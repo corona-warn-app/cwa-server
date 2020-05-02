@@ -2,22 +2,24 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0"
   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+
+  <modelVersion>4.0.0</modelVersion>
+
   <parent>
     <groupId>org.springframework.boot</groupId>
     <artifactId>spring-boot-starter-parent</artifactId>
     <version>2.2.6.RELEASE</version>
-    <relativePath/> <!-- lookup parent from repository -->
   </parent>
-  <modelVersion>4.0.0</modelVersion>
 
   <artifactId>services</artifactId>
+  <groupId>org.ena.server</groupId>
+  <version>0.0.1-SNAPSHOT</version>
+
   <packaging>pom</packaging>
   <modules>
     <module>Download</module>
     <module>Upload</module>
   </modules>
-  <groupId>org.ena.server</groupId>
-  <version>0.0.1-SNAPSHOT</version>
 
   <properties>
     <java.version>11</java.version>

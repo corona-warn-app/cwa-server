@@ -2,7 +2,22 @@
 <project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
   xmlns="http://maven.apache.org/POM/4.0.0"
   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+
+  <modelVersion>4.0.0</modelVersion>
+
+  <parent>
+    <artifactId>tools</artifactId>
+    <groupId>org.ena.server</groupId>
+    <version>0.0.1-SNAPSHOT</version>
+    <relativePath>../pom.xml</relativePath>
+  </parent>
+
+  <description>ENA TestDataGenerator</description>
+  <groupId>org.ena.server.tools</groupId>
   <artifactId>TestDataGenerator</artifactId>
+  <name>TestDataGenerator</name>
+  <version>0.0.1-SNAPSHOT</version>
+
   <dependencies>
     <dependency>
       <artifactId>Protocols</artifactId>
@@ -30,16 +45,4 @@
       <version>2.6</version>
     </dependency>
   </dependencies>
-
-  <description>ENA TestDataGenerator</description>
-  <groupId>org.ena.server.tools</groupId>
-  <modelVersion>4.0.0</modelVersion>
-  <name>TestDataGenerator</name>
-  <parent>
-    <artifactId>tools</artifactId>
-    <groupId>org.ena.server</groupId>
-    <version>0.0.1-SNAPSHOT</version>
-  </parent>
-
-  <version>0.0.1-SNAPSHOT</version>
 </project>
