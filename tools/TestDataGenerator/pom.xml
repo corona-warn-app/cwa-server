@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xmlns="http://maven.apache.org/POM/4.0.0"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <artifactId>TestDataGenerator</artifactId>
+  <dependencies>
+    <dependency>
+      <artifactId>Protocols</artifactId>
+      <groupId>org.ena.server.common</groupId>
+      <version>0.0.1-SNAPSHOT</version>
+    </dependency>
+    <dependency>
+      <artifactId>picocli</artifactId>
+      <groupId>info.picocli</groupId>
+      <version>4.2.0</version>
+    </dependency>
+    <dependency>
+      <artifactId>bcpkix-jdk15on</artifactId>
+      <groupId>org.bouncycastle</groupId>
+      <version>1.65</version>
+    </dependency>
+    <dependency>
+      <artifactId>commons-math3</artifactId>
+      <groupId>org.apache.commons</groupId>
+      <version>3.2</version>
+    </dependency>
+    <dependency>
+      <artifactId>commons-io</artifactId>
+      <groupId>commons-io</groupId>
+      <version>2.6</version>
+    </dependency>
+  </dependencies>
+
+  <description>ENA TestDataGenerator</description>
+  <groupId>org.ena.server.tools</groupId>
+  <modelVersion>4.0.0</modelVersion>
+  <name>TestDataGenerator</name>
+  <parent>
+    <artifactId>tools</artifactId>
+    <groupId>org.ena.server</groupId>
+    <version>0.0.1-SNAPSHOT</version>
+  </parent>
+
+  <version>0.0.1-SNAPSHOT</version>
+</project>
