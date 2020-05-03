@@ -27,7 +27,7 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.math3.distribution.IntegerDistribution;
 import org.apache.commons.math3.distribution.PoissonDistribution;
 import org.ena.server.common.protocols.generated.ExposureKeys.TemporaryExposureKey;
-import org.ena.server.common.protocols.generated.ExposureKeys.TemporaryExposureKey.RiskLevel;
+import org.ena.server.common.protocols.generated.RiskScore.RiskLevel;
 import org.ena.server.common.protocols.generated.ExposureKeys.TemporaryExposureKeyBucket;
 import org.ena.server.common.protocols.generated.ExposureKeys.TemporaryExposureKeyBucket.AggregationInterval;
 import org.ena.server.common.protocols.generated.Security.SignedPayload;
@@ -164,8 +164,8 @@ public class Generator {
   static TemporaryExposureKey generateTemporaryExposureKey(int rollingStartNumber) {
     RiskLevel riskLevel = RiskLevel.forNumber(
         Common.getRandomBetween(
-            RiskLevel.RISK_LEVEL_LOWEST_VALUE,
-            RiskLevel.RISK_LEVEL_HIGHEST_VALUE
+            RiskLevel.LOWEST_VALUE,
+            RiskLevel.HIGHEST_VALUE
         )
     );
     return TemporaryExposureKey.newBuilder()

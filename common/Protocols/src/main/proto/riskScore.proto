@@ -1,0 +1,74 @@
+syntax = "proto3";
+package org.ena.server.common.protocols.generated;
+
+// ExposureKeyPackage v0.1
+
+// See page 15:
+// https://covid19-static.cdn-apple.com/applications/covid19/current/static/contact-tracing/pdf/ExposureNotification-FrameworkDocumentationv1.2.pdf
+message RiskScoreParameters {
+
+  TransmissionRiskParameter transmission = 1;
+  double transmissionWeight= 2;
+
+  DurationRiskParameter duration = 3;
+  double durationWeight= 4;
+
+  DaysRiskParameter days = 5;
+  double daysWeight= 6;
+
+  AttenuationRiskParameter attenuation = 7;
+  double attenuationWeight= 8;
+
+  message TransmissionRiskParameter {
+    RiskLevel lowest = 1;
+    RiskLevel low = 2;
+    RiskLevel low_medium = 3;
+    RiskLevel medium = 4;
+    RiskLevel medium_high = 5;
+    RiskLevel high = 6;
+    RiskLevel very_high = 7;
+    RiskLevel highest = 8;
+  }
+  message DurationRiskParameter {
+    RiskLevel lowest = 1;               // < 5 min
+    RiskLevel low = 2;                  // 5 min
+    RiskLevel low_medium = 3;           // 10 min
+    RiskLevel medium = 4;               // 15 min
+    RiskLevel medium_high = 5;          // 20 min
+    RiskLevel high = 6;                 // 25 min
+    RiskLevel very_high = 7;            // 30 min
+    RiskLevel highest = 8;              // > 30 min
+  }
+  message DaysRiskParameter {
+    RiskLevel lowest = 1;               // >= 14 days
+    RiskLevel low = 2;                  // 13 or 12 days
+    RiskLevel low_medium = 3;           // 11 or 10 days
+    RiskLevel medium = 4;               // 9 or 8 days
+    RiskLevel medium_high = 5;          // 7 or 6 days
+    RiskLevel high = 6;                 // 5 or 4 days
+    RiskLevel very_high = 7;            // 3 or 2 days
+    RiskLevel highest = 8;              // 2 or 1 days
+  }
+  message AttenuationRiskParameter {
+    RiskLevel lowest = 1;               // A > 73 dBm
+    RiskLevel low = 2;                  // 63 < A <= 73 dBm
+    RiskLevel low_medium = 3;           // 51 < A <= 63 dBm
+    RiskLevel medium = 4;               // 33 < A <= 51 dBm
+    RiskLevel medium_high = 5;          // 27 < A <= 33 dBm
+    RiskLevel high = 6;                 // 15 < A <= 27 dBm
+    RiskLevel very_high = 7;            // 10 < A <= 15 dBm
+    RiskLevel highest = 8;              // A <= 10 dBm
+  }
+}
+
+enum RiskLevel {
+  INVALID = 0;
+  LOWEST = 1;
+  LOW = 2;
+  LOW_MEDIUM = 3;
+  MEDIUM = 4;
+  MEDIUM_HIGH = 5;
+  HIGH = 6;
+  VERY_HIGH = 7;
+  HIGHEST = 8;
+}

@@ -1476,7 +1476,7 @@ public final class ExposureKeys {
      * risk level from the sending device
      * </pre>
      *
-     * <code>.org.ena.server.common.protocols.generated.TemporaryExposureKey.RiskLevel riskLevel = 3;</code>
+     * <code>.org.ena.server.common.protocols.generated.RiskLevel riskLevel = 3;</code>
      * @return The enum numeric value on the wire for riskLevel.
      */
     int getRiskLevelValue();
@@ -1485,10 +1485,10 @@ public final class ExposureKeys {
      * risk level from the sending device
      * </pre>
      *
-     * <code>.org.ena.server.common.protocols.generated.TemporaryExposureKey.RiskLevel riskLevel = 3;</code>
+     * <code>.org.ena.server.common.protocols.generated.RiskLevel riskLevel = 3;</code>
      * @return The riskLevel.
      */
-    org.ena.server.common.protocols.generated.ExposureKeys.TemporaryExposureKey.RiskLevel getRiskLevel();
+    org.ena.server.common.protocols.generated.RiskScore.RiskLevel getRiskLevel();
   }
   /**
    * Protobuf type {@code org.ena.server.common.protocols.generated.TemporaryExposureKey}
@@ -1585,173 +1585,6 @@ public final class ExposureKeys {
               org.ena.server.common.protocols.generated.ExposureKeys.TemporaryExposureKey.class, org.ena.server.common.protocols.generated.ExposureKeys.TemporaryExposureKey.Builder.class);
     }
 
-    /**
-     * Protobuf enum {@code org.ena.server.common.protocols.generated.TemporaryExposureKey.RiskLevel}
-     */
-    public enum RiskLevel
-        implements com.google.protobuf.ProtocolMessageEnum {
-      /**
-       * <code>RISK_LEVEL_INVALID = 0;</code>
-       */
-      RISK_LEVEL_INVALID(0),
-      /**
-       * <code>RISK_LEVEL_LOWEST = 1;</code>
-       */
-      RISK_LEVEL_LOWEST(1),
-      /**
-       * <code>RISK_LEVEL_LOW = 2;</code>
-       */
-      RISK_LEVEL_LOW(2),
-      /**
-       * <code>RISK_LEVEL_LOW_MEDIUM = 3;</code>
-       */
-      RISK_LEVEL_LOW_MEDIUM(3),
-      /**
-       * <code>RISK_LEVEL_MEDIUM = 4;</code>
-       */
-      RISK_LEVEL_MEDIUM(4),
-      /**
-       * <code>RISK_LEVEL_MEDIUM_HIGH = 5;</code>
-       */
-      RISK_LEVEL_MEDIUM_HIGH(5),
-      /**
-       * <code>RISK_LEVEL_HIGH = 6;</code>
-       */
-      RISK_LEVEL_HIGH(6),
-      /**
-       * <code>RISK_LEVEL_VERY_HIGH = 7;</code>
-       */
-      RISK_LEVEL_VERY_HIGH(7),
-      /**
-       * <code>RISK_LEVEL_HIGHEST = 8;</code>
-       */
-      RISK_LEVEL_HIGHEST(8),
-      UNRECOGNIZED(-1),
-      ;
-
-      /**
-       * <code>RISK_LEVEL_INVALID = 0;</code>
-       */
-      public static final int RISK_LEVEL_INVALID_VALUE = 0;
-      /**
-       * <code>RISK_LEVEL_LOWEST = 1;</code>
-       */
-      public static final int RISK_LEVEL_LOWEST_VALUE = 1;
-      /**
-       * <code>RISK_LEVEL_LOW = 2;</code>
-       */
-      public static final int RISK_LEVEL_LOW_VALUE = 2;
-      /**
-       * <code>RISK_LEVEL_LOW_MEDIUM = 3;</code>
-       */
-      public static final int RISK_LEVEL_LOW_MEDIUM_VALUE = 3;
-      /**
-       * <code>RISK_LEVEL_MEDIUM = 4;</code>
-       */
-      public static final int RISK_LEVEL_MEDIUM_VALUE = 4;
-      /**
-       * <code>RISK_LEVEL_MEDIUM_HIGH = 5;</code>
-       */
-      public static final int RISK_LEVEL_MEDIUM_HIGH_VALUE = 5;
-      /**
-       * <code>RISK_LEVEL_HIGH = 6;</code>
-       */
-      public static final int RISK_LEVEL_HIGH_VALUE = 6;
-      /**
-       * <code>RISK_LEVEL_VERY_HIGH = 7;</code>
-       */
-      public static final int RISK_LEVEL_VERY_HIGH_VALUE = 7;
-      /**
-       * <code>RISK_LEVEL_HIGHEST = 8;</code>
-       */
-      public static final int RISK_LEVEL_HIGHEST_VALUE = 8;
-
-
-      public final int getNumber() {
-        if (this == UNRECOGNIZED) {
-          throw new java.lang.IllegalArgumentException(
-              "Can't get the number of an unknown enum value.");
-        }
-        return value;
-      }
-
-      /**
-       * @param value The numeric wire value of the corresponding enum entry.
-       * @return The enum associated with the given numeric wire value.
-       * @deprecated Use {@link #forNumber(int)} instead.
-       */
-      @java.lang.Deprecated
-      public static RiskLevel valueOf(int value) {
-        return forNumber(value);
-      }
-
-      /**
-       * @param value The numeric wire value of the corresponding enum entry.
-       * @return The enum associated with the given numeric wire value.
-       */
-      public static RiskLevel forNumber(int value) {
-        switch (value) {
-          case 0: return RISK_LEVEL_INVALID;
-          case 1: return RISK_LEVEL_LOWEST;
-          case 2: return RISK_LEVEL_LOW;
-          case 3: return RISK_LEVEL_LOW_MEDIUM;
-          case 4: return RISK_LEVEL_MEDIUM;
-          case 5: return RISK_LEVEL_MEDIUM_HIGH;
-          case 6: return RISK_LEVEL_HIGH;
-          case 7: return RISK_LEVEL_VERY_HIGH;
-          case 8: return RISK_LEVEL_HIGHEST;
-          default: return null;
-        }
-      }
-
-      public static com.google.protobuf.Internal.EnumLiteMap<RiskLevel>
-          internalGetValueMap() {
-        return internalValueMap;
-      }
-      private static final com.google.protobuf.Internal.EnumLiteMap<
-          RiskLevel> internalValueMap =
-            new com.google.protobuf.Internal.EnumLiteMap<RiskLevel>() {
-              public RiskLevel findValueByNumber(int number) {
-                return RiskLevel.forNumber(number);
-              }
-            };
-
-      public final com.google.protobuf.Descriptors.EnumValueDescriptor
-          getValueDescriptor() {
-        return getDescriptor().getValues().get(ordinal());
-      }
-      public final com.google.protobuf.Descriptors.EnumDescriptor
-          getDescriptorForType() {
-        return getDescriptor();
-      }
-      public static final com.google.protobuf.Descriptors.EnumDescriptor
-          getDescriptor() {
-        return org.ena.server.common.protocols.generated.ExposureKeys.TemporaryExposureKey.getDescriptor().getEnumTypes().get(0);
-      }
-
-      private static final RiskLevel[] VALUES = values();
-
-      public static RiskLevel valueOf(
-          com.google.protobuf.Descriptors.EnumValueDescriptor desc) {
-        if (desc.getType() != getDescriptor()) {
-          throw new java.lang.IllegalArgumentException(
-            "EnumValueDescriptor is not for this type.");
-        }
-        if (desc.getIndex() == -1) {
-          return UNRECOGNIZED;
-        }
-        return VALUES[desc.getIndex()];
-      }
-
-      private final int value;
-
-      private RiskLevel(int value) {
-        this.value = value;
-      }
-
-      // @@protoc_insertion_point(enum_scope:org.ena.server.common.protocols.generated.TemporaryExposureKey.RiskLevel)
-    }
-
     public static final int KEYDATA_FIELD_NUMBER = 1;
     private com.google.protobuf.ByteString keyData_;
     /**
@@ -1787,7 +1620,7 @@ public final class ExposureKeys {
      * risk level from the sending device
      * </pre>
      *
-     * <code>.org.ena.server.common.protocols.generated.TemporaryExposureKey.RiskLevel riskLevel = 3;</code>
+     * <code>.org.ena.server.common.protocols.generated.RiskLevel riskLevel = 3;</code>
      * @return The enum numeric value on the wire for riskLevel.
      */
     public int getRiskLevelValue() {
@@ -1798,13 +1631,13 @@ public final class ExposureKeys {
      * risk level from the sending device
      * </pre>
      *
-     * <code>.org.ena.server.common.protocols.generated.TemporaryExposureKey.RiskLevel riskLevel = 3;</code>
+     * <code>.org.ena.server.common.protocols.generated.RiskLevel riskLevel = 3;</code>
      * @return The riskLevel.
      */
-    public org.ena.server.common.protocols.generated.ExposureKeys.TemporaryExposureKey.RiskLevel getRiskLevel() {
+    public org.ena.server.common.protocols.generated.RiskScore.RiskLevel getRiskLevel() {
       @SuppressWarnings("deprecation")
-      org.ena.server.common.protocols.generated.ExposureKeys.TemporaryExposureKey.RiskLevel result = org.ena.server.common.protocols.generated.ExposureKeys.TemporaryExposureKey.RiskLevel.valueOf(riskLevel_);
-      return result == null ? org.ena.server.common.protocols.generated.ExposureKeys.TemporaryExposureKey.RiskLevel.UNRECOGNIZED : result;
+      org.ena.server.common.protocols.generated.RiskScore.RiskLevel result = org.ena.server.common.protocols.generated.RiskScore.RiskLevel.valueOf(riskLevel_);
+      return result == null ? org.ena.server.common.protocols.generated.RiskScore.RiskLevel.UNRECOGNIZED : result;
     }
 
     private byte memoizedIsInitialized = -1;
@@ -1827,7 +1660,7 @@ public final class ExposureKeys {
       if (rollingStartNumber_ != 0) {
         output.writeSFixed32(2, rollingStartNumber_);
       }
-      if (riskLevel_ != org.ena.server.common.protocols.generated.ExposureKeys.TemporaryExposureKey.RiskLevel.RISK_LEVEL_INVALID.getNumber()) {
+      if (riskLevel_ != org.ena.server.common.protocols.generated.RiskScore.RiskLevel.INVALID.getNumber()) {
         output.writeEnum(3, riskLevel_);
       }
       unknownFields.writeTo(output);
@@ -1847,7 +1680,7 @@ public final class ExposureKeys {
         size += com.google.protobuf.CodedOutputStream
           .computeSFixed32Size(2, rollingStartNumber_);
       }
-      if (riskLevel_ != org.ena.server.common.protocols.generated.ExposureKeys.TemporaryExposureKey.RiskLevel.RISK_LEVEL_INVALID.getNumber()) {
+      if (riskLevel_ != org.ena.server.common.protocols.generated.RiskScore.RiskLevel.INVALID.getNumber()) {
         size += com.google.protobuf.CodedOutputStream
           .computeEnumSize(3, riskLevel_);
       }
@@ -2235,7 +2068,7 @@ public final class ExposureKeys {
        * risk level from the sending device
        * </pre>
        *
-       * <code>.org.ena.server.common.protocols.generated.TemporaryExposureKey.RiskLevel riskLevel = 3;</code>
+       * <code>.org.ena.server.common.protocols.generated.RiskLevel riskLevel = 3;</code>
        * @return The enum numeric value on the wire for riskLevel.
        */
       public int getRiskLevelValue() {
@@ -2246,7 +2079,7 @@ public final class ExposureKeys {
        * risk level from the sending device
        * </pre>
        *
-       * <code>.org.ena.server.common.protocols.generated.TemporaryExposureKey.RiskLevel riskLevel = 3;</code>
+       * <code>.org.ena.server.common.protocols.generated.RiskLevel riskLevel = 3;</code>
        * @param value The enum numeric value on the wire for riskLevel to set.
        * @return This builder for chaining.
        */
@@ -2260,24 +2093,24 @@ public final class ExposureKeys {
        * risk level from the sending device
        * </pre>
        *
-       * <code>.org.ena.server.common.protocols.generated.TemporaryExposureKey.RiskLevel riskLevel = 3;</code>
+       * <code>.org.ena.server.common.protocols.generated.RiskLevel riskLevel = 3;</code>
        * @return The riskLevel.
        */
-      public org.ena.server.common.protocols.generated.ExposureKeys.TemporaryExposureKey.RiskLevel getRiskLevel() {
+      public org.ena.server.common.protocols.generated.RiskScore.RiskLevel getRiskLevel() {
         @SuppressWarnings("deprecation")
-        org.ena.server.common.protocols.generated.ExposureKeys.TemporaryExposureKey.RiskLevel result = org.ena.server.common.protocols.generated.ExposureKeys.TemporaryExposureKey.RiskLevel.valueOf(riskLevel_);
-        return result == null ? org.ena.server.common.protocols.generated.ExposureKeys.TemporaryExposureKey.RiskLevel.UNRECOGNIZED : result;
+        org.ena.server.common.protocols.generated.RiskScore.RiskLevel result = org.ena.server.common.protocols.generated.RiskScore.RiskLevel.valueOf(riskLevel_);
+        return result == null ? org.ena.server.common.protocols.generated.RiskScore.RiskLevel.UNRECOGNIZED : result;
       }
       /**
        * <pre>
        * risk level from the sending device
        * </pre>
        *
-       * <code>.org.ena.server.common.protocols.generated.TemporaryExposureKey.RiskLevel riskLevel = 3;</code>
+       * <code>.org.ena.server.common.protocols.generated.RiskLevel riskLevel = 3;</code>
        * @param value The riskLevel to set.
        * @return This builder for chaining.
        */
-      public Builder setRiskLevel(org.ena.server.common.protocols.generated.ExposureKeys.TemporaryExposureKey.RiskLevel value) {
+      public Builder setRiskLevel(org.ena.server.common.protocols.generated.RiskScore.RiskLevel value) {
         if (value == null) {
           throw new NullPointerException();
         }
@@ -2291,7 +2124,7 @@ public final class ExposureKeys {
        * risk level from the sending device
        * </pre>
        *
-       * <code>.org.ena.server.common.protocols.generated.TemporaryExposureKey.RiskLevel riskLevel = 3;</code>
+       * <code>.org.ena.server.common.protocols.generated.RiskLevel riskLevel = 3;</code>
        * @return This builder for chaining.
        */
       public Builder clearRiskLevel() {
@@ -2373,29 +2206,24 @@ public final class ExposureKeys {
   static {
     java.lang.String[] descriptorData = {
       "\n\022exposureKeys.proto\022)org.ena.server.com" +
-      "mon.protocols.generated\"\276\002\n\032TemporaryExp" +
-      "osureKeyBucket\022\020\n\010shardKey\030\001 \001(\t\022\021\n\ttime" +
-      "stamp\030\002 \001(\017\022v\n\023aggregationInterval\030\003 \001(\016" +
-      "2Y.org.ena.server.common.protocols.gener" +
-      "ated.TemporaryExposureKeyBucket.Aggregat" +
-      "ionInterval\022U\n\014exposureKeys\030\004 \003(\0132?.org." +
-      "ena.server.common.protocols.generated.Te" +
-      "mporaryExposureKey\",\n\023AggregationInterva" +
-      "l\022\n\n\006HOURLY\020\000\022\t\n\005DAILY\020\001\"\207\003\n\024TemporaryEx" +
-      "posureKey\022\017\n\007keyData\030\001 \001(\014\022\032\n\022rollingSta" +
-      "rtNumber\030\002 \001(\017\022\\\n\triskLevel\030\003 \001(\0162I.org." +
-      "ena.server.common.protocols.generated.Te" +
-      "mporaryExposureKey.RiskLevel\"\343\001\n\tRiskLev" +
-      "el\022\026\n\022RISK_LEVEL_INVALID\020\000\022\025\n\021RISK_LEVEL" +
-      "_LOWEST\020\001\022\022\n\016RISK_LEVEL_LOW\020\002\022\031\n\025RISK_LE" +
-      "VEL_LOW_MEDIUM\020\003\022\025\n\021RISK_LEVEL_MEDIUM\020\004\022" +
-      "\032\n\026RISK_LEVEL_MEDIUM_HIGH\020\005\022\023\n\017RISK_LEVE" +
-      "L_HIGH\020\006\022\030\n\024RISK_LEVEL_VERY_HIGH\020\007\022\026\n\022RI" +
-      "SK_LEVEL_HIGHEST\020\010b\006proto3"
+      "mon.protocols.generated\032\017riskScore.proto" +
+      "\"\276\002\n\032TemporaryExposureKeyBucket\022\020\n\010shard" +
+      "Key\030\001 \001(\t\022\021\n\ttimestamp\030\002 \001(\017\022v\n\023aggregat" +
+      "ionInterval\030\003 \001(\0162Y.org.ena.server.commo" +
+      "n.protocols.generated.TemporaryExposureK" +
+      "eyBucket.AggregationInterval\022U\n\014exposure" +
+      "Keys\030\004 \003(\0132?.org.ena.server.common.proto" +
+      "cols.generated.TemporaryExposureKey\",\n\023A" +
+      "ggregationInterval\022\n\n\006HOURLY\020\000\022\t\n\005DAILY\020" +
+      "\001\"\214\001\n\024TemporaryExposureKey\022\017\n\007keyData\030\001 " +
+      "\001(\014\022\032\n\022rollingStartNumber\030\002 \001(\017\022G\n\triskL" +
+      "evel\030\003 \001(\01624.org.ena.server.common.proto" +
+      "cols.generated.RiskLevelb\006proto3"
     };
     descriptor = com.google.protobuf.Descriptors.FileDescriptor
       .internalBuildGeneratedFileFrom(descriptorData,
         new com.google.protobuf.Descriptors.FileDescriptor[] {
+          org.ena.server.common.protocols.generated.RiskScore.getDescriptor(),
         });
     internal_static_org_ena_server_common_protocols_generated_TemporaryExposureKeyBucket_descriptor =
       getDescriptor().getMessageTypes().get(0);
@@ -2409,6 +2237,7 @@ public final class ExposureKeys {
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_org_ena_server_common_protocols_generated_TemporaryExposureKey_descriptor,
         new java.lang.String[] { "KeyData", "RollingStartNumber", "RiskLevel", });
+    org.ena.server.common.protocols.generated.RiskScore.getDescriptor();
   }
 
   // @@protoc_insertion_point(outer_class_scope)
