@@ -63,15 +63,8 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "array",
-                  "items": {
-                    "type": "string"
-                  },
-                  "example": [
-                    "v1",
-                    "v2",
-                    "v3"
-                  ]
+                  "type": "string",
+                  "example": "<html>...</html>"
                 }
               }
             }
