@@ -27,9 +27,9 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.math3.distribution.IntegerDistribution;
 import org.apache.commons.math3.distribution.PoissonDistribution;
 import org.ena.server.common.protocols.generated.ExposureKeys.TemporaryExposureKey;
-import org.ena.server.common.protocols.generated.RiskScore.RiskLevel;
 import org.ena.server.common.protocols.generated.ExposureKeys.TemporaryExposureKeyBucket;
 import org.ena.server.common.protocols.generated.ExposureKeys.TemporaryExposureKeyBucket.AggregationInterval;
+import org.ena.server.common.protocols.generated.RiskScore.RiskLevel;
 import org.ena.server.common.protocols.generated.Security.SignedPayload;
 import org.ena.server.tools.testdatagenerator.common.Common;
 
