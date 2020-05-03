@@ -109,7 +109,9 @@
             }
           }
         }
-      },
+      }
+    },
+    "/{version}/infections/country/{country}": {
       "post": {
         "summary": "Post infection keys.",
         "tags": [
@@ -123,6 +125,15 @@
             "required": true,
             "schema": {
               "$ref": "#/components/schemas/Version"
+            }
+          },
+          {
+            "name": "country",
+            "in": "path",
+            "description": "Country",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/Country"
             }
           }
         ],
@@ -436,6 +447,88 @@
           }
         }
       }
+    },
+    "/{version}/languages": {
+      "get": {
+        "summary": "Get all supported languages.",
+        "tags": [
+          "Languages"
+        ],
+        "parameters": [
+          {
+            "name": "version",
+            "in": "path",
+            "description": "API version",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/Version"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "All supported languages.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Language"
+                  },
+                  "example": [
+                    "de-DE",
+                    "fr-FR",
+                    "pl"
+                  ]
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/{version}/languages/{language}": {
+      "get": {
+        "summary": "Get the translation file for a specific language.",
+        "tags": [
+          "Languages"
+        ],
+        "parameters": [
+          {
+            "name": "version",
+            "in": "path",
+            "description": "API version",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/Version"
+            }
+          },
+          {
+            "name": "language",
+            "in": "path",
+            "description": "Language",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/Language"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The translation file for the specific language.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "example": {
+                    "GREETING": "Guten Tag"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
     }
   },
   "components": {
@@ -447,6 +540,11 @@
       "Country": {
         "type": "string",
         "example": "DE"
+      },
+      "Language": {
+        "type": "string",
+        "description": "An IETF BCP 47 language tag.",
+        "example": "de-DE"
       },
       "Date": {
         "type": "string",
