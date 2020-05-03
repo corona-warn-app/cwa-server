@@ -4927,19 +4927,19 @@ public final class RiskScore {
        * A &lt;= 10 dBm, highest risk
        * </pre>
        *
-       * <code>.org.ena.server.common.protocols.generated.RiskLevel lt_10_min = 8;</code>
-       * @return The enum numeric value on the wire for lt10Min.
+       * <code>.org.ena.server.common.protocols.generated.RiskLevel lt_10_dbm = 8;</code>
+       * @return The enum numeric value on the wire for lt10Dbm.
        */
-      int getLt10MinValue();
+      int getLt10DbmValue();
       /**
        * <pre>
        * A &lt;= 10 dBm, highest risk
        * </pre>
        *
-       * <code>.org.ena.server.common.protocols.generated.RiskLevel lt_10_min = 8;</code>
-       * @return The lt10Min.
+       * <code>.org.ena.server.common.protocols.generated.RiskLevel lt_10_dbm = 8;</code>
+       * @return The lt10Dbm.
        */
-      org.ena.server.common.protocols.generated.RiskScore.RiskLevel getLt10Min();
+      org.ena.server.common.protocols.generated.RiskScore.RiskLevel getLt10Dbm();
     }
     /**
      * Protobuf type {@code org.ena.server.common.protocols.generated.RiskScoreParameters.AttenuationRiskParameter}
@@ -4961,7 +4961,7 @@ public final class RiskScore {
         gt27Le33Dbm_ = 0;
         gt15Le27Dbm_ = 0;
         gt10Le15Dbm_ = 0;
-        lt10Min_ = 0;
+        lt10Dbm_ = 0;
       }
 
       @java.lang.Override
@@ -5039,7 +5039,7 @@ public final class RiskScore {
               case 64: {
                 int rawValue = input.readEnum();
 
-                lt10Min_ = rawValue;
+                lt10Dbm_ = rawValue;
                 break;
               }
               default: {
@@ -5263,30 +5263,30 @@ public final class RiskScore {
         return result == null ? org.ena.server.common.protocols.generated.RiskScore.RiskLevel.UNRECOGNIZED : result;
       }
 
-      public static final int LT_10_MIN_FIELD_NUMBER = 8;
-      private int lt10Min_;
+      public static final int LT_10_DBM_FIELD_NUMBER = 8;
+      private int lt10Dbm_;
       /**
        * <pre>
        * A &lt;= 10 dBm, highest risk
        * </pre>
        *
-       * <code>.org.ena.server.common.protocols.generated.RiskLevel lt_10_min = 8;</code>
-       * @return The enum numeric value on the wire for lt10Min.
+       * <code>.org.ena.server.common.protocols.generated.RiskLevel lt_10_dbm = 8;</code>
+       * @return The enum numeric value on the wire for lt10Dbm.
        */
-      public int getLt10MinValue() {
-        return lt10Min_;
+      public int getLt10DbmValue() {
+        return lt10Dbm_;
       }
       /**
        * <pre>
        * A &lt;= 10 dBm, highest risk
        * </pre>
        *
-       * <code>.org.ena.server.common.protocols.generated.RiskLevel lt_10_min = 8;</code>
-       * @return The lt10Min.
+       * <code>.org.ena.server.common.protocols.generated.RiskLevel lt_10_dbm = 8;</code>
+       * @return The lt10Dbm.
        */
-      public org.ena.server.common.protocols.generated.RiskScore.RiskLevel getLt10Min() {
+      public org.ena.server.common.protocols.generated.RiskScore.RiskLevel getLt10Dbm() {
         @SuppressWarnings("deprecation")
-        org.ena.server.common.protocols.generated.RiskScore.RiskLevel result = org.ena.server.common.protocols.generated.RiskScore.RiskLevel.valueOf(lt10Min_);
+        org.ena.server.common.protocols.generated.RiskScore.RiskLevel result = org.ena.server.common.protocols.generated.RiskScore.RiskLevel.valueOf(lt10Dbm_);
         return result == null ? org.ena.server.common.protocols.generated.RiskScore.RiskLevel.UNRECOGNIZED : result;
       }
 
@@ -5325,8 +5325,8 @@ public final class RiskScore {
         if (gt10Le15Dbm_ != org.ena.server.common.protocols.generated.RiskScore.RiskLevel.INVALID.getNumber()) {
           output.writeEnum(7, gt10Le15Dbm_);
         }
-        if (lt10Min_ != org.ena.server.common.protocols.generated.RiskScore.RiskLevel.INVALID.getNumber()) {
-          output.writeEnum(8, lt10Min_);
+        if (lt10Dbm_ != org.ena.server.common.protocols.generated.RiskScore.RiskLevel.INVALID.getNumber()) {
+          output.writeEnum(8, lt10Dbm_);
         }
         unknownFields.writeTo(output);
       }
@@ -5365,9 +5365,9 @@ public final class RiskScore {
           size += com.google.protobuf.CodedOutputStream
             .computeEnumSize(7, gt10Le15Dbm_);
         }
-        if (lt10Min_ != org.ena.server.common.protocols.generated.RiskScore.RiskLevel.INVALID.getNumber()) {
+        if (lt10Dbm_ != org.ena.server.common.protocols.generated.RiskScore.RiskLevel.INVALID.getNumber()) {
           size += com.google.protobuf.CodedOutputStream
-            .computeEnumSize(8, lt10Min_);
+            .computeEnumSize(8, lt10Dbm_);
         }
         size += unknownFields.getSerializedSize();
         memoizedSize = size;
@@ -5391,7 +5391,7 @@ public final class RiskScore {
         if (gt27Le33Dbm_ != other.gt27Le33Dbm_) return false;
         if (gt15Le27Dbm_ != other.gt15Le27Dbm_) return false;
         if (gt10Le15Dbm_ != other.gt10Le15Dbm_) return false;
-        if (lt10Min_ != other.lt10Min_) return false;
+        if (lt10Dbm_ != other.lt10Dbm_) return false;
         if (!unknownFields.equals(other.unknownFields)) return false;
         return true;
       }
@@ -5417,8 +5417,8 @@ public final class RiskScore {
         hash = (53 * hash) + gt15Le27Dbm_;
         hash = (37 * hash) + GT_10_LE_15_DBM_FIELD_NUMBER;
         hash = (53 * hash) + gt10Le15Dbm_;
-        hash = (37 * hash) + LT_10_MIN_FIELD_NUMBER;
-        hash = (53 * hash) + lt10Min_;
+        hash = (37 * hash) + LT_10_DBM_FIELD_NUMBER;
+        hash = (53 * hash) + lt10Dbm_;
         hash = (29 * hash) + unknownFields.hashCode();
         memoizedHashCode = hash;
         return hash;
@@ -5566,7 +5566,7 @@ public final class RiskScore {
 
           gt10Le15Dbm_ = 0;
 
-          lt10Min_ = 0;
+          lt10Dbm_ = 0;
 
           return this;
         }
@@ -5601,7 +5601,7 @@ public final class RiskScore {
           result.gt27Le33Dbm_ = gt27Le33Dbm_;
           result.gt15Le27Dbm_ = gt15Le27Dbm_;
           result.gt10Le15Dbm_ = gt10Le15Dbm_;
-          result.lt10Min_ = lt10Min_;
+          result.lt10Dbm_ = lt10Dbm_;
           onBuilt();
           return result;
         }
@@ -5671,8 +5671,8 @@ public final class RiskScore {
           if (other.gt10Le15Dbm_ != 0) {
             setGt10Le15DbmValue(other.getGt10Le15DbmValue());
           }
-          if (other.lt10Min_ != 0) {
-            setLt10MinValue(other.getLt10MinValue());
+          if (other.lt10Dbm_ != 0) {
+            setLt10DbmValue(other.getLt10DbmValue());
           }
           this.mergeUnknownFields(other.unknownFields);
           onChanged();
@@ -6207,29 +6207,29 @@ public final class RiskScore {
           return this;
         }
 
-        private int lt10Min_ = 0;
+        private int lt10Dbm_ = 0;
         /**
          * <pre>
          * A &lt;= 10 dBm, highest risk
          * </pre>
          *
-         * <code>.org.ena.server.common.protocols.generated.RiskLevel lt_10_min = 8;</code>
-         * @return The enum numeric value on the wire for lt10Min.
+         * <code>.org.ena.server.common.protocols.generated.RiskLevel lt_10_dbm = 8;</code>
+         * @return The enum numeric value on the wire for lt10Dbm.
          */
-        public int getLt10MinValue() {
-          return lt10Min_;
+        public int getLt10DbmValue() {
+          return lt10Dbm_;
         }
         /**
          * <pre>
          * A &lt;= 10 dBm, highest risk
          * </pre>
          *
-         * <code>.org.ena.server.common.protocols.generated.RiskLevel lt_10_min = 8;</code>
-         * @param value The enum numeric value on the wire for lt10Min to set.
+         * <code>.org.ena.server.common.protocols.generated.RiskLevel lt_10_dbm = 8;</code>
+         * @param value The enum numeric value on the wire for lt10Dbm to set.
          * @return This builder for chaining.
          */
-        public Builder setLt10MinValue(int value) {
-          lt10Min_ = value;
+        public Builder setLt10DbmValue(int value) {
+          lt10Dbm_ = value;
           onChanged();
           return this;
         }
@@ -6238,12 +6238,12 @@ public final class RiskScore {
          * A &lt;= 10 dBm, highest risk
          * </pre>
          *
-         * <code>.org.ena.server.common.protocols.generated.RiskLevel lt_10_min = 8;</code>
-         * @return The lt10Min.
+         * <code>.org.ena.server.common.protocols.generated.RiskLevel lt_10_dbm = 8;</code>
+         * @return The lt10Dbm.
          */
-        public org.ena.server.common.protocols.generated.RiskScore.RiskLevel getLt10Min() {
+        public org.ena.server.common.protocols.generated.RiskScore.RiskLevel getLt10Dbm() {
           @SuppressWarnings("deprecation")
-          org.ena.server.common.protocols.generated.RiskScore.RiskLevel result = org.ena.server.common.protocols.generated.RiskScore.RiskLevel.valueOf(lt10Min_);
+          org.ena.server.common.protocols.generated.RiskScore.RiskLevel result = org.ena.server.common.protocols.generated.RiskScore.RiskLevel.valueOf(lt10Dbm_);
           return result == null ? org.ena.server.common.protocols.generated.RiskScore.RiskLevel.UNRECOGNIZED : result;
         }
         /**
@@ -6251,16 +6251,16 @@ public final class RiskScore {
          * A &lt;= 10 dBm, highest risk
          * </pre>
          *
-         * <code>.org.ena.server.common.protocols.generated.RiskLevel lt_10_min = 8;</code>
-         * @param value The lt10Min to set.
+         * <code>.org.ena.server.common.protocols.generated.RiskLevel lt_10_dbm = 8;</code>
+         * @param value The lt10Dbm to set.
          * @return This builder for chaining.
          */
-        public Builder setLt10Min(org.ena.server.common.protocols.generated.RiskScore.RiskLevel value) {
+        public Builder setLt10Dbm(org.ena.server.common.protocols.generated.RiskScore.RiskLevel value) {
           if (value == null) {
             throw new NullPointerException();
           }
           
-          lt10Min_ = value.getNumber();
+          lt10Dbm_ = value.getNumber();
           onChanged();
           return this;
         }
@@ -6269,12 +6269,12 @@ public final class RiskScore {
          * A &lt;= 10 dBm, highest risk
          * </pre>
          *
-         * <code>.org.ena.server.common.protocols.generated.RiskLevel lt_10_min = 8;</code>
+         * <code>.org.ena.server.common.protocols.generated.RiskLevel lt_10_dbm = 8;</code>
          * @return This builder for chaining.
          */
-        public Builder clearLt10Min() {
+        public Builder clearLt10Dbm() {
           
-          lt10Min_ = 0;
+          lt10Dbm_ = 0;
           onChanged();
           return this;
         }
@@ -7758,7 +7758,7 @@ public final class RiskScore {
       "rver.common.protocols.generated.RiskLeve" +
       "l\022M\n\017gt_10_le_15_dbm\030\007 \001(\01624.org.ena.ser" +
       "ver.common.protocols.generated.RiskLevel" +
-      "\022G\n\tlt_10_min\030\010 \001(\01624.org.ena.server.com" +
+      "\022G\n\tlt_10_dbm\030\010 \001(\01624.org.ena.server.com" +
       "mon.protocols.generated.RiskLevel*\200\001\n\tRi" +
       "skLevel\022\013\n\007INVALID\020\000\022\n\n\006LOWEST\020\001\022\007\n\003LOW\020" +
       "\002\022\016\n\nLOW_MEDIUM\020\003\022\n\n\006MEDIUM\020\004\022\017\n\013MEDIUM_" +
@@ -7798,7 +7798,7 @@ public final class RiskScore {
     internal_static_org_ena_server_common_protocols_generated_RiskScoreParameters_AttenuationRiskParameter_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_org_ena_server_common_protocols_generated_RiskScoreParameters_AttenuationRiskParameter_descriptor,
-        new java.lang.String[] { "Gt73Dbm", "Gt63Le73Dbm", "Gt51Le63Dbm", "Gt33Le51Dbm", "Gt27Le33Dbm", "Gt15Le27Dbm", "Gt10Le15Dbm", "Lt10Min", });
+        new java.lang.String[] { "Gt73Dbm", "Gt63Le73Dbm", "Gt51Le63Dbm", "Gt33Le51Dbm", "Gt27Le33Dbm", "Gt15Le27Dbm", "Gt10Le15Dbm", "Lt10Dbm", });
   }
 
   // @@protoc_insertion_point(outer_class_scope)
