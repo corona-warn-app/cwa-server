@@ -186,16 +186,28 @@ public final class RiskScore {
       com.google.protobuf.MessageOrBuilder {
 
     /**
+     * <pre>
+     * App-specific mapping
+     * </pre>
+     *
      * <code>.org.ena.server.common.protocols.generated.RiskScoreParameters.TransmissionRiskParameter transmission = 1;</code>
      * @return Whether the transmission field is set.
      */
     boolean hasTransmission();
     /**
+     * <pre>
+     * App-specific mapping
+     * </pre>
+     *
      * <code>.org.ena.server.common.protocols.generated.RiskScoreParameters.TransmissionRiskParameter transmission = 1;</code>
      * @return The transmission.
      */
     org.ena.server.common.protocols.generated.RiskScore.RiskScoreParameters.TransmissionRiskParameter getTransmission();
     /**
+     * <pre>
+     * App-specific mapping
+     * </pre>
+     *
      * <code>.org.ena.server.common.protocols.generated.RiskScoreParameters.TransmissionRiskParameter transmission = 1;</code>
      */
     org.ena.server.common.protocols.generated.RiskScore.RiskScoreParameters.TransmissionRiskParameterOrBuilder getTransmissionOrBuilder();
@@ -228,19 +240,19 @@ public final class RiskScore {
     double getDurationWeight();
 
     /**
-     * <code>.org.ena.server.common.protocols.generated.RiskScoreParameters.DaysRiskParameter days = 5;</code>
-     * @return Whether the days field is set.
+     * <code>.org.ena.server.common.protocols.generated.RiskScoreParameters.DaysSinceLastExposureRiskParameter daysSinceLastExposure = 5;</code>
+     * @return Whether the daysSinceLastExposure field is set.
      */
-    boolean hasDays();
+    boolean hasDaysSinceLastExposure();
     /**
-     * <code>.org.ena.server.common.protocols.generated.RiskScoreParameters.DaysRiskParameter days = 5;</code>
-     * @return The days.
+     * <code>.org.ena.server.common.protocols.generated.RiskScoreParameters.DaysSinceLastExposureRiskParameter daysSinceLastExposure = 5;</code>
+     * @return The daysSinceLastExposure.
      */
-    org.ena.server.common.protocols.generated.RiskScore.RiskScoreParameters.DaysRiskParameter getDays();
+    org.ena.server.common.protocols.generated.RiskScore.RiskScoreParameters.DaysSinceLastExposureRiskParameter getDaysSinceLastExposure();
     /**
-     * <code>.org.ena.server.common.protocols.generated.RiskScoreParameters.DaysRiskParameter days = 5;</code>
+     * <code>.org.ena.server.common.protocols.generated.RiskScoreParameters.DaysSinceLastExposureRiskParameter daysSinceLastExposure = 5;</code>
      */
-    org.ena.server.common.protocols.generated.RiskScore.RiskScoreParameters.DaysRiskParameterOrBuilder getDaysOrBuilder();
+    org.ena.server.common.protocols.generated.RiskScore.RiskScoreParameters.DaysSinceLastExposureRiskParameterOrBuilder getDaysSinceLastExposureOrBuilder();
 
     /**
      * <code>double daysWeight = 6;</code>
@@ -356,14 +368,14 @@ public final class RiskScore {
               break;
             }
             case 42: {
-              org.ena.server.common.protocols.generated.RiskScore.RiskScoreParameters.DaysRiskParameter.Builder subBuilder = null;
-              if (days_ != null) {
-                subBuilder = days_.toBuilder();
+              org.ena.server.common.protocols.generated.RiskScore.RiskScoreParameters.DaysSinceLastExposureRiskParameter.Builder subBuilder = null;
+              if (daysSinceLastExposure_ != null) {
+                subBuilder = daysSinceLastExposure_.toBuilder();
               }
-              days_ = input.readMessage(org.ena.server.common.protocols.generated.RiskScore.RiskScoreParameters.DaysRiskParameter.parser(), extensionRegistry);
+              daysSinceLastExposure_ = input.readMessage(org.ena.server.common.protocols.generated.RiskScore.RiskScoreParameters.DaysSinceLastExposureRiskParameter.parser(), extensionRegistry);
               if (subBuilder != null) {
-                subBuilder.mergeFrom(days_);
-                days_ = subBuilder.buildPartial();
+                subBuilder.mergeFrom(daysSinceLastExposure_);
+                daysSinceLastExposure_ = subBuilder.buildPartial();
               }
 
               break;
@@ -428,92 +440,92 @@ public final class RiskScore {
         com.google.protobuf.MessageOrBuilder {
 
       /**
-       * <code>.org.ena.server.common.protocols.generated.RiskLevel lowest = 1;</code>
-       * @return The enum numeric value on the wire for lowest.
+       * <code>.org.ena.server.common.protocols.generated.RiskLevel appDefined_1 = 1;</code>
+       * @return The enum numeric value on the wire for appDefined1.
        */
-      int getLowestValue();
+      int getAppDefined1Value();
       /**
-       * <code>.org.ena.server.common.protocols.generated.RiskLevel lowest = 1;</code>
-       * @return The lowest.
+       * <code>.org.ena.server.common.protocols.generated.RiskLevel appDefined_1 = 1;</code>
+       * @return The appDefined1.
        */
-      org.ena.server.common.protocols.generated.RiskScore.RiskLevel getLowest();
+      org.ena.server.common.protocols.generated.RiskScore.RiskLevel getAppDefined1();
 
       /**
-       * <code>.org.ena.server.common.protocols.generated.RiskLevel low = 2;</code>
-       * @return The enum numeric value on the wire for low.
+       * <code>.org.ena.server.common.protocols.generated.RiskLevel appDefined_2 = 2;</code>
+       * @return The enum numeric value on the wire for appDefined2.
        */
-      int getLowValue();
+      int getAppDefined2Value();
       /**
-       * <code>.org.ena.server.common.protocols.generated.RiskLevel low = 2;</code>
-       * @return The low.
+       * <code>.org.ena.server.common.protocols.generated.RiskLevel appDefined_2 = 2;</code>
+       * @return The appDefined2.
        */
-      org.ena.server.common.protocols.generated.RiskScore.RiskLevel getLow();
+      org.ena.server.common.protocols.generated.RiskScore.RiskLevel getAppDefined2();
 
       /**
-       * <code>.org.ena.server.common.protocols.generated.RiskLevel low_medium = 3;</code>
-       * @return The enum numeric value on the wire for lowMedium.
+       * <code>.org.ena.server.common.protocols.generated.RiskLevel appDefined_3 = 3;</code>
+       * @return The enum numeric value on the wire for appDefined3.
        */
-      int getLowMediumValue();
+      int getAppDefined3Value();
       /**
-       * <code>.org.ena.server.common.protocols.generated.RiskLevel low_medium = 3;</code>
-       * @return The lowMedium.
+       * <code>.org.ena.server.common.protocols.generated.RiskLevel appDefined_3 = 3;</code>
+       * @return The appDefined3.
        */
-      org.ena.server.common.protocols.generated.RiskScore.RiskLevel getLowMedium();
+      org.ena.server.common.protocols.generated.RiskScore.RiskLevel getAppDefined3();
 
       /**
-       * <code>.org.ena.server.common.protocols.generated.RiskLevel medium = 4;</code>
-       * @return The enum numeric value on the wire for medium.
+       * <code>.org.ena.server.common.protocols.generated.RiskLevel appDefined_4 = 4;</code>
+       * @return The enum numeric value on the wire for appDefined4.
        */
-      int getMediumValue();
+      int getAppDefined4Value();
       /**
-       * <code>.org.ena.server.common.protocols.generated.RiskLevel medium = 4;</code>
-       * @return The medium.
+       * <code>.org.ena.server.common.protocols.generated.RiskLevel appDefined_4 = 4;</code>
+       * @return The appDefined4.
        */
-      org.ena.server.common.protocols.generated.RiskScore.RiskLevel getMedium();
+      org.ena.server.common.protocols.generated.RiskScore.RiskLevel getAppDefined4();
 
       /**
-       * <code>.org.ena.server.common.protocols.generated.RiskLevel medium_high = 5;</code>
-       * @return The enum numeric value on the wire for mediumHigh.
+       * <code>.org.ena.server.common.protocols.generated.RiskLevel appDefined_5 = 5;</code>
+       * @return The enum numeric value on the wire for appDefined5.
        */
-      int getMediumHighValue();
+      int getAppDefined5Value();
       /**
-       * <code>.org.ena.server.common.protocols.generated.RiskLevel medium_high = 5;</code>
-       * @return The mediumHigh.
+       * <code>.org.ena.server.common.protocols.generated.RiskLevel appDefined_5 = 5;</code>
+       * @return The appDefined5.
        */
-      org.ena.server.common.protocols.generated.RiskScore.RiskLevel getMediumHigh();
+      org.ena.server.common.protocols.generated.RiskScore.RiskLevel getAppDefined5();
 
       /**
-       * <code>.org.ena.server.common.protocols.generated.RiskLevel high = 6;</code>
-       * @return The enum numeric value on the wire for high.
+       * <code>.org.ena.server.common.protocols.generated.RiskLevel appDefined_6 = 6;</code>
+       * @return The enum numeric value on the wire for appDefined6.
        */
-      int getHighValue();
+      int getAppDefined6Value();
       /**
-       * <code>.org.ena.server.common.protocols.generated.RiskLevel high = 6;</code>
-       * @return The high.
+       * <code>.org.ena.server.common.protocols.generated.RiskLevel appDefined_6 = 6;</code>
+       * @return The appDefined6.
        */
-      org.ena.server.common.protocols.generated.RiskScore.RiskLevel getHigh();
+      org.ena.server.common.protocols.generated.RiskScore.RiskLevel getAppDefined6();
 
       /**
-       * <code>.org.ena.server.common.protocols.generated.RiskLevel very_high = 7;</code>
-       * @return The enum numeric value on the wire for veryHigh.
+       * <code>.org.ena.server.common.protocols.generated.RiskLevel appDefined_7 = 7;</code>
+       * @return The enum numeric value on the wire for appDefined7.
        */
-      int getVeryHighValue();
+      int getAppDefined7Value();
       /**
-       * <code>.org.ena.server.common.protocols.generated.RiskLevel very_high = 7;</code>
-       * @return The veryHigh.
+       * <code>.org.ena.server.common.protocols.generated.RiskLevel appDefined_7 = 7;</code>
+       * @return The appDefined7.
        */
-      org.ena.server.common.protocols.generated.RiskScore.RiskLevel getVeryHigh();
+      org.ena.server.common.protocols.generated.RiskScore.RiskLevel getAppDefined7();
 
       /**
-       * <code>.org.ena.server.common.protocols.generated.RiskLevel highest = 8;</code>
-       * @return The enum numeric value on the wire for highest.
+       * <code>.org.ena.server.common.protocols.generated.RiskLevel appDefined_8 = 8;</code>
+       * @return The enum numeric value on the wire for appDefined8.
        */
-      int getHighestValue();
+      int getAppDefined8Value();
       /**
-       * <code>.org.ena.server.common.protocols.generated.RiskLevel highest = 8;</code>
-       * @return The highest.
+       * <code>.org.ena.server.common.protocols.generated.RiskLevel appDefined_8 = 8;</code>
+       * @return The appDefined8.
        */
-      org.ena.server.common.protocols.generated.RiskScore.RiskLevel getHighest();
+      org.ena.server.common.protocols.generated.RiskScore.RiskLevel getAppDefined8();
     }
     /**
      * Protobuf type {@code org.ena.server.common.protocols.generated.RiskScoreParameters.TransmissionRiskParameter}
@@ -528,14 +540,14 @@ public final class RiskScore {
         super(builder);
       }
       private TransmissionRiskParameter() {
-        lowest_ = 0;
-        low_ = 0;
-        lowMedium_ = 0;
-        medium_ = 0;
-        mediumHigh_ = 0;
-        high_ = 0;
-        veryHigh_ = 0;
-        highest_ = 0;
+        appDefined1_ = 0;
+        appDefined2_ = 0;
+        appDefined3_ = 0;
+        appDefined4_ = 0;
+        appDefined5_ = 0;
+        appDefined6_ = 0;
+        appDefined7_ = 0;
+        appDefined8_ = 0;
       }
 
       @java.lang.Override
@@ -571,49 +583,49 @@ public final class RiskScore {
               case 8: {
                 int rawValue = input.readEnum();
 
-                lowest_ = rawValue;
+                appDefined1_ = rawValue;
                 break;
               }
               case 16: {
                 int rawValue = input.readEnum();
 
-                low_ = rawValue;
+                appDefined2_ = rawValue;
                 break;
               }
               case 24: {
                 int rawValue = input.readEnum();
 
-                lowMedium_ = rawValue;
+                appDefined3_ = rawValue;
                 break;
               }
               case 32: {
                 int rawValue = input.readEnum();
 
-                medium_ = rawValue;
+                appDefined4_ = rawValue;
                 break;
               }
               case 40: {
                 int rawValue = input.readEnum();
 
-                mediumHigh_ = rawValue;
+                appDefined5_ = rawValue;
                 break;
               }
               case 48: {
                 int rawValue = input.readEnum();
 
-                high_ = rawValue;
+                appDefined6_ = rawValue;
                 break;
               }
               case 56: {
                 int rawValue = input.readEnum();
 
-                veryHigh_ = rawValue;
+                appDefined7_ = rawValue;
                 break;
               }
               case 64: {
                 int rawValue = input.readEnum();
 
-                highest_ = rawValue;
+                appDefined8_ = rawValue;
                 break;
               }
               default: {
@@ -648,155 +660,155 @@ public final class RiskScore {
                 org.ena.server.common.protocols.generated.RiskScore.RiskScoreParameters.TransmissionRiskParameter.class, org.ena.server.common.protocols.generated.RiskScore.RiskScoreParameters.TransmissionRiskParameter.Builder.class);
       }
 
-      public static final int LOWEST_FIELD_NUMBER = 1;
-      private int lowest_;
+      public static final int APPDEFINED_1_FIELD_NUMBER = 1;
+      private int appDefined1_;
       /**
-       * <code>.org.ena.server.common.protocols.generated.RiskLevel lowest = 1;</code>
-       * @return The enum numeric value on the wire for lowest.
+       * <code>.org.ena.server.common.protocols.generated.RiskLevel appDefined_1 = 1;</code>
+       * @return The enum numeric value on the wire for appDefined1.
        */
-      public int getLowestValue() {
-        return lowest_;
+      public int getAppDefined1Value() {
+        return appDefined1_;
       }
       /**
-       * <code>.org.ena.server.common.protocols.generated.RiskLevel lowest = 1;</code>
-       * @return The lowest.
+       * <code>.org.ena.server.common.protocols.generated.RiskLevel appDefined_1 = 1;</code>
+       * @return The appDefined1.
        */
-      public org.ena.server.common.protocols.generated.RiskScore.RiskLevel getLowest() {
+      public org.ena.server.common.protocols.generated.RiskScore.RiskLevel getAppDefined1() {
         @SuppressWarnings("deprecation")
-        org.ena.server.common.protocols.generated.RiskScore.RiskLevel result = org.ena.server.common.protocols.generated.RiskScore.RiskLevel.valueOf(lowest_);
+        org.ena.server.common.protocols.generated.RiskScore.RiskLevel result = org.ena.server.common.protocols.generated.RiskScore.RiskLevel.valueOf(appDefined1_);
         return result == null ? org.ena.server.common.protocols.generated.RiskScore.RiskLevel.UNRECOGNIZED : result;
       }
 
-      public static final int LOW_FIELD_NUMBER = 2;
-      private int low_;
+      public static final int APPDEFINED_2_FIELD_NUMBER = 2;
+      private int appDefined2_;
       /**
-       * <code>.org.ena.server.common.protocols.generated.RiskLevel low = 2;</code>
-       * @return The enum numeric value on the wire for low.
+       * <code>.org.ena.server.common.protocols.generated.RiskLevel appDefined_2 = 2;</code>
+       * @return The enum numeric value on the wire for appDefined2.
        */
-      public int getLowValue() {
-        return low_;
+      public int getAppDefined2Value() {
+        return appDefined2_;
       }
       /**
-       * <code>.org.ena.server.common.protocols.generated.RiskLevel low = 2;</code>
-       * @return The low.
+       * <code>.org.ena.server.common.protocols.generated.RiskLevel appDefined_2 = 2;</code>
+       * @return The appDefined2.
        */
-      public org.ena.server.common.protocols.generated.RiskScore.RiskLevel getLow() {
+      public org.ena.server.common.protocols.generated.RiskScore.RiskLevel getAppDefined2() {
         @SuppressWarnings("deprecation")
-        org.ena.server.common.protocols.generated.RiskScore.RiskLevel result = org.ena.server.common.protocols.generated.RiskScore.RiskLevel.valueOf(low_);
+        org.ena.server.common.protocols.generated.RiskScore.RiskLevel result = org.ena.server.common.protocols.generated.RiskScore.RiskLevel.valueOf(appDefined2_);
         return result == null ? org.ena.server.common.protocols.generated.RiskScore.RiskLevel.UNRECOGNIZED : result;
       }
 
-      public static final int LOW_MEDIUM_FIELD_NUMBER = 3;
-      private int lowMedium_;
+      public static final int APPDEFINED_3_FIELD_NUMBER = 3;
+      private int appDefined3_;
       /**
-       * <code>.org.ena.server.common.protocols.generated.RiskLevel low_medium = 3;</code>
-       * @return The enum numeric value on the wire for lowMedium.
+       * <code>.org.ena.server.common.protocols.generated.RiskLevel appDefined_3 = 3;</code>
+       * @return The enum numeric value on the wire for appDefined3.
        */
-      public int getLowMediumValue() {
-        return lowMedium_;
+      public int getAppDefined3Value() {
+        return appDefined3_;
       }
       /**
-       * <code>.org.ena.server.common.protocols.generated.RiskLevel low_medium = 3;</code>
-       * @return The lowMedium.
+       * <code>.org.ena.server.common.protocols.generated.RiskLevel appDefined_3 = 3;</code>
+       * @return The appDefined3.
        */
-      public org.ena.server.common.protocols.generated.RiskScore.RiskLevel getLowMedium() {
+      public org.ena.server.common.protocols.generated.RiskScore.RiskLevel getAppDefined3() {
         @SuppressWarnings("deprecation")
-        org.ena.server.common.protocols.generated.RiskScore.RiskLevel result = org.ena.server.common.protocols.generated.RiskScore.RiskLevel.valueOf(lowMedium_);
+        org.ena.server.common.protocols.generated.RiskScore.RiskLevel result = org.ena.server.common.protocols.generated.RiskScore.RiskLevel.valueOf(appDefined3_);
         return result == null ? org.ena.server.common.protocols.generated.RiskScore.RiskLevel.UNRECOGNIZED : result;
       }
 
-      public static final int MEDIUM_FIELD_NUMBER = 4;
-      private int medium_;
+      public static final int APPDEFINED_4_FIELD_NUMBER = 4;
+      private int appDefined4_;
       /**
-       * <code>.org.ena.server.common.protocols.generated.RiskLevel medium = 4;</code>
-       * @return The enum numeric value on the wire for medium.
+       * <code>.org.ena.server.common.protocols.generated.RiskLevel appDefined_4 = 4;</code>
+       * @return The enum numeric value on the wire for appDefined4.
        */
-      public int getMediumValue() {
-        return medium_;
+      public int getAppDefined4Value() {
+        return appDefined4_;
       }
       /**
-       * <code>.org.ena.server.common.protocols.generated.RiskLevel medium = 4;</code>
-       * @return The medium.
+       * <code>.org.ena.server.common.protocols.generated.RiskLevel appDefined_4 = 4;</code>
+       * @return The appDefined4.
        */
-      public org.ena.server.common.protocols.generated.RiskScore.RiskLevel getMedium() {
+      public org.ena.server.common.protocols.generated.RiskScore.RiskLevel getAppDefined4() {
         @SuppressWarnings("deprecation")
-        org.ena.server.common.protocols.generated.RiskScore.RiskLevel result = org.ena.server.common.protocols.generated.RiskScore.RiskLevel.valueOf(medium_);
+        org.ena.server.common.protocols.generated.RiskScore.RiskLevel result = org.ena.server.common.protocols.generated.RiskScore.RiskLevel.valueOf(appDefined4_);
         return result == null ? org.ena.server.common.protocols.generated.RiskScore.RiskLevel.UNRECOGNIZED : result;
       }
 
-      public static final int MEDIUM_HIGH_FIELD_NUMBER = 5;
-      private int mediumHigh_;
+      public static final int APPDEFINED_5_FIELD_NUMBER = 5;
+      private int appDefined5_;
       /**
-       * <code>.org.ena.server.common.protocols.generated.RiskLevel medium_high = 5;</code>
-       * @return The enum numeric value on the wire for mediumHigh.
+       * <code>.org.ena.server.common.protocols.generated.RiskLevel appDefined_5 = 5;</code>
+       * @return The enum numeric value on the wire for appDefined5.
        */
-      public int getMediumHighValue() {
-        return mediumHigh_;
+      public int getAppDefined5Value() {
+        return appDefined5_;
       }
       /**
-       * <code>.org.ena.server.common.protocols.generated.RiskLevel medium_high = 5;</code>
-       * @return The mediumHigh.
+       * <code>.org.ena.server.common.protocols.generated.RiskLevel appDefined_5 = 5;</code>
+       * @return The appDefined5.
        */
-      public org.ena.server.common.protocols.generated.RiskScore.RiskLevel getMediumHigh() {
+      public org.ena.server.common.protocols.generated.RiskScore.RiskLevel getAppDefined5() {
         @SuppressWarnings("deprecation")
-        org.ena.server.common.protocols.generated.RiskScore.RiskLevel result = org.ena.server.common.protocols.generated.RiskScore.RiskLevel.valueOf(mediumHigh_);
+        org.ena.server.common.protocols.generated.RiskScore.RiskLevel result = org.ena.server.common.protocols.generated.RiskScore.RiskLevel.valueOf(appDefined5_);
         return result == null ? org.ena.server.common.protocols.generated.RiskScore.RiskLevel.UNRECOGNIZED : result;
       }
 
-      public static final int HIGH_FIELD_NUMBER = 6;
-      private int high_;
+      public static final int APPDEFINED_6_FIELD_NUMBER = 6;
+      private int appDefined6_;
       /**
-       * <code>.org.ena.server.common.protocols.generated.RiskLevel high = 6;</code>
-       * @return The enum numeric value on the wire for high.
+       * <code>.org.ena.server.common.protocols.generated.RiskLevel appDefined_6 = 6;</code>
+       * @return The enum numeric value on the wire for appDefined6.
        */
-      public int getHighValue() {
-        return high_;
+      public int getAppDefined6Value() {
+        return appDefined6_;
       }
       /**
-       * <code>.org.ena.server.common.protocols.generated.RiskLevel high = 6;</code>
-       * @return The high.
+       * <code>.org.ena.server.common.protocols.generated.RiskLevel appDefined_6 = 6;</code>
+       * @return The appDefined6.
        */
-      public org.ena.server.common.protocols.generated.RiskScore.RiskLevel getHigh() {
+      public org.ena.server.common.protocols.generated.RiskScore.RiskLevel getAppDefined6() {
         @SuppressWarnings("deprecation")
-        org.ena.server.common.protocols.generated.RiskScore.RiskLevel result = org.ena.server.common.protocols.generated.RiskScore.RiskLevel.valueOf(high_);
+        org.ena.server.common.protocols.generated.RiskScore.RiskLevel result = org.ena.server.common.protocols.generated.RiskScore.RiskLevel.valueOf(appDefined6_);
         return result == null ? org.ena.server.common.protocols.generated.RiskScore.RiskLevel.UNRECOGNIZED : result;
       }
 
-      public static final int VERY_HIGH_FIELD_NUMBER = 7;
-      private int veryHigh_;
+      public static final int APPDEFINED_7_FIELD_NUMBER = 7;
+      private int appDefined7_;
       /**
-       * <code>.org.ena.server.common.protocols.generated.RiskLevel very_high = 7;</code>
-       * @return The enum numeric value on the wire for veryHigh.
+       * <code>.org.ena.server.common.protocols.generated.RiskLevel appDefined_7 = 7;</code>
+       * @return The enum numeric value on the wire for appDefined7.
        */
-      public int getVeryHighValue() {
-        return veryHigh_;
+      public int getAppDefined7Value() {
+        return appDefined7_;
       }
       /**
-       * <code>.org.ena.server.common.protocols.generated.RiskLevel very_high = 7;</code>
-       * @return The veryHigh.
+       * <code>.org.ena.server.common.protocols.generated.RiskLevel appDefined_7 = 7;</code>
+       * @return The appDefined7.
        */
-      public org.ena.server.common.protocols.generated.RiskScore.RiskLevel getVeryHigh() {
+      public org.ena.server.common.protocols.generated.RiskScore.RiskLevel getAppDefined7() {
         @SuppressWarnings("deprecation")
-        org.ena.server.common.protocols.generated.RiskScore.RiskLevel result = org.ena.server.common.protocols.generated.RiskScore.RiskLevel.valueOf(veryHigh_);
+        org.ena.server.common.protocols.generated.RiskScore.RiskLevel result = org.ena.server.common.protocols.generated.RiskScore.RiskLevel.valueOf(appDefined7_);
         return result == null ? org.ena.server.common.protocols.generated.RiskScore.RiskLevel.UNRECOGNIZED : result;
       }
 
-      public static final int HIGHEST_FIELD_NUMBER = 8;
-      private int highest_;
+      public static final int APPDEFINED_8_FIELD_NUMBER = 8;
+      private int appDefined8_;
       /**
-       * <code>.org.ena.server.common.protocols.generated.RiskLevel highest = 8;</code>
-       * @return The enum numeric value on the wire for highest.
+       * <code>.org.ena.server.common.protocols.generated.RiskLevel appDefined_8 = 8;</code>
+       * @return The enum numeric value on the wire for appDefined8.
        */
-      public int getHighestValue() {
-        return highest_;
+      public int getAppDefined8Value() {
+        return appDefined8_;
       }
       /**
-       * <code>.org.ena.server.common.protocols.generated.RiskLevel highest = 8;</code>
-       * @return The highest.
+       * <code>.org.ena.server.common.protocols.generated.RiskLevel appDefined_8 = 8;</code>
+       * @return The appDefined8.
        */
-      public org.ena.server.common.protocols.generated.RiskScore.RiskLevel getHighest() {
+      public org.ena.server.common.protocols.generated.RiskScore.RiskLevel getAppDefined8() {
         @SuppressWarnings("deprecation")
-        org.ena.server.common.protocols.generated.RiskScore.RiskLevel result = org.ena.server.common.protocols.generated.RiskScore.RiskLevel.valueOf(highest_);
+        org.ena.server.common.protocols.generated.RiskScore.RiskLevel result = org.ena.server.common.protocols.generated.RiskScore.RiskLevel.valueOf(appDefined8_);
         return result == null ? org.ena.server.common.protocols.generated.RiskScore.RiskLevel.UNRECOGNIZED : result;
       }
 
@@ -814,29 +826,29 @@ public final class RiskScore {
       @java.lang.Override
       public void writeTo(com.google.protobuf.CodedOutputStream output)
                           throws java.io.IOException {
-        if (lowest_ != org.ena.server.common.protocols.generated.RiskScore.RiskLevel.INVALID.getNumber()) {
-          output.writeEnum(1, lowest_);
+        if (appDefined1_ != org.ena.server.common.protocols.generated.RiskScore.RiskLevel.INVALID.getNumber()) {
+          output.writeEnum(1, appDefined1_);
         }
-        if (low_ != org.ena.server.common.protocols.generated.RiskScore.RiskLevel.INVALID.getNumber()) {
-          output.writeEnum(2, low_);
+        if (appDefined2_ != org.ena.server.common.protocols.generated.RiskScore.RiskLevel.INVALID.getNumber()) {
+          output.writeEnum(2, appDefined2_);
         }
-        if (lowMedium_ != org.ena.server.common.protocols.generated.RiskScore.RiskLevel.INVALID.getNumber()) {
-          output.writeEnum(3, lowMedium_);
+        if (appDefined3_ != org.ena.server.common.protocols.generated.RiskScore.RiskLevel.INVALID.getNumber()) {
+          output.writeEnum(3, appDefined3_);
         }
-        if (medium_ != org.ena.server.common.protocols.generated.RiskScore.RiskLevel.INVALID.getNumber()) {
-          output.writeEnum(4, medium_);
+        if (appDefined4_ != org.ena.server.common.protocols.generated.RiskScore.RiskLevel.INVALID.getNumber()) {
+          output.writeEnum(4, appDefined4_);
         }
-        if (mediumHigh_ != org.ena.server.common.protocols.generated.RiskScore.RiskLevel.INVALID.getNumber()) {
-          output.writeEnum(5, mediumHigh_);
+        if (appDefined5_ != org.ena.server.common.protocols.generated.RiskScore.RiskLevel.INVALID.getNumber()) {
+          output.writeEnum(5, appDefined5_);
         }
-        if (high_ != org.ena.server.common.protocols.generated.RiskScore.RiskLevel.INVALID.getNumber()) {
-          output.writeEnum(6, high_);
+        if (appDefined6_ != org.ena.server.common.protocols.generated.RiskScore.RiskLevel.INVALID.getNumber()) {
+          output.writeEnum(6, appDefined6_);
         }
-        if (veryHigh_ != org.ena.server.common.protocols.generated.RiskScore.RiskLevel.INVALID.getNumber()) {
-          output.writeEnum(7, veryHigh_);
+        if (appDefined7_ != org.ena.server.common.protocols.generated.RiskScore.RiskLevel.INVALID.getNumber()) {
+          output.writeEnum(7, appDefined7_);
         }
-        if (highest_ != org.ena.server.common.protocols.generated.RiskScore.RiskLevel.INVALID.getNumber()) {
-          output.writeEnum(8, highest_);
+        if (appDefined8_ != org.ena.server.common.protocols.generated.RiskScore.RiskLevel.INVALID.getNumber()) {
+          output.writeEnum(8, appDefined8_);
         }
         unknownFields.writeTo(output);
       }
@@ -847,37 +859,37 @@ public final class RiskScore {
         if (size != -1) return size;
 
         size = 0;
-        if (lowest_ != org.ena.server.common.protocols.generated.RiskScore.RiskLevel.INVALID.getNumber()) {
+        if (appDefined1_ != org.ena.server.common.protocols.generated.RiskScore.RiskLevel.INVALID.getNumber()) {
           size += com.google.protobuf.CodedOutputStream
-            .computeEnumSize(1, lowest_);
+            .computeEnumSize(1, appDefined1_);
         }
-        if (low_ != org.ena.server.common.protocols.generated.RiskScore.RiskLevel.INVALID.getNumber()) {
+        if (appDefined2_ != org.ena.server.common.protocols.generated.RiskScore.RiskLevel.INVALID.getNumber()) {
           size += com.google.protobuf.CodedOutputStream
-            .computeEnumSize(2, low_);
+            .computeEnumSize(2, appDefined2_);
         }
-        if (lowMedium_ != org.ena.server.common.protocols.generated.RiskScore.RiskLevel.INVALID.getNumber()) {
+        if (appDefined3_ != org.ena.server.common.protocols.generated.RiskScore.RiskLevel.INVALID.getNumber()) {
           size += com.google.protobuf.CodedOutputStream
-            .computeEnumSize(3, lowMedium_);
+            .computeEnumSize(3, appDefined3_);
         }
-        if (medium_ != org.ena.server.common.protocols.generated.RiskScore.RiskLevel.INVALID.getNumber()) {
+        if (appDefined4_ != org.ena.server.common.protocols.generated.RiskScore.RiskLevel.INVALID.getNumber()) {
           size += com.google.protobuf.CodedOutputStream
-            .computeEnumSize(4, medium_);
+            .computeEnumSize(4, appDefined4_);
         }
-        if (mediumHigh_ != org.ena.server.common.protocols.generated.RiskScore.RiskLevel.INVALID.getNumber()) {
+        if (appDefined5_ != org.ena.server.common.protocols.generated.RiskScore.RiskLevel.INVALID.getNumber()) {
           size += com.google.protobuf.CodedOutputStream
-            .computeEnumSize(5, mediumHigh_);
+            .computeEnumSize(5, appDefined5_);
         }
-        if (high_ != org.ena.server.common.protocols.generated.RiskScore.RiskLevel.INVALID.getNumber()) {
+        if (appDefined6_ != org.ena.server.common.protocols.generated.RiskScore.RiskLevel.INVALID.getNumber()) {
           size += com.google.protobuf.CodedOutputStream
-            .computeEnumSize(6, high_);
+            .computeEnumSize(6, appDefined6_);
         }
-        if (veryHigh_ != org.ena.server.common.protocols.generated.RiskScore.RiskLevel.INVALID.getNumber()) {
+        if (appDefined7_ != org.ena.server.common.protocols.generated.RiskScore.RiskLevel.INVALID.getNumber()) {
           size += com.google.protobuf.CodedOutputStream
-            .computeEnumSize(7, veryHigh_);
+            .computeEnumSize(7, appDefined7_);
         }
-        if (highest_ != org.ena.server.common.protocols.generated.RiskScore.RiskLevel.INVALID.getNumber()) {
+        if (appDefined8_ != org.ena.server.common.protocols.generated.RiskScore.RiskLevel.INVALID.getNumber()) {
           size += com.google.protobuf.CodedOutputStream
-            .computeEnumSize(8, highest_);
+            .computeEnumSize(8, appDefined8_);
         }
         size += unknownFields.getSerializedSize();
         memoizedSize = size;
@@ -894,14 +906,14 @@ public final class RiskScore {
         }
         org.ena.server.common.protocols.generated.RiskScore.RiskScoreParameters.TransmissionRiskParameter other = (org.ena.server.common.protocols.generated.RiskScore.RiskScoreParameters.TransmissionRiskParameter) obj;
 
-        if (lowest_ != other.lowest_) return false;
-        if (low_ != other.low_) return false;
-        if (lowMedium_ != other.lowMedium_) return false;
-        if (medium_ != other.medium_) return false;
-        if (mediumHigh_ != other.mediumHigh_) return false;
-        if (high_ != other.high_) return false;
-        if (veryHigh_ != other.veryHigh_) return false;
-        if (highest_ != other.highest_) return false;
+        if (appDefined1_ != other.appDefined1_) return false;
+        if (appDefined2_ != other.appDefined2_) return false;
+        if (appDefined3_ != other.appDefined3_) return false;
+        if (appDefined4_ != other.appDefined4_) return false;
+        if (appDefined5_ != other.appDefined5_) return false;
+        if (appDefined6_ != other.appDefined6_) return false;
+        if (appDefined7_ != other.appDefined7_) return false;
+        if (appDefined8_ != other.appDefined8_) return false;
         if (!unknownFields.equals(other.unknownFields)) return false;
         return true;
       }
@@ -913,22 +925,22 @@ public final class RiskScore {
         }
         int hash = 41;
         hash = (19 * hash) + getDescriptor().hashCode();
-        hash = (37 * hash) + LOWEST_FIELD_NUMBER;
-        hash = (53 * hash) + lowest_;
-        hash = (37 * hash) + LOW_FIELD_NUMBER;
-        hash = (53 * hash) + low_;
-        hash = (37 * hash) + LOW_MEDIUM_FIELD_NUMBER;
-        hash = (53 * hash) + lowMedium_;
-        hash = (37 * hash) + MEDIUM_FIELD_NUMBER;
-        hash = (53 * hash) + medium_;
-        hash = (37 * hash) + MEDIUM_HIGH_FIELD_NUMBER;
-        hash = (53 * hash) + mediumHigh_;
-        hash = (37 * hash) + HIGH_FIELD_NUMBER;
-        hash = (53 * hash) + high_;
-        hash = (37 * hash) + VERY_HIGH_FIELD_NUMBER;
-        hash = (53 * hash) + veryHigh_;
-        hash = (37 * hash) + HIGHEST_FIELD_NUMBER;
-        hash = (53 * hash) + highest_;
+        hash = (37 * hash) + APPDEFINED_1_FIELD_NUMBER;
+        hash = (53 * hash) + appDefined1_;
+        hash = (37 * hash) + APPDEFINED_2_FIELD_NUMBER;
+        hash = (53 * hash) + appDefined2_;
+        hash = (37 * hash) + APPDEFINED_3_FIELD_NUMBER;
+        hash = (53 * hash) + appDefined3_;
+        hash = (37 * hash) + APPDEFINED_4_FIELD_NUMBER;
+        hash = (53 * hash) + appDefined4_;
+        hash = (37 * hash) + APPDEFINED_5_FIELD_NUMBER;
+        hash = (53 * hash) + appDefined5_;
+        hash = (37 * hash) + APPDEFINED_6_FIELD_NUMBER;
+        hash = (53 * hash) + appDefined6_;
+        hash = (37 * hash) + APPDEFINED_7_FIELD_NUMBER;
+        hash = (53 * hash) + appDefined7_;
+        hash = (37 * hash) + APPDEFINED_8_FIELD_NUMBER;
+        hash = (53 * hash) + appDefined8_;
         hash = (29 * hash) + unknownFields.hashCode();
         memoizedHashCode = hash;
         return hash;
@@ -1062,21 +1074,21 @@ public final class RiskScore {
         @java.lang.Override
         public Builder clear() {
           super.clear();
-          lowest_ = 0;
+          appDefined1_ = 0;
 
-          low_ = 0;
+          appDefined2_ = 0;
 
-          lowMedium_ = 0;
+          appDefined3_ = 0;
 
-          medium_ = 0;
+          appDefined4_ = 0;
 
-          mediumHigh_ = 0;
+          appDefined5_ = 0;
 
-          high_ = 0;
+          appDefined6_ = 0;
 
-          veryHigh_ = 0;
+          appDefined7_ = 0;
 
-          highest_ = 0;
+          appDefined8_ = 0;
 
           return this;
         }
@@ -1104,14 +1116,14 @@ public final class RiskScore {
         @java.lang.Override
         public org.ena.server.common.protocols.generated.RiskScore.RiskScoreParameters.TransmissionRiskParameter buildPartial() {
           org.ena.server.common.protocols.generated.RiskScore.RiskScoreParameters.TransmissionRiskParameter result = new org.ena.server.common.protocols.generated.RiskScore.RiskScoreParameters.TransmissionRiskParameter(this);
-          result.lowest_ = lowest_;
-          result.low_ = low_;
-          result.lowMedium_ = lowMedium_;
-          result.medium_ = medium_;
-          result.mediumHigh_ = mediumHigh_;
-          result.high_ = high_;
-          result.veryHigh_ = veryHigh_;
-          result.highest_ = highest_;
+          result.appDefined1_ = appDefined1_;
+          result.appDefined2_ = appDefined2_;
+          result.appDefined3_ = appDefined3_;
+          result.appDefined4_ = appDefined4_;
+          result.appDefined5_ = appDefined5_;
+          result.appDefined6_ = appDefined6_;
+          result.appDefined7_ = appDefined7_;
+          result.appDefined8_ = appDefined8_;
           onBuilt();
           return result;
         }
@@ -1160,29 +1172,29 @@ public final class RiskScore {
 
         public Builder mergeFrom(org.ena.server.common.protocols.generated.RiskScore.RiskScoreParameters.TransmissionRiskParameter other) {
           if (other == org.ena.server.common.protocols.generated.RiskScore.RiskScoreParameters.TransmissionRiskParameter.getDefaultInstance()) return this;
-          if (other.lowest_ != 0) {
-            setLowestValue(other.getLowestValue());
+          if (other.appDefined1_ != 0) {
+            setAppDefined1Value(other.getAppDefined1Value());
           }
-          if (other.low_ != 0) {
-            setLowValue(other.getLowValue());
+          if (other.appDefined2_ != 0) {
+            setAppDefined2Value(other.getAppDefined2Value());
           }
-          if (other.lowMedium_ != 0) {
-            setLowMediumValue(other.getLowMediumValue());
+          if (other.appDefined3_ != 0) {
+            setAppDefined3Value(other.getAppDefined3Value());
           }
-          if (other.medium_ != 0) {
-            setMediumValue(other.getMediumValue());
+          if (other.appDefined4_ != 0) {
+            setAppDefined4Value(other.getAppDefined4Value());
           }
-          if (other.mediumHigh_ != 0) {
-            setMediumHighValue(other.getMediumHighValue());
+          if (other.appDefined5_ != 0) {
+            setAppDefined5Value(other.getAppDefined5Value());
           }
-          if (other.high_ != 0) {
-            setHighValue(other.getHighValue());
+          if (other.appDefined6_ != 0) {
+            setAppDefined6Value(other.getAppDefined6Value());
           }
-          if (other.veryHigh_ != 0) {
-            setVeryHighValue(other.getVeryHighValue());
+          if (other.appDefined7_ != 0) {
+            setAppDefined7Value(other.getAppDefined7Value());
           }
-          if (other.highest_ != 0) {
-            setHighestValue(other.getHighestValue());
+          if (other.appDefined8_ != 0) {
+            setAppDefined8Value(other.getAppDefined8Value());
           }
           this.mergeUnknownFields(other.unknownFields);
           onChanged();
@@ -1213,418 +1225,418 @@ public final class RiskScore {
           return this;
         }
 
-        private int lowest_ = 0;
+        private int appDefined1_ = 0;
         /**
-         * <code>.org.ena.server.common.protocols.generated.RiskLevel lowest = 1;</code>
-         * @return The enum numeric value on the wire for lowest.
+         * <code>.org.ena.server.common.protocols.generated.RiskLevel appDefined_1 = 1;</code>
+         * @return The enum numeric value on the wire for appDefined1.
          */
-        public int getLowestValue() {
-          return lowest_;
+        public int getAppDefined1Value() {
+          return appDefined1_;
         }
         /**
-         * <code>.org.ena.server.common.protocols.generated.RiskLevel lowest = 1;</code>
-         * @param value The enum numeric value on the wire for lowest to set.
+         * <code>.org.ena.server.common.protocols.generated.RiskLevel appDefined_1 = 1;</code>
+         * @param value The enum numeric value on the wire for appDefined1 to set.
          * @return This builder for chaining.
          */
-        public Builder setLowestValue(int value) {
-          lowest_ = value;
+        public Builder setAppDefined1Value(int value) {
+          appDefined1_ = value;
           onChanged();
           return this;
         }
         /**
-         * <code>.org.ena.server.common.protocols.generated.RiskLevel lowest = 1;</code>
-         * @return The lowest.
+         * <code>.org.ena.server.common.protocols.generated.RiskLevel appDefined_1 = 1;</code>
+         * @return The appDefined1.
          */
-        public org.ena.server.common.protocols.generated.RiskScore.RiskLevel getLowest() {
+        public org.ena.server.common.protocols.generated.RiskScore.RiskLevel getAppDefined1() {
           @SuppressWarnings("deprecation")
-          org.ena.server.common.protocols.generated.RiskScore.RiskLevel result = org.ena.server.common.protocols.generated.RiskScore.RiskLevel.valueOf(lowest_);
+          org.ena.server.common.protocols.generated.RiskScore.RiskLevel result = org.ena.server.common.protocols.generated.RiskScore.RiskLevel.valueOf(appDefined1_);
           return result == null ? org.ena.server.common.protocols.generated.RiskScore.RiskLevel.UNRECOGNIZED : result;
         }
         /**
-         * <code>.org.ena.server.common.protocols.generated.RiskLevel lowest = 1;</code>
-         * @param value The lowest to set.
+         * <code>.org.ena.server.common.protocols.generated.RiskLevel appDefined_1 = 1;</code>
+         * @param value The appDefined1 to set.
          * @return This builder for chaining.
          */
-        public Builder setLowest(org.ena.server.common.protocols.generated.RiskScore.RiskLevel value) {
+        public Builder setAppDefined1(org.ena.server.common.protocols.generated.RiskScore.RiskLevel value) {
           if (value == null) {
             throw new NullPointerException();
           }
           
-          lowest_ = value.getNumber();
+          appDefined1_ = value.getNumber();
           onChanged();
           return this;
         }
         /**
-         * <code>.org.ena.server.common.protocols.generated.RiskLevel lowest = 1;</code>
+         * <code>.org.ena.server.common.protocols.generated.RiskLevel appDefined_1 = 1;</code>
          * @return This builder for chaining.
          */
-        public Builder clearLowest() {
+        public Builder clearAppDefined1() {
           
-          lowest_ = 0;
+          appDefined1_ = 0;
           onChanged();
           return this;
         }
 
-        private int low_ = 0;
+        private int appDefined2_ = 0;
         /**
-         * <code>.org.ena.server.common.protocols.generated.RiskLevel low = 2;</code>
-         * @return The enum numeric value on the wire for low.
+         * <code>.org.ena.server.common.protocols.generated.RiskLevel appDefined_2 = 2;</code>
+         * @return The enum numeric value on the wire for appDefined2.
          */
-        public int getLowValue() {
-          return low_;
+        public int getAppDefined2Value() {
+          return appDefined2_;
         }
         /**
-         * <code>.org.ena.server.common.protocols.generated.RiskLevel low = 2;</code>
-         * @param value The enum numeric value on the wire for low to set.
+         * <code>.org.ena.server.common.protocols.generated.RiskLevel appDefined_2 = 2;</code>
+         * @param value The enum numeric value on the wire for appDefined2 to set.
          * @return This builder for chaining.
          */
-        public Builder setLowValue(int value) {
-          low_ = value;
+        public Builder setAppDefined2Value(int value) {
+          appDefined2_ = value;
           onChanged();
           return this;
         }
         /**
-         * <code>.org.ena.server.common.protocols.generated.RiskLevel low = 2;</code>
-         * @return The low.
+         * <code>.org.ena.server.common.protocols.generated.RiskLevel appDefined_2 = 2;</code>
+         * @return The appDefined2.
          */
-        public org.ena.server.common.protocols.generated.RiskScore.RiskLevel getLow() {
+        public org.ena.server.common.protocols.generated.RiskScore.RiskLevel getAppDefined2() {
           @SuppressWarnings("deprecation")
-          org.ena.server.common.protocols.generated.RiskScore.RiskLevel result = org.ena.server.common.protocols.generated.RiskScore.RiskLevel.valueOf(low_);
+          org.ena.server.common.protocols.generated.RiskScore.RiskLevel result = org.ena.server.common.protocols.generated.RiskScore.RiskLevel.valueOf(appDefined2_);
           return result == null ? org.ena.server.common.protocols.generated.RiskScore.RiskLevel.UNRECOGNIZED : result;
         }
         /**
-         * <code>.org.ena.server.common.protocols.generated.RiskLevel low = 2;</code>
-         * @param value The low to set.
+         * <code>.org.ena.server.common.protocols.generated.RiskLevel appDefined_2 = 2;</code>
+         * @param value The appDefined2 to set.
          * @return This builder for chaining.
          */
-        public Builder setLow(org.ena.server.common.protocols.generated.RiskScore.RiskLevel value) {
+        public Builder setAppDefined2(org.ena.server.common.protocols.generated.RiskScore.RiskLevel value) {
           if (value == null) {
             throw new NullPointerException();
           }
           
-          low_ = value.getNumber();
+          appDefined2_ = value.getNumber();
           onChanged();
           return this;
         }
         /**
-         * <code>.org.ena.server.common.protocols.generated.RiskLevel low = 2;</code>
+         * <code>.org.ena.server.common.protocols.generated.RiskLevel appDefined_2 = 2;</code>
          * @return This builder for chaining.
          */
-        public Builder clearLow() {
+        public Builder clearAppDefined2() {
           
-          low_ = 0;
+          appDefined2_ = 0;
           onChanged();
           return this;
         }
 
-        private int lowMedium_ = 0;
+        private int appDefined3_ = 0;
         /**
-         * <code>.org.ena.server.common.protocols.generated.RiskLevel low_medium = 3;</code>
-         * @return The enum numeric value on the wire for lowMedium.
+         * <code>.org.ena.server.common.protocols.generated.RiskLevel appDefined_3 = 3;</code>
+         * @return The enum numeric value on the wire for appDefined3.
          */
-        public int getLowMediumValue() {
-          return lowMedium_;
+        public int getAppDefined3Value() {
+          return appDefined3_;
         }
         /**
-         * <code>.org.ena.server.common.protocols.generated.RiskLevel low_medium = 3;</code>
-         * @param value The enum numeric value on the wire for lowMedium to set.
+         * <code>.org.ena.server.common.protocols.generated.RiskLevel appDefined_3 = 3;</code>
+         * @param value The enum numeric value on the wire for appDefined3 to set.
          * @return This builder for chaining.
          */
-        public Builder setLowMediumValue(int value) {
-          lowMedium_ = value;
+        public Builder setAppDefined3Value(int value) {
+          appDefined3_ = value;
           onChanged();
           return this;
         }
         /**
-         * <code>.org.ena.server.common.protocols.generated.RiskLevel low_medium = 3;</code>
-         * @return The lowMedium.
+         * <code>.org.ena.server.common.protocols.generated.RiskLevel appDefined_3 = 3;</code>
+         * @return The appDefined3.
          */
-        public org.ena.server.common.protocols.generated.RiskScore.RiskLevel getLowMedium() {
+        public org.ena.server.common.protocols.generated.RiskScore.RiskLevel getAppDefined3() {
           @SuppressWarnings("deprecation")
-          org.ena.server.common.protocols.generated.RiskScore.RiskLevel result = org.ena.server.common.protocols.generated.RiskScore.RiskLevel.valueOf(lowMedium_);
+          org.ena.server.common.protocols.generated.RiskScore.RiskLevel result = org.ena.server.common.protocols.generated.RiskScore.RiskLevel.valueOf(appDefined3_);
           return result == null ? org.ena.server.common.protocols.generated.RiskScore.RiskLevel.UNRECOGNIZED : result;
         }
         /**
-         * <code>.org.ena.server.common.protocols.generated.RiskLevel low_medium = 3;</code>
-         * @param value The lowMedium to set.
+         * <code>.org.ena.server.common.protocols.generated.RiskLevel appDefined_3 = 3;</code>
+         * @param value The appDefined3 to set.
          * @return This builder for chaining.
          */
-        public Builder setLowMedium(org.ena.server.common.protocols.generated.RiskScore.RiskLevel value) {
+        public Builder setAppDefined3(org.ena.server.common.protocols.generated.RiskScore.RiskLevel value) {
           if (value == null) {
             throw new NullPointerException();
           }
           
-          lowMedium_ = value.getNumber();
+          appDefined3_ = value.getNumber();
           onChanged();
           return this;
         }
         /**
-         * <code>.org.ena.server.common.protocols.generated.RiskLevel low_medium = 3;</code>
+         * <code>.org.ena.server.common.protocols.generated.RiskLevel appDefined_3 = 3;</code>
          * @return This builder for chaining.
          */
-        public Builder clearLowMedium() {
+        public Builder clearAppDefined3() {
           
-          lowMedium_ = 0;
+          appDefined3_ = 0;
           onChanged();
           return this;
         }
 
-        private int medium_ = 0;
+        private int appDefined4_ = 0;
         /**
-         * <code>.org.ena.server.common.protocols.generated.RiskLevel medium = 4;</code>
-         * @return The enum numeric value on the wire for medium.
+         * <code>.org.ena.server.common.protocols.generated.RiskLevel appDefined_4 = 4;</code>
+         * @return The enum numeric value on the wire for appDefined4.
          */
-        public int getMediumValue() {
-          return medium_;
+        public int getAppDefined4Value() {
+          return appDefined4_;
         }
         /**
-         * <code>.org.ena.server.common.protocols.generated.RiskLevel medium = 4;</code>
-         * @param value The enum numeric value on the wire for medium to set.
+         * <code>.org.ena.server.common.protocols.generated.RiskLevel appDefined_4 = 4;</code>
+         * @param value The enum numeric value on the wire for appDefined4 to set.
          * @return This builder for chaining.
          */
-        public Builder setMediumValue(int value) {
-          medium_ = value;
+        public Builder setAppDefined4Value(int value) {
+          appDefined4_ = value;
           onChanged();
           return this;
         }
         /**
-         * <code>.org.ena.server.common.protocols.generated.RiskLevel medium = 4;</code>
-         * @return The medium.
+         * <code>.org.ena.server.common.protocols.generated.RiskLevel appDefined_4 = 4;</code>
+         * @return The appDefined4.
          */
-        public org.ena.server.common.protocols.generated.RiskScore.RiskLevel getMedium() {
+        public org.ena.server.common.protocols.generated.RiskScore.RiskLevel getAppDefined4() {
           @SuppressWarnings("deprecation")
-          org.ena.server.common.protocols.generated.RiskScore.RiskLevel result = org.ena.server.common.protocols.generated.RiskScore.RiskLevel.valueOf(medium_);
+          org.ena.server.common.protocols.generated.RiskScore.RiskLevel result = org.ena.server.common.protocols.generated.RiskScore.RiskLevel.valueOf(appDefined4_);
           return result == null ? org.ena.server.common.protocols.generated.RiskScore.RiskLevel.UNRECOGNIZED : result;
         }
         /**
-         * <code>.org.ena.server.common.protocols.generated.RiskLevel medium = 4;</code>
-         * @param value The medium to set.
+         * <code>.org.ena.server.common.protocols.generated.RiskLevel appDefined_4 = 4;</code>
+         * @param value The appDefined4 to set.
          * @return This builder for chaining.
          */
-        public Builder setMedium(org.ena.server.common.protocols.generated.RiskScore.RiskLevel value) {
+        public Builder setAppDefined4(org.ena.server.common.protocols.generated.RiskScore.RiskLevel value) {
           if (value == null) {
             throw new NullPointerException();
           }
           
-          medium_ = value.getNumber();
+          appDefined4_ = value.getNumber();
           onChanged();
           return this;
         }
         /**
-         * <code>.org.ena.server.common.protocols.generated.RiskLevel medium = 4;</code>
+         * <code>.org.ena.server.common.protocols.generated.RiskLevel appDefined_4 = 4;</code>
          * @return This builder for chaining.
          */
-        public Builder clearMedium() {
+        public Builder clearAppDefined4() {
           
-          medium_ = 0;
+          appDefined4_ = 0;
           onChanged();
           return this;
         }
 
-        private int mediumHigh_ = 0;
+        private int appDefined5_ = 0;
         /**
-         * <code>.org.ena.server.common.protocols.generated.RiskLevel medium_high = 5;</code>
-         * @return The enum numeric value on the wire for mediumHigh.
+         * <code>.org.ena.server.common.protocols.generated.RiskLevel appDefined_5 = 5;</code>
+         * @return The enum numeric value on the wire for appDefined5.
          */
-        public int getMediumHighValue() {
-          return mediumHigh_;
+        public int getAppDefined5Value() {
+          return appDefined5_;
         }
         /**
-         * <code>.org.ena.server.common.protocols.generated.RiskLevel medium_high = 5;</code>
-         * @param value The enum numeric value on the wire for mediumHigh to set.
+         * <code>.org.ena.server.common.protocols.generated.RiskLevel appDefined_5 = 5;</code>
+         * @param value The enum numeric value on the wire for appDefined5 to set.
          * @return This builder for chaining.
          */
-        public Builder setMediumHighValue(int value) {
-          mediumHigh_ = value;
+        public Builder setAppDefined5Value(int value) {
+          appDefined5_ = value;
           onChanged();
           return this;
         }
         /**
-         * <code>.org.ena.server.common.protocols.generated.RiskLevel medium_high = 5;</code>
-         * @return The mediumHigh.
+         * <code>.org.ena.server.common.protocols.generated.RiskLevel appDefined_5 = 5;</code>
+         * @return The appDefined5.
          */
-        public org.ena.server.common.protocols.generated.RiskScore.RiskLevel getMediumHigh() {
+        public org.ena.server.common.protocols.generated.RiskScore.RiskLevel getAppDefined5() {
           @SuppressWarnings("deprecation")
-          org.ena.server.common.protocols.generated.RiskScore.RiskLevel result = org.ena.server.common.protocols.generated.RiskScore.RiskLevel.valueOf(mediumHigh_);
+          org.ena.server.common.protocols.generated.RiskScore.RiskLevel result = org.ena.server.common.protocols.generated.RiskScore.RiskLevel.valueOf(appDefined5_);
           return result == null ? org.ena.server.common.protocols.generated.RiskScore.RiskLevel.UNRECOGNIZED : result;
         }
         /**
-         * <code>.org.ena.server.common.protocols.generated.RiskLevel medium_high = 5;</code>
-         * @param value The mediumHigh to set.
+         * <code>.org.ena.server.common.protocols.generated.RiskLevel appDefined_5 = 5;</code>
+         * @param value The appDefined5 to set.
          * @return This builder for chaining.
          */
-        public Builder setMediumHigh(org.ena.server.common.protocols.generated.RiskScore.RiskLevel value) {
+        public Builder setAppDefined5(org.ena.server.common.protocols.generated.RiskScore.RiskLevel value) {
           if (value == null) {
             throw new NullPointerException();
           }
           
-          mediumHigh_ = value.getNumber();
+          appDefined5_ = value.getNumber();
           onChanged();
           return this;
         }
         /**
-         * <code>.org.ena.server.common.protocols.generated.RiskLevel medium_high = 5;</code>
+         * <code>.org.ena.server.common.protocols.generated.RiskLevel appDefined_5 = 5;</code>
          * @return This builder for chaining.
          */
-        public Builder clearMediumHigh() {
+        public Builder clearAppDefined5() {
           
-          mediumHigh_ = 0;
+          appDefined5_ = 0;
           onChanged();
           return this;
         }
 
-        private int high_ = 0;
+        private int appDefined6_ = 0;
         /**
-         * <code>.org.ena.server.common.protocols.generated.RiskLevel high = 6;</code>
-         * @return The enum numeric value on the wire for high.
+         * <code>.org.ena.server.common.protocols.generated.RiskLevel appDefined_6 = 6;</code>
+         * @return The enum numeric value on the wire for appDefined6.
          */
-        public int getHighValue() {
-          return high_;
+        public int getAppDefined6Value() {
+          return appDefined6_;
         }
         /**
-         * <code>.org.ena.server.common.protocols.generated.RiskLevel high = 6;</code>
-         * @param value The enum numeric value on the wire for high to set.
+         * <code>.org.ena.server.common.protocols.generated.RiskLevel appDefined_6 = 6;</code>
+         * @param value The enum numeric value on the wire for appDefined6 to set.
          * @return This builder for chaining.
          */
-        public Builder setHighValue(int value) {
-          high_ = value;
+        public Builder setAppDefined6Value(int value) {
+          appDefined6_ = value;
           onChanged();
           return this;
         }
         /**
-         * <code>.org.ena.server.common.protocols.generated.RiskLevel high = 6;</code>
-         * @return The high.
+         * <code>.org.ena.server.common.protocols.generated.RiskLevel appDefined_6 = 6;</code>
+         * @return The appDefined6.
          */
-        public org.ena.server.common.protocols.generated.RiskScore.RiskLevel getHigh() {
+        public org.ena.server.common.protocols.generated.RiskScore.RiskLevel getAppDefined6() {
           @SuppressWarnings("deprecation")
-          org.ena.server.common.protocols.generated.RiskScore.RiskLevel result = org.ena.server.common.protocols.generated.RiskScore.RiskLevel.valueOf(high_);
+          org.ena.server.common.protocols.generated.RiskScore.RiskLevel result = org.ena.server.common.protocols.generated.RiskScore.RiskLevel.valueOf(appDefined6_);
           return result == null ? org.ena.server.common.protocols.generated.RiskScore.RiskLevel.UNRECOGNIZED : result;
         }
         /**
-         * <code>.org.ena.server.common.protocols.generated.RiskLevel high = 6;</code>
-         * @param value The high to set.
+         * <code>.org.ena.server.common.protocols.generated.RiskLevel appDefined_6 = 6;</code>
+         * @param value The appDefined6 to set.
          * @return This builder for chaining.
          */
-        public Builder setHigh(org.ena.server.common.protocols.generated.RiskScore.RiskLevel value) {
+        public Builder setAppDefined6(org.ena.server.common.protocols.generated.RiskScore.RiskLevel value) {
           if (value == null) {
             throw new NullPointerException();
           }
           
-          high_ = value.getNumber();
+          appDefined6_ = value.getNumber();
           onChanged();
           return this;
         }
         /**
-         * <code>.org.ena.server.common.protocols.generated.RiskLevel high = 6;</code>
+         * <code>.org.ena.server.common.protocols.generated.RiskLevel appDefined_6 = 6;</code>
          * @return This builder for chaining.
          */
-        public Builder clearHigh() {
+        public Builder clearAppDefined6() {
           
-          high_ = 0;
+          appDefined6_ = 0;
           onChanged();
           return this;
         }
 
-        private int veryHigh_ = 0;
+        private int appDefined7_ = 0;
         /**
-         * <code>.org.ena.server.common.protocols.generated.RiskLevel very_high = 7;</code>
-         * @return The enum numeric value on the wire for veryHigh.
+         * <code>.org.ena.server.common.protocols.generated.RiskLevel appDefined_7 = 7;</code>
+         * @return The enum numeric value on the wire for appDefined7.
          */
-        public int getVeryHighValue() {
-          return veryHigh_;
+        public int getAppDefined7Value() {
+          return appDefined7_;
         }
         /**
-         * <code>.org.ena.server.common.protocols.generated.RiskLevel very_high = 7;</code>
-         * @param value The enum numeric value on the wire for veryHigh to set.
+         * <code>.org.ena.server.common.protocols.generated.RiskLevel appDefined_7 = 7;</code>
+         * @param value The enum numeric value on the wire for appDefined7 to set.
          * @return This builder for chaining.
          */
-        public Builder setVeryHighValue(int value) {
-          veryHigh_ = value;
+        public Builder setAppDefined7Value(int value) {
+          appDefined7_ = value;
           onChanged();
           return this;
         }
         /**
-         * <code>.org.ena.server.common.protocols.generated.RiskLevel very_high = 7;</code>
-         * @return The veryHigh.
+         * <code>.org.ena.server.common.protocols.generated.RiskLevel appDefined_7 = 7;</code>
+         * @return The appDefined7.
          */
-        public org.ena.server.common.protocols.generated.RiskScore.RiskLevel getVeryHigh() {
+        public org.ena.server.common.protocols.generated.RiskScore.RiskLevel getAppDefined7() {
           @SuppressWarnings("deprecation")
-          org.ena.server.common.protocols.generated.RiskScore.RiskLevel result = org.ena.server.common.protocols.generated.RiskScore.RiskLevel.valueOf(veryHigh_);
+          org.ena.server.common.protocols.generated.RiskScore.RiskLevel result = org.ena.server.common.protocols.generated.RiskScore.RiskLevel.valueOf(appDefined7_);
           return result == null ? org.ena.server.common.protocols.generated.RiskScore.RiskLevel.UNRECOGNIZED : result;
         }
         /**
-         * <code>.org.ena.server.common.protocols.generated.RiskLevel very_high = 7;</code>
-         * @param value The veryHigh to set.
+         * <code>.org.ena.server.common.protocols.generated.RiskLevel appDefined_7 = 7;</code>
+         * @param value The appDefined7 to set.
          * @return This builder for chaining.
          */
-        public Builder setVeryHigh(org.ena.server.common.protocols.generated.RiskScore.RiskLevel value) {
+        public Builder setAppDefined7(org.ena.server.common.protocols.generated.RiskScore.RiskLevel value) {
           if (value == null) {
             throw new NullPointerException();
           }
           
-          veryHigh_ = value.getNumber();
+          appDefined7_ = value.getNumber();
           onChanged();
           return this;
         }
         /**
-         * <code>.org.ena.server.common.protocols.generated.RiskLevel very_high = 7;</code>
+         * <code>.org.ena.server.common.protocols.generated.RiskLevel appDefined_7 = 7;</code>
          * @return This builder for chaining.
          */
-        public Builder clearVeryHigh() {
+        public Builder clearAppDefined7() {
           
-          veryHigh_ = 0;
+          appDefined7_ = 0;
           onChanged();
           return this;
         }
 
-        private int highest_ = 0;
+        private int appDefined8_ = 0;
         /**
-         * <code>.org.ena.server.common.protocols.generated.RiskLevel highest = 8;</code>
-         * @return The enum numeric value on the wire for highest.
+         * <code>.org.ena.server.common.protocols.generated.RiskLevel appDefined_8 = 8;</code>
+         * @return The enum numeric value on the wire for appDefined8.
          */
-        public int getHighestValue() {
-          return highest_;
+        public int getAppDefined8Value() {
+          return appDefined8_;
         }
         /**
-         * <code>.org.ena.server.common.protocols.generated.RiskLevel highest = 8;</code>
-         * @param value The enum numeric value on the wire for highest to set.
+         * <code>.org.ena.server.common.protocols.generated.RiskLevel appDefined_8 = 8;</code>
+         * @param value The enum numeric value on the wire for appDefined8 to set.
          * @return This builder for chaining.
          */
-        public Builder setHighestValue(int value) {
-          highest_ = value;
+        public Builder setAppDefined8Value(int value) {
+          appDefined8_ = value;
           onChanged();
           return this;
         }
         /**
-         * <code>.org.ena.server.common.protocols.generated.RiskLevel highest = 8;</code>
-         * @return The highest.
+         * <code>.org.ena.server.common.protocols.generated.RiskLevel appDefined_8 = 8;</code>
+         * @return The appDefined8.
          */
-        public org.ena.server.common.protocols.generated.RiskScore.RiskLevel getHighest() {
+        public org.ena.server.common.protocols.generated.RiskScore.RiskLevel getAppDefined8() {
           @SuppressWarnings("deprecation")
-          org.ena.server.common.protocols.generated.RiskScore.RiskLevel result = org.ena.server.common.protocols.generated.RiskScore.RiskLevel.valueOf(highest_);
+          org.ena.server.common.protocols.generated.RiskScore.RiskLevel result = org.ena.server.common.protocols.generated.RiskScore.RiskLevel.valueOf(appDefined8_);
           return result == null ? org.ena.server.common.protocols.generated.RiskScore.RiskLevel.UNRECOGNIZED : result;
         }
         /**
-         * <code>.org.ena.server.common.protocols.generated.RiskLevel highest = 8;</code>
-         * @param value The highest to set.
+         * <code>.org.ena.server.common.protocols.generated.RiskLevel appDefined_8 = 8;</code>
+         * @param value The appDefined8 to set.
          * @return This builder for chaining.
          */
-        public Builder setHighest(org.ena.server.common.protocols.generated.RiskScore.RiskLevel value) {
+        public Builder setAppDefined8(org.ena.server.common.protocols.generated.RiskScore.RiskLevel value) {
           if (value == null) {
             throw new NullPointerException();
           }
           
-          highest_ = value.getNumber();
+          appDefined8_ = value.getNumber();
           onChanged();
           return this;
         }
         /**
-         * <code>.org.ena.server.common.protocols.generated.RiskLevel highest = 8;</code>
+         * <code>.org.ena.server.common.protocols.generated.RiskLevel appDefined_8 = 8;</code>
          * @return This builder for chaining.
          */
-        public Builder clearHighest() {
+        public Builder clearAppDefined8() {
           
-          highest_ = 0;
+          appDefined8_ = 0;
           onChanged();
           return this;
         }
@@ -1687,155 +1699,155 @@ public final class RiskScore {
 
       /**
        * <pre>
-       * &lt; 5 min
+       * D = 0 min, lowest risk
        * </pre>
        *
-       * <code>.org.ena.server.common.protocols.generated.RiskLevel lowest = 1;</code>
-       * @return The enum numeric value on the wire for lowest.
+       * <code>.org.ena.server.common.protocols.generated.RiskLevel eq_0_min = 1;</code>
+       * @return The enum numeric value on the wire for eq0Min.
        */
-      int getLowestValue();
+      int getEq0MinValue();
       /**
        * <pre>
-       * &lt; 5 min
+       * D = 0 min, lowest risk
        * </pre>
        *
-       * <code>.org.ena.server.common.protocols.generated.RiskLevel lowest = 1;</code>
-       * @return The lowest.
+       * <code>.org.ena.server.common.protocols.generated.RiskLevel eq_0_min = 1;</code>
+       * @return The eq0Min.
        */
-      org.ena.server.common.protocols.generated.RiskScore.RiskLevel getLowest();
+      org.ena.server.common.protocols.generated.RiskScore.RiskLevel getEq0Min();
 
       /**
        * <pre>
-       * 5 min
+       * 0 &lt; D &lt;= 5 min
        * </pre>
        *
-       * <code>.org.ena.server.common.protocols.generated.RiskLevel low = 2;</code>
-       * @return The enum numeric value on the wire for low.
+       * <code>.org.ena.server.common.protocols.generated.RiskLevel gt_0_le_5_min = 2;</code>
+       * @return The enum numeric value on the wire for gt0Le5Min.
        */
-      int getLowValue();
+      int getGt0Le5MinValue();
       /**
        * <pre>
-       * 5 min
+       * 0 &lt; D &lt;= 5 min
        * </pre>
        *
-       * <code>.org.ena.server.common.protocols.generated.RiskLevel low = 2;</code>
-       * @return The low.
+       * <code>.org.ena.server.common.protocols.generated.RiskLevel gt_0_le_5_min = 2;</code>
+       * @return The gt0Le5Min.
        */
-      org.ena.server.common.protocols.generated.RiskScore.RiskLevel getLow();
+      org.ena.server.common.protocols.generated.RiskScore.RiskLevel getGt0Le5Min();
 
       /**
        * <pre>
-       * 10 min
+       * 5 &lt; D &lt;= 10 min
        * </pre>
        *
-       * <code>.org.ena.server.common.protocols.generated.RiskLevel low_medium = 3;</code>
-       * @return The enum numeric value on the wire for lowMedium.
+       * <code>.org.ena.server.common.protocols.generated.RiskLevel gt_5_le_10_min = 3;</code>
+       * @return The enum numeric value on the wire for gt5Le10Min.
        */
-      int getLowMediumValue();
+      int getGt5Le10MinValue();
       /**
        * <pre>
-       * 10 min
+       * 5 &lt; D &lt;= 10 min
        * </pre>
        *
-       * <code>.org.ena.server.common.protocols.generated.RiskLevel low_medium = 3;</code>
-       * @return The lowMedium.
+       * <code>.org.ena.server.common.protocols.generated.RiskLevel gt_5_le_10_min = 3;</code>
+       * @return The gt5Le10Min.
        */
-      org.ena.server.common.protocols.generated.RiskScore.RiskLevel getLowMedium();
+      org.ena.server.common.protocols.generated.RiskScore.RiskLevel getGt5Le10Min();
 
       /**
        * <pre>
-       * 15 min
+       * 10 &lt; D &lt;= 15 min
        * </pre>
        *
-       * <code>.org.ena.server.common.protocols.generated.RiskLevel medium = 4;</code>
-       * @return The enum numeric value on the wire for medium.
+       * <code>.org.ena.server.common.protocols.generated.RiskLevel gt_10_le_15_min = 4;</code>
+       * @return The enum numeric value on the wire for gt10Le15Min.
        */
-      int getMediumValue();
+      int getGt10Le15MinValue();
       /**
        * <pre>
-       * 15 min
+       * 10 &lt; D &lt;= 15 min
        * </pre>
        *
-       * <code>.org.ena.server.common.protocols.generated.RiskLevel medium = 4;</code>
-       * @return The medium.
+       * <code>.org.ena.server.common.protocols.generated.RiskLevel gt_10_le_15_min = 4;</code>
+       * @return The gt10Le15Min.
        */
-      org.ena.server.common.protocols.generated.RiskScore.RiskLevel getMedium();
+      org.ena.server.common.protocols.generated.RiskScore.RiskLevel getGt10Le15Min();
 
       /**
        * <pre>
-       * 20 min
+       * 15 &lt; D &lt;= 20 min
        * </pre>
        *
-       * <code>.org.ena.server.common.protocols.generated.RiskLevel medium_high = 5;</code>
-       * @return The enum numeric value on the wire for mediumHigh.
+       * <code>.org.ena.server.common.protocols.generated.RiskLevel gt_15_le_20_min = 5;</code>
+       * @return The enum numeric value on the wire for gt15Le20Min.
        */
-      int getMediumHighValue();
+      int getGt15Le20MinValue();
       /**
        * <pre>
-       * 20 min
+       * 15 &lt; D &lt;= 20 min
        * </pre>
        *
-       * <code>.org.ena.server.common.protocols.generated.RiskLevel medium_high = 5;</code>
-       * @return The mediumHigh.
+       * <code>.org.ena.server.common.protocols.generated.RiskLevel gt_15_le_20_min = 5;</code>
+       * @return The gt15Le20Min.
        */
-      org.ena.server.common.protocols.generated.RiskScore.RiskLevel getMediumHigh();
+      org.ena.server.common.protocols.generated.RiskScore.RiskLevel getGt15Le20Min();
 
       /**
        * <pre>
-       * 25 min
+       * 20 &lt; D &lt;= 25 min
        * </pre>
        *
-       * <code>.org.ena.server.common.protocols.generated.RiskLevel high = 6;</code>
-       * @return The enum numeric value on the wire for high.
+       * <code>.org.ena.server.common.protocols.generated.RiskLevel gt_20_le_25_min = 6;</code>
+       * @return The enum numeric value on the wire for gt20Le25Min.
        */
-      int getHighValue();
+      int getGt20Le25MinValue();
       /**
        * <pre>
-       * 25 min
+       * 20 &lt; D &lt;= 25 min
        * </pre>
        *
-       * <code>.org.ena.server.common.protocols.generated.RiskLevel high = 6;</code>
-       * @return The high.
+       * <code>.org.ena.server.common.protocols.generated.RiskLevel gt_20_le_25_min = 6;</code>
+       * @return The gt20Le25Min.
        */
-      org.ena.server.common.protocols.generated.RiskScore.RiskLevel getHigh();
+      org.ena.server.common.protocols.generated.RiskScore.RiskLevel getGt20Le25Min();
 
       /**
        * <pre>
-       * 30 min
+       * 25 &lt; D &lt;= 30 min
        * </pre>
        *
-       * <code>.org.ena.server.common.protocols.generated.RiskLevel very_high = 7;</code>
-       * @return The enum numeric value on the wire for veryHigh.
+       * <code>.org.ena.server.common.protocols.generated.RiskLevel gt_25_le_30_min = 7;</code>
+       * @return The enum numeric value on the wire for gt25Le30Min.
        */
-      int getVeryHighValue();
+      int getGt25Le30MinValue();
       /**
        * <pre>
-       * 30 min
+       * 25 &lt; D &lt;= 30 min
        * </pre>
        *
-       * <code>.org.ena.server.common.protocols.generated.RiskLevel very_high = 7;</code>
-       * @return The veryHigh.
+       * <code>.org.ena.server.common.protocols.generated.RiskLevel gt_25_le_30_min = 7;</code>
+       * @return The gt25Le30Min.
        */
-      org.ena.server.common.protocols.generated.RiskScore.RiskLevel getVeryHigh();
+      org.ena.server.common.protocols.generated.RiskScore.RiskLevel getGt25Le30Min();
 
       /**
        * <pre>
-       * &gt; 30 min
+       * &gt; 30 min, highest risk
        * </pre>
        *
-       * <code>.org.ena.server.common.protocols.generated.RiskLevel highest = 8;</code>
-       * @return The enum numeric value on the wire for highest.
+       * <code>.org.ena.server.common.protocols.generated.RiskLevel gt_30_min = 8;</code>
+       * @return The enum numeric value on the wire for gt30Min.
        */
-      int getHighestValue();
+      int getGt30MinValue();
       /**
        * <pre>
-       * &gt; 30 min
+       * &gt; 30 min, highest risk
        * </pre>
        *
-       * <code>.org.ena.server.common.protocols.generated.RiskLevel highest = 8;</code>
-       * @return The highest.
+       * <code>.org.ena.server.common.protocols.generated.RiskLevel gt_30_min = 8;</code>
+       * @return The gt30Min.
        */
-      org.ena.server.common.protocols.generated.RiskScore.RiskLevel getHighest();
+      org.ena.server.common.protocols.generated.RiskScore.RiskLevel getGt30Min();
     }
     /**
      * Protobuf type {@code org.ena.server.common.protocols.generated.RiskScoreParameters.DurationRiskParameter}
@@ -1850,14 +1862,14 @@ public final class RiskScore {
         super(builder);
       }
       private DurationRiskParameter() {
-        lowest_ = 0;
-        low_ = 0;
-        lowMedium_ = 0;
-        medium_ = 0;
-        mediumHigh_ = 0;
-        high_ = 0;
-        veryHigh_ = 0;
-        highest_ = 0;
+        eq0Min_ = 0;
+        gt0Le5Min_ = 0;
+        gt5Le10Min_ = 0;
+        gt10Le15Min_ = 0;
+        gt15Le20Min_ = 0;
+        gt20Le25Min_ = 0;
+        gt25Le30Min_ = 0;
+        gt30Min_ = 0;
       }
 
       @java.lang.Override
@@ -1893,49 +1905,49 @@ public final class RiskScore {
               case 8: {
                 int rawValue = input.readEnum();
 
-                lowest_ = rawValue;
+                eq0Min_ = rawValue;
                 break;
               }
               case 16: {
                 int rawValue = input.readEnum();
 
-                low_ = rawValue;
+                gt0Le5Min_ = rawValue;
                 break;
               }
               case 24: {
                 int rawValue = input.readEnum();
 
-                lowMedium_ = rawValue;
+                gt5Le10Min_ = rawValue;
                 break;
               }
               case 32: {
                 int rawValue = input.readEnum();
 
-                medium_ = rawValue;
+                gt10Le15Min_ = rawValue;
                 break;
               }
               case 40: {
                 int rawValue = input.readEnum();
 
-                mediumHigh_ = rawValue;
+                gt15Le20Min_ = rawValue;
                 break;
               }
               case 48: {
                 int rawValue = input.readEnum();
 
-                high_ = rawValue;
+                gt20Le25Min_ = rawValue;
                 break;
               }
               case 56: {
                 int rawValue = input.readEnum();
 
-                veryHigh_ = rawValue;
+                gt25Le30Min_ = rawValue;
                 break;
               }
               case 64: {
                 int rawValue = input.readEnum();
 
-                highest_ = rawValue;
+                gt30Min_ = rawValue;
                 break;
               }
               default: {
@@ -1970,219 +1982,219 @@ public final class RiskScore {
                 org.ena.server.common.protocols.generated.RiskScore.RiskScoreParameters.DurationRiskParameter.class, org.ena.server.common.protocols.generated.RiskScore.RiskScoreParameters.DurationRiskParameter.Builder.class);
       }
 
-      public static final int LOWEST_FIELD_NUMBER = 1;
-      private int lowest_;
+      public static final int EQ_0_MIN_FIELD_NUMBER = 1;
+      private int eq0Min_;
       /**
        * <pre>
-       * &lt; 5 min
+       * D = 0 min, lowest risk
        * </pre>
        *
-       * <code>.org.ena.server.common.protocols.generated.RiskLevel lowest = 1;</code>
-       * @return The enum numeric value on the wire for lowest.
+       * <code>.org.ena.server.common.protocols.generated.RiskLevel eq_0_min = 1;</code>
+       * @return The enum numeric value on the wire for eq0Min.
        */
-      public int getLowestValue() {
-        return lowest_;
+      public int getEq0MinValue() {
+        return eq0Min_;
       }
       /**
        * <pre>
-       * &lt; 5 min
+       * D = 0 min, lowest risk
        * </pre>
        *
-       * <code>.org.ena.server.common.protocols.generated.RiskLevel lowest = 1;</code>
-       * @return The lowest.
+       * <code>.org.ena.server.common.protocols.generated.RiskLevel eq_0_min = 1;</code>
+       * @return The eq0Min.
        */
-      public org.ena.server.common.protocols.generated.RiskScore.RiskLevel getLowest() {
+      public org.ena.server.common.protocols.generated.RiskScore.RiskLevel getEq0Min() {
         @SuppressWarnings("deprecation")
-        org.ena.server.common.protocols.generated.RiskScore.RiskLevel result = org.ena.server.common.protocols.generated.RiskScore.RiskLevel.valueOf(lowest_);
+        org.ena.server.common.protocols.generated.RiskScore.RiskLevel result = org.ena.server.common.protocols.generated.RiskScore.RiskLevel.valueOf(eq0Min_);
         return result == null ? org.ena.server.common.protocols.generated.RiskScore.RiskLevel.UNRECOGNIZED : result;
       }
 
-      public static final int LOW_FIELD_NUMBER = 2;
-      private int low_;
+      public static final int GT_0_LE_5_MIN_FIELD_NUMBER = 2;
+      private int gt0Le5Min_;
       /**
        * <pre>
-       * 5 min
+       * 0 &lt; D &lt;= 5 min
        * </pre>
        *
-       * <code>.org.ena.server.common.protocols.generated.RiskLevel low = 2;</code>
-       * @return The enum numeric value on the wire for low.
+       * <code>.org.ena.server.common.protocols.generated.RiskLevel gt_0_le_5_min = 2;</code>
+       * @return The enum numeric value on the wire for gt0Le5Min.
        */
-      public int getLowValue() {
-        return low_;
+      public int getGt0Le5MinValue() {
+        return gt0Le5Min_;
       }
       /**
        * <pre>
-       * 5 min
+       * 0 &lt; D &lt;= 5 min
        * </pre>
        *
-       * <code>.org.ena.server.common.protocols.generated.RiskLevel low = 2;</code>
-       * @return The low.
+       * <code>.org.ena.server.common.protocols.generated.RiskLevel gt_0_le_5_min = 2;</code>
+       * @return The gt0Le5Min.
        */
-      public org.ena.server.common.protocols.generated.RiskScore.RiskLevel getLow() {
+      public org.ena.server.common.protocols.generated.RiskScore.RiskLevel getGt0Le5Min() {
         @SuppressWarnings("deprecation")
-        org.ena.server.common.protocols.generated.RiskScore.RiskLevel result = org.ena.server.common.protocols.generated.RiskScore.RiskLevel.valueOf(low_);
+        org.ena.server.common.protocols.generated.RiskScore.RiskLevel result = org.ena.server.common.protocols.generated.RiskScore.RiskLevel.valueOf(gt0Le5Min_);
         return result == null ? org.ena.server.common.protocols.generated.RiskScore.RiskLevel.UNRECOGNIZED : result;
       }
 
-      public static final int LOW_MEDIUM_FIELD_NUMBER = 3;
-      private int lowMedium_;
+      public static final int GT_5_LE_10_MIN_FIELD_NUMBER = 3;
+      private int gt5Le10Min_;
       /**
        * <pre>
-       * 10 min
+       * 5 &lt; D &lt;= 10 min
        * </pre>
        *
-       * <code>.org.ena.server.common.protocols.generated.RiskLevel low_medium = 3;</code>
-       * @return The enum numeric value on the wire for lowMedium.
+       * <code>.org.ena.server.common.protocols.generated.RiskLevel gt_5_le_10_min = 3;</code>
+       * @return The enum numeric value on the wire for gt5Le10Min.
        */
-      public int getLowMediumValue() {
-        return lowMedium_;
+      public int getGt5Le10MinValue() {
+        return gt5Le10Min_;
       }
       /**
        * <pre>
-       * 10 min
+       * 5 &lt; D &lt;= 10 min
        * </pre>
        *
-       * <code>.org.ena.server.common.protocols.generated.RiskLevel low_medium = 3;</code>
-       * @return The lowMedium.
+       * <code>.org.ena.server.common.protocols.generated.RiskLevel gt_5_le_10_min = 3;</code>
+       * @return The gt5Le10Min.
        */
-      public org.ena.server.common.protocols.generated.RiskScore.RiskLevel getLowMedium() {
+      public org.ena.server.common.protocols.generated.RiskScore.RiskLevel getGt5Le10Min() {
         @SuppressWarnings("deprecation")
-        org.ena.server.common.protocols.generated.RiskScore.RiskLevel result = org.ena.server.common.protocols.generated.RiskScore.RiskLevel.valueOf(lowMedium_);
+        org.ena.server.common.protocols.generated.RiskScore.RiskLevel result = org.ena.server.common.protocols.generated.RiskScore.RiskLevel.valueOf(gt5Le10Min_);
         return result == null ? org.ena.server.common.protocols.generated.RiskScore.RiskLevel.UNRECOGNIZED : result;
       }
 
-      public static final int MEDIUM_FIELD_NUMBER = 4;
-      private int medium_;
+      public static final int GT_10_LE_15_MIN_FIELD_NUMBER = 4;
+      private int gt10Le15Min_;
       /**
        * <pre>
-       * 15 min
+       * 10 &lt; D &lt;= 15 min
        * </pre>
        *
-       * <code>.org.ena.server.common.protocols.generated.RiskLevel medium = 4;</code>
-       * @return The enum numeric value on the wire for medium.
+       * <code>.org.ena.server.common.protocols.generated.RiskLevel gt_10_le_15_min = 4;</code>
+       * @return The enum numeric value on the wire for gt10Le15Min.
        */
-      public int getMediumValue() {
-        return medium_;
+      public int getGt10Le15MinValue() {
+        return gt10Le15Min_;
       }
       /**
        * <pre>
-       * 15 min
+       * 10 &lt; D &lt;= 15 min
        * </pre>
        *
-       * <code>.org.ena.server.common.protocols.generated.RiskLevel medium = 4;</code>
-       * @return The medium.
+       * <code>.org.ena.server.common.protocols.generated.RiskLevel gt_10_le_15_min = 4;</code>
+       * @return The gt10Le15Min.
        */
-      public org.ena.server.common.protocols.generated.RiskScore.RiskLevel getMedium() {
+      public org.ena.server.common.protocols.generated.RiskScore.RiskLevel getGt10Le15Min() {
         @SuppressWarnings("deprecation")
-        org.ena.server.common.protocols.generated.RiskScore.RiskLevel result = org.ena.server.common.protocols.generated.RiskScore.RiskLevel.valueOf(medium_);
+        org.ena.server.common.protocols.generated.RiskScore.RiskLevel result = org.ena.server.common.protocols.generated.RiskScore.RiskLevel.valueOf(gt10Le15Min_);
         return result == null ? org.ena.server.common.protocols.generated.RiskScore.RiskLevel.UNRECOGNIZED : result;
       }
 
-      public static final int MEDIUM_HIGH_FIELD_NUMBER = 5;
-      private int mediumHigh_;
+      public static final int GT_15_LE_20_MIN_FIELD_NUMBER = 5;
+      private int gt15Le20Min_;
       /**
        * <pre>
-       * 20 min
+       * 15 &lt; D &lt;= 20 min
        * </pre>
        *
-       * <code>.org.ena.server.common.protocols.generated.RiskLevel medium_high = 5;</code>
-       * @return The enum numeric value on the wire for mediumHigh.
+       * <code>.org.ena.server.common.protocols.generated.RiskLevel gt_15_le_20_min = 5;</code>
+       * @return The enum numeric value on the wire for gt15Le20Min.
        */
-      public int getMediumHighValue() {
-        return mediumHigh_;
+      public int getGt15Le20MinValue() {
+        return gt15Le20Min_;
       }
       /**
        * <pre>
-       * 20 min
+       * 15 &lt; D &lt;= 20 min
        * </pre>
        *
-       * <code>.org.ena.server.common.protocols.generated.RiskLevel medium_high = 5;</code>
-       * @return The mediumHigh.
+       * <code>.org.ena.server.common.protocols.generated.RiskLevel gt_15_le_20_min = 5;</code>
+       * @return The gt15Le20Min.
        */
-      public org.ena.server.common.protocols.generated.RiskScore.RiskLevel getMediumHigh() {
+      public org.ena.server.common.protocols.generated.RiskScore.RiskLevel getGt15Le20Min() {
         @SuppressWarnings("deprecation")
-        org.ena.server.common.protocols.generated.RiskScore.RiskLevel result = org.ena.server.common.protocols.generated.RiskScore.RiskLevel.valueOf(mediumHigh_);
+        org.ena.server.common.protocols.generated.RiskScore.RiskLevel result = org.ena.server.common.protocols.generated.RiskScore.RiskLevel.valueOf(gt15Le20Min_);
         return result == null ? org.ena.server.common.protocols.generated.RiskScore.RiskLevel.UNRECOGNIZED : result;
       }
 
-      public static final int HIGH_FIELD_NUMBER = 6;
-      private int high_;
+      public static final int GT_20_LE_25_MIN_FIELD_NUMBER = 6;
+      private int gt20Le25Min_;
       /**
        * <pre>
-       * 25 min
+       * 20 &lt; D &lt;= 25 min
        * </pre>
        *
-       * <code>.org.ena.server.common.protocols.generated.RiskLevel high = 6;</code>
-       * @return The enum numeric value on the wire for high.
+       * <code>.org.ena.server.common.protocols.generated.RiskLevel gt_20_le_25_min = 6;</code>
+       * @return The enum numeric value on the wire for gt20Le25Min.
        */
-      public int getHighValue() {
-        return high_;
+      public int getGt20Le25MinValue() {
+        return gt20Le25Min_;
       }
       /**
        * <pre>
-       * 25 min
+       * 20 &lt; D &lt;= 25 min
        * </pre>
        *
-       * <code>.org.ena.server.common.protocols.generated.RiskLevel high = 6;</code>
-       * @return The high.
+       * <code>.org.ena.server.common.protocols.generated.RiskLevel gt_20_le_25_min = 6;</code>
+       * @return The gt20Le25Min.
        */
-      public org.ena.server.common.protocols.generated.RiskScore.RiskLevel getHigh() {
+      public org.ena.server.common.protocols.generated.RiskScore.RiskLevel getGt20Le25Min() {
         @SuppressWarnings("deprecation")
-        org.ena.server.common.protocols.generated.RiskScore.RiskLevel result = org.ena.server.common.protocols.generated.RiskScore.RiskLevel.valueOf(high_);
+        org.ena.server.common.protocols.generated.RiskScore.RiskLevel result = org.ena.server.common.protocols.generated.RiskScore.RiskLevel.valueOf(gt20Le25Min_);
         return result == null ? org.ena.server.common.protocols.generated.RiskScore.RiskLevel.UNRECOGNIZED : result;
       }
 
-      public static final int VERY_HIGH_FIELD_NUMBER = 7;
-      private int veryHigh_;
+      public static final int GT_25_LE_30_MIN_FIELD_NUMBER = 7;
+      private int gt25Le30Min_;
       /**
        * <pre>
-       * 30 min
+       * 25 &lt; D &lt;= 30 min
        * </pre>
        *
-       * <code>.org.ena.server.common.protocols.generated.RiskLevel very_high = 7;</code>
-       * @return The enum numeric value on the wire for veryHigh.
+       * <code>.org.ena.server.common.protocols.generated.RiskLevel gt_25_le_30_min = 7;</code>
+       * @return The enum numeric value on the wire for gt25Le30Min.
        */
-      public int getVeryHighValue() {
-        return veryHigh_;
+      public int getGt25Le30MinValue() {
+        return gt25Le30Min_;
       }
       /**
        * <pre>
-       * 30 min
+       * 25 &lt; D &lt;= 30 min
        * </pre>
        *
-       * <code>.org.ena.server.common.protocols.generated.RiskLevel very_high = 7;</code>
-       * @return The veryHigh.
+       * <code>.org.ena.server.common.protocols.generated.RiskLevel gt_25_le_30_min = 7;</code>
+       * @return The gt25Le30Min.
        */
-      public org.ena.server.common.protocols.generated.RiskScore.RiskLevel getVeryHigh() {
+      public org.ena.server.common.protocols.generated.RiskScore.RiskLevel getGt25Le30Min() {
         @SuppressWarnings("deprecation")
-        org.ena.server.common.protocols.generated.RiskScore.RiskLevel result = org.ena.server.common.protocols.generated.RiskScore.RiskLevel.valueOf(veryHigh_);
+        org.ena.server.common.protocols.generated.RiskScore.RiskLevel result = org.ena.server.common.protocols.generated.RiskScore.RiskLevel.valueOf(gt25Le30Min_);
         return result == null ? org.ena.server.common.protocols.generated.RiskScore.RiskLevel.UNRECOGNIZED : result;
       }
 
-      public static final int HIGHEST_FIELD_NUMBER = 8;
-      private int highest_;
+      public static final int GT_30_MIN_FIELD_NUMBER = 8;
+      private int gt30Min_;
       /**
        * <pre>
-       * &gt; 30 min
+       * &gt; 30 min, highest risk
        * </pre>
        *
-       * <code>.org.ena.server.common.protocols.generated.RiskLevel highest = 8;</code>
-       * @return The enum numeric value on the wire for highest.
+       * <code>.org.ena.server.common.protocols.generated.RiskLevel gt_30_min = 8;</code>
+       * @return The enum numeric value on the wire for gt30Min.
        */
-      public int getHighestValue() {
-        return highest_;
+      public int getGt30MinValue() {
+        return gt30Min_;
       }
       /**
        * <pre>
-       * &gt; 30 min
+       * &gt; 30 min, highest risk
        * </pre>
        *
-       * <code>.org.ena.server.common.protocols.generated.RiskLevel highest = 8;</code>
-       * @return The highest.
+       * <code>.org.ena.server.common.protocols.generated.RiskLevel gt_30_min = 8;</code>
+       * @return The gt30Min.
        */
-      public org.ena.server.common.protocols.generated.RiskScore.RiskLevel getHighest() {
+      public org.ena.server.common.protocols.generated.RiskScore.RiskLevel getGt30Min() {
         @SuppressWarnings("deprecation")
-        org.ena.server.common.protocols.generated.RiskScore.RiskLevel result = org.ena.server.common.protocols.generated.RiskScore.RiskLevel.valueOf(highest_);
+        org.ena.server.common.protocols.generated.RiskScore.RiskLevel result = org.ena.server.common.protocols.generated.RiskScore.RiskLevel.valueOf(gt30Min_);
         return result == null ? org.ena.server.common.protocols.generated.RiskScore.RiskLevel.UNRECOGNIZED : result;
       }
 
@@ -2200,29 +2212,29 @@ public final class RiskScore {
       @java.lang.Override
       public void writeTo(com.google.protobuf.CodedOutputStream output)
                           throws java.io.IOException {
-        if (lowest_ != org.ena.server.common.protocols.generated.RiskScore.RiskLevel.INVALID.getNumber()) {
-          output.writeEnum(1, lowest_);
+        if (eq0Min_ != org.ena.server.common.protocols.generated.RiskScore.RiskLevel.INVALID.getNumber()) {
+          output.writeEnum(1, eq0Min_);
         }
-        if (low_ != org.ena.server.common.protocols.generated.RiskScore.RiskLevel.INVALID.getNumber()) {
-          output.writeEnum(2, low_);
+        if (gt0Le5Min_ != org.ena.server.common.protocols.generated.RiskScore.RiskLevel.INVALID.getNumber()) {
+          output.writeEnum(2, gt0Le5Min_);
         }
-        if (lowMedium_ != org.ena.server.common.protocols.generated.RiskScore.RiskLevel.INVALID.getNumber()) {
-          output.writeEnum(3, lowMedium_);
+        if (gt5Le10Min_ != org.ena.server.common.protocols.generated.RiskScore.RiskLevel.INVALID.getNumber()) {
+          output.writeEnum(3, gt5Le10Min_);
         }
-        if (medium_ != org.ena.server.common.protocols.generated.RiskScore.RiskLevel.INVALID.getNumber()) {
-          output.writeEnum(4, medium_);
+        if (gt10Le15Min_ != org.ena.server.common.protocols.generated.RiskScore.RiskLevel.INVALID.getNumber()) {
+          output.writeEnum(4, gt10Le15Min_);
         }
-        if (mediumHigh_ != org.ena.server.common.protocols.generated.RiskScore.RiskLevel.INVALID.getNumber()) {
-          output.writeEnum(5, mediumHigh_);
+        if (gt15Le20Min_ != org.ena.server.common.protocols.generated.RiskScore.RiskLevel.INVALID.getNumber()) {
+          output.writeEnum(5, gt15Le20Min_);
         }
-        if (high_ != org.ena.server.common.protocols.generated.RiskScore.RiskLevel.INVALID.getNumber()) {
-          output.writeEnum(6, high_);
+        if (gt20Le25Min_ != org.ena.server.common.protocols.generated.RiskScore.RiskLevel.INVALID.getNumber()) {
+          output.writeEnum(6, gt20Le25Min_);
         }
-        if (veryHigh_ != org.ena.server.common.protocols.generated.RiskScore.RiskLevel.INVALID.getNumber()) {
-          output.writeEnum(7, veryHigh_);
+        if (gt25Le30Min_ != org.ena.server.common.protocols.generated.RiskScore.RiskLevel.INVALID.getNumber()) {
+          output.writeEnum(7, gt25Le30Min_);
         }
-        if (highest_ != org.ena.server.common.protocols.generated.RiskScore.RiskLevel.INVALID.getNumber()) {
-          output.writeEnum(8, highest_);
+        if (gt30Min_ != org.ena.server.common.protocols.generated.RiskScore.RiskLevel.INVALID.getNumber()) {
+          output.writeEnum(8, gt30Min_);
         }
         unknownFields.writeTo(output);
       }
@@ -2233,37 +2245,37 @@ public final class RiskScore {
         if (size != -1) return size;
 
         size = 0;
-        if (lowest_ != org.ena.server.common.protocols.generated.RiskScore.RiskLevel.INVALID.getNumber()) {
+        if (eq0Min_ != org.ena.server.common.protocols.generated.RiskScore.RiskLevel.INVALID.getNumber()) {
           size += com.google.protobuf.CodedOutputStream
-            .computeEnumSize(1, lowest_);
+            .computeEnumSize(1, eq0Min_);
         }
-        if (low_ != org.ena.server.common.protocols.generated.RiskScore.RiskLevel.INVALID.getNumber()) {
+        if (gt0Le5Min_ != org.ena.server.common.protocols.generated.RiskScore.RiskLevel.INVALID.getNumber()) {
           size += com.google.protobuf.CodedOutputStream
-            .computeEnumSize(2, low_);
+            .computeEnumSize(2, gt0Le5Min_);
         }
-        if (lowMedium_ != org.ena.server.common.protocols.generated.RiskScore.RiskLevel.INVALID.getNumber()) {
+        if (gt5Le10Min_ != org.ena.server.common.protocols.generated.RiskScore.RiskLevel.INVALID.getNumber()) {
           size += com.google.protobuf.CodedOutputStream
-            .computeEnumSize(3, lowMedium_);
+            .computeEnumSize(3, gt5Le10Min_);
         }
-        if (medium_ != org.ena.server.common.protocols.generated.RiskScore.RiskLevel.INVALID.getNumber()) {
+        if (gt10Le15Min_ != org.ena.server.common.protocols.generated.RiskScore.RiskLevel.INVALID.getNumber()) {
           size += com.google.protobuf.CodedOutputStream
-            .computeEnumSize(4, medium_);
+            .computeEnumSize(4, gt10Le15Min_);
         }
-        if (mediumHigh_ != org.ena.server.common.protocols.generated.RiskScore.RiskLevel.INVALID.getNumber()) {
+        if (gt15Le20Min_ != org.ena.server.common.protocols.generated.RiskScore.RiskLevel.INVALID.getNumber()) {
           size += com.google.protobuf.CodedOutputStream
-            .computeEnumSize(5, mediumHigh_);
+            .computeEnumSize(5, gt15Le20Min_);
         }
-        if (high_ != org.ena.server.common.protocols.generated.RiskScore.RiskLevel.INVALID.getNumber()) {
+        if (gt20Le25Min_ != org.ena.server.common.protocols.generated.RiskScore.RiskLevel.INVALID.getNumber()) {
           size += com.google.protobuf.CodedOutputStream
-            .computeEnumSize(6, high_);
+            .computeEnumSize(6, gt20Le25Min_);
         }
-        if (veryHigh_ != org.ena.server.common.protocols.generated.RiskScore.RiskLevel.INVALID.getNumber()) {
+        if (gt25Le30Min_ != org.ena.server.common.protocols.generated.RiskScore.RiskLevel.INVALID.getNumber()) {
           size += com.google.protobuf.CodedOutputStream
-            .computeEnumSize(7, veryHigh_);
+            .computeEnumSize(7, gt25Le30Min_);
         }
-        if (highest_ != org.ena.server.common.protocols.generated.RiskScore.RiskLevel.INVALID.getNumber()) {
+        if (gt30Min_ != org.ena.server.common.protocols.generated.RiskScore.RiskLevel.INVALID.getNumber()) {
           size += com.google.protobuf.CodedOutputStream
-            .computeEnumSize(8, highest_);
+            .computeEnumSize(8, gt30Min_);
         }
         size += unknownFields.getSerializedSize();
         memoizedSize = size;
@@ -2280,14 +2292,14 @@ public final class RiskScore {
         }
         org.ena.server.common.protocols.generated.RiskScore.RiskScoreParameters.DurationRiskParameter other = (org.ena.server.common.protocols.generated.RiskScore.RiskScoreParameters.DurationRiskParameter) obj;
 
-        if (lowest_ != other.lowest_) return false;
-        if (low_ != other.low_) return false;
-        if (lowMedium_ != other.lowMedium_) return false;
-        if (medium_ != other.medium_) return false;
-        if (mediumHigh_ != other.mediumHigh_) return false;
-        if (high_ != other.high_) return false;
-        if (veryHigh_ != other.veryHigh_) return false;
-        if (highest_ != other.highest_) return false;
+        if (eq0Min_ != other.eq0Min_) return false;
+        if (gt0Le5Min_ != other.gt0Le5Min_) return false;
+        if (gt5Le10Min_ != other.gt5Le10Min_) return false;
+        if (gt10Le15Min_ != other.gt10Le15Min_) return false;
+        if (gt15Le20Min_ != other.gt15Le20Min_) return false;
+        if (gt20Le25Min_ != other.gt20Le25Min_) return false;
+        if (gt25Le30Min_ != other.gt25Le30Min_) return false;
+        if (gt30Min_ != other.gt30Min_) return false;
         if (!unknownFields.equals(other.unknownFields)) return false;
         return true;
       }
@@ -2299,22 +2311,22 @@ public final class RiskScore {
         }
         int hash = 41;
         hash = (19 * hash) + getDescriptor().hashCode();
-        hash = (37 * hash) + LOWEST_FIELD_NUMBER;
-        hash = (53 * hash) + lowest_;
-        hash = (37 * hash) + LOW_FIELD_NUMBER;
-        hash = (53 * hash) + low_;
-        hash = (37 * hash) + LOW_MEDIUM_FIELD_NUMBER;
-        hash = (53 * hash) + lowMedium_;
-        hash = (37 * hash) + MEDIUM_FIELD_NUMBER;
-        hash = (53 * hash) + medium_;
-        hash = (37 * hash) + MEDIUM_HIGH_FIELD_NUMBER;
-        hash = (53 * hash) + mediumHigh_;
-        hash = (37 * hash) + HIGH_FIELD_NUMBER;
-        hash = (53 * hash) + high_;
-        hash = (37 * hash) + VERY_HIGH_FIELD_NUMBER;
-        hash = (53 * hash) + veryHigh_;
-        hash = (37 * hash) + HIGHEST_FIELD_NUMBER;
-        hash = (53 * hash) + highest_;
+        hash = (37 * hash) + EQ_0_MIN_FIELD_NUMBER;
+        hash = (53 * hash) + eq0Min_;
+        hash = (37 * hash) + GT_0_LE_5_MIN_FIELD_NUMBER;
+        hash = (53 * hash) + gt0Le5Min_;
+        hash = (37 * hash) + GT_5_LE_10_MIN_FIELD_NUMBER;
+        hash = (53 * hash) + gt5Le10Min_;
+        hash = (37 * hash) + GT_10_LE_15_MIN_FIELD_NUMBER;
+        hash = (53 * hash) + gt10Le15Min_;
+        hash = (37 * hash) + GT_15_LE_20_MIN_FIELD_NUMBER;
+        hash = (53 * hash) + gt15Le20Min_;
+        hash = (37 * hash) + GT_20_LE_25_MIN_FIELD_NUMBER;
+        hash = (53 * hash) + gt20Le25Min_;
+        hash = (37 * hash) + GT_25_LE_30_MIN_FIELD_NUMBER;
+        hash = (53 * hash) + gt25Le30Min_;
+        hash = (37 * hash) + GT_30_MIN_FIELD_NUMBER;
+        hash = (53 * hash) + gt30Min_;
         hash = (29 * hash) + unknownFields.hashCode();
         memoizedHashCode = hash;
         return hash;
@@ -2448,21 +2460,21 @@ public final class RiskScore {
         @java.lang.Override
         public Builder clear() {
           super.clear();
-          lowest_ = 0;
+          eq0Min_ = 0;
 
-          low_ = 0;
+          gt0Le5Min_ = 0;
 
-          lowMedium_ = 0;
+          gt5Le10Min_ = 0;
 
-          medium_ = 0;
+          gt10Le15Min_ = 0;
 
-          mediumHigh_ = 0;
+          gt15Le20Min_ = 0;
 
-          high_ = 0;
+          gt20Le25Min_ = 0;
 
-          veryHigh_ = 0;
+          gt25Le30Min_ = 0;
 
-          highest_ = 0;
+          gt30Min_ = 0;
 
           return this;
         }
@@ -2490,14 +2502,14 @@ public final class RiskScore {
         @java.lang.Override
         public org.ena.server.common.protocols.generated.RiskScore.RiskScoreParameters.DurationRiskParameter buildPartial() {
           org.ena.server.common.protocols.generated.RiskScore.RiskScoreParameters.DurationRiskParameter result = new org.ena.server.common.protocols.generated.RiskScore.RiskScoreParameters.DurationRiskParameter(this);
-          result.lowest_ = lowest_;
-          result.low_ = low_;
-          result.lowMedium_ = lowMedium_;
-          result.medium_ = medium_;
-          result.mediumHigh_ = mediumHigh_;
-          result.high_ = high_;
-          result.veryHigh_ = veryHigh_;
-          result.highest_ = highest_;
+          result.eq0Min_ = eq0Min_;
+          result.gt0Le5Min_ = gt0Le5Min_;
+          result.gt5Le10Min_ = gt5Le10Min_;
+          result.gt10Le15Min_ = gt10Le15Min_;
+          result.gt15Le20Min_ = gt15Le20Min_;
+          result.gt20Le25Min_ = gt20Le25Min_;
+          result.gt25Le30Min_ = gt25Le30Min_;
+          result.gt30Min_ = gt30Min_;
           onBuilt();
           return result;
         }
@@ -2546,29 +2558,29 @@ public final class RiskScore {
 
         public Builder mergeFrom(org.ena.server.common.protocols.generated.RiskScore.RiskScoreParameters.DurationRiskParameter other) {
           if (other == org.ena.server.common.protocols.generated.RiskScore.RiskScoreParameters.DurationRiskParameter.getDefaultInstance()) return this;
-          if (other.lowest_ != 0) {
-            setLowestValue(other.getLowestValue());
+          if (other.eq0Min_ != 0) {
+            setEq0MinValue(other.getEq0MinValue());
           }
-          if (other.low_ != 0) {
-            setLowValue(other.getLowValue());
+          if (other.gt0Le5Min_ != 0) {
+            setGt0Le5MinValue(other.getGt0Le5MinValue());
           }
-          if (other.lowMedium_ != 0) {
-            setLowMediumValue(other.getLowMediumValue());
+          if (other.gt5Le10Min_ != 0) {
+            setGt5Le10MinValue(other.getGt5Le10MinValue());
           }
-          if (other.medium_ != 0) {
-            setMediumValue(other.getMediumValue());
+          if (other.gt10Le15Min_ != 0) {
+            setGt10Le15MinValue(other.getGt10Le15MinValue());
           }
-          if (other.mediumHigh_ != 0) {
-            setMediumHighValue(other.getMediumHighValue());
+          if (other.gt15Le20Min_ != 0) {
+            setGt15Le20MinValue(other.getGt15Le20MinValue());
           }
-          if (other.high_ != 0) {
-            setHighValue(other.getHighValue());
+          if (other.gt20Le25Min_ != 0) {
+            setGt20Le25MinValue(other.getGt20Le25MinValue());
           }
-          if (other.veryHigh_ != 0) {
-            setVeryHighValue(other.getVeryHighValue());
+          if (other.gt25Le30Min_ != 0) {
+            setGt25Le30MinValue(other.getGt25Le30MinValue());
           }
-          if (other.highest_ != 0) {
-            setHighestValue(other.getHighestValue());
+          if (other.gt30Min_ != 0) {
+            setGt30MinValue(other.getGt30MinValue());
           }
           this.mergeUnknownFields(other.unknownFields);
           onChanged();
@@ -2599,578 +2611,578 @@ public final class RiskScore {
           return this;
         }
 
-        private int lowest_ = 0;
+        private int eq0Min_ = 0;
         /**
          * <pre>
-         * &lt; 5 min
+         * D = 0 min, lowest risk
          * </pre>
          *
-         * <code>.org.ena.server.common.protocols.generated.RiskLevel lowest = 1;</code>
-         * @return The enum numeric value on the wire for lowest.
+         * <code>.org.ena.server.common.protocols.generated.RiskLevel eq_0_min = 1;</code>
+         * @return The enum numeric value on the wire for eq0Min.
          */
-        public int getLowestValue() {
-          return lowest_;
+        public int getEq0MinValue() {
+          return eq0Min_;
         }
         /**
          * <pre>
-         * &lt; 5 min
+         * D = 0 min, lowest risk
          * </pre>
          *
-         * <code>.org.ena.server.common.protocols.generated.RiskLevel lowest = 1;</code>
-         * @param value The enum numeric value on the wire for lowest to set.
+         * <code>.org.ena.server.common.protocols.generated.RiskLevel eq_0_min = 1;</code>
+         * @param value The enum numeric value on the wire for eq0Min to set.
          * @return This builder for chaining.
          */
-        public Builder setLowestValue(int value) {
-          lowest_ = value;
+        public Builder setEq0MinValue(int value) {
+          eq0Min_ = value;
           onChanged();
           return this;
         }
         /**
          * <pre>
-         * &lt; 5 min
+         * D = 0 min, lowest risk
          * </pre>
          *
-         * <code>.org.ena.server.common.protocols.generated.RiskLevel lowest = 1;</code>
-         * @return The lowest.
+         * <code>.org.ena.server.common.protocols.generated.RiskLevel eq_0_min = 1;</code>
+         * @return The eq0Min.
          */
-        public org.ena.server.common.protocols.generated.RiskScore.RiskLevel getLowest() {
+        public org.ena.server.common.protocols.generated.RiskScore.RiskLevel getEq0Min() {
           @SuppressWarnings("deprecation")
-          org.ena.server.common.protocols.generated.RiskScore.RiskLevel result = org.ena.server.common.protocols.generated.RiskScore.RiskLevel.valueOf(lowest_);
+          org.ena.server.common.protocols.generated.RiskScore.RiskLevel result = org.ena.server.common.protocols.generated.RiskScore.RiskLevel.valueOf(eq0Min_);
           return result == null ? org.ena.server.common.protocols.generated.RiskScore.RiskLevel.UNRECOGNIZED : result;
         }
         /**
          * <pre>
-         * &lt; 5 min
+         * D = 0 min, lowest risk
          * </pre>
          *
-         * <code>.org.ena.server.common.protocols.generated.RiskLevel lowest = 1;</code>
-         * @param value The lowest to set.
+         * <code>.org.ena.server.common.protocols.generated.RiskLevel eq_0_min = 1;</code>
+         * @param value The eq0Min to set.
          * @return This builder for chaining.
          */
-        public Builder setLowest(org.ena.server.common.protocols.generated.RiskScore.RiskLevel value) {
+        public Builder setEq0Min(org.ena.server.common.protocols.generated.RiskScore.RiskLevel value) {
           if (value == null) {
             throw new NullPointerException();
           }
           
-          lowest_ = value.getNumber();
+          eq0Min_ = value.getNumber();
           onChanged();
           return this;
         }
         /**
          * <pre>
-         * &lt; 5 min
+         * D = 0 min, lowest risk
          * </pre>
          *
-         * <code>.org.ena.server.common.protocols.generated.RiskLevel lowest = 1;</code>
+         * <code>.org.ena.server.common.protocols.generated.RiskLevel eq_0_min = 1;</code>
          * @return This builder for chaining.
          */
-        public Builder clearLowest() {
+        public Builder clearEq0Min() {
           
-          lowest_ = 0;
+          eq0Min_ = 0;
           onChanged();
           return this;
         }
 
-        private int low_ = 0;
+        private int gt0Le5Min_ = 0;
         /**
          * <pre>
-         * 5 min
+         * 0 &lt; D &lt;= 5 min
          * </pre>
          *
-         * <code>.org.ena.server.common.protocols.generated.RiskLevel low = 2;</code>
-         * @return The enum numeric value on the wire for low.
+         * <code>.org.ena.server.common.protocols.generated.RiskLevel gt_0_le_5_min = 2;</code>
+         * @return The enum numeric value on the wire for gt0Le5Min.
          */
-        public int getLowValue() {
-          return low_;
+        public int getGt0Le5MinValue() {
+          return gt0Le5Min_;
         }
         /**
          * <pre>
-         * 5 min
+         * 0 &lt; D &lt;= 5 min
          * </pre>
          *
-         * <code>.org.ena.server.common.protocols.generated.RiskLevel low = 2;</code>
-         * @param value The enum numeric value on the wire for low to set.
+         * <code>.org.ena.server.common.protocols.generated.RiskLevel gt_0_le_5_min = 2;</code>
+         * @param value The enum numeric value on the wire for gt0Le5Min to set.
          * @return This builder for chaining.
          */
-        public Builder setLowValue(int value) {
-          low_ = value;
+        public Builder setGt0Le5MinValue(int value) {
+          gt0Le5Min_ = value;
           onChanged();
           return this;
         }
         /**
          * <pre>
-         * 5 min
+         * 0 &lt; D &lt;= 5 min
          * </pre>
          *
-         * <code>.org.ena.server.common.protocols.generated.RiskLevel low = 2;</code>
-         * @return The low.
+         * <code>.org.ena.server.common.protocols.generated.RiskLevel gt_0_le_5_min = 2;</code>
+         * @return The gt0Le5Min.
          */
-        public org.ena.server.common.protocols.generated.RiskScore.RiskLevel getLow() {
+        public org.ena.server.common.protocols.generated.RiskScore.RiskLevel getGt0Le5Min() {
           @SuppressWarnings("deprecation")
-          org.ena.server.common.protocols.generated.RiskScore.RiskLevel result = org.ena.server.common.protocols.generated.RiskScore.RiskLevel.valueOf(low_);
+          org.ena.server.common.protocols.generated.RiskScore.RiskLevel result = org.ena.server.common.protocols.generated.RiskScore.RiskLevel.valueOf(gt0Le5Min_);
           return result == null ? org.ena.server.common.protocols.generated.RiskScore.RiskLevel.UNRECOGNIZED : result;
         }
         /**
          * <pre>
-         * 5 min
+         * 0 &lt; D &lt;= 5 min
          * </pre>
          *
-         * <code>.org.ena.server.common.protocols.generated.RiskLevel low = 2;</code>
-         * @param value The low to set.
+         * <code>.org.ena.server.common.protocols.generated.RiskLevel gt_0_le_5_min = 2;</code>
+         * @param value The gt0Le5Min to set.
          * @return This builder for chaining.
          */
-        public Builder setLow(org.ena.server.common.protocols.generated.RiskScore.RiskLevel value) {
+        public Builder setGt0Le5Min(org.ena.server.common.protocols.generated.RiskScore.RiskLevel value) {
           if (value == null) {
             throw new NullPointerException();
           }
           
-          low_ = value.getNumber();
+          gt0Le5Min_ = value.getNumber();
           onChanged();
           return this;
         }
         /**
          * <pre>
-         * 5 min
+         * 0 &lt; D &lt;= 5 min
          * </pre>
          *
-         * <code>.org.ena.server.common.protocols.generated.RiskLevel low = 2;</code>
+         * <code>.org.ena.server.common.protocols.generated.RiskLevel gt_0_le_5_min = 2;</code>
          * @return This builder for chaining.
          */
-        public Builder clearLow() {
+        public Builder clearGt0Le5Min() {
           
-          low_ = 0;
+          gt0Le5Min_ = 0;
           onChanged();
           return this;
         }
 
-        private int lowMedium_ = 0;
+        private int gt5Le10Min_ = 0;
         /**
          * <pre>
-         * 10 min
+         * 5 &lt; D &lt;= 10 min
          * </pre>
          *
-         * <code>.org.ena.server.common.protocols.generated.RiskLevel low_medium = 3;</code>
-         * @return The enum numeric value on the wire for lowMedium.
+         * <code>.org.ena.server.common.protocols.generated.RiskLevel gt_5_le_10_min = 3;</code>
+         * @return The enum numeric value on the wire for gt5Le10Min.
          */
-        public int getLowMediumValue() {
-          return lowMedium_;
+        public int getGt5Le10MinValue() {
+          return gt5Le10Min_;
         }
         /**
          * <pre>
-         * 10 min
+         * 5 &lt; D &lt;= 10 min
          * </pre>
          *
-         * <code>.org.ena.server.common.protocols.generated.RiskLevel low_medium = 3;</code>
-         * @param value The enum numeric value on the wire for lowMedium to set.
+         * <code>.org.ena.server.common.protocols.generated.RiskLevel gt_5_le_10_min = 3;</code>
+         * @param value The enum numeric value on the wire for gt5Le10Min to set.
          * @return This builder for chaining.
          */
-        public Builder setLowMediumValue(int value) {
-          lowMedium_ = value;
+        public Builder setGt5Le10MinValue(int value) {
+          gt5Le10Min_ = value;
           onChanged();
           return this;
         }
         /**
          * <pre>
-         * 10 min
+         * 5 &lt; D &lt;= 10 min
          * </pre>
          *
-         * <code>.org.ena.server.common.protocols.generated.RiskLevel low_medium = 3;</code>
-         * @return The lowMedium.
+         * <code>.org.ena.server.common.protocols.generated.RiskLevel gt_5_le_10_min = 3;</code>
+         * @return The gt5Le10Min.
          */
-        public org.ena.server.common.protocols.generated.RiskScore.RiskLevel getLowMedium() {
+        public org.ena.server.common.protocols.generated.RiskScore.RiskLevel getGt5Le10Min() {
           @SuppressWarnings("deprecation")
-          org.ena.server.common.protocols.generated.RiskScore.RiskLevel result = org.ena.server.common.protocols.generated.RiskScore.RiskLevel.valueOf(lowMedium_);
+          org.ena.server.common.protocols.generated.RiskScore.RiskLevel result = org.ena.server.common.protocols.generated.RiskScore.RiskLevel.valueOf(gt5Le10Min_);
           return result == null ? org.ena.server.common.protocols.generated.RiskScore.RiskLevel.UNRECOGNIZED : result;
         }
         /**
          * <pre>
-         * 10 min
+         * 5 &lt; D &lt;= 10 min
          * </pre>
          *
-         * <code>.org.ena.server.common.protocols.generated.RiskLevel low_medium = 3;</code>
-         * @param value The lowMedium to set.
+         * <code>.org.ena.server.common.protocols.generated.RiskLevel gt_5_le_10_min = 3;</code>
+         * @param value The gt5Le10Min to set.
          * @return This builder for chaining.
          */
-        public Builder setLowMedium(org.ena.server.common.protocols.generated.RiskScore.RiskLevel value) {
+        public Builder setGt5Le10Min(org.ena.server.common.protocols.generated.RiskScore.RiskLevel value) {
           if (value == null) {
             throw new NullPointerException();
           }
           
-          lowMedium_ = value.getNumber();
+          gt5Le10Min_ = value.getNumber();
           onChanged();
           return this;
         }
         /**
          * <pre>
-         * 10 min
+         * 5 &lt; D &lt;= 10 min
          * </pre>
          *
-         * <code>.org.ena.server.common.protocols.generated.RiskLevel low_medium = 3;</code>
+         * <code>.org.ena.server.common.protocols.generated.RiskLevel gt_5_le_10_min = 3;</code>
          * @return This builder for chaining.
          */
-        public Builder clearLowMedium() {
+        public Builder clearGt5Le10Min() {
           
-          lowMedium_ = 0;
+          gt5Le10Min_ = 0;
           onChanged();
           return this;
         }
 
-        private int medium_ = 0;
+        private int gt10Le15Min_ = 0;
         /**
          * <pre>
-         * 15 min
+         * 10 &lt; D &lt;= 15 min
          * </pre>
          *
-         * <code>.org.ena.server.common.protocols.generated.RiskLevel medium = 4;</code>
-         * @return The enum numeric value on the wire for medium.
+         * <code>.org.ena.server.common.protocols.generated.RiskLevel gt_10_le_15_min = 4;</code>
+         * @return The enum numeric value on the wire for gt10Le15Min.
          */
-        public int getMediumValue() {
-          return medium_;
+        public int getGt10Le15MinValue() {
+          return gt10Le15Min_;
         }
         /**
          * <pre>
-         * 15 min
+         * 10 &lt; D &lt;= 15 min
          * </pre>
          *
-         * <code>.org.ena.server.common.protocols.generated.RiskLevel medium = 4;</code>
-         * @param value The enum numeric value on the wire for medium to set.
+         * <code>.org.ena.server.common.protocols.generated.RiskLevel gt_10_le_15_min = 4;</code>
+         * @param value The enum numeric value on the wire for gt10Le15Min to set.
          * @return This builder for chaining.
          */
-        public Builder setMediumValue(int value) {
-          medium_ = value;
+        public Builder setGt10Le15MinValue(int value) {
+          gt10Le15Min_ = value;
           onChanged();
           return this;
         }
         /**
          * <pre>
-         * 15 min
+         * 10 &lt; D &lt;= 15 min
          * </pre>
          *
-         * <code>.org.ena.server.common.protocols.generated.RiskLevel medium = 4;</code>
-         * @return The medium.
+         * <code>.org.ena.server.common.protocols.generated.RiskLevel gt_10_le_15_min = 4;</code>
+         * @return The gt10Le15Min.
          */
-        public org.ena.server.common.protocols.generated.RiskScore.RiskLevel getMedium() {
+        public org.ena.server.common.protocols.generated.RiskScore.RiskLevel getGt10Le15Min() {
           @SuppressWarnings("deprecation")
-          org.ena.server.common.protocols.generated.RiskScore.RiskLevel result = org.ena.server.common.protocols.generated.RiskScore.RiskLevel.valueOf(medium_);
+          org.ena.server.common.protocols.generated.RiskScore.RiskLevel result = org.ena.server.common.protocols.generated.RiskScore.RiskLevel.valueOf(gt10Le15Min_);
           return result == null ? org.ena.server.common.protocols.generated.RiskScore.RiskLevel.UNRECOGNIZED : result;
         }
         /**
          * <pre>
-         * 15 min
+         * 10 &lt; D &lt;= 15 min
          * </pre>
          *
-         * <code>.org.ena.server.common.protocols.generated.RiskLevel medium = 4;</code>
-         * @param value The medium to set.
+         * <code>.org.ena.server.common.protocols.generated.RiskLevel gt_10_le_15_min = 4;</code>
+         * @param value The gt10Le15Min to set.
          * @return This builder for chaining.
          */
-        public Builder setMedium(org.ena.server.common.protocols.generated.RiskScore.RiskLevel value) {
+        public Builder setGt10Le15Min(org.ena.server.common.protocols.generated.RiskScore.RiskLevel value) {
           if (value == null) {
             throw new NullPointerException();
           }
           
-          medium_ = value.getNumber();
+          gt10Le15Min_ = value.getNumber();
           onChanged();
           return this;
         }
         /**
          * <pre>
-         * 15 min
+         * 10 &lt; D &lt;= 15 min
          * </pre>
          *
-         * <code>.org.ena.server.common.protocols.generated.RiskLevel medium = 4;</code>
+         * <code>.org.ena.server.common.protocols.generated.RiskLevel gt_10_le_15_min = 4;</code>
          * @return This builder for chaining.
          */
-        public Builder clearMedium() {
+        public Builder clearGt10Le15Min() {
           
-          medium_ = 0;
+          gt10Le15Min_ = 0;
           onChanged();
           return this;
         }
 
-        private int mediumHigh_ = 0;
+        private int gt15Le20Min_ = 0;
         /**
          * <pre>
-         * 20 min
+         * 15 &lt; D &lt;= 20 min
          * </pre>
          *
-         * <code>.org.ena.server.common.protocols.generated.RiskLevel medium_high = 5;</code>
-         * @return The enum numeric value on the wire for mediumHigh.
+         * <code>.org.ena.server.common.protocols.generated.RiskLevel gt_15_le_20_min = 5;</code>
+         * @return The enum numeric value on the wire for gt15Le20Min.
          */
-        public int getMediumHighValue() {
-          return mediumHigh_;
+        public int getGt15Le20MinValue() {
+          return gt15Le20Min_;
         }
         /**
          * <pre>
-         * 20 min
+         * 15 &lt; D &lt;= 20 min
          * </pre>
          *
-         * <code>.org.ena.server.common.protocols.generated.RiskLevel medium_high = 5;</code>
-         * @param value The enum numeric value on the wire for mediumHigh to set.
+         * <code>.org.ena.server.common.protocols.generated.RiskLevel gt_15_le_20_min = 5;</code>
+         * @param value The enum numeric value on the wire for gt15Le20Min to set.
          * @return This builder for chaining.
          */
-        public Builder setMediumHighValue(int value) {
-          mediumHigh_ = value;
+        public Builder setGt15Le20MinValue(int value) {
+          gt15Le20Min_ = value;
           onChanged();
           return this;
         }
         /**
          * <pre>
-         * 20 min
+         * 15 &lt; D &lt;= 20 min
          * </pre>
          *
-         * <code>.org.ena.server.common.protocols.generated.RiskLevel medium_high = 5;</code>
-         * @return The mediumHigh.
+         * <code>.org.ena.server.common.protocols.generated.RiskLevel gt_15_le_20_min = 5;</code>
+         * @return The gt15Le20Min.
          */
-        public org.ena.server.common.protocols.generated.RiskScore.RiskLevel getMediumHigh() {
+        public org.ena.server.common.protocols.generated.RiskScore.RiskLevel getGt15Le20Min() {
           @SuppressWarnings("deprecation")
-          org.ena.server.common.protocols.generated.RiskScore.RiskLevel result = org.ena.server.common.protocols.generated.RiskScore.RiskLevel.valueOf(mediumHigh_);
+          org.ena.server.common.protocols.generated.RiskScore.RiskLevel result = org.ena.server.common.protocols.generated.RiskScore.RiskLevel.valueOf(gt15Le20Min_);
           return result == null ? org.ena.server.common.protocols.generated.RiskScore.RiskLevel.UNRECOGNIZED : result;
         }
         /**
          * <pre>
-         * 20 min
+         * 15 &lt; D &lt;= 20 min
          * </pre>
          *
-         * <code>.org.ena.server.common.protocols.generated.RiskLevel medium_high = 5;</code>
-         * @param value The mediumHigh to set.
+         * <code>.org.ena.server.common.protocols.generated.RiskLevel gt_15_le_20_min = 5;</code>
+         * @param value The gt15Le20Min to set.
          * @return This builder for chaining.
          */
-        public Builder setMediumHigh(org.ena.server.common.protocols.generated.RiskScore.RiskLevel value) {
+        public Builder setGt15Le20Min(org.ena.server.common.protocols.generated.RiskScore.RiskLevel value) {
           if (value == null) {
             throw new NullPointerException();
           }
           
-          mediumHigh_ = value.getNumber();
+          gt15Le20Min_ = value.getNumber();
           onChanged();
           return this;
         }
         /**
          * <pre>
-         * 20 min
+         * 15 &lt; D &lt;= 20 min
          * </pre>
          *
-         * <code>.org.ena.server.common.protocols.generated.RiskLevel medium_high = 5;</code>
+         * <code>.org.ena.server.common.protocols.generated.RiskLevel gt_15_le_20_min = 5;</code>
          * @return This builder for chaining.
          */
-        public Builder clearMediumHigh() {
+        public Builder clearGt15Le20Min() {
           
-          mediumHigh_ = 0;
+          gt15Le20Min_ = 0;
           onChanged();
           return this;
         }
 
-        private int high_ = 0;
+        private int gt20Le25Min_ = 0;
         /**
          * <pre>
-         * 25 min
+         * 20 &lt; D &lt;= 25 min
          * </pre>
          *
-         * <code>.org.ena.server.common.protocols.generated.RiskLevel high = 6;</code>
-         * @return The enum numeric value on the wire for high.
+         * <code>.org.ena.server.common.protocols.generated.RiskLevel gt_20_le_25_min = 6;</code>
+         * @return The enum numeric value on the wire for gt20Le25Min.
          */
-        public int getHighValue() {
-          return high_;
+        public int getGt20Le25MinValue() {
+          return gt20Le25Min_;
         }
         /**
          * <pre>
-         * 25 min
+         * 20 &lt; D &lt;= 25 min
          * </pre>
          *
-         * <code>.org.ena.server.common.protocols.generated.RiskLevel high = 6;</code>
-         * @param value The enum numeric value on the wire for high to set.
+         * <code>.org.ena.server.common.protocols.generated.RiskLevel gt_20_le_25_min = 6;</code>
+         * @param value The enum numeric value on the wire for gt20Le25Min to set.
          * @return This builder for chaining.
          */
-        public Builder setHighValue(int value) {
-          high_ = value;
+        public Builder setGt20Le25MinValue(int value) {
+          gt20Le25Min_ = value;
           onChanged();
           return this;
         }
         /**
          * <pre>
-         * 25 min
+         * 20 &lt; D &lt;= 25 min
          * </pre>
          *
-         * <code>.org.ena.server.common.protocols.generated.RiskLevel high = 6;</code>
-         * @return The high.
+         * <code>.org.ena.server.common.protocols.generated.RiskLevel gt_20_le_25_min = 6;</code>
+         * @return The gt20Le25Min.
          */
-        public org.ena.server.common.protocols.generated.RiskScore.RiskLevel getHigh() {
+        public org.ena.server.common.protocols.generated.RiskScore.RiskLevel getGt20Le25Min() {
           @SuppressWarnings("deprecation")
-          org.ena.server.common.protocols.generated.RiskScore.RiskLevel result = org.ena.server.common.protocols.generated.RiskScore.RiskLevel.valueOf(high_);
+          org.ena.server.common.protocols.generated.RiskScore.RiskLevel result = org.ena.server.common.protocols.generated.RiskScore.RiskLevel.valueOf(gt20Le25Min_);
           return result == null ? org.ena.server.common.protocols.generated.RiskScore.RiskLevel.UNRECOGNIZED : result;
         }
         /**
          * <pre>
-         * 25 min
+         * 20 &lt; D &lt;= 25 min
          * </pre>
          *
-         * <code>.org.ena.server.common.protocols.generated.RiskLevel high = 6;</code>
-         * @param value The high to set.
+         * <code>.org.ena.server.common.protocols.generated.RiskLevel gt_20_le_25_min = 6;</code>
+         * @param value The gt20Le25Min to set.
          * @return This builder for chaining.
          */
-        public Builder setHigh(org.ena.server.common.protocols.generated.RiskScore.RiskLevel value) {
+        public Builder setGt20Le25Min(org.ena.server.common.protocols.generated.RiskScore.RiskLevel value) {
           if (value == null) {
             throw new NullPointerException();
           }
           
-          high_ = value.getNumber();
+          gt20Le25Min_ = value.getNumber();
           onChanged();
           return this;
         }
         /**
          * <pre>
-         * 25 min
+         * 20 &lt; D &lt;= 25 min
          * </pre>
          *
-         * <code>.org.ena.server.common.protocols.generated.RiskLevel high = 6;</code>
+         * <code>.org.ena.server.common.protocols.generated.RiskLevel gt_20_le_25_min = 6;</code>
          * @return This builder for chaining.
          */
-        public Builder clearHigh() {
+        public Builder clearGt20Le25Min() {
           
-          high_ = 0;
+          gt20Le25Min_ = 0;
           onChanged();
           return this;
         }
 
-        private int veryHigh_ = 0;
+        private int gt25Le30Min_ = 0;
         /**
          * <pre>
-         * 30 min
+         * 25 &lt; D &lt;= 30 min
          * </pre>
          *
-         * <code>.org.ena.server.common.protocols.generated.RiskLevel very_high = 7;</code>
-         * @return The enum numeric value on the wire for veryHigh.
+         * <code>.org.ena.server.common.protocols.generated.RiskLevel gt_25_le_30_min = 7;</code>
+         * @return The enum numeric value on the wire for gt25Le30Min.
          */
-        public int getVeryHighValue() {
-          return veryHigh_;
+        public int getGt25Le30MinValue() {
+          return gt25Le30Min_;
         }
         /**
          * <pre>
-         * 30 min
+         * 25 &lt; D &lt;= 30 min
          * </pre>
          *
-         * <code>.org.ena.server.common.protocols.generated.RiskLevel very_high = 7;</code>
-         * @param value The enum numeric value on the wire for veryHigh to set.
+         * <code>.org.ena.server.common.protocols.generated.RiskLevel gt_25_le_30_min = 7;</code>
+         * @param value The enum numeric value on the wire for gt25Le30Min to set.
          * @return This builder for chaining.
          */
-        public Builder setVeryHighValue(int value) {
-          veryHigh_ = value;
+        public Builder setGt25Le30MinValue(int value) {
+          gt25Le30Min_ = value;
           onChanged();
           return this;
         }
         /**
          * <pre>
-         * 30 min
+         * 25 &lt; D &lt;= 30 min
          * </pre>
          *
-         * <code>.org.ena.server.common.protocols.generated.RiskLevel very_high = 7;</code>
-         * @return The veryHigh.
+         * <code>.org.ena.server.common.protocols.generated.RiskLevel gt_25_le_30_min = 7;</code>
+         * @return The gt25Le30Min.
          */
-        public org.ena.server.common.protocols.generated.RiskScore.RiskLevel getVeryHigh() {
+        public org.ena.server.common.protocols.generated.RiskScore.RiskLevel getGt25Le30Min() {
           @SuppressWarnings("deprecation")
-          org.ena.server.common.protocols.generated.RiskScore.RiskLevel result = org.ena.server.common.protocols.generated.RiskScore.RiskLevel.valueOf(veryHigh_);
+          org.ena.server.common.protocols.generated.RiskScore.RiskLevel result = org.ena.server.common.protocols.generated.RiskScore.RiskLevel.valueOf(gt25Le30Min_);
           return result == null ? org.ena.server.common.protocols.generated.RiskScore.RiskLevel.UNRECOGNIZED : result;
         }
         /**
          * <pre>
-         * 30 min
+         * 25 &lt; D &lt;= 30 min
          * </pre>
          *
-         * <code>.org.ena.server.common.protocols.generated.RiskLevel very_high = 7;</code>
-         * @param value The veryHigh to set.
+         * <code>.org.ena.server.common.protocols.generated.RiskLevel gt_25_le_30_min = 7;</code>
+         * @param value The gt25Le30Min to set.
          * @return This builder for chaining.
          */
-        public Builder setVeryHigh(org.ena.server.common.protocols.generated.RiskScore.RiskLevel value) {
+        public Builder setGt25Le30Min(org.ena.server.common.protocols.generated.RiskScore.RiskLevel value) {
           if (value == null) {
             throw new NullPointerException();
           }
           
-          veryHigh_ = value.getNumber();
+          gt25Le30Min_ = value.getNumber();
           onChanged();
           return this;
         }
         /**
          * <pre>
-         * 30 min
+         * 25 &lt; D &lt;= 30 min
          * </pre>
          *
-         * <code>.org.ena.server.common.protocols.generated.RiskLevel very_high = 7;</code>
+         * <code>.org.ena.server.common.protocols.generated.RiskLevel gt_25_le_30_min = 7;</code>
          * @return This builder for chaining.
          */
-        public Builder clearVeryHigh() {
+        public Builder clearGt25Le30Min() {
           
-          veryHigh_ = 0;
+          gt25Le30Min_ = 0;
           onChanged();
           return this;
         }
 
-        private int highest_ = 0;
+        private int gt30Min_ = 0;
         /**
          * <pre>
-         * &gt; 30 min
+         * &gt; 30 min, highest risk
          * </pre>
          *
-         * <code>.org.ena.server.common.protocols.generated.RiskLevel highest = 8;</code>
-         * @return The enum numeric value on the wire for highest.
+         * <code>.org.ena.server.common.protocols.generated.RiskLevel gt_30_min = 8;</code>
+         * @return The enum numeric value on the wire for gt30Min.
          */
-        public int getHighestValue() {
-          return highest_;
+        public int getGt30MinValue() {
+          return gt30Min_;
         }
         /**
          * <pre>
-         * &gt; 30 min
+         * &gt; 30 min, highest risk
          * </pre>
          *
-         * <code>.org.ena.server.common.protocols.generated.RiskLevel highest = 8;</code>
-         * @param value The enum numeric value on the wire for highest to set.
+         * <code>.org.ena.server.common.protocols.generated.RiskLevel gt_30_min = 8;</code>
+         * @param value The enum numeric value on the wire for gt30Min to set.
          * @return This builder for chaining.
          */
-        public Builder setHighestValue(int value) {
-          highest_ = value;
+        public Builder setGt30MinValue(int value) {
+          gt30Min_ = value;
           onChanged();
           return this;
         }
         /**
          * <pre>
-         * &gt; 30 min
+         * &gt; 30 min, highest risk
          * </pre>
          *
-         * <code>.org.ena.server.common.protocols.generated.RiskLevel highest = 8;</code>
-         * @return The highest.
+         * <code>.org.ena.server.common.protocols.generated.RiskLevel gt_30_min = 8;</code>
+         * @return The gt30Min.
          */
-        public org.ena.server.common.protocols.generated.RiskScore.RiskLevel getHighest() {
+        public org.ena.server.common.protocols.generated.RiskScore.RiskLevel getGt30Min() {
           @SuppressWarnings("deprecation")
-          org.ena.server.common.protocols.generated.RiskScore.RiskLevel result = org.ena.server.common.protocols.generated.RiskScore.RiskLevel.valueOf(highest_);
+          org.ena.server.common.protocols.generated.RiskScore.RiskLevel result = org.ena.server.common.protocols.generated.RiskScore.RiskLevel.valueOf(gt30Min_);
           return result == null ? org.ena.server.common.protocols.generated.RiskScore.RiskLevel.UNRECOGNIZED : result;
         }
         /**
          * <pre>
-         * &gt; 30 min
+         * &gt; 30 min, highest risk
          * </pre>
          *
-         * <code>.org.ena.server.common.protocols.generated.RiskLevel highest = 8;</code>
-         * @param value The highest to set.
+         * <code>.org.ena.server.common.protocols.generated.RiskLevel gt_30_min = 8;</code>
+         * @param value The gt30Min to set.
          * @return This builder for chaining.
          */
-        public Builder setHighest(org.ena.server.common.protocols.generated.RiskScore.RiskLevel value) {
+        public Builder setGt30Min(org.ena.server.common.protocols.generated.RiskScore.RiskLevel value) {
           if (value == null) {
             throw new NullPointerException();
           }
           
-          highest_ = value.getNumber();
+          gt30Min_ = value.getNumber();
           onChanged();
           return this;
         }
         /**
          * <pre>
-         * &gt; 30 min
+         * &gt; 30 min, highest risk
          * </pre>
          *
-         * <code>.org.ena.server.common.protocols.generated.RiskLevel highest = 8;</code>
+         * <code>.org.ena.server.common.protocols.generated.RiskLevel gt_30_min = 8;</code>
          * @return This builder for chaining.
          */
-        public Builder clearHighest() {
+        public Builder clearGt30Min() {
           
-          highest_ = 0;
+          gt30Min_ = 0;
           onChanged();
           return this;
         }
@@ -3227,190 +3239,190 @@ public final class RiskScore {
 
     }
 
-    public interface DaysRiskParameterOrBuilder extends
-        // @@protoc_insertion_point(interface_extends:org.ena.server.common.protocols.generated.RiskScoreParameters.DaysRiskParameter)
+    public interface DaysSinceLastExposureRiskParameterOrBuilder extends
+        // @@protoc_insertion_point(interface_extends:org.ena.server.common.protocols.generated.RiskScoreParameters.DaysSinceLastExposureRiskParameter)
         com.google.protobuf.MessageOrBuilder {
 
       /**
        * <pre>
-       * &gt;= 14 days
+       * D &gt;= 14 days, lowest risk
        * </pre>
        *
-       * <code>.org.ena.server.common.protocols.generated.RiskLevel lowest = 1;</code>
-       * @return The enum numeric value on the wire for lowest.
+       * <code>.org.ena.server.common.protocols.generated.RiskLevel ge_14_days = 1;</code>
+       * @return The enum numeric value on the wire for ge14Days.
        */
-      int getLowestValue();
+      int getGe14DaysValue();
       /**
        * <pre>
-       * &gt;= 14 days
+       * D &gt;= 14 days, lowest risk
        * </pre>
        *
-       * <code>.org.ena.server.common.protocols.generated.RiskLevel lowest = 1;</code>
-       * @return The lowest.
+       * <code>.org.ena.server.common.protocols.generated.RiskLevel ge_14_days = 1;</code>
+       * @return The ge14Days.
        */
-      org.ena.server.common.protocols.generated.RiskScore.RiskLevel getLowest();
+      org.ena.server.common.protocols.generated.RiskScore.RiskLevel getGe14Days();
 
       /**
        * <pre>
-       * 13 or 12 days
+       * 12 &lt;= D &lt; 14 days
        * </pre>
        *
-       * <code>.org.ena.server.common.protocols.generated.RiskLevel low = 2;</code>
-       * @return The enum numeric value on the wire for low.
+       * <code>.org.ena.server.common.protocols.generated.RiskLevel ge_12_lt_14_days = 2;</code>
+       * @return The enum numeric value on the wire for ge12Lt14Days.
        */
-      int getLowValue();
+      int getGe12Lt14DaysValue();
       /**
        * <pre>
-       * 13 or 12 days
+       * 12 &lt;= D &lt; 14 days
        * </pre>
        *
-       * <code>.org.ena.server.common.protocols.generated.RiskLevel low = 2;</code>
-       * @return The low.
+       * <code>.org.ena.server.common.protocols.generated.RiskLevel ge_12_lt_14_days = 2;</code>
+       * @return The ge12Lt14Days.
        */
-      org.ena.server.common.protocols.generated.RiskScore.RiskLevel getLow();
+      org.ena.server.common.protocols.generated.RiskScore.RiskLevel getGe12Lt14Days();
 
       /**
        * <pre>
-       * 11 or 10 days
+       * 10 &lt;= D &lt; 12 days
        * </pre>
        *
-       * <code>.org.ena.server.common.protocols.generated.RiskLevel low_medium = 3;</code>
-       * @return The enum numeric value on the wire for lowMedium.
+       * <code>.org.ena.server.common.protocols.generated.RiskLevel ge_10_lt_12_days = 3;</code>
+       * @return The enum numeric value on the wire for ge10Lt12Days.
        */
-      int getLowMediumValue();
+      int getGe10Lt12DaysValue();
       /**
        * <pre>
-       * 11 or 10 days
+       * 10 &lt;= D &lt; 12 days
        * </pre>
        *
-       * <code>.org.ena.server.common.protocols.generated.RiskLevel low_medium = 3;</code>
-       * @return The lowMedium.
+       * <code>.org.ena.server.common.protocols.generated.RiskLevel ge_10_lt_12_days = 3;</code>
+       * @return The ge10Lt12Days.
        */
-      org.ena.server.common.protocols.generated.RiskScore.RiskLevel getLowMedium();
+      org.ena.server.common.protocols.generated.RiskScore.RiskLevel getGe10Lt12Days();
 
       /**
        * <pre>
-       * 9 or 8 days
+       * 8 &lt;= D &lt; 10 days
        * </pre>
        *
-       * <code>.org.ena.server.common.protocols.generated.RiskLevel medium = 4;</code>
-       * @return The enum numeric value on the wire for medium.
+       * <code>.org.ena.server.common.protocols.generated.RiskLevel ge_8_lt_10_days = 4;</code>
+       * @return The enum numeric value on the wire for ge8Lt10Days.
        */
-      int getMediumValue();
+      int getGe8Lt10DaysValue();
       /**
        * <pre>
-       * 9 or 8 days
+       * 8 &lt;= D &lt; 10 days
        * </pre>
        *
-       * <code>.org.ena.server.common.protocols.generated.RiskLevel medium = 4;</code>
-       * @return The medium.
+       * <code>.org.ena.server.common.protocols.generated.RiskLevel ge_8_lt_10_days = 4;</code>
+       * @return The ge8Lt10Days.
        */
-      org.ena.server.common.protocols.generated.RiskScore.RiskLevel getMedium();
+      org.ena.server.common.protocols.generated.RiskScore.RiskLevel getGe8Lt10Days();
 
       /**
        * <pre>
-       * 7 or 6 days
+       * 6 &lt;= D &lt; 8 days
        * </pre>
        *
-       * <code>.org.ena.server.common.protocols.generated.RiskLevel medium_high = 5;</code>
-       * @return The enum numeric value on the wire for mediumHigh.
+       * <code>.org.ena.server.common.protocols.generated.RiskLevel ge_6_lt_8_days = 5;</code>
+       * @return The enum numeric value on the wire for ge6Lt8Days.
        */
-      int getMediumHighValue();
+      int getGe6Lt8DaysValue();
       /**
        * <pre>
-       * 7 or 6 days
+       * 6 &lt;= D &lt; 8 days
        * </pre>
        *
-       * <code>.org.ena.server.common.protocols.generated.RiskLevel medium_high = 5;</code>
-       * @return The mediumHigh.
+       * <code>.org.ena.server.common.protocols.generated.RiskLevel ge_6_lt_8_days = 5;</code>
+       * @return The ge6Lt8Days.
        */
-      org.ena.server.common.protocols.generated.RiskScore.RiskLevel getMediumHigh();
+      org.ena.server.common.protocols.generated.RiskScore.RiskLevel getGe6Lt8Days();
 
       /**
        * <pre>
-       * 5 or 4 days
+       * 4 &lt;= D &lt; 6 days
        * </pre>
        *
-       * <code>.org.ena.server.common.protocols.generated.RiskLevel high = 6;</code>
-       * @return The enum numeric value on the wire for high.
+       * <code>.org.ena.server.common.protocols.generated.RiskLevel ge_4_lt_6_days = 6;</code>
+       * @return The enum numeric value on the wire for ge4Lt6Days.
        */
-      int getHighValue();
+      int getGe4Lt6DaysValue();
       /**
        * <pre>
-       * 5 or 4 days
+       * 4 &lt;= D &lt; 6 days
        * </pre>
        *
-       * <code>.org.ena.server.common.protocols.generated.RiskLevel high = 6;</code>
-       * @return The high.
+       * <code>.org.ena.server.common.protocols.generated.RiskLevel ge_4_lt_6_days = 6;</code>
+       * @return The ge4Lt6Days.
        */
-      org.ena.server.common.protocols.generated.RiskScore.RiskLevel getHigh();
+      org.ena.server.common.protocols.generated.RiskScore.RiskLevel getGe4Lt6Days();
 
       /**
        * <pre>
-       * 3 or 2 days
+       * 2 &lt;= D &lt; 4 days
        * </pre>
        *
-       * <code>.org.ena.server.common.protocols.generated.RiskLevel very_high = 7;</code>
-       * @return The enum numeric value on the wire for veryHigh.
+       * <code>.org.ena.server.common.protocols.generated.RiskLevel ge_2_lt_4_days = 7;</code>
+       * @return The enum numeric value on the wire for ge2Lt4Days.
        */
-      int getVeryHighValue();
+      int getGe2Lt4DaysValue();
       /**
        * <pre>
-       * 3 or 2 days
+       * 2 &lt;= D &lt; 4 days
        * </pre>
        *
-       * <code>.org.ena.server.common.protocols.generated.RiskLevel very_high = 7;</code>
-       * @return The veryHigh.
+       * <code>.org.ena.server.common.protocols.generated.RiskLevel ge_2_lt_4_days = 7;</code>
+       * @return The ge2Lt4Days.
        */
-      org.ena.server.common.protocols.generated.RiskScore.RiskLevel getVeryHigh();
+      org.ena.server.common.protocols.generated.RiskScore.RiskLevel getGe2Lt4Days();
 
       /**
        * <pre>
-       * 2 or 1 days
+       * 0 &lt;= D &lt; 2 days, highest risk
        * </pre>
        *
-       * <code>.org.ena.server.common.protocols.generated.RiskLevel highest = 8;</code>
-       * @return The enum numeric value on the wire for highest.
+       * <code>.org.ena.server.common.protocols.generated.RiskLevel ge_0_lt_2_days = 8;</code>
+       * @return The enum numeric value on the wire for ge0Lt2Days.
        */
-      int getHighestValue();
+      int getGe0Lt2DaysValue();
       /**
        * <pre>
-       * 2 or 1 days
+       * 0 &lt;= D &lt; 2 days, highest risk
        * </pre>
        *
-       * <code>.org.ena.server.common.protocols.generated.RiskLevel highest = 8;</code>
-       * @return The highest.
+       * <code>.org.ena.server.common.protocols.generated.RiskLevel ge_0_lt_2_days = 8;</code>
+       * @return The ge0Lt2Days.
        */
-      org.ena.server.common.protocols.generated.RiskScore.RiskLevel getHighest();
+      org.ena.server.common.protocols.generated.RiskScore.RiskLevel getGe0Lt2Days();
     }
     /**
-     * Protobuf type {@code org.ena.server.common.protocols.generated.RiskScoreParameters.DaysRiskParameter}
+     * Protobuf type {@code org.ena.server.common.protocols.generated.RiskScoreParameters.DaysSinceLastExposureRiskParameter}
      */
-    public  static final class DaysRiskParameter extends
+    public  static final class DaysSinceLastExposureRiskParameter extends
         com.google.protobuf.GeneratedMessageV3 implements
-        // @@protoc_insertion_point(message_implements:org.ena.server.common.protocols.generated.RiskScoreParameters.DaysRiskParameter)
-        DaysRiskParameterOrBuilder {
+        // @@protoc_insertion_point(message_implements:org.ena.server.common.protocols.generated.RiskScoreParameters.DaysSinceLastExposureRiskParameter)
+        DaysSinceLastExposureRiskParameterOrBuilder {
     private static final long serialVersionUID = 0L;
-      // Use DaysRiskParameter.newBuilder() to construct.
-      private DaysRiskParameter(com.google.protobuf.GeneratedMessageV3.Builder<?> builder) {
+      // Use DaysSinceLastExposureRiskParameter.newBuilder() to construct.
+      private DaysSinceLastExposureRiskParameter(com.google.protobuf.GeneratedMessageV3.Builder<?> builder) {
         super(builder);
       }
-      private DaysRiskParameter() {
-        lowest_ = 0;
-        low_ = 0;
-        lowMedium_ = 0;
-        medium_ = 0;
-        mediumHigh_ = 0;
-        high_ = 0;
-        veryHigh_ = 0;
-        highest_ = 0;
+      private DaysSinceLastExposureRiskParameter() {
+        ge14Days_ = 0;
+        ge12Lt14Days_ = 0;
+        ge10Lt12Days_ = 0;
+        ge8Lt10Days_ = 0;
+        ge6Lt8Days_ = 0;
+        ge4Lt6Days_ = 0;
+        ge2Lt4Days_ = 0;
+        ge0Lt2Days_ = 0;
       }
 
       @java.lang.Override
       @SuppressWarnings({"unused"})
       protected java.lang.Object newInstance(
           UnusedPrivateParameter unused) {
-        return new DaysRiskParameter();
+        return new DaysSinceLastExposureRiskParameter();
       }
 
       @java.lang.Override
@@ -3418,7 +3430,7 @@ public final class RiskScore {
       getUnknownFields() {
         return this.unknownFields;
       }
-      private DaysRiskParameter(
+      private DaysSinceLastExposureRiskParameter(
           com.google.protobuf.CodedInputStream input,
           com.google.protobuf.ExtensionRegistryLite extensionRegistry)
           throws com.google.protobuf.InvalidProtocolBufferException {
@@ -3439,49 +3451,49 @@ public final class RiskScore {
               case 8: {
                 int rawValue = input.readEnum();
 
-                lowest_ = rawValue;
+                ge14Days_ = rawValue;
                 break;
               }
               case 16: {
                 int rawValue = input.readEnum();
 
-                low_ = rawValue;
+                ge12Lt14Days_ = rawValue;
                 break;
               }
               case 24: {
                 int rawValue = input.readEnum();
 
-                lowMedium_ = rawValue;
+                ge10Lt12Days_ = rawValue;
                 break;
               }
               case 32: {
                 int rawValue = input.readEnum();
 
-                medium_ = rawValue;
+                ge8Lt10Days_ = rawValue;
                 break;
               }
               case 40: {
                 int rawValue = input.readEnum();
 
-                mediumHigh_ = rawValue;
+                ge6Lt8Days_ = rawValue;
                 break;
               }
               case 48: {
                 int rawValue = input.readEnum();
 
-                high_ = rawValue;
+                ge4Lt6Days_ = rawValue;
                 break;
               }
               case 56: {
                 int rawValue = input.readEnum();
 
-                veryHigh_ = rawValue;
+                ge2Lt4Days_ = rawValue;
                 break;
               }
               case 64: {
                 int rawValue = input.readEnum();
 
-                highest_ = rawValue;
+                ge0Lt2Days_ = rawValue;
                 break;
               }
               default: {
@@ -3505,230 +3517,230 @@ public final class RiskScore {
       }
       public static final com.google.protobuf.Descriptors.Descriptor
           getDescriptor() {
-        return org.ena.server.common.protocols.generated.RiskScore.internal_static_org_ena_server_common_protocols_generated_RiskScoreParameters_DaysRiskParameter_descriptor;
+        return org.ena.server.common.protocols.generated.RiskScore.internal_static_org_ena_server_common_protocols_generated_RiskScoreParameters_DaysSinceLastExposureRiskParameter_descriptor;
       }
 
       @java.lang.Override
       protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
           internalGetFieldAccessorTable() {
-        return org.ena.server.common.protocols.generated.RiskScore.internal_static_org_ena_server_common_protocols_generated_RiskScoreParameters_DaysRiskParameter_fieldAccessorTable
+        return org.ena.server.common.protocols.generated.RiskScore.internal_static_org_ena_server_common_protocols_generated_RiskScoreParameters_DaysSinceLastExposureRiskParameter_fieldAccessorTable
             .ensureFieldAccessorsInitialized(
-                org.ena.server.common.protocols.generated.RiskScore.RiskScoreParameters.DaysRiskParameter.class, org.ena.server.common.protocols.generated.RiskScore.RiskScoreParameters.DaysRiskParameter.Builder.class);
+                org.ena.server.common.protocols.generated.RiskScore.RiskScoreParameters.DaysSinceLastExposureRiskParameter.class, org.ena.server.common.protocols.generated.RiskScore.RiskScoreParameters.DaysSinceLastExposureRiskParameter.Builder.class);
       }
 
-      public static final int LOWEST_FIELD_NUMBER = 1;
-      private int lowest_;
+      public static final int GE_14_DAYS_FIELD_NUMBER = 1;
+      private int ge14Days_;
       /**
        * <pre>
-       * &gt;= 14 days
+       * D &gt;= 14 days, lowest risk
        * </pre>
        *
-       * <code>.org.ena.server.common.protocols.generated.RiskLevel lowest = 1;</code>
-       * @return The enum numeric value on the wire for lowest.
+       * <code>.org.ena.server.common.protocols.generated.RiskLevel ge_14_days = 1;</code>
+       * @return The enum numeric value on the wire for ge14Days.
        */
-      public int getLowestValue() {
-        return lowest_;
+      public int getGe14DaysValue() {
+        return ge14Days_;
       }
       /**
        * <pre>
-       * &gt;= 14 days
+       * D &gt;= 14 days, lowest risk
        * </pre>
        *
-       * <code>.org.ena.server.common.protocols.generated.RiskLevel lowest = 1;</code>
-       * @return The lowest.
+       * <code>.org.ena.server.common.protocols.generated.RiskLevel ge_14_days = 1;</code>
+       * @return The ge14Days.
        */
-      public org.ena.server.common.protocols.generated.RiskScore.RiskLevel getLowest() {
+      public org.ena.server.common.protocols.generated.RiskScore.RiskLevel getGe14Days() {
         @SuppressWarnings("deprecation")
-        org.ena.server.common.protocols.generated.RiskScore.RiskLevel result = org.ena.server.common.protocols.generated.RiskScore.RiskLevel.valueOf(lowest_);
+        org.ena.server.common.protocols.generated.RiskScore.RiskLevel result = org.ena.server.common.protocols.generated.RiskScore.RiskLevel.valueOf(ge14Days_);
         return result == null ? org.ena.server.common.protocols.generated.RiskScore.RiskLevel.UNRECOGNIZED : result;
       }
 
-      public static final int LOW_FIELD_NUMBER = 2;
-      private int low_;
+      public static final int GE_12_LT_14_DAYS_FIELD_NUMBER = 2;
+      private int ge12Lt14Days_;
       /**
        * <pre>
-       * 13 or 12 days
+       * 12 &lt;= D &lt; 14 days
        * </pre>
        *
-       * <code>.org.ena.server.common.protocols.generated.RiskLevel low = 2;</code>
-       * @return The enum numeric value on the wire for low.
+       * <code>.org.ena.server.common.protocols.generated.RiskLevel ge_12_lt_14_days = 2;</code>
+       * @return The enum numeric value on the wire for ge12Lt14Days.
        */
-      public int getLowValue() {
-        return low_;
+      public int getGe12Lt14DaysValue() {
+        return ge12Lt14Days_;
       }
       /**
        * <pre>
-       * 13 or 12 days
+       * 12 &lt;= D &lt; 14 days
        * </pre>
        *
-       * <code>.org.ena.server.common.protocols.generated.RiskLevel low = 2;</code>
-       * @return The low.
+       * <code>.org.ena.server.common.protocols.generated.RiskLevel ge_12_lt_14_days = 2;</code>
+       * @return The ge12Lt14Days.
        */
-      public org.ena.server.common.protocols.generated.RiskScore.RiskLevel getLow() {
+      public org.ena.server.common.protocols.generated.RiskScore.RiskLevel getGe12Lt14Days() {
         @SuppressWarnings("deprecation")
-        org.ena.server.common.protocols.generated.RiskScore.RiskLevel result = org.ena.server.common.protocols.generated.RiskScore.RiskLevel.valueOf(low_);
+        org.ena.server.common.protocols.generated.RiskScore.RiskLevel result = org.ena.server.common.protocols.generated.RiskScore.RiskLevel.valueOf(ge12Lt14Days_);
         return result == null ? org.ena.server.common.protocols.generated.RiskScore.RiskLevel.UNRECOGNIZED : result;
       }
 
-      public static final int LOW_MEDIUM_FIELD_NUMBER = 3;
-      private int lowMedium_;
+      public static final int GE_10_LT_12_DAYS_FIELD_NUMBER = 3;
+      private int ge10Lt12Days_;
       /**
        * <pre>
-       * 11 or 10 days
+       * 10 &lt;= D &lt; 12 days
        * </pre>
        *
-       * <code>.org.ena.server.common.protocols.generated.RiskLevel low_medium = 3;</code>
-       * @return The enum numeric value on the wire for lowMedium.
+       * <code>.org.ena.server.common.protocols.generated.RiskLevel ge_10_lt_12_days = 3;</code>
+       * @return The enum numeric value on the wire for ge10Lt12Days.
        */
-      public int getLowMediumValue() {
-        return lowMedium_;
+      public int getGe10Lt12DaysValue() {
+        return ge10Lt12Days_;
       }
       /**
        * <pre>
-       * 11 or 10 days
+       * 10 &lt;= D &lt; 12 days
        * </pre>
        *
-       * <code>.org.ena.server.common.protocols.generated.RiskLevel low_medium = 3;</code>
-       * @return The lowMedium.
+       * <code>.org.ena.server.common.protocols.generated.RiskLevel ge_10_lt_12_days = 3;</code>
+       * @return The ge10Lt12Days.
        */
-      public org.ena.server.common.protocols.generated.RiskScore.RiskLevel getLowMedium() {
+      public org.ena.server.common.protocols.generated.RiskScore.RiskLevel getGe10Lt12Days() {
         @SuppressWarnings("deprecation")
-        org.ena.server.common.protocols.generated.RiskScore.RiskLevel result = org.ena.server.common.protocols.generated.RiskScore.RiskLevel.valueOf(lowMedium_);
+        org.ena.server.common.protocols.generated.RiskScore.RiskLevel result = org.ena.server.common.protocols.generated.RiskScore.RiskLevel.valueOf(ge10Lt12Days_);
         return result == null ? org.ena.server.common.protocols.generated.RiskScore.RiskLevel.UNRECOGNIZED : result;
       }
 
-      public static final int MEDIUM_FIELD_NUMBER = 4;
-      private int medium_;
+      public static final int GE_8_LT_10_DAYS_FIELD_NUMBER = 4;
+      private int ge8Lt10Days_;
       /**
        * <pre>
-       * 9 or 8 days
+       * 8 &lt;= D &lt; 10 days
        * </pre>
        *
-       * <code>.org.ena.server.common.protocols.generated.RiskLevel medium = 4;</code>
-       * @return The enum numeric value on the wire for medium.
+       * <code>.org.ena.server.common.protocols.generated.RiskLevel ge_8_lt_10_days = 4;</code>
+       * @return The enum numeric value on the wire for ge8Lt10Days.
        */
-      public int getMediumValue() {
-        return medium_;
+      public int getGe8Lt10DaysValue() {
+        return ge8Lt10Days_;
       }
       /**
        * <pre>
-       * 9 or 8 days
+       * 8 &lt;= D &lt; 10 days
        * </pre>
        *
-       * <code>.org.ena.server.common.protocols.generated.RiskLevel medium = 4;</code>
-       * @return The medium.
+       * <code>.org.ena.server.common.protocols.generated.RiskLevel ge_8_lt_10_days = 4;</code>
+       * @return The ge8Lt10Days.
        */
-      public org.ena.server.common.protocols.generated.RiskScore.RiskLevel getMedium() {
+      public org.ena.server.common.protocols.generated.RiskScore.RiskLevel getGe8Lt10Days() {
         @SuppressWarnings("deprecation")
-        org.ena.server.common.protocols.generated.RiskScore.RiskLevel result = org.ena.server.common.protocols.generated.RiskScore.RiskLevel.valueOf(medium_);
+        org.ena.server.common.protocols.generated.RiskScore.RiskLevel result = org.ena.server.common.protocols.generated.RiskScore.RiskLevel.valueOf(ge8Lt10Days_);
         return result == null ? org.ena.server.common.protocols.generated.RiskScore.RiskLevel.UNRECOGNIZED : result;
       }
 
-      public static final int MEDIUM_HIGH_FIELD_NUMBER = 5;
-      private int mediumHigh_;
+      public static final int GE_6_LT_8_DAYS_FIELD_NUMBER = 5;
+      private int ge6Lt8Days_;
       /**
        * <pre>
-       * 7 or 6 days
+       * 6 &lt;= D &lt; 8 days
        * </pre>
        *
-       * <code>.org.ena.server.common.protocols.generated.RiskLevel medium_high = 5;</code>
-       * @return The enum numeric value on the wire for mediumHigh.
+       * <code>.org.ena.server.common.protocols.generated.RiskLevel ge_6_lt_8_days = 5;</code>
+       * @return The enum numeric value on the wire for ge6Lt8Days.
        */
-      public int getMediumHighValue() {
-        return mediumHigh_;
+      public int getGe6Lt8DaysValue() {
+        return ge6Lt8Days_;
       }
       /**
        * <pre>
-       * 7 or 6 days
+       * 6 &lt;= D &lt; 8 days
        * </pre>
        *
-       * <code>.org.ena.server.common.protocols.generated.RiskLevel medium_high = 5;</code>
-       * @return The mediumHigh.
+       * <code>.org.ena.server.common.protocols.generated.RiskLevel ge_6_lt_8_days = 5;</code>
+       * @return The ge6Lt8Days.
        */
-      public org.ena.server.common.protocols.generated.RiskScore.RiskLevel getMediumHigh() {
+      public org.ena.server.common.protocols.generated.RiskScore.RiskLevel getGe6Lt8Days() {
         @SuppressWarnings("deprecation")
-        org.ena.server.common.protocols.generated.RiskScore.RiskLevel result = org.ena.server.common.protocols.generated.RiskScore.RiskLevel.valueOf(mediumHigh_);
+        org.ena.server.common.protocols.generated.RiskScore.RiskLevel result = org.ena.server.common.protocols.generated.RiskScore.RiskLevel.valueOf(ge6Lt8Days_);
         return result == null ? org.ena.server.common.protocols.generated.RiskScore.RiskLevel.UNRECOGNIZED : result;
       }
 
-      public static final int HIGH_FIELD_NUMBER = 6;
-      private int high_;
+      public static final int GE_4_LT_6_DAYS_FIELD_NUMBER = 6;
+      private int ge4Lt6Days_;
       /**
        * <pre>
-       * 5 or 4 days
+       * 4 &lt;= D &lt; 6 days
        * </pre>
        *
-       * <code>.org.ena.server.common.protocols.generated.RiskLevel high = 6;</code>
-       * @return The enum numeric value on the wire for high.
+       * <code>.org.ena.server.common.protocols.generated.RiskLevel ge_4_lt_6_days = 6;</code>
+       * @return The enum numeric value on the wire for ge4Lt6Days.
        */
-      public int getHighValue() {
-        return high_;
+      public int getGe4Lt6DaysValue() {
+        return ge4Lt6Days_;
       }
       /**
        * <pre>
-       * 5 or 4 days
+       * 4 &lt;= D &lt; 6 days
        * </pre>
        *
-       * <code>.org.ena.server.common.protocols.generated.RiskLevel high = 6;</code>
-       * @return The high.
+       * <code>.org.ena.server.common.protocols.generated.RiskLevel ge_4_lt_6_days = 6;</code>
+       * @return The ge4Lt6Days.
        */
-      public org.ena.server.common.protocols.generated.RiskScore.RiskLevel getHigh() {
+      public org.ena.server.common.protocols.generated.RiskScore.RiskLevel getGe4Lt6Days() {
         @SuppressWarnings("deprecation")
-        org.ena.server.common.protocols.generated.RiskScore.RiskLevel result = org.ena.server.common.protocols.generated.RiskScore.RiskLevel.valueOf(high_);
+        org.ena.server.common.protocols.generated.RiskScore.RiskLevel result = org.ena.server.common.protocols.generated.RiskScore.RiskLevel.valueOf(ge4Lt6Days_);
         return result == null ? org.ena.server.common.protocols.generated.RiskScore.RiskLevel.UNRECOGNIZED : result;
       }
 
-      public static final int VERY_HIGH_FIELD_NUMBER = 7;
-      private int veryHigh_;
+      public static final int GE_2_LT_4_DAYS_FIELD_NUMBER = 7;
+      private int ge2Lt4Days_;
       /**
        * <pre>
-       * 3 or 2 days
+       * 2 &lt;= D &lt; 4 days
        * </pre>
        *
-       * <code>.org.ena.server.common.protocols.generated.RiskLevel very_high = 7;</code>
-       * @return The enum numeric value on the wire for veryHigh.
+       * <code>.org.ena.server.common.protocols.generated.RiskLevel ge_2_lt_4_days = 7;</code>
+       * @return The enum numeric value on the wire for ge2Lt4Days.
        */
-      public int getVeryHighValue() {
-        return veryHigh_;
+      public int getGe2Lt4DaysValue() {
+        return ge2Lt4Days_;
       }
       /**
        * <pre>
-       * 3 or 2 days
+       * 2 &lt;= D &lt; 4 days
        * </pre>
        *
-       * <code>.org.ena.server.common.protocols.generated.RiskLevel very_high = 7;</code>
-       * @return The veryHigh.
+       * <code>.org.ena.server.common.protocols.generated.RiskLevel ge_2_lt_4_days = 7;</code>
+       * @return The ge2Lt4Days.
        */
-      public org.ena.server.common.protocols.generated.RiskScore.RiskLevel getVeryHigh() {
+      public org.ena.server.common.protocols.generated.RiskScore.RiskLevel getGe2Lt4Days() {
         @SuppressWarnings("deprecation")
-        org.ena.server.common.protocols.generated.RiskScore.RiskLevel result = org.ena.server.common.protocols.generated.RiskScore.RiskLevel.valueOf(veryHigh_);
+        org.ena.server.common.protocols.generated.RiskScore.RiskLevel result = org.ena.server.common.protocols.generated.RiskScore.RiskLevel.valueOf(ge2Lt4Days_);
         return result == null ? org.ena.server.common.protocols.generated.RiskScore.RiskLevel.UNRECOGNIZED : result;
       }
 
-      public static final int HIGHEST_FIELD_NUMBER = 8;
-      private int highest_;
+      public static final int GE_0_LT_2_DAYS_FIELD_NUMBER = 8;
+      private int ge0Lt2Days_;
       /**
        * <pre>
-       * 2 or 1 days
+       * 0 &lt;= D &lt; 2 days, highest risk
        * </pre>
        *
-       * <code>.org.ena.server.common.protocols.generated.RiskLevel highest = 8;</code>
-       * @return The enum numeric value on the wire for highest.
+       * <code>.org.ena.server.common.protocols.generated.RiskLevel ge_0_lt_2_days = 8;</code>
+       * @return The enum numeric value on the wire for ge0Lt2Days.
        */
-      public int getHighestValue() {
-        return highest_;
+      public int getGe0Lt2DaysValue() {
+        return ge0Lt2Days_;
       }
       /**
        * <pre>
-       * 2 or 1 days
+       * 0 &lt;= D &lt; 2 days, highest risk
        * </pre>
        *
-       * <code>.org.ena.server.common.protocols.generated.RiskLevel highest = 8;</code>
-       * @return The highest.
+       * <code>.org.ena.server.common.protocols.generated.RiskLevel ge_0_lt_2_days = 8;</code>
+       * @return The ge0Lt2Days.
        */
-      public org.ena.server.common.protocols.generated.RiskScore.RiskLevel getHighest() {
+      public org.ena.server.common.protocols.generated.RiskScore.RiskLevel getGe0Lt2Days() {
         @SuppressWarnings("deprecation")
-        org.ena.server.common.protocols.generated.RiskScore.RiskLevel result = org.ena.server.common.protocols.generated.RiskScore.RiskLevel.valueOf(highest_);
+        org.ena.server.common.protocols.generated.RiskScore.RiskLevel result = org.ena.server.common.protocols.generated.RiskScore.RiskLevel.valueOf(ge0Lt2Days_);
         return result == null ? org.ena.server.common.protocols.generated.RiskScore.RiskLevel.UNRECOGNIZED : result;
       }
 
@@ -3746,29 +3758,29 @@ public final class RiskScore {
       @java.lang.Override
       public void writeTo(com.google.protobuf.CodedOutputStream output)
                           throws java.io.IOException {
-        if (lowest_ != org.ena.server.common.protocols.generated.RiskScore.RiskLevel.INVALID.getNumber()) {
-          output.writeEnum(1, lowest_);
+        if (ge14Days_ != org.ena.server.common.protocols.generated.RiskScore.RiskLevel.INVALID.getNumber()) {
+          output.writeEnum(1, ge14Days_);
         }
-        if (low_ != org.ena.server.common.protocols.generated.RiskScore.RiskLevel.INVALID.getNumber()) {
-          output.writeEnum(2, low_);
+        if (ge12Lt14Days_ != org.ena.server.common.protocols.generated.RiskScore.RiskLevel.INVALID.getNumber()) {
+          output.writeEnum(2, ge12Lt14Days_);
         }
-        if (lowMedium_ != org.ena.server.common.protocols.generated.RiskScore.RiskLevel.INVALID.getNumber()) {
-          output.writeEnum(3, lowMedium_);
+        if (ge10Lt12Days_ != org.ena.server.common.protocols.generated.RiskScore.RiskLevel.INVALID.getNumber()) {
+          output.writeEnum(3, ge10Lt12Days_);
         }
-        if (medium_ != org.ena.server.common.protocols.generated.RiskScore.RiskLevel.INVALID.getNumber()) {
-          output.writeEnum(4, medium_);
+        if (ge8Lt10Days_ != org.ena.server.common.protocols.generated.RiskScore.RiskLevel.INVALID.getNumber()) {
+          output.writeEnum(4, ge8Lt10Days_);
         }
-        if (mediumHigh_ != org.ena.server.common.protocols.generated.RiskScore.RiskLevel.INVALID.getNumber()) {
-          output.writeEnum(5, mediumHigh_);
+        if (ge6Lt8Days_ != org.ena.server.common.protocols.generated.RiskScore.RiskLevel.INVALID.getNumber()) {
+          output.writeEnum(5, ge6Lt8Days_);
         }
-        if (high_ != org.ena.server.common.protocols.generated.RiskScore.RiskLevel.INVALID.getNumber()) {
-          output.writeEnum(6, high_);
+        if (ge4Lt6Days_ != org.ena.server.common.protocols.generated.RiskScore.RiskLevel.INVALID.getNumber()) {
+          output.writeEnum(6, ge4Lt6Days_);
         }
-        if (veryHigh_ != org.ena.server.common.protocols.generated.RiskScore.RiskLevel.INVALID.getNumber()) {
-          output.writeEnum(7, veryHigh_);
+        if (ge2Lt4Days_ != org.ena.server.common.protocols.generated.RiskScore.RiskLevel.INVALID.getNumber()) {
+          output.writeEnum(7, ge2Lt4Days_);
         }
-        if (highest_ != org.ena.server.common.protocols.generated.RiskScore.RiskLevel.INVALID.getNumber()) {
-          output.writeEnum(8, highest_);
+        if (ge0Lt2Days_ != org.ena.server.common.protocols.generated.RiskScore.RiskLevel.INVALID.getNumber()) {
+          output.writeEnum(8, ge0Lt2Days_);
         }
         unknownFields.writeTo(output);
       }
@@ -3779,37 +3791,37 @@ public final class RiskScore {
         if (size != -1) return size;
 
         size = 0;
-        if (lowest_ != org.ena.server.common.protocols.generated.RiskScore.RiskLevel.INVALID.getNumber()) {
+        if (ge14Days_ != org.ena.server.common.protocols.generated.RiskScore.RiskLevel.INVALID.getNumber()) {
           size += com.google.protobuf.CodedOutputStream
-            .computeEnumSize(1, lowest_);
+            .computeEnumSize(1, ge14Days_);
         }
-        if (low_ != org.ena.server.common.protocols.generated.RiskScore.RiskLevel.INVALID.getNumber()) {
+        if (ge12Lt14Days_ != org.ena.server.common.protocols.generated.RiskScore.RiskLevel.INVALID.getNumber()) {
           size += com.google.protobuf.CodedOutputStream
-            .computeEnumSize(2, low_);
+            .computeEnumSize(2, ge12Lt14Days_);
         }
-        if (lowMedium_ != org.ena.server.common.protocols.generated.RiskScore.RiskLevel.INVALID.getNumber()) {
+        if (ge10Lt12Days_ != org.ena.server.common.protocols.generated.RiskScore.RiskLevel.INVALID.getNumber()) {
           size += com.google.protobuf.CodedOutputStream
-            .computeEnumSize(3, lowMedium_);
+            .computeEnumSize(3, ge10Lt12Days_);
         }
-        if (medium_ != org.ena.server.common.protocols.generated.RiskScore.RiskLevel.INVALID.getNumber()) {
+        if (ge8Lt10Days_ != org.ena.server.common.protocols.generated.RiskScore.RiskLevel.INVALID.getNumber()) {
           size += com.google.protobuf.CodedOutputStream
-            .computeEnumSize(4, medium_);
+            .computeEnumSize(4, ge8Lt10Days_);
         }
-        if (mediumHigh_ != org.ena.server.common.protocols.generated.RiskScore.RiskLevel.INVALID.getNumber()) {
+        if (ge6Lt8Days_ != org.ena.server.common.protocols.generated.RiskScore.RiskLevel.INVALID.getNumber()) {
           size += com.google.protobuf.CodedOutputStream
-            .computeEnumSize(5, mediumHigh_);
+            .computeEnumSize(5, ge6Lt8Days_);
         }
-        if (high_ != org.ena.server.common.protocols.generated.RiskScore.RiskLevel.INVALID.getNumber()) {
+        if (ge4Lt6Days_ != org.ena.server.common.protocols.generated.RiskScore.RiskLevel.INVALID.getNumber()) {
           size += com.google.protobuf.CodedOutputStream
-            .computeEnumSize(6, high_);
+            .computeEnumSize(6, ge4Lt6Days_);
         }
-        if (veryHigh_ != org.ena.server.common.protocols.generated.RiskScore.RiskLevel.INVALID.getNumber()) {
+        if (ge2Lt4Days_ != org.ena.server.common.protocols.generated.RiskScore.RiskLevel.INVALID.getNumber()) {
           size += com.google.protobuf.CodedOutputStream
-            .computeEnumSize(7, veryHigh_);
+            .computeEnumSize(7, ge2Lt4Days_);
         }
-        if (highest_ != org.ena.server.common.protocols.generated.RiskScore.RiskLevel.INVALID.getNumber()) {
+        if (ge0Lt2Days_ != org.ena.server.common.protocols.generated.RiskScore.RiskLevel.INVALID.getNumber()) {
           size += com.google.protobuf.CodedOutputStream
-            .computeEnumSize(8, highest_);
+            .computeEnumSize(8, ge0Lt2Days_);
         }
         size += unknownFields.getSerializedSize();
         memoizedSize = size;
@@ -3821,19 +3833,19 @@ public final class RiskScore {
         if (obj == this) {
          return true;
         }
-        if (!(obj instanceof org.ena.server.common.protocols.generated.RiskScore.RiskScoreParameters.DaysRiskParameter)) {
+        if (!(obj instanceof org.ena.server.common.protocols.generated.RiskScore.RiskScoreParameters.DaysSinceLastExposureRiskParameter)) {
           return super.equals(obj);
         }
-        org.ena.server.common.protocols.generated.RiskScore.RiskScoreParameters.DaysRiskParameter other = (org.ena.server.common.protocols.generated.RiskScore.RiskScoreParameters.DaysRiskParameter) obj;
+        org.ena.server.common.protocols.generated.RiskScore.RiskScoreParameters.DaysSinceLastExposureRiskParameter other = (org.ena.server.common.protocols.generated.RiskScore.RiskScoreParameters.DaysSinceLastExposureRiskParameter) obj;
 
-        if (lowest_ != other.lowest_) return false;
-        if (low_ != other.low_) return false;
-        if (lowMedium_ != other.lowMedium_) return false;
-        if (medium_ != other.medium_) return false;
-        if (mediumHigh_ != other.mediumHigh_) return false;
-        if (high_ != other.high_) return false;
-        if (veryHigh_ != other.veryHigh_) return false;
-        if (highest_ != other.highest_) return false;
+        if (ge14Days_ != other.ge14Days_) return false;
+        if (ge12Lt14Days_ != other.ge12Lt14Days_) return false;
+        if (ge10Lt12Days_ != other.ge10Lt12Days_) return false;
+        if (ge8Lt10Days_ != other.ge8Lt10Days_) return false;
+        if (ge6Lt8Days_ != other.ge6Lt8Days_) return false;
+        if (ge4Lt6Days_ != other.ge4Lt6Days_) return false;
+        if (ge2Lt4Days_ != other.ge2Lt4Days_) return false;
+        if (ge0Lt2Days_ != other.ge0Lt2Days_) return false;
         if (!unknownFields.equals(other.unknownFields)) return false;
         return true;
       }
@@ -3845,90 +3857,90 @@ public final class RiskScore {
         }
         int hash = 41;
         hash = (19 * hash) + getDescriptor().hashCode();
-        hash = (37 * hash) + LOWEST_FIELD_NUMBER;
-        hash = (53 * hash) + lowest_;
-        hash = (37 * hash) + LOW_FIELD_NUMBER;
-        hash = (53 * hash) + low_;
-        hash = (37 * hash) + LOW_MEDIUM_FIELD_NUMBER;
-        hash = (53 * hash) + lowMedium_;
-        hash = (37 * hash) + MEDIUM_FIELD_NUMBER;
-        hash = (53 * hash) + medium_;
-        hash = (37 * hash) + MEDIUM_HIGH_FIELD_NUMBER;
-        hash = (53 * hash) + mediumHigh_;
-        hash = (37 * hash) + HIGH_FIELD_NUMBER;
-        hash = (53 * hash) + high_;
-        hash = (37 * hash) + VERY_HIGH_FIELD_NUMBER;
-        hash = (53 * hash) + veryHigh_;
-        hash = (37 * hash) + HIGHEST_FIELD_NUMBER;
-        hash = (53 * hash) + highest_;
+        hash = (37 * hash) + GE_14_DAYS_FIELD_NUMBER;
+        hash = (53 * hash) + ge14Days_;
+        hash = (37 * hash) + GE_12_LT_14_DAYS_FIELD_NUMBER;
+        hash = (53 * hash) + ge12Lt14Days_;
+        hash = (37 * hash) + GE_10_LT_12_DAYS_FIELD_NUMBER;
+        hash = (53 * hash) + ge10Lt12Days_;
+        hash = (37 * hash) + GE_8_LT_10_DAYS_FIELD_NUMBER;
+        hash = (53 * hash) + ge8Lt10Days_;
+        hash = (37 * hash) + GE_6_LT_8_DAYS_FIELD_NUMBER;
+        hash = (53 * hash) + ge6Lt8Days_;
+        hash = (37 * hash) + GE_4_LT_6_DAYS_FIELD_NUMBER;
+        hash = (53 * hash) + ge4Lt6Days_;
+        hash = (37 * hash) + GE_2_LT_4_DAYS_FIELD_NUMBER;
+        hash = (53 * hash) + ge2Lt4Days_;
+        hash = (37 * hash) + GE_0_LT_2_DAYS_FIELD_NUMBER;
+        hash = (53 * hash) + ge0Lt2Days_;
         hash = (29 * hash) + unknownFields.hashCode();
         memoizedHashCode = hash;
         return hash;
       }
 
-      public static org.ena.server.common.protocols.generated.RiskScore.RiskScoreParameters.DaysRiskParameter parseFrom(
+      public static org.ena.server.common.protocols.generated.RiskScore.RiskScoreParameters.DaysSinceLastExposureRiskParameter parseFrom(
           java.nio.ByteBuffer data)
           throws com.google.protobuf.InvalidProtocolBufferException {
         return PARSER.parseFrom(data);
       }
-      public static org.ena.server.common.protocols.generated.RiskScore.RiskScoreParameters.DaysRiskParameter parseFrom(
+      public static org.ena.server.common.protocols.generated.RiskScore.RiskScoreParameters.DaysSinceLastExposureRiskParameter parseFrom(
           java.nio.ByteBuffer data,
           com.google.protobuf.ExtensionRegistryLite extensionRegistry)
           throws com.google.protobuf.InvalidProtocolBufferException {
         return PARSER.parseFrom(data, extensionRegistry);
       }
-      public static org.ena.server.common.protocols.generated.RiskScore.RiskScoreParameters.DaysRiskParameter parseFrom(
+      public static org.ena.server.common.protocols.generated.RiskScore.RiskScoreParameters.DaysSinceLastExposureRiskParameter parseFrom(
           com.google.protobuf.ByteString data)
           throws com.google.protobuf.InvalidProtocolBufferException {
         return PARSER.parseFrom(data);
       }
-      public static org.ena.server.common.protocols.generated.RiskScore.RiskScoreParameters.DaysRiskParameter parseFrom(
+      public static org.ena.server.common.protocols.generated.RiskScore.RiskScoreParameters.DaysSinceLastExposureRiskParameter parseFrom(
           com.google.protobuf.ByteString data,
           com.google.protobuf.ExtensionRegistryLite extensionRegistry)
           throws com.google.protobuf.InvalidProtocolBufferException {
         return PARSER.parseFrom(data, extensionRegistry);
       }
-      public static org.ena.server.common.protocols.generated.RiskScore.RiskScoreParameters.DaysRiskParameter parseFrom(byte[] data)
+      public static org.ena.server.common.protocols.generated.RiskScore.RiskScoreParameters.DaysSinceLastExposureRiskParameter parseFrom(byte[] data)
           throws com.google.protobuf.InvalidProtocolBufferException {
         return PARSER.parseFrom(data);
       }
-      public static org.ena.server.common.protocols.generated.RiskScore.RiskScoreParameters.DaysRiskParameter parseFrom(
+      public static org.ena.server.common.protocols.generated.RiskScore.RiskScoreParameters.DaysSinceLastExposureRiskParameter parseFrom(
           byte[] data,
           com.google.protobuf.ExtensionRegistryLite extensionRegistry)
           throws com.google.protobuf.InvalidProtocolBufferException {
         return PARSER.parseFrom(data, extensionRegistry);
       }
-      public static org.ena.server.common.protocols.generated.RiskScore.RiskScoreParameters.DaysRiskParameter parseFrom(java.io.InputStream input)
+      public static org.ena.server.common.protocols.generated.RiskScore.RiskScoreParameters.DaysSinceLastExposureRiskParameter parseFrom(java.io.InputStream input)
           throws java.io.IOException {
         return com.google.protobuf.GeneratedMessageV3
             .parseWithIOException(PARSER, input);
       }
-      public static org.ena.server.common.protocols.generated.RiskScore.RiskScoreParameters.DaysRiskParameter parseFrom(
+      public static org.ena.server.common.protocols.generated.RiskScore.RiskScoreParameters.DaysSinceLastExposureRiskParameter parseFrom(
           java.io.InputStream input,
           com.google.protobuf.ExtensionRegistryLite extensionRegistry)
           throws java.io.IOException {
         return com.google.protobuf.GeneratedMessageV3
             .parseWithIOException(PARSER, input, extensionRegistry);
       }
-      public static org.ena.server.common.protocols.generated.RiskScore.RiskScoreParameters.DaysRiskParameter parseDelimitedFrom(java.io.InputStream input)
+      public static org.ena.server.common.protocols.generated.RiskScore.RiskScoreParameters.DaysSinceLastExposureRiskParameter parseDelimitedFrom(java.io.InputStream input)
           throws java.io.IOException {
         return com.google.protobuf.GeneratedMessageV3
             .parseDelimitedWithIOException(PARSER, input);
       }
-      public static org.ena.server.common.protocols.generated.RiskScore.RiskScoreParameters.DaysRiskParameter parseDelimitedFrom(
+      public static org.ena.server.common.protocols.generated.RiskScore.RiskScoreParameters.DaysSinceLastExposureRiskParameter parseDelimitedFrom(
           java.io.InputStream input,
           com.google.protobuf.ExtensionRegistryLite extensionRegistry)
           throws java.io.IOException {
         return com.google.protobuf.GeneratedMessageV3
             .parseDelimitedWithIOException(PARSER, input, extensionRegistry);
       }
-      public static org.ena.server.common.protocols.generated.RiskScore.RiskScoreParameters.DaysRiskParameter parseFrom(
+      public static org.ena.server.common.protocols.generated.RiskScore.RiskScoreParameters.DaysSinceLastExposureRiskParameter parseFrom(
           com.google.protobuf.CodedInputStream input)
           throws java.io.IOException {
         return com.google.protobuf.GeneratedMessageV3
             .parseWithIOException(PARSER, input);
       }
-      public static org.ena.server.common.protocols.generated.RiskScore.RiskScoreParameters.DaysRiskParameter parseFrom(
+      public static org.ena.server.common.protocols.generated.RiskScore.RiskScoreParameters.DaysSinceLastExposureRiskParameter parseFrom(
           com.google.protobuf.CodedInputStream input,
           com.google.protobuf.ExtensionRegistryLite extensionRegistry)
           throws java.io.IOException {
@@ -3941,7 +3953,7 @@ public final class RiskScore {
       public static Builder newBuilder() {
         return DEFAULT_INSTANCE.toBuilder();
       }
-      public static Builder newBuilder(org.ena.server.common.protocols.generated.RiskScore.RiskScoreParameters.DaysRiskParameter prototype) {
+      public static Builder newBuilder(org.ena.server.common.protocols.generated.RiskScore.RiskScoreParameters.DaysSinceLastExposureRiskParameter prototype) {
         return DEFAULT_INSTANCE.toBuilder().mergeFrom(prototype);
       }
       @java.lang.Override
@@ -3957,26 +3969,26 @@ public final class RiskScore {
         return builder;
       }
       /**
-       * Protobuf type {@code org.ena.server.common.protocols.generated.RiskScoreParameters.DaysRiskParameter}
+       * Protobuf type {@code org.ena.server.common.protocols.generated.RiskScoreParameters.DaysSinceLastExposureRiskParameter}
        */
       public static final class Builder extends
           com.google.protobuf.GeneratedMessageV3.Builder<Builder> implements
-          // @@protoc_insertion_point(builder_implements:org.ena.server.common.protocols.generated.RiskScoreParameters.DaysRiskParameter)
-          org.ena.server.common.protocols.generated.RiskScore.RiskScoreParameters.DaysRiskParameterOrBuilder {
+          // @@protoc_insertion_point(builder_implements:org.ena.server.common.protocols.generated.RiskScoreParameters.DaysSinceLastExposureRiskParameter)
+          org.ena.server.common.protocols.generated.RiskScore.RiskScoreParameters.DaysSinceLastExposureRiskParameterOrBuilder {
         public static final com.google.protobuf.Descriptors.Descriptor
             getDescriptor() {
-          return org.ena.server.common.protocols.generated.RiskScore.internal_static_org_ena_server_common_protocols_generated_RiskScoreParameters_DaysRiskParameter_descriptor;
+          return org.ena.server.common.protocols.generated.RiskScore.internal_static_org_ena_server_common_protocols_generated_RiskScoreParameters_DaysSinceLastExposureRiskParameter_descriptor;
         }
 
         @java.lang.Override
         protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
             internalGetFieldAccessorTable() {
-          return org.ena.server.common.protocols.generated.RiskScore.internal_static_org_ena_server_common_protocols_generated_RiskScoreParameters_DaysRiskParameter_fieldAccessorTable
+          return org.ena.server.common.protocols.generated.RiskScore.internal_static_org_ena_server_common_protocols_generated_RiskScoreParameters_DaysSinceLastExposureRiskParameter_fieldAccessorTable
               .ensureFieldAccessorsInitialized(
-                  org.ena.server.common.protocols.generated.RiskScore.RiskScoreParameters.DaysRiskParameter.class, org.ena.server.common.protocols.generated.RiskScore.RiskScoreParameters.DaysRiskParameter.Builder.class);
+                  org.ena.server.common.protocols.generated.RiskScore.RiskScoreParameters.DaysSinceLastExposureRiskParameter.class, org.ena.server.common.protocols.generated.RiskScore.RiskScoreParameters.DaysSinceLastExposureRiskParameter.Builder.class);
         }
 
-        // Construct using org.ena.server.common.protocols.generated.RiskScore.RiskScoreParameters.DaysRiskParameter.newBuilder()
+        // Construct using org.ena.server.common.protocols.generated.RiskScore.RiskScoreParameters.DaysSinceLastExposureRiskParameter.newBuilder()
         private Builder() {
           maybeForceBuilderInitialization();
         }
@@ -3994,21 +4006,21 @@ public final class RiskScore {
         @java.lang.Override
         public Builder clear() {
           super.clear();
-          lowest_ = 0;
+          ge14Days_ = 0;
 
-          low_ = 0;
+          ge12Lt14Days_ = 0;
 
-          lowMedium_ = 0;
+          ge10Lt12Days_ = 0;
 
-          medium_ = 0;
+          ge8Lt10Days_ = 0;
 
-          mediumHigh_ = 0;
+          ge6Lt8Days_ = 0;
 
-          high_ = 0;
+          ge4Lt6Days_ = 0;
 
-          veryHigh_ = 0;
+          ge2Lt4Days_ = 0;
 
-          highest_ = 0;
+          ge0Lt2Days_ = 0;
 
           return this;
         }
@@ -4016,17 +4028,17 @@ public final class RiskScore {
         @java.lang.Override
         public com.google.protobuf.Descriptors.Descriptor
             getDescriptorForType() {
-          return org.ena.server.common.protocols.generated.RiskScore.internal_static_org_ena_server_common_protocols_generated_RiskScoreParameters_DaysRiskParameter_descriptor;
+          return org.ena.server.common.protocols.generated.RiskScore.internal_static_org_ena_server_common_protocols_generated_RiskScoreParameters_DaysSinceLastExposureRiskParameter_descriptor;
         }
 
         @java.lang.Override
-        public org.ena.server.common.protocols.generated.RiskScore.RiskScoreParameters.DaysRiskParameter getDefaultInstanceForType() {
-          return org.ena.server.common.protocols.generated.RiskScore.RiskScoreParameters.DaysRiskParameter.getDefaultInstance();
+        public org.ena.server.common.protocols.generated.RiskScore.RiskScoreParameters.DaysSinceLastExposureRiskParameter getDefaultInstanceForType() {
+          return org.ena.server.common.protocols.generated.RiskScore.RiskScoreParameters.DaysSinceLastExposureRiskParameter.getDefaultInstance();
         }
 
         @java.lang.Override
-        public org.ena.server.common.protocols.generated.RiskScore.RiskScoreParameters.DaysRiskParameter build() {
-          org.ena.server.common.protocols.generated.RiskScore.RiskScoreParameters.DaysRiskParameter result = buildPartial();
+        public org.ena.server.common.protocols.generated.RiskScore.RiskScoreParameters.DaysSinceLastExposureRiskParameter build() {
+          org.ena.server.common.protocols.generated.RiskScore.RiskScoreParameters.DaysSinceLastExposureRiskParameter result = buildPartial();
           if (!result.isInitialized()) {
             throw newUninitializedMessageException(result);
           }
@@ -4034,16 +4046,16 @@ public final class RiskScore {
         }
 
         @java.lang.Override
-        public org.ena.server.common.protocols.generated.RiskScore.RiskScoreParameters.DaysRiskParameter buildPartial() {
-          org.ena.server.common.protocols.generated.RiskScore.RiskScoreParameters.DaysRiskParameter result = new org.ena.server.common.protocols.generated.RiskScore.RiskScoreParameters.DaysRiskParameter(this);
-          result.lowest_ = lowest_;
-          result.low_ = low_;
-          result.lowMedium_ = lowMedium_;
-          result.medium_ = medium_;
-          result.mediumHigh_ = mediumHigh_;
-          result.high_ = high_;
-          result.veryHigh_ = veryHigh_;
-          result.highest_ = highest_;
+        public org.ena.server.common.protocols.generated.RiskScore.RiskScoreParameters.DaysSinceLastExposureRiskParameter buildPartial() {
+          org.ena.server.common.protocols.generated.RiskScore.RiskScoreParameters.DaysSinceLastExposureRiskParameter result = new org.ena.server.common.protocols.generated.RiskScore.RiskScoreParameters.DaysSinceLastExposureRiskParameter(this);
+          result.ge14Days_ = ge14Days_;
+          result.ge12Lt14Days_ = ge12Lt14Days_;
+          result.ge10Lt12Days_ = ge10Lt12Days_;
+          result.ge8Lt10Days_ = ge8Lt10Days_;
+          result.ge6Lt8Days_ = ge6Lt8Days_;
+          result.ge4Lt6Days_ = ge4Lt6Days_;
+          result.ge2Lt4Days_ = ge2Lt4Days_;
+          result.ge0Lt2Days_ = ge0Lt2Days_;
           onBuilt();
           return result;
         }
@@ -4082,39 +4094,39 @@ public final class RiskScore {
         }
         @java.lang.Override
         public Builder mergeFrom(com.google.protobuf.Message other) {
-          if (other instanceof org.ena.server.common.protocols.generated.RiskScore.RiskScoreParameters.DaysRiskParameter) {
-            return mergeFrom((org.ena.server.common.protocols.generated.RiskScore.RiskScoreParameters.DaysRiskParameter)other);
+          if (other instanceof org.ena.server.common.protocols.generated.RiskScore.RiskScoreParameters.DaysSinceLastExposureRiskParameter) {
+            return mergeFrom((org.ena.server.common.protocols.generated.RiskScore.RiskScoreParameters.DaysSinceLastExposureRiskParameter)other);
           } else {
             super.mergeFrom(other);
             return this;
           }
         }
 
-        public Builder mergeFrom(org.ena.server.common.protocols.generated.RiskScore.RiskScoreParameters.DaysRiskParameter other) {
-          if (other == org.ena.server.common.protocols.generated.RiskScore.RiskScoreParameters.DaysRiskParameter.getDefaultInstance()) return this;
-          if (other.lowest_ != 0) {
-            setLowestValue(other.getLowestValue());
+        public Builder mergeFrom(org.ena.server.common.protocols.generated.RiskScore.RiskScoreParameters.DaysSinceLastExposureRiskParameter other) {
+          if (other == org.ena.server.common.protocols.generated.RiskScore.RiskScoreParameters.DaysSinceLastExposureRiskParameter.getDefaultInstance()) return this;
+          if (other.ge14Days_ != 0) {
+            setGe14DaysValue(other.getGe14DaysValue());
           }
-          if (other.low_ != 0) {
-            setLowValue(other.getLowValue());
+          if (other.ge12Lt14Days_ != 0) {
+            setGe12Lt14DaysValue(other.getGe12Lt14DaysValue());
           }
-          if (other.lowMedium_ != 0) {
-            setLowMediumValue(other.getLowMediumValue());
+          if (other.ge10Lt12Days_ != 0) {
+            setGe10Lt12DaysValue(other.getGe10Lt12DaysValue());
           }
-          if (other.medium_ != 0) {
-            setMediumValue(other.getMediumValue());
+          if (other.ge8Lt10Days_ != 0) {
+            setGe8Lt10DaysValue(other.getGe8Lt10DaysValue());
           }
-          if (other.mediumHigh_ != 0) {
-            setMediumHighValue(other.getMediumHighValue());
+          if (other.ge6Lt8Days_ != 0) {
+            setGe6Lt8DaysValue(other.getGe6Lt8DaysValue());
           }
-          if (other.high_ != 0) {
-            setHighValue(other.getHighValue());
+          if (other.ge4Lt6Days_ != 0) {
+            setGe4Lt6DaysValue(other.getGe4Lt6DaysValue());
           }
-          if (other.veryHigh_ != 0) {
-            setVeryHighValue(other.getVeryHighValue());
+          if (other.ge2Lt4Days_ != 0) {
+            setGe2Lt4DaysValue(other.getGe2Lt4DaysValue());
           }
-          if (other.highest_ != 0) {
-            setHighestValue(other.getHighestValue());
+          if (other.ge0Lt2Days_ != 0) {
+            setGe0Lt2DaysValue(other.getGe0Lt2DaysValue());
           }
           this.mergeUnknownFields(other.unknownFields);
           onChanged();
@@ -4131,11 +4143,11 @@ public final class RiskScore {
             com.google.protobuf.CodedInputStream input,
             com.google.protobuf.ExtensionRegistryLite extensionRegistry)
             throws java.io.IOException {
-          org.ena.server.common.protocols.generated.RiskScore.RiskScoreParameters.DaysRiskParameter parsedMessage = null;
+          org.ena.server.common.protocols.generated.RiskScore.RiskScoreParameters.DaysSinceLastExposureRiskParameter parsedMessage = null;
           try {
             parsedMessage = PARSER.parsePartialFrom(input, extensionRegistry);
           } catch (com.google.protobuf.InvalidProtocolBufferException e) {
-            parsedMessage = (org.ena.server.common.protocols.generated.RiskScore.RiskScoreParameters.DaysRiskParameter) e.getUnfinishedMessage();
+            parsedMessage = (org.ena.server.common.protocols.generated.RiskScore.RiskScoreParameters.DaysSinceLastExposureRiskParameter) e.getUnfinishedMessage();
             throw e.unwrapIOException();
           } finally {
             if (parsedMessage != null) {
@@ -4145,578 +4157,578 @@ public final class RiskScore {
           return this;
         }
 
-        private int lowest_ = 0;
+        private int ge14Days_ = 0;
         /**
          * <pre>
-         * &gt;= 14 days
+         * D &gt;= 14 days, lowest risk
          * </pre>
          *
-         * <code>.org.ena.server.common.protocols.generated.RiskLevel lowest = 1;</code>
-         * @return The enum numeric value on the wire for lowest.
+         * <code>.org.ena.server.common.protocols.generated.RiskLevel ge_14_days = 1;</code>
+         * @return The enum numeric value on the wire for ge14Days.
          */
-        public int getLowestValue() {
-          return lowest_;
+        public int getGe14DaysValue() {
+          return ge14Days_;
         }
         /**
          * <pre>
-         * &gt;= 14 days
+         * D &gt;= 14 days, lowest risk
          * </pre>
          *
-         * <code>.org.ena.server.common.protocols.generated.RiskLevel lowest = 1;</code>
-         * @param value The enum numeric value on the wire for lowest to set.
+         * <code>.org.ena.server.common.protocols.generated.RiskLevel ge_14_days = 1;</code>
+         * @param value The enum numeric value on the wire for ge14Days to set.
          * @return This builder for chaining.
          */
-        public Builder setLowestValue(int value) {
-          lowest_ = value;
+        public Builder setGe14DaysValue(int value) {
+          ge14Days_ = value;
           onChanged();
           return this;
         }
         /**
          * <pre>
-         * &gt;= 14 days
+         * D &gt;= 14 days, lowest risk
          * </pre>
          *
-         * <code>.org.ena.server.common.protocols.generated.RiskLevel lowest = 1;</code>
-         * @return The lowest.
+         * <code>.org.ena.server.common.protocols.generated.RiskLevel ge_14_days = 1;</code>
+         * @return The ge14Days.
          */
-        public org.ena.server.common.protocols.generated.RiskScore.RiskLevel getLowest() {
+        public org.ena.server.common.protocols.generated.RiskScore.RiskLevel getGe14Days() {
           @SuppressWarnings("deprecation")
-          org.ena.server.common.protocols.generated.RiskScore.RiskLevel result = org.ena.server.common.protocols.generated.RiskScore.RiskLevel.valueOf(lowest_);
+          org.ena.server.common.protocols.generated.RiskScore.RiskLevel result = org.ena.server.common.protocols.generated.RiskScore.RiskLevel.valueOf(ge14Days_);
           return result == null ? org.ena.server.common.protocols.generated.RiskScore.RiskLevel.UNRECOGNIZED : result;
         }
         /**
          * <pre>
-         * &gt;= 14 days
+         * D &gt;= 14 days, lowest risk
          * </pre>
          *
-         * <code>.org.ena.server.common.protocols.generated.RiskLevel lowest = 1;</code>
-         * @param value The lowest to set.
+         * <code>.org.ena.server.common.protocols.generated.RiskLevel ge_14_days = 1;</code>
+         * @param value The ge14Days to set.
          * @return This builder for chaining.
          */
-        public Builder setLowest(org.ena.server.common.protocols.generated.RiskScore.RiskLevel value) {
+        public Builder setGe14Days(org.ena.server.common.protocols.generated.RiskScore.RiskLevel value) {
           if (value == null) {
             throw new NullPointerException();
           }
           
-          lowest_ = value.getNumber();
+          ge14Days_ = value.getNumber();
           onChanged();
           return this;
         }
         /**
          * <pre>
-         * &gt;= 14 days
+         * D &gt;= 14 days, lowest risk
          * </pre>
          *
-         * <code>.org.ena.server.common.protocols.generated.RiskLevel lowest = 1;</code>
+         * <code>.org.ena.server.common.protocols.generated.RiskLevel ge_14_days = 1;</code>
          * @return This builder for chaining.
          */
-        public Builder clearLowest() {
+        public Builder clearGe14Days() {
           
-          lowest_ = 0;
+          ge14Days_ = 0;
           onChanged();
           return this;
         }
 
-        private int low_ = 0;
+        private int ge12Lt14Days_ = 0;
         /**
          * <pre>
-         * 13 or 12 days
+         * 12 &lt;= D &lt; 14 days
          * </pre>
          *
-         * <code>.org.ena.server.common.protocols.generated.RiskLevel low = 2;</code>
-         * @return The enum numeric value on the wire for low.
+         * <code>.org.ena.server.common.protocols.generated.RiskLevel ge_12_lt_14_days = 2;</code>
+         * @return The enum numeric value on the wire for ge12Lt14Days.
          */
-        public int getLowValue() {
-          return low_;
+        public int getGe12Lt14DaysValue() {
+          return ge12Lt14Days_;
         }
         /**
          * <pre>
-         * 13 or 12 days
+         * 12 &lt;= D &lt; 14 days
          * </pre>
          *
-         * <code>.org.ena.server.common.protocols.generated.RiskLevel low = 2;</code>
-         * @param value The enum numeric value on the wire for low to set.
+         * <code>.org.ena.server.common.protocols.generated.RiskLevel ge_12_lt_14_days = 2;</code>
+         * @param value The enum numeric value on the wire for ge12Lt14Days to set.
          * @return This builder for chaining.
          */
-        public Builder setLowValue(int value) {
-          low_ = value;
+        public Builder setGe12Lt14DaysValue(int value) {
+          ge12Lt14Days_ = value;
           onChanged();
           return this;
         }
         /**
          * <pre>
-         * 13 or 12 days
+         * 12 &lt;= D &lt; 14 days
          * </pre>
          *
-         * <code>.org.ena.server.common.protocols.generated.RiskLevel low = 2;</code>
-         * @return The low.
+         * <code>.org.ena.server.common.protocols.generated.RiskLevel ge_12_lt_14_days = 2;</code>
+         * @return The ge12Lt14Days.
          */
-        public org.ena.server.common.protocols.generated.RiskScore.RiskLevel getLow() {
+        public org.ena.server.common.protocols.generated.RiskScore.RiskLevel getGe12Lt14Days() {
           @SuppressWarnings("deprecation")
-          org.ena.server.common.protocols.generated.RiskScore.RiskLevel result = org.ena.server.common.protocols.generated.RiskScore.RiskLevel.valueOf(low_);
+          org.ena.server.common.protocols.generated.RiskScore.RiskLevel result = org.ena.server.common.protocols.generated.RiskScore.RiskLevel.valueOf(ge12Lt14Days_);
           return result == null ? org.ena.server.common.protocols.generated.RiskScore.RiskLevel.UNRECOGNIZED : result;
         }
         /**
          * <pre>
-         * 13 or 12 days
+         * 12 &lt;= D &lt; 14 days
          * </pre>
          *
-         * <code>.org.ena.server.common.protocols.generated.RiskLevel low = 2;</code>
-         * @param value The low to set.
+         * <code>.org.ena.server.common.protocols.generated.RiskLevel ge_12_lt_14_days = 2;</code>
+         * @param value The ge12Lt14Days to set.
          * @return This builder for chaining.
          */
-        public Builder setLow(org.ena.server.common.protocols.generated.RiskScore.RiskLevel value) {
+        public Builder setGe12Lt14Days(org.ena.server.common.protocols.generated.RiskScore.RiskLevel value) {
           if (value == null) {
             throw new NullPointerException();
           }
           
-          low_ = value.getNumber();
+          ge12Lt14Days_ = value.getNumber();
           onChanged();
           return this;
         }
         /**
          * <pre>
-         * 13 or 12 days
+         * 12 &lt;= D &lt; 14 days
          * </pre>
          *
-         * <code>.org.ena.server.common.protocols.generated.RiskLevel low = 2;</code>
+         * <code>.org.ena.server.common.protocols.generated.RiskLevel ge_12_lt_14_days = 2;</code>
          * @return This builder for chaining.
          */
-        public Builder clearLow() {
+        public Builder clearGe12Lt14Days() {
           
-          low_ = 0;
+          ge12Lt14Days_ = 0;
           onChanged();
           return this;
         }
 
-        private int lowMedium_ = 0;
+        private int ge10Lt12Days_ = 0;
         /**
          * <pre>
-         * 11 or 10 days
+         * 10 &lt;= D &lt; 12 days
          * </pre>
          *
-         * <code>.org.ena.server.common.protocols.generated.RiskLevel low_medium = 3;</code>
-         * @return The enum numeric value on the wire for lowMedium.
+         * <code>.org.ena.server.common.protocols.generated.RiskLevel ge_10_lt_12_days = 3;</code>
+         * @return The enum numeric value on the wire for ge10Lt12Days.
          */
-        public int getLowMediumValue() {
-          return lowMedium_;
+        public int getGe10Lt12DaysValue() {
+          return ge10Lt12Days_;
         }
         /**
          * <pre>
-         * 11 or 10 days
+         * 10 &lt;= D &lt; 12 days
          * </pre>
          *
-         * <code>.org.ena.server.common.protocols.generated.RiskLevel low_medium = 3;</code>
-         * @param value The enum numeric value on the wire for lowMedium to set.
+         * <code>.org.ena.server.common.protocols.generated.RiskLevel ge_10_lt_12_days = 3;</code>
+         * @param value The enum numeric value on the wire for ge10Lt12Days to set.
          * @return This builder for chaining.
          */
-        public Builder setLowMediumValue(int value) {
-          lowMedium_ = value;
+        public Builder setGe10Lt12DaysValue(int value) {
+          ge10Lt12Days_ = value;
           onChanged();
           return this;
         }
         /**
          * <pre>
-         * 11 or 10 days
+         * 10 &lt;= D &lt; 12 days
          * </pre>
          *
-         * <code>.org.ena.server.common.protocols.generated.RiskLevel low_medium = 3;</code>
-         * @return The lowMedium.
+         * <code>.org.ena.server.common.protocols.generated.RiskLevel ge_10_lt_12_days = 3;</code>
+         * @return The ge10Lt12Days.
          */
-        public org.ena.server.common.protocols.generated.RiskScore.RiskLevel getLowMedium() {
+        public org.ena.server.common.protocols.generated.RiskScore.RiskLevel getGe10Lt12Days() {
           @SuppressWarnings("deprecation")
-          org.ena.server.common.protocols.generated.RiskScore.RiskLevel result = org.ena.server.common.protocols.generated.RiskScore.RiskLevel.valueOf(lowMedium_);
+          org.ena.server.common.protocols.generated.RiskScore.RiskLevel result = org.ena.server.common.protocols.generated.RiskScore.RiskLevel.valueOf(ge10Lt12Days_);
           return result == null ? org.ena.server.common.protocols.generated.RiskScore.RiskLevel.UNRECOGNIZED : result;
         }
         /**
          * <pre>
-         * 11 or 10 days
+         * 10 &lt;= D &lt; 12 days
          * </pre>
          *
-         * <code>.org.ena.server.common.protocols.generated.RiskLevel low_medium = 3;</code>
-         * @param value The lowMedium to set.
+         * <code>.org.ena.server.common.protocols.generated.RiskLevel ge_10_lt_12_days = 3;</code>
+         * @param value The ge10Lt12Days to set.
          * @return This builder for chaining.
          */
-        public Builder setLowMedium(org.ena.server.common.protocols.generated.RiskScore.RiskLevel value) {
+        public Builder setGe10Lt12Days(org.ena.server.common.protocols.generated.RiskScore.RiskLevel value) {
           if (value == null) {
             throw new NullPointerException();
           }
           
-          lowMedium_ = value.getNumber();
+          ge10Lt12Days_ = value.getNumber();
           onChanged();
           return this;
         }
         /**
          * <pre>
-         * 11 or 10 days
+         * 10 &lt;= D &lt; 12 days
          * </pre>
          *
-         * <code>.org.ena.server.common.protocols.generated.RiskLevel low_medium = 3;</code>
+         * <code>.org.ena.server.common.protocols.generated.RiskLevel ge_10_lt_12_days = 3;</code>
          * @return This builder for chaining.
          */
-        public Builder clearLowMedium() {
+        public Builder clearGe10Lt12Days() {
           
-          lowMedium_ = 0;
+          ge10Lt12Days_ = 0;
           onChanged();
           return this;
         }
 
-        private int medium_ = 0;
+        private int ge8Lt10Days_ = 0;
         /**
          * <pre>
-         * 9 or 8 days
+         * 8 &lt;= D &lt; 10 days
          * </pre>
          *
-         * <code>.org.ena.server.common.protocols.generated.RiskLevel medium = 4;</code>
-         * @return The enum numeric value on the wire for medium.
+         * <code>.org.ena.server.common.protocols.generated.RiskLevel ge_8_lt_10_days = 4;</code>
+         * @return The enum numeric value on the wire for ge8Lt10Days.
          */
-        public int getMediumValue() {
-          return medium_;
+        public int getGe8Lt10DaysValue() {
+          return ge8Lt10Days_;
         }
         /**
          * <pre>
-         * 9 or 8 days
+         * 8 &lt;= D &lt; 10 days
          * </pre>
          *
-         * <code>.org.ena.server.common.protocols.generated.RiskLevel medium = 4;</code>
-         * @param value The enum numeric value on the wire for medium to set.
+         * <code>.org.ena.server.common.protocols.generated.RiskLevel ge_8_lt_10_days = 4;</code>
+         * @param value The enum numeric value on the wire for ge8Lt10Days to set.
          * @return This builder for chaining.
          */
-        public Builder setMediumValue(int value) {
-          medium_ = value;
+        public Builder setGe8Lt10DaysValue(int value) {
+          ge8Lt10Days_ = value;
           onChanged();
           return this;
         }
         /**
          * <pre>
-         * 9 or 8 days
+         * 8 &lt;= D &lt; 10 days
          * </pre>
          *
-         * <code>.org.ena.server.common.protocols.generated.RiskLevel medium = 4;</code>
-         * @return The medium.
+         * <code>.org.ena.server.common.protocols.generated.RiskLevel ge_8_lt_10_days = 4;</code>
+         * @return The ge8Lt10Days.
          */
-        public org.ena.server.common.protocols.generated.RiskScore.RiskLevel getMedium() {
+        public org.ena.server.common.protocols.generated.RiskScore.RiskLevel getGe8Lt10Days() {
           @SuppressWarnings("deprecation")
-          org.ena.server.common.protocols.generated.RiskScore.RiskLevel result = org.ena.server.common.protocols.generated.RiskScore.RiskLevel.valueOf(medium_);
+          org.ena.server.common.protocols.generated.RiskScore.RiskLevel result = org.ena.server.common.protocols.generated.RiskScore.RiskLevel.valueOf(ge8Lt10Days_);
           return result == null ? org.ena.server.common.protocols.generated.RiskScore.RiskLevel.UNRECOGNIZED : result;
         }
         /**
          * <pre>
-         * 9 or 8 days
+         * 8 &lt;= D &lt; 10 days
          * </pre>
          *
-         * <code>.org.ena.server.common.protocols.generated.RiskLevel medium = 4;</code>
-         * @param value The medium to set.
+         * <code>.org.ena.server.common.protocols.generated.RiskLevel ge_8_lt_10_days = 4;</code>
+         * @param value The ge8Lt10Days to set.
          * @return This builder for chaining.
          */
-        public Builder setMedium(org.ena.server.common.protocols.generated.RiskScore.RiskLevel value) {
+        public Builder setGe8Lt10Days(org.ena.server.common.protocols.generated.RiskScore.RiskLevel value) {
           if (value == null) {
             throw new NullPointerException();
           }
           
-          medium_ = value.getNumber();
+          ge8Lt10Days_ = value.getNumber();
           onChanged();
           return this;
         }
         /**
          * <pre>
-         * 9 or 8 days
+         * 8 &lt;= D &lt; 10 days
          * </pre>
          *
-         * <code>.org.ena.server.common.protocols.generated.RiskLevel medium = 4;</code>
+         * <code>.org.ena.server.common.protocols.generated.RiskLevel ge_8_lt_10_days = 4;</code>
          * @return This builder for chaining.
          */
-        public Builder clearMedium() {
+        public Builder clearGe8Lt10Days() {
           
-          medium_ = 0;
+          ge8Lt10Days_ = 0;
           onChanged();
           return this;
         }
 
-        private int mediumHigh_ = 0;
+        private int ge6Lt8Days_ = 0;
         /**
          * <pre>
-         * 7 or 6 days
+         * 6 &lt;= D &lt; 8 days
          * </pre>
          *
-         * <code>.org.ena.server.common.protocols.generated.RiskLevel medium_high = 5;</code>
-         * @return The enum numeric value on the wire for mediumHigh.
+         * <code>.org.ena.server.common.protocols.generated.RiskLevel ge_6_lt_8_days = 5;</code>
+         * @return The enum numeric value on the wire for ge6Lt8Days.
          */
-        public int getMediumHighValue() {
-          return mediumHigh_;
+        public int getGe6Lt8DaysValue() {
+          return ge6Lt8Days_;
         }
         /**
          * <pre>
-         * 7 or 6 days
+         * 6 &lt;= D &lt; 8 days
          * </pre>
          *
-         * <code>.org.ena.server.common.protocols.generated.RiskLevel medium_high = 5;</code>
-         * @param value The enum numeric value on the wire for mediumHigh to set.
+         * <code>.org.ena.server.common.protocols.generated.RiskLevel ge_6_lt_8_days = 5;</code>
+         * @param value The enum numeric value on the wire for ge6Lt8Days to set.
          * @return This builder for chaining.
          */
-        public Builder setMediumHighValue(int value) {
-          mediumHigh_ = value;
+        public Builder setGe6Lt8DaysValue(int value) {
+          ge6Lt8Days_ = value;
           onChanged();
           return this;
         }
         /**
          * <pre>
-         * 7 or 6 days
+         * 6 &lt;= D &lt; 8 days
          * </pre>
          *
-         * <code>.org.ena.server.common.protocols.generated.RiskLevel medium_high = 5;</code>
-         * @return The mediumHigh.
+         * <code>.org.ena.server.common.protocols.generated.RiskLevel ge_6_lt_8_days = 5;</code>
+         * @return The ge6Lt8Days.
          */
-        public org.ena.server.common.protocols.generated.RiskScore.RiskLevel getMediumHigh() {
+        public org.ena.server.common.protocols.generated.RiskScore.RiskLevel getGe6Lt8Days() {
           @SuppressWarnings("deprecation")
-          org.ena.server.common.protocols.generated.RiskScore.RiskLevel result = org.ena.server.common.protocols.generated.RiskScore.RiskLevel.valueOf(mediumHigh_);
+          org.ena.server.common.protocols.generated.RiskScore.RiskLevel result = org.ena.server.common.protocols.generated.RiskScore.RiskLevel.valueOf(ge6Lt8Days_);
           return result == null ? org.ena.server.common.protocols.generated.RiskScore.RiskLevel.UNRECOGNIZED : result;
         }
         /**
          * <pre>
-         * 7 or 6 days
+         * 6 &lt;= D &lt; 8 days
          * </pre>
          *
-         * <code>.org.ena.server.common.protocols.generated.RiskLevel medium_high = 5;</code>
-         * @param value The mediumHigh to set.
+         * <code>.org.ena.server.common.protocols.generated.RiskLevel ge_6_lt_8_days = 5;</code>
+         * @param value The ge6Lt8Days to set.
          * @return This builder for chaining.
          */
-        public Builder setMediumHigh(org.ena.server.common.protocols.generated.RiskScore.RiskLevel value) {
+        public Builder setGe6Lt8Days(org.ena.server.common.protocols.generated.RiskScore.RiskLevel value) {
           if (value == null) {
             throw new NullPointerException();
           }
           
-          mediumHigh_ = value.getNumber();
+          ge6Lt8Days_ = value.getNumber();
           onChanged();
           return this;
         }
         /**
          * <pre>
-         * 7 or 6 days
+         * 6 &lt;= D &lt; 8 days
          * </pre>
          *
-         * <code>.org.ena.server.common.protocols.generated.RiskLevel medium_high = 5;</code>
+         * <code>.org.ena.server.common.protocols.generated.RiskLevel ge_6_lt_8_days = 5;</code>
          * @return This builder for chaining.
          */
-        public Builder clearMediumHigh() {
+        public Builder clearGe6Lt8Days() {
           
-          mediumHigh_ = 0;
+          ge6Lt8Days_ = 0;
           onChanged();
           return this;
         }
 
-        private int high_ = 0;
+        private int ge4Lt6Days_ = 0;
         /**
          * <pre>
-         * 5 or 4 days
+         * 4 &lt;= D &lt; 6 days
          * </pre>
          *
-         * <code>.org.ena.server.common.protocols.generated.RiskLevel high = 6;</code>
-         * @return The enum numeric value on the wire for high.
+         * <code>.org.ena.server.common.protocols.generated.RiskLevel ge_4_lt_6_days = 6;</code>
+         * @return The enum numeric value on the wire for ge4Lt6Days.
          */
-        public int getHighValue() {
-          return high_;
+        public int getGe4Lt6DaysValue() {
+          return ge4Lt6Days_;
         }
         /**
          * <pre>
-         * 5 or 4 days
+         * 4 &lt;= D &lt; 6 days
          * </pre>
          *
-         * <code>.org.ena.server.common.protocols.generated.RiskLevel high = 6;</code>
-         * @param value The enum numeric value on the wire for high to set.
+         * <code>.org.ena.server.common.protocols.generated.RiskLevel ge_4_lt_6_days = 6;</code>
+         * @param value The enum numeric value on the wire for ge4Lt6Days to set.
          * @return This builder for chaining.
          */
-        public Builder setHighValue(int value) {
-          high_ = value;
+        public Builder setGe4Lt6DaysValue(int value) {
+          ge4Lt6Days_ = value;
           onChanged();
           return this;
         }
         /**
          * <pre>
-         * 5 or 4 days
+         * 4 &lt;= D &lt; 6 days
          * </pre>
          *
-         * <code>.org.ena.server.common.protocols.generated.RiskLevel high = 6;</code>
-         * @return The high.
+         * <code>.org.ena.server.common.protocols.generated.RiskLevel ge_4_lt_6_days = 6;</code>
+         * @return The ge4Lt6Days.
          */
-        public org.ena.server.common.protocols.generated.RiskScore.RiskLevel getHigh() {
+        public org.ena.server.common.protocols.generated.RiskScore.RiskLevel getGe4Lt6Days() {
           @SuppressWarnings("deprecation")
-          org.ena.server.common.protocols.generated.RiskScore.RiskLevel result = org.ena.server.common.protocols.generated.RiskScore.RiskLevel.valueOf(high_);
+          org.ena.server.common.protocols.generated.RiskScore.RiskLevel result = org.ena.server.common.protocols.generated.RiskScore.RiskLevel.valueOf(ge4Lt6Days_);
           return result == null ? org.ena.server.common.protocols.generated.RiskScore.RiskLevel.UNRECOGNIZED : result;
         }
         /**
          * <pre>
-         * 5 or 4 days
+         * 4 &lt;= D &lt; 6 days
          * </pre>
          *
-         * <code>.org.ena.server.common.protocols.generated.RiskLevel high = 6;</code>
-         * @param value The high to set.
+         * <code>.org.ena.server.common.protocols.generated.RiskLevel ge_4_lt_6_days = 6;</code>
+         * @param value The ge4Lt6Days to set.
          * @return This builder for chaining.
          */
-        public Builder setHigh(org.ena.server.common.protocols.generated.RiskScore.RiskLevel value) {
+        public Builder setGe4Lt6Days(org.ena.server.common.protocols.generated.RiskScore.RiskLevel value) {
           if (value == null) {
             throw new NullPointerException();
           }
           
-          high_ = value.getNumber();
+          ge4Lt6Days_ = value.getNumber();
           onChanged();
           return this;
         }
         /**
          * <pre>
-         * 5 or 4 days
+         * 4 &lt;= D &lt; 6 days
          * </pre>
          *
-         * <code>.org.ena.server.common.protocols.generated.RiskLevel high = 6;</code>
+         * <code>.org.ena.server.common.protocols.generated.RiskLevel ge_4_lt_6_days = 6;</code>
          * @return This builder for chaining.
          */
-        public Builder clearHigh() {
+        public Builder clearGe4Lt6Days() {
           
-          high_ = 0;
+          ge4Lt6Days_ = 0;
           onChanged();
           return this;
         }
 
-        private int veryHigh_ = 0;
+        private int ge2Lt4Days_ = 0;
         /**
          * <pre>
-         * 3 or 2 days
+         * 2 &lt;= D &lt; 4 days
          * </pre>
          *
-         * <code>.org.ena.server.common.protocols.generated.RiskLevel very_high = 7;</code>
-         * @return The enum numeric value on the wire for veryHigh.
+         * <code>.org.ena.server.common.protocols.generated.RiskLevel ge_2_lt_4_days = 7;</code>
+         * @return The enum numeric value on the wire for ge2Lt4Days.
          */
-        public int getVeryHighValue() {
-          return veryHigh_;
+        public int getGe2Lt4DaysValue() {
+          return ge2Lt4Days_;
         }
         /**
          * <pre>
-         * 3 or 2 days
+         * 2 &lt;= D &lt; 4 days
          * </pre>
          *
-         * <code>.org.ena.server.common.protocols.generated.RiskLevel very_high = 7;</code>
-         * @param value The enum numeric value on the wire for veryHigh to set.
+         * <code>.org.ena.server.common.protocols.generated.RiskLevel ge_2_lt_4_days = 7;</code>
+         * @param value The enum numeric value on the wire for ge2Lt4Days to set.
          * @return This builder for chaining.
          */
-        public Builder setVeryHighValue(int value) {
-          veryHigh_ = value;
+        public Builder setGe2Lt4DaysValue(int value) {
+          ge2Lt4Days_ = value;
           onChanged();
           return this;
         }
         /**
          * <pre>
-         * 3 or 2 days
+         * 2 &lt;= D &lt; 4 days
          * </pre>
          *
-         * <code>.org.ena.server.common.protocols.generated.RiskLevel very_high = 7;</code>
-         * @return The veryHigh.
+         * <code>.org.ena.server.common.protocols.generated.RiskLevel ge_2_lt_4_days = 7;</code>
+         * @return The ge2Lt4Days.
          */
-        public org.ena.server.common.protocols.generated.RiskScore.RiskLevel getVeryHigh() {
+        public org.ena.server.common.protocols.generated.RiskScore.RiskLevel getGe2Lt4Days() {
           @SuppressWarnings("deprecation")
-          org.ena.server.common.protocols.generated.RiskScore.RiskLevel result = org.ena.server.common.protocols.generated.RiskScore.RiskLevel.valueOf(veryHigh_);
+          org.ena.server.common.protocols.generated.RiskScore.RiskLevel result = org.ena.server.common.protocols.generated.RiskScore.RiskLevel.valueOf(ge2Lt4Days_);
           return result == null ? org.ena.server.common.protocols.generated.RiskScore.RiskLevel.UNRECOGNIZED : result;
         }
         /**
          * <pre>
-         * 3 or 2 days
+         * 2 &lt;= D &lt; 4 days
          * </pre>
          *
-         * <code>.org.ena.server.common.protocols.generated.RiskLevel very_high = 7;</code>
-         * @param value The veryHigh to set.
+         * <code>.org.ena.server.common.protocols.generated.RiskLevel ge_2_lt_4_days = 7;</code>
+         * @param value The ge2Lt4Days to set.
          * @return This builder for chaining.
          */
-        public Builder setVeryHigh(org.ena.server.common.protocols.generated.RiskScore.RiskLevel value) {
+        public Builder setGe2Lt4Days(org.ena.server.common.protocols.generated.RiskScore.RiskLevel value) {
           if (value == null) {
             throw new NullPointerException();
           }
           
-          veryHigh_ = value.getNumber();
+          ge2Lt4Days_ = value.getNumber();
           onChanged();
           return this;
         }
         /**
          * <pre>
-         * 3 or 2 days
+         * 2 &lt;= D &lt; 4 days
          * </pre>
          *
-         * <code>.org.ena.server.common.protocols.generated.RiskLevel very_high = 7;</code>
+         * <code>.org.ena.server.common.protocols.generated.RiskLevel ge_2_lt_4_days = 7;</code>
          * @return This builder for chaining.
          */
-        public Builder clearVeryHigh() {
+        public Builder clearGe2Lt4Days() {
           
-          veryHigh_ = 0;
+          ge2Lt4Days_ = 0;
           onChanged();
           return this;
         }
 
-        private int highest_ = 0;
+        private int ge0Lt2Days_ = 0;
         /**
          * <pre>
-         * 2 or 1 days
+         * 0 &lt;= D &lt; 2 days, highest risk
          * </pre>
          *
-         * <code>.org.ena.server.common.protocols.generated.RiskLevel highest = 8;</code>
-         * @return The enum numeric value on the wire for highest.
+         * <code>.org.ena.server.common.protocols.generated.RiskLevel ge_0_lt_2_days = 8;</code>
+         * @return The enum numeric value on the wire for ge0Lt2Days.
          */
-        public int getHighestValue() {
-          return highest_;
+        public int getGe0Lt2DaysValue() {
+          return ge0Lt2Days_;
         }
         /**
          * <pre>
-         * 2 or 1 days
+         * 0 &lt;= D &lt; 2 days, highest risk
          * </pre>
          *
-         * <code>.org.ena.server.common.protocols.generated.RiskLevel highest = 8;</code>
-         * @param value The enum numeric value on the wire for highest to set.
+         * <code>.org.ena.server.common.protocols.generated.RiskLevel ge_0_lt_2_days = 8;</code>
+         * @param value The enum numeric value on the wire for ge0Lt2Days to set.
          * @return This builder for chaining.
          */
-        public Builder setHighestValue(int value) {
-          highest_ = value;
+        public Builder setGe0Lt2DaysValue(int value) {
+          ge0Lt2Days_ = value;
           onChanged();
           return this;
         }
         /**
          * <pre>
-         * 2 or 1 days
+         * 0 &lt;= D &lt; 2 days, highest risk
          * </pre>
          *
-         * <code>.org.ena.server.common.protocols.generated.RiskLevel highest = 8;</code>
-         * @return The highest.
+         * <code>.org.ena.server.common.protocols.generated.RiskLevel ge_0_lt_2_days = 8;</code>
+         * @return The ge0Lt2Days.
          */
-        public org.ena.server.common.protocols.generated.RiskScore.RiskLevel getHighest() {
+        public org.ena.server.common.protocols.generated.RiskScore.RiskLevel getGe0Lt2Days() {
           @SuppressWarnings("deprecation")
-          org.ena.server.common.protocols.generated.RiskScore.RiskLevel result = org.ena.server.common.protocols.generated.RiskScore.RiskLevel.valueOf(highest_);
+          org.ena.server.common.protocols.generated.RiskScore.RiskLevel result = org.ena.server.common.protocols.generated.RiskScore.RiskLevel.valueOf(ge0Lt2Days_);
           return result == null ? org.ena.server.common.protocols.generated.RiskScore.RiskLevel.UNRECOGNIZED : result;
         }
         /**
          * <pre>
-         * 2 or 1 days
+         * 0 &lt;= D &lt; 2 days, highest risk
          * </pre>
          *
-         * <code>.org.ena.server.common.protocols.generated.RiskLevel highest = 8;</code>
-         * @param value The highest to set.
+         * <code>.org.ena.server.common.protocols.generated.RiskLevel ge_0_lt_2_days = 8;</code>
+         * @param value The ge0Lt2Days to set.
          * @return This builder for chaining.
          */
-        public Builder setHighest(org.ena.server.common.protocols.generated.RiskScore.RiskLevel value) {
+        public Builder setGe0Lt2Days(org.ena.server.common.protocols.generated.RiskScore.RiskLevel value) {
           if (value == null) {
             throw new NullPointerException();
           }
           
-          highest_ = value.getNumber();
+          ge0Lt2Days_ = value.getNumber();
           onChanged();
           return this;
         }
         /**
          * <pre>
-         * 2 or 1 days
+         * 0 &lt;= D &lt; 2 days, highest risk
          * </pre>
          *
-         * <code>.org.ena.server.common.protocols.generated.RiskLevel highest = 8;</code>
+         * <code>.org.ena.server.common.protocols.generated.RiskLevel ge_0_lt_2_days = 8;</code>
          * @return This builder for chaining.
          */
-        public Builder clearHighest() {
+        public Builder clearGe0Lt2Days() {
           
-          highest_ = 0;
+          ge0Lt2Days_ = 0;
           onChanged();
           return this;
         }
@@ -4733,41 +4745,41 @@ public final class RiskScore {
         }
 
 
-        // @@protoc_insertion_point(builder_scope:org.ena.server.common.protocols.generated.RiskScoreParameters.DaysRiskParameter)
+        // @@protoc_insertion_point(builder_scope:org.ena.server.common.protocols.generated.RiskScoreParameters.DaysSinceLastExposureRiskParameter)
       }
 
-      // @@protoc_insertion_point(class_scope:org.ena.server.common.protocols.generated.RiskScoreParameters.DaysRiskParameter)
-      private static final org.ena.server.common.protocols.generated.RiskScore.RiskScoreParameters.DaysRiskParameter DEFAULT_INSTANCE;
+      // @@protoc_insertion_point(class_scope:org.ena.server.common.protocols.generated.RiskScoreParameters.DaysSinceLastExposureRiskParameter)
+      private static final org.ena.server.common.protocols.generated.RiskScore.RiskScoreParameters.DaysSinceLastExposureRiskParameter DEFAULT_INSTANCE;
       static {
-        DEFAULT_INSTANCE = new org.ena.server.common.protocols.generated.RiskScore.RiskScoreParameters.DaysRiskParameter();
+        DEFAULT_INSTANCE = new org.ena.server.common.protocols.generated.RiskScore.RiskScoreParameters.DaysSinceLastExposureRiskParameter();
       }
 
-      public static org.ena.server.common.protocols.generated.RiskScore.RiskScoreParameters.DaysRiskParameter getDefaultInstance() {
+      public static org.ena.server.common.protocols.generated.RiskScore.RiskScoreParameters.DaysSinceLastExposureRiskParameter getDefaultInstance() {
         return DEFAULT_INSTANCE;
       }
 
-      private static final com.google.protobuf.Parser<DaysRiskParameter>
-          PARSER = new com.google.protobuf.AbstractParser<DaysRiskParameter>() {
+      private static final com.google.protobuf.Parser<DaysSinceLastExposureRiskParameter>
+          PARSER = new com.google.protobuf.AbstractParser<DaysSinceLastExposureRiskParameter>() {
         @java.lang.Override
-        public DaysRiskParameter parsePartialFrom(
+        public DaysSinceLastExposureRiskParameter parsePartialFrom(
             com.google.protobuf.CodedInputStream input,
             com.google.protobuf.ExtensionRegistryLite extensionRegistry)
             throws com.google.protobuf.InvalidProtocolBufferException {
-          return new DaysRiskParameter(input, extensionRegistry);
+          return new DaysSinceLastExposureRiskParameter(input, extensionRegistry);
         }
       };
 
-      public static com.google.protobuf.Parser<DaysRiskParameter> parser() {
+      public static com.google.protobuf.Parser<DaysSinceLastExposureRiskParameter> parser() {
         return PARSER;
       }
 
       @java.lang.Override
-      public com.google.protobuf.Parser<DaysRiskParameter> getParserForType() {
+      public com.google.protobuf.Parser<DaysSinceLastExposureRiskParameter> getParserForType() {
         return PARSER;
       }
 
       @java.lang.Override
-      public org.ena.server.common.protocols.generated.RiskScore.RiskScoreParameters.DaysRiskParameter getDefaultInstanceForType() {
+      public org.ena.server.common.protocols.generated.RiskScore.RiskScoreParameters.DaysSinceLastExposureRiskParameter getDefaultInstanceForType() {
         return DEFAULT_INSTANCE;
       }
 
@@ -4779,155 +4791,155 @@ public final class RiskScore {
 
       /**
        * <pre>
-       * A &gt; 73 dBm
+       * A &gt; 73 dBm, lowest risk
        * </pre>
        *
-       * <code>.org.ena.server.common.protocols.generated.RiskLevel lowest = 1;</code>
-       * @return The enum numeric value on the wire for lowest.
+       * <code>.org.ena.server.common.protocols.generated.RiskLevel gt_73_dbm = 1;</code>
+       * @return The enum numeric value on the wire for gt73Dbm.
        */
-      int getLowestValue();
+      int getGt73DbmValue();
       /**
        * <pre>
-       * A &gt; 73 dBm
+       * A &gt; 73 dBm, lowest risk
        * </pre>
        *
-       * <code>.org.ena.server.common.protocols.generated.RiskLevel lowest = 1;</code>
-       * @return The lowest.
+       * <code>.org.ena.server.common.protocols.generated.RiskLevel gt_73_dbm = 1;</code>
+       * @return The gt73Dbm.
        */
-      org.ena.server.common.protocols.generated.RiskScore.RiskLevel getLowest();
+      org.ena.server.common.protocols.generated.RiskScore.RiskLevel getGt73Dbm();
 
       /**
        * <pre>
        * 63 &lt; A &lt;= 73 dBm
        * </pre>
        *
-       * <code>.org.ena.server.common.protocols.generated.RiskLevel low = 2;</code>
-       * @return The enum numeric value on the wire for low.
+       * <code>.org.ena.server.common.protocols.generated.RiskLevel gt_63_le_73_dbm = 2;</code>
+       * @return The enum numeric value on the wire for gt63Le73Dbm.
        */
-      int getLowValue();
+      int getGt63Le73DbmValue();
       /**
        * <pre>
        * 63 &lt; A &lt;= 73 dBm
        * </pre>
        *
-       * <code>.org.ena.server.common.protocols.generated.RiskLevel low = 2;</code>
-       * @return The low.
+       * <code>.org.ena.server.common.protocols.generated.RiskLevel gt_63_le_73_dbm = 2;</code>
+       * @return The gt63Le73Dbm.
        */
-      org.ena.server.common.protocols.generated.RiskScore.RiskLevel getLow();
+      org.ena.server.common.protocols.generated.RiskScore.RiskLevel getGt63Le73Dbm();
 
       /**
        * <pre>
        * 51 &lt; A &lt;= 63 dBm
        * </pre>
        *
-       * <code>.org.ena.server.common.protocols.generated.RiskLevel low_medium = 3;</code>
-       * @return The enum numeric value on the wire for lowMedium.
+       * <code>.org.ena.server.common.protocols.generated.RiskLevel gt_51_le_63_dbm = 3;</code>
+       * @return The enum numeric value on the wire for gt51Le63Dbm.
        */
-      int getLowMediumValue();
+      int getGt51Le63DbmValue();
       /**
        * <pre>
        * 51 &lt; A &lt;= 63 dBm
        * </pre>
        *
-       * <code>.org.ena.server.common.protocols.generated.RiskLevel low_medium = 3;</code>
-       * @return The lowMedium.
+       * <code>.org.ena.server.common.protocols.generated.RiskLevel gt_51_le_63_dbm = 3;</code>
+       * @return The gt51Le63Dbm.
        */
-      org.ena.server.common.protocols.generated.RiskScore.RiskLevel getLowMedium();
+      org.ena.server.common.protocols.generated.RiskScore.RiskLevel getGt51Le63Dbm();
 
       /**
        * <pre>
        * 33 &lt; A &lt;= 51 dBm
        * </pre>
        *
-       * <code>.org.ena.server.common.protocols.generated.RiskLevel medium = 4;</code>
-       * @return The enum numeric value on the wire for medium.
+       * <code>.org.ena.server.common.protocols.generated.RiskLevel gt_33_le_51_dbm = 4;</code>
+       * @return The enum numeric value on the wire for gt33Le51Dbm.
        */
-      int getMediumValue();
+      int getGt33Le51DbmValue();
       /**
        * <pre>
        * 33 &lt; A &lt;= 51 dBm
        * </pre>
        *
-       * <code>.org.ena.server.common.protocols.generated.RiskLevel medium = 4;</code>
-       * @return The medium.
+       * <code>.org.ena.server.common.protocols.generated.RiskLevel gt_33_le_51_dbm = 4;</code>
+       * @return The gt33Le51Dbm.
        */
-      org.ena.server.common.protocols.generated.RiskScore.RiskLevel getMedium();
+      org.ena.server.common.protocols.generated.RiskScore.RiskLevel getGt33Le51Dbm();
 
       /**
        * <pre>
        * 27 &lt; A &lt;= 33 dBm
        * </pre>
        *
-       * <code>.org.ena.server.common.protocols.generated.RiskLevel medium_high = 5;</code>
-       * @return The enum numeric value on the wire for mediumHigh.
+       * <code>.org.ena.server.common.protocols.generated.RiskLevel gt_27_le_33_dbm = 5;</code>
+       * @return The enum numeric value on the wire for gt27Le33Dbm.
        */
-      int getMediumHighValue();
+      int getGt27Le33DbmValue();
       /**
        * <pre>
        * 27 &lt; A &lt;= 33 dBm
        * </pre>
        *
-       * <code>.org.ena.server.common.protocols.generated.RiskLevel medium_high = 5;</code>
-       * @return The mediumHigh.
+       * <code>.org.ena.server.common.protocols.generated.RiskLevel gt_27_le_33_dbm = 5;</code>
+       * @return The gt27Le33Dbm.
        */
-      org.ena.server.common.protocols.generated.RiskScore.RiskLevel getMediumHigh();
+      org.ena.server.common.protocols.generated.RiskScore.RiskLevel getGt27Le33Dbm();
 
       /**
        * <pre>
        * 15 &lt; A &lt;= 27 dBm
        * </pre>
        *
-       * <code>.org.ena.server.common.protocols.generated.RiskLevel high = 6;</code>
-       * @return The enum numeric value on the wire for high.
+       * <code>.org.ena.server.common.protocols.generated.RiskLevel gt_15_le_27_dbm = 6;</code>
+       * @return The enum numeric value on the wire for gt15Le27Dbm.
        */
-      int getHighValue();
+      int getGt15Le27DbmValue();
       /**
        * <pre>
        * 15 &lt; A &lt;= 27 dBm
        * </pre>
        *
-       * <code>.org.ena.server.common.protocols.generated.RiskLevel high = 6;</code>
-       * @return The high.
+       * <code>.org.ena.server.common.protocols.generated.RiskLevel gt_15_le_27_dbm = 6;</code>
+       * @return The gt15Le27Dbm.
        */
-      org.ena.server.common.protocols.generated.RiskScore.RiskLevel getHigh();
+      org.ena.server.common.protocols.generated.RiskScore.RiskLevel getGt15Le27Dbm();
 
       /**
        * <pre>
        * 10 &lt; A &lt;= 15 dBm
        * </pre>
        *
-       * <code>.org.ena.server.common.protocols.generated.RiskLevel very_high = 7;</code>
-       * @return The enum numeric value on the wire for veryHigh.
+       * <code>.org.ena.server.common.protocols.generated.RiskLevel gt_10_le_15_dbm = 7;</code>
+       * @return The enum numeric value on the wire for gt10Le15Dbm.
        */
-      int getVeryHighValue();
+      int getGt10Le15DbmValue();
       /**
        * <pre>
        * 10 &lt; A &lt;= 15 dBm
        * </pre>
        *
-       * <code>.org.ena.server.common.protocols.generated.RiskLevel very_high = 7;</code>
-       * @return The veryHigh.
+       * <code>.org.ena.server.common.protocols.generated.RiskLevel gt_10_le_15_dbm = 7;</code>
+       * @return The gt10Le15Dbm.
        */
-      org.ena.server.common.protocols.generated.RiskScore.RiskLevel getVeryHigh();
+      org.ena.server.common.protocols.generated.RiskScore.RiskLevel getGt10Le15Dbm();
 
       /**
        * <pre>
-       * A &lt;= 10 dBm
+       * A &lt;= 10 dBm, highest risk
        * </pre>
        *
-       * <code>.org.ena.server.common.protocols.generated.RiskLevel highest = 8;</code>
-       * @return The enum numeric value on the wire for highest.
+       * <code>.org.ena.server.common.protocols.generated.RiskLevel lt_10_min = 8;</code>
+       * @return The enum numeric value on the wire for lt10Min.
        */
-      int getHighestValue();
+      int getLt10MinValue();
       /**
        * <pre>
-       * A &lt;= 10 dBm
+       * A &lt;= 10 dBm, highest risk
        * </pre>
        *
-       * <code>.org.ena.server.common.protocols.generated.RiskLevel highest = 8;</code>
-       * @return The highest.
+       * <code>.org.ena.server.common.protocols.generated.RiskLevel lt_10_min = 8;</code>
+       * @return The lt10Min.
        */
-      org.ena.server.common.protocols.generated.RiskScore.RiskLevel getHighest();
+      org.ena.server.common.protocols.generated.RiskScore.RiskLevel getLt10Min();
     }
     /**
      * Protobuf type {@code org.ena.server.common.protocols.generated.RiskScoreParameters.AttenuationRiskParameter}
@@ -4942,14 +4954,14 @@ public final class RiskScore {
         super(builder);
       }
       private AttenuationRiskParameter() {
-        lowest_ = 0;
-        low_ = 0;
-        lowMedium_ = 0;
-        medium_ = 0;
-        mediumHigh_ = 0;
-        high_ = 0;
-        veryHigh_ = 0;
-        highest_ = 0;
+        gt73Dbm_ = 0;
+        gt63Le73Dbm_ = 0;
+        gt51Le63Dbm_ = 0;
+        gt33Le51Dbm_ = 0;
+        gt27Le33Dbm_ = 0;
+        gt15Le27Dbm_ = 0;
+        gt10Le15Dbm_ = 0;
+        lt10Min_ = 0;
       }
 
       @java.lang.Override
@@ -4985,49 +4997,49 @@ public final class RiskScore {
               case 8: {
                 int rawValue = input.readEnum();
 
-                lowest_ = rawValue;
+                gt73Dbm_ = rawValue;
                 break;
               }
               case 16: {
                 int rawValue = input.readEnum();
 
-                low_ = rawValue;
+                gt63Le73Dbm_ = rawValue;
                 break;
               }
               case 24: {
                 int rawValue = input.readEnum();
 
-                lowMedium_ = rawValue;
+                gt51Le63Dbm_ = rawValue;
                 break;
               }
               case 32: {
                 int rawValue = input.readEnum();
 
-                medium_ = rawValue;
+                gt33Le51Dbm_ = rawValue;
                 break;
               }
               case 40: {
                 int rawValue = input.readEnum();
 
-                mediumHigh_ = rawValue;
+                gt27Le33Dbm_ = rawValue;
                 break;
               }
               case 48: {
                 int rawValue = input.readEnum();
 
-                high_ = rawValue;
+                gt15Le27Dbm_ = rawValue;
                 break;
               }
               case 56: {
                 int rawValue = input.readEnum();
 
-                veryHigh_ = rawValue;
+                gt10Le15Dbm_ = rawValue;
                 break;
               }
               case 64: {
                 int rawValue = input.readEnum();
 
-                highest_ = rawValue;
+                lt10Min_ = rawValue;
                 break;
               }
               default: {
@@ -5062,219 +5074,219 @@ public final class RiskScore {
                 org.ena.server.common.protocols.generated.RiskScore.RiskScoreParameters.AttenuationRiskParameter.class, org.ena.server.common.protocols.generated.RiskScore.RiskScoreParameters.AttenuationRiskParameter.Builder.class);
       }
 
-      public static final int LOWEST_FIELD_NUMBER = 1;
-      private int lowest_;
+      public static final int GT_73_DBM_FIELD_NUMBER = 1;
+      private int gt73Dbm_;
       /**
        * <pre>
-       * A &gt; 73 dBm
+       * A &gt; 73 dBm, lowest risk
        * </pre>
        *
-       * <code>.org.ena.server.common.protocols.generated.RiskLevel lowest = 1;</code>
-       * @return The enum numeric value on the wire for lowest.
+       * <code>.org.ena.server.common.protocols.generated.RiskLevel gt_73_dbm = 1;</code>
+       * @return The enum numeric value on the wire for gt73Dbm.
        */
-      public int getLowestValue() {
-        return lowest_;
+      public int getGt73DbmValue() {
+        return gt73Dbm_;
       }
       /**
        * <pre>
-       * A &gt; 73 dBm
+       * A &gt; 73 dBm, lowest risk
        * </pre>
        *
-       * <code>.org.ena.server.common.protocols.generated.RiskLevel lowest = 1;</code>
-       * @return The lowest.
+       * <code>.org.ena.server.common.protocols.generated.RiskLevel gt_73_dbm = 1;</code>
+       * @return The gt73Dbm.
        */
-      public org.ena.server.common.protocols.generated.RiskScore.RiskLevel getLowest() {
+      public org.ena.server.common.protocols.generated.RiskScore.RiskLevel getGt73Dbm() {
         @SuppressWarnings("deprecation")
-        org.ena.server.common.protocols.generated.RiskScore.RiskLevel result = org.ena.server.common.protocols.generated.RiskScore.RiskLevel.valueOf(lowest_);
+        org.ena.server.common.protocols.generated.RiskScore.RiskLevel result = org.ena.server.common.protocols.generated.RiskScore.RiskLevel.valueOf(gt73Dbm_);
         return result == null ? org.ena.server.common.protocols.generated.RiskScore.RiskLevel.UNRECOGNIZED : result;
       }
 
-      public static final int LOW_FIELD_NUMBER = 2;
-      private int low_;
+      public static final int GT_63_LE_73_DBM_FIELD_NUMBER = 2;
+      private int gt63Le73Dbm_;
       /**
        * <pre>
        * 63 &lt; A &lt;= 73 dBm
        * </pre>
        *
-       * <code>.org.ena.server.common.protocols.generated.RiskLevel low = 2;</code>
-       * @return The enum numeric value on the wire for low.
+       * <code>.org.ena.server.common.protocols.generated.RiskLevel gt_63_le_73_dbm = 2;</code>
+       * @return The enum numeric value on the wire for gt63Le73Dbm.
        */
-      public int getLowValue() {
-        return low_;
+      public int getGt63Le73DbmValue() {
+        return gt63Le73Dbm_;
       }
       /**
        * <pre>
        * 63 &lt; A &lt;= 73 dBm
        * </pre>
        *
-       * <code>.org.ena.server.common.protocols.generated.RiskLevel low = 2;</code>
-       * @return The low.
+       * <code>.org.ena.server.common.protocols.generated.RiskLevel gt_63_le_73_dbm = 2;</code>
+       * @return The gt63Le73Dbm.
        */
-      public org.ena.server.common.protocols.generated.RiskScore.RiskLevel getLow() {
+      public org.ena.server.common.protocols.generated.RiskScore.RiskLevel getGt63Le73Dbm() {
         @SuppressWarnings("deprecation")
-        org.ena.server.common.protocols.generated.RiskScore.RiskLevel result = org.ena.server.common.protocols.generated.RiskScore.RiskLevel.valueOf(low_);
+        org.ena.server.common.protocols.generated.RiskScore.RiskLevel result = org.ena.server.common.protocols.generated.RiskScore.RiskLevel.valueOf(gt63Le73Dbm_);
         return result == null ? org.ena.server.common.protocols.generated.RiskScore.RiskLevel.UNRECOGNIZED : result;
       }
 
-      public static final int LOW_MEDIUM_FIELD_NUMBER = 3;
-      private int lowMedium_;
+      public static final int GT_51_LE_63_DBM_FIELD_NUMBER = 3;
+      private int gt51Le63Dbm_;
       /**
        * <pre>
        * 51 &lt; A &lt;= 63 dBm
        * </pre>
        *
-       * <code>.org.ena.server.common.protocols.generated.RiskLevel low_medium = 3;</code>
-       * @return The enum numeric value on the wire for lowMedium.
+       * <code>.org.ena.server.common.protocols.generated.RiskLevel gt_51_le_63_dbm = 3;</code>
+       * @return The enum numeric value on the wire for gt51Le63Dbm.
        */
-      public int getLowMediumValue() {
-        return lowMedium_;
+      public int getGt51Le63DbmValue() {
+        return gt51Le63Dbm_;
       }
       /**
        * <pre>
        * 51 &lt; A &lt;= 63 dBm
        * </pre>
        *
-       * <code>.org.ena.server.common.protocols.generated.RiskLevel low_medium = 3;</code>
-       * @return The lowMedium.
+       * <code>.org.ena.server.common.protocols.generated.RiskLevel gt_51_le_63_dbm = 3;</code>
+       * @return The gt51Le63Dbm.
        */
-      public org.ena.server.common.protocols.generated.RiskScore.RiskLevel getLowMedium() {
+      public org.ena.server.common.protocols.generated.RiskScore.RiskLevel getGt51Le63Dbm() {
         @SuppressWarnings("deprecation")
-        org.ena.server.common.protocols.generated.RiskScore.RiskLevel result = org.ena.server.common.protocols.generated.RiskScore.RiskLevel.valueOf(lowMedium_);
+        org.ena.server.common.protocols.generated.RiskScore.RiskLevel result = org.ena.server.common.protocols.generated.RiskScore.RiskLevel.valueOf(gt51Le63Dbm_);
         return result == null ? org.ena.server.common.protocols.generated.RiskScore.RiskLevel.UNRECOGNIZED : result;
       }
 
-      public static final int MEDIUM_FIELD_NUMBER = 4;
-      private int medium_;
+      public static final int GT_33_LE_51_DBM_FIELD_NUMBER = 4;
+      private int gt33Le51Dbm_;
       /**
        * <pre>
        * 33 &lt; A &lt;= 51 dBm
        * </pre>
        *
-       * <code>.org.ena.server.common.protocols.generated.RiskLevel medium = 4;</code>
-       * @return The enum numeric value on the wire for medium.
+       * <code>.org.ena.server.common.protocols.generated.RiskLevel gt_33_le_51_dbm = 4;</code>
+       * @return The enum numeric value on the wire for gt33Le51Dbm.
        */
-      public int getMediumValue() {
-        return medium_;
+      public int getGt33Le51DbmValue() {
+        return gt33Le51Dbm_;
       }
       /**
        * <pre>
        * 33 &lt; A &lt;= 51 dBm
        * </pre>
        *
-       * <code>.org.ena.server.common.protocols.generated.RiskLevel medium = 4;</code>
-       * @return The medium.
+       * <code>.org.ena.server.common.protocols.generated.RiskLevel gt_33_le_51_dbm = 4;</code>
+       * @return The gt33Le51Dbm.
        */
-      public org.ena.server.common.protocols.generated.RiskScore.RiskLevel getMedium() {
+      public org.ena.server.common.protocols.generated.RiskScore.RiskLevel getGt33Le51Dbm() {
         @SuppressWarnings("deprecation")
-        org.ena.server.common.protocols.generated.RiskScore.RiskLevel result = org.ena.server.common.protocols.generated.RiskScore.RiskLevel.valueOf(medium_);
+        org.ena.server.common.protocols.generated.RiskScore.RiskLevel result = org.ena.server.common.protocols.generated.RiskScore.RiskLevel.valueOf(gt33Le51Dbm_);
         return result == null ? org.ena.server.common.protocols.generated.RiskScore.RiskLevel.UNRECOGNIZED : result;
       }
 
-      public static final int MEDIUM_HIGH_FIELD_NUMBER = 5;
-      private int mediumHigh_;
+      public static final int GT_27_LE_33_DBM_FIELD_NUMBER = 5;
+      private int gt27Le33Dbm_;
       /**
        * <pre>
        * 27 &lt; A &lt;= 33 dBm
        * </pre>
        *
-       * <code>.org.ena.server.common.protocols.generated.RiskLevel medium_high = 5;</code>
-       * @return The enum numeric value on the wire for mediumHigh.
+       * <code>.org.ena.server.common.protocols.generated.RiskLevel gt_27_le_33_dbm = 5;</code>
+       * @return The enum numeric value on the wire for gt27Le33Dbm.
        */
-      public int getMediumHighValue() {
-        return mediumHigh_;
+      public int getGt27Le33DbmValue() {
+        return gt27Le33Dbm_;
       }
       /**
        * <pre>
        * 27 &lt; A &lt;= 33 dBm
        * </pre>
        *
-       * <code>.org.ena.server.common.protocols.generated.RiskLevel medium_high = 5;</code>
-       * @return The mediumHigh.
+       * <code>.org.ena.server.common.protocols.generated.RiskLevel gt_27_le_33_dbm = 5;</code>
+       * @return The gt27Le33Dbm.
        */
-      public org.ena.server.common.protocols.generated.RiskScore.RiskLevel getMediumHigh() {
+      public org.ena.server.common.protocols.generated.RiskScore.RiskLevel getGt27Le33Dbm() {
         @SuppressWarnings("deprecation")
-        org.ena.server.common.protocols.generated.RiskScore.RiskLevel result = org.ena.server.common.protocols.generated.RiskScore.RiskLevel.valueOf(mediumHigh_);
+        org.ena.server.common.protocols.generated.RiskScore.RiskLevel result = org.ena.server.common.protocols.generated.RiskScore.RiskLevel.valueOf(gt27Le33Dbm_);
         return result == null ? org.ena.server.common.protocols.generated.RiskScore.RiskLevel.UNRECOGNIZED : result;
       }
 
-      public static final int HIGH_FIELD_NUMBER = 6;
-      private int high_;
+      public static final int GT_15_LE_27_DBM_FIELD_NUMBER = 6;
+      private int gt15Le27Dbm_;
       /**
        * <pre>
        * 15 &lt; A &lt;= 27 dBm
        * </pre>
        *
-       * <code>.org.ena.server.common.protocols.generated.RiskLevel high = 6;</code>
-       * @return The enum numeric value on the wire for high.
+       * <code>.org.ena.server.common.protocols.generated.RiskLevel gt_15_le_27_dbm = 6;</code>
+       * @return The enum numeric value on the wire for gt15Le27Dbm.
        */
-      public int getHighValue() {
-        return high_;
+      public int getGt15Le27DbmValue() {
+        return gt15Le27Dbm_;
       }
       /**
        * <pre>
        * 15 &lt; A &lt;= 27 dBm
        * </pre>
        *
-       * <code>.org.ena.server.common.protocols.generated.RiskLevel high = 6;</code>
-       * @return The high.
+       * <code>.org.ena.server.common.protocols.generated.RiskLevel gt_15_le_27_dbm = 6;</code>
+       * @return The gt15Le27Dbm.
        */
-      public org.ena.server.common.protocols.generated.RiskScore.RiskLevel getHigh() {
+      public org.ena.server.common.protocols.generated.RiskScore.RiskLevel getGt15Le27Dbm() {
         @SuppressWarnings("deprecation")
-        org.ena.server.common.protocols.generated.RiskScore.RiskLevel result = org.ena.server.common.protocols.generated.RiskScore.RiskLevel.valueOf(high_);
+        org.ena.server.common.protocols.generated.RiskScore.RiskLevel result = org.ena.server.common.protocols.generated.RiskScore.RiskLevel.valueOf(gt15Le27Dbm_);
         return result == null ? org.ena.server.common.protocols.generated.RiskScore.RiskLevel.UNRECOGNIZED : result;
       }
 
-      public static final int VERY_HIGH_FIELD_NUMBER = 7;
-      private int veryHigh_;
+      public static final int GT_10_LE_15_DBM_FIELD_NUMBER = 7;
+      private int gt10Le15Dbm_;
       /**
        * <pre>
        * 10 &lt; A &lt;= 15 dBm
        * </pre>
        *
-       * <code>.org.ena.server.common.protocols.generated.RiskLevel very_high = 7;</code>
-       * @return The enum numeric value on the wire for veryHigh.
+       * <code>.org.ena.server.common.protocols.generated.RiskLevel gt_10_le_15_dbm = 7;</code>
+       * @return The enum numeric value on the wire for gt10Le15Dbm.
        */
-      public int getVeryHighValue() {
-        return veryHigh_;
+      public int getGt10Le15DbmValue() {
+        return gt10Le15Dbm_;
       }
       /**
        * <pre>
        * 10 &lt; A &lt;= 15 dBm
        * </pre>
        *
-       * <code>.org.ena.server.common.protocols.generated.RiskLevel very_high = 7;</code>
-       * @return The veryHigh.
+       * <code>.org.ena.server.common.protocols.generated.RiskLevel gt_10_le_15_dbm = 7;</code>
+       * @return The gt10Le15Dbm.
        */
-      public org.ena.server.common.protocols.generated.RiskScore.RiskLevel getVeryHigh() {
+      public org.ena.server.common.protocols.generated.RiskScore.RiskLevel getGt10Le15Dbm() {
         @SuppressWarnings("deprecation")
-        org.ena.server.common.protocols.generated.RiskScore.RiskLevel result = org.ena.server.common.protocols.generated.RiskScore.RiskLevel.valueOf(veryHigh_);
+        org.ena.server.common.protocols.generated.RiskScore.RiskLevel result = org.ena.server.common.protocols.generated.RiskScore.RiskLevel.valueOf(gt10Le15Dbm_);
         return result == null ? org.ena.server.common.protocols.generated.RiskScore.RiskLevel.UNRECOGNIZED : result;
       }
 
-      public static final int HIGHEST_FIELD_NUMBER = 8;
-      private int highest_;
+      public static final int LT_10_MIN_FIELD_NUMBER = 8;
+      private int lt10Min_;
       /**
        * <pre>
-       * A &lt;= 10 dBm
+       * A &lt;= 10 dBm, highest risk
        * </pre>
        *
-       * <code>.org.ena.server.common.protocols.generated.RiskLevel highest = 8;</code>
-       * @return The enum numeric value on the wire for highest.
+       * <code>.org.ena.server.common.protocols.generated.RiskLevel lt_10_min = 8;</code>
+       * @return The enum numeric value on the wire for lt10Min.
        */
-      public int getHighestValue() {
-        return highest_;
+      public int getLt10MinValue() {
+        return lt10Min_;
       }
       /**
        * <pre>
-       * A &lt;= 10 dBm
+       * A &lt;= 10 dBm, highest risk
        * </pre>
        *
-       * <code>.org.ena.server.common.protocols.generated.RiskLevel highest = 8;</code>
-       * @return The highest.
+       * <code>.org.ena.server.common.protocols.generated.RiskLevel lt_10_min = 8;</code>
+       * @return The lt10Min.
        */
-      public org.ena.server.common.protocols.generated.RiskScore.RiskLevel getHighest() {
+      public org.ena.server.common.protocols.generated.RiskScore.RiskLevel getLt10Min() {
         @SuppressWarnings("deprecation")
-        org.ena.server.common.protocols.generated.RiskScore.RiskLevel result = org.ena.server.common.protocols.generated.RiskScore.RiskLevel.valueOf(highest_);
+        org.ena.server.common.protocols.generated.RiskScore.RiskLevel result = org.ena.server.common.protocols.generated.RiskScore.RiskLevel.valueOf(lt10Min_);
         return result == null ? org.ena.server.common.protocols.generated.RiskScore.RiskLevel.UNRECOGNIZED : result;
       }
 
@@ -5292,29 +5304,29 @@ public final class RiskScore {
       @java.lang.Override
       public void writeTo(com.google.protobuf.CodedOutputStream output)
                           throws java.io.IOException {
-        if (lowest_ != org.ena.server.common.protocols.generated.RiskScore.RiskLevel.INVALID.getNumber()) {
-          output.writeEnum(1, lowest_);
+        if (gt73Dbm_ != org.ena.server.common.protocols.generated.RiskScore.RiskLevel.INVALID.getNumber()) {
+          output.writeEnum(1, gt73Dbm_);
         }
-        if (low_ != org.ena.server.common.protocols.generated.RiskScore.RiskLevel.INVALID.getNumber()) {
-          output.writeEnum(2, low_);
+        if (gt63Le73Dbm_ != org.ena.server.common.protocols.generated.RiskScore.RiskLevel.INVALID.getNumber()) {
+          output.writeEnum(2, gt63Le73Dbm_);
         }
-        if (lowMedium_ != org.ena.server.common.protocols.generated.RiskScore.RiskLevel.INVALID.getNumber()) {
-          output.writeEnum(3, lowMedium_);
+        if (gt51Le63Dbm_ != org.ena.server.common.protocols.generated.RiskScore.RiskLevel.INVALID.getNumber()) {
+          output.writeEnum(3, gt51Le63Dbm_);
         }
-        if (medium_ != org.ena.server.common.protocols.generated.RiskScore.RiskLevel.INVALID.getNumber()) {
-          output.writeEnum(4, medium_);
+        if (gt33Le51Dbm_ != org.ena.server.common.protocols.generated.RiskScore.RiskLevel.INVALID.getNumber()) {
+          output.writeEnum(4, gt33Le51Dbm_);
         }
-        if (mediumHigh_ != org.ena.server.common.protocols.generated.RiskScore.RiskLevel.INVALID.getNumber()) {
-          output.writeEnum(5, mediumHigh_);
+        if (gt27Le33Dbm_ != org.ena.server.common.protocols.generated.RiskScore.RiskLevel.INVALID.getNumber()) {
+          output.writeEnum(5, gt27Le33Dbm_);
         }
-        if (high_ != org.ena.server.common.protocols.generated.RiskScore.RiskLevel.INVALID.getNumber()) {
-          output.writeEnum(6, high_);
+        if (gt15Le27Dbm_ != org.ena.server.common.protocols.generated.RiskScore.RiskLevel.INVALID.getNumber()) {
+          output.writeEnum(6, gt15Le27Dbm_);
         }
-        if (veryHigh_ != org.ena.server.common.protocols.generated.RiskScore.RiskLevel.INVALID.getNumber()) {
-          output.writeEnum(7, veryHigh_);
+        if (gt10Le15Dbm_ != org.ena.server.common.protocols.generated.RiskScore.RiskLevel.INVALID.getNumber()) {
+          output.writeEnum(7, gt10Le15Dbm_);
         }
-        if (highest_ != org.ena.server.common.protocols.generated.RiskScore.RiskLevel.INVALID.getNumber()) {
-          output.writeEnum(8, highest_);
+        if (lt10Min_ != org.ena.server.common.protocols.generated.RiskScore.RiskLevel.INVALID.getNumber()) {
+          output.writeEnum(8, lt10Min_);
         }
         unknownFields.writeTo(output);
       }
@@ -5325,37 +5337,37 @@ public final class RiskScore {
         if (size != -1) return size;
 
         size = 0;
-        if (lowest_ != org.ena.server.common.protocols.generated.RiskScore.RiskLevel.INVALID.getNumber()) {
+        if (gt73Dbm_ != org.ena.server.common.protocols.generated.RiskScore.RiskLevel.INVALID.getNumber()) {
           size += com.google.protobuf.CodedOutputStream
-            .computeEnumSize(1, lowest_);
+            .computeEnumSize(1, gt73Dbm_);
         }
-        if (low_ != org.ena.server.common.protocols.generated.RiskScore.RiskLevel.INVALID.getNumber()) {
+        if (gt63Le73Dbm_ != org.ena.server.common.protocols.generated.RiskScore.RiskLevel.INVALID.getNumber()) {
           size += com.google.protobuf.CodedOutputStream
-            .computeEnumSize(2, low_);
+            .computeEnumSize(2, gt63Le73Dbm_);
         }
-        if (lowMedium_ != org.ena.server.common.protocols.generated.RiskScore.RiskLevel.INVALID.getNumber()) {
+        if (gt51Le63Dbm_ != org.ena.server.common.protocols.generated.RiskScore.RiskLevel.INVALID.getNumber()) {
           size += com.google.protobuf.CodedOutputStream
-            .computeEnumSize(3, lowMedium_);
+            .computeEnumSize(3, gt51Le63Dbm_);
         }
-        if (medium_ != org.ena.server.common.protocols.generated.RiskScore.RiskLevel.INVALID.getNumber()) {
+        if (gt33Le51Dbm_ != org.ena.server.common.protocols.generated.RiskScore.RiskLevel.INVALID.getNumber()) {
           size += com.google.protobuf.CodedOutputStream
-            .computeEnumSize(4, medium_);
+            .computeEnumSize(4, gt33Le51Dbm_);
         }
-        if (mediumHigh_ != org.ena.server.common.protocols.generated.RiskScore.RiskLevel.INVALID.getNumber()) {
+        if (gt27Le33Dbm_ != org.ena.server.common.protocols.generated.RiskScore.RiskLevel.INVALID.getNumber()) {
           size += com.google.protobuf.CodedOutputStream
-            .computeEnumSize(5, mediumHigh_);
+            .computeEnumSize(5, gt27Le33Dbm_);
         }
-        if (high_ != org.ena.server.common.protocols.generated.RiskScore.RiskLevel.INVALID.getNumber()) {
+        if (gt15Le27Dbm_ != org.ena.server.common.protocols.generated.RiskScore.RiskLevel.INVALID.getNumber()) {
           size += com.google.protobuf.CodedOutputStream
-            .computeEnumSize(6, high_);
+            .computeEnumSize(6, gt15Le27Dbm_);
         }
-        if (veryHigh_ != org.ena.server.common.protocols.generated.RiskScore.RiskLevel.INVALID.getNumber()) {
+        if (gt10Le15Dbm_ != org.ena.server.common.protocols.generated.RiskScore.RiskLevel.INVALID.getNumber()) {
           size += com.google.protobuf.CodedOutputStream
-            .computeEnumSize(7, veryHigh_);
+            .computeEnumSize(7, gt10Le15Dbm_);
         }
-        if (highest_ != org.ena.server.common.protocols.generated.RiskScore.RiskLevel.INVALID.getNumber()) {
+        if (lt10Min_ != org.ena.server.common.protocols.generated.RiskScore.RiskLevel.INVALID.getNumber()) {
           size += com.google.protobuf.CodedOutputStream
-            .computeEnumSize(8, highest_);
+            .computeEnumSize(8, lt10Min_);
         }
         size += unknownFields.getSerializedSize();
         memoizedSize = size;
@@ -5372,14 +5384,14 @@ public final class RiskScore {
         }
         org.ena.server.common.protocols.generated.RiskScore.RiskScoreParameters.AttenuationRiskParameter other = (org.ena.server.common.protocols.generated.RiskScore.RiskScoreParameters.AttenuationRiskParameter) obj;
 
-        if (lowest_ != other.lowest_) return false;
-        if (low_ != other.low_) return false;
-        if (lowMedium_ != other.lowMedium_) return false;
-        if (medium_ != other.medium_) return false;
-        if (mediumHigh_ != other.mediumHigh_) return false;
-        if (high_ != other.high_) return false;
-        if (veryHigh_ != other.veryHigh_) return false;
-        if (highest_ != other.highest_) return false;
+        if (gt73Dbm_ != other.gt73Dbm_) return false;
+        if (gt63Le73Dbm_ != other.gt63Le73Dbm_) return false;
+        if (gt51Le63Dbm_ != other.gt51Le63Dbm_) return false;
+        if (gt33Le51Dbm_ != other.gt33Le51Dbm_) return false;
+        if (gt27Le33Dbm_ != other.gt27Le33Dbm_) return false;
+        if (gt15Le27Dbm_ != other.gt15Le27Dbm_) return false;
+        if (gt10Le15Dbm_ != other.gt10Le15Dbm_) return false;
+        if (lt10Min_ != other.lt10Min_) return false;
         if (!unknownFields.equals(other.unknownFields)) return false;
         return true;
       }
@@ -5391,22 +5403,22 @@ public final class RiskScore {
         }
         int hash = 41;
         hash = (19 * hash) + getDescriptor().hashCode();
-        hash = (37 * hash) + LOWEST_FIELD_NUMBER;
-        hash = (53 * hash) + lowest_;
-        hash = (37 * hash) + LOW_FIELD_NUMBER;
-        hash = (53 * hash) + low_;
-        hash = (37 * hash) + LOW_MEDIUM_FIELD_NUMBER;
-        hash = (53 * hash) + lowMedium_;
-        hash = (37 * hash) + MEDIUM_FIELD_NUMBER;
-        hash = (53 * hash) + medium_;
-        hash = (37 * hash) + MEDIUM_HIGH_FIELD_NUMBER;
-        hash = (53 * hash) + mediumHigh_;
-        hash = (37 * hash) + HIGH_FIELD_NUMBER;
-        hash = (53 * hash) + high_;
-        hash = (37 * hash) + VERY_HIGH_FIELD_NUMBER;
-        hash = (53 * hash) + veryHigh_;
-        hash = (37 * hash) + HIGHEST_FIELD_NUMBER;
-        hash = (53 * hash) + highest_;
+        hash = (37 * hash) + GT_73_DBM_FIELD_NUMBER;
+        hash = (53 * hash) + gt73Dbm_;
+        hash = (37 * hash) + GT_63_LE_73_DBM_FIELD_NUMBER;
+        hash = (53 * hash) + gt63Le73Dbm_;
+        hash = (37 * hash) + GT_51_LE_63_DBM_FIELD_NUMBER;
+        hash = (53 * hash) + gt51Le63Dbm_;
+        hash = (37 * hash) + GT_33_LE_51_DBM_FIELD_NUMBER;
+        hash = (53 * hash) + gt33Le51Dbm_;
+        hash = (37 * hash) + GT_27_LE_33_DBM_FIELD_NUMBER;
+        hash = (53 * hash) + gt27Le33Dbm_;
+        hash = (37 * hash) + GT_15_LE_27_DBM_FIELD_NUMBER;
+        hash = (53 * hash) + gt15Le27Dbm_;
+        hash = (37 * hash) + GT_10_LE_15_DBM_FIELD_NUMBER;
+        hash = (53 * hash) + gt10Le15Dbm_;
+        hash = (37 * hash) + LT_10_MIN_FIELD_NUMBER;
+        hash = (53 * hash) + lt10Min_;
         hash = (29 * hash) + unknownFields.hashCode();
         memoizedHashCode = hash;
         return hash;
@@ -5540,21 +5552,21 @@ public final class RiskScore {
         @java.lang.Override
         public Builder clear() {
           super.clear();
-          lowest_ = 0;
+          gt73Dbm_ = 0;
 
-          low_ = 0;
+          gt63Le73Dbm_ = 0;
 
-          lowMedium_ = 0;
+          gt51Le63Dbm_ = 0;
 
-          medium_ = 0;
+          gt33Le51Dbm_ = 0;
 
-          mediumHigh_ = 0;
+          gt27Le33Dbm_ = 0;
 
-          high_ = 0;
+          gt15Le27Dbm_ = 0;
 
-          veryHigh_ = 0;
+          gt10Le15Dbm_ = 0;
 
-          highest_ = 0;
+          lt10Min_ = 0;
 
           return this;
         }
@@ -5582,14 +5594,14 @@ public final class RiskScore {
         @java.lang.Override
         public org.ena.server.common.protocols.generated.RiskScore.RiskScoreParameters.AttenuationRiskParameter buildPartial() {
           org.ena.server.common.protocols.generated.RiskScore.RiskScoreParameters.AttenuationRiskParameter result = new org.ena.server.common.protocols.generated.RiskScore.RiskScoreParameters.AttenuationRiskParameter(this);
-          result.lowest_ = lowest_;
-          result.low_ = low_;
-          result.lowMedium_ = lowMedium_;
-          result.medium_ = medium_;
-          result.mediumHigh_ = mediumHigh_;
-          result.high_ = high_;
-          result.veryHigh_ = veryHigh_;
-          result.highest_ = highest_;
+          result.gt73Dbm_ = gt73Dbm_;
+          result.gt63Le73Dbm_ = gt63Le73Dbm_;
+          result.gt51Le63Dbm_ = gt51Le63Dbm_;
+          result.gt33Le51Dbm_ = gt33Le51Dbm_;
+          result.gt27Le33Dbm_ = gt27Le33Dbm_;
+          result.gt15Le27Dbm_ = gt15Le27Dbm_;
+          result.gt10Le15Dbm_ = gt10Le15Dbm_;
+          result.lt10Min_ = lt10Min_;
           onBuilt();
           return result;
         }
@@ -5638,29 +5650,29 @@ public final class RiskScore {
 
         public Builder mergeFrom(org.ena.server.common.protocols.generated.RiskScore.RiskScoreParameters.AttenuationRiskParameter other) {
           if (other == org.ena.server.common.protocols.generated.RiskScore.RiskScoreParameters.AttenuationRiskParameter.getDefaultInstance()) return this;
-          if (other.lowest_ != 0) {
-            setLowestValue(other.getLowestValue());
+          if (other.gt73Dbm_ != 0) {
+            setGt73DbmValue(other.getGt73DbmValue());
           }
-          if (other.low_ != 0) {
-            setLowValue(other.getLowValue());
+          if (other.gt63Le73Dbm_ != 0) {
+            setGt63Le73DbmValue(other.getGt63Le73DbmValue());
           }
-          if (other.lowMedium_ != 0) {
-            setLowMediumValue(other.getLowMediumValue());
+          if (other.gt51Le63Dbm_ != 0) {
+            setGt51Le63DbmValue(other.getGt51Le63DbmValue());
           }
-          if (other.medium_ != 0) {
-            setMediumValue(other.getMediumValue());
+          if (other.gt33Le51Dbm_ != 0) {
+            setGt33Le51DbmValue(other.getGt33Le51DbmValue());
           }
-          if (other.mediumHigh_ != 0) {
-            setMediumHighValue(other.getMediumHighValue());
+          if (other.gt27Le33Dbm_ != 0) {
+            setGt27Le33DbmValue(other.getGt27Le33DbmValue());
           }
-          if (other.high_ != 0) {
-            setHighValue(other.getHighValue());
+          if (other.gt15Le27Dbm_ != 0) {
+            setGt15Le27DbmValue(other.getGt15Le27DbmValue());
           }
-          if (other.veryHigh_ != 0) {
-            setVeryHighValue(other.getVeryHighValue());
+          if (other.gt10Le15Dbm_ != 0) {
+            setGt10Le15DbmValue(other.getGt10Le15DbmValue());
           }
-          if (other.highest_ != 0) {
-            setHighestValue(other.getHighestValue());
+          if (other.lt10Min_ != 0) {
+            setLt10MinValue(other.getLt10MinValue());
           }
           this.mergeUnknownFields(other.unknownFields);
           onChanged();
@@ -5691,132 +5703,101 @@ public final class RiskScore {
           return this;
         }
 
-        private int lowest_ = 0;
+        private int gt73Dbm_ = 0;
         /**
          * <pre>
-         * A &gt; 73 dBm
+         * A &gt; 73 dBm, lowest risk
          * </pre>
          *
-         * <code>.org.ena.server.common.protocols.generated.RiskLevel lowest = 1;</code>
-         * @return The enum numeric value on the wire for lowest.
+         * <code>.org.ena.server.common.protocols.generated.RiskLevel gt_73_dbm = 1;</code>
+         * @return The enum numeric value on the wire for gt73Dbm.
          */
-        public int getLowestValue() {
-          return lowest_;
+        public int getGt73DbmValue() {
+          return gt73Dbm_;
         }
         /**
          * <pre>
-         * A &gt; 73 dBm
+         * A &gt; 73 dBm, lowest risk
          * </pre>
          *
-         * <code>.org.ena.server.common.protocols.generated.RiskLevel lowest = 1;</code>
-         * @param value The enum numeric value on the wire for lowest to set.
+         * <code>.org.ena.server.common.protocols.generated.RiskLevel gt_73_dbm = 1;</code>
+         * @param value The enum numeric value on the wire for gt73Dbm to set.
          * @return This builder for chaining.
          */
-        public Builder setLowestValue(int value) {
-          lowest_ = value;
+        public Builder setGt73DbmValue(int value) {
+          gt73Dbm_ = value;
           onChanged();
           return this;
         }
         /**
          * <pre>
-         * A &gt; 73 dBm
+         * A &gt; 73 dBm, lowest risk
          * </pre>
          *
-         * <code>.org.ena.server.common.protocols.generated.RiskLevel lowest = 1;</code>
-         * @return The lowest.
+         * <code>.org.ena.server.common.protocols.generated.RiskLevel gt_73_dbm = 1;</code>
+         * @return The gt73Dbm.
          */
-        public org.ena.server.common.protocols.generated.RiskScore.RiskLevel getLowest() {
+        public org.ena.server.common.protocols.generated.RiskScore.RiskLevel getGt73Dbm() {
           @SuppressWarnings("deprecation")
-          org.ena.server.common.protocols.generated.RiskScore.RiskLevel result = org.ena.server.common.protocols.generated.RiskScore.RiskLevel.valueOf(lowest_);
+          org.ena.server.common.protocols.generated.RiskScore.RiskLevel result = org.ena.server.common.protocols.generated.RiskScore.RiskLevel.valueOf(gt73Dbm_);
           return result == null ? org.ena.server.common.protocols.generated.RiskScore.RiskLevel.UNRECOGNIZED : result;
         }
         /**
          * <pre>
-         * A &gt; 73 dBm
+         * A &gt; 73 dBm, lowest risk
          * </pre>
          *
-         * <code>.org.ena.server.common.protocols.generated.RiskLevel lowest = 1;</code>
-         * @param value The lowest to set.
+         * <code>.org.ena.server.common.protocols.generated.RiskLevel gt_73_dbm = 1;</code>
+         * @param value The gt73Dbm to set.
          * @return This builder for chaining.
          */
-        public Builder setLowest(org.ena.server.common.protocols.generated.RiskScore.RiskLevel value) {
+        public Builder setGt73Dbm(org.ena.server.common.protocols.generated.RiskScore.RiskLevel value) {
           if (value == null) {
             throw new NullPointerException();
           }
           
-          lowest_ = value.getNumber();
+          gt73Dbm_ = value.getNumber();
           onChanged();
           return this;
         }
         /**
          * <pre>
-         * A &gt; 73 dBm
+         * A &gt; 73 dBm, lowest risk
          * </pre>
          *
-         * <code>.org.ena.server.common.protocols.generated.RiskLevel lowest = 1;</code>
+         * <code>.org.ena.server.common.protocols.generated.RiskLevel gt_73_dbm = 1;</code>
          * @return This builder for chaining.
          */
-        public Builder clearLowest() {
+        public Builder clearGt73Dbm() {
           
-          lowest_ = 0;
+          gt73Dbm_ = 0;
           onChanged();
           return this;
         }
 
-        private int low_ = 0;
+        private int gt63Le73Dbm_ = 0;
         /**
          * <pre>
          * 63 &lt; A &lt;= 73 dBm
          * </pre>
          *
-         * <code>.org.ena.server.common.protocols.generated.RiskLevel low = 2;</code>
-         * @return The enum numeric value on the wire for low.
+         * <code>.org.ena.server.common.protocols.generated.RiskLevel gt_63_le_73_dbm = 2;</code>
+         * @return The enum numeric value on the wire for gt63Le73Dbm.
          */
-        public int getLowValue() {
-          return low_;
+        public int getGt63Le73DbmValue() {
+          return gt63Le73Dbm_;
         }
         /**
          * <pre>
          * 63 &lt; A &lt;= 73 dBm
          * </pre>
          *
-         * <code>.org.ena.server.common.protocols.generated.RiskLevel low = 2;</code>
-         * @param value The enum numeric value on the wire for low to set.
+         * <code>.org.ena.server.common.protocols.generated.RiskLevel gt_63_le_73_dbm = 2;</code>
+         * @param value The enum numeric value on the wire for gt63Le73Dbm to set.
          * @return This builder for chaining.
          */
-        public Builder setLowValue(int value) {
-          low_ = value;
-          onChanged();
-          return this;
-        }
-        /**
-         * <pre>
-         * 63 &lt; A &lt;= 73 dBm
-         * </pre>
-         *
-         * <code>.org.ena.server.common.protocols.generated.RiskLevel low = 2;</code>
-         * @return The low.
-         */
-        public org.ena.server.common.protocols.generated.RiskScore.RiskLevel getLow() {
-          @SuppressWarnings("deprecation")
-          org.ena.server.common.protocols.generated.RiskScore.RiskLevel result = org.ena.server.common.protocols.generated.RiskScore.RiskLevel.valueOf(low_);
-          return result == null ? org.ena.server.common.protocols.generated.RiskScore.RiskLevel.UNRECOGNIZED : result;
-        }
-        /**
-         * <pre>
-         * 63 &lt; A &lt;= 73 dBm
-         * </pre>
-         *
-         * <code>.org.ena.server.common.protocols.generated.RiskLevel low = 2;</code>
-         * @param value The low to set.
-         * @return This builder for chaining.
-         */
-        public Builder setLow(org.ena.server.common.protocols.generated.RiskScore.RiskLevel value) {
-          if (value == null) {
-            throw new NullPointerException();
-          }
-          
-          low_ = value.getNumber();
+        public Builder setGt63Le73DbmValue(int value) {
+          gt63Le73Dbm_ = value;
           onChanged();
           return this;
         }
@@ -5825,111 +5806,142 @@ public final class RiskScore {
          * 63 &lt; A &lt;= 73 dBm
          * </pre>
          *
-         * <code>.org.ena.server.common.protocols.generated.RiskLevel low = 2;</code>
-         * @return This builder for chaining.
+         * <code>.org.ena.server.common.protocols.generated.RiskLevel gt_63_le_73_dbm = 2;</code>
+         * @return The gt63Le73Dbm.
          */
-        public Builder clearLow() {
-          
-          low_ = 0;
-          onChanged();
-          return this;
-        }
-
-        private int lowMedium_ = 0;
-        /**
-         * <pre>
-         * 51 &lt; A &lt;= 63 dBm
-         * </pre>
-         *
-         * <code>.org.ena.server.common.protocols.generated.RiskLevel low_medium = 3;</code>
-         * @return The enum numeric value on the wire for lowMedium.
-         */
-        public int getLowMediumValue() {
-          return lowMedium_;
-        }
-        /**
-         * <pre>
-         * 51 &lt; A &lt;= 63 dBm
-         * </pre>
-         *
-         * <code>.org.ena.server.common.protocols.generated.RiskLevel low_medium = 3;</code>
-         * @param value The enum numeric value on the wire for lowMedium to set.
-         * @return This builder for chaining.
-         */
-        public Builder setLowMediumValue(int value) {
-          lowMedium_ = value;
-          onChanged();
-          return this;
-        }
-        /**
-         * <pre>
-         * 51 &lt; A &lt;= 63 dBm
-         * </pre>
-         *
-         * <code>.org.ena.server.common.protocols.generated.RiskLevel low_medium = 3;</code>
-         * @return The lowMedium.
-         */
-        public org.ena.server.common.protocols.generated.RiskScore.RiskLevel getLowMedium() {
+        public org.ena.server.common.protocols.generated.RiskScore.RiskLevel getGt63Le73Dbm() {
           @SuppressWarnings("deprecation")
-          org.ena.server.common.protocols.generated.RiskScore.RiskLevel result = org.ena.server.common.protocols.generated.RiskScore.RiskLevel.valueOf(lowMedium_);
+          org.ena.server.common.protocols.generated.RiskScore.RiskLevel result = org.ena.server.common.protocols.generated.RiskScore.RiskLevel.valueOf(gt63Le73Dbm_);
           return result == null ? org.ena.server.common.protocols.generated.RiskScore.RiskLevel.UNRECOGNIZED : result;
         }
         /**
          * <pre>
-         * 51 &lt; A &lt;= 63 dBm
+         * 63 &lt; A &lt;= 73 dBm
          * </pre>
          *
-         * <code>.org.ena.server.common.protocols.generated.RiskLevel low_medium = 3;</code>
-         * @param value The lowMedium to set.
+         * <code>.org.ena.server.common.protocols.generated.RiskLevel gt_63_le_73_dbm = 2;</code>
+         * @param value The gt63Le73Dbm to set.
          * @return This builder for chaining.
          */
-        public Builder setLowMedium(org.ena.server.common.protocols.generated.RiskScore.RiskLevel value) {
+        public Builder setGt63Le73Dbm(org.ena.server.common.protocols.generated.RiskScore.RiskLevel value) {
           if (value == null) {
             throw new NullPointerException();
           }
           
-          lowMedium_ = value.getNumber();
+          gt63Le73Dbm_ = value.getNumber();
           onChanged();
           return this;
+        }
+        /**
+         * <pre>
+         * 63 &lt; A &lt;= 73 dBm
+         * </pre>
+         *
+         * <code>.org.ena.server.common.protocols.generated.RiskLevel gt_63_le_73_dbm = 2;</code>
+         * @return This builder for chaining.
+         */
+        public Builder clearGt63Le73Dbm() {
+          
+          gt63Le73Dbm_ = 0;
+          onChanged();
+          return this;
+        }
+
+        private int gt51Le63Dbm_ = 0;
+        /**
+         * <pre>
+         * 51 &lt; A &lt;= 63 dBm
+         * </pre>
+         *
+         * <code>.org.ena.server.common.protocols.generated.RiskLevel gt_51_le_63_dbm = 3;</code>
+         * @return The enum numeric value on the wire for gt51Le63Dbm.
+         */
+        public int getGt51Le63DbmValue() {
+          return gt51Le63Dbm_;
         }
         /**
          * <pre>
          * 51 &lt; A &lt;= 63 dBm
          * </pre>
          *
-         * <code>.org.ena.server.common.protocols.generated.RiskLevel low_medium = 3;</code>
+         * <code>.org.ena.server.common.protocols.generated.RiskLevel gt_51_le_63_dbm = 3;</code>
+         * @param value The enum numeric value on the wire for gt51Le63Dbm to set.
          * @return This builder for chaining.
          */
-        public Builder clearLowMedium() {
+        public Builder setGt51Le63DbmValue(int value) {
+          gt51Le63Dbm_ = value;
+          onChanged();
+          return this;
+        }
+        /**
+         * <pre>
+         * 51 &lt; A &lt;= 63 dBm
+         * </pre>
+         *
+         * <code>.org.ena.server.common.protocols.generated.RiskLevel gt_51_le_63_dbm = 3;</code>
+         * @return The gt51Le63Dbm.
+         */
+        public org.ena.server.common.protocols.generated.RiskScore.RiskLevel getGt51Le63Dbm() {
+          @SuppressWarnings("deprecation")
+          org.ena.server.common.protocols.generated.RiskScore.RiskLevel result = org.ena.server.common.protocols.generated.RiskScore.RiskLevel.valueOf(gt51Le63Dbm_);
+          return result == null ? org.ena.server.common.protocols.generated.RiskScore.RiskLevel.UNRECOGNIZED : result;
+        }
+        /**
+         * <pre>
+         * 51 &lt; A &lt;= 63 dBm
+         * </pre>
+         *
+         * <code>.org.ena.server.common.protocols.generated.RiskLevel gt_51_le_63_dbm = 3;</code>
+         * @param value The gt51Le63Dbm to set.
+         * @return This builder for chaining.
+         */
+        public Builder setGt51Le63Dbm(org.ena.server.common.protocols.generated.RiskScore.RiskLevel value) {
+          if (value == null) {
+            throw new NullPointerException();
+          }
           
-          lowMedium_ = 0;
+          gt51Le63Dbm_ = value.getNumber();
+          onChanged();
+          return this;
+        }
+        /**
+         * <pre>
+         * 51 &lt; A &lt;= 63 dBm
+         * </pre>
+         *
+         * <code>.org.ena.server.common.protocols.generated.RiskLevel gt_51_le_63_dbm = 3;</code>
+         * @return This builder for chaining.
+         */
+        public Builder clearGt51Le63Dbm() {
+          
+          gt51Le63Dbm_ = 0;
           onChanged();
           return this;
         }
 
-        private int medium_ = 0;
+        private int gt33Le51Dbm_ = 0;
         /**
          * <pre>
          * 33 &lt; A &lt;= 51 dBm
          * </pre>
          *
-         * <code>.org.ena.server.common.protocols.generated.RiskLevel medium = 4;</code>
-         * @return The enum numeric value on the wire for medium.
+         * <code>.org.ena.server.common.protocols.generated.RiskLevel gt_33_le_51_dbm = 4;</code>
+         * @return The enum numeric value on the wire for gt33Le51Dbm.
          */
-        public int getMediumValue() {
-          return medium_;
+        public int getGt33Le51DbmValue() {
+          return gt33Le51Dbm_;
         }
         /**
          * <pre>
          * 33 &lt; A &lt;= 51 dBm
          * </pre>
          *
-         * <code>.org.ena.server.common.protocols.generated.RiskLevel medium = 4;</code>
-         * @param value The enum numeric value on the wire for medium to set.
+         * <code>.org.ena.server.common.protocols.generated.RiskLevel gt_33_le_51_dbm = 4;</code>
+         * @param value The enum numeric value on the wire for gt33Le51Dbm to set.
          * @return This builder for chaining.
          */
-        public Builder setMediumValue(int value) {
-          medium_ = value;
+        public Builder setGt33Le51DbmValue(int value) {
+          gt33Le51Dbm_ = value;
           onChanged();
           return this;
         }
@@ -5938,12 +5950,12 @@ public final class RiskScore {
          * 33 &lt; A &lt;= 51 dBm
          * </pre>
          *
-         * <code>.org.ena.server.common.protocols.generated.RiskLevel medium = 4;</code>
-         * @return The medium.
+         * <code>.org.ena.server.common.protocols.generated.RiskLevel gt_33_le_51_dbm = 4;</code>
+         * @return The gt33Le51Dbm.
          */
-        public org.ena.server.common.protocols.generated.RiskScore.RiskLevel getMedium() {
+        public org.ena.server.common.protocols.generated.RiskScore.RiskLevel getGt33Le51Dbm() {
           @SuppressWarnings("deprecation")
-          org.ena.server.common.protocols.generated.RiskScore.RiskLevel result = org.ena.server.common.protocols.generated.RiskScore.RiskLevel.valueOf(medium_);
+          org.ena.server.common.protocols.generated.RiskScore.RiskLevel result = org.ena.server.common.protocols.generated.RiskScore.RiskLevel.valueOf(gt33Le51Dbm_);
           return result == null ? org.ena.server.common.protocols.generated.RiskScore.RiskLevel.UNRECOGNIZED : result;
         }
         /**
@@ -5951,16 +5963,16 @@ public final class RiskScore {
          * 33 &lt; A &lt;= 51 dBm
          * </pre>
          *
-         * <code>.org.ena.server.common.protocols.generated.RiskLevel medium = 4;</code>
-         * @param value The medium to set.
+         * <code>.org.ena.server.common.protocols.generated.RiskLevel gt_33_le_51_dbm = 4;</code>
+         * @param value The gt33Le51Dbm to set.
          * @return This builder for chaining.
          */
-        public Builder setMedium(org.ena.server.common.protocols.generated.RiskScore.RiskLevel value) {
+        public Builder setGt33Le51Dbm(org.ena.server.common.protocols.generated.RiskScore.RiskLevel value) {
           if (value == null) {
             throw new NullPointerException();
           }
           
-          medium_ = value.getNumber();
+          gt33Le51Dbm_ = value.getNumber();
           onChanged();
           return this;
         }
@@ -5969,39 +5981,39 @@ public final class RiskScore {
          * 33 &lt; A &lt;= 51 dBm
          * </pre>
          *
-         * <code>.org.ena.server.common.protocols.generated.RiskLevel medium = 4;</code>
+         * <code>.org.ena.server.common.protocols.generated.RiskLevel gt_33_le_51_dbm = 4;</code>
          * @return This builder for chaining.
          */
-        public Builder clearMedium() {
+        public Builder clearGt33Le51Dbm() {
           
-          medium_ = 0;
+          gt33Le51Dbm_ = 0;
           onChanged();
           return this;
         }
 
-        private int mediumHigh_ = 0;
+        private int gt27Le33Dbm_ = 0;
         /**
          * <pre>
          * 27 &lt; A &lt;= 33 dBm
          * </pre>
          *
-         * <code>.org.ena.server.common.protocols.generated.RiskLevel medium_high = 5;</code>
-         * @return The enum numeric value on the wire for mediumHigh.
+         * <code>.org.ena.server.common.protocols.generated.RiskLevel gt_27_le_33_dbm = 5;</code>
+         * @return The enum numeric value on the wire for gt27Le33Dbm.
          */
-        public int getMediumHighValue() {
-          return mediumHigh_;
+        public int getGt27Le33DbmValue() {
+          return gt27Le33Dbm_;
         }
         /**
          * <pre>
          * 27 &lt; A &lt;= 33 dBm
          * </pre>
          *
-         * <code>.org.ena.server.common.protocols.generated.RiskLevel medium_high = 5;</code>
-         * @param value The enum numeric value on the wire for mediumHigh to set.
+         * <code>.org.ena.server.common.protocols.generated.RiskLevel gt_27_le_33_dbm = 5;</code>
+         * @param value The enum numeric value on the wire for gt27Le33Dbm to set.
          * @return This builder for chaining.
          */
-        public Builder setMediumHighValue(int value) {
-          mediumHigh_ = value;
+        public Builder setGt27Le33DbmValue(int value) {
+          gt27Le33Dbm_ = value;
           onChanged();
           return this;
         }
@@ -6010,12 +6022,12 @@ public final class RiskScore {
          * 27 &lt; A &lt;= 33 dBm
          * </pre>
          *
-         * <code>.org.ena.server.common.protocols.generated.RiskLevel medium_high = 5;</code>
-         * @return The mediumHigh.
+         * <code>.org.ena.server.common.protocols.generated.RiskLevel gt_27_le_33_dbm = 5;</code>
+         * @return The gt27Le33Dbm.
          */
-        public org.ena.server.common.protocols.generated.RiskScore.RiskLevel getMediumHigh() {
+        public org.ena.server.common.protocols.generated.RiskScore.RiskLevel getGt27Le33Dbm() {
           @SuppressWarnings("deprecation")
-          org.ena.server.common.protocols.generated.RiskScore.RiskLevel result = org.ena.server.common.protocols.generated.RiskScore.RiskLevel.valueOf(mediumHigh_);
+          org.ena.server.common.protocols.generated.RiskScore.RiskLevel result = org.ena.server.common.protocols.generated.RiskScore.RiskLevel.valueOf(gt27Le33Dbm_);
           return result == null ? org.ena.server.common.protocols.generated.RiskScore.RiskLevel.UNRECOGNIZED : result;
         }
         /**
@@ -6023,16 +6035,16 @@ public final class RiskScore {
          * 27 &lt; A &lt;= 33 dBm
          * </pre>
          *
-         * <code>.org.ena.server.common.protocols.generated.RiskLevel medium_high = 5;</code>
-         * @param value The mediumHigh to set.
+         * <code>.org.ena.server.common.protocols.generated.RiskLevel gt_27_le_33_dbm = 5;</code>
+         * @param value The gt27Le33Dbm to set.
          * @return This builder for chaining.
          */
-        public Builder setMediumHigh(org.ena.server.common.protocols.generated.RiskScore.RiskLevel value) {
+        public Builder setGt27Le33Dbm(org.ena.server.common.protocols.generated.RiskScore.RiskLevel value) {
           if (value == null) {
             throw new NullPointerException();
           }
           
-          mediumHigh_ = value.getNumber();
+          gt27Le33Dbm_ = value.getNumber();
           onChanged();
           return this;
         }
@@ -6041,39 +6053,39 @@ public final class RiskScore {
          * 27 &lt; A &lt;= 33 dBm
          * </pre>
          *
-         * <code>.org.ena.server.common.protocols.generated.RiskLevel medium_high = 5;</code>
+         * <code>.org.ena.server.common.protocols.generated.RiskLevel gt_27_le_33_dbm = 5;</code>
          * @return This builder for chaining.
          */
-        public Builder clearMediumHigh() {
+        public Builder clearGt27Le33Dbm() {
           
-          mediumHigh_ = 0;
+          gt27Le33Dbm_ = 0;
           onChanged();
           return this;
         }
 
-        private int high_ = 0;
+        private int gt15Le27Dbm_ = 0;
         /**
          * <pre>
          * 15 &lt; A &lt;= 27 dBm
          * </pre>
          *
-         * <code>.org.ena.server.common.protocols.generated.RiskLevel high = 6;</code>
-         * @return The enum numeric value on the wire for high.
+         * <code>.org.ena.server.common.protocols.generated.RiskLevel gt_15_le_27_dbm = 6;</code>
+         * @return The enum numeric value on the wire for gt15Le27Dbm.
          */
-        public int getHighValue() {
-          return high_;
+        public int getGt15Le27DbmValue() {
+          return gt15Le27Dbm_;
         }
         /**
          * <pre>
          * 15 &lt; A &lt;= 27 dBm
          * </pre>
          *
-         * <code>.org.ena.server.common.protocols.generated.RiskLevel high = 6;</code>
-         * @param value The enum numeric value on the wire for high to set.
+         * <code>.org.ena.server.common.protocols.generated.RiskLevel gt_15_le_27_dbm = 6;</code>
+         * @param value The enum numeric value on the wire for gt15Le27Dbm to set.
          * @return This builder for chaining.
          */
-        public Builder setHighValue(int value) {
-          high_ = value;
+        public Builder setGt15Le27DbmValue(int value) {
+          gt15Le27Dbm_ = value;
           onChanged();
           return this;
         }
@@ -6082,12 +6094,12 @@ public final class RiskScore {
          * 15 &lt; A &lt;= 27 dBm
          * </pre>
          *
-         * <code>.org.ena.server.common.protocols.generated.RiskLevel high = 6;</code>
-         * @return The high.
+         * <code>.org.ena.server.common.protocols.generated.RiskLevel gt_15_le_27_dbm = 6;</code>
+         * @return The gt15Le27Dbm.
          */
-        public org.ena.server.common.protocols.generated.RiskScore.RiskLevel getHigh() {
+        public org.ena.server.common.protocols.generated.RiskScore.RiskLevel getGt15Le27Dbm() {
           @SuppressWarnings("deprecation")
-          org.ena.server.common.protocols.generated.RiskScore.RiskLevel result = org.ena.server.common.protocols.generated.RiskScore.RiskLevel.valueOf(high_);
+          org.ena.server.common.protocols.generated.RiskScore.RiskLevel result = org.ena.server.common.protocols.generated.RiskScore.RiskLevel.valueOf(gt15Le27Dbm_);
           return result == null ? org.ena.server.common.protocols.generated.RiskScore.RiskLevel.UNRECOGNIZED : result;
         }
         /**
@@ -6095,16 +6107,16 @@ public final class RiskScore {
          * 15 &lt; A &lt;= 27 dBm
          * </pre>
          *
-         * <code>.org.ena.server.common.protocols.generated.RiskLevel high = 6;</code>
-         * @param value The high to set.
+         * <code>.org.ena.server.common.protocols.generated.RiskLevel gt_15_le_27_dbm = 6;</code>
+         * @param value The gt15Le27Dbm to set.
          * @return This builder for chaining.
          */
-        public Builder setHigh(org.ena.server.common.protocols.generated.RiskScore.RiskLevel value) {
+        public Builder setGt15Le27Dbm(org.ena.server.common.protocols.generated.RiskScore.RiskLevel value) {
           if (value == null) {
             throw new NullPointerException();
           }
           
-          high_ = value.getNumber();
+          gt15Le27Dbm_ = value.getNumber();
           onChanged();
           return this;
         }
@@ -6113,39 +6125,39 @@ public final class RiskScore {
          * 15 &lt; A &lt;= 27 dBm
          * </pre>
          *
-         * <code>.org.ena.server.common.protocols.generated.RiskLevel high = 6;</code>
+         * <code>.org.ena.server.common.protocols.generated.RiskLevel gt_15_le_27_dbm = 6;</code>
          * @return This builder for chaining.
          */
-        public Builder clearHigh() {
+        public Builder clearGt15Le27Dbm() {
           
-          high_ = 0;
+          gt15Le27Dbm_ = 0;
           onChanged();
           return this;
         }
 
-        private int veryHigh_ = 0;
+        private int gt10Le15Dbm_ = 0;
         /**
          * <pre>
          * 10 &lt; A &lt;= 15 dBm
          * </pre>
          *
-         * <code>.org.ena.server.common.protocols.generated.RiskLevel very_high = 7;</code>
-         * @return The enum numeric value on the wire for veryHigh.
+         * <code>.org.ena.server.common.protocols.generated.RiskLevel gt_10_le_15_dbm = 7;</code>
+         * @return The enum numeric value on the wire for gt10Le15Dbm.
          */
-        public int getVeryHighValue() {
-          return veryHigh_;
+        public int getGt10Le15DbmValue() {
+          return gt10Le15Dbm_;
         }
         /**
          * <pre>
          * 10 &lt; A &lt;= 15 dBm
          * </pre>
          *
-         * <code>.org.ena.server.common.protocols.generated.RiskLevel very_high = 7;</code>
-         * @param value The enum numeric value on the wire for veryHigh to set.
+         * <code>.org.ena.server.common.protocols.generated.RiskLevel gt_10_le_15_dbm = 7;</code>
+         * @param value The enum numeric value on the wire for gt10Le15Dbm to set.
          * @return This builder for chaining.
          */
-        public Builder setVeryHighValue(int value) {
-          veryHigh_ = value;
+        public Builder setGt10Le15DbmValue(int value) {
+          gt10Le15Dbm_ = value;
           onChanged();
           return this;
         }
@@ -6154,12 +6166,12 @@ public final class RiskScore {
          * 10 &lt; A &lt;= 15 dBm
          * </pre>
          *
-         * <code>.org.ena.server.common.protocols.generated.RiskLevel very_high = 7;</code>
-         * @return The veryHigh.
+         * <code>.org.ena.server.common.protocols.generated.RiskLevel gt_10_le_15_dbm = 7;</code>
+         * @return The gt10Le15Dbm.
          */
-        public org.ena.server.common.protocols.generated.RiskScore.RiskLevel getVeryHigh() {
+        public org.ena.server.common.protocols.generated.RiskScore.RiskLevel getGt10Le15Dbm() {
           @SuppressWarnings("deprecation")
-          org.ena.server.common.protocols.generated.RiskScore.RiskLevel result = org.ena.server.common.protocols.generated.RiskScore.RiskLevel.valueOf(veryHigh_);
+          org.ena.server.common.protocols.generated.RiskScore.RiskLevel result = org.ena.server.common.protocols.generated.RiskScore.RiskLevel.valueOf(gt10Le15Dbm_);
           return result == null ? org.ena.server.common.protocols.generated.RiskScore.RiskLevel.UNRECOGNIZED : result;
         }
         /**
@@ -6167,16 +6179,16 @@ public final class RiskScore {
          * 10 &lt; A &lt;= 15 dBm
          * </pre>
          *
-         * <code>.org.ena.server.common.protocols.generated.RiskLevel very_high = 7;</code>
-         * @param value The veryHigh to set.
+         * <code>.org.ena.server.common.protocols.generated.RiskLevel gt_10_le_15_dbm = 7;</code>
+         * @param value The gt10Le15Dbm to set.
          * @return This builder for chaining.
          */
-        public Builder setVeryHigh(org.ena.server.common.protocols.generated.RiskScore.RiskLevel value) {
+        public Builder setGt10Le15Dbm(org.ena.server.common.protocols.generated.RiskScore.RiskLevel value) {
           if (value == null) {
             throw new NullPointerException();
           }
           
-          veryHigh_ = value.getNumber();
+          gt10Le15Dbm_ = value.getNumber();
           onChanged();
           return this;
         }
@@ -6185,84 +6197,84 @@ public final class RiskScore {
          * 10 &lt; A &lt;= 15 dBm
          * </pre>
          *
-         * <code>.org.ena.server.common.protocols.generated.RiskLevel very_high = 7;</code>
+         * <code>.org.ena.server.common.protocols.generated.RiskLevel gt_10_le_15_dbm = 7;</code>
          * @return This builder for chaining.
          */
-        public Builder clearVeryHigh() {
+        public Builder clearGt10Le15Dbm() {
           
-          veryHigh_ = 0;
+          gt10Le15Dbm_ = 0;
           onChanged();
           return this;
         }
 
-        private int highest_ = 0;
+        private int lt10Min_ = 0;
         /**
          * <pre>
-         * A &lt;= 10 dBm
+         * A &lt;= 10 dBm, highest risk
          * </pre>
          *
-         * <code>.org.ena.server.common.protocols.generated.RiskLevel highest = 8;</code>
-         * @return The enum numeric value on the wire for highest.
+         * <code>.org.ena.server.common.protocols.generated.RiskLevel lt_10_min = 8;</code>
+         * @return The enum numeric value on the wire for lt10Min.
          */
-        public int getHighestValue() {
-          return highest_;
+        public int getLt10MinValue() {
+          return lt10Min_;
         }
         /**
          * <pre>
-         * A &lt;= 10 dBm
+         * A &lt;= 10 dBm, highest risk
          * </pre>
          *
-         * <code>.org.ena.server.common.protocols.generated.RiskLevel highest = 8;</code>
-         * @param value The enum numeric value on the wire for highest to set.
+         * <code>.org.ena.server.common.protocols.generated.RiskLevel lt_10_min = 8;</code>
+         * @param value The enum numeric value on the wire for lt10Min to set.
          * @return This builder for chaining.
          */
-        public Builder setHighestValue(int value) {
-          highest_ = value;
+        public Builder setLt10MinValue(int value) {
+          lt10Min_ = value;
           onChanged();
           return this;
         }
         /**
          * <pre>
-         * A &lt;= 10 dBm
+         * A &lt;= 10 dBm, highest risk
          * </pre>
          *
-         * <code>.org.ena.server.common.protocols.generated.RiskLevel highest = 8;</code>
-         * @return The highest.
+         * <code>.org.ena.server.common.protocols.generated.RiskLevel lt_10_min = 8;</code>
+         * @return The lt10Min.
          */
-        public org.ena.server.common.protocols.generated.RiskScore.RiskLevel getHighest() {
+        public org.ena.server.common.protocols.generated.RiskScore.RiskLevel getLt10Min() {
           @SuppressWarnings("deprecation")
-          org.ena.server.common.protocols.generated.RiskScore.RiskLevel result = org.ena.server.common.protocols.generated.RiskScore.RiskLevel.valueOf(highest_);
+          org.ena.server.common.protocols.generated.RiskScore.RiskLevel result = org.ena.server.common.protocols.generated.RiskScore.RiskLevel.valueOf(lt10Min_);
           return result == null ? org.ena.server.common.protocols.generated.RiskScore.RiskLevel.UNRECOGNIZED : result;
         }
         /**
          * <pre>
-         * A &lt;= 10 dBm
+         * A &lt;= 10 dBm, highest risk
          * </pre>
          *
-         * <code>.org.ena.server.common.protocols.generated.RiskLevel highest = 8;</code>
-         * @param value The highest to set.
+         * <code>.org.ena.server.common.protocols.generated.RiskLevel lt_10_min = 8;</code>
+         * @param value The lt10Min to set.
          * @return This builder for chaining.
          */
-        public Builder setHighest(org.ena.server.common.protocols.generated.RiskScore.RiskLevel value) {
+        public Builder setLt10Min(org.ena.server.common.protocols.generated.RiskScore.RiskLevel value) {
           if (value == null) {
             throw new NullPointerException();
           }
           
-          highest_ = value.getNumber();
+          lt10Min_ = value.getNumber();
           onChanged();
           return this;
         }
         /**
          * <pre>
-         * A &lt;= 10 dBm
+         * A &lt;= 10 dBm, highest risk
          * </pre>
          *
-         * <code>.org.ena.server.common.protocols.generated.RiskLevel highest = 8;</code>
+         * <code>.org.ena.server.common.protocols.generated.RiskLevel lt_10_min = 8;</code>
          * @return This builder for chaining.
          */
-        public Builder clearHighest() {
+        public Builder clearLt10Min() {
           
-          highest_ = 0;
+          lt10Min_ = 0;
           onChanged();
           return this;
         }
@@ -6322,6 +6334,10 @@ public final class RiskScore {
     public static final int TRANSMISSION_FIELD_NUMBER = 1;
     private org.ena.server.common.protocols.generated.RiskScore.RiskScoreParameters.TransmissionRiskParameter transmission_;
     /**
+     * <pre>
+     * App-specific mapping
+     * </pre>
+     *
      * <code>.org.ena.server.common.protocols.generated.RiskScoreParameters.TransmissionRiskParameter transmission = 1;</code>
      * @return Whether the transmission field is set.
      */
@@ -6329,6 +6345,10 @@ public final class RiskScore {
       return transmission_ != null;
     }
     /**
+     * <pre>
+     * App-specific mapping
+     * </pre>
+     *
      * <code>.org.ena.server.common.protocols.generated.RiskScoreParameters.TransmissionRiskParameter transmission = 1;</code>
      * @return The transmission.
      */
@@ -6336,6 +6356,10 @@ public final class RiskScore {
       return transmission_ == null ? org.ena.server.common.protocols.generated.RiskScore.RiskScoreParameters.TransmissionRiskParameter.getDefaultInstance() : transmission_;
     }
     /**
+     * <pre>
+     * App-specific mapping
+     * </pre>
+     *
      * <code>.org.ena.server.common.protocols.generated.RiskScoreParameters.TransmissionRiskParameter transmission = 1;</code>
      */
     public org.ena.server.common.protocols.generated.RiskScore.RiskScoreParameters.TransmissionRiskParameterOrBuilder getTransmissionOrBuilder() {
@@ -6385,27 +6409,27 @@ public final class RiskScore {
       return durationWeight_;
     }
 
-    public static final int DAYS_FIELD_NUMBER = 5;
-    private org.ena.server.common.protocols.generated.RiskScore.RiskScoreParameters.DaysRiskParameter days_;
+    public static final int DAYSSINCELASTEXPOSURE_FIELD_NUMBER = 5;
+    private org.ena.server.common.protocols.generated.RiskScore.RiskScoreParameters.DaysSinceLastExposureRiskParameter daysSinceLastExposure_;
     /**
-     * <code>.org.ena.server.common.protocols.generated.RiskScoreParameters.DaysRiskParameter days = 5;</code>
-     * @return Whether the days field is set.
+     * <code>.org.ena.server.common.protocols.generated.RiskScoreParameters.DaysSinceLastExposureRiskParameter daysSinceLastExposure = 5;</code>
+     * @return Whether the daysSinceLastExposure field is set.
      */
-    public boolean hasDays() {
-      return days_ != null;
+    public boolean hasDaysSinceLastExposure() {
+      return daysSinceLastExposure_ != null;
     }
     /**
-     * <code>.org.ena.server.common.protocols.generated.RiskScoreParameters.DaysRiskParameter days = 5;</code>
-     * @return The days.
+     * <code>.org.ena.server.common.protocols.generated.RiskScoreParameters.DaysSinceLastExposureRiskParameter daysSinceLastExposure = 5;</code>
+     * @return The daysSinceLastExposure.
      */
-    public org.ena.server.common.protocols.generated.RiskScore.RiskScoreParameters.DaysRiskParameter getDays() {
-      return days_ == null ? org.ena.server.common.protocols.generated.RiskScore.RiskScoreParameters.DaysRiskParameter.getDefaultInstance() : days_;
+    public org.ena.server.common.protocols.generated.RiskScore.RiskScoreParameters.DaysSinceLastExposureRiskParameter getDaysSinceLastExposure() {
+      return daysSinceLastExposure_ == null ? org.ena.server.common.protocols.generated.RiskScore.RiskScoreParameters.DaysSinceLastExposureRiskParameter.getDefaultInstance() : daysSinceLastExposure_;
     }
     /**
-     * <code>.org.ena.server.common.protocols.generated.RiskScoreParameters.DaysRiskParameter days = 5;</code>
+     * <code>.org.ena.server.common.protocols.generated.RiskScoreParameters.DaysSinceLastExposureRiskParameter daysSinceLastExposure = 5;</code>
      */
-    public org.ena.server.common.protocols.generated.RiskScore.RiskScoreParameters.DaysRiskParameterOrBuilder getDaysOrBuilder() {
-      return getDays();
+    public org.ena.server.common.protocols.generated.RiskScore.RiskScoreParameters.DaysSinceLastExposureRiskParameterOrBuilder getDaysSinceLastExposureOrBuilder() {
+      return getDaysSinceLastExposure();
     }
 
     public static final int DAYSWEIGHT_FIELD_NUMBER = 6;
@@ -6477,8 +6501,8 @@ public final class RiskScore {
       if (durationWeight_ != 0D) {
         output.writeDouble(4, durationWeight_);
       }
-      if (days_ != null) {
-        output.writeMessage(5, getDays());
+      if (daysSinceLastExposure_ != null) {
+        output.writeMessage(5, getDaysSinceLastExposure());
       }
       if (daysWeight_ != 0D) {
         output.writeDouble(6, daysWeight_);
@@ -6514,9 +6538,9 @@ public final class RiskScore {
         size += com.google.protobuf.CodedOutputStream
           .computeDoubleSize(4, durationWeight_);
       }
-      if (days_ != null) {
+      if (daysSinceLastExposure_ != null) {
         size += com.google.protobuf.CodedOutputStream
-          .computeMessageSize(5, getDays());
+          .computeMessageSize(5, getDaysSinceLastExposure());
       }
       if (daysWeight_ != 0D) {
         size += com.google.protobuf.CodedOutputStream
@@ -6561,10 +6585,10 @@ public final class RiskScore {
       if (java.lang.Double.doubleToLongBits(getDurationWeight())
           != java.lang.Double.doubleToLongBits(
               other.getDurationWeight())) return false;
-      if (hasDays() != other.hasDays()) return false;
-      if (hasDays()) {
-        if (!getDays()
-            .equals(other.getDays())) return false;
+      if (hasDaysSinceLastExposure() != other.hasDaysSinceLastExposure()) return false;
+      if (hasDaysSinceLastExposure()) {
+        if (!getDaysSinceLastExposure()
+            .equals(other.getDaysSinceLastExposure())) return false;
       }
       if (java.lang.Double.doubleToLongBits(getDaysWeight())
           != java.lang.Double.doubleToLongBits(
@@ -6602,9 +6626,9 @@ public final class RiskScore {
       hash = (37 * hash) + DURATIONWEIGHT_FIELD_NUMBER;
       hash = (53 * hash) + com.google.protobuf.Internal.hashLong(
           java.lang.Double.doubleToLongBits(getDurationWeight()));
-      if (hasDays()) {
-        hash = (37 * hash) + DAYS_FIELD_NUMBER;
-        hash = (53 * hash) + getDays().hashCode();
+      if (hasDaysSinceLastExposure()) {
+        hash = (37 * hash) + DAYSSINCELASTEXPOSURE_FIELD_NUMBER;
+        hash = (53 * hash) + getDaysSinceLastExposure().hashCode();
       }
       hash = (37 * hash) + DAYSWEIGHT_FIELD_NUMBER;
       hash = (53 * hash) + com.google.protobuf.Internal.hashLong(
@@ -6770,11 +6794,11 @@ public final class RiskScore {
         }
         durationWeight_ = 0D;
 
-        if (daysBuilder_ == null) {
-          days_ = null;
+        if (daysSinceLastExposureBuilder_ == null) {
+          daysSinceLastExposure_ = null;
         } else {
-          days_ = null;
-          daysBuilder_ = null;
+          daysSinceLastExposure_ = null;
+          daysSinceLastExposureBuilder_ = null;
         }
         daysWeight_ = 0D;
 
@@ -6824,10 +6848,10 @@ public final class RiskScore {
           result.duration_ = durationBuilder_.build();
         }
         result.durationWeight_ = durationWeight_;
-        if (daysBuilder_ == null) {
-          result.days_ = days_;
+        if (daysSinceLastExposureBuilder_ == null) {
+          result.daysSinceLastExposure_ = daysSinceLastExposure_;
         } else {
-          result.days_ = daysBuilder_.build();
+          result.daysSinceLastExposure_ = daysSinceLastExposureBuilder_.build();
         }
         result.daysWeight_ = daysWeight_;
         if (attenuationBuilder_ == null) {
@@ -6896,8 +6920,8 @@ public final class RiskScore {
         if (other.getDurationWeight() != 0D) {
           setDurationWeight(other.getDurationWeight());
         }
-        if (other.hasDays()) {
-          mergeDays(other.getDays());
+        if (other.hasDaysSinceLastExposure()) {
+          mergeDaysSinceLastExposure(other.getDaysSinceLastExposure());
         }
         if (other.getDaysWeight() != 0D) {
           setDaysWeight(other.getDaysWeight());
@@ -6941,6 +6965,10 @@ public final class RiskScore {
       private com.google.protobuf.SingleFieldBuilderV3<
           org.ena.server.common.protocols.generated.RiskScore.RiskScoreParameters.TransmissionRiskParameter, org.ena.server.common.protocols.generated.RiskScore.RiskScoreParameters.TransmissionRiskParameter.Builder, org.ena.server.common.protocols.generated.RiskScore.RiskScoreParameters.TransmissionRiskParameterOrBuilder> transmissionBuilder_;
       /**
+       * <pre>
+       * App-specific mapping
+       * </pre>
+       *
        * <code>.org.ena.server.common.protocols.generated.RiskScoreParameters.TransmissionRiskParameter transmission = 1;</code>
        * @return Whether the transmission field is set.
        */
@@ -6948,6 +6976,10 @@ public final class RiskScore {
         return transmissionBuilder_ != null || transmission_ != null;
       }
       /**
+       * <pre>
+       * App-specific mapping
+       * </pre>
+       *
        * <code>.org.ena.server.common.protocols.generated.RiskScoreParameters.TransmissionRiskParameter transmission = 1;</code>
        * @return The transmission.
        */
@@ -6959,6 +6991,10 @@ public final class RiskScore {
         }
       }
       /**
+       * <pre>
+       * App-specific mapping
+       * </pre>
+       *
        * <code>.org.ena.server.common.protocols.generated.RiskScoreParameters.TransmissionRiskParameter transmission = 1;</code>
        */
       public Builder setTransmission(org.ena.server.common.protocols.generated.RiskScore.RiskScoreParameters.TransmissionRiskParameter value) {
@@ -6975,6 +7011,10 @@ public final class RiskScore {
         return this;
       }
       /**
+       * <pre>
+       * App-specific mapping
+       * </pre>
+       *
        * <code>.org.ena.server.common.protocols.generated.RiskScoreParameters.TransmissionRiskParameter transmission = 1;</code>
        */
       public Builder setTransmission(
@@ -6989,6 +7029,10 @@ public final class RiskScore {
         return this;
       }
       /**
+       * <pre>
+       * App-specific mapping
+       * </pre>
+       *
        * <code>.org.ena.server.common.protocols.generated.RiskScoreParameters.TransmissionRiskParameter transmission = 1;</code>
        */
       public Builder mergeTransmission(org.ena.server.common.protocols.generated.RiskScore.RiskScoreParameters.TransmissionRiskParameter value) {
@@ -7007,6 +7051,10 @@ public final class RiskScore {
         return this;
       }
       /**
+       * <pre>
+       * App-specific mapping
+       * </pre>
+       *
        * <code>.org.ena.server.common.protocols.generated.RiskScoreParameters.TransmissionRiskParameter transmission = 1;</code>
        */
       public Builder clearTransmission() {
@@ -7021,6 +7069,10 @@ public final class RiskScore {
         return this;
       }
       /**
+       * <pre>
+       * App-specific mapping
+       * </pre>
+       *
        * <code>.org.ena.server.common.protocols.generated.RiskScoreParameters.TransmissionRiskParameter transmission = 1;</code>
        */
       public org.ena.server.common.protocols.generated.RiskScore.RiskScoreParameters.TransmissionRiskParameter.Builder getTransmissionBuilder() {
@@ -7029,6 +7081,10 @@ public final class RiskScore {
         return getTransmissionFieldBuilder().getBuilder();
       }
       /**
+       * <pre>
+       * App-specific mapping
+       * </pre>
+       *
        * <code>.org.ena.server.common.protocols.generated.RiskScoreParameters.TransmissionRiskParameter transmission = 1;</code>
        */
       public org.ena.server.common.protocols.generated.RiskScore.RiskScoreParameters.TransmissionRiskParameterOrBuilder getTransmissionOrBuilder() {
@@ -7040,6 +7096,10 @@ public final class RiskScore {
         }
       }
       /**
+       * <pre>
+       * App-specific mapping
+       * </pre>
+       *
        * <code>.org.ena.server.common.protocols.generated.RiskScoreParameters.TransmissionRiskParameter transmission = 1;</code>
        */
       private com.google.protobuf.SingleFieldBuilderV3<
@@ -7235,123 +7295,123 @@ public final class RiskScore {
         return this;
       }
 
-      private org.ena.server.common.protocols.generated.RiskScore.RiskScoreParameters.DaysRiskParameter days_;
+      private org.ena.server.common.protocols.generated.RiskScore.RiskScoreParameters.DaysSinceLastExposureRiskParameter daysSinceLastExposure_;
       private com.google.protobuf.SingleFieldBuilderV3<
-          org.ena.server.common.protocols.generated.RiskScore.RiskScoreParameters.DaysRiskParameter, org.ena.server.common.protocols.generated.RiskScore.RiskScoreParameters.DaysRiskParameter.Builder, org.ena.server.common.protocols.generated.RiskScore.RiskScoreParameters.DaysRiskParameterOrBuilder> daysBuilder_;
+          org.ena.server.common.protocols.generated.RiskScore.RiskScoreParameters.DaysSinceLastExposureRiskParameter, org.ena.server.common.protocols.generated.RiskScore.RiskScoreParameters.DaysSinceLastExposureRiskParameter.Builder, org.ena.server.common.protocols.generated.RiskScore.RiskScoreParameters.DaysSinceLastExposureRiskParameterOrBuilder> daysSinceLastExposureBuilder_;
       /**
-       * <code>.org.ena.server.common.protocols.generated.RiskScoreParameters.DaysRiskParameter days = 5;</code>
-       * @return Whether the days field is set.
+       * <code>.org.ena.server.common.protocols.generated.RiskScoreParameters.DaysSinceLastExposureRiskParameter daysSinceLastExposure = 5;</code>
+       * @return Whether the daysSinceLastExposure field is set.
        */
-      public boolean hasDays() {
-        return daysBuilder_ != null || days_ != null;
+      public boolean hasDaysSinceLastExposure() {
+        return daysSinceLastExposureBuilder_ != null || daysSinceLastExposure_ != null;
       }
       /**
-       * <code>.org.ena.server.common.protocols.generated.RiskScoreParameters.DaysRiskParameter days = 5;</code>
-       * @return The days.
+       * <code>.org.ena.server.common.protocols.generated.RiskScoreParameters.DaysSinceLastExposureRiskParameter daysSinceLastExposure = 5;</code>
+       * @return The daysSinceLastExposure.
        */
-      public org.ena.server.common.protocols.generated.RiskScore.RiskScoreParameters.DaysRiskParameter getDays() {
-        if (daysBuilder_ == null) {
-          return days_ == null ? org.ena.server.common.protocols.generated.RiskScore.RiskScoreParameters.DaysRiskParameter.getDefaultInstance() : days_;
+      public org.ena.server.common.protocols.generated.RiskScore.RiskScoreParameters.DaysSinceLastExposureRiskParameter getDaysSinceLastExposure() {
+        if (daysSinceLastExposureBuilder_ == null) {
+          return daysSinceLastExposure_ == null ? org.ena.server.common.protocols.generated.RiskScore.RiskScoreParameters.DaysSinceLastExposureRiskParameter.getDefaultInstance() : daysSinceLastExposure_;
         } else {
-          return daysBuilder_.getMessage();
+          return daysSinceLastExposureBuilder_.getMessage();
         }
       }
       /**
-       * <code>.org.ena.server.common.protocols.generated.RiskScoreParameters.DaysRiskParameter days = 5;</code>
+       * <code>.org.ena.server.common.protocols.generated.RiskScoreParameters.DaysSinceLastExposureRiskParameter daysSinceLastExposure = 5;</code>
        */
-      public Builder setDays(org.ena.server.common.protocols.generated.RiskScore.RiskScoreParameters.DaysRiskParameter value) {
-        if (daysBuilder_ == null) {
+      public Builder setDaysSinceLastExposure(org.ena.server.common.protocols.generated.RiskScore.RiskScoreParameters.DaysSinceLastExposureRiskParameter value) {
+        if (daysSinceLastExposureBuilder_ == null) {
           if (value == null) {
             throw new NullPointerException();
           }
-          days_ = value;
+          daysSinceLastExposure_ = value;
           onChanged();
         } else {
-          daysBuilder_.setMessage(value);
+          daysSinceLastExposureBuilder_.setMessage(value);
         }
 
         return this;
       }
       /**
-       * <code>.org.ena.server.common.protocols.generated.RiskScoreParameters.DaysRiskParameter days = 5;</code>
+       * <code>.org.ena.server.common.protocols.generated.RiskScoreParameters.DaysSinceLastExposureRiskParameter daysSinceLastExposure = 5;</code>
        */
-      public Builder setDays(
-          org.ena.server.common.protocols.generated.RiskScore.RiskScoreParameters.DaysRiskParameter.Builder builderForValue) {
-        if (daysBuilder_ == null) {
-          days_ = builderForValue.build();
+      public Builder setDaysSinceLastExposure(
+          org.ena.server.common.protocols.generated.RiskScore.RiskScoreParameters.DaysSinceLastExposureRiskParameter.Builder builderForValue) {
+        if (daysSinceLastExposureBuilder_ == null) {
+          daysSinceLastExposure_ = builderForValue.build();
           onChanged();
         } else {
-          daysBuilder_.setMessage(builderForValue.build());
+          daysSinceLastExposureBuilder_.setMessage(builderForValue.build());
         }
 
         return this;
       }
       /**
-       * <code>.org.ena.server.common.protocols.generated.RiskScoreParameters.DaysRiskParameter days = 5;</code>
+       * <code>.org.ena.server.common.protocols.generated.RiskScoreParameters.DaysSinceLastExposureRiskParameter daysSinceLastExposure = 5;</code>
        */
-      public Builder mergeDays(org.ena.server.common.protocols.generated.RiskScore.RiskScoreParameters.DaysRiskParameter value) {
-        if (daysBuilder_ == null) {
-          if (days_ != null) {
-            days_ =
-              org.ena.server.common.protocols.generated.RiskScore.RiskScoreParameters.DaysRiskParameter.newBuilder(days_).mergeFrom(value).buildPartial();
+      public Builder mergeDaysSinceLastExposure(org.ena.server.common.protocols.generated.RiskScore.RiskScoreParameters.DaysSinceLastExposureRiskParameter value) {
+        if (daysSinceLastExposureBuilder_ == null) {
+          if (daysSinceLastExposure_ != null) {
+            daysSinceLastExposure_ =
+              org.ena.server.common.protocols.generated.RiskScore.RiskScoreParameters.DaysSinceLastExposureRiskParameter.newBuilder(daysSinceLastExposure_).mergeFrom(value).buildPartial();
           } else {
-            days_ = value;
+            daysSinceLastExposure_ = value;
           }
           onChanged();
         } else {
-          daysBuilder_.mergeFrom(value);
+          daysSinceLastExposureBuilder_.mergeFrom(value);
         }
 
         return this;
       }
       /**
-       * <code>.org.ena.server.common.protocols.generated.RiskScoreParameters.DaysRiskParameter days = 5;</code>
+       * <code>.org.ena.server.common.protocols.generated.RiskScoreParameters.DaysSinceLastExposureRiskParameter daysSinceLastExposure = 5;</code>
        */
-      public Builder clearDays() {
-        if (daysBuilder_ == null) {
-          days_ = null;
+      public Builder clearDaysSinceLastExposure() {
+        if (daysSinceLastExposureBuilder_ == null) {
+          daysSinceLastExposure_ = null;
           onChanged();
         } else {
-          days_ = null;
-          daysBuilder_ = null;
+          daysSinceLastExposure_ = null;
+          daysSinceLastExposureBuilder_ = null;
         }
 
         return this;
       }
       /**
-       * <code>.org.ena.server.common.protocols.generated.RiskScoreParameters.DaysRiskParameter days = 5;</code>
+       * <code>.org.ena.server.common.protocols.generated.RiskScoreParameters.DaysSinceLastExposureRiskParameter daysSinceLastExposure = 5;</code>
        */
-      public org.ena.server.common.protocols.generated.RiskScore.RiskScoreParameters.DaysRiskParameter.Builder getDaysBuilder() {
+      public org.ena.server.common.protocols.generated.RiskScore.RiskScoreParameters.DaysSinceLastExposureRiskParameter.Builder getDaysSinceLastExposureBuilder() {
         
         onChanged();
-        return getDaysFieldBuilder().getBuilder();
+        return getDaysSinceLastExposureFieldBuilder().getBuilder();
       }
       /**
-       * <code>.org.ena.server.common.protocols.generated.RiskScoreParameters.DaysRiskParameter days = 5;</code>
+       * <code>.org.ena.server.common.protocols.generated.RiskScoreParameters.DaysSinceLastExposureRiskParameter daysSinceLastExposure = 5;</code>
        */
-      public org.ena.server.common.protocols.generated.RiskScore.RiskScoreParameters.DaysRiskParameterOrBuilder getDaysOrBuilder() {
-        if (daysBuilder_ != null) {
-          return daysBuilder_.getMessageOrBuilder();
+      public org.ena.server.common.protocols.generated.RiskScore.RiskScoreParameters.DaysSinceLastExposureRiskParameterOrBuilder getDaysSinceLastExposureOrBuilder() {
+        if (daysSinceLastExposureBuilder_ != null) {
+          return daysSinceLastExposureBuilder_.getMessageOrBuilder();
         } else {
-          return days_ == null ?
-              org.ena.server.common.protocols.generated.RiskScore.RiskScoreParameters.DaysRiskParameter.getDefaultInstance() : days_;
+          return daysSinceLastExposure_ == null ?
+              org.ena.server.common.protocols.generated.RiskScore.RiskScoreParameters.DaysSinceLastExposureRiskParameter.getDefaultInstance() : daysSinceLastExposure_;
         }
       }
       /**
-       * <code>.org.ena.server.common.protocols.generated.RiskScoreParameters.DaysRiskParameter days = 5;</code>
+       * <code>.org.ena.server.common.protocols.generated.RiskScoreParameters.DaysSinceLastExposureRiskParameter daysSinceLastExposure = 5;</code>
        */
       private com.google.protobuf.SingleFieldBuilderV3<
-          org.ena.server.common.protocols.generated.RiskScore.RiskScoreParameters.DaysRiskParameter, org.ena.server.common.protocols.generated.RiskScore.RiskScoreParameters.DaysRiskParameter.Builder, org.ena.server.common.protocols.generated.RiskScore.RiskScoreParameters.DaysRiskParameterOrBuilder> 
-          getDaysFieldBuilder() {
-        if (daysBuilder_ == null) {
-          daysBuilder_ = new com.google.protobuf.SingleFieldBuilderV3<
-              org.ena.server.common.protocols.generated.RiskScore.RiskScoreParameters.DaysRiskParameter, org.ena.server.common.protocols.generated.RiskScore.RiskScoreParameters.DaysRiskParameter.Builder, org.ena.server.common.protocols.generated.RiskScore.RiskScoreParameters.DaysRiskParameterOrBuilder>(
-                  getDays(),
+          org.ena.server.common.protocols.generated.RiskScore.RiskScoreParameters.DaysSinceLastExposureRiskParameter, org.ena.server.common.protocols.generated.RiskScore.RiskScoreParameters.DaysSinceLastExposureRiskParameter.Builder, org.ena.server.common.protocols.generated.RiskScore.RiskScoreParameters.DaysSinceLastExposureRiskParameterOrBuilder> 
+          getDaysSinceLastExposureFieldBuilder() {
+        if (daysSinceLastExposureBuilder_ == null) {
+          daysSinceLastExposureBuilder_ = new com.google.protobuf.SingleFieldBuilderV3<
+              org.ena.server.common.protocols.generated.RiskScore.RiskScoreParameters.DaysSinceLastExposureRiskParameter, org.ena.server.common.protocols.generated.RiskScore.RiskScoreParameters.DaysSinceLastExposureRiskParameter.Builder, org.ena.server.common.protocols.generated.RiskScore.RiskScoreParameters.DaysSinceLastExposureRiskParameterOrBuilder>(
+                  getDaysSinceLastExposure(),
                   getParentForChildren(),
                   isClean());
-          days_ = null;
+          daysSinceLastExposure_ = null;
         }
-        return daysBuilder_;
+        return daysSinceLastExposureBuilder_;
       }
 
       private double daysWeight_ ;
@@ -7601,10 +7661,10 @@ public final class RiskScore {
     com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
       internal_static_org_ena_server_common_protocols_generated_RiskScoreParameters_DurationRiskParameter_fieldAccessorTable;
   private static final com.google.protobuf.Descriptors.Descriptor
-    internal_static_org_ena_server_common_protocols_generated_RiskScoreParameters_DaysRiskParameter_descriptor;
+    internal_static_org_ena_server_common_protocols_generated_RiskScoreParameters_DaysSinceLastExposureRiskParameter_descriptor;
   private static final 
     com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
-      internal_static_org_ena_server_common_protocols_generated_RiskScoreParameters_DaysRiskParameter_fieldAccessorTable;
+      internal_static_org_ena_server_common_protocols_generated_RiskScoreParameters_DaysSinceLastExposureRiskParameter_fieldAccessorTable;
   private static final com.google.protobuf.Descriptors.Descriptor
     internal_static_org_ena_server_common_protocols_generated_RiskScoreParameters_AttenuationRiskParameter_descriptor;
   private static final 
@@ -7620,84 +7680,90 @@ public final class RiskScore {
   static {
     java.lang.String[] descriptorData = {
       "\n\017riskScore.proto\022)org.ena.server.common" +
-      ".protocols.generated\"\351\026\n\023RiskScoreParame" +
+      ".protocols.generated\"\342\030\n\023RiskScoreParame" +
       "ters\022n\n\014transmission\030\001 \001(\0132X.org.ena.ser" +
       "ver.common.protocols.generated.RiskScore" +
       "Parameters.TransmissionRiskParameter\022\032\n\022" +
       "transmissionWeight\030\002 \001(\001\022f\n\010duration\030\003 \001" +
       "(\0132T.org.ena.server.common.protocols.gen" +
       "erated.RiskScoreParameters.DurationRiskP" +
-      "arameter\022\026\n\016durationWeight\030\004 \001(\001\022^\n\004days" +
-      "\030\005 \001(\0132P.org.ena.server.common.protocols" +
-      ".generated.RiskScoreParameters.DaysRiskP" +
-      "arameter\022\022\n\ndaysWeight\030\006 \001(\001\022l\n\013attenuat" +
-      "ion\030\007 \001(\0132W.org.ena.server.common.protoc" +
-      "ols.generated.RiskScoreParameters.Attenu" +
-      "ationRiskParameter\022\031\n\021attenuationWeight\030" +
-      "\010 \001(\001\032\323\004\n\031TransmissionRiskParameter\022D\n\006l" +
-      "owest\030\001 \001(\01624.org.ena.server.common.prot" +
-      "ocols.generated.RiskLevel\022A\n\003low\030\002 \001(\01624" +
-      ".org.ena.server.common.protocols.generat" +
-      "ed.RiskLevel\022H\n\nlow_medium\030\003 \001(\01624.org.e" +
+      "arameter\022\026\n\016durationWeight\030\004 \001(\001\022\200\001\n\025day" +
+      "sSinceLastExposure\030\005 \001(\0132a.org.ena.serve" +
+      "r.common.protocols.generated.RiskScorePa" +
+      "rameters.DaysSinceLastExposureRiskParame" +
+      "ter\022\022\n\ndaysWeight\030\006 \001(\001\022l\n\013attenuation\030\007" +
+      " \001(\0132W.org.ena.server.common.protocols.g" +
+      "enerated.RiskScoreParameters.Attenuation" +
+      "RiskParameter\022\031\n\021attenuationWeight\030\010 \001(\001" +
+      "\032\373\004\n\031TransmissionRiskParameter\022J\n\014appDef" +
+      "ined_1\030\001 \001(\01624.org.ena.server.common.pro" +
+      "tocols.generated.RiskLevel\022J\n\014appDefined" +
+      "_2\030\002 \001(\01624.org.ena.server.common.protoco" +
+      "ls.generated.RiskLevel\022J\n\014appDefined_3\030\003" +
+      " \001(\01624.org.ena.server.common.protocols.g" +
+      "enerated.RiskLevel\022J\n\014appDefined_4\030\004 \001(\016" +
+      "24.org.ena.server.common.protocols.gener" +
+      "ated.RiskLevel\022J\n\014appDefined_5\030\005 \001(\01624.o" +
+      "rg.ena.server.common.protocols.generated" +
+      ".RiskLevel\022J\n\014appDefined_6\030\006 \001(\01624.org.e" +
       "na.server.common.protocols.generated.Ris" +
-      "kLevel\022D\n\006medium\030\004 \001(\01624.org.ena.server." +
-      "common.protocols.generated.RiskLevel\022I\n\013" +
-      "medium_high\030\005 \001(\01624.org.ena.server.commo" +
-      "n.protocols.generated.RiskLevel\022B\n\004high\030" +
-      "\006 \001(\01624.org.ena.server.common.protocols." +
-      "generated.RiskLevel\022G\n\tvery_high\030\007 \001(\01624" +
-      ".org.ena.server.common.protocols.generat" +
-      "ed.RiskLevel\022E\n\007highest\030\010 \001(\01624.org.ena." +
-      "server.common.protocols.generated.RiskLe" +
-      "vel\032\317\004\n\025DurationRiskParameter\022D\n\006lowest\030" +
-      "\001 \001(\01624.org.ena.server.common.protocols." +
-      "generated.RiskLevel\022A\n\003low\030\002 \001(\01624.org.e" +
-      "na.server.common.protocols.generated.Ris" +
-      "kLevel\022H\n\nlow_medium\030\003 \001(\01624.org.ena.ser" +
-      "ver.common.protocols.generated.RiskLevel" +
-      "\022D\n\006medium\030\004 \001(\01624.org.ena.server.common" +
-      ".protocols.generated.RiskLevel\022I\n\013medium" +
-      "_high\030\005 \001(\01624.org.ena.server.common.prot" +
-      "ocols.generated.RiskLevel\022B\n\004high\030\006 \001(\0162" +
+      "kLevel\022J\n\014appDefined_7\030\007 \001(\01624.org.ena.s" +
+      "erver.common.protocols.generated.RiskLev" +
+      "el\022J\n\014appDefined_8\030\010 \001(\01624.org.ena.serve" +
+      "r.common.protocols.generated.RiskLevel\032\377" +
+      "\004\n\025DurationRiskParameter\022F\n\010eq_0_min\030\001 \001" +
+      "(\01624.org.ena.server.common.protocols.gen" +
+      "erated.RiskLevel\022K\n\rgt_0_le_5_min\030\002 \001(\0162" +
       "4.org.ena.server.common.protocols.genera" +
-      "ted.RiskLevel\022G\n\tvery_high\030\007 \001(\01624.org.e" +
-      "na.server.common.protocols.generated.Ris" +
-      "kLevel\022E\n\007highest\030\010 \001(\01624.org.ena.server" +
-      ".common.protocols.generated.RiskLevel\032\313\004" +
-      "\n\021DaysRiskParameter\022D\n\006lowest\030\001 \001(\01624.or" +
+      "ted.RiskLevel\022L\n\016gt_5_le_10_min\030\003 \001(\01624." +
+      "org.ena.server.common.protocols.generate" +
+      "d.RiskLevel\022M\n\017gt_10_le_15_min\030\004 \001(\01624.o" +
+      "rg.ena.server.common.protocols.generated" +
+      ".RiskLevel\022M\n\017gt_15_le_20_min\030\005 \001(\01624.or" +
       "g.ena.server.common.protocols.generated." +
-      "RiskLevel\022A\n\003low\030\002 \001(\01624.org.ena.server." +
-      "common.protocols.generated.RiskLevel\022H\n\n" +
-      "low_medium\030\003 \001(\01624.org.ena.server.common" +
-      ".protocols.generated.RiskLevel\022D\n\006medium" +
-      "\030\004 \001(\01624.org.ena.server.common.protocols" +
-      ".generated.RiskLevel\022I\n\013medium_high\030\005 \001(" +
-      "\01624.org.ena.server.common.protocols.gene" +
-      "rated.RiskLevel\022B\n\004high\030\006 \001(\01624.org.ena." +
-      "server.common.protocols.generated.RiskLe" +
-      "vel\022G\n\tvery_high\030\007 \001(\01624.org.ena.server." +
-      "common.protocols.generated.RiskLevel\022E\n\007" +
-      "highest\030\010 \001(\01624.org.ena.server.common.pr" +
-      "otocols.generated.RiskLevel\032\322\004\n\030Attenuat" +
-      "ionRiskParameter\022D\n\006lowest\030\001 \001(\01624.org.e" +
-      "na.server.common.protocols.generated.Ris" +
-      "kLevel\022A\n\003low\030\002 \001(\01624.org.ena.server.com" +
-      "mon.protocols.generated.RiskLevel\022H\n\nlow" +
-      "_medium\030\003 \001(\01624.org.ena.server.common.pr" +
-      "otocols.generated.RiskLevel\022D\n\006medium\030\004 " +
-      "\001(\01624.org.ena.server.common.protocols.ge" +
-      "nerated.RiskLevel\022I\n\013medium_high\030\005 \001(\01624" +
-      ".org.ena.server.common.protocols.generat" +
-      "ed.RiskLevel\022B\n\004high\030\006 \001(\01624.org.ena.ser" +
+      "RiskLevel\022M\n\017gt_20_le_25_min\030\006 \001(\01624.org" +
+      ".ena.server.common.protocols.generated.R" +
+      "iskLevel\022M\n\017gt_25_le_30_min\030\007 \001(\01624.org." +
+      "ena.server.common.protocols.generated.Ri" +
+      "skLevel\022G\n\tgt_30_min\030\010 \001(\01624.org.ena.ser" +
       "ver.common.protocols.generated.RiskLevel" +
-      "\022G\n\tvery_high\030\007 \001(\01624.org.ena.server.com" +
-      "mon.protocols.generated.RiskLevel\022E\n\007hig" +
-      "hest\030\010 \001(\01624.org.ena.server.common.proto" +
-      "cols.generated.RiskLevel*\200\001\n\tRiskLevel\022\013" +
-      "\n\007INVALID\020\000\022\n\n\006LOWEST\020\001\022\007\n\003LOW\020\002\022\016\n\nLOW_" +
-      "MEDIUM\020\003\022\n\n\006MEDIUM\020\004\022\017\n\013MEDIUM_HIGH\020\005\022\010\n" +
-      "\004HIGH\020\006\022\r\n\tVERY_HIGH\020\007\022\013\n\007HIGHEST\020\010b\006pro" +
-      "to3"
+      "\032\225\005\n\"DaysSinceLastExposureRiskParameter\022" +
+      "H\n\nge_14_days\030\001 \001(\01624.org.ena.server.com" +
+      "mon.protocols.generated.RiskLevel\022N\n\020ge_" +
+      "12_lt_14_days\030\002 \001(\01624.org.ena.server.com" +
+      "mon.protocols.generated.RiskLevel\022N\n\020ge_" +
+      "10_lt_12_days\030\003 \001(\01624.org.ena.server.com" +
+      "mon.protocols.generated.RiskLevel\022M\n\017ge_" +
+      "8_lt_10_days\030\004 \001(\01624.org.ena.server.comm" +
+      "on.protocols.generated.RiskLevel\022L\n\016ge_6" +
+      "_lt_8_days\030\005 \001(\01624.org.ena.server.common" +
+      ".protocols.generated.RiskLevel\022L\n\016ge_4_l" +
+      "t_6_days\030\006 \001(\01624.org.ena.server.common.p" +
+      "rotocols.generated.RiskLevel\022L\n\016ge_2_lt_" +
+      "4_days\030\007 \001(\01624.org.ena.server.common.pro" +
+      "tocols.generated.RiskLevel\022L\n\016ge_0_lt_2_" +
+      "days\030\010 \001(\01624.org.ena.server.common.proto" +
+      "cols.generated.RiskLevel\032\206\005\n\030Attenuation" +
+      "RiskParameter\022G\n\tgt_73_dbm\030\001 \001(\01624.org.e" +
+      "na.server.common.protocols.generated.Ris" +
+      "kLevel\022M\n\017gt_63_le_73_dbm\030\002 \001(\01624.org.en" +
+      "a.server.common.protocols.generated.Risk" +
+      "Level\022M\n\017gt_51_le_63_dbm\030\003 \001(\01624.org.ena" +
+      ".server.common.protocols.generated.RiskL" +
+      "evel\022M\n\017gt_33_le_51_dbm\030\004 \001(\01624.org.ena." +
+      "server.common.protocols.generated.RiskLe" +
+      "vel\022M\n\017gt_27_le_33_dbm\030\005 \001(\01624.org.ena.s" +
+      "erver.common.protocols.generated.RiskLev" +
+      "el\022M\n\017gt_15_le_27_dbm\030\006 \001(\01624.org.ena.se" +
+      "rver.common.protocols.generated.RiskLeve" +
+      "l\022M\n\017gt_10_le_15_dbm\030\007 \001(\01624.org.ena.ser" +
+      "ver.common.protocols.generated.RiskLevel" +
+      "\022G\n\tlt_10_min\030\010 \001(\01624.org.ena.server.com" +
+      "mon.protocols.generated.RiskLevel*\200\001\n\tRi" +
+      "skLevel\022\013\n\007INVALID\020\000\022\n\n\006LOWEST\020\001\022\007\n\003LOW\020" +
+      "\002\022\016\n\nLOW_MEDIUM\020\003\022\n\n\006MEDIUM\020\004\022\017\n\013MEDIUM_" +
+      "HIGH\020\005\022\010\n\004HIGH\020\006\022\r\n\tVERY_HIGH\020\007\022\013\n\007HIGHE" +
+      "ST\020\010b\006proto3"
     };
     descriptor = com.google.protobuf.Descriptors.FileDescriptor
       .internalBuildGeneratedFileFrom(descriptorData,
@@ -7708,31 +7774,31 @@ public final class RiskScore {
     internal_static_org_ena_server_common_protocols_generated_RiskScoreParameters_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_org_ena_server_common_protocols_generated_RiskScoreParameters_descriptor,
-        new java.lang.String[] { "Transmission", "TransmissionWeight", "Duration", "DurationWeight", "Days", "DaysWeight", "Attenuation", "AttenuationWeight", });
+        new java.lang.String[] { "Transmission", "TransmissionWeight", "Duration", "DurationWeight", "DaysSinceLastExposure", "DaysWeight", "Attenuation", "AttenuationWeight", });
     internal_static_org_ena_server_common_protocols_generated_RiskScoreParameters_TransmissionRiskParameter_descriptor =
       internal_static_org_ena_server_common_protocols_generated_RiskScoreParameters_descriptor.getNestedTypes().get(0);
     internal_static_org_ena_server_common_protocols_generated_RiskScoreParameters_TransmissionRiskParameter_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_org_ena_server_common_protocols_generated_RiskScoreParameters_TransmissionRiskParameter_descriptor,
-        new java.lang.String[] { "Lowest", "Low", "LowMedium", "Medium", "MediumHigh", "High", "VeryHigh", "Highest", });
+        new java.lang.String[] { "AppDefined1", "AppDefined2", "AppDefined3", "AppDefined4", "AppDefined5", "AppDefined6", "AppDefined7", "AppDefined8", });
     internal_static_org_ena_server_common_protocols_generated_RiskScoreParameters_DurationRiskParameter_descriptor =
       internal_static_org_ena_server_common_protocols_generated_RiskScoreParameters_descriptor.getNestedTypes().get(1);
     internal_static_org_ena_server_common_protocols_generated_RiskScoreParameters_DurationRiskParameter_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_org_ena_server_common_protocols_generated_RiskScoreParameters_DurationRiskParameter_descriptor,
-        new java.lang.String[] { "Lowest", "Low", "LowMedium", "Medium", "MediumHigh", "High", "VeryHigh", "Highest", });
-    internal_static_org_ena_server_common_protocols_generated_RiskScoreParameters_DaysRiskParameter_descriptor =
+        new java.lang.String[] { "Eq0Min", "Gt0Le5Min", "Gt5Le10Min", "Gt10Le15Min", "Gt15Le20Min", "Gt20Le25Min", "Gt25Le30Min", "Gt30Min", });
+    internal_static_org_ena_server_common_protocols_generated_RiskScoreParameters_DaysSinceLastExposureRiskParameter_descriptor =
       internal_static_org_ena_server_common_protocols_generated_RiskScoreParameters_descriptor.getNestedTypes().get(2);
-    internal_static_org_ena_server_common_protocols_generated_RiskScoreParameters_DaysRiskParameter_fieldAccessorTable = new
+    internal_static_org_ena_server_common_protocols_generated_RiskScoreParameters_DaysSinceLastExposureRiskParameter_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
-        internal_static_org_ena_server_common_protocols_generated_RiskScoreParameters_DaysRiskParameter_descriptor,
-        new java.lang.String[] { "Lowest", "Low", "LowMedium", "Medium", "MediumHigh", "High", "VeryHigh", "Highest", });
+        internal_static_org_ena_server_common_protocols_generated_RiskScoreParameters_DaysSinceLastExposureRiskParameter_descriptor,
+        new java.lang.String[] { "Ge14Days", "Ge12Lt14Days", "Ge10Lt12Days", "Ge8Lt10Days", "Ge6Lt8Days", "Ge4Lt6Days", "Ge2Lt4Days", "Ge0Lt2Days", });
     internal_static_org_ena_server_common_protocols_generated_RiskScoreParameters_AttenuationRiskParameter_descriptor =
       internal_static_org_ena_server_common_protocols_generated_RiskScoreParameters_descriptor.getNestedTypes().get(3);
     internal_static_org_ena_server_common_protocols_generated_RiskScoreParameters_AttenuationRiskParameter_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_org_ena_server_common_protocols_generated_RiskScoreParameters_AttenuationRiskParameter_descriptor,
-        new java.lang.String[] { "Lowest", "Low", "LowMedium", "Medium", "MediumHigh", "High", "VeryHigh", "Highest", });
+        new java.lang.String[] { "Gt73Dbm", "Gt63Le73Dbm", "Gt51Le63Dbm", "Gt33Le51Dbm", "Gt27Le33Dbm", "Gt15Le27Dbm", "Gt10Le15Dbm", "Lt10Min", });
   }
 
   // @@protoc_insertion_point(outer_class_scope)
