@@ -19,30 +19,18 @@ public class DiagnosisKey {
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;
-
-  /**
-   * The randomly generated diagnosis key.
-   */
   private byte[] keyData;
-
-  /**
-   * A number describing when a key starts. It is equal to startTimeOfKeySinceEpochInSecs / (60 *
-   * 10).
-   */
   private long rollingStartNumber;
-
-  /**
-   * Risk of transmission associated with the person this key came from.
-   */
   private int transmissionRiskLevel;
 
   DiagnosisKey(byte[] keyData, long rollingStartNumber, int transmissionRiskLevel) {
   }
 
   /**
-   * Returns a new DiagnosisKeyBuilder
+   * Returns a DiagnosisKeyBuilder instance. A {@link DiagnosisKey} can then be build by either
+   * providing the required member values or by passing the respective protocol buffer object.
    *
-   * @return
+   * @return DiagnosisKeyBuilder instance.
    */
   public static DiagnosisKeyBuilder builder() {
     return new Builder();
@@ -52,14 +40,24 @@ public class DiagnosisKey {
     return id;
   }
 
+  /**
+   * @return generated diagnosis key.
+   */
   public byte[] getKeyData() {
     return keyData;
   }
 
+  /**
+   * @return number describing when a key starts. It is equal to startTimeOfKeySinceEpochInSecs /
+   * (60 * 10).
+   */
   public long getRollingStartNumber() {
     return rollingStartNumber;
   }
 
+  /**
+   * @return risk of transmission associated with the person this key came from.
+   */
   public int getTransmissionRiskLevel() {
     return transmissionRiskLevel;
   }
@@ -96,25 +94,46 @@ public class DiagnosisKey {
     private Builder() {
     }
 
+    /**
+     * @param keyData generated diagnosis key.
+     * @return this Builder instance.
+     */
     public RollingStartNumberBuilder keyData(byte[] keyData) {
       this.keyData = keyData;
       return this;
     }
 
+    /**
+     * @param rollingStartNumber number describing when a key starts. It is equal to
+     *                           startTimeOfKeySinceEpochInSecs / (60 * 10).
+     * @return this Builder instance.
+     */
     public TransmissionRiskLevelBuilder rollingStartNumber(long rollingStartNumber) {
       this.rollingStartNumber = rollingStartNumber;
       return this;
     }
 
+    /**
+     * @param transmissionRiskLevel risk of transmission associated with the person this key came
+     *                              from.
+     * @return this Builder instance.
+     */
     public FinalBuilder transmissionRiskLevel(int transmissionRiskLevel) {
       this.transmissionRiskLevel = transmissionRiskLevel;
       return this;
     }
 
+    /**
+     * @param protoBufObject
+     * @return this Builder instance.
+     */
     public Builder fromProtoBuf(ExposureKeys.TemporaryExposureKey protoBufObject) {
       return this;
     }
 
+    /**
+     * @return {@link DiagnosisKey} instance
+     */
     public DiagnosisKey build() {
       return new DiagnosisKey(this.keyData, this.rollingStartNumber,
           this.transmissionRiskLevel);
