@@ -33,3 +33,5 @@ out/
 
 # Project specifics
 target/
+
+.DS_Store
