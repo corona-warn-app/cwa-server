@@ -35,7 +35,7 @@ public class UploadController {
         .map((aProtoBufKey) -> DiagnosisKey.builder().fromProtoBuf(aProtoBufKey).build())
         .collect(Collectors.toList());
 
-    this.exposureKeyService.saveDiagnosisKey(diagnosisKeys);
+    this.exposureKeyService.saveDiagnosisKeys(diagnosisKeys);
 
     return ResponseEntity.ok().build();
   }

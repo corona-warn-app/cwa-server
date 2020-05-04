@@ -14,11 +14,11 @@ public class DiagnosisKeyService {
 
   /**
    * TODO doc explain
-   * @param diagnosisKey
+   * @param diagnosisKeys
    * @return
    */
-  public Collection<DiagnosisKey> saveDiagnosisKey(
-      Collection<DiagnosisKey> diagnosisKey) {
-    return keyRepository.saveAll(diagnosisKey);
+  public Collection<DiagnosisKey> saveDiagnosisKeys(
+      Collection<DiagnosisKey> diagnosisKeys) {
+    return keyRepository.saveAll(diagnosisKeys);
   }
 }
