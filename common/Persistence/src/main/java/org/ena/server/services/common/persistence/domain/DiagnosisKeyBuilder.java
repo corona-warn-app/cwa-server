@@ -48,10 +48,13 @@ public class DiagnosisKeyBuilder implements Builder, RollingStartNumberBuilder,
   }
 
   /**
-   * @param protoBufObject
+   * @param protoBufObject ProtocolBuffer object associated with the temporary exposure key.
    * @return this Builder instance.
    */
   public DiagnosisKeyBuilder fromProtoBuf(ExposureKeys.TemporaryExposureKey protoBufObject) {
+    this.keyData = protoBufObject.getKeyData().toByteArray();
+    this.rollingStartNumber = protoBufObject.getRollingStartNumber();
+    this.transmissionRiskLevel = protoBufObject.getRiskLevelValue();
     return this;
   }
 
