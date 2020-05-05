@@ -4,7 +4,6 @@ import com.google.protobuf.ByteString;
 import java.io.File;
 import java.io.IOException;
 import java.security.InvalidKeyException;
-import java.security.InvalidParameterException;
 import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
 import java.security.PrivateKey;
@@ -13,7 +12,6 @@ import java.security.SignatureException;
 import java.security.cert.Certificate;
 import java.security.cert.CertificateEncodingException;
 import java.security.cert.CertificateException;
-import java.text.ParseException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
@@ -32,6 +30,11 @@ import org.ena.server.common.protocols.generated.ExposureKeys.TemporaryExposureK
 import org.ena.server.common.protocols.generated.ExposureKeys.TemporaryExposureKeyBucket;
 import org.ena.server.common.protocols.generated.ExposureKeys.TemporaryExposureKeyBucket.AggregationInterval;
 import org.ena.server.common.protocols.generated.RiskScore.RiskLevel;
+import org.ena.server.common.protocols.generated.RiskScore.RiskScoreParameters;
+import org.ena.server.common.protocols.generated.RiskScore.RiskScoreParameters.AttenuationRiskParameter;
+import org.ena.server.common.protocols.generated.RiskScore.RiskScoreParameters.DaysSinceLastExposureRiskParameter;
+import org.ena.server.common.protocols.generated.RiskScore.RiskScoreParameters.DurationRiskParameter;
+import org.ena.server.common.protocols.generated.RiskScore.RiskScoreParameters.TransmissionRiskParameter;
 import org.ena.server.common.protocols.generated.Security.SignedPayload;
 import org.ena.server.tools.testdatagenerator.common.Common;
 import org.ena.server.tools.testdatagenerator.common.Common.DirectoryIndex;
@@ -45,9 +48,10 @@ public class Generator {
 
   static void generate(int totalHours, String startDateStr, int exposuresPerHour,
       File outputDirectory, File privateKeyFile, File certificateFile, int seed)
-      throws IOException, CertificateException {
+      throws IOException, CertificateException, NoSuchAlgorithmException, NoSuchProviderException, InvalidKeyException, SignatureException {
 
-    File dateDirectory = createDirectoryStructure(outputDirectory);
+    File rootDirectory = createRootDirectoryStructure(outputDirectory);
+    File dateDirectory = createDiagnosisKeyDirectoryStructure(rootDirectory);
 
     LocalDate startDate = LocalDate.parse(startDateStr, ISO8601);
     DirectoryIndex<LocalDate> dateDirectoryIndex = createDateDirectoryIndex(
@@ -147,22 +151,94 @@ public class Generator {
             ))
         );
 
+    // Write parameters
+    File parametersDirectory = createParametersDirectoryStructure(rootDirectory);
+    File parametersFile = Common.makeFile(parametersDirectory, "index");
+    RiskScoreParameters riskScoreParameters = RiskScoreParameters.newBuilder()
+        .setAttenuation(AttenuationRiskParameter.newBuilder()
+            .setGt73Dbm(RiskLevel.LOWEST)
+            .setGt63Le73Dbm(RiskLevel.LOW)
+            .setGt51Le63Dbm(RiskLevel.LOW_MEDIUM)
+            .setGt33Le51Dbm(RiskLevel.MEDIUM)
+            .setGt27Le33Dbm(RiskLevel.MEDIUM_HIGH)
+            .setGt10Le15Dbm(RiskLevel.HIGH)
+            .setGt10Le15Dbm(RiskLevel.VERY_HIGH)
+            .setLt10Dbm(RiskLevel.HIGHEST)
+            .build())
+        .setDaysSinceLastExposure(DaysSinceLastExposureRiskParameter.newBuilder()
+            .setGe14Days(RiskLevel.LOWEST)
+            .setGe12Lt14Days(RiskLevel.LOW)
+            .setGe10Lt12Days(RiskLevel.LOW_MEDIUM)
+            .setGe8Lt10Days(RiskLevel.MEDIUM)
+            .setGe6Lt8Days(RiskLevel.MEDIUM_HIGH)
+            .setGe4Lt6Days(RiskLevel.HIGH)
+            .setGe2Lt4Days(RiskLevel.VERY_HIGH)
+            .setGe0Lt2Days(RiskLevel.HIGHEST)
+            .build())
+        .setDuration(DurationRiskParameter.newBuilder()
+            .setEq0Min(RiskLevel.LOWEST)
+            .setGt0Le5Min(RiskLevel.LOW)
+            .setGt5Le10Min(RiskLevel.LOW_MEDIUM)
+            .setGt10Le15Min(RiskLevel.MEDIUM)
+            .setGt15Le20Min(RiskLevel.MEDIUM_HIGH)
+            .setGt20Le25Min(RiskLevel.HIGH)
+            .setGt25Le30Min(RiskLevel.VERY_HIGH)
+            .setGt30Min(RiskLevel.HIGHEST)
+            .build())
+        .setTransmission(TransmissionRiskParameter.newBuilder()
+            .setAppDefined1(RiskLevel.LOWEST)
+            .setAppDefined2(RiskLevel.LOW)
+            .setAppDefined3(RiskLevel.LOW_MEDIUM)
+            .setAppDefined4(RiskLevel.MEDIUM)
+            .setAppDefined5(RiskLevel.MEDIUM_HIGH)
+            .setAppDefined6(RiskLevel.HIGH)
+            .setAppDefined7(RiskLevel.VERY_HIGH)
+            .setAppDefined8(RiskLevel.HIGHEST)
+            .build())
+        .build();
+    SignedPayload signedRiskScoreParameters = generateSignedPayload(
+        riskScoreParameters.toByteArray(),
+        privateKey,
+        certificate
+    );
+    Common.writeBytesToFile(
+        signedRiskScoreParameters.toByteArray(),
+        parametersFile
+    );
+
     System.out.println("DONE");
   }
 
-  static File createDirectoryStructure(File outputDirectory) {
-    // API: /version/{version}/diagnosis-keys/country/{country}/date/{date}/hour/{hour}
+  static File createRootDirectoryStructure(File outputDirectory) {
     return Stream.of(outputDirectory)
         .peek(Common.uncheckedConsumer(FileUtils::deleteDirectory))
         .peek(File::mkdirs)
         .map(directory -> Common.makeDirectory(directory, "version"))
         .peek(directory -> Common.writeIndex(directory, Collections.singletonList(version)))
         .map(directory -> Common.makeDirectory(directory, version))
+        .findFirst()
+        .orElseThrow();
+  }
+
+  static File createDiagnosisKeyDirectoryStructure(File outputDirectory) {
+    // API: /version/{version}/diagnosis-keys/country/{country}/date/{date}/hour/{hour}
+    return Stream.of(outputDirectory)
         .map(directory -> Common.makeDirectory(directory, "diagnosis-keys"))
         .map(directory -> Common.makeDirectory(directory, "country"))
         .peek(directory -> Common.writeIndex(directory, Collections.singletonList(country)))
         .map(directory -> Common.makeDirectory(directory, country))
         .map(directory -> Common.makeDirectory(directory, "date"))
+        .findFirst()
+        .orElseThrow();
+  }
+
+  static File createParametersDirectoryStructure(File outputDirectory) {
+    // API: /version/{version}/parameters/country/{country}
+    return Stream.of(outputDirectory)
+        .map(directory -> Common.makeDirectory(directory, "parameters"))
+        .map(directory -> Common.makeDirectory(directory, "country"))
+        .peek(directory -> Common.writeIndex(directory, Collections.singletonList(country)))
+        .map(directory -> Common.makeDirectory(directory, country))
         .findFirst()
         .orElseThrow();
   }
