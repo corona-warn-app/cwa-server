@@ -6,7 +6,7 @@ pushd "$(dirname "${BASH_SOURCE[0]}")" > /dev/null || exit
 
 docker build                                              \
   -f Dockerfile                                           \
-  -t ena-server-mock ../TestDataGenerator &&              \
+  -t ena-server-mock ../ &&                               \
 docker run                                                \
   -p 127.0.0.1:80:80/tcp                                  \
   -it ena-server-mock
