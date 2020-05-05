@@ -8,7 +8,7 @@ docker build                                              \
   -f Dockerfile                                           \
   -t ena-server-mock ../ &&                               \
 docker run                                                \
-  -p 127.0.0.1:80:80/tcp                                  \
+  -p 127.0.0.1:8080:8080/tcp                              \
   -it ena-server-mock
 
 popd > /dev/null || exit
