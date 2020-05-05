@@ -354,7 +354,7 @@ public class Generator {
       Random random
   ) {
     long timestampEpochSeconds = timestamp.toEpochSecond(ZoneOffset.UTC);
-    int aggregationTimeHours = aggregationInterval == AggregationInterval.HOURLY ? 1 : 24;
+    long aggregationTimeHours = aggregationInterval == AggregationInterval.HOURLY ? 1L : 24L;
     long aggregationTimeSeconds = TimeUnit.HOURS.toSeconds(aggregationTimeHours);
     List<TemporaryExposureKey> temporaryExposureKeys = IntStream.range(0, numExposureKeys)
         .mapToObj(i -> {
@@ -364,7 +364,7 @@ public class Generator {
               random
           );
           //Convert from epoch seconds to 10 minute increment counter
-          int rollingStartNumber = Math.toIntExact(Math.floorDiv(
+          long rollingStartNumber = Math.floorDiv(
               rollingStartEpochSeconds,
               TimeUnit.MINUTES.toSeconds(10)
           ));
@@ -372,7 +372,7 @@ public class Generator {
         }).collect(Collectors.toList());
     return TemporaryExposureKeyBucket.newBuilder()
         .setShardKey(shardKey)
-        .setTimestamp(Math.toIntExact(timestampEpochSeconds))
+        .setTimestamp(timestampEpochSeconds)
         .setAggregationInterval(aggregationInterval)
         .addAllExposureKeys(temporaryExposureKeys)
         .build();

@@ -6,7 +6,7 @@ import "riskScore.proto";
 
 message TemporaryExposureKeyBucket {
   string shardKey = 1;                                // e.g. Country-Code
-  sfixed32 timestamp = 2;                             // publishing timestamp of this exposure key package - unix epoch
+  int64 timestamp = 2;                                // publishing timestamp of this exposure key package - unix epoch
   AggregationInterval aggregationInterval = 3;        // time interval aggregated in this package
   repeated TemporaryExposureKey exposureKeys = 4;     // list of temporary exposure keys
 
@@ -18,6 +18,6 @@ message TemporaryExposureKeyBucket {
 
 message TemporaryExposureKey {
   bytes keyData = 1;                  // 16 bytes long exposure key
-  sfixed32 rollingStartNumber = 2;    // unix epoch timestamp / 600
+  int64 rollingStartNumber = 2;       // unix epoch timestamp / 600
   RiskLevel riskLevel = 3;            // risk level from the sending device
 }
