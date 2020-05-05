@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/v1")
+@RequestMapping("/version/v1")
 public class UploadController {
 
   @Autowired
@@ -27,7 +27,7 @@ public class UploadController {
     return ResponseEntity.ok().body("Upload Endpoint v1");
   }
 
-  @PostMapping(value = "/infections/country/{country}")
+  @PostMapping(value = "/diagnosis-keys/country/{country}")
   public ResponseEntity<String> submitDiagnosisKey(
       @PathVariable String country,
       @RequestBody Collection<ExposureKeys.TemporaryExposureKey> exposureKeys,
