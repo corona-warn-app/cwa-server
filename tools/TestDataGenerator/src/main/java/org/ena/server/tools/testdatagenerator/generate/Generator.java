@@ -54,12 +54,7 @@ public class Generator {
 
     File rootDirectory = createRootDirectoryStructure(outputDirectory);
     if(openapi != null && openapi.exists()) {
-      File target = Common.makeFile(rootDirectory.toPath()
-          .resolve("version")
-          .resolve("v1")
-          .toFile(),
-          "index"
-      );
+      File target = Common.makeFile(rootDirectory, "index");
       Files.copy(openapi.toPath(), target.toPath(), StandardCopyOption.REPLACE_EXISTING);
     }
 
