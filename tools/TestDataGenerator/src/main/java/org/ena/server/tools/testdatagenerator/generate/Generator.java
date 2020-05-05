@@ -1,6 +1,5 @@
 package org.ena.server.tools.testdatagenerator.generate;
 
-import com.google.protobuf.AbstractMessageLite;
 import com.google.protobuf.ByteString;
 import java.io.File;
 import java.io.IOException;
@@ -28,12 +27,10 @@ import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
-import javax.print.attribute.standard.MediaSize.ISO;
 import org.apache.commons.io.FileUtils;
 import org.ena.server.common.protocols.generated.ExposureKeys.TemporaryExposureKey;
 import org.ena.server.common.protocols.generated.ExposureKeys.TemporaryExposureKeyBucket;
 import org.ena.server.common.protocols.generated.ExposureKeys.TemporaryExposureKeyBucket.AggregationInterval;
-import org.ena.server.common.protocols.generated.ExposureKeys.TemporaryExposureKeyBucketOrBuilder;
 import org.ena.server.common.protocols.generated.RiskScore.RiskLevel;
 import org.ena.server.common.protocols.generated.Security.SignedPayload;
 import org.ena.server.tools.testdatagenerator.common.Common;
@@ -47,17 +44,8 @@ public class Generator {
   static String version = "v1";
 
   static void generate(int totalHours, String startDateStr, int exposuresPerHour,
-      boolean forceEmpty,
-      File outputDirectory,
-      File privateKeyFile, File certificateFile, int seed)
-      throws IOException, CertificateException, ParseException {
-
-    int numLeftoverHours = totalHours % 24;
-    if (forceEmpty && numLeftoverHours == 0) {
-      throw new InvalidParameterException("When '--force_empty' is set, then '--hours' mod 24"
-          + "must be greater or equal to 1 (otherwise no hourly file would be generated"
-          + "that could be empty).");
-    }
+      File outputDirectory, File privateKeyFile, File certificateFile, int seed)
+      throws IOException, CertificateException {
 
     File dateDirectory = createDirectoryStructure(outputDirectory);
 
@@ -126,16 +114,16 @@ public class Generator {
                 .toFile()
             )
             .forEach(hourDirectory -> IntStream.range(0, getHours(
-                    startDate, startDate.plusDays(dayIndex), totalHours
+                startDate, startDate.plusDays(dayIndex), totalHours
                 ).size())
-                .forEach(hourIndex -> Stream.of(hourIndex)
-                    .map(__ -> Common.makeDirectory(hourDirectory, String.valueOf(hourIndex)))
-                    .map(a -> Common.makeFile(a, "index"))
-                    .forEach(indexFile -> Common.writeBytesToFile(
-                        signedHourData.get(dayIndex).get(hourIndex).toByteArray(),
-                        indexFile
-                    ))
-                )
+                    .forEach(hourIndex -> Stream.of(hourIndex)
+                        .map(__ -> Common.makeDirectory(hourDirectory, String.valueOf(hourIndex)))
+                        .map(a -> Common.makeFile(a, "index"))
+                        .forEach(indexFile -> Common.writeBytesToFile(
+                            signedHourData.get(dayIndex).get(hourIndex).toByteArray(),
+                            indexFile
+                        ))
+                    )
             )
         );
 
@@ -251,7 +239,7 @@ public class Generator {
         .collect(Collectors.toList());
   }
 
-  static int getNumberOfDays (int hours) {
+  static int getNumberOfDays(int hours) {
     return -Math.floorDiv(-hours, 24);
   }
 

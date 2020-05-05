@@ -41,12 +41,15 @@ public class GenerateCommand implements Runnable {
       required = true)
   private int exposures_per_hour;
 
+  /*
+  // TODO Also one full empty day?
   @Option(names = {"--force_empty"},
       description = ""
-          + "This will force the generation of at least one hourly file that will not contain any"
-          + "exposure keys.\n"
+          + "This will force the generation of at least one hourly file per day that will not "
+          + "contain any exposure keys.\n"
           + "Requires '--hours' to be set to a value n for which n mod 24 >= 1.")
   private boolean force_empty;
+  */
 
   @Option(names = {"--out"},
       description = ""
@@ -83,7 +86,7 @@ public class GenerateCommand implements Runnable {
   @Override
   public void run() {
     try {
-      Generator.generate(hours, start_date, exposures_per_hour, force_empty, out_directory,
+      Generator.generate(hours, start_date, exposures_per_hour, out_directory,
           private_key_file, certificate_file, seed);
     } catch (Exception e) {
       e.printStackTrace();
