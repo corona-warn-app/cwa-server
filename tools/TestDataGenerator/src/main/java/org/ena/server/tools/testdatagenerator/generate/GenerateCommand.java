@@ -51,6 +51,12 @@ public class GenerateCommand implements Runnable {
   private boolean force_empty;
   */
 
+  @Option(names = {"--openapi"},
+      description = ""
+          + "Optional: An OpenAPI definition file to include.\n\n"
+          + "Example: ../../services/Download/api_v1.json")
+  private File openapi;
+
   @Option(names = {"--out"},
       description = ""
           + "Target directory (will be wiped before data generation).\n"
@@ -86,7 +92,7 @@ public class GenerateCommand implements Runnable {
   @Override
   public void run() {
     try {
-      Generator.generate(hours, start_date, exposures_per_hour, out_directory,
+      Generator.generate(hours, start_date, exposures_per_hour, openapi, out_directory,
           private_key_file, certificate_file, seed);
     } catch (Exception e) {
       e.printStackTrace();

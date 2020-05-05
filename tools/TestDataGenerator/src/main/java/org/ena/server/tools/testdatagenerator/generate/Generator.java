@@ -3,6 +3,8 @@ package org.ena.server.tools.testdatagenerator.generate;
 import com.google.protobuf.ByteString;
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.StandardCopyOption;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
@@ -46,11 +48,21 @@ public class Generator {
   static String country = "DE";
   static String version = "v1";
 
-  static void generate(int totalHours, String startDateStr, int exposuresPerHour,
+  static void generate(int totalHours, String startDateStr, int exposuresPerHour, File openapi,
       File outputDirectory, File privateKeyFile, File certificateFile, int seed)
       throws IOException, CertificateException, NoSuchAlgorithmException, NoSuchProviderException, InvalidKeyException, SignatureException {
 
     File rootDirectory = createRootDirectoryStructure(outputDirectory);
+    if(openapi != null && openapi.exists()) {
+      File target = Common.makeFile(rootDirectory.toPath()
+          .resolve("version")
+          .resolve("v1")
+          .toFile(),
+          "index"
+      );
+      Files.copy(openapi.toPath(), target.toPath(), StandardCopyOption.REPLACE_EXISTING);
+    }
+
     File dateDirectory = createDiagnosisKeyDirectoryStructure(rootDirectory);
 
     LocalDate startDate = LocalDate.parse(startDateStr, ISO8601);
