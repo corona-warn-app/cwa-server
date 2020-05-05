@@ -22,7 +22,13 @@ public class DiagnosisKey {
   private long rollingStartNumber;
   private int transmissionRiskLevel;
 
+  /**
+   * Should be called by builders.
+   */
   DiagnosisKey(byte[] keyData, long rollingStartNumber, int transmissionRiskLevel) {
+    this.keyData = keyData;
+    this.rollingStartNumber = rollingStartNumber;
+    this.transmissionRiskLevel = transmissionRiskLevel;
   }
 
   /**

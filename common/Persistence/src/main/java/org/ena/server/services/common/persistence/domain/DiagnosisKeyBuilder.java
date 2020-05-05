@@ -1,6 +1,6 @@
 package org.ena.server.services.common.persistence.domain;
 
-import org.ena.server.common.protocols.generated.ExposureKeys;
+import org.ena.server.common.protocols.generated.ExposureKeys.TemporaryExposureKey;
 
 /**
  * An instance of this builder can be retrieved by calling {@link DiagnosisKey#builder()}.
@@ -51,7 +51,7 @@ public class DiagnosisKeyBuilder implements Builder, RollingStartNumberBuilder,
    * @param protoBufObject ProtocolBuffer object associated with the temporary exposure key.
    * @return this Builder instance.
    */
-  public DiagnosisKeyBuilder fromProtoBuf(ExposureKeys.TemporaryExposureKey protoBufObject) {
+  public DiagnosisKeyBuilder fromProtoBuf(TemporaryExposureKey protoBufObject) {
     this.keyData = protoBufObject.getKeyData().toByteArray();
     this.rollingStartNumber = protoBufObject.getRollingStartNumber();
     this.transmissionRiskLevel = protoBufObject.getRiskLevelValue();
@@ -69,7 +69,7 @@ public class DiagnosisKeyBuilder implements Builder, RollingStartNumberBuilder,
 
 interface Builder {
   RollingStartNumberBuilder keyData(byte[] keyData);
-  FinalBuilder fromProtoBuf(ExposureKeys.TemporaryExposureKey protoBufObject);
+  FinalBuilder fromProtoBuf(TemporaryExposureKey protoBufObject);
 }
 
 interface RollingStartNumberBuilder {
