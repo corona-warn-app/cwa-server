@@ -15,7 +15,7 @@ public final class ExposureKeys {
         (com.google.protobuf.ExtensionRegistryLite) registry);
   }
   public interface TemporaryExposureKeyBucketOrBuilder extends
-      // @@protoc_insertion_point(interface_extends:org.ena.server.common.protocols.generated.TemporaryExposureKeyBucket)
+      // @@protoc_insertion_point(interface_extends:org.cwa.server.common.protocols.generated.TemporaryExposureKeyBucket)
       com.google.protobuf.MessageOrBuilder {
 
     /**
@@ -53,7 +53,7 @@ public final class ExposureKeys {
      * time interval aggregated in this package
      * </pre>
      *
-     * <code>.org.ena.server.common.protocols.generated.TemporaryExposureKeyBucket.AggregationInterval aggregationInterval = 3;</code>
+     * <code>.org.cwa.server.common.protocols.generated.TemporaryExposureKeyBucket.AggregationInterval aggregationInterval = 3;</code>
      * @return The enum numeric value on the wire for aggregationInterval.
      */
     int getAggregationIntervalValue();
@@ -62,7 +62,7 @@ public final class ExposureKeys {
      * time interval aggregated in this package
      * </pre>
      *
-     * <code>.org.ena.server.common.protocols.generated.TemporaryExposureKeyBucket.AggregationInterval aggregationInterval = 3;</code>
+     * <code>.org.cwa.server.common.protocols.generated.TemporaryExposureKeyBucket.AggregationInterval aggregationInterval = 3;</code>
      * @return The aggregationInterval.
      */
     org.cwa.server.common.protocols.generated.ExposureKeys.TemporaryExposureKeyBucket.AggregationInterval getAggregationInterval();
@@ -72,16 +72,16 @@ public final class ExposureKeys {
      * list of temporary exposure keys
      * </pre>
      *
-     * <code>repeated .org.ena.server.common.protocols.generated.TemporaryExposureKey exposureKeys = 4;</code>
+     * <code>repeated .org.cwa.server.common.protocols.generated.TemporaryExposureKey exposureKeys = 4;</code>
      */
-    java.util.List<org.cwa.server.common.protocols.generated.ExposureKeys.TemporaryExposureKey>
+    java.util.List<org.cwa.server.common.protocols.generated.ExposureKeys.TemporaryExposureKey> 
         getExposureKeysList();
     /**
      * <pre>
      * list of temporary exposure keys
      * </pre>
      *
-     * <code>repeated .org.ena.server.common.protocols.generated.TemporaryExposureKey exposureKeys = 4;</code>
+     * <code>repeated .org.cwa.server.common.protocols.generated.TemporaryExposureKey exposureKeys = 4;</code>
      */
     org.cwa.server.common.protocols.generated.ExposureKeys.TemporaryExposureKey getExposureKeys(int index);
     /**
@@ -89,7 +89,7 @@ public final class ExposureKeys {
      * list of temporary exposure keys
      * </pre>
      *
-     * <code>repeated .org.ena.server.common.protocols.generated.TemporaryExposureKey exposureKeys = 4;</code>
+     * <code>repeated .org.cwa.server.common.protocols.generated.TemporaryExposureKey exposureKeys = 4;</code>
      */
     int getExposureKeysCount();
     /**
@@ -97,26 +97,26 @@ public final class ExposureKeys {
      * list of temporary exposure keys
      * </pre>
      *
-     * <code>repeated .org.ena.server.common.protocols.generated.TemporaryExposureKey exposureKeys = 4;</code>
+     * <code>repeated .org.cwa.server.common.protocols.generated.TemporaryExposureKey exposureKeys = 4;</code>
      */
-    java.util.List<? extends org.cwa.server.common.protocols.generated.ExposureKeys.TemporaryExposureKeyOrBuilder>
+    java.util.List<? extends org.cwa.server.common.protocols.generated.ExposureKeys.TemporaryExposureKeyOrBuilder> 
         getExposureKeysOrBuilderList();
     /**
      * <pre>
      * list of temporary exposure keys
      * </pre>
      *
-     * <code>repeated .org.ena.server.common.protocols.generated.TemporaryExposureKey exposureKeys = 4;</code>
+     * <code>repeated .org.cwa.server.common.protocols.generated.TemporaryExposureKey exposureKeys = 4;</code>
      */
     org.cwa.server.common.protocols.generated.ExposureKeys.TemporaryExposureKeyOrBuilder getExposureKeysOrBuilder(
         int index);
   }
   /**
-   * Protobuf type {@code org.ena.server.common.protocols.generated.TemporaryExposureKeyBucket}
+   * Protobuf type {@code org.cwa.server.common.protocols.generated.TemporaryExposureKeyBucket}
    */
   public  static final class TemporaryExposureKeyBucket extends
       com.google.protobuf.GeneratedMessageV3 implements
-      // @@protoc_insertion_point(message_implements:org.ena.server.common.protocols.generated.TemporaryExposureKeyBucket)
+      // @@protoc_insertion_point(message_implements:org.cwa.server.common.protocols.generated.TemporaryExposureKeyBucket)
       TemporaryExposureKeyBucketOrBuilder {
   private static final long serialVersionUID = 0L;
     // Use TemporaryExposureKeyBucket.newBuilder() to construct.
@@ -210,19 +210,19 @@ public final class ExposureKeys {
     }
     public static final com.google.protobuf.Descriptors.Descriptor
         getDescriptor() {
-      return org.cwa.server.common.protocols.generated.ExposureKeys.internal_static_org_ena_server_common_protocols_generated_TemporaryExposureKeyBucket_descriptor;
+      return org.cwa.server.common.protocols.generated.ExposureKeys.internal_static_org_cwa_server_common_protocols_generated_TemporaryExposureKeyBucket_descriptor;
     }
 
     @java.lang.Override
     protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
         internalGetFieldAccessorTable() {
-      return org.cwa.server.common.protocols.generated.ExposureKeys.internal_static_org_ena_server_common_protocols_generated_TemporaryExposureKeyBucket_fieldAccessorTable
+      return org.cwa.server.common.protocols.generated.ExposureKeys.internal_static_org_cwa_server_common_protocols_generated_TemporaryExposureKeyBucket_fieldAccessorTable
           .ensureFieldAccessorsInitialized(
               org.cwa.server.common.protocols.generated.ExposureKeys.TemporaryExposureKeyBucket.class, org.cwa.server.common.protocols.generated.ExposureKeys.TemporaryExposureKeyBucket.Builder.class);
     }
 
     /**
-     * Protobuf enum {@code org.ena.server.common.protocols.generated.TemporaryExposureKeyBucket.AggregationInterval}
+     * Protobuf enum {@code org.cwa.server.common.protocols.generated.TemporaryExposureKeyBucket.AggregationInterval}
      */
     public enum AggregationInterval
         implements com.google.protobuf.ProtocolMessageEnum {
@@ -338,7 +338,7 @@ public final class ExposureKeys {
         this.value = value;
       }
 
-      // @@protoc_insertion_point(enum_scope:org.ena.server.common.protocols.generated.TemporaryExposureKeyBucket.AggregationInterval)
+      // @@protoc_insertion_point(enum_scope:org.cwa.server.common.protocols.generated.TemporaryExposureKeyBucket.AggregationInterval)
     }
 
     public static final int SHARDKEY_FIELD_NUMBER = 1;
@@ -406,7 +406,7 @@ public final class ExposureKeys {
      * time interval aggregated in this package
      * </pre>
      *
-     * <code>.org.ena.server.common.protocols.generated.TemporaryExposureKeyBucket.AggregationInterval aggregationInterval = 3;</code>
+     * <code>.org.cwa.server.common.protocols.generated.TemporaryExposureKeyBucket.AggregationInterval aggregationInterval = 3;</code>
      * @return The enum numeric value on the wire for aggregationInterval.
      */
     public int getAggregationIntervalValue() {
@@ -417,7 +417,7 @@ public final class ExposureKeys {
      * time interval aggregated in this package
      * </pre>
      *
-     * <code>.org.ena.server.common.protocols.generated.TemporaryExposureKeyBucket.AggregationInterval aggregationInterval = 3;</code>
+     * <code>.org.cwa.server.common.protocols.generated.TemporaryExposureKeyBucket.AggregationInterval aggregationInterval = 3;</code>
      * @return The aggregationInterval.
      */
     public org.cwa.server.common.protocols.generated.ExposureKeys.TemporaryExposureKeyBucket.AggregationInterval getAggregationInterval() {
@@ -433,7 +433,7 @@ public final class ExposureKeys {
      * list of temporary exposure keys
      * </pre>
      *
-     * <code>repeated .org.ena.server.common.protocols.generated.TemporaryExposureKey exposureKeys = 4;</code>
+     * <code>repeated .org.cwa.server.common.protocols.generated.TemporaryExposureKey exposureKeys = 4;</code>
      */
     public java.util.List<org.cwa.server.common.protocols.generated.ExposureKeys.TemporaryExposureKey> getExposureKeysList() {
       return exposureKeys_;
@@ -443,9 +443,9 @@ public final class ExposureKeys {
      * list of temporary exposure keys
      * </pre>
      *
-     * <code>repeated .org.ena.server.common.protocols.generated.TemporaryExposureKey exposureKeys = 4;</code>
+     * <code>repeated .org.cwa.server.common.protocols.generated.TemporaryExposureKey exposureKeys = 4;</code>
      */
-    public java.util.List<? extends org.cwa.server.common.protocols.generated.ExposureKeys.TemporaryExposureKeyOrBuilder>
+    public java.util.List<? extends org.cwa.server.common.protocols.generated.ExposureKeys.TemporaryExposureKeyOrBuilder> 
         getExposureKeysOrBuilderList() {
       return exposureKeys_;
     }
@@ -454,7 +454,7 @@ public final class ExposureKeys {
      * list of temporary exposure keys
      * </pre>
      *
-     * <code>repeated .org.ena.server.common.protocols.generated.TemporaryExposureKey exposureKeys = 4;</code>
+     * <code>repeated .org.cwa.server.common.protocols.generated.TemporaryExposureKey exposureKeys = 4;</code>
      */
     public int getExposureKeysCount() {
       return exposureKeys_.size();
@@ -464,7 +464,7 @@ public final class ExposureKeys {
      * list of temporary exposure keys
      * </pre>
      *
-     * <code>repeated .org.ena.server.common.protocols.generated.TemporaryExposureKey exposureKeys = 4;</code>
+     * <code>repeated .org.cwa.server.common.protocols.generated.TemporaryExposureKey exposureKeys = 4;</code>
      */
     public org.cwa.server.common.protocols.generated.ExposureKeys.TemporaryExposureKey getExposureKeys(int index) {
       return exposureKeys_.get(index);
@@ -474,7 +474,7 @@ public final class ExposureKeys {
      * list of temporary exposure keys
      * </pre>
      *
-     * <code>repeated .org.ena.server.common.protocols.generated.TemporaryExposureKey exposureKeys = 4;</code>
+     * <code>repeated .org.cwa.server.common.protocols.generated.TemporaryExposureKey exposureKeys = 4;</code>
      */
     public org.cwa.server.common.protocols.generated.ExposureKeys.TemporaryExposureKeyOrBuilder getExposureKeysOrBuilder(
         int index) {
@@ -671,26 +671,26 @@ public final class ExposureKeys {
       return builder;
     }
     /**
-     * Protobuf type {@code org.ena.server.common.protocols.generated.TemporaryExposureKeyBucket}
+     * Protobuf type {@code org.cwa.server.common.protocols.generated.TemporaryExposureKeyBucket}
      */
     public static final class Builder extends
         com.google.protobuf.GeneratedMessageV3.Builder<Builder> implements
-        // @@protoc_insertion_point(builder_implements:org.ena.server.common.protocols.generated.TemporaryExposureKeyBucket)
+        // @@protoc_insertion_point(builder_implements:org.cwa.server.common.protocols.generated.TemporaryExposureKeyBucket)
         org.cwa.server.common.protocols.generated.ExposureKeys.TemporaryExposureKeyBucketOrBuilder {
       public static final com.google.protobuf.Descriptors.Descriptor
           getDescriptor() {
-        return org.cwa.server.common.protocols.generated.ExposureKeys.internal_static_org_ena_server_common_protocols_generated_TemporaryExposureKeyBucket_descriptor;
+        return org.cwa.server.common.protocols.generated.ExposureKeys.internal_static_org_cwa_server_common_protocols_generated_TemporaryExposureKeyBucket_descriptor;
       }
 
       @java.lang.Override
       protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
           internalGetFieldAccessorTable() {
-        return org.cwa.server.common.protocols.generated.ExposureKeys.internal_static_org_ena_server_common_protocols_generated_TemporaryExposureKeyBucket_fieldAccessorTable
+        return org.cwa.server.common.protocols.generated.ExposureKeys.internal_static_org_cwa_server_common_protocols_generated_TemporaryExposureKeyBucket_fieldAccessorTable
             .ensureFieldAccessorsInitialized(
                 org.cwa.server.common.protocols.generated.ExposureKeys.TemporaryExposureKeyBucket.class, org.cwa.server.common.protocols.generated.ExposureKeys.TemporaryExposureKeyBucket.Builder.class);
       }
 
-      // Construct using org.ena.server.common.protocols.generated.ExposureKeys.TemporaryExposureKeyBucket.newBuilder()
+      // Construct using org.cwa.server.common.protocols.generated.ExposureKeys.TemporaryExposureKeyBucket.newBuilder()
       private Builder() {
         maybeForceBuilderInitialization();
       }
@@ -727,7 +727,7 @@ public final class ExposureKeys {
       @java.lang.Override
       public com.google.protobuf.Descriptors.Descriptor
           getDescriptorForType() {
-        return org.cwa.server.common.protocols.generated.ExposureKeys.internal_static_org_ena_server_common_protocols_generated_TemporaryExposureKeyBucket_descriptor;
+        return org.cwa.server.common.protocols.generated.ExposureKeys.internal_static_org_cwa_server_common_protocols_generated_TemporaryExposureKeyBucket_descriptor;
       }
 
       @java.lang.Override
@@ -1018,7 +1018,7 @@ public final class ExposureKeys {
        * time interval aggregated in this package
        * </pre>
        *
-       * <code>.org.ena.server.common.protocols.generated.TemporaryExposureKeyBucket.AggregationInterval aggregationInterval = 3;</code>
+       * <code>.org.cwa.server.common.protocols.generated.TemporaryExposureKeyBucket.AggregationInterval aggregationInterval = 3;</code>
        * @return The enum numeric value on the wire for aggregationInterval.
        */
       public int getAggregationIntervalValue() {
@@ -1029,7 +1029,7 @@ public final class ExposureKeys {
        * time interval aggregated in this package
        * </pre>
        *
-       * <code>.org.ena.server.common.protocols.generated.TemporaryExposureKeyBucket.AggregationInterval aggregationInterval = 3;</code>
+       * <code>.org.cwa.server.common.protocols.generated.TemporaryExposureKeyBucket.AggregationInterval aggregationInterval = 3;</code>
        * @param value The enum numeric value on the wire for aggregationInterval to set.
        * @return This builder for chaining.
        */
@@ -1043,7 +1043,7 @@ public final class ExposureKeys {
        * time interval aggregated in this package
        * </pre>
        *
-       * <code>.org.ena.server.common.protocols.generated.TemporaryExposureKeyBucket.AggregationInterval aggregationInterval = 3;</code>
+       * <code>.org.cwa.server.common.protocols.generated.TemporaryExposureKeyBucket.AggregationInterval aggregationInterval = 3;</code>
        * @return The aggregationInterval.
        */
       public org.cwa.server.common.protocols.generated.ExposureKeys.TemporaryExposureKeyBucket.AggregationInterval getAggregationInterval() {
@@ -1056,7 +1056,7 @@ public final class ExposureKeys {
        * time interval aggregated in this package
        * </pre>
        *
-       * <code>.org.ena.server.common.protocols.generated.TemporaryExposureKeyBucket.AggregationInterval aggregationInterval = 3;</code>
+       * <code>.org.cwa.server.common.protocols.generated.TemporaryExposureKeyBucket.AggregationInterval aggregationInterval = 3;</code>
        * @param value The aggregationInterval to set.
        * @return This builder for chaining.
        */
@@ -1074,7 +1074,7 @@ public final class ExposureKeys {
        * time interval aggregated in this package
        * </pre>
        *
-       * <code>.org.ena.server.common.protocols.generated.TemporaryExposureKeyBucket.AggregationInterval aggregationInterval = 3;</code>
+       * <code>.org.cwa.server.common.protocols.generated.TemporaryExposureKeyBucket.AggregationInterval aggregationInterval = 3;</code>
        * @return This builder for chaining.
        */
       public Builder clearAggregationInterval() {
@@ -1101,7 +1101,7 @@ public final class ExposureKeys {
        * list of temporary exposure keys
        * </pre>
        *
-       * <code>repeated .org.ena.server.common.protocols.generated.TemporaryExposureKey exposureKeys = 4;</code>
+       * <code>repeated .org.cwa.server.common.protocols.generated.TemporaryExposureKey exposureKeys = 4;</code>
        */
       public java.util.List<org.cwa.server.common.protocols.generated.ExposureKeys.TemporaryExposureKey> getExposureKeysList() {
         if (exposureKeysBuilder_ == null) {
@@ -1115,7 +1115,7 @@ public final class ExposureKeys {
        * list of temporary exposure keys
        * </pre>
        *
-       * <code>repeated .org.ena.server.common.protocols.generated.TemporaryExposureKey exposureKeys = 4;</code>
+       * <code>repeated .org.cwa.server.common.protocols.generated.TemporaryExposureKey exposureKeys = 4;</code>
        */
       public int getExposureKeysCount() {
         if (exposureKeysBuilder_ == null) {
@@ -1129,7 +1129,7 @@ public final class ExposureKeys {
        * list of temporary exposure keys
        * </pre>
        *
-       * <code>repeated .org.ena.server.common.protocols.generated.TemporaryExposureKey exposureKeys = 4;</code>
+       * <code>repeated .org.cwa.server.common.protocols.generated.TemporaryExposureKey exposureKeys = 4;</code>
        */
       public org.cwa.server.common.protocols.generated.ExposureKeys.TemporaryExposureKey getExposureKeys(int index) {
         if (exposureKeysBuilder_ == null) {
@@ -1143,7 +1143,7 @@ public final class ExposureKeys {
        * list of temporary exposure keys
        * </pre>
        *
-       * <code>repeated .org.ena.server.common.protocols.generated.TemporaryExposureKey exposureKeys = 4;</code>
+       * <code>repeated .org.cwa.server.common.protocols.generated.TemporaryExposureKey exposureKeys = 4;</code>
        */
       public Builder setExposureKeys(
           int index, org.cwa.server.common.protocols.generated.ExposureKeys.TemporaryExposureKey value) {
@@ -1164,7 +1164,7 @@ public final class ExposureKeys {
        * list of temporary exposure keys
        * </pre>
        *
-       * <code>repeated .org.ena.server.common.protocols.generated.TemporaryExposureKey exposureKeys = 4;</code>
+       * <code>repeated .org.cwa.server.common.protocols.generated.TemporaryExposureKey exposureKeys = 4;</code>
        */
       public Builder setExposureKeys(
           int index, org.cwa.server.common.protocols.generated.ExposureKeys.TemporaryExposureKey.Builder builderForValue) {
@@ -1182,7 +1182,7 @@ public final class ExposureKeys {
        * list of temporary exposure keys
        * </pre>
        *
-       * <code>repeated .org.ena.server.common.protocols.generated.TemporaryExposureKey exposureKeys = 4;</code>
+       * <code>repeated .org.cwa.server.common.protocols.generated.TemporaryExposureKey exposureKeys = 4;</code>
        */
       public Builder addExposureKeys(org.cwa.server.common.protocols.generated.ExposureKeys.TemporaryExposureKey value) {
         if (exposureKeysBuilder_ == null) {
@@ -1202,7 +1202,7 @@ public final class ExposureKeys {
        * list of temporary exposure keys
        * </pre>
        *
-       * <code>repeated .org.ena.server.common.protocols.generated.TemporaryExposureKey exposureKeys = 4;</code>
+       * <code>repeated .org.cwa.server.common.protocols.generated.TemporaryExposureKey exposureKeys = 4;</code>
        */
       public Builder addExposureKeys(
           int index, org.cwa.server.common.protocols.generated.ExposureKeys.TemporaryExposureKey value) {
@@ -1223,7 +1223,7 @@ public final class ExposureKeys {
        * list of temporary exposure keys
        * </pre>
        *
-       * <code>repeated .org.ena.server.common.protocols.generated.TemporaryExposureKey exposureKeys = 4;</code>
+       * <code>repeated .org.cwa.server.common.protocols.generated.TemporaryExposureKey exposureKeys = 4;</code>
        */
       public Builder addExposureKeys(
           org.cwa.server.common.protocols.generated.ExposureKeys.TemporaryExposureKey.Builder builderForValue) {
@@ -1241,7 +1241,7 @@ public final class ExposureKeys {
        * list of temporary exposure keys
        * </pre>
        *
-       * <code>repeated .org.ena.server.common.protocols.generated.TemporaryExposureKey exposureKeys = 4;</code>
+       * <code>repeated .org.cwa.server.common.protocols.generated.TemporaryExposureKey exposureKeys = 4;</code>
        */
       public Builder addExposureKeys(
           int index, org.cwa.server.common.protocols.generated.ExposureKeys.TemporaryExposureKey.Builder builderForValue) {
@@ -1259,7 +1259,7 @@ public final class ExposureKeys {
        * list of temporary exposure keys
        * </pre>
        *
-       * <code>repeated .org.ena.server.common.protocols.generated.TemporaryExposureKey exposureKeys = 4;</code>
+       * <code>repeated .org.cwa.server.common.protocols.generated.TemporaryExposureKey exposureKeys = 4;</code>
        */
       public Builder addAllExposureKeys(
           java.lang.Iterable<? extends org.cwa.server.common.protocols.generated.ExposureKeys.TemporaryExposureKey> values) {
@@ -1278,7 +1278,7 @@ public final class ExposureKeys {
        * list of temporary exposure keys
        * </pre>
        *
-       * <code>repeated .org.ena.server.common.protocols.generated.TemporaryExposureKey exposureKeys = 4;</code>
+       * <code>repeated .org.cwa.server.common.protocols.generated.TemporaryExposureKey exposureKeys = 4;</code>
        */
       public Builder clearExposureKeys() {
         if (exposureKeysBuilder_ == null) {
@@ -1295,7 +1295,7 @@ public final class ExposureKeys {
        * list of temporary exposure keys
        * </pre>
        *
-       * <code>repeated .org.ena.server.common.protocols.generated.TemporaryExposureKey exposureKeys = 4;</code>
+       * <code>repeated .org.cwa.server.common.protocols.generated.TemporaryExposureKey exposureKeys = 4;</code>
        */
       public Builder removeExposureKeys(int index) {
         if (exposureKeysBuilder_ == null) {
@@ -1312,7 +1312,7 @@ public final class ExposureKeys {
        * list of temporary exposure keys
        * </pre>
        *
-       * <code>repeated .org.ena.server.common.protocols.generated.TemporaryExposureKey exposureKeys = 4;</code>
+       * <code>repeated .org.cwa.server.common.protocols.generated.TemporaryExposureKey exposureKeys = 4;</code>
        */
       public org.cwa.server.common.protocols.generated.ExposureKeys.TemporaryExposureKey.Builder getExposureKeysBuilder(
           int index) {
@@ -1323,7 +1323,7 @@ public final class ExposureKeys {
        * list of temporary exposure keys
        * </pre>
        *
-       * <code>repeated .org.ena.server.common.protocols.generated.TemporaryExposureKey exposureKeys = 4;</code>
+       * <code>repeated .org.cwa.server.common.protocols.generated.TemporaryExposureKey exposureKeys = 4;</code>
        */
       public org.cwa.server.common.protocols.generated.ExposureKeys.TemporaryExposureKeyOrBuilder getExposureKeysOrBuilder(
           int index) {
@@ -1337,9 +1337,9 @@ public final class ExposureKeys {
        * list of temporary exposure keys
        * </pre>
        *
-       * <code>repeated .org.ena.server.common.protocols.generated.TemporaryExposureKey exposureKeys = 4;</code>
+       * <code>repeated .org.cwa.server.common.protocols.generated.TemporaryExposureKey exposureKeys = 4;</code>
        */
-      public java.util.List<? extends org.cwa.server.common.protocols.generated.ExposureKeys.TemporaryExposureKeyOrBuilder>
+      public java.util.List<? extends org.cwa.server.common.protocols.generated.ExposureKeys.TemporaryExposureKeyOrBuilder> 
            getExposureKeysOrBuilderList() {
         if (exposureKeysBuilder_ != null) {
           return exposureKeysBuilder_.getMessageOrBuilderList();
@@ -1352,7 +1352,7 @@ public final class ExposureKeys {
        * list of temporary exposure keys
        * </pre>
        *
-       * <code>repeated .org.ena.server.common.protocols.generated.TemporaryExposureKey exposureKeys = 4;</code>
+       * <code>repeated .org.cwa.server.common.protocols.generated.TemporaryExposureKey exposureKeys = 4;</code>
        */
       public org.cwa.server.common.protocols.generated.ExposureKeys.TemporaryExposureKey.Builder addExposureKeysBuilder() {
         return getExposureKeysFieldBuilder().addBuilder(
@@ -1363,7 +1363,7 @@ public final class ExposureKeys {
        * list of temporary exposure keys
        * </pre>
        *
-       * <code>repeated .org.ena.server.common.protocols.generated.TemporaryExposureKey exposureKeys = 4;</code>
+       * <code>repeated .org.cwa.server.common.protocols.generated.TemporaryExposureKey exposureKeys = 4;</code>
        */
       public org.cwa.server.common.protocols.generated.ExposureKeys.TemporaryExposureKey.Builder addExposureKeysBuilder(
           int index) {
@@ -1375,14 +1375,14 @@ public final class ExposureKeys {
        * list of temporary exposure keys
        * </pre>
        *
-       * <code>repeated .org.ena.server.common.protocols.generated.TemporaryExposureKey exposureKeys = 4;</code>
+       * <code>repeated .org.cwa.server.common.protocols.generated.TemporaryExposureKey exposureKeys = 4;</code>
        */
-      public java.util.List<org.cwa.server.common.protocols.generated.ExposureKeys.TemporaryExposureKey.Builder>
+      public java.util.List<org.cwa.server.common.protocols.generated.ExposureKeys.TemporaryExposureKey.Builder> 
            getExposureKeysBuilderList() {
         return getExposureKeysFieldBuilder().getBuilderList();
       }
       private com.google.protobuf.RepeatedFieldBuilderV3<
-          org.cwa.server.common.protocols.generated.ExposureKeys.TemporaryExposureKey, org.cwa.server.common.protocols.generated.ExposureKeys.TemporaryExposureKey.Builder, org.cwa.server.common.protocols.generated.ExposureKeys.TemporaryExposureKeyOrBuilder>
+          org.cwa.server.common.protocols.generated.ExposureKeys.TemporaryExposureKey, org.cwa.server.common.protocols.generated.ExposureKeys.TemporaryExposureKey.Builder, org.cwa.server.common.protocols.generated.ExposureKeys.TemporaryExposureKeyOrBuilder> 
           getExposureKeysFieldBuilder() {
         if (exposureKeysBuilder_ == null) {
           exposureKeysBuilder_ = new com.google.protobuf.RepeatedFieldBuilderV3<
@@ -1408,10 +1408,10 @@ public final class ExposureKeys {
       }
 
 
-      // @@protoc_insertion_point(builder_scope:org.ena.server.common.protocols.generated.TemporaryExposureKeyBucket)
+      // @@protoc_insertion_point(builder_scope:org.cwa.server.common.protocols.generated.TemporaryExposureKeyBucket)
     }
 
-    // @@protoc_insertion_point(class_scope:org.ena.server.common.protocols.generated.TemporaryExposureKeyBucket)
+    // @@protoc_insertion_point(class_scope:org.cwa.server.common.protocols.generated.TemporaryExposureKeyBucket)
     private static final org.cwa.server.common.protocols.generated.ExposureKeys.TemporaryExposureKeyBucket DEFAULT_INSTANCE;
     static {
       DEFAULT_INSTANCE = new org.cwa.server.common.protocols.generated.ExposureKeys.TemporaryExposureKeyBucket();
@@ -1449,7 +1449,7 @@ public final class ExposureKeys {
   }
 
   public interface TemporaryExposureKeyOrBuilder extends
-      // @@protoc_insertion_point(interface_extends:org.ena.server.common.protocols.generated.TemporaryExposureKey)
+      // @@protoc_insertion_point(interface_extends:org.cwa.server.common.protocols.generated.TemporaryExposureKey)
       com.google.protobuf.MessageOrBuilder {
 
     /**
@@ -1477,7 +1477,7 @@ public final class ExposureKeys {
      * risk level from the sending device
      * </pre>
      *
-     * <code>.org.ena.server.common.protocols.generated.RiskLevel riskLevel = 3;</code>
+     * <code>.org.cwa.server.common.protocols.generated.RiskLevel riskLevel = 3;</code>
      * @return The enum numeric value on the wire for riskLevel.
      */
     int getRiskLevelValue();
@@ -1486,17 +1486,17 @@ public final class ExposureKeys {
      * risk level from the sending device
      * </pre>
      *
-     * <code>.org.ena.server.common.protocols.generated.RiskLevel riskLevel = 3;</code>
+     * <code>.org.cwa.server.common.protocols.generated.RiskLevel riskLevel = 3;</code>
      * @return The riskLevel.
      */
     org.cwa.server.common.protocols.generated.RiskScore.RiskLevel getRiskLevel();
   }
   /**
-   * Protobuf type {@code org.ena.server.common.protocols.generated.TemporaryExposureKey}
+   * Protobuf type {@code org.cwa.server.common.protocols.generated.TemporaryExposureKey}
    */
   public  static final class TemporaryExposureKey extends
       com.google.protobuf.GeneratedMessageV3 implements
-      // @@protoc_insertion_point(message_implements:org.ena.server.common.protocols.generated.TemporaryExposureKey)
+      // @@protoc_insertion_point(message_implements:org.cwa.server.common.protocols.generated.TemporaryExposureKey)
       TemporaryExposureKeyOrBuilder {
   private static final long serialVersionUID = 0L;
     // Use TemporaryExposureKey.newBuilder() to construct.
@@ -1575,13 +1575,13 @@ public final class ExposureKeys {
     }
     public static final com.google.protobuf.Descriptors.Descriptor
         getDescriptor() {
-      return org.cwa.server.common.protocols.generated.ExposureKeys.internal_static_org_ena_server_common_protocols_generated_TemporaryExposureKey_descriptor;
+      return org.cwa.server.common.protocols.generated.ExposureKeys.internal_static_org_cwa_server_common_protocols_generated_TemporaryExposureKey_descriptor;
     }
 
     @java.lang.Override
     protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
         internalGetFieldAccessorTable() {
-      return org.cwa.server.common.protocols.generated.ExposureKeys.internal_static_org_ena_server_common_protocols_generated_TemporaryExposureKey_fieldAccessorTable
+      return org.cwa.server.common.protocols.generated.ExposureKeys.internal_static_org_cwa_server_common_protocols_generated_TemporaryExposureKey_fieldAccessorTable
           .ensureFieldAccessorsInitialized(
               org.cwa.server.common.protocols.generated.ExposureKeys.TemporaryExposureKey.class, org.cwa.server.common.protocols.generated.ExposureKeys.TemporaryExposureKey.Builder.class);
     }
@@ -1621,7 +1621,7 @@ public final class ExposureKeys {
      * risk level from the sending device
      * </pre>
      *
-     * <code>.org.ena.server.common.protocols.generated.RiskLevel riskLevel = 3;</code>
+     * <code>.org.cwa.server.common.protocols.generated.RiskLevel riskLevel = 3;</code>
      * @return The enum numeric value on the wire for riskLevel.
      */
     public int getRiskLevelValue() {
@@ -1632,7 +1632,7 @@ public final class ExposureKeys {
      * risk level from the sending device
      * </pre>
      *
-     * <code>.org.ena.server.common.protocols.generated.RiskLevel riskLevel = 3;</code>
+     * <code>.org.cwa.server.common.protocols.generated.RiskLevel riskLevel = 3;</code>
      * @return The riskLevel.
      */
     public org.cwa.server.common.protocols.generated.RiskScore.RiskLevel getRiskLevel() {
@@ -1819,26 +1819,26 @@ public final class ExposureKeys {
       return builder;
     }
     /**
-     * Protobuf type {@code org.ena.server.common.protocols.generated.TemporaryExposureKey}
+     * Protobuf type {@code org.cwa.server.common.protocols.generated.TemporaryExposureKey}
      */
     public static final class Builder extends
         com.google.protobuf.GeneratedMessageV3.Builder<Builder> implements
-        // @@protoc_insertion_point(builder_implements:org.ena.server.common.protocols.generated.TemporaryExposureKey)
+        // @@protoc_insertion_point(builder_implements:org.cwa.server.common.protocols.generated.TemporaryExposureKey)
         org.cwa.server.common.protocols.generated.ExposureKeys.TemporaryExposureKeyOrBuilder {
       public static final com.google.protobuf.Descriptors.Descriptor
           getDescriptor() {
-        return org.cwa.server.common.protocols.generated.ExposureKeys.internal_static_org_ena_server_common_protocols_generated_TemporaryExposureKey_descriptor;
+        return org.cwa.server.common.protocols.generated.ExposureKeys.internal_static_org_cwa_server_common_protocols_generated_TemporaryExposureKey_descriptor;
       }
 
       @java.lang.Override
       protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
           internalGetFieldAccessorTable() {
-        return org.cwa.server.common.protocols.generated.ExposureKeys.internal_static_org_ena_server_common_protocols_generated_TemporaryExposureKey_fieldAccessorTable
+        return org.cwa.server.common.protocols.generated.ExposureKeys.internal_static_org_cwa_server_common_protocols_generated_TemporaryExposureKey_fieldAccessorTable
             .ensureFieldAccessorsInitialized(
                 org.cwa.server.common.protocols.generated.ExposureKeys.TemporaryExposureKey.class, org.cwa.server.common.protocols.generated.ExposureKeys.TemporaryExposureKey.Builder.class);
       }
 
-      // Construct using org.ena.server.common.protocols.generated.ExposureKeys.TemporaryExposureKey.newBuilder()
+      // Construct using org.cwa.server.common.protocols.generated.ExposureKeys.TemporaryExposureKey.newBuilder()
       private Builder() {
         maybeForceBuilderInitialization();
       }
@@ -1868,7 +1868,7 @@ public final class ExposureKeys {
       @java.lang.Override
       public com.google.protobuf.Descriptors.Descriptor
           getDescriptorForType() {
-        return org.cwa.server.common.protocols.generated.ExposureKeys.internal_static_org_ena_server_common_protocols_generated_TemporaryExposureKey_descriptor;
+        return org.cwa.server.common.protocols.generated.ExposureKeys.internal_static_org_cwa_server_common_protocols_generated_TemporaryExposureKey_descriptor;
       }
 
       @java.lang.Override
@@ -2070,7 +2070,7 @@ public final class ExposureKeys {
        * risk level from the sending device
        * </pre>
        *
-       * <code>.org.ena.server.common.protocols.generated.RiskLevel riskLevel = 3;</code>
+       * <code>.org.cwa.server.common.protocols.generated.RiskLevel riskLevel = 3;</code>
        * @return The enum numeric value on the wire for riskLevel.
        */
       public int getRiskLevelValue() {
@@ -2081,7 +2081,7 @@ public final class ExposureKeys {
        * risk level from the sending device
        * </pre>
        *
-       * <code>.org.ena.server.common.protocols.generated.RiskLevel riskLevel = 3;</code>
+       * <code>.org.cwa.server.common.protocols.generated.RiskLevel riskLevel = 3;</code>
        * @param value The enum numeric value on the wire for riskLevel to set.
        * @return This builder for chaining.
        */
@@ -2095,7 +2095,7 @@ public final class ExposureKeys {
        * risk level from the sending device
        * </pre>
        *
-       * <code>.org.ena.server.common.protocols.generated.RiskLevel riskLevel = 3;</code>
+       * <code>.org.cwa.server.common.protocols.generated.RiskLevel riskLevel = 3;</code>
        * @return The riskLevel.
        */
       public org.cwa.server.common.protocols.generated.RiskScore.RiskLevel getRiskLevel() {
@@ -2108,7 +2108,7 @@ public final class ExposureKeys {
        * risk level from the sending device
        * </pre>
        *
-       * <code>.org.ena.server.common.protocols.generated.RiskLevel riskLevel = 3;</code>
+       * <code>.org.cwa.server.common.protocols.generated.RiskLevel riskLevel = 3;</code>
        * @param value The riskLevel to set.
        * @return This builder for chaining.
        */
@@ -2126,7 +2126,7 @@ public final class ExposureKeys {
        * risk level from the sending device
        * </pre>
        *
-       * <code>.org.ena.server.common.protocols.generated.RiskLevel riskLevel = 3;</code>
+       * <code>.org.cwa.server.common.protocols.generated.RiskLevel riskLevel = 3;</code>
        * @return This builder for chaining.
        */
       public Builder clearRiskLevel() {
@@ -2148,10 +2148,10 @@ public final class ExposureKeys {
       }
 
 
-      // @@protoc_insertion_point(builder_scope:org.ena.server.common.protocols.generated.TemporaryExposureKey)
+      // @@protoc_insertion_point(builder_scope:org.cwa.server.common.protocols.generated.TemporaryExposureKey)
     }
 
-    // @@protoc_insertion_point(class_scope:org.ena.server.common.protocols.generated.TemporaryExposureKey)
+    // @@protoc_insertion_point(class_scope:org.cwa.server.common.protocols.generated.TemporaryExposureKey)
     private static final org.cwa.server.common.protocols.generated.ExposureKeys.TemporaryExposureKey DEFAULT_INSTANCE;
     static {
       DEFAULT_INSTANCE = new org.cwa.server.common.protocols.generated.ExposureKeys.TemporaryExposureKey();
@@ -2189,15 +2189,15 @@ public final class ExposureKeys {
   }
 
   private static final com.google.protobuf.Descriptors.Descriptor
-    internal_static_org_ena_server_common_protocols_generated_TemporaryExposureKeyBucket_descriptor;
+    internal_static_org_cwa_server_common_protocols_generated_TemporaryExposureKeyBucket_descriptor;
   private static final 
     com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
-      internal_static_org_ena_server_common_protocols_generated_TemporaryExposureKeyBucket_fieldAccessorTable;
+      internal_static_org_cwa_server_common_protocols_generated_TemporaryExposureKeyBucket_fieldAccessorTable;
   private static final com.google.protobuf.Descriptors.Descriptor
-    internal_static_org_ena_server_common_protocols_generated_TemporaryExposureKey_descriptor;
+    internal_static_org_cwa_server_common_protocols_generated_TemporaryExposureKey_descriptor;
   private static final 
     com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
-      internal_static_org_ena_server_common_protocols_generated_TemporaryExposureKey_fieldAccessorTable;
+      internal_static_org_cwa_server_common_protocols_generated_TemporaryExposureKey_fieldAccessorTable;
 
   public static com.google.protobuf.Descriptors.FileDescriptor
       getDescriptor() {
@@ -2207,19 +2207,19 @@ public final class ExposureKeys {
       descriptor;
   static {
     java.lang.String[] descriptorData = {
-      "\n\022exposureKeys.proto\022)org.ena.server.com" +
+      "\n\022exposureKeys.proto\022)org.cwa.server.com" +
       "mon.protocols.generated\032\017riskScore.proto" +
       "\"\276\002\n\032TemporaryExposureKeyBucket\022\020\n\010shard" +
       "Key\030\001 \001(\t\022\021\n\ttimestamp\030\002 \001(\003\022v\n\023aggregat" +
-      "ionInterval\030\003 \001(\0162Y.org.ena.server.commo" +
+      "ionInterval\030\003 \001(\0162Y.org.cwa.server.commo" +
       "n.protocols.generated.TemporaryExposureK" +
       "eyBucket.AggregationInterval\022U\n\014exposure" +
-      "Keys\030\004 \003(\0132?.org.ena.server.common.proto" +
+      "Keys\030\004 \003(\0132?.org.cwa.server.common.proto" +
       "cols.generated.TemporaryExposureKey\",\n\023A" +
       "ggregationInterval\022\n\n\006HOURLY\020\000\022\t\n\005DAILY\020" +
       "\001\"\214\001\n\024TemporaryExposureKey\022\017\n\007keyData\030\001 " +
       "\001(\014\022\032\n\022rollingStartNumber\030\002 \001(\003\022G\n\triskL" +
-      "evel\030\003 \001(\01624.org.ena.server.common.proto" +
+      "evel\030\003 \001(\01624.org.cwa.server.common.proto" +
       "cols.generated.RiskLevelb\006proto3"
     };
     descriptor = com.google.protobuf.Descriptors.FileDescriptor
@@ -2227,17 +2227,17 @@ public final class ExposureKeys {
         new com.google.protobuf.Descriptors.FileDescriptor[] {
           org.cwa.server.common.protocols.generated.RiskScore.getDescriptor(),
         });
-    internal_static_org_ena_server_common_protocols_generated_TemporaryExposureKeyBucket_descriptor =
+    internal_static_org_cwa_server_common_protocols_generated_TemporaryExposureKeyBucket_descriptor =
       getDescriptor().getMessageTypes().get(0);
-    internal_static_org_ena_server_common_protocols_generated_TemporaryExposureKeyBucket_fieldAccessorTable = new
+    internal_static_org_cwa_server_common_protocols_generated_TemporaryExposureKeyBucket_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
-        internal_static_org_ena_server_common_protocols_generated_TemporaryExposureKeyBucket_descriptor,
+        internal_static_org_cwa_server_common_protocols_generated_TemporaryExposureKeyBucket_descriptor,
         new java.lang.String[] { "ShardKey", "Timestamp", "AggregationInterval", "ExposureKeys", });
-    internal_static_org_ena_server_common_protocols_generated_TemporaryExposureKey_descriptor =
+    internal_static_org_cwa_server_common_protocols_generated_TemporaryExposureKey_descriptor =
       getDescriptor().getMessageTypes().get(1);
-    internal_static_org_ena_server_common_protocols_generated_TemporaryExposureKey_fieldAccessorTable = new
+    internal_static_org_cwa_server_common_protocols_generated_TemporaryExposureKey_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
-        internal_static_org_ena_server_common_protocols_generated_TemporaryExposureKey_descriptor,
+        internal_static_org_cwa_server_common_protocols_generated_TemporaryExposureKey_descriptor,
         new java.lang.String[] { "KeyData", "RollingStartNumber", "RiskLevel", });
     org.cwa.server.common.protocols.generated.RiskScore.getDescriptor();
   }

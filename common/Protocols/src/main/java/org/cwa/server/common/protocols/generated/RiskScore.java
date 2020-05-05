@@ -15,7 +15,7 @@ public final class RiskScore {
         (com.google.protobuf.ExtensionRegistryLite) registry);
   }
   /**
-   * Protobuf enum {@code org.ena.server.common.protocols.generated.RiskLevel}
+   * Protobuf enum {@code org.cwa.server.common.protocols.generated.RiskLevel}
    */
   public enum RiskLevel
       implements com.google.protobuf.ProtocolMessageEnum {
@@ -178,11 +178,11 @@ public final class RiskScore {
       this.value = value;
     }
 
-    // @@protoc_insertion_point(enum_scope:org.ena.server.common.protocols.generated.RiskLevel)
+    // @@protoc_insertion_point(enum_scope:org.cwa.server.common.protocols.generated.RiskLevel)
   }
 
   public interface RiskScoreParametersOrBuilder extends
-      // @@protoc_insertion_point(interface_extends:org.ena.server.common.protocols.generated.RiskScoreParameters)
+      // @@protoc_insertion_point(interface_extends:org.cwa.server.common.protocols.generated.RiskScoreParameters)
       com.google.protobuf.MessageOrBuilder {
 
     /**
@@ -190,7 +190,7 @@ public final class RiskScore {
      * App-specific mapping
      * </pre>
      *
-     * <code>.org.ena.server.common.protocols.generated.RiskScoreParameters.TransmissionRiskParameter transmission = 1;</code>
+     * <code>.org.cwa.server.common.protocols.generated.RiskScoreParameters.TransmissionRiskParameter transmission = 1;</code>
      * @return Whether the transmission field is set.
      */
     boolean hasTransmission();
@@ -199,7 +199,7 @@ public final class RiskScore {
      * App-specific mapping
      * </pre>
      *
-     * <code>.org.ena.server.common.protocols.generated.RiskScoreParameters.TransmissionRiskParameter transmission = 1;</code>
+     * <code>.org.cwa.server.common.protocols.generated.RiskScoreParameters.TransmissionRiskParameter transmission = 1;</code>
      * @return The transmission.
      */
     org.cwa.server.common.protocols.generated.RiskScore.RiskScoreParameters.TransmissionRiskParameter getTransmission();
@@ -208,7 +208,7 @@ public final class RiskScore {
      * App-specific mapping
      * </pre>
      *
-     * <code>.org.ena.server.common.protocols.generated.RiskScoreParameters.TransmissionRiskParameter transmission = 1;</code>
+     * <code>.org.cwa.server.common.protocols.generated.RiskScoreParameters.TransmissionRiskParameter transmission = 1;</code>
      */
     org.cwa.server.common.protocols.generated.RiskScore.RiskScoreParameters.TransmissionRiskParameterOrBuilder getTransmissionOrBuilder();
 
@@ -219,17 +219,17 @@ public final class RiskScore {
     double getTransmissionWeight();
 
     /**
-     * <code>.org.ena.server.common.protocols.generated.RiskScoreParameters.DurationRiskParameter duration = 3;</code>
+     * <code>.org.cwa.server.common.protocols.generated.RiskScoreParameters.DurationRiskParameter duration = 3;</code>
      * @return Whether the duration field is set.
      */
     boolean hasDuration();
     /**
-     * <code>.org.ena.server.common.protocols.generated.RiskScoreParameters.DurationRiskParameter duration = 3;</code>
+     * <code>.org.cwa.server.common.protocols.generated.RiskScoreParameters.DurationRiskParameter duration = 3;</code>
      * @return The duration.
      */
     org.cwa.server.common.protocols.generated.RiskScore.RiskScoreParameters.DurationRiskParameter getDuration();
     /**
-     * <code>.org.ena.server.common.protocols.generated.RiskScoreParameters.DurationRiskParameter duration = 3;</code>
+     * <code>.org.cwa.server.common.protocols.generated.RiskScoreParameters.DurationRiskParameter duration = 3;</code>
      */
     org.cwa.server.common.protocols.generated.RiskScore.RiskScoreParameters.DurationRiskParameterOrBuilder getDurationOrBuilder();
 
@@ -240,17 +240,17 @@ public final class RiskScore {
     double getDurationWeight();
 
     /**
-     * <code>.org.ena.server.common.protocols.generated.RiskScoreParameters.DaysSinceLastExposureRiskParameter daysSinceLastExposure = 5;</code>
+     * <code>.org.cwa.server.common.protocols.generated.RiskScoreParameters.DaysSinceLastExposureRiskParameter daysSinceLastExposure = 5;</code>
      * @return Whether the daysSinceLastExposure field is set.
      */
     boolean hasDaysSinceLastExposure();
     /**
-     * <code>.org.ena.server.common.protocols.generated.RiskScoreParameters.DaysSinceLastExposureRiskParameter daysSinceLastExposure = 5;</code>
+     * <code>.org.cwa.server.common.protocols.generated.RiskScoreParameters.DaysSinceLastExposureRiskParameter daysSinceLastExposure = 5;</code>
      * @return The daysSinceLastExposure.
      */
     org.cwa.server.common.protocols.generated.RiskScore.RiskScoreParameters.DaysSinceLastExposureRiskParameter getDaysSinceLastExposure();
     /**
-     * <code>.org.ena.server.common.protocols.generated.RiskScoreParameters.DaysSinceLastExposureRiskParameter daysSinceLastExposure = 5;</code>
+     * <code>.org.cwa.server.common.protocols.generated.RiskScoreParameters.DaysSinceLastExposureRiskParameter daysSinceLastExposure = 5;</code>
      */
     org.cwa.server.common.protocols.generated.RiskScore.RiskScoreParameters.DaysSinceLastExposureRiskParameterOrBuilder getDaysSinceLastExposureOrBuilder();
 
@@ -261,17 +261,17 @@ public final class RiskScore {
     double getDaysWeight();
 
     /**
-     * <code>.org.ena.server.common.protocols.generated.RiskScoreParameters.AttenuationRiskParameter attenuation = 7;</code>
+     * <code>.org.cwa.server.common.protocols.generated.RiskScoreParameters.AttenuationRiskParameter attenuation = 7;</code>
      * @return Whether the attenuation field is set.
      */
     boolean hasAttenuation();
     /**
-     * <code>.org.ena.server.common.protocols.generated.RiskScoreParameters.AttenuationRiskParameter attenuation = 7;</code>
+     * <code>.org.cwa.server.common.protocols.generated.RiskScoreParameters.AttenuationRiskParameter attenuation = 7;</code>
      * @return The attenuation.
      */
     org.cwa.server.common.protocols.generated.RiskScore.RiskScoreParameters.AttenuationRiskParameter getAttenuation();
     /**
-     * <code>.org.ena.server.common.protocols.generated.RiskScoreParameters.AttenuationRiskParameter attenuation = 7;</code>
+     * <code>.org.cwa.server.common.protocols.generated.RiskScoreParameters.AttenuationRiskParameter attenuation = 7;</code>
      */
     org.cwa.server.common.protocols.generated.RiskScore.RiskScoreParameters.AttenuationRiskParameterOrBuilder getAttenuationOrBuilder();
 
@@ -287,11 +287,11 @@ public final class RiskScore {
    * https://covid19-static.cdn-apple.com/applications/covid19/current/static/contact-tracing/pdf/ExposureNotification-FrameworkDocumentationv1.2.pdf
    * </pre>
    *
-   * Protobuf type {@code org.ena.server.common.protocols.generated.RiskScoreParameters}
+   * Protobuf type {@code org.cwa.server.common.protocols.generated.RiskScoreParameters}
    */
   public  static final class RiskScoreParameters extends
       com.google.protobuf.GeneratedMessageV3 implements
-      // @@protoc_insertion_point(message_implements:org.ena.server.common.protocols.generated.RiskScoreParameters)
+      // @@protoc_insertion_point(message_implements:org.cwa.server.common.protocols.generated.RiskScoreParameters)
       RiskScoreParametersOrBuilder {
   private static final long serialVersionUID = 0L;
     // Use RiskScoreParameters.newBuilder() to construct.
@@ -424,115 +424,115 @@ public final class RiskScore {
     }
     public static final com.google.protobuf.Descriptors.Descriptor
         getDescriptor() {
-      return org.cwa.server.common.protocols.generated.RiskScore.internal_static_org_ena_server_common_protocols_generated_RiskScoreParameters_descriptor;
+      return org.cwa.server.common.protocols.generated.RiskScore.internal_static_org_cwa_server_common_protocols_generated_RiskScoreParameters_descriptor;
     }
 
     @java.lang.Override
     protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
         internalGetFieldAccessorTable() {
-      return org.cwa.server.common.protocols.generated.RiskScore.internal_static_org_ena_server_common_protocols_generated_RiskScoreParameters_fieldAccessorTable
+      return org.cwa.server.common.protocols.generated.RiskScore.internal_static_org_cwa_server_common_protocols_generated_RiskScoreParameters_fieldAccessorTable
           .ensureFieldAccessorsInitialized(
               org.cwa.server.common.protocols.generated.RiskScore.RiskScoreParameters.class, org.cwa.server.common.protocols.generated.RiskScore.RiskScoreParameters.Builder.class);
     }
 
     public interface TransmissionRiskParameterOrBuilder extends
-        // @@protoc_insertion_point(interface_extends:org.ena.server.common.protocols.generated.RiskScoreParameters.TransmissionRiskParameter)
+        // @@protoc_insertion_point(interface_extends:org.cwa.server.common.protocols.generated.RiskScoreParameters.TransmissionRiskParameter)
         com.google.protobuf.MessageOrBuilder {
 
       /**
-       * <code>.org.ena.server.common.protocols.generated.RiskLevel appDefined_1 = 1;</code>
+       * <code>.org.cwa.server.common.protocols.generated.RiskLevel appDefined_1 = 1;</code>
        * @return The enum numeric value on the wire for appDefined1.
        */
       int getAppDefined1Value();
       /**
-       * <code>.org.ena.server.common.protocols.generated.RiskLevel appDefined_1 = 1;</code>
+       * <code>.org.cwa.server.common.protocols.generated.RiskLevel appDefined_1 = 1;</code>
        * @return The appDefined1.
        */
       org.cwa.server.common.protocols.generated.RiskScore.RiskLevel getAppDefined1();
 
       /**
-       * <code>.org.ena.server.common.protocols.generated.RiskLevel appDefined_2 = 2;</code>
+       * <code>.org.cwa.server.common.protocols.generated.RiskLevel appDefined_2 = 2;</code>
        * @return The enum numeric value on the wire for appDefined2.
        */
       int getAppDefined2Value();
       /**
-       * <code>.org.ena.server.common.protocols.generated.RiskLevel appDefined_2 = 2;</code>
+       * <code>.org.cwa.server.common.protocols.generated.RiskLevel appDefined_2 = 2;</code>
        * @return The appDefined2.
        */
       org.cwa.server.common.protocols.generated.RiskScore.RiskLevel getAppDefined2();
 
       /**
-       * <code>.org.ena.server.common.protocols.generated.RiskLevel appDefined_3 = 3;</code>
+       * <code>.org.cwa.server.common.protocols.generated.RiskLevel appDefined_3 = 3;</code>
        * @return The enum numeric value on the wire for appDefined3.
        */
       int getAppDefined3Value();
       /**
-       * <code>.org.ena.server.common.protocols.generated.RiskLevel appDefined_3 = 3;</code>
+       * <code>.org.cwa.server.common.protocols.generated.RiskLevel appDefined_3 = 3;</code>
        * @return The appDefined3.
        */
       org.cwa.server.common.protocols.generated.RiskScore.RiskLevel getAppDefined3();
 
       /**
-       * <code>.org.ena.server.common.protocols.generated.RiskLevel appDefined_4 = 4;</code>
+       * <code>.org.cwa.server.common.protocols.generated.RiskLevel appDefined_4 = 4;</code>
        * @return The enum numeric value on the wire for appDefined4.
        */
       int getAppDefined4Value();
       /**
-       * <code>.org.ena.server.common.protocols.generated.RiskLevel appDefined_4 = 4;</code>
+       * <code>.org.cwa.server.common.protocols.generated.RiskLevel appDefined_4 = 4;</code>
        * @return The appDefined4.
        */
       org.cwa.server.common.protocols.generated.RiskScore.RiskLevel getAppDefined4();
 
       /**
-       * <code>.org.ena.server.common.protocols.generated.RiskLevel appDefined_5 = 5;</code>
+       * <code>.org.cwa.server.common.protocols.generated.RiskLevel appDefined_5 = 5;</code>
        * @return The enum numeric value on the wire for appDefined5.
        */
       int getAppDefined5Value();
       /**
-       * <code>.org.ena.server.common.protocols.generated.RiskLevel appDefined_5 = 5;</code>
+       * <code>.org.cwa.server.common.protocols.generated.RiskLevel appDefined_5 = 5;</code>
        * @return The appDefined5.
        */
       org.cwa.server.common.protocols.generated.RiskScore.RiskLevel getAppDefined5();
 
       /**
-       * <code>.org.ena.server.common.protocols.generated.RiskLevel appDefined_6 = 6;</code>
+       * <code>.org.cwa.server.common.protocols.generated.RiskLevel appDefined_6 = 6;</code>
        * @return The enum numeric value on the wire for appDefined6.
        */
       int getAppDefined6Value();
       /**
-       * <code>.org.ena.server.common.protocols.generated.RiskLevel appDefined_6 = 6;</code>
+       * <code>.org.cwa.server.common.protocols.generated.RiskLevel appDefined_6 = 6;</code>
        * @return The appDefined6.
        */
       org.cwa.server.common.protocols.generated.RiskScore.RiskLevel getAppDefined6();
 
       /**
-       * <code>.org.ena.server.common.protocols.generated.RiskLevel appDefined_7 = 7;</code>
+       * <code>.org.cwa.server.common.protocols.generated.RiskLevel appDefined_7 = 7;</code>
        * @return The enum numeric value on the wire for appDefined7.
        */
       int getAppDefined7Value();
       /**
-       * <code>.org.ena.server.common.protocols.generated.RiskLevel appDefined_7 = 7;</code>
+       * <code>.org.cwa.server.common.protocols.generated.RiskLevel appDefined_7 = 7;</code>
        * @return The appDefined7.
        */
       org.cwa.server.common.protocols.generated.RiskScore.RiskLevel getAppDefined7();
 
       /**
-       * <code>.org.ena.server.common.protocols.generated.RiskLevel appDefined_8 = 8;</code>
+       * <code>.org.cwa.server.common.protocols.generated.RiskLevel appDefined_8 = 8;</code>
        * @return The enum numeric value on the wire for appDefined8.
        */
       int getAppDefined8Value();
       /**
-       * <code>.org.ena.server.common.protocols.generated.RiskLevel appDefined_8 = 8;</code>
+       * <code>.org.cwa.server.common.protocols.generated.RiskLevel appDefined_8 = 8;</code>
        * @return The appDefined8.
        */
       org.cwa.server.common.protocols.generated.RiskScore.RiskLevel getAppDefined8();
     }
     /**
-     * Protobuf type {@code org.ena.server.common.protocols.generated.RiskScoreParameters.TransmissionRiskParameter}
+     * Protobuf type {@code org.cwa.server.common.protocols.generated.RiskScoreParameters.TransmissionRiskParameter}
      */
     public  static final class TransmissionRiskParameter extends
         com.google.protobuf.GeneratedMessageV3 implements
-        // @@protoc_insertion_point(message_implements:org.ena.server.common.protocols.generated.RiskScoreParameters.TransmissionRiskParameter)
+        // @@protoc_insertion_point(message_implements:org.cwa.server.common.protocols.generated.RiskScoreParameters.TransmissionRiskParameter)
         TransmissionRiskParameterOrBuilder {
     private static final long serialVersionUID = 0L;
       // Use TransmissionRiskParameter.newBuilder() to construct.
@@ -649,13 +649,13 @@ public final class RiskScore {
       }
       public static final com.google.protobuf.Descriptors.Descriptor
           getDescriptor() {
-        return org.cwa.server.common.protocols.generated.RiskScore.internal_static_org_ena_server_common_protocols_generated_RiskScoreParameters_TransmissionRiskParameter_descriptor;
+        return org.cwa.server.common.protocols.generated.RiskScore.internal_static_org_cwa_server_common_protocols_generated_RiskScoreParameters_TransmissionRiskParameter_descriptor;
       }
 
       @java.lang.Override
       protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
           internalGetFieldAccessorTable() {
-        return org.cwa.server.common.protocols.generated.RiskScore.internal_static_org_ena_server_common_protocols_generated_RiskScoreParameters_TransmissionRiskParameter_fieldAccessorTable
+        return org.cwa.server.common.protocols.generated.RiskScore.internal_static_org_cwa_server_common_protocols_generated_RiskScoreParameters_TransmissionRiskParameter_fieldAccessorTable
             .ensureFieldAccessorsInitialized(
                 org.cwa.server.common.protocols.generated.RiskScore.RiskScoreParameters.TransmissionRiskParameter.class, org.cwa.server.common.protocols.generated.RiskScore.RiskScoreParameters.TransmissionRiskParameter.Builder.class);
       }
@@ -663,14 +663,14 @@ public final class RiskScore {
       public static final int APPDEFINED_1_FIELD_NUMBER = 1;
       private int appDefined1_;
       /**
-       * <code>.org.ena.server.common.protocols.generated.RiskLevel appDefined_1 = 1;</code>
+       * <code>.org.cwa.server.common.protocols.generated.RiskLevel appDefined_1 = 1;</code>
        * @return The enum numeric value on the wire for appDefined1.
        */
       public int getAppDefined1Value() {
         return appDefined1_;
       }
       /**
-       * <code>.org.ena.server.common.protocols.generated.RiskLevel appDefined_1 = 1;</code>
+       * <code>.org.cwa.server.common.protocols.generated.RiskLevel appDefined_1 = 1;</code>
        * @return The appDefined1.
        */
       public org.cwa.server.common.protocols.generated.RiskScore.RiskLevel getAppDefined1() {
@@ -682,14 +682,14 @@ public final class RiskScore {
       public static final int APPDEFINED_2_FIELD_NUMBER = 2;
       private int appDefined2_;
       /**
-       * <code>.org.ena.server.common.protocols.generated.RiskLevel appDefined_2 = 2;</code>
+       * <code>.org.cwa.server.common.protocols.generated.RiskLevel appDefined_2 = 2;</code>
        * @return The enum numeric value on the wire for appDefined2.
        */
       public int getAppDefined2Value() {
         return appDefined2_;
       }
       /**
-       * <code>.org.ena.server.common.protocols.generated.RiskLevel appDefined_2 = 2;</code>
+       * <code>.org.cwa.server.common.protocols.generated.RiskLevel appDefined_2 = 2;</code>
        * @return The appDefined2.
        */
       public org.cwa.server.common.protocols.generated.RiskScore.RiskLevel getAppDefined2() {
@@ -701,14 +701,14 @@ public final class RiskScore {
       public static final int APPDEFINED_3_FIELD_NUMBER = 3;
       private int appDefined3_;
       /**
-       * <code>.org.ena.server.common.protocols.generated.RiskLevel appDefined_3 = 3;</code>
+       * <code>.org.cwa.server.common.protocols.generated.RiskLevel appDefined_3 = 3;</code>
        * @return The enum numeric value on the wire for appDefined3.
        */
       public int getAppDefined3Value() {
         return appDefined3_;
       }
       /**
-       * <code>.org.ena.server.common.protocols.generated.RiskLevel appDefined_3 = 3;</code>
+       * <code>.org.cwa.server.common.protocols.generated.RiskLevel appDefined_3 = 3;</code>
        * @return The appDefined3.
        */
       public org.cwa.server.common.protocols.generated.RiskScore.RiskLevel getAppDefined3() {
@@ -720,14 +720,14 @@ public final class RiskScore {
       public static final int APPDEFINED_4_FIELD_NUMBER = 4;
       private int appDefined4_;
       /**
-       * <code>.org.ena.server.common.protocols.generated.RiskLevel appDefined_4 = 4;</code>
+       * <code>.org.cwa.server.common.protocols.generated.RiskLevel appDefined_4 = 4;</code>
        * @return The enum numeric value on the wire for appDefined4.
        */
       public int getAppDefined4Value() {
         return appDefined4_;
       }
       /**
-       * <code>.org.ena.server.common.protocols.generated.RiskLevel appDefined_4 = 4;</code>
+       * <code>.org.cwa.server.common.protocols.generated.RiskLevel appDefined_4 = 4;</code>
        * @return The appDefined4.
        */
       public org.cwa.server.common.protocols.generated.RiskScore.RiskLevel getAppDefined4() {
@@ -739,14 +739,14 @@ public final class RiskScore {
       public static final int APPDEFINED_5_FIELD_NUMBER = 5;
       private int appDefined5_;
       /**
-       * <code>.org.ena.server.common.protocols.generated.RiskLevel appDefined_5 = 5;</code>
+       * <code>.org.cwa.server.common.protocols.generated.RiskLevel appDefined_5 = 5;</code>
        * @return The enum numeric value on the wire for appDefined5.
        */
       public int getAppDefined5Value() {
         return appDefined5_;
       }
       /**
-       * <code>.org.ena.server.common.protocols.generated.RiskLevel appDefined_5 = 5;</code>
+       * <code>.org.cwa.server.common.protocols.generated.RiskLevel appDefined_5 = 5;</code>
        * @return The appDefined5.
        */
       public org.cwa.server.common.protocols.generated.RiskScore.RiskLevel getAppDefined5() {
@@ -758,14 +758,14 @@ public final class RiskScore {
       public static final int APPDEFINED_6_FIELD_NUMBER = 6;
       private int appDefined6_;
       /**
-       * <code>.org.ena.server.common.protocols.generated.RiskLevel appDefined_6 = 6;</code>
+       * <code>.org.cwa.server.common.protocols.generated.RiskLevel appDefined_6 = 6;</code>
        * @return The enum numeric value on the wire for appDefined6.
        */
       public int getAppDefined6Value() {
         return appDefined6_;
       }
       /**
-       * <code>.org.ena.server.common.protocols.generated.RiskLevel appDefined_6 = 6;</code>
+       * <code>.org.cwa.server.common.protocols.generated.RiskLevel appDefined_6 = 6;</code>
        * @return The appDefined6.
        */
       public org.cwa.server.common.protocols.generated.RiskScore.RiskLevel getAppDefined6() {
@@ -777,14 +777,14 @@ public final class RiskScore {
       public static final int APPDEFINED_7_FIELD_NUMBER = 7;
       private int appDefined7_;
       /**
-       * <code>.org.ena.server.common.protocols.generated.RiskLevel appDefined_7 = 7;</code>
+       * <code>.org.cwa.server.common.protocols.generated.RiskLevel appDefined_7 = 7;</code>
        * @return The enum numeric value on the wire for appDefined7.
        */
       public int getAppDefined7Value() {
         return appDefined7_;
       }
       /**
-       * <code>.org.ena.server.common.protocols.generated.RiskLevel appDefined_7 = 7;</code>
+       * <code>.org.cwa.server.common.protocols.generated.RiskLevel appDefined_7 = 7;</code>
        * @return The appDefined7.
        */
       public org.cwa.server.common.protocols.generated.RiskScore.RiskLevel getAppDefined7() {
@@ -796,14 +796,14 @@ public final class RiskScore {
       public static final int APPDEFINED_8_FIELD_NUMBER = 8;
       private int appDefined8_;
       /**
-       * <code>.org.ena.server.common.protocols.generated.RiskLevel appDefined_8 = 8;</code>
+       * <code>.org.cwa.server.common.protocols.generated.RiskLevel appDefined_8 = 8;</code>
        * @return The enum numeric value on the wire for appDefined8.
        */
       public int getAppDefined8Value() {
         return appDefined8_;
       }
       /**
-       * <code>.org.ena.server.common.protocols.generated.RiskLevel appDefined_8 = 8;</code>
+       * <code>.org.cwa.server.common.protocols.generated.RiskLevel appDefined_8 = 8;</code>
        * @return The appDefined8.
        */
       public org.cwa.server.common.protocols.generated.RiskScore.RiskLevel getAppDefined8() {
@@ -1037,26 +1037,26 @@ public final class RiskScore {
         return builder;
       }
       /**
-       * Protobuf type {@code org.ena.server.common.protocols.generated.RiskScoreParameters.TransmissionRiskParameter}
+       * Protobuf type {@code org.cwa.server.common.protocols.generated.RiskScoreParameters.TransmissionRiskParameter}
        */
       public static final class Builder extends
           com.google.protobuf.GeneratedMessageV3.Builder<Builder> implements
-          // @@protoc_insertion_point(builder_implements:org.ena.server.common.protocols.generated.RiskScoreParameters.TransmissionRiskParameter)
+          // @@protoc_insertion_point(builder_implements:org.cwa.server.common.protocols.generated.RiskScoreParameters.TransmissionRiskParameter)
           org.cwa.server.common.protocols.generated.RiskScore.RiskScoreParameters.TransmissionRiskParameterOrBuilder {
         public static final com.google.protobuf.Descriptors.Descriptor
             getDescriptor() {
-          return org.cwa.server.common.protocols.generated.RiskScore.internal_static_org_ena_server_common_protocols_generated_RiskScoreParameters_TransmissionRiskParameter_descriptor;
+          return org.cwa.server.common.protocols.generated.RiskScore.internal_static_org_cwa_server_common_protocols_generated_RiskScoreParameters_TransmissionRiskParameter_descriptor;
         }
 
         @java.lang.Override
         protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
             internalGetFieldAccessorTable() {
-          return org.cwa.server.common.protocols.generated.RiskScore.internal_static_org_ena_server_common_protocols_generated_RiskScoreParameters_TransmissionRiskParameter_fieldAccessorTable
+          return org.cwa.server.common.protocols.generated.RiskScore.internal_static_org_cwa_server_common_protocols_generated_RiskScoreParameters_TransmissionRiskParameter_fieldAccessorTable
               .ensureFieldAccessorsInitialized(
                   org.cwa.server.common.protocols.generated.RiskScore.RiskScoreParameters.TransmissionRiskParameter.class, org.cwa.server.common.protocols.generated.RiskScore.RiskScoreParameters.TransmissionRiskParameter.Builder.class);
         }
 
-        // Construct using org.ena.server.common.protocols.generated.RiskScore.RiskScoreParameters.TransmissionRiskParameter.newBuilder()
+        // Construct using org.cwa.server.common.protocols.generated.RiskScore.RiskScoreParameters.TransmissionRiskParameter.newBuilder()
         private Builder() {
           maybeForceBuilderInitialization();
         }
@@ -1096,7 +1096,7 @@ public final class RiskScore {
         @java.lang.Override
         public com.google.protobuf.Descriptors.Descriptor
             getDescriptorForType() {
-          return org.cwa.server.common.protocols.generated.RiskScore.internal_static_org_ena_server_common_protocols_generated_RiskScoreParameters_TransmissionRiskParameter_descriptor;
+          return org.cwa.server.common.protocols.generated.RiskScore.internal_static_org_cwa_server_common_protocols_generated_RiskScoreParameters_TransmissionRiskParameter_descriptor;
         }
 
         @java.lang.Override
@@ -1227,14 +1227,14 @@ public final class RiskScore {
 
         private int appDefined1_ = 0;
         /**
-         * <code>.org.ena.server.common.protocols.generated.RiskLevel appDefined_1 = 1;</code>
+         * <code>.org.cwa.server.common.protocols.generated.RiskLevel appDefined_1 = 1;</code>
          * @return The enum numeric value on the wire for appDefined1.
          */
         public int getAppDefined1Value() {
           return appDefined1_;
         }
         /**
-         * <code>.org.ena.server.common.protocols.generated.RiskLevel appDefined_1 = 1;</code>
+         * <code>.org.cwa.server.common.protocols.generated.RiskLevel appDefined_1 = 1;</code>
          * @param value The enum numeric value on the wire for appDefined1 to set.
          * @return This builder for chaining.
          */
@@ -1244,7 +1244,7 @@ public final class RiskScore {
           return this;
         }
         /**
-         * <code>.org.ena.server.common.protocols.generated.RiskLevel appDefined_1 = 1;</code>
+         * <code>.org.cwa.server.common.protocols.generated.RiskLevel appDefined_1 = 1;</code>
          * @return The appDefined1.
          */
         public org.cwa.server.common.protocols.generated.RiskScore.RiskLevel getAppDefined1() {
@@ -1253,7 +1253,7 @@ public final class RiskScore {
           return result == null ? org.cwa.server.common.protocols.generated.RiskScore.RiskLevel.UNRECOGNIZED : result;
         }
         /**
-         * <code>.org.ena.server.common.protocols.generated.RiskLevel appDefined_1 = 1;</code>
+         * <code>.org.cwa.server.common.protocols.generated.RiskLevel appDefined_1 = 1;</code>
          * @param value The appDefined1 to set.
          * @return This builder for chaining.
          */
@@ -1267,7 +1267,7 @@ public final class RiskScore {
           return this;
         }
         /**
-         * <code>.org.ena.server.common.protocols.generated.RiskLevel appDefined_1 = 1;</code>
+         * <code>.org.cwa.server.common.protocols.generated.RiskLevel appDefined_1 = 1;</code>
          * @return This builder for chaining.
          */
         public Builder clearAppDefined1() {
@@ -1279,14 +1279,14 @@ public final class RiskScore {
 
         private int appDefined2_ = 0;
         /**
-         * <code>.org.ena.server.common.protocols.generated.RiskLevel appDefined_2 = 2;</code>
+         * <code>.org.cwa.server.common.protocols.generated.RiskLevel appDefined_2 = 2;</code>
          * @return The enum numeric value on the wire for appDefined2.
          */
         public int getAppDefined2Value() {
           return appDefined2_;
         }
         /**
-         * <code>.org.ena.server.common.protocols.generated.RiskLevel appDefined_2 = 2;</code>
+         * <code>.org.cwa.server.common.protocols.generated.RiskLevel appDefined_2 = 2;</code>
          * @param value The enum numeric value on the wire for appDefined2 to set.
          * @return This builder for chaining.
          */
@@ -1296,7 +1296,7 @@ public final class RiskScore {
           return this;
         }
         /**
-         * <code>.org.ena.server.common.protocols.generated.RiskLevel appDefined_2 = 2;</code>
+         * <code>.org.cwa.server.common.protocols.generated.RiskLevel appDefined_2 = 2;</code>
          * @return The appDefined2.
          */
         public org.cwa.server.common.protocols.generated.RiskScore.RiskLevel getAppDefined2() {
@@ -1305,7 +1305,7 @@ public final class RiskScore {
           return result == null ? org.cwa.server.common.protocols.generated.RiskScore.RiskLevel.UNRECOGNIZED : result;
         }
         /**
-         * <code>.org.ena.server.common.protocols.generated.RiskLevel appDefined_2 = 2;</code>
+         * <code>.org.cwa.server.common.protocols.generated.RiskLevel appDefined_2 = 2;</code>
          * @param value The appDefined2 to set.
          * @return This builder for chaining.
          */
@@ -1319,7 +1319,7 @@ public final class RiskScore {
           return this;
         }
         /**
-         * <code>.org.ena.server.common.protocols.generated.RiskLevel appDefined_2 = 2;</code>
+         * <code>.org.cwa.server.common.protocols.generated.RiskLevel appDefined_2 = 2;</code>
          * @return This builder for chaining.
          */
         public Builder clearAppDefined2() {
@@ -1331,14 +1331,14 @@ public final class RiskScore {
 
         private int appDefined3_ = 0;
         /**
-         * <code>.org.ena.server.common.protocols.generated.RiskLevel appDefined_3 = 3;</code>
+         * <code>.org.cwa.server.common.protocols.generated.RiskLevel appDefined_3 = 3;</code>
          * @return The enum numeric value on the wire for appDefined3.
          */
         public int getAppDefined3Value() {
           return appDefined3_;
         }
         /**
-         * <code>.org.ena.server.common.protocols.generated.RiskLevel appDefined_3 = 3;</code>
+         * <code>.org.cwa.server.common.protocols.generated.RiskLevel appDefined_3 = 3;</code>
          * @param value The enum numeric value on the wire for appDefined3 to set.
          * @return This builder for chaining.
          */
@@ -1348,7 +1348,7 @@ public final class RiskScore {
           return this;
         }
         /**
-         * <code>.org.ena.server.common.protocols.generated.RiskLevel appDefined_3 = 3;</code>
+         * <code>.org.cwa.server.common.protocols.generated.RiskLevel appDefined_3 = 3;</code>
          * @return The appDefined3.
          */
         public org.cwa.server.common.protocols.generated.RiskScore.RiskLevel getAppDefined3() {
@@ -1357,7 +1357,7 @@ public final class RiskScore {
           return result == null ? org.cwa.server.common.protocols.generated.RiskScore.RiskLevel.UNRECOGNIZED : result;
         }
         /**
-         * <code>.org.ena.server.common.protocols.generated.RiskLevel appDefined_3 = 3;</code>
+         * <code>.org.cwa.server.common.protocols.generated.RiskLevel appDefined_3 = 3;</code>
          * @param value The appDefined3 to set.
          * @return This builder for chaining.
          */
@@ -1371,7 +1371,7 @@ public final class RiskScore {
           return this;
         }
         /**
-         * <code>.org.ena.server.common.protocols.generated.RiskLevel appDefined_3 = 3;</code>
+         * <code>.org.cwa.server.common.protocols.generated.RiskLevel appDefined_3 = 3;</code>
          * @return This builder for chaining.
          */
         public Builder clearAppDefined3() {
@@ -1383,14 +1383,14 @@ public final class RiskScore {
 
         private int appDefined4_ = 0;
         /**
-         * <code>.org.ena.server.common.protocols.generated.RiskLevel appDefined_4 = 4;</code>
+         * <code>.org.cwa.server.common.protocols.generated.RiskLevel appDefined_4 = 4;</code>
          * @return The enum numeric value on the wire for appDefined4.
          */
         public int getAppDefined4Value() {
           return appDefined4_;
         }
         /**
-         * <code>.org.ena.server.common.protocols.generated.RiskLevel appDefined_4 = 4;</code>
+         * <code>.org.cwa.server.common.protocols.generated.RiskLevel appDefined_4 = 4;</code>
          * @param value The enum numeric value on the wire for appDefined4 to set.
          * @return This builder for chaining.
          */
@@ -1400,7 +1400,7 @@ public final class RiskScore {
           return this;
         }
         /**
-         * <code>.org.ena.server.common.protocols.generated.RiskLevel appDefined_4 = 4;</code>
+         * <code>.org.cwa.server.common.protocols.generated.RiskLevel appDefined_4 = 4;</code>
          * @return The appDefined4.
          */
         public org.cwa.server.common.protocols.generated.RiskScore.RiskLevel getAppDefined4() {
@@ -1409,7 +1409,7 @@ public final class RiskScore {
           return result == null ? org.cwa.server.common.protocols.generated.RiskScore.RiskLevel.UNRECOGNIZED : result;
         }
         /**
-         * <code>.org.ena.server.common.protocols.generated.RiskLevel appDefined_4 = 4;</code>
+         * <code>.org.cwa.server.common.protocols.generated.RiskLevel appDefined_4 = 4;</code>
          * @param value The appDefined4 to set.
          * @return This builder for chaining.
          */
@@ -1423,7 +1423,7 @@ public final class RiskScore {
           return this;
         }
         /**
-         * <code>.org.ena.server.common.protocols.generated.RiskLevel appDefined_4 = 4;</code>
+         * <code>.org.cwa.server.common.protocols.generated.RiskLevel appDefined_4 = 4;</code>
          * @return This builder for chaining.
          */
         public Builder clearAppDefined4() {
@@ -1435,14 +1435,14 @@ public final class RiskScore {
 
         private int appDefined5_ = 0;
         /**
-         * <code>.org.ena.server.common.protocols.generated.RiskLevel appDefined_5 = 5;</code>
+         * <code>.org.cwa.server.common.protocols.generated.RiskLevel appDefined_5 = 5;</code>
          * @return The enum numeric value on the wire for appDefined5.
          */
         public int getAppDefined5Value() {
           return appDefined5_;
         }
         /**
-         * <code>.org.ena.server.common.protocols.generated.RiskLevel appDefined_5 = 5;</code>
+         * <code>.org.cwa.server.common.protocols.generated.RiskLevel appDefined_5 = 5;</code>
          * @param value The enum numeric value on the wire for appDefined5 to set.
          * @return This builder for chaining.
          */
@@ -1452,7 +1452,7 @@ public final class RiskScore {
           return this;
         }
         /**
-         * <code>.org.ena.server.common.protocols.generated.RiskLevel appDefined_5 = 5;</code>
+         * <code>.org.cwa.server.common.protocols.generated.RiskLevel appDefined_5 = 5;</code>
          * @return The appDefined5.
          */
         public org.cwa.server.common.protocols.generated.RiskScore.RiskLevel getAppDefined5() {
@@ -1461,7 +1461,7 @@ public final class RiskScore {
           return result == null ? org.cwa.server.common.protocols.generated.RiskScore.RiskLevel.UNRECOGNIZED : result;
         }
         /**
-         * <code>.org.ena.server.common.protocols.generated.RiskLevel appDefined_5 = 5;</code>
+         * <code>.org.cwa.server.common.protocols.generated.RiskLevel appDefined_5 = 5;</code>
          * @param value The appDefined5 to set.
          * @return This builder for chaining.
          */
@@ -1475,7 +1475,7 @@ public final class RiskScore {
           return this;
         }
         /**
-         * <code>.org.ena.server.common.protocols.generated.RiskLevel appDefined_5 = 5;</code>
+         * <code>.org.cwa.server.common.protocols.generated.RiskLevel appDefined_5 = 5;</code>
          * @return This builder for chaining.
          */
         public Builder clearAppDefined5() {
@@ -1487,14 +1487,14 @@ public final class RiskScore {
 
         private int appDefined6_ = 0;
         /**
-         * <code>.org.ena.server.common.protocols.generated.RiskLevel appDefined_6 = 6;</code>
+         * <code>.org.cwa.server.common.protocols.generated.RiskLevel appDefined_6 = 6;</code>
          * @return The enum numeric value on the wire for appDefined6.
          */
         public int getAppDefined6Value() {
           return appDefined6_;
         }
         /**
-         * <code>.org.ena.server.common.protocols.generated.RiskLevel appDefined_6 = 6;</code>
+         * <code>.org.cwa.server.common.protocols.generated.RiskLevel appDefined_6 = 6;</code>
          * @param value The enum numeric value on the wire for appDefined6 to set.
          * @return This builder for chaining.
          */
@@ -1504,7 +1504,7 @@ public final class RiskScore {
           return this;
         }
         /**
-         * <code>.org.ena.server.common.protocols.generated.RiskLevel appDefined_6 = 6;</code>
+         * <code>.org.cwa.server.common.protocols.generated.RiskLevel appDefined_6 = 6;</code>
          * @return The appDefined6.
          */
         public org.cwa.server.common.protocols.generated.RiskScore.RiskLevel getAppDefined6() {
@@ -1513,7 +1513,7 @@ public final class RiskScore {
           return result == null ? org.cwa.server.common.protocols.generated.RiskScore.RiskLevel.UNRECOGNIZED : result;
         }
         /**
-         * <code>.org.ena.server.common.protocols.generated.RiskLevel appDefined_6 = 6;</code>
+         * <code>.org.cwa.server.common.protocols.generated.RiskLevel appDefined_6 = 6;</code>
          * @param value The appDefined6 to set.
          * @return This builder for chaining.
          */
@@ -1527,7 +1527,7 @@ public final class RiskScore {
           return this;
         }
         /**
-         * <code>.org.ena.server.common.protocols.generated.RiskLevel appDefined_6 = 6;</code>
+         * <code>.org.cwa.server.common.protocols.generated.RiskLevel appDefined_6 = 6;</code>
          * @return This builder for chaining.
          */
         public Builder clearAppDefined6() {
@@ -1539,14 +1539,14 @@ public final class RiskScore {
 
         private int appDefined7_ = 0;
         /**
-         * <code>.org.ena.server.common.protocols.generated.RiskLevel appDefined_7 = 7;</code>
+         * <code>.org.cwa.server.common.protocols.generated.RiskLevel appDefined_7 = 7;</code>
          * @return The enum numeric value on the wire for appDefined7.
          */
         public int getAppDefined7Value() {
           return appDefined7_;
         }
         /**
-         * <code>.org.ena.server.common.protocols.generated.RiskLevel appDefined_7 = 7;</code>
+         * <code>.org.cwa.server.common.protocols.generated.RiskLevel appDefined_7 = 7;</code>
          * @param value The enum numeric value on the wire for appDefined7 to set.
          * @return This builder for chaining.
          */
@@ -1556,7 +1556,7 @@ public final class RiskScore {
           return this;
         }
         /**
-         * <code>.org.ena.server.common.protocols.generated.RiskLevel appDefined_7 = 7;</code>
+         * <code>.org.cwa.server.common.protocols.generated.RiskLevel appDefined_7 = 7;</code>
          * @return The appDefined7.
          */
         public org.cwa.server.common.protocols.generated.RiskScore.RiskLevel getAppDefined7() {
@@ -1565,7 +1565,7 @@ public final class RiskScore {
           return result == null ? org.cwa.server.common.protocols.generated.RiskScore.RiskLevel.UNRECOGNIZED : result;
         }
         /**
-         * <code>.org.ena.server.common.protocols.generated.RiskLevel appDefined_7 = 7;</code>
+         * <code>.org.cwa.server.common.protocols.generated.RiskLevel appDefined_7 = 7;</code>
          * @param value The appDefined7 to set.
          * @return This builder for chaining.
          */
@@ -1579,7 +1579,7 @@ public final class RiskScore {
           return this;
         }
         /**
-         * <code>.org.ena.server.common.protocols.generated.RiskLevel appDefined_7 = 7;</code>
+         * <code>.org.cwa.server.common.protocols.generated.RiskLevel appDefined_7 = 7;</code>
          * @return This builder for chaining.
          */
         public Builder clearAppDefined7() {
@@ -1591,14 +1591,14 @@ public final class RiskScore {
 
         private int appDefined8_ = 0;
         /**
-         * <code>.org.ena.server.common.protocols.generated.RiskLevel appDefined_8 = 8;</code>
+         * <code>.org.cwa.server.common.protocols.generated.RiskLevel appDefined_8 = 8;</code>
          * @return The enum numeric value on the wire for appDefined8.
          */
         public int getAppDefined8Value() {
           return appDefined8_;
         }
         /**
-         * <code>.org.ena.server.common.protocols.generated.RiskLevel appDefined_8 = 8;</code>
+         * <code>.org.cwa.server.common.protocols.generated.RiskLevel appDefined_8 = 8;</code>
          * @param value The enum numeric value on the wire for appDefined8 to set.
          * @return This builder for chaining.
          */
@@ -1608,7 +1608,7 @@ public final class RiskScore {
           return this;
         }
         /**
-         * <code>.org.ena.server.common.protocols.generated.RiskLevel appDefined_8 = 8;</code>
+         * <code>.org.cwa.server.common.protocols.generated.RiskLevel appDefined_8 = 8;</code>
          * @return The appDefined8.
          */
         public org.cwa.server.common.protocols.generated.RiskScore.RiskLevel getAppDefined8() {
@@ -1617,7 +1617,7 @@ public final class RiskScore {
           return result == null ? org.cwa.server.common.protocols.generated.RiskScore.RiskLevel.UNRECOGNIZED : result;
         }
         /**
-         * <code>.org.ena.server.common.protocols.generated.RiskLevel appDefined_8 = 8;</code>
+         * <code>.org.cwa.server.common.protocols.generated.RiskLevel appDefined_8 = 8;</code>
          * @param value The appDefined8 to set.
          * @return This builder for chaining.
          */
@@ -1631,7 +1631,7 @@ public final class RiskScore {
           return this;
         }
         /**
-         * <code>.org.ena.server.common.protocols.generated.RiskLevel appDefined_8 = 8;</code>
+         * <code>.org.cwa.server.common.protocols.generated.RiskLevel appDefined_8 = 8;</code>
          * @return This builder for chaining.
          */
         public Builder clearAppDefined8() {
@@ -1653,10 +1653,10 @@ public final class RiskScore {
         }
 
 
-        // @@protoc_insertion_point(builder_scope:org.ena.server.common.protocols.generated.RiskScoreParameters.TransmissionRiskParameter)
+        // @@protoc_insertion_point(builder_scope:org.cwa.server.common.protocols.generated.RiskScoreParameters.TransmissionRiskParameter)
       }
 
-      // @@protoc_insertion_point(class_scope:org.ena.server.common.protocols.generated.RiskScoreParameters.TransmissionRiskParameter)
+      // @@protoc_insertion_point(class_scope:org.cwa.server.common.protocols.generated.RiskScoreParameters.TransmissionRiskParameter)
       private static final org.cwa.server.common.protocols.generated.RiskScore.RiskScoreParameters.TransmissionRiskParameter DEFAULT_INSTANCE;
       static {
         DEFAULT_INSTANCE = new org.cwa.server.common.protocols.generated.RiskScore.RiskScoreParameters.TransmissionRiskParameter();
@@ -1694,7 +1694,7 @@ public final class RiskScore {
     }
 
     public interface DurationRiskParameterOrBuilder extends
-        // @@protoc_insertion_point(interface_extends:org.ena.server.common.protocols.generated.RiskScoreParameters.DurationRiskParameter)
+        // @@protoc_insertion_point(interface_extends:org.cwa.server.common.protocols.generated.RiskScoreParameters.DurationRiskParameter)
         com.google.protobuf.MessageOrBuilder {
 
       /**
@@ -1702,7 +1702,7 @@ public final class RiskScore {
        * D = 0 min, lowest risk
        * </pre>
        *
-       * <code>.org.ena.server.common.protocols.generated.RiskLevel eq_0_min = 1;</code>
+       * <code>.org.cwa.server.common.protocols.generated.RiskLevel eq_0_min = 1;</code>
        * @return The enum numeric value on the wire for eq0Min.
        */
       int getEq0MinValue();
@@ -1711,7 +1711,7 @@ public final class RiskScore {
        * D = 0 min, lowest risk
        * </pre>
        *
-       * <code>.org.ena.server.common.protocols.generated.RiskLevel eq_0_min = 1;</code>
+       * <code>.org.cwa.server.common.protocols.generated.RiskLevel eq_0_min = 1;</code>
        * @return The eq0Min.
        */
       org.cwa.server.common.protocols.generated.RiskScore.RiskLevel getEq0Min();
@@ -1721,7 +1721,7 @@ public final class RiskScore {
        * 0 &lt; D &lt;= 5 min
        * </pre>
        *
-       * <code>.org.ena.server.common.protocols.generated.RiskLevel gt_0_le_5_min = 2;</code>
+       * <code>.org.cwa.server.common.protocols.generated.RiskLevel gt_0_le_5_min = 2;</code>
        * @return The enum numeric value on the wire for gt0Le5Min.
        */
       int getGt0Le5MinValue();
@@ -1730,7 +1730,7 @@ public final class RiskScore {
        * 0 &lt; D &lt;= 5 min
        * </pre>
        *
-       * <code>.org.ena.server.common.protocols.generated.RiskLevel gt_0_le_5_min = 2;</code>
+       * <code>.org.cwa.server.common.protocols.generated.RiskLevel gt_0_le_5_min = 2;</code>
        * @return The gt0Le5Min.
        */
       org.cwa.server.common.protocols.generated.RiskScore.RiskLevel getGt0Le5Min();
@@ -1740,7 +1740,7 @@ public final class RiskScore {
        * 5 &lt; D &lt;= 10 min
        * </pre>
        *
-       * <code>.org.ena.server.common.protocols.generated.RiskLevel gt_5_le_10_min = 3;</code>
+       * <code>.org.cwa.server.common.protocols.generated.RiskLevel gt_5_le_10_min = 3;</code>
        * @return The enum numeric value on the wire for gt5Le10Min.
        */
       int getGt5Le10MinValue();
@@ -1749,7 +1749,7 @@ public final class RiskScore {
        * 5 &lt; D &lt;= 10 min
        * </pre>
        *
-       * <code>.org.ena.server.common.protocols.generated.RiskLevel gt_5_le_10_min = 3;</code>
+       * <code>.org.cwa.server.common.protocols.generated.RiskLevel gt_5_le_10_min = 3;</code>
        * @return The gt5Le10Min.
        */
       org.cwa.server.common.protocols.generated.RiskScore.RiskLevel getGt5Le10Min();
@@ -1759,7 +1759,7 @@ public final class RiskScore {
        * 10 &lt; D &lt;= 15 min
        * </pre>
        *
-       * <code>.org.ena.server.common.protocols.generated.RiskLevel gt_10_le_15_min = 4;</code>
+       * <code>.org.cwa.server.common.protocols.generated.RiskLevel gt_10_le_15_min = 4;</code>
        * @return The enum numeric value on the wire for gt10Le15Min.
        */
       int getGt10Le15MinValue();
@@ -1768,7 +1768,7 @@ public final class RiskScore {
        * 10 &lt; D &lt;= 15 min
        * </pre>
        *
-       * <code>.org.ena.server.common.protocols.generated.RiskLevel gt_10_le_15_min = 4;</code>
+       * <code>.org.cwa.server.common.protocols.generated.RiskLevel gt_10_le_15_min = 4;</code>
        * @return The gt10Le15Min.
        */
       org.cwa.server.common.protocols.generated.RiskScore.RiskLevel getGt10Le15Min();
@@ -1778,7 +1778,7 @@ public final class RiskScore {
        * 15 &lt; D &lt;= 20 min
        * </pre>
        *
-       * <code>.org.ena.server.common.protocols.generated.RiskLevel gt_15_le_20_min = 5;</code>
+       * <code>.org.cwa.server.common.protocols.generated.RiskLevel gt_15_le_20_min = 5;</code>
        * @return The enum numeric value on the wire for gt15Le20Min.
        */
       int getGt15Le20MinValue();
@@ -1787,7 +1787,7 @@ public final class RiskScore {
        * 15 &lt; D &lt;= 20 min
        * </pre>
        *
-       * <code>.org.ena.server.common.protocols.generated.RiskLevel gt_15_le_20_min = 5;</code>
+       * <code>.org.cwa.server.common.protocols.generated.RiskLevel gt_15_le_20_min = 5;</code>
        * @return The gt15Le20Min.
        */
       org.cwa.server.common.protocols.generated.RiskScore.RiskLevel getGt15Le20Min();
@@ -1797,7 +1797,7 @@ public final class RiskScore {
        * 20 &lt; D &lt;= 25 min
        * </pre>
        *
-       * <code>.org.ena.server.common.protocols.generated.RiskLevel gt_20_le_25_min = 6;</code>
+       * <code>.org.cwa.server.common.protocols.generated.RiskLevel gt_20_le_25_min = 6;</code>
        * @return The enum numeric value on the wire for gt20Le25Min.
        */
       int getGt20Le25MinValue();
@@ -1806,7 +1806,7 @@ public final class RiskScore {
        * 20 &lt; D &lt;= 25 min
        * </pre>
        *
-       * <code>.org.ena.server.common.protocols.generated.RiskLevel gt_20_le_25_min = 6;</code>
+       * <code>.org.cwa.server.common.protocols.generated.RiskLevel gt_20_le_25_min = 6;</code>
        * @return The gt20Le25Min.
        */
       org.cwa.server.common.protocols.generated.RiskScore.RiskLevel getGt20Le25Min();
@@ -1816,7 +1816,7 @@ public final class RiskScore {
        * 25 &lt; D &lt;= 30 min
        * </pre>
        *
-       * <code>.org.ena.server.common.protocols.generated.RiskLevel gt_25_le_30_min = 7;</code>
+       * <code>.org.cwa.server.common.protocols.generated.RiskLevel gt_25_le_30_min = 7;</code>
        * @return The enum numeric value on the wire for gt25Le30Min.
        */
       int getGt25Le30MinValue();
@@ -1825,7 +1825,7 @@ public final class RiskScore {
        * 25 &lt; D &lt;= 30 min
        * </pre>
        *
-       * <code>.org.ena.server.common.protocols.generated.RiskLevel gt_25_le_30_min = 7;</code>
+       * <code>.org.cwa.server.common.protocols.generated.RiskLevel gt_25_le_30_min = 7;</code>
        * @return The gt25Le30Min.
        */
       org.cwa.server.common.protocols.generated.RiskScore.RiskLevel getGt25Le30Min();
@@ -1835,7 +1835,7 @@ public final class RiskScore {
        * &gt; 30 min, highest risk
        * </pre>
        *
-       * <code>.org.ena.server.common.protocols.generated.RiskLevel gt_30_min = 8;</code>
+       * <code>.org.cwa.server.common.protocols.generated.RiskLevel gt_30_min = 8;</code>
        * @return The enum numeric value on the wire for gt30Min.
        */
       int getGt30MinValue();
@@ -1844,17 +1844,17 @@ public final class RiskScore {
        * &gt; 30 min, highest risk
        * </pre>
        *
-       * <code>.org.ena.server.common.protocols.generated.RiskLevel gt_30_min = 8;</code>
+       * <code>.org.cwa.server.common.protocols.generated.RiskLevel gt_30_min = 8;</code>
        * @return The gt30Min.
        */
       org.cwa.server.common.protocols.generated.RiskScore.RiskLevel getGt30Min();
     }
     /**
-     * Protobuf type {@code org.ena.server.common.protocols.generated.RiskScoreParameters.DurationRiskParameter}
+     * Protobuf type {@code org.cwa.server.common.protocols.generated.RiskScoreParameters.DurationRiskParameter}
      */
     public  static final class DurationRiskParameter extends
         com.google.protobuf.GeneratedMessageV3 implements
-        // @@protoc_insertion_point(message_implements:org.ena.server.common.protocols.generated.RiskScoreParameters.DurationRiskParameter)
+        // @@protoc_insertion_point(message_implements:org.cwa.server.common.protocols.generated.RiskScoreParameters.DurationRiskParameter)
         DurationRiskParameterOrBuilder {
     private static final long serialVersionUID = 0L;
       // Use DurationRiskParameter.newBuilder() to construct.
@@ -1971,13 +1971,13 @@ public final class RiskScore {
       }
       public static final com.google.protobuf.Descriptors.Descriptor
           getDescriptor() {
-        return org.cwa.server.common.protocols.generated.RiskScore.internal_static_org_ena_server_common_protocols_generated_RiskScoreParameters_DurationRiskParameter_descriptor;
+        return org.cwa.server.common.protocols.generated.RiskScore.internal_static_org_cwa_server_common_protocols_generated_RiskScoreParameters_DurationRiskParameter_descriptor;
       }
 
       @java.lang.Override
       protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
           internalGetFieldAccessorTable() {
-        return org.cwa.server.common.protocols.generated.RiskScore.internal_static_org_ena_server_common_protocols_generated_RiskScoreParameters_DurationRiskParameter_fieldAccessorTable
+        return org.cwa.server.common.protocols.generated.RiskScore.internal_static_org_cwa_server_common_protocols_generated_RiskScoreParameters_DurationRiskParameter_fieldAccessorTable
             .ensureFieldAccessorsInitialized(
                 org.cwa.server.common.protocols.generated.RiskScore.RiskScoreParameters.DurationRiskParameter.class, org.cwa.server.common.protocols.generated.RiskScore.RiskScoreParameters.DurationRiskParameter.Builder.class);
       }
@@ -1989,7 +1989,7 @@ public final class RiskScore {
        * D = 0 min, lowest risk
        * </pre>
        *
-       * <code>.org.ena.server.common.protocols.generated.RiskLevel eq_0_min = 1;</code>
+       * <code>.org.cwa.server.common.protocols.generated.RiskLevel eq_0_min = 1;</code>
        * @return The enum numeric value on the wire for eq0Min.
        */
       public int getEq0MinValue() {
@@ -2000,7 +2000,7 @@ public final class RiskScore {
        * D = 0 min, lowest risk
        * </pre>
        *
-       * <code>.org.ena.server.common.protocols.generated.RiskLevel eq_0_min = 1;</code>
+       * <code>.org.cwa.server.common.protocols.generated.RiskLevel eq_0_min = 1;</code>
        * @return The eq0Min.
        */
       public org.cwa.server.common.protocols.generated.RiskScore.RiskLevel getEq0Min() {
@@ -2016,7 +2016,7 @@ public final class RiskScore {
        * 0 &lt; D &lt;= 5 min
        * </pre>
        *
-       * <code>.org.ena.server.common.protocols.generated.RiskLevel gt_0_le_5_min = 2;</code>
+       * <code>.org.cwa.server.common.protocols.generated.RiskLevel gt_0_le_5_min = 2;</code>
        * @return The enum numeric value on the wire for gt0Le5Min.
        */
       public int getGt0Le5MinValue() {
@@ -2027,7 +2027,7 @@ public final class RiskScore {
        * 0 &lt; D &lt;= 5 min
        * </pre>
        *
-       * <code>.org.ena.server.common.protocols.generated.RiskLevel gt_0_le_5_min = 2;</code>
+       * <code>.org.cwa.server.common.protocols.generated.RiskLevel gt_0_le_5_min = 2;</code>
        * @return The gt0Le5Min.
        */
       public org.cwa.server.common.protocols.generated.RiskScore.RiskLevel getGt0Le5Min() {
@@ -2043,7 +2043,7 @@ public final class RiskScore {
        * 5 &lt; D &lt;= 10 min
        * </pre>
        *
-       * <code>.org.ena.server.common.protocols.generated.RiskLevel gt_5_le_10_min = 3;</code>
+       * <code>.org.cwa.server.common.protocols.generated.RiskLevel gt_5_le_10_min = 3;</code>
        * @return The enum numeric value on the wire for gt5Le10Min.
        */
       public int getGt5Le10MinValue() {
@@ -2054,7 +2054,7 @@ public final class RiskScore {
        * 5 &lt; D &lt;= 10 min
        * </pre>
        *
-       * <code>.org.ena.server.common.protocols.generated.RiskLevel gt_5_le_10_min = 3;</code>
+       * <code>.org.cwa.server.common.protocols.generated.RiskLevel gt_5_le_10_min = 3;</code>
        * @return The gt5Le10Min.
        */
       public org.cwa.server.common.protocols.generated.RiskScore.RiskLevel getGt5Le10Min() {
@@ -2070,7 +2070,7 @@ public final class RiskScore {
        * 10 &lt; D &lt;= 15 min
        * </pre>
        *
-       * <code>.org.ena.server.common.protocols.generated.RiskLevel gt_10_le_15_min = 4;</code>
+       * <code>.org.cwa.server.common.protocols.generated.RiskLevel gt_10_le_15_min = 4;</code>
        * @return The enum numeric value on the wire for gt10Le15Min.
        */
       public int getGt10Le15MinValue() {
@@ -2081,7 +2081,7 @@ public final class RiskScore {
        * 10 &lt; D &lt;= 15 min
        * </pre>
        *
-       * <code>.org.ena.server.common.protocols.generated.RiskLevel gt_10_le_15_min = 4;</code>
+       * <code>.org.cwa.server.common.protocols.generated.RiskLevel gt_10_le_15_min = 4;</code>
        * @return The gt10Le15Min.
        */
       public org.cwa.server.common.protocols.generated.RiskScore.RiskLevel getGt10Le15Min() {
@@ -2097,7 +2097,7 @@ public final class RiskScore {
        * 15 &lt; D &lt;= 20 min
        * </pre>
        *
-       * <code>.org.ena.server.common.protocols.generated.RiskLevel gt_15_le_20_min = 5;</code>
+       * <code>.org.cwa.server.common.protocols.generated.RiskLevel gt_15_le_20_min = 5;</code>
        * @return The enum numeric value on the wire for gt15Le20Min.
        */
       public int getGt15Le20MinValue() {
@@ -2108,7 +2108,7 @@ public final class RiskScore {
        * 15 &lt; D &lt;= 20 min
        * </pre>
        *
-       * <code>.org.ena.server.common.protocols.generated.RiskLevel gt_15_le_20_min = 5;</code>
+       * <code>.org.cwa.server.common.protocols.generated.RiskLevel gt_15_le_20_min = 5;</code>
        * @return The gt15Le20Min.
        */
       public org.cwa.server.common.protocols.generated.RiskScore.RiskLevel getGt15Le20Min() {
@@ -2124,7 +2124,7 @@ public final class RiskScore {
        * 20 &lt; D &lt;= 25 min
        * </pre>
        *
-       * <code>.org.ena.server.common.protocols.generated.RiskLevel gt_20_le_25_min = 6;</code>
+       * <code>.org.cwa.server.common.protocols.generated.RiskLevel gt_20_le_25_min = 6;</code>
        * @return The enum numeric value on the wire for gt20Le25Min.
        */
       public int getGt20Le25MinValue() {
@@ -2135,7 +2135,7 @@ public final class RiskScore {
        * 20 &lt; D &lt;= 25 min
        * </pre>
        *
-       * <code>.org.ena.server.common.protocols.generated.RiskLevel gt_20_le_25_min = 6;</code>
+       * <code>.org.cwa.server.common.protocols.generated.RiskLevel gt_20_le_25_min = 6;</code>
        * @return The gt20Le25Min.
        */
       public org.cwa.server.common.protocols.generated.RiskScore.RiskLevel getGt20Le25Min() {
@@ -2151,7 +2151,7 @@ public final class RiskScore {
        * 25 &lt; D &lt;= 30 min
        * </pre>
        *
-       * <code>.org.ena.server.common.protocols.generated.RiskLevel gt_25_le_30_min = 7;</code>
+       * <code>.org.cwa.server.common.protocols.generated.RiskLevel gt_25_le_30_min = 7;</code>
        * @return The enum numeric value on the wire for gt25Le30Min.
        */
       public int getGt25Le30MinValue() {
@@ -2162,7 +2162,7 @@ public final class RiskScore {
        * 25 &lt; D &lt;= 30 min
        * </pre>
        *
-       * <code>.org.ena.server.common.protocols.generated.RiskLevel gt_25_le_30_min = 7;</code>
+       * <code>.org.cwa.server.common.protocols.generated.RiskLevel gt_25_le_30_min = 7;</code>
        * @return The gt25Le30Min.
        */
       public org.cwa.server.common.protocols.generated.RiskScore.RiskLevel getGt25Le30Min() {
@@ -2178,7 +2178,7 @@ public final class RiskScore {
        * &gt; 30 min, highest risk
        * </pre>
        *
-       * <code>.org.ena.server.common.protocols.generated.RiskLevel gt_30_min = 8;</code>
+       * <code>.org.cwa.server.common.protocols.generated.RiskLevel gt_30_min = 8;</code>
        * @return The enum numeric value on the wire for gt30Min.
        */
       public int getGt30MinValue() {
@@ -2189,7 +2189,7 @@ public final class RiskScore {
        * &gt; 30 min, highest risk
        * </pre>
        *
-       * <code>.org.ena.server.common.protocols.generated.RiskLevel gt_30_min = 8;</code>
+       * <code>.org.cwa.server.common.protocols.generated.RiskLevel gt_30_min = 8;</code>
        * @return The gt30Min.
        */
       public org.cwa.server.common.protocols.generated.RiskScore.RiskLevel getGt30Min() {
@@ -2423,26 +2423,26 @@ public final class RiskScore {
         return builder;
       }
       /**
-       * Protobuf type {@code org.ena.server.common.protocols.generated.RiskScoreParameters.DurationRiskParameter}
+       * Protobuf type {@code org.cwa.server.common.protocols.generated.RiskScoreParameters.DurationRiskParameter}
        */
       public static final class Builder extends
           com.google.protobuf.GeneratedMessageV3.Builder<Builder> implements
-          // @@protoc_insertion_point(builder_implements:org.ena.server.common.protocols.generated.RiskScoreParameters.DurationRiskParameter)
+          // @@protoc_insertion_point(builder_implements:org.cwa.server.common.protocols.generated.RiskScoreParameters.DurationRiskParameter)
           org.cwa.server.common.protocols.generated.RiskScore.RiskScoreParameters.DurationRiskParameterOrBuilder {
         public static final com.google.protobuf.Descriptors.Descriptor
             getDescriptor() {
-          return org.cwa.server.common.protocols.generated.RiskScore.internal_static_org_ena_server_common_protocols_generated_RiskScoreParameters_DurationRiskParameter_descriptor;
+          return org.cwa.server.common.protocols.generated.RiskScore.internal_static_org_cwa_server_common_protocols_generated_RiskScoreParameters_DurationRiskParameter_descriptor;
         }
 
         @java.lang.Override
         protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
             internalGetFieldAccessorTable() {
-          return org.cwa.server.common.protocols.generated.RiskScore.internal_static_org_ena_server_common_protocols_generated_RiskScoreParameters_DurationRiskParameter_fieldAccessorTable
+          return org.cwa.server.common.protocols.generated.RiskScore.internal_static_org_cwa_server_common_protocols_generated_RiskScoreParameters_DurationRiskParameter_fieldAccessorTable
               .ensureFieldAccessorsInitialized(
                   org.cwa.server.common.protocols.generated.RiskScore.RiskScoreParameters.DurationRiskParameter.class, org.cwa.server.common.protocols.generated.RiskScore.RiskScoreParameters.DurationRiskParameter.Builder.class);
         }
 
-        // Construct using org.ena.server.common.protocols.generated.RiskScore.RiskScoreParameters.DurationRiskParameter.newBuilder()
+        // Construct using org.cwa.server.common.protocols.generated.RiskScore.RiskScoreParameters.DurationRiskParameter.newBuilder()
         private Builder() {
           maybeForceBuilderInitialization();
         }
@@ -2482,7 +2482,7 @@ public final class RiskScore {
         @java.lang.Override
         public com.google.protobuf.Descriptors.Descriptor
             getDescriptorForType() {
-          return org.cwa.server.common.protocols.generated.RiskScore.internal_static_org_ena_server_common_protocols_generated_RiskScoreParameters_DurationRiskParameter_descriptor;
+          return org.cwa.server.common.protocols.generated.RiskScore.internal_static_org_cwa_server_common_protocols_generated_RiskScoreParameters_DurationRiskParameter_descriptor;
         }
 
         @java.lang.Override
@@ -2617,7 +2617,7 @@ public final class RiskScore {
          * D = 0 min, lowest risk
          * </pre>
          *
-         * <code>.org.ena.server.common.protocols.generated.RiskLevel eq_0_min = 1;</code>
+         * <code>.org.cwa.server.common.protocols.generated.RiskLevel eq_0_min = 1;</code>
          * @return The enum numeric value on the wire for eq0Min.
          */
         public int getEq0MinValue() {
@@ -2628,7 +2628,7 @@ public final class RiskScore {
          * D = 0 min, lowest risk
          * </pre>
          *
-         * <code>.org.ena.server.common.protocols.generated.RiskLevel eq_0_min = 1;</code>
+         * <code>.org.cwa.server.common.protocols.generated.RiskLevel eq_0_min = 1;</code>
          * @param value The enum numeric value on the wire for eq0Min to set.
          * @return This builder for chaining.
          */
@@ -2642,7 +2642,7 @@ public final class RiskScore {
          * D = 0 min, lowest risk
          * </pre>
          *
-         * <code>.org.ena.server.common.protocols.generated.RiskLevel eq_0_min = 1;</code>
+         * <code>.org.cwa.server.common.protocols.generated.RiskLevel eq_0_min = 1;</code>
          * @return The eq0Min.
          */
         public org.cwa.server.common.protocols.generated.RiskScore.RiskLevel getEq0Min() {
@@ -2655,7 +2655,7 @@ public final class RiskScore {
          * D = 0 min, lowest risk
          * </pre>
          *
-         * <code>.org.ena.server.common.protocols.generated.RiskLevel eq_0_min = 1;</code>
+         * <code>.org.cwa.server.common.protocols.generated.RiskLevel eq_0_min = 1;</code>
          * @param value The eq0Min to set.
          * @return This builder for chaining.
          */
@@ -2673,7 +2673,7 @@ public final class RiskScore {
          * D = 0 min, lowest risk
          * </pre>
          *
-         * <code>.org.ena.server.common.protocols.generated.RiskLevel eq_0_min = 1;</code>
+         * <code>.org.cwa.server.common.protocols.generated.RiskLevel eq_0_min = 1;</code>
          * @return This builder for chaining.
          */
         public Builder clearEq0Min() {
@@ -2689,7 +2689,7 @@ public final class RiskScore {
          * 0 &lt; D &lt;= 5 min
          * </pre>
          *
-         * <code>.org.ena.server.common.protocols.generated.RiskLevel gt_0_le_5_min = 2;</code>
+         * <code>.org.cwa.server.common.protocols.generated.RiskLevel gt_0_le_5_min = 2;</code>
          * @return The enum numeric value on the wire for gt0Le5Min.
          */
         public int getGt0Le5MinValue() {
@@ -2700,7 +2700,7 @@ public final class RiskScore {
          * 0 &lt; D &lt;= 5 min
          * </pre>
          *
-         * <code>.org.ena.server.common.protocols.generated.RiskLevel gt_0_le_5_min = 2;</code>
+         * <code>.org.cwa.server.common.protocols.generated.RiskLevel gt_0_le_5_min = 2;</code>
          * @param value The enum numeric value on the wire for gt0Le5Min to set.
          * @return This builder for chaining.
          */
@@ -2714,7 +2714,7 @@ public final class RiskScore {
          * 0 &lt; D &lt;= 5 min
          * </pre>
          *
-         * <code>.org.ena.server.common.protocols.generated.RiskLevel gt_0_le_5_min = 2;</code>
+         * <code>.org.cwa.server.common.protocols.generated.RiskLevel gt_0_le_5_min = 2;</code>
          * @return The gt0Le5Min.
          */
         public org.cwa.server.common.protocols.generated.RiskScore.RiskLevel getGt0Le5Min() {
@@ -2727,7 +2727,7 @@ public final class RiskScore {
          * 0 &lt; D &lt;= 5 min
          * </pre>
          *
-         * <code>.org.ena.server.common.protocols.generated.RiskLevel gt_0_le_5_min = 2;</code>
+         * <code>.org.cwa.server.common.protocols.generated.RiskLevel gt_0_le_5_min = 2;</code>
          * @param value The gt0Le5Min to set.
          * @return This builder for chaining.
          */
@@ -2745,7 +2745,7 @@ public final class RiskScore {
          * 0 &lt; D &lt;= 5 min
          * </pre>
          *
-         * <code>.org.ena.server.common.protocols.generated.RiskLevel gt_0_le_5_min = 2;</code>
+         * <code>.org.cwa.server.common.protocols.generated.RiskLevel gt_0_le_5_min = 2;</code>
          * @return This builder for chaining.
          */
         public Builder clearGt0Le5Min() {
@@ -2761,7 +2761,7 @@ public final class RiskScore {
          * 5 &lt; D &lt;= 10 min
          * </pre>
          *
-         * <code>.org.ena.server.common.protocols.generated.RiskLevel gt_5_le_10_min = 3;</code>
+         * <code>.org.cwa.server.common.protocols.generated.RiskLevel gt_5_le_10_min = 3;</code>
          * @return The enum numeric value on the wire for gt5Le10Min.
          */
         public int getGt5Le10MinValue() {
@@ -2772,7 +2772,7 @@ public final class RiskScore {
          * 5 &lt; D &lt;= 10 min
          * </pre>
          *
-         * <code>.org.ena.server.common.protocols.generated.RiskLevel gt_5_le_10_min = 3;</code>
+         * <code>.org.cwa.server.common.protocols.generated.RiskLevel gt_5_le_10_min = 3;</code>
          * @param value The enum numeric value on the wire for gt5Le10Min to set.
          * @return This builder for chaining.
          */
@@ -2786,7 +2786,7 @@ public final class RiskScore {
          * 5 &lt; D &lt;= 10 min
          * </pre>
          *
-         * <code>.org.ena.server.common.protocols.generated.RiskLevel gt_5_le_10_min = 3;</code>
+         * <code>.org.cwa.server.common.protocols.generated.RiskLevel gt_5_le_10_min = 3;</code>
          * @return The gt5Le10Min.
          */
         public org.cwa.server.common.protocols.generated.RiskScore.RiskLevel getGt5Le10Min() {
@@ -2799,7 +2799,7 @@ public final class RiskScore {
          * 5 &lt; D &lt;= 10 min
          * </pre>
          *
-         * <code>.org.ena.server.common.protocols.generated.RiskLevel gt_5_le_10_min = 3;</code>
+         * <code>.org.cwa.server.common.protocols.generated.RiskLevel gt_5_le_10_min = 3;</code>
          * @param value The gt5Le10Min to set.
          * @return This builder for chaining.
          */
@@ -2817,7 +2817,7 @@ public final class RiskScore {
          * 5 &lt; D &lt;= 10 min
          * </pre>
          *
-         * <code>.org.ena.server.common.protocols.generated.RiskLevel gt_5_le_10_min = 3;</code>
+         * <code>.org.cwa.server.common.protocols.generated.RiskLevel gt_5_le_10_min = 3;</code>
          * @return This builder for chaining.
          */
         public Builder clearGt5Le10Min() {
@@ -2833,7 +2833,7 @@ public final class RiskScore {
          * 10 &lt; D &lt;= 15 min
          * </pre>
          *
-         * <code>.org.ena.server.common.protocols.generated.RiskLevel gt_10_le_15_min = 4;</code>
+         * <code>.org.cwa.server.common.protocols.generated.RiskLevel gt_10_le_15_min = 4;</code>
          * @return The enum numeric value on the wire for gt10Le15Min.
          */
         public int getGt10Le15MinValue() {
@@ -2844,7 +2844,7 @@ public final class RiskScore {
          * 10 &lt; D &lt;= 15 min
          * </pre>
          *
-         * <code>.org.ena.server.common.protocols.generated.RiskLevel gt_10_le_15_min = 4;</code>
+         * <code>.org.cwa.server.common.protocols.generated.RiskLevel gt_10_le_15_min = 4;</code>
          * @param value The enum numeric value on the wire for gt10Le15Min to set.
          * @return This builder for chaining.
          */
@@ -2858,7 +2858,7 @@ public final class RiskScore {
          * 10 &lt; D &lt;= 15 min
          * </pre>
          *
-         * <code>.org.ena.server.common.protocols.generated.RiskLevel gt_10_le_15_min = 4;</code>
+         * <code>.org.cwa.server.common.protocols.generated.RiskLevel gt_10_le_15_min = 4;</code>
          * @return The gt10Le15Min.
          */
         public org.cwa.server.common.protocols.generated.RiskScore.RiskLevel getGt10Le15Min() {
@@ -2871,7 +2871,7 @@ public final class RiskScore {
          * 10 &lt; D &lt;= 15 min
          * </pre>
          *
-         * <code>.org.ena.server.common.protocols.generated.RiskLevel gt_10_le_15_min = 4;</code>
+         * <code>.org.cwa.server.common.protocols.generated.RiskLevel gt_10_le_15_min = 4;</code>
          * @param value The gt10Le15Min to set.
          * @return This builder for chaining.
          */
@@ -2889,7 +2889,7 @@ public final class RiskScore {
          * 10 &lt; D &lt;= 15 min
          * </pre>
          *
-         * <code>.org.ena.server.common.protocols.generated.RiskLevel gt_10_le_15_min = 4;</code>
+         * <code>.org.cwa.server.common.protocols.generated.RiskLevel gt_10_le_15_min = 4;</code>
          * @return This builder for chaining.
          */
         public Builder clearGt10Le15Min() {
@@ -2905,7 +2905,7 @@ public final class RiskScore {
          * 15 &lt; D &lt;= 20 min
          * </pre>
          *
-         * <code>.org.ena.server.common.protocols.generated.RiskLevel gt_15_le_20_min = 5;</code>
+         * <code>.org.cwa.server.common.protocols.generated.RiskLevel gt_15_le_20_min = 5;</code>
          * @return The enum numeric value on the wire for gt15Le20Min.
          */
         public int getGt15Le20MinValue() {
@@ -2916,7 +2916,7 @@ public final class RiskScore {
          * 15 &lt; D &lt;= 20 min
          * </pre>
          *
-         * <code>.org.ena.server.common.protocols.generated.RiskLevel gt_15_le_20_min = 5;</code>
+         * <code>.org.cwa.server.common.protocols.generated.RiskLevel gt_15_le_20_min = 5;</code>
          * @param value The enum numeric value on the wire for gt15Le20Min to set.
          * @return This builder for chaining.
          */
@@ -2930,7 +2930,7 @@ public final class RiskScore {
          * 15 &lt; D &lt;= 20 min
          * </pre>
          *
-         * <code>.org.ena.server.common.protocols.generated.RiskLevel gt_15_le_20_min = 5;</code>
+         * <code>.org.cwa.server.common.protocols.generated.RiskLevel gt_15_le_20_min = 5;</code>
          * @return The gt15Le20Min.
          */
         public org.cwa.server.common.protocols.generated.RiskScore.RiskLevel getGt15Le20Min() {
@@ -2943,7 +2943,7 @@ public final class RiskScore {
          * 15 &lt; D &lt;= 20 min
          * </pre>
          *
-         * <code>.org.ena.server.common.protocols.generated.RiskLevel gt_15_le_20_min = 5;</code>
+         * <code>.org.cwa.server.common.protocols.generated.RiskLevel gt_15_le_20_min = 5;</code>
          * @param value The gt15Le20Min to set.
          * @return This builder for chaining.
          */
@@ -2961,7 +2961,7 @@ public final class RiskScore {
          * 15 &lt; D &lt;= 20 min
          * </pre>
          *
-         * <code>.org.ena.server.common.protocols.generated.RiskLevel gt_15_le_20_min = 5;</code>
+         * <code>.org.cwa.server.common.protocols.generated.RiskLevel gt_15_le_20_min = 5;</code>
          * @return This builder for chaining.
          */
         public Builder clearGt15Le20Min() {
@@ -2977,7 +2977,7 @@ public final class RiskScore {
          * 20 &lt; D &lt;= 25 min
          * </pre>
          *
-         * <code>.org.ena.server.common.protocols.generated.RiskLevel gt_20_le_25_min = 6;</code>
+         * <code>.org.cwa.server.common.protocols.generated.RiskLevel gt_20_le_25_min = 6;</code>
          * @return The enum numeric value on the wire for gt20Le25Min.
          */
         public int getGt20Le25MinValue() {
@@ -2988,7 +2988,7 @@ public final class RiskScore {
          * 20 &lt; D &lt;= 25 min
          * </pre>
          *
-         * <code>.org.ena.server.common.protocols.generated.RiskLevel gt_20_le_25_min = 6;</code>
+         * <code>.org.cwa.server.common.protocols.generated.RiskLevel gt_20_le_25_min = 6;</code>
          * @param value The enum numeric value on the wire for gt20Le25Min to set.
          * @return This builder for chaining.
          */
@@ -3002,7 +3002,7 @@ public final class RiskScore {
          * 20 &lt; D &lt;= 25 min
          * </pre>
          *
-         * <code>.org.ena.server.common.protocols.generated.RiskLevel gt_20_le_25_min = 6;</code>
+         * <code>.org.cwa.server.common.protocols.generated.RiskLevel gt_20_le_25_min = 6;</code>
          * @return The gt20Le25Min.
          */
         public org.cwa.server.common.protocols.generated.RiskScore.RiskLevel getGt20Le25Min() {
@@ -3015,7 +3015,7 @@ public final class RiskScore {
          * 20 &lt; D &lt;= 25 min
          * </pre>
          *
-         * <code>.org.ena.server.common.protocols.generated.RiskLevel gt_20_le_25_min = 6;</code>
+         * <code>.org.cwa.server.common.protocols.generated.RiskLevel gt_20_le_25_min = 6;</code>
          * @param value The gt20Le25Min to set.
          * @return This builder for chaining.
          */
@@ -3033,7 +3033,7 @@ public final class RiskScore {
          * 20 &lt; D &lt;= 25 min
          * </pre>
          *
-         * <code>.org.ena.server.common.protocols.generated.RiskLevel gt_20_le_25_min = 6;</code>
+         * <code>.org.cwa.server.common.protocols.generated.RiskLevel gt_20_le_25_min = 6;</code>
          * @return This builder for chaining.
          */
         public Builder clearGt20Le25Min() {
@@ -3049,7 +3049,7 @@ public final class RiskScore {
          * 25 &lt; D &lt;= 30 min
          * </pre>
          *
-         * <code>.org.ena.server.common.protocols.generated.RiskLevel gt_25_le_30_min = 7;</code>
+         * <code>.org.cwa.server.common.protocols.generated.RiskLevel gt_25_le_30_min = 7;</code>
          * @return The enum numeric value on the wire for gt25Le30Min.
          */
         public int getGt25Le30MinValue() {
@@ -3060,7 +3060,7 @@ public final class RiskScore {
          * 25 &lt; D &lt;= 30 min
          * </pre>
          *
-         * <code>.org.ena.server.common.protocols.generated.RiskLevel gt_25_le_30_min = 7;</code>
+         * <code>.org.cwa.server.common.protocols.generated.RiskLevel gt_25_le_30_min = 7;</code>
          * @param value The enum numeric value on the wire for gt25Le30Min to set.
          * @return This builder for chaining.
          */
@@ -3074,7 +3074,7 @@ public final class RiskScore {
          * 25 &lt; D &lt;= 30 min
          * </pre>
          *
-         * <code>.org.ena.server.common.protocols.generated.RiskLevel gt_25_le_30_min = 7;</code>
+         * <code>.org.cwa.server.common.protocols.generated.RiskLevel gt_25_le_30_min = 7;</code>
          * @return The gt25Le30Min.
          */
         public org.cwa.server.common.protocols.generated.RiskScore.RiskLevel getGt25Le30Min() {
@@ -3087,7 +3087,7 @@ public final class RiskScore {
          * 25 &lt; D &lt;= 30 min
          * </pre>
          *
-         * <code>.org.ena.server.common.protocols.generated.RiskLevel gt_25_le_30_min = 7;</code>
+         * <code>.org.cwa.server.common.protocols.generated.RiskLevel gt_25_le_30_min = 7;</code>
          * @param value The gt25Le30Min to set.
          * @return This builder for chaining.
          */
@@ -3105,7 +3105,7 @@ public final class RiskScore {
          * 25 &lt; D &lt;= 30 min
          * </pre>
          *
-         * <code>.org.ena.server.common.protocols.generated.RiskLevel gt_25_le_30_min = 7;</code>
+         * <code>.org.cwa.server.common.protocols.generated.RiskLevel gt_25_le_30_min = 7;</code>
          * @return This builder for chaining.
          */
         public Builder clearGt25Le30Min() {
@@ -3121,7 +3121,7 @@ public final class RiskScore {
          * &gt; 30 min, highest risk
          * </pre>
          *
-         * <code>.org.ena.server.common.protocols.generated.RiskLevel gt_30_min = 8;</code>
+         * <code>.org.cwa.server.common.protocols.generated.RiskLevel gt_30_min = 8;</code>
          * @return The enum numeric value on the wire for gt30Min.
          */
         public int getGt30MinValue() {
@@ -3132,7 +3132,7 @@ public final class RiskScore {
          * &gt; 30 min, highest risk
          * </pre>
          *
-         * <code>.org.ena.server.common.protocols.generated.RiskLevel gt_30_min = 8;</code>
+         * <code>.org.cwa.server.common.protocols.generated.RiskLevel gt_30_min = 8;</code>
          * @param value The enum numeric value on the wire for gt30Min to set.
          * @return This builder for chaining.
          */
@@ -3146,7 +3146,7 @@ public final class RiskScore {
          * &gt; 30 min, highest risk
          * </pre>
          *
-         * <code>.org.ena.server.common.protocols.generated.RiskLevel gt_30_min = 8;</code>
+         * <code>.org.cwa.server.common.protocols.generated.RiskLevel gt_30_min = 8;</code>
          * @return The gt30Min.
          */
         public org.cwa.server.common.protocols.generated.RiskScore.RiskLevel getGt30Min() {
@@ -3159,7 +3159,7 @@ public final class RiskScore {
          * &gt; 30 min, highest risk
          * </pre>
          *
-         * <code>.org.ena.server.common.protocols.generated.RiskLevel gt_30_min = 8;</code>
+         * <code>.org.cwa.server.common.protocols.generated.RiskLevel gt_30_min = 8;</code>
          * @param value The gt30Min to set.
          * @return This builder for chaining.
          */
@@ -3177,7 +3177,7 @@ public final class RiskScore {
          * &gt; 30 min, highest risk
          * </pre>
          *
-         * <code>.org.ena.server.common.protocols.generated.RiskLevel gt_30_min = 8;</code>
+         * <code>.org.cwa.server.common.protocols.generated.RiskLevel gt_30_min = 8;</code>
          * @return This builder for chaining.
          */
         public Builder clearGt30Min() {
@@ -3199,10 +3199,10 @@ public final class RiskScore {
         }
 
 
-        // @@protoc_insertion_point(builder_scope:org.ena.server.common.protocols.generated.RiskScoreParameters.DurationRiskParameter)
+        // @@protoc_insertion_point(builder_scope:org.cwa.server.common.protocols.generated.RiskScoreParameters.DurationRiskParameter)
       }
 
-      // @@protoc_insertion_point(class_scope:org.ena.server.common.protocols.generated.RiskScoreParameters.DurationRiskParameter)
+      // @@protoc_insertion_point(class_scope:org.cwa.server.common.protocols.generated.RiskScoreParameters.DurationRiskParameter)
       private static final org.cwa.server.common.protocols.generated.RiskScore.RiskScoreParameters.DurationRiskParameter DEFAULT_INSTANCE;
       static {
         DEFAULT_INSTANCE = new org.cwa.server.common.protocols.generated.RiskScore.RiskScoreParameters.DurationRiskParameter();
@@ -3240,7 +3240,7 @@ public final class RiskScore {
     }
 
     public interface DaysSinceLastExposureRiskParameterOrBuilder extends
-        // @@protoc_insertion_point(interface_extends:org.ena.server.common.protocols.generated.RiskScoreParameters.DaysSinceLastExposureRiskParameter)
+        // @@protoc_insertion_point(interface_extends:org.cwa.server.common.protocols.generated.RiskScoreParameters.DaysSinceLastExposureRiskParameter)
         com.google.protobuf.MessageOrBuilder {
 
       /**
@@ -3248,7 +3248,7 @@ public final class RiskScore {
        * D &gt;= 14 days, lowest risk
        * </pre>
        *
-       * <code>.org.ena.server.common.protocols.generated.RiskLevel ge_14_days = 1;</code>
+       * <code>.org.cwa.server.common.protocols.generated.RiskLevel ge_14_days = 1;</code>
        * @return The enum numeric value on the wire for ge14Days.
        */
       int getGe14DaysValue();
@@ -3257,7 +3257,7 @@ public final class RiskScore {
        * D &gt;= 14 days, lowest risk
        * </pre>
        *
-       * <code>.org.ena.server.common.protocols.generated.RiskLevel ge_14_days = 1;</code>
+       * <code>.org.cwa.server.common.protocols.generated.RiskLevel ge_14_days = 1;</code>
        * @return The ge14Days.
        */
       org.cwa.server.common.protocols.generated.RiskScore.RiskLevel getGe14Days();
@@ -3267,7 +3267,7 @@ public final class RiskScore {
        * 12 &lt;= D &lt; 14 days
        * </pre>
        *
-       * <code>.org.ena.server.common.protocols.generated.RiskLevel ge_12_lt_14_days = 2;</code>
+       * <code>.org.cwa.server.common.protocols.generated.RiskLevel ge_12_lt_14_days = 2;</code>
        * @return The enum numeric value on the wire for ge12Lt14Days.
        */
       int getGe12Lt14DaysValue();
@@ -3276,7 +3276,7 @@ public final class RiskScore {
        * 12 &lt;= D &lt; 14 days
        * </pre>
        *
-       * <code>.org.ena.server.common.protocols.generated.RiskLevel ge_12_lt_14_days = 2;</code>
+       * <code>.org.cwa.server.common.protocols.generated.RiskLevel ge_12_lt_14_days = 2;</code>
        * @return The ge12Lt14Days.
        */
       org.cwa.server.common.protocols.generated.RiskScore.RiskLevel getGe12Lt14Days();
@@ -3286,7 +3286,7 @@ public final class RiskScore {
        * 10 &lt;= D &lt; 12 days
        * </pre>
        *
-       * <code>.org.ena.server.common.protocols.generated.RiskLevel ge_10_lt_12_days = 3;</code>
+       * <code>.org.cwa.server.common.protocols.generated.RiskLevel ge_10_lt_12_days = 3;</code>
        * @return The enum numeric value on the wire for ge10Lt12Days.
        */
       int getGe10Lt12DaysValue();
@@ -3295,7 +3295,7 @@ public final class RiskScore {
        * 10 &lt;= D &lt; 12 days
        * </pre>
        *
-       * <code>.org.ena.server.common.protocols.generated.RiskLevel ge_10_lt_12_days = 3;</code>
+       * <code>.org.cwa.server.common.protocols.generated.RiskLevel ge_10_lt_12_days = 3;</code>
        * @return The ge10Lt12Days.
        */
       org.cwa.server.common.protocols.generated.RiskScore.RiskLevel getGe10Lt12Days();
@@ -3305,7 +3305,7 @@ public final class RiskScore {
        * 8 &lt;= D &lt; 10 days
        * </pre>
        *
-       * <code>.org.ena.server.common.protocols.generated.RiskLevel ge_8_lt_10_days = 4;</code>
+       * <code>.org.cwa.server.common.protocols.generated.RiskLevel ge_8_lt_10_days = 4;</code>
        * @return The enum numeric value on the wire for ge8Lt10Days.
        */
       int getGe8Lt10DaysValue();
@@ -3314,7 +3314,7 @@ public final class RiskScore {
        * 8 &lt;= D &lt; 10 days
        * </pre>
        *
-       * <code>.org.ena.server.common.protocols.generated.RiskLevel ge_8_lt_10_days = 4;</code>
+       * <code>.org.cwa.server.common.protocols.generated.RiskLevel ge_8_lt_10_days = 4;</code>
        * @return The ge8Lt10Days.
        */
       org.cwa.server.common.protocols.generated.RiskScore.RiskLevel getGe8Lt10Days();
@@ -3324,7 +3324,7 @@ public final class RiskScore {
        * 6 &lt;= D &lt; 8 days
        * </pre>
        *
-       * <code>.org.ena.server.common.protocols.generated.RiskLevel ge_6_lt_8_days = 5;</code>
+       * <code>.org.cwa.server.common.protocols.generated.RiskLevel ge_6_lt_8_days = 5;</code>
        * @return The enum numeric value on the wire for ge6Lt8Days.
        */
       int getGe6Lt8DaysValue();
@@ -3333,7 +3333,7 @@ public final class RiskScore {
        * 6 &lt;= D &lt; 8 days
        * </pre>
        *
-       * <code>.org.ena.server.common.protocols.generated.RiskLevel ge_6_lt_8_days = 5;</code>
+       * <code>.org.cwa.server.common.protocols.generated.RiskLevel ge_6_lt_8_days = 5;</code>
        * @return The ge6Lt8Days.
        */
       org.cwa.server.common.protocols.generated.RiskScore.RiskLevel getGe6Lt8Days();
@@ -3343,7 +3343,7 @@ public final class RiskScore {
        * 4 &lt;= D &lt; 6 days
        * </pre>
        *
-       * <code>.org.ena.server.common.protocols.generated.RiskLevel ge_4_lt_6_days = 6;</code>
+       * <code>.org.cwa.server.common.protocols.generated.RiskLevel ge_4_lt_6_days = 6;</code>
        * @return The enum numeric value on the wire for ge4Lt6Days.
        */
       int getGe4Lt6DaysValue();
@@ -3352,7 +3352,7 @@ public final class RiskScore {
        * 4 &lt;= D &lt; 6 days
        * </pre>
        *
-       * <code>.org.ena.server.common.protocols.generated.RiskLevel ge_4_lt_6_days = 6;</code>
+       * <code>.org.cwa.server.common.protocols.generated.RiskLevel ge_4_lt_6_days = 6;</code>
        * @return The ge4Lt6Days.
        */
       org.cwa.server.common.protocols.generated.RiskScore.RiskLevel getGe4Lt6Days();
@@ -3362,7 +3362,7 @@ public final class RiskScore {
        * 2 &lt;= D &lt; 4 days
        * </pre>
        *
-       * <code>.org.ena.server.common.protocols.generated.RiskLevel ge_2_lt_4_days = 7;</code>
+       * <code>.org.cwa.server.common.protocols.generated.RiskLevel ge_2_lt_4_days = 7;</code>
        * @return The enum numeric value on the wire for ge2Lt4Days.
        */
       int getGe2Lt4DaysValue();
@@ -3371,7 +3371,7 @@ public final class RiskScore {
        * 2 &lt;= D &lt; 4 days
        * </pre>
        *
-       * <code>.org.ena.server.common.protocols.generated.RiskLevel ge_2_lt_4_days = 7;</code>
+       * <code>.org.cwa.server.common.protocols.generated.RiskLevel ge_2_lt_4_days = 7;</code>
        * @return The ge2Lt4Days.
        */
       org.cwa.server.common.protocols.generated.RiskScore.RiskLevel getGe2Lt4Days();
@@ -3381,7 +3381,7 @@ public final class RiskScore {
        * 0 &lt;= D &lt; 2 days, highest risk
        * </pre>
        *
-       * <code>.org.ena.server.common.protocols.generated.RiskLevel ge_0_lt_2_days = 8;</code>
+       * <code>.org.cwa.server.common.protocols.generated.RiskLevel ge_0_lt_2_days = 8;</code>
        * @return The enum numeric value on the wire for ge0Lt2Days.
        */
       int getGe0Lt2DaysValue();
@@ -3390,17 +3390,17 @@ public final class RiskScore {
        * 0 &lt;= D &lt; 2 days, highest risk
        * </pre>
        *
-       * <code>.org.ena.server.common.protocols.generated.RiskLevel ge_0_lt_2_days = 8;</code>
+       * <code>.org.cwa.server.common.protocols.generated.RiskLevel ge_0_lt_2_days = 8;</code>
        * @return The ge0Lt2Days.
        */
       org.cwa.server.common.protocols.generated.RiskScore.RiskLevel getGe0Lt2Days();
     }
     /**
-     * Protobuf type {@code org.ena.server.common.protocols.generated.RiskScoreParameters.DaysSinceLastExposureRiskParameter}
+     * Protobuf type {@code org.cwa.server.common.protocols.generated.RiskScoreParameters.DaysSinceLastExposureRiskParameter}
      */
     public  static final class DaysSinceLastExposureRiskParameter extends
         com.google.protobuf.GeneratedMessageV3 implements
-        // @@protoc_insertion_point(message_implements:org.ena.server.common.protocols.generated.RiskScoreParameters.DaysSinceLastExposureRiskParameter)
+        // @@protoc_insertion_point(message_implements:org.cwa.server.common.protocols.generated.RiskScoreParameters.DaysSinceLastExposureRiskParameter)
         DaysSinceLastExposureRiskParameterOrBuilder {
     private static final long serialVersionUID = 0L;
       // Use DaysSinceLastExposureRiskParameter.newBuilder() to construct.
@@ -3517,13 +3517,13 @@ public final class RiskScore {
       }
       public static final com.google.protobuf.Descriptors.Descriptor
           getDescriptor() {
-        return org.cwa.server.common.protocols.generated.RiskScore.internal_static_org_ena_server_common_protocols_generated_RiskScoreParameters_DaysSinceLastExposureRiskParameter_descriptor;
+        return org.cwa.server.common.protocols.generated.RiskScore.internal_static_org_cwa_server_common_protocols_generated_RiskScoreParameters_DaysSinceLastExposureRiskParameter_descriptor;
       }
 
       @java.lang.Override
       protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
           internalGetFieldAccessorTable() {
-        return org.cwa.server.common.protocols.generated.RiskScore.internal_static_org_ena_server_common_protocols_generated_RiskScoreParameters_DaysSinceLastExposureRiskParameter_fieldAccessorTable
+        return org.cwa.server.common.protocols.generated.RiskScore.internal_static_org_cwa_server_common_protocols_generated_RiskScoreParameters_DaysSinceLastExposureRiskParameter_fieldAccessorTable
             .ensureFieldAccessorsInitialized(
                 org.cwa.server.common.protocols.generated.RiskScore.RiskScoreParameters.DaysSinceLastExposureRiskParameter.class, org.cwa.server.common.protocols.generated.RiskScore.RiskScoreParameters.DaysSinceLastExposureRiskParameter.Builder.class);
       }
@@ -3535,7 +3535,7 @@ public final class RiskScore {
        * D &gt;= 14 days, lowest risk
        * </pre>
        *
-       * <code>.org.ena.server.common.protocols.generated.RiskLevel ge_14_days = 1;</code>
+       * <code>.org.cwa.server.common.protocols.generated.RiskLevel ge_14_days = 1;</code>
        * @return The enum numeric value on the wire for ge14Days.
        */
       public int getGe14DaysValue() {
@@ -3546,7 +3546,7 @@ public final class RiskScore {
        * D &gt;= 14 days, lowest risk
        * </pre>
        *
-       * <code>.org.ena.server.common.protocols.generated.RiskLevel ge_14_days = 1;</code>
+       * <code>.org.cwa.server.common.protocols.generated.RiskLevel ge_14_days = 1;</code>
        * @return The ge14Days.
        */
       public org.cwa.server.common.protocols.generated.RiskScore.RiskLevel getGe14Days() {
@@ -3562,7 +3562,7 @@ public final class RiskScore {
        * 12 &lt;= D &lt; 14 days
        * </pre>
        *
-       * <code>.org.ena.server.common.protocols.generated.RiskLevel ge_12_lt_14_days = 2;</code>
+       * <code>.org.cwa.server.common.protocols.generated.RiskLevel ge_12_lt_14_days = 2;</code>
        * @return The enum numeric value on the wire for ge12Lt14Days.
        */
       public int getGe12Lt14DaysValue() {
@@ -3573,7 +3573,7 @@ public final class RiskScore {
        * 12 &lt;= D &lt; 14 days
        * </pre>
        *
-       * <code>.org.ena.server.common.protocols.generated.RiskLevel ge_12_lt_14_days = 2;</code>
+       * <code>.org.cwa.server.common.protocols.generated.RiskLevel ge_12_lt_14_days = 2;</code>
        * @return The ge12Lt14Days.
        */
       public org.cwa.server.common.protocols.generated.RiskScore.RiskLevel getGe12Lt14Days() {
@@ -3589,7 +3589,7 @@ public final class RiskScore {
        * 10 &lt;= D &lt; 12 days
        * </pre>
        *
-       * <code>.org.ena.server.common.protocols.generated.RiskLevel ge_10_lt_12_days = 3;</code>
+       * <code>.org.cwa.server.common.protocols.generated.RiskLevel ge_10_lt_12_days = 3;</code>
        * @return The enum numeric value on the wire for ge10Lt12Days.
        */
       public int getGe10Lt12DaysValue() {
@@ -3600,7 +3600,7 @@ public final class RiskScore {
        * 10 &lt;= D &lt; 12 days
        * </pre>
        *
-       * <code>.org.ena.server.common.protocols.generated.RiskLevel ge_10_lt_12_days = 3;</code>
+       * <code>.org.cwa.server.common.protocols.generated.RiskLevel ge_10_lt_12_days = 3;</code>
        * @return The ge10Lt12Days.
        */
       public org.cwa.server.common.protocols.generated.RiskScore.RiskLevel getGe10Lt12Days() {
@@ -3616,7 +3616,7 @@ public final class RiskScore {
        * 8 &lt;= D &lt; 10 days
        * </pre>
        *
-       * <code>.org.ena.server.common.protocols.generated.RiskLevel ge_8_lt_10_days = 4;</code>
+       * <code>.org.cwa.server.common.protocols.generated.RiskLevel ge_8_lt_10_days = 4;</code>
        * @return The enum numeric value on the wire for ge8Lt10Days.
        */
       public int getGe8Lt10DaysValue() {
@@ -3627,7 +3627,7 @@ public final class RiskScore {
        * 8 &lt;= D &lt; 10 days
        * </pre>
        *
-       * <code>.org.ena.server.common.protocols.generated.RiskLevel ge_8_lt_10_days = 4;</code>
+       * <code>.org.cwa.server.common.protocols.generated.RiskLevel ge_8_lt_10_days = 4;</code>
        * @return The ge8Lt10Days.
        */
       public org.cwa.server.common.protocols.generated.RiskScore.RiskLevel getGe8Lt10Days() {
@@ -3643,7 +3643,7 @@ public final class RiskScore {
        * 6 &lt;= D &lt; 8 days
        * </pre>
        *
-       * <code>.org.ena.server.common.protocols.generated.RiskLevel ge_6_lt_8_days = 5;</code>
+       * <code>.org.cwa.server.common.protocols.generated.RiskLevel ge_6_lt_8_days = 5;</code>
        * @return The enum numeric value on the wire for ge6Lt8Days.
        */
       public int getGe6Lt8DaysValue() {
@@ -3654,7 +3654,7 @@ public final class RiskScore {
        * 6 &lt;= D &lt; 8 days
        * </pre>
        *
-       * <code>.org.ena.server.common.protocols.generated.RiskLevel ge_6_lt_8_days = 5;</code>
+       * <code>.org.cwa.server.common.protocols.generated.RiskLevel ge_6_lt_8_days = 5;</code>
        * @return The ge6Lt8Days.
        */
       public org.cwa.server.common.protocols.generated.RiskScore.RiskLevel getGe6Lt8Days() {
@@ -3670,7 +3670,7 @@ public final class RiskScore {
        * 4 &lt;= D &lt; 6 days
        * </pre>
        *
-       * <code>.org.ena.server.common.protocols.generated.RiskLevel ge_4_lt_6_days = 6;</code>
+       * <code>.org.cwa.server.common.protocols.generated.RiskLevel ge_4_lt_6_days = 6;</code>
        * @return The enum numeric value on the wire for ge4Lt6Days.
        */
       public int getGe4Lt6DaysValue() {
@@ -3681,7 +3681,7 @@ public final class RiskScore {
        * 4 &lt;= D &lt; 6 days
        * </pre>
        *
-       * <code>.org.ena.server.common.protocols.generated.RiskLevel ge_4_lt_6_days = 6;</code>
+       * <code>.org.cwa.server.common.protocols.generated.RiskLevel ge_4_lt_6_days = 6;</code>
        * @return The ge4Lt6Days.
        */
       public org.cwa.server.common.protocols.generated.RiskScore.RiskLevel getGe4Lt6Days() {
@@ -3697,7 +3697,7 @@ public final class RiskScore {
        * 2 &lt;= D &lt; 4 days
        * </pre>
        *
-       * <code>.org.ena.server.common.protocols.generated.RiskLevel ge_2_lt_4_days = 7;</code>
+       * <code>.org.cwa.server.common.protocols.generated.RiskLevel ge_2_lt_4_days = 7;</code>
        * @return The enum numeric value on the wire for ge2Lt4Days.
        */
       public int getGe2Lt4DaysValue() {
@@ -3708,7 +3708,7 @@ public final class RiskScore {
        * 2 &lt;= D &lt; 4 days
        * </pre>
        *
-       * <code>.org.ena.server.common.protocols.generated.RiskLevel ge_2_lt_4_days = 7;</code>
+       * <code>.org.cwa.server.common.protocols.generated.RiskLevel ge_2_lt_4_days = 7;</code>
        * @return The ge2Lt4Days.
        */
       public org.cwa.server.common.protocols.generated.RiskScore.RiskLevel getGe2Lt4Days() {
@@ -3724,7 +3724,7 @@ public final class RiskScore {
        * 0 &lt;= D &lt; 2 days, highest risk
        * </pre>
        *
-       * <code>.org.ena.server.common.protocols.generated.RiskLevel ge_0_lt_2_days = 8;</code>
+       * <code>.org.cwa.server.common.protocols.generated.RiskLevel ge_0_lt_2_days = 8;</code>
        * @return The enum numeric value on the wire for ge0Lt2Days.
        */
       public int getGe0Lt2DaysValue() {
@@ -3735,7 +3735,7 @@ public final class RiskScore {
        * 0 &lt;= D &lt; 2 days, highest risk
        * </pre>
        *
-       * <code>.org.ena.server.common.protocols.generated.RiskLevel ge_0_lt_2_days = 8;</code>
+       * <code>.org.cwa.server.common.protocols.generated.RiskLevel ge_0_lt_2_days = 8;</code>
        * @return The ge0Lt2Days.
        */
       public org.cwa.server.common.protocols.generated.RiskScore.RiskLevel getGe0Lt2Days() {
@@ -3969,26 +3969,26 @@ public final class RiskScore {
         return builder;
       }
       /**
-       * Protobuf type {@code org.ena.server.common.protocols.generated.RiskScoreParameters.DaysSinceLastExposureRiskParameter}
+       * Protobuf type {@code org.cwa.server.common.protocols.generated.RiskScoreParameters.DaysSinceLastExposureRiskParameter}
        */
       public static final class Builder extends
           com.google.protobuf.GeneratedMessageV3.Builder<Builder> implements
-          // @@protoc_insertion_point(builder_implements:org.ena.server.common.protocols.generated.RiskScoreParameters.DaysSinceLastExposureRiskParameter)
+          // @@protoc_insertion_point(builder_implements:org.cwa.server.common.protocols.generated.RiskScoreParameters.DaysSinceLastExposureRiskParameter)
           org.cwa.server.common.protocols.generated.RiskScore.RiskScoreParameters.DaysSinceLastExposureRiskParameterOrBuilder {
         public static final com.google.protobuf.Descriptors.Descriptor
             getDescriptor() {
-          return org.cwa.server.common.protocols.generated.RiskScore.internal_static_org_ena_server_common_protocols_generated_RiskScoreParameters_DaysSinceLastExposureRiskParameter_descriptor;
+          return org.cwa.server.common.protocols.generated.RiskScore.internal_static_org_cwa_server_common_protocols_generated_RiskScoreParameters_DaysSinceLastExposureRiskParameter_descriptor;
         }
 
         @java.lang.Override
         protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
             internalGetFieldAccessorTable() {
-          return org.cwa.server.common.protocols.generated.RiskScore.internal_static_org_ena_server_common_protocols_generated_RiskScoreParameters_DaysSinceLastExposureRiskParameter_fieldAccessorTable
+          return org.cwa.server.common.protocols.generated.RiskScore.internal_static_org_cwa_server_common_protocols_generated_RiskScoreParameters_DaysSinceLastExposureRiskParameter_fieldAccessorTable
               .ensureFieldAccessorsInitialized(
                   org.cwa.server.common.protocols.generated.RiskScore.RiskScoreParameters.DaysSinceLastExposureRiskParameter.class, org.cwa.server.common.protocols.generated.RiskScore.RiskScoreParameters.DaysSinceLastExposureRiskParameter.Builder.class);
         }
 
-        // Construct using org.ena.server.common.protocols.generated.RiskScore.RiskScoreParameters.DaysSinceLastExposureRiskParameter.newBuilder()
+        // Construct using org.cwa.server.common.protocols.generated.RiskScore.RiskScoreParameters.DaysSinceLastExposureRiskParameter.newBuilder()
         private Builder() {
           maybeForceBuilderInitialization();
         }
@@ -4028,7 +4028,7 @@ public final class RiskScore {
         @java.lang.Override
         public com.google.protobuf.Descriptors.Descriptor
             getDescriptorForType() {
-          return org.cwa.server.common.protocols.generated.RiskScore.internal_static_org_ena_server_common_protocols_generated_RiskScoreParameters_DaysSinceLastExposureRiskParameter_descriptor;
+          return org.cwa.server.common.protocols.generated.RiskScore.internal_static_org_cwa_server_common_protocols_generated_RiskScoreParameters_DaysSinceLastExposureRiskParameter_descriptor;
         }
 
         @java.lang.Override
@@ -4163,7 +4163,7 @@ public final class RiskScore {
          * D &gt;= 14 days, lowest risk
          * </pre>
          *
-         * <code>.org.ena.server.common.protocols.generated.RiskLevel ge_14_days = 1;</code>
+         * <code>.org.cwa.server.common.protocols.generated.RiskLevel ge_14_days = 1;</code>
          * @return The enum numeric value on the wire for ge14Days.
          */
         public int getGe14DaysValue() {
@@ -4174,7 +4174,7 @@ public final class RiskScore {
          * D &gt;= 14 days, lowest risk
          * </pre>
          *
-         * <code>.org.ena.server.common.protocols.generated.RiskLevel ge_14_days = 1;</code>
+         * <code>.org.cwa.server.common.protocols.generated.RiskLevel ge_14_days = 1;</code>
          * @param value The enum numeric value on the wire for ge14Days to set.
          * @return This builder for chaining.
          */
@@ -4188,7 +4188,7 @@ public final class RiskScore {
          * D &gt;= 14 days, lowest risk
          * </pre>
          *
-         * <code>.org.ena.server.common.protocols.generated.RiskLevel ge_14_days = 1;</code>
+         * <code>.org.cwa.server.common.protocols.generated.RiskLevel ge_14_days = 1;</code>
          * @return The ge14Days.
          */
         public org.cwa.server.common.protocols.generated.RiskScore.RiskLevel getGe14Days() {
@@ -4201,7 +4201,7 @@ public final class RiskScore {
          * D &gt;= 14 days, lowest risk
          * </pre>
          *
-         * <code>.org.ena.server.common.protocols.generated.RiskLevel ge_14_days = 1;</code>
+         * <code>.org.cwa.server.common.protocols.generated.RiskLevel ge_14_days = 1;</code>
          * @param value The ge14Days to set.
          * @return This builder for chaining.
          */
@@ -4219,7 +4219,7 @@ public final class RiskScore {
          * D &gt;= 14 days, lowest risk
          * </pre>
          *
-         * <code>.org.ena.server.common.protocols.generated.RiskLevel ge_14_days = 1;</code>
+         * <code>.org.cwa.server.common.protocols.generated.RiskLevel ge_14_days = 1;</code>
          * @return This builder for chaining.
          */
         public Builder clearGe14Days() {
@@ -4235,7 +4235,7 @@ public final class RiskScore {
          * 12 &lt;= D &lt; 14 days
          * </pre>
          *
-         * <code>.org.ena.server.common.protocols.generated.RiskLevel ge_12_lt_14_days = 2;</code>
+         * <code>.org.cwa.server.common.protocols.generated.RiskLevel ge_12_lt_14_days = 2;</code>
          * @return The enum numeric value on the wire for ge12Lt14Days.
          */
         public int getGe12Lt14DaysValue() {
@@ -4246,7 +4246,7 @@ public final class RiskScore {
          * 12 &lt;= D &lt; 14 days
          * </pre>
          *
-         * <code>.org.ena.server.common.protocols.generated.RiskLevel ge_12_lt_14_days = 2;</code>
+         * <code>.org.cwa.server.common.protocols.generated.RiskLevel ge_12_lt_14_days = 2;</code>
          * @param value The enum numeric value on the wire for ge12Lt14Days to set.
          * @return This builder for chaining.
          */
@@ -4260,7 +4260,7 @@ public final class RiskScore {
          * 12 &lt;= D &lt; 14 days
          * </pre>
          *
-         * <code>.org.ena.server.common.protocols.generated.RiskLevel ge_12_lt_14_days = 2;</code>
+         * <code>.org.cwa.server.common.protocols.generated.RiskLevel ge_12_lt_14_days = 2;</code>
          * @return The ge12Lt14Days.
          */
         public org.cwa.server.common.protocols.generated.RiskScore.RiskLevel getGe12Lt14Days() {
@@ -4273,7 +4273,7 @@ public final class RiskScore {
          * 12 &lt;= D &lt; 14 days
          * </pre>
          *
-         * <code>.org.ena.server.common.protocols.generated.RiskLevel ge_12_lt_14_days = 2;</code>
+         * <code>.org.cwa.server.common.protocols.generated.RiskLevel ge_12_lt_14_days = 2;</code>
          * @param value The ge12Lt14Days to set.
          * @return This builder for chaining.
          */
@@ -4291,7 +4291,7 @@ public final class RiskScore {
          * 12 &lt;= D &lt; 14 days
          * </pre>
          *
-         * <code>.org.ena.server.common.protocols.generated.RiskLevel ge_12_lt_14_days = 2;</code>
+         * <code>.org.cwa.server.common.protocols.generated.RiskLevel ge_12_lt_14_days = 2;</code>
          * @return This builder for chaining.
          */
         public Builder clearGe12Lt14Days() {
@@ -4307,7 +4307,7 @@ public final class RiskScore {
          * 10 &lt;= D &lt; 12 days
          * </pre>
          *
-         * <code>.org.ena.server.common.protocols.generated.RiskLevel ge_10_lt_12_days = 3;</code>
+         * <code>.org.cwa.server.common.protocols.generated.RiskLevel ge_10_lt_12_days = 3;</code>
          * @return The enum numeric value on the wire for ge10Lt12Days.
          */
         public int getGe10Lt12DaysValue() {
@@ -4318,7 +4318,7 @@ public final class RiskScore {
          * 10 &lt;= D &lt; 12 days
          * </pre>
          *
-         * <code>.org.ena.server.common.protocols.generated.RiskLevel ge_10_lt_12_days = 3;</code>
+         * <code>.org.cwa.server.common.protocols.generated.RiskLevel ge_10_lt_12_days = 3;</code>
          * @param value The enum numeric value on the wire for ge10Lt12Days to set.
          * @return This builder for chaining.
          */
@@ -4332,7 +4332,7 @@ public final class RiskScore {
          * 10 &lt;= D &lt; 12 days
          * </pre>
          *
-         * <code>.org.ena.server.common.protocols.generated.RiskLevel ge_10_lt_12_days = 3;</code>
+         * <code>.org.cwa.server.common.protocols.generated.RiskLevel ge_10_lt_12_days = 3;</code>
          * @return The ge10Lt12Days.
          */
         public org.cwa.server.common.protocols.generated.RiskScore.RiskLevel getGe10Lt12Days() {
@@ -4345,7 +4345,7 @@ public final class RiskScore {
          * 10 &lt;= D &lt; 12 days
          * </pre>
          *
-         * <code>.org.ena.server.common.protocols.generated.RiskLevel ge_10_lt_12_days = 3;</code>
+         * <code>.org.cwa.server.common.protocols.generated.RiskLevel ge_10_lt_12_days = 3;</code>
          * @param value The ge10Lt12Days to set.
          * @return This builder for chaining.
          */
@@ -4363,7 +4363,7 @@ public final class RiskScore {
          * 10 &lt;= D &lt; 12 days
          * </pre>
          *
-         * <code>.org.ena.server.common.protocols.generated.RiskLevel ge_10_lt_12_days = 3;</code>
+         * <code>.org.cwa.server.common.protocols.generated.RiskLevel ge_10_lt_12_days = 3;</code>
          * @return This builder for chaining.
          */
         public Builder clearGe10Lt12Days() {
@@ -4379,7 +4379,7 @@ public final class RiskScore {
          * 8 &lt;= D &lt; 10 days
          * </pre>
          *
-         * <code>.org.ena.server.common.protocols.generated.RiskLevel ge_8_lt_10_days = 4;</code>
+         * <code>.org.cwa.server.common.protocols.generated.RiskLevel ge_8_lt_10_days = 4;</code>
          * @return The enum numeric value on the wire for ge8Lt10Days.
          */
         public int getGe8Lt10DaysValue() {
@@ -4390,7 +4390,7 @@ public final class RiskScore {
          * 8 &lt;= D &lt; 10 days
          * </pre>
          *
-         * <code>.org.ena.server.common.protocols.generated.RiskLevel ge_8_lt_10_days = 4;</code>
+         * <code>.org.cwa.server.common.protocols.generated.RiskLevel ge_8_lt_10_days = 4;</code>
          * @param value The enum numeric value on the wire for ge8Lt10Days to set.
          * @return This builder for chaining.
          */
@@ -4404,7 +4404,7 @@ public final class RiskScore {
          * 8 &lt;= D &lt; 10 days
          * </pre>
          *
-         * <code>.org.ena.server.common.protocols.generated.RiskLevel ge_8_lt_10_days = 4;</code>
+         * <code>.org.cwa.server.common.protocols.generated.RiskLevel ge_8_lt_10_days = 4;</code>
          * @return The ge8Lt10Days.
          */
         public org.cwa.server.common.protocols.generated.RiskScore.RiskLevel getGe8Lt10Days() {
@@ -4417,7 +4417,7 @@ public final class RiskScore {
          * 8 &lt;= D &lt; 10 days
          * </pre>
          *
-         * <code>.org.ena.server.common.protocols.generated.RiskLevel ge_8_lt_10_days = 4;</code>
+         * <code>.org.cwa.server.common.protocols.generated.RiskLevel ge_8_lt_10_days = 4;</code>
          * @param value The ge8Lt10Days to set.
          * @return This builder for chaining.
          */
@@ -4435,7 +4435,7 @@ public final class RiskScore {
          * 8 &lt;= D &lt; 10 days
          * </pre>
          *
-         * <code>.org.ena.server.common.protocols.generated.RiskLevel ge_8_lt_10_days = 4;</code>
+         * <code>.org.cwa.server.common.protocols.generated.RiskLevel ge_8_lt_10_days = 4;</code>
          * @return This builder for chaining.
          */
         public Builder clearGe8Lt10Days() {
@@ -4451,7 +4451,7 @@ public final class RiskScore {
          * 6 &lt;= D &lt; 8 days
          * </pre>
          *
-         * <code>.org.ena.server.common.protocols.generated.RiskLevel ge_6_lt_8_days = 5;</code>
+         * <code>.org.cwa.server.common.protocols.generated.RiskLevel ge_6_lt_8_days = 5;</code>
          * @return The enum numeric value on the wire for ge6Lt8Days.
          */
         public int getGe6Lt8DaysValue() {
@@ -4462,7 +4462,7 @@ public final class RiskScore {
          * 6 &lt;= D &lt; 8 days
          * </pre>
          *
-         * <code>.org.ena.server.common.protocols.generated.RiskLevel ge_6_lt_8_days = 5;</code>
+         * <code>.org.cwa.server.common.protocols.generated.RiskLevel ge_6_lt_8_days = 5;</code>
          * @param value The enum numeric value on the wire for ge6Lt8Days to set.
          * @return This builder for chaining.
          */
@@ -4476,7 +4476,7 @@ public final class RiskScore {
          * 6 &lt;= D &lt; 8 days
          * </pre>
          *
-         * <code>.org.ena.server.common.protocols.generated.RiskLevel ge_6_lt_8_days = 5;</code>
+         * <code>.org.cwa.server.common.protocols.generated.RiskLevel ge_6_lt_8_days = 5;</code>
          * @return The ge6Lt8Days.
          */
         public org.cwa.server.common.protocols.generated.RiskScore.RiskLevel getGe6Lt8Days() {
@@ -4489,7 +4489,7 @@ public final class RiskScore {
          * 6 &lt;= D &lt; 8 days
          * </pre>
          *
-         * <code>.org.ena.server.common.protocols.generated.RiskLevel ge_6_lt_8_days = 5;</code>
+         * <code>.org.cwa.server.common.protocols.generated.RiskLevel ge_6_lt_8_days = 5;</code>
          * @param value The ge6Lt8Days to set.
          * @return This builder for chaining.
          */
@@ -4507,7 +4507,7 @@ public final class RiskScore {
          * 6 &lt;= D &lt; 8 days
          * </pre>
          *
-         * <code>.org.ena.server.common.protocols.generated.RiskLevel ge_6_lt_8_days = 5;</code>
+         * <code>.org.cwa.server.common.protocols.generated.RiskLevel ge_6_lt_8_days = 5;</code>
          * @return This builder for chaining.
          */
         public Builder clearGe6Lt8Days() {
@@ -4523,7 +4523,7 @@ public final class RiskScore {
          * 4 &lt;= D &lt; 6 days
          * </pre>
          *
-         * <code>.org.ena.server.common.protocols.generated.RiskLevel ge_4_lt_6_days = 6;</code>
+         * <code>.org.cwa.server.common.protocols.generated.RiskLevel ge_4_lt_6_days = 6;</code>
          * @return The enum numeric value on the wire for ge4Lt6Days.
          */
         public int getGe4Lt6DaysValue() {
@@ -4534,7 +4534,7 @@ public final class RiskScore {
          * 4 &lt;= D &lt; 6 days
          * </pre>
          *
-         * <code>.org.ena.server.common.protocols.generated.RiskLevel ge_4_lt_6_days = 6;</code>
+         * <code>.org.cwa.server.common.protocols.generated.RiskLevel ge_4_lt_6_days = 6;</code>
          * @param value The enum numeric value on the wire for ge4Lt6Days to set.
          * @return This builder for chaining.
          */
@@ -4548,7 +4548,7 @@ public final class RiskScore {
          * 4 &lt;= D &lt; 6 days
          * </pre>
          *
-         * <code>.org.ena.server.common.protocols.generated.RiskLevel ge_4_lt_6_days = 6;</code>
+         * <code>.org.cwa.server.common.protocols.generated.RiskLevel ge_4_lt_6_days = 6;</code>
          * @return The ge4Lt6Days.
          */
         public org.cwa.server.common.protocols.generated.RiskScore.RiskLevel getGe4Lt6Days() {
@@ -4561,7 +4561,7 @@ public final class RiskScore {
          * 4 &lt;= D &lt; 6 days
          * </pre>
          *
-         * <code>.org.ena.server.common.protocols.generated.RiskLevel ge_4_lt_6_days = 6;</code>
+         * <code>.org.cwa.server.common.protocols.generated.RiskLevel ge_4_lt_6_days = 6;</code>
          * @param value The ge4Lt6Days to set.
          * @return This builder for chaining.
          */
@@ -4579,7 +4579,7 @@ public final class RiskScore {
          * 4 &lt;= D &lt; 6 days
          * </pre>
          *
-         * <code>.org.ena.server.common.protocols.generated.RiskLevel ge_4_lt_6_days = 6;</code>
+         * <code>.org.cwa.server.common.protocols.generated.RiskLevel ge_4_lt_6_days = 6;</code>
          * @return This builder for chaining.
          */
         public Builder clearGe4Lt6Days() {
@@ -4595,7 +4595,7 @@ public final class RiskScore {
          * 2 &lt;= D &lt; 4 days
          * </pre>
          *
-         * <code>.org.ena.server.common.protocols.generated.RiskLevel ge_2_lt_4_days = 7;</code>
+         * <code>.org.cwa.server.common.protocols.generated.RiskLevel ge_2_lt_4_days = 7;</code>
          * @return The enum numeric value on the wire for ge2Lt4Days.
          */
         public int getGe2Lt4DaysValue() {
@@ -4606,7 +4606,7 @@ public final class RiskScore {
          * 2 &lt;= D &lt; 4 days
          * </pre>
          *
-         * <code>.org.ena.server.common.protocols.generated.RiskLevel ge_2_lt_4_days = 7;</code>
+         * <code>.org.cwa.server.common.protocols.generated.RiskLevel ge_2_lt_4_days = 7;</code>
          * @param value The enum numeric value on the wire for ge2Lt4Days to set.
          * @return This builder for chaining.
          */
@@ -4620,7 +4620,7 @@ public final class RiskScore {
          * 2 &lt;= D &lt; 4 days
          * </pre>
          *
-         * <code>.org.ena.server.common.protocols.generated.RiskLevel ge_2_lt_4_days = 7;</code>
+         * <code>.org.cwa.server.common.protocols.generated.RiskLevel ge_2_lt_4_days = 7;</code>
          * @return The ge2Lt4Days.
          */
         public org.cwa.server.common.protocols.generated.RiskScore.RiskLevel getGe2Lt4Days() {
@@ -4633,7 +4633,7 @@ public final class RiskScore {
          * 2 &lt;= D &lt; 4 days
          * </pre>
          *
-         * <code>.org.ena.server.common.protocols.generated.RiskLevel ge_2_lt_4_days = 7;</code>
+         * <code>.org.cwa.server.common.protocols.generated.RiskLevel ge_2_lt_4_days = 7;</code>
          * @param value The ge2Lt4Days to set.
          * @return This builder for chaining.
          */
@@ -4651,7 +4651,7 @@ public final class RiskScore {
          * 2 &lt;= D &lt; 4 days
          * </pre>
          *
-         * <code>.org.ena.server.common.protocols.generated.RiskLevel ge_2_lt_4_days = 7;</code>
+         * <code>.org.cwa.server.common.protocols.generated.RiskLevel ge_2_lt_4_days = 7;</code>
          * @return This builder for chaining.
          */
         public Builder clearGe2Lt4Days() {
@@ -4667,7 +4667,7 @@ public final class RiskScore {
          * 0 &lt;= D &lt; 2 days, highest risk
          * </pre>
          *
-         * <code>.org.ena.server.common.protocols.generated.RiskLevel ge_0_lt_2_days = 8;</code>
+         * <code>.org.cwa.server.common.protocols.generated.RiskLevel ge_0_lt_2_days = 8;</code>
          * @return The enum numeric value on the wire for ge0Lt2Days.
          */
         public int getGe0Lt2DaysValue() {
@@ -4678,7 +4678,7 @@ public final class RiskScore {
          * 0 &lt;= D &lt; 2 days, highest risk
          * </pre>
          *
-         * <code>.org.ena.server.common.protocols.generated.RiskLevel ge_0_lt_2_days = 8;</code>
+         * <code>.org.cwa.server.common.protocols.generated.RiskLevel ge_0_lt_2_days = 8;</code>
          * @param value The enum numeric value on the wire for ge0Lt2Days to set.
          * @return This builder for chaining.
          */
@@ -4692,7 +4692,7 @@ public final class RiskScore {
          * 0 &lt;= D &lt; 2 days, highest risk
          * </pre>
          *
-         * <code>.org.ena.server.common.protocols.generated.RiskLevel ge_0_lt_2_days = 8;</code>
+         * <code>.org.cwa.server.common.protocols.generated.RiskLevel ge_0_lt_2_days = 8;</code>
          * @return The ge0Lt2Days.
          */
         public org.cwa.server.common.protocols.generated.RiskScore.RiskLevel getGe0Lt2Days() {
@@ -4705,7 +4705,7 @@ public final class RiskScore {
          * 0 &lt;= D &lt; 2 days, highest risk
          * </pre>
          *
-         * <code>.org.ena.server.common.protocols.generated.RiskLevel ge_0_lt_2_days = 8;</code>
+         * <code>.org.cwa.server.common.protocols.generated.RiskLevel ge_0_lt_2_days = 8;</code>
          * @param value The ge0Lt2Days to set.
          * @return This builder for chaining.
          */
@@ -4723,7 +4723,7 @@ public final class RiskScore {
          * 0 &lt;= D &lt; 2 days, highest risk
          * </pre>
          *
-         * <code>.org.ena.server.common.protocols.generated.RiskLevel ge_0_lt_2_days = 8;</code>
+         * <code>.org.cwa.server.common.protocols.generated.RiskLevel ge_0_lt_2_days = 8;</code>
          * @return This builder for chaining.
          */
         public Builder clearGe0Lt2Days() {
@@ -4745,10 +4745,10 @@ public final class RiskScore {
         }
 
 
-        // @@protoc_insertion_point(builder_scope:org.ena.server.common.protocols.generated.RiskScoreParameters.DaysSinceLastExposureRiskParameter)
+        // @@protoc_insertion_point(builder_scope:org.cwa.server.common.protocols.generated.RiskScoreParameters.DaysSinceLastExposureRiskParameter)
       }
 
-      // @@protoc_insertion_point(class_scope:org.ena.server.common.protocols.generated.RiskScoreParameters.DaysSinceLastExposureRiskParameter)
+      // @@protoc_insertion_point(class_scope:org.cwa.server.common.protocols.generated.RiskScoreParameters.DaysSinceLastExposureRiskParameter)
       private static final org.cwa.server.common.protocols.generated.RiskScore.RiskScoreParameters.DaysSinceLastExposureRiskParameter DEFAULT_INSTANCE;
       static {
         DEFAULT_INSTANCE = new org.cwa.server.common.protocols.generated.RiskScore.RiskScoreParameters.DaysSinceLastExposureRiskParameter();
@@ -4786,7 +4786,7 @@ public final class RiskScore {
     }
 
     public interface AttenuationRiskParameterOrBuilder extends
-        // @@protoc_insertion_point(interface_extends:org.ena.server.common.protocols.generated.RiskScoreParameters.AttenuationRiskParameter)
+        // @@protoc_insertion_point(interface_extends:org.cwa.server.common.protocols.generated.RiskScoreParameters.AttenuationRiskParameter)
         com.google.protobuf.MessageOrBuilder {
 
       /**
@@ -4794,7 +4794,7 @@ public final class RiskScore {
        * A &gt; 73 dBm, lowest risk
        * </pre>
        *
-       * <code>.org.ena.server.common.protocols.generated.RiskLevel gt_73_dbm = 1;</code>
+       * <code>.org.cwa.server.common.protocols.generated.RiskLevel gt_73_dbm = 1;</code>
        * @return The enum numeric value on the wire for gt73Dbm.
        */
       int getGt73DbmValue();
@@ -4803,7 +4803,7 @@ public final class RiskScore {
        * A &gt; 73 dBm, lowest risk
        * </pre>
        *
-       * <code>.org.ena.server.common.protocols.generated.RiskLevel gt_73_dbm = 1;</code>
+       * <code>.org.cwa.server.common.protocols.generated.RiskLevel gt_73_dbm = 1;</code>
        * @return The gt73Dbm.
        */
       org.cwa.server.common.protocols.generated.RiskScore.RiskLevel getGt73Dbm();
@@ -4813,7 +4813,7 @@ public final class RiskScore {
        * 63 &lt; A &lt;= 73 dBm
        * </pre>
        *
-       * <code>.org.ena.server.common.protocols.generated.RiskLevel gt_63_le_73_dbm = 2;</code>
+       * <code>.org.cwa.server.common.protocols.generated.RiskLevel gt_63_le_73_dbm = 2;</code>
        * @return The enum numeric value on the wire for gt63Le73Dbm.
        */
       int getGt63Le73DbmValue();
@@ -4822,7 +4822,7 @@ public final class RiskScore {
        * 63 &lt; A &lt;= 73 dBm
        * </pre>
        *
-       * <code>.org.ena.server.common.protocols.generated.RiskLevel gt_63_le_73_dbm = 2;</code>
+       * <code>.org.cwa.server.common.protocols.generated.RiskLevel gt_63_le_73_dbm = 2;</code>
        * @return The gt63Le73Dbm.
        */
       org.cwa.server.common.protocols.generated.RiskScore.RiskLevel getGt63Le73Dbm();
@@ -4832,7 +4832,7 @@ public final class RiskScore {
        * 51 &lt; A &lt;= 63 dBm
        * </pre>
        *
-       * <code>.org.ena.server.common.protocols.generated.RiskLevel gt_51_le_63_dbm = 3;</code>
+       * <code>.org.cwa.server.common.protocols.generated.RiskLevel gt_51_le_63_dbm = 3;</code>
        * @return The enum numeric value on the wire for gt51Le63Dbm.
        */
       int getGt51Le63DbmValue();
@@ -4841,7 +4841,7 @@ public final class RiskScore {
        * 51 &lt; A &lt;= 63 dBm
        * </pre>
        *
-       * <code>.org.ena.server.common.protocols.generated.RiskLevel gt_51_le_63_dbm = 3;</code>
+       * <code>.org.cwa.server.common.protocols.generated.RiskLevel gt_51_le_63_dbm = 3;</code>
        * @return The gt51Le63Dbm.
        */
       org.cwa.server.common.protocols.generated.RiskScore.RiskLevel getGt51Le63Dbm();
@@ -4851,7 +4851,7 @@ public final class RiskScore {
        * 33 &lt; A &lt;= 51 dBm
        * </pre>
        *
-       * <code>.org.ena.server.common.protocols.generated.RiskLevel gt_33_le_51_dbm = 4;</code>
+       * <code>.org.cwa.server.common.protocols.generated.RiskLevel gt_33_le_51_dbm = 4;</code>
        * @return The enum numeric value on the wire for gt33Le51Dbm.
        */
       int getGt33Le51DbmValue();
@@ -4860,7 +4860,7 @@ public final class RiskScore {
        * 33 &lt; A &lt;= 51 dBm
        * </pre>
        *
-       * <code>.org.ena.server.common.protocols.generated.RiskLevel gt_33_le_51_dbm = 4;</code>
+       * <code>.org.cwa.server.common.protocols.generated.RiskLevel gt_33_le_51_dbm = 4;</code>
        * @return The gt33Le51Dbm.
        */
       org.cwa.server.common.protocols.generated.RiskScore.RiskLevel getGt33Le51Dbm();
@@ -4870,7 +4870,7 @@ public final class RiskScore {
        * 27 &lt; A &lt;= 33 dBm
        * </pre>
        *
-       * <code>.org.ena.server.common.protocols.generated.RiskLevel gt_27_le_33_dbm = 5;</code>
+       * <code>.org.cwa.server.common.protocols.generated.RiskLevel gt_27_le_33_dbm = 5;</code>
        * @return The enum numeric value on the wire for gt27Le33Dbm.
        */
       int getGt27Le33DbmValue();
@@ -4879,7 +4879,7 @@ public final class RiskScore {
        * 27 &lt; A &lt;= 33 dBm
        * </pre>
        *
-       * <code>.org.ena.server.common.protocols.generated.RiskLevel gt_27_le_33_dbm = 5;</code>
+       * <code>.org.cwa.server.common.protocols.generated.RiskLevel gt_27_le_33_dbm = 5;</code>
        * @return The gt27Le33Dbm.
        */
       org.cwa.server.common.protocols.generated.RiskScore.RiskLevel getGt27Le33Dbm();
@@ -4889,7 +4889,7 @@ public final class RiskScore {
        * 15 &lt; A &lt;= 27 dBm
        * </pre>
        *
-       * <code>.org.ena.server.common.protocols.generated.RiskLevel gt_15_le_27_dbm = 6;</code>
+       * <code>.org.cwa.server.common.protocols.generated.RiskLevel gt_15_le_27_dbm = 6;</code>
        * @return The enum numeric value on the wire for gt15Le27Dbm.
        */
       int getGt15Le27DbmValue();
@@ -4898,7 +4898,7 @@ public final class RiskScore {
        * 15 &lt; A &lt;= 27 dBm
        * </pre>
        *
-       * <code>.org.ena.server.common.protocols.generated.RiskLevel gt_15_le_27_dbm = 6;</code>
+       * <code>.org.cwa.server.common.protocols.generated.RiskLevel gt_15_le_27_dbm = 6;</code>
        * @return The gt15Le27Dbm.
        */
       org.cwa.server.common.protocols.generated.RiskScore.RiskLevel getGt15Le27Dbm();
@@ -4908,7 +4908,7 @@ public final class RiskScore {
        * 10 &lt; A &lt;= 15 dBm
        * </pre>
        *
-       * <code>.org.ena.server.common.protocols.generated.RiskLevel gt_10_le_15_dbm = 7;</code>
+       * <code>.org.cwa.server.common.protocols.generated.RiskLevel gt_10_le_15_dbm = 7;</code>
        * @return The enum numeric value on the wire for gt10Le15Dbm.
        */
       int getGt10Le15DbmValue();
@@ -4917,7 +4917,7 @@ public final class RiskScore {
        * 10 &lt; A &lt;= 15 dBm
        * </pre>
        *
-       * <code>.org.ena.server.common.protocols.generated.RiskLevel gt_10_le_15_dbm = 7;</code>
+       * <code>.org.cwa.server.common.protocols.generated.RiskLevel gt_10_le_15_dbm = 7;</code>
        * @return The gt10Le15Dbm.
        */
       org.cwa.server.common.protocols.generated.RiskScore.RiskLevel getGt10Le15Dbm();
@@ -4927,7 +4927,7 @@ public final class RiskScore {
        * A &lt;= 10 dBm, highest risk
        * </pre>
        *
-       * <code>.org.ena.server.common.protocols.generated.RiskLevel lt_10_dbm = 8;</code>
+       * <code>.org.cwa.server.common.protocols.generated.RiskLevel lt_10_dbm = 8;</code>
        * @return The enum numeric value on the wire for lt10Dbm.
        */
       int getLt10DbmValue();
@@ -4936,17 +4936,17 @@ public final class RiskScore {
        * A &lt;= 10 dBm, highest risk
        * </pre>
        *
-       * <code>.org.ena.server.common.protocols.generated.RiskLevel lt_10_dbm = 8;</code>
+       * <code>.org.cwa.server.common.protocols.generated.RiskLevel lt_10_dbm = 8;</code>
        * @return The lt10Dbm.
        */
       org.cwa.server.common.protocols.generated.RiskScore.RiskLevel getLt10Dbm();
     }
     /**
-     * Protobuf type {@code org.ena.server.common.protocols.generated.RiskScoreParameters.AttenuationRiskParameter}
+     * Protobuf type {@code org.cwa.server.common.protocols.generated.RiskScoreParameters.AttenuationRiskParameter}
      */
     public  static final class AttenuationRiskParameter extends
         com.google.protobuf.GeneratedMessageV3 implements
-        // @@protoc_insertion_point(message_implements:org.ena.server.common.protocols.generated.RiskScoreParameters.AttenuationRiskParameter)
+        // @@protoc_insertion_point(message_implements:org.cwa.server.common.protocols.generated.RiskScoreParameters.AttenuationRiskParameter)
         AttenuationRiskParameterOrBuilder {
     private static final long serialVersionUID = 0L;
       // Use AttenuationRiskParameter.newBuilder() to construct.
@@ -5063,13 +5063,13 @@ public final class RiskScore {
       }
       public static final com.google.protobuf.Descriptors.Descriptor
           getDescriptor() {
-        return org.cwa.server.common.protocols.generated.RiskScore.internal_static_org_ena_server_common_protocols_generated_RiskScoreParameters_AttenuationRiskParameter_descriptor;
+        return org.cwa.server.common.protocols.generated.RiskScore.internal_static_org_cwa_server_common_protocols_generated_RiskScoreParameters_AttenuationRiskParameter_descriptor;
       }
 
       @java.lang.Override
       protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
           internalGetFieldAccessorTable() {
-        return org.cwa.server.common.protocols.generated.RiskScore.internal_static_org_ena_server_common_protocols_generated_RiskScoreParameters_AttenuationRiskParameter_fieldAccessorTable
+        return org.cwa.server.common.protocols.generated.RiskScore.internal_static_org_cwa_server_common_protocols_generated_RiskScoreParameters_AttenuationRiskParameter_fieldAccessorTable
             .ensureFieldAccessorsInitialized(
                 org.cwa.server.common.protocols.generated.RiskScore.RiskScoreParameters.AttenuationRiskParameter.class, org.cwa.server.common.protocols.generated.RiskScore.RiskScoreParameters.AttenuationRiskParameter.Builder.class);
       }
@@ -5081,7 +5081,7 @@ public final class RiskScore {
        * A &gt; 73 dBm, lowest risk
        * </pre>
        *
-       * <code>.org.ena.server.common.protocols.generated.RiskLevel gt_73_dbm = 1;</code>
+       * <code>.org.cwa.server.common.protocols.generated.RiskLevel gt_73_dbm = 1;</code>
        * @return The enum numeric value on the wire for gt73Dbm.
        */
       public int getGt73DbmValue() {
@@ -5092,7 +5092,7 @@ public final class RiskScore {
        * A &gt; 73 dBm, lowest risk
        * </pre>
        *
-       * <code>.org.ena.server.common.protocols.generated.RiskLevel gt_73_dbm = 1;</code>
+       * <code>.org.cwa.server.common.protocols.generated.RiskLevel gt_73_dbm = 1;</code>
        * @return The gt73Dbm.
        */
       public org.cwa.server.common.protocols.generated.RiskScore.RiskLevel getGt73Dbm() {
@@ -5108,7 +5108,7 @@ public final class RiskScore {
        * 63 &lt; A &lt;= 73 dBm
        * </pre>
        *
-       * <code>.org.ena.server.common.protocols.generated.RiskLevel gt_63_le_73_dbm = 2;</code>
+       * <code>.org.cwa.server.common.protocols.generated.RiskLevel gt_63_le_73_dbm = 2;</code>
        * @return The enum numeric value on the wire for gt63Le73Dbm.
        */
       public int getGt63Le73DbmValue() {
@@ -5119,7 +5119,7 @@ public final class RiskScore {
        * 63 &lt; A &lt;= 73 dBm
        * </pre>
        *
-       * <code>.org.ena.server.common.protocols.generated.RiskLevel gt_63_le_73_dbm = 2;</code>
+       * <code>.org.cwa.server.common.protocols.generated.RiskLevel gt_63_le_73_dbm = 2;</code>
        * @return The gt63Le73Dbm.
        */
       public org.cwa.server.common.protocols.generated.RiskScore.RiskLevel getGt63Le73Dbm() {
@@ -5135,7 +5135,7 @@ public final class RiskScore {
        * 51 &lt; A &lt;= 63 dBm
        * </pre>
        *
-       * <code>.org.ena.server.common.protocols.generated.RiskLevel gt_51_le_63_dbm = 3;</code>
+       * <code>.org.cwa.server.common.protocols.generated.RiskLevel gt_51_le_63_dbm = 3;</code>
        * @return The enum numeric value on the wire for gt51Le63Dbm.
        */
       public int getGt51Le63DbmValue() {
@@ -5146,7 +5146,7 @@ public final class RiskScore {
        * 51 &lt; A &lt;= 63 dBm
        * </pre>
        *
-       * <code>.org.ena.server.common.protocols.generated.RiskLevel gt_51_le_63_dbm = 3;</code>
+       * <code>.org.cwa.server.common.protocols.generated.RiskLevel gt_51_le_63_dbm = 3;</code>
        * @return The gt51Le63Dbm.
        */
       public org.cwa.server.common.protocols.generated.RiskScore.RiskLevel getGt51Le63Dbm() {
@@ -5162,7 +5162,7 @@ public final class RiskScore {
        * 33 &lt; A &lt;= 51 dBm
        * </pre>
        *
-       * <code>.org.ena.server.common.protocols.generated.RiskLevel gt_33_le_51_dbm = 4;</code>
+       * <code>.org.cwa.server.common.protocols.generated.RiskLevel gt_33_le_51_dbm = 4;</code>
        * @return The enum numeric value on the wire for gt33Le51Dbm.
        */
       public int getGt33Le51DbmValue() {
@@ -5173,7 +5173,7 @@ public final class RiskScore {
        * 33 &lt; A &lt;= 51 dBm
        * </pre>
        *
-       * <code>.org.ena.server.common.protocols.generated.RiskLevel gt_33_le_51_dbm = 4;</code>
+       * <code>.org.cwa.server.common.protocols.generated.RiskLevel gt_33_le_51_dbm = 4;</code>
        * @return The gt33Le51Dbm.
        */
       public org.cwa.server.common.protocols.generated.RiskScore.RiskLevel getGt33Le51Dbm() {
@@ -5189,7 +5189,7 @@ public final class RiskScore {
        * 27 &lt; A &lt;= 33 dBm
        * </pre>
        *
-       * <code>.org.ena.server.common.protocols.generated.RiskLevel gt_27_le_33_dbm = 5;</code>
+       * <code>.org.cwa.server.common.protocols.generated.RiskLevel gt_27_le_33_dbm = 5;</code>
        * @return The enum numeric value on the wire for gt27Le33Dbm.
        */
       public int getGt27Le33DbmValue() {
@@ -5200,7 +5200,7 @@ public final class RiskScore {
        * 27 &lt; A &lt;= 33 dBm
        * </pre>
        *
-       * <code>.org.ena.server.common.protocols.generated.RiskLevel gt_27_le_33_dbm = 5;</code>
+       * <code>.org.cwa.server.common.protocols.generated.RiskLevel gt_27_le_33_dbm = 5;</code>
        * @return The gt27Le33Dbm.
        */
       public org.cwa.server.common.protocols.generated.RiskScore.RiskLevel getGt27Le33Dbm() {
@@ -5216,7 +5216,7 @@ public final class RiskScore {
        * 15 &lt; A &lt;= 27 dBm
        * </pre>
        *
-       * <code>.org.ena.server.common.protocols.generated.RiskLevel gt_15_le_27_dbm = 6;</code>
+       * <code>.org.cwa.server.common.protocols.generated.RiskLevel gt_15_le_27_dbm = 6;</code>
        * @return The enum numeric value on the wire for gt15Le27Dbm.
        */
       public int getGt15Le27DbmValue() {
@@ -5227,7 +5227,7 @@ public final class RiskScore {
        * 15 &lt; A &lt;= 27 dBm
        * </pre>
        *
-       * <code>.org.ena.server.common.protocols.generated.RiskLevel gt_15_le_27_dbm = 6;</code>
+       * <code>.org.cwa.server.common.protocols.generated.RiskLevel gt_15_le_27_dbm = 6;</code>
        * @return The gt15Le27Dbm.
        */
       public org.cwa.server.common.protocols.generated.RiskScore.RiskLevel getGt15Le27Dbm() {
@@ -5243,7 +5243,7 @@ public final class RiskScore {
        * 10 &lt; A &lt;= 15 dBm
        * </pre>
        *
-       * <code>.org.ena.server.common.protocols.generated.RiskLevel gt_10_le_15_dbm = 7;</code>
+       * <code>.org.cwa.server.common.protocols.generated.RiskLevel gt_10_le_15_dbm = 7;</code>
        * @return The enum numeric value on the wire for gt10Le15Dbm.
        */
       public int getGt10Le15DbmValue() {
@@ -5254,7 +5254,7 @@ public final class RiskScore {
        * 10 &lt; A &lt;= 15 dBm
        * </pre>
        *
-       * <code>.org.ena.server.common.protocols.generated.RiskLevel gt_10_le_15_dbm = 7;</code>
+       * <code>.org.cwa.server.common.protocols.generated.RiskLevel gt_10_le_15_dbm = 7;</code>
        * @return The gt10Le15Dbm.
        */
       public org.cwa.server.common.protocols.generated.RiskScore.RiskLevel getGt10Le15Dbm() {
@@ -5270,7 +5270,7 @@ public final class RiskScore {
        * A &lt;= 10 dBm, highest risk
        * </pre>
        *
-       * <code>.org.ena.server.common.protocols.generated.RiskLevel lt_10_dbm = 8;</code>
+       * <code>.org.cwa.server.common.protocols.generated.RiskLevel lt_10_dbm = 8;</code>
        * @return The enum numeric value on the wire for lt10Dbm.
        */
       public int getLt10DbmValue() {
@@ -5281,7 +5281,7 @@ public final class RiskScore {
        * A &lt;= 10 dBm, highest risk
        * </pre>
        *
-       * <code>.org.ena.server.common.protocols.generated.RiskLevel lt_10_dbm = 8;</code>
+       * <code>.org.cwa.server.common.protocols.generated.RiskLevel lt_10_dbm = 8;</code>
        * @return The lt10Dbm.
        */
       public org.cwa.server.common.protocols.generated.RiskScore.RiskLevel getLt10Dbm() {
@@ -5515,26 +5515,26 @@ public final class RiskScore {
         return builder;
       }
       /**
-       * Protobuf type {@code org.ena.server.common.protocols.generated.RiskScoreParameters.AttenuationRiskParameter}
+       * Protobuf type {@code org.cwa.server.common.protocols.generated.RiskScoreParameters.AttenuationRiskParameter}
        */
       public static final class Builder extends
           com.google.protobuf.GeneratedMessageV3.Builder<Builder> implements
-          // @@protoc_insertion_point(builder_implements:org.ena.server.common.protocols.generated.RiskScoreParameters.AttenuationRiskParameter)
+          // @@protoc_insertion_point(builder_implements:org.cwa.server.common.protocols.generated.RiskScoreParameters.AttenuationRiskParameter)
           org.cwa.server.common.protocols.generated.RiskScore.RiskScoreParameters.AttenuationRiskParameterOrBuilder {
         public static final com.google.protobuf.Descriptors.Descriptor
             getDescriptor() {
-          return org.cwa.server.common.protocols.generated.RiskScore.internal_static_org_ena_server_common_protocols_generated_RiskScoreParameters_AttenuationRiskParameter_descriptor;
+          return org.cwa.server.common.protocols.generated.RiskScore.internal_static_org_cwa_server_common_protocols_generated_RiskScoreParameters_AttenuationRiskParameter_descriptor;
         }
 
         @java.lang.Override
         protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
             internalGetFieldAccessorTable() {
-          return org.cwa.server.common.protocols.generated.RiskScore.internal_static_org_ena_server_common_protocols_generated_RiskScoreParameters_AttenuationRiskParameter_fieldAccessorTable
+          return org.cwa.server.common.protocols.generated.RiskScore.internal_static_org_cwa_server_common_protocols_generated_RiskScoreParameters_AttenuationRiskParameter_fieldAccessorTable
               .ensureFieldAccessorsInitialized(
                   org.cwa.server.common.protocols.generated.RiskScore.RiskScoreParameters.AttenuationRiskParameter.class, org.cwa.server.common.protocols.generated.RiskScore.RiskScoreParameters.AttenuationRiskParameter.Builder.class);
         }
 
-        // Construct using org.ena.server.common.protocols.generated.RiskScore.RiskScoreParameters.AttenuationRiskParameter.newBuilder()
+        // Construct using org.cwa.server.common.protocols.generated.RiskScore.RiskScoreParameters.AttenuationRiskParameter.newBuilder()
         private Builder() {
           maybeForceBuilderInitialization();
         }
@@ -5574,7 +5574,7 @@ public final class RiskScore {
         @java.lang.Override
         public com.google.protobuf.Descriptors.Descriptor
             getDescriptorForType() {
-          return org.cwa.server.common.protocols.generated.RiskScore.internal_static_org_ena_server_common_protocols_generated_RiskScoreParameters_AttenuationRiskParameter_descriptor;
+          return org.cwa.server.common.protocols.generated.RiskScore.internal_static_org_cwa_server_common_protocols_generated_RiskScoreParameters_AttenuationRiskParameter_descriptor;
         }
 
         @java.lang.Override
@@ -5709,7 +5709,7 @@ public final class RiskScore {
          * A &gt; 73 dBm, lowest risk
          * </pre>
          *
-         * <code>.org.ena.server.common.protocols.generated.RiskLevel gt_73_dbm = 1;</code>
+         * <code>.org.cwa.server.common.protocols.generated.RiskLevel gt_73_dbm = 1;</code>
          * @return The enum numeric value on the wire for gt73Dbm.
          */
         public int getGt73DbmValue() {
@@ -5720,7 +5720,7 @@ public final class RiskScore {
          * A &gt; 73 dBm, lowest risk
          * </pre>
          *
-         * <code>.org.ena.server.common.protocols.generated.RiskLevel gt_73_dbm = 1;</code>
+         * <code>.org.cwa.server.common.protocols.generated.RiskLevel gt_73_dbm = 1;</code>
          * @param value The enum numeric value on the wire for gt73Dbm to set.
          * @return This builder for chaining.
          */
@@ -5734,7 +5734,7 @@ public final class RiskScore {
          * A &gt; 73 dBm, lowest risk
          * </pre>
          *
-         * <code>.org.ena.server.common.protocols.generated.RiskLevel gt_73_dbm = 1;</code>
+         * <code>.org.cwa.server.common.protocols.generated.RiskLevel gt_73_dbm = 1;</code>
          * @return The gt73Dbm.
          */
         public org.cwa.server.common.protocols.generated.RiskScore.RiskLevel getGt73Dbm() {
@@ -5747,7 +5747,7 @@ public final class RiskScore {
          * A &gt; 73 dBm, lowest risk
          * </pre>
          *
-         * <code>.org.ena.server.common.protocols.generated.RiskLevel gt_73_dbm = 1;</code>
+         * <code>.org.cwa.server.common.protocols.generated.RiskLevel gt_73_dbm = 1;</code>
          * @param value The gt73Dbm to set.
          * @return This builder for chaining.
          */
@@ -5765,7 +5765,7 @@ public final class RiskScore {
          * A &gt; 73 dBm, lowest risk
          * </pre>
          *
-         * <code>.org.ena.server.common.protocols.generated.RiskLevel gt_73_dbm = 1;</code>
+         * <code>.org.cwa.server.common.protocols.generated.RiskLevel gt_73_dbm = 1;</code>
          * @return This builder for chaining.
          */
         public Builder clearGt73Dbm() {
@@ -5781,7 +5781,7 @@ public final class RiskScore {
          * 63 &lt; A &lt;= 73 dBm
          * </pre>
          *
-         * <code>.org.ena.server.common.protocols.generated.RiskLevel gt_63_le_73_dbm = 2;</code>
+         * <code>.org.cwa.server.common.protocols.generated.RiskLevel gt_63_le_73_dbm = 2;</code>
          * @return The enum numeric value on the wire for gt63Le73Dbm.
          */
         public int getGt63Le73DbmValue() {
@@ -5792,7 +5792,7 @@ public final class RiskScore {
          * 63 &lt; A &lt;= 73 dBm
          * </pre>
          *
-         * <code>.org.ena.server.common.protocols.generated.RiskLevel gt_63_le_73_dbm = 2;</code>
+         * <code>.org.cwa.server.common.protocols.generated.RiskLevel gt_63_le_73_dbm = 2;</code>
          * @param value The enum numeric value on the wire for gt63Le73Dbm to set.
          * @return This builder for chaining.
          */
@@ -5806,7 +5806,7 @@ public final class RiskScore {
          * 63 &lt; A &lt;= 73 dBm
          * </pre>
          *
-         * <code>.org.ena.server.common.protocols.generated.RiskLevel gt_63_le_73_dbm = 2;</code>
+         * <code>.org.cwa.server.common.protocols.generated.RiskLevel gt_63_le_73_dbm = 2;</code>
          * @return The gt63Le73Dbm.
          */
         public org.cwa.server.common.protocols.generated.RiskScore.RiskLevel getGt63Le73Dbm() {
@@ -5819,7 +5819,7 @@ public final class RiskScore {
          * 63 &lt; A &lt;= 73 dBm
          * </pre>
          *
-         * <code>.org.ena.server.common.protocols.generated.RiskLevel gt_63_le_73_dbm = 2;</code>
+         * <code>.org.cwa.server.common.protocols.generated.RiskLevel gt_63_le_73_dbm = 2;</code>
          * @param value The gt63Le73Dbm to set.
          * @return This builder for chaining.
          */
@@ -5837,7 +5837,7 @@ public final class RiskScore {
          * 63 &lt; A &lt;= 73 dBm
          * </pre>
          *
-         * <code>.org.ena.server.common.protocols.generated.RiskLevel gt_63_le_73_dbm = 2;</code>
+         * <code>.org.cwa.server.common.protocols.generated.RiskLevel gt_63_le_73_dbm = 2;</code>
          * @return This builder for chaining.
          */
         public Builder clearGt63Le73Dbm() {
@@ -5853,7 +5853,7 @@ public final class RiskScore {
          * 51 &lt; A &lt;= 63 dBm
          * </pre>
          *
-         * <code>.org.ena.server.common.protocols.generated.RiskLevel gt_51_le_63_dbm = 3;</code>
+         * <code>.org.cwa.server.common.protocols.generated.RiskLevel gt_51_le_63_dbm = 3;</code>
          * @return The enum numeric value on the wire for gt51Le63Dbm.
          */
         public int getGt51Le63DbmValue() {
@@ -5864,7 +5864,7 @@ public final class RiskScore {
          * 51 &lt; A &lt;= 63 dBm
          * </pre>
          *
-         * <code>.org.ena.server.common.protocols.generated.RiskLevel gt_51_le_63_dbm = 3;</code>
+         * <code>.org.cwa.server.common.protocols.generated.RiskLevel gt_51_le_63_dbm = 3;</code>
          * @param value The enum numeric value on the wire for gt51Le63Dbm to set.
          * @return This builder for chaining.
          */
@@ -5878,7 +5878,7 @@ public final class RiskScore {
          * 51 &lt; A &lt;= 63 dBm
          * </pre>
          *
-         * <code>.org.ena.server.common.protocols.generated.RiskLevel gt_51_le_63_dbm = 3;</code>
+         * <code>.org.cwa.server.common.protocols.generated.RiskLevel gt_51_le_63_dbm = 3;</code>
          * @return The gt51Le63Dbm.
          */
         public org.cwa.server.common.protocols.generated.RiskScore.RiskLevel getGt51Le63Dbm() {
@@ -5891,7 +5891,7 @@ public final class RiskScore {
          * 51 &lt; A &lt;= 63 dBm
          * </pre>
          *
-         * <code>.org.ena.server.common.protocols.generated.RiskLevel gt_51_le_63_dbm = 3;</code>
+         * <code>.org.cwa.server.common.protocols.generated.RiskLevel gt_51_le_63_dbm = 3;</code>
          * @param value The gt51Le63Dbm to set.
          * @return This builder for chaining.
          */
@@ -5909,7 +5909,7 @@ public final class RiskScore {
          * 51 &lt; A &lt;= 63 dBm
          * </pre>
          *
-         * <code>.org.ena.server.common.protocols.generated.RiskLevel gt_51_le_63_dbm = 3;</code>
+         * <code>.org.cwa.server.common.protocols.generated.RiskLevel gt_51_le_63_dbm = 3;</code>
          * @return This builder for chaining.
          */
         public Builder clearGt51Le63Dbm() {
@@ -5925,7 +5925,7 @@ public final class RiskScore {
          * 33 &lt; A &lt;= 51 dBm
          * </pre>
          *
-         * <code>.org.ena.server.common.protocols.generated.RiskLevel gt_33_le_51_dbm = 4;</code>
+         * <code>.org.cwa.server.common.protocols.generated.RiskLevel gt_33_le_51_dbm = 4;</code>
          * @return The enum numeric value on the wire for gt33Le51Dbm.
          */
         public int getGt33Le51DbmValue() {
@@ -5936,7 +5936,7 @@ public final class RiskScore {
          * 33 &lt; A &lt;= 51 dBm
          * </pre>
          *
-         * <code>.org.ena.server.common.protocols.generated.RiskLevel gt_33_le_51_dbm = 4;</code>
+         * <code>.org.cwa.server.common.protocols.generated.RiskLevel gt_33_le_51_dbm = 4;</code>
          * @param value The enum numeric value on the wire for gt33Le51Dbm to set.
          * @return This builder for chaining.
          */
@@ -5950,7 +5950,7 @@ public final class RiskScore {
          * 33 &lt; A &lt;= 51 dBm
          * </pre>
          *
-         * <code>.org.ena.server.common.protocols.generated.RiskLevel gt_33_le_51_dbm = 4;</code>
+         * <code>.org.cwa.server.common.protocols.generated.RiskLevel gt_33_le_51_dbm = 4;</code>
          * @return The gt33Le51Dbm.
          */
         public org.cwa.server.common.protocols.generated.RiskScore.RiskLevel getGt33Le51Dbm() {
@@ -5963,7 +5963,7 @@ public final class RiskScore {
          * 33 &lt; A &lt;= 51 dBm
          * </pre>
          *
-         * <code>.org.ena.server.common.protocols.generated.RiskLevel gt_33_le_51_dbm = 4;</code>
+         * <code>.org.cwa.server.common.protocols.generated.RiskLevel gt_33_le_51_dbm = 4;</code>
          * @param value The gt33Le51Dbm to set.
          * @return This builder for chaining.
          */
@@ -5981,7 +5981,7 @@ public final class RiskScore {
          * 33 &lt; A &lt;= 51 dBm
          * </pre>
          *
-         * <code>.org.ena.server.common.protocols.generated.RiskLevel gt_33_le_51_dbm = 4;</code>
+         * <code>.org.cwa.server.common.protocols.generated.RiskLevel gt_33_le_51_dbm = 4;</code>
          * @return This builder for chaining.
          */
         public Builder clearGt33Le51Dbm() {
@@ -5997,7 +5997,7 @@ public final class RiskScore {
          * 27 &lt; A &lt;= 33 dBm
          * </pre>
          *
-         * <code>.org.ena.server.common.protocols.generated.RiskLevel gt_27_le_33_dbm = 5;</code>
+         * <code>.org.cwa.server.common.protocols.generated.RiskLevel gt_27_le_33_dbm = 5;</code>
          * @return The enum numeric value on the wire for gt27Le33Dbm.
          */
         public int getGt27Le33DbmValue() {
@@ -6008,7 +6008,7 @@ public final class RiskScore {
          * 27 &lt; A &lt;= 33 dBm
          * </pre>
          *
-         * <code>.org.ena.server.common.protocols.generated.RiskLevel gt_27_le_33_dbm = 5;</code>
+         * <code>.org.cwa.server.common.protocols.generated.RiskLevel gt_27_le_33_dbm = 5;</code>
          * @param value The enum numeric value on the wire for gt27Le33Dbm to set.
          * @return This builder for chaining.
          */
@@ -6022,7 +6022,7 @@ public final class RiskScore {
          * 27 &lt; A &lt;= 33 dBm
          * </pre>
          *
-         * <code>.org.ena.server.common.protocols.generated.RiskLevel gt_27_le_33_dbm = 5;</code>
+         * <code>.org.cwa.server.common.protocols.generated.RiskLevel gt_27_le_33_dbm = 5;</code>
          * @return The gt27Le33Dbm.
          */
         public org.cwa.server.common.protocols.generated.RiskScore.RiskLevel getGt27Le33Dbm() {
@@ -6035,7 +6035,7 @@ public final class RiskScore {
          * 27 &lt; A &lt;= 33 dBm
          * </pre>
          *
-         * <code>.org.ena.server.common.protocols.generated.RiskLevel gt_27_le_33_dbm = 5;</code>
+         * <code>.org.cwa.server.common.protocols.generated.RiskLevel gt_27_le_33_dbm = 5;</code>
          * @param value The gt27Le33Dbm to set.
          * @return This builder for chaining.
          */
@@ -6053,7 +6053,7 @@ public final class RiskScore {
          * 27 &lt; A &lt;= 33 dBm
          * </pre>
          *
-         * <code>.org.ena.server.common.protocols.generated.RiskLevel gt_27_le_33_dbm = 5;</code>
+         * <code>.org.cwa.server.common.protocols.generated.RiskLevel gt_27_le_33_dbm = 5;</code>
          * @return This builder for chaining.
          */
         public Builder clearGt27Le33Dbm() {
@@ -6069,7 +6069,7 @@ public final class RiskScore {
          * 15 &lt; A &lt;= 27 dBm
          * </pre>
          *
-         * <code>.org.ena.server.common.protocols.generated.RiskLevel gt_15_le_27_dbm = 6;</code>
+         * <code>.org.cwa.server.common.protocols.generated.RiskLevel gt_15_le_27_dbm = 6;</code>
          * @return The enum numeric value on the wire for gt15Le27Dbm.
          */
         public int getGt15Le27DbmValue() {
@@ -6080,7 +6080,7 @@ public final class RiskScore {
          * 15 &lt; A &lt;= 27 dBm
          * </pre>
          *
-         * <code>.org.ena.server.common.protocols.generated.RiskLevel gt_15_le_27_dbm = 6;</code>
+         * <code>.org.cwa.server.common.protocols.generated.RiskLevel gt_15_le_27_dbm = 6;</code>
          * @param value The enum numeric value on the wire for gt15Le27Dbm to set.
          * @return This builder for chaining.
          */
@@ -6094,7 +6094,7 @@ public final class RiskScore {
          * 15 &lt; A &lt;= 27 dBm
          * </pre>
          *
-         * <code>.org.ena.server.common.protocols.generated.RiskLevel gt_15_le_27_dbm = 6;</code>
+         * <code>.org.cwa.server.common.protocols.generated.RiskLevel gt_15_le_27_dbm = 6;</code>
          * @return The gt15Le27Dbm.
          */
         public org.cwa.server.common.protocols.generated.RiskScore.RiskLevel getGt15Le27Dbm() {
@@ -6107,7 +6107,7 @@ public final class RiskScore {
          * 15 &lt; A &lt;= 27 dBm
          * </pre>
          *
-         * <code>.org.ena.server.common.protocols.generated.RiskLevel gt_15_le_27_dbm = 6;</code>
+         * <code>.org.cwa.server.common.protocols.generated.RiskLevel gt_15_le_27_dbm = 6;</code>
          * @param value The gt15Le27Dbm to set.
          * @return This builder for chaining.
          */
@@ -6125,7 +6125,7 @@ public final class RiskScore {
          * 15 &lt; A &lt;= 27 dBm
          * </pre>
          *
-         * <code>.org.ena.server.common.protocols.generated.RiskLevel gt_15_le_27_dbm = 6;</code>
+         * <code>.org.cwa.server.common.protocols.generated.RiskLevel gt_15_le_27_dbm = 6;</code>
          * @return This builder for chaining.
          */
         public Builder clearGt15Le27Dbm() {
@@ -6141,7 +6141,7 @@ public final class RiskScore {
          * 10 &lt; A &lt;= 15 dBm
          * </pre>
          *
-         * <code>.org.ena.server.common.protocols.generated.RiskLevel gt_10_le_15_dbm = 7;</code>
+         * <code>.org.cwa.server.common.protocols.generated.RiskLevel gt_10_le_15_dbm = 7;</code>
          * @return The enum numeric value on the wire for gt10Le15Dbm.
          */
         public int getGt10Le15DbmValue() {
@@ -6152,7 +6152,7 @@ public final class RiskScore {
          * 10 &lt; A &lt;= 15 dBm
          * </pre>
          *
-         * <code>.org.ena.server.common.protocols.generated.RiskLevel gt_10_le_15_dbm = 7;</code>
+         * <code>.org.cwa.server.common.protocols.generated.RiskLevel gt_10_le_15_dbm = 7;</code>
          * @param value The enum numeric value on the wire for gt10Le15Dbm to set.
          * @return This builder for chaining.
          */
@@ -6166,7 +6166,7 @@ public final class RiskScore {
          * 10 &lt; A &lt;= 15 dBm
          * </pre>
          *
-         * <code>.org.ena.server.common.protocols.generated.RiskLevel gt_10_le_15_dbm = 7;</code>
+         * <code>.org.cwa.server.common.protocols.generated.RiskLevel gt_10_le_15_dbm = 7;</code>
          * @return The gt10Le15Dbm.
          */
         public org.cwa.server.common.protocols.generated.RiskScore.RiskLevel getGt10Le15Dbm() {
@@ -6179,7 +6179,7 @@ public final class RiskScore {
          * 10 &lt; A &lt;= 15 dBm
          * </pre>
          *
-         * <code>.org.ena.server.common.protocols.generated.RiskLevel gt_10_le_15_dbm = 7;</code>
+         * <code>.org.cwa.server.common.protocols.generated.RiskLevel gt_10_le_15_dbm = 7;</code>
          * @param value The gt10Le15Dbm to set.
          * @return This builder for chaining.
          */
@@ -6197,7 +6197,7 @@ public final class RiskScore {
          * 10 &lt; A &lt;= 15 dBm
          * </pre>
          *
-         * <code>.org.ena.server.common.protocols.generated.RiskLevel gt_10_le_15_dbm = 7;</code>
+         * <code>.org.cwa.server.common.protocols.generated.RiskLevel gt_10_le_15_dbm = 7;</code>
          * @return This builder for chaining.
          */
         public Builder clearGt10Le15Dbm() {
@@ -6213,7 +6213,7 @@ public final class RiskScore {
          * A &lt;= 10 dBm, highest risk
          * </pre>
          *
-         * <code>.org.ena.server.common.protocols.generated.RiskLevel lt_10_dbm = 8;</code>
+         * <code>.org.cwa.server.common.protocols.generated.RiskLevel lt_10_dbm = 8;</code>
          * @return The enum numeric value on the wire for lt10Dbm.
          */
         public int getLt10DbmValue() {
@@ -6224,7 +6224,7 @@ public final class RiskScore {
          * A &lt;= 10 dBm, highest risk
          * </pre>
          *
-         * <code>.org.ena.server.common.protocols.generated.RiskLevel lt_10_dbm = 8;</code>
+         * <code>.org.cwa.server.common.protocols.generated.RiskLevel lt_10_dbm = 8;</code>
          * @param value The enum numeric value on the wire for lt10Dbm to set.
          * @return This builder for chaining.
          */
@@ -6238,7 +6238,7 @@ public final class RiskScore {
          * A &lt;= 10 dBm, highest risk
          * </pre>
          *
-         * <code>.org.ena.server.common.protocols.generated.RiskLevel lt_10_dbm = 8;</code>
+         * <code>.org.cwa.server.common.protocols.generated.RiskLevel lt_10_dbm = 8;</code>
          * @return The lt10Dbm.
          */
         public org.cwa.server.common.protocols.generated.RiskScore.RiskLevel getLt10Dbm() {
@@ -6251,7 +6251,7 @@ public final class RiskScore {
          * A &lt;= 10 dBm, highest risk
          * </pre>
          *
-         * <code>.org.ena.server.common.protocols.generated.RiskLevel lt_10_dbm = 8;</code>
+         * <code>.org.cwa.server.common.protocols.generated.RiskLevel lt_10_dbm = 8;</code>
          * @param value The lt10Dbm to set.
          * @return This builder for chaining.
          */
@@ -6269,7 +6269,7 @@ public final class RiskScore {
          * A &lt;= 10 dBm, highest risk
          * </pre>
          *
-         * <code>.org.ena.server.common.protocols.generated.RiskLevel lt_10_dbm = 8;</code>
+         * <code>.org.cwa.server.common.protocols.generated.RiskLevel lt_10_dbm = 8;</code>
          * @return This builder for chaining.
          */
         public Builder clearLt10Dbm() {
@@ -6291,10 +6291,10 @@ public final class RiskScore {
         }
 
 
-        // @@protoc_insertion_point(builder_scope:org.ena.server.common.protocols.generated.RiskScoreParameters.AttenuationRiskParameter)
+        // @@protoc_insertion_point(builder_scope:org.cwa.server.common.protocols.generated.RiskScoreParameters.AttenuationRiskParameter)
       }
 
-      // @@protoc_insertion_point(class_scope:org.ena.server.common.protocols.generated.RiskScoreParameters.AttenuationRiskParameter)
+      // @@protoc_insertion_point(class_scope:org.cwa.server.common.protocols.generated.RiskScoreParameters.AttenuationRiskParameter)
       private static final org.cwa.server.common.protocols.generated.RiskScore.RiskScoreParameters.AttenuationRiskParameter DEFAULT_INSTANCE;
       static {
         DEFAULT_INSTANCE = new org.cwa.server.common.protocols.generated.RiskScore.RiskScoreParameters.AttenuationRiskParameter();
@@ -6338,7 +6338,7 @@ public final class RiskScore {
      * App-specific mapping
      * </pre>
      *
-     * <code>.org.ena.server.common.protocols.generated.RiskScoreParameters.TransmissionRiskParameter transmission = 1;</code>
+     * <code>.org.cwa.server.common.protocols.generated.RiskScoreParameters.TransmissionRiskParameter transmission = 1;</code>
      * @return Whether the transmission field is set.
      */
     public boolean hasTransmission() {
@@ -6349,7 +6349,7 @@ public final class RiskScore {
      * App-specific mapping
      * </pre>
      *
-     * <code>.org.ena.server.common.protocols.generated.RiskScoreParameters.TransmissionRiskParameter transmission = 1;</code>
+     * <code>.org.cwa.server.common.protocols.generated.RiskScoreParameters.TransmissionRiskParameter transmission = 1;</code>
      * @return The transmission.
      */
     public org.cwa.server.common.protocols.generated.RiskScore.RiskScoreParameters.TransmissionRiskParameter getTransmission() {
@@ -6360,7 +6360,7 @@ public final class RiskScore {
      * App-specific mapping
      * </pre>
      *
-     * <code>.org.ena.server.common.protocols.generated.RiskScoreParameters.TransmissionRiskParameter transmission = 1;</code>
+     * <code>.org.cwa.server.common.protocols.generated.RiskScoreParameters.TransmissionRiskParameter transmission = 1;</code>
      */
     public org.cwa.server.common.protocols.generated.RiskScore.RiskScoreParameters.TransmissionRiskParameterOrBuilder getTransmissionOrBuilder() {
       return getTransmission();
@@ -6379,21 +6379,21 @@ public final class RiskScore {
     public static final int DURATION_FIELD_NUMBER = 3;
     private org.cwa.server.common.protocols.generated.RiskScore.RiskScoreParameters.DurationRiskParameter duration_;
     /**
-     * <code>.org.ena.server.common.protocols.generated.RiskScoreParameters.DurationRiskParameter duration = 3;</code>
+     * <code>.org.cwa.server.common.protocols.generated.RiskScoreParameters.DurationRiskParameter duration = 3;</code>
      * @return Whether the duration field is set.
      */
     public boolean hasDuration() {
       return duration_ != null;
     }
     /**
-     * <code>.org.ena.server.common.protocols.generated.RiskScoreParameters.DurationRiskParameter duration = 3;</code>
+     * <code>.org.cwa.server.common.protocols.generated.RiskScoreParameters.DurationRiskParameter duration = 3;</code>
      * @return The duration.
      */
     public org.cwa.server.common.protocols.generated.RiskScore.RiskScoreParameters.DurationRiskParameter getDuration() {
       return duration_ == null ? org.cwa.server.common.protocols.generated.RiskScore.RiskScoreParameters.DurationRiskParameter.getDefaultInstance() : duration_;
     }
     /**
-     * <code>.org.ena.server.common.protocols.generated.RiskScoreParameters.DurationRiskParameter duration = 3;</code>
+     * <code>.org.cwa.server.common.protocols.generated.RiskScoreParameters.DurationRiskParameter duration = 3;</code>
      */
     public org.cwa.server.common.protocols.generated.RiskScore.RiskScoreParameters.DurationRiskParameterOrBuilder getDurationOrBuilder() {
       return getDuration();
@@ -6412,21 +6412,21 @@ public final class RiskScore {
     public static final int DAYSSINCELASTEXPOSURE_FIELD_NUMBER = 5;
     private org.cwa.server.common.protocols.generated.RiskScore.RiskScoreParameters.DaysSinceLastExposureRiskParameter daysSinceLastExposure_;
     /**
-     * <code>.org.ena.server.common.protocols.generated.RiskScoreParameters.DaysSinceLastExposureRiskParameter daysSinceLastExposure = 5;</code>
+     * <code>.org.cwa.server.common.protocols.generated.RiskScoreParameters.DaysSinceLastExposureRiskParameter daysSinceLastExposure = 5;</code>
      * @return Whether the daysSinceLastExposure field is set.
      */
     public boolean hasDaysSinceLastExposure() {
       return daysSinceLastExposure_ != null;
     }
     /**
-     * <code>.org.ena.server.common.protocols.generated.RiskScoreParameters.DaysSinceLastExposureRiskParameter daysSinceLastExposure = 5;</code>
+     * <code>.org.cwa.server.common.protocols.generated.RiskScoreParameters.DaysSinceLastExposureRiskParameter daysSinceLastExposure = 5;</code>
      * @return The daysSinceLastExposure.
      */
     public org.cwa.server.common.protocols.generated.RiskScore.RiskScoreParameters.DaysSinceLastExposureRiskParameter getDaysSinceLastExposure() {
       return daysSinceLastExposure_ == null ? org.cwa.server.common.protocols.generated.RiskScore.RiskScoreParameters.DaysSinceLastExposureRiskParameter.getDefaultInstance() : daysSinceLastExposure_;
     }
     /**
-     * <code>.org.ena.server.common.protocols.generated.RiskScoreParameters.DaysSinceLastExposureRiskParameter daysSinceLastExposure = 5;</code>
+     * <code>.org.cwa.server.common.protocols.generated.RiskScoreParameters.DaysSinceLastExposureRiskParameter daysSinceLastExposure = 5;</code>
      */
     public org.cwa.server.common.protocols.generated.RiskScore.RiskScoreParameters.DaysSinceLastExposureRiskParameterOrBuilder getDaysSinceLastExposureOrBuilder() {
       return getDaysSinceLastExposure();
@@ -6445,21 +6445,21 @@ public final class RiskScore {
     public static final int ATTENUATION_FIELD_NUMBER = 7;
     private org.cwa.server.common.protocols.generated.RiskScore.RiskScoreParameters.AttenuationRiskParameter attenuation_;
     /**
-     * <code>.org.ena.server.common.protocols.generated.RiskScoreParameters.AttenuationRiskParameter attenuation = 7;</code>
+     * <code>.org.cwa.server.common.protocols.generated.RiskScoreParameters.AttenuationRiskParameter attenuation = 7;</code>
      * @return Whether the attenuation field is set.
      */
     public boolean hasAttenuation() {
       return attenuation_ != null;
     }
     /**
-     * <code>.org.ena.server.common.protocols.generated.RiskScoreParameters.AttenuationRiskParameter attenuation = 7;</code>
+     * <code>.org.cwa.server.common.protocols.generated.RiskScoreParameters.AttenuationRiskParameter attenuation = 7;</code>
      * @return The attenuation.
      */
     public org.cwa.server.common.protocols.generated.RiskScore.RiskScoreParameters.AttenuationRiskParameter getAttenuation() {
       return attenuation_ == null ? org.cwa.server.common.protocols.generated.RiskScore.RiskScoreParameters.AttenuationRiskParameter.getDefaultInstance() : attenuation_;
     }
     /**
-     * <code>.org.ena.server.common.protocols.generated.RiskScoreParameters.AttenuationRiskParameter attenuation = 7;</code>
+     * <code>.org.cwa.server.common.protocols.generated.RiskScoreParameters.AttenuationRiskParameter attenuation = 7;</code>
      */
     public org.cwa.server.common.protocols.generated.RiskScore.RiskScoreParameters.AttenuationRiskParameterOrBuilder getAttenuationOrBuilder() {
       return getAttenuation();
@@ -6741,26 +6741,26 @@ public final class RiskScore {
      * https://covid19-static.cdn-apple.com/applications/covid19/current/static/contact-tracing/pdf/ExposureNotification-FrameworkDocumentationv1.2.pdf
      * </pre>
      *
-     * Protobuf type {@code org.ena.server.common.protocols.generated.RiskScoreParameters}
+     * Protobuf type {@code org.cwa.server.common.protocols.generated.RiskScoreParameters}
      */
     public static final class Builder extends
         com.google.protobuf.GeneratedMessageV3.Builder<Builder> implements
-        // @@protoc_insertion_point(builder_implements:org.ena.server.common.protocols.generated.RiskScoreParameters)
+        // @@protoc_insertion_point(builder_implements:org.cwa.server.common.protocols.generated.RiskScoreParameters)
         org.cwa.server.common.protocols.generated.RiskScore.RiskScoreParametersOrBuilder {
       public static final com.google.protobuf.Descriptors.Descriptor
           getDescriptor() {
-        return org.cwa.server.common.protocols.generated.RiskScore.internal_static_org_ena_server_common_protocols_generated_RiskScoreParameters_descriptor;
+        return org.cwa.server.common.protocols.generated.RiskScore.internal_static_org_cwa_server_common_protocols_generated_RiskScoreParameters_descriptor;
       }
 
       @java.lang.Override
       protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
           internalGetFieldAccessorTable() {
-        return org.cwa.server.common.protocols.generated.RiskScore.internal_static_org_ena_server_common_protocols_generated_RiskScoreParameters_fieldAccessorTable
+        return org.cwa.server.common.protocols.generated.RiskScore.internal_static_org_cwa_server_common_protocols_generated_RiskScoreParameters_fieldAccessorTable
             .ensureFieldAccessorsInitialized(
                 org.cwa.server.common.protocols.generated.RiskScore.RiskScoreParameters.class, org.cwa.server.common.protocols.generated.RiskScore.RiskScoreParameters.Builder.class);
       }
 
-      // Construct using org.ena.server.common.protocols.generated.RiskScore.RiskScoreParameters.newBuilder()
+      // Construct using org.cwa.server.common.protocols.generated.RiskScore.RiskScoreParameters.newBuilder()
       private Builder() {
         maybeForceBuilderInitialization();
       }
@@ -6816,7 +6816,7 @@ public final class RiskScore {
       @java.lang.Override
       public com.google.protobuf.Descriptors.Descriptor
           getDescriptorForType() {
-        return org.cwa.server.common.protocols.generated.RiskScore.internal_static_org_ena_server_common_protocols_generated_RiskScoreParameters_descriptor;
+        return org.cwa.server.common.protocols.generated.RiskScore.internal_static_org_cwa_server_common_protocols_generated_RiskScoreParameters_descriptor;
       }
 
       @java.lang.Override
@@ -6969,7 +6969,7 @@ public final class RiskScore {
        * App-specific mapping
        * </pre>
        *
-       * <code>.org.ena.server.common.protocols.generated.RiskScoreParameters.TransmissionRiskParameter transmission = 1;</code>
+       * <code>.org.cwa.server.common.protocols.generated.RiskScoreParameters.TransmissionRiskParameter transmission = 1;</code>
        * @return Whether the transmission field is set.
        */
       public boolean hasTransmission() {
@@ -6980,7 +6980,7 @@ public final class RiskScore {
        * App-specific mapping
        * </pre>
        *
-       * <code>.org.ena.server.common.protocols.generated.RiskScoreParameters.TransmissionRiskParameter transmission = 1;</code>
+       * <code>.org.cwa.server.common.protocols.generated.RiskScoreParameters.TransmissionRiskParameter transmission = 1;</code>
        * @return The transmission.
        */
       public org.cwa.server.common.protocols.generated.RiskScore.RiskScoreParameters.TransmissionRiskParameter getTransmission() {
@@ -6995,7 +6995,7 @@ public final class RiskScore {
        * App-specific mapping
        * </pre>
        *
-       * <code>.org.ena.server.common.protocols.generated.RiskScoreParameters.TransmissionRiskParameter transmission = 1;</code>
+       * <code>.org.cwa.server.common.protocols.generated.RiskScoreParameters.TransmissionRiskParameter transmission = 1;</code>
        */
       public Builder setTransmission(org.cwa.server.common.protocols.generated.RiskScore.RiskScoreParameters.TransmissionRiskParameter value) {
         if (transmissionBuilder_ == null) {
@@ -7015,7 +7015,7 @@ public final class RiskScore {
        * App-specific mapping
        * </pre>
        *
-       * <code>.org.ena.server.common.protocols.generated.RiskScoreParameters.TransmissionRiskParameter transmission = 1;</code>
+       * <code>.org.cwa.server.common.protocols.generated.RiskScoreParameters.TransmissionRiskParameter transmission = 1;</code>
        */
       public Builder setTransmission(
           org.cwa.server.common.protocols.generated.RiskScore.RiskScoreParameters.TransmissionRiskParameter.Builder builderForValue) {
@@ -7033,7 +7033,7 @@ public final class RiskScore {
        * App-specific mapping
        * </pre>
        *
-       * <code>.org.ena.server.common.protocols.generated.RiskScoreParameters.TransmissionRiskParameter transmission = 1;</code>
+       * <code>.org.cwa.server.common.protocols.generated.RiskScoreParameters.TransmissionRiskParameter transmission = 1;</code>
        */
       public Builder mergeTransmission(org.cwa.server.common.protocols.generated.RiskScore.RiskScoreParameters.TransmissionRiskParameter value) {
         if (transmissionBuilder_ == null) {
@@ -7055,7 +7055,7 @@ public final class RiskScore {
        * App-specific mapping
        * </pre>
        *
-       * <code>.org.ena.server.common.protocols.generated.RiskScoreParameters.TransmissionRiskParameter transmission = 1;</code>
+       * <code>.org.cwa.server.common.protocols.generated.RiskScoreParameters.TransmissionRiskParameter transmission = 1;</code>
        */
       public Builder clearTransmission() {
         if (transmissionBuilder_ == null) {
@@ -7073,7 +7073,7 @@ public final class RiskScore {
        * App-specific mapping
        * </pre>
        *
-       * <code>.org.ena.server.common.protocols.generated.RiskScoreParameters.TransmissionRiskParameter transmission = 1;</code>
+       * <code>.org.cwa.server.common.protocols.generated.RiskScoreParameters.TransmissionRiskParameter transmission = 1;</code>
        */
       public org.cwa.server.common.protocols.generated.RiskScore.RiskScoreParameters.TransmissionRiskParameter.Builder getTransmissionBuilder() {
         
@@ -7085,7 +7085,7 @@ public final class RiskScore {
        * App-specific mapping
        * </pre>
        *
-       * <code>.org.ena.server.common.protocols.generated.RiskScoreParameters.TransmissionRiskParameter transmission = 1;</code>
+       * <code>.org.cwa.server.common.protocols.generated.RiskScoreParameters.TransmissionRiskParameter transmission = 1;</code>
        */
       public org.cwa.server.common.protocols.generated.RiskScore.RiskScoreParameters.TransmissionRiskParameterOrBuilder getTransmissionOrBuilder() {
         if (transmissionBuilder_ != null) {
@@ -7100,10 +7100,10 @@ public final class RiskScore {
        * App-specific mapping
        * </pre>
        *
-       * <code>.org.ena.server.common.protocols.generated.RiskScoreParameters.TransmissionRiskParameter transmission = 1;</code>
+       * <code>.org.cwa.server.common.protocols.generated.RiskScoreParameters.TransmissionRiskParameter transmission = 1;</code>
        */
       private com.google.protobuf.SingleFieldBuilderV3<
-          org.cwa.server.common.protocols.generated.RiskScore.RiskScoreParameters.TransmissionRiskParameter, org.cwa.server.common.protocols.generated.RiskScore.RiskScoreParameters.TransmissionRiskParameter.Builder, org.cwa.server.common.protocols.generated.RiskScore.RiskScoreParameters.TransmissionRiskParameterOrBuilder>
+          org.cwa.server.common.protocols.generated.RiskScore.RiskScoreParameters.TransmissionRiskParameter, org.cwa.server.common.protocols.generated.RiskScore.RiskScoreParameters.TransmissionRiskParameter.Builder, org.cwa.server.common.protocols.generated.RiskScore.RiskScoreParameters.TransmissionRiskParameterOrBuilder> 
           getTransmissionFieldBuilder() {
         if (transmissionBuilder_ == null) {
           transmissionBuilder_ = new com.google.protobuf.SingleFieldBuilderV3<
@@ -7150,14 +7150,14 @@ public final class RiskScore {
       private com.google.protobuf.SingleFieldBuilderV3<
           org.cwa.server.common.protocols.generated.RiskScore.RiskScoreParameters.DurationRiskParameter, org.cwa.server.common.protocols.generated.RiskScore.RiskScoreParameters.DurationRiskParameter.Builder, org.cwa.server.common.protocols.generated.RiskScore.RiskScoreParameters.DurationRiskParameterOrBuilder> durationBuilder_;
       /**
-       * <code>.org.ena.server.common.protocols.generated.RiskScoreParameters.DurationRiskParameter duration = 3;</code>
+       * <code>.org.cwa.server.common.protocols.generated.RiskScoreParameters.DurationRiskParameter duration = 3;</code>
        * @return Whether the duration field is set.
        */
       public boolean hasDuration() {
         return durationBuilder_ != null || duration_ != null;
       }
       /**
-       * <code>.org.ena.server.common.protocols.generated.RiskScoreParameters.DurationRiskParameter duration = 3;</code>
+       * <code>.org.cwa.server.common.protocols.generated.RiskScoreParameters.DurationRiskParameter duration = 3;</code>
        * @return The duration.
        */
       public org.cwa.server.common.protocols.generated.RiskScore.RiskScoreParameters.DurationRiskParameter getDuration() {
@@ -7168,7 +7168,7 @@ public final class RiskScore {
         }
       }
       /**
-       * <code>.org.ena.server.common.protocols.generated.RiskScoreParameters.DurationRiskParameter duration = 3;</code>
+       * <code>.org.cwa.server.common.protocols.generated.RiskScoreParameters.DurationRiskParameter duration = 3;</code>
        */
       public Builder setDuration(org.cwa.server.common.protocols.generated.RiskScore.RiskScoreParameters.DurationRiskParameter value) {
         if (durationBuilder_ == null) {
@@ -7184,7 +7184,7 @@ public final class RiskScore {
         return this;
       }
       /**
-       * <code>.org.ena.server.common.protocols.generated.RiskScoreParameters.DurationRiskParameter duration = 3;</code>
+       * <code>.org.cwa.server.common.protocols.generated.RiskScoreParameters.DurationRiskParameter duration = 3;</code>
        */
       public Builder setDuration(
           org.cwa.server.common.protocols.generated.RiskScore.RiskScoreParameters.DurationRiskParameter.Builder builderForValue) {
@@ -7198,7 +7198,7 @@ public final class RiskScore {
         return this;
       }
       /**
-       * <code>.org.ena.server.common.protocols.generated.RiskScoreParameters.DurationRiskParameter duration = 3;</code>
+       * <code>.org.cwa.server.common.protocols.generated.RiskScoreParameters.DurationRiskParameter duration = 3;</code>
        */
       public Builder mergeDuration(org.cwa.server.common.protocols.generated.RiskScore.RiskScoreParameters.DurationRiskParameter value) {
         if (durationBuilder_ == null) {
@@ -7216,7 +7216,7 @@ public final class RiskScore {
         return this;
       }
       /**
-       * <code>.org.ena.server.common.protocols.generated.RiskScoreParameters.DurationRiskParameter duration = 3;</code>
+       * <code>.org.cwa.server.common.protocols.generated.RiskScoreParameters.DurationRiskParameter duration = 3;</code>
        */
       public Builder clearDuration() {
         if (durationBuilder_ == null) {
@@ -7230,7 +7230,7 @@ public final class RiskScore {
         return this;
       }
       /**
-       * <code>.org.ena.server.common.protocols.generated.RiskScoreParameters.DurationRiskParameter duration = 3;</code>
+       * <code>.org.cwa.server.common.protocols.generated.RiskScoreParameters.DurationRiskParameter duration = 3;</code>
        */
       public org.cwa.server.common.protocols.generated.RiskScore.RiskScoreParameters.DurationRiskParameter.Builder getDurationBuilder() {
         
@@ -7238,7 +7238,7 @@ public final class RiskScore {
         return getDurationFieldBuilder().getBuilder();
       }
       /**
-       * <code>.org.ena.server.common.protocols.generated.RiskScoreParameters.DurationRiskParameter duration = 3;</code>
+       * <code>.org.cwa.server.common.protocols.generated.RiskScoreParameters.DurationRiskParameter duration = 3;</code>
        */
       public org.cwa.server.common.protocols.generated.RiskScore.RiskScoreParameters.DurationRiskParameterOrBuilder getDurationOrBuilder() {
         if (durationBuilder_ != null) {
@@ -7249,10 +7249,10 @@ public final class RiskScore {
         }
       }
       /**
-       * <code>.org.ena.server.common.protocols.generated.RiskScoreParameters.DurationRiskParameter duration = 3;</code>
+       * <code>.org.cwa.server.common.protocols.generated.RiskScoreParameters.DurationRiskParameter duration = 3;</code>
        */
       private com.google.protobuf.SingleFieldBuilderV3<
-          org.cwa.server.common.protocols.generated.RiskScore.RiskScoreParameters.DurationRiskParameter, org.cwa.server.common.protocols.generated.RiskScore.RiskScoreParameters.DurationRiskParameter.Builder, org.cwa.server.common.protocols.generated.RiskScore.RiskScoreParameters.DurationRiskParameterOrBuilder>
+          org.cwa.server.common.protocols.generated.RiskScore.RiskScoreParameters.DurationRiskParameter, org.cwa.server.common.protocols.generated.RiskScore.RiskScoreParameters.DurationRiskParameter.Builder, org.cwa.server.common.protocols.generated.RiskScore.RiskScoreParameters.DurationRiskParameterOrBuilder> 
           getDurationFieldBuilder() {
         if (durationBuilder_ == null) {
           durationBuilder_ = new com.google.protobuf.SingleFieldBuilderV3<
@@ -7299,14 +7299,14 @@ public final class RiskScore {
       private com.google.protobuf.SingleFieldBuilderV3<
           org.cwa.server.common.protocols.generated.RiskScore.RiskScoreParameters.DaysSinceLastExposureRiskParameter, org.cwa.server.common.protocols.generated.RiskScore.RiskScoreParameters.DaysSinceLastExposureRiskParameter.Builder, org.cwa.server.common.protocols.generated.RiskScore.RiskScoreParameters.DaysSinceLastExposureRiskParameterOrBuilder> daysSinceLastExposureBuilder_;
       /**
-       * <code>.org.ena.server.common.protocols.generated.RiskScoreParameters.DaysSinceLastExposureRiskParameter daysSinceLastExposure = 5;</code>
+       * <code>.org.cwa.server.common.protocols.generated.RiskScoreParameters.DaysSinceLastExposureRiskParameter daysSinceLastExposure = 5;</code>
        * @return Whether the daysSinceLastExposure field is set.
        */
       public boolean hasDaysSinceLastExposure() {
         return daysSinceLastExposureBuilder_ != null || daysSinceLastExposure_ != null;
       }
       /**
-       * <code>.org.ena.server.common.protocols.generated.RiskScoreParameters.DaysSinceLastExposureRiskParameter daysSinceLastExposure = 5;</code>
+       * <code>.org.cwa.server.common.protocols.generated.RiskScoreParameters.DaysSinceLastExposureRiskParameter daysSinceLastExposure = 5;</code>
        * @return The daysSinceLastExposure.
        */
       public org.cwa.server.common.protocols.generated.RiskScore.RiskScoreParameters.DaysSinceLastExposureRiskParameter getDaysSinceLastExposure() {
@@ -7317,7 +7317,7 @@ public final class RiskScore {
         }
       }
       /**
-       * <code>.org.ena.server.common.protocols.generated.RiskScoreParameters.DaysSinceLastExposureRiskParameter daysSinceLastExposure = 5;</code>
+       * <code>.org.cwa.server.common.protocols.generated.RiskScoreParameters.DaysSinceLastExposureRiskParameter daysSinceLastExposure = 5;</code>
        */
       public Builder setDaysSinceLastExposure(org.cwa.server.common.protocols.generated.RiskScore.RiskScoreParameters.DaysSinceLastExposureRiskParameter value) {
         if (daysSinceLastExposureBuilder_ == null) {
@@ -7333,7 +7333,7 @@ public final class RiskScore {
         return this;
       }
       /**
-       * <code>.org.ena.server.common.protocols.generated.RiskScoreParameters.DaysSinceLastExposureRiskParameter daysSinceLastExposure = 5;</code>
+       * <code>.org.cwa.server.common.protocols.generated.RiskScoreParameters.DaysSinceLastExposureRiskParameter daysSinceLastExposure = 5;</code>
        */
       public Builder setDaysSinceLastExposure(
           org.cwa.server.common.protocols.generated.RiskScore.RiskScoreParameters.DaysSinceLastExposureRiskParameter.Builder builderForValue) {
@@ -7347,7 +7347,7 @@ public final class RiskScore {
         return this;
       }
       /**
-       * <code>.org.ena.server.common.protocols.generated.RiskScoreParameters.DaysSinceLastExposureRiskParameter daysSinceLastExposure = 5;</code>
+       * <code>.org.cwa.server.common.protocols.generated.RiskScoreParameters.DaysSinceLastExposureRiskParameter daysSinceLastExposure = 5;</code>
        */
       public Builder mergeDaysSinceLastExposure(org.cwa.server.common.protocols.generated.RiskScore.RiskScoreParameters.DaysSinceLastExposureRiskParameter value) {
         if (daysSinceLastExposureBuilder_ == null) {
@@ -7365,7 +7365,7 @@ public final class RiskScore {
         return this;
       }
       /**
-       * <code>.org.ena.server.common.protocols.generated.RiskScoreParameters.DaysSinceLastExposureRiskParameter daysSinceLastExposure = 5;</code>
+       * <code>.org.cwa.server.common.protocols.generated.RiskScoreParameters.DaysSinceLastExposureRiskParameter daysSinceLastExposure = 5;</code>
        */
       public Builder clearDaysSinceLastExposure() {
         if (daysSinceLastExposureBuilder_ == null) {
@@ -7379,7 +7379,7 @@ public final class RiskScore {
         return this;
       }
       /**
-       * <code>.org.ena.server.common.protocols.generated.RiskScoreParameters.DaysSinceLastExposureRiskParameter daysSinceLastExposure = 5;</code>
+       * <code>.org.cwa.server.common.protocols.generated.RiskScoreParameters.DaysSinceLastExposureRiskParameter daysSinceLastExposure = 5;</code>
        */
       public org.cwa.server.common.protocols.generated.RiskScore.RiskScoreParameters.DaysSinceLastExposureRiskParameter.Builder getDaysSinceLastExposureBuilder() {
         
@@ -7387,7 +7387,7 @@ public final class RiskScore {
         return getDaysSinceLastExposureFieldBuilder().getBuilder();
       }
       /**
-       * <code>.org.ena.server.common.protocols.generated.RiskScoreParameters.DaysSinceLastExposureRiskParameter daysSinceLastExposure = 5;</code>
+       * <code>.org.cwa.server.common.protocols.generated.RiskScoreParameters.DaysSinceLastExposureRiskParameter daysSinceLastExposure = 5;</code>
        */
       public org.cwa.server.common.protocols.generated.RiskScore.RiskScoreParameters.DaysSinceLastExposureRiskParameterOrBuilder getDaysSinceLastExposureOrBuilder() {
         if (daysSinceLastExposureBuilder_ != null) {
@@ -7398,10 +7398,10 @@ public final class RiskScore {
         }
       }
       /**
-       * <code>.org.ena.server.common.protocols.generated.RiskScoreParameters.DaysSinceLastExposureRiskParameter daysSinceLastExposure = 5;</code>
+       * <code>.org.cwa.server.common.protocols.generated.RiskScoreParameters.DaysSinceLastExposureRiskParameter daysSinceLastExposure = 5;</code>
        */
       private com.google.protobuf.SingleFieldBuilderV3<
-          org.cwa.server.common.protocols.generated.RiskScore.RiskScoreParameters.DaysSinceLastExposureRiskParameter, org.cwa.server.common.protocols.generated.RiskScore.RiskScoreParameters.DaysSinceLastExposureRiskParameter.Builder, org.cwa.server.common.protocols.generated.RiskScore.RiskScoreParameters.DaysSinceLastExposureRiskParameterOrBuilder>
+          org.cwa.server.common.protocols.generated.RiskScore.RiskScoreParameters.DaysSinceLastExposureRiskParameter, org.cwa.server.common.protocols.generated.RiskScore.RiskScoreParameters.DaysSinceLastExposureRiskParameter.Builder, org.cwa.server.common.protocols.generated.RiskScore.RiskScoreParameters.DaysSinceLastExposureRiskParameterOrBuilder> 
           getDaysSinceLastExposureFieldBuilder() {
         if (daysSinceLastExposureBuilder_ == null) {
           daysSinceLastExposureBuilder_ = new com.google.protobuf.SingleFieldBuilderV3<
@@ -7448,14 +7448,14 @@ public final class RiskScore {
       private com.google.protobuf.SingleFieldBuilderV3<
           org.cwa.server.common.protocols.generated.RiskScore.RiskScoreParameters.AttenuationRiskParameter, org.cwa.server.common.protocols.generated.RiskScore.RiskScoreParameters.AttenuationRiskParameter.Builder, org.cwa.server.common.protocols.generated.RiskScore.RiskScoreParameters.AttenuationRiskParameterOrBuilder> attenuationBuilder_;
       /**
-       * <code>.org.ena.server.common.protocols.generated.RiskScoreParameters.AttenuationRiskParameter attenuation = 7;</code>
+       * <code>.org.cwa.server.common.protocols.generated.RiskScoreParameters.AttenuationRiskParameter attenuation = 7;</code>
        * @return Whether the attenuation field is set.
        */
       public boolean hasAttenuation() {
         return attenuationBuilder_ != null || attenuation_ != null;
       }
       /**
-       * <code>.org.ena.server.common.protocols.generated.RiskScoreParameters.AttenuationRiskParameter attenuation = 7;</code>
+       * <code>.org.cwa.server.common.protocols.generated.RiskScoreParameters.AttenuationRiskParameter attenuation = 7;</code>
        * @return The attenuation.
        */
       public org.cwa.server.common.protocols.generated.RiskScore.RiskScoreParameters.AttenuationRiskParameter getAttenuation() {
@@ -7466,7 +7466,7 @@ public final class RiskScore {
         }
       }
       /**
-       * <code>.org.ena.server.common.protocols.generated.RiskScoreParameters.AttenuationRiskParameter attenuation = 7;</code>
+       * <code>.org.cwa.server.common.protocols.generated.RiskScoreParameters.AttenuationRiskParameter attenuation = 7;</code>
        */
       public Builder setAttenuation(org.cwa.server.common.protocols.generated.RiskScore.RiskScoreParameters.AttenuationRiskParameter value) {
         if (attenuationBuilder_ == null) {
@@ -7482,7 +7482,7 @@ public final class RiskScore {
         return this;
       }
       /**
-       * <code>.org.ena.server.common.protocols.generated.RiskScoreParameters.AttenuationRiskParameter attenuation = 7;</code>
+       * <code>.org.cwa.server.common.protocols.generated.RiskScoreParameters.AttenuationRiskParameter attenuation = 7;</code>
        */
       public Builder setAttenuation(
           org.cwa.server.common.protocols.generated.RiskScore.RiskScoreParameters.AttenuationRiskParameter.Builder builderForValue) {
@@ -7496,7 +7496,7 @@ public final class RiskScore {
         return this;
       }
       /**
-       * <code>.org.ena.server.common.protocols.generated.RiskScoreParameters.AttenuationRiskParameter attenuation = 7;</code>
+       * <code>.org.cwa.server.common.protocols.generated.RiskScoreParameters.AttenuationRiskParameter attenuation = 7;</code>
        */
       public Builder mergeAttenuation(org.cwa.server.common.protocols.generated.RiskScore.RiskScoreParameters.AttenuationRiskParameter value) {
         if (attenuationBuilder_ == null) {
@@ -7514,7 +7514,7 @@ public final class RiskScore {
         return this;
       }
       /**
-       * <code>.org.ena.server.common.protocols.generated.RiskScoreParameters.AttenuationRiskParameter attenuation = 7;</code>
+       * <code>.org.cwa.server.common.protocols.generated.RiskScoreParameters.AttenuationRiskParameter attenuation = 7;</code>
        */
       public Builder clearAttenuation() {
         if (attenuationBuilder_ == null) {
@@ -7528,7 +7528,7 @@ public final class RiskScore {
         return this;
       }
       /**
-       * <code>.org.ena.server.common.protocols.generated.RiskScoreParameters.AttenuationRiskParameter attenuation = 7;</code>
+       * <code>.org.cwa.server.common.protocols.generated.RiskScoreParameters.AttenuationRiskParameter attenuation = 7;</code>
        */
       public org.cwa.server.common.protocols.generated.RiskScore.RiskScoreParameters.AttenuationRiskParameter.Builder getAttenuationBuilder() {
         
@@ -7536,7 +7536,7 @@ public final class RiskScore {
         return getAttenuationFieldBuilder().getBuilder();
       }
       /**
-       * <code>.org.ena.server.common.protocols.generated.RiskScoreParameters.AttenuationRiskParameter attenuation = 7;</code>
+       * <code>.org.cwa.server.common.protocols.generated.RiskScoreParameters.AttenuationRiskParameter attenuation = 7;</code>
        */
       public org.cwa.server.common.protocols.generated.RiskScore.RiskScoreParameters.AttenuationRiskParameterOrBuilder getAttenuationOrBuilder() {
         if (attenuationBuilder_ != null) {
@@ -7547,10 +7547,10 @@ public final class RiskScore {
         }
       }
       /**
-       * <code>.org.ena.server.common.protocols.generated.RiskScoreParameters.AttenuationRiskParameter attenuation = 7;</code>
+       * <code>.org.cwa.server.common.protocols.generated.RiskScoreParameters.AttenuationRiskParameter attenuation = 7;</code>
        */
       private com.google.protobuf.SingleFieldBuilderV3<
-          org.cwa.server.common.protocols.generated.RiskScore.RiskScoreParameters.AttenuationRiskParameter, org.cwa.server.common.protocols.generated.RiskScore.RiskScoreParameters.AttenuationRiskParameter.Builder, org.cwa.server.common.protocols.generated.RiskScore.RiskScoreParameters.AttenuationRiskParameterOrBuilder>
+          org.cwa.server.common.protocols.generated.RiskScore.RiskScoreParameters.AttenuationRiskParameter, org.cwa.server.common.protocols.generated.RiskScore.RiskScoreParameters.AttenuationRiskParameter.Builder, org.cwa.server.common.protocols.generated.RiskScore.RiskScoreParameters.AttenuationRiskParameterOrBuilder> 
           getAttenuationFieldBuilder() {
         if (attenuationBuilder_ == null) {
           attenuationBuilder_ = new com.google.protobuf.SingleFieldBuilderV3<
@@ -7605,10 +7605,10 @@ public final class RiskScore {
       }
 
 
-      // @@protoc_insertion_point(builder_scope:org.ena.server.common.protocols.generated.RiskScoreParameters)
+      // @@protoc_insertion_point(builder_scope:org.cwa.server.common.protocols.generated.RiskScoreParameters)
     }
 
-    // @@protoc_insertion_point(class_scope:org.ena.server.common.protocols.generated.RiskScoreParameters)
+    // @@protoc_insertion_point(class_scope:org.cwa.server.common.protocols.generated.RiskScoreParameters)
     private static final org.cwa.server.common.protocols.generated.RiskScore.RiskScoreParameters DEFAULT_INSTANCE;
     static {
       DEFAULT_INSTANCE = new org.cwa.server.common.protocols.generated.RiskScore.RiskScoreParameters();
@@ -7646,30 +7646,30 @@ public final class RiskScore {
   }
 
   private static final com.google.protobuf.Descriptors.Descriptor
-    internal_static_org_ena_server_common_protocols_generated_RiskScoreParameters_descriptor;
+    internal_static_org_cwa_server_common_protocols_generated_RiskScoreParameters_descriptor;
   private static final 
     com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
-      internal_static_org_ena_server_common_protocols_generated_RiskScoreParameters_fieldAccessorTable;
+      internal_static_org_cwa_server_common_protocols_generated_RiskScoreParameters_fieldAccessorTable;
   private static final com.google.protobuf.Descriptors.Descriptor
-    internal_static_org_ena_server_common_protocols_generated_RiskScoreParameters_TransmissionRiskParameter_descriptor;
+    internal_static_org_cwa_server_common_protocols_generated_RiskScoreParameters_TransmissionRiskParameter_descriptor;
   private static final 
     com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
-      internal_static_org_ena_server_common_protocols_generated_RiskScoreParameters_TransmissionRiskParameter_fieldAccessorTable;
+      internal_static_org_cwa_server_common_protocols_generated_RiskScoreParameters_TransmissionRiskParameter_fieldAccessorTable;
   private static final com.google.protobuf.Descriptors.Descriptor
-    internal_static_org_ena_server_common_protocols_generated_RiskScoreParameters_DurationRiskParameter_descriptor;
+    internal_static_org_cwa_server_common_protocols_generated_RiskScoreParameters_DurationRiskParameter_descriptor;
   private static final 
     com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
-      internal_static_org_ena_server_common_protocols_generated_RiskScoreParameters_DurationRiskParameter_fieldAccessorTable;
+      internal_static_org_cwa_server_common_protocols_generated_RiskScoreParameters_DurationRiskParameter_fieldAccessorTable;
   private static final com.google.protobuf.Descriptors.Descriptor
-    internal_static_org_ena_server_common_protocols_generated_RiskScoreParameters_DaysSinceLastExposureRiskParameter_descriptor;
+    internal_static_org_cwa_server_common_protocols_generated_RiskScoreParameters_DaysSinceLastExposureRiskParameter_descriptor;
   private static final 
     com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
-      internal_static_org_ena_server_common_protocols_generated_RiskScoreParameters_DaysSinceLastExposureRiskParameter_fieldAccessorTable;
+      internal_static_org_cwa_server_common_protocols_generated_RiskScoreParameters_DaysSinceLastExposureRiskParameter_fieldAccessorTable;
   private static final com.google.protobuf.Descriptors.Descriptor
-    internal_static_org_ena_server_common_protocols_generated_RiskScoreParameters_AttenuationRiskParameter_descriptor;
+    internal_static_org_cwa_server_common_protocols_generated_RiskScoreParameters_AttenuationRiskParameter_descriptor;
   private static final 
     com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
-      internal_static_org_ena_server_common_protocols_generated_RiskScoreParameters_AttenuationRiskParameter_fieldAccessorTable;
+      internal_static_org_cwa_server_common_protocols_generated_RiskScoreParameters_AttenuationRiskParameter_fieldAccessorTable;
 
   public static com.google.protobuf.Descriptors.FileDescriptor
       getDescriptor() {
@@ -7679,86 +7679,86 @@ public final class RiskScore {
       descriptor;
   static {
     java.lang.String[] descriptorData = {
-      "\n\017riskScore.proto\022)org.ena.server.common" +
+      "\n\017riskScore.proto\022)org.cwa.server.common" +
       ".protocols.generated\"\342\030\n\023RiskScoreParame" +
-      "ters\022n\n\014transmission\030\001 \001(\0132X.org.ena.ser" +
+      "ters\022n\n\014transmission\030\001 \001(\0132X.org.cwa.ser" +
       "ver.common.protocols.generated.RiskScore" +
       "Parameters.TransmissionRiskParameter\022\032\n\022" +
       "transmissionWeight\030\002 \001(\001\022f\n\010duration\030\003 \001" +
-      "(\0132T.org.ena.server.common.protocols.gen" +
+      "(\0132T.org.cwa.server.common.protocols.gen" +
       "erated.RiskScoreParameters.DurationRiskP" +
       "arameter\022\026\n\016durationWeight\030\004 \001(\001\022\200\001\n\025day" +
-      "sSinceLastExposure\030\005 \001(\0132a.org.ena.serve" +
+      "sSinceLastExposure\030\005 \001(\0132a.org.cwa.serve" +
       "r.common.protocols.generated.RiskScorePa" +
       "rameters.DaysSinceLastExposureRiskParame" +
       "ter\022\022\n\ndaysWeight\030\006 \001(\001\022l\n\013attenuation\030\007" +
-      " \001(\0132W.org.ena.server.common.protocols.g" +
+      " \001(\0132W.org.cwa.server.common.protocols.g" +
       "enerated.RiskScoreParameters.Attenuation" +
       "RiskParameter\022\031\n\021attenuationWeight\030\010 \001(\001" +
       "\032\373\004\n\031TransmissionRiskParameter\022J\n\014appDef" +
-      "ined_1\030\001 \001(\01624.org.ena.server.common.pro" +
+      "ined_1\030\001 \001(\01624.org.cwa.server.common.pro" +
       "tocols.generated.RiskLevel\022J\n\014appDefined" +
-      "_2\030\002 \001(\01624.org.ena.server.common.protoco" +
+      "_2\030\002 \001(\01624.org.cwa.server.common.protoco" +
       "ls.generated.RiskLevel\022J\n\014appDefined_3\030\003" +
-      " \001(\01624.org.ena.server.common.protocols.g" +
+      " \001(\01624.org.cwa.server.common.protocols.g" +
       "enerated.RiskLevel\022J\n\014appDefined_4\030\004 \001(\016" +
-      "24.org.ena.server.common.protocols.gener" +
+      "24.org.cwa.server.common.protocols.gener" +
       "ated.RiskLevel\022J\n\014appDefined_5\030\005 \001(\01624.o" +
-      "rg.ena.server.common.protocols.generated" +
-      ".RiskLevel\022J\n\014appDefined_6\030\006 \001(\01624.org.e" +
-      "na.server.common.protocols.generated.Ris" +
-      "kLevel\022J\n\014appDefined_7\030\007 \001(\01624.org.ena.s" +
+      "rg.cwa.server.common.protocols.generated" +
+      ".RiskLevel\022J\n\014appDefined_6\030\006 \001(\01624.org.c" +
+      "wa.server.common.protocols.generated.Ris" +
+      "kLevel\022J\n\014appDefined_7\030\007 \001(\01624.org.cwa.s" +
       "erver.common.protocols.generated.RiskLev" +
-      "el\022J\n\014appDefined_8\030\010 \001(\01624.org.ena.serve" +
+      "el\022J\n\014appDefined_8\030\010 \001(\01624.org.cwa.serve" +
       "r.common.protocols.generated.RiskLevel\032\377" +
       "\004\n\025DurationRiskParameter\022F\n\010eq_0_min\030\001 \001" +
-      "(\01624.org.ena.server.common.protocols.gen" +
+      "(\01624.org.cwa.server.common.protocols.gen" +
       "erated.RiskLevel\022K\n\rgt_0_le_5_min\030\002 \001(\0162" +
-      "4.org.ena.server.common.protocols.genera" +
+      "4.org.cwa.server.common.protocols.genera" +
       "ted.RiskLevel\022L\n\016gt_5_le_10_min\030\003 \001(\01624." +
-      "org.ena.server.common.protocols.generate" +
+      "org.cwa.server.common.protocols.generate" +
       "d.RiskLevel\022M\n\017gt_10_le_15_min\030\004 \001(\01624.o" +
-      "rg.ena.server.common.protocols.generated" +
+      "rg.cwa.server.common.protocols.generated" +
       ".RiskLevel\022M\n\017gt_15_le_20_min\030\005 \001(\01624.or" +
-      "g.ena.server.common.protocols.generated." +
+      "g.cwa.server.common.protocols.generated." +
       "RiskLevel\022M\n\017gt_20_le_25_min\030\006 \001(\01624.org" +
-      ".ena.server.common.protocols.generated.R" +
+      ".cwa.server.common.protocols.generated.R" +
       "iskLevel\022M\n\017gt_25_le_30_min\030\007 \001(\01624.org." +
-      "ena.server.common.protocols.generated.Ri" +
-      "skLevel\022G\n\tgt_30_min\030\010 \001(\01624.org.ena.ser" +
+      "cwa.server.common.protocols.generated.Ri" +
+      "skLevel\022G\n\tgt_30_min\030\010 \001(\01624.org.cwa.ser" +
       "ver.common.protocols.generated.RiskLevel" +
       "\032\225\005\n\"DaysSinceLastExposureRiskParameter\022" +
-      "H\n\nge_14_days\030\001 \001(\01624.org.ena.server.com" +
+      "H\n\nge_14_days\030\001 \001(\01624.org.cwa.server.com" +
       "mon.protocols.generated.RiskLevel\022N\n\020ge_" +
-      "12_lt_14_days\030\002 \001(\01624.org.ena.server.com" +
+      "12_lt_14_days\030\002 \001(\01624.org.cwa.server.com" +
       "mon.protocols.generated.RiskLevel\022N\n\020ge_" +
-      "10_lt_12_days\030\003 \001(\01624.org.ena.server.com" +
+      "10_lt_12_days\030\003 \001(\01624.org.cwa.server.com" +
       "mon.protocols.generated.RiskLevel\022M\n\017ge_" +
-      "8_lt_10_days\030\004 \001(\01624.org.ena.server.comm" +
+      "8_lt_10_days\030\004 \001(\01624.org.cwa.server.comm" +
       "on.protocols.generated.RiskLevel\022L\n\016ge_6" +
-      "_lt_8_days\030\005 \001(\01624.org.ena.server.common" +
+      "_lt_8_days\030\005 \001(\01624.org.cwa.server.common" +
       ".protocols.generated.RiskLevel\022L\n\016ge_4_l" +
-      "t_6_days\030\006 \001(\01624.org.ena.server.common.p" +
+      "t_6_days\030\006 \001(\01624.org.cwa.server.common.p" +
       "rotocols.generated.RiskLevel\022L\n\016ge_2_lt_" +
-      "4_days\030\007 \001(\01624.org.ena.server.common.pro" +
+      "4_days\030\007 \001(\01624.org.cwa.server.common.pro" +
       "tocols.generated.RiskLevel\022L\n\016ge_0_lt_2_" +
-      "days\030\010 \001(\01624.org.ena.server.common.proto" +
+      "days\030\010 \001(\01624.org.cwa.server.common.proto" +
       "cols.generated.RiskLevel\032\206\005\n\030Attenuation" +
-      "RiskParameter\022G\n\tgt_73_dbm\030\001 \001(\01624.org.e" +
-      "na.server.common.protocols.generated.Ris" +
-      "kLevel\022M\n\017gt_63_le_73_dbm\030\002 \001(\01624.org.en" +
+      "RiskParameter\022G\n\tgt_73_dbm\030\001 \001(\01624.org.c" +
+      "wa.server.common.protocols.generated.Ris" +
+      "kLevel\022M\n\017gt_63_le_73_dbm\030\002 \001(\01624.org.cw" +
       "a.server.common.protocols.generated.Risk" +
-      "Level\022M\n\017gt_51_le_63_dbm\030\003 \001(\01624.org.ena" +
+      "Level\022M\n\017gt_51_le_63_dbm\030\003 \001(\01624.org.cwa" +
       ".server.common.protocols.generated.RiskL" +
-      "evel\022M\n\017gt_33_le_51_dbm\030\004 \001(\01624.org.ena." +
+      "evel\022M\n\017gt_33_le_51_dbm\030\004 \001(\01624.org.cwa." +
       "server.common.protocols.generated.RiskLe" +
-      "vel\022M\n\017gt_27_le_33_dbm\030\005 \001(\01624.org.ena.s" +
+      "vel\022M\n\017gt_27_le_33_dbm\030\005 \001(\01624.org.cwa.s" +
       "erver.common.protocols.generated.RiskLev" +
-      "el\022M\n\017gt_15_le_27_dbm\030\006 \001(\01624.org.ena.se" +
+      "el\022M\n\017gt_15_le_27_dbm\030\006 \001(\01624.org.cwa.se" +
       "rver.common.protocols.generated.RiskLeve" +
-      "l\022M\n\017gt_10_le_15_dbm\030\007 \001(\01624.org.ena.ser" +
+      "l\022M\n\017gt_10_le_15_dbm\030\007 \001(\01624.org.cwa.ser" +
       "ver.common.protocols.generated.RiskLevel" +
-      "\022G\n\tlt_10_dbm\030\010 \001(\01624.org.ena.server.com" +
+      "\022G\n\tlt_10_dbm\030\010 \001(\01624.org.cwa.server.com" +
       "mon.protocols.generated.RiskLevel*\200\001\n\tRi" +
       "skLevel\022\013\n\007INVALID\020\000\022\n\n\006LOWEST\020\001\022\007\n\003LOW\020" +
       "\002\022\016\n\nLOW_MEDIUM\020\003\022\n\n\006MEDIUM\020\004\022\017\n\013MEDIUM_" +
@@ -7769,35 +7769,35 @@ public final class RiskScore {
       .internalBuildGeneratedFileFrom(descriptorData,
         new com.google.protobuf.Descriptors.FileDescriptor[] {
         });
-    internal_static_org_ena_server_common_protocols_generated_RiskScoreParameters_descriptor =
+    internal_static_org_cwa_server_common_protocols_generated_RiskScoreParameters_descriptor =
       getDescriptor().getMessageTypes().get(0);
-    internal_static_org_ena_server_common_protocols_generated_RiskScoreParameters_fieldAccessorTable = new
+    internal_static_org_cwa_server_common_protocols_generated_RiskScoreParameters_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
-        internal_static_org_ena_server_common_protocols_generated_RiskScoreParameters_descriptor,
+        internal_static_org_cwa_server_common_protocols_generated_RiskScoreParameters_descriptor,
         new java.lang.String[] { "Transmission", "TransmissionWeight", "Duration", "DurationWeight", "DaysSinceLastExposure", "DaysWeight", "Attenuation", "AttenuationWeight", });
-    internal_static_org_ena_server_common_protocols_generated_RiskScoreParameters_TransmissionRiskParameter_descriptor =
-      internal_static_org_ena_server_common_protocols_generated_RiskScoreParameters_descriptor.getNestedTypes().get(0);
-    internal_static_org_ena_server_common_protocols_generated_RiskScoreParameters_TransmissionRiskParameter_fieldAccessorTable = new
+    internal_static_org_cwa_server_common_protocols_generated_RiskScoreParameters_TransmissionRiskParameter_descriptor =
+      internal_static_org_cwa_server_common_protocols_generated_RiskScoreParameters_descriptor.getNestedTypes().get(0);
+    internal_static_org_cwa_server_common_protocols_generated_RiskScoreParameters_TransmissionRiskParameter_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
-        internal_static_org_ena_server_common_protocols_generated_RiskScoreParameters_TransmissionRiskParameter_descriptor,
+        internal_static_org_cwa_server_common_protocols_generated_RiskScoreParameters_TransmissionRiskParameter_descriptor,
         new java.lang.String[] { "AppDefined1", "AppDefined2", "AppDefined3", "AppDefined4", "AppDefined5", "AppDefined6", "AppDefined7", "AppDefined8", });
-    internal_static_org_ena_server_common_protocols_generated_RiskScoreParameters_DurationRiskParameter_descriptor =
-      internal_static_org_ena_server_common_protocols_generated_RiskScoreParameters_descriptor.getNestedTypes().get(1);
-    internal_static_org_ena_server_common_protocols_generated_RiskScoreParameters_DurationRiskParameter_fieldAccessorTable = new
+    internal_static_org_cwa_server_common_protocols_generated_RiskScoreParameters_DurationRiskParameter_descriptor =
+      internal_static_org_cwa_server_common_protocols_generated_RiskScoreParameters_descriptor.getNestedTypes().get(1);
+    internal_static_org_cwa_server_common_protocols_generated_RiskScoreParameters_DurationRiskParameter_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
-        internal_static_org_ena_server_common_protocols_generated_RiskScoreParameters_DurationRiskParameter_descriptor,
+        internal_static_org_cwa_server_common_protocols_generated_RiskScoreParameters_DurationRiskParameter_descriptor,
         new java.lang.String[] { "Eq0Min", "Gt0Le5Min", "Gt5Le10Min", "Gt10Le15Min", "Gt15Le20Min", "Gt20Le25Min", "Gt25Le30Min", "Gt30Min", });
-    internal_static_org_ena_server_common_protocols_generated_RiskScoreParameters_DaysSinceLastExposureRiskParameter_descriptor =
-      internal_static_org_ena_server_common_protocols_generated_RiskScoreParameters_descriptor.getNestedTypes().get(2);
-    internal_static_org_ena_server_common_protocols_generated_RiskScoreParameters_DaysSinceLastExposureRiskParameter_fieldAccessorTable = new
+    internal_static_org_cwa_server_common_protocols_generated_RiskScoreParameters_DaysSinceLastExposureRiskParameter_descriptor =
+      internal_static_org_cwa_server_common_protocols_generated_RiskScoreParameters_descriptor.getNestedTypes().get(2);
+    internal_static_org_cwa_server_common_protocols_generated_RiskScoreParameters_DaysSinceLastExposureRiskParameter_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
-        internal_static_org_ena_server_common_protocols_generated_RiskScoreParameters_DaysSinceLastExposureRiskParameter_descriptor,
+        internal_static_org_cwa_server_common_protocols_generated_RiskScoreParameters_DaysSinceLastExposureRiskParameter_descriptor,
         new java.lang.String[] { "Ge14Days", "Ge12Lt14Days", "Ge10Lt12Days", "Ge8Lt10Days", "Ge6Lt8Days", "Ge4Lt6Days", "Ge2Lt4Days", "Ge0Lt2Days", });
-    internal_static_org_ena_server_common_protocols_generated_RiskScoreParameters_AttenuationRiskParameter_descriptor =
-      internal_static_org_ena_server_common_protocols_generated_RiskScoreParameters_descriptor.getNestedTypes().get(3);
-    internal_static_org_ena_server_common_protocols_generated_RiskScoreParameters_AttenuationRiskParameter_fieldAccessorTable = new
+    internal_static_org_cwa_server_common_protocols_generated_RiskScoreParameters_AttenuationRiskParameter_descriptor =
+      internal_static_org_cwa_server_common_protocols_generated_RiskScoreParameters_descriptor.getNestedTypes().get(3);
+    internal_static_org_cwa_server_common_protocols_generated_RiskScoreParameters_AttenuationRiskParameter_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
-        internal_static_org_ena_server_common_protocols_generated_RiskScoreParameters_AttenuationRiskParameter_descriptor,
+        internal_static_org_cwa_server_common_protocols_generated_RiskScoreParameters_AttenuationRiskParameter_descriptor,
         new java.lang.String[] { "Gt73Dbm", "Gt63Le73Dbm", "Gt51Le63Dbm", "Gt33Le51Dbm", "Gt27Le33Dbm", "Gt15Le27Dbm", "Gt10Le15Dbm", "Lt10Dbm", });
   }
 

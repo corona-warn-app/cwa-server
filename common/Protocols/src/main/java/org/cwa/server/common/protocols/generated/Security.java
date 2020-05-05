@@ -15,7 +15,7 @@ public final class Security {
         (com.google.protobuf.ExtensionRegistryLite) registry);
   }
   public interface SignedPayloadOrBuilder extends
-      // @@protoc_insertion_point(interface_extends:org.ena.server.common.protocols.generated.SignedPayload)
+      // @@protoc_insertion_point(interface_extends:org.cwa.server.common.protocols.generated.SignedPayload)
       com.google.protobuf.MessageOrBuilder {
 
     /**
@@ -49,11 +49,11 @@ public final class Security {
     com.google.protobuf.ByteString getSignature();
   }
   /**
-   * Protobuf type {@code org.ena.server.common.protocols.generated.SignedPayload}
+   * Protobuf type {@code org.cwa.server.common.protocols.generated.SignedPayload}
    */
   public  static final class SignedPayload extends
       com.google.protobuf.GeneratedMessageV3 implements
-      // @@protoc_insertion_point(message_implements:org.ena.server.common.protocols.generated.SignedPayload)
+      // @@protoc_insertion_point(message_implements:org.cwa.server.common.protocols.generated.SignedPayload)
       SignedPayloadOrBuilder {
   private static final long serialVersionUID = 0L;
     // Use SignedPayload.newBuilder() to construct.
@@ -132,13 +132,13 @@ public final class Security {
     }
     public static final com.google.protobuf.Descriptors.Descriptor
         getDescriptor() {
-      return org.cwa.server.common.protocols.generated.Security.internal_static_org_ena_server_common_protocols_generated_SignedPayload_descriptor;
+      return org.cwa.server.common.protocols.generated.Security.internal_static_org_cwa_server_common_protocols_generated_SignedPayload_descriptor;
     }
 
     @java.lang.Override
     protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
         internalGetFieldAccessorTable() {
-      return org.cwa.server.common.protocols.generated.Security.internal_static_org_ena_server_common_protocols_generated_SignedPayload_fieldAccessorTable
+      return org.cwa.server.common.protocols.generated.Security.internal_static_org_cwa_server_common_protocols_generated_SignedPayload_fieldAccessorTable
           .ensureFieldAccessorsInitialized(
               org.cwa.server.common.protocols.generated.Security.SignedPayload.class, org.cwa.server.common.protocols.generated.Security.SignedPayload.Builder.class);
     }
@@ -363,26 +363,26 @@ public final class Security {
       return builder;
     }
     /**
-     * Protobuf type {@code org.ena.server.common.protocols.generated.SignedPayload}
+     * Protobuf type {@code org.cwa.server.common.protocols.generated.SignedPayload}
      */
     public static final class Builder extends
         com.google.protobuf.GeneratedMessageV3.Builder<Builder> implements
-        // @@protoc_insertion_point(builder_implements:org.ena.server.common.protocols.generated.SignedPayload)
+        // @@protoc_insertion_point(builder_implements:org.cwa.server.common.protocols.generated.SignedPayload)
         org.cwa.server.common.protocols.generated.Security.SignedPayloadOrBuilder {
       public static final com.google.protobuf.Descriptors.Descriptor
           getDescriptor() {
-        return org.cwa.server.common.protocols.generated.Security.internal_static_org_ena_server_common_protocols_generated_SignedPayload_descriptor;
+        return org.cwa.server.common.protocols.generated.Security.internal_static_org_cwa_server_common_protocols_generated_SignedPayload_descriptor;
       }
 
       @java.lang.Override
       protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
           internalGetFieldAccessorTable() {
-        return org.cwa.server.common.protocols.generated.Security.internal_static_org_ena_server_common_protocols_generated_SignedPayload_fieldAccessorTable
+        return org.cwa.server.common.protocols.generated.Security.internal_static_org_cwa_server_common_protocols_generated_SignedPayload_fieldAccessorTable
             .ensureFieldAccessorsInitialized(
                 org.cwa.server.common.protocols.generated.Security.SignedPayload.class, org.cwa.server.common.protocols.generated.Security.SignedPayload.Builder.class);
       }
 
-      // Construct using org.ena.server.common.protocols.generated.Security.SignedPayload.newBuilder()
+      // Construct using org.cwa.server.common.protocols.generated.Security.SignedPayload.newBuilder()
       private Builder() {
         maybeForceBuilderInitialization();
       }
@@ -412,7 +412,7 @@ public final class Security {
       @java.lang.Override
       public com.google.protobuf.Descriptors.Descriptor
           getDescriptorForType() {
-        return org.cwa.server.common.protocols.generated.Security.internal_static_org_ena_server_common_protocols_generated_SignedPayload_descriptor;
+        return org.cwa.server.common.protocols.generated.Security.internal_static_org_cwa_server_common_protocols_generated_SignedPayload_descriptor;
       }
 
       @java.lang.Override
@@ -668,10 +668,10 @@ public final class Security {
       }
 
 
-      // @@protoc_insertion_point(builder_scope:org.ena.server.common.protocols.generated.SignedPayload)
+      // @@protoc_insertion_point(builder_scope:org.cwa.server.common.protocols.generated.SignedPayload)
     }
 
-    // @@protoc_insertion_point(class_scope:org.ena.server.common.protocols.generated.SignedPayload)
+    // @@protoc_insertion_point(class_scope:org.cwa.server.common.protocols.generated.SignedPayload)
     private static final org.cwa.server.common.protocols.generated.Security.SignedPayload DEFAULT_INSTANCE;
     static {
       DEFAULT_INSTANCE = new org.cwa.server.common.protocols.generated.Security.SignedPayload();
@@ -709,10 +709,10 @@ public final class Security {
   }
 
   private static final com.google.protobuf.Descriptors.Descriptor
-    internal_static_org_ena_server_common_protocols_generated_SignedPayload_descriptor;
+    internal_static_org_cwa_server_common_protocols_generated_SignedPayload_descriptor;
   private static final 
     com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
-      internal_static_org_ena_server_common_protocols_generated_SignedPayload_fieldAccessorTable;
+      internal_static_org_cwa_server_common_protocols_generated_SignedPayload_fieldAccessorTable;
 
   public static com.google.protobuf.Descriptors.FileDescriptor
       getDescriptor() {
@@ -722,7 +722,7 @@ public final class Security {
       descriptor;
   static {
     java.lang.String[] descriptorData = {
-      "\n\016security.proto\022)org.ena.server.common." +
+      "\n\016security.proto\022)org.cwa.server.common." +
       "protocols.generated\"M\n\rSignedPayload\022\017\n\007" +
       "payload\030\001 \001(\014\022\030\n\020certificateChain\030\002 \001(\014\022" +
       "\021\n\tsignature\030\003 \001(\014b\006proto3"
@@ -731,11 +731,11 @@ public final class Security {
       .internalBuildGeneratedFileFrom(descriptorData,
         new com.google.protobuf.Descriptors.FileDescriptor[] {
         });
-    internal_static_org_ena_server_common_protocols_generated_SignedPayload_descriptor =
+    internal_static_org_cwa_server_common_protocols_generated_SignedPayload_descriptor =
       getDescriptor().getMessageTypes().get(0);
-    internal_static_org_ena_server_common_protocols_generated_SignedPayload_fieldAccessorTable = new
+    internal_static_org_cwa_server_common_protocols_generated_SignedPayload_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
-        internal_static_org_ena_server_common_protocols_generated_SignedPayload_descriptor,
+        internal_static_org_cwa_server_common_protocols_generated_SignedPayload_descriptor,
         new java.lang.String[] { "Payload", "CertificateChain", "Signature", });
   }
 
