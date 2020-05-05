@@ -1,5 +1,5 @@
 syntax = "proto3";
-package org.ena.server.common.protocols.generated;
+package org.cwa.server.common.protocols.generated;
 import "riskScore.proto";
 
 // ExposureKeyPackage v0.1

@@ -1,14 +1,14 @@
 {
   "openapi": "3.0.0",
   "info": {
-    "title": "ENA-Server",
-    "description": "ENA-Server API.",
+    "title": "CWA-Server",
+    "description": "CWA-Server API.",
     "version": "0.0.1"
   },
   "servers": [
     {
       "url": "http://localhost:8080",
-      "description": "ENA Server - localhost"
+      "description": "CWA Server - localhost"
     }
   ],
   "paths": {
@@ -141,7 +141,7 @@
           "content": {
             "application/octet-stream": {
                 "schema": {
-                  "$ref": "#/components/schemas/org.ena.server.common.protocols.generated.SignedPayload"
+                  "$ref": "#/components/schemas/org.cwa.server.common.protocols.generated.SignedPayload"
                 },
                 "example": "<BINARY DATA>"
               }
@@ -246,7 +246,7 @@
             "content": {
               "application/octet-stream": {
                 "schema": {
-                  "$ref": "#/components/schemas/org.ena.server.common.protocols.generated.SignedPayload"
+                  "$ref": "#/components/schemas/org.cwa.server.common.protocols.generated.SignedPayload"
                 },
                 "example": "<BINARY DATA>"
               }
@@ -359,7 +359,7 @@
             "content": {
               "application/octet-stream": {
                 "schema": {
-                  "$ref": "#/components/schemas/org.ena.server.common.protocols.generated.SignedPayload"
+                  "$ref": "#/components/schemas/org.cwa.server.common.protocols.generated.SignedPayload"
                 },
                 "example": "<BINARY DATA>"
               }
@@ -439,7 +439,7 @@
             "content": {
               "application/octet-stream": {
                 "schema": {
-                  "$ref": "#/components/schemas/org.ena.server.common.protocols.generated.SignedPayload"
+                  "$ref": "#/components/schemas/org.cwa.server.common.protocols.generated.SignedPayload"
                 },
                 "example": "<BINARY DATA>"
               }
@@ -556,7 +556,7 @@
         "description": "Can only have values between 0 and 23. Server time zone is UTC.",
         "example": "17"
       },
-      "org.ena.server.common.protocols.generated.SignedPayload": {
+      "org.cwa.server.common.protocols.generated.SignedPayload": {
         "type": "string",
         "format": "binary"
       }

@@ -12,7 +12,7 @@
   </parent>
 
   <artifactId>services</artifactId>
-  <groupId>org.ena.server</groupId>
+  <groupId>org.cwa.server</groupId>
   <version>0.0.1-SNAPSHOT</version>
 
   <packaging>pom</packaging>
@@ -31,7 +31,7 @@
 
   <dependencies>
     <dependency>
-      <groupId>org.ena.server.common</groupId>
+      <groupId>org.cwa.server.common</groupId>
       <artifactId>Persistence</artifactId>
       <version>0.0.1-SNAPSHOT</version>
     </dependency>
