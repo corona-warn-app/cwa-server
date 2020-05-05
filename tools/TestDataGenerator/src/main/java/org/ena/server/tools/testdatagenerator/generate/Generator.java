@@ -229,7 +229,8 @@ public class Generator {
   static List<TemporaryExposureKeyBucket> aggregateDayData(LocalDate startDate,
       List<List<TemporaryExposureKeyBucket>> hourData) {
     int numDays = hourData.size();
-    return IntStream.range(0, numDays)
+    // Last (incomplete) day does not get an aggregate
+    return IntStream.range(0, numDays - 1)
         .mapToObj(currentDateIndex -> Stream.of(currentDateIndex)
             .map(startDate::plusDays)
             .map(currentDate -> TemporaryExposureKeyBucket.newBuilder()
