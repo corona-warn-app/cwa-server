@@ -28,19 +28,15 @@ import org.json.simple.JSONAware;
 public class Common {
 
   public static int getRandomBetween(int minIncluding, int maxIncluding, Random random) {
-    // TODO
-    return random.nextInt(
-        minIncluding,
-        maxIncluding + 1
-    );
+    return Math.toIntExact(getRandomBetween(
+        (long) minIncluding,
+        (long) maxIncluding,
+        random
+    ));
   }
 
   public static long getRandomBetween(long minIncluding, long maxIncluding, Random random) {
-    // TODO
-    return random.nextLong(
-        minIncluding,
-        maxIncluding + 1
-    );
+    return minIncluding + (long) (random.nextDouble() * (maxIncluding - minIncluding));
   }
 
   public static int nextPoisson(int mean, Random random) {

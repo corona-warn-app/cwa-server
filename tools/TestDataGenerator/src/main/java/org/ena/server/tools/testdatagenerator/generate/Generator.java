@@ -1,5 +1,6 @@
 package org.ena.server.tools.testdatagenerator.generate;
 
+import com.google.protobuf.AbstractMessageLite;
 import com.google.protobuf.ByteString;
 import java.io.File;
 import java.io.IOException;
@@ -27,10 +28,12 @@ import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
+import javax.print.attribute.standard.MediaSize.ISO;
 import org.apache.commons.io.FileUtils;
 import org.ena.server.common.protocols.generated.ExposureKeys.TemporaryExposureKey;
 import org.ena.server.common.protocols.generated.ExposureKeys.TemporaryExposureKeyBucket;
 import org.ena.server.common.protocols.generated.ExposureKeys.TemporaryExposureKeyBucket.AggregationInterval;
+import org.ena.server.common.protocols.generated.ExposureKeys.TemporaryExposureKeyBucketOrBuilder;
 import org.ena.server.common.protocols.generated.RiskScore.RiskLevel;
 import org.ena.server.common.protocols.generated.Security.SignedPayload;
 import org.ena.server.tools.testdatagenerator.common.Common;
@@ -65,7 +68,7 @@ public class Generator {
         totalHours
     );
 
-    List<DirectoryIndex<LocalDateTime>> hourDirectoryIndices = createHourDirectoryIndex(
+    createHourDirectoryIndex(
         dateDirectoryIndex,
         startDate,
         totalHours
@@ -79,13 +82,84 @@ public class Generator {
         random
     );
 
-    List<TemporaryExposureKeyBucket> dayData = aggregateDayData(dateDirectoryIndex, hourData);
+    List<TemporaryExposureKeyBucket> dayData = aggregateDayData(
+        startDate,
+        hourData
+    );
 
     PrivateKey privateKey = Common.getPrivateKeyFromFile(privateKeyFile);
     Certificate certificate = Common.getCertificateFromFile(certificateFile);
-    List<List<TemporaryExposureKeyBucket>> signedHourData =
+    List<List<SignedPayload>> signedHourData = hourData.stream()
+        .map(dayList -> dayList.stream()
+            .map(TemporaryExposureKeyBucket::toByteArray)
+            .map(Common.uncheckedFunction(hourBytes -> generateSignedPayload(
+                hourBytes,
+                privateKey,
+                certificate
+            )))
+            .collect(Collectors.toList())
+        )
+        .collect(Collectors.toList());
 
-        System.out.println("DONE");
+    List<SignedPayload> signedDayData = dayData.stream()
+        .map(a -> a)
+        .map(TemporaryExposureKeyBucket::toByteArray)
+        .map(Common.uncheckedFunction(hourBytes -> generateSignedPayload(
+            hourBytes,
+            privateKey,
+            certificate
+        )))
+        .collect(Collectors.toList());
+
+    // Write signed hour data
+    IntStream.range(0, signedHourData.size())
+        .forEach(dayIndex -> Stream.of(dayIndex)
+            .map(__ -> outputDirectory.toPath()
+                .resolve("version")
+                .resolve("v1")
+                .resolve("diagnosis-keys")
+                .resolve("country")
+                .resolve("DE")
+                .resolve("date")
+                .resolve(ISO8601.format(startDate.plusDays(dayIndex)))
+                .resolve("hour")
+                .toFile()
+            )
+            .forEach(hourDirectory -> IntStream.range(0, getHours(
+                    startDate, startDate.plusDays(dayIndex), totalHours
+                ).size())
+                .forEach(hourIndex -> Stream.of(hourIndex)
+                    .map(__ -> Common.makeDirectory(hourDirectory, String.valueOf(hourIndex)))
+                    .map(a -> Common.makeFile(a, "index"))
+                    .forEach(indexFile -> Common.writeBytesToFile(
+                        signedHourData.get(dayIndex).get(hourIndex).toByteArray(),
+                        indexFile
+                    ))
+                )
+            )
+        );
+
+    // Write signed day data
+    IntStream.range(0, signedDayData.size())
+        .forEach(dayIndex -> Stream.of(dayIndex)
+            .map(__ -> outputDirectory.toPath()
+                .resolve("version")
+                .resolve("v1")
+                .resolve("diagnosis-keys")
+                .resolve("country")
+                .resolve("DE")
+                .resolve("date")
+                .resolve(ISO8601.format(startDate.plusDays(dayIndex)))
+                .toFile()
+            )
+            .map(dayDirectory -> Common.makeFile(dayDirectory, "index"))
+            .forEach(indexFile -> Common.writeBytesToFile(
+                signedDayData.get(dayIndex).toByteArray(),
+                indexFile
+            ))
+        );
+
+    System.out.println("DONE");
   }
 
   static File createDirectoryStructure(File outputDirectory) {
@@ -107,11 +181,11 @@ public class Generator {
 
   static DirectoryIndex<LocalDate> createDateDirectoryIndex(File dateDirectory,
       LocalDate startDate, int totalHours) {
-    int numFullDays = Math.floorDiv(totalHours, 24);
+    int numDays = getNumberOfDays(totalHours);
     return Stream.of(dateDirectory)
         .map(directory -> new DirectoryIndex<>(
             directory,
-            getDates(startDate, numFullDays))
+            getDates(startDate, numDays))
         )
         .peek(index -> Common.writeIndex(index, date -> ISO8601.format((TemporalAccessor) date)))
         .findFirst()
@@ -137,7 +211,7 @@ public class Generator {
 
   static List<List<TemporaryExposureKeyBucket>> generateHourData(LocalDate startDate,
       int totalHours, int exposuresPerHour, Random random) {
-    int numDays = -Math.floorDiv(-totalHours, 24);
+    int numDays = getNumberOfDays(totalHours);
     return getDates(startDate, numDays).stream()
         .map(currentDate -> getHours(startDate, currentDate, totalHours).stream()
             .map(currentHour -> generateTemporaryExposureKeyBucket(
@@ -152,25 +226,32 @@ public class Generator {
         .collect(Collectors.toList());
   }
 
-  static TemporaryExposureKeyBucket aggregateDayData(DirectoryIndex<LocalDate> dateDirectoryIndex,
+  static List<TemporaryExposureKeyBucket> aggregateDayData(LocalDate startDate,
       List<List<TemporaryExposureKeyBucket>> hourData) {
-    String shardKey = hourData
-        .stream().findFirst().get()
-        .stream().findFirst().get().getShardKey();
-    // TODO
-    return TemporaryExposureKeyBucket.newBuilder()
-        .setShardKey(shardKey)
-        .setTimestamp(Math.toIntExact(
-            startDate.toEpochSecond(startDate.atStartOfDay().toLocalTime(), ZoneOffset.UTC))
-        )
-        .setAggregationInterval(AggregationInterval.DAILY)
-        .addAllExposureKeys(hourData.stream()
-            .flatMap(day -> hourData.stream()
-                .flatMap(hour -> hour.getExposureKeysList().stream())
+    int numDays = hourData.size();
+    return IntStream.range(0, numDays)
+        .mapToObj(currentDateIndex -> Stream.of(currentDateIndex)
+            .map(startDate::plusDays)
+            .map(currentDate -> TemporaryExposureKeyBucket.newBuilder()
+                .setShardKey(country)
+                .setTimestamp(Math.toIntExact(
+                    startDate.toEpochSecond(startDate.atStartOfDay().toLocalTime(), ZoneOffset.UTC))
+                )
+                .setAggregationInterval(AggregationInterval.DAILY)
+                .addAllExposureKeys(hourData.get(currentDateIndex).stream()
+                    .flatMap(hour -> hour.getExposureKeysList().stream())
+                    .collect(Collectors.toList())
+                )
+                .build()
             )
             .collect(Collectors.toList())
         )
-        .build();
+        .flatMap(List::stream)
+        .collect(Collectors.toList());
+  }
+
+  static int getNumberOfDays (int hours) {
+    return -Math.floorDiv(-hours, 24);
   }
 
   static List<LocalDate> getDates(LocalDate startDate, int numDays) {
@@ -183,7 +264,7 @@ public class Generator {
     int numFullDays = Math.floorDiv(totalHours, 24);
     long currentDay = ChronoUnit.DAYS.between(startDate, currentDate);
     int lastHour;
-    if (currentDay < numFullDays - 1) {
+    if (currentDay < numFullDays) {
       lastHour = 24;
     } else {
       lastHour = totalHours % 24;
@@ -246,7 +327,7 @@ public class Generator {
     return exposureKey;
   }
 
-  static SignedPayload generateSignedPayload(byte[] payload, PrivateKey privateKey,
+  static <T> SignedPayload generateSignedPayload(byte[] payload, PrivateKey privateKey,
       Certificate certificate)
       throws CertificateEncodingException, InvalidKeyException, NoSuchProviderException, NoSuchAlgorithmException, SignatureException {
     Signature payloadSignature = Signature.getInstance("Ed25519", "BC");
