@@ -43,10 +43,10 @@ public final class ExposureKeys {
      * publishing timestamp of this exposure key package - unix epoch
      * </pre>
      *
-     * <code>sfixed32 timestamp = 2;</code>
+     * <code>int64 timestamp = 2;</code>
      * @return The timestamp.
      */
-    int getTimestamp();
+    long getTimestamp();
 
     /**
      * <pre>
@@ -166,9 +166,9 @@ public final class ExposureKeys {
               shardKey_ = s;
               break;
             }
-            case 21: {
+            case 16: {
 
-              timestamp_ = input.readSFixed32();
+              timestamp_ = input.readInt64();
               break;
             }
             case 24: {
@@ -386,16 +386,16 @@ public final class ExposureKeys {
     }
 
     public static final int TIMESTAMP_FIELD_NUMBER = 2;
-    private int timestamp_;
+    private long timestamp_;
     /**
      * <pre>
      * publishing timestamp of this exposure key package - unix epoch
      * </pre>
      *
-     * <code>sfixed32 timestamp = 2;</code>
+     * <code>int64 timestamp = 2;</code>
      * @return The timestamp.
      */
-    public int getTimestamp() {
+    public long getTimestamp() {
       return timestamp_;
     }
 
@@ -498,8 +498,8 @@ public final class ExposureKeys {
       if (!getShardKeyBytes().isEmpty()) {
         com.google.protobuf.GeneratedMessageV3.writeString(output, 1, shardKey_);
       }
-      if (timestamp_ != 0) {
-        output.writeSFixed32(2, timestamp_);
+      if (timestamp_ != 0L) {
+        output.writeInt64(2, timestamp_);
       }
       if (aggregationInterval_ != org.ena.server.common.protocols.generated.ExposureKeys.TemporaryExposureKeyBucket.AggregationInterval.HOURLY.getNumber()) {
         output.writeEnum(3, aggregationInterval_);
@@ -519,9 +519,9 @@ public final class ExposureKeys {
       if (!getShardKeyBytes().isEmpty()) {
         size += com.google.protobuf.GeneratedMessageV3.computeStringSize(1, shardKey_);
       }
-      if (timestamp_ != 0) {
+      if (timestamp_ != 0L) {
         size += com.google.protobuf.CodedOutputStream
-          .computeSFixed32Size(2, timestamp_);
+          .computeInt64Size(2, timestamp_);
       }
       if (aggregationInterval_ != org.ena.server.common.protocols.generated.ExposureKeys.TemporaryExposureKeyBucket.AggregationInterval.HOURLY.getNumber()) {
         size += com.google.protobuf.CodedOutputStream
@@ -567,7 +567,8 @@ public final class ExposureKeys {
       hash = (37 * hash) + SHARDKEY_FIELD_NUMBER;
       hash = (53 * hash) + getShardKey().hashCode();
       hash = (37 * hash) + TIMESTAMP_FIELD_NUMBER;
-      hash = (53 * hash) + getTimestamp();
+      hash = (53 * hash) + com.google.protobuf.Internal.hashLong(
+          getTimestamp());
       hash = (37 * hash) + AGGREGATIONINTERVAL_FIELD_NUMBER;
       hash = (53 * hash) + aggregationInterval_;
       if (getExposureKeysCount() > 0) {
@@ -710,7 +711,7 @@ public final class ExposureKeys {
         super.clear();
         shardKey_ = "";
 
-        timestamp_ = 0;
+        timestamp_ = 0L;
 
         aggregationInterval_ = 0;
 
@@ -811,7 +812,7 @@ public final class ExposureKeys {
           shardKey_ = other.shardKey_;
           onChanged();
         }
-        if (other.getTimestamp() != 0) {
+        if (other.getTimestamp() != 0L) {
           setTimestamp(other.getTimestamp());
         }
         if (other.aggregationInterval_ != 0) {
@@ -969,16 +970,16 @@ public final class ExposureKeys {
         return this;
       }
 
-      private int timestamp_ ;
+      private long timestamp_ ;
       /**
        * <pre>
        * publishing timestamp of this exposure key package - unix epoch
        * </pre>
        *
-       * <code>sfixed32 timestamp = 2;</code>
+       * <code>int64 timestamp = 2;</code>
        * @return The timestamp.
        */
-      public int getTimestamp() {
+      public long getTimestamp() {
         return timestamp_;
       }
       /**
@@ -986,11 +987,11 @@ public final class ExposureKeys {
        * publishing timestamp of this exposure key package - unix epoch
        * </pre>
        *
-       * <code>sfixed32 timestamp = 2;</code>
+       * <code>int64 timestamp = 2;</code>
        * @param value The timestamp to set.
        * @return This builder for chaining.
        */
-      public Builder setTimestamp(int value) {
+      public Builder setTimestamp(long value) {
         
         timestamp_ = value;
         onChanged();
@@ -1001,12 +1002,12 @@ public final class ExposureKeys {
        * publishing timestamp of this exposure key package - unix epoch
        * </pre>
        *
-       * <code>sfixed32 timestamp = 2;</code>
+       * <code>int64 timestamp = 2;</code>
        * @return This builder for chaining.
        */
       public Builder clearTimestamp() {
         
-        timestamp_ = 0;
+        timestamp_ = 0L;
         onChanged();
         return this;
       }
@@ -1466,10 +1467,10 @@ public final class ExposureKeys {
      * unix epoch timestamp / 600
      * </pre>
      *
-     * <code>sfixed32 rollingStartNumber = 2;</code>
+     * <code>int64 rollingStartNumber = 2;</code>
      * @return The rollingStartNumber.
      */
-    int getRollingStartNumber();
+    long getRollingStartNumber();
 
     /**
      * <pre>
@@ -1542,9 +1543,9 @@ public final class ExposureKeys {
               keyData_ = input.readBytes();
               break;
             }
-            case 21: {
+            case 16: {
 
-              rollingStartNumber_ = input.readSFixed32();
+              rollingStartNumber_ = input.readInt64();
               break;
             }
             case 24: {
@@ -1600,16 +1601,16 @@ public final class ExposureKeys {
     }
 
     public static final int ROLLINGSTARTNUMBER_FIELD_NUMBER = 2;
-    private int rollingStartNumber_;
+    private long rollingStartNumber_;
     /**
      * <pre>
      * unix epoch timestamp / 600
      * </pre>
      *
-     * <code>sfixed32 rollingStartNumber = 2;</code>
+     * <code>int64 rollingStartNumber = 2;</code>
      * @return The rollingStartNumber.
      */
-    public int getRollingStartNumber() {
+    public long getRollingStartNumber() {
       return rollingStartNumber_;
     }
 
@@ -1657,8 +1658,8 @@ public final class ExposureKeys {
       if (!keyData_.isEmpty()) {
         output.writeBytes(1, keyData_);
       }
-      if (rollingStartNumber_ != 0) {
-        output.writeSFixed32(2, rollingStartNumber_);
+      if (rollingStartNumber_ != 0L) {
+        output.writeInt64(2, rollingStartNumber_);
       }
       if (riskLevel_ != org.ena.server.common.protocols.generated.RiskScore.RiskLevel.INVALID.getNumber()) {
         output.writeEnum(3, riskLevel_);
@@ -1676,9 +1677,9 @@ public final class ExposureKeys {
         size += com.google.protobuf.CodedOutputStream
           .computeBytesSize(1, keyData_);
       }
-      if (rollingStartNumber_ != 0) {
+      if (rollingStartNumber_ != 0L) {
         size += com.google.protobuf.CodedOutputStream
-          .computeSFixed32Size(2, rollingStartNumber_);
+          .computeInt64Size(2, rollingStartNumber_);
       }
       if (riskLevel_ != org.ena.server.common.protocols.generated.RiskScore.RiskLevel.INVALID.getNumber()) {
         size += com.google.protobuf.CodedOutputStream
@@ -1718,7 +1719,8 @@ public final class ExposureKeys {
       hash = (37 * hash) + KEYDATA_FIELD_NUMBER;
       hash = (53 * hash) + getKeyData().hashCode();
       hash = (37 * hash) + ROLLINGSTARTNUMBER_FIELD_NUMBER;
-      hash = (53 * hash) + getRollingStartNumber();
+      hash = (53 * hash) + com.google.protobuf.Internal.hashLong(
+          getRollingStartNumber());
       hash = (37 * hash) + RISKLEVEL_FIELD_NUMBER;
       hash = (53 * hash) + riskLevel_;
       hash = (29 * hash) + unknownFields.hashCode();
@@ -1856,7 +1858,7 @@ public final class ExposureKeys {
         super.clear();
         keyData_ = com.google.protobuf.ByteString.EMPTY;
 
-        rollingStartNumber_ = 0;
+        rollingStartNumber_ = 0L;
 
         riskLevel_ = 0;
 
@@ -1940,7 +1942,7 @@ public final class ExposureKeys {
         if (other.getKeyData() != com.google.protobuf.ByteString.EMPTY) {
           setKeyData(other.getKeyData());
         }
-        if (other.getRollingStartNumber() != 0) {
+        if (other.getRollingStartNumber() != 0L) {
           setRollingStartNumber(other.getRollingStartNumber());
         }
         if (other.riskLevel_ != 0) {
@@ -2020,16 +2022,16 @@ public final class ExposureKeys {
         return this;
       }
 
-      private int rollingStartNumber_ ;
+      private long rollingStartNumber_ ;
       /**
        * <pre>
        * unix epoch timestamp / 600
        * </pre>
        *
-       * <code>sfixed32 rollingStartNumber = 2;</code>
+       * <code>int64 rollingStartNumber = 2;</code>
        * @return The rollingStartNumber.
        */
-      public int getRollingStartNumber() {
+      public long getRollingStartNumber() {
         return rollingStartNumber_;
       }
       /**
@@ -2037,11 +2039,11 @@ public final class ExposureKeys {
        * unix epoch timestamp / 600
        * </pre>
        *
-       * <code>sfixed32 rollingStartNumber = 2;</code>
+       * <code>int64 rollingStartNumber = 2;</code>
        * @param value The rollingStartNumber to set.
        * @return This builder for chaining.
        */
-      public Builder setRollingStartNumber(int value) {
+      public Builder setRollingStartNumber(long value) {
         
         rollingStartNumber_ = value;
         onChanged();
@@ -2052,12 +2054,12 @@ public final class ExposureKeys {
        * unix epoch timestamp / 600
        * </pre>
        *
-       * <code>sfixed32 rollingStartNumber = 2;</code>
+       * <code>int64 rollingStartNumber = 2;</code>
        * @return This builder for chaining.
        */
       public Builder clearRollingStartNumber() {
         
-        rollingStartNumber_ = 0;
+        rollingStartNumber_ = 0L;
         onChanged();
         return this;
       }
@@ -2208,7 +2210,7 @@ public final class ExposureKeys {
       "\n\022exposureKeys.proto\022)org.ena.server.com" +
       "mon.protocols.generated\032\017riskScore.proto" +
       "\"\276\002\n\032TemporaryExposureKeyBucket\022\020\n\010shard" +
-      "Key\030\001 \001(\t\022\021\n\ttimestamp\030\002 \001(\017\022v\n\023aggregat" +
+      "Key\030\001 \001(\t\022\021\n\ttimestamp\030\002 \001(\003\022v\n\023aggregat" +
       "ionInterval\030\003 \001(\0162Y.org.ena.server.commo" +
       "n.protocols.generated.TemporaryExposureK" +
       "eyBucket.AggregationInterval\022U\n\014exposure" +
@@ -2216,7 +2218,7 @@ public final class ExposureKeys {
       "cols.generated.TemporaryExposureKey\",\n\023A" +
       "ggregationInterval\022\n\n\006HOURLY\020\000\022\t\n\005DAILY\020" +
       "\001\"\214\001\n\024TemporaryExposureKey\022\017\n\007keyData\030\001 " +
-      "\001(\014\022\032\n\022rollingStartNumber\030\002 \001(\017\022G\n\triskL" +
+      "\001(\014\022\032\n\022rollingStartNumber\030\002 \001(\003\022G\n\triskL" +
       "evel\030\003 \001(\01624.org.ena.server.common.proto" +
       "cols.generated.RiskLevelb\006proto3"
     };
