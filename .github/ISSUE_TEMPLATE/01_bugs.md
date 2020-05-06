@@ -32,9 +32,7 @@ Also, be sure to check our documentation first: <URL>
 
 ## Technical details
 
-- Docker version <!-- run `docker version` on host machine -->:
 - Host Machine OS (Windows/Linux/Mac):
-- Browser (Chrome/Firefox/Safari):
 
 ## Possible Fix
 
