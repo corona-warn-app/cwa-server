@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+// TODO Implement Unit Tests
 @RestController
 @RequestMapping("/version/v1")
 public class UploadController {
@@ -32,18 +33,17 @@ public class UploadController {
     return ResponseEntity.ok().body("Upload Endpoint v1");
   }
 
+  // TODO update protoSpec and endpoint to Collection<TemporaryExposureKey>
   @PostMapping(value = "/diagnosis-keys/country/{country}")
   public ResponseEntity<String> submitDiagnosisKey(
       @PathVariable String country,
       @RequestBody TemporaryExposureKey exposureKeys,
       @RequestHeader(value = "cwa-fake") Integer fake,
       @RequestHeader(value = "cwa-authorization") String tan) {
-
     if (fake != 0) {
       //TODO consider sleep or similar
       return buildSuccessResponseEntity();
     }
-
     if (!this.tanVerifier.verifyTan(tan)) {
       return buildTanInvalidResponseEntity();
     }
@@ -69,18 +69,17 @@ public class UploadController {
   }
 
   /**
-   * Persists the diagnosis keys contained in the specified request payload and returns the
-   * persisted {@link DiagnosisKey} instances.
+   * Persists the diagnosis keys contained in the specified request payload.
    *
-   * @param protBufDiagnosisKeys Diagnosis keys that were specified in the request.
-   * @return {@link DiagnosisKey} instances that were successfully persisted.
+   * @param protoBufDiagnosisKeys Diagnosis keys that were specified in the request.
+   * @throws IllegalArgumentException in case the given collection contains {@literal null}.
    */
-  private Collection<DiagnosisKey> persistDiagnosisKeysPayload(
-      Collection<TemporaryExposureKey> protBufDiagnosisKeys) {
-    Collection<DiagnosisKey> diagnosisKeys = protBufDiagnosisKeys.stream()
-        .map((aProtoBufKey) -> DiagnosisKey.builder().fromProtoBuf(aProtoBufKey).build())
+  private void persistDiagnosisKeysPayload(
+      Collection<TemporaryExposureKey> protoBufDiagnosisKeys) {
+    Collection<DiagnosisKey> diagnosisKeys = protoBufDiagnosisKeys.stream()
+        .map(aProtoBufKey -> DiagnosisKey.builder().fromProtoBuf(aProtoBufKey).build())
         .collect(Collectors.toList());
 
-    return this.exposureKeyService.saveDiagnosisKeys(diagnosisKeys);
+    this.exposureKeyService.saveDiagnosisKeys(diagnosisKeys);
   }
 }

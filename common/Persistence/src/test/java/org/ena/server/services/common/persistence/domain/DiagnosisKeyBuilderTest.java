@@ -9,7 +9,6 @@ import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class DiagnosisKeyBuilderTest {
-
   private final byte[] expKeyData = "myByteArr".getBytes(Charset.defaultCharset());
   private final long expRollingStartNumber = 123;
   private final int expTransmissionRiskLevel = 1;

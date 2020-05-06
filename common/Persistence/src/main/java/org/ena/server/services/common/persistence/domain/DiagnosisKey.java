@@ -21,6 +21,7 @@ public class DiagnosisKey {
   private byte[] keyData;
   private long rollingStartNumber;
   private int transmissionRiskLevel;
+  //TODO add creation date
 
   /**
    * Should be called by builders.
