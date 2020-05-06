@@ -1,4 +1,4 @@
-# ENA Test Data Generator
+# CWA Test Data Generator
 This CLI can generate and verify test data that adheres to the file exchange protocol defined in `/spec/file-xchange.proto`.
 Signatures are calculated using Ed25519 elliptic curve.
 ## Build

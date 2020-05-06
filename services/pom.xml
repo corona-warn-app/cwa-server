@@ -12,7 +12,7 @@
   </parent>
 
   <artifactId>services</artifactId>
-  <groupId>org.ena.server</groupId>
+  <groupId>app.coronawarn.server</groupId>
   <version>0.0.1-SNAPSHOT</version>
 
   <packaging>pom</packaging>
@@ -31,12 +31,12 @@
 
   <dependencies>
     <dependency>
-      <groupId>org.ena.server.common</groupId>
+      <groupId>app.coronawarn.server.common</groupId>
       <artifactId>Persistence</artifactId>
       <version>0.0.1-SNAPSHOT</version>
     </dependency>
     <dependency>
-      <groupId>org.ena.server.common</groupId>
+      <groupId>app.coronawarn.server.common</groupId>
       <artifactId>Protocols</artifactId>
       <version>0.0.1-SNAPSHOT</version>
     </dependency>

@@ -8,11 +8,11 @@
 		<module>common</module>
 		<module>services</module>
 	</modules>
-	<groupId>org.ena</groupId>
+	<groupId>app.coronawarn</groupId>
 	<artifactId>server</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<name>server</name>
-	<description>ENA Server</description>
+	<description>CWA Server</description>
 
 	<properties>
 		<java.version>11</java.version>
