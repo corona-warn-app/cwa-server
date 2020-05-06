@@ -2,7 +2,7 @@
     "openapi": "3.0.0",
     "info": {
         "version": "v1",
-        "title": "ENA-Server Upload API",
+        "title": "CWA-Server Upload API",
         "license": {
             "name": "Apache 2.0"
         }
@@ -38,7 +38,7 @@
                     "content": {
                         "application/octet-stream": {
                             "schema": {
-                                "$ref": "#/components/schemas/org.ena.server.common.protocols.generated.SignedPayload"
+                                "$ref": "#/components/schemas/app.coronawarn.server.common.protocols.generated.SignedPayload"
                             },
                             "example": "<BINARY DATA>"
                         }
@@ -79,7 +79,7 @@
                     "openapi": "3.0.0",
                     "info": {
                         "version": "v1",
-                        "title": "ENA-Server Download API",
+                        "title": "CWA-Server Download API",
                         "license": {
                             "name": "Apache 2.0"
                         }
@@ -97,7 +97,7 @@
                 "description": "An ISO 3166-1 alpha-2 country key",
                 "example": "DE"
             },
-            "org.ena.server.common.protocols.generated.SignedPayload": {
+            "app.coronawarn.server.common.protocols.generated.SignedPayload": {
                 "type": "string",
                 "format": "binary"
             }

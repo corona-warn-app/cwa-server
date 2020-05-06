@@ -7,13 +7,13 @@
 
   <parent>
     <artifactId>tools</artifactId>
-    <groupId>org.ena.server</groupId>
+    <groupId>app.coronawarn.server</groupId>
     <version>0.0.1-SNAPSHOT</version>
     <relativePath>../pom.xml</relativePath>
   </parent>
 
-  <description>ENA TestDataGenerator</description>
-  <groupId>org.ena.server.tools</groupId>
+  <description>CWA TestDataGenerator</description>
+  <groupId>app.coronawarn.server.tools</groupId>
   <artifactId>TestDataGenerator</artifactId>
   <name>TestDataGenerator</name>
   <version>0.0.1-SNAPSHOT</version>
@@ -21,7 +21,7 @@
   <dependencies>
     <dependency>
       <artifactId>Protocols</artifactId>
-      <groupId>org.ena.server.common</groupId>
+      <groupId>app.coronawarn.server.common</groupId>
       <version>0.0.1-SNAPSHOT</version>
     </dependency>
     <dependency>
@@ -66,7 +66,7 @@
             <manifest>
               <addClasspath>true</addClasspath>
               <classpathPrefix>lib/</classpathPrefix>
-              <mainClass>org.ena.server.tools.testdatagenerator.TestDataGeneratorCLI</mainClass>
+              <mainClass>app.coronawarn.server.tools.testdatagenerator.TestDataGeneratorCLI</mainClass>
             </manifest>
           </archive>
           <descriptorRefs>

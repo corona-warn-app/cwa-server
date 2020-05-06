@@ -66,13 +66,13 @@ ca_sign_certificate_request()
 # Self-signed root certificate
 mkdir root
 generate_private_key root/private.pem
-generate_certificate_signing_request root/private.pem '/CN=ENA Test Root Certificate' root/request.csr
+generate_certificate_signing_request root/private.pem '/CN=CWA Test Root Certificate' root/request.csr
 self_sign_certificate_request root/request.csr root/private.pem root/certificate.crt
 
 # Client certificate signed by root certificate
 mkdir client
 generate_private_key client/private.pem
-generate_certificate_signing_request client/private.pem '/CN=ENA Test Client Certificate' client/request.csr
+generate_certificate_signing_request client/private.pem '/CN=CWA Test Client Certificate' client/request.csr
 ca_sign_certificate_request client/request.csr root/certificate.crt root/private.pem client/certificate.crt
 
 # Concatenate the root certifricate and the client certificate.
