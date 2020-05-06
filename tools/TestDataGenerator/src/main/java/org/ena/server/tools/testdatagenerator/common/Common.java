@@ -145,6 +145,7 @@ public class Common {
     array.addAll(elements);
     writeJson(file, array);
   }
+
   public static void writeIndex(File directory, List<?> index) {
     writeIndex(new DirectoryIndex<>(directory, index), Object::toString);
   }
@@ -175,6 +176,7 @@ public class Common {
   public static class DirectoryIndex<T> {
     public File directory;
     public List<T> index;
+
     public DirectoryIndex(File directory, List<T> index) {
       this.directory = directory;
       this.index = index;

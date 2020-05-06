@@ -49,11 +49,11 @@ public class Generator {
   static String version = "v1";
 
   static void generate(int totalHours, String startDateStr, int exposuresPerHour, File openapi,
-      File outputDirectory, File privateKeyFile, File certificateFile, int seed)
+                       File outputDirectory, File privateKeyFile, File certificateFile, int seed)
       throws IOException, CertificateException, NoSuchAlgorithmException, NoSuchProviderException, InvalidKeyException, SignatureException {
 
     File rootDirectory = createRootDirectoryStructure(outputDirectory);
-    if(openapi != null && openapi.exists()) {
+    if (openapi != null && openapi.exists()) {
       File target = Common.makeFile(rootDirectory, "index");
       Files.copy(openapi.toPath(), target.toPath(), StandardCopyOption.REPLACE_EXISTING);
     }
@@ -61,30 +61,16 @@ public class Generator {
     File dateDirectory = createDiagnosisKeyDirectoryStructure(rootDirectory);
 
     LocalDate startDate = LocalDate.parse(startDateStr, ISO8601);
-    DirectoryIndex<LocalDate> dateDirectoryIndex = createDateDirectoryIndex(
-        dateDirectory,
-        startDate,
-        totalHours
-    );
+    DirectoryIndex<LocalDate> dateDirectoryIndex =
+        createDateDirectoryIndex(dateDirectory, startDate, totalHours);
 
-    createHourDirectoryIndex(
-        dateDirectoryIndex,
-        startDate,
-        totalHours
-    );
+    createHourDirectoryIndex(dateDirectoryIndex, startDate, totalHours);
 
     Random random = new Random(seed);
-    List<List<TemporaryExposureKeyBucket>> hourData = generateHourData(
-        startDate,
-        totalHours,
-        exposuresPerHour,
-        random
-    );
+    List<List<TemporaryExposureKeyBucket>> hourData =
+        generateHourData(startDate, totalHours, exposuresPerHour, random);
 
-    List<TemporaryExposureKeyBucket> dayData = aggregateDayData(
-        startDate,
-        hourData
-    );
+    List<TemporaryExposureKeyBucket> dayData = aggregateDayData(startDate, hourData);
 
     PrivateKey privateKey = Common.getPrivateKeyFromFile(privateKeyFile);
     Certificate certificate = Common.getCertificateFromFile(certificateFile);
@@ -94,20 +80,16 @@ public class Generator {
             .map(Common.uncheckedFunction(hourBytes -> generateSignedPayload(
                 hourBytes,
                 privateKey,
-                certificate
-            )))
-            .collect(Collectors.toList())
-        )
+                certificate)))
+            .collect(Collectors.toList()))
         .collect(Collectors.toList());
 
     List<SignedPayload> signedDayData = dayData.stream()
-        .map(a -> a)
         .map(TemporaryExposureKeyBucket::toByteArray)
         .map(Common.uncheckedFunction(hourBytes -> generateSignedPayload(
             hourBytes,
             privateKey,
-            certificate
-        )))
+            certificate)))
         .collect(Collectors.toList());
 
     // Write signed hour data
@@ -122,21 +104,16 @@ public class Generator {
                 .resolve("date")
                 .resolve(ISO8601.format(startDate.plusDays(dayIndex)))
                 .resolve("hour")
-                .toFile()
-            )
+                .toFile())
             .forEach(hourDirectory -> IntStream.range(0, getHours(
                 startDate, startDate.plusDays(dayIndex), totalHours
-                ).size())
-                    .forEach(hourIndex -> Stream.of(hourIndex)
-                        .map(__ -> Common.makeDirectory(hourDirectory, String.valueOf(hourIndex)))
-                        .map(a -> Common.makeFile(a, "index"))
-                        .forEach(indexFile -> Common.writeBytesToFile(
-                            signedHourData.get(dayIndex).get(hourIndex).toByteArray(),
-                            indexFile
-                        ))
-                    )
-            )
-        );
+            ).size())
+                .forEach(hourIndex -> Stream.of(hourIndex)
+                    .map(__ -> Common.makeDirectory(hourDirectory, String.valueOf(hourIndex)))
+                    .map(a -> Common.makeFile(a, "index"))
+                    .forEach(indexFile -> Common.writeBytesToFile(
+                        signedHourData.get(dayIndex).get(hourIndex).toByteArray(),
+                        indexFile)))));
 
     // Write signed day data
     IntStream.range(0, signedDayData.size())
@@ -154,9 +131,7 @@ public class Generator {
             .map(dayDirectory -> Common.makeFile(dayDirectory, "index"))
             .forEach(indexFile -> Common.writeBytesToFile(
                 signedDayData.get(dayIndex).toByteArray(),
-                indexFile
-            ))
-        );
+                indexFile)));
 
     // Write parameters
     File parametersDirectory = createParametersDirectoryStructure(rootDirectory);
@@ -206,12 +181,8 @@ public class Generator {
     SignedPayload signedRiskScoreParameters = generateSignedPayload(
         riskScoreParameters.toByteArray(),
         privateKey,
-        certificate
-    );
-    Common.writeBytesToFile(
-        signedRiskScoreParameters.toByteArray(),
-        parametersFile
-    );
+        certificate);
+    Common.writeBytesToFile(signedRiskScoreParameters.toByteArray(), parametersFile);
 
     System.out.println("DONE");
   }
@@ -251,13 +222,10 @@ public class Generator {
   }
 
   static DirectoryIndex<LocalDate> createDateDirectoryIndex(File dateDirectory,
-      LocalDate startDate, int totalHours) {
+                                                            LocalDate startDate, int totalHours) {
     int numDays = getNumberOfDays(totalHours);
     return Stream.of(dateDirectory)
-        .map(directory -> new DirectoryIndex<>(
-            directory,
-            getDates(startDate, numDays))
-        )
+        .map(directory -> new DirectoryIndex<>(directory, getDates(startDate, numDays)))
         .peek(index -> Common.writeIndex(index, date -> ISO8601.format((TemporalAccessor) date)))
         .findFirst()
         .orElseThrow();
@@ -272,16 +240,13 @@ public class Generator {
                 .map(directory -> Common.makeDirectory(directory, "hour"))
                 .map(directory -> new DirectoryIndex<>(
                     directory,
-                    getHours(startDate, currentDate, totalHours)
-                ))
-            )
-        )
+                    getHours(startDate, currentDate, totalHours)))))
         .peek(index -> Common.writeIndex(index, hour -> ((LocalDateTime) hour).getHour()))
         .collect(Collectors.toList());
   }
 
   static List<List<TemporaryExposureKeyBucket>> generateHourData(LocalDate startDate,
-      int totalHours, int exposuresPerHour, Random random) {
+                                                                 int totalHours, int exposuresPerHour, Random random) {
     int numDays = getNumberOfDays(totalHours);
     return getDates(startDate, numDays).stream()
         .map(currentDate -> getHours(startDate, currentDate, totalHours).stream()
@@ -290,15 +255,13 @@ public class Generator {
                 currentHour,
                 AggregationInterval.HOURLY,
                 Common.nextPoisson(exposuresPerHour, random),
-                random
-            ))
-            .collect(Collectors.toList())
-        )
+                random))
+            .collect(Collectors.toList()))
         .collect(Collectors.toList());
   }
 
   static List<TemporaryExposureKeyBucket> aggregateDayData(LocalDate startDate,
-      List<List<TemporaryExposureKeyBucket>> hourData) {
+                                                           List<List<TemporaryExposureKeyBucket>> hourData) {
     int numDays = hourData.size();
     // Last (incomplete) day does not get an aggregate
     return IntStream.range(0, numDays - 1)
@@ -306,9 +269,7 @@ public class Generator {
             .map(startDate::plusDays)
             .map(currentDate -> TemporaryExposureKeyBucket.newBuilder()
                 .setShardKey(country)
-                .setTimestamp(Math.toIntExact(
-                    startDate.toEpochSecond(startDate.atStartOfDay().toLocalTime(), ZoneOffset.UTC))
-                )
+                .setTimestamp(Math.toIntExact(startDate.toEpochSecond(startDate.atStartOfDay().toLocalTime(), ZoneOffset.UTC)))
                 .setAggregationInterval(AggregationInterval.DAILY)
                 .addAllExposureKeys(hourData.get(currentDateIndex).stream()
                     .flatMap(hour -> hour.getExposureKeysList().stream())
@@ -335,12 +296,8 @@ public class Generator {
   static List<LocalDateTime> getHours(LocalDate startDate, LocalDate currentDate, int totalHours) {
     int numFullDays = Math.floorDiv(totalHours, 24);
     long currentDay = ChronoUnit.DAYS.between(startDate, currentDate);
-    int lastHour;
-    if (currentDay < numFullDays) {
-      lastHour = 24;
-    } else {
-      lastHour = totalHours % 24;
-    }
+    int lastHour = (currentDay < numFullDays) ? 24 : totalHours % 24;
+
     return IntStream.range(0, lastHour)
         .mapToObj(hour -> currentDate.atStartOfDay().plusHours(hour))
         .collect(Collectors.toList());
@@ -361,13 +318,11 @@ public class Generator {
           long rollingStartEpochSeconds = Common.getRandomBetween(
               timestampEpochSeconds,
               timestampEpochSeconds + aggregationTimeSeconds,
-              random
-          );
+              random);
           //Convert from epoch seconds to 10 minute increment counter
           long rollingStartNumber = Math.floorDiv(
               rollingStartEpochSeconds,
-              TimeUnit.MINUTES.toSeconds(10)
-          ));
+              TimeUnit.MINUTES.toSeconds(10));
           return generateTemporaryExposureKey(rollingStartNumber, random);
         }).collect(Collectors.toList());
     return TemporaryExposureKeyBucket.newBuilder()
@@ -378,14 +333,9 @@ public class Generator {
         .build();
   }
 
-  static TemporaryExposureKey generateTemporaryExposureKey(int rollingStartNumber, Random random) {
+  static TemporaryExposureKey generateTemporaryExposureKey(long rollingStartNumber, Random random) {
     RiskLevel riskLevel = RiskLevel.forNumber(
-        Common.getRandomBetween(
-            RiskLevel.LOWEST_VALUE,
-            RiskLevel.HIGHEST_VALUE,
-            random
-        )
-    );
+        Common.getRandomBetween(RiskLevel.LOWEST_VALUE, RiskLevel.HIGHEST_VALUE, random));
     return TemporaryExposureKey.newBuilder()
         .setKeyData(ByteString.copyFrom(generateDiagnosisKeyBytes(random)))
         .setRollingStartNumber(rollingStartNumber)
@@ -400,7 +350,7 @@ public class Generator {
   }
 
   static <T> SignedPayload generateSignedPayload(byte[] payload, PrivateKey privateKey,
-      Certificate certificate)
+                                                 Certificate certificate)
       throws CertificateEncodingException, InvalidKeyException, NoSuchProviderException, NoSuchAlgorithmException, SignatureException {
     Signature payloadSignature = Signature.getInstance("Ed25519", "BC");
     payloadSignature.initSign(privateKey);

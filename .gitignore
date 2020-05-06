@@ -4,7 +4,6 @@
 *.iml
 *.ipr
 
-# mpeltonen/sbt-idea plugin
 .idea_modules/
 ### NetBeans ###
 /nbproject/private/
