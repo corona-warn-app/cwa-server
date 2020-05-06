@@ -1,6 +1,7 @@
 package org.ena.server.services.upload.controller;
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.stream.Collectors;
 import org.ena.server.common.protocols.generated.ExposureKeys.TemporaryExposureKey;
 import org.ena.server.services.common.persistence.domain.DiagnosisKey;
@@ -34,7 +35,7 @@ public class UploadController {
   @PostMapping(value = "/diagnosis-keys/country/{country}")
   public ResponseEntity<String> submitDiagnosisKey(
       @PathVariable String country,
-      @RequestBody Collection<TemporaryExposureKey> exposureKeys,
+      @RequestBody TemporaryExposureKey exposureKeys,
       @RequestHeader(value = "cwa-fake") Integer fake,
       @RequestHeader(value = "cwa-authorization") String tan) {
 
@@ -47,7 +48,7 @@ public class UploadController {
       return buildTanInvalidResponseEntity();
     }
 
-    persistDiagnosisKeysPayload(exposureKeys);
+    persistDiagnosisKeysPayload(Collections.singleton(exposureKeys));
 
     return buildSuccessResponseEntity();
   }
