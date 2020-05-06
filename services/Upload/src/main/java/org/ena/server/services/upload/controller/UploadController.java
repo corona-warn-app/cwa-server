@@ -2,9 +2,10 @@ package org.ena.server.services.upload.controller;
 
 import java.util.Collection;
 import java.util.stream.Collectors;
-import org.ena.server.common.protocols.generated.ExposureKeys;
+import org.ena.server.common.protocols.generated.ExposureKeys.TemporaryExposureKey;
 import org.ena.server.services.common.persistence.domain.DiagnosisKey;
 import org.ena.server.services.common.persistence.service.DiagnosisKeyService;
+import org.ena.server.services.upload.verification.TanVerifier;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -22,6 +23,9 @@ public class UploadController {
   @Autowired
   private DiagnosisKeyService exposureKeyService;
 
+  @Autowired
+  private TanVerifier tanVerifier;
+
   @GetMapping(value = "")
   public ResponseEntity<String> hello() {
     return ResponseEntity.ok().body("Upload Endpoint v1");
@@ -30,23 +34,52 @@ public class UploadController {
   @PostMapping(value = "/diagnosis-keys/country/{country}")
   public ResponseEntity<String> submitDiagnosisKey(
       @PathVariable String country,
-      @RequestBody Collection<ExposureKeys.TemporaryExposureKey> exposureKeys,
-      @RequestHeader(value = "ena-fake", required = true) boolean fake,
-      @RequestHeader(value = "ena-authorization", required = true) String enaAuthorization) {
+      @RequestBody Collection<TemporaryExposureKey> exposureKeys,
+      @RequestHeader(value = "ena-fake") Integer fake,
+      @RequestHeader(value = "ena-authorization") String tan) {
 
-    if (fake) {
+    if (fake != 0) {
       //TODO consider sleep or similar
-      return ResponseEntity.ok().build();
+      return buildSuccessResponseEntity();
     }
 
-    // TODO verification
+    if (!this.tanVerifier.verifyTan(tan)) {
+      return buildTanInvalidResponseEntity();
+    }
 
-    Collection<DiagnosisKey> diagnosisKeys = exposureKeys.stream()
+    persistDiagnosisKeysPayload(exposureKeys);
+
+    return buildSuccessResponseEntity();
+  }
+
+  /**
+   * @return A response that indicates that an invalid TAN was specified in the request.
+   */
+  private ResponseEntity<String> buildTanInvalidResponseEntity() {
+    // TODO implement
+    return null;
+  }
+
+  /**
+   * @return A response that indicates successful request processing.
+   */
+  private ResponseEntity<String> buildSuccessResponseEntity() {
+    return ResponseEntity.ok().build();
+  }
+
+  /**
+   * Persists the diagnosis keys contained in the specified request payload and returns the
+   * persisted {@link DiagnosisKey} instances.
+   *
+   * @param protBufDiagnosisKeys Diagnosis keys that were specified in the request.
+   * @return {@link DiagnosisKey} instances that were successfully persisted.
+   */
+  private Collection<DiagnosisKey> persistDiagnosisKeysPayload(
+      Collection<TemporaryExposureKey> protBufDiagnosisKeys) {
+    Collection<DiagnosisKey> diagnosisKeys = protBufDiagnosisKeys.stream()
         .map((aProtoBufKey) -> DiagnosisKey.builder().fromProtoBuf(aProtoBufKey).build())
         .collect(Collectors.toList());
 
-    this.exposureKeyService.saveDiagnosisKeys(diagnosisKeys);
-
-    return ResponseEntity.ok().build();
+    return this.exposureKeyService.saveDiagnosisKeys(diagnosisKeys);
   }
 }
