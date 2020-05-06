@@ -17,8 +17,8 @@
 
   <packaging>pom</packaging>
   <modules>
-    <module>Download</module>
-    <module>Upload</module>
+    <module>Distribution</module>
+    <module>Submission</module>
   </modules>
 
   <properties>
