@@ -1,10 +1,13 @@
 ---
 name: "\U00002753 Questions?"
-about: If you have *specific* questions about pieces of the code or documentation, please post them here.
+about: If you have *specific* questions about pieces of the code or documentation for this component, please post them here.
 
 ---
+<!--
+Thanks for submitting your question 🙌 ❤️
 
-<!-- Describe your question here. Please keep in mind that the GitHub issue tracker is mostly intended for reports related to the project code base and source, and for bugs and feature requests. Also have a look at our FAQs before opening a new question. -->
+Before opening a new issue, please make sure that we do not have any duplicates already open. You can ensure this by searching the issue list for this repository. If there is a duplicate, please close your issue and add a comment to the existing issue instead. Also, please, have a look at our FAQs and existing questions before opening a new question.
+-->
 
 ## Your Question
 <!-- Include details about your question. -->

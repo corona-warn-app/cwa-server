@@ -3,11 +3,10 @@ name: "\U0001F4AC Anything else?"
 about: For conceptual questions, please consider to open an issue in the documentation repository.
 
 ---
+<!--
+Thanks for contributing to the project 🙌 ❤️
 
-<!-- Describe your issue here. Please keep in mind that this GitHub issue tracker is mostly intended mostly intended for reports related to the project code base and source, and for bugs and feature requests. For conceptual questions, please consider to open an issue in the documentation repository.  -->
+Before opening a new issue, please make sure that we do not have any duplicates already open. You can ensure this by searching the issue list for this repository. If there is a duplicate, please close your issue and add a comment to the existing issue instead.
 
-## Your Environment
-<!-- Include details of your environment. -->
-* Operating System:
-* Libraries Used:
-* Environment Information:
+Also, be sure to check our readme first: https://github.com/corona-warn-app/cwa-server
+-->
