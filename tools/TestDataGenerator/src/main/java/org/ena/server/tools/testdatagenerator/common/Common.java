@@ -2,6 +2,8 @@ package org.ena.server.tools.testdatagenerator.common;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
+import java.io.FileOutputStream;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
@@ -10,29 +12,44 @@ import java.security.PrivateKey;
 import java.security.cert.Certificate;
 import java.security.cert.CertificateException;
 import java.security.cert.CertificateFactory;
+import java.util.List;
+import java.util.Random;
 import java.util.concurrent.ThreadLocalRandom;
-import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 import org.bouncycastle.asn1.pkcs.PrivateKeyInfo;
 import org.bouncycastle.openssl.PEMParser;
 import org.bouncycastle.openssl.jcajce.JcaPEMKeyConverter;
-import org.ena.server.common.protocols.generated.ExposureKeys.TemporaryExposureKeyBucket.AggregationInterval;
+import org.json.simple.JSONArray;
+import org.json.simple.JSONAware;
 
+@SuppressWarnings("ResultOfMethodCallIgnored")
 public class Common {
 
-  public static int getRandomBetween(int minIncluding, int maxIncluding) {
-    return ThreadLocalRandom.current().nextInt(
-        minIncluding,
-        maxIncluding + 1
-    );
+  public static int getRandomBetween(int minIncluding, int maxIncluding, Random random) {
+    return Math.toIntExact(getRandomBetween(
+        (long) minIncluding,
+        (long) maxIncluding,
+        random
+    ));
   }
 
-  public static long getRandomBetween(long minIncluding, long maxIncluding) {
-    return ThreadLocalRandom.current().nextLong(
-        minIncluding,
-        maxIncluding + 1
-    );
+  public static long getRandomBetween(long minIncluding, long maxIncluding, Random random) {
+    return minIncluding + (long) (random.nextDouble() * (maxIncluding - minIncluding));
+  }
+
+  public static int nextPoisson(int mean, Random random) {
+    // https://stackoverflow.com/a/9832977
+    // https://en.wikipedia.org/wiki/Poisson_distribution#Generating_Poisson-distributed_random_variables
+    double L = Math.exp(-mean);
+    int k = 0;
+    double p = 1.0;
+    do {
+      p = p * random.nextDouble();
+      k++;
+    } while (p > L);
+    return k - 1;
   }
 
   public static <T, R> Function<T, R> uncheckedFunction(
@@ -81,13 +98,56 @@ public class Common {
     return Files.readAllBytes(file.toPath());
   }
 
-  public static String getOutputFileName(String shardKey, String schemaVersion,
-      AggregationInterval aggregationInterval, long timestampEpoch) {
-    long aggregationMinutes = aggregationInterval == AggregationInterval.HOURLY
-        ? TimeUnit.HOURS.toMinutes(1)
-        : TimeUnit.DAYS.toMinutes(1);
-    return shardKey + "_" + schemaVersion + "_" + aggregationMinutes + "m_" + timestampEpoch
-        + ".cov";
+  public static File makeDirectory(File root, String name) {
+    File directory = new File(root.getPath() + "/" + name);
+    directory.mkdirs();
+    return directory;
+  }
+
+  public static File makeFile(File root, String name) {
+    File directory = new File(root.getPath() + "/" + name);
+    try {
+      directory.createNewFile();
+    } catch (IOException e) {
+      throw new RuntimeException(e);
+    }
+    return directory;
+  }
+
+  public static void writeJson(File to, JSONAware json) {
+    try {
+      FileWriter file = new FileWriter(to.getPath());
+      file.write(json.toJSONString());
+      file.flush();
+      file.close();
+    } catch (IOException e) {
+      throw new RuntimeException(e);
+    }
+  }
+
+  public static void writeBytesToFile(byte[] bytes, File outputFile) {
+    try {
+      outputFile.createNewFile();
+      FileOutputStream outputFileStream = new FileOutputStream(outputFile);
+      outputFileStream.write(bytes);
+    } catch (IOException e) {
+      throw new RuntimeException(e);
+    }
+  }
+
+  @SuppressWarnings("unchecked")
+  public static <T> void writeIndex(DirectoryIndex<T> directoryIndex, Function<Object, ?> formatter) {
+    File file = makeFile(directoryIndex.directory, "index");
+    JSONArray array = new JSONArray();
+    List<?> elements = directoryIndex.index.stream()
+        .map(formatter)
+        .collect(Collectors.toList());
+    array.addAll(elements);
+    writeJson(file, array);
+  }
+
+  public static void writeIndex(File directory, List<?> index) {
+    writeIndex(new DirectoryIndex<>(directory, index), Object::toString);
   }
 
   /**
@@ -95,7 +155,6 @@ public class Common {
    */
   @FunctionalInterface
   public interface CheckedFunction<T, R, E extends Exception> {
-
     R apply(T t) throws E;
   }
 
@@ -104,7 +163,23 @@ public class Common {
    */
   @FunctionalInterface
   public interface CheckedConsumer<T, E extends Exception> {
-
     void apply(T t) throws E;
+  }
+
+  /*
+  @FunctionalInterface
+  public interface Formatter<T, String> extends Function<T, String> {
+    String apply(T t);
+  }
+  */
+
+  public static class DirectoryIndex<T> {
+    public File directory;
+    public List<T> index;
+
+    public DirectoryIndex(File directory, List<T> index) {
+      this.directory = directory;
+      this.index = index;
+    }
   }
 }

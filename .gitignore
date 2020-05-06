@@ -4,6 +4,7 @@
 *.iml
 *.ipr
 
+.idea_modules/
 ### NetBeans ###
 /nbproject/private/
 /nbbuild/
