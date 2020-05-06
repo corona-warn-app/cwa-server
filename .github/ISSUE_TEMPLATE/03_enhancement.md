@@ -17,4 +17,4 @@ Before opening a new issue, please make sure that we do not have any duplicates 
 <!-- Outline the idea of your enhancement, by e.g., describing the algorithm you propose. You can also create a Pull Request to outline your idea -->
 
 ## Expected Benefits
-<!-- Summarize how your enhancement could aid the implementation (performance, readability, memory consumption, battery consumption, etc.) -->
+<!-- Summarize how your enhancement could aid the implementation (performance, readability, memory consumption, battery consumption, etc.). Please also back up with measurements or give detailed explanations for reduced runtimes, memory consumption, etc.  -->
