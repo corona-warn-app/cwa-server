@@ -35,8 +35,8 @@ public class UploadController {
   public ResponseEntity<String> submitDiagnosisKey(
       @PathVariable String country,
       @RequestBody Collection<TemporaryExposureKey> exposureKeys,
-      @RequestHeader(value = "ena-fake") Integer fake,
-      @RequestHeader(value = "ena-authorization") String tan) {
+      @RequestHeader(value = "cwa-fake") Integer fake,
+      @RequestHeader(value = "cwa-authorization") String tan) {
 
     if (fake != 0) {
       //TODO consider sleep or similar
