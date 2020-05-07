@@ -18,7 +18,7 @@
 
   <packaging>pom</packaging>
   <modules>
-    <module>Protocols</module>
+    <module>protocols</module>
     <module>Persistence</module>
   </modules>
 

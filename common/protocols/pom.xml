@@ -11,7 +11,7 @@
   <modelVersion>4.0.0</modelVersion>
 
   <groupId>app.coronawarn.server.common</groupId>
-  <artifactId>Protocols</artifactId>
+  <artifactId>protocols</artifactId>
   <version>0.0.1-SNAPSHOT</version>
 
   <dependencies>

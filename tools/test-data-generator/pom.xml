@@ -20,7 +20,7 @@
 
   <dependencies>
     <dependency>
-      <artifactId>Protocols</artifactId>
+      <artifactId>protocols</artifactId>
       <groupId>app.coronawarn.server.common</groupId>
       <version>0.0.1-SNAPSHOT</version>
     </dependency>
