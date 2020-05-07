@@ -8,6 +8,7 @@ import app.coronawarn.server.services.common.persistence.domain.DiagnosisKey;
 import app.coronawarn.server.services.common.persistence.service.DiagnosisKeyService;
 import app.coronawarn.server.services.submission.verification.TanVerifier;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -57,8 +58,7 @@ public class SubmissionController {
    * @return A response that indicates that an invalid TAN was specified in the request.
    */
   private ResponseEntity<String> buildTanInvalidResponseEntity() {
-    // TODO implement
-    return null;
+    return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Invalid TAN Code");
   }
 
   /**
