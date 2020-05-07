@@ -1,4 +1,4 @@
-package app.coronawarn.server.services.upload.controller;
+package app.coronawarn.server.services.submission.controller;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -6,7 +6,7 @@ import java.util.stream.Collectors;
 import app.coronawarn.server.common.protocols.generated.ExposureKeys.TemporaryExposureKey;
 import app.coronawarn.server.services.common.persistence.domain.DiagnosisKey;
 import app.coronawarn.server.services.common.persistence.service.DiagnosisKeyService;
-import app.coronawarn.server.services.upload.verification.TanVerifier;
+import app.coronawarn.server.services.submission.verification.TanVerifier;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -20,7 +20,7 @@ import org.springframework.web.bind.annotation.RestController;
 // TODO Implement Unit Tests
 @RestController
 @RequestMapping("/version/v1")
-public class UploadController {
+public class SubmissionController {
 
   @Autowired
   private DiagnosisKeyService exposureKeyService;
@@ -30,7 +30,7 @@ public class UploadController {
 
   @GetMapping(value = "")
   public ResponseEntity<String> hello() {
-    return ResponseEntity.ok().body("Upload Endpoint v1");
+    return ResponseEntity.ok().body("Diagnosis Key Submission Endpoint v1");
   }
 
   // TODO update protoSpec and endpoint to Collection<TemporaryExposureKey>

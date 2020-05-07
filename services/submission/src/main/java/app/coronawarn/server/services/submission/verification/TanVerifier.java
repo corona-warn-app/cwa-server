@@ -1,4 +1,4 @@
-package app.coronawarn.server.services.upload.verification;
+package app.coronawarn.server.services.submission.verification;
 
 import org.springframework.stereotype.Component;
 

@@ -1,4 +1,4 @@
-package app.coronawarn.server.services.upload.config;
+package app.coronawarn.server.services.submission.config;
 
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;

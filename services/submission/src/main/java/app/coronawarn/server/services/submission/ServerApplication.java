@@ -1,4 +1,4 @@
-package app.coronawarn.server.services.upload;
+package app.coronawarn.server.services.submission;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -13,7 +13,7 @@ import org.springframework.http.converter.protobuf.ProtobufHttpMessageConverter;
 @ServletComponentScan
 @EnableJpaRepositories(basePackages = "app.coronawarn.server.services.common.persistence")
 @EntityScan(basePackages = "app.coronawarn.server.services.common.persistence")
-@ComponentScan({"app.coronawarn.server.services.common.persistence", "app.coronawarn.server.services.upload"})
+@ComponentScan({"app.coronawarn.server.services.common.persistence", "app.coronawarn.server.services.submission"})
 public class ServerApplication {
 
   @Bean

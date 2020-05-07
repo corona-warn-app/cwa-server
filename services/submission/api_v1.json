@@ -2,7 +2,7 @@
     "openapi": "3.0.0",
     "info": {
         "version": "v1",
-        "title": "CWA-Server Upload API",
+        "title": "CWA-Server Submission API",
         "license": {
             "name": "Apache 2.0"
         }
