@@ -19,7 +19,7 @@
   <packaging>pom</packaging>
   <modules>
     <module>protocols</module>
-    <module>Persistence</module>
+    <module>persistence</module>
   </modules>
 
 </project>
