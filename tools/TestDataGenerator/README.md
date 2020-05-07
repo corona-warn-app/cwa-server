@@ -56,11 +56,11 @@ Generate test data according to the API spec.
                               total).
       --openapi=<openapi>   Optional: An OpenAPI definition file to include.
 
-                            Example: ../../services/Download/api_v1.json
+                            Example: ../../services/distribution/api_v1.json
       --out=<out_directory> Target directory (will be wiped before data
                               generation).
                             Will contain directories that match the REST API
-                              definition of the Download service.
+                              definition of the Distribution service.
 
                             Example: ./out
       --private_key=<private_key_file>
@@ -97,6 +97,6 @@ Verify test data
 ```
 ## Examples
 ### Generate test data
-`java -jar TestDataGenerator.jar generate --hours 181 --start_date 2020-05-01 --avg_exposures_per_hour 300 --openapi ../../services/Download/api_v1.json --out=./out --private_key=./certificates/client/private.pem --certificate=./certificates/chain/certificate.crt --seed 123456`
+`java -jar TestDataGenerator.jar generate --hours 181 --start_date 2020-05-01 --avg_exposures_per_hour 300 --openapi ../../services/distribution/api_v1.json --out=./out --private_key=./certificates/client/private.pem --certificate=./certificates/chain/certificate.crt --seed 123456`
 ### Verify test data
 `java -jar TestDataGenerator.jar verify --in=./out --certificate=certificates/chain/certificate.crt`

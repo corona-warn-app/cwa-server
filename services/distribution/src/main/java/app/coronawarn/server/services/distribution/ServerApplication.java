@@ -1,4 +1,4 @@
-package app.coronawarn.server.services.download;
+package app.coronawarn.server.services.distribution;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -11,7 +11,7 @@ import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 @ServletComponentScan
 @EnableJpaRepositories(basePackages = "app.coronawarn.server.services.common.persistence")
 @EntityScan(basePackages = "app.coronawarn.server.services.common.persistence")
-@ComponentScan({"app.coronawarn.server.services.common.persistence", "app.coronawarn.server.services.download"})
+@ComponentScan({"app.coronawarn.server.services.common.persistence", "app.coronawarn.server.services.distribution"})
 public class ServerApplication {
 
   public static void main(String[] args) {

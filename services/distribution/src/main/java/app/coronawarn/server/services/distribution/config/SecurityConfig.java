@@ -1,4 +1,4 @@
-package app.coronawarn.server.services.download.config;
+package app.coronawarn.server.services.distribution.config;
 
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;

@@ -79,7 +79,7 @@
                     "openapi": "3.0.0",
                     "info": {
                         "version": "v1",
-                        "title": "CWA-Server Download API",
+                        "title": "CWA-Server Distribution API",
                         "license": {
                             "name": "Apache 2.0"
                         }

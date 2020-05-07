@@ -54,14 +54,14 @@ public class GenerateCommand implements Runnable {
   @Option(names = {"--openapi"},
       description = ""
           + "Optional: An OpenAPI definition file to include.\n\n"
-          + "Example: ../../services/Download/api_v1.json")
+          + "Example: ../../services/distribution/api_v1.json")
   private File openapi;
 
   @Option(names = {"--out"},
       description = ""
           + "Target directory (will be wiped before data generation).\n"
           + "Will contain directories that match the REST API definition "
-          + "of the Download service.\n\n"
+          + "of the Distribution service.\n\n"
           + "Example: ./out",
       required = true)
   private File out_directory;
