@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# Builds and runs the Dockerfile in /tools/MockServer
+# Builds and runs the Dockerfile in /tools/mock-server
 
 pushd "$(dirname "${BASH_SOURCE[0]}")" > /dev/null || exit
 
