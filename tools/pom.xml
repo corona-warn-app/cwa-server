@@ -18,8 +18,7 @@
   <packaging>pom</packaging>
 
   <modules>
-    <module>TestDataGenerator</module>
+    <module>test-data-generator</module>
   </modules>
-
 
 </project>

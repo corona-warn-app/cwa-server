@@ -1,0 +1,496 @@
+{
+    "openapi": "3.0.0",
+    "info": {
+        "version": "v1",
+        "title": "CWA-Server Distribution API",
+        "license": {
+            "name": "Apache 2.0"
+        }
+    },
+    "paths": {
+        "/version": {
+            "get": {
+                "summary": "Get API versions",
+                "tags": [
+                    "Meta"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "All implemented API versions",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/Version"
+                                    },
+                                    "example": [
+                                        "v1",
+                                        "v2",
+                                        "v3"
+                                    ]
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/version/{version}": {
+            "get": {
+                "summary": "Get API specification for specific API version.",
+                "tags": [
+                    "Meta"
+                ],
+                "parameters": [
+                    {
+                        "name": "version",
+                        "in": "path",
+                        "description": "API version",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/components/schemas/Version"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OpenAPI 3.0 specification",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/OpenAPI"
+                                    },
+                                    "example": {
+                                        "openapi": "3.0.0",
+                                        "info": {
+                                            "version": "v1",
+                                            "title": "CWA-Server Distribution API",
+                                            "license": {
+                                                "name": "Apache 2.0"
+                                            }
+                                        },
+                                        "paths": {
+                                            "...": "..."
+                                        },
+                                        "components": {
+                                            "...": "..."
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/version/{version}/diagnosis-keys/country": {
+            "get": {
+                "summary": "Get all countries for which diagnosis keys are available.",
+                "tags": [
+                    "Diagnosis keys"
+                ],
+                "parameters": [
+                    {
+                        "name": "version",
+                        "in": "path",
+                        "description": "API version",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/components/schemas/Version"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "All countries for which diagnosis keys are available",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/Country"
+                                    },
+                                    "example": [
+                                        "DE",
+                                        "FR",
+                                        "PL"
+                                    ]
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/version/{version}/diagnosis-keys/country/{country}/date": {
+            "get": {
+                "summary": "Get all dates for which diagnosis keys are available.",
+                "description": "Gives a list of all dates for which diagnosis keys are available for a specific country. For Germany, this would return a list of dates for the past 14 days (if all of them contain diagnosis keys).",
+                "tags": [
+                    "Diagnosis keys"
+                ],
+                "parameters": [
+                    {
+                        "name": "version",
+                        "in": "path",
+                        "description": "API version",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/components/schemas/Version"
+                        }
+                    },
+                    {
+                        "name": "country",
+                        "in": "path",
+                        "description": "Country",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/components/schemas/Country"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "All dates for which diagnosis keys are available",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/Date"
+                                    },
+                                    "example": [
+                                        "2020-05-01",
+                                        "2020-04-30",
+                                        "2020-04-29",
+                                        "2020-04-28"
+                                    ]
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/version/{version}/diagnosis-keys/country/{country}/date/{date}": {
+            "get": {
+                "summary": "Get all diagnosis keys for a specific date.",
+                "description": "Gives all diagnosis keys for a specific country on a specific date. If there are no diagnosis keys available for that date (but the date is still within the 14-day window), a signed payload with an empty list of diagnosis keys will be returned. If the date is outside of the 14-day window, or in the future, an HTTP error code will be returned.",
+                "tags": [
+                    "Diagnosis keys"
+                ],
+                "parameters": [
+                    {
+                        "name": "version",
+                        "in": "path",
+                        "description": "API version",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/components/schemas/Version"
+                        }
+                    },
+                    {
+                        "name": "country",
+                        "in": "path",
+                        "description": "Country",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/components/schemas/Country"
+                        }
+                    },
+                    {
+                        "name": "date",
+                        "in": "path",
+                        "description": "Date",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/components/schemas/Date"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "All diagnosis keys for that day.",
+                        "content": {
+                            "application/octet-stream": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/app.coronawarn.server.common.protocols.generated.SignedPayload"
+                                },
+                                "example": "<BINARY DATA>"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/version/{version}/diagnosis-keys/country/{country}/date/{date}/hour": {
+            "get": {
+                "summary": "Get all hours of a day for which diagnosis keys are available.",
+                "description": "Gives a list of all hours (0-23) of a specific day (date) for which diagnosis keys are available for a specific country. For days in the past, a list containing the numbers/hours 0-23 will be returned. For the current day, a list containing the respective numbers/hours for which data is available (e.g. 0-17). If the day is outside of the 14-day window, or in the future, an HTTP error code will be returned..",
+                "tags": [
+                    "Diagnosis keys"
+                ],
+                "parameters": [
+                    {
+                        "name": "version",
+                        "in": "path",
+                        "description": "API version",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/components/schemas/Version"
+                        }
+                    },
+                    {
+                        "name": "country",
+                        "in": "path",
+                        "description": "Country",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/components/schemas/Country"
+                        }
+                    },
+                    {
+                        "name": "date",
+                        "in": "path",
+                        "description": "Date",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/components/schemas/Date"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "All hours (0~23) of that date for which diagnosis keys are available",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Hour"
+                                },
+                                "example": [
+                                    6,
+                                    7,
+                                    8,
+                                    9,
+                                    14,
+                                    15,
+                                    16,
+                                    22
+                                ]
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/version/{version}/diagnosis-keys/country/{country}/date/{date}/hour/{hour}": {
+            "get": {
+                "summary": "Get all diagnosis keys for a specific hour on a specific date.",
+                "description": "Gives all diagnosis keys for a specific country on a specific day within a specific hour. If there are no diagnosis keys available for the hour (but the day is still within the 14-day window), a signed payload with an empty list of diagnosis keys will be returned. If the day is outside of the 14-day window, or in the future, or an hour > 23 was requested, an HTTP error code will be returned..",
+                "tags": [
+                    "Diagnosis keys"
+                ],
+                "parameters": [
+                    {
+                        "name": "version",
+                        "in": "path",
+                        "description": "API version",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/components/schemas/Version"
+                        }
+                    },
+                    {
+                        "name": "country",
+                        "in": "path",
+                        "description": "Country",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/components/schemas/Country"
+                        }
+                    },
+                    {
+                        "name": "date",
+                        "in": "path",
+                        "description": "Date",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/components/schemas/Date"
+                        }
+                    },
+                    {
+                        "name": "hour",
+                        "in": "path",
+                        "description": "Hour",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/components/schemas/Hour"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "All diagnosis keys for that hour.",
+                        "content": {
+                            "application/octet-stream": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/app.coronawarn.server.common.protocols.generated.SignedPayload"
+                                },
+                                "example": "<BINARY DATA>"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/version/{version}/parameters/country": {
+            "get": {
+                "summary": "Get all countries for which risk score parameters are available.",
+                "tags": [
+                    "Risk score parameters"
+                ],
+                "parameters": [
+                    {
+                        "name": "version",
+                        "in": "path",
+                        "description": "API version",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/components/schemas/Version"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "All countries for which risk score parameters are available",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/Country"
+                                    },
+                                    "example": [
+                                        "DE",
+                                        "FR",
+                                        "PL"
+                                    ]
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/version/{version}/parameters/country/{country}": {
+            "get": {
+                "summary": "Get risk score parameters for a country.",
+                "tags": [
+                    "Risk score parameters"
+                ],
+                "parameters": [
+                    {
+                        "name": "version",
+                        "in": "path",
+                        "description": "API version",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/components/schemas/Version"
+                        }
+                    },
+                    {
+                        "name": "country",
+                        "in": "path",
+                        "description": "Country",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/components/schemas/Country"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Risk score parameters for a country.",
+                        "content": {
+                            "application/octet-stream": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/app.coronawarn.server.common.protocols.generated.SignedPayload"
+                                },
+                                "example": "<BINARY DATA>"
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "components": {
+        "schemas": {
+            "Version": {
+                "type": "string",
+                "description": "A string of form 'v[\\d+]'",
+                "example": "v1"
+            },
+            "OpenAPI": {
+                "description": "OpenAPI 3.0 specification",
+                "properties": {
+                    "openapi": {
+                        "type": "string"
+                    },
+                    "info": {
+                        "type": "object"
+                    },
+                    "paths": {
+                        "type": "object"
+                    },
+                    "components": {
+                        "type": "object"
+                    }
+                },
+                "example": {
+                    "openapi": "3.0.0",
+                    "info": {
+                        "version": "v1",
+                        "title": "CWA-Server Distribution API",
+                        "license": {
+                            "name": "Apache 2.0"
+                        }
+                    },
+                    "paths": {
+                        "...": "..."
+                    },
+                    "components": {
+                        "...": "..."
+                    }
+                }
+            },
+            "Country": {
+                "type": "string",
+                "description": "An ISO 3166-1 alpha-2 country key",
+                "example": "DE"
+            },
+            "Language": {
+                "type": "string",
+                "description": "An IETF BCP 47 language tag.",
+                "example": "de-DE"
+            },
+            "Date": {
+                "type": "string",
+                "description": "An ISO-8601 date descriptor. Server time zone is UTC.",
+                "example": "2020-05-01"
+            },
+            "Hour": {
+                "type": "string",
+                "description": "An integer number between 0 and 23. Server time zone is UTC.",
+                "example": "17"
+            },
+            "app.coronawarn.server.common.protocols.generated.SignedPayload": {
+                "type": "string",
+                "format": "binary"
+            }
+        }
+    }
+}

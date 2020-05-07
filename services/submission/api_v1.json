@@ -1,0 +1,106 @@
+{
+    "openapi": "3.0.0",
+    "info": {
+        "version": "v1",
+        "title": "CWA-Server Submission API",
+        "license": {
+            "name": "Apache 2.0"
+        }
+    },
+    "paths": {
+        "/version/{version}/diagnosis-keys/country/{country}": {
+            "post": {
+                "summary": "Post diagnosis keys.",
+                "tags": [
+                    "Diagnosis keys"
+                ],
+                "parameters": [
+                    {
+                        "name": "version",
+                        "in": "path",
+                        "description": "API version",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/components/schemas/Version"
+                        }
+                    },
+                    {
+                        "name": "country",
+                        "in": "path",
+                        "description": "Country",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/components/schemas/Country"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/octet-stream": {
+                            "schema": {
+                                "$ref": "#/components/schemas/app.coronawarn.server.common.protocols.generated.SignedPayload"
+                            },
+                            "example": "<BINARY DATA>"
+                        }
+                    }
+                },
+                "responses": {
+                    "202": {
+                        "description": ""
+                    }
+                }
+            }
+        }
+    },
+    "components": {
+        "schemas": {
+            "Version": {
+                "type": "string",
+                "description": "A string of form 'v[\\d+]'",
+                "example": "v1"
+            },
+            "OpenAPI": {
+                "description": "OpenAPI 3.0 specification",
+                "properties": {
+                    "openapi": {
+                        "type": "string"
+                    },
+                    "info": {
+                        "type": "object"
+                    },
+                    "paths": {
+                        "type": "object"
+                    },
+                    "components": {
+                        "type": "object"
+                    }
+                },
+                "example": {
+                    "openapi": "3.0.0",
+                    "info": {
+                        "version": "v1",
+                        "title": "CWA-Server Distribution API",
+                        "license": {
+                            "name": "Apache 2.0"
+                        }
+                    },
+                    "paths": {
+                        "...": "..."
+                    },
+                    "components": {
+                        "...": "..."
+                    }
+                }
+            },
+            "Country": {
+                "type": "string",
+                "description": "An ISO 3166-1 alpha-2 country key",
+                "example": "DE"
+            },
+            "app.coronawarn.server.common.protocols.generated.SignedPayload": {
+                "type": "string",
+                "format": "binary"
+            }
+        }
+    }
+}

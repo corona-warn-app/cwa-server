@@ -6,7 +6,7 @@
 
 pushd "$(dirname "${BASH_SOURCE[0]}")" > /dev/null || exit
 
-cd ../common/Protocols/src/main/proto || exit
+cd ../common/protocols/src/main/proto || exit
 protoc --java_out=../java --proto_path=. *.proto
 
 popd > /dev/null || exit
