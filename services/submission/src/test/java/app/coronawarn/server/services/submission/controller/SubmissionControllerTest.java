@@ -1,7 +1,6 @@
 package app.coronawarn.server.services.submission.controller;
 
 
-import static app.coronawarn.server.common.protocols.generated.ExposureKeys.TemporaryExposureKey;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.any;
 import static org.mockito.Mockito.anyCollection;
@@ -11,10 +10,14 @@ import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import app.coronawarn.server.common.protocols.external.exposurenotification.Key;
+import app.coronawarn.server.common.protocols.internal.SubmissionPayload;
 import app.coronawarn.server.services.common.persistence.service.DiagnosisKeyService;
 import app.coronawarn.server.services.submission.verification.TanVerifier;
 import com.google.protobuf.ByteString;
 import java.net.URI;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -139,20 +142,22 @@ public class SubmissionControllerTest {
     return headers;
   }
 
-  private static TemporaryExposureKey buildTemporaryExposureKey() {
-    return buildTemporaryExposureKey("testKey123456789", 3L, 2);
+  private static Collection<Key> buildTemporaryExposureKey() {
+    return Collections.singleton(buildTemporaryExposureKey("testKey123456789", 3, 2, 1));
   }
 
-  private static TemporaryExposureKey buildTemporaryExposureKey(
-      String keyData, long rollingStartNumber, int riskLevelValue) {
-    return TemporaryExposureKey.newBuilder()
+  private static Key buildTemporaryExposureKey(
+      String keyData, int rollingStartNumber, int rollingPeriod, int transmissionRiskLevel) {
+    return Key.newBuilder()
         .setKeyData(ByteString.copyFromUtf8(keyData))
         .setRollingStartNumber(rollingStartNumber)
-        .setRiskLevelValue(riskLevelValue).build();
+        .setRollingPeriod(rollingPeriod)
+        .setTransmissionRiskLevel(transmissionRiskLevel).build();
   }
 
-  private ResponseEntity<Void> executeRequest(TemporaryExposureKey body, HttpHeaders headers) {
-    RequestEntity<TemporaryExposureKey> request =
+  private ResponseEntity<Void> executeRequest(Collection<Key> keys, HttpHeaders headers) {
+    SubmissionPayload body = SubmissionPayload.newBuilder().addAllKeys(keys).build();
+    RequestEntity<SubmissionPayload> request =
         new RequestEntity<>(body, headers, HttpMethod.POST, SUBMISSION_URL);
     return testRestTemplate.postForEntity(SUBMISSION_URL, request, Void.class);
   }

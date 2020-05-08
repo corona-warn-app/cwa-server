@@ -1,16 +1,18 @@
 package app.coronawarn.server.services.common.persistence.domain;
 
-import app.coronawarn.server.common.protocols.generated.ExposureKeys.TemporaryExposureKey;
+import app.coronawarn.server.common.protocols.external.exposurenotification.Key;
 
 /**
- * An instance of this builder can be retrieved by calling {@link DiagnosisKey#builder()}.
- * A {@link DiagnosisKey} can then be build by either providing the required member values or by
- * passing the respective protocol buffer object.
+ * An instance of this builder can be retrieved by calling {@link DiagnosisKey#builder()}. A {@link
+ * DiagnosisKey} can then be build by either providing the required member values or by passing the
+ * respective protocol buffer object.
  */
 public class DiagnosisKeyBuilder implements Builder, RollingStartNumberBuilder,
-    TransmissionRiskLevelBuilder, FinalBuilder {
+    RollingPeriodBuilder, TransmissionRiskLevelBuilder, FinalBuilder {
+
   private byte[] keyData;
   private long rollingStartNumber;
+  private long rollingPeriod;
   private int transmissionRiskLevel;
 
   DiagnosisKeyBuilder() {
@@ -21,8 +23,13 @@ public class DiagnosisKeyBuilder implements Builder, RollingStartNumberBuilder,
     return this;
   }
 
-  public TransmissionRiskLevelBuilder rollingStartNumber(long rollingStartNumber) {
+  public RollingPeriodBuilder rollingStartNumber(long rollingStartNumber) {
     this.rollingStartNumber = rollingStartNumber;
+    return this;
+  }
+
+  public TransmissionRiskLevelBuilder rollingPeriod(long rollingPeriod) {
+    this.rollingPeriod = rollingPeriod;
     return this;
   }
 
@@ -31,16 +38,17 @@ public class DiagnosisKeyBuilder implements Builder, RollingStartNumberBuilder,
     return this;
   }
 
-  public DiagnosisKeyBuilder fromProtoBuf(TemporaryExposureKey protoBufObject) {
+  public DiagnosisKeyBuilder fromProtoBuf(Key protoBufObject) {
     this.keyData = protoBufObject.getKeyData().toByteArray();
     this.rollingStartNumber = protoBufObject.getRollingStartNumber();
-    this.transmissionRiskLevel = protoBufObject.getRiskLevelValue();
+    this.rollingPeriod = protoBufObject.getRollingPeriod();
+    this.transmissionRiskLevel = protoBufObject.getTransmissionRiskLevel();
     return this;
   }
 
   public DiagnosisKey build() {
-    return new DiagnosisKey(this.keyData, this.rollingStartNumber,
-        this.transmissionRiskLevel);
+    return new DiagnosisKey(
+        this.keyData, this.rollingStartNumber, this.rollingPeriod, this.transmissionRiskLevel);
   }
 }
 
@@ -56,7 +64,7 @@ interface Builder {
    * @param protoBufObject ProtocolBuffer object associated with the temporary exposure key.
    * @return this Builder instance.
    */
-  FinalBuilder fromProtoBuf(TemporaryExposureKey protoBufObject);
+  FinalBuilder fromProtoBuf(Key protoBufObject);
 }
 
 interface RollingStartNumberBuilder {
@@ -66,7 +74,17 @@ interface RollingStartNumberBuilder {
    *                           startTimeOfKeySinceEpochInSecs / (60 * 10).
    * @return this Builder instance.
    */
-  TransmissionRiskLevelBuilder rollingStartNumber(long rollingStartNumber);
+  RollingPeriodBuilder rollingStartNumber(long rollingStartNumber);
+}
+
+interface RollingPeriodBuilder {
+
+  /**
+   * @param rollingPeriod Number describing how long a key is valid. It is expressed in increments
+   *                      of 10 minutes (e.g. 144 for 24 hours).
+   * @return this Builder instance.
+   */
+  TransmissionRiskLevelBuilder rollingPeriod(long rollingPeriod);
 }
 
 interface TransmissionRiskLevelBuilder {
