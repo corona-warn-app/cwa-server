@@ -1,12 +1,12 @@
 package app.coronawarn.server.services.submission.controller;
 
-import java.util.Collection;
-import java.util.Collections;
-import java.util.stream.Collectors;
 import app.coronawarn.server.common.protocols.generated.ExposureKeys.TemporaryExposureKey;
 import app.coronawarn.server.services.common.persistence.domain.DiagnosisKey;
 import app.coronawarn.server.services.common.persistence.service.DiagnosisKeyService;
 import app.coronawarn.server.services.submission.verification.TanVerifier;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -34,7 +34,7 @@ public class SubmissionController {
 
   // TODO update protoSpec and endpoint to Collection<TemporaryExposureKey>
   @PostMapping(value = "/diagnosis-keys")
-  public ResponseEntity<String> submitDiagnosisKey(
+  public ResponseEntity<Void> submitDiagnosisKey(
       @RequestBody TemporaryExposureKey exposureKeys,
       @RequestHeader(value = "cwa-fake") Integer fake,
       @RequestHeader(value = "cwa-authorization") String tan) {
@@ -54,14 +54,14 @@ public class SubmissionController {
   /**
    * @return A response that indicates that an invalid TAN was specified in the request.
    */
-  private ResponseEntity<String> buildTanInvalidResponseEntity() {
-    return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Invalid TAN Code");
+  private ResponseEntity<Void> buildTanInvalidResponseEntity() {
+    return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
   }
 
   /**
    * @return A response that indicates successful request processing.
    */
-  private ResponseEntity<String> buildSuccessResponseEntity() {
+  private ResponseEntity<Void> buildSuccessResponseEntity() {
     return ResponseEntity.ok().build();
   }
 

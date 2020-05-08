@@ -21,6 +21,9 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -53,7 +56,7 @@ public class SubmissionControllerTest {
 
   @Test
   public void checkResponseStatusForValidParameters() {
-    ResponseEntity<String> actResponse =
+    ResponseEntity<Void> actResponse =
         executeRequest(buildTemporaryExposureKey(), buildOkHeaders());
 
     assertEquals(HttpStatus.OK, actResponse.getStatusCode());
@@ -66,14 +69,20 @@ public class SubmissionControllerTest {
     verify(diagnosisKeyService, atLeastOnce()).saveDiagnosisKeys(anyCollection());
   }
 
-  @Test
-  public void badRequestIfCwaHeaderMissing() {
-    HttpHeaders headers = setContentTypeProtoBufHeader(new HttpHeaders());
-
-    ResponseEntity<String> actResponse = executeRequest(buildTemporaryExposureKey(), headers);
+  @ParameterizedTest
+  @MethodSource("createIncompleteHeaders")
+  public void badRequestIfCwaHeadersMissing(HttpHeaders headers) {
+    ResponseEntity<Void> actResponse = executeRequest(buildTemporaryExposureKey(), headers);
 
     verify(diagnosisKeyService, never()).saveDiagnosisKeys(any());
     assertEquals(HttpStatus.BAD_REQUEST, actResponse.getStatusCode());
+  }
+
+  private static Stream<Arguments> createIncompleteHeaders() {
+    return Stream.of(
+        Arguments.of(setContentTypeProtoBufHeader(new HttpHeaders())),
+        Arguments.of(setContentTypeProtoBufHeader(setCwaFakeHeader(new HttpHeaders(), "0"))),
+        Arguments.of(setContentTypeProtoBufHeader(setCwaAuthHeader(new HttpHeaders()))));
   }
 
   @Test
@@ -91,12 +100,11 @@ public class SubmissionControllerTest {
   public void invalidTanHandling() {
     when(tanVerifier.verifyTan(anyString())).thenReturn(false);
 
-    ResponseEntity<String> actResponse =
+    ResponseEntity<Void> actResponse =
         executeRequest(buildTemporaryExposureKey(), buildOkHeaders());
 
     verify(diagnosisKeyService, never()).saveDiagnosisKeys(any());
     assertEquals(HttpStatus.FORBIDDEN, actResponse.getStatusCode());
-    assertEquals("Invalid TAN Code", actResponse.getBody());
   }
 
   @Test
@@ -104,43 +112,48 @@ public class SubmissionControllerTest {
     HttpHeaders headers = buildOkHeaders();
     setCwaFakeHeader(headers, "1");
 
-    ResponseEntity<String> actResponse = executeRequest(buildTemporaryExposureKey(), headers);
+    ResponseEntity<Void> actResponse = executeRequest(buildTemporaryExposureKey(), headers);
 
     verify(diagnosisKeyService, never()).saveDiagnosisKeys(any());
     assertEquals(HttpStatus.OK, actResponse.getStatusCode());
   }
 
-  private HttpHeaders buildOkHeaders() {
-    HttpHeaders headers = setContentTypeProtoBufHeader(new HttpHeaders());
-    headers.add("cwa-authorization", "okTan");
+  private static HttpHeaders buildOkHeaders() {
+    HttpHeaders headers = setCwaAuthHeader(setContentTypeProtoBufHeader(new HttpHeaders()));
+
     return setCwaFakeHeader(headers, "0");
   }
 
-  private HttpHeaders setContentTypeProtoBufHeader(HttpHeaders headers) {
+  private static HttpHeaders setContentTypeProtoBufHeader(HttpHeaders headers) {
     headers.setContentType(MediaType.valueOf("application/x-protobuf"));
     return headers;
   }
 
-  private HttpHeaders setCwaFakeHeader(HttpHeaders headers, String value) {
+  private static HttpHeaders setCwaAuthHeader(HttpHeaders headers) {
+    headers.set("cwa-authorization", "okTan");
+    return headers;
+  }
+
+  private static HttpHeaders setCwaFakeHeader(HttpHeaders headers, String value) {
     headers.set("cwa-fake", value);
     return headers;
   }
 
-  private TemporaryExposureKey buildTemporaryExposureKey() {
-    return buildTemporaryExposureKey("testKey", 3L, 2);
+  private static TemporaryExposureKey buildTemporaryExposureKey() {
+    return buildTemporaryExposureKey("testKey123456789", 3L, 2);
   }
 
-  private TemporaryExposureKey buildTemporaryExposureKey(String keyData, long rollingStartNumber,
-      int riskLevelValue) {
+  private static TemporaryExposureKey buildTemporaryExposureKey(
+      String keyData, long rollingStartNumber, int riskLevelValue) {
     return TemporaryExposureKey.newBuilder()
         .setKeyData(ByteString.copyFromUtf8(keyData))
         .setRollingStartNumber(rollingStartNumber)
         .setRiskLevelValue(riskLevelValue).build();
   }
 
-  private ResponseEntity<String> executeRequest(TemporaryExposureKey body, HttpHeaders headers) {
+  private ResponseEntity<Void> executeRequest(TemporaryExposureKey body, HttpHeaders headers) {
     RequestEntity<TemporaryExposureKey> request =
         new RequestEntity<>(body, headers, HttpMethod.POST, SUBMISSION_URL);
-    return testRestTemplate.postForEntity(SUBMISSION_URL, request, String.class);
+    return testRestTemplate.postForEntity(SUBMISSION_URL, request, Void.class);
   }
 }
