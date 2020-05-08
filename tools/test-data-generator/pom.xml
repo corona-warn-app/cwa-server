@@ -12,10 +12,10 @@
     <relativePath>../pom.xml</relativePath>
   </parent>
 
+  <name>TestDataGenerator</name>
   <description>CWA TestDataGenerator</description>
   <groupId>app.coronawarn.server.tools</groupId>
   <artifactId>test-data-generator</artifactId>
-  <name>TestDataGenerator</name>
   <version>0.0.1-SNAPSHOT</version>
 
   <dependencies>
