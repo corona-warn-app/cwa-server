@@ -2,6 +2,7 @@ package app.coronawarn.server.tools.testdatagenerator.verify;
 
 import app.coronawarn.server.common.protocols.generated.Security.SignedPayload;
 import app.coronawarn.server.tools.testdatagenerator.common.Common;
+import app.coronawarn.server.tools.testdatagenerator.common.IOUtils;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -17,7 +18,7 @@ public class Verifier {
 
   static void verify(File testDirectory, File expectedCertificateFile)
       throws IOException, CertificateException {
-    Certificate expectedCertificate = Common.getCertificateFromFile(expectedCertificateFile);
+    Certificate expectedCertificate = IOUtils.getCertificateFromFile(expectedCertificateFile);
     File daysDirectory = new File(testDirectory.toPath() + "/days");
     File hoursDirectory = new File(testDirectory.toPath() + "/hours");
     List<File> testFiles = new ArrayList<>();
@@ -28,7 +29,7 @@ public class Verifier {
         .map(Common.uncheckedFunction(Files::readAllBytes))
         .map(Common.uncheckedFunction(SignedPayload::parseFrom))
         .forEach(Common.uncheckedConsumer(signedPayload -> {
-          Certificate payloadCertificate = Common.getCertificateFromBytes(
+          Certificate payloadCertificate = IOUtils.getCertificateFromBytes(
               signedPayload.getCertificateChain().toByteArray()
           );
           if (!payloadCertificate.equals(expectedCertificate)) {

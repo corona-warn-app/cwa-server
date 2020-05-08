@@ -1,0 +1,82 @@
+package app.coronawarn.server.tools.testdatagenerator.generate.diagnosisKeys;
+
+import app.coronawarn.server.common.protocols.external.exposurenotification.File;
+import app.coronawarn.server.common.protocols.external.exposurenotification.Header;
+import app.coronawarn.server.common.protocols.external.exposurenotification.Key;
+import app.coronawarn.server.tools.testdatagenerator.common.Common;
+import java.time.Instant;
+import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
+
+public class Aggregator {
+
+  private static final int KILO = 1000;
+  private static final int FILE_SIZE_LIMIT_KB = 500;
+  private static final int FILE_SIZE_LIMIT_BYTES = FILE_SIZE_LIMIT_KB * KILO;
+
+  /**
+   * Aggregates a list of {@link Key Keys} into a list of {@link File Files}.
+   *
+   * @param keys
+   * @param startTimestamp
+   * @param endTimeStamp
+   * @param region
+   * @return A list of lists of equal size
+   */
+  public static List<File> aggregateKeys(List<Key> keys, Instant startTimestamp,
+      Instant endTimeStamp, String region) {
+    // Because protocol buffers optimize each serialization based on the content, we can not exactly
+    // calculate the file size that any given serialization will produce ahead of time. So, in order
+    // to know into how many batches we will need to split the keys, we simply "attempt" to
+    // serialize all keys into a single file and measure its size. If we find that the resulting
+    // file goes above the file size limit, we simply partition the keys into N partitions of
+    // approximately equal size, where N = (first file size / file size limit) + 1. We add one
+    // for good measure, to avoid edge cases, rounding errors and varying file sizes after
+    // serialization.
+    File singleFile = aggregateKeys(keys, 1, startTimestamp, endTimeStamp, region)
+        .stream()
+        .findFirst()
+        .orElseThrow();
+    int singleFileSize = singleFile.getSerializedSize();
+    if (singleFileSize > FILE_SIZE_LIMIT_BYTES) {
+      int numBatches = (singleFileSize / FILE_SIZE_LIMIT_BYTES) + 1;
+      return aggregateKeys(keys, numBatches, startTimestamp, endTimeStamp, region);
+    } else {
+      return List.of(singleFile);
+    }
+  }
+
+  /**
+   * Aggregates a list of {@link Key Keys} into a list of equally sized {@link File Files} with
+   * length {@code partitions}.
+   *
+   * @param keys
+   * @param numBatches
+   * @param startTimestamp
+   * @param endTimeStamp
+   * @param region
+   * @return
+   */
+  private static List<File> aggregateKeys(List<Key> keys, int numBatches, Instant startTimestamp,
+      Instant endTimeStamp, String region) {
+    List<List<Key>> partitions = Common.partitionList(keys, numBatches);
+    return IntStream.range(0, partitions.size())
+        .mapToObj(index -> {
+          Header header = Header.newBuilder()
+              .setStartTimestamp(startTimestamp.toEpochMilli())
+              .setEndTimestamp((endTimeStamp.toEpochMilli()))
+              .setRegion(region)
+              .setBatchNum(index + 1)
+              .setBatchSize(numBatches)
+              .build();
+          List<Key> partition = partitions.get(index);
+          return File.newBuilder()
+              .setHeader(header)
+              .addAllKeys(partition)
+              .build();
+        })
+        .collect(Collectors.toList());
+  }
+
+}
