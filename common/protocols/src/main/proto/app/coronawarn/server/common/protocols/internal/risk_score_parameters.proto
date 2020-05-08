@@ -1,36 +1,37 @@
-syntax = "proto3";
-package app.coronawarn.server.common.protocols.generated;
-
-// ExposureKeyPackage v0.1
-
 // See page 15:
 // https://covid19-static.cdn-apple.com/applications/covid19/current/static/contact-tracing/pdf/ExposureNotification-FrameworkDocumentationv1.2.pdf
+syntax = "proto3";
+package app.coronawarn.server.common.protocols.internal;
+option java_package = "app.coronawarn.server.common.protocols.internal";
+option java_multiple_files = true;
+import "app/coronawarn/server/common/protocols/internal/risk_level.proto";
+
 message RiskScoreParameters {
 
   // App-specific mapping
-  TransmissionRiskParameter transmission = 1;
-  double transmissionWeight= 2;
+  TransmissionRiskParameters transmission = 1;
+  double transmission_weight= 2;
 
-  DurationRiskParameter duration = 3;
-  double durationWeight= 4;
+  DurationRiskParameters duration = 3;
+  double duration_weight= 4;
 
-  DaysSinceLastExposureRiskParameter daysSinceLastExposure = 5;
-  double daysWeight= 6;
+  DaysSinceLastExposureRiskParameters days_since_last_exposure = 5;
+  double days_weight= 6;
 
-  AttenuationRiskParameter attenuation = 7;
-  double attenuationWeight= 8;
+  AttenuationRiskParameters attenuation = 7;
+  double attenuation_weight= 8;
 
-  message TransmissionRiskParameter {
-    RiskLevel appDefined_1 = 1;
-    RiskLevel appDefined_2 = 2;
-    RiskLevel appDefined_3 = 3;
-    RiskLevel appDefined_4 = 4;
-    RiskLevel appDefined_5 = 5;
-    RiskLevel appDefined_6 = 6;
-    RiskLevel appDefined_7 = 7;
-    RiskLevel appDefined_8 = 8;
+  message TransmissionRiskParameters {
+    RiskLevel app_defined_1 = 1;
+    RiskLevel app_defined_2 = 2;
+    RiskLevel app_defined_3 = 3;
+    RiskLevel app_defined_4 = 4;
+    RiskLevel app_defined_5 = 5;
+    RiskLevel app_defined_6 = 6;
+    RiskLevel app_defined_7 = 7;
+    RiskLevel app_defined_8 = 8;
   }
-  message DurationRiskParameter {
+  message DurationRiskParameters {
     RiskLevel eq_0_min = 1;             // D = 0 min, lowest risk
     RiskLevel gt_0_le_5_min = 2;        // 0 < D <= 5 min
     RiskLevel gt_5_le_10_min = 3;       // 5 < D <= 10 min
@@ -40,7 +41,7 @@ message RiskScoreParameters {
     RiskLevel gt_25_le_30_min = 7;      // 25 < D <= 30 min
     RiskLevel gt_30_min = 8;            // > 30 min, highest risk
   }
-  message DaysSinceLastExposureRiskParameter {
+  message DaysSinceLastExposureRiskParameters {
     RiskLevel ge_14_days = 1;           // D >= 14 days, lowest risk
     RiskLevel ge_12_lt_14_days = 2;     // 12 <= D < 14 days
     RiskLevel ge_10_lt_12_days = 3;     // 10 <= D < 12 days
@@ -50,7 +51,7 @@ message RiskScoreParameters {
     RiskLevel ge_2_lt_4_days = 7;       // 2 <= D < 4 days
     RiskLevel ge_0_lt_2_days = 8;       // 0 <= D < 2 days, highest risk
   }
-  message AttenuationRiskParameter {
+  message AttenuationRiskParameters {
     RiskLevel gt_73_dbm = 1;            // A > 73 dBm, lowest risk
     RiskLevel gt_63_le_73_dbm = 2;      // 63 < A <= 73 dBm
     RiskLevel gt_51_le_63_dbm = 3;      // 51 < A <= 63 dBm
@@ -60,16 +61,4 @@ message RiskScoreParameters {
     RiskLevel gt_10_le_15_dbm = 7;      // 10 < A <= 15 dBm
     RiskLevel lt_10_dbm = 8;            // A <= 10 dBm, highest risk
   }
-}
-
-enum RiskLevel {
-  INVALID = 0;
-  LOWEST = 1;
-  LOW = 2;
-  LOW_MEDIUM = 3;
-  MEDIUM = 4;
-  MEDIUM_HIGH = 5;
-  HIGH = 6;
-  VERY_HIGH = 7;
-  HIGHEST = 8;
 }

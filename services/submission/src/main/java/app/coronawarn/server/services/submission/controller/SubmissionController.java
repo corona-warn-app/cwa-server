@@ -1,6 +1,9 @@
 package app.coronawarn.server.services.submission.controller;
 
-import app.coronawarn.server.common.protocols.generated.ExposureKeys.TemporaryExposureKey;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.stream.Collectors;
+import app.coronawarn.server.common.protocols.internal.SubmissionPayload;
 import app.coronawarn.server.services.common.persistence.domain.DiagnosisKey;
 import app.coronawarn.server.services.common.persistence.service.DiagnosisKeyService;
 import app.coronawarn.server.services.submission.verification.TanVerifier;
@@ -35,7 +38,7 @@ public class SubmissionController {
   // TODO update protoSpec and endpoint to Collection<TemporaryExposureKey>
   @PostMapping(value = "/diagnosis-keys")
   public ResponseEntity<Void> submitDiagnosisKey(
-      @RequestBody TemporaryExposureKey exposureKeys,
+      @RequestBody SubmissionPayload exposureKeys,
       @RequestHeader(value = "cwa-fake") Integer fake,
       @RequestHeader(value = "cwa-authorization") String tan) {
     if (fake != 0) {
@@ -46,7 +49,7 @@ public class SubmissionController {
       return buildTanInvalidResponseEntity();
     }
 
-    persistDiagnosisKeysPayload(Collections.singleton(exposureKeys));
+    persistDiagnosisKeysPayload(exposureKeys);
 
     return buildSuccessResponseEntity();
   }
@@ -71,9 +74,8 @@ public class SubmissionController {
    * @param protoBufDiagnosisKeys Diagnosis keys that were specified in the request.
    * @throws IllegalArgumentException in case the given collection contains {@literal null}.
    */
-  private void persistDiagnosisKeysPayload(
-      Collection<TemporaryExposureKey> protoBufDiagnosisKeys) {
-    Collection<DiagnosisKey> diagnosisKeys = protoBufDiagnosisKeys.stream()
+  private void persistDiagnosisKeysPayload(SubmissionPayload protoBufDiagnosisKeys) {
+    Collection<DiagnosisKey> diagnosisKeys = protoBufDiagnosisKeys.getKeysList().stream()
         .map(aProtoBufKey -> DiagnosisKey.builder().fromProtoBuf(aProtoBufKey).build())
         .collect(Collectors.toList());
 
