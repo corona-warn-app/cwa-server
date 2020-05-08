@@ -11,7 +11,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
@@ -34,10 +33,8 @@ public class SubmissionController {
   }
 
   // TODO update protoSpec and endpoint to Collection<TemporaryExposureKey>
-  // TODO specify country handling
-  @PostMapping(value = "/diagnosis-keys/country/{country}")
+  @PostMapping(value = "/diagnosis-keys")
   public ResponseEntity<String> submitDiagnosisKey(
-      @PathVariable String country,
       @RequestBody TemporaryExposureKey exposureKeys,
       @RequestHeader(value = "cwa-fake") Integer fake,
       @RequestHeader(value = "cwa-authorization") String tan) {

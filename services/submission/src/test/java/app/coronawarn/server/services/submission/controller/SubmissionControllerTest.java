@@ -35,7 +35,7 @@ import org.springframework.http.ResponseEntity;
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 public class SubmissionControllerTest {
 
-  private static final URI SUBMISSION_URL = URI.create("/version/v1/diagnosis-keys/country/DE");
+  private static final URI SUBMISSION_URL = URI.create("/version/v1/diagnosis-keys");
 
   @MockBean
   private DiagnosisKeyService diagnosisKeyService;
