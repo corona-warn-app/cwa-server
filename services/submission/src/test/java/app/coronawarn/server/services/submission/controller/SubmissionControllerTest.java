@@ -3,6 +3,7 @@ package app.coronawarn.server.services.submission.controller;
 
 import static app.coronawarn.server.common.protocols.generated.ExposureKeys.TemporaryExposureKey;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.any;
 import static org.mockito.Mockito.anyCollection;
 import static org.mockito.Mockito.anyString;
@@ -10,11 +11,13 @@ import static org.mockito.Mockito.atLeastOnce;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+import static org.springframework.http.HttpStatus.*;
 
 import app.coronawarn.server.services.common.persistence.service.DiagnosisKeyService;
 import app.coronawarn.server.services.submission.verification.TanVerifier;
 import com.google.protobuf.ByteString;
 import java.net.URI;
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -30,7 +33,6 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.RequestEntity;
 import org.springframework.http.ResponseEntity;
@@ -59,7 +61,7 @@ public class SubmissionControllerTest {
     ResponseEntity<Void> actResponse =
         executeRequest(buildTemporaryExposureKey(), buildOkHeaders());
 
-    assertEquals(HttpStatus.OK, actResponse.getStatusCode());
+    assertEquals(OK, actResponse.getStatusCode());
   }
 
   @Test
@@ -75,7 +77,7 @@ public class SubmissionControllerTest {
     ResponseEntity<Void> actResponse = executeRequest(buildTemporaryExposureKey(), headers);
 
     verify(diagnosisKeyService, never()).saveDiagnosisKeys(any());
-    assertEquals(HttpStatus.BAD_REQUEST, actResponse.getStatusCode());
+    assertEquals(BAD_REQUEST, actResponse.getStatusCode());
   }
 
   private static Stream<Arguments> createIncompleteHeaders() {
@@ -86,14 +88,17 @@ public class SubmissionControllerTest {
   }
 
   @Test
-  public void checkAcceptedHttpMethods() {
-    Set<HttpMethod> expAllowedMethods =
-        Stream.of(HttpMethod.POST, HttpMethod.OPTIONS)
-            .collect(Collectors.toCollection(HashSet::new));
+  public void checkOnlyPostAllowed() {
+    Stream<HttpMethod> deniedMethods = Arrays.stream(HttpMethod.values())
+        .filter(method -> method != HttpMethod.POST)
+        .filter(method -> method != HttpMethod.PATCH); /* Patch is not supported by RestTemplate */
 
-    Set<HttpMethod> actAllowedMethods = testRestTemplate.optionsForAllow(SUBMISSION_URL.toString());
+    var allowedErrors = Arrays.asList(INTERNAL_SERVER_ERROR, METHOD_NOT_ALLOWED);
 
-    assertEquals(expAllowedMethods, actAllowedMethods);
+    deniedMethods
+        .map(method -> testRestTemplate.exchange(SUBMISSION_URL, method, null, Void.class))
+        .map(ResponseEntity::getStatusCode)
+        .forEach(httpStatus -> assertTrue(allowedErrors.contains(httpStatus)));
   }
 
   @Test
@@ -104,7 +109,7 @@ public class SubmissionControllerTest {
         executeRequest(buildTemporaryExposureKey(), buildOkHeaders());
 
     verify(diagnosisKeyService, never()).saveDiagnosisKeys(any());
-    assertEquals(HttpStatus.FORBIDDEN, actResponse.getStatusCode());
+    assertEquals(FORBIDDEN, actResponse.getStatusCode());
   }
 
   @Test
@@ -115,7 +120,7 @@ public class SubmissionControllerTest {
     ResponseEntity<Void> actResponse = executeRequest(buildTemporaryExposureKey(), headers);
 
     verify(diagnosisKeyService, never()).saveDiagnosisKeys(any());
-    assertEquals(HttpStatus.OK, actResponse.getStatusCode());
+    assertEquals(OK, actResponse.getStatusCode());
   }
 
   private static HttpHeaders buildOkHeaders() {
