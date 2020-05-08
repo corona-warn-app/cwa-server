@@ -5,8 +5,8 @@ import java.util.Objects;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
-import javax.persistence.Table;
 import javax.persistence.Id;
+import javax.persistence.Table;
 
 /**
  * A key generated for advertising over a window of time.
@@ -20,15 +20,18 @@ public class DiagnosisKey {
   private Long id;
   private byte[] keyData;
   private long rollingStartNumber;
+  private long rollingPeriod;
   private int transmissionRiskLevel;
   //TODO add creation date
 
   /**
    * Should be called by builders.
    */
-  DiagnosisKey(byte[] keyData, long rollingStartNumber, int transmissionRiskLevel) {
+  DiagnosisKey(
+      byte[] keyData, long rollingStartNumber, long rollingPeriod, int transmissionRiskLevel) {
     this.keyData = keyData;
     this.rollingStartNumber = rollingStartNumber;
+    this.rollingPeriod = rollingPeriod;
     this.transmissionRiskLevel = transmissionRiskLevel;
   }
 
@@ -62,6 +65,14 @@ public class DiagnosisKey {
   }
 
   /**
+   * @return number describing how long a key is valid. It is expressed in increments of 10 minutes
+   * (e.g. 144 for 24 hours).
+   */
+  public long getRollingPeriod() {
+    return rollingStartNumber;
+  }
+
+  /**
    * @return risk of transmission associated with the person this key came from.
    */
   public int getTransmissionRiskLevel() {
@@ -79,13 +90,14 @@ public class DiagnosisKey {
     DiagnosisKey that = (DiagnosisKey) o;
     return id == that.id &&
         rollingStartNumber == that.rollingStartNumber &&
+        rollingPeriod == that.rollingPeriod &&
         transmissionRiskLevel == that.transmissionRiskLevel &&
         Arrays.equals(keyData, that.keyData);
   }
 
   @Override
   public int hashCode() {
-    int result = Objects.hash(id, rollingStartNumber, transmissionRiskLevel);
+    int result = Objects.hash(id, rollingStartNumber, rollingPeriod, transmissionRiskLevel);
     result = 31 * result + Arrays.hashCode(keyData);
     return result;
   }
