@@ -18,7 +18,6 @@ import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-// TODO Implement Unit Tests
 @RestController
 @RequestMapping("/version/v1")
 public class SubmissionController {
@@ -35,6 +34,7 @@ public class SubmissionController {
   }
 
   // TODO update protoSpec and endpoint to Collection<TemporaryExposureKey>
+  // TODO specify country handling
   @PostMapping(value = "/diagnosis-keys/country/{country}")
   public ResponseEntity<String> submitDiagnosisKey(
       @PathVariable String country,
