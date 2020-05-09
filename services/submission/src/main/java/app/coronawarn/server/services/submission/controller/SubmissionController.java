@@ -1,19 +1,14 @@
 package app.coronawarn.server.services.submission.controller;
 
-import java.util.Collection;
-import java.util.Collections;
-import java.util.stream.Collectors;
 import app.coronawarn.server.common.protocols.internal.SubmissionPayload;
 import app.coronawarn.server.services.common.persistence.domain.DiagnosisKey;
 import app.coronawarn.server.services.common.persistence.service.DiagnosisKeyService;
 import app.coronawarn.server.services.submission.verification.TanVerifier;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
@@ -24,19 +19,17 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/version/v1")
 public class SubmissionController {
 
+  /** The route to the submission endpoint (version agnostic) */
+  public static final String SUBMISSION_ROUTE = "/diagnosis-keys";
+
   @Autowired
   private DiagnosisKeyService exposureKeyService;
 
   @Autowired
   private TanVerifier tanVerifier;
 
-  @GetMapping(value = "")
-  public ResponseEntity<String> hello() {
-    return ResponseEntity.ok().body("Diagnosis Key Submission Endpoint v1");
-  }
-
   // TODO update protoSpec and endpoint to Collection<TemporaryExposureKey>
-  @PostMapping(value = "/diagnosis-keys")
+  @PostMapping(SUBMISSION_ROUTE)
   public ResponseEntity<Void> submitDiagnosisKey(
       @RequestBody SubmissionPayload exposureKeys,
       @RequestHeader(value = "cwa-fake") Integer fake,

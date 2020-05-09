@@ -105,6 +105,8 @@ public class SubmissionControllerTest {
         .filter(method -> method != HttpMethod.POST)
         .filter(method -> method != HttpMethod.PATCH); /* Patch is not supported by RestTemplate */
 
+    // INTERNAL_SERVER_ERROR is the result of blocking by StrictFirewall for non POST calls
+    // METHOD_NOT_ALLOWED is the result of TRACE calls (disabled by default in tomcat)
     var allowedErrors = Arrays.asList(INTERNAL_SERVER_ERROR, METHOD_NOT_ALLOWED);
 
     deniedMethods
