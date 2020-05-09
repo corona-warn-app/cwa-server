@@ -16,7 +16,7 @@ We use GitHub to manage reviews of pull requests.
 
 * If you plan to do something more involved, please reach out to us on our [email](mailto:corona-warn-app.opensource@sap.com). This will avoid unnecessary work and surely give you and us a good deal of inspiration.
 
-* Relevant coding style guidelines are available in the respective sub-repositories as they are programming language-dependent.
+* Relevant coding style guidelines are available [here](https://google.github.io/styleguide/javaguide.html) and are enforced through CheckStyle.
 
 ## Steps to Contribute
 
