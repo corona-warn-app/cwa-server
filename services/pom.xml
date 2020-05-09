@@ -13,7 +13,7 @@
 
   <artifactId>services</artifactId>
   <groupId>app.coronawarn.server</groupId>
-  <version>0.0.1-SNAPSHOT</version>
+  <version>0.0.1</version>
 
   <packaging>pom</packaging>
   <modules>
@@ -33,12 +33,12 @@
     <dependency>
       <groupId>app.coronawarn.server.common</groupId>
       <artifactId>persistence</artifactId>
-      <version>0.0.1-SNAPSHOT</version>
+      <version>0.0.1</version>
     </dependency>
     <dependency>
       <groupId>app.coronawarn.server.common</groupId>
       <artifactId>protocols</artifactId>
-      <version>0.0.1-SNAPSHOT</version>
+      <version>0.0.1</version>
     </dependency>
     <dependency>
       <groupId>org.springframework.boot</groupId>
