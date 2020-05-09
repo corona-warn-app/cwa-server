@@ -8,21 +8,19 @@
   <parent>
     <artifactId>tools</artifactId>
     <groupId>app.coronawarn.server</groupId>
-    <version>0.0.1-SNAPSHOT</version>
+    <version>0.0.1</version>
     <relativePath>../pom.xml</relativePath>
   </parent>
 
-  <name>TestDataGenerator</name>
-  <description>CWA TestDataGenerator</description>
   <groupId>app.coronawarn.server.tools</groupId>
   <artifactId>test-data-generator</artifactId>
-  <version>0.0.1-SNAPSHOT</version>
+  <version>0.0.1</version>
 
   <dependencies>
     <dependency>
       <artifactId>protocols</artifactId>
       <groupId>app.coronawarn.server.common</groupId>
-      <version>0.0.1-SNAPSHOT</version>
+      <version>0.0.1</version>
     </dependency>
     <dependency>
       <artifactId>picocli</artifactId>
