@@ -37,3 +37,7 @@ target/
 .DS_Store
 
 out/
+
+.settings
+.project
+.classpath
