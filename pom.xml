@@ -4,7 +4,6 @@
 	<modelVersion>4.0.0</modelVersion>
 	<packaging>pom</packaging>
 	<modules>
-		<module>tools</module>
 		<module>common</module>
 		<module>services</module>
 	</modules>
