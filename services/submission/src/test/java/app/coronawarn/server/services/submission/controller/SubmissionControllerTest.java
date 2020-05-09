@@ -99,21 +99,26 @@ public class SubmissionControllerTest {
         Arguments.of(setContentTypeProtoBufHeader(setCwaAuthHeader(new HttpHeaders()))));
   }
 
-  @Test
-  public void checkOnlyPostAllowed() {
-    Stream<HttpMethod> deniedMethods = Arrays.stream(HttpMethod.values())
-        .filter(method -> method != HttpMethod.POST)
-        .filter(method -> method != HttpMethod.PATCH); /* Patch is not supported by RestTemplate */
-
+  @ParameterizedTest
+  @MethodSource("createDeniedHttpMethods")
+  public void checkOnlyPostAllowed(HttpMethod deniedHttpMethod) {
     // INTERNAL_SERVER_ERROR is the result of blocking by StrictFirewall for non POST calls.
     //                       We can change this when Spring Security 5.4.x is released.
     // METHOD_NOT_ALLOWED is the result of TRACE calls (disabled by default in tomcat)
     var allowedErrors = Arrays.asList(INTERNAL_SERVER_ERROR, METHOD_NOT_ALLOWED);
 
-    deniedMethods
-        .map(method -> testRestTemplate.exchange(SUBMISSION_URL, method, null, Void.class))
-        .map(ResponseEntity::getStatusCode)
-        .forEach(httpStatus -> assertTrue(allowedErrors.contains(httpStatus)));
+    var actStatus = testRestTemplate
+        .exchange(SUBMISSION_URL, deniedHttpMethod, null, Void.class).getStatusCode();
+
+    assertTrue(allowedErrors.contains(actStatus),
+        () -> deniedHttpMethod + " resulted in unexpected status: " + actStatus);
+  }
+
+  private static Stream<Arguments> createDeniedHttpMethods() {
+    return Arrays.stream(HttpMethod.values())
+        .filter(method -> method != HttpMethod.POST)
+        .filter(method -> method != HttpMethod.PATCH)
+        .map(elem -> Arguments.of(elem));
   }
 
   @Test
