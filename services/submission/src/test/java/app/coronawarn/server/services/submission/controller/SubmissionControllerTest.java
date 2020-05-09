@@ -111,13 +111,13 @@ public class SubmissionControllerTest {
         .exchange(SUBMISSION_URL, deniedHttpMethod, null, Void.class).getStatusCode();
 
     assertTrue(allowedErrors.contains(actStatus),
-        () -> deniedHttpMethod + " resulted in unexpected status: " + actStatus);
+        deniedHttpMethod + " resulted in unexpected status: " + actStatus);
   }
 
   private static Stream<Arguments> createDeniedHttpMethods() {
     return Arrays.stream(HttpMethod.values())
         .filter(method -> method != HttpMethod.POST)
-        .filter(method -> method != HttpMethod.PATCH)
+        .filter(method -> method != HttpMethod.PATCH) /* not supported by Rest Template */
         .map(elem -> Arguments.of(elem));
   }
 
