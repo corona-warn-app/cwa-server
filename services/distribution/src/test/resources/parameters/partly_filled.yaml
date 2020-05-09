@@ -1,0 +1,14 @@
+# Only some parts are filled
+
+transmission_weight: 100
+duration_weight: 50
+
+transmission:
+  app_defined_1: 5
+  app_defined_2: 2
+  app_defined_3: 3
+  app_defined_4: 4
+
+attenuation:
+  gt_15_le_27_dbm: 6
+  gt_10_le_15_dbm: 7

@@ -13,9 +13,14 @@ public class ParameterFileProviderTest {
   }
 
   @Test
-  public void readFile() {
+  public void readFile() throws UnableToLoadFileException {
     var p = new ParameterFileProvider();
-    p.readFile("aa");
+    var result = p.readFile("parameters/example.yaml");
+
+    System.out.println(result.getDuration().getGt30Min());
+
+    System.out.println(result);
+
     assertEquals(HttpStatus.OK, HttpStatus.OK);
   }
 }
