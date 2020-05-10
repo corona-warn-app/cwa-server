@@ -1,12 +1,12 @@
 package app.coronawarn.server.services.common.persistence.domain;
 
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
 import app.coronawarn.server.common.protocols.external.exposurenotification.Key;
 import com.google.protobuf.ByteString;
 import java.nio.charset.Charset;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertArrayEquals;
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class DiagnosisKeyBuilderTest {
   private final byte[] expKeyData = "myByteArr".getBytes(Charset.defaultCharset());
@@ -35,9 +35,9 @@ public class DiagnosisKeyBuilderTest {
   public void buildSuccessively() {
     DiagnosisKey actDiagnosisKey = DiagnosisKey.builder()
         .keyData(this.expKeyData)
-        .rollingStartNumber(this.expRollingStartNumber)
-        .rollingPeriod(this.expRollingPeriod)
-        .transmissionRiskLevel(this.expTransmissionRiskLevel).build();
+        .withRollingStartNumber(this.expRollingStartNumber)
+        .withRollingPeriod(this.expRollingPeriod)
+        .withTransmissionRiskLevel(this.expTransmissionRiskLevel).build();
 
     assertArrayEquals(this.expKeyData, actDiagnosisKey.getKeyData());
     assertEquals(this.expRollingStartNumber, actDiagnosisKey.getRollingStartNumber());

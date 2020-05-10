@@ -7,6 +7,9 @@ package app.coronawarn.server.services.distribution.parameters.validation;
  */
 public class ParameterSpec {
 
+  private ParameterSpec() {
+  }
+
   /** The minimum weight value for mobile API */
   public static final double WEIGHT_MIN = 0.001;
 

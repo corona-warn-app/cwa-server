@@ -14,4 +14,11 @@
   <artifactId>submission</artifactId>
   <version>0.0.1</version>
 
+  <dependencies>
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-web</artifactId>
+    </dependency>
+  </dependencies>
+
 </project>

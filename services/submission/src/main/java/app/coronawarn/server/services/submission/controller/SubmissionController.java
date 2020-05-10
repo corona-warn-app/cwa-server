@@ -19,7 +19,9 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/version/v1")
 public class SubmissionController {
 
-  /** The route to the submission endpoint (version agnostic) */
+  /**
+   * The route to the submission endpoint (version agnostic)
+   */
   public static final String SUBMISSION_ROUTE = "/diagnosis-keys";
 
   @Autowired
@@ -28,14 +30,12 @@ public class SubmissionController {
   @Autowired
   private TanVerifier tanVerifier;
 
-  // TODO update protoSpec and endpoint to Collection<TemporaryExposureKey>
   @PostMapping(SUBMISSION_ROUTE)
   public ResponseEntity<Void> submitDiagnosisKey(
       @RequestBody SubmissionPayload exposureKeys,
       @RequestHeader(value = "cwa-fake") Integer fake,
       @RequestHeader(value = "cwa-authorization") String tan) {
     if (fake != 0) {
-      //TODO consider sleep or similar
       return buildSuccessResponseEntity();
     }
     if (!this.tanVerifier.verifyTan(tan)) {

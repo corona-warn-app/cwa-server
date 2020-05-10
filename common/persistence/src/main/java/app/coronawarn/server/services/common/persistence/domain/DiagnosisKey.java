@@ -87,10 +87,10 @@ public class DiagnosisKey {
       return false;
     }
     DiagnosisKey that = (DiagnosisKey) o;
-    return id == that.id &&
-        rollingStartNumber == that.rollingStartNumber &&
+    return rollingStartNumber == that.rollingStartNumber &&
         rollingPeriod == that.rollingPeriod &&
         transmissionRiskLevel == that.transmissionRiskLevel &&
+        Objects.equals(id, that.id) &&
         Arrays.equals(keyData, that.keyData);
   }
 
