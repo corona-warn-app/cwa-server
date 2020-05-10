@@ -22,7 +22,6 @@ public class DiagnosisKey {
   private long rollingStartNumber;
   private long rollingPeriod;
   private int transmissionRiskLevel;
-  //TODO add creation date
 
   /**
    * Should be called by builders.
