@@ -1,17 +1,21 @@
 package app.coronawarn.server.tools.testdatagenerator;
 
-import app.coronawarn.server.tools.testdatagenerator.structure.Directory;
-import app.coronawarn.server.tools.testdatagenerator.structure.IndexDirectory;
-import app.coronawarn.server.tools.testdatagenerator.structure.cwa.diagnosiskeys.DiagnosisKeysDirectory;
-import app.coronawarn.server.tools.testdatagenerator.structure.cwa.parameters.ParametersDirectory;
+import app.coronawarn.server.tools.testdatagenerator.decorators.directory.IndexingDecorator;
+import app.coronawarn.server.tools.testdatagenerator.implementations.DirectoryImpl;
+import app.coronawarn.server.tools.testdatagenerator.implementations.FileImpl;
+import app.coronawarn.server.tools.testdatagenerator.implementations.IndexDirectoryImpl;
+import app.coronawarn.server.tools.testdatagenerator.implementations.cwa.DiagnosisKeysDirectoryImpl;
+import app.coronawarn.server.tools.testdatagenerator.implementations.cwa.ParametersDirectoryImpl;
+import app.coronawarn.server.tools.testdatagenerator.interfaces.IndexDirectory;
 import app.coronawarn.server.tools.testdatagenerator.util.Crypto;
-import app.coronawarn.server.tools.testdatagenerator.util.IOUtils;
+import app.coronawarn.server.tools.testdatagenerator.util.IO;
 import java.io.File;
 import java.io.IOException;
 import java.security.cert.CertificateException;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
+import java.util.Stack;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.math3.random.JDKRandomGenerator;
 import org.apache.commons.math3.random.RandomGenerator;
@@ -36,26 +40,30 @@ public class Generator {
     Crypto crypto = new Crypto(privateKeyFile, certificateFile);
     LocalDate startDate = LocalDate.parse(startDateStr, ISO8601);
 
-    DiagnosisKeysDirectory diagnosisKeysDirectory = new DiagnosisKeysDirectory(startDate,
+    DiagnosisKeysDirectoryImpl diagnosisKeysDirectory = new DiagnosisKeysDirectoryImpl(startDate,
         totalHours, exposuresPerHour, COUNTRY, ISO8601, crypto, random);
-    ParametersDirectory parametersDirectory = new ParametersDirectory(COUNTRY, crypto);
+    ParametersDirectoryImpl parametersDirectory = new ParametersDirectoryImpl(COUNTRY, crypto);
 
-    IndexDirectory<?> versionDirectory = new IndexDirectory<>("version", __ -> List.of(VERSION));
+    IndexDirectory<?> versionDirectory =
+        new IndexDirectoryImpl<>("version", __ -> List.of(VERSION));
     if (openapi != null) {
-      versionDirectory.addFileToAll("index", __ -> {
+      versionDirectory.addFileToAll(__ -> {
         try {
-          return IOUtils.getBytesFromFile(openapi);
+          return new FileImpl("index", IO.getBytesFromFile(openapi));
         } catch (IOException e) {
           throw new RuntimeException(e);
         }
       });
     }
 
-    versionDirectory.addDirectoryToAll(diagnosisKeysDirectory);
-    versionDirectory.addDirectoryToAll(parametersDirectory);
+    versionDirectory.addDirectoryToAll(__ -> diagnosisKeysDirectory);
+    versionDirectory.addDirectoryToAll(__ -> parametersDirectory);
 
-    Directory root = new Directory(outputDirectory);
-    root.addDirectory(versionDirectory);
+    DirectoryImpl root = new DirectoryImpl(outputDirectory);
+    root.addDirectory(new IndexingDecorator<>(versionDirectory));
+    System.out.println("Generating ...");
+    root.prepare(new Stack<>());
+    System.out.println("Writing ...");
     root.write();
 
     System.out.println("DONE");
@@ -63,7 +71,6 @@ public class Generator {
 
   private static void clearDirectory(File directory) throws IOException {
     FileUtils.deleteDirectory(directory);
-    //noinspection ResultOfMethodCallIgnored
     directory.mkdirs();
   }
 }

@@ -8,7 +8,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
-public class Aggregator {
+public class Batch {
 
   private static final int KILO = 1000;
   private static final int FILE_SIZE_LIMIT_KB = 500;
@@ -19,7 +19,8 @@ public class Aggregator {
    *
    * @return A list of lists of equal size
    */
-  public static List<File> aggregateKeys(List<Key> keys, Instant startTimestamp,
+  public static List<File> aggregateKeys(
+      List<Key> keys, Instant startTimestamp,
       Instant endTimeStamp, String region) {
     // Because protocol buffers optimize each serialization based on the content, we can not exactly
     // calculate the file size that any given serialization will produce ahead of time. So, in order
@@ -29,14 +30,15 @@ public class Aggregator {
     // approximately equal size, where N = (first file size / file size limit) + 1. We add one
     // for good measure, to avoid edge cases, rounding errors and varying file sizes after
     // serialization.
-    File singleFile = aggregateKeys(keys, 1, startTimestamp, endTimeStamp, region)
+    File singleFile = aggregateKeysIntoBatches(
+        keys, 1, startTimestamp, endTimeStamp, region)
         .stream()
         .findFirst()
         .orElseThrow();
     int singleFileSize = singleFile.getSerializedSize();
     if (singleFileSize > FILE_SIZE_LIMIT_BYTES) {
-      int numBatches = Common.ceilDiv(singleFileSize, FILE_SIZE_LIMIT_BYTES) + 1;
-      return aggregateKeys(keys, numBatches, startTimestamp, endTimeStamp, region);
+      int numBatches = Maths.ceilDiv(singleFileSize, FILE_SIZE_LIMIT_BYTES) + 1;
+      return aggregateKeysIntoBatches(keys, numBatches, startTimestamp, endTimeStamp, region);
     } else {
       return List.of(singleFile);
     }
@@ -46,9 +48,10 @@ public class Aggregator {
    * Aggregates a list of {@link Key Keys} into a list of equally sized {@link File Files} with
    * length {@code partitions}.
    */
-  private static List<File> aggregateKeys(List<Key> keys, int numBatches, Instant startTimestamp,
+  private static List<File> aggregateKeysIntoBatches(
+      List<Key> keys, int numBatches, Instant startTimestamp,
       Instant endTimeStamp, String region) {
-    List<List<Key>> partitions = Common.partitionList(keys, numBatches);
+    List<List<Key>> partitions = partitionList(keys, numBatches);
     return IntStream.range(0, partitions.size())
         .mapToObj(index -> {
           Header header = Header.newBuilder()
@@ -59,7 +62,8 @@ public class Aggregator {
               .setBatchSize(numBatches)
               .build();
           List<Key> partition = partitions.get(index);
-          return File.newBuilder()
+          return File
+              .newBuilder()
               .setHeader(header)
               .addAllKeys(partition)
               .build();
@@ -67,4 +71,20 @@ public class Aggregator {
         .collect(Collectors.toList());
   }
 
+  /**
+   * Partitions a list into {@code numPartitions} equally sized lists.
+   *
+   * @param list          The list to partition
+   * @param numPartitions The number of partitions
+   * @return A list of lists of equal size
+   */
+  public static <T> List<List<T>> partitionList(List<T> list, int numPartitions) {
+    int partitionSize = Maths.ceilDiv(list.size(), numPartitions);
+    return IntStream.range(0, numPartitions)
+        .mapToObj(currentPartition -> list.subList(
+            partitionSize * currentPartition,
+            Math.min(currentPartition * partitionSize + partitionSize, list.size()))
+        )
+        .collect(Collectors.toList());
+  }
 }

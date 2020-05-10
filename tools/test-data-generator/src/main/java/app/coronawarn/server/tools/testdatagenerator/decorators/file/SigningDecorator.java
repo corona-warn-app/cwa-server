@@ -1,6 +1,8 @@
-package app.coronawarn.server.tools.testdatagenerator.util;
+package app.coronawarn.server.tools.testdatagenerator.decorators.file;
 
 import app.coronawarn.server.common.protocols.internal.SignedPayload;
+import app.coronawarn.server.tools.testdatagenerator.interfaces.File;
+import app.coronawarn.server.tools.testdatagenerator.util.Crypto;
 import com.google.protobuf.ByteString;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
@@ -10,8 +12,33 @@ import java.security.Signature;
 import java.security.SignatureException;
 import java.security.cert.Certificate;
 import java.security.cert.CertificateEncodingException;
+import java.util.Stack;
 
-public class Signer {
+/**
+ * A {@link FileDecorator} that will convert the contents of a File into {@link
+ * app.coronawarn.server.common.protocols.internal.SignedPayload}.
+ */
+public class SigningDecorator extends FileDecorator {
+
+  final Crypto crypto;
+
+  public SigningDecorator(File file, Crypto crypto) {
+    super(file);
+    this.crypto = crypto;
+  }
+
+  @Override
+  public void prepare(Stack<Object> indices) {
+    System.out.println("Signing \t\t\t" + this.getFileOnDisk().getPath());
+    try {
+      SignedPayload signedPayload = sign(this.getBytes(), crypto.getPrivateKey(),
+          crypto.getCertificate());
+      this.setBytes(signedPayload.toByteArray());
+    } catch (Exception e) {
+      throw new RuntimeException(e);
+    }
+    super.prepare(indices);
+  }
 
   public static SignedPayload sign(byte[] payload, PrivateKey privateKey, Certificate certificate)
       throws CertificateEncodingException, InvalidKeyException, NoSuchProviderException, NoSuchAlgorithmException, SignatureException {

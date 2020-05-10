@@ -15,7 +15,7 @@ import org.bouncycastle.asn1.pkcs.PrivateKeyInfo;
 import org.bouncycastle.openssl.PEMParser;
 import org.bouncycastle.openssl.jcajce.JcaPEMKeyConverter;
 
-public class IOUtils {
+public class IO {
 
   public static PrivateKey getPrivateKeyFromFile(File privateKeyPath) throws IOException {
     PEMParser pemParser =
@@ -41,27 +41,17 @@ public class IOUtils {
     return Files.readAllBytes(file.toPath());
   }
 
-  public static File makeDirectory(File root, String name) {
-    File directory = new File(root.getPath() + "/" + name);
-    //noinspection ResultOfMethodCallIgnored
-    directory.mkdirs();
-    return directory;
-  }
-
-  public static File makeFile(File root, String name) {
+  public static void makeFile(File root, String name) {
     File directory = new File(root.getPath() + "/" + name);
     try {
-      //noinspection ResultOfMethodCallIgnored
       directory.createNewFile();
     } catch (IOException e) {
       throw new RuntimeException(e);
     }
-    return directory;
   }
 
   public static void writeBytesToFile(byte[] bytes, File outputFile) {
     try {
-      //noinspection ResultOfMethodCallIgnored
       outputFile.createNewFile();
       FileOutputStream outputFileStream = new FileOutputStream(outputFile);
       outputFileStream.write(bytes);

@@ -1,4 +1,4 @@
-package app.coronawarn.server.tools.testdatagenerator.structure.cwa.parameters;
+package app.coronawarn.server.tools.testdatagenerator.implementations.cwa;
 
 import app.coronawarn.server.common.protocols.internal.RiskLevel;
 import app.coronawarn.server.common.protocols.internal.RiskScoreParameters;
@@ -6,25 +6,23 @@ import app.coronawarn.server.common.protocols.internal.RiskScoreParameters.Atten
 import app.coronawarn.server.common.protocols.internal.RiskScoreParameters.DaysSinceLastExposureRiskParameters;
 import app.coronawarn.server.common.protocols.internal.RiskScoreParameters.DurationRiskParameters;
 import app.coronawarn.server.common.protocols.internal.RiskScoreParameters.TransmissionRiskParameters;
-import app.coronawarn.server.tools.testdatagenerator.structure.Directory;
-import app.coronawarn.server.tools.testdatagenerator.structure.IndexDirectory;
-import app.coronawarn.server.tools.testdatagenerator.structure.SigningDirectory;
+import app.coronawarn.server.tools.testdatagenerator.decorators.directory.IndexingDecorator;
+import app.coronawarn.server.tools.testdatagenerator.decorators.file.SigningDecorator;
+import app.coronawarn.server.tools.testdatagenerator.implementations.DirectoryImpl;
+import app.coronawarn.server.tools.testdatagenerator.implementations.FileImpl;
+import app.coronawarn.server.tools.testdatagenerator.implementations.IndexDirectoryImpl;
 import app.coronawarn.server.tools.testdatagenerator.util.Crypto;
-import java.io.File;
-import java.util.Arrays;
 import java.util.List;
-import java.util.Objects;
 
-public class ParametersDirectory extends Directory implements SigningDirectory {
+public class ParametersDirectoryImpl extends DirectoryImpl {
 
-  final Crypto crypto;
-
-  public ParametersDirectory(String region, Crypto crypto) {
+  public ParametersDirectoryImpl(String region, Crypto crypto) {
     super("parameters");
-    this.crypto = crypto;
-    this.addDirectory(new IndexDirectory<>("country", __ -> List.of(region))
-        .addFileToAll("index", __ -> generateParameters().toByteArray())
-    );
+    IndexDirectoryImpl<String> country = new IndexDirectoryImpl<>("country", __ -> List.of(region));
+    country.addFileToAll(__ -> new SigningDecorator(
+        new FileImpl("index", generateParameters().toByteArray()), crypto
+    ));
+    this.addDirectory(new IndexingDecorator<>(country));
   }
 
   private static RiskScoreParameters generateParameters() {
@@ -70,14 +68,5 @@ public class ParametersDirectory extends Directory implements SigningDirectory {
             .setAppDefined8(RiskLevel.RISK_LEVEL_HIGHEST)
             .build())
         .build();
-  }
-
-  @Override
-  public void sign() {
-    Arrays.stream(Objects.requireNonNull(this.getFile().listFiles()))
-        .map(countryDirectory -> Arrays.stream(Objects.requireNonNull(countryDirectory.listFiles()))
-            .filter(File::isDirectory)
-            .findFirst().orElseThrow())
-        .forEach(file -> this.signFiles(file, this.crypto));
   }
 }

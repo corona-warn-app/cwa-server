@@ -71,7 +71,7 @@ goto error
 if exist "%JAVA_HOME%\bin\java.exe" goto init
 
 echo.
-echo Error: JAVA_HOME is set to an invalid directory. >&2
+echo Error: JAVA_HOME is set to an invalid directoryImpl. >&2
 echo JAVA_HOME = "%JAVA_HOME%" >&2
 echo Please set the JAVA_HOME variable in your environment to match the >&2
 echo location of your Java installation. >&2
@@ -82,8 +82,8 @@ goto error
 
 :init
 
-@REM Find the project base dir, i.e. the directory that contains the folder ".mvn".
-@REM Fallback to current working directory if not found.
+@REM Find the project base dir, i.e. the directoryImpl that contains the folder ".mvn".
+@REM Fallback to current working directoryImpl if not found.
 
 set MAVEN_PROJECTBASEDIR=%MAVEN_BASEDIR%
 IF NOT "%MAVEN_PROJECTBASEDIR%"=="" goto endDetectBaseDir

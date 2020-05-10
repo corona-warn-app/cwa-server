@@ -18,8 +18,8 @@ public class Crypto {
 
   public Crypto(File privateKeyFile, File certificateFile)
       throws IOException, CertificateException {
-    this(IOUtils.getPrivateKeyFromFile(privateKeyFile),
-        IOUtils.getCertificateFromFile(certificateFile));
+    this(IO.getPrivateKeyFromFile(privateKeyFile),
+        IO.getCertificateFromFile(certificateFile));
   }
 
   public PrivateKey getPrivateKey() {
