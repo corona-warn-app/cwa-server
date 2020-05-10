@@ -4,7 +4,6 @@ import java.io.File;
 import picocli.CommandLine.Command;
 import picocli.CommandLine.Option;
 
-@SuppressWarnings("unused")
 @Command(name = "generate",
     description = "Generate test data according to the API spec.",
     version = "0.2",

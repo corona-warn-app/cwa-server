@@ -41,7 +41,6 @@ class HourDirectory extends IndexDirectory<LocalDateTime> implements SigningDire
   private final PoissonDistribution poisson;
   private final Crypto crypto;
 
-  @SuppressWarnings("unchecked")
   public HourDirectory(LocalDate startDate, int totalHours, int exposuresPerHour,
       Crypto crypto, RandomGenerator random) {
     super("hour", indices -> {

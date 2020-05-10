@@ -98,7 +98,6 @@ public class IndexDirectory<T> extends Directory {
     this.writeIndexDirectories(indices);
   }
 
-  @SuppressWarnings("unchecked")
   private void writeIndexDirectories(Stack<Object> indices) {
     Stream.of(indices)
         .map(this.getIndexFunction())
@@ -125,7 +124,6 @@ public class IndexDirectory<T> extends Directory {
    * elements returned by the {@link IndexDirectory#indexFunction}, formatted with the {@link
    * IndexDirectory#indexFormatter}.
    */
-  @SuppressWarnings("unchecked")
   private void addIndexFile(Stack<Object> indices) {
     Stream.of(indices)
         .map(this.getIndexFunction())

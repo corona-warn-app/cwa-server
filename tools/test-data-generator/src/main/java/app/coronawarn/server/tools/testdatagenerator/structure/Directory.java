@@ -62,13 +62,11 @@ public class Directory {
    *
    * @return self
    */
-  @SuppressWarnings("UnusedReturnValue")
   public Directory addFile(String name, byte[] bytes) {
     this.files.put(name, bytes);
     return this;
   }
 
-  @SuppressWarnings("unused")
   public List<Directory> getDirectories() {
     return this.directories;
   }
@@ -78,7 +76,6 @@ public class Directory {
    *
    * @return self
    */
-  @SuppressWarnings("UnusedReturnValue")
   public Directory addDirectory(Directory directory) {
     this.directories.add(directory);
     directory.setParent(this);
@@ -103,7 +100,6 @@ public class Directory {
     this.writeFiles(indices);
   }
 
-  @SuppressWarnings("ResultOfMethodCallIgnored")
   protected void writeOwnDirectory() {
     File file;
     if (this.file == null) {
