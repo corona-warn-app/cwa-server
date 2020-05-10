@@ -6,15 +6,16 @@ import app.coronawarn.server.tools.testdatagenerator.util.Crypto;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
-import java.util.Random;
+import org.apache.commons.math3.random.RandomGenerator;
 
 public class DiagnosisKeysDirectory extends Directory {
 
   public DiagnosisKeysDirectory(LocalDate startDate, int totalHours, int exposuresPerHour,
-      String region, DateTimeFormatter formatter, Crypto crypto, Random random) {
+      String region, DateTimeFormatter formatter, Crypto crypto, RandomGenerator random) {
     super("diagnosis-keys");
     this.addDirectory(new IndexDirectory<>("country", __ -> List.of(region))
-        .addDirectoryToAll(new DateDirectory(startDate, totalHours, exposuresPerHour, formatter, crypto, random))
+        .addDirectoryToAll(
+            new DateDirectory(startDate, totalHours, exposuresPerHour, formatter, crypto, random))
     );
   }
 }

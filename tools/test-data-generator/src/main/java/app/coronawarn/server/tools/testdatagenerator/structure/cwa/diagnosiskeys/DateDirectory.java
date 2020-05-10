@@ -13,9 +13,9 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
 import java.util.Objects;
-import java.util.Random;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+import org.apache.commons.math3.random.RandomGenerator;
 
 class DateDirectory extends IndexDirectory<LocalDate> implements SigningDirectory,
     AggregatingDirectory {
@@ -23,8 +23,7 @@ class DateDirectory extends IndexDirectory<LocalDate> implements SigningDirector
   private final Crypto crypto;
 
   public DateDirectory(LocalDate startDate, int totalHours, int exposuresPerHour,
-      DateTimeFormatter formatter,
-      Crypto crypto, Random random) {
+      DateTimeFormatter formatter, Crypto crypto, RandomGenerator random) {
     super("date", __ -> Common.getDates(startDate, Common.getNumberOfDays(totalHours)),
         formatter::format);
     this.crypto = crypto;

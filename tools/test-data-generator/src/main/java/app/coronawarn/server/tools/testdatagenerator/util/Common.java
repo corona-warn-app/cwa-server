@@ -4,15 +4,15 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
-import java.util.Random;
 import java.util.Stack;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
+import org.apache.commons.math3.random.RandomGenerator;
 
 public class Common {
 
-  public static int getRandomBetween(int minIncluding, int maxIncluding, Random random) {
+  public static int getRandomBetween(int minIncluding, int maxIncluding, RandomGenerator random) {
     return Math.toIntExact(getRandomBetween(
         (long) minIncluding,
         maxIncluding,
@@ -20,21 +20,9 @@ public class Common {
     ));
   }
 
-  public static long getRandomBetween(long minIncluding, long maxIncluding, Random random) {
+  public static long getRandomBetween(long minIncluding, long maxIncluding,
+      RandomGenerator random) {
     return minIncluding + (long) (random.nextDouble() * (maxIncluding - minIncluding));
-  }
-
-  public static int nextPoisson(int mean, Random random) {
-    // Kudos to Adam Zalcman: https://stackoverflow.com/a/9832977
-    // https://en.wikipedia.org/wiki/Poisson_distribution#Generating_Poisson-distributed_random_variables
-    double L = Math.exp(-mean);
-    int k = 0;
-    double p = 1.0;
-    do {
-      p = p * random.nextDouble();
-      k++;
-    } while (p > L);
-    return k - 1;
   }
 
   public static <T, R> Function<T, R> uncheckedFunction(

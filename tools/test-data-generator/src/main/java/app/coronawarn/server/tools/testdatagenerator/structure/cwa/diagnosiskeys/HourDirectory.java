@@ -17,31 +17,42 @@ import java.time.ZoneOffset;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
-import java.util.Random;
 import java.util.Stack;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
+import org.apache.commons.math3.distribution.PoissonDistribution;
+import org.apache.commons.math3.random.RandomGenerator;
 
 class HourDirectory extends IndexDirectory<LocalDateTime> implements SigningDirectory {
 
+  /**
+   * Default maximum number of iterations.
+   */
+  private static final int DEFAULT_MAX_ITERATIONS = 10000000;
+  /**
+   * Default convergence criterion.
+   */
+  private static final double DEFAULT_EPSILON = 1e-12;
+
   private final LocalDate startDate;
   private final int totalHours;
-  private final int exposuresPerHour;
-  private final Random random;
+  private final RandomGenerator random;
+  private final PoissonDistribution poisson;
   private final Crypto crypto;
 
   @SuppressWarnings("unchecked")
   public HourDirectory(LocalDate startDate, int totalHours, int exposuresPerHour,
-      Crypto crypto, Random random) {
+      Crypto crypto, RandomGenerator random) {
     super("hour", indices -> {
       LocalDate currentDate = ((LocalDate) indices.peek());
       return Common.getHours(startDate, currentDate, totalHours);
     }, LocalDateTime::getHour);
     this.startDate = startDate;
     this.totalHours = totalHours;
-    this.exposuresPerHour = exposuresPerHour;
     this.random = random;
+    this.poisson = new PoissonDistribution(random, exposuresPerHour, DEFAULT_EPSILON,
+        DEFAULT_MAX_ITERATIONS);
     this.crypto = crypto;
     this.addFileToAll("index", indices -> {
       Stack<Object> indicesCopy = (Stack<Object>) indices.clone();
@@ -53,32 +64,31 @@ class HourDirectory extends IndexDirectory<LocalDateTime> implements SigningDire
   }
 
   private byte[] generateHourFile(LocalDateTime currentHour, String region) {
-    return generateFileBucket(this.startDate, this.totalHours, currentHour, region,
-        this.exposuresPerHour, this.random).toByteArray();
+    return generateFileBucket(this.startDate, this.totalHours, currentHour, region, this.poisson,
+        this.random).toByteArray();
   }
 
   private static FileBucket generateFileBucket(LocalDate startDate, int totalHours,
-      LocalDateTime currentHour, String region,
-      int exposuresPerHour, Random random) {
+      LocalDateTime currentHour, String region, PoissonDistribution poisson,
+      RandomGenerator random) {
     return FileBucket.newBuilder()
         .addAllFiles(
-            generateFiles(startDate, totalHours, currentHour, region, exposuresPerHour, random))
+            generateFiles(startDate, totalHours, currentHour, region, poisson, random))
         .build();
   }
 
   private static List<File> generateFiles(
       LocalDate startDate, int totalHours, LocalDateTime currentHour, String region,
-      int exposuresPerHour,
-      Random random) {
+      PoissonDistribution poisson, RandomGenerator random) {
     Instant startTimestamp = Instant.from(currentHour.atOffset(ZoneOffset.UTC));
     Instant endTimestamp = Instant.from(currentHour.atOffset(ZoneOffset.UTC).plusHours(1));
-    int numExposures = Common.nextPoisson(exposuresPerHour, random);
+    int numExposures = poisson.sample();
     List<Key> keys = generateKeys(numExposures, startDate, totalHours, random);
     return Aggregator.aggregateKeys(keys, startTimestamp, endTimestamp, region);
   }
 
   private static List<Key> generateKeys(int number, LocalDate startDate, int totalHours,
-      Random random) {
+      RandomGenerator random) {
     return IntStream.range(0, number)
         .mapToObj(__ -> Key.newBuilder()
             .setRollingStartNumber(generateRollingStartNumber(startDate, totalHours, random))
@@ -92,7 +102,7 @@ class HourDirectory extends IndexDirectory<LocalDateTime> implements SigningDire
 
   // Timestamp since when a key was active, represented by a 10 minute interval counter
   private static int generateRollingStartNumber(LocalDate startDate, int totalHours,
-      Random random) {
+      RandomGenerator random) {
     // Calculate some random timestamp between the startDate (at 00:00 UTC) and totalHours
     // later. This will form the basis for our rollingStartNumber.
     LocalDateTime startDateTime = startDate.atStartOfDay();
@@ -113,7 +123,7 @@ class HourDirectory extends IndexDirectory<LocalDateTime> implements SigningDire
     return Math.toIntExact(Math.floorDiv(TimeUnit.DAYS.toMinutes(1), 10));
   }
 
-  private static RiskLevel generateRiskLevel(Random random) {
+  private static RiskLevel generateRiskLevel(RandomGenerator random) {
     return RiskLevel.forNumber(
         Common.getRandomBetween(
             RiskLevel.RISK_LEVEL_LOWEST_VALUE,
@@ -123,7 +133,7 @@ class HourDirectory extends IndexDirectory<LocalDateTime> implements SigningDire
     );
   }
 
-  private static byte[] generateDiagnosisKeyBytes(Random random) {
+  private static byte[] generateDiagnosisKeyBytes(RandomGenerator random) {
     byte[] exposureKey = new byte[16];
     random.nextBytes(exposureKey);
     return exposureKey;

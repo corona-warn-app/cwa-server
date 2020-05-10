@@ -4,7 +4,6 @@ import app.coronawarn.server.tools.testdatagenerator.structure.Directory;
 import app.coronawarn.server.tools.testdatagenerator.structure.IndexDirectory;
 import app.coronawarn.server.tools.testdatagenerator.structure.cwa.diagnosiskeys.DiagnosisKeysDirectory;
 import app.coronawarn.server.tools.testdatagenerator.structure.cwa.parameters.ParametersDirectory;
-import app.coronawarn.server.tools.testdatagenerator.util.Common;
 import app.coronawarn.server.tools.testdatagenerator.util.Crypto;
 import app.coronawarn.server.tools.testdatagenerator.util.IOUtils;
 import java.io.File;
@@ -13,8 +12,9 @@ import java.security.cert.CertificateException;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
-import java.util.Random;
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.math3.random.JDKRandomGenerator;
+import org.apache.commons.math3.random.RandomGenerator;
 
 public class Generator {
 
@@ -31,7 +31,8 @@ public class Generator {
 
     clearDirectory(outputDirectory);
 
-    Random random = new Random(seed);
+    RandomGenerator random = new JDKRandomGenerator();
+    random.setSeed(seed);
     Crypto crypto = new Crypto(privateKeyFile, certificateFile);
     LocalDate startDate = LocalDate.parse(startDateStr, ISO8601);
 
