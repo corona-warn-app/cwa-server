@@ -16,6 +16,7 @@ public class Aggregator {
 
   /**
    * Aggregates a list of {@link Key Keys} into a list of {@link File Files}.
+   *
    * @return A list of lists of equal size
    */
   public static List<File> aggregateKeys(List<Key> keys, Instant startTimestamp,

@@ -62,11 +62,6 @@ class HourDirectory extends IndexDirectory<LocalDateTime> implements SigningDire
     });
   }
 
-  private byte[] generateHourFile(LocalDateTime currentHour, String region) {
-    return generateFileBucket(this.startDate, this.totalHours, currentHour, region, this.poisson,
-        this.random).toByteArray();
-  }
-
   private static FileBucket generateFileBucket(LocalDate startDate, int totalHours,
       LocalDateTime currentHour, String region, PoissonDistribution poisson,
       RandomGenerator random) {
@@ -136,6 +131,11 @@ class HourDirectory extends IndexDirectory<LocalDateTime> implements SigningDire
     byte[] exposureKey = new byte[16];
     random.nextBytes(exposureKey);
     return exposureKey;
+  }
+
+  private byte[] generateHourFile(LocalDateTime currentHour, String region) {
+    return generateFileBucket(this.startDate, this.totalHours, currentHour, region, this.poisson,
+        this.random).toByteArray();
   }
 
   @Override

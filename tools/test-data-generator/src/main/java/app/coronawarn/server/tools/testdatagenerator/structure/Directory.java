@@ -14,11 +14,11 @@ import java.util.Stack;
  */
 public class Directory {
 
+  private final Map<String, byte[]> files = new HashMap<>();
+  private final List<Directory> directories = new ArrayList<>();
   private File file;
   private String name;
   private Directory parent;
-  private final Map<String, byte[]> files = new HashMap<>();
-  private final List<Directory> directories = new ArrayList<>();
 
   /**
    * A root {@link Directory} representing an already existing directory on disk.
@@ -44,13 +44,13 @@ public class Directory {
     return parent;
   }
 
+  public void setParent(Directory parent) {
+    this.parent = parent;
+  }
+
   public File getFile() {
     return Objects.requireNonNullElseGet(this.file,
         () -> getParent().getFile().toPath().resolve(this.name).toFile());
-  }
-
-  public void setParent(Directory parent) {
-    this.parent = parent;
   }
 
   public Map<String, byte[]> getFiles() {

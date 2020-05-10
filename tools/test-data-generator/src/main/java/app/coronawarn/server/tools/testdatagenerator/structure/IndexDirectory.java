@@ -20,12 +20,12 @@ import org.json.simple.JSONArray;
  */
 public class IndexDirectory<T> extends Directory {
 
-  private final IndexFunction<T> indexFunction;
-  private final Formatter<T> indexFormatter;
   // Files to be written into every directory created through the index
   protected final Map<String, FileFunction> indexFiles = new HashMap<>();
   // Directories to be written into every directory created through the index
   protected final List<Directory> indexDirectories = new ArrayList<>();
+  private final IndexFunction<T> indexFunction;
+  private final Formatter<T> indexFormatter;
 
   /**
    * Constructor.
