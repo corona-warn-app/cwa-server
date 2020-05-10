@@ -58,6 +58,6 @@ public class WeightValidationError implements ValidationError {
 
   public enum ErrorType {
     OUT_OF_RANGE,
-    TOO_MANY_DECIMALS
+    TOO_MANY_DECIMAL_PLACES
   }
 }

@@ -7,9 +7,9 @@ import java.util.Objects;
  */
 public class RiskLevelValidationError implements ValidationError {
 
-  private String parameter;
+  private final String parameter;
 
-  private String riskLevel;
+  private final String riskLevel;
 
   public RiskLevelValidationError(String parameter, String riskLevel) {
     this.parameter = parameter;

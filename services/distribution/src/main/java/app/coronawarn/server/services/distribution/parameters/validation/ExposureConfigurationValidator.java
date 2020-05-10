@@ -81,12 +81,12 @@ public class ExposureConfigurationValidator {
       this.errors.add(new WeightValidationError(name, weight, ErrorType.OUT_OF_RANGE));
     }
 
-    if (!respectsMaximumDecimals(weight)) {
-      this.errors.add(new WeightValidationError(name, weight, ErrorType.TOO_MANY_DECIMALS));
+    if (!respectsMaximumDecimalPlaces(weight)) {
+      this.errors.add(new WeightValidationError(name, weight, ErrorType.TOO_MANY_DECIMAL_PLACES));
     }
   }
 
-  private boolean respectsMaximumDecimals(double weight) {
+  private boolean respectsMaximumDecimalPlaces(double weight) {
     var bd = new BigDecimal(String.valueOf(weight));
 
     return bd.scale() <= ParameterSpec.WEIGHT_MAX_DECIMALS;

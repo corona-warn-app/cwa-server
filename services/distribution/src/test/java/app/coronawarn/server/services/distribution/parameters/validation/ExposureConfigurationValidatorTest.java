@@ -30,12 +30,13 @@ public class ExposureConfigurationValidatorTest {
 
   @Test
   public void emptyFileThrowsLoadFailure() {
-    assertThrows(UnableToLoadFileException.class, () -> {
-      new ExposureConfigurationProvider().readFile("parameters/empty.yaml");
-    });
+    assertThrows(UnableToLoadFileException.class, () ->
+        new ExposureConfigurationProvider().readFile("parameters/empty.yaml")
+    );
   }
 
-  private ValidationResult getResultForTest(TestWithExpectedResult test) throws UnableToLoadFileException {
+  private ValidationResult getResultForTest(TestWithExpectedResult test)
+      throws UnableToLoadFileException {
     var config = new ExposureConfigurationProvider().readFile(test.path());
     var validator = new ExposureConfigurationValidator(config);
     return validator.validate();
@@ -73,7 +74,7 @@ public class ExposureConfigurationValidatorTest {
   public static TestWithExpectedResult WeightNegative() {
     return new TestWithExpectedResult("weight_negative.yaml")
         .with(new WeightValidationError("transmission", -10d, ErrorType.OUT_OF_RANGE))
-        .with(new WeightValidationError("attenuation", 0.0001, ErrorType.TOO_MANY_DECIMALS))
+        .with(new WeightValidationError("attenuation", 0.0001, ErrorType.TOO_MANY_DECIMAL_PLACES))
         .with(new WeightValidationError("attenuation", 0.0001, ErrorType.OUT_OF_RANGE))
         .with(new WeightValidationError("duration", 0, ErrorType.OUT_OF_RANGE));
   }
