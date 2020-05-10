@@ -22,7 +22,6 @@ public class DiagnosisKey {
   private long rollingStartNumber;
   private long rollingPeriod;
   private int transmissionRiskLevel;
-  //TODO add creation date
 
   /**
    * Should be called by builders.
@@ -69,7 +68,7 @@ public class DiagnosisKey {
    * (e.g. 144 for 24 hours).
    */
   public long getRollingPeriod() {
-    return rollingStartNumber;
+    return rollingPeriod;
   }
 
   /**
