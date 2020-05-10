@@ -18,14 +18,14 @@ import org.bouncycastle.openssl.jcajce.JcaPEMKeyConverter;
 public class IO {
 
   public static PrivateKey getPrivateKeyFromFile(File privateKeyPath) throws IOException {
-    PEMParser pemParser = new PEMParser(
-        Files.newBufferedReader(privateKeyPath.toPath(), StandardCharsets.UTF_8));
+    PEMParser pemParser = new PEMParser(Files.newBufferedReader(privateKeyPath.toPath(),
+        StandardCharsets.UTF_8));
     PrivateKeyInfo privateKeyInfo = (PrivateKeyInfo) pemParser.readObject();
     return new JcaPEMKeyConverter().getPrivateKey(privateKeyInfo);
   }
 
-  public static Certificate getCertificateFromFile(File certificatePath)
-      throws IOException, CertificateException {
+  public static Certificate getCertificateFromFile(File certificatePath) throws IOException,
+      CertificateException {
     return getCertificateFromBytes(getBytesFromFile(certificatePath));
   }
 

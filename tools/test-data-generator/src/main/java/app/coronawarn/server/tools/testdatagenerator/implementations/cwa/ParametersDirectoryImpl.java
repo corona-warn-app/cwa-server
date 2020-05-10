@@ -19,9 +19,8 @@ public class ParametersDirectoryImpl extends DirectoryImpl {
   public ParametersDirectoryImpl(String region, Crypto crypto) {
     super("parameters");
     IndexDirectoryImpl<String> country = new IndexDirectoryImpl<>("country", __ -> List.of(region));
-    country.addFileToAll(__ -> new SigningDecorator(
-        new FileImpl("index", generateParameters().toByteArray()), crypto
-    ));
+    country.addFileToAll(__ -> new SigningDecorator(new FileImpl("index",
+        generateParameters().toByteArray()), crypto));
     this.addDirectory(new IndexingDecorator<>(country));
   }
 

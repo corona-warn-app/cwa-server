@@ -9,7 +9,8 @@ import app.coronawarn.server.tools.testdatagenerator.implementations.FileImpl;
 import app.coronawarn.server.tools.testdatagenerator.implementations.IndexDirectoryImpl;
 import app.coronawarn.server.tools.testdatagenerator.util.Batch;
 import app.coronawarn.server.tools.testdatagenerator.util.Crypto;
-import app.coronawarn.server.tools.testdatagenerator.util.Maths;
+import app.coronawarn.server.tools.testdatagenerator.util.DateTime;
+import app.coronawarn.server.tools.testdatagenerator.util.Random;
 import com.google.protobuf.ByteString;
 import java.time.Instant;
 import java.time.LocalDate;
@@ -37,7 +38,7 @@ class HourDirectoryImpl extends IndexDirectoryImpl<LocalDateTime> {
       Crypto crypto, RandomGenerator random) {
     super("hour", indices -> {
       LocalDate currentDate = ((LocalDate) indices.peek());
-      return Maths.getHours(startDate, currentDate, totalHours);
+      return DateTime.getHours(startDate, currentDate, totalHours);
     }, LocalDateTime::getHour);
     this.startDate = startDate;
     this.totalHours = totalHours;
@@ -97,7 +98,7 @@ class HourDirectoryImpl extends IndexDirectoryImpl<LocalDateTime> {
     // Calculate some random timestamp between the startDate (at 00:00 UTC) and totalHours
     // later. This will form the basis for our rollingStartNumber.
     LocalDateTime startDateTime = startDate.atStartOfDay();
-    Instant randomTimestamp = Instant.ofEpochMilli(Maths.getRandomBetween(
+    Instant randomTimestamp = Instant.ofEpochMilli(Random.getRandomBetween(
         startDateTime.toInstant(ZoneOffset.UTC).toEpochMilli(),
         startDateTime.plusHours(totalHours).toInstant(ZoneOffset.UTC).toEpochMilli(),
         random));
@@ -113,7 +114,7 @@ class HourDirectoryImpl extends IndexDirectoryImpl<LocalDateTime> {
   }
 
   private static RiskLevel generateRiskLevel(RandomGenerator random) {
-    return RiskLevel.forNumber(Maths.getRandomBetween(
+    return RiskLevel.forNumber(Random.getRandomBetween(
         RiskLevel.RISK_LEVEL_LOWEST_VALUE, RiskLevel.RISK_LEVEL_HIGHEST_VALUE, random));
   }
 

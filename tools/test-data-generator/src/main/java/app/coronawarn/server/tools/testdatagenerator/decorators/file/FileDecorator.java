@@ -1,6 +1,5 @@
 package app.coronawarn.server.tools.testdatagenerator.decorators.file;
 
-
 import app.coronawarn.server.tools.testdatagenerator.interfaces.Directory;
 import app.coronawarn.server.tools.testdatagenerator.interfaces.File;
 import java.util.Stack;

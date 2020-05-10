@@ -16,7 +16,7 @@ import java.util.Stack;
  *
  * @param <T> The type of the elements in the index (e.g. LocalDate for the /date directory)
  */
-public class IndexDirectoryImpl<T> extends DirectoryImpl implements Directory,
+public class IndexDirectoryImpl<T> extends DirectoryImpl implements
     app.coronawarn.server.tools.testdatagenerator.interfaces.IndexDirectory<T> {
 
   // Files to be written into every directory created through the index

@@ -19,8 +19,7 @@ public class Batch {
    *
    * @return A list of lists of equal size
    */
-  public static List<File> aggregateKeys(
-      List<Key> keys, Instant startTimestamp,
+  public static List<File> aggregateKeys(List<Key> keys, Instant startTimestamp,
       Instant endTimeStamp, String region) {
     // Because protocol buffers optimize each serialization based on the content, we can not exactly
     // calculate the file size that any given serialization will produce ahead of time. So, in order
@@ -47,15 +46,14 @@ public class Batch {
    * Aggregates a list of {@link Key Keys} into a list of equally sized {@link File Files} with
    * length {@code partitions}.
    */
-  private static List<File> aggregateKeysIntoBatches(
-      List<Key> keys, int numBatches, Instant startTimestamp,
-      Instant endTimeStamp, String region) {
+  private static List<File> aggregateKeysIntoBatches(List<Key> keys, int numBatches,
+      Instant startTimestamp, Instant endTimeStamp, String region) {
     List<List<Key>> partitions = partitionList(keys, numBatches);
     return IntStream.range(0, partitions.size())
         .mapToObj(index -> {
           Header header = Header.newBuilder()
-              .setStartTimestamp(startTimestamp.toEpochMilli()) // Inclusive
-              .setEndTimestamp(endTimeStamp.toEpochMilli()) // Exclusive
+              .setStartTimestamp(startTimestamp.toEpochMilli())
+              .setEndTimestamp(endTimeStamp.toEpochMilli())
               .setRegion(region)
               .setBatchNum(index + 1)
               .setBatchSize(numBatches)

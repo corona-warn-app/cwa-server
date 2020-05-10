@@ -16,10 +16,9 @@ public class Crypto {
     this.certificate = certificate;
   }
 
-  public Crypto(File privateKeyFile, File certificateFile)
-      throws IOException, CertificateException {
-    this(IO.getPrivateKeyFromFile(privateKeyFile),
-        IO.getCertificateFromFile(certificateFile));
+  public Crypto(File privateKeyFile, File certificateFile) throws IOException,
+      CertificateException {
+    this(IO.getPrivateKeyFromFile(privateKeyFile), IO.getCertificateFromFile(certificateFile));
   }
 
   public PrivateKey getPrivateKey() {
