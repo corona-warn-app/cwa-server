@@ -9,6 +9,11 @@ import static org.mockito.Mockito.atLeastOnce;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+import static org.springframework.http.HttpStatus.BAD_REQUEST;
+import static org.springframework.http.HttpStatus.FORBIDDEN;
+import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
+import static org.springframework.http.HttpStatus.METHOD_NOT_ALLOWED;
+import static org.springframework.http.HttpStatus.OK;
 
 import app.coronawarn.server.common.protocols.external.exposurenotification.Key;
 import app.coronawarn.server.common.protocols.internal.SubmissionPayload;
@@ -18,9 +23,9 @@ import app.coronawarn.server.services.submission.verification.TanVerifier;
 import com.google.protobuf.ByteString;
 import java.net.URI;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.HashSet;
 import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -36,7 +41,6 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.RequestEntity;
 import org.springframework.http.ResponseEntity;
@@ -65,7 +69,7 @@ public class SubmissionControllerTest {
     ResponseEntity<Void> actResponse =
         executeRequest(buildPayloadWithMultipleKeys(), buildOkHeaders());
 
-    assertEquals(HttpStatus.OK, actResponse.getStatusCode());
+    assertEquals(OK, actResponse.getStatusCode());
   }
 
   @Test
@@ -85,7 +89,7 @@ public class SubmissionControllerTest {
     ResponseEntity<Void> actResponse = executeRequest(buildPayloadWithOneKey(), headers);
 
     verify(diagnosisKeyService, never()).saveDiagnosisKeys(any());
-    assertEquals(HttpStatus.BAD_REQUEST, actResponse.getStatusCode());
+    assertEquals(BAD_REQUEST, actResponse.getStatusCode());
   }
 
   private static Stream<Arguments> createIncompleteHeaders() {
@@ -95,15 +99,26 @@ public class SubmissionControllerTest {
         Arguments.of(setContentTypeProtoBufHeader(setCwaAuthHeader(new HttpHeaders()))));
   }
 
-  @Test
-  public void checkAcceptedHttpMethods() {
-    Set<HttpMethod> expAllowedMethods =
-        Stream.of(HttpMethod.POST, HttpMethod.OPTIONS)
-            .collect(Collectors.toCollection(HashSet::new));
+  @ParameterizedTest
+  @MethodSource("createDeniedHttpMethods")
+  public void checkOnlyPostAllowed(HttpMethod deniedHttpMethod) {
+    // INTERNAL_SERVER_ERROR is the result of blocking by StrictFirewall for non POST calls.
+    //                       We can change this when Spring Security 5.4.x is released.
+    // METHOD_NOT_ALLOWED is the result of TRACE calls (disabled by default in tomcat)
+    var allowedErrors = Arrays.asList(INTERNAL_SERVER_ERROR, METHOD_NOT_ALLOWED);
 
-    Set<HttpMethod> actAllowedMethods = testRestTemplate.optionsForAllow(SUBMISSION_URL.toString());
+    var actStatus = testRestTemplate
+        .exchange(SUBMISSION_URL, deniedHttpMethod, null, Void.class).getStatusCode();
 
-    assertEquals(expAllowedMethods, actAllowedMethods);
+    assertTrue(allowedErrors.contains(actStatus),
+        deniedHttpMethod + " resulted in unexpected status: " + actStatus);
+  }
+
+  private static Stream<Arguments> createDeniedHttpMethods() {
+    return Arrays.stream(HttpMethod.values())
+        .filter(method -> method != HttpMethod.POST)
+        .filter(method -> method != HttpMethod.PATCH) /* not supported by Rest Template */
+        .map(elem -> Arguments.of(elem));
   }
 
   @Test
@@ -114,7 +129,7 @@ public class SubmissionControllerTest {
         executeRequest(buildPayloadWithOneKey(), buildOkHeaders());
 
     verify(diagnosisKeyService, never()).saveDiagnosisKeys(any());
-    assertEquals(HttpStatus.FORBIDDEN, actResponse.getStatusCode());
+    assertEquals(FORBIDDEN, actResponse.getStatusCode());
   }
 
   @Test
@@ -125,7 +140,7 @@ public class SubmissionControllerTest {
     ResponseEntity<Void> actResponse = executeRequest(buildPayloadWithOneKey(), headers);
 
     verify(diagnosisKeyService, never()).saveDiagnosisKeys(any());
-    assertEquals(HttpStatus.OK, actResponse.getStatusCode());
+    assertEquals(OK, actResponse.getStatusCode());
   }
 
   private static HttpHeaders buildOkHeaders() {
