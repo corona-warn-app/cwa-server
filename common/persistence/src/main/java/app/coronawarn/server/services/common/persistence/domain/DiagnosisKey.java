@@ -69,7 +69,7 @@ public class DiagnosisKey {
    * (e.g. 144 for 24 hours).
    */
   public long getRollingPeriod() {
-    return rollingStartNumber;
+    return rollingPeriod;
   }
 
   /**
