@@ -32,7 +32,7 @@ public class ExposureConfigurationValidator {
    * @return the ValidationResult instance, containing information about possible errors.
    * @throws ValidationFailedException in case the validation could not be performed
    */
-  public ValidationResult validate() throws ValidationFailedException {
+  public ValidationResult validate() {
     this.errors = new ValidationResult();
 
     validateWeights();
@@ -49,24 +49,26 @@ public class ExposureConfigurationValidator {
     return errors;
   }
 
-  private void validateParameterRiskLevels(String name, Object o) throws IntrospectionException {
-    var bean = Introspector.getBeanInfo(o.getClass());
+  private void validateParameterRiskLevels(String name, Object object)
+      throws IntrospectionException {
+    var bean = Introspector.getBeanInfo(object.getClass());
 
     Arrays.stream(bean.getPropertyDescriptors())
-        .filter(pd -> pd.getPropertyType() == RiskLevel.class)
-        .forEach(pd -> validateScore(pd, o, name));
+        .filter(propertyDescriptor -> propertyDescriptor.getPropertyType() == RiskLevel.class)
+        .forEach(propertyDescriptor -> validateScore(propertyDescriptor, object, name));
   }
 
-  private void validateScore(PropertyDescriptor pd, Object o, String parameter)
-      throws ValidationFailedException {
+  private void validateScore(
+      PropertyDescriptor propertyDescriptor, Object object, String parameter) {
     try {
-      RiskLevel level = (RiskLevel) pd.getReadMethod().invoke(o);
+      RiskLevel level = (RiskLevel) propertyDescriptor.getReadMethod().invoke(object);
 
       if (level == RiskLevel.UNRECOGNIZED || level == RiskLevel.RISK_LEVEL_UNSPECIFIED) {
-        this.errors.add(new RiskLevelValidationError(parameter, pd.getName()));
+        this.errors.add(new RiskLevelValidationError(parameter, propertyDescriptor.getName()));
       }
     } catch (IllegalAccessException | InvocationTargetException e) {
-      throw new ValidationFailedException("Unable to read property " + pd.getName(), e);
+      throw new ValidationFailedException(
+          "Unable to read property " + propertyDescriptor.getName(), e);
     }
   }
 
