@@ -4,13 +4,16 @@ import java.util.Objects;
 
 public class WeightValidationError implements ValidationError {
 
-  private String parameter;
+  private final ErrorType errorType;
 
-  private double givenValue;
+  private final String parameter;
 
-  public WeightValidationError(String parameter, double givenValue) {
+  private final double givenValue;
+
+  public WeightValidationError(String parameter, double givenValue, ErrorType errorType) {
     this.parameter = parameter;
     this.givenValue = givenValue;
+    this.errorType = errorType;
   }
 
   public String getParameter() {
@@ -19,6 +22,10 @@ public class WeightValidationError implements ValidationError {
 
   public double getGivenValue() {
     return givenValue;
+  }
+
+  public ErrorType getErrorType() {
+    return errorType;
   }
 
   @Override
@@ -31,19 +38,26 @@ public class WeightValidationError implements ValidationError {
     }
     WeightValidationError that = (WeightValidationError) o;
     return Double.compare(that.getGivenValue(), getGivenValue()) == 0 &&
+        getErrorType() == that.getErrorType() &&
         Objects.equals(getParameter(), that.getParameter());
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(getParameter(), getGivenValue());
+    return Objects.hash(getErrorType(), getParameter(), getGivenValue());
   }
 
   @Override
   public String toString() {
     return "WeightValidationError{" +
-        "parameter='" + parameter + '\'' +
+        "errorType=" + errorType +
+        ", parameter='" + parameter + '\'' +
         ", givenValue=" + givenValue +
         '}';
+  }
+
+  public enum ErrorType {
+    OUT_OF_RANGE,
+    TOO_MANY_DECIMALS
   }
 }

@@ -2,6 +2,9 @@ package app.coronawarn.server.services.distribution.parameters.validation;
 
 import java.util.Objects;
 
+/**
+ * Defines a validation errors for risk levels, used by the parameter scores.
+ */
 public class RiskLevelValidationError implements ValidationError {
 
   private String parameter;

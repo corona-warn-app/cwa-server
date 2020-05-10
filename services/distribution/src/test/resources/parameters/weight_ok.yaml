@@ -1,12 +1,9 @@
-#minimumRiskScore: 4
-
-transmission_weight: 500
-duration_weight: 50
-#daysSinceLastExposureWeight: 20
-attenuation_weight: 31.13
+transmission_weight: 100
+duration_weight: 47.211
+attenuation_weight: 0.001
 
 transmission:
-  app_defined_1: -1
+  app_defined_1: 1
   app_defined_2: 2
   app_defined_3: 3
   app_defined_4: 4
@@ -43,4 +40,4 @@ attenuation:
   gt_27_le_33_dbm: 5
   gt_15_le_27_dbm: 6
   gt_10_le_15_dbm: 7
-  #lt_10_dbm: 8
+  lt_10_dbm: 8

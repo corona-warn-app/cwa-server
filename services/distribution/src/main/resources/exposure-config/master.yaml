@@ -1,13 +1,28 @@
-transmission_weight: 100
-duration_weight: 50
-attenuation_weight: 80
+# This is the Exposure Config master file which defines the risk parameters for the mobile clients
+# Change this file with caution.
+#
+# Weights must be in range of 0.001 to 100
+# Parameter Scores must be in range of 1 to 8.
+#
+# Further documentation:
+# https://developer.apple.com/documentation/exposurenotification/enexposureconfiguration
+#
 
+# Weight Section
+
+transmission_weight: 50
+duration_weight: 50
+attenuation_weight: 50
+#minimumRiskScore: 4 # (missing)
+#daysSinceLastExposureWeight: 20 (missing)
+
+# Parameters Section
 
 transmission:
-  app_defined_1: -2 # not ok, negative
-  app_defined_2: 0 # not ok, unspecified
-  #app_defined_3: 3 # not ok (missing -> unspecified)
-  app_defined_4: 5
+  app_defined_1: 1
+  app_defined_2: 2
+  app_defined_3: 3
+  app_defined_4: 4
   app_defined_5: 5
   app_defined_6: 6
   app_defined_7: 7

@@ -1,13 +1,12 @@
-transmission_weight: 100
-duration_weight: 50
-attenuation_weight: 80
-
+transmission_weight: 10.001
+duration_weight: 0.001
+  attenuation_weight: 100 # broken syntax
 
 transmission:
-  app_defined_1: -2 # not ok, negative
-  app_defined_2: 0 # not ok, unspecified
-  #app_defined_3: 3 # not ok (missing -> unspecified)
-  app_defined_4: 5
+    app_defined_1: 2 # wrong syntax, indent too high
+  app_defined_2: 2
+  app_defined_3: 3
+  app_defined_4: 4
   app_defined_5: 5
   app_defined_6: 6
   app_defined_7: 7
