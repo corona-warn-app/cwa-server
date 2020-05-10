@@ -23,17 +23,17 @@ public class DiagnosisKeyBuilder implements Builder, RollingStartNumberBuilder,
     return this;
   }
 
-  public RollingPeriodBuilder rollingStartNumber(long rollingStartNumber) {
+  public RollingPeriodBuilder withRollingStartNumber(long rollingStartNumber) {
     this.rollingStartNumber = rollingStartNumber;
     return this;
   }
 
-  public TransmissionRiskLevelBuilder rollingPeriod(long rollingPeriod) {
+  public TransmissionRiskLevelBuilder withRollingPeriod(long rollingPeriod) {
     this.rollingPeriod = rollingPeriod;
     return this;
   }
 
-  public FinalBuilder transmissionRiskLevel(int transmissionRiskLevel) {
+  public FinalBuilder withTransmissionRiskLevel(int transmissionRiskLevel) {
     this.transmissionRiskLevel = transmissionRiskLevel;
     return this;
   }
@@ -74,7 +74,7 @@ interface RollingStartNumberBuilder {
    *                           startTimeOfKeySinceEpochInSecs / (60 * 10).
    * @return this Builder instance.
    */
-  RollingPeriodBuilder rollingStartNumber(long rollingStartNumber);
+  RollingPeriodBuilder withRollingStartNumber(long rollingStartNumber);
 }
 
 interface RollingPeriodBuilder {
@@ -84,7 +84,7 @@ interface RollingPeriodBuilder {
    *                      of 10 minutes (e.g. 144 for 24 hours).
    * @return this Builder instance.
    */
-  TransmissionRiskLevelBuilder rollingPeriod(long rollingPeriod);
+  TransmissionRiskLevelBuilder withRollingPeriod(long rollingPeriod);
 }
 
 interface TransmissionRiskLevelBuilder {
@@ -94,7 +94,7 @@ interface TransmissionRiskLevelBuilder {
    *                              from.
    * @return this Builder instance.
    */
-  FinalBuilder transmissionRiskLevel(int transmissionRiskLevel);
+  FinalBuilder withTransmissionRiskLevel(int transmissionRiskLevel);
 }
 
 interface FinalBuilder {

@@ -13,7 +13,6 @@ public class TanVerifier {
    * @return {@literal true} if the specified TAN is valid, {@literal false} otherwise.
    */
   public boolean verifyTan(String tan) {
-    // TODO implement
     return true;
   }
 }

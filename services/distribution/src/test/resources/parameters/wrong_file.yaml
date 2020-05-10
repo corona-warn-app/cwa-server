@@ -1,0 +1,20 @@
+ID: com.acme.mta.sample
+version: 1.0.1
+modules:
+  - name: pricing-ui
+    type: nodejs
+    path: ./ui
+    requires:
+      - name: thedatabase
+
+  - name: pricing-backend
+    type: java
+    path: ./backend
+    provides:
+      - name: price_opt
+        properties:
+          protocol: http
+          uri: myhost.mydomain
+resources:
+  - name: thedatabase
+    type: com.sap.xs.hdi-container

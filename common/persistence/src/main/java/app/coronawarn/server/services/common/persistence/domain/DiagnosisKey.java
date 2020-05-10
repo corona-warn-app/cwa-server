@@ -22,7 +22,6 @@ public class DiagnosisKey {
   private long rollingStartNumber;
   private long rollingPeriod;
   private int transmissionRiskLevel;
-  //TODO add creation date
 
   /**
    * Should be called by builders.
@@ -69,7 +68,7 @@ public class DiagnosisKey {
    * (e.g. 144 for 24 hours).
    */
   public long getRollingPeriod() {
-    return rollingStartNumber;
+    return rollingPeriod;
   }
 
   /**
@@ -88,10 +87,10 @@ public class DiagnosisKey {
       return false;
     }
     DiagnosisKey that = (DiagnosisKey) o;
-    return id == that.id &&
-        rollingStartNumber == that.rollingStartNumber &&
+    return rollingStartNumber == that.rollingStartNumber &&
         rollingPeriod == that.rollingPeriod &&
         transmissionRiskLevel == that.transmissionRiskLevel &&
+        Objects.equals(id, that.id) &&
         Arrays.equals(keyData, that.keyData);
   }
 
