@@ -105,8 +105,7 @@ public class IndexDirectoryImpl<T> extends DirectoryImpl implements Directory,
   }
 
   private Directory makeSubDirectory(T index) {
-    Directory subDirectory = new DirectoryImpl(
-        this.indexFormatter.apply(index).toString());
+    Directory subDirectory = new DirectoryImpl(this.indexFormatter.apply(index).toString());
     this.addDirectory(subDirectory);
     return subDirectory;
   }

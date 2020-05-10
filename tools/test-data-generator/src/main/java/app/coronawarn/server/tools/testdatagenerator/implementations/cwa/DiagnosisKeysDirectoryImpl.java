@@ -17,7 +17,8 @@ public class DiagnosisKeysDirectoryImpl extends DirectoryImpl {
     super("diagnosis-keys");
     IndexDirectoryImpl<String> country = new IndexDirectoryImpl<>("country", __ -> List.of(region));
     country.addDirectoryToAll(__ -> new DateAggregatingDecorator(new IndexingDecorator<>(
-        new DateDirectoryImpl(startDate, totalHours, exposuresPerHour, formatter, crypto, random)), crypto)
+        new DateDirectoryImpl(startDate, totalHours, exposuresPerHour, formatter, crypto, random)),
+        crypto)
     );
     this.addDirectory(new IndexingDecorator<>(country));
   }

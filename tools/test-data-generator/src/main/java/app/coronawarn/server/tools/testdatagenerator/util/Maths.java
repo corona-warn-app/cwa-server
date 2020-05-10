@@ -11,11 +11,7 @@ import org.apache.commons.math3.random.RandomGenerator;
 public class Maths {
 
   public static int getRandomBetween(int minIncluding, int maxIncluding, RandomGenerator random) {
-    return Math.toIntExact(getRandomBetween(
-        (long) minIncluding,
-        maxIncluding,
-        random
-    ));
+    return Math.toIntExact(getRandomBetween((long) minIncluding, maxIncluding, random));
   }
 
   public static long getRandomBetween(long minIncluding, long maxIncluding,
@@ -33,7 +29,7 @@ public class Maths {
    * == 2);}.
    */
   public static int getNumberOfDays(int hours) {
-    return -Math.floorDiv(-hours, 24);
+    return ceilDiv(hours, 24);
   }
 
   /**

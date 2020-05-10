@@ -65,14 +65,13 @@ class HourDirectoryImpl extends IndexDirectoryImpl<LocalDateTime> {
       LocalDateTime currentHour, String region, PoissonDistribution poisson,
       RandomGenerator random) {
     return FileBucket.newBuilder()
-        .addAllFiles(
-            generateFiles(startDate, totalHours, currentHour, region, poisson, random))
+        .addAllFiles(generateFiles(startDate, totalHours, currentHour, region, poisson, random))
         .build();
   }
 
-  private static List<File> generateFiles(
-      LocalDate startDate, int totalHours, LocalDateTime currentHour, String region,
-      PoissonDistribution poisson, RandomGenerator random) {
+  private static List<File> generateFiles(LocalDate startDate, int totalHours,
+      LocalDateTime currentHour, String region, PoissonDistribution poisson,
+      RandomGenerator random) {
     Instant startTimestamp = Instant.from(currentHour.atOffset(ZoneOffset.UTC));
     Instant endTimestamp = Instant.from(currentHour.atOffset(ZoneOffset.UTC).plusHours(1));
     int numExposures = poisson.sample();
@@ -88,8 +87,7 @@ class HourDirectoryImpl extends IndexDirectoryImpl<LocalDateTime> {
             .setRollingPeriod(generateRollingPeriod())
             .setTransmissionRiskLevel(generateRiskLevel(random).getNumber())
             .setKeyData(ByteString.copyFrom(generateDiagnosisKeyBytes(random)))
-            .build()
-        )
+            .build())
         .collect(Collectors.toList());
   }
 
@@ -102,12 +100,10 @@ class HourDirectoryImpl extends IndexDirectoryImpl<LocalDateTime> {
     Instant randomTimestamp = Instant.ofEpochMilli(Maths.getRandomBetween(
         startDateTime.toInstant(ZoneOffset.UTC).toEpochMilli(),
         startDateTime.plusHours(totalHours).toInstant(ZoneOffset.UTC).toEpochMilli(),
-        random
-    ));
+        random));
     return Math.toIntExact(Math.floorDiv(
         randomTimestamp.toEpochMilli(),
-        TimeUnit.MINUTES.toMillis(10)
-    ));
+        TimeUnit.MINUTES.toMillis(10)));
   }
 
   // Number of 10 minute intervals that a key was active for.
@@ -117,13 +113,8 @@ class HourDirectoryImpl extends IndexDirectoryImpl<LocalDateTime> {
   }
 
   private static RiskLevel generateRiskLevel(RandomGenerator random) {
-    return RiskLevel.forNumber(
-        Maths.getRandomBetween(
-            RiskLevel.RISK_LEVEL_LOWEST_VALUE,
-            RiskLevel.RISK_LEVEL_HIGHEST_VALUE,
-            random
-        )
-    );
+    return RiskLevel.forNumber(Maths.getRandomBetween(
+        RiskLevel.RISK_LEVEL_LOWEST_VALUE, RiskLevel.RISK_LEVEL_HIGHEST_VALUE, random));
   }
 
   private static byte[] generateDiagnosisKeyBytes(RandomGenerator random) {

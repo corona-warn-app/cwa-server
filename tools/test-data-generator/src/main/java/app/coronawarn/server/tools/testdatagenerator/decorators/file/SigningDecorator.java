@@ -4,14 +4,9 @@ import app.coronawarn.server.common.protocols.internal.SignedPayload;
 import app.coronawarn.server.tools.testdatagenerator.interfaces.File;
 import app.coronawarn.server.tools.testdatagenerator.util.Crypto;
 import com.google.protobuf.ByteString;
-import java.security.InvalidKeyException;
-import java.security.NoSuchAlgorithmException;
-import java.security.NoSuchProviderException;
 import java.security.PrivateKey;
 import java.security.Signature;
-import java.security.SignatureException;
 import java.security.cert.Certificate;
-import java.security.cert.CertificateEncodingException;
 import java.util.Stack;
 
 /**
@@ -30,25 +25,24 @@ public class SigningDecorator extends FileDecorator {
   @Override
   public void prepare(Stack<Object> indices) {
     System.out.println("Signing \t\t\t" + this.getFileOnDisk().getPath());
-    try {
-      SignedPayload signedPayload = sign(this.getBytes(), crypto.getPrivateKey(),
-          crypto.getCertificate());
-      this.setBytes(signedPayload.toByteArray());
-    } catch (Exception e) {
-      throw new RuntimeException(e);
-    }
+    SignedPayload signedPayload = sign(this.getBytes(), crypto.getPrivateKey(),
+        crypto.getCertificate());
+    this.setBytes(signedPayload.toByteArray());
     super.prepare(indices);
   }
 
-  public static SignedPayload sign(byte[] payload, PrivateKey privateKey, Certificate certificate)
-      throws CertificateEncodingException, InvalidKeyException, NoSuchProviderException, NoSuchAlgorithmException, SignatureException {
-    Signature payloadSignature = Signature.getInstance("Ed25519", "BC");
-    payloadSignature.initSign(privateKey);
-    payloadSignature.update(payload);
-    return SignedPayload.newBuilder()
-        .setCertificateChain(ByteString.copyFrom(certificate.getEncoded()))
-        .setSignature(ByteString.copyFrom(payloadSignature.sign()))
-        .setPayload(ByteString.copyFrom(payload))
-        .build();
+  public static SignedPayload sign(byte[] payload, PrivateKey privateKey, Certificate certificate) {
+    try {
+      Signature payloadSignature = Signature.getInstance("Ed25519", "BC");
+      payloadSignature.initSign(privateKey);
+      payloadSignature.update(payload);
+      return SignedPayload.newBuilder()
+          .setCertificateChain(ByteString.copyFrom(certificate.getEncoded()))
+          .setSignature(ByteString.copyFrom(payloadSignature.sign()))
+          .setPayload(ByteString.copyFrom(payload))
+          .build();
+    } catch (Exception e) {
+      throw new RuntimeException(e);
+    }
   }
 }

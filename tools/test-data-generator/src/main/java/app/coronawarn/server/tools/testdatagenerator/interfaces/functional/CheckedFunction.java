@@ -12,9 +12,9 @@ public interface CheckedFunction<T, R, E extends Exception> {
 
   static <T, R> Function<T, R> uncheckedFunction(
       CheckedFunction<T, R, ? extends Exception> function) {
-    return t -> {
+    return input -> {
       try {
-        return function.apply(t);
+        return function.apply(input);
       } catch (Exception e) {
         throw new RuntimeException(e);
       }

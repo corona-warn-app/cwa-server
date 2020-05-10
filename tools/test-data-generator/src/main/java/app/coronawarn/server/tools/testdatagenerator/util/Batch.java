@@ -26,12 +26,11 @@ public class Batch {
     // calculate the file size that any given serialization will produce ahead of time. So, in order
     // to know into how many batches we will need to split the keys, we simply "attempt" to
     // serialize all keys into a single file and measure its size. If we find that the resulting
-    // file goes above the file size limit, we simply partition the keys into N partitions of
-    // approximately equal size, where N = (first file size / file size limit) + 1. We add one
+    // file goes above the file size limit, we simply partition the keys into N + 1 partitions of
+    // approximately equal size, where N = (first file size / file size limit). We add one to N
     // for good measure, to avoid edge cases, rounding errors and varying file sizes after
     // serialization.
-    File singleFile = aggregateKeysIntoBatches(
-        keys, 1, startTimestamp, endTimeStamp, region)
+    File singleFile = aggregateKeysIntoBatches(keys, 1, startTimestamp, endTimeStamp, region)
         .stream()
         .findFirst()
         .orElseThrow();
@@ -81,10 +80,8 @@ public class Batch {
   public static <T> List<List<T>> partitionList(List<T> list, int numPartitions) {
     int partitionSize = Maths.ceilDiv(list.size(), numPartitions);
     return IntStream.range(0, numPartitions)
-        .mapToObj(currentPartition -> list.subList(
-            partitionSize * currentPartition,
-            Math.min(currentPartition * partitionSize + partitionSize, list.size()))
-        )
+        .mapToObj(currentPartition -> list.subList(partitionSize * currentPartition,
+            Math.min(currentPartition * partitionSize + partitionSize, list.size())))
         .collect(Collectors.toList());
   }
 }
