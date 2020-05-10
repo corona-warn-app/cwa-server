@@ -22,7 +22,7 @@ duration:
   gt_25_le_30_min: 7
   gt_30_min: 8
 
-daysSinceLastExposure:
+days_since_last_exposure:
   ge_14_days: 1
   ge_12_lt_14_days: 2
   ge_10_lt_12_days: 3
