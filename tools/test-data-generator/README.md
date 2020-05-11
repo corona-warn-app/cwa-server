@@ -7,13 +7,12 @@ Signatures are calculated using Ed25519 elliptic curve.
 `java -jar TestDataGenerator.jar`
 ## Help
 ```
-Usage: testDataGenerator [-hV] (generate | verify)
-Generates and verifies example exposure keys.
+Usage: testDataGenerator [-hV] (generate)
+Generates example exposure keys.
   -h, --help      Show this help message and exit.
   -V, --version   Print version information and exit.
 Commands:
   generate  Generate test data
-  verify    Verify test data
 ```
 ### Generate command
 ```
@@ -83,20 +82,6 @@ Generate test data according to the API spec.
                             Example: 2020-05-01
   -V, --version             Print version information and exit.
 ```
-### Verify command
-```
-Usage: testDataGenerator verify [-hV] --certificate=<certificate_file>
-                                --in=<in_directory>
-Verify test data
-      --certificate=<certificate_file>
-                            The Ed25519 certificate chain to use for
-                              verification. Supported Format: X.509
-  -h, --help                Show this help message and exit.
-      --in=<in_directory>   Directory of files to be verified.
-  -V, --version             Print version information and exit.
-```
 ## Examples
 ### Generate test data
-`java -jar TestDataGenerator.jar generate --hours 181 --start_date 2020-05-01 --avg_exposures_per_hour 300 --openapi ../../services/distribution/api_v1.json --out=./out --private_key=./certificates/client/private.pem --certificate=./certificates/chain/certificate.crt --seed 123456`
-### Verify test data
-`java -jar TestDataGenerator.jar verify --in=./out --certificate=certificates/chain/certificate.crt`
+`java -jar TestDataGenerator.jar generate --hours 330 --start_date 2020-04-27 --avg_exposures_per_hour 1000 --openapi ../../services/distribution/api_v1.json --out=./out --private_key=./certificates/client/private.pem --certificate=./certificates/chain/certificate.crt --seed 123456`

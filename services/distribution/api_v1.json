@@ -213,7 +213,7 @@
                 ],
                 "responses": {
                     "200": {
-                        "description": "All diagnosis keys for that day.",
+                        "description": "All diagnosis keys for a specific date.",
                         "content": {
                             "application/octet-stream": {
                                 "schema": {
@@ -228,8 +228,8 @@
         },
         "/version/{version}/diagnosis-keys/country/{country}/date/{date}/hour": {
             "get": {
-                "summary": "Get all hours of a day for which diagnosis keys are available.",
-                "description": "Gives a list of all hours (0-23) of a specific day (date) for which diagnosis keys are available for a specific country. For days in the past, a list containing the numbers/hours 0-23 will be returned. For the current day, a list containing the respective numbers/hours for which data is available (e.g. 0-17). If the day is outside of the 14-day window, or in the future, an HTTP error code will be returned..",
+                "summary": "Get all hours of a specific date for which diagnosis keys are available.",
+                "description": "Gives a list of all hours (0-23) of a specific date for which diagnosis keys are available for a specific country. For the current date, a list containing the respective numbers/hours for which data is available (e.g. 0-17) will be returned. If the date is outside of the 14-day window, or in the future, an HTTP error code will be returned..",
                 "tags": [
                     "Diagnosis keys"
                 ],
@@ -289,7 +289,7 @@
         "/version/{version}/diagnosis-keys/country/{country}/date/{date}/hour/{hour}": {
             "get": {
                 "summary": "Get all diagnosis keys for a specific hour on a specific date.",
-                "description": "Gives all diagnosis keys for a specific country on a specific day within a specific hour. If there are no diagnosis keys available for the hour (but the day is still within the 14-day window), a signed payload with an empty list of diagnosis keys will be returned. If the day is outside of the 14-day window, or in the future, or an hour > 23 was requested, an HTTP error code will be returned..",
+                "description": "Gives all diagnosis keys for a specific country on a specific date within a specific hour. If there are no diagnosis keys available for the hour (but the date is still within the 14-day window), a signed payload with an empty list of diagnosis keys will be returned. If the date is outside of the 14-day window, or in the future, or an hour > 23 was requested, an HTTP error code will be returned..",
                 "tags": [
                     "Diagnosis keys"
                 ],

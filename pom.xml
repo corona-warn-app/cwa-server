@@ -6,6 +6,7 @@
 	<modules>
 		<module>common</module>
 		<module>services</module>
+		<module>tools</module>
 	</modules>
 	<groupId>app.coronawarn</groupId>
 	<artifactId>server</artifactId>
