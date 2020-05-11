@@ -31,8 +31,7 @@ public class ExposureConfigurationValidatorTest {
   @Test
   public void emptyFileThrowsLoadFailure() {
     assertThrows(UnableToLoadFileException.class, () ->
-        new ExposureConfigurationProvider().readFile("parameters/empty.yaml")
-    );
+        new ExposureConfigurationProvider().readFile("parameters/empty.yaml"));
   }
 
   private ValidationResult getResultForTest(TestWithExpectedResult test)

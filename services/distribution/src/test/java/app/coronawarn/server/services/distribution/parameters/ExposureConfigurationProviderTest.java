@@ -18,21 +18,18 @@ public class ExposureConfigurationProviderTest {
   @Test
   public void wrongFile() {
     assertThrows(UnableToLoadFileException.class, () ->
-        new ExposureConfigurationProvider().readFile("parameters/wrong_file.yaml")
-    );
+        new ExposureConfigurationProvider().readFile("parameters/wrong_file.yaml"));
   }
 
   @Test
   public void brokenSyntax() {
     assertThrows(UnableToLoadFileException.class, () ->
-        new ExposureConfigurationProvider().readFile("parameters/broken_syntax.yaml")
-    );
+        new ExposureConfigurationProvider().readFile("parameters/broken_syntax.yaml"));
   }
 
   @Test
   public void doesNotExist() {
     assertThrows(UnableToLoadFileException.class, () ->
-        new ExposureConfigurationProvider().readFile("file_does_not_exist_anywhere.yaml")
-    );
+        new ExposureConfigurationProvider().readFile("file_does_not_exist_anywhere.yaml"));
   }
 }
