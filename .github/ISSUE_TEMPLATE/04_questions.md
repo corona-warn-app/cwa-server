@@ -1,6 +1,7 @@
 ---
 name: "\U00002753 Questions?"
 about: If you have *specific* questions about pieces of the code or documentation for this component, please post them here.
+labels: question
 
 ---
 <!--

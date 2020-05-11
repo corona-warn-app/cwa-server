@@ -1,6 +1,7 @@
 ---
-name: "\U0001F381 Enhancement Request"
+name: "\u23F1\uFE0F Enhancement Request"
 about: Do you have an idea for an enhancement?
+labels: enhancement
 
 ---
 <!--

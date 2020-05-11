@@ -8,7 +8,7 @@
 		<module>services</module>
 		<module>tools</module>
 	</modules>
-	<groupId>app.coronawarn</groupId>
+	<groupId>org.opencwa</groupId>
 	<artifactId>server</artifactId>
 	<version>0.0.1</version>
 	<name>server</name>
