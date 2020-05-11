@@ -1,11 +1,11 @@
-package app.coronawarn.server.services.distribution.parameters.validation;
+package app.coronawarn.server.services.distribution.exposure_configuration.validation;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-import app.coronawarn.server.services.distribution.parameters.ExposureConfigurationProvider;
-import app.coronawarn.server.services.distribution.parameters.UnableToLoadFileException;
-import app.coronawarn.server.services.distribution.parameters.validation.WeightValidationError.ErrorType;
+import app.coronawarn.server.services.distribution.exposure_configuration.ExposureConfigurationProvider;
+import app.coronawarn.server.services.distribution.exposure_configuration.UnableToLoadFileException;
+import app.coronawarn.server.services.distribution.exposure_configuration.validation.WeightValidationError.ErrorType;
 import java.util.stream.Stream;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;

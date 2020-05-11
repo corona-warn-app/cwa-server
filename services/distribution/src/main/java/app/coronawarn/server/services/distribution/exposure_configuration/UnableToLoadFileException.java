@@ -1,4 +1,4 @@
-package app.coronawarn.server.services.distribution.parameters;
+package app.coronawarn.server.services.distribution.exposure_configuration;
 
 /**
  * The file could not be loaded/parsed correctly.
