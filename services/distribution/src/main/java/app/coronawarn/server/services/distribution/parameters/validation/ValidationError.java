@@ -1,4 +1,4 @@
-package app.coronawarn.server.services.distribution.exposure_configuration.validation;
+package app.coronawarn.server.services.distribution.parameters.validation;
 
 /**
  * A validation error, found during the process of validating the Exposure Configuration. Can either

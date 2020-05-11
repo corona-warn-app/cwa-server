@@ -1,4 +1,4 @@
-package app.coronawarn.server.services.distribution.exposure_configuration.validation;
+package app.coronawarn.server.services.distribution.parameters.validation;
 
 /**
  * Definition of the spec according to Apple/Google:

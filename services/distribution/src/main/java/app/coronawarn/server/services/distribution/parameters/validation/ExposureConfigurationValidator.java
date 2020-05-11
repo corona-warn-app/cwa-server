@@ -1,8 +1,8 @@
-package app.coronawarn.server.services.distribution.exposure_configuration.validation;
+package app.coronawarn.server.services.distribution.parameters.validation;
 
 import app.coronawarn.server.common.protocols.internal.RiskLevel;
 import app.coronawarn.server.common.protocols.internal.RiskScoreParameters;
-import app.coronawarn.server.services.distribution.exposure_configuration.validation.WeightValidationError.ErrorType;
+import app.coronawarn.server.services.distribution.parameters.validation.WeightValidationError.ErrorType;
 import java.beans.IntrospectionException;
 import java.beans.Introspector;
 import java.beans.PropertyDescriptor;

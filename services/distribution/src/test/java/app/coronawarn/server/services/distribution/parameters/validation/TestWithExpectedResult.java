@@ -1,4 +1,4 @@
-package app.coronawarn.server.services.distribution.exposure_configuration.validation;
+package app.coronawarn.server.services.distribution.parameters.validation;
 
 public class TestWithExpectedResult {
 

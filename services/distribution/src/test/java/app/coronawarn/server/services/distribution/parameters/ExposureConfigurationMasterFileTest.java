@@ -1,9 +1,9 @@
-package app.coronawarn.server.services.distribution.exposure_configuration;
+package app.coronawarn.server.services.distribution.parameters;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-import app.coronawarn.server.services.distribution.exposure_configuration.validation.ExposureConfigurationValidator;
-import app.coronawarn.server.services.distribution.exposure_configuration.validation.ValidationResult;
+import app.coronawarn.server.services.distribution.parameters.validation.ExposureConfigurationValidator;
+import app.coronawarn.server.services.distribution.parameters.validation.ValidationResult;
 import org.junit.jupiter.api.Test;
 
 /**

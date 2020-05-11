@@ -1,7 +1,7 @@
-package app.coronawarn.server.services.distribution.exposure_configuration;
+package app.coronawarn.server.services.distribution.parameters;
 
 import app.coronawarn.server.common.protocols.internal.RiskScoreParameters;
-import app.coronawarn.server.services.distribution.exposure_configuration.parsing.YamlConstructorForProtoBuf;
+import app.coronawarn.server.services.distribution.parameters.parsing.YamlConstructorForProtoBuf;
 import java.io.InputStream;
 import org.yaml.snakeyaml.Yaml;
 import org.yaml.snakeyaml.error.YAMLException;
