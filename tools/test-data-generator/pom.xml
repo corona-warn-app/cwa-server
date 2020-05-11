@@ -3,20 +3,41 @@
   xmlns="http://maven.apache.org/POM/4.0.0"
   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 
-  <modelVersion>4.0.0</modelVersion>
-
-  <parent>
-    <artifactId>tools</artifactId>
-    <groupId>app.coronawarn.server</groupId>
-    <version>0.0.1</version>
-    <relativePath>../pom.xml</relativePath>
-  </parent>
-
-  <description>CWA TestDataGenerator</description>
-  <groupId>app.coronawarn.server.tools</groupId>
   <artifactId>test-data-generator</artifactId>
-  <name>TestDataGenerator</name>
-  <version>0.0.1</version>
+
+  <build>
+    <plugins>
+      <plugin>
+        <artifactId>maven-assembly-plugin</artifactId>
+        <configuration>
+          <appendAssemblyId>false</appendAssemblyId>
+          <archive>
+            <manifest>
+              <addClasspath>true</addClasspath>
+              <classpathPrefix>lib/</classpathPrefix>
+              <mainClass>app.coronawarn.server.tools.testdatagenerator.TestDataGeneratorCLI
+              </mainClass>
+            </manifest>
+          </archive>
+          <descriptorRefs>
+            <descriptorRef>jar-with-dependencies</descriptorRef>
+          </descriptorRefs>
+          <finalName>TestDataGenerator</finalName>
+          <outputDirectory>./</outputDirectory>
+        </configuration>
+        <executions>
+          <execution>
+            <goals>
+              <goal>single</goal>
+            </goals>
+            <phase>package</phase>
+          </execution>
+        </executions>
+        <groupId>org.apache.maven.plugins</groupId>
+        <version>3.3.0</version>
+      </plugin>
+    </plugins>
+  </build>
 
   <dependencies>
     <dependency>
@@ -40,43 +61,26 @@
       <version>2.6</version>
     </dependency>
     <dependency>
-      <groupId>com.googlecode.json-simple</groupId>
       <artifactId>json-simple</artifactId>
+      <groupId>com.googlecode.json-simple</groupId>
       <version>1.1.1</version>
     </dependency>
+    <dependency>
+      <artifactId>commons-math3</artifactId>
+      <groupId>org.apache.commons</groupId>
+      <version>3.2</version>
+    </dependency>
   </dependencies>
+  <groupId>app.coronawarn.server.tools</groupId>
+  <modelVersion>4.0.0</modelVersion>
 
-  <build>
-    <plugins>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-assembly-plugin</artifactId>
-        <version>3.3.0</version>
-        <executions>
-          <execution>
-            <phase>package</phase>
-            <goals>
-              <goal>single</goal>
-            </goals>
-          </execution>
-        </executions>
-        <configuration>
-          <outputDirectory>./</outputDirectory>
-          <archive>
-            <manifest>
-              <addClasspath>true</addClasspath>
-              <classpathPrefix>lib/</classpathPrefix>
-              <mainClass>app.coronawarn.server.tools.testdatagenerator.TestDataGeneratorCLI</mainClass>
-            </manifest>
-          </archive>
-          <descriptorRefs>
-            <descriptorRef>jar-with-dependencies</descriptorRef>
-          </descriptorRefs>
-          <finalName>TestDataGenerator</finalName>
-          <appendAssemblyId>false</appendAssemblyId>
-        </configuration>
-      </plugin>
-    </plugins>
-  </build>
+  <parent>
+    <artifactId>tools</artifactId>
+    <groupId>app.coronawarn.server</groupId>
+    <relativePath>../pom.xml</relativePath>
+    <version>0.0.1</version>
+  </parent>
+
+  <version>0.0.1</version>
 
 </project>
