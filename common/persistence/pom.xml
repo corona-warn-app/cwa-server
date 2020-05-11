@@ -9,7 +9,7 @@
   </parent>
   <modelVersion>4.0.0</modelVersion>
 
-  <groupId>app.coronawarn.server.common</groupId>
+  <groupId>org.opencwa</groupId>
   <artifactId>persistence</artifactId>
   <version>0.0.1</version>
 
@@ -23,7 +23,7 @@
 
   <dependencies>
     <dependency>
-      <groupId>app.coronawarn.server.common</groupId>
+      <groupId>org.opencwa</groupId>
       <artifactId>protocols</artifactId>
       <version>0.0.1</version>
     </dependency>

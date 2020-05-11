@@ -7,12 +7,11 @@
 
   <parent>
     <artifactId>server</artifactId>
-    <groupId>app.coronawarn</groupId>
+    <groupId>org.opencwa</groupId>
     <version>0.0.1</version>
     <relativePath>../pom.xml</relativePath>
   </parent>
 
-  <groupId>app.coronawarn.server</groupId>
   <artifactId>tools</artifactId>
   <version>0.0.1</version>
   <packaging>pom</packaging>
@@ -20,5 +19,4 @@
   <modules>
     <module>test-data-generator</module>
   </modules>
-
 </project>
