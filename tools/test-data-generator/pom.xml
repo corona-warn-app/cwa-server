@@ -42,7 +42,7 @@
   <dependencies>
     <dependency>
       <artifactId>protocols</artifactId>
-      <groupId>app.coronawarn.server.common</groupId>
+      <groupId>org.opencwa</groupId>
       <version>0.0.1</version>
     </dependency>
     <dependency>
@@ -71,12 +71,11 @@
       <version>3.2</version>
     </dependency>
   </dependencies>
-  <groupId>app.coronawarn.server.tools</groupId>
   <modelVersion>4.0.0</modelVersion>
 
   <parent>
     <artifactId>tools</artifactId>
-    <groupId>app.coronawarn.server</groupId>
+    <groupId>org.opencwa</groupId>
     <relativePath>../pom.xml</relativePath>
     <version>0.0.1</version>
   </parent>
