@@ -4,13 +4,12 @@
   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <parent>
     <artifactId>services</artifactId>
-    <groupId>app.coronawarn.server</groupId>
+    <groupId>org.opencwa</groupId>
     <version>0.0.1</version>
     <relativePath>../pom.xml</relativePath>
   </parent>
   <modelVersion>4.0.0</modelVersion>
 
-  <groupId>app.coronawarn.server.services</groupId>
   <artifactId>distribution</artifactId>
   <version>0.0.1</version>
 </project>
