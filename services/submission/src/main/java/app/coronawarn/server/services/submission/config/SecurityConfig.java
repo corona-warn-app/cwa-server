@@ -4,6 +4,7 @@ import app.coronawarn.server.services.submission.controller.SubmissionController
 import java.util.Arrays;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Profile;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -13,6 +14,7 @@ import org.springframework.security.web.firewall.StrictHttpFirewall;
 
 @Configuration
 @EnableWebSecurity
+@Profile("!swagger")
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
   private final static String SUBMISSION_ROUTE =
