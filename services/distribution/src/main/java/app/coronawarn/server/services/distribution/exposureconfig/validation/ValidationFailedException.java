@@ -1,4 +1,4 @@
-package app.coronawarn.server.services.distribution.parameters.validation;
+package app.coronawarn.server.services.distribution.exposureconfig.validation;
 
 /**
  * The validation could not be executed. Find more information about the root cause in the cause

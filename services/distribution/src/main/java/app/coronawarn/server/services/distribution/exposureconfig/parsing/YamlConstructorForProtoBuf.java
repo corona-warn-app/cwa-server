@@ -1,4 +1,4 @@
-package app.coronawarn.server.services.distribution.parameters.parsing;
+package app.coronawarn.server.services.distribution.exposureconfig.parsing;
 
 import java.util.Arrays;
 import org.yaml.snakeyaml.constructor.Constructor;
