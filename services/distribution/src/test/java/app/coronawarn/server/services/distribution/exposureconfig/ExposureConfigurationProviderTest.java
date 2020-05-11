@@ -1,4 +1,4 @@
-package app.coronawarn.server.services.distribution.parameters;
+package app.coronawarn.server.services.distribution.exposureconfig;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
