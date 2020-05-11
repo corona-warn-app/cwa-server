@@ -18,7 +18,7 @@ public class DiagnosisKeyBuilder implements Builder, RollingStartNumberBuilder,
   DiagnosisKeyBuilder() {
   }
 
-  public RollingStartNumberBuilder keyData(byte[] keyData) {
+  public RollingStartNumberBuilder withKeyData(byte[] keyData) {
     this.keyData = keyData;
     return this;
   }
@@ -58,7 +58,7 @@ interface Builder {
    * @param keyData generated diagnosis key.
    * @return this Builder instance.
    */
-  RollingStartNumberBuilder keyData(byte[] keyData);
+  RollingStartNumberBuilder withKeyData(byte[] keyData);
 
   /**
    * @param protoBufObject ProtocolBuffer object associated with the temporary exposure key.

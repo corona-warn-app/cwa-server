@@ -34,7 +34,7 @@ public class DiagnosisKeyBuilderTest {
   @Test
   public void buildSuccessively() {
     DiagnosisKey actDiagnosisKey = DiagnosisKey.builder()
-        .keyData(this.expKeyData)
+        .withKeyData(this.expKeyData)
         .withRollingStartNumber(this.expRollingStartNumber)
         .withRollingPeriod(this.expRollingPeriod)
         .withTransmissionRiskLevel(this.expTransmissionRiskLevel).build();
