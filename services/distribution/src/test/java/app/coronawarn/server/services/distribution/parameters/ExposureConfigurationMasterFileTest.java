@@ -1,4 +1,4 @@
-package app.coronawarn.server.services.distribution;
+package app.coronawarn.server.services.distribution.parameters;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
