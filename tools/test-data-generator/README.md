@@ -45,7 +45,7 @@ Generate test data according to the API spec.
                               --start_date. A daily digest file will be
                               generated for every complete 24h chunk. Leftover
                               hours (n mod 24) will be generated into the
-                              'hour' directoryImpl of the last day, but no daily
+                              'hour' directory of the last day, but no daily
                               digest file will be generated.
 
                             Example: A value of 181 will result in the
@@ -56,7 +56,7 @@ Generate test data according to the API spec.
       --openapi=<openapi>   Optional: An OpenAPI definition file to include.
 
                             Example: ../../services/distribution/api_v1.json
-      --out=<out_directory> Target directoryImpl (will be wiped before data
+      --out=<out_directory> Target directory (will be wiped before data
                               generation).
                             Will contain directories that match the REST API
                               definition of the Distribution service.
@@ -84,4 +84,4 @@ Generate test data according to the API spec.
 ```
 ## Examples
 ### Generate test data
-`java -jar TestDataGenerator.jar generate --hours 330 --start_date 2020-05-01 --avg_exposures_per_hour 1000 --openapi ../../services/distribution/api_v1.json --out=./out --private_key=./certificates/client/private.pem --certificate=./certificates/chain/certificate.crt --seed 123456`
+`java -jar TestDataGenerator.jar generate --hours 330 --start_date 2020-04-27 --avg_exposures_per_hour 1000 --openapi ../../services/distribution/api_v1.json --out=./out --private_key=./certificates/client/private.pem --certificate=./certificates/chain/certificate.crt --seed 123456`
