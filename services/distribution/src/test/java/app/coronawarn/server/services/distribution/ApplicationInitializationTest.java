@@ -3,19 +3,23 @@ package app.coronawarn.server.services.distribution;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import app.coronawarn.server.common.persistence.service.DiagnosisKeyService;
+import app.coronawarn.server.services.distribution.crypto.CryptoProvider;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
-//@SpringBootTest
+@SpringBootTest
 public class ApplicationInitializationTest {
 
   @Autowired
   private DiagnosisKeyService diagnosisKeyService;
 
-//  @Test
-//  public void jpaComponentsInjected() {
-//    Security.addProvider(new BouncyCastleProvider());
-//    assertNotNull(diagnosisKeyService);
-//  }
+  @Autowired
+  private CryptoProvider cryptoProvider;
+
+  @Test
+  public void beansInitialized() {
+    assertNotNull(diagnosisKeyService);
+    assertNotNull(cryptoProvider);
+  }
 }

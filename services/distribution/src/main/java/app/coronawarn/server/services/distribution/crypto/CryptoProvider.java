@@ -5,14 +5,15 @@ import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.URISyntaxException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.security.PrivateKey;
+import java.security.Security;
 import java.security.cert.Certificate;
 import java.security.cert.CertificateException;
 import java.security.cert.CertificateFactory;
 import org.bouncycastle.asn1.pkcs.PrivateKeyInfo;
+import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.bouncycastle.openssl.PEMParser;
 import org.bouncycastle.openssl.jcajce.JcaPEMKeyConverter;
 import org.springframework.stereotype.Component;
@@ -28,6 +29,7 @@ public class CryptoProvider {
   private final Certificate certificate;
 
   public CryptoProvider() throws IOException, CertificateException {
+    Security.addProvider(new BouncyCastleProvider());
     this.privateKey = getPrivateKeyFromFile(ResourceUtils.getFile(PRIVATE_KEY_FILE_PATH));
     this.certificate = getCertificateFromFile(ResourceUtils.getFile(CERTIFICATE_FILE_PATH));
   }
