@@ -30,14 +30,14 @@ public class WritableTest {
   }
 
   @Test
-  public void checkName() {
+  public void checkGetName() {
     String name = "Test";
     Writable writable = new WritableTestImpl(name);
     assertEquals(name, writable.getName());
   }
 
   @Test
-  public void checkParent() {
+  public void checkGetAndSetParent() {
     Directory parent = new DirectoryImpl("Parent");
     Writable child = new WritableTestImpl("Child");
     child.setParent(parent);
@@ -45,14 +45,14 @@ public class WritableTest {
   }
 
   @Test
-  public void checkFileOnDiskForRoot() {
+  public void checkGetFileOnDiskForRoot() {
     File file = new File("Root");
     Directory parent = new DirectoryImpl(file);
     assertEquals(file, parent.getFileOnDisk());
   }
 
   @Test
-  public void checkFileOnDiskRelativeToRoot() {
+  public void checkGetFileOnDiskRelativeToRoot() {
     File file = new File("Root");
     Directory parent = new DirectoryImpl(file);
     Writable child = new WritableTestImpl("Child");
@@ -61,7 +61,7 @@ public class WritableTest {
   }
 
   @Test
-  public void checkFileOnDiskExceptionIsOrphan() {
+  public void checkGetFileOnDiskThrowsIfNoParent() {
     Directory orphan = new DirectoryImpl("Orphan");
     assertThrows(NullPointerException.class, orphan::getFileOnDisk);
   }

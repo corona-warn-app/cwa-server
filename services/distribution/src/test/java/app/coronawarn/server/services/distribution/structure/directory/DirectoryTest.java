@@ -1,25 +1,34 @@
 package app.coronawarn.server.services.distribution.structure.directory;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.verify;
 
 import app.coronawarn.server.services.distribution.structure.file.File;
 import app.coronawarn.server.services.distribution.structure.file.FileImpl;
+import java.io.IOException;
 import java.util.List;
 import java.util.Stack;
+import org.junit.Rule;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.rules.TemporaryFolder;
 
 public class DirectoryTest {
 
-  private java.io.File outputDir = new java.io.File("/test");
+  private java.io.File outputDir;
   private Directory parentDirectory;
   private Directory childDirectory;
   private File childFile;
 
+  @Rule
+  private TemporaryFolder outputFolder = new TemporaryFolder();
+
   @BeforeEach
-  public void setup() {
+  public void setup() throws IOException {
+    outputFolder.create();
+    outputDir = outputFolder.newFolder();
     parentDirectory = new DirectoryImpl(outputDir);
     childDirectory = new DirectoryImpl("Child");
     childFile = new FileImpl("Child", new byte[0]);
@@ -69,6 +78,11 @@ public class DirectoryTest {
     parentDirectory.prepare(expectedStack);
 
     verify(spyChildDirectory).prepare(expectedStack);
+  }
+
+  @Test
+  public void checkWriteThrowsWithoutParent() {
+    assertThrows(NullPointerException.class, new DirectoryImpl("")::write);
   }
 
   @Test
