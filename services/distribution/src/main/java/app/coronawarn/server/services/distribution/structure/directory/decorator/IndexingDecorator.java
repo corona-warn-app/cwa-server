@@ -7,6 +7,8 @@ import java.util.List;
 import java.util.Stack;
 import java.util.stream.Collectors;
 import org.json.simple.JSONArray;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Writes a file called {@code "index"}, containing a JSON String of an array containing all
@@ -15,6 +17,7 @@ import org.json.simple.JSONArray;
  */
 public class IndexingDecorator<T> extends DirectoryDecorator {
 
+  private static final Logger logger = LoggerFactory.getLogger(IndexingDecorator.class);
   final IndexDirectory<T> directory;
 
   public IndexingDecorator(IndexDirectory<T> directory) {
@@ -24,7 +27,7 @@ public class IndexingDecorator<T> extends DirectoryDecorator {
 
   @Override
   public void prepare(Stack<Object> indices) {
-    System.out.println("Indexing \t\t\t" + this.getFileOnDisk().getPath());
+    logger.debug("Indexing {}", this.getFileOnDisk().getPath());
     List<T> index = this.directory.getIndex(indices);
     JSONArray array = new JSONArray();
     List<?> elements = index.stream()

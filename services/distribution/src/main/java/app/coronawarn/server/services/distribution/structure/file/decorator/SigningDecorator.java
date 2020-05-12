@@ -4,10 +4,18 @@ import app.coronawarn.server.common.protocols.internal.SignedPayload;
 import app.coronawarn.server.services.distribution.crypto.CryptoProvider;
 import app.coronawarn.server.services.distribution.structure.file.File;
 import com.google.protobuf.ByteString;
+import java.security.GeneralSecurityException;
+import java.security.InvalidKeyException;
+import java.security.NoSuchAlgorithmException;
+import java.security.NoSuchProviderException;
 import java.security.PrivateKey;
 import java.security.Signature;
+import java.security.SignatureException;
 import java.security.cert.Certificate;
+import java.security.cert.CertificateEncodingException;
 import java.util.Stack;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 /**
@@ -16,6 +24,7 @@ import org.springframework.beans.factory.annotation.Autowired;
  */
 public class SigningDecorator extends FileDecorator {
 
+  private static final Logger logger = LoggerFactory.getLogger(SigningDecorator.class);
   private final CryptoProvider cryptoProvider;
 
   public SigningDecorator(File file, CryptoProvider cryptoProvider) {
@@ -25,14 +34,14 @@ public class SigningDecorator extends FileDecorator {
 
   @Override
   public void prepare(Stack<Object> indices) {
-    System.out.println("Signing \t\t\t" + this.getFileOnDisk().getPath());
+    logger.debug("Signing {}", this.getFileOnDisk().getPath());
     SignedPayload signedPayload = sign(this.getBytes(), cryptoProvider.getPrivateKey(),
         cryptoProvider.getCertificate());
     this.setBytes(signedPayload.toByteArray());
     super.prepare(indices);
   }
 
-  public static SignedPayload sign(byte[] payload, PrivateKey privateKey, Certificate certificate) {
+  private static SignedPayload sign(byte[] payload, PrivateKey privateKey, Certificate certificate) {
     try {
       Signature payloadSignature = Signature.getInstance("Ed25519", "BC");
       payloadSignature.initSign(privateKey);
@@ -42,7 +51,8 @@ public class SigningDecorator extends FileDecorator {
           .setSignature(ByteString.copyFrom(payloadSignature.sign()))
           .setPayload(ByteString.copyFrom(payload))
           .build();
-    } catch (Exception e) {
+    } catch (GeneralSecurityException e) {
+      logger.error("Exception during payload signing.", e);
       throw new RuntimeException(e);
     }
   }
