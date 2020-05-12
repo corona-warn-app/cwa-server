@@ -23,7 +23,8 @@ jobs:
       - restore_cache:
           key: cwa-server-{{ checksum "~/pom-checksum" }}
 
-      - run: mvn dependency:go-offline
+      #- run: mvn dependency:go-offline
+      - run: mvn de.qaware.maven:go-offline-maven-plugin:1.2.5:resolve-dependencies
       
       - save_cache:
           paths:
