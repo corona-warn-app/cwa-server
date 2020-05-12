@@ -17,7 +17,7 @@ import org.junit.rules.TemporaryFolder;
 
 public class DirectoryTest {
 
-  private java.io.File outputDir;
+  private java.io.File outputDir = new java.io.File("test");
   private Directory parentDirectory;
   private Directory childDirectory;
   private File childFile;

@@ -36,7 +36,7 @@ public class ExposureConfigurationDistributionRunner implements ApplicationRunne
   public void run(ApplicationArguments args) {
     var riskScoreParameters = readRiskScoreParameters();
     IndexDirectory<?> versionDirectory =
-        new IndexDirectoryImpl<>("version", __ -> List.of(VERSION));
+        new IndexDirectoryImpl<>("version", __ -> List.of(VERSION), Object::toString);
     ExposureConfigurationDirectoryImpl parametersDirectory =
         new ExposureConfigurationDirectoryImpl(COUNTRY, riskScoreParameters, cryptoProvider);
     Directory root = new DirectoryImpl(new File(OUTPUT_PATH));

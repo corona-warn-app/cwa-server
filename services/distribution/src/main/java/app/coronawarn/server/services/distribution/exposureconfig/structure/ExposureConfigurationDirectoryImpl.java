@@ -16,7 +16,7 @@ public class ExposureConfigurationDirectoryImpl extends DirectoryImpl {
     super("parameters");
 
     IndexDirectoryImpl<String> country =
-        new IndexDirectoryImpl<>("country", __ -> List.of(region));
+        new IndexDirectoryImpl<>("country", __ -> List.of(region), Object::toString);
 
     country.addFileToAll(__ ->
         new SigningDecorator(new FileImpl("index", exposureConfig.toByteArray()), cryptoProvider));

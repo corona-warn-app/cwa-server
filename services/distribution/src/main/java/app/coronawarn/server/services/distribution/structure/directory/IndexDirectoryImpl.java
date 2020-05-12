@@ -42,14 +42,6 @@ public class IndexDirectoryImpl<T> extends DirectoryImpl implements IndexDirecto
     this.indexFormatter = indexFormatter;
   }
 
-  /**
-   * Constructor that defaults the {@link IndexDirectoryImpl#indexFormatter} to {@link
-   * Object#toString}.
-   */
-  public IndexDirectoryImpl(String name, IndexFunction<T> indexFunction) {
-    this(name, indexFunction, Object::toString);
-  }
-
   @Override
   public Formatter<T> getIndexFormatter() {
     return this.indexFormatter;
