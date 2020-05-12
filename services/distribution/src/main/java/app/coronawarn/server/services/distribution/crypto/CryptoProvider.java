@@ -34,16 +34,16 @@ public class CryptoProvider {
     this.certificate = getCertificateFromFile(ResourceUtils.getFile(CERTIFICATE_PATH));
   }
 
-  private static PrivateKey getPrivateKeyFromFile(File privateKeyPath) throws IOException {
-    PEMParser pemParser = new PEMParser(Files.newBufferedReader(privateKeyPath.toPath(),
+  private static PrivateKey getPrivateKeyFromFile(File privateKeyFile) throws IOException {
+    PEMParser pemParser = new PEMParser(Files.newBufferedReader(privateKeyFile.toPath(),
         StandardCharsets.UTF_8));
     PrivateKeyInfo privateKeyInfo = (PrivateKeyInfo) pemParser.readObject();
     return new JcaPEMKeyConverter().getPrivateKey(privateKeyInfo);
   }
 
-  private static Certificate getCertificateFromFile(File certificatePath) throws IOException,
+  private static Certificate getCertificateFromFile(File certificateFile) throws IOException,
       CertificateException {
-    return getCertificateFromBytes(IO.getBytesFromFile(certificatePath));
+    return getCertificateFromBytes(IO.getBytesFromFile(certificateFile));
   }
 
   private static Certificate getCertificateFromBytes(byte[] bytes) throws CertificateException {
