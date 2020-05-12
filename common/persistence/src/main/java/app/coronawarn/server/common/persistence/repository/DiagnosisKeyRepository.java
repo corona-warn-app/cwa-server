@@ -1,6 +1,6 @@
-package app.coronawarn.server.services.common.persistence.repository;
+package app.coronawarn.server.common.persistence.repository;
 
-import app.coronawarn.server.services.common.persistence.domain.DiagnosisKey;
+import app.coronawarn.server.common.persistence.domain.DiagnosisKey;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
