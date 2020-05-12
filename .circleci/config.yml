@@ -9,6 +9,8 @@ jobs:
 
     steps:
 
+      - run: mvn -v
+
       - checkout
 
       - run:
