@@ -7,7 +7,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
-@SpringBootTest
+//@SpringBootTest
 public class ApplicationInitializationTest {
 
   @Autowired
@@ -15,6 +15,7 @@ public class ApplicationInitializationTest {
 
 //  @Test
 //  public void jpaComponentsInjected() {
+//    Security.addProvider(new BouncyCastleProvider());
 //    assertNotNull(diagnosisKeyService);
 //  }
 }
