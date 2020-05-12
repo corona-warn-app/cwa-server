@@ -12,12 +12,15 @@ import java.util.List;
 public class ExposureConfigurationDirectoryImpl extends DirectoryImpl {
 
   public ExposureConfigurationDirectoryImpl(
-      String region, RiskScoreParameters parameters, CryptoProvider cryptoProvider) {
+      String region, RiskScoreParameters exposureConfig, CryptoProvider cryptoProvider) {
     super("parameters");
+
     IndexDirectoryImpl<String> country =
         new IndexDirectoryImpl<>("country", __ -> List.of(region));
-    country.addFileToAll(__ -> new SigningDecorator(new FileImpl("index",
-        parameters.toByteArray()), cryptoProvider));
+
+    country.addFileToAll(__ ->
+        new SigningDecorator(new FileImpl("index", exposureConfig.toByteArray()), cryptoProvider));
+
     this.addDirectory(new IndexingDecorator<>(country));
   }
 }
