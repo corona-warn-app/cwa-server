@@ -22,16 +22,16 @@ import org.springframework.util.ResourceUtils;
 @Component
 public class CryptoProvider {
 
-  private static final String PRIVATE_KEY_FILE_PATH = "classpath:certificates/client/private.pem";
-  private static final String CERTIFICATE_FILE_PATH = "classpath:certificates/chain/certificate.crt";
+  private static final String PRIVATE_KEY_PATH = "classpath:certificates/client/private.pem";
+  private static final String CERTIFICATE_PATH = "classpath:certificates/chain/certificate.crt";
 
   private final PrivateKey privateKey;
   private final Certificate certificate;
 
   public CryptoProvider() throws IOException, CertificateException {
     Security.addProvider(new BouncyCastleProvider());
-    this.privateKey = getPrivateKeyFromFile(ResourceUtils.getFile(PRIVATE_KEY_FILE_PATH));
-    this.certificate = getCertificateFromFile(ResourceUtils.getFile(CERTIFICATE_FILE_PATH));
+    this.privateKey = getPrivateKeyFromFile(ResourceUtils.getFile(PRIVATE_KEY_PATH));
+    this.certificate = getCertificateFromFile(ResourceUtils.getFile(CERTIFICATE_PATH));
   }
 
   private static PrivateKey getPrivateKeyFromFile(File privateKeyPath) throws IOException {
