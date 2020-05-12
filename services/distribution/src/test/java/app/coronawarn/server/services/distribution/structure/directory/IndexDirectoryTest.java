@@ -70,9 +70,39 @@ public class IndexDirectoryTest {
         .flatMap(Arrays::stream)
         .map(java.io.File::listFiles)
         .flatMap(Arrays::stream)
+        .sorted()
         .collect(Collectors.toList());
     List<java.io.File> expectedPhysicalFiles = expectedFileList.stream()
         .map(Writable::getFileOnDisk)
+        .sorted()
+        .collect(Collectors.toList());
+
+    assertEquals(expectedPhysicalFiles, actualPhysicalFiles);
+  }
+
+
+  @Test
+  public void checkAddDirectoryToAll() {
+    List<Directory> expectedDirectoryList = new ArrayList<>();
+    indexDirectory.addDirectoryToAll(__ -> {
+      Directory newDirectory = new DirectoryImpl("foo");
+      expectedDirectoryList.add(newDirectory);
+      return newDirectory;
+    });
+
+    prepareAndWrite(outputDirectory);
+
+    java.io.File actualIndexDirectoryFile = Objects.requireNonNull(outputFile.listFiles())[0];
+    List<java.io.File> actualPhysicalFiles = Stream.of(actualIndexDirectoryFile)
+        .map(java.io.File::listFiles)
+        .flatMap(Arrays::stream)
+        .map(java.io.File::listFiles)
+        .flatMap(Arrays::stream)
+        .sorted()
+        .collect(Collectors.toList());
+    List<java.io.File> expectedPhysicalFiles = expectedDirectoryList.stream()
+        .map(Writable::getFileOnDisk)
+        .sorted()
         .collect(Collectors.toList());
 
     assertEquals(expectedPhysicalFiles, actualPhysicalFiles);
