@@ -1,7 +1,7 @@
-package app.coronawarn.server.tools.testdatagenerator.decorators.file;
+package app.coronawarn.server.services.distribution.structure.file.decorator;
 
-import app.coronawarn.server.tools.testdatagenerator.interfaces.Directory;
-import app.coronawarn.server.tools.testdatagenerator.interfaces.File;
+import app.coronawarn.server.services.distribution.structure.directory.Directory;
+import app.coronawarn.server.services.distribution.structure.file.File;
 import java.util.Stack;
 
 public abstract class FileDecorator implements File {

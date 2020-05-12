@@ -1,13 +1,14 @@
-package app.coronawarn.server.tools.testdatagenerator.decorators.file;
+package app.coronawarn.server.services.distribution.structure.file.decorator;
 
 import app.coronawarn.server.common.protocols.internal.SignedPayload;
-import app.coronawarn.server.tools.testdatagenerator.interfaces.File;
-import app.coronawarn.server.tools.testdatagenerator.util.Crypto;
+import app.coronawarn.server.services.distribution.crypto.CryptoProvider;
+import app.coronawarn.server.services.distribution.structure.file.File;
 import com.google.protobuf.ByteString;
 import java.security.PrivateKey;
 import java.security.Signature;
 import java.security.cert.Certificate;
 import java.util.Stack;
+import org.springframework.beans.factory.annotation.Autowired;
 
 /**
  * A {@link FileDecorator} that will convert the contents of a File into {@link
@@ -15,18 +16,18 @@ import java.util.Stack;
  */
 public class SigningDecorator extends FileDecorator {
 
-  final Crypto crypto;
+  private final CryptoProvider cryptoProvider;
 
-  public SigningDecorator(File file, Crypto crypto) {
+  public SigningDecorator(File file, CryptoProvider cryptoProvider) {
     super(file);
-    this.crypto = crypto;
+    this.cryptoProvider = cryptoProvider;
   }
 
   @Override
   public void prepare(Stack<Object> indices) {
     System.out.println("Signing \t\t\t" + this.getFileOnDisk().getPath());
-    SignedPayload signedPayload = sign(this.getBytes(), crypto.getPrivateKey(),
-        crypto.getCertificate());
+    SignedPayload signedPayload = sign(this.getBytes(), cryptoProvider.getPrivateKey(),
+        cryptoProvider.getCertificate());
     this.setBytes(signedPayload.toByteArray());
     super.prepare(indices);
   }

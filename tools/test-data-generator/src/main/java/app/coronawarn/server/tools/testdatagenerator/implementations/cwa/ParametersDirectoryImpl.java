@@ -6,21 +6,20 @@ import app.coronawarn.server.common.protocols.internal.RiskScoreParameters.Atten
 import app.coronawarn.server.common.protocols.internal.RiskScoreParameters.DaysSinceLastExposureRiskParameters;
 import app.coronawarn.server.common.protocols.internal.RiskScoreParameters.DurationRiskParameters;
 import app.coronawarn.server.common.protocols.internal.RiskScoreParameters.TransmissionRiskParameters;
-import app.coronawarn.server.tools.testdatagenerator.decorators.directory.IndexingDecorator;
-import app.coronawarn.server.tools.testdatagenerator.decorators.file.SigningDecorator;
-import app.coronawarn.server.tools.testdatagenerator.implementations.DirectoryImpl;
-import app.coronawarn.server.tools.testdatagenerator.implementations.FileImpl;
-import app.coronawarn.server.tools.testdatagenerator.implementations.IndexDirectoryImpl;
-import app.coronawarn.server.tools.testdatagenerator.util.Crypto;
+import app.coronawarn.server.services.distribution.structure.directory.DirectoryImpl;
+import app.coronawarn.server.services.distribution.structure.directory.IndexDirectoryImpl;
+import app.coronawarn.server.services.distribution.structure.directory.decorator.IndexingDecorator;
+import app.coronawarn.server.services.distribution.structure.file.FileImpl;
+import app.coronawarn.server.services.distribution.structure.file.decorator.SigningDecorator;
 import java.util.List;
 
 public class ParametersDirectoryImpl extends DirectoryImpl {
 
-  public ParametersDirectoryImpl(String region, Crypto crypto) {
+  public ParametersDirectoryImpl(String region) {
     super("parameters");
     IndexDirectoryImpl<String> country = new IndexDirectoryImpl<>("country", __ -> List.of(region));
     country.addFileToAll(__ -> new SigningDecorator(new FileImpl("index",
-        generateParameters().toByteArray()), crypto));
+        generateParameters().toByteArray())));
     this.addDirectory(new IndexingDecorator<>(country));
   }
 

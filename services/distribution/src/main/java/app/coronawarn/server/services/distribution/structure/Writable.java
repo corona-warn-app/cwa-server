@@ -1,5 +1,6 @@
-package app.coronawarn.server.tools.testdatagenerator.interfaces;
+package app.coronawarn.server.services.distribution.structure;
 
+import app.coronawarn.server.services.distribution.structure.directory.Directory;
 import java.util.Stack;
 
 public interface Writable {

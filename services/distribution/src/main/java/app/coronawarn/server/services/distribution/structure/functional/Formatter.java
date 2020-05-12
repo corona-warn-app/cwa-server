@@ -1,4 +1,4 @@
-package app.coronawarn.server.tools.testdatagenerator.interfaces.functional;
+package app.coronawarn.server.services.distribution.structure.functional;
 
 import java.util.function.Function;
 

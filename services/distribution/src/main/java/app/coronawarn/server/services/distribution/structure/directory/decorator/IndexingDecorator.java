@@ -1,8 +1,8 @@
-package app.coronawarn.server.tools.testdatagenerator.decorators.directory;
+package app.coronawarn.server.services.distribution.structure.directory.decorator;
 
-import app.coronawarn.server.tools.testdatagenerator.implementations.FileImpl;
-import app.coronawarn.server.tools.testdatagenerator.implementations.IndexDirectoryImpl;
-import app.coronawarn.server.tools.testdatagenerator.interfaces.IndexDirectory;
+import app.coronawarn.server.services.distribution.structure.directory.IndexDirectory;
+import app.coronawarn.server.services.distribution.structure.directory.IndexDirectoryImpl;
+import app.coronawarn.server.services.distribution.structure.file.FileImpl;
 import java.util.List;
 import java.util.Stack;
 import java.util.stream.Collectors;

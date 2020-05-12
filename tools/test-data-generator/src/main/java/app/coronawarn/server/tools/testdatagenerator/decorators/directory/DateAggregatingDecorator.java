@@ -2,12 +2,12 @@ package app.coronawarn.server.tools.testdatagenerator.decorators.directory;
 
 import app.coronawarn.server.common.protocols.internal.FileBucket;
 import app.coronawarn.server.common.protocols.internal.SignedPayload;
-import app.coronawarn.server.tools.testdatagenerator.decorators.file.SigningDecorator;
-import app.coronawarn.server.tools.testdatagenerator.implementations.FileImpl;
-import app.coronawarn.server.tools.testdatagenerator.interfaces.Directory;
-import app.coronawarn.server.tools.testdatagenerator.interfaces.File;
-import app.coronawarn.server.tools.testdatagenerator.interfaces.functional.CheckedFunction;
-import app.coronawarn.server.tools.testdatagenerator.util.Crypto;
+import app.coronawarn.server.services.distribution.structure.directory.Directory;
+import app.coronawarn.server.services.distribution.structure.directory.decorator.DirectoryDecorator;
+import app.coronawarn.server.services.distribution.structure.file.File;
+import app.coronawarn.server.services.distribution.structure.file.FileImpl;
+import app.coronawarn.server.services.distribution.structure.file.decorator.SigningDecorator;
+import app.coronawarn.server.services.distribution.structure.functional.CheckedFunction;
 import java.util.List;
 import java.util.Stack;
 import java.util.stream.Collectors;
@@ -19,11 +19,8 @@ import java.util.stream.Stream;
  */
 public class DateAggregatingDecorator extends DirectoryDecorator {
 
-  final Crypto crypto;
-
-  public DateAggregatingDecorator(Directory directory, Crypto crypto) {
+  public DateAggregatingDecorator(Directory directory) {
     super(directory);
-    this.crypto = crypto;
   }
 
   @Override
@@ -40,7 +37,7 @@ public class DateAggregatingDecorator extends DirectoryDecorator {
           .map(this::makeNewFileBucket)
           .map(FileBucket::toByteArray)
           .map(bytes -> new FileImpl("index", bytes))
-          .map(aggregate -> new SigningDecorator(aggregate, crypto))
+          .map(SigningDecorator::new)
           .peek(currentDirectory::addFile)
           .forEach(aggregate -> aggregate.prepare(indices));
     });

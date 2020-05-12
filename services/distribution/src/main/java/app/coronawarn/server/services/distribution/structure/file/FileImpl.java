@@ -1,7 +1,7 @@
-package app.coronawarn.server.tools.testdatagenerator.implementations;
+package app.coronawarn.server.services.distribution.structure.file;
 
-import app.coronawarn.server.tools.testdatagenerator.interfaces.File;
-import app.coronawarn.server.tools.testdatagenerator.util.IO;
+import app.coronawarn.server.services.distribution.io.IO;
+import app.coronawarn.server.services.distribution.structure.WritableImpl;
 import java.util.Stack;
 
 public class FileImpl extends WritableImpl implements File {

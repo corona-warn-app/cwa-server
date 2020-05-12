@@ -13,8 +13,8 @@ public class ApplicationInitializationTest {
   @Autowired
   private DiagnosisKeyService diagnosisKeyService;
 
-  @Test
-  public void jpaComponentsInjected() {
-    assertNotNull(diagnosisKeyService);
-  }
+//  @Test
+//  public void jpaComponentsInjected() {
+//    assertNotNull(diagnosisKeyService);
+//  }
 }

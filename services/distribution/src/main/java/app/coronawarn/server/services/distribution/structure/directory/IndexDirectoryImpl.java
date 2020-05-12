@@ -1,11 +1,10 @@
-package app.coronawarn.server.tools.testdatagenerator.implementations;
+package app.coronawarn.server.services.distribution.structure.directory;
 
-import app.coronawarn.server.tools.testdatagenerator.interfaces.Directory;
-import app.coronawarn.server.tools.testdatagenerator.interfaces.File;
-import app.coronawarn.server.tools.testdatagenerator.interfaces.functional.DirectoryFunction;
-import app.coronawarn.server.tools.testdatagenerator.interfaces.functional.FileFunction;
-import app.coronawarn.server.tools.testdatagenerator.interfaces.functional.Formatter;
-import app.coronawarn.server.tools.testdatagenerator.interfaces.functional.IndexFunction;
+import app.coronawarn.server.services.distribution.structure.file.File;
+import app.coronawarn.server.services.distribution.structure.functional.DirectoryFunction;
+import app.coronawarn.server.services.distribution.structure.functional.FileFunction;
+import app.coronawarn.server.services.distribution.structure.functional.Formatter;
+import app.coronawarn.server.services.distribution.structure.functional.IndexFunction;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Stack;
@@ -16,8 +15,7 @@ import java.util.Stack;
  *
  * @param <T> The type of the elements in the index (e.g. LocalDate for the /date directory)
  */
-public class IndexDirectoryImpl<T> extends DirectoryImpl implements
-    app.coronawarn.server.tools.testdatagenerator.interfaces.IndexDirectory<T> {
+public class IndexDirectoryImpl<T> extends DirectoryImpl implements IndexDirectory<T> {
 
   // Files to be written into every directory created through the index
   private final List<FileFunction> metaFiles = new ArrayList<>();

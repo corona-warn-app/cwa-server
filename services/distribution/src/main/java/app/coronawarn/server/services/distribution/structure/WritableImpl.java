@@ -1,7 +1,6 @@
-package app.coronawarn.server.tools.testdatagenerator.implementations;
+package app.coronawarn.server.services.distribution.structure;
 
-import app.coronawarn.server.tools.testdatagenerator.interfaces.Directory;
-import app.coronawarn.server.tools.testdatagenerator.interfaces.Writable;
+import app.coronawarn.server.services.distribution.structure.directory.Directory;
 import java.util.Objects;
 
 public abstract class WritableImpl implements Writable {

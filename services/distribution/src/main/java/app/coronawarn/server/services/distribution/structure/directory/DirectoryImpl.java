@@ -1,7 +1,7 @@
-package app.coronawarn.server.tools.testdatagenerator.implementations;
+package app.coronawarn.server.services.distribution.structure.directory;
 
-import app.coronawarn.server.tools.testdatagenerator.interfaces.Directory;
-import app.coronawarn.server.tools.testdatagenerator.interfaces.File;
+import app.coronawarn.server.services.distribution.structure.WritableImpl;
+import app.coronawarn.server.services.distribution.structure.file.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Stack;
@@ -11,7 +11,7 @@ import java.util.Stack;
  */
 public class DirectoryImpl extends WritableImpl implements Directory {
 
-  private final List<app.coronawarn.server.tools.testdatagenerator.interfaces.File> files = new ArrayList<>();
+  private final List<File> files = new ArrayList<>();
   private final List<Directory> directories = new ArrayList<>();
 
   /**

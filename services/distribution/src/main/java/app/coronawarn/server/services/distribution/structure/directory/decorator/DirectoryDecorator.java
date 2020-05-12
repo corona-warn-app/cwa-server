@@ -1,7 +1,7 @@
-package app.coronawarn.server.tools.testdatagenerator.decorators.directory;
+package app.coronawarn.server.services.distribution.structure.directory.decorator;
 
-import app.coronawarn.server.tools.testdatagenerator.interfaces.Directory;
-import app.coronawarn.server.tools.testdatagenerator.interfaces.File;
+import app.coronawarn.server.services.distribution.structure.directory.Directory;
+import app.coronawarn.server.services.distribution.structure.file.File;
 import java.util.List;
 import java.util.Stack;
 
@@ -19,7 +19,7 @@ public abstract class DirectoryDecorator implements Directory {
   }
 
   @Override
-  public void addFile(app.coronawarn.server.tools.testdatagenerator.interfaces.File file) {
+  public void addFile(File file) {
     this.directory.addFile(file);
   }
 
@@ -62,5 +62,4 @@ public abstract class DirectoryDecorator implements Directory {
   public java.io.File getFileOnDisk() {
     return this.directory.getFileOnDisk();
   }
-
 }
