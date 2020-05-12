@@ -1,4 +1,4 @@
-package app.coronawarn.server.services.common.persistence.domain;
+package app.coronawarn.server.common.persistence.domain;
 
 import java.util.Arrays;
 import java.util.Objects;

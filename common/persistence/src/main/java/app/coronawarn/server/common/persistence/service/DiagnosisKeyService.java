@@ -1,8 +1,8 @@
-package app.coronawarn.server.services.common.persistence.service;
+package app.coronawarn.server.common.persistence.service;
 
 import java.util.Collection;
-import app.coronawarn.server.services.common.persistence.domain.DiagnosisKey;
-import app.coronawarn.server.services.common.persistence.repository.DiagnosisKeyRepository;
+import app.coronawarn.server.common.persistence.domain.DiagnosisKey;
+import app.coronawarn.server.common.persistence.repository.DiagnosisKeyRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 

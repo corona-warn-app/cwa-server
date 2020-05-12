@@ -1,8 +1,8 @@
 package app.coronawarn.server.services.submission.controller;
 
 import app.coronawarn.server.common.protocols.internal.SubmissionPayload;
-import app.coronawarn.server.services.common.persistence.domain.DiagnosisKey;
-import app.coronawarn.server.services.common.persistence.service.DiagnosisKeyService;
+import app.coronawarn.server.common.persistence.domain.DiagnosisKey;
+import app.coronawarn.server.common.persistence.service.DiagnosisKeyService;
 import app.coronawarn.server.services.submission.verification.TanVerifier;
 import java.util.Collection;
 import java.util.stream.Collectors;
