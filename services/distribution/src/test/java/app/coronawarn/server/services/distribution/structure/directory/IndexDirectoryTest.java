@@ -1,5 +1,6 @@
 package app.coronawarn.server.services.distribution.structure.directory;
 
+import static app.coronawarn.server.services.distribution.common.Helpers.prepareAndWrite;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import app.coronawarn.server.services.distribution.structure.Writable;
@@ -106,11 +107,6 @@ public class IndexDirectoryTest {
         .collect(Collectors.toList());
 
     assertEquals(expectedPhysicalFiles, actualPhysicalFiles);
-  }
-
-  private void prepareAndWrite(Directory directory) {
-    directory.prepare(new Stack<>());
-    directory.write();
   }
 
 }
