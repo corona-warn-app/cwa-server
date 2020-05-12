@@ -87,10 +87,6 @@ public class DirectoryImpl extends WritableImpl implements Directory {
 
   private void writeOwnDirectory() {
     java.io.File file = this.getFileOnDisk();
-    if (file == null) {
-      throw new RuntimeException(
-          "No directory on disk has been defined.");
-    }
     file.mkdirs();
   }
 
