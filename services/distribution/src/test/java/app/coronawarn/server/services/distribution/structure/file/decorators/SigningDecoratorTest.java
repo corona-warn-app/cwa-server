@@ -71,7 +71,7 @@ public class SigningDecoratorTest {
     SignedPayload signedPayload = SignedPayload.parseFrom(writtenBytes);
 
     InputStream certificateByteStream = new ByteArrayInputStream(
-        signedPayload.getSignature().toByteArray());
+        signedPayload.getCertificateChain().toByteArray());
     CertificateFactory certificateFactory = CertificateFactory.getInstance("X.509");
     Certificate certificate = certificateFactory.generateCertificate(certificateByteStream);
 
@@ -79,6 +79,7 @@ public class SigningDecoratorTest {
     signature.initVerify(certificate);
     signature.update(signedPayload.getPayload().toByteArray());
 
+    //TODO Continue here
     assertTrue(signature.verify(signedPayload.getPayload().toByteArray()));
   }
 }
