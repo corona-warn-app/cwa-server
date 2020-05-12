@@ -10,14 +10,10 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class WritableTest {
 
-  private static class WritableTestImpl extends WritableImpl {
+  private static class TestWritable extends WritableImpl {
 
-    protected WritableTestImpl(String name) {
+    protected TestWritable(String name) {
       super(name);
-    }
-
-    protected WritableTestImpl(File fileOnDisk) {
-      super(fileOnDisk);
     }
 
     @Override
@@ -32,14 +28,14 @@ public class WritableTest {
   @Test
   public void checkGetName() {
     String name = "Test";
-    Writable writable = new WritableTestImpl(name);
+    Writable writable = new TestWritable(name);
     assertEquals(name, writable.getName());
   }
 
   @Test
   public void checkGetAndSetParent() {
     Directory parent = new DirectoryImpl("Parent");
-    Writable child = new WritableTestImpl("Child");
+    Writable child = new TestWritable("Child");
     child.setParent(parent);
     assertEquals(parent, child.getParent());
   }
@@ -55,7 +51,7 @@ public class WritableTest {
   public void checkGetFileOnDiskRelativeToRoot() {
     File file = new File("Root");
     Directory parent = new DirectoryImpl(file);
-    Writable child = new WritableTestImpl("Child");
+    Writable child = new TestWritable("Child");
     child.setParent(parent);
     assertEquals(file.toPath().resolve("Child").toFile(), child.getFileOnDisk());
   }
