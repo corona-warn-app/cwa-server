@@ -1,9 +1,9 @@
 package app.coronawarn.server.services.distribution.runner;
 
+import app.coronawarn.server.common.persistence.domain.DiagnosisKey;
+import app.coronawarn.server.common.persistence.service.DiagnosisKeyService;
 import app.coronawarn.server.services.distribution.crypto.CryptoProvider;
 import app.coronawarn.server.services.distribution.diagnosiskeys.structure.DiagnosisKeysDirectoryImpl;
-import app.coronawarn.server.services.distribution.exposureconfig.structure.ExposureConfigurationDirectoryImpl;
-import app.coronawarn.server.services.distribution.structure.directory.Directory;
 import app.coronawarn.server.services.distribution.structure.directory.DirectoryImpl;
 import app.coronawarn.server.services.distribution.structure.directory.IndexDirectory;
 import app.coronawarn.server.services.distribution.structure.directory.IndexDirectoryImpl;
@@ -12,6 +12,7 @@ import java.io.File;
 import java.io.IOException;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.util.Collection;
 import java.util.List;
 import java.util.Stack;
 import org.apache.commons.io.FileUtils;
@@ -43,8 +44,13 @@ public class DiagnosisKeyDistributionRunner implements ApplicationRunner {
   @Autowired
   private CryptoProvider cryptoProvider;
 
+  @Autowired
+  private DiagnosisKeyService diagnosisKeyService;
+
   @Override
   public void run(ApplicationArguments args) throws IOException {
+
+    Collection<DiagnosisKey> diagnosisKeys = diagnosisKeyService.getDiagnosisKeys();
 
     java.io.File outputDirectory = new File(OUTPUT_PATH);
 
@@ -59,8 +65,8 @@ public class DiagnosisKeyDistributionRunner implements ApplicationRunner {
 
     LocalDate startDate = LocalDate.parse(startDateStr, ISO8601);
 
-    DiagnosisKeysDirectoryImpl diagnosisKeysDirectory = new DiagnosisKeysDirectoryImpl(startDate,
-        totalHours, exposuresPerHour, COUNTRY, ISO8601, random, cryptoProvider);
+    DiagnosisKeysDirectoryImpl diagnosisKeysDirectory = new DiagnosisKeysDirectoryImpl(
+        diagnosisKeys, COUNTRY, ISO8601, cryptoProvider);
 
     IndexDirectory<?> versionDirectory =
         new IndexDirectoryImpl<>("version", __ -> List.of(VERSION), Object::toString);
