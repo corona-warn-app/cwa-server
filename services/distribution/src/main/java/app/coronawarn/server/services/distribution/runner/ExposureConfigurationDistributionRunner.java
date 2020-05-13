@@ -25,7 +25,6 @@ import org.springframework.stereotype.Component;
 
 @Component
 @Order(1)
-@Profile("!test")
 public class ExposureConfigurationDistributionRunner implements ApplicationRunner {
 
   private static final Logger logger =

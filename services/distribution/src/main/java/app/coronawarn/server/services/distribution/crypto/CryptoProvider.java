@@ -17,10 +17,10 @@ import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.bouncycastle.openssl.PEMParser;
 import org.bouncycastle.openssl.jcajce.JcaPEMKeyConverter;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.Configuration;
+import org.springframework.stereotype.Component;
 import org.springframework.util.ResourceUtils;
 
-@Configuration
+@Component
 public class CryptoProvider {
 
   @Value("${app.coronawarn.server.services.distribution.paths.privatekey}")

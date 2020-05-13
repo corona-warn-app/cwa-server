@@ -8,7 +8,6 @@ import org.springframework.stereotype.Component;
 
 @Component
 @Order(2)
-@Profile("!test")
 public class DiagnosisKeyDistributionRunner implements ApplicationRunner {
 
   @Override
