@@ -10,14 +10,10 @@ import app.coronawarn.server.services.distribution.structure.directory.IndexDire
 import app.coronawarn.server.services.distribution.structure.directory.decorator.IndexingDecorator;
 import java.io.File;
 import java.io.IOException;
-import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
 import java.util.Collection;
 import java.util.List;
 import java.util.Stack;
 import org.apache.commons.io.FileUtils;
-import org.apache.commons.math3.random.JDKRandomGenerator;
-import org.apache.commons.math3.random.RandomGenerator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,12 +30,10 @@ import org.springframework.stereotype.Component;
  */
 public class DiagnosisKeyDistributionRunner implements ApplicationRunner {
 
-  private static final Logger logger =
-      LoggerFactory.getLogger(DiagnosisKeyDistributionRunner.class);
-  private static final String COUNTRY = "DE";
+  private static final Logger logger = LoggerFactory
+      .getLogger(DiagnosisKeyDistributionRunner.class);
   private static final String VERSION_DIRECTORY = "version";
   private static final String VERSION = "v1";
-  private static final DateTimeFormatter ISO8601 = DateTimeFormatter.ofPattern("yyyy-MM-dd");
   private static final String OUTPUT_PATH = "out";
 
   @Autowired
