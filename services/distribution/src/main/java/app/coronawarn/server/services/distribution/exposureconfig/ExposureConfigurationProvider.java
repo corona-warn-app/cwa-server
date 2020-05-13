@@ -1,6 +1,7 @@
 package app.coronawarn.server.services.distribution.exposureconfig;
 
 import app.coronawarn.server.common.protocols.internal.RiskScoreParameters;
+import app.coronawarn.server.common.protocols.internal.RiskScoreParameters.Builder;
 import app.coronawarn.server.services.distribution.exposureconfig.parsing.YamlConstructorForProtoBuf;
 import java.io.IOException;
 import java.io.InputStream;
@@ -47,7 +48,7 @@ public class ExposureConfigurationProvider {
     yaml.setBeanAccess(BeanAccess.FIELD); /* no setters on RiskScoreParameters available */
 
     try (InputStream inputStream = new ClassPathResource(path).getInputStream()) {
-      var loaded = yaml.loadAs(inputStream, RiskScoreParameters.newBuilder().getClass());
+      Builder loaded = yaml.loadAs(inputStream, RiskScoreParameters.newBuilder().getClass());
       if (loaded == null) {
         throw new UnableToLoadFileException(path);
       }
