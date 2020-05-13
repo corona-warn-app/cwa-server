@@ -9,11 +9,12 @@
     <groupId>org.springframework.boot</groupId>
     <artifactId>spring-boot-starter-parent</artifactId>
     <version>2.2.6.RELEASE</version>
+    <relativePath></relativePath>
   </parent>
 
   <artifactId>services</artifactId>
-  <groupId>app.coronawarn.server</groupId>
-  <version>0.0.1</version>
+  <groupId>org.opencwa</groupId>
+  <version>0.0.1-SNAPSHOT</version>
 
   <packaging>pom</packaging>
   <modules>
@@ -31,18 +32,14 @@
 
   <dependencies>
     <dependency>
-      <groupId>app.coronawarn.server.common</groupId>
+      <groupId>org.opencwa</groupId>
       <artifactId>persistence</artifactId>
-      <version>0.0.1</version>
+      <version>0.0.1-SNAPSHOT</version>
     </dependency>
     <dependency>
-      <groupId>app.coronawarn.server.common</groupId>
+      <groupId>org.opencwa</groupId>
       <artifactId>protocols</artifactId>
-      <version>0.0.1</version>
-    </dependency>
-    <dependency>
-      <groupId>org.springframework.boot</groupId>
-      <artifactId>spring-boot-starter-security</artifactId>
+      <version>0.0.1-SNAPSHOT</version>
     </dependency>
     <dependency>
       <groupId>org.springframework.boot</groupId>

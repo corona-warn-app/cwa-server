@@ -5,16 +5,15 @@
 
   <parent>
     <artifactId>server</artifactId>
-    <groupId>app.coronawarn</groupId>
-    <version>0.0.1</version>
+    <groupId>org.opencwa</groupId>
+    <version>0.0.1-SNAPSHOT</version>
     <relativePath>../pom.xml</relativePath>
   </parent>
 
   <modelVersion>4.0.0</modelVersion>
 
   <artifactId>common</artifactId>
-  <groupId>app.coronawarn.server</groupId>
-  <version>0.0.1</version>
+  <version>0.0.1-SNAPSHOT</version>
 
   <packaging>pom</packaging>
   <modules>

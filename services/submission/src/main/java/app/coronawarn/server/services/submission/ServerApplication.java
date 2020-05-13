@@ -11,9 +11,9 @@ import org.springframework.http.converter.protobuf.ProtobufHttpMessageConverter;
 
 @SpringBootApplication
 @ServletComponentScan
-@EnableJpaRepositories(basePackages = "app.coronawarn.server.services.common.persistence")
-@EntityScan(basePackages = "app.coronawarn.server.services.common.persistence")
-@ComponentScan({"app.coronawarn.server.services.common.persistence", "app.coronawarn.server.services.submission"})
+@EnableJpaRepositories(basePackages = "app.coronawarn.server.common.persistence")
+@EntityScan(basePackages = "app.coronawarn.server.common.persistence")
+@ComponentScan({"app.coronawarn.server.common.persistence", "app.coronawarn.server.services.submission"})
 public class ServerApplication {
 
   @Bean

@@ -19,14 +19,14 @@ public class APIExceptionHandler {
   @ExceptionHandler(Exception.class)
   @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
   public void unknownException(Exception ex, WebRequest wr) {
-    logger.error("Unable to handle {}", wr, ex);
+    logger.error("Unable to handle {}", wr.getDescription(false), ex);
   }
 
   @ExceptionHandler({HttpMessageNotReadableException.class, ServletRequestBindingException.class,
       InvalidProtocolBufferException.class})
   @ResponseStatus(HttpStatus.BAD_REQUEST)
   public void bindingExceptions(Exception ex, WebRequest wr) {
-    logger.error("Binding failed {}", wr, ex);
+    logger.error("Binding failed {}", wr.getDescription(false), ex);
   }
 
 }
