@@ -16,12 +16,16 @@ import org.bouncycastle.asn1.pkcs.PrivateKeyInfo;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.bouncycastle.openssl.PEMParser;
 import org.bouncycastle.openssl.jcajce.JcaPEMKeyConverter;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.util.ResourceUtils;
 
 @Component
 public class CryptoProvider {
+
+  private static final Logger logger = LoggerFactory.getLogger(CryptoProvider.class);
 
   @Value("${app.coronawarn.server.services.distribution.paths.privatekey}")
   private String privateKeyPath;
@@ -59,6 +63,7 @@ public class CryptoProvider {
       try {
         this.privateKey = getPrivateKeyFromFile(ResourceUtils.getFile(privateKeyPath));
       } catch (IOException e) {
+        logger.error("Failed to load private key from {}", privateKeyPath, e);
         throw new RuntimeException(e);
       }
     }
@@ -70,6 +75,7 @@ public class CryptoProvider {
       try {
         this.certificate = getCertificateFromFile(ResourceUtils.getFile(certificatePath));
       } catch (IOException | CertificateException e) {
+        logger.error("Failed to load certificate from {}", certificatePath, e);
         throw new RuntimeException(e);
       }
     }
