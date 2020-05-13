@@ -13,6 +13,8 @@ import app.coronawarn.server.services.distribution.structure.directory.decorator
 import java.io.File;
 import java.util.List;
 import java.util.Stack;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
@@ -25,6 +27,8 @@ import org.springframework.stereotype.Component;
 @Profile("!test")
 public class ExposureConfigurationDistributionRunner implements ApplicationRunner {
 
+  private static final Logger logger =
+      LoggerFactory.getLogger(ExposureConfigurationDistributionRunner.class);
   private static final String COUNTRY = "DE";
   private static final String VERSION = "v1";
   private static final String OUTPUT_PATH = "out";
@@ -50,7 +54,7 @@ public class ExposureConfigurationDistributionRunner implements ApplicationRunne
     try {
       return ExposureConfigurationProvider.readMasterFile();
     } catch (UnableToLoadFileException e) {
-      // TODO log appropriately
+      logger.error("Could not load exposure configuration parameters", e);
       throw new RuntimeException(e);
     }
   }
