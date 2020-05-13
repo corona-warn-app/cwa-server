@@ -8,22 +8,21 @@ import app.coronawarn.server.services.distribution.structure.directory.Directory
 import app.coronawarn.server.services.distribution.structure.directory.DirectoryImpl;
 import java.io.IOException;
 import java.nio.file.Files;
-import org.junit.Rule;
+import java.nio.file.Path;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.rules.TemporaryFolder;
+import org.junit.jupiter.api.io.TempDir;
 
 public class FileTest {
 
   private byte[] bytes = "World".getBytes();
   private File file;
 
-  @Rule
-  private TemporaryFolder outputFolder = new TemporaryFolder();
+  @TempDir
+  Path tempPath;
 
   @BeforeEach
   public void setup() throws IOException {
-    outputFolder.create();
     file = new FileImpl("Hello", bytes);
   }
 
@@ -46,7 +45,7 @@ public class FileTest {
 
   @Test
   public void checkWrite() throws IOException {
-    java.io.File outputFile = outputFolder.newFolder();
+    java.io.File outputFile = tempPath.toFile();
     Directory directory = new DirectoryImpl(outputFile);
 
     directory.addFile(file);
@@ -57,5 +56,4 @@ public class FileTest {
     assertArrayEquals(bytes, writtenBytes);
     assertEquals(1, outputFile.listFiles().length);
   }
-
 }

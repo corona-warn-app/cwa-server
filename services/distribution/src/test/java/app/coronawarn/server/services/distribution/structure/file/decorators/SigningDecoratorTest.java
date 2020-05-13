@@ -15,6 +15,7 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
@@ -24,11 +25,10 @@ import java.security.cert.Certificate;
 import java.security.cert.CertificateEncodingException;
 import java.security.cert.CertificateException;
 import java.security.cert.CertificateFactory;
-import org.junit.Rule;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.junit.rules.TemporaryFolder;
+import org.junit.jupiter.api.io.TempDir;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.ConfigFileApplicationContextInitializer;
 import org.springframework.test.context.ContextConfiguration;
@@ -39,8 +39,8 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
     initializers = ConfigFileApplicationContextInitializer.class)
 public class SigningDecoratorTest {
 
-  @Rule
-  private TemporaryFolder outputFolder = new TemporaryFolder();
+  @TempDir
+  Path tempPath;
 
   @Autowired
   CryptoProvider cryptoProvider;
@@ -51,9 +51,8 @@ public class SigningDecoratorTest {
   private File decorator;
 
   @BeforeEach
-  public void setup() throws IOException {
-    outputFolder.create();
-    parent = new DirectoryImpl(outputFolder.newFolder());
+  public void setup() {
+    parent = new DirectoryImpl(tempPath.toFile());
     decoree = new FileImpl("bar", bytes);
     decorator = new SigningDecorator(decoree, cryptoProvider);
 
