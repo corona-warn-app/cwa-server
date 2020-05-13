@@ -3,7 +3,7 @@ package app.coronawarn.server.services.distribution.structure.directory.decorato
 import app.coronawarn.server.services.distribution.structure.Writable;
 import app.coronawarn.server.services.distribution.structure.directory.Directory;
 import app.coronawarn.server.services.distribution.structure.file.File;
-import java.util.List;
+import java.util.Set;
 import java.util.Stack;
 
 /**
@@ -29,7 +29,7 @@ public abstract class DirectoryDecorator implements Directory {
   }
 
   @Override
-  public List<File> getFiles() {
+  public Set<File> getFiles() {
     return this.directory.getFiles();
   }
 
@@ -39,7 +39,7 @@ public abstract class DirectoryDecorator implements Directory {
   }
 
   @Override
-  public List<Directory> getDirectories() {
+  public Set<Directory> getDirectories() {
     return this.directory.getDirectories();
   }
 

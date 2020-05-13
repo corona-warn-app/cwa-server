@@ -2,7 +2,7 @@ package app.coronawarn.server.services.distribution.structure.directory;
 
 import app.coronawarn.server.services.distribution.structure.Writable;
 import app.coronawarn.server.services.distribution.structure.file.File;
-import java.util.List;
+import java.util.Set;
 
 /**
  * A {@link Writable} containing {@link File files} and further {@link Directory directories}.
@@ -18,7 +18,7 @@ public interface Directory extends Writable {
   /**
    * Returns all {@link File files} contained in this {@link Directory}.
    */
-  List<File> getFiles();
+  Set<File> getFiles();
 
   /**
    * Adds a {@link Directory directory} to the {@link DirectoryImpl#getDirectories directories} of
@@ -30,5 +30,5 @@ public interface Directory extends Writable {
   /**
    * Returns all {@link Directory directories} contained in this {@link Directory}.
    */
-  List<Directory> getDirectories();
+  Set<Directory> getDirectories();
 }

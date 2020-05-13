@@ -4,6 +4,7 @@ import app.coronawarn.server.services.distribution.structure.directory.IndexDire
 import app.coronawarn.server.services.distribution.structure.directory.IndexDirectoryImpl;
 import app.coronawarn.server.services.distribution.structure.file.FileImpl;
 import java.util.List;
+import java.util.Set;
 import java.util.Stack;
 import java.util.stream.Collectors;
 import org.json.simple.JSONArray;
@@ -33,7 +34,7 @@ public class IndexingDecorator<T> extends DirectoryDecorator {
   @Override
   public void prepare(Stack<Object> indices) {
     logger.debug("Indexing {}", this.getFileOnDisk().getPath());
-    List<T> index = this.directory.getIndex(indices);
+    Set<T> index = this.directory.getIndex(indices);
     JSONArray array = new JSONArray();
     List<?> elements = index.stream()
         .map(this.directory.getIndexFormatter())

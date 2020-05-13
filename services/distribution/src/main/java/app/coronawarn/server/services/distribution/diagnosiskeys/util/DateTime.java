@@ -3,11 +3,12 @@ package app.coronawarn.server.services.distribution.diagnosiskeys.util;
 import app.coronawarn.server.common.persistence.domain.DiagnosisKey;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.temporal.ChronoUnit;
+import java.time.ZoneOffset;
 import java.util.Collection;
-import java.util.List;
+import java.util.Set;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
-import java.util.stream.IntStream;
+import java.util.stream.Stream;
 
 public class DateTime {
 
@@ -20,32 +21,35 @@ public class DateTime {
     return Maths.ceilDiv(hours, 24);
   }
 
+
   /**
    * Creates a list of all {@link LocalDate LocalDates} between {@code startDate} and {@code
    * numDays} later.
    */
-  public static List<LocalDate> getDates(Collection<DiagnosisKey> diagnosisKeys) {
-    return List.of();
-    /*
-    return IntStream.range(0, numDays)
-        .mapToObj(startDate::plusDays)
-        .collect(Collectors.toList());
-     */
+  public static Set<LocalDate> getDates(Collection<DiagnosisKey> diagnosisKeys) {
+    // TODO Doc
+    return diagnosisKeys.stream()
+        .map(DiagnosisKey::getSubmissionTimestamp)
+        .map(timestamp -> LocalDate.ofEpochDay(timestamp / 24))
+        .collect(Collectors.toSet());
   }
+
 
   /**
    * Creates a list of all {@link LocalDateTime LocalDateTimes} between {@code startDate} and {@code
    * currentDate} (at 00:00 UTC) plus {@code totalHours % 24}.
    */
-  public static List<LocalDateTime> getHours(LocalDate currentDate, Collection<DiagnosisKey> diagnosisKeys) {
-    return List.of();
-    /*
-    int numFullDays = Math.floorDiv(totalHours, 24);
-    long currentDay = ChronoUnit.DAYS.between(startDate, currentDate);
-    int lastHour = (currentDay < numFullDays) ? 24 : totalHours % 24;
-    return IntStream.range(0, lastHour)
-        .mapToObj(hour -> currentDate.atStartOfDay().plusHours(hour))
-        .collect(Collectors.toList());
-    */
+  public static Set<LocalDateTime> getHours(LocalDate currentDate,
+      Collection<DiagnosisKey> diagnosisKeys) {
+    // TODO Doc
+    return diagnosisKeys.stream()
+        .map(DiagnosisKey::getSubmissionTimestamp)
+        .map(DateTime::getLocalDateTimeFromHoursSinceEpoch)
+        .filter(currentDateTime -> currentDateTime.toLocalDate().equals(currentDate))
+        .collect(Collectors.toSet());
+  }
+
+  public static LocalDateTime getLocalDateTimeFromHoursSinceEpoch(long timestamp) {
+      return LocalDateTime.ofEpochSecond(TimeUnit.HOURS.toSeconds(timestamp), 0, ZoneOffset.UTC);
   }
 }

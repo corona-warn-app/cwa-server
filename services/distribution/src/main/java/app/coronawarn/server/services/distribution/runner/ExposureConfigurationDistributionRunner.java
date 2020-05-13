@@ -12,6 +12,7 @@ import app.coronawarn.server.services.distribution.structure.directory.IndexDire
 import app.coronawarn.server.services.distribution.structure.directory.decorator.IndexingDecorator;
 import java.io.File;
 import java.util.List;
+import java.util.Set;
 import java.util.Stack;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -51,7 +52,7 @@ public class ExposureConfigurationDistributionRunner implements ApplicationRunne
   public void run(ApplicationArguments args) {
     var riskScoreParameters = readExposureConfiguration();
     IndexDirectory<?> versionDirectory =
-        new IndexDirectoryImpl<>(VERSION_DIRECTORY, __ -> List.of(version), Object::toString);
+        new IndexDirectoryImpl<>(VERSION_DIRECTORY, __ -> Set.of(version), Object::toString);
     ExposureConfigurationDirectoryImpl parametersDirectory =
         new ExposureConfigurationDirectoryImpl(country, riskScoreParameters, cryptoProvider);
     Directory root = new DirectoryImpl(new File(outputPath));

@@ -6,15 +6,17 @@ import app.coronawarn.server.services.distribution.structure.functional.FileFunc
 import app.coronawarn.server.services.distribution.structure.functional.Formatter;
 import app.coronawarn.server.services.distribution.structure.functional.IndexFunction;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.Stack;
 
 public class IndexDirectoryImpl<T> extends DirectoryImpl implements IndexDirectory<T> {
 
   // Files to be written into every directory created through the index
-  private final List<FileFunction> metaFiles = new ArrayList<>();
+  private final Set<FileFunction> metaFiles = new HashSet<>();
   // Directories to be written into every directory created through the index
-  private final List<DirectoryFunction> metaDirectories = new ArrayList<>();
+  private final Set<DirectoryFunction> metaDirectories = new HashSet<>();
   private final IndexFunction<T> indexFunction;
   private final Formatter<T> indexFormatter;
 
@@ -42,7 +44,7 @@ public class IndexDirectoryImpl<T> extends DirectoryImpl implements IndexDirecto
   }
 
   @Override
-  public List<T> getIndex(Stack<Object> indices) {
+  public Set<T> getIndex(Stack<Object> indices) {
     return this.indexFunction.apply(indices);
   }
 

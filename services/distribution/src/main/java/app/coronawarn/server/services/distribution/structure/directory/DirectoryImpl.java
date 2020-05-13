@@ -3,7 +3,9 @@ package app.coronawarn.server.services.distribution.structure.directory;
 import app.coronawarn.server.services.distribution.structure.WritableImpl;
 import app.coronawarn.server.services.distribution.structure.file.File;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.Stack;
 
 /**
@@ -11,8 +13,8 @@ import java.util.Stack;
  */
 public class DirectoryImpl extends WritableImpl implements Directory {
 
-  private final List<File> files = new ArrayList<>();
-  private final List<Directory> directories = new ArrayList<>();
+  private final Set<File> files = new HashSet<>();
+  private final Set<Directory> directories = new HashSet<>();
 
   /**
    * A root {@link DirectoryImpl} representing an already existing directory on disk.
@@ -41,7 +43,7 @@ public class DirectoryImpl extends WritableImpl implements Directory {
   }
 
   @Override
-  public List<File> getFiles() {
+  public Set<File> getFiles() {
     return this.files;
   }
 
@@ -52,7 +54,7 @@ public class DirectoryImpl extends WritableImpl implements Directory {
   }
 
   @Override
-  public List<Directory> getDirectories() {
+  public Set<Directory> getDirectories() {
     return this.directories;
   }
 

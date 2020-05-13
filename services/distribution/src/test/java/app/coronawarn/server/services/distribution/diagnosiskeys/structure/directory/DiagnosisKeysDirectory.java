@@ -1,6 +1,5 @@
 package app.coronawarn.server.services.distribution.diagnosiskeys.structure.directory;
 
-import static java.io.File;
 import static java.lang.String.join;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 

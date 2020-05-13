@@ -12,6 +12,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Collection;
 import java.util.List;
+import java.util.Set;
 import java.util.Stack;
 import org.apache.commons.io.FileUtils;
 import org.slf4j.Logger;
@@ -51,7 +52,7 @@ public class DiagnosisKeyDistributionRunner implements ApplicationRunner {
         new DiagnosisKeysDirectoryImpl(diagnosisKeys, cryptoProvider);
 
     IndexDirectory<?> versionDirectory =
-        new IndexDirectoryImpl<>(VERSION_DIRECTORY, __ -> List.of(VERSION), Object::toString);
+        new IndexDirectoryImpl<>(VERSION_DIRECTORY, __ -> Set.of(VERSION), Object::toString);
 
     versionDirectory.addDirectoryToAll(__ -> diagnosisKeysDirectory);
 

@@ -83,14 +83,43 @@ public class IndexDirectoryTest {
 
   @Test
   public void checkAddDirectoryToAll() {
+<<<<<<< Updated upstream
     List<Directory> expectedDirectoryList = new ArrayList<>();
     indexDirectory.addDirectoryToAll(__ -> {
       Directory newDirectory = new DirectoryImpl("foo");
       expectedDirectoryList.add(newDirectory);
+=======
+    List<Directory> expectedFileList = new ArrayList<>();
+    indexDirectory.addDirectoryToAll(__ -> {
+      Directory newDirectory = new DirectoryImpl("something");
+      expectedFileList.add(newDirectory);
+>>>>>>> Stashed changes
       return newDirectory;
     });
 
     prepareAndWrite(outputDirectory);
+<<<<<<< Updated upstream
+=======
+
+    java.io.File actualIndexDirectoryFile = Objects.requireNonNull(outputFile.listFiles())[0];
+    List<java.io.File> actualPhysicalFiles = Stream.of(actualIndexDirectoryFile)
+        .map(java.io.File::listFiles)
+        .flatMap(Arrays::stream)
+        .map(java.io.File::listFiles)
+        .flatMap(Arrays::stream)
+        .collect(Collectors.toList());
+    List<java.io.File> expectedPhysicalFiles = expectedFileList.stream()
+        .map(Writable::getFileOnDisk)
+        .collect(Collectors.toList());
+
+    assertEquals(expectedPhysicalFiles, actualPhysicalFiles);
+  }
+
+  private void prepareAndWrite(Directory directory) {
+    directory.prepare(new Stack<>());
+    directory.write();
+  }
+>>>>>>> Stashed changes
 
     java.io.File actualIndexDirectoryFile = Objects.requireNonNull(outputFile.listFiles())[0];
     List<java.io.File> actualPhysicalFiles = Stream.of(actualIndexDirectoryFile)

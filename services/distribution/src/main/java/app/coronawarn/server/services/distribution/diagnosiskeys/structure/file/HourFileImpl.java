@@ -5,13 +5,16 @@ import app.coronawarn.server.common.protocols.external.exposurenotification.File
 import app.coronawarn.server.common.protocols.external.exposurenotification.Key;
 import app.coronawarn.server.common.protocols.internal.FileBucket;
 import app.coronawarn.server.services.distribution.diagnosiskeys.util.Batch;
+import app.coronawarn.server.services.distribution.diagnosiskeys.util.DateTime;
 import app.coronawarn.server.services.distribution.structure.file.FileImpl;
+import com.google.protobuf.ByteString;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.util.Collection;
-import java.util.List;
+import java.util.Set;
 import java.util.Stack;
+import java.util.stream.Collectors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -47,63 +50,30 @@ public class HourFileImpl extends FileImpl {
         .toByteArray();
   }
 
-  private static List<File> generateFiles(Collection<DiagnosisKey> diagnosisKeys,
+  private static Set<File> generateFiles(Collection<DiagnosisKey> diagnosisKeys,
       LocalDateTime currentHour, String region) {
     Instant startTimestamp = Instant.from(currentHour.atOffset(ZoneOffset.UTC));
     Instant endTimestamp = Instant.from(currentHour.atOffset(ZoneOffset.UTC).plusHours(1));
-    List<Key> keys = getKeys(diagnosisKeys, currentHour);
+    Set<Key> keys = createKeys(diagnosisKeys, currentHour);
     return Batch.aggregateKeys(keys, startTimestamp, endTimestamp, region);
   }
 
-  private static List<Key> getKeys(Collection<DiagnosisKey> diagnosisKeys,
+  private static Set<Key> createKeys(Collection<DiagnosisKey> diagnosisKeys,
       LocalDateTime currentHour) {
-    return List.of();
-
-    /*
-    return IntStream.range(0, number)
-        .mapToObj(__ -> Key.newBuilder()
-            .setRollingStartNumber(generateRollingStartNumber(startDate, totalHours))
-            .setRollingPeriod(generateRollingPeriod())
-            // TODO Remove random
-            .setTransmissionRiskLevel(generateRiskLevel(random).getNumber())
-            .setKeyData(ByteString.copyFrom(generateDiagnosisKeyBytes()))
-            .build())
-        .collect(Collectors.toList());
-      */
+    return diagnosisKeys.stream()
+        .filter(diagnosisKey -> DateTime
+            .getLocalDateTimeFromHoursSinceEpoch(diagnosisKey.getSubmissionTimestamp())
+            .equals(currentHour))
+        .map(HourFileImpl::createKey)
+        .collect(Collectors.toSet());
   }
 
-  /*
-  // Timestamp since when a key was active, represented by a 10 minute interval counter
-  private static int generateRollingStartNumber(LocalDate startDate, int totalHours,
-      RandomGenerator random) {
-    // Calculate some random timestamp between the startDate (at 00:00 UTC) and totalHours
-    // later. This will form the basis for our rollingStartNumber.
-    LocalDateTime startDateTime = startDate.atStartOfDay();
-    // TODO Remove random
-    Instant randomTimestamp = Instant.ofEpochMilli(Random.getRandomBetween(
-        startDateTime.toInstant(ZoneOffset.UTC).toEpochMilli(),
-        startDateTime.plusHours(totalHours).toInstant(ZoneOffset.UTC).toEpochMilli(),
-        random));
-    return Math.toIntExact(Math.floorDiv(
-        randomTimestamp.toEpochMilli(),
-        TimeUnit.MINUTES.toMillis(10)));
+  private static Key createKey(DiagnosisKey key) {
+    return Key.newBuilder()
+        .setKeyData(ByteString.copyFrom(key.getKeyData()))
+        .setRollingStartNumber(Math.toIntExact(key.getRollingStartNumber()))
+        .setRollingPeriod(Math.toIntExact(key.getRollingPeriod()))
+        .setTransmissionRiskLevel(key.getTransmissionRiskLevel())
+        .build();
   }
-
-  // Number of 10 minute intervals that a key was active for.
-  private static int generateRollingPeriod() {
-    // We currently assume this to always be one day.
-    return Math.toIntExact(Math.floorDiv(TimeUnit.DAYS.toMinutes(1), 10));
-  }
-
-  private static RiskLevel generateRiskLevel(RandomGenerator random) {
-    return RiskLevel.forNumber(Random.getRandomBetween(
-        RiskLevel.RISK_LEVEL_LOWEST_VALUE, RiskLevel.RISK_LEVEL_HIGHEST_VALUE, random));
-  }
-
-  private static byte[] generateDiagnosisKeyBytes(RandomGenerator random) {
-    byte[] exposureKey = new byte[16];
-    random.nextBytes(exposureKey);
-    return exposureKey;
-  }
-  */
 }

@@ -20,6 +20,7 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Collection;
 import java.util.List;
+import java.util.Set;
 
 public class DiagnosisKeysDirectoryImpl extends DirectoryImpl {
 
@@ -56,7 +57,7 @@ public class DiagnosisKeysDirectoryImpl extends DirectoryImpl {
   }
 
   private IndexDirectory<String> createCountryDirectory() {
-    return new IndexDirectoryImpl<>(COUNTRY_DIRECTORY, __ -> List.of(COUNTRY), Object::toString);
+    return new IndexDirectoryImpl<>(COUNTRY_DIRECTORY, __ -> Set.of(COUNTRY), Object::toString);
   }
 
   private IndexDirectory<LocalDate> createDateDirectory() {
