@@ -20,7 +20,7 @@ public class ExposureConfigurationProvider {
   }
 
   /**
-   * the location of the exposure configuration master file
+   * The location of the exposure configuration master file.
    */
   public static final String MASTER_FILE = "exposure-config/master.yaml";
 
