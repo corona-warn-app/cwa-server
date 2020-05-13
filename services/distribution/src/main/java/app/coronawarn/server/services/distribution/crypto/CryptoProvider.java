@@ -16,22 +16,24 @@ import org.bouncycastle.asn1.pkcs.PrivateKeyInfo;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.bouncycastle.openssl.PEMParser;
 import org.bouncycastle.openssl.jcajce.JcaPEMKeyConverter;
-import org.springframework.stereotype.Component;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.util.ResourceUtils;
 
-@Component
+@Configuration
 public class CryptoProvider {
 
-  private static final String PRIVATE_KEY_PATH = "classpath:certificates/client/private.pem";
-  private static final String CERTIFICATE_PATH = "classpath:certificates/chain/certificate.crt";
+  @Value("${app.coronawarn.server.services.distribution.paths.privatekey}")
+  private String privateKeyPath;
 
-  private final PrivateKey privateKey;
-  private final Certificate certificate;
+  @Value("${app.coronawarn.server.services.distribution.paths.certificate}")
+  private String certificatePath;
 
-  public CryptoProvider() throws IOException, CertificateException {
+  private PrivateKey privateKey;
+  private Certificate certificate;
+
+  public CryptoProvider() {
     Security.addProvider(new BouncyCastleProvider());
-    this.privateKey = getPrivateKeyFromFile(ResourceUtils.getFile(PRIVATE_KEY_PATH));
-    this.certificate = getCertificateFromFile(ResourceUtils.getFile(CERTIFICATE_PATH));
   }
 
   private static PrivateKey getPrivateKeyFromFile(File privateKeyFile) throws IOException {
@@ -53,10 +55,24 @@ public class CryptoProvider {
   }
 
   public PrivateKey getPrivateKey() {
+    if (this.privateKey == null) {
+      try {
+        this.privateKey = getPrivateKeyFromFile(ResourceUtils.getFile(privateKeyPath));
+      } catch (IOException e) {
+        throw new RuntimeException(e);
+      }
+    }
     return privateKey;
   }
 
   public Certificate getCertificate() {
+    if (this.certificate == null) {
+      try {
+        this.certificate = getCertificateFromFile(ResourceUtils.getFile(certificatePath));
+      } catch (IOException | CertificateException e) {
+        throw new RuntimeException(e);
+      }
+    }
     return certificate;
   }
 }

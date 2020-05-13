@@ -27,14 +27,23 @@ import java.security.cert.CertificateFactory;
 import org.junit.Rule;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.rules.TemporaryFolder;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.ConfigFileApplicationContextInitializer;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 
+@ExtendWith(SpringExtension.class)
+@ContextConfiguration(classes = {CryptoProvider.class},
+    initializers = ConfigFileApplicationContextInitializer.class)
 public class SigningDecoratorTest {
 
   @Rule
   private TemporaryFolder outputFolder = new TemporaryFolder();
 
-  private static CryptoProvider cryptoProvider;
+  @Autowired
+  CryptoProvider cryptoProvider;
 
   private static final byte[] bytes = "foo".getBytes();
   private Directory parent;
@@ -42,8 +51,7 @@ public class SigningDecoratorTest {
   private File decorator;
 
   @BeforeEach
-  public void setup() throws IOException, CertificateException {
-    cryptoProvider = new CryptoProvider();
+  public void setup() throws IOException {
     outputFolder.create();
     parent = new DirectoryImpl(outputFolder.newFolder());
     decoree = new FileImpl("bar", bytes);

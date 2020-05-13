@@ -16,6 +16,7 @@ import java.util.Stack;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.context.annotation.Profile;
@@ -29,9 +30,15 @@ public class ExposureConfigurationDistributionRunner implements ApplicationRunne
 
   private static final Logger logger =
       LoggerFactory.getLogger(ExposureConfigurationDistributionRunner.class);
-  private static final String COUNTRY = "DE";
-  private static final String VERSION = "v1";
-  private static final String OUTPUT_PATH = "out";
+
+  @Value("${app.coronawarn.server.services.distribution.version}")
+  private String country;
+
+  @Value("${app.coronawarn.server.services.distribution.region}")
+  private String version;
+
+  @Value("${app.coronawarn.server.services.distribution.paths.output}")
+  private String outputPath;
 
   @Autowired
   private CryptoProvider cryptoProvider;
@@ -40,12 +47,12 @@ public class ExposureConfigurationDistributionRunner implements ApplicationRunne
   public void run(ApplicationArguments args) {
     var riskScoreParameters = readExposureConfiguration();
     IndexDirectory<?> versionDirectory =
-        new IndexDirectoryImpl<>("version", __ -> List.of(VERSION), Object::toString);
+        new IndexDirectoryImpl<>("version", __ -> List.of(version), Object::toString);
     ExposureConfigurationDirectoryImpl parametersDirectory =
-        new ExposureConfigurationDirectoryImpl(COUNTRY, riskScoreParameters, cryptoProvider);
-    Directory root = new DirectoryImpl(new File(OUTPUT_PATH));
+        new ExposureConfigurationDirectoryImpl(country, riskScoreParameters, cryptoProvider);
+    Directory root = new DirectoryImpl(new File(outputPath));
     versionDirectory.addDirectoryToAll(__ -> parametersDirectory);
-    root.addDirectory(new IndexingDecorator(versionDirectory));
+    root.addDirectory(new IndexingDecorator<>(versionDirectory));
     root.prepare(new Stack<>());
     root.write();
   }
