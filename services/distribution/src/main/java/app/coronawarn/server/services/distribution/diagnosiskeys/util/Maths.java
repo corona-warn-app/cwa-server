@@ -1,4 +1,4 @@
-package app.coronawarn.server.tools.testdatagenerator.util;
+package app.coronawarn.server.services.distribution.diagnosiskeys.util;
 
 public class Maths {
 

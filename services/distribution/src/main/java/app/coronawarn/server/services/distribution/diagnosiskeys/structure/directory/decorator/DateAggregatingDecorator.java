@@ -1,7 +1,8 @@
-package app.coronawarn.server.tools.testdatagenerator.decorators.directory;
+package app.coronawarn.server.services.distribution.diagnosiskeys.structure.directory.decorator;
 
 import app.coronawarn.server.common.protocols.internal.FileBucket;
 import app.coronawarn.server.common.protocols.internal.SignedPayload;
+import app.coronawarn.server.services.distribution.crypto.CryptoProvider;
 import app.coronawarn.server.services.distribution.structure.directory.Directory;
 import app.coronawarn.server.services.distribution.structure.directory.decorator.DirectoryDecorator;
 import app.coronawarn.server.services.distribution.structure.file.File;
@@ -19,8 +20,11 @@ import java.util.stream.Stream;
  */
 public class DateAggregatingDecorator extends DirectoryDecorator {
 
-  public DateAggregatingDecorator(Directory directory) {
+  private final CryptoProvider cryptoProvider;
+
+  public DateAggregatingDecorator(Directory directory, CryptoProvider cryptoProvider) {
     super(directory);
+    this.cryptoProvider = cryptoProvider;
   }
 
   @Override
@@ -37,7 +41,7 @@ public class DateAggregatingDecorator extends DirectoryDecorator {
           .map(this::makeNewFileBucket)
           .map(FileBucket::toByteArray)
           .map(bytes -> new FileImpl("index", bytes))
-          .map(SigningDecorator::new)
+          .map(file -> new SigningDecorator(file, cryptoProvider))
           .peek(currentDirectory::addFile)
           .forEach(aggregate -> aggregate.prepare(indices));
     });
