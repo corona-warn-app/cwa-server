@@ -40,6 +40,7 @@ public class IO {
     try {
       return Files.readAllBytes(file.toPath());
     } catch (IOException e) {
+      logger.error("Read operation failed.", e);
       throw new RuntimeException(e);
     }
   }
