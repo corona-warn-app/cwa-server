@@ -1,6 +1,14 @@
 package app.coronawarn.server.common.persistence.domain;
 
+import static app.coronawarn.server.common.persistence.domain.DiagnosisKeyBuilders.Builder;
+import static app.coronawarn.server.common.persistence.domain.DiagnosisKeyBuilders.FinalBuilder;
+import static app.coronawarn.server.common.persistence.domain.DiagnosisKeyBuilders.RollingPeriodBuilder;
+import static app.coronawarn.server.common.persistence.domain.DiagnosisKeyBuilders.RollingStartNumberBuilder;
+import static app.coronawarn.server.common.persistence.domain.DiagnosisKeyBuilders.TransmissionRiskLevelBuilder;
+import static java.time.temporal.ChronoUnit.HOURS;
+
 import app.coronawarn.server.common.protocols.external.exposurenotification.Key;
+import java.time.Instant;
 
 /**
  * An instance of this builder can be retrieved by calling {@link DiagnosisKey#builder()}. A {@link
@@ -47,60 +55,10 @@ public class DiagnosisKeyBuilder implements Builder, RollingStartNumberBuilder,
   }
 
   public DiagnosisKey build() {
-    return new DiagnosisKey(
-        this.keyData, this.rollingStartNumber, this.rollingPeriod, this.transmissionRiskLevel);
+    // hours since epoch
+    long submissionTimestamp = Instant.now().getEpochSecond() / 3600L;
+
+    return new DiagnosisKey(this.keyData, this.rollingStartNumber, this.rollingPeriod,
+        this.transmissionRiskLevel, submissionTimestamp);
   }
-}
-
-interface Builder {
-
-  /**
-   * @param keyData generated diagnosis key.
-   * @return this Builder instance.
-   */
-  RollingStartNumberBuilder withKeyData(byte[] keyData);
-
-  /**
-   * @param protoBufObject ProtocolBuffer object associated with the temporary exposure key.
-   * @return this Builder instance.
-   */
-  FinalBuilder fromProtoBuf(Key protoBufObject);
-}
-
-interface RollingStartNumberBuilder {
-
-  /**
-   * @param rollingStartNumber number describing when a key starts. It is equal to
-   *                           startTimeOfKeySinceEpochInSecs / (60 * 10).
-   * @return this Builder instance.
-   */
-  RollingPeriodBuilder withRollingStartNumber(long rollingStartNumber);
-}
-
-interface RollingPeriodBuilder {
-
-  /**
-   * @param rollingPeriod Number describing how long a key is valid. It is expressed in increments
-   *                      of 10 minutes (e.g. 144 for 24 hours).
-   * @return this Builder instance.
-   */
-  TransmissionRiskLevelBuilder withRollingPeriod(long rollingPeriod);
-}
-
-interface TransmissionRiskLevelBuilder {
-
-  /**
-   * @param transmissionRiskLevel risk of transmission associated with the person this key came
-   *                              from.
-   * @return this Builder instance.
-   */
-  FinalBuilder withTransmissionRiskLevel(int transmissionRiskLevel);
-}
-
-interface FinalBuilder {
-
-  /**
-   * @return {@link DiagnosisKey} instance
-   */
-  DiagnosisKey build();
 }

@@ -1,6 +1,5 @@
 package app.coronawarn.server.services.submission.controller;
 
-
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.any;
@@ -15,10 +14,10 @@ import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
 import static org.springframework.http.HttpStatus.METHOD_NOT_ALLOWED;
 import static org.springframework.http.HttpStatus.OK;
 
-import app.coronawarn.server.common.protocols.external.exposurenotification.Key;
-import app.coronawarn.server.common.protocols.internal.SubmissionPayload;
 import app.coronawarn.server.common.persistence.domain.DiagnosisKey;
 import app.coronawarn.server.common.persistence.service.DiagnosisKeyService;
+import app.coronawarn.server.common.protocols.external.exposurenotification.Key;
+import app.coronawarn.server.common.protocols.internal.SubmissionPayload;
 import app.coronawarn.server.services.submission.verification.TanVerifier;
 import com.google.protobuf.ByteString;
 import java.net.URI;
@@ -26,6 +25,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -41,6 +41,7 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.RequestEntity;
 import org.springframework.http.ResponseEntity;
@@ -105,9 +106,9 @@ public class SubmissionControllerTest {
     // INTERNAL_SERVER_ERROR is the result of blocking by StrictFirewall for non POST calls.
     //                       We can change this when Spring Security 5.4.x is released.
     // METHOD_NOT_ALLOWED is the result of TRACE calls (disabled by default in tomcat)
-    var allowedErrors = Arrays.asList(INTERNAL_SERVER_ERROR, METHOD_NOT_ALLOWED);
+    List<HttpStatus> allowedErrors = Arrays.asList(INTERNAL_SERVER_ERROR, METHOD_NOT_ALLOWED);
 
-    var actStatus = testRestTemplate
+    HttpStatus actStatus = testRestTemplate
         .exchange(SUBMISSION_URL, deniedHttpMethod, null, Void.class).getStatusCode();
 
     assertTrue(allowedErrors.contains(actStatus),

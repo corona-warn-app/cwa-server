@@ -15,7 +15,7 @@ import org.springframework.security.web.firewall.StrictHttpFirewall;
 @EnableWebSecurity
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
-  private final static String SUBMISSION_ROUTE =
+  private static final String SUBMISSION_ROUTE =
       "/version/v1" + SubmissionController.SUBMISSION_ROUTE;
 
   @Bean

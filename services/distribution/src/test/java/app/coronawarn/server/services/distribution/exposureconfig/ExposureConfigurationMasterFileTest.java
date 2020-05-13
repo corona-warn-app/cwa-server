@@ -18,10 +18,10 @@ public class ExposureConfigurationMasterFileTest {
 
   @Test
   public void testMasterFile() throws UnableToLoadFileException {
-    var config = new ExposureConfigurationProvider().readMasterFile();
+    var config = ExposureConfigurationProvider.readMasterFile();
 
     var validator = new ExposureConfigurationValidator(config);
-    var result =  validator.validate();
+    ValidationResult result = validator.validate();
 
     assertEquals(SUCCESS, result);
   }

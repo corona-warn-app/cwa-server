@@ -1,14 +1,14 @@
 package app.coronawarn.server.tools.testdatagenerator;
 
-import app.coronawarn.server.tools.testdatagenerator.decorators.directory.IndexingDecorator;
-import app.coronawarn.server.tools.testdatagenerator.implementations.DirectoryImpl;
-import app.coronawarn.server.tools.testdatagenerator.implementations.FileImpl;
-import app.coronawarn.server.tools.testdatagenerator.implementations.IndexDirectoryImpl;
+import app.coronawarn.server.services.distribution.crypto.Crypto;
+import app.coronawarn.server.services.distribution.io.IO;
+import app.coronawarn.server.services.distribution.structure.directory.DirectoryImpl;
+import app.coronawarn.server.services.distribution.structure.directory.IndexDirectory;
+import app.coronawarn.server.services.distribution.structure.directory.IndexDirectoryImpl;
+import app.coronawarn.server.services.distribution.structure.directory.decorator.IndexingDecorator;
+import app.coronawarn.server.services.distribution.structure.file.FileImpl;
 import app.coronawarn.server.tools.testdatagenerator.implementations.cwa.DiagnosisKeysDirectoryImpl;
 import app.coronawarn.server.tools.testdatagenerator.implementations.cwa.ParametersDirectoryImpl;
-import app.coronawarn.server.tools.testdatagenerator.interfaces.IndexDirectory;
-import app.coronawarn.server.tools.testdatagenerator.util.Crypto;
-import app.coronawarn.server.tools.testdatagenerator.util.IO;
 import java.io.File;
 import java.io.IOException;
 import java.security.cert.CertificateException;
@@ -37,12 +37,12 @@ public class Generator {
 
     RandomGenerator random = new JDKRandomGenerator();
     random.setSeed(seed);
-    Crypto crypto = new Crypto(privateKeyFile, certificateFile);
+    // Crypto crypto = new Crypto(privateKeyFile, certificateFile);
     LocalDate startDate = LocalDate.parse(startDateStr, ISO8601);
 
     DiagnosisKeysDirectoryImpl diagnosisKeysDirectory = new DiagnosisKeysDirectoryImpl(startDate,
-        totalHours, exposuresPerHour, COUNTRY, ISO8601, crypto, random);
-    ParametersDirectoryImpl parametersDirectory = new ParametersDirectoryImpl(COUNTRY, crypto);
+        totalHours, exposuresPerHour, COUNTRY, ISO8601, random);
+    ParametersDirectoryImpl parametersDirectory = new ParametersDirectoryImpl(COUNTRY);
 
     IndexDirectory<?> versionDirectory =
         new IndexDirectoryImpl<>("version", __ -> List.of(VERSION));

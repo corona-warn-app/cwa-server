@@ -6,9 +6,11 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import app.coronawarn.server.common.protocols.external.exposurenotification.Key;
 import com.google.protobuf.ByteString;
 import java.nio.charset.Charset;
+import java.time.Instant;
 import org.junit.jupiter.api.Test;
 
 public class DiagnosisKeyBuilderTest {
+
   private final byte[] expKeyData = "myByteArr".getBytes(Charset.defaultCharset());
   private final long expRollingStartNumber = 123;
   private final long expRollingPeriod = 123;
@@ -26,8 +28,10 @@ public class DiagnosisKeyBuilderTest {
 
     DiagnosisKey actDiagnosisKey = DiagnosisKey.builder().fromProtoBuf(protoBufObj).build();
 
+    assertEquals(getCurrentHoursSinceEpoch(), actDiagnosisKey.getSubmissionTimestamp());
     assertArrayEquals(this.expKeyData, actDiagnosisKey.getKeyData());
     assertEquals(this.expRollingStartNumber, actDiagnosisKey.getRollingStartNumber());
+    assertEquals(this.expRollingPeriod, actDiagnosisKey.getRollingStartNumber());
     assertEquals(this.expTransmissionRiskLevel, actDiagnosisKey.getTransmissionRiskLevel());
   }
 
@@ -39,9 +43,14 @@ public class DiagnosisKeyBuilderTest {
         .withRollingPeriod(this.expRollingPeriod)
         .withTransmissionRiskLevel(this.expTransmissionRiskLevel).build();
 
+    assertEquals(getCurrentHoursSinceEpoch(), actDiagnosisKey.getSubmissionTimestamp());
     assertArrayEquals(this.expKeyData, actDiagnosisKey.getKeyData());
     assertEquals(this.expRollingStartNumber, actDiagnosisKey.getRollingStartNumber());
     assertEquals(this.expRollingPeriod, actDiagnosisKey.getRollingPeriod());
     assertEquals(this.expTransmissionRiskLevel, actDiagnosisKey.getTransmissionRiskLevel());
+  }
+
+  private long getCurrentHoursSinceEpoch() {
+    return Instant.now().getEpochSecond() / 3600L;
   }
 }

@@ -11,8 +11,9 @@ public class DiagnosisKeyTest {
   final static long expRollingStartNumber = 1L;
   final static long expRollingPeriod = 2L;
   final static int expTransmissionRiskLevel = 3;
-  final static DiagnosisKey diagnosisKey = new DiagnosisKey(
-      expKeyData, expRollingStartNumber, expRollingPeriod, expTransmissionRiskLevel);
+  final static long expSubmissionTimestamp = 4L;
+  final static DiagnosisKey diagnosisKey = new DiagnosisKey(expKeyData, expRollingStartNumber,
+      expRollingPeriod, expTransmissionRiskLevel, expSubmissionTimestamp);
 
   @Test
   public void testRollingStartNumberGetter() {
@@ -27,5 +28,10 @@ public class DiagnosisKeyTest {
   @Test
   public void testTransmissionRiskLevelGetter() {
     assertEquals(expTransmissionRiskLevel, diagnosisKey.getTransmissionRiskLevel());
+  }
+
+  @Test
+  public void testSubmissionTimestampGetter() {
+    assertEquals(expSubmissionTimestamp, diagnosisKey.getSubmissionTimestamp());
   }
 }

@@ -6,7 +6,6 @@
 	<modules>
 		<module>common</module>
 		<module>services</module>
-		<module>tools</module>
 	</modules>
 	<groupId>org.opencwa</groupId>
 	<artifactId>server</artifactId>
@@ -30,7 +29,7 @@
 				<version>3.1.0</version>
 				<configuration>
 					<configLocation>codestyle/checkstyle.xml</configLocation>
-					<excludes>**/module-info.java,**/generated/**/*</excludes>
+					<excludes>**/module-info.java,**/target/**/*</excludes>
 					<encoding>UTF-8</encoding>
 					<consoleOutput>true</consoleOutput>
 					<failsOnError>true</failsOnError>

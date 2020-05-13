@@ -9,7 +9,6 @@ import org.yaml.snakeyaml.introspector.PropertyUtils;
 /**
  * This Constructor implementation grants SnakeYaml compliance with the generated proto Java
  * classes.
- *
  * SnakeYaml expects the Java properties to have the same name as the yaml properties. But the
  * generated Java classes' properties have an added suffix of '_'.
  * In addition, this implementation also allows snake case in the YAML (for better readability), as
@@ -32,7 +31,7 @@ public class YamlConstructorForProtoBuf extends Constructor {
     }
 
     private String snakeToCamelCase(String snakeCase) {
-      var camelCase = Arrays.stream(snakeCase.split("_"))
+      String camelCase = Arrays.stream(snakeCase.split("_"))
           .map(word -> Character.toUpperCase(word.charAt(0)) + word.substring(1))
           .reduce("", String::concat);
 

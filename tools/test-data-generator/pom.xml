@@ -3,7 +3,17 @@
   xmlns="http://maven.apache.org/POM/4.0.0"
   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 
+  <modelVersion>4.0.0</modelVersion>
+
+  <parent>
+    <artifactId>tools</artifactId>
+    <groupId>org.opencwa</groupId>
+    <relativePath>../pom.xml</relativePath>
+    <version>0.0.1-SNAPSHOT</version>
+  </parent>
+
   <artifactId>test-data-generator</artifactId>
+  <version>0.0.1-SNAPSHOT</version>
 
   <build>
     <plugins>
@@ -46,6 +56,11 @@
       <version>0.0.1-SNAPSHOT</version>
     </dependency>
     <dependency>
+      <artifactId>distribution</artifactId>
+      <groupId>org.opencwa</groupId>
+      <version>0.0.1-SNAPSHOT</version>
+    </dependency>
+    <dependency>
       <artifactId>picocli</artifactId>
       <groupId>info.picocli</groupId>
       <version>4.2.0</version>
@@ -71,15 +86,5 @@
       <version>3.2</version>
     </dependency>
   </dependencies>
-  <modelVersion>4.0.0</modelVersion>
-
-  <parent>
-    <artifactId>tools</artifactId>
-    <groupId>org.opencwa</groupId>
-    <relativePath>../pom.xml</relativePath>
-    <version>0.0.1-SNAPSHOT</version>
-  </parent>
-
-  <version>0.0.1-SNAPSHOT</version>
 
 </project>

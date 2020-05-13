@@ -7,6 +7,10 @@ import org.springframework.stereotype.Component;
 
 @Component
 @Order(2)
+/**
+ * This runner retrieves stored diagnosis keys, the generates and persists the respective diagnosis
+ * key bundles.
+ */
 public class DiagnosisKeyDistributionRunner implements ApplicationRunner {
 
   @Override

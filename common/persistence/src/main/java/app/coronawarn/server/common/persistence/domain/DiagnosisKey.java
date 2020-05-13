@@ -22,16 +22,18 @@ public class DiagnosisKey {
   private long rollingStartNumber;
   private long rollingPeriod;
   private int transmissionRiskLevel;
+  private long submissionTimestamp;
 
   /**
    * Should be called by builders.
    */
-  DiagnosisKey(
-      byte[] keyData, long rollingStartNumber, long rollingPeriod, int transmissionRiskLevel) {
+  DiagnosisKey(byte[] keyData, long rollingStartNumber, long rollingPeriod,
+      int transmissionRiskLevel, long submissionTimestamp) {
     this.keyData = keyData;
     this.rollingStartNumber = rollingStartNumber;
     this.rollingPeriod = rollingPeriod;
     this.transmissionRiskLevel = transmissionRiskLevel;
+    this.submissionTimestamp = submissionTimestamp;
   }
 
   /**
@@ -49,14 +51,14 @@ public class DiagnosisKey {
   }
 
   /**
-   * @return generated diagnosis key.
+   * Returns the diagnosis key.
    */
   public byte[] getKeyData() {
     return keyData;
   }
 
   /**
-   * @return number describing when a key starts. It is equal to startTimeOfKeySinceEpochInSecs /
+   * Returns a number describing when a key starts. It is equal to startTimeOfKeySinceEpochInSecs /
    * (60 * 10).
    */
   public long getRollingStartNumber() {
@@ -64,18 +66,26 @@ public class DiagnosisKey {
   }
 
   /**
-   * @return number describing how long a key is valid. It is expressed in increments of 10 minutes
-   * (e.g. 144 for 24 hours).
+   * Returns a number describing how long a key is valid. It is expressed in increments of 10
+   * minutes (e.g. 144 for 24 hours).
    */
   public long getRollingPeriod() {
     return rollingPeriod;
   }
 
   /**
-   * @return risk of transmission associated with the person this key came from.
+   * Returns the risk of transmission associated with the person this key came from.
    */
   public int getTransmissionRiskLevel() {
     return transmissionRiskLevel;
+  }
+
+  /**
+   * Returns the timestamp associated with the submission of this {@link DiagnosisKey} as hours
+   * since epoch.
+   */
+  public long getSubmissionTimestamp() {
+    return submissionTimestamp;
   }
 
   @Override
@@ -87,16 +97,18 @@ public class DiagnosisKey {
       return false;
     }
     DiagnosisKey that = (DiagnosisKey) o;
-    return rollingStartNumber == that.rollingStartNumber &&
-        rollingPeriod == that.rollingPeriod &&
-        transmissionRiskLevel == that.transmissionRiskLevel &&
-        Objects.equals(id, that.id) &&
-        Arrays.equals(keyData, that.keyData);
+    return rollingStartNumber == that.rollingStartNumber
+        && rollingPeriod == that.rollingPeriod
+        && transmissionRiskLevel == that.transmissionRiskLevel
+        && submissionTimestamp == that.submissionTimestamp
+        && Objects.equals(id, that.id)
+        && Arrays.equals(keyData, that.keyData);
   }
 
   @Override
   public int hashCode() {
-    int result = Objects.hash(id, rollingStartNumber, rollingPeriod, transmissionRiskLevel);
+    int result = Objects
+        .hash(id, rollingStartNumber, rollingPeriod, transmissionRiskLevel, submissionTimestamp);
     result = 31 * result + Arrays.hashCode(keyData);
     return result;
   }
