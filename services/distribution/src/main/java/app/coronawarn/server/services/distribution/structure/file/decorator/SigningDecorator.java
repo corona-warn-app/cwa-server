@@ -18,6 +18,9 @@ import org.slf4j.LoggerFactory;
  */
 public class SigningDecorator extends FileDecorator {
 
+  private static final String SIGNATURE_ALGORITHM = "Ed25519";
+  private static final String SECURITY_PROVIDER = "BC";
+
   private static final Logger logger = LoggerFactory.getLogger(SigningDecorator.class);
   private final CryptoProvider cryptoProvider;
 
@@ -41,7 +44,7 @@ public class SigningDecorator extends FileDecorator {
   private static SignedPayload sign(byte[] payload, PrivateKey privateKey,
       Certificate certificate) {
     try {
-      Signature payloadSignature = Signature.getInstance("Ed25519", "BC");
+      Signature payloadSignature = Signature.getInstance(SIGNATURE_ALGORITHM, SECURITY_PROVIDER);
       payloadSignature.initSign(privateKey);
       payloadSignature.update(payload);
       return SignedPayload.newBuilder()

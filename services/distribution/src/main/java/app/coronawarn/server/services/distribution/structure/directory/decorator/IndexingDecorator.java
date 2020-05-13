@@ -17,6 +17,8 @@ import org.slf4j.LoggerFactory;
  */
 public class IndexingDecorator<T> extends DirectoryDecorator {
 
+  private static final String INDEX_FILE_NAME = "index";
+
   private static final Logger logger = LoggerFactory.getLogger(IndexingDecorator.class);
   final IndexDirectory<T> directory;
 
@@ -37,7 +39,7 @@ public class IndexingDecorator<T> extends DirectoryDecorator {
         .map(this.directory.getIndexFormatter())
         .collect(Collectors.toList());
     array.addAll(elements);
-    this.addFile(new FileImpl("index", array.toJSONString().getBytes()));
+    this.addFile(new FileImpl(INDEX_FILE_NAME, array.toJSONString().getBytes()));
     super.prepare(indices);
   }
 }
