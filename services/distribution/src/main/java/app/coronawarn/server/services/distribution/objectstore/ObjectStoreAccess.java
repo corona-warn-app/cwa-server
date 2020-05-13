@@ -3,6 +3,7 @@ package app.coronawarn.server.services.distribution.objectstore;
 import java.io.File;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.Collection;
 import java.util.stream.Collectors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -76,8 +77,8 @@ public class ObjectStoreAccess {
    * @param prefix the prefix, e.g. my/folder/
    */
   public void deleteObjectsWithPrefix(String prefix) {
-    var files = getObjectsWithPrefix(prefix);
-    var identifiers = files
+    ListObjectsV2Response files = getObjectsWithPrefix(prefix);
+    Collection<ObjectIdentifier> identifiers = files
         .contents()
         .stream()
         .map(s3object -> ObjectIdentifier.builder().key(s3object.key()).build())
