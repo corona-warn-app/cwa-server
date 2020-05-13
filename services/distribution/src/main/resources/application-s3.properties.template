@@ -1,7 +1,0 @@
-# Copy to application-s3.properties and fill these information to enable s3 integration
-
-cloud.aws.credentials.accessKey=
-cloud.aws.credentials.secretKey=
-
-cwa.objectstore.endpoint=
-cwa.objectstore.bucket=
