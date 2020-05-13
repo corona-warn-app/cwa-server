@@ -4,6 +4,7 @@ import app.coronawarn.server.common.protocols.internal.RiskScoreParameters;
 import app.coronawarn.server.services.distribution.exposureconfig.parsing.YamlConstructorForProtoBuf;
 import java.io.IOException;
 import java.io.InputStream;
+import org.springframework.core.io.ClassPathResource;
 import org.yaml.snakeyaml.Yaml;
 import org.yaml.snakeyaml.error.YAMLException;
 import org.yaml.snakeyaml.introspector.BeanAccess;
@@ -45,8 +46,7 @@ public class ExposureConfigurationProvider {
     Yaml yaml = new Yaml(new YamlConstructorForProtoBuf());
     yaml.setBeanAccess(BeanAccess.FIELD); /* no setters on RiskScoreParameters available */
 
-    try (InputStream inputStream =
-        ExposureConfigurationProvider.class.getClassLoader().getResourceAsStream(path)) {
+    try (InputStream inputStream = new ClassPathResource(path).getInputStream()) {
       var loaded = yaml.loadAs(inputStream, RiskScoreParameters.newBuilder().getClass());
       if (loaded == null) {
         throw new UnableToLoadFileException(path);
