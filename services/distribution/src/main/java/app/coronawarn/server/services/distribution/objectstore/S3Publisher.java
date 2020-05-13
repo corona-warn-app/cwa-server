@@ -10,15 +10,17 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 /**
- * This publisher is the interface to the S3, translating a local file structure
- * to the target S3 objects.
+ * This publisher is the interface to the S3, translating a local file structure to the target S3
+ * objects.
  */
 @Component
 public class S3Publisher {
 
   private Logger logger = LoggerFactory.getLogger(this.getClass());
 
-  /** prefix path on S3, enforced for all methods on this class */
+  /**
+   * prefix path on S3, enforced for all methods on this class.
+   */
   private String prefixPath = "cwa/";
 
   private ObjectStoreAccess objectStoreAccess;
@@ -30,8 +32,8 @@ public class S3Publisher {
 
   /**
    * Publishes a local folder to S3. All files in the target folder will be copied over to S3,
-   * keeping the file structure.
-   * This operation is running also through all subfolders (recursively).
+   * keeping the file structure. This operation is running also through all subfolders
+   * (recursively).
    *
    * @param path the folder on the local disk
    * @throws IOException in case there was a problem reading the folder/contents
@@ -47,7 +49,7 @@ public class S3Publisher {
   }
 
   /**
-   * Deletes a folder on S3
+   * Deletes a folder on S3.
    *
    * @param path the folder to delete
    */
@@ -56,9 +58,10 @@ public class S3Publisher {
   }
 
   /**
-   * Publishes the given file
-   * @param file
-   * @param root
+   * Publishes the given file.
+   *
+   * @param file the file to publish
+   * @param root the root, needed to compute the relative path for the S3 location
    */
   public void publishFile(Path file, Path root) {
     if (file.toFile().isFile()) {
@@ -72,11 +75,9 @@ public class S3Publisher {
 
   /**
    * Checks whether the given file exists.
-   *
+   * <br>
    * Both parameters are local on disk, and the S3 path is derived relatively by the root & file.
-   * E.g.:<br>
-   * file: /folder1/folder2/file<br>
-   * root: /folder1/<br>
+   * E.g.:<br> file: /folder1/folder2/file<br> root: /folder1/<br>
    * <br>
    * The result S3 location will be /folder2/file, which will be checked for existence.
    *
@@ -90,11 +91,9 @@ public class S3Publisher {
 
   /**
    * Deletes the given file on S3.
-   *
+   * <br>
    * Both parameters are local on disk, and the S3 path is derived relatively by the root & file
-   * E.g.:<br>
-   * file: /folder1/folder2/file<br>
-   * root: /folder1/<br>
+   * E.g.:<br> file: /folder1/folder2/file<br> root: /folder1/<br>
    * <br>
    * The result S3 location will be /folder2/file, which will be deleted.
    *
@@ -115,8 +114,9 @@ public class S3Publisher {
   }
 
   /**
-   * Changes the prefix path for all S3Publisher operations. The default root
-   * @param prefixPath
+   * Changes the prefix path for all S3Publisher operations. The default root.
+   *
+   * @param prefixPath the new prefix path
    */
   public void setPrefixPath(String prefixPath) {
     this.prefixPath = prefixPath;

@@ -21,7 +21,7 @@ public class S3DistributionRunner implements ApplicationRunner {
 
   private Logger logger = LoggerFactory.getLogger(this.getClass());
 
-  @Value("${cwa.distribution.base}")
+  @Value("${app.coronawarn.server.services.distribution.paths.output}")
   private String workdir;
 
   @Autowired

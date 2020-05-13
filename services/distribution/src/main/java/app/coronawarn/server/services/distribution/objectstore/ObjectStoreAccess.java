@@ -22,7 +22,7 @@ import software.amazon.awssdk.services.s3.model.PutObjectRequest;
 /**
  * <p>Grants access to the object store, enabling basic functionality for working with files.</p>
  * <p>Use S3Publisher for more convenient access.</p>
- * <br></br>
+ * <br>
  * Make sure the following ENV vars are available.
  * <ul>
  *   <li>cwa.objectstore.endpoint</li>
@@ -88,7 +88,7 @@ public class ObjectStoreAccess {
   }
 
   /**
-   * Fetches the list of objects in the store with the given prefix
+   * Fetches the list of objects in the store with the given prefix.
    *
    * @param prefix the prefix, e.g. my/folder/
    * @return the list of objects
