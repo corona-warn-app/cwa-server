@@ -9,8 +9,21 @@ import app.coronawarn.server.services.distribution.structure.file.FileImpl;
 import app.coronawarn.server.services.distribution.structure.file.decorator.SigningDecorator;
 import java.util.List;
 
+/**
+ * Creates the directory structure {@code /parameters/country/:country} and writes a file called
+ * {@code index} containing {@link RiskScoreParameters} wrapped in a {@link
+ * app.coronawarn.server.common.protocols.internal.SignedPayload}.
+ */
 public class ExposureConfigurationDirectoryImpl extends DirectoryImpl {
 
+  /**
+   * Constructor.
+   *
+   * @param region         The region that the {@link RiskScoreParameters} apply to.
+   * @param exposureConfig The {@link RiskScoreParameters} to sign and write.
+   * @param cryptoProvider The {@link CryptoProvider} whose artifacts to use for creating the {@link
+   *                       app.coronawarn.server.common.protocols.internal.SignedPayload}.
+   */
   public ExposureConfigurationDirectoryImpl(
       String region, RiskScoreParameters exposureConfig, CryptoProvider cryptoProvider) {
     super("parameters");

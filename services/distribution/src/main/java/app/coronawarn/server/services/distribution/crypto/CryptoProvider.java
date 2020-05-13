@@ -22,6 +22,10 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.util.ResourceUtils;
 
+/**
+ * Wrapper class for a {@link CryptoProvider#getPrivateKey() private key} and a {@link
+ * CryptoProvider#getCertificate()} certificate} from the application properties.
+ */
 @Component
 public class CryptoProvider {
 
@@ -36,6 +40,9 @@ public class CryptoProvider {
   private PrivateKey privateKey;
   private Certificate certificate;
 
+  /**
+   * Creates a CryptoProvider, using {@link BouncyCastleProvider}.
+   */
   public CryptoProvider() {
     Security.addProvider(new BouncyCastleProvider());
   }
@@ -58,6 +65,9 @@ public class CryptoProvider {
     return certificateFactory.generateCertificate(certificateByteStream);
   }
 
+  /**
+   * Reads and returns the {@link PrivateKey} configured in the application properties.
+   */
   public PrivateKey getPrivateKey() {
     if (this.privateKey == null) {
       try {
@@ -70,6 +80,10 @@ public class CryptoProvider {
     return privateKey;
   }
 
+
+  /**
+   * Reads and returns the {@link Certificate} configured in the application properties.
+   */
   public Certificate getCertificate() {
     if (this.certificate == null) {
       try {

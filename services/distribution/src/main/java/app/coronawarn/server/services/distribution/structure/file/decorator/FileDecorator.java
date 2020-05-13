@@ -1,9 +1,14 @@
 package app.coronawarn.server.services.distribution.structure.file.decorator;
 
+import app.coronawarn.server.services.distribution.structure.Writable;
 import app.coronawarn.server.services.distribution.structure.directory.Directory;
 import app.coronawarn.server.services.distribution.structure.file.File;
 import java.util.Stack;
 
+/**
+ * Decorates a {@link File} (e.g. to modify its content) on {@link Writable#prepare}. This class
+ * proxies all function calls to the {@link File} it contains.
+ */
 public abstract class FileDecorator implements File {
 
   private final File file;

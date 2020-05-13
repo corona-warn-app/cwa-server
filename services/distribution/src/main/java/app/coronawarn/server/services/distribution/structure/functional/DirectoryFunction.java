@@ -5,7 +5,7 @@ import java.util.Stack;
 import java.util.function.Function;
 
 /**
- * A {@link Function}.
+ * A {@code Function<Stack<Object>, Directory>}.
  */
 @FunctionalInterface
 public interface DirectoryFunction extends Function<Stack<Object>, Directory> {

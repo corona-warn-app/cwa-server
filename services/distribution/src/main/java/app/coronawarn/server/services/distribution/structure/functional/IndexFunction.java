@@ -5,7 +5,7 @@ import java.util.Stack;
 import java.util.function.Function;
 
 /**
- * A {@link Function}.
+ * A {@code Function<Stack<Object>, List<T>>}.
  *
  * @param <T> The type of the index elements.
  */

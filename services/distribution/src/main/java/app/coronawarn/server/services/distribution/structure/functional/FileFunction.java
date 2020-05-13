@@ -5,7 +5,7 @@ import java.util.Stack;
 import java.util.function.Function;
 
 /**
- * A {@link Function}.
+ * A {@code Function<Stack<Object>, File>}.
  */
 @FunctionalInterface
 public interface FileFunction extends Function<Stack<Object>, File> {

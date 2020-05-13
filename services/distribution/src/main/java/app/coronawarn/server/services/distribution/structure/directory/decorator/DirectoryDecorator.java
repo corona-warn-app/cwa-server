@@ -1,10 +1,15 @@
 package app.coronawarn.server.services.distribution.structure.directory.decorator;
 
+import app.coronawarn.server.services.distribution.structure.Writable;
 import app.coronawarn.server.services.distribution.structure.directory.Directory;
 import app.coronawarn.server.services.distribution.structure.file.File;
 import java.util.List;
 import java.util.Stack;
 
+/**
+ * Decorates a {@link Directory} (e.g. to modify its files, subdirectories, etc.) on {@link
+ * Writable#prepare}. This class proxies all function calls to the {@link Directory} it contains.
+ */
 public abstract class DirectoryDecorator implements Directory {
 
   private final Directory directory;

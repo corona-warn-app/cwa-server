@@ -7,7 +7,7 @@ import java.util.List;
 import java.util.Stack;
 
 /**
- * A directory containing static files and further {@link Directory directories}.
+ * Implementation of {@link Directory} that interfaces with {@link java.io.File Files} on disk.
  */
 public class DirectoryImpl extends WritableImpl implements Directory {
 
@@ -34,9 +34,7 @@ public class DirectoryImpl extends WritableImpl implements Directory {
     super(name);
   }
 
-  /**
-   * Adds a file to the {@link DirectoryImpl#files} of this {@link DirectoryImpl}.
-   */
+  @Override
   public void addFile(File file) {
     this.files.add(file);
     file.setParent(this);
@@ -47,10 +45,7 @@ public class DirectoryImpl extends WritableImpl implements Directory {
     return this.files;
   }
 
-  /**
-   * Adds a {@link DirectoryImpl} to the {@link DirectoryImpl#directories} of this {@link
-   * DirectoryImpl}.
-   */
+  @Override
   public void addDirectory(Directory directory) {
     this.directories.add(directory);
     directory.setParent(this);
@@ -79,6 +74,7 @@ public class DirectoryImpl extends WritableImpl implements Directory {
    * Writes this {@link DirectoryImpl} and all of its {@link DirectoryImpl#files} and {@link
    * DirectoryImpl#directories} to disk.
    */
+  @Override
   public void write() {
     this.writeOwnDirectory();
     this.writeDirectories();

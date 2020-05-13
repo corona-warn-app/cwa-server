@@ -2,6 +2,7 @@ package app.coronawarn.server.services.distribution.structure.file.decorator;
 
 import app.coronawarn.server.common.protocols.internal.SignedPayload;
 import app.coronawarn.server.services.distribution.crypto.CryptoProvider;
+import app.coronawarn.server.services.distribution.structure.directory.decorator.IndexingDecorator;
 import app.coronawarn.server.services.distribution.structure.file.File;
 import com.google.protobuf.ByteString;
 import java.security.GeneralSecurityException;
@@ -13,7 +14,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * A {@link FileDecorator} that will convert the contents of a File into {@link
+ * A {@link FileDecorator} that will convert the contents of its {@link File} into a {@link
  * app.coronawarn.server.common.protocols.internal.SignedPayload}.
  */
 public class SigningDecorator extends FileDecorator {
@@ -26,6 +27,9 @@ public class SigningDecorator extends FileDecorator {
     this.cryptoProvider = cryptoProvider;
   }
 
+  /**
+   * See {@link SigningDecorator} class documentation.
+   */
   @Override
   public void prepare(Stack<Object> indices) {
     logger.debug("Signing {}", this.getFileOnDisk().getPath());
@@ -35,7 +39,8 @@ public class SigningDecorator extends FileDecorator {
     super.prepare(indices);
   }
 
-  private static SignedPayload sign(byte[] payload, PrivateKey privateKey, Certificate certificate) {
+  private static SignedPayload sign(byte[] payload, PrivateKey privateKey,
+      Certificate certificate) {
     try {
       Signature payloadSignature = Signature.getInstance("Ed25519", "BC");
       payloadSignature.initSign(privateKey);

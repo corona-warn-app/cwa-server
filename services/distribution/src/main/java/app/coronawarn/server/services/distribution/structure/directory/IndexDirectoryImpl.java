@@ -9,12 +9,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Stack;
 
-/**
- * A meta directory that maps its on-disk subdirectories to some list of elements. This list of
- * elements is determined by the {@link IndexDirectoryImpl#indexFunction}.
- *
- * @param <T> The type of the elements in the index (e.g. LocalDate for the /date directory)
- */
 public class IndexDirectoryImpl<T> extends DirectoryImpl implements IndexDirectory<T> {
 
   // Files to be written into every directory created through the index
@@ -52,27 +46,28 @@ public class IndexDirectoryImpl<T> extends DirectoryImpl implements IndexDirecto
     return this.indexFunction.apply(indices);
   }
 
-  /**
-   * Adds a file under the name {@code name}, whose content is calculated by the {@code
-   * fileFunction} to each one of the directories created from the index. The {@code fileFunction}
-   * calculates the file content from a {@link java.util.Stack} of parent {@link IndexDirectoryImpl}
-   * indices. File content calculation happens on {@link DirectoryImpl#write}.
-   *
-   * @param fileFunction A function that can calculate the content of the file, based on
-   */
   @Override
   public void addFileToAll(FileFunction fileFunction) {
     this.metaFiles.add(fileFunction);
   }
 
-  /**
-   * Adds a {@link DirectoryImpl} to each one of the directories created from the index.
-   */
   @Override
   public void addDirectoryToAll(DirectoryFunction directoryFunction) {
     this.metaDirectories.add(directoryFunction);
   }
 
+  /**
+   * Creates a new subdirectory for every element of the {@link IndexDirectory#getIndex index} and
+   * writes {@link IndexDirectory#addFileToAll files} and {@link IndexDirectory#addDirectory
+   * directories} to those. The respective element of the index will be pushed onto the Stack for
+   * subsequent {@link app.coronawarn.server.services.distribution.structure.Writable#prepare}
+   * calls on those files and directories.
+   *
+   * @param indices A {@link Stack} of parameters from all {@link IndexDirectory IndexDirectories}
+   *                further up in the hierarchy. The Stack may contain different types, depending on
+   *                the types {@code T} of {@link IndexDirectory IndexDirectories} further up in the
+   *                hierarchy.
+   */
   @Override
   public void prepare(Stack<Object> indices) {
     super.prepare(indices);

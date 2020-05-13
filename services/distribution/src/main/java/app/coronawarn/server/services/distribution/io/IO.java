@@ -7,14 +7,19 @@ import java.nio.file.Files;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * A class containing helper functions for general purpose file IO.
+ */
 public class IO {
 
   private static final Logger logger = LoggerFactory.getLogger(IO.class);
 
-  public static byte[] getBytesFromFile(File file) throws IOException {
-    return Files.readAllBytes(file.toPath());
-  }
-
+  /**
+   * Creates a new file on disk.
+   *
+   * @param root The parent file.
+   * @param name The name of the new file.
+   */
   public static void makeFile(File root, String name) {
     File directory = new File(root, name);
     try {
@@ -25,6 +30,26 @@ public class IO {
     }
   }
 
+  /**
+   * Reads the contents of a file as {@code byte[]}.
+   *
+   * @param file The file to read.
+   * @return The contents of the file as {@code byte[]}.
+   */
+  public static byte[] getBytesFromFile(File file) {
+    try {
+      return Files.readAllBytes(file.toPath());
+    } catch (IOException e) {
+      throw new RuntimeException(e);
+    }
+  }
+
+  /**
+   * Writes bytes into a file.
+   *
+   * @param bytes      The content to write
+   * @param outputFile The file to write the content into.
+   */
   public static void writeBytesToFile(byte[] bytes, File outputFile) {
     try (FileOutputStream outputFileStream = new FileOutputStream(outputFile)) {
       outputFileStream.write(bytes);

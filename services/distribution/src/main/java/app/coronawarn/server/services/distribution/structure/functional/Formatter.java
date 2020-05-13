@@ -3,7 +3,7 @@ package app.coronawarn.server.services.distribution.structure.functional;
 import java.util.function.Function;
 
 /**
- * A {@link Function}.
+ * A {@code Function<T, Object>}.
  *
  * @param <T> The type of the elements to format.
  */
