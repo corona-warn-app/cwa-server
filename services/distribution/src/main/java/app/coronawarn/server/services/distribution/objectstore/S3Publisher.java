@@ -1,7 +1,6 @@
 package app.coronawarn.server.services.distribution.objectstore;
 
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.stream.Stream;
@@ -10,6 +9,10 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+/**
+ * This publisher is the interface to the S3, translating a local file structure
+ * to the target S3 objects.
+ */
 @Component
 public class S3Publisher {
 

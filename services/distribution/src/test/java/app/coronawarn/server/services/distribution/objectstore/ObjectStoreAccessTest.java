@@ -19,7 +19,6 @@ public class ObjectStoreAccessTest {
 
   private String testRunId = "testing/cwa/" + UUID.randomUUID().toString() + "/";
 
-
   private String textFile = "objectstore/store-test-file";
 
   @Autowired
