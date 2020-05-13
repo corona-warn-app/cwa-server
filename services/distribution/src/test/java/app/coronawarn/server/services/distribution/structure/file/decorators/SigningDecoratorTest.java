@@ -79,7 +79,6 @@ public class SigningDecoratorTest {
     signature.initVerify(certificate);
     signature.update(signedPayload.getPayload().toByteArray());
 
-    //TODO Continue here
-    assertTrue(signature.verify(signedPayload.getPayload().toByteArray()));
+    assertTrue(signature.verify(signedPayload.getSignature().toByteArray()));
   }
 }
