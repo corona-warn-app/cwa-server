@@ -10,6 +10,7 @@ import app.coronawarn.server.services.distribution.structure.file.FileImpl;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.List;
+import java.util.Set;
 import java.util.Stack;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -36,7 +37,7 @@ public class DirectoryTest {
   @Test
   public void checkFilesInDirectory() {
     parentDirectory.addFile(childFile);
-    assertEquals(List.of(childFile), parentDirectory.getFiles());
+    assertEquals(Set.of(childFile), parentDirectory.getFiles());
   }
 
   @Test
@@ -48,7 +49,7 @@ public class DirectoryTest {
   @Test
   public void checkDirectoriesInDirectory() {
     parentDirectory.addDirectory(childDirectory);
-    assertEquals(List.of(childDirectory), parentDirectory.getDirectories());
+    assertEquals(Set.of(childDirectory), parentDirectory.getDirectories());
   }
 
   @Test

@@ -8,7 +8,6 @@ import java.util.Collection;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 public class DateTime {
 
@@ -50,6 +49,6 @@ public class DateTime {
   }
 
   public static LocalDateTime getLocalDateTimeFromHoursSinceEpoch(long timestamp) {
-      return LocalDateTime.ofEpochSecond(TimeUnit.HOURS.toSeconds(timestamp), 0, ZoneOffset.UTC);
+    return LocalDateTime.ofEpochSecond(TimeUnit.HOURS.toSeconds(timestamp), 0, ZoneOffset.UTC);
   }
 }

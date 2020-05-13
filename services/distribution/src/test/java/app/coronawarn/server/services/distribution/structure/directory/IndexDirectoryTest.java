@@ -14,6 +14,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
+import java.util.Set;
 import java.util.Stack;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -24,7 +25,7 @@ import org.junit.jupiter.api.io.TempDir;
 public class IndexDirectoryTest {
 
   private static final String name = "Numbers";
-  private static final List<Integer> index = List.of(0, 1, 2);
+  private static final Set<Integer> index = Set.of(0, 1, 2);
   private static final IndexFunction<Integer> indexFunction = __ -> index;
   private static final Formatter<Integer> indexFormatter = Integer::valueOf;
   private IndexDirectory<Integer> indexDirectory;
@@ -82,23 +83,14 @@ public class IndexDirectoryTest {
 
   @Test
   public void checkAddDirectoryToAll() {
-<<<<<<< Updated upstream
-    List<Directory> expectedDirectoryList = new ArrayList<>();
-    indexDirectory.addDirectoryToAll(__ -> {
-      Directory newDirectory = new DirectoryImpl("foo");
-      expectedDirectoryList.add(newDirectory);
-=======
     List<Directory> expectedFileList = new ArrayList<>();
     indexDirectory.addDirectoryToAll(__ -> {
       Directory newDirectory = new DirectoryImpl("something");
       expectedFileList.add(newDirectory);
->>>>>>> Stashed changes
       return newDirectory;
     });
 
     prepareAndWrite(outputDirectory);
-<<<<<<< Updated upstream
-=======
 
     java.io.File actualIndexDirectoryFile = Objects.requireNonNull(outputFile.listFiles())[0];
     List<java.io.File> actualPhysicalFiles = Stream.of(actualIndexDirectoryFile)
@@ -117,22 +109,5 @@ public class IndexDirectoryTest {
   private void prepareAndWrite(Directory directory) {
     directory.prepare(new Stack<>());
     directory.write();
-  }
->>>>>>> Stashed changes
-
-    java.io.File actualIndexDirectoryFile = Objects.requireNonNull(outputFile.listFiles())[0];
-    List<java.io.File> actualPhysicalFiles = Stream.of(actualIndexDirectoryFile)
-        .map(java.io.File::listFiles)
-        .flatMap(Arrays::stream)
-        .map(java.io.File::listFiles)
-        .flatMap(Arrays::stream)
-        .sorted()
-        .collect(Collectors.toList());
-    List<java.io.File> expectedPhysicalFiles = expectedDirectoryList.stream()
-        .map(Writable::getFileOnDisk)
-        .sorted()
-        .collect(Collectors.toList());
-
-    assertEquals(expectedPhysicalFiles, actualPhysicalFiles);
   }
 }
