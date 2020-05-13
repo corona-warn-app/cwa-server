@@ -1,8 +1,6 @@
 package app.coronawarn.server.services.distribution.structure.directory.decorators;
 
 import static app.coronawarn.server.services.distribution.common.Helpers.prepareAndWrite;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import app.coronawarn.server.services.distribution.structure.directory.Directory;
@@ -16,7 +14,6 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import org.json.simple.JSONArray;
 import org.json.simple.parser.JSONParser;
