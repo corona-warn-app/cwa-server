@@ -56,7 +56,7 @@ public class ExposureConfigurationProvider {
     } catch (YAMLException e) {
       throw new UnableToLoadFileException("Parsing failed", e);
     } catch (IOException e) {
-      throw new UnableToLoadFileException(path);
+      throw new UnableToLoadFileException("Failed to load file " + path, e);
     }
   }
 }

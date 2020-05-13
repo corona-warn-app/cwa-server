@@ -38,7 +38,7 @@ public class ExposureConfigurationDistributionRunner implements ApplicationRunne
 
   @Override
   public void run(ApplicationArguments args) {
-    var riskScoreParameters = readRiskScoreParameters();
+    var riskScoreParameters = readExposureConfiguration();
     IndexDirectory<?> versionDirectory =
         new IndexDirectoryImpl<>("version", __ -> List.of(VERSION), Object::toString);
     ExposureConfigurationDirectoryImpl parametersDirectory =
@@ -50,7 +50,7 @@ public class ExposureConfigurationDistributionRunner implements ApplicationRunne
     root.write();
   }
 
-  private RiskScoreParameters readRiskScoreParameters() {
+  private RiskScoreParameters readExposureConfiguration() {
     try {
       return ExposureConfigurationProvider.readMasterFile();
     } catch (UnableToLoadFileException e) {
