@@ -8,12 +8,12 @@ import static org.mockito.Mockito.verify;
 import app.coronawarn.server.services.distribution.structure.file.File;
 import app.coronawarn.server.services.distribution.structure.file.FileImpl;
 import java.io.IOException;
-import java.nio.file.Path;
 import java.util.List;
 import java.util.Stack;
+import org.junit.Rule;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.io.TempDir;
+import org.junit.rules.TemporaryFolder;
 
 public class DirectoryTest {
 
@@ -22,12 +22,13 @@ public class DirectoryTest {
   private Directory childDirectory;
   private File childFile;
 
-  @TempDir
-  Path tempPath;
+  @Rule
+  private TemporaryFolder outputFolder = new TemporaryFolder();
 
   @BeforeEach
   public void setup() throws IOException {
-    outputDir = tempPath.toFile();
+    outputFolder.create();
+    outputDir = outputFolder.newFolder();
     parentDirectory = new DirectoryImpl(outputDir);
     childDirectory = new DirectoryImpl("Child");
     childFile = new FileImpl("Child", new byte[0]);
