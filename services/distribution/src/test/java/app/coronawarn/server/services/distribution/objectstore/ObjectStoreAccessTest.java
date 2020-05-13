@@ -27,14 +27,14 @@ public class ObjectStoreAccessTest {
 
   @Test
   public void fetchFilesNotEmpty() {
-    var files = objectStoreAccess.getFilesWithPrefix("");
+    var files = objectStoreAccess.getObjectsWithPrefix("");
 
     assertFalse(files.contents().isEmpty(), "Contents is empty, but we should have files");
   }
 
   @Test
   public void fetchFilesNothingFound() {
-    var files = objectStoreAccess.getFilesWithPrefix("THISPREFIXDOESNOTEXIST");
+    var files = objectStoreAccess.getObjectsWithPrefix("THISPREFIXDOESNOTEXIST");
 
     assertTrue(files.contents().isEmpty(), "Found files, but should be empty!");
   }
@@ -46,19 +46,19 @@ public class ObjectStoreAccessTest {
 
   @Test
   public void pushTestFileAndDelete() throws IOException {
-    objectStoreAccess.put(testRunId + "TESTFILE", getExampleFile());
-    var files = objectStoreAccess.getFilesWithPrefix(testRunId);
+    objectStoreAccess.putObject(testRunId + "TESTFILE", getExampleFile());
+    var files = objectStoreAccess.getObjectsWithPrefix(testRunId);
     assertEquals(1, files.contents().size());
 
     objectStoreAccess.printAllFiles();
 
-    objectStoreAccess.deleteFilesWithPrefix(testRunId);
-    var filesAfterDeletion = objectStoreAccess.getFilesWithPrefix(testRunId);
+    objectStoreAccess.deleteObjectsWithPrefix(testRunId);
+    var filesAfterDeletion = objectStoreAccess.getObjectsWithPrefix(testRunId);
     assertEquals(0, filesAfterDeletion.contents().size());
 
     objectStoreAccess.printAllFiles();
 
-    var allFiles = objectStoreAccess.getFilesWithPrefix("");
+    var allFiles = objectStoreAccess.getObjectsWithPrefix("");
     assertFalse(allFiles.contents().isEmpty(), "Contents is empty, but we should have files");
   }
 

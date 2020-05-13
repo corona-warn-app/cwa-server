@@ -19,6 +19,19 @@ import software.amazon.awssdk.services.s3.model.ListObjectsV2Response;
 import software.amazon.awssdk.services.s3.model.ObjectIdentifier;
 import software.amazon.awssdk.services.s3.model.PutObjectRequest;
 
+/**
+ * <p>Grants access to the object store, enabling basic functionality for working with files.</p>
+ * <p>Use S3Publisher for more convenient access.</p>
+ * <br></br>
+ * Make sure the following ENV vars are available.
+ * <ul>
+ *   <li>cwa.objectstore.endpoint</li>
+ *   <li>cwa.objectstore.bucket</li>
+ *   <li>AWS_ACCESS_KEY_ID</li>
+ *   <li>AWS_SECRET_ACCESS_KEY</li>
+ * </ul>
+ *
+ */
 @Component
 public class ObjectStoreAccess {
 
@@ -29,24 +42,41 @@ public class ObjectStoreAccess {
   private S3Client client;
 
   @Autowired
-  public ObjectStoreAccess(@Value("${cwa.objectstore.endpoint}") String endpoint,
-      @Value("${cwa.objectstore.bucket}") String bucket) throws URISyntaxException {
+  public ObjectStoreAccess(@Value("${cwa.objectstore.endpoint:notset}") String endpoint,
+      @Value("${cwa.objectstore.bucket:notset}") String bucket) throws URISyntaxException {
     this.bucket = bucket;
+
+    if ("notset".equals(endpoint) || "notset".equals("bucket")) {
+      logger.warn("S3 Connection parameters missing - unable to serve S3 integration.");
+      return;
+    }
+
     this.client = S3Client.builder()
         .endpointOverride(new URI(endpoint))
-        .region(Region.EU_CENTRAL_1)
+        .region(Region.EU_CENTRAL_1) /* required by SDK, but ignored on S3 side */
         .build();
   }
 
-  public void put(String key, File file) {
+  /**
+   * Stores an object in the object store.
+   *
+   * @param key the key to use, e.g. my/folder/struc/file.ext
+   * @param file the file to upload
+   */
+  public void putObject(String key, File file) {
     RequestBody bodyFile = RequestBody.fromFile(file);
 
     this.client
         .putObject(PutObjectRequest.builder().bucket(this.bucket).key(key).build(), bodyFile);
   }
 
-  public void deleteFilesWithPrefix(String prefix) {
-    var files = getFilesWithPrefix(prefix);
+  /**
+   * Deletes objects in the object store, based on the given prefix (folder structure).
+   *
+   * @param prefix the prefix, e.g. my/folder/
+   */
+  public void deleteObjectsWithPrefix(String prefix) {
+    var files = getObjectsWithPrefix(prefix);
     var identifiers = files
         .contents()
         .stream()
@@ -57,11 +87,20 @@ public class ObjectStoreAccess {
         Delete.builder().objects(identifiers).build()).build());
   }
 
-  public ListObjectsV2Response getFilesWithPrefix(String prefix) {
+  /**
+   * Fetches the list of objects in the store with the given prefix
+   *
+   * @param prefix the prefix, e.g. my/folder/
+   * @return the list of objects
+   */
+  public ListObjectsV2Response getObjectsWithPrefix(String prefix) {
     return client
         .listObjectsV2(ListObjectsV2Request.builder().prefix(prefix).bucket(this.bucket).build());
   }
 
+  /**
+   * Print some debug information about what is currently in the store.
+   */
   public void printAllFiles() {
     var out = client.listObjectsV2(ListObjectsV2Request.builder().bucket(this.bucket).build());
 
