@@ -1,7 +1,7 @@
 package app.coronawarn.server.services.distribution.structure.directory;
 
-import app.coronawarn.server.services.distribution.structure.file.File;
 import app.coronawarn.server.services.distribution.structure.Writable;
+import app.coronawarn.server.services.distribution.structure.file.File;
 import java.util.List;
 
 public interface Directory extends Writable {

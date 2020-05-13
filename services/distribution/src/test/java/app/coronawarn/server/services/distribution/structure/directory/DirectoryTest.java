@@ -120,5 +120,4 @@ public class DirectoryTest {
 
     verify(spyChildDirectory).write();
   }
-
 }

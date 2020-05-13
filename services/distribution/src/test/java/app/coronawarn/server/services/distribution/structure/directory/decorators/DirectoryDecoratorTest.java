@@ -13,7 +13,6 @@ import org.junit.jupiter.api.Test;
 
 public class DirectoryDecoratorTest {
 
-
   @Test
   public void checkProxiesAllMethods() {
     Directory decoree = mock(Directory.class);

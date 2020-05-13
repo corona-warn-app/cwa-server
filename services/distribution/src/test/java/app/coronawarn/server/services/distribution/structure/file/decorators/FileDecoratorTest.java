@@ -51,5 +51,4 @@ public class FileDecoratorTest {
       super(file);
     }
   }
-
 }

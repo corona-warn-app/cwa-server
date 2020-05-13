@@ -81,7 +81,6 @@ public class IndexDirectoryTest {
     assertEquals(expectedPhysicalFiles, actualPhysicalFiles);
   }
 
-
   @Test
   public void checkAddDirectoryToAll() {
     List<Directory> expectedDirectoryList = new ArrayList<>();
@@ -108,5 +107,4 @@ public class IndexDirectoryTest {
 
     assertEquals(expectedPhysicalFiles, actualPhysicalFiles);
   }
-
 }

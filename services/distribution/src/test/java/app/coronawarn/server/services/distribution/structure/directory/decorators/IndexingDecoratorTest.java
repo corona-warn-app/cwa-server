@@ -65,8 +65,7 @@ public class IndexingDecoratorTest {
     Object obj = jsonParser.parse(reader);
     JSONArray indexJson = (JSONArray) obj;
 
-    index.forEach(expected -> {
-      assertTrue(indexJson.contains(expected.longValue()), expected.toString());
-    });
+    index.forEach(expected ->
+      assertTrue(indexJson.contains(expected.longValue()), expected.toString()));
   }
 }
