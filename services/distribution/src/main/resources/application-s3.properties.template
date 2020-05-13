@@ -1,0 +1,5 @@
+cloud.aws.credentials.accessKey=
+cloud.aws.credentials.secretKey=
+
+cwa.objectstore.endpoint=
+cwa.objectstore.bucket=

@@ -11,5 +11,6 @@ public class ExposureConfigurationDistributionRunner implements ApplicationRunne
 
   @Override
   public void run(ApplicationArguments args) {
+
   }
 }
