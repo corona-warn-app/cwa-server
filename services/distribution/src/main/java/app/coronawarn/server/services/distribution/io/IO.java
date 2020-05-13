@@ -12,7 +12,7 @@ public class IO {
   }
 
   public static void makeFile(File root, String name) {
-    File directory = new File(root.getPath() + "/" + name);
+    File directory = new File(root, name);
     try {
       directory.createNewFile();
     } catch (IOException e) {
