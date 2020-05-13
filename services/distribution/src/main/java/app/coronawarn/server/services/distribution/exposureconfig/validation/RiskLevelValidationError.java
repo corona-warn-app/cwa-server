@@ -33,8 +33,8 @@ public class RiskLevelValidationError implements ValidationError {
       return false;
     }
     RiskLevelValidationError that = (RiskLevelValidationError) o;
-    return Objects.equals(getParameter(), that.getParameter()) &&
-        Objects.equals(getRiskLevel(), that.getRiskLevel());
+    return Objects.equals(getParameter(), that.getParameter())
+        && Objects.equals(getRiskLevel(), that.getRiskLevel());
   }
 
   @Override

@@ -4,11 +4,10 @@ import app.coronawarn.server.common.protocols.external.exposurenotification.File
 import app.coronawarn.server.common.protocols.external.exposurenotification.Key;
 import app.coronawarn.server.common.protocols.internal.FileBucket;
 import app.coronawarn.server.common.protocols.internal.RiskLevel;
-import app.coronawarn.server.tools.testdatagenerator.decorators.file.SigningDecorator;
-import app.coronawarn.server.tools.testdatagenerator.implementations.FileImpl;
-import app.coronawarn.server.tools.testdatagenerator.implementations.IndexDirectoryImpl;
+import app.coronawarn.server.services.distribution.structure.directory.IndexDirectoryImpl;
+import app.coronawarn.server.services.distribution.structure.file.FileImpl;
+import app.coronawarn.server.services.distribution.structure.file.decorator.SigningDecorator;
 import app.coronawarn.server.tools.testdatagenerator.util.Batch;
-import app.coronawarn.server.tools.testdatagenerator.util.Crypto;
 import app.coronawarn.server.tools.testdatagenerator.util.DateTime;
 import app.coronawarn.server.tools.testdatagenerator.util.Random;
 import com.google.protobuf.ByteString;
@@ -35,7 +34,7 @@ class HourDirectoryImpl extends IndexDirectoryImpl<LocalDateTime> {
   private final RandomGenerator random;
 
   public HourDirectoryImpl(LocalDate startDate, int totalHours, int exposuresPerHour,
-      Crypto crypto, RandomGenerator random) {
+      RandomGenerator random) {
     super("hour", indices -> {
       LocalDate currentDate = ((LocalDate) indices.peek());
       return DateTime.getHours(startDate, currentDate, totalHours);
@@ -51,7 +50,7 @@ class HourDirectoryImpl extends IndexDirectoryImpl<LocalDateTime> {
       indicesCopy.pop();
       String region = (String) indicesCopy.pop();
       return new SigningDecorator(
-          new FileImpl("index", this.generateHourFile(hour, region)), crypto);
+          new FileImpl("index", this.generateHourFile(hour, region)));
     });
   }
 

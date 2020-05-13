@@ -3,7 +3,9 @@ package app.coronawarn.server.services.distribution.exposureconfig;
 import app.coronawarn.server.common.protocols.internal.RiskScoreParameters;
 import app.coronawarn.server.common.protocols.internal.RiskScoreParameters.Builder;
 import app.coronawarn.server.services.distribution.exposureconfig.parsing.YamlConstructorForProtoBuf;
+import java.io.IOException;
 import java.io.InputStream;
+import org.springframework.core.io.ClassPathResource;
 import org.yaml.snakeyaml.Yaml;
 import org.yaml.snakeyaml.error.YAMLException;
 import org.yaml.snakeyaml.introspector.BeanAccess;
@@ -15,8 +17,11 @@ import org.yaml.snakeyaml.introspector.BeanAccess;
  */
 public class ExposureConfigurationProvider {
 
+  private ExposureConfigurationProvider() {
+  }
+
   /**
-   * the location of the exposure configuration master file
+   * The location of the exposure configuration master file.
    */
   public static final String MASTER_FILE = "exposure-config/master.yaml";
 
@@ -26,7 +31,7 @@ public class ExposureConfigurationProvider {
    * @return the exposure configuration as RiskScoreParameters
    * @throws UnableToLoadFileException when the file/transformation did not succeed
    */
-  public RiskScoreParameters readMasterFile() throws UnableToLoadFileException {
+  public static RiskScoreParameters readMasterFile() throws UnableToLoadFileException {
     return readFile(MASTER_FILE);
   }
 
@@ -38,13 +43,11 @@ public class ExposureConfigurationProvider {
    * @return the RiskScoreParameters
    * @throws UnableToLoadFileException when the file/transformation did not succeed
    */
-  public RiskScoreParameters readFile(String path) throws UnableToLoadFileException {
+  public static RiskScoreParameters readFile(String path) throws UnableToLoadFileException {
     Yaml yaml = new Yaml(new YamlConstructorForProtoBuf());
     yaml.setBeanAccess(BeanAccess.FIELD); /* no setters on RiskScoreParameters available */
 
-    InputStream inputStream = this.getClass().getClassLoader().getResourceAsStream(path);
-
-    try {
+    try (InputStream inputStream = new ClassPathResource(path).getInputStream()) {
       Builder loaded = yaml.loadAs(inputStream, RiskScoreParameters.newBuilder().getClass());
       if (loaded == null) {
         throw new UnableToLoadFileException(path);
@@ -53,6 +56,8 @@ public class ExposureConfigurationProvider {
       return loaded.build();
     } catch (YAMLException e) {
       throw new UnableToLoadFileException("Parsing failed", e);
+    } catch (IOException e) {
+      throw new UnableToLoadFileException("Failed to load file " + path, e);
     }
   }
 }

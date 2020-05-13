@@ -1,8 +1,8 @@
 package app.coronawarn.server.services.submission.controller;
 
-import app.coronawarn.server.common.protocols.internal.SubmissionPayload;
 import app.coronawarn.server.common.persistence.domain.DiagnosisKey;
 import app.coronawarn.server.common.persistence.service.DiagnosisKeyService;
+import app.coronawarn.server.common.protocols.internal.SubmissionPayload;
 import app.coronawarn.server.services.submission.verification.TanVerifier;
 import java.util.Collection;
 import java.util.stream.Collectors;
@@ -20,7 +20,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class SubmissionController {
 
   /**
-   * The route to the submission endpoint (version agnostic)
+   * The route to the submission endpoint (version agnostic).
    */
   public static final String SUBMISSION_ROUTE = "/diagnosis-keys";
 
@@ -48,14 +48,14 @@ public class SubmissionController {
   }
 
   /**
-   * @return A response that indicates that an invalid TAN was specified in the request.
+   * Returns a response that indicates that an invalid TAN was specified in the request.
    */
   private ResponseEntity<Void> buildTanInvalidResponseEntity() {
     return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
   }
 
   /**
-   * @return A response that indicates successful request processing.
+   * Returns a response that indicates successful request processing.
    */
   private ResponseEntity<Void> buildSuccessResponseEntity() {
     return ResponseEntity.ok().build();

@@ -37,9 +37,9 @@ public class WeightValidationError implements ValidationError {
       return false;
     }
     WeightValidationError that = (WeightValidationError) o;
-    return Double.compare(that.getGivenValue(), getGivenValue()) == 0 &&
-        getErrorType() == that.getErrorType() &&
-        Objects.equals(getParameter(), that.getParameter());
+    return Double.compare(that.getGivenValue(), getGivenValue()) == 0
+        && getErrorType() == that.getErrorType()
+        && Objects.equals(getParameter(), that.getParameter());
   }
 
   @Override

@@ -9,6 +9,9 @@ import org.springframework.stereotype.Component;
 public class TanVerifier {
 
   /**
+   * Verifies the specified TAN. Returns {@literal true} if the specified TAN is valid, {@literal
+   * false} otherwise.
+   *
    * @param tan Submission TAN
    * @return {@literal true} if the specified TAN is valid, {@literal false} otherwise.
    */

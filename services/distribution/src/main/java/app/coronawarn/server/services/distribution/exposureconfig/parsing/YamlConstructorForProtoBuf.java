@@ -9,7 +9,6 @@ import org.yaml.snakeyaml.introspector.PropertyUtils;
 /**
  * This Constructor implementation grants SnakeYaml compliance with the generated proto Java
  * classes.
- *
  * SnakeYaml expects the Java properties to have the same name as the yaml properties. But the
  * generated Java classes' properties have an added suffix of '_'.
  * In addition, this implementation also allows snake case in the YAML (for better readability), as

@@ -31,12 +31,12 @@ public class ExposureConfigurationValidatorTest {
   @Test
   public void emptyFileThrowsLoadFailure() {
     assertThrows(UnableToLoadFileException.class, () ->
-        new ExposureConfigurationProvider().readFile("parameters/empty.yaml"));
+        ExposureConfigurationProvider.readFile("parameters/empty.yaml"));
   }
 
   private ValidationResult getResultForTest(TestWithExpectedResult test)
       throws UnableToLoadFileException {
-    var config = new ExposureConfigurationProvider().readFile(test.path());
+    var config = ExposureConfigurationProvider.readFile(test.path());
     var validator = new ExposureConfigurationValidator(config);
     return validator.validate();
   }
