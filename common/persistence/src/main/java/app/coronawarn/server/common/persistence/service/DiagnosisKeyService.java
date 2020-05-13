@@ -23,6 +23,9 @@ public class DiagnosisKeyService {
     keyRepository.saveAll(diagnosisKeys);
   }
 
+  /**
+   * Returns all persisted diagnosis keys.
+   */
   public Collection<DiagnosisKey> getDiagnosisKeys() {
     return keyRepository.findAll();
   }
