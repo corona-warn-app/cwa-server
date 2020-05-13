@@ -5,8 +5,10 @@ import static app.coronawarn.server.common.persistence.domain.DiagnosisKeyBuilde
 import static app.coronawarn.server.common.persistence.domain.DiagnosisKeyBuilders.RollingPeriodBuilder;
 import static app.coronawarn.server.common.persistence.domain.DiagnosisKeyBuilders.RollingStartNumberBuilder;
 import static app.coronawarn.server.common.persistence.domain.DiagnosisKeyBuilders.TransmissionRiskLevelBuilder;
+import static java.time.temporal.ChronoUnit.HOURS;
 
 import app.coronawarn.server.common.protocols.external.exposurenotification.Key;
+import java.time.Instant;
 
 /**
  * An instance of this builder can be retrieved by calling {@link DiagnosisKey#builder()}. A {@link
@@ -53,7 +55,10 @@ public class DiagnosisKeyBuilder implements Builder, RollingStartNumberBuilder,
   }
 
   public DiagnosisKey build() {
-    return new DiagnosisKey(
-        this.keyData, this.rollingStartNumber, this.rollingPeriod, this.transmissionRiskLevel);
+    // hours since epoch
+    long submissionTimestamp = Instant.now().getEpochSecond() / 3600L;
+
+    return new DiagnosisKey(this.keyData, this.rollingStartNumber, this.rollingPeriod,
+        this.transmissionRiskLevel, submissionTimestamp);
   }
 }

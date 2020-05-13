@@ -22,16 +22,18 @@ public class DiagnosisKey {
   private long rollingStartNumber;
   private long rollingPeriod;
   private int transmissionRiskLevel;
+  private long submissionTimestamp;
 
   /**
    * Should be called by builders.
    */
-  DiagnosisKey(
-      byte[] keyData, long rollingStartNumber, long rollingPeriod, int transmissionRiskLevel) {
+  DiagnosisKey(byte[] keyData, long rollingStartNumber, long rollingPeriod,
+      int transmissionRiskLevel, long submissionTimestamp) {
     this.keyData = keyData;
     this.rollingStartNumber = rollingStartNumber;
     this.rollingPeriod = rollingPeriod;
     this.transmissionRiskLevel = transmissionRiskLevel;
+    this.submissionTimestamp = submissionTimestamp;
   }
 
   /**
@@ -78,6 +80,14 @@ public class DiagnosisKey {
     return transmissionRiskLevel;
   }
 
+  /**
+   * Returns the timestamp associated with the submission of this {@link DiagnosisKey} as hours
+   * since epoch.
+   */
+  public long getSubmissionTimestamp() {
+    return submissionTimestamp;
+  }
+
   @Override
   public boolean equals(Object o) {
     if (this == o) {
@@ -90,13 +100,15 @@ public class DiagnosisKey {
     return rollingStartNumber == that.rollingStartNumber
         && rollingPeriod == that.rollingPeriod
         && transmissionRiskLevel == that.transmissionRiskLevel
+        && submissionTimestamp == that.submissionTimestamp
         && Objects.equals(id, that.id)
         && Arrays.equals(keyData, that.keyData);
   }
 
   @Override
   public int hashCode() {
-    int result = Objects.hash(id, rollingStartNumber, rollingPeriod, transmissionRiskLevel);
+    int result = Objects
+        .hash(id, rollingStartNumber, rollingPeriod, transmissionRiskLevel, submissionTimestamp);
     result = 31 * result + Arrays.hashCode(keyData);
     return result;
   }
