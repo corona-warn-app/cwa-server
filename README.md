@@ -52,6 +52,15 @@ Navigate to the service you would like to start and run the spring-boot:run targ
   mvn spring-boot:run -Dspring-boot.run.profiles=dev
 ```
 
+In order to enable S3 integration, you will need the following vars in your env:
+
+Var | Description
+----|----------------
+AWS_ACCESS_KEY_ID | The access key
+AWS_SECRET_ACCESS_KEY | The secret access key
+cwa.objectstore.endpoint | The S3 endpoint
+cwa.objectstore.bucket | The S3 bucket name
+
 Defined run profiles:
   - dev
 
