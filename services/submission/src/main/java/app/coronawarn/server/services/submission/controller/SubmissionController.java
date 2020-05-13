@@ -48,14 +48,14 @@ public class SubmissionController {
   }
 
   /**
-   * A response that indicates that an invalid TAN was specified in the request.
+   * Returns a response that indicates that an invalid TAN was specified in the request.
    */
   private ResponseEntity<Void> buildTanInvalidResponseEntity() {
     return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
   }
 
   /**
-   * A response that indicates successful request processing.
+   * Returns a response that indicates successful request processing.
    */
   private ResponseEntity<Void> buildSuccessResponseEntity() {
     return ResponseEntity.ok().build();
