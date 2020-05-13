@@ -49,14 +49,14 @@ public class DiagnosisKey {
   }
 
   /**
-   * @return generated diagnosis key.
+   * Returns the diagnosis key.
    */
   public byte[] getKeyData() {
     return keyData;
   }
 
   /**
-   * @return number describing when a key starts. It is equal to startTimeOfKeySinceEpochInSecs /
+   * Returns a number describing when a key starts. It is equal to startTimeOfKeySinceEpochInSecs /
    * (60 * 10).
    */
   public long getRollingStartNumber() {
@@ -64,15 +64,15 @@ public class DiagnosisKey {
   }
 
   /**
-   * @return number describing how long a key is valid. It is expressed in increments of 10 minutes
-   * (e.g. 144 for 24 hours).
+   * Returns a number describing how long a key is valid. It is expressed in increments of 10
+   * minutes (e.g. 144 for 24 hours).
    */
   public long getRollingPeriod() {
     return rollingPeriod;
   }
 
   /**
-   * @return risk of transmission associated with the person this key came from.
+   * Returns the risk of transmission associated with the person this key came from.
    */
   public int getTransmissionRiskLevel() {
     return transmissionRiskLevel;
@@ -87,11 +87,11 @@ public class DiagnosisKey {
       return false;
     }
     DiagnosisKey that = (DiagnosisKey) o;
-    return rollingStartNumber == that.rollingStartNumber &&
-        rollingPeriod == that.rollingPeriod &&
-        transmissionRiskLevel == that.transmissionRiskLevel &&
-        Objects.equals(id, that.id) &&
-        Arrays.equals(keyData, that.keyData);
+    return rollingStartNumber == that.rollingStartNumber
+        && rollingPeriod == that.rollingPeriod
+        && transmissionRiskLevel == that.transmissionRiskLevel
+        && Objects.equals(id, that.id)
+        && Arrays.equals(keyData, that.keyData);
   }
 
   @Override
