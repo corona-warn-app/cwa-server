@@ -1,8 +1,10 @@
 package app.coronawarn.server.services.distribution.diagnosiskeys.util;
 
+import app.coronawarn.server.common.persistence.domain.DiagnosisKey;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
+import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
@@ -22,23 +24,28 @@ public class DateTime {
    * Creates a list of all {@link LocalDate LocalDates} between {@code startDate} and {@code
    * numDays} later.
    */
-  public static List<LocalDate> getDates(LocalDate startDate, int numDays) {
+  public static List<LocalDate> getDates(Collection<DiagnosisKey> diagnosisKeys) {
+    return List.of();
+    /*
     return IntStream.range(0, numDays)
         .mapToObj(startDate::plusDays)
         .collect(Collectors.toList());
+     */
   }
 
   /**
    * Creates a list of all {@link LocalDateTime LocalDateTimes} between {@code startDate} and {@code
    * currentDate} (at 00:00 UTC) plus {@code totalHours % 24}.
    */
-  public static List<LocalDateTime> getHours(LocalDate startDate, LocalDate currentDate,
-      int totalHours) {
+  public static List<LocalDateTime> getHours(LocalDate currentDate, Collection<DiagnosisKey> diagnosisKeys) {
+    return List.of();
+    /*
     int numFullDays = Math.floorDiv(totalHours, 24);
     long currentDay = ChronoUnit.DAYS.between(startDate, currentDate);
     int lastHour = (currentDay < numFullDays) ? 24 : totalHours % 24;
     return IntStream.range(0, lastHour)
         .mapToObj(hour -> currentDate.atStartOfDay().plusHours(hour))
         .collect(Collectors.toList());
+    */
   }
 }
