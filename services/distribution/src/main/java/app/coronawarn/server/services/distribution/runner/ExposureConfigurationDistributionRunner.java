@@ -45,11 +45,13 @@ public class ExposureConfigurationDistributionRunner implements ApplicationRunne
   @Autowired
   private CryptoProvider cryptoProvider;
 
+  private static final String VERSION_DIRECTORY = "version";
+
   @Override
   public void run(ApplicationArguments args) {
     var riskScoreParameters = readExposureConfiguration();
     IndexDirectory<?> versionDirectory =
-        new IndexDirectoryImpl<>("version", __ -> List.of(version), Object::toString);
+        new IndexDirectoryImpl<>(VERSION_DIRECTORY, __ -> List.of(version), Object::toString);
     ExposureConfigurationDirectoryImpl parametersDirectory =
         new ExposureConfigurationDirectoryImpl(country, riskScoreParameters, cryptoProvider);
     Directory root = new DirectoryImpl(new File(outputPath));

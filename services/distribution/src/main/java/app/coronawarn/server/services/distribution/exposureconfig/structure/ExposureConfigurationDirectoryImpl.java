@@ -16,6 +16,10 @@ import java.util.List;
  */
 public class ExposureConfigurationDirectoryImpl extends DirectoryImpl {
 
+  private static final String PARAMETERS_DIRECTORY = "parameters";
+  private static final String COUNTRY_DIRECTORY = "country";
+  private static final String INDEX_FILE_NAME = "index";
+
   /**
    * Constructor.
    *
@@ -26,13 +30,14 @@ public class ExposureConfigurationDirectoryImpl extends DirectoryImpl {
    */
   public ExposureConfigurationDirectoryImpl(
       String region, RiskScoreParameters exposureConfig, CryptoProvider cryptoProvider) {
-    super("parameters");
+    super(PARAMETERS_DIRECTORY);
 
     IndexDirectoryImpl<String> country =
-        new IndexDirectoryImpl<>("country", __ -> List.of(region), Object::toString);
+        new IndexDirectoryImpl<>(COUNTRY_DIRECTORY, __ -> List.of(region), Object::toString);
 
     country.addFileToAll(__ ->
-        new SigningDecorator(new FileImpl("index", exposureConfig.toByteArray()), cryptoProvider));
+        new SigningDecorator(new FileImpl(INDEX_FILE_NAME, exposureConfig.toByteArray()),
+            cryptoProvider));
 
     this.addDirectory(new IndexingDecorator<>(country));
   }
