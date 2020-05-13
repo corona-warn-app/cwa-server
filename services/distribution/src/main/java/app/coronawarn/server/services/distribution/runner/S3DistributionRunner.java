@@ -29,11 +29,11 @@ public class S3DistributionRunner implements ApplicationRunner {
 
   @Override
   public void run(ApplicationArguments args) {
-    Path pathToDistribute = Path.of(workdir);
-
     try {
+      Path pathToDistribute = Path.of(workdir);
+
       s3Publisher.publishFolder(pathToDistribute);
-    } catch (IOException e) {
+    } catch (IOException | UnsupportedOperationException e) {
       logger.error("Distribution failed.", e);
     }
   }
