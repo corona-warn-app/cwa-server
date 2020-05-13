@@ -1,0 +1,46 @@
+#minimumRiskScore: 4
+
+transmission_weight: 10.001
+duration_weight: 0.001
+#days_since_last_exposure_weight: 20
+attenuation_weight: 100
+
+transmission:
+  app_defined_1: 2
+  app_defined_2: 2
+  app_defined_3: 3
+  app_defined_4: 4
+  app_defined_5: 5
+  app_defined_6: 6
+  app_defined_7: 7
+  app_defined_8: 8
+
+duration:
+  eq_0_min: 1
+  gt_0_le_5_min: 2
+  gt_5_le_10_min: 3
+  gt_10_le_15_min: 4
+  gt_15_le_20_min: 5
+  gt_20_le_25_min: 6
+  gt_25_le_30_min: 7
+  gt_30_min: 8
+
+days_since_last_exposure:
+  ge_14_days: 1
+  ge_12_lt_14_days: 2
+  ge_10_lt_12_days: 3
+  ge_8_lt_10_days: 4
+  ge_6_lt_8_days: 5
+  ge_4_lt_6_days: 6
+  ge_2_lt_4_days: 7
+  ge_0_lt_2_days: 8
+
+attenuation:
+  gt_73_dbm: 1
+  gt_63_le_73_dbm: 2
+  gt_51_le_63_dbm: 3
+  gt_33_le_51_dbm: 4
+  gt_27_le_33_dbm: 5
+  gt_15_le_27_dbm: 6
+  gt_10_le_15_dbm: 7
+  lt_10_dbm: 8
