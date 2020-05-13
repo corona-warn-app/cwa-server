@@ -34,6 +34,9 @@ public class DateAggregatingDecorator extends DirectoryDecorator {
     super.prepare(indices);
     System.out.println("Aggregating \t\t" + this.getFileOnDisk().getPath());
     List<Directory> days = this.getDirectories();
+    if(days.size() == 0) {
+      return;
+    }
     // Exclude the last day
     days.subList(0, days.size() - 1).forEach(currentDirectory -> {
       Stream.of(currentDirectory)
