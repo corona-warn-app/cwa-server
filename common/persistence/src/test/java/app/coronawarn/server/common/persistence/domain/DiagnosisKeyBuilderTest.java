@@ -29,14 +29,10 @@ public class DiagnosisKeyBuilderTest {
 
     DiagnosisKey actDiagnosisKey = DiagnosisKey.builder()
         .fromProtoBuf(protoBufObj)
-        .withSubmissionTimestamp(expSubmissionTimestamp)
+        .withSubmissionTimestamp(this.expSubmissionTimestamp)
         .build();
 
-    assertEquals(expSubmissionTimestamp, actDiagnosisKey.getSubmissionTimestamp());
-    assertArrayEquals(this.expKeyData, actDiagnosisKey.getKeyData());
-    assertEquals(this.expRollingStartNumber, actDiagnosisKey.getRollingStartNumber());
-    assertEquals(this.expRollingPeriod, actDiagnosisKey.getRollingStartNumber());
-    assertEquals(this.expTransmissionRiskLevel, actDiagnosisKey.getTransmissionRiskLevel());
+    assertDiagnosisKeyEquals(actDiagnosisKey, this.expSubmissionTimestamp);
   }
 
   @Test
@@ -51,11 +47,19 @@ public class DiagnosisKeyBuilderTest {
 
     DiagnosisKey actDiagnosisKey = DiagnosisKey.builder().fromProtoBuf(protoBufObj).build();
 
-    assertEquals(getCurrentHoursSinceEpoch(), actDiagnosisKey.getSubmissionTimestamp());
-    assertArrayEquals(this.expKeyData, actDiagnosisKey.getKeyData());
-    assertEquals(this.expRollingStartNumber, actDiagnosisKey.getRollingStartNumber());
-    assertEquals(this.expRollingPeriod, actDiagnosisKey.getRollingStartNumber());
-    assertEquals(this.expTransmissionRiskLevel, actDiagnosisKey.getTransmissionRiskLevel());
+    assertDiagnosisKeyEquals(actDiagnosisKey);
+  }
+
+  @Test
+  public void buildSuccessivelyWithSubmissionTimestamp() {
+    DiagnosisKey actDiagnosisKey = DiagnosisKey.builder()
+        .withKeyData(this.expKeyData)
+        .withRollingStartNumber(this.expRollingStartNumber)
+        .withRollingPeriod(this.expRollingPeriod)
+        .withTransmissionRiskLevel(this.expTransmissionRiskLevel)
+        .withSubmissionTimestamp(this.expSubmissionTimestamp).build();
+
+    assertDiagnosisKeyEquals(actDiagnosisKey, this.expSubmissionTimestamp);
   }
 
   @Test
@@ -66,31 +70,22 @@ public class DiagnosisKeyBuilderTest {
         .withRollingPeriod(this.expRollingPeriod)
         .withTransmissionRiskLevel(this.expTransmissionRiskLevel).build();
 
-    assertEquals(getCurrentHoursSinceEpoch(), actDiagnosisKey.getSubmissionTimestamp());
-    assertArrayEquals(this.expKeyData, actDiagnosisKey.getKeyData());
-    assertEquals(this.expRollingStartNumber, actDiagnosisKey.getRollingStartNumber());
-    assertEquals(this.expRollingPeriod, actDiagnosisKey.getRollingPeriod());
-    assertEquals(this.expTransmissionRiskLevel, actDiagnosisKey.getTransmissionRiskLevel());
+    assertDiagnosisKeyEquals(actDiagnosisKey);
   }
 
+  private void assertDiagnosisKeyEquals(DiagnosisKey actDiagnosisKey) {
+    assertDiagnosisKeyEquals(actDiagnosisKey, getCurrentHoursSinceEpoch());
+  }
 
-  @Test
-  public void buildSuccessivelyWithSubmissionTimestamp() {
-    DiagnosisKey actDiagnosisKey = DiagnosisKey.builder()
-        .withKeyData(this.expKeyData)
-        .withRollingStartNumber(this.expRollingStartNumber)
-        .withRollingPeriod(this.expRollingPeriod)
-        .withTransmissionRiskLevel(this.expTransmissionRiskLevel)
-        .withSubmissionTimestamp(expSubmissionTimestamp).build();
+  private long getCurrentHoursSinceEpoch() {
+    return Instant.now().getEpochSecond() / 3600L;
+  }
 
+  private void assertDiagnosisKeyEquals(DiagnosisKey actDiagnosisKey, long expSubmissionTimestamp) {
     assertEquals(expSubmissionTimestamp, actDiagnosisKey.getSubmissionTimestamp());
     assertArrayEquals(this.expKeyData, actDiagnosisKey.getKeyData());
     assertEquals(this.expRollingStartNumber, actDiagnosisKey.getRollingStartNumber());
     assertEquals(this.expRollingPeriod, actDiagnosisKey.getRollingPeriod());
     assertEquals(this.expTransmissionRiskLevel, actDiagnosisKey.getTransmissionRiskLevel());
-  }
-
-  private long getCurrentHoursSinceEpoch() {
-    return Instant.now().getEpochSecond() / 3600L;
   }
 }
