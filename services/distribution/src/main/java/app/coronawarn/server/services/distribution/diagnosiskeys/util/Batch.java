@@ -1,4 +1,4 @@
-package app.coronawarn.server.tools.testdatagenerator.util;
+package app.coronawarn.server.services.distribution.diagnosiskeys.util;
 
 import app.coronawarn.server.common.protocols.external.exposurenotification.File;
 import app.coronawarn.server.common.protocols.external.exposurenotification.Header;

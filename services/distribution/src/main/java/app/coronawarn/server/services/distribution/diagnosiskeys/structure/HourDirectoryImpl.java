@@ -1,15 +1,16 @@
-package app.coronawarn.server.tools.testdatagenerator.implementations.cwa;
+package app.coronawarn.server.services.distribution.diagnosiskeys.structure;
 
 import app.coronawarn.server.common.protocols.external.exposurenotification.File;
 import app.coronawarn.server.common.protocols.external.exposurenotification.Key;
 import app.coronawarn.server.common.protocols.internal.FileBucket;
 import app.coronawarn.server.common.protocols.internal.RiskLevel;
+import app.coronawarn.server.services.distribution.crypto.CryptoProvider;
+import app.coronawarn.server.services.distribution.diagnosiskeys.util.Batch;
+import app.coronawarn.server.services.distribution.diagnosiskeys.util.DateTime;
+import app.coronawarn.server.services.distribution.diagnosiskeys.util.Random;
 import app.coronawarn.server.services.distribution.structure.directory.IndexDirectoryImpl;
 import app.coronawarn.server.services.distribution.structure.file.FileImpl;
 import app.coronawarn.server.services.distribution.structure.file.decorator.SigningDecorator;
-import app.coronawarn.server.tools.testdatagenerator.util.Batch;
-import app.coronawarn.server.tools.testdatagenerator.util.DateTime;
-import app.coronawarn.server.tools.testdatagenerator.util.Random;
 import com.google.protobuf.ByteString;
 import java.time.Instant;
 import java.time.LocalDate;
@@ -34,7 +35,7 @@ class HourDirectoryImpl extends IndexDirectoryImpl<LocalDateTime> {
   private final RandomGenerator random;
 
   public HourDirectoryImpl(LocalDate startDate, int totalHours, int exposuresPerHour,
-      RandomGenerator random) {
+      RandomGenerator random, CryptoProvider cryptoProvider) {
     super("hour", indices -> {
       LocalDate currentDate = ((LocalDate) indices.peek());
       return DateTime.getHours(startDate, currentDate, totalHours);
@@ -50,7 +51,7 @@ class HourDirectoryImpl extends IndexDirectoryImpl<LocalDateTime> {
       indicesCopy.pop();
       String region = (String) indicesCopy.pop();
       return new SigningDecorator(
-          new FileImpl("index", this.generateHourFile(hour, region)));
+          new FileImpl("index", this.generateHourFile(hour, region)), cryptoProvider);
     });
   }
 
