@@ -22,30 +22,36 @@ public class DiagnosisKeyBuilder implements Builder, RollingStartNumberBuilder,
   private long rollingStartNumber;
   private long rollingPeriod;
   private int transmissionRiskLevel;
+  private long submissionTimestamp = -1L;
 
   DiagnosisKeyBuilder() {
   }
 
+  @Override
   public RollingStartNumberBuilder withKeyData(byte[] keyData) {
     this.keyData = keyData;
     return this;
   }
 
+  @Override
   public RollingPeriodBuilder withRollingStartNumber(long rollingStartNumber) {
     this.rollingStartNumber = rollingStartNumber;
     return this;
   }
 
+  @Override
   public TransmissionRiskLevelBuilder withRollingPeriod(long rollingPeriod) {
     this.rollingPeriod = rollingPeriod;
     return this;
   }
 
+  @Override
   public FinalBuilder withTransmissionRiskLevel(int transmissionRiskLevel) {
     this.transmissionRiskLevel = transmissionRiskLevel;
     return this;
   }
 
+  @Override
   public DiagnosisKeyBuilder fromProtoBuf(Key protoBufObject) {
     this.keyData = protoBufObject.getKeyData().toByteArray();
     this.rollingStartNumber = protoBufObject.getRollingStartNumber();
@@ -54,9 +60,18 @@ public class DiagnosisKeyBuilder implements Builder, RollingStartNumberBuilder,
     return this;
   }
 
+  @Override
+  public FinalBuilder withSubmissionTimestamp(long submissionTimestamp) {
+    this.submissionTimestamp = submissionTimestamp;
+    return this;
+  }
+
+  @Override
   public DiagnosisKey build() {
-    // hours since epoch
-    long submissionTimestamp = Instant.now().getEpochSecond() / 3600L;
+    if (submissionTimestamp < 0) {
+      // hours since epoch
+      submissionTimestamp = Instant.now().getEpochSecond() / 3600L;
+    }
 
     return new DiagnosisKey(this.keyData, this.rollingStartNumber, this.rollingPeriod,
         this.transmissionRiskLevel, submissionTimestamp);
