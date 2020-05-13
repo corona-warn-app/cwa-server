@@ -9,6 +9,8 @@ import java.io.IOException;
 import java.util.UUID;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.core.io.ClassPathResource;
@@ -16,6 +18,9 @@ import org.springframework.core.io.ClassPathResource;
 @SpringBootTest
 @Tag("s3-integration")
 public class ObjectStoreAccessTest {
+
+
+  private Logger logger = LoggerFactory.getLogger(this.getClass());
 
   private String testRunId = "testing/cwa/" + UUID.randomUUID().toString() + "/";
 
@@ -39,23 +44,18 @@ public class ObjectStoreAccessTest {
   }
 
   @Test
-  public void printFiles() {
-    objectStoreAccess.printAllFiles();
-  }
-
-  @Test
   public void pushTestFileAndDelete() throws IOException {
     objectStoreAccess.putObject(testRunId + "TESTFILE", getExampleFile());
     var files = objectStoreAccess.getObjectsWithPrefix(testRunId);
     assertEquals(1, files.contents().size());
 
-    objectStoreAccess.printAllFiles();
+    this.printAllFiles();
 
     objectStoreAccess.deleteObjectsWithPrefix(testRunId);
     var filesAfterDeletion = objectStoreAccess.getObjectsWithPrefix(testRunId);
     assertEquals(0, filesAfterDeletion.contents().size());
 
-    objectStoreAccess.printAllFiles();
+    this.printAllFiles();
 
     var allFiles = objectStoreAccess.getObjectsWithPrefix("");
     assertFalse(allFiles.contents().isEmpty(), "Contents is empty, but we should have files");
@@ -65,4 +65,16 @@ public class ObjectStoreAccessTest {
     return new File(new ClassPathResource(textFile).getURI());
   }
 
+  /**
+   * Print some debug information about what is currently in the store.
+   */
+  private void printAllFiles() {
+    var out = objectStoreAccess.getObjectsWithPrefix("");
+
+    logger.info("-------");
+    logger.info(out.contents().toString());
+    logger.info("-------");
+
+    logger.info("Fetched S3");
+  }
 }

@@ -99,17 +99,4 @@ public class ObjectStoreAccess {
         .listObjectsV2(ListObjectsV2Request.builder().prefix(prefix).bucket(this.bucket).build());
   }
 
-  /**
-   * Print some debug information about what is currently in the store.
-   */
-  public void printAllFiles() {
-    var out = client.listObjectsV2(ListObjectsV2Request.builder().bucket(this.bucket).build());
-
-    logger.info("-------");
-    logger.info(out.contents().toString());
-    logger.info("-------");
-
-    logger.info("Fetched S3");
-  }
-
 }
