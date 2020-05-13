@@ -4,7 +4,7 @@ import app.coronawarn.server.common.protocols.internal.RiskScoreParameters;
 import app.coronawarn.server.services.distribution.crypto.CryptoProvider;
 import app.coronawarn.server.services.distribution.exposureconfig.ExposureConfigurationProvider;
 import app.coronawarn.server.services.distribution.exposureconfig.UnableToLoadFileException;
-import app.coronawarn.server.services.distribution.exposureconfig.structure.ExposureConfigurationDirectoryImpl;
+import app.coronawarn.server.services.distribution.exposureconfig.structure.directory.ExposureConfigurationDirectoryImpl;
 import app.coronawarn.server.services.distribution.structure.directory.Directory;
 import app.coronawarn.server.services.distribution.structure.directory.DirectoryImpl;
 import app.coronawarn.server.services.distribution.structure.directory.IndexDirectory;

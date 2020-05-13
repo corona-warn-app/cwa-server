@@ -3,7 +3,7 @@ package app.coronawarn.server.services.distribution.runner;
 import app.coronawarn.server.common.persistence.domain.DiagnosisKey;
 import app.coronawarn.server.common.persistence.service.DiagnosisKeyService;
 import app.coronawarn.server.services.distribution.crypto.CryptoProvider;
-import app.coronawarn.server.services.distribution.diagnosiskeys.structure.DiagnosisKeysDirectoryImpl;
+import app.coronawarn.server.services.distribution.diagnosiskeys.structure.directory.DiagnosisKeysDirectoryImpl;
 import app.coronawarn.server.services.distribution.structure.directory.DirectoryImpl;
 import app.coronawarn.server.services.distribution.structure.directory.IndexDirectory;
 import app.coronawarn.server.services.distribution.structure.directory.IndexDirectoryImpl;
@@ -37,6 +37,7 @@ public class DiagnosisKeyDistributionRunner implements ApplicationRunner {
   private static final Logger logger =
       LoggerFactory.getLogger(DiagnosisKeyDistributionRunner.class);
   private static final String COUNTRY = "DE";
+  private static final String VERSION_DIRECTORY = "version";
   private static final String VERSION = "v1";
   private static final DateTimeFormatter ISO8601 = DateTimeFormatter.ofPattern("yyyy-MM-dd");
   private static final String OUTPUT_PATH = "out";
@@ -52,31 +53,22 @@ public class DiagnosisKeyDistributionRunner implements ApplicationRunner {
 
     Collection<DiagnosisKey> diagnosisKeys = diagnosisKeyService.getDiagnosisKeys();
 
-    java.io.File outputDirectory = new File(OUTPUT_PATH);
-
-    clearDirectory(outputDirectory);
-
-    RandomGenerator random = new JDKRandomGenerator();
-    random.setSeed(123456);
-
-    int totalHours = 330;
-    String startDateStr = "2020-05-01";
-    int exposuresPerHour = 100;
-
-    LocalDate startDate = LocalDate.parse(startDateStr, ISO8601);
-
-    DiagnosisKeysDirectoryImpl diagnosisKeysDirectory = new DiagnosisKeysDirectoryImpl(
-        diagnosisKeys, COUNTRY, ISO8601, cryptoProvider);
+    DiagnosisKeysDirectoryImpl diagnosisKeysDirectory =
+        new DiagnosisKeysDirectoryImpl(diagnosisKeys, cryptoProvider);
 
     IndexDirectory<?> versionDirectory =
-        new IndexDirectoryImpl<>("version", __ -> List.of(VERSION), Object::toString);
+        new IndexDirectoryImpl<>(VERSION_DIRECTORY, __ -> List.of(VERSION), Object::toString);
 
     versionDirectory.addDirectoryToAll(__ -> diagnosisKeysDirectory);
 
+    java.io.File outputDirectory = new File(OUTPUT_PATH);
+    clearDirectory(outputDirectory);
     DirectoryImpl root = new DirectoryImpl(outputDirectory);
     root.addDirectory(new IndexingDecorator<>(versionDirectory));
-    logger.debug("Generating ...");
+
+    logger.debug("Preparing ...");
     root.prepare(new Stack<>());
+
     logger.debug("Writing ...");
     root.write();
 

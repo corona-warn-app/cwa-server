@@ -1,64 +1,56 @@
-package app.coronawarn.server.services.distribution.diagnosiskeys.structure;
+package app.coronawarn.server.services.distribution.diagnosiskeys.structure.file;
 
 import app.coronawarn.server.common.persistence.domain.DiagnosisKey;
 import app.coronawarn.server.common.protocols.external.exposurenotification.File;
 import app.coronawarn.server.common.protocols.external.exposurenotification.Key;
 import app.coronawarn.server.common.protocols.internal.FileBucket;
-import app.coronawarn.server.services.distribution.crypto.CryptoProvider;
 import app.coronawarn.server.services.distribution.diagnosiskeys.util.Batch;
-import app.coronawarn.server.services.distribution.diagnosiskeys.util.DateTime;
-import app.coronawarn.server.services.distribution.structure.directory.IndexDirectoryImpl;
 import app.coronawarn.server.services.distribution.structure.file.FileImpl;
-import app.coronawarn.server.services.distribution.structure.file.decorator.SigningDecorator;
 import java.time.Instant;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.util.Collection;
 import java.util.List;
 import java.util.Stack;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-class HourDirectoryImpl extends IndexDirectoryImpl<LocalDateTime> {
+public class HourFileImpl extends FileImpl {
 
-  private static final String HOUR_DIRECTORY = "hour";
+  private static final Logger logger = LoggerFactory.getLogger(HourFileImpl.class);
 
   private static final String INDEX_FILE_NAME = "index";
 
-  public HourDirectoryImpl(Collection<DiagnosisKey> diagnosisKeys, CryptoProvider cryptoProvider) {
-    super(HOUR_DIRECTORY, indices -> {
-      LocalDate currentDate = ((LocalDate) indices.peek());
-      return DateTime.getHours(currentDate, diagnosisKeys);
-    }, LocalDateTime::getHour);
-    this.addFileToAll(indices -> {
-      Stack<Object> indicesCopy = (Stack<Object>) indices.clone();
-      LocalDateTime hour = (LocalDateTime) indicesCopy.pop();
-      indicesCopy.pop();
-      String region = (String) indicesCopy.pop();
-      return new SigningDecorator(
-          new FileImpl(INDEX_FILE_NAME, this.generateHourFile(diagnosisKeys, hour, region)),
-          cryptoProvider);
-    });
+  private final LocalDateTime currentHour;
+  private final String region;
+  private final Collection<DiagnosisKey> diagnosisKeys;
+
+  public HourFileImpl(LocalDateTime currentHour, String region,
+      Collection<DiagnosisKey> diagnosisKeys) {
+    super(INDEX_FILE_NAME, new byte[0]);
+    this.currentHour = currentHour;
+    this.region = region;
+    this.diagnosisKeys = diagnosisKeys;
   }
 
-  private byte[] generateHourFile(Collection<DiagnosisKey> diagnosisKeys, LocalDateTime currentHour,
-      String region) {
-    System.out.println(
-        "Generating \t\t" + this.getFileOnDisk().getPath() + "/" + currentHour.getHour());
-    return generateFileBucket(diagnosisKeys, currentHour, region).toByteArray();
+  @Override
+  public void prepare(Stack<Object> indices) {
+    this.setBytes(createHourBytes());
+    super.prepare(indices);
   }
 
-  private static FileBucket generateFileBucket(Collection<DiagnosisKey> diagnosisKeys,
-      LocalDateTime currentHour, String region) {
+  private byte[] createHourBytes() {
+    logger.debug("Creating hour file for {}", currentHour);
     return FileBucket.newBuilder()
         .addAllFiles(generateFiles(diagnosisKeys, currentHour, region))
-        .build();
+        .build()
+        .toByteArray();
   }
 
   private static List<File> generateFiles(Collection<DiagnosisKey> diagnosisKeys,
       LocalDateTime currentHour, String region) {
     Instant startTimestamp = Instant.from(currentHour.atOffset(ZoneOffset.UTC));
     Instant endTimestamp = Instant.from(currentHour.atOffset(ZoneOffset.UTC).plusHours(1));
-    // TODO Remove random
     List<Key> keys = getKeys(diagnosisKeys, currentHour);
     return Batch.aggregateKeys(keys, startTimestamp, endTimestamp, region);
   }
@@ -66,6 +58,7 @@ class HourDirectoryImpl extends IndexDirectoryImpl<LocalDateTime> {
   private static List<Key> getKeys(Collection<DiagnosisKey> diagnosisKeys,
       LocalDateTime currentHour) {
     return List.of();
+
     /*
     return IntStream.range(0, number)
         .mapToObj(__ -> Key.newBuilder()

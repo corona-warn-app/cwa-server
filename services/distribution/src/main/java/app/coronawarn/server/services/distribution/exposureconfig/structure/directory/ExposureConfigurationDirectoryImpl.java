@@ -1,4 +1,4 @@
-package app.coronawarn.server.services.distribution.exposureconfig.structure;
+package app.coronawarn.server.services.distribution.exposureconfig.structure.directory;
 
 import app.coronawarn.server.common.protocols.internal.RiskScoreParameters;
 import app.coronawarn.server.services.distribution.crypto.CryptoProvider;
