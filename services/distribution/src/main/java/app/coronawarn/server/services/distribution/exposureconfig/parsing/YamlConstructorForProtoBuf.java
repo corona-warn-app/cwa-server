@@ -32,7 +32,7 @@ public class YamlConstructorForProtoBuf extends Constructor {
     }
 
     private String snakeToCamelCase(String snakeCase) {
-      var camelCase = Arrays.stream(snakeCase.split("_"))
+      String camelCase = Arrays.stream(snakeCase.split("_"))
           .map(word -> Character.toUpperCase(word.charAt(0)) + word.substring(1))
           .reduce("", String::concat);
 
