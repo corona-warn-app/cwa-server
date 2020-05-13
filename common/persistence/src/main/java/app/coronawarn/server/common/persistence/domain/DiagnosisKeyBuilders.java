@@ -3,7 +3,8 @@ package app.coronawarn.server.common.persistence.domain;
 import app.coronawarn.server.common.protocols.external.exposurenotification.Key;
 
 /**
- * This interfaces bundles a interfaces that are used for the implementation of DiagnosisKeyBuilder.
+ * This interface bundles interfaces that are used for the implementation of {@link
+ * DiagnosisKeyBuilder}.
  */
 interface DiagnosisKeyBuilders {
 
@@ -65,7 +66,8 @@ interface DiagnosisKeyBuilders {
   interface FinalBuilder {
 
     /**
-     * Builds a {@link DiagnosisKey} instance.
+     * Builds a {@link DiagnosisKey} instance and sets the submission timestamp to hours since
+     * epoch.
      */
     DiagnosisKey build();
   }
