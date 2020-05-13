@@ -3,6 +3,7 @@ package app.coronawarn.server.services.distribution.exposureconfig.validation;
 import app.coronawarn.server.common.protocols.internal.RiskLevel;
 import app.coronawarn.server.common.protocols.internal.RiskScoreParameters;
 import app.coronawarn.server.services.distribution.exposureconfig.validation.WeightValidationError.ErrorType;
+import java.beans.BeanInfo;
 import java.beans.IntrospectionException;
 import java.beans.Introspector;
 import java.beans.PropertyDescriptor;
@@ -51,7 +52,7 @@ public class ExposureConfigurationValidator {
 
   private void validateParameterRiskLevels(String name, Object object)
       throws IntrospectionException {
-    var bean = Introspector.getBeanInfo(object.getClass());
+    BeanInfo bean = Introspector.getBeanInfo(object.getClass());
 
     Arrays.stream(bean.getPropertyDescriptors())
         .filter(propertyDescriptor -> propertyDescriptor.getPropertyType() == RiskLevel.class)
@@ -89,7 +90,7 @@ public class ExposureConfigurationValidator {
   }
 
   private boolean respectsMaximumDecimalPlaces(double weight) {
-    var bd = new BigDecimal(String.valueOf(weight));
+    BigDecimal bd = new BigDecimal(String.valueOf(weight));
 
     return bd.scale() <= ParameterSpec.WEIGHT_MAX_DECIMALS;
   }

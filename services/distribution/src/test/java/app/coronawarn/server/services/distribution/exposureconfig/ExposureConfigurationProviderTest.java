@@ -3,6 +3,7 @@ package app.coronawarn.server.services.distribution.exposureconfig;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
+import app.coronawarn.server.common.protocols.internal.RiskScoreParameters;
 import org.junit.jupiter.api.Test;
 
 public class ExposureConfigurationProviderTest {
@@ -10,7 +11,7 @@ public class ExposureConfigurationProviderTest {
   @Test
   public void okFile() throws UnableToLoadFileException {
     var provider = new ExposureConfigurationProvider();
-    var result = provider.readFile("parameters/all_ok.yaml");
+    RiskScoreParameters result = provider.readFile("parameters/all_ok.yaml");
 
     assertNotNull(result, "File is null, indicating loading failed");
   }

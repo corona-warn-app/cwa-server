@@ -21,7 +21,7 @@ public class ExposureConfigurationMasterFileTest {
     var config = new ExposureConfigurationProvider().readMasterFile();
 
     var validator = new ExposureConfigurationValidator(config);
-    var result =  validator.validate();
+    ValidationResult result = validator.validate();
 
     assertEquals(SUCCESS, result);
   }
