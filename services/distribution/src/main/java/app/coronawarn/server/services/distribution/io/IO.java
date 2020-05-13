@@ -21,9 +21,7 @@ public class IO {
   }
 
   public static void writeBytesToFile(byte[] bytes, File outputFile) {
-    try {
-      outputFile.createNewFile();
-      FileOutputStream outputFileStream = new FileOutputStream(outputFile);
+    try (FileOutputStream outputFileStream = new FileOutputStream(outputFile)) {
       outputFileStream.write(bytes);
     } catch (IOException e) {
       throw new RuntimeException(e);
