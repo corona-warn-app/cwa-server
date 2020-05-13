@@ -9,6 +9,7 @@ import app.coronawarn.server.services.distribution.structure.file.FileImpl;
 import app.coronawarn.server.services.distribution.structure.functional.Formatter;
 import app.coronawarn.server.services.distribution.structure.functional.IndexFunction;
 import java.io.IOException;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -16,10 +17,9 @@ import java.util.Objects;
 import java.util.Stack;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-import org.junit.Rule;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.rules.TemporaryFolder;
+import org.junit.jupiter.api.io.TempDir;
 
 public class IndexDirectoryTest {
 
@@ -29,15 +29,14 @@ public class IndexDirectoryTest {
   private static final Formatter<Integer> indexFormatter = Integer::valueOf;
   private IndexDirectory<Integer> indexDirectory;
   private Directory outputDirectory;
-
-  @Rule
-  private TemporaryFolder temporaryFolder = new TemporaryFolder();
   private java.io.File outputFile;
+
+  @TempDir
+  Path tempPath;
 
   @BeforeEach
   public void setup() throws IOException {
-    temporaryFolder.create();
-    outputFile = temporaryFolder.newFolder();
+    outputFile = tempPath.toFile();
 
     indexDirectory = new IndexDirectoryImpl<>(name, indexFunction, indexFormatter);
     outputDirectory = new DirectoryImpl(outputFile);

@@ -11,6 +11,7 @@ import app.coronawarn.server.services.distribution.structure.directory.decorator
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
@@ -18,15 +19,14 @@ import java.util.stream.Stream;
 import org.json.simple.JSONArray;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
-import org.junit.Rule;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.rules.TemporaryFolder;
+import org.junit.jupiter.api.io.TempDir;
 
 public class IndexingDecoratorTest {
 
-  @Rule
-  private TemporaryFolder outputFolder = new TemporaryFolder();
+  @TempDir
+  Path tempPath;
 
   private static final List<Integer> index = List.of(1, 2, 3);
   private java.io.File outputFile;
@@ -35,9 +35,8 @@ public class IndexingDecoratorTest {
   private Directory decorator;
 
   @BeforeEach
-  public void setup() throws IOException {
-    outputFolder.create();
-    outputFile = outputFolder.newFolder();
+  public void setup() {
+    outputFile = tempPath.toFile();
     parent = new DirectoryImpl(outputFile);
     decoree = new IndexDirectoryImpl<>("foo", __ -> index, __ -> __);
     decorator = new IndexingDecorator(decoree);
