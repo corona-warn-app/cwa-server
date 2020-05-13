@@ -22,6 +22,8 @@ public class DateAggregatingDecorator extends DirectoryDecorator {
 
   private final CryptoProvider cryptoProvider;
 
+  private static final String AGGREGATE_FILE_NAME = "index";
+
   public DateAggregatingDecorator(Directory directory, CryptoProvider cryptoProvider) {
     super(directory);
     this.cryptoProvider = cryptoProvider;
@@ -40,7 +42,7 @@ public class DateAggregatingDecorator extends DirectoryDecorator {
           .map(this::reduceFileBuckets)
           .map(this::makeNewFileBucket)
           .map(FileBucket::toByteArray)
-          .map(bytes -> new FileImpl("index", bytes))
+          .map(bytes -> new FileImpl(AGGREGATE_FILE_NAME, bytes))
           .map(file -> new SigningDecorator(file, cryptoProvider))
           .peek(currentDirectory::addFile)
           .forEach(aggregate -> aggregate.prepare(indices));

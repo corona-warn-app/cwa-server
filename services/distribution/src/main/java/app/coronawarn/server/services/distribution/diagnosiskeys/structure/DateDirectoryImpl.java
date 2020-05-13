@@ -11,9 +11,11 @@ import java.util.Collection;
 
 class DateDirectoryImpl extends IndexDirectoryImpl<LocalDate> {
 
+  private static final String DATE_DIRECTORY = "date";
+
   public DateDirectoryImpl(Collection<DiagnosisKey> diagnosisKeys, DateTimeFormatter formatter,
       CryptoProvider cryptoProvider) {
-    super("date", __ -> DateTime.getDates(diagnosisKeys),
+    super(DATE_DIRECTORY, __ -> DateTime.getDates(diagnosisKeys),
         formatter::format);
     this.addDirectoryToAll(__ -> new IndexingDecorator<>(
         new HourDirectoryImpl(diagnosisKeys, cryptoProvider)));

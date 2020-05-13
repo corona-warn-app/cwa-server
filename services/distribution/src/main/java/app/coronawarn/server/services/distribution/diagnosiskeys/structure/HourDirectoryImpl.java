@@ -20,8 +20,12 @@ import java.util.Stack;
 
 class HourDirectoryImpl extends IndexDirectoryImpl<LocalDateTime> {
 
+  private static final String HOUR_DIRECTORY = "hour";
+
+  private static final String INDEX_FILE_NAME = "index";
+
   public HourDirectoryImpl(Collection<DiagnosisKey> diagnosisKeys, CryptoProvider cryptoProvider) {
-    super("hour", indices -> {
+    super(HOUR_DIRECTORY, indices -> {
       LocalDate currentDate = ((LocalDate) indices.peek());
       return DateTime.getHours(currentDate, diagnosisKeys);
     }, LocalDateTime::getHour);
@@ -31,7 +35,7 @@ class HourDirectoryImpl extends IndexDirectoryImpl<LocalDateTime> {
       indicesCopy.pop();
       String region = (String) indicesCopy.pop();
       return new SigningDecorator(
-          new FileImpl("index", this.generateHourFile(diagnosisKeys, hour, region)),
+          new FileImpl(INDEX_FILE_NAME, this.generateHourFile(diagnosisKeys, hour, region)),
           cryptoProvider);
     });
   }

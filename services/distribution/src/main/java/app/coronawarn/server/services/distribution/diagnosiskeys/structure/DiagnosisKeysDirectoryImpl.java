@@ -12,10 +12,14 @@ import java.util.List;
 
 public class DiagnosisKeysDirectoryImpl extends DirectoryImpl {
 
+  private static final String DIAGNOSIS_KEYS_DIRECTORY = "diagnosis-keys";
+
+  private static final String COUNTRY_DIRECTORY = "country";
+
   public DiagnosisKeysDirectoryImpl(Collection<DiagnosisKey> diagnosisKeys, String region,
       DateTimeFormatter formatter, CryptoProvider cryptoProvider) {
-    super("diagnosis-keys");
-    IndexDirectoryImpl<String> country = new IndexDirectoryImpl<>("country", __ -> List.of(region),
+    super(DIAGNOSIS_KEYS_DIRECTORY);
+    IndexDirectoryImpl<String> country = new IndexDirectoryImpl<>(COUNTRY_DIRECTORY, __ -> List.of(region),
         Object::toString);
     country.addDirectoryToAll(__ -> new DateAggregatingDecorator(new IndexingDecorator<>(
         new DateDirectoryImpl(diagnosisKeys, formatter, cryptoProvider)),
