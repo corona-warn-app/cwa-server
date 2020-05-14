@@ -36,7 +36,7 @@ public class DiagnosisKeyDistributionRunner implements ApplicationRunner {
 
   private static final String VERSION_DIRECTORY = "version";
 
-  @Value("${app.coronawarn.server.services.distribution.region}")
+  @Value("${app.coronawarn.server.services.distribution.version}")
   private String version;
 
   @Value("${app.coronawarn.server.services.distribution.paths.output}")
