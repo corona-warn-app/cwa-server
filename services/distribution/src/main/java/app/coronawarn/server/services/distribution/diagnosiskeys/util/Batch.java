@@ -18,9 +18,9 @@ public class Batch {
   private static final int FILE_SIZE_LIMIT_BYTES = FILE_SIZE_LIMIT_KB * KILO;
 
   /**
-   * Aggregates a list of {@link Key Keys} into a list of {@link File Files}.
+   * Aggregates a set of {@link Key Keys} into a set of {@link File Files}.
    *
-   * @return A list of lists of equal size
+   * @return A set of files of equal size
    */
   public static Set<File> aggregateKeys(Set<Key> keys, Instant startTimestamp,
       Instant endTimeStamp, String region) {
@@ -46,7 +46,7 @@ public class Batch {
   }
 
   /**
-   * Aggregates a list of {@link Key Keys} into a list of equally sized {@link File Files} with
+   * Aggregates a set of {@link Key Keys} into a set of equally sized {@link File Files} with
    * length {@code partitions}.
    */
   private static Set<File> aggregateKeysIntoBatches(Set<Key> keys, int numBatches,
@@ -72,13 +72,13 @@ public class Batch {
   }
 
   /**
-   * Partitions a list into {@code numPartitions} equally sized lists.
+   * Partitions a set into {@code numPartitions} equally sized sets.
    *
    * @param set           The set to partition
    * @param numPartitions The number of partitions
-   * @return A list of lists of equal size
+   * @return A list of sets of equal size
    */
-  public static <T> List<Set<T>> partitionSet(Set<T> set, int numPartitions) {
+  private static <T> List<Set<T>> partitionSet(Set<T> set, int numPartitions) {
     int partitionSize = Maths.ceilDiv(set.size(), numPartitions);
     List<T> list = new ArrayList<>(set);
     return IntStream.range(0, numPartitions)
