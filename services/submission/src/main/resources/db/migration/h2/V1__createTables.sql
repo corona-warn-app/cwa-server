@@ -1,5 +1,5 @@
 CREATE TABLE diagnosis_key (
-    id bigint NOT NULL PRIMARY KEY,
+    id bigserial PRIMARY KEY,
     key_data bytea,
     rolling_period bigint NOT NULL,
     rolling_start_number bigint NOT NULL,
