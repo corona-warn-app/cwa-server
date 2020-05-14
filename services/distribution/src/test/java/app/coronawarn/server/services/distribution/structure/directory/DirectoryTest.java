@@ -8,7 +8,6 @@ import static org.mockito.Mockito.verify;
 import app.coronawarn.server.services.distribution.structure.file.File;
 import app.coronawarn.server.services.distribution.structure.file.FileImpl;
 import java.io.IOException;
-import java.util.List;
 import java.util.Set;
 import java.util.Stack;
 import org.junit.Rule;
