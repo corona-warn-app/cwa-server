@@ -64,7 +64,7 @@ public class S3Publisher {
    * @param root the root, needed to compute the relative path for the S3 location
    */
   public void publishFile(Path file, Path root) {
-    if (file.toFile().isFile()) {
+    if (!file.toFile().isFile()) {
       throw new UnsupportedOperationException("Supplied path is not a file: " + file);
     }
     String publishingPath = createS3Key(file, root);
