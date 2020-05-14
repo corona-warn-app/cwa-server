@@ -3,14 +3,14 @@
 </h1>
 
 <p align="center">
-    <a href="https://github.com/Exposure-Notification-App/ena-documentation/commits/" title="Last Commit"><img src="https://img.shields.io/github/last-commit/corona-warn-app/cwa-server"></a>
-    <a href="https://github.com/Exposure-Notification-App/ena-documentation/issues" title="Open Issues"><img src="https://img.shields.io/github/issues/corona-warn-app/cwa-server"></a>
-    <a href="https://travis-ci.com/github/corona-warn-app/cwa-server/branches" title="Build Status"><img src="https://travis-ci.com/corona-warn-app/cwa-server.svg?token=gpueM7d449jXM7yo7Zoq&branch=master"></a>
-    <a href="https://github.com/corona-warn-app/cwa-server/blob/master/LICENSE" title="License"><img src="https://img.shields.io/badge/License-Apache%202.0-green.svg"></a>
+    <a href="https://github.com/Exposure-Notification-App/ena-documentation/commits/" title="Last Commit"><img src="https://img.shields.io/github/last-commit/corona-warn-app/cwa-server?style=flat"></a>
+    <a href="https://github.com/Exposure-Notification-App/ena-documentation/issues" title="Open Issues"><img src="https://img.shields.io/github/issues/corona-warn-app/cwa-server?style=flat"></a>
+    <a href="https://circleci.com/gh/corona-warn-app/cwa-server" title="Build Status"><img src="https://circleci.com/gh/corona-warn-app/cwa-server.svg?style=flat&circle-token=a7294b977bb9ea2c2d53ff62c9aa442670e19b59"></a>
+    <a href="https://github.com/corona-warn-app/cwa-server/blob/master/LICENSE" title="License"><img src="https://img.shields.io/badge/License-Apache%202.0-green.svg?style=flat"></a>
 </p>
 
 <p align="center">
-  <a href="#api--deployments">API & Deployments</a> •
+  <a href="#service-apis">Service APIs</a> •
   <a href="#development">Development</a> •
   <a href="#architecture--documentation">Documentation</a> •
   <a href="#contributing">Contributing</a> •
@@ -20,36 +20,41 @@
 
 This project has the goal to develop the official Corona-Warn-App for Germany based on the Exposure Notification API by [Apple](https://www.apple.com/covid19/contacttracing/) and [Google](https://www.google.com/covid19/exposurenotifications/).  The apps (for both iOS and Android) will collect anonymous data from nearby mobile phones using Bluetooth technology. The data will be stored locally on each device, preventing authorities’ access and control over tracing data. This repository contains the **implementation of the key server** for the Corona-Warn-App. This implementation is **work in progress** and contains alpha-quality code only.
 
-_TODO: Add screenshots here._
+## Service APIs
 
-## API & Deployments
-
-Service      | Endpoint    | Postman     | OpenAPI
--------------|-------------|-------------|-------------
-Submission Service          | http://submission-cwa-server.apps.p006.otc.mcs-paas.io        | https://documenter.getpostman.com/view/5034888/SzmfZy8Z?version=latest          | https://github.com/corona-warn-app/cwa-server/raw/master/services/submission/api_v1.json
-Distribution Mock Service   | http://distribution-mock-cwa-server.apps.p006.otc.mcs-paas.io | https://documenter.getpostman.com/view/5099981/Szmb8Lcd?version=latest          | https://github.com/corona-warn-app/cwa-server/raw/master/services/distribution/api_v1.json
+Service      | OpenAPI Specification
+-------------|-------------
+Submission Service        | https://github.com/corona-warn-app/cwa-server/raw/master/services/submission/api_v1.json
+Distribution Service      | https://github.com/corona-warn-app/cwa-server/raw/master/services/distribution/api_v1.json
 
 
 ## Development
 
-_TODO: Information on how to setup, build, and run server._
-
 ### Setup
 
-_TODO: Steps and requirements needed to setup my machine for building the project._
+To setup this project locally on your machine, we recommend to install the following prerequisites:
+  - Java OpenJDK 11
+  - Maven 3.6
+  - Docker if you would like to build Docker images
+  - Postgres if you would like to connect a persistent storage. If no postgres connection is specified an in-memory HSQLDB will be provided.
 
 ### Build
 
-```
-  mvn install
-```
+After you checked out the repository run ```mvn install``` in your base directory to build the project.
 
 ### Run
 
-Navigate to the service you would like to start and run the spring-boot:run target. Example for the Submission Service:
+Navigate to the service you would like to start and run the spring-boot:run target. By default the HSQLDB will be used and after the Spring Boot application started the endpoint will be available on your local port 8080. As an example if you would like to start the submission service run:
 ```
   cd services/submission/
-  mvn spring-boot:run -Dspring-boot.run.profiles=dev
+  mvn spring-boot:run
+```
+
+If you want to use a postgres DB instead please use the postgres profile when starting the application:
+
+```
+  cd services/submission/
+  mvn spring-boot:run -Dspring-boot.run.profiles=postgres
 ```
 
 In order to enable S3 integration, you will need the following vars in your env:
@@ -61,12 +66,21 @@ AWS_SECRET_ACCESS_KEY | The secret access key
 cwa.objectstore.endpoint | The S3 endpoint
 cwa.objectstore.bucket | The S3 bucket name
 
-Defined run profiles:
-  - dev
+### Build Docker Images
+
+If you want to build a docker image of the service you can use the provided Dockerfile. To create an image simply run:
+```
+docker build --pull --rm -f "services/submission/Dockerfile" -t cwa-submission:latest .
+```
+
+Afterwards you can start the image and make it accessible on your localhost on port 3000 by running:
+```
+docker run -p 127.0.0.1:3000:8080/tcp --name 'cwa-submission' cwa-submission
+```
 
 ## Known Issues
 
-_TODO: Use this section to list known issues of the current implementation._
+There are no known issues.
 
 ## Architecture & Documentation
 
@@ -86,8 +100,6 @@ The full documentation for the Corona-Warn-App is in the [cwa-documentation](htt
 ## Contributing
 
 Contributions and feedback are encouraged and always welcome. Please see our [Contribution Guidelines](./CONTRIBUTING.md) for details on how to contribute, the project structure and additional details you need to know to work with us. By participating in this project, you agree to abide by its [Code of Conduct](./CODE_OF_CONDUCT.md).
-
-_TODO: Add additional information here or inside the contribution guidelines, (e.g. code style/formatting)_
 
 ## Contributors
 
