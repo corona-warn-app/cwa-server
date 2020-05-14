@@ -12,8 +12,8 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.Arrays;
-import java.util.List;
 import java.util.Objects;
+import java.util.Set;
 import java.util.stream.Stream;
 import org.json.simple.JSONArray;
 import org.json.simple.parser.JSONParser;
@@ -28,7 +28,7 @@ public class IndexingDecoratorTest {
   @Rule
   private TemporaryFolder outputFolder = new TemporaryFolder();
 
-  private static final List<Integer> index = List.of(1, 2, 3);
+  private static final Set<Integer> index = Set.of(1, 2, 3);
   private java.io.File outputFile;
   private Directory parent;
   private IndexDirectory<Integer> decoree;
@@ -40,7 +40,7 @@ public class IndexingDecoratorTest {
     outputFile = outputFolder.newFolder();
     parent = new DirectoryImpl(outputFile);
     decoree = new IndexDirectoryImpl<>("foo", __ -> index, __ -> __);
-    decorator = new IndexingDecorator(decoree);
+    decorator = new IndexingDecorator<>(decoree);
 
     parent.addDirectory(decorator);
 
@@ -63,6 +63,6 @@ public class IndexingDecoratorTest {
     JSONArray indexJson = (JSONArray) obj;
 
     index.forEach(expected ->
-      assertTrue(indexJson.contains(expected.longValue()), expected.toString()));
+        assertTrue(indexJson.contains(expected.longValue()), expected.toString()));
   }
 }

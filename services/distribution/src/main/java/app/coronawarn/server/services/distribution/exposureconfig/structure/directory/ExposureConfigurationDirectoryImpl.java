@@ -1,4 +1,4 @@
-package app.coronawarn.server.services.distribution.exposureconfig.structure;
+package app.coronawarn.server.services.distribution.exposureconfig.structure.directory;
 
 import app.coronawarn.server.common.protocols.internal.RiskScoreParameters;
 import app.coronawarn.server.services.distribution.crypto.CryptoProvider;
@@ -18,22 +18,22 @@ public class ExposureConfigurationDirectoryImpl extends DirectoryImpl {
 
   private static final String PARAMETERS_DIRECTORY = "parameters";
   private static final String COUNTRY_DIRECTORY = "country";
+  private static final String COUNTRY = "DE";
   private static final String INDEX_FILE_NAME = "index";
 
   /**
    * Constructor.
    *
-   * @param region         The region that the {@link RiskScoreParameters} apply to.
    * @param exposureConfig The {@link RiskScoreParameters} to sign and write.
    * @param cryptoProvider The {@link CryptoProvider} whose artifacts to use for creating the {@link
    *                       app.coronawarn.server.common.protocols.internal.SignedPayload}.
    */
-  public ExposureConfigurationDirectoryImpl(
-      String region, RiskScoreParameters exposureConfig, CryptoProvider cryptoProvider) {
+  public ExposureConfigurationDirectoryImpl(RiskScoreParameters exposureConfig,
+      CryptoProvider cryptoProvider) {
     super(PARAMETERS_DIRECTORY);
 
     IndexDirectoryImpl<String> country =
-        new IndexDirectoryImpl<>(COUNTRY_DIRECTORY, __ -> Set.of(region), Object::toString);
+        new IndexDirectoryImpl<>(COUNTRY_DIRECTORY, __ -> Set.of(COUNTRY), Object::toString);
 
     country.addFileToAll(__ ->
         new SigningDecorator(new FileImpl(INDEX_FILE_NAME, exposureConfig.toByteArray()),

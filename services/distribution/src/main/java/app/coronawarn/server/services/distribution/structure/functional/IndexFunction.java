@@ -1,7 +1,7 @@
 package app.coronawarn.server.services.distribution.structure.functional;
 
-import java.util.List;
-import java.util.Stack;
+import app.coronawarn.server.services.distribution.structure.util.ImmutableStack;
+import java.util.Set;
 import java.util.function.Function;
 
 /**
@@ -10,7 +10,7 @@ import java.util.function.Function;
  * @param <T> The type of the index elements.
  */
 @FunctionalInterface
-public interface IndexFunction<T> extends Function<Stack<Object>, List<T>> {
+public interface IndexFunction<T> extends Function<ImmutableStack<Object>, Set<T>> {
 
-  List<T> apply(Stack<Object> t);
+  Set<T> apply(ImmutableStack<Object> t);
 }

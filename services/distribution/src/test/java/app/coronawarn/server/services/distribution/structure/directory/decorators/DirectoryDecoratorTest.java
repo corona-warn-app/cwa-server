@@ -8,7 +8,7 @@ import app.coronawarn.server.services.distribution.structure.directory.Directory
 import app.coronawarn.server.services.distribution.structure.directory.decorator.DirectoryDecorator;
 import app.coronawarn.server.services.distribution.structure.file.File;
 import app.coronawarn.server.services.distribution.structure.file.FileImpl;
-import java.util.Stack;
+import app.coronawarn.server.services.distribution.structure.util.ImmutableStack;
 import org.junit.jupiter.api.Test;
 
 public class DirectoryDecoratorTest {
@@ -18,7 +18,7 @@ public class DirectoryDecoratorTest {
     Directory decoree = mock(Directory.class);
     Directory decorator = new TestDirectoryDecorator(decoree);
 
-    Stack<Object> stack = new Stack<>();
+    ImmutableStack<Object> stack = new ImmutableStack<>();
     decorator.prepare(stack);
     verify(decoree).prepare(stack);
 

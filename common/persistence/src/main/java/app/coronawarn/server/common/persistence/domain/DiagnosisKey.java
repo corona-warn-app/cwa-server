@@ -1,5 +1,6 @@
 package app.coronawarn.server.common.persistence.domain;
 
+import app.coronawarn.server.common.persistence.domain.DiagnosisKeyBuilders.Builder;
 import java.util.Arrays;
 import java.util.Objects;
 import javax.persistence.Entity;
@@ -45,7 +46,7 @@ public class DiagnosisKey {
    *
    * @return DiagnosisKeyBuilder instance.
    */
-  public static DiagnosisKeyBuilder builder() {
+  public static Builder builder() {
     return new DiagnosisKeyBuilder();
   }
 

@@ -1,13 +1,20 @@
-package app.coronawarn.server.tools.testdatagenerator.util;
+package app.coronawarn.server.services.distribution.diagnosiskeys.util;
 
 import app.coronawarn.server.common.protocols.external.exposurenotification.File;
 import app.coronawarn.server.common.protocols.external.exposurenotification.Header;
 import app.coronawarn.server.common.protocols.external.exposurenotification.Key;
 import java.time.Instant;
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
+/**
+ * Functionality to split collections of {@link Key keys} into similar sized collections of {@link
+ * java.io.File files} containing the respecitve key data.
+ */
 public class Batch {
 
   private static final int KILO = 1000;
@@ -15,11 +22,9 @@ public class Batch {
   private static final int FILE_SIZE_LIMIT_BYTES = FILE_SIZE_LIMIT_KB * KILO;
 
   /**
-   * Aggregates a list of {@link Key Keys} into a list of {@link File Files}.
-   *
-   * @return A list of lists of equal size
+   * Aggregates a set of {@link Key Keys} into a set of {@link File Files} of roughly equal size.
    */
-  public static List<File> aggregateKeys(List<Key> keys, Instant startTimestamp,
+  public static Set<File> aggregateKeys(Set<Key> keys, Instant startTimestamp,
       Instant endTimeStamp, String region) {
     // Because protocol buffers optimize each serialization based on the content, we can not exactly
     // calculate the file size that any given serialization will produce ahead of time. So, in order
@@ -38,17 +43,16 @@ public class Batch {
       int numBatches = Maths.ceilDiv(singleFileSize, FILE_SIZE_LIMIT_BYTES) + 1;
       return aggregateKeysIntoBatches(keys, numBatches, startTimestamp, endTimeStamp, region);
     } else {
-      return List.of(singleFile);
+      return Set.of(singleFile);
     }
   }
 
   /**
-   * Aggregates a list of {@link Key Keys} into a list of equally sized {@link File Files} with
-   * length {@code partitions}.
+   * Aggregates a set of {@link Key Keys} into a set of equally sized {@link File Files}.
    */
-  private static List<File> aggregateKeysIntoBatches(List<Key> keys, int numBatches,
+  private static Set<File> aggregateKeysIntoBatches(Set<Key> keys, int numBatches,
       Instant startTimestamp, Instant endTimeStamp, String region) {
-    List<List<Key>> partitions = partitionList(keys, numBatches);
+    List<Set<Key>> partitions = partitionSet(keys, numBatches);
     return IntStream.range(0, partitions.size())
         .mapToObj(index -> {
           Header header = Header.newBuilder()
@@ -58,28 +62,29 @@ public class Batch {
               .setBatchNum(index + 1)
               .setBatchSize(numBatches)
               .build();
-          List<Key> partition = partitions.get(index);
+          Set<Key> partition = partitions.get(index);
           return File
               .newBuilder()
               .setHeader(header)
               .addAllKeys(partition)
               .build();
         })
-        .collect(Collectors.toList());
+        .collect(Collectors.toSet());
   }
 
   /**
-   * Partitions a list into {@code numPartitions} equally sized lists.
+   * Partitions a set into {@code numPartitions} equally sized sets.
    *
-   * @param list          The list to partition
+   * @param set           The set to partition
    * @param numPartitions The number of partitions
-   * @return A list of lists of equal size
+   * @return A list of sets of equal size
    */
-  public static <T> List<List<T>> partitionList(List<T> list, int numPartitions) {
-    int partitionSize = Maths.ceilDiv(list.size(), numPartitions);
+  private static <T> List<Set<T>> partitionSet(Set<T> set, int numPartitions) {
+    int partitionSize = Maths.ceilDiv(set.size(), numPartitions);
+    List<T> list = new ArrayList<>(set);
     return IntStream.range(0, numPartitions)
-        .mapToObj(currentPartition -> list.subList(partitionSize * currentPartition,
-            Math.min(currentPartition * partitionSize + partitionSize, list.size())))
+        .mapToObj(currentPartition -> new HashSet<>(list.subList(partitionSize * currentPartition,
+            Math.min(currentPartition * partitionSize + partitionSize, list.size()))))
         .collect(Collectors.toList());
   }
 }
