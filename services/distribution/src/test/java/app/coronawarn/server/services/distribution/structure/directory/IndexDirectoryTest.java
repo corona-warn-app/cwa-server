@@ -67,10 +67,8 @@ public class IndexDirectoryTest {
 
     java.io.File actualIndexDirectoryFile = Objects.requireNonNull(outputFile.listFiles())[0];
     List<java.io.File> actualPhysicalFiles = Stream.of(actualIndexDirectoryFile)
-        .map(java.io.File::listFiles)
-        .flatMap(Arrays::stream)
-        .map(java.io.File::listFiles)
-        .flatMap(Arrays::stream)
+        .flatMap(IndexDirectoryTest::getContainedElements)
+        .flatMap(IndexDirectoryTest::getContainedElements)
         .sorted()
         .collect(Collectors.toList());
     List<java.io.File> expectedPhysicalFiles = expectedFileList.stream()
@@ -94,16 +92,18 @@ public class IndexDirectoryTest {
 
     java.io.File actualIndexDirectoryFile = Objects.requireNonNull(outputFile.listFiles())[0];
     Set<java.io.File> actualPhysicalFiles = Stream.of(actualIndexDirectoryFile)
-        .map(java.io.File::listFiles)
-        .flatMap(Arrays::stream)
-        .map(java.io.File::listFiles)
-        .flatMap(Arrays::stream)
+        .flatMap(IndexDirectoryTest::getContainedElements)
+        .flatMap(IndexDirectoryTest::getContainedElements)
         .collect(Collectors.toSet());
     Set<java.io.File> expectedPhysicalFiles = expectedFileList.stream()
         .map(Writable::getFileOnDisk)
         .collect(Collectors.toSet());
 
     assertEquals(expectedPhysicalFiles, actualPhysicalFiles);
+  }
+
+  private static Stream<java.io.File> getContainedElements(java.io.File directory) {
+    return Arrays.stream(directory.listFiles());
   }
 
   private void prepareAndWrite(Directory directory) {
