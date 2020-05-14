@@ -68,6 +68,8 @@ cwa.objectstore.bucket | The S3 bucket name
 
 ### Build and run Docker Images
 
+First download and install [Docker](https://www.docker.com/products/docker-desktop).
+
 If you want to build and run a docker image of a service you can use the prepared scripts in the respective service directory.
 To build and run the distribution service:
 ```
