@@ -2,8 +2,6 @@ package app.coronawarn.server.services.distribution.diagnosiskeys.structure;
 
 import static java.util.Collections.emptyList;
 import static java.util.Collections.emptySet;
-import static java.util.Collections.singleton;
-import static org.assertj.core.util.Sets.newLinkedHashSet;
 
 import app.coronawarn.server.common.persistence.domain.DiagnosisKey;
 import app.coronawarn.server.services.distribution.diagnosiskeys.util.DateTime;
@@ -29,8 +27,8 @@ public class DateTimeTest {
   @ParameterizedTest
   @MethodSource("createDiagnosisKeysForEpochDay0")
   public void testGetDatesForEpochDay0(DiagnosisKey diagnosisKey) {
-    var expDates = singleton(LocalDate.ofEpochDay(0L));
-    var actDates = DateTime.getDates(singleton(diagnosisKey));
+    var expDates = Set.of(LocalDate.ofEpochDay(0L));
+    var actDates = DateTime.getDates(Set.of(diagnosisKey));
 
     Assertions.assertEquals(expDates, actDates,
         "Failed for submission timestamp: " + diagnosisKey.getSubmissionTimestamp());
@@ -46,10 +44,10 @@ public class DateTimeTest {
 
   @Test
   public void testGetDatesFor2Days() {
-    var diagnosisKeys = newLinkedHashSet(
+    var diagnosisKeys = Set.of(
         buildDiagnosisKeyForDateTime(LocalDateTime.of(1970, 1, 1, 1, 0)),
         buildDiagnosisKeyForDateTime(LocalDateTime.of(1970, 1, 2, 1, 0)));
-    var expDates = newLinkedHashSet(LocalDate.ofEpochDay(0L), LocalDate.ofEpochDay(1L));
+    var expDates = Set.of(LocalDate.ofEpochDay(0L), LocalDate.ofEpochDay(1L));
 
     Assertions.assertEquals(expDates, DateTime.getDates(diagnosisKeys));
   }
@@ -65,7 +63,7 @@ public class DateTimeTest {
   @ParameterizedTest
   @MethodSource("createDiagnosisKeysForEpochDay1And3")
   public void testGetHoursReturnsHoursOnlyForSpecifiedDate(Set<DiagnosisKey> diagnosisKeys) {
-    var expHours = newLinkedHashSet(
+    var expHours = Set.of(
         LocalDateTime.of(1970, 1, 2, 0, 0),
         LocalDateTime.of(1970, 1, 2, 5, 0));
 
@@ -80,8 +78,8 @@ public class DateTimeTest {
   private static Stream<Arguments> createDiagnosisKeysForEpochDay1And3() {
     return Stream.of(
         emptySet(),
-        singleton(buildDiagnosisKeyForDateTime(LocalDateTime.of(1970, 1, 1, 23, 59))),
-        newLinkedHashSet(
+        Set.of(buildDiagnosisKeyForDateTime(LocalDateTime.of(1970, 1, 1, 23, 59))),
+        Set.of(
             buildDiagnosisKeyForDateTime(LocalDateTime.of(1970, 1, 1, 23, 59, 59)),
             buildDiagnosisKeyForDateTime(LocalDateTime.of(1970, 1, 3, 0, 0)))
     ).map(Arguments::of);
