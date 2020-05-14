@@ -82,6 +82,17 @@ To build and run the submission service:
 ```
 The submission service will then be available locally on port 8080.
 
+## Debugging 
+
+You may run the application with the spring profile `dev` to enable the `DEBUG` log-level.
+
+```
+mvn spring-boot:run -Dspring-boot.run.profiles=postgres,dev
+```
+
+To be able to set breakpoints (e.g. in IntelliJ), it may be necessary to use the parameter `-Dspring-boot.run.fork=false`. 
+
+
 ## Known Issues
 
 There are no known issues.
