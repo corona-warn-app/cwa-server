@@ -1,4 +1,4 @@
-package app.coronawarn.server.services.distribution.diagnosiskeys.structure;
+package app.coronawarn.server.services.distribution.diagnosiskeys.util;
 
 import static java.util.Collections.emptyList;
 import static java.util.Collections.emptySet;
