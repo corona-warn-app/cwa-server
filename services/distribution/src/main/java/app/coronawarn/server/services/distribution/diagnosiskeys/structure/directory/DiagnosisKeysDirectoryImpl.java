@@ -34,6 +34,7 @@ public class DiagnosisKeysDirectoryImpl extends DirectoryImpl {
   public void prepare(Stack<Object> indices) {
     this.addDirectory(decorateCountryDirectory(
         new DiagnosisKeysCountryDirectoryImpl(diagnosisKeys, cryptoProvider)));
+    super.prepare(indices);
   }
 
   private Directory decorateCountryDirectory(IndexDirectory<String> countryDirectory) {
