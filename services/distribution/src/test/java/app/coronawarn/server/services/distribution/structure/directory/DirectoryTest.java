@@ -7,9 +7,9 @@ import static org.mockito.Mockito.verify;
 
 import app.coronawarn.server.services.distribution.structure.file.File;
 import app.coronawarn.server.services.distribution.structure.file.FileImpl;
+import app.coronawarn.server.services.distribution.structure.util.ImmutableStack;
 import java.io.IOException;
-import java.util.List;
-import java.util.Stack;
+import java.util.Set;
 import org.junit.Rule;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -37,7 +37,7 @@ public class DirectoryTest {
   @Test
   public void checkFilesInDirectory() {
     parentDirectory.addFile(childFile);
-    assertEquals(List.of(childFile), parentDirectory.getFiles());
+    assertEquals(Set.of(childFile), parentDirectory.getFiles());
   }
 
   @Test
@@ -49,7 +49,7 @@ public class DirectoryTest {
   @Test
   public void checkDirectoriesInDirectory() {
     parentDirectory.addDirectory(childDirectory);
-    assertEquals(List.of(childDirectory), parentDirectory.getDirectories());
+    assertEquals(Set.of(childDirectory), parentDirectory.getDirectories());
   }
 
   @Test
@@ -61,7 +61,7 @@ public class DirectoryTest {
   @Test
   public void checkPrepareDelegatesToFiles() {
     File spyChildFile = spy(childFile);
-    Stack<Object> expectedStack = new Stack<>();
+    ImmutableStack<Object> expectedStack = new ImmutableStack<>();
 
     parentDirectory.addFile(spyChildFile);
     parentDirectory.prepare(expectedStack);
@@ -72,7 +72,7 @@ public class DirectoryTest {
   @Test
   public void checkPrepareDelegatesToDirectories() {
     Directory spyChildDirectory = spy(childDirectory);
-    Stack<Object> expectedStack = new Stack<>();
+    ImmutableStack<Object> expectedStack = new ImmutableStack<>();
 
     parentDirectory.addDirectory(spyChildDirectory);
     parentDirectory.prepare(expectedStack);

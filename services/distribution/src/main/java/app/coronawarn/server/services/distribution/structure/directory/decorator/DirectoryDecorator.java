@@ -3,8 +3,8 @@ package app.coronawarn.server.services.distribution.structure.directory.decorato
 import app.coronawarn.server.services.distribution.structure.Writable;
 import app.coronawarn.server.services.distribution.structure.directory.Directory;
 import app.coronawarn.server.services.distribution.structure.file.File;
-import java.util.List;
-import java.util.Stack;
+import app.coronawarn.server.services.distribution.structure.util.ImmutableStack;
+import java.util.Set;
 
 /**
  * Decorates a {@link Directory} (e.g. to modify its files, subdirectories, etc.) on {@link
@@ -19,7 +19,7 @@ public abstract class DirectoryDecorator implements Directory {
   }
 
   @Override
-  public void prepare(Stack<Object> indices) {
+  public void prepare(ImmutableStack<Object> indices) {
     this.directory.prepare(indices);
   }
 
@@ -29,7 +29,7 @@ public abstract class DirectoryDecorator implements Directory {
   }
 
   @Override
-  public List<File> getFiles() {
+  public Set<File> getFiles() {
     return this.directory.getFiles();
   }
 
@@ -39,7 +39,7 @@ public abstract class DirectoryDecorator implements Directory {
   }
 
   @Override
-  public List<Directory> getDirectories() {
+  public Set<Directory> getDirectories() {
     return this.directory.getDirectories();
   }
 

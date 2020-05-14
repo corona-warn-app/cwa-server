@@ -1,7 +1,7 @@
 package app.coronawarn.server.services.distribution.structure;
 
 import app.coronawarn.server.services.distribution.structure.directory.Directory;
-import java.util.Stack;
+import app.coronawarn.server.services.distribution.structure.util.ImmutableStack;
 
 /**
  * Something that can be written to disk.
@@ -36,5 +36,5 @@ public interface Writable {
   /**
    * Does preparation work for this {@link Writable} (e.g. calculate data, setup structures, etc.).
    */
-  void prepare(Stack<Object> indices);
+  void prepare(ImmutableStack<Object> indices);
 }

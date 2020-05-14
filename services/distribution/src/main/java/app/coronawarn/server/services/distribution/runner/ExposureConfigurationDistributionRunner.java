@@ -4,15 +4,15 @@ import app.coronawarn.server.common.protocols.internal.RiskScoreParameters;
 import app.coronawarn.server.services.distribution.crypto.CryptoProvider;
 import app.coronawarn.server.services.distribution.exposureconfig.ExposureConfigurationProvider;
 import app.coronawarn.server.services.distribution.exposureconfig.UnableToLoadFileException;
-import app.coronawarn.server.services.distribution.exposureconfig.structure.ExposureConfigurationDirectoryImpl;
+import app.coronawarn.server.services.distribution.exposureconfig.structure.directory.ExposureConfigurationDirectoryImpl;
 import app.coronawarn.server.services.distribution.structure.directory.Directory;
 import app.coronawarn.server.services.distribution.structure.directory.DirectoryImpl;
 import app.coronawarn.server.services.distribution.structure.directory.IndexDirectory;
 import app.coronawarn.server.services.distribution.structure.directory.IndexDirectoryImpl;
 import app.coronawarn.server.services.distribution.structure.directory.decorator.IndexingDecorator;
+import app.coronawarn.server.services.distribution.structure.util.ImmutableStack;
 import java.io.File;
-import java.util.List;
-import java.util.Stack;
+import java.util.Set;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,9 +34,6 @@ public class ExposureConfigurationDistributionRunner implements ApplicationRunne
       LoggerFactory.getLogger(ExposureConfigurationDistributionRunner.class);
 
   @Value("${app.coronawarn.server.services.distribution.version}")
-  private String country;
-
-  @Value("${app.coronawarn.server.services.distribution.region}")
   private String version;
 
   @Value("${app.coronawarn.server.services.distribution.paths.output}")
@@ -51,14 +48,15 @@ public class ExposureConfigurationDistributionRunner implements ApplicationRunne
   public void run(ApplicationArguments args) {
     var riskScoreParameters = readExposureConfiguration();
     IndexDirectory<?> versionDirectory =
-        new IndexDirectoryImpl<>(VERSION_DIRECTORY, __ -> List.of(version), Object::toString);
+        new IndexDirectoryImpl<>(VERSION_DIRECTORY, __ -> Set.of(version), Object::toString);
     ExposureConfigurationDirectoryImpl parametersDirectory =
-        new ExposureConfigurationDirectoryImpl(country, riskScoreParameters, cryptoProvider);
+        new ExposureConfigurationDirectoryImpl(riskScoreParameters, cryptoProvider);
     Directory root = new DirectoryImpl(new File(outputPath));
     versionDirectory.addDirectoryToAll(__ -> parametersDirectory);
     root.addDirectory(new IndexingDecorator<>(versionDirectory));
-    root.prepare(new Stack<>());
+    root.prepare(new ImmutableStack<>());
     root.write();
+    logger.debug("Exposure configuration structure written successfully.");
   }
 
   private RiskScoreParameters readExposureConfiguration() {

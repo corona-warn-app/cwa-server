@@ -3,7 +3,7 @@ package app.coronawarn.server.services.distribution.structure.file;
 import app.coronawarn.server.services.distribution.io.IO;
 import app.coronawarn.server.services.distribution.structure.Writable;
 import app.coronawarn.server.services.distribution.structure.WritableImpl;
-import java.util.Stack;
+import app.coronawarn.server.services.distribution.structure.util.ImmutableStack;
 
 /**
  * Implementation of {@link File} that interfaces with {@link java.io.File Files} on disk.
@@ -18,8 +18,8 @@ public class FileImpl extends WritableImpl implements File {
   }
 
   /**
-   * Creates a {@link java.io.File} with name {@link Writable#getName} on disk and writes the
-   * {@link File#getBytes bytes} of this {@link File} into the {@link java.io.File} to disk.
+   * Creates a {@link java.io.File} with name {@link Writable#getName} on disk and writes the {@link
+   * File#getBytes bytes} of this {@link File} into the {@link java.io.File} to disk.
    */
   @Override
   public void write() {
@@ -41,6 +41,6 @@ public class FileImpl extends WritableImpl implements File {
    * Does nothing.
    */
   @Override
-  public void prepare(Stack<Object> indices) {
+  public void prepare(ImmutableStack<Object> indices) {
   }
 }

@@ -3,7 +3,9 @@ package app.coronawarn.server.common.persistence.service;
 import app.coronawarn.server.common.persistence.domain.DiagnosisKey;
 import app.coronawarn.server.common.persistence.repository.DiagnosisKeyRepository;
 import java.util.Collection;
+import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -20,5 +22,12 @@ public class DiagnosisKeyService {
    */
   public void saveDiagnosisKeys(Collection<DiagnosisKey> diagnosisKeys) {
     keyRepository.saveAll(diagnosisKeys);
+  }
+
+  /**
+   * Returns all persisted diagnosis keys, sorted by their submission timestamp.
+   */
+  public List<DiagnosisKey> getDiagnosisKeys() {
+    return keyRepository.findAll(Sort.by(Sort.Direction.ASC, "submissionTimestamp"));
   }
 }

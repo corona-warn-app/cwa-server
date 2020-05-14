@@ -3,12 +3,12 @@ package app.coronawarn.server.services.distribution.structure.file.decorator;
 import app.coronawarn.server.common.protocols.internal.SignedPayload;
 import app.coronawarn.server.services.distribution.crypto.CryptoProvider;
 import app.coronawarn.server.services.distribution.structure.file.File;
+import app.coronawarn.server.services.distribution.structure.util.ImmutableStack;
 import com.google.protobuf.ByteString;
 import java.security.GeneralSecurityException;
 import java.security.PrivateKey;
 import java.security.Signature;
 import java.security.cert.Certificate;
-import java.util.Stack;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -33,12 +33,12 @@ public class SigningDecorator extends FileDecorator {
    * See {@link SigningDecorator} class documentation.
    */
   @Override
-  public void prepare(Stack<Object> indices) {
+  public void prepare(ImmutableStack<Object> indices) {
+    super.prepare(indices);
     logger.debug("Signing {}", this.getFileOnDisk().getPath());
     SignedPayload signedPayload = sign(this.getBytes(), cryptoProvider.getPrivateKey(),
         cryptoProvider.getCertificate());
     this.setBytes(signedPayload.toByteArray());
-    super.prepare(indices);
   }
 
   private static SignedPayload sign(byte[] payload, PrivateKey privateKey,

@@ -7,7 +7,7 @@ import app.coronawarn.server.services.distribution.structure.directory.IndexDire
 import app.coronawarn.server.services.distribution.structure.directory.decorator.IndexingDecorator;
 import app.coronawarn.server.services.distribution.structure.file.FileImpl;
 import app.coronawarn.server.services.distribution.structure.file.decorator.SigningDecorator;
-import java.util.List;
+import java.util.Set;
 
 /**
  * Creates the directory structure {@code /parameters/country/:country} and writes a file called
@@ -33,7 +33,7 @@ public class ExposureConfigurationDirectoryImpl extends DirectoryImpl {
     super(PARAMETERS_DIRECTORY);
 
     IndexDirectoryImpl<String> country =
-        new IndexDirectoryImpl<>(COUNTRY_DIRECTORY, __ -> List.of(region), Object::toString);
+        new IndexDirectoryImpl<>(COUNTRY_DIRECTORY, __ -> Set.of(region), Object::toString);
 
     country.addFileToAll(__ ->
         new SigningDecorator(new FileImpl(INDEX_FILE_NAME, exposureConfig.toByteArray()),

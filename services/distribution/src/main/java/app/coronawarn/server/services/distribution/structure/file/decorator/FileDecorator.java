@@ -3,7 +3,7 @@ package app.coronawarn.server.services.distribution.structure.file.decorator;
 import app.coronawarn.server.services.distribution.structure.Writable;
 import app.coronawarn.server.services.distribution.structure.directory.Directory;
 import app.coronawarn.server.services.distribution.structure.file.File;
-import java.util.Stack;
+import app.coronawarn.server.services.distribution.structure.util.ImmutableStack;
 
 /**
  * Decorates a {@link File} (e.g. to modify its content) on {@link Writable#prepare}. This class
@@ -18,7 +18,7 @@ public abstract class FileDecorator implements File {
   }
 
   @Override
-  public void prepare(Stack<Object> indices) {
+  public void prepare(ImmutableStack<Object> indices) {
     this.file.prepare(indices);
   }
 
