@@ -5,7 +5,6 @@ import static app.coronawarn.server.common.persistence.domain.DiagnosisKeyBuilde
 import static app.coronawarn.server.common.persistence.domain.DiagnosisKeyBuilders.RollingPeriodBuilder;
 import static app.coronawarn.server.common.persistence.domain.DiagnosisKeyBuilders.RollingStartNumberBuilder;
 import static app.coronawarn.server.common.persistence.domain.DiagnosisKeyBuilders.TransmissionRiskLevelBuilder;
-import static java.time.temporal.ChronoUnit.HOURS;
 
 import app.coronawarn.server.common.protocols.external.exposurenotification.Key;
 import java.time.Instant;

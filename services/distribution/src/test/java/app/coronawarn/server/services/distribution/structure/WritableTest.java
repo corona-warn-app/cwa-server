@@ -3,9 +3,9 @@ package app.coronawarn.server.services.distribution.structure;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-import app.coronawarn.server.services.distribution.structure.util.ImmutableStack;
 import app.coronawarn.server.services.distribution.structure.directory.Directory;
 import app.coronawarn.server.services.distribution.structure.directory.DirectoryImpl;
+import app.coronawarn.server.services.distribution.structure.util.ImmutableStack;
 import java.io.File;
 import org.junit.jupiter.api.Test;
 

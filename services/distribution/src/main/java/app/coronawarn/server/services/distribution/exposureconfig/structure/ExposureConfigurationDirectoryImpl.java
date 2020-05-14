@@ -7,7 +7,6 @@ import app.coronawarn.server.services.distribution.structure.directory.IndexDire
 import app.coronawarn.server.services.distribution.structure.directory.decorator.IndexingDecorator;
 import app.coronawarn.server.services.distribution.structure.file.FileImpl;
 import app.coronawarn.server.services.distribution.structure.file.decorator.SigningDecorator;
-import java.util.List;
 import java.util.Set;
 
 /**

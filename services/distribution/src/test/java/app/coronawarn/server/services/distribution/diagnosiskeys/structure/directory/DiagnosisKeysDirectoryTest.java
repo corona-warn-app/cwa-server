@@ -1,13 +1,14 @@
 package app.coronawarn.server.services.distribution.diagnosiskeys.structure.directory;
 
+import static app.coronawarn.server.services.distribution.common.Helpers.buildDiagnosisKeyForSubmissionTimestamp;
 import static java.lang.String.join;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import app.coronawarn.server.common.persistence.domain.DiagnosisKey;
 import app.coronawarn.server.services.distribution.crypto.CryptoProvider;
-import app.coronawarn.server.services.distribution.structure.util.ImmutableStack;
 import app.coronawarn.server.services.distribution.structure.directory.Directory;
 import app.coronawarn.server.services.distribution.structure.directory.DirectoryImpl;
+import app.coronawarn.server.services.distribution.structure.util.ImmutableStack;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -57,18 +58,9 @@ public class DiagnosisKeysDirectoryTest {
     // Generate diagnosis keys covering 30 hours of submission timestamps
     // Until 02.01.1970 - 06:00 UTC -> 1 full day + 6 hours
     diagnosisKeys = IntStream.range(0, 30)
-        .mapToObj(currentHour -> generateDiagnosisKey(startTimestamp + currentHour))
+        .mapToObj(
+            currentHour -> buildDiagnosisKeyForSubmissionTimestamp(startTimestamp + currentHour))
         .collect(Collectors.toList());
-  }
-
-  private DiagnosisKey generateDiagnosisKey(long submissionTimestamp) {
-    return DiagnosisKey.builder()
-        .withKeyData(new byte[16])
-        .withRollingStartNumber(1L)
-        .withRollingPeriod(2L)
-        .withTransmissionRiskLevel(3)
-        .withSubmissionTimestamp(submissionTimestamp)
-        .build();
   }
 
   @Test

@@ -5,9 +5,9 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.verify;
 
-import app.coronawarn.server.services.distribution.structure.util.ImmutableStack;
 import app.coronawarn.server.services.distribution.structure.file.File;
 import app.coronawarn.server.services.distribution.structure.file.FileImpl;
+import app.coronawarn.server.services.distribution.structure.util.ImmutableStack;
 import java.io.IOException;
 import java.util.Set;
 import org.junit.Rule;

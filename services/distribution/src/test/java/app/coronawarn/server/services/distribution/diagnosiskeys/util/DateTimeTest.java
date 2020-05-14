@@ -1,12 +1,13 @@
 package app.coronawarn.server.services.distribution.diagnosiskeys.util;
 
+import static app.coronawarn.server.services.distribution.common.Helpers.buildDiagnosisKeyForDateTime;
 import static java.util.Collections.emptyList;
 import static java.util.Collections.emptySet;
 
 import app.coronawarn.server.common.persistence.domain.DiagnosisKey;
+import app.coronawarn.server.services.distribution.common.Helpers;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.ZoneOffset;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -52,14 +53,6 @@ public class DateTimeTest {
     Assertions.assertEquals(expDates, DateTime.getDates(diagnosisKeys));
   }
 
-  private static DiagnosisKey buildDiagnosisKeyForDateTime(LocalDateTime dateTime) {
-    return DiagnosisKey.builder().
-        withRollingStartNumber(0L)
-        .withRollingPeriod(1L)
-        .withTransmissionRiskLevel(2)
-        .withSubmissionTimestamp(dateTime.toEpochSecond(ZoneOffset.UTC) / 3600).build();
-  }
-
   @ParameterizedTest
   @MethodSource("createDiagnosisKeysForEpochDay1And3")
   public void testGetHoursReturnsHoursOnlyForSpecifiedDate(Set<DiagnosisKey> diagnosisKeys) {
@@ -69,7 +62,7 @@ public class DateTimeTest {
 
     var diagnosisKeysIncludingExpHours = new HashSet(diagnosisKeys);
     diagnosisKeysIncludingExpHours.addAll(expHours.stream()
-        .map(DateTimeTest::buildDiagnosisKeyForDateTime).collect(Collectors.toSet()));
+        .map(Helpers::buildDiagnosisKeyForDateTime).collect(Collectors.toSet()));
 
     var actHours = DateTime.getHours(LocalDate.ofEpochDay(1L), diagnosisKeysIncludingExpHours);
 

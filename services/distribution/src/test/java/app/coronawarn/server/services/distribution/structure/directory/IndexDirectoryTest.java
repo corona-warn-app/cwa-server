@@ -2,12 +2,12 @@ package app.coronawarn.server.services.distribution.structure.directory;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-import app.coronawarn.server.services.distribution.structure.util.ImmutableStack;
 import app.coronawarn.server.services.distribution.structure.Writable;
 import app.coronawarn.server.services.distribution.structure.file.File;
 import app.coronawarn.server.services.distribution.structure.file.FileImpl;
 import app.coronawarn.server.services.distribution.structure.functional.Formatter;
 import app.coronawarn.server.services.distribution.structure.functional.IndexFunction;
+import app.coronawarn.server.services.distribution.structure.util.ImmutableStack;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
