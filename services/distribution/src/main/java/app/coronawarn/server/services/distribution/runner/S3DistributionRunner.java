@@ -30,7 +30,7 @@ public class S3DistributionRunner implements ApplicationRunner {
   @Override
   public void run(ApplicationArguments args) {
     try {
-      Path pathToDistribute = Path.of(workdir);
+      Path pathToDistribute = Path.of(workdir).toAbsolutePath();
 
       s3Publisher.publishFolder(pathToDistribute);
     } catch (IOException | UnsupportedOperationException e) {
