@@ -8,9 +8,12 @@ import app.coronawarn.server.services.distribution.diagnosiskeys.util.DateTime;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
+import java.util.Collections;
+import java.util.HashSet;
 import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+import org.assertj.core.util.Sets;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -67,10 +70,11 @@ public class DateTimeTest {
         LocalDateTime.of(1970, 1, 2, 0, 0),
         LocalDateTime.of(1970, 1, 2, 5, 0));
 
-    diagnosisKeys.addAll(expHours.stream()
+    var diagnosisKeysIncludingExpHours = new HashSet(diagnosisKeys);
+    diagnosisKeysIncludingExpHours.addAll(expHours.stream()
         .map(DateTimeTest::buildDiagnosisKeyForDateTime).collect(Collectors.toSet()));
 
-    var actHours = DateTime.getHours(LocalDate.ofEpochDay(1L), diagnosisKeys);
+    var actHours = DateTime.getHours(LocalDate.ofEpochDay(1L), diagnosisKeysIncludingExpHours);
 
     Assertions.assertEquals(expHours, actHours);
   }
