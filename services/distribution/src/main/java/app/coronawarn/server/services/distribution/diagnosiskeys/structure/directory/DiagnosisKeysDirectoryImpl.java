@@ -2,34 +2,24 @@ package app.coronawarn.server.services.distribution.diagnosiskeys.structure.dire
 
 import app.coronawarn.server.common.persistence.domain.DiagnosisKey;
 import app.coronawarn.server.services.distribution.crypto.CryptoProvider;
-import app.coronawarn.server.services.distribution.diagnosiskeys.structure.directory.decorator.DateAggregatingDecorator;
-import app.coronawarn.server.services.distribution.diagnosiskeys.structure.file.HourFileImpl;
-import app.coronawarn.server.services.distribution.diagnosiskeys.util.DateTime;
 import app.coronawarn.server.services.distribution.structure.directory.Directory;
 import app.coronawarn.server.services.distribution.structure.directory.DirectoryImpl;
 import app.coronawarn.server.services.distribution.structure.directory.IndexDirectory;
-import app.coronawarn.server.services.distribution.structure.directory.IndexDirectoryImpl;
 import app.coronawarn.server.services.distribution.structure.directory.decorator.IndexingDecorator;
-import app.coronawarn.server.services.distribution.structure.file.File;
-import app.coronawarn.server.services.distribution.structure.file.decorator.SigningDecorator;
-import app.coronawarn.server.services.distribution.structure.functional.FileFunction;
-import app.coronawarn.server.services.distribution.structure.functional.Formatter;
-import app.coronawarn.server.services.distribution.structure.functional.IndexFunction;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.Collection;
-import java.util.Set;
-import net.bytebuddy.asm.Advice.Local;
+import java.util.Stack;
 
+/**
+ * A {@link Directory} containing the file and directory structure that mirrors the API defined in
+ * the OpenAPI definition {@code /services/distribution/api_v1.json}. Available countries (endpoint
+ * {@code /version/v1/diagnosis-keys/country}) are statically set to only {@code "DE"}. The dates
+ * and respective hours (endpoint {@code /version/v1/diagnosis-keys/country/DE/date}) will be
+ * created based on the actual {@link DiagnosisKey DiagnosisKeys} given to the {@link
+ * DiagnosisKeysDirectoryImpl#DiagnosisKeysDirectoryImpl constructor}.
+ */
 public class DiagnosisKeysDirectoryImpl extends DirectoryImpl {
 
   private static final String DIAGNOSIS_KEYS_DIRECTORY = "diagnosis-keys";
-  private static final String COUNTRY_DIRECTORY = "country";
-  private static final String COUNTRY = "DE";
-  private static final String DATE_DIRECTORY = "date";
-  private static final String HOUR_DIRECTORY = "hour";
-  private static final DateTimeFormatter ISO8601 = DateTimeFormatter.ofPattern("yyyy-MM-dd");
   private final Collection<DiagnosisKey> diagnosisKeys;
   private final CryptoProvider cryptoProvider;
 
@@ -38,69 +28,15 @@ public class DiagnosisKeysDirectoryImpl extends DirectoryImpl {
     super(DIAGNOSIS_KEYS_DIRECTORY);
     this.diagnosisKeys = diagnosisKeys;
     this.cryptoProvider = cryptoProvider;
-    this.addDirectory(createDirectoryStructure());
   }
 
-  private Directory createDirectoryStructure() {
-    IndexDirectory<String> countryDirectory = createCountryDirectory();
-    Directory countryDirectoryDecorated = decorateCountryDirectory(countryDirectory);
-
-    countryDirectory.addDirectoryToAll(__ -> {
-      IndexDirectory<LocalDate> dateDirectory = createDateDirectory();
-      Directory decoratedDateDirectory = decorateDateDirectory(dateDirectory);
-      dateDirectory.addDirectoryToAll(___ -> decorateHourDirectory(createHourDirectory()));
-      return decoratedDateDirectory;
-    });
-
-    return countryDirectoryDecorated;
-  }
-
-  private IndexDirectory<String> createCountryDirectory() {
-    return new IndexDirectoryImpl<>(COUNTRY_DIRECTORY, __ -> Set.of(COUNTRY), Object::toString);
-  }
-
-  private IndexDirectory<LocalDate> createDateDirectory() {
-    IndexFunction<LocalDate> dateDirectoryIndex = __ -> DateTime.getDates(diagnosisKeys);
-    Formatter<LocalDate> dateDirectoryFormatter = ISO8601::format;
-    return new IndexDirectoryImpl<>(DATE_DIRECTORY, dateDirectoryIndex, dateDirectoryFormatter);
-  }
-
-  private IndexDirectory<LocalDateTime> createHourDirectory() {
-    IndexFunction<LocalDateTime> hourDirectoryIndex =
-        indices -> DateTime.getHours(((LocalDate) indices.peek()), diagnosisKeys);
-    Formatter<LocalDateTime> hourDirectoryFormatter = LocalDateTime::getHour;
-    IndexDirectory<LocalDateTime> hourDirectory = new IndexDirectoryImpl<>(HOUR_DIRECTORY,
-        hourDirectoryIndex, hourDirectoryFormatter);
-
-    FileFunction hourFileFunction = getHourFileFunction();
-    hourDirectory.addFileToAll(hourFileFunction);
-
-    return hourDirectory;
-  }
-
-  private FileFunction getHourFileFunction() {
-    return indices -> {
-      LocalDateTime currentHour = (LocalDateTime) indices.pop();
-      // The LocalDateTime currentHour already contains both the date and the hour information, so
-      // we can throw away the LocalDate that's next in the stack from the "/date" IndexDirectory.
-      indices.pop();
-      String region = (String) indices.pop();
-
-      File hourFile = new HourFileImpl(currentHour, region, diagnosisKeys);
-      return new SigningDecorator(hourFile, cryptoProvider);
-    };
+  @Override
+  public void prepare(Stack<Object> indices) {
+    this.addDirectory(decorateCountryDirectory(
+        new DiagnosisKeysCountryDirectoryImpl(diagnosisKeys, cryptoProvider)));
   }
 
   private Directory decorateCountryDirectory(IndexDirectory<String> countryDirectory) {
     return new IndexingDecorator<>(countryDirectory);
-  }
-
-  private Directory decorateDateDirectory(IndexDirectory<LocalDate> dateDirectory) {
-    Directory dateDirectoryIndexed = new IndexingDecorator<>(dateDirectory);
-    return new DateAggregatingDecorator(dateDirectoryIndexed, cryptoProvider);
-  }
-
-  private Directory decorateHourDirectory(IndexDirectory<LocalDateTime> hourDirectory) {
-    return new IndexingDecorator<>(hourDirectory);
   }
 }

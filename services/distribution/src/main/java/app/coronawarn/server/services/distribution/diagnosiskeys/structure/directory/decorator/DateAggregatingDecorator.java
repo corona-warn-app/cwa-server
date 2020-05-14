@@ -3,7 +3,6 @@ package app.coronawarn.server.services.distribution.diagnosiskeys.structure.dire
 import app.coronawarn.server.common.protocols.internal.FileBucket;
 import app.coronawarn.server.common.protocols.internal.SignedPayload;
 import app.coronawarn.server.services.distribution.crypto.CryptoProvider;
-import app.coronawarn.server.services.distribution.diagnosiskeys.structure.file.HourFileImpl;
 import app.coronawarn.server.services.distribution.structure.Writable;
 import app.coronawarn.server.services.distribution.structure.directory.Directory;
 import app.coronawarn.server.services.distribution.structure.directory.decorator.DirectoryDecorator;
@@ -22,8 +21,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * A {@link DirectoryDecorator} that will create a {@link FileBucket} for each day within its
- * directory.
+ * A {@link DirectoryDecorator} that will create a {@link SignedPayload} containing a {@link
+ * FileBucket} for each date within its directory.
  */
 public class DateAggregatingDecorator extends DirectoryDecorator {
 
