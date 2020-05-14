@@ -65,6 +65,7 @@ public class DateAggregatingDecorator extends DirectoryDecorator {
   }
 
   private Set<File> getSubDirectoryFiles(Directory directory) {
+    // Get all files 2 directory levels down
     return Stream.of(directory)
         .map(Directory::getDirectories)
         .flatMap(Set::stream)
