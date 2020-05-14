@@ -93,15 +93,15 @@ public class IndexDirectoryTest {
     prepareAndWrite(outputDirectory);
 
     java.io.File actualIndexDirectoryFile = Objects.requireNonNull(outputFile.listFiles())[0];
-    List<java.io.File> actualPhysicalFiles = Stream.of(actualIndexDirectoryFile)
+    Set<java.io.File> actualPhysicalFiles = Stream.of(actualIndexDirectoryFile)
         .map(java.io.File::listFiles)
         .flatMap(Arrays::stream)
         .map(java.io.File::listFiles)
         .flatMap(Arrays::stream)
-        .collect(Collectors.toList());
-    List<java.io.File> expectedPhysicalFiles = expectedFileList.stream()
+        .collect(Collectors.toSet());
+    Set<java.io.File> expectedPhysicalFiles = expectedFileList.stream()
         .map(Writable::getFileOnDisk)
-        .collect(Collectors.toList());
+        .collect(Collectors.toSet());
 
     assertEquals(expectedPhysicalFiles, actualPhysicalFiles);
   }
