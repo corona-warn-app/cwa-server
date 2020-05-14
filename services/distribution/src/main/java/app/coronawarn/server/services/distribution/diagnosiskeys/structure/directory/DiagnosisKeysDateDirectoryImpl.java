@@ -21,9 +21,6 @@ public class DiagnosisKeysDateDirectoryImpl extends IndexDirectoryImpl<LocalDate
   private Collection<DiagnosisKey> diagnosisKeys;
   private CryptoProvider cryptoProvider;
 
-  /**
-   * TODO Doc.
-   */
   public DiagnosisKeysDateDirectoryImpl(Collection<DiagnosisKey> diagnosisKeys,
       CryptoProvider cryptoProvider) {
     super(DATE_DIRECTORY, __ -> DateTime.getDates(diagnosisKeys), ISO8601::format);

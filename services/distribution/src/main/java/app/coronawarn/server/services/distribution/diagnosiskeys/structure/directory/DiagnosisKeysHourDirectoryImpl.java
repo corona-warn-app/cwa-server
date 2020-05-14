@@ -20,9 +20,6 @@ public class DiagnosisKeysHourDirectoryImpl extends IndexDirectoryImpl<LocalDate
   private LocalDate currentDate;
   private CryptoProvider cryptoProvider;
 
-  /**
-   * TODO Doc.
-   */
   public DiagnosisKeysHourDirectoryImpl(Collection<DiagnosisKey> diagnosisKeys,
       LocalDate currentDate, CryptoProvider cryptoProvider) {
     super(HOUR_DIRECTORY, indices -> {

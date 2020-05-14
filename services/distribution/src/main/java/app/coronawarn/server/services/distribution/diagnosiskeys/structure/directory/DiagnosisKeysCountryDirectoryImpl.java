@@ -20,9 +20,6 @@ public class DiagnosisKeysCountryDirectoryImpl extends IndexDirectoryImpl<String
   private Collection<DiagnosisKey> diagnosisKeys;
   private CryptoProvider cryptoProvider;
 
-  /**
-   * TODO Doc.
-   */
   public DiagnosisKeysCountryDirectoryImpl(Collection<DiagnosisKey> diagnosisKeys,
       CryptoProvider cryptoProvider) {
     super(COUNTRY_DIRECTORY, __ -> Set.of(COUNTRY), Object::toString);
