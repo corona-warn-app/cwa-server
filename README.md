@@ -66,17 +66,21 @@ AWS_SECRET_ACCESS_KEY | The secret access key
 cwa.objectstore.endpoint | The S3 endpoint
 cwa.objectstore.bucket | The S3 bucket name
 
-### Build Docker Images
+### Build and run Docker Images
 
-If you want to build a docker image of the service you can use the provided Dockerfile. To create an image simply run:
+First download and install [Docker](https://www.docker.com/products/docker-desktop).
+
+If you want to build and run a docker image of a service you can use the prepared script in the respective service directory.
+To build and run the distribution service:
 ```
-docker build --pull --rm -f "services/submission/Dockerfile" -t cwa-submission:latest .
+./services/distribution/build_and_run.sh
 ```
 
-Afterwards you can start the image and make it accessible on your localhost on port 3000 by running:
+To build and run the submission service:
 ```
-docker run -p 127.0.0.1:3000:8080/tcp --name 'cwa-submission' cwa-submission
+./services/submission/build_and_run.sh
 ```
+The submission service will then be available locally on port 8080.
 
 ## Known Issues
 
