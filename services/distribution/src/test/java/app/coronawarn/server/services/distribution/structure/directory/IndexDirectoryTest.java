@@ -1,6 +1,5 @@
 package app.coronawarn.server.services.distribution.structure.directory;
 
-import static app.coronawarn.server.services.distribution.common.Helpers.prepareAndWrite;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import app.coronawarn.server.services.distribution.structure.Writable;

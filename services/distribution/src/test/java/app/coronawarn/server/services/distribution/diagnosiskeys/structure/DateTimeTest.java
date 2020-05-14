@@ -4,16 +4,13 @@ import static java.util.Collections.emptyList;
 import static java.util.Collections.emptySet;
 
 import app.coronawarn.server.common.persistence.domain.DiagnosisKey;
-import app.coronawarn.server.services.distribution.diagnosiskeys.util.DateTime;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
-import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-import org.assertj.core.util.Sets;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
