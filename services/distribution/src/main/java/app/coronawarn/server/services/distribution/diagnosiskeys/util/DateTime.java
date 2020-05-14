@@ -16,6 +16,7 @@ public class DateTime {
    * (assert(getNumberOfDays(23) == 1); assert(getNumberOfDays(24) == 1); assert(getNumberOfDays(25)
    * == 2);}.
    */
+  // TODO make sure it's being used
   public static int getNumberOfDays(int hours) {
     return Maths.ceilDiv(hours, 24);
   }
