@@ -12,17 +12,6 @@ import java.util.stream.Collectors;
 public class DateTime {
 
   /**
-   * Calculates the number of days covered by {@code hours} (rounded up) Examples: {@code
-   * (assert(getNumberOfDays(23) == 1); assert(getNumberOfDays(24) == 1); assert(getNumberOfDays(25)
-   * == 2);}.
-   */
-  // TODO make sure it's being used
-  public static int getNumberOfDays(int hours) {
-    return Maths.ceilDiv(hours, 24);
-  }
-
-
-  /**
    * Creates a list of all {@link LocalDate LocalDates} between {@code startDate} and {@code
    * numDays} later.
    */
