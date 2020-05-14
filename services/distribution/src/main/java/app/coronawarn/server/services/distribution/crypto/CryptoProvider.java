@@ -1,12 +1,9 @@
 package app.coronawarn.server.services.distribution.crypto;
 
-import app.coronawarn.server.services.distribution.io.IO;
 import java.io.ByteArrayInputStream;
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
+import java.io.InputStreamReader;
 import java.security.PrivateKey;
 import java.security.Security;
 import java.security.cert.Certificate;
@@ -18,9 +15,10 @@ import org.bouncycastle.openssl.PEMParser;
 import org.bouncycastle.openssl.jcajce.JcaPEMKeyConverter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.io.ResourceLoader;
 import org.springframework.stereotype.Component;
-import org.springframework.util.ResourceUtils;
 
 /**
  * Wrapper class for a {@link CryptoProvider#getPrivateKey() private key} and a {@link
@@ -37,6 +35,9 @@ public class CryptoProvider {
   @Value("${app.coronawarn.server.services.distribution.paths.certificate}")
   private String certificatePath;
 
+  @Autowired
+  private ResourceLoader resourceLoader;
+
   private PrivateKey privateKey;
   private Certificate certificate;
 
@@ -47,19 +48,20 @@ public class CryptoProvider {
     Security.addProvider(new BouncyCastleProvider());
   }
 
-  private static PrivateKey getPrivateKeyFromFile(File privateKeyFile) throws IOException {
-    PEMParser pemParser = new PEMParser(Files.newBufferedReader(privateKeyFile.toPath(),
-        StandardCharsets.UTF_8));
+  private static PrivateKey getPrivateKeyFromStream(final InputStream privateKeyStream)
+      throws IOException {
+    PEMParser pemParser = new PEMParser(new InputStreamReader(privateKeyStream));
     PrivateKeyInfo privateKeyInfo = (PrivateKeyInfo) pemParser.readObject();
     return new JcaPEMKeyConverter().getPrivateKey(privateKeyInfo);
   }
 
-  private static Certificate getCertificateFromFile(File certificateFile) throws IOException,
-      CertificateException {
-    return getCertificateFromBytes(IO.getBytesFromFile(certificateFile));
+  private static Certificate getCertificateFromStream(final InputStream certificateStream)
+      throws IOException, CertificateException {
+    return getCertificateFromBytes(certificateStream.readAllBytes());
   }
 
-  private static Certificate getCertificateFromBytes(byte[] bytes) throws CertificateException {
+  private static Certificate getCertificateFromBytes(final byte[] bytes)
+      throws CertificateException {
     CertificateFactory certificateFactory = CertificateFactory.getInstance("X.509");
     InputStream certificateByteStream = new ByteArrayInputStream(bytes);
     return certificateFactory.generateCertificate(certificateByteStream);
@@ -71,7 +73,9 @@ public class CryptoProvider {
   public PrivateKey getPrivateKey() {
     if (this.privateKey == null) {
       try {
-        this.privateKey = getPrivateKeyFromFile(ResourceUtils.getFile(privateKeyPath));
+        InputStream privateKeyStream = resourceLoader.getResource(privateKeyPath)
+            .getInputStream();
+        this.privateKey = getPrivateKeyFromStream(privateKeyStream);
       } catch (IOException e) {
         logger.error("Failed to load private key from {}", privateKeyPath, e);
         throw new RuntimeException(e);
@@ -80,14 +84,14 @@ public class CryptoProvider {
     return privateKey;
   }
 
-
   /**
    * Reads and returns the {@link Certificate} configured in the application properties.
    */
   public Certificate getCertificate() {
     if (this.certificate == null) {
       try {
-        this.certificate = getCertificateFromFile(ResourceUtils.getFile(certificatePath));
+        InputStream certStream = resourceLoader.getResource(certificatePath).getInputStream();
+        this.certificate = getCertificateFromStream(certStream);
       } catch (IOException | CertificateException e) {
         logger.error("Failed to load certificate from {}", certificatePath, e);
         throw new RuntimeException(e);
