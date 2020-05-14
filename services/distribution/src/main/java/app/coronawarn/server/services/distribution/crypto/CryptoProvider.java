@@ -50,8 +50,8 @@ public class CryptoProvider {
 
   private static PrivateKey getPrivateKeyFromStream(final InputStream privateKeyStream)
       throws IOException {
-    final PEMParser pemParser = new PEMParser(new InputStreamReader(privateKeyStream));
-    final PrivateKeyInfo privateKeyInfo = (PrivateKeyInfo) pemParser.readObject();
+    PEMParser pemParser = new PEMParser(new InputStreamReader(privateKeyStream));
+    PrivateKeyInfo privateKeyInfo = (PrivateKeyInfo) pemParser.readObject();
     return new JcaPEMKeyConverter().getPrivateKey(privateKeyInfo);
   }
 
@@ -62,8 +62,8 @@ public class CryptoProvider {
 
   private static Certificate getCertificateFromBytes(final byte[] bytes)
       throws CertificateException {
-    final CertificateFactory certificateFactory = CertificateFactory.getInstance("X.509");
-    final InputStream certificateByteStream = new ByteArrayInputStream(bytes);
+    CertificateFactory certificateFactory = CertificateFactory.getInstance("X.509");
+    InputStream certificateByteStream = new ByteArrayInputStream(bytes);
     return certificateFactory.generateCertificate(certificateByteStream);
   }
 
@@ -73,10 +73,10 @@ public class CryptoProvider {
   public PrivateKey getPrivateKey() {
     if (this.privateKey == null) {
       try {
-        final InputStream privateKeyStream = resourceLoader.getResource(privateKeyPath)
+        InputStream privateKeyStream = resourceLoader.getResource(privateKeyPath)
             .getInputStream();
         this.privateKey = getPrivateKeyFromStream(privateKeyStream);
-      } catch (final IOException e) {
+      } catch (IOException e) {
         logger.error("Failed to load private key from {}", privateKeyPath, e);
         throw new RuntimeException(e);
       }
@@ -90,7 +90,7 @@ public class CryptoProvider {
   public Certificate getCertificate() {
     if (this.certificate == null) {
       try {
-        final InputStream certStream = resourceLoader.getResource(certificatePath).getInputStream();
+        InputStream certStream = resourceLoader.getResource(certificatePath).getInputStream();
         this.certificate = getCertificateFromStream(certStream);
       } catch (IOException | CertificateException e) {
         logger.error("Failed to load certificate from {}", certificatePath, e);
