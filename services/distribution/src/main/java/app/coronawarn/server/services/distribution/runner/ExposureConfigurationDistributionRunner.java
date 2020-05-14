@@ -33,10 +33,10 @@ public class ExposureConfigurationDistributionRunner implements ApplicationRunne
   private static final Logger logger =
       LoggerFactory.getLogger(ExposureConfigurationDistributionRunner.class);
 
-  @Value("${app.coronawarn.server.services.distribution.version}")
+  @Value("${app.coronawarn.server.services.distribution.region}")
   private String country;
 
-  @Value("${app.coronawarn.server.services.distribution.region}")
+  @Value("${app.coronawarn.server.services.distribution.version}")
   private String version;
 
   @Value("${app.coronawarn.server.services.distribution.paths.output}")
