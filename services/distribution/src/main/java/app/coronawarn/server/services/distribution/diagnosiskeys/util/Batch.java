@@ -11,6 +11,10 @@ import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
+/**
+ * Functionality to split collections of {@link Key keys} into similar sized collections of {@link
+ * java.io.File files} containing the respecitve key data.
+ */
 public class Batch {
 
   private static final int KILO = 1000;
@@ -18,9 +22,7 @@ public class Batch {
   private static final int FILE_SIZE_LIMIT_BYTES = FILE_SIZE_LIMIT_KB * KILO;
 
   /**
-   * Aggregates a set of {@link Key Keys} into a set of {@link File Files}.
-   *
-   * @return A set of files of equal size
+   * Aggregates a set of {@link Key Keys} into a set of {@link File Files} of roughly equal size.
    */
   public static Set<File> aggregateKeys(Set<Key> keys, Instant startTimestamp,
       Instant endTimeStamp, String region) {
@@ -46,8 +48,7 @@ public class Batch {
   }
 
   /**
-   * Aggregates a set of {@link Key Keys} into a set of equally sized {@link File Files} with
-   * length {@code partitions}.
+   * Aggregates a set of {@link Key Keys} into a set of equally sized {@link File Files}.
    */
   private static Set<File> aggregateKeysIntoBatches(Set<Key> keys, int numBatches,
       Instant startTimestamp, Instant endTimeStamp, String region) {
