@@ -9,14 +9,16 @@ import java.util.Set;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
+/**
+ * Methods for conversions of time/date data.
+ */
 public class DateTime {
 
   /**
-   * Creates a list of all {@link LocalDate LocalDates} between {@code startDate} and {@code
-   * numDays} later.
+   * Returns a set of all {@link LocalDate dates} that are associated with the submission timestamps
+   * of the specified {@link DiagnosisKey diagnosis keys}.
    */
   public static Set<LocalDate> getDates(Collection<DiagnosisKey> diagnosisKeys) {
-    // TODO Doc
     return diagnosisKeys.stream()
         .map(DiagnosisKey::getSubmissionTimestamp)
         .map(timestamp -> LocalDate.ofEpochDay(timestamp / 24))
@@ -25,12 +27,12 @@ public class DateTime {
 
 
   /**
-   * Creates a list of all {@link LocalDateTime LocalDateTimes} between {@code startDate} and {@code
-   * currentDate} (at 00:00 UTC) plus {@code totalHours % 24}.
+   * Returns a set of all {@link LocalDateTime hours} that are associated with the submission
+   * timestamps of the specified {@link DiagnosisKey diagnosis keys} and the specified {@link
+   * LocalDate date}.
    */
   public static Set<LocalDateTime> getHours(LocalDate currentDate,
       Collection<DiagnosisKey> diagnosisKeys) {
-    // TODO Doc
     return diagnosisKeys.stream()
         .map(DiagnosisKey::getSubmissionTimestamp)
         .map(DateTime::getLocalDateTimeFromHoursSinceEpoch)
@@ -38,6 +40,9 @@ public class DateTime {
         .collect(Collectors.toSet());
   }
 
+  /**
+   * Creates a {@link LocalDateTime} based on the specified epoch timestamp.
+   */
   public static LocalDateTime getLocalDateTimeFromHoursSinceEpoch(long timestamp) {
     return LocalDateTime.ofEpochSecond(TimeUnit.HOURS.toSeconds(timestamp), 0, ZoneOffset.UTC);
   }
