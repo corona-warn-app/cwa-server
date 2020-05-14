@@ -127,7 +127,6 @@ public class DiagnosisKeysDirectoryTest {
         join(s, "diagnosis-keys", "country", "DE", "date", "1970-01-01", "hour", "21", "index"),
         join(s, "diagnosis-keys", "country", "DE", "date", "1970-01-01", "hour", "22", "index"),
         join(s, "diagnosis-keys", "country", "DE", "date", "1970-01-01", "hour", "23", "index"),
-        join(s, "diagnosis-keys", "country", "DE", "date", "1970-01-02", "index"),
         join(s, "diagnosis-keys", "country", "DE", "date", "1970-01-02", "hour", "index"),
         join(s, "diagnosis-keys", "country", "DE", "date", "1970-01-02", "hour", "0", "index"),
         join(s, "diagnosis-keys", "country", "DE", "date", "1970-01-02", "hour", "1", "index"),

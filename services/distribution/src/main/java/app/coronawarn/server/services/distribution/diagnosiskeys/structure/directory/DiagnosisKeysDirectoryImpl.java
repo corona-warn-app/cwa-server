@@ -46,8 +46,6 @@ public class DiagnosisKeysDirectoryImpl extends DirectoryImpl {
     Directory countryDirectoryDecorated = decorateCountryDirectory(countryDirectory);
 
     countryDirectory.addDirectoryToAll(__ -> {
-      // TODO Some reference is being reused here and messes up the date index.
-      // TODO Continue here
       IndexDirectory<LocalDate> dateDirectory = createDateDirectory();
       Directory decoratedDateDirectory = decorateDateDirectory(dateDirectory);
       dateDirectory.addDirectoryToAll(___ -> decorateHourDirectory(createHourDirectory()));

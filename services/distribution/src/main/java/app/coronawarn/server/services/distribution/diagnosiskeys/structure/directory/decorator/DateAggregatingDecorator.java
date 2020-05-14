@@ -3,6 +3,7 @@ package app.coronawarn.server.services.distribution.diagnosiskeys.structure.dire
 import app.coronawarn.server.common.protocols.internal.FileBucket;
 import app.coronawarn.server.common.protocols.internal.SignedPayload;
 import app.coronawarn.server.services.distribution.crypto.CryptoProvider;
+import app.coronawarn.server.services.distribution.diagnosiskeys.structure.file.HourFileImpl;
 import app.coronawarn.server.services.distribution.structure.Writable;
 import app.coronawarn.server.services.distribution.structure.directory.Directory;
 import app.coronawarn.server.services.distribution.structure.directory.decorator.DirectoryDecorator;
@@ -17,12 +18,16 @@ import java.util.Set;
 import java.util.Stack;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * A {@link DirectoryDecorator} that will create a {@link FileBucket} for each day within its
  * directory.
  */
 public class DateAggregatingDecorator extends DirectoryDecorator {
+
+  private static final Logger logger = LoggerFactory.getLogger(DateAggregatingDecorator.class);
 
   private final CryptoProvider cryptoProvider;
 
@@ -36,7 +41,7 @@ public class DateAggregatingDecorator extends DirectoryDecorator {
   @Override
   public void prepare(Stack<Object> indices) {
     super.prepare(indices);
-    System.out.println("Aggregating \t\t" + this.getFileOnDisk().getPath());
+    logger.debug("Aggregating {}", this.getFileOnDisk().getPath());
     Set<Directory> days = this.getDirectories();
     if (days.size() == 0) {
       return;
