@@ -48,7 +48,7 @@ public class ObjectStoreAccess {
     this.bucket = bucket;
 
     if ("notset".equals(endpoint) || "notset".equals(bucket)) {
-      logger.warn("S3 Connection parameters missing - unable to serve S3 integration.");
+      logger.error("S3 Connection parameters missing - unable to serve S3 integration.");
       return;
     }
 
