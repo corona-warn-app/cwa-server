@@ -52,7 +52,7 @@ public class DateAggregatingDecorator extends DirectoryDecorator {
     // Exclude the last day
     sortedDays.subList(0, days.size() - 1).forEach(currentDirectory -> {
       Stream.of(currentDirectory)
-          .map(this::getSubDirectoryFiles)
+          .map(this::getSubSubDirectoryFiles)
           .map(this::parseFileBucketsFromFiles)
           .map(this::reduceFileBuckets)
           .map(this::makeNewFileBucket)
@@ -64,7 +64,7 @@ public class DateAggregatingDecorator extends DirectoryDecorator {
     });
   }
 
-  private Set<File> getSubDirectoryFiles(Directory directory) {
+  private Set<File> getSubSubDirectoryFiles(Directory directory) {
     // Get all files 2 directory levels down
     return Stream.of(directory)
         .map(Directory::getDirectories)
