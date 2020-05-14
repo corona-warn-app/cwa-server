@@ -4,6 +4,7 @@ import app.coronawarn.server.common.persistence.domain.DiagnosisKey;
 import app.coronawarn.server.common.persistence.service.DiagnosisKeyService;
 import app.coronawarn.server.services.distribution.crypto.CryptoProvider;
 import app.coronawarn.server.services.distribution.diagnosiskeys.structure.directory.DiagnosisKeysDirectoryImpl;
+import app.coronawarn.server.services.distribution.structure.util.ImmutableStack;
 import app.coronawarn.server.services.distribution.structure.directory.DirectoryImpl;
 import app.coronawarn.server.services.distribution.structure.directory.IndexDirectory;
 import app.coronawarn.server.services.distribution.structure.directory.IndexDirectoryImpl;
@@ -12,7 +13,6 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Collection;
 import java.util.Set;
-import java.util.Stack;
 import org.apache.commons.io.FileUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -67,7 +67,7 @@ public class DiagnosisKeyDistributionRunner implements ApplicationRunner {
     root.addDirectory(new IndexingDecorator<>(versionDirectory));
 
     logger.debug("Preparing ...");
-    root.prepare(new Stack<>());
+    root.prepare(new ImmutableStack<>());
 
     logger.debug("Writing ...");
     root.write();

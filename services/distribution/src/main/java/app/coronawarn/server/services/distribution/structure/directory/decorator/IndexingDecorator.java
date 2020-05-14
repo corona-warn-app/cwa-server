@@ -1,11 +1,11 @@
 package app.coronawarn.server.services.distribution.structure.directory.decorator;
 
+import app.coronawarn.server.services.distribution.structure.util.ImmutableStack;
 import app.coronawarn.server.services.distribution.structure.directory.IndexDirectory;
 import app.coronawarn.server.services.distribution.structure.directory.IndexDirectoryImpl;
 import app.coronawarn.server.services.distribution.structure.file.FileImpl;
 import java.util.List;
 import java.util.Set;
-import java.util.Stack;
 import java.util.stream.Collectors;
 import org.json.simple.JSONArray;
 import org.slf4j.Logger;
@@ -32,7 +32,7 @@ public class IndexingDecorator<T> extends DirectoryDecorator {
    * See {@link IndexingDecorator} class documentation.
    */
   @Override
-  public void prepare(Stack<Object> indices) {
+  public void prepare(ImmutableStack<Object> indices) {
     logger.debug("Indexing {}", this.getFileOnDisk().getPath());
     Set<T> index = this.directory.getIndex(indices);
     JSONArray array = new JSONArray();

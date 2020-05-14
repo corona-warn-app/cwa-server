@@ -2,12 +2,12 @@ package app.coronawarn.server.services.distribution.diagnosiskeys.structure.dire
 
 import app.coronawarn.server.common.persistence.domain.DiagnosisKey;
 import app.coronawarn.server.services.distribution.crypto.CryptoProvider;
+import app.coronawarn.server.services.distribution.structure.util.ImmutableStack;
 import app.coronawarn.server.services.distribution.structure.directory.Directory;
 import app.coronawarn.server.services.distribution.structure.directory.DirectoryImpl;
 import app.coronawarn.server.services.distribution.structure.directory.IndexDirectory;
 import app.coronawarn.server.services.distribution.structure.directory.decorator.IndexingDecorator;
 import java.util.Collection;
-import java.util.Stack;
 
 /**
  * A {@link Directory} containing the file and directory structure that mirrors the API defined in
@@ -31,7 +31,7 @@ public class DiagnosisKeysDirectoryImpl extends DirectoryImpl {
   }
 
   @Override
-  public void prepare(Stack<Object> indices) {
+  public void prepare(ImmutableStack<Object> indices) {
     this.addDirectory(decorateCountryDirectory(
         new DiagnosisKeysCountryDirectoryImpl(diagnosisKeys, cryptoProvider)));
     super.prepare(indices);

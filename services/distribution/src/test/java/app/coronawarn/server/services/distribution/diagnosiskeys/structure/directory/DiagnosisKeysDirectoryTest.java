@@ -5,6 +5,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import app.coronawarn.server.common.persistence.domain.DiagnosisKey;
 import app.coronawarn.server.services.distribution.crypto.CryptoProvider;
+import app.coronawarn.server.services.distribution.structure.util.ImmutableStack;
 import app.coronawarn.server.services.distribution.structure.directory.Directory;
 import app.coronawarn.server.services.distribution.structure.directory.DirectoryImpl;
 import java.io.File;
@@ -14,7 +15,6 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
-import java.util.Stack;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import org.junit.Rule;
@@ -76,7 +76,7 @@ public class DiagnosisKeysDirectoryTest {
     diagnosisKeys = new ArrayList<>();
     Directory directory = new DiagnosisKeysDirectoryImpl(diagnosisKeys, cryptoProvider);
     parentDirectory.addDirectory(directory);
-    directory.prepare(new Stack<>());
+    directory.prepare(new ImmutableStack<>());
     directory.write();
 
     String s = File.separator;
@@ -94,7 +94,7 @@ public class DiagnosisKeysDirectoryTest {
   public void checkBuildsTheCorrectDirectoryStructure() {
     Directory directory = new DiagnosisKeysDirectoryImpl(diagnosisKeys, cryptoProvider);
     parentDirectory.addDirectory(directory);
-    directory.prepare(new Stack<>());
+    directory.prepare(new ImmutableStack<>());
     directory.write();
 
     String s = File.separator;

@@ -1,9 +1,9 @@
 package app.coronawarn.server.services.distribution.structure.file;
 
+import app.coronawarn.server.services.distribution.structure.util.ImmutableStack;
 import app.coronawarn.server.services.distribution.io.IO;
 import app.coronawarn.server.services.distribution.structure.Writable;
 import app.coronawarn.server.services.distribution.structure.WritableImpl;
-import java.util.Stack;
 
 /**
  * Implementation of {@link File} that interfaces with {@link java.io.File Files} on disk.
@@ -41,6 +41,6 @@ public class FileImpl extends WritableImpl implements File {
    * Does nothing.
    */
   @Override
-  public void prepare(Stack<Object> indices) {
+  public void prepare(ImmutableStack<Object> indices) {
   }
 }

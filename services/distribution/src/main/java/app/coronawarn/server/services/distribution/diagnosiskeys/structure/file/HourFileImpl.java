@@ -6,6 +6,7 @@ import app.coronawarn.server.common.protocols.external.exposurenotification.Key;
 import app.coronawarn.server.common.protocols.internal.FileBucket;
 import app.coronawarn.server.services.distribution.diagnosiskeys.util.Batch;
 import app.coronawarn.server.services.distribution.diagnosiskeys.util.DateTime;
+import app.coronawarn.server.services.distribution.structure.util.ImmutableStack;
 import app.coronawarn.server.services.distribution.structure.file.FileImpl;
 import com.google.protobuf.ByteString;
 import java.time.Instant;
@@ -13,7 +14,6 @@ import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.util.Collection;
 import java.util.Set;
-import java.util.Stack;
 import java.util.stream.Collectors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -37,7 +37,7 @@ public class HourFileImpl extends FileImpl {
   }
 
   @Override
-  public void prepare(Stack<Object> indices) {
+  public void prepare(ImmutableStack<Object> indices) {
     this.setBytes(createHourBytes());
     super.prepare(indices);
   }

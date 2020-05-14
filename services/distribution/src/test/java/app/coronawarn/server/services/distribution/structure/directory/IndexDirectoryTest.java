@@ -2,6 +2,7 @@ package app.coronawarn.server.services.distribution.structure.directory;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+import app.coronawarn.server.services.distribution.structure.util.ImmutableStack;
 import app.coronawarn.server.services.distribution.structure.Writable;
 import app.coronawarn.server.services.distribution.structure.file.File;
 import app.coronawarn.server.services.distribution.structure.file.FileImpl;
@@ -13,7 +14,6 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
-import java.util.Stack;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import org.junit.Rule;
@@ -46,7 +46,7 @@ public class IndexDirectoryTest {
 
   @Test
   public void checkGetIndex() {
-    assertEquals(index, indexDirectory.getIndex(new Stack<>()));
+    assertEquals(index, indexDirectory.getIndex(new ImmutableStack<>()));
   }
 
   @Test
@@ -107,7 +107,7 @@ public class IndexDirectoryTest {
   }
 
   private void prepareAndWrite(Directory directory) {
-    directory.prepare(new Stack<>());
+    directory.prepare(new ImmutableStack<>());
     directory.write();
   }
 }

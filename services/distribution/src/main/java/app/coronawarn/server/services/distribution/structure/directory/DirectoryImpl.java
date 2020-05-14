@@ -1,12 +1,10 @@
 package app.coronawarn.server.services.distribution.structure.directory;
 
+import app.coronawarn.server.services.distribution.structure.util.ImmutableStack;
 import app.coronawarn.server.services.distribution.structure.WritableImpl;
 import app.coronawarn.server.services.distribution.structure.file.File;
-import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
-import java.util.Stack;
 
 /**
  * Implementation of {@link Directory} that interfaces with {@link java.io.File Files} on disk.
@@ -59,16 +57,16 @@ public class DirectoryImpl extends WritableImpl implements Directory {
   }
 
   @Override
-  public void prepare(Stack<Object> indices) {
+  public void prepare(ImmutableStack<Object> indices) {
     this.prepareFiles(indices);
     this.prepareDirectories(indices);
   }
 
-  private void prepareDirectories(Stack<Object> indices) {
+  private void prepareDirectories(ImmutableStack<Object> indices) {
     this.directories.forEach(directory -> directory.prepare(indices));
   }
 
-  private void prepareFiles(Stack<Object> indices) {
+  private void prepareFiles(ImmutableStack<Object> indices) {
     this.files.forEach(file -> file.prepare(indices));
   }
 

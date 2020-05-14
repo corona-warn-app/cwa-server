@@ -1,9 +1,9 @@
 package app.coronawarn.server.services.distribution.structure.directory;
 
+import app.coronawarn.server.services.distribution.structure.util.ImmutableStack;
 import app.coronawarn.server.services.distribution.structure.functional.DirectoryFunction;
 import app.coronawarn.server.services.distribution.structure.functional.FileFunction;
 import app.coronawarn.server.services.distribution.structure.functional.Formatter;
-import java.util.List;
 import java.util.Set;
 import java.util.Stack;
 
@@ -41,7 +41,7 @@ public interface IndexDirectory<T> extends Directory {
    *                the types {@code T} of {@link IndexDirectory IndexDirectories} further up in the
    *                hierarchy.
    */
-  Set<T> getIndex(Stack<Object> indices);
+  Set<T> getIndex(ImmutableStack<Object> indices);
 
   /**
    * Returns the function used to format elements of the index (e.g. for writing to disk).

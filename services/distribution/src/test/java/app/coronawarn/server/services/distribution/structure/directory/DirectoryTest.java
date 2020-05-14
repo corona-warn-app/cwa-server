@@ -5,11 +5,11 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.verify;
 
+import app.coronawarn.server.services.distribution.structure.util.ImmutableStack;
 import app.coronawarn.server.services.distribution.structure.file.File;
 import app.coronawarn.server.services.distribution.structure.file.FileImpl;
 import java.io.IOException;
 import java.util.Set;
-import java.util.Stack;
 import org.junit.Rule;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -61,7 +61,7 @@ public class DirectoryTest {
   @Test
   public void checkPrepareDelegatesToFiles() {
     File spyChildFile = spy(childFile);
-    Stack<Object> expectedStack = new Stack<>();
+    ImmutableStack<Object> expectedStack = new ImmutableStack<>();
 
     parentDirectory.addFile(spyChildFile);
     parentDirectory.prepare(expectedStack);
@@ -72,7 +72,7 @@ public class DirectoryTest {
   @Test
   public void checkPrepareDelegatesToDirectories() {
     Directory spyChildDirectory = spy(childDirectory);
-    Stack<Object> expectedStack = new Stack<>();
+    ImmutableStack<Object> expectedStack = new ImmutableStack<>();
 
     parentDirectory.addDirectory(spyChildDirectory);
     parentDirectory.prepare(expectedStack);

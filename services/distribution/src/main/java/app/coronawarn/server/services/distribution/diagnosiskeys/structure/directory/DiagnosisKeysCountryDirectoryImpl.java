@@ -3,6 +3,7 @@ package app.coronawarn.server.services.distribution.diagnosiskeys.structure.dire
 import app.coronawarn.server.common.persistence.domain.DiagnosisKey;
 import app.coronawarn.server.services.distribution.crypto.CryptoProvider;
 import app.coronawarn.server.services.distribution.diagnosiskeys.structure.directory.decorator.DateAggregatingDecorator;
+import app.coronawarn.server.services.distribution.structure.util.ImmutableStack;
 import app.coronawarn.server.services.distribution.structure.directory.Directory;
 import app.coronawarn.server.services.distribution.structure.directory.IndexDirectory;
 import app.coronawarn.server.services.distribution.structure.directory.IndexDirectoryImpl;
@@ -10,7 +11,6 @@ import app.coronawarn.server.services.distribution.structure.directory.decorator
 import java.time.LocalDate;
 import java.util.Collection;
 import java.util.Set;
-import java.util.Stack;
 
 public class DiagnosisKeysCountryDirectoryImpl extends IndexDirectoryImpl<String> {
 
@@ -21,7 +21,7 @@ public class DiagnosisKeysCountryDirectoryImpl extends IndexDirectoryImpl<String
   private CryptoProvider cryptoProvider;
 
   /**
-   * TODO Doc.
+   * <version>0.0.1-SNAPSHOT Doc.
    */
   public DiagnosisKeysCountryDirectoryImpl(Collection<DiagnosisKey> diagnosisKeys,
       CryptoProvider cryptoProvider) {
@@ -31,9 +31,10 @@ public class DiagnosisKeysCountryDirectoryImpl extends IndexDirectoryImpl<String
   }
 
   @Override
-  public void prepare(Stack<Object> indices) {
+  public void prepare(ImmutableStack<Object> indices) {
     this.addDirectoryToAll(__ -> {
-      IndexDirectory<LocalDate> dateDirectory = new DiagnosisKeysDateDirectoryImpl(diagnosisKeys, cryptoProvider);
+      IndexDirectory<LocalDate> dateDirectory = new DiagnosisKeysDateDirectoryImpl(diagnosisKeys,
+          cryptoProvider);
       return decorateDateDirectory(dateDirectory);
     });
     super.prepare(indices);

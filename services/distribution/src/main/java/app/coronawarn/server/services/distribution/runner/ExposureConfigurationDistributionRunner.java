@@ -2,6 +2,7 @@ package app.coronawarn.server.services.distribution.runner;
 
 import app.coronawarn.server.common.protocols.internal.RiskScoreParameters;
 import app.coronawarn.server.services.distribution.crypto.CryptoProvider;
+import app.coronawarn.server.services.distribution.structure.util.ImmutableStack;
 import app.coronawarn.server.services.distribution.exposureconfig.ExposureConfigurationProvider;
 import app.coronawarn.server.services.distribution.exposureconfig.UnableToLoadFileException;
 import app.coronawarn.server.services.distribution.exposureconfig.structure.directory.ExposureConfigurationDirectoryImpl;
@@ -11,9 +12,7 @@ import app.coronawarn.server.services.distribution.structure.directory.IndexDire
 import app.coronawarn.server.services.distribution.structure.directory.IndexDirectoryImpl;
 import app.coronawarn.server.services.distribution.structure.directory.decorator.IndexingDecorator;
 import java.io.File;
-import java.util.List;
 import java.util.Set;
-import java.util.Stack;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -58,7 +57,7 @@ public class ExposureConfigurationDistributionRunner implements ApplicationRunne
     Directory root = new DirectoryImpl(new File(outputPath));
     versionDirectory.addDirectoryToAll(__ -> parametersDirectory);
     root.addDirectory(new IndexingDecorator<>(versionDirectory));
-    root.prepare(new Stack<>());
+    root.prepare(new ImmutableStack<>());
     root.write();
   }
 

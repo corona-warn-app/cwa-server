@@ -3,11 +3,11 @@ package app.coronawarn.server.services.distribution.structure.file.decorators;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 
+import app.coronawarn.server.services.distribution.structure.util.ImmutableStack;
 import app.coronawarn.server.services.distribution.structure.directory.Directory;
 import app.coronawarn.server.services.distribution.structure.directory.DirectoryImpl;
 import app.coronawarn.server.services.distribution.structure.file.File;
 import app.coronawarn.server.services.distribution.structure.file.decorator.FileDecorator;
-import java.util.Stack;
 import org.junit.jupiter.api.Test;
 
 public class FileDecoratorTest {
@@ -17,7 +17,7 @@ public class FileDecoratorTest {
     File decoree = mock(File.class);
     File decorator = new TestFileDecorator(decoree);
 
-    Stack<Object> stack = new Stack<>();
+    ImmutableStack<Object> stack = new ImmutableStack<>();
     decorator.prepare(stack);
     verify(decoree).prepare(stack);
 

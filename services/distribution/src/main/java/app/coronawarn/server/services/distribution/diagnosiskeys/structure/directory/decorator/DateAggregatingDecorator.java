@@ -3,6 +3,7 @@ package app.coronawarn.server.services.distribution.diagnosiskeys.structure.dire
 import app.coronawarn.server.common.protocols.internal.FileBucket;
 import app.coronawarn.server.common.protocols.internal.SignedPayload;
 import app.coronawarn.server.services.distribution.crypto.CryptoProvider;
+import app.coronawarn.server.services.distribution.structure.util.ImmutableStack;
 import app.coronawarn.server.services.distribution.structure.Writable;
 import app.coronawarn.server.services.distribution.structure.directory.Directory;
 import app.coronawarn.server.services.distribution.structure.directory.decorator.DirectoryDecorator;
@@ -14,7 +15,6 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Set;
-import java.util.Stack;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import org.slf4j.Logger;
@@ -38,7 +38,7 @@ public class DateAggregatingDecorator extends DirectoryDecorator {
   }
 
   @Override
-  public void prepare(Stack<Object> indices) {
+  public void prepare(ImmutableStack<Object> indices) {
     super.prepare(indices);
     logger.debug("Aggregating {}", this.getFileOnDisk().getPath());
     Set<Directory> days = this.getDirectories();
