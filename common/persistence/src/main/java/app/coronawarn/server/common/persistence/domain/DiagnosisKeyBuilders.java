@@ -66,7 +66,7 @@ interface DiagnosisKeyBuilders {
   interface FinalBuilder {
 
     /**
-     * Adds the specified submission time stamp that is expected to represent hours since epoch.
+     * Adds the specified submission timestamp that is expected to represent hours since epoch.
      *
      * @param submissionTimestamp timestamp in hours since epoch.
      * @return this Builder instance.
