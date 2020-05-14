@@ -2,7 +2,6 @@ package app.coronawarn.server.services.distribution.runner;
 
 import app.coronawarn.server.common.protocols.internal.RiskScoreParameters;
 import app.coronawarn.server.services.distribution.crypto.CryptoProvider;
-import app.coronawarn.server.services.distribution.structure.util.ImmutableStack;
 import app.coronawarn.server.services.distribution.exposureconfig.ExposureConfigurationProvider;
 import app.coronawarn.server.services.distribution.exposureconfig.UnableToLoadFileException;
 import app.coronawarn.server.services.distribution.exposureconfig.structure.directory.ExposureConfigurationDirectoryImpl;
@@ -11,6 +10,7 @@ import app.coronawarn.server.services.distribution.structure.directory.Directory
 import app.coronawarn.server.services.distribution.structure.directory.IndexDirectory;
 import app.coronawarn.server.services.distribution.structure.directory.IndexDirectoryImpl;
 import app.coronawarn.server.services.distribution.structure.directory.decorator.IndexingDecorator;
+import app.coronawarn.server.services.distribution.structure.util.ImmutableStack;
 import java.io.File;
 import java.util.Set;
 import org.slf4j.Logger;

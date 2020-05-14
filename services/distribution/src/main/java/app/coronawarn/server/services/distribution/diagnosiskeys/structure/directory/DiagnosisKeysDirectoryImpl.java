@@ -2,11 +2,11 @@ package app.coronawarn.server.services.distribution.diagnosiskeys.structure.dire
 
 import app.coronawarn.server.common.persistence.domain.DiagnosisKey;
 import app.coronawarn.server.services.distribution.crypto.CryptoProvider;
-import app.coronawarn.server.services.distribution.structure.util.ImmutableStack;
 import app.coronawarn.server.services.distribution.structure.directory.Directory;
 import app.coronawarn.server.services.distribution.structure.directory.DirectoryImpl;
 import app.coronawarn.server.services.distribution.structure.directory.IndexDirectory;
 import app.coronawarn.server.services.distribution.structure.directory.decorator.IndexingDecorator;
+import app.coronawarn.server.services.distribution.structure.util.ImmutableStack;
 import java.util.Collection;
 
 /**

@@ -3,12 +3,12 @@ package app.coronawarn.server.services.distribution.structure.directory.decorato
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 
-import app.coronawarn.server.services.distribution.structure.util.ImmutableStack;
 import app.coronawarn.server.services.distribution.structure.directory.Directory;
 import app.coronawarn.server.services.distribution.structure.directory.DirectoryImpl;
 import app.coronawarn.server.services.distribution.structure.directory.decorator.DirectoryDecorator;
 import app.coronawarn.server.services.distribution.structure.file.File;
 import app.coronawarn.server.services.distribution.structure.file.FileImpl;
+import app.coronawarn.server.services.distribution.structure.util.ImmutableStack;
 import org.junit.jupiter.api.Test;
 
 public class DirectoryDecoratorTest {

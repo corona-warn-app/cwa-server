@@ -1,7 +1,7 @@
 package app.coronawarn.server.services.distribution.structure.functional;
 
-import app.coronawarn.server.services.distribution.structure.util.ImmutableStack;
 import app.coronawarn.server.services.distribution.structure.file.File;
+import app.coronawarn.server.services.distribution.structure.util.ImmutableStack;
 import java.util.function.Function;
 
 /**

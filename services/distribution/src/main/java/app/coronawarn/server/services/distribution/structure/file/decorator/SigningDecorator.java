@@ -2,8 +2,8 @@ package app.coronawarn.server.services.distribution.structure.file.decorator;
 
 import app.coronawarn.server.common.protocols.internal.SignedPayload;
 import app.coronawarn.server.services.distribution.crypto.CryptoProvider;
-import app.coronawarn.server.services.distribution.structure.util.ImmutableStack;
 import app.coronawarn.server.services.distribution.structure.file.File;
+import app.coronawarn.server.services.distribution.structure.util.ImmutableStack;
 import com.google.protobuf.ByteString;
 import java.security.GeneralSecurityException;
 import java.security.PrivateKey;

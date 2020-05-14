@@ -1,8 +1,8 @@
 package app.coronawarn.server.services.distribution.structure.directory;
 
-import app.coronawarn.server.services.distribution.structure.util.ImmutableStack;
 import app.coronawarn.server.services.distribution.structure.WritableImpl;
 import app.coronawarn.server.services.distribution.structure.file.File;
+import app.coronawarn.server.services.distribution.structure.util.ImmutableStack;
 import java.util.HashSet;
 import java.util.Set;
 

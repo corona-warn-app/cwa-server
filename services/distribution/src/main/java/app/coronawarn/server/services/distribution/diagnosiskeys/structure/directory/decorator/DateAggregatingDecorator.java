@@ -3,7 +3,6 @@ package app.coronawarn.server.services.distribution.diagnosiskeys.structure.dire
 import app.coronawarn.server.common.protocols.internal.FileBucket;
 import app.coronawarn.server.common.protocols.internal.SignedPayload;
 import app.coronawarn.server.services.distribution.crypto.CryptoProvider;
-import app.coronawarn.server.services.distribution.structure.util.ImmutableStack;
 import app.coronawarn.server.services.distribution.structure.Writable;
 import app.coronawarn.server.services.distribution.structure.directory.Directory;
 import app.coronawarn.server.services.distribution.structure.directory.decorator.DirectoryDecorator;
@@ -11,6 +10,7 @@ import app.coronawarn.server.services.distribution.structure.file.File;
 import app.coronawarn.server.services.distribution.structure.file.FileImpl;
 import app.coronawarn.server.services.distribution.structure.file.decorator.SigningDecorator;
 import app.coronawarn.server.services.distribution.structure.functional.CheckedFunction;
+import app.coronawarn.server.services.distribution.structure.util.ImmutableStack;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;

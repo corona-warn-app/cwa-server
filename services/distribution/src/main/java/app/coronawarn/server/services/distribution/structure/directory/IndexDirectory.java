@@ -1,9 +1,9 @@
 package app.coronawarn.server.services.distribution.structure.directory;
 
-import app.coronawarn.server.services.distribution.structure.util.ImmutableStack;
 import app.coronawarn.server.services.distribution.structure.functional.DirectoryFunction;
 import app.coronawarn.server.services.distribution.structure.functional.FileFunction;
 import app.coronawarn.server.services.distribution.structure.functional.Formatter;
+import app.coronawarn.server.services.distribution.structure.util.ImmutableStack;
 import java.util.Set;
 import java.util.Stack;
 

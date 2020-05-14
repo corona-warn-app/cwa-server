@@ -1,7 +1,7 @@
 package app.coronawarn.server.services.distribution.structure;
 
-import app.coronawarn.server.services.distribution.structure.util.ImmutableStack;
 import app.coronawarn.server.services.distribution.structure.directory.Directory;
+import app.coronawarn.server.services.distribution.structure.util.ImmutableStack;
 
 /**
  * Something that can be written to disk.

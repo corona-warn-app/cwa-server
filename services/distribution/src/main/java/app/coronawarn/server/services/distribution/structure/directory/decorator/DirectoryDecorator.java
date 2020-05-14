@@ -1,9 +1,9 @@
 package app.coronawarn.server.services.distribution.structure.directory.decorator;
 
-import app.coronawarn.server.services.distribution.structure.util.ImmutableStack;
 import app.coronawarn.server.services.distribution.structure.Writable;
 import app.coronawarn.server.services.distribution.structure.directory.Directory;
 import app.coronawarn.server.services.distribution.structure.file.File;
+import app.coronawarn.server.services.distribution.structure.util.ImmutableStack;
 import java.util.Set;
 
 /**

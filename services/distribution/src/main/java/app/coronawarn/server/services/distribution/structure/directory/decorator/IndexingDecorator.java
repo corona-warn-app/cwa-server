@@ -1,9 +1,9 @@
 package app.coronawarn.server.services.distribution.structure.directory.decorator;
 
-import app.coronawarn.server.services.distribution.structure.util.ImmutableStack;
 import app.coronawarn.server.services.distribution.structure.directory.IndexDirectory;
 import app.coronawarn.server.services.distribution.structure.directory.IndexDirectoryImpl;
 import app.coronawarn.server.services.distribution.structure.file.FileImpl;
+import app.coronawarn.server.services.distribution.structure.util.ImmutableStack;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;

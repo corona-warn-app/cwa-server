@@ -4,10 +4,10 @@ import app.coronawarn.server.common.persistence.domain.DiagnosisKey;
 import app.coronawarn.server.services.distribution.crypto.CryptoProvider;
 import app.coronawarn.server.services.distribution.diagnosiskeys.structure.file.HourFileImpl;
 import app.coronawarn.server.services.distribution.diagnosiskeys.util.DateTime;
-import app.coronawarn.server.services.distribution.structure.util.ImmutableStack;
 import app.coronawarn.server.services.distribution.structure.directory.IndexDirectoryImpl;
 import app.coronawarn.server.services.distribution.structure.file.File;
 import app.coronawarn.server.services.distribution.structure.file.decorator.SigningDecorator;
+import app.coronawarn.server.services.distribution.structure.util.ImmutableStack;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Collection;
@@ -26,7 +26,7 @@ public class DiagnosisKeysHourDirectoryImpl extends IndexDirectoryImpl<LocalDate
   public DiagnosisKeysHourDirectoryImpl(Collection<DiagnosisKey> diagnosisKeys,
       LocalDate currentDate, CryptoProvider cryptoProvider) {
     super(HOUR_DIRECTORY, indices -> {
-        return DateTime.getHours(((LocalDate) indices.peek()), diagnosisKeys);
+      return DateTime.getHours(((LocalDate) indices.peek()), diagnosisKeys);
     }, LocalDateTime::getHour);
     this.diagnosisKeys = diagnosisKeys;
     this.currentDate = currentDate;

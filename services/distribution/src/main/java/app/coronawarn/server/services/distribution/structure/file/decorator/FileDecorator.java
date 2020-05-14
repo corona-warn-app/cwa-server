@@ -1,9 +1,9 @@
 package app.coronawarn.server.services.distribution.structure.file.decorator;
 
-import app.coronawarn.server.services.distribution.structure.util.ImmutableStack;
 import app.coronawarn.server.services.distribution.structure.Writable;
 import app.coronawarn.server.services.distribution.structure.directory.Directory;
 import app.coronawarn.server.services.distribution.structure.file.File;
+import app.coronawarn.server.services.distribution.structure.util.ImmutableStack;
 
 /**
  * Decorates a {@link File} (e.g. to modify its content) on {@link Writable#prepare}. This class
