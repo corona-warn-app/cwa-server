@@ -23,7 +23,7 @@ import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
 @Component
-@Order(1)
+@Order(2)
 /**
  * Reads the exposure configuration parameters from the respective file in the class path, then
  * generates and persists the respective exposure configuration bundle.
