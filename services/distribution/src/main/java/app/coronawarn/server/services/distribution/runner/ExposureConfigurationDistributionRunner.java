@@ -33,9 +33,6 @@ public class ExposureConfigurationDistributionRunner implements ApplicationRunne
   private static final Logger logger =
       LoggerFactory.getLogger(ExposureConfigurationDistributionRunner.class);
 
-  @Value("${app.coronawarn.server.services.distribution.region}")
-  private String country;
-
   @Value("${app.coronawarn.server.services.distribution.version}")
   private String version;
 
@@ -53,7 +50,7 @@ public class ExposureConfigurationDistributionRunner implements ApplicationRunne
     IndexDirectory<?> versionDirectory =
         new IndexDirectoryImpl<>(VERSION_DIRECTORY, __ -> Set.of(version), Object::toString);
     ExposureConfigurationDirectoryImpl parametersDirectory =
-        new ExposureConfigurationDirectoryImpl(country, riskScoreParameters, cryptoProvider);
+        new ExposureConfigurationDirectoryImpl(riskScoreParameters, cryptoProvider);
     Directory root = new DirectoryImpl(new File(outputPath));
     versionDirectory.addDirectoryToAll(__ -> parametersDirectory);
     root.addDirectory(new IndexingDecorator<>(versionDirectory));
