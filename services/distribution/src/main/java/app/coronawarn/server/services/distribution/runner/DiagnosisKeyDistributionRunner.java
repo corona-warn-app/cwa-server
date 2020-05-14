@@ -45,7 +45,6 @@ public class DiagnosisKeyDistributionRunner implements ApplicationRunner {
 
   @Override
   public void run(ApplicationArguments args) throws IOException {
-
     Collection<DiagnosisKey> diagnosisKeys = diagnosisKeyService.getDiagnosisKeys();
 
     DiagnosisKeysDirectoryImpl diagnosisKeysDirectory =
