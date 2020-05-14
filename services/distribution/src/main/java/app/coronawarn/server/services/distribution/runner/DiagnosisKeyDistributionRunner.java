@@ -11,13 +11,13 @@ import app.coronawarn.server.services.distribution.structure.directory.decorator
 import java.io.File;
 import java.io.IOException;
 import java.util.Collection;
-import java.util.List;
 import java.util.Set;
 import java.util.Stack;
 import org.apache.commons.io.FileUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.core.annotation.Order;
@@ -33,15 +33,21 @@ public class DiagnosisKeyDistributionRunner implements ApplicationRunner {
 
   private static final Logger logger = LoggerFactory
       .getLogger(DiagnosisKeyDistributionRunner.class);
+
   private static final String VERSION_DIRECTORY = "version";
-  private static final String VERSION = "v1";
-  private static final String OUTPUT_PATH = "out";
+
+  @Value("${app.coronawarn.server.services.distribution.region}")
+  private String version;
+
+  @Value("${app.coronawarn.server.services.distribution.paths.output}")
+  private String outputPath;
 
   @Autowired
   private CryptoProvider cryptoProvider;
 
   @Autowired
   private DiagnosisKeyService diagnosisKeyService;
+
 
   @Override
   public void run(ApplicationArguments args) throws IOException {
@@ -51,11 +57,11 @@ public class DiagnosisKeyDistributionRunner implements ApplicationRunner {
         new DiagnosisKeysDirectoryImpl(diagnosisKeys, cryptoProvider);
 
     IndexDirectory<?> versionDirectory =
-        new IndexDirectoryImpl<>(VERSION_DIRECTORY, __ -> Set.of(VERSION), Object::toString);
+        new IndexDirectoryImpl<>(VERSION_DIRECTORY, __ -> Set.of(version), Object::toString);
 
     versionDirectory.addDirectoryToAll(__ -> diagnosisKeysDirectory);
 
-    java.io.File outputDirectory = new File(OUTPUT_PATH);
+    java.io.File outputDirectory = new File(outputPath);
     clearDirectory(outputDirectory);
     DirectoryImpl root = new DirectoryImpl(outputDirectory);
     root.addDirectory(new IndexingDecorator<>(versionDirectory));
