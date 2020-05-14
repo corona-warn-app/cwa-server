@@ -37,6 +37,4 @@ public class S3DistributionRunner implements ApplicationRunner {
       logger.error("Distribution failed.", e);
     }
   }
-
-
 }
