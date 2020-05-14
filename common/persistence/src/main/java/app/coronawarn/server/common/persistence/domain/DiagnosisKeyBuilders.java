@@ -66,8 +66,16 @@ interface DiagnosisKeyBuilders {
   interface FinalBuilder {
 
     /**
-     * Builds a {@link DiagnosisKey} instance and sets the submission timestamp to hours since
-     * epoch.
+     * Adds the specified submission timestamp that is expected to represent hours since epoch.
+     *
+     * @param submissionTimestamp timestamp in hours since epoch.
+     * @return this Builder instance.
+     */
+    FinalBuilder withSubmissionTimestamp(long submissionTimestamp);
+
+    /**
+     * Builds a {@link DiagnosisKey} instance. If no submission timestamp has been specified it will
+     * be set to "now" as hours since epoch.
      */
     DiagnosisKey build();
   }

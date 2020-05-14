@@ -2,17 +2,17 @@ package app.coronawarn.server.services.distribution.structure.directory;
 
 import app.coronawarn.server.services.distribution.structure.WritableImpl;
 import app.coronawarn.server.services.distribution.structure.file.File;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Stack;
+import app.coronawarn.server.services.distribution.structure.util.ImmutableStack;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * Implementation of {@link Directory} that interfaces with {@link java.io.File Files} on disk.
  */
 public class DirectoryImpl extends WritableImpl implements Directory {
 
-  private final List<File> files = new ArrayList<>();
-  private final List<Directory> directories = new ArrayList<>();
+  private final Set<File> files = new HashSet<>();
+  private final Set<Directory> directories = new HashSet<>();
 
   /**
    * A root {@link DirectoryImpl} representing an already existing directory on disk.
@@ -41,7 +41,7 @@ public class DirectoryImpl extends WritableImpl implements Directory {
   }
 
   @Override
-  public List<File> getFiles() {
+  public Set<File> getFiles() {
     return this.files;
   }
 
@@ -52,21 +52,21 @@ public class DirectoryImpl extends WritableImpl implements Directory {
   }
 
   @Override
-  public List<Directory> getDirectories() {
+  public Set<Directory> getDirectories() {
     return this.directories;
   }
 
   @Override
-  public void prepare(Stack<Object> indices) {
+  public void prepare(ImmutableStack<Object> indices) {
     this.prepareFiles(indices);
     this.prepareDirectories(indices);
   }
 
-  private void prepareDirectories(Stack<Object> indices) {
+  private void prepareDirectories(ImmutableStack<Object> indices) {
     this.directories.forEach(directory -> directory.prepare(indices));
   }
 
-  private void prepareFiles(Stack<Object> indices) {
+  private void prepareFiles(ImmutableStack<Object> indices) {
     this.files.forEach(file -> file.prepare(indices));
   }
 

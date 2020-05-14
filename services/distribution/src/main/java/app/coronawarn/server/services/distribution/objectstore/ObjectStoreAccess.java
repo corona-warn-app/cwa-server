@@ -47,8 +47,8 @@ public class ObjectStoreAccess {
       @Value("${cwa.objectstore.bucket:notset}") String bucket) throws URISyntaxException {
     this.bucket = bucket;
 
-    if ("notset".equals(endpoint) || "notset".equals("bucket")) {
-      logger.warn("S3 Connection parameters missing - unable to serve S3 integration.");
+    if ("notset".equals(endpoint) || "notset".equals(bucket)) {
+      logger.error("S3 Connection parameters missing - unable to serve S3 integration.");
       return;
     }
 

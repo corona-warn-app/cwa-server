@@ -25,7 +25,7 @@ public class SubmissionController {
   public static final String SUBMISSION_ROUTE = "/diagnosis-keys";
 
   @Autowired
-  private DiagnosisKeyService exposureKeyService;
+  private DiagnosisKeyService diagnosisKeyService;
 
   @Autowired
   private TanVerifier tanVerifier;
@@ -72,6 +72,6 @@ public class SubmissionController {
         .map(aProtoBufKey -> DiagnosisKey.builder().fromProtoBuf(aProtoBufKey).build())
         .collect(Collectors.toList());
 
-    this.exposureKeyService.saveDiagnosisKeys(diagnosisKeys);
+    this.diagnosisKeyService.saveDiagnosisKeys(diagnosisKeys);
   }
 }

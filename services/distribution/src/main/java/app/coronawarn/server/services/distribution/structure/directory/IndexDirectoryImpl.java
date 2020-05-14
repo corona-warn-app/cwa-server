@@ -5,16 +5,17 @@ import app.coronawarn.server.services.distribution.structure.functional.Director
 import app.coronawarn.server.services.distribution.structure.functional.FileFunction;
 import app.coronawarn.server.services.distribution.structure.functional.Formatter;
 import app.coronawarn.server.services.distribution.structure.functional.IndexFunction;
-import java.util.ArrayList;
-import java.util.List;
+import app.coronawarn.server.services.distribution.structure.util.ImmutableStack;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.Stack;
 
 public class IndexDirectoryImpl<T> extends DirectoryImpl implements IndexDirectory<T> {
 
   // Files to be written into every directory created through the index
-  private final List<FileFunction> metaFiles = new ArrayList<>();
+  private final Set<FileFunction> metaFiles = new HashSet<>();
   // Directories to be written into every directory created through the index
-  private final List<DirectoryFunction> metaDirectories = new ArrayList<>();
+  private final Set<DirectoryFunction> metaDirectories = new HashSet<>();
   private final IndexFunction<T> indexFunction;
   private final Formatter<T> indexFormatter;
 
@@ -42,7 +43,7 @@ public class IndexDirectoryImpl<T> extends DirectoryImpl implements IndexDirecto
   }
 
   @Override
-  public List<T> getIndex(Stack<Object> indices) {
+  public Set<T> getIndex(ImmutableStack<Object> indices) {
     return this.indexFunction.apply(indices);
   }
 
@@ -60,8 +61,8 @@ public class IndexDirectoryImpl<T> extends DirectoryImpl implements IndexDirecto
    * Creates a new subdirectory for every element of the {@link IndexDirectory#getIndex index} and
    * writes {@link IndexDirectory#addFileToAll files} and {@link IndexDirectory#addDirectory
    * directories} to those. The respective element of the index will be pushed onto the Stack for
-   * subsequent {@link app.coronawarn.server.services.distribution.structure.Writable#prepare}
-   * calls on those files and directories.
+   * subsequent {@link app.coronawarn.server.services.distribution.structure.Writable#prepare} calls
+   * on those files and directories.
    *
    * @param indices A {@link Stack} of parameters from all {@link IndexDirectory IndexDirectories}
    *                further up in the hierarchy. The Stack may contain different types, depending on
@@ -69,24 +70,18 @@ public class IndexDirectoryImpl<T> extends DirectoryImpl implements IndexDirecto
    *                hierarchy.
    */
   @Override
-  public void prepare(Stack<Object> indices) {
+  public void prepare(ImmutableStack<Object> indices) {
     super.prepare(indices);
     this.prepareIndex(indices);
   }
 
-  private void prepareIndex(Stack<Object> indices) {
+  private void prepareIndex(ImmutableStack<Object> indices) {
     this.getIndex(indices).forEach(currentIndex -> {
-      Stack<Object> newIndices = cloneStackAndAdd(indices, currentIndex);
+      ImmutableStack<Object> newIndices = indices.push(currentIndex);
       Directory subDirectory = makeSubDirectory(currentIndex);
       prepareMetaFiles(newIndices, subDirectory);
       prepareMetaDirectories(newIndices, subDirectory);
     });
-  }
-
-  private static Stack<Object> cloneStackAndAdd(Stack<Object> stack, Object element) {
-    Stack<Object> newStack = (Stack<Object>) stack.clone();
-    newStack.push(element);
-    return newStack;
   }
 
   private Directory makeSubDirectory(T index) {
@@ -95,7 +90,7 @@ public class IndexDirectoryImpl<T> extends DirectoryImpl implements IndexDirecto
     return subDirectory;
   }
 
-  private void prepareMetaFiles(Stack<Object> indices, Directory target) {
+  private void prepareMetaFiles(ImmutableStack<Object> indices, Directory target) {
     this.metaFiles.forEach(metaFileFunction -> {
       File newFile = metaFileFunction.apply(indices);
       target.addFile(newFile);
@@ -103,7 +98,7 @@ public class IndexDirectoryImpl<T> extends DirectoryImpl implements IndexDirecto
     });
   }
 
-  private void prepareMetaDirectories(Stack<Object> indices, Directory target) {
+  private void prepareMetaDirectories(ImmutableStack<Object> indices, Directory target) {
     this.metaDirectories.forEach(metaDirectoryFunction -> {
       Directory newDirectory = metaDirectoryFunction.apply(indices);
       target.addDirectory(newDirectory);

@@ -36,7 +36,6 @@ public class S3DistributionRunner implements ApplicationRunner {
     } catch (IOException | UnsupportedOperationException e) {
       logger.error("Distribution failed.", e);
     }
+    logger.debug("Data pushed to CDN successfully.");
   }
-
-
 }
