@@ -56,6 +56,7 @@ public class ExposureConfigurationDistributionRunner implements ApplicationRunne
     root.addDirectory(new IndexingDecorator<>(versionDirectory));
     root.prepare(new ImmutableStack<>());
     root.write();
+    logger.debug("Exposure configuration structure written successfully.");
   }
 
   private RiskScoreParameters readExposureConfiguration() {

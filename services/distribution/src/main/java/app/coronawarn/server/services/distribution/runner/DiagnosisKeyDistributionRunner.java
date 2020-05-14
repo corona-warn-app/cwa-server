@@ -66,13 +66,9 @@ public class DiagnosisKeyDistributionRunner implements ApplicationRunner {
     DirectoryImpl root = new DirectoryImpl(outputDirectory);
     root.addDirectory(new IndexingDecorator<>(versionDirectory));
 
-    logger.debug("Preparing ...");
     root.prepare(new ImmutableStack<>());
-
-    logger.debug("Writing ...");
     root.write();
-
-    logger.info("DONE");
+    logger.debug("Diagnosis key distribution structure written successfully.");
   }
 
   private static void clearDirectory(File directory) throws IOException {
