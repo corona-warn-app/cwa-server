@@ -10,7 +10,7 @@ import org.springframework.context.annotation.Primary;
 /**
  * Specifies the data source (postgres or h2) as defined
  * in the .properties files with parameters prefixed
- * by spring.datasource
+ * by spring.datasource.
  */
 @Configuration
 public class DataSourceConfig {
