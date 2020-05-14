@@ -19,8 +19,8 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Collection;
-import java.util.List;
 import java.util.Set;
+import net.bytebuddy.asm.Advice.Local;
 
 public class DiagnosisKeysDirectoryImpl extends DirectoryImpl {
 
@@ -43,17 +43,18 @@ public class DiagnosisKeysDirectoryImpl extends DirectoryImpl {
 
   private Directory createDirectoryStructure() {
     IndexDirectory<String> countryDirectory = createCountryDirectory();
+    Directory countryDirectoryDecorated = decorateCountryDirectory(countryDirectory);
 
-    IndexDirectory<LocalDate> dateDirectory = createDateDirectory();
-    Directory dateDirectoryDecorated = decorateDateDirectory(dateDirectory);
+    countryDirectory.addDirectoryToAll(__ -> {
+      // TODO Some reference is being reused here and messes up the date index.
+      // TODO Continue here
+      IndexDirectory<LocalDate> dateDirectory = createDateDirectory();
+      Directory decoratedDateDirectory = decorateDateDirectory(dateDirectory);
+      dateDirectory.addDirectoryToAll(___ -> decorateHourDirectory(createHourDirectory()));
+      return decoratedDateDirectory;
+    });
 
-    IndexDirectory<LocalDateTime> hourDirectory = createHourDirectory();
-    Directory hourDirectoryDecorated = decorateHourDirectory(hourDirectory);
-
-    countryDirectory.addDirectoryToAll(__ -> dateDirectoryDecorated);
-    dateDirectory.addDirectoryToAll(__ -> hourDirectoryDecorated);
-
-    return countryDirectory;
+    return countryDirectoryDecorated;
   }
 
   private IndexDirectory<String> createCountryDirectory() {
@@ -90,6 +91,10 @@ public class DiagnosisKeysDirectoryImpl extends DirectoryImpl {
       File hourFile = new HourFileImpl(currentHour, region, diagnosisKeys);
       return new SigningDecorator(hourFile, cryptoProvider);
     };
+  }
+
+  private Directory decorateCountryDirectory(IndexDirectory<String> countryDirectory) {
+    return new IndexingDecorator<>(countryDirectory);
   }
 
   private Directory decorateDateDirectory(IndexDirectory<LocalDate> dateDirectory) {
