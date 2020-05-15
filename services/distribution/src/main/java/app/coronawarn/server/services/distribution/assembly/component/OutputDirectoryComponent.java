@@ -19,7 +19,7 @@ public class OutputDirectoryComponent {
 
   private static final Logger logger = LoggerFactory.getLogger(OutputDirectoryComponent.class);
 
-  @Value("${app.coronawarn.server.services.distribution.paths.output}")
+  @Value("${services.distribution.paths.output}")
   private String outputPath;
 
   public Directory getDirectory() {

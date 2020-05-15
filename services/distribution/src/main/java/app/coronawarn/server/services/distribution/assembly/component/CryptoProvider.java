@@ -30,10 +30,10 @@ public class CryptoProvider {
 
   private static final Logger logger = LoggerFactory.getLogger(CryptoProvider.class);
 
-  @Value("${app.coronawarn.server.services.distribution.paths.privatekey}")
+  @Value("${services.distribution.paths.privatekey}")
   private String privateKeyPath;
 
-  @Value("${app.coronawarn.server.services.distribution.paths.certificate}")
+  @Value("${services.distribution.paths.certificate}")
   private String certificatePath;
 
   @Autowired

@@ -24,7 +24,7 @@ public class RetentionPolicyRunner implements ApplicationRunner {
   @Autowired
   private DiagnosisKeyService diagnosisKeyService;
 
-  @Value("${app.coronawarn.server.services.distribution.retention_days}")
+  @Value("${services.distribution.retention_days}")
   private Integer rententionDays;
 
   @Override
