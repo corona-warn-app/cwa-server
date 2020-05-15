@@ -18,8 +18,8 @@ public class DiagnosisKeysDateDirectoryImpl extends IndexDirectoryImpl<LocalDate
   private static final String DATE_DIRECTORY = "date";
   private static final DateTimeFormatter ISO8601 = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 
-  private Collection<DiagnosisKey> diagnosisKeys;
-  private CryptoProvider cryptoProvider;
+  private final Collection<DiagnosisKey> diagnosisKeys;
+  private final CryptoProvider cryptoProvider;
 
   public DiagnosisKeysDateDirectoryImpl(Collection<DiagnosisKey> diagnosisKeys,
       CryptoProvider cryptoProvider) {

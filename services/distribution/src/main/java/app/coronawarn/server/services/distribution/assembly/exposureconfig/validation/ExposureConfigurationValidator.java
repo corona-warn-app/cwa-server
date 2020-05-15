@@ -19,7 +19,7 @@ import java.util.Arrays;
  */
 public class ExposureConfigurationValidator {
 
-  private RiskScoreParameters config;
+  private final RiskScoreParameters config;
 
   private ValidationResult errors;
 

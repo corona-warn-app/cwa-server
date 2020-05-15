@@ -4,7 +4,7 @@ import java.util.Stack;
 
 public class ImmutableStack<T> {
 
-  private Stack<T> stack;
+  private final Stack<T> stack;
 
   public ImmutableStack() {
     this.stack = new Stack<>();

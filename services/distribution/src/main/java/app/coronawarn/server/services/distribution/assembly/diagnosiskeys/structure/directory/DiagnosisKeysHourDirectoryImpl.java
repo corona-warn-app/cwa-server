@@ -16,9 +16,9 @@ public class DiagnosisKeysHourDirectoryImpl extends IndexDirectoryImpl<LocalDate
 
   private static final String HOUR_DIRECTORY = "hour";
 
-  private Collection<DiagnosisKey> diagnosisKeys;
-  private LocalDate currentDate;
-  private CryptoProvider cryptoProvider;
+  private final Collection<DiagnosisKey> diagnosisKeys;
+  private final LocalDate currentDate;
+  private final CryptoProvider cryptoProvider;
 
   public DiagnosisKeysHourDirectoryImpl(Collection<DiagnosisKey> diagnosisKeys,
       LocalDate currentDate, CryptoProvider cryptoProvider) {

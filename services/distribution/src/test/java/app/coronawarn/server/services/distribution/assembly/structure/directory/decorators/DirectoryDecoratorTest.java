@@ -52,7 +52,7 @@ public class DirectoryDecoratorTest {
     verify(decoree).getFileOnDisk();
   }
 
-  private class TestDirectoryDecorator extends DirectoryDecorator {
+  private static class TestDirectoryDecorator extends DirectoryDecorator {
 
     protected TestDirectoryDecorator(Directory directory) {
       super(directory);

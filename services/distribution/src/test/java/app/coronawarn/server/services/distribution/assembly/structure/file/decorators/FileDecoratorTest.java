@@ -45,7 +45,7 @@ public class FileDecoratorTest {
     verify(decoree).getFileOnDisk();
   }
 
-  private class TestFileDecorator extends FileDecorator {
+  private static class TestFileDecorator extends FileDecorator {
 
     protected TestFileDecorator(File file) {
       super(file);

@@ -17,8 +17,8 @@ public class DiagnosisKeysCountryDirectoryImpl extends IndexDirectoryImpl<String
   private static final String COUNTRY_DIRECTORY = "country";
   private static final String COUNTRY = "DE";
 
-  private Collection<DiagnosisKey> diagnosisKeys;
-  private CryptoProvider cryptoProvider;
+  private final Collection<DiagnosisKey> diagnosisKeys;
+  private final CryptoProvider cryptoProvider;
 
   public DiagnosisKeysCountryDirectoryImpl(Collection<DiagnosisKey> diagnosisKeys,
       CryptoProvider cryptoProvider) {

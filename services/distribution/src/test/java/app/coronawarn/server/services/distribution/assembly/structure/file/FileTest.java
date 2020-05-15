@@ -15,7 +15,7 @@ import org.junit.rules.TemporaryFolder;
 
 public class FileTest {
 
-  private byte[] bytes = "World".getBytes();
+  private final byte[] bytes = "World".getBytes();
   private File file;
 
   @Rule

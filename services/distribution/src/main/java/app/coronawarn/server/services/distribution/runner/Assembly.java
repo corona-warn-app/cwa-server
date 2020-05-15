@@ -1,7 +1,7 @@
 package app.coronawarn.server.services.distribution.runner;
 
-import app.coronawarn.server.services.distribution.assembly.component.OutputDirectoryProvider;
 import app.coronawarn.server.services.distribution.assembly.component.CwaApiStructureProvider;
+import app.coronawarn.server.services.distribution.assembly.component.OutputDirectoryProvider;
 import app.coronawarn.server.services.distribution.assembly.structure.directory.Directory;
 import app.coronawarn.server.services.distribution.assembly.structure.util.ImmutableStack;
 import java.io.IOException;
@@ -13,11 +13,11 @@ import org.springframework.boot.ApplicationRunner;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
-@Component
-@Order(2)
 /**
  * This runner assembles and writes diagnosis key bundles and the parameter configuration.
  */
+@Component
+@Order(2)
 public class Assembly implements ApplicationRunner {
 
   private static final Logger logger = LoggerFactory.getLogger(Assembly.class);
