@@ -31,6 +31,7 @@ public class RetentionPolicyRunner implements ApplicationRunner {
   public void run(ApplicationArguments args) {
     diagnosisKeyService.applyRetentionPolicy(rententionDays);
 
-    logger.debug("Retention policy applied successfully.");
+    logger.debug("Retention policy applied successfully. Deleted all entries older that {} days.",
+        rententionDays);
   }
 }
