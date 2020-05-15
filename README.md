@@ -1,5 +1,5 @@
 <h1 align="center">
-    Corona Warn App - Server
+    Corona-Warn-App Server
 </h1>
 
 <p align="center">
@@ -12,97 +12,107 @@
 <p align="center">
   <a href="#development">Development</a> •
   <a href="#service-apis">Service APIs</a> •
-  <a href="#architecture--documentation">Documentation</a> •
+  <a href="#documentation">Documentation</a> •
   <a href="#support--feedback">Support</a> •
-  <a href="#contributing">Contributing</a>
+  <a href="#how-to-contribute">How to Contribute</a> •
+  <a href="#contributors">Contributors</a> •
+  <a href="#repositories">Repositories</a> •
+  <a href="#licensing">Licensing</a>
 </p>
 
-This project has the goal to develop the official Corona-Warn-App for Germany based on the Exposure Notification API by [Apple](https://www.apple.com/covid19/contacttracing/) and [Google](https://www.google.com/covid19/exposurenotifications/).  The apps (for both iOS and Android) will collect anonymous data from nearby mobile phones using Bluetooth technology. The data will be stored locally on each device, preventing authorities’ access and control over tracing data. This repository contains the **implementation of the key server** for the Corona-Warn-App. This implementation is **work in progress** and contains alpha-quality code only.
+The goal of this project is to develop the official Corona-Warn-App for Germany based on the exposure notification API from [Apple](https://www.apple.com/covid19/contacttracing/) and [Google](https://www.google.com/covid19/exposurenotifications/). The apps (for both iOS and Android) use Bluetooth technology to exchange anonymous encrypted data with other mobile phones (on which the app is also installed) in the vicinity of an app user's phone. The data is stored locally on each user's device, preventing authorities or other parties from accessing or controlling the data. This repository contains the **implementation of the server for encryption keys** for the Corona-Warn-App. This implementation is still a **work in progress** and the code it contains is currently alpha-quality code.
 
-The Corona Warn App services are commonly referred to as cwa services in this documentation.
+In this documentation, Corona-Warn-App services are also referred to as cwa services.
 
 ## Development
 
-After you checkout this repository, we support two ways of running the application:
+After you've checked out this repository, you can run the application in one of the following ways:
 
-1. A [docker](https://www.docker.com/) based deployment on your local machine. You can either run the single components using the respective dockerfile or if you want to run the full backend using the docker-compose might be the most convenient way.
-2. A maven based runtime on your local machine. If you want to develop something in a single component this is the proposed approach.
+* As a [Docker](https://www.docker.com/)-based deployment on your local machine. You can run either: 
+    * Single components using the respective dockerfile or
+    * The full backend using the Docker Compose (which is considered the most convenient way)
+* As a [Maven](https://maven.apache.org)-based runtime on your local machine. 
+  If you want to develop something in a single component, this approach is preferable.
 
-### Docker based deployment
+### Docker-Based Deployment
 
-If you would like to use the docker based deployment you need to install docker on your local machine. To do so please consult the [official docker documentation](https://docs.docker.com/get-docker/) to download and install.
+If you want to use Docker-based deployment, you need to install Docker on your local machine. For more information about downloading and installing Docker, see the [official Docker documentation](https://docs.docker.com/get-docker/).
 
-#### Run the full cwa backend using docker compose
+#### Running the Full cwa Backend Using Docker Compose
 
-We prepared a full setup for your convenience using [docker-compose](https://docs.docker.com/compose/reference/overview/). To build the backend services run ```docker-compose build``` in the repositories root directory. After the services were built you can start the whole backend using ```docker-compose up```.
-The distribution service will only run once and then finish. If you want to trigger additional distribution runs please run ```docker-compose start distribution```.
+For your convenience, a full setup has been prepared using [Docker Compose](https://docs.docker.com/compose/reference/overview/). To build the backend services, run ```docker-compose build``` in the repository's root directory. 
 
-The docker compose contains the following services:
+Once the services are built, you can start the whole backend using ```docker-compose up```.
+The distribution service runs once and then finishes. If you want to trigger additional distribution runs, run ```docker-compose start distribution```.
 
-Service       | Description | Endpoint & Default Credentials
+The docker-compose contains the following services:
+
+Service       | Description | Endpoint and Default Credentials
 --------------|-------------|-----------
-submission    | The Corona Warn App submission service                                      | http://localhost:8080 
-distribution  | The Corona Warn App distribution service                                    | NO ENDPOINT
+submission    | The Corona-Warn-App submission service                                      | http://localhost:8080 
+distribution  | The Corona-Warn-App distribution service                                    | NO ENDPOINT
 postgres      | A [postgres] database installation             | postgres:5432
-pgadmin       | A [pgadmin](https://www.pgadmin.org/) installation for the postgres db      | http://localhost:8081 <br> Username: user@domain.com <br> Password: password
-minio         | [MinIO] is a S3 compliant object store                                      | http://localhost:8082/ <br> Access Key: cws_key_id <br> Secret Key: cws_secret_key_id
+pgadmin       | A [pgadmin](https://www.pgadmin.org/) installation for the postgres database      | http://localhost:8081 <br> Username: user@domain.com <br> Password: password
+minio         | [MinIO] is an S3-compliant object store                                      | http://localhost:8082/ <br> Access key: cws_key_id <br> Secret key: cws_secret_key_id
 
-#### Run single cwa services using docker
+#### Running Single cwa Services Using Docker
 
-If you would like to build and run a single cwa service it might be easiest to run them in a docker environment. For this you can use the prepared script in the respective cwa service directory. The docker script will first build the cwa service and then create an image for the runtime. Therefore, there are no additional dependencies for you to install.
+If you would like to build and run a single cwa service, it's considered easiest to run them in a Docker environment. You can do this using the script provided in the respective cwa service directory. The Docker script first builds the cwa service and then creates an image for the runtime, which means that there are no additional dependencies for you to install.
 
-To build and run the distribution service run:
+To build and run the distribution service, run the following command:
 
 ```bash
 ./services/distribution/build_and_run.sh
 ```
 
-To build and run the submission service run:
+To build and run the submission service, run the following command:
 
 ```bash
 ./services/submission/build_and_run.sh
 ```
 
-The submission service will be available on localhost:8080.
+The submission service is available on localhost:8080.
 
-### Maven based runtime
+### Maven-Based Runtime
 
-The maven based runtime is the right choice if you want to actively develop in one of the cwa services.
-To prepare your machine to run the cwa project locally, we recommend to install the following prerequisites:
+If you want to actively develop in one of the cwa services, the Maven-based runtime is most suitable.
+To prepare your machine to run the cwa project locally, we recommend that you first ensure that you've installed the following:
 
 - [Java OpenJDK 11](https://openjdk.java.net/)
 - [Maven 3.6](https://maven.apache.org/)
-- [Postgres] if you would like to connect a persistent storage. If no postgres connection is specified an in-memory [HSQLDB](http://hsqldb.org/) will be provided.
-- [MinIO] if you would like to run the distribution service and write the files to an object store instead of using your local file system.
+- [Postgres] (if you want to connect to a persistent storage; if a postgres connection is not specified, an in-memory [HSQLDB](http://hsqldb.org/) is provided)
+- [MinIO] (if you want to run the distribution service and write the files to an object store instead of using your local file system)
 
 #### Build
 
-After you checked out the repository run ```mvn install``` in your base directory to build the project.
+After you've checked out the repository, to build the project, run ```mvn install``` in your base directory.
 
 ### Run
 
-Navigate to the service you would like to start and run the spring-boot:run target. By default the HSQLDB will be used and after the Spring Boot application started the endpoint will be available on your local port 8080. As an example if you would like to start the submission service run:
+Navigate to the service you want to start and run the spring-boot:run target. The HSQLDB is used by default. Once the Spring Boot application has started, the endpoint is available on your local port 8080. 
+
+If you want to start the submission service run, for example, you start it as follows:
 
 ```bash
   cd services/submission/
   mvn spring-boot:run
 ```
 
-If you want to use a postgres DB instead please use the postgres profile when starting the application:
+If you want to use a Postgres database instead, use the Postgres profile when starting the application:
 
 ```bash
   cd services/submission/
   mvn spring-boot:run -Dspring-boot.run.profiles=postgres
 ```
 
-In order to enable the S3 integration in the cwa distribution service, please use the s3 profile when starting the application.
+To enable the S3 integration in the cwa distribution service, use the S3 profile when starting the application:
 
 ```bash
   cd services/distribution/
   mvn spring-boot:run -Dspring-boot.run.profiles=s3
 ```
 
-Of course you can combine multiple profiles.
+You can also combine multiple profiles if necessary:
 
 ```bash
   cd services/distribution/
@@ -111,28 +121,30 @@ Of course you can combine multiple profiles.
 
 ### Debugging
 
-You may run the application with the spring profile `dev` to enable the `DEBUG` log-level.
+To enable the `DEBUG` log level, you can run the application using the Spring `dev` profile.
 
 ```bash
 mvn spring-boot:run -Dspring-boot.run.profiles=dev
 ```
 
-To be able to set breakpoints (e.g. in IntelliJ), it may be necessary to use the parameter ```-Dspring-boot.run.fork=false```.
+To set breakpoints (in IntelliJ, for example), you can use the ```-Dspring-boot.run.fork=false``` parameter.
 
 ## Service APIs
 
-The API which is being exposed by our backend services is documented in an [OpenAPI](https://www.openapis.org/) specification. The following table shows the location where you can find the specification files:
+The API that is being exposed by the backend services is documented in an [OpenAPI](https://www.openapis.org/) specification. The specification files are available at the following locations: 
 
 Service      | OpenAPI Specification
 -------------|-------------
 Submission Service        | https://github.com/corona-warn-app/cwa-server/raw/master/services/submission/api_v1.json
 Distribution Service      | https://github.com/corona-warn-app/cwa-server/raw/master/services/distribution/api_v1.json
 
-## Architecture & Documentation
+## Documentation
 
-The full documentation for the Corona-Warn-App can be found in the [cwa-documentation] repository. Please refer to this repository for technical documents, UI/UX specifications, architectures, and whitepapers of this implementation.
+The full documentation for the Corona-Warn-App can be found in the [cwa-documentation] repository. This repository contains technical documents, UI/UX specifications, architecture information, and whitepapers for this implementation.
 
-## Support & Feedback
+## Support and Feedback
+
+The following channels are available for discussions, feedback, and support requests:
 
 | Type                     | Channel                                                |
 | ------------------------ | ------------------------------------------------------ |
@@ -141,20 +153,22 @@ The full documentation for the Corona-Warn-App can be found in the [cwa-document
 | **Backend Issue**    | <a href="https://github.com/corona-warn-app/cwa-server/issues/new/choose" title="Open Backend Issue"><img src="https://img.shields.io/github/issues/corona-warn-app/cwa-server/backend.svg?style=flat-square"></a>  |
 | **Other Requests**    | <a href="mailto:corona-warn-app.opensource@sap.com" title="Email CWD Team"><img src="https://img.shields.io/badge/email-CWD%20team-green?logo=mail.ru&style=flat-square&logoColor=white"></a>   |
 
-## Contributing
+## How to Contribute
 
-Contributions and feedback are encouraged and always welcome. Please see our [Contribution Guidelines](./CONTRIBUTING.md) for details on how to contribute, the project structure and additional details you need to know to work with us. By participating in this project, you agree to abide by its [Code of Conduct](./CODE_OF_CONDUCT.md).
+Contribution and feedback are encouraged and always welcome. For more information about how to contribute, the project structure, as well as additional contribution information, see our [Contribution Guidelines](./CONTRIBUTING.md). By participating in this project, you agree to abide by its [Code of Conduct](./CODE_OF_CONDUCT.md) at all times.
 
 ## Contributors
 
-The German government has asked SAP and Deutsche Telekom to develop the Corona-Warn-App. Deutsche Telekom is providing the infrastructure technology and will operate and run the backend for the app in a safe, scalable, and stable manner. SAP is responsible for the development of the app development and the exposure notification backend. Therefore, development teams of SAP and T-Systems are contributing to this project. At the same time, our commitment to open source means that we are enabling -and encouraging- all interested parties to contribute and become part of its developer community. 
+The German government requested SAP SE and Deutsche Telekom AG to develop the Corona-Warn-App. Deutsche Telekom is providing the infrastructure technology and is to operate and run the backend for the app in a safe, scalable, and stable manner. SAP is responsible for app development and the exposure notification backend. Development teams from both SAP and Deutsche Telekom are therefore contributing to this project. At the same time, commitment to open source means that all interested parties are being enabled **and encouraged** to contribute and become part of this developer community. 
 
 ## Repositories
 
+The following public repositories are available for the Corona-Warn-App:
+
 | Repository          | Description                                                           |
 | ------------------- | --------------------------------------------------------------------- |
-| [cwa-documentation] | Project overview, general documentation, and white papers.            |
-| [cwa-server]        | Backend implementation for the Apple/Google exposure notification API.|
+| [cwa-documentation] | Project overview, general documentation, and white papers            |
+| [cwa-server]        | Backend implementation for the Apple/Google exposure notification API|
 
 [cwa-documentation]: https://github.com/corona-warn-app/cwa-documentation
 [cwa-server]: https://github.com/corona-warn-app/cwa-server
@@ -162,4 +176,5 @@ The German government has asked SAP and Deutsche Telekom to develop the Corona-W
 [MinIO]: https://min.io/
 ---
 
-This project is licensed under the **Apache-2.0** license. For more information, see the [LICENSE](./LICENSE) file.
+## Licensing
+This project is licensed under the **Apache 2.0** license. For more information, see the [LICENSE](./LICENSE) file.
