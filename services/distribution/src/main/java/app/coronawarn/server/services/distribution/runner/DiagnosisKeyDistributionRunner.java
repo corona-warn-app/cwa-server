@@ -24,7 +24,7 @@ import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
 @Component
-@Order(2)
+@Order(3)
 /**
  * This runner retrieves stored diagnosis keys, the generates and persists the respective diagnosis
  * key bundles.

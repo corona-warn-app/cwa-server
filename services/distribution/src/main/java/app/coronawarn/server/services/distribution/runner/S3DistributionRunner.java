@@ -16,7 +16,7 @@ import org.springframework.stereotype.Component;
  * This runner will sync the base working directory to the S3.
  */
 @Component
-@Order(3)
+@Order(4)
 public class S3DistributionRunner implements ApplicationRunner {
 
   private Logger logger = LoggerFactory.getLogger(this.getClass());
