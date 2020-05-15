@@ -28,10 +28,10 @@ In this documentation, Corona-Warn-App services are also referred to as cwa serv
 
 After you've checked out this repository, you can run the application in one of the following ways:
 
-* As a [Docker](https://www.docker.com/)-based deployment on your local machine. You can run either: 
+* As a [Docker](https://www.docker.com/)-based deployment on your local machine. You can run either:
   * Single components using the respective Dockerfile or
   * The full backend using the Docker Compose (which is considered the most convenient way)
-* As a [Maven](https://maven.apache.org)-based runtime on your local machine. 
+* As a [Maven](https://maven.apache.org)-based build on your local machine.
   If you want to develop something in a single component, this approach is preferable.
 
 ### Docker-Based Deployment
@@ -49,11 +49,11 @@ The docker-compose contains the following services:
 
 Service       | Description | Endpoint and Default Credentials
 --------------|-------------|-----------
-submission    | The Corona-Warn-App submission service                                      | http://localhost:8080 
-distribution  | The Corona-Warn-App distribution service                                    | NO ENDPOINT
-postgres      | A [postgres] database installation             | postgres:5432
+submission    | The Corona-Warn-App submission service                                            | http://localhost:8080 
+distribution  | The Corona-Warn-App distribution service                                          | NO ENDPOINT
+postgres      | A [postgres] database installation                                                | postgres:5432 <br> Username: postgres <br> Password: x24GeYzDp7kaZ8B
 pgadmin       | A [pgadmin](https://www.pgadmin.org/) installation for the postgres database      | http://localhost:8081 <br> Username: user@domain.com <br> Password: password
-minio         | [MinIO] is an S3-compliant object store                                      | http://localhost:8082/ <br> Access key: cws_key_id <br> Secret key: cws_secret_key_id
+minio         | [MinIO] is an S3-compliant object store                                           | http://localhost:8082/ <br> Access key: cws_key_id <br> Secret key: cws_secret_key_id
 
 #### Running Single cwa Services Using Docker
 
@@ -73,7 +73,7 @@ To build and run the submission service, run the following command:
 
 The submission service is available on localhost:8080.
 
-### Maven-Based Runtime
+### Maven-Based Build
 
 If you want to actively develop in one of the cwa services, the Maven-based runtime is most suitable.
 To prepare your machine to run the cwa project locally, we recommend that you first ensure that you've installed the following:
@@ -89,7 +89,8 @@ After you've checked out the repository, to build the project, run ```mvn instal
 
 ### Run
 
-Navigate to the service you want to start and run the spring-boot:run target. The HSQLDB is used by default. Once the Spring Boot application has started, the endpoint is available on your local port 8080.
+Navigate to the service you want to start and run the spring-boot:run target. The HSQLDB is used by default.
+When you start the submission service, the endpoint is available on your local port 8080.
 
 If you want to start the submission service, for example, you start it as follows:
 
