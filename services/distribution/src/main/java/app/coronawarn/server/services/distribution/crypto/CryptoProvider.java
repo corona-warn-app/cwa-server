@@ -17,6 +17,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.io.Resource;
 import org.springframework.core.io.ResourceLoader;
 import org.springframework.stereotype.Component;
 
@@ -72,9 +73,8 @@ public class CryptoProvider {
    */
   public PrivateKey getPrivateKey() {
     if (this.privateKey == null) {
-      try {
-        InputStream privateKeyStream = resourceLoader.getResource(privateKeyPath)
-            .getInputStream();
+      Resource privateKeyResource = resourceLoader.getResource(privateKeyPath);
+      try (InputStream privateKeyStream = privateKeyResource.getInputStream()) {
         this.privateKey = getPrivateKeyFromStream(privateKeyStream);
       } catch (IOException e) {
         logger.error("Failed to load private key from {}", privateKeyPath, e);
@@ -89,8 +89,8 @@ public class CryptoProvider {
    */
   public Certificate getCertificate() {
     if (this.certificate == null) {
-      try {
-        InputStream certStream = resourceLoader.getResource(certificatePath).getInputStream();
+      Resource certResource = resourceLoader.getResource(certificatePath);
+      try (InputStream certStream = certResource.getInputStream()) {
         this.certificate = getCertificateFromStream(certStream);
       } catch (IOException | CertificateException e) {
         logger.error("Failed to load certificate from {}", certificatePath, e);
