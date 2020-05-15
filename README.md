@@ -66,7 +66,15 @@ AWS_SECRET_ACCESS_KEY | The secret access key
 cwa.objectstore.endpoint | The S3 endpoint
 cwa.objectstore.bucket | The S3 bucket name
 
-### Build and run Docker Images
+### Build and run Docker Compose (full stack)
+To start:
+- Run `docker-compose up`
+- After the initial build and startup, an initial "distribution" will run
+
+To start additional "distribution" runs:
+- Run `docker-compose start distribution`
+
+### Build and run single Docker Images
 
 First download and install [Docker](https://www.docker.com/products/docker-desktop).
 
