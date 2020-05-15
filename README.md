@@ -29,8 +29,8 @@ In this documentation, Corona-Warn-App services are also referred to as cwa serv
 After you've checked out this repository, you can run the application in one of the following ways:
 
 * As a [Docker](https://www.docker.com/)-based deployment on your local machine. You can run either: 
-    * Single components using the respective dockerfile or
-    * The full backend using the Docker Compose (which is considered the most convenient way)
+  * Single components using the respective Dockerfile or
+  * The full backend using the Docker Compose (which is considered the most convenient way)
 * As a [Maven](https://maven.apache.org)-based runtime on your local machine. 
   If you want to develop something in a single component, this approach is preferable.
 
@@ -78,10 +78,10 @@ The submission service is available on localhost:8080.
 If you want to actively develop in one of the cwa services, the Maven-based runtime is most suitable.
 To prepare your machine to run the cwa project locally, we recommend that you first ensure that you've installed the following:
 
-- [Java OpenJDK 11](https://openjdk.java.net/)
-- [Maven 3.6](https://maven.apache.org/)
-- [Postgres] (if you want to connect to a persistent storage; if a postgres connection is not specified, an in-memory [HSQLDB](http://hsqldb.org/) is provided)
-- [MinIO] (if you want to run the distribution service and write the files to an object store instead of using your local file system)
+* [Java OpenJDK 11](https://openjdk.java.net/)
+* [Maven 3.6](https://maven.apache.org/)
+* [Postgres] (if you want to connect to a persistent storage; if a postgres connection is not specified, an in-memory [HSQLDB] is provided)
+* [MinIO] (if you want to run the distribution service and write the files to an object store instead of using your local file system)
 
 #### Build
 
@@ -89,16 +89,16 @@ After you've checked out the repository, to build the project, run ```mvn instal
 
 ### Run
 
-Navigate to the service you want to start and run the spring-boot:run target. The HSQLDB is used by default. Once the Spring Boot application has started, the endpoint is available on your local port 8080. 
+Navigate to the service you want to start and run the spring-boot:run target. The HSQLDB is used by default. Once the Spring Boot application has started, the endpoint is available on your local port 8080.
 
-If you want to start the submission service run, for example, you start it as follows:
+If you want to start the submission service, for example, you start it as follows:
 
 ```bash
   cd services/submission/
   mvn spring-boot:run
 ```
 
-If you want to use a Postgres database instead, use the Postgres profile when starting the application:
+If you want to use a Postgres database instead of the default in-memory HSQLDB, use the Postgres profile when starting the application:
 
 ```bash
   cd services/submission/
@@ -116,7 +116,7 @@ You can also combine multiple profiles if necessary:
 
 ```bash
   cd services/distribution/
-  mvn spring-boot:run -Dspring-boot.run.profiles=dev, postgres,s3
+  mvn spring-boot:run -Dspring-boot.run.profiles=dev,postgres,s3
 ```
 
 ### Debugging
@@ -127,7 +127,7 @@ To enable the `DEBUG` log level, you can run the application using the Spring `d
 mvn spring-boot:run -Dspring-boot.run.profiles=dev
 ```
 
-To set breakpoints (in IntelliJ, for example), you can use the ```-Dspring-boot.run.fork=false``` parameter.
+To be able to set breakpoints (e.g. in IntelliJ), it may be necessary to use the ```-Dspring-boot.run.fork=false``` parameter.
 
 ## Service APIs
 
@@ -159,11 +159,11 @@ Contribution and feedback are encouraged and always welcome. For more informatio
 
 ## Contributors
 
-The German government requested SAP SE and Deutsche Telekom AG to develop the Corona-Warn-App. Deutsche Telekom is providing the infrastructure technology and is to operate and run the backend for the app in a safe, scalable, and stable manner. SAP is responsible for app development and the exposure notification backend. Development teams from both SAP and Deutsche Telekom are therefore contributing to this project. At the same time, commitment to open source means that all interested parties are being enabled **and encouraged** to contribute and become part of this developer community. 
+The German government requested SAP SE and Deutsche Telekom AG to develop the Corona-Warn-App. Deutsche Telekom is providing the infrastructure technology and is to operate and run the backend for the app in a safe, scalable, and stable manner. SAP is responsible for app development and the exposure notification backend. Development teams from both SAP and Deutsche Telekom are therefore contributing to this project. At the same time, commitment to open source means that all interested parties are being enabled **and encouraged** to contribute and become part of this developer community.
 
 ## Repositories
 
-The following public repositories are available for the Corona-Warn-App:
+The following public repositories are currently available for the Corona-Warn-App:
 
 | Repository          | Description                                                           |
 | ------------------- | --------------------------------------------------------------------- |
@@ -174,7 +174,9 @@ The following public repositories are available for the Corona-Warn-App:
 [cwa-server]: https://github.com/corona-warn-app/cwa-server
 [Postgres]: https://www.postgresql.org/
 [MinIO]: https://min.io/
+[HSQLDB]: http://hsqldb.org/
 ---
 
 ## Licensing
+
 This project is licensed under the **Apache 2.0** license. For more information, see the [LICENSE](./LICENSE) file.
