@@ -17,27 +17,27 @@ services:
       POSTGRESQL_USER: postgres
     networks:
       - cwa
-  # distribution:
-  #   build:
-  #     context: ./
-  #     dockerfile: ./services/distribution/DockerfileCron
-  #   depends_on:
-  #    - postgres
-  #    - minio
-  #   environment: 
-  #     SPRING_PROFILES_ACTIVE: cloud
-  #     POSTGRESQL_SERVICE_PORT: '5432'
-  #     POSTGRESQL_SERVICE_HOST: postgres
-  #     POSTGRESQL_DATABASE: cwa
-  #     POSTGRESQL_PASSWORD: x24GeYzDp7kaZ8B
-  #     POSTGRESQL_USER: postgres
-  #     AWS_ACCESS_KEY_ID: cws_key_id
-  #     AWS_SECRET_ACCESS_KEY: cws_secret_key_id
-  #     cwa.objectstore.endpoint: http://minio:9000
-  #     cwa.objectstore.bucket: cwa
-  #     app.coronawarn.server.services.distribution.paths.output: /tmp/distribution
-  #   networks:
-  #     - cwa
+  distribution:
+    build:
+      context: ./
+      dockerfile: ./services/distribution/Dockerfile
+    depends_on:
+     - postgres
+     - minio
+    environment:
+      SPRING_PROFILES_ACTIVE: cloud
+      POSTGRESQL_SERVICE_PORT: '5432'
+      POSTGRESQL_SERVICE_HOST: postgres
+      POSTGRESQL_DATABASE: cwa
+      POSTGRESQL_PASSWORD: x24GeYzDp7kaZ8B
+      POSTGRESQL_USER: postgres
+      AWS_ACCESS_KEY_ID: cws_key_id
+      AWS_SECRET_ACCESS_KEY: cws_secret_key_id
+      cwa.objectstore.endpoint: http://minio:9000
+      cwa.objectstore.bucket: cwa
+      app.coronawarn.server.services.distribution.paths.output: /tmp/distribution
+    networks:
+      - cwa
   postgres:
     image: postgres:9.6
     restart: always
