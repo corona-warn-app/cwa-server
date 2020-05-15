@@ -3,7 +3,7 @@ package app.coronawarn.server.services.distribution;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import app.coronawarn.server.common.persistence.service.DiagnosisKeyService;
-import app.coronawarn.server.services.distribution.crypto.CryptoProvider;
+import app.coronawarn.server.services.distribution.assembly.component.CryptoProvider;
 import app.coronawarn.server.services.distribution.objectstore.S3Publisher;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;

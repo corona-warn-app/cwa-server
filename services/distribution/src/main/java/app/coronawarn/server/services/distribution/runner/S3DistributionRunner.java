@@ -1,5 +1,6 @@
 package app.coronawarn.server.services.distribution.runner;
 
+import app.coronawarn.server.services.distribution.assembly.component.OutputDirectoryComponent;
 import app.coronawarn.server.services.distribution.objectstore.S3Publisher;
 import java.io.IOException;
 import java.nio.file.Path;
@@ -16,13 +17,13 @@ import org.springframework.stereotype.Component;
  * This runner will sync the base working directory to the S3.
  */
 @Component
-@Order(4)
+@Order(3)
 public class S3DistributionRunner implements ApplicationRunner {
 
   private Logger logger = LoggerFactory.getLogger(this.getClass());
 
-  @Value("${app.coronawarn.server.services.distribution.paths.output}")
-  private String workdir;
+  @Autowired
+  private OutputDirectoryComponent outputDirectoryComponent;
 
   @Autowired
   private S3Publisher s3Publisher;
@@ -30,8 +31,7 @@ public class S3DistributionRunner implements ApplicationRunner {
   @Override
   public void run(ApplicationArguments args) {
     try {
-      Path pathToDistribute = Path.of(workdir).toAbsolutePath();
-
+      Path pathToDistribute = outputDirectoryComponent.getFileOnDisk().toPath().toAbsolutePath();
       s3Publisher.publishFolder(pathToDistribute);
     } catch (IOException | UnsupportedOperationException e) {
       logger.error("Distribution failed.", e);
