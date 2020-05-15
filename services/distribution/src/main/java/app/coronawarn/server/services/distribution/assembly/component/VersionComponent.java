@@ -3,6 +3,7 @@ package app.coronawarn.server.services.distribution.assembly.component;
 import app.coronawarn.server.services.distribution.assembly.structure.directory.Directory;
 import app.coronawarn.server.services.distribution.assembly.structure.directory.IndexDirectory;
 import app.coronawarn.server.services.distribution.assembly.structure.directory.IndexDirectoryImpl;
+import app.coronawarn.server.services.distribution.assembly.structure.directory.decorator.IndexingDecorator;
 import java.util.Set;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -29,6 +30,6 @@ public class VersionComponent {
     versionDirectory.addDirectoryToAll(__ -> exposureConfigurationComponent.getExposureConfiguration());
     versionDirectory.addDirectoryToAll(__ -> diagnosisKeysComponent.getDiagnosisKeys());
 
-    return versionDirectory;
+    return new IndexingDecorator<>(versionDirectory);
   }
 }
