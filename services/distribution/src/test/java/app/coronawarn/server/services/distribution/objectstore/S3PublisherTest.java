@@ -23,11 +23,11 @@ import org.springframework.core.io.ClassPathResource;
 @TestInstance(Lifecycle.PER_CLASS)
 public class S3PublisherTest {
 
-  private String testRunId = "testing/cwa/" + UUID.randomUUID().toString() + "/";
+  private final String testRunId = "testing/cwa/" + UUID.randomUUID().toString() + "/";
 
-  private String rootTestFolder = "objectstore/publisher/";
+  private final String rootTestFolder = "objectstore/publisher/";
 
-  private String exampleFile = rootTestFolder + "rootfile";
+  private final String exampleFile = rootTestFolder + "rootfile";
 
   @Autowired
   private S3Publisher s3Publisher;

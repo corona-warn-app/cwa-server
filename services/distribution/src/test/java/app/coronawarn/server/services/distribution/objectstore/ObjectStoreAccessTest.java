@@ -20,11 +20,11 @@ import org.springframework.core.io.ClassPathResource;
 public class ObjectStoreAccessTest {
 
 
-  private Logger logger = LoggerFactory.getLogger(this.getClass());
+  private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
-  private String testRunId = "testing/cwa/" + UUID.randomUUID().toString() + "/";
+  private final String testRunId = "testing/cwa/" + UUID.randomUUID().toString() + "/";
 
-  private String textFile = "objectstore/store-test-file";
+  private final String textFile = "objectstore/store-test-file";
 
   @Autowired
   private ObjectStoreAccess objectStoreAccess;
