@@ -1,13 +1,12 @@
 package app.coronawarn.server.services.distribution.runner;
 
-import app.coronawarn.server.services.distribution.assembly.component.OutputDirectoryComponent;
+import app.coronawarn.server.services.distribution.assembly.component.OutputDirectory;
 import app.coronawarn.server.services.distribution.objectstore.S3Publisher;
 import java.io.IOException;
 import java.nio.file.Path;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.core.annotation.Order;
@@ -23,7 +22,7 @@ public class S3DistributionRunner implements ApplicationRunner {
   private Logger logger = LoggerFactory.getLogger(this.getClass());
 
   @Autowired
-  private OutputDirectoryComponent outputDirectoryComponent;
+  private OutputDirectory outputDirectory;
 
   @Autowired
   private S3Publisher s3Publisher;
@@ -31,7 +30,7 @@ public class S3DistributionRunner implements ApplicationRunner {
   @Override
   public void run(ApplicationArguments args) {
     try {
-      Path pathToDistribute = outputDirectoryComponent.getFileOnDisk().toPath().toAbsolutePath();
+      Path pathToDistribute = outputDirectory.getFileOnDisk().toPath().toAbsolutePath();
       s3Publisher.publishFolder(pathToDistribute);
     } catch (IOException | UnsupportedOperationException e) {
       logger.error("Distribution failed.", e);

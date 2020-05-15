@@ -2,8 +2,6 @@ package app.coronawarn.server.services.distribution.assembly.component;
 
 import app.coronawarn.server.services.distribution.assembly.structure.directory.Directory;
 import app.coronawarn.server.services.distribution.assembly.structure.directory.DirectoryImpl;
-import app.coronawarn.server.services.distribution.runner.AssemblyRunner;
-import java.io.File;
 import java.io.IOException;
 import org.apache.commons.io.FileUtils;
 import org.slf4j.Logger;
@@ -15,9 +13,9 @@ import org.springframework.stereotype.Component;
  * Creates and clears a {@link Directory} on disk, which is defined by the application properties.
  */
 @Component
-public class OutputDirectoryComponent {
+public class OutputDirectory {
 
-  private static final Logger logger = LoggerFactory.getLogger(OutputDirectoryComponent.class);
+  private static final Logger logger = LoggerFactory.getLogger(OutputDirectory.class);
 
   @Value("${services.distribution.paths.output}")
   private String outputPath;
