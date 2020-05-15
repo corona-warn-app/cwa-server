@@ -9,8 +9,7 @@ package app.coronawarn.server.services.submission.verification;
  * COVID-19 positive test. This TAN is transferred to the mobile app, which will then in turn use
  * this TAN for getting authorization on uploading the diagnosis keys.</li>
  * <li>TELETAN: This TAN will be issued by the Health Authority over the phone. The affected
- * patient
- * needs to enter this TELETAN in the mobile app when uploading the diagnosis keys.</li>
+ * patient needs to enter this TELETAN in the mobile app when uploading the diagnosis keys.</li>
  * </ol>
  */
 public enum AuthorizationType {
@@ -49,7 +48,7 @@ public enum AuthorizationType {
    *
    * @param authKey the TAN key, e.g. "AB88XX3Z"
    * @return true, in case it is a well formed TAN for this authorization type. This does not
-   * necessarily mean, that the TAN is valid.
+   *         necessarily mean, that the TAN is valid.
    */
   public abstract boolean isValidSyntax(String authKey);
 

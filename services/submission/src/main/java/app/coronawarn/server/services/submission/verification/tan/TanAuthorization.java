@@ -10,7 +10,9 @@ import java.util.regex.Pattern;
  */
 public class TanAuthorization {
 
-  /** the rough syntax of how a the auth header value should look like. Note: Not yet final. */
+  /**
+   * the rough syntax of how a the auth header value should look like. Note: Not yet final.
+   */
   private static final Pattern SYNTAX = Pattern.compile("^(TAN|TELETAN) ([ a-zA-Z0-9]{6,30})$");
 
   private AuthorizationType authType;
@@ -39,8 +41,8 @@ public class TanAuthorization {
       return false;
     }
     TanAuthorization that = (TanAuthorization) o;
-    return getAuthType() == that.getAuthType() &&
-        Objects.equals(getKey(), that.getKey());
+    return getAuthType() == that.getAuthType()
+        && Objects.equals(getKey(), that.getKey());
   }
 
   @Override
@@ -64,14 +66,14 @@ public class TanAuthorization {
     var matcher = SYNTAX.matcher(authValue.trim());
 
     if (!matcher.matches()) {
-      throw new IllegalTanAuthorizationFormatException((authValue));
+      throw new IllegalTanAuthorizationFormatException(authValue);
     }
 
     AuthorizationType authType = AuthorizationType.valueOf(matcher.group(1));
     String authKey = matcher.group(2);
 
     if (!authType.isValidSyntax(authKey)) {
-      throw new IllegalTanAuthorizationKeyFormatException((authValue));
+      throw new IllegalTanAuthorizationKeyFormatException(authValue);
     }
 
     return new TanAuthorization(authType, authKey);
