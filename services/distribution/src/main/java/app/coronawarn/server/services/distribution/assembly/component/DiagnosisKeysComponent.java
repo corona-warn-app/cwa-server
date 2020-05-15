@@ -2,6 +2,7 @@ package app.coronawarn.server.services.distribution.assembly.component;
 
 import app.coronawarn.server.common.persistence.domain.DiagnosisKey;
 import app.coronawarn.server.common.persistence.repository.DiagnosisKeyRepository;
+import app.coronawarn.server.common.persistence.service.DiagnosisKeyService;
 import app.coronawarn.server.services.distribution.assembly.diagnosiskeys.structure.directory.DiagnosisKeysDirectoryImpl;
 import app.coronawarn.server.services.distribution.assembly.structure.directory.Directory;
 import java.util.Collection;
@@ -20,7 +21,7 @@ public class DiagnosisKeysComponent {
   private static final Logger logger = LoggerFactory.getLogger(DiagnosisKeysComponent.class);
 
   @Autowired
-  private DiagnosisKeyRepository diagnosisKeyRepository;
+  private DiagnosisKeyService diagnosisKeyService;
 
   @Autowired
   private CryptoProvider cryptoProvider;
@@ -32,7 +33,7 @@ public class DiagnosisKeysComponent {
 
   private Collection<DiagnosisKey> readDiagnosisKeys() {
     logger.debug("Querying diagnosis keys from the database...");
-    return diagnosisKeyRepository.findAll();
+    return diagnosisKeyService.getDiagnosisKeys();
   }
 
 }
