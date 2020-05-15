@@ -3,6 +3,8 @@ package app.coronawarn.server.services.distribution.objectstore;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -47,6 +49,20 @@ public class S3Publisher {
       stream.filter(Files::isRegularFile).forEach(file -> publishFile(file, path));
     }
   }
+
+  public void publishFolderFast(Path path) throws IOException, InterruptedException {
+    if (!path.toFile().isDirectory()) {
+      throw new UnsupportedOperationException("Supplied path is not a folder: " + path);
+    }
+
+    try (Stream<Path> stream = Files.walk(path, Integer.MAX_VALUE)) {
+      var files = stream.filter(Files::isRegularFile).map(f -> f.toFile()).collect(Collectors.toList());
+      this.objectStoreAccess.putObjects("cktesting", new ArrayList(files));
+    }
+
+  }
+
+
 
   /**
    * Deletes a folder on S3.

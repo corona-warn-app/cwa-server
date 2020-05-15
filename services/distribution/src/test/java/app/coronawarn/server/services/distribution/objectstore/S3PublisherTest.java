@@ -39,6 +39,14 @@ public class S3PublisherTest {
     s3Publisher.publishFolder(start);
   }
 
+
+  @Test
+  public void publishFolderFast() throws IOException, InterruptedException {
+    Path start = Paths.get(getFile(rootTestFolder).getPath());
+
+    s3Publisher.publishFolderFast(start);
+  }
+
   @Test
   public void publishSingleFile() throws IOException {
     Path fileToPublish = getFile(exampleFile).toPath();
