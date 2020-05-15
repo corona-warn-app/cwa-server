@@ -1,7 +1,6 @@
 package app.coronawarn.server.services.distribution.assembly.component;
 
 import app.coronawarn.server.common.persistence.domain.DiagnosisKey;
-import app.coronawarn.server.common.persistence.repository.DiagnosisKeyRepository;
 import app.coronawarn.server.common.persistence.service.DiagnosisKeyService;
 import app.coronawarn.server.services.distribution.assembly.diagnosiskeys.structure.directory.DiagnosisKeysDirectoryImpl;
 import app.coronawarn.server.services.distribution.assembly.structure.directory.Directory;
@@ -12,8 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 /**
- * Retrieves stored diagnosis keys, then assembles and persists the respective diagnosis key
- * bundles.
+ * Retrieves stored diagnosis keys and builds a {@link DiagnosisKeysDirectoryImpl} with them.
  */
 @Component
 public class DiagnosisKeysComponent {

@@ -11,13 +11,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 /**
- * Reads the exposure configuration parameters from the respective file in the class path, then
- * assembles and persists the respective exposure configuration bundle.
+ * Reads the exposure configuration parameters from the respective file in the class path and builds
+ * a {@link ExposureConfigurationDirectoryImpl} with them.
  */
 @Component
 public class ExposureConfigurationComponent {
 
-  private static final Logger logger = LoggerFactory.getLogger(ExposureConfigurationComponent.class);
+  private static final Logger logger = LoggerFactory
+      .getLogger(ExposureConfigurationComponent.class);
 
   @Autowired
   private CryptoProvider cryptoProvider;
