@@ -18,9 +18,9 @@ import org.springframework.stereotype.Component;
 /**
  * This runner assembles and writes diagnosis key bundles and the parameter configuration.
  */
-public class AssemblyRunner implements ApplicationRunner {
+public class Assembly implements ApplicationRunner {
 
-  private static final Logger logger = LoggerFactory.getLogger(AssemblyRunner.class);
+  private static final Logger logger = LoggerFactory.getLogger(Assembly.class);
 
   @Autowired
   private OutputDirectory outputDirectory;

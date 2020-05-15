@@ -16,10 +16,10 @@ import org.springframework.stereotype.Component;
  */
 @Component
 @Order(1)
-public class RetentionPolicyRunner implements ApplicationRunner {
+public class RetentionPolicy implements ApplicationRunner {
 
   private static final Logger logger = LoggerFactory
-      .getLogger(RetentionPolicyRunner.class);
+      .getLogger(RetentionPolicy.class);
 
   @Autowired
   private DiagnosisKeyService diagnosisKeyService;

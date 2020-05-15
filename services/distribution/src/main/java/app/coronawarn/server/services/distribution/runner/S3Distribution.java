@@ -17,7 +17,7 @@ import org.springframework.stereotype.Component;
  */
 @Component
 @Order(3)
-public class S3DistributionRunner implements ApplicationRunner {
+public class S3Distribution implements ApplicationRunner {
 
   private Logger logger = LoggerFactory.getLogger(this.getClass());
 
