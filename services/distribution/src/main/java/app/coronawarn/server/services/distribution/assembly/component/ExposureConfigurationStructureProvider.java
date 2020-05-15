@@ -15,10 +15,10 @@ import org.springframework.stereotype.Component;
  * a {@link ExposureConfigurationDirectoryImpl} with them.
  */
 @Component
-public class ExposureConfiguration {
+public class ExposureConfigurationStructureProvider {
 
   private static final Logger logger = LoggerFactory
-      .getLogger(ExposureConfiguration.class);
+      .getLogger(ExposureConfigurationStructureProvider.class);
 
   @Autowired
   private CryptoProvider cryptoProvider;

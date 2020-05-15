@@ -1,7 +1,7 @@
 package app.coronawarn.server.services.distribution.runner;
 
-import app.coronawarn.server.services.distribution.assembly.component.OutputDirectory;
-import app.coronawarn.server.services.distribution.assembly.component.Version;
+import app.coronawarn.server.services.distribution.assembly.component.OutputDirectoryProvider;
+import app.coronawarn.server.services.distribution.assembly.component.CwaApiStructureProvider;
 import app.coronawarn.server.services.distribution.assembly.structure.directory.Directory;
 import app.coronawarn.server.services.distribution.assembly.structure.util.ImmutableStack;
 import java.io.IOException;
@@ -23,16 +23,16 @@ public class Assembly implements ApplicationRunner {
   private static final Logger logger = LoggerFactory.getLogger(Assembly.class);
 
   @Autowired
-  private OutputDirectory outputDirectory;
+  private OutputDirectoryProvider outputDirectoryProvider;
 
   @Autowired
-  private Version version;
+  private CwaApiStructureProvider cwaApiStructureProvider;
 
   @Override
   public void run(ApplicationArguments args) throws IOException {
-    Directory outputDirectory = this.outputDirectory.getDirectory();
-    outputDirectory.addDirectory(version.getDirectory());
-    this.outputDirectory.clear();
+    Directory outputDirectory = this.outputDirectoryProvider.getDirectory();
+    outputDirectory.addDirectory(cwaApiStructureProvider.getDirectory());
+    this.outputDirectoryProvider.clear();
     logger.debug("Preparing files...");
     outputDirectory.prepare(new ImmutableStack<>());
     logger.debug("Writing files...");

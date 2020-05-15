@@ -31,7 +31,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration(classes = {CryptoProvider.class},
     initializers = ConfigFileApplicationContextInitializer.class)
-public class DiagnosisKeysDirectoryTest {
+public class DiagnosisKeysStructureProviderDirectoryTest {
 
   @Autowired
   CryptoProvider cryptoProvider;

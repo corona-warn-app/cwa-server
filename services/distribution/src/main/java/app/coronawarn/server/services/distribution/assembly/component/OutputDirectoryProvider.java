@@ -13,9 +13,9 @@ import org.springframework.stereotype.Component;
  * Creates and clears a {@link Directory} on disk, which is defined by the application properties.
  */
 @Component
-public class OutputDirectory {
+public class OutputDirectoryProvider {
 
-  private static final Logger logger = LoggerFactory.getLogger(OutputDirectory.class);
+  private static final Logger logger = LoggerFactory.getLogger(OutputDirectoryProvider.class);
 
   @Value("${services.distribution.paths.output}")
   private String outputPath;

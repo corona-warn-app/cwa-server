@@ -12,7 +12,7 @@ import org.junit.jupiter.api.Test;
  *
  * There should never be any deployment when this test is failing.
  */
-public class ExposureConfigurationMasterFileTest {
+public class ExposureConfigurationStructureProviderMasterFileTest {
 
   private static final ValidationResult SUCCESS = new ValidationResult();
 

@@ -1,6 +1,6 @@
 package app.coronawarn.server.services.distribution.runner;
 
-import app.coronawarn.server.services.distribution.assembly.component.OutputDirectory;
+import app.coronawarn.server.services.distribution.assembly.component.OutputDirectoryProvider;
 import app.coronawarn.server.services.distribution.objectstore.S3Publisher;
 import java.io.IOException;
 import java.nio.file.Path;
@@ -22,7 +22,7 @@ public class S3Distribution implements ApplicationRunner {
   private Logger logger = LoggerFactory.getLogger(this.getClass());
 
   @Autowired
-  private OutputDirectory outputDirectory;
+  private OutputDirectoryProvider outputDirectoryProvider;
 
   @Autowired
   private S3Publisher s3Publisher;
@@ -30,7 +30,7 @@ public class S3Distribution implements ApplicationRunner {
   @Override
   public void run(ApplicationArguments args) {
     try {
-      Path pathToDistribute = outputDirectory.getFileOnDisk().toPath().toAbsolutePath();
+      Path pathToDistribute = outputDirectoryProvider.getFileOnDisk().toPath().toAbsolutePath();
       s3Publisher.publishFolder(pathToDistribute);
     } catch (IOException | UnsupportedOperationException e) {
       logger.error("Distribution failed.", e);

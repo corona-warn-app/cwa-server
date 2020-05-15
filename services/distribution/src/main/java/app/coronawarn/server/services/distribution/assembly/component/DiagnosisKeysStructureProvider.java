@@ -14,9 +14,9 @@ import org.springframework.stereotype.Component;
  * Retrieves stored diagnosis keys and builds a {@link DiagnosisKeysDirectoryImpl} with them.
  */
 @Component
-public class DiagnosisKeys {
+public class DiagnosisKeysStructureProvider {
 
-  private static final Logger logger = LoggerFactory.getLogger(DiagnosisKeys.class);
+  private static final Logger logger = LoggerFactory.getLogger(DiagnosisKeysStructureProvider.class);
 
   @Autowired
   private DiagnosisKeyService diagnosisKeyService;
