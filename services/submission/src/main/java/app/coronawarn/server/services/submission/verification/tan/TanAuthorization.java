@@ -55,7 +55,7 @@ public class TanAuthorization {
    * Creates a new TanAuthorization object, based on the given authorization string value, which
    * should be supplied as the CWA-Authorization header upon uploading diagnosis keys.
    *
-   * @param authValue The string auth value, e.g. TAN D047211
+   * @param authValue The string auth value, e.g. TAN X32ZIWLL
    * @return the TAN Authorization instance, holding the auth type & auth key.
    * @throws TanAuthorizationException in case the validation on the given auth value string failed
    */
