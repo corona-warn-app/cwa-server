@@ -47,15 +47,15 @@ public class SigningDecoratorTest {
 
   private static final byte[] bytes = "foo".getBytes();
   private Directory parent;
-  private File decoree;
+  private File decoratee;
   private File decorator;
 
   @BeforeEach
   public void setup() throws IOException {
     outputFolder.create();
     parent = new DirectoryImpl(outputFolder.newFolder());
-    decoree = new FileImpl("bar", bytes);
-    decorator = new SigningDecorator(decoree, cryptoProvider);
+    decoratee = new FileImpl("bar", bytes);
+    decorator = new SigningDecorator(decoratee, cryptoProvider);
 
     parent.addFile(decorator);
 
@@ -64,7 +64,7 @@ public class SigningDecoratorTest {
 
   @Test
   public void checkCertificate() throws IOException, CertificateEncodingException {
-    byte[] writtenBytes = Files.readAllBytes(decoree.getFileOnDisk().toPath());
+    byte[] writtenBytes = Files.readAllBytes(decoratee.getFileOnDisk().toPath());
     SignedPayload signedPayload = SignedPayload.parseFrom(writtenBytes);
 
     assertArrayEquals(cryptoProvider.getCertificate().getEncoded(),
@@ -75,7 +75,7 @@ public class SigningDecoratorTest {
   public void checkSignature()
       throws IOException, CertificateException, NoSuchProviderException, NoSuchAlgorithmException,
       InvalidKeyException, SignatureException {
-    byte[] writtenBytes = Files.readAllBytes(decoree.getFileOnDisk().toPath());
+    byte[] writtenBytes = Files.readAllBytes(decoratee.getFileOnDisk().toPath());
     SignedPayload signedPayload = SignedPayload.parseFrom(writtenBytes);
 
     InputStream certificateByteStream = new ByteArrayInputStream(
