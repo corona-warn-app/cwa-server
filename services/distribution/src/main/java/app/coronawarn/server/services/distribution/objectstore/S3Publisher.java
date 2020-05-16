@@ -18,14 +18,14 @@ import org.springframework.stereotype.Component;
 @Component
 public class S3Publisher {
 
-  private Logger logger = LoggerFactory.getLogger(this.getClass());
+  private static final Logger logger = LoggerFactory.getLogger(S3Publisher.class);
 
   /**
    * prefix path on S3, enforced for all methods on this class.
    */
   private String prefixPath = "cwa/";
 
-  private ObjectStoreAccess objectStoreAccess;
+  private final ObjectStoreAccess objectStoreAccess;
 
   @Autowired
   public S3Publisher(ObjectStoreAccess objectStoreAccess) {

@@ -1,0 +1,91 @@
+version: '3'
+services:
+  submission:
+    build:
+      context: ./
+      dockerfile: ./services/submission/Dockerfile
+    depends_on:
+      - postgres
+    ports:
+      - "8080:8080"
+    environment: 
+      SPRING_PROFILES_ACTIVE: cloud
+      POSTGRESQL_SERVICE_PORT: '5432'
+      POSTGRESQL_SERVICE_HOST: postgres
+      POSTGRESQL_DATABASE: cwa
+      POSTGRESQL_PASSWORD: x24GeYzDp7kaZ8B
+      POSTGRESQL_USER: postgres
+    networks:
+      - cwa
+  distribution:
+    build:
+      context: ./
+      dockerfile: ./services/distribution/Dockerfile
+    depends_on:
+     - postgres
+     - minio
+    environment:
+      SPRING_PROFILES_ACTIVE: cloud
+      POSTGRESQL_SERVICE_PORT: '5432'
+      POSTGRESQL_SERVICE_HOST: postgres
+      POSTGRESQL_DATABASE: cwa
+      POSTGRESQL_PASSWORD: x24GeYzDp7kaZ8B
+      POSTGRESQL_USER: postgres
+      AWS_ACCESS_KEY_ID: cws_key_id
+      AWS_SECRET_ACCESS_KEY: cws_secret_key_id
+      cwa.objectstore.endpoint: http://minio:9000
+      cwa.objectstore.bucket: cwa
+      app.coronawarn.server.services.distribution.paths.output: /tmp/distribution
+    networks:
+      - cwa
+  postgres:
+    image: postgres:9.6
+    restart: always
+    ports:
+      - "5432:5432"
+    environment:
+      PGDATA: /data/postgres
+      POSTGRES_DB: cwa
+      POSTGRESQL_USER: postgres
+      POSTGRESQL_DATABASE: cwa
+      POSTGRES_PASSWORD: x24GeYzDp7kaZ8B
+    volumes:
+       - postgres_volume:/data/postgres
+    networks:
+      - cwa
+  pgadmin:
+    container_name: pgadmin_container
+    image: dpage/pgadmin4
+    volumes:
+       - pgadmin_volume:/root/.pgadmin
+    ports:
+      - "8081:80"
+    restart: unless-stopped
+    networks:
+      - cwa
+    depends_on:
+      - postgres
+    environment:
+      PGADMIN_DEFAULT_EMAIL: user@domain.com
+      PGADMIN_DEFAULT_PASSWORD: password
+  minio:
+    image: "minio/minio"
+    volumes:
+      - minio_volume:/data
+    ports:
+      - "8082:9000"
+    environment:
+      MINIO_ACCESS_KEY: cws_key_id
+      MINIO_SECRET_KEY: cws_secret_key_id
+    entrypoint: sh
+    command: -c 'mkdir -p /data/cwa && minio server /data'
+    networks:
+      - cwa
+volumes:
+  logvolume01: {}
+  minio_volume:
+  postgres_volume:
+  pgadmin_volume:
+networks:
+  cwa:
+    driver: bridge

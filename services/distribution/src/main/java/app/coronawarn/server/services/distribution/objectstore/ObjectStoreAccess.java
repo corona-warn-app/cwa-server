@@ -49,9 +49,9 @@ import software.amazon.awssdk.services.s3.model.PutObjectRequest;
 @Component
 public class ObjectStoreAccess {
 
-  private Logger logger = LoggerFactory.getLogger(this.getClass());
+  private static final Logger logger = LoggerFactory.getLogger(ObjectStoreAccess.class);
 
-  private String bucket;
+  private final String bucket;
 
   private S3Client client;
 
