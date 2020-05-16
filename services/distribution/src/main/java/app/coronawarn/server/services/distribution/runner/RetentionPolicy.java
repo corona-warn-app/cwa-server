@@ -15,7 +15,7 @@ import org.springframework.stereotype.Component;
  * threshold of days.
  */
 @Component
-@Order(1)
+@Order(2)
 public class RetentionPolicy implements ApplicationRunner {
 
   private static final Logger logger = LoggerFactory
