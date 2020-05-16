@@ -19,7 +19,7 @@ import org.springframework.stereotype.Component;
 @Order(3)
 public class S3Distribution implements ApplicationRunner {
 
-  private final Logger logger = LoggerFactory.getLogger(this.getClass());
+  private static final Logger logger = LoggerFactory.getLogger(S3Distribution.class);
 
   @Autowired
   private OutputDirectoryProvider outputDirectoryProvider;
