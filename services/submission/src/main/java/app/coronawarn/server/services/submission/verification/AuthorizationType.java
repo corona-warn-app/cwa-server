@@ -1,5 +1,7 @@
 package app.coronawarn.server.services.submission.verification;
 
+import java.util.stream.Stream;
+
 /**
  * The Authorization Types define the available authorization methods & syntax. This type depends on
  * the actual type, and the attached authorization key.<br>
@@ -33,14 +35,27 @@ public enum AuthorizationType {
     }
   };
 
-  private String authorizationConstant;
+  private String protocolConstant;
 
-  AuthorizationType(String authorizationConstant) {
-    this.authorizationConstant = authorizationConstant;
+  AuthorizationType(String protocolConstant) {
+    this.protocolConstant = protocolConstant;
   }
 
-  public String getAuthorizationConstant() {
-    return authorizationConstant;
+  /**
+   * Creates a new Authorization Type instance based on the given string value. If the value matches
+   * the enums protocol constant (used in the CWA-Authorization header), it will return the correct
+   * enum value. If the string could not be matched, will throw an exception instead.
+   *
+   * @param value The value to use for creating the enum value.
+   * @return the matching authorization type
+   * @throws IllegalArgumentException in case the given string value does not match any
+   *         {@link AuthorizationType#protocolConstant}.
+   */
+  public static AuthorizationType from(String value) {
+    return Stream.of(AuthorizationType.values())
+        .filter(a -> a.protocolConstant.equals(value))
+        .findAny()
+        .orElseThrow(() -> new IllegalArgumentException("Given " + value + " is not supported."));
   }
 
   /**

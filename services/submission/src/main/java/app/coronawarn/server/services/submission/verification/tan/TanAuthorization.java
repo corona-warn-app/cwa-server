@@ -2,6 +2,7 @@ package app.coronawarn.server.services.submission.verification.tan;
 
 import app.coronawarn.server.services.submission.verification.AuthorizationType;
 import java.util.Objects;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
@@ -63,13 +64,13 @@ public class TanAuthorization {
       throw new TanAuthorizationException("No authorization value supplied.");
     }
 
-    var matcher = SYNTAX.matcher(authValue.trim());
+    Matcher matcher = SYNTAX.matcher(authValue.trim());
 
     if (!matcher.matches()) {
       throw new IllegalTanAuthorizationFormatException(authValue);
     }
 
-    AuthorizationType authType = AuthorizationType.valueOf(matcher.group(1));
+    AuthorizationType authType = AuthorizationType.from(matcher.group(1));
     String authKey = matcher.group(2);
 
     if (!authType.isValidSyntax(authKey)) {
