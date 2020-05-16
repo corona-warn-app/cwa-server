@@ -40,7 +40,7 @@ If you want to use Docker-based deployment, you need to install Docker on your l
 
 #### Running the Full cwa Backend Using Docker Compose
 
-For your convenience, a full setup has been prepared using [Docker Compose](https://docs.docker.com/compose/reference/overview/). To build the backend services, run ```docker-compose build``` in the repository's root directory. 
+For your convenience, a full setup including the generation of test data has been prepared using [Docker Compose](https://docs.docker.com/compose/reference/overview/). To build the backend services, run ```docker-compose build``` in the repository's root directory. 
 
 Once the services are built, you can start the whole backend using ```docker-compose up```.
 The distribution service runs once and then finishes. If you want to trigger additional distribution runs, run ```docker-compose start distribution```.
