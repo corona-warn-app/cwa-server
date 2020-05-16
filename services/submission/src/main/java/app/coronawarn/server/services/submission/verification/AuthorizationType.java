@@ -53,7 +53,7 @@ public enum AuthorizationType {
    */
   public static AuthorizationType from(String value) {
     return Stream.of(AuthorizationType.values())
-        .filter(a -> a.protocolConstant.equals(value))
+        .filter(authType -> authType.protocolConstant.equals(value))
         .findAny()
         .orElseThrow(() -> new IllegalArgumentException("Given " + value + " is not supported."));
   }
