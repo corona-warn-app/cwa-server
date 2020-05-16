@@ -116,11 +116,11 @@ public class TestDataGeneration implements ApplicationRunner {
   }
 
   /**
-   * Returns the timestamp (in 1 hour intervals since epoch) of the last full hour. Example: If called
-   * at 15:38 UTC, this function would return the timestamp for today 14:00 UTC.
+   * Returns the timestamp (in 1 hour intervals since epoch) of the last full hour. Example: If
+   * called at 15:38 UTC, this function would return the timestamp for today 14:00 UTC.
    */
   private long getGeneratorEndTimestamp() {
-    return (LocalDateTime.now().toEpochSecond(ZoneOffset.UTC) / TimeUnit.HOURS.toSeconds(1)) - 1;
+    return (LocalDateTime.now().toEpochSecond(ZoneOffset.UTC) / ONE_HOUR_INTERVAL_SECONDS) - 1;
   }
 
   /**
@@ -130,7 +130,7 @@ public class TestDataGeneration implements ApplicationRunner {
    */
   private long getRetentionStartTimestamp() {
     return LocalDate.now().minusDays(rententionDays).atStartOfDay()
-        .toEpochSecond(ZoneOffset.UTC) / 3600;
+        .toEpochSecond(ZoneOffset.UTC) / ONE_HOUR_INTERVAL_SECONDS;
   }
 
   /**
