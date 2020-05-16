@@ -27,7 +27,7 @@ public class TanVerifier {
 
       return validateAuthorization(tanAuthorization);
     } catch (TanAuthorizationException e) {
-      logger.error("Failed TAN validation", e);
+      logger.info("Failed TAN validation", e);
       return false;
     }
   }
@@ -41,7 +41,7 @@ public class TanVerifier {
       case TELETAN:
         return validateTeleTan(tanAuthorization.getKey());
       default:
-        throw new UnsupportedOperationException("AuthType not supported: " + authType);
+        throw new UnsupportedOperationException("Authorization Type not supported: " + authType);
     }
   }
 

@@ -5,19 +5,19 @@ import java.util.Objects;
 import java.util.regex.Pattern;
 
 /**
- * This TAN Authorization holds all information needed in order to perform a validity check on the
+ * This TAN Authorization holds all information needed in order to perform a verification on the
  * Verification Server. It supports the {@link AuthorizationType} and the actual TAN key.
  */
 public class TanAuthorization {
 
   /**
-   * the rough syntax of how a the auth header value should look like. Note: Not yet final.
+   * the rough syntax of how an auth header value should look like. Note: Not yet final.
    */
   private static final Pattern SYNTAX = Pattern.compile("^(TAN|TELETAN) ([ a-zA-Z0-9]{6,30})$");
 
-  private AuthorizationType authType;
+  private final AuthorizationType authType;
 
-  private String key;
+  private final String key;
 
   protected TanAuthorization(AuthorizationType authType, String key) {
     this.authType = authType;
