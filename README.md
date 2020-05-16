@@ -40,7 +40,7 @@ If you want to use Docker-based deployment, you need to install Docker on your l
 
 #### Running the Full cwa Backend Using Docker Compose
 
-For your convenience, a full setup has been prepared using [Docker Compose](https://docs.docker.com/compose/reference/overview/). To build the backend services, run ```docker-compose build``` in the repository's root directory. 
+For your convenience, a full setup has been prepared using [Docker Compose](https://docs.docker.com/compose/reference/overview/). To build the backend services, run ```docker-compose build``` in the repository's root directory. A default configuration file can be found under ```.env```in the root folder of the repository. The default values for the local Postgres and MinIO build should be changed in this file before docker-compose is run.
 
 Once the services are built, you can start the whole backend using ```docker-compose up```.
 The distribution service runs once and then finishes. If you want to trigger additional distribution runs, run ```docker-compose start distribution```.
@@ -51,7 +51,7 @@ Service       | Description | Endpoint and Default Credentials
 --------------|-------------|-----------
 submission    | The Corona-Warn-App submission service                                            | http://localhost:8080 
 distribution  | The Corona-Warn-App distribution service                                          | NO ENDPOINT
-postgres      | A [postgres] database installation                                                | postgres:5432 <br> Username: postgres <br> Password: x24GeYzDp7kaZ8B
+postgres      | A [postgres] database installation                                                | postgres:5432 <br> Username: postgres <br> Password: postgres
 pgadmin       | A [pgadmin](https://www.pgadmin.org/) installation for the postgres database      | http://localhost:8081 <br> Username: user@domain.com <br> Password: password
 minio         | [MinIO] is an S3-compliant object store                                           | http://localhost:8082/ <br> Access key: cws_key_id <br> Secret key: cws_secret_key_id
 
