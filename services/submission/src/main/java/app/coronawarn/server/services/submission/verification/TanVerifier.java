@@ -12,7 +12,7 @@ import org.springframework.stereotype.Component;
 @Component("tanVerifier")
 public class TanVerifier {
 
-  private static final Logger logger = LoggerFactory.getLogger(this.getClass());
+  private static final Logger logger = LoggerFactory.getLogger(TanVerifier.class);
 
   /**
    * Verifies the specified TAN. Returns {@literal true} if the specified TAN is valid, {@literal
