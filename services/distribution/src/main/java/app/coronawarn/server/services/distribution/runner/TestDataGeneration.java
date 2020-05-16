@@ -107,7 +107,7 @@ public class TestDataGeneration implements ApplicationRunner {
    * are no diagnosis keys in the database yet.
    */
   private long getGeneratorStartTimestamp(List<DiagnosisKey> diagnosisKeys) {
-    if (diagnosisKeys.size() == 0) {
+    if (diagnosisKeys.isEmpty()) {
       return getRetentionStartTimestamp();
     } else {
       DiagnosisKey latestDiagnosisKey = diagnosisKeys.get(diagnosisKeys.size() - 1);
