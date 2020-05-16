@@ -194,7 +194,7 @@ public class SubmissionControllerTest {
 
     assertEquals(expKeys.size(), keyEntities.size(),
         "Number of submitted keys and generated key entities don't match.");
-    keyEntities.stream().forEach(anActKey -> assertTrue(expKeys.contains(anActKey),
+    keyEntities.forEach(anActKey -> assertTrue(expKeys.contains(anActKey),
         "Key entity does not correspond to a submitted key."));
   }
 

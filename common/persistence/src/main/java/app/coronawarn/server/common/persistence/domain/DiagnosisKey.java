@@ -25,9 +25,6 @@ public class DiagnosisKey {
   private int transmissionRiskLevel;
   private long submissionTimestamp;
 
-  public DiagnosisKey() {
-  }
-
   /**
    * Should be called by builders.
    */
