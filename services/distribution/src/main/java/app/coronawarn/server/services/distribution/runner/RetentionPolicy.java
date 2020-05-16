@@ -34,6 +34,7 @@ public class RetentionPolicy implements ApplicationRunner {
 
   @Override
   public void run(ApplicationArguments args) {
+      diagnosisKeyService.applyRetentionPolicy(retentionDays);
     try {
       diagnosisKeyService.applyRetentionPolicy(retentionDays);
     } catch (Exception e) {
