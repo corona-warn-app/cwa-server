@@ -78,7 +78,7 @@ The submission service is available on localhost:8080.
 If you want to actively develop in one of the cwa services, the Maven-based runtime is most suitable.
 To prepare your machine to run the cwa project locally, we recommend that you first ensure that you've installed the following:
 
-* [Java OpenJDK 11](https://openjdk.java.net/)
+* [Minimum JDK Version 11](https://openjdk.java.net/)
 * [Maven 3.6](https://maven.apache.org/)
 * [Postgres] (if you want to connect to a persistent storage; if a postgres connection is not specified, an in-memory [HSQLDB] is provided)
 * [MinIO] (if you want to run the distribution service and write the files to an object store instead of using your local file system)
