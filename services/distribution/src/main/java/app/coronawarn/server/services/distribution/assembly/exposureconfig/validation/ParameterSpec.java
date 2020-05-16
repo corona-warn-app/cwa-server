@@ -15,7 +15,7 @@ public class ParameterSpec {
   /** The maximum weight value for mobile API. */
   public static final int WEIGHT_MAX = 100;
 
-  /** Maximmum number of allowed decimals. */
+  /** Maximum number of allowed decimals. */
   public static final int WEIGHT_MAX_DECIMALS = 3;
 
 }

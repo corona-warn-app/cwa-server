@@ -15,41 +15,41 @@ public class DirectoryDecoratorTest {
 
   @Test
   public void checkProxiesAllMethods() {
-    Directory decoree = mock(Directory.class);
-    Directory decorator = new TestDirectoryDecorator(decoree);
+    Directory decoratee = mock(Directory.class);
+    Directory decorator = new TestDirectoryDecorator(decoratee);
 
     ImmutableStack<Object> stack = new ImmutableStack<>();
     decorator.prepare(stack);
-    verify(decoree).prepare(stack);
+    verify(decoratee).prepare(stack);
 
     File file = new FileImpl("foo", new byte[0]);
     decorator.addFile(file);
-    verify(decoree).addFile(file);
+    verify(decoratee).addFile(file);
 
     decorator.getFiles();
-    verify(decoree).getFiles();
+    verify(decoratee).getFiles();
 
     Directory directory = new DirectoryImpl("foo");
     decorator.addDirectory(directory);
-    verify(decoree).addDirectory(directory);
+    verify(decoratee).addDirectory(directory);
 
     decorator.getDirectories();
-    verify(decoree).getDirectories();
+    verify(decoratee).getDirectories();
 
     decorator.write();
-    verify(decoree).write();
+    verify(decoratee).write();
 
     decorator.getName();
-    verify(decoree).getName();
+    verify(decoratee).getName();
 
     decorator.getParent();
-    verify(decoree).getParent();
+    verify(decoratee).getParent();
 
     decorator.setParent(directory);
-    verify(decoree).setParent(directory);
+    verify(decoratee).setParent(directory);
 
     decorator.getFileOnDisk();
-    verify(decoree).getFileOnDisk();
+    verify(decoratee).getFileOnDisk();
   }
 
   private static class TestDirectoryDecorator extends DirectoryDecorator {

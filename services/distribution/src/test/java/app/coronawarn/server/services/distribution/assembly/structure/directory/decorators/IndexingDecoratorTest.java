@@ -31,7 +31,7 @@ public class IndexingDecoratorTest {
   private static final Set<Integer> index = Set.of(1, 2, 3);
   private java.io.File outputFile;
   private Directory parent;
-  private IndexDirectory<Integer> decoree;
+  private IndexDirectory<Integer> decoratee;
   private Directory decorator;
 
   @BeforeEach
@@ -39,8 +39,8 @@ public class IndexingDecoratorTest {
     outputFolder.create();
     outputFile = outputFolder.newFolder();
     parent = new DirectoryImpl(outputFile);
-    decoree = new IndexDirectoryImpl<>("foo", __ -> index, __ -> __);
-    decorator = new IndexingDecorator<>(decoree);
+    decoratee = new IndexDirectoryImpl<>("foo", __ -> index, __ -> __);
+    decorator = new IndexingDecorator<>(decoratee);
 
     parent.addDirectory(decorator);
 
