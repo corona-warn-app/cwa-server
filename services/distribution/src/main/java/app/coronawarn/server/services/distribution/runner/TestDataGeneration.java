@@ -53,7 +53,7 @@ public class TestDataGeneration implements ApplicationRunner {
 
   private RandomGenerator random = new JDKRandomGenerator();
 
-  private static final int POISSON_MAX_ITERATIONS = 10000000;
+  private static final int POISSON_MAX_ITERATIONS = 10_000_000;
   private static final double POISSON_EPSILON = 1e-12;
   private PoissonDistribution poisson;
 
