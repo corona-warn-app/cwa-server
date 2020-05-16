@@ -75,7 +75,7 @@ generate_private_key client/private.pem
 generate_certificate_signing_request client/private.pem '/CN=CWA Test Client Certificate' client/request.csr
 ca_sign_certificate_request client/request.csr root/certificate.crt root/private.pem client/certificate.crt
 
-# Concatenate the root certifricate and the client certificate.
+# Concatenate the root certificate and the client certificate.
 # This way, we have the whole certificate chain in a single file.
 mkdir chain
 cat client/certificate.crt root/certificate.crt >> chain/certificate.crt
