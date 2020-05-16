@@ -3,7 +3,6 @@ package app.coronawarn.server.services.distribution.assembly.io;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.nio.file.Files;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -26,21 +25,6 @@ public class IO {
       directory.createNewFile();
     } catch (IOException e) {
       logger.error("Failed to create file: {}", name, e);
-      throw new RuntimeException(e);
-    }
-  }
-
-  /**
-   * Reads the contents of a file as {@code byte[]}.
-   *
-   * @param file The file to read.
-   * @return The contents of the file as {@code byte[]}.
-   */
-  public static byte[] getBytesFromFile(File file) {
-    try {
-      return Files.readAllBytes(file.toPath());
-    } catch (IOException e) {
-      logger.error("Read operation failed.", e);
       throw new RuntimeException(e);
     }
   }
