@@ -24,14 +24,14 @@ public class RetentionPolicy implements ApplicationRunner {
   @Autowired
   private DiagnosisKeyService diagnosisKeyService;
 
-  @Value("${services.distribution.retention_days}")
-  private Integer rententionDays;
+  @Value("${services.distribution.retentionDays}")
+  private Integer retentionDays;
 
   @Override
   public void run(ApplicationArguments args) {
-    diagnosisKeyService.applyRetentionPolicy(rententionDays);
+    diagnosisKeyService.applyRetentionPolicy(retentionDays);
 
     logger.debug("Retention policy applied successfully. Deleted all entries older that {} days.",
-        rententionDays);
+        retentionDays);
   }
 }

@@ -6,13 +6,13 @@ import static app.coronawarn.server.common.persistence.domain.DiagnosisKeyBuilde
 import static app.coronawarn.server.common.persistence.domain.DiagnosisKeyBuilders.RollingStartNumberBuilder;
 import static app.coronawarn.server.common.persistence.domain.DiagnosisKeyBuilders.TransmissionRiskLevelBuilder;
 
+import app.coronawarn.server.common.persistence.exception.InvalidDiagnosisKeyException;
 import app.coronawarn.server.common.protocols.external.exposurenotification.Key;
 import java.time.Instant;
 
 /**
- * An instance of this builder can be retrieved by calling {@link DiagnosisKey#builder()}. A {@link
- * DiagnosisKey} can then be build by either providing the required member values or by passing the
- * respective protocol buffer object.
+ * An instance of this builder can be retrieved by calling {@link DiagnosisKey#builder()}. A {@link DiagnosisKey} can then be build by either providing the
+ * required member values or by passing the respective protocol buffer object.
  */
 public class DiagnosisKeyBuilder implements Builder, RollingStartNumberBuilder,
     RollingPeriodBuilder, TransmissionRiskLevelBuilder, FinalBuilder {
@@ -27,36 +27,40 @@ public class DiagnosisKeyBuilder implements Builder, RollingStartNumberBuilder,
   }
 
   @Override
-  public RollingStartNumberBuilder withKeyData(byte[] keyData) {
+  public RollingStartNumberBuilder withKeyData(byte[] keyData) throws InvalidDiagnosisKeyException {
+    DiagnosisKeyValidator.validateKeyData(keyData);
     this.keyData = keyData;
     return this;
   }
 
   @Override
-  public RollingPeriodBuilder withRollingStartNumber(long rollingStartNumber) {
+  public RollingPeriodBuilder withRollingStartNumber(long rollingStartNumber) throws InvalidDiagnosisKeyException {
+    DiagnosisKeyValidator.validateRollingStartNumber(rollingStartNumber);
     this.rollingStartNumber = rollingStartNumber;
     return this;
   }
 
   @Override
-  public TransmissionRiskLevelBuilder withRollingPeriod(long rollingPeriod) {
+  public TransmissionRiskLevelBuilder withRollingPeriod(long rollingPeriod) throws InvalidDiagnosisKeyException {
+    DiagnosisKeyValidator.validateRollingPeriod(rollingPeriod);
     this.rollingPeriod = rollingPeriod;
     return this;
   }
 
   @Override
-  public FinalBuilder withTransmissionRiskLevel(int transmissionRiskLevel) {
+  public FinalBuilder withTransmissionRiskLevel(int transmissionRiskLevel) throws InvalidDiagnosisKeyException {
+    DiagnosisKeyValidator.validateTransmissionLevel(transmissionRiskLevel);
     this.transmissionRiskLevel = transmissionRiskLevel;
     return this;
   }
 
   @Override
-  public DiagnosisKeyBuilder fromProtoBuf(Key protoBufObject) {
-    this.keyData = protoBufObject.getKeyData().toByteArray();
-    this.rollingStartNumber = protoBufObject.getRollingStartNumber();
-    this.rollingPeriod = protoBufObject.getRollingPeriod();
-    this.transmissionRiskLevel = protoBufObject.getTransmissionRiskLevel();
-    return this;
+  public FinalBuilder fromProtoBuf(Key protoBufObject) throws InvalidDiagnosisKeyException {
+    return this
+        .withKeyData(protoBufObject.getKeyData().toByteArray())
+        .withRollingStartNumber(protoBufObject.getRollingStartNumber())
+        .withRollingPeriod(protoBufObject.getRollingPeriod())
+        .withTransmissionRiskLevel(protoBufObject.getTransmissionRiskLevel());
   }
 
   @Override

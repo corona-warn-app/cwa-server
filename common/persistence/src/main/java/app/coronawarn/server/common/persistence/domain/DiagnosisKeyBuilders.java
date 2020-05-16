@@ -1,5 +1,6 @@
 package app.coronawarn.server.common.persistence.domain;
 
+import app.coronawarn.server.common.persistence.exception.InvalidDiagnosisKeyException;
 import app.coronawarn.server.common.protocols.external.exposurenotification.Key;
 
 /**
@@ -16,7 +17,7 @@ interface DiagnosisKeyBuilders {
      * @param keyData generated diagnosis key.
      * @return this Builder instance.
      */
-    RollingStartNumberBuilder withKeyData(byte[] keyData);
+    RollingStartNumberBuilder withKeyData(byte[] keyData) throws InvalidDiagnosisKeyException;
 
     /**
      * Adds the data contained in the specified protocol buffers key object to this builder.
@@ -24,7 +25,7 @@ interface DiagnosisKeyBuilders {
      * @param protoBufObject ProtocolBuffer object associated with the temporary exposure key.
      * @return this Builder instance.
      */
-    FinalBuilder fromProtoBuf(Key protoBufObject);
+    FinalBuilder fromProtoBuf(Key protoBufObject) throws InvalidDiagnosisKeyException;
   }
 
   interface RollingStartNumberBuilder {
@@ -36,7 +37,7 @@ interface DiagnosisKeyBuilders {
      *                           startTimeOfKeySinceEpochInSecs / (60 * 10).
      * @return this Builder instance.
      */
-    RollingPeriodBuilder withRollingStartNumber(long rollingStartNumber);
+    RollingPeriodBuilder withRollingStartNumber(long rollingStartNumber) throws InvalidDiagnosisKeyException;
   }
 
   interface RollingPeriodBuilder {
@@ -48,7 +49,7 @@ interface DiagnosisKeyBuilders {
      *                      of 10 minutes (e.g. 144 for 24 hours).
      * @return this Builder instance.
      */
-    TransmissionRiskLevelBuilder withRollingPeriod(long rollingPeriod);
+    TransmissionRiskLevelBuilder withRollingPeriod(long rollingPeriod) throws InvalidDiagnosisKeyException;
   }
 
   interface TransmissionRiskLevelBuilder {
@@ -60,7 +61,7 @@ interface DiagnosisKeyBuilders {
      *                              from.
      * @return this Builder instance.
      */
-    FinalBuilder withTransmissionRiskLevel(int transmissionRiskLevel);
+    FinalBuilder withTransmissionRiskLevel(int transmissionRiskLevel) throws InvalidDiagnosisKeyException;
   }
 
   interface FinalBuilder {

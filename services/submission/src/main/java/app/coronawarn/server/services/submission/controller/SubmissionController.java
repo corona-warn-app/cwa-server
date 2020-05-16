@@ -1,12 +1,16 @@
 package app.coronawarn.server.services.submission.controller;
 
 import app.coronawarn.server.common.persistence.domain.DiagnosisKey;
+import app.coronawarn.server.common.persistence.exception.InvalidDiagnosisKeyException;
 import app.coronawarn.server.common.persistence.service.DiagnosisKeyService;
+import app.coronawarn.server.common.protocols.external.exposurenotification.Key;
 import app.coronawarn.server.common.protocols.internal.SubmissionPayload;
+import app.coronawarn.server.services.submission.exception.InvalidPayloadException;
 import app.coronawarn.server.services.submission.verification.TanVerifier;
-import java.util.Collection;
-import java.util.stream.Collectors;
+import java.util.LinkedList;
+import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -19,6 +23,9 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/version/v1")
 public class SubmissionController {
 
+  @Value("${services.submission.retentionDays}")
+  private Integer retentionDays;
+
   /**
    * The route to the submission endpoint (version agnostic).
    */
@@ -30,34 +37,28 @@ public class SubmissionController {
   @Autowired
   private TanVerifier tanVerifier;
 
+  @Value("${services.submission.payload.maxNumberOfKeys}")
+  private Integer maxNumberOfKeys;
+
   @PostMapping(SUBMISSION_ROUTE)
   public ResponseEntity<Void> submitDiagnosisKey(
-      @RequestBody SubmissionPayload exposureKeys,
+      @RequestBody SubmissionPayload exposureKeysPayload,
       @RequestHeader(value = "cwa-fake") Integer fake,
       @RequestHeader(value = "cwa-authorization") String tan) {
     if (fake != 0) {
-      return buildSuccessResponseEntity();
+      return ResponseEntity.ok().build();
     }
+
     if (!this.tanVerifier.verifyTan(tan)) {
-      return buildTanInvalidResponseEntity();
+      return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
     }
 
-    persistDiagnosisKeysPayload(exposureKeys);
+    try {
+      saveDiagnosisKeysPayload(exposureKeysPayload);
+    } catch (InvalidDiagnosisKeyException | InvalidPayloadException e) {
+      return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+    }
 
-    return buildSuccessResponseEntity();
-  }
-
-  /**
-   * Returns a response that indicates that an invalid TAN was specified in the request.
-   */
-  private ResponseEntity<Void> buildTanInvalidResponseEntity() {
-    return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
-  }
-
-  /**
-   * Returns a response that indicates successful request processing.
-   */
-  private ResponseEntity<Void> buildSuccessResponseEntity() {
     return ResponseEntity.ok().build();
   }
 
@@ -67,11 +68,26 @@ public class SubmissionController {
    * @param protoBufDiagnosisKeys Diagnosis keys that were specified in the request.
    * @throws IllegalArgumentException in case the given collection contains {@literal null}.
    */
-  private void persistDiagnosisKeysPayload(SubmissionPayload protoBufDiagnosisKeys) {
-    Collection<DiagnosisKey> diagnosisKeys = protoBufDiagnosisKeys.getKeysList().stream()
-        .map(aProtoBufKey -> DiagnosisKey.builder().fromProtoBuf(aProtoBufKey).build())
-        .collect(Collectors.toList());
+  public void saveDiagnosisKeysPayload(SubmissionPayload protoBufDiagnosisKeys) throws InvalidDiagnosisKeyException, InvalidPayloadException {
+    List<Key> protoBufKeysList = protoBufDiagnosisKeys.getKeysList();
+    validatePayload(protoBufKeysList);
 
-    this.diagnosisKeyService.saveDiagnosisKeys(diagnosisKeys);
+    List<DiagnosisKey> diagnosisKeys = new LinkedList<>();
+    for (Key aProtoBufKey : protoBufKeysList) {
+      DiagnosisKey diagnosisKey = DiagnosisKey.builder().fromProtoBuf(aProtoBufKey).build();
+      if (diagnosisKey.isYoungerThanRetentionPeriod(retentionDays)) {
+        diagnosisKeys.add(diagnosisKey);
+      }
+    }
+
+    diagnosisKeyService.saveDiagnosisKeys(diagnosisKeys);
   }
+
+  private void validatePayload(List<Key> protoBufKeysList) throws InvalidPayloadException {
+    if (protoBufKeysList.isEmpty() || protoBufKeysList.size() > maxNumberOfKeys) {
+      throw new InvalidPayloadException(
+          String.format("Number of keys must be between 1 and %s, but is %s.", maxNumberOfKeys, protoBufKeysList));
+    }
+  }
+
 }

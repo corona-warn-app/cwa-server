@@ -3,6 +3,7 @@ package app.coronawarn.server.common.persistence.domain;
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+import app.coronawarn.server.common.persistence.exception.InvalidDiagnosisKeyException;
 import app.coronawarn.server.common.protocols.external.exposurenotification.Key;
 import com.google.protobuf.ByteString;
 import java.nio.charset.Charset;
@@ -36,7 +37,7 @@ public class DiagnosisKeyBuilderTest {
   }
 
   @Test
-  public void buildFromProtoBufObjWithoutSubmissionTimestamp() {
+  public void buildFromProtoBufObjWithoutSubmissionTimestamp() throws InvalidDiagnosisKeyException {
     Key protoBufObj = Key
         .newBuilder()
         .setKeyData(ByteString.copyFrom(this.expKeyData))
@@ -51,7 +52,7 @@ public class DiagnosisKeyBuilderTest {
   }
 
   @Test
-  public void buildSuccessivelyWithSubmissionTimestamp() {
+  public void buildSuccessivelyWithSubmissionTimestamp() throws InvalidDiagnosisKeyException {
     DiagnosisKey actDiagnosisKey = DiagnosisKey.builder()
         .withKeyData(this.expKeyData)
         .withRollingStartNumber(this.expRollingStartNumber)
@@ -63,7 +64,7 @@ public class DiagnosisKeyBuilderTest {
   }
 
   @Test
-  public void buildSuccessivelyWithoutSubmissionTimestamp() {
+  public void buildSuccessivelyWithoutSubmissionTimestamp() throws InvalidDiagnosisKeyException {
     DiagnosisKey actDiagnosisKey = DiagnosisKey.builder()
         .withKeyData(this.expKeyData)
         .withRollingStartNumber(this.expRollingStartNumber)
