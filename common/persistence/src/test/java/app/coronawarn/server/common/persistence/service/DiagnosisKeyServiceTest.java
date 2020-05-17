@@ -2,8 +2,10 @@ package app.coronawarn.server.common.persistence.service;
 
 import static java.time.ZoneOffset.UTC;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import app.coronawarn.server.common.persistence.domain.DiagnosisKey;
+import app.coronawarn.server.common.persistence.exception.InvalidDiagnosisKeyException;
 import app.coronawarn.server.common.persistence.repository.DiagnosisKeyRepository;
 import java.time.OffsetDateTime;
 import java.util.ArrayList;
@@ -111,12 +113,17 @@ public class DiagnosisKeyServiceTest {
   }
 
   public static DiagnosisKey buildDiagnosisKeyForSubmissionTimestamp(long submissionTimeStamp) {
-    return DiagnosisKey.builder()
-        .withKeyData(new byte[16])
-        .withRollingStartNumber(0L)
-        .withRollingPeriod(1L)
-        .withTransmissionRiskLevel(2)
-        .withSubmissionTimestamp(submissionTimeStamp).build();
+    try {
+      return DiagnosisKey.builder()
+          .withKeyData(new byte[16])
+          .withRollingStartNumber(0L)
+          .withRollingPeriod(1L)
+          .withTransmissionRiskLevel(2)
+          .withSubmissionTimestamp(submissionTimeStamp).build();
+    } catch (InvalidDiagnosisKeyException e) {
+      fail("The diagnosis key is not valid.");
+      return null;
+    }
   }
 
   public static DiagnosisKey buildDiagnosisKeyForDateTime(OffsetDateTime dateTime) {

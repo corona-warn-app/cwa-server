@@ -7,6 +7,7 @@ import app.coronawarn.server.common.protocols.external.exposurenotification.Key;
 import app.coronawarn.server.common.protocols.internal.SubmissionPayload;
 import app.coronawarn.server.services.submission.exception.InvalidPayloadException;
 import app.coronawarn.server.services.submission.verification.TanVerifier;
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -44,7 +45,7 @@ public class SubmissionController {
   public ResponseEntity<Void> submitDiagnosisKey(
       @RequestBody SubmissionPayload exposureKeysPayload,
       @RequestHeader(value = "cwa-fake") Integer fake,
-      @RequestHeader(value = "cwa-authorization") String tan) {
+      @RequestHeader(value = "cwa-authorization") String tan) throws InvalidDiagnosisKeyException, InvalidPayloadException {
     if (fake != 0) {
       return ResponseEntity.ok().build();
     }
@@ -53,12 +54,7 @@ public class SubmissionController {
       return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
     }
 
-    try {
-      saveDiagnosisKeysPayload(exposureKeysPayload);
-    } catch (InvalidDiagnosisKeyException | InvalidPayloadException e) {
-      return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
-    }
-
+    saveDiagnosisKeysPayload(exposureKeysPayload);
     return ResponseEntity.ok().build();
   }
 
@@ -72,7 +68,7 @@ public class SubmissionController {
     List<Key> protoBufKeysList = protoBufDiagnosisKeys.getKeysList();
     validatePayload(protoBufKeysList);
 
-    List<DiagnosisKey> diagnosisKeys = new LinkedList<>();
+    List<DiagnosisKey> diagnosisKeys = new ArrayList<>();
     for (Key aProtoBufKey : protoBufKeysList) {
       DiagnosisKey diagnosisKey = DiagnosisKey.builder().fromProtoBuf(aProtoBufKey).build();
       if (diagnosisKey.isYoungerThanRetentionPeriod(retentionDays)) {

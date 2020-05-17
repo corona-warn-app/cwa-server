@@ -2,6 +2,7 @@ package app.coronawarn.server.common.persistence.domain;
 
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import app.coronawarn.server.common.persistence.exception.InvalidDiagnosisKeyException;
 import app.coronawarn.server.common.protocols.external.exposurenotification.Key;
@@ -13,8 +14,8 @@ import org.junit.jupiter.api.Test;
 public class DiagnosisKeyBuilderTest {
 
   private final byte[] expKeyData = "myByteArr".getBytes(Charset.defaultCharset());
-  private final long expRollingStartNumber = 123;
-  private final long expRollingPeriod = 123;
+  private final long expRollingStartNumber = 73800;
+  private final long expRollingPeriod = 144;
   private final int expTransmissionRiskLevel = 1;
   private final long expSubmissionTimestamp = 2L;
 
@@ -28,10 +29,15 @@ public class DiagnosisKeyBuilderTest {
         .setTransmissionRiskLevel(this.expTransmissionRiskLevel)
         .build();
 
-    DiagnosisKey actDiagnosisKey = DiagnosisKey.builder()
-        .fromProtoBuf(protoBufObj)
-        .withSubmissionTimestamp(this.expSubmissionTimestamp)
-        .build();
+    DiagnosisKey actDiagnosisKey = null;
+    try {
+      actDiagnosisKey = DiagnosisKey.builder()
+          .fromProtoBuf(protoBufObj)
+          .withSubmissionTimestamp(this.expSubmissionTimestamp)
+          .build();
+    } catch (InvalidDiagnosisKeyException e) {
+      fail("The diagnosis key is not valid.");
+    }
 
     assertDiagnosisKeyEquals(actDiagnosisKey, this.expSubmissionTimestamp);
   }

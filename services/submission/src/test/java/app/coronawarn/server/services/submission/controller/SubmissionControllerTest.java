@@ -1,7 +1,9 @@
 package app.coronawarn.server.services.submission.controller;
 
+import static java.time.ZoneOffset.UTC;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 import static org.mockito.Mockito.any;
 import static org.mockito.Mockito.anyString;
 import static org.mockito.Mockito.atLeastOnce;
@@ -15,18 +17,24 @@ import static org.springframework.http.HttpStatus.METHOD_NOT_ALLOWED;
 import static org.springframework.http.HttpStatus.OK;
 
 import app.coronawarn.server.common.persistence.domain.DiagnosisKey;
+import app.coronawarn.server.common.persistence.exception.InvalidDiagnosisKeyException;
 import app.coronawarn.server.common.persistence.service.DiagnosisKeyService;
 import app.coronawarn.server.common.protocols.external.exposurenotification.Key;
 import app.coronawarn.server.common.protocols.internal.SubmissionPayload;
 import app.coronawarn.server.services.submission.verification.TanVerifier;
 import com.google.protobuf.ByteString;
 import java.net.URI;
+import java.time.Instant;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.ZoneOffset;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import org.junit.jupiter.api.BeforeEach;
@@ -171,10 +179,17 @@ public class SubmissionControllerTest {
 
   private static Collection<Key> buildPayloadWithMultipleKeys() {
     return Stream.of(
-        buildTemporaryExposureKey("testKey111111111", 1, 2, 3),
-        buildTemporaryExposureKey("testKey222222222", 4, 5, 6),
-        buildTemporaryExposureKey("testKey333333333", 7, 8, 9))
+        buildTemporaryExposureKey("testKey111111111", createRollingStartNumber(2), 2, 3),
+        buildTemporaryExposureKey("testKey222222222", createRollingStartNumber(4), 5, 6),
+        buildTemporaryExposureKey("testKey333333333", createRollingStartNumber(10), 8, 8))
         .collect(Collectors.toCollection(ArrayList::new));
+  }
+
+  private static int createRollingStartNumber(Integer daysAgo) {
+    return Math.toIntExact(LocalDate
+        .ofInstant(Instant.now(), UTC)
+        .minusDays(daysAgo).atStartOfDay()
+        .toEpochSecond(UTC));
   }
 
   private static Key buildTemporaryExposureKey(
@@ -189,7 +204,14 @@ public class SubmissionControllerTest {
   private void assertElementsCorrespondToEachOther
       (Collection<Key> submittedKeys, Collection<DiagnosisKey> keyEntities) {
     Set<DiagnosisKey> expKeys = submittedKeys.stream()
-        .map(aSubmittedKey -> DiagnosisKey.builder().fromProtoBuf(aSubmittedKey).build())
+        .map(aSubmittedKey -> {
+          try {
+            return DiagnosisKey.builder().fromProtoBuf(aSubmittedKey).build();
+          } catch (InvalidDiagnosisKeyException e) {
+            fail("The diagnosis key is not valid.");
+            return null;
+          }
+        })
         .collect(Collectors.toSet());
 
     assertEquals(expKeys.size(), keyEntities.size(),
