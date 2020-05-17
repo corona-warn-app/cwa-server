@@ -20,7 +20,7 @@ import org.springframework.core.io.ClassPathResource;
 public class ObjectStoreAccessTest {
 
 
-  private final Logger logger = LoggerFactory.getLogger(this.getClass());
+  private static final Logger logger = LoggerFactory.getLogger(ObjectStoreAccessTest.class);
 
   private final String testRunId = "testing/cwa/" + UUID.randomUUID().toString() + "/";
 

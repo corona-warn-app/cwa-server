@@ -14,35 +14,35 @@ public class FileDecoratorTest {
 
   @Test
   public void checkProxiesAllMethods() {
-    File decoree = mock(File.class);
-    File decorator = new TestFileDecorator(decoree);
+    File decoratee = mock(File.class);
+    File decorator = new TestFileDecorator(decoratee);
 
     ImmutableStack<Object> stack = new ImmutableStack<>();
     decorator.prepare(stack);
-    verify(decoree).prepare(stack);
+    verify(decoratee).prepare(stack);
 
     decorator.getBytes();
-    verify(decoree).getBytes();
+    verify(decoratee).getBytes();
 
     byte[] bytes = new byte[0];
     decorator.setBytes(bytes);
-    verify(decoree).setBytes(bytes);
+    verify(decoratee).setBytes(bytes);
 
     decorator.write();
-    verify(decoree).write();
+    verify(decoratee).write();
 
     decorator.getName();
-    verify(decoree).getName();
+    verify(decoratee).getName();
 
     decorator.getParent();
-    verify(decoree).getParent();
+    verify(decoratee).getParent();
 
     Directory parent = new DirectoryImpl("foo");
     decorator.setParent(parent);
-    verify(decoree).setParent(parent);
+    verify(decoratee).setParent(parent);
 
     decorator.getFileOnDisk();
-    verify(decoree).getFileOnDisk();
+    verify(decoratee).getFileOnDisk();
   }
 
   private static class TestFileDecorator extends FileDecorator {
