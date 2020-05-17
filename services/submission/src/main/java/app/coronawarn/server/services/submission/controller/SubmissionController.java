@@ -5,15 +5,23 @@ import app.coronawarn.server.common.persistence.service.DiagnosisKeyService;
 import app.coronawarn.server.common.protocols.internal.SubmissionPayload;
 import app.coronawarn.server.services.submission.verification.TanVerifier;
 import java.util.Collection;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ForkJoinPool;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
+import org.apache.commons.math3.distribution.PoissonDistribution;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.util.StopWatch;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.context.request.async.DeferredResult;
 
 @RestController
 @RequestMapping("/version/v1")
@@ -24,27 +32,57 @@ public class SubmissionController {
    */
   public static final String SUBMISSION_ROUTE = "/diagnosis-keys";
 
+  @Value("${services.submission.fake_delay_moving_average_samples}")
+  private Double fakeDelayMovingAverageSamples;
+
+  // Exponential moving average of the last N real request durations (in ms), where
+  // N = fakeDelayMovingAverageSamples.
+  @Value("${services.submission.initial_fake_delay_milliseconds}")
+  private Double fakeDelay;
+
   @Autowired
   private DiagnosisKeyService diagnosisKeyService;
 
   @Autowired
   private TanVerifier tanVerifier;
 
+  private ScheduledExecutorService scheduledExecutor = Executors.newSingleThreadScheduledExecutor();
+  private ForkJoinPool forkJoinPool = ForkJoinPool.commonPool();
+
   @PostMapping(SUBMISSION_ROUTE)
-  public ResponseEntity<Void> submitDiagnosisKey(
+  public DeferredResult<ResponseEntity<Void>> submitDiagnosisKey(
       @RequestBody SubmissionPayload exposureKeys,
       @RequestHeader(value = "cwa-fake") Integer fake,
       @RequestHeader(value = "cwa-authorization") String tan) {
+    final DeferredResult<ResponseEntity<Void>> deferredResult = new DeferredResult<>();
     if (fake != 0) {
-      return buildSuccessResponseEntity();
+      setFakeDeferredResult(deferredResult);
+    } else {
+      setRealDeferredResult(deferredResult, exposureKeys, tan);
     }
-    if (!this.tanVerifier.verifyTan(tan)) {
-      return buildTanInvalidResponseEntity();
-    }
+    return deferredResult;
+  }
 
-    persistDiagnosisKeysPayload(exposureKeys);
+  private void setFakeDeferredResult(DeferredResult<ResponseEntity<Void>> deferredResult) {
+    long delay = new PoissonDistribution(fakeDelay).sample();
+    scheduledExecutor.schedule(() -> deferredResult.setResult(buildSuccessResponseEntity()),
+        delay, TimeUnit.MILLISECONDS);
+  }
 
-    return buildSuccessResponseEntity();
+  private void setRealDeferredResult(DeferredResult<ResponseEntity<Void>> deferredResult,
+      SubmissionPayload exposureKeys, String tan) {
+    forkJoinPool.submit(() -> {
+      StopWatch stopWatch = new StopWatch();
+      stopWatch.start();
+      if (!this.tanVerifier.verifyTan(tan)) {
+        deferredResult.setResult(buildTanInvalidResponseEntity());
+      } else {
+        persistDiagnosisKeysPayload(exposureKeys);
+        deferredResult.setResult(buildSuccessResponseEntity());
+      }
+      stopWatch.stop();
+      updateFakeDelay(stopWatch.getTotalTimeMillis());
+    });
   }
 
   /**
@@ -73,5 +111,9 @@ public class SubmissionController {
         .collect(Collectors.toList());
 
     this.diagnosisKeyService.saveDiagnosisKeys(diagnosisKeys);
+  }
+
+  private synchronized void updateFakeDelay(long realRequestDuration) {
+    fakeDelay = fakeDelay + (1 / fakeDelayMovingAverageSamples) * (realRequestDuration - fakeDelay);
   }
 }
