@@ -85,8 +85,8 @@ public class DateAggregatingDecorator extends DirectoryDecorator {
         .collect(Collectors.toSet());
   }
 
-  private Set<app.coronawarn.server.common.protocols.external.exposurenotification.File> reduceFileBuckets(
-      Set<FileBucket> fileBuckets) {
+  private Set<app.coronawarn.server.common.protocols.external.exposurenotification.File>
+      reduceFileBuckets(Set<FileBucket> fileBuckets) {
     return fileBuckets.stream()
         .map(FileBucket::getFilesList)
         .flatMap(List::stream)

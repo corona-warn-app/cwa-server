@@ -23,6 +23,9 @@ public class DiagnosisKeysDirectoryImpl extends DirectoryImpl {
   private final Collection<DiagnosisKey> diagnosisKeys;
   private final CryptoProvider cryptoProvider;
 
+  /**
+   * Constructor.
+   */
   public DiagnosisKeysDirectoryImpl(Collection<DiagnosisKey> diagnosisKeys,
       CryptoProvider cryptoProvider) {
     super(DIAGNOSIS_KEYS_DIRECTORY);

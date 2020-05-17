@@ -28,6 +28,9 @@ public class HourFileImpl extends FileImpl {
   private final String region;
   private final Collection<DiagnosisKey> diagnosisKeys;
 
+  /**
+   * Constructor.
+   */
   public HourFileImpl(LocalDateTime currentHour, String region,
       Collection<DiagnosisKey> diagnosisKeys) {
     super(INDEX_FILE_NAME, new byte[0]);

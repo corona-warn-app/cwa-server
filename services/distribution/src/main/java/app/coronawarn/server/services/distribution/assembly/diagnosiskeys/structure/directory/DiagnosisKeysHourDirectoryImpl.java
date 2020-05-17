@@ -20,6 +20,9 @@ public class DiagnosisKeysHourDirectoryImpl extends IndexDirectoryImpl<LocalDate
   private final LocalDate currentDate;
   private final CryptoProvider cryptoProvider;
 
+  /**
+   * Constructor.
+   */
   public DiagnosisKeysHourDirectoryImpl(Collection<DiagnosisKey> diagnosisKeys,
       LocalDate currentDate, CryptoProvider cryptoProvider) {
     super(HOUR_DIRECTORY, indices -> {
@@ -35,7 +38,8 @@ public class DiagnosisKeysHourDirectoryImpl extends IndexDirectoryImpl<LocalDate
     this.addFileToAll(currentIndices -> {
       LocalDateTime currentHour = (LocalDateTime) currentIndices.peek();
       // The LocalDateTime currentHour already contains both the date and the hour information, so
-      // we can throw away the LocalDate that's the second item on the stack from the "/date" IndexDirectory.
+      // we can throw away the LocalDate that's the second item on the stack from the "/date"
+      // IndexDirectory.
       String region = (String) currentIndices.pop().pop().peek();
       return decorateHourFile(new HourFileImpl(currentHour, region, diagnosisKeys));
     });

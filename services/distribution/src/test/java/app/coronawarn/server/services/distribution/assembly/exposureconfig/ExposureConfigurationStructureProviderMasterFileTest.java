@@ -9,7 +9,7 @@ import org.junit.jupiter.api.Test;
 /**
  * This test will verify that the provided Exposure Configuration master file is syntactically
  * correct and according to spec.
- *
+ * <p>
  * There should never be any deployment when this test is failing.
  */
 public class ExposureConfigurationStructureProviderMasterFileTest {

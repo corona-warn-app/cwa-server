@@ -22,8 +22,8 @@ public class YamlConstructorForProtoBuf extends Constructor {
 
   private static class ProtoBufPropertyUtils extends PropertyUtils {
 
-    public Property getProperty(Class<?> type, String name, BeanAccess bAccess) {
-      return super.getProperty(type, transformToProtoNaming(name), bAccess);
+    public Property getProperty(Class<?> type, String name, BeanAccess beanAccess) {
+      return super.getProperty(type, transformToProtoNaming(name), beanAccess);
     }
 
     private String transformToProtoNaming(String yamlPropertyName) {

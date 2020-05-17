@@ -46,6 +46,14 @@ public class SubmissionController {
   @Autowired
   private TanVerifier tanVerifier;
 
+  /**
+   * Handles diagnosis key submission requests.
+   *
+   * @param exposureKeys The unmarshalled protocol buffers submission payload.
+   * @param fake A header flag, marking fake requests.
+   * @param tan A tan for diagnosis verification.
+   * @return An empty response body.
+   */
   private ScheduledExecutorService scheduledExecutor = Executors.newSingleThreadScheduledExecutor();
   private ForkJoinPool forkJoinPool = ForkJoinPool.commonPool();
 
@@ -107,7 +115,7 @@ public class SubmissionController {
    */
   private void persistDiagnosisKeysPayload(SubmissionPayload protoBufDiagnosisKeys) {
     Collection<DiagnosisKey> diagnosisKeys = protoBufDiagnosisKeys.getKeysList().stream()
-        .map(aProtoBufKey -> DiagnosisKey.builder().fromProtoBuf(aProtoBufKey).build())
+        .map(protoBufKey -> DiagnosisKey.builder().fromProtoBuf(protoBufKey).build())
         .collect(Collectors.toList());
 
     this.diagnosisKeyService.saveDiagnosisKeys(diagnosisKeys);

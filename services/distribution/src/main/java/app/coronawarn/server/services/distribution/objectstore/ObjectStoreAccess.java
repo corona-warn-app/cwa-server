@@ -31,7 +31,6 @@ import software.amazon.awssdk.services.s3.model.PutObjectRequest;
  *   <li>AWS_ACCESS_KEY_ID</li>
  *   <li>AWS_SECRET_ACCESS_KEY</li>
  * </ul>
- *
  */
 @Component
 public class ObjectStoreAccess {
@@ -42,6 +41,9 @@ public class ObjectStoreAccess {
 
   private S3Client client;
 
+  /**
+   * Bean constructor.
+   */
   @Autowired
   public ObjectStoreAccess(@Value("${cwa.objectstore.endpoint:notset}") String endpoint,
       @Value("${cwa.objectstore.bucket:notset}") String bucket) throws URISyntaxException {
@@ -61,7 +63,7 @@ public class ObjectStoreAccess {
   /**
    * Stores an object in the object store.
    *
-   * @param key the key to use, e.g. my/folder/struc/file.ext
+   * @param key  the key to use, e.g. my/folder/struc/file.ext
    * @param file the file to upload
    */
   public void putObject(String key, File file) {

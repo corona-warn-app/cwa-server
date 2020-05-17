@@ -32,7 +32,8 @@ public interface IndexDirectory<T> extends Directory {
   void addDirectoryToAll(DirectoryFunction directoryFunction);
 
   /**
-   * Calls the {@link app.coronawarn.server.services.distribution.assembly.structure.functional.IndexFunction}
+   * Calls the
+   * {@link app.coronawarn.server.services.distribution.assembly.structure.functional.IndexFunction}
    * with the {@code indices} to calculate and return the elements of the index of this {@link
    * IndexDirectory}.
    *

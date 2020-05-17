@@ -61,8 +61,9 @@ public class IndexDirectoryImpl<T> extends DirectoryImpl implements IndexDirecto
    * Creates a new subdirectory for every element of the {@link IndexDirectory#getIndex index} and
    * writes {@link IndexDirectory#addFileToAll files} and {@link IndexDirectory#addDirectory
    * directories} to those. The respective element of the index will be pushed onto the Stack for
-   * subsequent {@link app.coronawarn.server.services.distribution.assembly.structure.Writable#prepare} calls
-   * on those files and directories.
+   * subsequent
+   * {@link app.coronawarn.server.services.distribution.assembly.structure.Writable#prepare}
+   * calls on those files and directories.
    *
    * @param indices A {@link Stack} of parameters from all {@link IndexDirectory IndexDirectories}
    *                further up in the hierarchy. The Stack may contain different types, depending on
