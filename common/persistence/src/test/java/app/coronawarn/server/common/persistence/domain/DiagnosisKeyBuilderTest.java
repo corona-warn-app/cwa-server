@@ -2,7 +2,7 @@ package app.coronawarn.server.common.persistence.domain;
 
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.fail;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import app.coronawarn.server.common.persistence.exception.InvalidDiagnosisKeyException;
 import app.coronawarn.server.common.protocols.external.exposurenotification.Key;
@@ -10,6 +10,7 @@ import com.google.protobuf.ByteString;
 import java.nio.charset.Charset;
 import java.time.Instant;
 import org.junit.jupiter.api.Test;
+import org.opentest4j.AssertionFailedError;
 
 public class DiagnosisKeyBuilderTest {
 
@@ -36,7 +37,7 @@ public class DiagnosisKeyBuilderTest {
           .withSubmissionTimestamp(this.expSubmissionTimestamp)
           .build();
     } catch (InvalidDiagnosisKeyException e) {
-      fail("The diagnosis key is not valid.");
+      throw new AssertionFailedError("The diagnosis key is not valid.");
     }
 
     assertDiagnosisKeyEquals(actDiagnosisKey, this.expSubmissionTimestamp);
@@ -80,6 +81,54 @@ public class DiagnosisKeyBuilderTest {
     assertDiagnosisKeyEquals(actDiagnosisKey);
   }
 
+  @Test
+  public void failsForInvalidKeyData() throws InvalidDiagnosisKeyException {
+    assertThrows(
+        InvalidDiagnosisKeyException.class, () ->
+            DiagnosisKey.builder()
+                .withKeyData("17--bytelongarray".getBytes(Charset.defaultCharset()))
+                .withRollingStartNumber(this.expRollingStartNumber)
+                .withRollingPeriod(this.expRollingPeriod)
+                .withTransmissionRiskLevel(this.expTransmissionRiskLevel).build()
+    );
+  }
+
+  @Test
+  public void failsForInvalidRollingStartNumber() throws InvalidDiagnosisKeyException {
+    assertThrows(
+        InvalidDiagnosisKeyException.class, () ->
+            DiagnosisKey.builder()
+                .withKeyData(this.expKeyData)
+                .withRollingStartNumber(0)
+                .withRollingPeriod(this.expRollingPeriod)
+                .withTransmissionRiskLevel(this.expTransmissionRiskLevel).build()
+    );
+  }
+
+  @Test
+  public void failsForInvalidRollingPeriod() throws InvalidDiagnosisKeyException {
+    assertThrows(
+        InvalidDiagnosisKeyException.class, () ->
+            DiagnosisKey.builder()
+                .withKeyData(this.expKeyData)
+                .withRollingStartNumber(this.expRollingStartNumber)
+                .withRollingPeriod(0)
+                .withTransmissionRiskLevel(this.expTransmissionRiskLevel).build()
+    );
+  }
+
+  @Test
+  public void failsForInvalidTransmissionRiskLevel() throws InvalidDiagnosisKeyException {
+    assertThrows(
+        InvalidDiagnosisKeyException.class, () ->
+            DiagnosisKey.builder()
+                .withKeyData(this.expKeyData)
+                .withRollingStartNumber(this.expRollingStartNumber)
+                .withRollingPeriod(this.expRollingPeriod)
+                .withTransmissionRiskLevel(10).build()
+    );
+  }
+
   private void assertDiagnosisKeyEquals(DiagnosisKey actDiagnosisKey) {
     assertDiagnosisKeyEquals(actDiagnosisKey, getCurrentHoursSinceEpoch());
   }
@@ -95,4 +144,5 @@ public class DiagnosisKeyBuilderTest {
     assertEquals(this.expRollingPeriod, actDiagnosisKey.getRollingPeriod());
     assertEquals(this.expTransmissionRiskLevel, actDiagnosisKey.getTransmissionRiskLevel());
   }
+
 }

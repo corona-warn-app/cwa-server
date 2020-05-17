@@ -38,24 +38,6 @@ class DiagnosisKeyValidatorTest {
   }
 
   @Test
-  public void rollingStartNumberMustBeValidIncrement() {
-    checkMessage(assertThrows(
-        InvalidDiagnosisKeyException.class, () ->
-            DiagnosisKeyValidator.validateRollingStartNumber(123456L)),
-        "Rolling start number must be start of rolling period, i.e. an increment of 60 * 10.");
-
-    checkMessage(assertThrows(
-        InvalidDiagnosisKeyException.class, () ->
-            DiagnosisKeyValidator.validateRollingStartNumber(0L)),
-        "Rolling start number must be start of rolling period, i.e. an increment of 60 * 10.");
-
-    checkMessage(assertThrows(
-        InvalidDiagnosisKeyException.class, () ->
-            DiagnosisKeyValidator.validateRollingStartNumber(-4200L)),
-        "Rolling start number must be start of rolling period, i.e. an increment of 60 * 10.");
-  }
-
-  @Test
   public void rollingStartNumberDoesNotThrowForValid() {
     Assertions.assertThatCode(
         () -> DiagnosisKeyValidator.validateRollingStartNumber(4200L))
@@ -91,12 +73,12 @@ class DiagnosisKeyValidatorTest {
     checkMessage(assertThrows(
         InvalidDiagnosisKeyException.class, () ->
             DiagnosisKeyValidator.validateRollingPeriod(0)),
-        "Rolling period must be larger than 0.");
+        "Rolling period must be positive number, but is 0.");
 
     checkMessage(assertThrows(
         InvalidDiagnosisKeyException.class, () ->
             DiagnosisKeyValidator.validateRollingPeriod(-3L)),
-        "Rolling period must be larger than 0.");
+        "Rolling period must be positive number, but is -3.");
   }
 
   @Test

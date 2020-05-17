@@ -96,11 +96,11 @@ public class DiagnosisKey {
     return submissionTimestamp;
   }
 
-  public boolean isYoungerThanRetentionPeriod(long daysToRetain) {
+  public boolean isYoungerThanRetentionThreshold(long daysToRetain) {
     long threshold = LocalDateTime
         .ofInstant(Instant.now(), UTC)
         .minusDays(daysToRetain)
-        .toEpochSecond(UTC) / 3600L;
+        .toEpochSecond(UTC) / (60 * 10);
 
     return this.rollingStartNumber >= threshold;
   }

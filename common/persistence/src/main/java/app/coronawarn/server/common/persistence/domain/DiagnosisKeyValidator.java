@@ -23,9 +23,9 @@ public class DiagnosisKeyValidator {
   }
 
   public static void validateRollingStartNumber(long rollingStartNumber) throws InvalidDiagnosisKeyException {
-    if (rollingStartNumber < 1 || rollingStartNumber % (60 * 10) != 0) {
-      logger.debug("Rolling start number must be start of rolling period, i.e. an increment of 60 * 10.");
-      throw new InvalidDiagnosisKeyException("Rolling start number must be start of rolling period, i.e. an increment of 60 * 10.");
+    if (rollingStartNumber < 1) {
+      logger.debug("Rolling start number must be greater than 0.");
+      throw new InvalidDiagnosisKeyException("Rolling start number must be greater than 0.");
     }
 
     long currentInstant = LocalDateTime.ofInstant(Instant.now(), UTC).toEpochSecond(UTC);
@@ -37,8 +37,8 @@ public class DiagnosisKeyValidator {
 
   public static void validateRollingPeriod(long rollingPeriod) throws InvalidDiagnosisKeyException {
     if (rollingPeriod < 1) {
-      logger.debug("Rolling period must be larger than 0.");
-      throw new InvalidDiagnosisKeyException("Rolling period must be larger than 0.");
+      logger.debug("Rolling period must be positive number, but is {}.", rollingPeriod);
+      throw new InvalidDiagnosisKeyException(String.format("Rolling period must be positive number, but is %s.", rollingPeriod));
     }
   }
 

@@ -70,7 +70,7 @@ public class SubmissionController {
     List<DiagnosisKey> diagnosisKeys = new ArrayList<>();
     for (Key aProtoBufKey : protoBufKeysList) {
       DiagnosisKey diagnosisKey = DiagnosisKey.builder().fromProtoBuf(aProtoBufKey).build();
-      if (diagnosisKey.isYoungerThanRetentionPeriod(retentionDays)) {
+      if (diagnosisKey.isYoungerThanRetentionThreshold(retentionDays)) {
         diagnosisKeys.add(diagnosisKey);
       }
     }
