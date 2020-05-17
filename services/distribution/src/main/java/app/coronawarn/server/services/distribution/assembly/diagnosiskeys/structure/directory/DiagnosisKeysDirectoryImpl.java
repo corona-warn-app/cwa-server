@@ -24,7 +24,8 @@ public class DiagnosisKeysDirectoryImpl extends DirectoryImpl {
   private final CryptoProvider cryptoProvider;
 
   /**
-   * Constructor.
+   * Constructs a {@link DiagnosisKeysDirectoryImpl} based on the specified {@link DiagnosisKey}
+   * collection. Cryptographic signing is performed using the specified {@link CryptoProvider}.
    */
   public DiagnosisKeysDirectoryImpl(Collection<DiagnosisKey> diagnosisKeys,
       CryptoProvider cryptoProvider) {

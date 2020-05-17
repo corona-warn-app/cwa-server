@@ -20,7 +20,8 @@ public class IndexDirectoryImpl<T> extends DirectoryImpl implements IndexDirecto
   private final Formatter<T> indexFormatter;
 
   /**
-   * Constructor.
+   * Constructs a {@link IndexDirectoryImpl} instance that represents a directory, containing an
+   * index in the form of sub directories.
    *
    * @param name           The name that this directory should have on disk.
    * @param indexFunction  An {@link IndexFunction} that calculates the index of this {@link

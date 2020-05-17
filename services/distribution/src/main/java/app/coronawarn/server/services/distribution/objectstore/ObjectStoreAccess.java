@@ -42,7 +42,12 @@ public class ObjectStoreAccess {
   private S3Client client;
 
   /**
-   * Bean constructor.
+   * Constructs an {@link ObjectStoreAccess} instance for communication with the specified object
+   * store endpoint and bucket.
+   *
+   * @param endpoint The endpoint URI for communication with the object store.
+   * @param bucket   The bucket name.
+   * @throws URISyntaxException thrown if endpoint URI invalid.
    */
   @Autowired
   public ObjectStoreAccess(@Value("${cwa.objectstore.endpoint:notset}") String endpoint,

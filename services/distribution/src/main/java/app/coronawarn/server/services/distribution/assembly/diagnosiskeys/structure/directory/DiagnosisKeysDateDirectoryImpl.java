@@ -22,7 +22,9 @@ public class DiagnosisKeysDateDirectoryImpl extends IndexDirectoryImpl<LocalDate
   private final CryptoProvider cryptoProvider;
 
   /**
-   * Constructor.
+   * Constructs a {@link DiagnosisKeysDateDirectoryImpl} instance associated with the specified
+   * {@link DiagnosisKey} collection. Payload signing is be performed according to the specified
+   * {@link CryptoProvider}.
    */
   public DiagnosisKeysDateDirectoryImpl(Collection<DiagnosisKey> diagnosisKeys,
       CryptoProvider cryptoProvider) {

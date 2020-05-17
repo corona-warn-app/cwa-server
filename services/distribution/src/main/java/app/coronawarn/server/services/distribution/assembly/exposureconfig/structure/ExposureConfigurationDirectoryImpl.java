@@ -21,7 +21,8 @@ public class ExposureConfigurationDirectoryImpl extends DirectoryImpl {
   private static final String INDEX_FILE_NAME = "index";
 
   /**
-   * Constructor.
+   * Constructs an {@link ExposureConfigurationDirectoryImpl} instance representing the directory
+   * structure {@code /parameters/country/:country}.
    *
    * @param region         The region that the {@link RiskScoreParameters} apply to.
    * @param exposureConfig The {@link RiskScoreParameters} to sign and write.

@@ -46,17 +46,17 @@ public class SubmissionController {
   @Autowired
   private TanVerifier tanVerifier;
 
+  private ScheduledExecutorService scheduledExecutor = Executors.newSingleThreadScheduledExecutor();
+  private ForkJoinPool forkJoinPool = ForkJoinPool.commonPool();
+
   /**
    * Handles diagnosis key submission requests.
    *
    * @param exposureKeys The unmarshalled protocol buffers submission payload.
-   * @param fake A header flag, marking fake requests.
-   * @param tan A tan for diagnosis verification.
+   * @param fake         A header flag, marking fake requests.
+   * @param tan          A tan for diagnosis verification.
    * @return An empty response body.
    */
-  private ScheduledExecutorService scheduledExecutor = Executors.newSingleThreadScheduledExecutor();
-  private ForkJoinPool forkJoinPool = ForkJoinPool.commonPool();
-
   @PostMapping(SUBMISSION_ROUTE)
   public DeferredResult<ResponseEntity<Void>> submitDiagnosisKey(
       @RequestBody SubmissionPayload exposureKeys,

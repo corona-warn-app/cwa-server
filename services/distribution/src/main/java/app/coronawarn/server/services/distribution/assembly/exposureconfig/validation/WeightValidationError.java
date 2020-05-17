@@ -11,7 +11,7 @@ public class WeightValidationError implements ValidationError {
   private final double givenValue;
 
   /**
-   * Constructor.
+   * Constructs a {@link WeightValidationError} for a specific error occurrence.
    *
    * @param parameter The name of the exposure configuration parameter.
    * @param givenValue The value of the exposure configuration parameter.
