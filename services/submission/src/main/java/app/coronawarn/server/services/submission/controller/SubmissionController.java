@@ -86,8 +86,12 @@ public class SubmissionController {
       if (!this.tanVerifier.verifyTan(tan)) {
         deferredResult.setResult(buildTanInvalidResponseEntity());
       } else {
-        persistDiagnosisKeysPayload(exposureKeys);
-        deferredResult.setResult(buildSuccessResponseEntity());
+        try {
+          persistDiagnosisKeysPayload(exposureKeys);
+          deferredResult.setResult(buildSuccessResponseEntity());
+        } catch (Exception e) {
+          deferredResult.setErrorResult(e);
+        }
       }
       stopWatch.stop();
       updateFakeDelay(stopWatch.getTotalTimeMillis());
