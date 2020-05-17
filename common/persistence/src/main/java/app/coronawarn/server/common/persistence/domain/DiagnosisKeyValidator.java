@@ -14,6 +14,13 @@ public class DiagnosisKeyValidator {
   private static final Integer MIN_RISK_LEVEL = 0;
   private static final Integer MAX_RISK_LEVEL = 8;
 
+  public static void validateDiagnosisKey(DiagnosisKey diagnosisKey) {
+    validateKeyData(diagnosisKey.getKeyData());
+    validateRollingPeriod(diagnosisKey.getRollingPeriod());
+    validateRollingStartNumber(diagnosisKey.getRollingStartNumber());
+    validateTransmissionRiskLevel(diagnosisKey.getTransmissionRiskLevel());
+  }
+
   public static void validateTransmissionRiskLevel(int transmissionRiskLevel) throws InvalidDiagnosisKeyException {
     if (transmissionRiskLevel < MIN_RISK_LEVEL || transmissionRiskLevel > MAX_RISK_LEVEL) {
       logger.debug("Risk level {} is not allowed. Must be between {} and {}.", transmissionRiskLevel, MIN_RISK_LEVEL, MAX_RISK_LEVEL);
