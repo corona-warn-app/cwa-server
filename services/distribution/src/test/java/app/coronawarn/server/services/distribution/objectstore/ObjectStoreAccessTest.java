@@ -3,10 +3,15 @@ package app.coronawarn.server.services.distribution.objectstore;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.Mockito.spy;
+import static org.mockito.Mockito.when;
 
+import app.coronawarn.server.services.distribution.objectstore.publish.PublishFile;
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Path;
 import java.util.UUID;
+import java.util.stream.Collectors;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
@@ -26,6 +31,8 @@ public class ObjectStoreAccessTest {
 
   private final String textFile = "objectstore/store-test-file";
 
+  private final String rootTestFolder = "objectstore/";
+
   @Autowired
   private ObjectStoreAccess objectStoreAccess;
 
@@ -33,36 +40,46 @@ public class ObjectStoreAccessTest {
   public void fetchFilesNotEmpty() {
     var files = objectStoreAccess.getObjectsWithPrefix("");
 
-    assertFalse(files.contents().isEmpty(), "Contents is empty, but we should have files");
+    assertFalse(files.collect(Collectors.toList()).isEmpty(), "Contents is empty, but we should have files");
   }
 
   @Test
   public void fetchFilesNothingFound() {
-    var files = objectStoreAccess.getObjectsWithPrefix("THISPREFIXDOESNOTEXIST");
+    var files = objectStoreAccess.getObjectsWithPrefix("THIS_PREFIX_DOES_NOT_EXIST");
 
-    assertTrue(files.contents().isEmpty(), "Found files, but should be empty!");
+    assertTrue(files.collect(Collectors.toList()).isEmpty(), "Found files, but should be empty!");
   }
 
   @Test
   public void pushTestFileAndDelete() throws IOException {
-    objectStoreAccess.putObject(testRunId + "TESTFILE", getExampleFile());
+    PublishFile pf = new PublishFile(getExampleFile(), getRootTestFolder());
+
+    PublishFile spy = spy(pf);
+    when(spy.getS3Key()).thenReturn(testRunId + pf.getS3Key());
+
+    objectStoreAccess.putObject(spy);
     var files = objectStoreAccess.getObjectsWithPrefix(testRunId);
-    assertEquals(1, files.contents().size());
+    assertEquals(1, files.collect(Collectors.toList()).size());
 
     this.printAllFiles();
 
     objectStoreAccess.deleteObjectsWithPrefix(testRunId);
-    var filesAfterDeletion = objectStoreAccess.getObjectsWithPrefix(testRunId);
-    assertEquals(0, filesAfterDeletion.contents().size());
+    var filesAfterDeletion = objectStoreAccess.getObjectsWithPrefix(testRunId)
+        .collect(Collectors.toList());
+    assertEquals(0, filesAfterDeletion.size());
 
     this.printAllFiles();
 
-    var allFiles = objectStoreAccess.getObjectsWithPrefix("");
-    assertFalse(allFiles.contents().isEmpty(), "Contents is empty, but we should have files");
+    var allFiles = objectStoreAccess.getObjectsWithPrefix("").collect(Collectors.toList());
+    assertFalse(allFiles.isEmpty(), "Contents is empty, but we should have files");
   }
 
-  private File getExampleFile() throws IOException {
-    return new File(new ClassPathResource(textFile).getURI());
+  private Path getExampleFile() throws IOException {
+    return Path.of(new ClassPathResource(textFile).getURI());
+  }
+
+  private Path getRootTestFolder() throws IOException {
+    return Path.of(new ClassPathResource(rootTestFolder).getURI());
   }
 
   /**
@@ -72,7 +89,7 @@ public class ObjectStoreAccessTest {
     var out = objectStoreAccess.getObjectsWithPrefix("");
 
     logger.info("-------");
-    logger.info(out.contents().toString());
+    logger.info(out.collect(Collectors.toList()).toString());
     logger.info("-------");
 
     logger.info("Fetched S3");

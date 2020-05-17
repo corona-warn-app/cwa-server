@@ -1,77 +1,59 @@
 package app.coronawarn.server.services.distribution.objectstore;
 
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
-import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.UUID;
-import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.BeforeAll;
+import java.util.List;
+import java.util.stream.Collectors;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestInstance;
-import org.junit.jupiter.api.TestInstance.Lifecycle;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.core.io.ClassPathResource;
+import software.amazon.awssdk.services.s3.model.S3Object;
 
 @SpringBootTest
 @Tag("s3-integration")
-@TestInstance(Lifecycle.PER_CLASS)
 public class S3PublisherTest {
+  private static final Logger logger = LoggerFactory.getLogger(S3PublisherTest.class);
 
-  private final String testRunId = "testing/cwa/" + UUID.randomUUID().toString() + "/";
-
-  private final String rootTestFolder = "objectstore/publisher/";
-
-  private final String exampleFile = rootTestFolder + "rootfile";
+  private final String rootTestFolder = "objectstore/";
 
   @Autowired
-  private S3Publisher s3Publisher;
+  ObjectStoreAccess objectStoreAccess;
 
   @Test
-  public void publishFolder() throws IOException {
-    Path start = Paths.get(getFile(rootTestFolder).getPath());
+  public void publishTestFolderOk() throws IOException {
+    S3Publisher publisher = new S3Publisher(getFolderAsPath(rootTestFolder), objectStoreAccess, "publisher");
 
-    s3Publisher.publishFolder(start);
+    printAllFiles();
+
+    publisher.publish();
+
+    printAllFiles();
+
+    List<S3Object> s3Objects = objectStoreAccess.getObjectsWithPrefix("publisher")
+        .collect(Collectors.toList());
+
+    assertEquals(7, s3Objects.size());
+
   }
 
-
-  @Test
-  public void publishFolderFast() throws IOException, InterruptedException {
-    Path start = Paths.get(getFile(rootTestFolder).getPath());
-
-    s3Publisher.publishFolderFast(start);
+  private Path getFolderAsPath(String path) throws IOException {
+    return Path.of(new ClassPathResource(path).getURI());
   }
 
-  @Test
-  public void publishSingleFile() throws IOException {
-    Path fileToPublish = getFile(exampleFile).toPath();
-    Path path = getFile(rootTestFolder).toPath();
+  private void printAllFiles() {
+    var out = objectStoreAccess.getObjectsWithPrefix("publisher");
 
-    s3Publisher.publishFile(fileToPublish, path);
-    assertTrue(s3Publisher.isFileExisting(fileToPublish, path), "File should exist on S3");
+    logger.info("-------");
+    logger.info(out.collect(Collectors.toList()).toString());
+    logger.info("-------");
 
-    s3Publisher.deleteFile(fileToPublish, path);
-    assertFalse(s3Publisher.isFileExisting(fileToPublish, path), "File should have been deleted");
+    logger.info("Fetched S3");
   }
 
-  private File getFile(String path) throws IOException {
-    return new File(new ClassPathResource(path).getURI());
-  }
-
-  @BeforeAll
-  public void setup() {
-    s3Publisher.setPrefixPath(this.testRunId);
-  }
-
-  @AfterAll
-  public void teardown() {
-    s3Publisher.deleteFolder("");
-
-    s3Publisher.setPrefixPath("cwa/");
-  }
 }

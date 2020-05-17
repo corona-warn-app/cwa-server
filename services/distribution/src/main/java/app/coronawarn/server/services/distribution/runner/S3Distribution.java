@@ -1,6 +1,7 @@
 package app.coronawarn.server.services.distribution.runner;
 
 import app.coronawarn.server.services.distribution.assembly.component.OutputDirectoryProvider;
+import app.coronawarn.server.services.distribution.objectstore.ObjectStoreAccess;
 import app.coronawarn.server.services.distribution.objectstore.S3Publisher;
 import java.io.IOException;
 import java.nio.file.Path;
@@ -25,14 +26,17 @@ public class S3Distribution implements ApplicationRunner {
   private OutputDirectoryProvider outputDirectoryProvider;
 
   @Autowired
-  private S3Publisher s3Publisher;
+  private ObjectStoreAccess objectStoreAccess;
 
   @Override
   public void run(ApplicationArguments args) {
     try {
+
       Path pathToDistribute = outputDirectoryProvider.getFileOnDisk().toPath().toAbsolutePath();
-      s3Publisher.publishFolder(pathToDistribute);
-    } catch (IOException | UnsupportedOperationException e) {
+      S3Publisher s3Publisher = new S3Publisher(pathToDistribute, objectStoreAccess);
+
+      s3Publisher.publish();
+    } catch (UnsupportedOperationException | IOException e) {
       logger.error("Distribution failed.", e);
     }
     logger.debug("Data pushed to CDN successfully.");
