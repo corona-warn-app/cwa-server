@@ -1,6 +1,7 @@
 package app.coronawarn.server.services.distribution.runner;
 
 import app.coronawarn.server.common.persistence.domain.DiagnosisKey;
+import app.coronawarn.server.common.persistence.exception.InvalidDiagnosisKeyException;
 import app.coronawarn.server.common.persistence.service.DiagnosisKeyService;
 import app.coronawarn.server.common.protocols.internal.RiskLevel;
 import java.time.LocalDate;
@@ -11,6 +12,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.stream.LongStream;
+import junit.framework.AssertionFailedError;
 import org.apache.commons.math3.distribution.PoissonDistribution;
 import org.apache.commons.math3.random.JDKRandomGenerator;
 import org.apache.commons.math3.random.RandomGenerator;
@@ -90,7 +92,13 @@ public class TestDataGeneration implements ApplicationRunner {
     logger.debug("Generating diagnosis keys between {} and {}...", startTimestamp, endTimestamp);
     List<DiagnosisKey> newDiagnosisKeys = LongStream.range(startTimestamp, endTimestamp)
         .mapToObj(submissionTimestamp -> IntStream.range(0, poisson.sample())
-            .mapToObj(__ -> generateDiagnosisKey(submissionTimestamp))
+            .mapToObj(__ -> {
+              try {
+                return generateDiagnosisKey(submissionTimestamp);
+              } catch (InvalidDiagnosisKeyException e) {
+                throw new AssertionFailedError("The diagnosis key is not valid.");
+              }
+            })
             .collect(Collectors.toList()))
         .flatMap(List::stream)
         .collect(Collectors.toList());
@@ -136,7 +144,7 @@ public class TestDataGeneration implements ApplicationRunner {
   /**
    * Returns a random diagnosis key with a specific submission timestamp.
    */
-  private DiagnosisKey generateDiagnosisKey(long submissionTimestamp) {
+  private DiagnosisKey generateDiagnosisKey(long submissionTimestamp) throws InvalidDiagnosisKeyException {
     return DiagnosisKey.builder()
         .withKeyData(generateDiagnosisKeyBytes())
         .withRollingStartNumber(generateRollingStartNumber(submissionTimestamp))
