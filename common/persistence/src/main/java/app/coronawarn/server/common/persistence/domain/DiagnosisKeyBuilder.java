@@ -50,7 +50,7 @@ public class DiagnosisKeyBuilder implements Builder, RollingStartNumberBuilder,
 
   @Override
   public FinalBuilder withTransmissionRiskLevel(int transmissionRiskLevel) throws InvalidDiagnosisKeyException {
-    DiagnosisKeyValidator.validateTransmissionLevel(transmissionRiskLevel);
+    DiagnosisKeyValidator.validateTransmissionRiskLevel(transmissionRiskLevel);
     this.transmissionRiskLevel = transmissionRiskLevel;
     return this;
   }

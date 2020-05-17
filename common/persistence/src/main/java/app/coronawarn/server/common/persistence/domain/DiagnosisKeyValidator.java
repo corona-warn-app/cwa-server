@@ -14,16 +14,16 @@ public class DiagnosisKeyValidator {
   private static final Integer MIN_RISK_LEVEL = 0;
   private static final Integer MAX_RISK_LEVEL = 8;
 
-  public static void validateTransmissionLevel(int transmissionRiskLevel) throws InvalidDiagnosisKeyException {
+  public static void validateTransmissionRiskLevel(int transmissionRiskLevel) throws InvalidDiagnosisKeyException {
     if (transmissionRiskLevel < MIN_RISK_LEVEL || transmissionRiskLevel > MAX_RISK_LEVEL) {
-      logger.debug("Risk level {} is not allowed. Must be between {} and {}.", MIN_RISK_LEVEL, MAX_RISK_LEVEL, transmissionRiskLevel);
+      logger.debug("Risk level {} is not allowed. Must be between {} and {}.", transmissionRiskLevel, MIN_RISK_LEVEL, MAX_RISK_LEVEL);
       throw new InvalidDiagnosisKeyException(
-          String.format("Risk level %s is not allowed. Must be between %s and %s.", MIN_RISK_LEVEL, MAX_RISK_LEVEL, transmissionRiskLevel));
+          String.format("Risk level %s is not allowed. Must be between %s and %s.", transmissionRiskLevel, MIN_RISK_LEVEL, MAX_RISK_LEVEL));
     }
   }
 
   public static void validateRollingStartNumber(long rollingStartNumber) throws InvalidDiagnosisKeyException {
-    if (rollingStartNumber % (60 * 10) != 0) {
+    if (rollingStartNumber < 1 || rollingStartNumber % (60 * 10) != 0) {
       logger.debug("Rolling start number must be start of rolling period, i.e. an increment of 60 * 10.");
       throw new InvalidDiagnosisKeyException("Rolling start number must be start of rolling period, i.e. an increment of 60 * 10.");
     }
@@ -36,9 +36,9 @@ public class DiagnosisKeyValidator {
   }
 
   public static void validateRollingPeriod(long rollingPeriod) throws InvalidDiagnosisKeyException {
-    if (rollingPeriod < 0) {
-      logger.debug("Rolling period cannot be 0.");
-      throw new InvalidDiagnosisKeyException("Rolling period cannot be 0.");
+    if (rollingPeriod < 1) {
+      logger.debug("Rolling period must be larger than 0.");
+      throw new InvalidDiagnosisKeyException("Rolling period must be larger than 0.");
     }
   }
 
