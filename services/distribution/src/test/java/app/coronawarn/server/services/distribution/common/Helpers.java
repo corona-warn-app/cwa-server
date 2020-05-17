@@ -8,6 +8,7 @@ import app.coronawarn.server.services.distribution.assembly.structure.directory.
 import app.coronawarn.server.services.distribution.assembly.structure.util.ImmutableStack;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
+import junit.framework.AssertionFailedError;
 
 public class Helpers {
 
@@ -25,8 +26,7 @@ public class Helpers {
           .withTransmissionRiskLevel(2)
           .withSubmissionTimestamp(submissionTimeStamp).build();
     } catch (InvalidDiagnosisKeyException e) {
-      fail("The diagnosis key is not valid.");
-      return null;
+      throw new AssertionFailedError("The diagnosis key is not valid.");
     }
   }
 

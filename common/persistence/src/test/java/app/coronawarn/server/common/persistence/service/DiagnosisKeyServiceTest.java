@@ -14,6 +14,7 @@ import java.util.List;
 import org.assertj.core.util.Lists;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
+import org.opentest4j.AssertionFailedError;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 
@@ -119,8 +120,7 @@ public class DiagnosisKeyServiceTest {
           .withTransmissionRiskLevel(2)
           .withSubmissionTimestamp(submissionTimeStamp).build();
     } catch (InvalidDiagnosisKeyException e) {
-      fail("The diagnosis key is not valid.");
-      return null;
+      throw new AssertionFailedError("The diagnosis key is not valid.");
     }
   }
 
