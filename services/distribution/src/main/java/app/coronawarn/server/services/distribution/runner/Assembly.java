@@ -5,7 +5,6 @@ import app.coronawarn.server.services.distribution.assembly.component.CwaApiStru
 import app.coronawarn.server.services.distribution.assembly.component.OutputDirectoryProvider;
 import app.coronawarn.server.services.distribution.assembly.structure.directory.Directory;
 import app.coronawarn.server.services.distribution.assembly.structure.util.ImmutableStack;
-import java.io.IOException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;

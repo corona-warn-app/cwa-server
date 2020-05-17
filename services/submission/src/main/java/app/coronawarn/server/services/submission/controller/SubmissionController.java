@@ -8,7 +8,6 @@ import app.coronawarn.server.common.protocols.internal.SubmissionPayload;
 import app.coronawarn.server.services.submission.exception.InvalidPayloadException;
 import app.coronawarn.server.services.submission.verification.TanVerifier;
 import java.util.ArrayList;
-import java.util.LinkedList;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
