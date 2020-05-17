@@ -4,8 +4,6 @@ on:
   push:
     branches: 
       - master
-  schedule:
-    - cron: '0 6 * * 4'
 
 jobs:
   CodeQL-Build:
