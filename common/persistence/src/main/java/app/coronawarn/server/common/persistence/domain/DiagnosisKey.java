@@ -25,7 +25,7 @@ public class DiagnosisKey {
   private int transmissionRiskLevel;
   private long submissionTimestamp;
 
-  public DiagnosisKey() {
+  protected DiagnosisKey() {
   }
 
   /**
