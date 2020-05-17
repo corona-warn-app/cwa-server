@@ -16,7 +16,7 @@ import org.springframework.web.context.request.WebRequest;
 @RestControllerAdvice("app.coronawarn.server.services.submission.controller")
 public class APIExceptionHandler {
 
-  private static final  Logger logger = LoggerFactory.getLogger(APIExceptionHandler.class);
+  private static final Logger logger = LoggerFactory.getLogger(APIExceptionHandler.class);
 
   @ExceptionHandler(Exception.class)
   @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
@@ -25,9 +25,15 @@ public class APIExceptionHandler {
   }
 
   @ExceptionHandler({HttpMessageNotReadableException.class, ServletRequestBindingException.class,
-      InvalidProtocolBufferException.class, InvalidDiagnosisKeyException.class, InvalidPayloadException.class})
+      InvalidProtocolBufferException.class})
   @ResponseStatus(HttpStatus.BAD_REQUEST)
   public void bindingExceptions(Exception ex, WebRequest wr) {
     logger.error("Binding failed {}", wr.getDescription(false), ex);
+  }
+
+  @ExceptionHandler({InvalidDiagnosisKeyException.class, InvalidPayloadException.class})
+  @ResponseStatus(HttpStatus.BAD_REQUEST)
+  public void diagnosisKeyExceptions(Exception ex, WebRequest wr) {
+    logger.error("Erroneous Submission Payload {}", wr.getDescription(false), ex);
   }
 }
