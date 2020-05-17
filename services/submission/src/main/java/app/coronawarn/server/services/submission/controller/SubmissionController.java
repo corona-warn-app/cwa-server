@@ -24,7 +24,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/version/v1")
 public class SubmissionController {
 
-  @Value("${services.submission.retentionDays}")
+  @Value("${services.submission.retention-days}")
   private Integer retentionDays;
 
   /**
@@ -38,7 +38,7 @@ public class SubmissionController {
   @Autowired
   private TanVerifier tanVerifier;
 
-  @Value("${services.submission.payload.maxNumberOfKeys}")
+  @Value("${services.submission.payload.max-number-of-keys}")
   private Integer maxNumberOfKeys;
 
   @PostMapping(SUBMISSION_ROUTE)
