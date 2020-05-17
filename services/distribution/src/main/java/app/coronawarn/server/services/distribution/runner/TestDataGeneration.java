@@ -33,7 +33,7 @@ import org.springframework.stereotype.Component;
  * testdata}).
  */
 @Component
-@Order(1)
+@Order(-1)
 @Profile("testdata")
 public class TestDataGeneration implements ApplicationRunner {
 

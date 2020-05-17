@@ -19,7 +19,7 @@ import org.springframework.stereotype.Component;
  * This runner assembles and writes diagnosis key bundles and the parameter configuration.
  */
 @Component
-@Order(3)
+@Order(2)
 public class Assembly implements ApplicationRunner {
 
   private static final Logger logger = LoggerFactory.getLogger(Assembly.class);
