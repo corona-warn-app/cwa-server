@@ -156,7 +156,7 @@ public class SubmissionControllerTest {
   }
 
   private static HttpHeaders setCwaAuthHeader(HttpHeaders headers) {
-    headers.set("cwa-authorization", "okTan");
+    headers.set("cwa-authorization", "TAN okTan");
     return headers;
   }
 
