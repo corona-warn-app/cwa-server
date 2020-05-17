@@ -51,11 +51,11 @@ public class SubmissionController {
   }
 
   @PostMapping(SUBMISSION_ROUTE)
-  public DeferredResult<?> submitDiagnosisKey(
+  public DeferredResult<ResponseEntity<Void>> submitDiagnosisKey(
       @RequestBody SubmissionPayload exposureKeys,
       @RequestHeader(value = "cwa-fake") Integer fake,
       @RequestHeader(value = "cwa-authorization") String tan) {
-    final DeferredResult<ResponseEntity<?>> deferredResult = new DeferredResult<>();
+    final DeferredResult<ResponseEntity<Void>> deferredResult = new DeferredResult<>();
     if (fake != 0) {
       setFakeDeferredResult(deferredResult);
     } else {
@@ -64,13 +64,13 @@ public class SubmissionController {
     return deferredResult;
   }
 
-  private void setFakeDeferredResult(DeferredResult<ResponseEntity<?>> deferredResult) {
+  private void setFakeDeferredResult(DeferredResult<ResponseEntity<Void>> deferredResult) {
     long delay = poisson.sample();
     scheduledExecutor.schedule(() -> deferredResult.setResult(buildSuccessResponseEntity()),
         delay, TimeUnit.MILLISECONDS);
   }
 
-  private void setRealDeferredResult(DeferredResult<ResponseEntity<?>> deferredResult,
+  private void setRealDeferredResult(DeferredResult<ResponseEntity<Void>> deferredResult,
       SubmissionPayload exposureKeys, String tan) {
     forkJoinPool.submit(() -> {
       if (!this.tanVerifier.verifyTan(tan)) {
@@ -85,14 +85,14 @@ public class SubmissionController {
   /**
    * Returns a response that indicates that an invalid TAN was specified in the request.
    */
-  private ResponseEntity<?> buildTanInvalidResponseEntity() {
+  private ResponseEntity<Void> buildTanInvalidResponseEntity() {
     return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
   }
 
   /**
    * Returns a response that indicates successful request processing.
    */
-  private ResponseEntity<?> buildSuccessResponseEntity() {
+  private ResponseEntity<Void> buildSuccessResponseEntity() {
     return ResponseEntity.ok().build();
   }
 
