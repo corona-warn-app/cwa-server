@@ -89,23 +89,21 @@ public class DiagnosisKeyServiceTest {
     assertDiagnosisKeysEqual(Lists.emptyList(), actKeys);
   }
 
-  private void assertDiagnosisKeysEqual(List<DiagnosisKey> expDiagKeys,
-      List<DiagnosisKey> actDiagKeys) {
-    assertEquals(expDiagKeys.size(), actDiagKeys.size(), "Cardinality mismatch");
+  private void assertDiagnosisKeysEqual(List<DiagnosisKey> expKeys, List<DiagnosisKey> actKeys) {
+    assertEquals(expKeys.size(), actKeys.size(), "Cardinality mismatch");
 
-    for (int i = 0; i < expDiagKeys.size(); i++) {
-      var expDiagKey = expDiagKeys.get(i);
-      var actDiagKey = actDiagKeys.get(i);
+    for (int i = 0; i < expKeys.size(); i++) {
+      var expKey = expKeys.get(i);
+      var actKey = actKeys.get(i);
 
-      assertEquals(
-          expDiagKey.getKeyData(), actDiagKey.getKeyData(), "keyData mismatch");
-      assertEquals(expDiagKey.getRollingStartNumber(), actDiagKey.getRollingStartNumber(),
+      assertEquals(expKey.getKeyData(), actKey.getKeyData(), "keyData mismatch");
+      assertEquals(expKey.getRollingStartNumber(), actKey.getRollingStartNumber(),
           "rollingStartNumber mismatch");
-      assertEquals(expDiagKey.getRollingPeriod(), actDiagKey.getRollingPeriod(),
+      assertEquals(expKey.getRollingPeriod(), actKey.getRollingPeriod(),
           "rollingPeriod mismatch");
-      assertEquals(expDiagKey.getTransmissionRiskLevel(), actDiagKey.getTransmissionRiskLevel(),
+      assertEquals(expKey.getTransmissionRiskLevel(), actKey.getTransmissionRiskLevel(),
           "transmissionRiskLevel mismatch");
-      assertEquals(expDiagKey.getSubmissionTimestamp(), actDiagKey.getSubmissionTimestamp(),
+      assertEquals(expKey.getSubmissionTimestamp(), actKey.getSubmissionTimestamp(),
           "submissionTimestamp mismatch");
     }
   }
