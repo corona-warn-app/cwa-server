@@ -9,7 +9,7 @@ services:
     ports:
       - "8080:8080"
     environment: 
-      SPRING_PROFILES_ACTIVE: cloud
+      SPRING_PROFILES_ACTIVE: cloud,dev
       POSTGRESQL_SERVICE_PORT: '5432'
       POSTGRESQL_SERVICE_HOST: postgres
       POSTGRESQL_DATABASE: ${POSTGRES_DB}
@@ -25,7 +25,7 @@ services:
      - postgres
      - minio
     environment:
-      SPRING_PROFILES_ACTIVE: cloud
+      SPRING_PROFILES_ACTIVE: cloud,dev,testdata
       POSTGRESQL_SERVICE_PORT: '5432'
       POSTGRESQL_SERVICE_HOST: postgres
       POSTGRESQL_DATABASE: ${POSTGRES_DB}
