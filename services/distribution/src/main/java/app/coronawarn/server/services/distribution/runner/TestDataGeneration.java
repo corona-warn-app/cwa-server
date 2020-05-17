@@ -40,7 +40,7 @@ public class TestDataGeneration implements ApplicationRunner {
   private final Logger logger = LoggerFactory.getLogger(TestDataGeneration.class);
 
   @Value("${services.distribution.retention_days}")
-  private Integer rententionDays;
+  private Integer retentionDays;
 
   @Value("${services.distribution.testdata.seed}")
   private Integer seed;
@@ -95,7 +95,7 @@ public class TestDataGeneration implements ApplicationRunner {
         .flatMap(List::stream)
         .collect(Collectors.toList());
 
-    logger.debug("Wrting {} new diagnosis keys to the database...", newDiagnosisKeys.size());
+    logger.debug("Writing {} new diagnosis keys to the database...", newDiagnosisKeys.size());
     diagnosisKeyService.saveDiagnosisKeys(newDiagnosisKeys);
 
     logger.debug("Test data generation finished successfully.");
@@ -129,7 +129,7 @@ public class TestDataGeneration implements ApplicationRunner {
    * function would return the timestamp for 14 days ago (from now) at 00:00 UTC.
    */
   private long getRetentionStartTimestamp() {
-    return LocalDate.now().minusDays(rententionDays).atStartOfDay()
+    return LocalDate.now().minusDays(retentionDays).atStartOfDay()
         .toEpochSecond(ZoneOffset.UTC) / ONE_HOUR_INTERVAL_SECONDS;
   }
 
@@ -165,7 +165,7 @@ public class TestDataGeneration implements ApplicationRunner {
         submissionTimestamp * ONE_HOUR_INTERVAL_SECONDS / TEN_MINUTES_INTERVAL_SECONDS;
     long minRollingStartNumber =
         maxRollingStartNumber
-            - TimeUnit.DAYS.toSeconds(rententionDays) / TEN_MINUTES_INTERVAL_SECONDS;
+            - TimeUnit.DAYS.toSeconds(retentionDays) / TEN_MINUTES_INTERVAL_SECONDS;
     return getRandomBetween(minRollingStartNumber, maxRollingStartNumber);
   }
 
