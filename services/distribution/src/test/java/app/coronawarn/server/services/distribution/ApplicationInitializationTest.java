@@ -25,13 +25,9 @@ public class ApplicationInitializationTest {
   @Autowired
   private CryptoProvider cryptoProvider;
 
-  @Autowired
-  private S3Publisher s3Publisher;
-
   @Test
   public void beansInitialized() {
     assertNotNull(diagnosisKeyService);
     assertNotNull(cryptoProvider);
-    assertNotNull(s3Publisher);
   }
 }
