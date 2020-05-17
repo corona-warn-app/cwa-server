@@ -62,14 +62,12 @@ If you would like to build and run a single cwa service, it's considered easiest
 To build and run the distribution service, run the following command:
 
 ```bash
-chomd +x services/distribution/build_and_run.sh # only once
 ./services/distribution/build_and_run.sh
 ```
 
 To build and run the submission service, run the following command:
 
 ```bash
-chomd +x services/submission/build_and_run.sh # only once
 ./services/submission/build_and_run.sh
 ```
 
