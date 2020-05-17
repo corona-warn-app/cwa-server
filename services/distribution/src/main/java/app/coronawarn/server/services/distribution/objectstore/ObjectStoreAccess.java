@@ -1,7 +1,7 @@
 package app.coronawarn.server.services.distribution.objectstore;
 
-import app.coronawarn.server.services.distribution.objectstore.publish.MetadataProvider;
 import app.coronawarn.server.services.distribution.objectstore.publish.LocalFile;
+import app.coronawarn.server.services.distribution.objectstore.publish.MetadataProvider;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.Collection;
