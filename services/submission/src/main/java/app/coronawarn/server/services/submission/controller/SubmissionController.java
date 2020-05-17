@@ -1,6 +1,7 @@
 package app.coronawarn.server.services.submission.controller;
 
 import app.coronawarn.server.common.persistence.domain.DiagnosisKey;
+import app.coronawarn.server.common.persistence.domain.DiagnosisKeyValidator;
 import app.coronawarn.server.common.persistence.exception.InvalidDiagnosisKeyException;
 import app.coronawarn.server.common.persistence.service.DiagnosisKeyService;
 import app.coronawarn.server.common.protocols.external.exposurenotification.Key;
@@ -14,6 +15,8 @@ import java.util.concurrent.ForkJoinPool;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 import org.apache.commons.math3.distribution.PoissonDistribution;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
@@ -29,6 +32,7 @@ import org.springframework.web.context.request.async.DeferredResult;
 @RestController
 @RequestMapping("/version/v1")
 public class SubmissionController {
+  private static final Logger logger = LoggerFactory.getLogger(SubmissionController.class);
   /**
    * The route to the submission endpoint (version agnostic).
    */
@@ -127,6 +131,8 @@ public class SubmissionController {
       DiagnosisKey diagnosisKey = DiagnosisKey.builder().fromProtoBuf(aProtoBufKey).build();
       if (diagnosisKey.isYoungerThanRetentionThreshold(retentionDays)) {
         diagnosisKeys.add(diagnosisKey);
+      } else {
+        logger.debug("Not persisting diagnosis key {}, as it is outdated beyond retention threshold.", diagnosisKey);
       }
     }
 
