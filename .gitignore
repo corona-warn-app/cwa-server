@@ -38,3 +38,4 @@ out/
 .settings
 .project
 .classpath
+/data
