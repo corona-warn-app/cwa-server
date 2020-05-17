@@ -106,7 +106,7 @@ If you want to use a Postgres database instead of the default in-memory HSQLDB, 
   mvn spring-boot:run -Dspring-boot.run.profiles=postgres
 ```
 
-To enable the S3 integration in the cwa distribution service, use the S3 profile when starting the application:
+To enable the S3-compatible object storage integration in the cwa distribution service, use the S3 profile when starting the application:
 
 ```bash
   cd services/distribution/
