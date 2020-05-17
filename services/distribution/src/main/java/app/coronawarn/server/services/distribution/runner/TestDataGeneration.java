@@ -92,13 +92,7 @@ public class TestDataGeneration implements ApplicationRunner {
     logger.debug("Generating diagnosis keys between {} and {}...", startTimestamp, endTimestamp);
     List<DiagnosisKey> newDiagnosisKeys = LongStream.range(startTimestamp, endTimestamp)
         .mapToObj(submissionTimestamp -> IntStream.range(0, poisson.sample())
-            .mapToObj(__ -> {
-              try {
-                return generateDiagnosisKey(submissionTimestamp);
-              } catch (InvalidDiagnosisKeyException e) {
-                throw new AssertionFailedError("The diagnosis key is not valid.");
-              }
-            })
+            .mapToObj(__ -> generateDiagnosisKey(submissionTimestamp))
             .collect(Collectors.toList()))
         .flatMap(List::stream)
         .collect(Collectors.toList());

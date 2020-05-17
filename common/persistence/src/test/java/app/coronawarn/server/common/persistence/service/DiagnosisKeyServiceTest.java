@@ -2,10 +2,8 @@ package app.coronawarn.server.common.persistence.service;
 
 import static java.time.ZoneOffset.UTC;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.fail;
 
 import app.coronawarn.server.common.persistence.domain.DiagnosisKey;
-import app.coronawarn.server.common.persistence.exception.InvalidDiagnosisKeyException;
 import app.coronawarn.server.common.persistence.repository.DiagnosisKeyRepository;
 import java.time.OffsetDateTime;
 import java.util.ArrayList;
@@ -14,7 +12,6 @@ import java.util.List;
 import org.assertj.core.util.Lists;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
-import org.opentest4j.AssertionFailedError;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 
@@ -112,16 +109,12 @@ public class DiagnosisKeyServiceTest {
   }
 
   public static DiagnosisKey buildDiagnosisKeyForSubmissionTimestamp(long submissionTimeStamp) {
-    try {
-      return DiagnosisKey.builder()
-          .withKeyData(new byte[16])
-          .withRollingStartNumber(600L)
-          .withRollingPeriod(1L)
-          .withTransmissionRiskLevel(2)
-          .withSubmissionTimestamp(submissionTimeStamp).build();
-    } catch (InvalidDiagnosisKeyException e) {
-      throw new AssertionFailedError("The diagnosis key is not valid.");
-    }
+    return DiagnosisKey.builder()
+        .withKeyData(new byte[16])
+        .withRollingStartNumber(600L)
+        .withRollingPeriod(1L)
+        .withTransmissionRiskLevel(2)
+        .withSubmissionTimestamp(submissionTimeStamp).build();
   }
 
   public static DiagnosisKey buildDiagnosisKeyForDateTime(OffsetDateTime dateTime) {

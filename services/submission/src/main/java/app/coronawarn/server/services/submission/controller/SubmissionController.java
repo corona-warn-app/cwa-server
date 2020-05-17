@@ -9,23 +9,26 @@ import app.coronawarn.server.services.submission.exception.InvalidPayloadExcepti
 import app.coronawarn.server.services.submission.verification.TanVerifier;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ForkJoinPool;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
+import org.apache.commons.math3.distribution.PoissonDistribution;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.util.StopWatch;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.context.request.async.DeferredResult;
 
 @RestController
 @RequestMapping("/version/v1")
 public class SubmissionController {
-
-  @Value("${services.submission.retention-days}")
-  private Integer retentionDays;
-
   /**
    * The route to the submission endpoint (version agnostic).
    */
@@ -37,24 +40,72 @@ public class SubmissionController {
   @Autowired
   private TanVerifier tanVerifier;
 
+  // Exponential moving average of the last N real request durations (in ms), where
+  // N = fakeDelayMovingAverageSamples.
+  @Value("${services.submission.initial_fake_delay_milliseconds}")
+  private Double fakeDelay;
+
+  @Value("${services.submission.fake_delay_moving_average_samples}")
+  private Double fakeDelayMovingAverageSamples;
+
+  @Value("${services.submission.retention-days}")
+  private Integer retentionDays;
+
   @Value("${services.submission.payload.max-number-of-keys}")
   private Integer maxNumberOfKeys;
 
+  private ScheduledExecutorService scheduledExecutor = Executors.newSingleThreadScheduledExecutor();
+  private ForkJoinPool forkJoinPool = ForkJoinPool.commonPool();
+
+
   @PostMapping(SUBMISSION_ROUTE)
-  public ResponseEntity<Void> submitDiagnosisKey(
-      @RequestBody SubmissionPayload exposureKeysPayload,
+  public DeferredResult<ResponseEntity<Void>> submitDiagnosisKey(
+      @RequestBody SubmissionPayload exposureKeys,
       @RequestHeader(value = "cwa-fake") Integer fake,
-      @RequestHeader(value = "cwa-authorization") String tan) throws InvalidDiagnosisKeyException, InvalidPayloadException {
+      @RequestHeader(value = "cwa-authorization") String tan) {
+    final DeferredResult<ResponseEntity<Void>> deferredResult = new DeferredResult<>();
     if (fake != 0) {
-      return ResponseEntity.ok().build();
+      setFakeDeferredResult(deferredResult);
+    } else {
+      setRealDeferredResult(deferredResult, exposureKeys, tan);
     }
+    return deferredResult;
+  }
 
-    if (!this.tanVerifier.verifyTan(tan)) {
-      return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
-    }
+  private void setFakeDeferredResult(DeferredResult<ResponseEntity<Void>> deferredResult) {
+    long delay = new PoissonDistribution(fakeDelay).sample();
+    scheduledExecutor.schedule(() -> deferredResult.setResult(buildSuccessResponseEntity()),
+        delay, TimeUnit.MILLISECONDS);
+  }
 
-    saveDiagnosisKeysPayload(exposureKeysPayload);
+  private void setRealDeferredResult(DeferredResult<ResponseEntity<Void>> deferredResult,
+      SubmissionPayload exposureKeys, String tan) {
+    forkJoinPool.submit(() -> {
+      StopWatch stopWatch = new StopWatch();
+      stopWatch.start();
+      if (!this.tanVerifier.verifyTan(tan)) {
+        deferredResult.setResult(buildTanInvalidResponseEntity());
+      } else {
+        persistDiagnosisKeysPayload(exposureKeys);
+        deferredResult.setResult(buildSuccessResponseEntity());
+      }
+      stopWatch.stop();
+      updateFakeDelay(stopWatch.getTotalTimeMillis());
+    });
+  }
+
+  /**
+   * Returns a response that indicates successful request processing.
+   */
+  private ResponseEntity<Void> buildSuccessResponseEntity() {
     return ResponseEntity.ok().build();
+  }
+
+  /**
+   * Returns a response that indicates that an invalid TAN was specified in the request.
+   */
+  private ResponseEntity<Void> buildTanInvalidResponseEntity() {
+    return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
   }
 
   /**
@@ -63,7 +114,7 @@ public class SubmissionController {
    * @param protoBufDiagnosisKeys Diagnosis keys that were specified in the request.
    * @throws IllegalArgumentException in case the given collection contains {@literal null}.
    */
-  public void saveDiagnosisKeysPayload(SubmissionPayload protoBufDiagnosisKeys) throws InvalidDiagnosisKeyException, InvalidPayloadException {
+  public void persistDiagnosisKeysPayload(SubmissionPayload protoBufDiagnosisKeys) throws InvalidDiagnosisKeyException, InvalidPayloadException {
     List<Key> protoBufKeysList = protoBufDiagnosisKeys.getKeysList();
     validatePayload(protoBufKeysList);
 
@@ -83,6 +134,10 @@ public class SubmissionController {
       throw new InvalidPayloadException(
           String.format("Number of keys must be between 1 and %s, but is %s.", maxNumberOfKeys, protoBufKeysList));
     }
+  }
+
+  private synchronized void updateFakeDelay(long realRequestDuration) {
+    fakeDelay = fakeDelay + (1 / fakeDelayMovingAverageSamples) * (realRequestDuration - fakeDelay);
   }
 
 }

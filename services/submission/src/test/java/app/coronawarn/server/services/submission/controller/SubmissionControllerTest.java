@@ -16,7 +16,6 @@ import static org.springframework.http.HttpStatus.METHOD_NOT_ALLOWED;
 import static org.springframework.http.HttpStatus.OK;
 
 import app.coronawarn.server.common.persistence.domain.DiagnosisKey;
-import app.coronawarn.server.common.persistence.exception.InvalidDiagnosisKeyException;
 import app.coronawarn.server.common.persistence.service.DiagnosisKeyService;
 import app.coronawarn.server.common.protocols.external.exposurenotification.Key;
 import app.coronawarn.server.common.protocols.internal.SubmissionPayload;
@@ -39,7 +38,6 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.mockito.ArgumentCaptor;
-import org.opentest4j.AssertionFailedError;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -279,13 +277,7 @@ public class SubmissionControllerTest {
   private void assertElementsCorrespondToEachOther
       (Collection<Key> submittedKeys, Collection<DiagnosisKey> keyEntities) {
     Set<DiagnosisKey> expKeys = submittedKeys.stream()
-        .map(aSubmittedKey -> {
-          try {
-            return DiagnosisKey.builder().fromProtoBuf(aSubmittedKey).build();
-          } catch (InvalidDiagnosisKeyException e) {
-            throw new AssertionFailedError("The diagnosis key is not valid.");
-          }
-        })
+        .map(aSubmittedKey -> DiagnosisKey.builder().fromProtoBuf(aSubmittedKey).build())
         .collect(Collectors.toSet());
 
     assertEquals(expKeys.size(), keyEntities.size(),
@@ -293,7 +285,7 @@ public class SubmissionControllerTest {
     keyEntities.forEach(anActKey -> assertTrue(expKeys.contains(anActKey),
         "Key entity does not correspond to a submitted key."));
   }
-  isYoungerThanRetentionThreshold
+
   private ResponseEntity<Void> executeRequest(Collection<Key> keys, HttpHeaders headers) {
     SubmissionPayload body = SubmissionPayload.newBuilder().addAllKeys(keys).build();
     RequestEntity<SubmissionPayload> request =
