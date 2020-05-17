@@ -12,9 +12,9 @@ services:
       SPRING_PROFILES_ACTIVE: cloud
       POSTGRESQL_SERVICE_PORT: '5432'
       POSTGRESQL_SERVICE_HOST: postgres
-      POSTGRESQL_DATABASE: cwa
-      POSTGRESQL_PASSWORD: x24GeYzDp7kaZ8B
-      POSTGRESQL_USER: postgres
+      POSTGRESQL_DATABASE: ${POSTGRES_DB}
+      POSTGRESQL_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRESQL_USER: ${POSTGRES_USER}
     networks:
       - cwa
   distribution:
@@ -28,11 +28,12 @@ services:
       SPRING_PROFILES_ACTIVE: cloud
       POSTGRESQL_SERVICE_PORT: '5432'
       POSTGRESQL_SERVICE_HOST: postgres
-      POSTGRESQL_DATABASE: cwa
-      POSTGRESQL_PASSWORD: x24GeYzDp7kaZ8B
-      POSTGRESQL_USER: postgres
-      AWS_ACCESS_KEY_ID: cws_key_id
-      AWS_SECRET_ACCESS_KEY: cws_secret_key_id
+      POSTGRESQL_DATABASE: ${POSTGRES_DB}
+      POSTGRESQL_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRESQL_USER: ${POSTGRES_USER}
+      # Settings for the S3 compatible MinIO objectstore
+      AWS_ACCESS_KEY_ID: ${MINIO_ACCESS_KEY}
+      AWS_SECRET_ACCESS_KEY: ${MINIO_SECRET_KEY}
       cwa.objectstore.endpoint: http://minio:9000
       cwa.objectstore.bucket: cwa
       app.coronawarn.server.services.distribution.paths.output: /tmp/distribution
@@ -45,10 +46,9 @@ services:
       - "5432:5432"
     environment:
       PGDATA: /data/postgres
-      POSTGRES_DB: cwa
-      POSTGRESQL_USER: postgres
-      POSTGRESQL_DATABASE: cwa
-      POSTGRES_PASSWORD: x24GeYzDp7kaZ8B
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
     volumes:
        - postgres_volume:/data/postgres
     networks:
@@ -66,8 +66,8 @@ services:
     depends_on:
       - postgres
     environment:
-      PGADMIN_DEFAULT_EMAIL: user@domain.com
-      PGADMIN_DEFAULT_PASSWORD: password
+      PGADMIN_DEFAULT_EMAIL: ${PGADMIN_DEFAULT_EMAIL}
+      PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_DEFAULT_PASSWORD}
   minio:
     image: "minio/minio"
     volumes:
@@ -75,8 +75,8 @@ services:
     ports:
       - "8082:9000"
     environment:
-      MINIO_ACCESS_KEY: cws_key_id
-      MINIO_SECRET_KEY: cws_secret_key_id
+      MINIO_ACCESS_KEY: ${MINIO_ACCESS_KEY}
+      MINIO_SECRET_KEY: ${MINIO_SECRET_KEY}
     entrypoint: sh
     command: -c 'mkdir -p /data/cwa && minio server /data'
     networks:
