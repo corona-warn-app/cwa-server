@@ -138,8 +138,6 @@ public class SubmissionControllerTest {
     assertElementsCorrespondToEachOther(keys, argument.getValue());
   }
 
-  //TODO old keys ignored
-
   @ParameterizedTest
   @MethodSource("createIncompleteHeaders")
   public void badRequestIfCwaHeadersMissing(HttpHeaders headers) {
@@ -295,7 +293,7 @@ public class SubmissionControllerTest {
     keyEntities.forEach(anActKey -> assertTrue(expKeys.contains(anActKey),
         "Key entity does not correspond to a submitted key."));
   }
-
+  isYoungerThanRetentionThreshold
   private ResponseEntity<Void> executeRequest(Collection<Key> keys, HttpHeaders headers) {
     SubmissionPayload body = SubmissionPayload.newBuilder().addAllKeys(keys).build();
     RequestEntity<SubmissionPayload> request =

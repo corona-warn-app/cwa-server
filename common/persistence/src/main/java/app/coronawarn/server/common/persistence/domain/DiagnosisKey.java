@@ -96,6 +96,12 @@ public class DiagnosisKey {
     return submissionTimestamp;
   }
 
+  /**
+   * Checks if this diagnosis key falls into the period between now, and the retention threshold.
+   * @param daysToRetain the number of days before a key is outdated
+   * @return true, if this diagnosis key's rolling start number is in the time span between
+   * now, and the given days to retain
+   */
   public boolean isYoungerThanRetentionThreshold(long daysToRetain) {
     long threshold = LocalDateTime
         .ofInstant(Instant.now(), UTC)
