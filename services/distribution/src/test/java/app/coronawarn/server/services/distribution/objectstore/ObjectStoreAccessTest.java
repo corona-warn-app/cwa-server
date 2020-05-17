@@ -6,8 +6,8 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.when;
 
-import app.coronawarn.server.services.distribution.objectstore.publish.PublishFile;
-import java.io.File;
+import app.coronawarn.server.services.distribution.objectstore.publish.LocalFile;
+import app.coronawarn.server.services.distribution.objectstore.publish.LocalGenericFile;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.UUID;
@@ -52,12 +52,12 @@ public class ObjectStoreAccessTest {
 
   @Test
   public void pushTestFileAndDelete() throws IOException {
-    PublishFile pf = new PublishFile(getExampleFile(), getRootTestFolder());
+    LocalFile localFile = new LocalGenericFile(getExampleFile(), getRootTestFolder());
 
-    PublishFile spy = spy(pf);
-    when(spy.getS3Key()).thenReturn(testRunId + pf.getS3Key());
+    LocalFile localFileSpy = spy(localFile);
+    when(localFileSpy.getS3Key()).thenReturn(testRunId + localFile.getS3Key());
 
-    objectStoreAccess.putObject(spy);
+    objectStoreAccess.putObject(localFileSpy);
     var files = objectStoreAccess.getObjectsWithPrefix(testRunId);
     assertEquals(1, files.collect(Collectors.toList()).size());
 

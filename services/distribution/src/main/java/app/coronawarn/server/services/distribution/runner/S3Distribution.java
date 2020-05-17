@@ -31,14 +31,14 @@ public class S3Distribution implements ApplicationRunner {
   @Override
   public void run(ApplicationArguments args) {
     try {
-
       Path pathToDistribute = outputDirectoryProvider.getFileOnDisk().toPath().toAbsolutePath();
       S3Publisher s3Publisher = new S3Publisher(pathToDistribute, objectStoreAccess);
 
       s3Publisher.publish();
+      logger.info("Data pushed to CDN successfully.");
     } catch (UnsupportedOperationException | IOException e) {
       logger.error("Distribution failed.", e);
     }
-    logger.debug("Data pushed to CDN successfully.");
+
   }
 }

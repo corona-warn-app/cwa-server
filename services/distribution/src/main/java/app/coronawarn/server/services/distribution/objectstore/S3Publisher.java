@@ -25,16 +25,16 @@ public class S3Publisher {
 
   private static final Logger logger = LoggerFactory.getLogger(S3Publisher.class);
 
-  /** The default CWA root folder, which contains all CWA related files */
+  /** The default CWA root folder, which contains all CWA related files. */
   private static final String CWA_S3_ROOT_DEFAULT = "version";
 
-  /** The CWA root folder to be used, which contains all CWA related files */
+  /** The CWA root folder to be used, which contains all CWA related files. */
   private final String cwaS3Root;
 
-  /** root folder for the upload on the local disk */
+  /** root folder for the upload on the local disk. */
   private final Path root;
 
-  /** access to the object store */
+  /** access to the object store. */
   private final ObjectStoreAccess access;
 
   public S3Publisher(Path root, ObjectStoreAccess access) {

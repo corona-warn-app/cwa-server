@@ -10,7 +10,7 @@ import java.util.Base64;
 /**
  * Represents a file, which is subject for publishing to S3.
  */
-public class PublishFile {
+public abstract class LocalFile {
 
   protected Path file;
 
@@ -18,7 +18,7 @@ public class PublishFile {
 
   protected String hash;
 
-  public PublishFile(Path file, Path basePath) {
+  public LocalFile(Path file, Path basePath) {
     this.file = file;
     this.hash = hash();
     this.s3Key = createS3Key(file, basePath);
@@ -43,7 +43,7 @@ public class PublishFile {
 
       return Base64.getEncoder().encodeToString(digester.digest());
     } catch (IOException | NoSuchAlgorithmException e) {
-     throw new RuntimeException("Unable to compute hashes due to ", e);
+      throw new RuntimeException("Unable to compute hashes due to ", e);
     }
   }
 

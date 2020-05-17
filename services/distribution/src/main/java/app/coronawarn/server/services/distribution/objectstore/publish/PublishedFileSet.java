@@ -31,7 +31,7 @@ public class PublishedFileSet {
    * @param file the to-be-published file which should be checked
    * @return true, if it exists & is identical
    */
-  public boolean isNotYetPublished(PublishFile file) {
+  public boolean isNotYetPublished(LocalFile file) {
     S3Object published = s3Objects.get(file.s3Key);
 
     if (published == null) {
@@ -41,7 +41,7 @@ public class PublishedFileSet {
     return !hasSameHashAsPublishedFile(file);
   }
 
-  private boolean hasSameHashAsPublishedFile(PublishFile file) {
+  private boolean hasSameHashAsPublishedFile(LocalFile file) {
     String hash = metadataProvider.fetchMetadataFor(file.s3Key).get("cwa.hash");
 
     return file.getHash().equals(hash);

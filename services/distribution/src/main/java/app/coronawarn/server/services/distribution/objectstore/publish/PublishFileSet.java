@@ -12,16 +12,18 @@ import java.util.stream.Stream;
  */
 public class PublishFileSet {
 
+  /** the root folder from which to read all files. */
   private final Path root;
 
-  private final List<PublishFile> files;
+  /** the list of identified files in the root folder. */
+  private final List<LocalFile> files;
 
   public PublishFileSet(Path root) throws IOException {
     this.root = root;
-    this.files = getFiles(root);
+    this.files = getFilesOnPath(root);
   }
 
-  private List<PublishFile> getFiles(Path path) throws IOException {
+  private List<LocalFile> getFilesOnPath(Path path) throws IOException {
     if (path == null || !path.toFile().isDirectory()) {
       throw new UnsupportedOperationException("Supplied path is not a folder: " + path);
     }
@@ -34,15 +36,15 @@ public class PublishFileSet {
     }
   }
 
-  private PublishFile constructPublishFile(Path path) {
+  private LocalFile constructPublishFile(Path path) {
     if (path.endsWith("index")) {
-      return new PublishIndexFile(path, root);
+      return new LocalIndexFile(path, root);
     }
 
-    return new PublishFile(path, root);
+    return new LocalGenericFile(path, root);
   }
 
-  public List<PublishFile> getFiles() {
+  public List<LocalFile> getFiles() {
     return files;
   }
 }

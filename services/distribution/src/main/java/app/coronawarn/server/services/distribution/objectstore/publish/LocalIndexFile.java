@@ -11,11 +11,11 @@ import java.nio.file.Path;
  * <br>
  * /diagnosis-keys/date/2020-12-12/index -> /diagnosis-keys/date/2020-12-12
  */
-public class PublishIndexFile extends PublishFile {
+public class LocalIndexFile extends LocalFile {
 
   private static final String INDEX_FILE_SUFFIX = "/index";
 
-  public PublishIndexFile(Path file, Path basePath) {
+  public LocalIndexFile(Path file, Path basePath) {
     super(file, basePath);
   }
 

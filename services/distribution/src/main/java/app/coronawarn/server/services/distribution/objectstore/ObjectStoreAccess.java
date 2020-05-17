@@ -1,7 +1,7 @@
 package app.coronawarn.server.services.distribution.objectstore;
 
 import app.coronawarn.server.services.distribution.objectstore.publish.MetadataProvider;
-import app.coronawarn.server.services.distribution.objectstore.publish.PublishFile;
+import app.coronawarn.server.services.distribution.objectstore.publish.LocalFile;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.Collection;
@@ -62,18 +62,18 @@ public class ObjectStoreAccess implements MetadataProvider {
   }
 
   /**
-   * Stores the target file on the S3
+   * Stores the target file on the S3.
    *
-   * @param publishFile the file to be published
+   * @param localFile the file to be published
    */
-  public void putObject(PublishFile publishFile) {
-    logger.info("... uploading " + publishFile.getS3Key());
-    RequestBody bodyFile = RequestBody.fromFile(publishFile.getFile());
+  public void putObject(LocalFile localFile) {
+    logger.info("... uploading " + localFile.getS3Key());
+    RequestBody bodyFile = RequestBody.fromFile(localFile.getFile());
 
     this.client.putObject(PutObjectRequest.builder()
         .bucket(this.bucket)
-        .key(publishFile.getS3Key())
-        .metadata(createMetadataFor(publishFile))
+        .key(localFile.getS3Key())
+        .metadata(createMetadataFor(localFile))
         .build(),
         bodyFile);
   }
@@ -121,7 +121,7 @@ public class ObjectStoreAccess implements MetadataProvider {
         .metadata();
   }
 
-  private Map<String, String> createMetadataFor(PublishFile file) {
+  private Map<String, String> createMetadataFor(LocalFile file) {
     return Map.of("cwa.hash", file.getHash());
   }
 }
