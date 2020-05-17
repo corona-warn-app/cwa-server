@@ -13,7 +13,7 @@ import org.junit.jupiter.api.Test;
 
 public class DiagnosisKeyBuilderTest {
 
-  private final byte[] expKeyData = "myByteArr".getBytes(Charset.defaultCharset());
+  private final byte[] expKeyData = "16-bytelongarray".getBytes(Charset.defaultCharset());
   private final long expRollingStartNumber = 73800;
   private final long expRollingPeriod = 144;
   private final int expTransmissionRiskLevel = 1;

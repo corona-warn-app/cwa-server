@@ -43,6 +43,10 @@ public class DiagnosisKeyValidator {
   }
 
   public static void validateKeyData(byte[] keyData) throws InvalidDiagnosisKeyException {
-
+    if (keyData.length != 16) {
+      logger.debug("Key data must be byte array of length 16, but is {}.", keyData.length);
+      throw new InvalidDiagnosisKeyException(
+          String.format("Key data must be byte array of length 16, but is %s.", keyData.length));
+    }
   }
 }
