@@ -10,12 +10,12 @@ import java.util.concurrent.ForkJoinPool;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
-import javax.annotation.PostConstruct;
 import org.apache.commons.math3.distribution.PoissonDistribution;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.util.StopWatch;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
@@ -32,9 +32,13 @@ public class SubmissionController {
    */
   public static final String SUBMISSION_ROUTE = "/diagnosis-keys";
 
-  @Value("${services.submission.fake_delay_milliseconds}")
-  private Integer fakeDelay;
-  private PoissonDistribution poisson;
+  @Value("${services.submission.fake_delay_moving_average_samples}")
+  private Double fakeDelayMovingAverageSamples;
+
+  // Exponential moving average of the last N real request durations (in ms), where
+  // N = fakeDelayMovingAverageSamples.
+  @Value("${services.submission.initial_fake_delay_milliseconds}")
+  private Double fakeDelay;
 
   @Autowired
   private DiagnosisKeyService diagnosisKeyService;
@@ -44,11 +48,6 @@ public class SubmissionController {
 
   private ScheduledExecutorService scheduledExecutor = Executors.newSingleThreadScheduledExecutor();
   private ForkJoinPool forkJoinPool = ForkJoinPool.commonPool();
-
-  @PostConstruct
-  public void setup() {
-    this.poisson = new PoissonDistribution(fakeDelay);
-  }
 
   @PostMapping(SUBMISSION_ROUTE)
   public DeferredResult<ResponseEntity<Void>> submitDiagnosisKey(
@@ -65,7 +64,7 @@ public class SubmissionController {
   }
 
   private void setFakeDeferredResult(DeferredResult<ResponseEntity<Void>> deferredResult) {
-    long delay = poisson.sample();
+    long delay = new PoissonDistribution(fakeDelay).sample();
     scheduledExecutor.schedule(() -> deferredResult.setResult(buildSuccessResponseEntity()),
         delay, TimeUnit.MILLISECONDS);
   }
@@ -73,12 +72,16 @@ public class SubmissionController {
   private void setRealDeferredResult(DeferredResult<ResponseEntity<Void>> deferredResult,
       SubmissionPayload exposureKeys, String tan) {
     forkJoinPool.submit(() -> {
+      StopWatch stopWatch = new StopWatch();
+      stopWatch.start();
       if (!this.tanVerifier.verifyTan(tan)) {
         deferredResult.setResult(buildTanInvalidResponseEntity());
       } else {
         persistDiagnosisKeysPayload(exposureKeys);
         deferredResult.setResult(buildSuccessResponseEntity());
       }
+      stopWatch.stop();
+      updateFakeDelay(stopWatch.getTotalTimeMillis());
     });
   }
 
@@ -108,5 +111,9 @@ public class SubmissionController {
         .collect(Collectors.toList());
 
     this.diagnosisKeyService.saveDiagnosisKeys(diagnosisKeys);
+  }
+
+  private synchronized void updateFakeDelay(long realRequestDuration) {
+    fakeDelay = fakeDelay + (1 / fakeDelayMovingAverageSamples) * (realRequestDuration - fakeDelay);
   }
 }
