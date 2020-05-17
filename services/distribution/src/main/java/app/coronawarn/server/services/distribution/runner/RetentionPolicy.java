@@ -30,18 +30,18 @@ public class RetentionPolicy implements ApplicationRunner {
   private ApplicationContext applicationContext;
 
   @Value("${services.distribution.retention_days}")
-  private Integer rententionDays;
+  private Integer retentionDays;
 
   @Override
   public void run(ApplicationArguments args) {
     try {
-      diagnosisKeyService.applyRetentionPolicy(rententionDays);
+      diagnosisKeyService.applyRetentionPolicy(retentionDays);
     } catch (Exception e) {
       logger.error("Application of retention policy failed.", e);
       Application.killApplication(applicationContext);
     }
 
     logger.debug("Retention policy applied successfully. Deleted all entries older that {} days.",
-        rententionDays);
+        retentionDays);
   }
 }
