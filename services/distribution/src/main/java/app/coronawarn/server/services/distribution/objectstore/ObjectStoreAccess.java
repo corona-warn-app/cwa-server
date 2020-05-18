@@ -29,7 +29,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 /**
- * <p>Grants access to the object store, enabling basic functionality for working with files.</p>
+ * <p>Grants access to the S3 compatible object storage hosted by Telekom in Germany, enabling basic
+ * functionality for working with files.</p>
  * <p>Use S3Publisher for more convenient access.</p>
  * <br>
  * Make sure the following ENV vars are available.
@@ -51,6 +52,14 @@ public class ObjectStoreAccess implements MetadataProvider {
 
   private MinioClient client;
 
+  /**
+   * Constructs an {@link ObjectStoreAccess} instance for communication with the specified object store endpoint and
+   * bucket.
+   *
+   * @param endpoint The endpoint URI for communication with the object store.
+   * @param bucket   The bucket name.
+   * @throws URISyntaxException thrown if endpoint URI invalid.
+   */
   @Autowired
   public ObjectStoreAccess(ObjectStoreConfigurationProperties configurationProperties)
       throws IOException, GeneralSecurityException, MinioException {

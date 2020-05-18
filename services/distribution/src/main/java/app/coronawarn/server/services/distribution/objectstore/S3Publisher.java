@@ -65,5 +65,4 @@ public class S3Publisher {
     }
     logger.info("Upload completed.");
   }
-
 }

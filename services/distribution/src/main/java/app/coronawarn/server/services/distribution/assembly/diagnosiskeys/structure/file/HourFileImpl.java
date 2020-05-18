@@ -28,6 +28,14 @@ public class HourFileImpl extends FileImpl {
   private final String region;
   private final Collection<DiagnosisKey> diagnosisKeys;
 
+  /**
+   * Constructs an {@link HourFileImpl} instance that is associated with the specified region and hour. The specified
+   * {@link DiagnosisKey} collection is filtered by the specified hour.
+   *
+   * @param currentHour   The hour for which diagnosis keys will be aggregated.
+   * @param region        The region associated with this instance.
+   * @param diagnosisKeys The {@link DiagnosisKey} collection that will be filtered by the specified hour.
+   */
   public HourFileImpl(LocalDateTime currentHour, String region,
       Collection<DiagnosisKey> diagnosisKeys) {
     super(INDEX_FILE_NAME, new byte[0]);

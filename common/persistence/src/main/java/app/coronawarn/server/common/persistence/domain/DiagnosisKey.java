@@ -1,6 +1,10 @@
 package app.coronawarn.server.common.persistence.domain;
 
+import static java.time.ZoneOffset.UTC;
+
 import app.coronawarn.server.common.persistence.domain.DiagnosisKeyBuilders.Builder;
+import java.time.Instant;
+import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.Objects;
 import javax.persistence.Entity;
@@ -41,8 +45,8 @@ public class DiagnosisKey {
   }
 
   /**
-   * Returns a DiagnosisKeyBuilder instance. A {@link DiagnosisKey} can then be build by either
-   * providing the required member values or by passing the respective protocol buffer object.
+   * Returns a DiagnosisKeyBuilder instance. A {@link DiagnosisKey} can then be build by either providing the required
+   * member values or by passing the respective protocol buffer object.
    *
    * @return DiagnosisKeyBuilder instance.
    */
@@ -62,16 +66,15 @@ public class DiagnosisKey {
   }
 
   /**
-   * Returns a number describing when a key starts. It is equal to startTimeOfKeySinceEpochInSecs /
-   * (60 * 10).
+   * Returns a number describing when a key starts. It is equal to startTimeOfKeySinceEpochInSecs / (60 * 10).
    */
   public long getRollingStartNumber() {
     return rollingStartNumber;
   }
 
   /**
-   * Returns a number describing how long a key is valid. It is expressed in increments of 10
-   * minutes (e.g. 144 for 24 hours).
+   * Returns a number describing how long a key is valid. It is expressed in increments of 10 minutes (e.g. 144 for 24
+   * hours).
    */
   public long getRollingPeriod() {
     return rollingPeriod;
@@ -85,11 +88,25 @@ public class DiagnosisKey {
   }
 
   /**
-   * Returns the timestamp associated with the submission of this {@link DiagnosisKey} as hours
-   * since epoch.
+   * Returns the timestamp associated with the submission of this {@link DiagnosisKey} as hours since epoch.
    */
   public long getSubmissionTimestamp() {
     return submissionTimestamp;
+  }
+
+  /**
+   * Checks if this diagnosis key falls into the period between now, and the retention threshold.
+   *
+   * @param daysToRetain the number of days before a key is outdated
+   * @return true, if the rolling start number is in the time span between now, and the given days to retain
+   */
+  public boolean isYoungerThanRetentionThreshold(long daysToRetain) {
+    long threshold = LocalDateTime
+        .ofInstant(Instant.now(), UTC)
+        .minusDays(daysToRetain)
+        .toEpochSecond(UTC) / (60 * 10);
+
+    return this.rollingStartNumber >= threshold;
   }
 
   @Override
