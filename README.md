@@ -145,7 +145,7 @@ Contribution and feedback are encouraged and always welcome. For more informatio
 
 ## Contributors
 
-The German government requested SAP SE and Deutsche Telekom AG to develop the Corona-Warn-App. Deutsche Telekom is providing the infrastructure technology and is to operate and run the backend for the app in a safe, scalable, and stable manner. SAP is responsible for app development and the exposure notification backend. Development teams from both SAP and Deutsche Telekom are therefore contributing to this project. At the same time, commitment to open source means that all interested parties are being enabled **and encouraged** to contribute and become part of this developer community.
+The German government has asked SAP and Deutsche Telekom to develop the Corona-Warn-App for Germany as open source software. Deutsche Telekom is providing the network and mobile technology and will operate and run the backend for the app in a safe, scalable and stable manner. SAP is responsible for the app development, its framework and the underlying platform. Therefore, development teams of SAP and Deutsche Telekom are contributing to this project. At the same time our commitment to open source means that we are enabling -in fact encouraging- all interested parties to contribute and become part of its developer community.
 
 ## Repositories
 
