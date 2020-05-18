@@ -45,8 +45,8 @@ public class DiagnosisKey {
   }
 
   /**
-   * Returns a DiagnosisKeyBuilder instance. A {@link DiagnosisKey} can then be build by either providing the required member values or by passing the
-   * respective protocol buffer object.
+   * Returns a DiagnosisKeyBuilder instance. A {@link DiagnosisKey} can then be build by either
+   * providing the required member values or by passing the respective protocol buffer object.
    *
    * @return DiagnosisKeyBuilder instance.
    */
