@@ -29,6 +29,7 @@
   <version>0.0.1-SNAPSHOT</version>
   <dependencies>
     <dependency>
+      <!-- Used to access the S3 compatible object storage -->
       <groupId>software.amazon.awssdk</groupId>
       <artifactId>s3</artifactId>
     </dependency>
