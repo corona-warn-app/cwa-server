@@ -67,6 +67,18 @@
       <artifactId>spring-boot-starter-log4j2</artifactId>
     </dependency>
     <dependency>
+      <!-- https://nvd.nist.gov/vuln/detail/CVE-2020-9488 -->
+      <groupId>org.apache.logging.log4j</groupId>
+      <artifactId>log4j-core</artifactId>
+      <version>2.13.3</version>
+    </dependency>
+    <dependency>
+      <!-- https://nvd.nist.gov/vuln/detail/CVE-2020-9488 -->
+      <groupId>org.apache.logging.log4j</groupId>
+      <artifactId>log4j-api</artifactId>
+      <version>2.13.3</version>
+    </dependency>
+    <dependency>
       <!-- https://nvd.nist.gov/vuln/detail/CVE-2017-18640 -->
       <groupId>org.yaml</groupId>
       <artifactId>snakeyaml</artifactId>
