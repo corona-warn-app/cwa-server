@@ -34,8 +34,8 @@ services:
       # Settings for the S3 compatible MinIO object storage
       AWS_ACCESS_KEY_ID: ${MINIO_ACCESS_KEY}
       AWS_SECRET_ACCESS_KEY: ${MINIO_SECRET_KEY}
-      cwa.objectstore.endpoint: http://minio:9000
-      cwa.objectstore.bucket: cwa
+      CWA_OBJECTSTORE_ENDPOINT: http://minio:9000
+      CWA_OBJECTSTORE_BUCKET: cwa
       app.coronawarn.server.services.distribution.paths.output: /tmp/distribution
     networks:
       - cwa

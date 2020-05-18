@@ -44,7 +44,7 @@ public class TestDataGeneration implements ApplicationRunner {
   @Value("${services.distribution.testdata.seed}")
   private Integer seed;
 
-  @Value("${services.distribution.testdata.exposures_per_hour}")
+  @Value("${services.distribution.testdata.exposures-per-hour}")
   private Integer exposuresPerHour;
 
   @Autowired
