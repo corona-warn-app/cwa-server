@@ -12,9 +12,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * A {@link DirectoryDecorator} that writes a file called {@code "index"}, containing a JSON array
- * containing all elements returned {@link IndexDirectoryImpl#getIndex}, formatted with the {@link
- * IndexDirectoryImpl#getIndexFormatter} on {@link app.coronawarn.server.services.distribution.assembly.structure.Writable#prepare}.
+ * A {@link DirectoryDecorator} that writes a file called {@code "index"}, containing a JSON array containing all
+ * elements returned {@link IndexDirectoryImpl#getIndex}, formatted with the {@link
+ * IndexDirectoryImpl#getIndexFormatter} on
+ * {@link app.coronawarn.server.services.distribution.assembly.structure.Writable#prepare}.
  */
 public class IndexingDecorator<T> extends DirectoryDecorator {
 

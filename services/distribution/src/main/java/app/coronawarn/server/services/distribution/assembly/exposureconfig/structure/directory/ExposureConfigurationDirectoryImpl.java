@@ -10,9 +10,9 @@ import app.coronawarn.server.services.distribution.assembly.structure.file.decor
 import java.util.Set;
 
 /**
- * Creates the directory structure {@code /parameters/country/:country} and writes a file called
- * {@code index} containing {@link RiskScoreParameters} wrapped in a {@link
- * app.coronawarn.server.common.protocols.internal.SignedPayload}.
+ * Creates the directory structure {@code /parameters/country/:country} and writes a file called {@code index}
+ * containing {@link RiskScoreParameters} wrapped in a
+ * {@link app.coronawarn.server.common.protocols.internal.SignedPayload}.
  */
 public class ExposureConfigurationDirectoryImpl extends DirectoryImpl {
 

@@ -14,8 +14,8 @@ import org.springframework.stereotype.Component;
 @Component
 public class CwaApiStructureProvider {
 
-  private final String VERSION_DIRECTORY = "version";
-  private final String VERSION_V1 = "v1";
+  private static final String VERSION_DIRECTORY = "version";
+  private static final String VERSION_V1 = "v1";
 
   @Autowired
   private ExposureConfigurationStructureProvider exposureConfigurationStructureProvider;
@@ -23,11 +23,15 @@ public class CwaApiStructureProvider {
   @Autowired
   private DiagnosisKeysStructureProvider diagnosisKeysStructureProvider;
 
+  /**
+   * Returns the base directory.
+   */
   public Directory getDirectory() {
     IndexDirectory<?> versionDirectory =
         new IndexDirectoryImpl<>(VERSION_DIRECTORY, __ -> Set.of(VERSION_V1), Object::toString);
 
-    versionDirectory.addDirectoryToAll(__ -> exposureConfigurationStructureProvider.getExposureConfiguration());
+    versionDirectory
+        .addDirectoryToAll(__ -> exposureConfigurationStructureProvider.getExposureConfiguration());
     versionDirectory.addDirectoryToAll(__ -> diagnosisKeysStructureProvider.getDiagnosisKeys());
 
     return new IndexingDecorator<>(versionDirectory);

@@ -12,9 +12,8 @@ import org.yaml.snakeyaml.error.YAMLException;
 import org.yaml.snakeyaml.introspector.BeanAccess;
 
 /**
- * Provides the Exposure Configuration based on a file in the file system.<br> The existing file
- * must be a valid YAML file, and must match the specification of the proto file
- * risk_score_parameters.proto.
+ * Provides the Exposure Configuration based on a file in the file system.<br> The existing file must be a valid YAML
+ * file, and must match the specification of the proto file risk_score_parameters.proto.
  */
 public class ExposureConfigurationProvider {
 
@@ -37,8 +36,7 @@ public class ExposureConfigurationProvider {
   }
 
   /**
-   * Fetches an exposure configuration file based on the given path. The path must be available in
-   * the classloader.
+   * Fetches an exposure configuration file based on the given path. The path must be available in the classloader.
    *
    * @param path the path, e.g. folder/my-exposure-configuration.yaml
    * @return the RiskScoreParameters

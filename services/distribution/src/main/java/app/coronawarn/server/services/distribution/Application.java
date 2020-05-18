@@ -10,9 +10,9 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 
 /**
- * The retrieval, assembly and distribution of configuration and diagnosis key data is handled by a
- * chain of {@link org.springframework.boot.ApplicationRunner} instances. An unrecoverable failure
- * in either one of them is terminating the chain execution.
+ * The retrieval, assembly and distribution of configuration and diagnosis key data is handled by a chain of {@link
+ * org.springframework.boot.ApplicationRunner} instances. An unrecoverable failure in either one of them is terminating
+ * the chain execution.
  */
 @SpringBootApplication
 @EnableJpaRepositories(basePackages = "app.coronawarn.server.common.persistence")

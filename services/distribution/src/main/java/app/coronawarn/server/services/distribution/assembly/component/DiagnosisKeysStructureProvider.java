@@ -16,7 +16,8 @@ import org.springframework.stereotype.Component;
 @Component
 public class DiagnosisKeysStructureProvider {
 
-  private static final Logger logger = LoggerFactory.getLogger(DiagnosisKeysStructureProvider.class);
+  private static final Logger logger = LoggerFactory
+      .getLogger(DiagnosisKeysStructureProvider.class);
 
   @Autowired
   private DiagnosisKeyService diagnosisKeyService;

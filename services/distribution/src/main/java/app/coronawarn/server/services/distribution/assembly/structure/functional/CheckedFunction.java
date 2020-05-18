@@ -10,6 +10,9 @@ public interface CheckedFunction<T, R, E extends Exception> {
 
   R apply(T t) throws E;
 
+  /**
+   * Convert checked exceptions to unchecked exceptions in Functions.
+   */
   static <T, R> Function<T, R> uncheckedFunction(
       CheckedFunction<T, R, ? extends Exception> function) {
     return input -> {

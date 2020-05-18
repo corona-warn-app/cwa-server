@@ -21,8 +21,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * A {@link DirectoryDecorator} that will create a {@link SignedPayload} containing a {@link
- * FileBucket} for each date within its directory.
+ * A {@link DirectoryDecorator} that will create a {@link SignedPayload} containing a {@link FileBucket} for each date
+ * within its directory.
  */
 public class DateAggregatingDecorator extends DirectoryDecorator {
 
@@ -85,8 +85,8 @@ public class DateAggregatingDecorator extends DirectoryDecorator {
         .collect(Collectors.toSet());
   }
 
-  private Set<app.coronawarn.server.common.protocols.external.exposurenotification.File> reduceFileBuckets(
-      Set<FileBucket> fileBuckets) {
+  private Set<app.coronawarn.server.common.protocols.external.exposurenotification.File>
+      reduceFileBuckets(Set<FileBucket> fileBuckets) {
     return fileBuckets.stream()
         .map(FileBucket::getFilesList)
         .flatMap(List::stream)

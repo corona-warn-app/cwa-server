@@ -3,8 +3,8 @@ package app.coronawarn.server.services.submission.verification.tan;
 import app.coronawarn.server.services.submission.verification.AuthorizationType;
 
 /**
- * Thrown when the application tried to parse the CWA-Authorization header, but the header value did
- * not comply with the specification.
+ * Thrown when the application tried to parse the CWA-Authorization header, but the header value did not comply with the
+ * specification.
  * <br>
  * A valid header format is: CWA-Authorization: (AuthorizationType) (Key)
  * <ul>
