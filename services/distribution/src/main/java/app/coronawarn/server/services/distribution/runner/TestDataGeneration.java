@@ -38,7 +38,7 @@ public class TestDataGeneration implements ApplicationRunner {
 
   private final Logger logger = LoggerFactory.getLogger(TestDataGeneration.class);
 
-  @Value("${services.distribution.retention_days}")
+  @Value("${services.distribution.retention-days}")
   private Integer retentionDays;
 
   @Value("${services.distribution.testdata.seed}")
