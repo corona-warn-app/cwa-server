@@ -21,7 +21,7 @@ public class DiagnosisKeysCountryDirectoryImpl extends IndexDirectoryImpl<String
   private final CryptoProvider cryptoProvider;
 
   /**
-   * Constructs a {@link DiagnosisKeysCountryDirectoryImpl} instance that that represents the
+   * Constructs a {@link DiagnosisKeysCountryDirectoryImpl} instance that represents the
    * {@code .../country/:country/...} portion of the diagnosis key directory structure.
    */
   public DiagnosisKeysCountryDirectoryImpl(Collection<DiagnosisKey> diagnosisKeys,
