@@ -108,7 +108,6 @@ public class ObjectStoreAccess implements MetadataProvider {
    * Deletes objects in the object store, based on the given prefix (folder structure).
    *
    * @param prefix the prefix, e.g. my/folder/
-   * @return
    */
   public List<DeleteError> deleteObjectsWithPrefix(String prefix)
       throws MinioException, GeneralSecurityException, IOException {
@@ -121,7 +120,7 @@ public class ObjectStoreAccess implements MetadataProvider {
     var deletionResponse = this.client.removeObjects(bucket, toDelete);
 
     List<DeleteError> errors = new ArrayList<>();
-    for(Result<DeleteError> deleteErrorResult : deletionResponse) {
+    for (Result<DeleteError> deleteErrorResult : deletionResponse) {
       errors.add(deleteErrorResult.get());
     }
 

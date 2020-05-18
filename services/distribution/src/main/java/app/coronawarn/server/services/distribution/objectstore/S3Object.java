@@ -12,7 +12,7 @@ public class S3Object {
   /**
    * the name of the object.
    */
-  private String objectName;
+  private final String objectName;
 
   /**
    * the available meta information.
