@@ -20,7 +20,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.ConfigFileApplicationContextInitializer;
-import org.springframework.core.io.ClassPathResource;
+import org.springframework.core.io.ResourceLoader;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
@@ -38,6 +38,9 @@ public class ObjectStoreAccessTest {
 
   @Autowired
   private ObjectStoreAccess objectStoreAccess;
+
+  @Autowired
+  private ResourceLoader resourceLoader;
 
   @BeforeEach
   public void setup()
@@ -86,11 +89,11 @@ public class ObjectStoreAccessTest {
   }
 
   private Path getExampleFile() throws IOException {
-    return Path.of(new ClassPathResource(textFile).getURI());
+    return resourceLoader.getResource(textFile).getFile().toPath();
   }
 
   private Path getRootTestFolder() throws IOException {
-    return Path.of(new ClassPathResource(rootTestFolder).getURI());
+    return resourceLoader.getResource(rootTestFolder).getFile().toPath();
   }
 
 }

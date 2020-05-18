@@ -15,7 +15,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.ConfigFileApplicationContextInitializer;
-import org.springframework.core.io.ClassPathResource;
+import org.springframework.core.io.ResourceLoader;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
@@ -30,6 +30,9 @@ public class S3PublisherTest {
   @Autowired
   private ObjectStoreAccess objectStoreAccess;
 
+  @Autowired
+  private ResourceLoader resourceLoader;
+
   @Test
   public void publishTestFolderOk() throws IOException, GeneralSecurityException, MinioException {
     S3Publisher publisher = new S3Publisher(getFolderAsPath(rootTestFolder), objectStoreAccess);
@@ -42,7 +45,7 @@ public class S3PublisherTest {
   }
 
   private Path getFolderAsPath(String path) throws IOException {
-    return Path.of(new ClassPathResource(path).getURI());
+    return resourceLoader.getResource(path).getFile().toPath();
   }
 
   @BeforeEach
