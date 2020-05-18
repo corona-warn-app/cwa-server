@@ -22,7 +22,7 @@
 
 The goal of this project is to develop the official Corona-Warn-App for Germany based on the exposure notification API from [Apple](https://www.apple.com/covid19/contacttracing/) and [Google](https://www.google.com/covid19/exposurenotifications/). The apps (for both iOS and Android) use Bluetooth technology to exchange anonymous encrypted data with other mobile phones (on which the app is also installed) in the vicinity of an app user's phone. The data is stored locally on each user's device, preventing authorities or other parties from accessing or controlling the data. This repository contains the **implementation of the server for encryption keys** for the Corona-Warn-App. This implementation is still a **work in progress**, and the code it contains is currently alpha-quality code.
 
-In this documentation, Corona-Warn-App services are also referred to as cwa services.
+In this documentation, Corona-Warn-App services are also referred to as CWA services.
 
 ## Development
 
@@ -55,9 +55,9 @@ postgres      | A [postgres] database installation                              
 pgadmin       | A [pgadmin](https://www.pgadmin.org/) installation for the postgres database      | http://localhost:8081 <br> Username: user@domain.com <br> Password: password
 minio         | [MinIO] is an S3-compliant object store                                           | http://localhost:8082/ <br> Access key: minioadmin <br> Secret key: minioadmin
 
-#### Running Single cwa Services Using Docker
+#### Running Single CWA Services Using Docker
 
-If you would like to build and run a single cwa service, it's considered easiest to run them in a Docker environment. You can do this using the script provided in the respective cwa service directory. The Docker script first builds the cwa service and then creates an image for the runtime, which means that there are no additional dependencies for you to install.
+If you would like to build and run a single CWA service, it's considered easiest to run them in a Docker environment. You can do this using the script provided in the respective CWA service directory. The Docker script first builds the CWA service and then creates an image for the runtime, which means that there are no additional dependencies for you to install.
 
 To build and run the distribution service, run the following command:
 
@@ -75,8 +75,8 @@ The submission service is available on localhost:8080.
 
 ### Maven-Based Build
 
-If you want to actively develop in one of the cwa services, the Maven-based runtime is most suitable.
-To prepare your machine to run the cwa project locally, we recommend that you first ensure that you've installed the following:
+If you want to actively develop in one of the CWA services, the Maven-based runtime is most suitable.
+To prepare your machine to run the CWA project locally, we recommend that you first ensure that you've installed the following:
 
 * [Minimum JDK Version 11](https://openjdk.java.net/)
 * [Maven 3.6](https://maven.apache.org/)
