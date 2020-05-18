@@ -78,7 +78,7 @@ The submission service is available on [localhost:8080](http://localhost:8080 ).
 If you want to actively develop in one of the CWA services, the Maven-based runtime is most suitable.
 To prepare your machine to run the CWA project locally, we recommend that you first ensure that you've installed the following:
 
-* [Minimum JDK Version 11](https://openjdk.java.net/)
+* Minimum JDK Version 11: [OpenJDK](https://openjdk.java.net/) / [SapMachine](https://sap.github.io/SapMachine/)
 * [Maven 3.6](https://maven.apache.org/)
 * [Postgres]
 * [MinIO]
