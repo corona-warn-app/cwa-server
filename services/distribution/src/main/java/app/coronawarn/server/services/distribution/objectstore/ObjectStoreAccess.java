@@ -19,37 +19,37 @@
 
 package app.coronawarn.server.services.distribution.objectstore;
 
-import java.io.File;
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.util.Collection;
+import app.coronawarn.server.services.distribution.objectstore.publish.LocalFile;
+import io.minio.MinioClient;
+import io.minio.PutObjectOptions;
+import io.minio.Result;
+import io.minio.errors.InvalidEndpointException;
+import io.minio.errors.InvalidPortException;
+import io.minio.errors.MinioException;
+import io.minio.messages.DeleteError;
+import io.minio.messages.Item;
+import java.io.IOException;
+import java.security.GeneralSecurityException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
-import software.amazon.awssdk.core.sync.RequestBody;
-import software.amazon.awssdk.regions.Region;
-import software.amazon.awssdk.services.s3.S3Client;
-import software.amazon.awssdk.services.s3.model.Delete;
-import software.amazon.awssdk.services.s3.model.DeleteObjectsRequest;
-import software.amazon.awssdk.services.s3.model.ListObjectsV2Request;
-import software.amazon.awssdk.services.s3.model.ListObjectsV2Response;
-import software.amazon.awssdk.services.s3.model.ObjectIdentifier;
-import software.amazon.awssdk.services.s3.model.PutObjectRequest;
 
 /**
- * <p>Grants access to the S3 compatible object storage hosted by Telekom in Germany, enabling basic
- * functionality for working with files.</p>
- * <p>Use S3Publisher for more convenient access.</p>
+ * <p>Grants access to the S3 compatible object storage hosted by Telekom in Germany, enabling
+ * basic functionality for working with files.</p>
  * <br>
- * Make sure the following ENV vars are available.
+ * Make sure the following properties are available on the env:
  * <ul>
- *   <li>cwa.objectstore.endpoint</li>
- *   <li>cwa.objectstore.bucket</li>
- *   <li>AWS_ACCESS_KEY_ID</li>
- *   <li>AWS_SECRET_ACCESS_KEY</li>
+ * <li>cwa.objectstore.endpoint</li>
+ * <li>cwa.objectstore.bucket</li>
+ * <li>cwa.objectstore.accessKey</li>
+ * <li>cwa.objectstore.secretKey</li>
+ * <li>cwa.objectstore.port</li>
  * </ul>
  */
 @Component
@@ -57,37 +57,72 @@ public class ObjectStoreAccess {
 
   private static final Logger logger = LoggerFactory.getLogger(ObjectStoreAccess.class);
 
-  private S3Client client;
+  private static final String DEFAULT_REGION = "eu-west-1";
 
-  @Value("${cwa.objectstore.bucket}")
-  private String bucket;
-  
+  private final String bucket;
+
+  private MinioClient client;
+
+
   /**
-   * Constructs an {@link ObjectStoreAccess} instance for communication with the specified object store endpoint and
-   * bucket.
+   * Constructs an {@link ObjectStoreAccess} instance for communication with the specified object
+   * store endpoint and bucket.
    *
-   * @param endpoint The endpoint URI for communication with the object store.
-   * @throws URISyntaxException thrown if endpoint URI invalid.
+   * @param configurationProperties The config properties
+   * @throws IOException When there were problems creating the S3 client
+   * @throws GeneralSecurityException When there were problems creating the S3 client
+   * @throws MinioException When there were problems creating the S3 client
    */
   @Autowired
-  public ObjectStoreAccess(@Value("${cwa.objectstore.endpoint}") String endpoint) throws URISyntaxException {
-    this.client = S3Client.builder()
-        .endpointOverride(new URI(endpoint))
-        .region(Region.EU_CENTRAL_1) /* required by SDK, but ignored on S3 side */
-        .build();
+  public ObjectStoreAccess(ObjectStoreConfigurationProperties configurationProperties)
+      throws IOException, GeneralSecurityException, MinioException {
+    this.client = createClient(configurationProperties);
+
+    this.bucket = configurationProperties.getBucket();
+
+    if (!this.client.bucketExists(this.bucket)) {
+      throw new IllegalArgumentException("Supplied bucket does not exist " + bucket);
+    }
+  }
+
+  private MinioClient createClient(ObjectStoreConfigurationProperties configurationProperties)
+      throws InvalidPortException, InvalidEndpointException {
+    if (isSsl(configurationProperties)) {
+      return new MinioClient(
+          configurationProperties.getEndpoint(),
+          configurationProperties.getPort(),
+          configurationProperties.getAccessKey(), configurationProperties.getSecretKey(),
+          DEFAULT_REGION,
+          true
+      );
+    } else {
+      return new MinioClient(
+          configurationProperties.getEndpoint(),
+          configurationProperties.getPort(),
+          configurationProperties.getAccessKey(), configurationProperties.getSecretKey()
+      );
+    }
+  }
+
+  private boolean isSsl(ObjectStoreConfigurationProperties configurationProperties) {
+    return configurationProperties.getEndpoint().startsWith("https://");
   }
 
   /**
-   * Stores an object in the object store.
+   * Stores the target file on the S3.
    *
-   * @param key  the key to use, e.g. my/folder/struc/file.ext
-   * @param file the file to upload
+   * @param localFile the file to be published
    */
-  public void putObject(String key, File file) {
-    RequestBody bodyFile = RequestBody.fromFile(file);
+  public void putObject(LocalFile localFile)
+      throws IOException, GeneralSecurityException, MinioException {
+    String s3Key = localFile.getS3Key();
 
-    this.client
-        .putObject(PutObjectRequest.builder().bucket(this.bucket).key(key).build(), bodyFile);
+
+    var options = new PutObjectOptions(localFile.getFile().toFile().length(), -1);
+    options.setHeaders(createMetadataFor(localFile));
+
+    logger.info("... uploading " + s3Key);
+    this.client.putObject(bucket, s3Key, localFile.getFile().toString(), options);
   }
 
   /**
@@ -95,16 +130,24 @@ public class ObjectStoreAccess {
    *
    * @param prefix the prefix, e.g. my/folder/
    */
-  public void deleteObjectsWithPrefix(String prefix) {
-    ListObjectsV2Response files = getObjectsWithPrefix(prefix);
-    Collection<ObjectIdentifier> identifiers = files
-        .contents()
+  public List<DeleteError> deleteObjectsWithPrefix(String prefix)
+      throws MinioException, GeneralSecurityException, IOException {
+    List<String> toDelete = getObjectsWithPrefix(prefix)
         .stream()
-        .map(s3object -> ObjectIdentifier.builder().key(s3object.key()).build())
+        .map(S3Object::getObjectName)
         .collect(Collectors.toList());
 
-    this.client.deleteObjects(DeleteObjectsRequest.builder().bucket(this.bucket).delete(
-        Delete.builder().objects(identifiers).build()).build());
+    logger.info("Deleting " + toDelete.size() + " entries with prefix " + prefix);
+    var deletionResponse = this.client.removeObjects(bucket, toDelete);
+
+    List<DeleteError> errors = new ArrayList<>();
+    for (Result<DeleteError> deleteErrorResult : deletionResponse) {
+      errors.add(deleteErrorResult.get());
+    }
+
+    logger.info("Deletion result: " + errors.size());
+
+    return errors;
   }
 
   /**
@@ -113,9 +156,19 @@ public class ObjectStoreAccess {
    * @param prefix the prefix, e.g. my/folder/
    * @return the list of objects
    */
-  public ListObjectsV2Response getObjectsWithPrefix(String prefix) {
-    return client
-        .listObjectsV2(ListObjectsV2Request.builder().prefix(prefix).bucket(this.bucket).build());
+  public List<S3Object> getObjectsWithPrefix(String prefix)
+      throws IOException, GeneralSecurityException, MinioException {
+    var objects = this.client.listObjects(bucket, prefix, true, true, false);
+
+    var list = new ArrayList<S3Object>();
+    for (Result<Item> item : objects) {
+      list.add(S3Object.of(item.get()));
+    }
+
+    return list;
   }
 
+  private Map<String, String> createMetadataFor(LocalFile file) {
+    return Map.of("cwa.hash", file.getHash());
+  }
 }

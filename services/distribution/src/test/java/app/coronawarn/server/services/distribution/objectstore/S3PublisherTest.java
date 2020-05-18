@@ -19,70 +19,62 @@
 
 package app.coronawarn.server.services.distribution.objectstore;
 
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
-import java.io.File;
+import app.coronawarn.server.services.distribution.Application;
+import io.minio.errors.MinioException;
 import java.io.IOException;
 import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.UUID;
-import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.BeforeAll;
+import java.security.GeneralSecurityException;
+import java.util.List;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestInstance;
-import org.junit.jupiter.api.TestInstance.Lifecycle;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.core.io.ClassPathResource;
+import org.springframework.boot.test.context.ConfigFileApplicationContextInitializer;
+import org.springframework.core.io.ResourceLoader;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 
-@SpringBootTest
+@ExtendWith(SpringExtension.class)
+@ContextConfiguration(classes = {Application.class},
+    initializers = ConfigFileApplicationContextInitializer.class)
 @Tag("s3-integration")
-@TestInstance(Lifecycle.PER_CLASS)
 public class S3PublisherTest {
-
-  private final String testRunId = "testing/cwa/" + UUID.randomUUID().toString() + "/";
 
   private final String rootTestFolder = "objectstore/publisher/";
 
-  private final String exampleFile = rootTestFolder + "rootfile";
+  @Autowired
+  private ObjectStoreAccess objectStoreAccess;
 
   @Autowired
-  private S3Publisher s3Publisher;
+  private ResourceLoader resourceLoader;
 
   @Test
-  public void publishFolder() throws IOException {
-    Path start = Paths.get(getFile(rootTestFolder).getPath());
+  public void publishTestFolderOk() throws IOException, GeneralSecurityException, MinioException {
+    S3Publisher publisher = new S3Publisher(getFolderAsPath(rootTestFolder), objectStoreAccess);
 
-    s3Publisher.publishFolder(start);
+    publisher.publish();
+
+    List<S3Object> s3Objects = objectStoreAccess.getObjectsWithPrefix("version");
+
+    assertEquals(5, s3Objects.size());
   }
 
-  @Test
-  public void publishSingleFile() throws IOException {
-    Path fileToPublish = getFile(exampleFile).toPath();
-    Path path = getFile(rootTestFolder).toPath();
-
-    s3Publisher.publishFile(fileToPublish, path);
-    assertTrue(s3Publisher.isFileExisting(fileToPublish, path), "File should exist on S3");
-
-    s3Publisher.deleteFile(fileToPublish, path);
-    assertFalse(s3Publisher.isFileExisting(fileToPublish, path), "File should have been deleted");
+  private Path getFolderAsPath(String path) throws IOException {
+    return resourceLoader.getResource(path).getFile().toPath();
   }
 
-  private File getFile(String path) throws IOException {
-    return new File(new ClassPathResource(path).getURI());
+  @BeforeEach
+  public void setup()
+      throws MinioException, GeneralSecurityException, IOException {
+    objectStoreAccess.deleteObjectsWithPrefix("");
   }
 
-  @BeforeAll
-  public void setup() {
-    s3Publisher.setPrefixPath(this.testRunId);
-  }
-
-  @AfterAll
-  public void teardown() {
-    s3Publisher.deleteFolder("");
-
-    s3Publisher.setPrefixPath("cwa/");
+  @AfterEach
+  public void teardown() throws IOException, GeneralSecurityException, MinioException {
+    objectStoreAccess.deleteObjectsWithPrefix("");
   }
 }

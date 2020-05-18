@@ -161,7 +161,6 @@ The following public repositories are currently available for the Corona-Warn-Ap
 [Postgres]: https://www.postgresql.org/
 [MinIO]: https://min.io/
 [HSQLDB]: http://hsqldb.org/
----
 
 ## Licensing
 
