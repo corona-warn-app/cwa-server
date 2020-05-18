@@ -10,7 +10,6 @@ import com.google.protobuf.ByteString;
 import java.nio.charset.Charset;
 import java.time.Instant;
 import org.junit.jupiter.api.Test;
-import org.opentest4j.AssertionFailedError;
 
 public class DiagnosisKeyBuilderTest {
 
@@ -31,14 +30,10 @@ public class DiagnosisKeyBuilderTest {
         .build();
 
     DiagnosisKey actDiagnosisKey = null;
-    try {
-      actDiagnosisKey = DiagnosisKey.builder()
-          .fromProtoBuf(protoBufObj)
-          .withSubmissionTimestamp(this.expSubmissionTimestamp)
-          .build();
-    } catch (InvalidDiagnosisKeyException e) {
-      throw new AssertionFailedError("The diagnosis key is not valid.");
-    }
+    actDiagnosisKey = DiagnosisKey.builder()
+        .fromProtoBuf(protoBufObj)
+        .withSubmissionTimestamp(this.expSubmissionTimestamp)
+        .build();
 
     assertDiagnosisKeyEquals(actDiagnosisKey, this.expSubmissionTimestamp);
   }

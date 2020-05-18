@@ -12,7 +12,6 @@ import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.stream.LongStream;
-import junit.framework.AssertionFailedError;
 import org.apache.commons.math3.distribution.PoissonDistribution;
 import org.apache.commons.math3.random.JDKRandomGenerator;
 import org.apache.commons.math3.random.RandomGenerator;
@@ -138,7 +137,7 @@ public class TestDataGeneration implements ApplicationRunner {
   /**
    * Returns a random diagnosis key with a specific submission timestamp.
    */
-  private DiagnosisKey generateDiagnosisKey(long submissionTimestamp) throws InvalidDiagnosisKeyException {
+  private DiagnosisKey generateDiagnosisKey(long submissionTimestamp) {
     return DiagnosisKey.builder()
         .withKeyData(generateDiagnosisKeyBytes())
         .withRollingStartNumber(generateRollingStartNumber(submissionTimestamp))

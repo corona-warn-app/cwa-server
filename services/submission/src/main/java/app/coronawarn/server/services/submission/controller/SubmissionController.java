@@ -1,7 +1,6 @@
 package app.coronawarn.server.services.submission.controller;
 
 import app.coronawarn.server.common.persistence.domain.DiagnosisKey;
-import app.coronawarn.server.common.persistence.domain.DiagnosisKeyValidator;
 import app.coronawarn.server.common.persistence.exception.InvalidDiagnosisKeyException;
 import app.coronawarn.server.common.persistence.service.DiagnosisKeyService;
 import app.coronawarn.server.common.protocols.external.exposurenotification.Key;
@@ -60,7 +59,6 @@ public class SubmissionController {
 
   private ScheduledExecutorService scheduledExecutor = Executors.newSingleThreadScheduledExecutor();
   private ForkJoinPool forkJoinPool = ForkJoinPool.commonPool();
-
 
   @PostMapping(SUBMISSION_ROUTE)
   public DeferredResult<ResponseEntity<Void>> submitDiagnosisKey(
