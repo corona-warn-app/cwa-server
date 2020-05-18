@@ -40,7 +40,7 @@ If you want to use Docker-based deployment, you need to install Docker on your l
 
 #### Running the Full CWA Backend Using Docker Compose
 
-For your convenience, a full setup including the generation of test data has been prepared using [Docker Compose](https://docs.docker.com/compose/reference/overview/). To build the backend services, run ```docker-compose build``` in the repository's root directory. A default configuration file can be found under ```.env```in the root folder of the repository. The default values for the local Postgres and MinIO build should be changed in this file before docker-compose is run.
+For your convenience, a full setup including the generation of test data has been prepared using [Docker Compose](https://docs.docker.com/compose/reference/overview/). To build the backend services, run ```docker-compose build``` in the repository's root directory. A default configuration file can be found under ```.env```in the root folder of the repository. The default values for the local Postgres and MinIO-build should be changed in this file before docker-compose is run.
 
 Once the services are built, you can start the whole backend using ```docker-compose up```.
 The distribution service runs once and then finishes. If you want to trigger additional distribution runs, run ```docker-compose start distribution```.
@@ -85,7 +85,7 @@ To prepare your machine to run the CWA project locally, we recommend that you fi
 
 #### Configure
 
-After you made sure that the specified dependencies are running configure them in the respective configuration files.
+After you made sure that the specified dependencies are running, configure them in the respective configuration files.
 
 * Configure the Postgres connection in the [submission config](./services/submission/src/main/resources/application.properties) and in the [distribution config](./services/distribution/src/main/resources/application.properties)
 * Configure the S3 compatible object storage in the [distribution config](./services/distribution/src/main/resources/application.properties)
@@ -117,7 +117,7 @@ To be able to set breakpoints (e.g. in IntelliJ), it may be necessary to use the
 
 ## Service APIs
 
-The API that is being exposed by the backend services is documented in an [OpenAPI](https://www.openapis.org/) specification. The specification files are available at the following locations: 
+The API that is being exposed by the backend services is documented in an [OpenAPI](https://www.openapis.org/) specification. The specification files are available at the following locations:
 
 Service      | OpenAPI Specification
 -------------|-------------
@@ -126,7 +126,7 @@ Distribution Service      | https://github.com/corona-warn-app/cwa-server/raw/ma
 
 ## Documentation
 
-The full documentation for the Corona-Warn-App can be found in the [cwa-documentation] repository. This repository contains technical documents, UI/UX specifications, architecture information, and whitepapers for this implementation.
+The full documentation for the Corona-Warn-App can be found in the [cwa-documentation] repository. The documentation repository contains technical documents, architecture information, and whitepapers related to this implementation.
 
 ## Support and Feedback
 
@@ -161,7 +161,6 @@ The following public repositories are currently available for the Corona-Warn-Ap
 [Postgres]: https://www.postgresql.org/
 [MinIO]: https://min.io/
 [HSQLDB]: http://hsqldb.org/
----
 
 ## Licensing
 
