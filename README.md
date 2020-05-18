@@ -38,7 +38,7 @@ After you've checked out this repository, you can run the application in one of 
 
 If you want to use Docker-based deployment, you need to install Docker on your local machine. For more information about downloading and installing Docker, see the [official Docker documentation](https://docs.docker.com/get-docker/).
 
-#### Running the Full cwa Backend Using Docker Compose
+#### Running the Full CWA Backend Using Docker Compose
 
 For your convenience, a full setup including the generation of test data has been prepared using [Docker Compose](https://docs.docker.com/compose/reference/overview/). To build the backend services, run ```docker-compose build``` in the repository's root directory. A default configuration file can be found under ```.env```in the root folder of the repository. The default values for the local Postgres and MinIO build should be changed in this file before docker-compose is run.
 
@@ -53,7 +53,7 @@ submission    | The Corona-Warn-App submission service                          
 distribution  | The Corona-Warn-App distribution service                                          | NO ENDPOINT
 postgres      | A [postgres] database installation                                                | postgres:5432 <br> Username: postgres <br> Password: postgres
 pgadmin       | A [pgadmin](https://www.pgadmin.org/) installation for the postgres database      | http://localhost:8081 <br> Username: user@domain.com <br> Password: password
-minio         | [MinIO] is an S3-compliant object store                                           | http://localhost:8082/ <br> Access key: cws_key_id <br> Secret key: cws_secret_key_id
+minio         | [MinIO] is an S3-compliant object store                                           | http://localhost:8082/ <br> Access key: minioadmin <br> Secret key: minioadmin
 
 #### Running Single cwa Services Using Docker
 
@@ -80,17 +80,23 @@ To prepare your machine to run the cwa project locally, we recommend that you fi
 
 * [Minimum JDK Version 11](https://openjdk.java.net/)
 * [Maven 3.6](https://maven.apache.org/)
-* [Postgres] (if you want to connect to a persistent storage; if a postgres connection is not specified, an in-memory [HSQLDB] is provided)
-* [MinIO] (if you want to run the distribution service and write the files to an object store instead of using your local file system)
+* [Postgres]
+* [MinIO]
+
+#### Configure
+
+After you made sure that the specified dependencies are running configure them in the respective configuration files.
+
+* Configure the Postgres connection in the [submission config](./services/submission/src/main/resources/application.properties) and in the [distribution config](./services/distribution/src/main/resources/application.properties)
+* Configure the S3 compatible object storage in the [distribution config](./services/distribution/src/main/resources/application.properties)
 
 #### Build
 
 After you've checked out the repository, to build the project, run ```mvn install``` in your base directory.
 
-### Run
+#### Run
 
-Navigate to the service you want to start and run the spring-boot:run target. The HSQLDB is used by default.
-When you start the submission service, the endpoint is available on your local port 8080.
+Navigate to the service you want to start and run the spring-boot:run target. The configured Postgres and the configured S3 compliant object storage are used as default. When you start the submission service, the endpoint is available on your local port 8080.
 
 If you want to start the submission service, for example, you start it as follows:
 
@@ -99,28 +105,7 @@ If you want to start the submission service, for example, you start it as follow
   mvn spring-boot:run
 ```
 
-If you want to use a Postgres database instead of the default in-memory HSQLDB, use the Postgres profile when starting the application:
-
-```bash
-  cd services/submission/
-  mvn spring-boot:run -Dspring-boot.run.profiles=postgres
-```
-
-To enable the S3-compatible object storage integration in the cwa distribution service, use the S3 profile when starting the application:
-
-```bash
-  cd services/distribution/
-  mvn spring-boot:run -Dspring-boot.run.profiles=s3
-```
-
-You can also combine multiple profiles if necessary:
-
-```bash
-  cd services/distribution/
-  mvn spring-boot:run -Dspring-boot.run.profiles=dev,postgres,s3
-```
-
-### Debugging
+#### Debugging
 
 To enable the `DEBUG` log level, you can run the application using the Spring `dev` profile.
 
