@@ -38,9 +38,11 @@ public class DiagnosisKeyValidator {
 
   public static void validateTransmissionRiskLevel(int transmissionRiskLevel) {
     if (transmissionRiskLevel < MIN_RISK_LEVEL || transmissionRiskLevel > MAX_RISK_LEVEL) {
-      logger.debug("Risk level {} is not allowed. Must be between {} and {}.", transmissionRiskLevel, MIN_RISK_LEVEL, MAX_RISK_LEVEL);
+      logger.debug("Risk level {} is not allowed. Must be between {} and {}.",
+          transmissionRiskLevel, MIN_RISK_LEVEL, MAX_RISK_LEVEL);
       throw new InvalidDiagnosisKeyException(
-          String.format("Risk level %s is not allowed. Must be between %s and %s.", transmissionRiskLevel, MIN_RISK_LEVEL, MAX_RISK_LEVEL));
+          String.format("Risk level %s is not allowed. Must be between %s and %s.",
+              transmissionRiskLevel, MIN_RISK_LEVEL, MAX_RISK_LEVEL));
     }
   }
 
@@ -60,7 +62,8 @@ public class DiagnosisKeyValidator {
   public static void validateRollingPeriod(long rollingPeriod) {
     if (rollingPeriod < 1) {
       logger.debug("Rolling period must be positive number, but is {}.", rollingPeriod);
-      throw new InvalidDiagnosisKeyException(String.format("Rolling period must be positive number, but is %s.", rollingPeriod));
+      throw new InvalidDiagnosisKeyException(
+          String.format("Rolling period must be positive number, but is %s.", rollingPeriod));
     }
   }
 

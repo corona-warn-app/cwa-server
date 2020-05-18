@@ -66,14 +66,16 @@ public class DiagnosisKey {
   }
 
   /**
-   * Returns a number describing when a key starts. It is equal to startTimeOfKeySinceEpochInSecs / (60 * 10).
+   * Returns a number describing when a key starts. It is equal to
+   * startTimeOfKeySinceEpochInSecs / (60 * 10).
    */
   public long getRollingStartNumber() {
     return rollingStartNumber;
   }
 
   /**
-   * Returns a number describing how long a key is valid. It is expressed in increments of 10 minutes (e.g. 144 for 24 hours).
+   * Returns a number describing how long a key is valid.
+   * It is expressed in increments of 10 minutes (e.g. 144 for 24 hours).
    */
   public long getRollingPeriod() {
     return rollingPeriod;
@@ -87,7 +89,8 @@ public class DiagnosisKey {
   }
 
   /**
-   * Returns the timestamp associated with the submission of this {@link DiagnosisKey} as hours since epoch.
+   * Returns the timestamp associated with the submission of
+   * this {@link DiagnosisKey} as hours since epoch.
    */
   public long getSubmissionTimestamp() {
     return submissionTimestamp;
