@@ -4,20 +4,13 @@ import app.coronawarn.server.services.distribution.objectstore.publish.LocalFile
 import app.coronawarn.server.services.distribution.objectstore.publish.MetadataProvider;
 import io.minio.MinioClient;
 import io.minio.Result;
-import io.minio.errors.ErrorResponseException;
-import io.minio.errors.InsufficientDataException;
-import io.minio.errors.InternalException;
-import io.minio.errors.InvalidBucketNameException;
 import io.minio.errors.InvalidEndpointException;
 import io.minio.errors.InvalidPortException;
-import io.minio.errors.InvalidResponseException;
 import io.minio.errors.MinioException;
-import io.minio.errors.XmlParserException;
+import io.minio.messages.DeleteError;
 import io.minio.messages.Item;
 import java.io.IOException;
 import java.security.GeneralSecurityException;
-import java.security.InvalidKeyException;
-import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -115,8 +108,9 @@ public class ObjectStoreAccess implements MetadataProvider {
    * Deletes objects in the object store, based on the given prefix (folder structure).
    *
    * @param prefix the prefix, e.g. my/folder/
+   * @return
    */
-  public void deleteObjectsWithPrefix(String prefix)
+  public List<DeleteError> deleteObjectsWithPrefix(String prefix)
       throws MinioException, GeneralSecurityException, IOException {
     List<String> toDelete = getObjectsWithPrefix(prefix)
         .stream()
@@ -124,31 +118,16 @@ public class ObjectStoreAccess implements MetadataProvider {
         .collect(Collectors.toList());
 
     logger.info("Deleting " + toDelete.size() + " entries with prefix " + prefix);
-    var response = this.client.removeObjects(bucket, toDelete);
-    response.forEach(err -> {
-      try {
-        System.err.println(err.get());
-      } catch (ErrorResponseException e) {
-        e.printStackTrace();
-      } catch (InsufficientDataException e) {
-        e.printStackTrace();
-      } catch (InternalException e) {
-        e.printStackTrace();
-      } catch (InvalidBucketNameException e) {
-        e.printStackTrace();
-      } catch (InvalidKeyException e) {
-        e.printStackTrace();
-      } catch (InvalidResponseException e) {
-        e.printStackTrace();
-      } catch (IOException e) {
-        e.printStackTrace();
-      } catch (NoSuchAlgorithmException e) {
-        e.printStackTrace();
-      } catch (XmlParserException e) {
-        e.printStackTrace();
-      }
-    });
-    logger.info("Deletion result:" + response);
+    var deletionResponse = this.client.removeObjects(bucket, toDelete);
+
+    List<DeleteError> errors = new ArrayList<>();
+    for(Result<DeleteError> deleteErrorResult : deletionResponse) {
+      errors.add(deleteErrorResult.get());
+    }
+
+    logger.info("Deletion result: " + errors.size());
+
+    return errors;
   }
 
   /**
