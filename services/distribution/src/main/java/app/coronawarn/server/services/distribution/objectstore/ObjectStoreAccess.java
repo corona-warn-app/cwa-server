@@ -42,6 +42,7 @@ public class ObjectStoreAccess {
 
   @Value("${cwa.objectstore.bucket}")
   private String bucket;
+  
   /**
    * Constructs an {@link ObjectStoreAccess} instance for communication with the specified object store endpoint and
    * bucket.
