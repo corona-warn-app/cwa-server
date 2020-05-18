@@ -13,7 +13,7 @@
   <a href="#development">Development</a> •
   <a href="#service-apis">Service APIs</a> •
   <a href="#documentation">Documentation</a> •
-  <a href="#support--feedback">Support</a> •
+  <a href="#support-and-feedback">Support</a> •
   <a href="#how-to-contribute">How to Contribute</a> •
   <a href="#contributors">Contributors</a> •
   <a href="#repositories">Repositories</a> •
