@@ -21,7 +21,7 @@ import software.amazon.awssdk.services.s3.model.ObjectIdentifier;
 import software.amazon.awssdk.services.s3.model.PutObjectRequest;
 
 /**
- * <p>Grants access to the object store, enabling basic functionality for working with files.</p>
+ * <p>Grants access to the S3 compatible object storage hosted by Telekom in Germany, enabling basic functionality for working with files.</p>
  * <p>Use S3Publisher for more convenient access.</p>
  * <br>
  * Make sure the following ENV vars are available.
