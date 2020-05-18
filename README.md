@@ -71,7 +71,7 @@ To build and run the submission service, run the following command:
 ./services/submission/build_and_run.sh
 ```
 
-The submission service is available on localhost:8080.
+The submission service is available on [localhost:8080](http://localhost:8080 ).
 
 ### Maven-Based Build
 
