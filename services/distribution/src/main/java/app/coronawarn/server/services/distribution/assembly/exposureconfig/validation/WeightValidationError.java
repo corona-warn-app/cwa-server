@@ -13,9 +13,9 @@ public class WeightValidationError implements ValidationError {
   /**
    * Constructs a {@link WeightValidationError} for a specific error occurrence.
    *
-   * @param parameter The name of the exposure configuration parameter.
+   * @param parameter  The name of the exposure configuration parameter.
    * @param givenValue The value of the exposure configuration parameter.
-   * @param errorType An error specifier.
+   * @param errorType  An error specifier.
    */
   public WeightValidationError(String parameter, double givenValue, ErrorType errorType) {
     this.parameter = parameter;

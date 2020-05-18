@@ -25,6 +25,9 @@ public class DiagnosisKeysDateDirectoryImpl extends IndexDirectoryImpl<LocalDate
    * Constructs a {@link DiagnosisKeysDateDirectoryImpl} instance associated with the specified
    * {@link DiagnosisKey} collection. Payload signing is be performed according to the specified
    * {@link CryptoProvider}.
+   *
+   * @param diagnosisKeys  The diagnosis keys processed in the contained directories.
+   * @param cryptoProvider The {@link CryptoProvider} used for payload signing.
    */
   public DiagnosisKeysDateDirectoryImpl(Collection<DiagnosisKey> diagnosisKeys,
       CryptoProvider cryptoProvider) {
