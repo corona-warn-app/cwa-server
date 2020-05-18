@@ -111,7 +111,7 @@ public class DiagnosisKeyServiceTest {
   public static DiagnosisKey buildDiagnosisKeyForSubmissionTimestamp(long submissionTimeStamp) {
     return DiagnosisKey.builder()
         .withKeyData(new byte[16])
-        .withRollingStartNumber(0L)
+        .withRollingStartNumber(600L)
         .withRollingPeriod(1L)
         .withTransmissionRiskLevel(2)
         .withSubmissionTimestamp(submissionTimeStamp).build();
