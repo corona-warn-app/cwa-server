@@ -30,16 +30,15 @@ import org.springframework.stereotype.Component;
 
 /**
  * <p>Grants access to the S3 compatible object storage hosted by Telekom in Germany, enabling
- * basic
- * functionality for working with files.</p>
- * <p>Use S3Publisher for more convenient access.</p>
+ * basic functionality for working with files.</p>
  * <br>
- * Make sure the following ENV vars are available.
+ * Make sure the following properties are available on the env:
  * <ul>
  * <li>cwa.objectstore.endpoint</li>
  * <li>cwa.objectstore.bucket</li>
  * <li>cwa.objectstore.accessKey</li>
  * <li>cwa.objectstore.secretKey</li>
+ * <li>cwa.objectstore.port</li>
  * </ul>
  */
 @Component
