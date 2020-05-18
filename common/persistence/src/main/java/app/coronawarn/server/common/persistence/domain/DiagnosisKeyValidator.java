@@ -8,11 +8,25 @@ import java.time.LocalDateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * Validates Keys sent to Submission endpoint as follows:
+ * <p><ul>
+ * <li>Risk level must be between 0 and 8
+ * <li>Rolling start number must be greater than 0
+ * <li>Rolling start number cannot be in the future
+ * <li>Rolling period must be positive number
+ * <li>Key data must be byte array of length 16
+ * </ul><p>
+ */
 public class DiagnosisKeyValidator {
+
   private static final Logger logger = LoggerFactory.getLogger(DiagnosisKeyValidator.class);
 
   private static final Integer MIN_RISK_LEVEL = 0;
   private static final Integer MAX_RISK_LEVEL = 8;
+
+  private DiagnosisKeyValidator() {
+  }
 
   public static void validateDiagnosisKey(DiagnosisKey diagnosisKey) {
     validateKeyData(diagnosisKey.getKeyData());
