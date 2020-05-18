@@ -2,58 +2,57 @@ package app.coronawarn.server.services.distribution.objectstore;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+import app.coronawarn.server.services.distribution.Application;
+import io.minio.errors.MinioException;
 import java.io.IOException;
 import java.nio.file.Path;
+import java.security.GeneralSecurityException;
 import java.util.List;
-import java.util.stream.Collectors;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.context.ConfigFileApplicationContextInitializer;
 import org.springframework.core.io.ClassPathResource;
-import software.amazon.awssdk.services.s3.model.S3Object;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 
-@SpringBootTest
+@ExtendWith(SpringExtension.class)
+@ContextConfiguration(classes = {Application.class},
+    initializers = ConfigFileApplicationContextInitializer.class)
 @Tag("s3-integration")
 public class S3PublisherTest {
-  private static final Logger logger = LoggerFactory.getLogger(S3PublisherTest.class);
 
   private final String rootTestFolder = "objectstore/";
 
   @Autowired
-  ObjectStoreAccess objectStoreAccess;
+  private ObjectStoreAccess objectStoreAccess;
 
   @Test
-  public void publishTestFolderOk() throws IOException {
-    S3Publisher publisher = new S3Publisher(getFolderAsPath(rootTestFolder), objectStoreAccess, "publisher");
-
-    printAllFiles();
+  public void publishTestFolderOk() throws IOException, GeneralSecurityException, MinioException {
+    S3Publisher publisher = new S3Publisher(getFolderAsPath(rootTestFolder), objectStoreAccess);
 
     publisher.publish();
 
-    printAllFiles();
-
-    List<S3Object> s3Objects = objectStoreAccess.getObjectsWithPrefix("publisher")
-        .collect(Collectors.toList());
+    List<S3Object> s3Objects = objectStoreAccess.getObjectsWithPrefix("publisher");
 
     assertEquals(7, s3Objects.size());
-
   }
 
   private Path getFolderAsPath(String path) throws IOException {
     return Path.of(new ClassPathResource(path).getURI());
   }
 
-  private void printAllFiles() {
-    var out = objectStoreAccess.getObjectsWithPrefix("publisher");
-
-    logger.info("-------");
-    logger.info(out.collect(Collectors.toList()).toString());
-    logger.info("-------");
-
-    logger.info("Fetched S3");
+  @BeforeEach
+  public void setup()
+      throws MinioException, GeneralSecurityException, IOException {
+    objectStoreAccess.deleteObjectsWithPrefix("");
   }
 
+  @AfterEach
+  public void teardown() throws IOException, GeneralSecurityException, MinioException {
+    objectStoreAccess.deleteObjectsWithPrefix("");
+  }
 }

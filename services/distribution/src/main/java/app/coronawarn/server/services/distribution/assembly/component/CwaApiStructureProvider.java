@@ -14,8 +14,8 @@ import org.springframework.stereotype.Component;
 @Component
 public class CwaApiStructureProvider {
 
-  private final String VERSION_DIRECTORY = "version";
-  private final String VERSION_V1 = "v1";
+  public static final String VERSION_DIRECTORY = "version";
+  public static final String VERSION_V1 = "v1";
 
   @Autowired
   private ExposureConfigurationStructureProvider exposureConfigurationStructureProvider;

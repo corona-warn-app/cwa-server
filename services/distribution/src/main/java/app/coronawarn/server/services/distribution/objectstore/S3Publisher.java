@@ -1,9 +1,14 @@
 package app.coronawarn.server.services.distribution.objectstore;
 
+import app.coronawarn.server.services.distribution.assembly.component.CwaApiStructureProvider;
+import app.coronawarn.server.services.distribution.objectstore.publish.LocalFile;
 import app.coronawarn.server.services.distribution.objectstore.publish.PublishFileSet;
 import app.coronawarn.server.services.distribution.objectstore.publish.PublishedFileSet;
+import io.minio.errors.MinioException;
 import java.io.IOException;
 import java.nio.file.Path;
+import java.security.GeneralSecurityException;
+import java.util.stream.Collectors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -26,10 +31,7 @@ public class S3Publisher {
   private static final Logger logger = LoggerFactory.getLogger(S3Publisher.class);
 
   /** The default CWA root folder, which contains all CWA related files. */
-  private static final String CWA_S3_ROOT_DEFAULT = "version";
-
-  /** The CWA root folder to be used, which contains all CWA related files. */
-  private final String cwaS3Root;
+  private static final String CWA_S3_ROOT = CwaApiStructureProvider.VERSION_DIRECTORY;
 
   /** root folder for the upload on the local disk. */
   private final Path root;
@@ -38,13 +40,8 @@ public class S3Publisher {
   private final ObjectStoreAccess access;
 
   public S3Publisher(Path root, ObjectStoreAccess access) {
-    this(root, access, CWA_S3_ROOT_DEFAULT);
-  }
-
-  public S3Publisher(Path root, ObjectStoreAccess access, String s3Root) {
     this.root = root;
     this.access = access;
-    this.cwaS3Root = s3Root;
   }
 
   /**
@@ -52,17 +49,20 @@ public class S3Publisher {
    *
    * @throws IOException in case there were problems reading files from the disk.
    */
-  public void publish() throws IOException {
-    var published = new PublishedFileSet(access.getObjectsWithPrefix(cwaS3Root), access);
+  public void publish() throws IOException, GeneralSecurityException, MinioException {
+    var published = new PublishedFileSet(access.getObjectsWithPrefix(CWA_S3_ROOT), access);
     var toPublish = new PublishFileSet(root);
 
     var diff = toPublish
         .getFiles()
         .stream()
-        .filter(published::isNotYetPublished);
+        .filter(published::isNotYetPublished)
+        .collect(Collectors.toList());
 
     logger.info("Beginning upload... ");
-    diff.forEach(access::putObject);
+    for (LocalFile file : diff) {
+      this.access.putObject(file);
+    }
     logger.info("Upload completed.");
   }
 

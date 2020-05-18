@@ -12,12 +12,22 @@ import java.util.stream.Stream;
  */
 public class PublishFileSet {
 
+  /** how deep the folder structure will be scanned for files.  */
+  private static final int FILE_WALK_MAX_DEPTH = 20;
+
   /** the root folder from which to read all files. */
   private final Path root;
 
   /** the list of identified files in the root folder. */
   private final List<LocalFile> files;
 
+  /**
+   * Creates a new PublishFileSet, based on the given root folder. This root folder will be used to
+   * scan recursively for available files.
+   *
+   * @param root the root folder, e.g. ./out/
+   * @throws IOException in case there were problems reading the files
+   */
   public PublishFileSet(Path root) throws IOException {
     this.root = root;
     this.files = getFilesOnPath(root);
@@ -28,7 +38,7 @@ public class PublishFileSet {
       throw new UnsupportedOperationException("Supplied path is not a folder: " + path);
     }
 
-    try (Stream<Path> stream = Files.walk(path, Integer.MAX_VALUE)) {
+    try (Stream<Path> stream = Files.walk(path, FILE_WALK_MAX_DEPTH)) {
       return stream
           .filter(Files::isRegularFile)
           .map(this::constructPublishFile)

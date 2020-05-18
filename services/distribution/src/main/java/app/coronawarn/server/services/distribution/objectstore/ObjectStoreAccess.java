@@ -2,27 +2,31 @@ package app.coronawarn.server.services.distribution.objectstore;
 
 import app.coronawarn.server.services.distribution.objectstore.publish.LocalFile;
 import app.coronawarn.server.services.distribution.objectstore.publish.MetadataProvider;
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.util.Collection;
+import io.minio.MinioClient;
+import io.minio.Result;
+import io.minio.errors.ErrorResponseException;
+import io.minio.errors.InsufficientDataException;
+import io.minio.errors.InternalException;
+import io.minio.errors.InvalidBucketNameException;
+import io.minio.errors.InvalidEndpointException;
+import io.minio.errors.InvalidPortException;
+import io.minio.errors.InvalidResponseException;
+import io.minio.errors.MinioException;
+import io.minio.errors.XmlParserException;
+import io.minio.messages.Item;
+import java.io.IOException;
+import java.security.GeneralSecurityException;
+import java.security.InvalidKeyException;
+import java.security.NoSuchAlgorithmException;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
-import software.amazon.awssdk.core.sync.RequestBody;
-import software.amazon.awssdk.regions.Region;
-import software.amazon.awssdk.services.s3.S3Client;
-import software.amazon.awssdk.services.s3.model.Delete;
-import software.amazon.awssdk.services.s3.model.DeleteObjectsRequest;
-import software.amazon.awssdk.services.s3.model.HeadObjectRequest;
-import software.amazon.awssdk.services.s3.model.ListObjectsV2Request;
-import software.amazon.awssdk.services.s3.model.ObjectIdentifier;
-import software.amazon.awssdk.services.s3.model.PutObjectRequest;
-import software.amazon.awssdk.services.s3.model.S3Object;
 
 /**
  * <p>Grants access to the object store, enabling basic functionality for working with files.</p>
@@ -41,24 +45,45 @@ public class ObjectStoreAccess implements MetadataProvider {
 
   private static final Logger logger = LoggerFactory.getLogger(ObjectStoreAccess.class);
 
+  private static final String DEFAULT_REGION = "eu-west-1";
+
   private final String bucket;
 
-  private S3Client client;
+  private MinioClient client;
 
   @Autowired
-  public ObjectStoreAccess(@Value("${cwa.objectstore.endpoint:notset}") String endpoint,
-      @Value("${cwa.objectstore.bucket:notset}") String bucket) throws URISyntaxException {
-    this.bucket = bucket;
+  public ObjectStoreAccess(ObjectStoreConfigurationProperties configurationProperties)
+      throws IOException, GeneralSecurityException, MinioException {
+    this.client = createClient(configurationProperties);
 
-    if ("notset".equals(endpoint) || "notset".equals(bucket)) {
-      logger.error("S3 Connection parameters missing - unable to serve S3 integration.");
-      return;
+    this.bucket = configurationProperties.getBucket();
+
+    if (!this.client.bucketExists(this.bucket)) {
+      throw new IllegalArgumentException("Supplied bucket does not exist " + bucket);
     }
+  }
 
-    this.client = S3Client.builder()
-        .endpointOverride(new URI(endpoint))
-        .region(Region.EU_CENTRAL_1) /* required by SDK, but ignored on S3 side */
-        .build();
+  private MinioClient createClient(ObjectStoreConfigurationProperties configurationProperties)
+      throws InvalidPortException, InvalidEndpointException {
+    if (isSSL(configurationProperties)) {
+      return new MinioClient(
+          configurationProperties.getEndpoint(),
+          configurationProperties.getPort(),
+          configurationProperties.getAccessKey(), configurationProperties.getSecretKey(),
+          DEFAULT_REGION,
+          true
+      );
+    } else {
+      return new MinioClient(
+          configurationProperties.getEndpoint(),
+          configurationProperties.getPort(),
+          configurationProperties.getAccessKey(), configurationProperties.getSecretKey()
+      );
+    }
+  }
+
+  private boolean isSSL(ObjectStoreConfigurationProperties configurationProperties) {
+    return configurationProperties.getEndpoint().startsWith("https://");
   }
 
   /**
@@ -66,16 +91,13 @@ public class ObjectStoreAccess implements MetadataProvider {
    *
    * @param localFile the file to be published
    */
-  public void putObject(LocalFile localFile) {
-    logger.info("... uploading " + localFile.getS3Key());
-    RequestBody bodyFile = RequestBody.fromFile(localFile.getFile());
+  public void putObject(LocalFile localFile)
+      throws IOException, GeneralSecurityException, MinioException {
+    String s3Key = localFile.getS3Key();
 
-    this.client.putObject(PutObjectRequest.builder()
-        .bucket(this.bucket)
-        .key(localFile.getS3Key())
-        .metadata(createMetadataFor(localFile))
-        .build(),
-        bodyFile);
+    logger.info("... uploading " + s3Key);
+
+    this.client.putObject(bucket, s3Key, localFile.getFile().toString(), null);
   }
 
   /**
@@ -83,15 +105,39 @@ public class ObjectStoreAccess implements MetadataProvider {
    *
    * @param prefix the prefix, e.g. my/folder/
    */
-  public void deleteObjectsWithPrefix(String prefix) {
-    Stream<S3Object> files = getObjectsWithPrefix(prefix);
-    logger.info("Deleting num files: " + files);
-    Collection<ObjectIdentifier> identifiers = files
-        .map(s3object -> ObjectIdentifier.builder().key(s3object.key()).build())
+  public void deleteObjectsWithPrefix(String prefix)
+      throws MinioException, GeneralSecurityException, IOException {
+    List<String> toDelete = getObjectsWithPrefix(prefix)
+        .stream()
+        .map(S3Object::getObjectName)
         .collect(Collectors.toList());
 
-    this.client.deleteObjects(DeleteObjectsRequest.builder().bucket(this.bucket).delete(
-        Delete.builder().objects(identifiers).build()).build());
+    logger.info("Deleting " + toDelete.size() + " entries with prefix " + prefix);
+    var response = this.client.removeObjects(bucket, toDelete);
+    response.forEach(err -> {
+      try {
+        System.err.println(err.get());
+      } catch (ErrorResponseException e) {
+        e.printStackTrace();
+      } catch (InsufficientDataException e) {
+        e.printStackTrace();
+      } catch (InternalException e) {
+        e.printStackTrace();
+      } catch (InvalidBucketNameException e) {
+        e.printStackTrace();
+      } catch (InvalidKeyException e) {
+        e.printStackTrace();
+      } catch (InvalidResponseException e) {
+        e.printStackTrace();
+      } catch (IOException e) {
+        e.printStackTrace();
+      } catch (NoSuchAlgorithmException e) {
+        e.printStackTrace();
+      } catch (XmlParserException e) {
+        e.printStackTrace();
+      }
+    });
+    logger.info("Deletion result:" + response);
   }
 
   /**
@@ -100,28 +146,26 @@ public class ObjectStoreAccess implements MetadataProvider {
    * @param prefix the prefix, e.g. my/folder/
    * @return the list of objects
    */
-  public Stream<S3Object> getObjectsWithPrefix(String prefix) {
-    ListObjectsV2Request listReq = ListObjectsV2Request.builder()
-        .bucket(bucket)
-        .prefix(prefix)
-        .build();
+  public List<S3Object> getObjectsWithPrefix(String prefix)
+      throws IOException, GeneralSecurityException, MinioException {
+    var objects = this.client.listObjects(bucket, prefix, true, true, false);
 
-    return this.client
-        .listObjectsV2Paginator(listReq)
-        .stream()
-        .flatMap(page -> page.contents().stream());
-  }
+    var list = new ArrayList<S3Object>();
+    for (Result<Item> item : objects) {
+      list.add(S3Object.of(item.get()));
+    }
 
-  @Override
-  public Map<String, String> fetchMetadataFor(String s3Key) {
-    return this.client.headObject(HeadObjectRequest.builder()
-        .bucket(bucket)
-        .key(s3Key)
-        .build())
-        .metadata();
+    return list;
   }
 
   private Map<String, String> createMetadataFor(LocalFile file) {
     return Map.of("cwa.hash", file.getHash());
   }
+
+  @Override
+  public Map<String, String> fetchMetadataFor(String s3Key) {
+    return Collections.EMPTY_MAP;
+  }
+
+
 }

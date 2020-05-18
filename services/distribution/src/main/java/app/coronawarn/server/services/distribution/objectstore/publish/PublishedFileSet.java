@@ -1,9 +1,9 @@
 package app.coronawarn.server.services.distribution.objectstore.publish;
 
+import app.coronawarn.server.services.distribution.objectstore.S3Object;
+import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
-import software.amazon.awssdk.services.s3.model.S3Object;
 
 /**
  * Provides an overview about which files are currently available on S3.
@@ -14,9 +14,9 @@ public class PublishedFileSet {
 
   private Map<String, S3Object> s3Objects;
 
-  public PublishedFileSet(Stream<S3Object> s3Objects, MetadataProvider metadataProvider) {
-    this.s3Objects = s3Objects
-        .collect(Collectors.toMap(s3object -> s3object.key(), s3object -> s3object));
+  public PublishedFileSet(List<S3Object> s3Objects, MetadataProvider metadataProvider) {
+    this.s3Objects = s3Objects.stream()
+        .collect(Collectors.toMap(S3Object::getObjectName, s3object -> s3object));
     this.metadataProvider = metadataProvider;
   }
 
