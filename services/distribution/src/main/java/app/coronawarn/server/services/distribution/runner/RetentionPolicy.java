@@ -29,7 +29,7 @@ public class RetentionPolicy implements ApplicationRunner {
   @Autowired
   private ApplicationContext applicationContext;
 
-  @Value("${services.distribution.retention_days}")
+  @Value("${services.distribution.retention-days}")
   private Integer retentionDays;
 
   @Override
