@@ -4,12 +4,26 @@ import io.minio.messages.Item;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * Represents an object as discovered on S3.
+ */
 public class S3Object {
 
+  /**
+   * the name of the object.
+   */
   private String objectName;
 
+  /**
+   * the available meta information.
+   */
   private Map<String, String> metadata = new HashMap<>();
 
+  /**
+   * Constructs a new S3Object for the given object name.
+   *
+   * @param objectName the target object name
+   */
   public S3Object(String objectName) {
     this.objectName = objectName;
   }
@@ -22,6 +36,12 @@ public class S3Object {
     return metadata;
   }
 
+  /**
+   * Returns a new instance of an S3Object based on the given item.
+   *
+   * @param item the item (as provided by MinIO)
+   * @return the S3Object representation
+   */
   public static S3Object of(Item item) {
     S3Object s3Object = new S3Object(item.objectName());
 

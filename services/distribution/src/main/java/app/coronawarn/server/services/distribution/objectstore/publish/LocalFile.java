@@ -12,12 +12,21 @@ import java.util.Base64;
  */
 public abstract class LocalFile {
 
+  /** the path to the file to be represented. */
   protected Path file;
 
+  /** the assigned S3 key. */
   protected String s3Key;
 
+  /** the hash of this file. */
   protected String hash;
 
+  /**
+   * Constructs a new file representing a file on the disk.
+   *
+   * @param file the path to the file to be represented
+   * @param basePath the base path
+   */
   public LocalFile(Path file, Path basePath) {
     this.file = file;
     this.hash = hash();

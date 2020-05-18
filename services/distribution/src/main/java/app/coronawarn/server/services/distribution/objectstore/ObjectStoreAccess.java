@@ -29,7 +29,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 /**
- * <p>Grants access to the S3 compatible object storage hosted by Telekom in Germany, enabling basic
+ * <p>Grants access to the S3 compatible object storage hosted by Telekom in Germany, enabling
+ * basic
  * functionality for working with files.</p>
  * <p>Use S3Publisher for more convenient access.</p>
  * <br>
@@ -37,8 +38,8 @@ import org.springframework.stereotype.Component;
  * <ul>
  * <li>cwa.objectstore.endpoint</li>
  * <li>cwa.objectstore.bucket</li>
- * <li>AWS_ACCESS_KEY_ID</li>
- * <li>AWS_SECRET_ACCESS_KEY</li>
+ * <li>cwa.objectstore.accessKey</li>
+ * <li>cwa.objectstore.secretKey</li>
  * </ul>
  */
 @Component
@@ -52,13 +53,15 @@ public class ObjectStoreAccess implements MetadataProvider {
 
   private MinioClient client;
 
+
   /**
-   * Constructs an {@link ObjectStoreAccess} instance for communication with the specified object store endpoint and
-   * bucket.
+   * Constructs an {@link ObjectStoreAccess} instance for communication with the specified object
+   * store endpoint and bucket.
    *
-   * @param endpoint The endpoint URI for communication with the object store.
-   * @param bucket   The bucket name.
-   * @throws URISyntaxException thrown if endpoint URI invalid.
+   * @param configurationProperties The config properties
+   * @throws IOException When there were problems creating the S3 client
+   * @throws GeneralSecurityException When there were problems creating the S3 client
+   * @throws MinioException When there were problems creating the S3 client
    */
   @Autowired
   public ObjectStoreAccess(ObjectStoreConfigurationProperties configurationProperties)
@@ -74,7 +77,7 @@ public class ObjectStoreAccess implements MetadataProvider {
 
   private MinioClient createClient(ObjectStoreConfigurationProperties configurationProperties)
       throws InvalidPortException, InvalidEndpointException {
-    if (isSSL(configurationProperties)) {
+    if (isSsl(configurationProperties)) {
       return new MinioClient(
           configurationProperties.getEndpoint(),
           configurationProperties.getPort(),
@@ -91,7 +94,7 @@ public class ObjectStoreAccess implements MetadataProvider {
     }
   }
 
-  private boolean isSSL(ObjectStoreConfigurationProperties configurationProperties) {
+  private boolean isSsl(ObjectStoreConfigurationProperties configurationProperties) {
     return configurationProperties.getEndpoint().startsWith("https://");
   }
 

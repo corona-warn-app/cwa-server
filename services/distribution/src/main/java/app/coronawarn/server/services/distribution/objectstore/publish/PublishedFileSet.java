@@ -10,10 +10,20 @@ import java.util.stream.Collectors;
  */
 public class PublishedFileSet {
 
+  /** the metadata provider for fetching meta information. */
   private final MetadataProvider metadataProvider;
 
+  /** ta map of S3 objects with the S3 object name as the key component of the map. */
   private Map<String, S3Object> s3Objects;
 
+  /**
+   * Creates a new PublishedFileSet for the given S3 objects with the help of the metadata provider.
+   * The metadata provider helps to determine whether files have been changed, and are requiring
+   * re-upload.
+   *
+   * @param s3Objects the list of s3 objects.
+   * @param metadataProvider the meta data provider.
+   */
   public PublishedFileSet(List<S3Object> s3Objects, MetadataProvider metadataProvider) {
     this.s3Objects = s3Objects.stream()
         .collect(Collectors.toMap(S3Object::getObjectName, s3object -> s3object));
