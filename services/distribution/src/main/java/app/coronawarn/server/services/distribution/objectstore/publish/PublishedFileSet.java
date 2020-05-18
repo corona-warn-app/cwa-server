@@ -42,7 +42,7 @@ public class PublishedFileSet {
    * @return true, if it exists & is identical
    */
   public boolean isNotYetPublished(LocalFile file) {
-    S3Object published = s3Objects.get(file.s3Key);
+    S3Object published = s3Objects.get(file.getS3Key());
 
     if (published == null) {
       return true;
@@ -52,7 +52,7 @@ public class PublishedFileSet {
   }
 
   private boolean hasSameHashAsPublishedFile(LocalFile file) {
-    String hash = metadataProvider.fetchMetadataFor(file.s3Key).get("cwa.hash");
+    String hash = metadataProvider.fetchMetadataFor(file.getS3Key()).get("cwa.hash");
 
     return file.getHash().equals(hash);
   }
