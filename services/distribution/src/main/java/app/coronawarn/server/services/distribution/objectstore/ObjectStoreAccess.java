@@ -38,28 +38,20 @@ public class ObjectStoreAccess {
 
   private static final Logger logger = LoggerFactory.getLogger(ObjectStoreAccess.class);
 
-  private final String bucket;
-
   private S3Client client;
 
+  @Value("${cwa.objectstore.bucket}")
+  private String bucket;
+  
   /**
    * Constructs an {@link ObjectStoreAccess} instance for communication with the specified object store endpoint and
    * bucket.
    *
    * @param endpoint The endpoint URI for communication with the object store.
-   * @param bucket   The bucket name.
    * @throws URISyntaxException thrown if endpoint URI invalid.
    */
   @Autowired
-  public ObjectStoreAccess(@Value("${cwa.objectstore.endpoint:notset}") String endpoint,
-      @Value("${cwa.objectstore.bucket:notset}") String bucket) throws URISyntaxException {
-    this.bucket = bucket;
-
-    if ("notset".equals(endpoint) || "notset".equals(bucket)) {
-      logger.error("S3 Connection parameters missing - unable to serve S3 integration.");
-      return;
-    }
-
+  public ObjectStoreAccess(@Value("${cwa.objectstore.endpoint}") String endpoint) throws URISyntaxException {
     this.client = S3Client.builder()
         .endpointOverride(new URI(endpoint))
         .region(Region.EU_CENTRAL_1) /* required by SDK, but ignored on S3 side */
