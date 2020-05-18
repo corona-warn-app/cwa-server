@@ -1,6 +1,5 @@
 package app.coronawarn.server.common.persistence.domain;
 
-import app.coronawarn.server.common.persistence.exception.InvalidDiagnosisKeyException;
 import app.coronawarn.server.common.protocols.external.exposurenotification.Key;
 
 /**
