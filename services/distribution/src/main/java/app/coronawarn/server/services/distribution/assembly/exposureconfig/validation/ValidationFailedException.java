@@ -1,8 +1,8 @@
 package app.coronawarn.server.services.distribution.assembly.exposureconfig.validation;
 
 /**
- * The validation could not be executed. Find more information about the root cause in the cause
- * element, and in the message property.<br>
+ * The validation could not be executed. Find more information about the root cause in the cause element, and in the
+ * message property.
  */
 public class ValidationFailedException extends RuntimeException {
 

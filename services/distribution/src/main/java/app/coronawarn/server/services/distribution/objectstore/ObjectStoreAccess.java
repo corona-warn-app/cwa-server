@@ -21,7 +21,8 @@ import software.amazon.awssdk.services.s3.model.ObjectIdentifier;
 import software.amazon.awssdk.services.s3.model.PutObjectRequest;
 
 /**
- * <p>Grants access to the S3 compatible object storage hosted by Telekom in Germany, enabling basic functionality for working with files.</p>
+ * <p>Grants access to the S3 compatible object storage hosted by Telekom in Germany, enabling basic
+ * functionality for working with files.</p>
  * <p>Use S3Publisher for more convenient access.</p>
  * <br>
  * Make sure the following ENV vars are available.
@@ -31,7 +32,6 @@ import software.amazon.awssdk.services.s3.model.PutObjectRequest;
  *   <li>AWS_ACCESS_KEY_ID</li>
  *   <li>AWS_SECRET_ACCESS_KEY</li>
  * </ul>
- *
  */
 @Component
 public class ObjectStoreAccess {
@@ -42,6 +42,14 @@ public class ObjectStoreAccess {
 
   private S3Client client;
 
+  /**
+   * Constructs an {@link ObjectStoreAccess} instance for communication with the specified object store endpoint and
+   * bucket.
+   *
+   * @param endpoint The endpoint URI for communication with the object store.
+   * @param bucket   The bucket name.
+   * @throws URISyntaxException thrown if endpoint URI invalid.
+   */
   @Autowired
   public ObjectStoreAccess(@Value("${cwa.objectstore.endpoint:notset}") String endpoint,
       @Value("${cwa.objectstore.bucket:notset}") String bucket) throws URISyntaxException {
@@ -61,7 +69,7 @@ public class ObjectStoreAccess {
   /**
    * Stores an object in the object store.
    *
-   * @param key the key to use, e.g. my/folder/struc/file.ext
+   * @param key  the key to use, e.g. my/folder/struc/file.ext
    * @param file the file to upload
    */
   public void putObject(String key, File file) {

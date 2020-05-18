@@ -18,8 +18,8 @@ public class FileImpl extends WritableImpl implements File {
   }
 
   /**
-   * Creates a {@link java.io.File} with name {@link Writable#getName} on disk and writes the {@link
-   * File#getBytes bytes} of this {@link File} into the {@link java.io.File} to disk.
+   * Creates a {@link java.io.File} with name {@link Writable#getName} on disk and writes the {@link File#getBytes
+   * bytes} of this {@link File} into the {@link java.io.File} to disk.
    */
   @Override
   public void write() {

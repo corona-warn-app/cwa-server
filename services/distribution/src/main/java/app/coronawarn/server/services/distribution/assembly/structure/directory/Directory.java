@@ -10,8 +10,7 @@ import java.util.Set;
 public interface Directory extends Writable {
 
   /**
-   * Adds a {@link File file} to the {@link DirectoryImpl#getFiles files} of this {@link
-   * Directory}.
+   * Adds a {@link File file} to the {@link DirectoryImpl#getFiles files} of this {@link Directory}.
    */
   void addFile(File file);
 
@@ -21,8 +20,8 @@ public interface Directory extends Writable {
   Set<File> getFiles();
 
   /**
-   * Adds a {@link Directory directory} to the {@link DirectoryImpl#getDirectories directories} of
-   * this {@link Directory}.
+   * Adds a {@link Directory directory} to the {@link DirectoryImpl#getDirectories directories} of this {@link
+   * Directory}.
    */
   void addDirectory(Directory directory);
 

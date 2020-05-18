@@ -44,9 +44,9 @@ public class RiskLevelValidationError implements ValidationError {
 
   @Override
   public String toString() {
-    return "RiskLevelValidationError{" +
-        "parameter='" + parameter + '\'' +
-        ", riskLevel='" + riskLevel + '\'' +
-        '}';
+    return "RiskLevelValidationError{"
+        + "parameter='" + parameter + '\''
+        + ", riskLevel='" + riskLevel + '\''
+        + '}';
   }
 }

@@ -28,6 +28,11 @@ public class OutputDirectoryProvider {
     return new java.io.File(outputPath);
   }
 
+  /**
+   * Removes the output directory and all files and directories within it.
+   *
+   * @throws IOException if file operation fails
+   */
   public void clear() throws IOException {
     logger.debug("Clearing output directory...");
     java.io.File outputDirectory = getFileOnDisk();

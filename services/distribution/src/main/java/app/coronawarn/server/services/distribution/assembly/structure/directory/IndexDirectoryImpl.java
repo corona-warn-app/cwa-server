@@ -20,15 +20,15 @@ public class IndexDirectoryImpl<T> extends DirectoryImpl implements IndexDirecto
   private final Formatter<T> indexFormatter;
 
   /**
-   * Constructor.
+   * Constructs a {@link IndexDirectoryImpl} instance that represents a directory, containing an index in the form of
+   * sub directories.
    *
    * @param name           The name that this directory should have on disk.
-   * @param indexFunction  An {@link IndexFunction} that calculates the index of this {@link
-   *                       IndexDirectoryImpl} from a {@link java.util.Stack} of parent {@link
-   *                       IndexDirectoryImpl} indices. The top element of the stack is from the
-   *                       closest {@link IndexDirectoryImpl} in the parent chain.
-   * @param indexFormatter A {@link Formatter} used to format the directory name for each index
-   *                       element returned by the {@link IndexDirectoryImpl#indexFunction}.
+   * @param indexFunction  An {@link IndexFunction} that calculates the index of this {@link IndexDirectoryImpl} from a
+   *                       {@link java.util.Stack} of parent {@link IndexDirectoryImpl} indices. The top element of the
+   *                       stack is from the closest {@link IndexDirectoryImpl} in the parent chain.
+   * @param indexFormatter A {@link Formatter} used to format the directory name for each index element returned by the
+   *                       {@link IndexDirectoryImpl#indexFunction}.
    */
   public IndexDirectoryImpl(String name, IndexFunction<T> indexFunction,
       Formatter<T> indexFormatter) {
@@ -58,16 +58,15 @@ public class IndexDirectoryImpl<T> extends DirectoryImpl implements IndexDirecto
   }
 
   /**
-   * Creates a new subdirectory for every element of the {@link IndexDirectory#getIndex index} and
-   * writes {@link IndexDirectory#addFileToAll files} and {@link IndexDirectory#addDirectory
-   * directories} to those. The respective element of the index will be pushed onto the Stack for
-   * subsequent {@link app.coronawarn.server.services.distribution.assembly.structure.Writable#prepare} calls
-   * on those files and directories.
+   * Creates a new subdirectory for every element of the {@link IndexDirectory#getIndex index} and writes {@link
+   * IndexDirectory#addFileToAll files} and {@link IndexDirectory#addDirectory directories} to those. The respective
+   * element of the index will be pushed onto the Stack for subsequent
+   * {@link app.coronawarn.server.services.distribution.assembly.structure.Writable#prepare} calls on those files and
+   * directories.
    *
-   * @param indices A {@link Stack} of parameters from all {@link IndexDirectory IndexDirectories}
-   *                further up in the hierarchy. The Stack may contain different types, depending on
-   *                the types {@code T} of {@link IndexDirectory IndexDirectories} further up in the
-   *                hierarchy.
+   * @param indices A {@link Stack} of parameters from all {@link IndexDirectory IndexDirectories} further up in the
+   *                hierarchy. The Stack may contain different types, depending on the types {@code T} of {@link
+   *                IndexDirectory IndexDirectories} further up in the hierarchy.
    */
   @Override
   public void prepare(ImmutableStack<Object> indices) {

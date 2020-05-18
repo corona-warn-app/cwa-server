@@ -29,6 +29,11 @@ public class DiagnosisKeyValidator {
   private DiagnosisKeyValidator() {
   }
 
+  /**
+   * Validates a {@link DiagnosisKey}.
+   *
+   * @param diagnosisKey the diagnosis key to be validated.
+   */
   public static void validateDiagnosisKey(DiagnosisKey diagnosisKey) {
     validateKeyData(diagnosisKey.getKeyData());
     validateRollingPeriod(diagnosisKey.getRollingPeriod());
@@ -36,6 +41,11 @@ public class DiagnosisKeyValidator {
     validateTransmissionRiskLevel(diagnosisKey.getTransmissionRiskLevel());
   }
 
+  /**
+   * Validates a {@link DiagnosisKey}'s transmission risk level.
+   *
+   * @param transmissionRiskLevel the risk level to be validated
+   */
   public static void validateTransmissionRiskLevel(int transmissionRiskLevel) {
     if (transmissionRiskLevel < MIN_RISK_LEVEL || transmissionRiskLevel > MAX_RISK_LEVEL) {
       logger.debug("Risk level {} is not allowed. Must be between {} and {}.",
@@ -46,6 +56,11 @@ public class DiagnosisKeyValidator {
     }
   }
 
+  /**
+   * Validates a {@link DiagnosisKey}'s rolling start number.
+   *
+   * @param rollingStartNumber the rolling start number to be validated
+   */
   public static void validateRollingStartNumber(long rollingStartNumber) {
     if (rollingStartNumber < 1) {
       logger.debug("Rolling start number must be greater than 0.");
@@ -59,6 +74,11 @@ public class DiagnosisKeyValidator {
     }
   }
 
+  /**
+   * Validates a {@link DiagnosisKey}'s rolling period.
+   *
+   * @param rollingPeriod the rolling period to be validated
+   */
   public static void validateRollingPeriod(long rollingPeriod) {
     if (rollingPeriod < 1) {
       logger.debug("Rolling period must be positive number, but is {}.", rollingPeriod);
@@ -67,6 +87,11 @@ public class DiagnosisKeyValidator {
     }
   }
 
+  /**
+   * Validates a {@link DiagnosisKey}'s key data.
+   *
+   * @param keyData the key's data
+   */
   public static void validateKeyData(byte[] keyData) {
     if (keyData.length != 16) {
       logger.debug("Key data must be byte array of length 16, but is {}.", keyData.length);

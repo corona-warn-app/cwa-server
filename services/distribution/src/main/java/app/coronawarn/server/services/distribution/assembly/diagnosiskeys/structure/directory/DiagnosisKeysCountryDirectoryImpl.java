@@ -20,6 +20,13 @@ public class DiagnosisKeysCountryDirectoryImpl extends IndexDirectoryImpl<String
   private final Collection<DiagnosisKey> diagnosisKeys;
   private final CryptoProvider cryptoProvider;
 
+  /**
+   * Constructs a {@link DiagnosisKeysCountryDirectoryImpl} instance that represents the {@code
+   * .../country/:country/...} portion of the diagnosis key directory structure.
+   *
+   * @param diagnosisKeys  The diagnosis keys processed in the contained sub directories.
+   * @param cryptoProvider The {@link CryptoProvider} used for payload signing.
+   */
   public DiagnosisKeysCountryDirectoryImpl(Collection<DiagnosisKey> diagnosisKeys,
       CryptoProvider cryptoProvider) {
     super(COUNTRY_DIRECTORY, __ -> Set.of(COUNTRY), Object::toString);
