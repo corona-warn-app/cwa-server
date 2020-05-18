@@ -6,8 +6,8 @@ import app.coronawarn.server.services.distribution.assembly.structure.file.File;
 import app.coronawarn.server.services.distribution.assembly.structure.util.ImmutableStack;
 
 /**
- * Decorates a {@link File} (e.g. to modify its content) on {@link Writable#prepare}. This class
- * proxies all function calls to the {@link File} it contains.
+ * Decorates a {@link File} (e.g. to modify its content) on {@link Writable#prepare}. This class proxies all function
+ * calls to the {@link File} it contains.
  */
 public abstract class FileDecorator implements File {
 

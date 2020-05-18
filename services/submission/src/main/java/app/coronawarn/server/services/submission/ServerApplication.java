@@ -13,7 +13,8 @@ import org.springframework.http.converter.protobuf.ProtobufHttpMessageConverter;
 @ServletComponentScan
 @EnableJpaRepositories(basePackages = "app.coronawarn.server.common.persistence")
 @EntityScan(basePackages = "app.coronawarn.server.common.persistence")
-@ComponentScan({"app.coronawarn.server.common.persistence", "app.coronawarn.server.services.submission"})
+@ComponentScan({"app.coronawarn.server.common.persistence",
+    "app.coronawarn.server.services.submission"})
 public class ServerApplication {
 
   @Bean

@@ -14,9 +14,9 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.context.request.WebRequest;
 
 @RestControllerAdvice("app.coronawarn.server.services.submission.controller")
-public class APIExceptionHandler {
+public class ApiExceptionHandler {
 
-  private static final Logger logger = LoggerFactory.getLogger(APIExceptionHandler.class);
+  private static final Logger logger = LoggerFactory.getLogger(ApiExceptionHandler.class);
 
   @ExceptionHandler(Exception.class)
   @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)

@@ -11,7 +11,7 @@ public class ExposureConfigurationStructureProviderProviderTest {
   @Test
   public void okFile() throws UnableToLoadFileException {
     RiskScoreParameters result =
-      ExposureConfigurationProvider.readFile("parameters/all_ok.yaml");
+        ExposureConfigurationProvider.readFile("parameters/all_ok.yaml");
 
     assertNotNull(result, "File is null, indicating loading failed");
   }

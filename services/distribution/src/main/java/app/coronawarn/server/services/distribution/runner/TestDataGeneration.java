@@ -25,12 +25,11 @@ import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
 /**
- * Generates random diagnosis keys for the time frame between the last diagnosis key in the database
- * and now (last full hour) and writes them to the database. If there are no diagnosis keys in the
- * database yet, then random diagnosis keys for the time frame between the last full hour and the
- * beginning of the retention period (14 days ago) will be generated. The average number of exposure
- * keys to be generated per hour is configurable in the application properties (profile = {@code
- * testdata}).
+ * Generates random diagnosis keys for the time frame between the last diagnosis key in the database and now (last full
+ * hour) and writes them to the database. If there are no diagnosis keys in the database yet, then random diagnosis keys
+ * for the time frame between the last full hour and the beginning of the retention period (14 days ago) will be
+ * generated. The average number of exposure keys to be generated per hour is configurable in the application properties
+ * (profile = {@code testdata}).
  */
 @Component
 @Order(-1)
@@ -102,9 +101,9 @@ public class TestDataGeneration implements ApplicationRunner {
   }
 
   /**
-   * Returns the submission timestamp (in 1 hour intervals since epoch) of the last diagnosis key in
-   * the database (or the result of {@link TestDataGeneration#getRetentionStartTimestamp} if there
-   * are no diagnosis keys in the database yet.
+   * Returns the submission timestamp (in 1 hour intervals since epoch) of the last diagnosis key in the database (or
+   * the result of {@link TestDataGeneration#getRetentionStartTimestamp} if there are no diagnosis keys in the database
+   * yet.
    */
   private long getGeneratorStartTimestamp(List<DiagnosisKey> diagnosisKeys) {
     if (diagnosisKeys.isEmpty()) {
@@ -116,17 +115,17 @@ public class TestDataGeneration implements ApplicationRunner {
   }
 
   /**
-   * Returns the timestamp (in 1 hour intervals since epoch) of the last full hour. Example: If
-   * called at 15:38 UTC, this function would return the timestamp for today 14:00 UTC.
+   * Returns the timestamp (in 1 hour intervals since epoch) of the last full hour. Example: If called at 15:38 UTC,
+   * this function would return the timestamp for today 14:00 UTC.
    */
   private long getGeneratorEndTimestamp() {
     return (LocalDateTime.now().toEpochSecond(ZoneOffset.UTC) / ONE_HOUR_INTERVAL_SECONDS) - 1;
   }
 
   /**
-   * Returns the timestamp (in 1 hour intervals since epoch) at which the retention period starts.
-   * Example: If the retention period in the application properties is set to 14 days, then this
-   * function would return the timestamp for 14 days ago (from now) at 00:00 UTC.
+   * Returns the timestamp (in 1 hour intervals since epoch) at which the retention period starts. Example: If the
+   * retention period in the application properties is set to 14 days, then this function would return the timestamp for
+   * 14 days ago (from now) at 00:00 UTC.
    */
   private long getRetentionStartTimestamp() {
     return LocalDate.now().minusDays(retentionDays).atStartOfDay()
@@ -156,9 +155,8 @@ public class TestDataGeneration implements ApplicationRunner {
   }
 
   /**
-   * Returns a random rolling start number (timestamp since when a key was active, represented by a
-   * 10 minute interval counter.) between a specific submission timestamp and the beginning of the
-   * retention period.
+   * Returns a random rolling start number (timestamp since when a key was active, represented by a 10 minute interval
+   * counter.) between a specific submission timestamp and the beginning of the retention period.
    */
   private long generateRollingStartNumber(long submissionTimestamp) {
     long maxRollingStartNumber =

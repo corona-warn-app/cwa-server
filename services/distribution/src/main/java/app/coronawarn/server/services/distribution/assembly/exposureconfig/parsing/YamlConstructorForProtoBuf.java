@@ -7,11 +7,9 @@ import org.yaml.snakeyaml.introspector.Property;
 import org.yaml.snakeyaml.introspector.PropertyUtils;
 
 /**
- * This Constructor implementation grants SnakeYaml compliance with the generated proto Java
- * classes.
- * SnakeYaml expects the Java properties to have the same name as the yaml properties. But the
- * generated Java classes' properties have an added suffix of '_'.
- * In addition, this implementation also allows snake case in the YAML (for better readability), as
+ * This Constructor implementation grants SnakeYaml compliance with the generated proto Java classes. SnakeYaml expects
+ * the Java properties to have the same name as the yaml properties. But the generated Java classes' properties have an
+ * added suffix of '_'. In addition, this implementation also allows snake case in the YAML (for better readability), as
  * the Java properties are transformed to camel case.
  */
 public class YamlConstructorForProtoBuf extends Constructor {
@@ -22,8 +20,8 @@ public class YamlConstructorForProtoBuf extends Constructor {
 
   private static class ProtoBufPropertyUtils extends PropertyUtils {
 
-    public Property getProperty(Class<?> type, String name, BeanAccess bAccess) {
-      return super.getProperty(type, transformToProtoNaming(name), bAccess);
+    public Property getProperty(Class<?> type, String name, BeanAccess beanAccess) {
+      return super.getProperty(type, transformToProtoNaming(name), beanAccess);
     }
 
     private String transformToProtoNaming(String yamlPropertyName) {

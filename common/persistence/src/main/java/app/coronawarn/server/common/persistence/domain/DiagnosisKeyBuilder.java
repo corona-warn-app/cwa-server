@@ -10,9 +10,8 @@ import app.coronawarn.server.common.protocols.external.exposurenotification.Key;
 import java.time.Instant;
 
 /**
- * An instance of this builder can be retrieved by calling {@link DiagnosisKey#builder()}.
- * A {@link DiagnosisKey} can then be build by either providing the required member values
- * or by passing the respective protocol buffer object.
+ * An instance of this builder can be retrieved by calling {@link DiagnosisKey#builder()}. A {@link DiagnosisKey} can
+ * then be build by either providing the required member values or by passing the respective protocol buffer object.
  */
 public class DiagnosisKeyBuilder implements Builder, RollingStartNumberBuilder,
     RollingPeriodBuilder, TransmissionRiskLevelBuilder, FinalBuilder {

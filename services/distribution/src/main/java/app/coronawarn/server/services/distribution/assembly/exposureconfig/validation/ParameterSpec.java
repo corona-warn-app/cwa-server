@@ -9,13 +9,19 @@ public class ParameterSpec {
   private ParameterSpec() {
   }
 
-  /** The minimum weight value for mobile API. */
+  /**
+   * The minimum weight value for mobile API.
+   */
   public static final double WEIGHT_MIN = 0.001;
 
-  /** The maximum weight value for mobile API. */
+  /**
+   * The maximum weight value for mobile API.
+   */
   public static final int WEIGHT_MAX = 100;
 
-  /** Maximum number of allowed decimals. */
+  /**
+   * Maximum number of allowed decimals.
+   */
   public static final int WEIGHT_MAX_DECIMALS = 3;
 
 }

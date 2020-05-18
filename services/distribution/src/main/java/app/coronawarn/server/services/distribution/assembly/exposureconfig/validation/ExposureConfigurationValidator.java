@@ -12,8 +12,8 @@ import java.math.BigDecimal;
 import java.util.Arrays;
 
 /**
- * The Exposure Configuration Validator checks the values of a given RiskScoreParameters instance.
- * Validation is performed according to the Apple/Google spec.<br>
+ * The Exposure Configuration Validator checks the values of a given RiskScoreParameters instance. Validation is
+ * performed according to the Apple/Google spec.<br>
  * <br>
  * Weights must be in the range of 0.001 to 100.<br> Scores must be in the range of 1 to 8.<br>
  */

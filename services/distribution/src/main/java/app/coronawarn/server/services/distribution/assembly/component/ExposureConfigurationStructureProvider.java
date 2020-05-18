@@ -11,8 +11,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 /**
- * Reads the exposure configuration parameters from the respective file in the class path and builds
- * a {@link ExposureConfigurationDirectoryImpl} with them.
+ * Reads the exposure configuration parameters from the respective file in the class path and builds a {@link
+ * ExposureConfigurationDirectoryImpl} with them.
  */
 @Component
 public class ExposureConfigurationStructureProvider {

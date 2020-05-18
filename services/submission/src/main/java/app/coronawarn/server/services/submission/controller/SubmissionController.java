@@ -59,6 +59,14 @@ public class SubmissionController {
   private ScheduledExecutorService scheduledExecutor = Executors.newSingleThreadScheduledExecutor();
   private ForkJoinPool forkJoinPool = ForkJoinPool.commonPool();
 
+  /**
+   * Handles diagnosis key submission requests.
+   *
+   * @param exposureKeys The unmarshalled protocol buffers submission payload.
+   * @param fake         A header flag, marking fake requests.
+   * @param tan          A tan for diagnosis verification.
+   * @return An empty response body.
+   */
   @PostMapping(SUBMISSION_ROUTE)
   public DeferredResult<ResponseEntity<Void>> submitDiagnosisKey(
       @RequestBody SubmissionPayload exposureKeys,
@@ -120,12 +128,12 @@ public class SubmissionController {
    * @throws IllegalArgumentException in case the given collection contains {@literal null}.
    */
   public void persistDiagnosisKeysPayload(SubmissionPayload protoBufDiagnosisKeys) {
-    List<Key> protoBufKeysList = protoBufDiagnosisKeys.getKeysList();
-    validatePayload(protoBufKeysList);
+    List<Key> protoBufferKeysList = protoBufDiagnosisKeys.getKeysList();
+    validatePayload(protoBufferKeysList);
 
     List<DiagnosisKey> diagnosisKeys = new ArrayList<>();
-    for (Key aProtoBufKey : protoBufKeysList) {
-      DiagnosisKey diagnosisKey = DiagnosisKey.builder().fromProtoBuf(aProtoBufKey).build();
+    for (Key protoBufferKey : protoBufferKeysList) {
+      DiagnosisKey diagnosisKey = DiagnosisKey.builder().fromProtoBuf(protoBufferKey).build();
       if (diagnosisKey.isYoungerThanRetentionThreshold(retentionDays)) {
         diagnosisKeys.add(diagnosisKey);
       } else {

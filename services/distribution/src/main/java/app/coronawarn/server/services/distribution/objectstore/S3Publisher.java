@@ -10,8 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 /**
- * This publisher is the interface to the S3, translating a local file structure to the target S3
- * objects.
+ * This publisher is the interface to the S3, translating a local file structure to the target S3 objects.
  */
 @Component
 public class S3Publisher {
@@ -31,9 +30,8 @@ public class S3Publisher {
   }
 
   /**
-   * Publishes a local folder to S3. All files in the target folder will be copied over to S3,
-   * keeping the file structure. This operation is running also through all subfolders
-   * (recursively).
+   * Publishes a local folder to S3. All files in the target folder will be copied over to S3, keeping the file
+   * structure. This operation is running also through all subfolders (recursively).
    *
    * @param path the folder on the local disk
    * @throws IOException in case there was a problem reading the folder/contents
@@ -76,8 +74,8 @@ public class S3Publisher {
   /**
    * Checks whether the given file exists.
    * <br>
-   * Both parameters are local on disk, and the S3 path is derived relatively by the root & file.
-   * E.g.:<br> file: /folder1/folder2/file<br> root: /folder1/<br>
+   * Both parameters are local on disk, and the S3 path is derived relatively by the root & file. E.g.:<br> file:
+   * /folder1/folder2/file<br> root: /folder1/<br>
    * <br>
    * The result S3 location will be /folder2/file, which will be checked for existence.
    *
@@ -92,8 +90,8 @@ public class S3Publisher {
   /**
    * Deletes the given file on S3.
    * <br>
-   * Both parameters are local on disk, and the S3 path is derived relatively by the root & file
-   * E.g.:<br> file: /folder1/folder2/file<br> root: /folder1/<br>
+   * Both parameters are local on disk, and the S3 path is derived relatively by the root & file E.g.:<br> file:
+   * /folder1/folder2/file<br> root: /folder1/<br>
    * <br>
    * The result S3 location will be /folder2/file, which will be deleted.
    *

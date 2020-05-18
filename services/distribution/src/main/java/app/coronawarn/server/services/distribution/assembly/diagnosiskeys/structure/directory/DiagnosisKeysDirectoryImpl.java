@@ -10,12 +10,11 @@ import app.coronawarn.server.services.distribution.assembly.structure.util.Immut
 import java.util.Collection;
 
 /**
- * A {@link Directory} containing the file and directory structure that mirrors the API defined in
- * the OpenAPI definition {@code /services/distribution/api_v1.json}. Available countries (endpoint
- * {@code /version/v1/diagnosis-keys/country}) are statically set to only {@code "DE"}. The dates
- * and respective hours (endpoint {@code /version/v1/diagnosis-keys/country/DE/date}) will be
- * created based on the actual {@link DiagnosisKey DiagnosisKeys} given to the {@link
- * DiagnosisKeysDirectoryImpl#DiagnosisKeysDirectoryImpl constructor}.
+ * A {@link Directory} containing the file and directory structure that mirrors the API defined in the OpenAPI
+ * definition {@code /services/distribution/api_v1.json}. Available countries (endpoint {@code
+ * /version/v1/diagnosis-keys/country}) are statically set to only {@code "DE"}. The dates and respective hours
+ * (endpoint {@code /version/v1/diagnosis-keys/country/DE/date}) will be created based on the actual {@link DiagnosisKey
+ * DiagnosisKeys} given to the {@link DiagnosisKeysDirectoryImpl#DiagnosisKeysDirectoryImpl constructor}.
  */
 public class DiagnosisKeysDirectoryImpl extends DirectoryImpl {
 
@@ -23,8 +22,14 @@ public class DiagnosisKeysDirectoryImpl extends DirectoryImpl {
   private final Collection<DiagnosisKey> diagnosisKeys;
   private final CryptoProvider cryptoProvider;
 
-  public DiagnosisKeysDirectoryImpl(Collection<DiagnosisKey> diagnosisKeys,
-      CryptoProvider cryptoProvider) {
+  /**
+   * Constructs a {@link DiagnosisKeysDirectoryImpl} based on the specified {@link DiagnosisKey} collection.
+   * Cryptographic signing is performed using the specified {@link CryptoProvider}.
+   *
+   * @param diagnosisKeys  The diagnosis keys processed in the contained sub directories.
+   * @param cryptoProvider The {@link CryptoProvider} used for payload signing.
+   */
+  public DiagnosisKeysDirectoryImpl(Collection<DiagnosisKey> diagnosisKeys, CryptoProvider cryptoProvider) {
     super(DIAGNOSIS_KEYS_DIRECTORY);
     this.diagnosisKeys = diagnosisKeys;
     this.cryptoProvider = cryptoProvider;

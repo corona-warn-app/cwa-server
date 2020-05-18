@@ -15,8 +15,7 @@ public class TanVerifier {
   private static final Logger logger = LoggerFactory.getLogger(TanVerifier.class);
 
   /**
-   * Verifies the specified TAN. Returns {@literal true} if the specified TAN is valid, {@literal
-   * false} otherwise.
+   * Verifies the specified TAN. Returns {@literal true} if the specified TAN is valid, {@literal false} otherwise.
    *
    * @param tan Submission Authorization TAN, in format "(TAN|TELETAN) KEY"
    * @return {@literal true} if the specified TAN is valid, {@literal false} otherwise.

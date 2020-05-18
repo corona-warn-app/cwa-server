@@ -13,8 +13,7 @@ import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
 /**
- * This runner removes any diagnosis keys from the database that were submitted before a configured
- * threshold of days.
+ * This runner removes any diagnosis keys from the database that were submitted before a configured threshold of days.
  */
 @Component
 @Order(1)
