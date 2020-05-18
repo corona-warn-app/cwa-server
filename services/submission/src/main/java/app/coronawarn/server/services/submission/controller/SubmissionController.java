@@ -128,12 +128,12 @@ public class SubmissionController {
    * @throws IllegalArgumentException in case the given collection contains {@literal null}.
    */
   public void persistDiagnosisKeysPayload(SubmissionPayload protoBufDiagnosisKeys) {
-    List<Key> protoBufKeysList = protoBufDiagnosisKeys.getKeysList();
-    validatePayload(protoBufKeysList);
+    List<Key> protoBufferKeysList = protoBufDiagnosisKeys.getKeysList();
+    validatePayload(protoBufferKeysList);
 
     List<DiagnosisKey> diagnosisKeys = new ArrayList<>();
-    for (Key aProtoBufKey : protoBufKeysList) {
-      DiagnosisKey diagnosisKey = DiagnosisKey.builder().fromProtoBuf(aProtoBufKey).build();
+    for (Key protoBufferKey : protoBufferKeysList) {
+      DiagnosisKey diagnosisKey = DiagnosisKey.builder().fromProtoBuf(protoBufferKey).build();
       if (diagnosisKey.isYoungerThanRetentionThreshold(retentionDays)) {
         diagnosisKeys.add(diagnosisKey);
       } else {
