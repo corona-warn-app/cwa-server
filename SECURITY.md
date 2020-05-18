@@ -5,7 +5,7 @@ The Corona-Warn-App is built with security and data privacy in mind to ensure yo
 **Please do not report security vulnerabilities directly on GitHub. GitHub Issues can be publicly seen and therefore would result in a direct disclosure.**
 
 * Please address questions about data privacy, security concepts, and other media requests to the corona-warn-app.opensource@sap.com mailbox.
-* For reporting a vulnerability please use the [Researcher Vulnerability Report Form](https://vulnerability-form.cfapps.sap.hana.ondemand.com/#/). Until further notice, please select "Others" in the Product category and note the affected repository in the vulnerability description.
+* For reporting a vulnerability, please use the Researcher Vulnerability Report Form on [SAP Trust Center](http://www.sap.com/security). Until further notice, please select "Others" in the product category and note the affected repository in the vulnerability description.
 
 # Disclosure Handling
 
