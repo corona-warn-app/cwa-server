@@ -23,10 +23,9 @@ public class DiagnosisKeysHourDirectoryImpl extends IndexDirectoryImpl<LocalDate
   /**
    * Constructs a {@link DiagnosisKeysHourDirectoryImpl} instance for the specified date.
    *
-   * @param diagnosisKeys  A collection of diagnosis keys. These will be filtered according to the
-   *                       specified current date.
-   * @param currentDate    The date that this {@link DiagnosisKeysHourDirectoryImpl} shall be
-   *                       associated with.
+   * @param diagnosisKeys  A collection of diagnosis keys. These will be filtered according to the specified current
+   *                       date.
+   * @param currentDate    The date that this {@link DiagnosisKeysHourDirectoryImpl} shall be associated with.
    * @param cryptoProvider The {@link CryptoProvider} used for cryptographic signing.
    */
   public DiagnosisKeysHourDirectoryImpl(Collection<DiagnosisKey> diagnosisKeys,

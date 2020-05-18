@@ -21,8 +21,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * A {@link DirectoryDecorator} that will create a {@link SignedPayload} containing a {@link
- * FileBucket} for each date within its directory.
+ * A {@link DirectoryDecorator} that will create a {@link SignedPayload} containing a {@link FileBucket} for each date
+ * within its directory.
  */
 public class DateAggregatingDecorator extends DirectoryDecorator {
 

@@ -3,8 +3,7 @@ package app.coronawarn.server.services.distribution.assembly.exposureconfig.vali
 import java.util.HashSet;
 
 /**
- * The result of a validation run for Exposure Configurations. Find details about possible
- * errors in this collection.
+ * The result of a validation run for Exposure Configurations. Find details about possible errors in this collection.
  */
 public class ValidationResult extends HashSet<ValidationError> {
 

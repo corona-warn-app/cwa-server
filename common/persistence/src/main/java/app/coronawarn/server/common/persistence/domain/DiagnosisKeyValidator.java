@@ -31,6 +31,7 @@ public class DiagnosisKeyValidator {
 
   /**
    * Validates a {@link DiagnosisKey}.
+   *
    * @param diagnosisKey the diagnosis key to be validated.
    */
   public static void validateDiagnosisKey(DiagnosisKey diagnosisKey) {
@@ -42,6 +43,7 @@ public class DiagnosisKeyValidator {
 
   /**
    * Validates a {@link DiagnosisKey}'s transmission risk level.
+   *
    * @param transmissionRiskLevel the risk level to be validated
    */
   public static void validateTransmissionRiskLevel(int transmissionRiskLevel) {
@@ -56,6 +58,7 @@ public class DiagnosisKeyValidator {
 
   /**
    * Validates a {@link DiagnosisKey}'s rolling start number.
+   *
    * @param rollingStartNumber the rolling start number to be validated
    */
   public static void validateRollingStartNumber(long rollingStartNumber) {
@@ -73,6 +76,7 @@ public class DiagnosisKeyValidator {
 
   /**
    * Validates a {@link DiagnosisKey}'s rolling period.
+   *
    * @param rollingPeriod the rolling period to be validated
    */
   public static void validateRollingPeriod(long rollingPeriod) {
@@ -85,6 +89,7 @@ public class DiagnosisKeyValidator {
 
   /**
    * Validates a {@link DiagnosisKey}'s key data.
+   *
    * @param keyData the key's data
    */
   public static void validateKeyData(byte[] keyData) {

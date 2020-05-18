@@ -43,8 +43,8 @@ public class ObjectStoreAccess {
   private S3Client client;
 
   /**
-   * Constructs an {@link ObjectStoreAccess} instance for communication with the specified object
-   * store endpoint and bucket.
+   * Constructs an {@link ObjectStoreAccess} instance for communication with the specified object store endpoint and
+   * bucket.
    *
    * @param endpoint The endpoint URI for communication with the object store.
    * @param bucket   The bucket name.

@@ -12,8 +12,8 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 /**
- * Functionality to split collections of {@link Key keys} into similar sized collections of {@link
- * java.io.File files} containing the respective key data.
+ * Functionality to split collections of {@link Key keys} into similar sized collections of {@link java.io.File files}
+ * containing the respective key data.
  */
 public class Batch {
 

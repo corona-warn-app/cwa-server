@@ -6,8 +6,8 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
- * This TAN Authorization holds all information needed in order to perform a verification on the
- * Verification Server. It supports the {@link AuthorizationType} and the actual TAN key.
+ * This TAN Authorization holds all information needed in order to perform a verification on the Verification Server. It
+ * supports the {@link AuthorizationType} and the actual TAN key.
  */
 public class TanAuthorization {
 
@@ -52,8 +52,8 @@ public class TanAuthorization {
   }
 
   /**
-   * Creates a new TanAuthorization object, based on the given authorization string value, which
-   * should be supplied as the CWA-Authorization header upon uploading diagnosis keys.
+   * Creates a new TanAuthorization object, based on the given authorization string value, which should be supplied as
+   * the CWA-Authorization header upon uploading diagnosis keys.
    *
    * @param authValue The string auth value, e.g. TAN X32ZIWLL
    * @return the TAN Authorization instance, holding the auth type & auth key.

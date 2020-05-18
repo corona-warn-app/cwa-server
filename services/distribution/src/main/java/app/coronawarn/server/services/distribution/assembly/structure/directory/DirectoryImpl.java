@@ -24,9 +24,9 @@ public class DirectoryImpl extends WritableImpl implements Directory {
   }
 
   /**
-   * A {@link DirectoryImpl} that does not yet represent an already existing directory on disk, but
-   * one that shall be created on disk when calling {@link DirectoryImpl#write}. A parent needs to
-   * be defined by calling {@link DirectoryImpl#setParent}, before writing can succeed.
+   * A {@link DirectoryImpl} that does not yet represent an already existing directory on disk, but one that shall be
+   * created on disk when calling {@link DirectoryImpl#write}. A parent needs to be defined by calling {@link
+   * DirectoryImpl#setParent}, before writing can succeed.
    *
    * @param name The name that this directory should have on disk.
    */
@@ -71,8 +71,8 @@ public class DirectoryImpl extends WritableImpl implements Directory {
   }
 
   /**
-   * Writes this {@link DirectoryImpl} and all of its {@link DirectoryImpl#files} and {@link
-   * DirectoryImpl#directories} to disk.
+   * Writes this {@link DirectoryImpl} and all of its {@link DirectoryImpl#files} and {@link DirectoryImpl#directories}
+   * to disk.
    */
   @Override
   public void write() {

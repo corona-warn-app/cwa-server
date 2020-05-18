@@ -7,8 +7,8 @@ import app.coronawarn.server.services.distribution.assembly.structure.util.Immut
 import java.util.Set;
 
 /**
- * Decorates a {@link Directory} (e.g. to modify its files, subdirectories, etc.) on {@link
- * Writable#prepare}. This class proxies all function calls to the {@link Directory} it contains.
+ * Decorates a {@link Directory} (e.g. to modify its files, subdirectories, etc.) on {@link Writable#prepare}. This
+ * class proxies all function calls to the {@link Directory} it contains.
  */
 public abstract class DirectoryDecorator implements Directory {
 
