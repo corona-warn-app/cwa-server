@@ -39,7 +39,7 @@ public class DiagnosisKeyBuilderTest {
   }
 
   @Test
-  public void buildFromProtoBufObjWithoutSubmissionTimestamp() throws InvalidDiagnosisKeyException {
+  public void buildFromProtoBufObjWithoutSubmissionTimestamp() {
     Key protoBufObj = Key
         .newBuilder()
         .setKeyData(ByteString.copyFrom(this.expKeyData))
@@ -54,7 +54,7 @@ public class DiagnosisKeyBuilderTest {
   }
 
   @Test
-  public void buildSuccessivelyWithSubmissionTimestamp() throws InvalidDiagnosisKeyException {
+  public void buildSuccessivelyWithSubmissionTimestamp() {
     DiagnosisKey actDiagnosisKey = DiagnosisKey.builder()
         .withKeyData(this.expKeyData)
         .withRollingStartNumber(this.expRollingStartNumber)
@@ -66,7 +66,7 @@ public class DiagnosisKeyBuilderTest {
   }
 
   @Test
-  public void buildSuccessivelyWithoutSubmissionTimestamp() throws InvalidDiagnosisKeyException {
+  public void buildSuccessivelyWithoutSubmissionTimestamp() {
     DiagnosisKey actDiagnosisKey = DiagnosisKey.builder()
         .withKeyData(this.expKeyData)
         .withRollingStartNumber(this.expRollingStartNumber)
@@ -77,7 +77,7 @@ public class DiagnosisKeyBuilderTest {
   }
 
   @Test
-  public void failsForInvalidKeyData() throws InvalidDiagnosisKeyException {
+  public void failsForInvalidKeyData() {
     assertThrows(
         InvalidDiagnosisKeyException.class, () ->
             DiagnosisKey.builder()
@@ -89,7 +89,7 @@ public class DiagnosisKeyBuilderTest {
   }
 
   @Test
-  public void failsForInvalidRollingStartNumber() throws InvalidDiagnosisKeyException {
+  public void failsForInvalidRollingStartNumber() {
     assertThrows(
         InvalidDiagnosisKeyException.class, () ->
             DiagnosisKey.builder()
@@ -101,7 +101,7 @@ public class DiagnosisKeyBuilderTest {
   }
 
   @Test
-  public void failsForInvalidRollingPeriod() throws InvalidDiagnosisKeyException {
+  public void failsForInvalidRollingPeriod() {
     assertThrows(
         InvalidDiagnosisKeyException.class, () ->
             DiagnosisKey.builder()
@@ -113,7 +113,7 @@ public class DiagnosisKeyBuilderTest {
   }
 
   @Test
-  public void failsForInvalidTransmissionRiskLevel() throws InvalidDiagnosisKeyException {
+  public void failsForInvalidTransmissionRiskLevel() {
     assertThrows(
         InvalidDiagnosisKeyException.class, () ->
             DiagnosisKey.builder()

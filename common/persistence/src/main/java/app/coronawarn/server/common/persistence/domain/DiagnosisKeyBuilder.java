@@ -28,35 +28,35 @@ public class DiagnosisKeyBuilder implements Builder, RollingStartNumberBuilder,
   }
 
   @Override
-  public RollingStartNumberBuilder withKeyData(byte[] keyData) throws InvalidDiagnosisKeyException {
+  public RollingStartNumberBuilder withKeyData(byte[] keyData) {
     DiagnosisKeyValidator.validateKeyData(keyData);
     this.keyData = keyData;
     return this;
   }
 
   @Override
-  public RollingPeriodBuilder withRollingStartNumber(long rollingStartNumber) throws InvalidDiagnosisKeyException {
+  public RollingPeriodBuilder withRollingStartNumber(long rollingStartNumber) {
     DiagnosisKeyValidator.validateRollingStartNumber(rollingStartNumber);
     this.rollingStartNumber = rollingStartNumber;
     return this;
   }
 
   @Override
-  public TransmissionRiskLevelBuilder withRollingPeriod(long rollingPeriod) throws InvalidDiagnosisKeyException {
+  public TransmissionRiskLevelBuilder withRollingPeriod(long rollingPeriod) {
     DiagnosisKeyValidator.validateRollingPeriod(rollingPeriod);
     this.rollingPeriod = rollingPeriod;
     return this;
   }
 
   @Override
-  public FinalBuilder withTransmissionRiskLevel(int transmissionRiskLevel) throws InvalidDiagnosisKeyException {
+  public FinalBuilder withTransmissionRiskLevel(int transmissionRiskLevel) {
     DiagnosisKeyValidator.validateTransmissionRiskLevel(transmissionRiskLevel);
     this.transmissionRiskLevel = transmissionRiskLevel;
     return this;
   }
 
   @Override
-  public FinalBuilder fromProtoBuf(Key protoBufObject) throws InvalidDiagnosisKeyException {
+  public FinalBuilder fromProtoBuf(Key protoBufObject) {
     return this
         .withKeyData(protoBufObject.getKeyData().toByteArray())
         .withRollingStartNumber(protoBufObject.getRollingStartNumber())

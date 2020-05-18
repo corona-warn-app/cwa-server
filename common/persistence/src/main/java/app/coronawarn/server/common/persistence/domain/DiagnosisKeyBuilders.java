@@ -17,7 +17,7 @@ interface DiagnosisKeyBuilders {
      * @param keyData generated diagnosis key.
      * @return this Builder instance.
      */
-    RollingStartNumberBuilder withKeyData(byte[] keyData) throws InvalidDiagnosisKeyException;
+    RollingStartNumberBuilder withKeyData(byte[] keyData);
 
     /**
      * Adds the data contained in the specified protocol buffers key object to this builder.
@@ -25,7 +25,7 @@ interface DiagnosisKeyBuilders {
      * @param protoBufObject ProtocolBuffer object associated with the temporary exposure key.
      * @return this Builder instance.
      */
-    FinalBuilder fromProtoBuf(Key protoBufObject) throws InvalidDiagnosisKeyException;
+    FinalBuilder fromProtoBuf(Key protoBufObject);
   }
 
   interface RollingStartNumberBuilder {
@@ -37,7 +37,7 @@ interface DiagnosisKeyBuilders {
      *                           startTimeOfKeySinceEpochInSecs / (60 * 10).
      * @return this Builder instance.
      */
-    RollingPeriodBuilder withRollingStartNumber(long rollingStartNumber) throws InvalidDiagnosisKeyException;
+    RollingPeriodBuilder withRollingStartNumber(long rollingStartNumber);
   }
 
   interface RollingPeriodBuilder {
@@ -49,7 +49,7 @@ interface DiagnosisKeyBuilders {
      *                      of 10 minutes (e.g. 144 for 24 hours).
      * @return this Builder instance.
      */
-    TransmissionRiskLevelBuilder withRollingPeriod(long rollingPeriod) throws InvalidDiagnosisKeyException;
+    TransmissionRiskLevelBuilder withRollingPeriod(long rollingPeriod);
   }
 
   interface TransmissionRiskLevelBuilder {
@@ -61,7 +61,7 @@ interface DiagnosisKeyBuilders {
      *                              from.
      * @return this Builder instance.
      */
-    FinalBuilder withTransmissionRiskLevel(int transmissionRiskLevel) throws InvalidDiagnosisKeyException;
+    FinalBuilder withTransmissionRiskLevel(int transmissionRiskLevel);
   }
 
   interface FinalBuilder {

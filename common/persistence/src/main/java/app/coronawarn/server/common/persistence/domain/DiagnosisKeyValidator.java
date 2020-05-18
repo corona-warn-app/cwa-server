@@ -9,14 +9,15 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Validates Keys sent to Submission endpoint as follows:
+ * Validates Keys sent to Submission endpoint as follows.
+ *
  * <p><ul>
  * <li>Risk level must be between 0 and 8
  * <li>Rolling start number must be greater than 0
  * <li>Rolling start number cannot be in the future
  * <li>Rolling period must be positive number
  * <li>Key data must be byte array of length 16
- * </ul><p>
+ * </ul>
  */
 public class DiagnosisKeyValidator {
 
@@ -35,7 +36,7 @@ public class DiagnosisKeyValidator {
     validateTransmissionRiskLevel(diagnosisKey.getTransmissionRiskLevel());
   }
 
-  public static void validateTransmissionRiskLevel(int transmissionRiskLevel) throws InvalidDiagnosisKeyException {
+  public static void validateTransmissionRiskLevel(int transmissionRiskLevel) {
     if (transmissionRiskLevel < MIN_RISK_LEVEL || transmissionRiskLevel > MAX_RISK_LEVEL) {
       logger.debug("Risk level {} is not allowed. Must be between {} and {}.", transmissionRiskLevel, MIN_RISK_LEVEL, MAX_RISK_LEVEL);
       throw new InvalidDiagnosisKeyException(
@@ -43,7 +44,7 @@ public class DiagnosisKeyValidator {
     }
   }
 
-  public static void validateRollingStartNumber(long rollingStartNumber) throws InvalidDiagnosisKeyException {
+  public static void validateRollingStartNumber(long rollingStartNumber) {
     if (rollingStartNumber < 1) {
       logger.debug("Rolling start number must be greater than 0.");
       throw new InvalidDiagnosisKeyException("Rolling start number must be greater than 0.");
@@ -56,14 +57,14 @@ public class DiagnosisKeyValidator {
     }
   }
 
-  public static void validateRollingPeriod(long rollingPeriod) throws InvalidDiagnosisKeyException {
+  public static void validateRollingPeriod(long rollingPeriod) {
     if (rollingPeriod < 1) {
       logger.debug("Rolling period must be positive number, but is {}.", rollingPeriod);
       throw new InvalidDiagnosisKeyException(String.format("Rolling period must be positive number, but is %s.", rollingPeriod));
     }
   }
 
-  public static void validateKeyData(byte[] keyData) throws InvalidDiagnosisKeyException {
+  public static void validateKeyData(byte[] keyData) {
     if (keyData.length != 16) {
       logger.debug("Key data must be byte array of length 16, but is {}.", keyData.length);
       throw new InvalidDiagnosisKeyException(

@@ -120,7 +120,7 @@ public class SubmissionController {
    * @param protoBufDiagnosisKeys Diagnosis keys that were specified in the request.
    * @throws IllegalArgumentException in case the given collection contains {@literal null}.
    */
-  public void persistDiagnosisKeysPayload(SubmissionPayload protoBufDiagnosisKeys) throws InvalidDiagnosisKeyException, InvalidPayloadException {
+  public void persistDiagnosisKeysPayload(SubmissionPayload protoBufDiagnosisKeys) {
     List<Key> protoBufKeysList = protoBufDiagnosisKeys.getKeysList();
     validatePayload(protoBufKeysList);
 
@@ -137,7 +137,7 @@ public class SubmissionController {
     diagnosisKeyService.saveDiagnosisKeys(diagnosisKeys);
   }
 
-  private void validatePayload(List<Key> protoBufKeysList) throws InvalidPayloadException {
+  private void validatePayload(List<Key> protoBufKeysList) {
     if (protoBufKeysList.isEmpty() || protoBufKeysList.size() > maxNumberOfKeys) {
       throw new InvalidPayloadException(
           String.format("Number of keys must be between 1 and %s, but is %s.", maxNumberOfKeys, protoBufKeysList));
