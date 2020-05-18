@@ -9,7 +9,7 @@
 	</modules>
 	<groupId>org.opencwa</groupId>
 	<artifactId>server</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
+	<version>0.3.3-SNAPSHOT</version>
 	<name>server</name>
 	<description>CWA Server</description>
 
