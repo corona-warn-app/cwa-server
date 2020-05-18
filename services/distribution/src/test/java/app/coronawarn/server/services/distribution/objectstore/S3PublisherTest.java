@@ -25,7 +25,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 @Tag("s3-integration")
 public class S3PublisherTest {
 
-  private final String rootTestFolder = "objectstore/";
+  private final String rootTestFolder = "objectstore/publisher/";
 
   @Autowired
   private ObjectStoreAccess objectStoreAccess;
@@ -39,9 +39,9 @@ public class S3PublisherTest {
 
     publisher.publish();
 
-    List<S3Object> s3Objects = objectStoreAccess.getObjectsWithPrefix("publisher");
+    List<S3Object> s3Objects = objectStoreAccess.getObjectsWithPrefix("version");
 
-    assertEquals(7, s3Objects.size());
+    assertEquals(5, s3Objects.size());
   }
 
   private Path getFolderAsPath(String path) throws IOException {

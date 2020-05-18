@@ -1,8 +1,8 @@
 package app.coronawarn.server.services.distribution.objectstore;
 
 import app.coronawarn.server.services.distribution.objectstore.publish.LocalFile;
-import app.coronawarn.server.services.distribution.objectstore.publish.MetadataProvider;
 import io.minio.MinioClient;
+import io.minio.PutObjectOptions;
 import io.minio.Result;
 import io.minio.errors.InvalidEndpointException;
 import io.minio.errors.InvalidPortException;
@@ -12,7 +12,6 @@ import io.minio.messages.Item;
 import java.io.IOException;
 import java.security.GeneralSecurityException;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -35,7 +34,7 @@ import org.springframework.stereotype.Component;
  * </ul>
  */
 @Component
-public class ObjectStoreAccess implements MetadataProvider {
+public class ObjectStoreAccess {
 
   private static final Logger logger = LoggerFactory.getLogger(ObjectStoreAccess.class);
 
@@ -99,9 +98,12 @@ public class ObjectStoreAccess implements MetadataProvider {
       throws IOException, GeneralSecurityException, MinioException {
     String s3Key = localFile.getS3Key();
 
-    logger.info("... uploading " + s3Key);
 
-    this.client.putObject(bucket, s3Key, localFile.getFile().toString(), null);
+    var options = new PutObjectOptions(localFile.getFile().toFile().length(), -1);
+    options.setHeaders(createMetadataFor(localFile));
+
+    logger.info("... uploading " + s3Key);
+    this.client.putObject(bucket, s3Key, localFile.getFile().toString(), options);
   }
 
   /**
@@ -150,11 +152,4 @@ public class ObjectStoreAccess implements MetadataProvider {
   private Map<String, String> createMetadataFor(LocalFile file) {
     return Map.of("cwa.hash", file.getHash());
   }
-
-  @Override
-  public Map<String, String> fetchMetadataFor(String s3Key) {
-    return Collections.EMPTY_MAP;
-  }
-
-
 }

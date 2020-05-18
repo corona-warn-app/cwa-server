@@ -10,9 +10,6 @@ import java.util.stream.Collectors;
  */
 public class PublishedFileSet {
 
-  /** the metadata provider for fetching meta information. */
-  private final MetadataProvider metadataProvider;
-
   /** ta map of S3 objects with the S3 object name as the key component of the map. */
   private Map<String, S3Object> s3Objects;
 
@@ -22,12 +19,10 @@ public class PublishedFileSet {
    * re-upload.
    *
    * @param s3Objects the list of s3 objects.
-   * @param metadataProvider the meta data provider.
    */
-  public PublishedFileSet(List<S3Object> s3Objects, MetadataProvider metadataProvider) {
+  public PublishedFileSet(List<S3Object> s3Objects) {
     this.s3Objects = s3Objects.stream()
         .collect(Collectors.toMap(S3Object::getObjectName, s3object -> s3object));
-    this.metadataProvider = metadataProvider;
   }
 
   /**
@@ -52,8 +47,11 @@ public class PublishedFileSet {
   }
 
   private boolean hasSameHashAsPublishedFile(LocalFile file) {
-    String hash = metadataProvider.fetchMetadataFor(file.getS3Key()).get("cwa.hash");
+    var metaData = s3Objects.get(file.getS3Key()).getMetadata();
 
-    return file.getHash().equals(hash);
+    String s3FileHash = metaData.get("X-Amz-Meta-Cwa.hash");
+
+    return file.getHash().equals(s3FileHash);
   }
+
 }

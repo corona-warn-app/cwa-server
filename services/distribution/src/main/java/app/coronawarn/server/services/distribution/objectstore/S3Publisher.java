@@ -50,7 +50,7 @@ public class S3Publisher {
    * @throws IOException in case there were problems reading files from the disk.
    */
   public void publish() throws IOException, GeneralSecurityException, MinioException {
-    var published = new PublishedFileSet(access.getObjectsWithPrefix(CWA_S3_ROOT), access);
+    var published = new PublishedFileSet(access.getObjectsWithPrefix(CWA_S3_ROOT));
     var toPublish = new PublishFileSet(root);
 
     var diff = toPublish
