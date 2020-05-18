@@ -1,5 +1,6 @@
 package app.coronawarn.server.services.submission.controller;
 
+import static java.time.ZoneOffset.UTC;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.any;
@@ -21,6 +22,8 @@ import app.coronawarn.server.common.protocols.internal.SubmissionPayload;
 import app.coronawarn.server.services.submission.verification.TanVerifier;
 import com.google.protobuf.ByteString;
 import java.net.URI;
+import java.time.Instant;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -71,6 +74,55 @@ public class SubmissionControllerTest {
         executeRequest(buildPayloadWithMultipleKeys(), buildOkHeaders());
 
     assertEquals(OK, actResponse.getStatusCode());
+  }
+
+  @Test
+  public void check400ResponseStatusForInvalidParameters() {
+    ResponseEntity<Void> actResponse =
+        executeRequest(buildPayloadWithInvalidKey(), buildOkHeaders());
+
+    assertEquals(BAD_REQUEST, actResponse.getStatusCode());
+  }
+
+  @Test
+  public void check400ResponseStatusForMissingKeys() {
+    ResponseEntity<Void> actResponse =
+        executeRequest(new ArrayList<>(), buildOkHeaders());
+
+    assertEquals(BAD_REQUEST, actResponse.getStatusCode());
+  }
+
+  @Test
+  public void check400ResponseStatusForTooManyKeys() {
+    ResponseEntity<Void> actResponse =
+        executeRequest(buildPayloadWithTooManyKeys(), buildOkHeaders());
+
+    assertEquals(BAD_REQUEST, actResponse.getStatusCode());
+  }
+
+  @Test
+  public void singleKeyWithOutdatedRollingStartNumberDoesNotGetSaved() {
+    Collection<Key> keys = buildPayloadWithSingleOutdatedKey();
+    ArgumentCaptor<Collection<DiagnosisKey>> argument = ArgumentCaptor.forClass(Collection.class);
+
+    executeRequest(keys, buildOkHeaders());
+
+    verify(diagnosisKeyService, atLeastOnce()).saveDiagnosisKeys(argument.capture());
+    assertTrue(argument.getValue().isEmpty());
+  }
+
+  @Test
+  public void keysWithOutdatedRollingStartNumberDoNotGetSaved() {
+    Collection<Key> keys = buildPayloadWithMultipleKeys();
+    Key outdatedKey = createOutdatedKey();
+    keys.add(outdatedKey);
+    ArgumentCaptor<Collection<DiagnosisKey>> argument = ArgumentCaptor.forClass(Collection.class);
+
+    executeRequest(keys, buildOkHeaders());
+
+    verify(diagnosisKeyService, atLeastOnce()).saveDiagnosisKeys(argument.capture());
+    keys.remove(outdatedKey);
+    assertElementsCorrespondToEachOther(keys, argument.getValue());
   }
 
   @Test
@@ -171,10 +223,46 @@ public class SubmissionControllerTest {
 
   private static Collection<Key> buildPayloadWithMultipleKeys() {
     return Stream.of(
-        buildTemporaryExposureKey("testKey111111111", 1, 2, 3),
-        buildTemporaryExposureKey("testKey222222222", 4, 5, 6),
-        buildTemporaryExposureKey("testKey333333333", 7, 8, 9))
+        buildTemporaryExposureKey("testKey111111111", createRollingStartNumber(2), 2, 3),
+        buildTemporaryExposureKey("testKey222222222", createRollingStartNumber(4), 5, 6),
+        buildTemporaryExposureKey("testKey333333333", createRollingStartNumber(10), 8, 8))
         .collect(Collectors.toCollection(ArrayList::new));
+  }
+
+  private static Collection<Key> buildPayloadWithSingleOutdatedKey() {
+    Key outdatedKey = createOutdatedKey();
+    return Stream.of(outdatedKey).collect(Collectors.toCollection(ArrayList::new));
+  }
+
+  private static Key createOutdatedKey() {
+    return Key.newBuilder()
+        .setKeyData(ByteString.copyFromUtf8("testKey222222222"))
+        .setRollingStartNumber(createRollingStartNumber(99))
+        .setRollingPeriod(10)
+        .setTransmissionRiskLevel(5).build();
+  }
+
+  private Collection<Key> buildPayloadWithTooManyKeys() {
+    ArrayList<Key> tooMany = new ArrayList<>();
+    for (int i = 0; i <= 99; i++) {
+      tooMany.add(
+          buildTemporaryExposureKey("testKey111111111", createRollingStartNumber(2), 2, 3));
+    }
+
+    return tooMany;
+  }
+
+  private static Collection<Key> buildPayloadWithInvalidKey() {
+    return Stream.of(
+        buildTemporaryExposureKey("testKey111111111", createRollingStartNumber(2), 2, 999))
+        .collect(Collectors.toCollection(ArrayList::new));
+  }
+
+  private static int createRollingStartNumber(Integer daysAgo) {
+    return Math.toIntExact(LocalDate
+        .ofInstant(Instant.now(), UTC)
+        .minusDays(daysAgo).atStartOfDay()
+        .toEpochSecond(UTC) / (60 * 10));
   }
 
   private static Key buildTemporaryExposureKey(
