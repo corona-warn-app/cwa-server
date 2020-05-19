@@ -19,9 +19,14 @@
 
 package app.coronawarn.server.common.persistence.domain;
 
+import static java.time.ZoneOffset.UTC;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.nio.charset.Charset;
+import java.time.Instant;
+import java.time.LocalDateTime;
 import org.junit.jupiter.api.Test;
 
 public class DiagnosisKeyTest {
@@ -53,4 +58,19 @@ public class DiagnosisKeyTest {
   public void testSubmissionTimestampGetter() {
     assertEquals(expSubmissionTimestamp, diagnosisKey.getSubmissionTimestamp());
   }
+
+  @Test
+  public void testIsYoungerThanRetentionThreshold() {
+    long fiveDaysAgo = LocalDateTime
+        .ofInstant(Instant.now(), UTC)
+        .minusDays(5).minusMinutes(10)
+        .toEpochSecond(UTC) / (60 * 10);
+    DiagnosisKey diagnosisKeyFiveDays = new DiagnosisKey(expKeyData, fiveDaysAgo,
+        expRollingPeriod, expTransmissionRiskLevel, expSubmissionTimestamp);
+
+    assertFalse(diagnosisKeyFiveDays.isYoungerThanRetentionThreshold(4L));
+    assertFalse(diagnosisKeyFiveDays.isYoungerThanRetentionThreshold(5L));
+    assertTrue(diagnosisKeyFiveDays.isYoungerThanRetentionThreshold(6L));
+  }
+
 }
