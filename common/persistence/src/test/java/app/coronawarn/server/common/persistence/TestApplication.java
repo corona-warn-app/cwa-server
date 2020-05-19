@@ -19,6 +19,7 @@
 
 package app.coronawarn.server.common.persistence;
 
+import app.coronawarn.server.common.persistence.repository.DiagnosisKeyRepository;
 import app.coronawarn.server.common.persistence.service.DiagnosisKeyService;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
@@ -28,7 +29,7 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class TestApplication {
   @Bean
-  DiagnosisKeyService createDiagnosisKeyService() {
-    return new DiagnosisKeyService();
+  DiagnosisKeyService createDiagnosisKeyService(DiagnosisKeyRepository keyRepository) {
+    return new DiagnosisKeyService(keyRepository);
   }
 }

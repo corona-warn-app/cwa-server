@@ -38,11 +38,15 @@ public class DiagnosisKeysStructureProvider {
   private static final Logger logger = LoggerFactory
       .getLogger(DiagnosisKeysStructureProvider.class);
 
-  @Autowired
-  private DiagnosisKeyService diagnosisKeyService;
+  private final DiagnosisKeyService diagnosisKeyService;
+
+  private final CryptoProvider cryptoProvider;
 
   @Autowired
-  private CryptoProvider cryptoProvider;
+  public DiagnosisKeysStructureProvider(DiagnosisKeyService diagnosisKeyService, CryptoProvider cryptoProvider) {
+    this.diagnosisKeyService = diagnosisKeyService;
+    this.cryptoProvider = cryptoProvider;
+  }
 
   public Directory getDiagnosisKeys() {
     Collection<DiagnosisKey> diagnosisKeys = readDiagnosisKeys();
