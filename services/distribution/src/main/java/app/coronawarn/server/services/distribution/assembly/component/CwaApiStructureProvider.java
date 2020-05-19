@@ -36,11 +36,16 @@ public class CwaApiStructureProvider {
   public static final String VERSION_DIRECTORY = "version";
   public static final String VERSION_V1 = "v1";
 
-  @Autowired
-  private ExposureConfigurationStructureProvider exposureConfigurationStructureProvider;
+  private final ExposureConfigurationStructureProvider exposureConfigurationStructureProvider;
+
+  private final DiagnosisKeysStructureProvider diagnosisKeysStructureProvider;
 
   @Autowired
-  private DiagnosisKeysStructureProvider diagnosisKeysStructureProvider;
+  public CwaApiStructureProvider(ExposureConfigurationStructureProvider exposureConfigurationStructureProvider,
+                                 DiagnosisKeysStructureProvider diagnosisKeysStructureProvider) {
+    this.exposureConfigurationStructureProvider = exposureConfigurationStructureProvider;
+    this.diagnosisKeysStructureProvider = diagnosisKeysStructureProvider;
+  }
 
   /**
    * Returns the base directory.
