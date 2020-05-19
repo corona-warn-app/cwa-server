@@ -21,7 +21,6 @@ package app.coronawarn.server.services.distribution.assembly.component;
 
 import java.io.ByteArrayInputStream;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -74,7 +73,6 @@ public class CryptoProvider {
       throws IOException {
     PEMParser pemParser = new PEMParser(new InputStreamReader(privateKeyStream));
     PrivateKeyInfo privateKeyInfo = (PrivateKeyInfo) pemParser.readObject();
-    logger.debug("Found key info: {}", privateKeyInfo);
     return new JcaPEMKeyConverter().getPrivateKey(privateKeyInfo);
   }
 
@@ -128,7 +126,7 @@ public class CryptoProvider {
    */
   private InputStream getInputSteamFromPath(String path) throws IOException {
     if (path.startsWith("classpath:")) {
-      logger.debug("Look for resource at path {}", path);
+      logger.debug("Look for Spring IO Resource at path {}", path);
       Resource resource = resourceLoader.getResource(path);
       return resource.getInputStream();
     } else {
