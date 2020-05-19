@@ -46,28 +46,24 @@ public class DiagnosisKeyBuilder implements Builder, RollingStartNumberBuilder,
 
   @Override
   public RollingStartNumberBuilder withKeyData(byte[] keyData) {
-    DiagnosisKeyValidator.validateKeyData(keyData);
     this.keyData = keyData;
     return this;
   }
 
   @Override
   public RollingPeriodBuilder withRollingStartNumber(long rollingStartNumber) {
-    DiagnosisKeyValidator.validateRollingStartNumber(rollingStartNumber);
     this.rollingStartNumber = rollingStartNumber;
     return this;
   }
 
   @Override
   public TransmissionRiskLevelBuilder withRollingPeriod(long rollingPeriod) {
-    DiagnosisKeyValidator.validateRollingPeriod(rollingPeriod);
     this.rollingPeriod = rollingPeriod;
     return this;
   }
 
   @Override
   public FinalBuilder withTransmissionRiskLevel(int transmissionRiskLevel) {
-    DiagnosisKeyValidator.validateTransmissionRiskLevel(transmissionRiskLevel);
     this.transmissionRiskLevel = transmissionRiskLevel;
     return this;
   }
@@ -94,7 +90,11 @@ public class DiagnosisKeyBuilder implements Builder, RollingStartNumberBuilder,
       submissionTimestamp = Instant.now().getEpochSecond() / 3600L;
     }
 
-    return new DiagnosisKey(this.keyData, this.rollingStartNumber, this.rollingPeriod,
-        this.transmissionRiskLevel, submissionTimestamp);
+    var diagnosisKey = new DiagnosisKey(this.keyData, this.rollingStartNumber,
+        this.rollingPeriod, this.transmissionRiskLevel, submissionTimestamp);
+
+    diagnosisKey.validate();
+
+    return diagnosisKey;
   }
 }

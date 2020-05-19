@@ -22,15 +22,27 @@ package app.coronawarn.server.common.persistence.domain;
 import static java.time.ZoneOffset.UTC;
 
 import app.coronawarn.server.common.persistence.domain.DiagnosisKeyBuilders.Builder;
+import app.coronawarn.server.common.persistence.domain.validation.ValidRollingStartNumber;
+import app.coronawarn.server.common.persistence.exception.InvalidDiagnosisKeyException;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.Objects;
+import java.util.Set;
+import java.util.stream.Collectors;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import javax.validation.ConstraintViolation;
+import javax.validation.Validation;
+import javax.validation.Validator;
+import javax.validation.constraints.Min;
+import javax.validation.constraints.Size;
+import org.hibernate.validator.constraints.Range;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * A key generated for advertising over a window of time.
@@ -39,13 +51,26 @@ import javax.persistence.Table;
 @Table(name = "diagnosis_key")
 public class DiagnosisKey {
 
+  private static final Logger logger = LoggerFactory.getLogger(DiagnosisKey.class);
+
+  private static final Validator VALIDATOR = Validation.buildDefaultValidatorFactory().getValidator();
+
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;
+
+  @Size(min = 16, max = 16, message = "Key data must be byte array of length 16")
   private byte[] keyData;
+
+  @ValidRollingStartNumber
   private long rollingStartNumber;
+
+  @Min(value = 1L, message = "Rolling period must be greater than 0.")
   private long rollingPeriod;
+
+  @Range(min = 0, max = 8, message = "Risk level must be between 0 and 8.")
   private int transmissionRiskLevel;
+
   private long submissionTimestamp;
 
   protected DiagnosisKey() {
@@ -126,6 +151,38 @@ public class DiagnosisKey {
         .toEpochSecond(UTC) / (60 * 10);
 
     return this.rollingStartNumber >= threshold;
+  }
+
+  /**
+   * Determines if this key is valid.
+   *
+   * @return true, if valid, else false.
+   */
+  public boolean isValid() {
+    Set<ConstraintViolation<DiagnosisKey>> violations = getConstraintViolations();
+    if (!violations.isEmpty()) {
+      logger.debug("invalid");
+    }
+    return violations.isEmpty();
+  }
+
+  /**
+   * Validates this key.
+   */
+  public void validate() {
+    Set<ConstraintViolation<DiagnosisKey>> violations = getConstraintViolations();
+
+    if (!violations.isEmpty()) {
+      String violationsMessage = violations.stream()
+          .map(violation -> String.format("%s invalid Value: %s", violation.getMessage(), violation.getInvalidValue()))
+          .collect(Collectors.toList()).toString();
+      logger.debug(violationsMessage);
+      throw new InvalidDiagnosisKeyException(violationsMessage);
+    }
+  }
+
+  private Set<ConstraintViolation<DiagnosisKey>> getConstraintViolations() {
+    return VALIDATOR.validate(this);
   }
 
   @Override
