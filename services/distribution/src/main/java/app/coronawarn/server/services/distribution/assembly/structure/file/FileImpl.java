@@ -23,6 +23,8 @@ import app.coronawarn.server.services.distribution.assembly.io.IO;
 import app.coronawarn.server.services.distribution.assembly.structure.Writable;
 import app.coronawarn.server.services.distribution.assembly.structure.WritableImpl;
 import app.coronawarn.server.services.distribution.assembly.structure.util.ImmutableStack;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 
 /**
  * Implementation of {@link File} that interfaces with {@link java.io.File Files} on disk.

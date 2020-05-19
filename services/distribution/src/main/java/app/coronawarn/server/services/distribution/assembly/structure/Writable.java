@@ -20,6 +20,8 @@
 package app.coronawarn.server.services.distribution.assembly.structure;
 
 import app.coronawarn.server.services.distribution.assembly.structure.util.ImmutableStack;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 
 /**
  * Something that can be written to disk.
@@ -55,4 +57,14 @@ public interface Writable {
    * Does preparation work for this {@link Writable} (e.g. calculate data, setup structures, etc.).
    */
   void prepare(ImmutableStack<Object> indices);
+
+  /**
+   * TODO
+   */
+  boolean isFile();
+
+  /**
+   * TODO
+   */
+  boolean isDirectory();
 }

@@ -23,6 +23,7 @@ import app.coronawarn.server.services.distribution.assembly.structure.Writable;
 import app.coronawarn.server.services.distribution.assembly.structure.WritablesContainer;
 import app.coronawarn.server.services.distribution.assembly.structure.file.File;
 import app.coronawarn.server.services.distribution.assembly.structure.util.ImmutableStack;
+import java.io.IOException;
 
 /**
  * Decorates a {@link File} (e.g. to modify its content) on {@link Writable#prepare}. This class proxies all function
@@ -39,6 +40,16 @@ public abstract class FileDecorator implements File {
   @Override
   public void prepare(ImmutableStack<Object> indices) {
     this.file.prepare(indices);
+  }
+
+  @Override
+  public boolean isFile() {
+    return this.file.isFile();
+  }
+
+  @Override
+  public boolean isDirectory() {
+    return this.file.isDirectory();
   }
 
   @Override

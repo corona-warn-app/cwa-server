@@ -51,6 +51,8 @@ public class S3Distribution implements ApplicationRunner {
 
   @Override
   public void run(ApplicationArguments args) {
+    // TODO Revert
+    /*
     try {
       Path pathToDistribute = outputDirectoryProvider.getFileOnDisk().toPath().toAbsolutePath();
       S3Publisher s3Publisher = new S3Publisher(pathToDistribute, objectStoreAccess);
@@ -60,6 +62,6 @@ public class S3Distribution implements ApplicationRunner {
     } catch (UnsupportedOperationException | GeneralSecurityException  | MinioException | IOException e) {
       logger.error("Distribution failed.", e);
     }
-
+   */
   }
 }

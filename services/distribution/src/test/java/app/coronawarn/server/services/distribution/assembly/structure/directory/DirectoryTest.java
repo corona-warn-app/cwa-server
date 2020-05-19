@@ -82,7 +82,7 @@ public class DirectoryTest {
   }
 
   @Test
-  public void checkWriteWritesOwnDirectory() {
+  public void checkWriteWritesOwnDirectory() throws IOException {
     class MockFile extends java.io.File {
 
       public MockFile() {
@@ -98,7 +98,7 @@ public class DirectoryTest {
   }
 
   @Test
-  public void checkWriteDelegatesToWritables() {
+  public void checkWriteDelegatesToWritables() throws IOException {
     File spyChildFile = spy(childFile);
 
     parentDirectory.addWritable(spyChildFile);

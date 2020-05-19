@@ -99,14 +99,14 @@ public class DateAggregatingDecorator extends DirectoryDecorator {
     // Get all archives 2 directory levels down
     return Stream.of(rootDirectory)
         .map(WritablesContainer::getWritables)
-        .filter(writable -> writable instanceof Directory)
         .flatMap(Set::stream)
-        .map(directory -> ((Directory) directory).getWritables())
         .filter(writable -> writable instanceof Directory)
-        .flatMap(Set::stream)
         .map(directory -> ((Directory) directory).getWritables())
-        .filter(writable -> writable instanceof Archive)
+        .flatMap(Set::stream)
+        .filter(writable -> writable instanceof Directory)
+        .map(directory -> ((Directory) directory).getWritables())
         .flatMap(Collection::stream)
+        .filter(writable -> writable instanceof Archive)
         .map(archive -> (Archive) archive)
         .collect(Collectors.toSet());
   }

@@ -27,6 +27,7 @@ import app.coronawarn.server.services.distribution.assembly.structure.directory.
 import app.coronawarn.server.services.distribution.assembly.structure.file.File;
 import app.coronawarn.server.services.distribution.assembly.structure.file.decorator.FileDecorator;
 import app.coronawarn.server.services.distribution.assembly.structure.util.ImmutableStack;
+import java.io.IOException;
 import org.junit.jupiter.api.Test;
 
 public class FileDecoratorTest {

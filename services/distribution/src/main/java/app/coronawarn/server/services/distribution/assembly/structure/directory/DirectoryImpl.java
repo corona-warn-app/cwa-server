@@ -19,9 +19,12 @@
 
 package app.coronawarn.server.services.distribution.assembly.structure.directory;
 
+import static app.coronawarn.server.services.distribution.assembly.structure.functional.CheckedConsumer.uncheckedConsumer;
+
 import app.coronawarn.server.services.distribution.assembly.structure.Writable;
 import app.coronawarn.server.services.distribution.assembly.structure.WritablesContainerImpl;
 import app.coronawarn.server.services.distribution.assembly.structure.file.File;
+import app.coronawarn.server.services.distribution.assembly.structure.functional.CheckedConsumer;
 import app.coronawarn.server.services.distribution.assembly.structure.util.ImmutableStack;
 
 /**
@@ -74,6 +77,6 @@ public class DirectoryImpl extends WritablesContainerImpl implements Directory {
   }
 
   private void writeContainedWritables() {
-    this.getWritables().forEach(Writable::write);
+    this.getWritables().forEach(uncheckedConsumer(Writable::write));
   }
 }

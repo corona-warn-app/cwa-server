@@ -19,6 +19,8 @@
 
 package app.coronawarn.server.services.distribution.assembly.structure;
 
+import app.coronawarn.server.services.distribution.assembly.structure.directory.Directory;
+import app.coronawarn.server.services.distribution.assembly.structure.file.File;
 import java.util.Objects;
 
 public abstract class WritableImpl implements Writable {
@@ -54,5 +56,15 @@ public abstract class WritableImpl implements Writable {
   public java.io.File getFileOnDisk() {
     return Objects.requireNonNullElseGet(this.fileOnDisk,
         () -> getParent().getFileOnDisk().toPath().resolve(this.getName()).toFile());
+  }
+
+  @Override
+  public boolean isFile() {
+    return this instanceof File;
+  }
+
+  @Override
+  public boolean isDirectory() {
+    return this instanceof Directory;
   }
 }
