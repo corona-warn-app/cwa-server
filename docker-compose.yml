@@ -32,11 +32,12 @@ services:
       POSTGRESQL_PASSWORD: ${POSTGRES_PASSWORD}
       POSTGRESQL_USER: ${POSTGRES_USER}
       # Settings for the S3 compatible MinIO object storage
-      AWS_ACCESS_KEY_ID: ${MINIO_ACCESS_KEY}
-      AWS_SECRET_ACCESS_KEY: ${MINIO_SECRET_KEY}
-      CWA_OBJECTSTORE_ENDPOINT: http://minio:9000
+      CWA_OBJECTSTORE_ACCESSKEY: ${MINIO_ACCESS_KEY}
+      CWA_OBJECTSTORE_SECRETKEY: ${MINIO_SECRET_KEY}
+      CWA_OBJECTSTORE_ENDPOINT: http://minio
       CWA_OBJECTSTORE_BUCKET: cwa
-      app.coronawarn.server.services.distribution.paths.output: /tmp/distribution
+      CWA_OBJECTSTORE_PORT: 9000
+      services.distribution.paths.output: /tmp/distribution
     networks:
       - cwa
   postgres:

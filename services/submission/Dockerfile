@@ -12,4 +12,4 @@ RUN cp ${WORK_DIR}/services/submission/target/submission-*.jar /usr/sap/submissi
 
 FROM gcr.io/distroless/java:11
 COPY --from=build /usr/sap/submission-service/submission-*.jar .
-CMD ["submission-0.0.1-SNAPSHOT.jar"]
+CMD ["submission-0.3.3-SNAPSHOT.jar"]
