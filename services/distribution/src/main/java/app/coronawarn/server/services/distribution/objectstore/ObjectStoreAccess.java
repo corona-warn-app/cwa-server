@@ -23,9 +23,15 @@ import app.coronawarn.server.services.distribution.objectstore.publish.LocalFile
 import io.minio.MinioClient;
 import io.minio.PutObjectOptions;
 import io.minio.Result;
+import io.minio.errors.ErrorResponseException;
+import io.minio.errors.InsufficientDataException;
+import io.minio.errors.InternalException;
+import io.minio.errors.InvalidBucketNameException;
 import io.minio.errors.InvalidEndpointException;
 import io.minio.errors.InvalidPortException;
+import io.minio.errors.InvalidResponseException;
 import io.minio.errors.MinioException;
+import io.minio.errors.XmlParserException;
 import io.minio.messages.DeleteError;
 import io.minio.messages.Item;
 import java.io.IOException;
@@ -162,7 +168,21 @@ public class ObjectStoreAccess {
 
     var list = new ArrayList<S3Object>();
     for (Result<Item> item : objects) {
-      list.add(S3Object.of(item.get()));
+      try {
+        list.add(S3Object.of(item.get()));
+      } catch (ErrorResponseException e) {
+        e.printStackTrace();
+      } catch (InsufficientDataException e) {
+        e.printStackTrace();
+      } catch (InternalException e) {
+        e.printStackTrace();
+      } catch (InvalidBucketNameException e) {
+        e.printStackTrace();
+      } catch (InvalidResponseException e) {
+        e.printStackTrace();
+      } catch (XmlParserException e) {
+        e.printStackTrace();
+      }
     }
 
     return list;
