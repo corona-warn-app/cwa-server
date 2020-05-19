@@ -75,8 +75,8 @@ public class Batch {
     return IntStream.range(0, partitions.size())
         .mapToObj(index -> {
           Header header = Header.newBuilder()
-              .setStartTimestamp(startTimestamp.toEpochMilli())
-              .setEndTimestamp(endTimeStamp.toEpochMilli())
+              .setStartTimestamp((int)startTimestamp.getEpochSecond())
+              .setEndTimestamp((int)endTimeStamp.getEpochSecond())
               .setRegion(region)
               .setBatchNum(index + 1)
               .setBatchSize(numBatches)

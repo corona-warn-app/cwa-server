@@ -11,8 +11,8 @@ message File {
 }
 
 message Header {
-  int64 startTimestamp = 1; // Time window of keys in this file based on arrival to server, in UTC.
-  int64 endTimestamp = 2;
+  int32 startTimestamp = 1; // Time window of keys in this file based on arrival to server, in UTC.
+  int32 endTimestamp = 2;
   string region = 3; // Region for which these keys came from (e.g., country)
   int32 batchNum = 4; // E.g., Batch 2 of 10
   int32 batchSize = 5;
