@@ -23,6 +23,7 @@ import app.coronawarn.server.common.persistence.domain.DiagnosisKey;
 import app.coronawarn.server.common.persistence.service.DiagnosisKeyService;
 import app.coronawarn.server.common.protocols.external.exposurenotification.Key;
 import app.coronawarn.server.common.protocols.internal.SubmissionPayload;
+import app.coronawarn.server.services.submission.config.SubmissionServiceConfig;
 import app.coronawarn.server.services.submission.exception.InvalidPayloadException;
 import app.coronawarn.server.services.submission.verification.TanVerifier;
 import java.util.ArrayList;
@@ -59,25 +60,23 @@ public class SubmissionController {
 
   private final TanVerifier tanVerifier;
 
+  private final Double fakeDelayMovingAverageSamples;
+
+  private final Integer retentionDays;
+
+  private final Integer maxNumberOfKeys;
+
+  private Double fakeDelay;
   @Autowired
-  SubmissionController(DiagnosisKeyService diagnosisKeyService, TanVerifier tanVerifier) {
+  SubmissionController(DiagnosisKeyService diagnosisKeyService, TanVerifier tanVerifier,
+      SubmissionServiceConfig submissionServiceConfig) {
     this.diagnosisKeyService = diagnosisKeyService;
     this.tanVerifier = tanVerifier;
+    fakeDelay = submissionServiceConfig.getInitialFakeDelayMilliseconds();
+    fakeDelayMovingAverageSamples = submissionServiceConfig.getFakeDelayMovingAverageSamples();
+    retentionDays = submissionServiceConfig.getRetentionDays();
+    maxNumberOfKeys = submissionServiceConfig.getMaxNumberOfKeys();
   }
-
-  // Exponential moving average of the last N real request durations (in ms), where
-  // N = fakeDelayMovingAverageSamples.
-  @Value("${services.submission.initial_fake_delay_milliseconds}")
-  private Double fakeDelay;
-
-  @Value("${services.submission.fake_delay_moving_average_samples}")
-  private Double fakeDelayMovingAverageSamples;
-
-  @Value("${services.submission.retention-days}")
-  private Integer retentionDays;
-
-  @Value("${services.submission.payload.max-number-of-keys}")
-  private Integer maxNumberOfKeys;
 
   private ScheduledExecutorService scheduledExecutor = Executors.newSingleThreadScheduledExecutor();
   private ForkJoinPool forkJoinPool = ForkJoinPool.commonPool();
