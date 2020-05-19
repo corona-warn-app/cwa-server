@@ -20,6 +20,8 @@
 package app.coronawarn.server.services.distribution.assembly.component;
 
 import java.io.ByteArrayInputStream;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -92,9 +94,8 @@ public class CryptoProvider {
    */
   public PrivateKey getPrivateKey() {
     if (privateKey == null) {
-      Resource privateKeyResource = resourceLoader.getResource(privateKeyPath);
-      try (InputStream privateKeyStream = privateKeyResource.getInputStream()) {
-        privateKey = getPrivateKeyFromStream(privateKeyStream);
+      try (InputStream privateKeyStream = this.getInputSteamFromPath(privateKeyPath)) {
+        this.privateKey = getPrivateKeyFromStream(privateKeyStream);
       } catch (IOException e) {
         logger.error("Failed to load private key from {}", privateKeyPath, e);
         throw new RuntimeException(e);
@@ -108,8 +109,7 @@ public class CryptoProvider {
    */
   public Certificate getCertificate() {
     if (this.certificate == null) {
-      Resource certResource = resourceLoader.getResource(certificatePath);
-      try (InputStream certStream = certResource.getInputStream()) {
+      try (InputStream certStream = this.getInputSteamFromPath(certificatePath)) {
         this.certificate = getCertificateFromStream(certStream);
       } catch (IOException | CertificateException e) {
         logger.error("Failed to load certificate from {}", certificatePath, e);
@@ -117,5 +117,20 @@ public class CryptoProvider {
       }
     }
     return certificate;
+  }
+
+  /**
+   * Disambiguates different forms of provided paths and returns an InputStream.
+   * @param path configured path to resource or file
+   * @return InputStream based on the provided path.
+   * @throws IOException if path does not allow to createe valid InputStream.
+   */
+  private InputStream getInputSteamFromPath(String path) throws IOException {
+    if (path.startsWith("classpath:")) {
+      Resource privateKeyResource = resourceLoader.getResource(path);
+      return privateKeyResource.getInputStream();
+    } else {
+      return new FileInputStream(path);
+    }
   }
 }
