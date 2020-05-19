@@ -10,6 +10,6 @@ RUN cd ${WORK_DIR}
 RUN mvn -B -DskipTests=true ${MAVEN_ARGS} clean install
 RUN cp ${WORK_DIR}/services/distribution/target/distribution-*.jar /usr/sap/distribution-service
 
-FROM openjdk:11-alpine
+FROM openjdk:11-jdk-slim
 COPY --from=build /usr/sap/distribution-service/distribution-*.jar .
 CMD tail -f /dev/null
