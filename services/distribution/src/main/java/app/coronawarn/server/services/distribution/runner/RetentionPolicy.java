@@ -41,14 +41,18 @@ public class RetentionPolicy implements ApplicationRunner {
   private static final Logger logger = LoggerFactory
       .getLogger(RetentionPolicy.class);
 
-  @Autowired
-  private DiagnosisKeyService diagnosisKeyService;
+  private final DiagnosisKeyService diagnosisKeyService;
 
-  @Autowired
-  private ApplicationContext applicationContext;
+  private final ApplicationContext applicationContext;
 
   @Value("${services.distribution.retention-days}")
   private Integer retentionDays;
+
+  @Autowired
+  public RetentionPolicy(DiagnosisKeyService diagnosisKeyService, ApplicationContext applicationContext) {
+    this.diagnosisKeyService = diagnosisKeyService;
+    this.applicationContext = applicationContext;
+  }
 
   @Override
   public void run(ApplicationArguments args) {
