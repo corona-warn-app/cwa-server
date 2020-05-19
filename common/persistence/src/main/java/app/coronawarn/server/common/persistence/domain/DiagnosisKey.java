@@ -174,7 +174,7 @@ public class DiagnosisKey {
 
     if (!violations.isEmpty()) {
       String violationsMessage = violations.stream()
-          .map(violation -> String.format("%s invalid Value: %s", violation.getMessage(), violation.getInvalidValue()))
+          .map(violation -> String.format("%s Invalid Value: %s", violation.getMessage(), violation.getInvalidValue()))
           .collect(Collectors.toList()).toString();
       logger.debug(violationsMessage);
       throw new InvalidDiagnosisKeyException(violationsMessage);
