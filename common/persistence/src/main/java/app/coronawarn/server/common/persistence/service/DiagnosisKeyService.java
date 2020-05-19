@@ -22,7 +22,6 @@ package app.coronawarn.server.common.persistence.service;
 import static java.time.ZoneOffset.UTC;
 
 import app.coronawarn.server.common.persistence.domain.DiagnosisKey;
-import app.coronawarn.server.common.persistence.domain.DiagnosisKeyValidator;
 import app.coronawarn.server.common.persistence.repository.DiagnosisKeyRepository;
 import java.time.Instant;
 import java.time.LocalDateTime;
@@ -54,8 +53,8 @@ public class DiagnosisKeyService {
    * Returns all valid persisted diagnosis keys, sorted by their submission timestamp.
    */
   public List<DiagnosisKey> getDiagnosisKeys() {
-    return keyRepository.findAll(Sort.by(Direction.ASC, "submissionTimestamp"));//.stream()
-//        .filter(DiagnosisKeyValidator::isValidDiagnosisKey).collect(Collectors.toList());
+    return keyRepository.findAll(Sort.by(Direction.ASC, "submissionTimestamp")).stream()
+        .filter(DiagnosisKey::isValid).collect(Collectors.toList());
   }
 
   /**
