@@ -93,7 +93,8 @@ public class CryptoProvider {
    */
   public PrivateKey getPrivateKey() {
     if (privateKey == null) {
-      try (InputStream privateKeyStream = this.getInputSteamFromPath(privateKeyPath)) {
+      Resource privateKeyResource = resourceLoader.getResource(privateKeyPath);
+      try (InputStream privateKeyStream = privateKeyResource.getInputStream()) {
         this.privateKey = getPrivateKeyFromStream(privateKeyStream);
       } catch (IOException e) {
         logger.error("Failed to load private key from {}", privateKeyPath, e);
@@ -108,7 +109,8 @@ public class CryptoProvider {
    */
   public Certificate getCertificate() {
     if (this.certificate == null) {
-      try (InputStream certStream = this.getInputSteamFromPath(certificatePath)) {
+      Resource certResource = resourceLoader.getResource(certificatePath);
+      try (InputStream certStream = certResource.getInputStream()) {
         this.certificate = getCertificateFromStream(certStream);
       } catch (IOException | CertificateException e) {
         logger.error("Failed to load certificate from {}", certificatePath, e);
@@ -116,22 +118,5 @@ public class CryptoProvider {
       }
     }
     return certificate;
-  }
-
-  /**
-   * Disambiguates different forms of provided paths and returns an InputStream.
-   * @param path configured path to resource or file
-   * @return InputStream based on the provided path.
-   * @throws IOException if path does not allow to createe valid InputStream.
-   */
-  private InputStream getInputSteamFromPath(String path) throws IOException {
-    if (path.startsWith("classpath:")) {
-      logger.debug("Look for Spring IO Resource at path {}", path);
-      Resource resource = resourceLoader.getResource(path);
-      return resource.getInputStream();
-    } else {
-      logger.debug("Look for file at path {}", path);
-      return new FileInputStream(path);
-    }
   }
 }
