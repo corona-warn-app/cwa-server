@@ -55,11 +55,15 @@ public class SubmissionController {
    */
   public static final String SUBMISSION_ROUTE = "/diagnosis-keys";
 
-  @Autowired
-  private DiagnosisKeyService diagnosisKeyService;
+  private final DiagnosisKeyService diagnosisKeyService;
+
+  private final TanVerifier tanVerifier;
 
   @Autowired
-  private TanVerifier tanVerifier;
+  SubmissionController(DiagnosisKeyService diagnosisKeyService, TanVerifier tanVerifier) {
+    this.diagnosisKeyService = diagnosisKeyService;
+    this.tanVerifier = tanVerifier;
+  }
 
   // Exponential moving average of the last N real request durations (in ms), where
   // N = fakeDelayMovingAverageSamples.

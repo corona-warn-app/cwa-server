@@ -66,8 +66,7 @@ public class TestDataGeneration implements ApplicationRunner {
   @Value("${services.distribution.testdata.exposures-per-hour}")
   private Integer exposuresPerHour;
 
-  @Autowired
-  private DiagnosisKeyService diagnosisKeyService;
+  private final DiagnosisKeyService diagnosisKeyService;
 
   private RandomGenerator random = new JDKRandomGenerator();
 
@@ -80,6 +79,11 @@ public class TestDataGeneration implements ApplicationRunner {
 
   // The rolling start number is counted in 10 minute intervals since epoch
   private static final long TEN_MINUTES_INTERVAL_SECONDS = TimeUnit.MINUTES.toSeconds(10);
+
+  @Autowired
+  public TestDataGeneration(DiagnosisKeyService diagnosisKeyService) {
+    this.diagnosisKeyService = diagnosisKeyService;
+  }
 
   /**
    * See {@link TestDataGeneration} class documentation.

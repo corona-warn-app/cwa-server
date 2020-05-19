@@ -34,8 +34,12 @@ import org.springframework.stereotype.Component;
 @Component
 public class DiagnosisKeyService {
 
+  private final DiagnosisKeyRepository keyRepository;
+
   @Autowired
-  private DiagnosisKeyRepository keyRepository;
+  public DiagnosisKeyService(DiagnosisKeyRepository keyRepository) {
+    this.keyRepository = keyRepository;
+  }
 
   /**
    * Persists the specified collection of {@link DiagnosisKey} instances.
