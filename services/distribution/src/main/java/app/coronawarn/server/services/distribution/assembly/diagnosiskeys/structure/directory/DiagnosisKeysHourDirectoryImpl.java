@@ -21,15 +21,19 @@ package app.coronawarn.server.services.distribution.assembly.diagnosiskeys.struc
 
 import app.coronawarn.server.common.persistence.domain.DiagnosisKey;
 import app.coronawarn.server.services.distribution.assembly.component.CryptoProvider;
-import app.coronawarn.server.services.distribution.assembly.diagnosiskeys.structure.file.HourFileImpl;
+import app.coronawarn.server.services.distribution.assembly.diagnosiskeys.structure.directory.decorator.DiagnosisKeyArchiveSigningDecorator;
+import app.coronawarn.server.services.distribution.assembly.diagnosiskeys.structure.file.TemporaryExposureKeyExportFile;
 import app.coronawarn.server.services.distribution.assembly.diagnosiskeys.util.DateTime;
 import app.coronawarn.server.services.distribution.assembly.structure.directory.IndexDirectoryImpl;
+import app.coronawarn.server.services.distribution.assembly.structure.file.Archive;
 import app.coronawarn.server.services.distribution.assembly.structure.file.File;
-import app.coronawarn.server.services.distribution.assembly.structure.file.decorator.SigningDecorator;
+import app.coronawarn.server.services.distribution.assembly.structure.file.ZipArchiveImpl;
 import app.coronawarn.server.services.distribution.assembly.structure.util.ImmutableStack;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Collection;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 public class DiagnosisKeysHourDirectoryImpl extends IndexDirectoryImpl<LocalDateTime> {
 
@@ -42,16 +46,16 @@ public class DiagnosisKeysHourDirectoryImpl extends IndexDirectoryImpl<LocalDate
   /**
    * Constructs a {@link DiagnosisKeysHourDirectoryImpl} instance for the specified date.
    *
-   * @param diagnosisKeys  A collection of diagnosis keys. These will be filtered according to the specified current
-   *                       date.
-   * @param currentDate    The date that this {@link DiagnosisKeysHourDirectoryImpl} shall be associated with.
+   * @param diagnosisKeys  A collection of diagnosis keys. These will be filtered according to the
+   *                       specified current date.
+   * @param currentDate    The date that this {@link DiagnosisKeysHourDirectoryImpl} shall be
+   *                       associated with.
    * @param cryptoProvider The {@link CryptoProvider} used for cryptographic signing.
    */
   public DiagnosisKeysHourDirectoryImpl(Collection<DiagnosisKey> diagnosisKeys,
       LocalDate currentDate, CryptoProvider cryptoProvider) {
-    super(HOUR_DIRECTORY, indices -> {
-      return DateTime.getHours(((LocalDate) indices.peek()), diagnosisKeys);
-    }, LocalDateTime::getHour);
+    super(HOUR_DIRECTORY, indices -> DateTime.getHours(((LocalDate) indices.peek()), diagnosisKeys),
+        LocalDateTime::getHour);
     this.diagnosisKeys = diagnosisKeys;
     this.currentDate = currentDate;
     this.cryptoProvider = cryptoProvider;
@@ -59,18 +63,35 @@ public class DiagnosisKeysHourDirectoryImpl extends IndexDirectoryImpl<LocalDate
 
   @Override
   public void prepare(ImmutableStack<Object> indices) {
-    this.addFileToAll(currentIndices -> {
+    this.addWritableToAll(currentIndices -> {
       LocalDateTime currentHour = (LocalDateTime) currentIndices.peek();
       // The LocalDateTime currentHour already contains both the date and the hour information, so
       // we can throw away the LocalDate that's the second item on the stack from the "/date"
       // IndexDirectory.
       String region = (String) currentIndices.pop().pop().peek();
-      return decorateHourFile(new HourFileImpl(currentHour, region, diagnosisKeys));
+
+      Set<DiagnosisKey> diagnosisKeysForCurrentHour = getDiagnosisKeysForHour(currentHour);
+
+      File temporaryExposureKeyExportFile =
+          TemporaryExposureKeyExportFile.fromDiagnosisKeys(diagnosisKeysForCurrentHour, region);
+
+      Archive hourArchive = new ZipArchiveImpl("index");
+      hourArchive.addWritable(temporaryExposureKeyExportFile);
+
+      return decorateDiagnosisKeyArchive(hourArchive);
     });
     super.prepare(indices);
   }
 
-  private File decorateHourFile(File hourFile) {
-    return new SigningDecorator(hourFile, cryptoProvider);
+  private Set<DiagnosisKey> getDiagnosisKeysForHour(LocalDateTime hour) {
+    return this.diagnosisKeys.stream()
+        .filter(diagnosisKey -> DateTime
+            .getLocalDateTimeFromHoursSinceEpoch(diagnosisKey.getSubmissionTimestamp())
+            .equals(hour))
+        .collect(Collectors.toSet());
+  }
+
+  private File decorateDiagnosisKeyArchive(Archive archive) {
+    return new DiagnosisKeyArchiveSigningDecorator(archive, cryptoProvider);
   }
 }

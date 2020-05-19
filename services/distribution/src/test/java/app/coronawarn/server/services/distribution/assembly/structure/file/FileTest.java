@@ -68,7 +68,7 @@ public class FileTest {
     java.io.File outputFile = outputFolder.newFolder();
     Directory directory = new DirectoryImpl(outputFile);
 
-    directory.addFile(file);
+    directory.addWritable(file);
     directory.write();
 
     byte[] writtenBytes = Files.readAllBytes(file.getFileOnDisk().toPath());

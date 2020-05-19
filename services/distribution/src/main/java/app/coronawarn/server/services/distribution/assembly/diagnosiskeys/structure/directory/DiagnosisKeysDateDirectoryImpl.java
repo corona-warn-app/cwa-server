@@ -56,7 +56,7 @@ public class DiagnosisKeysDateDirectoryImpl extends IndexDirectoryImpl<LocalDate
 
   @Override
   public void prepare(ImmutableStack<Object> indices) {
-    this.addDirectoryToAll(currentIndices -> {
+    this.addWritableToAll(currentIndices -> {
       LocalDate currentDate = (LocalDate) currentIndices.peek();
       IndexDirectory<LocalDateTime> hourDirectory = new DiagnosisKeysHourDirectoryImpl(
           diagnosisKeys, currentDate, cryptoProvider);

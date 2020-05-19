@@ -55,7 +55,7 @@ public class DiagnosisKeysCountryDirectoryImpl extends IndexDirectoryImpl<String
 
   @Override
   public void prepare(ImmutableStack<Object> indices) {
-    this.addDirectoryToAll(__ -> {
+    this.addWritableToAll(__ -> {
       IndexDirectory<LocalDate> dateDirectory = new DiagnosisKeysDateDirectoryImpl(diagnosisKeys,
           cryptoProvider);
       return decorateDateDirectory(dateDirectory);

@@ -60,7 +60,7 @@ public class IndexDirectoryTest {
 
     indexDirectory = new IndexDirectoryImpl<>(name, indexFunction, indexFormatter);
     outputDirectory = new DirectoryImpl(outputFile);
-    outputDirectory.addDirectory(indexDirectory);
+    outputDirectory.addWritable(indexDirectory);
   }
 
   @Test
@@ -76,7 +76,7 @@ public class IndexDirectoryTest {
   @Test
   public void checkAddFileToAll() {
     List<File> expectedFileList = new ArrayList<>();
-    indexDirectory.addFileToAll(__ -> {
+    indexDirectory.addWritableToAll(__ -> {
       File newFile = new FileImpl("index", new byte[0]);
       expectedFileList.add(newFile);
       return newFile;
@@ -101,7 +101,7 @@ public class IndexDirectoryTest {
   @Test
   public void checkAddDirectoryToAll() {
     List<Directory> expectedFileList = new ArrayList<>();
-    indexDirectory.addDirectoryToAll(__ -> {
+    indexDirectory.addWritableToAll(__ -> {
       Directory newDirectory = new DirectoryImpl("something");
       expectedFileList.add(newDirectory);
       return newDirectory;

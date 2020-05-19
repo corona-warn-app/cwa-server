@@ -24,14 +24,15 @@ import app.coronawarn.server.services.distribution.assembly.component.CryptoProv
 import app.coronawarn.server.services.distribution.assembly.structure.directory.DirectoryImpl;
 import app.coronawarn.server.services.distribution.assembly.structure.directory.IndexDirectoryImpl;
 import app.coronawarn.server.services.distribution.assembly.structure.directory.decorator.IndexingDecorator;
+import app.coronawarn.server.services.distribution.assembly.structure.file.Archive;
 import app.coronawarn.server.services.distribution.assembly.structure.file.FileImpl;
-import app.coronawarn.server.services.distribution.assembly.structure.file.decorator.SigningDecorator;
+import app.coronawarn.server.services.distribution.assembly.structure.file.ZipArchiveImpl;
 import java.util.Set;
 
 /**
- * Creates the directory structure {@code /parameters/country/:country} and writes a file called {@code index}
- * containing {@link RiskScoreParameters} wrapped in a
- * {@link app.coronawarn.server.common.protocols.internal.SignedPayload}.
+ * Creates the directory structure {@code /parameters/country/:country} and writes a file called
+ * {@code index} containing {@link RiskScoreParameters} wrapped in a {@link
+ * app.coronawarn.server.common.protocols.internal.SignedPayload}.
  */
 public class ExposureConfigurationDirectoryImpl extends DirectoryImpl {
 
@@ -51,13 +52,15 @@ public class ExposureConfigurationDirectoryImpl extends DirectoryImpl {
       CryptoProvider cryptoProvider) {
     super(PARAMETERS_DIRECTORY);
 
+    // TODO Extract into config archive
+    Archive archive = new ZipArchiveImpl(INDEX_FILE_NAME);
+    archive.addWritable(new FileImpl("export.bin", exposureConfig.toByteArray()));
+
     IndexDirectoryImpl<String> country =
         new IndexDirectoryImpl<>(COUNTRY_DIRECTORY, __ -> Set.of(COUNTRY), Object::toString);
+    country.addWritableToAll(__ ->
+        new ExposureConfigArchiveSigningDecorator(archive, cryptoProvider));
 
-    country.addFileToAll(__ ->
-        new SigningDecorator(new FileImpl(INDEX_FILE_NAME, exposureConfig.toByteArray()),
-            cryptoProvider));
-
-    this.addDirectory(new IndexingDecorator<>(country));
+    this.addWritable(new IndexingDecorator<>(country));
   }
 }

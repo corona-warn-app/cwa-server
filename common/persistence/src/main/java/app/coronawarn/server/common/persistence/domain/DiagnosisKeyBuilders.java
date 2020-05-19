@@ -19,10 +19,11 @@
 
 package app.coronawarn.server.common.persistence.domain;
 
-import app.coronawarn.server.common.protocols.external.exposurenotification.Key;
+import app.coronawarn.server.common.protocols.external.exposurenotification.TemporaryExposureKey;
 
 /**
- * This interface bundles interfaces that are used for the implementation of {@link DiagnosisKeyBuilder}.
+ * This interface bundles interfaces that are used for the implementation of {@link
+ * DiagnosisKeyBuilder}.
  */
 interface DiagnosisKeyBuilders {
 
@@ -42,7 +43,7 @@ interface DiagnosisKeyBuilders {
      * @param protoBufObject ProtocolBuffer object associated with the temporary exposure key.
      * @return this Builder instance.
      */
-    FinalBuilder fromProtoBuf(Key protoBufObject);
+    FinalBuilder fromProtoBuf(TemporaryExposureKey protoBufObject);
   }
 
   interface RollingStartNumberBuilder {
@@ -74,7 +75,8 @@ interface DiagnosisKeyBuilders {
     /**
      * Adds the specified transmission risk level to this builder.
      *
-     * @param transmissionRiskLevel risk of transmission associated with the person this key came from.
+     * @param transmissionRiskLevel risk of transmission associated with the person this key came
+     *                              from.
      * @return this Builder instance.
      */
     FinalBuilder withTransmissionRiskLevel(int transmissionRiskLevel);
@@ -91,8 +93,8 @@ interface DiagnosisKeyBuilders {
     FinalBuilder withSubmissionTimestamp(long submissionTimestamp);
 
     /**
-     * Builds a {@link DiagnosisKey} instance. If no submission timestamp has been specified it will be set to "now" as
-     * hours since epoch.
+     * Builds a {@link DiagnosisKey} instance. If no submission timestamp has been specified it will
+     * be set to "now" as hours since epoch.
      */
     DiagnosisKey build();
   }

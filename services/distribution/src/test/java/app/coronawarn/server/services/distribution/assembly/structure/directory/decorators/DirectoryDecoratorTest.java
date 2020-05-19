@@ -41,19 +41,12 @@ public class DirectoryDecoratorTest {
     decorator.prepare(stack);
     verify(decoratee).prepare(stack);
 
-    File file = new FileImpl("foo", new byte[0]);
-    decorator.addFile(file);
-    verify(decoratee).addFile(file);
-
-    decorator.getFiles();
-    verify(decoratee).getFiles();
-
     Directory directory = new DirectoryImpl("foo");
-    decorator.addDirectory(directory);
-    verify(decoratee).addDirectory(directory);
+    decorator.addWritable(directory);
+    verify(decoratee).addWritable(directory);
 
-    decorator.getDirectories();
-    verify(decoratee).getDirectories();
+    decorator.getWritables();
+    verify(decoratee).getWritables();
 
     decorator.write();
     verify(decoratee).write();

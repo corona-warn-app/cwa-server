@@ -20,7 +20,7 @@
 package app.coronawarn.server.services.distribution.assembly.structure.file.decorator;
 
 import app.coronawarn.server.services.distribution.assembly.structure.Writable;
-import app.coronawarn.server.services.distribution.assembly.structure.directory.Directory;
+import app.coronawarn.server.services.distribution.assembly.structure.WritablesContainer;
 import app.coronawarn.server.services.distribution.assembly.structure.file.File;
 import app.coronawarn.server.services.distribution.assembly.structure.util.ImmutableStack;
 
@@ -62,12 +62,12 @@ public abstract class FileDecorator implements File {
   }
 
   @Override
-  public Directory getParent() {
+  public WritablesContainer getParent() {
     return this.file.getParent();
   }
 
   @Override
-  public void setParent(Directory parent) {
+  public void setParent(WritablesContainer parent) {
     this.file.setParent(parent);
   }
 

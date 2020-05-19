@@ -21,6 +21,7 @@ package app.coronawarn.server.services.distribution.assembly.diagnosiskeys.struc
 
 import app.coronawarn.server.common.persistence.domain.DiagnosisKey;
 import app.coronawarn.server.services.distribution.assembly.component.CryptoProvider;
+import app.coronawarn.server.services.distribution.assembly.structure.Writable;
 import app.coronawarn.server.services.distribution.assembly.structure.directory.Directory;
 import app.coronawarn.server.services.distribution.assembly.structure.directory.DirectoryImpl;
 import app.coronawarn.server.services.distribution.assembly.structure.directory.IndexDirectory;
@@ -56,7 +57,7 @@ public class DiagnosisKeysDirectoryImpl extends DirectoryImpl {
 
   @Override
   public void prepare(ImmutableStack<Object> indices) {
-    this.addDirectory(decorateCountryDirectory(
+    this.addWritable(decorateCountryDirectory(
         new DiagnosisKeysCountryDirectoryImpl(diagnosisKeys, cryptoProvider)));
     super.prepare(indices);
   }

@@ -17,17 +17,22 @@
  * under the License.
  */
 
-package app.coronawarn.server.services.distribution.assembly.structure.functional;
+package app.coronawarn.server.services.distribution.assembly.structure;
 
-import app.coronawarn.server.services.distribution.assembly.structure.file.File;
-import app.coronawarn.server.services.distribution.assembly.structure.util.ImmutableStack;
-import java.util.function.Function;
+import java.util.Set;
 
 /**
- * A {@code Function<Stack<Object>, File>}.
+ * A {@link Writable} that can contain other {@link Writable writables}.
  */
-@FunctionalInterface
-public interface FileFunction extends Function<ImmutableStack<Object>, File> {
+public interface WritablesContainer extends Writable {
 
-  File apply(ImmutableStack<Object> t);
+  /**
+   * Adds a {@link Writable} to this {@link WritablesContainer}.
+   */
+  void addWritable(Writable writable);
+
+  /**
+   * Returns all {@link Writable writables} contained in this {@link WritablesContainer}.
+   */
+  Set<Writable> getWritables();
 }

@@ -19,15 +19,15 @@
 
 package app.coronawarn.server.services.distribution.assembly.structure.functional;
 
-import app.coronawarn.server.services.distribution.assembly.structure.directory.Directory;
+import app.coronawarn.server.services.distribution.assembly.structure.Writable;
 import app.coronawarn.server.services.distribution.assembly.structure.util.ImmutableStack;
 import java.util.function.Function;
 
 /**
- * A {@code Function<Stack<Object>, Directory>}.
+ * A {@code Function<Stack<Object>, Writable>}.
  */
 @FunctionalInterface
-public interface DirectoryFunction extends Function<ImmutableStack<Object>, Directory> {
+public interface WritableFunction extends Function<ImmutableStack<Object>, Writable> {
 
-  Directory apply(ImmutableStack<Object> t);
+  Writable apply(ImmutableStack<Object> t);
 }

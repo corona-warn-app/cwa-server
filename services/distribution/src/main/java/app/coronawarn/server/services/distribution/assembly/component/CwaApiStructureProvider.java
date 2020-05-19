@@ -50,8 +50,8 @@ public class CwaApiStructureProvider {
         new IndexDirectoryImpl<>(VERSION_DIRECTORY, __ -> Set.of(VERSION_V1), Object::toString);
 
     versionDirectory
-        .addDirectoryToAll(__ -> exposureConfigurationStructureProvider.getExposureConfiguration());
-    versionDirectory.addDirectoryToAll(__ -> diagnosisKeysStructureProvider.getDiagnosisKeys());
+        .addWritableToAll(__ -> exposureConfigurationStructureProvider.getExposureConfiguration());
+    versionDirectory.addWritableToAll(__ -> diagnosisKeysStructureProvider.getDiagnosisKeys());
 
     return new IndexingDecorator<>(versionDirectory);
   }

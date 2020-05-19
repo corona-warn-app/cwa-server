@@ -25,7 +25,7 @@ import static app.coronawarn.server.common.persistence.domain.DiagnosisKeyBuilde
 import static app.coronawarn.server.common.persistence.domain.DiagnosisKeyBuilders.RollingStartNumberBuilder;
 import static app.coronawarn.server.common.persistence.domain.DiagnosisKeyBuilders.TransmissionRiskLevelBuilder;
 
-import app.coronawarn.server.common.protocols.external.exposurenotification.Key;
+import app.coronawarn.server.common.protocols.external.exposurenotification.TemporaryExposureKey;
 import java.time.Instant;
 
 /**
@@ -73,10 +73,10 @@ public class DiagnosisKeyBuilder implements Builder, RollingStartNumberBuilder,
   }
 
   @Override
-  public FinalBuilder fromProtoBuf(Key protoBufObject) {
+  public FinalBuilder fromProtoBuf(TemporaryExposureKey protoBufObject) {
     return this
         .withKeyData(protoBufObject.getKeyData().toByteArray())
-        .withRollingStartNumber(protoBufObject.getRollingStartNumber())
+        .withRollingStartNumber(protoBufObject.getRollingStartIntervalNumber())
         .withRollingPeriod(protoBufObject.getRollingPeriod())
         .withTransmissionRiskLevel(protoBufObject.getTransmissionRiskLevel());
   }

@@ -19,19 +19,15 @@
 
 package app.coronawarn.server.services.distribution.assembly.structure.directory;
 
-import app.coronawarn.server.services.distribution.assembly.structure.WritableImpl;
+import app.coronawarn.server.services.distribution.assembly.structure.Writable;
+import app.coronawarn.server.services.distribution.assembly.structure.WritablesContainerImpl;
 import app.coronawarn.server.services.distribution.assembly.structure.file.File;
 import app.coronawarn.server.services.distribution.assembly.structure.util.ImmutableStack;
-import java.util.HashSet;
-import java.util.Set;
 
 /**
  * Implementation of {@link Directory} that interfaces with {@link java.io.File Files} on disk.
  */
-public class DirectoryImpl extends WritableImpl implements Directory {
-
-  private final Set<File> files = new HashSet<>();
-  private final Set<Directory> directories = new HashSet<>();
+public class DirectoryImpl extends WritablesContainerImpl implements Directory {
 
   /**
    * A root {@link DirectoryImpl} representing an already existing directory on disk.
@@ -43,9 +39,9 @@ public class DirectoryImpl extends WritableImpl implements Directory {
   }
 
   /**
-   * A {@link DirectoryImpl} that does not yet represent an already existing directory on disk, but one that shall be
-   * created on disk when calling {@link DirectoryImpl#write}. A parent needs to be defined by calling {@link
-   * DirectoryImpl#setParent}, before writing can succeed.
+   * A {@link DirectoryImpl} that does not yet represent an already existing directory on disk, but
+   * one that shall be created on disk when calling {@link DirectoryImpl#write}. A parent needs to
+   * be defined by calling {@link DirectoryImpl#setParent}, before writing can succeed.
    *
    * @param name The name that this directory should have on disk.
    */
@@ -53,63 +49,31 @@ public class DirectoryImpl extends WritableImpl implements Directory {
     super(name);
   }
 
-  @Override
-  public void addFile(File file) {
-    this.files.add(file);
-    file.setParent(this);
-  }
-
-  @Override
-  public Set<File> getFiles() {
-    return this.files;
-  }
-
-  @Override
-  public void addDirectory(Directory directory) {
-    this.directories.add(directory);
-    directory.setParent(this);
-  }
-
-  @Override
-  public Set<Directory> getDirectories() {
-    return this.directories;
-  }
-
+  /**
+   * Delegates the {@link Writable#prepare} call to all contained {@link
+   * DirectoryImpl#getWritables()} writables}.
+   */
   @Override
   public void prepare(ImmutableStack<Object> indices) {
-    this.prepareFiles(indices);
-    this.prepareDirectories(indices);
-  }
-
-  private void prepareDirectories(ImmutableStack<Object> indices) {
-    this.directories.forEach(directory -> directory.prepare(indices));
-  }
-
-  private void prepareFiles(ImmutableStack<Object> indices) {
-    this.files.forEach(file -> file.prepare(indices));
+    this.getWritables().forEach(writable -> writable.prepare(indices));
   }
 
   /**
-   * Writes this {@link DirectoryImpl} and all of its {@link DirectoryImpl#files} and {@link DirectoryImpl#directories}
-   * to disk.
+   * Writes this {@link DirectoryImpl} and all of its {@link DirectoryImpl#getWritables()}
+   * writables} to disk.
    */
   @Override
   public void write() {
-    this.writeOwnDirectory();
-    this.writeDirectories();
-    this.writeFiles();
+    this.writeSelf();
+    this.writeContainedWritables();
   }
 
-  private void writeOwnDirectory() {
+  private void writeSelf() {
     java.io.File file = this.getFileOnDisk();
     file.mkdirs();
   }
 
-  private void writeDirectories() {
-    this.directories.forEach(Directory::write);
-  }
-
-  private void writeFiles() {
-    this.files.forEach(File::write);
+  private void writeContainedWritables() {
+    this.getWritables().forEach(Writable::write);
   }
 }

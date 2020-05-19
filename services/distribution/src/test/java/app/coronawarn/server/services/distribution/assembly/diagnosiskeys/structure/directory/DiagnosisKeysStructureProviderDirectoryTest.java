@@ -86,7 +86,7 @@ public class DiagnosisKeysStructureProviderDirectoryTest {
   public void checkBuildsTheCorrectDirectoryStructureWhenNoKeys() {
     diagnosisKeys = new ArrayList<>();
     Directory directory = new DiagnosisKeysDirectoryImpl(diagnosisKeys, cryptoProvider);
-    parentDirectory.addDirectory(directory);
+    parentDirectory.addWritable(directory);
     directory.prepare(new ImmutableStack<>());
     directory.write();
 
@@ -104,7 +104,7 @@ public class DiagnosisKeysStructureProviderDirectoryTest {
   @Test
   public void checkBuildsTheCorrectDirectoryStructure() {
     Directory directory = new DiagnosisKeysDirectoryImpl(diagnosisKeys, cryptoProvider);
-    parentDirectory.addDirectory(directory);
+    parentDirectory.addWritable(directory);
     directory.prepare(new ImmutableStack<>());
     directory.write();
 

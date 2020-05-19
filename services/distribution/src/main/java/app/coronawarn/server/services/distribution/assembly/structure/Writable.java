@@ -19,7 +19,6 @@
 
 package app.coronawarn.server.services.distribution.assembly.structure;
 
-import app.coronawarn.server.services.distribution.assembly.structure.directory.Directory;
 import app.coronawarn.server.services.distribution.assembly.structure.util.ImmutableStack;
 
 /**
@@ -40,12 +39,12 @@ public interface Writable {
   /**
    * Returns the parent of this {@link Writable}, or {@code null} if it doesn't have a parent.
    */
-  Directory getParent();
+  WritablesContainer getParent();
 
   /**
    * Sets the parent of this {@link Writable}.
    */
-  void setParent(Directory parent);
+  void setParent(WritablesContainer parent);
 
   /**
    * Returns the {@link java.io.File} that this {@link Writable} represents on disk.

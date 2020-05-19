@@ -60,7 +60,7 @@ public class IndexingDecorator<T> extends DirectoryDecorator {
         .map(this.directory.getIndexFormatter())
         .collect(Collectors.toList());
     array.addAll(elements);
-    this.addFile(new FileImpl(INDEX_FILE_NAME, array.toJSONString().getBytes()));
+    this.addWritable(new FileImpl(INDEX_FILE_NAME, array.toJSONString().getBytes()));
     super.prepare(indices);
   }
 }

@@ -61,7 +61,7 @@ public class IndexingDecoratorTest {
     decoratee = new IndexDirectoryImpl<>("foo", __ -> index, __ -> __);
     decorator = new IndexingDecorator<>(decoratee);
 
-    parent.addDirectory(decorator);
+    parent.addWritable(decorator);
 
     prepareAndWrite(parent);
   }

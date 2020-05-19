@@ -19,40 +19,29 @@
 
 package app.coronawarn.server.services.distribution.assembly.structure;
 
-import java.util.Objects;
+import java.util.HashSet;
+import java.util.Set;
 
-public abstract class WritableImpl implements Writable {
+public abstract class WritablesContainerImpl extends WritableImpl implements WritablesContainer {
 
-  private String name;
-  private WritablesContainer parent;
-  private java.io.File fileOnDisk;
+  private final Set<Writable> writables = new HashSet<>();
 
-  protected WritableImpl(String name) {
-    this.name = name;
+  protected WritablesContainerImpl(String name) {
+    super(name);
   }
 
-  protected WritableImpl(java.io.File fileOnDisk) {
-    this.fileOnDisk = fileOnDisk;
-  }
-
-  @Override
-  public String getName() {
-    return this.name;
+  protected WritablesContainerImpl(java.io.File file) {
+    super(file);
   }
 
   @Override
-  public WritablesContainer getParent() {
-    return this.parent;
+  public void addWritable(Writable writable) {
+    this.writables.add(writable);
+    writable.setParent(this);
   }
 
   @Override
-  public void setParent(WritablesContainer parent) {
-    this.parent = parent;
-  }
-
-  @Override
-  public java.io.File getFileOnDisk() {
-    return Objects.requireNonNullElseGet(this.fileOnDisk,
-        () -> getParent().getFileOnDisk().toPath().resolve(this.getName()).toFile());
+  public Set<Writable> getWritables() {
+    return this.writables;
   }
 }

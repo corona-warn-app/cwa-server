@@ -20,14 +20,14 @@
 package app.coronawarn.server.services.distribution.assembly.structure.directory.decorator;
 
 import app.coronawarn.server.services.distribution.assembly.structure.Writable;
+import app.coronawarn.server.services.distribution.assembly.structure.WritablesContainer;
 import app.coronawarn.server.services.distribution.assembly.structure.directory.Directory;
-import app.coronawarn.server.services.distribution.assembly.structure.file.File;
 import app.coronawarn.server.services.distribution.assembly.structure.util.ImmutableStack;
 import java.util.Set;
 
 /**
- * Decorates a {@link Directory} (e.g. to modify its files, subdirectories, etc.) on {@link Writable#prepare}. This
- * class proxies all function calls to the {@link Directory} it contains.
+ * Decorates a {@link Directory} (e.g. to modify its files, subdirectories, etc.) on {@link
+ * Writable#prepare}. This class proxies all function calls to the {@link Directory} it contains.
  */
 public abstract class DirectoryDecorator implements Directory {
 
@@ -43,23 +43,13 @@ public abstract class DirectoryDecorator implements Directory {
   }
 
   @Override
-  public void addFile(File file) {
-    this.directory.addFile(file);
+  public void addWritable(Writable writable) {
+    this.directory.addWritable(writable);
   }
 
   @Override
-  public Set<File> getFiles() {
-    return this.directory.getFiles();
-  }
-
-  @Override
-  public void addDirectory(Directory directory) {
-    this.directory.addDirectory(directory);
-  }
-
-  @Override
-  public Set<Directory> getDirectories() {
-    return this.directory.getDirectories();
+  public Set<Writable> getWritables() {
+    return this.directory.getWritables();
   }
 
   @Override
@@ -73,12 +63,12 @@ public abstract class DirectoryDecorator implements Directory {
   }
 
   @Override
-  public Directory getParent() {
+  public WritablesContainer getParent() {
     return this.directory.getParent();
   }
 
   @Override
-  public void setParent(Directory parent) {
+  public void setParent(WritablesContainer parent) {
     this.directory.setParent(parent);
   }
 

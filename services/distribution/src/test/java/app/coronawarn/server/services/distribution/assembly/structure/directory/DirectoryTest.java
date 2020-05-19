@@ -54,49 +54,26 @@ public class DirectoryTest {
   }
 
   @Test
-  public void checkFilesInDirectory() {
-    parentDirectory.addFile(childFile);
-    assertEquals(Set.of(childFile), parentDirectory.getFiles());
+  public void checkWritablesInDirectory() {
+    parentDirectory.addWritable(childFile);
+    assertEquals(Set.of(childFile), parentDirectory.getWritables());
   }
 
   @Test
-  public void checkParentOfFilesInDirectory() {
-    parentDirectory.addFile(childFile);
+  public void checkParentOfWritablesInDirectory() {
+    parentDirectory.addWritable(childFile);
     assertEquals(parentDirectory, childFile.getParent());
   }
 
   @Test
-  public void checkDirectoriesInDirectory() {
-    parentDirectory.addDirectory(childDirectory);
-    assertEquals(Set.of(childDirectory), parentDirectory.getDirectories());
-  }
-
-  @Test
-  public void checkParentOfDirectoriesInDirectory() {
-    parentDirectory.addDirectory(childDirectory);
-    assertEquals(parentDirectory, childDirectory.getParent());
-  }
-
-  @Test
-  public void checkPrepareDelegatesToFiles() {
+  public void checkPrepareDelegatesToWritables() {
     File spyChildFile = spy(childFile);
     ImmutableStack<Object> expectedStack = new ImmutableStack<>();
 
-    parentDirectory.addFile(spyChildFile);
+    parentDirectory.addWritable(spyChildFile);
     parentDirectory.prepare(expectedStack);
 
     verify(spyChildFile).prepare(expectedStack);
-  }
-
-  @Test
-  public void checkPrepareDelegatesToDirectories() {
-    Directory spyChildDirectory = spy(childDirectory);
-    ImmutableStack<Object> expectedStack = new ImmutableStack<>();
-
-    parentDirectory.addDirectory(spyChildDirectory);
-    parentDirectory.prepare(expectedStack);
-
-    verify(spyChildDirectory).prepare(expectedStack);
   }
 
   @Test
@@ -121,22 +98,12 @@ public class DirectoryTest {
   }
 
   @Test
-  public void checkWriteDelegatesToFiles() {
+  public void checkWriteDelegatesToWritables() {
     File spyChildFile = spy(childFile);
 
-    parentDirectory.addFile(spyChildFile);
+    parentDirectory.addWritable(spyChildFile);
     parentDirectory.write();
 
     verify(spyChildFile).write();
-  }
-
-  @Test
-  public void checkWriteDelegatesToDirectories() {
-    Directory spyChildDirectory = spy(childDirectory);
-
-    parentDirectory.addDirectory(spyChildDirectory);
-    parentDirectory.write();
-
-    verify(spyChildDirectory).write();
   }
 }

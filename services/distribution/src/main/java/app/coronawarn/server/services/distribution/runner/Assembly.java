@@ -55,7 +55,7 @@ public class Assembly implements ApplicationRunner {
   public void run(ApplicationArguments args) {
     try {
       Directory outputDirectory = this.outputDirectoryProvider.getDirectory();
-      outputDirectory.addDirectory(cwaApiStructureProvider.getDirectory());
+      outputDirectory.addWritable(cwaApiStructureProvider.getDirectory());
       this.outputDirectoryProvider.clear();
       logger.debug("Preparing files...");
       outputDirectory.prepare(new ImmutableStack<>());

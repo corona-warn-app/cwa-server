@@ -22,7 +22,7 @@ package app.coronawarn.server.services.distribution.assembly.structure.file;
 import app.coronawarn.server.services.distribution.assembly.structure.Writable;
 
 /**
- * A {@link Writable} containing some bytes.
+ * A {@link Writable} that contains some bytes.
  */
 public interface File extends Writable {
 
