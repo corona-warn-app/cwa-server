@@ -94,7 +94,7 @@ public class CryptoProvider {
     if (privateKey == null) {
       Resource privateKeyResource = resourceLoader.getResource(privateKeyPath);
       try (InputStream privateKeyStream = privateKeyResource.getInputStream()) {
-        this.privateKey = getPrivateKeyFromStream(privateKeyStream);
+        privateKey = getPrivateKeyFromStream(privateKeyStream);
       } catch (IOException e) {
         logger.error("Failed to load private key from {}", privateKeyPath, e);
         throw new RuntimeException(e);
