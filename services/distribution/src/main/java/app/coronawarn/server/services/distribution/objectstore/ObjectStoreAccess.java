@@ -23,15 +23,9 @@ import app.coronawarn.server.services.distribution.objectstore.publish.LocalFile
 import io.minio.MinioClient;
 import io.minio.PutObjectOptions;
 import io.minio.Result;
-import io.minio.errors.ErrorResponseException;
-import io.minio.errors.InsufficientDataException;
-import io.minio.errors.InternalException;
-import io.minio.errors.InvalidBucketNameException;
 import io.minio.errors.InvalidEndpointException;
 import io.minio.errors.InvalidPortException;
-import io.minio.errors.InvalidResponseException;
 import io.minio.errors.MinioException;
-import io.minio.errors.XmlParserException;
 import io.minio.messages.DeleteError;
 import io.minio.messages.Item;
 import java.io.IOException;
@@ -123,7 +117,6 @@ public class ObjectStoreAccess {
       throws IOException, GeneralSecurityException, MinioException {
     String s3Key = localFile.getS3Key();
 
-
     var options = new PutObjectOptions(localFile.getFile().toFile().length(), -1);
     options.setHeaders(createMetadataFor(localFile));
 
@@ -164,25 +157,11 @@ public class ObjectStoreAccess {
    */
   public List<S3Object> getObjectsWithPrefix(String prefix)
       throws IOException, GeneralSecurityException, MinioException {
-    var objects = this.client.listObjects(bucket, prefix, true, true, false);
+    var objects = this.client.listObjects(bucket, prefix, true);
 
     var list = new ArrayList<S3Object>();
     for (Result<Item> item : objects) {
-      try {
-        list.add(S3Object.of(item.get()));
-      } catch (ErrorResponseException e) {
-        e.printStackTrace();
-      } catch (InsufficientDataException e) {
-        e.printStackTrace();
-      } catch (InternalException e) {
-        e.printStackTrace();
-      } catch (InvalidBucketNameException e) {
-        e.printStackTrace();
-      } catch (InvalidResponseException e) {
-        e.printStackTrace();
-      } catch (XmlParserException e) {
-        e.printStackTrace();
-      }
+      list.add(S3Object.of(item.get()));
     }
 
     return list;

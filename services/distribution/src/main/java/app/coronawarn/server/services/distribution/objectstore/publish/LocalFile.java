@@ -19,12 +19,15 @@
 
 package app.coronawarn.server.services.distribution.objectstore.publish;
 
+import com.google.common.io.BaseEncoding;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.util.Base64;
+import java.util.List;
+import javax.xml.bind.DatatypeConverter;
+import org.springframework.util.DigestUtils;
 
 /**
  * Represents a file, which is subject for publishing to S3.
@@ -48,7 +51,7 @@ public abstract class LocalFile {
    */
   public LocalFile(Path file, Path basePath) {
     this.file = file;
-    this.hash = hash();
+    this.hash = computeS3ETag();
     this.s3Key = createS3Key(file, basePath);
   }
 
@@ -66,13 +69,40 @@ public abstract class LocalFile {
 
   private String hash() {
     try {
-      MessageDigest digester = MessageDigest.getInstance("SHA-256");
+      MessageDigest digester = MessageDigest.getInstance("MD5");
       digester.update(Files.readAllBytes(file));
 
-      return Base64.getEncoder().encodeToString(digester.digest());
+      return DatatypeConverter.printHexBinary(digester.digest());
     } catch (IOException | NoSuchAlgorithmException e) {
       throw new RuntimeException("Unable to compute hashes due to ", e);
     }
+  }
+
+  private String hash2() {
+    List<String> md5s = List.of(hash());
+    StringBuilder stringBuilder = new StringBuilder();
+    for (String md5:md5s) {
+      stringBuilder.append(md5);
+    }
+
+    String hex = stringBuilder.toString();
+    byte raw[] = BaseEncoding.base16().decode(hex.toUpperCase());
+    String digest = DigestUtils.md5DigestAsHex(raw);
+
+    return digest + "-" + md5s.size();
+  }
+
+  private String computeS3ETag() {
+    try {
+      String md5 = DigestUtils.md5DigestAsHex(Files.readAllBytes(file));
+      byte raw[] = BaseEncoding.base16().decode(md5.toUpperCase());
+
+      return DigestUtils.md5DigestAsHex(raw) + "-1";
+    } catch (IOException e) {
+      e.printStackTrace();
+    }
+
+    return "";
   }
 
   protected String createS3Key(Path file, Path rootFolder) {
