@@ -25,7 +25,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.util.List;
 import javax.xml.bind.DatatypeConverter;
 import org.springframework.util.DigestUtils;
 
@@ -34,13 +33,19 @@ import org.springframework.util.DigestUtils;
  */
 public abstract class LocalFile {
 
-  /** the path to the file to be represented. */
+  /**
+   * the path to the file to be represented.
+   */
   private final Path file;
 
-  /** the assigned S3 key. */
+  /**
+   * the assigned S3 key.
+   */
   private final String s3Key;
 
-  /** the hash of this file. */
+  /**
+   * the hash of this file.
+   */
   private final String hash;
 
   /**
@@ -78,24 +83,10 @@ public abstract class LocalFile {
     }
   }
 
-  private String hash2() {
-    List<String> md5s = List.of(hash());
-    StringBuilder stringBuilder = new StringBuilder();
-    for (String md5:md5s) {
-      stringBuilder.append(md5);
-    }
-
-    String hex = stringBuilder.toString();
-    byte raw[] = BaseEncoding.base16().decode(hex.toUpperCase());
-    String digest = DigestUtils.md5DigestAsHex(raw);
-
-    return digest + "-" + md5s.size();
-  }
-
   private String computeS3ETag() {
     try {
       String md5 = DigestUtils.md5DigestAsHex(Files.readAllBytes(file));
-      byte raw[] = BaseEncoding.base16().decode(md5.toUpperCase());
+      byte[] raw = BaseEncoding.base16().decode(md5.toUpperCase());
 
       return DigestUtils.md5DigestAsHex(raw) + "-1";
     } catch (IOException e) {

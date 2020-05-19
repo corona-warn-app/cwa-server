@@ -27,6 +27,7 @@ import org.simpleframework.xml.Root;
  */
 @Root(name = "Contents", strict = false)
 public class Item {
+
   @Element(name = "Key")
   private String objectName;
 
@@ -50,45 +51,63 @@ public class Item {
 
   private boolean isDir = false;
 
-  public Item() {}
+  public Item() {
 
-  /** Constructs a new Item for prefix i.e. directory. */
+  }
+
+  /**
+   * Constructs a new Item for prefix i.e. directory.
+   */
   public Item(String prefix) {
     this.objectName = prefix;
     this.isDir = true;
   }
 
-  /** Returns object name. */
+  /**
+   * Returns object name.
+   */
   public String objectName() {
     return objectName;
   }
 
-  /** Returns last modified time of the object. */
+  /**
+   * Returns last modified time of the object.
+   */
   public ZonedDateTime lastModified() {
     return lastModified.zonedDateTime();
   }
 
-  /** Returns ETag of the object. */
+  /**
+   * Returns ETag of the object.
+   */
   public String etag() {
     return etag;
   }
 
-  /** Returns object size. */
+  /**
+   * Returns object size.
+   */
   public long size() {
     return size;
   }
 
-  /** Returns storage class of the object. */
+  /**
+   * Returns storage class of the object.
+   */
   public String storageClass() {
     return storageClass;
   }
 
-  /** Returns owner object of given the object. */
+  /**
+   * Returns owner object of given the object.
+   */
   public Owner owner() {
     return owner;
   }
 
-  /** Returns user metadata. This is MinIO specific extension to ListObjectsV2. */
+  /**
+   * Returns user metadata. This is MinIO specific extension to ListObjectsV2.
+   */
   public Map<String, String> userMetadata() {
     if (userMetadata == null) {
       return null;
@@ -97,7 +116,9 @@ public class Item {
     return userMetadata.get();
   }
 
-  /** Returns whether the object is a directory or not. */
+  /**
+   * Returns whether the object is a directory or not.
+   */
   public boolean isDir() {
     return isDir;
   }
