@@ -39,8 +39,8 @@ services:
       CWA_OBJECTSTORE_PORT: 9000
       services.distribution.paths.output: /tmp/distribution
       # Settings for cryptographic artefacts
-      VAULT_PRIVATE: ${SECRET_PRIVATE}
-      VAULT_CERTIFICATE: ${SECRET_CERTIFICATE}
+      VAULT_FILESIGNING_SECRET: ${SECRET_PRIVATE}
+      VAULT_FILESIGNING_CERT: ${SECRET_CERTIFICATE}
     volumes:
       - ./docker-compose-test-secrets:/secrets
     networks:
