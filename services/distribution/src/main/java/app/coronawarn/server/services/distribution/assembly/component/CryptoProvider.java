@@ -74,6 +74,7 @@ public class CryptoProvider {
       throws IOException {
     PEMParser pemParser = new PEMParser(new InputStreamReader(privateKeyStream));
     PrivateKeyInfo privateKeyInfo = (PrivateKeyInfo) pemParser.readObject();
+    logger.debug("Found key info: {}", privateKeyInfo);
     return new JcaPEMKeyConverter().getPrivateKey(privateKeyInfo);
   }
 
@@ -127,9 +128,11 @@ public class CryptoProvider {
    */
   private InputStream getInputSteamFromPath(String path) throws IOException {
     if (path.startsWith("classpath:")) {
-      Resource privateKeyResource = resourceLoader.getResource(path);
-      return privateKeyResource.getInputStream();
+      logger.debug("Look for resource at path {}", path);
+      Resource resource = resourceLoader.getResource(path);
+      return resource.getInputStream();
     } else {
+      logger.debug("Look for file at path {}", path);
       return new FileInputStream(path);
     }
   }
