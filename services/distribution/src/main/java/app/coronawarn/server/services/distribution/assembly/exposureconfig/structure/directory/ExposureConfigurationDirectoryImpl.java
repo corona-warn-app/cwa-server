@@ -21,12 +21,12 @@ package app.coronawarn.server.services.distribution.assembly.exposureconfig.stru
 
 import app.coronawarn.server.common.protocols.internal.RiskScoreParameters;
 import app.coronawarn.server.services.distribution.assembly.component.CryptoProvider;
+import app.coronawarn.server.services.distribution.assembly.structure.archive.Archive;
 import app.coronawarn.server.services.distribution.assembly.structure.directory.DirectoryImpl;
 import app.coronawarn.server.services.distribution.assembly.structure.directory.IndexDirectoryImpl;
 import app.coronawarn.server.services.distribution.assembly.structure.directory.decorator.IndexingDecorator;
-import app.coronawarn.server.services.distribution.assembly.structure.file.Archive;
 import app.coronawarn.server.services.distribution.assembly.structure.file.FileImpl;
-import app.coronawarn.server.services.distribution.assembly.structure.file.ZipArchiveImpl;
+import app.coronawarn.server.services.distribution.assembly.structure.archive.ArchiveImpl;
 import java.util.Set;
 
 /**
@@ -46,20 +46,20 @@ public class ExposureConfigurationDirectoryImpl extends DirectoryImpl {
    *
    * @param exposureConfig The {@link RiskScoreParameters} to sign and write.
    * @param cryptoProvider The {@link CryptoProvider} whose artifacts to use for creating the {@link
-   *                       app.coronawarn.server.common.protocols.internal.SignedPayload}.
+   *                       app.coronawarn.server.common.protocols.internal.SignedPayload}. TODO
    */
   public ExposureConfigurationDirectoryImpl(RiskScoreParameters exposureConfig,
       CryptoProvider cryptoProvider) {
     super(PARAMETERS_DIRECTORY);
 
     // TODO Extract into config archive
-    Archive archive = new ZipArchiveImpl(INDEX_FILE_NAME);
+    Archive archive = new ArchiveImpl(INDEX_FILE_NAME);
     archive.addWritable(new FileImpl("export.bin", exposureConfig.toByteArray()));
 
     IndexDirectoryImpl<String> country =
         new IndexDirectoryImpl<>(COUNTRY_DIRECTORY, __ -> Set.of(COUNTRY), Object::toString);
     country.addWritableToAll(__ ->
-        new ExposureConfigArchiveSigningDecorator(archive, cryptoProvider));
+        new ExposureConfigSigningDecorator(archive, cryptoProvider));
 
     this.addWritable(new IndexingDecorator<>(country));
   }

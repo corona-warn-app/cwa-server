@@ -2,13 +2,13 @@ package app.coronawarn.server.services.distribution.assembly.diagnosiskeys.struc
 
 import app.coronawarn.server.services.distribution.assembly.component.CryptoProvider;
 import app.coronawarn.server.services.distribution.assembly.structure.Writable;
-import app.coronawarn.server.services.distribution.assembly.structure.file.Archive;
+import app.coronawarn.server.services.distribution.assembly.structure.archive.Archive;
+import app.coronawarn.server.services.distribution.assembly.structure.directory.decorator.SigningDecoratorImpl;
 import app.coronawarn.server.services.distribution.assembly.structure.file.File;
-import app.coronawarn.server.services.distribution.assembly.structure.file.decorator.ArchiveSigningDecoratorImpl;
 
-public class DiagnosisKeyArchiveSigningDecorator extends ArchiveSigningDecoratorImpl {
+public class DiagnosisKeySigningDecorator extends SigningDecoratorImpl {
 
-  public DiagnosisKeyArchiveSigningDecorator(Archive archive, CryptoProvider cryptoProvider) {
+  public DiagnosisKeySigningDecorator(Archive archive, CryptoProvider cryptoProvider) {
     super(archive, cryptoProvider);
   }
 

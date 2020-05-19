@@ -22,15 +22,18 @@ package app.coronawarn.server.services.distribution.assembly.structure.directory
 import static app.coronawarn.server.services.distribution.assembly.structure.functional.CheckedConsumer.uncheckedConsumer;
 
 import app.coronawarn.server.services.distribution.assembly.structure.Writable;
-import app.coronawarn.server.services.distribution.assembly.structure.WritablesContainerImpl;
+import app.coronawarn.server.services.distribution.assembly.structure.WritableImpl;
 import app.coronawarn.server.services.distribution.assembly.structure.file.File;
-import app.coronawarn.server.services.distribution.assembly.structure.functional.CheckedConsumer;
 import app.coronawarn.server.services.distribution.assembly.structure.util.ImmutableStack;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * Implementation of {@link Directory} that interfaces with {@link java.io.File Files} on disk.
  */
-public class DirectoryImpl extends WritablesContainerImpl implements Directory {
+public class DirectoryImpl extends WritableImpl implements Directory {
+
+  private final Set<Writable> writables = new HashSet<>();
 
   /**
    * A root {@link DirectoryImpl} representing an already existing directory on disk.
@@ -50,6 +53,17 @@ public class DirectoryImpl extends WritablesContainerImpl implements Directory {
    */
   public DirectoryImpl(String name) {
     super(name);
+  }
+
+  @Override
+  public void addWritable(Writable writable) {
+    this.writables.add(writable);
+    writable.setParent(this);
+  }
+
+  @Override
+  public Set<Writable> getWritables() {
+    return this.writables;
   }
 
   /**

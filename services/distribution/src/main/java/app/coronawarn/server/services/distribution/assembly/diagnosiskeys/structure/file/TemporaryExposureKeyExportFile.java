@@ -4,7 +4,7 @@ import app.coronawarn.server.common.persistence.domain.DiagnosisKey;
 import app.coronawarn.server.common.protocols.external.exposurenotification.TemporaryExposureKey;
 import app.coronawarn.server.common.protocols.external.exposurenotification.TemporaryExposureKeyExport;
 import app.coronawarn.server.services.distribution.assembly.structure.file.FileImpl;
-import app.coronawarn.server.services.distribution.assembly.structure.file.decorator.ArchiveSigningDecoratorImpl;
+import app.coronawarn.server.services.distribution.assembly.structure.directory.decorator.SigningDecoratorImpl;
 import app.coronawarn.server.services.distribution.assembly.structure.util.ImmutableStack;
 import com.google.protobuf.ByteString;
 import java.util.Collection;
@@ -63,7 +63,7 @@ public class TemporaryExposureKeyExportFile extends FileImpl {
         // TODO Use buildPartial and then set batch stuff somewhere else
         .setBatchNum(1)
         .setBatchSize(1)
-        .addAllSignatureInfos(Set.of(ArchiveSigningDecoratorImpl.getSignatureInfo()))
+        .addAllSignatureInfos(Set.of(SigningDecoratorImpl.getSignatureInfo()))
         .addAllKeys(this.temporaryExposureKeys)
         .build()
         .toByteArray();

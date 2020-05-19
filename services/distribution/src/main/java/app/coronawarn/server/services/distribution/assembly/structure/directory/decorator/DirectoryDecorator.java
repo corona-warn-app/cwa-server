@@ -20,11 +20,8 @@
 package app.coronawarn.server.services.distribution.assembly.structure.directory.decorator;
 
 import app.coronawarn.server.services.distribution.assembly.structure.Writable;
-import app.coronawarn.server.services.distribution.assembly.structure.WritableImpl;
-import app.coronawarn.server.services.distribution.assembly.structure.WritablesContainer;
 import app.coronawarn.server.services.distribution.assembly.structure.directory.Directory;
 import app.coronawarn.server.services.distribution.assembly.structure.util.ImmutableStack;
-import java.io.IOException;
 import java.util.Set;
 
 /**
@@ -65,12 +62,12 @@ public abstract class DirectoryDecorator implements Directory {
   }
 
   @Override
-  public WritablesContainer getParent() {
+  public Directory getParent() {
     return this.directory.getParent();
   }
 
   @Override
-  public void setParent(WritablesContainer parent) {
+  public void setParent(Directory parent) {
     this.directory.setParent(parent);
   }
 

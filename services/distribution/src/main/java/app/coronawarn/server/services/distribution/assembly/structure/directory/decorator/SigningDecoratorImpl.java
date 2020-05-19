@@ -17,15 +17,14 @@
  * under the License.
  */
 
-package app.coronawarn.server.services.distribution.assembly.structure.file.decorator;
+package app.coronawarn.server.services.distribution.assembly.structure.directory.decorator;
 
 import app.coronawarn.server.common.protocols.external.exposurenotification.SignatureInfo;
 import app.coronawarn.server.common.protocols.external.exposurenotification.TEKSignature;
 import app.coronawarn.server.common.protocols.external.exposurenotification.TEKSignatureList;
 import app.coronawarn.server.services.distribution.assembly.component.CryptoProvider;
-import app.coronawarn.server.services.distribution.assembly.structure.Writable;
-import app.coronawarn.server.services.distribution.assembly.structure.file.Archive;
-import app.coronawarn.server.services.distribution.assembly.structure.file.File;
+import app.coronawarn.server.services.distribution.assembly.structure.archive.Archive;
+import app.coronawarn.server.services.distribution.assembly.structure.directory.Directory;
 import app.coronawarn.server.services.distribution.assembly.structure.file.FileImpl;
 import app.coronawarn.server.services.distribution.assembly.structure.util.ImmutableStack;
 import com.google.protobuf.ByteString;
@@ -35,25 +34,23 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * An {@link ArchiveDecorator} that will add a signature to the {@link Archive} it decorates. The
- * decorated archive may only contain one writable.
+ * A {@link DirectoryDecorator} that will add a signature file to the {@link Directory} it decorates.
  */
-public abstract class ArchiveSigningDecoratorImpl extends ArchiveDecorator implements
-    ArchiveSigningDecorator {
+public abstract class SigningDecoratorImpl extends DirectoryDecorator implements SigningDecorator {
 
   private static final String SIGNATURE_ALGORITHM = "Ed25519";
   private static final String SECURITY_PROVIDER = "BC";
 
-  private static final Logger logger = LoggerFactory.getLogger(ArchiveSigningDecoratorImpl.class);
+  private static final Logger logger = LoggerFactory.getLogger(SigningDecoratorImpl.class);
   private final CryptoProvider cryptoProvider;
 
-  public ArchiveSigningDecoratorImpl(Archive archive, CryptoProvider cryptoProvider) {
+  public SigningDecoratorImpl(Archive archive, CryptoProvider cryptoProvider) {
     super(archive);
     this.cryptoProvider = cryptoProvider;
   }
 
   /**
-   * See {@link ArchiveSigningDecoratorImpl} class documentation.
+   * See {@link SigningDecoratorImpl} class documentation.
    */
   @Override
   public void prepare(ImmutableStack<Object> indices) {

@@ -2,13 +2,13 @@ package app.coronawarn.server.services.distribution.assembly.exposureconfig.stru
 
 import app.coronawarn.server.services.distribution.assembly.component.CryptoProvider;
 import app.coronawarn.server.services.distribution.assembly.structure.Writable;
-import app.coronawarn.server.services.distribution.assembly.structure.file.Archive;
+import app.coronawarn.server.services.distribution.assembly.structure.archive.Archive;
 import app.coronawarn.server.services.distribution.assembly.structure.file.File;
-import app.coronawarn.server.services.distribution.assembly.structure.file.decorator.ArchiveSigningDecoratorImpl;
+import app.coronawarn.server.services.distribution.assembly.structure.directory.decorator.SigningDecoratorImpl;
 
-public class ExposureConfigArchiveSigningDecorator extends ArchiveSigningDecoratorImpl {
+public class ExposureConfigSigningDecorator extends SigningDecoratorImpl {
 
-  public ExposureConfigArchiveSigningDecorator(Archive archive, CryptoProvider cryptoProvider) {
+  public ExposureConfigSigningDecorator(Archive archive, CryptoProvider cryptoProvider) {
     super(archive, cryptoProvider);
   }
 

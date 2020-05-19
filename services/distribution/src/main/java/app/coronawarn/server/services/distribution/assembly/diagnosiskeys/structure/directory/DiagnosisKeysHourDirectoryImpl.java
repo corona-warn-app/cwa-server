@@ -21,13 +21,14 @@ package app.coronawarn.server.services.distribution.assembly.diagnosiskeys.struc
 
 import app.coronawarn.server.common.persistence.domain.DiagnosisKey;
 import app.coronawarn.server.services.distribution.assembly.component.CryptoProvider;
-import app.coronawarn.server.services.distribution.assembly.diagnosiskeys.structure.directory.decorator.DiagnosisKeyArchiveSigningDecorator;
+import app.coronawarn.server.services.distribution.assembly.diagnosiskeys.structure.directory.decorator.DiagnosisKeySigningDecorator;
 import app.coronawarn.server.services.distribution.assembly.diagnosiskeys.structure.file.TemporaryExposureKeyExportFile;
 import app.coronawarn.server.services.distribution.assembly.diagnosiskeys.util.DateTime;
+import app.coronawarn.server.services.distribution.assembly.structure.archive.Archive;
+import app.coronawarn.server.services.distribution.assembly.structure.directory.Directory;
 import app.coronawarn.server.services.distribution.assembly.structure.directory.IndexDirectoryImpl;
-import app.coronawarn.server.services.distribution.assembly.structure.file.Archive;
 import app.coronawarn.server.services.distribution.assembly.structure.file.File;
-import app.coronawarn.server.services.distribution.assembly.structure.file.ZipArchiveImpl;
+import app.coronawarn.server.services.distribution.assembly.structure.archive.ArchiveImpl;
 import app.coronawarn.server.services.distribution.assembly.structure.util.ImmutableStack;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -75,7 +76,7 @@ public class DiagnosisKeysHourDirectoryImpl extends IndexDirectoryImpl<LocalDate
       File temporaryExposureKeyExportFile =
           TemporaryExposureKeyExportFile.fromDiagnosisKeys(diagnosisKeysForCurrentHour, region);
 
-      Archive hourArchive = new ZipArchiveImpl("index");
+      Archive hourArchive = new ArchiveImpl("index");
       hourArchive.addWritable(temporaryExposureKeyExportFile);
 
       return decorateDiagnosisKeyArchive(hourArchive);
@@ -91,7 +92,7 @@ public class DiagnosisKeysHourDirectoryImpl extends IndexDirectoryImpl<LocalDate
         .collect(Collectors.toSet());
   }
 
-  private File decorateDiagnosisKeyArchive(Archive archive) {
-    return new DiagnosisKeyArchiveSigningDecorator(archive, cryptoProvider);
+  private Directory decorateDiagnosisKeyArchive(Archive archive) {
+    return new DiagnosisKeySigningDecorator(archive, cryptoProvider);
   }
 }

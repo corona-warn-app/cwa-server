@@ -19,6 +19,7 @@
 
 package app.coronawarn.server.services.distribution.assembly.structure;
 
+import app.coronawarn.server.services.distribution.assembly.structure.directory.Directory;
 import app.coronawarn.server.services.distribution.assembly.structure.util.ImmutableStack;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -41,12 +42,12 @@ public interface Writable {
   /**
    * Returns the parent of this {@link Writable}, or {@code null} if it doesn't have a parent.
    */
-  WritablesContainer getParent();
+  Directory getParent();
 
   /**
    * Sets the parent of this {@link Writable}.
    */
-  void setParent(WritablesContainer parent);
+  void setParent(Directory parent);
 
   /**
    * Returns the {@link java.io.File} that this {@link Writable} represents on disk.

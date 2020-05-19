@@ -20,10 +20,9 @@
 package app.coronawarn.server.services.distribution.assembly.structure.file.decorator;
 
 import app.coronawarn.server.services.distribution.assembly.structure.Writable;
-import app.coronawarn.server.services.distribution.assembly.structure.WritablesContainer;
+import app.coronawarn.server.services.distribution.assembly.structure.directory.Directory;
 import app.coronawarn.server.services.distribution.assembly.structure.file.File;
 import app.coronawarn.server.services.distribution.assembly.structure.util.ImmutableStack;
-import java.io.IOException;
 
 /**
  * Decorates a {@link File} (e.g. to modify its content) on {@link Writable#prepare}. This class proxies all function
@@ -73,12 +72,12 @@ public abstract class FileDecorator implements File {
   }
 
   @Override
-  public WritablesContainer getParent() {
+  public Directory getParent() {
     return this.file.getParent();
   }
 
   @Override
-  public void setParent(WritablesContainer parent) {
+  public void setParent(Directory parent) {
     this.file.setParent(parent);
   }
 

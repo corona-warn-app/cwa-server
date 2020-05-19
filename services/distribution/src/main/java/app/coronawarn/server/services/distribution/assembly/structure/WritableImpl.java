@@ -26,7 +26,7 @@ import java.util.Objects;
 public abstract class WritableImpl implements Writable {
 
   private String name;
-  private WritablesContainer parent;
+  private Directory parent;
   private java.io.File fileOnDisk;
 
   protected WritableImpl(String name) {
@@ -43,12 +43,12 @@ public abstract class WritableImpl implements Writable {
   }
 
   @Override
-  public WritablesContainer getParent() {
+  public Directory getParent() {
     return this.parent;
   }
 
   @Override
-  public void setParent(WritablesContainer parent) {
+  public void setParent(Directory parent) {
     this.parent = parent;
   }
 

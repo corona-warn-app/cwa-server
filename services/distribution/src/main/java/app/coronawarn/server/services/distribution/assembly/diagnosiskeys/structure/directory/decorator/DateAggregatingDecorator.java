@@ -26,13 +26,12 @@ import app.coronawarn.server.common.protocols.external.exposurenotification.Temp
 import app.coronawarn.server.services.distribution.assembly.component.CryptoProvider;
 import app.coronawarn.server.services.distribution.assembly.diagnosiskeys.structure.file.TemporaryExposureKeyExportFile;
 import app.coronawarn.server.services.distribution.assembly.structure.Writable;
-import app.coronawarn.server.services.distribution.assembly.structure.WritablesContainer;
+import app.coronawarn.server.services.distribution.assembly.structure.archive.Archive;
+import app.coronawarn.server.services.distribution.assembly.structure.archive.ArchiveImpl;
 import app.coronawarn.server.services.distribution.assembly.structure.directory.Directory;
 import app.coronawarn.server.services.distribution.assembly.structure.directory.decorator.DirectoryDecorator;
-import app.coronawarn.server.services.distribution.assembly.structure.file.Archive;
 import app.coronawarn.server.services.distribution.assembly.structure.file.File;
 import app.coronawarn.server.services.distribution.assembly.structure.file.FileImpl;
-import app.coronawarn.server.services.distribution.assembly.structure.file.ZipArchiveImpl;
 import app.coronawarn.server.services.distribution.assembly.structure.util.ImmutableStack;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -85,36 +84,36 @@ public class DateAggregatingDecorator extends DirectoryDecorator {
           .map(this::parseTemporaryExposureKeyExportsFromFiles)
           .map(this::reduceTemporaryExposureKeyExportsToNewFile)
           .map(temporaryExposureKeyExportFile -> {
-            Archive aggregate = new ZipArchiveImpl(AGGREGATE_FILE_NAME);
+            Archive aggregate = new ArchiveImpl(AGGREGATE_FILE_NAME);
             aggregate.addWritable(temporaryExposureKeyExportFile);
             return aggregate;
           })
-          .map(file -> new DiagnosisKeyArchiveSigningDecorator(file, cryptoProvider))
+          .map(file -> new DiagnosisKeySigningDecorator(file, cryptoProvider))
           .peek(currentDirectory::addWritable)
           .forEach(aggregate -> aggregate.prepare(indices));
     });
   }
 
-  private Set<Archive> getSubSubDirectoryArchives(Directory rootDirectory) {
+  private Set<Directory> getSubSubDirectoryArchives(Directory rootDirectory) {
     // Get all archives 2 directory levels down
     return Stream.of(rootDirectory)
-        .map(WritablesContainer::getWritables)
+        .map(Directory::getWritables)
         .flatMap(Set::stream)
-        .filter(writable -> writable instanceof Directory)
+        .filter(Writable::isDirectory)
         .map(directory -> ((Directory) directory).getWritables())
         .flatMap(Set::stream)
-        .filter(writable -> writable instanceof Directory)
+        .filter(Writable::isDirectory)
         .map(directory -> ((Directory) directory).getWritables())
         .flatMap(Collection::stream)
-        .filter(writable -> writable instanceof Archive)
-        .map(archive -> (Archive) archive)
+        .filter(Writable::isDirectory)
+        .map(directory -> (Directory) directory)
         .collect(Collectors.toSet());
   }
 
   private Set<TemporaryExposureKeyExportFile> getTemporaryExposureKeyExportFilesFromArchives(
-      Set<Archive> hourArchives) {
+      Set<Directory> hourArchives) {
     return hourArchives.stream()
-        .map(WritablesContainer::getWritables)
+        .map(Directory::getWritables)
         // TODO
         .map(a -> a.stream().filter(b -> b.getName().equals("export.bin")))
         .map(Stream::findFirst)

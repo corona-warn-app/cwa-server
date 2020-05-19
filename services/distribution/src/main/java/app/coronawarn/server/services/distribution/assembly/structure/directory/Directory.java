@@ -20,10 +20,20 @@
 package app.coronawarn.server.services.distribution.assembly.structure.directory;
 
 import app.coronawarn.server.services.distribution.assembly.structure.Writable;
-import app.coronawarn.server.services.distribution.assembly.structure.WritablesContainer;
+import java.util.Set;
 
 /**
  * A {@link WritablesContainer} that can be written to disk.
  */
-public interface Directory extends Writable, WritablesContainer {
+public interface Directory extends Writable {
+
+  /**
+   * Adds a {@link Writable} to this {@link Directory}.
+   */
+  void addWritable(Writable writable);
+
+  /**
+   * Returns all {@link Writable writables} contained in this {@link Directory}.
+   */
+  Set<Writable> getWritables();
 }

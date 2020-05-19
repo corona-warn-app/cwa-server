@@ -41,8 +41,9 @@ public class CwaApiStructureProvider {
   private final DiagnosisKeysStructureProvider diagnosisKeysStructureProvider;
 
   @Autowired
-  public CwaApiStructureProvider(ExposureConfigurationStructureProvider exposureConfigurationStructureProvider,
-                                 DiagnosisKeysStructureProvider diagnosisKeysStructureProvider) {
+  public CwaApiStructureProvider(
+      ExposureConfigurationStructureProvider exposureConfigurationStructureProvider,
+      DiagnosisKeysStructureProvider diagnosisKeysStructureProvider) {
     this.exposureConfigurationStructureProvider = exposureConfigurationStructureProvider;
     this.diagnosisKeysStructureProvider = diagnosisKeysStructureProvider;
   }

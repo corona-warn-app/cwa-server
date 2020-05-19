@@ -19,32 +19,13 @@
 
 package app.coronawarn.server.services.distribution.assembly.structure.file.decorators;
 
-import static app.coronawarn.server.services.distribution.common.Helpers.prepareAndWrite;
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import app.coronawarn.server.services.distribution.assembly.component.CryptoProvider;
 import app.coronawarn.server.services.distribution.assembly.structure.directory.Directory;
-import app.coronawarn.server.services.distribution.assembly.structure.directory.DirectoryImpl;
 import app.coronawarn.server.services.distribution.assembly.structure.file.File;
-import app.coronawarn.server.services.distribution.assembly.structure.file.FileImpl;
-import app.coronawarn.server.services.distribution.assembly.structure.file.decorator.ArchiveSigningDecoratorImpl;
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.nio.file.Files;
-import java.security.InvalidKeyException;
-import java.security.NoSuchAlgorithmException;
-import java.security.NoSuchProviderException;
-import java.security.Signature;
-import java.security.SignatureException;
-import java.security.cert.Certificate;
-import java.security.cert.CertificateEncodingException;
-import java.security.cert.CertificateException;
-import java.security.cert.CertificateFactory;
 import org.junit.Rule;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.rules.TemporaryFolder;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -74,7 +55,7 @@ public class ArchiveSigningDecoratorImplTest {
     outputFolder.create();
     parent = new DirectoryImpl(outputFolder.newFolder());
     decoratee = new FileImpl("bar", bytes);
-    decorator = new ArchiveSigningDecoratorImpl(decoratee, cryptoProvider);
+    decorator = new SigningDecoratorImpl(decoratee, cryptoProvider);
 
     parent.addWritable(decorator);
 
