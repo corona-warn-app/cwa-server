@@ -12,4 +12,4 @@ RUN cp ${WORK_DIR}/services/distribution/target/distribution-*.jar /usr/sap/dist
 
 FROM gcr.io/distroless/java:11
 COPY --from=build /usr/sap/distribution-service/distribution-*.jar .
-CMD ["distribution-0.0.1-SNAPSHOT.jar"]
+CMD ["distribution-0.3.3-SNAPSHOT.jar"]
