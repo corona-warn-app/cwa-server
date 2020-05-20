@@ -118,7 +118,7 @@ public class ObjectStoreAccess {
     String s3Key = localFile.getS3Key();
 
     var options = new PutObjectOptions(localFile.getFile().toFile().length(), -1);
-    options.setHeaders(createMetadataFor(localFile));
+    options.setHeaders(createHeadersForPublicAccess());
 
     logger.info("... uploading " + s3Key);
     this.client.putObject(bucket, s3Key, localFile.getFile().toString(), options);
@@ -167,7 +167,7 @@ public class ObjectStoreAccess {
     return list;
   }
 
-  private Map<String, String> createMetadataFor(LocalFile file) {
-    return Map.of("cwa.hash", file.getHash());
+  private Map<String, String> createHeadersForPublicAccess() {
+    return Map.of( "x-amz-acl", "public-read");
   }
 }
