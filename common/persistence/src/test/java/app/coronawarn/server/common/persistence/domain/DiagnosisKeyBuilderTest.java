@@ -32,6 +32,8 @@ import java.time.LocalDate;
 import java.time.ZoneOffset;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 
 public class DiagnosisKeyBuilderTest {
 
@@ -99,71 +101,6 @@ public class DiagnosisKeyBuilderTest {
   }
 
   @Test
-  public void failsForInvalidKeyData() {
-    assertThrows(
-        InvalidDiagnosisKeyException.class, () ->
-            DiagnosisKey.builder()
-                .withKeyData("17--bytelongarray".getBytes(Charset.defaultCharset()))
-                .withRollingStartNumber(this.expRollingStartNumber)
-                .withRollingPeriod(this.expRollingPeriod)
-                .withTransmissionRiskLevel(this.expTransmissionRiskLevel).build()
-    );
-  }
-
-  @Test
-  public void failsForInvalidRollingStartNumber() {
-    assertThrows(
-        InvalidDiagnosisKeyException.class, () ->
-            DiagnosisKey.builder()
-                .withKeyData(this.expKeyData)
-                .withRollingStartNumber(0)
-                .withRollingPeriod(this.expRollingPeriod)
-                .withTransmissionRiskLevel(this.expTransmissionRiskLevel).build()
-    );
-  }
-
-  @Test
-  public void failsForInvalidRollingPeriod() {
-    assertThrows(
-        InvalidDiagnosisKeyException.class, () ->
-            DiagnosisKey.builder()
-                .withKeyData(this.expKeyData)
-                .withRollingStartNumber(this.expRollingStartNumber)
-                .withRollingPeriod(0)
-                .withTransmissionRiskLevel(this.expTransmissionRiskLevel).build()
-    );
-  }
-
-  @Test
-  public void failsForInvalidTransmissionRiskLevel() {
-    assertThrows(
-        InvalidDiagnosisKeyException.class, () ->
-            DiagnosisKey.builder()
-                .withKeyData(this.expKeyData)
-                .withRollingStartNumber(this.expRollingStartNumber)
-                .withRollingPeriod(this.expRollingPeriod)
-                .withTransmissionRiskLevel(10).build()
-    );
-  }
-
-  @Test
-  public void transmissionRiskLevelMustBeInRange() {
-    checkMessage(assertThrows(
-        InvalidDiagnosisKeyException.class, () -> keyWithRiskLevel(9)),
-        "[Risk level must be between 0 and 8. Invalid Value: 9]");
-
-    checkMessage(assertThrows(
-        InvalidDiagnosisKeyException.class, () -> keyWithRiskLevel(-1)),
-        "[Risk level must be between 0 and 8. Invalid Value: -1]");
-  }
-
-  @Test
-  public void transmissionRiskLevelDoesNotThrowForValid() {
-    Assertions.assertThatCode(() -> keyWithRiskLevel(0)).doesNotThrowAnyException();
-    Assertions.assertThatCode(() -> keyWithRiskLevel(8)).doesNotThrowAnyException();
-  }
-
-  @Test
   public void rollingStartNumberDoesNotThrowForValid() {
     Assertions.assertThatCode(() -> keyWithRollingStartNumber(4200L)).doesNotThrowAnyException();
 
@@ -175,8 +112,8 @@ public class DiagnosisKeyBuilderTest {
   public void rollingStartNumberCannotBeInFuture() {
     checkMessage(assertThrows(
         InvalidDiagnosisKeyException.class,
-        () -> keyWithRollingStartNumber(1904169600L)),
-        "[Rolling start number must be greater 0 and cannot be in the future. Invalid Value: 1904169600]");
+        () -> keyWithRollingStartNumber(Long.MAX_VALUE)),
+        "[Rolling start number must be greater 0 and cannot be in the future. Invalid Value: " + Long.MAX_VALUE + "]");
 
     long tomorrow = LocalDate
         .ofInstant(Instant.now(), ZoneOffset.UTC)
@@ -191,14 +128,37 @@ public class DiagnosisKeyBuilderTest {
   }
 
   @Test
-  public void rollingPeriodMustBeLargerThanZero() {
-    checkMessage(assertThrows(
-        InvalidDiagnosisKeyException.class, () -> keyWithRollingPeriod(0)),
-        "[Rolling period must be greater than 0. Invalid Value: 0]");
+  public void failsForInvalidRollingStartNumber() {
+    assertThrows(
+        InvalidDiagnosisKeyException.class, () ->
+            DiagnosisKey.builder()
+                .withKeyData(this.expKeyData)
+                .withRollingStartNumber(0L)
+                .withRollingPeriod(this.expRollingPeriod)
+                .withTransmissionRiskLevel(this.expTransmissionRiskLevel).build()
+    );
+  }
 
+  @ParameterizedTest
+  @ValueSource(ints = {9, -1})
+  public void transmissionRiskLevelMustBeInRange(int invalidRiskLevel) {
     checkMessage(assertThrows(
-        InvalidDiagnosisKeyException.class, () -> keyWithRollingPeriod(-3L)),
-        "[Rolling period must be greater than 0. Invalid Value: -3]");
+        InvalidDiagnosisKeyException.class, () -> keyWithRiskLevel(invalidRiskLevel)),
+        "[Risk level must be between 0 and 8. Invalid Value: " + invalidRiskLevel + "]");
+  }
+
+  @ParameterizedTest
+  @ValueSource(ints = {0, 8})
+  public void transmissionRiskLevelDoesNotThrowForValid(int validRiskLevel) {
+    Assertions.assertThatCode(() -> keyWithRiskLevel(validRiskLevel)).doesNotThrowAnyException();
+  }
+
+  @ParameterizedTest
+  @ValueSource(longs = {0L, -3L})
+  public void rollingPeriodMustBeLargerThanZero(long invalidRollingPeriod) {
+    checkMessage(assertThrows(
+        InvalidDiagnosisKeyException.class, () -> keyWithRollingPeriod(invalidRollingPeriod)),
+        "[Rolling period must be greater than 0. Invalid Value: " + invalidRollingPeriod + "]");
   }
 
   @Test
@@ -206,19 +166,12 @@ public class DiagnosisKeyBuilderTest {
     Assertions.assertThatCode(() -> keyWithRollingPeriod(144L)).doesNotThrowAnyException();
   }
 
-  @Test
-  public void keyDataMustHaveValidLength() {
+  @ParameterizedTest
+  @ValueSource(strings = {"17--bytelongarray", "", "1"})
+  public void keyDataMustHaveValidLength(String invalidKeyString) {
     assertThrows(
         InvalidDiagnosisKeyException.class,
-        () -> keyWithKeyData("17--bytelongarray".getBytes(Charset.defaultCharset())));
-
-    assertThrows(
-        InvalidDiagnosisKeyException.class,
-        () -> keyWithKeyData("".getBytes(Charset.defaultCharset())));
-
-    assertThrows(
-        InvalidDiagnosisKeyException.class,
-        () -> keyWithKeyData("1".getBytes(Charset.defaultCharset())));
+        () -> keyWithKeyData(invalidKeyString.getBytes(Charset.defaultCharset())));
   }
 
   @Test
@@ -278,5 +231,4 @@ public class DiagnosisKeyBuilderTest {
   private void checkMessage(InvalidDiagnosisKeyException ex, String message) {
     assertEquals(ex.getMessage(), message);
   }
-
 }
