@@ -25,8 +25,14 @@ import static app.coronawarn.server.common.persistence.domain.DiagnosisKeyBuilde
 import static app.coronawarn.server.common.persistence.domain.DiagnosisKeyBuilders.RollingStartNumberBuilder;
 import static app.coronawarn.server.common.persistence.domain.DiagnosisKeyBuilders.TransmissionRiskLevelBuilder;
 
+import app.coronawarn.server.common.persistence.exception.InvalidDiagnosisKeyException;
 import app.coronawarn.server.common.protocols.external.exposurenotification.Key;
 import java.time.Instant;
+import java.util.Set;
+import java.util.stream.Collectors;
+import javax.validation.ConstraintViolation;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * An instance of this builder can be retrieved by calling {@link DiagnosisKey#builder()}. A {@link DiagnosisKey} can
@@ -34,6 +40,8 @@ import java.time.Instant;
  */
 public class DiagnosisKeyBuilder implements Builder, RollingStartNumberBuilder,
     RollingPeriodBuilder, TransmissionRiskLevelBuilder, FinalBuilder {
+
+  private static final Logger logger = LoggerFactory.getLogger(DiagnosisKeyBuilder.class);
 
   private byte[] keyData;
   private long rollingStartNumber;
@@ -46,28 +54,24 @@ public class DiagnosisKeyBuilder implements Builder, RollingStartNumberBuilder,
 
   @Override
   public RollingStartNumberBuilder withKeyData(byte[] keyData) {
-    DiagnosisKeyValidator.validateKeyData(keyData);
     this.keyData = keyData;
     return this;
   }
 
   @Override
   public RollingPeriodBuilder withRollingStartNumber(long rollingStartNumber) {
-    DiagnosisKeyValidator.validateRollingStartNumber(rollingStartNumber);
     this.rollingStartNumber = rollingStartNumber;
     return this;
   }
 
   @Override
   public TransmissionRiskLevelBuilder withRollingPeriod(long rollingPeriod) {
-    DiagnosisKeyValidator.validateRollingPeriod(rollingPeriod);
     this.rollingPeriod = rollingPeriod;
     return this;
   }
 
   @Override
   public FinalBuilder withTransmissionRiskLevel(int transmissionRiskLevel) {
-    DiagnosisKeyValidator.validateTransmissionRiskLevel(transmissionRiskLevel);
     this.transmissionRiskLevel = transmissionRiskLevel;
     return this;
   }
@@ -94,7 +98,23 @@ public class DiagnosisKeyBuilder implements Builder, RollingStartNumberBuilder,
       submissionTimestamp = Instant.now().getEpochSecond() / 3600L;
     }
 
-    return new DiagnosisKey(this.keyData, this.rollingStartNumber, this.rollingPeriod,
-        this.transmissionRiskLevel, submissionTimestamp);
+    var diagnosisKey = new DiagnosisKey(this.keyData, this.rollingStartNumber,
+        this.rollingPeriod, this.transmissionRiskLevel, submissionTimestamp);
+
+    return throwIfValidationFails(diagnosisKey);
+  }
+
+  private DiagnosisKey throwIfValidationFails(DiagnosisKey diagnosisKey) {
+    Set<ConstraintViolation<DiagnosisKey>> violations = diagnosisKey.getConstraintViolations();
+
+    if (!violations.isEmpty()) {
+      String violationsMessage = violations.stream()
+          .map(violation -> String.format("%s Invalid Value: %s", violation.getMessage(), violation.getInvalidValue()))
+          .collect(Collectors.toList()).toString();
+      logger.debug(violationsMessage);
+      throw new InvalidDiagnosisKeyException(violationsMessage);
+    }
+
+    return diagnosisKey;
   }
 }

@@ -27,8 +27,10 @@ import java.time.Instant;
 import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.List;
+import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.Sort.Direction;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -52,10 +54,11 @@ public class DiagnosisKeyService {
   }
 
   /**
-   * Returns all persisted diagnosis keys, sorted by their submission timestamp.
+   * Returns all valid persisted diagnosis keys, sorted by their submission timestamp.
    */
   public List<DiagnosisKey> getDiagnosisKeys() {
-    return keyRepository.findAll(Sort.by(Sort.Direction.ASC, "submissionTimestamp"));
+    return keyRepository.findAll(Sort.by(Direction.ASC, "submissionTimestamp")).stream()
+        .filter(DiagnosisKey::isValid).collect(Collectors.toList());
   }
 
   /**

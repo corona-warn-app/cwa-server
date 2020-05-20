@@ -48,14 +48,13 @@ public class DiagnosisKeysStructureProvider {
     this.cryptoProvider = cryptoProvider;
   }
 
+  /**
+   * Get directory for diagnosis keys from database.
+   * @return the directory
+   */
   public Directory getDiagnosisKeys() {
-    Collection<DiagnosisKey> diagnosisKeys = readDiagnosisKeys();
+    logger.debug("Querying diagnosis keys from the database...");
+    Collection<DiagnosisKey> diagnosisKeys = diagnosisKeyService.getDiagnosisKeys();
     return new DiagnosisKeysDirectoryImpl(diagnosisKeys, cryptoProvider);
   }
-
-  private Collection<DiagnosisKey> readDiagnosisKeys() {
-    logger.debug("Querying diagnosis keys from the database...");
-    return diagnosisKeyService.getDiagnosisKeys();
-  }
-
 }

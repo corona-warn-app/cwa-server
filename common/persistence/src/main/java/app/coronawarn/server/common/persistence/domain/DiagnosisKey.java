@@ -22,15 +22,23 @@ package app.coronawarn.server.common.persistence.domain;
 import static java.time.ZoneOffset.UTC;
 
 import app.coronawarn.server.common.persistence.domain.DiagnosisKeyBuilders.Builder;
+import app.coronawarn.server.common.persistence.domain.validation.ValidRollingStartNumber;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.Objects;
+import java.util.Set;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import javax.validation.ConstraintViolation;
+import javax.validation.Validation;
+import javax.validation.Validator;
+import javax.validation.constraints.Min;
+import javax.validation.constraints.Size;
+import org.hibernate.validator.constraints.Range;
 
 /**
  * A key generated for advertising over a window of time.
@@ -38,14 +46,24 @@ import javax.persistence.Table;
 @Entity
 @Table(name = "diagnosis_key")
 public class DiagnosisKey {
+  private static final Validator VALIDATOR = Validation.buildDefaultValidatorFactory().getValidator();
 
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;
+
+  @Size(min = 16, max = 16, message = "Key data must be a byte array of length 16.")
   private byte[] keyData;
+
+  @ValidRollingStartNumber
   private long rollingStartNumber;
+
+  @Min(value = 1L, message = "Rolling period must be greater than 0.")
   private long rollingPeriod;
+
+  @Range(min = 0, max = 8, message = "Risk level must be between 0 and 8.")
   private int transmissionRiskLevel;
+
   private long submissionTimestamp;
 
   protected DiagnosisKey() {
@@ -126,6 +144,33 @@ public class DiagnosisKey {
         .toEpochSecond(UTC) / (60 * 10);
 
     return this.rollingStartNumber >= threshold;
+  }
+
+  /**
+   * Determines if this key is valid.
+   *
+   * @return true, if valid, else false.
+   */
+  public boolean isValid() {
+    Set<ConstraintViolation<DiagnosisKey>> violations = getConstraintViolations();
+    return violations.isEmpty();
+  }
+
+  /**
+   * Gets any constraint violations that this key might incorporate.
+   *
+   * <p><ul>
+   * <li>Risk level must be between 0 and 8
+   * <li>Rolling start number must be greater than 0
+   * <li>Rolling start number cannot be in the future
+   * <li>Rolling period must be positive number
+   * <li>Key data must be byte array of length 16
+   * </ul>
+   *
+   * @return A set of constraint violations of this key.
+   */
+  public Set<ConstraintViolation<DiagnosisKey>> getConstraintViolations() {
+    return VALIDATOR.validate(this);
   }
 
   @Override
