@@ -35,7 +35,7 @@ import org.junit.rules.TemporaryFolder;
 public class FileTest {
 
   private final byte[] bytes = "World".getBytes();
-  private File file;
+  private FileOnDisk file;
 
   @Rule
   private TemporaryFolder outputFolder = new TemporaryFolder();

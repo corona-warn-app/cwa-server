@@ -48,14 +48,14 @@ public class WritableTest {
   @Test
   public void checkGetName() {
     String name = "Test";
-    Writable writable = new TestWritable(name);
+    WritableOnDisk writable = new TestWritable(name);
     assertEquals(name, writable.getName());
   }
 
   @Test
   public void checkGetAndSetParent() {
-    Directory parent = new DirectoryOnDisk("Parent");
-    Writable child = new TestWritable("Child");
+    DirectoryOnDisk parent = new DirectoryOnDisk("Parent");
+    WritableOnDisk child = new TestWritable("Child");
     child.setParent(parent);
     assertEquals(parent, child.getParent());
   }
@@ -63,22 +63,22 @@ public class WritableTest {
   @Test
   public void checkGetFileOnDiskForRoot() {
     File file = new File("Root");
-    Directory parent = new DirectoryOnDisk(file);
+    DirectoryOnDisk parent = new DirectoryOnDisk(file);
     assertEquals(file, parent.getFileOnDisk());
   }
 
   @Test
   public void checkGetFileOnDiskRelativeToRoot() {
     File file = new File("Root");
-    Directory parent = new DirectoryOnDisk(file);
-    Writable child = new TestWritable("Child");
+    DirectoryOnDisk parent = new DirectoryOnDisk(file);
+    WritableOnDisk child = new TestWritable("Child");
     child.setParent(parent);
     assertEquals(file.toPath().resolve("Child").toFile(), child.getFileOnDisk());
   }
 
   @Test
   public void checkGetFileOnDiskThrowsIfNoParent() {
-    Directory orphan = new DirectoryOnDisk("Orphan");
+    DirectoryOnDisk orphan = new DirectoryOnDisk("Orphan");
     assertThrows(NullPointerException.class, orphan::getFileOnDisk);
   }
 }

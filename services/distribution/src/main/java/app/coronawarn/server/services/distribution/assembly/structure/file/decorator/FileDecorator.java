@@ -73,12 +73,12 @@ public abstract class FileDecorator<W extends Writable<W>> implements File<W> {
   }
 
   @Override
-  public W getParent() {
+  public Directory<W> getParent() {
     return this.file.getParent();
   }
 
   @Override
-  public void setParent(W parent) {
+  public void setParent(Directory<W> parent) {
     this.file.setParent(parent);
   }
 

@@ -4,6 +4,7 @@ import static app.coronawarn.server.services.distribution.assembly.structure.uti
 
 import app.coronawarn.server.services.distribution.assembly.structure.Writable;
 import app.coronawarn.server.services.distribution.assembly.structure.WritableOnDisk;
+import app.coronawarn.server.services.distribution.assembly.structure.directory.Directory;
 import app.coronawarn.server.services.distribution.assembly.structure.directory.DirectoryOnDisk;
 import app.coronawarn.server.services.distribution.assembly.structure.file.File;
 import app.coronawarn.server.services.distribution.assembly.structure.file.FileOnDisk;
@@ -37,7 +38,7 @@ public class ArchiveOnDisk extends FileOnDisk implements Archive<WritableOnDisk>
   }
 
   @Override
-  public void setParent(WritableOnDisk parent) {
+  public void setParent(Directory<WritableOnDisk> parent) {
     super.setParent(parent);
     tempDirectory.setParent(parent);
   }

@@ -106,13 +106,13 @@ public class DateAggregatingDecorator extends IndexDirectoryDecorator<LocalDate,
         .map(Directory::getWritables)
         .flatMap(Set::stream)
         .filter(Writable::isDirectory)
-        .map(directory -> ((DirectoryOnDisk) directory).getWritables())
+        .map(directory -> ((Directory<WritableOnDisk>) directory).getWritables())
         .flatMap(Set::stream)
         .filter(Writable::isDirectory)
-        .map(directory -> ((DirectoryOnDisk) directory).getWritables())
+        .map(directory -> ((Directory<WritableOnDisk>) directory).getWritables())
         .flatMap(Collection::stream)
         .filter(Writable::isDirectory)
-        .map(directory -> (DirectoryOnDisk) directory)
+        .map(directory -> (Directory<WritableOnDisk>) directory)
         .collect(Collectors.toSet());
   }
 

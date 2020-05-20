@@ -19,6 +19,7 @@
 
 package app.coronawarn.server.services.distribution.assembly.structure;
 
+import app.coronawarn.server.services.distribution.assembly.structure.directory.Directory;
 import app.coronawarn.server.services.distribution.assembly.structure.util.ImmutableStack;
 
 /**
@@ -41,12 +42,12 @@ public interface Writable<W extends Writable<W>> {
   /**
    * Returns the parent of this {@link Writable}, or {@code null} if it doesn't have a parent.
    */
-  W getParent();
+  Directory<W> getParent();
 
   /**
    * Sets the parent of this {@link Writable}.
    */
-  void setParent(W parent);
+  void setParent(Directory<W> parent);
 
   /**
    * Does preparation work for this {@link Writable} (e.g. calculate data, setup structures, etc.).

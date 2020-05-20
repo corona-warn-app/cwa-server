@@ -22,9 +22,11 @@ package app.coronawarn.server.services.distribution.assembly.structure.file.deco
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 
+import app.coronawarn.server.services.distribution.assembly.structure.WritableOnDisk;
 import app.coronawarn.server.services.distribution.assembly.structure.directory.Directory;
 import app.coronawarn.server.services.distribution.assembly.structure.directory.DirectoryOnDisk;
 import app.coronawarn.server.services.distribution.assembly.structure.file.File;
+import app.coronawarn.server.services.distribution.assembly.structure.file.FileOnDisk;
 import app.coronawarn.server.services.distribution.assembly.structure.file.decorator.FileDecorator;
 import app.coronawarn.server.services.distribution.assembly.structure.util.ImmutableStack;
 import org.junit.jupiter.api.Test;
@@ -33,8 +35,8 @@ public class FileDecoratorTest {
 
   @Test
   public void checkProxiesAllMethods() {
-    File decoratee = mock(File.class);
-    File decorator = new TestFileDecorator(decoratee);
+    File<WritableOnDisk> decoratee = mock(FileOnDisk.class);
+    File<WritableOnDisk> decorator = new TestFileDecorator(decoratee);
 
     ImmutableStack<Object> stack = new ImmutableStack<>();
     decorator.prepare(stack);
@@ -56,17 +58,14 @@ public class FileDecoratorTest {
     decorator.getParent();
     verify(decoratee).getParent();
 
-    Directory parent = new DirectoryOnDisk("foo");
+    Directory<WritableOnDisk> parent = new DirectoryOnDisk("foo");
     decorator.setParent(parent);
     verify(decoratee).setParent(parent);
-
-    decorator.getFileOnDisk();
-    verify(decoratee).getFileOnDisk();
   }
 
-  private static class TestFileDecorator extends FileDecorator {
+  private static class TestFileDecorator extends FileDecorator<WritableOnDisk> {
 
-    protected TestFileDecorator(File file) {
+    protected TestFileDecorator(File<WritableOnDisk> file) {
       super(file);
     }
   }

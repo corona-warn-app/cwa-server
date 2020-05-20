@@ -26,7 +26,7 @@ import java.util.Objects;
 public abstract class WritableOnDisk implements Writable<WritableOnDisk> {
 
   private String name;
-  private WritableOnDisk parent;
+  private Directory<WritableOnDisk> parent;
   private java.io.File fileOnDisk;
 
   protected WritableOnDisk(String name) {
@@ -43,12 +43,12 @@ public abstract class WritableOnDisk implements Writable<WritableOnDisk> {
   }
 
   @Override
-  public WritableOnDisk getParent() {
+  public Directory<WritableOnDisk> getParent() {
     return this.parent;
   }
 
   @Override
-  public void setParent(WritableOnDisk parent) {
+  public void setParent(Directory<WritableOnDisk> parent) {
     this.parent = parent;
   }
 
@@ -57,7 +57,7 @@ public abstract class WritableOnDisk implements Writable<WritableOnDisk> {
    */
   public java.io.File getFileOnDisk() {
     return Objects.requireNonNullElseGet(this.fileOnDisk,
-        () -> getParent().getFileOnDisk().toPath().resolve(this.getName()).toFile());
+        () -> ((WritableOnDisk)this.getParent()).getFileOnDisk().toPath().resolve(this.getName()).toFile());
   }
 
   @Override

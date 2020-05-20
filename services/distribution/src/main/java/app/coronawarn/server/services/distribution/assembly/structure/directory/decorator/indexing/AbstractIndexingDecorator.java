@@ -55,16 +55,7 @@ public abstract class AbstractIndexingDecorator<T, W extends Writable<W>> extend
    */
   @Override
   public void prepare(ImmutableStack<Object> indices) {
-    logger.debug("Indexing ..."); // TODO
-    Set<T> index = this.directory.getIndex(indices);
-    JSONArray array = new JSONArray();
-    List<?> elements = index.stream()
-        .map(this.directory.getIndexFormatter())
-        .collect(Collectors.toList());
-    array.addAll(elements);
-    this.addWritable(this.getIndexFile(INDEX_FILE_NAME));
-    // TODO
-    //this.addWritable(new FileOnDisk(INDEX_FILE_NAME, array.toJSONString().getBytes()));
+    this.addWritable(this.getIndexFile(INDEX_FILE_NAME, indices));
     super.prepare(indices);
   }
 }

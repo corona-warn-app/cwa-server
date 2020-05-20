@@ -42,7 +42,7 @@ public class FileOnDisk extends WritableOnDisk implements File<WritableOnDisk> {
    */
   @Override
   public void write() {
-    IO.makeFile(this.getParent().getFileOnDisk(), this.getName());
+    IO.makeFile(((WritableOnDisk)this.getParent()).getFileOnDisk(), this.getName());
     IO.writeBytesToFile(this.getBytes(), this.getFileOnDisk());
   }
 

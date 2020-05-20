@@ -63,12 +63,12 @@ public abstract class DirectoryDecorator<W extends Writable<W>> implements Direc
   }
 
   @Override
-  public W getParent() {
+  public Directory<W> getParent() {
     return this.directory.getParent();
   }
 
   @Override
-  public void setParent(W parent) {
+  public void setParent(Directory<W> parent) {
     this.directory.setParent(parent);
   }
 
