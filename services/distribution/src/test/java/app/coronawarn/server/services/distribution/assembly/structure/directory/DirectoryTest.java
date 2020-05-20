@@ -25,7 +25,7 @@ import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.verify;
 
 import app.coronawarn.server.services.distribution.assembly.structure.file.File;
-import app.coronawarn.server.services.distribution.assembly.structure.file.FileImpl;
+import app.coronawarn.server.services.distribution.assembly.structure.file.FileOnDisk;
 import app.coronawarn.server.services.distribution.assembly.structure.util.ImmutableStack;
 import java.io.IOException;
 import java.util.Set;
@@ -48,9 +48,9 @@ public class DirectoryTest {
   public void setup() throws IOException {
     outputFolder.create();
     outputDir = outputFolder.newFolder();
-    parentDirectory = new DirectoryImpl(outputDir);
-    childDirectory = new DirectoryImpl("Child");
-    childFile = new FileImpl("Child", new byte[0]);
+    parentDirectory = new DirectoryOnDisk(outputDir);
+    childDirectory = new DirectoryOnDisk("Child");
+    childFile = new FileOnDisk("Child", new byte[0]);
   }
 
   @Test
@@ -78,7 +78,7 @@ public class DirectoryTest {
 
   @Test
   public void checkWriteThrowsWithoutParent() {
-    assertThrows(NullPointerException.class, new DirectoryImpl("")::write);
+    assertThrows(NullPointerException.class, new DirectoryOnDisk("")::write);
   }
 
   @Test
@@ -91,7 +91,7 @@ public class DirectoryTest {
     }
 
     java.io.File mockOutputDirectory = spy(new MockFile());
-    parentDirectory = new DirectoryImpl(mockOutputDirectory);
+    parentDirectory = new DirectoryOnDisk(mockOutputDirectory);
 
     parentDirectory.write();
     verify(mockOutputDirectory).mkdirs();

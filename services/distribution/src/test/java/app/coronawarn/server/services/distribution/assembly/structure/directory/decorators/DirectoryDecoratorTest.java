@@ -23,10 +23,8 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 
 import app.coronawarn.server.services.distribution.assembly.structure.directory.Directory;
-import app.coronawarn.server.services.distribution.assembly.structure.directory.DirectoryImpl;
+import app.coronawarn.server.services.distribution.assembly.structure.directory.DirectoryOnDisk;
 import app.coronawarn.server.services.distribution.assembly.structure.directory.decorator.DirectoryDecorator;
-import app.coronawarn.server.services.distribution.assembly.structure.file.File;
-import app.coronawarn.server.services.distribution.assembly.structure.file.FileImpl;
 import app.coronawarn.server.services.distribution.assembly.structure.util.ImmutableStack;
 import org.junit.jupiter.api.Test;
 
@@ -41,7 +39,7 @@ public class DirectoryDecoratorTest {
     decorator.prepare(stack);
     verify(decoratee).prepare(stack);
 
-    Directory directory = new DirectoryImpl("foo");
+    Directory directory = new DirectoryOnDisk("foo");
     decorator.addWritable(directory);
     verify(decoratee).addWritable(directory);
 

@@ -24,7 +24,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import app.coronawarn.server.services.distribution.assembly.structure.directory.Directory;
-import app.coronawarn.server.services.distribution.assembly.structure.directory.DirectoryImpl;
+import app.coronawarn.server.services.distribution.assembly.structure.directory.DirectoryOnDisk;
 import java.io.IOException;
 import java.nio.file.Files;
 import org.junit.Rule;
@@ -43,7 +43,7 @@ public class FileTest {
   @BeforeEach
   public void setup() throws IOException {
     outputFolder.create();
-    file = new FileImpl("Hello", bytes);
+    file = new FileOnDisk("Hello", bytes);
   }
 
   @Test
@@ -66,7 +66,7 @@ public class FileTest {
   @Test
   public void checkWrite() throws IOException {
     java.io.File outputFile = outputFolder.newFolder();
-    Directory directory = new DirectoryImpl(outputFile);
+    Directory directory = new DirectoryOnDisk(outputFile);
 
     directory.addWritable(file);
     directory.write();

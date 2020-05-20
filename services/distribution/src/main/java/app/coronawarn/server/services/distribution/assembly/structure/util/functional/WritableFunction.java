@@ -17,19 +17,19 @@
  * under the License.
  */
 
-package app.coronawarn.server.services.distribution.assembly.structure.functional;
+package app.coronawarn.server.services.distribution.assembly.structure.util.functional;
 
+import app.coronawarn.server.services.distribution.assembly.structure.Writable;
 import app.coronawarn.server.services.distribution.assembly.structure.util.ImmutableStack;
-import java.util.Set;
 import java.util.function.Function;
 
 /**
- * A {@code Function<Stack<Object>, List<T>>}.
+ * A {@code Function<Stack<Object>, Writable>}.
  *
- * @param <T> The type of the index elements.
+ * @param <T> The specific type of {@link Writable} that this {@link WritableFunction} can create.
  */
 @FunctionalInterface
-public interface IndexFunction<T> extends Function<ImmutableStack<Object>, Set<T>> {
+public interface WritableFunction<T extends Writable<T>> extends Function<ImmutableStack<Object>, T> {
 
-  Set<T> apply(ImmutableStack<Object> t);
+  T apply(ImmutableStack<Object> t);
 }

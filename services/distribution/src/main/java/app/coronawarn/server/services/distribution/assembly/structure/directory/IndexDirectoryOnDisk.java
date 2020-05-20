@@ -20,35 +20,35 @@
 package app.coronawarn.server.services.distribution.assembly.structure.directory;
 
 import app.coronawarn.server.services.distribution.assembly.structure.Writable;
-import app.coronawarn.server.services.distribution.assembly.structure.functional.Formatter;
-import app.coronawarn.server.services.distribution.assembly.structure.functional.IndexFunction;
-import app.coronawarn.server.services.distribution.assembly.structure.functional.WritableFunction;
+import app.coronawarn.server.services.distribution.assembly.structure.WritableOnDisk;
+import app.coronawarn.server.services.distribution.assembly.structure.util.functional.Formatter;
+import app.coronawarn.server.services.distribution.assembly.structure.util.functional.IndexFunction;
+import app.coronawarn.server.services.distribution.assembly.structure.util.functional.WritableFunction;
 import app.coronawarn.server.services.distribution.assembly.structure.util.ImmutableStack;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.Stack;
 
-public class IndexDirectoryImpl<T> extends DirectoryImpl implements IndexDirectory<T> {
+public class IndexDirectoryOnDisk<T> extends DirectoryOnDisk implements IndexDirectory<T, WritableOnDisk> {
 
   // Writables to be written into every directory created through the index
-  private final Set<WritableFunction> metaWritables = new HashSet<>();
+  private final Set<WritableFunction<WritableOnDisk>> metaWritables = new HashSet<>();
   private final IndexFunction<T> indexFunction;
   private final Formatter<T> indexFormatter;
 
   /**
-   * Constructs a {@link IndexDirectoryImpl} instance that represents a directory, containing an
+   * Constructs a {@link IndexDirectoryOnDisk} instance that represents a directory, containing an
    * index in the form of sub directories.
    *
    * @param name           The name that this directory should have on disk.
    * @param indexFunction  An {@link IndexFunction} that calculates the index of this {@link
-   *                       IndexDirectoryImpl} from a {@link java.util.Stack} of parent {@link
-   *                       IndexDirectoryImpl} indices. The top element of the stack is from the
-   *                       closest {@link IndexDirectoryImpl} in the parent chain.
+   *                       IndexDirectoryOnDisk} from a {@link java.util.Stack} of parent {@link
+   *                       IndexDirectoryOnDisk} indices. The top element of the stack is from the
+   *                       closest {@link IndexDirectoryOnDisk} in the parent chain.
    * @param indexFormatter A {@link Formatter} used to format the directory name for each index
-   *                       element returned by the {@link IndexDirectoryImpl#indexFunction}.
+   *                       element returned by the {@link IndexDirectoryOnDisk#indexFunction}.
    */
-  public IndexDirectoryImpl(String name, IndexFunction<T> indexFunction,
-      Formatter<T> indexFormatter) {
+  public IndexDirectoryOnDisk(String name, IndexFunction<T> indexFunction, Formatter<T> indexFormatter) {
     super(name);
     this.indexFunction = indexFunction;
     this.indexFormatter = indexFormatter;
@@ -65,7 +65,7 @@ public class IndexDirectoryImpl<T> extends DirectoryImpl implements IndexDirecto
   }
 
   @Override
-  public void addWritableToAll(WritableFunction writableFunction) {
+  public void addWritableToAll(WritableFunction<WritableOnDisk> writableFunction) {
     this.metaWritables.add(writableFunction);
   }
 
@@ -73,7 +73,7 @@ public class IndexDirectoryImpl<T> extends DirectoryImpl implements IndexDirecto
    * Creates a new subdirectory for every element of the {@link IndexDirectory#getIndex index} and
    * writes all its {@link IndexDirectory#addWritableToAll writables} to those. The respective
    * element of the index will be pushed onto the Stack for subsequent {@link
-   * app.coronawarn.server.services.distribution.assembly.structure.Writable#prepare} calls.
+   * Writable#prepare} calls.
    *
    * @param indices A {@link Stack} of parameters from all {@link IndexDirectory IndexDirectories}
    *                further up in the hierarchy. The Stack may contain different types, depending on
@@ -89,20 +89,20 @@ public class IndexDirectoryImpl<T> extends DirectoryImpl implements IndexDirecto
   private void prepareIndex(ImmutableStack<Object> indices) {
     this.getIndex(indices).forEach(currentIndex -> {
       ImmutableStack<Object> newIndices = indices.push(currentIndex);
-      Directory subDirectory = makeSubDirectory(currentIndex);
+      DirectoryOnDisk subDirectory = makeSubDirectory(currentIndex);
       prepareMetaWritables(newIndices, subDirectory);
     });
   }
 
-  private Directory makeSubDirectory(T index) {
-    Directory subDirectory = new DirectoryImpl(this.indexFormatter.apply(index).toString());
+  private DirectoryOnDisk makeSubDirectory(T index) {
+    DirectoryOnDisk subDirectory = new DirectoryOnDisk(this.indexFormatter.apply(index).toString());
     this.addWritable(subDirectory);
     return subDirectory;
   }
 
-  private void prepareMetaWritables(ImmutableStack<Object> indices, Directory target) {
+  private void prepareMetaWritables(ImmutableStack<Object> indices, DirectoryOnDisk target) {
     this.metaWritables.forEach(metaWritableFunction -> {
-      Writable newWritable = metaWritableFunction.apply(indices);
+      WritableOnDisk newWritable = metaWritableFunction.apply(indices);
       target.addWritable(newWritable);
       newWritable.prepare(indices);
     });

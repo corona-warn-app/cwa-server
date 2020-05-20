@@ -3,8 +3,8 @@ package app.coronawarn.server.services.distribution.assembly.diagnosiskeys.struc
 import app.coronawarn.server.common.persistence.domain.DiagnosisKey;
 import app.coronawarn.server.common.protocols.external.exposurenotification.TemporaryExposureKey;
 import app.coronawarn.server.common.protocols.external.exposurenotification.TemporaryExposureKeyExport;
-import app.coronawarn.server.services.distribution.assembly.structure.file.FileImpl;
-import app.coronawarn.server.services.distribution.assembly.structure.directory.decorator.SigningDecoratorImpl;
+import app.coronawarn.server.services.distribution.assembly.structure.directory.decorator.AbstractSigningDecorator;
+import app.coronawarn.server.services.distribution.assembly.structure.file.FileOnDisk;
 import app.coronawarn.server.services.distribution.assembly.structure.util.ImmutableStack;
 import com.google.protobuf.ByteString;
 import java.util.Collection;
@@ -14,7 +14,7 @@ import java.util.stream.Collectors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class TemporaryExposureKeyExportFile extends FileImpl {
+public class TemporaryExposureKeyExportFile extends FileOnDisk {
 
   private static final Logger logger = LoggerFactory
       .getLogger(TemporaryExposureKeyExportFile.class);
@@ -63,7 +63,7 @@ public class TemporaryExposureKeyExportFile extends FileImpl {
         // TODO Use buildPartial and then set batch stuff somewhere else
         .setBatchNum(1)
         .setBatchSize(1)
-        .addAllSignatureInfos(Set.of(SigningDecoratorImpl.getSignatureInfo()))
+        .addAllSignatureInfos(Set.of(AbstractSigningDecorator.getSignatureInfo()))
         .addAllKeys(this.temporaryExposureKeys)
         .build()
         .toByteArray();

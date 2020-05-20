@@ -23,11 +23,10 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 
 import app.coronawarn.server.services.distribution.assembly.structure.directory.Directory;
-import app.coronawarn.server.services.distribution.assembly.structure.directory.DirectoryImpl;
+import app.coronawarn.server.services.distribution.assembly.structure.directory.DirectoryOnDisk;
 import app.coronawarn.server.services.distribution.assembly.structure.file.File;
 import app.coronawarn.server.services.distribution.assembly.structure.file.decorator.FileDecorator;
 import app.coronawarn.server.services.distribution.assembly.structure.util.ImmutableStack;
-import java.io.IOException;
 import org.junit.jupiter.api.Test;
 
 public class FileDecoratorTest {
@@ -57,7 +56,7 @@ public class FileDecoratorTest {
     decorator.getParent();
     verify(decoratee).getParent();
 
-    Directory parent = new DirectoryImpl("foo");
+    Directory parent = new DirectoryOnDisk("foo");
     decorator.setParent(parent);
     verify(decoratee).setParent(parent);
 

@@ -19,15 +19,14 @@
 
 package app.coronawarn.server.services.distribution.assembly.structure;
 
-import app.coronawarn.server.services.distribution.assembly.structure.directory.Directory;
 import app.coronawarn.server.services.distribution.assembly.structure.util.ImmutableStack;
-import java.io.FileNotFoundException;
-import java.io.IOException;
 
 /**
- * Something that can be written to disk.
+ * Something that has a name and can be written to somewhere.
+ *
+ * @param <W> The specific type of {@link Writable} that this {@link Writable} can be a child of.
  */
-public interface Writable {
+public interface Writable<W extends Writable<W>> {
 
   /**
    * Writes this {@link Writable} to disk.
@@ -42,17 +41,12 @@ public interface Writable {
   /**
    * Returns the parent of this {@link Writable}, or {@code null} if it doesn't have a parent.
    */
-  Directory getParent();
+  W getParent();
 
   /**
    * Sets the parent of this {@link Writable}.
    */
-  void setParent(Directory parent);
-
-  /**
-   * Returns the {@link java.io.File} that this {@link Writable} represents on disk.
-   */
-  java.io.File getFileOnDisk();
+  void setParent(W parent);
 
   /**
    * Does preparation work for this {@link Writable} (e.g. calculate data, setup structures, etc.).

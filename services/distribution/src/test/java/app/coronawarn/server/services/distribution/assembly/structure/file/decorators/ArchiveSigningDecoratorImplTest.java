@@ -53,9 +53,9 @@ public class ArchiveSigningDecoratorImplTest {
   @BeforeEach
   public void setup() throws IOException {
     outputFolder.create();
-    parent = new DirectoryImpl(outputFolder.newFolder());
-    decoratee = new FileImpl("bar", bytes);
-    decorator = new SigningDecoratorImpl(decoratee, cryptoProvider);
+    parent = new DirectoryOnDisk(outputFolder.newFolder());
+    decoratee = new FileOnDisk("bar", bytes);
+    decorator = new AbstractSigningDecorator(decoratee, cryptoProvider);
 
     parent.addWritable(decorator);
 

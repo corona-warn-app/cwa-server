@@ -23,17 +23,17 @@ import app.coronawarn.server.services.distribution.assembly.structure.directory.
 import app.coronawarn.server.services.distribution.assembly.structure.file.File;
 import java.util.Objects;
 
-public abstract class WritableImpl implements Writable {
+public abstract class WritableOnDisk implements Writable<WritableOnDisk> {
 
   private String name;
-  private Directory parent;
+  private WritableOnDisk parent;
   private java.io.File fileOnDisk;
 
-  protected WritableImpl(String name) {
+  protected WritableOnDisk(String name) {
     this.name = name;
   }
 
-  protected WritableImpl(java.io.File fileOnDisk) {
+  protected WritableOnDisk(java.io.File fileOnDisk) {
     this.fileOnDisk = fileOnDisk;
   }
 
@@ -43,16 +43,18 @@ public abstract class WritableImpl implements Writable {
   }
 
   @Override
-  public Directory getParent() {
+  public WritableOnDisk getParent() {
     return this.parent;
   }
 
   @Override
-  public void setParent(Directory parent) {
+  public void setParent(WritableOnDisk parent) {
     this.parent = parent;
   }
 
-  @Override
+  /**
+   * Returns the {@link java.io.File} that this {@link Writable} represents on disk.
+   */
   public java.io.File getFileOnDisk() {
     return Objects.requireNonNullElseGet(this.fileOnDisk,
         () -> getParent().getFileOnDisk().toPath().resolve(this.getName()).toFile());

@@ -21,8 +21,8 @@ package app.coronawarn.server.services.distribution.assembly.component;
 
 import app.coronawarn.server.services.distribution.assembly.structure.directory.Directory;
 import app.coronawarn.server.services.distribution.assembly.structure.directory.IndexDirectory;
-import app.coronawarn.server.services.distribution.assembly.structure.directory.IndexDirectoryImpl;
-import app.coronawarn.server.services.distribution.assembly.structure.directory.decorator.IndexingDecorator;
+import app.coronawarn.server.services.distribution.assembly.structure.directory.IndexDirectoryOnDisk;
+import app.coronawarn.server.services.distribution.assembly.structure.directory.decorator.AbstractIndexingDecorator;
 import java.util.Set;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -53,12 +53,12 @@ public class CwaApiStructureProvider {
    */
   public Directory getDirectory() {
     IndexDirectory<?> versionDirectory =
-        new IndexDirectoryImpl<>(VERSION_DIRECTORY, __ -> Set.of(VERSION_V1), Object::toString);
+        new IndexDirectoryOnDisk<>(VERSION_DIRECTORY, __ -> Set.of(VERSION_V1), Object::toString);
 
     versionDirectory
         .addWritableToAll(__ -> exposureConfigurationStructureProvider.getExposureConfiguration());
     versionDirectory.addWritableToAll(__ -> diagnosisKeysStructureProvider.getDiagnosisKeys());
 
-    return new IndexingDecorator<>(versionDirectory);
+    return new AbstractIndexingDecorator<>(versionDirectory);
   }
 }

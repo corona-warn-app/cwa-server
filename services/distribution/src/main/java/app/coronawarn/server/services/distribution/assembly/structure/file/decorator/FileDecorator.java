@@ -28,11 +28,12 @@ import app.coronawarn.server.services.distribution.assembly.structure.util.Immut
  * Decorates a {@link File} (e.g. to modify its content) on {@link Writable#prepare}. This class proxies all function
  * calls to the {@link File} it contains.
  */
-public abstract class FileDecorator implements File {
+// TODO Maybe remove, doesn't seem to be useful anymore
+public abstract class FileDecorator<W extends Writable<W>> implements File<W> {
 
-  private final File file;
+  private final File<W> file;
 
-  protected FileDecorator(File file) {
+  protected FileDecorator(File<W> file) {
     this.file = file;
   }
 
@@ -72,17 +73,14 @@ public abstract class FileDecorator implements File {
   }
 
   @Override
-  public Directory getParent() {
+  public W getParent() {
     return this.file.getParent();
   }
 
   @Override
-  public void setParent(Directory parent) {
+  public void setParent(W parent) {
     this.file.setParent(parent);
   }
 
-  @Override
-  public java.io.File getFileOnDisk() {
-    return this.file.getFileOnDisk();
-  }
+  // TODO getFileOnDisk???
 }

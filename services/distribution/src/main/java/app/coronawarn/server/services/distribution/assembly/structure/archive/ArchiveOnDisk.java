@@ -1,12 +1,11 @@
 package app.coronawarn.server.services.distribution.assembly.structure.archive;
 
-import static app.coronawarn.server.services.distribution.assembly.structure.functional.CheckedConsumer.uncheckedConsumer;
+import static app.coronawarn.server.services.distribution.assembly.structure.util.functional.CheckedConsumer.uncheckedConsumer;
 
-import app.coronawarn.server.services.distribution.assembly.structure.Writable;
-import app.coronawarn.server.services.distribution.assembly.structure.directory.Directory;
-import app.coronawarn.server.services.distribution.assembly.structure.directory.DirectoryImpl;
+import app.coronawarn.server.services.distribution.assembly.structure.WritableOnDisk;
+import app.coronawarn.server.services.distribution.assembly.structure.directory.DirectoryOnDisk;
 import app.coronawarn.server.services.distribution.assembly.structure.file.File;
-import app.coronawarn.server.services.distribution.assembly.structure.file.FileImpl;
+import app.coronawarn.server.services.distribution.assembly.structure.file.FileOnDisk;
 import app.coronawarn.server.services.distribution.assembly.structure.util.ImmutableStack;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -17,18 +16,18 @@ import java.util.zip.ZipOutputStream;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class ArchiveImpl extends FileImpl implements Archive {
+public class ArchiveOnDisk extends FileOnDisk implements Archive<WritableOnDisk> {
 
-  private static final Logger logger = LoggerFactory.getLogger(ArchiveImpl.class);
+  private static final Logger logger = LoggerFactory.getLogger(ArchiveOnDisk.class);
 
   private static final String TEMPORARY_DIRECTORY_NAME = "temporary";
 
-  private Directory tempDirectory;
+  private DirectoryOnDisk tempDirectory;
 
-  public ArchiveImpl(String name) {
+  public ArchiveOnDisk(String name) {
     super(name, new byte[0]);
     try {
-      tempDirectory = new DirectoryImpl(
+      tempDirectory = new DirectoryOnDisk(
           Files.createTempDirectory(TEMPORARY_DIRECTORY_NAME).toFile());
     } catch (IOException e) {
       logger.error("Failed to create temporary directory for zip archive {}", this.getFileOnDisk());
@@ -37,18 +36,18 @@ public class ArchiveImpl extends FileImpl implements Archive {
   }
 
   @Override
-  public void setParent(Directory parent) {
+  public void setParent(WritableOnDisk parent) {
     super.setParent(parent);
     tempDirectory.setParent(parent);
   }
 
   @Override
-  public void addWritable(Writable writable) {
+  public void addWritable(WritableOnDisk writable) {
     this.tempDirectory.addWritable(writable);
   }
 
   @Override
-  public Set<Writable> getWritables() {
+  public Set<WritableOnDisk> getWritables() {
     return this.tempDirectory.getWritables();
   }
 
@@ -63,7 +62,7 @@ public class ArchiveImpl extends FileImpl implements Archive {
     ZipOutputStream zipOutputStream = new ZipOutputStream(byteArrayOutputStream);
     this.getWritables().stream()
         .filter(writable -> writable instanceof File)
-        .map(file -> (File) file)
+        .map(file -> (FileOnDisk) file)
         .forEach(uncheckedConsumer(file -> {
           String pathInZip = file.getName();
           zipOutputStream.putNextEntry(new ZipEntry(pathInZip));

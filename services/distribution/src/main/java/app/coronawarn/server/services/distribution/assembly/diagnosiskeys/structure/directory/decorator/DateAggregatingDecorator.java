@@ -19,7 +19,7 @@
 
 package app.coronawarn.server.services.distribution.assembly.diagnosiskeys.structure.directory.decorator;
 
-import static app.coronawarn.server.services.distribution.assembly.structure.functional.CheckedFunction.uncheckedFunction;
+import static app.coronawarn.server.services.distribution.assembly.structure.util.functional.CheckedFunction.uncheckedFunction;
 
 import app.coronawarn.server.common.protocols.external.exposurenotification.TemporaryExposureKey;
 import app.coronawarn.server.common.protocols.external.exposurenotification.TemporaryExposureKeyExport;
@@ -27,11 +27,11 @@ import app.coronawarn.server.services.distribution.assembly.component.CryptoProv
 import app.coronawarn.server.services.distribution.assembly.diagnosiskeys.structure.file.TemporaryExposureKeyExportFile;
 import app.coronawarn.server.services.distribution.assembly.structure.Writable;
 import app.coronawarn.server.services.distribution.assembly.structure.archive.Archive;
-import app.coronawarn.server.services.distribution.assembly.structure.archive.ArchiveImpl;
+import app.coronawarn.server.services.distribution.assembly.structure.archive.ArchiveOnDisk;
 import app.coronawarn.server.services.distribution.assembly.structure.directory.Directory;
 import app.coronawarn.server.services.distribution.assembly.structure.directory.decorator.DirectoryDecorator;
 import app.coronawarn.server.services.distribution.assembly.structure.file.File;
-import app.coronawarn.server.services.distribution.assembly.structure.file.FileImpl;
+import app.coronawarn.server.services.distribution.assembly.structure.file.FileOnDisk;
 import app.coronawarn.server.services.distribution.assembly.structure.util.ImmutableStack;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -84,11 +84,11 @@ public class DateAggregatingDecorator extends DirectoryDecorator {
           .map(this::parseTemporaryExposureKeyExportsFromFiles)
           .map(this::reduceTemporaryExposureKeyExportsToNewFile)
           .map(temporaryExposureKeyExportFile -> {
-            Archive aggregate = new ArchiveImpl(AGGREGATE_FILE_NAME);
+            Archive aggregate = new ArchiveOnDisk(AGGREGATE_FILE_NAME);
             aggregate.addWritable(temporaryExposureKeyExportFile);
             return aggregate;
           })
-          .map(file -> new DiagnosisKeySigningDecorator(file, cryptoProvider))
+          .map(file -> new DiagnosisKeyAbstractSigningDecorator(file, cryptoProvider))
           .peek(currentDirectory::addWritable)
           .forEach(aggregate -> aggregate.prepare(indices));
     });
@@ -126,7 +126,7 @@ public class DateAggregatingDecorator extends DirectoryDecorator {
   private Set<TemporaryExposureKeyExport> parseTemporaryExposureKeyExportsFromFiles(
       Set<TemporaryExposureKeyExportFile> temporaryExposureKeyExportFiles) {
     return temporaryExposureKeyExportFiles.stream()
-        .map(FileImpl::getBytes)
+        .map(FileOnDisk::getBytes)
         .map(uncheckedFunction(TemporaryExposureKeyExport::parseFrom))
         .collect(Collectors.toSet());
   }

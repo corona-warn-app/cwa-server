@@ -23,10 +23,10 @@ import static app.coronawarn.server.services.distribution.common.Helpers.prepare
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import app.coronawarn.server.services.distribution.assembly.structure.directory.Directory;
-import app.coronawarn.server.services.distribution.assembly.structure.directory.DirectoryImpl;
+import app.coronawarn.server.services.distribution.assembly.structure.directory.DirectoryOnDisk;
 import app.coronawarn.server.services.distribution.assembly.structure.directory.IndexDirectory;
-import app.coronawarn.server.services.distribution.assembly.structure.directory.IndexDirectoryImpl;
-import app.coronawarn.server.services.distribution.assembly.structure.directory.decorator.IndexingDecorator;
+import app.coronawarn.server.services.distribution.assembly.structure.directory.IndexDirectoryOnDisk;
+import app.coronawarn.server.services.distribution.assembly.structure.directory.decorator.AbstractIndexingDecorator;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
@@ -42,7 +42,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.rules.TemporaryFolder;
 
-public class IndexingDecoratorTest {
+public class AbstractIndexingDecoratorTest {
 
   @Rule
   private TemporaryFolder outputFolder = new TemporaryFolder();
@@ -57,9 +57,9 @@ public class IndexingDecoratorTest {
   public void setup() throws IOException {
     outputFolder.create();
     outputFile = outputFolder.newFolder();
-    parent = new DirectoryImpl(outputFile);
-    decoratee = new IndexDirectoryImpl<>("foo", __ -> index, __ -> __);
-    decorator = new IndexingDecorator<>(decoratee);
+    parent = new DirectoryOnDisk(outputFile);
+    decoratee = new IndexDirectoryOnDisk<>("foo", __ -> index, __ -> __);
+    decorator = new AbstractIndexingDecorator<>(decoratee);
 
     parent.addWritable(decorator);
 

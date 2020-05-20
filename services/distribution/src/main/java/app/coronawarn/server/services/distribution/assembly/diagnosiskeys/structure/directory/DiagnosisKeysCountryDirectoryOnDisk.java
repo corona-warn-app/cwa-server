@@ -21,48 +21,49 @@ package app.coronawarn.server.services.distribution.assembly.diagnosiskeys.struc
 
 import app.coronawarn.server.common.persistence.domain.DiagnosisKey;
 import app.coronawarn.server.services.distribution.assembly.component.CryptoProvider;
-import app.coronawarn.server.services.distribution.assembly.structure.Writable;
+import app.coronawarn.server.services.distribution.assembly.diagnosiskeys.structure.directory.decorator.DateAggregatingDecorator;
 import app.coronawarn.server.services.distribution.assembly.structure.directory.Directory;
-import app.coronawarn.server.services.distribution.assembly.structure.directory.DirectoryImpl;
 import app.coronawarn.server.services.distribution.assembly.structure.directory.IndexDirectory;
-import app.coronawarn.server.services.distribution.assembly.structure.directory.decorator.IndexingDecorator;
+import app.coronawarn.server.services.distribution.assembly.structure.directory.IndexDirectoryOnDisk;
+import app.coronawarn.server.services.distribution.assembly.structure.directory.decorator.AbstractIndexingDecorator;
 import app.coronawarn.server.services.distribution.assembly.structure.util.ImmutableStack;
+import java.time.LocalDate;
 import java.util.Collection;
+import java.util.Set;
 
-/**
- * A {@link Directory} containing the file and directory structure that mirrors the API defined in the OpenAPI
- * definition {@code /services/distribution/api_v1.json}. Available countries (endpoint {@code
- * /version/v1/diagnosis-keys/country}) are statically set to only {@code "DE"}. The dates and respective hours
- * (endpoint {@code /version/v1/diagnosis-keys/country/DE/date}) will be created based on the actual {@link DiagnosisKey
- * DiagnosisKeys} given to the {@link DiagnosisKeysDirectoryImpl#DiagnosisKeysDirectoryImpl constructor}.
- */
-public class DiagnosisKeysDirectoryImpl extends DirectoryImpl {
+public class DiagnosisKeysCountryDirectoryOnDisk extends IndexDirectoryOnDisk<String> {
 
-  private static final String DIAGNOSIS_KEYS_DIRECTORY = "diagnosis-keys";
+  private static final String COUNTRY_DIRECTORY = "country";
+  private static final String COUNTRY = "DE";
+
   private final Collection<DiagnosisKey> diagnosisKeys;
   private final CryptoProvider cryptoProvider;
 
   /**
-   * Constructs a {@link DiagnosisKeysDirectoryImpl} based on the specified {@link DiagnosisKey} collection.
-   * Cryptographic signing is performed using the specified {@link CryptoProvider}.
+   * Constructs a {@link DiagnosisKeysCountryDirectoryOnDisk} instance that represents the {@code
+   * .../country/:country/...} portion of the diagnosis key directory structure.
    *
    * @param diagnosisKeys  The diagnosis keys processed in the contained sub directories.
    * @param cryptoProvider The {@link CryptoProvider} used for payload signing.
    */
-  public DiagnosisKeysDirectoryImpl(Collection<DiagnosisKey> diagnosisKeys, CryptoProvider cryptoProvider) {
-    super(DIAGNOSIS_KEYS_DIRECTORY);
+  public DiagnosisKeysCountryDirectoryOnDisk(Collection<DiagnosisKey> diagnosisKeys,
+      CryptoProvider cryptoProvider) {
+    super(COUNTRY_DIRECTORY, __ -> Set.of(COUNTRY), Object::toString);
     this.diagnosisKeys = diagnosisKeys;
     this.cryptoProvider = cryptoProvider;
   }
 
   @Override
   public void prepare(ImmutableStack<Object> indices) {
-    this.addWritable(decorateCountryDirectory(
-        new DiagnosisKeysCountryDirectoryImpl(diagnosisKeys, cryptoProvider)));
+    this.addWritableToAll(__ -> {
+      IndexDirectory<LocalDate> dateDirectory = new DiagnosisKeysDateDirectoryOnDisk(diagnosisKeys,
+          cryptoProvider);
+      return decorateDateDirectory(dateDirectory);
+    });
     super.prepare(indices);
   }
 
-  private Directory decorateCountryDirectory(IndexDirectory<String> countryDirectory) {
-    return new IndexingDecorator<>(countryDirectory);
+  private Directory decorateDateDirectory(IndexDirectory<LocalDate> dateDirectory) {
+    return new DateAggregatingDecorator(new AbstractIndexingDecorator<>(dateDirectory), cryptoProvider);
   }
 }

@@ -3,12 +3,12 @@ package app.coronawarn.server.services.distribution.assembly.diagnosiskeys.struc
 import app.coronawarn.server.services.distribution.assembly.component.CryptoProvider;
 import app.coronawarn.server.services.distribution.assembly.structure.Writable;
 import app.coronawarn.server.services.distribution.assembly.structure.archive.Archive;
-import app.coronawarn.server.services.distribution.assembly.structure.directory.decorator.SigningDecoratorImpl;
+import app.coronawarn.server.services.distribution.assembly.structure.directory.decorator.AbstractSigningDecorator;
 import app.coronawarn.server.services.distribution.assembly.structure.file.File;
 
-public class DiagnosisKeySigningDecorator extends SigningDecoratorImpl {
+public class DiagnosisKeyAbstractSigningDecorator extends AbstractSigningDecorator {
 
-  public DiagnosisKeySigningDecorator(Archive archive, CryptoProvider cryptoProvider) {
+  public DiagnosisKeyAbstractSigningDecorator(Archive archive, CryptoProvider cryptoProvider) {
     super(archive, cryptoProvider);
   }
 

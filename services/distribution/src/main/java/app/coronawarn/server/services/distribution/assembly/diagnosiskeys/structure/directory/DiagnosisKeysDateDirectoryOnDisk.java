@@ -21,49 +21,51 @@ package app.coronawarn.server.services.distribution.assembly.diagnosiskeys.struc
 
 import app.coronawarn.server.common.persistence.domain.DiagnosisKey;
 import app.coronawarn.server.services.distribution.assembly.component.CryptoProvider;
-import app.coronawarn.server.services.distribution.assembly.diagnosiskeys.structure.directory.decorator.DateAggregatingDecorator;
+import app.coronawarn.server.services.distribution.assembly.diagnosiskeys.util.DateTime;
 import app.coronawarn.server.services.distribution.assembly.structure.directory.Directory;
 import app.coronawarn.server.services.distribution.assembly.structure.directory.IndexDirectory;
-import app.coronawarn.server.services.distribution.assembly.structure.directory.IndexDirectoryImpl;
-import app.coronawarn.server.services.distribution.assembly.structure.directory.decorator.IndexingDecorator;
+import app.coronawarn.server.services.distribution.assembly.structure.directory.IndexDirectoryOnDisk;
+import app.coronawarn.server.services.distribution.assembly.structure.directory.decorator.AbstractIndexingDecorator;
 import app.coronawarn.server.services.distribution.assembly.structure.util.ImmutableStack;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Collection;
-import java.util.Set;
 
-public class DiagnosisKeysCountryDirectoryImpl extends IndexDirectoryImpl<String> {
+public class DiagnosisKeysDateDirectoryOnDisk extends IndexDirectoryOnDisk<LocalDate> {
 
-  private static final String COUNTRY_DIRECTORY = "country";
-  private static final String COUNTRY = "DE";
+  private static final String DATE_DIRECTORY = "date";
+  private static final DateTimeFormatter ISO8601 = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 
   private final Collection<DiagnosisKey> diagnosisKeys;
   private final CryptoProvider cryptoProvider;
 
   /**
-   * Constructs a {@link DiagnosisKeysCountryDirectoryImpl} instance that represents the {@code
-   * .../country/:country/...} portion of the diagnosis key directory structure.
+   * Constructs a {@link DiagnosisKeysDateDirectoryOnDisk} instance associated with the specified {@link DiagnosisKey}
+   * collection. Payload signing is be performed according to the specified {@link CryptoProvider}.
    *
-   * @param diagnosisKeys  The diagnosis keys processed in the contained sub directories.
+   * @param diagnosisKeys  The diagnosis keys processed in the contained directories.
    * @param cryptoProvider The {@link CryptoProvider} used for payload signing.
    */
-  public DiagnosisKeysCountryDirectoryImpl(Collection<DiagnosisKey> diagnosisKeys,
+  public DiagnosisKeysDateDirectoryOnDisk(Collection<DiagnosisKey> diagnosisKeys,
       CryptoProvider cryptoProvider) {
-    super(COUNTRY_DIRECTORY, __ -> Set.of(COUNTRY), Object::toString);
-    this.diagnosisKeys = diagnosisKeys;
+    super(DATE_DIRECTORY, __ -> DateTime.getDates(diagnosisKeys), ISO8601::format);
     this.cryptoProvider = cryptoProvider;
+    this.diagnosisKeys = diagnosisKeys;
   }
 
   @Override
   public void prepare(ImmutableStack<Object> indices) {
-    this.addWritableToAll(__ -> {
-      IndexDirectory<LocalDate> dateDirectory = new DiagnosisKeysDateDirectoryImpl(diagnosisKeys,
-          cryptoProvider);
-      return decorateDateDirectory(dateDirectory);
+    this.addWritableToAll(currentIndices -> {
+      LocalDate currentDate = (LocalDate) currentIndices.peek();
+      IndexDirectory<LocalDateTime> hourDirectory = new DiagnosisKeysHourDirectoryOnDisk(
+          diagnosisKeys, currentDate, cryptoProvider);
+      return decorateHourDirectory(hourDirectory);
     });
     super.prepare(indices);
   }
 
-  private Directory decorateDateDirectory(IndexDirectory<LocalDate> dateDirectory) {
-    return new DateAggregatingDecorator(new IndexingDecorator<>(dateDirectory), cryptoProvider);
+  private Directory decorateHourDirectory(IndexDirectory<LocalDateTime> hourDirectory) {
+    return new AbstractIndexingDecorator<>(hourDirectory);
   }
 }

@@ -20,7 +20,7 @@
 package app.coronawarn.server.services.distribution.assembly.component;
 
 import app.coronawarn.server.services.distribution.assembly.structure.directory.Directory;
-import app.coronawarn.server.services.distribution.assembly.structure.directory.DirectoryImpl;
+import app.coronawarn.server.services.distribution.assembly.structure.directory.DirectoryOnDisk;
 import java.io.IOException;
 import org.apache.commons.io.FileUtils;
 import org.slf4j.Logger;
@@ -40,7 +40,7 @@ public class OutputDirectoryProvider {
   private String outputPath;
 
   public Directory getDirectory() {
-    return new DirectoryImpl(getFileOnDisk());
+    return new DirectoryOnDisk(getFileOnDisk());
   }
 
   public java.io.File getFileOnDisk() {

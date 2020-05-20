@@ -19,11 +19,11 @@
 
 package app.coronawarn.server.services.distribution.assembly.structure.directory;
 
-import static app.coronawarn.server.services.distribution.assembly.structure.functional.CheckedConsumer.uncheckedConsumer;
+import static app.coronawarn.server.services.distribution.assembly.structure.util.functional.CheckedConsumer.uncheckedConsumer;
 
 import app.coronawarn.server.services.distribution.assembly.structure.Writable;
-import app.coronawarn.server.services.distribution.assembly.structure.WritableImpl;
 import app.coronawarn.server.services.distribution.assembly.structure.file.File;
+import app.coronawarn.server.services.distribution.assembly.structure.WritableOnDisk;
 import app.coronawarn.server.services.distribution.assembly.structure.util.ImmutableStack;
 import java.util.HashSet;
 import java.util.Set;
@@ -31,44 +31,44 @@ import java.util.Set;
 /**
  * Implementation of {@link Directory} that interfaces with {@link java.io.File Files} on disk.
  */
-public class DirectoryImpl extends WritableImpl implements Directory {
+public class DirectoryOnDisk extends WritableOnDisk implements Directory<WritableOnDisk> {
 
-  private final Set<Writable> writables = new HashSet<>();
+  private final Set<WritableOnDisk> writables = new HashSet<>();
 
   /**
-   * A root {@link DirectoryImpl} representing an already existing directory on disk.
+   * A root {@link DirectoryOnDisk} representing an already existing directory on disk.
    *
-   * @param file The {@link File File} that this {@link DirectoryImpl} represents on disk.
+   * @param file The {@link File File} that this {@link DirectoryOnDisk} represents on disk.
    */
-  public DirectoryImpl(java.io.File file) {
+  public DirectoryOnDisk(java.io.File file) {
     super(file);
   }
 
   /**
-   * A {@link DirectoryImpl} that does not yet represent an already existing directory on disk, but
-   * one that shall be created on disk when calling {@link DirectoryImpl#write}. A parent needs to
-   * be defined by calling {@link DirectoryImpl#setParent}, before writing can succeed.
+   * A {@link DirectoryOnDisk} that does not yet represent an already existing directory on disk, but
+   * one that shall be created on disk when calling {@link DirectoryOnDisk#write}. A parent needs to
+   * be defined by calling {@link DirectoryOnDisk#setParent}, before writing can succeed.
    *
    * @param name The name that this directory should have on disk.
    */
-  public DirectoryImpl(String name) {
+  public DirectoryOnDisk(String name) {
     super(name);
   }
 
   @Override
-  public void addWritable(Writable writable) {
+  public void addWritable(WritableOnDisk writable) {
     this.writables.add(writable);
     writable.setParent(this);
   }
 
   @Override
-  public Set<Writable> getWritables() {
+  public Set<WritableOnDisk> getWritables() {
     return this.writables;
   }
 
   /**
    * Delegates the {@link Writable#prepare} call to all contained {@link
-   * DirectoryImpl#getWritables()} writables}.
+   * DirectoryOnDisk#getWritables()} writables}.
    */
   @Override
   public void prepare(ImmutableStack<Object> indices) {
@@ -76,7 +76,7 @@ public class DirectoryImpl extends WritableImpl implements Directory {
   }
 
   /**
-   * Writes this {@link DirectoryImpl} and all of its {@link DirectoryImpl#getWritables()}
+   * Writes this {@link DirectoryOnDisk} and all of its {@link DirectoryOnDisk#getWritables()}
    * writables} to disk.
    */
   @Override

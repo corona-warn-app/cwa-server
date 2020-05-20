@@ -21,19 +21,17 @@ package app.coronawarn.server.services.distribution.assembly.structure.file;
 
 import app.coronawarn.server.services.distribution.assembly.io.IO;
 import app.coronawarn.server.services.distribution.assembly.structure.Writable;
-import app.coronawarn.server.services.distribution.assembly.structure.WritableImpl;
+import app.coronawarn.server.services.distribution.assembly.structure.WritableOnDisk;
 import app.coronawarn.server.services.distribution.assembly.structure.util.ImmutableStack;
-import java.io.FileNotFoundException;
-import java.io.IOException;
 
 /**
- * Implementation of {@link File} that interfaces with {@link java.io.File Files} on disk.
+ * A {@link File} that can be written to disk.
  */
-public class FileImpl extends WritableImpl implements File {
+public class FileOnDisk extends WritableOnDisk implements File<WritableOnDisk> {
 
   private byte[] bytes;
 
-  public FileImpl(String name, byte[] bytes) {
+  public FileOnDisk(String name, byte[] bytes) {
     super(name);
     this.bytes = bytes;
   }

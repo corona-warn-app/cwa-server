@@ -22,11 +22,11 @@ package app.coronawarn.server.services.distribution.assembly.exposureconfig.stru
 import app.coronawarn.server.common.protocols.internal.RiskScoreParameters;
 import app.coronawarn.server.services.distribution.assembly.component.CryptoProvider;
 import app.coronawarn.server.services.distribution.assembly.structure.archive.Archive;
-import app.coronawarn.server.services.distribution.assembly.structure.directory.DirectoryImpl;
-import app.coronawarn.server.services.distribution.assembly.structure.directory.IndexDirectoryImpl;
-import app.coronawarn.server.services.distribution.assembly.structure.directory.decorator.IndexingDecorator;
-import app.coronawarn.server.services.distribution.assembly.structure.file.FileImpl;
-import app.coronawarn.server.services.distribution.assembly.structure.archive.ArchiveImpl;
+import app.coronawarn.server.services.distribution.assembly.structure.archive.ArchiveOnDisk;
+import app.coronawarn.server.services.distribution.assembly.structure.directory.DirectoryOnDisk;
+import app.coronawarn.server.services.distribution.assembly.structure.directory.IndexDirectoryOnDisk;
+import app.coronawarn.server.services.distribution.assembly.structure.directory.decorator.AbstractIndexingDecorator;
+import app.coronawarn.server.services.distribution.assembly.structure.file.FileOnDisk;
 import java.util.Set;
 
 /**
@@ -34,7 +34,7 @@ import java.util.Set;
  * {@code index} containing {@link RiskScoreParameters} wrapped in a {@link
  * app.coronawarn.server.common.protocols.internal.SignedPayload}.
  */
-public class ExposureConfigurationDirectoryImpl extends DirectoryImpl {
+public class ExposureConfigurationDirectoryOnDisk extends DirectoryOnDisk {
 
   private static final String PARAMETERS_DIRECTORY = "parameters";
   private static final String COUNTRY_DIRECTORY = "country";
@@ -48,19 +48,19 @@ public class ExposureConfigurationDirectoryImpl extends DirectoryImpl {
    * @param cryptoProvider The {@link CryptoProvider} whose artifacts to use for creating the {@link
    *                       app.coronawarn.server.common.protocols.internal.SignedPayload}. TODO
    */
-  public ExposureConfigurationDirectoryImpl(RiskScoreParameters exposureConfig,
+  public ExposureConfigurationDirectoryOnDisk(RiskScoreParameters exposureConfig,
       CryptoProvider cryptoProvider) {
     super(PARAMETERS_DIRECTORY);
 
     // TODO Extract into config archive
-    Archive archive = new ArchiveImpl(INDEX_FILE_NAME);
-    archive.addWritable(new FileImpl("export.bin", exposureConfig.toByteArray()));
+    Archive archive = new ArchiveOnDisk(INDEX_FILE_NAME);
+    archive.addWritable(new FileOnDisk("export.bin", exposureConfig.toByteArray()));
 
-    IndexDirectoryImpl<String> country =
-        new IndexDirectoryImpl<>(COUNTRY_DIRECTORY, __ -> Set.of(COUNTRY), Object::toString);
+    IndexDirectoryOnDisk<String> country =
+        new IndexDirectoryOnDisk<>(COUNTRY_DIRECTORY, __ -> Set.of(COUNTRY), Object::toString);
     country.addWritableToAll(__ ->
-        new ExposureConfigSigningDecorator(archive, cryptoProvider));
+        new ExposureConfigAbstractSigningDecorator(archive, cryptoProvider));
 
-    this.addWritable(new IndexingDecorator<>(country));
+    this.addWritable(new AbstractIndexingDecorator<>(country));
   }
 }

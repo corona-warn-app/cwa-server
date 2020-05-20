@@ -23,9 +23,9 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import app.coronawarn.server.services.distribution.assembly.structure.Writable;
 import app.coronawarn.server.services.distribution.assembly.structure.file.File;
-import app.coronawarn.server.services.distribution.assembly.structure.file.FileImpl;
-import app.coronawarn.server.services.distribution.assembly.structure.functional.Formatter;
-import app.coronawarn.server.services.distribution.assembly.structure.functional.IndexFunction;
+import app.coronawarn.server.services.distribution.assembly.structure.file.FileOnDisk;
+import app.coronawarn.server.services.distribution.assembly.structure.util.functional.Formatter;
+import app.coronawarn.server.services.distribution.assembly.structure.util.functional.IndexFunction;
 import app.coronawarn.server.services.distribution.assembly.structure.util.ImmutableStack;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -58,8 +58,8 @@ public class IndexDirectoryTest {
     temporaryFolder.create();
     outputFile = temporaryFolder.newFolder();
 
-    indexDirectory = new IndexDirectoryImpl<>(name, indexFunction, indexFormatter);
-    outputDirectory = new DirectoryImpl(outputFile);
+    indexDirectory = new IndexDirectoryOnDisk<>(name, indexFunction, indexFormatter);
+    outputDirectory = new DirectoryOnDisk(outputFile);
     outputDirectory.addWritable(indexDirectory);
   }
 
@@ -77,7 +77,7 @@ public class IndexDirectoryTest {
   public void checkAddFileToAll() {
     List<File> expectedFileList = new ArrayList<>();
     indexDirectory.addWritableToAll(__ -> {
-      File newFile = new FileImpl("index", new byte[0]);
+      File newFile = new FileOnDisk("index", new byte[0]);
       expectedFileList.add(newFile);
       return newFile;
     });
@@ -102,7 +102,7 @@ public class IndexDirectoryTest {
   public void checkAddDirectoryToAll() {
     List<Directory> expectedFileList = new ArrayList<>();
     indexDirectory.addWritableToAll(__ -> {
-      Directory newDirectory = new DirectoryImpl("something");
+      Directory newDirectory = new DirectoryOnDisk("something");
       expectedFileList.add(newDirectory);
       return newDirectory;
     });
