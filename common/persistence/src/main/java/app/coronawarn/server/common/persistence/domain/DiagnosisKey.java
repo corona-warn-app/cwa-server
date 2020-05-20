@@ -52,7 +52,7 @@ public class DiagnosisKey {
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;
 
-  @Size(min = 16, max = 16, message = "Key data must be byte array of length 16.")
+  @Size(min = 16, max = 16, message = "Key data must be a byte array of length 16.")
   private byte[] keyData;
 
   @ValidRollingStartNumber

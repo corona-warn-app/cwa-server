@@ -22,6 +22,7 @@ import static org.mockito.Mockito.when;
 
 import app.coronawarn.server.common.persistence.repository.DiagnosisKeyRepository;
 import app.coronawarn.server.common.persistence.service.DiagnosisKeyService;
+import app.coronawarn.server.common.persistence.service.DiagnosisKeyServiceTestHelper;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.List;
@@ -50,7 +51,7 @@ public class DiagnosisKeyServiceMockedRepositoryTest {
   void testKeyRetrievalWithInvalidDbEntries() {
     DiagnosisKey invalidKey1 = invalidKey(1L);
     DiagnosisKey invalidKey2 = invalidKey(3L);
-    var expKeys = new ArrayList<>(List.of(invalidKey1, invalidKey2));
+    var expKeys = List.of(invalidKey1, invalidKey2);
 
     mockInvalidKeyInDb(expKeys);
 
@@ -73,10 +74,10 @@ public class DiagnosisKeyServiceMockedRepositoryTest {
     List<DiagnosisKey> actualKeys = diagnosisKeyService.getDiagnosisKeys();
     expKeys.remove(invalidKey1);
     expKeys.remove(invalidKey2);
-    assertDiagnosisKeysEqual(expKeys, actualKeys);
+    DiagnosisKeyServiceTestHelper.assertDiagnosisKeysEqual(expKeys, actualKeys);
   }
 
-  private void mockInvalidKeyInDb(ArrayList<DiagnosisKey> keys) {
+  private void mockInvalidKeyInDb(List<DiagnosisKey> keys) {
     when(diagnosisKeyRepository.findAll(Sort.by(Direction.ASC, "submissionTimestamp"))).thenReturn(keys);
   }
 
@@ -89,26 +90,6 @@ public class DiagnosisKeyServiceMockedRepositoryTest {
     byte[] expKeyData = "17--bytelongarray".getBytes(Charset.defaultCharset());
     return new DiagnosisKey(expKeyData, expRollingStartNumber,
         expRollingPeriod, expTransmissionRiskLevel, expSubmissionTimestamp);
-  }
-
-
-  private void assertDiagnosisKeysEqual(List<DiagnosisKey> expKeys, List<DiagnosisKey> actKeys) {
-    assertEquals(expKeys.size(), actKeys.size(), "Cardinality mismatch");
-
-    for (int i = 0; i < expKeys.size(); i++) {
-      var expKey = expKeys.get(i);
-      var actKey = actKeys.get(i);
-
-      assertEquals(expKey.getKeyData(), actKey.getKeyData(), "keyData mismatch");
-      assertEquals(expKey.getRollingStartNumber(), actKey.getRollingStartNumber(),
-          "rollingStartNumber mismatch");
-      assertEquals(expKey.getRollingPeriod(), actKey.getRollingPeriod(),
-          "rollingPeriod mismatch");
-      assertEquals(expKey.getTransmissionRiskLevel(), actKey.getTransmissionRiskLevel(),
-          "transmissionRiskLevel mismatch");
-      assertEquals(expKey.getSubmissionTimestamp(), actKey.getSubmissionTimestamp(),
-          "submissionTimestamp mismatch");
-    }
   }
 
 }

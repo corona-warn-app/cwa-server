@@ -20,7 +20,6 @@
 package app.coronawarn.server.common.persistence.service;
 
 import static java.time.ZoneOffset.UTC;
-import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import app.coronawarn.server.common.persistence.domain.DiagnosisKey;
@@ -53,7 +52,7 @@ public class DiagnosisKeyServiceTest {
   @Test
   void testRetrievalForEmptyDB() {
     var actKeys = diagnosisKeyService.getDiagnosisKeys();
-    assertDiagnosisKeysEqual(Lists.emptyList(), actKeys);
+    DiagnosisKeyServiceTestHelper.assertDiagnosisKeysEqual(Lists.emptyList(), actKeys);
   }
 
   @Test
@@ -63,7 +62,7 @@ public class DiagnosisKeyServiceTest {
     diagnosisKeyService.saveDiagnosisKeys(expKeys);
     var actKeys = diagnosisKeyService.getDiagnosisKeys();
 
-    assertDiagnosisKeysEqual(expKeys, actKeys);
+    DiagnosisKeyServiceTestHelper.assertDiagnosisKeysEqual(expKeys, actKeys);
   }
 
   @Test
@@ -78,14 +77,14 @@ public class DiagnosisKeyServiceTest {
     Collections.reverse(expKeys);
     var actKeys = diagnosisKeyService.getDiagnosisKeys();
 
-    assertDiagnosisKeysEqual(expKeys, actKeys);
+    DiagnosisKeyServiceTestHelper.assertDiagnosisKeysEqual(expKeys, actKeys);
   }
 
   @Test
   void testApplyRetentionPolicyForEmptyDb() {
     diagnosisKeyService.applyRetentionPolicy(1);
     var actKeys = diagnosisKeyService.getDiagnosisKeys();
-    assertDiagnosisKeysEqual(Lists.emptyList(), actKeys);
+    DiagnosisKeyServiceTestHelper.assertDiagnosisKeysEqual(Lists.emptyList(), actKeys);
   }
 
   @Test
@@ -96,7 +95,7 @@ public class DiagnosisKeyServiceTest {
     diagnosisKeyService.applyRetentionPolicy(1);
     var actKeys = diagnosisKeyService.getDiagnosisKeys();
 
-    assertDiagnosisKeysEqual(expKeys, actKeys);
+    DiagnosisKeyServiceTestHelper.assertDiagnosisKeysEqual(expKeys, actKeys);
   }
 
   @Test
@@ -107,7 +106,7 @@ public class DiagnosisKeyServiceTest {
     diagnosisKeyService.applyRetentionPolicy(1);
     var actKeys = diagnosisKeyService.getDiagnosisKeys();
 
-    assertDiagnosisKeysEqual(Lists.emptyList(), actKeys);
+    DiagnosisKeyServiceTestHelper.assertDiagnosisKeysEqual(Lists.emptyList(), actKeys);
   }
 
   @Test
@@ -125,26 +124,7 @@ public class DiagnosisKeyServiceTest {
 
     List<DiagnosisKey> actKeys = diagnosisKeyService.getDiagnosisKeys();
 
-    assertDiagnosisKeysEqual(Lists.emptyList(), actKeys);
-  }
-
-  private void assertDiagnosisKeysEqual(List<DiagnosisKey> expKeys, List<DiagnosisKey> actKeys) {
-    assertEquals(expKeys.size(), actKeys.size(), "Cardinality mismatch");
-
-    for (int i = 0; i < expKeys.size(); i++) {
-      var expKey = expKeys.get(i);
-      var actKey = actKeys.get(i);
-
-      assertEquals(expKey.getKeyData(), actKey.getKeyData(), "keyData mismatch");
-      assertEquals(expKey.getRollingStartNumber(), actKey.getRollingStartNumber(),
-          "rollingStartNumber mismatch");
-      assertEquals(expKey.getRollingPeriod(), actKey.getRollingPeriod(),
-          "rollingPeriod mismatch");
-      assertEquals(expKey.getTransmissionRiskLevel(), actKey.getTransmissionRiskLevel(),
-          "transmissionRiskLevel mismatch");
-      assertEquals(expKey.getSubmissionTimestamp(), actKey.getSubmissionTimestamp(),
-          "submissionTimestamp mismatch");
-    }
+    DiagnosisKeyServiceTestHelper.assertDiagnosisKeysEqual(Lists.emptyList(), actKeys);
   }
 
   public static DiagnosisKey buildDiagnosisKeyForSubmissionTimestamp(long submissionTimeStamp) {
