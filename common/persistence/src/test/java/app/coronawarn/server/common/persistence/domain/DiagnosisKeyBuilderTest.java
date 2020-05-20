@@ -96,29 +96,29 @@ public class DiagnosisKeyBuilderTest {
 
   @Test
   public void failsForInvalidKeyData() {
-    assertInvalidKeyBuildingFaulures("17--bytelongarray".getBytes(Charset.defaultCharset()),
+    assertInvalidKeyBuildingFailures("17--bytelongarray".getBytes(Charset.defaultCharset()),
         this.expRollingStartNumber, this.expRollingPeriod, this.expTransmissionRiskLevel);
   }
 
   @Test
   public void failsForInvalidRollingStartNumber() {
-    assertInvalidKeyBuildingFaulures(this.expKeyData, 0, this.expRollingPeriod,
+    assertInvalidKeyBuildingFailures(this.expKeyData, 0, this.expRollingPeriod,
         this.expTransmissionRiskLevel);
   }
 
   @Test
   public void failsForInvalidRollingPeriod() {
-    assertInvalidKeyBuildingFaulures(this.expKeyData, this.expRollingStartNumber,
+    assertInvalidKeyBuildingFailures(this.expKeyData, this.expRollingStartNumber,
         this.expRollingPeriod, 0);
   }
 
   @Test
   public void failsForInvalidTransmissionRiskLevel() {
-    assertInvalidKeyBuildingFaulures(this.expKeyData, this.expRollingStartNumber,
+    assertInvalidKeyBuildingFailures(this.expKeyData, this.expRollingStartNumber,
         this.expRollingPeriod, 10);
   }
 
-  private void assertInvalidKeyBuildingFaulures(byte[] expKeyData, long expRollingStartNumber,
+  private void assertInvalidKeyBuildingFailures(byte[] expKeyData, long expRollingStartNumber,
       long expRollingPeriod, int transmissionRiskLevel) {
 
     FinalBuilder finalBuilder = DiagnosisKey.builder()
