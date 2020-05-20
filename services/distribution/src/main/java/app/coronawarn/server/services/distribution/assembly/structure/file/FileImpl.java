@@ -42,7 +42,7 @@ public class FileImpl extends WritableImpl implements File {
    */
   @Override
   public void write() {
-    IO.makeFile(this.getParent().getFileOnDisk(), this.getName());
+    IO.makeNewFile(this.getParent().getFileOnDisk(), this.getName());
     IO.writeBytesToFile(this.getBytes(), this.getFileOnDisk());
   }
 
