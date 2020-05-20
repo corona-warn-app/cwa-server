@@ -19,10 +19,12 @@
 
 package app.coronawarn.server.common.persistence.service;
 
+import static app.coronawarn.server.common.persistence.service.DiagnosisKeyServiceTestHelper.assertDiagnosisKeysEqual;
 import static java.time.ZoneOffset.UTC;
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import app.coronawarn.server.common.persistence.domain.DiagnosisKey;
+import app.coronawarn.server.common.persistence.exception.InvalidDiagnosisKeyException;
 import app.coronawarn.server.common.persistence.repository.DiagnosisKeyRepository;
 import java.time.OffsetDateTime;
 import java.util.ArrayList;
@@ -108,23 +110,22 @@ public class DiagnosisKeyServiceTest {
     assertDiagnosisKeysEqual(Lists.emptyList(), actKeys);
   }
 
-  private void assertDiagnosisKeysEqual(List<DiagnosisKey> expKeys, List<DiagnosisKey> actKeys) {
-    assertEquals(expKeys.size(), actKeys.size(), "Cardinality mismatch");
+  @Test
+  void testNoPersistOnValidationError() {
+    assertThrows(InvalidDiagnosisKeyException.class, () -> {
+      var keys = List.of(DiagnosisKey.builder()
+          .withKeyData(new byte[16])
+          .withRollingStartNumber(OffsetDateTime.now(UTC).toEpochSecond() / 600L)
+          .withRollingPeriod(1L)
+          .withTransmissionRiskLevel(2)
+          .withSubmissionTimestamp(0L).build());
 
-    for (int i = 0; i < expKeys.size(); i++) {
-      var expKey = expKeys.get(i);
-      var actKey = actKeys.get(i);
+      diagnosisKeyService.saveDiagnosisKeys(keys);
+    });
 
-      assertEquals(expKey.getKeyData(), actKey.getKeyData(), "keyData mismatch");
-      assertEquals(expKey.getRollingStartNumber(), actKey.getRollingStartNumber(),
-          "rollingStartNumber mismatch");
-      assertEquals(expKey.getRollingPeriod(), actKey.getRollingPeriod(),
-          "rollingPeriod mismatch");
-      assertEquals(expKey.getTransmissionRiskLevel(), actKey.getTransmissionRiskLevel(),
-          "transmissionRiskLevel mismatch");
-      assertEquals(expKey.getSubmissionTimestamp(), actKey.getSubmissionTimestamp(),
-          "submissionTimestamp mismatch");
-    }
+    List<DiagnosisKey> actKeys = diagnosisKeyService.getDiagnosisKeys();
+
+    assertDiagnosisKeysEqual(Lists.emptyList(), actKeys);
   }
 
   public static DiagnosisKey buildDiagnosisKeyForSubmissionTimestamp(long submissionTimeStamp) {
