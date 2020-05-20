@@ -16,7 +16,6 @@
 
 package app.coronawarn.server.common.persistence.domain;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.when;
 
@@ -91,5 +90,4 @@ public class DiagnosisKeyServiceMockedRepositoryTest {
     return new DiagnosisKey(expKeyData, expRollingStartNumber,
         expRollingPeriod, expTransmissionRiskLevel, expSubmissionTimestamp);
   }
-
 }
