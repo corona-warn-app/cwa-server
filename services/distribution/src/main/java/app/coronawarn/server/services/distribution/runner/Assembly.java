@@ -42,14 +42,23 @@ public class Assembly implements ApplicationRunner {
 
   private static final Logger logger = LoggerFactory.getLogger(Assembly.class);
 
-  @Autowired
-  private OutputDirectoryProvider outputDirectoryProvider;
+  private final OutputDirectoryProvider outputDirectoryProvider;
 
-  @Autowired
-  private CwaApiStructureProvider cwaApiStructureProvider;
+  private final CwaApiStructureProvider cwaApiStructureProvider;
 
+  private final ApplicationContext applicationContext;
+
+  /**
+   * Creates an Assembly, using {@link OutputDirectoryProvider}, {@link CwaApiStructureProvider}
+   * and {@link ApplicationContext}.
+   */
   @Autowired
-  private ApplicationContext applicationContext;
+  public Assembly(OutputDirectoryProvider outputDirectoryProvider, CwaApiStructureProvider cwaApiStructureProvider,
+                  ApplicationContext applicationContext) {
+    this.outputDirectoryProvider = outputDirectoryProvider;
+    this.cwaApiStructureProvider = cwaApiStructureProvider;
+    this.applicationContext = applicationContext;
+  }
 
   @Override
   public void run(ApplicationArguments args) {
