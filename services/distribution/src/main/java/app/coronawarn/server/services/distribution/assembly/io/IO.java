@@ -42,7 +42,9 @@ public class IO {
   public static boolean makeNewFile(File root, String name) {
     File directory = new File(root, name);
     try {
-      return directory.createNewFile();
+      if (!directory.createNewFile()) {
+        throw new IOException("Could not create " + name + ", file already exists");
+      }
     } catch (IOException e) {
       logger.error("Failed to create file: {}", name, e);
       throw new RuntimeException(e);
