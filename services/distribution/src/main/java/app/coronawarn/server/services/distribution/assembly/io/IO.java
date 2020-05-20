@@ -33,15 +33,16 @@ public class IO {
   private static final Logger logger = LoggerFactory.getLogger(IO.class);
 
   /**
-   * Creates a new file on disk.
+   * Create a file on the disk if it does not already exist.
    *
    * @param root The parent file.
    * @param name The name of the new file.
+   * @return Whether the file is successfully created
    */
-  public static void makeFile(File root, String name) {
+  public static boolean makeNewFile(File root, String name) {
     File directory = new File(root, name);
     try {
-      directory.createNewFile();
+      return directory.createNewFile();
     } catch (IOException e) {
       logger.error("Failed to create file: {}", name, e);
       throw new RuntimeException(e);
