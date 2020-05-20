@@ -28,6 +28,6 @@ public class ValidRollingStartNumberValidator implements ConstraintValidator<Val
   @Override
   public boolean isValid(Long rollingStartNumber, ConstraintValidatorContext constraintValidatorContext) {
     long currentInstant = LocalDateTime.ofInstant(Instant.now(), UTC).toEpochSecond(UTC) / 600L;
-    return rollingStartNumber > 0 && rollingStartNumber < currentInstant;
+    return rollingStartNumber > 0L && rollingStartNumber < currentInstant;
   }
 }

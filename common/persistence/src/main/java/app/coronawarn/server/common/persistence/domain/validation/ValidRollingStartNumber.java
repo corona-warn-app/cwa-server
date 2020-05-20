@@ -32,18 +32,21 @@ public @interface ValidRollingStartNumber {
 
   /**
    * Error message.
-   * @return
+   *
+   * @return the error message
    */
-  String message() default "Rolling start cannot be in the future.";
+  String message() default "Rolling start number must be greater 0 and cannot be in the future.";
 
   /**
    * Groups.
+   *
    * @return
    */
   Class<?>[] groups() default {};
 
   /**
    * Payload.
+   *
    * @return
    */
   Class<? extends Payload>[] payload() default {};

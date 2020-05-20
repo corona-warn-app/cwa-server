@@ -21,18 +21,17 @@ package app.coronawarn.server.common.persistence.domain;
 
 import static java.time.ZoneOffset.UTC;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import app.coronawarn.server.common.persistence.exception.InvalidDiagnosisKeyException;
 import java.nio.charset.Charset;
 import java.time.Instant;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import org.assertj.core.api.Assertions;
-import java.time.Instant;
-import java.time.LocalDateTime;
 import org.junit.jupiter.api.Test;
 
 public class DiagnosisKeyTest {
@@ -95,7 +94,7 @@ public class DiagnosisKeyTest {
     checkMessage(assertThrows(
         InvalidDiagnosisKeyException.class,
         keyWithRollingStartNumber(1904169600L)::validate),
-        "[Rolling start cannot be in the future. Invalid Value: 1904169600]");
+        "[Rolling start number must be greater 0 and cannot be in the future. Invalid Value: 1904169600]");
 
     long tomorrow = LocalDate
         .ofInstant(Instant.now(), ZoneOffset.UTC)
@@ -104,7 +103,8 @@ public class DiagnosisKeyTest {
 
     checkMessage(assertThrows(
         InvalidDiagnosisKeyException.class, keyWithRollingStartNumber(tomorrow)::validate),
-        String.format("[Rolling start cannot be in the future. Invalid Value: %s]", tomorrow));
+        String.format("[Rolling start number must be greater 0 and cannot be in the future. Invalid Value: %s]",
+            tomorrow));
 
   }
 
