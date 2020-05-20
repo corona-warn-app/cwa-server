@@ -156,6 +156,19 @@ public class DiagnosisKey {
     return violations.isEmpty();
   }
 
+  /**
+   * Gets any constraint violations that this key might incorporate.
+   *
+   * <p><ul>
+   * <li>Risk level must be between 0 and 8
+   * <li>Rolling start number must be greater than 0
+   * <li>Rolling start number cannot be in the future
+   * <li>Rolling period must be positive number
+   * <li>Key data must be byte array of length 16
+   * </ul>
+   *
+   * @return A set of constraint violations of this key.
+   */
   public Set<ConstraintViolation<DiagnosisKey>> getConstraintViolations() {
     return VALIDATOR.validate(this);
   }
