@@ -38,11 +38,11 @@ class DiagnosisKeyValidatorTest {
   @Test
   public void transmissionRiskLevelMustBeInRange() {
 
-    assertException(
+    assertKeyValidation(
         () -> DiagnosisKeyValidator.validateTransmissionRiskLevel(9),
         "Risk level 9 is not allowed. Must be between 0 and 8.");
 
-    assertException(
+    assertKeyValidation(
         () -> DiagnosisKeyValidator.validateTransmissionRiskLevel(-1),
         "Risk level -1 is not allowed. Must be between 0 and 8.");
   }
@@ -72,7 +72,7 @@ class DiagnosisKeyValidatorTest {
 
   @Test
   public void rollingStartNumberCannotBeInFuture() {
-    assertException(
+    assertKeyValidation(
         () -> DiagnosisKeyValidator.validateRollingStartNumber(1904169600L),
         "Rolling start cannot be in the future.");
 
@@ -81,18 +81,18 @@ class DiagnosisKeyValidatorTest {
         .plusDays(1).atStartOfDay()
         .toEpochSecond(UTC);
 
-    assertException(
+    assertKeyValidation(
         () -> DiagnosisKeyValidator.validateRollingStartNumber(tomorrow),
         "Rolling start cannot be in the future.");
   }
 
   @Test
   public void rollingPeriodMustBeLargerThanZero() {
-    assertException(
+    assertKeyValidation(
         () -> DiagnosisKeyValidator.validateRollingPeriod(0),
         "Rolling period must be positive number, but is 0.");
 
-    assertException(
+    assertKeyValidation(
         () -> DiagnosisKeyValidator.validateRollingPeriod(-3L),
         "Rolling period must be positive number, but is -3.");
   }
@@ -106,21 +106,21 @@ class DiagnosisKeyValidatorTest {
 
   @Test
   public void keyDataMustHaveValidLength() {
-    assertException(
+    assertKeyValidation(
         () -> DiagnosisKeyValidator
             .validateKeyData("17--bytelongarray".getBytes(DEFAULT_CHAR_SET)),
         "Key data must be byte array of length 16, but is 17.");
 
-    assertException(
+    assertKeyValidation(
         () -> DiagnosisKeyValidator.validateKeyData("".getBytes(DEFAULT_CHAR_SET)),
         "Key data must be byte array of length 16, but is 0.");
 
-    assertException(
+    assertKeyValidation(
         () -> DiagnosisKeyValidator.validateKeyData("1".getBytes(DEFAULT_CHAR_SET)),
         "Key data must be byte array of length 16, but is 1.");
   }
 
-  private void assertException(ThrowingCallable throwingCallable, String message) {
+  private void assertKeyValidation(ThrowingCallable throwingCallable, String message) {
     assertThat(catchThrowable(throwingCallable))
         .isInstanceOf(InvalidDiagnosisKeyException.class)
         .hasMessage(message);
