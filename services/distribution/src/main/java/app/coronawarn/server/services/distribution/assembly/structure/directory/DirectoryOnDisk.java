@@ -29,7 +29,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 /**
- * Implementation of {@link Directory} that interfaces with {@link java.io.File Files} on disk.
+ * A {@link Directory} that can be written to disk.
  */
 public class DirectoryOnDisk extends WritableOnDisk implements Directory<WritableOnDisk> {
 

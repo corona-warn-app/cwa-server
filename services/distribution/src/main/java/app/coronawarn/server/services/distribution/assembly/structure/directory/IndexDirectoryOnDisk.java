@@ -29,6 +29,11 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.Stack;
 
+/**
+ * An {@link IndexDirectory} that can be written to disk.
+ *
+ * @param <T> The type of the elements in the index.
+ */
 public class IndexDirectoryOnDisk<T> extends DirectoryOnDisk implements IndexDirectory<T, WritableOnDisk> {
 
   // Writables to be written into every directory created through the index
@@ -69,13 +74,13 @@ public class IndexDirectoryOnDisk<T> extends DirectoryOnDisk implements IndexDir
   }
 
   /**
-   * Creates a new subdirectory for every element of the {@link IndexDirectory#getIndex index} and writes all its {@link
-   * IndexDirectory#addWritableToAll writables} to those. The respective element of the index will be pushed onto the
-   * Stack for subsequent {@link Writable#prepare} calls.
+   * Creates a new subdirectory for every element of the {@link IndexDirectory#getIndex index} and writes all its
+   * {@link IndexDirectory#addWritableToAll writables} to those. The respective element of the index will be pushed
+   * onto the Stack for subsequent {@link Writable#prepare} calls.
    *
    * @param indices A {@link Stack} of parameters from all {@link IndexDirectory IndexDirectories} further up in the
-   *                hierarchy. The Stack may contain different types, depending on the types {@code T} of {@link
-   *                IndexDirectory IndexDirectories} further up in the hierarchy.
+   *                hierarchy. The Stack may contain different types, depending on the types {@code T} of
+   *                {@link IndexDirectory IndexDirectories} further up in the hierarchy.
    */
   @Override
   public void prepare(ImmutableStack<Object> indices) {

@@ -33,9 +33,6 @@ import java.security.Signature;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-/**
- * A {@link DirectoryDecorator} that will add a signature file to the {@link Directory} it decorates.
- */
 public abstract class AbstractSigningDecorator<W extends Writable<W>> extends DirectoryDecorator<W> implements
     SigningDecorator<W> {
 
@@ -51,9 +48,6 @@ public abstract class AbstractSigningDecorator<W extends Writable<W>> extends Di
     this.cryptoProvider = cryptoProvider;
   }
 
-  /**
-   * See {@link AbstractSigningDecorator} class documentation.
-   */
   @Override
   public void prepare(ImmutableStack<Object> indices) {
     super.prepare(indices);
@@ -84,7 +78,7 @@ public abstract class AbstractSigningDecorator<W extends Writable<W>> extends Di
   }
 
   /**
-   * TODO Enter correct values.
+   * Returns the static {@link SignatureInfo} configured in the application properties. TODO Enter correct values.
    */
   public static SignatureInfo getSignatureInfo() {
     return SignatureInfo.newBuilder()

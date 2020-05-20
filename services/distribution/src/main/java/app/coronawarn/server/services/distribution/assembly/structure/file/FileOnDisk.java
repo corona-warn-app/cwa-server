@@ -37,12 +37,12 @@ public class FileOnDisk extends WritableOnDisk implements File<WritableOnDisk> {
   }
 
   /**
-   * Creates a {@link java.io.File} with name {@link Writable#getName} on disk and writes the {@link
-   * File#getBytes bytes} of this {@link File} into the {@link java.io.File} to disk.
+   * Creates a {@link java.io.File} with name {@link Writable#getName} on disk and writes the
+   * {@link File#getBytes bytes} of this {@link File} into that {@link java.io.File}.
    */
   @Override
   public void write() {
-    IO.makeFile(((WritableOnDisk)this.getParent()).getFileOnDisk(), this.getName());
+    IO.makeFile(((WritableOnDisk) this.getParent()).getFileOnDisk(), this.getName());
     IO.writeBytesToFile(this.getBytes(), this.getFileOnDisk());
   }
 

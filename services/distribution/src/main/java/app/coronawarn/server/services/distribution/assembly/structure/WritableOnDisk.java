@@ -24,6 +24,9 @@ import app.coronawarn.server.services.distribution.assembly.structure.directory.
 import app.coronawarn.server.services.distribution.assembly.structure.file.File;
 import java.util.Objects;
 
+/**
+ * A {@link Writable} that can be written to disk.
+ */
 public abstract class WritableOnDisk implements Writable<WritableOnDisk> {
 
   private String name;

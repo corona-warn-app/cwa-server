@@ -19,7 +19,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * TODO.
+ * An {@link Archive} that can be written to disk as a ZIP archive.
  */
 public class ArchiveOnDisk extends FileOnDisk implements Archive<WritableOnDisk> {
 
@@ -30,7 +30,7 @@ public class ArchiveOnDisk extends FileOnDisk implements Archive<WritableOnDisk>
   private DirectoryOnDisk tempDirectory;
 
   /**
-   * TODO.
+   * Constructs an {@link Archive} with an internal, temporary directory to store writables in.
    */
   public ArchiveOnDisk(String name) {
     super(name, new byte[0]);

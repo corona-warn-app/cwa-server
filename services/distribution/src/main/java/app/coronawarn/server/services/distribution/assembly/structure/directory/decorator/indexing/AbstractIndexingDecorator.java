@@ -32,11 +32,6 @@ import org.json.simple.JSONArray;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-/**
- * A {@link DirectoryDecorator} that writes a file called {@code "index"}, containing a JSON array containing all
- * elements returned {@link IndexDirectoryOnDisk#getIndex}, formatted with the {@link
- * IndexDirectoryOnDisk#getIndexFormatter} on {@link Writable#prepare}.
- */
 public abstract class AbstractIndexingDecorator<T, W extends Writable<W>> extends
     IndexDirectoryDecorator<T, W> implements IndexingDecorator<T, W> {
 

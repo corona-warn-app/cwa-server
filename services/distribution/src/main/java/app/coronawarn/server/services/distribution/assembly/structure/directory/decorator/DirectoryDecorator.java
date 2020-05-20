@@ -20,14 +20,13 @@
 package app.coronawarn.server.services.distribution.assembly.structure.directory.decorator;
 
 import app.coronawarn.server.services.distribution.assembly.structure.Writable;
-import app.coronawarn.server.services.distribution.assembly.structure.WritableOnDisk;
 import app.coronawarn.server.services.distribution.assembly.structure.directory.Directory;
 import app.coronawarn.server.services.distribution.assembly.structure.util.ImmutableStack;
 import java.util.Set;
 
 /**
- * Decorates a {@link Directory} (e.g. to modify its files, subdirectories, etc.) on {@link
- * Writable#prepare}. This class proxies all function calls to the {@link Directory} it contains.
+ * Decorates a {@link Directory} (e.g. to modify its files, subdirectories, etc.) on {@link Writable#prepare}. This
+ * class proxies all function calls to the {@link Directory} it decorates.
  */
 public abstract class DirectoryDecorator<W extends Writable<W>> implements Directory<W> {
 

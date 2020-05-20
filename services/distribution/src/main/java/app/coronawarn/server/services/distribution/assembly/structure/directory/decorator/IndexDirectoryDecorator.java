@@ -7,6 +7,10 @@ import app.coronawarn.server.services.distribution.assembly.structure.util.funct
 import app.coronawarn.server.services.distribution.assembly.structure.util.functional.WritableFunction;
 import java.util.Set;
 
+/**
+ * Decorates an {@link IndexDirectory} (e.g. to modify its files, subdirectories, etc.) on {@link Writable#prepare}.
+ * This class proxies all function calls to the {@link IndexDirectory} it decorates.
+ */
 public abstract class IndexDirectoryDecorator<T, W extends Writable<W>> extends DirectoryDecorator<W> implements
     IndexDirectory<T, W> {
 
