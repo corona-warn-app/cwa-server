@@ -21,10 +21,12 @@ package app.coronawarn.server.services.distribution.assembly.diagnosiskeys.struc
 
 import app.coronawarn.server.common.persistence.domain.DiagnosisKey;
 import app.coronawarn.server.services.distribution.assembly.component.CryptoProvider;
+import app.coronawarn.server.services.distribution.assembly.structure.WritableOnDisk;
 import app.coronawarn.server.services.distribution.assembly.structure.directory.Directory;
 import app.coronawarn.server.services.distribution.assembly.structure.directory.DirectoryOnDisk;
 import app.coronawarn.server.services.distribution.assembly.structure.directory.IndexDirectory;
-import app.coronawarn.server.services.distribution.assembly.structure.directory.decorator.AbstractIndexingDecorator;
+import app.coronawarn.server.services.distribution.assembly.structure.directory.IndexDirectoryOnDisk;
+import app.coronawarn.server.services.distribution.assembly.structure.directory.decorator.indexing.IndexingDecoratorOnDisk;
 import app.coronawarn.server.services.distribution.assembly.structure.util.ImmutableStack;
 import java.util.Collection;
 
@@ -61,7 +63,8 @@ public class DiagnosisKeysDirectoryOnDisk extends DirectoryOnDisk {
     super.prepare(indices);
   }
 
-  private Directory decorateCountryDirectory(IndexDirectory<String> countryDirectory) {
-    return new AbstractIndexingDecorator<>(countryDirectory);
+  private IndexDirectory<String, WritableOnDisk> decorateCountryDirectory(
+      IndexDirectoryOnDisk<String> countryDirectory) {
+    return new IndexingDecoratorOnDisk<>(countryDirectory);
   }
 }

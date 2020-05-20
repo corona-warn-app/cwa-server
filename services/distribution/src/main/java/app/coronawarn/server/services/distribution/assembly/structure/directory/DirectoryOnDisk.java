@@ -33,7 +33,7 @@ import java.util.Set;
  */
 public class DirectoryOnDisk extends WritableOnDisk implements Directory<WritableOnDisk> {
 
-  private final Set<WritableOnDisk> writables = new HashSet<>();
+  private final Set<Writable<WritableOnDisk>> writables = new HashSet<>();
 
   /**
    * A root {@link DirectoryOnDisk} representing an already existing directory on disk.
@@ -56,13 +56,13 @@ public class DirectoryOnDisk extends WritableOnDisk implements Directory<Writabl
   }
 
   @Override
-  public void addWritable(WritableOnDisk writable) {
+  public void addWritable(Writable<WritableOnDisk> writable) {
     this.writables.add(writable);
     writable.setParent(this);
   }
 
   @Override
-  public Set<WritableOnDisk> getWritables() {
+  public Set<Writable<WritableOnDisk>> getWritables() {
     return this.writables;
   }
 

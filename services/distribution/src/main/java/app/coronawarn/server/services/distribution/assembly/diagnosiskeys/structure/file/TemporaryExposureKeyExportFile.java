@@ -3,7 +3,7 @@ package app.coronawarn.server.services.distribution.assembly.diagnosiskeys.struc
 import app.coronawarn.server.common.persistence.domain.DiagnosisKey;
 import app.coronawarn.server.common.protocols.external.exposurenotification.TemporaryExposureKey;
 import app.coronawarn.server.common.protocols.external.exposurenotification.TemporaryExposureKeyExport;
-import app.coronawarn.server.services.distribution.assembly.structure.directory.decorator.AbstractSigningDecorator;
+import app.coronawarn.server.services.distribution.assembly.structure.directory.decorator.signing.AbstractSigningDecorator;
 import app.coronawarn.server.services.distribution.assembly.structure.file.FileOnDisk;
 import app.coronawarn.server.services.distribution.assembly.structure.util.ImmutableStack;
 import com.google.protobuf.ByteString;

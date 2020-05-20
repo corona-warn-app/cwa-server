@@ -29,7 +29,7 @@ import java.util.function.Function;
  * @param <T> The specific type of {@link Writable} that this {@link WritableFunction} can create.
  */
 @FunctionalInterface
-public interface WritableFunction<T extends Writable<T>> extends Function<ImmutableStack<Object>, T> {
+public interface WritableFunction<T extends Writable<T>> extends Function<ImmutableStack<Object>, Writable<T>> {
 
-  T apply(ImmutableStack<Object> t);
+  Writable<T> apply(ImmutableStack<Object> t);
 }

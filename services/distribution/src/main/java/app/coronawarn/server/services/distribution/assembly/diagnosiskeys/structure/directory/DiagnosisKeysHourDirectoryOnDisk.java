@@ -21,7 +21,7 @@ package app.coronawarn.server.services.distribution.assembly.diagnosiskeys.struc
 
 import app.coronawarn.server.common.persistence.domain.DiagnosisKey;
 import app.coronawarn.server.services.distribution.assembly.component.CryptoProvider;
-import app.coronawarn.server.services.distribution.assembly.diagnosiskeys.structure.directory.decorator.DiagnosisKeyAbstractSigningDecorator;
+import app.coronawarn.server.services.distribution.assembly.diagnosiskeys.structure.directory.decorator.DiagnosisKeySigningDecorator;
 import app.coronawarn.server.services.distribution.assembly.diagnosiskeys.structure.file.TemporaryExposureKeyExportFile;
 import app.coronawarn.server.services.distribution.assembly.diagnosiskeys.util.DateTime;
 import app.coronawarn.server.services.distribution.assembly.structure.archive.Archive;
@@ -93,6 +93,6 @@ public class DiagnosisKeysHourDirectoryOnDisk extends IndexDirectoryOnDisk<Local
   }
 
   private Directory decorateDiagnosisKeyArchive(Archive archive) {
-    return new DiagnosisKeyAbstractSigningDecorator(archive, cryptoProvider);
+    return new DiagnosisKeySigningDecorator(archive, cryptoProvider);
   }
 }

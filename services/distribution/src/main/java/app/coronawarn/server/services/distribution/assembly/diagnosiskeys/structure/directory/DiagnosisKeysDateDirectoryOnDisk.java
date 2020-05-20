@@ -22,10 +22,12 @@ package app.coronawarn.server.services.distribution.assembly.diagnosiskeys.struc
 import app.coronawarn.server.common.persistence.domain.DiagnosisKey;
 import app.coronawarn.server.services.distribution.assembly.component.CryptoProvider;
 import app.coronawarn.server.services.distribution.assembly.diagnosiskeys.util.DateTime;
+import app.coronawarn.server.services.distribution.assembly.structure.WritableOnDisk;
 import app.coronawarn.server.services.distribution.assembly.structure.directory.Directory;
 import app.coronawarn.server.services.distribution.assembly.structure.directory.IndexDirectory;
 import app.coronawarn.server.services.distribution.assembly.structure.directory.IndexDirectoryOnDisk;
-import app.coronawarn.server.services.distribution.assembly.structure.directory.decorator.AbstractIndexingDecorator;
+import app.coronawarn.server.services.distribution.assembly.structure.directory.decorator.indexing.AbstractIndexingDecorator;
+import app.coronawarn.server.services.distribution.assembly.structure.directory.decorator.indexing.IndexingDecoratorOnDisk;
 import app.coronawarn.server.services.distribution.assembly.structure.util.ImmutableStack;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -58,14 +60,14 @@ public class DiagnosisKeysDateDirectoryOnDisk extends IndexDirectoryOnDisk<Local
   public void prepare(ImmutableStack<Object> indices) {
     this.addWritableToAll(currentIndices -> {
       LocalDate currentDate = (LocalDate) currentIndices.peek();
-      IndexDirectory<LocalDateTime> hourDirectory = new DiagnosisKeysHourDirectoryOnDisk(
+      IndexDirectoryOnDisk<LocalDateTime> hourDirectory = new DiagnosisKeysHourDirectoryOnDisk(
           diagnosisKeys, currentDate, cryptoProvider);
       return decorateHourDirectory(hourDirectory);
     });
     super.prepare(indices);
   }
 
-  private Directory decorateHourDirectory(IndexDirectory<LocalDateTime> hourDirectory) {
-    return new AbstractIndexingDecorator<>(hourDirectory);
+  private Directory<WritableOnDisk> decorateHourDirectory(IndexDirectoryOnDisk<LocalDateTime> hourDirectory) {
+    return new IndexingDecoratorOnDisk<>(hourDirectory);
   }
 }

@@ -2,6 +2,7 @@ package app.coronawarn.server.services.distribution.assembly.structure.archive;
 
 import static app.coronawarn.server.services.distribution.assembly.structure.util.functional.CheckedConsumer.uncheckedConsumer;
 
+import app.coronawarn.server.services.distribution.assembly.structure.Writable;
 import app.coronawarn.server.services.distribution.assembly.structure.WritableOnDisk;
 import app.coronawarn.server.services.distribution.assembly.structure.directory.DirectoryOnDisk;
 import app.coronawarn.server.services.distribution.assembly.structure.file.File;
@@ -42,12 +43,12 @@ public class ArchiveOnDisk extends FileOnDisk implements Archive<WritableOnDisk>
   }
 
   @Override
-  public void addWritable(WritableOnDisk writable) {
+  public void addWritable(Writable<WritableOnDisk> writable) {
     this.tempDirectory.addWritable(writable);
   }
 
   @Override
-  public Set<WritableOnDisk> getWritables() {
+  public Set<Writable<WritableOnDisk>> getWritables() {
     return this.tempDirectory.getWritables();
   }
 

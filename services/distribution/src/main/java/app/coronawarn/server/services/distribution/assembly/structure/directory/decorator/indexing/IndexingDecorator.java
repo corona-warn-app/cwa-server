@@ -1,4 +1,4 @@
-package app.coronawarn.server.services.distribution.assembly.structure.directory.decorator;
+package app.coronawarn.server.services.distribution.assembly.structure.directory.decorator.indexing;
 
 import app.coronawarn.server.services.distribution.assembly.structure.Writable;
 import app.coronawarn.server.services.distribution.assembly.structure.directory.IndexDirectory;

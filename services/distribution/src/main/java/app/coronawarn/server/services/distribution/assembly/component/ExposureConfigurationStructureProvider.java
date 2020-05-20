@@ -23,6 +23,7 @@ import app.coronawarn.server.common.protocols.internal.RiskScoreParameters;
 import app.coronawarn.server.services.distribution.assembly.exposureconfig.ExposureConfigurationProvider;
 import app.coronawarn.server.services.distribution.assembly.exposureconfig.UnableToLoadFileException;
 import app.coronawarn.server.services.distribution.assembly.exposureconfig.structure.directory.ExposureConfigurationDirectoryOnDisk;
+import app.coronawarn.server.services.distribution.assembly.structure.WritableOnDisk;
 import app.coronawarn.server.services.distribution.assembly.structure.directory.Directory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -46,7 +47,7 @@ public class ExposureConfigurationStructureProvider {
     this.cryptoProvider = cryptoProvider;
   }
 
-  public Directory getExposureConfiguration() {
+  public Directory<WritableOnDisk> getExposureConfiguration() {
     var riskScoreParameters = readExposureConfiguration();
     return new ExposureConfigurationDirectoryOnDisk(riskScoreParameters, cryptoProvider);
   }

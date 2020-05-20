@@ -46,8 +46,8 @@ public class IndexDirectoryTest {
   private static final Set<Integer> index = Set.of(0, 1, 2);
   private static final IndexFunction<Integer> indexFunction = __ -> index;
   private static final Formatter<Integer> indexFormatter = Integer::valueOf;
-  private IndexDirectory<Integer> indexDirectory;
-  private Directory outputDirectory;
+  private IndexDirectory<?, ?> indexDirectory;
+  private Directory<?> outputDirectory;
 
   @Rule
   private TemporaryFolder temporaryFolder = new TemporaryFolder();

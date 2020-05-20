@@ -26,13 +26,18 @@ import app.coronawarn.server.common.protocols.external.exposurenotification.Temp
 import app.coronawarn.server.services.distribution.assembly.component.CryptoProvider;
 import app.coronawarn.server.services.distribution.assembly.diagnosiskeys.structure.file.TemporaryExposureKeyExportFile;
 import app.coronawarn.server.services.distribution.assembly.structure.Writable;
+import app.coronawarn.server.services.distribution.assembly.structure.WritableOnDisk;
 import app.coronawarn.server.services.distribution.assembly.structure.archive.Archive;
 import app.coronawarn.server.services.distribution.assembly.structure.archive.ArchiveOnDisk;
 import app.coronawarn.server.services.distribution.assembly.structure.directory.Directory;
+import app.coronawarn.server.services.distribution.assembly.structure.directory.DirectoryOnDisk;
+import app.coronawarn.server.services.distribution.assembly.structure.directory.IndexDirectory;
 import app.coronawarn.server.services.distribution.assembly.structure.directory.decorator.DirectoryDecorator;
+import app.coronawarn.server.services.distribution.assembly.structure.directory.decorator.IndexDirectoryDecorator;
 import app.coronawarn.server.services.distribution.assembly.structure.file.File;
 import app.coronawarn.server.services.distribution.assembly.structure.file.FileOnDisk;
 import app.coronawarn.server.services.distribution.assembly.structure.util.ImmutableStack;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Comparator;
@@ -48,7 +53,7 @@ import org.slf4j.LoggerFactory;
 /**
  * A {@link DirectoryDecorator} that will TODO
  */
-public class DateAggregatingDecorator extends DirectoryDecorator {
+public class DateAggregatingDecorator extends IndexDirectoryDecorator<LocalDate, WritableOnDisk> {
 
   private static final Logger logger = LoggerFactory.getLogger(DateAggregatingDecorator.class);
 
@@ -56,7 +61,7 @@ public class DateAggregatingDecorator extends DirectoryDecorator {
 
   private static final String AGGREGATE_FILE_NAME = "index";
 
-  public DateAggregatingDecorator(Directory directory, CryptoProvider cryptoProvider) {
+  public DateAggregatingDecorator(IndexDirectory directory, CryptoProvider cryptoProvider) {
     super(directory);
     this.cryptoProvider = cryptoProvider;
   }
@@ -64,16 +69,17 @@ public class DateAggregatingDecorator extends DirectoryDecorator {
   @Override
   public void prepare(ImmutableStack<Object> indices) {
     super.prepare(indices);
-    logger.debug("Aggregating {}", this.getFileOnDisk().getPath());
-    Set<Directory> dayDirectories = this.getWritables().stream()
-        .filter(writable -> writable instanceof Directory)
-        .map(directory -> (Directory) directory)
+    logger.debug("Aggregating ..."); // TODO
+
+    Set<Directory<WritableOnDisk>> dayDirectories = this.getWritables().stream()
+        .filter(writable -> writable instanceof DirectoryOnDisk)
+        .map(directory -> (DirectoryOnDisk) directory)
         .collect(Collectors.toSet());
     if (dayDirectories.size() == 0) {
       return;
     }
 
-    List<Directory> sortedDayDirectories = new ArrayList<>(dayDirectories);
+    List<Directory<WritableOnDisk>> sortedDayDirectories = new ArrayList<>(dayDirectories);
     sortedDayDirectories.sort(Comparator.comparing(Writable::getName));
 
     // Exclude the last day
@@ -84,34 +90,34 @@ public class DateAggregatingDecorator extends DirectoryDecorator {
           .map(this::parseTemporaryExposureKeyExportsFromFiles)
           .map(this::reduceTemporaryExposureKeyExportsToNewFile)
           .map(temporaryExposureKeyExportFile -> {
-            Archive aggregate = new ArchiveOnDisk(AGGREGATE_FILE_NAME);
+            Archive<WritableOnDisk> aggregate = new ArchiveOnDisk(AGGREGATE_FILE_NAME);
             aggregate.addWritable(temporaryExposureKeyExportFile);
             return aggregate;
           })
-          .map(file -> new DiagnosisKeyAbstractSigningDecorator(file, cryptoProvider))
+          .map(file -> new DiagnosisKeySigningDecorator(file, cryptoProvider))
           .peek(currentDirectory::addWritable)
           .forEach(aggregate -> aggregate.prepare(indices));
     });
   }
 
-  private Set<Directory> getSubSubDirectoryArchives(Directory rootDirectory) {
+  private Set<Directory<WritableOnDisk>> getSubSubDirectoryArchives(Directory<WritableOnDisk> rootDirectory) {
     // Get all archives 2 directory levels down
     return Stream.of(rootDirectory)
         .map(Directory::getWritables)
         .flatMap(Set::stream)
         .filter(Writable::isDirectory)
-        .map(directory -> ((Directory) directory).getWritables())
+        .map(directory -> ((DirectoryOnDisk) directory).getWritables())
         .flatMap(Set::stream)
         .filter(Writable::isDirectory)
-        .map(directory -> ((Directory) directory).getWritables())
+        .map(directory -> ((DirectoryOnDisk) directory).getWritables())
         .flatMap(Collection::stream)
         .filter(Writable::isDirectory)
-        .map(directory -> (Directory) directory)
+        .map(directory -> (DirectoryOnDisk) directory)
         .collect(Collectors.toSet());
   }
 
   private Set<TemporaryExposureKeyExportFile> getTemporaryExposureKeyExportFilesFromArchives(
-      Set<Directory> hourArchives) {
+      Set<Directory<WritableOnDisk>> hourArchives) {
     return hourArchives.stream()
         .map(Directory::getWritables)
         // TODO

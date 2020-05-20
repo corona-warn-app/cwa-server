@@ -22,6 +22,7 @@ package app.coronawarn.server.services.distribution.assembly.component;
 import app.coronawarn.server.common.persistence.domain.DiagnosisKey;
 import app.coronawarn.server.common.persistence.service.DiagnosisKeyService;
 import app.coronawarn.server.services.distribution.assembly.diagnosiskeys.structure.directory.DiagnosisKeysDirectoryOnDisk;
+import app.coronawarn.server.services.distribution.assembly.structure.WritableOnDisk;
 import app.coronawarn.server.services.distribution.assembly.structure.directory.Directory;
 import java.util.Collection;
 import org.slf4j.Logger;
@@ -48,7 +49,7 @@ public class DiagnosisKeysStructureProvider {
     this.cryptoProvider = cryptoProvider;
   }
 
-  public Directory getDiagnosisKeys() {
+  public Directory<WritableOnDisk> getDiagnosisKeys() {
     Collection<DiagnosisKey> diagnosisKeys = readDiagnosisKeys();
     return new DiagnosisKeysDirectoryOnDisk(diagnosisKeys, cryptoProvider);
   }

@@ -22,11 +22,13 @@ package app.coronawarn.server.services.distribution.assembly.structure.directory
 import static app.coronawarn.server.services.distribution.common.Helpers.prepareAndWrite;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import app.coronawarn.server.services.distribution.assembly.structure.WritableOnDisk;
 import app.coronawarn.server.services.distribution.assembly.structure.directory.Directory;
 import app.coronawarn.server.services.distribution.assembly.structure.directory.DirectoryOnDisk;
 import app.coronawarn.server.services.distribution.assembly.structure.directory.IndexDirectory;
 import app.coronawarn.server.services.distribution.assembly.structure.directory.IndexDirectoryOnDisk;
-import app.coronawarn.server.services.distribution.assembly.structure.directory.decorator.AbstractIndexingDecorator;
+import app.coronawarn.server.services.distribution.assembly.structure.directory.decorator.indexing.AbstractIndexingDecorator;
+import app.coronawarn.server.services.distribution.assembly.structure.directory.decorator.indexing.IndexingDecoratorOnDisk;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
@@ -42,16 +44,16 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.rules.TemporaryFolder;
 
-public class AbstractIndexingDecoratorTest {
+public class IndexingDecoratorOnDiskTest {
 
   @Rule
   private TemporaryFolder outputFolder = new TemporaryFolder();
 
   private static final Set<Integer> index = Set.of(1, 2, 3);
   private java.io.File outputFile;
-  private Directory parent;
-  private IndexDirectory<Integer> decoratee;
-  private Directory decorator;
+  private DirectoryOnDisk parent;
+  private IndexDirectoryOnDisk<Integer> decoratee;
+  private IndexingDecoratorOnDisk<Integer> decorator;
 
   @BeforeEach
   public void setup() throws IOException {
@@ -59,7 +61,7 @@ public class AbstractIndexingDecoratorTest {
     outputFile = outputFolder.newFolder();
     parent = new DirectoryOnDisk(outputFile);
     decoratee = new IndexDirectoryOnDisk<>("foo", __ -> index, __ -> __);
-    decorator = new AbstractIndexingDecorator<>(decoratee);
+    decorator = new IndexingDecoratorOnDisk<Integer>(decoratee);
 
     parent.addWritable(decorator);
 

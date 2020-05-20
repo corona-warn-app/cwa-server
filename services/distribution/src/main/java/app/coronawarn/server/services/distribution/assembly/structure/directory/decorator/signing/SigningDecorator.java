@@ -1,6 +1,5 @@
-package app.coronawarn.server.services.distribution.assembly.structure.directory.decorator;
+package app.coronawarn.server.services.distribution.assembly.structure.directory.decorator.signing;
 
-import app.coronawarn.server.services.distribution.assembly.component.CryptoProvider;
 import app.coronawarn.server.services.distribution.assembly.structure.Writable;
 import app.coronawarn.server.services.distribution.assembly.structure.directory.Directory;
 import app.coronawarn.server.services.distribution.assembly.structure.file.File;
@@ -11,7 +10,7 @@ public interface SigningDecorator<W extends Writable<W>> extends Directory<W> {
 
   Logger logger = LoggerFactory.getLogger(SigningDecorator.class);
 
-  File<W> getSignatureFile(String signatureFileName, CryptoProvider cryptoProvider);
+  File<W> getSignatureFile(String signatureFileName);
 
   byte[] getBytesToSign();
 

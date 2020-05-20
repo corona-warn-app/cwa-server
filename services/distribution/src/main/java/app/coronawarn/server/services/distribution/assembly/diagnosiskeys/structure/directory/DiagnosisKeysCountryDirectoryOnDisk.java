@@ -22,10 +22,12 @@ package app.coronawarn.server.services.distribution.assembly.diagnosiskeys.struc
 import app.coronawarn.server.common.persistence.domain.DiagnosisKey;
 import app.coronawarn.server.services.distribution.assembly.component.CryptoProvider;
 import app.coronawarn.server.services.distribution.assembly.diagnosiskeys.structure.directory.decorator.DateAggregatingDecorator;
+import app.coronawarn.server.services.distribution.assembly.structure.WritableOnDisk;
 import app.coronawarn.server.services.distribution.assembly.structure.directory.Directory;
 import app.coronawarn.server.services.distribution.assembly.structure.directory.IndexDirectory;
 import app.coronawarn.server.services.distribution.assembly.structure.directory.IndexDirectoryOnDisk;
-import app.coronawarn.server.services.distribution.assembly.structure.directory.decorator.AbstractIndexingDecorator;
+import app.coronawarn.server.services.distribution.assembly.structure.directory.decorator.indexing.AbstractIndexingDecorator;
+import app.coronawarn.server.services.distribution.assembly.structure.directory.decorator.indexing.IndexingDecoratorOnDisk;
 import app.coronawarn.server.services.distribution.assembly.structure.util.ImmutableStack;
 import java.time.LocalDate;
 import java.util.Collection;
@@ -56,14 +58,14 @@ public class DiagnosisKeysCountryDirectoryOnDisk extends IndexDirectoryOnDisk<St
   @Override
   public void prepare(ImmutableStack<Object> indices) {
     this.addWritableToAll(__ -> {
-      IndexDirectory<LocalDate> dateDirectory = new DiagnosisKeysDateDirectoryOnDisk(diagnosisKeys,
+      IndexDirectoryOnDisk<LocalDate> dateDirectory = new DiagnosisKeysDateDirectoryOnDisk(diagnosisKeys,
           cryptoProvider);
       return decorateDateDirectory(dateDirectory);
     });
     super.prepare(indices);
   }
 
-  private Directory decorateDateDirectory(IndexDirectory<LocalDate> dateDirectory) {
-    return new DateAggregatingDecorator(new AbstractIndexingDecorator<>(dateDirectory), cryptoProvider);
+  private IndexDirectory<LocalDate, WritableOnDisk> decorateDateDirectory(IndexDirectoryOnDisk<LocalDate> dateDirectory) {
+    return new DateAggregatingDecorator(new IndexingDecoratorOnDisk<>(dateDirectory), cryptoProvider);
   }
 }

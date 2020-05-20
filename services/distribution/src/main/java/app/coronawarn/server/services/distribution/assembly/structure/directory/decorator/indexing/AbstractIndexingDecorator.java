@@ -17,12 +17,13 @@
  * under the License.
  */
 
-package app.coronawarn.server.services.distribution.assembly.structure.directory.decorator;
+package app.coronawarn.server.services.distribution.assembly.structure.directory.decorator.indexing;
 
+import app.coronawarn.server.services.distribution.assembly.structure.Writable;
 import app.coronawarn.server.services.distribution.assembly.structure.directory.IndexDirectory;
 import app.coronawarn.server.services.distribution.assembly.structure.directory.IndexDirectoryOnDisk;
-import app.coronawarn.server.services.distribution.assembly.structure.file.FileOnDisk;
-import app.coronawarn.server.services.distribution.assembly.structure.Writable;
+import app.coronawarn.server.services.distribution.assembly.structure.directory.decorator.DirectoryDecorator;
+import app.coronawarn.server.services.distribution.assembly.structure.directory.decorator.IndexDirectoryDecorator;
 import app.coronawarn.server.services.distribution.assembly.structure.util.ImmutableStack;
 import java.util.List;
 import java.util.Set;
@@ -34,11 +35,10 @@ import org.slf4j.LoggerFactory;
 /**
  * A {@link DirectoryDecorator} that writes a file called {@code "index"}, containing a JSON array containing all
  * elements returned {@link IndexDirectoryOnDisk#getIndex}, formatted with the {@link
- * IndexDirectoryOnDisk#getIndexFormatter} on
- * {@link Writable#prepare}.
+ * IndexDirectoryOnDisk#getIndexFormatter} on {@link Writable#prepare}.
  */
-public abstract class AbstractIndexingDecorator<T, W extends Writable<W>> extends DirectoryDecorator<W> implements
-    IndexingDecorator<T, W> {
+public abstract class AbstractIndexingDecorator<T, W extends Writable<W>> extends
+    IndexDirectoryDecorator<T, W> implements IndexingDecorator<T, W> {
 
   private static final String INDEX_FILE_NAME = "index";
 

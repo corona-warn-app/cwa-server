@@ -17,17 +17,15 @@
  * under the License.
  */
 
-package app.coronawarn.server.services.distribution.assembly.structure.directory.decorator;
+package app.coronawarn.server.services.distribution.assembly.structure.directory.decorator.signing;
 
 import app.coronawarn.server.common.protocols.external.exposurenotification.SignatureInfo;
 import app.coronawarn.server.common.protocols.external.exposurenotification.TEKSignature;
 import app.coronawarn.server.common.protocols.external.exposurenotification.TEKSignatureList;
 import app.coronawarn.server.services.distribution.assembly.component.CryptoProvider;
 import app.coronawarn.server.services.distribution.assembly.structure.Writable;
-import app.coronawarn.server.services.distribution.assembly.structure.archive.ArchiveOnDisk;
 import app.coronawarn.server.services.distribution.assembly.structure.directory.Directory;
-import app.coronawarn.server.services.distribution.assembly.structure.directory.DirectoryOnDisk;
-import app.coronawarn.server.services.distribution.assembly.structure.file.FileOnDisk;
+import app.coronawarn.server.services.distribution.assembly.structure.directory.decorator.DirectoryDecorator;
 import app.coronawarn.server.services.distribution.assembly.structure.util.ImmutableStack;
 import com.google.protobuf.ByteString;
 import java.security.GeneralSecurityException;
@@ -46,7 +44,7 @@ public abstract class AbstractSigningDecorator<W extends Writable<W>> extends Di
   String SECURITY_PROVIDER = "BC";
 
   private static final Logger logger = LoggerFactory.getLogger(AbstractSigningDecorator.class);
-  private final CryptoProvider cryptoProvider;
+  protected final CryptoProvider cryptoProvider;
 
   public AbstractSigningDecorator(Directory<W> directory, CryptoProvider cryptoProvider) {
     super(directory);
@@ -60,37 +58,10 @@ public abstract class AbstractSigningDecorator<W extends Writable<W>> extends Di
   public void prepare(ImmutableStack<Object> indices) {
     super.prepare(indices);
     logger.debug("Adding signature to ..."); // TODO
-    // TODO
-    TEKSignatureList signatureList = this.createTEKSignatureList(this.cryptoProvider);
-    this.addWritable(this.getSignatureFile(SIGNATURE_FILE_NAME, this.cryptoProvider));
-    // TODO
-    //this.addWritable(new FileOnDisk("export.sig", signatureList.toByteArray()));
-
-    /*
-        TODO Continue here tomorrow:
-        - Fix abstract decorators
-        - Fix "...OnDisk" implementations
-        - Try to remove temp directory from zip/archive decorator (only work on byte[])
-        - Write unit tests
-        - Write integration tests
-        - Fix JavaDoc
-        - Open draft PR
-        - Draft PR deployment to p006
-        - Open tickets for:
-          - Missing sig algorithm string et al.
-          - Missing batching (currently everything 1/1)
-          - Missing endpoint reworking
-        - Update OpenAPI spec file
-        - Update linked tickets
-        - Daily reporting
-        - Time recording
-        - Announce payload updates and new deployment on app channels
-     */
+    this.addWritable(this.getSignatureFile(SIGNATURE_FILE_NAME));
   }
 
-
-
-  private TEKSignatureList createTEKSignatureList(CryptoProvider cryptoProvider) {
+  protected TEKSignatureList createTEKSignatureList(CryptoProvider cryptoProvider) {
     // TODO
     return TEKSignatureList.newBuilder()
         .addSignatures(TEKSignature.newBuilder()
@@ -114,7 +85,8 @@ public abstract class AbstractSigningDecorator<W extends Writable<W>> extends Di
     }
   }
 
-  static SignatureInfo getSignatureInfo() {
+  // TODO
+  public static SignatureInfo getSignatureInfo() {
     return SignatureInfo.newBuilder()
         .setAppBundleId("TODO")
         .setAndroidPackage("TODO")

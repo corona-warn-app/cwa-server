@@ -25,7 +25,8 @@ import app.coronawarn.server.services.distribution.assembly.structure.archive.Ar
 import app.coronawarn.server.services.distribution.assembly.structure.archive.ArchiveOnDisk;
 import app.coronawarn.server.services.distribution.assembly.structure.directory.DirectoryOnDisk;
 import app.coronawarn.server.services.distribution.assembly.structure.directory.IndexDirectoryOnDisk;
-import app.coronawarn.server.services.distribution.assembly.structure.directory.decorator.AbstractIndexingDecorator;
+import app.coronawarn.server.services.distribution.assembly.structure.directory.decorator.indexing.AbstractIndexingDecorator;
+import app.coronawarn.server.services.distribution.assembly.structure.directory.decorator.indexing.IndexingDecoratorOnDisk;
 import app.coronawarn.server.services.distribution.assembly.structure.file.FileOnDisk;
 import java.util.Set;
 
@@ -53,14 +54,14 @@ public class ExposureConfigurationDirectoryOnDisk extends DirectoryOnDisk {
     super(PARAMETERS_DIRECTORY);
 
     // TODO Extract into config archive
-    Archive archive = new ArchiveOnDisk(INDEX_FILE_NAME);
+    ArchiveOnDisk archive = new ArchiveOnDisk(INDEX_FILE_NAME);
     archive.addWritable(new FileOnDisk("export.bin", exposureConfig.toByteArray()));
 
     IndexDirectoryOnDisk<String> country =
         new IndexDirectoryOnDisk<>(COUNTRY_DIRECTORY, __ -> Set.of(COUNTRY), Object::toString);
     country.addWritableToAll(__ ->
-        new ExposureConfigAbstractSigningDecorator(archive, cryptoProvider));
+        new ExposureConfigSigningDecorator(archive, cryptoProvider));
 
-    this.addWritable(new AbstractIndexingDecorator<>(country));
+    this.addWritable(new IndexingDecoratorOnDisk<>(country));
   }
 }
