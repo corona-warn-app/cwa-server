@@ -39,8 +39,12 @@ public class ExposureConfigurationStructureProvider {
   private static final Logger logger = LoggerFactory
       .getLogger(ExposureConfigurationStructureProvider.class);
 
+  private final CryptoProvider cryptoProvider;
+
   @Autowired
-  private CryptoProvider cryptoProvider;
+  public ExposureConfigurationStructureProvider(CryptoProvider cryptoProvider) {
+    this.cryptoProvider = cryptoProvider;
+  }
 
   public Directory getExposureConfiguration() {
     var riskScoreParameters = readExposureConfiguration();

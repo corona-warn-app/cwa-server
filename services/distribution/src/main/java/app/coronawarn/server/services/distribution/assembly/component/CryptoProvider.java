@@ -55,8 +55,7 @@ public class CryptoProvider {
   @Value("${services.distribution.paths.certificate}")
   private String certificatePath;
 
-  @Autowired
-  private ResourceLoader resourceLoader;
+  private final ResourceLoader resourceLoader;
 
   private PrivateKey privateKey;
   private Certificate certificate;
@@ -64,7 +63,9 @@ public class CryptoProvider {
   /**
    * Creates a CryptoProvider, using {@link BouncyCastleProvider}.
    */
-  public CryptoProvider() {
+  @Autowired
+  public CryptoProvider(ResourceLoader resourceLoader) {
+    this.resourceLoader = resourceLoader;
     Security.addProvider(new BouncyCastleProvider());
   }
 
