@@ -22,7 +22,6 @@ package app.coronawarn.server.common.persistence.domain;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.catchThrowable;
 
-import app.coronawarn.server.common.persistence.domain.DiagnosisKeyBuilders.FinalBuilder;
 import app.coronawarn.server.common.persistence.exception.InvalidDiagnosisKeyException;
 import app.coronawarn.server.common.protocols.external.exposurenotification.Key;
 import com.google.protobuf.ByteString;
@@ -109,7 +108,7 @@ public class DiagnosisKeyBuilderTest {
   @Test
   public void failsForInvalidRollingPeriod() {
     assertInvalidKeyBuildingFailures(this.expKeyData, this.expRollingStartNumber,
-        this.expRollingPeriod, 0);
+        0, this.expTransmissionRiskLevel);
   }
 
   @Test
@@ -121,11 +120,14 @@ public class DiagnosisKeyBuilderTest {
   private void assertInvalidKeyBuildingFailures(byte[] expKeyData, long expRollingStartNumber,
       long expRollingPeriod, int transmissionRiskLevel) {
 
-    assertThat(catchThrowable(DiagnosisKey.builder()
+    Throwable actual = catchThrowable(() -> DiagnosisKey.builder()
         .withKeyData(expKeyData)
         .withRollingStartNumber(expRollingStartNumber)
         .withRollingPeriod(expRollingPeriod)
-        .withTransmissionRiskLevel(transmissionRiskLevel)::build))
+        .withTransmissionRiskLevel(transmissionRiskLevel)
+        .build());
+
+    assertThat(actual)
         .isInstanceOf(InvalidDiagnosisKeyException.class);
   }
 
