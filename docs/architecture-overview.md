@@ -90,7 +90,7 @@ The actual task of the verification is handed over to the verification backend, 
 After verification was successfully done, the diagnosis keys are persisted in the database, and will be published in the next batch.
 
 The payload send by the mobile is defined as:
-```golang
+```protobuf
 message SubmissionPayload {
   repeated Key keys = 1;
 }
