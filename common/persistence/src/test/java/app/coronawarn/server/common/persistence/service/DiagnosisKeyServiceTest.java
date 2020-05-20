@@ -20,7 +20,7 @@
 package app.coronawarn.server.common.persistence.service;
 
 import static java.time.ZoneOffset.UTC;
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.assertj.core.api.Assertions.assertThat;
 
 import app.coronawarn.server.common.persistence.domain.DiagnosisKey;
 import app.coronawarn.server.common.persistence.repository.DiagnosisKeyRepository;
@@ -109,21 +109,27 @@ public class DiagnosisKeyServiceTest {
   }
 
   private void assertDiagnosisKeysEqual(List<DiagnosisKey> expKeys, List<DiagnosisKey> actKeys) {
-    assertEquals(expKeys.size(), actKeys.size(), "Cardinality mismatch");
+    assertThat(actKeys.size()).withFailMessage("Cardinality mismatch").isEqualTo(expKeys.size());
 
     for (int i = 0; i < expKeys.size(); i++) {
       var expKey = expKeys.get(i);
       var actKey = actKeys.get(i);
 
-      assertEquals(expKey.getKeyData(), actKey.getKeyData(), "keyData mismatch");
-      assertEquals(expKey.getRollingStartNumber(), actKey.getRollingStartNumber(),
-          "rollingStartNumber mismatch");
-      assertEquals(expKey.getRollingPeriod(), actKey.getRollingPeriod(),
-          "rollingPeriod mismatch");
-      assertEquals(expKey.getTransmissionRiskLevel(), actKey.getTransmissionRiskLevel(),
-          "transmissionRiskLevel mismatch");
-      assertEquals(expKey.getSubmissionTimestamp(), actKey.getSubmissionTimestamp(),
-          "submissionTimestamp mismatch");
+      assertThat(actKey.getKeyData())
+          .withFailMessage("keyData mismatch")
+          .isEqualTo(expKey.getKeyData());
+      assertThat(actKey.getRollingStartNumber())
+          .withFailMessage("rollingStartNumber mismatch")
+          .isEqualTo(expKey.getRollingStartNumber());
+      assertThat(actKey.getRollingPeriod())
+          .withFailMessage("rollingPeriod mismatch")
+          .isEqualTo(expKey.getRollingPeriod());
+      assertThat(actKey.getTransmissionRiskLevel())
+          .withFailMessage("transmissionRiskLevel mismatch")
+          .isEqualTo(expKey.getTransmissionRiskLevel());
+      assertThat(actKey.getSubmissionTimestamp())
+          .withFailMessage("submissionTimestamp mismatch")
+          .isEqualTo(expKey.getSubmissionTimestamp());
     }
   }
 

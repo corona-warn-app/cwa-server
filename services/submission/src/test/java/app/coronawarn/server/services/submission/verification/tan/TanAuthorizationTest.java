@@ -2,9 +2,9 @@
  * Corona-Warn-App
  *
  * SAP SE and all other contributors /
- * copyright owners license this file to you under the Apache 
- * License, Version 2.0 (the "License"); you may not use this 
- * file except in compliance with the License. 
+ * copyright owners license this file to you under the Apache
+ * License, Version 2.0 (the "License"); you may not use this
+ * file except in compliance with the License.
  * You may obtain a copy of the License at
  *
  * http://www.apache.org/licenses/LICENSE-2.0
@@ -19,8 +19,8 @@
 
 package app.coronawarn.server.services.submission.verification.tan;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.catchThrowable;
 
 import app.coronawarn.server.services.submission.verification.AuthorizationType;
 import java.util.stream.Stream;
@@ -35,7 +35,7 @@ public class TanAuthorizationTest {
   public void tanOk(TanTestCase testCase) throws TanAuthorizationException {
     var tanAuthorization = TanAuthorization.of(testCase.getAuthValue());
 
-    assertEquals(testCase.getExpected(), tanAuthorization);
+    assertThat(tanAuthorization).isEqualTo(testCase.getExpected());
   }
 
   @ParameterizedTest
@@ -43,15 +43,14 @@ public class TanAuthorizationTest {
   public void teleTanOk(TanTestCase testCase) throws TanAuthorizationException {
     var tanAuthorization = TanAuthorization.of(testCase.getAuthValue());
 
-    assertEquals(testCase.getExpected(), tanAuthorization);
+    assertThat(tanAuthorization).isEqualTo(testCase.getExpected());
   }
 
   @ParameterizedTest
   @MethodSource("createFailedTests")
   public void fails(String authorizationValue) {
-    assertThrows(TanAuthorizationException.class, () -> {
-      TanAuthorization.of(authorizationValue);
-    });
+    assertThat(catchThrowable(() -> TanAuthorization.of(authorizationValue)))
+        .isInstanceOf(TanAuthorizationException.class);
   }
 
   private static Stream<Arguments> createSuccessTestsTan() {
@@ -67,8 +66,10 @@ public class TanAuthorizationTest {
   private static Stream<Arguments> createSuccessTestsTeleTan() {
     return Stream.of(
         TanTestCase.with("TELETAN THE RED FOX").expect(AuthorizationType.TELETAN, "THE RED FOX"),
-        TanTestCase.with("TELETAN JUMPS OVER FENCES").expect(AuthorizationType.TELETAN, "JUMPS OVER FENCES"),
-        TanTestCase.with("TELETAN VERYLONGSINGLEWORD").expect(AuthorizationType.TELETAN, "VERYLONGSINGLEWORD")
+        TanTestCase.with("TELETAN JUMPS OVER FENCES")
+            .expect(AuthorizationType.TELETAN, "JUMPS OVER FENCES"),
+        TanTestCase.with("TELETAN VERYLONGSINGLEWORD")
+            .expect(AuthorizationType.TELETAN, "VERYLONGSINGLEWORD")
     ).map(Arguments::of);
   }
 

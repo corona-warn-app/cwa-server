@@ -20,8 +20,7 @@
 package app.coronawarn.server.services.distribution.assembly.structure.file.decorators;
 
 import static app.coronawarn.server.services.distribution.common.Helpers.prepareAndWrite;
-import static org.junit.jupiter.api.Assertions.assertArrayEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.assertj.core.api.Assertions.assertThat;
 
 import app.coronawarn.server.common.protocols.internal.SignedPayload;
 import app.coronawarn.server.services.distribution.assembly.component.CryptoProvider;
@@ -86,8 +85,8 @@ public class SigningDecoratorTest {
     byte[] writtenBytes = Files.readAllBytes(decoratee.getFileOnDisk().toPath());
     SignedPayload signedPayload = SignedPayload.parseFrom(writtenBytes);
 
-    assertArrayEquals(cryptoProvider.getCertificate().getEncoded(),
-        signedPayload.getCertificateChain().toByteArray());
+    assertThat(signedPayload.getCertificateChain().toByteArray())
+        .isEqualTo(cryptoProvider.getCertificate().getEncoded());
   }
 
   @Test
@@ -106,6 +105,6 @@ public class SigningDecoratorTest {
     signature.initVerify(certificate);
     signature.update(signedPayload.getPayload().toByteArray());
 
-    assertTrue(signature.verify(signedPayload.getSignature().toByteArray()));
+    assertThat(signature.verify(signedPayload.getSignature().toByteArray())).isTrue();
   }
 }

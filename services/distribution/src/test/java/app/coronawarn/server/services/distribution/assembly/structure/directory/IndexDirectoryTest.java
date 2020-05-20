@@ -19,7 +19,7 @@
 
 package app.coronawarn.server.services.distribution.assembly.structure.directory;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.assertj.core.api.Assertions.assertThat;
 
 import app.coronawarn.server.services.distribution.assembly.structure.Writable;
 import app.coronawarn.server.services.distribution.assembly.structure.file.File;
@@ -65,12 +65,12 @@ public class IndexDirectoryTest {
 
   @Test
   public void checkGetIndex() {
-    assertEquals(index, indexDirectory.getIndex(new ImmutableStack<>()));
+    assertThat(indexDirectory.getIndex(new ImmutableStack<>())).isEqualTo(index);
   }
 
   @Test
   public void checkGetIndexFormatter() {
-    assertEquals(indexFormatter, indexDirectory.getIndexFormatter());
+    assertThat(indexDirectory.getIndexFormatter()).isEqualTo(indexFormatter);
   }
 
   @Test
@@ -95,7 +95,7 @@ public class IndexDirectoryTest {
         .sorted()
         .collect(Collectors.toList());
 
-    assertEquals(expectedPhysicalFiles, actualPhysicalFiles);
+    assertThat(actualPhysicalFiles).isEqualTo(expectedPhysicalFiles);
   }
 
   @Test
@@ -118,7 +118,7 @@ public class IndexDirectoryTest {
         .map(Writable::getFileOnDisk)
         .collect(Collectors.toSet());
 
-    assertEquals(expectedPhysicalFiles, actualPhysicalFiles);
+    assertThat(actualPhysicalFiles).isEqualTo(expectedPhysicalFiles);
   }
 
   private static Stream<java.io.File> getContainedElements(java.io.File directory) {

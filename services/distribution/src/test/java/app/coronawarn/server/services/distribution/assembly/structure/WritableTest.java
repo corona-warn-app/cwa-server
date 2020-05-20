@@ -19,8 +19,8 @@
 
 package app.coronawarn.server.services.distribution.assembly.structure;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.catchThrowable;
 
 import app.coronawarn.server.services.distribution.assembly.structure.directory.Directory;
 import app.coronawarn.server.services.distribution.assembly.structure.directory.DirectoryImpl;
@@ -49,7 +49,7 @@ public class WritableTest {
   public void checkGetName() {
     String name = "Test";
     Writable writable = new TestWritable(name);
-    assertEquals(name, writable.getName());
+    assertThat(writable.getName()).isEqualTo(name);
   }
 
   @Test
@@ -57,14 +57,14 @@ public class WritableTest {
     Directory parent = new DirectoryImpl("Parent");
     Writable child = new TestWritable("Child");
     child.setParent(parent);
-    assertEquals(parent, child.getParent());
+    assertThat(child.getParent()).isEqualTo(parent);
   }
 
   @Test
   public void checkGetFileOnDiskForRoot() {
     File file = new File("Root");
     Directory parent = new DirectoryImpl(file);
-    assertEquals(file, parent.getFileOnDisk());
+    assertThat(parent.getFileOnDisk()).isEqualTo(file);
   }
 
   @Test
@@ -73,12 +73,12 @@ public class WritableTest {
     Directory parent = new DirectoryImpl(file);
     Writable child = new TestWritable("Child");
     child.setParent(parent);
-    assertEquals(file.toPath().resolve("Child").toFile(), child.getFileOnDisk());
+    assertThat(child.getFileOnDisk()).isEqualTo(file.toPath().resolve("Child").toFile());
   }
 
   @Test
   public void checkGetFileOnDiskThrowsIfNoParent() {
     Directory orphan = new DirectoryImpl("Orphan");
-    assertThrows(NullPointerException.class, orphan::getFileOnDisk);
+    assertThat(catchThrowable(orphan::getFileOnDisk)).isInstanceOf(NullPointerException.class);
   }
 }

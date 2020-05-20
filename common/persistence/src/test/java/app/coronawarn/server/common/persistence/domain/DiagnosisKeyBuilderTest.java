@@ -19,8 +19,7 @@
 
 package app.coronawarn.server.common.persistence.domain;
 
-import static org.junit.jupiter.api.Assertions.assertArrayEquals;
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import app.coronawarn.server.common.persistence.exception.InvalidDiagnosisKeyException;
@@ -48,8 +47,7 @@ public class DiagnosisKeyBuilderTest {
         .setTransmissionRiskLevel(this.expTransmissionRiskLevel)
         .build();
 
-    DiagnosisKey actDiagnosisKey = null;
-    actDiagnosisKey = DiagnosisKey.builder()
+    DiagnosisKey actDiagnosisKey = DiagnosisKey.builder()
         .fromProtoBuf(protoBufObj)
         .withSubmissionTimestamp(this.expSubmissionTimestamp)
         .build();
@@ -152,11 +150,11 @@ public class DiagnosisKeyBuilderTest {
   }
 
   private void assertDiagnosisKeyEquals(DiagnosisKey actDiagnosisKey, long expSubmissionTimestamp) {
-    assertEquals(expSubmissionTimestamp, actDiagnosisKey.getSubmissionTimestamp());
-    assertArrayEquals(this.expKeyData, actDiagnosisKey.getKeyData());
-    assertEquals(this.expRollingStartNumber, actDiagnosisKey.getRollingStartNumber());
-    assertEquals(this.expRollingPeriod, actDiagnosisKey.getRollingPeriod());
-    assertEquals(this.expTransmissionRiskLevel, actDiagnosisKey.getTransmissionRiskLevel());
+    assertThat(actDiagnosisKey.getSubmissionTimestamp()).isEqualTo(expSubmissionTimestamp);
+    assertThat(actDiagnosisKey.getKeyData()).isEqualTo(this.expKeyData);
+    assertThat(actDiagnosisKey.getRollingStartNumber()).isEqualTo(this.expRollingStartNumber);
+    assertThat(actDiagnosisKey.getRollingPeriod()).isEqualTo(this.expRollingPeriod);
+    assertThat(actDiagnosisKey.getTransmissionRiskLevel()).isEqualTo(this.expTransmissionRiskLevel);
   }
 
 }

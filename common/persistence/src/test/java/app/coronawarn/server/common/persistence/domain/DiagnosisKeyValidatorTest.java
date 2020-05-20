@@ -20,28 +20,30 @@
 package app.coronawarn.server.common.persistence.domain;
 
 import static java.time.ZoneOffset.UTC;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.catchThrowable;
 
 import app.coronawarn.server.common.persistence.exception.InvalidDiagnosisKeyException;
 import java.nio.charset.Charset;
 import java.time.Instant;
 import java.time.LocalDate;
 import org.assertj.core.api.Assertions;
+import org.assertj.core.api.ThrowableAssert.ThrowingCallable;
 import org.junit.jupiter.api.Test;
 
 class DiagnosisKeyValidatorTest {
 
+  private final Charset DEFAULT_CHAR_SET = Charset.defaultCharset();
+
   @Test
   public void transmissionRiskLevelMustBeInRange() {
-    checkMessage(assertThrows(
-        InvalidDiagnosisKeyException.class, () ->
-            DiagnosisKeyValidator.validateTransmissionRiskLevel(9)),
+
+    assertException(
+        () -> DiagnosisKeyValidator.validateTransmissionRiskLevel(9),
         "Risk level 9 is not allowed. Must be between 0 and 8.");
 
-    checkMessage(assertThrows(
-        InvalidDiagnosisKeyException.class, () ->
-            DiagnosisKeyValidator.validateTransmissionRiskLevel(-1)),
+    assertException(
+        () -> DiagnosisKeyValidator.validateTransmissionRiskLevel(-1),
         "Risk level -1 is not allowed. Must be between 0 and 8.");
   }
 
@@ -70,9 +72,8 @@ class DiagnosisKeyValidatorTest {
 
   @Test
   public void rollingStartNumberCannotBeInFuture() {
-    checkMessage(assertThrows(
-        InvalidDiagnosisKeyException.class, () ->
-            DiagnosisKeyValidator.validateRollingStartNumber(1904169600L)),
+    assertException(
+        () -> DiagnosisKeyValidator.validateRollingStartNumber(1904169600L),
         "Rolling start cannot be in the future.");
 
     long tomorrow = LocalDate
@@ -80,23 +81,19 @@ class DiagnosisKeyValidatorTest {
         .plusDays(1).atStartOfDay()
         .toEpochSecond(UTC);
 
-    checkMessage(assertThrows(
-        InvalidDiagnosisKeyException.class, () ->
-            DiagnosisKeyValidator.validateRollingStartNumber(tomorrow)),
+    assertException(
+        () -> DiagnosisKeyValidator.validateRollingStartNumber(tomorrow),
         "Rolling start cannot be in the future.");
-
   }
 
   @Test
   public void rollingPeriodMustBeLargerThanZero() {
-    checkMessage(assertThrows(
-        InvalidDiagnosisKeyException.class, () ->
-            DiagnosisKeyValidator.validateRollingPeriod(0)),
+    assertException(
+        () -> DiagnosisKeyValidator.validateRollingPeriod(0),
         "Rolling period must be positive number, but is 0.");
 
-    checkMessage(assertThrows(
-        InvalidDiagnosisKeyException.class, () ->
-            DiagnosisKeyValidator.validateRollingPeriod(-3L)),
+    assertException(
+        () -> DiagnosisKeyValidator.validateRollingPeriod(-3L),
         "Rolling period must be positive number, but is -3.");
   }
 
@@ -109,35 +106,32 @@ class DiagnosisKeyValidatorTest {
 
   @Test
   public void keyDataMustHaveValidLength() {
-    checkMessage(assertThrows(
-        InvalidDiagnosisKeyException.class, () ->
-            DiagnosisKeyValidator.validateKeyData(
-                "17--bytelongarray".getBytes(Charset.defaultCharset()))),
+    assertException(
+        () -> DiagnosisKeyValidator
+            .validateKeyData("17--bytelongarray".getBytes(DEFAULT_CHAR_SET)),
         "Key data must be byte array of length 16, but is 17.");
 
-    checkMessage(assertThrows(
-        InvalidDiagnosisKeyException.class, () ->
-            DiagnosisKeyValidator.validateKeyData(
-                "".getBytes(Charset.defaultCharset()))),
+    assertException(
+        () -> DiagnosisKeyValidator.validateKeyData("".getBytes(DEFAULT_CHAR_SET)),
         "Key data must be byte array of length 16, but is 0.");
 
-    checkMessage(assertThrows(
-        InvalidDiagnosisKeyException.class, () ->
-            DiagnosisKeyValidator.validateKeyData(
-                "1".getBytes(Charset.defaultCharset()))),
+    assertException(
+        () -> DiagnosisKeyValidator.validateKeyData("1".getBytes(DEFAULT_CHAR_SET)),
         "Key data must be byte array of length 16, but is 1.");
+  }
+
+  private void assertException(ThrowingCallable throwingCallable, String message) {
+    assertThat(catchThrowable(throwingCallable))
+        .isInstanceOf(InvalidDiagnosisKeyException.class)
+        .hasMessage(message);
   }
 
   @Test
   public void keyDataDoesNotThrowOnValid() {
     Assertions.assertThatCode(
         () -> DiagnosisKeyValidator.validateKeyData(
-            "16-bytelongarray".getBytes(Charset.defaultCharset())))
+            "16-bytelongarray".getBytes(DEFAULT_CHAR_SET)))
         .doesNotThrowAnyException();
-  }
-
-  private void checkMessage(InvalidDiagnosisKeyException ex, String message) {
-    assertEquals(ex.getMessage(), message);
   }
 
 }

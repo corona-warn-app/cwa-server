@@ -20,7 +20,7 @@
 package app.coronawarn.server.services.distribution.assembly.structure.directory.decorators;
 
 import static app.coronawarn.server.services.distribution.common.Helpers.prepareAndWrite;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.assertj.core.api.Assertions.assertThat;
 
 import app.coronawarn.server.services.distribution.assembly.structure.directory.Directory;
 import app.coronawarn.server.services.distribution.assembly.structure.directory.DirectoryImpl;
@@ -82,6 +82,9 @@ public class IndexingDecoratorTest {
     JSONArray indexJson = (JSONArray) obj;
 
     index.forEach(expected ->
-        assertTrue(indexJson.contains(expected.longValue()), expected.toString()));
+        assertThat(indexJson.contains(expected.longValue()))
+            .withFailMessage(expected.toString())
+            .isTrue()
+    );
   }
 }

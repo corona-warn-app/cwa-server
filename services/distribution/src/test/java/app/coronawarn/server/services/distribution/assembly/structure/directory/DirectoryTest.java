@@ -19,8 +19,8 @@
 
 package app.coronawarn.server.services.distribution.assembly.structure.directory;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.catchThrowable;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.verify;
 
@@ -56,25 +56,25 @@ public class DirectoryTest {
   @Test
   public void checkFilesInDirectory() {
     parentDirectory.addFile(childFile);
-    assertEquals(Set.of(childFile), parentDirectory.getFiles());
+    assertThat(parentDirectory.getFiles()).isEqualTo(Set.of(childFile));
   }
 
   @Test
   public void checkParentOfFilesInDirectory() {
     parentDirectory.addFile(childFile);
-    assertEquals(parentDirectory, childFile.getParent());
+    assertThat(childFile.getParent()).isEqualTo(parentDirectory);
   }
 
   @Test
   public void checkDirectoriesInDirectory() {
     parentDirectory.addDirectory(childDirectory);
-    assertEquals(Set.of(childDirectory), parentDirectory.getDirectories());
+    assertThat(parentDirectory.getDirectories()).isEqualTo(Set.of(childDirectory));
   }
 
   @Test
   public void checkParentOfDirectoriesInDirectory() {
     parentDirectory.addDirectory(childDirectory);
-    assertEquals(parentDirectory, childDirectory.getParent());
+    assertThat(childDirectory.getParent()).isEqualTo(parentDirectory);
   }
 
   @Test
@@ -101,7 +101,8 @@ public class DirectoryTest {
 
   @Test
   public void checkWriteThrowsWithoutParent() {
-    assertThrows(NullPointerException.class, new DirectoryImpl("")::write);
+    assertThat(catchThrowable(new DirectoryImpl("")::write))
+        .isInstanceOf(NullPointerException.class);
   }
 
   @Test
