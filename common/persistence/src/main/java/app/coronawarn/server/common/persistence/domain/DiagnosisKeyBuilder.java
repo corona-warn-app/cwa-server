@@ -101,6 +101,10 @@ public class DiagnosisKeyBuilder implements Builder, RollingStartNumberBuilder,
     var diagnosisKey = new DiagnosisKey(this.keyData, this.rollingStartNumber,
         this.rollingPeriod, this.transmissionRiskLevel, submissionTimestamp);
 
+    return throwIfValidationFails(diagnosisKey);
+  }
+
+  private DiagnosisKey throwIfValidationFails(DiagnosisKey diagnosisKey) {
     Set<ConstraintViolation<DiagnosisKey>> violations = diagnosisKey.getConstraintViolations();
 
     if (!violations.isEmpty()) {
@@ -110,7 +114,6 @@ public class DiagnosisKeyBuilder implements Builder, RollingStartNumberBuilder,
       logger.debug(violationsMessage);
       throw new InvalidDiagnosisKeyException(violationsMessage);
     }
-
 
     return diagnosisKey;
   }
