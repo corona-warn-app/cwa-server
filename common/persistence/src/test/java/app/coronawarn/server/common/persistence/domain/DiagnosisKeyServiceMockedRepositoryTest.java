@@ -16,12 +16,12 @@
 
 package app.coronawarn.server.common.persistence.domain;
 
+import static app.coronawarn.server.common.persistence.service.DiagnosisKeyServiceTestHelper.assertDiagnosisKeysEqual;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.when;
 
 import app.coronawarn.server.common.persistence.repository.DiagnosisKeyRepository;
 import app.coronawarn.server.common.persistence.service.DiagnosisKeyService;
-import app.coronawarn.server.common.persistence.service.DiagnosisKeyServiceTestHelper;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.List;
@@ -73,7 +73,7 @@ public class DiagnosisKeyServiceMockedRepositoryTest {
     List<DiagnosisKey> actualKeys = diagnosisKeyService.getDiagnosisKeys();
     expKeys.remove(invalidKey1);
     expKeys.remove(invalidKey2);
-    DiagnosisKeyServiceTestHelper.assertDiagnosisKeysEqual(expKeys, actualKeys);
+    assertDiagnosisKeysEqual(expKeys, actualKeys);
   }
 
   private void mockInvalidKeyInDb(List<DiagnosisKey> keys) {
