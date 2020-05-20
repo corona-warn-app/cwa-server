@@ -160,9 +160,6 @@ public class DiagnosisKey {
    */
   public boolean isValid() {
     Set<ConstraintViolation<DiagnosisKey>> violations = getConstraintViolations();
-    if (!violations.isEmpty()) {
-      logger.debug("invalid");
-    }
     return violations.isEmpty();
   }
 
