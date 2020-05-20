@@ -168,6 +168,6 @@ public class ObjectStoreAccess {
   }
 
   private Map<String, String> createHeadersForPublicAccess() {
-    return Map.of( "x-amz-acl", "public-read");
+    return Map.of("x-amz-acl", "public-read");
   }
 }

@@ -62,7 +62,7 @@ public class PublishedFileSet {
       return true;
     }
 
-    return !file.getHash().equals(published.getEtag());
+    return !file.getEtag().equals(published.getEtag());
   }
 
 }

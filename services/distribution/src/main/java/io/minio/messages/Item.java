@@ -21,6 +21,13 @@ import java.util.Map;
 import org.simpleframework.xml.Element;
 import org.simpleframework.xml.Root;
 
+/* ----------------------------------------------------------------
+ * Copied from MinIO due to patch not yet available.
+ * https://github.com/minio/minio-java/pull/921
+ * Waiting for new release version: 7.0.3
+ * ----------------------------------------------------------------
+ */
+
 /**
  * Helper class to denote Object information in {@link ListBucketResult} and {@link
  * ListBucketResultV1}.
@@ -43,7 +50,7 @@ public class Item {
   @Element(name = "StorageClass")
   private String storageClass;
 
-  @Element(name = "Owner", required = false) /* Monkeypatch: Owner is optional */
+  @Element(name = "Owner", required = false) /* Monkeypatch: Owner should be optional */
   private Owner owner;
 
   @Element(name = "UserMetadata", required = false)
