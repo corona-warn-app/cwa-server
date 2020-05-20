@@ -23,13 +23,11 @@ import static java.time.ZoneOffset.UTC;
 
 import app.coronawarn.server.common.persistence.domain.DiagnosisKeyBuilders.Builder;
 import app.coronawarn.server.common.persistence.domain.validation.ValidRollingStartNumber;
-import app.coronawarn.server.common.persistence.exception.InvalidDiagnosisKeyException;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.Objects;
 import java.util.Set;
-import java.util.stream.Collectors;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -41,8 +39,6 @@ import javax.validation.Validator;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.Size;
 import org.hibernate.validator.constraints.Range;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * A key generated for advertising over a window of time.
@@ -50,9 +46,6 @@ import org.slf4j.LoggerFactory;
 @Entity
 @Table(name = "diagnosis_key")
 public class DiagnosisKey {
-
-  private static final Logger logger = LoggerFactory.getLogger(DiagnosisKey.class);
-
   private static final Validator VALIDATOR = Validation.buildDefaultValidatorFactory().getValidator();
 
   @Id
@@ -163,22 +156,7 @@ public class DiagnosisKey {
     return violations.isEmpty();
   }
 
-  /**
-   * Validates this key.
-   */
-  public void validate() {
-    Set<ConstraintViolation<DiagnosisKey>> violations = getConstraintViolations();
-
-    if (!violations.isEmpty()) {
-      String violationsMessage = violations.stream()
-          .map(violation -> String.format("%s Invalid Value: %s", violation.getMessage(), violation.getInvalidValue()))
-          .collect(Collectors.toList()).toString();
-      logger.debug(violationsMessage);
-      throw new InvalidDiagnosisKeyException(violationsMessage);
-    }
-  }
-
-  private Set<ConstraintViolation<DiagnosisKey>> getConstraintViolations() {
+  public Set<ConstraintViolation<DiagnosisKey>> getConstraintViolations() {
     return VALIDATOR.validate(this);
   }
 
