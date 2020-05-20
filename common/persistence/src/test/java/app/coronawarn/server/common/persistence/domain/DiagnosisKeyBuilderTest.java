@@ -96,29 +96,30 @@ public class DiagnosisKeyBuilderTest {
   @Test
   public void failsForInvalidKeyData() {
     assertInvalidKeyBuildingFailures("17--bytelongarray".getBytes(Charset.defaultCharset()),
-        this.expRollingStartNumber, this.expRollingPeriod, this.expTransmissionRiskLevel);
+        this.expRollingStartNumber, this.expRollingPeriod, this.expTransmissionRiskLevel,
+        "Key data must be byte array of length 16, but is 17.");
   }
 
   @Test
   public void failsForInvalidRollingStartNumber() {
     assertInvalidKeyBuildingFailures(this.expKeyData, 0, this.expRollingPeriod,
-        this.expTransmissionRiskLevel);
+        this.expTransmissionRiskLevel, "Rolling start number must be greater than 0.");
   }
 
   @Test
   public void failsForInvalidRollingPeriod() {
     assertInvalidKeyBuildingFailures(this.expKeyData, this.expRollingStartNumber,
-        0, this.expTransmissionRiskLevel);
+        0, this.expTransmissionRiskLevel, "Rolling period must be positive number, but is 0.");
   }
 
   @Test
   public void failsForInvalidTransmissionRiskLevel() {
     assertInvalidKeyBuildingFailures(this.expKeyData, this.expRollingStartNumber,
-        this.expRollingPeriod, 10);
+        this.expRollingPeriod, 10, "Risk level 10 is not allowed. Must be between 0 and 8.");
   }
 
   private void assertInvalidKeyBuildingFailures(byte[] expKeyData, long expRollingStartNumber,
-      long expRollingPeriod, int transmissionRiskLevel) {
+      long expRollingPeriod, int transmissionRiskLevel, String message) {
 
     Throwable actual = catchThrowable(() -> DiagnosisKey.builder()
         .withKeyData(expKeyData)
@@ -128,7 +129,8 @@ public class DiagnosisKeyBuilderTest {
         .build());
 
     assertThat(actual)
-        .isInstanceOf(InvalidDiagnosisKeyException.class);
+        .isInstanceOf(InvalidDiagnosisKeyException.class)
+        .hasMessage(message);
   }
 
 
