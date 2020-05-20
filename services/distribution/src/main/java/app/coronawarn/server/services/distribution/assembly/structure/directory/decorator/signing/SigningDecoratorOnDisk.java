@@ -15,7 +15,7 @@ public abstract class SigningDecoratorOnDisk extends AbstractSigningDecorator<Wr
 
   @Override
   public FileOnDisk getSignatureFile(String signatureFileName) {
-    TEKSignatureList signatureList = this.createTEKSignatureList(this.cryptoProvider);
+    TEKSignatureList signatureList = this.createTemporaryExposureKeySignatureList(this.cryptoProvider);
     return new FileOnDisk(signatureFileName, signatureList.toByteArray());
   }
 }

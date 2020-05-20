@@ -21,50 +21,51 @@ package app.coronawarn.server.services.distribution.assembly.diagnosiskeys.struc
 
 import app.coronawarn.server.common.persistence.domain.DiagnosisKey;
 import app.coronawarn.server.services.distribution.assembly.component.CryptoProvider;
+import app.coronawarn.server.services.distribution.assembly.diagnosiskeys.util.DateTime;
 import app.coronawarn.server.services.distribution.assembly.structure.WritableOnDisk;
 import app.coronawarn.server.services.distribution.assembly.structure.directory.Directory;
-import app.coronawarn.server.services.distribution.assembly.structure.directory.DirectoryOnDisk;
-import app.coronawarn.server.services.distribution.assembly.structure.directory.IndexDirectory;
 import app.coronawarn.server.services.distribution.assembly.structure.directory.IndexDirectoryOnDisk;
 import app.coronawarn.server.services.distribution.assembly.structure.directory.decorator.indexing.IndexingDecoratorOnDisk;
 import app.coronawarn.server.services.distribution.assembly.structure.util.ImmutableStack;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Collection;
 
-/**
- * A {@link Directory} containing the file and directory structure that mirrors the API defined in the OpenAPI
- * definition {@code /services/distribution/api_v1.json}. Available countries (endpoint {@code
- * /version/v1/diagnosis-keys/country}) are statically set to only {@code "DE"}. The dates and respective hours
- * (endpoint {@code /version/v1/diagnosis-keys/country/DE/date}) will be created based on the actual {@link DiagnosisKey
- * DiagnosisKeys} given to the {@link DiagnosisKeysDirectoryOnDisk#DiagnosisKeysDirectoryOnDisk constructor}.
- */
-public class DiagnosisKeysDirectoryOnDisk extends DirectoryOnDisk {
+public class DiagnosisKeysDateDirectory extends IndexDirectoryOnDisk<LocalDate> {
 
-  private static final String DIAGNOSIS_KEYS_DIRECTORY = "diagnosis-keys";
+  private static final String DATE_DIRECTORY = "date";
+  private static final DateTimeFormatter ISO8601 = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+
   private final Collection<DiagnosisKey> diagnosisKeys;
   private final CryptoProvider cryptoProvider;
 
   /**
-   * Constructs a {@link DiagnosisKeysDirectoryOnDisk} based on the specified {@link DiagnosisKey} collection.
-   * Cryptographic signing is performed using the specified {@link CryptoProvider}.
+   * Constructs a {@link DiagnosisKeysDateDirectory} instance associated with the specified {@link DiagnosisKey}
+   * collection. Payload signing is be performed according to the specified {@link CryptoProvider}.
    *
-   * @param diagnosisKeys  The diagnosis keys processed in the contained sub directories.
+   * @param diagnosisKeys  The diagnosis keys processed in the contained directories.
    * @param cryptoProvider The {@link CryptoProvider} used for payload signing.
    */
-  public DiagnosisKeysDirectoryOnDisk(Collection<DiagnosisKey> diagnosisKeys, CryptoProvider cryptoProvider) {
-    super(DIAGNOSIS_KEYS_DIRECTORY);
-    this.diagnosisKeys = diagnosisKeys;
+  public DiagnosisKeysDateDirectory(Collection<DiagnosisKey> diagnosisKeys,
+      CryptoProvider cryptoProvider) {
+    super(DATE_DIRECTORY, __ -> DateTime.getDates(diagnosisKeys), ISO8601::format);
     this.cryptoProvider = cryptoProvider;
+    this.diagnosisKeys = diagnosisKeys;
   }
 
   @Override
   public void prepare(ImmutableStack<Object> indices) {
-    this.addWritable(decorateCountryDirectory(
-        new DiagnosisKeysCountryDirectoryOnDisk(diagnosisKeys, cryptoProvider)));
+    this.addWritableToAll(currentIndices -> {
+      LocalDate currentDate = (LocalDate) currentIndices.peek();
+      IndexDirectoryOnDisk<LocalDateTime> hourDirectory = new DiagnosisKeysHourDirectory(
+          diagnosisKeys, currentDate, cryptoProvider);
+      return decorateHourDirectory(hourDirectory);
+    });
     super.prepare(indices);
   }
 
-  private IndexDirectory<String, WritableOnDisk> decorateCountryDirectory(
-      IndexDirectoryOnDisk<String> countryDirectory) {
-    return new IndexingDecoratorOnDisk<>(countryDirectory);
+  private Directory<WritableOnDisk> decorateHourDirectory(IndexDirectoryOnDisk<LocalDateTime> hourDirectory) {
+    return new IndexingDecoratorOnDisk<>(hourDirectory);
   }
 }

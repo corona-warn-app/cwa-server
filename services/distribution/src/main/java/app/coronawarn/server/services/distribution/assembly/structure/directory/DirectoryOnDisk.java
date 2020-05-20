@@ -22,8 +22,8 @@ package app.coronawarn.server.services.distribution.assembly.structure.directory
 import static app.coronawarn.server.services.distribution.assembly.structure.util.functional.CheckedConsumer.uncheckedConsumer;
 
 import app.coronawarn.server.services.distribution.assembly.structure.Writable;
-import app.coronawarn.server.services.distribution.assembly.structure.file.File;
 import app.coronawarn.server.services.distribution.assembly.structure.WritableOnDisk;
+import app.coronawarn.server.services.distribution.assembly.structure.file.File;
 import app.coronawarn.server.services.distribution.assembly.structure.util.ImmutableStack;
 import java.util.HashSet;
 import java.util.Set;
@@ -45,9 +45,9 @@ public class DirectoryOnDisk extends WritableOnDisk implements Directory<Writabl
   }
 
   /**
-   * A {@link DirectoryOnDisk} that does not yet represent an already existing directory on disk, but
-   * one that shall be created on disk when calling {@link DirectoryOnDisk#write}. A parent needs to
-   * be defined by calling {@link DirectoryOnDisk#setParent}, before writing can succeed.
+   * A {@link DirectoryOnDisk} that does not yet represent an already existing directory on disk, but one that shall be
+   * created on disk when calling {@link DirectoryOnDisk#write}. A parent needs to be defined by calling {@link
+   * DirectoryOnDisk#setParent}, before writing can succeed.
    *
    * @param name The name that this directory should have on disk.
    */
@@ -67,8 +67,7 @@ public class DirectoryOnDisk extends WritableOnDisk implements Directory<Writabl
   }
 
   /**
-   * Delegates the {@link Writable#prepare} call to all contained {@link
-   * DirectoryOnDisk#getWritables()} writables}.
+   * Delegates the {@link Writable#prepare} call to all contained {@link DirectoryOnDisk#getWritables()} writables}.
    */
   @Override
   public void prepare(ImmutableStack<Object> indices) {
@@ -76,8 +75,7 @@ public class DirectoryOnDisk extends WritableOnDisk implements Directory<Writabl
   }
 
   /**
-   * Writes this {@link DirectoryOnDisk} and all of its {@link DirectoryOnDisk#getWritables()}
-   * writables} to disk.
+   * Writes this {@link DirectoryOnDisk} and all of its {@link DirectoryOnDisk#getWritables()} writables} to disk.
    */
   @Override
   public void write() {

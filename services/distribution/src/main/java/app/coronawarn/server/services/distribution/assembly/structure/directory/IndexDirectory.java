@@ -20,15 +20,15 @@
 package app.coronawarn.server.services.distribution.assembly.structure.directory;
 
 import app.coronawarn.server.services.distribution.assembly.structure.Writable;
+import app.coronawarn.server.services.distribution.assembly.structure.util.ImmutableStack;
 import app.coronawarn.server.services.distribution.assembly.structure.util.functional.Formatter;
 import app.coronawarn.server.services.distribution.assembly.structure.util.functional.WritableFunction;
-import app.coronawarn.server.services.distribution.assembly.structure.util.ImmutableStack;
 import java.util.Set;
 import java.util.Stack;
 
 /**
- * A "meta {@link Directory directory}" that maps its on-disk subdirectories to some list of elements.
- * This list of elements is determined by a {@link WritableFunction}.
+ * A "meta {@link Directory directory}" that maps its on-disk subdirectories to some list of elements. This list of
+ * elements is determined by a {@link WritableFunction}.
  *
  * @param <W> The specific type of {@link Writable} that this {@link IndexDirectory} can be a child of.
  * @param <T> The type of the elements in the index.
@@ -36,24 +36,22 @@ import java.util.Stack;
 public interface IndexDirectory<T, W extends Writable<W>> extends Directory<W> {
 
   /**
-   * Adds a writable under the name {@code name}, whose content is calculated by the {@code
-   * writableFunction} to each one of the directories created from the index. The {@code
-   * fileFunction} calculates the file content from a {@link java.util.Stack} of parent {@link
-   * IndexDirectoryOnDisk} indices. File content calculation happens on {@link DirectoryOnDisk#write}.
+   * Adds a writable under the name {@code name}, whose content is calculated by the {@code writableFunction} to each
+   * one of the directories created from the index. The {@code fileFunction} calculates the file content from a {@link
+   * java.util.Stack} of parent {@link IndexDirectoryOnDisk} indices. File content calculation happens on {@link
+   * DirectoryOnDisk#write}.
    *
    * @param writableFunction A function that can output a new writable.
    */
   void addWritableToAll(WritableFunction<W> writableFunction);
 
   /**
-   * Calls the {@link app.coronawarn.server.services.distribution.assembly.structure.util.functional.IndexFunction}
-   * with the {@code indices} to calculate and return the elements of the index of this {@link
-   * IndexDirectory}.
+   * Calls the {@link app.coronawarn.server.services.distribution.assembly.structure.util.functional.IndexFunction} with
+   * the {@code indices} to calculate and return the elements of the index of this {@link IndexDirectory}.
    *
-   * @param indices A {@link Stack} of parameters from all {@link IndexDirectory IndexDirectories}
-   *                further up in the hierarchy. The Stack may contain different types, depending on
-   *                the types {@code T} of {@link IndexDirectory IndexDirectories} further up in the
-   *                hierarchy.
+   * @param indices A {@link Stack} of parameters from all {@link IndexDirectory IndexDirectories} further up in the
+   *                hierarchy. The Stack may contain different types, depending on the types {@code T} of {@link
+   *                IndexDirectory IndexDirectories} further up in the hierarchy.
    */
   Set<T> getIndex(ImmutableStack<Object> indices);
 

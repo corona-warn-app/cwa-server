@@ -50,7 +50,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration(classes = {CryptoProvider.class},
     initializers = ConfigFileApplicationContextInitializer.class)
-public class DiagnosisKeysStructureProviderDirectoryTest {
+public class DiagnosisKeysDirectoryTest {
 
   @Autowired
   CryptoProvider cryptoProvider;
@@ -85,7 +85,7 @@ public class DiagnosisKeysStructureProviderDirectoryTest {
   @Test
   public void checkBuildsTheCorrectDirectoryStructureWhenNoKeys() {
     diagnosisKeys = new ArrayList<>();
-    Directory directory = new DiagnosisKeysDirectoryOnDisk(diagnosisKeys, cryptoProvider);
+    Directory directory = new DiagnosisKeysDirectory(diagnosisKeys, cryptoProvider);
     parentDirectory.addWritable(directory);
     directory.prepare(new ImmutableStack<>());
     directory.write();
@@ -103,7 +103,7 @@ public class DiagnosisKeysStructureProviderDirectoryTest {
 
   @Test
   public void checkBuildsTheCorrectDirectoryStructure() {
-    Directory directory = new DiagnosisKeysDirectoryOnDisk(diagnosisKeys, cryptoProvider);
+    Directory directory = new DiagnosisKeysDirectory(diagnosisKeys, cryptoProvider);
     parentDirectory.addWritable(directory);
     directory.prepare(new ImmutableStack<>());
     directory.write();

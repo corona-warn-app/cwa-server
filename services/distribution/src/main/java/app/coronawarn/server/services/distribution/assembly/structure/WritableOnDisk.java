@@ -19,6 +19,7 @@
 
 package app.coronawarn.server.services.distribution.assembly.structure;
 
+import app.coronawarn.server.services.distribution.assembly.structure.archive.Archive;
 import app.coronawarn.server.services.distribution.assembly.structure.directory.Directory;
 import app.coronawarn.server.services.distribution.assembly.structure.file.File;
 import java.util.Objects;
@@ -68,5 +69,10 @@ public abstract class WritableOnDisk implements Writable<WritableOnDisk> {
   @Override
   public boolean isDirectory() {
     return this instanceof Directory;
+  }
+
+  @Override
+  public boolean isArchive() {
+    return this instanceof Archive;
   }
 }

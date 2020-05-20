@@ -54,13 +54,9 @@ public interface Writable<W extends Writable<W>> {
    */
   void prepare(ImmutableStack<Object> indices);
 
-  /**
-   * TODO
-   */
   boolean isFile();
 
-  /**
-   * TODO
-   */
   boolean isDirectory();
+
+  boolean isArchive();
 }

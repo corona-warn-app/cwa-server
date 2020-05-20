@@ -72,15 +72,6 @@ public abstract class DirectoryDecorator<W extends Writable<W>> implements Direc
     this.directory.setParent(parent);
   }
 
-  /*
-  TODO
-  @Override
-  public java.io.File getFileOnDisk() {
-    return this.directory.getFileOnDisk();
-  }
-  */
-
-  // TODO Remove
   @Override
   public boolean isFile() {
     return this.directory.isFile();
@@ -89,5 +80,10 @@ public abstract class DirectoryDecorator<W extends Writable<W>> implements Direc
   @Override
   public boolean isDirectory() {
     return this.directory.isDirectory();
+  }
+
+  @Override
+  public boolean isArchive() {
+    return this.directory.isArchive();
   }
 }

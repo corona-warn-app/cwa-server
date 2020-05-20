@@ -35,6 +35,9 @@ public class TemporaryExposureKeyExportFile extends FileOnDisk {
     this.endTimestamp = endTimestamp;
   }
 
+  /**
+   * TODO.
+   */
   public static TemporaryExposureKeyExportFile fromTemporaryExposureKeys(
       Collection<TemporaryExposureKey> temporaryExposureKeys, String region, long startTimestamp,
       long endTimestamp) {
@@ -42,6 +45,9 @@ public class TemporaryExposureKeyExportFile extends FileOnDisk {
         endTimestamp);
   }
 
+  /**
+   * TODO.
+   */
   public static TemporaryExposureKeyExportFile fromDiagnosisKeys(
       Collection<DiagnosisKey> diagnosisKeys, String region) {
     return new TemporaryExposureKeyExportFile(

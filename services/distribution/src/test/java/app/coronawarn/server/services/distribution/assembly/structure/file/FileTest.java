@@ -23,6 +23,7 @@ import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
+import app.coronawarn.server.services.distribution.assembly.structure.WritableOnDisk;
 import app.coronawarn.server.services.distribution.assembly.structure.directory.Directory;
 import app.coronawarn.server.services.distribution.assembly.structure.directory.DirectoryOnDisk;
 import java.io.IOException;
@@ -66,7 +67,7 @@ public class FileTest {
   @Test
   public void checkWrite() throws IOException {
     java.io.File outputFile = outputFolder.newFolder();
-    Directory directory = new DirectoryOnDisk(outputFile);
+    Directory<WritableOnDisk> directory = new DirectoryOnDisk(outputFile);
 
     directory.addWritable(file);
     directory.write();

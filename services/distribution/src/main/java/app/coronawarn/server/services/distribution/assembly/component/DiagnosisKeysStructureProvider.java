@@ -21,7 +21,7 @@ package app.coronawarn.server.services.distribution.assembly.component;
 
 import app.coronawarn.server.common.persistence.domain.DiagnosisKey;
 import app.coronawarn.server.common.persistence.service.DiagnosisKeyService;
-import app.coronawarn.server.services.distribution.assembly.diagnosiskeys.structure.directory.DiagnosisKeysDirectoryOnDisk;
+import app.coronawarn.server.services.distribution.assembly.diagnosiskeys.structure.directory.DiagnosisKeysDirectory;
 import app.coronawarn.server.services.distribution.assembly.structure.WritableOnDisk;
 import app.coronawarn.server.services.distribution.assembly.structure.directory.Directory;
 import java.util.Collection;
@@ -31,7 +31,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 /**
- * Retrieves stored diagnosis keys and builds a {@link DiagnosisKeysDirectoryOnDisk} with them.
+ * Retrieves stored diagnosis keys and builds a {@link DiagnosisKeysDirectory} with them.
  */
 @Component
 public class DiagnosisKeysStructureProvider {
@@ -51,7 +51,7 @@ public class DiagnosisKeysStructureProvider {
 
   public Directory<WritableOnDisk> getDiagnosisKeys() {
     Collection<DiagnosisKey> diagnosisKeys = readDiagnosisKeys();
-    return new DiagnosisKeysDirectoryOnDisk(diagnosisKeys, cryptoProvider);
+    return new DiagnosisKeysDirectory(diagnosisKeys, cryptoProvider);
   }
 
   private Collection<DiagnosisKey> readDiagnosisKeys() {

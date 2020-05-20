@@ -21,51 +21,50 @@ package app.coronawarn.server.services.distribution.assembly.diagnosiskeys.struc
 
 import app.coronawarn.server.common.persistence.domain.DiagnosisKey;
 import app.coronawarn.server.services.distribution.assembly.component.CryptoProvider;
-import app.coronawarn.server.services.distribution.assembly.diagnosiskeys.structure.directory.decorator.DateAggregatingDecorator;
 import app.coronawarn.server.services.distribution.assembly.structure.WritableOnDisk;
 import app.coronawarn.server.services.distribution.assembly.structure.directory.Directory;
+import app.coronawarn.server.services.distribution.assembly.structure.directory.DirectoryOnDisk;
 import app.coronawarn.server.services.distribution.assembly.structure.directory.IndexDirectory;
 import app.coronawarn.server.services.distribution.assembly.structure.directory.IndexDirectoryOnDisk;
-import app.coronawarn.server.services.distribution.assembly.structure.directory.decorator.indexing.AbstractIndexingDecorator;
 import app.coronawarn.server.services.distribution.assembly.structure.directory.decorator.indexing.IndexingDecoratorOnDisk;
 import app.coronawarn.server.services.distribution.assembly.structure.util.ImmutableStack;
-import java.time.LocalDate;
 import java.util.Collection;
-import java.util.Set;
 
-public class DiagnosisKeysCountryDirectoryOnDisk extends IndexDirectoryOnDisk<String> {
+/**
+ * A {@link Directory} containing the file and directory structure that mirrors the API defined in the OpenAPI
+ * definition {@code /services/distribution/api_v1.json}. Available countries (endpoint {@code
+ * /version/v1/diagnosis-keys/country}) are statically set to only {@code "DE"}. The dates and respective hours
+ * (endpoint {@code /version/v1/diagnosis-keys/country/DE/date}) will be created based on the actual {@link DiagnosisKey
+ * DiagnosisKeys} given to the {@link DiagnosisKeysDirectory#DiagnosisKeysDirectory constructor}.
+ */
+public class DiagnosisKeysDirectory extends DirectoryOnDisk {
 
-  private static final String COUNTRY_DIRECTORY = "country";
-  private static final String COUNTRY = "DE";
-
+  private static final String DIAGNOSIS_KEYS_DIRECTORY = "diagnosis-keys";
   private final Collection<DiagnosisKey> diagnosisKeys;
   private final CryptoProvider cryptoProvider;
 
   /**
-   * Constructs a {@link DiagnosisKeysCountryDirectoryOnDisk} instance that represents the {@code
-   * .../country/:country/...} portion of the diagnosis key directory structure.
+   * Constructs a {@link DiagnosisKeysDirectory} based on the specified {@link DiagnosisKey} collection.
+   * Cryptographic signing is performed using the specified {@link CryptoProvider}.
    *
    * @param diagnosisKeys  The diagnosis keys processed in the contained sub directories.
    * @param cryptoProvider The {@link CryptoProvider} used for payload signing.
    */
-  public DiagnosisKeysCountryDirectoryOnDisk(Collection<DiagnosisKey> diagnosisKeys,
-      CryptoProvider cryptoProvider) {
-    super(COUNTRY_DIRECTORY, __ -> Set.of(COUNTRY), Object::toString);
+  public DiagnosisKeysDirectory(Collection<DiagnosisKey> diagnosisKeys, CryptoProvider cryptoProvider) {
+    super(DIAGNOSIS_KEYS_DIRECTORY);
     this.diagnosisKeys = diagnosisKeys;
     this.cryptoProvider = cryptoProvider;
   }
 
   @Override
   public void prepare(ImmutableStack<Object> indices) {
-    this.addWritableToAll(__ -> {
-      IndexDirectoryOnDisk<LocalDate> dateDirectory = new DiagnosisKeysDateDirectoryOnDisk(diagnosisKeys,
-          cryptoProvider);
-      return decorateDateDirectory(dateDirectory);
-    });
+    this.addWritable(decorateCountryDirectory(
+        new DiagnosisKeysCountryDirectory(diagnosisKeys, cryptoProvider)));
     super.prepare(indices);
   }
 
-  private IndexDirectory<LocalDate, WritableOnDisk> decorateDateDirectory(IndexDirectoryOnDisk<LocalDate> dateDirectory) {
-    return new DateAggregatingDecorator(new IndexingDecoratorOnDisk<>(dateDirectory), cryptoProvider);
+  private IndexDirectory<String, WritableOnDisk> decorateCountryDirectory(
+      IndexDirectoryOnDisk<String> countryDirectory) {
+    return new IndexingDecoratorOnDisk<>(countryDirectory);
   }
 }

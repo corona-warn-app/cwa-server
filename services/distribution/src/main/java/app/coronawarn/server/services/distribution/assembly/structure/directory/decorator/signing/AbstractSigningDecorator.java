@@ -39,9 +39,9 @@ import org.slf4j.LoggerFactory;
 public abstract class AbstractSigningDecorator<W extends Writable<W>> extends DirectoryDecorator<W> implements
     SigningDecorator<W> {
 
-  String SIGNATURE_FILE_NAME = "export.sig";
-  String SIGNATURE_ALGORITHM = "Ed25519";
-  String SECURITY_PROVIDER = "BC";
+  private static final String SIGNATURE_FILE_NAME = "export.sig";
+  private static final String SIGNATURE_ALGORITHM = "Ed25519";
+  private static final String SECURITY_PROVIDER = "BC";
 
   private static final Logger logger = LoggerFactory.getLogger(AbstractSigningDecorator.class);
   protected final CryptoProvider cryptoProvider;
@@ -57,12 +57,10 @@ public abstract class AbstractSigningDecorator<W extends Writable<W>> extends Di
   @Override
   public void prepare(ImmutableStack<Object> indices) {
     super.prepare(indices);
-    logger.debug("Adding signature to ..."); // TODO
     this.addWritable(this.getSignatureFile(SIGNATURE_FILE_NAME));
   }
 
-  protected TEKSignatureList createTEKSignatureList(CryptoProvider cryptoProvider) {
-    // TODO
+  protected TEKSignatureList createTemporaryExposureKeySignatureList(CryptoProvider cryptoProvider) {
     return TEKSignatureList.newBuilder()
         .addSignatures(TEKSignature.newBuilder()
             .setSignatureInfo(getSignatureInfo())
@@ -85,7 +83,9 @@ public abstract class AbstractSigningDecorator<W extends Writable<W>> extends Di
     }
   }
 
-  // TODO
+  /**
+   * TODO Enter correct values.
+   */
   public static SignatureInfo getSignatureInfo() {
     return SignatureInfo.newBuilder()
         .setAppBundleId("TODO")

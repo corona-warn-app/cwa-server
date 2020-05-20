@@ -76,11 +76,9 @@ public class IndexDirectoryTest {
 
   @Test
   public void checkAddFileToAll() {
-    // TODO
-    /*
-    List<File> expectedFileList = new ArrayList<>();
+    List<FileOnDisk> expectedFileList = new ArrayList<>();
     indexDirectory.addWritableToAll(__ -> {
-      File newFile = new FileOnDisk("index", new byte[0]);
+      FileOnDisk newFile = new FileOnDisk("index", new byte[0]);
       expectedFileList.add(newFile);
       return newFile;
     });
@@ -94,21 +92,18 @@ public class IndexDirectoryTest {
         .sorted()
         .collect(Collectors.toList());
     List<java.io.File> expectedPhysicalFiles = expectedFileList.stream()
-        .map(Writable::getFileOnDisk)
+        .map(WritableOnDisk::getFileOnDisk)
         .sorted()
         .collect(Collectors.toList());
 
     assertEquals(expectedPhysicalFiles, actualPhysicalFiles);
-    */
   }
 
   @Test
   public void checkAddDirectoryToAll() {
-    // TODO
-    /*
-    List<Directory> expectedFileList = new ArrayList<>();
+    List<DirectoryOnDisk> expectedFileList = new ArrayList<>();
     indexDirectory.addWritableToAll(__ -> {
-      Directory newDirectory = new DirectoryOnDisk("something");
+      DirectoryOnDisk newDirectory = new DirectoryOnDisk("something");
       expectedFileList.add(newDirectory);
       return newDirectory;
     });
@@ -121,18 +116,17 @@ public class IndexDirectoryTest {
         .flatMap(IndexDirectoryTest::getContainedElements)
         .collect(Collectors.toSet());
     Set<java.io.File> expectedPhysicalFiles = expectedFileList.stream()
-        .map(Writable::getFileOnDisk)
+        .map(WritableOnDisk::getFileOnDisk)
         .collect(Collectors.toSet());
 
     assertEquals(expectedPhysicalFiles, actualPhysicalFiles);
-     */
   }
 
   private static Stream<java.io.File> getContainedElements(java.io.File directory) {
     return Arrays.stream(directory.listFiles());
   }
 
-  private void prepareAndWrite(Directory directory) {
+  private void prepareAndWrite(Directory<WritableOnDisk> directory) {
     directory.prepare(new ImmutableStack<>());
     directory.write();
   }

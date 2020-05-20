@@ -1,4 +1,4 @@
-package app.coronawarn.server.services.distribution.assembly.exposureconfig.structure.directory;
+package app.coronawarn.server.services.distribution.assembly.exposureconfig.structure.directory.decorator;
 
 import app.coronawarn.server.services.distribution.assembly.component.CryptoProvider;
 import app.coronawarn.server.services.distribution.assembly.structure.Writable;
@@ -23,13 +23,11 @@ public class ExposureConfigSigningDecorator extends SigningDecoratorOnDisk {
 
   @Override
   public int getBatchNum() {
-    // TODO
     return 1;
   }
 
   @Override
   public int getBatchSize() {
-    // TODO
     return 1;
   }
 }

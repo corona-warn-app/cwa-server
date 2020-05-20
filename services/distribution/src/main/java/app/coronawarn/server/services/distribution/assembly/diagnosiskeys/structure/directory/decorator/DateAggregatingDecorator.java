@@ -51,7 +51,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * A {@link DirectoryDecorator} that will TODO
+ * A {@link DirectoryDecorator} that will bundle hour aggregates into date aggregates and sign them.
  */
 public class DateAggregatingDecorator extends IndexDirectoryDecorator<LocalDate, WritableOnDisk> {
 
@@ -69,8 +69,6 @@ public class DateAggregatingDecorator extends IndexDirectoryDecorator<LocalDate,
   @Override
   public void prepare(ImmutableStack<Object> indices) {
     super.prepare(indices);
-    logger.debug("Aggregating ..."); // TODO
-
     Set<Directory<WritableOnDisk>> dayDirectories = this.getWritables().stream()
         .filter(writable -> writable instanceof DirectoryOnDisk)
         .map(directory -> (DirectoryOnDisk) directory)
@@ -120,8 +118,8 @@ public class DateAggregatingDecorator extends IndexDirectoryDecorator<LocalDate,
       Set<Directory<WritableOnDisk>> hourArchives) {
     return hourArchives.stream()
         .map(Directory::getWritables)
-        // TODO
-        .map(a -> a.stream().filter(b -> b.getName().equals("export.bin")))
+        .map(writables -> writables.stream()
+            .filter(writable -> writable.getName().equals("export.bin")))
         .map(Stream::findFirst)
         .map(Optional::orElseThrow)
         .filter(writable -> writable instanceof File)

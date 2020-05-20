@@ -24,6 +24,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.verify;
 
+import app.coronawarn.server.services.distribution.assembly.structure.WritableOnDisk;
 import app.coronawarn.server.services.distribution.assembly.structure.file.File;
 import app.coronawarn.server.services.distribution.assembly.structure.file.FileOnDisk;
 import app.coronawarn.server.services.distribution.assembly.structure.util.ImmutableStack;
@@ -37,9 +38,9 @@ import org.junit.rules.TemporaryFolder;
 public class DirectoryTest {
 
   private java.io.File outputDir = new java.io.File("test");
-  private Directory parentDirectory;
-  private Directory childDirectory;
-  private File childFile;
+  private Directory<WritableOnDisk> parentDirectory;
+  private Directory<WritableOnDisk> childDirectory;
+  private File<WritableOnDisk> childFile;
 
   @Rule
   private TemporaryFolder outputFolder = new TemporaryFolder();
@@ -67,7 +68,7 @@ public class DirectoryTest {
 
   @Test
   public void checkPrepareDelegatesToWritables() {
-    File spyChildFile = spy(childFile);
+    File<WritableOnDisk> spyChildFile = spy(childFile);
     ImmutableStack<Object> expectedStack = new ImmutableStack<>();
 
     parentDirectory.addWritable(spyChildFile);
@@ -99,7 +100,7 @@ public class DirectoryTest {
 
   @Test
   public void checkWriteDelegatesToWritables() throws IOException {
-    File spyChildFile = spy(childFile);
+    File<WritableOnDisk> spyChildFile = spy(childFile);
 
     parentDirectory.addWritable(spyChildFile);
     parentDirectory.write();

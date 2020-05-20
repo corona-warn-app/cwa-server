@@ -21,10 +21,10 @@ package app.coronawarn.server.services.distribution.assembly.structure.directory
 
 import app.coronawarn.server.services.distribution.assembly.structure.Writable;
 import app.coronawarn.server.services.distribution.assembly.structure.WritableOnDisk;
+import app.coronawarn.server.services.distribution.assembly.structure.util.ImmutableStack;
 import app.coronawarn.server.services.distribution.assembly.structure.util.functional.Formatter;
 import app.coronawarn.server.services.distribution.assembly.structure.util.functional.IndexFunction;
 import app.coronawarn.server.services.distribution.assembly.structure.util.functional.WritableFunction;
-import app.coronawarn.server.services.distribution.assembly.structure.util.ImmutableStack;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.Stack;
@@ -37,16 +37,15 @@ public class IndexDirectoryOnDisk<T> extends DirectoryOnDisk implements IndexDir
   private final Formatter<T> indexFormatter;
 
   /**
-   * Constructs a {@link IndexDirectoryOnDisk} instance that represents a directory, containing an
-   * index in the form of sub directories.
+   * Constructs a {@link IndexDirectoryOnDisk} instance that represents a directory, containing an index in the form of
+   * sub directories.
    *
    * @param name           The name that this directory should have on disk.
-   * @param indexFunction  An {@link IndexFunction} that calculates the index of this {@link
-   *                       IndexDirectoryOnDisk} from a {@link java.util.Stack} of parent {@link
-   *                       IndexDirectoryOnDisk} indices. The top element of the stack is from the
-   *                       closest {@link IndexDirectoryOnDisk} in the parent chain.
-   * @param indexFormatter A {@link Formatter} used to format the directory name for each index
-   *                       element returned by the {@link IndexDirectoryOnDisk#indexFunction}.
+   * @param indexFunction  An {@link IndexFunction} that calculates the index of this {@link IndexDirectoryOnDisk} from
+   *                       a {@link java.util.Stack} of parent {@link IndexDirectoryOnDisk} indices. The top element of
+   *                       the stack is from the closest {@link IndexDirectoryOnDisk} in the parent chain.
+   * @param indexFormatter A {@link Formatter} used to format the directory name for each index element returned by the
+   *                       {@link IndexDirectoryOnDisk#indexFunction}.
    */
   public IndexDirectoryOnDisk(String name, IndexFunction<T> indexFunction, Formatter<T> indexFormatter) {
     super(name);
@@ -70,15 +69,13 @@ public class IndexDirectoryOnDisk<T> extends DirectoryOnDisk implements IndexDir
   }
 
   /**
-   * Creates a new subdirectory for every element of the {@link IndexDirectory#getIndex index} and
-   * writes all its {@link IndexDirectory#addWritableToAll writables} to those. The respective
-   * element of the index will be pushed onto the Stack for subsequent {@link
-   * Writable#prepare} calls.
+   * Creates a new subdirectory for every element of the {@link IndexDirectory#getIndex index} and writes all its {@link
+   * IndexDirectory#addWritableToAll writables} to those. The respective element of the index will be pushed onto the
+   * Stack for subsequent {@link Writable#prepare} calls.
    *
-   * @param indices A {@link Stack} of parameters from all {@link IndexDirectory IndexDirectories}
-   *                further up in the hierarchy. The Stack may contain different types, depending on
-   *                the types {@code T} of {@link IndexDirectory IndexDirectories} further up in the
-   *                hierarchy.
+   * @param indices A {@link Stack} of parameters from all {@link IndexDirectory IndexDirectories} further up in the
+   *                hierarchy. The Stack may contain different types, depending on the types {@code T} of {@link
+   *                IndexDirectory IndexDirectories} further up in the hierarchy.
    */
   @Override
   public void prepare(ImmutableStack<Object> indices) {

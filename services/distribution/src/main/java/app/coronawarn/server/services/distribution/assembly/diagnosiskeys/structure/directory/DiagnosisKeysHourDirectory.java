@@ -25,10 +25,10 @@ import app.coronawarn.server.services.distribution.assembly.diagnosiskeys.struct
 import app.coronawarn.server.services.distribution.assembly.diagnosiskeys.structure.file.TemporaryExposureKeyExportFile;
 import app.coronawarn.server.services.distribution.assembly.diagnosiskeys.util.DateTime;
 import app.coronawarn.server.services.distribution.assembly.structure.archive.Archive;
+import app.coronawarn.server.services.distribution.assembly.structure.archive.ArchiveOnDisk;
 import app.coronawarn.server.services.distribution.assembly.structure.directory.Directory;
 import app.coronawarn.server.services.distribution.assembly.structure.directory.IndexDirectoryOnDisk;
 import app.coronawarn.server.services.distribution.assembly.structure.file.File;
-import app.coronawarn.server.services.distribution.assembly.structure.archive.ArchiveOnDisk;
 import app.coronawarn.server.services.distribution.assembly.structure.util.ImmutableStack;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -36,7 +36,7 @@ import java.util.Collection;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-public class DiagnosisKeysHourDirectoryOnDisk extends IndexDirectoryOnDisk<LocalDateTime> {
+public class DiagnosisKeysHourDirectory extends IndexDirectoryOnDisk<LocalDateTime> {
 
   private static final String HOUR_DIRECTORY = "hour";
 
@@ -45,15 +45,14 @@ public class DiagnosisKeysHourDirectoryOnDisk extends IndexDirectoryOnDisk<Local
   private final CryptoProvider cryptoProvider;
 
   /**
-   * Constructs a {@link DiagnosisKeysHourDirectoryOnDisk} instance for the specified date.
+   * Constructs a {@link DiagnosisKeysHourDirectory} instance for the specified date.
    *
-   * @param diagnosisKeys  A collection of diagnosis keys. These will be filtered according to the
-   *                       specified current date.
-   * @param currentDate    The date that this {@link DiagnosisKeysHourDirectoryOnDisk} shall be
-   *                       associated with.
+   * @param diagnosisKeys  A collection of diagnosis keys. These will be filtered according to the specified current
+   *                       date.
+   * @param currentDate    The date that this {@link DiagnosisKeysHourDirectory} shall be associated with.
    * @param cryptoProvider The {@link CryptoProvider} used for cryptographic signing.
    */
-  public DiagnosisKeysHourDirectoryOnDisk(Collection<DiagnosisKey> diagnosisKeys,
+  public DiagnosisKeysHourDirectory(Collection<DiagnosisKey> diagnosisKeys,
       LocalDate currentDate, CryptoProvider cryptoProvider) {
     super(HOUR_DIRECTORY, indices -> DateTime.getHours(((LocalDate) indices.peek()), diagnosisKeys),
         LocalDateTime::getHour);

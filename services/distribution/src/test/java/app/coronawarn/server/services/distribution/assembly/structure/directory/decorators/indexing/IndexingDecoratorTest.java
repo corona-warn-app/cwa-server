@@ -17,7 +17,7 @@
  * under the License.
  */
 
-package app.coronawarn.server.services.distribution.assembly.structure.directory.decorators;
+package app.coronawarn.server.services.distribution.assembly.structure.directory.decorators.indexing;
 
 import static app.coronawarn.server.services.distribution.common.Helpers.prepareAndWrite;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -44,16 +44,16 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.rules.TemporaryFolder;
 
-public class IndexingDecoratorOnDiskTest {
+public class IndexingDecoratorTest {
 
   @Rule
   private TemporaryFolder outputFolder = new TemporaryFolder();
 
   private static final Set<Integer> index = Set.of(1, 2, 3);
   private java.io.File outputFile;
-  private DirectoryOnDisk parent;
-  private IndexDirectoryOnDisk<Integer> decoratee;
-  private IndexingDecoratorOnDisk<Integer> decorator;
+  private Directory<WritableOnDisk> parent;
+  private IndexDirectory<Integer, WritableOnDisk> decoratee;
+  private IndexDirectory<Integer, WritableOnDisk> decorator;
 
   @BeforeEach
   public void setup() throws IOException {
@@ -61,7 +61,7 @@ public class IndexingDecoratorOnDiskTest {
     outputFile = outputFolder.newFolder();
     parent = new DirectoryOnDisk(outputFile);
     decoratee = new IndexDirectoryOnDisk<>("foo", __ -> index, __ -> __);
-    decorator = new IndexingDecoratorOnDisk<Integer>(decoratee);
+    decorator = new IndexingDecoratorOnDisk<>(decoratee);
 
     parent.addWritable(decorator);
 

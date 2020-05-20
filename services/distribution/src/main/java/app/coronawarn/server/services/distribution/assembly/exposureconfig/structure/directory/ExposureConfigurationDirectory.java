@@ -21,21 +21,19 @@ package app.coronawarn.server.services.distribution.assembly.exposureconfig.stru
 
 import app.coronawarn.server.common.protocols.internal.RiskScoreParameters;
 import app.coronawarn.server.services.distribution.assembly.component.CryptoProvider;
-import app.coronawarn.server.services.distribution.assembly.structure.archive.Archive;
+import app.coronawarn.server.services.distribution.assembly.exposureconfig.structure.directory.decorator.ExposureConfigSigningDecorator;
 import app.coronawarn.server.services.distribution.assembly.structure.archive.ArchiveOnDisk;
 import app.coronawarn.server.services.distribution.assembly.structure.directory.DirectoryOnDisk;
 import app.coronawarn.server.services.distribution.assembly.structure.directory.IndexDirectoryOnDisk;
-import app.coronawarn.server.services.distribution.assembly.structure.directory.decorator.indexing.AbstractIndexingDecorator;
 import app.coronawarn.server.services.distribution.assembly.structure.directory.decorator.indexing.IndexingDecoratorOnDisk;
 import app.coronawarn.server.services.distribution.assembly.structure.file.FileOnDisk;
 import java.util.Set;
 
 /**
- * Creates the directory structure {@code /parameters/country/:country} and writes a file called
- * {@code index} containing {@link RiskScoreParameters} wrapped in a {@link
- * app.coronawarn.server.common.protocols.internal.SignedPayload}.
+ * Creates the directory structure {@code /parameters/country/:country} and writes a file called {@code index}
+ * containing {@link RiskScoreParameters} wrapped in a signed zip archive.
  */
-public class ExposureConfigurationDirectoryOnDisk extends DirectoryOnDisk {
+public class ExposureConfigurationDirectory extends DirectoryOnDisk {
 
   private static final String PARAMETERS_DIRECTORY = "parameters";
   private static final String COUNTRY_DIRECTORY = "country";
@@ -46,14 +44,12 @@ public class ExposureConfigurationDirectoryOnDisk extends DirectoryOnDisk {
    * Constructor.
    *
    * @param exposureConfig The {@link RiskScoreParameters} to sign and write.
-   * @param cryptoProvider The {@link CryptoProvider} whose artifacts to use for creating the {@link
-   *                       app.coronawarn.server.common.protocols.internal.SignedPayload}. TODO
+   * @param cryptoProvider The {@link CryptoProvider} whose artifacts to use for creating the signature.
    */
-  public ExposureConfigurationDirectoryOnDisk(RiskScoreParameters exposureConfig,
+  public ExposureConfigurationDirectory(RiskScoreParameters exposureConfig,
       CryptoProvider cryptoProvider) {
     super(PARAMETERS_DIRECTORY);
 
-    // TODO Extract into config archive
     ArchiveOnDisk archive = new ArchiveOnDisk(INDEX_FILE_NAME);
     archive.addWritable(new FileOnDisk("export.bin", exposureConfig.toByteArray()));
 

@@ -18,6 +18,9 @@ import java.util.zip.ZipOutputStream;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * TODO.
+ */
 public class ArchiveOnDisk extends FileOnDisk implements Archive<WritableOnDisk> {
 
   private static final Logger logger = LoggerFactory.getLogger(ArchiveOnDisk.class);
@@ -26,6 +29,9 @@ public class ArchiveOnDisk extends FileOnDisk implements Archive<WritableOnDisk>
 
   private DirectoryOnDisk tempDirectory;
 
+  /**
+   * TODO.
+   */
   public ArchiveOnDisk(String name) {
     super(name, new byte[0]);
     try {

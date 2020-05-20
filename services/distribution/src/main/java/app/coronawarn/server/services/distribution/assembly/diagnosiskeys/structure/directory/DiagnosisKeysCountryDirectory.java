@@ -21,53 +21,50 @@ package app.coronawarn.server.services.distribution.assembly.diagnosiskeys.struc
 
 import app.coronawarn.server.common.persistence.domain.DiagnosisKey;
 import app.coronawarn.server.services.distribution.assembly.component.CryptoProvider;
-import app.coronawarn.server.services.distribution.assembly.diagnosiskeys.util.DateTime;
+import app.coronawarn.server.services.distribution.assembly.diagnosiskeys.structure.directory.decorator.DateAggregatingDecorator;
 import app.coronawarn.server.services.distribution.assembly.structure.WritableOnDisk;
-import app.coronawarn.server.services.distribution.assembly.structure.directory.Directory;
 import app.coronawarn.server.services.distribution.assembly.structure.directory.IndexDirectory;
 import app.coronawarn.server.services.distribution.assembly.structure.directory.IndexDirectoryOnDisk;
-import app.coronawarn.server.services.distribution.assembly.structure.directory.decorator.indexing.AbstractIndexingDecorator;
 import app.coronawarn.server.services.distribution.assembly.structure.directory.decorator.indexing.IndexingDecoratorOnDisk;
 import app.coronawarn.server.services.distribution.assembly.structure.util.ImmutableStack;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.Collection;
+import java.util.Set;
 
-public class DiagnosisKeysDateDirectoryOnDisk extends IndexDirectoryOnDisk<LocalDate> {
+public class DiagnosisKeysCountryDirectory extends IndexDirectoryOnDisk<String> {
 
-  private static final String DATE_DIRECTORY = "date";
-  private static final DateTimeFormatter ISO8601 = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+  private static final String COUNTRY_DIRECTORY = "country";
+  private static final String COUNTRY = "DE";
 
   private final Collection<DiagnosisKey> diagnosisKeys;
   private final CryptoProvider cryptoProvider;
 
   /**
-   * Constructs a {@link DiagnosisKeysDateDirectoryOnDisk} instance associated with the specified {@link DiagnosisKey}
-   * collection. Payload signing is be performed according to the specified {@link CryptoProvider}.
+   * Constructs a {@link DiagnosisKeysCountryDirectory} instance that represents the {@code .../country/:country/...}
+   * portion of the diagnosis key directory structure.
    *
-   * @param diagnosisKeys  The diagnosis keys processed in the contained directories.
+   * @param diagnosisKeys  The diagnosis keys processed in the contained sub directories.
    * @param cryptoProvider The {@link CryptoProvider} used for payload signing.
    */
-  public DiagnosisKeysDateDirectoryOnDisk(Collection<DiagnosisKey> diagnosisKeys,
+  public DiagnosisKeysCountryDirectory(Collection<DiagnosisKey> diagnosisKeys,
       CryptoProvider cryptoProvider) {
-    super(DATE_DIRECTORY, __ -> DateTime.getDates(diagnosisKeys), ISO8601::format);
-    this.cryptoProvider = cryptoProvider;
+    super(COUNTRY_DIRECTORY, __ -> Set.of(COUNTRY), Object::toString);
     this.diagnosisKeys = diagnosisKeys;
+    this.cryptoProvider = cryptoProvider;
   }
 
   @Override
   public void prepare(ImmutableStack<Object> indices) {
-    this.addWritableToAll(currentIndices -> {
-      LocalDate currentDate = (LocalDate) currentIndices.peek();
-      IndexDirectoryOnDisk<LocalDateTime> hourDirectory = new DiagnosisKeysHourDirectoryOnDisk(
-          diagnosisKeys, currentDate, cryptoProvider);
-      return decorateHourDirectory(hourDirectory);
+    this.addWritableToAll(__ -> {
+      IndexDirectoryOnDisk<LocalDate> dateDirectory = new DiagnosisKeysDateDirectory(diagnosisKeys,
+          cryptoProvider);
+      return decorateDateDirectory(dateDirectory);
     });
     super.prepare(indices);
   }
 
-  private Directory<WritableOnDisk> decorateHourDirectory(IndexDirectoryOnDisk<LocalDateTime> hourDirectory) {
-    return new IndexingDecoratorOnDisk<>(hourDirectory);
+  private IndexDirectory<LocalDate, WritableOnDisk> decorateDateDirectory(
+      IndexDirectoryOnDisk<LocalDate> dateDirectory) {
+    return new DateAggregatingDecorator(new IndexingDecoratorOnDisk<>(dateDirectory), cryptoProvider);
   }
 }

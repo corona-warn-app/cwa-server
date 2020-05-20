@@ -25,7 +25,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import app.coronawarn.server.common.protocols.internal.RiskScoreParameters;
 import org.junit.jupiter.api.Test;
 
-public class ExposureConfigurationStructureProviderProviderTest {
+public class ExposureConfigurationProviderTest {
 
   @Test
   public void okFile() throws UnableToLoadFileException {

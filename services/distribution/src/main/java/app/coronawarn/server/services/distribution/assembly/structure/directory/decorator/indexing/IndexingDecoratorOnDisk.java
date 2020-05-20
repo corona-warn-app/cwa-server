@@ -1,6 +1,7 @@
 package app.coronawarn.server.services.distribution.assembly.structure.directory.decorator.indexing;
 
 import app.coronawarn.server.services.distribution.assembly.structure.WritableOnDisk;
+import app.coronawarn.server.services.distribution.assembly.structure.directory.IndexDirectory;
 import app.coronawarn.server.services.distribution.assembly.structure.directory.IndexDirectoryOnDisk;
 import app.coronawarn.server.services.distribution.assembly.structure.file.FileOnDisk;
 import app.coronawarn.server.services.distribution.assembly.structure.util.ImmutableStack;
@@ -16,13 +17,12 @@ public class IndexingDecoratorOnDisk<T> extends AbstractIndexingDecorator<T, Wri
 
   private static final Logger logger = LoggerFactory.getLogger(IndexingDecoratorOnDisk.class);
 
-  public IndexingDecoratorOnDisk(IndexDirectoryOnDisk<T> directory) {
+  public IndexingDecoratorOnDisk(IndexDirectory<T, WritableOnDisk> directory) {
     super(directory);
   }
 
   @Override
   public FileOnDisk getIndexFile(String indexFileName, ImmutableStack<Object> indices) {
-    logger.debug("Indexing ..."); // TODO
     Set<T> index = this.directory.getIndex(indices);
     JSONArray array = new JSONArray();
     List<?> elements = index.stream()

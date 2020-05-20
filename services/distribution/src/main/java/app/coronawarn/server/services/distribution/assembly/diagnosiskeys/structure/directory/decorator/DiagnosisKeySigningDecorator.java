@@ -17,7 +17,6 @@ public class DiagnosisKeySigningDecorator extends SigningDecoratorOnDisk {
 
   @Override
   public byte[] getBytesToSign() {
-    // TODO Extract and reuse
     Writable<?> archiveContent = this.getWritables().stream().findFirst().orElseThrow(
         () -> new RuntimeException("Archive must contain exactly one file for signing"));
     File<?> fileToSign = (FileOnDisk) archiveContent;
@@ -26,13 +25,13 @@ public class DiagnosisKeySigningDecorator extends SigningDecoratorOnDisk {
 
   @Override
   public int getBatchNum() {
-    // TODO
+    // TODO Check if multiple batches are required.
     return 1;
   }
 
   @Override
   public int getBatchSize() {
-    // TODO
+    // TODO Check if multiple batches are required.
     return 1;
   }
 }
