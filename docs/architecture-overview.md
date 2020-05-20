@@ -45,7 +45,7 @@ The mobile application will use a CDN for fetching files, which mirrors all file
 
 Note: The verification back end design is not yet available as discussions are ongoing.
 
-The verification back end supports the users' journey beginning at a them scanning their QR code printed
+The verification back end supports the user's journey beginning at scanning the QR code printed
 on the COVID-19 test strip until the upload of diagnosis keys when the user was tested positive. Testing
 labs will update the Verification Backend when a COVID-19 test result is positive. Since the QR code
 is linked to a test, the mobile application will be able to fetch a test-positive notification from
