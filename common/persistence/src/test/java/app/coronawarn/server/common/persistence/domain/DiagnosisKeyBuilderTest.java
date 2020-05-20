@@ -121,13 +121,11 @@ public class DiagnosisKeyBuilderTest {
   private void assertInvalidKeyBuildingFailures(byte[] expKeyData, long expRollingStartNumber,
       long expRollingPeriod, int transmissionRiskLevel) {
 
-    FinalBuilder finalBuilder = DiagnosisKey.builder()
+    assertThat(catchThrowable(DiagnosisKey.builder()
         .withKeyData(expKeyData)
         .withRollingStartNumber(expRollingStartNumber)
         .withRollingPeriod(expRollingPeriod)
-        .withTransmissionRiskLevel(transmissionRiskLevel);
-
-    assertThat(catchThrowable(finalBuilder::build))
+        .withTransmissionRiskLevel(transmissionRiskLevel)::build))
         .isInstanceOf(InvalidDiagnosisKeyException.class);
   }
 
