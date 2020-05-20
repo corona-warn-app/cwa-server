@@ -37,9 +37,8 @@ public class IO {
    *
    * @param root The parent file.
    * @param name The name of the new file.
-   * @return Whether the file is successfully created
    */
-  public static boolean makeNewFile(File root, String name) {
+  public static void makeNewFile(File root, String name) {
     File directory = new File(root, name);
     try {
       if (!directory.createNewFile()) {
