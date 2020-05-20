@@ -20,8 +20,9 @@
 package app.coronawarn.server.common.persistence.domain;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.assertj.core.api.Assertions.catchThrowable;
 
+import app.coronawarn.server.common.persistence.domain.DiagnosisKeyBuilders.FinalBuilder;
 import app.coronawarn.server.common.persistence.exception.InvalidDiagnosisKeyException;
 import app.coronawarn.server.common.protocols.external.exposurenotification.Key;
 import com.google.protobuf.ByteString;
@@ -95,51 +96,41 @@ public class DiagnosisKeyBuilderTest {
 
   @Test
   public void failsForInvalidKeyData() {
-    assertThrows(
-        InvalidDiagnosisKeyException.class, () ->
-            DiagnosisKey.builder()
-                .withKeyData("17--bytelongarray".getBytes(Charset.defaultCharset()))
-                .withRollingStartNumber(this.expRollingStartNumber)
-                .withRollingPeriod(this.expRollingPeriod)
-                .withTransmissionRiskLevel(this.expTransmissionRiskLevel).build()
-    );
+    assertInvalidKeyBuildingFaulures("17--bytelongarray".getBytes(Charset.defaultCharset()),
+        this.expRollingStartNumber, this.expRollingPeriod, this.expTransmissionRiskLevel);
   }
 
   @Test
   public void failsForInvalidRollingStartNumber() {
-    assertThrows(
-        InvalidDiagnosisKeyException.class, () ->
-            DiagnosisKey.builder()
-                .withKeyData(this.expKeyData)
-                .withRollingStartNumber(0)
-                .withRollingPeriod(this.expRollingPeriod)
-                .withTransmissionRiskLevel(this.expTransmissionRiskLevel).build()
-    );
+    assertInvalidKeyBuildingFaulures(this.expKeyData, 0, this.expRollingPeriod,
+        this.expTransmissionRiskLevel);
   }
 
   @Test
   public void failsForInvalidRollingPeriod() {
-    assertThrows(
-        InvalidDiagnosisKeyException.class, () ->
-            DiagnosisKey.builder()
-                .withKeyData(this.expKeyData)
-                .withRollingStartNumber(this.expRollingStartNumber)
-                .withRollingPeriod(0)
-                .withTransmissionRiskLevel(this.expTransmissionRiskLevel).build()
-    );
+    assertInvalidKeyBuildingFaulures(this.expKeyData, this.expRollingStartNumber,
+        this.expRollingPeriod, 0);
   }
 
   @Test
   public void failsForInvalidTransmissionRiskLevel() {
-    assertThrows(
-        InvalidDiagnosisKeyException.class, () ->
-            DiagnosisKey.builder()
-                .withKeyData(this.expKeyData)
-                .withRollingStartNumber(this.expRollingStartNumber)
-                .withRollingPeriod(this.expRollingPeriod)
-                .withTransmissionRiskLevel(10).build()
-    );
+    assertInvalidKeyBuildingFaulures(this.expKeyData, this.expRollingStartNumber,
+        this.expRollingPeriod, 10);
   }
+
+  private void assertInvalidKeyBuildingFaulures(byte[] expKeyData, long expRollingStartNumber,
+      long expRollingPeriod, int transmissionRiskLevel) {
+
+    FinalBuilder finalBuilder = DiagnosisKey.builder()
+        .withKeyData(expKeyData)
+        .withRollingStartNumber(expRollingStartNumber)
+        .withRollingPeriod(expRollingPeriod)
+        .withTransmissionRiskLevel(transmissionRiskLevel);
+
+    assertThat(catchThrowable(finalBuilder::build))
+        .isInstanceOf(InvalidDiagnosisKeyException.class);
+  }
+
 
   private void assertDiagnosisKeyEquals(DiagnosisKey actDiagnosisKey) {
     assertDiagnosisKeyEquals(actDiagnosisKey, getCurrentHoursSinceEpoch());
