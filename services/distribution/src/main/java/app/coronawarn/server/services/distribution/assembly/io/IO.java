@@ -57,8 +57,7 @@ public class IO {
    * @param outputFile The file to write the content into.
    */
   public static void writeBytesToFile(byte[] bytes, File outputFile) {
-    try {
-      FileOutputStream outputFileStream = new FileOutputStream(outputFile);
+    try (FileOutputStream outputFileStream = new FileOutputStream(outputFile)) {
       outputFileStream.write(bytes);
     } catch (IOException e) {
       logger.error("Could not write file {}", outputFile);
