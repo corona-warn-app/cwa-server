@@ -34,7 +34,7 @@ public interface SigningDecorator<W extends Writable<W>> extends Directory<W> {
   File<W> getSignatureFile(String signatureFileName);
 
   /**
-   *Returns the bytes that shall be signed.
+   * Returns the bytes that shall be signed.
    */
   byte[] getBytesToSign();
 

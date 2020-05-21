@@ -106,6 +106,6 @@ public class ArchiveOnDisk extends FileOnDisk implements Archive<WritableOnDisk>
 
   @Override
   public void setBytes(byte[] bytes) {
-    throw new RuntimeException("Can not set bytes on an archive.");
+    throw new UnsupportedOperationException("Can not set bytes on an archive.");
   }
 }

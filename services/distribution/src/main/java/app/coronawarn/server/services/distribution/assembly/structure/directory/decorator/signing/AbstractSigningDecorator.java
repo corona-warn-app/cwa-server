@@ -81,6 +81,7 @@ public abstract class AbstractSigningDecorator<W extends Writable<W>> extends Di
    * Returns the static {@link SignatureInfo} configured in the application properties. TODO Enter correct values.
    */
   public static SignatureInfo getSignatureInfo() {
+    // TODO cwa-server#205, cwa-server#206
     return SignatureInfo.newBuilder()
         .setAppBundleId("TODO")
         .setAndroidPackage("TODO")

@@ -305,8 +305,7 @@ public class SubmissionControllerTest {
         "Key entity does not correspond to a submitted key."));
   }
 
-  private ResponseEntity<Void> executeRequest(Collection<TemporaryExposureKey> keys,
-      HttpHeaders headers) {
+  private ResponseEntity<Void> executeRequest(Collection<TemporaryExposureKey> keys, HttpHeaders headers) {
     SubmissionPayload body = SubmissionPayload.newBuilder().addAllKeys(keys).build();
     RequestEntity<SubmissionPayload> request =
         new RequestEntity<>(body, headers, HttpMethod.POST, SUBMISSION_URL);
