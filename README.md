@@ -97,6 +97,9 @@ After you made sure that the specified dependencies are running, configure them 
 
 * Configure the Postgres connection in the [submission config](./services/submission/src/main/resources/application.properties) and in the [distribution config](./services/distribution/src/main/resources/application.properties)
 * Configure the S3 compatible object storage in the [distribution config](./services/distribution/src/main/resources/application.properties)
+* Configure the certificate and private key for the distribution service, the paths need to be prefixed with `file:`
+    * `VAULT_FILESIGNING_SECRET` should be the path to the private key, example available in `<repo-root>/docker-compose-test-secrets/private.pem`
+    * `VAULT_FILESIGNING_CERT` should be the path to the certificate, example available in `<repo-root>/docker-compose-test-secrets/certificate.cert`
 
 #### Build
 
