@@ -11,9 +11,11 @@ import java.util.Collection;
 import java.util.NoSuchElementException;
 import java.util.Set;
 import java.util.stream.Collectors;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
+/**
+ * A {@link app.coronawarn.server.services.distribution.assembly.structure.file.File} containing a
+ * {@link TemporaryExposureKeyExport}.
+ */
 public class TemporaryExposureKeyExportFile extends FileOnDisk {
 
   private static final String INDEX_FILE_NAME = "export.bin";
@@ -33,20 +35,19 @@ public class TemporaryExposureKeyExportFile extends FileOnDisk {
   }
 
   /**
-   * TODO.
+   * Constructs a {@link TemporaryExposureKeyExportFile} from {@link TemporaryExposureKey TemporaryExposureKeys}.
    */
   public static TemporaryExposureKeyExportFile fromTemporaryExposureKeys(
-      Collection<TemporaryExposureKey> temporaryExposureKeys, String region, long startTimestamp,
-      long endTimestamp) {
+      Collection<TemporaryExposureKey> temporaryExposureKeys, String region, long startTimestamp, long endTimestamp) {
     return new TemporaryExposureKeyExportFile(temporaryExposureKeys, region, startTimestamp,
         endTimestamp);
   }
 
   /**
-   * TODO.
+   * Constructs a {@link TemporaryExposureKeyExportFile} from {@link DiagnosisKey DiagnosisKeys}.
    */
-  public static TemporaryExposureKeyExportFile fromDiagnosisKeys(
-      Collection<DiagnosisKey> diagnosisKeys, String region) {
+  public static TemporaryExposureKeyExportFile fromDiagnosisKeys(Collection<DiagnosisKey> diagnosisKeys,
+      String region) {
     return new TemporaryExposureKeyExportFile(
         getTemporaryExposureKeysFromDiagnosisKeys(diagnosisKeys), region,
         getStartTimestamp(diagnosisKeys), getEndTimestamp(diagnosisKeys));
