@@ -62,15 +62,7 @@ public class PublishedFileSet {
       return true;
     }
 
-    return !hasSameHashAsPublishedFile(file);
-  }
-
-  private boolean hasSameHashAsPublishedFile(LocalFile file) {
-    var metaData = s3Objects.get(file.getS3Key()).getMetadata();
-
-    String s3FileHash = metaData.get("X-Amz-Meta-Cwa.hash");
-
-    return file.getHash().equals(s3FileHash);
+    return !file.getEtag().equals(published.getEtag());
   }
 
 }
