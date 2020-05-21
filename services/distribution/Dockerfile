@@ -6,8 +6,8 @@ COPY . ${WORK_DIR}/
 
 RUN mkdir -p /root/.m2 /usr/sap/distribution-service
 RUN mvn -B -DskipTests=true --file ${WORK_DIR}/pom.xml ${MAVEN_ARGS} clean install
-RUN cp ${WORK_DIR}/services/distribution/target/distribution-*.jar /usr/sap/distribution-service
+RUN cp ${WORK_DIR}/services/distribution/target/distribution-*.jar /usr/sap/distribution-service/distribution.jar
 
 FROM gcr.io/distroless/java:11
-COPY --from=build /usr/sap/distribution-service/distribution-*.jar .
-CMD ["distribution-0.3.3-SNAPSHOT.jar"]
+COPY --from=build /usr/sap/distribution-service/distribution.jar .
+CMD ["distribution.jar"]
