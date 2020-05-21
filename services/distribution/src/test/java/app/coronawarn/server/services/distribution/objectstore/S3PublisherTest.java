@@ -61,7 +61,7 @@ public class S3PublisherTest {
 
     List<S3Object> s3Objects = objectStoreAccess.getObjectsWithPrefix("version");
 
-    assertThat(s3Objects.size()).isEqualTo(5);
+    assertThat(s3Objects).hasSize(5);
   }
 
   private Path getFolderAsPath(String path) throws IOException {
