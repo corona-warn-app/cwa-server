@@ -20,9 +20,7 @@
 package app.coronawarn.server.common.persistence.domain;
 
 import static java.time.ZoneOffset.UTC;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.assertj.core.api.Assertions.assertThat;
 
 import java.nio.charset.Charset;
 import java.time.Instant;
@@ -41,22 +39,22 @@ public class DiagnosisKeyTest {
 
   @Test
   public void testRollingStartNumberGetter() {
-    assertEquals(expRollingStartNumber, diagnosisKey.getRollingStartNumber());
+    assertThat(diagnosisKey.getRollingStartNumber()).isEqualTo(expRollingStartNumber);
   }
 
   @Test
   public void testRollingPeriodGetter() {
-    assertEquals(expRollingPeriod, diagnosisKey.getRollingPeriod());
+    assertThat(diagnosisKey.getRollingPeriod()).isEqualTo(expRollingPeriod);
   }
 
   @Test
   public void testTransmissionRiskLevelGetter() {
-    assertEquals(expTransmissionRiskLevel, diagnosisKey.getTransmissionRiskLevel());
+    assertThat(diagnosisKey.getTransmissionRiskLevel()).isEqualTo(expTransmissionRiskLevel);
   }
 
   @Test
   public void testSubmissionTimestampGetter() {
-    assertEquals(expSubmissionTimestamp, diagnosisKey.getSubmissionTimestamp());
+    assertThat(diagnosisKey.getSubmissionTimestamp()).isEqualTo(expSubmissionTimestamp);
   }
 
   @Test
@@ -68,8 +66,8 @@ public class DiagnosisKeyTest {
     DiagnosisKey diagnosisKeyFiveDays = new DiagnosisKey(expKeyData, fiveDaysAgo,
         expRollingPeriod, expTransmissionRiskLevel, expSubmissionTimestamp);
 
-    assertFalse(diagnosisKeyFiveDays.isYoungerThanRetentionThreshold(4L));
-    assertFalse(diagnosisKeyFiveDays.isYoungerThanRetentionThreshold(5L));
-    assertTrue(diagnosisKeyFiveDays.isYoungerThanRetentionThreshold(6L));
+    assertThat(diagnosisKeyFiveDays.isYoungerThanRetentionThreshold(4L)).isFalse();
+    assertThat(diagnosisKeyFiveDays.isYoungerThanRetentionThreshold(5L)).isFalse();
+    assertThat(diagnosisKeyFiveDays.isYoungerThanRetentionThreshold(6L)).isTrue();
   }
 }

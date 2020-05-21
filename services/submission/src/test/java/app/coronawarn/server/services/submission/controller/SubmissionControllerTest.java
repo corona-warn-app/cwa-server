@@ -20,8 +20,7 @@
 package app.coronawarn.server.services.submission.controller;
 
 import static java.time.ZoneOffset.UTC;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.any;
 import static org.mockito.Mockito.anyString;
 import static org.mockito.Mockito.atLeastOnce;
@@ -92,7 +91,7 @@ public class SubmissionControllerTest {
     ResponseEntity<Void> actResponse =
         executeRequest(buildPayloadWithMultipleKeys(), buildOkHeaders());
 
-    assertEquals(OK, actResponse.getStatusCode());
+    assertThat(actResponse.getStatusCode()).isEqualTo(OK);
   }
 
   @Test
@@ -100,7 +99,7 @@ public class SubmissionControllerTest {
     ResponseEntity<Void> actResponse =
         executeRequest(buildPayloadWithInvalidKey(), buildOkHeaders());
 
-    assertEquals(BAD_REQUEST, actResponse.getStatusCode());
+    assertThat(actResponse.getStatusCode()).isEqualTo(BAD_REQUEST);
   }
 
   @Test
@@ -108,7 +107,7 @@ public class SubmissionControllerTest {
     ResponseEntity<Void> actResponse =
         executeRequest(new ArrayList<>(), buildOkHeaders());
 
-    assertEquals(BAD_REQUEST, actResponse.getStatusCode());
+    assertThat(actResponse.getStatusCode()).isEqualTo(BAD_REQUEST);
   }
 
   @Test
@@ -116,7 +115,7 @@ public class SubmissionControllerTest {
     ResponseEntity<Void> actResponse =
         executeRequest(buildPayloadWithTooManyKeys(), buildOkHeaders());
 
-    assertEquals(BAD_REQUEST, actResponse.getStatusCode());
+    assertThat(actResponse.getStatusCode()).isEqualTo(BAD_REQUEST);
   }
 
   @Test
@@ -127,7 +126,7 @@ public class SubmissionControllerTest {
     executeRequest(keys, buildOkHeaders());
 
     verify(diagnosisKeyService, atLeastOnce()).saveDiagnosisKeys(argument.capture());
-    assertTrue(argument.getValue().isEmpty());
+    assertThat(argument.getValue()).isEmpty();
   }
 
   @Test
@@ -161,7 +160,7 @@ public class SubmissionControllerTest {
     ResponseEntity<Void> actResponse = executeRequest(buildPayloadWithOneKey(), headers);
 
     verify(diagnosisKeyService, never()).saveDiagnosisKeys(any());
-    assertEquals(BAD_REQUEST, actResponse.getStatusCode());
+    assertThat(actResponse.getStatusCode()).isEqualTo(BAD_REQUEST);
   }
 
   private static Stream<Arguments> createIncompleteHeaders() {
@@ -182,8 +181,9 @@ public class SubmissionControllerTest {
     HttpStatus actStatus = testRestTemplate
         .exchange(SUBMISSION_URL, deniedHttpMethod, null, Void.class).getStatusCode();
 
-    assertTrue(allowedErrors.contains(actStatus),
-        deniedHttpMethod + " resulted in unexpected status: " + actStatus);
+    assertThat(allowedErrors)
+        .withFailMessage(deniedHttpMethod + " resulted in unexpected status: " + actStatus)
+        .contains(actStatus);
   }
 
   private static Stream<Arguments> createDeniedHttpMethods() {
@@ -201,7 +201,7 @@ public class SubmissionControllerTest {
         executeRequest(buildPayloadWithOneKey(), buildOkHeaders());
 
     verify(diagnosisKeyService, never()).saveDiagnosisKeys(any());
-    assertEquals(FORBIDDEN, actResponse.getStatusCode());
+    assertThat(actResponse.getStatusCode()).isEqualTo(FORBIDDEN);
   }
 
   @Test
@@ -212,7 +212,7 @@ public class SubmissionControllerTest {
     ResponseEntity<Void> actResponse = executeRequest(buildPayloadWithOneKey(), headers);
 
     verify(diagnosisKeyService, never()).saveDiagnosisKeys(any());
-    assertEquals(OK, actResponse.getStatusCode());
+    assertThat(actResponse.getStatusCode()).isEqualTo(OK);
   }
 
   private static HttpHeaders buildOkHeaders() {
@@ -299,10 +299,13 @@ public class SubmissionControllerTest {
         .map(aSubmittedKey -> DiagnosisKey.builder().fromProtoBuf(aSubmittedKey).build())
         .collect(Collectors.toSet());
 
-    assertEquals(expKeys.size(), keyEntities.size(),
-        "Number of submitted keys and generated key entities don't match.");
-    keyEntities.forEach(anActKey -> assertTrue(expKeys.contains(anActKey),
-        "Key entity does not correspond to a submitted key."));
+    assertThat(keyEntities.size())
+        .withFailMessage("Number of submitted keys and generated key entities don't match.")
+        .isEqualTo(expKeys.size());
+    keyEntities.forEach(anActKey -> assertThat(expKeys)
+        .withFailMessage("Key entity does not correspond to a submitted key.")
+        .contains(anActKey)
+    );
   }
 
   private ResponseEntity<Void> executeRequest(Collection<TemporaryExposureKey> keys, HttpHeaders headers) {
