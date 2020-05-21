@@ -22,6 +22,7 @@ package app.coronawarn.server.services.distribution.runner;
 import app.coronawarn.server.services.distribution.Application;
 import app.coronawarn.server.services.distribution.assembly.component.CwaApiStructureProvider;
 import app.coronawarn.server.services.distribution.assembly.component.OutputDirectoryProvider;
+import app.coronawarn.server.services.distribution.assembly.structure.WritableOnDisk;
 import app.coronawarn.server.services.distribution.assembly.structure.directory.Directory;
 import app.coronawarn.server.services.distribution.assembly.structure.util.ImmutableStack;
 import org.slf4j.Logger;
@@ -63,7 +64,7 @@ public class Assembly implements ApplicationRunner {
   @Override
   public void run(ApplicationArguments args) {
     try {
-      Directory outputDirectory = this.outputDirectoryProvider.getDirectory();
+      Directory<WritableOnDisk> outputDirectory = this.outputDirectoryProvider.getDirectory();
       outputDirectory.addWritable(cwaApiStructureProvider.getDirectory());
       this.outputDirectoryProvider.clear();
       logger.debug("Preparing files...");

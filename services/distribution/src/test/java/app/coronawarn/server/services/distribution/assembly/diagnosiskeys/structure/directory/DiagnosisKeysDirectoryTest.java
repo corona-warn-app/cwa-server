@@ -25,6 +25,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import app.coronawarn.server.common.persistence.domain.DiagnosisKey;
 import app.coronawarn.server.services.distribution.assembly.component.CryptoProvider;
+import app.coronawarn.server.services.distribution.assembly.structure.WritableOnDisk;
 import app.coronawarn.server.services.distribution.assembly.structure.directory.Directory;
 import app.coronawarn.server.services.distribution.assembly.structure.directory.DirectoryOnDisk;
 import app.coronawarn.server.services.distribution.assembly.structure.util.ImmutableStack;
@@ -59,7 +60,7 @@ public class DiagnosisKeysDirectoryTest {
   private TemporaryFolder outputFolder = new TemporaryFolder();
 
   private File outputFile;
-  private Directory parentDirectory;
+  private Directory<WritableOnDisk> parentDirectory;
 
   List<DiagnosisKey> diagnosisKeys;
 
@@ -85,7 +86,7 @@ public class DiagnosisKeysDirectoryTest {
   @Test
   public void checkBuildsTheCorrectDirectoryStructureWhenNoKeys() {
     diagnosisKeys = new ArrayList<>();
-    Directory directory = new DiagnosisKeysDirectory(diagnosisKeys, cryptoProvider);
+    Directory<WritableOnDisk> directory = new DiagnosisKeysDirectory(diagnosisKeys, cryptoProvider);
     parentDirectory.addWritable(directory);
     directory.prepare(new ImmutableStack<>());
     directory.write();
@@ -103,7 +104,7 @@ public class DiagnosisKeysDirectoryTest {
 
   @Test
   public void checkBuildsTheCorrectDirectoryStructure() {
-    Directory directory = new DiagnosisKeysDirectory(diagnosisKeys, cryptoProvider);
+    Directory<WritableOnDisk> directory = new DiagnosisKeysDirectory(diagnosisKeys, cryptoProvider);
     parentDirectory.addWritable(directory);
     directory.prepare(new ImmutableStack<>());
     directory.write();

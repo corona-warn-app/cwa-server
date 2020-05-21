@@ -60,7 +60,7 @@ public class DateAggregatingDecorator extends IndexDirectoryDecorator<LocalDate,
 
   private static final String AGGREGATE_FILE_NAME = "index";
 
-  public DateAggregatingDecorator(IndexDirectory directory, CryptoProvider cryptoProvider) {
+  public DateAggregatingDecorator(IndexDirectory<LocalDate, WritableOnDisk> directory, CryptoProvider cryptoProvider) {
     super(directory);
     this.cryptoProvider = cryptoProvider;
   }

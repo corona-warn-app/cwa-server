@@ -24,6 +24,7 @@ import app.coronawarn.server.services.distribution.assembly.component.CryptoProv
 import app.coronawarn.server.services.distribution.assembly.diagnosiskeys.structure.directory.decorator.DiagnosisKeySigningDecorator;
 import app.coronawarn.server.services.distribution.assembly.diagnosiskeys.structure.file.TemporaryExposureKeyExportFile;
 import app.coronawarn.server.services.distribution.assembly.diagnosiskeys.util.DateTime;
+import app.coronawarn.server.services.distribution.assembly.structure.WritableOnDisk;
 import app.coronawarn.server.services.distribution.assembly.structure.archive.Archive;
 import app.coronawarn.server.services.distribution.assembly.structure.archive.ArchiveOnDisk;
 import app.coronawarn.server.services.distribution.assembly.structure.directory.Directory;
@@ -72,10 +73,10 @@ public class DiagnosisKeysHourDirectory extends IndexDirectoryOnDisk<LocalDateTi
 
       Set<DiagnosisKey> diagnosisKeysForCurrentHour = getDiagnosisKeysForHour(currentHour);
 
-      File temporaryExposureKeyExportFile =
+      File<WritableOnDisk> temporaryExposureKeyExportFile =
           TemporaryExposureKeyExportFile.fromDiagnosisKeys(diagnosisKeysForCurrentHour, region);
 
-      Archive hourArchive = new ArchiveOnDisk("index");
+      Archive<WritableOnDisk> hourArchive = new ArchiveOnDisk("index");
       hourArchive.addWritable(temporaryExposureKeyExportFile);
 
       return decorateDiagnosisKeyArchive(hourArchive);
@@ -91,7 +92,7 @@ public class DiagnosisKeysHourDirectory extends IndexDirectoryOnDisk<LocalDateTi
         .collect(Collectors.toSet());
   }
 
-  private Directory decorateDiagnosisKeyArchive(Archive archive) {
+  private Directory<WritableOnDisk> decorateDiagnosisKeyArchive(Archive<WritableOnDisk> archive) {
     return new DiagnosisKeySigningDecorator(archive, cryptoProvider);
   }
 }

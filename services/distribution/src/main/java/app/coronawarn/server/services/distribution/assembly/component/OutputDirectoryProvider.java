@@ -19,6 +19,7 @@
 
 package app.coronawarn.server.services.distribution.assembly.component;
 
+import app.coronawarn.server.services.distribution.assembly.structure.WritableOnDisk;
 import app.coronawarn.server.services.distribution.assembly.structure.directory.Directory;
 import app.coronawarn.server.services.distribution.assembly.structure.directory.DirectoryOnDisk;
 import java.io.IOException;
@@ -39,7 +40,7 @@ public class OutputDirectoryProvider {
   @Value("${services.distribution.paths.output}")
   private String outputPath;
 
-  public Directory getDirectory() {
+  public Directory<WritableOnDisk> getDirectory() {
     return new DirectoryOnDisk(getFileOnDisk());
   }
 

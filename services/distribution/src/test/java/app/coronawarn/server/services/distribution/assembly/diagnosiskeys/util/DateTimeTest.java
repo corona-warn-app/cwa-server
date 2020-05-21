@@ -79,7 +79,7 @@ public class DateTimeTest {
         LocalDateTime.of(1970, 1, 2, 0, 0),
         LocalDateTime.of(1970, 1, 2, 5, 0));
 
-    var diagnosisKeysIncludingExpHours = new HashSet(diagnosisKeys);
+    var diagnosisKeysIncludingExpHours = new HashSet<>(diagnosisKeys);
     diagnosisKeysIncludingExpHours.addAll(expHours.stream()
         .map(Helpers::buildDiagnosisKeyForDateTime).collect(Collectors.toSet()));
 
