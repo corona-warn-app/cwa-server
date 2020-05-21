@@ -23,8 +23,6 @@ import static java.time.ZoneOffset.UTC;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatCode;
 import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 
 import java.nio.charset.Charset;
@@ -75,9 +73,9 @@ public class DiagnosisKeyTest {
     DiagnosisKey diagnosisKeyFiveDays = new DiagnosisKey(expKeyData, fiveDaysAgo,
         expRollingPeriod, expTransmissionRiskLevel, expSubmissionTimestamp);
 
-    assertFalse(diagnosisKeyFiveDays.isYoungerThanRetentionThreshold(4));
-    assertFalse(diagnosisKeyFiveDays.isYoungerThanRetentionThreshold(5));
-    assertTrue(diagnosisKeyFiveDays.isYoungerThanRetentionThreshold(6));
+    assertThat(diagnosisKeyFiveDays.isYoungerThanRetentionThreshold(4)).isFalse();
+    assertThat(diagnosisKeyFiveDays.isYoungerThanRetentionThreshold(5)).isFalse();
+    assertThat(diagnosisKeyFiveDays.isYoungerThanRetentionThreshold(6)).isTrue();
   }
 
   @DisplayName("Test retention threshold accepts positive value")
