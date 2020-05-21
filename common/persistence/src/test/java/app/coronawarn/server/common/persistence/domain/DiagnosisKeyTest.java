@@ -21,9 +21,9 @@ package app.coronawarn.server.common.persistence.domain;
 
 import static java.time.ZoneOffset.UTC;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.assertj.core.api.Assertions.assertThatCode;
+import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException;
 import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 
@@ -84,14 +84,15 @@ public class DiagnosisKeyTest {
   @ValueSource(ints = {0, 1, Integer.MAX_VALUE})
   @ParameterizedTest
   public void testRetentionThresholdAcceptsPositiveValue(int daysToRetain) {
-    assertDoesNotThrow(() -> diagnosisKey.isYoungerThanRetentionThreshold(daysToRetain));
+    assertThatCode(() -> diagnosisKey.isYoungerThanRetentionThreshold(daysToRetain))
+        .doesNotThrowAnyException();
   }
 
   @DisplayName("Test retention threshold rejects negative value")
   @ValueSource(ints = {Integer.MIN_VALUE, -1})
   @ParameterizedTest
   public void testRetentionThresholdRejectsNegativeValue(int daysToRetain) {
-    assertThrows(IllegalArgumentException.class,
-        () -> diagnosisKey.isYoungerThanRetentionThreshold(daysToRetain));
+    assertThatIllegalArgumentException()
+        .isThrownBy(() -> diagnosisKey.isYoungerThanRetentionThreshold(daysToRetain));
   }
 }
