@@ -86,19 +86,17 @@ public class ArchiveOnDisk extends FileOnDisk implements Archive<WritableOnDisk>
   @Override
   public byte[] getBytes() {
     ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-    ZipOutputStream zipOutputStream = new ZipOutputStream(byteArrayOutputStream);
-    this.getWritables().stream()
-        .filter(writable -> writable instanceof File)
-        .map(file -> (FileOnDisk) file)
-        .forEach(uncheckedConsumer(file -> {
-          String pathInZip = file.getName();
-          zipOutputStream.putNextEntry(new ZipEntry(pathInZip));
-          byte[] bytes = file.getBytes();
-          zipOutputStream.write(bytes, 0, bytes.length);
-        }));
-    try {
-      zipOutputStream.close();
-      byteArrayOutputStream.close();
+
+    try (ZipOutputStream zipOutputStream = new ZipOutputStream(byteArrayOutputStream)) {
+      this.getWritables().stream()
+          .filter(writable -> writable instanceof File)
+          .map(file -> (FileOnDisk) file)
+          .forEach(uncheckedConsumer(file -> {
+            String pathInZip = file.getName();
+            zipOutputStream.putNextEntry(new ZipEntry(pathInZip));
+            byte[] bytes = file.getBytes();
+            zipOutputStream.write(bytes, 0, bytes.length);
+          }));
     } catch (IOException e) {
       logger.error("Failed to close zip archive output stream.");
       throw new RuntimeException(e);
