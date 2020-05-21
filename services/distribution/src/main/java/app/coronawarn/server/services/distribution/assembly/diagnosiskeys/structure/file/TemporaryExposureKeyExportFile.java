@@ -8,13 +8,12 @@ import app.coronawarn.server.services.distribution.assembly.structure.file.FileO
 import app.coronawarn.server.services.distribution.assembly.structure.util.ImmutableStack;
 import com.google.protobuf.ByteString;
 import java.util.Collection;
-import java.util.NoSuchElementException;
 import java.util.Set;
 import java.util.stream.Collectors;
 
 /**
- * A {@link app.coronawarn.server.services.distribution.assembly.structure.file.File} containing a
- * {@link TemporaryExposureKeyExport}.
+ * A {@link app.coronawarn.server.services.distribution.assembly.structure.file.File} containing a {@link
+ * TemporaryExposureKeyExport}.
  */
 public class TemporaryExposureKeyExportFile extends FileOnDisk {
 
@@ -25,8 +24,8 @@ public class TemporaryExposureKeyExportFile extends FileOnDisk {
   private final long startTimestamp;
   private final long endTimestamp;
 
-  private TemporaryExposureKeyExportFile(Collection<TemporaryExposureKey> temporaryExposureKeys,
-      String region, long startTimestamp, long endTimestamp) {
+  private TemporaryExposureKeyExportFile(Collection<TemporaryExposureKey> temporaryExposureKeys, String region,
+      long startTimestamp, long endTimestamp) {
     super(INDEX_FILE_NAME, new byte[0]);
     this.temporaryExposureKeys = temporaryExposureKeys;
     this.region = region;
@@ -36,21 +35,37 @@ public class TemporaryExposureKeyExportFile extends FileOnDisk {
 
   /**
    * Constructs a {@link TemporaryExposureKeyExportFile} from {@link TemporaryExposureKey TemporaryExposureKeys}.
+   *
+   * @param temporaryExposureKeys The {@link TemporaryExposureKey TemporaryExposureKeys} to bundle into the {@link
+   *                              TemporaryExposureKeyExport}.
+   * @param region                The region that the {@link TemporaryExposureKey TemporaryExposureKeys} are from.
+   * @param startTimestamp        The start of the time window covered by the {@link TemporaryExposureKeyExport}, in UTC
+   *                              seconds since epoch.
+   * @param endTimestamp          The end of the time window covered by the {@link TemporaryExposureKeyExport}, in UTC *
+   *                              seconds since epoch.
+   * @return A new {@link TemporaryExposureKeyExportFile}.
    */
   public static TemporaryExposureKeyExportFile fromTemporaryExposureKeys(
       Collection<TemporaryExposureKey> temporaryExposureKeys, String region, long startTimestamp, long endTimestamp) {
-    return new TemporaryExposureKeyExportFile(temporaryExposureKeys, region, startTimestamp,
-        endTimestamp);
+    return new TemporaryExposureKeyExportFile(temporaryExposureKeys, region, startTimestamp, endTimestamp);
   }
 
   /**
    * Constructs a {@link TemporaryExposureKeyExportFile} from {@link DiagnosisKey DiagnosisKeys}.
+   *
+   * @param diagnosisKeys  The {@link DiagnosisKey DiagnosisKeys} to bundle into the {@link
+   *                       TemporaryExposureKeyExport}.
+   * @param region         The region that the {@link TemporaryExposureKey TemporaryExposureKeys} are from.
+   * @param startTimestamp The start of the time window covered by the {@link TemporaryExposureKeyExport}, in UTC
+   *                       seconds since epoch.
+   * @param endTimestamp   The end of the time window covered by the {@link TemporaryExposureKeyExport}, in UTC *
+   *                       seconds since epoch.
+   * @return A new {@link TemporaryExposureKeyExportFile}.
    */
   public static TemporaryExposureKeyExportFile fromDiagnosisKeys(Collection<DiagnosisKey> diagnosisKeys,
-      String region) {
-    return new TemporaryExposureKeyExportFile(
-        getTemporaryExposureKeysFromDiagnosisKeys(diagnosisKeys), region,
-        getStartTimestamp(diagnosisKeys), getEndTimestamp(diagnosisKeys));
+      String region, long startTimestamp, long endTimestamp) {
+    return new TemporaryExposureKeyExportFile(getTemporaryExposureKeysFromDiagnosisKeys(diagnosisKeys), region,
+        startTimestamp, endTimestamp);
   }
 
   @Override
@@ -83,19 +98,5 @@ public class TemporaryExposureKeyExportFile extends FileOnDisk {
         .setRollingPeriod(Math.toIntExact(diagnosisKey.getRollingPeriod()))
         .build())
         .collect(Collectors.toSet());
-  }
-
-  private static long getStartTimestamp(Collection<DiagnosisKey> diagnosisKeys) {
-    return diagnosisKeys.stream()
-        .mapToLong(DiagnosisKey::getSubmissionTimestamp)
-        .min()
-        .orElseThrow(NoSuchElementException::new);
-  }
-
-  private static long getEndTimestamp(Collection<DiagnosisKey> diagnosisKeys) {
-    return diagnosisKeys.stream()
-        .mapToLong(DiagnosisKey::getSubmissionTimestamp)
-        .max()
-        .orElseThrow(NoSuchElementException::new);
   }
 }

@@ -33,6 +33,7 @@ import app.coronawarn.server.services.distribution.assembly.structure.file.File;
 import app.coronawarn.server.services.distribution.assembly.structure.util.ImmutableStack;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.ZoneOffset;
 import java.util.Collection;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -69,8 +70,10 @@ public class DiagnosisKeysHourDirectory extends IndexDirectoryOnDisk<LocalDateTi
 
       Set<DiagnosisKey> diagnosisKeysForCurrentHour = getDiagnosisKeysForHour(currentHour);
 
-      File<WritableOnDisk> temporaryExposureKeyExportFile =
-          TemporaryExposureKeyExportFile.fromDiagnosisKeys(diagnosisKeysForCurrentHour, region);
+      long startTimestamp = currentHour.toEpochSecond(ZoneOffset.UTC);
+      long endTimestamp = currentHour.plusHours(1).toEpochSecond(ZoneOffset.UTC);
+      File<WritableOnDisk> temporaryExposureKeyExportFile = TemporaryExposureKeyExportFile.fromDiagnosisKeys(
+          diagnosisKeysForCurrentHour, region, startTimestamp, endTimestamp);
 
       Archive<WritableOnDisk> hourArchive = new ArchiveOnDisk("index");
       hourArchive.addWritable(temporaryExposureKeyExportFile);
