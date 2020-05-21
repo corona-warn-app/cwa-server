@@ -21,8 +21,9 @@ package app.coronawarn.server.common.persistence.service;
 
 import static app.coronawarn.server.common.persistence.service.DiagnosisKeyServiceTestHelper.assertDiagnosisKeysEqual;
 import static java.time.ZoneOffset.UTC;
-import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatCode;
+import static org.assertj.core.api.Assertions.catchThrowable;
 
 import app.coronawarn.server.common.persistence.domain.DiagnosisKey;
 import app.coronawarn.server.common.persistence.exception.InvalidDiagnosisKeyException;
@@ -89,15 +90,16 @@ public class DiagnosisKeyServiceTest {
   @ValueSource(ints = {0, 1, Integer.MAX_VALUE})
   @ParameterizedTest
   void testApplyRetentionPolicyForValidNumberOfDays(int daysToRetain) {
-    assertDoesNotThrow(() -> diagnosisKeyService.applyRetentionPolicy(daysToRetain));
+    assertThatCode(() -> diagnosisKeyService.applyRetentionPolicy(daysToRetain))
+        .doesNotThrowAnyException();
   }
 
   @DisplayName("Assert a negative retention period is rejected.")
   @ValueSource(ints = {Integer.MIN_VALUE, -1})
   @ParameterizedTest
   void testApplyRetentionPolicyForNegativeNumberOfDays(int daysToRetain) {
-    assertThrows(IllegalArgumentException.class,
-        () -> diagnosisKeyService.applyRetentionPolicy(daysToRetain));
+    assertThat(catchThrowable(() -> diagnosisKeyService.applyRetentionPolicy(daysToRetain)))
+        .isInstanceOf(IllegalArgumentException.class);
   }
 
   @Test
@@ -131,7 +133,7 @@ public class DiagnosisKeyServiceTest {
 
   @Test
   void testNoPersistOnValidationError() {
-    assertThrows(InvalidDiagnosisKeyException.class, () -> {
+    assertThat(catchThrowable(() -> {
       var keys = List.of(DiagnosisKey.builder()
           .withKeyData(new byte[16])
           .withRollingStartNumber(OffsetDateTime.now(UTC).toEpochSecond() / 600L)
@@ -140,7 +142,7 @@ public class DiagnosisKeyServiceTest {
           .withSubmissionTimestamp(0L).build());
 
       diagnosisKeyService.saveDiagnosisKeys(keys);
-    });
+    })).isInstanceOf(InvalidDiagnosisKeyException.class);
 
     List<DiagnosisKey> actKeys = diagnosisKeyService.getDiagnosisKeys();
 
