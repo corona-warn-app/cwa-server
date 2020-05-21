@@ -4,7 +4,7 @@ import app.coronawarn.server.services.distribution.assembly.component.CryptoProv
 import app.coronawarn.server.services.distribution.assembly.structure.Writable;
 import app.coronawarn.server.services.distribution.assembly.structure.WritableOnDisk;
 import app.coronawarn.server.services.distribution.assembly.structure.archive.Archive;
-import app.coronawarn.server.services.distribution.assembly.structure.directory.decorator.signing.SigningDecoratorOnDisk;
+import app.coronawarn.server.services.distribution.assembly.structure.archive.decorator.signing.SigningDecoratorOnDisk;
 import app.coronawarn.server.services.distribution.assembly.structure.file.FileOnDisk;
 
 public class ExposureConfigSigningDecorator extends SigningDecoratorOnDisk {

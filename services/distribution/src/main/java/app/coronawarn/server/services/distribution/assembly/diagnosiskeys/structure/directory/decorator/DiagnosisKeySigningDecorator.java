@@ -22,15 +22,15 @@ package app.coronawarn.server.services.distribution.assembly.diagnosiskeys.struc
 import app.coronawarn.server.services.distribution.assembly.component.CryptoProvider;
 import app.coronawarn.server.services.distribution.assembly.structure.Writable;
 import app.coronawarn.server.services.distribution.assembly.structure.WritableOnDisk;
-import app.coronawarn.server.services.distribution.assembly.structure.directory.Directory;
-import app.coronawarn.server.services.distribution.assembly.structure.directory.decorator.signing.SigningDecoratorOnDisk;
+import app.coronawarn.server.services.distribution.assembly.structure.archive.Archive;
+import app.coronawarn.server.services.distribution.assembly.structure.archive.decorator.signing.SigningDecoratorOnDisk;
 import app.coronawarn.server.services.distribution.assembly.structure.file.File;
 import app.coronawarn.server.services.distribution.assembly.structure.file.FileOnDisk;
 
 public class DiagnosisKeySigningDecorator extends SigningDecoratorOnDisk {
 
-  public DiagnosisKeySigningDecorator(Directory<WritableOnDisk> directory, CryptoProvider cryptoProvider) {
-    super(directory, cryptoProvider);
+  public DiagnosisKeySigningDecorator(Archive<WritableOnDisk> archive, CryptoProvider cryptoProvider) {
+    super(archive, cryptoProvider);
   }
 
   @Override

@@ -17,16 +17,16 @@
  * under the License.
  */
 
-package app.coronawarn.server.services.distribution.assembly.structure.directory.decorator.signing;
+package app.coronawarn.server.services.distribution.assembly.structure.archive.decorator.signing;
 
 import app.coronawarn.server.services.distribution.assembly.structure.Writable;
-import app.coronawarn.server.services.distribution.assembly.structure.directory.Directory;
+import app.coronawarn.server.services.distribution.assembly.structure.archive.Archive;
 import app.coronawarn.server.services.distribution.assembly.structure.file.File;
 
 /**
  * A decorator that can sign an array of bytes and write the signature into a file.
  */
-public interface SigningDecorator<W extends Writable<W>> extends Directory<W> {
+public interface SigningDecorator<W extends Writable<W>> extends Archive<W> {
 
   /**
    * Returns the file containing the signature.

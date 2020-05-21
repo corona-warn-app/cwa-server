@@ -17,13 +17,15 @@
  * under the License.
  */
 
-package app.coronawarn.server.services.distribution.assembly.structure.directory.decorator.signing;
+package app.coronawarn.server.services.distribution.assembly.structure.archive.decorator.signing;
 
 import app.coronawarn.server.common.protocols.external.exposurenotification.SignatureInfo;
 import app.coronawarn.server.common.protocols.external.exposurenotification.TEKSignature;
 import app.coronawarn.server.common.protocols.external.exposurenotification.TEKSignatureList;
 import app.coronawarn.server.services.distribution.assembly.component.CryptoProvider;
 import app.coronawarn.server.services.distribution.assembly.structure.Writable;
+import app.coronawarn.server.services.distribution.assembly.structure.archive.Archive;
+import app.coronawarn.server.services.distribution.assembly.structure.archive.decorator.ArchiveDecorator;
 import app.coronawarn.server.services.distribution.assembly.structure.directory.Directory;
 import app.coronawarn.server.services.distribution.assembly.structure.directory.decorator.DirectoryDecorator;
 import app.coronawarn.server.services.distribution.assembly.structure.util.ImmutableStack;
@@ -33,7 +35,7 @@ import java.security.Signature;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public abstract class AbstractSigningDecorator<W extends Writable<W>> extends DirectoryDecorator<W> implements
+public abstract class AbstractSigningDecorator<W extends Writable<W>> extends ArchiveDecorator<W> implements
     SigningDecorator<W> {
 
   private static final String SIGNATURE_FILE_NAME = "export.sig";
@@ -43,8 +45,8 @@ public abstract class AbstractSigningDecorator<W extends Writable<W>> extends Di
   private static final Logger logger = LoggerFactory.getLogger(AbstractSigningDecorator.class);
   protected final CryptoProvider cryptoProvider;
 
-  public AbstractSigningDecorator(Directory<W> directory, CryptoProvider cryptoProvider) {
-    super(directory);
+  public AbstractSigningDecorator(Archive<W> archive, CryptoProvider cryptoProvider) {
+    super(archive);
     this.cryptoProvider = cryptoProvider;
   }
 

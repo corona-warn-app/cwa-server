@@ -39,7 +39,6 @@ import app.coronawarn.server.services.distribution.assembly.structure.file.FileO
 import app.coronawarn.server.services.distribution.assembly.structure.util.ImmutableStack;
 import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Comparator;
 import java.util.List;
 import java.util.NoSuchElementException;
@@ -98,24 +97,41 @@ public class DateAggregatingDecorator extends IndexDirectoryDecorator<LocalDate,
     });
   }
 
-  private Set<Directory<WritableOnDisk>> getSubSubDirectoryArchives(Directory<WritableOnDisk> rootDirectory) {
-    // Get all archives 2 directory levels down
-    return Stream.of(rootDirectory)
-        .map(Directory::getWritables)
-        .flatMap(Set::stream)
-        .filter(Writable::isDirectory)
-        .map(directory -> ((Directory<WritableOnDisk>) directory).getWritables())
-        .flatMap(Set::stream)
-        .filter(Writable::isDirectory)
-        .map(directory -> ((Directory<WritableOnDisk>) directory).getWritables())
-        .flatMap(Collection::stream)
-        .filter(Writable::isDirectory)
-        .map(directory -> (Directory<WritableOnDisk>) directory)
+  /**
+   * Returns all archives that are 3 levels down from the root directory.
+   */
+  private Set<Archive<WritableOnDisk>> getSubSubDirectoryArchives(Directory<WritableOnDisk> rootDirectory) {
+    return getWritablesInDirectory(rootDirectory, 3).stream()
+        .filter(Writable::isArchive)
+        .map(archive -> (Archive<WritableOnDisk>) archive)
         .collect(Collectors.toSet());
   }
 
+  /**
+   * Traverses a directory {@code depth} levels deep and returns a flattened list of all writables at that depth. A
+   * {@code depth} of 0 or less returns a set only containing the root directory. A depth of 1 returns a set of
+   * writables in the root directory. A depth of 2 returns a set of all writables in all directories in the root
+   * directory, and so on.
+   *
+   * @param rootDirectory The directory in which to start traversal.
+   * @param depth         The depth to traverse.
+   * @return All writables that are {@code depth} levels down.
+   */
+  private Set<Writable<WritableOnDisk>> getWritablesInDirectory(Directory<WritableOnDisk> rootDirectory, int depth) {
+    if (depth <= 0) {
+      return Set.of(rootDirectory);
+    } else if (depth == 1) {
+      return rootDirectory.getWritables();
+    } else {
+      return rootDirectory.getWritables().stream()
+          .filter(Writable::isDirectory)
+          .flatMap(directory -> getWritablesInDirectory((Directory<WritableOnDisk>) directory, depth - 1).stream())
+          .collect(Collectors.toSet());
+    }
+  }
+
   private Set<TemporaryExposureKeyExportFile> getTemporaryExposureKeyExportFilesFromArchives(
-      Set<Directory<WritableOnDisk>> hourArchives) {
+      Set<Archive<WritableOnDisk>> hourArchives) {
     return hourArchives.stream()
         .map(Directory::getWritables)
         .map(writables -> writables.stream()
