@@ -22,11 +22,10 @@ package app.coronawarn.server.services.distribution.assembly.structure.directory
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 
+import app.coronawarn.server.services.distribution.assembly.structure.WritableOnDisk;
 import app.coronawarn.server.services.distribution.assembly.structure.directory.Directory;
-import app.coronawarn.server.services.distribution.assembly.structure.directory.DirectoryImpl;
+import app.coronawarn.server.services.distribution.assembly.structure.directory.DirectoryOnDisk;
 import app.coronawarn.server.services.distribution.assembly.structure.directory.decorator.DirectoryDecorator;
-import app.coronawarn.server.services.distribution.assembly.structure.file.File;
-import app.coronawarn.server.services.distribution.assembly.structure.file.FileImpl;
 import app.coronawarn.server.services.distribution.assembly.structure.util.ImmutableStack;
 import org.junit.jupiter.api.Test;
 
@@ -34,26 +33,19 @@ public class DirectoryDecoratorTest {
 
   @Test
   public void checkProxiesAllMethods() {
-    Directory decoratee = mock(Directory.class);
-    Directory decorator = new TestDirectoryDecorator(decoratee);
+    Directory<WritableOnDisk> decoratee = mock(DirectoryOnDisk.class);
+    Directory<WritableOnDisk> decorator = new TestDirectoryDecorator(decoratee);
 
     ImmutableStack<Object> stack = new ImmutableStack<>();
     decorator.prepare(stack);
     verify(decoratee).prepare(stack);
 
-    File file = new FileImpl("foo", new byte[0]);
-    decorator.addFile(file);
-    verify(decoratee).addFile(file);
+    Directory<WritableOnDisk> directory = new DirectoryOnDisk("foo");
+    decorator.addWritable(directory);
+    verify(decoratee).addWritable(directory);
 
-    decorator.getFiles();
-    verify(decoratee).getFiles();
-
-    Directory directory = new DirectoryImpl("foo");
-    decorator.addDirectory(directory);
-    verify(decoratee).addDirectory(directory);
-
-    decorator.getDirectories();
-    verify(decoratee).getDirectories();
+    decorator.getWritables();
+    verify(decoratee).getWritables();
 
     decorator.write();
     verify(decoratee).write();
@@ -66,14 +58,11 @@ public class DirectoryDecoratorTest {
 
     decorator.setParent(directory);
     verify(decoratee).setParent(directory);
-
-    decorator.getFileOnDisk();
-    verify(decoratee).getFileOnDisk();
   }
 
-  private static class TestDirectoryDecorator extends DirectoryDecorator {
+  private static class TestDirectoryDecorator extends DirectoryDecorator<WritableOnDisk> {
 
-    protected TestDirectoryDecorator(Directory directory) {
+    protected TestDirectoryDecorator(Directory<WritableOnDisk> directory) {
       super(directory);
     }
   }

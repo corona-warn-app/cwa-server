@@ -43,8 +43,7 @@ public class DateTime {
         .map(timestamp -> LocalDate.ofEpochDay(timestamp / 24))
         .collect(Collectors.toSet());
   }
-
-
+  
   /**
    * Returns a set of all {@link LocalDateTime hours} that are associated with the submission timestamps of the
    * specified {@link DiagnosisKey diagnosis keys} and the specified {@link LocalDate date}.
