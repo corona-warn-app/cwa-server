@@ -13,6 +13,10 @@
   <artifactId>submission</artifactId>
   <version>0.3.3-SNAPSHOT</version>
 
+  <properties>
+    <sonar.projectKey>corona-warn-app_cwa-server_services_submission</sonar.projectKey>
+  </properties>
+
   <dependencies>
     <dependency>
       <groupId>org.springframework.boot</groupId>
