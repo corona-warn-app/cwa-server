@@ -74,8 +74,7 @@ public class FileTest {
     byte[] writtenBytes = Files.readAllBytes(file.getFileOnDisk().toPath());
 
     assertThat(writtenBytes).isEqualTo(bytes);
-    assertThat(outputFile.listFiles()).isNotNull();
-    assertThat(outputFile.listFiles().length).isEqualTo(1);
+    assertThat(outputFile.listFiles()).isNotNull().hasSize(1);
   }
 
 }
