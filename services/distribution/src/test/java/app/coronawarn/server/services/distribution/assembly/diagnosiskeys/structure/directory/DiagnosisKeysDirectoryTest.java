@@ -21,7 +21,7 @@ package app.coronawarn.server.services.distribution.assembly.diagnosiskeys.struc
 
 import static app.coronawarn.server.services.distribution.common.Helpers.buildDiagnosisKeyForSubmissionTimestamp;
 import static java.lang.String.join;
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.assertj.core.api.Assertions.assertThat;
 
 import app.coronawarn.server.common.persistence.domain.DiagnosisKey;
 import app.coronawarn.server.services.distribution.assembly.component.CryptoProvider;
@@ -97,7 +97,7 @@ public class DiagnosisKeysDirectoryTest {
 
     Set<String> actualFiles = getActualFiles(outputFile);
 
-    assertEquals(expectedFiles, actualFiles);
+    assertThat(actualFiles).isEqualTo(expectedFiles);
   }
 
   @Test
@@ -148,7 +148,7 @@ public class DiagnosisKeysDirectoryTest {
 
     Set<String> actualFiles = getActualFiles(outputFile);
 
-    assertEquals(expectedFiles, actualFiles);
+    assertThat(actualFiles).isEqualTo(expectedFiles);
   }
 
   private Set<String> getActualFiles(java.io.File root) {

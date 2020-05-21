@@ -19,8 +19,8 @@
 
 package app.coronawarn.server.services.distribution.assembly.structure;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.catchThrowable;
 
 import app.coronawarn.server.services.distribution.assembly.structure.directory.DirectoryOnDisk;
 import app.coronawarn.server.services.distribution.assembly.structure.util.ImmutableStack;
@@ -48,7 +48,7 @@ public class WritableTest {
   public void checkGetName() {
     String name = "Test";
     WritableOnDisk writable = new TestWritable(name);
-    assertEquals(name, writable.getName());
+    assertThat(writable.getName()).isEqualTo(name);
   }
 
   @Test
@@ -56,14 +56,14 @@ public class WritableTest {
     DirectoryOnDisk parent = new DirectoryOnDisk("Parent");
     WritableOnDisk child = new TestWritable("Child");
     child.setParent(parent);
-    assertEquals(parent, child.getParent());
+    assertThat(child.getParent()).isEqualTo(parent);
   }
 
   @Test
   public void checkGetFileOnDiskForRoot() {
     File file = new File("Root");
     DirectoryOnDisk parent = new DirectoryOnDisk(file);
-    assertEquals(file, parent.getFileOnDisk());
+    assertThat(parent.getFileOnDisk()).isEqualTo(file);
   }
 
   @Test
@@ -72,12 +72,12 @@ public class WritableTest {
     DirectoryOnDisk parent = new DirectoryOnDisk(file);
     WritableOnDisk child = new TestWritable("Child");
     child.setParent(parent);
-    assertEquals(file.toPath().resolve("Child").toFile(), child.getFileOnDisk());
+    assertThat(child.getFileOnDisk()).isEqualTo(file.toPath().resolve("Child").toFile());
   }
 
   @Test
   public void checkGetFileOnDiskThrowsIfNoParent() {
-    DirectoryOnDisk orphan = new DirectoryOnDisk("Orphan");
-    assertThrows(NullPointerException.class, orphan::getFileOnDisk);
+    assertThat(catchThrowable(new DirectoryOnDisk("Orphan")::getFileOnDisk))
+        .isInstanceOf(NullPointerException.class);
   }
 }

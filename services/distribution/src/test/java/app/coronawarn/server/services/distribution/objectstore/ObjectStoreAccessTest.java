@@ -19,8 +19,7 @@
 
 package app.coronawarn.server.services.distribution.objectstore;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.when;
 
@@ -76,7 +75,7 @@ public class ObjectStoreAccessTest {
   public void defaultIsEmptyTrue() throws MinioException, GeneralSecurityException, IOException {
     var files = objectStoreAccess.getObjectsWithPrefix(testRunId);
 
-    assertTrue(files.isEmpty(), "Content should be empty");
+    assertThat(files).withFailMessage("Content should be empty").isEmpty();
   }
 
   @Test
@@ -84,7 +83,7 @@ public class ObjectStoreAccessTest {
       throws MinioException, GeneralSecurityException, IOException {
     var files = objectStoreAccess.getObjectsWithPrefix("THIS_PREFIX_DOES_NOT_EXIST");
 
-    assertTrue(files.isEmpty(), "Found files, but should be empty!");
+    assertThat(files).withFailMessage("Found files, but should be empty!").isEmpty();
   }
 
   @Test
@@ -97,14 +96,14 @@ public class ObjectStoreAccessTest {
 
     objectStoreAccess.putObject(localFileSpy);
     var files = objectStoreAccess.getObjectsWithPrefix(testRunId);
-    assertEquals(1, files.size());
+    assertThat(files.size()).isEqualTo(1);
 
-    assertEquals(testFileTargetKey, files.get(0).getObjectName());
+    assertThat(files.get(0).getObjectName()).isEqualTo(testFileTargetKey);
 
     objectStoreAccess.deleteObjectsWithPrefix(testRunId);
 
     var filesAfterDeletion = objectStoreAccess.getObjectsWithPrefix(testRunId);
-    assertEquals(0, filesAfterDeletion.size());
+    assertThat(filesAfterDeletion.size()).isEqualTo(0);
   }
 
   private Path getExampleFile() throws IOException {

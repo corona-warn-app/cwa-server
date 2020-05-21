@@ -20,11 +20,12 @@
 package app.coronawarn.server.common.persistence.domain;
 
 import static java.time.ZoneOffset.UTC;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
-import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+
 
 import java.nio.charset.Charset;
 import java.time.Instant;
@@ -33,6 +34,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
+
 
 public class DiagnosisKeyTest {
 
@@ -46,22 +48,22 @@ public class DiagnosisKeyTest {
 
   @Test
   public void testRollingStartNumberGetter() {
-    assertEquals(expRollingStartNumber, diagnosisKey.getRollingStartNumber());
+    assertThat(diagnosisKey.getRollingStartNumber()).isEqualTo(expRollingStartNumber);
   }
 
   @Test
   public void testRollingPeriodGetter() {
-    assertEquals(expRollingPeriod, diagnosisKey.getRollingPeriod());
+    assertThat(diagnosisKey.getRollingPeriod()).isEqualTo(expRollingPeriod);
   }
 
   @Test
   public void testTransmissionRiskLevelGetter() {
-    assertEquals(expTransmissionRiskLevel, diagnosisKey.getTransmissionRiskLevel());
+    assertThat(diagnosisKey.getTransmissionRiskLevel()).isEqualTo(expTransmissionRiskLevel);
   }
 
   @Test
   public void testSubmissionTimestampGetter() {
-    assertEquals(expSubmissionTimestamp, diagnosisKey.getSubmissionTimestamp());
+    assertThat(diagnosisKey.getSubmissionTimestamp()).isEqualTo(expSubmissionTimestamp);
   }
 
   @Test
