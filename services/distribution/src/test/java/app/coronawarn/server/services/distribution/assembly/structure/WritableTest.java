@@ -22,15 +22,14 @@ package app.coronawarn.server.services.distribution.assembly.structure;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-import app.coronawarn.server.services.distribution.assembly.structure.directory.Directory;
-import app.coronawarn.server.services.distribution.assembly.structure.directory.DirectoryImpl;
+import app.coronawarn.server.services.distribution.assembly.structure.directory.DirectoryOnDisk;
 import app.coronawarn.server.services.distribution.assembly.structure.util.ImmutableStack;
 import java.io.File;
 import org.junit.jupiter.api.Test;
 
 public class WritableTest {
 
-  private static class TestWritable extends WritableImpl {
+  private static class TestWritable extends WritableOnDisk {
 
     protected TestWritable(String name) {
       super(name);
@@ -48,14 +47,14 @@ public class WritableTest {
   @Test
   public void checkGetName() {
     String name = "Test";
-    Writable writable = new TestWritable(name);
+    WritableOnDisk writable = new TestWritable(name);
     assertEquals(name, writable.getName());
   }
 
   @Test
   public void checkGetAndSetParent() {
-    Directory parent = new DirectoryImpl("Parent");
-    Writable child = new TestWritable("Child");
+    DirectoryOnDisk parent = new DirectoryOnDisk("Parent");
+    WritableOnDisk child = new TestWritable("Child");
     child.setParent(parent);
     assertEquals(parent, child.getParent());
   }
@@ -63,22 +62,22 @@ public class WritableTest {
   @Test
   public void checkGetFileOnDiskForRoot() {
     File file = new File("Root");
-    Directory parent = new DirectoryImpl(file);
+    DirectoryOnDisk parent = new DirectoryOnDisk(file);
     assertEquals(file, parent.getFileOnDisk());
   }
 
   @Test
   public void checkGetFileOnDiskRelativeToRoot() {
     File file = new File("Root");
-    Directory parent = new DirectoryImpl(file);
-    Writable child = new TestWritable("Child");
+    DirectoryOnDisk parent = new DirectoryOnDisk(file);
+    WritableOnDisk child = new TestWritable("Child");
     child.setParent(parent);
     assertEquals(file.toPath().resolve("Child").toFile(), child.getFileOnDisk());
   }
 
   @Test
   public void checkGetFileOnDiskThrowsIfNoParent() {
-    Directory orphan = new DirectoryImpl("Orphan");
+    DirectoryOnDisk orphan = new DirectoryOnDisk("Orphan");
     assertThrows(NullPointerException.class, orphan::getFileOnDisk);
   }
 }
