@@ -20,14 +20,19 @@
 package app.coronawarn.server.common.persistence.domain;
 
 import static java.time.ZoneOffset.UTC;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.nio.charset.Charset;
 import java.time.Instant;
 import java.time.LocalDateTime;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 
 public class DiagnosisKeyTest {
 
@@ -68,8 +73,23 @@ public class DiagnosisKeyTest {
     DiagnosisKey diagnosisKeyFiveDays = new DiagnosisKey(expKeyData, fiveDaysAgo,
         expRollingPeriod, expTransmissionRiskLevel, expSubmissionTimestamp);
 
-    assertFalse(diagnosisKeyFiveDays.isYoungerThanRetentionThreshold(4L));
-    assertFalse(diagnosisKeyFiveDays.isYoungerThanRetentionThreshold(5L));
-    assertTrue(diagnosisKeyFiveDays.isYoungerThanRetentionThreshold(6L));
+    assertFalse(diagnosisKeyFiveDays.isYoungerThanRetentionThreshold(4));
+    assertFalse(diagnosisKeyFiveDays.isYoungerThanRetentionThreshold(5));
+    assertTrue(diagnosisKeyFiveDays.isYoungerThanRetentionThreshold(6));
+  }
+
+  @DisplayName("Test retention threshold accepts positive value")
+  @ValueSource(ints = {0, 1, Integer.MAX_VALUE})
+  @ParameterizedTest
+  public void testRetentionThresholdAcceptsPositiveValue(int daysToRetain) {
+    assertDoesNotThrow(() -> diagnosisKey.isYoungerThanRetentionThreshold(daysToRetain));
+  }
+
+  @DisplayName("Test retention threshold rejects negative value")
+  @ValueSource(ints = {Integer.MIN_VALUE, -1})
+  @ParameterizedTest
+  public void testRetentionThresholdRejectsNegativeValue(int daysToRetain) {
+    assertThrows(IllegalArgumentException.class,
+        () -> diagnosisKey.isYoungerThanRetentionThreshold(daysToRetain));
   }
 }
