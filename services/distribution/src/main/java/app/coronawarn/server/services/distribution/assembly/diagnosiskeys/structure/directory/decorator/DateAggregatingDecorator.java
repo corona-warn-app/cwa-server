@@ -46,8 +46,6 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * A {@link DirectoryDecorator} that will bundle hour aggregates into date aggregates and sign them.
@@ -70,7 +68,7 @@ public class DateAggregatingDecorator extends IndexDirectoryDecorator<LocalDate,
         .filter(writable -> writable instanceof DirectoryOnDisk)
         .map(directory -> (DirectoryOnDisk) directory)
         .collect(Collectors.toSet());
-    if (dayDirectories.size() == 0) {
+    if (dayDirectories.isEmpty()) {
       return;
     }
 
@@ -78,21 +76,20 @@ public class DateAggregatingDecorator extends IndexDirectoryDecorator<LocalDate,
     sortedDayDirectories.sort(Comparator.comparing(Writable::getName));
 
     // Exclude the last day
-    sortedDayDirectories.subList(0, sortedDayDirectories.size() - 1).forEach(currentDirectory -> {
-      Stream.of(currentDirectory)
-          .map(this::getSubSubDirectoryArchives)
-          .map(this::getTemporaryExposureKeyExportFilesFromArchives)
-          .map(this::parseTemporaryExposureKeyExportsFromFiles)
-          .map(this::reduceTemporaryExposureKeyExportsToNewFile)
-          .map(temporaryExposureKeyExportFile -> {
-            Archive<WritableOnDisk> aggregate = new ArchiveOnDisk(AGGREGATE_FILE_NAME);
-            aggregate.addWritable(temporaryExposureKeyExportFile);
-            return aggregate;
-          })
-          .map(file -> new DiagnosisKeySigningDecorator(file, cryptoProvider))
-          .peek(currentDirectory::addWritable)
-          .forEach(aggregate -> aggregate.prepare(indices));
-    });
+    sortedDayDirectories.subList(0, sortedDayDirectories.size() - 1)
+        .forEach(currentDirectory -> Stream.of(currentDirectory)
+            .map(this::getSubSubDirectoryArchives)
+            .map(this::getTemporaryExposureKeyExportFilesFromArchives)
+            .map(this::parseTemporaryExposureKeyExportsFromFiles)
+            .map(this::reduceTemporaryExposureKeyExportsToNewFile)
+            .map(temporaryExposureKeyExportFile -> {
+              Archive<WritableOnDisk> aggregate = new ArchiveOnDisk(AGGREGATE_FILE_NAME);
+              aggregate.addWritable(temporaryExposureKeyExportFile);
+              return aggregate;
+            })
+            .map(file -> new DiagnosisKeySigningDecorator(file, cryptoProvider))
+            .peek(currentDirectory::addWritable)
+            .forEach(aggregate -> aggregate.prepare(indices)));
   }
 
   /**
