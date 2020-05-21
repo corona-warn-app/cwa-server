@@ -36,7 +36,7 @@ import static org.springframework.http.HttpStatus.OK;
 
 import app.coronawarn.server.common.persistence.domain.DiagnosisKey;
 import app.coronawarn.server.common.persistence.service.DiagnosisKeyService;
-import app.coronawarn.server.common.protocols.external.exposurenotification.Key;
+import app.coronawarn.server.common.protocols.external.exposurenotification.TemporaryExposureKey;
 import app.coronawarn.server.common.protocols.internal.SubmissionPayload;
 import app.coronawarn.server.services.submission.verification.TanVerifier;
 import com.google.protobuf.ByteString;
@@ -121,7 +121,7 @@ public class SubmissionControllerTest {
 
   @Test
   public void singleKeyWithOutdatedRollingStartNumberDoesNotGetSaved() {
-    Collection<Key> keys = buildPayloadWithSingleOutdatedKey();
+    Collection<TemporaryExposureKey> keys = buildPayloadWithSingleOutdatedKey();
     ArgumentCaptor<Collection<DiagnosisKey>> argument = ArgumentCaptor.forClass(Collection.class);
 
     executeRequest(keys, buildOkHeaders());
@@ -132,8 +132,8 @@ public class SubmissionControllerTest {
 
   @Test
   public void keysWithOutdatedRollingStartNumberDoNotGetSaved() {
-    Collection<Key> keys = buildPayloadWithMultipleKeys();
-    Key outdatedKey = createOutdatedKey();
+    Collection<TemporaryExposureKey> keys = buildPayloadWithMultipleKeys();
+    TemporaryExposureKey outdatedKey = createOutdatedKey();
     keys.add(outdatedKey);
     ArgumentCaptor<Collection<DiagnosisKey>> argument = ArgumentCaptor.forClass(Collection.class);
 
@@ -146,7 +146,7 @@ public class SubmissionControllerTest {
 
   @Test
   public void checkSaveOperationCallForValidParameters() {
-    Collection<Key> keys = buildPayloadWithMultipleKeys();
+    Collection<TemporaryExposureKey> keys = buildPayloadWithMultipleKeys();
     ArgumentCaptor<Collection<DiagnosisKey>> argument = ArgumentCaptor.forClass(Collection.class);
 
     executeRequest(keys, buildOkHeaders());
@@ -236,11 +236,11 @@ public class SubmissionControllerTest {
     return headers;
   }
 
-  private static Collection<Key> buildPayloadWithOneKey() {
+  private static Collection<TemporaryExposureKey> buildPayloadWithOneKey() {
     return Collections.singleton(buildTemporaryExposureKey("testKey111111111", 1, 2, 3));
   }
 
-  private static Collection<Key> buildPayloadWithMultipleKeys() {
+  private static Collection<TemporaryExposureKey> buildPayloadWithMultipleKeys() {
     return Stream.of(
         buildTemporaryExposureKey("testKey111111111", createRollingStartNumber(2), 2, 3),
         buildTemporaryExposureKey("testKey222222222", createRollingStartNumber(4), 5, 6),
@@ -248,21 +248,21 @@ public class SubmissionControllerTest {
         .collect(Collectors.toCollection(ArrayList::new));
   }
 
-  private static Collection<Key> buildPayloadWithSingleOutdatedKey() {
-    Key outdatedKey = createOutdatedKey();
+  private static Collection<TemporaryExposureKey> buildPayloadWithSingleOutdatedKey() {
+    TemporaryExposureKey outdatedKey = createOutdatedKey();
     return Stream.of(outdatedKey).collect(Collectors.toCollection(ArrayList::new));
   }
 
-  private static Key createOutdatedKey() {
-    return Key.newBuilder()
+  private static TemporaryExposureKey createOutdatedKey() {
+    return TemporaryExposureKey.newBuilder()
         .setKeyData(ByteString.copyFromUtf8("testKey222222222"))
-        .setRollingStartNumber(createRollingStartNumber(99))
+        .setRollingStartIntervalNumber(createRollingStartNumber(99))
         .setRollingPeriod(10)
         .setTransmissionRiskLevel(5).build();
   }
 
-  private Collection<Key> buildPayloadWithTooManyKeys() {
-    ArrayList<Key> tooMany = new ArrayList<>();
+  private Collection<TemporaryExposureKey> buildPayloadWithTooManyKeys() {
+    ArrayList<TemporaryExposureKey> tooMany = new ArrayList<>();
     for (int i = 0; i <= 99; i++) {
       tooMany.add(
           buildTemporaryExposureKey("testKey111111111", createRollingStartNumber(2), 2, 3));
@@ -271,7 +271,7 @@ public class SubmissionControllerTest {
     return tooMany;
   }
 
-  private static Collection<Key> buildPayloadWithInvalidKey() {
+  private static Collection<TemporaryExposureKey> buildPayloadWithInvalidKey() {
     return Stream.of(
         buildTemporaryExposureKey("testKey111111111", createRollingStartNumber(2), 2, 999))
         .collect(Collectors.toCollection(ArrayList::new));
@@ -284,17 +284,17 @@ public class SubmissionControllerTest {
         .toEpochSecond(UTC) / (60 * 10));
   }
 
-  private static Key buildTemporaryExposureKey(
+  private static TemporaryExposureKey buildTemporaryExposureKey(
       String keyData, int rollingStartNumber, int rollingPeriod, int transmissionRiskLevel) {
-    return Key.newBuilder()
+    return TemporaryExposureKey.newBuilder()
         .setKeyData(ByteString.copyFromUtf8(keyData))
-        .setRollingStartNumber(rollingStartNumber)
+        .setRollingStartIntervalNumber(rollingStartNumber)
         .setRollingPeriod(rollingPeriod)
         .setTransmissionRiskLevel(transmissionRiskLevel).build();
   }
 
   private void assertElementsCorrespondToEachOther
-      (Collection<Key> submittedKeys, Collection<DiagnosisKey> keyEntities) {
+      (Collection<TemporaryExposureKey> submittedKeys, Collection<DiagnosisKey> keyEntities) {
     Set<DiagnosisKey> expKeys = submittedKeys.stream()
         .map(aSubmittedKey -> DiagnosisKey.builder().fromProtoBuf(aSubmittedKey).build())
         .collect(Collectors.toSet());
@@ -305,7 +305,7 @@ public class SubmissionControllerTest {
         "Key entity does not correspond to a submitted key."));
   }
 
-  private ResponseEntity<Void> executeRequest(Collection<Key> keys, HttpHeaders headers) {
+  private ResponseEntity<Void> executeRequest(Collection<TemporaryExposureKey> keys, HttpHeaders headers) {
     SubmissionPayload body = SubmissionPayload.newBuilder().addAllKeys(keys).build();
     RequestEntity<SubmissionPayload> request =
         new RequestEntity<>(body, headers, HttpMethod.POST, SUBMISSION_URL);
