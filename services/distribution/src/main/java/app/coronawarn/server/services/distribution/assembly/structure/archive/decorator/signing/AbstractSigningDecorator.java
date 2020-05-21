@@ -19,10 +19,10 @@
 
 package app.coronawarn.server.services.distribution.assembly.structure.archive.decorator.signing;
 
+import app.coronawarn.server.common.protocols.external.exposurenotification.SignatureInfo;
 import app.coronawarn.server.common.protocols.external.exposurenotification.TEKSignature;
 import app.coronawarn.server.common.protocols.external.exposurenotification.TEKSignatureList;
 import app.coronawarn.server.services.distribution.assembly.component.CryptoProvider;
-import app.coronawarn.server.services.distribution.assembly.configuration.SignatureConfigurationProperties;
 import app.coronawarn.server.services.distribution.assembly.structure.Writable;
 import app.coronawarn.server.services.distribution.assembly.structure.archive.Archive;
 import app.coronawarn.server.services.distribution.assembly.structure.archive.decorator.ArchiveDecorator;
@@ -32,7 +32,6 @@ import java.security.GeneralSecurityException;
 import java.security.Signature;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 
 public abstract class AbstractSigningDecorator<W extends Writable<W>> extends ArchiveDecorator<W> implements
     SigningDecorator<W> {
@@ -43,9 +42,6 @@ public abstract class AbstractSigningDecorator<W extends Writable<W>> extends Ar
 
   private static final Logger logger = LoggerFactory.getLogger(AbstractSigningDecorator.class);
   protected final CryptoProvider cryptoProvider;
-
-  @Autowired
-  private SignatureConfigurationProperties signatureConfigurationProperties;
 
   public AbstractSigningDecorator(Archive<W> archive, CryptoProvider cryptoProvider) {
     super(archive);
@@ -61,7 +57,7 @@ public abstract class AbstractSigningDecorator<W extends Writable<W>> extends Ar
   protected TEKSignatureList createTemporaryExposureKeySignatureList(CryptoProvider cryptoProvider) {
     return TEKSignatureList.newBuilder()
         .addSignatures(TEKSignature.newBuilder()
-            .setSignatureInfo(signatureConfigurationProperties.getSignatureInfo())
+            .setSignatureInfo(getSignatureInfo())
             .setBatchNum(getBatchNum())
             .setBatchSize(getBatchSize())
             .setSignature(ByteString.copyFrom(createSignature(cryptoProvider)))
@@ -79,5 +75,19 @@ public abstract class AbstractSigningDecorator<W extends Writable<W>> extends Ar
       logger.error("Failed to sign archive.", e);
       throw new RuntimeException(e);
     }
+  }
+
+  /**
+   * Returns the static {@link SignatureInfo} configured in the application properties. TODO Enter correct values.
+   */
+  public static SignatureInfo getSignatureInfo() {
+    // TODO cwa-server#205, cwa-server#206
+    return SignatureInfo.newBuilder()
+        .setAppBundleId("TODO")
+        .setAndroidPackage("TODO")
+        .setVerificationKeyVersion("TODO")
+        .setVerificationKeyId("TODO")
+        .setSignatureAlgorithm("TODO")
+        .build();
   }
 }
