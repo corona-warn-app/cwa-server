@@ -74,9 +74,15 @@ Component: Spring Boot
 Licensor:  VMWare Inc.
 Website:   https://spring.io/
 License:   Apache License 2.0
+
+Component: Zenko CloudServer
+Licensor:  Zenko
+Website:   https://github.com/scality/cloudserver
+License:   Apache License 2.0
+
 --------------------------------------------------------------------------------
 Apache License 2.0 (Commons IO, Commons Math 3, flyway, JSON-Simple,
-Maven, MinIO Object Storage, snakeyaml, Spring Boot)
+Maven, MinIO Object Storage, snakeyaml, Spring Boot, Zenko CloudServer)
 
                                  Apache License
                            Version 2.0, January 2004

@@ -6,6 +6,8 @@
     <a href="https://github.com/corona-warn-app/cwa-server/commits/" title="Last Commit"><img src="https://img.shields.io/github/last-commit/corona-warn-app/cwa-server?style=flat"></a>
     <a href="https://github.com/corona-warn-app/cwa-server/issues" title="Open Issues"><img src="https://img.shields.io/github/issues/corona-warn-app/cwa-server?style=flat"></a>
     <a href="https://circleci.com/gh/corona-warn-app/cwa-server" title="Build Status"><img src="https://circleci.com/gh/corona-warn-app/cwa-server.svg?style=shield&circle-token=4ab059989d10709df19eb4b98ab7c121a25e981a"></a>
+        <a href="https://sonarcloud.io/dashboard?id=corona-warn-app_cwa-server" title="Quality Gate"><img src="https://sonarcloud.io/api/project_badges/measure?project=corona-warn-app_cwa-server&metric=alert_status"></a>    
+        <a href="https://sonarcloud.io/component_measures?id=corona-warn-app_cwa-server&metric=Coverage&view=list" title="Coverage"><img src="https://sonarcloud.io/api/project_badges/measure?project=corona-warn-app_cwa-server&metric=coverage"></a>
     <a href="https://github.com/corona-warn-app/cwa-server/blob/master/LICENSE" title="License"><img src="https://img.shields.io/badge/License-Apache%202.0-green.svg?style=flat"></a>
 </p>
 
@@ -46,7 +48,7 @@ If you want to use Docker-based deployment, you need to install Docker on your l
 
 #### Running the Full CWA Backend Using Docker Compose
 
-For your convenience, a full setup including the generation of test data has been prepared using [Docker Compose](https://docs.docker.com/compose/reference/overview/). To build the backend services, run ```docker-compose build``` in the repository's root directory. A default configuration file can be found under ```.env```in the root folder of the repository. The default values for the local Postgres and MinIO-build should be changed in this file before docker-compose is run.
+For your convenience, a full setup including the generation of test data has been prepared using [Docker Compose](https://docs.docker.com/compose/reference/overview/). To build the backend services, run ```docker-compose build``` in the repository's root directory. A default configuration file can be found under ```.env```in the root folder of the repository. The default values for the local Postgres and Zenko Cloudserver should be changed in this file before docker-compose is run.
 
 Once the services are built, you can start the whole backend using ```docker-compose up```.
 The distribution service runs once and then finishes. If you want to trigger additional distribution runs, run ```docker-compose start distribution```.
@@ -55,11 +57,11 @@ The docker-compose contains the following services:
 
 Service       | Description | Endpoint and Default Credentials
 --------------|-------------|-----------
-submission    | The Corona-Warn-App submission service                                            | http://localhost:8080 
-distribution  | The Corona-Warn-App distribution service                                          | NO ENDPOINT
-postgres      | A [postgres] database installation                                                | postgres:5432 <br> Username: postgres <br> Password: postgres
-pgadmin       | A [pgadmin](https://www.pgadmin.org/) installation for the postgres database      | http://localhost:8081 <br> Username: user@domain.com <br> Password: password
-minio         | [MinIO] is an S3-compliant object store                                           | http://localhost:8082/ <br> Access key: minioadmin <br> Secret key: minioadmin
+submission    | The Corona-Warn-App submission service                                                      | http://localhost:8000 
+distribution  | The Corona-Warn-App distribution service                                                    | NO ENDPOINT
+postgres      | A [postgres] database installation                                                          | postgres:8001 <br> Username: postgres <br> Password: postgres
+pgadmin       | A [pgadmin](https://www.pgadmin.org/) installation for the postgres database                | http://localhost:8002 <br> Username: user@domain.com <br> Password: password
+cloudserver   | [Zenko CloudServer] is a S3-compliant object store  | http://localhost:8003/ <br> Access key: accessKey1 <br> Secret key: verySecretKey1
 
 #### Running Single CWA Services Using Docker
 
@@ -87,7 +89,7 @@ To prepare your machine to run the CWA project locally, we recommend that you fi
 * Minimum JDK Version 11: [OpenJDK](https://openjdk.java.net/) / [SapMachine](https://sap.github.io/SapMachine/)
 * [Maven 3.6](https://maven.apache.org/)
 * [Postgres]
-* [MinIO]
+* [Zenko CloudServer]
 
 #### Configure
 
@@ -95,6 +97,9 @@ After you made sure that the specified dependencies are running, configure them 
 
 * Configure the Postgres connection in the [submission config](./services/submission/src/main/resources/application.properties) and in the [distribution config](./services/distribution/src/main/resources/application.properties)
 * Configure the S3 compatible object storage in the [distribution config](./services/distribution/src/main/resources/application.properties)
+* Configure the certificate and private key for the distribution service, the paths need to be prefixed with `file:`
+    * `VAULT_FILESIGNING_SECRET` should be the path to the private key, example available in `<repo-root>/docker-compose-test-secrets/private.pem`
+    * `VAULT_FILESIGNING_CERT` should be the path to the certificate, example available in `<repo-root>/docker-compose-test-secrets/certificate.cert`
 
 #### Build
 
@@ -165,8 +170,8 @@ The following public repositories are currently available for the Corona-Warn-Ap
 [cwa-documentation]: https://github.com/corona-warn-app/cwa-documentation
 [cwa-server]: https://github.com/corona-warn-app/cwa-server
 [Postgres]: https://www.postgresql.org/
-[MinIO]: https://min.io/
 [HSQLDB]: http://hsqldb.org/
+[Zenko CloudServer]: https://github.com/scality/cloudserver
 
 ## Licensing
 

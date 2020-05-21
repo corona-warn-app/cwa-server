@@ -19,26 +19,35 @@
 
 package app.coronawarn.server.services.distribution.objectstore.publish;
 
+import com.google.common.io.BaseEncoding;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
-import java.util.Base64;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.util.DigestUtils;
 
 /**
  * Represents a file, which is subject for publishing to S3.
  */
 public abstract class LocalFile {
 
-  /** the path to the file to be represented. */
+  private static final Logger logger = LoggerFactory.getLogger(LocalFile.class);
+
+  /**
+   * the path to the file to be represented.
+   */
   private final Path file;
 
-  /** the assigned S3 key. */
+  /**
+   * the assigned S3 key.
+   */
   private final String s3Key;
 
-  /** the hash of this file. */
-  private final String hash;
+  /**
+   * the etag of this file.
+   */
+  private final String etag;
 
   /**
    * Constructs a new file representing a file on the disk.
@@ -48,7 +57,7 @@ public abstract class LocalFile {
    */
   public LocalFile(Path file, Path basePath) {
     this.file = file;
-    this.hash = hash();
+    this.etag = computeS3ETag();
     this.s3Key = createS3Key(file, basePath);
   }
 
@@ -56,23 +65,25 @@ public abstract class LocalFile {
     return s3Key;
   }
 
-  public String getHash() {
-    return hash;
+  public String getEtag() {
+    return etag;
   }
 
   public Path getFile() {
     return file;
   }
 
-  private String hash() {
+  private String computeS3ETag() {
     try {
-      MessageDigest digester = MessageDigest.getInstance("SHA-256");
-      digester.update(Files.readAllBytes(file));
+      String md5 = DigestUtils.md5DigestAsHex(Files.readAllBytes(file));
+      byte[] raw = BaseEncoding.base16().decode(md5.toUpperCase());
 
-      return Base64.getEncoder().encodeToString(digester.digest());
-    } catch (IOException | NoSuchAlgorithmException e) {
-      throw new RuntimeException("Unable to compute hashes due to ", e);
+      return DigestUtils.md5DigestAsHex(raw) + "-1";
+    } catch (IOException e) {
+      logger.warn("Unable to compute E-Tag", e);
     }
+
+    return "";
   }
 
   protected String createS3Key(Path file, Path rootFolder) {

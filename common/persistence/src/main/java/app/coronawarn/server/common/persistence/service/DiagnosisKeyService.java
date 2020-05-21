@@ -62,12 +62,17 @@ public class DiagnosisKeyService {
   }
 
   /**
-   * Deletes all diagnosis key entries which have a submission timestamp that is older than the specified number of
-   * days.
+   * Deletes all diagnosis key entries which have a submission timestamp that is older than the
+   * specified number of days.
    *
    * @param daysToRetain the number of days until which diagnosis keys will be retained.
+   * @throws IllegalArgumentException if {@code daysToRetain} is negative.
    */
   public void applyRetentionPolicy(int daysToRetain) {
+    if (daysToRetain < 0) {
+      throw new IllegalArgumentException("Number of days to retain must be greater or equal to 0.");
+    }
+
     long threshold = LocalDateTime
         .ofInstant(Instant.now(), UTC)
         .minusDays(daysToRetain)
