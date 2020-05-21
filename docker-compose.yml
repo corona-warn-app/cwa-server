@@ -69,6 +69,7 @@ services:
     ports:
       - "8003:8000"
     environment:
+      ENDPOINT: objectstore
       REMOTE_MANAGEMENT_DISABLE: 1
       SCALITY_ACCESS_KEY_ID: ${OBJECTSTORE_ACCESSKEY}
       SCALITY_SECRET_ACCESS_KEY: ${OBJECTSTORE_SECRETKEY}
