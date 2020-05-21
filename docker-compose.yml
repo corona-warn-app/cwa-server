@@ -9,7 +9,7 @@ services:
     ports:
       - "8000:8080"
     environment: 
-      SPRING_PROFILES_ACTIVE: cloud,dev
+      SPRING_PROFILES_ACTIVE: dev
       POSTGRESQL_SERVICE_PORT: '5432'
       POSTGRESQL_SERVICE_HOST: postgres
       POSTGRESQL_DATABASE: ${POSTGRES_DB}
@@ -24,7 +24,7 @@ services:
      - objectstore
      - create-bucket
     environment:
-      SPRING_PROFILES_ACTIVE: cloud,dev,testdata
+      SPRING_PROFILES_ACTIVE: dev,testdata
       POSTGRESQL_SERVICE_PORT: '5432'
       POSTGRESQL_SERVICE_HOST: postgres
       POSTGRESQL_DATABASE: ${POSTGRES_DB}
