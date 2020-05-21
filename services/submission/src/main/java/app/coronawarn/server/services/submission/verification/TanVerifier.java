@@ -45,7 +45,7 @@ public class TanVerifier {
 
       return validateAuthorization(tanAuthorization);
     } catch (TanAuthorizationException e) {
-      logger.info("Failed TAN validation", e);
+      logger.error("Failed TAN validation", e);
       return false;
     }
   }

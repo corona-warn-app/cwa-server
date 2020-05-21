@@ -10,6 +10,10 @@
     <relativePath>../pom.xml</relativePath>
   </parent>
 
+  <properties>
+    <sonar.projectKey>corona-warn-app_cwa-server_common</sonar.projectKey>
+  </properties>
+
   <modelVersion>4.0.0</modelVersion>
 
   <artifactId>common</artifactId>
