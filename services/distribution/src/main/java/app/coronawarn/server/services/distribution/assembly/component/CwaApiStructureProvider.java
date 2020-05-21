@@ -19,10 +19,10 @@
 
 package app.coronawarn.server.services.distribution.assembly.component;
 
+import app.coronawarn.server.services.distribution.assembly.structure.WritableOnDisk;
 import app.coronawarn.server.services.distribution.assembly.structure.directory.Directory;
-import app.coronawarn.server.services.distribution.assembly.structure.directory.IndexDirectory;
-import app.coronawarn.server.services.distribution.assembly.structure.directory.IndexDirectoryImpl;
-import app.coronawarn.server.services.distribution.assembly.structure.directory.decorator.IndexingDecorator;
+import app.coronawarn.server.services.distribution.assembly.structure.directory.IndexDirectoryOnDisk;
+import app.coronawarn.server.services.distribution.assembly.structure.directory.decorator.indexing.IndexingDecoratorOnDisk;
 import java.util.Set;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -41,8 +41,9 @@ public class CwaApiStructureProvider {
   private final DiagnosisKeysStructureProvider diagnosisKeysStructureProvider;
 
   @Autowired
-  public CwaApiStructureProvider(ExposureConfigurationStructureProvider exposureConfigurationStructureProvider,
-                                 DiagnosisKeysStructureProvider diagnosisKeysStructureProvider) {
+  public CwaApiStructureProvider(
+      ExposureConfigurationStructureProvider exposureConfigurationStructureProvider,
+      DiagnosisKeysStructureProvider diagnosisKeysStructureProvider) {
     this.exposureConfigurationStructureProvider = exposureConfigurationStructureProvider;
     this.diagnosisKeysStructureProvider = diagnosisKeysStructureProvider;
   }
@@ -50,14 +51,14 @@ public class CwaApiStructureProvider {
   /**
    * Returns the base directory.
    */
-  public Directory getDirectory() {
-    IndexDirectory<?> versionDirectory =
-        new IndexDirectoryImpl<>(VERSION_DIRECTORY, __ -> Set.of(VERSION_V1), Object::toString);
+  public Directory<WritableOnDisk> getDirectory() {
+    IndexDirectoryOnDisk<String> versionDirectory =
+        new IndexDirectoryOnDisk<>(VERSION_DIRECTORY, __ -> Set.of(VERSION_V1), Object::toString);
 
     versionDirectory
-        .addDirectoryToAll(__ -> exposureConfigurationStructureProvider.getExposureConfiguration());
-    versionDirectory.addDirectoryToAll(__ -> diagnosisKeysStructureProvider.getDiagnosisKeys());
+        .addWritableToAll(__ -> exposureConfigurationStructureProvider.getExposureConfiguration());
+    versionDirectory.addWritableToAll(__ -> diagnosisKeysStructureProvider.getDiagnosisKeys());
 
-    return new IndexingDecorator<>(versionDirectory);
+    return new IndexingDecoratorOnDisk<>(versionDirectory);
   }
 }

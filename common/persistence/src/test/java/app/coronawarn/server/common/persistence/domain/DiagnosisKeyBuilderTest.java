@@ -24,7 +24,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import app.coronawarn.server.common.persistence.exception.InvalidDiagnosisKeyException;
-import app.coronawarn.server.common.protocols.external.exposurenotification.Key;
+import app.coronawarn.server.common.protocols.external.exposurenotification.TemporaryExposureKey;
 import com.google.protobuf.ByteString;
 import java.nio.charset.Charset;
 import java.time.Instant;
@@ -45,10 +45,10 @@ public class DiagnosisKeyBuilderTest {
 
   @Test
   public void buildFromProtoBufObjWithSubmissionTimestamp() {
-    Key protoBufObj = Key
+    TemporaryExposureKey protoBufObj = TemporaryExposureKey
         .newBuilder()
         .setKeyData(ByteString.copyFrom(this.expKeyData))
-        .setRollingStartNumber(Long.valueOf(this.expRollingStartNumber).intValue())
+        .setRollingStartIntervalNumber(Long.valueOf(this.expRollingStartNumber).intValue())
         .setRollingPeriod(Long.valueOf(this.expRollingPeriod).intValue())
         .setTransmissionRiskLevel(this.expTransmissionRiskLevel)
         .build();
@@ -64,10 +64,10 @@ public class DiagnosisKeyBuilderTest {
 
   @Test
   public void buildFromProtoBufObjWithoutSubmissionTimestamp() {
-    Key protoBufObj = Key
+    TemporaryExposureKey protoBufObj = TemporaryExposureKey
         .newBuilder()
         .setKeyData(ByteString.copyFrom(this.expKeyData))
-        .setRollingStartNumber(Long.valueOf(this.expRollingStartNumber).intValue())
+        .setRollingStartIntervalNumber(Long.valueOf(this.expRollingStartNumber).intValue())
         .setRollingPeriod(Long.valueOf(this.expRollingPeriod).intValue())
         .setTransmissionRiskLevel(this.expTransmissionRiskLevel)
         .build();

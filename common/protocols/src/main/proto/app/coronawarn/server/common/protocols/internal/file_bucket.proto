@@ -1,9 +1,0 @@
-syntax = "proto3";
-package app.coronawarn.server.common.protocols.internal;
-option java_package = "app.coronawarn.server.common.protocols.internal";
-option java_multiple_files = true;
-import "app/coronawarn/server/common/protocols/external/exposurenotification/exposure_notification.proto";
-
-message FileBucket {
-  repeated app.coronawarn.server.common.protocols.external.exposurenotification.File files = 1;
-}

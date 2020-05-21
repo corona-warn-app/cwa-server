@@ -1,0 +1,21 @@
+//https://static.googleusercontent.com/media/www.google.com/en//covid19/exposurenotifications/pdfs/Exposure-Key-File-Format-and-Verification.pdf
+syntax = "proto2";
+package app.coronawarn.server.common.protocols.external.exposurenotification;
+option java_package = "app.coronawarn.server.common.protocols.external.exposurenotification";
+option java_multiple_files = true;
+import "app/coronawarn/server/common/protocols/external/exposurenotification/temporary_exposure_key_export.proto";
+
+message TEKSignatureList {
+  repeated TEKSignature signatures = 1;
+}
+
+message TEKSignature {
+  // Info about the signing key, version, algorithm, etc
+  optional SignatureInfo signature_info = 1;
+  // E.g., File 2 in batch size of 10. Ordinal, 1-based numbering.
+  // E.g., Batch 2 of 10
+  optional int32 batch_num = 2;
+  optional int32 batch_size = 3;
+  // Signature in X9.62 format (ASN.1 SEQUENCE of two INTEGER fields)
+  optional bytes signature = 4;
+}
