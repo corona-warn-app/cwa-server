@@ -7,7 +7,7 @@ WORKDIR ${WORK_DIR}
 
 RUN mkdir -p /root/.m2 /usr/sap/distribution-service
 RUN cd ${WORK_DIR}
-RUN mvn -B -DskipTests=true ${MAVEN_ARGS} clean install
+RUN mvn --batch-mode -DskipTests=true ${MAVEN_ARGS} clean install
 RUN cp ${WORK_DIR}/services/distribution/target/distribution-*.jar /usr/sap/distribution-service
 
 FROM gcr.io/distroless/java:11
