@@ -27,15 +27,21 @@ import java.time.Instant;
 import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.List;
+import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.Sort.Direction;
 import org.springframework.stereotype.Component;
 
 @Component
 public class DiagnosisKeyService {
 
+  private final DiagnosisKeyRepository keyRepository;
+
   @Autowired
-  private DiagnosisKeyRepository keyRepository;
+  public DiagnosisKeyService(DiagnosisKeyRepository keyRepository) {
+    this.keyRepository = keyRepository;
+  }
 
   /**
    * Persists the specified collection of {@link DiagnosisKey} instances.
@@ -48,19 +54,25 @@ public class DiagnosisKeyService {
   }
 
   /**
-   * Returns all persisted diagnosis keys, sorted by their submission timestamp.
+   * Returns all valid persisted diagnosis keys, sorted by their submission timestamp.
    */
   public List<DiagnosisKey> getDiagnosisKeys() {
-    return keyRepository.findAll(Sort.by(Sort.Direction.ASC, "submissionTimestamp"));
+    return keyRepository.findAll(Sort.by(Direction.ASC, "submissionTimestamp")).stream()
+        .filter(DiagnosisKey::isValid).collect(Collectors.toList());
   }
 
   /**
-   * Deletes all diagnosis key entries which have a submission timestamp that is older than the specified number of
-   * days.
+   * Deletes all diagnosis key entries which have a submission timestamp that is older than the
+   * specified number of days.
    *
    * @param daysToRetain the number of days until which diagnosis keys will be retained.
+   * @throws IllegalArgumentException if {@code daysToRetain} is negative.
    */
   public void applyRetentionPolicy(int daysToRetain) {
+    if (daysToRetain < 0) {
+      throw new IllegalArgumentException("Number of days to retain must be greater or equal to 0.");
+    }
+
     long threshold = LocalDateTime
         .ofInstant(Instant.now(), UTC)
         .minusDays(daysToRetain)

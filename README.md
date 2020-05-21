@@ -24,6 +24,12 @@ The goal of this project is to develop the official Corona-Warn-App for Germany 
 
 In this documentation, Corona-Warn-App services are also referred to as CWA services.
 
+## Architecture Overview
+
+You can find the architecture overview [here](/docs/architecture-overview.md), which will give you
+a good starting point in how the backend services interact with other services, and what purpose
+they serve.
+
 ## Development
 
 After you've checked out this repository, you can run the application in one of the following ways:

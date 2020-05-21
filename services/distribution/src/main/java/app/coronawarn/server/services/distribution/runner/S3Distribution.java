@@ -43,11 +43,15 @@ public class S3Distribution implements ApplicationRunner {
 
   private static final Logger logger = LoggerFactory.getLogger(S3Distribution.class);
 
-  @Autowired
-  private OutputDirectoryProvider outputDirectoryProvider;
+  private final OutputDirectoryProvider outputDirectoryProvider;
+
+  private final ObjectStoreAccess objectStoreAccess;
 
   @Autowired
-  private ObjectStoreAccess objectStoreAccess;
+  public S3Distribution(OutputDirectoryProvider outputDirectoryProvider, ObjectStoreAccess objectStoreAccess) {
+    this.outputDirectoryProvider = outputDirectoryProvider;
+    this.objectStoreAccess = objectStoreAccess;
+  }
 
   @Override
   public void run(ApplicationArguments args) {
