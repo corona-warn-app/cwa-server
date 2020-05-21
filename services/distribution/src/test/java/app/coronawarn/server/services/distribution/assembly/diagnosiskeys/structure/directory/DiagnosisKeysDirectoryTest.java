@@ -72,8 +72,6 @@ public class DiagnosisKeysDirectoryTest {
 
     // 01.01.1970 - 00:00 UTC
     long startTimestamp = 0;
-    // 02.01.1970 - 06:00 UTC (in 10 minute intervals)
-    long endTimestamp = startTimestamp + (24 * 6);
 
     // Generate diagnosis keys covering 30 hours of submission timestamps
     // Until 02.01.1970 - 06:00 UTC -> 1 full day + 6 hours

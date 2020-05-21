@@ -31,7 +31,6 @@ public abstract class AbstractIndexingDecorator<T, W extends Writable<W>> extend
 
   private static final String INDEX_FILE_NAME = "index";
 
-  private static final Logger logger = LoggerFactory.getLogger(AbstractIndexingDecorator.class);
   final IndexDirectory<T, W> directory;
 
   public AbstractIndexingDecorator(IndexDirectory<T, W> directory) {

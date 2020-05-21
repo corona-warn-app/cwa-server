@@ -39,7 +39,6 @@ public class DirectoryTest {
 
   private java.io.File outputDir = new java.io.File("test");
   private Directory<WritableOnDisk> parentDirectory;
-  private Directory<WritableOnDisk> childDirectory;
   private File<WritableOnDisk> childFile;
 
   @Rule
@@ -50,7 +49,6 @@ public class DirectoryTest {
     outputFolder.create();
     outputDir = outputFolder.newFolder();
     parentDirectory = new DirectoryOnDisk(outputDir);
-    childDirectory = new DirectoryOnDisk("Child");
     childFile = new FileOnDisk("Child", new byte[0]);
   }
 
@@ -83,7 +81,7 @@ public class DirectoryTest {
   }
 
   @Test
-  public void checkWriteWritesOwnDirectory() throws IOException {
+  public void checkWriteWritesOwnDirectory() {
     class MockFile extends java.io.File {
 
       public MockFile() {
@@ -99,7 +97,7 @@ public class DirectoryTest {
   }
 
   @Test
-  public void checkWriteDelegatesToWritables() throws IOException {
+  public void checkWriteDelegatesToWritables() {
     File<WritableOnDisk> spyChildFile = spy(childFile);
 
     parentDirectory.addWritable(spyChildFile);

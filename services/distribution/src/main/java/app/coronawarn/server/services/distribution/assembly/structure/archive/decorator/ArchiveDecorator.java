@@ -23,8 +23,6 @@ import app.coronawarn.server.services.distribution.assembly.structure.Writable;
 import app.coronawarn.server.services.distribution.assembly.structure.archive.Archive;
 import app.coronawarn.server.services.distribution.assembly.structure.directory.Directory;
 import app.coronawarn.server.services.distribution.assembly.structure.directory.decorator.DirectoryDecorator;
-import app.coronawarn.server.services.distribution.assembly.structure.util.ImmutableStack;
-import java.util.Set;
 
 /**
  * Decorates a {@link Directory} (e.g. to modify its files, subdirectories, etc.) on {@link Writable#prepare}. This

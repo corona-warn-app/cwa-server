@@ -16,9 +16,6 @@ import org.slf4j.LoggerFactory;
 
 public class TemporaryExposureKeyExportFile extends FileOnDisk {
 
-  private static final Logger logger = LoggerFactory
-      .getLogger(TemporaryExposureKeyExportFile.class);
-
   private static final String INDEX_FILE_NAME = "export.bin";
 
   private final Collection<TemporaryExposureKey> temporaryExposureKeys;

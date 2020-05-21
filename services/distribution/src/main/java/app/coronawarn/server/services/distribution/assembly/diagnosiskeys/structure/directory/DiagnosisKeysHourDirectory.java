@@ -42,7 +42,6 @@ public class DiagnosisKeysHourDirectory extends IndexDirectoryOnDisk<LocalDateTi
   private static final String HOUR_DIRECTORY = "hour";
 
   private final Collection<DiagnosisKey> diagnosisKeys;
-  private final LocalDate currentDate;
   private final CryptoProvider cryptoProvider;
 
   /**
@@ -50,15 +49,12 @@ public class DiagnosisKeysHourDirectory extends IndexDirectoryOnDisk<LocalDateTi
    *
    * @param diagnosisKeys  A collection of diagnosis keys. These will be filtered according to the specified current
    *                       date.
-   * @param currentDate    The date that this {@link DiagnosisKeysHourDirectory} shall be associated with.
    * @param cryptoProvider The {@link CryptoProvider} used for cryptographic signing.
    */
-  public DiagnosisKeysHourDirectory(Collection<DiagnosisKey> diagnosisKeys,
-      LocalDate currentDate, CryptoProvider cryptoProvider) {
+  public DiagnosisKeysHourDirectory(Collection<DiagnosisKey> diagnosisKeys, CryptoProvider cryptoProvider) {
     super(HOUR_DIRECTORY, indices -> DateTime.getHours(((LocalDate) indices.peek()), diagnosisKeys),
         LocalDateTime::getHour);
     this.diagnosisKeys = diagnosisKeys;
-    this.currentDate = currentDate;
     this.cryptoProvider = cryptoProvider;
   }
 

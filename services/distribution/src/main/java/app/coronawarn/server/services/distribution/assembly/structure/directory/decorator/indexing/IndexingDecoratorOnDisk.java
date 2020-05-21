@@ -33,8 +33,6 @@ import org.slf4j.LoggerFactory;
 public class IndexingDecoratorOnDisk<T> extends AbstractIndexingDecorator<T, WritableOnDisk>
     implements IndexingDecorator<T, WritableOnDisk> {
 
-  private static final Logger logger = LoggerFactory.getLogger(IndexingDecoratorOnDisk.class);
-
   public IndexingDecoratorOnDisk(IndexDirectory<T, WritableOnDisk> directory) {
     super(directory);
   }

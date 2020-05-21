@@ -26,8 +26,6 @@ import app.coronawarn.server.services.distribution.assembly.component.CryptoProv
 import app.coronawarn.server.services.distribution.assembly.structure.Writable;
 import app.coronawarn.server.services.distribution.assembly.structure.archive.Archive;
 import app.coronawarn.server.services.distribution.assembly.structure.archive.decorator.ArchiveDecorator;
-import app.coronawarn.server.services.distribution.assembly.structure.directory.Directory;
-import app.coronawarn.server.services.distribution.assembly.structure.directory.decorator.DirectoryDecorator;
 import app.coronawarn.server.services.distribution.assembly.structure.util.ImmutableStack;
 import com.google.protobuf.ByteString;
 import java.security.GeneralSecurityException;

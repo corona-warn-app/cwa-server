@@ -54,8 +54,6 @@ import org.slf4j.LoggerFactory;
  */
 public class DateAggregatingDecorator extends IndexDirectoryDecorator<LocalDate, WritableOnDisk> {
 
-  private static final Logger logger = LoggerFactory.getLogger(DateAggregatingDecorator.class);
-
   private final CryptoProvider cryptoProvider;
 
   private static final String AGGREGATE_FILE_NAME = "index";
