@@ -21,7 +21,8 @@ package app.coronawarn.server.services.distribution.assembly.component;
 
 import app.coronawarn.server.common.persistence.domain.DiagnosisKey;
 import app.coronawarn.server.common.persistence.service.DiagnosisKeyService;
-import app.coronawarn.server.services.distribution.assembly.diagnosiskeys.structure.directory.DiagnosisKeysDirectoryImpl;
+import app.coronawarn.server.services.distribution.assembly.diagnosiskeys.structure.directory.DiagnosisKeysDirectory;
+import app.coronawarn.server.services.distribution.assembly.structure.WritableOnDisk;
 import app.coronawarn.server.services.distribution.assembly.structure.directory.Directory;
 import java.util.Collection;
 import org.slf4j.Logger;
@@ -30,7 +31,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 /**
- * Retrieves stored diagnosis keys and builds a {@link DiagnosisKeysDirectoryImpl} with them.
+ * Retrieves stored diagnosis keys and builds a {@link DiagnosisKeysDirectory} with them.
  */
 @Component
 public class DiagnosisKeysStructureProvider {
@@ -52,9 +53,9 @@ public class DiagnosisKeysStructureProvider {
    * Get directory for diagnosis keys from database.
    * @return the directory
    */
-  public Directory getDiagnosisKeys() {
+  public Directory<WritableOnDisk> getDiagnosisKeys() {
     logger.debug("Querying diagnosis keys from the database...");
     Collection<DiagnosisKey> diagnosisKeys = diagnosisKeyService.getDiagnosisKeys();
-    return new DiagnosisKeysDirectoryImpl(diagnosisKeys, cryptoProvider);
+    return new DiagnosisKeysDirectory(diagnosisKeys, cryptoProvider);
   }
 }

@@ -19,7 +19,7 @@
 
 package app.coronawarn.server.common.persistence.domain;
 
-import app.coronawarn.server.common.protocols.external.exposurenotification.Key;
+import app.coronawarn.server.common.protocols.external.exposurenotification.TemporaryExposureKey;
 
 /**
  * This interface bundles interfaces that are used for the implementation of {@link DiagnosisKeyBuilder}.
@@ -42,7 +42,7 @@ interface DiagnosisKeyBuilders {
      * @param protoBufObject ProtocolBuffer object associated with the temporary exposure key.
      * @return this Builder instance.
      */
-    FinalBuilder fromProtoBuf(Key protoBufObject);
+    FinalBuilder fromProtoBuf(TemporaryExposureKey protoBufObject);
   }
 
   interface RollingStartNumberBuilder {

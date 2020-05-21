@@ -60,7 +60,7 @@ public class IO {
     try (FileOutputStream outputFileStream = new FileOutputStream(outputFile)) {
       outputFileStream.write(bytes);
     } catch (IOException e) {
-      logger.error("Write operation failed.", e);
+      logger.error("Could not write file {}", outputFile);
       throw new RuntimeException(e);
     }
   }

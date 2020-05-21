@@ -20,33 +20,22 @@
 package app.coronawarn.server.services.distribution.assembly.structure.directory;
 
 import app.coronawarn.server.services.distribution.assembly.structure.Writable;
-import app.coronawarn.server.services.distribution.assembly.structure.file.File;
 import java.util.Set;
 
 /**
- * A {@link Writable} containing {@link File files} and further {@link Directory directories}.
+ * A {@link Writable} that can contains other {@link Writable Writables}.
+ *
+ * @param <W> The specific type of {@link Writable} that this {@link Directory} can be a child of.
  */
-public interface Directory extends Writable {
+public interface Directory<W extends Writable<W>> extends Writable<W> {
 
   /**
-   * Adds a {@link File file} to the {@link DirectoryImpl#getFiles files} of this {@link Directory}.
+   * Adds a {@link Writable} to this {@link Directory}.
    */
-  void addFile(File file);
+  void addWritable(Writable<W> writable);
 
   /**
-   * Returns all {@link File files} contained in this {@link Directory}.
+   * Returns all {@link Writable writables} contained in this {@link Directory}.
    */
-  Set<File> getFiles();
-
-  /**
-   * Adds a {@link Directory directory} to the {@link DirectoryImpl#getDirectories directories} of this {@link
-   * Directory}.
-   */
-  void addDirectory(Directory directory);
-
-
-  /**
-   * Returns all {@link Directory directories} contained in this {@link Directory}.
-   */
-  Set<Directory> getDirectories();
+  Set<Writable<W>> getWritables();
 }

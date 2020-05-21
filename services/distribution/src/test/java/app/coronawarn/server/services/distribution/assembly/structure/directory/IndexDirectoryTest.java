@@ -21,12 +21,11 @@ package app.coronawarn.server.services.distribution.assembly.structure.directory
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-import app.coronawarn.server.services.distribution.assembly.structure.Writable;
-import app.coronawarn.server.services.distribution.assembly.structure.file.File;
-import app.coronawarn.server.services.distribution.assembly.structure.file.FileImpl;
-import app.coronawarn.server.services.distribution.assembly.structure.functional.Formatter;
-import app.coronawarn.server.services.distribution.assembly.structure.functional.IndexFunction;
+import app.coronawarn.server.services.distribution.assembly.structure.WritableOnDisk;
+import app.coronawarn.server.services.distribution.assembly.structure.file.FileOnDisk;
 import app.coronawarn.server.services.distribution.assembly.structure.util.ImmutableStack;
+import app.coronawarn.server.services.distribution.assembly.structure.util.functional.Formatter;
+import app.coronawarn.server.services.distribution.assembly.structure.util.functional.IndexFunction;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -46,8 +45,8 @@ public class IndexDirectoryTest {
   private static final Set<Integer> index = Set.of(0, 1, 2);
   private static final IndexFunction<Integer> indexFunction = __ -> index;
   private static final Formatter<Integer> indexFormatter = Integer::valueOf;
-  private IndexDirectory<Integer> indexDirectory;
-  private Directory outputDirectory;
+  private IndexDirectory<Integer, WritableOnDisk> indexDirectory;
+  private Directory<WritableOnDisk> outputDirectory;
 
   @Rule
   private TemporaryFolder temporaryFolder = new TemporaryFolder();
@@ -58,9 +57,9 @@ public class IndexDirectoryTest {
     temporaryFolder.create();
     outputFile = temporaryFolder.newFolder();
 
-    indexDirectory = new IndexDirectoryImpl<>(name, indexFunction, indexFormatter);
-    outputDirectory = new DirectoryImpl(outputFile);
-    outputDirectory.addDirectory(indexDirectory);
+    indexDirectory = new IndexDirectoryOnDisk<>(name, indexFunction, indexFormatter);
+    outputDirectory = new DirectoryOnDisk(outputFile);
+    outputDirectory.addWritable(indexDirectory);
   }
 
   @Test
@@ -75,9 +74,9 @@ public class IndexDirectoryTest {
 
   @Test
   public void checkAddFileToAll() {
-    List<File> expectedFileList = new ArrayList<>();
-    indexDirectory.addFileToAll(__ -> {
-      File newFile = new FileImpl("index", new byte[0]);
+    List<FileOnDisk> expectedFileList = new ArrayList<>();
+    indexDirectory.addWritableToAll(__ -> {
+      FileOnDisk newFile = new FileOnDisk("index", new byte[0]);
       expectedFileList.add(newFile);
       return newFile;
     });
@@ -91,7 +90,7 @@ public class IndexDirectoryTest {
         .sorted()
         .collect(Collectors.toList());
     List<java.io.File> expectedPhysicalFiles = expectedFileList.stream()
-        .map(Writable::getFileOnDisk)
+        .map(WritableOnDisk::getFileOnDisk)
         .sorted()
         .collect(Collectors.toList());
 
@@ -100,9 +99,9 @@ public class IndexDirectoryTest {
 
   @Test
   public void checkAddDirectoryToAll() {
-    List<Directory> expectedFileList = new ArrayList<>();
-    indexDirectory.addDirectoryToAll(__ -> {
-      Directory newDirectory = new DirectoryImpl("something");
+    List<DirectoryOnDisk> expectedFileList = new ArrayList<>();
+    indexDirectory.addWritableToAll(__ -> {
+      DirectoryOnDisk newDirectory = new DirectoryOnDisk("something");
       expectedFileList.add(newDirectory);
       return newDirectory;
     });
@@ -115,7 +114,7 @@ public class IndexDirectoryTest {
         .flatMap(IndexDirectoryTest::getContainedElements)
         .collect(Collectors.toSet());
     Set<java.io.File> expectedPhysicalFiles = expectedFileList.stream()
-        .map(Writable::getFileOnDisk)
+        .map(WritableOnDisk::getFileOnDisk)
         .collect(Collectors.toSet());
 
     assertEquals(expectedPhysicalFiles, actualPhysicalFiles);
@@ -125,7 +124,7 @@ public class IndexDirectoryTest {
     return Arrays.stream(directory.listFiles());
   }
 
-  private void prepareAndWrite(Directory directory) {
+  private void prepareAndWrite(Directory<WritableOnDisk> directory) {
     directory.prepare(new ImmutableStack<>());
     directory.write();
   }
