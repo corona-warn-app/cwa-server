@@ -160,7 +160,7 @@ public class SubmissionController {
       if (diagnosisKey.isYoungerThanRetentionThreshold(retentionDays)) {
         diagnosisKeys.add(diagnosisKey);
       } else {
-        logger.debug("Not persisting diagnosis key {}, as it is outdated beyond retention threshold.", diagnosisKey);
+        logger.info("Not persisting a diagnosis key, as it is outdated beyond retention threshold.");
       }
     }
 
