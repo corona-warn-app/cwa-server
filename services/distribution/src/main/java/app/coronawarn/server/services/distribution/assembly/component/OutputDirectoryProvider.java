@@ -19,8 +19,9 @@
 
 package app.coronawarn.server.services.distribution.assembly.component;
 
+import app.coronawarn.server.services.distribution.assembly.structure.WritableOnDisk;
 import app.coronawarn.server.services.distribution.assembly.structure.directory.Directory;
-import app.coronawarn.server.services.distribution.assembly.structure.directory.DirectoryImpl;
+import app.coronawarn.server.services.distribution.assembly.structure.directory.DirectoryOnDisk;
 import java.io.IOException;
 import org.apache.commons.io.FileUtils;
 import org.slf4j.Logger;
@@ -39,8 +40,8 @@ public class OutputDirectoryProvider {
   @Value("${services.distribution.paths.output}")
   private String outputPath;
 
-  public Directory getDirectory() {
-    return new DirectoryImpl(getFileOnDisk());
+  public Directory<WritableOnDisk> getDirectory() {
+    return new DirectoryOnDisk(getFileOnDisk());
   }
 
   public java.io.File getFileOnDisk() {

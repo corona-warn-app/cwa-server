@@ -51,9 +51,7 @@ public class LocalIndexFile extends LocalFile {
   @Override
   protected String createS3Key(Path file, Path rootFolder) {
     String s3Key = super.createS3Key(file, rootFolder);
-
-    // Deactivate index mapping for now
-    // return s3Key.substring(0, s3Key.length() - INDEX_FILE_SUFFIX.length());
-    return s3Key;
+    
+    return s3Key.substring(0, s3Key.length() - INDEX_FILE_SUFFIX.length());
   }
 }

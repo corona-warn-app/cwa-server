@@ -19,13 +19,14 @@
 
 package app.coronawarn.server.services.distribution.assembly.structure.directory;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.catchThrowable;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.verify;
 
+import app.coronawarn.server.services.distribution.assembly.structure.WritableOnDisk;
 import app.coronawarn.server.services.distribution.assembly.structure.file.File;
-import app.coronawarn.server.services.distribution.assembly.structure.file.FileImpl;
+import app.coronawarn.server.services.distribution.assembly.structure.file.FileOnDisk;
 import app.coronawarn.server.services.distribution.assembly.structure.util.ImmutableStack;
 import java.io.IOException;
 import java.util.Set;
@@ -37,9 +38,8 @@ import org.junit.rules.TemporaryFolder;
 public class DirectoryTest {
 
   private java.io.File outputDir = new java.io.File("test");
-  private Directory parentDirectory;
-  private Directory childDirectory;
-  private File childFile;
+  private Directory<WritableOnDisk> parentDirectory;
+  private File<WritableOnDisk> childFile;
 
   @Rule
   private TemporaryFolder outputFolder = new TemporaryFolder();
@@ -48,61 +48,36 @@ public class DirectoryTest {
   public void setup() throws IOException {
     outputFolder.create();
     outputDir = outputFolder.newFolder();
-    parentDirectory = new DirectoryImpl(outputDir);
-    childDirectory = new DirectoryImpl("Child");
-    childFile = new FileImpl("Child", new byte[0]);
+    parentDirectory = new DirectoryOnDisk(outputDir);
+    childFile = new FileOnDisk("Child", new byte[0]);
   }
 
   @Test
-  public void checkFilesInDirectory() {
-    parentDirectory.addFile(childFile);
-    assertThat(parentDirectory.getFiles()).isEqualTo(Set.of(childFile));
+  public void checkWritablesInDirectory() {
+    parentDirectory.addWritable(childFile);
+    assertEquals(Set.of(childFile), parentDirectory.getWritables());
   }
 
   @Test
-  public void checkParentOfFilesInDirectory() {
-    parentDirectory.addFile(childFile);
-    assertThat(childFile.getParent()).isEqualTo(parentDirectory);
+  public void checkParentOfWritablesInDirectory() {
+    parentDirectory.addWritable(childFile);
+    assertEquals(parentDirectory, childFile.getParent());
   }
 
   @Test
-  public void checkDirectoriesInDirectory() {
-    parentDirectory.addDirectory(childDirectory);
-    assertThat(parentDirectory.getDirectories()).isEqualTo(Set.of(childDirectory));
-  }
-
-  @Test
-  public void checkParentOfDirectoriesInDirectory() {
-    parentDirectory.addDirectory(childDirectory);
-    assertThat(childDirectory.getParent()).isEqualTo(parentDirectory);
-  }
-
-  @Test
-  public void checkPrepareDelegatesToFiles() {
-    File spyChildFile = spy(childFile);
+  public void checkPrepareDelegatesToWritables() {
+    File<WritableOnDisk> spyChildFile = spy(childFile);
     ImmutableStack<Object> expectedStack = new ImmutableStack<>();
 
-    parentDirectory.addFile(spyChildFile);
+    parentDirectory.addWritable(spyChildFile);
     parentDirectory.prepare(expectedStack);
 
     verify(spyChildFile).prepare(expectedStack);
   }
 
   @Test
-  public void checkPrepareDelegatesToDirectories() {
-    Directory spyChildDirectory = spy(childDirectory);
-    ImmutableStack<Object> expectedStack = new ImmutableStack<>();
-
-    parentDirectory.addDirectory(spyChildDirectory);
-    parentDirectory.prepare(expectedStack);
-
-    verify(spyChildDirectory).prepare(expectedStack);
-  }
-
-  @Test
   public void checkWriteThrowsWithoutParent() {
-    assertThat(catchThrowable(new DirectoryImpl("")::write))
-        .isInstanceOf(NullPointerException.class);
+    assertThrows(NullPointerException.class, new DirectoryOnDisk("")::write);
   }
 
   @Test
@@ -115,29 +90,19 @@ public class DirectoryTest {
     }
 
     java.io.File mockOutputDirectory = spy(new MockFile());
-    parentDirectory = new DirectoryImpl(mockOutputDirectory);
+    parentDirectory = new DirectoryOnDisk(mockOutputDirectory);
 
     parentDirectory.write();
     verify(mockOutputDirectory).mkdirs();
   }
 
   @Test
-  public void checkWriteDelegatesToFiles() {
-    File spyChildFile = spy(childFile);
+  public void checkWriteDelegatesToWritables() {
+    File<WritableOnDisk> spyChildFile = spy(childFile);
 
-    parentDirectory.addFile(spyChildFile);
+    parentDirectory.addWritable(spyChildFile);
     parentDirectory.write();
 
     verify(spyChildFile).write();
-  }
-
-  @Test
-  public void checkWriteDelegatesToDirectories() {
-    Directory spyChildDirectory = spy(childDirectory);
-
-    parentDirectory.addDirectory(spyChildDirectory);
-    parentDirectory.write();
-
-    verify(spyChildDirectory).write();
   }
 }

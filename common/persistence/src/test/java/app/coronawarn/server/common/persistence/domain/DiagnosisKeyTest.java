@@ -70,5 +70,4 @@ public class DiagnosisKeyTest {
     assertThat(diagnosisKeyFiveDays.isYoungerThanRetentionThreshold(5L)).isFalse();
     assertThat(diagnosisKeyFiveDays.isYoungerThanRetentionThreshold(6L)).isTrue();
   }
-
 }

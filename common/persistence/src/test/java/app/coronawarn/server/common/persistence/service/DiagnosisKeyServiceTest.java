@@ -19,10 +19,13 @@
 
 package app.coronawarn.server.common.persistence.service;
 
+import static app.coronawarn.server.common.persistence.service.DiagnosisKeyServiceTestHelper.assertDiagnosisKeysEqual;
 import static java.time.ZoneOffset.UTC;
-import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import app.coronawarn.server.common.persistence.domain.DiagnosisKey;
+import app.coronawarn.server.common.persistence.exception.InvalidDiagnosisKeyException;
 import app.coronawarn.server.common.persistence.repository.DiagnosisKeyRepository;
 import java.time.OffsetDateTime;
 import java.util.ArrayList;
@@ -30,7 +33,10 @@ import java.util.Collections;
 import java.util.List;
 import org.assertj.core.util.Lists;
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 
@@ -79,6 +85,21 @@ public class DiagnosisKeyServiceTest {
     assertDiagnosisKeysEqual(expKeys, actKeys);
   }
 
+  @DisplayName("Assert a positive retention period is accepted.")
+  @ValueSource(ints = {0, 1, Integer.MAX_VALUE})
+  @ParameterizedTest
+  void testApplyRetentionPolicyForValidNumberOfDays(int daysToRetain) {
+    assertDoesNotThrow(() -> diagnosisKeyService.applyRetentionPolicy(daysToRetain));
+  }
+
+  @DisplayName("Assert a negative retention period is rejected.")
+  @ValueSource(ints = {Integer.MIN_VALUE, -1})
+  @ParameterizedTest
+  void testApplyRetentionPolicyForNegativeNumberOfDays(int daysToRetain) {
+    assertThrows(IllegalArgumentException.class,
+        () -> diagnosisKeyService.applyRetentionPolicy(daysToRetain));
+  }
+
   @Test
   void testApplyRetentionPolicyForEmptyDb() {
     diagnosisKeyService.applyRetentionPolicy(1);
@@ -108,29 +129,22 @@ public class DiagnosisKeyServiceTest {
     assertDiagnosisKeysEqual(Lists.emptyList(), actKeys);
   }
 
-  private void assertDiagnosisKeysEqual(List<DiagnosisKey> expKeys, List<DiagnosisKey> actKeys) {
-    assertThat(actKeys.size()).withFailMessage("Cardinality mismatch").isEqualTo(expKeys.size());
+  @Test
+  void testNoPersistOnValidationError() {
+    assertThrows(InvalidDiagnosisKeyException.class, () -> {
+      var keys = List.of(DiagnosisKey.builder()
+          .withKeyData(new byte[16])
+          .withRollingStartNumber(OffsetDateTime.now(UTC).toEpochSecond() / 600L)
+          .withRollingPeriod(1L)
+          .withTransmissionRiskLevel(2)
+          .withSubmissionTimestamp(0L).build());
 
-    for (int i = 0; i < expKeys.size(); i++) {
-      var expKey = expKeys.get(i);
-      var actKey = actKeys.get(i);
+      diagnosisKeyService.saveDiagnosisKeys(keys);
+    });
 
-      assertThat(actKey.getKeyData())
-          .withFailMessage("keyData mismatch")
-          .isEqualTo(expKey.getKeyData());
-      assertThat(actKey.getRollingStartNumber())
-          .withFailMessage("rollingStartNumber mismatch")
-          .isEqualTo(expKey.getRollingStartNumber());
-      assertThat(actKey.getRollingPeriod())
-          .withFailMessage("rollingPeriod mismatch")
-          .isEqualTo(expKey.getRollingPeriod());
-      assertThat(actKey.getTransmissionRiskLevel())
-          .withFailMessage("transmissionRiskLevel mismatch")
-          .isEqualTo(expKey.getTransmissionRiskLevel());
-      assertThat(actKey.getSubmissionTimestamp())
-          .withFailMessage("submissionTimestamp mismatch")
-          .isEqualTo(expKey.getSubmissionTimestamp());
-    }
+    List<DiagnosisKey> actKeys = diagnosisKeyService.getDiagnosisKeys();
+
+    assertDiagnosisKeysEqual(Lists.emptyList(), actKeys);
   }
 
   public static DiagnosisKey buildDiagnosisKeyForSubmissionTimestamp(long submissionTimeStamp) {

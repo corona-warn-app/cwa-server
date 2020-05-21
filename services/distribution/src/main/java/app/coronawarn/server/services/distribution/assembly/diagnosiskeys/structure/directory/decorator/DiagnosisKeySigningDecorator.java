@@ -1,0 +1,55 @@
+/*
+ * Corona-Warn-App
+ *
+ * SAP SE and all other contributors /
+ * copyright owners license this file to you under the Apache
+ * License, Version 2.0 (the "License"); you may not use this
+ * file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
+ */
+
+package app.coronawarn.server.services.distribution.assembly.diagnosiskeys.structure.directory.decorator;
+
+import app.coronawarn.server.services.distribution.assembly.component.CryptoProvider;
+import app.coronawarn.server.services.distribution.assembly.structure.Writable;
+import app.coronawarn.server.services.distribution.assembly.structure.WritableOnDisk;
+import app.coronawarn.server.services.distribution.assembly.structure.archive.Archive;
+import app.coronawarn.server.services.distribution.assembly.structure.archive.decorator.signing.SigningDecoratorOnDisk;
+import app.coronawarn.server.services.distribution.assembly.structure.file.File;
+import app.coronawarn.server.services.distribution.assembly.structure.file.FileOnDisk;
+
+public class DiagnosisKeySigningDecorator extends SigningDecoratorOnDisk {
+
+  public DiagnosisKeySigningDecorator(Archive<WritableOnDisk> archive, CryptoProvider cryptoProvider) {
+    super(archive, cryptoProvider);
+  }
+
+  @Override
+  public byte[] getBytesToSign() {
+    Writable<?> archiveContent = this.getWritables().stream().findFirst().orElseThrow(
+        () -> new RuntimeException("Archive must contain exactly one file for signing"));
+    File<?> fileToSign = (FileOnDisk) archiveContent;
+    return fileToSign.getBytes();
+  }
+
+  @Override
+  public int getBatchNum() {
+    // TODO Check if multiple batches are required.
+    return 1;
+  }
+
+  @Override
+  public int getBatchSize() {
+    // TODO Check if multiple batches are required.
+    return 1;
+  }
+}

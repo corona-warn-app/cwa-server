@@ -45,7 +45,7 @@ public class TanVerifier {
 
       return validateAuthorization(tanAuthorization);
     } catch (TanAuthorizationException e) {
-      logger.info("Failed TAN validation", e);
+      logger.error("Failed TAN validation", e);
       return false;
     }
   }
@@ -64,10 +64,12 @@ public class TanVerifier {
   }
 
   private boolean validateTan(String tan) {
+    // FIXME Add implementation
     return true;
   }
 
   private boolean validateTeleTan(String teleTan) {
+    // FIXME Add implementation
     return true;
   }
 }

@@ -21,7 +21,7 @@ package app.coronawarn.server.services.submission.controller;
 
 import app.coronawarn.server.common.persistence.domain.DiagnosisKey;
 import app.coronawarn.server.common.persistence.service.DiagnosisKeyService;
-import app.coronawarn.server.common.protocols.external.exposurenotification.Key;
+import app.coronawarn.server.common.protocols.external.exposurenotification.TemporaryExposureKey;
 import app.coronawarn.server.common.protocols.internal.SubmissionPayload;
 import app.coronawarn.server.services.submission.exception.InvalidPayloadException;
 import app.coronawarn.server.services.submission.verification.TanVerifier;
@@ -151,23 +151,23 @@ public class SubmissionController {
    * @throws IllegalArgumentException in case the given collection contains {@literal null}.
    */
   public void persistDiagnosisKeysPayload(SubmissionPayload protoBufDiagnosisKeys) {
-    List<Key> protoBufferKeysList = protoBufDiagnosisKeys.getKeysList();
+    List<TemporaryExposureKey> protoBufferKeysList = protoBufDiagnosisKeys.getKeysList();
     validatePayload(protoBufferKeysList);
 
     List<DiagnosisKey> diagnosisKeys = new ArrayList<>();
-    for (Key protoBufferKey : protoBufferKeysList) {
+    for (TemporaryExposureKey protoBufferKey : protoBufferKeysList) {
       DiagnosisKey diagnosisKey = DiagnosisKey.builder().fromProtoBuf(protoBufferKey).build();
       if (diagnosisKey.isYoungerThanRetentionThreshold(retentionDays)) {
         diagnosisKeys.add(diagnosisKey);
       } else {
-        logger.debug("Not persisting diagnosis key {}, as it is outdated beyond retention threshold.", diagnosisKey);
+        logger.info("Not persisting a diagnosis key, as it is outdated beyond retention threshold.");
       }
     }
 
     diagnosisKeyService.saveDiagnosisKeys(diagnosisKeys);
   }
 
-  private void validatePayload(List<Key> protoBufKeysList) {
+  private void validatePayload(List<TemporaryExposureKey> protoBufKeysList) {
     if (protoBufKeysList.isEmpty() || protoBufKeysList.size() > maxNumberOfKeys) {
       throw new InvalidPayloadException(
           String.format("Number of keys must be between 1 and %s, but is %s.", maxNumberOfKeys, protoBufKeysList));

@@ -19,39 +19,44 @@
 
 package app.coronawarn.server.services.distribution.assembly.diagnosiskeys.structure.directory.decorator;
 
-import app.coronawarn.server.common.protocols.internal.FileBucket;
-import app.coronawarn.server.common.protocols.internal.SignedPayload;
+import static app.coronawarn.server.services.distribution.assembly.structure.util.functional.CheckedFunction.uncheckedFunction;
+
+import app.coronawarn.server.common.protocols.external.exposurenotification.TemporaryExposureKey;
+import app.coronawarn.server.common.protocols.external.exposurenotification.TemporaryExposureKeyExport;
 import app.coronawarn.server.services.distribution.assembly.component.CryptoProvider;
+import app.coronawarn.server.services.distribution.assembly.diagnosiskeys.structure.file.TemporaryExposureKeyExportFile;
 import app.coronawarn.server.services.distribution.assembly.structure.Writable;
+import app.coronawarn.server.services.distribution.assembly.structure.WritableOnDisk;
+import app.coronawarn.server.services.distribution.assembly.structure.archive.Archive;
+import app.coronawarn.server.services.distribution.assembly.structure.archive.ArchiveOnDisk;
 import app.coronawarn.server.services.distribution.assembly.structure.directory.Directory;
+import app.coronawarn.server.services.distribution.assembly.structure.directory.DirectoryOnDisk;
+import app.coronawarn.server.services.distribution.assembly.structure.directory.IndexDirectory;
 import app.coronawarn.server.services.distribution.assembly.structure.directory.decorator.DirectoryDecorator;
+import app.coronawarn.server.services.distribution.assembly.structure.directory.decorator.IndexDirectoryDecorator;
 import app.coronawarn.server.services.distribution.assembly.structure.file.File;
-import app.coronawarn.server.services.distribution.assembly.structure.file.FileImpl;
-import app.coronawarn.server.services.distribution.assembly.structure.file.decorator.SigningDecorator;
-import app.coronawarn.server.services.distribution.assembly.structure.functional.CheckedFunction;
+import app.coronawarn.server.services.distribution.assembly.structure.file.FileOnDisk;
 import app.coronawarn.server.services.distribution.assembly.structure.util.ImmutableStack;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+import java.util.NoSuchElementException;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
- * A {@link DirectoryDecorator} that will create a {@link SignedPayload} containing a {@link FileBucket} for each date
- * within its directory.
+ * A {@link DirectoryDecorator} that will bundle hour aggregates into date aggregates and sign them.
  */
-public class DateAggregatingDecorator extends DirectoryDecorator {
-
-  private static final Logger logger = LoggerFactory.getLogger(DateAggregatingDecorator.class);
+public class DateAggregatingDecorator extends IndexDirectoryDecorator<LocalDate, WritableOnDisk> {
 
   private final CryptoProvider cryptoProvider;
 
   private static final String AGGREGATE_FILE_NAME = "index";
 
-  public DateAggregatingDecorator(Directory directory, CryptoProvider cryptoProvider) {
+  public DateAggregatingDecorator(IndexDirectory<LocalDate, WritableOnDisk> directory, CryptoProvider cryptoProvider) {
     super(directory);
     this.cryptoProvider = cryptoProvider;
   }
@@ -59,63 +64,125 @@ public class DateAggregatingDecorator extends DirectoryDecorator {
   @Override
   public void prepare(ImmutableStack<Object> indices) {
     super.prepare(indices);
-    logger.debug("Aggregating {}", this.getFileOnDisk().getPath());
-    Set<Directory> days = this.getDirectories();
-    if (days.size() == 0) {
+    Set<Directory<WritableOnDisk>> dayDirectories = this.getWritables().stream()
+        .filter(writable -> writable instanceof DirectoryOnDisk)
+        .map(directory -> (DirectoryOnDisk) directory)
+        .collect(Collectors.toSet());
+    if (dayDirectories.isEmpty()) {
       return;
     }
 
-    List<Directory> sortedDays = new ArrayList<>(days);
-    sortedDays.sort(Comparator.comparing(Writable::getName));
+    List<Directory<WritableOnDisk>> sortedDayDirectories = new ArrayList<>(dayDirectories);
+    sortedDayDirectories.sort(Comparator.comparing(Writable::getName));
 
     // Exclude the last day
-    sortedDays.subList(0, days.size() - 1).forEach(currentDirectory -> {
-      Stream.of(currentDirectory)
-          .map(this::getSubSubDirectoryFiles)
-          .map(this::parseFileBucketsFromFiles)
-          .map(this::reduceFileBuckets)
-          .map(this::makeNewFileBucket)
-          .map(FileBucket::toByteArray)
-          .map(bytes -> new FileImpl(AGGREGATE_FILE_NAME, bytes))
-          .map(file -> new SigningDecorator(file, cryptoProvider))
-          .peek(currentDirectory::addFile)
-          .forEach(aggregate -> aggregate.prepare(indices));
-    });
+    sortedDayDirectories.subList(0, sortedDayDirectories.size() - 1)
+        .forEach(currentDirectory -> Stream.of(currentDirectory)
+            .map(this::getSubSubDirectoryArchives)
+            .map(this::getTemporaryExposureKeyExportFilesFromArchives)
+            .map(this::parseTemporaryExposureKeyExportsFromFiles)
+            .map(this::reduceTemporaryExposureKeyExportsToNewFile)
+            .map(temporaryExposureKeyExportFile -> {
+              Archive<WritableOnDisk> aggregate = new ArchiveOnDisk(AGGREGATE_FILE_NAME);
+              aggregate.addWritable(temporaryExposureKeyExportFile);
+              return aggregate;
+            })
+            .map(file -> new DiagnosisKeySigningDecorator(file, cryptoProvider))
+            .peek(currentDirectory::addWritable)
+            .forEach(aggregate -> aggregate.prepare(indices)));
   }
 
-  private Set<File> getSubSubDirectoryFiles(Directory directory) {
-    // Get all files 2 directory levels down
-    return Stream.of(directory)
-        .map(Directory::getDirectories)
-        .flatMap(Set::stream)
-        .map(Directory::getDirectories)
-        .flatMap(Set::stream)
-        .map(Directory::getFiles)
-        .flatMap(Set::stream)
+  /**
+   * Returns all archives that are 3 levels down from the root directory.
+   */
+  private Set<Archive<WritableOnDisk>> getSubSubDirectoryArchives(Directory<WritableOnDisk> rootDirectory) {
+    return getWritablesInDirectory(rootDirectory, 3).stream()
+        .filter(Writable::isArchive)
+        .map(archive -> (Archive<WritableOnDisk>) archive)
         .collect(Collectors.toSet());
   }
 
-  private Set<FileBucket> parseFileBucketsFromFiles(Set<File> files) {
-    return files.stream()
-        .map(File::getBytes)
-        .map(CheckedFunction.uncheckedFunction(SignedPayload::parseFrom))
-        .map(SignedPayload::getPayload)
-        .map(CheckedFunction.uncheckedFunction(FileBucket::parseFrom))
+  /**
+   * Traverses a directory {@code depth} levels deep and returns a flattened list of all writables at that depth. A
+   * {@code depth} of 0 or less returns a set only containing the root directory. A depth of 1 returns a set of
+   * writables in the root directory. A depth of 2 returns a set of all writables in all directories in the root
+   * directory, and so on.
+   *
+   * @param rootDirectory The directory in which to start traversal.
+   * @param depth         The depth to traverse.
+   * @return All writables that are {@code depth} levels down.
+   */
+  private Set<Writable<WritableOnDisk>> getWritablesInDirectory(Directory<WritableOnDisk> rootDirectory, int depth) {
+    if (depth <= 0) {
+      return Set.of(rootDirectory);
+    } else if (depth == 1) {
+      return rootDirectory.getWritables();
+    } else {
+      return rootDirectory.getWritables().stream()
+          .filter(Writable::isDirectory)
+          .flatMap(directory -> getWritablesInDirectory((Directory<WritableOnDisk>) directory, depth - 1).stream())
+          .collect(Collectors.toSet());
+    }
+  }
+
+  private Set<TemporaryExposureKeyExportFile> getTemporaryExposureKeyExportFilesFromArchives(
+      Set<Archive<WritableOnDisk>> hourArchives) {
+    return hourArchives.stream()
+        .map(Directory::getWritables)
+        .map(writables -> writables.stream()
+            .filter(writable -> writable.getName().equals("export.bin")))
+        .map(Stream::findFirst)
+        .map(Optional::orElseThrow)
+        .filter(writable -> writable instanceof File)
+        .map(file -> (TemporaryExposureKeyExportFile) file)
         .collect(Collectors.toSet());
   }
 
-  private Set<app.coronawarn.server.common.protocols.external.exposurenotification.File>
-      reduceFileBuckets(Set<FileBucket> fileBuckets) {
-    return fileBuckets.stream()
-        .map(FileBucket::getFilesList)
+  private Set<TemporaryExposureKeyExport> parseTemporaryExposureKeyExportsFromFiles(
+      Set<TemporaryExposureKeyExportFile> temporaryExposureKeyExportFiles) {
+    return temporaryExposureKeyExportFiles.stream()
+        .map(FileOnDisk::getBytes)
+        .map(uncheckedFunction(TemporaryExposureKeyExport::parseFrom))
+        .collect(Collectors.toSet());
+  }
+
+  private TemporaryExposureKeyExportFile reduceTemporaryExposureKeyExportsToNewFile(
+      Set<TemporaryExposureKeyExport> temporaryExposureKeyExports) {
+    return TemporaryExposureKeyExportFile.fromTemporaryExposureKeys(
+        getTemporaryExposureKeys(temporaryExposureKeyExports),
+        getRegion(temporaryExposureKeyExports),
+        getStartTimestamp(temporaryExposureKeyExports),
+        getEndTimestamp(temporaryExposureKeyExports)
+    );
+  }
+
+  private static Set<TemporaryExposureKey> getTemporaryExposureKeys(
+      Set<TemporaryExposureKeyExport> temporaryExposureKeyExports) {
+    return temporaryExposureKeyExports.stream()
+        .map(TemporaryExposureKeyExport::getKeysList)
         .flatMap(List::stream)
         .collect(Collectors.toSet());
   }
 
-  private FileBucket makeNewFileBucket(
-      Set<app.coronawarn.server.common.protocols.external.exposurenotification.File> enFiles) {
-    return FileBucket.newBuilder()
-        .addAllFiles(enFiles)
-        .build();
+  private static String getRegion(Set<TemporaryExposureKeyExport> temporaryExposureKeyExports) {
+    return temporaryExposureKeyExports.stream()
+        .map(TemporaryExposureKeyExport::getRegion)
+        .findAny()
+        .orElseThrow(NoSuchElementException::new);
+  }
+
+  private static long getStartTimestamp(
+      Set<TemporaryExposureKeyExport> temporaryExposureKeyExports) {
+    return temporaryExposureKeyExports.stream()
+        .mapToLong(TemporaryExposureKeyExport::getStartTimestamp)
+        .min()
+        .orElseThrow(NoSuchElementException::new);
+  }
+
+  private static long getEndTimestamp(Set<TemporaryExposureKeyExport> temporaryExposureKeyExports) {
+    return temporaryExposureKeyExports.stream()
+        .mapToLong(TemporaryExposureKeyExport::getEndTimestamp)
+        .max()
+        .orElseThrow(NoSuchElementException::new);
   }
 }
