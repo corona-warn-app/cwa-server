@@ -38,6 +38,9 @@ public class S3Object {
    */
   private Map<String, String> metadata = new HashMap<>();
 
+  /** The e-Tag of this S3 Object. */
+  private String etag;
+
   /**
    * Constructs a new S3Object for the given object name.
    *
@@ -55,6 +58,10 @@ public class S3Object {
     return metadata;
   }
 
+  public String getEtag() {
+    return etag;
+  }
+
   /**
    * Returns a new instance of an S3Object based on the given item.
    *
@@ -67,6 +74,8 @@ public class S3Object {
     if (item.userMetadata() != null) {
       s3Object.metadata = item.userMetadata();
     }
+
+    s3Object.etag = item.etag().replaceAll("\"","");
 
     return s3Object;
   }

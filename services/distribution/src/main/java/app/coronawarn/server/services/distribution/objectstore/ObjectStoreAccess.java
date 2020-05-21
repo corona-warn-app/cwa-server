@@ -59,10 +59,11 @@ public class ObjectStoreAccess {
 
   private static final String DEFAULT_REGION = "eu-west-1";
 
+  private final boolean isSetPublicReadAclOnPutObject;
+
   private final String bucket;
 
-  private MinioClient client;
-
+  private final MinioClient client;
 
   /**
    * Constructs an {@link ObjectStoreAccess} instance for communication with the specified object
@@ -79,6 +80,7 @@ public class ObjectStoreAccess {
     this.client = createClient(configurationProperties);
 
     this.bucket = configurationProperties.getBucket();
+    this.isSetPublicReadAclOnPutObject = configurationProperties.isSetPublicReadAclOnPutObject();
 
     if (!this.client.bucketExists(this.bucket)) {
       throw new IllegalArgumentException("Supplied bucket does not exist " + bucket);
@@ -116,10 +118,7 @@ public class ObjectStoreAccess {
   public void putObject(LocalFile localFile)
       throws IOException, GeneralSecurityException, MinioException {
     String s3Key = localFile.getS3Key();
-
-
-    var options = new PutObjectOptions(localFile.getFile().toFile().length(), -1);
-    options.setHeaders(createMetadataFor(localFile));
+    PutObjectOptions options = createOptionsFor(localFile);
 
     logger.info("... uploading " + s3Key);
     this.client.putObject(bucket, s3Key, localFile.getFile().toString(), options);
@@ -158,7 +157,7 @@ public class ObjectStoreAccess {
    */
   public List<S3Object> getObjectsWithPrefix(String prefix)
       throws IOException, GeneralSecurityException, MinioException {
-    var objects = this.client.listObjects(bucket, prefix, true, true, false);
+    var objects = this.client.listObjects(bucket, prefix, true);
 
     var list = new ArrayList<S3Object>();
     for (Result<Item> item : objects) {
@@ -168,7 +167,14 @@ public class ObjectStoreAccess {
     return list;
   }
 
-  private Map<String, String> createMetadataFor(LocalFile file) {
-    return Map.of("cwa.hash", file.getHash());
+  private PutObjectOptions createOptionsFor(LocalFile file) {
+    var options = new PutObjectOptions(file.getFile().toFile().length(), -1);
+
+    if (this.isSetPublicReadAclOnPutObject) {
+      options.setHeaders(Map.of("x-amz-acl", "public-read"));
+    }
+
+    return options;
   }
+
 }
