@@ -3,18 +3,23 @@ package app.coronawarn.server.services.distribution.assembly.diagnosiskeys.struc
 import app.coronawarn.server.common.persistence.domain.DiagnosisKey;
 import app.coronawarn.server.common.protocols.external.exposurenotification.TemporaryExposureKey;
 import app.coronawarn.server.common.protocols.external.exposurenotification.TemporaryExposureKeyExport;
-import app.coronawarn.server.services.distribution.assembly.structure.archive.decorator.signing.AbstractSigningDecorator;
+import app.coronawarn.server.services.distribution.assembly.configuration.SignatureConfigurationProperties;
 import app.coronawarn.server.services.distribution.assembly.structure.file.FileOnDisk;
 import app.coronawarn.server.services.distribution.assembly.structure.util.ImmutableStack;
 import com.google.protobuf.ByteString;
 import java.util.Collection;
 import java.util.Set;
 import java.util.stream.Collectors;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.stereotype.Component;
 
 /**
  * A {@link app.coronawarn.server.services.distribution.assembly.structure.file.File} containing a {@link
  * TemporaryExposureKeyExport}.
  */
+@Component
 public class TemporaryExposureKeyExportFile extends FileOnDisk {
 
   private static final String INDEX_FILE_NAME = "export.bin";
@@ -23,6 +28,9 @@ public class TemporaryExposureKeyExportFile extends FileOnDisk {
   private final String region;
   private final long startTimestamp;
   private final long endTimestamp;
+
+  @Autowired
+  private SignatureConfigurationProperties signatureConfigurationProperties;
 
   private TemporaryExposureKeyExportFile(Collection<TemporaryExposureKey> temporaryExposureKeys, String region,
       long startTimestamp, long endTimestamp) {
@@ -82,7 +90,7 @@ public class TemporaryExposureKeyExportFile extends FileOnDisk {
         // TODO Use buildPartial and then set batch stuff somewhere else
         .setBatchNum(1)
         .setBatchSize(1)
-        .addAllSignatureInfos(Set.of(AbstractSigningDecorator.getSignatureInfo()))
+        .addAllSignatureInfos(Set.of(signatureConfigurationProperties.getSignatureInfo()))
         .addAllKeys(this.temporaryExposureKeys)
         .build()
         .toByteArray();
