@@ -27,7 +27,6 @@ import app.coronawarn.server.services.distribution.assembly.structure.directory.
 import app.coronawarn.server.services.distribution.assembly.structure.directory.DirectoryOnDisk;
 import app.coronawarn.server.services.distribution.assembly.structure.directory.IndexDirectory;
 import app.coronawarn.server.services.distribution.assembly.structure.directory.IndexDirectoryOnDisk;
-import app.coronawarn.server.services.distribution.assembly.structure.directory.decorator.indexing.AbstractIndexingDecorator;
 import app.coronawarn.server.services.distribution.assembly.structure.directory.decorator.indexing.IndexingDecoratorOnDisk;
 import java.io.File;
 import java.io.FileReader;

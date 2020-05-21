@@ -21,13 +21,11 @@ package app.coronawarn.server.services.distribution.assembly.structure.directory
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-import app.coronawarn.server.services.distribution.assembly.structure.Writable;
 import app.coronawarn.server.services.distribution.assembly.structure.WritableOnDisk;
-import app.coronawarn.server.services.distribution.assembly.structure.file.File;
 import app.coronawarn.server.services.distribution.assembly.structure.file.FileOnDisk;
+import app.coronawarn.server.services.distribution.assembly.structure.util.ImmutableStack;
 import app.coronawarn.server.services.distribution.assembly.structure.util.functional.Formatter;
 import app.coronawarn.server.services.distribution.assembly.structure.util.functional.IndexFunction;
-import app.coronawarn.server.services.distribution.assembly.structure.util.ImmutableStack;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;

@@ -20,7 +20,6 @@
 package app.coronawarn.server.services.distribution.assembly.structure.directory;
 
 import app.coronawarn.server.services.distribution.assembly.structure.Writable;
-import app.coronawarn.server.services.distribution.assembly.structure.file.File;
 import java.util.Set;
 
 /**

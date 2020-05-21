@@ -21,14 +21,8 @@ package app.coronawarn.server.services.distribution.assembly.structure.directory
 
 import app.coronawarn.server.services.distribution.assembly.structure.Writable;
 import app.coronawarn.server.services.distribution.assembly.structure.directory.IndexDirectory;
-import app.coronawarn.server.services.distribution.assembly.structure.directory.IndexDirectoryOnDisk;
-import app.coronawarn.server.services.distribution.assembly.structure.directory.decorator.DirectoryDecorator;
 import app.coronawarn.server.services.distribution.assembly.structure.directory.decorator.IndexDirectoryDecorator;
 import app.coronawarn.server.services.distribution.assembly.structure.util.ImmutableStack;
-import java.util.List;
-import java.util.Set;
-import java.util.stream.Collectors;
-import org.json.simple.JSONArray;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

@@ -21,9 +21,7 @@ package app.coronawarn.server.services.distribution.assembly.component;
 
 import app.coronawarn.server.services.distribution.assembly.structure.WritableOnDisk;
 import app.coronawarn.server.services.distribution.assembly.structure.directory.Directory;
-import app.coronawarn.server.services.distribution.assembly.structure.directory.IndexDirectory;
 import app.coronawarn.server.services.distribution.assembly.structure.directory.IndexDirectoryOnDisk;
-import app.coronawarn.server.services.distribution.assembly.structure.directory.decorator.indexing.AbstractIndexingDecorator;
 import app.coronawarn.server.services.distribution.assembly.structure.directory.decorator.indexing.IndexingDecoratorOnDisk;
 import java.util.Set;
 import org.springframework.beans.factory.annotation.Autowired;
