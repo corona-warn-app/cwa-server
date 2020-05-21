@@ -48,7 +48,7 @@ If you want to use Docker-based deployment, you need to install Docker on your l
 
 #### Running the Full CWA Backend Using Docker Compose
 
-For your convenience, a full setup including the generation of test data has been prepared using [Docker Compose](https://docs.docker.com/compose/reference/overview/). To build the backend services, run ```docker-compose build``` in the repository's root directory. A default configuration file can be found under ```.env```in the root folder of the repository. The default values for the local Postgres and MinIO-build should be changed in this file before docker-compose is run.
+For your convenience, a full setup including the generation of test data has been prepared using [Docker Compose](https://docs.docker.com/compose/reference/overview/). To build the backend services, run ```docker-compose build``` in the repository's root directory. A default configuration file can be found under ```.env```in the root folder of the repository. The default values for the local Postgres and Zenko Cloudserver should be changed in this file before docker-compose is run.
 
 Once the services are built, you can start the whole backend using ```docker-compose up```.
 The distribution service runs once and then finishes. If you want to trigger additional distribution runs, run ```docker-compose start distribution```.
@@ -57,11 +57,11 @@ The docker-compose contains the following services:
 
 Service       | Description | Endpoint and Default Credentials
 --------------|-------------|-----------
-submission    | The Corona-Warn-App submission service                                            | http://localhost:8080 
-distribution  | The Corona-Warn-App distribution service                                          | NO ENDPOINT
-postgres      | A [postgres] database installation                                                | postgres:5432 <br> Username: postgres <br> Password: postgres
-pgadmin       | A [pgadmin](https://www.pgadmin.org/) installation for the postgres database      | http://localhost:8081 <br> Username: user@domain.com <br> Password: password
-minio         | [MinIO] is an S3-compliant object store                                           | http://localhost:8082/ <br> Access key: minioadmin <br> Secret key: minioadmin
+submission    | The Corona-Warn-App submission service                                                      | http://localhost:8000 
+distribution  | The Corona-Warn-App distribution service                                                    | NO ENDPOINT
+postgres      | A [postgres] database installation                                                          | postgres:8001 <br> Username: postgres <br> Password: postgres
+pgadmin       | A [pgadmin](https://www.pgadmin.org/) installation for the postgres database                | http://localhost:8002 <br> Username: user@domain.com <br> Password: password
+cloudserver   | [Zenko CloudServer] is a S3-compliant object store  | http://localhost:8003/ <br> Access key: accessKey1 <br> Secret key: verySecretKey1
 
 #### Running Single CWA Services Using Docker
 
@@ -89,7 +89,7 @@ To prepare your machine to run the CWA project locally, we recommend that you fi
 * Minimum JDK Version 11: [OpenJDK](https://openjdk.java.net/) / [SapMachine](https://sap.github.io/SapMachine/)
 * [Maven 3.6](https://maven.apache.org/)
 * [Postgres]
-* [MinIO]
+* [Zenko CloudServer]
 
 #### Configure
 
@@ -167,8 +167,8 @@ The following public repositories are currently available for the Corona-Warn-Ap
 [cwa-documentation]: https://github.com/corona-warn-app/cwa-documentation
 [cwa-server]: https://github.com/corona-warn-app/cwa-server
 [Postgres]: https://www.postgresql.org/
-[MinIO]: https://min.io/
 [HSQLDB]: http://hsqldb.org/
+[Zenko CloudServer]: https://github.com/scality/cloudserver
 
 ## Licensing
 

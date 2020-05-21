@@ -34,6 +34,16 @@ public class ObjectStoreConfigurationProperties {
 
   private String bucket;
 
+  private boolean setPublicReadAclOnPutObject;
+
+  public boolean isSetPublicReadAclOnPutObject() {
+    return setPublicReadAclOnPutObject;
+  }
+
+  public void setSetPublicReadAclOnPutObject(boolean setPublicReadAclOnPutObject) {
+    this.setPublicReadAclOnPutObject = setPublicReadAclOnPutObject;
+  }
+
   public int getPort() {
     return port;
   }
