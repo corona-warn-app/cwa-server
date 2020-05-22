@@ -19,7 +19,7 @@
 
 package app.coronawarn.server.services.distribution.assembly.component;
 
-import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.assertj.core.api.Assertions.assertThat;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -38,7 +38,7 @@ public class CryptoProviderTest {
 
   @Test
   public void constructorInitializesCryptoArtifacts() {
-    assertNotNull(cryptoProvider.getPrivateKey());
-    assertNotNull(cryptoProvider.getCertificate());
+    assertThat(cryptoProvider.getPrivateKey()).isNotNull();
+    assertThat(cryptoProvider.getCertificate()).isNotNull();
   }
 }

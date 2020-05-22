@@ -19,8 +19,8 @@
 
 package app.coronawarn.server.services.distribution.assembly.exposureconfig.validation;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.catchThrowable;
 
 import app.coronawarn.server.services.distribution.assembly.exposureconfig.ExposureConfigurationProvider;
 import app.coronawarn.server.services.distribution.assembly.exposureconfig.UnableToLoadFileException;
@@ -38,19 +38,20 @@ public class ExposureConfigurationValidatorTest {
   @ParameterizedTest
   @MethodSource("createOkTests")
   public void ok(TestWithExpectedResult test) throws UnableToLoadFileException {
-    assertEquals(SUCCESS, getResultForTest(test));
+    assertThat(getResultForTest(test)).isEqualTo(SUCCESS);
   }
 
   @ParameterizedTest
   @MethodSource("createFailedTests")
   public void fails(TestWithExpectedResult test) throws UnableToLoadFileException {
-    assertEquals(test.result, getResultForTest(test));
+    assertThat(getResultForTest(test)).isEqualTo(test.result);
   }
 
   @Test
   public void emptyFileThrowsLoadFailure() {
-    assertThrows(UnableToLoadFileException.class, () ->
-        ExposureConfigurationProvider.readFile("parameters/empty.yaml"));
+    assertThat(
+        catchThrowable(() -> ExposureConfigurationProvider.readFile("parameters/empty.yaml")))
+        .isInstanceOf(UnableToLoadFileException.class);
   }
 
   private ValidationResult getResultForTest(TestWithExpectedResult test)
