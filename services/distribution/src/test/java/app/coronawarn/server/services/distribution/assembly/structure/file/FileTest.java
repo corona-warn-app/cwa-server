@@ -19,12 +19,13 @@
 
 package app.coronawarn.server.services.distribution.assembly.structure.file;
 
-import static org.junit.jupiter.api.Assertions.assertArrayEquals;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.catchThrowable;
+
+import app.coronawarn.server.services.distribution.assembly.structure.WritableOnDisk;
 import app.coronawarn.server.services.distribution.assembly.structure.directory.Directory;
-import app.coronawarn.server.services.distribution.assembly.structure.directory.DirectoryImpl;
+import app.coronawarn.server.services.distribution.assembly.structure.directory.DirectoryOnDisk;
 import java.io.IOException;
 import java.nio.file.Files;
 import org.junit.Rule;
@@ -35,7 +36,7 @@ import org.junit.rules.TemporaryFolder;
 public class FileTest {
 
   private final byte[] bytes = "World".getBytes();
-  private File file;
+  private FileOnDisk file;
 
   @Rule
   private TemporaryFolder outputFolder = new TemporaryFolder();
@@ -43,38 +44,38 @@ public class FileTest {
   @BeforeEach
   public void setup() throws IOException {
     outputFolder.create();
-    file = new FileImpl("Hello", bytes);
+    file = new FileOnDisk("Hello", bytes);
   }
 
   @Test
   public void checkGetBytes() {
-    assertEquals(bytes, file.getBytes());
+    assertThat(file.getBytes()).isEqualTo(bytes);
   }
 
   @Test
   public void checkSetBytes() {
     byte[] bytes = "Goodbye".getBytes();
     file.setBytes(bytes);
-    assertEquals(bytes, file.getBytes());
+    assertThat(file.getBytes()).isEqualTo(bytes);
   }
 
   @Test
   public void checkWriteThrowsWithoutParent() {
-    assertThrows(NullPointerException.class, file::write);
+    assertThat(catchThrowable(file::write)).isInstanceOf(NullPointerException.class);
   }
 
   @Test
   public void checkWrite() throws IOException {
     java.io.File outputFile = outputFolder.newFolder();
-    Directory directory = new DirectoryImpl(outputFile);
+    Directory<WritableOnDisk> directory = new DirectoryOnDisk(outputFile);
 
-    directory.addFile(file);
+    directory.addWritable(file);
     directory.write();
 
     byte[] writtenBytes = Files.readAllBytes(file.getFileOnDisk().toPath());
 
-    assertArrayEquals(bytes, writtenBytes);
-    assertEquals(1, outputFile.listFiles().length);
+    assertThat(writtenBytes).isEqualTo(bytes);
+    assertThat(outputFile.listFiles()).isNotNull().hasSize(1);
   }
 
 }

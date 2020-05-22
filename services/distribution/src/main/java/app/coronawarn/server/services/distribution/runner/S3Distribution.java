@@ -64,6 +64,5 @@ public class S3Distribution implements ApplicationRunner {
     } catch (UnsupportedOperationException | GeneralSecurityException  | MinioException | IOException e) {
       logger.error("Distribution failed.", e);
     }
-
   }
 }
