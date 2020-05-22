@@ -21,6 +21,7 @@ package app.coronawarn.server.services.submission.controller;
 
 import static java.time.ZoneOffset.UTC;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.anyCollection;
 import static org.mockito.Mockito.any;
 import static org.mockito.Mockito.anyString;
 import static org.mockito.Mockito.atLeastOnce;
@@ -48,6 +49,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
+import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import org.junit.jupiter.api.BeforeEach;
@@ -88,6 +90,9 @@ public class SubmissionControllerTest {
 
   @Test
   public void checkResponseStatusForValidParameters() {
+
+    when(diagnosisKeyService.saveDiagnosisKeys(anyCollection())).thenReturn(CompletableFuture.completedFuture(List.of()));
+
     ResponseEntity<Void> actResponse =
         executeRequest(buildPayloadWithMultipleKeys(), buildOkHeaders());
 

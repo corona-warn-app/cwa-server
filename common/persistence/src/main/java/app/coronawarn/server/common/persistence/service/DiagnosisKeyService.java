@@ -27,13 +27,15 @@ import java.time.Instant;
 import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.Sort.Direction;
-import org.springframework.stereotype.Component;
+import org.springframework.scheduling.annotation.Async;
+import org.springframework.stereotype.Service;
 
-@Component
+@Service
 public class DiagnosisKeyService {
 
   private final DiagnosisKeyRepository keyRepository;
@@ -49,16 +51,18 @@ public class DiagnosisKeyService {
    * @param diagnosisKeys must not contain {@literal null}.
    * @throws IllegalArgumentException in case the given collection contains {@literal null}.
    */
-  public void saveDiagnosisKeys(Collection<DiagnosisKey> diagnosisKeys) {
-    keyRepository.saveAll(diagnosisKeys);
+  @Async
+  public CompletableFuture<List<DiagnosisKey>> saveDiagnosisKeys(Collection<DiagnosisKey> diagnosisKeys) {
+    return CompletableFuture.completedFuture(keyRepository.saveAll(diagnosisKeys));
   }
 
   /**
    * Returns all valid persisted diagnosis keys, sorted by their submission timestamp.
    */
-  public List<DiagnosisKey> getDiagnosisKeys() {
-    return keyRepository.findAll(Sort.by(Direction.ASC, "submissionTimestamp")).stream()
-        .filter(DiagnosisKey::isValid).collect(Collectors.toList());
+  @Async
+  public CompletableFuture<List<DiagnosisKey>> getDiagnosisKeys() {
+    return CompletableFuture.completedFuture(keyRepository.findAll(Sort.by(Direction.ASC, "submissionTimestamp"))
+        .stream().filter(DiagnosisKey::isValid).collect(Collectors.toList()));
   }
 
   /**
@@ -67,8 +71,10 @@ public class DiagnosisKeyService {
    *
    * @param daysToRetain the number of days until which diagnosis keys will be retained.
    * @throws IllegalArgumentException if {@code daysToRetain} is negative.
+   * @return
    */
-  public void applyRetentionPolicy(int daysToRetain) {
+  @Async
+  public CompletableFuture<Void> applyRetentionPolicy(int daysToRetain) {
     if (daysToRetain < 0) {
       throw new IllegalArgumentException("Number of days to retain must be greater or equal to 0.");
     }
@@ -77,6 +83,6 @@ public class DiagnosisKeyService {
         .ofInstant(Instant.now(), UTC)
         .minusDays(daysToRetain)
         .toEpochSecond(UTC) / 3600L;
-    keyRepository.deleteBySubmissionTimestampIsLessThanEqual(threshold);
+    return CompletableFuture.runAsync(() -> keyRepository.deleteBySubmissionTimestampIsLessThanEqual(threshold));
   }
 }

@@ -27,9 +27,8 @@ import app.coronawarn.server.services.submission.exception.InvalidPayloadExcepti
 import app.coronawarn.server.services.submission.verification.TanVerifier;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ForkJoinPool;
-import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.Executor;
 import java.util.concurrent.TimeUnit;
 import org.apache.commons.math3.distribution.PoissonDistribution;
 import org.slf4j.Logger;
@@ -38,13 +37,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.util.StopWatch;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.context.request.async.DeferredResult;
 
 @RestController
 @RequestMapping("/version/v1")
@@ -80,9 +79,6 @@ public class SubmissionController {
   @Value("${services.submission.payload.max-number-of-keys}")
   private Integer maxNumberOfKeys;
 
-  private ScheduledExecutorService scheduledExecutor = Executors.newSingleThreadScheduledExecutor();
-
-  private ForkJoinPool forkJoinPool = ForkJoinPool.commonPool();
 
   /**
    * Handles diagnosis key submission requests.
@@ -93,43 +89,43 @@ public class SubmissionController {
    * @return An empty response body.
    */
   @PostMapping(SUBMISSION_ROUTE)
-  public DeferredResult<ResponseEntity<Void>> submitDiagnosisKey(
+  public CompletableFuture<ResponseEntity<Void>> submitDiagnosisKey(
       @RequestBody SubmissionPayload exposureKeys,
       @RequestHeader("cwa-fake") Integer fake,
       @RequestHeader("cwa-authorization") String tan) {
-    final DeferredResult<ResponseEntity<Void>> deferredResult = new DeferredResult<>();
     if (fake != 0) {
-      setFakeDeferredResult(deferredResult);
+      return fakeResult();
     } else {
-      setRealDeferredResult(deferredResult, exposureKeys, tan);
+      return realResult(exposureKeys, tan);
     }
-    return deferredResult;
   }
 
-  private void setFakeDeferredResult(DeferredResult<ResponseEntity<Void>> deferredResult) {
+  private CompletableFuture<ResponseEntity<Void>> fakeResult() {
     long delay = new PoissonDistribution(fakeDelay).sample();
-    scheduledExecutor.schedule(() -> deferredResult.setResult(buildSuccessResponseEntity()),
-        delay, TimeUnit.MILLISECONDS);
+    Executor delayedExecutor = CompletableFuture.delayedExecutor(delay, TimeUnit.MILLISECONDS);
+    return CompletableFuture.supplyAsync(this::buildSuccessResponseEntity, delayedExecutor);
   }
 
-  private void setRealDeferredResult(DeferredResult<ResponseEntity<Void>> deferredResult,
-      SubmissionPayload exposureKeys, String tan) {
-    forkJoinPool.submit(() -> {
-      StopWatch stopWatch = new StopWatch();
-      stopWatch.start();
-      if (!this.tanVerifier.verifyTan(tan)) {
-        deferredResult.setResult(buildTanInvalidResponseEntity());
-      } else {
-        try {
-          persistDiagnosisKeysPayload(exposureKeys);
-          deferredResult.setResult(buildSuccessResponseEntity());
-        } catch (Exception e) {
-          deferredResult.setErrorResult(e);
-        }
-      }
-      stopWatch.stop();
-      updateFakeDelay(stopWatch.getTotalTimeMillis());
-    });
+  private CompletableFuture<ResponseEntity<Void>> realResult(SubmissionPayload exposureKeys, String tan) {
+    StopWatch stopWatch = new StopWatch();
+    stopWatch.start();
+    if (!this.tanVerifier.verifyTan(tan)) {
+      return CompletableFuture.supplyAsync(this::buildTanInvalidResponseEntity)
+          .whenComplete((v, t) -> {
+            stopWatch.stop();
+            updateFakeDelay(stopWatch.getTotalTimeMillis());
+          });
+    } else {
+      return persistDiagnosisKeysPayload(exposureKeys)
+          .thenApply(diagnosisKeys -> buildSuccessResponseEntity())
+          .exceptionally(throwable -> {
+            logger.error(throwable.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+          }).whenComplete((v, t) -> {
+            stopWatch.stop();
+            updateFakeDelay(stopWatch.getTotalTimeMillis());
+          });
+    }
   }
 
   /**
@@ -150,9 +146,11 @@ public class SubmissionController {
    * Persists the diagnosis keys contained in the specified request payload.
    *
    * @param protoBufDiagnosisKeys Diagnosis keys that were specified in the request.
+   * @return A list of saved Diagnosis Keys.
    * @throws IllegalArgumentException in case the given collection contains {@literal null}.
    */
-  public void persistDiagnosisKeysPayload(SubmissionPayload protoBufDiagnosisKeys) {
+  @Async
+  public CompletableFuture<List<DiagnosisKey>> persistDiagnosisKeysPayload(SubmissionPayload protoBufDiagnosisKeys) {
     List<TemporaryExposureKey> protoBufferKeysList = protoBufDiagnosisKeys.getKeysList();
     validatePayload(protoBufferKeysList);
 
@@ -166,7 +164,7 @@ public class SubmissionController {
       }
     }
 
-    diagnosisKeyService.saveDiagnosisKeys(diagnosisKeys);
+    return diagnosisKeyService.saveDiagnosisKeys(diagnosisKeys);
   }
 
   private void validatePayload(List<TemporaryExposureKey> protoBufKeysList) {

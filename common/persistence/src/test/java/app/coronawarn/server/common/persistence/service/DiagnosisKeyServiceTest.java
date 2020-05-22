@@ -57,8 +57,7 @@ public class DiagnosisKeyServiceTest {
 
   @Test
   void testRetrievalForEmptyDB() {
-    var actKeys = diagnosisKeyService.getDiagnosisKeys();
-    assertDiagnosisKeysEqual(Lists.emptyList(), actKeys);
+    diagnosisKeyService.getDiagnosisKeys().thenAccept(actKeys -> assertDiagnosisKeysEqual(Lists.emptyList(), actKeys));
   }
 
   @Test
@@ -66,9 +65,7 @@ public class DiagnosisKeyServiceTest {
     var expKeys = List.of(buildDiagnosisKeyForSubmissionTimestamp(0L));
 
     diagnosisKeyService.saveDiagnosisKeys(expKeys);
-    var actKeys = diagnosisKeyService.getDiagnosisKeys();
-
-    assertDiagnosisKeysEqual(expKeys, actKeys);
+    diagnosisKeyService.getDiagnosisKeys().thenAccept(actKeys -> assertDiagnosisKeysEqual(expKeys, actKeys));
   }
 
   @Test
@@ -81,9 +78,7 @@ public class DiagnosisKeyServiceTest {
 
     // reverse to match expected sort order
     Collections.reverse(expKeys);
-    var actKeys = diagnosisKeyService.getDiagnosisKeys();
-
-    assertDiagnosisKeysEqual(expKeys, actKeys);
+    diagnosisKeyService.getDiagnosisKeys().thenAccept(actKeys -> assertDiagnosisKeysEqual(expKeys, actKeys));
   }
 
   @DisplayName("Assert a positive retention period is accepted.")
@@ -105,8 +100,7 @@ public class DiagnosisKeyServiceTest {
   @Test
   void testApplyRetentionPolicyForEmptyDb() {
     diagnosisKeyService.applyRetentionPolicy(1);
-    var actKeys = diagnosisKeyService.getDiagnosisKeys();
-    assertDiagnosisKeysEqual(Lists.emptyList(), actKeys);
+    diagnosisKeyService.getDiagnosisKeys().thenAccept(actKeys -> assertDiagnosisKeysEqual(Lists.emptyList(), actKeys));
   }
 
   @Test
@@ -115,9 +109,7 @@ public class DiagnosisKeyServiceTest {
 
     diagnosisKeyService.saveDiagnosisKeys(expKeys);
     diagnosisKeyService.applyRetentionPolicy(1);
-    var actKeys = diagnosisKeyService.getDiagnosisKeys();
-
-    assertDiagnosisKeysEqual(expKeys, actKeys);
+    diagnosisKeyService.getDiagnosisKeys().thenAccept(actKeys -> assertDiagnosisKeysEqual(expKeys, actKeys));
   }
 
   @Test
@@ -126,9 +118,7 @@ public class DiagnosisKeyServiceTest {
 
     diagnosisKeyService.saveDiagnosisKeys(keys);
     diagnosisKeyService.applyRetentionPolicy(1);
-    var actKeys = diagnosisKeyService.getDiagnosisKeys();
-
-    assertDiagnosisKeysEqual(Lists.emptyList(), actKeys);
+    diagnosisKeyService.getDiagnosisKeys().thenAccept(actKeys -> assertDiagnosisKeysEqual(Lists.emptyList(), actKeys));
   }
 
   @Test
@@ -144,9 +134,7 @@ public class DiagnosisKeyServiceTest {
       diagnosisKeyService.saveDiagnosisKeys(keys);
     })).isInstanceOf(InvalidDiagnosisKeyException.class);
 
-    List<DiagnosisKey> actKeys = diagnosisKeyService.getDiagnosisKeys();
-
-    assertDiagnosisKeysEqual(Lists.emptyList(), actKeys);
+    diagnosisKeyService.getDiagnosisKeys().thenAccept(actKeys -> assertDiagnosisKeysEqual(Lists.emptyList(), actKeys));
   }
 
   public static DiagnosisKey buildDiagnosisKeyForSubmissionTimestamp(long submissionTimeStamp) {

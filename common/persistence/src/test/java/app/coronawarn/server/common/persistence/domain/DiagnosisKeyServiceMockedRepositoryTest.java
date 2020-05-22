@@ -54,8 +54,7 @@ public class DiagnosisKeyServiceMockedRepositoryTest {
 
     mockInvalidKeyInDb(expKeys);
 
-    List<DiagnosisKey> actualKeys = diagnosisKeyService.getDiagnosisKeys();
-    assertThat(actualKeys.isEmpty()).isTrue();
+    diagnosisKeyService.getDiagnosisKeys().thenAccept(actualkeys -> assertThat(actualkeys.isEmpty()).isTrue());
   }
 
   @Test
@@ -70,10 +69,12 @@ public class DiagnosisKeyServiceMockedRepositoryTest {
 
     mockInvalidKeyInDb(expKeys);
 
-    List<DiagnosisKey> actualKeys = diagnosisKeyService.getDiagnosisKeys();
-    expKeys.remove(invalidKey1);
-    expKeys.remove(invalidKey2);
-    assertDiagnosisKeysEqual(expKeys, actualKeys);
+    diagnosisKeyService.getDiagnosisKeys().thenAccept(actualKeys -> {
+      expKeys.remove(invalidKey1);
+      expKeys.remove(invalidKey2);
+      assertDiagnosisKeysEqual(expKeys, actualKeys);
+    });
+
   }
 
   private void mockInvalidKeyInDb(List<DiagnosisKey> keys) {

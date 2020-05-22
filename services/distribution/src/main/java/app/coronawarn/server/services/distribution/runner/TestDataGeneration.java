@@ -98,29 +98,29 @@ public class TestDataGeneration implements ApplicationRunner {
    */
   private void writeTestData() {
     logger.debug("Querying diagnosis keys from the database...");
-    List<DiagnosisKey> existingDiagnosisKeys = diagnosisKeyService.getDiagnosisKeys();
+    diagnosisKeyService.getDiagnosisKeys().thenAccept(existingDiagnosisKeys -> {
+      // Timestamps in hours since epoch
+      long startTimestamp = getGeneratorStartTimestamp(existingDiagnosisKeys);
+      long endTimestamp = getGeneratorEndTimestamp();
 
-    // Timestamps in hours since epoch
-    long startTimestamp = getGeneratorStartTimestamp(existingDiagnosisKeys);
-    long endTimestamp = getGeneratorEndTimestamp();
+      // Add the startTimestamp to the seed. Otherwise we would generate the same data every hour.
+      random.setSeed(seed + startTimestamp);
+      poisson =
+          new PoissonDistribution(random, exposuresPerHour, POISSON_EPSILON, POISSON_MAX_ITERATIONS);
 
-    // Add the startTimestamp to the seed. Otherwise we would generate the same data every hour.
-    random.setSeed(seed + startTimestamp);
-    poisson =
-        new PoissonDistribution(random, exposuresPerHour, POISSON_EPSILON, POISSON_MAX_ITERATIONS);
+      logger.debug("Generating diagnosis keys between {} and {}...", startTimestamp, endTimestamp);
+      List<DiagnosisKey> newDiagnosisKeys = LongStream.range(startTimestamp, endTimestamp)
+          .mapToObj(submissionTimestamp -> IntStream.range(0, poisson.sample())
+              .mapToObj(__ -> generateDiagnosisKey(submissionTimestamp))
+              .collect(Collectors.toList()))
+          .flatMap(List::stream)
+          .collect(Collectors.toList());
 
-    logger.debug("Generating diagnosis keys between {} and {}...", startTimestamp, endTimestamp);
-    List<DiagnosisKey> newDiagnosisKeys = LongStream.range(startTimestamp, endTimestamp)
-        .mapToObj(submissionTimestamp -> IntStream.range(0, poisson.sample())
-            .mapToObj(__ -> generateDiagnosisKey(submissionTimestamp))
-            .collect(Collectors.toList()))
-        .flatMap(List::stream)
-        .collect(Collectors.toList());
+      logger.debug("Writing {} new diagnosis keys to the database...", newDiagnosisKeys.size());
+      diagnosisKeyService.saveDiagnosisKeys(newDiagnosisKeys);
 
-    logger.debug("Writing {} new diagnosis keys to the database...", newDiagnosisKeys.size());
-    diagnosisKeyService.saveDiagnosisKeys(newDiagnosisKeys);
-
-    logger.debug("Test data generation finished successfully.");
+      logger.debug("Test data generation finished successfully.");
+    });
   }
 
   /**
