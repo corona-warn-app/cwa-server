@@ -88,8 +88,8 @@ public class SubmissionController {
    * Handles diagnosis key submission requests.
    *
    * @param exposureKeys The unmarshalled protocol buffers submission payload.
-   * @param fake A header flag, marking fake requests.
-   * @param tan A tan for diagnosis verification.
+   * @param fake         A header flag, marking fake requests.
+   * @param tan          A tan for diagnosis verification.
    * @return An empty response body.
    */
   @PostMapping(SUBMISSION_ROUTE)
