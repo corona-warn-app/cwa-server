@@ -55,8 +55,7 @@ public class TemporaryExposureKeyExportFile extends FileOnDisk {
    */
   public static TemporaryExposureKeyExportFile fromTemporaryExposureKeys(
       Collection<TemporaryExposureKey> temporaryExposureKeys, String region, long startTimestamp, long endTimestamp) {
-    return new TemporaryExposureKeyExportFile(temporaryExposureKeys, region, startTimestamp,
-        endTimestamp);
+    return new TemporaryExposureKeyExportFile(temporaryExposureKeys, region, startTimestamp, endTimestamp);
   }
 
   /**
@@ -73,8 +72,7 @@ public class TemporaryExposureKeyExportFile extends FileOnDisk {
    */
   public static TemporaryExposureKeyExportFile fromDiagnosisKeys(Collection<DiagnosisKey> diagnosisKeys, String region,
       long startTimestamp, long endTimestamp) {
-    return new TemporaryExposureKeyExportFile(
-        getTemporaryExposureKeysFromDiagnosisKeys(diagnosisKeys), region,
+    return new TemporaryExposureKeyExportFile(getTemporaryExposureKeysFromDiagnosisKeys(diagnosisKeys), region,
         startTimestamp, endTimestamp);
   }
 
