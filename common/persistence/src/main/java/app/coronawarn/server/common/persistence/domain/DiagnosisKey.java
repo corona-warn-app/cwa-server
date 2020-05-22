@@ -55,8 +55,8 @@ public class DiagnosisKey {
   @Size(min = 16, max = 16, message = "Key data must be a byte array of length 16.")
   private byte[] keyData;
 
-  @ValidRollingStartNumber
-  private int rollingStartNumber;
+  @ValidRollingStartIntervalNumber
+  private int rollingStartIntervalNumber;
 
   @Min(value = 1L, message = "Rolling period must be greater than 0.")
   private int rollingPeriod;
@@ -72,10 +72,10 @@ public class DiagnosisKey {
   /**
    * Should be called by builders.
    */
-  DiagnosisKey(byte[] keyData, int rollingStartNumber, int rollingPeriod,
+  DiagnosisKey(byte[] keyData, int rollingStartIntervalNumber, int rollingPeriod,
       int transmissionRiskLevel, long submissionTimestamp) {
     this.keyData = keyData;
-    this.rollingStartNumber = rollingStartNumber;
+    this.rollingStartIntervalNumber = rollingStartIntervalNumber;
     this.rollingPeriod = rollingPeriod;
     this.transmissionRiskLevel = transmissionRiskLevel;
     this.submissionTimestamp = submissionTimestamp;
@@ -105,15 +105,15 @@ public class DiagnosisKey {
   /**
    * Returns a number describing when a key starts. It is equal to startTimeOfKeySinceEpochInSecs / (60 * 10).
    */
-  public long getRollingStartNumber() {
-    return rollingStartNumber;
+  public int getRollingStartNumber() {
+    return rollingStartIntervalNumber;
   }
 
   /**
    * Returns a number describing how long a key is valid. It is expressed in increments of 10 minutes (e.g. 144 for 24
    * hours).
    */
-  public long getRollingPeriod() {
+  public int getRollingPeriod() {
     return rollingPeriod;
   }
 
@@ -147,7 +147,7 @@ public class DiagnosisKey {
         .minusDays(daysToRetain)
         .toEpochSecond(UTC) / (60 * 10);
 
-    return this.rollingStartNumber >= threshold;
+    return this.rollingStartIntervalNumber >= threshold;
   }
 
   /**
@@ -186,7 +186,7 @@ public class DiagnosisKey {
       return false;
     }
     DiagnosisKey that = (DiagnosisKey) o;
-    return rollingStartNumber == that.rollingStartNumber
+    return rollingStartIntervalNumber == that.rollingStartIntervalNumber
         && rollingPeriod == that.rollingPeriod
         && transmissionRiskLevel == that.transmissionRiskLevel
         && submissionTimestamp == that.submissionTimestamp
@@ -197,7 +197,7 @@ public class DiagnosisKey {
   @Override
   public int hashCode() {
     int result = Objects
-        .hash(id, rollingStartNumber, rollingPeriod, transmissionRiskLevel, submissionTimestamp);
+        .hash(id, rollingStartIntervalNumber, rollingPeriod, transmissionRiskLevel, submissionTimestamp);
     result = 31 * result + Arrays.hashCode(keyData);
     return result;
   }
