@@ -10,7 +10,7 @@ services:
   submission:
     initial-fake-delay-milliseconds: 10
     # The number of samples for the calculation of the moving average for fake request delays.
-    fake-delay_moving-average-samples: 10
+    fake-delay-moving-average-samples: 10
     retention-days: 14
     payload:
       max-number-of-keys: 14
