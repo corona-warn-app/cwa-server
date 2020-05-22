@@ -142,6 +142,7 @@ public class DateAggregatingDecorator extends IndexDirectoryDecorator<LocalDate,
       Set<TemporaryExposureKeyExportFile> temporaryExposureKeyExportFiles) {
     return temporaryExposureKeyExportFiles.stream()
         .map(FileOnDisk::getBytes)
+        .map(TemporaryExposureKeyExportFile::withoutFileHeader)
         .map(uncheckedFunction(TemporaryExposureKeyExport::parseFrom))
         .collect(Collectors.toSet());
   }
