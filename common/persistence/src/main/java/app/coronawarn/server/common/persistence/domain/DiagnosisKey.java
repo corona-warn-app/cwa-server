@@ -58,7 +58,7 @@ public class DiagnosisKey {
   @ValidRollingStartNumber
   private int rollingStartIntervalNumber;
 
-  @Min(value = 1L, message = "Rolling period must be greater than 0.")
+  @Min(value = 1, message = "Rolling period must be greater than 0.")
   private int rollingPeriod;
 
   @Range(min = 0, max = 8, message = "Risk level must be between 0 and 8.")

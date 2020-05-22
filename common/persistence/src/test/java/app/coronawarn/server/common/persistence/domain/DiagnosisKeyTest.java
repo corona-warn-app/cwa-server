@@ -37,8 +37,8 @@ import org.junit.jupiter.params.provider.ValueSource;
 public class DiagnosisKeyTest {
 
   final static byte[] expKeyData = "testKey111111111".getBytes(Charset.defaultCharset());
-  final static long expRollingStartNumber = 1L;
-  final static long expRollingPeriod = 2L;
+  final static int expRollingStartNumber = 1;
+  final static int expRollingPeriod = 2;
   final static int expTransmissionRiskLevel = 3;
   final static long expSubmissionTimestamp = 4L;
   final static DiagnosisKey diagnosisKey = new DiagnosisKey(expKeyData, expRollingStartNumber,
