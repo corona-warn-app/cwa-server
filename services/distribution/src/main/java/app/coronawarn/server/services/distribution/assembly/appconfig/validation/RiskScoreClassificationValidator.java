@@ -63,9 +63,9 @@ public class RiskScoreClassificationValidator extends AppConfigurationValidator 
   }
 
   private void validateValues() {
-    for (RiskScoreClass riskScoreClass : riskScoreClassification.getRiskScoreClassesList()) {
-      int minRiskLevel = riskScoreClass.getMinRiskLevel();
-      int maxRiskLevel = riskScoreClass.getMaxRiskLevel();
+    for (RiskScoreClass riskScoreClass : riskScoreClassification.getRiskClassesList()) {
+      int minRiskLevel = riskScoreClass.getMin();
+      int maxRiskLevel = riskScoreClass.getMax();
 
       validateLabel(riskScoreClass.getLabel());
       validateRiskScoreValueBounds(minRiskLevel);
@@ -102,8 +102,8 @@ public class RiskScoreClassificationValidator extends AppConfigurationValidator 
   }
 
   private void validateValueRangeCoverage() {
-    int partitionSum = riskScoreClassification.getRiskScoreClassesList().stream()
-        .mapToInt(riskScoreClass -> (riskScoreClass.getMaxRiskLevel() - riskScoreClass.getMinRiskLevel() + 1))
+    int partitionSum = riskScoreClassification.getRiskClassesList().stream()
+        .mapToInt(riskScoreClass -> (riskScoreClass.getMax() - riskScoreClass.getMin() + 1))
         .sum();
 
     if (partitionSum != RISK_SCORE_VALUE_RANGE) {

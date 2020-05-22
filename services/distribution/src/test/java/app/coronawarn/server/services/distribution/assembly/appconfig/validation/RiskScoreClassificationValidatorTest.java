@@ -102,8 +102,8 @@ public class RiskScoreClassificationValidatorTest {
   @MethodSource("createInvalidPartitionings")
   void failsIfPartitioningInvalid(RiskScoreClassification invalidClassification) {
     var validator = new RiskScoreClassificationValidator(invalidClassification);
-    int coveredRange = invalidClassification.getRiskScoreClassesList().stream()
-        .mapToInt(riskScoreClass -> (riskScoreClass.getMaxRiskLevel() - riskScoreClass.getMinRiskLevel() + 1))
+    int coveredRange = invalidClassification.getRiskClassesList().stream()
+        .mapToInt(riskScoreClass -> (riskScoreClass.getMax() - riskScoreClass.getMin() + 1))
         .sum();
     var expectedResult = buildExpectedResult(
         buildError("covered value range", coveredRange, INVALID_PARTITIONING));
@@ -158,11 +158,11 @@ public class RiskScoreClassificationValidatorTest {
   }
 
   private static RiskScoreClassification buildClassification(RiskScoreClass... riskScoreClasses) {
-    return RiskScoreClassification.newBuilder().addAllRiskScoreClasses(asList(riskScoreClasses)).build();
+    return RiskScoreClassification.newBuilder().addAllRiskClasses(asList(riskScoreClasses)).build();
   }
 
   private static RiskScoreClass buildRiskClass(String label, int min, int max, String url) {
-    return RiskScoreClass.newBuilder().setLabel(label).setMinRiskLevel(min).setMaxRiskLevel(max).setUrl(url).build();
+    return RiskScoreClass.newBuilder().setLabel(label).setMin(min).setMax(max).setUrl(url).build();
   }
 
   private static ValidationResult buildExpectedResult(RiskScoreClassificationValidationError... errors) {
