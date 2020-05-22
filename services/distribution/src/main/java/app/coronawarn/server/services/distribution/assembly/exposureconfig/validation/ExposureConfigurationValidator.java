@@ -36,11 +36,9 @@ import java.util.Arrays;
  * <br>
  * Weights must be in the range of 0.001 to 100.<br> Scores must be in the range of 1 to 8.<br>
  */
-public class ExposureConfigurationValidator {
+public class ExposureConfigurationValidator extends AppConfigurationValidator {
 
   private final RiskScoreParameters config;
-
-  private ValidationResult errors;
 
   public ExposureConfigurationValidator(RiskScoreParameters config) {
     this.config = config;
@@ -52,6 +50,7 @@ public class ExposureConfigurationValidator {
    * @return the ValidationResult instance, containing information about possible errors.
    * @throws ValidationExecutionException in case the validation could not be performed
    */
+  @Override
   public ValidationResult validate() {
     this.errors = new ValidationResult();
 
