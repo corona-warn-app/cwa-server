@@ -81,13 +81,13 @@ public abstract class AbstractSigningDecorator<W extends Writable<W>> extends Ar
    * Returns the static {@link SignatureInfo} configured in the application properties. TODO Enter correct values.
    */
   public static SignatureInfo getSignatureInfo() {
-    // TODO cwa-server#205, cwa-server#206
+    // TODO cwa-server#183 cwa-server#207 cwa-server#238
     return SignatureInfo.newBuilder()
-        .setAppBundleId("TODO")
-        .setAndroidPackage("TODO")
-        .setVerificationKeyVersion("TODO")
-        .setVerificationKeyId("TODO")
-        .setSignatureAlgorithm("TODO")
+        .setAppBundleId("de.rki.coronawarnapp")
+        .setAndroidPackage("de.rki.coronawarnapp")
+        .setVerificationKeyVersion("")
+        .setVerificationKeyId("")
+        .setSignatureAlgorithm("1.2.840.10045.4.3.2")
         .build();
   }
 }
