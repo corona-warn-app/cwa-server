@@ -30,6 +30,12 @@ public class ValidationResult {
 
   private Set<ValidationError> errors = new HashSet<>();
 
+  /**
+   * Adds a {@link ValidationError} to this {@link ValidationResult}.
+   *
+   * @param error The {@link ValidationError} that shall be added.
+   * @return true if this {@link ValidationResult} did not already contain the specified {@link ValidationError}.
+   */
   public boolean add(ValidationError error) {
     return this.errors.add(error);
   }
