@@ -50,7 +50,7 @@ public class ExposureConfigurationValidator {
    * Triggers the validation of the configuration.
    *
    * @return the ValidationResult instance, containing information about possible errors.
-   * @throws ValidationFailedException in case the validation could not be performed
+   * @throws ValidationExecutionException in case the validation could not be performed
    */
   public ValidationResult validate() {
     this.errors = new ValidationResult();
@@ -63,7 +63,7 @@ public class ExposureConfigurationValidator {
       validateParameterRiskLevels("daysSinceLastExposure", config.getDaysSinceLastExposure());
       validateParameterRiskLevels("attenuation", config.getAttenuation());
     } catch (IntrospectionException e) {
-      throw new ValidationFailedException("Unable to check risk levels", e);
+      throw new ValidationExecutionException("Unable to check risk levels", e);
     }
 
     return errors;
@@ -87,7 +87,7 @@ public class ExposureConfigurationValidator {
         this.errors.add(new RiskLevelValidationError(parameter, propertyDescriptor.getName()));
       }
     } catch (IllegalAccessException | InvocationTargetException e) {
-      throw new ValidationFailedException(
+      throw new ValidationExecutionException(
           "Unable to read property " + propertyDescriptor.getName(), e);
     }
   }
