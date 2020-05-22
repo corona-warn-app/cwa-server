@@ -49,6 +49,7 @@ import org.springframework.web.context.request.async.DeferredResult;
 @RestController
 @RequestMapping("/version/v1")
 public class SubmissionController {
+
   private static final Logger logger = LoggerFactory.getLogger(SubmissionController.class);
   /**
    * The route to the submission endpoint (version agnostic).
@@ -80,6 +81,7 @@ public class SubmissionController {
   private Integer maxNumberOfKeys;
 
   private ScheduledExecutorService scheduledExecutor = Executors.newSingleThreadScheduledExecutor();
+
   private ForkJoinPool forkJoinPool = ForkJoinPool.commonPool();
 
   /**
@@ -93,8 +95,8 @@ public class SubmissionController {
   @PostMapping(SUBMISSION_ROUTE)
   public DeferredResult<ResponseEntity<Void>> submitDiagnosisKey(
       @RequestBody SubmissionPayload exposureKeys,
-      @RequestHeader(value = "cwa-fake") Integer fake,
-      @RequestHeader(value = "cwa-authorization") String tan) {
+      @RequestHeader("cwa-fake") Integer fake,
+      @RequestHeader("cwa-authorization") String tan) {
     final DeferredResult<ResponseEntity<Void>> deferredResult = new DeferredResult<>();
     if (fake != 0) {
       setFakeDeferredResult(deferredResult);

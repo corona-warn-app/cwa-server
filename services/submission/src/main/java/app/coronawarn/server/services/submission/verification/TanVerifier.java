@@ -28,7 +28,7 @@ import org.springframework.stereotype.Component;
 /**
  * The TanVerifier performs the verification of submission TANs.
  */
-@Component("tanVerifier")
+@Component
 public class TanVerifier {
 
   private static final Logger logger = LoggerFactory.getLogger(TanVerifier.class);
