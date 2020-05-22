@@ -21,11 +21,18 @@ package app.coronawarn.server.common.persistence.domain;
 
 import static java.time.ZoneOffset.UTC;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatCode;
+import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException;
+
 
 import java.nio.charset.Charset;
 import java.time.Instant;
 import java.time.LocalDateTime;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
+
 
 public class DiagnosisKeyTest {
 
@@ -66,8 +73,24 @@ public class DiagnosisKeyTest {
     DiagnosisKey diagnosisKeyFiveDays = new DiagnosisKey(expKeyData, fiveDaysAgo,
         expRollingPeriod, expTransmissionRiskLevel, expSubmissionTimestamp);
 
-    assertThat(diagnosisKeyFiveDays.isYoungerThanRetentionThreshold(4L)).isFalse();
-    assertThat(diagnosisKeyFiveDays.isYoungerThanRetentionThreshold(5L)).isFalse();
-    assertThat(diagnosisKeyFiveDays.isYoungerThanRetentionThreshold(6L)).isTrue();
+    assertThat(diagnosisKeyFiveDays.isYoungerThanRetentionThreshold(4)).isFalse();
+    assertThat(diagnosisKeyFiveDays.isYoungerThanRetentionThreshold(5)).isFalse();
+    assertThat(diagnosisKeyFiveDays.isYoungerThanRetentionThreshold(6)).isTrue();
+  }
+
+  @DisplayName("Test retention threshold accepts positive value")
+  @ValueSource(ints = {0, 1, Integer.MAX_VALUE})
+  @ParameterizedTest
+  public void testRetentionThresholdAcceptsPositiveValue(int daysToRetain) {
+    assertThatCode(() -> diagnosisKey.isYoungerThanRetentionThreshold(daysToRetain))
+        .doesNotThrowAnyException();
+  }
+
+  @DisplayName("Test retention threshold rejects negative value")
+  @ValueSource(ints = {Integer.MIN_VALUE, -1})
+  @ParameterizedTest
+  public void testRetentionThresholdRejectsNegativeValue(int daysToRetain) {
+    assertThatIllegalArgumentException()
+        .isThrownBy(() -> diagnosisKey.isYoungerThanRetentionThreshold(daysToRetain));
   }
 }
