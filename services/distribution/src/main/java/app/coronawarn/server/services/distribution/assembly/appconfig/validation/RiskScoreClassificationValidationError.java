@@ -27,7 +27,7 @@ public class RiskScoreClassificationValidationError implements ValidationError {
 
   private final Object value;
 
-  private final String reason;
+  private final ErrorType reason;
 
   /**
    * Creates a {@link RiskScoreClassificationValidationError} that stores the specified validation error source,
@@ -35,9 +35,9 @@ public class RiskScoreClassificationValidationError implements ValidationError {
    *
    * @param errorSource A label that describes the property associated with this validation error.
    * @param value       The value that caused the validation error.
-   * @param reason      A description of this specific validation error.
+   * @param reason      A validation error specifier.
    */
-  public RiskScoreClassificationValidationError(String errorSource, Object value, String reason) {
+  public RiskScoreClassificationValidationError(String errorSource, Object value, ErrorType reason) {
     this.errorSource = errorSource;
     this.value = value;
     this.reason = reason;
@@ -69,5 +69,13 @@ public class RiskScoreClassificationValidationError implements ValidationError {
   @Override
   public int hashCode() {
     return Objects.hash(errorSource, value, reason);
+  }
+
+  public enum ErrorType {
+    BLANK_LABEL,
+    MIN_GREATER_THAN_MAX,
+    VALUE_OUT_OF_BOUNDS,
+    INVALID_URL,
+    INVALID_PARTITIONING
   }
 }

@@ -19,6 +19,12 @@
 
 package app.coronawarn.server.services.distribution.assembly.appconfig.validation;
 
+import static app.coronawarn.server.services.distribution.assembly.appconfig.validation.RiskScoreClassificationValidationError.ErrorType.BLANK_LABEL;
+import static app.coronawarn.server.services.distribution.assembly.appconfig.validation.RiskScoreClassificationValidationError.ErrorType.INVALID_PARTITIONING;
+import static app.coronawarn.server.services.distribution.assembly.appconfig.validation.RiskScoreClassificationValidationError.ErrorType.INVALID_URL;
+import static app.coronawarn.server.services.distribution.assembly.appconfig.validation.RiskScoreClassificationValidationError.ErrorType.MIN_GREATER_THAN_MAX;
+import static app.coronawarn.server.services.distribution.assembly.appconfig.validation.RiskScoreClassificationValidationError.ErrorType.VALUE_OUT_OF_BOUNDS;
+
 import app.coronawarn.server.common.protocols.internal.RiskScoreClass;
 import app.coronawarn.server.common.protocols.internal.RiskScoreClassification;
 import java.net.MalformedURLException;
@@ -68,23 +74,20 @@ public class RiskScoreClassificationValidator extends AppConfigurationValidator 
 
       if (minRiskLevel > maxRiskLevel) {
         errors.add(new RiskScoreClassificationValidationError(
-            "minRiskLevel, maxRiskLevel", minRiskLevel + ", " + maxRiskLevel,
-            "minRiskLevel is greater than maxRiskLevel"));
+            "minRiskLevel, maxRiskLevel", minRiskLevel + ", " + maxRiskLevel, MIN_GREATER_THAN_MAX));
       }
     }
   }
 
   private void validateLabel(String label) {
     if (label.isBlank()) {
-      errors.add(new RiskScoreClassificationValidationError("label", label, "blank label"));
+      errors.add(new RiskScoreClassificationValidationError("label", label, BLANK_LABEL));
     }
   }
 
   private void validateRiskScoreValueBounds(int value) {
     if (value < 0 || value > RISK_SCORE_VALUE_RANGE - 1) {
-      errors.add(new RiskScoreClassificationValidationError(
-          "minRiskLevel/maxRiskLevel", value,
-          "minRiskLevel or maxRiskLevel is out of bounds"));
+      errors.add(new RiskScoreClassificationValidationError("minRiskLevel/maxRiskLevel", value, VALUE_OUT_OF_BOUNDS));
     }
   }
 
@@ -93,7 +96,7 @@ public class RiskScoreClassificationValidator extends AppConfigurationValidator 
       try {
         new URL(url);
       } catch (MalformedURLException e) {
-        errors.add(new RiskScoreClassificationValidationError("url", url, "invalid url"));
+        errors.add(new RiskScoreClassificationValidationError("url", url, INVALID_URL));
       }
     }
   }
@@ -104,9 +107,7 @@ public class RiskScoreClassificationValidator extends AppConfigurationValidator 
         .sum();
 
     if (partitionSum != RISK_SCORE_VALUE_RANGE) {
-      errors.add(new RiskScoreClassificationValidationError(
-          "covered value range", partitionSum,
-          "covered value range does not match risk score value range"));
+      errors.add(new RiskScoreClassificationValidationError("covered value range", partitionSum, INVALID_PARTITIONING));
     }
   }
 }
