@@ -55,7 +55,7 @@ public class DiagnosisKey {
   @Size(min = 16, max = 16, message = "Key data must be a byte array of length 16.")
   private byte[] keyData;
 
-  @ValidRollingStartIntervalNumber
+  @ValidRollingStartNumber
   private int rollingStartIntervalNumber;
 
   @Min(value = 1L, message = "Rolling period must be greater than 0.")
