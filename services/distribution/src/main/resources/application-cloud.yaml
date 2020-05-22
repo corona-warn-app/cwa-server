@@ -16,8 +16,8 @@ services:
 
 cwa:
   objectstore:
-    accessKey: ${CWA_OBJECTSTORE_ACCESSKEY}
-    secretKey: ${CWA_OBJECTSTORE_SECRETKEY}
+    access-key: ${CWA_OBJECTSTORE_ACCESSKEY}
+    secret-key: ${CWA_OBJECTSTORE_SECRETKEY}
     endpoint: ${CWA_OBJECTSTORE_ENDPOINT}
     bucket: ${CWA_OBJECTSTORE_BUCKET}
     port: ${CWA_OBJECTSTORE_PORT}

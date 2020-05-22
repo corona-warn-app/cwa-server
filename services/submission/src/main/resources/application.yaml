@@ -8,9 +8,9 @@ logging:
 # The initial value of the moving average for fake request delays.
 services:
   submission:
-    initial_fake_delay_milliseconds: 10
-# The number of samples for the calculation of the moving average for fake request delays.
-    fake_delay_moving_average_samples: 10
+    initial-fake-delay-milliseconds: 10
+    # The number of samples for the calculation of the moving average for fake request delays.
+    fake-delay_moving-average-samples: 10
     retention-days: 14
     payload:
       max-number-of-keys: 14

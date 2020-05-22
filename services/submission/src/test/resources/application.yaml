@@ -18,8 +18,8 @@ spring:
 
 services:
   submission:
-    initial_fake_delay_milliseconds: 1
-    fake_delay_moving_average_samples: 1
+    initial-fake-delay-milliseconds: 1
+    fake-delay-moving-average-samples: 1
     retention-days: 14
     payload:
       max-number-of-keys: 14
