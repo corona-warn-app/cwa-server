@@ -38,8 +38,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Creates the directory structure {@code /parameters/country/:country} and writes a file  containing {@link
- * RiskScoreParameters} , wrapped in a signed zip archive.
+ * Creates the directory structure {@code /parameters/country/:country} and writes a file containing {@link
+ * RiskScoreParameters}, wrapped in a signed zip archive.
  */
 public class AppConfigurationDirectory extends DirectoryOnDisk {
 
@@ -63,9 +63,7 @@ public class AppConfigurationDirectory extends DirectoryOnDisk {
     super(PARAMETERS_DIRECTORY);
 
     this.cryptoProvider = cryptoProvider;
-
     addExposureConfigurationIfValid();
-
     this.addWritable(new IndexingDecoratorOnDisk<>(countryDirectory));
   }
 
