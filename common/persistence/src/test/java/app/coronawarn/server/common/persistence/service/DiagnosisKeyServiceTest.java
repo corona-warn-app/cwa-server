@@ -32,6 +32,7 @@ import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
 import org.assertj.core.util.Lists;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;
@@ -57,15 +58,17 @@ public class DiagnosisKeyServiceTest {
 
   @Test
   void testRetrievalForEmptyDB() {
-    diagnosisKeyService.getDiagnosisKeys().thenAccept(actKeys -> assertDiagnosisKeysEqual(Lists.emptyList(), actKeys));
+    diagnosisKeyService.getDiagnosisKeys()
+        .thenAccept(actKeys -> assertDiagnosisKeysEqual(Lists.emptyList(), actKeys)).join();
   }
 
   @Test
   void testSaveAndRetrieve() {
     var expKeys = List.of(buildDiagnosisKeyForSubmissionTimestamp(0L));
 
-    diagnosisKeyService.saveDiagnosisKeys(expKeys);
-    diagnosisKeyService.getDiagnosisKeys().thenAccept(actKeys -> assertDiagnosisKeysEqual(expKeys, actKeys));
+    diagnosisKeyService.saveDiagnosisKeys(expKeys)
+        .thenApply(diagnosisKeys -> diagnosisKeyService.getDiagnosisKeys()
+            .thenAccept(actKeys -> assertDiagnosisKeysEqual(diagnosisKeys, actKeys)).join());
   }
 
   @Test
@@ -74,11 +77,11 @@ public class DiagnosisKeyServiceTest {
         buildDiagnosisKeyForSubmissionTimestamp(1L),
         buildDiagnosisKeyForSubmissionTimestamp(0L)));
 
-    diagnosisKeyService.saveDiagnosisKeys(expKeys);
-
-    // reverse to match expected sort order
-    Collections.reverse(expKeys);
-    diagnosisKeyService.getDiagnosisKeys().thenAccept(actKeys -> assertDiagnosisKeysEqual(expKeys, actKeys));
+    diagnosisKeyService.saveDiagnosisKeys(expKeys).thenApply(diagnosisKeys -> CompletableFuture.supplyAsync(() -> {
+      Collections.reverse(diagnosisKeys);
+      return diagnosisKeys;
+    }).thenApply(reversedDiagnosisKeys -> diagnosisKeyService.getDiagnosisKeys()
+        .thenAccept(actKeys -> assertDiagnosisKeysEqual(expKeys, actKeys)))).join();
   }
 
   @DisplayName("Assert a positive retention period is accepted.")
@@ -99,26 +102,29 @@ public class DiagnosisKeyServiceTest {
 
   @Test
   void testApplyRetentionPolicyForEmptyDb() {
-    diagnosisKeyService.applyRetentionPolicy(1);
-    diagnosisKeyService.getDiagnosisKeys().thenAccept(actKeys -> assertDiagnosisKeysEqual(Lists.emptyList(), actKeys));
+    diagnosisKeyService.applyRetentionPolicy(1)
+        .thenApply(aVoid -> diagnosisKeyService.getDiagnosisKeys()
+            .thenAccept(actKeys -> assertDiagnosisKeysEqual(Lists.emptyList(), actKeys))).join();
   }
 
   @Test
   void testApplyRetentionPolicyForOneNotApplicableEntry() {
     var expKeys = List.of(buildDiagnosisKeyForDateTime(OffsetDateTime.now(UTC).minusHours(23)));
 
-    diagnosisKeyService.saveDiagnosisKeys(expKeys);
-    diagnosisKeyService.applyRetentionPolicy(1);
-    diagnosisKeyService.getDiagnosisKeys().thenAccept(actKeys -> assertDiagnosisKeysEqual(expKeys, actKeys));
+    diagnosisKeyService.saveDiagnosisKeys(expKeys)
+        .thenApply(diagnosisKeys -> diagnosisKeyService.applyRetentionPolicy(1)
+            .thenApply(aVoid -> diagnosisKeyService.getDiagnosisKeys()
+                .thenAccept(actKeys -> assertDiagnosisKeysEqual(expKeys, actKeys)))).join();
   }
 
   @Test
   void testApplyRetentionPolicyForOneApplicableEntry() {
     var keys = List.of(buildDiagnosisKeyForDateTime(OffsetDateTime.now(UTC).minusDays(1L)));
 
-    diagnosisKeyService.saveDiagnosisKeys(keys);
-    diagnosisKeyService.applyRetentionPolicy(1);
-    diagnosisKeyService.getDiagnosisKeys().thenAccept(actKeys -> assertDiagnosisKeysEqual(Lists.emptyList(), actKeys));
+    diagnosisKeyService.saveDiagnosisKeys(keys)
+        .thenApply(diagnosisKeys -> diagnosisKeyService.applyRetentionPolicy(1)
+            .thenApply(aVoid -> diagnosisKeyService.getDiagnosisKeys()
+                .thenAccept(actKeys -> assertDiagnosisKeysEqual(Lists.emptyList(), actKeys)))).join();
   }
 
   @Test
@@ -134,7 +140,7 @@ public class DiagnosisKeyServiceTest {
       diagnosisKeyService.saveDiagnosisKeys(keys);
     })).isInstanceOf(InvalidDiagnosisKeyException.class);
 
-    diagnosisKeyService.getDiagnosisKeys().thenAccept(actKeys -> assertDiagnosisKeysEqual(Lists.emptyList(), actKeys));
+    diagnosisKeyService.getDiagnosisKeys().thenAccept(actKeys -> assertDiagnosisKeysEqual(Lists.emptyList(), actKeys)).join();
   }
 
   public static DiagnosisKey buildDiagnosisKeyForSubmissionTimestamp(long submissionTimeStamp) {
