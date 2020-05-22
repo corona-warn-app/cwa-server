@@ -17,7 +17,7 @@
  * under the License.
  */
 
-package app.coronawarn.server.services.distribution.assembly.exposureconfig;
+package app.coronawarn.server.services.distribution.assembly.appconfig;
 
 /**
  * The file could not be loaded/parsed correctly.

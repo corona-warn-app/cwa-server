@@ -19,7 +19,7 @@
 
 package app.coronawarn.server.services.distribution.assembly.component;
 
-import app.coronawarn.server.services.distribution.assembly.exposureconfig.structure.directory.AppConfigurationDirectory;
+import app.coronawarn.server.services.distribution.assembly.appconfig.structure.directory.AppConfigurationDirectory;
 import app.coronawarn.server.services.distribution.assembly.structure.WritableOnDisk;
 import app.coronawarn.server.services.distribution.assembly.structure.directory.Directory;
 import org.springframework.beans.factory.annotation.Autowired;

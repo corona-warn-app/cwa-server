@@ -17,12 +17,12 @@
  * under the License.
  */
 
-package app.coronawarn.server.services.distribution.assembly.exposureconfig;
+package app.coronawarn.server.services.distribution.assembly.appconfig;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import app.coronawarn.server.services.distribution.assembly.exposureconfig.validation.ExposureConfigurationValidator;
-import app.coronawarn.server.services.distribution.assembly.exposureconfig.validation.ValidationResult;
+import app.coronawarn.server.services.distribution.assembly.appconfig.validation.ExposureConfigurationValidator;
+import app.coronawarn.server.services.distribution.assembly.appconfig.validation.ValidationResult;
 import org.junit.jupiter.api.Test;
 
 /**

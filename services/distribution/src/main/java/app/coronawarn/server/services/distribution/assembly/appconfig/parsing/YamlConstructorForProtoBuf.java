@@ -17,7 +17,7 @@
  * under the License.
  */
 
-package app.coronawarn.server.services.distribution.assembly.exposureconfig.parsing;
+package app.coronawarn.server.services.distribution.assembly.appconfig.parsing;
 
 import java.util.Arrays;
 import org.yaml.snakeyaml.constructor.Constructor;

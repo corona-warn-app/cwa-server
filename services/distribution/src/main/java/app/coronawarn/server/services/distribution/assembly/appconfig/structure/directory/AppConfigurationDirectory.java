@@ -17,16 +17,16 @@
  * under the License.
  */
 
-package app.coronawarn.server.services.distribution.assembly.exposureconfig.structure.directory;
+package app.coronawarn.server.services.distribution.assembly.appconfig.structure.directory;
 
 import app.coronawarn.server.common.protocols.internal.RiskScoreParameters;
+import app.coronawarn.server.services.distribution.assembly.appconfig.ExposureConfigurationProvider;
+import app.coronawarn.server.services.distribution.assembly.appconfig.UnableToLoadFileException;
+import app.coronawarn.server.services.distribution.assembly.appconfig.structure.directory.decorator.AppConfigurationSigningDecorator;
+import app.coronawarn.server.services.distribution.assembly.appconfig.validation.AppConfigurationValidator;
+import app.coronawarn.server.services.distribution.assembly.appconfig.validation.ExposureConfigurationValidator;
+import app.coronawarn.server.services.distribution.assembly.appconfig.validation.ValidationResult;
 import app.coronawarn.server.services.distribution.assembly.component.CryptoProvider;
-import app.coronawarn.server.services.distribution.assembly.exposureconfig.ExposureConfigurationProvider;
-import app.coronawarn.server.services.distribution.assembly.exposureconfig.UnableToLoadFileException;
-import app.coronawarn.server.services.distribution.assembly.exposureconfig.structure.directory.decorator.AppConfigurationSigningDecorator;
-import app.coronawarn.server.services.distribution.assembly.exposureconfig.validation.AppConfigurationValidator;
-import app.coronawarn.server.services.distribution.assembly.exposureconfig.validation.ExposureConfigurationValidator;
-import app.coronawarn.server.services.distribution.assembly.exposureconfig.validation.ValidationResult;
 import app.coronawarn.server.services.distribution.assembly.structure.archive.ArchiveOnDisk;
 import app.coronawarn.server.services.distribution.assembly.structure.directory.DirectoryOnDisk;
 import app.coronawarn.server.services.distribution.assembly.structure.directory.IndexDirectoryOnDisk;

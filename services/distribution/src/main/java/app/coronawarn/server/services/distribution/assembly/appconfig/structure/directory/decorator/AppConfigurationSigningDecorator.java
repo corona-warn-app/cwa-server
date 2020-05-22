@@ -1,4 +1,4 @@
-package app.coronawarn.server.services.distribution.assembly.exposureconfig.structure.directory.decorator;
+package app.coronawarn.server.services.distribution.assembly.appconfig.structure.directory.decorator;
 
 import app.coronawarn.server.services.distribution.assembly.component.CryptoProvider;
 import app.coronawarn.server.services.distribution.assembly.structure.Writable;
