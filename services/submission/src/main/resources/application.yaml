@@ -21,7 +21,7 @@ spring:
       ddl-auto: validate
   flyway:
     enabled: true
-  locations: classpath:db/migration/postgres
+    locations: classpath:db/migration/postgres
 # Postgres configuration
   datasource:
     driver-class-name: org.postgresql.Driver
