@@ -39,6 +39,7 @@ public class YamlConstructorForProtoBuf extends Constructor {
 
   private static class ProtoBufPropertyUtils extends PropertyUtils {
 
+    @Override
     public Property getProperty(Class<?> type, String name, BeanAccess beanAccess) {
       return super.getProperty(type, transformToProtoNaming(name), beanAccess);
     }

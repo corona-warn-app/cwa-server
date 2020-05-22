@@ -86,7 +86,7 @@ public class AppConfigurationDirectory extends DirectoryOnDisk {
 
     if (validationResult.hasErrors()) {
       logger.error("App configuration file creation failed. Validation failed for {}./n{}",
-          archiveName, validationResult.toString());
+          archiveName, validationResult);
     }
 
     ArchiveOnDisk appConfigurationFile = new ArchiveOnDisk(archiveName);
