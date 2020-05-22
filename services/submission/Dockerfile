@@ -5,6 +5,7 @@ ARG WORK_DIR=/build
 COPY . ${WORK_DIR}/
 
 RUN mkdir -p /root/.m2 /usr/sap/submission-service
+# hadolint ignore=SC2086
 RUN mvn -B -DskipTests=true --file ${WORK_DIR}/pom.xml ${MAVEN_ARGS} clean install
 RUN cp ${WORK_DIR}/services/submission/target/submission-*.jar /usr/sap/submission-service/submission.jar
 
