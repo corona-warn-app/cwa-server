@@ -1,0 +1,15 @@
+syntax = "proto3";
+package app.coronawarn.server.common.protocols.internal;
+option java_package = "app.coronawarn.server.common.protocols.internal";
+option java_multiple_files = true;
+
+message RiskScoreClassification {
+  repeated RiskScoreClass riskScoreClasses = 1;
+}
+
+message RiskScoreClass {
+  string label = 1;
+  int32 minRiskLevel = 2;
+  int32 maxRiskLevel = 3;
+  string url = 4;
+}
