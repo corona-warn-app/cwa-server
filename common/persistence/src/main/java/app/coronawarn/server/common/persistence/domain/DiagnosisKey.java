@@ -56,10 +56,10 @@ public class DiagnosisKey {
   private byte[] keyData;
 
   @ValidRollingStartNumber
-  private long rollingStartNumber;
+  private int rollingStartNumber;
 
   @Min(value = 1L, message = "Rolling period must be greater than 0.")
-  private long rollingPeriod;
+  private int rollingPeriod;
 
   @Range(min = 0, max = 8, message = "Risk level must be between 0 and 8.")
   private int transmissionRiskLevel;
@@ -72,7 +72,7 @@ public class DiagnosisKey {
   /**
    * Should be called by builders.
    */
-  DiagnosisKey(byte[] keyData, long rollingStartNumber, long rollingPeriod,
+  DiagnosisKey(byte[] keyData, int rollingStartNumber, int rollingPeriod,
       int transmissionRiskLevel, long submissionTimestamp) {
     this.keyData = keyData;
     this.rollingStartNumber = rollingStartNumber;
