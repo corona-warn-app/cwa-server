@@ -57,6 +57,8 @@ public class OutputDirectoryProvider {
     logger.debug("Clearing output directory...");
     java.io.File outputDirectory = getFileOnDisk();
     FileUtils.deleteDirectory(outputDirectory);
-    outputDirectory.mkdirs();
+    if (!outputDirectory.mkdirs()) {
+      throw new IOException("Failed to clear output directory.");
+    }
   }
 }
