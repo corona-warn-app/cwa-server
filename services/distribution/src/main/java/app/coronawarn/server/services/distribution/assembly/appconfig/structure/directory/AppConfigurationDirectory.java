@@ -19,12 +19,15 @@
 
 package app.coronawarn.server.services.distribution.assembly.appconfig.structure.directory;
 
+import app.coronawarn.server.common.protocols.internal.RiskScoreClassification;
 import app.coronawarn.server.common.protocols.internal.RiskScoreParameters;
 import app.coronawarn.server.services.distribution.assembly.appconfig.ExposureConfigurationProvider;
+import app.coronawarn.server.services.distribution.assembly.appconfig.RiskScoreClassificationProvider;
 import app.coronawarn.server.services.distribution.assembly.appconfig.UnableToLoadFileException;
 import app.coronawarn.server.services.distribution.assembly.appconfig.structure.directory.decorator.AppConfigurationSigningDecorator;
 import app.coronawarn.server.services.distribution.assembly.appconfig.validation.AppConfigurationValidator;
 import app.coronawarn.server.services.distribution.assembly.appconfig.validation.ExposureConfigurationValidator;
+import app.coronawarn.server.services.distribution.assembly.appconfig.validation.RiskScoreClassificationValidator;
 import app.coronawarn.server.services.distribution.assembly.appconfig.validation.ValidationResult;
 import app.coronawarn.server.services.distribution.assembly.component.CryptoProvider;
 import app.coronawarn.server.services.distribution.assembly.structure.archive.ArchiveOnDisk;
@@ -38,8 +41,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Creates the directory structure {@code /parameters/country/:country} and writes a file containing {@link
- * RiskScoreParameters}, wrapped in a signed zip archive.
+ * Creates the directory structure {@code /parameters/country/:country} and writes two files. One containing {@link
+ * RiskScoreParameters} and the another containing the {@link RiskScoreClassification}, wrapped in a signed zip
+ * archive.
  */
 public class AppConfigurationDirectory extends DirectoryOnDisk {
 
@@ -48,6 +52,7 @@ public class AppConfigurationDirectory extends DirectoryOnDisk {
   private static final String COUNTRY_DIRECTORY = "country";
   private static final String COUNTRY = "DE";
   private static final String EXPOSURE_CONFIGURATION_FILE_NAME = "exposure_configuration";
+  private static final String RISK_SCORE_CLASSIFICATION_FILE_NAME = "risk_score_classification";
 
   private final IndexDirectoryOnDisk<String> countryDirectory =
       new IndexDirectoryOnDisk<>(COUNTRY_DIRECTORY, __ -> Set.of(COUNTRY), Object::toString);
@@ -55,7 +60,7 @@ public class AppConfigurationDirectory extends DirectoryOnDisk {
   private final CryptoProvider cryptoProvider;
 
   /**
-   * Creates an {@link AppConfigurationDirectory} for the exposure configuration.
+   * Creates an {@link AppConfigurationDirectory} for the exposure configuration and risk score classification.
    *
    * @param cryptoProvider The {@link CryptoProvider} whose artifacts to use for creating the signature.
    */
@@ -64,6 +69,8 @@ public class AppConfigurationDirectory extends DirectoryOnDisk {
 
     this.cryptoProvider = cryptoProvider;
     addExposureConfigurationIfValid();
+    addRiskScoreClassificationIfValid();
+
     this.addWritable(new IndexingDecoratorOnDisk<>(countryDirectory));
   }
 
@@ -74,6 +81,16 @@ public class AppConfigurationDirectory extends DirectoryOnDisk {
       addArchiveIfMessageValid(EXPOSURE_CONFIGURATION_FILE_NAME, exposureConfig, validator);
     } catch (UnableToLoadFileException e) {
       logger.error("Exposure configuration will not be published! Unable to read configuration file from disk.");
+    }
+  }
+
+  private void addRiskScoreClassificationIfValid() {
+    try {
+      RiskScoreClassification riskScoreClassification = RiskScoreClassificationProvider.readMasterFile();
+      AppConfigurationValidator validator = new RiskScoreClassificationValidator(riskScoreClassification);
+      addArchiveIfMessageValid(RISK_SCORE_CLASSIFICATION_FILE_NAME, riskScoreClassification, validator);
+    } catch (UnableToLoadFileException e) {
+      logger.error("Risk score classification will not be published! Unable to read configuration file from disk.");
     }
   }
 
