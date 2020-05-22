@@ -19,8 +19,8 @@
 
 package app.coronawarn.server.services.distribution.assembly.exposureconfig;
 
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.catchThrowable;
 
 import app.coronawarn.server.common.protocols.internal.RiskScoreParameters;
 import org.junit.jupiter.api.Test;
@@ -32,24 +32,28 @@ public class ExposureConfigurationProviderTest {
     RiskScoreParameters result =
         ExposureConfigurationProvider.readFile("parameters/all_ok.yaml");
 
-    assertNotNull(result, "File is null, indicating loading failed");
+    assertThat(result).withFailMessage("File is null, indicating loading failed").isNotNull();
   }
 
   @Test
   public void wrongFile() {
-    assertThrows(UnableToLoadFileException.class, () ->
-        ExposureConfigurationProvider.readFile("parameters/wrong_file.yaml"));
+    assertUnableToLoadFile("parameters/wrong_file.yaml");
   }
 
   @Test
   public void brokenSyntax() {
-    assertThrows(UnableToLoadFileException.class, () ->
-        ExposureConfigurationProvider.readFile("parameters/broken_syntax.yaml"));
+    assertUnableToLoadFile("parameters/broken_syntax.yaml");
   }
 
   @Test
   public void doesNotExist() {
-    assertThrows(UnableToLoadFileException.class, () ->
-        ExposureConfigurationProvider.readFile("file_does_not_exist_anywhere.yaml"));
+    assertUnableToLoadFile("file_does_not_exist_anywhere.yaml");
   }
+
+  private void assertUnableToLoadFile(String s) {
+    assertThat(catchThrowable(() ->
+        ExposureConfigurationProvider.readFile(s)))
+        .isInstanceOf(UnableToLoadFileException.class);
+  }
+
 }

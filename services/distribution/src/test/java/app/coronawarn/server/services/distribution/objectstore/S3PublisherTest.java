@@ -19,7 +19,8 @@
 
 package app.coronawarn.server.services.distribution.objectstore;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 import app.coronawarn.server.services.distribution.Application;
 import io.minio.errors.MinioException;
@@ -60,7 +61,7 @@ public class S3PublisherTest {
 
     List<S3Object> s3Objects = objectStoreAccess.getObjectsWithPrefix("version");
 
-    assertEquals(5, s3Objects.size());
+    assertThat(s3Objects).hasSize(5);
   }
 
   private Path getFolderAsPath(String path) throws IOException {
