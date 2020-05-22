@@ -67,6 +67,7 @@ public class SubmissionController {
   private final Integer maxNumberOfKeys;
 
   private Double fakeDelay;
+
   @Autowired
   SubmissionController(DiagnosisKeyService diagnosisKeyService, TanVerifier tanVerifier,
       SubmissionServiceConfig submissionServiceConfig) {

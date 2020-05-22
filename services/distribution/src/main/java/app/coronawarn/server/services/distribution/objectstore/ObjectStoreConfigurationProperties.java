@@ -20,7 +20,9 @@
 package app.coronawarn.server.services.distribution.objectstore;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.stereotype.Component;
 
+@Component
 @ConfigurationProperties(prefix = "cwa.objectstore")
 public class ObjectStoreConfigurationProperties {
 

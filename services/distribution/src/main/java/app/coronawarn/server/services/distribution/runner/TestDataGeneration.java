@@ -77,6 +77,12 @@ public class TestDataGeneration implements ApplicationRunner {
   // The rolling start number is counted in 10 minute intervals since epoch
   private static final long TEN_MINUTES_INTERVAL_SECONDS = TimeUnit.MINUTES.toSeconds(10);
 
+  /**
+   * AllArgs Constructor.
+   *
+   * @param diagnosisKeyService DiagnosisKeyService Bean
+   * @param distributionServiceConfig Distribution Service Specific Configuration
+   */
   @Autowired
   public TestDataGeneration(DiagnosisKeyService diagnosisKeyService,
       DistributionServiceConfig distributionServiceConfig) {

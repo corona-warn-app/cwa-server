@@ -48,6 +48,12 @@ public class RetentionPolicy implements ApplicationRunner {
 
   private final Integer retentionDays;
 
+  /**
+   * AllArgs Constructor.
+   * @param diagnosisKeyService DiagnosisKeyService Bean
+   * @param applicationContext ApplicationContext
+   * @param distributionServiceConfig Distribution Service Specific Configuration
+   */
   @Autowired
   public RetentionPolicy(DiagnosisKeyService diagnosisKeyService,
       ApplicationContext applicationContext,

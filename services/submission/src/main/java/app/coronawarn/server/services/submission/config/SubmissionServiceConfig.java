@@ -5,7 +5,6 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.stereotype.Component;
 
 @Component
-@EnableConfigurationProperties
 @ConfigurationProperties(prefix = "services.submission")
 public class SubmissionServiceConfig {
 
