@@ -12,9 +12,10 @@
 
   <groupId>org.opencwa</groupId>
   <artifactId>persistence</artifactId>
-  <version>0.4.1-SNAPSHOT</version>
+  <version>${revision}</version>
 
   <properties>
+    <revision>0.4.1-SNAPSHOT</revision>
     <java.version>11</java.version>
     <maven.compiler.source>11</maven.compiler.source>
     <maven.compiler.target>11</maven.compiler.target>
@@ -27,7 +28,7 @@
     <dependency>
       <groupId>org.opencwa</groupId>
       <artifactId>protocols</artifactId>
-      <version>0.4.1-SNAPSHOT</version>
+      <version>${project.version}</version>
     </dependency>
     <dependency>
       <groupId>org.springframework.boot</groupId>
