@@ -20,11 +20,24 @@
 package app.coronawarn.server.services.distribution.assembly.exposureconfig.validation;
 
 import java.util.HashSet;
+import java.util.Objects;
+import java.util.Set;
 
 /**
  * The result of a validation run for Exposure Configurations. Find details about possible errors in this collection.
  */
-public class ValidationResult extends HashSet<ValidationError> {
+public class ValidationResult {
+
+  private Set<ValidationError> errors = new HashSet<>();
+
+  public boolean add(ValidationError error) {
+    return this.errors.add(error);
+  }
+
+  @Override
+  public String toString() {
+    return errors.toString();
+  }
 
   /**
    * Checks whether this validation result instance has at least one error.
@@ -32,7 +45,7 @@ public class ValidationResult extends HashSet<ValidationError> {
    * @return true if yes, false otherwise
    */
   public boolean hasErrors() {
-    return !this.isEmpty();
+    return !this.errors.isEmpty();
   }
 
   /**
@@ -42,5 +55,22 @@ public class ValidationResult extends HashSet<ValidationError> {
    */
   public boolean isSuccessful() {
     return !hasErrors();
+  }
+
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) {
+      return true;
+    }
+    if (o == null || getClass() != o.getClass()) {
+      return false;
+    }
+    ValidationResult that = (ValidationResult) o;
+    return Objects.equals(errors, that.errors);
+  }
+
+  @Override
+  public int hashCode() {
+    return Objects.hash(errors);
   }
 }
