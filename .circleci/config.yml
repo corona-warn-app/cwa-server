@@ -32,7 +32,7 @@ jobs:
           path: ~/test-results/junit
       - run:
           name: Analyze on SonarCloud
-          command: mvn --batch-mode verify sonar:sonar
+          command: mvn --batch-mode verify sonar:sonar --fail-never
 
 workflows:
   main:

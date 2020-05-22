@@ -46,8 +46,8 @@ The mobile application will use a CDN for fetching files, which mirrors all file
 Note: The verification backend design will be available soon as discussions are ongoing.
 
 The verification backend supports the user's journey beginning at scanning the QR code printed
-on the COVID-19 test strip until the upload of diagnosis keys when the user was tested positive. Testing
-labs will update the Verification Backend when a COVID-19 test result is positive. Since the QR code
+on the documentation of the SARS-CoV-2 test until the upload of diagnosis keys when the user was tested positive. Testing
+labs will update the Verification Backend when a SARS-CoV-2 test result is positive. Since the QR code
 is linked to a test, the mobile application will be able to fetch a test-positive notification from
 the Verification Backend, along with a TAN. The TAN will be used as an authorization token when
 the user uploads the diagnosis keys of the past 14 days.
@@ -131,7 +131,7 @@ the clients will fetch their data from. There are three types of files.
 
 #### Key Export
 
-Key Export files are files, which hold published diagnosis keys from COVID-19 positive tested users.
+Key Export files are files, which hold published diagnosis keys from SARS-CoV-2 positive tested users.
 These files are based on the specification of Google/Apple and are generated in regular intervals.
 Each interval generates a `.zip` file, containing two files:
 

@@ -19,40 +19,35 @@
 
 package app.coronawarn.server.services.distribution.assembly.structure.directory;
 
-import app.coronawarn.server.services.distribution.assembly.structure.functional.DirectoryFunction;
-import app.coronawarn.server.services.distribution.assembly.structure.functional.FileFunction;
-import app.coronawarn.server.services.distribution.assembly.structure.functional.Formatter;
+import app.coronawarn.server.services.distribution.assembly.structure.Writable;
 import app.coronawarn.server.services.distribution.assembly.structure.util.ImmutableStack;
+import app.coronawarn.server.services.distribution.assembly.structure.util.functional.Formatter;
+import app.coronawarn.server.services.distribution.assembly.structure.util.functional.WritableFunction;
 import java.util.Set;
 import java.util.Stack;
 
 /**
- * A meta directory that maps its on-disk subdirectories to some list of elements. This list of elements is determined
- * by a {@link FileFunction}.
+ * A "meta {@link Directory directory}" that maps its on-disk subdirectories to some list of elements. This list of
+ * elements is determined by a {@link WritableFunction}.
  *
+ * @param <W> The specific type of {@link Writable} that this {@link IndexDirectory} can be a child of.
  * @param <T> The type of the elements in the index.
  */
-public interface IndexDirectory<T> extends Directory {
+public interface IndexDirectory<T, W extends Writable<W>> extends Directory<W> {
 
   /**
-   * Adds a file under the name {@code name}, whose content is calculated by the {@code fileFunction} to each one of the
-   * directories created from the index. The {@code fileFunction} calculates the file content from a {@link
-   * java.util.Stack} of parent {@link IndexDirectoryImpl} indices. File content calculation happens on {@link
-   * DirectoryImpl#write}.
+   * Adds a writable under the name {@code name}, whose content is calculated by the {@code writableFunction} to each
+   * one of the directories created from the index. The {@code fileFunction} calculates the file content from a {@link
+   * java.util.Stack} of parent {@link IndexDirectoryOnDisk} indices. File content calculation happens on {@link
+   * DirectoryOnDisk#write}.
    *
-   * @param fileFunction A function that can calculate the content of the file, based on
+   * @param writableFunction A function that can output a new writable.
    */
-  void addFileToAll(FileFunction fileFunction);
+  void addWritableToAll(WritableFunction<W> writableFunction);
 
   /**
-   * Adds a {@link DirectoryImpl} to each one of the directories created from the index. Analogous to {@link
-   * IndexDirectory#addFileToAll}.
-   */
-  void addDirectoryToAll(DirectoryFunction directoryFunction);
-
-  /**
-   * Calls the {@link app.coronawarn.server.services.distribution.assembly.structure.functional.IndexFunction} with the
-   * {@code indices} to calculate and return the elements of the index of this {@link IndexDirectory}.
+   * Calls the {@link app.coronawarn.server.services.distribution.assembly.structure.util.functional.IndexFunction} with
+   * the {@code indices} to calculate and return the elements of the index of this {@link IndexDirectory}.
    *
    * @param indices A {@link Stack} of parameters from all {@link IndexDirectory IndexDirectories} further up in the
    *                hierarchy. The Stack may contain different types, depending on the types {@code T} of {@link

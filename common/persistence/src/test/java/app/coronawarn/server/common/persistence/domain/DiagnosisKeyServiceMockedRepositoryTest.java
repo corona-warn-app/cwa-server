@@ -17,7 +17,7 @@
 package app.coronawarn.server.common.persistence.domain;
 
 import static app.coronawarn.server.common.persistence.service.DiagnosisKeyServiceTestHelper.assertDiagnosisKeysEqual;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.when;
 
 import app.coronawarn.server.common.persistence.repository.DiagnosisKeyRepository;
@@ -55,7 +55,7 @@ public class DiagnosisKeyServiceMockedRepositoryTest {
     mockInvalidKeyInDb(expKeys);
 
     List<DiagnosisKey> actualKeys = diagnosisKeyService.getDiagnosisKeys();
-    assertTrue(actualKeys.isEmpty());
+    assertThat(actualKeys.isEmpty()).isTrue();
   }
 
   @Test
