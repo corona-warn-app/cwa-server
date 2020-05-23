@@ -78,10 +78,7 @@ public class TestDataGeneration implements ApplicationRunner {
   private static final long TEN_MINUTES_INTERVAL_SECONDS = TimeUnit.MINUTES.toSeconds(10);
 
   /**
-   * AllArgs Constructor.
-   *
-   * @param diagnosisKeyService DiagnosisKeyService Bean
-   * @param distributionServiceConfig Distribution Service Specific Configuration
+   * Creates a new TestDataGeneration runner.
    */
   @Autowired
   public TestDataGeneration(DiagnosisKeyService diagnosisKeyService,

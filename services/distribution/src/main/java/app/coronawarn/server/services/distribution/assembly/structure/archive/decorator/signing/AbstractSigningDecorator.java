@@ -58,13 +58,13 @@ public abstract class AbstractSigningDecorator<W extends Writable<W>> extends Ar
 
   protected TEKSignatureList createTemporaryExposureKeySignatureList() {
     return TEKSignatureList.newBuilder()
-      .addSignatures(TEKSignature.newBuilder()
-        .setSignatureInfo(distributionServiceConfig.getSignature().getSignatureInfo())
-        .setBatchNum(getBatchNum())
-        .setBatchSize(getBatchSize())
-        .setSignature(ByteString.copyFrom(createSignature(cryptoProvider)))
-        .build())
-      .build();
+        .addSignatures(TEKSignature.newBuilder()
+            .setSignatureInfo(distributionServiceConfig.getSignature().getSignatureInfo())
+            .setBatchNum(getBatchNum())
+            .setBatchSize(getBatchSize())
+            .setSignature(ByteString.copyFrom(createSignature(cryptoProvider)))
+            .build())
+        .build();
   }
 
   private byte[] createSignature(CryptoProvider cryptoProvider) {
