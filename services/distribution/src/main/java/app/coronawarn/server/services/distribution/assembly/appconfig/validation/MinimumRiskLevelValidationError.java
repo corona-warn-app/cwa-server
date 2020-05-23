@@ -21,6 +21,9 @@ package app.coronawarn.server.services.distribution.assembly.appconfig.validatio
 
 import java.util.Objects;
 
+/**
+ * Represents a minimum risk level error, in case the value is out of bounds.
+ */
 public class MinimumRiskLevelValidationError implements ValidationError {
 
   private int riskLevelProvided;
