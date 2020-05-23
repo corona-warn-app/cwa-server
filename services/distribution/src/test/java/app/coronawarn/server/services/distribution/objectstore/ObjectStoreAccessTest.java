@@ -46,7 +46,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 @ContextConfiguration(classes = {Application.class},
     initializers = ConfigFileApplicationContextInitializer.class)
 @Tag("s3-integration")
-public class ObjectStoreAccessTest {
+class ObjectStoreAccessTest {
 
   private static final String testRunId = "testing/cwa/" + UUID.randomUUID().toString() + "/";
 
@@ -72,14 +72,14 @@ public class ObjectStoreAccessTest {
   }
 
   @Test
-  public void defaultIsEmptyTrue() throws MinioException, GeneralSecurityException, IOException {
+  void defaultIsEmptyTrue() throws MinioException, GeneralSecurityException, IOException {
     var files = objectStoreAccess.getObjectsWithPrefix(testRunId);
 
     assertThat(files).withFailMessage("Content should be empty").isEmpty();
   }
 
   @Test
-  public void fetchFilesNothingFound()
+  void fetchFilesNothingFound()
       throws MinioException, GeneralSecurityException, IOException {
     var files = objectStoreAccess.getObjectsWithPrefix("THIS_PREFIX_DOES_NOT_EXIST");
 
@@ -87,7 +87,7 @@ public class ObjectStoreAccessTest {
   }
 
   @Test
-  public void pushTestFileAndDelete() throws IOException, GeneralSecurityException, MinioException {
+  void pushTestFileAndDelete() throws IOException, GeneralSecurityException, MinioException {
     LocalFile localFile = new LocalGenericFile(getExampleFile(), getRootTestFolder());
     String testFileTargetKey = testRunId + localFile.getS3Key();
 

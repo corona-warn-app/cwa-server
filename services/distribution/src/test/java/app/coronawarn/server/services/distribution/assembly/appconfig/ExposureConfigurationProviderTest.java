@@ -25,10 +25,10 @@ import static org.assertj.core.api.Assertions.catchThrowable;
 import app.coronawarn.server.common.protocols.internal.RiskScoreParameters;
 import org.junit.jupiter.api.Test;
 
-public class ExposureConfigurationProviderTest {
+class ExposureConfigurationProviderTest {
 
   @Test
-  public void okFile() throws UnableToLoadFileException {
+  void okFile() throws UnableToLoadFileException {
     RiskScoreParameters result =
         ExposureConfigurationProvider.readFile("parameters/all_ok.yaml");
 
@@ -36,17 +36,17 @@ public class ExposureConfigurationProviderTest {
   }
 
   @Test
-  public void wrongFile() {
+  void wrongFile() {
     assertUnableToLoadFile("parameters/wrong_file.yaml");
   }
 
   @Test
-  public void brokenSyntax() {
+  void brokenSyntax() {
     assertUnableToLoadFile("parameters/broken_syntax.yaml");
   }
 
   @Test
-  public void doesNotExist() {
+  void doesNotExist() {
     assertUnableToLoadFile("file_does_not_exist_anywhere.yaml");
   }
 
