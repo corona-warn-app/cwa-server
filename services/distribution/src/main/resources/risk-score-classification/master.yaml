@@ -1,0 +1,27 @@
+# This is the Risk Score Classification master file which partitions the risk
+# score value range (0-255) into distinct risk classes that will be used to by
+# the app in order to present the correct risk classification in a user
+# friendly manner, based on the underlying total risk score, to the user.
+#
+# The risk classes must not overlap and
+# cover the full risk score value range (0-255).
+#
+# Change this file with caution!
+
+risk_classes:
+  -
+    label: "LOW"
+    min: 0
+    max: 100
+    url: "https://www..."
+  -
+    label: "MID"
+    min: 101
+    max: 200
+    url: "https://www..."
+  -
+    label: "HIGH"
+    min: 201
+    max: 255
+    url: "https://www..."
+    

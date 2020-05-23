@@ -17,11 +17,11 @@
  * under the License.
  */
 
-package app.coronawarn.server.services.distribution.assembly.exposureconfig.validation;
+package app.coronawarn.server.services.distribution.assembly.appconfig.validation;
 
 import app.coronawarn.server.common.protocols.internal.RiskLevel;
 import app.coronawarn.server.common.protocols.internal.RiskScoreParameters;
-import app.coronawarn.server.services.distribution.assembly.exposureconfig.validation.WeightValidationError.ErrorType;
+import app.coronawarn.server.services.distribution.assembly.appconfig.validation.WeightValidationError.ErrorType;
 import java.beans.BeanInfo;
 import java.beans.IntrospectionException;
 import java.beans.Introspector;
@@ -36,11 +36,9 @@ import java.util.Arrays;
  * <br>
  * Weights must be in the range of 0.001 to 100.<br> Scores must be in the range of 1 to 8.<br>
  */
-public class ExposureConfigurationValidator {
+public class ExposureConfigurationValidator extends AppConfigurationValidator {
 
   private final RiskScoreParameters config;
-
-  private ValidationResult errors;
 
   public ExposureConfigurationValidator(RiskScoreParameters config) {
     this.config = config;
@@ -52,6 +50,7 @@ public class ExposureConfigurationValidator {
    * @return the ValidationResult instance, containing information about possible errors.
    * @throws ValidationExecutionException in case the validation could not be performed
    */
+  @Override
   public ValidationResult validate() {
     this.errors = new ValidationResult();
 
