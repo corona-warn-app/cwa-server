@@ -136,8 +136,12 @@ public class DiagnosisKey {
    *
    * @param daysToRetain the number of days before a key is outdated
    * @return true, if the rolling start number is in the time span between now, and the given days to retain
+   * @throws IllegalArgumentException if {@code daysToRetain} is negative.
    */
-  public boolean isYoungerThanRetentionThreshold(long daysToRetain) {
+  public boolean isYoungerThanRetentionThreshold(int daysToRetain) {
+    if (daysToRetain < 0) {
+      throw new IllegalArgumentException("Retention threshold must be greater or equal to 0.");
+    }
     long threshold = LocalDateTime
         .ofInstant(Instant.now(), UTC)
         .minusDays(daysToRetain)

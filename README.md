@@ -51,7 +51,7 @@ If you want to use Docker-based deployment, you need to install Docker on your l
 For your convenience, a full setup including the generation of test data has been prepared using [Docker Compose](https://docs.docker.com/compose/reference/overview/). To build the backend services, run ```docker-compose build``` in the repository's root directory. A default configuration file can be found under ```.env```in the root folder of the repository. The default values for the local Postgres and Zenko Cloudserver should be changed in this file before docker-compose is run.
 
 Once the services are built, you can start the whole backend using ```docker-compose up```.
-The distribution service runs once and then finishes. If you want to trigger additional distribution runs, run ```docker-compose start distribution```.
+The distribution service runs once and then finishes. If you want to trigger additional distribution runs, run ```docker-compose run distribution```.
 
 The docker-compose contains the following services:
 
@@ -62,6 +62,10 @@ distribution  | The Corona-Warn-App distribution service                        
 postgres      | A [postgres] database installation                                                          | postgres:8001 <br> Username: postgres <br> Password: postgres
 pgadmin       | A [pgadmin](https://www.pgadmin.org/) installation for the postgres database                | http://localhost:8002 <br> Username: user@domain.com <br> Password: password
 cloudserver   | [Zenko CloudServer] is a S3-compliant object store  | http://localhost:8003/ <br> Access key: accessKey1 <br> Secret key: verySecretKey1
+
+##### Known Limitation
+
+The docker-compose runs into a timing issue in some cases when the create-bucket target runs before the objectstore is available. The mitigation is easy: after running ```docker-compose up``` wait until all components are initialized and running. Afterwards, trigger the ```create-bucket``` service manually by running ```docker-compose run create-bucket```. If you want to trigger distribution runs, run ```docker-compose run distribution```. The timing issue will be fixed in a future release.
 
 #### Running Single CWA Services Using Docker
 
