@@ -13,7 +13,7 @@ import java.util.stream.Collectors;
 
 public class HourIndexingDecorator extends IndexingDecoratorOnDisk<LocalDateTime> {
 
-  private DistributionServiceConfig distributionServiceConfig;
+  private final DistributionServiceConfig distributionServiceConfig;
 
   public HourIndexingDecorator(DiagnosisKeysHourDirectory directory,
       DistributionServiceConfig distributionServiceConfig) {

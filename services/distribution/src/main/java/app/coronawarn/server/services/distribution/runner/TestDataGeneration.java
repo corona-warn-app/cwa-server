@@ -102,15 +102,20 @@ public class TestDataGeneration implements ApplicationRunner {
     logger.debug("Querying diagnosis keys from the database...");
     List<DiagnosisKey> existingDiagnosisKeys = diagnosisKeyService.getDiagnosisKeys();
 
-    // Timestamps in hours since epoch
-    long startTimestamp = getGeneratorStartTimestamp(existingDiagnosisKeys);
-    long endTimestamp = getGeneratorEndTimestamp();
+    // Timestamps in hours since epoch. Test data generation starts one hour after the latest diagnosis key in the
+    // database and ends one hour before the current one.
+    long startTimestamp = getGeneratorStartTimestamp(existingDiagnosisKeys) + 1; // Inclusive
+    long endTimestamp = getGeneratorEndTimestamp(); // Exclusive
 
     // Add the startTimestamp to the seed. Otherwise we would generate the same data every hour.
     random.setSeed(this.config.getSeed() + startTimestamp);
     poisson =
         new PoissonDistribution(random, this.config.getExposuresPerHour(), POISSON_EPSILON, POISSON_MAX_ITERATIONS);
 
+    if (startTimestamp == endTimestamp) {
+      logger.debug("Skipping test data generation, latest diagnosis keys are still up-to-date.");
+      return;
+    }
     logger.debug("Generating diagnosis keys between {} and {}...", startTimestamp, endTimestamp);
     List<DiagnosisKey> newDiagnosisKeys = LongStream.range(startTimestamp, endTimestamp)
         .mapToObj(submissionTimestamp -> IntStream.range(0, poisson.sample())

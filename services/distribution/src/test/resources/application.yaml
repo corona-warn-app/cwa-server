@@ -9,6 +9,8 @@ services:
   distribution:
     output-file-name: index
     retention-days: 14
+    include-incomplete-days: false
+    include-incomplete-hours: false
     paths:
       output: out
       privatekey: classpath:certificates/client/private.pem

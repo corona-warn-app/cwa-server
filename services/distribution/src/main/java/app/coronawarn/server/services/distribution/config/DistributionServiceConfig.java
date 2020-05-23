@@ -2,7 +2,6 @@ package app.coronawarn.server.services.distribution.config;
 
 import app.coronawarn.server.common.protocols.external.exposurenotification.SignatureInfo;
 import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -361,12 +360,12 @@ public class DistributionServiceConfig {
     public SignatureInfo getSignatureInfo() {
       // TODO cwa-server#183 cwa-server#207 cwa-server#238
       return SignatureInfo.newBuilder()
-        .setAppBundleId(this.getAppBundleId())
-        .setAndroidPackage(this.getAndroidPackage())
-        .setVerificationKeyVersion(this.getVerificationKeyVersion())
-        .setVerificationKeyId(this.getVerificationKeyId())
-        .setSignatureAlgorithm(this.getAlgorithmOid())
-        .build();
+          .setAppBundleId(this.getAppBundleId())
+          .setAndroidPackage(this.getAndroidPackage())
+          .setVerificationKeyVersion(this.getVerificationKeyVersion())
+          .setVerificationKeyId(this.getVerificationKeyId())
+          .setSignatureAlgorithm(this.getAlgorithmOid())
+          .build();
     }
   }
 
