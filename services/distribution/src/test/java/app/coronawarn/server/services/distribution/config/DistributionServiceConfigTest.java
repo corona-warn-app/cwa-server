@@ -21,7 +21,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 @ExtendWith(SpringExtension.class)
 @EnableConfigurationProperties(value = DistributionServiceConfig.class)
 @TestPropertySource("classpath:application.properties")
- class DistributionServiceConfigTest {
+class DistributionServiceConfigTest {
 
   @Autowired
   private DistributionServiceConfig dsc;

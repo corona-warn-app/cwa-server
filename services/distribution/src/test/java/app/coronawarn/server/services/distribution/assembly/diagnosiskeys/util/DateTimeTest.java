@@ -37,16 +37,16 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 
- class DateTimeTest {
+class DateTimeTest {
 
   @Test
-   void testGetDatesForEmptyList() {
+  void testGetDatesForEmptyList() {
     assertThat(DateTime.getDates(emptyList())).isEmpty();
   }
 
   @ParameterizedTest
   @MethodSource("createDiagnosisKeysForEpochDay0")
-   void testGetDatesForEpochDay0(DiagnosisKey diagnosisKey) {
+  void testGetDatesForEpochDay0(DiagnosisKey diagnosisKey) {
     var expDates = Set.of(LocalDate.ofEpochDay(0L));
     var actDates = DateTime.getDates(Set.of(diagnosisKey));
 
@@ -65,7 +65,7 @@ import org.junit.jupiter.params.provider.MethodSource;
   }
 
   @Test
-   void testGetDatesFor2Days() {
+  void testGetDatesFor2Days() {
     var diagnosisKeys = Set.of(
         buildDiagnosisKeyForDateTime(LocalDateTime.of(1970, 1, 1, 1, 0)),
         buildDiagnosisKeyForDateTime(LocalDateTime.of(1970, 1, 2, 1, 0)));
@@ -76,7 +76,7 @@ import org.junit.jupiter.params.provider.MethodSource;
 
   @ParameterizedTest
   @MethodSource("createDiagnosisKeysForEpochDay1And3")
-   void testGetHoursReturnsHoursOnlyForSpecifiedDate(Set<DiagnosisKey> diagnosisKeys) {
+  void testGetHoursReturnsHoursOnlyForSpecifiedDate(Set<DiagnosisKey> diagnosisKeys) {
     var expHours = Set.of(
         LocalDateTime.of(1970, 1, 2, 0, 0),
         LocalDateTime.of(1970, 1, 2, 5, 0));

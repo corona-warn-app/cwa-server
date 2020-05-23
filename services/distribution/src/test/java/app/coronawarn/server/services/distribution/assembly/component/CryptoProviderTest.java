@@ -35,13 +35,13 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration(classes = {CryptoProvider.class},
     initializers = ConfigFileApplicationContextInitializer.class)
- class CryptoProviderTest {
+class CryptoProviderTest {
 
   @Autowired
   CryptoProvider cryptoProvider;
 
   @Test
-   void constructorInitializesCryptoArtifacts() {
+  void constructorInitializesCryptoArtifacts() {
     assertThat(cryptoProvider.getPrivateKey()).isNotNull();
     assertThat(cryptoProvider.getCertificate()).isNotNull();
   }

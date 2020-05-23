@@ -27,7 +27,7 @@ import app.coronawarn.server.services.distribution.assembly.structure.util.Immut
 import java.io.File;
 import org.junit.jupiter.api.Test;
 
- class WritableTest {
+class WritableTest {
 
   private static class TestWritable extends WritableOnDisk {
 
@@ -45,14 +45,14 @@ import org.junit.jupiter.api.Test;
   }
 
   @Test
-   void checkGetName() {
+  void checkGetName() {
     String name = "Test";
     WritableOnDisk writable = new TestWritable(name);
     assertThat(writable.getName()).isEqualTo(name);
   }
 
   @Test
-   void checkGetAndSetParent() {
+  void checkGetAndSetParent() {
     DirectoryOnDisk parent = new DirectoryOnDisk("Parent");
     WritableOnDisk child = new TestWritable("Child");
     child.setParent(parent);
@@ -60,14 +60,14 @@ import org.junit.jupiter.api.Test;
   }
 
   @Test
-   void checkGetFileOnDiskForRoot() {
+  void checkGetFileOnDiskForRoot() {
     File file = new File("Root");
     DirectoryOnDisk parent = new DirectoryOnDisk(file);
     assertThat(parent.getFileOnDisk()).isEqualTo(file);
   }
 
   @Test
-   void checkGetFileOnDiskRelativeToRoot() {
+  void checkGetFileOnDiskRelativeToRoot() {
     File file = new File("Root");
     DirectoryOnDisk parent = new DirectoryOnDisk(file);
     WritableOnDisk child = new TestWritable("Child");
@@ -76,7 +76,7 @@ import org.junit.jupiter.api.Test;
   }
 
   @Test
-   void checkGetFileOnDiskThrowsIfNoParent() {
+  void checkGetFileOnDiskThrowsIfNoParent() {
     assertThat(catchThrowable(new DirectoryOnDisk("Orphan")::getFileOnDisk))
         .isInstanceOf(NullPointerException.class);
   }

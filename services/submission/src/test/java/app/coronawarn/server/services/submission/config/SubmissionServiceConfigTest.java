@@ -18,7 +18,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 @ExtendWith(SpringExtension.class)
 @EnableConfigurationProperties(value = SubmissionServiceConfig.class)
 @TestPropertySource("classpath:application-config-test.properties")
- class SubmissionServiceConfigTest {
+class SubmissionServiceConfigTest {
 
   @Autowired
   private SubmissionServiceConfig config;

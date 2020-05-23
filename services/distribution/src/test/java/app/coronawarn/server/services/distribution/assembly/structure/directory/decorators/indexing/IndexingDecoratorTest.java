@@ -43,7 +43,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.rules.TemporaryFolder;
 
- class IndexingDecoratorTest {
+class IndexingDecoratorTest {
 
   @Rule
   private TemporaryFolder outputFolder = new TemporaryFolder();
@@ -68,7 +68,7 @@ import org.junit.rules.TemporaryFolder;
   }
 
   @Test
-   void checkWritesIndexFile() throws IOException, ParseException {
+  void checkWritesIndexFile() throws IOException, ParseException {
     java.io.File actualIndexDirectoryFile = Objects.requireNonNull(outputFile.listFiles())[0];
     java.io.File actualPhysicalFile = Stream.of(actualIndexDirectoryFile)
         .map(File::listFiles)

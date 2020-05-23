@@ -33,7 +33,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.rules.TemporaryFolder;
 
- class FileTest {
+class FileTest {
 
   private final byte[] bytes = "World".getBytes();
   private FileOnDisk file;
@@ -48,24 +48,24 @@ import org.junit.rules.TemporaryFolder;
   }
 
   @Test
-   void checkGetBytes() {
+  void checkGetBytes() {
     assertThat(file.getBytes()).isEqualTo(bytes);
   }
 
   @Test
-   void checkSetBytes() {
+  void checkSetBytes() {
     byte[] bytes = "Goodbye".getBytes();
     file.setBytes(bytes);
     assertThat(file.getBytes()).isEqualTo(bytes);
   }
 
   @Test
-   void checkWriteThrowsWithoutParent() {
+  void checkWriteThrowsWithoutParent() {
     assertThat(catchThrowable(file::write)).isInstanceOf(NullPointerException.class);
   }
 
   @Test
-   void checkWrite() throws IOException {
+  void checkWrite() throws IOException {
     java.io.File outputFile = outputFolder.newFolder();
     Directory<WritableOnDisk> directory = new DirectoryOnDisk(outputFile);
 

@@ -34,7 +34,7 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 
 
- class DiagnosisKeyTest {
+class DiagnosisKeyTest {
 
   final static byte[] expKeyData = "testKey111111111".getBytes(Charset.defaultCharset());
   final static long expRollingStartNumber = 1L;
@@ -45,27 +45,27 @@ import org.junit.jupiter.params.provider.ValueSource;
       expRollingPeriod, expTransmissionRiskLevel, expSubmissionTimestamp);
 
   @Test
-   void testRollingStartNumberGetter() {
+  void testRollingStartNumberGetter() {
     assertThat(diagnosisKey.getRollingStartNumber()).isEqualTo(expRollingStartNumber);
   }
 
   @Test
-   void testRollingPeriodGetter() {
+  void testRollingPeriodGetter() {
     assertThat(diagnosisKey.getRollingPeriod()).isEqualTo(expRollingPeriod);
   }
 
   @Test
-   void testTransmissionRiskLevelGetter() {
+  void testTransmissionRiskLevelGetter() {
     assertThat(diagnosisKey.getTransmissionRiskLevel()).isEqualTo(expTransmissionRiskLevel);
   }
 
   @Test
-   void testSubmissionTimestampGetter() {
+  void testSubmissionTimestampGetter() {
     assertThat(diagnosisKey.getSubmissionTimestamp()).isEqualTo(expSubmissionTimestamp);
   }
 
   @Test
-   void testIsYoungerThanRetentionThreshold() {
+  void testIsYoungerThanRetentionThreshold() {
     long fiveDaysAgo = LocalDateTime
         .ofInstant(Instant.now(), UTC)
         .minusDays(5).minusMinutes(10)
@@ -81,7 +81,7 @@ import org.junit.jupiter.params.provider.ValueSource;
   @DisplayName("Test retention threshold accepts positive value")
   @ValueSource(ints = {0, 1, Integer.MAX_VALUE})
   @ParameterizedTest
-   void testRetentionThresholdAcceptsPositiveValue(int daysToRetain) {
+  void testRetentionThresholdAcceptsPositiveValue(int daysToRetain) {
     assertThatCode(() -> diagnosisKey.isYoungerThanRetentionThreshold(daysToRetain))
         .doesNotThrowAnyException();
   }
@@ -89,7 +89,7 @@ import org.junit.jupiter.params.provider.ValueSource;
   @DisplayName("Test retention threshold rejects negative value")
   @ValueSource(ints = {Integer.MIN_VALUE, -1})
   @ParameterizedTest
-   void testRetentionThresholdRejectsNegativeValue(int daysToRetain) {
+  void testRetentionThresholdRejectsNegativeValue(int daysToRetain) {
     assertThatIllegalArgumentException()
         .isThrownBy(() -> diagnosisKey.isYoungerThanRetentionThreshold(daysToRetain));
   }
