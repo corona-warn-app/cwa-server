@@ -17,7 +17,7 @@
  * under the License.
  */
 
-package app.coronawarn.server.services.distribution.assembly.exposureconfig.validation;
+package app.coronawarn.server.services.distribution.assembly.appconfig.validation;
 
 import java.util.Objects;
 

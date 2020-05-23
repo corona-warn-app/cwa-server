@@ -17,7 +17,7 @@
  * under the License.
  */
 
-package app.coronawarn.server.services.distribution.assembly.exposureconfig.validation;
+package app.coronawarn.server.services.distribution.assembly.appconfig.validation;
 
 import java.util.HashSet;
 import java.util.Objects;
@@ -40,11 +40,6 @@ public class ValidationResult {
     return this.errors.add(error);
   }
 
-  @Override
-  public String toString() {
-    return errors.toString();
-  }
-
   /**
    * Checks whether this validation result instance has at least one error.
    *
@@ -54,13 +49,9 @@ public class ValidationResult {
     return !this.errors.isEmpty();
   }
 
-  /**
-   * Checks whether this validation result instance has no errors.
-   *
-   * @return true if yes, false otherwise
-   */
-  public boolean isSuccessful() {
-    return !hasErrors();
+  @Override
+  public String toString() {
+    return errors.toString();
   }
 
   @Override
