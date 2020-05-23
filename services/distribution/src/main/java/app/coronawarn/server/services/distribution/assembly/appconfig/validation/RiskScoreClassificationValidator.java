@@ -33,7 +33,7 @@ import java.net.URL;
 /**
  * The RiskScoreClassificationValidator validates the values of an associated {@link RiskScoreClassification} instance.
  */
-public class RiskScoreClassificationValidator extends AppConfigurationValidator {
+public class RiskScoreClassificationValidator extends ConfigurationValidator {
 
   /**
    * This defines the number of possible values (0 ... RISK_SCORE_VALUE_RANGE - 1) for the total risk score.
