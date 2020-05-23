@@ -24,7 +24,7 @@ import app.coronawarn.server.common.protocols.internal.RiskScoreParameters;
 import app.coronawarn.server.services.distribution.assembly.appconfig.ExposureConfigurationProvider;
 import app.coronawarn.server.services.distribution.assembly.appconfig.RiskScoreClassificationProvider;
 import app.coronawarn.server.services.distribution.assembly.appconfig.UnableToLoadFileException;
-import app.coronawarn.server.services.distribution.assembly.appconfig.structure.directory.decorator.AppConfigurationSigningDecorator;
+import app.coronawarn.server.services.distribution.assembly.appconfig.structure.archive.decorator.signing.AppConfigurationSigningDecorator;
 import app.coronawarn.server.services.distribution.assembly.appconfig.validation.AppConfigurationValidator;
 import app.coronawarn.server.services.distribution.assembly.appconfig.validation.ExposureConfigurationValidator;
 import app.coronawarn.server.services.distribution.assembly.appconfig.validation.RiskScoreClassificationValidator;

@@ -17,7 +17,7 @@
  * under the License.
  */
 
-package app.coronawarn.server.services.distribution.assembly.diagnosiskeys.structure.directory.decorator;
+package app.coronawarn.server.services.distribution.assembly.diagnosiskeys.structure.archive.decorator.singing;
 
 import app.coronawarn.server.services.distribution.assembly.component.CryptoProvider;
 import app.coronawarn.server.services.distribution.assembly.structure.Writable;
