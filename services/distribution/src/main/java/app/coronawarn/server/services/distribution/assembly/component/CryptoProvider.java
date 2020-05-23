@@ -23,13 +23,14 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.security.KeyPair;
 import java.security.PrivateKey;
 import java.security.Security;
 import java.security.cert.Certificate;
 import java.security.cert.CertificateException;
 import java.security.cert.CertificateFactory;
-import org.bouncycastle.asn1.pkcs.PrivateKeyInfo;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
+import org.bouncycastle.openssl.PEMKeyPair;
 import org.bouncycastle.openssl.PEMParser;
 import org.bouncycastle.openssl.jcajce.JcaPEMKeyConverter;
 import org.slf4j.Logger;
@@ -69,11 +70,11 @@ public class CryptoProvider {
     Security.addProvider(new BouncyCastleProvider());
   }
 
-  private static PrivateKey getPrivateKeyFromStream(final InputStream privateKeyStream)
-      throws IOException {
-    PEMParser pemParser = new PEMParser(new InputStreamReader(privateKeyStream));
-    PrivateKeyInfo privateKeyInfo = (PrivateKeyInfo) pemParser.readObject();
-    return new JcaPEMKeyConverter().getPrivateKey(privateKeyInfo);
+  private static PrivateKey getPrivateKeyFromStream(final InputStream privateKeyStream) throws IOException {
+    InputStreamReader privateKeyStreamReader = new InputStreamReader(privateKeyStream);
+    Object parsed = new PEMParser(privateKeyStreamReader).readObject();
+    KeyPair pair = new JcaPEMKeyConverter().getKeyPair((PEMKeyPair) parsed);
+    return pair.getPrivate();
   }
 
   private static Certificate getCertificateFromStream(final InputStream certificateStream)
