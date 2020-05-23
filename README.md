@@ -170,9 +170,11 @@ The following public repositories are currently available for the Corona-Warn-Ap
 | ------------------- | --------------------------------------------------------------------- |
 | [cwa-documentation] | Project overview, general documentation, and white papers            |
 | [cwa-server]        | Backend implementation for the Apple/Google exposure notification API|
+| [cwa-verification-server] | Backend implementation of the verification process|
 
 [cwa-documentation]: https://github.com/corona-warn-app/cwa-documentation
 [cwa-server]: https://github.com/corona-warn-app/cwa-server
+[cwa-verification-server]: https://github.com/corona-warn-app/cwa-verification-server
 [Postgres]: https://www.postgresql.org/
 [HSQLDB]: http://hsqldb.org/
 [Zenko CloudServer]: https://github.com/scality/cloudserver
