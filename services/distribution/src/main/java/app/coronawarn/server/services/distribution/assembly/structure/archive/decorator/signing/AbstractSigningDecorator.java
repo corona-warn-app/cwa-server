@@ -37,7 +37,7 @@ public abstract class AbstractSigningDecorator<W extends Writable<W>> extends Ar
     SigningDecorator<W> {
 
   private static final String SIGNATURE_FILE_NAME = "export.sig";
-  private static final String SIGNATURE_ALGORITHM = "Ed25519";
+  private static final String SIGNATURE_ALGORITHM = "SHA256withECDSA";
   private static final String SECURITY_PROVIDER = "BC";
 
   private static final Logger logger = LoggerFactory.getLogger(AbstractSigningDecorator.class);
