@@ -17,7 +17,7 @@
  * under the License.
  */
 
-package app.coronawarn.server.services.distribution.assembly.exposureconfig.parsing;
+package app.coronawarn.server.services.distribution.assembly.appconfig.parsing;
 
 import java.util.Arrays;
 import org.yaml.snakeyaml.constructor.Constructor;
@@ -39,6 +39,7 @@ public class YamlConstructorForProtoBuf extends Constructor {
 
   private static class ProtoBufPropertyUtils extends PropertyUtils {
 
+    @Override
     public Property getProperty(Class<?> type, String name, BeanAccess beanAccess) {
       return super.getProperty(type, transformToProtoNaming(name), beanAccess);
     }
@@ -55,5 +56,4 @@ public class YamlConstructorForProtoBuf extends Constructor {
       return Character.toLowerCase(camelCase.charAt(0)) + camelCase.substring(1);
     }
   }
-
 }

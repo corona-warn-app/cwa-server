@@ -5,7 +5,7 @@
   <parent>
     <artifactId>services</artifactId>
     <groupId>org.opencwa</groupId>
-    <version>0.3.3-SNAPSHOT</version>
+    <version>0.4.1-SNAPSHOT</version>
     <relativePath>../pom.xml</relativePath>
   </parent>
   <modelVersion>4.0.0</modelVersion>
@@ -51,7 +51,7 @@
   </build>
 
   <artifactId>distribution</artifactId>
-  <version>0.3.3-SNAPSHOT</version>
+  <version>0.4.1-SNAPSHOT</version>
   <dependencies>
     <dependency>
       <groupId>io.minio</groupId>
