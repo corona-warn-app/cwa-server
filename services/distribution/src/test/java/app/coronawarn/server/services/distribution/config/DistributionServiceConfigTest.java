@@ -51,7 +51,9 @@ public class DistributionServiceConfigTest {
     Map<String, String> cp = new HashMap<>();
     cp.put("services.distribution.retention-days", dsc.getRetentionDays().toString());
     cp.put("services.distribution.output-file-name", dsc.getOutputFileName());
-    cp.put("services.distribution.tek-export-file-name", dsc.getTekExportFileName());
+    cp.put("services.distribution.tek-export.file-name", dsc.getTekExport().getFileName());
+    cp.put("services.distribution.tek-export.file-header", dsc.getTekExport().getFileHeader());
+    cp.put("services.distribution.tek-export.file-header-width", dsc.getTekExport().getFileHeaderWidth().toString());
     cp.put("services.distribution.paths.privatekey", dsc.getPaths().getPrivateKey());
     cp.put("services.distribution.paths.certificate", dsc.getPaths().getCertificate());
     cp.put("services.distribution.paths.output", dsc.getPaths().getOutput());

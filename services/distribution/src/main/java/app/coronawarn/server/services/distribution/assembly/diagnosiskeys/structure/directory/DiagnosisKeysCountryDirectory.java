@@ -34,9 +34,6 @@ import java.util.Set;
 
 public class DiagnosisKeysCountryDirectory extends IndexDirectoryOnDisk<String> {
 
-  private static final String COUNTRY_DIRECTORY = "country";
-  private static final String COUNTRY = "DE";
-
   private final Collection<DiagnosisKey> diagnosisKeys;
   private final CryptoProvider cryptoProvider;
   private final DistributionServiceConfig distributionServiceConfig;
@@ -50,7 +47,8 @@ public class DiagnosisKeysCountryDirectory extends IndexDirectoryOnDisk<String> 
    */
   public DiagnosisKeysCountryDirectory(Collection<DiagnosisKey> diagnosisKeys,
       CryptoProvider cryptoProvider, DistributionServiceConfig distributionServiceConfig) {
-    super(COUNTRY_DIRECTORY, __ -> Set.of(COUNTRY), Object::toString);
+    super(distributionServiceConfig.getApi().getCountryPath(), __ ->
+        Set.of(distributionServiceConfig.getApi().getCountryGermany()), Object::toString);
     this.diagnosisKeys = diagnosisKeys;
     this.cryptoProvider = cryptoProvider;
     this.distributionServiceConfig = distributionServiceConfig;
@@ -68,7 +66,7 @@ public class DiagnosisKeysCountryDirectory extends IndexDirectoryOnDisk<String> 
 
   private IndexDirectory<LocalDate, WritableOnDisk> decorateDateDirectory(
       IndexDirectoryOnDisk<LocalDate> dateDirectory) {
-    return new DateAggregatingDecorator(new IndexingDecoratorOnDisk<>(dateDirectory), cryptoProvider,
-        distributionServiceConfig);
+    return new DateAggregatingDecorator(new IndexingDecoratorOnDisk<>(dateDirectory,
+        distributionServiceConfig.getOutputFileName()), cryptoProvider, distributionServiceConfig);
   }
 }

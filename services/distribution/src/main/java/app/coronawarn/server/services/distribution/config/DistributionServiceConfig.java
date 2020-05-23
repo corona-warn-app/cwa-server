@@ -13,7 +13,7 @@ public class DistributionServiceConfig {
   private TestData testData;
   private Integer retentionDays;
   private String outputFileName;
-  private String tekExportFileName;
+  private TekExport tekExport;
   private Signature signature;
   private Api api;
 
@@ -49,12 +49,12 @@ public class DistributionServiceConfig {
     this.outputFileName = outputFileName;
   }
 
-  public String getTekExportFileName() {
-    return tekExportFileName;
+  public TekExport getTekExport() {
+    return tekExport;
   }
 
-  public void setTekExportFileName(String tekExportFileName) {
-    this.tekExportFileName = tekExportFileName;
+  public void setTekExport(TekExport tekExport) {
+    this.tekExport = tekExport;
   }
 
   public Signature getSignature() {
@@ -71,6 +71,37 @@ public class DistributionServiceConfig {
 
   public void setApi(Api api) {
     this.api = api;
+  }
+
+  public static class TekExport {
+
+    private String fileName;
+    private String fileHeader;
+    private Integer fileHeaderWidth;
+
+    public String getFileName() {
+      return fileName;
+    }
+
+    public void setFileName(String fileName) {
+      this.fileName = fileName;
+    }
+
+    public String getFileHeader() {
+      return fileHeader;
+    }
+
+    public void setFileHeader(String fileHeader) {
+      this.fileHeader = fileHeader;
+    }
+
+    public Integer getFileHeaderWidth() {
+      return fileHeaderWidth;
+    }
+
+    public void setFileHeaderWidth(Integer fileHeaderWidth) {
+      this.fileHeaderWidth = fileHeaderWidth;
+    }
   }
 
   public static class TestData {

@@ -40,7 +40,6 @@ import java.util.Collection;
  */
 public class DiagnosisKeysDirectory extends DirectoryOnDisk {
 
-  private static final String DIAGNOSIS_KEYS_DIRECTORY = "diagnosis-keys";
   private final Collection<DiagnosisKey> diagnosisKeys;
   private final CryptoProvider cryptoProvider;
   private final DistributionServiceConfig distributionServiceConfig;
@@ -54,7 +53,7 @@ public class DiagnosisKeysDirectory extends DirectoryOnDisk {
    */
   public DiagnosisKeysDirectory(Collection<DiagnosisKey> diagnosisKeys, CryptoProvider cryptoProvider,
       DistributionServiceConfig distributionServiceConfig) {
-    super(DIAGNOSIS_KEYS_DIRECTORY);
+    super(distributionServiceConfig.getApi().getDiagnosisKeysPath());
     this.diagnosisKeys = diagnosisKeys;
     this.cryptoProvider = cryptoProvider;
     this.distributionServiceConfig = distributionServiceConfig;
@@ -69,6 +68,6 @@ public class DiagnosisKeysDirectory extends DirectoryOnDisk {
 
   private IndexDirectory<String, WritableOnDisk> decorateCountryDirectory(
       IndexDirectoryOnDisk<String> countryDirectory) {
-    return new IndexingDecoratorOnDisk<>(countryDirectory);
+    return new IndexingDecoratorOnDisk<>(countryDirectory, distributionServiceConfig.getOutputFileName());
   }
 }

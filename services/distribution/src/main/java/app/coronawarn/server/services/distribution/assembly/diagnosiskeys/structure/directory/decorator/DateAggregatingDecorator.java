@@ -35,7 +35,6 @@ import app.coronawarn.server.services.distribution.assembly.structure.directory.
 import app.coronawarn.server.services.distribution.assembly.structure.directory.decorator.DirectoryDecorator;
 import app.coronawarn.server.services.distribution.assembly.structure.directory.decorator.IndexDirectoryDecorator;
 import app.coronawarn.server.services.distribution.assembly.structure.file.File;
-import app.coronawarn.server.services.distribution.assembly.structure.file.FileOnDisk;
 import app.coronawarn.server.services.distribution.assembly.structure.util.ImmutableStack;
 import app.coronawarn.server.services.distribution.config.DistributionServiceConfig;
 import java.time.LocalDate;
@@ -55,8 +54,6 @@ public class DateAggregatingDecorator extends IndexDirectoryDecorator<LocalDate,
 
   private final CryptoProvider cryptoProvider;
   private final DistributionServiceConfig distributionServiceConfig;
-
-  private static final String AGGREGATE_FILE_NAME = "index";
 
   /**
    * Creates a new DateAggregatingDecorator.
@@ -90,7 +87,7 @@ public class DateAggregatingDecorator extends IndexDirectoryDecorator<LocalDate,
             .map(this::parseTemporaryExposureKeyExportsFromFiles)
             .map(this::reduceTemporaryExposureKeyExportsToNewFile)
             .map(temporaryExposureKeyExportFile -> {
-              Archive<WritableOnDisk> aggregate = new ArchiveOnDisk(AGGREGATE_FILE_NAME);
+              Archive<WritableOnDisk> aggregate = new ArchiveOnDisk(distributionServiceConfig.getOutputFileName());
               aggregate.addWritable(temporaryExposureKeyExportFile);
               return aggregate;
             })
@@ -148,8 +145,7 @@ public class DateAggregatingDecorator extends IndexDirectoryDecorator<LocalDate,
   private Set<TemporaryExposureKeyExport> parseTemporaryExposureKeyExportsFromFiles(
       Set<TemporaryExposureKeyExportFile> temporaryExposureKeyExportFiles) {
     return temporaryExposureKeyExportFiles.stream()
-        .map(FileOnDisk::getBytes)
-        .map(TemporaryExposureKeyExportFile::withoutFileHeader)
+        .map(TemporaryExposureKeyExportFile::getBytesWithoutHeader)
         .map(uncheckedFunction(TemporaryExposureKeyExport::parseFrom))
         .collect(Collectors.toSet());
   }

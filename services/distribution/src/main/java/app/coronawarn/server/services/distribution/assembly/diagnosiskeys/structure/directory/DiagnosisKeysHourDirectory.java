@@ -41,8 +41,6 @@ import java.util.stream.Collectors;
 
 public class DiagnosisKeysHourDirectory extends IndexDirectoryOnDisk<LocalDateTime> {
 
-  private static final String HOUR_DIRECTORY = "hour";
-
   private final Collection<DiagnosisKey> diagnosisKeys;
   private final CryptoProvider cryptoProvider;
   private final DistributionServiceConfig distributionServiceConfig;
@@ -56,8 +54,8 @@ public class DiagnosisKeysHourDirectory extends IndexDirectoryOnDisk<LocalDateTi
    */
   public DiagnosisKeysHourDirectory(Collection<DiagnosisKey> diagnosisKeys, CryptoProvider cryptoProvider,
       DistributionServiceConfig distributionServiceConfig) {
-    super(HOUR_DIRECTORY, indices -> DateTime.getHours(((LocalDate) indices.peek()), diagnosisKeys),
-        LocalDateTime::getHour);
+    super(distributionServiceConfig.getApi().getHourPath(),
+        indices -> DateTime.getHours(((LocalDate) indices.peek()), diagnosisKeys), LocalDateTime::getHour);
     this.diagnosisKeys = diagnosisKeys;
     this.cryptoProvider = cryptoProvider;
     this.distributionServiceConfig = distributionServiceConfig;
@@ -79,7 +77,7 @@ public class DiagnosisKeysHourDirectory extends IndexDirectoryOnDisk<LocalDateTi
       File<WritableOnDisk> temporaryExposureKeyExportFile = TemporaryExposureKeyExportFile.fromDiagnosisKeys(
           diagnosisKeysForCurrentHour, region, startTimestamp, endTimestamp, distributionServiceConfig);
 
-      Archive<WritableOnDisk> hourArchive = new ArchiveOnDisk("index");
+      Archive<WritableOnDisk> hourArchive = new ArchiveOnDisk(distributionServiceConfig.getOutputFileName());
       hourArchive.addWritable(temporaryExposureKeyExportFile);
 
       return decorateDiagnosisKeyArchive(hourArchive);

@@ -35,7 +35,6 @@ import java.util.Collection;
 
 public class DiagnosisKeysDateDirectory extends IndexDirectoryOnDisk<LocalDate> {
 
-  private static final String DATE_DIRECTORY = "date";
   private static final DateTimeFormatter ISO8601 = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 
   private final Collection<DiagnosisKey> diagnosisKeys;
@@ -51,7 +50,7 @@ public class DiagnosisKeysDateDirectory extends IndexDirectoryOnDisk<LocalDate> 
    */
   public DiagnosisKeysDateDirectory(Collection<DiagnosisKey> diagnosisKeys,
       CryptoProvider cryptoProvider, DistributionServiceConfig distributionServiceConfig) {
-    super(DATE_DIRECTORY, __ -> DateTime.getDates(diagnosisKeys), ISO8601::format);
+    super(distributionServiceConfig.getApi().getDatePath(), __ -> DateTime.getDates(diagnosisKeys), ISO8601::format);
     this.cryptoProvider = cryptoProvider;
     this.diagnosisKeys = diagnosisKeys;
     this.distributionServiceConfig = distributionServiceConfig;
@@ -68,6 +67,6 @@ public class DiagnosisKeysDateDirectory extends IndexDirectoryOnDisk<LocalDate> 
   }
 
   private Directory<WritableOnDisk> decorateHourDirectory(IndexDirectoryOnDisk<LocalDateTime> hourDirectory) {
-    return new IndexingDecoratorOnDisk<>(hourDirectory);
+    return new IndexingDecoratorOnDisk<>(hourDirectory, distributionServiceConfig.getOutputFileName());
   }
 }
