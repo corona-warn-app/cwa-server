@@ -23,6 +23,7 @@ import app.coronawarn.server.services.distribution.assembly.structure.WritableOn
 import app.coronawarn.server.services.distribution.assembly.structure.directory.Directory;
 import app.coronawarn.server.services.distribution.assembly.structure.directory.IndexDirectoryOnDisk;
 import app.coronawarn.server.services.distribution.assembly.structure.directory.decorator.indexing.IndexingDecoratorOnDisk;
+import app.coronawarn.server.services.distribution.config.DistributionServiceConfig;
 import java.util.Set;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -40,12 +41,19 @@ public class CwaApiStructureProvider {
 
   private final DiagnosisKeysStructureProvider diagnosisKeysStructureProvider;
 
+  private final DistributionServiceConfig distributionServiceConfig;
+
+  /**
+   * Creates a new CwaApiStructureProvider.
+   */
   @Autowired
   public CwaApiStructureProvider(
       AppConfigurationStructureProvider appConfigurationStructureProvider,
-      DiagnosisKeysStructureProvider diagnosisKeysStructureProvider) {
+      DiagnosisKeysStructureProvider diagnosisKeysStructureProvider,
+      DistributionServiceConfig distributionServiceConfig) {
     this.appConfigurationStructureProvider = appConfigurationStructureProvider;
     this.diagnosisKeysStructureProvider = diagnosisKeysStructureProvider;
+    this.distributionServiceConfig = distributionServiceConfig;
   }
 
   /**
@@ -59,6 +67,6 @@ public class CwaApiStructureProvider {
         .addWritableToAll(__ -> appConfigurationStructureProvider.getAppConfiguration());
     versionDirectory.addWritableToAll(__ -> diagnosisKeysStructureProvider.getDiagnosisKeys());
 
-    return new IndexingDecoratorOnDisk<>(versionDirectory);
+    return new IndexingDecoratorOnDisk<>(versionDirectory, distributionServiceConfig.getOutputFileName());
   }
 }

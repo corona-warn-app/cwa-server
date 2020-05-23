@@ -3,6 +3,7 @@ package app.coronawarn.server.services.distribution.assembly.diagnosiskeys.struc
 import app.coronawarn.server.services.distribution.assembly.diagnosiskeys.structure.directory.DiagnosisKeysDateDirectory;
 import app.coronawarn.server.services.distribution.assembly.structure.directory.decorator.indexing.IndexingDecoratorOnDisk;
 import app.coronawarn.server.services.distribution.assembly.structure.util.ImmutableStack;
+import app.coronawarn.server.services.distribution.config.DistributionServiceConfig;
 import java.time.LocalDate;
 import java.time.ZoneOffset;
 import java.util.Set;
@@ -10,11 +11,12 @@ import java.util.stream.Collectors;
 
 public class DateIndexingDecorator extends IndexingDecoratorOnDisk<LocalDate> {
 
-  private final boolean includeIncompleteDays;
+  private final DistributionServiceConfig distributionServiceConfig;
 
-  public DateIndexingDecorator(DiagnosisKeysDateDirectory directory, boolean includeIncompleteDays) {
-    super(directory);
-    this.includeIncompleteDays = includeIncompleteDays;
+  public DateIndexingDecorator(DiagnosisKeysDateDirectory directory,
+      DistributionServiceConfig distributionServiceConfig) {
+    super(directory, distributionServiceConfig.getOutputFileName());
+    this.distributionServiceConfig = distributionServiceConfig;
   }
 
   /**
@@ -23,7 +25,7 @@ public class DateIndexingDecorator extends IndexingDecoratorOnDisk<LocalDate> {
    */
   @Override
   public Set<LocalDate> getIndex(ImmutableStack<Object> indices) {
-    if (!includeIncompleteDays) {
+    if (!distributionServiceConfig.getIncludeIncompleteDays()) {
       LocalDate currentDate = LocalDate.now(ZoneOffset.UTC);
       return super.getIndex(indices).stream()
           .filter(date -> !date.equals(currentDate))

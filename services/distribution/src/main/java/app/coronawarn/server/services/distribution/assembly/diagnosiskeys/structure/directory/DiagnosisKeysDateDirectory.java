@@ -27,17 +27,18 @@ import app.coronawarn.server.services.distribution.assembly.structure.WritableOn
 import app.coronawarn.server.services.distribution.assembly.structure.directory.Directory;
 import app.coronawarn.server.services.distribution.assembly.structure.directory.IndexDirectoryOnDisk;
 import app.coronawarn.server.services.distribution.assembly.structure.util.ImmutableStack;
+import app.coronawarn.server.services.distribution.config.DistributionServiceConfig;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.Collection;
 
 public class DiagnosisKeysDateDirectory extends IndexDirectoryOnDisk<LocalDate> {
 
-  private static final String DATE_DIRECTORY = "date";
   private static final DateTimeFormatter ISO8601 = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 
   private final Collection<DiagnosisKey> diagnosisKeys;
   private final CryptoProvider cryptoProvider;
+  private final DistributionServiceConfig distributionServiceConfig;
 
   /**
    * Constructs a {@link DiagnosisKeysDateDirectory} instance associated with the specified {@link DiagnosisKey}
@@ -46,22 +47,25 @@ public class DiagnosisKeysDateDirectory extends IndexDirectoryOnDisk<LocalDate> 
    * @param diagnosisKeys  The diagnosis keys processed in the contained directories.
    * @param cryptoProvider The {@link CryptoProvider} used for payload signing.
    */
-  public DiagnosisKeysDateDirectory(Collection<DiagnosisKey> diagnosisKeys, CryptoProvider cryptoProvider) {
-    super(DATE_DIRECTORY, __ -> DateTime.getDates(diagnosisKeys), ISO8601::format);
+  public DiagnosisKeysDateDirectory(Collection<DiagnosisKey> diagnosisKeys,
+      CryptoProvider cryptoProvider, DistributionServiceConfig distributionServiceConfig) {
+    super(distributionServiceConfig.getApi().getDatePath(), __ -> DateTime.getDates(diagnosisKeys), ISO8601::format);
     this.cryptoProvider = cryptoProvider;
     this.diagnosisKeys = diagnosisKeys;
+    this.distributionServiceConfig = distributionServiceConfig;
   }
 
   @Override
   public void prepare(ImmutableStack<Object> indices) {
     this.addWritableToAll(__ -> {
-      DiagnosisKeysHourDirectory hourDirectory = new DiagnosisKeysHourDirectory(diagnosisKeys, cryptoProvider);
+      DiagnosisKeysHourDirectory hourDirectory =
+          new DiagnosisKeysHourDirectory(diagnosisKeys, cryptoProvider, distributionServiceConfig);
       return decorateHourDirectory(hourDirectory);
     });
     super.prepare(indices);
   }
 
   private Directory<WritableOnDisk> decorateHourDirectory(DiagnosisKeysHourDirectory hourDirectory) {
-    return new HourIndexingDecorator(hourDirectory);
+    return new HourIndexingDecorator(hourDirectory, distributionServiceConfig);
   }
 }

@@ -3,6 +3,7 @@ package app.coronawarn.server.services.distribution.assembly.diagnosiskeys.struc
 import app.coronawarn.server.services.distribution.assembly.diagnosiskeys.structure.directory.DiagnosisKeysHourDirectory;
 import app.coronawarn.server.services.distribution.assembly.structure.directory.decorator.indexing.IndexingDecoratorOnDisk;
 import app.coronawarn.server.services.distribution.assembly.structure.util.ImmutableStack;
+import app.coronawarn.server.services.distribution.config.DistributionServiceConfig;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
@@ -12,11 +13,12 @@ import java.util.stream.Collectors;
 
 public class HourIndexingDecorator extends IndexingDecoratorOnDisk<LocalDateTime> {
 
-  private Boolean includeIncompleteHours;
+  private DistributionServiceConfig distributionServiceConfig;
 
-  public HourIndexingDecorator(DiagnosisKeysHourDirectory directory, boolean includeIncompleteHours) {
-    super(directory);
-    this.includeIncompleteHours = includeIncompleteHours;
+  public HourIndexingDecorator(DiagnosisKeysHourDirectory directory,
+      DistributionServiceConfig distributionServiceConfig) {
+    super(directory, distributionServiceConfig.getOutputFileName());
+    this.distributionServiceConfig = distributionServiceConfig;
   }
 
   /**
@@ -27,7 +29,8 @@ public class HourIndexingDecorator extends IndexingDecoratorOnDisk<LocalDateTime
   @Override
   public Set<LocalDateTime> getIndex(ImmutableStack<Object> indices) {
     LocalDate currentDateIndex = (LocalDate) indices.peek();
-    if (!includeIncompleteHours && LocalDate.now(ZoneOffset.UTC).equals(currentDateIndex)) {
+    if (!distributionServiceConfig.getIncludeIncompleteHours()
+        && LocalDate.now(ZoneOffset.UTC).equals(currentDateIndex)) {
       LocalDateTime currentHour = LocalDateTime.now(ZoneOffset.UTC).truncatedTo(ChronoUnit.HOURS);
       return super.getIndex(indices).stream()
           .filter(hour -> !hour.equals(currentHour))

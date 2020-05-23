@@ -19,6 +19,8 @@
 
 package app.coronawarn.server.services.distribution.objectstore;
 
+import app.coronawarn.server.services.distribution.config.DistributionServiceConfig;
+import app.coronawarn.server.services.distribution.config.DistributionServiceConfig.ObjectStore;
 import app.coronawarn.server.services.distribution.objectstore.publish.LocalFile;
 import io.minio.MinioClient;
 import io.minio.PutObjectOptions;
@@ -45,11 +47,11 @@ import org.springframework.stereotype.Component;
  * <br>
  * Make sure the following properties are available on the env:
  * <ul>
- * <li>cwa.objectstore.endpoint</li>
- * <li>cwa.objectstore.bucket</li>
- * <li>cwa.objectstore.accessKey</li>
- * <li>cwa.objectstore.secretKey</li>
- * <li>cwa.objectstore.port</li>
+ * <li>services.distribution.objectstore.endpoint</li>
+ * <li>services.distribution.objectstore.bucket</li>
+ * <li>services.distribution.objectstore.accessKey</li>
+ * <li>services.distribution.objectstore.secretKey</li>
+ * <li>services.distribution.objectstore.port</li>
  * </ul>
  */
 @Component
@@ -66,48 +68,48 @@ public class ObjectStoreAccess {
   private final MinioClient client;
 
   /**
-   * Constructs an {@link ObjectStoreAccess} instance for communication with the specified object
-   * store endpoint and bucket.
+   * Constructs an {@link ObjectStoreAccess} instance for communication with the specified object store endpoint and
+   * bucket.
    *
-   * @param configurationProperties The config properties
-   * @throws IOException When there were problems creating the S3 client
+   * @param distributionServiceConfig The config properties
+   * @throws IOException              When there were problems creating the S3 client
    * @throws GeneralSecurityException When there were problems creating the S3 client
-   * @throws MinioException When there were problems creating the S3 client
+   * @throws MinioException           When there were problems creating the S3 client
    */
   @Autowired
-  public ObjectStoreAccess(ObjectStoreConfigurationProperties configurationProperties)
+  public ObjectStoreAccess(DistributionServiceConfig distributionServiceConfig)
       throws IOException, GeneralSecurityException, MinioException {
-    this.client = createClient(configurationProperties);
+    this.client = createClient(distributionServiceConfig.getObjectStore());
 
-    this.bucket = configurationProperties.getBucket();
-    this.isSetPublicReadAclOnPutObject = configurationProperties.isSetPublicReadAclOnPutObject();
+    this.bucket = distributionServiceConfig.getObjectStore().getBucket();
+    this.isSetPublicReadAclOnPutObject = distributionServiceConfig.getObjectStore().isSetPublicReadAclOnPutObject();
 
     if (!this.client.bucketExists(this.bucket)) {
       throw new IllegalArgumentException("Supplied bucket does not exist " + bucket);
     }
   }
 
-  private MinioClient createClient(ObjectStoreConfigurationProperties configurationProperties)
+  private MinioClient createClient(ObjectStore objectStore)
       throws InvalidPortException, InvalidEndpointException {
-    if (isSsl(configurationProperties)) {
+    if (isSsl(objectStore)) {
       return new MinioClient(
-          configurationProperties.getEndpoint(),
-          configurationProperties.getPort(),
-          configurationProperties.getAccessKey(), configurationProperties.getSecretKey(),
+          objectStore.getEndpoint(),
+          objectStore.getPort(),
+          objectStore.getAccessKey(), objectStore.getSecretKey(),
           DEFAULT_REGION,
           true
       );
     } else {
       return new MinioClient(
-          configurationProperties.getEndpoint(),
-          configurationProperties.getPort(),
-          configurationProperties.getAccessKey(), configurationProperties.getSecretKey()
+          objectStore.getEndpoint(),
+          objectStore.getPort(),
+          objectStore.getAccessKey(), objectStore.getSecretKey()
       );
     }
   }
 
-  private boolean isSsl(ObjectStoreConfigurationProperties configurationProperties) {
-    return configurationProperties.getEndpoint().startsWith("https://");
+  private boolean isSsl(ObjectStore objectStore) {
+    return objectStore.getEndpoint().startsWith("https://");
   }
 
   /**
