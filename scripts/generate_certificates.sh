@@ -14,8 +14,10 @@ pushd certificates > /dev/null || exit
 # $1 = OUT Private key file
 generate_private_key()
 {
-  openssl genpkey                             \
-    -algorithm ED25519                        \
+  openssl ecparam                             \
+    -name prime256v1                          \
+    -genkey                                   \
+    -noout                                    \
     -out "$1"
 }
 
