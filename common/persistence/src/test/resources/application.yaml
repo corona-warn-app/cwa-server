@@ -1,0 +1,17 @@
+---
+spring:
+  flyway:
+    enabled: false
+  jpa:
+    hibernate:
+      ddl-auto: create
+    properties:
+      hibernate:
+        show-sql: false
+  main:
+    banner-mode: off
+logging:
+  level:
+    org:
+      springframework: off
+    root: off

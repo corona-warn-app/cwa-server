@@ -14,7 +14,7 @@
 
   <artifactId>services</artifactId>
   <groupId>org.opencwa</groupId>
-  <version>0.4.1-SNAPSHOT</version>
+  <version>${revision}</version>
 
   <packaging>pom</packaging>
   <modules>
@@ -35,12 +35,12 @@
     <dependency>
       <groupId>org.opencwa</groupId>
       <artifactId>persistence</artifactId>
-      <version>0.4.1-SNAPSHOT</version>
+      <version>${project.version}</version>
     </dependency>
     <dependency>
       <groupId>org.opencwa</groupId>
       <artifactId>protocols</artifactId>
-      <version>0.4.1-SNAPSHOT</version>
+      <version>${project.version}</version>
     </dependency>
     <dependency>
       <groupId>org.springframework.boot</groupId>
