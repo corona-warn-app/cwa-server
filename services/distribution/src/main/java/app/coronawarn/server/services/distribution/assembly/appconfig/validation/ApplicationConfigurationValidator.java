@@ -20,11 +20,22 @@
 package app.coronawarn.server.services.distribution.assembly.appconfig.validation;
 
 import app.coronawarn.server.common.protocols.internal.ApplicationConfiguration;
+import app.coronawarn.server.common.protocols.internal.RiskScoreClassification;
+import app.coronawarn.server.common.protocols.internal.RiskScoreParameters;
 
+/**
+ * This validator validates a {@link ApplicationConfiguration}. It will re-use the {@link ConfigurationValidator} from
+ * the sub-configurations of {@link RiskScoreParameters} and {@link RiskScoreClassification}.
+ */
 public class ApplicationConfigurationValidator extends ConfigurationValidator {
 
   private final ApplicationConfiguration config;
 
+  /**
+   * Creates a new instance for the given {@link ApplicationConfiguration}.
+   *
+   * @param config the Application Configuration to validate.
+   */
   public ApplicationConfigurationValidator(ApplicationConfiguration config) {
     this.config = config;
   }

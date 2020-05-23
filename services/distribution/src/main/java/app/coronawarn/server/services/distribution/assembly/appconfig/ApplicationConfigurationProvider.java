@@ -21,6 +21,17 @@ package app.coronawarn.server.services.distribution.assembly.appconfig;
 
 import app.coronawarn.server.common.protocols.internal.ApplicationConfiguration;
 
+/**
+ * Provides the application configuration needed for the mobile client. Contains all necessary
+ * sub-configs, including:
+ * <ul>
+ *   <li>Exposure Configuration</li>
+ *   <li>Risk Score Classification</li>
+ *   <li>App Config, e.g. minimum risk threshold</li>
+ * </ul>
+ *
+ * <p>The application config is fetched from the master-config folder.</p>
+ */
 public class ApplicationConfigurationProvider {
 
   /**
@@ -28,10 +39,14 @@ public class ApplicationConfigurationProvider {
    */
   public static final String MASTER_FILE = "master-config/app-config.yaml";
 
+  private ApplicationConfigurationProvider() {
+
+  }
+
   /**
-   * Fetches the master configuration as a RiskScoreParameters instance.
+   * Fetches the master configuration as a ApplicationConfiguration instance.
    *
-   * @return the exposure configuration as RiskScoreParameters
+   * @return the exposure configuration as ApplicationConfiguration
    * @throws UnableToLoadFileException when the file/transformation did not succeed
    */
   public static ApplicationConfiguration readMasterFile() throws UnableToLoadFileException {
@@ -42,7 +57,7 @@ public class ApplicationConfigurationProvider {
    * Fetches an exposure configuration file based on the given path. The path must be available in the classloader.
    *
    * @param path the path, e.g. folder/my-exposure-configuration.yaml
-   * @return the RiskScoreParameters
+   * @return the ApplicationConfiguration
    * @throws UnableToLoadFileException when the file/transformation did not succeed
    */
   public static ApplicationConfiguration readFile(String path) throws UnableToLoadFileException {

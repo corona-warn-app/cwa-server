@@ -25,13 +25,32 @@ import com.google.protobuf.Message;
 import java.nio.file.Path;
 import java.util.Arrays;
 import org.yaml.snakeyaml.constructor.AbstractConstruct;
+import org.yaml.snakeyaml.constructor.Constructor;
 import org.yaml.snakeyaml.nodes.Node;
 import org.yaml.snakeyaml.nodes.ScalarNode;
 
+/**
+ * This extension to SnakeYaml allows to merge yaml files, e.g.:
+ * <pre>
+ *   example: !include other.yaml
+ * </pre>
+ * This construct will follow the relative include based on the parent Yaml file, and will
+ * transform the result to the matching Protobuf representation. No other classes are
+ * allowed.
+ */
 public class IncludeConstruct extends AbstractConstruct {
 
+  /** the path of the parent Yaml. */
   private final Path path;
 
+  /**
+   * Creates a new include construct, to be used in a {@link Constructor}, e.g.:
+   *
+   * <pre>
+   *  this.yamlConstructors.put(new Tag("!include"), new IncludeConstruct(path));
+   * </pre>
+   * @param path the path of the parent Yaml.
+   */
   IncludeConstruct(String path) {
     this.path = Path.of(path);
   }
@@ -55,7 +74,7 @@ public class IncludeConstruct extends AbstractConstruct {
     try {
       return YamlLoader.loadYamlIntoProtobufBuilder(target.toString(), builder).build();
     } catch (UnableToLoadFileException e) {
-      throw new RuntimeException(e);
+      throw new IncludeResolveFailedException(scalarNode, e);
     }
   }
 }
