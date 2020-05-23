@@ -17,12 +17,15 @@
  * under the License.
  */
 
-package app.coronawarn.server.services.distribution.assembly.exposureconfig.validation;
+package app.coronawarn.server.services.distribution.assembly.appconfig.validation;
 
 /**
- * A validation error, found during the process of validating the Exposure Configuration. Can either be score or weight
- * related.
+ * The validation could not be executed. Find more information about the root cause in the cause element, and in the
+ * message property.
  */
-public interface ValidationError {
+public class ValidationExecutionException extends RuntimeException {
 
+  public ValidationExecutionException(String message, Throwable cause) {
+    super(message, cause);
+  }
 }
