@@ -120,7 +120,7 @@ public class ObjectStoreAccess {
     String s3Key = localFile.getS3Key();
     PutObjectOptions options = createOptionsFor(localFile);
 
-    logger.info("... uploading " + s3Key);
+    logger.info("... uploading {}",s3Key);
     this.client.putObject(bucket, s3Key, localFile.getFile().toString(), options);
   }
 

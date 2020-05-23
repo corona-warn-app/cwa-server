@@ -32,6 +32,11 @@ import java.util.stream.Collectors;
  * Methods for conversions of time/date data.
  */
 public class DateTime {
+  /**
+   * Adding private constructor to avoid explicit creation of object outside of provided methods.
+   */
+  private DateTime(){
+  }
 
   /**
    * Returns a set of all {@link LocalDate dates} that are associated with the submission timestamps of the specified

@@ -72,7 +72,6 @@ public class TestDataGeneration implements ApplicationRunner {
 
   private static final int POISSON_MAX_ITERATIONS = 10_000_000;
   private static final double POISSON_EPSILON = 1e-12;
-  private PoissonDistribution poisson;
 
   // The submission timestamp is counted in 1 hour intervals since epoch
   private static final long ONE_HOUR_INTERVAL_SECONDS = TimeUnit.HOURS.toSeconds(1);
@@ -106,7 +105,7 @@ public class TestDataGeneration implements ApplicationRunner {
 
     // Add the startTimestamp to the seed. Otherwise we would generate the same data every hour.
     random.setSeed(seed + startTimestamp);
-    poisson =
+    PoissonDistribution poisson =
         new PoissonDistribution(random, exposuresPerHour, POISSON_EPSILON, POISSON_MAX_ITERATIONS);
 
     logger.debug("Generating diagnosis keys between {} and {}...", startTimestamp, endTimestamp);

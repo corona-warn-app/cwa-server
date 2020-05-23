@@ -60,6 +60,6 @@ public class FileOnDisk extends WritableOnDisk implements File<WritableOnDisk> {
    * Does nothing.
    */
   @Override
-  public void prepare(ImmutableStack<Object> indices) {
+  public void prepare(ImmutableStack<Object> indices) throws UnsupportedOperationException{
   }
 }
