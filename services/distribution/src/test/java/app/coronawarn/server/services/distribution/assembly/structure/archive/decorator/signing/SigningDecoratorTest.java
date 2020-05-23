@@ -34,7 +34,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration(classes = {CryptoProvider.class},
     initializers = ConfigFileApplicationContextInitializer.class)
-public class SigningDecoratorTest {
+class SigningDecoratorTest {
 
   @Autowired
   CryptoProvider cryptoProvider;
@@ -46,7 +46,7 @@ public class SigningDecoratorTest {
   private TemporaryFolder outputFolder = new TemporaryFolder();
 
   @BeforeEach
-  public void setup() throws IOException {
+  void setup() throws IOException {
     Archive<WritableOnDisk> archive = new ArchiveOnDisk("export.zip");
     fileToSign = new FileOnDisk("export.bin", "123456".getBytes());
     archive.addWritable(fileToSign);
@@ -69,7 +69,7 @@ public class SigningDecoratorTest {
   }
 
   @Test
-  public void checkSignatureFileStructure() {
+  void checkSignatureFileStructure() {
 
     assertThat(signatureList).isNotNull();
 
@@ -84,7 +84,7 @@ public class SigningDecoratorTest {
   }
 
   @Test
-  public void checkSignatureInfo() {
+  void checkSignatureInfo() {
     SignatureInfo signatureInfo = signatureList.getSignaturesList().get(0).getSignatureInfo();
 
     assertThat(signatureInfo.getAppBundleId()).isEqualTo("de.rki.coronawarnapp");
@@ -95,7 +95,7 @@ public class SigningDecoratorTest {
   }
 
   @Test
-  public void checkSignature()
+  void checkSignature()
       throws NoSuchProviderException, NoSuchAlgorithmException, InvalidKeyException, SignatureException {
     byte[] fileBytes = fileToSign.getBytes();
     byte[] signatureBytes = signatureList.getSignaturesList().get(0).getSignature().toByteArray();
