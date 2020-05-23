@@ -17,14 +17,14 @@
  * under the License.
  */
 
-package app.coronawarn.server.services.distribution.assembly.exposureconfig.validation;
+package app.coronawarn.server.services.distribution.assembly.appconfig.validation;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.catchThrowable;
 
-import app.coronawarn.server.services.distribution.assembly.exposureconfig.ExposureConfigurationProvider;
-import app.coronawarn.server.services.distribution.assembly.exposureconfig.UnableToLoadFileException;
-import app.coronawarn.server.services.distribution.assembly.exposureconfig.validation.WeightValidationError.ErrorType;
+import app.coronawarn.server.services.distribution.assembly.appconfig.ExposureConfigurationProvider;
+import app.coronawarn.server.services.distribution.assembly.appconfig.UnableToLoadFileException;
+import app.coronawarn.server.services.distribution.assembly.appconfig.validation.WeightValidationError.ErrorType;
 import java.util.stream.Stream;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;

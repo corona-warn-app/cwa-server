@@ -36,15 +36,15 @@ public class CwaApiStructureProvider {
   public static final String VERSION_DIRECTORY = "version";
   public static final String VERSION_V1 = "v1";
 
-  private final ExposureConfigurationStructureProvider exposureConfigurationStructureProvider;
+  private final AppConfigurationStructureProvider appConfigurationStructureProvider;
 
   private final DiagnosisKeysStructureProvider diagnosisKeysStructureProvider;
 
   @Autowired
   public CwaApiStructureProvider(
-      ExposureConfigurationStructureProvider exposureConfigurationStructureProvider,
+      AppConfigurationStructureProvider appConfigurationStructureProvider,
       DiagnosisKeysStructureProvider diagnosisKeysStructureProvider) {
-    this.exposureConfigurationStructureProvider = exposureConfigurationStructureProvider;
+    this.appConfigurationStructureProvider = appConfigurationStructureProvider;
     this.diagnosisKeysStructureProvider = diagnosisKeysStructureProvider;
   }
 
@@ -56,7 +56,7 @@ public class CwaApiStructureProvider {
         new IndexDirectoryOnDisk<>(VERSION_DIRECTORY, __ -> Set.of(VERSION_V1), Object::toString);
 
     versionDirectory
-        .addWritableToAll(__ -> exposureConfigurationStructureProvider.getExposureConfiguration());
+        .addWritableToAll(__ -> appConfigurationStructureProvider.getAppConfiguration());
     versionDirectory.addWritableToAll(__ -> diagnosisKeysStructureProvider.getDiagnosisKeys());
 
     return new IndexingDecoratorOnDisk<>(versionDirectory);
