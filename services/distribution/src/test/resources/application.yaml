@@ -1,0 +1,57 @@
+---
+logging:
+  level:
+    org:
+      springframework: off
+    root: info
+
+services:
+  distribution:
+    output-file-name: index
+    retention-days: 14
+    paths:
+      output: out
+      privatekey: classpath:certificates/client/private.pem
+      certificate: classpath:certificates/chain/certificate.crt
+    tek-export:
+      file-name: export.bin
+      file-header: EK Export v1
+      file-header-width: 16
+    api:
+      version-path: version
+      version-v1: v1
+      country-path: country
+      country-germany: DE
+      date-path: date
+      hour-path: hour
+      diagnosis-keys-path: diagnosis-keys
+      parameters-path: configuration
+      parameters-exposure-configuration-file-name: exposure_configuration
+      parameters-risk-score-classification-file-name: risk_score_classification
+    signature:
+      app-bundle-id: de.rki.coronawarnapp
+      android-package: de.rki.coronawarnapp
+      verification-key-id:
+      verification-key-version:
+      algorithm-oid: 1.2.840.10045.4.3.2
+      algorithm-name: SHA256withECDSA
+      file-name: export.sig
+      security-provider: BC
+    # S3 object store configuration
+    objectstore:
+      access-key: ${CWA_OBJECTSTORE_ACCESSKEY:accessKey1}
+      secret-key: ${CWA_OBJECTSTORE_SECRETKEY:verySecretKey1}
+      endpoint: ${WA_OBJECTSTORE_ENDPOINT:http\://localhost\:8003}
+      bucket: ${CWA_OBJECTSTORE_BUCKET:cwa}
+      port: ${CWA_OBJECTSTORE_PORT:8003}
+      set-public-read-acl-on-put-object: true
+spring:
+  main:
+    banner-mode: off
+  flyway:
+    enabled: true
+# default case is H2 - value will be overwritten by profile cloud or postgres
+    locations: classpath:db/migration/h2
+  jpa:
+    hibernate:
+      ddl-auto: validate

@@ -1,0 +1,9 @@
+---
+spring:
+  flyway:
+    locations: classpath:db/migration/postgres
+  datasource:
+    driver-class-name: org.postgresql.Driver
+    url: jdbc:postgresql://${POSTGRESQL_SERVICE_HOST}:${POSTGRESQL_SERVICE_PORT}/${POSTGRESQL_DATABASE}
+    username: ${POSTGRESQL_USER}
+    password: ${POSTGRESQL_PASSWORD}
