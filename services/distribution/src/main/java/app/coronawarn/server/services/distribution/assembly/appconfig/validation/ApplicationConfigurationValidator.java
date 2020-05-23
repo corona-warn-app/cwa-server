@@ -1,4 +1,4 @@
-package app.coronawarn.server.services.distribution.assembly.exposureconfig.validation;
+package app.coronawarn.server.services.distribution.assembly.appconfig.validation;
 
 import app.coronawarn.server.common.protocols.internal.ApplicationConfiguration;
 
@@ -23,7 +23,7 @@ public class ApplicationConfigurationValidator extends ConfigurationValidator {
   }
 
   private void validateMinRisk() {
-    var minLevel = this.config.getMinRiskLevel();
+    int minLevel = this.config.getMinRiskScore();
 
     if (minLevel < 0 || minLevel > RiskScoreClassificationValidator.RISK_SCORE_VALUE_RANGE - 1) {
       this.errors.add(new MinimumRiskLevelValidationError(minLevel));

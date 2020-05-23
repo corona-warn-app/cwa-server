@@ -9,11 +9,11 @@ import org.yaml.snakeyaml.constructor.AbstractConstruct;
 import org.yaml.snakeyaml.nodes.Node;
 import org.yaml.snakeyaml.nodes.ScalarNode;
 
-public class ConstructInclude extends AbstractConstruct {
+public class IncludeConstruct extends AbstractConstruct {
 
   private final Path path;
 
-  ConstructInclude(String path) {
+  IncludeConstruct(String path) {
     this.path = Path.of(path);
   }
 

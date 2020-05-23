@@ -69,7 +69,7 @@ public class ObjectStoreAccess {
    * Constructs an {@link ObjectStoreAccess} instance for communication with the specified object
    * store endpoint and bucket.
    *
-   * @param configurationProperties The config properties
+   * @param configurationProperties The master-config properties
    * @throws IOException When there were problems creating the S3 client
    * @throws GeneralSecurityException When there were problems creating the S3 client
    * @throws MinioException When there were problems creating the S3 client

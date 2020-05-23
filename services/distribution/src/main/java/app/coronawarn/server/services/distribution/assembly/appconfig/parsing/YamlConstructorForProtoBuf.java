@@ -36,7 +36,7 @@ public class YamlConstructorForProtoBuf extends Constructor {
 
   public YamlConstructorForProtoBuf(String path) {
     setPropertyUtils(new ProtoBufPropertyUtils());
-    this.yamlConstructors.put(new Tag("!include"), new ConstructInclude(path));
+    this.yamlConstructors.put(new Tag("!include"), new IncludeConstruct(path));
   }
 
   private static class ProtoBufPropertyUtils extends PropertyUtils {

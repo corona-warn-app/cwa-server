@@ -1,4 +1,4 @@
-package app.coronawarn.server.services.distribution.assembly.exposureconfig;
+package app.coronawarn.server.services.distribution.assembly.appconfig;
 
 import app.coronawarn.server.common.protocols.internal.ApplicationConfiguration;
 
@@ -7,7 +7,7 @@ public class ApplicationConfigurationProvider {
   /**
    * The location of the exposure configuration master file.
    */
-  public static final String MASTER_FILE = "config/app-config.yaml";
+  public static final String MASTER_FILE = "master-config/app-config.yaml";
 
   /**
    * Fetches the master configuration as a RiskScoreParameters instance.

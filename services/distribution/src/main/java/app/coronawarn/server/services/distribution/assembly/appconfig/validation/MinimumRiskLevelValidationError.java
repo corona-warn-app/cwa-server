@@ -1,4 +1,4 @@
-package app.coronawarn.server.services.distribution.assembly.exposureconfig.validation;
+package app.coronawarn.server.services.distribution.assembly.appconfig.validation;
 
 import java.util.Objects;
 
@@ -14,8 +14,12 @@ public class MinimumRiskLevelValidationError implements ValidationError {
     return riskLevelProvided;
   }
 
-  public void setRiskLevelProvided(int riskLevelProvided) {
-    this.riskLevelProvided = riskLevelProvided;
+  @Override
+  public String toString() {
+    return "MinimumRiskLevelValidationError{"
+        + "riskLevelProvided="
+        + riskLevelProvided
+        + '}';
   }
 
   @Override

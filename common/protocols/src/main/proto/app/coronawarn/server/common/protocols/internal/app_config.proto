@@ -7,7 +7,7 @@ import "app/coronawarn/server/common/protocols/internal/risk_score_parameters.pr
 
 message ApplicationConfiguration {
 
-  int32 minRiskLevel = 1;
+  int32 minRiskScore = 1;
 
   app.coronawarn.server.common.protocols.internal.RiskScoreClassification riskScoreClasses = 2;
 
