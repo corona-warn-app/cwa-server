@@ -16,6 +16,7 @@ public class DistributionServiceConfig {
   private TekExport tekExport;
   private Signature signature;
   private Api api;
+  private ObjectStore objectStore;
 
   public Paths getPaths() {
     return paths;
@@ -71,6 +72,15 @@ public class DistributionServiceConfig {
 
   public void setApi(Api api) {
     this.api = api;
+  }
+
+  public ObjectStore getObjectStore() {
+    return objectStore;
+  }
+
+  public void setObjectStore(
+      ObjectStore objectStore) {
+    this.objectStore = objectStore;
   }
 
   public static class TekExport {
@@ -340,5 +350,64 @@ public class DistributionServiceConfig {
         .setSignatureAlgorithm(this.getAlgorithmOid())
         .build();
     }
+  }
+
+  public static class ObjectStore {
+
+    private String accessKey;
+    private String secretKey;
+    private String endpoint;
+    private Integer port;
+    private String bucket;
+    private Boolean setPublicReadAclOnPutObject;
+
+    public String getAccessKey() {
+      return accessKey;
+    }
+
+    public void setAccessKey(String accessKey) {
+      this.accessKey = accessKey;
+    }
+
+    public String getSecretKey() {
+      return secretKey;
+    }
+
+    public void setSecretKey(String secretKey) {
+      this.secretKey = secretKey;
+    }
+
+    public String getEndpoint() {
+      return endpoint;
+    }
+
+    public void setEndpoint(String endpoint) {
+      this.endpoint = endpoint;
+    }
+
+    public Integer getPort() {
+      return port;
+    }
+
+    public void setPort(Integer port) {
+      this.port = port;
+    }
+
+    public String getBucket() {
+      return bucket;
+    }
+
+    public void setBucket(String bucket) {
+      this.bucket = bucket;
+    }
+
+    public Boolean isSetPublicReadAclOnPutObject() {
+      return setPublicReadAclOnPutObject;
+    }
+
+    public void setSetPublicReadAclOnPutObject(Boolean setPublicReadAclOnPutObject) {
+      this.setPublicReadAclOnPutObject = setPublicReadAclOnPutObject;
+    }
+
   }
 }

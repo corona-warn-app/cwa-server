@@ -77,6 +77,13 @@ public class DistributionServiceConfigTest {
         dsc.getApi().getParametersExposureConfigurationFileName());
     cp.put("services.distribution.api.parameters-risk-score-classification-file-name",
         dsc.getApi().getParametersRiskScoreClassificationFileName());
+    cp.put("services.distribution.objectstore.access-key", dsc.getObjectStore().getAccessKey());
+    cp.put("services.distribution.objectstore.secret-key", dsc.getObjectStore().getSecretKey());
+    cp.put("services.distribution.objectstore.endpoint", dsc.getObjectStore().getEndpoint());
+    cp.put("services.distribution.objectstore.bucket", dsc.getObjectStore().getBucket());
+    cp.put("services.distribution.objectstore.port", dsc.getObjectStore().getPort().toString());
+    cp.put("services.distribution.objectstore.set-public-read-acl-on-put-object",
+        dsc.getObjectStore().isSetPublicReadAclOnPutObject().toString());
 
     cp.forEach((key, value) -> assertThat(properties.getProperty(key)).isEqualTo(value));
   }
