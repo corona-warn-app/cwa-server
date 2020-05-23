@@ -60,7 +60,7 @@ public class IndexingDecoratorTest {
     outputFile = outputFolder.newFolder();
     parent = new DirectoryOnDisk(outputFile);
     decoratee = new IndexDirectoryOnDisk<>("foo", __ -> index, __ -> __);
-    decorator = new IndexingDecoratorOnDisk<>(decoratee);
+    decorator = new IndexingDecoratorOnDisk<>(decoratee, "foo");
 
     parent.addWritable(decorator);
 
