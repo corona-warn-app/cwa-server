@@ -41,7 +41,7 @@ public class OutputDirectoryProvider {
 
   @Autowired
   public OutputDirectoryProvider(DistributionServiceConfig distributionServiceConfig) {
-    this.outputPath = distributionServiceConfig.getOutputPath();
+    this.outputPath = distributionServiceConfig.getPaths().getOutput();
   }
 
   public Directory<WritableOnDisk> getDirectory() {

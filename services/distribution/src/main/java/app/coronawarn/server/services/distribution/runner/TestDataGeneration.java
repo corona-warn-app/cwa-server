@@ -88,8 +88,8 @@ public class TestDataGeneration implements ApplicationRunner {
       DistributionServiceConfig distributionServiceConfig) {
     this.diagnosisKeyService = diagnosisKeyService;
     this.retentionDays = distributionServiceConfig.getRetentionDays();
-    this.seed = distributionServiceConfig.getSeed();
-    this.exposuresPerHour = distributionServiceConfig.getExposuresPerHour();
+    this.seed = distributionServiceConfig.getTestData().getSeed();
+    this.exposuresPerHour = distributionServiceConfig.getTestData().getExposuresPerHour();
   }
 
   /**

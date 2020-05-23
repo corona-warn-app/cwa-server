@@ -66,21 +66,21 @@ public class ObjectStoreAccess {
   private final MinioClient client;
 
   /**
-   * Constructs an {@link ObjectStoreAccess} instance for communication with the specified object
-   * store endpoint and bucket.
+   * Constructs an {@link ObjectStoreAccess} instance for communication with the specified object store endpoint and
+   * bucket.
    *
-   * @param configurationProperties The config properties
-   * @throws IOException When there were problems creating the S3 client
+   * @param objectStoreConfigurationProperties The config properties
+   * @throws IOException              When there were problems creating the S3 client
    * @throws GeneralSecurityException When there were problems creating the S3 client
-   * @throws MinioException When there were problems creating the S3 client
+   * @throws MinioException           When there were problems creating the S3 client
    */
   @Autowired
-  public ObjectStoreAccess(ObjectStoreConfigurationProperties configurationProperties)
+  public ObjectStoreAccess(ObjectStoreConfigurationProperties objectStoreConfigurationProperties)
       throws IOException, GeneralSecurityException, MinioException {
-    this.client = createClient(configurationProperties);
+    this.client = createClient(objectStoreConfigurationProperties);
 
-    this.bucket = configurationProperties.getBucket();
-    this.isSetPublicReadAclOnPutObject = configurationProperties.isSetPublicReadAclOnPutObject();
+    this.bucket = objectStoreConfigurationProperties.getBucket();
+    this.isSetPublicReadAclOnPutObject = objectStoreConfigurationProperties.isSetPublicReadAclOnPutObject();
 
     if (!this.client.bucketExists(this.bucket)) {
       throw new IllegalArgumentException("Supplied bucket does not exist " + bucket);

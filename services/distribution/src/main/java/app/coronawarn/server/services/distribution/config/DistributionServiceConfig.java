@@ -1,5 +1,6 @@
 package app.coronawarn.server.services.distribution.config;
 
+import app.coronawarn.server.common.protocols.external.exposurenotification.SignatureInfo;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.stereotype.Component;
@@ -11,6 +12,8 @@ public class DistributionServiceConfig {
   private Paths paths;
   private TestData testData;
   private Integer retentionDays;
+
+  private Signature signature;
 
   public Paths getPaths() {
     return paths;
@@ -36,27 +39,15 @@ public class DistributionServiceConfig {
     this.retentionDays = retentionDays;
   }
 
-  public String getPrivatekeyPath() {
-    return paths.getPrivatekey();
+  public Signature getSignature() {
+    return signature;
   }
 
-  public String getCertificatePath() {
-    return paths.getCertificate();
+  public void setSignature(Signature signature) {
+    this.signature = signature;
   }
 
-  public String getOutputPath() {
-    return paths.getOutput();
-  }
-
-  public Integer getSeed() {
-    return testData.getSeed();
-  }
-
-  public Integer getExposuresPerHour() {
-    return testData.getExposuresPerHour();
-  }
-
-  private static class TestData {
+  public static class TestData {
 
     private Integer seed;
     private Integer exposuresPerHour;
@@ -78,18 +69,18 @@ public class DistributionServiceConfig {
     }
   }
 
-  private static class Paths {
+  public static class Paths {
 
-    private String privatekey;
+    private String privateKey;
     private String certificate;
     private String output;
 
-    public String getPrivatekey() {
-      return privatekey;
+    public String getPrivateKey() {
+      return privateKey;
     }
 
-    public void setPrivatekey(String privatekey) {
-      this.privatekey = privatekey;
+    public void setPrivateKey(String privateKey) {
+      this.privateKey = privateKey;
     }
 
     public String getCertificate() {
@@ -106,6 +97,96 @@ public class DistributionServiceConfig {
 
     public void setOutput(String output) {
       this.output = output;
+    }
+  }
+
+  public static class Signature {
+
+    private String appBundleId;
+    private String androidPackage;
+    private String verificationKeyId;
+    private String verificationKeyVersion;
+    private String algorithmOid;
+    private String algorithmName;
+    private String fileName;
+    private String securityProvider;
+
+    public String getAppBundleId() {
+      return appBundleId;
+    }
+
+    public void setAppBundleId(String appBundleId) {
+      this.appBundleId = appBundleId;
+    }
+
+    public String getAndroidPackage() {
+      return androidPackage;
+    }
+
+    public void setAndroidPackage(String androidPackage) {
+      this.androidPackage = androidPackage;
+    }
+
+    public String getVerificationKeyId() {
+      return verificationKeyId;
+    }
+
+    public void setVerificationKeyId(String verificationKeyId) {
+      this.verificationKeyId = verificationKeyId;
+    }
+
+    public String getVerificationKeyVersion() {
+      return verificationKeyVersion;
+    }
+
+    public void setVerificationKeyVersion(String verificationKeyVersion) {
+      this.verificationKeyVersion = verificationKeyVersion;
+    }
+
+    public String getAlgorithmOid() {
+      return algorithmOid;
+    }
+
+    public void setAlgorithmOid(String algorithmOid) {
+      this.algorithmOid = algorithmOid;
+    }
+
+    public String getAlgorithmName() {
+      return algorithmName;
+    }
+
+    public void setAlgorithmName(String algorithmName) {
+      this.algorithmName = algorithmName;
+    }
+
+    public String getFileName() {
+      return fileName;
+    }
+
+    public void setFileName(String fileName) {
+      this.fileName = fileName;
+    }
+
+    public String getSecurityProvider() {
+      return securityProvider;
+    }
+
+    public void setSecurityProvider(String securityProvider) {
+      this.securityProvider = securityProvider;
+    }
+
+    /**
+     * Returns the static {@link SignatureInfo} configured in the application properties. TODO Enter correct values.
+     */
+    public SignatureInfo getSignatureInfo() {
+      // TODO cwa-server#183 cwa-server#207 cwa-server#238
+      return SignatureInfo.newBuilder()
+        .setAppBundleId(this.getAppBundleId())
+        .setAndroidPackage(this.getAndroidPackage())
+        .setVerificationKeyVersion(this.getVerificationKeyVersion())
+        .setVerificationKeyId(this.getVerificationKeyId())
+        .setSignatureAlgorithm(this.getAlgorithmOid())
+        .build();
     }
   }
 }

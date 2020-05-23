@@ -65,8 +65,8 @@ public class CryptoProvider {
   @Autowired
   public CryptoProvider(ResourceLoader resourceLoader, DistributionServiceConfig distributionServiceConfig) {
     this.resourceLoader = resourceLoader;
-    this.privateKeyPath = distributionServiceConfig.getPrivatekeyPath();
-    this.certificatePath = distributionServiceConfig.getCertificatePath();
+    this.privateKeyPath = distributionServiceConfig.getPaths().getPrivateKey();
+    this.certificatePath = distributionServiceConfig.getPaths().getCertificate();
     Security.addProvider(new BouncyCastleProvider());
   }
 

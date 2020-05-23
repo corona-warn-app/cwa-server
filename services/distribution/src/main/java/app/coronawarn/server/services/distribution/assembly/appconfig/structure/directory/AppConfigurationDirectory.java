@@ -35,6 +35,7 @@ import app.coronawarn.server.services.distribution.assembly.structure.directory.
 import app.coronawarn.server.services.distribution.assembly.structure.directory.IndexDirectoryOnDisk;
 import app.coronawarn.server.services.distribution.assembly.structure.directory.decorator.indexing.IndexingDecoratorOnDisk;
 import app.coronawarn.server.services.distribution.assembly.structure.file.FileOnDisk;
+import app.coronawarn.server.services.distribution.config.DistributionServiceConfig;
 import com.google.protobuf.Message;
 import java.util.Set;
 import org.slf4j.Logger;
@@ -58,16 +59,18 @@ public class AppConfigurationDirectory extends DirectoryOnDisk {
       new IndexDirectoryOnDisk<>(COUNTRY_DIRECTORY, __ -> Set.of(COUNTRY), Object::toString);
 
   private final CryptoProvider cryptoProvider;
+  private final DistributionServiceConfig distributionServiceConfig;
 
   /**
    * Creates an {@link AppConfigurationDirectory} for the exposure configuration and risk score classification.
    *
    * @param cryptoProvider The {@link CryptoProvider} whose artifacts to use for creating the signature.
    */
-  public AppConfigurationDirectory(CryptoProvider cryptoProvider) {
+  public AppConfigurationDirectory(CryptoProvider cryptoProvider, DistributionServiceConfig distributionServiceConfig) {
     super(PARAMETERS_DIRECTORY);
-
     this.cryptoProvider = cryptoProvider;
+    this.distributionServiceConfig = distributionServiceConfig;
+
     addExposureConfigurationIfValid();
     addRiskScoreClassificationIfValid();
 
@@ -108,6 +111,7 @@ public class AppConfigurationDirectory extends DirectoryOnDisk {
 
     ArchiveOnDisk appConfigurationFile = new ArchiveOnDisk(archiveName);
     appConfigurationFile.addWritable(new FileOnDisk("export.bin", message.toByteArray()));
-    countryDirectory.addWritableToAll(__ -> new AppConfigurationSigningDecorator(appConfigurationFile, cryptoProvider));
+    countryDirectory.addWritableToAll(__ -> new AppConfigurationSigningDecorator(appConfigurationFile, cryptoProvider,
+        distributionServiceConfig));
   }
 }

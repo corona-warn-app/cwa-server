@@ -31,6 +31,7 @@ import app.coronawarn.server.services.distribution.assembly.structure.directory.
 import app.coronawarn.server.services.distribution.assembly.structure.directory.IndexDirectoryOnDisk;
 import app.coronawarn.server.services.distribution.assembly.structure.file.File;
 import app.coronawarn.server.services.distribution.assembly.structure.util.ImmutableStack;
+import app.coronawarn.server.services.distribution.config.DistributionServiceConfig;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
@@ -44,6 +45,7 @@ public class DiagnosisKeysHourDirectory extends IndexDirectoryOnDisk<LocalDateTi
 
   private final Collection<DiagnosisKey> diagnosisKeys;
   private final CryptoProvider cryptoProvider;
+  private final DistributionServiceConfig distributionServiceConfig;
 
   /**
    * Constructs a {@link DiagnosisKeysHourDirectory} instance for the specified date.
@@ -52,11 +54,13 @@ public class DiagnosisKeysHourDirectory extends IndexDirectoryOnDisk<LocalDateTi
    *                       date.
    * @param cryptoProvider The {@link CryptoProvider} used for cryptographic signing.
    */
-  public DiagnosisKeysHourDirectory(Collection<DiagnosisKey> diagnosisKeys, CryptoProvider cryptoProvider) {
+  public DiagnosisKeysHourDirectory(Collection<DiagnosisKey> diagnosisKeys, CryptoProvider cryptoProvider,
+      DistributionServiceConfig distributionServiceConfig) {
     super(HOUR_DIRECTORY, indices -> DateTime.getHours(((LocalDate) indices.peek()), diagnosisKeys),
         LocalDateTime::getHour);
     this.diagnosisKeys = diagnosisKeys;
     this.cryptoProvider = cryptoProvider;
+    this.distributionServiceConfig = distributionServiceConfig;
   }
 
   @Override
@@ -73,7 +77,7 @@ public class DiagnosisKeysHourDirectory extends IndexDirectoryOnDisk<LocalDateTi
       long startTimestamp = currentHour.toEpochSecond(ZoneOffset.UTC);
       long endTimestamp = currentHour.plusHours(1).toEpochSecond(ZoneOffset.UTC);
       File<WritableOnDisk> temporaryExposureKeyExportFile = TemporaryExposureKeyExportFile.fromDiagnosisKeys(
-          diagnosisKeysForCurrentHour, region, startTimestamp, endTimestamp);
+          diagnosisKeysForCurrentHour, region, startTimestamp, endTimestamp, distributionServiceConfig);
 
       Archive<WritableOnDisk> hourArchive = new ArchiveOnDisk("index");
       hourArchive.addWritable(temporaryExposureKeyExportFile);
@@ -92,6 +96,6 @@ public class DiagnosisKeysHourDirectory extends IndexDirectoryOnDisk<LocalDateTi
   }
 
   private Directory<WritableOnDisk> decorateDiagnosisKeyArchive(Archive<WritableOnDisk> archive) {
-    return new DiagnosisKeySigningDecorator(archive, cryptoProvider);
+    return new DiagnosisKeySigningDecorator(archive, cryptoProvider, distributionServiceConfig);
   }
 }

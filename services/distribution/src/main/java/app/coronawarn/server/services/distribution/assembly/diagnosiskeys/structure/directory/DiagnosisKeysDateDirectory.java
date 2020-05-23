@@ -27,6 +27,7 @@ import app.coronawarn.server.services.distribution.assembly.structure.directory.
 import app.coronawarn.server.services.distribution.assembly.structure.directory.IndexDirectoryOnDisk;
 import app.coronawarn.server.services.distribution.assembly.structure.directory.decorator.indexing.IndexingDecoratorOnDisk;
 import app.coronawarn.server.services.distribution.assembly.structure.util.ImmutableStack;
+import app.coronawarn.server.services.distribution.config.DistributionServiceConfig;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -39,6 +40,7 @@ public class DiagnosisKeysDateDirectory extends IndexDirectoryOnDisk<LocalDate> 
 
   private final Collection<DiagnosisKey> diagnosisKeys;
   private final CryptoProvider cryptoProvider;
+  private final DistributionServiceConfig distributionServiceConfig;
 
   /**
    * Constructs a {@link DiagnosisKeysDateDirectory} instance associated with the specified {@link DiagnosisKey}
@@ -48,16 +50,18 @@ public class DiagnosisKeysDateDirectory extends IndexDirectoryOnDisk<LocalDate> 
    * @param cryptoProvider The {@link CryptoProvider} used for payload signing.
    */
   public DiagnosisKeysDateDirectory(Collection<DiagnosisKey> diagnosisKeys,
-      CryptoProvider cryptoProvider) {
+      CryptoProvider cryptoProvider, DistributionServiceConfig distributionServiceConfig) {
     super(DATE_DIRECTORY, __ -> DateTime.getDates(diagnosisKeys), ISO8601::format);
     this.cryptoProvider = cryptoProvider;
     this.diagnosisKeys = diagnosisKeys;
+    this.distributionServiceConfig = distributionServiceConfig;
   }
 
   @Override
   public void prepare(ImmutableStack<Object> indices) {
     this.addWritableToAll(__ -> {
-      IndexDirectoryOnDisk<LocalDateTime> hourDirectory = new DiagnosisKeysHourDirectory(diagnosisKeys, cryptoProvider);
+      IndexDirectoryOnDisk<LocalDateTime> hourDirectory = new DiagnosisKeysHourDirectory(diagnosisKeys, cryptoProvider,
+          distributionServiceConfig);
       return decorateHourDirectory(hourDirectory);
     });
     super.prepare(indices);

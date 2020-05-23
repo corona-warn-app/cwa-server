@@ -28,6 +28,7 @@ import app.coronawarn.server.services.distribution.assembly.structure.directory.
 import app.coronawarn.server.services.distribution.assembly.structure.directory.IndexDirectoryOnDisk;
 import app.coronawarn.server.services.distribution.assembly.structure.directory.decorator.indexing.IndexingDecoratorOnDisk;
 import app.coronawarn.server.services.distribution.assembly.structure.util.ImmutableStack;
+import app.coronawarn.server.services.distribution.config.DistributionServiceConfig;
 import java.util.Collection;
 
 /**
@@ -42,6 +43,7 @@ public class DiagnosisKeysDirectory extends DirectoryOnDisk {
   private static final String DIAGNOSIS_KEYS_DIRECTORY = "diagnosis-keys";
   private final Collection<DiagnosisKey> diagnosisKeys;
   private final CryptoProvider cryptoProvider;
+  private final DistributionServiceConfig distributionServiceConfig;
 
   /**
    * Constructs a {@link DiagnosisKeysDirectory} based on the specified {@link DiagnosisKey} collection.
@@ -50,16 +52,18 @@ public class DiagnosisKeysDirectory extends DirectoryOnDisk {
    * @param diagnosisKeys  The diagnosis keys processed in the contained sub directories.
    * @param cryptoProvider The {@link CryptoProvider} used for payload signing.
    */
-  public DiagnosisKeysDirectory(Collection<DiagnosisKey> diagnosisKeys, CryptoProvider cryptoProvider) {
+  public DiagnosisKeysDirectory(Collection<DiagnosisKey> diagnosisKeys, CryptoProvider cryptoProvider,
+      DistributionServiceConfig distributionServiceConfig) {
     super(DIAGNOSIS_KEYS_DIRECTORY);
     this.diagnosisKeys = diagnosisKeys;
     this.cryptoProvider = cryptoProvider;
+    this.distributionServiceConfig = distributionServiceConfig;
   }
 
   @Override
   public void prepare(ImmutableStack<Object> indices) {
     this.addWritable(decorateCountryDirectory(
-        new DiagnosisKeysCountryDirectory(diagnosisKeys, cryptoProvider)));
+        new DiagnosisKeysCountryDirectory(diagnosisKeys, cryptoProvider, distributionServiceConfig)));
     super.prepare(indices);
   }
 

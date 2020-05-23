@@ -22,7 +22,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 public class DistributionServiceConfigTest {
 
   @Autowired
-  private DistributionServiceConfig config;
+  private DistributionServiceConfig distributionServiceConfig;
 
   private final Properties properties = new Properties();
 
@@ -40,23 +40,23 @@ public class DistributionServiceConfigTest {
   @Test
   void whenDistributionConfigBeanCreatedThenPropertiesLoadedCorrectly() {
 
-    assertNotNull("Configuration should not be null", config);
-    assertNotNull("Paths should not be null", config.getPaths());
-    assertNull("TestData should be null", config.getTestData());
+    assertNotNull("Configuration should not be null", distributionServiceConfig);
+    assertNotNull("Paths should not be null", distributionServiceConfig.getPaths());
+    assertNull("TestData should be null", distributionServiceConfig.getTestData());
 
     assertEquals("PrivateKey path value should be loaded correctly.",
-        properties.getProperty("services.distribution.paths.privatekey"),
-        config.getPrivatekeyPath());
+      properties.getProperty("services.distribution.paths.privatekey"),
+      distributionServiceConfig.getPaths().getPrivateKey());
     assertEquals("Certificate path value should be loaded correctly.",
-        properties.getProperty("services.distribution.paths.certificate"),
-        config.getCertificatePath());
+      properties.getProperty("services.distribution.paths.certificate"),
+      distributionServiceConfig.getPaths().getCertificate());
     assertEquals("Output path value should be loaded correctly.",
-        properties.getProperty("services.distribution.paths.output"),
-        config.getOutputPath());
+      properties.getProperty("services.distribution.paths.output"),
+      distributionServiceConfig.getPaths().getOutput());
 
     assertEquals("Retention Days value should be loaded correctly.",
-        properties.getProperty("services.distribution.retention-days"),
-        String.valueOf(config.getRetentionDays()));
+      properties.getProperty("services.distribution.retention-days"),
+      String.valueOf(distributionServiceConfig.getRetentionDays()));
 
   }
 
