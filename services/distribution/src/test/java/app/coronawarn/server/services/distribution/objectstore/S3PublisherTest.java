@@ -71,11 +71,11 @@ public class S3PublisherTest {
   @BeforeEach
   public void setup()
       throws MinioException, GeneralSecurityException, IOException {
-    //objectStoreAccess.deleteObjectsWithPrefix("");
+    objectStoreAccess.deleteObjectsWithPrefix("");
   }
 
   @AfterEach
   public void teardown() throws IOException, GeneralSecurityException, MinioException {
-    //objectStoreAccess.deleteObjectsWithPrefix("");
+    objectStoreAccess.deleteObjectsWithPrefix("");
   }
 }

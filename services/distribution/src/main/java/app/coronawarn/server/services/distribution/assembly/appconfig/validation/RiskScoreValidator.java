@@ -24,6 +24,10 @@ package app.coronawarn.server.services.distribution.assembly.appconfig.validatio
  */
 public class RiskScoreValidator {
 
+  private RiskScoreValidator() {
+
+  }
+
   /**
    * Validates the bounds of a risk score value.
    *
