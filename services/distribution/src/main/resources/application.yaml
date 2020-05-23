@@ -1,0 +1,66 @@
+---
+logging:
+  level:
+    org:
+      springframework:
+        web: INFO
+    app:
+      coronawarn: INFO
+
+services:
+  distribution:
+    output-file-name: index
+    retention-days: 14
+    paths:
+      output: out
+      privatekey: ${VAULT_FILESIGNING_SECRET}
+      certificate: ${VAULT_FILESIGNING_CERT}
+    tek-export:
+      file-name: export.bin
+      file-header: EK Export v1
+      file-header-width: 16
+    api:
+      version-path: version
+      version-v1: v1
+      country-path: country
+      country-germany: DE
+      date-path: date
+      hour-path: hour
+      diagnosis-keys-path: diagnosis-keys
+      parameters-path: configuration
+      parameters-exposure-configuration-file-name: exposure_configuration
+      parameters-risk-score-classification-file-name: risk_score_classification
+    signature:
+      app-bundle-id: de.rki.coronawarnapp
+      android-package: de.rki.coronawarnapp
+      verification-key-id:
+      verification-key-version:
+      algorithm-oid: 1.2.840.10045.4.3.2
+      algorithm-name: SHA256withECDSA
+      file-name: export.sig
+      security-provider: BC
+    # Configuration for the S3 compatible object storage hosted by Telekom in Germany
+    objectstore:
+      access-key: ${CWA_OBJECTSTORE_ACCESSKEY:accessKey1}
+      secret-key: ${CWA_OBJECTSTORE_SECRETKEY:verySecretKey1}
+      endpoint: ${CWA_OBJECTSTORE_ENDPOINT:http\://localhost\:8003}
+      bucket: ${CWA_OBJECTSTORE_BUCKET:cwa}
+      port: ${CWA_OBJECTSTORE_PORT:8003}
+      set-public-read-acl-on-put-object: true
+
+spring:
+  main:
+    web-application-type: NONE
+# Postgres configuration
+  jpa:
+    hibernate:
+      ddl-auto: validate
+  flyway:
+    enabled: true
+    locations: classpath:db/migration/postgres
+
+  datasource:
+    driver-class-name: org.postgresql.Driver
+    url: jdbc:postgresql://${POSTGRESQL_SERVICE_HOST:localhost}:${POSTGRESQL_SERVICE_PORT:5432}/${POSTGRESQL_DATABASE:cwa}
+    username: ${POSTGRESQL_USER:postgres}
+    password: ${POSTGRESQL_PASSWORD:postgres}
