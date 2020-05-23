@@ -43,4 +43,13 @@ public class ParameterSpec {
    */
   public static final int WEIGHT_MAX_DECIMALS = 3;
 
+  /**
+   * The allowed minimum value for risk score.
+   */
+  public static final int RISK_SCORE_MIN = 0;
+
+  /**
+   * The allowed maximum value for a risk score.
+   */
+  public static final int RISK_SCORE_MAX = 4096;
 }

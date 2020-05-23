@@ -55,7 +55,7 @@ public class ApplicationConfigurationValidator extends ConfigurationValidator {
   private void validateMinRisk() {
     int minLevel = this.config.getMinRiskScore();
 
-    if (minLevel < 0 || minLevel > RiskScoreClassificationValidator.RISK_SCORE_VALUE_RANGE - 1) {
+    if (!RiskScoreValidator.isInBounds(minLevel)) {
       this.errors.add(new MinimumRiskLevelValidationError(minLevel));
     }
   }

@@ -38,7 +38,7 @@ public class RiskScoreClassificationValidator extends ConfigurationValidator {
   /**
    * This defines the number of possible values (0 ... RISK_SCORE_VALUE_RANGE - 1) for the total risk score.
    */
-  public static final int RISK_SCORE_VALUE_RANGE = 256;
+  public static final int RISK_SCORE_VALUE_RANGE = ParameterSpec.RISK_SCORE_MAX + 1;
 
   private final RiskScoreClassification riskScoreClassification;
 
@@ -86,7 +86,7 @@ public class RiskScoreClassificationValidator extends ConfigurationValidator {
   }
 
   private void validateRiskScoreValueBounds(int value) {
-    if (value < 0 || value > RISK_SCORE_VALUE_RANGE - 1) {
+    if (!RiskScoreValidator.isInBounds(value)) {
       errors.add(new RiskScoreClassificationValidationError("minRiskLevel/maxRiskLevel", value, VALUE_OUT_OF_BOUNDS));
     }
   }
