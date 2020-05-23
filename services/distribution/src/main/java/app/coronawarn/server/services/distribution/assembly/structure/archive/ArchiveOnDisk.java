@@ -44,8 +44,6 @@ public class ArchiveOnDisk extends FileOnDisk implements Archive<WritableOnDisk>
 
   private static final Logger logger = LoggerFactory.getLogger(ArchiveOnDisk.class);
 
-  private static final String TEMPORARY_DIRECTORY_NAME = "temporary";
-
   private DirectoryOnDisk tempDirectory;
 
   /**
@@ -55,7 +53,7 @@ public class ArchiveOnDisk extends FileOnDisk implements Archive<WritableOnDisk>
     super(name, new byte[0]);
     try {
       tempDirectory = new DirectoryOnDisk(
-          Files.createTempDirectory(TEMPORARY_DIRECTORY_NAME).toFile());
+          Files.createTempDirectory("temporary").toFile());
     } catch (IOException e) {
       logger.error("Failed to create temporary directory for zip archive {}", this.getFileOnDisk());
       throw new RuntimeException(e);

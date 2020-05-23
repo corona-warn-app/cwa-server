@@ -19,23 +19,24 @@
 
 package app.coronawarn.server.services.distribution.assembly.component;
 
+import app.coronawarn.server.services.distribution.config.DistributionServiceConfig;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.security.KeyPair;
 import java.security.PrivateKey;
 import java.security.Security;
 import java.security.cert.Certificate;
 import java.security.cert.CertificateException;
 import java.security.cert.CertificateFactory;
-import org.bouncycastle.asn1.pkcs.PrivateKeyInfo;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
+import org.bouncycastle.openssl.PEMKeyPair;
 import org.bouncycastle.openssl.PEMParser;
 import org.bouncycastle.openssl.jcajce.JcaPEMKeyConverter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.ResourceLoader;
 import org.springframework.stereotype.Component;
@@ -49,11 +50,9 @@ public class CryptoProvider {
 
   private static final Logger logger = LoggerFactory.getLogger(CryptoProvider.class);
 
-  @Value("${services.distribution.paths.privatekey}")
-  private String privateKeyPath;
+  private final String privateKeyPath;
 
-  @Value("${services.distribution.paths.certificate}")
-  private String certificatePath;
+  private final String certificatePath;
 
   private final ResourceLoader resourceLoader;
 
@@ -64,16 +63,18 @@ public class CryptoProvider {
    * Creates a CryptoProvider, using {@link BouncyCastleProvider}.
    */
   @Autowired
-  public CryptoProvider(ResourceLoader resourceLoader) {
+  public CryptoProvider(ResourceLoader resourceLoader, DistributionServiceConfig distributionServiceConfig) {
     this.resourceLoader = resourceLoader;
+    this.privateKeyPath = distributionServiceConfig.getPaths().getPrivateKey();
+    this.certificatePath = distributionServiceConfig.getPaths().getCertificate();
     Security.addProvider(new BouncyCastleProvider());
   }
 
-  private static PrivateKey getPrivateKeyFromStream(final InputStream privateKeyStream)
-      throws IOException {
-    PEMParser pemParser = new PEMParser(new InputStreamReader(privateKeyStream));
-    PrivateKeyInfo privateKeyInfo = (PrivateKeyInfo) pemParser.readObject();
-    return new JcaPEMKeyConverter().getPrivateKey(privateKeyInfo);
+  private static PrivateKey getPrivateKeyFromStream(final InputStream privateKeyStream) throws IOException {
+    InputStreamReader privateKeyStreamReader = new InputStreamReader(privateKeyStream);
+    Object parsed = new PEMParser(privateKeyStreamReader).readObject();
+    KeyPair pair = new JcaPEMKeyConverter().getKeyPair((PEMKeyPair) parsed);
+    return pair.getPrivate();
   }
 
   private static Certificate getCertificateFromStream(final InputStream certificateStream)
