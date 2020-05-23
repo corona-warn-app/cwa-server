@@ -31,8 +31,8 @@ import org.json.simple.JSONArray;
 public class IndexingDecoratorOnDisk<T> extends AbstractIndexingDecorator<T, WritableOnDisk>
     implements IndexingDecorator<T, WritableOnDisk> {
 
-  public IndexingDecoratorOnDisk(IndexDirectory<T, WritableOnDisk> directory) {
-    super(directory);
+  public IndexingDecoratorOnDisk(IndexDirectory<T, WritableOnDisk> directory, String indexFileName) {
+    super(directory, indexFileName);
   }
 
   @Override

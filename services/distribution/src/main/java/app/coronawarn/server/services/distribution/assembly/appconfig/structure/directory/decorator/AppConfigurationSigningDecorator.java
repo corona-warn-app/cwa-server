@@ -6,11 +6,13 @@ import app.coronawarn.server.services.distribution.assembly.structure.WritableOn
 import app.coronawarn.server.services.distribution.assembly.structure.archive.Archive;
 import app.coronawarn.server.services.distribution.assembly.structure.archive.decorator.signing.SigningDecoratorOnDisk;
 import app.coronawarn.server.services.distribution.assembly.structure.file.FileOnDisk;
+import app.coronawarn.server.services.distribution.config.DistributionServiceConfig;
 
 public class AppConfigurationSigningDecorator extends SigningDecoratorOnDisk {
 
-  public AppConfigurationSigningDecorator(Archive<WritableOnDisk> archive, CryptoProvider cryptoProvider) {
-    super(archive, cryptoProvider);
+  public AppConfigurationSigningDecorator(Archive<WritableOnDisk> archive, CryptoProvider cryptoProvider,
+      DistributionServiceConfig distributionServiceConfig) {
+    super(archive, cryptoProvider, distributionServiceConfig);
   }
 
   @Override

@@ -22,11 +22,12 @@ package app.coronawarn.server.services.distribution.assembly.component;
 import app.coronawarn.server.services.distribution.assembly.structure.WritableOnDisk;
 import app.coronawarn.server.services.distribution.assembly.structure.directory.Directory;
 import app.coronawarn.server.services.distribution.assembly.structure.directory.DirectoryOnDisk;
+import app.coronawarn.server.services.distribution.config.DistributionServiceConfig;
 import java.io.IOException;
 import org.apache.commons.io.FileUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Value;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 /**
@@ -36,9 +37,12 @@ import org.springframework.stereotype.Component;
 public class OutputDirectoryProvider {
 
   private static final Logger logger = LoggerFactory.getLogger(OutputDirectoryProvider.class);
+  private final String outputPath;
 
-  @Value("${services.distribution.paths.output}")
-  private String outputPath;
+  @Autowired
+  public OutputDirectoryProvider(DistributionServiceConfig distributionServiceConfig) {
+    this.outputPath = distributionServiceConfig.getPaths().getOutput();
+  }
 
   public Directory<WritableOnDisk> getDirectory() {
     return new DirectoryOnDisk(getFileOnDisk());

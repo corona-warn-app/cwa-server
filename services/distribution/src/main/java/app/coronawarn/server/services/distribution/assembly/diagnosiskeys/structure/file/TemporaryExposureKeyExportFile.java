@@ -3,9 +3,10 @@ package app.coronawarn.server.services.distribution.assembly.diagnosiskeys.struc
 import app.coronawarn.server.common.persistence.domain.DiagnosisKey;
 import app.coronawarn.server.common.protocols.external.exposurenotification.TemporaryExposureKey;
 import app.coronawarn.server.common.protocols.external.exposurenotification.TemporaryExposureKeyExport;
-import app.coronawarn.server.services.distribution.assembly.structure.archive.decorator.signing.AbstractSigningDecorator;
 import app.coronawarn.server.services.distribution.assembly.structure.file.FileOnDisk;
 import app.coronawarn.server.services.distribution.assembly.structure.util.ImmutableStack;
+import app.coronawarn.server.services.distribution.config.DistributionServiceConfig;
+import com.google.common.base.Strings;
 import com.google.common.primitives.Bytes;
 import com.google.protobuf.ByteString;
 import java.nio.charset.StandardCharsets;
@@ -20,25 +21,20 @@ import java.util.stream.Collectors;
  */
 public class TemporaryExposureKeyExportFile extends FileOnDisk {
 
-  /**
-   * The mandatory header for all TEK Export files.
-   */
-  private static final byte[] HEADER = "EK Export v1    ".getBytes(StandardCharsets.UTF_8);
-
-  private static final String INDEX_FILE_NAME = "export.bin";
-
   private final Collection<TemporaryExposureKey> temporaryExposureKeys;
   private final String region;
   private final long startTimestamp;
   private final long endTimestamp;
+  private final DistributionServiceConfig distributionServiceConfig;
 
   private TemporaryExposureKeyExportFile(Collection<TemporaryExposureKey> temporaryExposureKeys, String region,
-      long startTimestamp, long endTimestamp) {
-    super(INDEX_FILE_NAME, new byte[0]);
+      long startTimestamp, long endTimestamp, DistributionServiceConfig distributionServiceConfig) {
+    super(distributionServiceConfig.getTekExport().getFileName(), new byte[0]);
     this.temporaryExposureKeys = temporaryExposureKeys;
     this.region = region;
     this.startTimestamp = startTimestamp;
     this.endTimestamp = endTimestamp;
+    this.distributionServiceConfig = distributionServiceConfig;
   }
 
   /**
@@ -54,8 +50,10 @@ public class TemporaryExposureKeyExportFile extends FileOnDisk {
    * @return A new {@link TemporaryExposureKeyExportFile}.
    */
   public static TemporaryExposureKeyExportFile fromTemporaryExposureKeys(
-      Collection<TemporaryExposureKey> temporaryExposureKeys, String region, long startTimestamp, long endTimestamp) {
-    return new TemporaryExposureKeyExportFile(temporaryExposureKeys, region, startTimestamp, endTimestamp);
+      Collection<TemporaryExposureKey> temporaryExposureKeys, String region, long startTimestamp, long endTimestamp,
+      DistributionServiceConfig distributionServiceConfig) {
+    return new TemporaryExposureKeyExportFile(temporaryExposureKeys, region, startTimestamp, endTimestamp,
+        distributionServiceConfig);
   }
 
   /**
@@ -71,9 +69,9 @@ public class TemporaryExposureKeyExportFile extends FileOnDisk {
    * @return A new {@link TemporaryExposureKeyExportFile}.
    */
   public static TemporaryExposureKeyExportFile fromDiagnosisKeys(Collection<DiagnosisKey> diagnosisKeys, String region,
-      long startTimestamp, long endTimestamp) {
+      long startTimestamp, long endTimestamp, DistributionServiceConfig distributionServiceConfig) {
     return new TemporaryExposureKeyExportFile(getTemporaryExposureKeysFromDiagnosisKeys(diagnosisKeys), region,
-        startTimestamp, endTimestamp);
+        startTimestamp, endTimestamp, distributionServiceConfig);
   }
 
   @Override
@@ -83,7 +81,7 @@ public class TemporaryExposureKeyExportFile extends FileOnDisk {
   }
 
   private byte[] createKeyExportBytesWithHeader() {
-    return Bytes.concat(HEADER, createTemporaryExposureKeyExportBytes());
+    return Bytes.concat(this.getHeaderBytes(), createTemporaryExposureKeyExportBytes());
   }
 
   private byte[] createTemporaryExposureKeyExportBytes() {
@@ -94,7 +92,7 @@ public class TemporaryExposureKeyExportFile extends FileOnDisk {
         // TODO Use buildPartial and then set batch stuff somewhere else
         .setBatchNum(1)
         .setBatchSize(1)
-        .addAllSignatureInfos(Set.of(AbstractSigningDecorator.getSignatureInfo()))
+        .addAllSignatureInfos(Set.of(distributionServiceConfig.getSignature().getSignatureInfo()))
         .addAllKeys(this.temporaryExposureKeys)
         .build()
         .toByteArray();
@@ -112,17 +110,21 @@ public class TemporaryExposureKeyExportFile extends FileOnDisk {
         .collect(Collectors.toSet());
   }
 
+  private byte[] getHeaderBytes() {
+    String header = distributionServiceConfig.getTekExport().getFileHeader();
+    int headerWidth = distributionServiceConfig.getTekExport().getFileHeaderWidth();
+    return Strings.padEnd(header, headerWidth, ' ').getBytes(StandardCharsets.UTF_8);
+  }
+
   /**
-   * Returns a new byte array based on the given byte array, without the TEK file header.
-   *
-   * @param keyExportBytes the files of the key export file (with headers).
-   * @return the original key export file bytes, representing the proto definition.
+   * Returns the bytes of this TemporaryExposureKeyExportFile, but without the header.
    */
-  public static byte[] withoutFileHeader(byte[] keyExportBytes) {
-    if (!Arrays.equals(keyExportBytes, 0, HEADER.length, HEADER, 0, HEADER.length)) {
+  public byte[] getBytesWithoutHeader() {
+    byte[] headerBytes = this.getHeaderBytes();
+    byte[] fileBytes = this.getBytes();
+    if (!Arrays.equals(fileBytes, 0, headerBytes.length, headerBytes, 0, headerBytes.length)) {
       throw new IllegalArgumentException("Supplied bytes are not starting with EK Export File header");
     }
-
-    return Arrays.copyOfRange(keyExportBytes, HEADER.length, keyExportBytes.length);
+    return Arrays.copyOfRange(fileBytes, headerBytes.length, fileBytes.length);
   }
 }

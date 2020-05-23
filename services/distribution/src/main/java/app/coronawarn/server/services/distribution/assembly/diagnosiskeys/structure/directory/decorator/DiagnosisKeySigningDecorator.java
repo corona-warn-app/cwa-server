@@ -26,11 +26,13 @@ import app.coronawarn.server.services.distribution.assembly.structure.archive.Ar
 import app.coronawarn.server.services.distribution.assembly.structure.archive.decorator.signing.SigningDecoratorOnDisk;
 import app.coronawarn.server.services.distribution.assembly.structure.file.File;
 import app.coronawarn.server.services.distribution.assembly.structure.file.FileOnDisk;
+import app.coronawarn.server.services.distribution.config.DistributionServiceConfig;
 
 public class DiagnosisKeySigningDecorator extends SigningDecoratorOnDisk {
 
-  public DiagnosisKeySigningDecorator(Archive<WritableOnDisk> archive, CryptoProvider cryptoProvider) {
-    super(archive, cryptoProvider);
+  public DiagnosisKeySigningDecorator(Archive<WritableOnDisk> archive, CryptoProvider cryptoProvider,
+      DistributionServiceConfig distributionServiceConfig) {
+    super(archive, cryptoProvider, distributionServiceConfig);
   }
 
   @Override
