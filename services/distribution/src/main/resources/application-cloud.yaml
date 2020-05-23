@@ -13,12 +13,10 @@ services:
   distribution:
     paths:
       output: /tmp/distribution
-
-cwa:
-  objectstore:
-    access-key: ${CWA_OBJECTSTORE_ACCESSKEY}
-    secret-key: ${CWA_OBJECTSTORE_SECRETKEY}
-    endpoint: ${CWA_OBJECTSTORE_ENDPOINT}
-    bucket: ${CWA_OBJECTSTORE_BUCKET}
-    port: ${CWA_OBJECTSTORE_PORT}
-    set-public-read-acl-on-put-object: false
+    objectstore:
+      access-key: ${CWA_OBJECTSTORE_ACCESSKEY}
+      secret-key: ${CWA_OBJECTSTORE_SECRETKEY}
+      endpoint: ${CWA_OBJECTSTORE_ENDPOINT}
+      bucket: ${CWA_OBJECTSTORE_BUCKET}
+      port: ${CWA_OBJECTSTORE_PORT}
+      set-public-read-acl-on-put-object: false
