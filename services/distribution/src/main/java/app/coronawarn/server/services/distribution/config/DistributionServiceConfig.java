@@ -12,8 +12,10 @@ public class DistributionServiceConfig {
   private Paths paths;
   private TestData testData;
   private Integer retentionDays;
-
+  private String outputFileName;
+  private String tekExportFileName;
   private Signature signature;
+  private Api api;
 
   public Paths getPaths() {
     return paths;
@@ -39,12 +41,36 @@ public class DistributionServiceConfig {
     this.retentionDays = retentionDays;
   }
 
+  public String getOutputFileName() {
+    return outputFileName;
+  }
+
+  public void setOutputFileName(String outputFileName) {
+    this.outputFileName = outputFileName;
+  }
+
+  public String getTekExportFileName() {
+    return tekExportFileName;
+  }
+
+  public void setTekExportFileName(String tekExportFileName) {
+    this.tekExportFileName = tekExportFileName;
+  }
+
   public Signature getSignature() {
     return signature;
   }
 
   public void setSignature(Signature signature) {
     this.signature = signature;
+  }
+
+  public Api getApi() {
+    return api;
+  }
+
+  public void setApi(Api api) {
+    this.api = api;
   }
 
   public static class TestData {
@@ -98,6 +124,101 @@ public class DistributionServiceConfig {
     public void setOutput(String output) {
       this.output = output;
     }
+  }
+
+  public static class Api {
+
+    private String versionPath;
+    private String versionV1;
+    private String countryPath;
+    private String countryGermany;
+    private String datePath;
+    private String hourPath;
+    private String diagnosisKeysPath;
+    private String parametersPath;
+    private String parametersExposureConfigurationFileName;
+
+    public String getVersionPath() {
+      return versionPath;
+    }
+
+    public void setVersionPath(String versionPath) {
+      this.versionPath = versionPath;
+    }
+
+    public String getVersionV1() {
+      return versionV1;
+    }
+
+    public void setVersionV1(String versionV1) {
+      this.versionV1 = versionV1;
+    }
+
+    public String getCountryPath() {
+      return countryPath;
+    }
+
+    public void setCountryPath(String countryPath) {
+      this.countryPath = countryPath;
+    }
+
+    public String getCountryGermany() {
+      return countryGermany;
+    }
+
+    public void setCountryGermany(String countryGermany) {
+      this.countryGermany = countryGermany;
+    }
+
+    public String getDatePath() {
+      return datePath;
+    }
+
+    public void setDatePath(String datePath) {
+      this.datePath = datePath;
+    }
+
+    public String getHourPath() {
+      return hourPath;
+    }
+
+    public void setHourPath(String hourPath) {
+      this.hourPath = hourPath;
+    }
+
+    public String getDiagnosisKeysPath() {
+      return diagnosisKeysPath;
+    }
+
+    public void setDiagnosisKeysPath(String diagnosisKeysPath) {
+      this.diagnosisKeysPath = diagnosisKeysPath;
+    }
+
+    public String getParametersPath() {
+      return parametersPath;
+    }
+
+    public void setParametersPath(String parametersPath) {
+      this.parametersPath = parametersPath;
+    }
+
+    public String getParametersExposureConfigurationFileName() {
+      return parametersExposureConfigurationFileName;
+    }
+
+    public void setParametersExposureConfigurationFileName(String parametersExposureConfigurationFileName) {
+      this.parametersExposureConfigurationFileName = parametersExposureConfigurationFileName;
+    }
+
+    public String getParametersRiskScoreClassificationFileName() {
+      return parametersRiskScoreClassificationFileName;
+    }
+
+    public void setParametersRiskScoreClassificationFileName(String parametersRiskScoreClassificationFileName) {
+      this.parametersRiskScoreClassificationFileName = parametersRiskScoreClassificationFileName;
+    }
+
+    private String parametersRiskScoreClassificationFileName;
   }
 
   public static class Signature {

@@ -1,11 +1,13 @@
 package app.coronawarn.server.services.distribution.config;
 
-import static org.springframework.test.util.AssertionErrors.assertEquals;
 import static org.springframework.test.util.AssertionErrors.assertNotNull;
 import static org.springframework.test.util.AssertionErrors.assertNull;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Properties;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -22,7 +24,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 public class DistributionServiceConfigTest {
 
   @Autowired
-  private DistributionServiceConfig distributionServiceConfig;
+  private DistributionServiceConfig dsc;
 
   private final Properties properties = new Properties();
 
@@ -40,58 +42,41 @@ public class DistributionServiceConfigTest {
   @Test
   void whenDistributionConfigBeanCreatedThenPropertiesLoadedCorrectly() {
 
-    assertNotNull("Configuration should not be null", distributionServiceConfig);
-    assertNotNull("Paths should not be null", distributionServiceConfig.getPaths());
-    assertNull("TestData should be null", distributionServiceConfig.getTestData());
-    assertNotNull("Signature should not be null", distributionServiceConfig.getSignature());
+    assertNotNull("Configuration should not be null", dsc);
+    assertNotNull("Paths should not be null", dsc.getPaths());
+    assertNull("TestData should be null", dsc.getTestData());
+    assertNotNull("Signature should not be null", dsc.getSignature());
+    assertNotNull("API should not be null", dsc.getApi());
 
-    assertEquals("PrivateKey path value should be loaded correctly.",
-      properties.getProperty("services.distribution.paths.privatekey"),
-      distributionServiceConfig.getPaths().getPrivateKey());
+    Map<String, String> cp = new HashMap<>();
+    cp.put("services.distribution.retention-days", dsc.getRetentionDays().toString());
+    cp.put("services.distribution.output-file-name", dsc.getOutputFileName());
+    cp.put("services.distribution.tek-export-file-name", dsc.getTekExportFileName());
+    cp.put("services.distribution.paths.privatekey", dsc.getPaths().getPrivateKey());
+    cp.put("services.distribution.paths.certificate", dsc.getPaths().getCertificate());
+    cp.put("services.distribution.paths.output", dsc.getPaths().getOutput());
+    cp.put("services.distribution.signature.app-bundle-id", dsc.getSignature().getAppBundleId());
+    cp.put("services.distribution.signature.android-package", dsc.getSignature().getAndroidPackage());
+    cp.put("services.distribution.signature.verification-key-id", dsc.getSignature().getVerificationKeyId());
+    cp.put("services.distribution.signature.verification-key-version", dsc.getSignature().getVerificationKeyVersion());
+    cp.put("services.distribution.signature.algorithm-oid", dsc.getSignature().getAlgorithmOid());
+    cp.put("services.distribution.signature.algorithm-name", dsc.getSignature().getAlgorithmName());
+    cp.put("services.distribution.signature.file-name", dsc.getSignature().getFileName());
+    cp.put("services.distribution.signature.security-provider", dsc.getSignature().getSecurityProvider());
+    cp.put("services.distribution.api.version-path", dsc.getApi().getVersionPath());
+    cp.put("services.distribution.api.version-v1", dsc.getApi().getVersionV1());
+    cp.put("services.distribution.api.country-path", dsc.getApi().getCountryPath());
+    cp.put("services.distribution.api.country-germany", dsc.getApi().getCountryGermany());
+    cp.put("services.distribution.api.date-path", dsc.getApi().getDatePath());
+    cp.put("services.distribution.api.hour-path", dsc.getApi().getHourPath());
+    cp.put("services.distribution.api.diagnosis-keys-path", dsc.getApi().getDiagnosisKeysPath());
+    cp.put("services.distribution.api.parameters-path", dsc.getApi().getParametersPath());
+    cp.put("services.distribution.api.parameters-exposure-configuration-file-name",
+        dsc.getApi().getParametersExposureConfigurationFileName());
+    cp.put("services.distribution.api.parameters-risk-score-classification-file-name",
+        dsc.getApi().getParametersRiskScoreClassificationFileName());
 
-    assertEquals("Certificate path value should be loaded correctly.",
-      properties.getProperty("services.distribution.paths.certificate"),
-      distributionServiceConfig.getPaths().getCertificate());
-
-    assertEquals("Output path value should be loaded correctly.",
-      properties.getProperty("services.distribution.paths.output"),
-      distributionServiceConfig.getPaths().getOutput());
-
-    assertEquals("Retention Days value should be loaded correctly.",
-      properties.getProperty("services.distribution.retention-days"),
-      String.valueOf(distributionServiceConfig.getRetentionDays()));
-
-    assertEquals("App bundle ID value should be loaded correctly.",
-        properties.getProperty("services.distribution.signature.app-bundle-id"),
-        String.valueOf(distributionServiceConfig.getSignature().getAppBundleId()));
-
-    assertEquals("Android package value should be loaded correctly.",
-        properties.getProperty("services.distribution.signature.android-package"),
-        String.valueOf(distributionServiceConfig.getSignature().getAndroidPackage()));
-
-    assertEquals("Verification key ID value should be loaded correctly.",
-        properties.getProperty("services.distribution.signature.verification-key-id"),
-        String.valueOf(distributionServiceConfig.getSignature().getVerificationKeyId()));
-
-    assertEquals("Verification key version value should be loaded correctly.",
-        properties.getProperty("services.distribution.signature.verification-key-version"),
-        String.valueOf(distributionServiceConfig.getSignature().getVerificationKeyVersion()));
-
-    assertEquals("Algorithm OID value should be loaded correctly.",
-        properties.getProperty("services.distribution.signature.algorithm-oid"),
-        String.valueOf(distributionServiceConfig.getSignature().getAlgorithmOid()));
-
-    assertEquals("Algorithm name value should be loaded correctly.",
-        properties.getProperty("services.distribution.signature.algorithm-name"),
-        String.valueOf(distributionServiceConfig.getSignature().getAlgorithmName()));
-
-    assertEquals("File name value should be loaded correctly.",
-        properties.getProperty("services.distribution.signature.file-name"),
-        String.valueOf(distributionServiceConfig.getSignature().getFileName()));
-
-    assertEquals("Security provider version value should be loaded correctly.",
-        properties.getProperty("services.distribution.signature.security-provider"),
-        String.valueOf(distributionServiceConfig.getSignature().getSecurityProvider()));
+    cp.forEach((key, value) -> assertThat(properties.getProperty(key)).isEqualTo(value));
   }
 
 }
