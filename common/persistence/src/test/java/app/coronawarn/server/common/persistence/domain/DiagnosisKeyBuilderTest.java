@@ -34,7 +34,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 
-public class DiagnosisKeyBuilderTest {
+class DiagnosisKeyBuilderTest {
 
   private final byte[] expKeyData = "16-bytelongarray".getBytes(Charset.defaultCharset());
   private final long expRollingStartNumber = 73800;
@@ -43,7 +43,7 @@ public class DiagnosisKeyBuilderTest {
   private final long expSubmissionTimestamp = 2L;
 
   @Test
-  public void buildFromProtoBufObjWithSubmissionTimestamp() {
+  void buildFromProtoBufObjWithSubmissionTimestamp() {
     TemporaryExposureKey protoBufObj = TemporaryExposureKey
         .newBuilder()
         .setKeyData(ByteString.copyFrom(this.expKeyData))
@@ -61,7 +61,7 @@ public class DiagnosisKeyBuilderTest {
   }
 
   @Test
-  public void buildFromProtoBufObjWithoutSubmissionTimestamp() {
+  void buildFromProtoBufObjWithoutSubmissionTimestamp() {
     TemporaryExposureKey protoBufObj = TemporaryExposureKey
         .newBuilder()
         .setKeyData(ByteString.copyFrom(this.expKeyData))
@@ -76,7 +76,7 @@ public class DiagnosisKeyBuilderTest {
   }
 
   @Test
-  public void buildSuccessivelyWithSubmissionTimestamp() {
+  void buildSuccessivelyWithSubmissionTimestamp() {
     DiagnosisKey actDiagnosisKey = DiagnosisKey.builder()
         .withKeyData(this.expKeyData)
         .withRollingStartNumber(this.expRollingStartNumber)
@@ -88,7 +88,7 @@ public class DiagnosisKeyBuilderTest {
   }
 
   @Test
-  public void buildSuccessivelyWithoutSubmissionTimestamp() {
+  void buildSuccessivelyWithoutSubmissionTimestamp() {
     DiagnosisKey actDiagnosisKey = DiagnosisKey.builder()
         .withKeyData(this.expKeyData)
         .withRollingStartNumber(this.expRollingStartNumber)
@@ -99,7 +99,7 @@ public class DiagnosisKeyBuilderTest {
   }
 
   @Test
-  public void rollingStartNumberDoesNotThrowForValid() {
+  void rollingStartNumberDoesNotThrowForValid() {
     assertThatCode(() -> keyWithRollingStartNumber(4200L)).doesNotThrowAnyException();
 
     // Timestamp: 05/16/2020 @ 00:00 in hours
@@ -107,7 +107,7 @@ public class DiagnosisKeyBuilderTest {
   }
 
   @Test
-  public void rollingStartNumberCannotBeInFuture() {
+  void rollingStartNumberCannotBeInFuture() {
     assertThat(catchThrowable(() -> keyWithRollingStartNumber(Long.MAX_VALUE)))
         .isInstanceOf(InvalidDiagnosisKeyException.class)
         .hasMessage(
@@ -129,7 +129,7 @@ public class DiagnosisKeyBuilderTest {
   }
 
   @Test
-  public void failsForInvalidRollingStartNumber() {
+  void failsForInvalidRollingStartNumber() {
     assertThat(
         catchThrowable(() -> DiagnosisKey.builder()
             .withKeyData(this.expKeyData)
@@ -142,7 +142,7 @@ public class DiagnosisKeyBuilderTest {
 
   @ParameterizedTest
   @ValueSource(ints = {9, -1})
-  public void transmissionRiskLevelMustBeInRange(int invalidRiskLevel) {
+  void transmissionRiskLevelMustBeInRange(int invalidRiskLevel) {
     assertThat(catchThrowable(() -> keyWithRiskLevel(invalidRiskLevel)))
         .isInstanceOf(InvalidDiagnosisKeyException.class)
         .hasMessage(
@@ -151,13 +151,13 @@ public class DiagnosisKeyBuilderTest {
 
   @ParameterizedTest
   @ValueSource(ints = {0, 8})
-  public void transmissionRiskLevelDoesNotThrowForValid(int validRiskLevel) {
+  void transmissionRiskLevelDoesNotThrowForValid(int validRiskLevel) {
     assertThatCode(() -> keyWithRiskLevel(validRiskLevel)).doesNotThrowAnyException();
   }
 
   @ParameterizedTest
   @ValueSource(longs = {0L, -3L})
-  public void rollingPeriodMustBeLargerThanZero(long invalidRollingPeriod) {
+  void rollingPeriodMustBeLargerThanZero(long invalidRollingPeriod) {
     assertThat(catchThrowable(() -> keyWithRollingPeriod(invalidRollingPeriod)))
         .isInstanceOf(InvalidDiagnosisKeyException.class)
         .hasMessage(
@@ -165,20 +165,20 @@ public class DiagnosisKeyBuilderTest {
   }
 
   @Test
-  public void rollingPeriodDoesNotThrowForValid() {
+  void rollingPeriodDoesNotThrowForValid() {
     assertThatCode(() -> keyWithRollingPeriod(144L)).doesNotThrowAnyException();
   }
 
   @ParameterizedTest
   @ValueSource(strings = {"17--bytelongarray", "", "1"})
-  public void keyDataMustHaveValidLength(String invalidKeyString) {
+  void keyDataMustHaveValidLength(String invalidKeyString) {
     assertThat(
         catchThrowable(() -> keyWithKeyData(invalidKeyString.getBytes(Charset.defaultCharset()))))
         .isInstanceOf(InvalidDiagnosisKeyException.class);
   }
 
   @Test
-  public void keyDataDoesNotThrowOnValid() {
+  void keyDataDoesNotThrowOnValid() {
     assertThatCode(() -> keyWithKeyData("16-bytelongarray".getBytes(Charset.defaultCharset())))
         .doesNotThrowAnyException();
   }
