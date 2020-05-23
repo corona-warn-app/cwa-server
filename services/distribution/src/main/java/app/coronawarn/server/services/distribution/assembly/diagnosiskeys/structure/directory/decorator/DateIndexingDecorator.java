@@ -1,0 +1,35 @@
+package app.coronawarn.server.services.distribution.assembly.diagnosiskeys.structure.directory.decorator;
+
+import app.coronawarn.server.services.distribution.assembly.diagnosiskeys.structure.directory.DiagnosisKeysDateDirectory;
+import app.coronawarn.server.services.distribution.assembly.structure.directory.decorator.indexing.IndexingDecoratorOnDisk;
+import app.coronawarn.server.services.distribution.assembly.structure.util.ImmutableStack;
+import java.time.LocalDate;
+import java.time.ZoneOffset;
+import java.util.Set;
+import java.util.stream.Collectors;
+
+public class DateIndexingDecorator extends IndexingDecoratorOnDisk<LocalDate> {
+
+  private final boolean includeIncompleteDays;
+
+  public DateIndexingDecorator(DiagnosisKeysDateDirectory directory, boolean includeIncompleteDays) {
+    super(directory);
+    this.includeIncompleteDays = includeIncompleteDays;
+  }
+
+  /**
+   * Returns the index of the decorated {@link DiagnosisKeysDateDirectory}. By default, the current date (today) will be
+   * excluded from the index. However, if the profile `include-incomplete` is set, the current date will be included.
+   */
+  @Override
+  public Set<LocalDate> getIndex(ImmutableStack<Object> indices) {
+    if (!includeIncompleteDays) {
+      LocalDate currentDate = LocalDate.now(ZoneOffset.UTC);
+      return super.getIndex(indices).stream()
+          .filter(date -> !date.equals(currentDate))
+          .collect(Collectors.toSet());
+    } else {
+      return super.getIndex(indices);
+    }
+  }
+}

@@ -62,6 +62,9 @@ public class DateAggregatingDecorator extends IndexDirectoryDecorator<LocalDate,
     this.cryptoProvider = cryptoProvider;
   }
 
+  // TODO this.getIndex and then work on that instead of looping through the writables
+  // TODO --> Current date needs to be excluded!
+
   @Override
   public void prepare(ImmutableStack<Object> indices) {
     super.prepare(indices);
