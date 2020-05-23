@@ -17,15 +17,21 @@
  * under the License.
  */
 
-package app.coronawarn.server.services.distribution.assembly.exposureconfig.validation;
+package app.coronawarn.server.services.distribution.assembly.appconfig.validation;
 
 /**
- * The validation could not be executed. Find more information about the root cause in the cause element, and in the
- * message property.
+ * Classes that extend {@link AppConfigurationValidator} validate the values of an associated {@link
+ * com.google.protobuf.Message} instance.
  */
-public class ValidationExecutionException extends RuntimeException {
+public abstract class AppConfigurationValidator {
 
-  public ValidationExecutionException(String message, Throwable cause) {
-    super(message, cause);
-  }
+  protected ValidationResult errors;
+
+  /**
+   * Performs a validation of the associated {@link com.google.protobuf.Message} instance and returns information about
+   * validation failures.
+   *
+   * @return The ValidationResult instance, containing information about possible errors.
+   */
+  public abstract ValidationResult validate();
 }

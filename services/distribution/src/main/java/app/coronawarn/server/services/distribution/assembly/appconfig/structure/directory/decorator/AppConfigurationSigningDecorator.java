@@ -1,4 +1,4 @@
-package app.coronawarn.server.services.distribution.assembly.exposureconfig.structure.directory.decorator;
+package app.coronawarn.server.services.distribution.assembly.appconfig.structure.directory.decorator;
 
 import app.coronawarn.server.services.distribution.assembly.component.CryptoProvider;
 import app.coronawarn.server.services.distribution.assembly.structure.Writable;
@@ -7,9 +7,9 @@ import app.coronawarn.server.services.distribution.assembly.structure.archive.Ar
 import app.coronawarn.server.services.distribution.assembly.structure.archive.decorator.signing.SigningDecoratorOnDisk;
 import app.coronawarn.server.services.distribution.assembly.structure.file.FileOnDisk;
 
-public class ExposureConfigSigningDecorator extends SigningDecoratorOnDisk {
+public class AppConfigurationSigningDecorator extends SigningDecoratorOnDisk {
 
-  public ExposureConfigSigningDecorator(Archive<WritableOnDisk> archive, CryptoProvider cryptoProvider) {
+  public AppConfigurationSigningDecorator(Archive<WritableOnDisk> archive, CryptoProvider cryptoProvider) {
     super(archive, cryptoProvider);
   }
 
