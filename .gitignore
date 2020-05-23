@@ -38,3 +38,5 @@ out/
 .settings
 .project
 .classpath
+pom.xml.versionsBackup
+.factorypath
