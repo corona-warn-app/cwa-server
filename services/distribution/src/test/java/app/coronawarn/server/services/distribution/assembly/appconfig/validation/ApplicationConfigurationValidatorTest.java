@@ -52,7 +52,7 @@ class ApplicationConfigurationValidatorTest {
   void circular() {
     assertThatThrownBy(() -> {
       ApplicationConfigurationProvider.readFile("configtests/app-config_circular.yaml");
-    }).isInstanceOf(IllegalArgumentException.class).hasMessageContaining("Include references itself.");
+    }).isInstanceOf(UnableToLoadFileException.class);
   }
 
   private ValidationResult getResultForTest(TestWithExpectedResult test)
