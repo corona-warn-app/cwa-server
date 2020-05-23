@@ -44,8 +44,8 @@ public class DiagnosisKeyBuilder implements Builder, RollingStartNumberBuilder,
   private static final Logger logger = LoggerFactory.getLogger(DiagnosisKeyBuilder.class);
 
   private byte[] keyData;
-  private long rollingStartNumber;
-  private long rollingPeriod;
+  private int rollingStartNumber;
+  private int rollingPeriod;
   private int transmissionRiskLevel;
   private long submissionTimestamp = -1L;
 
@@ -59,13 +59,13 @@ public class DiagnosisKeyBuilder implements Builder, RollingStartNumberBuilder,
   }
 
   @Override
-  public RollingPeriodBuilder withRollingStartNumber(long rollingStartNumber) {
+  public RollingPeriodBuilder withRollingStartNumber(int rollingStartNumber) {
     this.rollingStartNumber = rollingStartNumber;
     return this;
   }
 
   @Override
-  public TransmissionRiskLevelBuilder withRollingPeriod(long rollingPeriod) {
+  public TransmissionRiskLevelBuilder withRollingPeriod(int rollingPeriod) {
     this.rollingPeriod = rollingPeriod;
     return this;
   }
