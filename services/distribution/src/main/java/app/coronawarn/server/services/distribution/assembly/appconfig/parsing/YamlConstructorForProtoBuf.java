@@ -56,5 +56,4 @@ public class YamlConstructorForProtoBuf extends Constructor {
       return Character.toLowerCase(camelCase.charAt(0)) + camelCase.substring(1);
     }
   }
-
 }
