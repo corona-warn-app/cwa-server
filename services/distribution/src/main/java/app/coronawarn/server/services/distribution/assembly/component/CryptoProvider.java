@@ -29,7 +29,6 @@ import java.security.Security;
 import java.security.cert.Certificate;
 import java.security.cert.CertificateException;
 import java.security.cert.CertificateFactory;
-import org.bouncycastle.asn1.pkcs.PrivateKeyInfo;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.bouncycastle.openssl.PEMKeyPair;
 import org.bouncycastle.openssl.PEMParser;
@@ -74,7 +73,7 @@ public class CryptoProvider {
   private static PrivateKey getPrivateKeyFromStream(final InputStream privateKeyStream) throws IOException {
     InputStreamReader privateKeyStreamReader = new InputStreamReader(privateKeyStream);
     Object parsed = new PEMParser(privateKeyStreamReader).readObject();
-    KeyPair pair = new JcaPEMKeyConverter().getKeyPair((PEMKeyPair)parsed);
+    KeyPair pair = new JcaPEMKeyConverter().getKeyPair((PEMKeyPair) parsed);
     return pair.getPrivate();
   }
 
