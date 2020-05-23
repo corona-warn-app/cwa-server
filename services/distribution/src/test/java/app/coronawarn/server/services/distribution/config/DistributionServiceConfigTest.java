@@ -43,13 +43,16 @@ public class DistributionServiceConfigTest {
     assertNotNull("Configuration should not be null", distributionServiceConfig);
     assertNotNull("Paths should not be null", distributionServiceConfig.getPaths());
     assertNull("TestData should be null", distributionServiceConfig.getTestData());
+    assertNotNull("Signature should not be null", distributionServiceConfig.getSignature());
 
     assertEquals("PrivateKey path value should be loaded correctly.",
       properties.getProperty("services.distribution.paths.privatekey"),
       distributionServiceConfig.getPaths().getPrivateKey());
+
     assertEquals("Certificate path value should be loaded correctly.",
       properties.getProperty("services.distribution.paths.certificate"),
       distributionServiceConfig.getPaths().getCertificate());
+
     assertEquals("Output path value should be loaded correctly.",
       properties.getProperty("services.distribution.paths.output"),
       distributionServiceConfig.getPaths().getOutput());
@@ -58,6 +61,37 @@ public class DistributionServiceConfigTest {
       properties.getProperty("services.distribution.retention-days"),
       String.valueOf(distributionServiceConfig.getRetentionDays()));
 
+    assertEquals("App bundle ID value should be loaded correctly.",
+        properties.getProperty("services.distribution.signature.app-bundle-id"),
+        String.valueOf(distributionServiceConfig.getSignature().getAppBundleId()));
+
+    assertEquals("Android package value should be loaded correctly.",
+        properties.getProperty("services.distribution.signature.android-package"),
+        String.valueOf(distributionServiceConfig.getSignature().getAndroidPackage()));
+
+    assertEquals("Verification key ID value should be loaded correctly.",
+        properties.getProperty("services.distribution.signature.verification-key-id"),
+        String.valueOf(distributionServiceConfig.getSignature().getVerificationKeyId()));
+
+    assertEquals("Verification key version value should be loaded correctly.",
+        properties.getProperty("services.distribution.signature.verification-key-version"),
+        String.valueOf(distributionServiceConfig.getSignature().getVerificationKeyVersion()));
+
+    assertEquals("Algorithm OID value should be loaded correctly.",
+        properties.getProperty("services.distribution.signature.algorithm-oid"),
+        String.valueOf(distributionServiceConfig.getSignature().getAlgorithmOid()));
+
+    assertEquals("Algorithm name value should be loaded correctly.",
+        properties.getProperty("services.distribution.signature.algorithm-name"),
+        String.valueOf(distributionServiceConfig.getSignature().getAlgorithmName()));
+
+    assertEquals("File name value should be loaded correctly.",
+        properties.getProperty("services.distribution.signature.file-name"),
+        String.valueOf(distributionServiceConfig.getSignature().getFileName()));
+
+    assertEquals("Security provider version value should be loaded correctly.",
+        properties.getProperty("services.distribution.signature.security-provider"),
+        String.valueOf(distributionServiceConfig.getSignature().getSecurityProvider()));
   }
 
 }
