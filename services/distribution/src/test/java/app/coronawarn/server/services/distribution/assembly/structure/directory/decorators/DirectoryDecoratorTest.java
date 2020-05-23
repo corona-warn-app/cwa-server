@@ -29,10 +29,10 @@ import app.coronawarn.server.services.distribution.assembly.structure.directory.
 import app.coronawarn.server.services.distribution.assembly.structure.util.ImmutableStack;
 import org.junit.jupiter.api.Test;
 
-public class DirectoryDecoratorTest {
+class DirectoryDecoratorTest {
 
   @Test
-  public void checkProxiesAllMethods() {
+  void checkProxiesAllMethods() {
     Directory<WritableOnDisk> decoratee = mock(DirectoryOnDisk.class);
     Directory<WritableOnDisk> decorator = new TestDirectoryDecorator(decoratee);
 
