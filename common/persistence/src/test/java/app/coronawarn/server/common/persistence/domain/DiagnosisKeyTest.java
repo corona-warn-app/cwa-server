@@ -65,11 +65,6 @@ import org.junit.jupiter.params.provider.ValueSource;
   }
 
   @Test
-   void testSubmissionTimestampGetter() {
-    assertThat(diagnosisKey.getSubmissionTimestamp()).isEqualTo(expSubmissionTimestamp);
-  }
-
-  @Test
    void testIsYoungerThanRetentionThreshold() {
     long fiveDaysAgo = LocalDateTime
         .ofInstant(Instant.now(), UTC)
