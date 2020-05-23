@@ -68,10 +68,10 @@ public class SubmissionController {
 
   // Exponential moving average of the last N real request durations (in ms), where
   // N = fakeDelayMovingAverageSamples.
-  @Value("${services.submission.initial_fake_delay_milliseconds}")
+  @Value("${services.submission.initial-fake-delay-milliseconds}")
   private Double fakeDelay;
 
-  @Value("${services.submission.fake_delay_moving_average_samples}")
+  @Value("${services.submission.fake-delay-moving-average-samples}")
   private Double fakeDelayMovingAverageSamples;
 
   @Value("${services.submission.retention-days}")
