@@ -1,0 +1,25 @@
+---
+logging:
+  level:
+    org:
+      springframework: off
+    root: off
+spring:
+  main:
+    banner-mode: off
+  flyway:
+    enabled: true
+    # default case is H2 - value will be overwritten by profile cloud or postgres
+    locations: classpath:db/migration/h2
+
+  jpa:
+    hibernate:
+      ddl-auto: validate
+
+services:
+  submission:
+    initial-fake-delay-milliseconds: 1
+    fake-delay-moving-average-samples: 1
+    retention-days: 14
+    payload:
+      max-number-of-keys: 14

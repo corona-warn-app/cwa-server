@@ -1,0 +1,30 @@
+---
+logging:
+  level:
+    org:
+      springframework:
+        web: INFO
+
+# The initial value of the moving average for fake request delays.
+services:
+  submission:
+    initial-fake-delay-milliseconds: 10
+    # The number of samples for the calculation of the moving average for fake request delays.
+    fake-delay-moving-average-samples: 10
+    retention-days: 14
+    payload:
+      max-number-of-keys: 14
+
+spring:
+  jpa:
+    hibernate:
+      ddl-auto: validate
+  flyway:
+    enabled: true
+    locations: classpath:db/migration/postgres
+# Postgres configuration
+  datasource:
+    driver-class-name: org.postgresql.Driver
+    url: jdbc:postgresql://${POSTGRESQL_SERVICE_HOST:localhost}:${POSTGRESQL_SERVICE_PORT:5432}/${POSTGRESQL_DATABASE:cwa}
+    username: ${POSTGRESQL_USER:postgres}
+    password: ${POSTGRESQL_PASSWORD:postgres}
