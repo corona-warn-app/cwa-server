@@ -30,6 +30,10 @@ import org.slf4j.LoggerFactory;
  */
 public class IO {
 
+  private IO() {
+    throw new IllegalStateException("IO class");
+  }
+
   private static final Logger logger = LoggerFactory.getLogger(IO.class);
 
   /**

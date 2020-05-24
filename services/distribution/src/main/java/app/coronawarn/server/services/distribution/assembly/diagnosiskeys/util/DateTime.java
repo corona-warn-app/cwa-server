@@ -33,6 +33,10 @@ import java.util.stream.Collectors;
  */
 public class DateTime {
 
+  private DateTime() {
+    throw new IllegalStateException("DateTime class");
+  }
+
   /**
    * Returns a set of all {@link LocalDate dates} that are associated with the submission timestamps of the specified
    * {@link DiagnosisKey diagnosis keys}.
