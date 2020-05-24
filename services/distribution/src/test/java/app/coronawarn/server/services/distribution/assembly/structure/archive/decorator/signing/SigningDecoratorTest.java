@@ -5,7 +5,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 import app.coronawarn.server.common.protocols.external.exposurenotification.SignatureInfo;
 import app.coronawarn.server.common.protocols.external.exposurenotification.TEKSignature;
 import app.coronawarn.server.common.protocols.external.exposurenotification.TEKSignatureList;
-import app.coronawarn.server.services.distribution.Application;
 import app.coronawarn.server.services.distribution.assembly.component.CryptoProvider;
 import app.coronawarn.server.services.distribution.assembly.structure.WritableOnDisk;
 import app.coronawarn.server.services.distribution.assembly.structure.archive.Archive;
