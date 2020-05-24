@@ -14,6 +14,9 @@
   <name>server</name>
   <description>CWA Server</description>
   <url>https://www.coronawarn.app/</url>
+  <ciManagement>
+    <url>https://app.circleci.com/pipelines/github/corona-warn-app/cwa-server</url>
+  </ciManagement>
   <issueManagement>
     <url>https://github.com/corona-warn-app/cwa-server/issues</url>
   </issueManagement>
