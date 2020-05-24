@@ -66,7 +66,7 @@ public class DiagnosisKeyService {
   }
 
   private static boolean isDiagnosisKeyValid(DiagnosisKey diagnosisKey) {
-    Collection<ConstraintViolation<DiagnosisKey>> violations = diagnosisKey.getConstraintViolations();
+    Collection<ConstraintViolation<DiagnosisKey>> violations = diagnosisKey.validate();
     boolean isValid = violations.isEmpty();
 
     if (!isValid) {
