@@ -29,8 +29,7 @@ import org.simpleframework.xml.Root;
  */
 
 /**
- * Helper class to denote Object information in {@link ListBucketResult} and {@link
- * ListBucketResultV1}.
+ * Helper class to denote Object information in {@link ListBucketResult} and {@link ListBucketResultV1}.
  */
 @Root(name = "Contents", strict = false)
 public class Item {
