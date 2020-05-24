@@ -19,19 +19,9 @@
 
 package app.coronawarn.server.common.persistence.service;
 
-import static app.coronawarn.server.common.persistence.service.DiagnosisKeyServiceTestHelper.assertDiagnosisKeysEqual;
-import static java.time.ZoneOffset.UTC;
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatCode;
-import static org.assertj.core.api.Assertions.catchThrowable;
-
 import app.coronawarn.server.common.persistence.domain.DiagnosisKey;
 import app.coronawarn.server.common.persistence.exception.InvalidDiagnosisKeyException;
 import app.coronawarn.server.common.persistence.repository.DiagnosisKeyRepository;
-import java.time.OffsetDateTime;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
 import org.assertj.core.util.Lists;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;
@@ -40,6 +30,15 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+
+import java.time.OffsetDateTime;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
+import static app.coronawarn.server.common.persistence.service.DiagnosisKeyServiceTestHelper.assertDiagnosisKeysEqual;
+import static java.time.ZoneOffset.UTC;
+import static org.assertj.core.api.Assertions.*;
 
 @DataJpaTest
 class DiagnosisKeyServiceTest {
@@ -136,8 +135,8 @@ class DiagnosisKeyServiceTest {
     assertThat(catchThrowable(() -> {
       var keys = List.of(DiagnosisKey.builder()
           .withKeyData(new byte[16])
-          .withRollingStartNumber(OffsetDateTime.now(UTC).toEpochSecond() / 600L)
-          .withRollingPeriod(1L)
+          .withRollingStartNumber((int) (OffsetDateTime.now(UTC).toEpochSecond() / 600))
+          .withRollingPeriod(1)
           .withTransmissionRiskLevel(2)
           .withSubmissionTimestamp(0L).build());
 
@@ -152,8 +151,8 @@ class DiagnosisKeyServiceTest {
   public static DiagnosisKey buildDiagnosisKeyForSubmissionTimestamp(long submissionTimeStamp) {
     return DiagnosisKey.builder()
         .withKeyData(new byte[16])
-        .withRollingStartNumber(600L)
-        .withRollingPeriod(1L)
+        .withRollingStartNumber(600)
+        .withRollingPeriod(1)
         .withTransmissionRiskLevel(2)
         .withSubmissionTimestamp(submissionTimeStamp).build();
   }

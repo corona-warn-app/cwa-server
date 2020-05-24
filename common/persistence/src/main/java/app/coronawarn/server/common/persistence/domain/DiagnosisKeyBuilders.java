@@ -54,7 +54,7 @@ interface DiagnosisKeyBuilders {
      *                           startTimeOfKeySinceEpochInSecs / (60 * 10).
      * @return this Builder instance.
      */
-    RollingPeriodBuilder withRollingStartNumber(long rollingStartNumber);
+    RollingPeriodBuilder withRollingStartNumber(int rollingStartIntervalNumber);
   }
 
   interface RollingPeriodBuilder {
@@ -66,7 +66,7 @@ interface DiagnosisKeyBuilders {
      *                      of 10 minutes (e.g. 144 for 24 hours).
      * @return this Builder instance.
      */
-    TransmissionRiskLevelBuilder withRollingPeriod(long rollingPeriod);
+    TransmissionRiskLevelBuilder withRollingPeriod(int rollingPeriod);
   }
 
   interface TransmissionRiskLevelBuilder {

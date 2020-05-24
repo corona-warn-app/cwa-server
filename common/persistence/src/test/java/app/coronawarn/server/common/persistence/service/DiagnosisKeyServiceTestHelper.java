@@ -19,10 +19,11 @@
 
 package app.coronawarn.server.common.persistence.service;
 
-import static org.assertj.core.api.Assertions.assertThat;
-
 import app.coronawarn.server.common.persistence.domain.DiagnosisKey;
+
 import java.util.List;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 public class DiagnosisKeyServiceTestHelper {
 
@@ -36,7 +37,7 @@ public class DiagnosisKeyServiceTestHelper {
 
       assertThat(actKey.getKeyData()).withFailMessage("keyData mismatch")
           .isEqualTo(expKey.getKeyData());
-      assertThat(actKey.getRollingStartNumber()).withFailMessage("rollingStartNumber mismatch")
+      assertThat(actKey.getRollingStartNumber()).withFailMessage("rollingStartIntervalNumber mismatch")
           .isEqualTo(expKey.getRollingStartNumber());
       assertThat(actKey.getRollingPeriod()).withFailMessage("rollingPeriod mismatch")
           .isEqualTo(expKey.getRollingPeriod());

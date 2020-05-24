@@ -16,15 +16,8 @@
 
 package app.coronawarn.server.common.persistence.domain;
 
-import static app.coronawarn.server.common.persistence.service.DiagnosisKeyServiceTestHelper.assertDiagnosisKeysEqual;
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Mockito.when;
-
 import app.coronawarn.server.common.persistence.repository.DiagnosisKeyRepository;
 import app.coronawarn.server.common.persistence.service.DiagnosisKeyService;
-import java.nio.charset.Charset;
-import java.util.ArrayList;
-import java.util.List;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
@@ -32,12 +25,20 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.Sort.Direction;
 
+import java.nio.charset.Charset;
+import java.util.ArrayList;
+import java.util.List;
+
+import static app.coronawarn.server.common.persistence.service.DiagnosisKeyServiceTestHelper.assertDiagnosisKeysEqual;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.when;
+
 @DataJpaTest
 class DiagnosisKeyServiceMockedRepositoryTest {
 
   static final byte[] expKeyData = "16-bytelongarray".getBytes(Charset.defaultCharset());
-  static final long expRollingStartNumber = 73800;
-  static final long expRollingPeriod = 144;
+  static final int expRollingStartIntervalNumber = 73800;
+  static final int expRollingPeriod = 144;
   static final int expTransmissionRiskLevel = 1;
 
   @Autowired
@@ -81,13 +82,13 @@ class DiagnosisKeyServiceMockedRepositoryTest {
   }
 
   private DiagnosisKey validKey(long expSubmissionTimestamp) {
-    return new DiagnosisKey(expKeyData, expRollingStartNumber,
+    return new DiagnosisKey(expKeyData, expRollingStartIntervalNumber,
         expRollingPeriod, expTransmissionRiskLevel, expSubmissionTimestamp);
   }
 
   private DiagnosisKey invalidKey(long expSubmissionTimestamp) {
     byte[] expKeyData = "17--bytelongarray".getBytes(Charset.defaultCharset());
-    return new DiagnosisKey(expKeyData, expRollingStartNumber,
+    return new DiagnosisKey(expKeyData, expRollingStartIntervalNumber,
         expRollingPeriod, expTransmissionRiskLevel, expSubmissionTimestamp);
   }
 }
