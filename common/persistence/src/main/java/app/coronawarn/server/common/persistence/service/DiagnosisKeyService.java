@@ -62,8 +62,8 @@ public class DiagnosisKeyService {
   }
 
   /**
-   * Deletes all diagnosis key entries which have a submission timestamp that is older than the
-   * specified number of days.
+   * Deletes all diagnosis key entries which have a submission timestamp that is older than the specified number of
+   * days.
    *
    * @param daysToRetain the number of days until which diagnosis keys will be retained.
    * @throws IllegalArgumentException if {@code daysToRetain} is negative.

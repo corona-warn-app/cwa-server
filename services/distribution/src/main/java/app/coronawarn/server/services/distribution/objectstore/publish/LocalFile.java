@@ -52,7 +52,7 @@ public abstract class LocalFile {
   /**
    * Constructs a new file representing a file on the disk.
    *
-   * @param file the path to the file to be represented
+   * @param file     the path to the file to be represented
    * @param basePath the base path
    */
   public LocalFile(Path file, Path basePath) {
