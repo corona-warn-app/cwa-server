@@ -26,7 +26,7 @@ public class HourIndexingDecorator extends IndexingDecoratorOnDisk<LocalDateTime
   /**
    * Returns the index of the decorated {@link DiagnosisKeysHourDirectory}. If the decorated hour directory represents
    * the current date (today), then by default, the current hour will be excluded from the index. However, if the
-   * profile `include-incomplete` is set, the current hour will be included.
+   * profile `demo` is set, the current hour will be included.
    */
   @Override
   public Set<LocalDateTime> getIndex(ImmutableStack<Object> indices) {

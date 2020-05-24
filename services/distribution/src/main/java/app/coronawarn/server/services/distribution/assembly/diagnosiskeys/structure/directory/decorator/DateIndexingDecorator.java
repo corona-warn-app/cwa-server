@@ -23,7 +23,7 @@ public class DateIndexingDecorator extends IndexingDecoratorOnDisk<LocalDate> {
 
   /**
    * Returns the index of the decorated {@link DiagnosisKeysDateDirectory}. By default, the current date (today) will be
-   * excluded from the index. However, if the profile `include-incomplete` is set, the current date will be included.
+   * excluded from the index. However, if the profile `demo` is set, the current date will be included.
    */
   @Override
   public Set<LocalDate> getIndex(ImmutableStack<Object> indices) {
