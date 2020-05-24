@@ -343,12 +343,12 @@ public class DistributionServiceConfig {
     public SignatureInfo getSignatureInfo() {
       // TODO cwa-server#183 cwa-server#207 cwa-server#238
       return SignatureInfo.newBuilder()
-        .setAppBundleId(this.getAppBundleId())
-        .setAndroidPackage(this.getAndroidPackage())
-        .setVerificationKeyVersion(this.getVerificationKeyVersion())
-        .setVerificationKeyId(this.getVerificationKeyId())
-        .setSignatureAlgorithm(this.getAlgorithmOid())
-        .build();
+          .setAppBundleId(this.getAppBundleId())
+          .setAndroidPackage(this.getAndroidPackage())
+          .setVerificationKeyVersion(this.getVerificationKeyVersion())
+          .setVerificationKeyId(this.getVerificationKeyId())
+          .setSignatureAlgorithm(this.getAlgorithmOid())
+          .build();
     }
   }
 
@@ -408,6 +408,5 @@ public class DistributionServiceConfig {
     public void setSetPublicReadAclOnPutObject(Boolean setPublicReadAclOnPutObject) {
       this.setPublicReadAclOnPutObject = setPublicReadAclOnPutObject;
     }
-
   }
 }

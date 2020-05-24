@@ -35,7 +35,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.rules.TemporaryFolder;
 
-public class DirectoryTest {
+class DirectoryTest {
 
   private java.io.File outputDir = new java.io.File("test");
   private Directory<WritableOnDisk> parentDirectory;
@@ -53,19 +53,19 @@ public class DirectoryTest {
   }
 
   @Test
-  public void checkWritablesInDirectory() {
+  void checkWritablesInDirectory() {
     parentDirectory.addWritable(childFile);
     assertThat(parentDirectory.getWritables()).isEqualTo(Set.of(childFile));
   }
 
   @Test
-  public void checkParentOfWritablesInDirectory() {
+  void checkParentOfWritablesInDirectory() {
     parentDirectory.addWritable(childFile);
     assertThat(childFile.getParent()).isEqualTo(parentDirectory);
   }
 
   @Test
-  public void checkPrepareDelegatesToWritables() {
+  void checkPrepareDelegatesToWritables() {
     File<WritableOnDisk> spyChildFile = spy(childFile);
     ImmutableStack<Object> expectedStack = new ImmutableStack<>();
 
@@ -76,13 +76,13 @@ public class DirectoryTest {
   }
 
   @Test
-  public void checkWriteThrowsWithoutParent() {
+  void checkWriteThrowsWithoutParent() {
     assertThat(catchThrowable(new DirectoryOnDisk("")::write))
         .isInstanceOf(NullPointerException.class);
   }
 
   @Test
-  public void checkWriteWritesOwnDirectory() {
+  void checkWriteWritesOwnDirectory() {
     class MockFile extends java.io.File {
 
       public MockFile() {
@@ -98,7 +98,7 @@ public class DirectoryTest {
   }
 
   @Test
-  public void checkWriteDelegatesToWritables() {
+  void checkWriteDelegatesToWritables() {
     File<WritableOnDisk> spyChildFile = spy(childFile);
 
     parentDirectory.addWritable(spyChildFile);

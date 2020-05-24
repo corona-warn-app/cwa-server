@@ -39,7 +39,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.rules.TemporaryFolder;
 
-public class IndexDirectoryTest {
+class IndexDirectoryTest {
 
   private static final String name = "Numbers";
   private static final Set<Integer> index = Set.of(0, 1, 2);
@@ -63,17 +63,17 @@ public class IndexDirectoryTest {
   }
 
   @Test
-  public void checkGetIndex() {
+  void checkGetIndex() {
     assertThat(indexDirectory.getIndex(new ImmutableStack<>())).isEqualTo(index);
   }
 
   @Test
-  public void checkGetIndexFormatter() {
+  void checkGetIndexFormatter() {
     assertThat(indexDirectory.getIndexFormatter()).isEqualTo(indexFormatter);
   }
 
   @Test
-  public void checkAddFileToAll() {
+  void checkAddFileToAll() {
     List<FileOnDisk> expectedFileList = new ArrayList<>();
     indexDirectory.addWritableToAll(__ -> {
       FileOnDisk newFile = new FileOnDisk("index", new byte[0]);
@@ -98,7 +98,7 @@ public class IndexDirectoryTest {
   }
 
   @Test
-  public void checkAddDirectoryToAll() {
+  void checkAddDirectoryToAll() {
     List<DirectoryOnDisk> expectedFileList = new ArrayList<>();
     indexDirectory.addWritableToAll(__ -> {
       DirectoryOnDisk newDirectory = new DirectoryOnDisk("something");

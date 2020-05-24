@@ -40,9 +40,8 @@ public class LocalIndexFile extends LocalFile {
   /**
    * Constructs a new file, which is treated as an index file.
    *
-   * @param file the file on the disk
-   * @param basePath the base path, from where the file was loaded. This will be used in order to
-   *                  determine the S3 key
+   * @param file     the file on the disk
+   * @param basePath the base path, from where the file was loaded. This will be used in order to determine the S3 key
    */
   public LocalIndexFile(Path file, Path basePath) {
     super(file, basePath);
@@ -51,7 +50,7 @@ public class LocalIndexFile extends LocalFile {
   @Override
   protected String createS3Key(Path file, Path rootFolder) {
     String s3Key = super.createS3Key(file, rootFolder);
-    
+
     return s3Key.substring(0, s3Key.length() - INDEX_FILE_SUFFIX.length());
   }
 }

@@ -43,7 +43,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 @ContextConfiguration(classes = {Application.class},
     initializers = ConfigFileApplicationContextInitializer.class)
 @Tag("s3-integration")
-public class S3PublisherTest {
+class S3PublisherTest {
 
   private final String rootTestFolder = "objectstore/publisher/";
 
@@ -54,7 +54,7 @@ public class S3PublisherTest {
   private ResourceLoader resourceLoader;
 
   @Test
-  public void publishTestFolderOk() throws IOException, GeneralSecurityException, MinioException {
+  void publishTestFolderOk() throws IOException, GeneralSecurityException, MinioException {
     S3Publisher publisher = new S3Publisher(getFolderAsPath(rootTestFolder), objectStoreAccess);
 
     publisher.publish();

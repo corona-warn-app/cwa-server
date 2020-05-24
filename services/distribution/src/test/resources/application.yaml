@@ -41,7 +41,7 @@ services:
     objectstore:
       access-key: ${CWA_OBJECTSTORE_ACCESSKEY:accessKey1}
       secret-key: ${CWA_OBJECTSTORE_SECRETKEY:verySecretKey1}
-      endpoint: ${WA_OBJECTSTORE_ENDPOINT:http\://localhost\:8003}
+      endpoint: ${CWA_OBJECTSTORE_ENDPOINT:http://localhost:8003}
       bucket: ${CWA_OBJECTSTORE_BUCKET:cwa}
       port: ${CWA_OBJECTSTORE_PORT:8003}
       set-public-read-acl-on-put-object: true
