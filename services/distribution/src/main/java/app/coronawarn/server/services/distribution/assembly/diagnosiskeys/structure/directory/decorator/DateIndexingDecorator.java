@@ -25,7 +25,7 @@ public class DateIndexingDecorator extends IndexingDecoratorOnDisk<LocalDate> {
    */
   @Override
   public Set<LocalDate> getIndex(ImmutableStack<Object> indices) {
-    if (!distributionServiceConfig.getIncludeIncompleteDays()) {
+    if (Boolean.FALSE.equals(distributionServiceConfig.getIncludeIncompleteDays())) {
       LocalDate currentDate = LocalDate.now(ZoneOffset.UTC);
       return super.getIndex(indices).stream()
           .filter(date -> !date.equals(currentDate))

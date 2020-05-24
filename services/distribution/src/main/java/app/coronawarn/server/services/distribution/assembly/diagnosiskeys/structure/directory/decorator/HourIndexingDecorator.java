@@ -29,7 +29,7 @@ public class HourIndexingDecorator extends IndexingDecoratorOnDisk<LocalDateTime
   @Override
   public Set<LocalDateTime> getIndex(ImmutableStack<Object> indices) {
     LocalDate currentDateIndex = (LocalDate) indices.peek();
-    if (!distributionServiceConfig.getIncludeIncompleteHours()
+    if (Boolean.FALSE.equals(distributionServiceConfig.getIncludeIncompleteHours())
         && LocalDate.now(ZoneOffset.UTC).equals(currentDateIndex)) {
       LocalDateTime currentHour = LocalDateTime.now(ZoneOffset.UTC).truncatedTo(ChronoUnit.HOURS);
       return super.getIndex(indices).stream()
