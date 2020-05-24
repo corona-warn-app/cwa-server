@@ -7,7 +7,7 @@ spring:
       ddl-auto: create
     properties:
       hibernate:
-        show-sql: false
+        show_sql: false
   main:
     banner-mode: off
 logging:
