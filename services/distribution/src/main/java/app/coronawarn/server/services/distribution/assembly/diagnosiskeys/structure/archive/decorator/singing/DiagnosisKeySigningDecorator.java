@@ -45,13 +45,11 @@ public class DiagnosisKeySigningDecorator extends SigningDecoratorOnDisk {
 
   @Override
   public int getBatchNum() {
-    // TODO Check if multiple batches are required.
     return 1;
   }
 
   @Override
   public int getBatchSize() {
-    // TODO Check if multiple batches are required.
     return 1;
   }
 }
