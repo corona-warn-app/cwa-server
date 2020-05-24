@@ -45,6 +45,12 @@ public class TanVerifier {
   private final RestTemplate restTemplate;
   private final HttpHeaders requestHeader = new HttpHeaders();
 
+  /**
+   * This class can be used to verify a TAN against a configured verification service.
+   *
+   * @param submissionServiceConfig A submission service configuration
+   * @param restTemplateBuilder A rest template builder
+   */
   @Autowired
   public TanVerifier(SubmissionServiceConfig submissionServiceConfig, RestTemplateBuilder restTemplateBuilder) {
     this.verificationServiceUrl = submissionServiceConfig.getVerificationBaseUrl()
@@ -87,7 +93,7 @@ public class TanVerifier {
   }
 
   /**
-   * Queries the configured verification service to validate the provided TAN
+   * Queries the configured verification service to validate the provided TAN.
    *
    * @param tan Submission Authorization TAN
    * @return {@literal true} if verification service is able to verify the provided TAN, {@literal false} otherwise
