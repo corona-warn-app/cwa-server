@@ -23,17 +23,21 @@ import app.coronawarn.server.services.distribution.assembly.structure.Writable;
 import app.coronawarn.server.services.distribution.assembly.structure.directory.IndexDirectory;
 import app.coronawarn.server.services.distribution.assembly.structure.directory.decorator.IndexDirectoryDecorator;
 import app.coronawarn.server.services.distribution.assembly.structure.util.ImmutableStack;
+import app.coronawarn.server.services.distribution.config.DistributionServiceConfig;
 
 public abstract class AbstractIndexingDecorator<T, W extends Writable<W>> extends
     IndexDirectoryDecorator<T, W> implements IndexingDecorator<T, W> {
 
-  private static final String INDEX_FILE_NAME = "index";
-
   final IndexDirectory<T, W> directory;
+  private final String indexFileName;
 
-  public AbstractIndexingDecorator(IndexDirectory<T, W> directory) {
+  /**
+   * Creates a new AbstractIndexingDecorator.
+   */
+  public AbstractIndexingDecorator(IndexDirectory<T, W> directory, String indexFileName) {
     super(directory);
     this.directory = directory;
+    this.indexFileName = indexFileName;
   }
 
   /**
@@ -41,7 +45,7 @@ public abstract class AbstractIndexingDecorator<T, W extends Writable<W>> extend
    */
   @Override
   public void prepare(ImmutableStack<Object> indices) {
-    this.addWritable(this.getIndexFile(INDEX_FILE_NAME, indices));
+    this.addWritable(this.getIndexFile(indexFileName, indices));
     super.prepare(indices);
   }
 }

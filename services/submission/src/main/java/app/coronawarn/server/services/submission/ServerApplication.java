@@ -22,6 +22,7 @@ package app.coronawarn.server.services.submission;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.domain.EntityScan;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.web.servlet.ServletComponentScan;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
@@ -34,6 +35,7 @@ import org.springframework.http.converter.protobuf.ProtobufHttpMessageConverter;
 @EntityScan(basePackages = "app.coronawarn.server.common.persistence")
 @ComponentScan({"app.coronawarn.server.common.persistence",
     "app.coronawarn.server.services.submission"})
+@EnableConfigurationProperties
 public class ServerApplication {
 
   @Bean

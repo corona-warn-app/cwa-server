@@ -35,7 +35,7 @@ import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.junit.jupiter.params.provider.ValueSource;
 
-public class RiskScoreClassificationValidatorTest {
+class RiskScoreClassificationValidatorTest {
 
   private final static int MAX_SCORE = RISK_SCORE_VALUE_RANGE - 1;
   private final static String VALID_LABEL = "myLabel";

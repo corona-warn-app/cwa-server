@@ -19,7 +19,7 @@
 
 package app.coronawarn.server.services.distribution;
 
-import app.coronawarn.server.services.distribution.objectstore.ObjectStoreConfigurationProperties;
+import app.coronawarn.server.services.distribution.config.DistributionServiceConfig;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.SpringApplication;
@@ -40,7 +40,7 @@ import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 @EntityScan(basePackages = "app.coronawarn.server.common.persistence")
 @ComponentScan({"app.coronawarn.server.common.persistence",
     "app.coronawarn.server.services.distribution"})
-@EnableConfigurationProperties(ObjectStoreConfigurationProperties.class)
+@EnableConfigurationProperties({DistributionServiceConfig.class})
 public class Application {
 
   private static final Logger logger = LoggerFactory.getLogger(Application.class);
