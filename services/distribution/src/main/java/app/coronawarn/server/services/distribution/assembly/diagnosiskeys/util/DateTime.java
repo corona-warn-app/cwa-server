@@ -33,7 +33,8 @@ import java.util.stream.Collectors;
  */
 public class DateTime {
 
-  private DateTime() {}
+  private DateTime() {
+  }
 
   /**
    * Returns a set of all {@link LocalDate dates} that are associated with the submission timestamps of the specified
