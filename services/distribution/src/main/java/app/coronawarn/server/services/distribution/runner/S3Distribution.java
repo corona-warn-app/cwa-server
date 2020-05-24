@@ -61,7 +61,7 @@ public class S3Distribution implements ApplicationRunner {
 
       s3Publisher.publish();
       logger.info("Data pushed to CDN successfully.");
-    } catch (UnsupportedOperationException | GeneralSecurityException  | MinioException | IOException e) {
+    } catch (UnsupportedOperationException | GeneralSecurityException | MinioException | IOException e) {
       logger.error("Distribution failed.", e);
     }
   }

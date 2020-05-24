@@ -425,6 +425,5 @@ public class DistributionServiceConfig {
     public void setSetPublicReadAclOnPutObject(Boolean setPublicReadAclOnPutObject) {
       this.setPublicReadAclOnPutObject = setPublicReadAclOnPutObject;
     }
-
   }
 }
