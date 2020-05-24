@@ -1,5 +1,7 @@
 package app.coronawarn.server.services.distribution.assembly.diagnosiskeys.structure.directory.decorator;
 
+import static java.util.function.Predicate.not;
+
 import app.coronawarn.server.services.distribution.assembly.diagnosiskeys.structure.directory.DiagnosisKeysDateDirectory;
 import app.coronawarn.server.services.distribution.assembly.structure.directory.decorator.indexing.IndexingDecoratorOnDisk;
 import app.coronawarn.server.services.distribution.assembly.structure.util.ImmutableStack;
@@ -28,7 +30,7 @@ public class DateIndexingDecorator extends IndexingDecoratorOnDisk<LocalDate> {
     if (Boolean.FALSE.equals(distributionServiceConfig.getIncludeIncompleteDays())) {
       LocalDate currentDate = LocalDate.now(ZoneOffset.UTC);
       return super.getIndex(indices).stream()
-          .filter(date -> !date.equals(currentDate))
+          .filter(not(currentDate::equals))
           .collect(Collectors.toSet());
     } else {
       return super.getIndex(indices);

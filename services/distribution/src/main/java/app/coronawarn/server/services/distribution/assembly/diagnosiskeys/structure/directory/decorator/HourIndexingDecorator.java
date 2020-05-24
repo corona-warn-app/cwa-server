@@ -1,5 +1,7 @@
 package app.coronawarn.server.services.distribution.assembly.diagnosiskeys.structure.directory.decorator;
 
+import static java.util.function.Predicate.not;
+
 import app.coronawarn.server.services.distribution.assembly.diagnosiskeys.structure.directory.DiagnosisKeysHourDirectory;
 import app.coronawarn.server.services.distribution.assembly.structure.directory.decorator.indexing.IndexingDecoratorOnDisk;
 import app.coronawarn.server.services.distribution.assembly.structure.util.ImmutableStack;
@@ -33,7 +35,7 @@ public class HourIndexingDecorator extends IndexingDecoratorOnDisk<LocalDateTime
         && LocalDate.now(ZoneOffset.UTC).equals(currentDateIndex)) {
       LocalDateTime currentHour = LocalDateTime.now(ZoneOffset.UTC).truncatedTo(ChronoUnit.HOURS);
       return super.getIndex(indices).stream()
-          .filter(hour -> !hour.equals(currentHour))
+          .filter(not(currentHour::equals))
           .collect(Collectors.toSet());
     } else {
       return super.getIndex(indices);
