@@ -66,9 +66,6 @@ public class DateAggregatingDecorator extends IndexDirectoryDecorator<LocalDate,
     this.distributionServiceConfig = distributionServiceConfig;
   }
 
-  // TODO this.getIndex and then work on that instead of looping through the writables
-  // TODO --> Current date needs to be excluded!
-
   @Override
   public void prepare(ImmutableStack<Object> indices) {
     super.prepare(indices);
@@ -80,11 +77,13 @@ public class DateAggregatingDecorator extends IndexDirectoryDecorator<LocalDate,
       return;
     }
 
-    List<Directory<WritableOnDisk>> sortedDayDirectories = new ArrayList<>(dayDirectories);
-    sortedDayDirectories.sort(Comparator.comparing(Writable::getName));
+    Set<String> dates = this.getIndex(indices).stream()
+        .map(this.getIndexFormatter())
+        .map(Object::toString)
+        .collect(Collectors.toSet());
 
-    // Exclude the last day
-    sortedDayDirectories.subList(0, sortedDayDirectories.size() - 1)
+    dayDirectories.stream()
+        .filter(dayDirectory -> dates.contains(dayDirectory.getName()))
         .forEach(currentDirectory -> Stream.of(currentDirectory)
             .map(this::getSubSubDirectoryArchives)
             .map(this::getTemporaryExposureKeyExportFilesFromArchives)
