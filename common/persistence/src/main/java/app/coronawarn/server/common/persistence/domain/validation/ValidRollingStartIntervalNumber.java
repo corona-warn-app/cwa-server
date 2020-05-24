@@ -16,18 +16,34 @@
 
 package app.coronawarn.server.common.persistence.domain.validation;
 
-import javax.validation.ConstraintValidator;
-import javax.validation.ConstraintValidatorContext;
-import java.time.Instant;
-import java.time.LocalDateTime;
+import javax.validation.Constraint;
+import javax.validation.Payload;
+import java.lang.annotation.*;
 
-import static java.time.ZoneOffset.UTC;
+@Constraint(validatedBy = ValidRollingStartIntervalNumberValidator.class)
+@Target({ElementType.FIELD})
+@Retention(RetentionPolicy.RUNTIME)
+@Documented
+public @interface ValidRollingStartIntervalNumber {
 
-public class ValidRollingStartNumberValidator implements ConstraintValidator<ValidRollingStartNumber, Integer> {
+  /**
+   * Error message.
+   *
+   * @return the error message
+   */
+  String message() default "Rolling start number must be greater 0 and cannot be in the future.";
 
-  @Override
-  public boolean isValid(Integer rollingStartIntervalNumber, ConstraintValidatorContext constraintValidatorContext) {
-    int currentInstant = (int) (LocalDateTime.ofInstant(Instant.now(), UTC).toEpochSecond(UTC) / 600L);
-    return rollingStartIntervalNumber > 0L && rollingStartIntervalNumber < currentInstant;
-  }
+  /**
+   * Groups.
+   *
+   * @return
+   */
+  Class<?>[] groups() default {};
+
+  /**
+   * Payload.
+   *
+   * @return
+   */
+  Class<? extends Payload>[] payload() default {};
 }
