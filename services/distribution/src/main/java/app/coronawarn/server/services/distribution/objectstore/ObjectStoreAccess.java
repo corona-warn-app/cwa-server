@@ -122,7 +122,7 @@ public class ObjectStoreAccess {
     String s3Key = localFile.getS3Key();
     PutObjectOptions options = createOptionsFor(localFile);
 
-    logger.info("... uploading " + s3Key);
+    logger.info("... uploading {}", s3Key);
     this.client.putObject(bucket, s3Key, localFile.getFile().toString(), options);
   }
 
@@ -138,7 +138,7 @@ public class ObjectStoreAccess {
         .map(S3Object::getObjectName)
         .collect(Collectors.toList());
 
-    logger.info("Deleting " + toDelete.size() + " entries with prefix " + prefix);
+    logger.info("Deleting {} entries with prefix {}", toDelete.size(), prefix);
     var deletionResponse = this.client.removeObjects(bucket, toDelete);
 
     List<DeleteError> errors = new ArrayList<>();
@@ -146,7 +146,7 @@ public class ObjectStoreAccess {
       errors.add(deleteErrorResult.get());
     }
 
-    logger.info("Deletion result: " + errors.size());
+    logger.info("Deletion result: {}", errors.size());
 
     return errors;
   }
