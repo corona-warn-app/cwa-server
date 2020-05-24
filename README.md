@@ -139,6 +139,24 @@ Service      | OpenAPI Specification
 Submission Service        | https://github.com/corona-warn-app/cwa-server/raw/master/services/submission/api_v1.json
 Distribution Service      | https://github.com/corona-warn-app/cwa-server/raw/master/services/distribution/api_v1.json
 
+## Spring Profiles
+
+#### Distribution
+
+Profile      | Effect
+-------------|-------------
+`dev`        | Turns the log level to `DEBUG`.
+`cloud`      | Removes default values for the `datasource` and `objectstore` configurations.
+`demo`       | Includes incomplete days and hours into the distribution run, thus creating aggregates for the current day and the current hour (and including both in the respective indices). When running multiple distributions in one hour with this profile, the date aggregate for today and the hours aggregate for the current hour will be updated and overwritten.
+`testdata`   | Causes test data to be inserted into the database before each distribution run. By default, around 1000 random diagnosis keys will be generated per hour. If there are no diagnosis keys in the database yet, random keys will be generated for every hour from the beginning of the retention period (14 days ago at 00:00 UTC) until one hour before the present hour. If there are already keys in the database, the random keys will be generated for every hour from the latest diagnosis key in the database (by submission timestamp) until one hour before the present hour (or none at all, if the latest diagnosis key in the database was submitted one hour ago or later).
+
+#### Submission
+
+Profile      | Effect
+-------------|-------------
+`dev`        | Turns the log level to `DEBUG`.
+`cloud`      | Removes default values for the `datasource` configuration.
+
 ## Documentation
 
 The full documentation for the Corona-Warn-App can be found in the [cwa-documentation](https://github.com/corona-warn-app/cwa-documentation) repository. The documentation repository contains technical documents, architecture information, and whitepapers related to this implementation.
