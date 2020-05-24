@@ -151,16 +151,6 @@ public class DiagnosisKey {
   }
 
   /**
-   * Determines if this key is valid.
-   *
-   * @return true, if valid, else false.
-   */
-  public boolean isValid() {
-    Set<ConstraintViolation<DiagnosisKey>> violations = getConstraintViolations();
-    return violations.isEmpty();
-  }
-
-  /**
    * Gets any constraint violations that this key might incorporate.
    *
    * <p><ul>
@@ -175,6 +165,18 @@ public class DiagnosisKey {
    */
   public Set<ConstraintViolation<DiagnosisKey>> getConstraintViolations() {
     return VALIDATOR.validate(this);
+  }
+
+  @Override
+  public String toString() {
+    return "DiagnosisKey{"
+        + "id=" + id
+        + ", keyData=" + Arrays.toString(keyData)
+        + ", rollingStartNumber=" + rollingStartNumber
+        + ", rollingPeriod=" + rollingPeriod
+        + ", transmissionRiskLevel=" + transmissionRiskLevel
+        + ", submissionTimestamp=" + submissionTimestamp
+        + '}';
   }
 
   @Override

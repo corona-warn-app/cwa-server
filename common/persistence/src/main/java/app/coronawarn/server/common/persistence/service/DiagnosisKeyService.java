@@ -28,6 +28,9 @@ import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
+import javax.validation.ConstraintViolation;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.Sort.Direction;
@@ -36,6 +39,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class DiagnosisKeyService {
 
+  private static final Logger logger = LoggerFactory.getLogger(DiagnosisKeyService.class);
   private final DiagnosisKeyRepository keyRepository;
 
   @Autowired
@@ -58,7 +62,19 @@ public class DiagnosisKeyService {
    */
   public List<DiagnosisKey> getDiagnosisKeys() {
     return keyRepository.findAll(Sort.by(Direction.ASC, "submissionTimestamp")).stream()
-        .filter(DiagnosisKey::isValid).collect(Collectors.toList());
+        .filter(DiagnosisKeyService::isDiagnosisKeyValid).collect(Collectors.toList());
+  }
+
+  private static boolean isDiagnosisKeyValid(DiagnosisKey diagnosisKey) {
+    Collection<ConstraintViolation<DiagnosisKey>> violations = diagnosisKey.getConstraintViolations();
+    boolean isValid = violations.isEmpty();
+
+    if (!isValid) {
+      logger.warn("Validation failed for diagnosis key from database. Diagnosis key: {}, Violations: {}",
+          diagnosisKey, violations);
+    }
+
+    return isValid;
   }
 
   /**
