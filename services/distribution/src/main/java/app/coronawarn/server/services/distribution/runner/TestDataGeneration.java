@@ -23,6 +23,7 @@ import app.coronawarn.server.common.persistence.domain.DiagnosisKey;
 import app.coronawarn.server.common.persistence.service.DiagnosisKeyService;
 import app.coronawarn.server.common.protocols.internal.RiskLevel;
 import app.coronawarn.server.services.distribution.config.DistributionServiceConfig;
+import app.coronawarn.server.services.distribution.config.DistributionServiceConfig.TestData;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
@@ -59,9 +60,7 @@ public class TestDataGeneration implements ApplicationRunner {
 
   private final Integer retentionDays;
 
-  private final Integer seed;
-
-  private final Integer exposuresPerHour;
+  private final TestData config;
 
   private final DiagnosisKeyService diagnosisKeyService;
 
@@ -85,8 +84,7 @@ public class TestDataGeneration implements ApplicationRunner {
       DistributionServiceConfig distributionServiceConfig) {
     this.diagnosisKeyService = diagnosisKeyService;
     this.retentionDays = distributionServiceConfig.getRetentionDays();
-    this.seed = distributionServiceConfig.getTestData().getSeed();
-    this.exposuresPerHour = distributionServiceConfig.getTestData().getExposuresPerHour();
+    this.config = distributionServiceConfig.getTestData();
   }
 
   /**
@@ -104,15 +102,20 @@ public class TestDataGeneration implements ApplicationRunner {
     logger.debug("Querying diagnosis keys from the database...");
     List<DiagnosisKey> existingDiagnosisKeys = diagnosisKeyService.getDiagnosisKeys();
 
-    // Timestamps in hours since epoch
-    long startTimestamp = getGeneratorStartTimestamp(existingDiagnosisKeys);
-    long endTimestamp = getGeneratorEndTimestamp();
+    // Timestamps in hours since epoch. Test data generation starts one hour after the latest diagnosis key in the
+    // database and ends one hour before the current one.
+    long startTimestamp = getGeneratorStartTimestamp(existingDiagnosisKeys) + 1; // Inclusive
+    long endTimestamp = getGeneratorEndTimestamp(); // Exclusive
 
     // Add the startTimestamp to the seed. Otherwise we would generate the same data every hour.
-    random.setSeed(seed + startTimestamp);
+    random.setSeed(this.config.getSeed() + startTimestamp);
     poisson =
-        new PoissonDistribution(random, exposuresPerHour, POISSON_EPSILON, POISSON_MAX_ITERATIONS);
+        new PoissonDistribution(random, this.config.getExposuresPerHour(), POISSON_EPSILON, POISSON_MAX_ITERATIONS);
 
+    if (startTimestamp == endTimestamp) {
+      logger.debug("Skipping test data generation, latest diagnosis keys are still up-to-date.");
+      return;
+    }
     logger.debug("Generating diagnosis keys between {} and {}...", startTimestamp, endTimestamp);
     List<DiagnosisKey> newDiagnosisKeys = LongStream.range(startTimestamp, endTimestamp)
         .mapToObj(submissionTimestamp -> IntStream.range(0, poisson.sample())

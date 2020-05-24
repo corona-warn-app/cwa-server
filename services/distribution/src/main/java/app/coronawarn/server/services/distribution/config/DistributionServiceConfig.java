@@ -12,6 +12,8 @@ public class DistributionServiceConfig {
   private TestData testData;
   private Integer retentionDays;
   private String outputFileName;
+  private Boolean includeIncompleteDays;
+  private Boolean includeIncompleteHours;
   private TekExport tekExport;
   private Signature signature;
   private Api api;
@@ -47,6 +49,22 @@ public class DistributionServiceConfig {
 
   public void setOutputFileName(String outputFileName) {
     this.outputFileName = outputFileName;
+  }
+
+  public Boolean getIncludeIncompleteDays() {
+    return includeIncompleteDays;
+  }
+
+  public void setIncludeIncompleteDays(Boolean includeIncompleteDays) {
+    this.includeIncompleteDays = includeIncompleteDays;
+  }
+
+  public Boolean getIncludeIncompleteHours() {
+    return includeIncompleteHours;
+  }
+
+  public void setIncludeIncompleteHours(Boolean includeIncompleteHours) {
+    this.includeIncompleteHours = includeIncompleteHours;
   }
 
   public TekExport getTekExport() {

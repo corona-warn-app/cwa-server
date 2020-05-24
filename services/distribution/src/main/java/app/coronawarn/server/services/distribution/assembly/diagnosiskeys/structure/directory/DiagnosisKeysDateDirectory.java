@@ -21,15 +21,14 @@ package app.coronawarn.server.services.distribution.assembly.diagnosiskeys.struc
 
 import app.coronawarn.server.common.persistence.domain.DiagnosisKey;
 import app.coronawarn.server.services.distribution.assembly.component.CryptoProvider;
+import app.coronawarn.server.services.distribution.assembly.diagnosiskeys.structure.directory.decorator.HourIndexingDecorator;
 import app.coronawarn.server.services.distribution.assembly.diagnosiskeys.util.DateTime;
 import app.coronawarn.server.services.distribution.assembly.structure.WritableOnDisk;
 import app.coronawarn.server.services.distribution.assembly.structure.directory.Directory;
 import app.coronawarn.server.services.distribution.assembly.structure.directory.IndexDirectoryOnDisk;
-import app.coronawarn.server.services.distribution.assembly.structure.directory.decorator.indexing.IndexingDecoratorOnDisk;
 import app.coronawarn.server.services.distribution.assembly.structure.util.ImmutableStack;
 import app.coronawarn.server.services.distribution.config.DistributionServiceConfig;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Collection;
 
@@ -59,14 +58,14 @@ public class DiagnosisKeysDateDirectory extends IndexDirectoryOnDisk<LocalDate> 
   @Override
   public void prepare(ImmutableStack<Object> indices) {
     this.addWritableToAll(__ -> {
-      IndexDirectoryOnDisk<LocalDateTime> hourDirectory = new DiagnosisKeysHourDirectory(diagnosisKeys, cryptoProvider,
-          distributionServiceConfig);
+      DiagnosisKeysHourDirectory hourDirectory =
+          new DiagnosisKeysHourDirectory(diagnosisKeys, cryptoProvider, distributionServiceConfig);
       return decorateHourDirectory(hourDirectory);
     });
     super.prepare(indices);
   }
 
-  private Directory<WritableOnDisk> decorateHourDirectory(IndexDirectoryOnDisk<LocalDateTime> hourDirectory) {
-    return new IndexingDecoratorOnDisk<>(hourDirectory, distributionServiceConfig.getOutputFileName());
+  private Directory<WritableOnDisk> decorateHourDirectory(DiagnosisKeysHourDirectory hourDirectory) {
+    return new HourIndexingDecorator(hourDirectory, distributionServiceConfig);
   }
 }

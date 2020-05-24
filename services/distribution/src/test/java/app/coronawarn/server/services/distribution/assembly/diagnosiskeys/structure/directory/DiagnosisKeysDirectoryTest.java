@@ -29,6 +29,7 @@ import app.coronawarn.server.services.distribution.assembly.structure.WritableOn
 import app.coronawarn.server.services.distribution.assembly.structure.directory.Directory;
 import app.coronawarn.server.services.distribution.assembly.structure.directory.DirectoryOnDisk;
 import app.coronawarn.server.services.distribution.assembly.structure.util.ImmutableStack;
+import app.coronawarn.server.services.distribution.config.DistributionServiceConfig;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -38,8 +39,6 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
-
-import app.coronawarn.server.services.distribution.config.DistributionServiceConfig;
 import org.junit.Rule;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -146,6 +145,7 @@ class DiagnosisKeysDirectoryTest {
         join(s, "diagnosis-keys", "country", "DE", "date", "1970-01-01", "hour", "21", "index"),
         join(s, "diagnosis-keys", "country", "DE", "date", "1970-01-01", "hour", "22", "index"),
         join(s, "diagnosis-keys", "country", "DE", "date", "1970-01-01", "hour", "23", "index"),
+        join(s, "diagnosis-keys", "country", "DE", "date", "1970-01-02", "index"),
         join(s, "diagnosis-keys", "country", "DE", "date", "1970-01-02", "hour", "index"),
         join(s, "diagnosis-keys", "country", "DE", "date", "1970-01-02", "hour", "0", "index"),
         join(s, "diagnosis-keys", "country", "DE", "date", "1970-01-02", "hour", "1", "index"),

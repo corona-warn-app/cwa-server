@@ -24,6 +24,7 @@ import static app.coronawarn.server.services.distribution.assembly.structure.uti
 import app.coronawarn.server.common.protocols.external.exposurenotification.TemporaryExposureKey;
 import app.coronawarn.server.common.protocols.external.exposurenotification.TemporaryExposureKeyExport;
 import app.coronawarn.server.services.distribution.assembly.component.CryptoProvider;
+import app.coronawarn.server.services.distribution.assembly.diagnosiskeys.structure.archive.decorator.singing.DiagnosisKeySigningDecorator;
 import app.coronawarn.server.services.distribution.assembly.diagnosiskeys.structure.file.TemporaryExposureKeyExportFile;
 import app.coronawarn.server.services.distribution.assembly.structure.Writable;
 import app.coronawarn.server.services.distribution.assembly.structure.WritableOnDisk;
@@ -38,8 +39,6 @@ import app.coronawarn.server.services.distribution.assembly.structure.file.File;
 import app.coronawarn.server.services.distribution.assembly.structure.util.ImmutableStack;
 import app.coronawarn.server.services.distribution.config.DistributionServiceConfig;
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
@@ -76,11 +75,13 @@ public class DateAggregatingDecorator extends IndexDirectoryDecorator<LocalDate,
       return;
     }
 
-    List<Directory<WritableOnDisk>> sortedDayDirectories = new ArrayList<>(dayDirectories);
-    sortedDayDirectories.sort(Comparator.comparing(Writable::getName));
+    Set<String> dates = this.getIndex(indices).stream()
+        .map(this.getIndexFormatter())
+        .map(Object::toString)
+        .collect(Collectors.toSet());
 
-    // Exclude the last day
-    sortedDayDirectories.subList(0, sortedDayDirectories.size() - 1)
+    dayDirectories.stream()
+        .filter(dayDirectory -> dates.contains(dayDirectory.getName()))
         .forEach(currentDirectory -> Stream.of(currentDirectory)
             .map(this::getSubSubDirectoryArchives)
             .map(this::getTemporaryExposureKeyExportFilesFromArchives)
