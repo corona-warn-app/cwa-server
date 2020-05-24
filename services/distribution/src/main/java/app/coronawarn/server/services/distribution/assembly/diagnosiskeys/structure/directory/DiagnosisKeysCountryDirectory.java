@@ -34,9 +34,6 @@ import java.util.Set;
 
 public class DiagnosisKeysCountryDirectory extends IndexDirectoryOnDisk<String> {
 
-  private static final String COUNTRY_DIRECTORY = "country";
-  private static final String COUNTRY = "DE";
-
   private final Collection<DiagnosisKey> diagnosisKeys;
   private final CryptoProvider cryptoProvider;
   private final DistributionServiceConfig distributionServiceConfig;
