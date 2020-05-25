@@ -24,7 +24,6 @@ import app.coronawarn.server.services.distribution.Application;
 import app.coronawarn.server.services.distribution.config.DistributionServiceConfig;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.context.ApplicationContext;
@@ -50,8 +49,7 @@ public class RetentionPolicy implements ApplicationRunner {
   /**
    * Creates a new RetentionPolicy.
    */
-  @Autowired
-  public RetentionPolicy(DiagnosisKeyService diagnosisKeyService,
+  RetentionPolicy(DiagnosisKeyService diagnosisKeyService,
       ApplicationContext applicationContext,
       DistributionServiceConfig distributionServiceConfig) {
     this.diagnosisKeyService = diagnosisKeyService;

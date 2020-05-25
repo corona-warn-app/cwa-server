@@ -36,7 +36,6 @@ import org.bouncycastle.openssl.PEMParser;
 import org.bouncycastle.openssl.jcajce.JcaPEMKeyConverter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.ResourceLoader;
 import org.springframework.stereotype.Component;
@@ -62,8 +61,7 @@ public class CryptoProvider {
   /**
    * Creates a CryptoProvider, using {@link BouncyCastleProvider}.
    */
-  @Autowired
-  public CryptoProvider(ResourceLoader resourceLoader, DistributionServiceConfig distributionServiceConfig) {
+  CryptoProvider(ResourceLoader resourceLoader, DistributionServiceConfig distributionServiceConfig) {
     this.resourceLoader = resourceLoader;
     this.privateKeyPath = distributionServiceConfig.getPaths().getPrivateKey();
     this.certificatePath = distributionServiceConfig.getPaths().getCertificate();
