@@ -23,7 +23,6 @@ import app.coronawarn.server.common.persistence.exception.InvalidDiagnosisKeyExc
 import app.coronawarn.server.common.protocols.external.exposurenotification.TemporaryExposureKey;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 import javax.validation.ConstraintViolation;
 import java.time.Instant;
 import java.util.Set;
@@ -95,14 +94,9 @@ public class DiagnosisKeyBuilder implements Builder, RollingStartNumberBuilder,
       submissionTimestamp = Instant.now().getEpochSecond() / 3600L;
     }
 
-<<<<<<< HEAD
-    var diagnosisKey = new DiagnosisKey(
-        keyData, rollingStartNumber, rollingPeriod, transmissionRiskLevel, submissionTimestamp);
-=======
+
     var diagnosisKey = new DiagnosisKey(this.keyData, this.rollingStartIntervalNumber,
         this.rollingPeriod, this.transmissionRiskLevel, submissionTimestamp);
->>>>>>> Variable name and type changed
-
     return throwIfValidationFails(diagnosisKey);
   }
 

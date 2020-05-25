@@ -22,7 +22,6 @@ package app.coronawarn.server.common.persistence.domain;
 import app.coronawarn.server.common.persistence.domain.DiagnosisKeyBuilders.Builder;
 import app.coronawarn.server.common.persistence.domain.validation.ValidRollingStartIntervalNumber;
 import org.hibernate.validator.constraints.Range;
-
 import javax.persistence.*;
 import javax.validation.ConstraintViolation;
 import javax.validation.Validation;
@@ -36,6 +35,8 @@ import java.util.Objects;
 import java.util.Set;
 
 import static java.time.ZoneOffset.UTC;
+
+
 
 /**
  * A key generated for advertising over a window of time.

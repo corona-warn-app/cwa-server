@@ -23,7 +23,8 @@ import java.time.LocalDateTime;
 
 import static java.time.ZoneOffset.UTC;
 
-public class ValidRollingStartIntervalNumberValidator implements ConstraintValidator<ValidRollingStartIntervalNumber, Integer> {
+public class ValidRollingStartIntervalNumberValidator implements
+        ConstraintValidator<ValidRollingStartIntervalNumber, Integer> {
 
   @Override
   public boolean isValid(Integer rollingStartIntervalNumber, ConstraintValidatorContext constraintValidatorContext) {
