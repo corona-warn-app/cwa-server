@@ -168,18 +168,6 @@ public class DiagnosisKey {
   }
 
   @Override
-  public String toString() {
-    return "DiagnosisKey{"
-        + "id=" + id
-        + ", keyData=" + Arrays.toString(keyData)
-        + ", rollingStartNumber=" + rollingStartNumber
-        + ", rollingPeriod=" + rollingPeriod
-        + ", transmissionRiskLevel=" + transmissionRiskLevel
-        + ", submissionTimestamp=" + submissionTimestamp
-        + '}';
-  }
-
-  @Override
   public boolean equals(Object o) {
     if (this == o) {
       return true;
