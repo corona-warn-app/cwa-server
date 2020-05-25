@@ -30,13 +30,10 @@ import app.coronawarn.server.services.distribution.config.DistributionServiceCon
 import com.google.protobuf.ByteString;
 import java.security.GeneralSecurityException;
 import java.security.Signature;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public abstract class AbstractSigningDecorator<W extends Writable<W>> extends ArchiveDecorator<W>
     implements SigningDecorator<W> {
 
-  private static final Logger logger = LoggerFactory.getLogger(AbstractSigningDecorator.class);
   protected final CryptoProvider cryptoProvider;
   private final DistributionServiceConfig distributionServiceConfig;
 
@@ -75,8 +72,7 @@ public abstract class AbstractSigningDecorator<W extends Writable<W>> extends Ar
       payloadSignature.update(this.getBytesToSign());
       return payloadSignature.sign();
     } catch (GeneralSecurityException e) {
-      logger.error("Failed to sign archive.", e);
-      throw new RuntimeException(e);
+      throw new RuntimeException("Failed to sign archive.", e);
     }
   }
 }
