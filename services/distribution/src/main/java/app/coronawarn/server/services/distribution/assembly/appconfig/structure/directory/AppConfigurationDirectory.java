@@ -19,15 +19,14 @@
 
 package app.coronawarn.server.services.distribution.assembly.appconfig.structure.directory;
 
+import app.coronawarn.server.common.protocols.internal.ApplicationConfiguration;
 import app.coronawarn.server.common.protocols.internal.RiskScoreClassification;
 import app.coronawarn.server.common.protocols.internal.RiskScoreParameters;
-import app.coronawarn.server.services.distribution.assembly.appconfig.ExposureConfigurationProvider;
-import app.coronawarn.server.services.distribution.assembly.appconfig.RiskScoreClassificationProvider;
+import app.coronawarn.server.services.distribution.assembly.appconfig.ApplicationConfigurationProvider;
 import app.coronawarn.server.services.distribution.assembly.appconfig.UnableToLoadFileException;
 import app.coronawarn.server.services.distribution.assembly.appconfig.structure.archive.decorator.signing.AppConfigurationSigningDecorator;
-import app.coronawarn.server.services.distribution.assembly.appconfig.validation.AppConfigurationValidator;
-import app.coronawarn.server.services.distribution.assembly.appconfig.validation.ExposureConfigurationValidator;
-import app.coronawarn.server.services.distribution.assembly.appconfig.validation.RiskScoreClassificationValidator;
+import app.coronawarn.server.services.distribution.assembly.appconfig.validation.ApplicationConfigurationValidator;
+import app.coronawarn.server.services.distribution.assembly.appconfig.validation.ConfigurationValidator;
 import app.coronawarn.server.services.distribution.assembly.appconfig.validation.ValidationResult;
 import app.coronawarn.server.services.distribution.assembly.component.CryptoProvider;
 import app.coronawarn.server.services.distribution.assembly.structure.archive.ArchiveOnDisk;
@@ -68,31 +67,19 @@ public class AppConfigurationDirectory extends DirectoryOnDisk {
     countryDirectory = new IndexDirectoryOnDisk<>(distributionServiceConfig.getApi().getCountryPath(),
         __ -> Set.of(distributionServiceConfig.getApi().getCountryGermany()), Object::toString);
 
-    addExposureConfigurationIfValid();
-    addRiskScoreClassificationIfValid();
+    addApplicationConfigurationIfValid();
 
     this.addWritable(new IndexingDecoratorOnDisk<>(countryDirectory, distributionServiceConfig.getOutputFileName()));
   }
 
-  private void addExposureConfigurationIfValid() {
+  private void addApplicationConfigurationIfValid() {
     try {
-      RiskScoreParameters exposureConfig = ExposureConfigurationProvider.readMasterFile();
-      AppConfigurationValidator validator = new ExposureConfigurationValidator(exposureConfig);
-      addArchiveIfMessageValid(distributionServiceConfig.getApi().getParametersExposureConfigurationFileName(),
-          exposureConfig, validator);
+      ApplicationConfiguration appConfig = ApplicationConfigurationProvider.readMasterFile();
+      ConfigurationValidator validator = new ApplicationConfigurationValidator(appConfig);
+      addArchiveIfMessageValid(distributionServiceConfig.getApi().getAppConfigFileName(),
+          appConfig, validator);
     } catch (UnableToLoadFileException e) {
       logger.error("Exposure configuration will not be published! Unable to read configuration file from disk.");
-    }
-  }
-
-  private void addRiskScoreClassificationIfValid() {
-    try {
-      RiskScoreClassification riskScoreClassification = RiskScoreClassificationProvider.readMasterFile();
-      AppConfigurationValidator validator = new RiskScoreClassificationValidator(riskScoreClassification);
-      addArchiveIfMessageValid(distributionServiceConfig.getApi().getParametersRiskScoreClassificationFileName(),
-          riskScoreClassification, validator);
-    } catch (UnableToLoadFileException e) {
-      logger.error("Risk score classification will not be published! Unable to read configuration file from disk.");
     }
   }
 
@@ -100,7 +87,7 @@ public class AppConfigurationDirectory extends DirectoryOnDisk {
    * If validation of the {@link Message} succeeds, it is written into a file, put into an archive with the specified
    * name and added to the specified parent directory.
    */
-  private void addArchiveIfMessageValid(String archiveName, Message message, AppConfigurationValidator validator) {
+  private void addArchiveIfMessageValid(String archiveName, Message message, ConfigurationValidator validator) {
     ValidationResult validationResult = validator.validate();
 
     if (validationResult.hasErrors()) {

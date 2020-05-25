@@ -114,7 +114,7 @@ public class DiagnosisKeyBuilder
   }
 
   private DiagnosisKey throwIfValidationFails(DiagnosisKey diagnosisKey) {
-    Set<ConstraintViolation<DiagnosisKey>> violations = diagnosisKey.getConstraintViolations();
+    Set<ConstraintViolation<DiagnosisKey>> violations = diagnosisKey.validate();
 
     if (!violations.isEmpty()) {
       String violationsMessage =

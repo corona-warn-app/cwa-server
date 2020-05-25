@@ -13,8 +13,7 @@
 transmission_weight: 50
 duration_weight: 50
 attenuation_weight: 50
-#minimumRiskScore: 4 # (missing)
-#days_since_last_exposure_weight: 20 (missing)
+days_weight: 20
 
 # Parameters Section
 
