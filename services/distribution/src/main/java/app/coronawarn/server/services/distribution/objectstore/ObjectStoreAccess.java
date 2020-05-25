@@ -38,7 +38,6 @@ import java.util.Map;
 import java.util.stream.Collectors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 /**
@@ -76,8 +75,7 @@ public class ObjectStoreAccess {
    * @throws GeneralSecurityException When there were problems creating the S3 client
    * @throws MinioException           When there were problems creating the S3 client
    */
-  @Autowired
-  public ObjectStoreAccess(DistributionServiceConfig distributionServiceConfig)
+  ObjectStoreAccess(DistributionServiceConfig distributionServiceConfig)
       throws IOException, GeneralSecurityException, MinioException {
     this.client = createClient(distributionServiceConfig.getObjectStore());
 

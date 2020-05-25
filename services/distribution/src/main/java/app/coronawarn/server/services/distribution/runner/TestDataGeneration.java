@@ -37,7 +37,6 @@ import org.apache.commons.math3.random.JDKRandomGenerator;
 import org.apache.commons.math3.random.RandomGenerator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.context.annotation.Profile;
@@ -79,8 +78,7 @@ public class TestDataGeneration implements ApplicationRunner {
   /**
    * Creates a new TestDataGeneration runner.
    */
-  @Autowired
-  public TestDataGeneration(DiagnosisKeyService diagnosisKeyService,
+  TestDataGeneration(DiagnosisKeyService diagnosisKeyService,
       DistributionServiceConfig distributionServiceConfig) {
     this.diagnosisKeyService = diagnosisKeyService;
     this.retentionDays = distributionServiceConfig.getRetentionDays();
