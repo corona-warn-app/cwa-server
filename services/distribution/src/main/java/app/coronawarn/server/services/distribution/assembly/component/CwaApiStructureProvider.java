@@ -25,7 +25,6 @@ import app.coronawarn.server.services.distribution.assembly.structure.directory.
 import app.coronawarn.server.services.distribution.assembly.structure.directory.decorator.indexing.IndexingDecoratorOnDisk;
 import app.coronawarn.server.services.distribution.config.DistributionServiceConfig;
 import java.util.Set;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 /**
@@ -46,8 +45,7 @@ public class CwaApiStructureProvider {
   /**
    * Creates a new CwaApiStructureProvider.
    */
-  @Autowired
-  public CwaApiStructureProvider(
+  CwaApiStructureProvider(
       AppConfigurationStructureProvider appConfigurationStructureProvider,
       DiagnosisKeysStructureProvider diagnosisKeysStructureProvider,
       DistributionServiceConfig distributionServiceConfig) {

@@ -8,20 +8,14 @@
 #
 # Change this file with caution!
 
-risk_classes:
+risk-classes:
   -
-    label: "LOW"
+    label: LOW
     min: 0
-    max: 100
-    url: "https://www..."
+    max: 2749
+    url: "https://www.coronawarn.app"
   -
-    label: "MID"
-    min: 101
-    max: 200
-    url: "https://www..."
-  -
-    label: "HIGH"
-    min: 201
-    max: 255
-    url: "https://www..."
-    
+    label: HIGH
+    min: 2750
+    max: 4096
+    url: "https://www.coronawarn.app"
