@@ -28,10 +28,8 @@ import static org.springframework.test.web.client.response.MockRestResponseCreat
 
 import app.coronawarn.server.services.submission.config.SubmissionServiceConfig;
 import java.util.UUID;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,17 +39,15 @@ import org.springframework.boot.test.context.ConfigFileApplicationContextInitial
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.client.ExpectedCount;
 import org.springframework.test.web.client.MockRestServiceServer;
 import org.springframework.web.client.HttpServerErrorException;
-import org.springframework.web.client.HttpServerErrorException.InternalServerError;
 
 @EnableConfigurationProperties(value = SubmissionServiceConfig.class)
 @ContextConfiguration(classes = {TanVerifier.class},
   initializers = ConfigFileApplicationContextInitializer.class)
 @RestClientTest
-public class TanVerifierTest {
+class TanVerifierTest {
 
   @Autowired
   private MockRestServiceServer server;
@@ -66,7 +62,7 @@ public class TanVerifierTest {
   private String randomUUID;
 
   @BeforeEach
-  public void setup() {
+  void setup() {
     this.verificationUrl = submissionServiceConfig.getVerificationBaseUrl()
       + submissionServiceConfig.getVerificationPath();
     this.randomUUID = UUID.randomUUID().toString();
@@ -77,12 +73,12 @@ public class TanVerifierTest {
     "ANY SYNTAX", "123456", "ABCD23X", "ZZZZZZZ", "Bearer 3123fe", "", "&%$§&%&$%/%&",
     "LOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOONG"
   })
-  public void checkWrongTanSyntax(String invalidSyntaxTan) {
+  void checkWrongTanSyntax(String invalidSyntaxTan) {
     assertThat(tanVerifier.verifyTan(invalidSyntaxTan)).isFalse();
   }
 
   @Test
-  public void checkValidTan() {
+  void checkValidTan() {
     this.server
       .expect(ExpectedCount.once(), requestTo(verificationUrl))
       .andExpect(method(HttpMethod.POST))
@@ -91,7 +87,7 @@ public class TanVerifierTest {
   }
 
   @Test
-  public void checkInvalidTan() {
+  void checkInvalidTan() {
     this.server
       .expect(ExpectedCount.once(), requestTo(verificationUrl))
       .andExpect(method(HttpMethod.POST))
@@ -100,7 +96,7 @@ public class TanVerifierTest {
   }
 
   @Test
-  public void checkInternalServerError() {
+  void checkInternalServerError() {
     this.server
       .expect(ExpectedCount.once(), requestTo(verificationUrl))
       .andExpect(method(HttpMethod.POST))
