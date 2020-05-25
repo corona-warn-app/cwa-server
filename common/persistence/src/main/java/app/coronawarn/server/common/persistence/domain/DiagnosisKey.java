@@ -36,6 +36,7 @@ import javax.persistence.Table;
 import javax.validation.ConstraintViolation;
 import javax.validation.Validation;
 import javax.validation.Validator;
+import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.Size;
 import org.hibernate.validator.constraints.Range;
@@ -46,6 +47,14 @@ import org.hibernate.validator.constraints.Range;
 @Entity
 @Table(name = "diagnosis_key")
 public class DiagnosisKey {
+
+  /**
+   * According to "Setting Up an Exposure Notification Server" by Apple, exposure notification servers are expected to
+   * reject any diagnosis keys that do not have a rolling period of a certain fixed value. See
+   * https://developer.apple.com/documentation/exposurenotification/setting_up_an_exposure_notification_server
+   */
+  public static final int EXPECTED_ROLLING_PERIOD = 144;
+
   private static final Validator VALIDATOR = Validation.buildDefaultValidatorFactory().getValidator();
 
   @Id
@@ -58,7 +67,8 @@ public class DiagnosisKey {
   @ValidRollingStartIntervalNumber
   private int rollingStartIntervalNumber;
 
-  @Min(value = 1, message = "Rolling period must be greater than 0.")
+  @Min(value = EXPECTED_ROLLING_PERIOD, message = "Rolling period must be " + EXPECTED_ROLLING_PERIOD + ".")
+  @Max(value = EXPECTED_ROLLING_PERIOD, message = "Rolling period must be " + EXPECTED_ROLLING_PERIOD + ".")
   private int rollingPeriod;
 
   @Range(min = 0, max = 8, message = "Risk level must be between 0 and 8.")
