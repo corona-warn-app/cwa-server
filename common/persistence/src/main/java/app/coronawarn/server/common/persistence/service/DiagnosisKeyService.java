@@ -70,8 +70,7 @@ public class DiagnosisKeyService {
     boolean isValid = violations.isEmpty();
 
     if (!isValid) {
-      logger.warn("Validation failed for diagnosis key from database. Diagnosis key: {}, Violations: {}",
-          diagnosisKey, violations);
+      logger.warn("Validation failed for diagnosis key from database. Violations: {}", violations);
     }
 
     return isValid;
