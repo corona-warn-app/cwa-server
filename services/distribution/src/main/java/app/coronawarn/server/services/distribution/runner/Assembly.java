@@ -27,7 +27,6 @@ import app.coronawarn.server.services.distribution.assembly.structure.directory.
 import app.coronawarn.server.services.distribution.assembly.structure.util.ImmutableStack;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.context.ApplicationContext;
@@ -53,8 +52,7 @@ public class Assembly implements ApplicationRunner {
    * Creates an Assembly, using {@link OutputDirectoryProvider}, {@link CwaApiStructureProvider} and
    * {@link ApplicationContext}.
    */
-  @Autowired
-  public Assembly(OutputDirectoryProvider outputDirectoryProvider,
+  Assembly(OutputDirectoryProvider outputDirectoryProvider,
       CwaApiStructureProvider cwaApiStructureProvider, ApplicationContext applicationContext) {
     this.outputDirectoryProvider = outputDirectoryProvider;
     this.cwaApiStructureProvider = cwaApiStructureProvider;

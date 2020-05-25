@@ -23,7 +23,6 @@ import app.coronawarn.server.services.distribution.assembly.appconfig.structure.
 import app.coronawarn.server.services.distribution.assembly.structure.WritableOnDisk;
 import app.coronawarn.server.services.distribution.assembly.structure.directory.Directory;
 import app.coronawarn.server.services.distribution.config.DistributionServiceConfig;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 /**
@@ -36,8 +35,7 @@ public class AppConfigurationStructureProvider {
   private final CryptoProvider cryptoProvider;
   private final DistributionServiceConfig distributionServiceConfig;
 
-  @Autowired
-  public AppConfigurationStructureProvider(CryptoProvider cryptoProvider,
+  AppConfigurationStructureProvider(CryptoProvider cryptoProvider,
       DistributionServiceConfig distributionServiceConfig) {
     this.cryptoProvider = cryptoProvider;
     this.distributionServiceConfig = distributionServiceConfig;
