@@ -22,10 +22,10 @@ package app.coronawarn.server.services.distribution.assembly.diagnosiskeys.struc
 import app.coronawarn.server.common.persistence.domain.DiagnosisKey;
 import app.coronawarn.server.services.distribution.assembly.component.CryptoProvider;
 import app.coronawarn.server.services.distribution.assembly.diagnosiskeys.structure.directory.decorator.DateAggregatingDecorator;
+import app.coronawarn.server.services.distribution.assembly.diagnosiskeys.structure.directory.decorator.DateIndexingDecorator;
 import app.coronawarn.server.services.distribution.assembly.structure.WritableOnDisk;
 import app.coronawarn.server.services.distribution.assembly.structure.directory.IndexDirectory;
 import app.coronawarn.server.services.distribution.assembly.structure.directory.IndexDirectoryOnDisk;
-import app.coronawarn.server.services.distribution.assembly.structure.directory.decorator.indexing.IndexingDecoratorOnDisk;
 import app.coronawarn.server.services.distribution.assembly.structure.util.ImmutableStack;
 import app.coronawarn.server.services.distribution.config.DistributionServiceConfig;
 import java.time.LocalDate;
@@ -57,16 +57,15 @@ public class DiagnosisKeysCountryDirectory extends IndexDirectoryOnDisk<String> 
   @Override
   public void prepare(ImmutableStack<Object> indices) {
     this.addWritableToAll(__ -> {
-      IndexDirectoryOnDisk<LocalDate> dateDirectory = new DiagnosisKeysDateDirectory(diagnosisKeys,
-          cryptoProvider, distributionServiceConfig);
+      DiagnosisKeysDateDirectory dateDirectory = new DiagnosisKeysDateDirectory(diagnosisKeys, cryptoProvider,
+          distributionServiceConfig);
       return decorateDateDirectory(dateDirectory);
     });
     super.prepare(indices);
   }
 
-  private IndexDirectory<LocalDate, WritableOnDisk> decorateDateDirectory(
-      IndexDirectoryOnDisk<LocalDate> dateDirectory) {
-    return new DateAggregatingDecorator(new IndexingDecoratorOnDisk<>(dateDirectory,
-        distributionServiceConfig.getOutputFileName()), cryptoProvider, distributionServiceConfig);
+  private IndexDirectory<LocalDate, WritableOnDisk> decorateDateDirectory(DiagnosisKeysDateDirectory dateDirectory) {
+    return new DateAggregatingDecorator(new DateIndexingDecorator(dateDirectory, distributionServiceConfig),
+        cryptoProvider, distributionServiceConfig);
   }
 }

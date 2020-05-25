@@ -61,7 +61,7 @@ public abstract class WritableOnDisk implements Writable<WritableOnDisk> {
    */
   public java.io.File getFileOnDisk() {
     return Objects.requireNonNullElseGet(this.fileOnDisk,
-        () -> ((WritableOnDisk)this.getParent()).getFileOnDisk().toPath().resolve(this.getName()).toFile());
+        () -> ((WritableOnDisk) this.getParent()).getFileOnDisk().toPath().resolve(this.getName()).toFile());
   }
 
   @Override

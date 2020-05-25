@@ -31,24 +31,24 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 
-public class ExposureConfigurationValidatorTest {
+class ExposureConfigurationValidatorTest {
 
   private static final ValidationResult SUCCESS = new ValidationResult();
 
   @ParameterizedTest
   @MethodSource("createOkTests")
-  public void ok(TestWithExpectedResult test) throws UnableToLoadFileException {
+  void ok(TestWithExpectedResult test) throws UnableToLoadFileException {
     assertThat(getResultForTest(test)).isEqualTo(SUCCESS);
   }
 
   @ParameterizedTest
   @MethodSource("createFailedTests")
-  public void fails(TestWithExpectedResult test) throws UnableToLoadFileException {
+  void fails(TestWithExpectedResult test) throws UnableToLoadFileException {
     assertThat(getResultForTest(test)).isEqualTo(test.result);
   }
 
   @Test
-  public void emptyFileThrowsLoadFailure() {
+  void emptyFileThrowsLoadFailure() {
     assertThat(
         catchThrowable(() -> ExposureConfigurationProvider.readFile("parameters/empty.yaml")))
         .isInstanceOf(UnableToLoadFileException.class);

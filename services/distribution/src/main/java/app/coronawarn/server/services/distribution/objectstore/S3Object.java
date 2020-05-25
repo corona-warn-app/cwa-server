@@ -75,7 +75,7 @@ public class S3Object {
       s3Object.metadata = item.userMetadata();
     }
 
-    s3Object.etag = item.etag().replaceAll("\"","");
+    s3Object.etag = item.etag().replaceAll("\"", "");
 
     return s3Object;
   }
