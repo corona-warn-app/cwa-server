@@ -70,7 +70,9 @@ public class DiagnosisKeyService {
     boolean isValid = violations.isEmpty();
 
     if (!isValid) {
-      logger.warn("Validation failed for diagnosis key from database. Violations: {}", violations);
+      List<String> violationMessages =
+          violations.stream().map(ConstraintViolation::getMessage).collect(Collectors.toList());
+      logger.warn("Validation failed for diagnosis key from database. Violations: {}", violationMessages);
     }
 
     return isValid;
