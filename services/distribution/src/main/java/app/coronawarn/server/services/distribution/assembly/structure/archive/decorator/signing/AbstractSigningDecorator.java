@@ -19,7 +19,6 @@
 
 package app.coronawarn.server.services.distribution.assembly.structure.archive.decorator.signing;
 
-import app.coronawarn.server.common.protocols.external.exposurenotification.SignatureInfo;
 import app.coronawarn.server.common.protocols.external.exposurenotification.TEKSignature;
 import app.coronawarn.server.common.protocols.external.exposurenotification.TEKSignatureList;
 import app.coronawarn.server.services.distribution.assembly.component.CryptoProvider;
@@ -27,37 +26,40 @@ import app.coronawarn.server.services.distribution.assembly.structure.Writable;
 import app.coronawarn.server.services.distribution.assembly.structure.archive.Archive;
 import app.coronawarn.server.services.distribution.assembly.structure.archive.decorator.ArchiveDecorator;
 import app.coronawarn.server.services.distribution.assembly.structure.util.ImmutableStack;
+import app.coronawarn.server.services.distribution.config.DistributionServiceConfig;
 import com.google.protobuf.ByteString;
 import java.security.GeneralSecurityException;
 import java.security.Signature;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public abstract class AbstractSigningDecorator<W extends Writable<W>> extends ArchiveDecorator<W> implements
-    SigningDecorator<W> {
-
-  private static final String SIGNATURE_FILE_NAME = "export.sig";
-  private static final String SIGNATURE_ALGORITHM = "SHA256withECDSA";
-  private static final String SECURITY_PROVIDER = "BC";
+public abstract class AbstractSigningDecorator<W extends Writable<W>> extends ArchiveDecorator<W>
+    implements SigningDecorator<W> {
 
   private static final Logger logger = LoggerFactory.getLogger(AbstractSigningDecorator.class);
   protected final CryptoProvider cryptoProvider;
+  private final DistributionServiceConfig distributionServiceConfig;
 
-  public AbstractSigningDecorator(Archive<W> archive, CryptoProvider cryptoProvider) {
+  /**
+   * Creates an AbstractSigningDecorator.
+   */
+  public AbstractSigningDecorator(Archive<W> archive, CryptoProvider cryptoProvider,
+      DistributionServiceConfig distributionServiceConfig) {
     super(archive);
     this.cryptoProvider = cryptoProvider;
+    this.distributionServiceConfig = distributionServiceConfig;
   }
 
   @Override
   public void prepare(ImmutableStack<Object> indices) {
     super.prepare(indices);
-    this.addWritable(this.getSignatureFile(SIGNATURE_FILE_NAME));
+    this.addWritable(this.getSignatureFile(distributionServiceConfig.getSignature().getFileName()));
   }
 
-  protected TEKSignatureList createTemporaryExposureKeySignatureList(CryptoProvider cryptoProvider) {
+  protected TEKSignatureList createTemporaryExposureKeySignatureList() {
     return TEKSignatureList.newBuilder()
         .addSignatures(TEKSignature.newBuilder()
-            .setSignatureInfo(getSignatureInfo())
+            .setSignatureInfo(distributionServiceConfig.getSignature().getSignatureInfo())
             .setBatchNum(getBatchNum())
             .setBatchSize(getBatchSize())
             .setSignature(ByteString.copyFrom(createSignature(cryptoProvider)))
@@ -67,7 +69,8 @@ public abstract class AbstractSigningDecorator<W extends Writable<W>> extends Ar
 
   private byte[] createSignature(CryptoProvider cryptoProvider) {
     try {
-      Signature payloadSignature = Signature.getInstance(SIGNATURE_ALGORITHM, SECURITY_PROVIDER);
+      Signature payloadSignature = Signature.getInstance(distributionServiceConfig.getSignature().getAlgorithmName(),
+          distributionServiceConfig.getSignature().getSecurityProvider());
       payloadSignature.initSign(cryptoProvider.getPrivateKey());
       payloadSignature.update(this.getBytesToSign());
       return payloadSignature.sign();
@@ -75,19 +78,5 @@ public abstract class AbstractSigningDecorator<W extends Writable<W>> extends Ar
       logger.error("Failed to sign archive.", e);
       throw new RuntimeException(e);
     }
-  }
-
-  /**
-   * Returns the static {@link SignatureInfo} configured in the application properties. TODO Enter correct values.
-   */
-  public static SignatureInfo getSignatureInfo() {
-    // TODO cwa-server#183 cwa-server#207 cwa-server#238
-    return SignatureInfo.newBuilder()
-        .setAppBundleId("de.rki.coronawarnapp")
-        .setAndroidPackage("de.rki.coronawarnapp")
-        .setVerificationKeyVersion("")
-        .setVerificationKeyId("")
-        .setSignatureAlgorithm("1.2.840.10045.4.3.2")
-        .build();
   }
 }

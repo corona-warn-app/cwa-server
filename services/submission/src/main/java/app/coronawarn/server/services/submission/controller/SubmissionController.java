@@ -23,6 +23,7 @@ import app.coronawarn.server.common.persistence.domain.DiagnosisKey;
 import app.coronawarn.server.common.persistence.service.DiagnosisKeyService;
 import app.coronawarn.server.common.protocols.external.exposurenotification.TemporaryExposureKey;
 import app.coronawarn.server.common.protocols.internal.SubmissionPayload;
+import app.coronawarn.server.services.submission.config.SubmissionServiceConfig;
 import app.coronawarn.server.services.submission.exception.InvalidPayloadException;
 import app.coronawarn.server.services.submission.verification.TanVerifier;
 import java.util.ArrayList;
@@ -35,7 +36,6 @@ import org.apache.commons.math3.distribution.PoissonDistribution;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.StopWatch;
@@ -60,25 +60,24 @@ public class SubmissionController {
 
   private final TanVerifier tanVerifier;
 
-  @Autowired
-  SubmissionController(DiagnosisKeyService diagnosisKeyService, TanVerifier tanVerifier) {
-    this.diagnosisKeyService = diagnosisKeyService;
-    this.tanVerifier = tanVerifier;
-  }
+  private final Double fakeDelayMovingAverageSamples;
 
-  // Exponential moving average of the last N real request durations (in ms), where
-  // N = fakeDelayMovingAverageSamples.
-  @Value("${services.submission.initial_fake_delay_milliseconds}")
+  private final Integer retentionDays;
+
+  private final Integer maxNumberOfKeys;
+
   private Double fakeDelay;
 
-  @Value("${services.submission.fake_delay_moving_average_samples}")
-  private Double fakeDelayMovingAverageSamples;
-
-  @Value("${services.submission.retention-days}")
-  private Integer retentionDays;
-
-  @Value("${services.submission.payload.max-number-of-keys}")
-  private Integer maxNumberOfKeys;
+  @Autowired
+  SubmissionController(DiagnosisKeyService diagnosisKeyService, TanVerifier tanVerifier,
+      SubmissionServiceConfig submissionServiceConfig) {
+    this.diagnosisKeyService = diagnosisKeyService;
+    this.tanVerifier = tanVerifier;
+    fakeDelay = submissionServiceConfig.getInitialFakeDelayMilliseconds();
+    fakeDelayMovingAverageSamples = submissionServiceConfig.getFakeDelayMovingAverageSamples();
+    retentionDays = submissionServiceConfig.getRetentionDays();
+    maxNumberOfKeys = submissionServiceConfig.getMaxNumberOfKeys();
+  }
 
   private ScheduledExecutorService scheduledExecutor = Executors.newSingleThreadScheduledExecutor();
 

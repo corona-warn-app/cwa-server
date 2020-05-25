@@ -33,7 +33,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.Sort.Direction;
 
 @DataJpaTest
-public class DiagnosisKeyServiceMockedRepositoryTest {
+class DiagnosisKeyServiceMockedRepositoryTest {
 
   static final byte[] expKeyData = "16-bytelongarray".getBytes(Charset.defaultCharset());
   static final long expRollingStartNumber = 73800;

@@ -14,6 +14,7 @@ import app.coronawarn.server.services.distribution.assembly.structure.directory.
 import app.coronawarn.server.services.distribution.assembly.structure.file.File;
 import app.coronawarn.server.services.distribution.assembly.structure.file.FileOnDisk;
 import app.coronawarn.server.services.distribution.assembly.structure.util.ImmutableStack;
+import app.coronawarn.server.services.distribution.config.DistributionServiceConfig;
 import java.io.IOException;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
@@ -27,17 +28,22 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.rules.TemporaryFolder;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.ConfigFileApplicationContextInitializer;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
+@EnableConfigurationProperties(value = DistributionServiceConfig.class)
 @ExtendWith(SpringExtension.class)
-@ContextConfiguration(classes = {CryptoProvider.class},
+@ContextConfiguration(classes = {CryptoProvider.class, DistributionServiceConfig.class},
     initializers = ConfigFileApplicationContextInitializer.class)
 class SigningDecoratorTest {
 
   @Autowired
   CryptoProvider cryptoProvider;
+
+  @Autowired
+  DistributionServiceConfig distributionServiceConfig;
 
   private File<WritableOnDisk> fileToSign;
   private TEKSignatureList signatureList;
@@ -51,7 +57,8 @@ class SigningDecoratorTest {
     fileToSign = new FileOnDisk("export.bin", "123456".getBytes());
     archive.addWritable(fileToSign);
 
-    SigningDecorator<WritableOnDisk> signingDecorator = new TestSigningDecorator(archive, cryptoProvider);
+    SigningDecorator<WritableOnDisk> signingDecorator = new TestSigningDecorator(archive, cryptoProvider,
+        distributionServiceConfig);
 
     outputFolder.create();
     java.io.File outputDir = outputFolder.newFolder();
@@ -108,8 +115,9 @@ class SigningDecoratorTest {
 
   private static class TestSigningDecorator extends SigningDecoratorOnDisk {
 
-    public TestSigningDecorator(Archive<WritableOnDisk> archive, CryptoProvider cryptoProvider) {
-      super(archive, cryptoProvider);
+    public TestSigningDecorator(Archive<WritableOnDisk> archive, CryptoProvider cryptoProvider,
+        DistributionServiceConfig distributionServiceConfig) {
+      super(archive, cryptoProvider, distributionServiceConfig);
     }
 
     @Override

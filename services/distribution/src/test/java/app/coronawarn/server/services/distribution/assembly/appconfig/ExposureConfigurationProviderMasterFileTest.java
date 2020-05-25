@@ -31,12 +31,12 @@ import org.junit.jupiter.api.Test;
  * <p>
  * There should never be any deployment when this test is failing.
  */
-public class ExposureConfigurationProviderMasterFileTest {
+class ExposureConfigurationProviderMasterFileTest {
 
   private static final ValidationResult SUCCESS = new ValidationResult();
 
   @Test
-  public void testMasterFile() throws UnableToLoadFileException {
+  void testMasterFile() throws UnableToLoadFileException {
     var config = ExposureConfigurationProvider.readMasterFile();
 
     var validator = new ExposureConfigurationValidator(config);

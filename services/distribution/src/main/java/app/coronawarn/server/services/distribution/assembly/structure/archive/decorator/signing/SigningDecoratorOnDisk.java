@@ -24,17 +24,19 @@ import app.coronawarn.server.services.distribution.assembly.component.CryptoProv
 import app.coronawarn.server.services.distribution.assembly.structure.WritableOnDisk;
 import app.coronawarn.server.services.distribution.assembly.structure.archive.Archive;
 import app.coronawarn.server.services.distribution.assembly.structure.file.FileOnDisk;
+import app.coronawarn.server.services.distribution.config.DistributionServiceConfig;
 
-public abstract class SigningDecoratorOnDisk extends AbstractSigningDecorator<WritableOnDisk>
-    implements SigningDecorator<WritableOnDisk> {
+public abstract class SigningDecoratorOnDisk extends AbstractSigningDecorator<WritableOnDisk> implements
+    SigningDecorator<WritableOnDisk> {
 
-  public SigningDecoratorOnDisk(Archive<WritableOnDisk> archive, CryptoProvider cryptoProvider) {
-    super(archive, cryptoProvider);
+  public SigningDecoratorOnDisk(Archive<WritableOnDisk> archive, CryptoProvider cryptoProvider,
+      DistributionServiceConfig distributionServiceConfig) {
+    super(archive, cryptoProvider, distributionServiceConfig);
   }
 
   @Override
   public FileOnDisk getSignatureFile(String signatureFileName) {
-    TEKSignatureList signatureList = this.createTemporaryExposureKeySignatureList(this.cryptoProvider);
+    TEKSignatureList signatureList = this.createTemporaryExposureKeySignatureList();
     return new FileOnDisk(signatureFileName, signatureList.toByteArray());
   }
 }

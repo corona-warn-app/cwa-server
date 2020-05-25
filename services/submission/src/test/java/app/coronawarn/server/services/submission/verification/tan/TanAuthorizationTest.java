@@ -28,11 +28,11 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 
-public class TanAuthorizationTest {
+class TanAuthorizationTest {
 
   @ParameterizedTest
   @MethodSource("createSuccessTestsTan")
-  public void tanOk(TanTestCase testCase) throws TanAuthorizationException {
+  void tanOk(TanTestCase testCase) throws TanAuthorizationException {
     var tanAuthorization = TanAuthorization.of(testCase.getAuthValue());
 
     assertThat(tanAuthorization).isEqualTo(testCase.getExpected());
@@ -40,7 +40,7 @@ public class TanAuthorizationTest {
 
   @ParameterizedTest
   @MethodSource("createSuccessTestsTeleTan")
-  public void teleTanOk(TanTestCase testCase) throws TanAuthorizationException {
+  void teleTanOk(TanTestCase testCase) throws TanAuthorizationException {
     var tanAuthorization = TanAuthorization.of(testCase.getAuthValue());
 
     assertThat(tanAuthorization).isEqualTo(testCase.getExpected());
@@ -48,7 +48,7 @@ public class TanAuthorizationTest {
 
   @ParameterizedTest
   @MethodSource("createFailedTests")
-  public void fails(String authorizationValue) {
+  void fails(String authorizationValue) {
     assertThat(catchThrowable(() -> TanAuthorization.of(authorizationValue)))
         .isInstanceOf(TanAuthorizationException.class);
   }

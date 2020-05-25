@@ -17,7 +17,7 @@
  * under the License.
  */
 
-package app.coronawarn.server.services.distribution.assembly.diagnosiskeys.structure.directory.decorator;
+package app.coronawarn.server.services.distribution.assembly.diagnosiskeys.structure.archive.decorator.singing;
 
 import app.coronawarn.server.services.distribution.assembly.component.CryptoProvider;
 import app.coronawarn.server.services.distribution.assembly.structure.Writable;
@@ -26,11 +26,13 @@ import app.coronawarn.server.services.distribution.assembly.structure.archive.Ar
 import app.coronawarn.server.services.distribution.assembly.structure.archive.decorator.signing.SigningDecoratorOnDisk;
 import app.coronawarn.server.services.distribution.assembly.structure.file.File;
 import app.coronawarn.server.services.distribution.assembly.structure.file.FileOnDisk;
+import app.coronawarn.server.services.distribution.config.DistributionServiceConfig;
 
 public class DiagnosisKeySigningDecorator extends SigningDecoratorOnDisk {
 
-  public DiagnosisKeySigningDecorator(Archive<WritableOnDisk> archive, CryptoProvider cryptoProvider) {
-    super(archive, cryptoProvider);
+  public DiagnosisKeySigningDecorator(Archive<WritableOnDisk> archive, CryptoProvider cryptoProvider,
+      DistributionServiceConfig distributionServiceConfig) {
+    super(archive, cryptoProvider, distributionServiceConfig);
   }
 
   @Override
@@ -43,13 +45,11 @@ public class DiagnosisKeySigningDecorator extends SigningDecoratorOnDisk {
 
   @Override
   public int getBatchNum() {
-    // TODO Check if multiple batches are required.
     return 1;
   }
 
   @Override
   public int getBatchSize() {
-    // TODO Check if multiple batches are required.
     return 1;
   }
 }

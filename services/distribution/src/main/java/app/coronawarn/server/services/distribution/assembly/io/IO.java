@@ -30,6 +30,9 @@ import org.slf4j.LoggerFactory;
  */
 public class IO {
 
+  private IO() {
+  }
+
   private static final Logger logger = LoggerFactory.getLogger(IO.class);
 
   /**

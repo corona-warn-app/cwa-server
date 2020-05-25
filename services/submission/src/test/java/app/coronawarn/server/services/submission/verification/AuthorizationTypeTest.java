@@ -25,15 +25,15 @@ import static org.assertj.core.api.Assertions.assertThat;
 import org.junit.jupiter.api.Test;
 
 
-public class AuthorizationTypeTest {
+class AuthorizationTypeTest {
 
   @Test
-  public void checkTanSyntax() {
+  void checkTanSyntax() {
     assertThat(AuthorizationType.TAN.isValidSyntax("ANY SYNTAX")).isTrue();
   }
 
   @Test
-  public void checkTeleTanSyntax() {
+  void checkTeleTanSyntax() {
     assertThat(AuthorizationType.TELETAN.isValidSyntax("ANY SYNTAX")).isTrue();
   }
 }
