@@ -24,6 +24,7 @@ import org.yaml.snakeyaml.constructor.Constructor;
 import org.yaml.snakeyaml.introspector.BeanAccess;
 import org.yaml.snakeyaml.introspector.Property;
 import org.yaml.snakeyaml.introspector.PropertyUtils;
+import org.yaml.snakeyaml.nodes.Tag;
 
 /**
  * This Constructor implementation grants SnakeYaml compliance with the generated proto Java classes. SnakeYaml expects
@@ -33,8 +34,9 @@ import org.yaml.snakeyaml.introspector.PropertyUtils;
  */
 public class YamlConstructorForProtoBuf extends Constructor {
 
-  public YamlConstructorForProtoBuf() {
+  public YamlConstructorForProtoBuf(String path) {
     setPropertyUtils(new ProtoBufPropertyUtils());
+    this.yamlConstructors.put(new Tag("!include"), new IncludeConstruct(path));
   }
 
   private static class ProtoBufPropertyUtils extends PropertyUtils {
@@ -49,7 +51,7 @@ public class YamlConstructorForProtoBuf extends Constructor {
     }
 
     private String snakeToCamelCase(String snakeCase) {
-      String camelCase = Arrays.stream(snakeCase.split("_"))
+      String camelCase = Arrays.stream(snakeCase.replace("-", "_").split("_"))
           .map(word -> Character.toUpperCase(word.charAt(0)) + word.substring(1))
           .reduce("", String::concat);
 

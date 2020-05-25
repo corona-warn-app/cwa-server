@@ -45,7 +45,7 @@ public class YamlLoader {
    */
   public static <T extends Message.Builder> T loadYamlIntoProtobufBuilder(String path, Class<T> builderType)
       throws UnableToLoadFileException {
-    Yaml yaml = new Yaml(new YamlConstructorForProtoBuf());
+    Yaml yaml = new Yaml(new YamlConstructorForProtoBuf(path));
     // no setters for generated message classes available
     yaml.setBeanAccess(BeanAccess.FIELD);
 

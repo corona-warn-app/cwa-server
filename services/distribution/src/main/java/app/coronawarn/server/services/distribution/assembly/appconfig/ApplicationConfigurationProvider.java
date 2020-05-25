@@ -19,29 +19,37 @@
 
 package app.coronawarn.server.services.distribution.assembly.appconfig;
 
-import app.coronawarn.server.common.protocols.internal.RiskScoreParameters;
+import app.coronawarn.server.common.protocols.internal.ApplicationConfiguration;
 
 /**
- * Provides the Exposure Configuration based on a file in the file system.<br> The existing file must be a valid YAML
- * file, and must match the specification of the proto file risk_score_parameters.proto.
+ * Provides the application configuration needed for the mobile client. Contains all necessary
+ * sub-configs, including:
+ * <ul>
+ *   <li>Exposure Configuration</li>
+ *   <li>Risk Score Classification</li>
+ *   <li>App Config, e.g. minimum risk threshold</li>
+ * </ul>
+ *
+ * <p>The application config is fetched from the master-config folder.</p>
  */
-public class ExposureConfigurationProvider {
-
-  private ExposureConfigurationProvider() {
-  }
+public class ApplicationConfigurationProvider {
 
   /**
    * The location of the exposure configuration master file.
    */
-  public static final String MASTER_FILE = "master-config/exposure-config.yaml";
+  public static final String MASTER_FILE = "master-config/app-config.yaml";
+
+  private ApplicationConfigurationProvider() {
+
+  }
 
   /**
-   * Fetches the master configuration as a RiskScoreParameters instance.
+   * Fetches the master configuration as a ApplicationConfiguration instance.
    *
-   * @return the exposure configuration as RiskScoreParameters
+   * @return the exposure configuration as ApplicationConfiguration
    * @throws UnableToLoadFileException when the file/transformation did not succeed
    */
-  public static RiskScoreParameters readMasterFile() throws UnableToLoadFileException {
+  public static ApplicationConfiguration readMasterFile() throws UnableToLoadFileException {
     return readFile(MASTER_FILE);
   }
 
@@ -49,10 +57,10 @@ public class ExposureConfigurationProvider {
    * Fetches an exposure configuration file based on the given path. The path must be available in the classloader.
    *
    * @param path the path, e.g. folder/my-exposure-configuration.yaml
-   * @return the RiskScoreParameters
+   * @return the ApplicationConfiguration
    * @throws UnableToLoadFileException when the file/transformation did not succeed
    */
-  public static RiskScoreParameters readFile(String path) throws UnableToLoadFileException {
-    return YamlLoader.loadYamlIntoProtobufBuilder(path, RiskScoreParameters.Builder.class).build();
+  public static ApplicationConfiguration readFile(String path) throws UnableToLoadFileException {
+    return YamlLoader.loadYamlIntoProtobufBuilder(path, ApplicationConfiguration.Builder.class).build();
   }
 }
