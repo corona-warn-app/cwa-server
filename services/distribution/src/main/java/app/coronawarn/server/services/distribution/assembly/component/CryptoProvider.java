@@ -31,6 +31,7 @@ import java.security.Security;
 import java.security.cert.Certificate;
 import java.security.cert.CertificateException;
 import java.security.cert.CertificateFactory;
+import javax.annotation.PostConstruct;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.bouncycastle.openssl.PEMKeyPair;
 import org.bouncycastle.openssl.PEMParser;
@@ -65,6 +66,15 @@ public class CryptoProvider {
     Security.addProvider(new BouncyCastleProvider());
   }
 
+  /**
+   * Reads the {@link Certificate} and {@link PrivateKey} configured in the application properties.
+   */
+  @PostConstruct
+  private void init() {
+    loadPrivateKey();
+    loadCertificate();
+  }
+
   private static PrivateKey getPrivateKeyFromStream(final InputStream privateKeyStream) throws IOException {
     InputStreamReader privateKeyStreamReader = new InputStreamReader(privateKeyStream);
     Object parsed = new PEMParser(privateKeyStreamReader).readObject();
@@ -85,32 +95,34 @@ public class CryptoProvider {
   }
 
   /**
-   * Reads and returns the {@link PrivateKey} configured in the application properties.
+   * Returns the {@link PrivateKey} configured in the application properties.
    */
   public PrivateKey getPrivateKey() {
-    if (privateKey == null) {
-      Resource privateKeyResource = resourceLoader.getResource(privateKeyPath);
-      try (InputStream privateKeyStream = privateKeyResource.getInputStream()) {
-        privateKey = getPrivateKeyFromStream(privateKeyStream);
-      } catch (IOException e) {
-        throw new UncheckedIOException("Failed to load private key from " + privateKeyPath, e);
-      }
-    }
     return privateKey;
   }
 
+  private void loadPrivateKey() {
+    Resource privateKeyResource = resourceLoader.getResource(privateKeyPath);
+    try (InputStream privateKeyStream = privateKeyResource.getInputStream()) {
+      privateKey = getPrivateKeyFromStream(privateKeyStream);
+    } catch (IOException e) {
+      throw new UncheckedIOException("Failed to load private key from " + privateKeyPath, e);
+    }
+  }
+
   /**
-   * Reads and returns the {@link Certificate} configured in the application properties.
+   * Returns the {@link Certificate} configured in the application properties.
    */
   public Certificate getCertificate() {
-    if (this.certificate == null) {
-      Resource certResource = resourceLoader.getResource(certificatePath);
-      try (InputStream certStream = certResource.getInputStream()) {
-        this.certificate = getCertificateFromStream(certStream);
-      } catch (IOException | CertificateException e) {
-        throw new RuntimeException("Failed to load certificate from " + certificatePath, e);
-      }
-    }
     return certificate;
+  }
+
+  private void loadCertificate() {
+    Resource certResource = resourceLoader.getResource(certificatePath);
+    try (InputStream certStream = certResource.getInputStream()) {
+      this.certificate = getCertificateFromStream(certStream);
+    } catch (IOException | CertificateException e) {
+      throw new RuntimeException("Failed to load certificate from " + certificatePath, e);
+    }
   }
 }
