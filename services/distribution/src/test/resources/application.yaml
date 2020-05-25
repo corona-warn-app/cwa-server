@@ -27,6 +27,7 @@ services:
       date-path: date
       hour-path: hour
       diagnosis-keys-path: diagnosis-keys
+      diagnosis-keys-index-path: index
       parameters-path: configuration
       app-config-file-name: app_config
     signature:

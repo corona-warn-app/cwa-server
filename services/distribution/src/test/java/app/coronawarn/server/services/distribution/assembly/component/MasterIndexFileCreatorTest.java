@@ -19,15 +19,14 @@
 
 package app.coronawarn.server.services.distribution.assembly.component;
 
-import static org.mockito.Mockito.when;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.when;
 
 import app.coronawarn.server.services.distribution.config.DistributionServiceConfig;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.Arrays;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mockito;
@@ -36,19 +35,17 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.boot.test.context.ConfigFileApplicationContextInitializer;
 import org.springframework.core.io.ResourceLoader;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 @EnableConfigurationProperties(value = DistributionServiceConfig.class)
 @ExtendWith(SpringExtension.class)
-@TestPropertySource(properties = "spring.config.location = classpath:master-index-test/config.yaml")
-@ContextConfiguration(classes = {DistributionServiceConfig.class,OutputDirectoryProvider.class},
+@ContextConfiguration(classes = {DistributionServiceConfig.class, OutputDirectoryProvider.class},
     initializers = ConfigFileApplicationContextInitializer.class)
 class MasterIndexFileCreatorTest {
 
   private static final String TEST_BASE = "master-index-test/testout";
 
-  private static String ACTUAL_PATH = TEST_BASE + "/version/v1/diagnosis-keys/index";
+  private static final String ACTUAL_PATH = TEST_BASE + "/version/v1/diagnosis-keys/index";
 
   @Autowired
   private DistributionServiceConfig distributionServiceConfig;
@@ -60,7 +57,7 @@ class MasterIndexFileCreatorTest {
   private ResourceLoader resourceLoader;
 
   @Test
-  void test() throws IOException {
+  void testCreation() throws IOException {
     var spy = Mockito.spy(outputDirectoryProvider);
     when(spy.getFileOnDisk()).thenReturn(getTestBase());
 

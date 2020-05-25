@@ -55,7 +55,6 @@ public class Assembly implements ApplicationRunner {
    * Creates an Assembly, using {@link OutputDirectoryProvider}, {@link CwaApiStructureProvider} and {@link
    * ApplicationContext}.
    */
-  @Autowired
   public Assembly(OutputDirectoryProvider outputDirectoryProvider, CwaApiStructureProvider cwaApiStructureProvider,
       ApplicationContext applicationContext, MasterIndexFileCreator masterIndexFileCreator) {
     this.outputDirectoryProvider = outputDirectoryProvider;
