@@ -194,7 +194,17 @@ public class DistributionServiceConfig {
     private String hourPath;
     private String diagnosisKeysPath;
     private String parametersPath;
+    private String parametersExposureConfigurationFileName;
+    private String diagnosisKeysIndexPath;
     private String appConfigFileName;
+
+    public String getDiagnosisKeysIndexPath() {
+      return diagnosisKeysIndexPath;
+    }
+
+    public void setDiagnosisKeysIndexPath(String diagnosisKeysIndexPath) {
+      this.diagnosisKeysIndexPath = diagnosisKeysIndexPath;
+    }
 
     public String getVersionPath() {
       return versionPath;

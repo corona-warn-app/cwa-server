@@ -21,6 +21,7 @@ package app.coronawarn.server.services.distribution.runner;
 
 import app.coronawarn.server.services.distribution.Application;
 import app.coronawarn.server.services.distribution.assembly.component.CwaApiStructureProvider;
+import app.coronawarn.server.services.distribution.assembly.component.MasterIndexFileCreator;
 import app.coronawarn.server.services.distribution.assembly.component.OutputDirectoryProvider;
 import app.coronawarn.server.services.distribution.assembly.structure.WritableOnDisk;
 import app.coronawarn.server.services.distribution.assembly.structure.directory.Directory;
@@ -48,15 +49,19 @@ public class Assembly implements ApplicationRunner {
 
   private final ApplicationContext applicationContext;
 
+  private final MasterIndexFileCreator masterIndexFileCreator;
+
   /**
-   * Creates an Assembly, using {@link OutputDirectoryProvider}, {@link CwaApiStructureProvider} and
-   * {@link ApplicationContext}.
+   * Creates an Assembly, using {@link OutputDirectoryProvider}, {@link CwaApiStructureProvider} and {@link
+   * ApplicationContext}.
    */
-  Assembly(OutputDirectoryProvider outputDirectoryProvider,
-      CwaApiStructureProvider cwaApiStructureProvider, ApplicationContext applicationContext) {
+  @Autowired
+  public Assembly(OutputDirectoryProvider outputDirectoryProvider, CwaApiStructureProvider cwaApiStructureProvider,
+      ApplicationContext applicationContext, MasterIndexFileCreator masterIndexFileCreator) {
     this.outputDirectoryProvider = outputDirectoryProvider;
     this.cwaApiStructureProvider = cwaApiStructureProvider;
     this.applicationContext = applicationContext;
+    this.masterIndexFileCreator = masterIndexFileCreator;
   }
 
   @Override
@@ -69,6 +74,8 @@ public class Assembly implements ApplicationRunner {
       outputDirectory.prepare(new ImmutableStack<>());
       logger.debug("Writing files...");
       outputDirectory.write();
+      logger.debug("Creating index file...");
+      masterIndexFileCreator.createIndex();
     } catch (Exception e) {
       logger.error("Distribution data assembly failed.", e);
       Application.killApplication(applicationContext);
@@ -76,4 +83,6 @@ public class Assembly implements ApplicationRunner {
 
     logger.debug("Distribution data assembled successfully.");
   }
+
+
 }
