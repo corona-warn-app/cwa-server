@@ -1,0 +1,13 @@
+#----------------------------------------------------------------------
+# This is the Corona Warn App master configuration file.
+# ----------------------------------------------------------------------
+#
+# This configuration file will be fetched by the mobile app in order to function.
+#
+# It currently provides settings for minimum risk score, score classes and exposure configuration.
+#
+# Change this file with caution!
+
+min-risk-score: 90
+risk-score-classes: !include risk-score-classification.yaml
+exposure-config: !include exposure-config.yaml

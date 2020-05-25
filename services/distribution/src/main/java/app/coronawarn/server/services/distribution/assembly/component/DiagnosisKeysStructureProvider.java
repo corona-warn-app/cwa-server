@@ -28,7 +28,6 @@ import app.coronawarn.server.services.distribution.config.DistributionServiceCon
 import java.util.Collection;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 /**
@@ -47,8 +46,7 @@ public class DiagnosisKeysStructureProvider {
   /**
    * Creates a new DiagnosisKeysStructureProvider.
    */
-  @Autowired
-  public DiagnosisKeysStructureProvider(DiagnosisKeyService diagnosisKeyService, CryptoProvider cryptoProvider,
+  DiagnosisKeysStructureProvider(DiagnosisKeyService diagnosisKeyService, CryptoProvider cryptoProvider,
       DistributionServiceConfig distributionServiceConfig) {
     this.diagnosisKeyService = diagnosisKeyService;
     this.cryptoProvider = cryptoProvider;

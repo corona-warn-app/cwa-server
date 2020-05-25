@@ -17,19 +17,21 @@
  * under the License.
  */
 
-package app.coronawarn.server.common.persistence.repository;
+package app.coronawarn.server.services.distribution.assembly.appconfig.validation;
 
-import app.coronawarn.server.common.persistence.domain.DiagnosisKey;
-import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.stereotype.Repository;
+/**
+ * Classes that extend {@link ConfigurationValidator} validate the values of an associated {@link
+ * com.google.protobuf.Message} instance.
+ */
+public abstract class ConfigurationValidator {
 
-@Repository
-public interface DiagnosisKeyRepository extends JpaRepository<DiagnosisKey, Long> {
+  protected ValidationResult errors;
 
   /**
-   * Deletes all entries that have a submission timestamp lesser or equal to the specified one.
+   * Performs a validation of the associated {@link com.google.protobuf.Message} instance and returns information about
+   * validation failures.
    *
-   * @param submissionTimestamp the submission timestamp up to which entries will be deleted.
+   * @return The ValidationResult instance, containing information about possible errors.
    */
-  void deleteBySubmissionTimestampIsLessThanEqual(long submissionTimestamp);
+  public abstract ValidationResult validate();
 }

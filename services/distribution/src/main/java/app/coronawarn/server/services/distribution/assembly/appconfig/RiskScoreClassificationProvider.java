@@ -33,7 +33,7 @@ public class RiskScoreClassificationProvider {
   /**
    * The location of the risk score classification master file.
    */
-  public static final String MASTER_FILE = "risk-score-classification/master.yaml";
+  public static final String MASTER_FILE = "master-config/risk-score-classification.yaml";
 
   /**
    * Fetches the master configuration as a {@link RiskScoreClassification} instance.
