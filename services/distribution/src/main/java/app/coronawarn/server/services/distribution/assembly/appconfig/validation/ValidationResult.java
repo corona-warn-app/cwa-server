@@ -70,4 +70,16 @@ public class ValidationResult {
   public int hashCode() {
     return Objects.hash(errors);
   }
+
+  /**
+   * Adds all validation errors of the given result to this one, effectively merging them.
+   *
+   * @param other the other validation result to merge
+   * @return this instance
+   */
+  public ValidationResult with(ValidationResult other) {
+    this.errors.addAll(other.errors);
+
+    return this;
+  }
 }

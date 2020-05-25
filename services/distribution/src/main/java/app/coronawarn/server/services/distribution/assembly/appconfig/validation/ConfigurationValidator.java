@@ -20,36 +20,18 @@
 package app.coronawarn.server.services.distribution.assembly.appconfig.validation;
 
 /**
- * Definition of the spec according to Apple/Google:
- * https://developer.apple.com/documentation/exposurenotification/enexposureconfiguration
+ * Classes that extend {@link ConfigurationValidator} validate the values of an associated {@link
+ * com.google.protobuf.Message} instance.
  */
-public class ParameterSpec {
+public abstract class ConfigurationValidator {
 
-  private ParameterSpec() {
-  }
-
-  /**
-   * The minimum weight value for mobile API.
-   */
-  public static final double WEIGHT_MIN = 0.001;
+  protected ValidationResult errors;
 
   /**
-   * The maximum weight value for mobile API.
+   * Performs a validation of the associated {@link com.google.protobuf.Message} instance and returns information about
+   * validation failures.
+   *
+   * @return The ValidationResult instance, containing information about possible errors.
    */
-  public static final int WEIGHT_MAX = 100;
-
-  /**
-   * Maximum number of allowed decimals.
-   */
-  public static final int WEIGHT_MAX_DECIMALS = 3;
-
-  /**
-   * The allowed minimum value for risk score.
-   */
-  public static final int RISK_SCORE_MIN = 0;
-
-  /**
-   * The allowed maximum value for a risk score.
-   */
-  public static final int RISK_SCORE_MAX = 4096;
+  public abstract ValidationResult validate();
 }

@@ -30,8 +30,7 @@ services:
       hour-path: hour
       diagnosis-keys-path: diagnosis-keys
       parameters-path: configuration
-      parameters-exposure-configuration-file-name: exposure_configuration
-      parameters-risk-score-classification-file-name: risk_score_classification
+      app-config-file-name: app_config
     signature:
       app-bundle-id: de.rki.coronawarnapp
       android-package: de.rki.coronawarnapp
