@@ -21,7 +21,7 @@ package app.coronawarn.server.services.submission.exception;
 
 /**
  * Exception thrown to indicate an invalid payload of a
- * {@link app.coronawarn.server.common.protocols.external.exposurenotification.Key}.
+ * {@link app.coronawarn.server.common.protocols.external.exposurenotification.TemporaryExposureKey}.
  */
 public class InvalidPayloadException extends RuntimeException {
 
