@@ -15,9 +15,8 @@ services:
     payload:
       max-number-of-keys: 14
     verification:
-      base-url: ${POSTGRESQL_SERVICE_HOST:http://localhost:8004}
+      base-url: ${VERIFICATION_BASE_URL:http://localhost:8004}
       path: /version/v1/tan/verify
-
 
 spring:
   jpa:

@@ -48,7 +48,6 @@ import org.springframework.web.client.HttpServerErrorException;
 import org.springframework.web.client.HttpServerErrorException.InternalServerError;
 
 @EnableConfigurationProperties(value = SubmissionServiceConfig.class)
-@ExtendWith(SpringExtension.class)
 @ContextConfiguration(classes = {TanVerifier.class},
   initializers = ConfigFileApplicationContextInitializer.class)
 @RestClientTest

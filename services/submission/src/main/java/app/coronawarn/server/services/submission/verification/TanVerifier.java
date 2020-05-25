@@ -97,7 +97,7 @@ public class TanVerifier {
    *
    * @param tan Submission Authorization TAN
    * @return {@literal true} if verification service is able to verify the provided TAN, {@literal false} otherwise
-   * @throws RestClientException if http status code is neither 2xx nor 4xx
+   * @throws RestClientException if http status code is neither 2xx nor 404
    */
   private boolean verifyWithVerificationService(String tan) {
     String json = "{ \"tan\": \"" + tan + "\" }";
@@ -106,7 +106,7 @@ public class TanVerifier {
     try {
       ResponseEntity<String> response = restTemplate.postForEntity(verificationServiceUrl, entity, String.class);
       return response.getStatusCode().is2xxSuccessful();
-    } catch (HttpClientErrorException e) {
+    } catch (HttpClientErrorException.NotFound e) {
       // The validation service returns http status 404 if the TAN is invalid
       logger.debug("TAN validation failed for TAN: {}", tan);
       return false;
