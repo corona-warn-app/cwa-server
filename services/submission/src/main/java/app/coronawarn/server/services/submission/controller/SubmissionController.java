@@ -56,16 +56,13 @@ public class SubmissionController {
    */
   public static final String SUBMISSION_ROUTE = "/diagnosis-keys";
 
+  private final ScheduledExecutorService scheduledExecutor = Executors.newSingleThreadScheduledExecutor();
+  private final ForkJoinPool forkJoinPool = ForkJoinPool.commonPool();
   private final DiagnosisKeyService diagnosisKeyService;
-
   private final TanVerifier tanVerifier;
-
   private final Double fakeDelayMovingAverageSamples;
-
   private final Integer retentionDays;
-
   private final Integer maxNumberOfKeys;
-
   private Double fakeDelay;
 
   @Autowired
@@ -78,10 +75,6 @@ public class SubmissionController {
     retentionDays = submissionServiceConfig.getRetentionDays();
     maxNumberOfKeys = submissionServiceConfig.getMaxNumberOfKeys();
   }
-
-  private ScheduledExecutorService scheduledExecutor = Executors.newSingleThreadScheduledExecutor();
-
-  private ForkJoinPool forkJoinPool = ForkJoinPool.commonPool();
 
   /**
    * Handles diagnosis key submission requests.
@@ -96,23 +89,23 @@ public class SubmissionController {
       @RequestBody SubmissionPayload exposureKeys,
       @RequestHeader("cwa-fake") Integer fake,
       @RequestHeader("cwa-authorization") String tan) {
-    final DeferredResult<ResponseEntity<Void>> deferredResult = new DeferredResult<>();
     if (fake != 0) {
-      setFakeDeferredResult(deferredResult);
+      return buildFakeDeferredResult();
     } else {
-      setRealDeferredResult(deferredResult, exposureKeys, tan);
+      return buildRealDeferredResult(exposureKeys, tan);
     }
-    return deferredResult;
   }
 
-  private void setFakeDeferredResult(DeferredResult<ResponseEntity<Void>> deferredResult) {
+  private DeferredResult<ResponseEntity<Void>> buildFakeDeferredResult() {
+    DeferredResult<ResponseEntity<Void>> deferredResult = new DeferredResult<>();
     long delay = new PoissonDistribution(fakeDelay).sample();
     scheduledExecutor.schedule(() -> deferredResult.setResult(buildSuccessResponseEntity()),
         delay, TimeUnit.MILLISECONDS);
+    return deferredResult;
   }
 
-  private void setRealDeferredResult(DeferredResult<ResponseEntity<Void>> deferredResult,
-      SubmissionPayload exposureKeys, String tan) {
+  private DeferredResult<ResponseEntity<Void>> buildRealDeferredResult(SubmissionPayload exposureKeys, String tan) {
+    DeferredResult<ResponseEntity<Void>> deferredResult = new DeferredResult<>();
     forkJoinPool.submit(() -> {
       StopWatch stopWatch = new StopWatch();
       stopWatch.start();
@@ -129,6 +122,7 @@ public class SubmissionController {
       stopWatch.stop();
       updateFakeDelay(stopWatch.getTotalTimeMillis());
     });
+    return deferredResult;
   }
 
   /**
@@ -178,5 +172,4 @@ public class SubmissionController {
   private synchronized void updateFakeDelay(long realRequestDuration) {
     fakeDelay = fakeDelay + (1 / fakeDelayMovingAverageSamples) * (realRequestDuration - fakeDelay);
   }
-
 }
