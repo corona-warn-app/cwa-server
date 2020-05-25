@@ -57,11 +57,11 @@ The docker-compose contains the following services:
 
 Service       | Description | Endpoint and Default Credentials
 --------------|-------------|-----------
-submission    | The Corona-Warn-App submission service                                                      | http://localhost:8000
+submission    | The Corona-Warn-App submission service                                                      | `http://localhost:8000`
 distribution  | The Corona-Warn-App distribution service                                                    | NO ENDPOINT
 postgres      | A [postgres] database installation                                                          | postgres:8001 <br> Username: postgres <br> Password: postgres
-pgadmin       | A [pgadmin](https://www.pgadmin.org/) installation for the postgres database                | http://localhost:8002 <br> Username: user@domain.com <br> Password: password
-cloudserver   | [Zenko CloudServer] is a S3-compliant object store  | http://localhost:8003/ <br> Access key: accessKey1 <br> Secret key: verySecretKey1
+pgadmin       | A [pgadmin](https://www.pgadmin.org/) installation for the postgres database                | `http://localhost:8002` <br> Username: user@domain.com <br> Password: password
+cloudserver   | [Zenko CloudServer] is a S3-compliant object store  | `http://localhost:8003/` <br> Access key: accessKey1 <br> Secret key: verySecretKey1
 
 ##### Known Limitation
 
@@ -136,8 +136,8 @@ The API that is being exposed by the backend services is documented in an [OpenA
 
 Service      | OpenAPI Specification
 -------------|-------------
-Submission Service        | https://github.com/corona-warn-app/cwa-server/raw/master/services/submission/api_v1.json
-Distribution Service      | https://github.com/corona-warn-app/cwa-server/raw/master/services/distribution/api_v1.json
+Submission Service        | [services/submission/api_v1.json](https://github.com/corona-warn-app/cwa-server/raw/master/services/submission/api_v1.json)
+Distribution Service      | [services/distribution/api_v1.json)](https://github.com/corona-warn-app/cwa-server/raw/master/services/distribution/api_v1.json)
 
 ## Spring Profiles
 
