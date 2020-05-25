@@ -19,10 +19,10 @@
 
 package app.coronawarn.server.services.distribution.assembly.appconfig.validation;
 
-import static app.coronawarn.server.services.distribution.assembly.appconfig.validation.RiskScoreClassificationValidator.RISK_SCORE_VALUE_RANGE;
+import static app.coronawarn.server.services.distribution.assembly.appconfig.validation.RiskScoreClassificationValidationError.ErrorType.INVALID_PARTITIONING;
+import static app.coronawarn.server.services.distribution.assembly.appconfig.validation.RiskScoreClassificationValidationError.ErrorType.MIN_GREATER_THAN_MAX;
 import static java.util.Arrays.asList;
 import static org.assertj.core.api.Assertions.assertThat;
-import static app.coronawarn.server.services.distribution.assembly.appconfig.validation.RiskScoreClassificationValidationError.ErrorType.*;
 
 import app.coronawarn.server.common.protocols.internal.RiskScoreClass;
 import app.coronawarn.server.common.protocols.internal.RiskScoreClassification;
@@ -37,7 +37,7 @@ import org.junit.jupiter.params.provider.ValueSource;
 
 class RiskScoreClassificationValidatorTest {
 
-  private final static int MAX_SCORE = RISK_SCORE_VALUE_RANGE - 1;
+  private final static int MAX_SCORE = ParameterSpec.RISK_SCORE_MAX;
   private final static String VALID_LABEL = "myLabel";
   private final static String VALID_URL = "";
 

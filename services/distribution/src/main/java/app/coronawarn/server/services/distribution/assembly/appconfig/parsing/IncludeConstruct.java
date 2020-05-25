@@ -69,7 +69,7 @@ public class IncludeConstruct extends AbstractConstruct {
     var builder = (Class<? extends Message.Builder>) Arrays.stream(node.getType().getDeclaredClasses())
         .filter(Message.Builder.class::isAssignableFrom)
         .findFirst()
-        .orElseThrow(() -> new RuntimeException("No Message.Builder on class: " + node.getType().getSimpleName()));
+        .orElseThrow(() -> new NoMessageBuilderOnClassException(node));
 
     try {
       return YamlLoader.loadYamlIntoProtobufBuilder(target.toString(), builder).build();

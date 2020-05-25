@@ -35,11 +35,6 @@ import java.net.URL;
  */
 public class RiskScoreClassificationValidator extends ConfigurationValidator {
 
-  /**
-   * This defines the number of possible values (0 ... RISK_SCORE_VALUE_RANGE - 1) for the total risk score.
-   */
-  public static final int RISK_SCORE_VALUE_RANGE = ParameterSpec.RISK_SCORE_MAX + 1;
-
   private final RiskScoreClassification riskScoreClassification;
 
   public RiskScoreClassificationValidator(RiskScoreClassification riskScoreClassification) {
@@ -106,7 +101,7 @@ public class RiskScoreClassificationValidator extends ConfigurationValidator {
         .mapToInt(riskScoreClass -> (riskScoreClass.getMax() - riskScoreClass.getMin() + 1))
         .sum();
 
-    if (partitionSum != RISK_SCORE_VALUE_RANGE) {
+    if (partitionSum != ParameterSpec.RISK_SCORE_MAX + 1) {
       errors.add(new RiskScoreClassificationValidationError("covered value range", partitionSum, INVALID_PARTITIONING));
     }
   }

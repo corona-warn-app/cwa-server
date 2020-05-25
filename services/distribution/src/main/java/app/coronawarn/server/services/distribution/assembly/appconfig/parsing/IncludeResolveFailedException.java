@@ -38,6 +38,6 @@ public class IncludeResolveFailedException extends RuntimeException {
   }
 
   private static String computeMessage(ScalarNode scalarNode) {
-    return "Unable to resolve Yaml node: " + scalarNode.getNodeId().name() + " " + scalarNode.getValue();
+    return String.format("Unable to resolve Yaml node: %s -> %s", scalarNode.getNodeId().name(), scalarNode.getValue());
   }
 }
