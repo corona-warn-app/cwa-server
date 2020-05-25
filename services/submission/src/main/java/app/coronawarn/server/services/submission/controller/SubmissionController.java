@@ -116,17 +116,24 @@ public class SubmissionController {
     forkJoinPool.submit(() -> {
       StopWatch stopWatch = new StopWatch();
       stopWatch.start();
-      if (!this.tanVerifier.verifyTan(tan)) {
-        deferredResult.setResult(buildTanInvalidResponseEntity());
-      } else {
-        try {
-          persistDiagnosisKeysPayload(exposureKeys);
-          deferredResult.setResult(buildSuccessResponseEntity());
-        } catch (Exception e) {
-          deferredResult.setErrorResult(e);
+
+      try {
+
+        if (!this.tanVerifier.verifyTan(tan)) {
+          deferredResult.setResult(buildTanInvalidResponseEntity());
+        } else {
+          try {
+            persistDiagnosisKeysPayload(exposureKeys);
+            deferredResult.setResult(buildSuccessResponseEntity());
+          } catch (Exception e) {
+            deferredResult.setErrorResult(e);
+          }
         }
+
+      } finally {
+        stopWatch.stop();
       }
-      stopWatch.stop();
+
       updateFakeDelay(stopWatch.getTotalTimeMillis());
     });
   }
