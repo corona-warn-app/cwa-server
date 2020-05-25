@@ -45,6 +45,7 @@ import org.springframework.stereotype.Component;
 public class RequestExecutor {
   public static final String VALID_KEY_DATA_1 = "testKey111111111";
   public static final String VALID_KEY_DATA_2 = "testKey222222222";
+  public static final String VALID_KEY_DATA_3 = "testKey333333333";
   private static final URI SUBMISSION_URL = URI.create("/version/v1/diagnosis-keys");
   private final TestRestTemplate testRestTemplate;
 
