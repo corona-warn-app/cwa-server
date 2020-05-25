@@ -194,7 +194,6 @@ public class DistributionServiceConfig {
     private String hourPath;
     private String diagnosisKeysPath;
     private String parametersPath;
-    private String parametersExposureConfigurationFileName;
     private String diagnosisKeysIndexPath;
     private String appConfigFileName;
 

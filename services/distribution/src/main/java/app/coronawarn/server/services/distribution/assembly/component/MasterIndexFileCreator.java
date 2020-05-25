@@ -42,6 +42,10 @@ public class MasterIndexFileCreator {
 
   private static final Pattern HOUR_INDEX_PATTERN = Pattern.compile(".*/hour/\\d{1,2}/index$");
 
+  private static final int DIRECTORY_SCANNING_MAX_DEPTH = 10;
+
+  private static final String NEW_LINE_SEPARATOR = "\r\n";
+
   private final DistributionServiceConfig distributionServiceConfig;
 
   private final OutputDirectoryProvider outputDirectoryProvider;
@@ -74,28 +78,28 @@ public class MasterIndexFileCreator {
   }
 
   private void generateMainIndexForVersion(Path path) {
-    logger.info("Creating index for for " + path.toAbsolutePath());
+    logger.info("Creating index for for {}", path.toAbsolutePath());
 
-    try (Stream<Path> stream = Files.walk(path, 20)) {
+    Path keysFolder = path.resolve(distributionServiceConfig.getApi().getDiagnosisKeysPath());
+
+    try (Stream<Path> stream = Files.walk(path, DIRECTORY_SCANNING_MAX_DEPTH)) {
       String indexFileContent = stream
           .filter(Files::isRegularFile)
           .filter(MasterIndexFileCreator::isRelevantForMainIndex)
           .map(Path::getParent)
-          .map(path::relativize)
+          .map(keysFolder::relativize)
           .map(Path::toString)
           .sorted()
-          .collect(Collectors.joining("\r\n"));
+          .collect(Collectors.joining(NEW_LINE_SEPARATOR));
 
-      storeIndexFile(path, indexFileContent);
+      storeIndexFile(keysFolder, indexFileContent);
     } catch (IOException e) {
       throw new AssemblyFailedException(e);
     }
   }
 
-  private void storeIndexFile(Path versionFolder, String content) {
-    Path targetIndexFile = versionFolder
-        .resolve(distributionServiceConfig.getApi().getDiagnosisKeysPath())
-        .resolve(distributionServiceConfig.getApi().getDiagnosisKeysIndexPath());
+  private void storeIndexFile(Path keysFolder, String content) {
+    Path targetIndexFile = keysFolder.resolve(distributionServiceConfig.getApi().getDiagnosisKeysIndexPath());
 
     try {
       logger.debug("Storing index file on {}", targetIndexFile.toAbsolutePath());
