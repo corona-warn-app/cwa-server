@@ -101,14 +101,14 @@ public class SubmissionPayloadValidator implements Validator {
       return;
     }
 
-    Integer[] sortedStartInveralNumbers = temporaryExposureKeys.stream()
+    Integer[] sortedStartIntervalNumbers = temporaryExposureKeys.stream()
         .mapToInt(TemporaryExposureKey::getRollingStartIntervalNumber)
         .sorted().boxed().toArray(Integer[]::new);
 
-    for (int i = 1; i < sortedStartInveralNumbers.length; i++) {
-      if (sortedStartInveralNumbers[i] != sortedStartInveralNumbers[i - 1] + DiagnosisKey.EXPECTED_ROLLING_PERIOD) {
+    for (int i = 1; i < sortedStartIntervalNumbers.length; i++) {
+      if (sortedStartIntervalNumbers[i] != sortedStartIntervalNumbers[i - 1] + DiagnosisKey.EXPECTED_ROLLING_PERIOD) {
         String error = String.format(
-            "Subsequent intervals do not align. StartIntervalNumbers: %s", sortedStartInveralNumbers);
+            "Subsequent intervals do not align. StartIntervalNumbers: %s", sortedStartIntervalNumbers);
         errors.rejectValue(null, error);
         return;
       }
