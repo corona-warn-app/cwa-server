@@ -19,17 +19,18 @@
 
 package app.coronawarn.server.common.persistence.domain;
 
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.ValueSource;
+import static java.time.ZoneOffset.UTC;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatCode;
+import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException;
 
 import java.nio.charset.Charset;
 import java.time.Instant;
 import java.time.LocalDateTime;
-
-import static java.time.ZoneOffset.UTC;
-import static org.assertj.core.api.Assertions.*;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 
 
 class DiagnosisKeyTest {
@@ -43,13 +44,8 @@ class DiagnosisKeyTest {
       expRollingPeriod, expTransmissionRiskLevel, expSubmissionTimestamp);
 
   @Test
-<<<<<<< HEAD
-  void testRollingStartNumberGetter() {
-    assertThat(diagnosisKey.getRollingStartNumber()).isEqualTo(expRollingStartNumber);
-=======
   public void testRollingStartNumberGetter() {
     assertThat(diagnosisKey.getRollingStartNumber()).isEqualTo(expRollingStartIntervalNumber);
->>>>>>> Variable name and type changed
   }
 
   @Test
@@ -68,19 +64,11 @@ class DiagnosisKeyTest {
   }
 
   @Test
-<<<<<<< HEAD
-  void testIsYoungerThanRetentionThreshold() {
-    long fiveDaysAgo = LocalDateTime
-        .ofInstant(Instant.now(), UTC)
-        .minusDays(5).minusMinutes(10)
-        .toEpochSecond(UTC) / (60 * 10);
-=======
   public void testIsYoungerThanRetentionThreshold() {
     int fiveDaysAgo = (int) (LocalDateTime
             .ofInstant(Instant.now(), UTC)
             .minusDays(5).minusMinutes(10)
             .toEpochSecond(UTC) / (60 * 10));
->>>>>>> Variable name and type changed
     DiagnosisKey diagnosisKeyFiveDays = new DiagnosisKey(expKeyData, fiveDaysAgo,
         expRollingPeriod, expTransmissionRiskLevel, expSubmissionTimestamp);
 

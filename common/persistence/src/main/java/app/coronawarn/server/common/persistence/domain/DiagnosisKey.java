@@ -19,23 +19,26 @@
 
 package app.coronawarn.server.common.persistence.domain;
 
+import static java.time.ZoneOffset.UTC;
+
 import app.coronawarn.server.common.persistence.domain.DiagnosisKeyBuilders.Builder;
 import app.coronawarn.server.common.persistence.domain.validation.ValidRollingStartIntervalNumber;
-import org.hibernate.validator.constraints.Range;
-import javax.persistence.*;
-import javax.validation.ConstraintViolation;
-import javax.validation.Validation;
-import javax.validation.Validator;
-import javax.validation.constraints.Min;
-import javax.validation.constraints.Size;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.Objects;
 import java.util.Set;
-
-import static java.time.ZoneOffset.UTC;
-
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.Table;
+import javax.validation.ConstraintViolation;
+import javax.validation.Validation;
+import javax.validation.Validator;
+import javax.validation.constraints.Min;
+import javax.validation.constraints.Size;
+import org.hibernate.validator.constraints.Range;
 
 
 /**

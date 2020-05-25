@@ -16,19 +16,21 @@
 
 package app.coronawarn.server.common.persistence.domain.validation;
 
-import javax.validation.ConstraintValidator;
-import javax.validation.ConstraintValidatorContext;
-import java.time.Instant;
-import java.time.LocalDateTime;
-
 import static java.time.ZoneOffset.UTC;
 
-public class ValidRollingStartIntervalNumberValidator implements
-        ConstraintValidator<ValidRollingStartIntervalNumber, Integer> {
+import java.time.Instant;
+import java.time.LocalDateTime;
+import javax.validation.ConstraintValidator;
+import javax.validation.ConstraintValidatorContext;
+
+public class ValidRollingStartIntervalNumberValidator
+    implements ConstraintValidator<ValidRollingStartIntervalNumber, Integer> {
 
   @Override
-  public boolean isValid(Integer rollingStartIntervalNumber, ConstraintValidatorContext constraintValidatorContext) {
-    int currentInstant = (int) (LocalDateTime.ofInstant(Instant.now(), UTC).toEpochSecond(UTC) / 600L);
+  public boolean isValid(
+      Integer rollingStartIntervalNumber, ConstraintValidatorContext constraintValidatorContext) {
+    int currentInstant =
+        (int) (LocalDateTime.ofInstant(Instant.now(), UTC).toEpochSecond(UTC) / 600L);
     return rollingStartIntervalNumber > 0L && rollingStartIntervalNumber < currentInstant;
   }
 }

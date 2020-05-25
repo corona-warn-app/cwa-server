@@ -19,19 +19,20 @@
 
 package app.coronawarn.server.common.persistence.domain;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatCode;
+import static org.assertj.core.api.Assertions.catchThrowable;
+
 import app.coronawarn.server.common.persistence.exception.InvalidDiagnosisKeyException;
 import app.coronawarn.server.common.protocols.external.exposurenotification.TemporaryExposureKey;
 import com.google.protobuf.ByteString;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.ValueSource;
-
 import java.nio.charset.Charset;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.ZoneOffset;
-
-import static org.assertj.core.api.Assertions.*;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 
 class DiagnosisKeyBuilderTest {
 
@@ -108,11 +109,11 @@ class DiagnosisKeyBuilderTest {
   @Test
 
   public void rollingStartNumberCannotBeInFuture() {
-    assertThat(catchThrowable(() -> keyWithRollingStartNumber((int) Long.MAX_VALUE)))
+    assertThat(catchThrowable(() -> keyWithRollingStartNumber(Integer.MAX_VALUE)))
         .isInstanceOf(InvalidDiagnosisKeyException.class)
         .hasMessage(
             "[Rolling start number must be greater 0 and cannot be in the future. Invalid Value: "
-                + Long.MAX_VALUE + "]");
+                + Integer.MAX_VALUE + "]");
 
     long tomorrow = LocalDate
         .ofInstant(Instant.now(), ZoneOffset.UTC)
@@ -156,7 +157,7 @@ class DiagnosisKeyBuilderTest {
   }
 
   @ParameterizedTest
-  @ValueSource(longs = {0L, -3L})
+  @ValueSource(ints = {0, -3})
 
   public void rollingPeriodMustBeLargerThanZero(int invalidRollingPeriod) {
     assertThat(catchThrowable(() -> keyWithRollingPeriod(invalidRollingPeriod)))
