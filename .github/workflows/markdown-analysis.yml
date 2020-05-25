@@ -6,12 +6,6 @@ on:
     - master
     paths:
       - '**/*.md'
-  push:
-    branches:
-    - master
-    - mdlintAction
-    paths:
-      - '**/*.md'
 
 jobs:
   markdownlint:
