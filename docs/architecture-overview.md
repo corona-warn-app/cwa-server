@@ -107,8 +107,10 @@ message Key {
 
 Additionally, the endpoint requires the following headers to be set:
 
-    CWA-Authorization: TAN <TAN>
-    CWA-Fake: <0 or 1>
+```http
+CWA-Authorization: TAN <TAN>
+CWA-Fake: <0 or 1>
+```
 
 There is currently no official specification for publishing diagnosis keys to the server.
 Google currently uses the following in their reference implementation.
