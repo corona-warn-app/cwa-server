@@ -176,7 +176,7 @@ class SubmissionControllerTest {
     // INTERNAL_SERVER_ERROR is the result of blocking by StrictFirewall for non POST calls.
     //                       We can change this when Spring Security 5.4.x is released.
     // METHOD_NOT_ALLOWED is the result of TRACE calls (disabled by default in tomcat)
-    List<HttpStatus> allowedErrors = Arrays.asList(INTERNAL_SERVER_ERROR, METHOD_NOT_ALLOWED);
+    List<HttpStatus> allowedErrors = Arrays.asList(INTERNAL_SERVER_ERROR, FORBIDDEN, METHOD_NOT_ALLOWED);
 
     HttpStatus actStatus = testRestTemplate
         .exchange(SUBMISSION_URL, deniedHttpMethod, null, Void.class).getStatusCode();
