@@ -166,7 +166,7 @@ public class TestDataGeneration implements ApplicationRunner {
   private DiagnosisKey generateDiagnosisKey(long submissionTimestamp) {
     return DiagnosisKey.builder()
         .withKeyData(generateDiagnosisKeyBytes())
-        .withRollingStartNumber(generateRollingStartNumber(submissionTimestamp))
+        .withRollingStartIntervalNumber(generateRollingStartIntervalNumber(submissionTimestamp))
         .withRollingPeriod(generateRollingPeriod())
         .withTransmissionRiskLevel(generateTransmissionRiskLevel())
         .withSubmissionTimestamp(submissionTimestamp)
@@ -186,20 +186,20 @@ public class TestDataGeneration implements ApplicationRunner {
    * Returns a random rolling start number (timestamp since when a key was active, represented by a 10 minute interval
    * counter.) between a specific submission timestamp and the beginning of the retention period.
    */
-  private long generateRollingStartNumber(long submissionTimestamp) {
-    long maxRollingStartNumber =
+  private int generateRollingStartIntervalNumber(long submissionTimestamp) {
+    long maxRollingStartIntervalNumber =
         submissionTimestamp * ONE_HOUR_INTERVAL_SECONDS / TEN_MINUTES_INTERVAL_SECONDS;
-    long minRollingStartNumber =
-        maxRollingStartNumber
+    long minRollingStartIntervalNumber =
+        maxRollingStartIntervalNumber
             - TimeUnit.DAYS.toSeconds(retentionDays) / TEN_MINUTES_INTERVAL_SECONDS;
-    return getRandomBetween(minRollingStartNumber, maxRollingStartNumber);
+    return Math.toIntExact(getRandomBetween(minRollingStartIntervalNumber, maxRollingStartIntervalNumber));
   }
 
   /**
    * Returns a rolling period (number of 10 minute intervals that a key was active for) of 1 day.
    */
-  private long generateRollingPeriod() {
-    return TimeUnit.DAYS.toSeconds(1) / TEN_MINUTES_INTERVAL_SECONDS;
+  private int generateRollingPeriod() {
+    return Math.toIntExact(TimeUnit.DAYS.toSeconds(1) / TEN_MINUTES_INTERVAL_SECONDS);
   }
 
   /**

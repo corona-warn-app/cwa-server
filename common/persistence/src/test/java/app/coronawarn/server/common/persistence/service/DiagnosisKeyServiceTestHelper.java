@@ -36,8 +36,8 @@ public class DiagnosisKeyServiceTestHelper {
 
       assertThat(actKey.getKeyData()).withFailMessage("keyData mismatch")
           .isEqualTo(expKey.getKeyData());
-      assertThat(actKey.getRollingStartNumber()).withFailMessage("rollingStartNumber mismatch")
-          .isEqualTo(expKey.getRollingStartNumber());
+      assertThat(actKey.getRollingStartIntervalNumber()).withFailMessage("rollingStartIntervalNumber mismatch")
+          .isEqualTo(expKey.getRollingStartIntervalNumber());
       assertThat(actKey.getRollingPeriod()).withFailMessage("rollingPeriod mismatch")
           .isEqualTo(expKey.getRollingPeriod());
       assertThat(actKey.getTransmissionRiskLevel())
