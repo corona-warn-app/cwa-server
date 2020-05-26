@@ -50,7 +50,6 @@ public class DiagnosisKeyBuilder implements Builder, RollingStartIntervalNumberB
   private long submissionTimestamp = -1L;
 
   DiagnosisKeyBuilder() {
-
   }
 
   @Override
@@ -79,7 +78,8 @@ public class DiagnosisKeyBuilder implements Builder, RollingStartIntervalNumberB
 
   @Override
   public FinalBuilder fromProtoBuf(TemporaryExposureKey protoBufObject) {
-    return this.withKeyData(protoBufObject.getKeyData().toByteArray())
+    return this
+        .withKeyData(protoBufObject.getKeyData().toByteArray())
         .withRollingStartIntervalNumber(protoBufObject.getRollingStartIntervalNumber())
         .withRollingPeriod(protoBufObject.getRollingPeriod())
         .withTransmissionRiskLevel(protoBufObject.getTransmissionRiskLevel());
@@ -98,13 +98,8 @@ public class DiagnosisKeyBuilder implements Builder, RollingStartIntervalNumberB
       submissionTimestamp = Instant.now().getEpochSecond() / 3600L;
     }
 
-    var diagnosisKey =
-        new DiagnosisKey(
-            this.keyData,
-            this.rollingStartIntervalNumber,
-            this.rollingPeriod,
-            this.transmissionRiskLevel,
-            submissionTimestamp);
+    var diagnosisKey = new DiagnosisKey(
+        keyData, rollingStartIntervalNumber, rollingPeriod, transmissionRiskLevel, submissionTimestamp);
     return throwIfValidationFails(diagnosisKey);
   }
 
@@ -112,12 +107,9 @@ public class DiagnosisKeyBuilder implements Builder, RollingStartIntervalNumberB
     Set<ConstraintViolation<DiagnosisKey>> violations = diagnosisKey.validate();
 
     if (!violations.isEmpty()) {
-      String violationsMessage =
-          violations.stream()
-              .map(violation ->
-                  String.format("%s Invalid Value: %s", violation.getMessage(), violation.getInvalidValue()))
-              .collect(Collectors.toList())
-              .toString();
+      String violationsMessage = violations.stream()
+          .map(violation -> String.format("%s Invalid Value: %s", violation.getMessage(), violation.getInvalidValue()))
+          .collect(Collectors.toList()).toString();
       logger.debug(violationsMessage);
       throw new InvalidDiagnosisKeyException(violationsMessage);
     }
