@@ -40,13 +40,16 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
   @Bean
   protected HttpFirewall strictFirewall() {
     StrictHttpFirewall firewall = new StrictHttpFirewall();
-    firewall.setAllowedHttpMethods(Arrays.asList(HttpMethod.POST.name()));
+    firewall.setAllowedHttpMethods(Arrays.asList(
+        HttpMethod.GET.name(),
+        HttpMethod.POST.name()));
     return firewall;
   }
 
   @Override
   protected void configure(HttpSecurity http) throws Exception {
     http.authorizeRequests()
+        .mvcMatchers(HttpMethod.GET, "/actuator/**").permitAll()
         .mvcMatchers(HttpMethod.POST, SUBMISSION_ROUTE).permitAll()
         .anyRequest().denyAll()
         .and().csrf().disable();
