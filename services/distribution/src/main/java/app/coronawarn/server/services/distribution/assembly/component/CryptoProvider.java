@@ -23,6 +23,7 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.UncheckedIOException;
 import java.security.PrivateKey;
 import java.security.Security;
 import java.security.cert.Certificate;
@@ -97,8 +98,7 @@ public class CryptoProvider {
       try (InputStream privateKeyStream = privateKeyResource.getInputStream()) {
         privateKey = getPrivateKeyFromStream(privateKeyStream);
       } catch (IOException e) {
-        logger.error("Failed to load private key from {}", privateKeyPath, e);
-        throw new RuntimeException(e);
+        throw new UncheckedIOException("Failed to load private key from " + privateKeyPath, e);
       }
     }
     return privateKey;
@@ -113,8 +113,8 @@ public class CryptoProvider {
       try (InputStream certStream = certResource.getInputStream()) {
         this.certificate = getCertificateFromStream(certStream);
       } catch (IOException | CertificateException e) {
-        logger.error("Failed to load certificate from {}", certificatePath, e);
-        throw new RuntimeException(e);
+        logger.error("Failed to load certificate from {} with exception {}", certificatePath, e);
+        throw new RuntimeException(e.getMessage(),e.getCause());
       }
     }
     return certificate;

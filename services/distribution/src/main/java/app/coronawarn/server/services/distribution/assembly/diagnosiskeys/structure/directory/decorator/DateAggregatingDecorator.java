@@ -91,8 +91,7 @@ public class DateAggregatingDecorator extends IndexDirectoryDecorator<LocalDate,
             .forEach(aggregate -> {
               currentDirectory.addWritable(aggregate);
               aggregate.prepare(indices);
-            }
-            )
+            })
         );
   }
 
