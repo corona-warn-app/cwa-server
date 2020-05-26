@@ -65,12 +65,12 @@ public class CountryIndexingDecorator<T> extends IndexDirectoryDecorator<T, Writ
   public void prepare(ImmutableStack<Object> indices) {
     super.prepare(indices);
 
-    Collection<DirectoryOnDisk> directories = this.getWritables().stream()
+    Collection<DirectoryOnDisk> countryDirectories = this.getWritables().stream()
         .filter(Writable::isDirectory)
         .map(directory -> (DirectoryOnDisk) directory)
         .collect(Collectors.toSet());
 
-    directories.forEach(this::writeIndexFileForCountry);
+    countryDirectories.forEach(this::writeIndexFileForCountry);
   }
 
   private void writeIndexFileForCountry(Directory<WritableOnDisk> directory) {
@@ -80,16 +80,15 @@ public class CountryIndexingDecorator<T> extends IndexDirectoryDecorator<T, Writ
         .findFirst()
         .orElseThrow();
 
-    String content = CountryIndexingDecorator.getExposureKeyExportsIn(dateDirectory)
+    String resourcePaths = CountryIndexingDecorator.getExposureKeyExportPaths(dateDirectory)
         .stream()
         .sorted()
         .collect(Collectors.joining(NEW_LINE_SEPARATOR));
 
-    var indexFile = new FileOnDisk(fileName, content.getBytes(StandardCharsets.UTF_8));
-    directory.addWritable(indexFile);
+    directory.addWritable(new FileOnDisk(fileName, resourcePaths.getBytes(StandardCharsets.UTF_8)));
   }
 
-  private static Set<String> getExposureKeyExportsIn(Directory<WritableOnDisk> rootDirectory) {
+  private static Set<String> getExposureKeyExportPaths(Directory<WritableOnDisk> rootDirectory) {
     Collection<Directory<WritableOnDisk>> directories = rootDirectory.getWritables()
         .stream()
         .filter(Writable::isDirectory)
@@ -101,7 +100,7 @@ public class CountryIndexingDecorator<T> extends IndexDirectoryDecorator<T, Writ
       return Set.of(rootDirectory.getName());
     } else {
       return directories.stream()
-          .map(CountryIndexingDecorator::getExposureKeyExportsIn)
+          .map(CountryIndexingDecorator::getExposureKeyExportPaths)
           .flatMap(Set::stream)
           .map(childName -> rootDirectory.getName() + "/" + childName)
           .collect(Collectors.toSet());
