@@ -35,7 +35,7 @@ public @interface ValidRollingStartIntervalNumber {
    *
    * @return the error message
    */
-  String message() default "Rolling start number must be greater 0 and cannot be in the future.";
+  String message() default "Rolling start interval number must be greater 0 and cannot be in the future.";
 
   /**
    * Groups.
