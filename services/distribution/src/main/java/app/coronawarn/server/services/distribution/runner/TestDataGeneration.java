@@ -67,7 +67,6 @@ public class TestDataGeneration implements ApplicationRunner {
 
   private static final int POISSON_MAX_ITERATIONS = 10_000_000;
   private static final double POISSON_EPSILON = 1e-12;
-  private PoissonDistribution poisson;
 
   // The submission timestamp is counted in 1 hour intervals since epoch
   private static final long ONE_HOUR_INTERVAL_SECONDS = TimeUnit.HOURS.toSeconds(1);
@@ -107,7 +106,7 @@ public class TestDataGeneration implements ApplicationRunner {
 
     // Add the startTimestamp to the seed. Otherwise we would generate the same data every hour.
     random.setSeed(this.config.getSeed() + startTimestamp);
-    poisson =
+    PoissonDistribution poisson =
         new PoissonDistribution(random, this.config.getExposuresPerHour(), POISSON_EPSILON, POISSON_MAX_ITERATIONS);
 
     if (startTimestamp == endTimestamp) {
@@ -166,7 +165,7 @@ public class TestDataGeneration implements ApplicationRunner {
   private DiagnosisKey generateDiagnosisKey(long submissionTimestamp) {
     return DiagnosisKey.builder()
         .withKeyData(generateDiagnosisKeyBytes())
-        .withRollingStartNumber(generateRollingStartNumber(submissionTimestamp))
+        .withRollingStartIntervalNumber(generateRollingStartIntervalNumber(submissionTimestamp))
         .withRollingPeriod(generateRollingPeriod())
         .withTransmissionRiskLevel(generateTransmissionRiskLevel())
         .withSubmissionTimestamp(submissionTimestamp)
@@ -186,20 +185,20 @@ public class TestDataGeneration implements ApplicationRunner {
    * Returns a random rolling start number (timestamp since when a key was active, represented by a 10 minute interval
    * counter.) between a specific submission timestamp and the beginning of the retention period.
    */
-  private long generateRollingStartNumber(long submissionTimestamp) {
-    long maxRollingStartNumber =
+  private int generateRollingStartIntervalNumber(long submissionTimestamp) {
+    long maxRollingStartIntervalNumber =
         submissionTimestamp * ONE_HOUR_INTERVAL_SECONDS / TEN_MINUTES_INTERVAL_SECONDS;
-    long minRollingStartNumber =
-        maxRollingStartNumber
+    long minRollingStartIntervalNumber =
+        maxRollingStartIntervalNumber
             - TimeUnit.DAYS.toSeconds(retentionDays) / TEN_MINUTES_INTERVAL_SECONDS;
-    return getRandomBetween(minRollingStartNumber, maxRollingStartNumber);
+    return Math.toIntExact(getRandomBetween(minRollingStartIntervalNumber, maxRollingStartIntervalNumber));
   }
 
   /**
    * Returns a rolling period (number of 10 minute intervals that a key was active for) of 1 day.
    */
-  private long generateRollingPeriod() {
-    return TimeUnit.DAYS.toSeconds(1) / TEN_MINUTES_INTERVAL_SECONDS;
+  private int generateRollingPeriod() {
+    return Math.toIntExact(TimeUnit.DAYS.toSeconds(1) / TEN_MINUTES_INTERVAL_SECONDS);
   }
 
   /**
