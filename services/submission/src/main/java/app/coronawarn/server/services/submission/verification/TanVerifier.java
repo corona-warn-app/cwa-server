@@ -67,7 +67,7 @@ public class TanVerifier {
    * @throws RestClientException if status code is neither 2xx nor 4xx
    */
   public boolean verifyTan(String tan) {
-    String trimmedTan = tan.trim();
+    String trimmedTan = tan.trim().replaceAll(" ", "");
 
     if (!checkTanSyntax(trimmedTan)) {
       logger.debug("TAN Syntax check failed for TAN: {}", trimmedTan);
