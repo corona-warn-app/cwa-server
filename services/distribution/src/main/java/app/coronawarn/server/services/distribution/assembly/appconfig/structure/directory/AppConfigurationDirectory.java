@@ -79,7 +79,7 @@ public class AppConfigurationDirectory extends DirectoryOnDisk {
       addArchiveIfMessageValid(distributionServiceConfig.getApi().getAppConfigFileName(),
           appConfig, validator);
     } catch (UnableToLoadFileException e) {
-      logger.error("Exposure configuration will not be published! Unable to read configuration file from disk.");
+      logger.error("Exposure configuration will not be published! Unable to read configuration file from disk.", e);
     }
   }
 
