@@ -19,11 +19,10 @@
 
 package app.coronawarn.server.common.persistence.service;
 
-import app.coronawarn.server.common.persistence.domain.DiagnosisKey;
-
-import java.util.List;
-
 import static org.assertj.core.api.Assertions.assertThat;
+
+import app.coronawarn.server.common.persistence.domain.DiagnosisKey;
+import java.util.List;
 
 public class DiagnosisKeyServiceTestHelper {
 

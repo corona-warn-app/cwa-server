@@ -44,7 +44,7 @@ class DiagnosisKeyTest {
       expRollingPeriod, expTransmissionRiskLevel, expSubmissionTimestamp);
 
   @Test
-  public void testRollingStartNumberGetter() {
+  void testRollingStartIntervalNumberGetter() {
     assertThat(diagnosisKey.getRollingStartIntervalNumber()).isEqualTo(expRollingStartIntervalNumber);
   }
 
@@ -64,11 +64,11 @@ class DiagnosisKeyTest {
   }
 
   @Test
-  public void testIsYoungerThanRetentionThreshold() {
+  void testIsYoungerThanRetentionThreshold() {
     int fiveDaysAgo = (int) (LocalDateTime
-            .ofInstant(Instant.now(), UTC)
-            .minusDays(5).minusMinutes(10)
-            .toEpochSecond(UTC) / (60 * 10));
+        .ofInstant(Instant.now(), UTC)
+        .minusDays(5).minusMinutes(10)
+        .toEpochSecond(UTC) / (60 * 10));
     DiagnosisKey diagnosisKeyFiveDays = new DiagnosisKey(expKeyData, fiveDaysAgo,
         expRollingPeriod, expTransmissionRiskLevel, expSubmissionTimestamp);
 

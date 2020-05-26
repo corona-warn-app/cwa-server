@@ -119,7 +119,7 @@ class SubmissionControllerTest {
   }
 
   @Test
-  void singleKeyWithOutdatedRollingStartNumberDoesNotGetSaved() {
+  void singleKeyWithOutdatedRollingStartIntervalNumberDoesNotGetSaved() {
     Collection<TemporaryExposureKey> keys = buildPayloadWithSingleOutdatedKey();
     ArgumentCaptor<Collection<DiagnosisKey>> argument = ArgumentCaptor.forClass(Collection.class);
 
@@ -130,7 +130,7 @@ class SubmissionControllerTest {
   }
 
   @Test
-  void keysWithOutdatedRollingStartNumberDoNotGetSaved() {
+  void keysWithOutdatedRollingStartIntervalNumberDoNotGetSaved() {
     Collection<TemporaryExposureKey> keys = buildPayloadWithMultipleKeys();
     TemporaryExposureKey outdatedKey = createOutdatedKey();
     keys.add(outdatedKey);
@@ -242,9 +242,9 @@ class SubmissionControllerTest {
 
   private static Collection<TemporaryExposureKey> buildPayloadWithMultipleKeys() {
     return Stream.of(
-        buildTemporaryExposureKey("testKey111111111", createRollingStartNumber(2), 2, 3),
-        buildTemporaryExposureKey("testKey222222222", createRollingStartNumber(4), 5, 6),
-        buildTemporaryExposureKey("testKey333333333", createRollingStartNumber(10), 8, 8))
+        buildTemporaryExposureKey("testKey111111111", createRollingStartIntervalNumber(2), 2, 3),
+        buildTemporaryExposureKey("testKey222222222", createRollingStartIntervalNumber(4), 5, 6),
+        buildTemporaryExposureKey("testKey333333333", createRollingStartIntervalNumber(10), 8, 8))
         .collect(Collectors.toCollection(ArrayList::new));
   }
 
@@ -256,7 +256,7 @@ class SubmissionControllerTest {
   private static TemporaryExposureKey createOutdatedKey() {
     return TemporaryExposureKey.newBuilder()
         .setKeyData(ByteString.copyFromUtf8("testKey222222222"))
-        .setRollingStartIntervalNumber(createRollingStartNumber(99))
+        .setRollingStartIntervalNumber(createRollingStartIntervalNumber(99))
         .setRollingPeriod(10)
         .setTransmissionRiskLevel(5).build();
   }
@@ -265,7 +265,7 @@ class SubmissionControllerTest {
     ArrayList<TemporaryExposureKey> tooMany = new ArrayList<>();
     for (int i = 0; i <= 99; i++) {
       tooMany.add(
-          buildTemporaryExposureKey("testKey111111111", createRollingStartNumber(2), 2, 3));
+          buildTemporaryExposureKey("testKey111111111", createRollingStartIntervalNumber(2), 2, 3));
     }
 
     return tooMany;
@@ -273,11 +273,11 @@ class SubmissionControllerTest {
 
   private static Collection<TemporaryExposureKey> buildPayloadWithInvalidKey() {
     return Stream.of(
-        buildTemporaryExposureKey("testKey111111111", createRollingStartNumber(2), 2, 999))
+        buildTemporaryExposureKey("testKey111111111", createRollingStartIntervalNumber(2), 2, 999))
         .collect(Collectors.toCollection(ArrayList::new));
   }
 
-  private static int createRollingStartNumber(Integer daysAgo) {
+  private static int createRollingStartIntervalNumber(Integer daysAgo) {
     return Math.toIntExact(LocalDate
         .ofInstant(Instant.now(), UTC)
         .minusDays(daysAgo).atStartOfDay()
@@ -285,10 +285,10 @@ class SubmissionControllerTest {
   }
 
   private static TemporaryExposureKey buildTemporaryExposureKey(
-      String keyData, int rollingStartNumber, int rollingPeriod, int transmissionRiskLevel) {
+      String keyData, int rollingStartIntervalNumber, int rollingPeriod, int transmissionRiskLevel) {
     return TemporaryExposureKey.newBuilder()
         .setKeyData(ByteString.copyFromUtf8(keyData))
-        .setRollingStartIntervalNumber(rollingStartNumber)
+        .setRollingStartIntervalNumber(rollingStartIntervalNumber)
         .setRollingPeriod(rollingPeriod)
         .setTransmissionRiskLevel(transmissionRiskLevel).build();
   }

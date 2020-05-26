@@ -35,9 +35,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * An instance of this builder can be retrieved by calling {@link DiagnosisKey#builder()}. A {@link
- * DiagnosisKey} can then be build by either providing the required member values or by passing the
- * respective protocol buffer object.
+ * An instance of this builder can be retrieved by calling {@link DiagnosisKey#builder()}. A {@link DiagnosisKey} can
+ * then be build by either providing the required member values or by passing the respective protocol buffer object.
  */
 public class DiagnosisKeyBuilder implements Builder, RollingStartIntervalNumberBuilder,
     RollingPeriodBuilder, TransmissionRiskLevelBuilder, FinalBuilder {
@@ -115,11 +114,8 @@ public class DiagnosisKeyBuilder implements Builder, RollingStartIntervalNumberB
     if (!violations.isEmpty()) {
       String violationsMessage =
           violations.stream()
-              .map(
-                  violation ->
-                      String.format(
-                          "%s Invalid Value: %s",
-                          violation.getMessage(), violation.getInvalidValue()))
+              .map(violation ->
+                  String.format("%s Invalid Value: %s", violation.getMessage(), violation.getInvalidValue()))
               .collect(Collectors.toList())
               .toString();
       logger.debug(violationsMessage);
