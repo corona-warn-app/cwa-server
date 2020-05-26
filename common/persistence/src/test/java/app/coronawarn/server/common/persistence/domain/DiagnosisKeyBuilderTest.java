@@ -79,7 +79,7 @@ class DiagnosisKeyBuilderTest {
   void buildSuccessivelyWithSubmissionTimestamp() {
     DiagnosisKey actDiagnosisKey = DiagnosisKey.builder()
         .withKeyData(this.expKeyData)
-        .withRollingStartNumber(this.expRollingStartIntervalNumber)
+        .withRollingStartIntervalNumber(this.expRollingStartIntervalNumber)
         .withRollingPeriod(this.expRollingPeriod)
         .withTransmissionRiskLevel(this.expTransmissionRiskLevel)
         .withSubmissionTimestamp(this.expSubmissionTimestamp).build();
@@ -91,7 +91,7 @@ class DiagnosisKeyBuilderTest {
   void buildSuccessivelyWithoutSubmissionTimestamp() {
     DiagnosisKey actDiagnosisKey = DiagnosisKey.builder()
         .withKeyData(this.expKeyData)
-        .withRollingStartNumber(this.expRollingStartIntervalNumber)
+        .withRollingStartIntervalNumber(this.expRollingStartIntervalNumber)
         .withRollingPeriod(this.expRollingPeriod)
         .withTransmissionRiskLevel(this.expTransmissionRiskLevel).build();
 
@@ -134,7 +134,7 @@ class DiagnosisKeyBuilderTest {
     assertThat(
         catchThrowable(() -> DiagnosisKey.builder()
             .withKeyData(this.expKeyData)
-            .withRollingStartNumber(0)
+            .withRollingStartIntervalNumber(0)
             .withRollingPeriod(this.expRollingPeriod)
             .withTransmissionRiskLevel(this.expTransmissionRiskLevel).build()
         )
@@ -188,7 +188,7 @@ class DiagnosisKeyBuilderTest {
   private DiagnosisKey keyWithKeyData(byte[] expKeyData) {
     return DiagnosisKey.builder()
         .withKeyData(expKeyData)
-        .withRollingStartNumber(expRollingStartIntervalNumber)
+        .withRollingStartIntervalNumber(expRollingStartIntervalNumber)
         .withRollingPeriod(expRollingPeriod)
         .withTransmissionRiskLevel(expTransmissionRiskLevel).build();
   }
@@ -196,7 +196,7 @@ class DiagnosisKeyBuilderTest {
   private DiagnosisKey keyWithRollingStartNumber(int expRollingStartIntervalNumber) {
     return DiagnosisKey.builder()
         .withKeyData(expKeyData)
-        .withRollingStartNumber(expRollingStartIntervalNumber)
+        .withRollingStartIntervalNumber(expRollingStartIntervalNumber)
         .withRollingPeriod(expRollingPeriod)
         .withTransmissionRiskLevel(expTransmissionRiskLevel).build();
   }
@@ -204,7 +204,7 @@ class DiagnosisKeyBuilderTest {
   private DiagnosisKey keyWithRollingPeriod(int expRollingPeriod) {
     return DiagnosisKey.builder()
         .withKeyData(expKeyData)
-        .withRollingStartNumber(expRollingStartIntervalNumber)
+        .withRollingStartIntervalNumber(expRollingStartIntervalNumber)
         .withRollingPeriod(expRollingPeriod)
         .withTransmissionRiskLevel(expTransmissionRiskLevel).build();
   }
@@ -212,7 +212,7 @@ class DiagnosisKeyBuilderTest {
   private DiagnosisKey keyWithRiskLevel(int expTransmissionRiskLevel) {
     return DiagnosisKey.builder()
         .withKeyData(expKeyData)
-        .withRollingStartNumber(expRollingStartIntervalNumber)
+        .withRollingStartIntervalNumber(expRollingStartIntervalNumber)
         .withRollingPeriod(expRollingPeriod)
         .withTransmissionRiskLevel(expTransmissionRiskLevel).build();
   }

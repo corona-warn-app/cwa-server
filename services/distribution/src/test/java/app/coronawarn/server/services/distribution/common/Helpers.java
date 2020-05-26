@@ -35,7 +35,7 @@ public class Helpers {
   public static DiagnosisKey buildDiagnosisKeyForSubmissionTimestamp(long submissionTimeStamp) {
     return DiagnosisKey.builder()
         .withKeyData(new byte[16])
-        .withRollingStartNumber(600)
+        .withRollingStartIntervalNumber(600)
         .withRollingPeriod(1)
         .withTransmissionRiskLevel(2)
         .withSubmissionTimestamp(submissionTimeStamp).build();

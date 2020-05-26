@@ -166,7 +166,7 @@ public class TestDataGeneration implements ApplicationRunner {
   private DiagnosisKey generateDiagnosisKey(long submissionTimestamp) {
     return DiagnosisKey.builder()
         .withKeyData(generateDiagnosisKeyBytes())
-        .withRollingStartNumber((int) generateRollingStartNumber(submissionTimestamp))
+        .withRollingStartIntervalNumber((int) generateRollingStartNumber(submissionTimestamp))
         .withRollingPeriod((int) generateRollingPeriod())
         .withTransmissionRiskLevel(generateTransmissionRiskLevel())
         .withSubmissionTimestamp(submissionTimestamp)

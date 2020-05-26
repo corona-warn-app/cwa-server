@@ -55,7 +55,7 @@ interface DiagnosisKeyBuilders {
      *     startTimeOfKeySinceEpochInSecs / (60 * 10).
      * @return this Builder instance.
      */
-    RollingPeriodBuilder withRollingStartNumber(int rollingStartIntervalNumber);
+    RollingPeriodBuilder withRollingStartIntervalNumber(int rollingStartIntervalNumber);
   }
 
   interface RollingPeriodBuilder {

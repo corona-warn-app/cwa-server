@@ -135,7 +135,7 @@ class DiagnosisKeyServiceTest {
     assertThat(catchThrowable(() -> {
       var keys = List.of(DiagnosisKey.builder()
           .withKeyData(new byte[16])
-          .withRollingStartNumber((int) (OffsetDateTime.now(UTC).toEpochSecond() / 600))
+          .withRollingStartIntervalNumber((int) (OffsetDateTime.now(UTC).toEpochSecond() / 600))
           .withRollingPeriod(1)
           .withTransmissionRiskLevel(2)
           .withSubmissionTimestamp(0L).build());
@@ -151,7 +151,7 @@ class DiagnosisKeyServiceTest {
   public static DiagnosisKey buildDiagnosisKeyForSubmissionTimestamp(long submissionTimeStamp) {
     return DiagnosisKey.builder()
         .withKeyData(new byte[16])
-        .withRollingStartNumber(600)
+        .withRollingStartIntervalNumber(600)
         .withRollingPeriod(1)
         .withTransmissionRiskLevel(2)
         .withSubmissionTimestamp(submissionTimeStamp).build();

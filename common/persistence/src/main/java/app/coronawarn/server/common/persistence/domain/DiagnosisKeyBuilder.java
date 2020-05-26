@@ -65,7 +65,7 @@ public class DiagnosisKeyBuilder
   }
 
   @Override
-  public RollingPeriodBuilder withRollingStartNumber(int rollingStartIntervalNumber) {
+  public RollingPeriodBuilder withRollingStartIntervalNumber(int rollingStartIntervalNumber) {
     this.rollingStartIntervalNumber = rollingStartIntervalNumber;
     return this;
   }
@@ -85,7 +85,7 @@ public class DiagnosisKeyBuilder
   @Override
   public FinalBuilder fromProtoBuf(TemporaryExposureKey protoBufObject) {
     return this.withKeyData(protoBufObject.getKeyData().toByteArray())
-        .withRollingStartNumber(protoBufObject.getRollingStartIntervalNumber())
+        .withRollingStartIntervalNumber(protoBufObject.getRollingStartIntervalNumber())
         .withRollingPeriod(protoBufObject.getRollingPeriod())
         .withTransmissionRiskLevel(protoBufObject.getTransmissionRiskLevel());
   }
