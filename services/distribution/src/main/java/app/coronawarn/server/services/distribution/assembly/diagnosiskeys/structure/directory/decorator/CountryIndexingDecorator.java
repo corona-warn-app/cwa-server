@@ -28,19 +28,33 @@ import app.coronawarn.server.services.distribution.assembly.structure.directory.
 import app.coronawarn.server.services.distribution.assembly.structure.directory.decorator.IndexDirectoryDecorator;
 import app.coronawarn.server.services.distribution.assembly.structure.file.FileOnDisk;
 import app.coronawarn.server.services.distribution.assembly.structure.util.ImmutableStack;
+import app.coronawarn.server.services.distribution.config.DistributionServiceConfig;
 import java.nio.charset.StandardCharsets;
 import java.util.Collection;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+/**
+ * This decorator creates the central index file for a country, e.g. DE.
+ */
 public class CountryIndexingDecorator<T> extends IndexDirectoryDecorator<T, WritableOnDisk> {
 
+  /** Separate each entry in the index file with new line. */
   private static final String NEW_LINE_SEPARATOR = "\r\n";
 
-  private static final String FILE_NAME = "index";
+  /** the name of this index file. */
+  private final String fileName;
 
-  public CountryIndexingDecorator(IndexDirectory<T, WritableOnDisk> directory) {
+  /**
+   * Creates a new decorator instance for the given directory.
+   *
+   * @param directory The target country directory.
+   * @param distributionServiceConfig The config.
+   */
+  public CountryIndexingDecorator(IndexDirectory<T, WritableOnDisk> directory,
+      DistributionServiceConfig distributionServiceConfig) {
     super(directory);
+    this.fileName = distributionServiceConfig.getOutputFileName();
   }
 
   @Override
@@ -67,7 +81,7 @@ public class CountryIndexingDecorator<T> extends IndexDirectoryDecorator<T, Writ
         .sorted()
         .collect(Collectors.joining(NEW_LINE_SEPARATOR));
 
-    var indexFile =  new FileOnDisk(FILE_NAME, content.getBytes(StandardCharsets.UTF_8));
+    var indexFile =  new FileOnDisk(fileName, content.getBytes(StandardCharsets.UTF_8));
     directory.addWritable(indexFile);
   }
 
