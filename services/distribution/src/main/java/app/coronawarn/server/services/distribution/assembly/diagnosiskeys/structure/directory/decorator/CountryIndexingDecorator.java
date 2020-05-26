@@ -14,14 +14,14 @@ import java.util.stream.Collectors;
 import org.json.simple.JSONArray;
 
 public class CountryIndexingDecorator<T> extends IndexDirectoryDecorator<T, WritableOnDisk> {
-
-
+  
   public CountryIndexingDecorator(IndexDirectory<T, WritableOnDisk> directory) {
     super(directory);
   }
 
   @Override
   public void prepare(ImmutableStack<Object> indices) {
+    super.prepare(indices);
 
     Collection<DirectoryOnDisk> directories = this.getWritables().stream()
         .filter(Writable::isDirectory)
@@ -29,8 +29,6 @@ public class CountryIndexingDecorator<T> extends IndexDirectoryDecorator<T, Writ
         .collect(Collectors.toSet());
 
     directories.forEach(this::writeIndexFile);
-
-    super.prepare(indices);
   }
 
   public void writeIndexFile(DirectoryOnDisk directory) {
@@ -43,20 +41,20 @@ public class CountryIndexingDecorator<T> extends IndexDirectoryDecorator<T, Writ
     directory.addWritable(new FileOnDisk("index", array.toJSONString().getBytes()));
   }
 
-  private Set<String> getWritablesInDirectory(Directory<WritableOnDisk> rootDirectory) {
+  private static Set<String> getWritablesInDirectory(Directory<WritableOnDisk> rootDirectory) {
 
-    Collection<DirectoryOnDisk> directories = this.getWritables().stream()
+    Collection<Directory<WritableOnDisk>> directories = rootDirectory.getWritables().stream()
         .filter(Writable::isDirectory)
-        .map(directory -> (DirectoryOnDisk) directory)
+        .map(directory -> (Directory<WritableOnDisk>) directory)
         .collect(Collectors.toSet());
 
     if (directories.isEmpty()) {
-      return Set.of(this.getName());
+      return Set.of(rootDirectory.getName());
     } else {
       return directories.stream()
-          .map(this::getWritablesInDirectory)
+          .map(CountryIndexingDecorator::getWritablesInDirectory)
           .flatMap(Set::stream)
-          .map(childName -> this.getName() + "/" + childName)
+          .map(childName -> rootDirectory.getName() + "/" + childName)
           .collect(Collectors.toSet());
     }
   }
