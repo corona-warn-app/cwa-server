@@ -82,7 +82,7 @@ public class ExposureConfigurationValidator extends ConfigurationValidator {
     try {
       RiskLevel level = (RiskLevel) propertyDescriptor.getReadMethod().invoke(object);
 
-      if (level == RiskLevel.UNRECOGNIZED || level == RiskLevel.RISK_LEVEL_UNSPECIFIED) {
+      if (level == RiskLevel.UNRECOGNIZED) {
         this.errors.add(new RiskLevelValidationError(parameter, propertyDescriptor.getName()));
       }
     } catch (IllegalAccessException | InvocationTargetException e) {
