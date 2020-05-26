@@ -23,11 +23,12 @@ import java.time.LocalDateTime;
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
 
-public class ValidRollingStartNumberValidator implements ConstraintValidator<ValidRollingStartNumber, Long> {
+public class ValidRollingStartIntervalNumberValidator
+    implements ConstraintValidator<ValidRollingStartIntervalNumber, Integer> {
 
   @Override
-  public boolean isValid(Long rollingStartNumber, ConstraintValidatorContext constraintValidatorContext) {
-    long currentInstant = LocalDateTime.ofInstant(Instant.now(), UTC).toEpochSecond(UTC) / 600L;
-    return rollingStartNumber > 0L && rollingStartNumber < currentInstant;
+  public boolean isValid(Integer rollingStartIntervalNumber, ConstraintValidatorContext constraintValidatorContext) {
+    int currentInstant = Math.toIntExact(LocalDateTime.ofInstant(Instant.now(), UTC).toEpochSecond(UTC) / 600L);
+    return rollingStartIntervalNumber > 0 && rollingStartIntervalNumber < currentInstant;
   }
 }

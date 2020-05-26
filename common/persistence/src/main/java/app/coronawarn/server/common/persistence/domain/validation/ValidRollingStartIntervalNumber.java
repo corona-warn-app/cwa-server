@@ -24,11 +24,11 @@ import java.lang.annotation.Target;
 import javax.validation.Constraint;
 import javax.validation.Payload;
 
-@Constraint(validatedBy = ValidRollingStartNumberValidator.class)
+@Constraint(validatedBy = ValidRollingStartIntervalNumberValidator.class)
 @Target({ElementType.FIELD})
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
-public @interface ValidRollingStartNumber {
+public @interface ValidRollingStartIntervalNumber {
 
   /**
    * Error message.
