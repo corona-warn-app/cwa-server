@@ -24,7 +24,7 @@ import app.coronawarn.server.common.persistence.service.DiagnosisKeyService;
 import app.coronawarn.server.common.protocols.external.exposurenotification.TemporaryExposureKey;
 import app.coronawarn.server.common.protocols.internal.SubmissionPayload;
 import app.coronawarn.server.services.submission.config.SubmissionServiceConfig;
-import app.coronawarn.server.services.submission.exception.InvalidPayloadException;
+import app.coronawarn.server.services.submission.validation.ValidSubmissionPayload;
 import app.coronawarn.server.services.submission.verification.TanVerifier;
 import java.util.ArrayList;
 import java.util.List;
@@ -39,6 +39,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.StopWatch;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
@@ -48,6 +49,7 @@ import org.springframework.web.context.request.async.DeferredResult;
 
 @RestController
 @RequestMapping("/version/v1")
+@Validated
 public class SubmissionController {
 
   private static final Logger logger = LoggerFactory.getLogger(SubmissionController.class);
@@ -62,7 +64,6 @@ public class SubmissionController {
   private final TanVerifier tanVerifier;
   private final Double fakeDelayMovingAverageSamples;
   private final Integer retentionDays;
-  private final Integer maxNumberOfKeys;
   private Double fakeDelay;
 
   @Autowired
@@ -73,7 +74,6 @@ public class SubmissionController {
     fakeDelay = submissionServiceConfig.getInitialFakeDelayMilliseconds();
     fakeDelayMovingAverageSamples = submissionServiceConfig.getFakeDelayMovingAverageSamples();
     retentionDays = submissionServiceConfig.getRetentionDays();
-    maxNumberOfKeys = submissionServiceConfig.getMaxNumberOfKeys();
   }
 
   /**
@@ -86,7 +86,7 @@ public class SubmissionController {
    */
   @PostMapping(SUBMISSION_ROUTE)
   public DeferredResult<ResponseEntity<Void>> submitDiagnosisKey(
-      @RequestBody SubmissionPayload exposureKeys,
+      @ValidSubmissionPayload @RequestBody SubmissionPayload exposureKeys,
       @RequestHeader("cwa-fake") Integer fake,
       @RequestHeader("cwa-authorization") String tan) {
     if (fake != 0) {
@@ -147,9 +147,8 @@ public class SubmissionController {
    */
   public void persistDiagnosisKeysPayload(SubmissionPayload protoBufDiagnosisKeys) {
     List<TemporaryExposureKey> protoBufferKeysList = protoBufDiagnosisKeys.getKeysList();
-    validatePayload(protoBufferKeysList);
-
     List<DiagnosisKey> diagnosisKeys = new ArrayList<>();
+
     for (TemporaryExposureKey protoBufferKey : protoBufferKeysList) {
       DiagnosisKey diagnosisKey = DiagnosisKey.builder().fromProtoBuf(protoBufferKey).build();
       if (diagnosisKey.isYoungerThanRetentionThreshold(retentionDays)) {
@@ -160,13 +159,6 @@ public class SubmissionController {
     }
 
     diagnosisKeyService.saveDiagnosisKeys(diagnosisKeys);
-  }
-
-  private void validatePayload(List<TemporaryExposureKey> protoBufKeysList) {
-    if (protoBufKeysList.isEmpty() || protoBufKeysList.size() > maxNumberOfKeys) {
-      throw new InvalidPayloadException(
-          String.format("Number of keys must be between 1 and %s, but is %s.", maxNumberOfKeys, protoBufKeysList));
-    }
   }
 
   private synchronized void updateFakeDelay(long realRequestDuration) {
