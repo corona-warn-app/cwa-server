@@ -45,7 +45,7 @@ class DiagnosisKeyTest {
 
   @Test
   public void testRollingStartNumberGetter() {
-    assertThat(diagnosisKey.getRollingStartNumber()).isEqualTo(expRollingStartIntervalNumber);
+    assertThat(diagnosisKey.getRollingStartIntervalNumber()).isEqualTo(expRollingStartIntervalNumber);
   }
 
   @Test

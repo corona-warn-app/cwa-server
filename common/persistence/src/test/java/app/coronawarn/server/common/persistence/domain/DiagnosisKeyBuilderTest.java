@@ -228,7 +228,7 @@ class DiagnosisKeyBuilderTest {
   private void assertDiagnosisKeyEquals(DiagnosisKey actDiagnosisKey, long expSubmissionTimestamp) {
     assertThat(actDiagnosisKey.getSubmissionTimestamp()).isEqualTo(expSubmissionTimestamp);
     assertThat(actDiagnosisKey.getKeyData()).isEqualTo(this.expKeyData);
-    assertThat(actDiagnosisKey.getRollingStartNumber()).isEqualTo(this.expRollingStartIntervalNumber);
+    assertThat(actDiagnosisKey.getRollingStartIntervalNumber()).isEqualTo(this.expRollingStartIntervalNumber);
     assertThat(actDiagnosisKey.getRollingPeriod()).isEqualTo(this.expRollingPeriod);
     assertThat(actDiagnosisKey.getTransmissionRiskLevel()).isEqualTo(this.expTransmissionRiskLevel);
   }

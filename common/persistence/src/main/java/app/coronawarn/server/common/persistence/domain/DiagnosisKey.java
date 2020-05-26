@@ -105,7 +105,7 @@ public class DiagnosisKey {
   /**
    * Returns a number describing when a key starts. It is equal to startTimeOfKeySinceEpochInSecs / (60 * 10).
    */
-  public int getRollingStartNumber() {
+  public int getRollingStartIntervalNumber() {
     return rollingStartIntervalNumber;
   }
 
