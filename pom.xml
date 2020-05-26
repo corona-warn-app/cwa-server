@@ -10,7 +10,7 @@
   </modules>
   <groupId>org.opencwa</groupId>
   <artifactId>server</artifactId>
-  <version>0.4.1-SNAPSHOT</version>
+  <version>0.5.1-SNAPSHOT</version>
   <name>server</name>
   <description>CWA Server</description>
   <url>https://www.coronawarn.app/</url>
