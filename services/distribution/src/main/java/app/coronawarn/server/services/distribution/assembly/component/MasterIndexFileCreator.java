@@ -19,9 +19,9 @@
 
 package app.coronawarn.server.services.distribution.assembly.component;
 
-import app.coronawarn.server.services.distribution.assembly.AssemblyFailedException;
 import app.coronawarn.server.services.distribution.config.DistributionServiceConfig;
 import java.io.IOException;
+import java.io.UncheckedIOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -73,40 +73,50 @@ public class MasterIndexFileCreator {
     try (Stream<Path> stream = Files.list(versionDirectory)) {
       stream
           .filter(Files::isDirectory)
-          .forEach(this::generateMainIndexForVersion);
+          .forEach(this::createIndexForCountriesAtVersionFolder);
     }
   }
 
-  private void generateMainIndexForVersion(Path path) {
-    logger.info("Creating index for for {}", path.toAbsolutePath());
+  private void createIndexForCountriesAtVersionFolder(Path versionFolder) {
+    var countryFolder = versionFolder
+        .resolve(distributionServiceConfig.getApi().getDiagnosisKeysPath())
+        .resolve(distributionServiceConfig.getApi().getCountryPath());
 
-    Path keysFolder = path.resolve(distributionServiceConfig.getApi().getDiagnosisKeysPath());
+    try (Stream<Path> stream = Files.list(countryFolder)) {
+      stream.filter(Files::isDirectory).forEach(this::generateMainIndex);
+    } catch (IOException e) {
+      throw new UncheckedIOException(e);
+    }
+  }
+
+  private void generateMainIndex(Path path) {
+    logger.info("Creating index for for {}", path.toAbsolutePath());
 
     try (Stream<Path> stream = Files.walk(path, DIRECTORY_SCANNING_MAX_DEPTH)) {
       String indexFileContent = stream
           .filter(Files::isRegularFile)
           .filter(MasterIndexFileCreator::isRelevantForMainIndex)
           .map(Path::getParent)
-          .map(keysFolder::relativize)
+          .map(path::relativize)
           .map(Path::toString)
           .sorted()
           .collect(Collectors.joining(NEW_LINE_SEPARATOR));
 
-      storeIndexFile(keysFolder, indexFileContent);
+      storeIndexFile(path, indexFileContent);
     } catch (IOException e) {
-      throw new AssemblyFailedException(e);
+      throw new UncheckedIOException(e);
     }
   }
 
-  private void storeIndexFile(Path keysFolder, String content) {
-    Path targetIndexFile = keysFolder.resolve(distributionServiceConfig.getApi().getDiagnosisKeysIndexPath());
+  private void storeIndexFile(Path countryFolder, String content) {
+    Path targetIndexFile = countryFolder.resolve(distributionServiceConfig.getApi().getDiagnosisKeysIndexPath());
 
     try {
       logger.debug("Storing index file on {}", targetIndexFile.toAbsolutePath());
 
       Files.writeString(targetIndexFile, content, StandardCharsets.UTF_8);
     } catch (IOException e) {
-      throw new AssemblyFailedException(e);
+      throw new UncheckedIOException(e);
     }
   }
 

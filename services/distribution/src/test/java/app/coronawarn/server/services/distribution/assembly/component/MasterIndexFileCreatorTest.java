@@ -45,7 +45,7 @@ class MasterIndexFileCreatorTest {
 
   private static final String TEST_BASE = "master-index-test/testout";
 
-  private static final String ACTUAL_PATH = TEST_BASE + "/version/v1/diagnosis-keys/index";
+  private static final String ACTUAL_PATH = TEST_BASE + "/version/v1/diagnosis-keys/country/DE/index";
 
   @Autowired
   private DistributionServiceConfig distributionServiceConfig;
