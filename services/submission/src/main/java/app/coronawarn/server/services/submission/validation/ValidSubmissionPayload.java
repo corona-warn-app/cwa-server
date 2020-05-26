@@ -136,7 +136,8 @@ public @interface ValidSubmissionPayload {
           .sorted().boxed().toArray(Integer[]::new);
 
       for (int i = 1; i < sortedStartIntervalNumbers.length; i++) {
-        if (sortedStartIntervalNumbers[i] != sortedStartIntervalNumbers[i - 1] + DiagnosisKey.EXPECTED_ROLLING_PERIOD) {
+        if (!sortedStartIntervalNumbers[i]
+            .equals(sortedStartIntervalNumbers[i - 1] + DiagnosisKey.EXPECTED_ROLLING_PERIOD)) {
           addViolation(validatorContext, String.format(
               "Subsequent intervals do not align. StartIntervalNumbers: %s", sortedStartIntervalNumbers));
           return false;
