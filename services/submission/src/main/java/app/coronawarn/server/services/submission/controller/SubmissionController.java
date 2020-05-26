@@ -87,7 +87,7 @@ public class SubmissionController {
   @PostMapping(SUBMISSION_ROUTE)
   public DeferredResult<ResponseEntity<Void>> submitDiagnosisKey(
       @ValidSubmissionPayload @RequestBody SubmissionPayload exposureKeys,
-      @RequestHeader("cwa-fake") Integer fake,
+      @RequestHeader("cwa-fake") String fake,
       @RequestHeader("cwa-authorization") String tan) {
     if (!fake.equals("0")) {
       return buildFakeDeferredResult();
