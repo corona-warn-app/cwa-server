@@ -5,7 +5,7 @@ attenuation_weight: 80
 
 transmission:
   app_defined_1: -2 # not ok, negative
-  app_defined_2: 0 # not ok, unspecified
+  app_defined_2: 0
   #app_defined_3: 3 # not ok (missing -> unspecified)
   app_defined_4: 5
   app_defined_5: 5
