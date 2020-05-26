@@ -6,7 +6,7 @@
     <a href="https://github.com/corona-warn-app/cwa-server/commits/" title="Last Commit"><img src="https://img.shields.io/github/last-commit/corona-warn-app/cwa-server?style=flat"></a>
     <a href="https://github.com/corona-warn-app/cwa-server/issues" title="Open Issues"><img src="https://img.shields.io/github/issues/corona-warn-app/cwa-server?style=flat"></a>
     <a href="https://circleci.com/gh/corona-warn-app/cwa-server" title="Build Status"><img src="https://circleci.com/gh/corona-warn-app/cwa-server.svg?style=shield&circle-token=4ab059989d10709df19eb4b98ab7c121a25e981a"></a>
-        <a href="https://sonarcloud.io/dashboard?id=corona-warn-app_cwa-server" title="Quality Gate"><img src="https://sonarcloud.io/api/project_badges/measure?project=corona-warn-app_cwa-server&metric=alert_status"></a>    
+        <a href="https://sonarcloud.io/dashboard?id=corona-warn-app_cwa-server" title="Quality Gate"><img src="https://sonarcloud.io/api/project_badges/measure?project=corona-warn-app_cwa-server&metric=alert_status"></a>
         <a href="https://sonarcloud.io/component_measures?id=corona-warn-app_cwa-server&metric=Coverage&view=list" title="Coverage"><img src="https://sonarcloud.io/api/project_badges/measure?project=corona-warn-app_cwa-server&metric=coverage"></a>
     <a href="https://github.com/corona-warn-app/cwa-server/blob/master/LICENSE" title="License"><img src="https://img.shields.io/badge/License-Apache%202.0-green.svg?style=flat"></a>
 </p>
@@ -55,17 +55,18 @@ The distribution service runs once and then finishes. If you want to trigger add
 
 The docker-compose contains the following services:
 
-Service       | Description | Endpoint and Default Credentials
---------------|-------------|-----------
-submission    | The Corona-Warn-App submission service                                                      | http://localhost:8000 
-distribution  | The Corona-Warn-App distribution service                                                    | NO ENDPOINT
-postgres      | A [postgres] database installation                                                          | postgres:8001 <br> Username: postgres <br> Password: postgres
-pgadmin       | A [pgadmin](https://www.pgadmin.org/) installation for the postgres database                | http://localhost:8002 <br> Username: user@domain.com <br> Password: password
-cloudserver   | [Zenko CloudServer] is a S3-compliant object store  | http://localhost:8003/ <br> Access key: accessKey1 <br> Secret key: verySecretKey1
+Service           | Description | Endpoint and Default Credentials
+------------------|-------------|-----------
+submission        | The Corona-Warn-App submission service                                                      | `http://localhost:8000` <br> `http://localhost:8005` (for actuator endpoint)
+distribution      | The Corona-Warn-App distribution service                                                    | NO ENDPOINT
+postgres          | A [postgres] database installation                                                          | `postgres:8001` <br> Username: postgres <br> Password: postgres
+pgadmin           | A [pgadmin](https://www.pgadmin.org/) installation for the postgres database                | `http://localhost:8002` <br> Username: user@domain.com <br> Password: password
+cloudserver       | [Zenko CloudServer] is a S3-compliant object store  | `http://localhost:8003/` <br> Access key: accessKey1 <br> Secret key: verySecretKey1
+verification-fake | A very simple fake implementation for the tan verification.                                 | `http://localhost:8004/version/v1/tan/verify` <br> The only valid tan is "b69ab69f-9823-4549-8961-c41sa74b2f36"
 
 ##### Known Limitation
 
-The docker-compose runs into a timing issue in some cases when the create-bucket target runs before the objectstore is available. The mitigation is easy: after running ```docker-compose up``` wait until all components are initialized and running. Afterwards, trigger the ```create-bucket``` service manually by running ```docker-compose run create-bucket```. If you want to trigger distribution runs, run ```docker-compose run distribution```. The timing issue will be fixed in a future release.
+In rare cases the docker-compose runs into a timing issue if the distribution service starts before the bucket of the objectstore was created. This is not a big issue as you can simply run ```docker-compose run distribution``` to trigger additional distribution runs after the objectstore was initialized.
 
 #### Running Single CWA Services Using Docker
 
@@ -99,11 +100,11 @@ To prepare your machine to run the CWA project locally, we recommend that you fi
 
 After you made sure that the specified dependencies are running, configure them in the respective configuration files.
 
-* Configure the Postgres connection in the [submission config](./services/submission/src/main/resources/application.properties) and in the [distribution config](./services/distribution/src/main/resources/application.properties)
-* Configure the S3 compatible object storage in the [distribution config](./services/distribution/src/main/resources/application.properties)
+* Configure the Postgres connection in the [submission config](./services/submission/src/main/resources/application.yaml) and in the [distribution config](./services/distribution/src/main/resources/application.yaml)
+* Configure the S3 compatible object storage in the [distribution config](./services/distribution/src/main/resources/application.yaml)
 * Configure the certificate and private key for the distribution service, the paths need to be prefixed with `file:`
-    * `VAULT_FILESIGNING_SECRET` should be the path to the private key, example available in `<repo-root>/docker-compose-test-secrets/private.pem`
-    * `VAULT_FILESIGNING_CERT` should be the path to the certificate, example available in `<repo-root>/docker-compose-test-secrets/certificate.cert`
+  * `VAULT_FILESIGNING_SECRET` should be the path to the private key, example available in `<repo-root>/docker-compose-test-secrets/private.pem`
+  * `VAULT_FILESIGNING_CERT` should be the path to the certificate, example available in `<repo-root>/docker-compose-test-secrets/certificate.cert`
 
 #### Build
 
@@ -136,8 +137,26 @@ The API that is being exposed by the backend services is documented in an [OpenA
 
 Service      | OpenAPI Specification
 -------------|-------------
-Submission Service        | https://github.com/corona-warn-app/cwa-server/raw/master/services/submission/api_v1.json
-Distribution Service      | https://github.com/corona-warn-app/cwa-server/raw/master/services/distribution/api_v1.json
+Submission Service        | [services/submission/api_v1.json](https://github.com/corona-warn-app/cwa-server/raw/master/services/submission/api_v1.json)
+Distribution Service      | [services/distribution/api_v1.json)](https://github.com/corona-warn-app/cwa-server/raw/master/services/distribution/api_v1.json)
+
+## Spring Profiles
+
+### Distribution
+
+Profile      | Effect
+-------------|-------------
+`dev`        | Turns the log level to `DEBUG`.
+`cloud`      | Removes default values for the `datasource` and `objectstore` configurations.
+`demo`       | Includes incomplete days and hours into the distribution run, thus creating aggregates for the current day and the current hour (and including both in the respective indices). When running multiple distributions in one hour with this profile, the date aggregate for today and the hours aggregate for the current hour will be updated and overwritten.
+`testdata`   | Causes test data to be inserted into the database before each distribution run. By default, around 1000 random diagnosis keys will be generated per hour. If there are no diagnosis keys in the database yet, random keys will be generated for every hour from the beginning of the retention period (14 days ago at 00:00 UTC) until one hour before the present hour. If there are already keys in the database, the random keys will be generated for every hour from the latest diagnosis key in the database (by submission timestamp) until one hour before the present hour (or none at all, if the latest diagnosis key in the database was submitted one hour ago or later).
+
+### Submission
+
+Profile      | Effect
+-------------|-------------
+`dev`        | Turns the log level to `DEBUG`.
+`cloud`      | Removes default values for the `datasource` configuration.
 
 ## Documentation
 
@@ -170,9 +189,11 @@ The following public repositories are currently available for the Corona-Warn-Ap
 | ------------------- | --------------------------------------------------------------------- |
 | [cwa-documentation] | Project overview, general documentation, and white papers            |
 | [cwa-server]        | Backend implementation for the Apple/Google exposure notification API|
+| [cwa-verification-server] | Backend implementation of the verification process|
 
 [cwa-documentation]: https://github.com/corona-warn-app/cwa-documentation
 [cwa-server]: https://github.com/corona-warn-app/cwa-server
+[cwa-verification-server]: https://github.com/corona-warn-app/cwa-verification-server
 [Postgres]: https://www.postgresql.org/
 [HSQLDB]: http://hsqldb.org/
 [Zenko CloudServer]: https://github.com/scality/cloudserver
@@ -181,8 +202,8 @@ The following public repositories are currently available for the Corona-Warn-Ap
 
 Copyright (c) 2020 SAP SE or an SAP affiliate company.
 
-Licensed under the **Apache License, Version 2.0** (the "License"); you may not use this file except in compliance with the License. 
+Licensed under the **Apache License, Version 2.0** (the "License"); you may not use this file except in compliance with the License.
 
-You may obtain a copy of the License at https://www.apache.org/licenses/LICENSE-2.0.
+You may obtain a copy of the License at <https://www.apache.org/licenses/LICENSE-2.0>.
 
 Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the [LICENSE](./LICENSE) for the specific language governing permissions and limitations under the License.

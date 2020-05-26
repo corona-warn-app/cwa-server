@@ -42,7 +42,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 
 @DataJpaTest
-public class DiagnosisKeyServiceTest {
+class DiagnosisKeyServiceTest {
 
   @Autowired
   private DiagnosisKeyService diagnosisKeyService;
@@ -136,8 +136,7 @@ public class DiagnosisKeyServiceTest {
     assertThat(catchThrowable(() -> {
       var keys = List.of(DiagnosisKey.builder()
           .withKeyData(new byte[16])
-          .withRollingStartNumber(OffsetDateTime.now(UTC).toEpochSecond() / 600L)
-          .withRollingPeriod(1L)
+          .withRollingStartIntervalNumber((int) (OffsetDateTime.now(UTC).toEpochSecond() / 600))
           .withTransmissionRiskLevel(2)
           .withSubmissionTimestamp(0L).build());
 
@@ -152,8 +151,7 @@ public class DiagnosisKeyServiceTest {
   public static DiagnosisKey buildDiagnosisKeyForSubmissionTimestamp(long submissionTimeStamp) {
     return DiagnosisKey.builder()
         .withKeyData(new byte[16])
-        .withRollingStartNumber(600L)
-        .withRollingPeriod(1L)
+        .withRollingStartIntervalNumber(600)
         .withTransmissionRiskLevel(2)
         .withSubmissionTimestamp(submissionTimeStamp).build();
   }

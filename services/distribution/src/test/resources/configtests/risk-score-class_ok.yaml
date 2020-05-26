@@ -1,0 +1,11 @@
+risk-classes:
+  -
+    label: LOW
+    min: 0
+    max: 2749
+    url: "https://www.coronawarn.app"
+  -
+    label: HIGH
+    min: 2750
+    max: 4096
+    url: "https://www.coronawarn.app"

@@ -22,22 +22,21 @@ package app.coronawarn.server.services.distribution.assembly.diagnosiskeys.struc
 import app.coronawarn.server.common.persistence.domain.DiagnosisKey;
 import app.coronawarn.server.services.distribution.assembly.component.CryptoProvider;
 import app.coronawarn.server.services.distribution.assembly.diagnosiskeys.structure.directory.decorator.DateAggregatingDecorator;
+import app.coronawarn.server.services.distribution.assembly.diagnosiskeys.structure.directory.decorator.DateIndexingDecorator;
 import app.coronawarn.server.services.distribution.assembly.structure.WritableOnDisk;
 import app.coronawarn.server.services.distribution.assembly.structure.directory.IndexDirectory;
 import app.coronawarn.server.services.distribution.assembly.structure.directory.IndexDirectoryOnDisk;
-import app.coronawarn.server.services.distribution.assembly.structure.directory.decorator.indexing.IndexingDecoratorOnDisk;
 import app.coronawarn.server.services.distribution.assembly.structure.util.ImmutableStack;
+import app.coronawarn.server.services.distribution.config.DistributionServiceConfig;
 import java.time.LocalDate;
 import java.util.Collection;
 import java.util.Set;
 
 public class DiagnosisKeysCountryDirectory extends IndexDirectoryOnDisk<String> {
 
-  private static final String COUNTRY_DIRECTORY = "country";
-  private static final String COUNTRY = "DE";
-
   private final Collection<DiagnosisKey> diagnosisKeys;
   private final CryptoProvider cryptoProvider;
+  private final DistributionServiceConfig distributionServiceConfig;
 
   /**
    * Constructs a {@link DiagnosisKeysCountryDirectory} instance that represents the {@code .../country/:country/...}
@@ -47,24 +46,26 @@ public class DiagnosisKeysCountryDirectory extends IndexDirectoryOnDisk<String> 
    * @param cryptoProvider The {@link CryptoProvider} used for payload signing.
    */
   public DiagnosisKeysCountryDirectory(Collection<DiagnosisKey> diagnosisKeys,
-      CryptoProvider cryptoProvider) {
-    super(COUNTRY_DIRECTORY, __ -> Set.of(COUNTRY), Object::toString);
+      CryptoProvider cryptoProvider, DistributionServiceConfig distributionServiceConfig) {
+    super(distributionServiceConfig.getApi().getCountryPath(), x ->
+        Set.of(distributionServiceConfig.getApi().getCountryGermany()), Object::toString);
     this.diagnosisKeys = diagnosisKeys;
     this.cryptoProvider = cryptoProvider;
+    this.distributionServiceConfig = distributionServiceConfig;
   }
 
   @Override
   public void prepare(ImmutableStack<Object> indices) {
     this.addWritableToAll(__ -> {
-      IndexDirectoryOnDisk<LocalDate> dateDirectory = new DiagnosisKeysDateDirectory(diagnosisKeys,
-          cryptoProvider);
+      DiagnosisKeysDateDirectory dateDirectory = new DiagnosisKeysDateDirectory(diagnosisKeys, cryptoProvider,
+          distributionServiceConfig);
       return decorateDateDirectory(dateDirectory);
     });
     super.prepare(indices);
   }
 
-  private IndexDirectory<LocalDate, WritableOnDisk> decorateDateDirectory(
-      IndexDirectoryOnDisk<LocalDate> dateDirectory) {
-    return new DateAggregatingDecorator(new IndexingDecoratorOnDisk<>(dateDirectory), cryptoProvider);
+  private IndexDirectory<LocalDate, WritableOnDisk> decorateDateDirectory(DiagnosisKeysDateDirectory dateDirectory) {
+    return new DateAggregatingDecorator(new DateIndexingDecorator(dateDirectory, distributionServiceConfig),
+        cryptoProvider, distributionServiceConfig);
   }
 }

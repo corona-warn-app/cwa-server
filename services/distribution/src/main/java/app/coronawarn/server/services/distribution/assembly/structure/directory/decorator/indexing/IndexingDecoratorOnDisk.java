@@ -31,16 +31,16 @@ import org.json.simple.JSONArray;
 public class IndexingDecoratorOnDisk<T> extends AbstractIndexingDecorator<T, WritableOnDisk>
     implements IndexingDecorator<T, WritableOnDisk> {
 
-  public IndexingDecoratorOnDisk(IndexDirectory<T, WritableOnDisk> directory) {
-    super(directory);
+  public IndexingDecoratorOnDisk(IndexDirectory<T, WritableOnDisk> directory, String indexFileName) {
+    super(directory, indexFileName);
   }
 
   @Override
   public FileOnDisk getIndexFile(String indexFileName, ImmutableStack<Object> indices) {
-    Set<T> index = this.directory.getIndex(indices);
+    Set<T> index = this.getIndex(indices);
     JSONArray array = new JSONArray();
     List<?> elements = index.stream()
-        .map(this.directory.getIndexFormatter())
+        .map(this.getIndexFormatter())
         .collect(Collectors.toList());
     array.addAll(elements);
     return new FileOnDisk(indexFileName, array.toJSONString().getBytes());

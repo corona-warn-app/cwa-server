@@ -21,6 +21,7 @@ package app.coronawarn.server.services.distribution.assembly.diagnosiskeys.struc
 
 import app.coronawarn.server.common.persistence.domain.DiagnosisKey;
 import app.coronawarn.server.services.distribution.assembly.component.CryptoProvider;
+import app.coronawarn.server.services.distribution.assembly.diagnosiskeys.structure.directory.decorator.CountryIndexingDecorator;
 import app.coronawarn.server.services.distribution.assembly.structure.WritableOnDisk;
 import app.coronawarn.server.services.distribution.assembly.structure.directory.Directory;
 import app.coronawarn.server.services.distribution.assembly.structure.directory.DirectoryOnDisk;
@@ -28,6 +29,7 @@ import app.coronawarn.server.services.distribution.assembly.structure.directory.
 import app.coronawarn.server.services.distribution.assembly.structure.directory.IndexDirectoryOnDisk;
 import app.coronawarn.server.services.distribution.assembly.structure.directory.decorator.indexing.IndexingDecoratorOnDisk;
 import app.coronawarn.server.services.distribution.assembly.structure.util.ImmutableStack;
+import app.coronawarn.server.services.distribution.config.DistributionServiceConfig;
 import java.util.Collection;
 
 /**
@@ -39,32 +41,36 @@ import java.util.Collection;
  */
 public class DiagnosisKeysDirectory extends DirectoryOnDisk {
 
-  private static final String DIAGNOSIS_KEYS_DIRECTORY = "diagnosis-keys";
   private final Collection<DiagnosisKey> diagnosisKeys;
   private final CryptoProvider cryptoProvider;
+  private final DistributionServiceConfig distributionServiceConfig;
 
   /**
-   * Constructs a {@link DiagnosisKeysDirectory} based on the specified {@link DiagnosisKey} collection.
-   * Cryptographic signing is performed using the specified {@link CryptoProvider}.
+   * Constructs a {@link DiagnosisKeysDirectory} based on the specified {@link DiagnosisKey} collection. Cryptographic
+   * signing is performed using the specified {@link CryptoProvider}.
    *
    * @param diagnosisKeys  The diagnosis keys processed in the contained sub directories.
    * @param cryptoProvider The {@link CryptoProvider} used for payload signing.
    */
-  public DiagnosisKeysDirectory(Collection<DiagnosisKey> diagnosisKeys, CryptoProvider cryptoProvider) {
-    super(DIAGNOSIS_KEYS_DIRECTORY);
+  public DiagnosisKeysDirectory(Collection<DiagnosisKey> diagnosisKeys, CryptoProvider cryptoProvider,
+      DistributionServiceConfig distributionServiceConfig) {
+    super(distributionServiceConfig.getApi().getDiagnosisKeysPath());
     this.diagnosisKeys = diagnosisKeys;
     this.cryptoProvider = cryptoProvider;
+    this.distributionServiceConfig = distributionServiceConfig;
   }
 
   @Override
   public void prepare(ImmutableStack<Object> indices) {
     this.addWritable(decorateCountryDirectory(
-        new DiagnosisKeysCountryDirectory(diagnosisKeys, cryptoProvider)));
+        new DiagnosisKeysCountryDirectory(diagnosisKeys, cryptoProvider, distributionServiceConfig)));
     super.prepare(indices);
   }
 
   private IndexDirectory<String, WritableOnDisk> decorateCountryDirectory(
       IndexDirectoryOnDisk<String> countryDirectory) {
-    return new IndexingDecoratorOnDisk<>(countryDirectory);
+    return new CountryIndexingDecorator<>(
+        new IndexingDecoratorOnDisk<>(countryDirectory, distributionServiceConfig.getOutputFileName()),
+        distributionServiceConfig);
   }
 }

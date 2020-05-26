@@ -33,6 +33,9 @@ import java.util.stream.Collectors;
  */
 public class DateTime {
 
+  private DateTime(){
+  }
+
   /**
    * Returns a set of all {@link LocalDate dates} that are associated with the submission timestamps of the specified
    * {@link DiagnosisKey diagnosis keys}.
@@ -43,13 +46,12 @@ public class DateTime {
         .map(timestamp -> LocalDate.ofEpochDay(timestamp / 24))
         .collect(Collectors.toSet());
   }
-  
+
   /**
    * Returns a set of all {@link LocalDateTime hours} that are associated with the submission timestamps of the
    * specified {@link DiagnosisKey diagnosis keys} and the specified {@link LocalDate date}.
    */
-  public static Set<LocalDateTime> getHours(LocalDate currentDate,
-      Collection<DiagnosisKey> diagnosisKeys) {
+  public static Set<LocalDateTime> getHours(LocalDate currentDate, Collection<DiagnosisKey> diagnosisKeys) {
     return diagnosisKeys.stream()
         .map(DiagnosisKey::getSubmissionTimestamp)
         .map(DateTime::getLocalDateTimeFromHoursSinceEpoch)

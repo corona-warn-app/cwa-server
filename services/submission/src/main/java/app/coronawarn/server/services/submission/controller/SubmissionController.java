@@ -23,7 +23,8 @@ import app.coronawarn.server.common.persistence.domain.DiagnosisKey;
 import app.coronawarn.server.common.persistence.service.DiagnosisKeyService;
 import app.coronawarn.server.common.protocols.external.exposurenotification.TemporaryExposureKey;
 import app.coronawarn.server.common.protocols.internal.SubmissionPayload;
-import app.coronawarn.server.services.submission.exception.InvalidPayloadException;
+import app.coronawarn.server.services.submission.config.SubmissionServiceConfig;
+import app.coronawarn.server.services.submission.validation.ValidSubmissionPayload;
 import app.coronawarn.server.services.submission.verification.TanVerifier;
 import java.util.ArrayList;
 import java.util.List;
@@ -35,10 +36,10 @@ import org.apache.commons.math3.distribution.PoissonDistribution;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.StopWatch;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
@@ -48,6 +49,7 @@ import org.springframework.web.context.request.async.DeferredResult;
 
 @RestController
 @RequestMapping("/version/v1")
+@Validated
 public class SubmissionController {
 
   private static final Logger logger = LoggerFactory.getLogger(SubmissionController.class);
@@ -56,33 +58,23 @@ public class SubmissionController {
    */
   public static final String SUBMISSION_ROUTE = "/diagnosis-keys";
 
+  private final ScheduledExecutorService scheduledExecutor = Executors.newSingleThreadScheduledExecutor();
+  private final ForkJoinPool forkJoinPool = ForkJoinPool.commonPool();
   private final DiagnosisKeyService diagnosisKeyService;
-
   private final TanVerifier tanVerifier;
-
-  @Autowired
-  SubmissionController(DiagnosisKeyService diagnosisKeyService, TanVerifier tanVerifier) {
-    this.diagnosisKeyService = diagnosisKeyService;
-    this.tanVerifier = tanVerifier;
-  }
-
-  // Exponential moving average of the last N real request durations (in ms), where
-  // N = fakeDelayMovingAverageSamples.
-  @Value("${services.submission.initial_fake_delay_milliseconds}")
+  private final Double fakeDelayMovingAverageSamples;
+  private final Integer retentionDays;
   private Double fakeDelay;
 
-  @Value("${services.submission.fake_delay_moving_average_samples}")
-  private Double fakeDelayMovingAverageSamples;
-
-  @Value("${services.submission.retention-days}")
-  private Integer retentionDays;
-
-  @Value("${services.submission.payload.max-number-of-keys}")
-  private Integer maxNumberOfKeys;
-
-  private ScheduledExecutorService scheduledExecutor = Executors.newSingleThreadScheduledExecutor();
-
-  private ForkJoinPool forkJoinPool = ForkJoinPool.commonPool();
+  @Autowired
+  SubmissionController(DiagnosisKeyService diagnosisKeyService, TanVerifier tanVerifier,
+      SubmissionServiceConfig submissionServiceConfig) {
+    this.diagnosisKeyService = diagnosisKeyService;
+    this.tanVerifier = tanVerifier;
+    fakeDelay = submissionServiceConfig.getInitialFakeDelayMilliseconds();
+    fakeDelayMovingAverageSamples = submissionServiceConfig.getFakeDelayMovingAverageSamples();
+    retentionDays = submissionServiceConfig.getRetentionDays();
+  }
 
   /**
    * Handles diagnosis key submission requests.
@@ -94,26 +86,27 @@ public class SubmissionController {
    */
   @PostMapping(SUBMISSION_ROUTE)
   public DeferredResult<ResponseEntity<Void>> submitDiagnosisKey(
-      @RequestBody SubmissionPayload exposureKeys,
+      @ValidSubmissionPayload @RequestBody SubmissionPayload exposureKeys,
       @RequestHeader("cwa-fake") Integer fake,
       @RequestHeader("cwa-authorization") String tan) {
-    final DeferredResult<ResponseEntity<Void>> deferredResult = new DeferredResult<>();
     if (fake != 0) {
-      setFakeDeferredResult(deferredResult);
+      return buildFakeDeferredResult();
     } else {
-      setRealDeferredResult(deferredResult, exposureKeys, tan);
+      return buildRealDeferredResult(exposureKeys, tan);
     }
-    return deferredResult;
   }
 
-  private void setFakeDeferredResult(DeferredResult<ResponseEntity<Void>> deferredResult) {
+  private DeferredResult<ResponseEntity<Void>> buildFakeDeferredResult() {
+    DeferredResult<ResponseEntity<Void>> deferredResult = new DeferredResult<>();
     long delay = new PoissonDistribution(fakeDelay).sample();
     scheduledExecutor.schedule(() -> deferredResult.setResult(buildSuccessResponseEntity()),
         delay, TimeUnit.MILLISECONDS);
+    return deferredResult;
   }
 
-  private void setRealDeferredResult(DeferredResult<ResponseEntity<Void>> deferredResult,
-      SubmissionPayload exposureKeys, String tan) {
+  private DeferredResult<ResponseEntity<Void>> buildRealDeferredResult(SubmissionPayload exposureKeys, String tan) {
+    DeferredResult<ResponseEntity<Void>> deferredResult = new DeferredResult<>();
+
     forkJoinPool.submit(() -> {
       StopWatch stopWatch = new StopWatch();
       stopWatch.start();
@@ -123,13 +116,15 @@ public class SubmissionController {
         try {
           persistDiagnosisKeysPayload(exposureKeys);
           deferredResult.setResult(buildSuccessResponseEntity());
+          stopWatch.stop();
+          updateFakeDelay(stopWatch.getTotalTimeMillis());
         } catch (Exception e) {
           deferredResult.setErrorResult(e);
         }
       }
-      stopWatch.stop();
-      updateFakeDelay(stopWatch.getTotalTimeMillis());
     });
+
+    return deferredResult;
   }
 
   /**
@@ -154,9 +149,8 @@ public class SubmissionController {
    */
   public void persistDiagnosisKeysPayload(SubmissionPayload protoBufDiagnosisKeys) {
     List<TemporaryExposureKey> protoBufferKeysList = protoBufDiagnosisKeys.getKeysList();
-    validatePayload(protoBufferKeysList);
-
     List<DiagnosisKey> diagnosisKeys = new ArrayList<>();
+
     for (TemporaryExposureKey protoBufferKey : protoBufferKeysList) {
       DiagnosisKey diagnosisKey = DiagnosisKey.builder().fromProtoBuf(protoBufferKey).build();
       if (diagnosisKey.isYoungerThanRetentionThreshold(retentionDays)) {
@@ -169,15 +163,7 @@ public class SubmissionController {
     diagnosisKeyService.saveDiagnosisKeys(diagnosisKeys);
   }
 
-  private void validatePayload(List<TemporaryExposureKey> protoBufKeysList) {
-    if (protoBufKeysList.isEmpty() || protoBufKeysList.size() > maxNumberOfKeys) {
-      throw new InvalidPayloadException(
-          String.format("Number of keys must be between 1 and %s, but is %s.", maxNumberOfKeys, protoBufKeysList));
-    }
-  }
-
   private synchronized void updateFakeDelay(long realRequestDuration) {
     fakeDelay = fakeDelay + (1 / fakeDelayMovingAverageSamples) * (realRequestDuration - fakeDelay);
   }
-
 }

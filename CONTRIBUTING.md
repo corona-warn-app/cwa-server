@@ -4,9 +4,9 @@
 
 All members of the project community must abide by the [Contributor Covenant, version 2.0](CODE_OF_CONDUCT.md).
 Only by respecting each other we can develop a productive, collaborative community.
-Instances of abusive, harassing, or otherwise unacceptable behavior may be reported by contacting [corona-warn-app.opensource@sap.com](mailto:corona-warn-app.opensource@sap.com) and/or a project maintainer. 
+Instances of abusive, harassing, or otherwise unacceptable behavior may be reported by contacting [corona-warn-app.opensource@sap.com](mailto:corona-warn-app.opensource@sap.com) and/or a project maintainer.
 
-We appreciate your courtesy of avoiding political questions here. Issues which are not related to the project itself will be closed by our community managers. 
+We appreciate your courtesy of avoiding political questions here. Issues which are not related to the project itself will be closed by our community managers.
 
 ## Engaging in Our Project
 
@@ -18,11 +18,11 @@ We use GitHub to manage reviews of pull requests.
 
 * If you plan to do something more involved, please reach out to us and send an [email](mailto:corona-warn-app.opensource@sap.com). This will avoid unnecessary work and surely give you and us a good deal of inspiration.
 
-* Relevant coding style guidelines are available in the respective sub-repositories as they are programming language-dependent.
+* Relevant coding style guidelines are available [here](https://google.github.io/styleguide/javaguide.html), with the exception of a max line width of 120 characters. These rules are enforced through CheckStyle.
 
 ## Steps to Contribute
 
-Should you wish to work on an issue, please claim it first by commenting on the GitHub issue that you want to work on. This is to prevent duplicated efforts from other contributors on the same issue.
+Should you wish to work on an issue that has not yet been claimed, please claim it first by commenting on the GitHub issue that you want to work on and begin work (the maintainers will assign it to your GitHub user as soon as they can). This is to prevent duplicated efforts from other contributors on the same issue.
 
 If you have questions about one of the issues, please comment on them, and one of the maintainers will clarify.
 
@@ -54,6 +54,8 @@ The following rule governs documentation contributions:
 
 * Create _Work In Progress [WIP]_ pull requests only if you need clarification or an explicit review before you can continue your work item.
 
+* When creating your Pull Request, please consider checking the __'Allow edits from maintainers'__ checkbox as this will make it easier for us to push commits to your Pull Request if we require.
+
 * If your patch is not getting reviewed or you need a specific person to review it, you can @-reply a reviewer asking for a review in the pull request or a comment, or you can ask for a review by contacting us via [email](mailto:corona-warn-app.opensource@sap.com).
 
 * Post review:
@@ -64,7 +66,7 @@ The following rule governs documentation contributions:
 
 ## Issues and Planning
 
-* We use GitHub issues to track bugs and enhancement requests. 
+* We use GitHub issues to track bugs and enhancement requests.
 
 * Please provide as much context as possible when you open an issue. The information you provide must be comprehensive enough to reproduce that issue for the assignee. Therefore, contributors should use but aren't restricted to the issue template provided by the project maintainers.
 
