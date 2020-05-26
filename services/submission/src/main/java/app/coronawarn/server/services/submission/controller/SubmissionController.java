@@ -106,29 +106,24 @@ public class SubmissionController {
 
   private DeferredResult<ResponseEntity<Void>> buildRealDeferredResult(SubmissionPayload exposureKeys, String tan) {
     DeferredResult<ResponseEntity<Void>> deferredResult = new DeferredResult<>();
+
     forkJoinPool.submit(() -> {
       StopWatch stopWatch = new StopWatch();
       stopWatch.start();
-
-      try {
-
-        if (!this.tanVerifier.verifyTan(tan)) {
-          deferredResult.setResult(buildTanInvalidResponseEntity());
-        } else {
-          try {
-            persistDiagnosisKeysPayload(exposureKeys);
-            deferredResult.setResult(buildSuccessResponseEntity());
-          } catch (Exception e) {
-            deferredResult.setErrorResult(e);
-          }
+      if (!this.tanVerifier.verifyTan(tan)) {
+        deferredResult.setResult(buildTanInvalidResponseEntity());
+      } else {
+        try {
+          persistDiagnosisKeysPayload(exposureKeys);
+          deferredResult.setResult(buildSuccessResponseEntity());
+          stopWatch.stop();
+          updateFakeDelay(stopWatch.getTotalTimeMillis());
+        } catch (Exception e) {
+          deferredResult.setErrorResult(e);
         }
-
-      } finally {
-        stopWatch.stop();
       }
-
-      updateFakeDelay(stopWatch.getTotalTimeMillis());
     });
+
     return deferredResult;
   }
 
