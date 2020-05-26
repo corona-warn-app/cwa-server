@@ -33,12 +33,9 @@ import java.util.stream.Collectors;
  */
 public class DateTime {
   /**
-   * Adding private constructor to avoid explicit creation of object outside of provided methods.
+   * Private constructor to avoid explicit creation of object outside of provided methods.
    */
   private DateTime(){
-  }
-
-  private DateTime() {
   }
 
   /**
