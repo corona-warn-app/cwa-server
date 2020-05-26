@@ -22,7 +22,7 @@ package app.coronawarn.server.common.persistence.domain;
 import static app.coronawarn.server.common.persistence.domain.DiagnosisKeyBuilders.Builder;
 import static app.coronawarn.server.common.persistence.domain.DiagnosisKeyBuilders.FinalBuilder;
 import static app.coronawarn.server.common.persistence.domain.DiagnosisKeyBuilders.RollingPeriodBuilder;
-import static app.coronawarn.server.common.persistence.domain.DiagnosisKeyBuilders.RollingStartNumberBuilder;
+import static app.coronawarn.server.common.persistence.domain.DiagnosisKeyBuilders.RollingStartIntervalNumberBuilder;
 import static app.coronawarn.server.common.persistence.domain.DiagnosisKeyBuilders.TransmissionRiskLevelBuilder;
 
 import app.coronawarn.server.common.persistence.exception.InvalidDiagnosisKeyException;
@@ -38,14 +38,14 @@ import org.slf4j.LoggerFactory;
  * An instance of this builder can be retrieved by calling {@link DiagnosisKey#builder()}. A {@link DiagnosisKey} can
  * then be build by either providing the required member values or by passing the respective protocol buffer object.
  */
-public class DiagnosisKeyBuilder implements Builder, RollingStartNumberBuilder,
+public class DiagnosisKeyBuilder implements Builder, RollingStartIntervalNumberBuilder,
     RollingPeriodBuilder, TransmissionRiskLevelBuilder, FinalBuilder {
 
   private static final Logger logger = LoggerFactory.getLogger(DiagnosisKeyBuilder.class);
 
   private byte[] keyData;
-  private long rollingStartNumber;
-  private long rollingPeriod;
+  private int rollingStartIntervalNumber;
+  private int rollingPeriod;
   private int transmissionRiskLevel;
   private long submissionTimestamp = -1L;
 
@@ -53,19 +53,19 @@ public class DiagnosisKeyBuilder implements Builder, RollingStartNumberBuilder,
   }
 
   @Override
-  public RollingStartNumberBuilder withKeyData(byte[] keyData) {
+  public RollingStartIntervalNumberBuilder withKeyData(byte[] keyData) {
     this.keyData = keyData;
     return this;
   }
 
   @Override
-  public RollingPeriodBuilder withRollingStartNumber(long rollingStartNumber) {
-    this.rollingStartNumber = rollingStartNumber;
+  public RollingPeriodBuilder withRollingStartIntervalNumber(int rollingStartIntervalNumber) {
+    this.rollingStartIntervalNumber = rollingStartIntervalNumber;
     return this;
   }
 
   @Override
-  public TransmissionRiskLevelBuilder withRollingPeriod(long rollingPeriod) {
+  public TransmissionRiskLevelBuilder withRollingPeriod(int rollingPeriod) {
     this.rollingPeriod = rollingPeriod;
     return this;
   }
@@ -80,7 +80,7 @@ public class DiagnosisKeyBuilder implements Builder, RollingStartNumberBuilder,
   public FinalBuilder fromProtoBuf(TemporaryExposureKey protoBufObject) {
     return this
         .withKeyData(protoBufObject.getKeyData().toByteArray())
-        .withRollingStartNumber(protoBufObject.getRollingStartIntervalNumber())
+        .withRollingStartIntervalNumber(protoBufObject.getRollingStartIntervalNumber())
         .withRollingPeriod(protoBufObject.getRollingPeriod())
         .withTransmissionRiskLevel(protoBufObject.getTransmissionRiskLevel());
   }
@@ -99,8 +99,7 @@ public class DiagnosisKeyBuilder implements Builder, RollingStartNumberBuilder,
     }
 
     var diagnosisKey = new DiagnosisKey(
-        keyData, rollingStartNumber, rollingPeriod, transmissionRiskLevel, submissionTimestamp);
-
+        keyData, rollingStartIntervalNumber, rollingPeriod, transmissionRiskLevel, submissionTimestamp);
     return throwIfValidationFails(diagnosisKey);
   }
 

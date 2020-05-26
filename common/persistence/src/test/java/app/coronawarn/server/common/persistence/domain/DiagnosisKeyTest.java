@@ -24,7 +24,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatCode;
 import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException;
 
-
 import java.nio.charset.Charset;
 import java.time.Instant;
 import java.time.LocalDateTime;
@@ -37,16 +36,16 @@ import org.junit.jupiter.params.provider.ValueSource;
 class DiagnosisKeyTest {
 
   final static byte[] expKeyData = "testKey111111111".getBytes(Charset.defaultCharset());
-  final static long expRollingStartNumber = 1L;
-  final static long expRollingPeriod = 2L;
+  final static int expRollingStartIntervalNumber = 1;
+  final static int expRollingPeriod = 2;
   final static int expTransmissionRiskLevel = 3;
   final static long expSubmissionTimestamp = 4L;
-  final static DiagnosisKey diagnosisKey = new DiagnosisKey(expKeyData, expRollingStartNumber,
+  final static DiagnosisKey diagnosisKey = new DiagnosisKey(expKeyData, expRollingStartIntervalNumber,
       expRollingPeriod, expTransmissionRiskLevel, expSubmissionTimestamp);
 
   @Test
-  void testRollingStartNumberGetter() {
-    assertThat(diagnosisKey.getRollingStartNumber()).isEqualTo(expRollingStartNumber);
+  void testRollingStartIntervalNumberGetter() {
+    assertThat(diagnosisKey.getRollingStartIntervalNumber()).isEqualTo(expRollingStartIntervalNumber);
   }
 
   @Test
@@ -66,10 +65,10 @@ class DiagnosisKeyTest {
 
   @Test
   void testIsYoungerThanRetentionThreshold() {
-    long fiveDaysAgo = LocalDateTime
+    int fiveDaysAgo = (int) (LocalDateTime
         .ofInstant(Instant.now(), UTC)
         .minusDays(5).minusMinutes(10)
-        .toEpochSecond(UTC) / (60 * 10);
+        .toEpochSecond(UTC) / (60 * 10));
     DiagnosisKey diagnosisKeyFiveDays = new DiagnosisKey(expKeyData, fiveDaysAgo,
         expRollingPeriod, expTransmissionRiskLevel, expSubmissionTimestamp);
 
