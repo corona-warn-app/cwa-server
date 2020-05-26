@@ -83,5 +83,4 @@ public class Assembly implements ApplicationRunner {
     logger.debug("Distribution data assembled successfully.");
   }
 
-
 }
