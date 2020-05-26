@@ -36,7 +36,6 @@ import javax.persistence.Table;
 import javax.validation.ConstraintViolation;
 import javax.validation.Validation;
 import javax.validation.Validator;
-import javax.validation.constraints.Min;
 import javax.validation.constraints.Size;
 import org.hibernate.validator.constraints.Range;
 
@@ -46,6 +45,14 @@ import org.hibernate.validator.constraints.Range;
 @Entity
 @Table(name = "diagnosis_key")
 public class DiagnosisKey {
+
+  /**
+   * According to "Setting Up an Exposure Notification Server" by Apple, exposure notification servers are expected to
+   * reject any diagnosis keys that do not have a rolling period of a certain fixed value. See
+   * https://developer.apple.com/documentation/exposurenotification/setting_up_an_exposure_notification_server
+   */
+  public static final int EXPECTED_ROLLING_PERIOD = 144;
+
   private static final Validator VALIDATOR = Validation.buildDefaultValidatorFactory().getValidator();
 
   @Id
@@ -58,7 +65,8 @@ public class DiagnosisKey {
   @ValidRollingStartIntervalNumber
   private int rollingStartIntervalNumber;
 
-  @Min(value = 1, message = "Rolling period must be greater than 0.")
+  @Range(min = EXPECTED_ROLLING_PERIOD, max = EXPECTED_ROLLING_PERIOD,
+      message = "Rolling period must be " + EXPECTED_ROLLING_PERIOD + ".")
   private int rollingPeriod;
 
   @Range(min = 0, max = 8, message = "Risk level must be between 0 and 8.")
@@ -135,7 +143,7 @@ public class DiagnosisKey {
    * Checks if this diagnosis key falls into the period between now, and the retention threshold.
    *
    * @param daysToRetain the number of days before a key is outdated
-   * @return true, if the rolling start number is in the time span between now, and the given days to retain
+   * @return true, if the rolling start interval number is within the time between now, and the given days to retain
    * @throws IllegalArgumentException if {@code daysToRetain} is negative.
    */
   public boolean isYoungerThanRetentionThreshold(int daysToRetain) {
@@ -155,7 +163,7 @@ public class DiagnosisKey {
    *
    * <p><ul>
    * <li>Risk level must be between 0 and 8
-   * <li>Rolling start number must be greater than 0
+   * <li>Rolling start interval number must be greater than 0
    * <li>Rolling start number cannot be in the future
    * <li>Rolling period must be positive number
    * <li>Key data must be byte array of length 16

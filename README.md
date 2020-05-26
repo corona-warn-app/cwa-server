@@ -55,17 +55,18 @@ The distribution service runs once and then finishes. If you want to trigger add
 
 The docker-compose contains the following services:
 
-Service       | Description | Endpoint and Default Credentials
---------------|-------------|-----------
-submission    | The Corona-Warn-App submission service                                                      | http://localhost:8000 <br> http://localhost:8005 (for actuator endpoint)
-distribution  | The Corona-Warn-App distribution service                                                    | NO ENDPOINT
-postgres      | A [postgres] database installation                                                          | postgres:8001 <br> Username: postgres <br> Password: postgres
-pgadmin       | A [pgadmin](https://www.pgadmin.org/) installation for the postgres database                | http://localhost:8002 <br> Username: user@domain.com <br> Password: password
-cloudserver   | [Zenko CloudServer] is a S3-compliant object store  | http://localhost:8003/ <br> Access key: accessKey1 <br> Secret key: verySecretKey1
+Service           | Description | Endpoint and Default Credentials
+------------------|-------------|-----------
+submission        | The Corona-Warn-App submission service                                                      | http://localhost:8000 <br> http://localhost:8005 (for actuator endpoint)
+distribution      | The Corona-Warn-App distribution service                                                    | NO ENDPOINT
+postgres          | A [postgres] database installation                                                          | postgres:8001 <br> Username: postgres <br> Password: postgres
+pgadmin           | A [pgadmin](https://www.pgadmin.org/) installation for the postgres database                | http://localhost:8002 <br> Username: user@domain.com <br> Password: password
+cloudserver       | [Zenko CloudServer] is a S3-compliant object store  | http://localhost:8003/ <br> Access key: accessKey1 <br> Secret key: verySecretKey1
+verification-fake | A very simple fake implementation for the tan verification.                                 | http://localhost:8004/version/v1/tan/verify <br> The only valid tan is "b69ab69f-9823-4549-8961-c41sa74b2f36"
 
 ##### Known Limitation
 
-The docker-compose runs into a timing issue in some cases when the create-bucket target runs before the objectstore is available. The mitigation is easy: after running ```docker-compose up``` wait until all components are initialized and running. Afterwards, trigger the ```create-bucket``` service manually by running ```docker-compose run create-bucket```. If you want to trigger distribution runs, run ```docker-compose run distribution```. The timing issue will be fixed in a future release.
+In rare cases the docker-compose runs into a timing issue if the distribution service starts before the bucket of the objectstore was created. This is not a big issue as you can simply run ```docker-compose run distribution``` to trigger additional distribution runs after the objectstore was initialized.
 
 #### Running Single CWA Services Using Docker
 

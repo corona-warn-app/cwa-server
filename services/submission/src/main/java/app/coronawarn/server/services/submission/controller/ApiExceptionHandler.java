@@ -20,8 +20,8 @@
 package app.coronawarn.server.services.submission.controller;
 
 import app.coronawarn.server.common.persistence.exception.InvalidDiagnosisKeyException;
-import app.coronawarn.server.services.submission.exception.InvalidPayloadException;
 import com.google.protobuf.InvalidProtocolBufferException;
+import javax.validation.ConstraintViolationException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
@@ -50,7 +50,7 @@ public class ApiExceptionHandler {
     logger.error("Binding failed {}", wr.getDescription(false), ex);
   }
 
-  @ExceptionHandler({InvalidDiagnosisKeyException.class, InvalidPayloadException.class})
+  @ExceptionHandler({InvalidDiagnosisKeyException.class, ConstraintViolationException.class})
   @ResponseStatus(HttpStatus.BAD_REQUEST)
   public void diagnosisKeyExceptions(Exception ex, WebRequest wr) {
     logger.error("Erroneous Submission Payload {}", wr.getDescription(false), ex);
