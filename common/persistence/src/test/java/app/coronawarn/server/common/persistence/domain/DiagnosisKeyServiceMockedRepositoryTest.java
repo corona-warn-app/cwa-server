@@ -37,7 +37,6 @@ class DiagnosisKeyServiceMockedRepositoryTest {
 
   static final byte[] expKeyData = "16-bytelongarray".getBytes(Charset.defaultCharset());
   static final int expRollingStartIntervalNumber = 73800;
-  static final int expRollingPeriod = 144;
   static final int expTransmissionRiskLevel = 1;
 
   @Autowired
@@ -82,12 +81,12 @@ class DiagnosisKeyServiceMockedRepositoryTest {
 
   private DiagnosisKey validKey(long expSubmissionTimestamp) {
     return new DiagnosisKey(expKeyData, expRollingStartIntervalNumber,
-        expRollingPeriod, expTransmissionRiskLevel, expSubmissionTimestamp);
+        DiagnosisKey.EXPECTED_ROLLING_PERIOD, expTransmissionRiskLevel, expSubmissionTimestamp);
   }
 
   private DiagnosisKey invalidKey(long expSubmissionTimestamp) {
     byte[] expKeyData = "17--bytelongarray".getBytes(Charset.defaultCharset());
     return new DiagnosisKey(expKeyData, expRollingStartIntervalNumber,
-        expRollingPeriod, expTransmissionRiskLevel, expSubmissionTimestamp);
+        DiagnosisKey.EXPECTED_ROLLING_PERIOD, expTransmissionRiskLevel, expSubmissionTimestamp);
   }
 }

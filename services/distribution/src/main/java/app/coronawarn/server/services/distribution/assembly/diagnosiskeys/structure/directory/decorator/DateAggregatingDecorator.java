@@ -93,8 +93,11 @@ public class DateAggregatingDecorator extends IndexDirectoryDecorator<LocalDate,
               return aggregate;
             })
             .map(file -> new DiagnosisKeySigningDecorator(file, cryptoProvider, distributionServiceConfig))
-            .peek(currentDirectory::addWritable)
-            .forEach(aggregate -> aggregate.prepare(indices)));
+            .forEach(aggregate -> {
+              currentDirectory.addWritable(aggregate);
+              aggregate.prepare(indices);
+            })
+        );
   }
 
   /**
