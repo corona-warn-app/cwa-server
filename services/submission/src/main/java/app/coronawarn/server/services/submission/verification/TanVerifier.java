@@ -88,7 +88,7 @@ public class TanVerifier {
       UUID.fromString(tan);
       return true;
     } catch (IllegalArgumentException e) {
-      logger.debug("UUID creation failed for value: " + tan, e);
+      logger.debug("UUID creation failed for value: {}", tan, e);
       return false;
     }
   }
@@ -109,7 +109,7 @@ public class TanVerifier {
       return response.getStatusCode().is2xxSuccessful();
     } catch (HttpClientErrorException.NotFound e) {
       // The validation service returns http status 404 if the TAN is invalid
-      logger.debug("TAN validation failed for TAN: " + tan, e);
+      logger.debug("TAN validation failed for TAN: {}", tan, e);
       return false;
     }
   }
