@@ -70,7 +70,7 @@ public class TanVerifier {
     String trimmedTan = tan.trim().replaceAll(" ", "");
 
     if (!checkTanSyntax(trimmedTan)) {
-      logger.debug("TAN Syntax check failed for TAN: {}", trimmedTan);
+      logger.debug("TAN Syntax check failed for TAN: {}", trimmedTan.substring(0,10));
       return false;
     }
 
