@@ -35,6 +35,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 @Component
 public class DiagnosisKeyService {
@@ -85,6 +86,7 @@ public class DiagnosisKeyService {
    * @param daysToRetain the number of days until which diagnosis keys will be retained.
    * @throws IllegalArgumentException if {@code daysToRetain} is negative.
    */
+  @Transactional
   public void applyRetentionPolicy(int daysToRetain) {
     if (daysToRetain < 0) {
       throw new IllegalArgumentException("Number of days to retain must be greater or equal to 0.");
