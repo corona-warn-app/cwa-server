@@ -35,9 +35,7 @@ public class CountryIndexingDecorator<T> extends IndexDirectoryDecorator<T, Writ
 
   public void writeIndexFile(DirectoryOnDisk directory) {
 
-    Collection<String> paths = this.getWritablesInDirectory(directory).stream()
-        .map(Writable::getName)
-        .collect(Collectors.toSet());
+    Collection<String> paths = this.getWritablesInDirectory(directory);
 
     JSONArray array = new JSONArray();
     array.addAll(paths);
@@ -45,7 +43,7 @@ public class CountryIndexingDecorator<T> extends IndexDirectoryDecorator<T, Writ
     directory.addWritable(new FileOnDisk("index", array.toJSONString().getBytes()));
   }
 
-  private Set<Writable<WritableOnDisk>> getWritablesInDirectory(Directory<WritableOnDisk> rootDirectory) {
+  private Set<String> getWritablesInDirectory(Directory<WritableOnDisk> rootDirectory) {
 
     Collection<DirectoryOnDisk> directories = this.getWritables().stream()
         .filter(Writable::isDirectory)
@@ -53,11 +51,12 @@ public class CountryIndexingDecorator<T> extends IndexDirectoryDecorator<T, Writ
         .collect(Collectors.toSet());
 
     if (directories.isEmpty()) {
-      return Set.of(this);
+      return Set.of(this.getName());
     } else {
       return directories.stream()
           .map(this::getWritablesInDirectory)
           .flatMap(Set::stream)
+          .map(childName -> this.getName() + "/" + childName)
           .collect(Collectors.toSet());
     }
   }
