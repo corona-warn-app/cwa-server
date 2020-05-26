@@ -100,16 +100,16 @@ class DiagnosisKeyBuilderTest {
 
   @Test
   public void rollingStartNumberDoesNotThrowForValid() {
-    assertThatCode(() -> keyWithRollingStartNumber(4200)).doesNotThrowAnyException();
+    assertThatCode(() -> keyWithRollingStartIntervalNumber(4200)).doesNotThrowAnyException();
 
     // Timestamp: 05/16/2020 @ 00:00 in hours
-    assertThatCode(() -> keyWithRollingStartNumber(441552)).doesNotThrowAnyException();
+    assertThatCode(() -> keyWithRollingStartIntervalNumber(441552)).doesNotThrowAnyException();
   }
 
   @Test
 
   public void rollingStartNumberCannotBeInFuture() {
-    assertThat(catchThrowable(() -> keyWithRollingStartNumber(Integer.MAX_VALUE)))
+    assertThat(catchThrowable(() -> keyWithRollingStartIntervalNumber(Integer.MAX_VALUE)))
         .isInstanceOf(InvalidDiagnosisKeyException.class)
         .hasMessage(
             "[Rolling start number must be greater 0 and cannot be in the future. Invalid Value: "
@@ -120,7 +120,7 @@ class DiagnosisKeyBuilderTest {
         .plusDays(1).atStartOfDay()
         .toEpochSecond(ZoneOffset.UTC);
 
-    assertThat(catchThrowable(() -> keyWithRollingStartNumber((int) tomorrow)))
+    assertThat(catchThrowable(() -> keyWithRollingStartIntervalNumber((int) tomorrow)))
         .isInstanceOf(InvalidDiagnosisKeyException.class)
         .hasMessage(
             String.format(
@@ -193,7 +193,7 @@ class DiagnosisKeyBuilderTest {
         .withTransmissionRiskLevel(expTransmissionRiskLevel).build();
   }
 
-  private DiagnosisKey keyWithRollingStartNumber(int expRollingStartIntervalNumber) {
+  private DiagnosisKey keyWithRollingStartIntervalNumber(int expRollingStartIntervalNumber) {
     return DiagnosisKey.builder()
         .withKeyData(expKeyData)
         .withRollingStartIntervalNumber(expRollingStartIntervalNumber)
