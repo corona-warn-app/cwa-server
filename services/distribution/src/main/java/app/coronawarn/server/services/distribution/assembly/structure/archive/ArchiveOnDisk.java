@@ -30,18 +30,19 @@ import app.coronawarn.server.services.distribution.assembly.structure.file.FileO
 import app.coronawarn.server.services.distribution.assembly.structure.util.ImmutableStack;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.io.UncheckedIOException;
 import java.nio.file.Files;
 import java.util.Set;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * An {@link Archive} that can be written to disk as a ZIP archive.
  */
 public class ArchiveOnDisk extends FileOnDisk implements Archive<WritableOnDisk> {
 
-  private static final String TEMPORARY_DIRECTORY_NAME = "temporary";
+  private static final Logger logger = LoggerFactory.getLogger(ArchiveOnDisk.class);
 
   private DirectoryOnDisk tempDirectory;
 
@@ -52,9 +53,10 @@ public class ArchiveOnDisk extends FileOnDisk implements Archive<WritableOnDisk>
     super(name, new byte[0]);
     try {
       tempDirectory = new DirectoryOnDisk(
-          Files.createTempDirectory(TEMPORARY_DIRECTORY_NAME).toFile());
+          Files.createTempDirectory("temporary").toFile());
     } catch (IOException e) {
-      throw new UncheckedIOException("Failed to create temporary directory for zip archive " + this.getFileOnDisk(), e);
+      logger.error("Failed to create temporary directory for zip archive {}", this.getFileOnDisk());
+      throw new RuntimeException(e);
     }
   }
 
@@ -94,7 +96,8 @@ public class ArchiveOnDisk extends FileOnDisk implements Archive<WritableOnDisk>
             zipOutputStream.write(bytes, 0, bytes.length);
           }));
     } catch (IOException e) {
-      throw new UncheckedIOException("Failed to close zip archive output stream.",e);
+      logger.error("Failed to close zip archive output stream.");
+      throw new RuntimeException(e);
     }
     return byteArrayOutputStream.toByteArray();
   }

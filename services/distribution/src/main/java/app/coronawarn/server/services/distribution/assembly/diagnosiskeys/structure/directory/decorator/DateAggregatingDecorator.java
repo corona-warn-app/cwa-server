@@ -24,6 +24,7 @@ import static app.coronawarn.server.services.distribution.assembly.structure.uti
 import app.coronawarn.server.common.protocols.external.exposurenotification.TemporaryExposureKey;
 import app.coronawarn.server.common.protocols.external.exposurenotification.TemporaryExposureKeyExport;
 import app.coronawarn.server.services.distribution.assembly.component.CryptoProvider;
+import app.coronawarn.server.services.distribution.assembly.diagnosiskeys.structure.archive.decorator.singing.DiagnosisKeySigningDecorator;
 import app.coronawarn.server.services.distribution.assembly.diagnosiskeys.structure.file.TemporaryExposureKeyExportFile;
 import app.coronawarn.server.services.distribution.assembly.structure.Writable;
 import app.coronawarn.server.services.distribution.assembly.structure.WritableOnDisk;
@@ -35,11 +36,9 @@ import app.coronawarn.server.services.distribution.assembly.structure.directory.
 import app.coronawarn.server.services.distribution.assembly.structure.directory.decorator.DirectoryDecorator;
 import app.coronawarn.server.services.distribution.assembly.structure.directory.decorator.IndexDirectoryDecorator;
 import app.coronawarn.server.services.distribution.assembly.structure.file.File;
-import app.coronawarn.server.services.distribution.assembly.structure.file.FileOnDisk;
 import app.coronawarn.server.services.distribution.assembly.structure.util.ImmutableStack;
+import app.coronawarn.server.services.distribution.config.DistributionServiceConfig;
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
@@ -53,12 +52,16 @@ import java.util.stream.Stream;
 public class DateAggregatingDecorator extends IndexDirectoryDecorator<LocalDate, WritableOnDisk> {
 
   private final CryptoProvider cryptoProvider;
+  private final DistributionServiceConfig distributionServiceConfig;
 
-  private static final String AGGREGATE_FILE_NAME = "index";
-
-  public DateAggregatingDecorator(IndexDirectory<LocalDate, WritableOnDisk> directory, CryptoProvider cryptoProvider) {
+  /**
+   * Creates a new DateAggregatingDecorator.
+   */
+  public DateAggregatingDecorator(IndexDirectory<LocalDate, WritableOnDisk> directory, CryptoProvider cryptoProvider,
+      DistributionServiceConfig distributionServiceConfig) {
     super(directory);
     this.cryptoProvider = cryptoProvider;
+    this.distributionServiceConfig = distributionServiceConfig;
   }
 
   @Override
@@ -72,27 +75,26 @@ public class DateAggregatingDecorator extends IndexDirectoryDecorator<LocalDate,
       return;
     }
 
-    List<Directory<WritableOnDisk>> sortedDayDirectories = new ArrayList<>(dayDirectories);
-    sortedDayDirectories.sort(Comparator.comparing(Writable::getName));
+    Set<String> dates = this.getIndex(indices).stream()
+        .map(this.getIndexFormatter())
+        .map(Object::toString)
+        .collect(Collectors.toSet());
 
-    // Exclude the last day
-    sortedDayDirectories.subList(0, sortedDayDirectories.size() - 1)
+    dayDirectories.stream()
+        .filter(dayDirectory -> dates.contains(dayDirectory.getName()))
         .forEach(currentDirectory -> Stream.of(currentDirectory)
             .map(this::getSubSubDirectoryArchives)
             .map(this::getTemporaryExposureKeyExportFilesFromArchives)
             .map(this::parseTemporaryExposureKeyExportsFromFiles)
             .map(this::reduceTemporaryExposureKeyExportsToNewFile)
             .map(temporaryExposureKeyExportFile -> {
-              Archive<WritableOnDisk> aggregate = new ArchiveOnDisk(AGGREGATE_FILE_NAME);
+              Archive<WritableOnDisk> aggregate = new ArchiveOnDisk(distributionServiceConfig.getOutputFileName());
               aggregate.addWritable(temporaryExposureKeyExportFile);
               return aggregate;
             })
-            .map(file -> new DiagnosisKeySigningDecorator(file, cryptoProvider))
-            .forEach(aggregate -> {
-              currentDirectory.addWritable(aggregate);
-              aggregate.prepare(indices);
-            })
-        );
+            .map(file -> new DiagnosisKeySigningDecorator(file, cryptoProvider, distributionServiceConfig))
+            .peek(currentDirectory::addWritable)
+            .forEach(aggregate -> aggregate.prepare(indices)));
   }
 
   /**
@@ -144,8 +146,7 @@ public class DateAggregatingDecorator extends IndexDirectoryDecorator<LocalDate,
   private Set<TemporaryExposureKeyExport> parseTemporaryExposureKeyExportsFromFiles(
       Set<TemporaryExposureKeyExportFile> temporaryExposureKeyExportFiles) {
     return temporaryExposureKeyExportFiles.stream()
-        .map(FileOnDisk::getBytes)
-        .map(TemporaryExposureKeyExportFile::withoutFileHeader)
+        .map(TemporaryExposureKeyExportFile::getBytesWithoutHeader)
         .map(uncheckedFunction(TemporaryExposureKeyExport::parseFrom))
         .collect(Collectors.toSet());
   }
@@ -156,7 +157,8 @@ public class DateAggregatingDecorator extends IndexDirectoryDecorator<LocalDate,
         getTemporaryExposureKeys(temporaryExposureKeyExports),
         getRegion(temporaryExposureKeyExports),
         getStartTimestamp(temporaryExposureKeyExports),
-        getEndTimestamp(temporaryExposureKeyExports)
+        getEndTimestamp(temporaryExposureKeyExports),
+        distributionServiceConfig
     );
   }
 

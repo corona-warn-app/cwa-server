@@ -28,6 +28,9 @@ import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
+import javax.validation.ConstraintViolation;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.Sort.Direction;
@@ -36,6 +39,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class DiagnosisKeyService {
 
+  private static final Logger logger = LoggerFactory.getLogger(DiagnosisKeyService.class);
   private final DiagnosisKeyRepository keyRepository;
 
   @Autowired
@@ -58,12 +62,25 @@ public class DiagnosisKeyService {
    */
   public List<DiagnosisKey> getDiagnosisKeys() {
     return keyRepository.findAll(Sort.by(Direction.ASC, "submissionTimestamp")).stream()
-        .filter(DiagnosisKey::isValid).collect(Collectors.toList());
+        .filter(DiagnosisKeyService::isDiagnosisKeyValid).collect(Collectors.toList());
+  }
+
+  private static boolean isDiagnosisKeyValid(DiagnosisKey diagnosisKey) {
+    Collection<ConstraintViolation<DiagnosisKey>> violations = diagnosisKey.validate();
+    boolean isValid = violations.isEmpty();
+
+    if (!isValid) {
+      List<String> violationMessages =
+          violations.stream().map(ConstraintViolation::getMessage).collect(Collectors.toList());
+      logger.warn("Validation failed for diagnosis key from database. Violations: {}", violationMessages);
+    }
+
+    return isValid;
   }
 
   /**
-   * Deletes all diagnosis key entries which have a submission timestamp that is older than the
-   * specified number of days.
+   * Deletes all diagnosis key entries which have a submission timestamp that is older than the specified number of
+   * days.
    *
    * @param daysToRetain the number of days until which diagnosis keys will be retained.
    * @throws IllegalArgumentException if {@code daysToRetain} is negative.

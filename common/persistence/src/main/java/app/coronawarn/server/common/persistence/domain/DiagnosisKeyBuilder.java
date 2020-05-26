@@ -98,14 +98,14 @@ public class DiagnosisKeyBuilder implements Builder, RollingStartNumberBuilder,
       submissionTimestamp = Instant.now().getEpochSecond() / 3600L;
     }
 
-    var diagnosisKey = new DiagnosisKey(this.keyData, this.rollingStartNumber,
-        this.rollingPeriod, this.transmissionRiskLevel, submissionTimestamp);
+    var diagnosisKey = new DiagnosisKey(
+        keyData, rollingStartNumber, rollingPeriod, transmissionRiskLevel, submissionTimestamp);
 
     return throwIfValidationFails(diagnosisKey);
   }
 
   private DiagnosisKey throwIfValidationFails(DiagnosisKey diagnosisKey) {
-    Set<ConstraintViolation<DiagnosisKey>> violations = diagnosisKey.getConstraintViolations();
+    Set<ConstraintViolation<DiagnosisKey>> violations = diagnosisKey.validate();
 
     if (!violations.isEmpty()) {
       String violationsMessage = violations.stream()

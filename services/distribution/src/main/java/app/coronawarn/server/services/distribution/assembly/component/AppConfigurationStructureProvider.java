@@ -22,7 +22,7 @@ package app.coronawarn.server.services.distribution.assembly.component;
 import app.coronawarn.server.services.distribution.assembly.appconfig.structure.directory.AppConfigurationDirectory;
 import app.coronawarn.server.services.distribution.assembly.structure.WritableOnDisk;
 import app.coronawarn.server.services.distribution.assembly.structure.directory.Directory;
-import org.springframework.beans.factory.annotation.Autowired;
+import app.coronawarn.server.services.distribution.config.DistributionServiceConfig;
 import org.springframework.stereotype.Component;
 
 /**
@@ -33,13 +33,15 @@ import org.springframework.stereotype.Component;
 public class AppConfigurationStructureProvider {
 
   private final CryptoProvider cryptoProvider;
+  private final DistributionServiceConfig distributionServiceConfig;
 
-  @Autowired
-  public AppConfigurationStructureProvider(CryptoProvider cryptoProvider) {
+  AppConfigurationStructureProvider(CryptoProvider cryptoProvider,
+      DistributionServiceConfig distributionServiceConfig) {
     this.cryptoProvider = cryptoProvider;
+    this.distributionServiceConfig = distributionServiceConfig;
   }
 
   public Directory<WritableOnDisk> getAppConfiguration() {
-    return new AppConfigurationDirectory(cryptoProvider);
+    return new AppConfigurationDirectory(cryptoProvider, distributionServiceConfig);
   }
 }

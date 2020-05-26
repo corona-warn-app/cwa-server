@@ -29,7 +29,7 @@ jobs:
         java-version: 11
 
     - name: Build
-      run: mvn clean compile
+      run: mvn --batch-mode clean compile
 
     - name: Perform CodeQL Analysis
       uses: github/codeql-action/analyze@v1

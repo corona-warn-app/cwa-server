@@ -21,22 +21,20 @@ package app.coronawarn.server.services.distribution.assembly.appconfig;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import app.coronawarn.server.services.distribution.assembly.appconfig.validation.ExposureConfigurationValidator;
 import app.coronawarn.server.services.distribution.assembly.appconfig.validation.RiskScoreClassificationValidator;
 import app.coronawarn.server.services.distribution.assembly.appconfig.validation.ValidationResult;
 import org.junit.jupiter.api.Test;
 
 /**
  * This test will verify that the provided risk score classification master file is syntactically correct and according
- * to spec.
- * There should never be any deployment when this test is failing.
+ * to spec. There should never be any deployment when this test is failing.
  */
-public class RiskScoreClassificationProviderMasterFileTest {
+class RiskScoreClassificationProviderMasterFileTest {
 
   private static final ValidationResult SUCCESS = new ValidationResult();
 
   @Test
-  public void testMasterFile() throws UnableToLoadFileException {
+  void testMasterFile() throws UnableToLoadFileException {
     var config = RiskScoreClassificationProvider.readMasterFile();
 
     var validator = new RiskScoreClassificationValidator(config);

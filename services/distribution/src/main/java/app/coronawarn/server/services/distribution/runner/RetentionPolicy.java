@@ -21,10 +21,9 @@ package app.coronawarn.server.services.distribution.runner;
 
 import app.coronawarn.server.common.persistence.service.DiagnosisKeyService;
 import app.coronawarn.server.services.distribution.Application;
+import app.coronawarn.server.services.distribution.config.DistributionServiceConfig;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.context.ApplicationContext;
@@ -45,13 +44,17 @@ public class RetentionPolicy implements ApplicationRunner {
 
   private final ApplicationContext applicationContext;
 
-  @Value("${services.distribution.retention-days}")
-  private Integer retentionDays;
+  private final Integer retentionDays;
 
-  @Autowired
-  public RetentionPolicy(DiagnosisKeyService diagnosisKeyService, ApplicationContext applicationContext) {
+  /**
+   * Creates a new RetentionPolicy.
+   */
+  RetentionPolicy(DiagnosisKeyService diagnosisKeyService,
+      ApplicationContext applicationContext,
+      DistributionServiceConfig distributionServiceConfig) {
     this.diagnosisKeyService = diagnosisKeyService;
     this.applicationContext = applicationContext;
+    this.retentionDays = distributionServiceConfig.getRetentionDays();
   }
 
   @Override

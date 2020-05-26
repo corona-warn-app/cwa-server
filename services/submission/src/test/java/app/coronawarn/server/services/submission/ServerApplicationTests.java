@@ -33,7 +33,7 @@ class ServerApplicationTests {
   private SubmissionController controller;
 
   @Test
-  public void contextLoads() {
+  void contextLoads() {
     assertThat(this.controller).isNotNull();
   }
 }

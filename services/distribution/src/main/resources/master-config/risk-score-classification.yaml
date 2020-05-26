@@ -1,0 +1,21 @@
+# This is the Risk Score Classification master file which partitions the risk
+# score value range (0-255) into distinct risk classes that will be used to by
+# the app in order to present the correct risk classification in a user
+# friendly manner, based on the underlying total risk score, to the user.
+#
+# The risk classes must not overlap and
+# cover the full risk score value range (0-255).
+#
+# Change this file with caution!
+
+risk-classes:
+  -
+    label: LOW
+    min: 0
+    max: 2749
+    url: "https://www.coronawarn.app"
+  -
+    label: HIGH
+    min: 2750
+    max: 4096
+    url: "https://www.coronawarn.app"

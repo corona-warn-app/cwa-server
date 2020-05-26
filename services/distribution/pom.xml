@@ -23,6 +23,7 @@
           <version>3.0.0-M3</version>
           <configuration>
             <excludedGroups>s3-integration</excludedGroups>
+            <trimStackTrace>false</trimStackTrace>
           </configuration>
         </plugin>
       </plugins>

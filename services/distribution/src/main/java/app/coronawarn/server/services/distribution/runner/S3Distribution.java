@@ -28,7 +28,6 @@ import java.nio.file.Path;
 import java.security.GeneralSecurityException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.core.annotation.Order;
@@ -47,8 +46,7 @@ public class S3Distribution implements ApplicationRunner {
 
   private final ObjectStoreAccess objectStoreAccess;
 
-  @Autowired
-  public S3Distribution(OutputDirectoryProvider outputDirectoryProvider, ObjectStoreAccess objectStoreAccess) {
+  S3Distribution(OutputDirectoryProvider outputDirectoryProvider, ObjectStoreAccess objectStoreAccess) {
     this.outputDirectoryProvider = outputDirectoryProvider;
     this.objectStoreAccess = objectStoreAccess;
   }
@@ -61,7 +59,7 @@ public class S3Distribution implements ApplicationRunner {
 
       s3Publisher.publish();
       logger.info("Data pushed to CDN successfully.");
-    } catch (UnsupportedOperationException | GeneralSecurityException  | MinioException | IOException e) {
+    } catch (UnsupportedOperationException | GeneralSecurityException | MinioException | IOException e) {
       logger.error("Distribution failed.", e);
     }
   }

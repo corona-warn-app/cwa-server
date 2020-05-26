@@ -19,15 +19,14 @@
 
 package app.coronawarn.server.services.distribution.assembly.appconfig.structure.directory;
 
+import app.coronawarn.server.common.protocols.internal.ApplicationConfiguration;
 import app.coronawarn.server.common.protocols.internal.RiskScoreClassification;
 import app.coronawarn.server.common.protocols.internal.RiskScoreParameters;
-import app.coronawarn.server.services.distribution.assembly.appconfig.ExposureConfigurationProvider;
-import app.coronawarn.server.services.distribution.assembly.appconfig.RiskScoreClassificationProvider;
+import app.coronawarn.server.services.distribution.assembly.appconfig.ApplicationConfigurationProvider;
 import app.coronawarn.server.services.distribution.assembly.appconfig.UnableToLoadFileException;
-import app.coronawarn.server.services.distribution.assembly.appconfig.structure.directory.decorator.AppConfigurationSigningDecorator;
-import app.coronawarn.server.services.distribution.assembly.appconfig.validation.AppConfigurationValidator;
-import app.coronawarn.server.services.distribution.assembly.appconfig.validation.ExposureConfigurationValidator;
-import app.coronawarn.server.services.distribution.assembly.appconfig.validation.RiskScoreClassificationValidator;
+import app.coronawarn.server.services.distribution.assembly.appconfig.structure.archive.decorator.signing.AppConfigurationSigningDecorator;
+import app.coronawarn.server.services.distribution.assembly.appconfig.validation.ApplicationConfigurationValidator;
+import app.coronawarn.server.services.distribution.assembly.appconfig.validation.ConfigurationValidator;
 import app.coronawarn.server.services.distribution.assembly.appconfig.validation.ValidationResult;
 import app.coronawarn.server.services.distribution.assembly.component.CryptoProvider;
 import app.coronawarn.server.services.distribution.assembly.structure.archive.ArchiveOnDisk;
@@ -35,6 +34,7 @@ import app.coronawarn.server.services.distribution.assembly.structure.directory.
 import app.coronawarn.server.services.distribution.assembly.structure.directory.IndexDirectoryOnDisk;
 import app.coronawarn.server.services.distribution.assembly.structure.directory.decorator.indexing.IndexingDecoratorOnDisk;
 import app.coronawarn.server.services.distribution.assembly.structure.file.FileOnDisk;
+import app.coronawarn.server.services.distribution.config.DistributionServiceConfig;
 import com.google.protobuf.Message;
 import java.util.Set;
 import org.slf4j.Logger;
@@ -48,49 +48,38 @@ import org.slf4j.LoggerFactory;
 public class AppConfigurationDirectory extends DirectoryOnDisk {
 
   private static final Logger logger = LoggerFactory.getLogger(AppConfigurationDirectory.class);
-  private static final String PARAMETERS_DIRECTORY = "configuration";
-  private static final String COUNTRY_DIRECTORY = "country";
-  private static final String COUNTRY = "DE";
-  private static final String EXPOSURE_CONFIGURATION_FILE_NAME = "exposure_configuration";
-  private static final String RISK_SCORE_CLASSIFICATION_FILE_NAME = "risk_score_classification";
 
-  private final IndexDirectoryOnDisk<String> countryDirectory =
-      new IndexDirectoryOnDisk<>(COUNTRY_DIRECTORY, __ -> Set.of(COUNTRY), Object::toString);
+  private final IndexDirectoryOnDisk<String> countryDirectory;
 
   private final CryptoProvider cryptoProvider;
+  private final DistributionServiceConfig distributionServiceConfig;
 
   /**
    * Creates an {@link AppConfigurationDirectory} for the exposure configuration and risk score classification.
    *
    * @param cryptoProvider The {@link CryptoProvider} whose artifacts to use for creating the signature.
    */
-  public AppConfigurationDirectory(CryptoProvider cryptoProvider) {
-    super(PARAMETERS_DIRECTORY);
-
+  public AppConfigurationDirectory(CryptoProvider cryptoProvider, DistributionServiceConfig distributionServiceConfig) {
+    super(distributionServiceConfig.getApi().getParametersPath());
     this.cryptoProvider = cryptoProvider;
-    addExposureConfigurationIfValid();
-    addRiskScoreClassificationIfValid();
+    this.distributionServiceConfig = distributionServiceConfig;
 
-    this.addWritable(new IndexingDecoratorOnDisk<>(countryDirectory));
+    countryDirectory = new IndexDirectoryOnDisk<>(distributionServiceConfig.getApi().getCountryPath(),
+        __ -> Set.of(distributionServiceConfig.getApi().getCountryGermany()), Object::toString);
+
+    addApplicationConfigurationIfValid();
+
+    this.addWritable(new IndexingDecoratorOnDisk<>(countryDirectory, distributionServiceConfig.getOutputFileName()));
   }
 
-  private void addExposureConfigurationIfValid() {
+  private void addApplicationConfigurationIfValid() {
     try {
-      RiskScoreParameters exposureConfig = ExposureConfigurationProvider.readMasterFile();
-      AppConfigurationValidator validator = new ExposureConfigurationValidator(exposureConfig);
-      addArchiveIfMessageValid(EXPOSURE_CONFIGURATION_FILE_NAME, exposureConfig, validator);
+      ApplicationConfiguration appConfig = ApplicationConfigurationProvider.readMasterFile();
+      ConfigurationValidator validator = new ApplicationConfigurationValidator(appConfig);
+      addArchiveIfMessageValid(distributionServiceConfig.getApi().getAppConfigFileName(),
+          appConfig, validator);
     } catch (UnableToLoadFileException e) {
       logger.error("Exposure configuration will not be published! Unable to read configuration file from disk.");
-    }
-  }
-
-  private void addRiskScoreClassificationIfValid() {
-    try {
-      RiskScoreClassification riskScoreClassification = RiskScoreClassificationProvider.readMasterFile();
-      AppConfigurationValidator validator = new RiskScoreClassificationValidator(riskScoreClassification);
-      addArchiveIfMessageValid(RISK_SCORE_CLASSIFICATION_FILE_NAME, riskScoreClassification, validator);
-    } catch (UnableToLoadFileException e) {
-      logger.error("Risk score classification will not be published! Unable to read configuration file from disk.");
     }
   }
 
@@ -98,7 +87,7 @@ public class AppConfigurationDirectory extends DirectoryOnDisk {
    * If validation of the {@link Message} succeeds, it is written into a file, put into an archive with the specified
    * name and added to the specified parent directory.
    */
-  private void addArchiveIfMessageValid(String archiveName, Message message, AppConfigurationValidator validator) {
+  private void addArchiveIfMessageValid(String archiveName, Message message, ConfigurationValidator validator) {
     ValidationResult validationResult = validator.validate();
 
     if (validationResult.hasErrors()) {
@@ -108,6 +97,7 @@ public class AppConfigurationDirectory extends DirectoryOnDisk {
 
     ArchiveOnDisk appConfigurationFile = new ArchiveOnDisk(archiveName);
     appConfigurationFile.addWritable(new FileOnDisk("export.bin", message.toByteArray()));
-    countryDirectory.addWritableToAll(__ -> new AppConfigurationSigningDecorator(appConfigurationFile, cryptoProvider));
+    countryDirectory.addWritableToAll(__ -> new AppConfigurationSigningDecorator(appConfigurationFile, cryptoProvider,
+        distributionServiceConfig));
   }
 }

@@ -22,6 +22,8 @@ package app.coronawarn.server.services.distribution.runner;
 import app.coronawarn.server.common.persistence.domain.DiagnosisKey;
 import app.coronawarn.server.common.persistence.service.DiagnosisKeyService;
 import app.coronawarn.server.common.protocols.internal.RiskLevel;
+import app.coronawarn.server.services.distribution.config.DistributionServiceConfig;
+import app.coronawarn.server.services.distribution.config.DistributionServiceConfig.TestData;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
@@ -35,8 +37,6 @@ import org.apache.commons.math3.random.JDKRandomGenerator;
 import org.apache.commons.math3.random.RandomGenerator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.context.annotation.Profile;
@@ -57,21 +57,17 @@ public class TestDataGeneration implements ApplicationRunner {
 
   private final Logger logger = LoggerFactory.getLogger(TestDataGeneration.class);
 
-  @Value("${services.distribution.retention-days}")
-  private Integer retentionDays;
+  private final Integer retentionDays;
 
-  @Value("${services.distribution.testdata.seed}")
-  private Integer seed;
-
-  @Value("${services.distribution.testdata.exposures-per-hour}")
-  private Integer exposuresPerHour;
+  private final TestData config;
 
   private final DiagnosisKeyService diagnosisKeyService;
 
-  private RandomGenerator random = new JDKRandomGenerator();
+  private final RandomGenerator random = new JDKRandomGenerator();
 
   private static final int POISSON_MAX_ITERATIONS = 10_000_000;
   private static final double POISSON_EPSILON = 1e-12;
+  private PoissonDistribution poisson;
 
   // The submission timestamp is counted in 1 hour intervals since epoch
   private static final long ONE_HOUR_INTERVAL_SECONDS = TimeUnit.HOURS.toSeconds(1);
@@ -79,9 +75,14 @@ public class TestDataGeneration implements ApplicationRunner {
   // The rolling start number is counted in 10 minute intervals since epoch
   private static final long TEN_MINUTES_INTERVAL_SECONDS = TimeUnit.MINUTES.toSeconds(10);
 
-  @Autowired
-  public TestDataGeneration(DiagnosisKeyService diagnosisKeyService) {
+  /**
+   * Creates a new TestDataGeneration runner.
+   */
+  TestDataGeneration(DiagnosisKeyService diagnosisKeyService,
+      DistributionServiceConfig distributionServiceConfig) {
     this.diagnosisKeyService = diagnosisKeyService;
+    this.retentionDays = distributionServiceConfig.getRetentionDays();
+    this.config = distributionServiceConfig.getTestData();
   }
 
   /**
@@ -99,15 +100,20 @@ public class TestDataGeneration implements ApplicationRunner {
     logger.debug("Querying diagnosis keys from the database...");
     List<DiagnosisKey> existingDiagnosisKeys = diagnosisKeyService.getDiagnosisKeys();
 
-    // Timestamps in hours since epoch
-    long startTimestamp = getGeneratorStartTimestamp(existingDiagnosisKeys);
-    long endTimestamp = getGeneratorEndTimestamp();
+    // Timestamps in hours since epoch. Test data generation starts one hour after the latest diagnosis key in the
+    // database and ends one hour before the current one.
+    long startTimestamp = getGeneratorStartTimestamp(existingDiagnosisKeys) + 1; // Inclusive
+    long endTimestamp = getGeneratorEndTimestamp(); // Exclusive
 
     // Add the startTimestamp to the seed. Otherwise we would generate the same data every hour.
-    random.setSeed(seed + startTimestamp);
-    PoissonDistribution poisson =
-        new PoissonDistribution(random, exposuresPerHour, POISSON_EPSILON, POISSON_MAX_ITERATIONS);
+    random.setSeed(this.config.getSeed() + startTimestamp);
+    poisson =
+        new PoissonDistribution(random, this.config.getExposuresPerHour(), POISSON_EPSILON, POISSON_MAX_ITERATIONS);
 
+    if (startTimestamp == endTimestamp) {
+      logger.debug("Skipping test data generation, latest diagnosis keys are still up-to-date.");
+      return;
+    }
     logger.debug("Generating diagnosis keys between {} and {}...", startTimestamp, endTimestamp);
     List<DiagnosisKey> newDiagnosisKeys = LongStream.range(startTimestamp, endTimestamp)
         .mapToObj(submissionTimestamp -> IntStream.range(0, poisson.sample())

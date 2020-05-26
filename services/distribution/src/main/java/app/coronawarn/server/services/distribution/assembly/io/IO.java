@@ -29,10 +29,7 @@ import java.io.UncheckedIOException;
  */
 public class IO {
 
-  /**
-   * Private constructor to prevent object instantiation.
-   */
-  private IO(){
+  private IO() {
   }
 
   /**
@@ -62,7 +59,7 @@ public class IO {
     try (FileOutputStream outputFileStream = new FileOutputStream(outputFile)) {
       outputFileStream.write(bytes);
     } catch (IOException e) {
-      throw new UncheckedIOException("Could not write file " + outputFile,e);
+      throw new UncheckedIOException("Could not write file " + outputFile, e);
     }
   }
 }
