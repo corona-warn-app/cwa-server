@@ -37,7 +37,7 @@ import org.junit.jupiter.params.provider.ValueSource;
 class DiagnosisKeyBuilderTest {
 
   private final byte[] expKeyData = "16-bytelongarray".getBytes(Charset.defaultCharset());
-  private final int expRollingStartNumber = 73800;
+  private final int expRollingStartIntervalNumber = 73800;
   private final int expTransmissionRiskLevel = 1;
   private final long expSubmissionTimestamp = 2L;
 
@@ -107,12 +107,10 @@ class DiagnosisKeyBuilderTest {
     assertDiagnosisKeyEquals(actDiagnosisKey, this.expSubmissionTimestamp);
   }
 
-  @Test
-  void rollingStartIntervalNumberDoesNotThrowForValid() {
-    assertThatCode(() -> keyWithRollingStartIntervalNumber(4200)).doesNotThrowAnyException();
-
-    // Timestamp: 05/16/2020 @ 00:00 in hours
-    assertThatCode(() -> keyWithRollingStartIntervalNumber(441552)).doesNotThrowAnyException();
+  @ParameterizedTest
+  @ValueSource(ints = {4200, 441552})
+  void rollingStartIntervalNumberDoesNotThrowForValid(int validRollingStartIntervalNumber) {
+    assertThatCode(() -> keyWithRollingStartIntervalNumber(validRollingStartIntervalNumber)).doesNotThrowAnyException();
   }
 
   @Test

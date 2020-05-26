@@ -24,7 +24,7 @@ import static app.coronawarn.server.services.submission.controller.RequestExecut
 import static app.coronawarn.server.services.submission.controller.RequestExecutor.VALID_KEY_DATA_3;
 import static app.coronawarn.server.services.submission.controller.RequestExecutor.buildOkHeaders;
 import static app.coronawarn.server.services.submission.controller.RequestExecutor.buildTemporaryExposureKey;
-import static app.coronawarn.server.services.submission.controller.RequestExecutor.createRollingStartNumber;
+import static app.coronawarn.server.services.submission.controller.RequestExecutor.createRollingStartIntervalNumber;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
@@ -74,14 +74,14 @@ class PayloadValidationTest {
   private Collection<TemporaryExposureKey> buildPayloadWithTooManyKeys() {
     ArrayList<TemporaryExposureKey> tooMany = new ArrayList<>();
     for (int i = 0; i <= 20; i++) {
-      tooMany.add(buildTemporaryExposureKey(VALID_KEY_DATA_1, createRollingStartNumber(2), 3));
+      tooMany.add(buildTemporaryExposureKey(VALID_KEY_DATA_1, createRollingStartIntervalNumber(2), 3));
     }
     return tooMany;
   }
 
   @Test
   void check400ResponseStatusForDuplicateStartIntervalNumber() {
-    int rollingStartIntervalNumber = createRollingStartNumber(2);
+    int rollingStartIntervalNumber = createRollingStartIntervalNumber(2);
     var keysWithDuplicateStartIntervalNumber = Lists.list(
         buildTemporaryExposureKey(VALID_KEY_DATA_1, rollingStartIntervalNumber, 1),
         buildTemporaryExposureKey(VALID_KEY_DATA_2, rollingStartIntervalNumber, 2));
@@ -93,7 +93,7 @@ class PayloadValidationTest {
 
   @Test
   void check400ResponseStatusForGapsInTimeIntervals() {
-    int rollingStartIntervalNumber1 = createRollingStartNumber(6);
+    int rollingStartIntervalNumber1 = createRollingStartIntervalNumber(6);
     int rollingStartIntervalNumber2 = rollingStartIntervalNumber1 + DiagnosisKey.EXPECTED_ROLLING_PERIOD;
     int rollingStartIntervalNumber3 = rollingStartIntervalNumber2 + 2 * DiagnosisKey.EXPECTED_ROLLING_PERIOD;
     var keysWithDuplicateStartIntervalNumber = Lists.list(
@@ -108,7 +108,7 @@ class PayloadValidationTest {
 
   @Test
   void check400ResponseStatusForOverlappingTimeIntervals() {
-    int rollingStartIntervalNumber1 = createRollingStartNumber(6);
+    int rollingStartIntervalNumber1 = createRollingStartIntervalNumber(6);
     int rollingStartIntervalNumber2 = rollingStartIntervalNumber1 + (DiagnosisKey.EXPECTED_ROLLING_PERIOD / 2);
     var keysWithDuplicateStartIntervalNumber = Lists.list(
         buildTemporaryExposureKey(VALID_KEY_DATA_1, rollingStartIntervalNumber1, 1),
@@ -121,7 +121,7 @@ class PayloadValidationTest {
 
   @Test
   void check200ResponseStatusForValidSubmissionPayload() {
-    int rollingStartIntervalNumber1 = createRollingStartNumber(6);
+    int rollingStartIntervalNumber1 = createRollingStartIntervalNumber(6);
     int rollingStartIntervalNumber2 = rollingStartIntervalNumber1 + DiagnosisKey.EXPECTED_ROLLING_PERIOD;
     int rollingStartIntervalNumber3 = rollingStartIntervalNumber2 + DiagnosisKey.EXPECTED_ROLLING_PERIOD;
     var keysWithDuplicateStartIntervalNumber = Lists.list(

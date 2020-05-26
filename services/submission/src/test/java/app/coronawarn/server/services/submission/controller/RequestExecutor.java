@@ -83,14 +83,14 @@ public class RequestExecutor {
   }
 
   public static TemporaryExposureKey buildTemporaryExposureKey(
-      String keyData, int rollingStartNumber, int transmissionRiskLevel) {
+      String keyData, int rollingStartIntervalNumber, int transmissionRiskLevel) {
     return TemporaryExposureKey.newBuilder()
         .setKeyData(ByteString.copyFromUtf8(keyData))
-        .setRollingStartIntervalNumber(rollingStartNumber)
+        .setRollingStartIntervalNumber(rollingStartIntervalNumber)
         .setTransmissionRiskLevel(transmissionRiskLevel).build();
   }
 
-  public static int createRollingStartNumber(Integer daysAgo) {
+  public static int createRollingStartIntervalNumber(Integer daysAgo) {
     return Math.toIntExact(LocalDate
         .ofInstant(Instant.now(), UTC)
         .minusDays(daysAgo).atStartOfDay()

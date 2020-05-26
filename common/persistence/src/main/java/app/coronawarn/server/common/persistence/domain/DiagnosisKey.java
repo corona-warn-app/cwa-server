@@ -145,7 +145,7 @@ public class DiagnosisKey {
    * Checks if this diagnosis key falls into the period between now, and the retention threshold.
    *
    * @param daysToRetain the number of days before a key is outdated
-   * @return true, if the rolling start number is in the time span between now, and the given days to retain
+   * @return true, if the rolling start interval number is within the time between now, and the given days to retain
    * @throws IllegalArgumentException if {@code daysToRetain} is negative.
    */
   public boolean isYoungerThanRetentionThreshold(int daysToRetain) {
