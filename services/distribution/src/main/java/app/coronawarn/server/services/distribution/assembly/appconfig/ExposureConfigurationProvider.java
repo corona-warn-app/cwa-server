@@ -33,7 +33,7 @@ public class ExposureConfigurationProvider {
   /**
    * The location of the exposure configuration master file.
    */
-  public static final String MASTER_FILE = "exposure-config/master.yaml";
+  public static final String MASTER_FILE = "master-config/exposure-config.yaml";
 
   /**
    * Fetches the master configuration as a RiskScoreParameters instance.

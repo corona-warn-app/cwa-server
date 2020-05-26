@@ -36,7 +36,7 @@ import java.util.Arrays;
  * <br>
  * Weights must be in the range of 0.001 to 100.<br> Scores must be in the range of 1 to 8.<br>
  */
-public class ExposureConfigurationValidator extends AppConfigurationValidator {
+public class ExposureConfigurationValidator extends ConfigurationValidator {
 
   private final RiskScoreParameters config;
 
@@ -82,7 +82,7 @@ public class ExposureConfigurationValidator extends AppConfigurationValidator {
     try {
       RiskLevel level = (RiskLevel) propertyDescriptor.getReadMethod().invoke(object);
 
-      if (level == RiskLevel.UNRECOGNIZED || level == RiskLevel.RISK_LEVEL_UNSPECIFIED) {
+      if (level == RiskLevel.UNRECOGNIZED) {
         this.errors.add(new RiskLevelValidationError(parameter, propertyDescriptor.getName()));
       }
     } catch (IllegalAccessException | InvocationTargetException e) {

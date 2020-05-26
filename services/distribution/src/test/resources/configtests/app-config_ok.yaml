@@ -1,0 +1,3 @@
+min-risk-score: 100
+risk-score-classes: !include risk-score-class_ok.yaml
+exposure-config: !include exposure-config_ok.yaml

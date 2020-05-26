@@ -36,8 +36,7 @@ import org.springframework.data.domain.Sort.Direction;
 class DiagnosisKeyServiceMockedRepositoryTest {
 
   static final byte[] expKeyData = "16-bytelongarray".getBytes(Charset.defaultCharset());
-  static final long expRollingStartNumber = 73800;
-  static final long expRollingPeriod = 144;
+  static final int expRollingStartIntervalNumber = 73800;
   static final int expTransmissionRiskLevel = 1;
 
   @Autowired
@@ -81,13 +80,13 @@ class DiagnosisKeyServiceMockedRepositoryTest {
   }
 
   private DiagnosisKey validKey(long expSubmissionTimestamp) {
-    return new DiagnosisKey(expKeyData, expRollingStartNumber,
-        expRollingPeriod, expTransmissionRiskLevel, expSubmissionTimestamp);
+    return new DiagnosisKey(expKeyData, expRollingStartIntervalNumber,
+        DiagnosisKey.EXPECTED_ROLLING_PERIOD, expTransmissionRiskLevel, expSubmissionTimestamp);
   }
 
   private DiagnosisKey invalidKey(long expSubmissionTimestamp) {
     byte[] expKeyData = "17--bytelongarray".getBytes(Charset.defaultCharset());
-    return new DiagnosisKey(expKeyData, expRollingStartNumber,
-        expRollingPeriod, expTransmissionRiskLevel, expSubmissionTimestamp);
+    return new DiagnosisKey(expKeyData, expRollingStartIntervalNumber,
+        DiagnosisKey.EXPECTED_ROLLING_PERIOD, expTransmissionRiskLevel, expSubmissionTimestamp);
   }
 }

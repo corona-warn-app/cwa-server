@@ -194,7 +194,7 @@ public class DistributionServiceConfig {
     private String hourPath;
     private String diagnosisKeysPath;
     private String parametersPath;
-    private String parametersExposureConfigurationFileName;
+    private String appConfigFileName;
 
     public String getVersionPath() {
       return versionPath;
@@ -260,23 +260,13 @@ public class DistributionServiceConfig {
       this.parametersPath = parametersPath;
     }
 
-    public String getParametersExposureConfigurationFileName() {
-      return parametersExposureConfigurationFileName;
+    public String getAppConfigFileName() {
+      return appConfigFileName;
     }
 
-    public void setParametersExposureConfigurationFileName(String parametersExposureConfigurationFileName) {
-      this.parametersExposureConfigurationFileName = parametersExposureConfigurationFileName;
+    public void setAppConfigFileName(String appConfigFileName) {
+      this.appConfigFileName = appConfigFileName;
     }
-
-    public String getParametersRiskScoreClassificationFileName() {
-      return parametersRiskScoreClassificationFileName;
-    }
-
-    public void setParametersRiskScoreClassificationFileName(String parametersRiskScoreClassificationFileName) {
-      this.parametersRiskScoreClassificationFileName = parametersRiskScoreClassificationFileName;
-    }
-
-    private String parametersRiskScoreClassificationFileName;
   }
 
   public static class Signature {

@@ -33,12 +33,7 @@ import java.net.URL;
 /**
  * The RiskScoreClassificationValidator validates the values of an associated {@link RiskScoreClassification} instance.
  */
-public class RiskScoreClassificationValidator extends AppConfigurationValidator {
-
-  /**
-   * This defines the number of possible values (0 ... RISK_SCORE_VALUE_RANGE - 1) for the total risk score.
-   */
-  public static final int RISK_SCORE_VALUE_RANGE = 256;
+public class RiskScoreClassificationValidator extends ConfigurationValidator {
 
   private final RiskScoreClassification riskScoreClassification;
 
@@ -86,7 +81,7 @@ public class RiskScoreClassificationValidator extends AppConfigurationValidator 
   }
 
   private void validateRiskScoreValueBounds(int value) {
-    if (value < 0 || value > RISK_SCORE_VALUE_RANGE - 1) {
+    if (!RiskScoreValidator.isInBounds(value)) {
       errors.add(new RiskScoreClassificationValidationError("minRiskLevel/maxRiskLevel", value, VALUE_OUT_OF_BOUNDS));
     }
   }
@@ -106,7 +101,7 @@ public class RiskScoreClassificationValidator extends AppConfigurationValidator 
         .mapToInt(riskScoreClass -> (riskScoreClass.getMax() - riskScoreClass.getMin() + 1))
         .sum();
 
-    if (partitionSum != RISK_SCORE_VALUE_RANGE) {
+    if (partitionSum != ParameterSpec.RISK_SCORE_MAX + 1) {
       errors.add(new RiskScoreClassificationValidationError("covered value range", partitionSum, INVALID_PARTITIONING));
     }
   }

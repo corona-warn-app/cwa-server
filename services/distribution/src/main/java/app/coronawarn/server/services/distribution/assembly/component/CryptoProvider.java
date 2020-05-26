@@ -24,6 +24,7 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.UncheckedIOException;
 import java.security.KeyPair;
 import java.security.PrivateKey;
 import java.security.Security;
@@ -34,9 +35,6 @@ import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.bouncycastle.openssl.PEMKeyPair;
 import org.bouncycastle.openssl.PEMParser;
 import org.bouncycastle.openssl.jcajce.JcaPEMKeyConverter;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.ResourceLoader;
 import org.springframework.stereotype.Component;
@@ -47,8 +45,6 @@ import org.springframework.stereotype.Component;
  */
 @Component
 public class CryptoProvider {
-
-  private static final Logger logger = LoggerFactory.getLogger(CryptoProvider.class);
 
   private final String privateKeyPath;
 
@@ -62,8 +58,7 @@ public class CryptoProvider {
   /**
    * Creates a CryptoProvider, using {@link BouncyCastleProvider}.
    */
-  @Autowired
-  public CryptoProvider(ResourceLoader resourceLoader, DistributionServiceConfig distributionServiceConfig) {
+  CryptoProvider(ResourceLoader resourceLoader, DistributionServiceConfig distributionServiceConfig) {
     this.resourceLoader = resourceLoader;
     this.privateKeyPath = distributionServiceConfig.getPaths().getPrivateKey();
     this.certificatePath = distributionServiceConfig.getPaths().getCertificate();
@@ -98,8 +93,7 @@ public class CryptoProvider {
       try (InputStream privateKeyStream = privateKeyResource.getInputStream()) {
         privateKey = getPrivateKeyFromStream(privateKeyStream);
       } catch (IOException e) {
-        logger.error("Failed to load private key from {}", privateKeyPath, e);
-        throw new RuntimeException(e);
+        throw new UncheckedIOException("Failed to load private key from " + privateKeyPath, e);
       }
     }
     return privateKey;
@@ -114,8 +108,7 @@ public class CryptoProvider {
       try (InputStream certStream = certResource.getInputStream()) {
         this.certificate = getCertificateFromStream(certStream);
       } catch (IOException | CertificateException e) {
-        logger.error("Failed to load certificate from {}", certificatePath, e);
-        throw new RuntimeException(e);
+        throw new RuntimeException("Failed to load certificate from " + certificatePath, e);
       }
     }
     return certificate;
