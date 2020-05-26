@@ -32,9 +32,7 @@ import java.util.stream.Collectors;
  * Methods for conversions of time/date data.
  */
 public class DateTime {
-  /**
-   * Private constructor to avoid explicit creation of object outside of provided methods.
-   */
+
   private DateTime(){
   }
 
