@@ -39,16 +39,20 @@ import java.util.stream.Collectors;
  */
 public class CountryIndexingDecorator<T> extends IndexDirectoryDecorator<T, WritableOnDisk> {
 
-  /** Separate each entry in the index file with new line. */
+  /**
+   * Separate each entry in the index file with new line.
+   */
   private static final String NEW_LINE_SEPARATOR = "\r\n";
 
-  /** the name of this index file. */
+  /**
+   * the name of this index file.
+   */
   private final String fileName;
 
   /**
    * Creates a new decorator instance for the given directory.
    *
-   * @param directory The target country directory.
+   * @param directory                 The target country directory.
    * @param distributionServiceConfig The config.
    */
   public CountryIndexingDecorator(IndexDirectory<T, WritableOnDisk> directory,
@@ -81,12 +85,13 @@ public class CountryIndexingDecorator<T> extends IndexDirectoryDecorator<T, Writ
         .sorted()
         .collect(Collectors.joining(NEW_LINE_SEPARATOR));
 
-    var indexFile =  new FileOnDisk(fileName, content.getBytes(StandardCharsets.UTF_8));
+    var indexFile = new FileOnDisk(fileName, content.getBytes(StandardCharsets.UTF_8));
     directory.addWritable(indexFile);
   }
 
   private static Set<String> getExposureKeyExportsIn(Directory<WritableOnDisk> rootDirectory) {
-    Collection<Directory<WritableOnDisk>> directories = rootDirectory.getWritables().stream()
+    Collection<Directory<WritableOnDisk>> directories = rootDirectory.getWritables()
+        .stream()
         .filter(Writable::isDirectory)
         .filter(directory -> !(directory instanceof Archive))
         .map(directory -> (Directory<WritableOnDisk>) directory)
