@@ -22,7 +22,7 @@ package app.coronawarn.server.common.persistence.domain;
 import static java.time.ZoneOffset.UTC;
 
 import app.coronawarn.server.common.persistence.domain.DiagnosisKeyBuilders.Builder;
-import app.coronawarn.server.common.persistence.domain.validation.ValidRollingStartNumber;
+import app.coronawarn.server.common.persistence.domain.validation.ValidRollingStartIntervalNumber;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.util.Arrays;
@@ -55,11 +55,11 @@ public class DiagnosisKey {
   @Size(min = 16, max = 16, message = "Key data must be a byte array of length 16.")
   private byte[] keyData;
 
-  @ValidRollingStartNumber
-  private long rollingStartNumber;
+  @ValidRollingStartIntervalNumber
+  private int rollingStartIntervalNumber;
 
-  @Min(value = 1L, message = "Rolling period must be greater than 0.")
-  private long rollingPeriod;
+  @Min(value = 1, message = "Rolling period must be greater than 0.")
+  private int rollingPeriod;
 
   @Range(min = 0, max = 8, message = "Risk level must be between 0 and 8.")
   private int transmissionRiskLevel;
@@ -72,10 +72,10 @@ public class DiagnosisKey {
   /**
    * Should be called by builders.
    */
-  DiagnosisKey(byte[] keyData, long rollingStartNumber, long rollingPeriod,
+  DiagnosisKey(byte[] keyData, int rollingStartIntervalNumber, int rollingPeriod,
       int transmissionRiskLevel, long submissionTimestamp) {
     this.keyData = keyData;
-    this.rollingStartNumber = rollingStartNumber;
+    this.rollingStartIntervalNumber = rollingStartIntervalNumber;
     this.rollingPeriod = rollingPeriod;
     this.transmissionRiskLevel = transmissionRiskLevel;
     this.submissionTimestamp = submissionTimestamp;
@@ -105,15 +105,15 @@ public class DiagnosisKey {
   /**
    * Returns a number describing when a key starts. It is equal to startTimeOfKeySinceEpochInSecs / (60 * 10).
    */
-  public long getRollingStartNumber() {
-    return rollingStartNumber;
+  public int getRollingStartIntervalNumber() {
+    return rollingStartIntervalNumber;
   }
 
   /**
    * Returns a number describing how long a key is valid. It is expressed in increments of 10 minutes (e.g. 144 for 24
    * hours).
    */
-  public long getRollingPeriod() {
+  public int getRollingPeriod() {
     return rollingPeriod;
   }
 
@@ -147,7 +147,7 @@ public class DiagnosisKey {
         .minusDays(daysToRetain)
         .toEpochSecond(UTC) / (60 * 10);
 
-    return this.rollingStartNumber >= threshold;
+    return this.rollingStartIntervalNumber >= threshold;
   }
 
   /**
@@ -176,7 +176,7 @@ public class DiagnosisKey {
       return false;
     }
     DiagnosisKey that = (DiagnosisKey) o;
-    return rollingStartNumber == that.rollingStartNumber
+    return rollingStartIntervalNumber == that.rollingStartIntervalNumber
         && rollingPeriod == that.rollingPeriod
         && transmissionRiskLevel == that.transmissionRiskLevel
         && submissionTimestamp == that.submissionTimestamp
@@ -187,7 +187,7 @@ public class DiagnosisKey {
   @Override
   public int hashCode() {
     int result = Objects
-        .hash(id, rollingStartNumber, rollingPeriod, transmissionRiskLevel, submissionTimestamp);
+        .hash(id, rollingStartIntervalNumber, rollingPeriod, transmissionRiskLevel, submissionTimestamp);
     result = 31 * result + Arrays.hashCode(keyData);
     return result;
   }

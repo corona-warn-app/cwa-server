@@ -104,8 +104,8 @@ public class TemporaryExposureKeyExportFile extends FileOnDisk {
         .setKeyData(ByteString.copyFrom(diagnosisKey.getKeyData()))
         .setTransmissionRiskLevel(diagnosisKey.getTransmissionRiskLevel())
         // TODO cwa-server/#233 Rolling start number and period should be int32
-        .setRollingStartIntervalNumber(Math.toIntExact(diagnosisKey.getRollingStartNumber()))
-        .setRollingPeriod(Math.toIntExact(diagnosisKey.getRollingPeriod()))
+        .setRollingStartIntervalNumber(diagnosisKey.getRollingStartIntervalNumber())
+        .setRollingPeriod(diagnosisKey.getRollingPeriod())
         .build())
         .collect(Collectors.toSet());
   }
