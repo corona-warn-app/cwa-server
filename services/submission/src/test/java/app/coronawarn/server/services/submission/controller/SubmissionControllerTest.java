@@ -44,7 +44,7 @@ import static org.springframework.http.HttpStatus.OK;
 import app.coronawarn.server.common.persistence.domain.DiagnosisKey;
 import app.coronawarn.server.common.persistence.service.DiagnosisKeyService;
 import app.coronawarn.server.common.protocols.external.exposurenotification.TemporaryExposureKey;
-import app.coronawarn.server.services.submission.validation.SubmissionPayloadValidator;
+import app.coronawarn.server.services.submission.config.SubmissionServiceConfig;
 import app.coronawarn.server.services.submission.verification.TanVerifier;
 import com.google.protobuf.ByteString;
 import java.net.URI;
@@ -82,19 +82,18 @@ class SubmissionControllerTest {
   @MockBean
   private TanVerifier tanVerifier;
 
-  @MockBean
-  private SubmissionPayloadValidator submissionPayloadValidator;
-
   @Autowired
   private TestRestTemplate testRestTemplate;
 
   @Autowired
   private RequestExecutor executor;
 
+  @Autowired
+  private SubmissionServiceConfig config;
+
   @BeforeEach
   public void setUpMocks() {
     when(tanVerifier.verifyTan(anyString())).thenReturn(true);
-    when(submissionPayloadValidator.supports(any())).thenReturn(true);
   }
 
   @Test
@@ -209,23 +208,26 @@ class SubmissionControllerTest {
     return Collections.singleton(buildTemporaryExposureKey(VALID_KEY_DATA_1, 1, 3));
   }
 
-  private static Collection<TemporaryExposureKey> buildPayloadWithMultipleKeys() {
+  private Collection<TemporaryExposureKey> buildPayloadWithMultipleKeys() {
+    int rollingStartIntervalNumber1 = createRollingStartIntervalNumber(config.getRetentionDays() - 1);
+    int rollingStartIntervalNumber2 = rollingStartIntervalNumber1 + DiagnosisKey.EXPECTED_ROLLING_PERIOD;
+    int rollingStartIntervalNumber3 = rollingStartIntervalNumber2 + DiagnosisKey.EXPECTED_ROLLING_PERIOD;
     return Stream.of(
-        buildTemporaryExposureKey(VALID_KEY_DATA_1, createRollingStartIntervalNumber(2), 3),
-        buildTemporaryExposureKey(VALID_KEY_DATA_2, createRollingStartIntervalNumber(4), 6),
-        buildTemporaryExposureKey(VALID_KEY_DATA_3, createRollingStartIntervalNumber(10), 8))
+        buildTemporaryExposureKey(VALID_KEY_DATA_1, rollingStartIntervalNumber1, 3),
+        buildTemporaryExposureKey(VALID_KEY_DATA_2, rollingStartIntervalNumber3, 6),
+        buildTemporaryExposureKey(VALID_KEY_DATA_3, rollingStartIntervalNumber2, 8))
         .collect(Collectors.toCollection(ArrayList::new));
   }
 
-  private static Collection<TemporaryExposureKey> buildPayloadWithSingleOutdatedKey() {
+  private Collection<TemporaryExposureKey> buildPayloadWithSingleOutdatedKey() {
     TemporaryExposureKey outdatedKey = createOutdatedKey();
     return Stream.of(outdatedKey).collect(Collectors.toCollection(ArrayList::new));
   }
 
-  private static TemporaryExposureKey createOutdatedKey() {
+  private TemporaryExposureKey createOutdatedKey() {
     return TemporaryExposureKey.newBuilder()
         .setKeyData(ByteString.copyFromUtf8(VALID_KEY_DATA_2))
-        .setRollingStartIntervalNumber(createRollingStartIntervalNumber(99))
+        .setRollingStartIntervalNumber(createRollingStartIntervalNumber(config.getRetentionDays()))
         .setRollingPeriod(DiagnosisKey.EXPECTED_ROLLING_PERIOD)
         .setTransmissionRiskLevel(5).build();
   }

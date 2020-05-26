@@ -24,7 +24,7 @@ import app.coronawarn.server.common.persistence.service.DiagnosisKeyService;
 import app.coronawarn.server.common.protocols.external.exposurenotification.TemporaryExposureKey;
 import app.coronawarn.server.common.protocols.internal.SubmissionPayload;
 import app.coronawarn.server.services.submission.config.SubmissionServiceConfig;
-import app.coronawarn.server.services.submission.validation.SubmissionPayloadValidator;
+import app.coronawarn.server.services.submission.validation.ValidSubmissionPayload;
 import app.coronawarn.server.services.submission.verification.TanVerifier;
 import java.util.ArrayList;
 import java.util.List;
@@ -32,7 +32,6 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ForkJoinPool;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
-import javax.validation.Valid;
 import org.apache.commons.math3.distribution.PoissonDistribution;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -40,8 +39,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.StopWatch;
-import org.springframework.validation.DataBinder;
-import org.springframework.web.bind.annotation.InitBinder;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
@@ -51,6 +49,7 @@ import org.springframework.web.context.request.async.DeferredResult;
 
 @RestController
 @RequestMapping("/version/v1")
+@Validated
 public class SubmissionController {
 
   private static final Logger logger = LoggerFactory.getLogger(SubmissionController.class);
@@ -65,26 +64,16 @@ public class SubmissionController {
   private final TanVerifier tanVerifier;
   private final Double fakeDelayMovingAverageSamples;
   private final Integer retentionDays;
-  private final SubmissionPayloadValidator submissionPayloadValidator;
   private Double fakeDelay;
 
   @Autowired
   SubmissionController(DiagnosisKeyService diagnosisKeyService, TanVerifier tanVerifier,
-      SubmissionServiceConfig submissionServiceConfig, SubmissionPayloadValidator submissionPayloadValidator) {
+      SubmissionServiceConfig submissionServiceConfig) {
     this.diagnosisKeyService = diagnosisKeyService;
     this.tanVerifier = tanVerifier;
-    this.submissionPayloadValidator = submissionPayloadValidator;
     fakeDelay = submissionServiceConfig.getInitialFakeDelayMilliseconds();
     fakeDelayMovingAverageSamples = submissionServiceConfig.getFakeDelayMovingAverageSamples();
     retentionDays = submissionServiceConfig.getRetentionDays();
-  }
-
-  /**
-   * Registers a {@link SubmissionPayloadValidator} for request body validation.
-   */
-  @InitBinder
-  private void initBinder(DataBinder binder) {
-    binder.addValidators(submissionPayloadValidator);
   }
 
   /**
@@ -97,7 +86,7 @@ public class SubmissionController {
    */
   @PostMapping(SUBMISSION_ROUTE)
   public DeferredResult<ResponseEntity<Void>> submitDiagnosisKey(
-      @Valid @RequestBody SubmissionPayload exposureKeys,
+      @ValidSubmissionPayload @RequestBody SubmissionPayload exposureKeys,
       @RequestHeader("cwa-fake") Integer fake,
       @RequestHeader("cwa-authorization") String tan) {
     if (fake != 0) {

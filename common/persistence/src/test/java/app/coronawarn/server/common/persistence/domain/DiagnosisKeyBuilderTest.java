@@ -118,7 +118,7 @@ class DiagnosisKeyBuilderTest {
     assertThat(catchThrowable(() -> keyWithRollingStartIntervalNumber(Integer.MAX_VALUE)))
         .isInstanceOf(InvalidDiagnosisKeyException.class)
         .hasMessage(
-            "[Rolling start number must be greater 0 and cannot be in the future. Invalid Value: "
+            "[Rolling start interval number must be greater 0 and cannot be in the future. Invalid Value: "
                 + Integer.MAX_VALUE + "]");
 
     long tomorrow = LocalDate
@@ -130,7 +130,7 @@ class DiagnosisKeyBuilderTest {
         .isInstanceOf(InvalidDiagnosisKeyException.class)
         .hasMessage(
             String.format(
-                "[Rolling start number must be greater 0 and cannot be in the future. Invalid Value: %s]",
+                "[Rolling start interval number must be greater 0 and cannot be in the future. Invalid Value: %s]",
                 tomorrow));
   }
 

@@ -163,7 +163,7 @@ public class DiagnosisKey {
    *
    * <p><ul>
    * <li>Risk level must be between 0 and 8
-   * <li>Rolling start number must be greater than 0
+   * <li>Rolling start interval number must be greater than 0
    * <li>Rolling start number cannot be in the future
    * <li>Rolling period must be positive number
    * <li>Key data must be byte array of length 16
