@@ -70,8 +70,7 @@ public class TanVerifier {
     String trimmedTan = tan.trim();
 
     if (!checkTanSyntax(trimmedTan)) {
-      int minTanLength = Math.min(trimmedTan.length(), 10);
-      logger.debug("TAN Syntax check failed for TAN: {}", trimmedTan.substring(0, minTanLength));
+      logger.debug("TAN Syntax check failed for TAN: {}", trimmedTan);
       return false;
     }
 
