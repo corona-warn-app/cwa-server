@@ -22,7 +22,7 @@ package app.coronawarn.server.common.persistence.domain;
 import static app.coronawarn.server.common.persistence.domain.DiagnosisKeyBuilders.Builder;
 import static app.coronawarn.server.common.persistence.domain.DiagnosisKeyBuilders.FinalBuilder;
 import static app.coronawarn.server.common.persistence.domain.DiagnosisKeyBuilders.RollingPeriodBuilder;
-import static app.coronawarn.server.common.persistence.domain.DiagnosisKeyBuilders.RollingStartNumberBuilder;
+import static app.coronawarn.server.common.persistence.domain.DiagnosisKeyBuilders.RollingStartIntervalNumberBuilder;
 import static app.coronawarn.server.common.persistence.domain.DiagnosisKeyBuilders.TransmissionRiskLevelBuilder;
 
 import app.coronawarn.server.common.persistence.exception.InvalidDiagnosisKeyException;
@@ -39,12 +39,8 @@ import org.slf4j.LoggerFactory;
  * DiagnosisKey} can then be build by either providing the required member values or by passing the
  * respective protocol buffer object.
  */
-public class DiagnosisKeyBuilder
-    implements Builder,
-        RollingStartNumberBuilder,
-        RollingPeriodBuilder,
-        TransmissionRiskLevelBuilder,
-        FinalBuilder {
+public class DiagnosisKeyBuilder implements Builder, RollingStartIntervalNumberBuilder,
+    RollingPeriodBuilder, TransmissionRiskLevelBuilder, FinalBuilder {
 
   private static final Logger logger = LoggerFactory.getLogger(DiagnosisKeyBuilder.class);
 
@@ -59,7 +55,7 @@ public class DiagnosisKeyBuilder
   }
 
   @Override
-  public RollingStartNumberBuilder withKeyData(byte[] keyData) {
+  public RollingStartIntervalNumberBuilder withKeyData(byte[] keyData) {
     this.keyData = keyData;
     return this;
   }

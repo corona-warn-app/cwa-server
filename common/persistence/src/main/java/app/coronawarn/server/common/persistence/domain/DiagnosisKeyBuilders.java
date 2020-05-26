@@ -35,7 +35,7 @@ interface DiagnosisKeyBuilders {
      * @param keyData generated diagnosis key.
      * @return this Builder instance.
      */
-    RollingStartNumberBuilder withKeyData(byte[] keyData);
+    RollingStartIntervalNumberBuilder withKeyData(byte[] keyData);
 
     /**
      * Adds the data contained in the specified protocol buffers key object to this builder.
@@ -46,7 +46,7 @@ interface DiagnosisKeyBuilders {
     FinalBuilder fromProtoBuf(TemporaryExposureKey protoBufObject);
   }
 
-  interface RollingStartNumberBuilder {
+  interface RollingStartIntervalNumberBuilder {
 
     /**
      * Adds the specified rolling start number to this builder.
