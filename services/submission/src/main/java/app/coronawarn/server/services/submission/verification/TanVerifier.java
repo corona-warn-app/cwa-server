@@ -108,7 +108,7 @@ public class TanVerifier {
       return response.getStatusCode().is2xxSuccessful();
     } catch (HttpClientErrorException.NotFound e) {
       // The validation service returns http status 404 if the TAN is invalid
-      logger.debug("TAN validation failed for TAN: {}", tan);
+      logger.warn("TAN was rejected by Verification Server");
       return false;
     }
   }
