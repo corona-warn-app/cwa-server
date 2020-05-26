@@ -71,7 +71,7 @@ public class TestDataGeneration implements ApplicationRunner {
   // The submission timestamp is counted in 1 hour intervals since epoch
   private static final long ONE_HOUR_INTERVAL_SECONDS = TimeUnit.HOURS.toSeconds(1);
 
-  // The rolling start number is counted in 10 minute intervals since epoch
+  // The rolling start interval number is counted in 10 minute intervals since epoch
   private static final long TEN_MINUTES_INTERVAL_SECONDS = TimeUnit.MINUTES.toSeconds(10);
 
   /**
@@ -166,7 +166,6 @@ public class TestDataGeneration implements ApplicationRunner {
     return DiagnosisKey.builder()
         .withKeyData(generateDiagnosisKeyBytes())
         .withRollingStartIntervalNumber(generateRollingStartIntervalNumber(submissionTimestamp))
-        .withRollingPeriod(generateRollingPeriod())
         .withTransmissionRiskLevel(generateTransmissionRiskLevel())
         .withSubmissionTimestamp(submissionTimestamp)
         .build();
@@ -182,8 +181,8 @@ public class TestDataGeneration implements ApplicationRunner {
   }
 
   /**
-   * Returns a random rolling start number (timestamp since when a key was active, represented by a 10 minute interval
-   * counter.) between a specific submission timestamp and the beginning of the retention period.
+   * Returns a random rolling start interval number (timestamp since when a key was active, represented by a 10 minute
+   * interval counter) between a specific submission timestamp and the beginning of the retention period.
    */
   private int generateRollingStartIntervalNumber(long submissionTimestamp) {
     long maxRollingStartIntervalNumber =
@@ -192,13 +191,6 @@ public class TestDataGeneration implements ApplicationRunner {
         maxRollingStartIntervalNumber
             - TimeUnit.DAYS.toSeconds(retentionDays) / TEN_MINUTES_INTERVAL_SECONDS;
     return Math.toIntExact(getRandomBetween(minRollingStartIntervalNumber, maxRollingStartIntervalNumber));
-  }
-
-  /**
-   * Returns a rolling period (number of 10 minute intervals that a key was active for) of 1 day.
-   */
-  private int generateRollingPeriod() {
-    return Math.toIntExact(TimeUnit.DAYS.toSeconds(1) / TEN_MINUTES_INTERVAL_SECONDS);
   }
 
   /**
