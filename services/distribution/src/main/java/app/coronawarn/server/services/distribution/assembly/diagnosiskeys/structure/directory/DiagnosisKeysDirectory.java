@@ -70,7 +70,6 @@ public class DiagnosisKeysDirectory extends DirectoryOnDisk {
   private IndexDirectory<String, WritableOnDisk> decorateCountryDirectory(
       IndexDirectoryOnDisk<String> countryDirectory) {
     return new CountryIndexingDecorator<>(
-        new IndexingDecoratorOnDisk<>(countryDirectory, distributionServiceConfig.getOutputFileName()),
-        distributionServiceConfig.getOutputFileName());
+        new IndexingDecoratorOnDisk<>(countryDirectory, distributionServiceConfig.getOutputFileName()));
   }
 }

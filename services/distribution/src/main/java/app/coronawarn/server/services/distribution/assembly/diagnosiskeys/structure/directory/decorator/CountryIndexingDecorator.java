@@ -5,7 +5,7 @@ import app.coronawarn.server.services.distribution.assembly.structure.WritableOn
 import app.coronawarn.server.services.distribution.assembly.structure.directory.Directory;
 import app.coronawarn.server.services.distribution.assembly.structure.directory.DirectoryOnDisk;
 import app.coronawarn.server.services.distribution.assembly.structure.directory.IndexDirectory;
-import app.coronawarn.server.services.distribution.assembly.structure.directory.decorator.indexing.IndexingDecoratorOnDisk;
+import app.coronawarn.server.services.distribution.assembly.structure.directory.decorator.IndexDirectoryDecorator;
 import app.coronawarn.server.services.distribution.assembly.structure.file.FileOnDisk;
 import app.coronawarn.server.services.distribution.assembly.structure.util.ImmutableStack;
 import java.util.Collection;
@@ -13,23 +13,36 @@ import java.util.Set;
 import java.util.stream.Collectors;
 import org.json.simple.JSONArray;
 
-public class CountryIndexingDecorator<T> extends IndexingDecoratorOnDisk<T> {
+public class CountryIndexingDecorator<T> extends IndexDirectoryDecorator<T, WritableOnDisk> {
 
-  public CountryIndexingDecorator(IndexDirectory<T, WritableOnDisk> directory, String indexFileName) {
-    super(directory, indexFileName);
+
+  public CountryIndexingDecorator(IndexDirectory<T, WritableOnDisk> directory) {
+    super(directory);
   }
 
   @Override
-  public FileOnDisk getIndexFile(String indexFileName, ImmutableStack<Object> indices) {
+  public void prepare(ImmutableStack<Object> indices) {
 
-    Collection<String> paths = this.getWritablesInDirectory(this).stream()
+    Collection<DirectoryOnDisk> directories = this.getWritables().stream()
+        .filter(Writable::isDirectory)
+        .map(directory -> (DirectoryOnDisk) directory)
+        .collect(Collectors.toSet());
+
+    directories.forEach(this::writeIndexFile);
+
+    super.prepare(indices);
+  }
+
+  public void writeIndexFile(DirectoryOnDisk directory) {
+
+    Collection<String> paths = this.getWritablesInDirectory(directory).stream()
         .map(Writable::getName)
         .collect(Collectors.toSet());
 
     JSONArray array = new JSONArray();
     array.addAll(paths);
 
-    return new FileOnDisk(indexFileName, array.toJSONString().getBytes());
+    directory.addWritable(new FileOnDisk("index", array.toJSONString().getBytes()));
   }
 
   private Set<Writable<WritableOnDisk>> getWritablesInDirectory(Directory<WritableOnDisk> rootDirectory) {
