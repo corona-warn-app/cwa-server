@@ -40,7 +40,6 @@ import javax.validation.constraints.Min;
 import javax.validation.constraints.Size;
 import org.hibernate.validator.constraints.Range;
 
-
 /**
  * A key generated for advertising over a window of time.
  */
