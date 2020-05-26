@@ -15,6 +15,9 @@ jobs:
       - restore_cache:
           key: cwa-server-{{ checksum "~/pom-checksum" }}
       - run: mvn --batch-mode dependency:go-offline
+      - run:
+          name: Analyze on SonarCloud
+          command: mvn --batch-mode verify -DskipTests sonar:sonar --fail-never
       - save_cache:
           paths:
             - ~/.m2
@@ -30,9 +33,6 @@ jobs:
           path: ~/test-results
       - store_artifacts:
           path: ~/test-results/junit
-      - run:
-          name: Analyze on SonarCloud
-          command: mvn --batch-mode verify -DskipTests sonar:sonar --fail-never
 
 workflows:
   main:
