@@ -61,5 +61,8 @@ public class FileOnDisk extends WritableOnDisk implements File<WritableOnDisk> {
    */
   @Override
   public void prepare(ImmutableStack<Object> indices) {
+    /*
+    Method override exists here to comply with the implementation rules for the Writable interface.
+     */
   }
 }
