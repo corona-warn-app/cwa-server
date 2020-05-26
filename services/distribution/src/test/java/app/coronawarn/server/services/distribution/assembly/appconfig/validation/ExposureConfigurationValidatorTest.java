@@ -72,8 +72,7 @@ class ExposureConfigurationValidatorTest {
   private static Stream<Arguments> createFailedTests() {
     return Stream.of(
         ScoreTooHigh(),
-        // TODO adjust test when new validation for yaml-Files is implemented (check that no attributes are missing
-        //  in .yaml)
+        // TODO cwa-server/#320 Validate that no attributes are missing in .yaml
         // ScoreNegative(),
         WeightNegative(),
         WeightTooHigh()
