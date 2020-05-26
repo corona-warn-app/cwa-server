@@ -43,7 +43,7 @@ management:
   endpoints:
     web:
       exposure:
-        include: '*'
+        include: 'flyway, health, info, metrics, prometheus'
   metrics:
     export:
       prometheus:
