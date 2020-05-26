@@ -36,8 +36,6 @@ import javax.persistence.Table;
 import javax.validation.ConstraintViolation;
 import javax.validation.Validation;
 import javax.validation.Validator;
-import javax.validation.constraints.Max;
-import javax.validation.constraints.Min;
 import javax.validation.constraints.Size;
 import org.hibernate.validator.constraints.Range;
 
@@ -67,8 +65,8 @@ public class DiagnosisKey {
   @ValidRollingStartIntervalNumber
   private int rollingStartIntervalNumber;
 
-  @Min(value = EXPECTED_ROLLING_PERIOD, message = "Rolling period must be " + EXPECTED_ROLLING_PERIOD + ".")
-  @Max(value = EXPECTED_ROLLING_PERIOD, message = "Rolling period must be " + EXPECTED_ROLLING_PERIOD + ".")
+  @Range(min = EXPECTED_ROLLING_PERIOD, max = EXPECTED_ROLLING_PERIOD,
+      message = "Rolling period must be " + EXPECTED_ROLLING_PERIOD + ".")
   private int rollingPeriod;
 
   @Range(min = 0, max = 8, message = "Risk level must be between 0 and 8.")
