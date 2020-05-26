@@ -99,7 +99,7 @@ message SubmissionPayload {
 
 message Key {
   bytes keyData = 1; // Key of infected user
-  uint32 rollingStartNumber = 2; // Interval number when the key's EKRollingPeriod started.
+  uint32 rollingStartIntervalNumber = 2; // Interval number when the key's EKRollingPeriod started.
   uint32 rollingPeriod = 3; // Number of 10-minute windows between key rolling.
   int32 transmissionRiskLevel = 4; // Risk of transmission associated with the person this key came from.
 }
@@ -107,8 +107,10 @@ message Key {
 
 Additionally, the endpoint requires the following headers to be set:
 
-    CWA-Authorization: TAN <TAN>
-    CWA-Fake: <0 or 1>
+```http
+CWA-Authorization: TAN <TAN>
+CWA-Fake: <0 or 1>
+```
 
 There is currently no official specification for publishing diagnosis keys to the server.
 Google currently uses the following in their reference implementation.

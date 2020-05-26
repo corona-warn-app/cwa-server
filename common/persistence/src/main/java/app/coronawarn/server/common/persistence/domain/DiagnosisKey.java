@@ -22,7 +22,7 @@ package app.coronawarn.server.common.persistence.domain;
 import static java.time.ZoneOffset.UTC;
 
 import app.coronawarn.server.common.persistence.domain.DiagnosisKeyBuilders.Builder;
-import app.coronawarn.server.common.persistence.domain.validation.ValidRollingStartNumber;
+import app.coronawarn.server.common.persistence.domain.validation.ValidRollingStartIntervalNumber;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.util.Arrays;
@@ -36,7 +36,6 @@ import javax.persistence.Table;
 import javax.validation.ConstraintViolation;
 import javax.validation.Validation;
 import javax.validation.Validator;
-import javax.validation.constraints.Min;
 import javax.validation.constraints.Size;
 import org.hibernate.validator.constraints.Range;
 
@@ -46,6 +45,14 @@ import org.hibernate.validator.constraints.Range;
 @Entity
 @Table(name = "diagnosis_key")
 public class DiagnosisKey {
+
+  /**
+   * According to "Setting Up an Exposure Notification Server" by Apple, exposure notification servers are expected to
+   * reject any diagnosis keys that do not have a rolling period of a certain fixed value. See
+   * https://developer.apple.com/documentation/exposurenotification/setting_up_an_exposure_notification_server
+   */
+  public static final int EXPECTED_ROLLING_PERIOD = 144;
+
   private static final Validator VALIDATOR = Validation.buildDefaultValidatorFactory().getValidator();
 
   @Id
@@ -55,11 +62,12 @@ public class DiagnosisKey {
   @Size(min = 16, max = 16, message = "Key data must be a byte array of length 16.")
   private byte[] keyData;
 
-  @ValidRollingStartNumber
-  private long rollingStartNumber;
+  @ValidRollingStartIntervalNumber
+  private int rollingStartIntervalNumber;
 
-  @Min(value = 1L, message = "Rolling period must be greater than 0.")
-  private long rollingPeriod;
+  @Range(min = EXPECTED_ROLLING_PERIOD, max = EXPECTED_ROLLING_PERIOD,
+      message = "Rolling period must be " + EXPECTED_ROLLING_PERIOD + ".")
+  private int rollingPeriod;
 
   @Range(min = 0, max = 8, message = "Risk level must be between 0 and 8.")
   private int transmissionRiskLevel;
@@ -72,10 +80,10 @@ public class DiagnosisKey {
   /**
    * Should be called by builders.
    */
-  DiagnosisKey(byte[] keyData, long rollingStartNumber, long rollingPeriod,
+  DiagnosisKey(byte[] keyData, int rollingStartIntervalNumber, int rollingPeriod,
       int transmissionRiskLevel, long submissionTimestamp) {
     this.keyData = keyData;
-    this.rollingStartNumber = rollingStartNumber;
+    this.rollingStartIntervalNumber = rollingStartIntervalNumber;
     this.rollingPeriod = rollingPeriod;
     this.transmissionRiskLevel = transmissionRiskLevel;
     this.submissionTimestamp = submissionTimestamp;
@@ -105,15 +113,15 @@ public class DiagnosisKey {
   /**
    * Returns a number describing when a key starts. It is equal to startTimeOfKeySinceEpochInSecs / (60 * 10).
    */
-  public long getRollingStartNumber() {
-    return rollingStartNumber;
+  public int getRollingStartIntervalNumber() {
+    return rollingStartIntervalNumber;
   }
 
   /**
    * Returns a number describing how long a key is valid. It is expressed in increments of 10 minutes (e.g. 144 for 24
    * hours).
    */
-  public long getRollingPeriod() {
+  public int getRollingPeriod() {
     return rollingPeriod;
   }
 
@@ -135,7 +143,7 @@ public class DiagnosisKey {
    * Checks if this diagnosis key falls into the period between now, and the retention threshold.
    *
    * @param daysToRetain the number of days before a key is outdated
-   * @return true, if the rolling start number is in the time span between now, and the given days to retain
+   * @return true, if the rolling start interval number is within the time between now, and the given days to retain
    * @throws IllegalArgumentException if {@code daysToRetain} is negative.
    */
   public boolean isYoungerThanRetentionThreshold(int daysToRetain) {
@@ -147,17 +155,7 @@ public class DiagnosisKey {
         .minusDays(daysToRetain)
         .toEpochSecond(UTC) / (60 * 10);
 
-    return this.rollingStartNumber >= threshold;
-  }
-
-  /**
-   * Determines if this key is valid.
-   *
-   * @return true, if valid, else false.
-   */
-  public boolean isValid() {
-    Set<ConstraintViolation<DiagnosisKey>> violations = getConstraintViolations();
-    return violations.isEmpty();
+    return this.rollingStartIntervalNumber >= threshold;
   }
 
   /**
@@ -165,7 +163,7 @@ public class DiagnosisKey {
    *
    * <p><ul>
    * <li>Risk level must be between 0 and 8
-   * <li>Rolling start number must be greater than 0
+   * <li>Rolling start interval number must be greater than 0
    * <li>Rolling start number cannot be in the future
    * <li>Rolling period must be positive number
    * <li>Key data must be byte array of length 16
@@ -173,7 +171,7 @@ public class DiagnosisKey {
    *
    * @return A set of constraint violations of this key.
    */
-  public Set<ConstraintViolation<DiagnosisKey>> getConstraintViolations() {
+  public Set<ConstraintViolation<DiagnosisKey>> validate() {
     return VALIDATOR.validate(this);
   }
 
@@ -186,7 +184,7 @@ public class DiagnosisKey {
       return false;
     }
     DiagnosisKey that = (DiagnosisKey) o;
-    return rollingStartNumber == that.rollingStartNumber
+    return rollingStartIntervalNumber == that.rollingStartIntervalNumber
         && rollingPeriod == that.rollingPeriod
         && transmissionRiskLevel == that.transmissionRiskLevel
         && submissionTimestamp == that.submissionTimestamp
@@ -197,7 +195,7 @@ public class DiagnosisKey {
   @Override
   public int hashCode() {
     int result = Objects
-        .hash(id, rollingStartNumber, rollingPeriod, transmissionRiskLevel, submissionTimestamp);
+        .hash(id, rollingStartIntervalNumber, rollingPeriod, transmissionRiskLevel, submissionTimestamp);
     result = 31 * result + Arrays.hashCode(keyData);
     return result;
   }
