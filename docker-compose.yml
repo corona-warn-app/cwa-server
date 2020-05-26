@@ -8,7 +8,8 @@ services:
       - postgres
     ports:
       - "8000:8080"
-    environment: 
+      - "8005:8081"
+    environment:
       SPRING_PROFILES_ACTIVE: dev
       POSTGRESQL_SERVICE_PORT: '5432'
       POSTGRESQL_SERVICE_HOST: postgres
