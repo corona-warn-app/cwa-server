@@ -59,12 +59,12 @@ public class S3Distribution implements ApplicationRunner {
   /**
    * Creates an S3Distribution object, which will upload and remove files from the S3-compatible storage.
    *
-   * @param outputDirectoryProvider the outputDirectoryProvider.
-   * @param objectStoreAccess  the objectStoreAccess for the S3Distribution.
+   * @param outputDirectoryProvider   the outputDirectoryProvider.
+   * @param objectStoreAccess         the objectStoreAccess for the S3Distribution.
    * @param distributionServiceConfig the distributionServiceConfig, used to retrieve the retention days.
    */
   public S3Distribution(OutputDirectoryProvider outputDirectoryProvider, ObjectStoreAccess objectStoreAccess,
-                        DistributionServiceConfig distributionServiceConfig) {
+      DistributionServiceConfig distributionServiceConfig) {
     this.outputDirectoryProvider = outputDirectoryProvider;
     this.objectStoreAccess = objectStoreAccess;
     this.distributionServiceConfig = distributionServiceConfig;
@@ -90,31 +90,31 @@ public class S3Distribution implements ApplicationRunner {
    */
   public void applyRetentionPolicy(int retentionDays) throws MinioException, GeneralSecurityException, IOException {
     List<S3Object> diagnosisKeysObjects = this.objectStoreAccess.getObjectsWithPrefix("version/v1/"
-            + distributionServiceConfig.getApi().getDiagnosisKeysPath() + "/"
-            + distributionServiceConfig.getApi().getCountryPath() + "/"
-            + distributionServiceConfig.getApi().getCountryGermany() + "/"
-            + distributionServiceConfig.getApi().getDatePath() + "/");
+        + distributionServiceConfig.getApi().getDiagnosisKeysPath() + "/"
+        + distributionServiceConfig.getApi().getCountryPath() + "/"
+        + distributionServiceConfig.getApi().getCountryGermany() + "/"
+        + distributionServiceConfig.getApi().getDatePath() + "/");
     final String regex = ".*([0-9]{4}-[0-9]{2}-[0-9]{2}).*";
     final Pattern pattern = Pattern.compile(regex);
 
     final LocalDate cutOffDate = LocalDate.now(ZoneOffset.UTC).minusDays(retentionDays);
 
     diagnosisKeysObjects.stream()
-            .filter(diagnosisKeysObject -> {
-              Matcher matcher = pattern.matcher(diagnosisKeysObject.getObjectName());
-              return matcher.matches() && LocalDate.parse(matcher.group(1), DateTimeFormatter.ISO_LOCAL_DATE)
-                      .isBefore(cutOffDate);
-            })
-            .map(diagnosisKeysObject -> {
-              try {
-                return objectStoreAccess.deleteObjectsWithPrefix(diagnosisKeysObject.getObjectName());
-              } catch (Exception e) {
-                throw new RuntimeException(e);
-              }
-            })
-            .filter(maybeDeleteErrors -> maybeDeleteErrors.size() > 0)
-            .forEach(deleteErrors -> deleteErrors.forEach(deleteError -> {
-              throw new RuntimeException(deleteError.message());
-            }));
+        .filter(diagnosisKeysObject -> {
+          Matcher matcher = pattern.matcher(diagnosisKeysObject.getObjectName());
+          return matcher.matches() && LocalDate.parse(matcher.group(1), DateTimeFormatter.ISO_LOCAL_DATE)
+              .isBefore(cutOffDate);
+        })
+        .map(diagnosisKeysObject -> {
+          try {
+            return objectStoreAccess.deleteObjectsWithPrefix(diagnosisKeysObject.getObjectName());
+          } catch (Exception e) {
+            throw new RuntimeException(e);
+          }
+        })
+        .filter(maybeDeleteErrors -> maybeDeleteErrors.size() > 0)
+        .forEach(deleteErrors -> deleteErrors.forEach(deleteError -> {
+          throw new RuntimeException(deleteError.message());
+        }));
   }
 }
