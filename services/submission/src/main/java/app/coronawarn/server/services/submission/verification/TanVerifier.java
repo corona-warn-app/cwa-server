@@ -108,8 +108,8 @@ public class TanVerifier {
       ResponseEntity<String> response = restTemplate.postForEntity(verificationServiceUrl, entity, String.class);
       return response.getStatusCode().is2xxSuccessful();
     } catch (HttpClientErrorException.NotFound e) {
-      // The validation service returns http status 404 if the TAN is invalid
-      logger.debug("TAN validation failed for TAN: {}", tan, e);
+      // The verification service returns http status 404 if the TAN is invalid
+      logger.debug("TAN verification failed");
       return false;
     }
   }
