@@ -118,16 +118,17 @@ class SigningDecoratorTest {
     byte[] signatureBytes = signatureList.getSignaturesList().get(0).getSignature().toByteArray();
 
     Resource certResource = resourceLoader.getResource("classpath:keys/certificate.crt");
-    InputStream certStream = certResource.getInputStream();
-    byte[] bytes = certStream.readAllBytes();
-    CertificateFactory certificateFactory = CertificateFactory.getInstance("X.509");
-    InputStream certificateByteStream = new ByteArrayInputStream(bytes);
-    Certificate certificate = certificateFactory.generateCertificate(certificateByteStream);
+    try (InputStream certStream = certResource.getInputStream()) {
+      byte[] bytes = certStream.readAllBytes();
+      CertificateFactory certificateFactory = CertificateFactory.getInstance("X.509");
+      InputStream certificateByteStream = new ByteArrayInputStream(bytes);
+      Certificate certificate = certificateFactory.generateCertificate(certificateByteStream);
 
-    Signature payloadSignature = Signature.getInstance("SHA256withECDSA", "BC");
-    payloadSignature.initVerify(certificate);
-    payloadSignature.update(fileBytes);
-    assertThat(payloadSignature.verify(signatureBytes)).isTrue();
+      Signature payloadSignature = Signature.getInstance("SHA256withECDSA", "BC");
+      payloadSignature.initVerify(certificate);
+      payloadSignature.update(fileBytes);
+      assertThat(payloadSignature.verify(signatureBytes)).isTrue();
+    }
   }
 
   private static class TestSigningDecorator extends SigningDecoratorOnDisk {
