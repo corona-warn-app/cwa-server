@@ -32,18 +32,13 @@ import io.minio.messages.DeleteError;
 import io.minio.messages.Item;
 import java.io.IOException;
 import java.security.GeneralSecurityException;
-import java.time.ZonedDateTime;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
-import io.minio.messages.Retention;
-import io.minio.messages.RetentionMode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
 
 /**
@@ -62,16 +57,11 @@ import org.springframework.stereotype.Component;
 @Component
 public class ObjectStoreAccess {
 
-  @Autowired
   private static final Logger logger = LoggerFactory.getLogger(ObjectStoreAccess.class);
 
   private static final String DEFAULT_REGION = "eu-west-1";
 
   private final boolean isSetPublicReadAclOnPutObject;
-
-  private final DistributionServiceConfig distributionServiceConfig;
-
-  private final Environment env;
 
   private final String bucket;
 
@@ -87,10 +77,8 @@ public class ObjectStoreAccess {
    * @throws MinioException           When there were problems creating the S3 client
    */
   @Autowired
-  public ObjectStoreAccess(DistributionServiceConfig distributionServiceConfig, Environment env)
+  public ObjectStoreAccess(DistributionServiceConfig distributionServiceConfig)
       throws IOException, GeneralSecurityException, MinioException {
-    this.env = env;
-    this.distributionServiceConfig = distributionServiceConfig;
     this.client = createClient(distributionServiceConfig.getObjectStore());
 
     this.bucket = distributionServiceConfig.getObjectStore().getBucket();
@@ -133,20 +121,9 @@ public class ObjectStoreAccess {
       throws IOException, GeneralSecurityException, MinioException {
     String s3Key = localFile.getS3Key();
     PutObjectOptions options = createOptionsFor(localFile);
-    Retention retentionPolicy = new Retention(RetentionMode.COMPLIANCE, ZonedDateTime.now().plusHours(
-            this.distributionServiceConfig.getRetentionDays()));
-//    Retention retentionPolicy = new Retention(RetentionMode.GOVERNANCE, ZonedDateTime.now().plusMinutes(
-//            2));
 
     logger.info("... uploading {}", s3Key);
-    if (Arrays.asList(this.env.getActiveProfiles()).contains("dev") && s3Key.contains("diagnosis-keys")) {
-//      this.client.putObject(bucket, s3Key.replace("2020-05-27", "2020-04-27"), localFile.getFile().toString(), options);
-      this.client.setObjectRetention(bucket, s3Key, null, retentionPolicy, true);
-
-
-      Retention retentionRead = this.client.getObjectRetention(bucket, s3Key, null);
-      logger.info("mode: " + retentionRead.mode() + "until: " + retentionRead.retainUntilDate());
-    }
+    this.client.putObject(bucket, s3Key, localFile.getFile().toString(), options);
   }
 
   /**

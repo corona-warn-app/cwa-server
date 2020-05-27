@@ -28,8 +28,7 @@ services:
       country-germany: DE
       date-path: date
       hour-path: hour
-#      TODO: change back to diagnosis-keys
-      diagnosis-keys-path: diagnosis-keys-retention-test
+      diagnosis-keys-path: diagnosis-keys
       parameters-path: configuration
       parameters-exposure-configuration-file-name: exposure_configuration
       parameters-risk-score-classification-file-name: risk_score_classification
