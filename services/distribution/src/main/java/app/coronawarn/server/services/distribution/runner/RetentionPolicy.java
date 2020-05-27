@@ -73,7 +73,7 @@ public class RetentionPolicy implements ApplicationRunner {
       Application.killApplication(applicationContext);
     }
 
-    logger.debug("Retention policy applied successfully. Deleted all entries older that {} days.",
+    logger.debug("Retention policy applied successfully. Deleted all entries older than {} days.",
         retentionDays);
   }
 }
