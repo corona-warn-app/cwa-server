@@ -35,15 +35,11 @@ import java.nio.file.Files;
 import java.util.Set;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * An {@link Archive} that can be written to disk as a ZIP archive.
  */
 public class ArchiveOnDisk extends FileOnDisk implements Archive<WritableOnDisk> {
-
-  private static final Logger logger = LoggerFactory.getLogger(ArchiveOnDisk.class);
 
   private DirectoryOnDisk tempDirectory;
 

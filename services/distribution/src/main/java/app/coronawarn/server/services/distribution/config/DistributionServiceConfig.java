@@ -348,7 +348,6 @@ public class DistributionServiceConfig {
      * Returns the static {@link SignatureInfo} configured in the application properties. TODO Enter correct values.
      */
     public SignatureInfo getSignatureInfo() {
-      // TODO cwa-server#183 cwa-server#207 cwa-server#238
       return SignatureInfo.newBuilder()
           .setAppBundleId(this.getAppBundleId())
           .setAndroidPackage(this.getAndroidPackage())
