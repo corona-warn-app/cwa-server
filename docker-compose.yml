@@ -84,10 +84,10 @@ services:
     environment:
       - AWS_ACCESS_KEY_ID=${OBJECTSTORE_ACCESSKEY}
       - AWS_SECRET_ACCESS_KEY=${OBJECTSTORE_SECRETKEY}
-    entrypoint: ["/root/scripts/wait-for-it/wait-for-it.sh", "objectstore:8000", "-t", "30", "--"]
+    #entrypoint: ["/root/scripts/wait-for-it/wait-for-it.sh", "objectstore:8000", "-t", "30", "--"]
     volumes:
       - ./scripts/wait-for-it:/root/scripts/wait-for-it
-    command: aws s3api create-bucket --bucket cwa --endpoint-url http://objectstore:8000 --acl public-read
+    command: s3api create-bucket --bucket cwa --endpoint-url http://objectstore:8000 --acl public-read
     depends_on:
       - objectstore
   verification-fake:
