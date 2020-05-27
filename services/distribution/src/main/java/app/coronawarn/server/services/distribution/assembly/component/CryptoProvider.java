@@ -85,7 +85,7 @@ public class CryptoProvider {
   }
 
   private PrivateKey loadPrivateKey(final ResourceLoader resourceLoader,
-                                    final DistributionServiceConfig distributionServiceConfig) {
+      final DistributionServiceConfig distributionServiceConfig) {
     String path = distributionServiceConfig.getPaths().getPrivateKey();
     Resource privateKeyResource = resourceLoader.getResource(path);
     try (InputStream privateKeyStream = privateKeyResource.getInputStream()) {
@@ -103,7 +103,7 @@ public class CryptoProvider {
   }
 
   private Certificate loadCertificate(final ResourceLoader resourceLoader,
-                                      final DistributionServiceConfig distributionServiceConfig) {
+      final DistributionServiceConfig distributionServiceConfig) {
     String path = distributionServiceConfig.getPaths().getCertificate();
     Resource certResource = resourceLoader.getResource(path);
     try (InputStream certStream = certResource.getInputStream()) {
