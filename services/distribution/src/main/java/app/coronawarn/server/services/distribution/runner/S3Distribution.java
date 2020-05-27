@@ -21,11 +21,21 @@ package app.coronawarn.server.services.distribution.runner;
 
 import app.coronawarn.server.services.distribution.assembly.component.OutputDirectoryProvider;
 import app.coronawarn.server.services.distribution.objectstore.ObjectStoreAccess;
+import app.coronawarn.server.services.distribution.objectstore.S3Object;
 import app.coronawarn.server.services.distribution.objectstore.S3Publisher;
 import io.minio.errors.MinioException;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.security.GeneralSecurityException;
+import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.ZoneOffset;
+import java.time.format.DateTimeFormatter;
+import java.util.Date;
+import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -63,6 +73,31 @@ public class S3Distribution implements ApplicationRunner {
       logger.info("Data pushed to CDN successfully.");
     } catch (UnsupportedOperationException | GeneralSecurityException | MinioException | IOException e) {
       logger.error("Distribution failed.", e);
+    }
+  }
+
+  public void applyRetentionPolicy(int retentionDays) {
+    try {
+      List<S3Object> diagnosisKeysObjects = this.objectStoreAccess.getObjectsWithPrefix("version/v1/diagnosis-keys-retention-test/country/DE/date/");
+      final DateTimeFormatter dateFormat = DateTimeFormatter.ISO_LOCAL_DATE;
+      final String regex = ".*([0-9]{4}-[0-9]{2}-[0-9]{2}).*";
+      final Pattern pattern = Pattern.compile(regex);
+
+      final LocalDate cutOffDate = LocalDate.now(ZoneOffset.UTC).minusDays(retentionDays);
+
+      diagnosisKeysObjects.stream().forEach(diagnosisKeysObject -> logger.info(diagnosisKeysObject.getObjectName()));
+
+      for (S3Object da : diagnosisKeysObjects) {
+        Matcher matcher = pattern.matcher(da.getObjectName());
+        if (matcher.matches()) {
+          if (LocalDate.parse(matcher.group(1), dateFormat).isBefore(cutOffDate)) {
+            logger.info("DELETING " + da.getObjectName());
+          }
+        }
+      }
+
+    } catch (Exception e) {
+      logger.error(e.toString());
     }
   }
 }

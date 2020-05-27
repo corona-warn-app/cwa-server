@@ -47,22 +47,27 @@ public class RetentionPolicy implements ApplicationRunner {
 
   private final Integer retentionDays;
 
+  private final S3Distribution s3Distribution;
+
   /**
    * Creates a new RetentionPolicy.
    */
   @Autowired
   public RetentionPolicy(DiagnosisKeyService diagnosisKeyService,
       ApplicationContext applicationContext,
-      DistributionServiceConfig distributionServiceConfig) {
+      DistributionServiceConfig distributionServiceConfig,
+                         S3Distribution s3Distribution) {
     this.diagnosisKeyService = diagnosisKeyService;
     this.applicationContext = applicationContext;
     this.retentionDays = distributionServiceConfig.getRetentionDays();
+    this.s3Distribution = s3Distribution;
   }
 
   @Override
   public void run(ApplicationArguments args) {
     try {
       diagnosisKeyService.applyRetentionPolicy(retentionDays);
+      s3Distribution.applyRetentionPolicy(retentionDays);
     } catch (Exception e) {
       logger.error("Application of retention policy failed.", e);
       Application.killApplication(applicationContext);

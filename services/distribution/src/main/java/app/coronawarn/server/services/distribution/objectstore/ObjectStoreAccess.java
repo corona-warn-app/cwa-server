@@ -140,7 +140,7 @@ public class ObjectStoreAccess {
 
     logger.info("... uploading {}", s3Key);
     if (Arrays.asList(this.env.getActiveProfiles()).contains("dev") && s3Key.contains("diagnosis-keys")) {
-      this.client.putObject(bucket, s3Key, localFile.getFile().toString(), options);
+//      this.client.putObject(bucket, s3Key.replace("2020-05-27", "2020-04-27"), localFile.getFile().toString(), options);
       this.client.setObjectRetention(bucket, s3Key, null, retentionPolicy, true);
 
 
