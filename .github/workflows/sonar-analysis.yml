@@ -1,0 +1,43 @@
+name: "ci"
+
+on:
+  pull_request:
+    branches:
+    - master
+  push:
+    branches:
+    - master
+    - chatops-sonar-*
+
+jobs:
+  sonar:
+    runs-on: ubuntu-latest
+    # only run if it's a push event or a pull request from upstream
+    if: ${{ github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository }}
+
+    name: 'github actions: sonar'
+    steps:
+    - run: echo ${{ github.repository }}
+    - uses: actions/checkout@v2
+      with:
+        fetch-depth: 0
+    - uses: actions/cache@v1
+      with:
+        path: ~/.m2/repository
+        key: ${{ runner.os }}-maven-sonar-${{ hashFiles('**/pom.xml') }}
+        restore-keys: |
+          ${{ runner.os }}-maven-sonar-
+          ${{ runner.os }}-maven-
+    - uses: actions/setup-java@v1
+      with:
+        java-version: 11
+    - run: |
+        mvn --batch-mode verify sonar:sonar \
+        -Dsonar.login=${SONAR_TOKEN} \
+        -Dsonar.host.url=${SONAR_URL} \
+        -Dsonar.organization=ccfenner \
+        -Dsonar.projectKey=${GITHUB_REPOSITORY/\//_}
+      env:
+        SONAR_URL: https://sonarcloud.io
+        SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
