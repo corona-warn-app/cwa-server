@@ -105,16 +105,20 @@ public class S3Distribution implements ApplicationRunner {
           return matcher.matches() && LocalDate.parse(matcher.group(1), DateTimeFormatter.ISO_LOCAL_DATE)
               .isBefore(cutOffDate);
         })
-        .map(diagnosisKeysObject -> {
-          try {
-            return objectStoreAccess.deleteObjectsWithPrefix(diagnosisKeysObject.getObjectName());
-          } catch (Exception e) {
-            throw new RuntimeException(e);
-          }
-        })
-        .filter(maybeDeleteErrors -> maybeDeleteErrors.size() > 0)
-        .forEach(deleteErrors -> deleteErrors.forEach(deleteError -> {
-          throw new RuntimeException(deleteError.message());
-        }));
+        .forEach(this::deleteDiagnosisKey);
+  }
+
+  /**
+   * Java stream do not support checked exceptions within streams. This helper method rethrows them as unchecked
+   * expressions, so they can be passed up to the Retention Policy.
+   *
+   * @param diagnosisKey the  diagnosis key, that should be deleted.
+   */
+  public void deleteDiagnosisKey(S3Object diagnosisKey) {
+    try {
+      objectStoreAccess.deleteObjectsWithPrefix(diagnosisKey.getObjectName());
+    } catch (Exception e) {
+      throw new RuntimeException(e);
+    }
   }
 }
