@@ -50,6 +50,17 @@ public class S3Object {
     this.objectName = objectName;
   }
 
+  /**
+   * Constructs a new S3Object for the given object name.
+   *
+   * @param objectName the target object name
+   * @param etag the e-etag
+   */
+  protected S3Object(String objectName, String etag) {
+    this(objectName);
+    this.etag = etag;
+  }
+
   public String getObjectName() {
     return objectName;
   }
