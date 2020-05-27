@@ -57,7 +57,11 @@ public class S3Distribution implements ApplicationRunner {
   private final DistributionServiceConfig distributionServiceConfig;
 
   /**
-   * tmp javadoc.
+   * Creates an S3Distribution object, which will upload and remove files from the S3-compatible storage.
+   *
+   * @param outputDirectoryProvider the outputDirectoryProvider.
+   * @param objectStoreAccess  the objectStoreAccess for the S3Distribution.
+   * @param distributionServiceConfig the distributionServiceConfig, used to retrieve the retention days.
    */
   public S3Distribution(OutputDirectoryProvider outputDirectoryProvider, ObjectStoreAccess objectStoreAccess,
                         DistributionServiceConfig distributionServiceConfig) {
