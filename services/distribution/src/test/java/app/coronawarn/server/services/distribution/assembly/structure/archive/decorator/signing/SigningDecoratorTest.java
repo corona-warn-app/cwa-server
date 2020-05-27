@@ -15,12 +15,17 @@ import app.coronawarn.server.services.distribution.assembly.structure.file.File;
 import app.coronawarn.server.services.distribution.assembly.structure.file.FileOnDisk;
 import app.coronawarn.server.services.distribution.assembly.structure.util.ImmutableStack;
 import app.coronawarn.server.services.distribution.config.DistributionServiceConfig;
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
 import java.security.Signature;
 import java.security.SignatureException;
+import java.security.cert.Certificate;
+import java.security.cert.CertificateException;
+import java.security.cert.CertificateFactory;
 import java.util.List;
 import org.junit.Rule;
 import org.junit.jupiter.api.BeforeEach;
@@ -30,6 +35,8 @@ import org.junit.rules.TemporaryFolder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.ConfigFileApplicationContextInitializer;
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.ResourceLoader;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
@@ -41,6 +48,9 @@ class SigningDecoratorTest {
 
   @Autowired
   CryptoProvider cryptoProvider;
+
+  @Autowired
+  ResourceLoader resourceLoader;
 
   @Autowired
   DistributionServiceConfig distributionServiceConfig;
@@ -103,14 +113,22 @@ class SigningDecoratorTest {
 
   @Test
   void checkSignature()
-      throws NoSuchProviderException, NoSuchAlgorithmException, InvalidKeyException, SignatureException {
+      throws NoSuchProviderException, NoSuchAlgorithmException, SignatureException, IOException, InvalidKeyException, CertificateException {
     byte[] fileBytes = fileToSign.getBytes();
     byte[] signatureBytes = signatureList.getSignaturesList().get(0).getSignature().toByteArray();
 
-    Signature payloadSignature = Signature.getInstance("SHA256withECDSA", "BC");
-    payloadSignature.initVerify(cryptoProvider.getCertificate());
-    payloadSignature.update(fileBytes);
-    assertThat(payloadSignature.verify(signatureBytes)).isTrue();
+    Resource certResource = resourceLoader.getResource("classpath:keys/certificate.crt");
+    try (InputStream certStream = certResource.getInputStream()) {
+      byte[] bytes = certStream.readAllBytes();
+      CertificateFactory certificateFactory = CertificateFactory.getInstance("X.509");
+      InputStream certificateByteStream = new ByteArrayInputStream(bytes);
+      Certificate certificate = certificateFactory.generateCertificate(certificateByteStream);
+
+      Signature payloadSignature = Signature.getInstance("SHA256withECDSA", "BC");
+      payloadSignature.initVerify(certificate);
+      payloadSignature.update(fileBytes);
+      assertThat(payloadSignature.verify(signatureBytes)).isTrue();
+    }
   }
 
   private static class TestSigningDecorator extends SigningDecoratorOnDisk {
