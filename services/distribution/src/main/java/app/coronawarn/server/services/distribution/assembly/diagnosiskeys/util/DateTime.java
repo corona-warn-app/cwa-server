@@ -33,7 +33,7 @@ import java.util.stream.Collectors;
  */
 public class DateTime {
 
-  private DateTime(){
+  private DateTime() {
   }
 
   /**

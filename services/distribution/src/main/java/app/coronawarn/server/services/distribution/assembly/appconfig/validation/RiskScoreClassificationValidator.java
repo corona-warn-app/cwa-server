@@ -87,12 +87,10 @@ public class RiskScoreClassificationValidator extends ConfigurationValidator {
   }
 
   private void validateUrl(String url) {
-    if (!url.isBlank()) {
-      try {
-        new URL(url);
-      } catch (MalformedURLException e) {
-        errors.add(new RiskScoreClassificationValidationError("url", url, INVALID_URL));
-      }
+    try {
+      new URL(url.trim());
+    } catch (MalformedURLException e) {
+      errors.add(new RiskScoreClassificationValidationError("url", url, INVALID_URL));
     }
   }
 
