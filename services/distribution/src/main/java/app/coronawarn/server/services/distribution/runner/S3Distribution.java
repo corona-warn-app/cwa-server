@@ -28,18 +28,12 @@ import io.minio.errors.MinioException;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.security.GeneralSecurityException;
-import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import java.util.stream.Collectors;
-
-import io.minio.messages.DeleteError;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.ApplicationArguments;
@@ -62,10 +56,14 @@ public class S3Distribution implements ApplicationRunner {
 
   private final DistributionServiceConfig distributionServiceConfig;
 
+  /**
+   * tmp javadoc.
+   */
   public S3Distribution(OutputDirectoryProvider outputDirectoryProvider, ObjectStoreAccess objectStoreAccess,
                         DistributionServiceConfig distributionServiceConfig) {
     this.outputDirectoryProvider = outputDirectoryProvider;
     this.objectStoreAccess = objectStoreAccess;
+    this.distributionServiceConfig = distributionServiceConfig;
   }
 
   @Override
@@ -81,33 +79,38 @@ public class S3Distribution implements ApplicationRunner {
     }
   }
 
+  /**
+   * Deletes all diagnosis-key files from S3 that are older than retentionDays.
+   *
+   * @param retentionDays the number of days, that files should be retained on S3.
+   */
   public void applyRetentionPolicy(int retentionDays) throws MinioException, GeneralSecurityException, IOException {
-      List<S3Object> diagnosisKeysObjects = this.objectStoreAccess.getObjectsWithPrefix("version/v1/" +
-              distributionServiceConfig.getApi().getDiagnosisKeysPath() + "/" +
-              distributionServiceConfig.getApi().getCountryPath() + "/" +
-              distributionServiceConfig.getApi().getCountryGermany() + "/" +
-              distributionServiceConfig.getApi().getDatePath() + "/");
-      final String regex = ".*([0-9]{4}-[0-9]{2}-[0-9]{2}).*";
-      final Pattern pattern = Pattern.compile(regex);
+    List<S3Object> diagnosisKeysObjects = this.objectStoreAccess.getObjectsWithPrefix("version/v1/"
+            + distributionServiceConfig.getApi().getDiagnosisKeysPath() + "/"
+            + distributionServiceConfig.getApi().getCountryPath() + "/"
+            + distributionServiceConfig.getApi().getCountryGermany() + "/"
+            + distributionServiceConfig.getApi().getDatePath() + "/");
+    final String regex = ".*([0-9]{4}-[0-9]{2}-[0-9]{2}).*";
+    final Pattern pattern = Pattern.compile(regex);
 
-      final LocalDate cutOffDate = LocalDate.now(ZoneOffset.UTC).minusDays(retentionDays);
+    final LocalDate cutOffDate = LocalDate.now(ZoneOffset.UTC).minusDays(retentionDays);
 
-      diagnosisKeysObjects.stream()
-        .filter(diagnosisKeysObject -> {
-          Matcher matcher = pattern.matcher(diagnosisKeysObject.getObjectName());
-          return matcher.matches() && LocalDate.parse(matcher.group(1), DateTimeFormatter.ISO_LOCAL_DATE)
-                  .isBefore(cutOffDate);
-        })
-        .map(diagnosisKeysObject -> {
-          try {
-            return objectStoreAccess.deleteObjectsWithPrefix(diagnosisKeysObject.getObjectName());
-          } catch (Exception e) {
-            throw new RuntimeException(e);
-          }
-        })
-        .filter(maybeDeleteErrors -> maybeDeleteErrors.size() > 0)
-        .forEach(deleteErrors -> deleteErrors.forEach(deleteError -> {
-          throw new RuntimeException(deleteError.message());
-        }));
+    diagnosisKeysObjects.stream()
+            .filter(diagnosisKeysObject -> {
+              Matcher matcher = pattern.matcher(diagnosisKeysObject.getObjectName());
+              return matcher.matches() && LocalDate.parse(matcher.group(1), DateTimeFormatter.ISO_LOCAL_DATE)
+                      .isBefore(cutOffDate);
+            })
+            .map(diagnosisKeysObject -> {
+              try {
+                return objectStoreAccess.deleteObjectsWithPrefix(diagnosisKeysObject.getObjectName());
+              } catch (Exception e) {
+                throw new RuntimeException(e);
+              }
+            })
+            .filter(maybeDeleteErrors -> maybeDeleteErrors.size() > 0)
+            .forEach(deleteErrors -> deleteErrors.forEach(deleteError -> {
+              throw new RuntimeException(deleteError.message());
+            }));
   }
 }
