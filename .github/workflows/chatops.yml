@@ -1,0 +1,38 @@
+name: ChatOps
+
+on:
+  issue_comment:
+    types: [created]
+
+jobs:
+  sonar:
+    name: 'SonarCloud on PR'
+
+    runs-on: ubuntu-latest
+    if: github.event.comment.body == '/sonar' && (github.event.comment.author_association == 'COLLABORATOR' || github.event.comment.author_association == 'OWNER' || github.event.comment.author_association == 'MEMBER')
+
+    steps:
+      - name: get pull request url
+        id: pullrequest
+        run: |
+          echo "::set-output name=number::$(echo ${{ github.event.comment.issue_url }} | sed 's/https:\/\/api.github.com\/repos\/CCFenner\/cwa-server\/issues\///g')"
+          echo "::set-output name=url::$(curl ${{ github.event.comment.issue_url }} | jq '.pull_request.url' | sed 's/\"//g')"
+      - name: get branch name
+        id: repository
+        run: |
+          echo "::set-output name=branch::$(curl ${{ steps.pullrequest.outputs.url }} | jq '.head.ref' | sed 's/\"//g')"
+          echo "::set-output name=slug::$(curl ${{ steps.pullrequest.outputs.url }} | jq '.head.repo.full_name' | sed 's/\"//g')"
+      # Checkout
+      - uses: actions/checkout@v2
+        with:
+          persist-credentials: false # necessary to be able to provide own PAT
+          repository: ${{ steps.repository.outputs.slug }}
+          ref: ${{ steps.repository.outputs.branch }}
+      # Add remote to upstream repository
+      - run: git remote add upstream https://${CHATOPS_USER}:${CHATOPS_TOKEN}@github.com/$GITHUB_REPOSITORY
+        env:
+          CHATOPS_TOKEN: ${{ secrets.CHATOPS_TOKEN }}
+          CHATOPS_USER: ${{ secrets.CHATOPS_USER }}
+      # Only push to SonarCloud branch if PR is created from a fork
+      - if: ${{ steps.repository.outputs.slug != 'CCFenner/cwa-server' }}
+        run: git push -f upstream HEAD:chatops-sonar-${{steps.pullrequest.outputs.number}}
