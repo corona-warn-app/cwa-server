@@ -45,6 +45,7 @@ import org.springframework.stereotype.Component;
  */
 @Component
 public class CryptoProvider {
+
   private final PrivateKey privateKey;
   private final Certificate certificate;
 
