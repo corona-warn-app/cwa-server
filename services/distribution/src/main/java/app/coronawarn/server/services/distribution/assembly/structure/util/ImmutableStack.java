@@ -19,21 +19,22 @@
 
 package app.coronawarn.server.services.distribution.assembly.structure.util;
 
-import java.util.Stack;
+import java.util.ArrayDeque;
+import java.util.Deque;
 
 public class ImmutableStack<T> {
 
-  private final Stack<T> stack;
+  private final Deque<T> stack;
 
   public ImmutableStack() {
-    this.stack = new Stack<>();
+    this.stack = new ArrayDeque<>();
   }
 
   /**
    * Creates a clone of the specified {@link ImmutableStack}.
    */
   public ImmutableStack(ImmutableStack<T> other) {
-    this.stack = (Stack<T>) other.stack.clone();
+    this.stack = new ArrayDeque<>(other.stack);
   }
 
   /**
