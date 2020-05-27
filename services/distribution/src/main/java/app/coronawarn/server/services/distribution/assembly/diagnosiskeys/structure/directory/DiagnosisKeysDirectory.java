@@ -21,6 +21,7 @@ package app.coronawarn.server.services.distribution.assembly.diagnosiskeys.struc
 
 import app.coronawarn.server.common.persistence.domain.DiagnosisKey;
 import app.coronawarn.server.services.distribution.assembly.component.CryptoProvider;
+import app.coronawarn.server.services.distribution.assembly.diagnosiskeys.structure.directory.decorator.CountryIndexingDecorator;
 import app.coronawarn.server.services.distribution.assembly.structure.WritableOnDisk;
 import app.coronawarn.server.services.distribution.assembly.structure.directory.Directory;
 import app.coronawarn.server.services.distribution.assembly.structure.directory.DirectoryOnDisk;
@@ -45,8 +46,8 @@ public class DiagnosisKeysDirectory extends DirectoryOnDisk {
   private final DistributionServiceConfig distributionServiceConfig;
 
   /**
-   * Constructs a {@link DiagnosisKeysDirectory} based on the specified {@link DiagnosisKey} collection.
-   * Cryptographic signing is performed using the specified {@link CryptoProvider}.
+   * Constructs a {@link DiagnosisKeysDirectory} based on the specified {@link DiagnosisKey} collection. Cryptographic
+   * signing is performed using the specified {@link CryptoProvider}.
    *
    * @param diagnosisKeys  The diagnosis keys processed in the contained sub directories.
    * @param cryptoProvider The {@link CryptoProvider} used for payload signing.
@@ -68,6 +69,8 @@ public class DiagnosisKeysDirectory extends DirectoryOnDisk {
 
   private IndexDirectory<String, WritableOnDisk> decorateCountryDirectory(
       IndexDirectoryOnDisk<String> countryDirectory) {
-    return new IndexingDecoratorOnDisk<>(countryDirectory, distributionServiceConfig.getOutputFileName());
+    return new CountryIndexingDecorator<>(
+        new IndexingDecoratorOnDisk<>(countryDirectory, distributionServiceConfig.getOutputFileName()),
+        distributionServiceConfig);
   }
 }
