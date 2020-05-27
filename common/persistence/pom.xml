@@ -12,7 +12,7 @@
 
   <groupId>org.opencwa</groupId>
   <artifactId>persistence</artifactId>
-  <version>0.5.1-SNAPSHOT</version>
+  <version>${revision}</version>
 
   <properties>
     <java.version>11</java.version>
@@ -27,7 +27,7 @@
     <dependency>
       <groupId>org.opencwa</groupId>
       <artifactId>protocols</artifactId>
-      <version>0.5.1-SNAPSHOT</version>
+      <version>${project.version}</version>
     </dependency>
     <dependency>
       <groupId>org.springframework.boot</groupId>
@@ -105,6 +105,28 @@
 
   <build>
     <plugins>
+      <plugin>
+        <!-- see https://maven.apache.org/maven-ci-friendly.html#install-deploy -->
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>flatten-maven-plugin</artifactId>
+        <version>1.1.0</version>
+        <configuration>
+          <updatePomFile>true</updatePomFile>
+          <flattenMode>resolveCiFriendliesOnly</flattenMode>
+        </configuration>
+        <executions>
+          <execution>
+            <id>flatten</id>
+            <phase>process-resources</phase>
+            <goals><goal>flatten</goal></goals>
+          </execution>
+          <execution>
+            <id>flatten-clean</id>
+            <phase>clean</phase>
+            <goals><goal>clean</goal></goals>
+          </execution>
+        </executions>
+      </plugin>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-checkstyle-plugin</artifactId>
