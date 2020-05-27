@@ -54,7 +54,7 @@ public class RetentionPolicy implements ApplicationRunner {
   RetentionPolicy(DiagnosisKeyService diagnosisKeyService,
       ApplicationContext applicationContext,
       DistributionServiceConfig distributionServiceConfig,
-                         S3Distribution s3Distribution) {
+      S3Distribution s3Distribution) {
     this.diagnosisKeyService = diagnosisKeyService;
     this.applicationContext = applicationContext;
     this.retentionDays = distributionServiceConfig.getRetentionDays();
