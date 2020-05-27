@@ -58,7 +58,7 @@ The docker-compose contains the following services:
 
 Service           | Description | Endpoint and Default Credentials
 ------------------|-------------|-----------
-submission        | The Corona-Warn-App submission service                                                      | `http://localhost:8000` <br> `http://localhost:8005` (for actuator endpoint)
+submission        | The Corona-Warn-App submission service                                                      | `http://localhost:8000` <br> `http://localhost:8006` (for actuator endpoint)
 distribution      | The Corona-Warn-App distribution service                                                    | NO ENDPOINT
 postgres          | A [postgres] database installation                                                          | `postgres:8001` <br> Username: postgres <br> Password: postgres
 pgadmin           | A [pgadmin](https://www.pgadmin.org/) installation for the postgres database                | `http://localhost:8002` <br> Username: user@domain.com <br> Password: password
