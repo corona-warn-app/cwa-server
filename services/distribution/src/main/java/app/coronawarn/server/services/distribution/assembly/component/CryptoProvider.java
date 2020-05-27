@@ -58,19 +58,19 @@ public class CryptoProvider {
     Security.addProvider(new BouncyCastleProvider());
   }
 
-  private static PrivateKey getPrivateKeyFromStream(final InputStream privateKeyStream) throws IOException {
+  private static PrivateKey getPrivateKeyFromStream(InputStream privateKeyStream) throws IOException {
     InputStreamReader privateKeyStreamReader = new InputStreamReader(privateKeyStream);
     Object parsed = new PEMParser(privateKeyStreamReader).readObject();
     KeyPair pair = new JcaPEMKeyConverter().getKeyPair((PEMKeyPair) parsed);
     return pair.getPrivate();
   }
 
-  private static Certificate getCertificateFromStream(final InputStream certificateStream)
+  private static Certificate getCertificateFromStream(InputStream certificateStream)
       throws IOException, CertificateException {
     return getCertificateFromBytes(certificateStream.readAllBytes());
   }
 
-  private static Certificate getCertificateFromBytes(final byte[] bytes)
+  private static Certificate getCertificateFromBytes(byte[] bytes)
       throws CertificateException {
     CertificateFactory certificateFactory = CertificateFactory.getInstance("X.509");
     InputStream certificateByteStream = new ByteArrayInputStream(bytes);
@@ -84,8 +84,8 @@ public class CryptoProvider {
     return privateKey;
   }
 
-  private PrivateKey loadPrivateKey(final ResourceLoader resourceLoader,
-      final DistributionServiceConfig distributionServiceConfig) {
+  private PrivateKey loadPrivateKey(ResourceLoader resourceLoader,
+      DistributionServiceConfig distributionServiceConfig) {
     String path = distributionServiceConfig.getPaths().getPrivateKey();
     Resource privateKeyResource = resourceLoader.getResource(path);
     try (InputStream privateKeyStream = privateKeyResource.getInputStream()) {
@@ -102,8 +102,8 @@ public class CryptoProvider {
     return certificate;
   }
 
-  private Certificate loadCertificate(final ResourceLoader resourceLoader,
-      final DistributionServiceConfig distributionServiceConfig) {
+  private Certificate loadCertificate(ResourceLoader resourceLoader,
+      DistributionServiceConfig distributionServiceConfig) {
     String path = distributionServiceConfig.getPaths().getCertificate();
     Resource certResource = resourceLoader.getResource(path);
     try (InputStream certStream = certResource.getInputStream()) {
