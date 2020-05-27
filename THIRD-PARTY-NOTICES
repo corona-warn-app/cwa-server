@@ -55,6 +55,11 @@ Licensor:  MinIO Inc.
 Website:   https://min.io/
 License:   Apache License 2.0
 
+Component: MojoHaus Flatten Maven Plugin
+Licensor:  MojoHaus
+Website:   https://www.mojohaus.org/flatten-maven-plugin/
+License:   Apache License 2.0
+
 Component: PostgreSQL
 Licensor:  PostgreSQL
 Website:   https://www.postgresql.org/
@@ -87,7 +92,7 @@ License:   Apache License 2.0
 
 --------------------------------------------------------------------------------
 Apache License 2.0 (Commons IO, Commons Math 3, flyway, JSON-Simple,
-Maven, MinIO Object Storage, snakeyaml, Spring Boot, Zenko CloudServer)
+Maven, MinIO Object Storage, MojoHaus Flatten Maven Plugin, snakeyaml, Spring Boot, Zenko CloudServer)
 
                                  Apache License
                            Version 2.0, January 2004
