@@ -7,3 +7,17 @@ spring:
     url: jdbc:postgresql://${POSTGRESQL_SERVICE_HOST}:${POSTGRESQL_SERVICE_PORT}/${POSTGRESQL_DATABASE}
     username: ${POSTGRESQL_USER}
     password: ${POSTGRESQL_PASSWORD}
+
+services:
+  submission:
+    verification:
+      base-url: ${VERIFICATION_BASE_URL}
+
+server:
+  ssl:
+    enabled: true
+    key-password: ${SSL_PASSWORD}
+    key-store: ${SSL_KEYSTORE_PATH}
+    key-store-password: ${SSL_PASSWORD}
+    key-store-provider: SUN
+    key-store-type: JKS

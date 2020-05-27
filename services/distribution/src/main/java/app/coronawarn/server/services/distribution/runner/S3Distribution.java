@@ -42,7 +42,6 @@ import java.util.stream.Collectors;
 import io.minio.messages.DeleteError;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.core.annotation.Order;
@@ -63,12 +62,10 @@ public class S3Distribution implements ApplicationRunner {
 
   private final DistributionServiceConfig distributionServiceConfig;
 
-  @Autowired
   public S3Distribution(OutputDirectoryProvider outputDirectoryProvider, ObjectStoreAccess objectStoreAccess,
                         DistributionServiceConfig distributionServiceConfig) {
     this.outputDirectoryProvider = outputDirectoryProvider;
     this.objectStoreAccess = objectStoreAccess;
-    this.distributionServiceConfig = distributionServiceConfig;
   }
 
   @Override

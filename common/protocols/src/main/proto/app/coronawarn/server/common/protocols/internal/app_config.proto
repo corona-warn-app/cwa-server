@@ -1,0 +1,15 @@
+syntax = "proto3";
+package app.coronawarn.server.common.protocols.internal;
+option java_package = "app.coronawarn.server.common.protocols.internal";
+option java_multiple_files = true;
+import "app/coronawarn/server/common/protocols/internal/risk_score_classification.proto";
+import "app/coronawarn/server/common/protocols/internal/risk_score_parameters.proto";
+
+message ApplicationConfiguration {
+
+  int32 minRiskScore = 1;
+
+  app.coronawarn.server.common.protocols.internal.RiskScoreClassification riskScoreClasses = 2;
+
+  app.coronawarn.server.common.protocols.internal.RiskScoreParameters exposureConfig = 3;
+}

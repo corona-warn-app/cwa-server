@@ -49,7 +49,7 @@ public class DiagnosisKeysDateDirectory extends IndexDirectoryOnDisk<LocalDate> 
    */
   public DiagnosisKeysDateDirectory(Collection<DiagnosisKey> diagnosisKeys,
       CryptoProvider cryptoProvider, DistributionServiceConfig distributionServiceConfig) {
-    super(distributionServiceConfig.getApi().getDatePath(), __ -> DateTime.getDates(diagnosisKeys), ISO8601::format);
+    super(distributionServiceConfig.getApi().getDatePath(), x -> DateTime.getDates(diagnosisKeys), ISO8601::format);
     this.cryptoProvider = cryptoProvider;
     this.diagnosisKeys = diagnosisKeys;
     this.distributionServiceConfig = distributionServiceConfig;

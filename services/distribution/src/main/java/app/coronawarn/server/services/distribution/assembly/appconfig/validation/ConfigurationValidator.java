@@ -17,15 +17,21 @@
  * under the License.
  */
 
-package app.coronawarn.server.services.submission.verification.tan;
+package app.coronawarn.server.services.distribution.assembly.appconfig.validation;
 
 /**
- * Thrown, when the application tried to validate the CWA-Authorization header value, in case the given value is
- * malformed.
+ * Classes that extend {@link ConfigurationValidator} validate the values of an associated {@link
+ * com.google.protobuf.Message} instance.
  */
-public class TanAuthorizationException extends Exception {
+public abstract class ConfigurationValidator {
 
-  public TanAuthorizationException(String message) {
-    super(message);
-  }
+  protected ValidationResult errors;
+
+  /**
+   * Performs a validation of the associated {@link com.google.protobuf.Message} instance and returns information about
+   * validation failures.
+   *
+   * @return The ValidationResult instance, containing information about possible errors.
+   */
+  public abstract ValidationResult validate();
 }

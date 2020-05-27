@@ -30,6 +30,7 @@ import app.coronawarn.server.services.distribution.assembly.structure.file.FileO
 import app.coronawarn.server.services.distribution.assembly.structure.util.ImmutableStack;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.UncheckedIOException;
 import java.nio.file.Files;
 import java.util.Set;
 import java.util.zip.ZipEntry;
@@ -55,8 +56,7 @@ public class ArchiveOnDisk extends FileOnDisk implements Archive<WritableOnDisk>
       tempDirectory = new DirectoryOnDisk(
           Files.createTempDirectory("temporary").toFile());
     } catch (IOException e) {
-      logger.error("Failed to create temporary directory for zip archive {}", this.getFileOnDisk());
-      throw new RuntimeException(e);
+      throw new UncheckedIOException("Failed to create temporary directory for zip archive " + this.getFileOnDisk(), e);
     }
   }
 
@@ -96,8 +96,7 @@ public class ArchiveOnDisk extends FileOnDisk implements Archive<WritableOnDisk>
             zipOutputStream.write(bytes, 0, bytes.length);
           }));
     } catch (IOException e) {
-      logger.error("Failed to close zip archive output stream.");
-      throw new RuntimeException(e);
+      throw new UncheckedIOException("Failed to close zip archive output stream.", e);
     }
     return byteArrayOutputStream.toByteArray();
   }

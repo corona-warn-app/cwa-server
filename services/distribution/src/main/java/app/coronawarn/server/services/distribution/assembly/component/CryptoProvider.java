@@ -24,6 +24,7 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.UncheckedIOException;
 import java.security.KeyPair;
 import java.security.PrivateKey;
 import java.security.Security;
@@ -34,9 +35,6 @@ import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.bouncycastle.openssl.PEMKeyPair;
 import org.bouncycastle.openssl.PEMParser;
 import org.bouncycastle.openssl.jcajce.JcaPEMKeyConverter;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.ResourceLoader;
 import org.springframework.stereotype.Component;
@@ -48,41 +46,31 @@ import org.springframework.stereotype.Component;
 @Component
 public class CryptoProvider {
 
-  private static final Logger logger = LoggerFactory.getLogger(CryptoProvider.class);
-
-  private final String privateKeyPath;
-
-  private final String certificatePath;
-
-  private final ResourceLoader resourceLoader;
-
-  private PrivateKey privateKey;
-  private Certificate certificate;
+  private final PrivateKey privateKey;
+  private final Certificate certificate;
 
   /**
    * Creates a CryptoProvider, using {@link BouncyCastleProvider}.
    */
-  @Autowired
-  public CryptoProvider(ResourceLoader resourceLoader, DistributionServiceConfig distributionServiceConfig) {
-    this.resourceLoader = resourceLoader;
-    this.privateKeyPath = distributionServiceConfig.getPaths().getPrivateKey();
-    this.certificatePath = distributionServiceConfig.getPaths().getCertificate();
+  CryptoProvider(ResourceLoader resourceLoader, DistributionServiceConfig distributionServiceConfig) {
+    privateKey = loadPrivateKey(resourceLoader, distributionServiceConfig);
+    certificate = loadCertificate(resourceLoader, distributionServiceConfig);
     Security.addProvider(new BouncyCastleProvider());
   }
 
-  private static PrivateKey getPrivateKeyFromStream(final InputStream privateKeyStream) throws IOException {
+  private static PrivateKey getPrivateKeyFromStream(InputStream privateKeyStream) throws IOException {
     InputStreamReader privateKeyStreamReader = new InputStreamReader(privateKeyStream);
     Object parsed = new PEMParser(privateKeyStreamReader).readObject();
     KeyPair pair = new JcaPEMKeyConverter().getKeyPair((PEMKeyPair) parsed);
     return pair.getPrivate();
   }
 
-  private static Certificate getCertificateFromStream(final InputStream certificateStream)
+  private static Certificate getCertificateFromStream(InputStream certificateStream)
       throws IOException, CertificateException {
     return getCertificateFromBytes(certificateStream.readAllBytes());
   }
 
-  private static Certificate getCertificateFromBytes(final byte[] bytes)
+  private static Certificate getCertificateFromBytes(byte[] bytes)
       throws CertificateException {
     CertificateFactory certificateFactory = CertificateFactory.getInstance("X.509");
     InputStream certificateByteStream = new ByteArrayInputStream(bytes);
@@ -90,34 +78,38 @@ public class CryptoProvider {
   }
 
   /**
-   * Reads and returns the {@link PrivateKey} configured in the application properties.
+   * Returns the {@link PrivateKey} configured in the application properties.
    */
   public PrivateKey getPrivateKey() {
-    if (privateKey == null) {
-      Resource privateKeyResource = resourceLoader.getResource(privateKeyPath);
-      try (InputStream privateKeyStream = privateKeyResource.getInputStream()) {
-        privateKey = getPrivateKeyFromStream(privateKeyStream);
-      } catch (IOException e) {
-        logger.error("Failed to load private key from {}", privateKeyPath, e);
-        throw new RuntimeException(e);
-      }
-    }
     return privateKey;
   }
 
+  private PrivateKey loadPrivateKey(ResourceLoader resourceLoader,
+      DistributionServiceConfig distributionServiceConfig) {
+    String path = distributionServiceConfig.getPaths().getPrivateKey();
+    Resource privateKeyResource = resourceLoader.getResource(path);
+    try (InputStream privateKeyStream = privateKeyResource.getInputStream()) {
+      return getPrivateKeyFromStream(privateKeyStream);
+    } catch (IOException e) {
+      throw new UncheckedIOException("Failed to load private key from " + path, e);
+    }
+  }
+
   /**
-   * Reads and returns the {@link Certificate} configured in the application properties.
+   * Returns the {@link Certificate} configured in the application properties.
    */
   public Certificate getCertificate() {
-    if (this.certificate == null) {
-      Resource certResource = resourceLoader.getResource(certificatePath);
-      try (InputStream certStream = certResource.getInputStream()) {
-        this.certificate = getCertificateFromStream(certStream);
-      } catch (IOException | CertificateException e) {
-        logger.error("Failed to load certificate from {}", certificatePath, e);
-        throw new RuntimeException(e);
-      }
-    }
     return certificate;
+  }
+
+  private Certificate loadCertificate(ResourceLoader resourceLoader,
+      DistributionServiceConfig distributionServiceConfig) {
+    String path = distributionServiceConfig.getPaths().getCertificate();
+    Resource certResource = resourceLoader.getResource(path);
+    try (InputStream certStream = certResource.getInputStream()) {
+      return getCertificateFromStream(certStream);
+    } catch (IOException | CertificateException e) {
+      throw new RuntimeException("Failed to load certificate from " + path, e);
+    }
   }
 }
