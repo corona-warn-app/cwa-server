@@ -20,13 +20,10 @@
 package app.coronawarn.server.services.distribution.objectstore;
 
 import app.coronawarn.server.services.distribution.config.DistributionServiceConfig;
-import app.coronawarn.server.services.distribution.config.DistributionServiceConfig.ObjectStore;
 import app.coronawarn.server.services.distribution.objectstore.publish.LocalFile;
 import io.minio.MinioClient;
 import io.minio.PutObjectOptions;
 import io.minio.Result;
-import io.minio.errors.InvalidEndpointException;
-import io.minio.errors.InvalidPortException;
 import io.minio.errors.MinioException;
 import io.minio.messages.DeleteError;
 import io.minio.messages.Item;
@@ -58,7 +55,6 @@ public class ObjectStoreAccess {
 
   private static final Logger logger = LoggerFactory.getLogger(ObjectStoreAccess.class);
 
-  private static final String DEFAULT_REGION = "eu-west-1";
 
   private final boolean isSetPublicReadAclOnPutObject;
 
@@ -75,39 +71,15 @@ public class ObjectStoreAccess {
    * @throws GeneralSecurityException When there were problems creating the S3 client
    * @throws MinioException           When there were problems creating the S3 client
    */
-  ObjectStoreAccess(DistributionServiceConfig distributionServiceConfig)
+  ObjectStoreAccess(DistributionServiceConfig distributionServiceConfig, MinioClient minioClient)
       throws IOException, GeneralSecurityException, MinioException {
-    this.client = createClient(distributionServiceConfig.getObjectStore());
-
+    this.client = minioClient;
     this.bucket = distributionServiceConfig.getObjectStore().getBucket();
     this.isSetPublicReadAclOnPutObject = distributionServiceConfig.getObjectStore().isSetPublicReadAclOnPutObject();
 
     if (!this.client.bucketExists(this.bucket)) {
       throw new IllegalArgumentException("Supplied bucket does not exist " + bucket);
     }
-  }
-
-  private MinioClient createClient(ObjectStore objectStore)
-      throws InvalidPortException, InvalidEndpointException {
-    if (isSsl(objectStore)) {
-      return new MinioClient(
-          objectStore.getEndpoint(),
-          objectStore.getPort(),
-          objectStore.getAccessKey(), objectStore.getSecretKey(),
-          DEFAULT_REGION,
-          true
-      );
-    } else {
-      return new MinioClient(
-          objectStore.getEndpoint(),
-          objectStore.getPort(),
-          objectStore.getAccessKey(), objectStore.getSecretKey()
-      );
-    }
-  }
-
-  private boolean isSsl(ObjectStore objectStore) {
-    return objectStore.getEndpoint().startsWith("https://");
   }
 
   /**
