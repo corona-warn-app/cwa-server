@@ -1,3 +1,4 @@
+<!-- markdownlint-disable MD041 -->
 <h1 align="center">
     Corona-Warn-App Server
 </h1>
