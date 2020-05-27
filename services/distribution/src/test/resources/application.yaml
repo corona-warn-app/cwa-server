@@ -13,8 +13,7 @@ services:
     include-incomplete-hours: false
     paths:
       output: out
-      privatekey: classpath:certificates/client/private.pem
-      certificate: classpath:certificates/chain/certificate.crt
+      privatekey: classpath:keys/private.pem
     tek-export:
       file-name: export.bin
       file-header: EK Export v1

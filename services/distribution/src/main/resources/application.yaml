@@ -16,7 +16,6 @@ services:
     paths:
       output: out
       privatekey: ${VAULT_FILESIGNING_SECRET}
-      certificate: ${VAULT_FILESIGNING_CERT}
     tek-export:
       file-name: export.bin
       file-header: EK Export v1

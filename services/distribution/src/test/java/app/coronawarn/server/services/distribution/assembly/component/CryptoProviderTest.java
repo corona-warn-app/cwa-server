@@ -42,6 +42,5 @@ class CryptoProviderTest {
   @Test
   void constructorInitializesCryptoArtifacts() {
     assertThat(cryptoProvider.getPrivateKey()).isNotNull();
-    assertThat(cryptoProvider.getCertificate()).isNotNull();
   }
 }
