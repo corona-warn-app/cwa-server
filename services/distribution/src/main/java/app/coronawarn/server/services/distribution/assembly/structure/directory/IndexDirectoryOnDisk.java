@@ -77,9 +77,9 @@ public class IndexDirectoryOnDisk<T> extends DirectoryOnDisk implements IndexDir
    * {@link IndexDirectory#addWritableToAll writables} to those. The respective element of the index will be pushed
    * onto the Stack for subsequent {@link Writable#prepare} calls.
    *
-   * @param indices A {@link ImmutableStack} of parameters from all {@link IndexDirectory IndexDirectories} further up in the
-   *                hierarchy. The Stack may contain different types, depending on the types {@code T} of
-   *                {@link IndexDirectory IndexDirectories} further up in the hierarchy.
+   * @param indices A {@link ImmutableStack} of parameters from all {@link IndexDirectory IndexDirectories} further up
+   *                in the hierarchy. The Stack may contain different types, depending on the types {@code T} of {@link
+   *                IndexDirectory IndexDirectories} further up in the hierarchy.
    */
   @Override
   public void prepare(ImmutableStack<Object> indices) {
