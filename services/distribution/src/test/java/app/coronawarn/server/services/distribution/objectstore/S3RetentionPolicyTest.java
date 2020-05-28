@@ -25,11 +25,8 @@ import static org.mockito.Mockito.atLeastOnce;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-
-import app.coronawarn.server.services.distribution.assembly.component.OutputDirectoryProvider;
 import app.coronawarn.server.services.distribution.config.DistributionServiceConfig;
 import app.coronawarn.server.services.distribution.config.DistributionServiceConfig.ObjectStore;
-import app.coronawarn.server.services.distribution.runner.S3Distribution;
 import io.minio.errors.MinioException;
 import java.io.IOException;
 import java.security.GeneralSecurityException;
@@ -46,24 +43,19 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 @EnableConfigurationProperties(value = DistributionServiceConfig.class)
 @ExtendWith(SpringExtension.class)
-@ContextConfiguration(classes = {S3Distribution.class, ObjectStore.class},
+@ContextConfiguration(classes = {S3RetentionPolicy.class, ObjectStore.class},
     initializers = ConfigFileApplicationContextInitializer.class)
-class S3DistributionTest {
-
-  @Autowired
-  private DistributionServiceConfig distributionServiceConfig;
+class S3RetentionPolicyTest {
 
   @MockBean
   private ObjectStoreAccess objectStoreAccess;
 
-  @MockBean
-  private OutputDirectoryProvider outputDirectoryProvider;
-
   @Autowired
-  private S3Distribution s3Distribution;
+  private S3RetentionPolicy s3RetentionPolicy;
 
   @Test
   void shouldDeleteOldFiles() throws IOException, GeneralSecurityException, MinioException {
+    //TODO use api cfg
     String expectedFileToBeDeleted = "version/v1/diagnosis-keys/country/DE/date/1970-01-01/hour/0";
 
     when(objectStoreAccess.getObjectsWithPrefix(any())).thenReturn(List.of(
@@ -71,7 +63,7 @@ class S3DistributionTest {
         new S3Object("version/v1/diagnosis-keys/country/DE/date/" + LocalDate.now().toString() + "/hour/0"),
         new S3Object("version/v1/configuration/country/DE/app_config")));
 
-    s3Distribution.applyRetentionPolicy(1);
+    s3RetentionPolicy.applyRetentionPolicy(1);
 
     verify(objectStoreAccess, atLeastOnce()).deleteObjectsWithPrefix(eq(expectedFileToBeDeleted));
   }
