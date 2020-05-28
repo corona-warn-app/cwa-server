@@ -35,7 +35,7 @@ jobs:
         mvn --batch-mode verify sonar:sonar \
         -Dsonar.login=${SONAR_TOKEN} \
         -Dsonar.host.url=${SONAR_URL} \
-        -Dsonar.organization=ccfenner \
+        -Dsonar.organization=corona-warn-app \
         -Dsonar.projectKey=${GITHUB_REPOSITORY/\//_}
       env:
         SONAR_URL: https://sonarcloud.io
