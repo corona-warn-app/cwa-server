@@ -20,7 +20,6 @@
 package app.coronawarn.server.services.distribution.assembly.component;
 
 import app.coronawarn.server.services.distribution.config.DistributionServiceConfig;
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -28,9 +27,6 @@ import java.io.UncheckedIOException;
 import java.security.KeyPair;
 import java.security.PrivateKey;
 import java.security.Security;
-import java.security.cert.Certificate;
-import java.security.cert.CertificateException;
-import java.security.cert.CertificateFactory;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.bouncycastle.openssl.PEMKeyPair;
 import org.bouncycastle.openssl.PEMParser;
@@ -40,21 +36,18 @@ import org.springframework.core.io.ResourceLoader;
 import org.springframework.stereotype.Component;
 
 /**
- * Wrapper component for a {@link CryptoProvider#getPrivateKey() private key} and a {@link
- * CryptoProvider#getCertificate()} certificate} from the application properties.
+ * Wrapper component for a {@link CryptoProvider#getPrivateKey() private key} from the application properties.
  */
 @Component
 public class CryptoProvider {
 
   private final PrivateKey privateKey;
-  private final Certificate certificate;
 
   /**
    * Creates a CryptoProvider, using {@link BouncyCastleProvider}.
    */
   CryptoProvider(ResourceLoader resourceLoader, DistributionServiceConfig distributionServiceConfig) {
     privateKey = loadPrivateKey(resourceLoader, distributionServiceConfig);
-    certificate = loadCertificate(resourceLoader, distributionServiceConfig);
     Security.addProvider(new BouncyCastleProvider());
   }
 
@@ -63,18 +56,6 @@ public class CryptoProvider {
     Object parsed = new PEMParser(privateKeyStreamReader).readObject();
     KeyPair pair = new JcaPEMKeyConverter().getKeyPair((PEMKeyPair) parsed);
     return pair.getPrivate();
-  }
-
-  private static Certificate getCertificateFromStream(InputStream certificateStream)
-      throws IOException, CertificateException {
-    return getCertificateFromBytes(certificateStream.readAllBytes());
-  }
-
-  private static Certificate getCertificateFromBytes(byte[] bytes)
-      throws CertificateException {
-    CertificateFactory certificateFactory = CertificateFactory.getInstance("X.509");
-    InputStream certificateByteStream = new ByteArrayInputStream(bytes);
-    return certificateFactory.generateCertificate(certificateByteStream);
   }
 
   /**
@@ -92,24 +73,6 @@ public class CryptoProvider {
       return getPrivateKeyFromStream(privateKeyStream);
     } catch (IOException e) {
       throw new UncheckedIOException("Failed to load private key from " + path, e);
-    }
-  }
-
-  /**
-   * Returns the {@link Certificate} configured in the application properties.
-   */
-  public Certificate getCertificate() {
-    return certificate;
-  }
-
-  private Certificate loadCertificate(ResourceLoader resourceLoader,
-      DistributionServiceConfig distributionServiceConfig) {
-    String path = distributionServiceConfig.getPaths().getCertificate();
-    Resource certResource = resourceLoader.getResource(path);
-    try (InputStream certStream = certResource.getInputStream()) {
-      return getCertificateFromStream(certStream);
-    } catch (IOException | CertificateException e) {
-      throw new RuntimeException("Failed to load certificate from " + path, e);
     }
   }
 }

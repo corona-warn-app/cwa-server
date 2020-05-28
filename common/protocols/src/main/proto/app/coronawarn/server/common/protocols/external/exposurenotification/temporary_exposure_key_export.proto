@@ -21,17 +21,15 @@ message TemporaryExposureKeyExport {
 message SignatureInfo {
   // Apple App Store Application Bundle ID
   optional string app_bundle_id = 1;
-  // Android App package name
-  optional string android_package = 2;
   // Key version for rollovers
   // Must be in character class [a-zA-Z0-9_]
-  optional string verification_key_version = 3;
+  optional string verification_key_version = 2;
   // Alias with which to identify public key to be used for verification
   // Must be in character class [a-zA-Z0-9_]
-  optional string verification_key_id = 4;
+  optional string verification_key_id = 3;
   // ASN.1 OID for Algorithm Identifier. Supported algorithms are
   // either 1.2.840.10045.4.3.2 or 1.2.840.10045.4.3.4
-  optional string signature_algorithm = 5;
+  optional string signature_algorithm = 4;
 }
 message TemporaryExposureKey {
   // Key of infected user
