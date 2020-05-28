@@ -263,7 +263,6 @@ public class DistributionServiceConfig {
   public static class Signature {
 
     private String appBundleId;
-    private String androidPackage;
     private String verificationKeyId;
     private String verificationKeyVersion;
     private String algorithmOid;
@@ -277,14 +276,6 @@ public class DistributionServiceConfig {
 
     public void setAppBundleId(String appBundleId) {
       this.appBundleId = appBundleId;
-    }
-
-    public String getAndroidPackage() {
-      return androidPackage;
-    }
-
-    public void setAndroidPackage(String androidPackage) {
-      this.androidPackage = androidPackage;
     }
 
     public String getVerificationKeyId() {
@@ -341,7 +332,6 @@ public class DistributionServiceConfig {
     public SignatureInfo getSignatureInfo() {
       return SignatureInfo.newBuilder()
           .setAppBundleId(this.getAppBundleId())
-          .setAndroidPackage(this.getAndroidPackage())
           .setVerificationKeyVersion(this.getVerificationKeyVersion())
           .setVerificationKeyId(this.getVerificationKeyId())
           .setSignatureAlgorithm(this.getAlgorithmOid())
