@@ -129,7 +129,7 @@ public class ObjectStoreAccess {
    *
    * @param prefix the prefix, e.g. my/folder/
    */
-  public List<DeleteError> deleteObjectsWithPrefix(String prefix)
+  public void deleteObjectsWithPrefix(String prefix)
       throws MinioException, GeneralSecurityException, IOException {
     List<String> toDelete = getObjectsWithPrefix(prefix)
         .stream()
@@ -144,9 +144,9 @@ public class ObjectStoreAccess {
       errors.add(deleteErrorResult.get());
     }
 
-    logger.info("Deletion result: {}", errors.size());
-
-    return errors;
+    if (!errors.isEmpty()) {
+      throw new MinioException("Can't delete files, number of errors: " + errors.size());
+    }
   }
 
   /**
