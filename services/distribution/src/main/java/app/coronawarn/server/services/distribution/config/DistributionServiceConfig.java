@@ -156,7 +156,6 @@ public class DistributionServiceConfig {
   public static class Paths {
 
     private String privateKey;
-    private String certificate;
     private String output;
 
     public String getPrivateKey() {
@@ -165,14 +164,6 @@ public class DistributionServiceConfig {
 
     public void setPrivateKey(String privateKey) {
       this.privateKey = privateKey;
-    }
-
-    public String getCertificate() {
-      return certificate;
-    }
-
-    public void setCertificate(String certificate) {
-      this.certificate = certificate;
     }
 
     public String getOutput() {
@@ -348,7 +339,6 @@ public class DistributionServiceConfig {
      * Returns the static {@link SignatureInfo} configured in the application properties. TODO Enter correct values.
      */
     public SignatureInfo getSignatureInfo() {
-      // TODO cwa-server#183 cwa-server#207 cwa-server#238
       return SignatureInfo.newBuilder()
           .setAppBundleId(this.getAppBundleId())
           .setAndroidPackage(this.getAndroidPackage())
