@@ -30,9 +30,8 @@ services:
       app-config-file-name: app_config
     signature:
       app-bundle-id: de.rki.coronawarnapp
-      android-package: de.rki.coronawarnapp
-      verification-key-id:
-      verification-key-version:
+      verification-key-id: 262
+      verification-key-version: v1
       algorithm-oid: 1.2.840.10045.4.3.2
       algorithm-name: SHA256withECDSA
       file-name: export.sig
