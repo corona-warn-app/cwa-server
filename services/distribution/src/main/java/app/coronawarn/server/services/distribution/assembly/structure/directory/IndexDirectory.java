@@ -24,7 +24,6 @@ import app.coronawarn.server.services.distribution.assembly.structure.util.Immut
 import app.coronawarn.server.services.distribution.assembly.structure.util.functional.Formatter;
 import app.coronawarn.server.services.distribution.assembly.structure.util.functional.WritableFunction;
 import java.util.Set;
-import java.util.Stack;
 
 /**
  * A "meta {@link Directory directory}" that maps its on-disk subdirectories to some list of elements. This list of
@@ -38,7 +37,7 @@ public interface IndexDirectory<T, W extends Writable<W>> extends Directory<W> {
   /**
    * Adds a writable under the name {@code name}, whose content is calculated by the {@code writableFunction} to each
    * one of the directories created from the index. The {@code fileFunction} calculates the file content from a {@link
-   * java.util.Stack} of parent {@link IndexDirectoryOnDisk} indices. File content calculation happens on {@link
+   * ImmutableStack} of parent {@link IndexDirectoryOnDisk} indices. File content calculation happens on {@link
    * DirectoryOnDisk#write}.
    *
    * @param writableFunction A function that can output a new writable.

@@ -27,7 +27,6 @@ import app.coronawarn.server.services.distribution.assembly.structure.util.funct
 import app.coronawarn.server.services.distribution.assembly.structure.util.functional.WritableFunction;
 import java.util.HashSet;
 import java.util.Set;
-import java.util.Stack;
 
 /**
  * An {@link IndexDirectory} that can be written to disk.
@@ -47,7 +46,7 @@ public class IndexDirectoryOnDisk<T> extends DirectoryOnDisk implements IndexDir
    *
    * @param name           The name that this directory should have on disk.
    * @param indexFunction  An {@link IndexFunction} that calculates the index of this {@link IndexDirectoryOnDisk} from
-   *                       a {@link java.util.Stack} of parent {@link IndexDirectoryOnDisk} indices. The top element of
+   *                       a {@link ImmutableStack} of parent {@link IndexDirectoryOnDisk} indices. The top element of
    *                       the stack is from the closest {@link IndexDirectoryOnDisk} in the parent chain.
    * @param indexFormatter A {@link Formatter} used to format the directory name for each index element returned by the
    *                       {@link IndexDirectoryOnDisk#indexFunction}.
@@ -78,9 +77,9 @@ public class IndexDirectoryOnDisk<T> extends DirectoryOnDisk implements IndexDir
    * {@link IndexDirectory#addWritableToAll writables} to those. The respective element of the index will be pushed
    * onto the Stack for subsequent {@link Writable#prepare} calls.
    *
-   * @param indices A {@link Stack} of parameters from all {@link IndexDirectory IndexDirectories} further up in the
-   *                hierarchy. The Stack may contain different types, depending on the types {@code T} of
-   *                {@link IndexDirectory IndexDirectories} further up in the hierarchy.
+   * @param indices A {@link ImmutableStack} of parameters from all {@link IndexDirectory IndexDirectories} further up
+   *                in the hierarchy. The Stack may contain different types, depending on the types {@code T} of {@link
+   *                IndexDirectory IndexDirectories} further up in the hierarchy.
    */
   @Override
   public void prepare(ImmutableStack<Object> indices) {
