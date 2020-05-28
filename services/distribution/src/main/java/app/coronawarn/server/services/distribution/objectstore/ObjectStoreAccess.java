@@ -145,10 +145,8 @@ public class ObjectStoreAccess {
     }
 
     if (!errors.isEmpty()) {
-      throw new MinioException("can't delete files, number of errors: " + errors.size());
+      throw new MinioException("Can't delete files, number of errors: " + errors.size());
     }
-
-    logger.info("Deletion result: {}", errors.size());
   }
 
   /**

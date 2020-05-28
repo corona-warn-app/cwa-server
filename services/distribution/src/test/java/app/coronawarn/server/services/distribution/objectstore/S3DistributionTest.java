@@ -1,91 +1,78 @@
+/*
+ * Corona-Warn-App
+ *
+ * SAP SE and all other contributors /
+ * copyright owners license this file to you under the Apache
+ * License, Version 2.0 (the "License"); you may not use this
+ * file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
+ */
+
 package app.coronawarn.server.services.distribution.objectstore;
 
-import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.atLeastOnce;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
-import app.coronawarn.server.services.distribution.Application;
+
+import app.coronawarn.server.services.distribution.assembly.component.OutputDirectoryProvider;
 import app.coronawarn.server.services.distribution.config.DistributionServiceConfig;
+import app.coronawarn.server.services.distribution.config.DistributionServiceConfig.ObjectStore;
 import app.coronawarn.server.services.distribution.runner.S3Distribution;
-import io.minio.MinioClient;
-import io.minio.errors.InvalidEndpointException;
-import io.minio.errors.InvalidPortException;
 import io.minio.errors.MinioException;
 import java.io.IOException;
 import java.security.GeneralSecurityException;
 import java.time.LocalDate;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
+import java.util.List;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestInstance;
-import org.junit.jupiter.api.TestInstance.Lifecycle;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.ConfigFileApplicationContextInitializer;
-import org.springframework.core.io.ResourceLoader;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
+@EnableConfigurationProperties(value = DistributionServiceConfig.class)
 @ExtendWith(SpringExtension.class)
-@ContextConfiguration(classes = {Application.class},
+@ContextConfiguration(classes = {S3Distribution.class, ObjectStore.class},
     initializers = ConfigFileApplicationContextInitializer.class)
-@TestInstance(Lifecycle.PER_CLASS)
-public class S3DistributionTest {
-
-  private static final String textFile = "objectstore/store-test-file";
-
-  private MinioClient client;
+class S3DistributionTest {
 
   @Autowired
   private DistributionServiceConfig distributionServiceConfig;
 
-  @Autowired
+  @MockBean
   private ObjectStoreAccess objectStoreAccess;
+
+  @MockBean
+  private OutputDirectoryProvider outputDirectoryProvider;
 
   @Autowired
   private S3Distribution s3Distribution;
 
-  @Autowired
-  private ResourceLoader resourceLoader;
-
   @Test
   void shouldDeleteOldFiles() throws IOException, GeneralSecurityException, MinioException {
-    this.client.putObject(this.distributionServiceConfig.getObjectStore().getBucket(),
-        "version/v1/diagnosis-keys/country/DE/date/1970-01-01/hour/0", getExampleFilePath(), null);
-    this.client.putObject(this.distributionServiceConfig.getObjectStore().getBucket(),
-        "version/v1/diagnosis-keys/country/DE/date/" + LocalDate.now().toString() + "/hour/0", getExampleFilePath(),
-        null);
-    this.client.putObject(this.distributionServiceConfig.getObjectStore().getBucket(),
-        "version/v1/configuration/country/DE/app_config", getExampleFilePath(), null);
+    String expectedFileToBeDeleted = "version/v1/diagnosis-keys/country/DE/date/1970-01-01/hour/0";
 
-    assertThat(objectStoreAccess.getObjectsWithPrefix("version/v1/").size()).isEqualTo(3);
+    when(objectStoreAccess.getObjectsWithPrefix(any())).thenReturn(List.of(
+        new S3Object(expectedFileToBeDeleted),
+        new S3Object("version/v1/diagnosis-keys/country/DE/date/" + LocalDate.now().toString() + "/hour/0"),
+        new S3Object("version/v1/configuration/country/DE/app_config")));
 
-    s3Distribution.applyRetentionPolicy(distributionServiceConfig.getRetentionDays());
+    s3Distribution.applyRetentionPolicy(1);
 
-    assertThat(objectStoreAccess.getObjectsWithPrefix("version/v1/").size()).isEqualTo(2);
-  }
-
-  private String getExampleFilePath() throws IOException {
-    return resourceLoader.getResource(textFile).getFile().toString();
-  }
-
-  @BeforeAll
-  public void connectS3Storage() throws InvalidPortException, InvalidEndpointException {
-    this.client = new MinioClient(
-        distributionServiceConfig.getObjectStore().getEndpoint(),
-        distributionServiceConfig.getObjectStore().getPort(),
-        distributionServiceConfig.getObjectStore().getAccessKey(),
-        distributionServiceConfig.getObjectStore().getSecretKey()
-    );
-  }
-
-  @BeforeEach
-  public void setup()
-      throws MinioException, GeneralSecurityException, IOException {
-    objectStoreAccess.deleteObjectsWithPrefix("");
-  }
-
-  @AfterEach
-  public void teardown() throws IOException, GeneralSecurityException, MinioException {
-    objectStoreAccess.deleteObjectsWithPrefix("");
+    verify(objectStoreAccess, atLeastOnce()).deleteObjectsWithPrefix(eq(expectedFileToBeDeleted));
   }
 }
