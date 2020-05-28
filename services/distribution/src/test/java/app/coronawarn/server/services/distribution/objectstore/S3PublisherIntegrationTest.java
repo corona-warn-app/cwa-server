@@ -19,10 +19,9 @@
 
 package app.coronawarn.server.services.distribution.objectstore;
 
-
 import static org.assertj.core.api.Assertions.assertThat;
 
-import app.coronawarn.server.services.distribution.Application;
+import app.coronawarn.server.services.distribution.config.DistributionServiceConfig;
 import io.minio.errors.MinioException;
 import java.io.IOException;
 import java.nio.file.Path;
@@ -34,14 +33,16 @@ import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.ConfigFileApplicationContextInitializer;
 import org.springframework.core.io.ResourceLoader;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 @ExtendWith(SpringExtension.class)
-@ContextConfiguration(classes = {Application.class},
+@ContextConfiguration(classes = {ObjectStoreAccess.class, ObjectStoreClientConfig.class},
     initializers = ConfigFileApplicationContextInitializer.class)
+@EnableConfigurationProperties(value = DistributionServiceConfig.class)
 @Tag("s3-integration")
 class S3PublisherIntegrationTest {
 
@@ -58,7 +59,6 @@ class S3PublisherIntegrationTest {
     S3Publisher publisher = new S3Publisher(getFolderAsPath(rootTestFolder), objectStoreAccess);
 
     publisher.publish();
-
     List<S3Object> s3Objects = objectStoreAccess.getObjectsWithPrefix("version");
 
     assertThat(s3Objects).hasSize(5);
@@ -69,8 +69,7 @@ class S3PublisherIntegrationTest {
   }
 
   @BeforeEach
-  public void setup()
-      throws MinioException, GeneralSecurityException, IOException {
+  public void setup() throws MinioException, GeneralSecurityException, IOException {
     objectStoreAccess.deleteObjectsWithPrefix("");
   }
 

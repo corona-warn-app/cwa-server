@@ -24,7 +24,6 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-import app.coronawarn.server.services.distribution.Application;
 import io.minio.errors.MinioException;
 import java.io.IOException;
 import java.security.GeneralSecurityException;
@@ -32,23 +31,16 @@ import java.util.List;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.ConfigFileApplicationContextInitializer;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.core.io.ResourceLoader;
-import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 @ExtendWith(SpringExtension.class)
-@ContextConfiguration(classes = {Application.class},
-    initializers = ConfigFileApplicationContextInitializer.class)
 class S3PublisherTest {
 
   private static final String PUBLISHING_PATH = "testsetups/s3publishertest/topublish";
-
   private static final S3Object FILE_1 = new S3Object("file1.txt", "39f7e3afaa8f8560a3050d1a1b365f47-1");
-
   private static final S3Object FILE_2 = new S3Object("file2.txt", "8d29190901bfde9710ea76b29ef3d33e-1");
-
   private static final S3Object FILE_3 = new S3Object("file3.txt", "585f3b3f71f6b1519a21bef8bb77cf01-1");
 
   @MockBean
@@ -92,7 +84,6 @@ class S3PublisherTest {
 
     verify(objectStoreAccess, times(1)).putObject(any());
   }
-
 
   private List<S3Object> noneExisting() {
     return List.of();
