@@ -65,7 +65,7 @@ public class AppConfigurationDirectory extends DirectoryOnDisk {
     this.distributionServiceConfig = distributionServiceConfig;
 
     countryDirectory = new IndexDirectoryOnDisk<>(distributionServiceConfig.getApi().getCountryPath(),
-        x -> Set.of(distributionServiceConfig.getApi().getCountryGermany()), Object::toString);
+        __ -> Set.of(distributionServiceConfig.getApi().getCountryGermany()), Object::toString);
 
     addApplicationConfigurationIfValid();
 
@@ -79,7 +79,7 @@ public class AppConfigurationDirectory extends DirectoryOnDisk {
       addArchiveIfMessageValid(distributionServiceConfig.getApi().getAppConfigFileName(),
           appConfig, validator);
     } catch (UnableToLoadFileException e) {
-      logger.error("Exposure configuration will not be published! Unable to read configuration file from disk.");
+      logger.error("Exposure configuration will not be published! Unable to read configuration file from disk.", e);
     }
   }
 
@@ -97,7 +97,7 @@ public class AppConfigurationDirectory extends DirectoryOnDisk {
 
     ArchiveOnDisk appConfigurationFile = new ArchiveOnDisk(archiveName);
     appConfigurationFile.addWritable(new FileOnDisk("export.bin", message.toByteArray()));
-    countryDirectory.addWritableToAll(x -> new AppConfigurationSigningDecorator(appConfigurationFile, cryptoProvider,
+    countryDirectory.addWritableToAll(__ -> new AppConfigurationSigningDecorator(appConfigurationFile, cryptoProvider,
         distributionServiceConfig));
   }
 }

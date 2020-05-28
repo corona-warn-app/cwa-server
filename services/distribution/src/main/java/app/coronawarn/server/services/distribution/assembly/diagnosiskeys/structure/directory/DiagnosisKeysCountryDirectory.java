@@ -47,7 +47,7 @@ public class DiagnosisKeysCountryDirectory extends IndexDirectoryOnDisk<String> 
    */
   public DiagnosisKeysCountryDirectory(Collection<DiagnosisKey> diagnosisKeys,
       CryptoProvider cryptoProvider, DistributionServiceConfig distributionServiceConfig) {
-    super(distributionServiceConfig.getApi().getCountryPath(), x ->
+    super(distributionServiceConfig.getApi().getCountryPath(), __ ->
         Set.of(distributionServiceConfig.getApi().getCountryGermany()), Object::toString);
     this.diagnosisKeys = diagnosisKeys;
     this.cryptoProvider = cryptoProvider;

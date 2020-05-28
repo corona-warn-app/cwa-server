@@ -37,8 +37,8 @@ public class FileOnDisk extends WritableOnDisk implements File<WritableOnDisk> {
   }
 
   /**
-   * Creates a {@link java.io.File} with name {@link Writable#getName} on disk and writes the
-   * {@link File#getBytes bytes} of this {@link File} into that {@link java.io.File}.
+   * Creates a {@link java.io.File} with name {@link Writable#getName} on disk and writes the {@link File#getBytes
+   * bytes} of this {@link File} into that {@link java.io.File}.
    */
   @Override
   public void write() {
@@ -61,8 +61,6 @@ public class FileOnDisk extends WritableOnDisk implements File<WritableOnDisk> {
    */
   @Override
   public void prepare(ImmutableStack<Object> indices) {
-    /*
-    Method override exists here to comply with the implementation rules for the Writable interface.
-     */
+    // Method override exists here to comply with the implementation rules for the Writable interface.
   }
 }

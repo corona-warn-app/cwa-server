@@ -1,0 +1,90 @@
+/*
+ * Corona-Warn-App
+ *
+ * SAP SE and all other contributors /
+ * copyright owners license this file to you under the Apache
+ * License, Version 2.0 (the "License"); you may not use this
+ * file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
+ */
+
+package app.coronawarn.server.services.distribution.objectstore;
+
+import app.coronawarn.server.services.distribution.config.DistributionServiceConfig;
+import app.coronawarn.server.services.distribution.config.DistributionServiceConfig.Api;
+import io.minio.errors.MinioException;
+import java.io.IOException;
+import java.io.UncheckedIOException;
+import java.security.GeneralSecurityException;
+import java.time.LocalDate;
+import java.time.ZoneOffset;
+import java.time.format.DateTimeFormatter;
+import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+
+/**
+ * Creates an S3RetentionPolicy object, which applies the retention policy to the S3 compatible storage.
+ */
+@Component
+public class S3RetentionPolicy {
+
+  private final ObjectStoreAccess objectStoreAccess;
+  private final Api api;
+
+  @Autowired
+  public S3RetentionPolicy(ObjectStoreAccess objectStoreAccess, DistributionServiceConfig distributionServiceConfig) {
+    this.objectStoreAccess = objectStoreAccess;
+    this.api = distributionServiceConfig.getApi();
+  }
+
+  /**
+   * Deletes all diagnosis-key files from S3 that are older than retentionDays.
+   *
+   * @param retentionDays the number of days, that files should be retained on S3.
+   */
+  public void applyRetentionPolicy(int retentionDays) throws MinioException, GeneralSecurityException, IOException {
+    List<S3Object> diagnosisKeysObjects = objectStoreAccess.getObjectsWithPrefix("version/v1/"
+        + api.getDiagnosisKeysPath() + "/"
+        + api.getCountryPath() + "/"
+        + api.getCountryGermany() + "/"
+        + api.getDatePath() + "/");
+    final String regex = ".*([0-9]{4}-[0-9]{2}-[0-9]{2}).*";
+    final Pattern pattern = Pattern.compile(regex);
+
+    final LocalDate cutOffDate = LocalDate.now(ZoneOffset.UTC).minusDays(retentionDays);
+
+    diagnosisKeysObjects.stream()
+        .filter(diagnosisKeysObject -> {
+          Matcher matcher = pattern.matcher(diagnosisKeysObject.getObjectName());
+          return matcher.matches() && LocalDate.parse(matcher.group(1), DateTimeFormatter.ISO_LOCAL_DATE)
+              .isBefore(cutOffDate);
+        })
+        .forEach(this::deleteDiagnosisKey);
+  }
+
+  /**
+   * Java stream do not support checked exceptions within streams. This helper method rethrows them as unchecked
+   * expressions, so they can be passed up to the Retention Policy.
+   *
+   * @param diagnosisKey the  diagnosis key, that should be deleted.
+   */
+  public void deleteDiagnosisKey(S3Object diagnosisKey) {
+    try {
+      objectStoreAccess.deleteObjectsWithPrefix(diagnosisKey.getObjectName());
+    } catch (Exception e) {
+      throw new UncheckedIOException(new IOException(e));
+    }
+  }
+}

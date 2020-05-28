@@ -39,19 +39,19 @@ class RiskScoreClassificationValidatorTest {
 
   private final static int MAX_SCORE = ParameterSpec.RISK_SCORE_MAX;
   private final static String VALID_LABEL = "myLabel";
-  private final static String VALID_URL = "";
+  private final static String VALID_URL = "https://www.my.url";
 
   @ParameterizedTest
   @ValueSource(strings = {"", " "})
   void failsForBlankLabels(String invalidLabel) {
-    var validator = buildValidator(buildRiskClass(invalidLabel, 0, MAX_SCORE, ""));
+    var validator = buildValidator(buildRiskClass(invalidLabel, 0, MAX_SCORE, VALID_URL));
     var expectedResult = buildExpectedResult(buildError("label", invalidLabel, ErrorType.BLANK_LABEL));
 
     assertThat(validator.validate()).isEqualTo(expectedResult);
   }
 
   @ParameterizedTest
-  @ValueSource(strings = {"invalid.Url", "invalid-url", "$$$://invalid.url"})
+  @ValueSource(strings = {"invalid.Url", "invalid-url", "$$$://invalid.url", "", " "})
   void failsForInvalidUrl(String invalidUrl) {
     var validator = buildValidator(buildRiskClass(VALID_LABEL, 0, MAX_SCORE, invalidUrl));
     var expectedResult = buildExpectedResult(buildError("url", invalidUrl, ErrorType.INVALID_URL));
@@ -133,10 +133,8 @@ class RiskScoreClassificationValidatorTest {
 
   private static Stream<Arguments> createValidClassifications() {
     return Stream.of(
-        // blank url
-        buildClassification(buildRiskClass(VALID_LABEL, 0, MAX_SCORE, "")),
-        // legit url
-        buildClassification(buildRiskClass(VALID_LABEL, 0, MAX_SCORE, "http://www.sap.com")),
+        // valid url
+        buildClassification(buildRiskClass(VALID_LABEL, 0, MAX_SCORE, VALID_URL)),
         // [0:MAX_SCORE/2][MAX_SCORE/2:MAX_SCORE]
         buildClassification(
             buildRiskClass(VALID_LABEL, 0, MAX_SCORE / 2, VALID_URL),
