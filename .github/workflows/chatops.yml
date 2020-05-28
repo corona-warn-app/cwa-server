@@ -6,7 +6,7 @@ on:
 
 jobs:
   sonar:
-    name: 'SonarCloud on PR'
+    name: 'Push to SonarCloud Branch'
 
     runs-on: ubuntu-latest
     if: github.event.comment.body == '/sonar' && (github.event.comment.author_association == 'COLLABORATOR' || github.event.comment.author_association == 'OWNER' || github.event.comment.author_association == 'MEMBER')
@@ -15,7 +15,7 @@ jobs:
       - name: get pull request url
         id: pullrequest
         run: |
-          echo "::set-output name=number::$(echo ${{ github.event.comment.issue_url }} | sed 's/https:\/\/api.github.com\/repos\/${GITHUB_REPOSITORY_OWNER}\/cwa-server\/issues\///g')"
+          echo "::set-output name=number::$(echo ${{ github.event.comment.issue_url }} | sed 's/https:\/\/api.github.com\/repos\/${{ github.repository_owner }}\/cwa-server\/issues\///g')"
           echo "::set-output name=url::$(curl ${{ github.event.comment.issue_url }} | jq '.pull_request.url' | sed 's/\"//g')"
       - name: get branch name
         id: repository
@@ -34,5 +34,5 @@ jobs:
           CHATOPS_TOKEN: ${{ secrets.CHATOPS_TOKEN }}
           CHATOPS_USER: ${{ secrets.CHATOPS_USER }}
       # Only push to SonarCloud branch if PR is created from a fork
-      - if: ${{ steps.repository.outputs.slug != 'CCFenner/cwa-server' }}
+      - if: ${{ steps.repository.outputs.slug != github.repository }}
         run: git push -f upstream HEAD:chatops-sonar-${{steps.pullrequest.outputs.number}}
