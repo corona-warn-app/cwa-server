@@ -23,6 +23,7 @@ import app.coronawarn.server.services.distribution.config.DistributionServiceCon
 import app.coronawarn.server.services.distribution.config.DistributionServiceConfig.Api;
 import io.minio.errors.MinioException;
 import java.io.IOException;
+import java.io.UncheckedIOException;
 import java.security.GeneralSecurityException;
 import java.time.LocalDate;
 import java.time.ZoneOffset;
@@ -83,7 +84,7 @@ public class S3RetentionPolicy {
     try {
       objectStoreAccess.deleteObjectsWithPrefix(diagnosisKey.getObjectName());
     } catch (Exception e) {
-      throw new RuntimeException(e);
+      throw new UncheckedIOException(new IOException(e));
     }
   }
 }
