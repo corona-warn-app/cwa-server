@@ -15,7 +15,7 @@ jobs:
       - name: get pull request url
         id: pullrequest
         run: |
-          echo "::set-output name=number::$(echo ${{ github.event.comment.issue_url }} | sed 's/https:\/\/api.github.com\/repos\/CCFenner\/cwa-server\/issues\///g')"
+          echo "::set-output name=number::$(echo ${{ github.event.comment.issue_url }} | sed 's/https:\/\/api.github.com\/repos\/${GITHUB_REPOSITORY_OWNER}\/cwa-server\/issues\///g')"
           echo "::set-output name=url::$(curl ${{ github.event.comment.issue_url }} | jq '.pull_request.url' | sed 's/\"//g')"
       - name: get branch name
         id: repository
