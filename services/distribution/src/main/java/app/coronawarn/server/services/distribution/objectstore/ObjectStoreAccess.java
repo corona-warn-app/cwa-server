@@ -20,19 +20,17 @@
 package app.coronawarn.server.services.distribution.objectstore;
 
 import app.coronawarn.server.services.distribution.config.DistributionServiceConfig;
-import app.coronawarn.server.services.distribution.config.DistributionServiceConfig.ObjectStore;
 import app.coronawarn.server.services.distribution.objectstore.publish.LocalFile;
 import io.minio.MinioClient;
 import io.minio.PutObjectOptions;
 import io.minio.Result;
-import io.minio.errors.InvalidEndpointException;
-import io.minio.errors.InvalidPortException;
 import io.minio.errors.MinioException;
 import io.minio.messages.DeleteError;
 import io.minio.messages.Item;
 import java.io.IOException;
 import java.security.GeneralSecurityException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -58,7 +56,11 @@ public class ObjectStoreAccess {
 
   private static final Logger logger = LoggerFactory.getLogger(ObjectStoreAccess.class);
 
-  private static final String DEFAULT_REGION = "eu-west-1";
+  /**
+   * Specifies the default maximum amount of time in seconds that a published resource can be considered "fresh" when
+   * held in a cache.
+   */
+  public static final int DEFAULT_MAX_CACHE_AGE = 300;
 
   private final boolean isSetPublicReadAclOnPutObject;
 
@@ -71,14 +73,14 @@ public class ObjectStoreAccess {
    * bucket.
    *
    * @param distributionServiceConfig The config properties
+   * @param minioClient               The client used for interaction with the object store
    * @throws IOException              When there were problems creating the S3 client
    * @throws GeneralSecurityException When there were problems creating the S3 client
    * @throws MinioException           When there were problems creating the S3 client
    */
-  ObjectStoreAccess(DistributionServiceConfig distributionServiceConfig)
+  ObjectStoreAccess(DistributionServiceConfig distributionServiceConfig, MinioClient minioClient)
       throws IOException, GeneralSecurityException, MinioException {
-    this.client = createClient(distributionServiceConfig.getObjectStore());
-
+    this.client = minioClient;
     this.bucket = distributionServiceConfig.getObjectStore().getBucket();
     this.isSetPublicReadAclOnPutObject = distributionServiceConfig.getObjectStore().isSetPublicReadAclOnPutObject();
 
@@ -87,38 +89,25 @@ public class ObjectStoreAccess {
     }
   }
 
-  private MinioClient createClient(ObjectStore objectStore)
-      throws InvalidPortException, InvalidEndpointException {
-    if (isSsl(objectStore)) {
-      return new MinioClient(
-          objectStore.getEndpoint(),
-          objectStore.getPort(),
-          objectStore.getAccessKey(), objectStore.getSecretKey(),
-          DEFAULT_REGION,
-          true
-      );
-    } else {
-      return new MinioClient(
-          objectStore.getEndpoint(),
-          objectStore.getPort(),
-          objectStore.getAccessKey(), objectStore.getSecretKey()
-      );
-    }
-  }
-
-  private boolean isSsl(ObjectStore objectStore) {
-    return objectStore.getEndpoint().startsWith("https://");
+  /**
+   * Stores the target file on the S3 and sets cache control headers according to the default maximum age value.
+   *
+   * @param localFile The file to be published.
+   */
+  public void putObject(LocalFile localFile) throws IOException, GeneralSecurityException, MinioException {
+    putObject(localFile, DEFAULT_MAX_CACHE_AGE);
   }
 
   /**
-   * Stores the target file on the S3.
+   * Stores the target file on the S3 and sets cache control headers according to the specified maximum age value.
    *
-   * @param localFile the file to be published
+   * @param localFile The file to be published.
+   * @param maxAge    A cache control parameter that specifies the maximum amount of time in seconds that a resource can
+   *                  be considered "fresh" when held in a cache.
    */
-  public void putObject(LocalFile localFile)
-      throws IOException, GeneralSecurityException, MinioException {
+  public void putObject(LocalFile localFile, int maxAge) throws IOException, GeneralSecurityException, MinioException {
     String s3Key = localFile.getS3Key();
-    PutObjectOptions options = createOptionsFor(localFile);
+    PutObjectOptions options = createOptionsFor(localFile, maxAge);
 
     logger.info("... uploading {}", s3Key);
     this.client.putObject(bucket, s3Key, localFile.getFile().toString(), options);
@@ -167,12 +156,14 @@ public class ObjectStoreAccess {
     return list;
   }
 
-  private PutObjectOptions createOptionsFor(LocalFile file) {
+  private PutObjectOptions createOptionsFor(LocalFile file, int maxAge) {
     var options = new PutObjectOptions(file.getFile().toFile().length(), -1);
 
+    Map<String, String> headers = new HashMap<>(Map.of("cache-control", "public,max-age=" + maxAge));
     if (this.isSetPublicReadAclOnPutObject) {
-      options.setHeaders(Map.of("x-amz-acl", "public-read"));
+      headers.put("x-amz-acl", "public-read");
     }
+    options.setHeaders(headers);
 
     return options;
   }
