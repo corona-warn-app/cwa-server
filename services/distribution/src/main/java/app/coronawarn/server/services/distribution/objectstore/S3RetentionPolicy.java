@@ -34,7 +34,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 /**
- * TODO .
+ * Creates an S3RetentionPolicy object, which applies the retention policy to the S3 compatible storage.
  */
 @Component
 public class S3RetentionPolicy {

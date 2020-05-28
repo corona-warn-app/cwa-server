@@ -22,6 +22,7 @@ package app.coronawarn.server.services.distribution.objectstore;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.atLeastOnce;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -53,18 +54,39 @@ class S3RetentionPolicyTest {
   @Autowired
   private S3RetentionPolicy s3RetentionPolicy;
 
+  @Autowired DistributionServiceConfig distributionServiceConfig;
+
   @Test
   void shouldDeleteOldFiles() throws IOException, GeneralSecurityException, MinioException {
-    //TODO use api cfg
-    String expectedFileToBeDeleted = "version/v1/diagnosis-keys/country/DE/date/1970-01-01/hour/0";
+    String expectedFileToBeDeleted = generateFileName(LocalDate.now().minusDays(2));
 
     when(objectStoreAccess.getObjectsWithPrefix(any())).thenReturn(List.of(
         new S3Object(expectedFileToBeDeleted),
-        new S3Object("version/v1/diagnosis-keys/country/DE/date/" + LocalDate.now().toString() + "/hour/0"),
+        new S3Object(generateFileName(LocalDate.now())),
         new S3Object("version/v1/configuration/country/DE/app_config")));
 
     s3RetentionPolicy.applyRetentionPolicy(1);
 
     verify(objectStoreAccess, atLeastOnce()).deleteObjectsWithPrefix(eq(expectedFileToBeDeleted));
+  }
+
+  @Test
+  void shouldNotDeleteFilesIfAllAreValid() throws IOException, GeneralSecurityException, MinioException {
+    when(objectStoreAccess.getObjectsWithPrefix(any())).thenReturn(List.of(
+        new S3Object(generateFileName(LocalDate.now().minusDays(1))),
+        new S3Object(generateFileName(LocalDate.now().plusDays(1))),
+        new S3Object(generateFileName(LocalDate.now())),
+        new S3Object("version/v1/configuration/country/DE/app_config")));
+
+    s3RetentionPolicy.applyRetentionPolicy(1);
+
+    verify(objectStoreAccess, never()).deleteObjectsWithPrefix(any());
+  }
+
+  private String generateFileName(LocalDate date) {
+    var api = distributionServiceConfig.getApi();
+
+    return "version/v1/" + api.getDiagnosisKeysPath() + "/"  + api.getCountryPath() + "/"
+        + api.getCountryGermany() + "/" + api.getDatePath() + "/" + date.toString() + "/hour/0";
   }
 }
