@@ -6,3 +6,8 @@ logging:
         web: DEBUG
     app:
       coronawarn: DEBUG
+
+services:
+  distribution:
+    signature:
+      app-bundle-id: de.rki.coronawarnapp-dev

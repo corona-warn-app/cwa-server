@@ -49,12 +49,12 @@ public class TanVerifier {
    * This class can be used to verify a TAN against a configured verification service.
    *
    * @param submissionServiceConfig A submission service configuration
-   * @param restTemplateBuilder A rest template builder
+   * @param restTemplateBuilder     A rest template builder
    */
   @Autowired
   public TanVerifier(SubmissionServiceConfig submissionServiceConfig, RestTemplateBuilder restTemplateBuilder) {
     this.verificationServiceUrl = submissionServiceConfig.getVerificationBaseUrl()
-      + submissionServiceConfig.getVerificationPath();
+        + submissionServiceConfig.getVerificationPath();
     this.restTemplate = restTemplateBuilder.build();
     this.requestHeader.setContentType(MediaType.APPLICATION_JSON);
   }
@@ -88,6 +88,7 @@ public class TanVerifier {
       UUID.fromString(tan);
       return true;
     } catch (IllegalArgumentException e) {
+      logger.debug("UUID creation failed for value: {}", tan, e);
       return false;
     }
   }
@@ -107,8 +108,8 @@ public class TanVerifier {
       ResponseEntity<String> response = restTemplate.postForEntity(verificationServiceUrl, entity, String.class);
       return response.getStatusCode().is2xxSuccessful();
     } catch (HttpClientErrorException.NotFound e) {
-      // The validation service returns http status 404 if the TAN is invalid
-      logger.debug("TAN validation failed for TAN: {}", tan);
+      // The verification service returns http status 404 if the TAN is invalid
+      logger.debug("TAN verification failed");
       return false;
     }
   }
