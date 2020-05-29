@@ -5,31 +5,36 @@ option java_package = "app.coronawarn.server.common.protocols.external.exposuren
 option java_multiple_files = true;
 
 message TemporaryExposureKeyExport {
-  // Time window of keys in this batch based on arrival to server, in UTC seconds
+  // Time window of keys in the file, based on arrival
+  // at the server, in UTC seconds.
   optional fixed64 start_timestamp = 1;
   optional fixed64 end_timestamp = 2;
-  // Region for which these keys came from (e.g., country)
+  // Region from which these keys came (for example, MCC).
   optional string region = 3;
-  // E.g., File 2 in batch size of 10. Ordinal, 1-based numbering.
+  // Reserved for future use. Both batch_num and batch_size
+  // must be set to a value of 1.
   optional int32 batch_num = 4;
   optional int32 batch_size = 5;
-  // Information about associated signatures
+  // Information about associated signatures.
   repeated SignatureInfo signature_infos = 6;
-  // The TemporaryExposureKeys themselves
+  // The temporary exposure keys themselves.
   repeated TemporaryExposureKey keys = 7;
 }
 message SignatureInfo {
-  // Apple App Store Application Bundle ID
+  // App Store app bundle ID.
   optional string app_bundle_id = 1;
-  // Key version for rollovers
-  // Must be in character class [a-zA-Z0-9_]
-  optional string verification_key_version = 2;
-  // Alias with which to identify public key to be used for verification
-  // Must be in character class [a-zA-Z0-9_]
-  optional string verification_key_id = 3;
-  // ASN.1 OID for Algorithm Identifier. Supported algorithms are
-  // either 1.2.840.10045.4.3.2 or 1.2.840.10045.4.3.4
-  optional string signature_algorithm = 4;
+  // Android app package name.
+  optional string android_package = 2;
+  // Key version in case the EN server signing key is rotated.
+  optional string verification_key_version = 3;
+  // Three-digit mobile country code (MCC) for validating the key file.
+  // If a region has more than one MCC, the server can choose
+  // which MCC to use. This value does not have to match the client's MCC,
+  // but must correspond to one of the supported MCCs for its region.
+  optional string verification_key_id = 4;
+  // All keys must be signed using the SHA-256 with ECDSA algorithm.
+  // This field must contain the string "1.2.840.10045.4.3.2".
+  optional string signature_algorithm = 5;
 }
 message TemporaryExposureKey {
   // Key of infected user

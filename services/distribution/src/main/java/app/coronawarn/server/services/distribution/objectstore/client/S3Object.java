@@ -17,7 +17,7 @@
  * under the License.
  */
 
-package app.coronawarn.server.services.distribution.objectstore;
+package app.coronawarn.server.services.distribution.objectstore.client;
 
 import io.minio.messages.Item;
 import java.util.HashMap;
@@ -50,12 +50,19 @@ public class S3Object {
     this.objectName = objectName;
   }
 
-  public String getObjectName() {
-    return objectName;
+  /**
+   * Constructs a new S3Object for the given object name.
+   *
+   * @param objectName the target object name
+   * @param etag the e-etag
+   */
+  public S3Object(String objectName, String etag) {
+    this(objectName);
+    this.etag = etag;
   }
 
-  public Map<String, String> getMetadata() {
-    return metadata;
+  public String getObjectName() {
+    return objectName;
   }
 
   public String getEtag() {
@@ -69,14 +76,7 @@ public class S3Object {
    * @return the S3Object representation
    */
   public static S3Object of(Item item) {
-    S3Object s3Object = new S3Object(item.objectName());
-
-    if (item.userMetadata() != null) {
-      s3Object.metadata = item.userMetadata();
-    }
-
-    s3Object.etag = item.etag().replaceAll("\"", "");
-
-    return s3Object;
+    String etag = item.etag().replaceAll("\"", "");
+    return new S3Object(item.objectName(), etag);
   }
 }
