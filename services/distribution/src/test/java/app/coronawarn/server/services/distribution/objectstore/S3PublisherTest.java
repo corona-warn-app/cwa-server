@@ -19,63 +19,102 @@
 
 package app.coronawarn.server.services.distribution.objectstore;
 
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
-import static org.assertj.core.api.Assertions.assertThat;
-
-import app.coronawarn.server.services.distribution.Application;
 import io.minio.errors.MinioException;
 import java.io.IOException;
-import java.nio.file.Path;
 import java.security.GeneralSecurityException;
 import java.util.List;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.ConfigFileApplicationContextInitializer;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.core.io.ResourceLoader;
-import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 @ExtendWith(SpringExtension.class)
-@ContextConfiguration(classes = {Application.class},
-    initializers = ConfigFileApplicationContextInitializer.class)
-@Tag("s3-integration")
 class S3PublisherTest {
 
-  private final String rootTestFolder = "objectstore/publisher/";
+  private static final String PUBLISHING_PATH = "testsetups/s3publishertest/topublish";
+  private static final S3Object FILE_1 = new S3Object("file1.txt", "39f7e3afaa8f8560a3050d1a1b365f47-1");
+  private static final S3Object FILE_2 = new S3Object("file2.txt", "8d29190901bfde9710ea76b29ef3d33e-1");
+  private static final S3Object FILE_3 = new S3Object("file3.txt", "585f3b3f71f6b1519a21bef8bb77cf01-1");
 
-  @Autowired
+  @MockBean
   private ObjectStoreAccess objectStoreAccess;
 
   @Autowired
   private ResourceLoader resourceLoader;
 
   @Test
-  void publishTestFolderOk() throws IOException, GeneralSecurityException, MinioException {
-    S3Publisher publisher = new S3Publisher(getFolderAsPath(rootTestFolder), objectStoreAccess);
+  void allNewNoExisting() throws IOException, GeneralSecurityException, MinioException {
+    when(objectStoreAccess.getObjectsWithPrefix("version")).thenReturn(noneExisting());
 
-    publisher.publish();
+    createTestPublisher().publish();
 
-    List<S3Object> s3Objects = objectStoreAccess.getObjectsWithPrefix("version");
-
-    assertThat(s3Objects).hasSize(5);
+    verify(objectStoreAccess, times(3)).putObject(any());
   }
 
-  private Path getFolderAsPath(String path) throws IOException {
-    return resourceLoader.getResource(path).getFile().toPath();
+  @Test
+  void noUploadsDueToAlreadyExist() throws IOException, GeneralSecurityException, MinioException {
+    when(objectStoreAccess.getObjectsWithPrefix("version")).thenReturn(allExistAllSame());
+
+    createTestPublisher().publish();
+
+    verify(objectStoreAccess, times(0)).putObject(any());
   }
 
-  @BeforeEach
-  public void setup()
-      throws MinioException, GeneralSecurityException, IOException {
-    objectStoreAccess.deleteObjectsWithPrefix("");
+  @Test
+  void uploadAllOtherFilesDifferentNames() throws IOException, GeneralSecurityException, MinioException {
+    when(objectStoreAccess.getObjectsWithPrefix("version")).thenReturn(otherExisting());
+
+    createTestPublisher().publish();
+
+    verify(objectStoreAccess, times(3)).putObject(any());
   }
 
-  @AfterEach
-  public void teardown() throws IOException, GeneralSecurityException, MinioException {
-    objectStoreAccess.deleteObjectsWithPrefix("");
+  @Test
+  void uploadOneDueToOneChanged() throws IOException, GeneralSecurityException, MinioException {
+    when(objectStoreAccess.getObjectsWithPrefix("version")).thenReturn(twoIdenticalOneOtherOneChange());
+
+    createTestPublisher().publish();
+
+    verify(objectStoreAccess, times(1)).putObject(any());
+  }
+
+  private List<S3Object> noneExisting() {
+    return List.of();
+  }
+
+  private List<S3Object> otherExisting() {
+    return List.of(
+        new S3Object("some_old_file.txt", "1fb772815c837b6294d9f163db89e962-1"),
+        new S3Object("other_old_file.txt", "2fb772815c837b6294d9f163db89e962-1")
+    );
+  }
+
+  private List<S3Object> allExistAllSame() {
+    return List.of(
+        FILE_1,
+        FILE_2,
+        FILE_3
+    );
+  }
+
+  private List<S3Object> twoIdenticalOneOtherOneChange() {
+    return List.of(
+        new S3Object("newfile.txt", "1fb772815c837b6294d9f163db89e962-1"), // new
+        FILE_1,
+        FILE_2,
+        new S3Object("file3.txt", "111772815c837b6294d9f163db89e962-1") // changed
+    );
+  }
+
+  private S3Publisher createTestPublisher() throws IOException {
+    var publishPath = resourceLoader.getResource(PUBLISHING_PATH).getFile().toPath();
+    return new S3Publisher(publishPath, objectStoreAccess);
   }
 }
