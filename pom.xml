@@ -54,6 +54,7 @@
           <sectionDelimiter>---</sectionDelimiter>
           <addJavaLicenseAfterPackage>false</addJavaLicenseAfterPackage>
           <trimHeaderLine>true</trimHeaderLine>
+          <emptyLineAfterHeader>true</emptyLineAfterHeader>
         </configuration>
       </plugin>
       <plugin>
