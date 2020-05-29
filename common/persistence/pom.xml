@@ -14,6 +14,10 @@
   <artifactId>persistence</artifactId>
   <version>${revision}</version>
 
+  <organization>
+    <name>SAP SE</name>
+  </organization>
+
   <properties>
     <java.version>11</java.version>
     <maven.compiler.source>11</maven.compiler.source>
@@ -105,6 +109,19 @@
 
   <build>
     <plugins>
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>license-maven-plugin</artifactId>
+        <version>2.0.0</version>
+        <configuration>
+          <includes>**/*.java</includes>
+          <copyrightOwners>${organization.name} and all other contributors</copyrightOwners>
+          <processStartTag>---license-start</processStartTag>
+          <processEndTag>---license-end</processEndTag>
+          <sectionDelimiter>---</sectionDelimiter>
+          <addJavaLicenseAfterPackage>false</addJavaLicenseAfterPackage>
+        </configuration>
+      </plugin>
       <plugin>
         <!-- see https://maven.apache.org/maven-ci-friendly.html#install-deploy -->
         <groupId>org.codehaus.mojo</groupId>
