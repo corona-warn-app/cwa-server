@@ -16,6 +16,10 @@
   <groupId>org.opencwa</groupId>
   <version>${revision}</version>
 
+  <organization>
+    <name>SAP SE</name>
+  </organization>
+
   <packaging>pom</packaging>
   <modules>
     <module>distribution</module>
@@ -89,6 +93,19 @@
 
   <build>
     <plugins>
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>license-maven-plugin</artifactId>
+        <version>2.0.0</version>
+        <configuration>
+          <includes>**/*.java</includes>
+          <copyrightOwners>${organization.name} and all other contributors</copyrightOwners>
+          <processStartTag>---license-start</processStartTag>
+          <processEndTag>---license-end</processEndTag>
+          <sectionDelimiter>---</sectionDelimiter>
+          <addJavaLicenseAfterPackage>false</addJavaLicenseAfterPackage>
+        </configuration>
+      </plugin>
       <plugin>
         <!-- see https://maven.apache.org/maven-ci-friendly.html#install-deploy -->
         <groupId>org.codehaus.mojo</groupId>
