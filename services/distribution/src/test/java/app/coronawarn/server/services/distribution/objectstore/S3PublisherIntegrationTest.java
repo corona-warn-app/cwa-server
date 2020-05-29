@@ -22,10 +22,10 @@ package app.coronawarn.server.services.distribution.objectstore;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import app.coronawarn.server.services.distribution.config.DistributionServiceConfig;
-import io.minio.errors.MinioException;
+import app.coronawarn.server.services.distribution.objectstore.client.ObjectStoreClientConfig;
+import app.coronawarn.server.services.distribution.objectstore.client.S3Object;
 import java.io.IOException;
 import java.nio.file.Path;
-import java.security.GeneralSecurityException;
 import java.util.List;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -55,7 +55,7 @@ class S3PublisherIntegrationTest {
   private ResourceLoader resourceLoader;
 
   @Test
-  void publishTestFolderOk() throws IOException, GeneralSecurityException, MinioException {
+  void publishTestFolderOk() throws IOException {
     S3Publisher publisher = new S3Publisher(getFolderAsPath(rootTestFolder), objectStoreAccess);
 
     publisher.publish();
@@ -69,12 +69,12 @@ class S3PublisherIntegrationTest {
   }
 
   @BeforeEach
-  public void setup() throws MinioException, GeneralSecurityException, IOException {
+  public void setup() {
     objectStoreAccess.deleteObjectsWithPrefix("");
   }
 
   @AfterEach
-  public void teardown() throws IOException, GeneralSecurityException, MinioException {
+  public void teardown() {
     objectStoreAccess.deleteObjectsWithPrefix("");
   }
 }

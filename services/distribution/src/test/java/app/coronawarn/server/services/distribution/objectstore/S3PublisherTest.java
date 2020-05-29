@@ -24,9 +24,8 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-import io.minio.errors.MinioException;
+import app.coronawarn.server.services.distribution.objectstore.client.S3Object;
 import java.io.IOException;
-import java.security.GeneralSecurityException;
 import java.util.List;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -50,7 +49,7 @@ class S3PublisherTest {
   private ResourceLoader resourceLoader;
 
   @Test
-  void allNewNoExisting() throws IOException, GeneralSecurityException, MinioException {
+  void allNewNoExisting() throws IOException {
     when(objectStoreAccess.getObjectsWithPrefix("version")).thenReturn(noneExisting());
 
     createTestPublisher().publish();
@@ -59,7 +58,7 @@ class S3PublisherTest {
   }
 
   @Test
-  void noUploadsDueToAlreadyExist() throws IOException, GeneralSecurityException, MinioException {
+  void noUploadsDueToAlreadyExist() throws IOException {
     when(objectStoreAccess.getObjectsWithPrefix("version")).thenReturn(allExistAllSame());
 
     createTestPublisher().publish();
@@ -68,7 +67,7 @@ class S3PublisherTest {
   }
 
   @Test
-  void uploadAllOtherFilesDifferentNames() throws IOException, GeneralSecurityException, MinioException {
+  void uploadAllOtherFilesDifferentNames() throws IOException {
     when(objectStoreAccess.getObjectsWithPrefix("version")).thenReturn(otherExisting());
 
     createTestPublisher().publish();
@@ -77,7 +76,7 @@ class S3PublisherTest {
   }
 
   @Test
-  void uploadOneDueToOneChanged() throws IOException, GeneralSecurityException, MinioException {
+  void uploadOneDueToOneChanged() throws IOException {
     when(objectStoreAccess.getObjectsWithPrefix("version")).thenReturn(twoIdenticalOneOtherOneChange());
 
     createTestPublisher().publish();
