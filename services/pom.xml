@@ -103,7 +103,7 @@
           <processStartTag>---license-start</processStartTag>
           <processEndTag>---license-end</processEndTag>
           <sectionDelimiter>---</sectionDelimiter>
-          <addJavaLicenseAfterPackage>false</addJavaLicenseAfterPackage
+          <addJavaLicenseAfterPackage>false</addJavaLicenseAfterPackage>
           <trimHeaderLine>true</trimHeaderLine>
           <emptyLineAfterHeader>true</emptyLineAfterHeader>
         </configuration>
