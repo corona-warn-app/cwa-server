@@ -17,7 +17,7 @@
  * under the License.
  */
 
-package app.coronawarn.server.services.distribution.objectstore;
+package app.coronawarn.server.services.distribution.objectstore.client;
 
 import app.coronawarn.server.services.distribution.config.DistributionServiceConfig;
 import app.coronawarn.server.services.distribution.config.DistributionServiceConfig.ObjectStore;
@@ -36,27 +36,25 @@ public class ObjectStoreClientConfig {
   private static final String DEFAULT_REGION = "eu-west-1";
 
   @Bean
-  public MinioClient createMinioClient(DistributionServiceConfig distributionServiceConfig)
+  public ObjectStoreClient createObjectStoreClient(DistributionServiceConfig distributionServiceConfig)
       throws InvalidPortException, InvalidEndpointException {
     return createClient(distributionServiceConfig.getObjectStore());
   }
 
-  private MinioClient createClient(ObjectStore objectStore)
+  private MinioClientWrapper createClient(ObjectStore objectStore)
       throws InvalidPortException, InvalidEndpointException {
     if (isSsl(objectStore)) {
-      return new MinioClient(
+      return new MinioClientWrapper(new MinioClient(
           objectStore.getEndpoint(),
           objectStore.getPort(),
           objectStore.getAccessKey(), objectStore.getSecretKey(),
           DEFAULT_REGION,
-          true
-      );
+          true));
     } else {
-      return new MinioClient(
+      return new MinioClientWrapper(new MinioClient(
           objectStore.getEndpoint(),
           objectStore.getPort(),
-          objectStore.getAccessKey(), objectStore.getSecretKey()
-      );
+          objectStore.getAccessKey(), objectStore.getSecretKey()));
     }
   }
 

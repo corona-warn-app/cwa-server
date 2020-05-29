@@ -21,10 +21,7 @@ package app.coronawarn.server.services.distribution.objectstore;
 
 import app.coronawarn.server.services.distribution.config.DistributionServiceConfig;
 import app.coronawarn.server.services.distribution.config.DistributionServiceConfig.Api;
-import io.minio.errors.MinioException;
-import java.io.IOException;
-import java.io.UncheckedIOException;
-import java.security.GeneralSecurityException;
+import app.coronawarn.server.services.distribution.objectstore.client.S3Object;
 import java.time.LocalDate;
 import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
@@ -54,7 +51,7 @@ public class S3RetentionPolicy {
    *
    * @param retentionDays the number of days, that files should be retained on S3.
    */
-  public void applyRetentionPolicy(int retentionDays) throws MinioException, GeneralSecurityException, IOException {
+  public void applyRetentionPolicy(int retentionDays) {
     List<S3Object> diagnosisKeysObjects = objectStoreAccess.getObjectsWithPrefix("version/v1/"
         + api.getDiagnosisKeysPath() + "/"
         + api.getCountryPath() + "/"
@@ -81,10 +78,6 @@ public class S3RetentionPolicy {
    * @param diagnosisKey the  diagnosis key, that should be deleted.
    */
   public void deleteDiagnosisKey(S3Object diagnosisKey) {
-    try {
-      objectStoreAccess.deleteObjectsWithPrefix(diagnosisKey.getObjectName());
-    } catch (Exception e) {
-      throw new UncheckedIOException(new IOException(e));
-    }
+    objectStoreAccess.deleteObjectsWithPrefix(diagnosisKey.getObjectName());
   }
 }
