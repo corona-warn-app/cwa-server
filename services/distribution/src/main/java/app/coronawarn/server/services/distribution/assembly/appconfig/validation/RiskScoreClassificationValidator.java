@@ -81,7 +81,7 @@ public class RiskScoreClassificationValidator extends ConfigurationValidator {
   }
 
   private void validateRiskScoreValueBounds(int value) {
-    if (!RiskScoreValidator.isInBounds(value)) {
+    if (value < 0 || value > ParameterSpec.TOTAL_RISK_SCORE_MAX) {
       errors.add(new RiskScoreClassificationValidationError("minRiskLevel/maxRiskLevel", value, VALUE_OUT_OF_BOUNDS));
     }
   }
@@ -99,7 +99,7 @@ public class RiskScoreClassificationValidator extends ConfigurationValidator {
         .mapToInt(riskScoreClass -> (riskScoreClass.getMax() - riskScoreClass.getMin() + 1))
         .sum();
 
-    if (partitionSum != ParameterSpec.RISK_SCORE_MAX + 1) {
+    if (partitionSum != ParameterSpec.TOTAL_RISK_SCORE_MAX + 1) {
       errors.add(new RiskScoreClassificationValidationError("covered value range", partitionSum, INVALID_PARTITIONING));
     }
   }

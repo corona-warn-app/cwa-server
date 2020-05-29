@@ -52,4 +52,9 @@ public class ParameterSpec {
    * The allowed maximum value for a risk score.
    */
   public static final int RISK_SCORE_MAX = 4096;
+
+  /**
+   * The allowed maximum value for the total risk score.
+   */
+  public static final int TOTAL_RISK_SCORE_MAX = 255;
 }

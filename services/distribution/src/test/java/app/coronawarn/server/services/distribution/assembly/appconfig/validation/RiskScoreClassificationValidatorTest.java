@@ -37,7 +37,7 @@ import org.junit.jupiter.params.provider.ValueSource;
 
 class RiskScoreClassificationValidatorTest {
 
-  private final static int MAX_SCORE = ParameterSpec.RISK_SCORE_MAX;
+  private final static int MAX_SCORE = ParameterSpec.TOTAL_RISK_SCORE_MAX;
   private final static String VALID_LABEL = "myLabel";
   private final static String VALID_URL = "https://www.my.url";
 
