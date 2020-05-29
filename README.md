@@ -63,7 +63,7 @@ distribution      | The Corona-Warn-App distribution service                    
 postgres          | A [postgres] database installation                                                          | `postgres:8001` <br> Username: postgres <br> Password: postgres
 pgadmin           | A [pgadmin](https://www.pgadmin.org/) installation for the postgres database                | `http://localhost:8002` <br> Username: user@domain.com <br> Password: password
 cloudserver       | [Zenko CloudServer] is a S3-compliant object store  | `http://localhost:8003/` <br> Access key: accessKey1 <br> Secret key: verySecretKey1
-verification-fake | A very simple fake implementation for the tan verification.                                 | `http://localhost:8004/version/v1/tan/verify` <br> The only valid tan is "b69ab69f-9823-4549-8961-c41sa74b2f36"
+verification-fake | A very simple fake implementation for the tan verification.                                 | `http://localhost:8004/version/v1/tan/verify` <br> The only valid tan is "edc07f08-a1aa-11ea-bb37-0242ac130002"
 
 ##### Known Limitation
 
