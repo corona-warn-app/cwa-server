@@ -53,6 +53,7 @@
           <processEndTag>---license-end</processEndTag>
           <sectionDelimiter>---</sectionDelimiter>
           <addJavaLicenseAfterPackage>false</addJavaLicenseAfterPackage>
+          <trimHeaderLine>true</trimHeaderLine>
         </configuration>
       </plugin>
       <plugin>
