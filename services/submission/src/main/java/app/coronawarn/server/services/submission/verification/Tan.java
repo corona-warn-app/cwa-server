@@ -34,7 +34,8 @@ class Tan {
   }
 
   /**
-   * Returns the string representation of a tan.
+   * Returns the TAN in it's string representation.
+   *
    * @return the tan UUID as a string.
    */
   @Override
