@@ -121,21 +121,8 @@ public class TestDataGeneration implements ApplicationRunner {
         .collect(Collectors.toList());
 
     logger.debug("Writing {} new diagnosis keys to the database...", newDiagnosisKeys.size());
-//    diagnosisKeyService.saveDiagnosisKeys(newDiagnosisKeys);
-    var tmp1 = DiagnosisKey.builder().withKeyData("testKey111111111".getBytes(Charset.defaultCharset())).withRollingStartIntervalNumber(1).withTransmissionRiskLevel(1).withSubmissionTimestamp(441907).build();
-    var tmp2 = DiagnosisKey.builder().withKeyData("testKey111111111".getBytes(Charset.defaultCharset())).withRollingStartIntervalNumber(2).withTransmissionRiskLevel(1).withSubmissionTimestamp(441907).build();
-
-
-
-    var tmp = List.of(tmp1, tmp2);
-
-
-    diagnosisKeyService.saveDiagnosisKeys(tmp);
-
-
-//    diagnosisKeyService.saveDiagnosisKeys(newDiagnosisKeys);
+    diagnosisKeyService.saveDiagnosisKeys(newDiagnosisKeys);
     logger.debug("Test data generation finished successfully.");
-//    diagnosisKeyService.saveDiagnosisKeys(newDiagnosisKeys);
   }
 
   /**
