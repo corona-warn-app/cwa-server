@@ -22,12 +22,14 @@ package app.coronawarn.server.services.submission.verification;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
-import static org.springframework.test.web.client.match.MockRestRequestMatchers.method;
-import static org.springframework.test.web.client.match.MockRestRequestMatchers.requestTo;
+import static org.springframework.http.HttpHeaders.CONTENT_TYPE;
+import static org.springframework.test.web.client.match.MockRestRequestMatchers.*;
 import static org.springframework.test.web.client.response.MockRestResponseCreators.withStatus;
 
 import app.coronawarn.server.services.submission.config.SubmissionServiceConfig;
+
 import java.util.UUID;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -38,6 +40,7 @@ import org.springframework.boot.test.autoconfigure.web.client.RestClientTest;
 import org.springframework.boot.test.context.ConfigFileApplicationContextInitializer;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.web.client.ExpectedCount;
 import org.springframework.test.web.client.MockRestServiceServer;
@@ -68,20 +71,12 @@ class TanVerifierTest {
     this.randomUUID = UUID.randomUUID().toString();
   }
 
-  @ParameterizedTest
-  @ValueSource(strings = {
-    "ANY SYNTAX", "123456", "ABCD23X", "ZZZZZZZ", "Bearer 3123fe", "", "&%$§&%&$%/%&",
-    "LOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOONG"
-  })
-  void checkWrongTanSyntax(String invalidSyntaxTan) {
-    assertThat(tanVerifier.verifyTan(invalidSyntaxTan)).isFalse();
-  }
-
   @Test
   void checkValidTan() {
     this.server
       .expect(ExpectedCount.once(), requestTo(verificationUrl))
       .andExpect(method(HttpMethod.POST))
+      .andExpect(header(CONTENT_TYPE, MediaType.APPLICATION_JSON.toString()))
       .andRespond(withStatus(HttpStatus.OK));
     assertThat(tanVerifier.verifyTan(randomUUID)).isTrue();
   }
@@ -91,6 +86,7 @@ class TanVerifierTest {
     this.server
       .expect(ExpectedCount.once(), requestTo(verificationUrl))
       .andExpect(method(HttpMethod.POST))
+      .andExpect(header(CONTENT_TYPE, MediaType.APPLICATION_JSON.toString()))
       .andRespond(withStatus(HttpStatus.NOT_FOUND));
     assertThat(tanVerifier.verifyTan(randomUUID)).isFalse();
   }
@@ -100,6 +96,7 @@ class TanVerifierTest {
     this.server
       .expect(ExpectedCount.once(), requestTo(verificationUrl))
       .andExpect(method(HttpMethod.POST))
+      .andExpect(header(CONTENT_TYPE, MediaType.APPLICATION_JSON.toString()))
       .andRespond(withStatus(HttpStatus.INTERNAL_SERVER_ERROR));
     assertThatExceptionOfType(HttpServerErrorException.class).isThrownBy(() -> tanVerifier.verifyTan(randomUUID));
   }
