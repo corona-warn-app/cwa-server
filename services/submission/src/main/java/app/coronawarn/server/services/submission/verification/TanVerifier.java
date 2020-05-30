@@ -72,7 +72,7 @@ public class TanVerifier {
    */
   private boolean verifyWithVerificationService(Tan tan) {
     try {
-      verificationServerClient.verfiyTan(tan);
+      verificationServerClient.verifyTan(tan);
       return true;
     } catch (FeignException.NotFound e) {
       return false;

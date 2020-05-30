@@ -43,7 +43,7 @@ import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 import static org.springframework.http.HttpHeaders.CONTENT_TYPE;
 
 @SpringBootTest(
-  classes = {FeignAutoConfiguration.class, FeignTestConfiguraiton.class, TanVerifier.class})
+  classes = {FeignAutoConfiguration.class, FeignTestConfiguration.class, TanVerifier.class})
 @EnableConfigurationProperties(value = SubmissionServiceConfig.class)
 class TanVerifierTest {
   @Autowired

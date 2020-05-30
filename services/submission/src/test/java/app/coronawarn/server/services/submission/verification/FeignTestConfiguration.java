@@ -7,7 +7,7 @@ import org.springframework.context.annotation.Configuration;
 
 @EnableFeignClients
 @Configuration
-public class FeignTestConfiguraiton {
+public class FeignTestConfiguration {
   @Bean
   public HttpMessageConverters httpMessageConverters() {
     return new HttpMessageConverters();
