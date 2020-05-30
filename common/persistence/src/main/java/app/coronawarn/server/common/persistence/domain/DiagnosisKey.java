@@ -23,9 +23,11 @@ import static java.time.ZoneOffset.UTC;
 
 import app.coronawarn.server.common.persistence.domain.DiagnosisKeyBuilders.Builder;
 import app.coronawarn.server.common.persistence.domain.validation.ValidRollingStartIntervalNumber;
+import java.time.Duration;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
+import java.time.temporal.TemporalUnit;
 import java.util.Arrays;
 import java.util.Objects;
 import java.util.Set;
@@ -141,22 +143,23 @@ public class DiagnosisKey {
   }
 
   /**
-   * Returns the distribution timestamp. Before keys are allowed to be exported, they need to be expired for at least
+   * Returns the distribution datetime. Before keys are allowed to be exported, they need to be expired for at least
    * two hours.
    *
-   * @return the distribution timestamp, from which on the key can be distributed.
+   * @return the distribution datetime, from which on the key can be distributed.
    */
-  public LocalDateTime getDistributionTimestamp() {
-    var submissionTimestampDate = LocalDateTime.ofEpochSecond(getSubmissionTimestamp() * 3600, 0, UTC);
+  public LocalDateTime getDistributionDateTime() {
+    var submissionDateTime = LocalDateTime.ofEpochSecond(getSubmissionTimestamp() * 3600, 0, UTC);
     var keyExpiryDate =
         LocalDateTime.ofEpochSecond(getRollingStartIntervalNumber() * 600L, 0, UTC)
             .plusMinutes(getRollingPeriod() * 10L);
 
-    if (keyExpiryDate.until(submissionTimestampDate, ChronoUnit.MINUTES) < 120) {
+    if (Duration.between(keyExpiryDate, submissionDateTime).toMinutes() <= 120) {
       // truncatedTo floors the value, so we need to add an hour to the 2 hour minimum expiry time to compensate that.
       return keyExpiryDate.plusHours(3).truncatedTo(ChronoUnit.HOURS);
     }
-    return submissionTimestampDate;
+
+    return submissionDateTime;
   }
 
   /**
