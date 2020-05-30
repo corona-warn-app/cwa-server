@@ -25,6 +25,7 @@ import app.coronawarn.server.common.persistence.domain.DiagnosisKeyBuilders.Buil
 import app.coronawarn.server.common.persistence.domain.validation.ValidRollingStartIntervalNumber;
 import java.time.Instant;
 import java.time.LocalDateTime;
+import java.time.ZoneOffset;
 import java.util.Arrays;
 import java.util.Objects;
 import java.util.Set;
@@ -137,6 +138,24 @@ public class DiagnosisKey {
    */
   public long getSubmissionTimestamp() {
     return submissionTimestamp;
+  }
+
+  public LocalDateTime getDistributionTimestamp() {
+    var submissionTimestampDate = LocalDateTime.ofEpochSecond(getSubmissionTimestamp() * 3600, 0, UTC);
+    var keyExpiryDate =
+        LocalDateTime.ofEpochSecond(getRollingStartIntervalNumber() * 600, 0, UTC)
+            .plusMinutes(getRollingPeriod() * 10);
+
+    if (submissionTimestampDate.minusHours(2).isBefore(keyExpiryDate)) {
+      var differenceHours = submissionTimestampDate.minusHours(1).isBefore(keyExpiryDate) ? 2 : 1;
+      if (LocalDateTime.now(ZoneOffset.UTC).isBefore(submissionTimestampDate.plusHours(differenceHours))) {
+        return LocalDateTime.ofEpochSecond(0, 0, UTC);
+      } else {
+        return submissionTimestampDate.plusHours(differenceHours);
+      }
+    } else {
+      return submissionTimestampDate;
+    }
   }
 
   /**
