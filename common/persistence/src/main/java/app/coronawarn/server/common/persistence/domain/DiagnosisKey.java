@@ -25,7 +25,6 @@ import app.coronawarn.server.common.persistence.domain.DiagnosisKeyBuilders.Buil
 import app.coronawarn.server.common.persistence.domain.validation.ValidRollingStartIntervalNumber;
 import java.time.Instant;
 import java.time.LocalDateTime;
-import java.time.ZoneOffset;
 import java.util.Arrays;
 import java.util.Objects;
 import java.util.Set;
@@ -141,15 +140,10 @@ public class DiagnosisKey {
   }
 
   /**
-   * Returns the distribution timestamp, which is used to determine the export folder the key should be placed in.
-   * If the expiry date is more than 2 hours before the submission timestamp, the key will be in the folder, that
-   * matches the submission timestamp. If the expiry date is less than 2 hours, but more than 1 hour away from the
-   * submission timestamp it will be saved in the submission timestamp + 1 hour folder, same for less than an hour
-   * respectively with the submission timestamp + 2 hours folder.
-   * If the key is still active, or the folder, that it should be saved to is in the future, the distribution date
-   * will be set to '1970-01-01T00:00', which results in this key not being saved during that run.
+   * Returns the distribution timestamp. Before keys are allowed to be exported, they need to be expired for at least
+   * two hours.
    *
-   * @return
+   * @return the distribution timestamp, from which on the key can be distributed.
    */
   public LocalDateTime getDistributionTimestamp() {
     var submissionTimestampDate = LocalDateTime.ofEpochSecond(getSubmissionTimestamp() * 3600, 0, UTC);
@@ -158,12 +152,7 @@ public class DiagnosisKey {
             .plusMinutes(getRollingPeriod() * 10);
 
     if (submissionTimestampDate.minusHours(2).isBefore(keyExpiryDate)) {
-      var differenceHours = submissionTimestampDate.minusHours(1).isBefore(keyExpiryDate) ? 2 : 1;
-      if (LocalDateTime.now(ZoneOffset.UTC).isBefore(submissionTimestampDate.plusHours(differenceHours))) {
-        return LocalDateTime.ofEpochSecond(0, 0, UTC);
-      } else {
-        return submissionTimestampDate.plusHours(differenceHours);
-      }
+      return submissionTimestampDate.plusHours(submissionTimestampDate.minusHours(1).isBefore(keyExpiryDate) ? 2 : 1);
     } else {
       return submissionTimestampDate;
     }

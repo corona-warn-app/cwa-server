@@ -94,23 +94,12 @@ class DiagnosisKeyTest {
 
   @Test
   void testDistributionDate() {
-    int twoHoursAgo = (int) (LocalDateTime
-        .ofInstant(Instant.now(), UTC)
-        .minusHours(2)
-        .toEpochSecond(UTC) / (60 * 10));
-
     var diagnosisKeyExpired = new DiagnosisKey(expKeyData, 1, 0, expTransmissionRiskLevel, 3);
     var diagnosisKeyExpiresInUnderAnHour = new DiagnosisKey(expKeyData, 1, 6, expTransmissionRiskLevel, 3);
     var diagnosisKeyExpiresInOverAnHour = new DiagnosisKey(expKeyData, 1, 12, expTransmissionRiskLevel, 3);
-    var diagnosisKeyExpiresFuture =
-        new DiagnosisKey(expKeyData, twoHoursAgo, 1, expTransmissionRiskLevel, Instant.now().getEpochSecond() / 3600);
-    var diagnosisKeyStillActive =
-        new DiagnosisKey(expKeyData, twoHoursAgo, 4, expTransmissionRiskLevel, Instant.now().getEpochSecond() / 3600);
 
     assertThat(diagnosisKeyExpired.getDistributionTimestamp()).isEqualTo("1970-01-01T03:00");
     assertThat(diagnosisKeyExpiresInUnderAnHour.getDistributionTimestamp()).isEqualTo("1970-01-01T04:00");
     assertThat(diagnosisKeyExpiresInOverAnHour.getDistributionTimestamp()).isEqualTo("1970-01-01T05:00");
-    assertThat(diagnosisKeyExpiresFuture.getDistributionTimestamp()).isEqualTo("1970-01-01T00:00");
-    assertThat(diagnosisKeyStillActive.getDistributionTimestamp()).isEqualTo("1970-01-01T00:00");
   }
 }
