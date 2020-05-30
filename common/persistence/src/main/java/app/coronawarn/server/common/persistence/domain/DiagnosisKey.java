@@ -148,8 +148,8 @@ public class DiagnosisKey {
   public LocalDateTime getDistributionTimestamp() {
     var submissionTimestampDate = LocalDateTime.ofEpochSecond(getSubmissionTimestamp() * 3600, 0, UTC);
     var keyExpiryDate =
-        LocalDateTime.ofEpochSecond(getRollingStartIntervalNumber() * 600, 0, UTC)
-            .plusMinutes(getRollingPeriod() * 10);
+        LocalDateTime.ofEpochSecond(getRollingStartIntervalNumber() * 600L, 0, UTC)
+            .plusMinutes(getRollingPeriod() * 10L);
 
     if (submissionTimestampDate.minusHours(2).isBefore(keyExpiryDate)) {
       return submissionTimestampDate.plusHours(submissionTimestampDate.minusHours(1).isBefore(keyExpiryDate) ? 2 : 1);
