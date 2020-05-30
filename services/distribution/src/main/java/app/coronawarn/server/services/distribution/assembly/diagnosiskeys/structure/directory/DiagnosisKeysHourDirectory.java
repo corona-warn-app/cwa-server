@@ -87,9 +87,23 @@ public class DiagnosisKeysHourDirectory extends IndexDirectoryOnDisk<LocalDateTi
 
   private Set<DiagnosisKey> getDiagnosisKeysForHour(LocalDateTime hour) {
     return this.diagnosisKeys.stream()
-        .filter(diagnosisKey -> DateTime
-            .getLocalDateTimeFromHoursSinceEpoch(diagnosisKey.getSubmissionTimestamp())
-            .equals(hour))
+        .filter(diagnosisKey -> {
+          var submissionTimestamp = DateTime.getLocalDateTimeFromHoursSinceEpoch(diagnosisKey.getSubmissionTimestamp());
+          var keyExpiryDate =
+              LocalDateTime.ofEpochSecond(diagnosisKey.getRollingStartIntervalNumber() * 600, 0, ZoneOffset.UTC)
+                  .plusHours(diagnosisKey.getRollingPeriod() / 6);
+
+          if (submissionTimestamp.minusHours(2).isBefore(keyExpiryDate)) {
+            var differenceHours = submissionTimestamp.minusHours(1).isBefore(keyExpiryDate) ? 2 : 1;
+            if (LocalDateTime.now(ZoneOffset.UTC).isBefore(submissionTimestamp.plusHours(differenceHours))) {
+              return false;
+            } else {
+              return submissionTimestamp.plusHours(differenceHours).equals(hour);
+            }
+          } else {
+            return submissionTimestamp.equals(hour);
+          }
+        })
         .collect(Collectors.toSet());
   }
 
