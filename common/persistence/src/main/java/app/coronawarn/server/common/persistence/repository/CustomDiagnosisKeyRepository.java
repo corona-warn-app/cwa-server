@@ -21,6 +21,6 @@ package app.coronawarn.server.common.persistence.repository;
 
 import java.util.List;
 
-public interface CustomDiagnosisKeyRepository<DiagnosisKey> {
-  <S extends DiagnosisKey> List<S> saveAll(Iterable<S> iterable);
+public interface CustomDiagnosisKeyRepository<T> {
+  <S extends T> List<S> saveAll(Iterable<S> iterable);
 }

@@ -1,6 +1,5 @@
 CREATE TABLE diagnosis_key (
-    id bigserial PRIMARY KEY,
-    key_data bytea,
+    key_data bytea PRIMARY KEY,
     rolling_period bigint NOT NULL,
     rolling_start_number bigint NOT NULL,
     submission_timestamp bigint NOT NULL,

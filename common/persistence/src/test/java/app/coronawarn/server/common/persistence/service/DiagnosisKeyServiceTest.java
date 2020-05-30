@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -33,6 +33,7 @@ import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Random;
 import org.assertj.core.util.Lists;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;
@@ -149,15 +150,39 @@ class DiagnosisKeyServiceTest {
     assertDiagnosisKeysEqual(Lists.emptyList(), actKeys);
   }
 
-  public static DiagnosisKey buildDiagnosisKeyForSubmissionTimestamp(long submissionTimeStamp) {
+  @Test
+  void shouldNotUpdateExistingKey() {
+    var keys = List.of(DiagnosisKey.builder()
+            .withKeyData("1234567890123456".getBytes())
+            .withRollingStartIntervalNumber((int) (OffsetDateTime.now(UTC).toEpochSecond() / 600) - 2)
+            .withTransmissionRiskLevel(2)
+            .withSubmissionTimestamp(0L).build(),
+        DiagnosisKey.builder()
+            .withKeyData("1234567890123456".getBytes())
+            .withRollingStartIntervalNumber((int) (OffsetDateTime.now(UTC).toEpochSecond() / 600) - 3)
+            .withTransmissionRiskLevel(3)
+            .withSubmissionTimestamp(0L).build());
+
+    diagnosisKeyService.saveDiagnosisKeys(keys);
+
+    var actKeys = diagnosisKeyService.getDiagnosisKeys();
+
+    assertThat(actKeys.size()).isEqualTo(1);
+    assertThat(actKeys.iterator().next().getTransmissionRiskLevel()).isEqualTo(2);
+  }
+
+  public DiagnosisKey buildDiagnosisKeyForSubmissionTimestamp(long submissionTimeStamp) {
+    byte[] randomBytes = new byte[16];
+    Random random = new Random(submissionTimeStamp);
+    random.nextBytes(randomBytes);
     return DiagnosisKey.builder()
-        .withKeyData(new byte[16])
+        .withKeyData(randomBytes)
         .withRollingStartIntervalNumber(600)
         .withTransmissionRiskLevel(2)
         .withSubmissionTimestamp(submissionTimeStamp).build();
   }
 
-  public static DiagnosisKey buildDiagnosisKeyForDateTime(OffsetDateTime dateTime) {
+  public DiagnosisKey buildDiagnosisKeyForDateTime(OffsetDateTime dateTime) {
     return buildDiagnosisKeyForSubmissionTimestamp(dateTime.toEpochSecond() / 3600);
   }
 }

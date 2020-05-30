@@ -38,7 +38,6 @@ import javax.validation.Validation;
 import javax.validation.Validator;
 import javax.validation.constraints.Size;
 import org.hibernate.validator.constraints.Range;
-import org.springframework.transaction.annotation.Transactional;
 
 /**
  * A key generated for advertising over a window of time.
@@ -72,12 +71,6 @@ public class DiagnosisKey {
   private int transmissionRiskLevel;
 
   private long submissionTimestamp;
-
-
-  @Transactional
-  public void insertWithQuery(DiagnosisKey diagnosisKey) {
-    System.out.println(diagnosisKey.getSubmissionTimestamp());
-  }
 
   protected DiagnosisKey() {
   }
