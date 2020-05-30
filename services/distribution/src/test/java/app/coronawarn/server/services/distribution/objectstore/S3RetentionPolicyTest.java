@@ -28,10 +28,9 @@ import static org.mockito.Mockito.when;
 
 import app.coronawarn.server.services.distribution.config.DistributionServiceConfig;
 import app.coronawarn.server.services.distribution.config.DistributionServiceConfig.ObjectStore;
-import io.minio.errors.MinioException;
-import java.io.IOException;
-import java.security.GeneralSecurityException;
+import app.coronawarn.server.services.distribution.objectstore.client.S3Object;
 import java.time.LocalDate;
+import java.time.ZoneOffset;
 import java.util.List;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -57,8 +56,8 @@ class S3RetentionPolicyTest {
   @Autowired DistributionServiceConfig distributionServiceConfig;
 
   @Test
-  void shouldDeleteOldFiles() throws IOException, GeneralSecurityException, MinioException {
-    String expectedFileToBeDeleted = generateFileName(LocalDate.now().minusDays(2));
+  void shouldDeleteOldFiles() {
+    String expectedFileToBeDeleted = generateFileName(LocalDate.now(ZoneOffset.UTC).minusDays(2));
 
     when(objectStoreAccess.getObjectsWithPrefix(any())).thenReturn(List.of(
         new S3Object(expectedFileToBeDeleted),
@@ -71,7 +70,7 @@ class S3RetentionPolicyTest {
   }
 
   @Test
-  void shouldNotDeleteFilesIfAllAreValid() throws IOException, GeneralSecurityException, MinioException {
+  void shouldNotDeleteFilesIfAllAreValid() {
     when(objectStoreAccess.getObjectsWithPrefix(any())).thenReturn(List.of(
         new S3Object(generateFileName(LocalDate.now().minusDays(1))),
         new S3Object(generateFileName(LocalDate.now().plusDays(1))),

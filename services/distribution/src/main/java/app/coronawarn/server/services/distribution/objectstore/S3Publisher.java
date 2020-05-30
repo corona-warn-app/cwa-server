@@ -23,10 +23,8 @@ import app.coronawarn.server.services.distribution.assembly.component.CwaApiStru
 import app.coronawarn.server.services.distribution.objectstore.publish.LocalFile;
 import app.coronawarn.server.services.distribution.objectstore.publish.PublishFileSet;
 import app.coronawarn.server.services.distribution.objectstore.publish.PublishedFileSet;
-import io.minio.errors.MinioException;
 import java.io.IOException;
 import java.nio.file.Path;
-import java.security.GeneralSecurityException;
 import java.util.stream.Collectors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -68,7 +66,7 @@ public class S3Publisher {
    *
    * @throws IOException in case there were problems reading files from the disk.
    */
-  public void publish() throws IOException, GeneralSecurityException, MinioException {
+  public void publish() throws IOException {
     var published = new PublishedFileSet(access.getObjectsWithPrefix(CWA_S3_ROOT));
     var toPublish = new PublishFileSet(root);
 
