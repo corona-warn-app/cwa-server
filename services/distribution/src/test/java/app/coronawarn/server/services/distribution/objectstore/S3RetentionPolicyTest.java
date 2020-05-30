@@ -30,6 +30,7 @@ import app.coronawarn.server.services.distribution.config.DistributionServiceCon
 import app.coronawarn.server.services.distribution.config.DistributionServiceConfig.ObjectStore;
 import app.coronawarn.server.services.distribution.objectstore.client.S3Object;
 import java.time.LocalDate;
+import java.time.ZoneOffset;
 import java.util.List;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -56,7 +57,7 @@ class S3RetentionPolicyTest {
 
   @Test
   void shouldDeleteOldFiles() {
-    String expectedFileToBeDeleted = generateFileName(LocalDate.now().minusDays(2));
+    String expectedFileToBeDeleted = generateFileName(LocalDate.now(ZoneOffset.UTC).minusDays(2));
 
     when(objectStoreAccess.getObjectsWithPrefix(any())).thenReturn(List.of(
         new S3Object(expectedFileToBeDeleted),
