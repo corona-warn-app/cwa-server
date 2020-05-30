@@ -25,6 +25,7 @@ import app.coronawarn.server.common.persistence.domain.DiagnosisKeyBuilders.Buil
 import app.coronawarn.server.common.persistence.domain.validation.ValidRollingStartIntervalNumber;
 import java.time.Instant;
 import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.Arrays;
 import java.util.Objects;
 import java.util.Set;
@@ -151,11 +152,11 @@ public class DiagnosisKey {
         LocalDateTime.ofEpochSecond(getRollingStartIntervalNumber() * 600L, 0, UTC)
             .plusMinutes(getRollingPeriod() * 10L);
 
-    if (submissionTimestampDate.minusHours(2).isBefore(keyExpiryDate)) {
-      return submissionTimestampDate.plusHours(submissionTimestampDate.minusHours(1).isBefore(keyExpiryDate) ? 2 : 1);
-    } else {
-      return submissionTimestampDate;
+    if (keyExpiryDate.until(submissionTimestampDate, ChronoUnit.MINUTES) < 120) {
+      // truncatedTo floors the value, so we need to add an hour to the 2 hour minimum expiry time to compensate that.
+      return keyExpiryDate.plusHours(3).truncatedTo(ChronoUnit.HOURS);
     }
+    return submissionTimestampDate;
   }
 
   /**

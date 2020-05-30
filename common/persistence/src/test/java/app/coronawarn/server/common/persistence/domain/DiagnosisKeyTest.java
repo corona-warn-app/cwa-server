@@ -93,13 +93,20 @@ class DiagnosisKeyTest {
   }
 
   @Test
-  void testDistributionDate() {
-    var diagnosisKeyExpired = new DiagnosisKey(expKeyData, 1, 0, expTransmissionRiskLevel, 3);
-    var diagnosisKeyExpiresInUnderAnHour = new DiagnosisKey(expKeyData, 1, 6, expTransmissionRiskLevel, 3);
-    var diagnosisKeyExpiresInOverAnHour = new DiagnosisKey(expKeyData, 1, 12, expTransmissionRiskLevel, 3);
+  void testDistributionDateExpired() {
+    var diagnosisKey = new DiagnosisKey(expKeyData, 1, 0, expTransmissionRiskLevel, 3);
+    assertThat(diagnosisKey.getDistributionTimestamp()).isEqualTo("1970-01-01T03:00");
+  }
 
-    assertThat(diagnosisKeyExpired.getDistributionTimestamp()).isEqualTo("1970-01-01T03:00");
-    assertThat(diagnosisKeyExpiresInUnderAnHour.getDistributionTimestamp()).isEqualTo("1970-01-01T04:00");
-    assertThat(diagnosisKeyExpiresInOverAnHour.getDistributionTimestamp()).isEqualTo("1970-01-01T05:00");
+  @Test
+  void testDistributionDateExpiresInUnderAnHour() {
+    var diagnosisKey = new DiagnosisKey(expKeyData, 1, 6, expTransmissionRiskLevel, 3);
+    assertThat(diagnosisKey.getDistributionTimestamp()).isEqualTo("1970-01-01T04:00");
+  }
+
+  @Test
+  void testDistributionDateExpiresInOverAnHour() {
+    var diagnosisKey = new DiagnosisKey(expKeyData, 1, 12, expTransmissionRiskLevel, 3);
+    assertThat(diagnosisKey.getDistributionTimestamp()).isEqualTo("1970-01-01T05:00");
   }
 }
