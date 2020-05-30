@@ -1,12 +1,12 @@
 package app.coronawarn.server.services.submission.verification;
 
 import org.springframework.boot.autoconfigure.http.HttpMessageConverters;
-import org.springframework.cloud.openfeign.EnableFeignClients;
+import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Profile;
 
-@EnableFeignClients
-@Configuration
+@TestConfiguration
+@Profile("feign")
 public class FeignTestConfiguration {
   @Bean
   public HttpMessageConverters httpMessageConverters() {
