@@ -1,12 +1,15 @@
 ---
 spring:
   flyway:
+    enabled: true
     locations: classpath:db/migration/postgres
+    password: ${POSTGRESQL_PASSWORD_FLYWAY}
+    user: ${POSTGRESQL_USER_FLYWAY}
   datasource:
     driver-class-name: org.postgresql.Driver
     url: jdbc:postgresql://${POSTGRESQL_SERVICE_HOST}:${POSTGRESQL_SERVICE_PORT}/${POSTGRESQL_DATABASE}
-    username: ${POSTGRESQL_USER}
-    password: ${POSTGRESQL_PASSWORD}
+    username: ${POSTGRESQL_USER_SUBMISSION}
+    password: ${POSTGRESQL_PASSWORD_SUBMISSION}
 
 services:
   submission:
