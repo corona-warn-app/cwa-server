@@ -33,9 +33,9 @@ overview, check out the [solution architecture](https://github.com/corona-warn-a
 
 All mobile app relevant files will be stored on the S3 Object Store. Those files are:
 
-- aggregated files containing the diagnostic keys, which were reported in a specific interval (e.g. hourly)
+- Aggregated files containing the diagnostic keys, which were reported in a specific interval (e.g. hourly).
 - Daily aggregated files containing the exposure keys, which were reported for the respective days.
-- Configuration files, containing the [exposure configuration](https://developer.apple.com/documentation/exposurenotification/enexposureconfiguration) and CWA mobile app config
+- Configuration files containing the [exposure configuration](https://developer.apple.com/documentation/exposurenotification/enexposureconfiguration) and CWA mobile app config.
 - Additional files regarding meta information of available files/structures/etc.
 
 The files will be pushed to an S3 compliant object store whenever new files become available. File structure definitions for those files can be found in the respective Services chapter.
@@ -142,7 +142,7 @@ Key Export files are files, which hold published diagnosis keys from SARS-CoV-2 
 These files are based on the specification of Google/Apple and are generated in regular intervals.
 Each interval generates a `.zip` file, containing two files:
 
-1. export.bin: Contains the list of diagnosis keys
+1. export.bin: Contains the list of diagnosis keys.
 2. export.sig: Contains signature information needed for validating the export.bin file.
 The file structure definition can be found [here](https://github.com/google/exposure-notifications-server/blob/master/internal/pb/export/export.proto).
 
