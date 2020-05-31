@@ -80,6 +80,11 @@ Licensor:  VMWare Inc.
 Website:   https://spring.io/
 License:   Apache License 2.0
 
+Component: Spring Cloud
+Licensor:  VMWare Inc.
+Website:   https://spring.io/
+License:   Apache License 2.0
+
 Component: wait-for-it
 Licensor:  Giles Hall
 Website:   https://github.com/vishnubob/wait-for-it
@@ -88,6 +93,11 @@ License:   MIT License
 Component: Zenko CloudServer
 Licensor:  Zenko
 Website:   https://github.com/scality/cloudserver
+License:   Apache License 2.0
+
+Component: Wiremock
+Licensor:  Tom Akehurst
+Website:   http://wiremock.org/
 License:   Apache License 2.0
 
 --------------------------------------------------------------------------------
