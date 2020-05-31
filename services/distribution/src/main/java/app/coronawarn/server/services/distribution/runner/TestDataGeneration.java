@@ -20,6 +20,9 @@
 
 package app.coronawarn.server.services.distribution.runner;
 
+import static app.coronawarn.server.services.distribution.assembly.diagnosiskeys.util.DateTime.ONE_HOUR_INTERVAL_SECONDS;
+import static app.coronawarn.server.services.distribution.assembly.diagnosiskeys.util.DateTime.TEN_MINUTES_INTERVAL_SECONDS;
+
 import app.coronawarn.server.common.persistence.domain.DiagnosisKey;
 import app.coronawarn.server.common.persistence.service.DiagnosisKeyService;
 import app.coronawarn.server.common.protocols.internal.RiskLevel;
@@ -68,12 +71,6 @@ public class TestDataGeneration implements ApplicationRunner {
 
   private static final int POISSON_MAX_ITERATIONS = 10_000_000;
   private static final double POISSON_EPSILON = 1e-12;
-
-  // The submission timestamp is counted in 1 hour intervals since epoch
-  private static final long ONE_HOUR_INTERVAL_SECONDS = TimeUnit.HOURS.toSeconds(1);
-
-  // The rolling start interval number is counted in 10 minute intervals since epoch
-  private static final long TEN_MINUTES_INTERVAL_SECONDS = TimeUnit.MINUTES.toSeconds(10);
 
   /**
    * Creates a new TestDataGeneration runner.

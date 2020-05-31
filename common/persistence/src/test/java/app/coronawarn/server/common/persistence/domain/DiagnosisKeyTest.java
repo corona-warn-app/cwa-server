@@ -33,7 +33,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 
-
 class DiagnosisKeyTest {
 
   final static byte[] expKeyData = "testKey111111111".getBytes(Charset.defaultCharset());
