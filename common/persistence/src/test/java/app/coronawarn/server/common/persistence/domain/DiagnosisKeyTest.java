@@ -92,22 +92,4 @@ class DiagnosisKeyTest {
     assertThatIllegalArgumentException()
         .isThrownBy(() -> diagnosisKey.isYoungerThanRetentionThreshold(daysToRetain));
   }
-
-  @Test
-  void testDistributionDateExpired() {
-    var diagnosisKey = new DiagnosisKey(expKeyData, 1, 0, expTransmissionRiskLevel, 3);
-    assertThat(diagnosisKey.getDistributionDateTime()).isEqualTo("1970-01-01T03:00");
-  }
-
-  @Test
-  void testDistributionDateExpiresInUnderAnHour() {
-    var diagnosisKey = new DiagnosisKey(expKeyData, 1, 6, expTransmissionRiskLevel, 3);
-    assertThat(diagnosisKey.getDistributionDateTime()).isEqualTo("1970-01-01T04:00");
-  }
-
-  @Test
-  void testDistributionDateExpiresInOverAnHour() {
-    var diagnosisKey = new DiagnosisKey(expKeyData, 1, 12, expTransmissionRiskLevel, 3);
-    assertThat(diagnosisKey.getDistributionDateTime()).isEqualTo("1970-01-01T05:00");
-  }
 }
