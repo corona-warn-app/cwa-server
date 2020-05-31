@@ -30,6 +30,7 @@ import static org.mockito.Mockito.when;
 
 import app.coronawarn.server.services.distribution.config.DistributionServiceConfig;
 import app.coronawarn.server.services.distribution.objectstore.client.ObjectStoreClient;
+import app.coronawarn.server.services.distribution.objectstore.client.ObjectStoreClient.HeaderKey;
 import app.coronawarn.server.services.distribution.objectstore.publish.LocalFile;
 import java.io.File;
 import java.nio.file.Path;
@@ -88,8 +89,8 @@ class ObjectStoreAccessUnitTest {
 
   @Test
   void testPutObjectSetsDefaultCacheControlHeader() {
-    ArgumentCaptor<Map<String, String>> headers = ArgumentCaptor.forClass(Map.class);
-    var expHeader = entry("cache-control", "public,max-age=" + ObjectStoreAccess.DEFAULT_MAX_CACHE_AGE);
+    ArgumentCaptor<Map<HeaderKey, String>> headers = ArgumentCaptor.forClass(Map.class);
+    var expHeader = entry(HeaderKey.CACHE_CONTROL, "public,max-age=" + ObjectStoreAccess.DEFAULT_MAX_CACHE_AGE);
 
     objectStoreAccess.putObject(testLocalFile);
 
@@ -100,9 +101,9 @@ class ObjectStoreAccessUnitTest {
 
   @Test
   void testPutObjectSetsSpecifiedCacheControlHeader() {
-    ArgumentCaptor<Map<String, String>> headers = ArgumentCaptor.forClass(Map.class);
+    ArgumentCaptor<Map<HeaderKey, String>> headers = ArgumentCaptor.forClass(Map.class);
     var expMaxAge = 1337;
-    var expHeader = entry("cache-control", "public,max-age=" + expMaxAge);
+    var expHeader = entry(HeaderKey.CACHE_CONTROL, "public,max-age=" + expMaxAge);
 
     objectStoreAccess.putObject(testLocalFile, expMaxAge);
 

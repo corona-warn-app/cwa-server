@@ -38,6 +38,8 @@ import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
+import java.util.stream.Collectors;
 
 /**
  * Implementation of {@link ObjectStoreClient} that encapsulates a {@link MinioClient}.
@@ -52,14 +54,15 @@ public class MinioClientWrapper implements ObjectStoreClient {
 
   @Override
   public List<S3Object> getObjects(String bucket, String prefix) {
-    var objects = this.minioClient.listObjects(bucket, prefix, true);
+    Iterable<Result<Item>> objects = this.minioClient.listObjects(bucket, prefix, true);
 
     var list = new ArrayList<S3Object>();
     for (Result<Item> item : objects) {
       try {
         list.add(S3Object.of(item.get()));
       } catch (ErrorResponseException | NoSuchAlgorithmException | InternalException | IOException | InvalidKeyException
-          | InvalidResponseException | InvalidBucketNameException | InsufficientDataException | XmlParserException e) {
+          | InvalidResponseException | InvalidBucketNameException | InsufficientDataException | XmlParserException
+          | IllegalArgumentException e) {
         throw new ObjectStoreOperationFailedException("Failed to download objects from object store.", e);
       }
     }
@@ -67,20 +70,25 @@ public class MinioClientWrapper implements ObjectStoreClient {
   }
 
   @Override
-  public void putObject(String bucket, String objectName, Path filePath, Map<String, String> headers) {
+  public void putObject(String bucket, String objectName, Path filePath, Map<HeaderKey, String> headers) {
     try {
       var options = new PutObjectOptions(Files.size(filePath), -1);
-      options.setHeaders(headers);
+      Map<String, String> minioHeaders = headers.entrySet().stream()
+          .map(entry -> Map.entry(entry.getKey().keyValue, entry.getValue()))
+          .collect(Collectors.toMap(Entry::getKey, Entry::getValue));
+
+      options.setHeaders(minioHeaders);
       minioClient.putObject(bucket, objectName, filePath.toString(), options);
     } catch (ErrorResponseException | NoSuchAlgorithmException | InternalException | IOException | InvalidKeyException
-        | InvalidResponseException | InvalidBucketNameException | InsufficientDataException | XmlParserException e) {
+        | InvalidResponseException | InvalidBucketNameException | InsufficientDataException | XmlParserException
+        | IllegalArgumentException e) {
       throw new ObjectStoreOperationFailedException("Failed to upload object to object store.", e);
     }
   }
 
   @Override
   public void removeObjects(String bucket, List<String> objectNames) {
-    if (minioClient.removeObjects(bucket, objectNames).iterator().hasNext()) {
+    if (!objectNames.isEmpty() && minioClient.removeObjects(bucket, objectNames).iterator().hasNext()) {
       throw new ObjectStoreOperationFailedException("Failed to remove objects from object store");
     }
   }
@@ -90,7 +98,8 @@ public class MinioClientWrapper implements ObjectStoreClient {
     try {
       return minioClient.bucketExists(bucket);
     } catch (ErrorResponseException | NoSuchAlgorithmException | InternalException | IOException | InvalidKeyException
-        | InvalidResponseException | InvalidBucketNameException | InsufficientDataException | XmlParserException e) {
+        | InvalidResponseException | InvalidBucketNameException | InsufficientDataException | XmlParserException
+        | IllegalArgumentException e) {
       throw new ObjectStoreOperationFailedException("Failed to check if object store bucket exists.", e);
     }
   }
