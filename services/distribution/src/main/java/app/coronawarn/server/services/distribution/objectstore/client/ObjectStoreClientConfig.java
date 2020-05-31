@@ -47,7 +47,7 @@ public class ObjectStoreClientConfig {
   private ObjectStoreClient createClient(ObjectStore objectStore) {
     AwsCredentialsProvider credentialsProvider = StaticCredentialsProvider.create(
         AwsBasicCredentials.create(objectStore.getAccessKey(), objectStore.getSecretKey()));
-    String endpoint = removeTralingSlash(objectStore.getEndpoint()) + ":" + objectStore.getPort();
+    String endpoint = removeTrailingSlash(objectStore.getEndpoint()) + ":" + objectStore.getPort();
 
     return new S3ClientWrapper(S3Client.builder()
         .region(DEFAULT_REGION)
@@ -56,7 +56,7 @@ public class ObjectStoreClientConfig {
         .build());
   }
 
-  private String removeTralingSlash(String string) {
-    return (string.endsWith("/") ? string.substring(0, string.length() - 1) : string);
+  private String removeTrailingSlash(String string) {
+    return string.endsWith("/") ? string.substring(0, string.length() - 1) : string;
   }
 }
