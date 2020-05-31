@@ -1,36 +1,31 @@
-/*
+/*-
+ * ---license-start
  * Corona-Warn-App
- *
- * SAP SE and all other contributors /
- * copyright owners license this file to you under the Apache
- * License, Version 2.0 (the "License"); you may not use this
- * file except in compliance with the License.
+ * ---
+ * Copyright (C) 2020 SAP SE and all other contributors
+ * ---
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
- * specific language governing permissions and limitations
- * under the License.
+ * 
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ * ---license-end
  */
 
 package app.coronawarn.server.services.distribution.objectstore;
 
 import app.coronawarn.server.services.distribution.config.DistributionServiceConfig;
+import app.coronawarn.server.services.distribution.objectstore.client.ObjectStoreClient;
+import app.coronawarn.server.services.distribution.objectstore.client.ObjectStoreClient.HeaderKey;
+import app.coronawarn.server.services.distribution.objectstore.client.S3Object;
 import app.coronawarn.server.services.distribution.objectstore.publish.LocalFile;
-import io.minio.MinioClient;
-import io.minio.PutObjectOptions;
-import io.minio.Result;
-import io.minio.errors.MinioException;
-import io.minio.messages.DeleteError;
-import io.minio.messages.Item;
-import java.io.IOException;
-import java.security.GeneralSecurityException;
-import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -66,21 +61,17 @@ public class ObjectStoreAccess {
 
   private final String bucket;
 
-  private final MinioClient client;
+  private final ObjectStoreClient client;
 
   /**
    * Constructs an {@link ObjectStoreAccess} instance for communication with the specified object store endpoint and
    * bucket.
    *
    * @param distributionServiceConfig The config properties
-   * @param minioClient               The client used for interaction with the object store
-   * @throws IOException              When there were problems creating the S3 client
-   * @throws GeneralSecurityException When there were problems creating the S3 client
-   * @throws MinioException           When there were problems creating the S3 client
+   * @param objectStoreClient         The client used for interaction with the object store
    */
-  ObjectStoreAccess(DistributionServiceConfig distributionServiceConfig, MinioClient minioClient)
-      throws IOException, GeneralSecurityException, MinioException {
-    this.client = minioClient;
+  ObjectStoreAccess(DistributionServiceConfig distributionServiceConfig, ObjectStoreClient objectStoreClient) {
+    this.client = objectStoreClient;
     this.bucket = distributionServiceConfig.getObjectStore().getBucket();
     this.isSetPublicReadAclOnPutObject = distributionServiceConfig.getObjectStore().isSetPublicReadAclOnPutObject();
 
@@ -94,7 +85,7 @@ public class ObjectStoreAccess {
    *
    * @param localFile The file to be published.
    */
-  public void putObject(LocalFile localFile) throws IOException, GeneralSecurityException, MinioException {
+  public void putObject(LocalFile localFile) {
     putObject(localFile, DEFAULT_MAX_CACHE_AGE);
   }
 
@@ -105,12 +96,12 @@ public class ObjectStoreAccess {
    * @param maxAge    A cache control parameter that specifies the maximum amount of time in seconds that a resource can
    *                  be considered "fresh" when held in a cache.
    */
-  public void putObject(LocalFile localFile, int maxAge) throws IOException, GeneralSecurityException, MinioException {
+  public void putObject(LocalFile localFile, int maxAge) {
     String s3Key = localFile.getS3Key();
-    PutObjectOptions options = createOptionsFor(localFile, maxAge);
+    Map<HeaderKey, String> headers = createHeaders(maxAge);
 
     logger.info("... uploading {}", s3Key);
-    this.client.putObject(bucket, s3Key, localFile.getFile().toString(), options);
+    this.client.putObject(bucket, s3Key, localFile.getFile(), headers);
   }
 
   /**
@@ -118,24 +109,14 @@ public class ObjectStoreAccess {
    *
    * @param prefix the prefix, e.g. my/folder/
    */
-  public void deleteObjectsWithPrefix(String prefix)
-      throws MinioException, GeneralSecurityException, IOException {
+  public void deleteObjectsWithPrefix(String prefix) {
     List<String> toDelete = getObjectsWithPrefix(prefix)
         .stream()
         .map(S3Object::getObjectName)
         .collect(Collectors.toList());
 
     logger.info("Deleting {} entries with prefix {}", toDelete.size(), prefix);
-    var deletionResponse = this.client.removeObjects(bucket, toDelete);
-
-    List<DeleteError> errors = new ArrayList<>();
-    for (Result<DeleteError> deleteErrorResult : deletionResponse) {
-      errors.add(deleteErrorResult.get());
-    }
-
-    if (!errors.isEmpty()) {
-      throw new MinioException("Can't delete files, number of errors: " + errors.size());
-    }
+    this.client.removeObjects(bucket, toDelete);
   }
 
   /**
@@ -144,28 +125,15 @@ public class ObjectStoreAccess {
    * @param prefix the prefix, e.g. my/folder/
    * @return the list of objects
    */
-  public List<S3Object> getObjectsWithPrefix(String prefix)
-      throws IOException, GeneralSecurityException, MinioException {
-    var objects = this.client.listObjects(bucket, prefix, true);
-
-    var list = new ArrayList<S3Object>();
-    for (Result<Item> item : objects) {
-      list.add(S3Object.of(item.get()));
-    }
-
-    return list;
+  public List<S3Object> getObjectsWithPrefix(String prefix) {
+    return client.getObjects(bucket, prefix);
   }
 
-  private PutObjectOptions createOptionsFor(LocalFile file, int maxAge) {
-    var options = new PutObjectOptions(file.getFile().toFile().length(), -1);
-
-    Map<String, String> headers = new HashMap<>(Map.of("cache-control", "public,max-age=" + maxAge));
+  private Map<HeaderKey, String> createHeaders(int maxAge) {
+    EnumMap<HeaderKey, String> headers = new EnumMap<>(Map.of(HeaderKey.CACHE_CONTROL, "public,max-age=" + maxAge));
     if (this.isSetPublicReadAclOnPutObject) {
-      headers.put("x-amz-acl", "public-read");
+      headers.put(HeaderKey.AMZ_ACL, "public-read");
     }
-    options.setHeaders(headers);
-
-    return options;
+    return headers;
   }
-
 }

@@ -32,6 +32,7 @@ services:
       app-config-file-name: app_config
     signature:
       app-bundle-id: de.rki.coronawarnapp
+      android-package: de.rki.coronawarnapp
       verification-key-id: 262
       verification-key-version: v1
       algorithm-oid: 1.2.840.10045.4.3.2
@@ -42,7 +43,7 @@ services:
     objectstore:
       access-key: ${CWA_OBJECTSTORE_ACCESSKEY:accessKey1}
       secret-key: ${CWA_OBJECTSTORE_SECRETKEY:verySecretKey1}
-      endpoint: ${CWA_OBJECTSTORE_ENDPOINT:http://localhost:8003}
+      endpoint: ${CWA_OBJECTSTORE_ENDPOINT:http://localhost}
       bucket: ${CWA_OBJECTSTORE_BUCKET:cwa}
       port: ${CWA_OBJECTSTORE_PORT:8003}
       set-public-read-acl-on-put-object: true

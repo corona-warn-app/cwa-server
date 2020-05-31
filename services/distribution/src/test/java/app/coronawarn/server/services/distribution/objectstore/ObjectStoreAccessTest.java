@@ -1,20 +1,21 @@
-/*
+/*-
+ * ---license-start
  * Corona-Warn-App
- *
- * SAP SE and all other contributors /
- * copyright owners license this file to you under the Apache
- * License, Version 2.0 (the "License"); you may not use this
- * file except in compliance with the License.
+ * ---
+ * Copyright (C) 2020 SAP SE and all other contributors
+ * ---
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
- * specific language governing permissions and limitations
- * under the License.
+ * 
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ * ---license-end
  */
 
 package app.coronawarn.server.services.distribution.objectstore;
@@ -26,10 +27,8 @@ import static org.mockito.Mockito.when;
 import app.coronawarn.server.services.distribution.Application;
 import app.coronawarn.server.services.distribution.objectstore.publish.LocalFile;
 import app.coronawarn.server.services.distribution.objectstore.publish.LocalGenericFile;
-import io.minio.errors.MinioException;
 import java.io.IOException;
 import java.nio.file.Path;
-import java.security.GeneralSecurityException;
 import java.util.UUID;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -61,33 +60,31 @@ class ObjectStoreAccessTest {
   private ResourceLoader resourceLoader;
 
   @BeforeEach
-  public void setup()
-      throws MinioException, GeneralSecurityException, IOException {
+  public void setup() {
     objectStoreAccess.deleteObjectsWithPrefix(testRunId);
   }
 
   @AfterEach
-  public void teardown() throws IOException, GeneralSecurityException, MinioException {
+  public void teardown() {
     objectStoreAccess.deleteObjectsWithPrefix(testRunId);
   }
 
   @Test
-  void defaultIsEmptyTrue() throws MinioException, GeneralSecurityException, IOException {
+  void defaultIsEmptyTrue() {
     var files = objectStoreAccess.getObjectsWithPrefix(testRunId);
 
     assertThat(files).withFailMessage("Content should be empty").isEmpty();
   }
 
   @Test
-  void fetchFilesNothingFound()
-      throws MinioException, GeneralSecurityException, IOException {
+  void fetchFilesNothingFound() {
     var files = objectStoreAccess.getObjectsWithPrefix("THIS_PREFIX_DOES_NOT_EXIST");
 
     assertThat(files).withFailMessage("Found files, but should be empty!").isEmpty();
   }
 
   @Test
-  void pushTestFileAndDelete() throws IOException, GeneralSecurityException, MinioException {
+  void pushTestFileAndDelete() throws IOException {
     LocalFile localFile = new LocalGenericFile(getExampleFile(), getRootTestFolder());
     String testFileTargetKey = testRunId + localFile.getS3Key();
 
