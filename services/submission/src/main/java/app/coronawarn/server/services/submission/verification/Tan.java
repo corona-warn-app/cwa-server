@@ -7,7 +7,7 @@ import java.util.UUID;
  * A representation of a tan.
  */
 class Tan {
-  private UUID tan;
+  private final UUID tan;
 
   private Tan(UUID tan) {
     this.tan = tan;
