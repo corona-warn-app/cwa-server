@@ -25,8 +25,9 @@ import app.coronawarn.server.services.distribution.config.DistributionServiceCon
 import java.net.URI;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import software.amazon.awssdk.auth.credentials.AwsCredentials;
+import software.amazon.awssdk.auth.credentials.AwsBasicCredentials;
 import software.amazon.awssdk.auth.credentials.AwsCredentialsProvider;
+import software.amazon.awssdk.auth.credentials.StaticCredentialsProvider;
 import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.s3.S3Client;
 
@@ -36,7 +37,7 @@ import software.amazon.awssdk.services.s3.S3Client;
 @Configuration
 public class ObjectStoreClientConfig {
 
-  private static final String DEFAULT_REGION = "eu-west-1";
+  private static final Region DEFAULT_REGION = Region.EU_CENTRAL_1;
 
   @Bean
   public ObjectStoreClient createObjectStoreClient(DistributionServiceConfig distributionServiceConfig) {
@@ -44,39 +45,18 @@ public class ObjectStoreClientConfig {
   }
 
   private ObjectStoreClient createClient(ObjectStore objectStore) {
+    AwsCredentialsProvider credentialsProvider = StaticCredentialsProvider.create(
+        AwsBasicCredentials.create(objectStore.getAccessKey(), objectStore.getSecretKey()));
+    String endpoint = removeTralingSlash(objectStore.getEndpoint()) + ":" + objectStore.getPort();
+
     return new S3ClientWrapper(S3Client.builder()
-        .region(Region.of(DEFAULT_REGION))
-        .endpointOverride(URI.create(objectStore.getEndpoint() + ":" + objectStore.getPort()))
-        .credentialsProvider(new CredentialsProvider(objectStore.getAccessKey(), objectStore.getSecretKey()))
+        .region(DEFAULT_REGION)
+        .endpointOverride(URI.create(endpoint))
+        .credentialsProvider(credentialsProvider)
         .build());
   }
 
-  /**
-   * Statically serves credentials based on construction arguments.
-   */
-  static class CredentialsProvider implements AwsCredentialsProvider {
-
-    final String accessKeyId;
-    final String secretAccessKey;
-
-    public CredentialsProvider(String accessKeyId, String secretAccessKey) {
-      this.accessKeyId = accessKeyId;
-      this.secretAccessKey = secretAccessKey;
-    }
-
-    @Override
-    public AwsCredentials resolveCredentials() {
-      return new AwsCredentials() {
-        @Override
-        public String accessKeyId() {
-          return accessKeyId;
-        }
-
-        @Override
-        public String secretAccessKey() {
-          return secretAccessKey;
-        }
-      };
-    }
+  private String removeTralingSlash(String string) {
+    return (string.endsWith("/") ? string.substring(0, string.length() - 1) : string);
   }
 }
