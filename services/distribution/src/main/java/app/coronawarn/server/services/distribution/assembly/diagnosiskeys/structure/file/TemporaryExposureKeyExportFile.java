@@ -1,3 +1,23 @@
+/*-
+ * ---license-start
+ * Corona-Warn-App
+ * ---
+ * Copyright (C) 2020 SAP SE and all other contributors
+ * ---
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ * ---license-end
+ */
+
 package app.coronawarn.server.services.distribution.assembly.diagnosiskeys.structure.file;
 
 import app.coronawarn.server.common.persistence.domain.DiagnosisKey;
@@ -6,8 +26,6 @@ import app.coronawarn.server.common.protocols.external.exposurenotification.Temp
 import app.coronawarn.server.services.distribution.assembly.structure.file.FileOnDisk;
 import app.coronawarn.server.services.distribution.assembly.structure.util.ImmutableStack;
 import app.coronawarn.server.services.distribution.config.DistributionServiceConfig;
-import com.google.common.base.Strings;
-import com.google.common.primitives.Bytes;
 import com.google.protobuf.ByteString;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
@@ -81,7 +99,15 @@ public class TemporaryExposureKeyExportFile extends FileOnDisk {
   }
 
   private byte[] createKeyExportBytesWithHeader() {
-    return Bytes.concat(this.getHeaderBytes(), createTemporaryExposureKeyExportBytes());
+    byte[] headerBytes = this.getHeaderBytes();
+    byte[] temporaryExposureKeyExportBytes = createTemporaryExposureKeyExportBytes();
+    return concatenate(headerBytes, temporaryExposureKeyExportBytes);
+  }
+
+  private byte[] concatenate(byte[] arr1, byte[] arr2) {
+    var concatenatedBytes = Arrays.copyOf(arr1, arr1.length + arr2.length);
+    System.arraycopy(arr2, 0, concatenatedBytes, arr1.length, arr2.length);
+    return concatenatedBytes;
   }
 
   private byte[] createTemporaryExposureKeyExportBytes() {
@@ -112,7 +138,12 @@ public class TemporaryExposureKeyExportFile extends FileOnDisk {
   private byte[] getHeaderBytes() {
     String header = distributionServiceConfig.getTekExport().getFileHeader();
     int headerWidth = distributionServiceConfig.getTekExport().getFileHeaderWidth();
-    return Strings.padEnd(header, headerWidth, ' ').getBytes(StandardCharsets.UTF_8);
+    return padRight(header, headerWidth).getBytes(StandardCharsets.UTF_8);
+  }
+
+  private String padRight(String string, int padding) {
+    String format = "%1$-" + padding + "s";
+    return String.format(format, string);
   }
 
   /**

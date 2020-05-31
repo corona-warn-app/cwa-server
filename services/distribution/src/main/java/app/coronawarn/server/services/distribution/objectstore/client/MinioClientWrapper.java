@@ -1,20 +1,21 @@
-/*
+/*-
+ * ---license-start
  * Corona-Warn-App
- *
- * SAP SE and all other contributors /
- * copyright owners license this file to you under the Apache
- * License, Version 2.0 (the "License"); you may not use this
- * file except in compliance with the License.
+ * ---
+ * Copyright (C) 2020 SAP SE and all other contributors
+ * ---
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
- * specific language governing permissions and limitations
- * under the License.
+ * 
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ * ---license-end
  */
 
 package app.coronawarn.server.services.distribution.objectstore.client;
@@ -37,6 +38,8 @@ import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
+import java.util.stream.Collectors;
 
 /**
  * Implementation of {@link ObjectStoreClient} that encapsulates a {@link MinioClient}.
@@ -51,14 +54,15 @@ public class MinioClientWrapper implements ObjectStoreClient {
 
   @Override
   public List<S3Object> getObjects(String bucket, String prefix) {
-    var objects = this.minioClient.listObjects(bucket, prefix, true);
+    Iterable<Result<Item>> objects = this.minioClient.listObjects(bucket, prefix, true);
 
     var list = new ArrayList<S3Object>();
     for (Result<Item> item : objects) {
       try {
         list.add(S3Object.of(item.get()));
       } catch (ErrorResponseException | NoSuchAlgorithmException | InternalException | IOException | InvalidKeyException
-          | InvalidResponseException | InvalidBucketNameException | InsufficientDataException | XmlParserException e) {
+          | InvalidResponseException | InvalidBucketNameException | InsufficientDataException | XmlParserException
+          | IllegalArgumentException e) {
         throw new ObjectStoreOperationFailedException("Failed to download objects from object store.", e);
       }
     }
@@ -66,20 +70,25 @@ public class MinioClientWrapper implements ObjectStoreClient {
   }
 
   @Override
-  public void putObject(String bucket, String objectName, Path filePath, Map<String, String> headers) {
+  public void putObject(String bucket, String objectName, Path filePath, Map<HeaderKey, String> headers) {
     try {
       var options = new PutObjectOptions(Files.size(filePath), -1);
-      options.setHeaders(headers);
+      Map<String, String> minioHeaders = headers.entrySet().stream()
+          .map(entry -> Map.entry(entry.getKey().keyValue, entry.getValue()))
+          .collect(Collectors.toMap(Entry::getKey, Entry::getValue));
+
+      options.setHeaders(minioHeaders);
       minioClient.putObject(bucket, objectName, filePath.toString(), options);
     } catch (ErrorResponseException | NoSuchAlgorithmException | InternalException | IOException | InvalidKeyException
-        | InvalidResponseException | InvalidBucketNameException | InsufficientDataException | XmlParserException e) {
+        | InvalidResponseException | InvalidBucketNameException | InsufficientDataException | XmlParserException
+        | IllegalArgumentException e) {
       throw new ObjectStoreOperationFailedException("Failed to upload object to object store.", e);
     }
   }
 
   @Override
   public void removeObjects(String bucket, List<String> objectNames) {
-    if (minioClient.removeObjects(bucket, objectNames).iterator().hasNext()) {
+    if (!objectNames.isEmpty() && minioClient.removeObjects(bucket, objectNames).iterator().hasNext()) {
       throw new ObjectStoreOperationFailedException("Failed to remove objects from object store");
     }
   }
@@ -89,7 +98,8 @@ public class MinioClientWrapper implements ObjectStoreClient {
     try {
       return minioClient.bucketExists(bucket);
     } catch (ErrorResponseException | NoSuchAlgorithmException | InternalException | IOException | InvalidKeyException
-        | InvalidResponseException | InvalidBucketNameException | InsufficientDataException | XmlParserException e) {
+        | InvalidResponseException | InvalidBucketNameException | InsufficientDataException | XmlParserException
+        | IllegalArgumentException e) {
       throw new ObjectStoreOperationFailedException("Failed to check if object store bucket exists.", e);
     }
   }

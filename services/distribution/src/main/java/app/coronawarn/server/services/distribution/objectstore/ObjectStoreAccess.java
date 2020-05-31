@@ -1,29 +1,31 @@
-/*
+/*-
+ * ---license-start
  * Corona-Warn-App
- *
- * SAP SE and all other contributors /
- * copyright owners license this file to you under the Apache
- * License, Version 2.0 (the "License"); you may not use this
- * file except in compliance with the License.
+ * ---
+ * Copyright (C) 2020 SAP SE and all other contributors
+ * ---
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
- * specific language governing permissions and limitations
- * under the License.
+ * 
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ * ---license-end
  */
 
 package app.coronawarn.server.services.distribution.objectstore;
 
 import app.coronawarn.server.services.distribution.config.DistributionServiceConfig;
 import app.coronawarn.server.services.distribution.objectstore.client.ObjectStoreClient;
+import app.coronawarn.server.services.distribution.objectstore.client.ObjectStoreClient.HeaderKey;
 import app.coronawarn.server.services.distribution.objectstore.client.S3Object;
 import app.coronawarn.server.services.distribution.objectstore.publish.LocalFile;
-import java.util.HashMap;
+import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -96,7 +98,7 @@ public class ObjectStoreAccess {
    */
   public void putObject(LocalFile localFile, int maxAge) {
     String s3Key = localFile.getS3Key();
-    Map<String, String> headers = createHeaders(maxAge);
+    Map<HeaderKey, String> headers = createHeaders(maxAge);
 
     logger.info("... uploading {}", s3Key);
     this.client.putObject(bucket, s3Key, localFile.getFile(), headers);
@@ -127,10 +129,10 @@ public class ObjectStoreAccess {
     return client.getObjects(bucket, prefix);
   }
 
-  private Map<String, String> createHeaders(int maxAge) {
-    Map<String, String> headers = new HashMap<>(Map.of("cache-control", "public,max-age=" + maxAge));
+  private Map<HeaderKey, String> createHeaders(int maxAge) {
+    EnumMap<HeaderKey, String> headers = new EnumMap<>(Map.of(HeaderKey.CACHE_CONTROL, "public,max-age=" + maxAge));
     if (this.isSetPublicReadAclOnPutObject) {
-      headers.put("x-amz-acl", "public-read");
+      headers.put(HeaderKey.AMZ_ACL, "public-read");
     }
     return headers;
   }
