@@ -20,10 +20,10 @@
 
 package app.coronawarn.server.services.distribution.objectstore.publish;
 
-import com.google.common.io.BaseEncoding;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import org.bouncycastle.util.encoders.Hex;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.util.DigestUtils;
@@ -77,7 +77,7 @@ public abstract class LocalFile {
   private String computeS3ETag() {
     try {
       String md5 = DigestUtils.md5DigestAsHex(Files.readAllBytes(file));
-      byte[] raw = BaseEncoding.base16().decode(md5.toUpperCase());
+      byte[] raw = Hex.decode(md5.toUpperCase());
 
       return DigestUtils.md5DigestAsHex(raw) + "-1";
     } catch (IOException e) {

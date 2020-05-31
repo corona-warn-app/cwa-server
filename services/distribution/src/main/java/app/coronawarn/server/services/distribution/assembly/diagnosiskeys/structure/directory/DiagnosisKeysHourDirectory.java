@@ -88,9 +88,7 @@ public class DiagnosisKeysHourDirectory extends IndexDirectoryOnDisk<LocalDateTi
 
   private Set<DiagnosisKey> getDiagnosisKeysForHour(LocalDateTime hour) {
     return this.diagnosisKeys.stream()
-        .filter(diagnosisKey -> DateTime
-            .getLocalDateTimeFromHoursSinceEpoch(diagnosisKey.getSubmissionTimestamp())
-            .equals(hour))
+        .filter(diagnosisKey -> DistributionDateTimeCalculator.getDistributionDateTime(diagnosisKey).equals(hour))
         .collect(Collectors.toSet());
   }
 

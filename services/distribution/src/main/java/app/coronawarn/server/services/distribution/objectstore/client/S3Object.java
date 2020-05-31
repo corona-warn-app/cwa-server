@@ -20,9 +20,7 @@
 
 package app.coronawarn.server.services.distribution.objectstore.client;
 
-import io.minio.messages.Item;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.Objects;
 
 /**
  * Represents an object as discovered on S3.
@@ -33,11 +31,6 @@ public class S3Object {
    * the name of the object.
    */
   private final String objectName;
-
-  /**
-   * the available meta information.
-   */
-  private Map<String, String> metadata = new HashMap<>();
 
   /** The e-Tag of this S3 Object. */
   private String etag;
@@ -70,14 +63,20 @@ public class S3Object {
     return etag;
   }
 
-  /**
-   * Returns a new instance of an S3Object based on the given item.
-   *
-   * @param item the item (as provided by MinIO)
-   * @return the S3Object representation
-   */
-  public static S3Object of(Item item) {
-    String etag = item.etag().replaceAll("\"", "");
-    return new S3Object(item.objectName(), etag);
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) {
+      return true;
+    }
+    if (o == null || getClass() != o.getClass()) {
+      return false;
+    }
+    S3Object s3Object = (S3Object) o;
+    return Objects.equals(objectName, s3Object.objectName) && Objects.equals(etag, s3Object.etag);
+  }
+
+  @Override
+  public int hashCode() {
+    return Objects.hash(objectName, etag);
   }
 }
