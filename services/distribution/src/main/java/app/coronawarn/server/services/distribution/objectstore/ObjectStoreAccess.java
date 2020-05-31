@@ -74,10 +74,6 @@ public class ObjectStoreAccess {
     this.client = objectStoreClient;
     this.bucket = distributionServiceConfig.getObjectStore().getBucket();
     this.isSetPublicReadAclOnPutObject = distributionServiceConfig.getObjectStore().isSetPublicReadAclOnPutObject();
-
-    if (!this.client.bucketExists(this.bucket)) {
-      throw new IllegalArgumentException("Supplied bucket does not exist " + bucket);
-    }
   }
 
   /**
