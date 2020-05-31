@@ -37,7 +37,7 @@ public interface ObjectStoreClient {
    * @return A list of objects from the object store that match the specified parameters.
    * @throws ObjectStoreOperationFailedException if the operation could not be performed.
    */
-  List<S3Object> getObjects(String bucket, String prefix) throws ObjectStoreOperationFailedException;
+  List<S3Object> getObjects(String bucket, String prefix);
 
   /**
    * Uploads data from the specified file to an object with the specified name.
@@ -48,8 +48,7 @@ public interface ObjectStoreClient {
    * @param headers    The headers to be used during upload.
    * @throws ObjectStoreOperationFailedException if the operation could not be performed.
    */
-  void putObject(String bucket, String objectName, Path filePath, Map<String, String> headers)
-      throws ObjectStoreOperationFailedException;
+  void putObject(String bucket, String objectName, Path filePath, Map<HeaderKey, String> headers);
 
   /**
    * Removes all the specified objects from the specified object store bucket.
@@ -58,7 +57,7 @@ public interface ObjectStoreClient {
    * @param objectNames The names of objects to delete.
    * @throws ObjectStoreOperationFailedException if the operation could not be performed.
    */
-  void removeObjects(String bucket, List<String> objectNames) throws ObjectStoreOperationFailedException;
+  void removeObjects(String bucket, List<String> objectNames);
 
   /**
    * Checks if an object store bucket with the specified name exists.
@@ -67,5 +66,19 @@ public interface ObjectStoreClient {
    * @return True if the bucket exists.
    * @throws ObjectStoreOperationFailedException if the operation could not be performed.
    */
-  boolean bucketExists(String bucket) throws ObjectStoreOperationFailedException;
+  boolean bucketExists(String bucket);
+
+  /**
+   * Provides the supported header keys.
+   */
+  enum HeaderKey {
+    CACHE_CONTROL("Cache-Control"),
+    AMZ_ACL("x-amz-acl");
+
+    public final String keyValue;
+
+    HeaderKey(String keyValue) {
+      this.keyValue = keyValue;
+    }
+  }
 }
