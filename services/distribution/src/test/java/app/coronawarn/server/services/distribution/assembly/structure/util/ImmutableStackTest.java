@@ -20,14 +20,11 @@
 
 package app.coronawarn.server.services.distribution.assembly.structure.util;
 
-import org.assertj.core.api.Assertions;
-import org.junit.jupiter.api.Test;
-
-import java.util.ArrayDeque;
-import java.util.NoSuchElementException;
-
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
+
+import java.util.NoSuchElementException;
+import org.junit.jupiter.api.Test;
 
 class ImmutableStackTest {
 
