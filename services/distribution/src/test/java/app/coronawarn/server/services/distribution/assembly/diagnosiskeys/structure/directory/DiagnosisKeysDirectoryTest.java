@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -26,6 +26,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import app.coronawarn.server.common.persistence.domain.DiagnosisKey;
 import app.coronawarn.server.services.distribution.assembly.component.CryptoProvider;
+import app.coronawarn.server.services.distribution.assembly.diagnosiskeys.DiagnosisKeyBundler;
 import app.coronawarn.server.services.distribution.assembly.structure.WritableOnDisk;
 import app.coronawarn.server.services.distribution.assembly.structure.directory.Directory;
 import app.coronawarn.server.services.distribution.assembly.structure.directory.DirectoryOnDisk;
@@ -91,8 +92,8 @@ class DiagnosisKeysDirectoryTest {
   @Test
   void checkBuildsTheCorrectDirectoryStructureWhenNoKeys() {
     diagnosisKeys = new ArrayList<>();
-    Directory<WritableOnDisk> directory = new DiagnosisKeysDirectory(diagnosisKeys, cryptoProvider,
-        distributionServiceConfig);
+    Directory<WritableOnDisk> directory = new DiagnosisKeysDirectory(
+        new DiagnosisKeyBundler(diagnosisKeys, distributionServiceConfig), cryptoProvider, distributionServiceConfig);
     parentDirectory.addWritable(directory);
     directory.prepare(new ImmutableStack<>());
     directory.write();
@@ -111,8 +112,8 @@ class DiagnosisKeysDirectoryTest {
 
   @Test
   void checkBuildsTheCorrectDirectoryStructure() {
-    Directory<WritableOnDisk> directory = new DiagnosisKeysDirectory(diagnosisKeys, cryptoProvider,
-        distributionServiceConfig);
+    Directory<WritableOnDisk> directory = new DiagnosisKeysDirectory(
+        new DiagnosisKeyBundler(diagnosisKeys, distributionServiceConfig), cryptoProvider, distributionServiceConfig);
     parentDirectory.addWritable(directory);
     directory.prepare(new ImmutableStack<>());
     directory.write();

@@ -31,6 +31,10 @@ public class DistributionServiceConfig {
   private Paths paths;
   private TestData testData;
   private Integer retentionDays;
+  private Boolean expiryPolicyEnabled;
+  private Integer expiryPolicyMinutes;
+  private Boolean skippingPolicyEnabled;
+  private Integer skippingPolicyThreshold;
   private String outputFileName;
   private Boolean includeIncompleteDays;
   private Boolean includeIncompleteHours;
@@ -61,6 +65,38 @@ public class DistributionServiceConfig {
 
   public void setRetentionDays(Integer retentionDays) {
     this.retentionDays = retentionDays;
+  }
+
+  public Boolean getExpiryPolicyEnabled() {
+    return expiryPolicyEnabled;
+  }
+
+  public void setExpiryPolicyEnabled(Boolean expiryPolicyEnabled) {
+    this.expiryPolicyEnabled = expiryPolicyEnabled;
+  }
+
+  public Integer getExpiryPolicyMinutes() {
+    return expiryPolicyMinutes;
+  }
+
+  public void setExpiryPolicyMinutes(Integer expiryPolicyMinutes) {
+    this.expiryPolicyMinutes = expiryPolicyMinutes;
+  }
+
+  public Boolean getSkippingPolicyEnabled() {
+    return skippingPolicyEnabled;
+  }
+
+  public void setSkippingPolicyEnabled(Boolean skippingPolicyEnabled) {
+    this.skippingPolicyEnabled = skippingPolicyEnabled;
+  }
+
+  public Integer getSkippingPolicyThreshold() {
+    return skippingPolicyThreshold;
+  }
+
+  public void setSkippingPolicyThreshold(Integer skippingPolicyThreshold) {
+    this.skippingPolicyThreshold = skippingPolicyThreshold;
   }
 
   public String getOutputFileName() {

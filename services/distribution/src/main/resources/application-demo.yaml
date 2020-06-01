@@ -1,4 +1,6 @@
 services:
   distribution:
+    expiry-policy-enabled: false
+    skipping-policy-enabled: false
     include-incomplete-days: true
     include-incomplete-hours: true

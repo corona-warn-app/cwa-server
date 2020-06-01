@@ -22,6 +22,7 @@ package app.coronawarn.server.services.distribution.assembly.component;
 
 import app.coronawarn.server.common.persistence.domain.DiagnosisKey;
 import app.coronawarn.server.common.persistence.service.DiagnosisKeyService;
+import app.coronawarn.server.services.distribution.assembly.diagnosiskeys.DiagnosisKeyBundler;
 import app.coronawarn.server.services.distribution.assembly.diagnosiskeys.structure.directory.DiagnosisKeysDirectory;
 import app.coronawarn.server.services.distribution.assembly.structure.WritableOnDisk;
 import app.coronawarn.server.services.distribution.assembly.structure.directory.Directory;
@@ -61,6 +62,7 @@ public class DiagnosisKeysStructureProvider {
   public Directory<WritableOnDisk> getDiagnosisKeys() {
     logger.debug("Querying diagnosis keys from the database...");
     Collection<DiagnosisKey> diagnosisKeys = diagnosisKeyService.getDiagnosisKeys();
-    return new DiagnosisKeysDirectory(diagnosisKeys, cryptoProvider, distributionServiceConfig);
+    DiagnosisKeyBundler diagnosisKeyBundler = new DiagnosisKeyBundler(diagnosisKeys, distributionServiceConfig);
+    return new DiagnosisKeysDirectory(diagnosisKeyBundler, cryptoProvider, distributionServiceConfig);
   }
 }
