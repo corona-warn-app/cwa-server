@@ -152,14 +152,15 @@ class DiagnosisKeyServiceTest {
 
   @Test
   void shouldNotUpdateExistingKey() {
+    var keyData = "1234567890123456";
     var keys = List.of(DiagnosisKey.builder()
-            .withKeyData("1234567890123456".getBytes())
-            .withRollingStartIntervalNumber((int) (OffsetDateTime.now(UTC).toEpochSecond() / 600) - 2)
+            .withKeyData(keyData.getBytes())
+            .withRollingStartIntervalNumber(600)
             .withTransmissionRiskLevel(2)
             .withSubmissionTimestamp(0L).build(),
         DiagnosisKey.builder()
-            .withKeyData("1234567890123456".getBytes())
-            .withRollingStartIntervalNumber((int) (OffsetDateTime.now(UTC).toEpochSecond() / 600) - 3)
+            .withKeyData(keyData.getBytes())
+            .withRollingStartIntervalNumber(600)
             .withTransmissionRiskLevel(3)
             .withSubmissionTimestamp(0L).build());
 
