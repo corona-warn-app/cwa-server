@@ -49,11 +49,14 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 import software.amazon.awssdk.core.exception.SdkClientException;
 import software.amazon.awssdk.core.exception.SdkException;
 import software.amazon.awssdk.core.sync.RequestBody;
+import software.amazon.awssdk.http.SdkHttpResponse;
 import software.amazon.awssdk.services.s3.S3Client;
 import software.amazon.awssdk.services.s3.model.Bucket;
 import software.amazon.awssdk.services.s3.model.Delete;
 import software.amazon.awssdk.services.s3.model.DeleteObjectsRequest;
 import software.amazon.awssdk.services.s3.model.DeleteObjectsResponse;
+import software.amazon.awssdk.services.s3.model.HeadBucketRequest;
+import software.amazon.awssdk.services.s3.model.HeadBucketResponse;
 import software.amazon.awssdk.services.s3.model.ListBucketsResponse;
 import software.amazon.awssdk.services.s3.model.ListObjectsV2Request;
 import software.amazon.awssdk.services.s3.model.ListObjectsV2Response;
@@ -74,26 +77,35 @@ class S3ClientWrapperTest {
   private S3Client s3Client;
   private S3ClientWrapper s3ClientWrapper;
   private List<Bucket> existingBuckets;
+  private HeadBucketResponse headBucketResponse;
 
   @BeforeEach
   public void setUpMocks() {
     s3Client = mock(S3Client.class);
     s3ClientWrapper = new S3ClientWrapper(s3Client);
     existingBuckets = new ArrayList<>();
-    ListBucketsResponse listBucketsResponse = mock(ListBucketsResponse.class);
+    headBucketResponse = mock(HeadBucketResponse.class);
+
+    ListBucketsResponse listBucketsResponse = mock(ListBucketsResponse.class);    
 
     when(listBucketsResponse.buckets()).thenReturn(existingBuckets);
-    when(s3Client.listBuckets()).thenReturn(listBucketsResponse);
+    when(s3Client.listBuckets()).thenReturn(listBucketsResponse);    
+    when(s3Client.headBucket(any(HeadBucketRequest.class))).thenReturn(headBucketResponse);
   }
 
   @Test
-  void testBucketExistsIfBucketExists() {
-    existingBuckets.add(Bucket.builder().name(VALID_BUCKET_NAME).build());
+  void testBucketExistsIfBucketExists() {    
+    SdkHttpResponse response = SdkHttpResponse.builder().statusCode(200).build();
+    when(headBucketResponse.sdkHttpResponse()).thenReturn(response);
+
     assertThat(s3ClientWrapper.bucketExists(VALID_BUCKET_NAME)).isTrue();
   }
 
   @Test
   void testBucketExistsIfBucketDoesNotExist() {
+    SdkHttpResponse response = SdkHttpResponse.builder().statusCode(404).build();
+    when(headBucketResponse.sdkHttpResponse()).thenReturn(response);
+
     assertThat(s3ClientWrapper.bucketExists(VALID_BUCKET_NAME)).isFalse();
   }
 
