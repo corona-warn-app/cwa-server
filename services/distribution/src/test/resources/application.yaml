@@ -12,7 +12,7 @@ services:
     expiry-policy-enabled: true
     expiry-policy-minutes: 120
     shifting-policy-enabled: true
-    shifting-policy-threshold: 140
+    shifting-policy-threshold: 5
     include-incomplete-days: false
     include-incomplete-hours: false
     paths:

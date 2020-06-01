@@ -27,8 +27,6 @@ public class DiagnosisKeyBundler {
   // A map containing diagnosis keys, grouped by the LocalDateTime on which they may be distributed
   private final Map<LocalDateTime, List<DiagnosisKey>> distributableDiagnosisKeys;
 
-  private final Optional<LocalDateTime> earliestDistributableTimestamp;
-
   /**
    * Creates a new {@link DiagnosisKeyBundler}.
    *
@@ -38,7 +36,6 @@ public class DiagnosisKeyBundler {
       DistributionServiceConfig distributionServiceConfig) {
     this.distributionServiceConfig = distributionServiceConfig;
     this.distributableDiagnosisKeys = createDiagnosisKeyDistributionMap(diagnosisKeys);
-    this.earliestDistributableTimestamp = getEarliestDistributableTimestamp();
   }
 
   private Map<LocalDateTime, List<DiagnosisKey>> createDiagnosisKeyDistributionMap(
@@ -48,10 +45,6 @@ public class DiagnosisKeyBundler {
     } else {
       return diagnosisKeys.stream().collect(groupingBy(this::getSubmissionDateTime));
     }
-  }
-
-  private Optional<LocalDateTime> getEarliestDistributableTimestamp() {
-    return this.distributableDiagnosisKeys.keySet().stream().min(LocalDateTime::compareTo);
   }
 
   /**
@@ -64,63 +57,51 @@ public class DiagnosisKeyBundler {
   }
 
   /**
-   * Returns all diagnosis keys that should be distributed at a specific hour.
+   * Returns all diagnosis keys that should be distributed in a specific hour.
    */
   public List<DiagnosisKey> getDiagnosisKeysDistributableAt(LocalDateTime hour) {
-    if (earliestDistributableTimestamp.isEmpty()) {
-      return List.of();
-    }
-    if (hour.isBefore(earliestDistributableTimestamp.get())) {
-      return List.of();
-    }
-    List<DiagnosisKey> distributableInCurrentHour = Optional
-        .ofNullable(this.distributableDiagnosisKeys.get(hour))
-        .orElse(List.of());
     if (distributionServiceConfig.getShiftingPolicyEnabled()) {
-      if (distributableInCurrentHour.size() >= distributionServiceConfig.getShiftingPolicyThreshold()) {
-        return distributableInCurrentHour;
+      List<DiagnosisKey> keysSinceLastDistribution = getKeysSinceLastDistribution(hour);
+      if (keysSinceLastDistribution.size() >= distributionServiceConfig.getShiftingPolicyThreshold()) {
+        return keysSinceLastDistribution;
       } else {
-        List<DiagnosisKey> keysSinceLastDistribution = getKeysSinceLastDistribution(hour);
-        if (keysSinceLastDistribution.size() >= distributionServiceConfig.getShiftingPolicyThreshold()) {
-          return keysSinceLastDistribution;
-        } else {
-          return List.of();
-        }
+        return List.of();
       }
     } else {
-      return distributableInCurrentHour;
+      return getDiagnosisKeysForHour(hour);
     }
   }
 
   /**
-   * Returns a list of all distributable keys between a specific hour and the last distribution (bundle that was above
-   * the shifting threshold) or the timestamp of the earliest distributable key.
+   * Returns a all distributable keys between a specific hour and the last distribution (bundle that was above the
+   * shifting threshold) or the earliest distributable key.
    */
   private List<DiagnosisKey> getKeysSinceLastDistribution(LocalDateTime hour) {
+    Optional<LocalDateTime> earliestDistributableTimestamp = getEarliestDistributableTimestamp();
     if (earliestDistributableTimestamp.isEmpty()) {
       return List.of();
     }
     if (hour.isBefore(earliestDistributableTimestamp.get())) {
       return List.of();
     }
-    List<DiagnosisKey> distributableInCurrentHour = Optional
-        .ofNullable(this.distributableDiagnosisKeys.get(hour))
-        .orElse(List.of());
-    int threshold = distributionServiceConfig.getShiftingPolicyThreshold();
-    if (distributableInCurrentHour.size() >= threshold) {
+    List<DiagnosisKey> distributableInCurrentHour = getDiagnosisKeysForHour(hour);
+    if (distributableInCurrentHour.size() >= distributionServiceConfig.getShiftingPolicyThreshold()) {
       return distributableInCurrentHour;
     }
-
     LocalDateTime previousHour = hour.minusHours(1);
     Collection<DiagnosisKey> distributableInPreviousHour = getDiagnosisKeysDistributableAt(previousHour);
-    if (distributableInPreviousHour.size() >= threshold) {
-      // Last hour was distributed, we can not combine
+    if (distributableInPreviousHour.size() >= distributionServiceConfig.getShiftingPolicyThreshold()) {
+      // Last hour was distributed, so we can not combine the current hour with the last hour
       return distributableInCurrentHour;
     } else {
-      // Last hour was not distributed, we can combine
-      return Stream.concat(distributableInCurrentHour.stream(), distributableInPreviousHour.stream())
+      // Last hour was not distributed, so we can combine the current hour with the last hour
+      return Stream.concat(distributableInCurrentHour.stream(), getKeysSinceLastDistribution(previousHour).stream())
           .collect(Collectors.toList());
     }
+  }
+
+  private Optional<LocalDateTime> getEarliestDistributableTimestamp() {
+    return this.distributableDiagnosisKeys.keySet().stream().min(LocalDateTime::compareTo);
   }
 
   /**
@@ -156,5 +137,14 @@ public class DiagnosisKeyBundler {
     } else {
       return submissionDateTime;
     }
+  }
+
+  /**
+   * Returns all diagnosis keys that should be distributed in a specific hour.
+   */
+  private List<DiagnosisKey> getDiagnosisKeysForHour(LocalDateTime hour) {
+    return Optional
+        .ofNullable(this.distributableDiagnosisKeys.get(hour))
+        .orElse(List.of());
   }
 }
