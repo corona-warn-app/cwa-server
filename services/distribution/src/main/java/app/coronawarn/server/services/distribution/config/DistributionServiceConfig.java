@@ -33,8 +33,8 @@ public class DistributionServiceConfig {
   private Integer retentionDays;
   private Boolean expiryPolicyEnabled;
   private Integer expiryPolicyMinutes;
-  private Boolean skippingPolicyEnabled;
-  private Integer skippingPolicyThreshold;
+  private Boolean shiftingPolicyEnabled;
+  private Integer shiftingPolicyThreshold;
   private String outputFileName;
   private Boolean includeIncompleteDays;
   private Boolean includeIncompleteHours;
@@ -83,20 +83,20 @@ public class DistributionServiceConfig {
     this.expiryPolicyMinutes = expiryPolicyMinutes;
   }
 
-  public Boolean getSkippingPolicyEnabled() {
-    return skippingPolicyEnabled;
+  public Boolean getShiftingPolicyEnabled() {
+    return shiftingPolicyEnabled;
   }
 
-  public void setSkippingPolicyEnabled(Boolean skippingPolicyEnabled) {
-    this.skippingPolicyEnabled = skippingPolicyEnabled;
+  public void setShiftingPolicyEnabled(Boolean shiftingPolicyEnabled) {
+    this.shiftingPolicyEnabled = shiftingPolicyEnabled;
   }
 
-  public Integer getSkippingPolicyThreshold() {
-    return skippingPolicyThreshold;
+  public Integer getShiftingPolicyThreshold() {
+    return shiftingPolicyThreshold;
   }
 
-  public void setSkippingPolicyThreshold(Integer skippingPolicyThreshold) {
-    this.skippingPolicyThreshold = skippingPolicyThreshold;
+  public void setShiftingPolicyThreshold(Integer shiftingPolicyThreshold) {
+    this.shiftingPolicyThreshold = shiftingPolicyThreshold;
   }
 
   public String getOutputFileName() {
