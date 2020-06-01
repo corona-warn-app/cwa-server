@@ -1,20 +1,21 @@
-/*
+/*-
+ * ---license-start
  * Corona-Warn-App
- *
- * SAP SE and all other contributors /
- * copyright owners license this file to you under the Apache
- * License, Version 2.0 (the "License"); you may not use this
- * file except in compliance with the License.
+ * ---
+ * Copyright (C) 2020 SAP SE and all other contributors
+ * ---
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
- * specific language governing permissions and limitations
- * under the License.
+ * 
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ * ---license-end
  */
 
 package app.coronawarn.server.services.distribution.objectstore.client;
@@ -36,7 +37,7 @@ public interface ObjectStoreClient {
    * @return A list of objects from the object store that match the specified parameters.
    * @throws ObjectStoreOperationFailedException if the operation could not be performed.
    */
-  List<S3Object> getObjects(String bucket, String prefix) throws ObjectStoreOperationFailedException;
+  List<S3Object> getObjects(String bucket, String prefix);
 
   /**
    * Uploads data from the specified file to an object with the specified name.
@@ -47,8 +48,7 @@ public interface ObjectStoreClient {
    * @param headers    The headers to be used during upload.
    * @throws ObjectStoreOperationFailedException if the operation could not be performed.
    */
-  void putObject(String bucket, String objectName, Path filePath, Map<String, String> headers)
-      throws ObjectStoreOperationFailedException;
+  void putObject(String bucket, String objectName, Path filePath, Map<HeaderKey, String> headers);
 
   /**
    * Removes all the specified objects from the specified object store bucket.
@@ -57,7 +57,7 @@ public interface ObjectStoreClient {
    * @param objectNames The names of objects to delete.
    * @throws ObjectStoreOperationFailedException if the operation could not be performed.
    */
-  void removeObjects(String bucket, List<String> objectNames) throws ObjectStoreOperationFailedException;
+  void removeObjects(String bucket, List<String> objectNames);
 
   /**
    * Checks if an object store bucket with the specified name exists.
@@ -66,5 +66,19 @@ public interface ObjectStoreClient {
    * @return True if the bucket exists.
    * @throws ObjectStoreOperationFailedException if the operation could not be performed.
    */
-  boolean bucketExists(String bucket) throws ObjectStoreOperationFailedException;
+  boolean bucketExists(String bucket);
+
+  /**
+   * Provides the supported header keys.
+   */
+  enum HeaderKey {
+    CACHE_CONTROL("Cache-Control"),
+    AMZ_ACL("x-amz-acl");
+
+    public final String keyValue;
+
+    HeaderKey(String keyValue) {
+      this.keyValue = keyValue;
+    }
+  }
 }

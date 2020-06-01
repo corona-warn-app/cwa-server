@@ -1,20 +1,21 @@
-/*
+/*-
+ * ---license-start
  * Corona-Warn-App
- *
- * SAP SE and all other contributors /
- * copyright owners license this file to you under the Apache
- * License, Version 2.0 (the "License"); you may not use this
- * file except in compliance with the License.
+ * ---
+ * Copyright (C) 2020 SAP SE and all other contributors
+ * ---
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
- * specific language governing permissions and limitations
- * under the License.
+ * 
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ * ---license-end
  */
 
 package app.coronawarn.server.services.distribution.objectstore;
@@ -38,9 +39,9 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 class S3PublisherTest {
 
   private static final String PUBLISHING_PATH = "testsetups/s3publishertest/topublish";
-  private static final S3Object FILE_1 = new S3Object("file1.txt", "39f7e3afaa8f8560a3050d1a1b365f47-1");
-  private static final S3Object FILE_2 = new S3Object("file2.txt", "8d29190901bfde9710ea76b29ef3d33e-1");
-  private static final S3Object FILE_3 = new S3Object("file3.txt", "585f3b3f71f6b1519a21bef8bb77cf01-1");
+  private static final S3Object FILE_1 = new S3Object("file1.txt", "cf7fb1ca5c32adc0941c35a6f7fc5eba-1");
+  private static final S3Object FILE_2 = new S3Object("file2.txt", "d882afb9fa9c26f7e9d0965b8faa79b8-1");
+  private static final S3Object FILE_3 = new S3Object("file3.txt", "0385524c9fdc83634467a11667c851ac-1");
 
   @MockBean
   private ObjectStoreAccess objectStoreAccess;

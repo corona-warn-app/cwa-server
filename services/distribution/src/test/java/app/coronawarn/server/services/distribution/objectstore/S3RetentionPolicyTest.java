@@ -1,20 +1,21 @@
-/*
+/*-
+ * ---license-start
  * Corona-Warn-App
- *
- * SAP SE and all other contributors /
- * copyright owners license this file to you under the Apache
- * License, Version 2.0 (the "License"); you may not use this
- * file except in compliance with the License.
+ * ---
+ * Copyright (C) 2020 SAP SE and all other contributors
+ * ---
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
- * specific language governing permissions and limitations
- * under the License.
+ * 
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ * ---license-end
  */
 
 package app.coronawarn.server.services.distribution.objectstore;
@@ -30,6 +31,7 @@ import app.coronawarn.server.services.distribution.config.DistributionServiceCon
 import app.coronawarn.server.services.distribution.config.DistributionServiceConfig.ObjectStore;
 import app.coronawarn.server.services.distribution.objectstore.client.S3Object;
 import java.time.LocalDate;
+import java.time.ZoneOffset;
 import java.util.List;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -56,7 +58,7 @@ class S3RetentionPolicyTest {
 
   @Test
   void shouldDeleteOldFiles() {
-    String expectedFileToBeDeleted = generateFileName(LocalDate.now().minusDays(2));
+    String expectedFileToBeDeleted = generateFileName(LocalDate.now(ZoneOffset.UTC).minusDays(2));
 
     when(objectStoreAccess.getObjectsWithPrefix(any())).thenReturn(List.of(
         new S3Object(expectedFileToBeDeleted),

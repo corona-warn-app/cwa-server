@@ -138,7 +138,7 @@ The API that is being exposed by the backend services is documented in an [OpenA
 Service      | OpenAPI Specification
 -------------|-------------
 Submission Service        | [services/submission/api_v1.json](https://github.com/corona-warn-app/cwa-server/raw/master/services/submission/api_v1.json)
-Distribution Service      | [services/distribution/api_v1.json)](https://github.com/corona-warn-app/cwa-server/raw/master/services/distribution/api_v1.json)
+Distribution Service      | [services/distribution/api_v1.json](https://github.com/corona-warn-app/cwa-server/raw/master/services/distribution/api_v1.json)
 
 ## Spring Profiles
 
