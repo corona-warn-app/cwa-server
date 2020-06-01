@@ -22,44 +22,41 @@ package app.coronawarn.server.services.distribution.objectstore.client;
 
 import app.coronawarn.server.services.distribution.config.DistributionServiceConfig;
 import app.coronawarn.server.services.distribution.config.DistributionServiceConfig.ObjectStore;
-import io.minio.MinioClient;
-import io.minio.errors.InvalidEndpointException;
-import io.minio.errors.InvalidPortException;
+import java.net.URI;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import software.amazon.awssdk.auth.credentials.AwsBasicCredentials;
+import software.amazon.awssdk.auth.credentials.AwsCredentialsProvider;
+import software.amazon.awssdk.auth.credentials.StaticCredentialsProvider;
+import software.amazon.awssdk.regions.Region;
+import software.amazon.awssdk.services.s3.S3Client;
 
 /**
- * Manages the instantiation of the {@link MinioClient} bean.
+ * Manages the instantiation of the {@link ObjectStoreClient} bean.
  */
 @Configuration
 public class ObjectStoreClientConfig {
 
-  private static final String DEFAULT_REGION = "eu-west-1";
+  private static final Region DEFAULT_REGION = Region.EU_CENTRAL_1;
 
   @Bean
-  public ObjectStoreClient createObjectStoreClient(DistributionServiceConfig distributionServiceConfig)
-      throws InvalidPortException, InvalidEndpointException {
+  public ObjectStoreClient createObjectStoreClient(DistributionServiceConfig distributionServiceConfig) {
     return createClient(distributionServiceConfig.getObjectStore());
   }
 
-  private MinioClientWrapper createClient(ObjectStore objectStore)
-      throws InvalidPortException, InvalidEndpointException {
-    if (isSsl(objectStore)) {
-      return new MinioClientWrapper(new MinioClient(
-          objectStore.getEndpoint(),
-          objectStore.getPort(),
-          objectStore.getAccessKey(), objectStore.getSecretKey(),
-          DEFAULT_REGION,
-          true));
-    } else {
-      return new MinioClientWrapper(new MinioClient(
-          objectStore.getEndpoint(),
-          objectStore.getPort(),
-          objectStore.getAccessKey(), objectStore.getSecretKey()));
-    }
+  private ObjectStoreClient createClient(ObjectStore objectStore) {
+    AwsCredentialsProvider credentialsProvider = StaticCredentialsProvider.create(
+        AwsBasicCredentials.create(objectStore.getAccessKey(), objectStore.getSecretKey()));
+    String endpoint = removeTrailingSlash(objectStore.getEndpoint()) + ":" + objectStore.getPort();
+
+    return new S3ClientWrapper(S3Client.builder()
+        .region(DEFAULT_REGION)
+        .endpointOverride(URI.create(endpoint))
+        .credentialsProvider(credentialsProvider)
+        .build());
   }
 
-  private boolean isSsl(ObjectStore objectStore) {
-    return objectStore.getEndpoint().startsWith("https://");
+  private String removeTrailingSlash(String string) {
+    return string.endsWith("/") ? string.substring(0, string.length() - 1) : string;
   }
 }
