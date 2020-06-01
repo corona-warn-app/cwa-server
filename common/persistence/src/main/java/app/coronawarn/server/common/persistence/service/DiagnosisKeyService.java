@@ -55,8 +55,13 @@ public class DiagnosisKeyService {
    * @param diagnosisKeys must not contain {@literal null}.
    * @throws IllegalArgumentException in case the given collection contains {@literal null}.
    */
+  @Transactional
   public void saveDiagnosisKeys(Collection<DiagnosisKey> diagnosisKeys) {
-    keyRepository.saveAllDoNothingOnConflict(diagnosisKeys);
+    for (DiagnosisKey diagnosisKey: diagnosisKeys) {
+      keyRepository.saveDoNothingOnConflict(
+          diagnosisKey.getKeyData(), diagnosisKey.getRollingStartIntervalNumber(), diagnosisKey.getRollingPeriod(),
+          diagnosisKey.getSubmissionTimestamp(), diagnosisKey.getTransmissionRiskLevel());
+    }
   }
 
   /**
