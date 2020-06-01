@@ -1,5 +1,8 @@
 ---
 spring:
+  test:
+    database:
+      replace: none
   flyway:
     enabled: false
   jpa:
@@ -8,6 +11,10 @@ spring:
     properties:
       hibernate:
         show_sql: false
+  datasource:
+    url: jdbc:h2:mem:test;MODE=PostgreSQL
+    driverClassName: org.h2.Driver
+    platform: h2
   main:
     banner-mode: off
 logging:
