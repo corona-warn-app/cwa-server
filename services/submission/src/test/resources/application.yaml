@@ -11,7 +11,13 @@ spring:
     enabled: true
     # default case is H2 - value will be overwritten by profile cloud or postgres
     locations: classpath:db/migration/h2
-
+  datasource:
+    url: jdbc:h2:mem:test;MODE=PostgreSQL
+    driverClassName: org.h2.Driver
+    platform: h2
+  test:
+    database:
+      replace: none
   jpa:
     hibernate:
       ddl-auto: validate
@@ -24,5 +30,5 @@ services:
     payload:
       max-number-of-keys: 14
     verification:
-      base-url: http://verificationService:1234
+      base-url: http://localhost:1234
       path: /version/v1/tan/verify
