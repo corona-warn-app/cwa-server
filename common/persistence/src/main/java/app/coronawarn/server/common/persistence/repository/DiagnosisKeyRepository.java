@@ -32,9 +32,10 @@ public interface DiagnosisKeyRepository extends JpaRepository<DiagnosisKey, Long
   /**
    * Deletes all entries that have a submission timestamp lesser or equal to the specified one.
    *
-   * @param submissionTimestamp the submission timestamp up to which entries will be deleted.
+   * @param submissionTimestamp The submission timestamp up to which entries will be deleted.
+   * @return The number of rows that were deleted.
    */
-  void deleteBySubmissionTimestampIsLessThanEqual(long submissionTimestamp);
+  int deleteBySubmissionTimestampIsLessThanEqual(long submissionTimestamp);
 
   /**
    * Attempts to write the specified diagnosis key information into the database. If a row with the specified key data
