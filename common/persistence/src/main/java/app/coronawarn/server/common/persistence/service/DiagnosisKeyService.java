@@ -50,21 +50,34 @@ public class DiagnosisKeyService {
   }
 
   /**
-   * Persists the specified collection of {@link DiagnosisKey} instances.
+   * Persists the specified collection of {@link DiagnosisKey} instances. If the key data of a particular diagnosis key
+   * already exists in the database, this diagnosis key is not persisted.
    *
    * @param diagnosisKeys must not contain {@literal null}.
    * @throws IllegalArgumentException in case the given collection contains {@literal null}.
    */
+  @Transactional
   public void saveDiagnosisKeys(Collection<DiagnosisKey> diagnosisKeys) {
-    keyRepository.saveAll(diagnosisKeys);
+    for (DiagnosisKey diagnosisKey : diagnosisKeys) {
+      keyRepository.saveDoNothingOnConflict(
+          diagnosisKey.getKeyData(), diagnosisKey.getRollingStartIntervalNumber(), diagnosisKey.getRollingPeriod(),
+          diagnosisKey.getSubmissionTimestamp(), diagnosisKey.getTransmissionRiskLevel());
+    }
   }
 
   /**
    * Returns all valid persisted diagnosis keys, sorted by their submission timestamp.
    */
   public List<DiagnosisKey> getDiagnosisKeys() {
-    return keyRepository.findAll(Sort.by(Direction.ASC, "submissionTimestamp")).stream()
-        .filter(DiagnosisKeyService::isDiagnosisKeyValid).collect(Collectors.toList());
+    List<DiagnosisKey> diagnosisKeys = keyRepository.findAll(Sort.by(Direction.ASC, "submissionTimestamp"));
+    List<DiagnosisKey> validDiagnosisKeys =
+        diagnosisKeys.stream().filter(DiagnosisKeyService::isDiagnosisKeyValid).collect(Collectors.toList());
+
+    int numberOfDiscardedKeys = diagnosisKeys.size() - validDiagnosisKeys.size();
+    logger.info("Retrieved {} diagnosis key(s). Discarded {} diagnosis key(s) from the result as invalid.",
+        diagnosisKeys.size(), numberOfDiscardedKeys);
+
+    return validDiagnosisKeys;
   }
 
   private static boolean isDiagnosisKeyValid(DiagnosisKey diagnosisKey) {
@@ -97,6 +110,8 @@ public class DiagnosisKeyService {
         .ofInstant(Instant.now(), UTC)
         .minusDays(daysToRetain)
         .toEpochSecond(UTC) / 3600L;
-    keyRepository.deleteBySubmissionTimestampIsLessThanEqual(threshold);
+    int numberOfDeletions = keyRepository.deleteBySubmissionTimestampIsLessThanEqual(threshold);
+    logger.info("Deleted {} diagnosis key(s) with a submission timestamp older than {} day(s) ago.",
+        numberOfDeletions, daysToRetain);
   }
 }
