@@ -40,7 +40,7 @@ public class DiagnosisKeyBundler {
 
   private Map<LocalDateTime, List<DiagnosisKey>> createDiagnosisKeyDistributionMap(
       Collection<DiagnosisKey> diagnosisKeys) {
-    if (distributionServiceConfig.getExpiryPolicyEnabled()) {
+    if (Boolean.TRUE.equals(distributionServiceConfig.getExpiryPolicyEnabled())) {
       return diagnosisKeys.stream().collect(groupingBy(this::getDistributionDateTime));
     } else {
       return diagnosisKeys.stream().collect(groupingBy(this::getSubmissionDateTime));
@@ -60,7 +60,7 @@ public class DiagnosisKeyBundler {
    * Returns all diagnosis keys that should be distributed in a specific hour.
    */
   public List<DiagnosisKey> getDiagnosisKeysDistributableAt(LocalDateTime hour) {
-    if (distributionServiceConfig.getShiftingPolicyEnabled()) {
+    if (Boolean.TRUE.equals(distributionServiceConfig.getShiftingPolicyEnabled())) {
       List<DiagnosisKey> keysSinceLastDistribution = getKeysSinceLastDistribution(hour);
       if (keysSinceLastDistribution.size() >= distributionServiceConfig.getShiftingPolicyThreshold()) {
         return keysSinceLastDistribution;
