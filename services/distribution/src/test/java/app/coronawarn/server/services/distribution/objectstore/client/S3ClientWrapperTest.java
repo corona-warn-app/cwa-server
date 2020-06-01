@@ -94,7 +94,7 @@ class S3ClientWrapperTest {
   }
 
   @Test
-  void testBucketExistsIfBucketExists() {    
+  void testBucketExistsIfBucketExists() {  
     SdkHttpResponse response = SdkHttpResponse.builder().statusCode(200).build();
     when(headBucketResponse.sdkHttpResponse()).thenReturn(response);
 
@@ -112,7 +112,8 @@ class S3ClientWrapperTest {
   @ParameterizedTest
   @ValueSource(classes = {S3Exception.class, SdkClientException.class, SdkException.class})
   void bucketExistsThrowsObjectStoreOperationFailedExceptionIfClientThrows(Class<Exception> cause) {
-    when(s3Client.listBuckets()).thenThrow(cause);
+    when(s3Client.headBucket(any(HeadBucketRequest.class))).thenThrow(cause);
+
     assertThatExceptionOfType(ObjectStoreOperationFailedException.class)
         .isThrownBy(() -> s3ClientWrapper.bucketExists(VALID_BUCKET_NAME));
   }
