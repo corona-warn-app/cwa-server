@@ -34,7 +34,7 @@ import org.springframework.web.client.RestClientException;
 public class TanVerifier {
 
   private static final Logger logger = LoggerFactory.getLogger(TanVerifier.class);
-  private VerificationServerClient verificationServerClient;
+  private final VerificationServerClient verificationServerClient;
 
   /**
    * This class can be used to verify a TAN against a configured verification service.
