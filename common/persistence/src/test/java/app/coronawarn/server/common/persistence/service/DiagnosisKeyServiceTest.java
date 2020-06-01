@@ -172,7 +172,7 @@ class DiagnosisKeyServiceTest {
     assertThat(actKeys.iterator().next().getTransmissionRiskLevel()).isEqualTo(2);
   }
 
-  public DiagnosisKey buildDiagnosisKeyForSubmissionTimestamp(long submissionTimeStamp) {
+  public static DiagnosisKey buildDiagnosisKeyForSubmissionTimestamp(long submissionTimeStamp) {
     byte[] randomBytes = new byte[16];
     Random random = new Random(submissionTimeStamp);
     random.nextBytes(randomBytes);
@@ -183,7 +183,7 @@ class DiagnosisKeyServiceTest {
         .withSubmissionTimestamp(submissionTimeStamp).build();
   }
 
-  public DiagnosisKey buildDiagnosisKeyForDateTime(OffsetDateTime dateTime) {
+  public static DiagnosisKey buildDiagnosisKeyForDateTime(OffsetDateTime dateTime) {
     return buildDiagnosisKeyForSubmissionTimestamp(dateTime.toEpochSecond() / 3600);
   }
 }

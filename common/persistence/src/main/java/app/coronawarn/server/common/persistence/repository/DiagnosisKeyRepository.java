@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -48,8 +48,8 @@ public interface DiagnosisKeyRepository extends JpaRepository<DiagnosisKey, Long
    */
   @Modifying
   @Query(nativeQuery = true, value =
-      "INSERT INTO diagnosis_key("
-          + "key_data, rolling_start_interval_number, rolling_period, submission_timestamp, transmission_risk_level)"
+      "INSERT INTO diagnosis_key"
+          + "(key_data, rolling_start_interval_number, rolling_period, submission_timestamp, transmission_risk_level)"
           + " VALUES(?, ?, ?, ?, ?) ON CONFLICT DO NOTHING;")
   void saveDoNothingOnConflict(byte[] keyData, int rollingStartIntervalNumber, int rollingPeriod,
       long submissionTimestamp, int transmissionRisk);
