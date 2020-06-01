@@ -37,7 +37,14 @@ public interface DiagnosisKeyRepository extends JpaRepository<DiagnosisKey, Long
   void deleteBySubmissionTimestampIsLessThanEqual(long submissionTimestamp);
 
   /**
-   * TODO.
+   * Attempts to write the specified diagnosis key information into the database. If a row with the specified key data
+   * already exists, no data is inserted.
+   *
+   * @param keyData                    The key data of the diagnosis key.
+   * @param rollingStartIntervalNumber The rolling start interval number of the diagnosis key.
+   * @param rollingPeriod              The rolling period of the diagnosis key.
+   * @param submissionTimestamp        The submission timestamp of the diagnosis key.
+   * @param transmissionRisk           The transmission risk level of the diagnosis key.
    */
   @Modifying
   @Query(nativeQuery = true, value =
