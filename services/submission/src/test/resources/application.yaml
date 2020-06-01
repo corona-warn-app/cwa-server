@@ -30,5 +30,5 @@ services:
     payload:
       max-number-of-keys: 14
     verification:
-      base-url: http://verificationService:1234
+      base-url: http://localhost:1234
       path: /version/v1/tan/verify

@@ -20,20 +20,12 @@
 
 package app.coronawarn.server.services.submission.verification;
 
-import app.coronawarn.server.services.submission.config.SubmissionServiceConfig;
-import java.util.UUID;
+import feign.FeignException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.web.client.RestTemplateBuilder;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestClientException;
-import org.springframework.web.client.RestTemplate;
 
 /**
  * The TanVerifier performs the verification of submission TANs.
@@ -42,54 +34,32 @@ import org.springframework.web.client.RestTemplate;
 public class TanVerifier {
 
   private static final Logger logger = LoggerFactory.getLogger(TanVerifier.class);
-  private final String verificationServiceUrl;
-  private final RestTemplate restTemplate;
-  private final HttpHeaders requestHeader = new HttpHeaders();
+  private final VerificationServerClient verificationServerClient;
 
   /**
    * This class can be used to verify a TAN against a configured verification service.
    *
-   * @param submissionServiceConfig A submission service configuration
-   * @param restTemplateBuilder     A rest template builder
+   * @param verificationServerClient The REST client to communicate with the verification server
    */
   @Autowired
-  public TanVerifier(SubmissionServiceConfig submissionServiceConfig, RestTemplateBuilder restTemplateBuilder) {
-    this.verificationServiceUrl = submissionServiceConfig.getVerificationBaseUrl()
-        + submissionServiceConfig.getVerificationPath();
-    this.restTemplate = restTemplateBuilder.build();
-    this.requestHeader.setContentType(MediaType.APPLICATION_JSON);
+  public TanVerifier(VerificationServerClient verificationServerClient) {
+    this.verificationServerClient = verificationServerClient;
   }
 
   /**
    * Verifies the specified TAN. Returns {@literal true} if the specified TAN is valid, {@literal false} otherwise.
    *
-   * @param tan Submission Authorization TAN
+   * @param tanString Submission Authorization TAN
    * @return {@literal true} if the specified TAN is valid, {@literal false} otherwise.
    * @throws RestClientException if status code is neither 2xx nor 4xx
    */
-  public boolean verifyTan(String tan) {
-    String trimmedTan = tan.trim();
-
-    if (!checkTanSyntax(trimmedTan)) {
-      logger.debug("TAN Syntax check failed for TAN: {}", trimmedTan);
-      return false;
-    }
-
-    return verifyWithVerificationService(trimmedTan);
-  }
-
-  /**
-   * Verifies if the provided TAN can be parsed as a UUID.
-   *
-   * @param tan Submission Authorization TAN
-   * @return {@literal true} if tan can be parsed as a UUID, {@literal false} otherwise
-   */
-  private boolean checkTanSyntax(String tan) {
+  public boolean verifyTan(String tanString) {
     try {
-      UUID.fromString(tan);
-      return true;
+      Tan tan = Tan.of(tanString);
+
+      return verifyWithVerificationService(tan);
     } catch (IllegalArgumentException e) {
-      logger.debug("UUID creation failed for value: {}", tan, e);
+      logger.debug("TAN Syntax check failed for TAN: {}", tanString.trim());
       return false;
     }
   }
@@ -101,16 +71,11 @@ public class TanVerifier {
    * @return {@literal true} if verification service is able to verify the provided TAN, {@literal false} otherwise
    * @throws RestClientException if http status code is neither 2xx nor 404
    */
-  private boolean verifyWithVerificationService(String tan) {
-    String json = "{ \"tan\": \"" + tan + "\" }";
-    HttpEntity<String> entity = new HttpEntity<>(json, requestHeader);
-
+  private boolean verifyWithVerificationService(Tan tan) {
     try {
-      ResponseEntity<String> response = restTemplate.postForEntity(verificationServiceUrl, entity, String.class);
-      return response.getStatusCode().is2xxSuccessful();
-    } catch (HttpClientErrorException.NotFound e) {
-      // The verification service returns http status 404 if the TAN is invalid
-      logger.debug("TAN verification failed");
+      verificationServerClient.verifyTan(tan);
+      return true;
+    } catch (FeignException.NotFound e) {
       return false;
     }
   }
