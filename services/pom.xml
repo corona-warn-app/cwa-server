@@ -106,6 +106,9 @@
           <addJavaLicenseAfterPackage>false</addJavaLicenseAfterPackage>
           <trimHeaderLine>true</trimHeaderLine>
           <emptyLineAfterHeader>true</emptyLineAfterHeader>
+          <excludes>
+            <exclude>**/io/minio/**/*.java</exclude>
+          </excludes>
         </configuration>
       </plugin>
       <plugin>
