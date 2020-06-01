@@ -50,13 +50,19 @@ public class DiagnosisKeyService {
   }
 
   /**
-   * Persists the specified collection of {@link DiagnosisKey} instances.
+   * Persists the specified collection of {@link DiagnosisKey} instances. If the key data of a particular diagnosis key
+   * already exists in the database, this diagnosis key is not persisted.
    *
    * @param diagnosisKeys must not contain {@literal null}.
    * @throws IllegalArgumentException in case the given collection contains {@literal null}.
    */
+  @Transactional
   public void saveDiagnosisKeys(Collection<DiagnosisKey> diagnosisKeys) {
-    keyRepository.saveAll(diagnosisKeys);
+    for (DiagnosisKey diagnosisKey : diagnosisKeys) {
+      keyRepository.saveDoNothingOnConflict(
+          diagnosisKey.getKeyData(), diagnosisKey.getRollingStartIntervalNumber(), diagnosisKey.getRollingPeriod(),
+          diagnosisKey.getSubmissionTimestamp(), diagnosisKey.getTransmissionRiskLevel());
+    }
   }
 
   /**
