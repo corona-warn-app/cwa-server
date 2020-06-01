@@ -115,7 +115,6 @@ public class TemporaryExposureKeyExportFile extends FileOnDisk {
         .setStartTimestamp(this.startTimestamp)
         .setEndTimestamp(this.endTimestamp)
         .setRegion(this.region)
-        // TODO Use buildPartial and then set batch stuff somewhere else
         .setBatchNum(1)
         .setBatchSize(1)
         .addAllSignatureInfos(Set.of(distributionServiceConfig.getSignature().getSignatureInfo()))
