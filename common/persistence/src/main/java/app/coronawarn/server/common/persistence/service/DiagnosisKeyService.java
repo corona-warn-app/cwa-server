@@ -69,8 +69,15 @@ public class DiagnosisKeyService {
    * Returns all valid persisted diagnosis keys, sorted by their submission timestamp.
    */
   public List<DiagnosisKey> getDiagnosisKeys() {
-    return keyRepository.findAll(Sort.by(Direction.ASC, "submissionTimestamp")).stream()
-        .filter(DiagnosisKeyService::isDiagnosisKeyValid).collect(Collectors.toList());
+    List<DiagnosisKey> diagnosisKeys = keyRepository.findAll(Sort.by(Direction.ASC, "submissionTimestamp"));
+    List<DiagnosisKey> validDiagnosisKeys =
+        diagnosisKeys.stream().filter(DiagnosisKeyService::isDiagnosisKeyValid).collect(Collectors.toList());
+
+    int numberOfDiscardedKeys = diagnosisKeys.size() - validDiagnosisKeys.size();
+    logger.info("Retrieved {} diagnosis key(s). Discarded {} diagnosis key(s) from the result as invalid.",
+        diagnosisKeys.size(), numberOfDiscardedKeys);
+
+    return validDiagnosisKeys;
   }
 
   private static boolean isDiagnosisKeyValid(DiagnosisKey diagnosisKey) {
@@ -103,6 +110,8 @@ public class DiagnosisKeyService {
         .ofInstant(Instant.now(), UTC)
         .minusDays(daysToRetain)
         .toEpochSecond(UTC) / 3600L;
-    keyRepository.deleteBySubmissionTimestampIsLessThanEqual(threshold);
+    int numberOfDeletions = keyRepository.deleteBySubmissionTimestampIsLessThanEqual(threshold);
+    logger.info("Deleted {} diagnosis key(s) with a submission timestamp older than {} day(s) ago.",
+        numberOfDeletions, daysToRetain);
   }
 }
