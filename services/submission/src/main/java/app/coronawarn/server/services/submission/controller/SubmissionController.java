@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -33,6 +33,8 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ForkJoinPool;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicReference;
+
 import org.apache.commons.math3.distribution.PoissonDistribution;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -65,14 +67,14 @@ public class SubmissionController {
   private final TanVerifier tanVerifier;
   private final Double fakeDelayMovingAverageSamples;
   private final Integer retentionDays;
-  private Double fakeDelay;
+  private final AtomicReference<Double> fakeDelay;
 
   @Autowired
   SubmissionController(DiagnosisKeyService diagnosisKeyService, TanVerifier tanVerifier,
       SubmissionServiceConfig submissionServiceConfig) {
     this.diagnosisKeyService = diagnosisKeyService;
     this.tanVerifier = tanVerifier;
-    fakeDelay = submissionServiceConfig.getInitialFakeDelayMilliseconds();
+    fakeDelay = new AtomicReference<>(submissionServiceConfig.getInitialFakeDelayMilliseconds());
     fakeDelayMovingAverageSamples = submissionServiceConfig.getFakeDelayMovingAverageSamples();
     retentionDays = submissionServiceConfig.getRetentionDays();
   }
@@ -99,7 +101,7 @@ public class SubmissionController {
 
   private DeferredResult<ResponseEntity<Void>> buildFakeDeferredResult() {
     DeferredResult<ResponseEntity<Void>> deferredResult = new DeferredResult<>();
-    long delay = new PoissonDistribution(fakeDelay).sample();
+    long delay = new PoissonDistribution(fakeDelay.get()).sample();
     scheduledExecutor.schedule(() -> deferredResult.setResult(buildSuccessResponseEntity()),
         delay, TimeUnit.MILLISECONDS);
     return deferredResult;
@@ -164,7 +166,18 @@ public class SubmissionController {
     diagnosisKeyService.saveDiagnosisKeys(diagnosisKeys);
   }
 
-  private synchronized void updateFakeDelay(long realRequestDuration) {
-    fakeDelay = fakeDelay + (1 / fakeDelayMovingAverageSamples) * (realRequestDuration - fakeDelay);
+  /** @implNote VisibleForTesting */
+  void updateFakeDelay(long realRequestDuration) {
+    while (true) {
+      Double fd = fakeDelay.get();
+      if (fakeDelay.compareAndSet(
+          fd, fd + (1 / fakeDelayMovingAverageSamples) * (realRequestDuration - fd))) {
+        break;
+      }
+    }
+  }
+  /** @implNote VisibleForTesting */
+  Double getFakeDelay() {
+    return fakeDelay.get();
   }
 }
