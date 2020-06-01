@@ -356,7 +356,7 @@ public class DistributionServiceConfig {
     }
 
     /**
-     * Returns the static {@link SignatureInfo} configured in the application properties. TODO Enter correct values.
+     * Returns the static {@link SignatureInfo} configured in the application properties.
      */
     public SignatureInfo getSignatureInfo() {
       return SignatureInfo.newBuilder()
