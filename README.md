@@ -144,12 +144,14 @@ Distribution Service      | [services/distribution/api_v1.json](https://github.c
 
 ### Distribution
 
-Profile      | Effect
--------------|-------------
-`dev`        | Turns the log level to `DEBUG` and sets the app package ID in the export packages' signature info to `de.rki.coronawarnapp-dev` so that test certificates (instead of production certificates) will be used for client-side validation.
-`cloud`      | Removes default values for the `datasource` and `objectstore` configurations.
-`demo`       | Includes incomplete days and hours into the distribution run, thus creating aggregates for the current day and the current hour (and including both in the respective indices). When running multiple distributions in one hour with this profile, the date aggregate for today and the hours aggregate for the current hour will be updated and overwritten.
-`testdata`   | Causes test data to be inserted into the database before each distribution run. By default, around 1000 random diagnosis keys will be generated per hour. If there are no diagnosis keys in the database yet, random keys will be generated for every hour from the beginning of the retention period (14 days ago at 00:00 UTC) until one hour before the present hour. If there are already keys in the database, the random keys will be generated for every hour from the latest diagnosis key in the database (by submission timestamp) until one hour before the present hour (or none at all, if the latest diagnosis key in the database was submitted one hour ago or later).
+Profile          | Effect
+-----------------|-------------
+`dev`            | Turns the log level to `DEBUG`.
+`cloud`          | Removes default values for the `datasource` and `objectstore` configurations.
+`demo`           | Includes incomplete days and hours into the distribution run, thus creating aggregates for the current day and the current hour (and including both in the respective indices). When running multiple distributions in one hour with this profile, the date aggregate for today and the hours aggregate for the current hour will be updated and overwritten.
+`testdata`       | Causes test data to be inserted into the database before each distribution run. By default, around 1000 random diagnosis keys will be generated per hour. If there are no diagnosis keys in the database yet, random keys will be generated for every hour from the beginning of the retention period (14 days ago at 00:00 UTC) until one hour before the present hour. If there are already keys in the database, the random keys will be generated for every hour from the latest diagnosis key in the database (by submission timestamp) until one hour before the present hour (or none at all, if the latest diagnosis key in the database was submitted one hour ago or later).
+`signature-dev`  | Sets the app package ID in the export packages' signature info to `de.rki.coronawarnapp-dev` so that test certificates (instead of production certificates) will be used for client-side validation.
+`signature-prod` | Provides production app package IDs for the signature info
 
 ### Submission
 
