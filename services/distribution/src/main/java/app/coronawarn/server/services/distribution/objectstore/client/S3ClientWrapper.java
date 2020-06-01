@@ -42,8 +42,7 @@ import software.amazon.awssdk.services.s3.model.ObjectIdentifier;
 import software.amazon.awssdk.services.s3.model.PutObjectRequest;
 
 /**
- * Implementation of {@link ObjectStoreClient} that encapsulates an
- * {@link S3Client}.
+ * Implementation of {@link ObjectStoreClient} that encapsulates an {@link S3Client}.
  */
 public class S3ClientWrapper implements ObjectStoreClient {
 
@@ -57,7 +56,7 @@ public class S3ClientWrapper implements ObjectStoreClient {
 
   @Override
   public boolean bucketExists(String bucketName) {
-    try {      
+    try {
       HeadBucketRequest request = HeadBucketRequest.builder().bucket(bucketName).build();      
       HeadBucketResponse response = s3Client.headBucket(request);
       return response.sdkHttpResponse().isSuccessful();
@@ -69,8 +68,8 @@ public class S3ClientWrapper implements ObjectStoreClient {
   @Override
   public List<S3Object> getObjects(String bucket, String prefix) {
     try {
-      ListObjectsV2Response response = s3Client
-          .listObjectsV2(ListObjectsV2Request.builder().prefix(prefix).bucket(bucket).build());
+      ListObjectsV2Response response =
+          s3Client.listObjectsV2(ListObjectsV2Request.builder().prefix(prefix).bucket(bucket).build());
       return response.contents().stream().map(S3ClientWrapper::buildS3Object).collect(toList());
     } catch (SdkException e) {
       throw new ObjectStoreOperationFailedException("Failed to upload object to object store", e);
@@ -107,7 +106,9 @@ public class S3ClientWrapper implements ObjectStoreClient {
 
     try {
       DeleteObjectsResponse response = s3Client.deleteObjects(
-          DeleteObjectsRequest.builder().bucket(bucket).delete(Delete.builder().objects(identifiers).build()).build());
+          DeleteObjectsRequest.builder()
+              .bucket(bucket)
+              .delete(Delete.builder().objects(identifiers).build()).build());
 
       if (response.hasErrors()) {
         String errMessage = "Failed to remove objects from object store.";
