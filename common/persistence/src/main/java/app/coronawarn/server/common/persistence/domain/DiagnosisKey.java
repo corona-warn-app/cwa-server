@@ -32,6 +32,7 @@ import java.util.Set;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
+import javax.persistence.NamedNativeQuery;
 import javax.persistence.Table;
 import javax.validation.ConstraintViolation;
 import javax.validation.Validation;
@@ -44,6 +45,12 @@ import org.hibernate.validator.constraints.Range;
  */
 @Entity
 @Table(name = "diagnosis_key")
+@NamedNativeQuery(
+    name = "DiagnosisKey.saveAllDoNothingOnConflict",
+    query = "INSERT INTO diagnosis_key"
+        + " (key_data, rolling_start_interval_number, rolling_period, submission_timestamp, transmission_risk_level)"
+        + " VALUES (?, ?, ?, ?, ?) ON CONFLICT DO NOTHING;",
+    resultClass = DiagnosisKey.class)
 public class DiagnosisKey {
 
   /**

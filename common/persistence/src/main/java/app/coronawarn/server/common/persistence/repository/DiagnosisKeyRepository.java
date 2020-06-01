@@ -21,12 +21,12 @@
 package app.coronawarn.server.common.persistence.repository;
 
 import app.coronawarn.server.common.persistence.domain.DiagnosisKey;
+import java.util.List;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface DiagnosisKeyRepository extends JpaRepository<DiagnosisKey, Long>,
-    CustomDiagnosisKeyRepository<DiagnosisKey> {
+public interface DiagnosisKeyRepository extends JpaRepository<DiagnosisKey, Long> {
 
   /**
    * Deletes all entries that have a submission timestamp lesser or equal to the specified one.
@@ -34,4 +34,12 @@ public interface DiagnosisKeyRepository extends JpaRepository<DiagnosisKey, Long
    * @param submissionTimestamp the submission timestamp up to which entries will be deleted.
    */
   void deleteBySubmissionTimestampIsLessThanEqual(long submissionTimestamp);
+
+  /**
+   * TODO.
+   *
+   * @param diagnosisKeys TODO
+   * @return
+   */
+  List<DiagnosisKey> saveAllDoNothingOnConflict(Iterable<DiagnosisKey> diagnosisKeys);
 }
