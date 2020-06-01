@@ -29,9 +29,8 @@ import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.Objects;
 import java.util.Set;
+import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.validation.ConstraintViolation;
@@ -57,10 +56,8 @@ public class DiagnosisKey {
   private static final Validator VALIDATOR = Validation.buildDefaultValidatorFactory().getValidator();
 
   @Id
-  @GeneratedValue(strategy = GenerationType.IDENTITY)
-  private Long id;
-
   @Size(min = 16, max = 16, message = "Key data must be a byte array of length 16.")
+  @Column(unique = true)
   private byte[] keyData;
 
   @ValidRollingStartIntervalNumber
@@ -98,10 +95,6 @@ public class DiagnosisKey {
    */
   public static Builder builder() {
     return new DiagnosisKeyBuilder();
-  }
-
-  public Long getId() {
-    return id;
   }
 
   /**
@@ -189,14 +182,13 @@ public class DiagnosisKey {
         && rollingPeriod == that.rollingPeriod
         && transmissionRiskLevel == that.transmissionRiskLevel
         && submissionTimestamp == that.submissionTimestamp
-        && Objects.equals(id, that.id)
         && Arrays.equals(keyData, that.keyData);
   }
 
   @Override
   public int hashCode() {
     int result = Objects
-        .hash(id, rollingStartIntervalNumber, rollingPeriod, transmissionRiskLevel, submissionTimestamp);
+        .hash(rollingStartIntervalNumber, rollingPeriod, transmissionRiskLevel, submissionTimestamp);
     result = 31 * result + Arrays.hashCode(keyData);
     return result;
   }
