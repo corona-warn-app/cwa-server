@@ -14,5 +14,5 @@ message ApplicationConfiguration {
 
   app.coronawarn.server.common.protocols.internal.RiskScoreParameters exposureConfig = 3;
 
-  app.coronawarn.server.common.protocols.internal.ApplicationVersionConfig appVersion = 5;
+  app.coronawarn.server.common.protocols.internal.ApplicationVersionConfiguration appVersion = 5;
 }

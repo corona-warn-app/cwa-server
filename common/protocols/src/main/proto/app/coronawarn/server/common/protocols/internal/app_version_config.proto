@@ -1,20 +1,20 @@
-syntax = "proto3";
+syntax = "proto2";
 package app.coronawarn.server.common.protocols.internal;
 option java_package = "app.coronawarn.server.common.protocols.internal";
 option java_multiple_files = true;
 
-message ApplicationVersionConfig {
-  ApplicationVersionInfo ios = 1;
-  ApplicationVersionInfo android = 2;
+message ApplicationVersionConfiguration {
+  required ApplicationVersionInfo ios = 1;
+  required ApplicationVersionInfo android = 2;
 }
 
 message ApplicationVersionInfo {
-  SemanticVersion latest = 1;
-  SemanticVersion min = 2;
+  required SemanticVersion latest = 1;
+  required SemanticVersion min = 2;
 }
 
 message SemanticVersion {
-  uint32 major = 1;
-  uint32 minor = 2;
-  uint32 patch = 3;
+  required uint32 major = 1;
+  required uint32 minor = 2;
+  required uint32 patch = 3;
 }
