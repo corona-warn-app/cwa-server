@@ -58,9 +58,11 @@ spring:
   flyway:
     enabled: true
     locations: classpath:db/migration/postgres
+    password: ${POSTGRESQL_PASSWORD_FLYWAY:postgres}
+    user: ${POSTGRESQL_USER_FLYWAY:postgres}
 
   datasource:
     driver-class-name: org.postgresql.Driver
     url: jdbc:postgresql://${POSTGRESQL_SERVICE_HOST:localhost}:${POSTGRESQL_SERVICE_PORT:5432}/${POSTGRESQL_DATABASE:cwa}
-    username: ${POSTGRESQL_USER:postgres}
-    password: ${POSTGRESQL_PASSWORD:postgres}
+    username: ${POSTGRESQL_USER_DISTRIBUTION:postgres}
+    password: ${POSTGRESQL_PASSWORD_DISTRIBUTION:postgres}
