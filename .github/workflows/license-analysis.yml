@@ -1,0 +1,19 @@
+name: "CI"
+
+on:
+  pull_request:
+    branches:
+    - master
+
+jobs:
+  fileheader:
+    runs-on: ubuntu-latest
+    name: 'license file header'
+    steps:
+    - uses: actions/checkout@v2
+    - name: Java Setup
+      uses: actions/setup-java@v1
+      with:
+        java-version: 11
+    - name: Verify License File Headers
+      run: mvn --batch-mode clean license:check-file-header -Dlicense.failOnMissingHeader=true -Dlicense.failOnNotUptodateHeader=true
