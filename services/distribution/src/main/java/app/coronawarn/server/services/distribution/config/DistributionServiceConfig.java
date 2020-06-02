@@ -31,6 +31,8 @@ public class DistributionServiceConfig {
   private Paths paths;
   private TestData testData;
   private Integer retentionDays;
+  private Integer expiryPolicyMinutes;
+  private Integer shiftingPolicyThreshold;
   private String outputFileName;
   private Boolean includeIncompleteDays;
   private Boolean includeIncompleteHours;
@@ -61,6 +63,22 @@ public class DistributionServiceConfig {
 
   public void setRetentionDays(Integer retentionDays) {
     this.retentionDays = retentionDays;
+  }
+
+  public Integer getExpiryPolicyMinutes() {
+    return expiryPolicyMinutes;
+  }
+
+  public void setExpiryPolicyMinutes(Integer expiryPolicyMinutes) {
+    this.expiryPolicyMinutes = expiryPolicyMinutes;
+  }
+
+  public Integer getShiftingPolicyThreshold() {
+    return shiftingPolicyThreshold;
+  }
+
+  public void setShiftingPolicyThreshold(Integer shiftingPolicyThreshold) {
+    this.shiftingPolicyThreshold = shiftingPolicyThreshold;
   }
 
   public String getOutputFileName() {

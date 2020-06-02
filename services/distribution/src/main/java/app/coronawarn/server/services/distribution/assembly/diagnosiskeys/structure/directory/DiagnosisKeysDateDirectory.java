@@ -22,6 +22,7 @@ package app.coronawarn.server.services.distribution.assembly.diagnosiskeys.struc
 
 import app.coronawarn.server.common.persistence.domain.DiagnosisKey;
 import app.coronawarn.server.services.distribution.assembly.component.CryptoProvider;
+import app.coronawarn.server.services.distribution.assembly.diagnosiskeys.DiagnosisKeyBundler;
 import app.coronawarn.server.services.distribution.assembly.diagnosiskeys.structure.directory.decorator.HourIndexingDecorator;
 import app.coronawarn.server.services.distribution.assembly.diagnosiskeys.util.DateTime;
 import app.coronawarn.server.services.distribution.assembly.structure.WritableOnDisk;
@@ -31,13 +32,12 @@ import app.coronawarn.server.services.distribution.assembly.structure.util.Immut
 import app.coronawarn.server.services.distribution.config.DistributionServiceConfig;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
-import java.util.Collection;
 
 public class DiagnosisKeysDateDirectory extends IndexDirectoryOnDisk<LocalDate> {
 
   private static final DateTimeFormatter ISO8601 = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 
-  private final Collection<DiagnosisKey> diagnosisKeys;
+  private final DiagnosisKeyBundler diagnosisKeyBundler;
   private final CryptoProvider cryptoProvider;
   private final DistributionServiceConfig distributionServiceConfig;
 
@@ -45,14 +45,15 @@ public class DiagnosisKeysDateDirectory extends IndexDirectoryOnDisk<LocalDate> 
    * Constructs a {@link DiagnosisKeysDateDirectory} instance associated with the specified {@link DiagnosisKey}
    * collection. Payload signing is be performed according to the specified {@link CryptoProvider}.
    *
-   * @param diagnosisKeys  The diagnosis keys processed in the contained directories.
+   * @param diagnosisKeyBundler A {@link DiagnosisKeyBundler} containing the {@link DiagnosisKey DiagnosisKeys}.
    * @param cryptoProvider The {@link CryptoProvider} used for payload signing.
    */
-  public DiagnosisKeysDateDirectory(Collection<DiagnosisKey> diagnosisKeys,
+  public DiagnosisKeysDateDirectory(DiagnosisKeyBundler diagnosisKeyBundler,
       CryptoProvider cryptoProvider, DistributionServiceConfig distributionServiceConfig) {
-    super(distributionServiceConfig.getApi().getDatePath(), __ -> DateTime.getDates(diagnosisKeys), ISO8601::format);
+    super(distributionServiceConfig.getApi().getDatePath(),
+        __ -> DateTime.getDates(diagnosisKeyBundler.getAllDiagnosisKeys()), ISO8601::format);
     this.cryptoProvider = cryptoProvider;
-    this.diagnosisKeys = diagnosisKeys;
+    this.diagnosisKeyBundler = diagnosisKeyBundler;
     this.distributionServiceConfig = distributionServiceConfig;
   }
 
@@ -60,7 +61,7 @@ public class DiagnosisKeysDateDirectory extends IndexDirectoryOnDisk<LocalDate> 
   public void prepare(ImmutableStack<Object> indices) {
     this.addWritableToAll(__ -> {
       DiagnosisKeysHourDirectory hourDirectory =
-          new DiagnosisKeysHourDirectory(diagnosisKeys, cryptoProvider, distributionServiceConfig);
+          new DiagnosisKeysHourDirectory(diagnosisKeyBundler, cryptoProvider, distributionServiceConfig);
       return decorateHourDirectory(hourDirectory);
     });
     super.prepare(indices);
