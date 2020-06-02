@@ -101,7 +101,6 @@ class DiagnosisKeysDirectoryTest {
     String s = File.separator;
     Set<String> expectedFiles = Set.of(
         join(s, "diagnosis-keys", "country", "index"),
-        join(s, "diagnosis-keys", "country", "DE", "index"),
         join(s, "diagnosis-keys", "country", "DE", "date", "index")
     );
 
@@ -123,7 +122,6 @@ class DiagnosisKeysDirectoryTest {
     String s = File.separator;
     Set<String> expectedFiles = Set.of(
         join(s, "diagnosis-keys", "country", "index"),
-        join(s, "diagnosis-keys", "country", "DE", "index"),
         join(s, "diagnosis-keys", "country", "DE", "date", "index"),
         join(s, "diagnosis-keys", "country", "DE", "date", "1970-01-01", "index"),
         join(s, "diagnosis-keys", "country", "DE", "date", "1970-01-01", "hour", "index"),
