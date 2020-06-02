@@ -18,31 +18,49 @@
  * ---license-end
  */
 
-package app.coronawarn.server.services.distribution.assembly.appconfig.validation;
+package app.coronawarn.server.services.submission.verification;
 
 import java.util.Objects;
+import java.util.UUID;
 
 /**
- * Represents a minimum risk level error, in case the value is out of bounds.
+ * A representation of a tan.
  */
-public class MinimumRiskLevelValidationError implements ValidationError {
+class Tan {
+  private final UUID tan;
 
-  private int riskLevelProvided;
-
-  public MinimumRiskLevelValidationError(int riskLevelProvided) {
-    this.riskLevelProvided = riskLevelProvided;
+  private Tan(UUID tan) {
+    this.tan = tan;
   }
 
-  public int getRiskLevelProvided() {
-    return riskLevelProvided;
+  /**
+   * Creates a new {@link #Tan} instance for the given tan string.
+   *
+   * @param tanString A valid UUID string representation.
+   * @return The Tan instance
+   * @throws IllegalArgumentException when the given tan string is not a valid UUID.
+   */
+  public static Tan of(String tanString) {
+    UUID tan = UUID.fromString(tanString.trim());
+    return new Tan(tan);
   }
 
+  /**
+   * Returns the tan entity as UUID.
+   * @return the tan.
+   */
+  public UUID getTan() {
+    return tan;
+  }
+
+  /**
+   * Returns the TAN in it's string representation.
+   *
+   * @return the tan UUID as a string.
+   */
   @Override
   public String toString() {
-    return "MinimumRiskLevelValidationError{"
-        + "riskLevelProvided="
-        + riskLevelProvided
-        + '}';
+    return tan.toString();
   }
 
   @Override
@@ -53,12 +71,12 @@ public class MinimumRiskLevelValidationError implements ValidationError {
     if (o == null || getClass() != o.getClass()) {
       return false;
     }
-    MinimumRiskLevelValidationError that = (MinimumRiskLevelValidationError) o;
-    return getRiskLevelProvided() == that.getRiskLevelProvided();
+    Tan tan1 = (Tan) o;
+    return tan.equals(tan1.tan);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(getRiskLevelProvided());
+    return Objects.hash(tan);
   }
 }

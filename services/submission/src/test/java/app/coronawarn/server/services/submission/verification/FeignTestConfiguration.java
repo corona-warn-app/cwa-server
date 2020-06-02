@@ -18,25 +18,18 @@
  * ---license-end
  */
 
-package app.coronawarn.server.services.distribution.assembly.structure.directory;
+package app.coronawarn.server.services.submission.verification;
 
-import app.coronawarn.server.services.distribution.assembly.structure.Writable;
-import java.util.Set;
+import org.springframework.boot.autoconfigure.http.HttpMessageConverters;
+import org.springframework.boot.test.context.TestConfiguration;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Profile;
 
-/**
- * A {@link Writable} that can contains other {@link Writable Writables}.
- *
- * @param <W> The specific type of {@link Writable} that this {@link Directory} can be a child of.
- */
-public interface Directory<W extends Writable<W>> extends Writable<W> {
-
-  /**
-   * Adds a {@link Writable} to this {@link Directory}.
-   */
-  void addWritable(Writable<W> writable);
-
-  /**
-   * Returns all {@link Writable writables} contained in this {@link Directory}.
-   */
-  Set<Writable<W>> getWritables();
+@TestConfiguration
+@Profile("feign")
+public class FeignTestConfiguration {
+  @Bean
+  public HttpMessageConverters httpMessageConverters() {
+    return new HttpMessageConverters();
+  }
 }
