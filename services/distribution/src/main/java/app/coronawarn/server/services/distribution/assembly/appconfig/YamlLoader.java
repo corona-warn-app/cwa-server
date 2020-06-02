@@ -50,8 +50,8 @@ public class YamlLoader {
     // no setters for generated message classes available
     yaml.setBeanAccess(BeanAccess.FIELD);
 
-    Resource riskScoreParametersResource = new ClassPathResource(path);
-    try (InputStream inputStream = riskScoreParametersResource.getInputStream()) {
+    Resource configurationResource = new ClassPathResource(path);
+    try (InputStream inputStream = configurationResource.getInputStream()) {
       T loaded = yaml.loadAs(inputStream, builderType);
       if (loaded == null) {
         throw new UnableToLoadFileException(path);
