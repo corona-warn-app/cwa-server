@@ -22,6 +22,7 @@ package app.coronawarn.server.services.distribution.assembly.diagnosiskeys.struc
 
 import app.coronawarn.server.common.persistence.domain.DiagnosisKey;
 import app.coronawarn.server.services.distribution.assembly.component.CryptoProvider;
+import app.coronawarn.server.services.distribution.assembly.diagnosiskeys.DiagnosisKeyBundler;
 import app.coronawarn.server.services.distribution.assembly.diagnosiskeys.structure.directory.decorator.DateAggregatingDecorator;
 import app.coronawarn.server.services.distribution.assembly.diagnosiskeys.structure.directory.decorator.DateIndexingDecorator;
 import app.coronawarn.server.services.distribution.assembly.structure.WritableOnDisk;
@@ -30,12 +31,11 @@ import app.coronawarn.server.services.distribution.assembly.structure.directory.
 import app.coronawarn.server.services.distribution.assembly.structure.util.ImmutableStack;
 import app.coronawarn.server.services.distribution.config.DistributionServiceConfig;
 import java.time.LocalDate;
-import java.util.Collection;
 import java.util.Set;
 
 public class DiagnosisKeysCountryDirectory extends IndexDirectoryOnDisk<String> {
 
-  private final Collection<DiagnosisKey> diagnosisKeys;
+  private final DiagnosisKeyBundler diagnosisKeyBundler;
   private final CryptoProvider cryptoProvider;
   private final DistributionServiceConfig distributionServiceConfig;
 
@@ -43,14 +43,14 @@ public class DiagnosisKeysCountryDirectory extends IndexDirectoryOnDisk<String> 
    * Constructs a {@link DiagnosisKeysCountryDirectory} instance that represents the {@code .../country/:country/...}
    * portion of the diagnosis key directory structure.
    *
-   * @param diagnosisKeys  The diagnosis keys processed in the contained sub directories.
-   * @param cryptoProvider The {@link CryptoProvider} used for payload signing.
+   * @param diagnosisKeyBundler A {@link DiagnosisKeyBundler} containing the {@link DiagnosisKey DiagnosisKeys}.
+   * @param cryptoProvider      The {@link CryptoProvider} used for payload signing.
    */
-  public DiagnosisKeysCountryDirectory(Collection<DiagnosisKey> diagnosisKeys,
+  public DiagnosisKeysCountryDirectory(DiagnosisKeyBundler diagnosisKeyBundler,
       CryptoProvider cryptoProvider, DistributionServiceConfig distributionServiceConfig) {
     super(distributionServiceConfig.getApi().getCountryPath(), __ ->
         Set.of(distributionServiceConfig.getApi().getCountryGermany()), Object::toString);
-    this.diagnosisKeys = diagnosisKeys;
+    this.diagnosisKeyBundler = diagnosisKeyBundler;
     this.cryptoProvider = cryptoProvider;
     this.distributionServiceConfig = distributionServiceConfig;
   }
@@ -58,7 +58,7 @@ public class DiagnosisKeysCountryDirectory extends IndexDirectoryOnDisk<String> 
   @Override
   public void prepare(ImmutableStack<Object> indices) {
     this.addWritableToAll(__ -> {
-      DiagnosisKeysDateDirectory dateDirectory = new DiagnosisKeysDateDirectory(diagnosisKeys, cryptoProvider,
+      DiagnosisKeysDateDirectory dateDirectory = new DiagnosisKeysDateDirectory(diagnosisKeyBundler, cryptoProvider,
           distributionServiceConfig);
       return decorateDateDirectory(dateDirectory);
     });
