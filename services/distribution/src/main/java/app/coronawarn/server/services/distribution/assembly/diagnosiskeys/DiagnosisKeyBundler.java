@@ -22,7 +22,9 @@ import java.util.stream.Stream;
  */
 public class DiagnosisKeyBundler {
 
-  private final DistributionServiceConfig distributionServiceConfig;
+  private final int minNumberOfKeysPerBundle;
+  private final boolean keyExpirationPolicyIsActive;
+  private final long expiryPolicyMinutes;
 
   // A map containing diagnosis keys, grouped by the LocalDateTime on which they may be distributed
   private final Map<LocalDateTime, List<DiagnosisKey>> distributableDiagnosisKeys;
@@ -34,13 +36,15 @@ public class DiagnosisKeyBundler {
    */
   public DiagnosisKeyBundler(Collection<DiagnosisKey> diagnosisKeys,
       DistributionServiceConfig distributionServiceConfig) {
-    this.distributionServiceConfig = distributionServiceConfig;
     this.distributableDiagnosisKeys = createDiagnosisKeyDistributionMap(diagnosisKeys);
+    this.minNumberOfKeysPerBundle = distributionServiceConfig.getShiftingPolicyThreshold();
+    this.keyExpirationPolicyIsActive = Boolean.TRUE.equals(distributionServiceConfig.getExpiryPolicyEnabled());
+    this.expiryPolicyMinutes = distributionServiceConfig.getExpiryPolicyMinutes();
   }
 
   private Map<LocalDateTime, List<DiagnosisKey>> createDiagnosisKeyDistributionMap(
       Collection<DiagnosisKey> diagnosisKeys) {
-    if (Boolean.TRUE.equals(distributionServiceConfig.getExpiryPolicyEnabled())) {
+    if (keyExpirationPolicyIsActive) {
       return diagnosisKeys.stream().collect(groupingBy(this::getDistributionDateTime));
     } else {
       return diagnosisKeys.stream().collect(groupingBy(this::getSubmissionDateTime));
@@ -60,15 +64,11 @@ public class DiagnosisKeyBundler {
    * Returns all diagnosis keys that should be distributed in a specific hour.
    */
   public List<DiagnosisKey> getDiagnosisKeysDistributableAt(LocalDateTime hour) {
-    if (Boolean.TRUE.equals(distributionServiceConfig.getShiftingPolicyEnabled())) {
-      List<DiagnosisKey> keysSinceLastDistribution = getKeysSinceLastDistribution(hour);
-      if (keysSinceLastDistribution.size() >= distributionServiceConfig.getShiftingPolicyThreshold()) {
-        return keysSinceLastDistribution;
-      } else {
-        return List.of();
-      }
+    List<DiagnosisKey> keysSinceLastDistribution = getKeysSinceLastDistribution(hour);
+    if (keysSinceLastDistribution.size() >= minNumberOfKeysPerBundle) {
+      return keysSinceLastDistribution;
     } else {
-      return getDiagnosisKeysForHour(hour);
+      return List.of();
     }
   }
 
@@ -78,19 +78,16 @@ public class DiagnosisKeyBundler {
    */
   private List<DiagnosisKey> getKeysSinceLastDistribution(LocalDateTime hour) {
     Optional<LocalDateTime> earliestDistributableTimestamp = getEarliestDistributableTimestamp();
-    if (earliestDistributableTimestamp.isEmpty()) {
-      return List.of();
-    }
-    if (hour.isBefore(earliestDistributableTimestamp.get())) {
+    if (earliestDistributableTimestamp.isEmpty() || hour.isBefore(earliestDistributableTimestamp.get())) {
       return List.of();
     }
     List<DiagnosisKey> distributableInCurrentHour = getDiagnosisKeysForHour(hour);
-    if (distributableInCurrentHour.size() >= distributionServiceConfig.getShiftingPolicyThreshold()) {
+    if (distributableInCurrentHour.size() >= minNumberOfKeysPerBundle) {
       return distributableInCurrentHour;
     }
     LocalDateTime previousHour = hour.minusHours(1);
     Collection<DiagnosisKey> distributableInPreviousHour = getDiagnosisKeysDistributableAt(previousHour);
-    if (distributableInPreviousHour.size() >= distributionServiceConfig.getShiftingPolicyThreshold()) {
+    if (distributableInPreviousHour.size() >= minNumberOfKeysPerBundle) {
       // Last hour was distributed, so we can not combine the current hour with the last hour
       return distributableInCurrentHour;
     } else {
@@ -129,7 +126,6 @@ public class DiagnosisKeyBundler {
   private LocalDateTime getDistributionDateTime(DiagnosisKey diagnosisKey) {
     LocalDateTime submissionDateTime = getSubmissionDateTime(diagnosisKey);
     LocalDateTime expiryDateTime = getExpiryDateTime(diagnosisKey);
-    long expiryPolicyMinutes = distributionServiceConfig.getExpiryPolicyMinutes();
     long minutesBetweenExpiryAndSubmission = Duration.between(expiryDateTime, submissionDateTime).toMinutes();
     if (minutesBetweenExpiryAndSubmission <= expiryPolicyMinutes) {
       // truncatedTo floors the value, so we need to add an hour to the DISTRIBUTION_PADDING to compensate that.
