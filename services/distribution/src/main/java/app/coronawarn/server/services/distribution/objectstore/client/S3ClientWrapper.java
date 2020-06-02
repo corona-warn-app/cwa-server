@@ -49,7 +49,7 @@ public class S3ClientWrapper implements ObjectStoreClient {
 
   private final S3Client s3Client;
 
-  private final int maxRetries = 3;
+  private static final int maxRetries = 3;
 
   public S3ClientWrapper(S3Client s3Client) {
     this.s3Client = s3Client;
@@ -82,7 +82,7 @@ public class S3ClientWrapper implements ObjectStoreClient {
         if (currentTry >= maxRetries) {
           throw new ObjectStoreOperationFailedException("Failed to upload object to object store", e);
         }
-        logger.debug("Failed to upload object to object store. Attempt " + currentTry + " of " + maxRetries);
+        logger.debug("Failed to upload object to object store. Attempt {} of {}", currentTry, maxRetries);
       }
     }
   }
@@ -109,7 +109,7 @@ public class S3ClientWrapper implements ObjectStoreClient {
         if (currentTry >= maxRetries) {
           throw new ObjectStoreOperationFailedException("Failed to upload object to object store", e);
         }
-        logger.debug("Failed to upload object to object store. Attempt " + currentTry + " of " + maxRetries);
+        logger.debug("Failed to upload object to object store. Attempt {} of {}", currentTry, maxRetries);
       }
     }
   }
@@ -139,7 +139,7 @@ public class S3ClientWrapper implements ObjectStoreClient {
             logger.error("{} {}", errMessage, response.errors());
             throw new ObjectStoreOperationFailedException(errMessage);
           }
-          logger.debug("Failed to remove objects from object store. Attempt " + currentTry + " of " + maxRetries);
+          logger.debug("Failed to remove objects from object store. Attempt {} of {}", currentTry, maxRetries);
         } else {
           break;
         }
@@ -147,7 +147,7 @@ public class S3ClientWrapper implements ObjectStoreClient {
         if (currentTry >= maxRetries) {
           throw new ObjectStoreOperationFailedException("Failed to remove objects from object store.", e);
         }
-        logger.debug("Failed to remove objects from object store. Attempt " + currentTry + " of " + maxRetries);
+        logger.debug("Failed to remove objects from object store. Attempt {} of {}", currentTry, maxRetries);
       }
     }
   }
