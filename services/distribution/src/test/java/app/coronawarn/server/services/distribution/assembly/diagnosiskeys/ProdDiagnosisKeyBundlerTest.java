@@ -45,40 +45,40 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration(classes = {DistributionServiceConfig.class},
     initializers = ConfigFileApplicationContextInitializer.class)
-class DiagnosisKeyBundlerTest {
+class ProdDiagnosisKeyBundlerTest {
 
   @Autowired
   DistributionServiceConfig distributionServiceConfig;
 
   @Test
   void testEmptyListWhenNoDiagnosisKeys() {
-    DiagnosisKeyBundler bundler = new DiagnosisKeyBundler(List.of(), distributionServiceConfig);
+    ProdDiagnosisKeyBundler bundler = new ProdDiagnosisKeyBundler(List.of(), distributionServiceConfig);
     assertThat(bundler.getDiagnosisKeysDistributableAt(LocalDateTime.of(1970, 1, 1, 0, 0, 0))).hasSize(0);
   }
 
   @Test
   void testEmptyListWhenGettingDistributableKeysBeforeEarliestDiagnosisKey() {
     List<DiagnosisKey> diagnosisKeys = buildDiagnosisKeys(6, 50L, 5);
-    DiagnosisKeyBundler bundler = new DiagnosisKeyBundler(diagnosisKeys, distributionServiceConfig);
+    ProdDiagnosisKeyBundler bundler = new ProdDiagnosisKeyBundler(diagnosisKeys, distributionServiceConfig);
     assertThat(bundler.getDiagnosisKeysDistributableAt(LocalDateTime.of(1970, 1, 1, 0, 0, 0))).hasSize(0);
   }
 
   @Nested
   @DisplayName("Expiry policy")
-  class DiagnosisKeyBundlerExpiryPolicyTest {
+  class ProdDiagnosisKeyBundlerExpiryPolicyTest {
 
     @ParameterizedTest
     @ValueSource(longs = {0L, 24L, 24L + 2L})
     void testLastPeriodOfHourAndSubmissionLessThanDistributionDateTime(long submissionTimestamp) {
       List<DiagnosisKey> diagnosisKeys = buildDiagnosisKeys(5, submissionTimestamp, 10);
-      DiagnosisKeyBundler bundler = new DiagnosisKeyBundler(diagnosisKeys, distributionServiceConfig);
+      ProdDiagnosisKeyBundler bundler = new ProdDiagnosisKeyBundler(diagnosisKeys, distributionServiceConfig);
       assertThat(bundler.getDiagnosisKeysDistributableAt(LocalDateTime.of(1970, 1, 2, 3, 0, 0))).hasSize(10);
     }
 
     @Test
     void testLastPeriodOfHourAndSubmissionEqualsDistributionDateTime() {
       List<DiagnosisKey> diagnosisKeys = buildDiagnosisKeys(5, 24L + 3L, 10);
-      DiagnosisKeyBundler bundler = new DiagnosisKeyBundler(diagnosisKeys, distributionServiceConfig);
+      ProdDiagnosisKeyBundler bundler = new ProdDiagnosisKeyBundler(diagnosisKeys, distributionServiceConfig);
       assertThat(bundler.getDiagnosisKeysDistributableAt(LocalDateTime.of(1970, 1, 2, 3, 0, 0))).hasSize(10);
     }
 
@@ -86,40 +86,40 @@ class DiagnosisKeyBundlerTest {
     @ValueSource(longs = {0L, 24L, 24L + 2L, 24L + 3L})
     void testFirstPeriodOfHourAndSubmissionLessThanDistributionDateTime(long submissionTimestamp) {
       List<DiagnosisKey> diagnosisKeys = buildDiagnosisKeys(6, submissionTimestamp, 10);
-      DiagnosisKeyBundler bundler = new DiagnosisKeyBundler(diagnosisKeys, distributionServiceConfig);
+      ProdDiagnosisKeyBundler bundler = new ProdDiagnosisKeyBundler(diagnosisKeys, distributionServiceConfig);
       assertThat(bundler.getDiagnosisKeysDistributableAt(LocalDateTime.of(1970, 1, 2, 4, 0, 0))).hasSize(10);
     }
 
     @Test
     void testFirstPeriodOfHourAndSubmissionEqualsDistributionDateTime() {
       List<DiagnosisKey> diagnosisKeys = buildDiagnosisKeys(6, 24L + 4L, 10);
-      DiagnosisKeyBundler bundler = new DiagnosisKeyBundler(diagnosisKeys, distributionServiceConfig);
+      ProdDiagnosisKeyBundler bundler = new ProdDiagnosisKeyBundler(diagnosisKeys, distributionServiceConfig);
       assertThat(bundler.getDiagnosisKeysDistributableAt(LocalDateTime.of(1970, 1, 2, 4, 0, 0))).hasSize(10);
     }
 
     @Test
     void testLastPeriodOfHourAndSubmissionGreaterDistributionDateTime() {
       List<DiagnosisKey> diagnosisKeys = buildDiagnosisKeys(5, 24L + 4L, 10);
-      DiagnosisKeyBundler bundler = new DiagnosisKeyBundler(diagnosisKeys, distributionServiceConfig);
+      ProdDiagnosisKeyBundler bundler = new ProdDiagnosisKeyBundler(diagnosisKeys, distributionServiceConfig);
       assertThat(bundler.getDiagnosisKeysDistributableAt(LocalDateTime.of(1970, 1, 2, 4, 0, 0))).hasSize(10);
     }
   }
 
   @Nested
   @DisplayName("Shifting policy")
-  class DiagnosisKeyBundlerShiftingPolicyTest {
+  class ProdDiagnosisKeyBundlerShiftingPolicyTest {
 
     @Test
     void testDoesNotShiftIfPackageSizeGreaterThanThreshold() {
       List<DiagnosisKey> diagnosisKeys = buildDiagnosisKeys(6, 50L, 6);
-      DiagnosisKeyBundler bundler = new DiagnosisKeyBundler(diagnosisKeys, distributionServiceConfig);
+      ProdDiagnosisKeyBundler bundler = new ProdDiagnosisKeyBundler(diagnosisKeys, distributionServiceConfig);
       assertThat(bundler.getDiagnosisKeysDistributableAt(LocalDateTime.of(1970, 1, 3, 2, 0, 0))).hasSize(6);
     }
 
     @Test
     void testDoesNotShiftIfPackageSizeEqualsThreshold() {
       List<DiagnosisKey> diagnosisKeys = buildDiagnosisKeys(6, 50L, 5);
-      DiagnosisKeyBundler bundler = new DiagnosisKeyBundler(diagnosisKeys, distributionServiceConfig);
+      ProdDiagnosisKeyBundler bundler = new ProdDiagnosisKeyBundler(diagnosisKeys, distributionServiceConfig);
       assertThat(bundler.getDiagnosisKeysDistributableAt(LocalDateTime.of(1970, 1, 3, 2, 0, 0))).hasSize(5);
     }
 
@@ -128,7 +128,7 @@ class DiagnosisKeyBundlerTest {
       List<DiagnosisKey> diagnosisKeys = Stream
           .concat(buildDiagnosisKeys(6, 50L, 4).stream(), buildDiagnosisKeys(6, 51L, 1).stream())
           .collect(Collectors.toList());
-      DiagnosisKeyBundler bundler = new DiagnosisKeyBundler(diagnosisKeys, distributionServiceConfig);
+      ProdDiagnosisKeyBundler bundler = new ProdDiagnosisKeyBundler(diagnosisKeys, distributionServiceConfig);
       assertThat(bundler.getDiagnosisKeysDistributableAt(LocalDateTime.of(1970, 1, 3, 2, 0, 0))).hasSize(0);
       assertThat(bundler.getDiagnosisKeysDistributableAt(LocalDateTime.of(1970, 1, 3, 3, 0, 0))).hasSize(5);
     }
@@ -139,7 +139,7 @@ class DiagnosisKeyBundlerTest {
           .of(buildDiagnosisKeys(6, 50L, 5), buildDiagnosisKeys(6, 51L, 2), buildDiagnosisKeys(6, 52L, 4))
           .flatMap(List::stream)
           .collect(Collectors.toList());
-      DiagnosisKeyBundler bundler = new DiagnosisKeyBundler(diagnosisKeys, distributionServiceConfig);
+      ProdDiagnosisKeyBundler bundler = new ProdDiagnosisKeyBundler(diagnosisKeys, distributionServiceConfig);
       assertThat(bundler.getDiagnosisKeysDistributableAt(LocalDateTime.of(1970, 1, 3, 2, 0, 0))).hasSize(5);
       assertThat(bundler.getDiagnosisKeysDistributableAt(LocalDateTime.of(1970, 1, 3, 3, 0, 0))).hasSize(0);
       assertThat(bundler.getDiagnosisKeysDistributableAt(LocalDateTime.of(1970, 1, 3, 4, 0, 0))).hasSize(6);
@@ -151,7 +151,7 @@ class DiagnosisKeyBundlerTest {
       List<DiagnosisKey> diagnosisKeys = Stream
           .concat(buildDiagnosisKeys(6, 50L, 1).stream(), buildDiagnosisKeys(6, 51L, 5).stream())
           .collect(Collectors.toList());
-      DiagnosisKeyBundler bundler = new DiagnosisKeyBundler(diagnosisKeys, distributionServiceConfig);
+      ProdDiagnosisKeyBundler bundler = new ProdDiagnosisKeyBundler(diagnosisKeys, distributionServiceConfig);
       assertThat(bundler.getDiagnosisKeysDistributableAt(LocalDateTime.of(1970, 1, 3, 2, 0, 0))).hasSize(0);
       assertThat(bundler.getDiagnosisKeysDistributableAt(LocalDateTime.of(1970, 1, 3, 3, 0, 0))).hasSize(5);
     }
@@ -164,7 +164,7 @@ class DiagnosisKeyBundlerTest {
               buildDiagnosisKeys(6, 56L, 1))
           .flatMap(List::stream)
           .collect(Collectors.toList());
-      DiagnosisKeyBundler bundler = new DiagnosisKeyBundler(diagnosisKeys, distributionServiceConfig);
+      ProdDiagnosisKeyBundler bundler = new ProdDiagnosisKeyBundler(diagnosisKeys, distributionServiceConfig);
       assertThat(bundler.getDiagnosisKeysDistributableAt(LocalDateTime.of(1970, 1, 3, 2, 0, 0))).hasSize(0);
       assertThat(bundler.getDiagnosisKeysDistributableAt(LocalDateTime.of(1970, 1, 3, 3, 0, 0))).hasSize(0);
       assertThat(bundler.getDiagnosisKeysDistributableAt(LocalDateTime.of(1970, 1, 3, 4, 0, 0))).hasSize(0);

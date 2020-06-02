@@ -26,7 +26,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import app.coronawarn.server.common.persistence.domain.DiagnosisKey;
 import app.coronawarn.server.services.distribution.assembly.component.CryptoProvider;
-import app.coronawarn.server.services.distribution.assembly.diagnosiskeys.DiagnosisKeyBundler;
+import app.coronawarn.server.services.distribution.assembly.diagnosiskeys.ProdDiagnosisKeyBundler;
 import app.coronawarn.server.services.distribution.assembly.structure.WritableOnDisk;
 import app.coronawarn.server.services.distribution.assembly.structure.directory.Directory;
 import app.coronawarn.server.services.distribution.assembly.structure.directory.DirectoryOnDisk;
@@ -93,7 +93,7 @@ class DiagnosisKeysDirectoryTest {
   void checkBuildsTheCorrectDirectoryStructureWhenNoKeys() {
     diagnosisKeys = new ArrayList<>();
     Directory<WritableOnDisk> directory = new DiagnosisKeysDirectory(
-        new DiagnosisKeyBundler(diagnosisKeys, distributionServiceConfig), cryptoProvider, distributionServiceConfig);
+        new ProdDiagnosisKeyBundler(diagnosisKeys, distributionServiceConfig), cryptoProvider, distributionServiceConfig);
     parentDirectory.addWritable(directory);
     directory.prepare(new ImmutableStack<>());
     directory.write();
@@ -113,7 +113,7 @@ class DiagnosisKeysDirectoryTest {
   @Test
   void checkBuildsTheCorrectDirectoryStructure() {
     Directory<WritableOnDisk> directory = new DiagnosisKeysDirectory(
-        new DiagnosisKeyBundler(diagnosisKeys, distributionServiceConfig), cryptoProvider, distributionServiceConfig);
+        new ProdDiagnosisKeyBundler(diagnosisKeys, distributionServiceConfig), cryptoProvider, distributionServiceConfig);
     parentDirectory.addWritable(directory);
     directory.prepare(new ImmutableStack<>());
     directory.write();

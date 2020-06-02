@@ -23,13 +23,17 @@ package app.coronawarn.server.services.distribution.assembly.component;
 import app.coronawarn.server.common.persistence.domain.DiagnosisKey;
 import app.coronawarn.server.common.persistence.service.DiagnosisKeyService;
 import app.coronawarn.server.services.distribution.assembly.diagnosiskeys.DiagnosisKeyBundler;
+import app.coronawarn.server.services.distribution.assembly.diagnosiskeys.ProdDiagnosisKeyBundler;
 import app.coronawarn.server.services.distribution.assembly.diagnosiskeys.structure.directory.DiagnosisKeysDirectory;
 import app.coronawarn.server.services.distribution.assembly.structure.WritableOnDisk;
 import app.coronawarn.server.services.distribution.assembly.structure.directory.Directory;
 import app.coronawarn.server.services.distribution.config.DistributionServiceConfig;
+import java.util.Arrays;
 import java.util.Collection;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
 
 /**
@@ -41,6 +45,8 @@ public class DiagnosisKeysStructureProvider {
   private static final Logger logger = LoggerFactory
       .getLogger(DiagnosisKeysStructureProvider.class);
 
+  @Autowired
+  private DiagnosisKeyBundler diagnosisKeyBundler;
   private final DiagnosisKeyService diagnosisKeyService;
   private final CryptoProvider cryptoProvider;
   private final DistributionServiceConfig distributionServiceConfig;
@@ -62,7 +68,10 @@ public class DiagnosisKeysStructureProvider {
   public Directory<WritableOnDisk> getDiagnosisKeys() {
     logger.debug("Querying diagnosis keys from the database...");
     Collection<DiagnosisKey> diagnosisKeys = diagnosisKeyService.getDiagnosisKeys();
-    DiagnosisKeyBundler diagnosisKeyBundler = new DiagnosisKeyBundler(diagnosisKeys, distributionServiceConfig);
+
+    // TODO Add if/else for "demo" profile
+    diagnosisKeyBundler.setDiagnosisKeys(diagnosisKeys);
+
     return new DiagnosisKeysDirectory(diagnosisKeyBundler, cryptoProvider, distributionServiceConfig);
   }
 }
