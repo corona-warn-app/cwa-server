@@ -9,6 +9,8 @@ services:
   distribution:
     output-file-name: index
     retention-days: 14
+    expiry-policy-minutes: 120
+    shifting-policy-threshold: 5
     include-incomplete-days: false
     include-incomplete-hours: false
     paths:
