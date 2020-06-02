@@ -150,7 +150,7 @@ class RiskScoreClassificationValidatorTest {
     ).map(Arguments::of);
   }
 
-  private static GeneralValidationError buildError(String parameter, Object value, ErrorType reason) {
+  public static GeneralValidationError buildError(String parameter, Object value, ErrorType reason) {
     return new GeneralValidationError(parameter, value, reason);
   }
 
