@@ -26,7 +26,7 @@ import static org.assertj.core.api.Assertions.catchThrowable;
 import app.coronawarn.server.common.protocols.internal.ApplicationVersionConfiguration;
 import org.junit.jupiter.api.Test;
 
-public class ApplicationVersionConfigurationProviderTest {
+class ApplicationVersionConfigurationProviderTest {
 
   @Test
   void okFile() throws UnableToLoadFileException {
