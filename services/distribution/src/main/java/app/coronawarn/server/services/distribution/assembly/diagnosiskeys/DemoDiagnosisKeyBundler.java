@@ -31,7 +31,7 @@ import org.springframework.context.annotation.Profile;
 
 /**
  * An instance of this class contains a collection of {@link DiagnosisKey DiagnosisKeys}, that will be distributed
- * without respecting expiry or shifting policies.
+ * in the same hour they have been submitted.
  */
 @Profile("demo")
 public class DemoDiagnosisKeyBundler extends DiagnosisKeyBundler {

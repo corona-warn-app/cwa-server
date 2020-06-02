@@ -38,8 +38,10 @@ import java.util.stream.Stream;
 import org.springframework.context.annotation.Profile;
 
 /**
- * An instance of this class contains a collection of {@link DiagnosisKey DiagnosisKeys}, that will be distributed
- * while respecting expiry and shifting policies.
+ * An instance of this class contains a collection of {@link DiagnosisKey DiagnosisKeys}, that will be distributed while
+ * respecting expiry policy (keys must be expired for a configurable amount of time before distribution) and shifting
+ * policy (there must be at least a configurable number of keys in a distribution). The policies are configurable
+ * through the properties {@code expiry-policy-minutes} and {@code shifting-policy-threshold}.
  */
 @Profile("!demo")
 public class ProdDiagnosisKeyBundler extends DiagnosisKeyBundler {
