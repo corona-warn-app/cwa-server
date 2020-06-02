@@ -7,8 +7,9 @@ import app.coronawarn.server.services.distribution.config.DistributionServiceCon
 import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.List;
-import java.util.Map;
+import org.springframework.context.annotation.Profile;
 
+@Profile("demo")
 public class DemoDiagnosisKeyBundler extends DiagnosisKeyBundler {
 
   public DemoDiagnosisKeyBundler(DistributionServiceConfig distributionServiceConfig) {
@@ -16,9 +17,9 @@ public class DemoDiagnosisKeyBundler extends DiagnosisKeyBundler {
   }
 
   @Override
-  protected Map<LocalDateTime, List<DiagnosisKey>> createDiagnosisKeyDistributionMap(
-      Collection<DiagnosisKey> diagnosisKeys) {
-    return diagnosisKeys.stream().collect(groupingBy(this::getSubmissionDateTime));
+  protected void createDiagnosisKeyDistributionMap(Collection<DiagnosisKey> diagnosisKeys) {
+    this.distributableDiagnosisKeys.clear();
+    this.distributableDiagnosisKeys.putAll(diagnosisKeys.stream().collect(groupingBy(this::getSubmissionDateTime)));
   }
 
   @Override

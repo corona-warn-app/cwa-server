@@ -20,7 +20,6 @@
 
 package app.coronawarn.server.services.distribution.assembly.diagnosiskeys;
 
-import static app.coronawarn.server.services.distribution.assembly.diagnosiskeys.util.DateTime.ONE_HOUR_INTERVAL_SECONDS;
 import static app.coronawarn.server.services.distribution.assembly.diagnosiskeys.util.DateTime.TEN_MINUTES_INTERVAL_SECONDS;
 import static java.time.ZoneOffset.UTC;
 import static java.util.stream.Collectors.groupingBy;
@@ -32,14 +31,15 @@ import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.Collection;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+import org.springframework.context.annotation.Profile;
 
 /**
- * An instance of this class contains a collection of {@link DiagnosisKey DiagnosisKeys}.
+ * An instance of this class contains a collection of {@link DiagnosisKey DiagnosisKeys}. TODO
  */
+@Profile("!demo")
 public class ProdDiagnosisKeyBundler extends DiagnosisKeyBundler {
 
   /**

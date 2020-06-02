@@ -11,9 +11,7 @@ services:
   distribution:
     output-file-name: index
     retention-days: 14
-    expiry-policy-enabled: true
     expiry-policy-minutes: 120
-    shifting-policy-enabled: true
     shifting-policy-threshold: 140
     include-incomplete-days: false
     include-incomplete-hours: false

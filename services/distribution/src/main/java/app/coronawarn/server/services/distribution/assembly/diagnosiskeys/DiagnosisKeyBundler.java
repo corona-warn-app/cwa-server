@@ -12,11 +12,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
+import org.springframework.stereotype.Component;
 
+@Component
 public abstract class DiagnosisKeyBundler {
 
   protected final int minNumberOfKeysPerBundle;
-  protected final boolean keyExpirationPolicyIsActive;
   protected final long expiryPolicyMinutes;
 
   // A map containing diagnosis keys, grouped by the LocalDateTime on which they may be distributed
@@ -24,7 +25,6 @@ public abstract class DiagnosisKeyBundler {
 
   public DiagnosisKeyBundler(DistributionServiceConfig distributionServiceConfig) {
     this.minNumberOfKeysPerBundle = distributionServiceConfig.getShiftingPolicyThreshold();
-    this.keyExpirationPolicyIsActive = Boolean.TRUE.equals(distributionServiceConfig.getExpiryPolicyEnabled());
     this.expiryPolicyMinutes = distributionServiceConfig.getExpiryPolicyMinutes();
   }
 
