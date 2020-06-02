@@ -42,6 +42,9 @@ class RiskScoreClassificationValidatorTest {
   private final static String VALID_LABEL = "myLabel";
   private final static String VALID_URL = "https://www.my.url";
 
+  public final static RiskScoreClassification MINIMAL_RISK_SCORE_CLASSIFICATION =
+      buildClassification(buildRiskClass(VALID_LABEL, 0, MAX_SCORE, VALID_URL));
+
   @ParameterizedTest
   @ValueSource(strings = {"", " "})
   void failsForBlankLabels(String invalidLabel) {
@@ -134,8 +137,7 @@ class RiskScoreClassificationValidatorTest {
 
   private static Stream<Arguments> createValidClassifications() {
     return Stream.of(
-        // valid url
-        buildClassification(buildRiskClass(VALID_LABEL, 0, MAX_SCORE, VALID_URL)),
+        MINIMAL_RISK_SCORE_CLASSIFICATION,
         // [0:MAX_SCORE/2][MAX_SCORE/2:MAX_SCORE]
         buildClassification(
             buildRiskClass(VALID_LABEL, 0, MAX_SCORE / 2, VALID_URL),

@@ -20,16 +20,26 @@
 
 package app.coronawarn.server.services.distribution.assembly.appconfig.validation;
 
+import static app.coronawarn.server.services.distribution.assembly.appconfig.validation.GeneralValidationError.ErrorType.MIN_GREATER_THAN_MAX;
+import static app.coronawarn.server.services.distribution.assembly.appconfig.validation.GeneralValidationError.ErrorType.VALUE_OUT_OF_BOUNDS;
+import static app.coronawarn.server.services.distribution.assembly.appconfig.validation.ParameterSpec.ATTENUATION_DURATION_THRESHOLD_MAX;
+import static app.coronawarn.server.services.distribution.assembly.appconfig.validation.ParameterSpec.ATTENUATION_DURATION_THRESHOLD_MIN;
+import static app.coronawarn.server.services.distribution.assembly.appconfig.validation.RiskScoreClassificationValidatorTest.MINIMAL_RISK_SCORE_CLASSIFICATION;
+import static app.coronawarn.server.services.distribution.assembly.appconfig.validation.RiskScoreClassificationValidatorTest.buildExpectedResult;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
+import app.coronawarn.server.common.protocols.internal.ApplicationConfiguration;
+import app.coronawarn.server.common.protocols.internal.AttenuationDurationThresholds;
 import app.coronawarn.server.services.distribution.assembly.appconfig.ApplicationConfigurationProvider;
+import app.coronawarn.server.services.distribution.assembly.appconfig.ExposureConfigurationProvider;
 import app.coronawarn.server.services.distribution.assembly.appconfig.UnableToLoadFileException;
 import java.util.stream.Stream;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
+import org.junit.jupiter.params.provider.ValueSource;
 
 class ApplicationConfigurationValidatorTest {
 
@@ -47,6 +57,43 @@ class ApplicationConfigurationValidatorTest {
   @MethodSource("createNegativeTests")
   void negative(TestWithExpectedResult test) throws UnableToLoadFileException {
     assertThat(getResultForTest(test)).isEqualTo(test.result);
+  }
+
+  @ParameterizedTest
+  @ValueSource(ints = {ATTENUATION_DURATION_THRESHOLD_MIN - 1, ATTENUATION_DURATION_THRESHOLD_MAX + 1})
+  void negativeForAttenuationDurationThresholdOutOfBounds(int invalidThresholdValue) throws Exception {
+    ApplicationConfigurationValidator validator = getValidatorForAttenuationDurationThreshold(
+        invalidThresholdValue, invalidThresholdValue);
+
+    ValidationResult expectedResult = buildExpectedResult(
+        new GeneralValidationError("attenuationDurationThreshold.upper", invalidThresholdValue, VALUE_OUT_OF_BOUNDS),
+        new GeneralValidationError("attenuationDurationThreshold.lower", invalidThresholdValue, VALUE_OUT_OF_BOUNDS));
+
+    assertThat(validator.validate()).isEqualTo(expectedResult);
+  }
+
+  @Test
+  void negativeForUpperAttenuationDurationThresholdLesserThanLower() throws Exception {
+    ApplicationConfigurationValidator validator = getValidatorForAttenuationDurationThreshold(
+        ATTENUATION_DURATION_THRESHOLD_MAX, ATTENUATION_DURATION_THRESHOLD_MIN);
+
+    ValidationResult expectedResult = buildExpectedResult(
+        new GeneralValidationError("attenuationDurationThreshold.lower, attenuationDurationThreshold.upper",
+            (ATTENUATION_DURATION_THRESHOLD_MAX + ", " + ATTENUATION_DURATION_THRESHOLD_MIN), MIN_GREATER_THAN_MAX));
+
+    assertThat(validator.validate()).isEqualTo(expectedResult);
+  }
+
+  private ApplicationConfigurationValidator getValidatorForAttenuationDurationThreshold(int lower, int upper)
+      throws Exception {
+    ApplicationConfiguration appConfig = ApplicationConfiguration.newBuilder()
+        .setMinRiskScore(100)
+        .setRiskScoreClasses(MINIMAL_RISK_SCORE_CLASSIFICATION)
+        .setExposureConfig(ExposureConfigurationProvider.readFile("configtests/exposure-config_ok.yaml"))
+        .setAttenuationDurationThresholds(AttenuationDurationThresholds.newBuilder()
+            .setLower(lower)
+            .setUpper(upper)).build();
+    return new ApplicationConfigurationValidator(appConfig);
   }
 
   @Test
