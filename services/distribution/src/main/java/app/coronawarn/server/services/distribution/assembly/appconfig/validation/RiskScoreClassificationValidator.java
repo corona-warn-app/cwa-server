@@ -20,11 +20,11 @@
 
 package app.coronawarn.server.services.distribution.assembly.appconfig.validation;
 
-import static app.coronawarn.server.services.distribution.assembly.appconfig.validation.RiskScoreClassificationValidationError.ErrorType.BLANK_LABEL;
-import static app.coronawarn.server.services.distribution.assembly.appconfig.validation.RiskScoreClassificationValidationError.ErrorType.INVALID_PARTITIONING;
-import static app.coronawarn.server.services.distribution.assembly.appconfig.validation.RiskScoreClassificationValidationError.ErrorType.INVALID_URL;
-import static app.coronawarn.server.services.distribution.assembly.appconfig.validation.RiskScoreClassificationValidationError.ErrorType.MIN_GREATER_THAN_MAX;
-import static app.coronawarn.server.services.distribution.assembly.appconfig.validation.RiskScoreClassificationValidationError.ErrorType.VALUE_OUT_OF_BOUNDS;
+import static app.coronawarn.server.services.distribution.assembly.appconfig.validation.GeneralValidationError.ErrorType.BLANK_LABEL;
+import static app.coronawarn.server.services.distribution.assembly.appconfig.validation.GeneralValidationError.ErrorType.INVALID_PARTITIONING;
+import static app.coronawarn.server.services.distribution.assembly.appconfig.validation.GeneralValidationError.ErrorType.INVALID_URL;
+import static app.coronawarn.server.services.distribution.assembly.appconfig.validation.GeneralValidationError.ErrorType.MIN_GREATER_THAN_MAX;
+import static app.coronawarn.server.services.distribution.assembly.appconfig.validation.GeneralValidationError.ErrorType.VALUE_OUT_OF_BOUNDS;
 
 import app.coronawarn.server.common.protocols.internal.RiskScoreClass;
 import app.coronawarn.server.common.protocols.internal.RiskScoreClassification;
@@ -69,7 +69,7 @@ public class RiskScoreClassificationValidator extends ConfigurationValidator {
       validateUrl(riskScoreClass.getUrl());
 
       if (minRiskLevel > maxRiskLevel) {
-        errors.add(new RiskScoreClassificationValidationError(
+        errors.add(new GeneralValidationError(
             "minRiskLevel, maxRiskLevel", minRiskLevel + ", " + maxRiskLevel, MIN_GREATER_THAN_MAX));
       }
     }
@@ -77,13 +77,13 @@ public class RiskScoreClassificationValidator extends ConfigurationValidator {
 
   private void validateLabel(String label) {
     if (label.isBlank()) {
-      errors.add(new RiskScoreClassificationValidationError("label", label, BLANK_LABEL));
+      errors.add(new GeneralValidationError("label", label, BLANK_LABEL));
     }
   }
 
   private void validateRiskScoreValueBounds(int value) {
     if (!RiskScoreValidator.isInBounds(value)) {
-      errors.add(new RiskScoreClassificationValidationError("minRiskLevel/maxRiskLevel", value, VALUE_OUT_OF_BOUNDS));
+      errors.add(new GeneralValidationError("minRiskLevel/maxRiskLevel", value, VALUE_OUT_OF_BOUNDS));
     }
   }
 
@@ -91,7 +91,7 @@ public class RiskScoreClassificationValidator extends ConfigurationValidator {
     try {
       new URL(url.trim());
     } catch (MalformedURLException e) {
-      errors.add(new RiskScoreClassificationValidationError("url", url, INVALID_URL));
+      errors.add(new GeneralValidationError("url", url, INVALID_URL));
     }
   }
 
@@ -101,7 +101,7 @@ public class RiskScoreClassificationValidator extends ConfigurationValidator {
         .sum();
 
     if (partitionSum != ParameterSpec.RISK_SCORE_MAX + 1) {
-      errors.add(new RiskScoreClassificationValidationError("covered value range", partitionSum, INVALID_PARTITIONING));
+      errors.add(new GeneralValidationError("covered value range", partitionSum, INVALID_PARTITIONING));
     }
   }
 }
