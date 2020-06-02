@@ -31,9 +31,7 @@ public class DistributionServiceConfig {
   private Paths paths;
   private TestData testData;
   private Integer retentionDays;
-  private Boolean expiryPolicyEnabled;
   private Integer expiryPolicyMinutes;
-  private Boolean shiftingPolicyEnabled;
   private Integer shiftingPolicyThreshold;
   private String outputFileName;
   private Boolean includeIncompleteDays;
@@ -67,28 +65,12 @@ public class DistributionServiceConfig {
     this.retentionDays = retentionDays;
   }
 
-  public Boolean getExpiryPolicyEnabled() {
-    return expiryPolicyEnabled;
-  }
-
-  public void setExpiryPolicyEnabled(Boolean expiryPolicyEnabled) {
-    this.expiryPolicyEnabled = expiryPolicyEnabled;
-  }
-
   public Integer getExpiryPolicyMinutes() {
     return expiryPolicyMinutes;
   }
 
   public void setExpiryPolicyMinutes(Integer expiryPolicyMinutes) {
     this.expiryPolicyMinutes = expiryPolicyMinutes;
-  }
-
-  public Boolean getShiftingPolicyEnabled() {
-    return shiftingPolicyEnabled;
-  }
-
-  public void setShiftingPolicyEnabled(Boolean shiftingPolicyEnabled) {
-    this.shiftingPolicyEnabled = shiftingPolicyEnabled;
   }
 
   public Integer getShiftingPolicyThreshold() {
