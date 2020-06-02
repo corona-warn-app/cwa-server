@@ -44,7 +44,7 @@ public class GeneralValidationError implements ValidationError {
 
   @Override
   public String toString() {
-    return "RiskScoreClassificationValidationError{"
+    return "GeneralValidationError{"
         + "errorType=" + reason
         + ", parameter='" + errorSource + '\''
         + ", givenValue=" + value
