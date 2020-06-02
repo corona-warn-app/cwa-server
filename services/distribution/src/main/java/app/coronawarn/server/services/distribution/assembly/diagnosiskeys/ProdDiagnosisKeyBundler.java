@@ -22,6 +22,7 @@ package app.coronawarn.server.services.distribution.assembly.diagnosiskeys;
 
 import static app.coronawarn.server.services.distribution.assembly.diagnosiskeys.util.DateTime.TEN_MINUTES_INTERVAL_SECONDS;
 import static java.time.ZoneOffset.UTC;
+import static java.util.Collections.emptyList;
 import static java.util.stream.Collectors.groupingBy;
 
 import app.coronawarn.server.common.persistence.domain.DiagnosisKey;
@@ -54,6 +55,7 @@ public class ProdDiagnosisKeyBundler extends DiagnosisKeyBundler {
    * Initializes the internal {@code distributableDiagnosisKeys} map, grouping the diagnosis keys by the date on which
    * they may be distributed, while respecting the expiry policy.
    */
+  @Override
   protected void createDiagnosisKeyDistributionMap(Collection<DiagnosisKey> diagnosisKeys) {
     this.distributableDiagnosisKeys.clear();
     this.distributableDiagnosisKeys.putAll(diagnosisKeys.stream().collect(groupingBy(this::getDistributionDateTime)));
@@ -63,12 +65,13 @@ public class ProdDiagnosisKeyBundler extends DiagnosisKeyBundler {
    * Returns all diagnosis keys that should be distributed in a specific hour, while respecting the shifting and expiry
    * policies.
    */
+  @Override
   public List<DiagnosisKey> getDiagnosisKeysDistributableAt(LocalDateTime hour) {
     List<DiagnosisKey> keysSinceLastDistribution = getKeysSinceLastDistribution(hour);
     if (keysSinceLastDistribution.size() >= minNumberOfKeysPerBundle) {
       return keysSinceLastDistribution;
     } else {
-      return List.of();
+      return emptyList();
     }
   }
 
@@ -79,7 +82,7 @@ public class ProdDiagnosisKeyBundler extends DiagnosisKeyBundler {
   private List<DiagnosisKey> getKeysSinceLastDistribution(LocalDateTime hour) {
     Optional<LocalDateTime> earliestDistributableTimestamp = getEarliestDistributableTimestamp();
     if (earliestDistributableTimestamp.isEmpty() || hour.isBefore(earliestDistributableTimestamp.get())) {
-      return List.of();
+      return emptyList();
     }
     List<DiagnosisKey> distributableInCurrentHour = getDiagnosisKeysForHour(hour);
     if (distributableInCurrentHour.size() >= minNumberOfKeysPerBundle) {

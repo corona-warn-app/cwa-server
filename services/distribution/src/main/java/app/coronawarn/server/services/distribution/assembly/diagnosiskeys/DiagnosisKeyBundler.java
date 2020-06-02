@@ -22,6 +22,7 @@ package app.coronawarn.server.services.distribution.assembly.diagnosiskeys;
 
 import static app.coronawarn.server.services.distribution.assembly.diagnosiskeys.util.DateTime.ONE_HOUR_INTERVAL_SECONDS;
 import static java.time.ZoneOffset.UTC;
+import static java.util.Collections.emptyList;
 
 import app.coronawarn.server.common.persistence.domain.DiagnosisKey;
 import app.coronawarn.server.services.distribution.config.DistributionServiceConfig;
@@ -92,6 +93,6 @@ public abstract class DiagnosisKeyBundler {
   protected List<DiagnosisKey> getDiagnosisKeysForHour(LocalDateTime hour) {
     return Optional
         .ofNullable(this.distributableDiagnosisKeys.get(hour))
-        .orElse(List.of());
+        .orElse(emptyList());
   }
 }

@@ -40,7 +40,6 @@ public class DemoDiagnosisKeyBundler extends DiagnosisKeyBundler {
     super(distributionServiceConfig);
   }
 
-
   /**
    * Initializes the internal {@code distributableDiagnosisKeys} map, grouping the diagnosis keys by the submission
    * timestamp, thus ignoring the expiry policy.
@@ -50,7 +49,6 @@ public class DemoDiagnosisKeyBundler extends DiagnosisKeyBundler {
     this.distributableDiagnosisKeys.clear();
     this.distributableDiagnosisKeys.putAll(diagnosisKeys.stream().collect(groupingBy(this::getSubmissionDateTime)));
   }
-
 
   /**
    * Returns all diagnosis keys that should be distributed in a specific hour, without respecting the shifting and
