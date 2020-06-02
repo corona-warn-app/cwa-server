@@ -14,3 +14,4 @@ attenuationDurationThresholds:
   upper: 70
 risk-score-classes: !include risk-score-classification.yaml
 exposure-config: !include exposure-config.yaml
+app-version: !include app-version-config.yaml

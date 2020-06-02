@@ -4,3 +4,4 @@ attenuationDurationThresholds:
   upper: 70
 risk-score-classes: !include risk-score-class_ok.yaml
 exposure-config: !include exposure-config_ok.yaml
+app-version: !include app-version-config_ok.yaml
