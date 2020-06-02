@@ -37,7 +37,8 @@ import java.util.stream.Stream;
 import org.springframework.context.annotation.Profile;
 
 /**
- * An instance of this class contains a collection of {@link DiagnosisKey DiagnosisKeys}. TODO
+ * An instance of this class contains a collection of {@link DiagnosisKey DiagnosisKeys}, that will be distributed
+ * while respecting expiry and shifting policies.
  */
 @Profile("!demo")
 public class ProdDiagnosisKeyBundler extends DiagnosisKeyBundler {
@@ -49,13 +50,18 @@ public class ProdDiagnosisKeyBundler extends DiagnosisKeyBundler {
     super(distributionServiceConfig);
   }
 
+  /**
+   * Initializes the internal {@code distributableDiagnosisKeys} map, grouping the diagnosis keys by the date on which
+   * they may be distributed, while respecting the expiry policy.
+   */
   protected void createDiagnosisKeyDistributionMap(Collection<DiagnosisKey> diagnosisKeys) {
     this.distributableDiagnosisKeys.clear();
     this.distributableDiagnosisKeys.putAll(diagnosisKeys.stream().collect(groupingBy(this::getDistributionDateTime)));
   }
 
   /**
-   * TODO.
+   * Returns all diagnosis keys that should be distributed in a specific hour, while respecting the shifting and expiry
+   * policies.
    */
   public List<DiagnosisKey> getDiagnosisKeysDistributableAt(LocalDateTime hour) {
     List<DiagnosisKey> keysSinceLastDistribution = getKeysSinceLastDistribution(hour);

@@ -29,6 +29,10 @@ import java.util.Collection;
 import java.util.List;
 import org.springframework.context.annotation.Profile;
 
+/**
+ * An instance of this class contains a collection of {@link DiagnosisKey DiagnosisKeys}, that will be distributed
+ * without respecting expiry or shifting policies.
+ */
 @Profile("demo")
 public class DemoDiagnosisKeyBundler extends DiagnosisKeyBundler {
 
@@ -36,12 +40,22 @@ public class DemoDiagnosisKeyBundler extends DiagnosisKeyBundler {
     super(distributionServiceConfig);
   }
 
+
+  /**
+   * Initializes the internal {@code distributableDiagnosisKeys} map, grouping the diagnosis keys by the submission
+   * timestamp, thus ignoring the expiry policy.
+   */
   @Override
   protected void createDiagnosisKeyDistributionMap(Collection<DiagnosisKey> diagnosisKeys) {
     this.distributableDiagnosisKeys.clear();
     this.distributableDiagnosisKeys.putAll(diagnosisKeys.stream().collect(groupingBy(this::getSubmissionDateTime)));
   }
 
+
+  /**
+   * Returns all diagnosis keys that should be distributed in a specific hour, without respecting the shifting and
+   * expiry policies.
+   */
   @Override
   public List<DiagnosisKey> getDiagnosisKeysDistributableAt(LocalDateTime hour) {
     return this.getDiagnosisKeysForHour(hour);

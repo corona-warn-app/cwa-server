@@ -34,6 +34,9 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 import org.springframework.stereotype.Component;
 
+/**
+ * An instance of this class contains a collection of {@link DiagnosisKey DiagnosisKeys}.
+ */
 @Component
 public abstract class DiagnosisKeyBundler {
 
@@ -48,6 +51,10 @@ public abstract class DiagnosisKeyBundler {
     this.expiryPolicyMinutes = distributionServiceConfig.getExpiryPolicyMinutes();
   }
 
+  /**
+   * Sets the {@link DiagnosisKey DiagnosisKeys} contained by this {@link DiagnosisKeyBundler} and calls {@link
+   * DiagnosisKeyBundler#createDiagnosisKeyDistributionMap}.
+   */
   public void setDiagnosisKeys(Collection<DiagnosisKey> diagnosisKeys) {
     createDiagnosisKeyDistributionMap(diagnosisKeys);
   }
@@ -62,7 +69,8 @@ public abstract class DiagnosisKeyBundler {
   }
 
   /**
-   * TODO.
+   * Initializes the internal {@code distributableDiagnosisKeys} map, which should contain all diagnosis keys, grouped
+   * by the LocalDateTime on which they may be distributed.
    */
   protected abstract void createDiagnosisKeyDistributionMap(Collection<DiagnosisKey> diagnosisKeys);
 
