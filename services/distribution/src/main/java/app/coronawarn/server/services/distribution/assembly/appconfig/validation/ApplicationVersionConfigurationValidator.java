@@ -43,37 +43,39 @@ public class ApplicationVersionConfigurationValidator extends ConfigurationValid
   }
 
   private void validateApplicationVersionInfo(String name, ApplicationVersionInfo appVersionInfo) {
-    ComparisonResult comparisonResult = compare(appVersionInfo.getLatest(), appVersionInfo.getMin());
-    if (ComparisonResult.LESS.equals(comparisonResult)) {
-      this.errors.add(new GeneralValidationError(name + ": latest/min", appVersionInfo, MIN_GREATER_THAN_MAX));
+    SemanticVersion minVersion = appVersionInfo.getMin();
+    ComparisonResult comparisonResult = compare(appVersionInfo.getLatest(), minVersion);
+    if (ComparisonResult.LOWER.equals(comparisonResult)) {
+      this.errors.add(new GeneralValidationError(name + ": latest/min",
+          minVersion.getMajor() + "." + minVersion.getMinor() + "." + minVersion.getPatch(), MIN_GREATER_THAN_MAX));
     }
   }
 
   private ComparisonResult compare(SemanticVersion left, SemanticVersion right) {
     if (left.getMajor() < right.getMajor()) {
-      return ComparisonResult.LESS;
+      return ComparisonResult.LOWER;
     }
     if (left.getMajor() > right.getMajor()) {
-      return ComparisonResult.GREATER;
+      return ComparisonResult.HIGHER;
     }
     if (left.getMinor() < right.getMinor()) {
-      return ComparisonResult.LESS;
+      return ComparisonResult.LOWER;
     }
     if (left.getMinor() > right.getMinor()) {
-      return ComparisonResult.GREATER;
+      return ComparisonResult.HIGHER;
     }
     if (left.getPatch() < right.getPatch()) {
-      return ComparisonResult.LESS;
+      return ComparisonResult.LOWER;
     }
     if (left.getPatch() > right.getPatch()) {
-      return ComparisonResult.GREATER;
+      return ComparisonResult.HIGHER;
     }
     return ComparisonResult.EQUAL;
   }
 
   private enum ComparisonResult {
-    LESS,
+    LOWER,
     EQUAL,
-    GREATER
+    HIGHER
   }
 }
