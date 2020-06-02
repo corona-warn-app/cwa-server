@@ -33,7 +33,6 @@ import static org.mockito.Mockito.when;
 
 import app.coronawarn.server.services.distribution.objectstore.client.ObjectStoreClient.HeaderKey;
 import java.nio.file.Path;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -50,11 +49,9 @@ import software.amazon.awssdk.core.exception.SdkClientException;
 import software.amazon.awssdk.core.exception.SdkException;
 import software.amazon.awssdk.core.sync.RequestBody;
 import software.amazon.awssdk.services.s3.S3Client;
-import software.amazon.awssdk.services.s3.model.Bucket;
 import software.amazon.awssdk.services.s3.model.Delete;
 import software.amazon.awssdk.services.s3.model.DeleteObjectsRequest;
 import software.amazon.awssdk.services.s3.model.DeleteObjectsResponse;
-import software.amazon.awssdk.services.s3.model.ListBucketsResponse;
 import software.amazon.awssdk.services.s3.model.ListObjectsV2Request;
 import software.amazon.awssdk.services.s3.model.ListObjectsV2Response;
 import software.amazon.awssdk.services.s3.model.NoSuchBucketException;
@@ -73,34 +70,29 @@ class S3ClientWrapperTest {
 
   private S3Client s3Client;
   private S3ClientWrapper s3ClientWrapper;
-  private List<Bucket> existingBuckets;
 
   @BeforeEach
   public void setUpMocks() {
     s3Client = mock(S3Client.class);
     s3ClientWrapper = new S3ClientWrapper(s3Client);
-    existingBuckets = new ArrayList<>();
-    ListBucketsResponse listBucketsResponse = mock(ListBucketsResponse.class);
-
-    when(listBucketsResponse.buckets()).thenReturn(existingBuckets);
-    when(s3Client.listBuckets()).thenReturn(listBucketsResponse);
   }
 
   @Test
   void testBucketExistsIfBucketExists() {
-    existingBuckets.add(Bucket.builder().name(VALID_BUCKET_NAME).build());
+    when(s3Client.listObjectsV2((any(ListObjectsV2Request.class)))).thenReturn(ListObjectsV2Response.builder().build());
     assertThat(s3ClientWrapper.bucketExists(VALID_BUCKET_NAME)).isTrue();
   }
 
   @Test
   void testBucketExistsIfBucketDoesNotExist() {
+    when(s3Client.listObjectsV2(any(ListObjectsV2Request.class))).thenThrow(NoSuchBucketException.class);
     assertThat(s3ClientWrapper.bucketExists(VALID_BUCKET_NAME)).isFalse();
   }
 
   @ParameterizedTest
   @ValueSource(classes = {S3Exception.class, SdkClientException.class, SdkException.class})
   void bucketExistsThrowsObjectStoreOperationFailedExceptionIfClientThrows(Class<Exception> cause) {
-    when(s3Client.listBuckets()).thenThrow(cause);
+    when(s3Client.listObjectsV2(any(ListObjectsV2Request.class))).thenThrow(cause);
     assertThatExceptionOfType(ObjectStoreOperationFailedException.class)
         .isThrownBy(() -> s3ClientWrapper.bucketExists(VALID_BUCKET_NAME));
   }
