@@ -33,12 +33,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
-import org.springframework.stereotype.Component;
 
 /**
  * An instance of this class contains a collection of {@link DiagnosisKey DiagnosisKeys}.
  */
-@Component
 public abstract class DiagnosisKeyBundler {
 
   protected final int minNumberOfKeysPerBundle;
