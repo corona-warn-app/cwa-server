@@ -12,4 +12,11 @@ message ApplicationConfiguration {
   app.coronawarn.server.common.protocols.internal.RiskScoreClassification riskScoreClasses = 2;
 
   app.coronawarn.server.common.protocols.internal.RiskScoreParameters exposureConfig = 3;
+
+  AttenuationDurationThresholds attenuationDurationThresholds = 4;
+}
+
+message AttenuationDurationThresholds {
+  int32 lower = 1;
+  int32 upper = 2;
 }
