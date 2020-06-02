@@ -36,6 +36,7 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import org.springframework.context.annotation.Profile;
+import org.springframework.stereotype.Component;
 
 /**
  * An instance of this class contains a collection of {@link DiagnosisKey DiagnosisKeys}, that will be distributed while
@@ -44,6 +45,7 @@ import org.springframework.context.annotation.Profile;
  * through the properties {@code expiry-policy-minutes} and {@code shifting-policy-threshold}.
  */
 @Profile("!demo")
+@Component
 public class ProdDiagnosisKeyBundler extends DiagnosisKeyBundler {
 
   /**

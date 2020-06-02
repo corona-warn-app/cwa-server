@@ -28,12 +28,14 @@ import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.List;
 import org.springframework.context.annotation.Profile;
+import org.springframework.stereotype.Component;
 
 /**
  * An instance of this class contains a collection of {@link DiagnosisKey DiagnosisKeys}, that will be distributed
  * in the same hour they have been submitted.
  */
 @Profile("demo")
+@Component
 public class DemoDiagnosisKeyBundler extends DiagnosisKeyBundler {
 
   public DemoDiagnosisKeyBundler(DistributionServiceConfig distributionServiceConfig) {
