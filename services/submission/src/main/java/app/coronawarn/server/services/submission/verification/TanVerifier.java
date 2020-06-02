@@ -23,7 +23,6 @@ package app.coronawarn.server.services.submission.verification;
 import feign.FeignException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestClientException;
 
@@ -41,7 +40,6 @@ public class TanVerifier {
    *
    * @param verificationServerClient The REST client to communicate with the verification server
    */
-  @Autowired
   public TanVerifier(VerificationServerClient verificationServerClient) {
     this.verificationServerClient = verificationServerClient;
   }
