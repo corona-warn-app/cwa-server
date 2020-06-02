@@ -6,6 +6,7 @@ services:
       dockerfile: ./services/submission/Dockerfile
     depends_on:
       - postgres
+      - verification-fake
     ports:
       - "8000:8080"
       - "8006:8081"
@@ -18,6 +19,7 @@ services:
       POSTGRESQL_USER_SUBMISION: ${POSTGRES_USER}
       POSTGRESQL_PASSWORD_FLYWAY: ${POSTGRES_PASSWORD}
       POSTGRESQL_USER_FLYWAY: ${POSTGRES_USER}
+      VERIFICATION_BASE_URL: http://verification-fake:8004
   distribution:
     build:
       context: ./
