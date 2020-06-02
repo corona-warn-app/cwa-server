@@ -28,6 +28,9 @@ import app.coronawarn.server.common.protocols.internal.ApplicationVersionConfigu
  */
 public class ApplicationVersionConfigurationProvider {
 
+  private ApplicationVersionConfigurationProvider() {
+  }
+
   /**
    * The location of the app version config master file.
    */
