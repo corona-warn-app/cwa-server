@@ -20,7 +20,6 @@
 
 package app.coronawarn.server.services.distribution.assembly.diagnosiskeys;
 
-import static app.coronawarn.server.services.distribution.assembly.diagnosiskeys.util.DateTime.TEN_MINUTES_INTERVAL_SECONDS;
 import static java.time.ZoneOffset.UTC;
 import static java.util.Collections.emptyList;
 import static java.util.stream.Collectors.groupingBy;

@@ -26,6 +26,7 @@ import static java.util.Collections.emptySet;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import app.coronawarn.server.common.persistence.domain.DiagnosisKey;
+import app.coronawarn.server.services.distribution.assembly.diagnosiskeys.DiagnosisKeyBundler;
 import app.coronawarn.server.services.distribution.common.Helpers;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -42,14 +43,14 @@ class DateTimeTest {
 
   @Test
   void testGetDatesForEmptyList() {
-    assertThat(DateTime.getDates(emptyList())).isEmpty();
+    assertThat(DiagnosisKeyBundler.getDates(emptyList())).isEmpty();
   }
 
   @ParameterizedTest
   @MethodSource("createDiagnosisKeysForEpochDay0")
   void testGetDatesForEpochDay0(DiagnosisKey diagnosisKey) {
     var expDates = Set.of(LocalDate.ofEpochDay(0L));
-    var actDates = DateTime.getDates(Set.of(diagnosisKey));
+    var actDates = DiagnosisKeyBundler.getDates(Set.of(diagnosisKey));
 
     assertThat(actDates)
         .withFailMessage(
@@ -72,7 +73,7 @@ class DateTimeTest {
         buildDiagnosisKeyForDateTime(LocalDateTime.of(1970, 1, 2, 1, 0)));
     var expDates = Set.of(LocalDate.ofEpochDay(0L), LocalDate.ofEpochDay(1L));
 
-    assertThat(DateTime.getDates(diagnosisKeys)).isEqualTo(expDates);
+    assertThat(DiagnosisKeyBundler.getDates(diagnosisKeys)).isEqualTo(expDates);
   }
 
   @ParameterizedTest
@@ -86,7 +87,7 @@ class DateTimeTest {
     diagnosisKeysIncludingExpHours.addAll(expHours.stream()
         .map(Helpers::buildDiagnosisKeyForDateTime).collect(Collectors.toSet()));
 
-    var actHours = DateTime.getHours(LocalDate.ofEpochDay(1L), diagnosisKeysIncludingExpHours);
+    var actHours = DiagnosisKeyBundler.getHours(LocalDate.ofEpochDay(1L), diagnosisKeysIncludingExpHours);
 
     assertThat(actHours).isEqualTo(expHours);
   }
