@@ -22,6 +22,7 @@ package app.coronawarn.server.services.distribution.assembly.diagnosiskeys.struc
 
 import app.coronawarn.server.common.persistence.domain.DiagnosisKey;
 import app.coronawarn.server.services.distribution.assembly.component.CryptoProvider;
+import app.coronawarn.server.services.distribution.assembly.diagnosiskeys.DiagnosisKeyBundler;
 import app.coronawarn.server.services.distribution.assembly.diagnosiskeys.structure.directory.decorator.CountryIndexingDecorator;
 import app.coronawarn.server.services.distribution.assembly.structure.WritableOnDisk;
 import app.coronawarn.server.services.distribution.assembly.structure.directory.Directory;
@@ -31,7 +32,6 @@ import app.coronawarn.server.services.distribution.assembly.structure.directory.
 import app.coronawarn.server.services.distribution.assembly.structure.directory.decorator.indexing.IndexingDecoratorOnDisk;
 import app.coronawarn.server.services.distribution.assembly.structure.util.ImmutableStack;
 import app.coronawarn.server.services.distribution.config.DistributionServiceConfig;
-import java.util.Collection;
 
 /**
  * A {@link Directory} containing the file and directory structure that mirrors the API defined in the OpenAPI
@@ -42,7 +42,7 @@ import java.util.Collection;
  */
 public class DiagnosisKeysDirectory extends DirectoryOnDisk {
 
-  private final Collection<DiagnosisKey> diagnosisKeys;
+  private final DiagnosisKeyBundler diagnosisKeyBundler;
   private final CryptoProvider cryptoProvider;
   private final DistributionServiceConfig distributionServiceConfig;
 
@@ -50,13 +50,13 @@ public class DiagnosisKeysDirectory extends DirectoryOnDisk {
    * Constructs a {@link DiagnosisKeysDirectory} based on the specified {@link DiagnosisKey} collection. Cryptographic
    * signing is performed using the specified {@link CryptoProvider}.
    *
-   * @param diagnosisKeys  The diagnosis keys processed in the contained sub directories.
-   * @param cryptoProvider The {@link CryptoProvider} used for payload signing.
+   * @param diagnosisKeyBundler A {@link DiagnosisKeyBundler} containing the {@link DiagnosisKey DiagnosisKeys}.
+   * @param cryptoProvider      The {@link CryptoProvider} used for payload signing.
    */
-  public DiagnosisKeysDirectory(Collection<DiagnosisKey> diagnosisKeys, CryptoProvider cryptoProvider,
+  public DiagnosisKeysDirectory(DiagnosisKeyBundler diagnosisKeyBundler, CryptoProvider cryptoProvider,
       DistributionServiceConfig distributionServiceConfig) {
     super(distributionServiceConfig.getApi().getDiagnosisKeysPath());
-    this.diagnosisKeys = diagnosisKeys;
+    this.diagnosisKeyBundler = diagnosisKeyBundler;
     this.cryptoProvider = cryptoProvider;
     this.distributionServiceConfig = distributionServiceConfig;
   }
@@ -64,7 +64,7 @@ public class DiagnosisKeysDirectory extends DirectoryOnDisk {
   @Override
   public void prepare(ImmutableStack<Object> indices) {
     this.addWritable(decorateCountryDirectory(
-        new DiagnosisKeysCountryDirectory(diagnosisKeys, cryptoProvider, distributionServiceConfig)));
+        new DiagnosisKeysCountryDirectory(diagnosisKeyBundler, cryptoProvider, distributionServiceConfig)));
     super.prepare(indices);
   }
 
