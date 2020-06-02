@@ -49,6 +49,8 @@ public class S3ClientWrapper implements ObjectStoreClient {
 
   private final S3Client s3Client;
 
+  private final int maxRetries = 3;
+
   public S3ClientWrapper(S3Client s3Client) {
     this.s3Client = s3Client;
   }
@@ -68,18 +70,27 @@ public class S3ClientWrapper implements ObjectStoreClient {
 
   @Override
   public List<S3Object> getObjects(String bucket, String prefix) {
-    try {
-      ListObjectsV2Response response =
-          s3Client.listObjectsV2(ListObjectsV2Request.builder().prefix(prefix).bucket(bucket).build());
-      return response.contents().stream().map(S3ClientWrapper::buildS3Object).collect(toList());
-    } catch (SdkException e) {
-      throw new ObjectStoreOperationFailedException("Failed to upload object to object store", e);
+    int currentTry = 0;
+
+    while(true) {
+      currentTry++;
+      try {
+        ListObjectsV2Response response   =
+            s3Client.listObjectsV2(ListObjectsV2Request.builder().prefix(prefix).bucket(bucket).build());
+        return response.contents().stream().map(S3ClientWrapper::buildS3Object).collect(toList());
+      } catch (SdkException e) {
+        if (currentTry > maxRetries) {
+          throw new ObjectStoreOperationFailedException("Failed to upload object to object store", e);
+        }
+        logger.debug("Failed to upload object to object store. Attempt " + currentTry + " of " + maxRetries);
+      }
     }
   }
 
   @Override
   public void putObject(String bucket, String objectName, Path filePath, Map<HeaderKey, String> headers) {
     RequestBody bodyFile = RequestBody.fromFile(filePath);
+    int currentTry = 0;
 
     var requestBuilder = PutObjectRequest.builder().bucket(bucket).key(objectName);
     if (headers.containsKey(HeaderKey.AMZ_ACL)) {
@@ -89,15 +100,24 @@ public class S3ClientWrapper implements ObjectStoreClient {
       requestBuilder.cacheControl(headers.get(HeaderKey.CACHE_CONTROL));
     }
 
-    try {
-      s3Client.putObject(requestBuilder.build(), bodyFile);
-    } catch (SdkException e) {
-      throw new ObjectStoreOperationFailedException("Failed to upload object to object store", e);
+    while(true) {
+      currentTry++;
+
+      try {
+        s3Client.putObject(requestBuilder.build(), bodyFile);
+      } catch (SdkException e) {
+        if (currentTry > maxRetries) {
+          throw new ObjectStoreOperationFailedException("Failed to upload object to object store", e);
+        }
+        logger.debug("Failed to upload object to object store. Attempt " + currentTry + " of " + maxRetries);
+      }
     }
   }
 
   @Override
   public void removeObjects(String bucket, List<String> objectNames) {
+    int currentTry = 0;
+
     if (objectNames.isEmpty()) {
       return;
     }
@@ -105,19 +125,30 @@ public class S3ClientWrapper implements ObjectStoreClient {
     Collection<ObjectIdentifier> identifiers = objectNames.stream()
         .map(key -> ObjectIdentifier.builder().key(key).build()).collect(toList());
 
-    try {
-      DeleteObjectsResponse response = s3Client.deleteObjects(
-          DeleteObjectsRequest.builder()
-              .bucket(bucket)
-              .delete(Delete.builder().objects(identifiers).build()).build());
 
-      if (response.hasErrors()) {
-        String errMessage = "Failed to remove objects from object store.";
-        logger.error("{} {}", errMessage, response.errors());
-        throw new ObjectStoreOperationFailedException(errMessage);
+    while(true) {
+      currentTry++;
+      try {
+        // TODO
+        DeleteObjectsResponse response = s3Client.deleteObjects(
+            DeleteObjectsRequest.builder()
+                .bucket(bucket)
+                .delete(Delete.builder().objects(identifiers).build()).build());
+
+        if (response.hasErrors()) {
+          String errMessage = "Failed to remove objects from object store.";
+          if (currentTry > maxRetries) {
+            logger.error("{} {}", errMessage, response.errors());
+            throw new ObjectStoreOperationFailedException(errMessage);
+          }
+          logger.debug("Failed to remove objects from object store. Attempt " + currentTry + " of " + maxRetries);
+        }
+      } catch (SdkException e) {
+        if (currentTry > maxRetries) {
+          throw new ObjectStoreOperationFailedException("Failed to remove objects from object store.", e);
+        }
+        logger.debug("Failed to remove objects from object store. Attempt " + currentTry + " of " + maxRetries);
       }
-    } catch (SdkException e) {
-      throw new ObjectStoreOperationFailedException("Failed to remove objects from object store.", e);
     }
   }
 
