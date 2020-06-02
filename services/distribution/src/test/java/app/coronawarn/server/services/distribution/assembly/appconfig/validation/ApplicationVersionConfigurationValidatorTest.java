@@ -30,7 +30,7 @@ import app.coronawarn.server.services.distribution.assembly.appconfig.UnableToLo
 import app.coronawarn.server.services.distribution.assembly.appconfig.validation.GeneralValidationError.ErrorType;
 import org.junit.jupiter.api.Test;
 
-public class ApplicationVersionConfigurationValidatorTest {
+class ApplicationVersionConfigurationValidatorTest {
 
   private static final ValidationResult SUCCESS = new ValidationResult();
 
