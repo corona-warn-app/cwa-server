@@ -26,7 +26,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import app.coronawarn.server.common.persistence.domain.DiagnosisKey;
 import app.coronawarn.server.services.distribution.assembly.component.CryptoProvider;
-import app.coronawarn.server.services.distribution.assembly.diagnosiskeys.ProdDiagnosisKeyBundler;
+import app.coronawarn.server.services.distribution.assembly.diagnosiskeys.DemoDiagnosisKeyBundler;
+import app.coronawarn.server.services.distribution.assembly.diagnosiskeys.DiagnosisKeyBundler;
 import app.coronawarn.server.services.distribution.assembly.structure.WritableOnDisk;
 import app.coronawarn.server.services.distribution.assembly.structure.directory.Directory;
 import app.coronawarn.server.services.distribution.assembly.structure.directory.DirectoryOnDisk;
@@ -34,7 +35,6 @@ import app.coronawarn.server.services.distribution.assembly.structure.util.Immut
 import app.coronawarn.server.services.distribution.config.DistributionServiceConfig;
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
@@ -91,9 +91,9 @@ class DiagnosisKeysDirectoryTest {
 
   @Test
   void checkBuildsTheCorrectDirectoryStructureWhenNoKeys() {
-    diagnosisKeys = new ArrayList<>();
-    Directory<WritableOnDisk> directory = new DiagnosisKeysDirectory(
-        new ProdDiagnosisKeyBundler(diagnosisKeys, distributionServiceConfig), cryptoProvider, distributionServiceConfig);
+    DiagnosisKeyBundler bundler = new DemoDiagnosisKeyBundler(distributionServiceConfig);
+    Directory<WritableOnDisk> directory = new DiagnosisKeysDirectory(bundler, cryptoProvider,
+        distributionServiceConfig);
     parentDirectory.addWritable(directory);
     directory.prepare(new ImmutableStack<>());
     directory.write();
@@ -112,8 +112,10 @@ class DiagnosisKeysDirectoryTest {
 
   @Test
   void checkBuildsTheCorrectDirectoryStructure() {
-    Directory<WritableOnDisk> directory = new DiagnosisKeysDirectory(
-        new ProdDiagnosisKeyBundler(diagnosisKeys, distributionServiceConfig), cryptoProvider, distributionServiceConfig);
+    DiagnosisKeyBundler bundler = new DemoDiagnosisKeyBundler(distributionServiceConfig);
+    bundler.setDiagnosisKeys(diagnosisKeys);
+    Directory<WritableOnDisk> directory = new DiagnosisKeysDirectory(bundler, cryptoProvider,
+        distributionServiceConfig);
     parentDirectory.addWritable(directory);
     directory.prepare(new ImmutableStack<>());
     directory.write();

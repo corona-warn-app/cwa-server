@@ -42,7 +42,7 @@ public abstract class DiagnosisKeyBundler {
   }
 
   /**
-   * TODO
+   * TODO.
    */
   protected abstract void createDiagnosisKeyDistributionMap(Collection<DiagnosisKey> diagnosisKeys);
 

@@ -54,6 +54,9 @@ public class ProdDiagnosisKeyBundler extends DiagnosisKeyBundler {
     this.distributableDiagnosisKeys.putAll(diagnosisKeys.stream().collect(groupingBy(this::getDistributionDateTime)));
   }
 
+  /**
+   * TODO.
+   */
   public List<DiagnosisKey> getDiagnosisKeysDistributableAt(LocalDateTime hour) {
     List<DiagnosisKey> keysSinceLastDistribution = getKeysSinceLastDistribution(hour);
     if (keysSinceLastDistribution.size() >= minNumberOfKeysPerBundle) {
