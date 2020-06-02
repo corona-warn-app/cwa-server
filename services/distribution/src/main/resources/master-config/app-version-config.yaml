@@ -1,7 +1,7 @@
 # This is the Application Version Configuration master file which contains information for clients
 # about the latest and minimum supported mobile app versions on Android and iOS.
 #
-# The latest version mus not be lower than the min version.
+# The latest version must not be lower than the min version.
 #
 # Change this file with caution!
 
