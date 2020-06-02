@@ -71,8 +71,8 @@ public class ApplicationConfigurationValidator extends ConfigurationValidator {
     int lower = config.getAttenuationDurationThresholds().getLower();
     int upper = config.getAttenuationDurationThresholds().getUpper();
 
-    checkThresholdBounds("lower", lower);
-    checkThresholdBounds("upper", upper);
+    checkThresholdBound("lower", lower);
+    checkThresholdBound("upper", upper);
 
     if (lower > upper) {
       String parameters = "attenuationDurationThreshold.lower, attenuationDurationThreshold.upper";
@@ -81,7 +81,7 @@ public class ApplicationConfigurationValidator extends ConfigurationValidator {
     }
   }
 
-  private void checkThresholdBounds(String boundLabel, int boundValue) {
+  private void checkThresholdBound(String boundLabel, int boundValue) {
     if (boundValue < ATTENUATION_DURATION_THRESHOLD_MIN || boundValue > ATTENUATION_DURATION_THRESHOLD_MAX) {
       this.errors.add(
           new GeneralValidationError("attenuationDurationThreshold." + boundLabel, boundValue, VALUE_OUT_OF_BOUNDS));
