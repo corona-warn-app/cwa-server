@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -69,8 +69,15 @@ public class DiagnosisKeyService {
    * Returns all valid persisted diagnosis keys, sorted by their submission timestamp.
    */
   public List<DiagnosisKey> getDiagnosisKeys() {
-    return keyRepository.findAll(Sort.by(Direction.ASC, "submissionTimestamp")).stream()
-        .filter(DiagnosisKeyService::isDiagnosisKeyValid).collect(Collectors.toList());
+    List<DiagnosisKey> diagnosisKeys = keyRepository.findAll(Sort.by(Direction.ASC, "submissionTimestamp"));
+    List<DiagnosisKey> validDiagnosisKeys =
+        diagnosisKeys.stream().filter(DiagnosisKeyService::isDiagnosisKeyValid).collect(Collectors.toList());
+
+    int numberOfDiscardedKeys = diagnosisKeys.size() - validDiagnosisKeys.size();
+    logger.info("Retrieved {} diagnosis key(s). Discarded {} diagnosis key(s) from the result as invalid.",
+        diagnosisKeys.size(), numberOfDiscardedKeys);
+
+    return validDiagnosisKeys;
   }
 
   private static boolean isDiagnosisKeyValid(DiagnosisKey diagnosisKey) {
@@ -103,6 +110,8 @@ public class DiagnosisKeyService {
         .ofInstant(Instant.now(), UTC)
         .minusDays(daysToRetain)
         .toEpochSecond(UTC) / 3600L;
-    keyRepository.deleteBySubmissionTimestampIsLessThanEqual(threshold);
+    int numberOfDeletions = keyRepository.deleteBySubmissionTimestampIsLessThanEqual(threshold);
+    logger.info("Deleted {} diagnosis key(s) with a submission timestamp older than {} day(s) ago.",
+        numberOfDeletions, daysToRetain);
   }
 }
