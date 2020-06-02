@@ -96,7 +96,7 @@ services:
     depends_on:
       - objectstore
   verification-fake:
-    image: lilienthal/cwa-verification-fake:latest
+    image: lilienthal/cwa-verification-fake:0.0.3
     restart: always
     ports:
       - "8004:8004"
