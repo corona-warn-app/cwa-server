@@ -34,10 +34,9 @@ import software.amazon.awssdk.services.s3.S3Client;
 import software.amazon.awssdk.services.s3.model.Delete;
 import software.amazon.awssdk.services.s3.model.DeleteObjectsRequest;
 import software.amazon.awssdk.services.s3.model.DeleteObjectsResponse;
-import software.amazon.awssdk.services.s3.model.HeadBucketRequest;
-import software.amazon.awssdk.services.s3.model.HeadBucketResponse;
 import software.amazon.awssdk.services.s3.model.ListObjectsV2Request;
 import software.amazon.awssdk.services.s3.model.ListObjectsV2Response;
+import software.amazon.awssdk.services.s3.model.NoSuchBucketException;
 import software.amazon.awssdk.services.s3.model.ObjectIdentifier;
 import software.amazon.awssdk.services.s3.model.PutObjectRequest;
 
@@ -57,9 +56,11 @@ public class S3ClientWrapper implements ObjectStoreClient {
   @Override
   public boolean bucketExists(String bucketName) {
     try {
-      HeadBucketRequest request = HeadBucketRequest.builder().bucket(bucketName).build();      
-      HeadBucketResponse response = s3Client.headBucket(request);
-      return response.sdkHttpResponse().isSuccessful();
+      // using S3Client.listObjectsV2 instead of S3Client.listBuckets/headBucket in order to limit required permissions
+      s3Client.listObjectsV2(ListObjectsV2Request.builder().bucket(bucketName).maxKeys(0).build());
+      return true;
+    } catch (NoSuchBucketException e) {
+      return false;
     } catch (SdkException e) {
       throw new ObjectStoreOperationFailedException("Failed to determine if bucket exists.", e);
     }
