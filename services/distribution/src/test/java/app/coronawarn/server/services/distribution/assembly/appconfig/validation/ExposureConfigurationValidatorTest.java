@@ -21,13 +21,12 @@
 package app.coronawarn.server.services.distribution.assembly.appconfig.validation;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.catchThrowable;
 
-import app.coronawarn.server.services.distribution.assembly.appconfig.ExposureConfigurationProvider;
+import app.coronawarn.server.common.protocols.internal.RiskScoreParameters;
 import app.coronawarn.server.services.distribution.assembly.appconfig.UnableToLoadFileException;
+import app.coronawarn.server.services.distribution.assembly.appconfig.YamlLoader;
 import app.coronawarn.server.services.distribution.assembly.appconfig.validation.WeightValidationError.ErrorType;
 import java.util.stream.Stream;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
@@ -48,16 +47,8 @@ class ExposureConfigurationValidatorTest {
     assertThat(getResultForTest(test)).isEqualTo(test.result);
   }
 
-  @Test
-  void emptyFileThrowsLoadFailure() {
-    assertThat(
-        catchThrowable(() -> ExposureConfigurationProvider.readFile("parameters/empty.yaml")))
-        .isInstanceOf(UnableToLoadFileException.class);
-  }
-
-  private ValidationResult getResultForTest(TestWithExpectedResult test)
-      throws UnableToLoadFileException {
-    var config = ExposureConfigurationProvider.readFile(test.path());
+  private ValidationResult getResultForTest(TestWithExpectedResult test) throws UnableToLoadFileException {
+    var config = YamlLoader.loadYamlIntoProtobufBuilder(test.path(), RiskScoreParameters.Builder.class).build();
     var validator = new ExposureConfigurationValidator(config);
     return validator.validate();
   }

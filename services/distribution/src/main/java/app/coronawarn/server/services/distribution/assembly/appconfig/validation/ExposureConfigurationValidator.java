@@ -69,8 +69,7 @@ public class ExposureConfigurationValidator extends ConfigurationValidator {
     return errors;
   }
 
-  private void validateParameterRiskLevels(String name, Object object)
-      throws IntrospectionException {
+  private void validateParameterRiskLevels(String name, Object object) throws IntrospectionException {
     BeanInfo bean = Introspector.getBeanInfo(object.getClass());
 
     Arrays.stream(bean.getPropertyDescriptors())
@@ -78,8 +77,7 @@ public class ExposureConfigurationValidator extends ConfigurationValidator {
         .forEach(propertyDescriptor -> validateScore(propertyDescriptor, object, name));
   }
 
-  private void validateScore(
-      PropertyDescriptor propertyDescriptor, Object object, String parameter) {
+  private void validateScore(PropertyDescriptor propertyDescriptor, Object object, String parameter) {
     try {
       RiskLevel level = (RiskLevel) propertyDescriptor.getReadMethod().invoke(object);
 
@@ -87,8 +85,7 @@ public class ExposureConfigurationValidator extends ConfigurationValidator {
         this.errors.add(new RiskLevelValidationError(parameter, propertyDescriptor.getName()));
       }
     } catch (IllegalAccessException | InvocationTargetException e) {
-      throw new ValidationExecutionException(
-          "Unable to read property " + propertyDescriptor.getName(), e);
+      throw new ValidationExecutionException("Unable to read property " + propertyDescriptor.getName(), e);
     }
   }
 
@@ -113,7 +110,6 @@ public class ExposureConfigurationValidator extends ConfigurationValidator {
 
     return bd.scale() <= ParameterSpec.WEIGHT_MAX_DECIMALS;
   }
-
 
   private boolean isOutOfRange(double min, double max, double x) {
     return x < min || x > max;

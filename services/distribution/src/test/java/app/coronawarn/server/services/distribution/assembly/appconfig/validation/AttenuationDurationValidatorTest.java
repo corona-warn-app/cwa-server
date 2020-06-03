@@ -43,7 +43,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 
-public class AttenuationDurationValidatorTest {
+class AttenuationDurationValidatorTest {
   private static final Thresholds VALID_THRESHOLDS =
       buildThresholds(ATTENUATION_DURATION_THRESHOLD_MIN, ATTENUATION_DURATION_THRESHOLD_MAX);
   private static final Weights VALID_WEIGHTS =
