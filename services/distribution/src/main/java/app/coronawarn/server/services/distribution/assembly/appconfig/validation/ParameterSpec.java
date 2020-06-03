@@ -63,4 +63,19 @@ public class ParameterSpec {
    * The allowed maximum value for an attenuation threshold.
    */
   public static final int ATTENUATION_DURATION_THRESHOLD_MAX = 100;
+
+  /**
+   * The allowed minimum value for an attenuation weight.
+   */
+  public static final double ATTENUATION_DURATION_WEIGHT_MIN = .0;
+
+  /**
+   * The allowed maximum value for an attenuation weight.
+   */
+  public static final double ATTENUATION_DURATION_WEIGHT_MAX = 1.;
+
+  /**
+   * Maximum number of allowed decimals for an attenuation weight.
+   */
+  public static final int ATTENUATION_DURATION_WEIGHT_MAX_DECIMALS = 3;
 }
