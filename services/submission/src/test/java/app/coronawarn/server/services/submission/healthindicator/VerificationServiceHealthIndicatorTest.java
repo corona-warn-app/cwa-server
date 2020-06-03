@@ -57,28 +57,28 @@ class VerificationServiceHealthIndicatorTest {
   }
 
   @Test
-  void checkUpForRunningVerificationServerIsHealthy() throws Exception {
+  void checkIsHealthyIfVerificationServerIsRunning() throws Exception {
     when(verificationServerClient.verifyTan(any())).thenThrow(FeignException.NotFound.class);
     mvc.perform(get("/actuator/health"))
         .andExpect(status().is2xxSuccessful()).andReturn();
   }
 
   @Test
-  void checkUpForVerificationServerDownIsUnhealthy() throws Exception {
+  void checkIsUnhealthyIfVerificationServerIsDown() throws Exception {
     when(verificationServerClient.verifyTan(any())).thenThrow(FeignException.InternalServerError.class);
     mvc.perform(get("/actuator/health"))
         .andExpect(status().isServiceUnavailable()).andReturn();
   }
 
   @Test
-  void checkUpForVerificationServerDownIsNotReady() throws Exception {
+  void checkIsNotReadyIfVerificationServerIsDown() throws Exception {
     when(verificationServerClient.verifyTan(any())).thenThrow(FeignException.InternalServerError.class);
     mvc.perform(get("/actuator/health/readiness"))
         .andExpect(status().isServiceUnavailable()).andReturn();
   }
 
   @Test
-  void checkUpForVerificationServerDownIsAliveAnyway() throws Exception {
+  void checkIsAliveEvenIfVerificationServerIsDown() throws Exception {
     when(verificationServerClient.verifyTan(any())).thenThrow(FeignException.InternalServerError.class);
     mvc.perform(get("/actuator/health/liveness"))
         .andExpect(status().is2xxSuccessful()).andReturn();
