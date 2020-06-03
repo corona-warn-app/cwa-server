@@ -178,7 +178,7 @@ class S3ClientWrapperTest {
   @ValueSource(classes = {NoSuchBucketException.class, S3Exception.class, SdkClientException.class, SdkException.class})
   void shouldAttemptToGetObjectsThreeTimesAndThenThrow(Class<Exception> cause) {
     when(s3Client.listObjectsV2(any(ListObjectsV2Request.class))).thenThrow(cause);
-    assertThatExceptionOfType(NoSuchBucketException.class)
+    assertThatExceptionOfType(ObjectStoreOperationFailedException.class)
         .isThrownBy(() -> s3ClientWrapper.getObjects(VALID_BUCKET_NAME, VALID_PREFIX));
 
     verify(s3Client, times(3)).listObjectsV2(any(ListObjectsV2Request.class));

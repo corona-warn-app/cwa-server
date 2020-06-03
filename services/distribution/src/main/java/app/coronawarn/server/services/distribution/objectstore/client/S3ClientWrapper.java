@@ -110,7 +110,8 @@ public class S3ClientWrapper implements ObjectStoreClient {
 
   @Override
   @Retryable(value = {SdkException.class,
-      ObjectStoreOperationFailedException.class}, maxAttempts = 3, backoff = @Backoff(2000L), recover = "recoverRemoveObjects")
+      ObjectStoreOperationFailedException.class}, maxAttempts = 3, backoff = @Backoff(2000L),
+      recover = "recoverRemoveObjects")
   public void removeObjects(String bucket, List<String> objectNames) {
     if (objectNames.isEmpty()) {
       return;
