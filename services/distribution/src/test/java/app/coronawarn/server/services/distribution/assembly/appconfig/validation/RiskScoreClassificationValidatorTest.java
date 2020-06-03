@@ -166,7 +166,7 @@ class RiskScoreClassificationValidatorTest {
     return RiskScoreClass.newBuilder().setLabel(label).setMin(min).setMax(max).setUrl(url).build();
   }
 
-  public static ValidationResult buildExpectedResult(GeneralValidationError... errors) {
+  public static ValidationResult buildExpectedResult(ValidationError... errors) {
     var validationResult = new ValidationResult();
     Arrays.stream(errors).forEach(validationResult::add);
     return validationResult;
