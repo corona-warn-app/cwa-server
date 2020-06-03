@@ -45,7 +45,7 @@ management:
     health:
       group:
         readiness:
-          include: db
+          include: db, verificationService
           show-details: always
   endpoints:
     web:

@@ -26,7 +26,7 @@ import java.util.UUID;
 /**
  * A representation of a tan.
  */
-class Tan {
+public class Tan {
   private final UUID tan;
 
   private Tan(UUID tan) {
