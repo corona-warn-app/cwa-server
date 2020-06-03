@@ -1,7 +1,5 @@
 min-risk-score: 100
-attenuationDurationThresholds:
-  lower: 50
-  upper: 70
+attenuation-duration: !include attenuation-duration.yaml
 risk-score-classes: !include risk-score-class_ok.yaml
 exposure-config: !include exposure-config_ok.yaml
 app-version: !include app-version-config_ok.yaml
