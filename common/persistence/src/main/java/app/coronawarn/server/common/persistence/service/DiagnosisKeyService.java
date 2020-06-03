@@ -32,7 +32,6 @@ import java.util.stream.Collectors;
 import javax.validation.ConstraintViolation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.stereotype.Component;
@@ -44,7 +43,6 @@ public class DiagnosisKeyService {
   private static final Logger logger = LoggerFactory.getLogger(DiagnosisKeyService.class);
   private final DiagnosisKeyRepository keyRepository;
 
-  @Autowired
   public DiagnosisKeyService(DiagnosisKeyRepository keyRepository) {
     this.keyRepository = keyRepository;
   }

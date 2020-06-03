@@ -32,7 +32,6 @@ import java.time.temporal.ChronoUnit;
 import java.util.Collection;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 /**
@@ -44,8 +43,7 @@ public class DiagnosisKeysStructureProvider {
   private static final Logger logger = LoggerFactory
       .getLogger(DiagnosisKeysStructureProvider.class);
 
-  @Autowired
-  private DiagnosisKeyBundler diagnosisKeyBundler;
+  private final DiagnosisKeyBundler diagnosisKeyBundler;
   private final DiagnosisKeyService diagnosisKeyService;
   private final CryptoProvider cryptoProvider;
   private final DistributionServiceConfig distributionServiceConfig;
@@ -54,10 +52,11 @@ public class DiagnosisKeysStructureProvider {
    * Creates a new DiagnosisKeysStructureProvider.
    */
   DiagnosisKeysStructureProvider(DiagnosisKeyService diagnosisKeyService, CryptoProvider cryptoProvider,
-      DistributionServiceConfig distributionServiceConfig) {
+      DistributionServiceConfig distributionServiceConfig, DiagnosisKeyBundler diagnosisKeyBundler) {
     this.diagnosisKeyService = diagnosisKeyService;
     this.cryptoProvider = cryptoProvider;
     this.distributionServiceConfig = distributionServiceConfig;
+    this.diagnosisKeyBundler = diagnosisKeyBundler;
   }
 
   /**
