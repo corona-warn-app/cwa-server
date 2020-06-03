@@ -29,7 +29,6 @@ import java.net.URI;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.util.Collection;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -50,7 +49,6 @@ public class RequestExecutor {
   private static final URI SUBMISSION_URL = URI.create("/version/v1/diagnosis-keys");
   private final TestRestTemplate testRestTemplate;
 
-  @Autowired
   public RequestExecutor(TestRestTemplate testRestTemplate) {
     this.testRestTemplate = testRestTemplate;
   }
