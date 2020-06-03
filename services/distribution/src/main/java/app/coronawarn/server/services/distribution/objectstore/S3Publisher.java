@@ -79,11 +79,7 @@ public class S3Publisher {
 
     logger.info("Beginning upload... ");
     for (LocalFile file : diff) {
-      try {
-        this.access.putObject(file);
-      } catch (Exception e) {
-        logger.error("Cannot upload file! ", e);
-      }
+      this.access.putObject(file);
     }
     logger.info("Upload completed.");
   }

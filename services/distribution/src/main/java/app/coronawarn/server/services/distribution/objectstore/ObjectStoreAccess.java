@@ -101,11 +101,7 @@ public class ObjectStoreAccess {
     Map<HeaderKey, String> headers = createHeaders(maxAge);
 
     logger.info("... uploading {}", s3Key);
-    try {
-      this.client.putObject(bucket, s3Key, localFile.getFile(), headers);
-    } catch (Exception e) {
-      logger.error("Cannot upload file! ", e);
-    }
+    this.client.putObject(bucket, s3Key, localFile.getFile(), headers);
   }
 
   /**
