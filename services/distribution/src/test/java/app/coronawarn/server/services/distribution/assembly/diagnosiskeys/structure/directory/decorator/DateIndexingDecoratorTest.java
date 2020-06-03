@@ -27,6 +27,7 @@ import app.coronawarn.server.common.persistence.domain.DiagnosisKey;
 import app.coronawarn.server.services.distribution.assembly.component.CryptoProvider;
 import app.coronawarn.server.services.distribution.assembly.diagnosiskeys.DiagnosisKeyBundler;
 import app.coronawarn.server.services.distribution.assembly.diagnosiskeys.ProdDiagnosisKeyBundler;
+import app.coronawarn.server.services.distribution.assembly.diagnosiskeys.structure.directory.DiagnosisKeysDateDirectory;
 import app.coronawarn.server.services.distribution.assembly.diagnosiskeys.structure.directory.DiagnosisKeysHourDirectory;
 import app.coronawarn.server.services.distribution.assembly.structure.util.ImmutableStack;
 import app.coronawarn.server.services.distribution.config.DistributionServiceConfig;
@@ -49,7 +50,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration(classes = {CryptoProvider.class, DistributionServiceConfig.class},
     initializers = ConfigFileApplicationContextInitializer.class)
-public class HourIndexingDecoratorTest {
+public class DateIndexingDecoratorTest {
 
   @Autowired
   DistributionServiceConfig distributionServiceConfig;
@@ -65,40 +66,40 @@ public class HourIndexingDecoratorTest {
   }
 
   @Test
-  void excludesEmptyHoursFromIndex() {
+  void excludesEmptyDatesFromIndex() {
     List<DiagnosisKey> diagnosisKeys = Stream
-        .of(buildDiagnosisKeys(6, LocalDateTime.of(1970, 1, 3, 4, 0), 5),
-            buildDiagnosisKeys(6, LocalDateTime.of(1970, 1, 3, 5, 0), 0),
-            buildDiagnosisKeys(6, LocalDateTime.of(1970, 1, 3, 6, 0), 5))
+        .of(buildDiagnosisKeys(6, LocalDateTime.of(1970, 1, 3, 0, 0), 5),
+            buildDiagnosisKeys(6, LocalDateTime.of(1970, 1, 4, 0, 0), 0),
+            buildDiagnosisKeys(6, LocalDateTime.of(1970, 1, 5, 0, 0), 5))
         .flatMap(List::stream)
         .collect(Collectors.toList());
-    diagnosisKeyBundler.setDiagnosisKeys(diagnosisKeys, LocalDateTime.of(1970, 1, 5, 0, 0));
-    HourIndexingDecorator decorator = makeDecoratedHourDirectory(diagnosisKeyBundler);
-    decorator.prepare(new ImmutableStack<>().push("DE").push(LocalDate.of(1970, 1, 3)));
+    diagnosisKeyBundler.setDiagnosisKeys(diagnosisKeys, LocalDateTime.of(1970, 1, 6, 0, 0));
+    DateIndexingDecorator decorator = makeDecoratedDateDirectory(diagnosisKeyBundler);
+    decorator.prepare(new ImmutableStack<>().push("DE"));
 
-    Set<LocalDateTime> index = decorator.getIndex(new ImmutableStack<>().push(LocalDate.of(1970, 1, 3)));
+    Set<LocalDate> index = decorator.getIndex(new ImmutableStack<>());
 
-    assertThat(index).contains(LocalDateTime.of(1970, 1, 3, 4, 0));
-    assertThat(index).doesNotContain(LocalDateTime.of(1970, 1, 3, 5, 0));
-    assertThat(index).contains(LocalDateTime.of(1970, 1, 3, 6, 0));
+    assertThat(index).contains(LocalDate.of(1970, 1, 3));
+    assertThat(index).doesNotContain(LocalDate.of(1970, 1, 4));
+    assertThat(index).contains(LocalDate.of(1970, 1, 5));
   }
 
   @Test
-  void excludesCurrentHourFromIndex() {
-    List<DiagnosisKey> diagnosisKeys = buildDiagnosisKeys(6, LocalDateTime.of(1970, 1, 5, 0, 0), 5);
-    diagnosisKeyBundler.setDiagnosisKeys(diagnosisKeys, LocalDateTime.of(1970, 1, 5, 1, 0));
-    HourIndexingDecorator decorator = makeDecoratedHourDirectory(diagnosisKeyBundler);
-    decorator.prepare(new ImmutableStack<>().push("DE").push(LocalDate.of(1970, 1, 5)));
+  void excludesCurrentDateFromIndex() {
+    List<DiagnosisKey> diagnosisKeys = buildDiagnosisKeys(6, LocalDateTime.of(1970, 1, 4, 0, 0), 5);
+    diagnosisKeyBundler.setDiagnosisKeys(diagnosisKeys, LocalDateTime.of(1970, 1, 5, 0, 0));
+    DateIndexingDecorator decorator = makeDecoratedDateDirectory(diagnosisKeyBundler);
+    decorator.prepare(new ImmutableStack<>().push("DE"));
 
-    Set<LocalDateTime> index = decorator.getIndex(new ImmutableStack<>().push(LocalDate.of(1970, 1, 5)));
+    Set<LocalDate> index = decorator.getIndex(new ImmutableStack<>());
 
-    assertThat(index).contains(LocalDateTime.of(1970, 1, 5, 0, 0));
-    assertThat(index).doesNotContain(LocalDateTime.of(1970, 1, 5, 1, 0));
+    assertThat(index).contains(LocalDate.of(1970, 1, 4));
+    assertThat(index).doesNotContain(LocalDate.of(1970, 1, 5));
   }
 
-  private HourIndexingDecorator makeDecoratedHourDirectory(DiagnosisKeyBundler diagnosisKeyBundler) {
-    return new HourIndexingDecorator(
-        new DiagnosisKeysHourDirectory(diagnosisKeyBundler, cryptoProvider, distributionServiceConfig),
+  private DateIndexingDecorator makeDecoratedDateDirectory(DiagnosisKeyBundler diagnosisKeyBundler) {
+    return new DateIndexingDecorator(
+        new DiagnosisKeysDateDirectory(diagnosisKeyBundler, cryptoProvider, distributionServiceConfig),
         distributionServiceConfig
     );
   }

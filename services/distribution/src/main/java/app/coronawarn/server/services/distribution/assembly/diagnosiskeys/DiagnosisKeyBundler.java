@@ -54,41 +54,16 @@ public abstract class DiagnosisKeyBundler {
   protected final int minNumberOfKeysPerBundle;
   protected final long expiryPolicyMinutes;
 
+  // The hour at which the distribution runs. This field is needed to prevent the run from distributing any keys that
+  // have already been submitted but may only be distributed in the future (e.g. because they are not expired yet).
+  protected LocalDateTime distributionTime;
+
   // A map containing diagnosis keys, grouped by the LocalDateTime on which they may be distributed
   protected final Map<LocalDateTime, List<DiagnosisKey>> distributableDiagnosisKeys = new HashMap<>();
 
   public DiagnosisKeyBundler(DistributionServiceConfig distributionServiceConfig) {
     this.minNumberOfKeysPerBundle = distributionServiceConfig.getShiftingPolicyThreshold();
     this.expiryPolicyMinutes = distributionServiceConfig.getExpiryPolicyMinutes();
-  }
-
-  /**
-   * Returns a set of all {@link LocalDate dates} that are associated with the submission timestamps of the specified
-   * {@link DiagnosisKey diagnosis keys}.
-   */
-  public Set<LocalDate> getDates(Collection<DiagnosisKey> diagnosisKeys) {
-
-    return this.getDiagnosisKeysDistributableAt()
-
-        /*
-    return diagnosisKeys.stream()
-        .map(DiagnosisKey::getSubmissionTimestamp)
-        .map(timestamp -> LocalDate.ofEpochDay(timestamp / 24))
-        .collect(Collectors.toSet());
-
-         */
-  }
-
-  /**
-   * Returns a set of all {@link LocalDateTime hours} that are associated with the submission timestamps of the
-   * specified {@link DiagnosisKey diagnosis keys} and the specified {@link LocalDate date}.
-   */
-  public Set<LocalDateTime> getHours(LocalDate currentDate, Collection<DiagnosisKey> diagnosisKeys) {
-    return diagnosisKeys.stream()
-        .map(DiagnosisKey::getSubmissionTimestamp)
-        .map(DiagnosisKeyBundler::getLocalDateTimeFromHoursSinceEpoch)
-        .filter(currentDateTime -> currentDateTime.toLocalDate().equals(currentDate))
-        .collect(Collectors.toSet());
   }
 
   /**
@@ -99,11 +74,15 @@ public abstract class DiagnosisKeyBundler {
   }
 
   /**
-   * Sets the {@link DiagnosisKey DiagnosisKeys} contained by this {@link DiagnosisKeyBundler} and calls {@link
-   * DiagnosisKeyBundler#createDiagnosisKeyDistributionMap}.
+   * Sets the {@link DiagnosisKey DiagnosisKeys} contained by this {@link DiagnosisKeyBundler} and the time at which the
+   * distribution runs and calls {@link DiagnosisKeyBundler#createDiagnosisKeyDistributionMap}.
+   *
+   * @param diagnosisKeys    The {@link DiagnosisKey DiagnosisKeys} contained by this {@link DiagnosisKeyBundler}.
+   * @param distributionTime The {@link LocalDateTime} at which the distribution runs.
    */
-  public void setDiagnosisKeys(Collection<DiagnosisKey> diagnosisKeys) {
-    createDiagnosisKeyDistributionMap(diagnosisKeys);
+  public void setDiagnosisKeys(Collection<DiagnosisKey> diagnosisKeys, LocalDateTime distributionTime) {
+    this.distributionTime = distributionTime;
+    this.createDiagnosisKeyDistributionMap(diagnosisKeys);
   }
 
   /**
@@ -122,9 +101,23 @@ public abstract class DiagnosisKeyBundler {
   protected abstract void createDiagnosisKeyDistributionMap(Collection<DiagnosisKey> diagnosisKeys);
 
   /**
-   * Returns all diagnosis keys that should be distributed in a specific hour.
+   * Returns a set of all {@link LocalDate dates} on which {@link DiagnosisKey diagnosis keys} shall be distributed.
    */
-  public abstract List<DiagnosisKey> getDiagnosisKeysDistributableAt(LocalDateTime hour);
+  public Set<LocalDate> getDatesWithDistributableDiagnosisKeys() {
+    return this.distributableDiagnosisKeys.keySet().stream()
+        .map(LocalDateTime::toLocalDate)
+        .collect(Collectors.toSet());
+  }
+
+  /**
+   * Returns a set of all {@link LocalDateTime hours} of a specified {@link LocalDate date} during which {@link
+   * DiagnosisKey diagnosis keys} shall be distributed.
+   */
+  public Set<LocalDateTime> getHoursWithDistributableDiagnosisKeys(LocalDate currentDate) {
+    return this.distributableDiagnosisKeys.keySet().stream()
+        .filter(dateTime -> dateTime.toLocalDate().equals(currentDate))
+        .collect(Collectors.toSet());
+  }
 
   /**
    * Returns the submission timestamp of a {@link DiagnosisKey} as a {@link LocalDateTime}.
@@ -134,9 +127,20 @@ public abstract class DiagnosisKeyBundler {
   }
 
   /**
+   * Returns all diagnosis keys that should be distributed on a specific date.
+   */
+  public List<DiagnosisKey> getDiagnosisKeysForDate(LocalDate date) {
+    return this.distributableDiagnosisKeys.keySet().stream()
+        .filter(dateTime -> dateTime.toLocalDate().equals(date))
+        .map(this::getDiagnosisKeysForHour)
+        .flatMap(List::stream)
+        .collect(Collectors.toList());
+  }
+
+  /**
    * Returns all diagnosis keys that should be distributed in a specific hour.
    */
-  protected List<DiagnosisKey> getDiagnosisKeysForHour(LocalDateTime hour) {
+  public List<DiagnosisKey> getDiagnosisKeysForHour(LocalDateTime hour) {
     return Optional
         .ofNullable(this.distributableDiagnosisKeys.get(hour))
         .orElse(emptyList());

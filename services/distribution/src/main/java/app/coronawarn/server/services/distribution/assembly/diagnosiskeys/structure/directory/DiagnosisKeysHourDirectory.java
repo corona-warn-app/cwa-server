@@ -52,8 +52,9 @@ public class DiagnosisKeysHourDirectory extends IndexDirectoryOnDisk<LocalDateTi
    */
   public DiagnosisKeysHourDirectory(DiagnosisKeyBundler diagnosisKeyBundler, CryptoProvider cryptoProvider,
       DistributionServiceConfig distributionServiceConfig) {
-    super(distributionServiceConfig.getApi().getHourPath(), indices -> DiagnosisKeyBundler.getHours(((LocalDate) indices.peek()),
-        diagnosisKeyBundler.getAllDiagnosisKeys()), LocalDateTime::getHour);
+    super(distributionServiceConfig.getApi().getHourPath(),
+        indices -> diagnosisKeyBundler.getHoursWithDistributableDiagnosisKeys(((LocalDate) indices.peek())),
+        LocalDateTime::getHour);
     this.diagnosisKeyBundler = diagnosisKeyBundler;
     this.cryptoProvider = cryptoProvider;
     this.distributionServiceConfig = distributionServiceConfig;
@@ -69,7 +70,7 @@ public class DiagnosisKeysHourDirectory extends IndexDirectoryOnDisk<LocalDateTi
       String region = (String) currentIndices.pop().pop().peek();
 
       List<DiagnosisKey> diagnosisKeysForCurrentHour =
-          this.diagnosisKeyBundler.getDiagnosisKeysDistributableAt(currentHour);
+          this.diagnosisKeyBundler.getDiagnosisKeysForHour(currentHour);
 
       long startTimestamp = currentHour.toEpochSecond(ZoneOffset.UTC);
       long endTimestamp = currentHour.plusHours(1).toEpochSecond(ZoneOffset.UTC);

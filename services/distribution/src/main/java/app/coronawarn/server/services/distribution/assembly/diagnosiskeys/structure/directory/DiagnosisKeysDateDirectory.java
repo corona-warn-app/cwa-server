@@ -45,12 +45,12 @@ public class DiagnosisKeysDateDirectory extends IndexDirectoryOnDisk<LocalDate> 
    * collection. Payload signing is be performed according to the specified {@link CryptoProvider}.
    *
    * @param diagnosisKeyBundler A {@link DiagnosisKeyBundler} containing the {@link DiagnosisKey DiagnosisKeys}.
-   * @param cryptoProvider The {@link CryptoProvider} used for payload signing.
+   * @param cryptoProvider      The {@link CryptoProvider} used for payload signing.
    */
   public DiagnosisKeysDateDirectory(DiagnosisKeyBundler diagnosisKeyBundler,
       CryptoProvider cryptoProvider, DistributionServiceConfig distributionServiceConfig) {
     super(distributionServiceConfig.getApi().getDatePath(),
-        __ -> DiagnosisKeyBundler.getDates(diagnosisKeyBundler.getAllDiagnosisKeys()), ISO8601::format);
+        __ -> diagnosisKeyBundler.getDatesWithDistributableDiagnosisKeys(), ISO8601::format);
     this.cryptoProvider = cryptoProvider;
     this.diagnosisKeyBundler = diagnosisKeyBundler;
     this.distributionServiceConfig = distributionServiceConfig;
