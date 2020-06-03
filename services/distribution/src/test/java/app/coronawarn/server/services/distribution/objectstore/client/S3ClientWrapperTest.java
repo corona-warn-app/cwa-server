@@ -27,11 +27,10 @@ import static org.assertj.core.util.Maps.newHashMap;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.atLeastOnce;
-import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
-
 
 import app.coronawarn.server.services.distribution.objectstore.client.ObjectStoreClient.HeaderKey;
 import java.nio.file.Path;
@@ -46,6 +45,10 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.junit.jupiter.params.provider.ValueSource;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.retry.annotation.EnableRetry;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import software.amazon.awssdk.core.exception.SdkClientException;
@@ -65,20 +68,31 @@ import software.amazon.awssdk.services.s3.model.S3Exception;
 import software.amazon.awssdk.utils.builder.SdkBuilder;
 
 @ExtendWith(SpringExtension.class)
-@EnableRetry
 class S3ClientWrapperTest {
 
   private static final String VALID_BUCKET_NAME = "myBucket";
   private static final String VALID_PREFIX = "prefix";
   private static final String VALID_NAME = "object key";
 
+  @MockBean
   private S3Client s3Client;
-  private S3ClientWrapper s3ClientWrapper;
+
+  @Autowired
+  private ObjectStoreClient s3ClientWrapper;
+
+  @Configuration
+  @EnableRetry
+  public static class Config {
+
+    @Bean
+    public ObjectStoreClient createS3ClientWrapper(S3Client s3Client) {
+      return new S3ClientWrapper(s3Client);
+    }
+  }
 
   @BeforeEach
   public void setUpMocks() {
-    s3Client = mock(S3Client.class);
-    s3ClientWrapper = new S3ClientWrapper(s3Client);
+    reset(s3Client);
   }
 
   @Test
