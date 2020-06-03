@@ -24,20 +24,13 @@ import static java.util.stream.Collectors.groupingBy;
 
 import app.coronawarn.server.common.persistence.domain.DiagnosisKey;
 import app.coronawarn.server.services.distribution.config.DistributionServiceConfig;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.temporal.ChronoUnit;
 import java.util.Collection;
-import java.util.List;
-import java.util.Set;
-import java.util.concurrent.TimeUnit;
-import java.util.stream.Collectors;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 
 /**
- * An instance of this class contains a collection of {@link DiagnosisKey DiagnosisKeys}, that will be distributed
- * in the same hour they have been submitted.
+ * An instance of this class contains a collection of {@link DiagnosisKey DiagnosisKeys}, that will be distributed in
+ * the same hour they have been submitted.
  */
 @Profile("demo")
 @Component

@@ -69,7 +69,7 @@ public class ProdDiagnosisKeyBundler extends DiagnosisKeyBundler {
     Map<LocalDateTime, List<DiagnosisKey>> distributableDiagnosisKeysGroupedByExpiryPolicy = new HashMap<>(
         diagnosisKeys.stream().collect(groupingBy(this::getDistributionDateTimeByExpiryPolicy)));
     LocalDateTime earliestDistributableTimestamp =
-        getEarliestDistributableTimestamp(distributableDiagnosisKeysGroupedByExpiryPolicy).get();
+        getEarliestDistributableTimestamp(distributableDiagnosisKeysGroupedByExpiryPolicy).orElseThrow();
     LocalDateTime latestDistributableTimestamp = this.distributionTime;
 
     List<DiagnosisKey> diagnosisKeyAccumulator = new ArrayList<>();

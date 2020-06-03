@@ -41,7 +41,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration(classes = {DistributionServiceConfig.class, ProdDiagnosisKeyBundler.class},
     initializers = ConfigFileApplicationContextInitializer.class)
-public class ProdDiagnosisKeyBundlerExpiryPolicyTest {
+class ProdDiagnosisKeyBundlerExpiryPolicyTest {
 
   @Autowired
   DistributionServiceConfig distributionServiceConfig;
