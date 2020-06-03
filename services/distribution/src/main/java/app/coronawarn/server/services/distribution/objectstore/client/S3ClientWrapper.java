@@ -26,8 +26,6 @@ import java.nio.file.Path;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.retry.annotation.Backoff;
 import org.springframework.retry.annotation.Recover;
 import org.springframework.retry.annotation.Retryable;
@@ -47,8 +45,6 @@ import software.amazon.awssdk.services.s3.model.PutObjectRequest;
  * Implementation of {@link ObjectStoreClient} that encapsulates an {@link S3Client}.
  */
 public class S3ClientWrapper implements ObjectStoreClient {
-
-  private static final Logger logger = LoggerFactory.getLogger(S3ClientWrapper.class);
 
   private final S3Client s3Client;
 
@@ -70,7 +66,11 @@ public class S3ClientWrapper implements ObjectStoreClient {
   }
 
   @Override
-  @Retryable(value = SdkException.class, maxAttempts = 3, backoff = @Backoff(2000L), recover = "recoverGetObjects")
+  @Retryable(
+      value = SdkException.class,
+      maxAttemptsExpression = "${services.distribution.objectstore.retry-attempts}",
+      backoff = @Backoff(delayExpression = "${services.distribution.objectstore.retry-backoff}"),
+      recover = "recoverGetObjects")
   public List<S3Object> getObjects(String bucket, String prefix) {
     ListObjectsV2Response response =
         s3Client.listObjectsV2(ListObjectsV2Request.builder().prefix(prefix).bucket(bucket).build());
@@ -79,11 +79,15 @@ public class S3ClientWrapper implements ObjectStoreClient {
 
   @Recover
   public List<S3Object> recoverGetObjects(Throwable t, String bucket, String prefix) {
-    throw new ObjectStoreOperationFailedException("Failed to upload object to object store", t);
+    throw new ObjectStoreOperationFailedException("Failed to get objects from object store", t);
   }
 
   @Override
-  @Retryable(value = SdkException.class, maxAttempts = 3, backoff = @Backoff(2000L), recover = "recoverPutObject")
+  @Retryable(
+      value = SdkException.class,
+      maxAttemptsExpression = "${services.distribution.objectstore.retry-attempts}",
+      backoff = @Backoff(delayExpression = "${services.distribution.objectstore.retry-backoff}"),
+      recover = "recoverPutObject")
   public void putObject(String bucket, String objectName, Path filePath, Map<HeaderKey, String> headers) {
     RequestBody bodyFile = RequestBody.fromFile(filePath);
 
@@ -105,8 +109,9 @@ public class S3ClientWrapper implements ObjectStoreClient {
   }
 
   @Override
-  @Retryable(value = {SdkException.class,
-      ObjectStoreOperationFailedException.class}, maxAttempts = 3, backoff = @Backoff(2000L),
+  @Retryable(value = {SdkException.class, ObjectStoreOperationFailedException.class},
+      maxAttemptsExpression = "${services.distribution.objectstore.retry-attempts}",
+      backoff = @Backoff(delayExpression = "${services.distribution.objectstore.retry-backoff}"),
       recover = "recoverRemoveObjects")
   public void removeObjects(String bucket, List<String> objectNames) {
     if (objectNames.isEmpty()) {

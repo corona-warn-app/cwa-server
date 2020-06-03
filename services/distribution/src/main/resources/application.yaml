@@ -47,6 +47,8 @@ services:
       bucket: ${CWA_OBJECTSTORE_BUCKET:cwa}
       port: ${CWA_OBJECTSTORE_PORT:8003}
       set-public-read-acl-on-put-object: true
+      retry-attempts: 3
+      retry-backoff: 2000
 
 spring:
   main:
