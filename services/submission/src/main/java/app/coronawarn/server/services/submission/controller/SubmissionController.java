@@ -36,7 +36,6 @@ import java.util.concurrent.TimeUnit;
 import org.apache.commons.math3.distribution.PoissonDistribution;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.StopWatch;
@@ -67,7 +66,6 @@ public class SubmissionController {
   private final Integer retentionDays;
   private Double fakeDelay;
 
-  @Autowired
   SubmissionController(DiagnosisKeyService diagnosisKeyService, TanVerifier tanVerifier,
       SubmissionServiceConfig submissionServiceConfig) {
     this.diagnosisKeyService = diagnosisKeyService;
