@@ -82,7 +82,7 @@ public class S3Publisher {
       try {
         this.access.putObject(file);
       } catch (Exception e) {
-        logger.error("Can't upload file! ", e);
+        logger.error("Cannot upload file! ", e);
       }
     }
     logger.info("Upload completed.");

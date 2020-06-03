@@ -52,8 +52,6 @@ public class S3ClientWrapper implements ObjectStoreClient {
 
   private final S3Client s3Client;
 
-  private static final int MAX_RETRIES = 3;
-
   public S3ClientWrapper(S3Client s3Client) {
     this.s3Client = s3Client;
   }
@@ -73,8 +71,7 @@ public class S3ClientWrapper implements ObjectStoreClient {
 
   @Override
   @Retryable(value = SdkException.class, maxAttempts = 3, backoff = @Backoff(2000L), recover = "recoverGetObjects")
-  public List<S3Object> getObjects(String bucket, String prefix) throws SdkException {
-    logger.info("here");
+  public List<S3Object> getObjects(String bucket, String prefix) {
     ListObjectsV2Response response =
         s3Client.listObjectsV2(ListObjectsV2Request.builder().prefix(prefix).bucket(bucket).build());
     return response.contents().stream().map(S3ClientWrapper::buildS3Object).collect(toList());
@@ -82,7 +79,6 @@ public class S3ClientWrapper implements ObjectStoreClient {
 
   @Recover
   public List<S3Object> recoverGetObjects(Throwable t, String bucket, String prefix) {
-    logger.info("recover");
     throw new ObjectStoreOperationFailedException("Failed to upload object to object store", t);
   }
 

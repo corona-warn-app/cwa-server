@@ -104,7 +104,7 @@ public class ObjectStoreAccess {
     try {
       this.client.putObject(bucket, s3Key, localFile.getFile(), headers);
     } catch (Exception e) {
-      logger.error("Can't upload file! ", e);
+      logger.error("Cannot upload file! ", e);
     }
   }
 
