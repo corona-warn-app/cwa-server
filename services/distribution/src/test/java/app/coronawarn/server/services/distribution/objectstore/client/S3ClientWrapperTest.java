@@ -46,6 +46,7 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.junit.jupiter.params.provider.ValueSource;
+import org.springframework.retry.annotation.EnableRetry;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import software.amazon.awssdk.core.exception.SdkClientException;
 import software.amazon.awssdk.core.exception.SdkException;
@@ -64,6 +65,7 @@ import software.amazon.awssdk.services.s3.model.S3Exception;
 import software.amazon.awssdk.utils.builder.SdkBuilder;
 
 @ExtendWith(SpringExtension.class)
+@EnableRetry
 class S3ClientWrapperTest {
 
   private static final String VALID_BUCKET_NAME = "myBucket";
@@ -162,7 +164,7 @@ class S3ClientWrapperTest {
   @ValueSource(classes = {NoSuchBucketException.class, S3Exception.class, SdkClientException.class, SdkException.class})
   void shouldAttemptToGetObjectsThreeTimesAndThenThrow(Class<Exception> cause) {
     when(s3Client.listObjectsV2(any(ListObjectsV2Request.class))).thenThrow(cause);
-    assertThatExceptionOfType(ObjectStoreOperationFailedException.class)
+    assertThatExceptionOfType(NoSuchBucketException.class)
         .isThrownBy(() -> s3ClientWrapper.getObjects(VALID_BUCKET_NAME, VALID_PREFIX));
 
     verify(s3Client, times(3)).listObjectsV2(any(ListObjectsV2Request.class));

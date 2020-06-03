@@ -22,10 +22,12 @@ package app.coronawarn.server.services.distribution.config;
 
 import app.coronawarn.server.common.protocols.external.exposurenotification.SignatureInfo;
 import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.retry.annotation.EnableRetry;
 import org.springframework.stereotype.Component;
 
 @Component
 @ConfigurationProperties(prefix = "services.distribution")
+@EnableRetry
 public class DistributionServiceConfig {
 
   private Paths paths;

@@ -28,6 +28,9 @@ import java.util.List;
 import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.retry.annotation.Backoff;
+import org.springframework.retry.annotation.Recover;
+import org.springframework.retry.annotation.Retryable;
 import software.amazon.awssdk.core.exception.SdkException;
 import software.amazon.awssdk.core.sync.RequestBody;
 import software.amazon.awssdk.services.s3.S3Client;
@@ -69,28 +72,24 @@ public class S3ClientWrapper implements ObjectStoreClient {
   }
 
   @Override
-  public List<S3Object> getObjects(String bucket, String prefix) {
-    int currentTry = 0;
+  @Retryable(value = SdkException.class, maxAttempts = 3, backoff = @Backoff(2000L), recover = "recoverGetObjects")
+  public List<S3Object> getObjects(String bucket, String prefix) throws SdkException {
+    logger.info("here");
+    ListObjectsV2Response response =
+        s3Client.listObjectsV2(ListObjectsV2Request.builder().prefix(prefix).bucket(bucket).build());
+    return response.contents().stream().map(S3ClientWrapper::buildS3Object).collect(toList());
+  }
 
-    while (true) {
-      currentTry++;
-      try {
-        ListObjectsV2Response response =
-            s3Client.listObjectsV2(ListObjectsV2Request.builder().prefix(prefix).bucket(bucket).build());
-        return response.contents().stream().map(S3ClientWrapper::buildS3Object).collect(toList());
-      } catch (SdkException e) {
-        if (currentTry >= MAX_RETRIES) {
-          throw new ObjectStoreOperationFailedException("Failed to upload object to object store", e);
-        }
-        logger.debug("Failed to upload object to object store. Attempt {} of {}", currentTry, MAX_RETRIES);
-      }
-    }
+  @Recover
+  public List<S3Object> recoverGetObjects(Throwable t, String bucket, String prefix) {
+    logger.info("recover");
+    throw new ObjectStoreOperationFailedException("Failed to upload object to object store", t);
   }
 
   @Override
+  @Retryable(value = SdkException.class, maxAttempts = 3, backoff = @Backoff(2000L), recover = "recoverPutObject")
   public void putObject(String bucket, String objectName, Path filePath, Map<HeaderKey, String> headers) {
     RequestBody bodyFile = RequestBody.fromFile(filePath);
-    int currentTry = 0;
 
     var requestBuilder = PutObjectRequest.builder().bucket(bucket).key(objectName);
     if (headers.containsKey(HeaderKey.AMZ_ACL)) {
@@ -100,24 +99,19 @@ public class S3ClientWrapper implements ObjectStoreClient {
       requestBuilder.cacheControl(headers.get(HeaderKey.CACHE_CONTROL));
     }
 
-    while (true) {
-      currentTry++;
-      try {
-        s3Client.putObject(requestBuilder.build(), bodyFile);
-        break;
-      } catch (SdkException e) {
-        if (currentTry >= MAX_RETRIES) {
-          throw new ObjectStoreOperationFailedException("Failed to upload object to object store", e);
-        }
-        logger.debug("Failed to upload object to object store. Attempt {} of {}", currentTry, MAX_RETRIES);
-      }
-    }
+    s3Client.putObject(requestBuilder.build(), bodyFile);
+  }
+
+  @Recover
+  public void recoverPutObject(Throwable t, String bucket, String objectName, Path filePath,
+      Map<HeaderKey, String> headers) {
+    throw new ObjectStoreOperationFailedException("Failed to upload object to object store", t);
   }
 
   @Override
+  @Retryable(value = {SdkException.class,
+      ObjectStoreOperationFailedException.class}, maxAttempts = 3, backoff = @Backoff(2000L), recover = "recoverRemoveObjects")
   public void removeObjects(String bucket, List<String> objectNames) {
-    int currentTry = 0;
-
     if (objectNames.isEmpty()) {
       return;
     }
@@ -125,31 +119,19 @@ public class S3ClientWrapper implements ObjectStoreClient {
     Collection<ObjectIdentifier> identifiers = objectNames.stream()
         .map(key -> ObjectIdentifier.builder().key(key).build()).collect(toList());
 
-    while (true) {
-      currentTry++;
-      try {
-        DeleteObjectsResponse response = s3Client.deleteObjects(
-            DeleteObjectsRequest.builder()
-                .bucket(bucket)
-                .delete(Delete.builder().objects(identifiers).build()).build());
+    DeleteObjectsResponse response = s3Client.deleteObjects(
+        DeleteObjectsRequest.builder()
+            .bucket(bucket)
+            .delete(Delete.builder().objects(identifiers).build()).build());
 
-        if (response.hasErrors()) {
-          String errMessage = "Failed to remove objects from object store.";
-          if (currentTry >= MAX_RETRIES) {
-            logger.error("{} {}", errMessage, response.errors());
-            throw new ObjectStoreOperationFailedException(errMessage);
-          }
-          logger.debug("Failed to remove objects from object store. Attempt {} of {}", currentTry, MAX_RETRIES);
-        } else {
-          break;
-        }
-      } catch (SdkException e) {
-        if (currentTry >= MAX_RETRIES) {
-          throw new ObjectStoreOperationFailedException("Failed to remove objects from object store.", e);
-        }
-        logger.debug("Failed to remove objects from object store. Attempt {} of {}", currentTry, MAX_RETRIES);
-      }
+    if (response.hasErrors()) {
+      throw new ObjectStoreOperationFailedException("Failed to remove objects from object store.");
     }
+  }
+
+  @Recover
+  public void recoverRemoveObjects(Throwable t, String bucket, List<String> objectNames) {
+    throw new ObjectStoreOperationFailedException("Failed to remove objects from object store.", t);
   }
 
   private static S3Object buildS3Object(software.amazon.awssdk.services.s3.model.S3Object s3Object) {
