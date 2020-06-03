@@ -20,8 +20,8 @@
 
 package app.coronawarn.server.services.distribution.runner;
 
-import static app.coronawarn.server.services.distribution.assembly.diagnosiskeys.util.DateTime.ONE_HOUR_INTERVAL_SECONDS;
-import static app.coronawarn.server.services.distribution.assembly.diagnosiskeys.util.DateTime.TEN_MINUTES_INTERVAL_SECONDS;
+import static app.coronawarn.server.services.distribution.assembly.diagnosiskeys.DiagnosisKeyBundler.ONE_HOUR_INTERVAL_SECONDS;
+import static app.coronawarn.server.services.distribution.assembly.diagnosiskeys.DiagnosisKeyBundler.TEN_MINUTES_INTERVAL_SECONDS;
 
 import app.coronawarn.server.common.persistence.domain.DiagnosisKey;
 import app.coronawarn.server.common.persistence.service.DiagnosisKeyService;
