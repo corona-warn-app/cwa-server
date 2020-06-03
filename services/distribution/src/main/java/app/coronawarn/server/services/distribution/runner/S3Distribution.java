@@ -58,7 +58,7 @@ public class S3Distribution implements ApplicationRunner {
       S3Publisher s3Publisher = new S3Publisher(pathToDistribute, objectStoreAccess);
 
       s3Publisher.publish();
-      logger.info("Data pushed to CDN successfully.");
+      logger.info("Data pushed to Object Store successfully.");
     } catch (UnsupportedOperationException | ObjectStoreOperationFailedException | IOException e) {
       logger.error("Distribution failed.", e);
     }
