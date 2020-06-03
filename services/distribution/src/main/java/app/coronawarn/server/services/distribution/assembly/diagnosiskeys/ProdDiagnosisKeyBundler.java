@@ -20,7 +20,6 @@
 
 package app.coronawarn.server.services.distribution.assembly.diagnosiskeys;
 
-import static app.coronawarn.server.services.distribution.assembly.diagnosiskeys.util.DateTime.TEN_MINUTES_INTERVAL_SECONDS;
 import static java.time.ZoneOffset.UTC;
 import static java.util.Collections.emptyList;
 import static java.util.stream.Collectors.groupingBy;
@@ -30,11 +29,13 @@ import app.coronawarn.server.services.distribution.config.DistributionServiceCon
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
+import java.util.stream.LongStream;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 
@@ -57,55 +58,38 @@ public class ProdDiagnosisKeyBundler extends DiagnosisKeyBundler {
 
   /**
    * Initializes the internal {@code distributableDiagnosisKeys} map, grouping the diagnosis keys by the date on which
-   * they may be distributed, while respecting the expiry policy.
+   * they may be distributed, while respecting the expiry and shifting policies.
    */
   @Override
   protected void createDiagnosisKeyDistributionMap(Collection<DiagnosisKey> diagnosisKeys) {
     this.distributableDiagnosisKeys.clear();
-    this.distributableDiagnosisKeys.putAll(diagnosisKeys.stream().collect(groupingBy(this::getDistributionDateTime)));
+    if (diagnosisKeys.isEmpty()) {
+      return;
+    }
+    Map<LocalDateTime, List<DiagnosisKey>> distributableDiagnosisKeysGroupedByExpiryPolicy = new HashMap<>(
+        diagnosisKeys.stream().collect(groupingBy(this::getDistributionDateTimeByExpiryPolicy)));
+    LocalDateTime earliestDistributableTimestamp =
+        getEarliestDistributableTimestamp(distributableDiagnosisKeysGroupedByExpiryPolicy).orElseThrow();
+    LocalDateTime latestDistributableTimestamp = this.distributionTime;
+
+    List<DiagnosisKey> diagnosisKeyAccumulator = new ArrayList<>();
+    LongStream.range(0, earliestDistributableTimestamp.until(latestDistributableTimestamp, ChronoUnit.HOURS))
+        .forEach(hourCounter -> {
+          LocalDateTime currentHour = earliestDistributableTimestamp.plusHours(hourCounter);
+          Collection<DiagnosisKey> currentHourDiagnosisKeys = Optional
+              .ofNullable(distributableDiagnosisKeysGroupedByExpiryPolicy.get(currentHour))
+              .orElse(emptyList());
+          diagnosisKeyAccumulator.addAll(currentHourDiagnosisKeys);
+          if (diagnosisKeyAccumulator.size() >= minNumberOfKeysPerBundle) {
+            this.distributableDiagnosisKeys.put(currentHour, new ArrayList<>(diagnosisKeyAccumulator));
+            diagnosisKeyAccumulator.clear();
+          }
+        });
   }
 
-  /**
-   * Returns all diagnosis keys that should be distributed in a specific hour, while respecting the shifting and expiry
-   * policies.
-   */
-  @Override
-  public List<DiagnosisKey> getDiagnosisKeysDistributableAt(LocalDateTime hour) {
-    List<DiagnosisKey> keysSinceLastDistribution = getKeysSinceLastDistribution(hour);
-    if (keysSinceLastDistribution.size() >= minNumberOfKeysPerBundle) {
-      return keysSinceLastDistribution;
-    } else {
-      return emptyList();
-    }
-  }
-
-  /**
-   * Returns a all distributable keys between a specific hour and the last distribution (bundle that was above the
-   * shifting threshold) or the earliest distributable key.
-   */
-  private List<DiagnosisKey> getKeysSinceLastDistribution(LocalDateTime hour) {
-    Optional<LocalDateTime> earliestDistributableTimestamp = getEarliestDistributableTimestamp();
-    if (earliestDistributableTimestamp.isEmpty() || hour.isBefore(earliestDistributableTimestamp.get())) {
-      return emptyList();
-    }
-    List<DiagnosisKey> distributableInCurrentHour = getDiagnosisKeysForHour(hour);
-    if (distributableInCurrentHour.size() >= minNumberOfKeysPerBundle) {
-      return distributableInCurrentHour;
-    }
-    LocalDateTime previousHour = hour.minusHours(1);
-    Collection<DiagnosisKey> distributableInPreviousHour = getDiagnosisKeysDistributableAt(previousHour);
-    if (distributableInPreviousHour.size() >= minNumberOfKeysPerBundle) {
-      // Last hour was distributed, so we can not combine the current hour with the last hour
-      return distributableInCurrentHour;
-    } else {
-      // Last hour was not distributed, so we can combine the current hour with the last hour
-      return Stream.concat(distributableInCurrentHour.stream(), getKeysSinceLastDistribution(previousHour).stream())
-          .collect(Collectors.toList());
-    }
-  }
-
-  private Optional<LocalDateTime> getEarliestDistributableTimestamp() {
-    return this.distributableDiagnosisKeys.keySet().stream().min(LocalDateTime::compareTo);
+  private static Optional<LocalDateTime> getEarliestDistributableTimestamp(
+      Map<LocalDateTime, List<DiagnosisKey>> distributableDiagnosisKeys) {
+    return distributableDiagnosisKeys.keySet().stream().min(LocalDateTime::compareTo);
   }
 
   /**
@@ -118,12 +102,13 @@ public class ProdDiagnosisKeyBundler extends DiagnosisKeyBundler {
   }
 
   /**
-   * Calculates the earliest point in time at which the specified {@link DiagnosisKey} can be distributed. Before keys
-   * are allowed to be distributed, they must be expired for a configured amount of time.
+   * Calculates the earliest point in time at which the specified {@link DiagnosisKey} can be distributed, while
+   * respecting the expiry policy and the submission timestamp. Before keys are allowed to be distributed, they must be
+   * expired for a configured amount of time.
    *
    * @return {@link LocalDateTime} at which the specified {@link DiagnosisKey} can be distributed.
    */
-  private LocalDateTime getDistributionDateTime(DiagnosisKey diagnosisKey) {
+  private LocalDateTime getDistributionDateTimeByExpiryPolicy(DiagnosisKey diagnosisKey) {
     LocalDateTime submissionDateTime = getSubmissionDateTime(diagnosisKey);
     LocalDateTime expiryDateTime = getExpiryDateTime(diagnosisKey);
     long minutesBetweenExpiryAndSubmission = Duration.between(expiryDateTime, submissionDateTime).toMinutes();

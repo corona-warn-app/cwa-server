@@ -42,11 +42,19 @@ management:
       enabled: true
     prometheus:
       enabled: true
+    health:
+      group:
+        readiness:
+          include: db, verificationService
+          show-details: always
   endpoints:
     web:
       exposure:
-        include: 'flyway, health, info, metrics, prometheus'
+        include: 'health, prometheus'
   metrics:
     export:
       prometheus:
         enabled: true
+  health:
+    probes:
+      enabled: true

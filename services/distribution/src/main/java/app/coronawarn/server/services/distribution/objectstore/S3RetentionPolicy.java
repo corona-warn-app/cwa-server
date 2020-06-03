@@ -29,7 +29,6 @@ import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 /**
@@ -41,7 +40,6 @@ public class S3RetentionPolicy {
   private final ObjectStoreAccess objectStoreAccess;
   private final Api api;
 
-  @Autowired
   public S3RetentionPolicy(ObjectStoreAccess objectStoreAccess, DistributionServiceConfig distributionServiceConfig) {
     this.objectStoreAccess = objectStoreAccess;
     this.api = distributionServiceConfig.getApi();

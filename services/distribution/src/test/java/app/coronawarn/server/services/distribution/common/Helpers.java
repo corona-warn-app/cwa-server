@@ -25,6 +25,9 @@ import app.coronawarn.server.services.distribution.assembly.structure.directory.
 import app.coronawarn.server.services.distribution.assembly.structure.util.ImmutableStack;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
+import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 public class Helpers {
 
@@ -36,12 +39,27 @@ public class Helpers {
   public static DiagnosisKey buildDiagnosisKeyForSubmissionTimestamp(long submissionTimeStamp) {
     return DiagnosisKey.builder()
         .withKeyData(new byte[16])
-        .withRollingStartIntervalNumber(600)
+        .withRollingStartIntervalNumber(1)
         .withTransmissionRiskLevel(2)
         .withSubmissionTimestamp(submissionTimeStamp).build();
   }
 
   public static DiagnosisKey buildDiagnosisKeyForDateTime(LocalDateTime dateTime) {
     return buildDiagnosisKeyForSubmissionTimestamp(dateTime.toEpochSecond(ZoneOffset.UTC) / 3600);
+  }
+
+  public static List<DiagnosisKey> buildDiagnosisKeys(int startIntervalNumber, LocalDateTime submissionTimestamp, int number) {
+    long timestamp = submissionTimestamp.toEpochSecond(ZoneOffset.UTC) / 3600;
+    return buildDiagnosisKeys(startIntervalNumber, timestamp, number);
+  }
+
+  public static List<DiagnosisKey> buildDiagnosisKeys(int startIntervalNumber, long submissionTimestamp, int number) {
+    return IntStream.range(0, number)
+        .mapToObj(__ -> DiagnosisKey.builder()
+            .withKeyData(new byte[16])
+            .withRollingStartIntervalNumber(startIntervalNumber)
+            .withTransmissionRiskLevel(2)
+            .withSubmissionTimestamp(submissionTimestamp).build())
+        .collect(Collectors.toList());
   }
 }

@@ -57,7 +57,7 @@ public class S3ClientWrapper implements ObjectStoreClient {
   public boolean bucketExists(String bucketName) {
     try {
       // using S3Client.listObjectsV2 instead of S3Client.listBuckets/headBucket in order to limit required permissions
-      s3Client.listObjectsV2(ListObjectsV2Request.builder().bucket(bucketName).maxKeys(0).build());
+      s3Client.listObjectsV2(ListObjectsV2Request.builder().bucket(bucketName).maxKeys(1).build());
       return true;
     } catch (NoSuchBucketException e) {
       return false;
