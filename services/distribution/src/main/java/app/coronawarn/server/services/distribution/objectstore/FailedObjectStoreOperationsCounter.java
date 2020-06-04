@@ -27,7 +27,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
-// TODO doc
+/**
+ * Maintains the count and maximum number of failed object store operations in a thread-safe manner.
+ */
 @Component
 public class FailedObjectStoreOperationsCounter {
 
@@ -40,6 +42,12 @@ public class FailedObjectStoreOperationsCounter {
     maxNumberOfFailedOperations = distributionServiceConfig.getObjectStore().getMaxNumberOfFailedOperations();
   }
 
+  /**
+   * Increments the internal failed operations counter and rethrows the specified exception if the configured maximum
+   * number of failed object store operation was exceeded.
+   *
+   * @param cause The {@link ObjectStoreOperationFailedException} that is associated with the failed operation.
+   */
   public void incrementAndCheckThreshold(ObjectStoreOperationFailedException cause) {
     logger.error("Object store operation failed.", cause);
     if (failedOperationsCounter.incrementAndGet() > maxNumberOfFailedOperations) {

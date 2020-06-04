@@ -50,17 +50,32 @@ public class S3Publisher {
 
   private static final Logger logger = LoggerFactory.getLogger(S3Publisher.class);
 
-  /** The default CWA root folder, which contains all CWA related files. */
+  /**
+   * The default CWA root folder, which contains all CWA related files.
+   */
   private static final String CWA_S3_ROOT = CwaApiStructureProvider.VERSION_DIRECTORY;
 
-  /** root folder for the upload on the local disk. */
+  /**
+   * root folder for the upload on the local disk.
+   */
   private final Path root;
 
-  /** access to the object store. */
+  /**
+   * access to the object store.
+   */
   private final ObjectStoreAccess objectStoreAccess;
 
   private final FailedObjectStoreOperationsCounter failedOperationsCounter;
 
+  /**
+   * Creates an {@link S3Publisher} instance that attempts to publish the files at the specified location to an object
+   * store. Object store operations are performed through the specified {@link ObjectStoreAccess} instance.
+   *
+   * @param root                    The path of the directory that shall be published.
+   * @param objectStoreAccess       The {@link ObjectStoreAccess} used to communicate with the object store.
+   * @param failedOperationsCounter The {@link FailedObjectStoreOperationsCounter} that is used to monitor the number of
+   *                                failed operations.
+   */
   public S3Publisher(Path root, ObjectStoreAccess objectStoreAccess,
       FailedObjectStoreOperationsCounter failedOperationsCounter) {
     this.root = root;
