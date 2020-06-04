@@ -48,6 +48,7 @@ services:
       set-public-read-acl-on-put-object: true
       retry-attempts: 3
       retry-backoff: 1
+      max-number-of-failed-operations: 5
 spring:
   main:
     banner-mode: off

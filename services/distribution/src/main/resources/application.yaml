@@ -49,7 +49,7 @@ services:
       set-public-read-acl-on-put-object: true
       retry-attempts: 3
       retry-backoff: 2000
-      max-mumber-of-failed-operations: 5
+      max-number-of-failed-operations: 5
 
 spring:
   main:
