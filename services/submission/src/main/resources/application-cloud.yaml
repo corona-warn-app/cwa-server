@@ -24,3 +24,15 @@ server:
     key-store-password: ${SSL_PASSWORD}
     key-store-provider: SUN
     key-store-type: JKS
+
+client:
+  ssl:
+    one-way-authentication-enabled: false
+    two-way-authentication-enabled: true
+    key-password: ${SSL_PASSWORD}
+    key-store: ${SSL_KEYSTORE_PATH}
+    key-store-password: ${SSL_PASSWORD}
+    key-store-provider: SUN
+    key-store-type: JKS
+    #trust-store: truststore.jks
+    #trust-store-password: secret
