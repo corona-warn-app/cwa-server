@@ -55,16 +55,8 @@ public class S3Publisher {
    */
   private static final String CWA_S3_ROOT = CwaApiStructureProvider.VERSION_DIRECTORY;
 
-  /**
-   * root folder for the upload on the local disk.
-   */
   private final Path root;
-
-  /**
-   * access to the object store.
-   */
   private final ObjectStoreAccess objectStoreAccess;
-
   private final FailedObjectStoreOperationsCounter failedOperationsCounter;
 
   /**
