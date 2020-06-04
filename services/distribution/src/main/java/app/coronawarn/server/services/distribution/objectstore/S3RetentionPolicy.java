@@ -22,6 +22,7 @@ package app.coronawarn.server.services.distribution.objectstore;
 
 import app.coronawarn.server.services.distribution.config.DistributionServiceConfig;
 import app.coronawarn.server.services.distribution.config.DistributionServiceConfig.Api;
+import app.coronawarn.server.services.distribution.objectstore.client.ObjectStoreOperationFailedException;
 import app.coronawarn.server.services.distribution.objectstore.client.S3Object;
 import java.time.LocalDate;
 import java.time.ZoneOffset;
@@ -39,10 +40,13 @@ public class S3RetentionPolicy {
 
   private final ObjectStoreAccess objectStoreAccess;
   private final Api api;
+  private final FailedObjectStoreOperationsCounter failedObjectStoreOperationsCounter;
 
-  public S3RetentionPolicy(ObjectStoreAccess objectStoreAccess, DistributionServiceConfig distributionServiceConfig) {
+  public S3RetentionPolicy(ObjectStoreAccess objectStoreAccess, DistributionServiceConfig distributionServiceConfig,
+      FailedObjectStoreOperationsCounter failedOperationsCounter) {
     this.objectStoreAccess = objectStoreAccess;
     this.api = distributionServiceConfig.getApi();
+    this.failedObjectStoreOperationsCounter = failedOperationsCounter;
   }
 
   /**
@@ -77,6 +81,10 @@ public class S3RetentionPolicy {
    * @param diagnosisKey the  diagnosis key, that should be deleted.
    */
   public void deleteDiagnosisKey(S3Object diagnosisKey) {
-    objectStoreAccess.deleteObjectsWithPrefix(diagnosisKey.getObjectName());
+    try {
+      objectStoreAccess.deleteObjectsWithPrefix(diagnosisKey.getObjectName());
+    } catch (ObjectStoreOperationFailedException e) {
+      failedObjectStoreOperationsCounter.rethrowIfMaxNumberOfFailedOperationsReached(e);
+    }
   }
 }

@@ -21,6 +21,7 @@
 package app.coronawarn.server.services.distribution.objectstore;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.mock;
 
 import app.coronawarn.server.services.distribution.config.DistributionServiceConfig;
 import app.coronawarn.server.services.distribution.objectstore.client.ObjectStoreClientConfig;
@@ -57,7 +58,8 @@ class S3PublisherIntegrationTest {
 
   @Test
   void publishTestFolderOk() throws IOException {
-    S3Publisher publisher = new S3Publisher(getFolderAsPath(rootTestFolder), objectStoreAccess);
+    S3Publisher publisher = new S3Publisher(
+        getFolderAsPath(rootTestFolder), objectStoreAccess, mock(FailedObjectStoreOperationsCounter.class));
 
     publisher.publish();
     List<S3Object> s3Objects = objectStoreAccess.getObjectsWithPrefix("version");

@@ -48,9 +48,6 @@ import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.ConfigFileApplicationContextInitializer;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.retry.annotation.EnableRetry;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import software.amazon.awssdk.core.exception.SdkClientException;
@@ -82,16 +79,6 @@ class S3ClientWrapperTest {
 
   @Autowired
   private ObjectStoreClient s3ClientWrapper;
-
-  @Configuration
-  @EnableRetry
-  public static class Config {
-
-    @Bean
-    public ObjectStoreClient createS3ClientWrapper(S3Client s3Client) {
-      return new S3ClientWrapper(s3Client);
-    }
-  }
 
   @BeforeEach
   public void setUpMocks() {

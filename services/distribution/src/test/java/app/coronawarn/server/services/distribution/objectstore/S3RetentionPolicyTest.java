@@ -44,7 +44,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 @EnableConfigurationProperties(value = DistributionServiceConfig.class)
 @ExtendWith(SpringExtension.class)
-@ContextConfiguration(classes = {S3RetentionPolicy.class, ObjectStore.class},
+@ContextConfiguration(classes = {S3RetentionPolicy.class, ObjectStore.class, FailedObjectStoreOperationsCounter.class},
     initializers = ConfigFileApplicationContextInitializer.class)
 class S3RetentionPolicyTest {
 
