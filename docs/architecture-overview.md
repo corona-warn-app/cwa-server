@@ -27,7 +27,7 @@ On a high level, the application consists of two main parts, as shown below.
 ![Overview Diagram](./images/v4.png)
 
 1. CWA Server: Handles submission and aggregation/distribution of diagnosis keys and configuration files.
-2. Verification Server: Deals with test result retrieval and verification (including issuing TANs). 
+2. Verification Server: Deals with test result retrieval and verification (including issuing TANs).
 The components regarding the verification are managed and deployed separately.
 
 This document outlines the CWA Server components, which are part of this repository. For the full architectural
@@ -52,7 +52,7 @@ The mobile application will use a CDN for fetching files, which mirrors all file
 
 The verification server supports the user's journey beginning at scanning the QR code printed
 on the documentation of the SARS-CoV-2 test until the upload of diagnosis keys when the user was tested positive. Testing
-labs will provide the results of SARS-CoV-2 tests to the [test result server](https://github.com/corona-warn-app/cwa-testresult-server), 
+labs will provide the results of SARS-CoV-2 tests to the [test result server](https://github.com/corona-warn-app/cwa-testresult-server),
 which in turn provides an interface to the [verification server](https://github.com/corona-warn-app/cwa-verification-server).
 Since the GUID contained in the QR code is linked to a test, the mobile application is able to fetch the results from
 the verification server and provide a notification to the user. After users have given their consent to upload their diagnosis key,
