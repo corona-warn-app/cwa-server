@@ -1,8 +1,12 @@
-# Architecture CWA Backend
+# Architecture CWA Server
 
-This document outlines the CWA backend architecture on high level. This document
+This document outlines the CWA server architecture on high level. This document
 does not necessarily reflect the current implementation status in this repository, as there are
 still frequent changes to the exposure notification API by Google/Apple.
+
+Please note: This overview document only focuses on the architecture of this component.
+If you are interested in the full architectural overview, check out the [solution architecture](https://github.com/corona-warn-app/cwa-documentation/blob/master/solution_architecture.md) 
+in the [cwa-documentation](https://github.com/corona-warn-app/cwa-documentation) repository.
 
 ## Overview
 
@@ -20,11 +24,11 @@ On a high level, the application consists of two main parts, as shown below.
 
 ![Overview Diagram](./images/v4.png)
 
-1. CWA Backend: Handles submission and aggregation/distribution of diagnosis keys and configuration files.
+1. CWA Server: Handles submission and aggregation/distribution of diagnosis keys and configuration files.
 2. Verification Backend: Deals with test result verification and issues TANs. This backend is managed and deployed
 separately. The repository for those components will be opened up to the community soon.
 
-This document outlines the CWA backend components, which are part of this repository. For the full architectural
+This document outlines the CWA Server components, which are part of this repository. For the full architectural
 overview, check out the [solution architecture](https://github.com/corona-warn-app/cwa-documentation/blob/master/solution_architecture.md).
 
 ## Integration with Other Systems
@@ -53,15 +57,15 @@ is linked to a test, the mobile application will be able to fetch a test-positiv
 the Verification Backend, along with a TAN. The TAN will be used as an authorization token when
 the user uploads the diagnosis keys of the past 14 days.
 
-Therefore, from a CWA Backend perspective, the Verification Backend provides an endpoint for TAN verification.
+Therefore, from a CWA Server perspective, the Verification Backend provides an endpoint for TAN verification.
 
 ## Security
 
 ### Endpoint Protection
 
-The CWA backend exposes only one endpoint – the submission endpoint.
+The CWA Server exposes only one endpoint – the submission endpoint.
 The endpoint is public (unauthenticated), and authorization for calls is granted to users who are passing a valid TAN.
-The TAN verification cannot be done on CWA backend, but the task is delegated to the Verification Backend (see Verification Backend chapter in Integration with other Systems).
+The TAN verification cannot be done on CWA Server, but the task is delegated to the Verification Backend (see Verification Backend chapter in Integration with other Systems).
 
 ### Authenticity
 
@@ -80,7 +84,7 @@ In order to protect the privacy of the users, the mobile app needs to send fake 
 The server accepts the incoming calls and will treat them the same way as regular submissions.
 The payload and behavior of fake and real requests must be similar, so that 3rd parties are unable to differentiate between those requests.
 If a submission request marked as fake is received by the server, the caller will be presented with a successful result.
-The CWA backend will not persist the entry on the database and will ensure that fake and real requests take the same amount of total response time, e.g. by delaying the response to the client, if necessary.
+The CWA Server will not persist the entry on the database and will ensure that fake and real requests take the same amount of total response time, e.g. by delaying the response to the client, if necessary.
 
 ## Services
 
@@ -176,5 +180,15 @@ The index will be regenerated whenever new export files are distributed to the o
 
 ## Data Retention
 
-The retention period is set to 14 days. Therefore, all keys whose _submission date_ is older than 14 days are removed from the system. This includes the persistency layer, as well as CDN/object store published files.
-The retention mechanism is enforced by the Distribution Service.
+The retention period is set to 14 days. Therefore, all keys whose _submission date_ is older than 14 days are removed from the system. This includes the database persistency layer, as well as files stored on the object store.
+The retention mechanism is enforced automatically by the Distribution Service upon each distribution run (multiple runs per day).
+No manual trigger or action is required.
+
+Data is deleted by normal means. For PostgreSQL, the identified rows will be deleted by normal __DELETE__ calls to the database, and
+cleaned up when auto vacuuming is executed.
+When data deletion is executed on the object store, the object store is instructed to delete all
+files with the following prefix:
+
+`version/v1/diagnosis-keys/country/DE/<date>`
+
+In which `<date>` stands for the ISO formatted date (e.g. `2012-06-05`), and is before the retention cutoff date (today - 14 days).
