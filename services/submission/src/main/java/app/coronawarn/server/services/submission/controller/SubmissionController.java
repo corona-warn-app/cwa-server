@@ -168,14 +168,13 @@ public class SubmissionController {
 
   /** @implNote VisibleForTesting */
   void updateFakeDelay(long realRequestDuration) {
-    while (true) {
-      Double fd = fakeDelay.get();
-      if (fakeDelay.compareAndSet(
-          fd, fd + (1 / fakeDelayMovingAverageSamples) * (realRequestDuration - fd))) {
-        break;
-      }
-    }
+    Double fd;
+    do {
+      fd = fakeDelay.get();
+    } while (!fakeDelay.compareAndSet(
+        fd, fd + (1 / fakeDelayMovingAverageSamples) * (realRequestDuration - fd)));
   }
+
   /** @implNote VisibleForTesting */
   Double getFakeDelay() {
     return fakeDelay.get();
