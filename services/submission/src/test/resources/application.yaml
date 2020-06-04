@@ -32,3 +32,17 @@ services:
     verification:
       base-url: http://localhost:1234
       path: /version/v1/tan/verify
+
+management:
+  endpoint:
+    health:
+      group:
+        readiness:
+          include: db, verificationService
+  endpoints:
+    web:
+      exposure:
+        include: 'health'
+  health:
+    probes:
+      enabled: true

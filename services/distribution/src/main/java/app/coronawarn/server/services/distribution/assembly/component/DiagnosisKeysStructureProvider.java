@@ -27,10 +27,11 @@ import app.coronawarn.server.services.distribution.assembly.diagnosiskeys.struct
 import app.coronawarn.server.services.distribution.assembly.structure.WritableOnDisk;
 import app.coronawarn.server.services.distribution.assembly.structure.directory.Directory;
 import app.coronawarn.server.services.distribution.config.DistributionServiceConfig;
+import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.Collection;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 /**
@@ -42,8 +43,7 @@ public class DiagnosisKeysStructureProvider {
   private static final Logger logger = LoggerFactory
       .getLogger(DiagnosisKeysStructureProvider.class);
 
-  @Autowired
-  private DiagnosisKeyBundler diagnosisKeyBundler;
+  private final DiagnosisKeyBundler diagnosisKeyBundler;
   private final DiagnosisKeyService diagnosisKeyService;
   private final CryptoProvider cryptoProvider;
   private final DistributionServiceConfig distributionServiceConfig;
@@ -52,10 +52,11 @@ public class DiagnosisKeysStructureProvider {
    * Creates a new DiagnosisKeysStructureProvider.
    */
   DiagnosisKeysStructureProvider(DiagnosisKeyService diagnosisKeyService, CryptoProvider cryptoProvider,
-      DistributionServiceConfig distributionServiceConfig) {
+      DistributionServiceConfig distributionServiceConfig, DiagnosisKeyBundler diagnosisKeyBundler) {
     this.diagnosisKeyService = diagnosisKeyService;
     this.cryptoProvider = cryptoProvider;
     this.distributionServiceConfig = distributionServiceConfig;
+    this.diagnosisKeyBundler = diagnosisKeyBundler;
   }
 
   /**
@@ -66,7 +67,7 @@ public class DiagnosisKeysStructureProvider {
   public Directory<WritableOnDisk> getDiagnosisKeys() {
     logger.debug("Querying diagnosis keys from the database...");
     Collection<DiagnosisKey> diagnosisKeys = diagnosisKeyService.getDiagnosisKeys();
-    diagnosisKeyBundler.setDiagnosisKeys(diagnosisKeys);
+    diagnosisKeyBundler.setDiagnosisKeys(diagnosisKeys, LocalDateTime.now().truncatedTo(ChronoUnit.HOURS));
     return new DiagnosisKeysDirectory(diagnosisKeyBundler, cryptoProvider, distributionServiceConfig);
   }
 }

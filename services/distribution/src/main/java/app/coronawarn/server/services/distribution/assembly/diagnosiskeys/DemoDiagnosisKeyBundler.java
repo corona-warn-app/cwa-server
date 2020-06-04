@@ -24,15 +24,13 @@ import static java.util.stream.Collectors.groupingBy;
 
 import app.coronawarn.server.common.persistence.domain.DiagnosisKey;
 import app.coronawarn.server.services.distribution.config.DistributionServiceConfig;
-import java.time.LocalDateTime;
 import java.util.Collection;
-import java.util.List;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 
 /**
- * An instance of this class contains a collection of {@link DiagnosisKey DiagnosisKeys}, that will be distributed
- * in the same hour they have been submitted.
+ * An instance of this class contains a collection of {@link DiagnosisKey DiagnosisKeys}, that will be distributed in
+ * the same hour they have been submitted.
  */
 @Profile("demo")
 @Component
@@ -44,20 +42,11 @@ public class DemoDiagnosisKeyBundler extends DiagnosisKeyBundler {
 
   /**
    * Initializes the internal {@code distributableDiagnosisKeys} map, grouping the diagnosis keys by the submission
-   * timestamp, thus ignoring the expiry policy.
+   * timestamp, thus ignoring the expiry and shifting policies.
    */
   @Override
   protected void createDiagnosisKeyDistributionMap(Collection<DiagnosisKey> diagnosisKeys) {
     this.distributableDiagnosisKeys.clear();
     this.distributableDiagnosisKeys.putAll(diagnosisKeys.stream().collect(groupingBy(this::getSubmissionDateTime)));
-  }
-
-  /**
-   * Returns all diagnosis keys that should be distributed in a specific hour, without respecting the shifting and
-   * expiry policies.
-   */
-  @Override
-  public List<DiagnosisKey> getDiagnosisKeysDistributableAt(LocalDateTime hour) {
-    return this.getDiagnosisKeysForHour(hour);
   }
 }

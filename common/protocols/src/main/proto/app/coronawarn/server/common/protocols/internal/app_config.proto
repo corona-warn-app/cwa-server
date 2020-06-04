@@ -4,6 +4,8 @@ option java_package = "app.coronawarn.server.common.protocols.internal";
 option java_multiple_files = true;
 import "app/coronawarn/server/common/protocols/internal/risk_score_classification.proto";
 import "app/coronawarn/server/common/protocols/internal/risk_score_parameters.proto";
+import "app/coronawarn/server/common/protocols/internal/app_version_config.proto";
+import "app/coronawarn/server/common/protocols/internal/attenuation_duration.proto";
 
 message ApplicationConfiguration {
 
@@ -12,4 +14,8 @@ message ApplicationConfiguration {
   app.coronawarn.server.common.protocols.internal.RiskScoreClassification riskScoreClasses = 2;
 
   app.coronawarn.server.common.protocols.internal.RiskScoreParameters exposureConfig = 3;
+
+  app.coronawarn.server.common.protocols.internal.AttenuationDuration attenuationDuration = 4;
+
+  app.coronawarn.server.common.protocols.internal.ApplicationVersionConfiguration appVersion = 5;
 }

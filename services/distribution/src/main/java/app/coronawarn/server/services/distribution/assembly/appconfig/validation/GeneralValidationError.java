@@ -22,23 +22,21 @@ package app.coronawarn.server.services.distribution.assembly.appconfig.validatio
 
 import java.util.Objects;
 
-public class RiskScoreClassificationValidationError implements ValidationError {
+public class GeneralValidationError implements ValidationError {
 
   private final String errorSource;
-
   private final Object value;
-
   private final ErrorType reason;
 
   /**
-   * Creates a {@link RiskScoreClassificationValidationError} that stores the specified validation error source,
+   * Creates a {@link GeneralValidationError} that stores the specified validation error source,
    * erroneous value and a reason for the error to occur.
    *
    * @param errorSource A label that describes the property associated with this validation error.
    * @param value       The value that caused the validation error.
    * @param reason      A validation error specifier.
    */
-  public RiskScoreClassificationValidationError(String errorSource, Object value, ErrorType reason) {
+  public GeneralValidationError(String errorSource, Object value, ErrorType reason) {
     this.errorSource = errorSource;
     this.value = value;
     this.reason = reason;
@@ -46,7 +44,7 @@ public class RiskScoreClassificationValidationError implements ValidationError {
 
   @Override
   public String toString() {
-    return "RiskScoreClassificationValidationError{"
+    return "GeneralValidationError{"
         + "errorType=" + reason
         + ", parameter='" + errorSource + '\''
         + ", givenValue=" + value
@@ -61,7 +59,7 @@ public class RiskScoreClassificationValidationError implements ValidationError {
     if (o == null || getClass() != o.getClass()) {
       return false;
     }
-    RiskScoreClassificationValidationError that = (RiskScoreClassificationValidationError) o;
+    GeneralValidationError that = (GeneralValidationError) o;
     return Objects.equals(errorSource, that.errorSource)
         && Objects.equals(value, that.value)
         && Objects.equals(reason, that.reason);

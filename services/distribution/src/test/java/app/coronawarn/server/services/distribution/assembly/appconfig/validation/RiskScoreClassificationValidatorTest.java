@@ -20,14 +20,14 @@
 
 package app.coronawarn.server.services.distribution.assembly.appconfig.validation;
 
-import static app.coronawarn.server.services.distribution.assembly.appconfig.validation.RiskScoreClassificationValidationError.ErrorType.INVALID_PARTITIONING;
-import static app.coronawarn.server.services.distribution.assembly.appconfig.validation.RiskScoreClassificationValidationError.ErrorType.MIN_GREATER_THAN_MAX;
+import static app.coronawarn.server.services.distribution.assembly.appconfig.validation.GeneralValidationError.ErrorType.INVALID_PARTITIONING;
+import static app.coronawarn.server.services.distribution.assembly.appconfig.validation.GeneralValidationError.ErrorType.MIN_GREATER_THAN_MAX;
 import static java.util.Arrays.asList;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import app.coronawarn.server.common.protocols.internal.RiskScoreClass;
 import app.coronawarn.server.common.protocols.internal.RiskScoreClassification;
-import app.coronawarn.server.services.distribution.assembly.appconfig.validation.RiskScoreClassificationValidationError.ErrorType;
+import app.coronawarn.server.services.distribution.assembly.appconfig.validation.GeneralValidationError.ErrorType;
 import java.util.Arrays;
 import java.util.stream.Stream;
 import org.junit.jupiter.api.Test;
@@ -41,6 +41,9 @@ class RiskScoreClassificationValidatorTest {
   private final static int MAX_SCORE = ParameterSpec.RISK_SCORE_MAX;
   private final static String VALID_LABEL = "myLabel";
   private final static String VALID_URL = "https://www.my.url";
+
+  public final static RiskScoreClassification MINIMAL_RISK_SCORE_CLASSIFICATION =
+      buildClassification(buildRiskClass(VALID_LABEL, 0, MAX_SCORE, VALID_URL));
 
   @ParameterizedTest
   @ValueSource(strings = {"", " "})
@@ -93,10 +96,9 @@ class RiskScoreClassificationValidatorTest {
     // Note: additional classes have to be added in order to reach the expected value range size
     var validator = buildValidator(buildRiskClass(VALID_LABEL, min, max, VALID_URL),
         buildRiskClass(VALID_LABEL, 0, MAX_SCORE, VALID_URL));
-    var expectedResult = buildExpectedResult(
-        buildError("minRiskLevel, maxRiskLevel", (min + ", " + max), MIN_GREATER_THAN_MAX));
+    var expectedResult = buildError("minRiskLevel, maxRiskLevel", (min + ", " + max), MIN_GREATER_THAN_MAX);
 
-    assertThat(validator.validate()).isEqualTo(expectedResult);
+    assertThat(validator.validate().hasError(expectedResult)).isTrue();
   }
 
   @ParameterizedTest
@@ -104,7 +106,7 @@ class RiskScoreClassificationValidatorTest {
   void failsIfPartitioningInvalid(RiskScoreClassification invalidClassification) {
     var validator = new RiskScoreClassificationValidator(invalidClassification);
     int coveredRange = invalidClassification.getRiskClassesList().stream()
-        .mapToInt(riskScoreClass -> (riskScoreClass.getMax() - riskScoreClass.getMin() + 1))
+        .mapToInt(riskScoreClass -> (riskScoreClass.getMax() - riskScoreClass.getMin()))
         .sum();
     var expectedResult = buildExpectedResult(
         buildError("covered value range", coveredRange, INVALID_PARTITIONING));
@@ -117,7 +119,7 @@ class RiskScoreClassificationValidatorTest {
         buildClassification(buildRiskClass(VALID_LABEL, 0, 0, VALID_URL)),
         buildClassification(
             buildRiskClass(VALID_LABEL, 0, MAX_SCORE / 2, VALID_URL),
-            buildRiskClass(VALID_LABEL, MAX_SCORE / 2 + 1, MAX_SCORE, VALID_URL),
+            buildRiskClass(VALID_LABEL, MAX_SCORE / 2, MAX_SCORE, VALID_URL),
             buildRiskClass(VALID_LABEL, 0, MAX_SCORE, VALID_URL)),
         buildClassification(
             buildRiskClass(VALID_LABEL, 0, MAX_SCORE, VALID_URL),
@@ -134,22 +136,21 @@ class RiskScoreClassificationValidatorTest {
 
   private static Stream<Arguments> createValidClassifications() {
     return Stream.of(
-        // valid url
-        buildClassification(buildRiskClass(VALID_LABEL, 0, MAX_SCORE, VALID_URL)),
+        MINIMAL_RISK_SCORE_CLASSIFICATION,
         // [0:MAX_SCORE/2][MAX_SCORE/2:MAX_SCORE]
         buildClassification(
             buildRiskClass(VALID_LABEL, 0, MAX_SCORE / 2, VALID_URL),
-            buildRiskClass(VALID_LABEL, MAX_SCORE / 2 + 1, MAX_SCORE, VALID_URL)),
+            buildRiskClass(VALID_LABEL, MAX_SCORE / 2, MAX_SCORE, VALID_URL)),
         // [0:MAX_SCORE-10][MAX_SCORE-9][MAX_SCORE-8:MAX_SCORE]
         buildClassification(
             buildRiskClass(VALID_LABEL, 0, MAX_SCORE - 10, VALID_URL),
-            buildRiskClass(VALID_LABEL, MAX_SCORE - 9, MAX_SCORE - 9, VALID_URL),
-            buildRiskClass(VALID_LABEL, MAX_SCORE - 8, MAX_SCORE, VALID_URL))
+            buildRiskClass(VALID_LABEL, MAX_SCORE - 10, MAX_SCORE - 10, VALID_URL),
+            buildRiskClass(VALID_LABEL, MAX_SCORE - 10,  MAX_SCORE, VALID_URL))
     ).map(Arguments::of);
   }
 
-  private static RiskScoreClassificationValidationError buildError(String parameter, Object value, ErrorType reason) {
-    return new RiskScoreClassificationValidationError(parameter, value, reason);
+  public static GeneralValidationError buildError(String parameter, Object value, ErrorType reason) {
+    return new GeneralValidationError(parameter, value, reason);
   }
 
   private static RiskScoreClassificationValidator buildValidator(RiskScoreClass... riskScoreClasses) {
@@ -164,7 +165,7 @@ class RiskScoreClassificationValidatorTest {
     return RiskScoreClass.newBuilder().setLabel(label).setMin(min).setMax(max).setUrl(url).build();
   }
 
-  private static ValidationResult buildExpectedResult(RiskScoreClassificationValidationError... errors) {
+  public static ValidationResult buildExpectedResult(ValidationError... errors) {
     var validationResult = new ValidationResult();
     Arrays.stream(errors).forEach(validationResult::add);
     return validationResult;

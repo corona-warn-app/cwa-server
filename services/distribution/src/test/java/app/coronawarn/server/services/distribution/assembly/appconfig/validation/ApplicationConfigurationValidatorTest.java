@@ -20,6 +20,8 @@
 
 package app.coronawarn.server.services.distribution.assembly.appconfig.validation;
 
+import static app.coronawarn.server.services.distribution.assembly.appconfig.validation.ParameterSpec.RISK_SCORE_MAX;
+import static app.coronawarn.server.services.distribution.assembly.appconfig.validation.ParameterSpec.RISK_SCORE_MIN;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
@@ -82,11 +84,11 @@ class ApplicationConfigurationValidatorTest {
 
   public static TestWithExpectedResult MinRiskThresholdOutOfBoundsNegative() {
     return testBuilder.build("app-config_mrs_negative.yaml")
-        .with(new MinimumRiskLevelValidationError(-1));
+        .with(new MinimumRiskLevelValidationError(RISK_SCORE_MIN - 1));
   }
 
   public static TestWithExpectedResult MinRiskThresholdOutOfBoundsPositive() {
     return testBuilder.build("app-config_mrs_oob.yaml")
-        .with(new MinimumRiskLevelValidationError(4097));
+        .with(new MinimumRiskLevelValidationError(RISK_SCORE_MAX + 1));
   }
 }

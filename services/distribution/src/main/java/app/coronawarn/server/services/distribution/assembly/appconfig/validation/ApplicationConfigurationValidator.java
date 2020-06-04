@@ -47,10 +47,12 @@ public class ApplicationConfigurationValidator extends ConfigurationValidator {
 
     validateMinRisk();
 
-    ValidationResult exposureResult = new ExposureConfigurationValidator(config.getExposureConfig()).validate();
-    ValidationResult riskScoreResult = new RiskScoreClassificationValidator(config.getRiskScoreClasses()).validate();
+    errors.with(new ExposureConfigurationValidator(config.getExposureConfig()).validate());
+    errors.with(new RiskScoreClassificationValidator(config.getRiskScoreClasses()).validate());
+    errors.with(new ApplicationVersionConfigurationValidator(config.getAppVersion()).validate());
+    errors.with(new AttenuationDurationValidator(config.getAttenuationDuration()).validate());
 
-    return errors.with(exposureResult).with(riskScoreResult);
+    return errors;
   }
 
   private void validateMinRisk() {

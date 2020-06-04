@@ -52,5 +52,51 @@ public class ParameterSpec {
   /**
    * The allowed maximum value for a risk score.
    */
-  public static final int RISK_SCORE_MAX = 4096;
+  public static final int RISK_SCORE_MAX = 72;
+
+  /**
+   * The allowed minimum value for an attenuation threshold.
+   */
+  public static final int ATTENUATION_DURATION_THRESHOLD_MIN = 0;
+
+  /**
+   * The allowed maximum value for an attenuation threshold.
+   */
+  public static final int ATTENUATION_DURATION_THRESHOLD_MAX = 100;
+
+  /**
+   * The allowed minimum value for an attenuation weight.
+   */
+  public static final double ATTENUATION_DURATION_WEIGHT_MIN = .0;
+
+  /**
+   * The allowed maximum value for an attenuation weight.
+   */
+  public static final double ATTENUATION_DURATION_WEIGHT_MAX = 1.;
+
+  /**
+   * Maximum number of allowed decimals for an attenuation weight.
+   */
+  public static final int ATTENUATION_DURATION_WEIGHT_MAX_DECIMALS = 3;
+
+
+  /**
+   * The allowed minimum value for a default bucket offset.
+   */
+  public static final int DEFAULT_BUCKET_OFFSET_MIN = 0;
+
+  /**
+   * The allowed maximum value for a default bucket offset.
+   */
+  public static final int DEFAULT_BUCKET_OFFSET_MAX = 1;
+
+  /**
+   * The allowed minimum value for a risk score normalization divisor.
+   */
+  public static final int RISK_SCORE_NORMALIZATION_DIVISOR_MIN = 0;
+
+  /**
+   * The allowed maximum value for a risk score normalization divisor.
+   */
+  public static final int RISK_SCORE_NORMALIZATION_DIVISOR_MAX = 1000;
 }
