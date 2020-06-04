@@ -78,4 +78,25 @@ public class ParameterSpec {
    * Maximum number of allowed decimals for an attenuation weight.
    */
   public static final int ATTENUATION_DURATION_WEIGHT_MAX_DECIMALS = 3;
+
+
+  /**
+   * The allowed minimum value for a default bucket offset.
+   */
+  public static final int DEFAULT_BUCKET_OFFSET_MIN = 0;
+
+  /**
+   * The allowed maximum value for a default bucket offset.
+   */
+  public static final int DEFAULT_BUCKET_OFFSET_MAX = 1;
+
+  /**
+   * The allowed minimum value for a risk score normalization divisor.
+   */
+  public static final int RISK_SCORE_NORMALIZATION_DIVISOR_MIN = 0;
+
+  /**
+   * The allowed maximum value for a risk score normalization divisor.
+   */
+  public static final int RISK_SCORE_NORMALIZATION_DIVISOR_MAX = 1000;
 }

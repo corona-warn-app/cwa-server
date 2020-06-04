@@ -99,7 +99,7 @@
         <version>2.0.0</version>
         <configuration>
           <includes>**/*.java</includes>
-          <copyrightOwners>${organization.name} and all other contributors</copyrightOwners>
+          <copyrightOwners>${project.organization.name} and all other contributors</copyrightOwners>
           <processStartTag>---license-start</processStartTag>
           <processEndTag>---license-end</processEndTag>
           <sectionDelimiter>---</sectionDelimiter>
