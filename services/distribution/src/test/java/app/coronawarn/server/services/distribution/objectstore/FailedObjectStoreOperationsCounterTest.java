@@ -37,7 +37,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 @ContextConfiguration(classes = {
     FailedObjectStoreOperationsCounter.class}, initializers = ConfigFileApplicationContextInitializer.class)
 @EnableConfigurationProperties(value = DistributionServiceConfig.class)
-public class FailedObjectStoreOperationsCounterTest {
+class FailedObjectStoreOperationsCounterTest {
 
   @Autowired
   private DistributionServiceConfig distributionServiceConfig;
@@ -46,7 +46,7 @@ public class FailedObjectStoreOperationsCounterTest {
   private FailedObjectStoreOperationsCounter failedObjectStoreOperationsCounter;
 
   @Test
-  public void shouldThrowOnSixthAttempt() {
+  void shouldThrowOnSixthAttempt() {
     var exception = new ObjectStoreOperationFailedException("mock");
     for (int i = 0; i < distributionServiceConfig.getObjectStore().getMaxNumberOfFailedOperations(); i++) {
       assertThatCode(() -> failedObjectStoreOperationsCounter.incrementAndCheckThreshold(exception))
