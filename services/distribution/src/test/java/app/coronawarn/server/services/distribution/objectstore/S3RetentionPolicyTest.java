@@ -23,12 +23,15 @@ package app.coronawarn.server.services.distribution.objectstore;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.atLeastOnce;
+import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import app.coronawarn.server.services.distribution.config.DistributionServiceConfig;
 import app.coronawarn.server.services.distribution.config.DistributionServiceConfig.ObjectStore;
+import app.coronawarn.server.services.distribution.objectstore.client.ObjectStoreOperationFailedException;
 import app.coronawarn.server.services.distribution.objectstore.client.S3Object;
 import java.time.LocalDate;
 import java.time.ZoneOffset;
@@ -50,6 +53,9 @@ class S3RetentionPolicyTest {
 
   @MockBean
   private ObjectStoreAccess objectStoreAccess;
+
+  @MockBean
+  private FailedObjectStoreOperationsCounter failedObjectStoreOperationsCounter;
 
   @Autowired
   private S3RetentionPolicy s3RetentionPolicy;
@@ -81,6 +87,16 @@ class S3RetentionPolicyTest {
     s3RetentionPolicy.applyRetentionPolicy(1);
 
     verify(objectStoreAccess, never()).deleteObjectsWithPrefix(any());
+  }
+
+  @Test
+  void deleteDiagnosisKeysUpdatesFailedOperationCounter() {
+    doThrow(ObjectStoreOperationFailedException.class).when(objectStoreAccess).deleteObjectsWithPrefix(any());
+
+    s3RetentionPolicy.deleteDiagnosisKey(new S3Object("foo"));
+
+    verify(failedObjectStoreOperationsCounter, times(1))
+        .incrementAndCheckThreshold(any(ObjectStoreOperationFailedException.class));
   }
 
   private String generateFileName(LocalDate date) {
