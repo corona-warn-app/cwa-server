@@ -127,7 +127,6 @@ public class SubmissionController {
     return deferredResult;
   }
 
-
   /**
    * Returns a response that indicates successful request processing.
    */
