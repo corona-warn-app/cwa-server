@@ -5,7 +5,7 @@ does not necessarily reflect the current implementation status in this repositor
 still frequent changes to the exposure notification API by Google/Apple.
 
 Please note: This overview document only focuses on the architecture of this component.
-If you are interested in the full architectural overview, check out the [solution architecture](https://github.com/corona-warn-app/cwa-documentation/blob/master/solution_architecture.md) 
+If you are interested in the full architectural overview, check out the [solution architecture](https://github.com/corona-warn-app/cwa-documentation/blob/master/solution_architecture.md)
 in the [cwa-documentation](https://github.com/corona-warn-app/cwa-documentation) repository.
 
 ## Overview
