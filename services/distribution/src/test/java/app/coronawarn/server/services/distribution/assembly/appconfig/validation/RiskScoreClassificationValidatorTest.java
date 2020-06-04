@@ -96,10 +96,9 @@ class RiskScoreClassificationValidatorTest {
     // Note: additional classes have to be added in order to reach the expected value range size
     var validator = buildValidator(buildRiskClass(VALID_LABEL, min, max, VALID_URL),
         buildRiskClass(VALID_LABEL, 0, MAX_SCORE, VALID_URL));
-    var expectedResult = buildExpectedResult(
-        buildError("minRiskLevel, maxRiskLevel", (min + ", " + max), MIN_GREATER_THAN_MAX));
+    var expectedResult = buildError("minRiskLevel, maxRiskLevel", (min + ", " + max), MIN_GREATER_THAN_MAX);
 
-    assertThat(validator.validate()).isEqualTo(expectedResult);
+    assertThat(validator.validate().hasError(expectedResult)).isTrue();
   }
 
   @ParameterizedTest
@@ -107,7 +106,7 @@ class RiskScoreClassificationValidatorTest {
   void failsIfPartitioningInvalid(RiskScoreClassification invalidClassification) {
     var validator = new RiskScoreClassificationValidator(invalidClassification);
     int coveredRange = invalidClassification.getRiskClassesList().stream()
-        .mapToInt(riskScoreClass -> (riskScoreClass.getMax() - riskScoreClass.getMin() + 1))
+        .mapToInt(riskScoreClass -> (riskScoreClass.getMax() - riskScoreClass.getMin()))
         .sum();
     var expectedResult = buildExpectedResult(
         buildError("covered value range", coveredRange, INVALID_PARTITIONING));
@@ -120,7 +119,7 @@ class RiskScoreClassificationValidatorTest {
         buildClassification(buildRiskClass(VALID_LABEL, 0, 0, VALID_URL)),
         buildClassification(
             buildRiskClass(VALID_LABEL, 0, MAX_SCORE / 2, VALID_URL),
-            buildRiskClass(VALID_LABEL, MAX_SCORE / 2 + 1, MAX_SCORE, VALID_URL),
+            buildRiskClass(VALID_LABEL, MAX_SCORE / 2, MAX_SCORE, VALID_URL),
             buildRiskClass(VALID_LABEL, 0, MAX_SCORE, VALID_URL)),
         buildClassification(
             buildRiskClass(VALID_LABEL, 0, MAX_SCORE, VALID_URL),
@@ -141,12 +140,12 @@ class RiskScoreClassificationValidatorTest {
         // [0:MAX_SCORE/2][MAX_SCORE/2:MAX_SCORE]
         buildClassification(
             buildRiskClass(VALID_LABEL, 0, MAX_SCORE / 2, VALID_URL),
-            buildRiskClass(VALID_LABEL, MAX_SCORE / 2 + 1, MAX_SCORE, VALID_URL)),
+            buildRiskClass(VALID_LABEL, MAX_SCORE / 2, MAX_SCORE, VALID_URL)),
         // [0:MAX_SCORE-10][MAX_SCORE-9][MAX_SCORE-8:MAX_SCORE]
         buildClassification(
             buildRiskClass(VALID_LABEL, 0, MAX_SCORE - 10, VALID_URL),
-            buildRiskClass(VALID_LABEL, MAX_SCORE - 9, MAX_SCORE - 9, VALID_URL),
-            buildRiskClass(VALID_LABEL, MAX_SCORE - 8, MAX_SCORE, VALID_URL))
+            buildRiskClass(VALID_LABEL, MAX_SCORE - 10, MAX_SCORE - 10, VALID_URL),
+            buildRiskClass(VALID_LABEL, MAX_SCORE - 10,  MAX_SCORE, VALID_URL))
     ).map(Arguments::of);
   }
 

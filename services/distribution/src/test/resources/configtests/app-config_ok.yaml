@@ -1,4 +1,4 @@
-min-risk-score: 100
+min-risk-score: 72
 attenuation-duration: !include attenuation-duration.yaml
 risk-score-classes: !include risk-score-class_ok.yaml
 exposure-config: !include exposure-config_ok.yaml
