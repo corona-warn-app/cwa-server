@@ -42,6 +42,9 @@ public class S3RetentionPolicy {
   private final Api api;
   private final FailedObjectStoreOperationsCounter failedObjectStoreOperationsCounter;
 
+  /**
+   * Creates an {@link S3RetentionPolicy} instance with the specified parameters.
+   */
   public S3RetentionPolicy(ObjectStoreAccess objectStoreAccess, DistributionServiceConfig distributionServiceConfig,
       FailedObjectStoreOperationsCounter failedOperationsCounter) {
     this.objectStoreAccess = objectStoreAccess;
@@ -84,7 +87,7 @@ public class S3RetentionPolicy {
     try {
       objectStoreAccess.deleteObjectsWithPrefix(diagnosisKey.getObjectName());
     } catch (ObjectStoreOperationFailedException e) {
-      failedObjectStoreOperationsCounter.rethrowIfMaxNumberOfFailedOperationsReached(e);
+      failedObjectStoreOperationsCounter.incrementAndCheckThreshold(e);
     }
   }
 }

@@ -47,7 +47,8 @@ public class S3Distribution implements ApplicationRunner {
   private final ObjectStoreAccess objectStoreAccess;
   private final FailedObjectStoreOperationsCounter failedOperationsCounter;
 
-  S3Distribution(OutputDirectoryProvider outputDirectoryProvider, ObjectStoreAccess objectStoreAccess, FailedObjectStoreOperationsCounter failedOperationsCounter) {
+  S3Distribution(OutputDirectoryProvider outputDirectoryProvider, ObjectStoreAccess objectStoreAccess,
+      FailedObjectStoreOperationsCounter failedOperationsCounter) {
     this.outputDirectoryProvider = outputDirectoryProvider;
     this.objectStoreAccess = objectStoreAccess;
     this.failedOperationsCounter = failedOperationsCounter;

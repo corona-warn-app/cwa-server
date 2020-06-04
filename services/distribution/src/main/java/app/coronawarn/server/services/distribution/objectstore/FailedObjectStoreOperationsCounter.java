@@ -27,6 +27,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
+// TODO doc
 @Component
 public class FailedObjectStoreOperationsCounter {
 
@@ -39,7 +40,7 @@ public class FailedObjectStoreOperationsCounter {
     maxNumberOfFailedOperations = distributionServiceConfig.getObjectStore().getMaxNumberOfFailedOperations();
   }
 
-  public void rethrowIfMaxNumberOfFailedOperationsReached(ObjectStoreOperationFailedException cause) {
+  public void incrementAndCheckThreshold(ObjectStoreOperationFailedException cause) {
     logger.error("Object store operation failed.", cause);
     if (failedOperationsCounter.incrementAndGet() > maxNumberOfFailedOperations) {
       logger.error("Number of failed object store operations exceeded threshold of {}.", maxNumberOfFailedOperations);

@@ -85,7 +85,7 @@ public class S3Publisher {
           .filter(published::isNotYetPublished)
           .collect(Collectors.toList());
     } catch (ObjectStoreOperationFailedException e) {
-      failedOperationsCounter.rethrowIfMaxNumberOfFailedOperationsReached(e);
+      failedOperationsCounter.incrementAndCheckThreshold(e);
       // failed to retrieve existing files; publish everything
       diff = toPublish;
     }
@@ -95,7 +95,7 @@ public class S3Publisher {
       try {
         this.objectStoreAccess.putObject(file);
       } catch (ObjectStoreOperationFailedException e) {
-        failedOperationsCounter.rethrowIfMaxNumberOfFailedOperationsReached(e);
+        failedOperationsCounter.incrementAndCheckThreshold(e);
       }
     }
     logger.info("Upload completed.");
