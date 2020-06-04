@@ -4,6 +4,9 @@
 # Each of the aforementioned partitions has a weight in the range of [0, 1]
 # assigned to it. The number of decimal places is restricted to 3.
 #
+# default-bucket-offset value range: {0, 1}
+# risk-score-normalization-divisor value range: [1, 1000]
+#
 # Change this file with caution!
 
 thresholds:
@@ -13,3 +16,5 @@ weights:
   low: 1.0
   mid: 0.5
   high: 0.0
+default-bucket-offset: 0
+risk-score-normalization-divisor: 25

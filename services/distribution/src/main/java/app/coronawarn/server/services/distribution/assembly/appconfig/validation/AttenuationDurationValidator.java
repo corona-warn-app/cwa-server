@@ -26,6 +26,10 @@ import static app.coronawarn.server.services.distribution.assembly.appconfig.val
 import static app.coronawarn.server.services.distribution.assembly.appconfig.validation.ParameterSpec.ATTENUATION_DURATION_THRESHOLD_MIN;
 import static app.coronawarn.server.services.distribution.assembly.appconfig.validation.ParameterSpec.ATTENUATION_DURATION_WEIGHT_MAX;
 import static app.coronawarn.server.services.distribution.assembly.appconfig.validation.ParameterSpec.ATTENUATION_DURATION_WEIGHT_MIN;
+import static app.coronawarn.server.services.distribution.assembly.appconfig.validation.ParameterSpec.DEFAULT_BUCKET_OFFSET_MAX;
+import static app.coronawarn.server.services.distribution.assembly.appconfig.validation.ParameterSpec.DEFAULT_BUCKET_OFFSET_MIN;
+import static app.coronawarn.server.services.distribution.assembly.appconfig.validation.ParameterSpec.RISK_SCORE_NORMALIZATION_DIVISOR_MAX;
+import static app.coronawarn.server.services.distribution.assembly.appconfig.validation.ParameterSpec.RISK_SCORE_NORMALIZATION_DIVISOR_MIN;
 import static app.coronawarn.server.services.distribution.assembly.appconfig.validation.WeightValidationError.ErrorType.OUT_OF_RANGE;
 import static app.coronawarn.server.services.distribution.assembly.appconfig.validation.WeightValidationError.ErrorType.TOO_MANY_DECIMAL_PLACES;
 
@@ -49,6 +53,8 @@ public class AttenuationDurationValidator extends ConfigurationValidator {
 
     validateThresholds();
     validateWeights();
+    validateDefaultBucketOffset();
+    validateRiskScoreNormalizationDivisor();
 
     return errors;
   }
@@ -57,8 +63,8 @@ public class AttenuationDurationValidator extends ConfigurationValidator {
     int lower = attenuationDuration.getThresholds().getLower();
     int upper = attenuationDuration.getThresholds().getUpper();
 
-    checkThresholdBound("lower", lower);
-    checkThresholdBound("upper", upper);
+    checkValueRange("thresholds.lower", lower, ATTENUATION_DURATION_THRESHOLD_MIN, ATTENUATION_DURATION_THRESHOLD_MAX);
+    checkValueRange("thresholds.upper", upper, ATTENUATION_DURATION_THRESHOLD_MIN, ATTENUATION_DURATION_THRESHOLD_MAX);
 
     if (lower > upper) {
       String parameters = "attenuation-duration.thresholds.lower, attenuation-duration.thresholds.upper";
@@ -67,10 +73,10 @@ public class AttenuationDurationValidator extends ConfigurationValidator {
     }
   }
 
-  private void checkThresholdBound(String thresholdLabel, int thresholdValue) {
-    if (thresholdValue < ATTENUATION_DURATION_THRESHOLD_MIN || thresholdValue > ATTENUATION_DURATION_THRESHOLD_MAX) {
+  private void checkValueRange(String parameterLabel, int value, int min, int max) {
+    if (value < min || value > max) {
       this.errors.add(new GeneralValidationError(
-          "attenuation-duration.thresholds." + thresholdLabel, thresholdValue, VALUE_OUT_OF_BOUNDS));
+          "attenuation-duration." + parameterLabel, value, VALUE_OUT_OF_BOUNDS));
     }
   }
 
@@ -90,5 +96,16 @@ public class AttenuationDurationValidator extends ConfigurationValidator {
       this.errors.add(new WeightValidationError(
           "attenuation-duration.weights." + weightLabel, weightValue, TOO_MANY_DECIMAL_PLACES));
     }
+  }
+
+  private void validateDefaultBucketOffset() {
+    int bucketOffset = attenuationDuration.getDefaultBucketOffset();
+    checkValueRange("default-bucket-offset", bucketOffset, DEFAULT_BUCKET_OFFSET_MIN, DEFAULT_BUCKET_OFFSET_MAX);
+  }
+
+  private void validateRiskScoreNormalizationDivisor() {
+    int riskScoreNormalizationDivisor = attenuationDuration.getRiskScoreNormalizationDivisor();
+    checkValueRange("risk-score-normalization-divisor", riskScoreNormalizationDivisor,
+        RISK_SCORE_NORMALIZATION_DIVISOR_MIN, RISK_SCORE_NORMALIZATION_DIVISOR_MAX);
   }
 }
