@@ -18,14 +18,13 @@
  * ---license-end
  */
 
-package app.coronawarn.server.services.submission.healthindicator;
+package app.coronawarn.server.services.submission.monitoring;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-import app.coronawarn.server.services.submission.controller.RequestExecutor;
 import app.coronawarn.server.services.submission.verification.VerificationServerClient;
 import feign.FeignException;
 import org.junit.jupiter.api.BeforeEach;

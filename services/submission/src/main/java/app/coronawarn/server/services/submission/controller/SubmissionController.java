@@ -25,6 +25,7 @@ import app.coronawarn.server.common.persistence.service.DiagnosisKeyService;
 import app.coronawarn.server.common.protocols.external.exposurenotification.TemporaryExposureKey;
 import app.coronawarn.server.common.protocols.internal.SubmissionPayload;
 import app.coronawarn.server.services.submission.config.SubmissionServiceConfig;
+import app.coronawarn.server.services.submission.monitoring.SubmissionControllerMonitor;
 import app.coronawarn.server.services.submission.validation.ValidSubmissionPayload;
 import app.coronawarn.server.services.submission.verification.TanVerifier;
 import java.util.ArrayList;
@@ -58,18 +59,21 @@ public class SubmissionController {
    */
   public static final String SUBMISSION_ROUTE = "/diagnosis-keys";
 
+  private final SubmissionControllerMonitor submissionControllerMonitor;
   private final ScheduledExecutorService scheduledExecutor = Executors.newSingleThreadScheduledExecutor();
   private final ForkJoinPool forkJoinPool = ForkJoinPool.commonPool();
   private final DiagnosisKeyService diagnosisKeyService;
   private final TanVerifier tanVerifier;
   private final Double fakeDelayMovingAverageSamples;
   private final Integer retentionDays;
+  // TODO: gauge for fake delay
   private Double fakeDelay;
 
   SubmissionController(DiagnosisKeyService diagnosisKeyService, TanVerifier tanVerifier,
-      SubmissionServiceConfig submissionServiceConfig) {
+      SubmissionServiceConfig submissionServiceConfig, SubmissionControllerMonitor submissionControllerMonitor) {
     this.diagnosisKeyService = diagnosisKeyService;
     this.tanVerifier = tanVerifier;
+    this.submissionControllerMonitor = submissionControllerMonitor;
     fakeDelay = submissionServiceConfig.getInitialFakeDelayMilliseconds();
     fakeDelayMovingAverageSamples = submissionServiceConfig.getFakeDelayMovingAverageSamples();
     retentionDays = submissionServiceConfig.getRetentionDays();
@@ -89,8 +93,10 @@ public class SubmissionController {
       @RequestHeader("cwa-fake") Integer fake,
       @RequestHeader("cwa-authorization") String tan) {
     if (fake != 0) {
+      submissionControllerMonitor.incrementFake();
       return buildFakeDeferredResult();
     } else {
+      submissionControllerMonitor.incrementReal();
       return buildRealDeferredResult(exposureKeys, tan);
     }
   }
@@ -110,6 +116,7 @@ public class SubmissionController {
       StopWatch stopWatch = new StopWatch();
       stopWatch.start();
       if (!this.tanVerifier.verifyTan(tan)) {
+        submissionControllerMonitor.incrementInvalidTan();
         deferredResult.setResult(buildTanInvalidResponseEntity());
       } else {
         try {
