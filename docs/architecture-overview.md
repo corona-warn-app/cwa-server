@@ -25,7 +25,7 @@ On a high level, the application consists of two main parts, as shown below.
 ![Overview Diagram](./images/v4.png)
 
 1. CWA Server: Handles submission and aggregation/distribution of diagnosis keys and configuration files.
-2. Verification Backend: Deals with test result verification and issues TANs. This backend is managed and deployed
+2. Verification Server: Deals with test result verification and issues TANs. This server is managed and deployed
 separately. The repository for those components will be opened up to the community soon.
 
 This document outlines the CWA Server components, which are part of this repository. For the full architectural
@@ -46,18 +46,18 @@ The files will be pushed to an S3 compliant object store whenever new files beco
 
 The mobile application will use a CDN for fetching files, which mirrors all files as a transparent proxy present in the object store.
 
-### Verification Backend
+### Verification Server
 
-Note: The verification backend design will be available soon as discussions are ongoing.
+Note: The verification server design will be available soon as discussions are ongoing.
 
-The verification backend supports the user's journey beginning at scanning the QR code printed
+The verification server supports the user's journey beginning at scanning the QR code printed
 on the documentation of the SARS-CoV-2 test until the upload of diagnosis keys when the user was tested positive. Testing
-labs will update the Verification Backend when a SARS-CoV-2 test result is positive. Since the QR code
+labs will update the verification server when a SARS-CoV-2 test result is positive. Since the QR code
 is linked to a test, the mobile application will be able to fetch a test-positive notification from
-the Verification Backend, along with a TAN. The TAN will be used as an authorization token when
+the verification server, along with a TAN. The TAN will be used as an authorization token when
 the user uploads the diagnosis keys of the past 14 days.
 
-Therefore, from a CWA Server perspective, the Verification Backend provides an endpoint for TAN verification.
+Therefore, from a CWA Server perspective, the verification server provides an endpoint for TAN verification.
 
 ## Security
 
@@ -65,7 +65,7 @@ Therefore, from a CWA Server perspective, the Verification Backend provides an e
 
 The CWA Server exposes only one endpoint – the submission endpoint.
 The endpoint is public (unauthenticated), and authorization for calls is granted to users who are passing a valid TAN.
-The TAN verification cannot be done on CWA Server, but the task is delegated to the Verification Backend (see Verification Backend chapter in Integration with other Systems).
+The TAN verification cannot be done on CWA Server, but the task is delegated to the verification server (see Verification Server chapter in Integration with other Systems).
 
 ### Authenticity
 
@@ -91,7 +91,7 @@ The CWA Server will not persist the entry on the database and will ensure that f
 ### Submission Service
 
 The submission service's only task is to process uploaded diagnosis keys and persist them to the database after the TAN has been verified.
-The actual task of the verification is handed over to the verification backend, which will provide the verification result back to CWA.
+The actual task of the verification is handed over to the verification server, which will provide the verification result back to CWA.
 After verification was successfully done, the diagnosis keys are persisted in the database, and will be published in the next batch.
 
 The payload send by the mobile is defined as:
