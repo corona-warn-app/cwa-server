@@ -97,10 +97,10 @@ public class RiskScoreClassificationValidator extends ConfigurationValidator {
 
   private void validateValueRangeCoverage() {
     int partitionSum = riskScoreClassification.getRiskClassesList().stream()
-        .mapToInt(riskScoreClass -> (riskScoreClass.getMax() - riskScoreClass.getMin() + 1))
+        .mapToInt(riskScoreClass -> (riskScoreClass.getMax() - riskScoreClass.getMin()))
         .sum();
 
-    if (partitionSum != ParameterSpec.RISK_SCORE_MAX + 1) {
+    if (partitionSum != ParameterSpec.RISK_SCORE_MAX) {
       errors.add(new GeneralValidationError("covered value range", partitionSum, INVALID_PARTITIONING));
     }
   }

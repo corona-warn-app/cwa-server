@@ -87,6 +87,6 @@ class ApplicationConfigurationValidatorTest {
 
   public static TestWithExpectedResult MinRiskThresholdOutOfBoundsPositive() {
     return testBuilder.build("app-config_mrs_oob.yaml")
-        .with(new MinimumRiskLevelValidationError(4097));
+        .with(new MinimumRiskLevelValidationError(73));
   }
 }
