@@ -32,6 +32,7 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import app.coronawarn.server.services.distribution.config.DistributionServiceConfig;
 import app.coronawarn.server.services.distribution.objectstore.client.ObjectStoreClient.HeaderKey;
 import java.nio.file.Path;
 import java.util.List;
@@ -46,6 +47,8 @@ import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.ConfigFileApplicationContextInitializer;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Bean;
@@ -71,11 +74,15 @@ import software.amazon.awssdk.utils.builder.SdkBuilder;
 
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration(initializers = ConfigFileApplicationContextInitializer.class)
+@EnableConfigurationProperties(value = DistributionServiceConfig.class)
 class S3ClientWrapperTest {
 
   private static final String VALID_BUCKET_NAME = "myBucket";
   private static final String VALID_PREFIX = "prefix";
   private static final String VALID_NAME = "object key";
+
+  @Value("${services.distribution.objectstore.retry-attempts}")
+  private int configuredNumberOfRetries;
 
   @MockBean
   private S3Client s3Client;
@@ -179,12 +186,12 @@ class S3ClientWrapperTest {
 
   @ParameterizedTest
   @ValueSource(classes = {NoSuchBucketException.class, S3Exception.class, SdkClientException.class, SdkException.class})
-  void shouldAttemptToGetObjectsThreeTimesAndThenThrow(Class<Exception> cause) {
+  void shouldRetryGettingObjectsAndThenThrow(Class<Exception> cause) {
     when(s3Client.listObjectsV2(any(ListObjectsV2Request.class))).thenThrow(cause);
     assertThatExceptionOfType(ObjectStoreOperationFailedException.class)
         .isThrownBy(() -> s3ClientWrapper.getObjects(VALID_BUCKET_NAME, VALID_PREFIX));
 
-    verify(s3Client, times(3)).listObjectsV2(any(ListObjectsV2Request.class));
+    verify(s3Client, times(configuredNumberOfRetries)).listObjectsV2(any(ListObjectsV2Request.class));
   }
 
   @Test
@@ -226,12 +233,12 @@ class S3ClientWrapperTest {
 
   @ParameterizedTest
   @ValueSource(classes = {NoSuchBucketException.class, S3Exception.class, SdkClientException.class, SdkException.class})
-  void shouldAttemptToUploadObjectThreeTimesAndThenThrow(Class<Exception> cause) {
+  void shouldRetryUploadingObjectAndThenThrow(Class<Exception> cause) {
     when(s3Client.putObject(any(PutObjectRequest.class), any(RequestBody.class))).thenThrow(cause);
     assertThatExceptionOfType(ObjectStoreOperationFailedException.class)
         .isThrownBy(() -> s3ClientWrapper.putObject(VALID_BUCKET_NAME, VALID_PREFIX, Path.of(""), emptyMap()));
 
-    verify(s3Client, times(3)).putObject(any(PutObjectRequest.class), any(RequestBody.class));
+    verify(s3Client, times(configuredNumberOfRetries)).putObject(any(PutObjectRequest.class), any(RequestBody.class));
   }
 
   @Test
@@ -271,11 +278,11 @@ class S3ClientWrapperTest {
 
   @ParameterizedTest
   @ValueSource(classes = {NoSuchBucketException.class, S3Exception.class, SdkClientException.class, SdkException.class})
-  void shouldAttemptToRemoveObjectThreeTimesAndThenThrow(Class<Exception> cause) {
+  void shouldRetryRemovingObjectAndThenThrow(Class<Exception> cause) {
     when(s3Client.deleteObjects(any(DeleteObjectsRequest.class))).thenThrow(cause);
     assertThatExceptionOfType(ObjectStoreOperationFailedException.class)
         .isThrownBy(() -> s3ClientWrapper.removeObjects(VALID_BUCKET_NAME, List.of(VALID_NAME)));
 
-    verify(s3Client, times(3)).deleteObjects(any(DeleteObjectsRequest.class));
+    verify(s3Client, times(configuredNumberOfRetries)).deleteObjects(any(DeleteObjectsRequest.class));
   }
 }

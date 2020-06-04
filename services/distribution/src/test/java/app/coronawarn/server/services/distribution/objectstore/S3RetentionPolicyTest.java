@@ -60,7 +60,8 @@ class S3RetentionPolicyTest {
   @Autowired
   private S3RetentionPolicy s3RetentionPolicy;
 
-  @Autowired DistributionServiceConfig distributionServiceConfig;
+  @Autowired
+  private DistributionServiceConfig distributionServiceConfig;
 
   @Test
   void shouldDeleteOldFiles() {
