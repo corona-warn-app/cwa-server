@@ -34,7 +34,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.ResourceUtils;
 
 @Component
-@Profile("cloud")
+@Profile("ssl-client-verification")
 public class CloudFeignClientProvider implements FeignClientProvider {
 
   @Autowired

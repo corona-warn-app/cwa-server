@@ -1,0 +1,9 @@
+---
+server:
+  ssl:
+    enabled: true
+    key-password: ${SSL_SUBMISSION_KEYSTORE_PASSWORD}
+    key-store: ${SSL_SUBMISSION_KEYSTORE_PATH}
+    key-store-password: ${SSL_SUBMISSION_KEYSTORE_PASSWORD}
+    key-store-provider: SUN
+    key-store-type: JKS
