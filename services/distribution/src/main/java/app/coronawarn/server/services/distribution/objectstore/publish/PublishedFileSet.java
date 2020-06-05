@@ -63,7 +63,7 @@ public class PublishedFileSet {
       return true;
     }
 
-    return !file.getEtag().equals(published.getEtag());
+    return !file.getChecksum().equals(published.getCwaHash());
   }
 
 }

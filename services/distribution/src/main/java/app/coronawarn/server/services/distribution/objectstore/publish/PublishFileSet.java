@@ -20,6 +20,7 @@
 
 package app.coronawarn.server.services.distribution.objectstore.publish;
 
+import app.coronawarn.server.services.distribution.assembly.structure.file.FileOnDiskWithChecksum;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -61,6 +62,7 @@ public class PublishFileSet {
     try (Stream<Path> stream = Files.walk(path, FILE_WALK_MAX_DEPTH)) {
       return stream
           .filter(Files::isRegularFile)
+          .filter(this::ignoreChecksumFiles)
           .map(this::constructPublishFile)
           .collect(Collectors.toList());
     }
@@ -72,6 +74,10 @@ public class PublishFileSet {
     }
 
     return new LocalGenericFile(path, root);
+  }
+
+  private boolean ignoreChecksumFiles(Path path) {
+    return !FileOnDiskWithChecksum.isChecksumFile(path);
   }
 
   public List<LocalFile> getFiles() {
