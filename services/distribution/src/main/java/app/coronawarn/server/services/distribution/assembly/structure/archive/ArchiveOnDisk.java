@@ -45,7 +45,10 @@ public class ArchiveOnDisk extends FileOnDiskWithChecksum implements Archive<Wri
 
   private DirectoryOnDisk tempDirectory;
 
-  private byte[] checksumBytes;
+  /**
+   * The checksum-relevant content of this {@link ArchiveOnDisk}.
+   */
+  private byte[] bytesForChecksum;
 
   /**
    * Constructs an {@link Archive} with an internal, temporary directory to store writables in.
@@ -79,7 +82,7 @@ public class ArchiveOnDisk extends FileOnDiskWithChecksum implements Archive<Wri
   public void prepare(ImmutableStack<Object> indices) {
     this.tempDirectory.prepare(indices);
 
-    updateChecksumBytes();
+    updateBytesForChecksum();
   }
 
   @Override
@@ -107,18 +110,18 @@ public class ArchiveOnDisk extends FileOnDiskWithChecksum implements Archive<Wri
     throw new UnsupportedOperationException("Can not set bytes on an archive.");
   }
 
-  private void updateChecksumBytes() {
+  private void updateBytesForChecksum() {
     var targetFile = this.getWritables().stream()
         .filter(Writable::isFile)
         .map(file -> (FileOnDisk) file)
         .findFirst()
         .orElseThrow();
 
-    this.checksumBytes = targetFile.getBytes();
+    this.bytesForChecksum = targetFile.getBytes();
   }
 
   @Override
   protected byte[] getBytesForChecksum() {
-    return this.checksumBytes;
+    return this.bytesForChecksum;
   }
 }

@@ -99,21 +99,18 @@ public class S3ClientWrapper implements ObjectStoreClient {
       backoff = @Backoff(delayExpression = "${services.distribution.objectstore.retry-backoff}"))
   public void putObject(String bucket, String objectName, Path filePath, Map<HeaderKey, String> headers) {
     logRetryStatus("object upload");
-    RequestBody bodyFile = RequestBody.fromFile(filePath);
-
     var requestBuilder = PutObjectRequest.builder().bucket(bucket).key(objectName);
     if (headers.containsKey(HeaderKey.AMZ_ACL)) {
       requestBuilder.acl(headers.get(HeaderKey.AMZ_ACL));
     }
-
     if (headers.containsKey(HeaderKey.CACHE_CONTROL)) {
       requestBuilder.cacheControl(headers.get(HeaderKey.CACHE_CONTROL));
     }
-
     if (headers.containsKey(HeaderKey.CWA_HASH)) {
       requestBuilder.metadata(Map.of(HeaderKey.CWA_HASH.withMetaPrefix(), headers.get(HeaderKey.CWA_HASH)));
     }
 
+    RequestBody bodyFile = RequestBody.fromFile(filePath);
     s3Client.putObject(requestBuilder.build(), bodyFile);
   }
 
@@ -170,5 +167,4 @@ public class S3ClientWrapper implements ObjectStoreClient {
       logger.warn("Retrying {} after {} failed attempt(s).", action, retryCount);
     }
   }
-
 }

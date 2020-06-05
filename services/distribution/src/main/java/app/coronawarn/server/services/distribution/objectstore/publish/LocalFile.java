@@ -58,6 +58,7 @@ public abstract class LocalFile {
   public LocalFile(Path file, Path basePath) {
     this.file = file;
     this.s3Key = createS3Key(file, basePath);
+    this.checksum = loadChecksum();
   }
 
   public String getS3Key() {
@@ -72,14 +73,13 @@ public abstract class LocalFile {
     return file;
   }
 
-  LocalFile loadChecksum() {
+  private String loadChecksum() {
     try {
-      this.checksum = Files.readString(FileOnDiskWithChecksum.buildChecksumPathForFile(file)).trim();
+      return Files.readString(FileOnDiskWithChecksum.buildChecksumPathForFile(file)).trim();
     } catch (IOException e) {
       logger.debug("Unable to load checksum file.");
+      return "";
     }
-
-    return this;
   }
 
   protected String createS3Key(Path file, Path rootFolder) {

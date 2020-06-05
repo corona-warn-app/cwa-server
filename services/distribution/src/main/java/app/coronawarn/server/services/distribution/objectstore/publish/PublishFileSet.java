@@ -64,7 +64,6 @@ public class PublishFileSet {
           .filter(Files::isRegularFile)
           .filter(this::ignoreChecksumFiles)
           .map(this::constructPublishFile)
-          .map(LocalFile::loadChecksum)
           .collect(Collectors.toList());
     }
   }

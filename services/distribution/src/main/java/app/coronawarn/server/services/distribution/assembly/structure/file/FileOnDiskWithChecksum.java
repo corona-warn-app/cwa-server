@@ -27,14 +27,14 @@ import org.bouncycastle.util.encoders.Hex;
 import org.springframework.util.DigestUtils;
 
 /**
- * A {@link File} that can be written to disk, along a second {@link File} containing the hashsum of the actual {@link
- * FileOnDisk}.<br> The checksum file resides in the same folder as the actual file, and will use the same file name
- * with suffix {@link FileOnDiskWithChecksum#CHECKSUM_FILE_SUFFIX}.
+ * A {@link File} that can be written to disk, alongside a second {@link File} containing the hashsum of the actual
+ * {@link FileOnDisk}.<br> The checksum file resides in the same folder as the actual file, and will use the same file
+ * name with suffix {@link FileOnDiskWithChecksum#CHECKSUM_FILE_SUFFIX}.
  */
 public class FileOnDiskWithChecksum extends FileOnDisk {
 
   /**
-   * the file suffix for checksum files.
+   * The file suffix for checksum files.
    */
   public static final String CHECKSUM_FILE_SUFFIX = ".checksum";
 
@@ -82,7 +82,7 @@ public class FileOnDiskWithChecksum extends FileOnDisk {
   /**
    * Checks whether the given path translate to a checksum file.
    *
-   * @param path the path to heck
+   * @param path the path handle of the checksum file
    * @return true if it is a checksum file, false otherwise
    */
   public static boolean isChecksumFile(Path path) {
@@ -90,7 +90,7 @@ public class FileOnDiskWithChecksum extends FileOnDisk {
   }
 
   /**
-   * Constructs and returns the checksum file for a given file.
+   * Constructs and returns the checksum {@link Path} handle for a given file.
    *
    * @param file the file to create the checksum path for
    * @return the checksum path, which incorporates the original file + the checksum suffix.
