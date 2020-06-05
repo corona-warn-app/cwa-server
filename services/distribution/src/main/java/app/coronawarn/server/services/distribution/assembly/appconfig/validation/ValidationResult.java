@@ -67,6 +67,10 @@ public class ValidationResult {
     return Objects.equals(errors, that.errors);
   }
 
+  public boolean hasError(ValidationError error) {
+    return this.errors.contains(error);
+  }
+
   @Override
   public int hashCode() {
     return Objects.hash(errors);
