@@ -94,12 +94,12 @@ public class SubmissionController {
       @ValidSubmissionPayload @RequestBody SubmissionPayload exposureKeys,
       @RequestHeader("cwa-fake") Integer fake,
       @RequestHeader("cwa-authorization") String tan) {
-    submissionControllerMonitor.incrementAll();
+    submissionControllerMonitor.incrementRequestCounter();
     if (fake != 0) {
-      submissionControllerMonitor.incrementFake();
+      submissionControllerMonitor.incrementFakeRequestCounter();
       return buildFakeDeferredResult();
     } else {
-      submissionControllerMonitor.incrementReal();
+      submissionControllerMonitor.incrementRealRequestCounter();
       return buildRealDeferredResult(exposureKeys, tan);
     }
   }
@@ -120,7 +120,7 @@ public class SubmissionController {
         StopWatch stopWatch = new StopWatch();
         stopWatch.start();
         if (!this.tanVerifier.verifyTan(tan)) {
-          submissionControllerMonitor.incrementInvalidTan();
+          submissionControllerMonitor.incrementInvalidTanRequestCounter();
           deferredResult.setResult(buildTanInvalidResponseEntity());
         } else {
           persistDiagnosisKeysPayload(exposureKeys);

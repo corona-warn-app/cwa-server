@@ -39,7 +39,7 @@ public class SubmissionControllerMonitor {
   private final MeterRegistry meterRegistry;
 
   private final Integer batchSize;
-  private BatchCounter allRequests;
+  private BatchCounter requests;
   private BatchCounter realRequests;
   private BatchCounter fakeRequests;
   private BatchCounter invalidTanRequests;
@@ -55,8 +55,17 @@ public class SubmissionControllerMonitor {
     initializeCounters();
   }
 
+  /**
+   * We count the following values.
+   *  <ul>
+   *    <li> All requests that come in to the {@link SubmissionController}.
+   *    <li> As part of all, the number of requests that are not fake.
+   *    <li> As part of all, the number of requests that are fake.
+   *    <li> As part of all, the number of requests for that the TAN-validation failed.
+   *  </ul>
+   */
   private void initializeCounters() {
-    allRequests = new BatchCounter(meterRegistry, batchSize, "all");
+    requests = new BatchCounter(meterRegistry, batchSize, "all");
     realRequests = new BatchCounter(meterRegistry, batchSize, "real");
     fakeRequests = new BatchCounter(meterRegistry, batchSize, "fake");
     invalidTanRequests = new BatchCounter(meterRegistry, batchSize, "invalidTan");
@@ -75,19 +84,19 @@ public class SubmissionControllerMonitor {
         .register(meterRegistry);
   }
 
-  public void incrementAll() {
-    allRequests.increment();
+  public void incrementRequestCounter() {
+    requests.increment();
   }
 
-  public void incrementReal() {
+  public void incrementRealRequestCounter() {
     realRequests.increment();
   }
 
-  public void incrementFake() {
+  public void incrementFakeRequestCounter() {
     fakeRequests.increment();
   }
 
-  public void incrementInvalidTan() {
+  public void incrementInvalidTanRequestCounter() {
     invalidTanRequests.increment();
   }
 }
