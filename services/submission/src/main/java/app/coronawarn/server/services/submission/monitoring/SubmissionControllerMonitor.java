@@ -59,20 +59,22 @@ public class SubmissionControllerMonitor {
   }
 
   private void initializeCounters() {
-    realRequests = new BatchCounter(meterRegistry, batchSize, "real");
-    fakeRequests = new BatchCounter(meterRegistry, batchSize, "fake");
-    invalidTanRequests = new BatchCounter(meterRegistry, batchSize, "invalidTan");
+    realRequests = new BatchCounter(meterRegistry, batchSize, "real", "The number of non-fake requests.");
+    fakeRequests = new BatchCounter(meterRegistry, batchSize, "fake", "The number of fake requests.");
+    invalidTanRequests = new BatchCounter(meterRegistry, batchSize, "invalidTan",
+        "The number requests with invalid TAN.");
   }
 
   /**
-   * Initializes the gauges for the {@link SubmissionController} that is being monitored. Currently, only
-   * the delay time of fake requests is measured.
+   * Initializes the gauges for the {@link SubmissionController} that is being monitored. Currently, only the delay time
+   * of fake requests is measured.
    *
    * @param submissionController the submission controller for which the gauges shall be initialized
    */
   public void initializeGauges(SubmissionController submissionController) {
     Gauge.builder(SUBMISSION_CONTROLLER_CURRENT_FAKE_DELAY, submissionController,
         __ -> submissionController.getFakeDelay())
+        .description("The time that fake requests are delayed to make them indistinguishable from real requests.")
         .register(meterRegistry);
   }
 

@@ -38,10 +38,11 @@ public class BatchCounter {
   private final Counter counter;
   private Double batch = 0.;
 
-  BatchCounter(MeterRegistry meterRegistry, Integer batchSize, String type) {
+  BatchCounter(MeterRegistry meterRegistry, Integer batchSize, String type, String description) {
     this.batchSize = batchSize;
     counter = Counter.builder(SUBMISSION_CONTROLLER_REQUESTS_COUNTER_NAME)
         .tag("type", type)
+        .description(description)
         .register(meterRegistry);
   }
 
