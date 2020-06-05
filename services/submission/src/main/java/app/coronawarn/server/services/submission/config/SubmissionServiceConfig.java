@@ -142,7 +142,4 @@ public class SubmissionServiceConfig {
   public void setMonitoringBatchSize(Integer batchSize) {
     this.monitoring.setBatchSize(batchSize);
   }
-
-
-
 }

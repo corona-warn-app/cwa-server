@@ -57,5 +57,4 @@ public class BatchCounter {
       batch = 1.;
     }
   }
-
 }

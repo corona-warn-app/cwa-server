@@ -34,8 +34,6 @@ import org.springframework.stereotype.Component;
 @Component
 @ConfigurationProperties(prefix = "services.submission.monitoring")
 public class SubmissionControllerMonitor {
-
-
   private static final String SUBMISSION_CONTROLLER_CURRENT_FAKE_DELAY = "submissionController.fakeDelay";
 
   private final MeterRegistry meterRegistry;
@@ -92,5 +90,4 @@ public class SubmissionControllerMonitor {
   public void incrementInvalidTan() {
     invalidTanRequests.increment();
   }
-
 }
