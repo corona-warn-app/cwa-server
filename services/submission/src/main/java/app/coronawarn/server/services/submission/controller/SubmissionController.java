@@ -162,7 +162,8 @@ public class SubmissionController {
     diagnosisKeyService.saveDiagnosisKeys(diagnosisKeys);
   }
 
-  private synchronized void updateFakeDelay(long realRequestDuration) {
-    fakeDelay = fakeDelay + (1 / fakeDelayMovingAverageSamples) * (realRequestDuration - fakeDelay);
+  private void updateFakeDelay(long realRequestDuration) {
+    final Double currentDelay = fakeDelay;
+    fakeDelay = currentDelay + (1 / fakeDelayMovingAverageSamples) * (realRequestDuration - currentDelay);
   }
 }
