@@ -26,7 +26,9 @@ import io.micrometer.core.instrument.Counter;
 import io.micrometer.core.instrument.MeterRegistry;
 
 /**
- * counter.
+ * Batch counter for counting requests for monitoring. Counts up in batches,
+ * given batch size. This way, single requests cannot be traced to semantics
+ * of the counter by comparing time stamps.
  */
 public class BatchCounter {
 
@@ -44,7 +46,8 @@ public class BatchCounter {
   }
 
   /**
-   * ínvrement.
+   * Increments the {@link BatchCounter}. If the batch size is reached, it is provided
+   * to monitoring, else, the internal counter is incremented.
    */
   public void increment() {
     if (batch < batchSize) {

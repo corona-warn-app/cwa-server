@@ -65,7 +65,8 @@ public class SubmissionControllerMonitor {
   }
 
   /**
-   * Initializes the gauges for the {@link SubmissionController} that is being monitored.
+   * Initializes the gauges for the {@link SubmissionController} that is being monitored. Currently, only
+   * the delay time of fake requests is measured.
    *
    * @param submissionController the submission controller for which the gauges shall be initialized
    */
@@ -75,26 +76,14 @@ public class SubmissionControllerMonitor {
         .register(meterRegistry);
   }
 
-  /**
-   * Increment request counter in steps of batch size. This is done to prevent being able to retrace requests using time
-   * stamps.
-   */
   public void incrementReal() {
     realRequests.increment();
   }
 
-  /**
-   * Increment fake request counter in steps of batch size. This is done to prevent being able to retrace requests using
-   * time stamps.
-   */
   public void incrementFake() {
     fakeRequests.increment();
   }
 
-  /**
-   * Increment invalid tan request counter in steps of batch size. This is done to prevent being able to retrace
-   * requests using time stamps.
-   */
   public void incrementInvalidTan() {
     invalidTanRequests.increment();
   }
