@@ -78,19 +78,13 @@ public class S3ClientWrapper implements ObjectStoreClient {
       backoff = @Backoff(delayExpression = "${services.distribution.objectstore.retry-backoff}"))
   public List<S3Object> getObjects(String bucket, String prefix) {
     logRetryStatus("object download");
+
     ListObjectsV2Response response =
         s3Client.listObjectsV2(ListObjectsV2Request.builder().prefix(prefix).bucket(bucket).build());
-    return response.contents().stream().map(S3ClientWrapper::buildS3Object).collect(toList());
-    try {
-      ListObjectsV2Response response =
-          s3Client.listObjectsV2(ListObjectsV2Request.builder().prefix(prefix).bucket(bucket).build());
-      return response.contents()
-        .stream()
-        .map(s3Object -> buildS3Object(s3Object, bucket))
-        .collect(toList());
-    } catch (SdkException e) {
-      throw new ObjectStoreOperationFailedException("Failed to upload object to object store", e);
-    }
+
+    return response.contents().stream()
+      .map(s3Object -> buildS3Object(s3Object, bucket))
+      .collect(toList());
   }
 
   @Recover
@@ -151,9 +145,6 @@ public class S3ClientWrapper implements ObjectStoreClient {
     throw new ObjectStoreOperationFailedException("Failed to modify objects on object store.", cause);
   }
 
-  private static S3Object buildS3Object(software.amazon.awssdk.services.s3.model.S3Object s3Object) {
-    String etag = s3Object.eTag().replaceAll("\"", "");
-    return new S3Object(s3Object.key(), etag);
   /**
    * Fetches the CWA Hash for the given S3Object. Unfortunately, this is necessary for the AWS SDK, as it does not
    * support fetching metadata within the {@link ListObjectsV2Request}.<br> MinIO actually does support this, so when
@@ -168,6 +159,11 @@ public class S3ClientWrapper implements ObjectStoreClient {
     return result.metadata().get(HeaderKey.CWA_HASH.keyValue);
   }
 
+  private S3Object buildS3Object(software.amazon.awssdk.services.s3.model.S3Object s3Object, String bucket) {
+    String cwaHash = fetchCwaHash(s3Object, bucket);
+    return new S3Object(s3Object.key(), cwaHash);
+  }
+
   private void logRetryStatus(String action) {
     int retryCount = RetrySynchronizationManager.getContext().getRetryCount();
     if (retryCount > 0) {
@@ -175,8 +171,4 @@ public class S3ClientWrapper implements ObjectStoreClient {
     }
   }
 
-  private S3Object buildS3Object(software.amazon.awssdk.services.s3.model.S3Object s3Object, String bucket) {
-    String cwaHash = fetchCwaHash(s3Object, bucket);
-    return new S3Object(s3Object.key(), cwaHash);
-  }
 }
