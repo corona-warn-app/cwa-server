@@ -33,7 +33,7 @@ import org.springframework.stereotype.Component;
 
 @Component
 @Profile("!cloud")
-public class DevelopmentFeignClientProvider extends FeignClientProvider {
+public class DevelopmentFeignClientProvider implements FeignClientProvider {
 
   @Override
   public Client createFeignClient() {

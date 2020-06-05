@@ -22,6 +22,6 @@ package app.coronawarn.server.services.submission.verification;
 
 import feign.Client;
 
-public abstract class FeignClientProvider {
-  abstract Client createFeignClient();
+public interface FeignClientProvider {
+  Client createFeignClient();
 }

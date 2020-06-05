@@ -35,7 +35,7 @@ import org.springframework.util.ResourceUtils;
 
 @Component
 @Profile("cloud")
-public class CloudFeignClientProvider extends FeignClientProvider {
+public class CloudFeignClientProvider implements FeignClientProvider {
 
   @Autowired
   Environment environment;
