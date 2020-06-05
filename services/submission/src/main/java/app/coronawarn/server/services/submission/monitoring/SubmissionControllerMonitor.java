@@ -24,7 +24,6 @@ package app.coronawarn.server.services.submission.monitoring;
 
 import app.coronawarn.server.services.submission.config.SubmissionServiceConfig;
 import app.coronawarn.server.services.submission.controller.SubmissionController;
-import io.micrometer.core.instrument.Counter;
 import io.micrometer.core.instrument.Gauge;
 import io.micrometer.core.instrument.MeterRegistry;
 import org.springframework.boot.context.properties.ConfigurationProperties;
@@ -38,18 +37,15 @@ import org.springframework.stereotype.Component;
 @ConfigurationProperties(prefix = "services.submission.monitoring")
 public class SubmissionControllerMonitor {
 
-  private static final String SUBMISSION_CONTROLLER_REQUESTS_COUNTER_NAME = "submissionController.requests";
+
   private static final String SUBMISSION_CONTROLLER_CURRENT_FAKE_DELAY = "submissionController.fakeDelay";
 
   private final MeterRegistry meterRegistry;
 
   private final Integer batchSize;
-  private Counter realRequests;
-  private Double realRequestsBatch = 0.;
-  private Counter fakeRequests;
-  private Double fakeRequestsBatch = 0.;
-  private Counter invalidTanRequests;
-  private Double invalidTanRequestsBatch = 0.;
+  private BatchCounter realRequests;
+  private BatchCounter fakeRequests;
+  private BatchCounter invalidTanRequests;
 
   /**
    * Constructor for {@link SubmissionControllerMonitor}. Initializes all counters to 0 upon being called.
@@ -63,20 +59,9 @@ public class SubmissionControllerMonitor {
   }
 
   private void initializeCounters() {
-    realRequests = Counter.builder(SUBMISSION_CONTROLLER_REQUESTS_COUNTER_NAME)
-        .tag("type", "real")
-        .description("")
-        .register(meterRegistry);
-
-    fakeRequests = Counter.builder(SUBMISSION_CONTROLLER_REQUESTS_COUNTER_NAME)
-        .tag("type", "fake")
-        .description("")
-        .register(meterRegistry);
-
-    invalidTanRequests = Counter.builder(SUBMISSION_CONTROLLER_REQUESTS_COUNTER_NAME)
-        .tag("type", "invalidTan")
-        .description("")
-        .register(meterRegistry);
+    realRequests = new BatchCounter(meterRegistry, batchSize, "real");
+    fakeRequests = new BatchCounter(meterRegistry, batchSize, "fake");
+    invalidTanRequests = new BatchCounter(meterRegistry, batchSize, "invalidTan");
   }
 
   /**
@@ -87,7 +72,6 @@ public class SubmissionControllerMonitor {
   public void initializeGauges(SubmissionController submissionController) {
     Gauge.builder(SUBMISSION_CONTROLLER_CURRENT_FAKE_DELAY, submissionController,
         __ -> submissionController.getFakeDelay())
-        .description("")
         .register(meterRegistry);
   }
 
@@ -96,12 +80,7 @@ public class SubmissionControllerMonitor {
    * stamps.
    */
   public void incrementReal() {
-    if (realRequestsBatch < batchSize) {
-      realRequestsBatch++;
-    } else {
-      realRequests.increment(realRequestsBatch);
-      realRequestsBatch = 1.;
-    }
+    realRequests.increment();
   }
 
   /**
@@ -109,12 +88,7 @@ public class SubmissionControllerMonitor {
    * time stamps.
    */
   public void incrementFake() {
-    if (fakeRequestsBatch < batchSize) {
-      fakeRequestsBatch++;
-    } else {
-      fakeRequests.increment(fakeRequestsBatch);
-      fakeRequestsBatch = 1.;
-    }
+    fakeRequests.increment();
   }
 
   /**
@@ -122,12 +96,7 @@ public class SubmissionControllerMonitor {
    * requests using time stamps.
    */
   public void incrementInvalidTan() {
-    if (invalidTanRequestsBatch < batchSize) {
-      invalidTanRequestsBatch++;
-    } else {
-      invalidTanRequests.increment(invalidTanRequestsBatch);
-      invalidTanRequestsBatch = 1.;
-    }
+    invalidTanRequests.increment();
   }
 
 }
