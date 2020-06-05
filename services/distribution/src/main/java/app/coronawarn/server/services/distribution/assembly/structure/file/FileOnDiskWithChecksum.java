@@ -33,7 +33,9 @@ import org.springframework.util.DigestUtils;
  */
 public class FileOnDiskWithChecksum extends FileOnDisk {
 
-  /** the file suffix for checksum files */
+  /**
+   * the file suffix for checksum files.
+   */
   public static final String CHECKSUM_FILE_SUFFIX = ".checksum";
 
   /**

@@ -54,7 +54,7 @@ public class ArchiveOnDisk extends FileOnDiskWithChecksum implements Archive<Wri
     super(name, new byte[0]);
     try {
       tempDirectory = new DirectoryOnDisk(
-          Files.createTempDirectory("temporary").toFile());
+        Files.createTempDirectory("temporary").toFile());
     } catch (IOException e) {
       throw new UncheckedIOException("Failed to create temporary directory for zip archive " + this.getFileOnDisk(), e);
     }
@@ -89,14 +89,14 @@ public class ArchiveOnDisk extends FileOnDiskWithChecksum implements Archive<Wri
 
     try (ZipOutputStream zipOutputStream = new ZipOutputStream(byteArrayOutputStream)) {
       this.getWritables().stream()
-          .filter(writable -> writable instanceof File)
-          .map(file -> (FileOnDisk) file)
-          .forEach(uncheckedConsumer(file -> {
-            String pathInZip = file.getName();
-            zipOutputStream.putNextEntry(new ZipEntry(pathInZip));
-            byte[] bytes = file.getBytes();
-            zipOutputStream.write(bytes, 0, bytes.length);
-          }));
+        .filter(writable -> writable instanceof File)
+        .map(file -> (FileOnDisk) file)
+        .forEach(uncheckedConsumer(file -> {
+          String pathInZip = file.getName();
+          zipOutputStream.putNextEntry(new ZipEntry(pathInZip));
+          byte[] bytes = file.getBytes();
+          zipOutputStream.write(bytes, 0, bytes.length);
+        }));
     } catch (IOException e) {
       throw new UncheckedIOException("Failed to close zip archive output stream.", e);
     }
