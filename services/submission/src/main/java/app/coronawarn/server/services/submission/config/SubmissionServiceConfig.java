@@ -34,6 +34,7 @@ public class SubmissionServiceConfig {
   private Integer retentionDays;
   private Payload payload;
   private Verification verification;
+  private Monitoring monitoring;
 
   public Double getInitialFakeDelayMilliseconds() {
     return initialFakeDelayMilliseconds;
@@ -93,7 +94,6 @@ public class SubmissionServiceConfig {
   }
 
   private static class Verification {
-
     private String baseUrl;
 
     private String path;
@@ -114,5 +114,35 @@ public class SubmissionServiceConfig {
       this.path = path;
     }
   }
+
+  private static class Monitoring {
+    private Integer batchSize;
+
+    public Integer getBatchSize() {
+      return batchSize;
+    }
+
+    public void setBatchSize(Integer batchSize) {
+      this.batchSize = batchSize;
+    }
+  }
+
+  public Monitoring getMonitoring() {
+    return monitoring;
+  }
+
+  public void setMonitoring(Monitoring monitoring) {
+    this.monitoring = monitoring;
+  }
+
+  public Integer getMonitoringBatchSize() {
+    return this.monitoring.getBatchSize();
+  }
+
+  public void setMonitoringBatchSize(Integer batchSize) {
+    this.monitoring.setBatchSize(batchSize);
+  }
+
+
 
 }

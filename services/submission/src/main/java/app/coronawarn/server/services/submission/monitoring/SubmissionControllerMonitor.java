@@ -20,12 +20,14 @@
  *
  */
 
-package app.coronawarn.server.services.submission.controller.monitoring;
+package app.coronawarn.server.services.submission.monitoring;
 
+import app.coronawarn.server.services.submission.config.SubmissionServiceConfig;
 import app.coronawarn.server.services.submission.controller.SubmissionController;
 import io.micrometer.core.instrument.Counter;
 import io.micrometer.core.instrument.Gauge;
 import io.micrometer.core.instrument.MeterRegistry;
+import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Component;
 
 /**
@@ -33,6 +35,7 @@ import org.springframework.stereotype.Component;
  * {@link app.coronawarn.server.services.submission.controller.SubmissionController}.
  */
 @Component
+@ConfigurationProperties(prefix = "services.submission.monitoring")
 public class SubmissionControllerMonitor {
 
   private static final String SUBMISSION_CONTROLLER_REQUESTS_COUNTER_NAME = "submissionController.requests";
@@ -40,17 +43,22 @@ public class SubmissionControllerMonitor {
 
   private final MeterRegistry meterRegistry;
 
+  private final Integer batchSize;
   private Counter realRequests;
+  private Double realRequestsBatch = 0.;
   private Counter fakeRequests;
+  private Double fakeRequestsBatch = 0.;
   private Counter invalidTanRequests;
+  private Double invalidTanRequestsBatch = 0.;
 
   /**
-   * Constructor for {@link SubmissionControllerMonitor}. Initializes all metrics upon being called.
+   * Constructor for {@link SubmissionControllerMonitor}. Initializes all counters upon being called.
    *
    * @param meterRegistry the meterRegistry
    */
-  protected SubmissionControllerMonitor(MeterRegistry meterRegistry) {
+  protected SubmissionControllerMonitor(MeterRegistry meterRegistry, SubmissionServiceConfig submissionServiceConfig) {
     this.meterRegistry = meterRegistry;
+    this.batchSize = submissionServiceConfig.getMonitoringBatchSize();
     initializeCounters();
   }
 
@@ -72,7 +80,8 @@ public class SubmissionControllerMonitor {
   }
 
   /**
-   * init gauges.
+   * Initializes the gauges of this monitor.
+   *
    * @param submissionController init
    */
   public void initializeGauges(SubmissionController submissionController) {
@@ -82,16 +91,43 @@ public class SubmissionControllerMonitor {
         .register(meterRegistry);
   }
 
+  /**
+   * Increment request counter in steps of batch size. This is done to prevent being able to retrace requests using time
+   * stamps.
+   */
   public void incrementReal() {
-    realRequests.increment();
+    if (realRequestsBatch < batchSize) {
+      realRequestsBatch++;
+    } else {
+      realRequests.increment(realRequestsBatch);
+      realRequestsBatch = 1.;
+    }
   }
 
+  /**
+   * Increment fake request counter in steps of batch size. This is done to prevent being able to retrace requests using
+   * time stamps.
+   */
   public void incrementFake() {
-    fakeRequests.increment();
+    if (fakeRequestsBatch < batchSize) {
+      fakeRequestsBatch++;
+    } else {
+      fakeRequests.increment(fakeRequestsBatch);
+      fakeRequestsBatch = 1.;
+    }
   }
 
+  /**
+   * Increment invalid tan request counter in steps of batch size. This is done to prevent being able to retrace
+   * requests using time stamps.
+   */
   public void incrementInvalidTan() {
-    invalidTanRequests.increment();
+    if (invalidTanRequestsBatch < batchSize) {
+      invalidTanRequestsBatch++;
+    } else {
+      invalidTanRequests.increment(invalidTanRequestsBatch);
+      invalidTanRequestsBatch = 1.;
+    }
   }
 
 

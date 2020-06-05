@@ -25,7 +25,7 @@ import app.coronawarn.server.common.persistence.service.DiagnosisKeyService;
 import app.coronawarn.server.common.protocols.external.exposurenotification.TemporaryExposureKey;
 import app.coronawarn.server.common.protocols.internal.SubmissionPayload;
 import app.coronawarn.server.services.submission.config.SubmissionServiceConfig;
-import app.coronawarn.server.services.submission.controller.monitoring.SubmissionControllerMonitor;
+import app.coronawarn.server.services.submission.monitoring.SubmissionControllerMonitor;
 import app.coronawarn.server.services.submission.validation.ValidSubmissionPayload;
 import app.coronawarn.server.services.submission.verification.TanVerifier;
 import java.util.ArrayList;
@@ -73,10 +73,10 @@ public class SubmissionController {
     this.diagnosisKeyService = diagnosisKeyService;
     this.tanVerifier = tanVerifier;
     this.submissionControllerMonitor = submissionControllerMonitor;
-    submissionControllerMonitor.initializeGauges(this);
     fakeDelay = submissionServiceConfig.getInitialFakeDelayMilliseconds();
     fakeDelayMovingAverageSamples = submissionServiceConfig.getFakeDelayMovingAverageSamples();
     retentionDays = submissionServiceConfig.getRetentionDays();
+    submissionControllerMonitor.initializeGauges(this);
   }
 
   /**
