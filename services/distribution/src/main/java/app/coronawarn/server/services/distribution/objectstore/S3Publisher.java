@@ -78,6 +78,7 @@ public class S3Publisher {
   public void publish() throws IOException {
     var published = new PublishedFileSet(access.getObjectsWithPrefix(CWA_S3_ROOT));
     var toPublish = new PublishFileSet(root);
+    Collection<Future<Void>> fileUploads = new ArrayList<>();
 
     var diff = toPublish
         .getFiles()
@@ -87,14 +88,13 @@ public class S3Publisher {
 
     logger.info("Beginning upload... ");
 
-    Collection<Future<Integer>> results = new ArrayList<>();
-
     for (LocalFile file : diff) {
-      results.add(this.access.putObject(file));
+      fileUploads.add(this.access.putObject(file));
     }
-    results.forEach(result -> {
+    fileUploads.forEach(result -> {
       try {
         result.get();
+        result.cancel(true);
       } catch (Exception e) {
         //will be handled in conjunction with PR #419
         logger.error("Exception: ", e);
