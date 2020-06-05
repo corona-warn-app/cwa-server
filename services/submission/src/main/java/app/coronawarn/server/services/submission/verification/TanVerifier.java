@@ -21,6 +21,7 @@
 package app.coronawarn.server.services.submission.verification;
 
 import feign.FeignException;
+import io.micrometer.core.annotation.Timed;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;

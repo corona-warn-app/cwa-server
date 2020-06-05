@@ -28,6 +28,7 @@ import app.coronawarn.server.services.submission.config.SubmissionServiceConfig;
 import app.coronawarn.server.services.submission.monitoring.SubmissionControllerMonitor;
 import app.coronawarn.server.services.submission.validation.ValidSubmissionPayload;
 import app.coronawarn.server.services.submission.verification.TanVerifier;
+import io.micrometer.core.annotation.Timed;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Executors;
@@ -88,6 +89,7 @@ public class SubmissionController {
    * @return An empty response body.
    */
   @PostMapping(SUBMISSION_ROUTE)
+  @Timed(description = "Time spent handling submission.")
   public DeferredResult<ResponseEntity<Void>> submitDiagnosisKey(
       @ValidSubmissionPayload @RequestBody SubmissionPayload exposureKeys,
       @RequestHeader("cwa-fake") Integer fake,
