@@ -379,7 +379,6 @@ public class DistributionServiceConfig {
     public SignatureInfo getSignatureInfo() {
       return SignatureInfo.newBuilder()
           .setAppBundleId(this.getAppBundleId())
-          .setAndroidPackage(this.getAndroidPackage())
           .setVerificationKeyVersion(this.getVerificationKeyVersion())
           .setVerificationKeyId(this.getVerificationKeyId())
           .setSignatureAlgorithm(this.getAlgorithmOid())
