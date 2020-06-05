@@ -20,7 +20,8 @@
 
 package app.coronawarn.server.services.submission.validation;
 
-import app.coronawarn.server.common.persistence.domain.DiagnosisKey;
+import static app.coronawarn.server.common.persistence.domain.DiagnosisKey.EXPECTED_ROLLING_PERIOD;
+
 import app.coronawarn.server.common.protocols.external.exposurenotification.TemporaryExposureKey;
 import app.coronawarn.server.common.protocols.internal.SubmissionPayload;
 import app.coronawarn.server.services.submission.config.SubmissionServiceConfig;
@@ -94,7 +95,7 @@ public @interface ValidSubmissionPayload {
 
       boolean isValid = checkKeyCollectionSize(exposureKeys, validatorContext);
       isValid &= checkUniqueStartIntervalNumbers(exposureKeys, validatorContext);
-      isValid &= checkNoGapsInTimeWindow(exposureKeys, validatorContext);
+      isValid &= checkNoOverlapsInTimeWindow(exposureKeys, validatorContext);
 
       return isValid;
     }
@@ -129,7 +130,7 @@ public @interface ValidSubmissionPayload {
       return true;
     }
 
-    private boolean checkNoGapsInTimeWindow(List<TemporaryExposureKey> exposureKeys,
+    private boolean checkNoOverlapsInTimeWindow(List<TemporaryExposureKey> exposureKeys,
         ConstraintValidatorContext validatorContext) {
       if (exposureKeys.size() < 2) {
         return true;
@@ -140,10 +141,9 @@ public @interface ValidSubmissionPayload {
           .sorted().boxed().toArray(Integer[]::new);
 
       for (int i = 1; i < sortedStartIntervalNumbers.length; i++) {
-        if (!sortedStartIntervalNumbers[i]
-            .equals(sortedStartIntervalNumbers[i - 1] + DiagnosisKey.EXPECTED_ROLLING_PERIOD)) {
+        if ((sortedStartIntervalNumbers[i - 1] + EXPECTED_ROLLING_PERIOD) > sortedStartIntervalNumbers[i]) {
           addViolation(validatorContext, String.format(
-              "Subsequent intervals do not align. StartIntervalNumbers: %s", sortedStartIntervalNumbers));
+              "Subsequent intervals overlap. StartIntervalNumbers: %s", sortedStartIntervalNumbers));
           return false;
         }
       }
