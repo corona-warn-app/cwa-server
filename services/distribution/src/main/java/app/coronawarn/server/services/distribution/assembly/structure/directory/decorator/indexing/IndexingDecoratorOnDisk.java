@@ -23,6 +23,7 @@ package app.coronawarn.server.services.distribution.assembly.structure.directory
 import app.coronawarn.server.services.distribution.assembly.structure.WritableOnDisk;
 import app.coronawarn.server.services.distribution.assembly.structure.directory.IndexDirectory;
 import app.coronawarn.server.services.distribution.assembly.structure.file.FileOnDisk;
+import app.coronawarn.server.services.distribution.assembly.structure.file.FileOnDiskWithChecksum;
 import app.coronawarn.server.services.distribution.assembly.structure.util.ImmutableStack;
 import java.util.List;
 import java.util.Set;
@@ -42,8 +43,9 @@ public class IndexingDecoratorOnDisk<T> extends AbstractIndexingDecorator<T, Wri
     JSONArray array = new JSONArray();
     List<?> elements = index.stream()
         .map(this.getIndexFormatter())
+        .sorted()
         .collect(Collectors.toList());
     array.addAll(elements);
-    return new FileOnDisk(indexFileName, array.toJSONString().getBytes());
+    return new FileOnDiskWithChecksum(indexFileName, array.toJSONString().getBytes());
   }
 }

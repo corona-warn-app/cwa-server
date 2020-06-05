@@ -20,13 +20,15 @@
 
 package app.coronawarn.server.services.distribution.assembly.appconfig.validation;
 
-import static app.coronawarn.server.services.distribution.assembly.appconfig.validation.GeneralValidationError.ErrorType.MIN_GREATER_THAN_MAX;
+import static app.coronawarn.server.services.distribution.assembly.appconfig.validation.ValidationError.ErrorType.MIN_GREATER_THAN_MAX;
 
 import app.coronawarn.server.common.protocols.internal.ApplicationVersionConfiguration;
 import app.coronawarn.server.common.protocols.internal.ApplicationVersionInfo;
 import app.coronawarn.server.common.protocols.internal.SemanticVersion;
 
 public class ApplicationVersionConfigurationValidator extends ConfigurationValidator {
+
+  public static final String CONFIG_PREFIX = "app-version.";
 
   private final ApplicationVersionConfiguration config;
 
@@ -46,7 +48,7 @@ public class ApplicationVersionConfigurationValidator extends ConfigurationValid
     SemanticVersion minVersion = appVersionInfo.getMin();
     ComparisonResult comparisonResult = compare(appVersionInfo.getLatest(), minVersion);
     if (ComparisonResult.LOWER.equals(comparisonResult)) {
-      this.errors.add(new GeneralValidationError(name + ": latest/min",
+      this.errors.add(new ValidationError(CONFIG_PREFIX + name + ".[latest|min]",
           minVersion.getMajor() + "." + minVersion.getMinor() + "." + minVersion.getPatch(), MIN_GREATER_THAN_MAX));
     }
   }

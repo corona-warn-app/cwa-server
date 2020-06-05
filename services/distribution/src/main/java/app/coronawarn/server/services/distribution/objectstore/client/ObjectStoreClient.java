@@ -73,12 +73,17 @@ public interface ObjectStoreClient {
    */
   enum HeaderKey {
     CACHE_CONTROL("Cache-Control"),
-    AMZ_ACL("x-amz-acl");
+    AMZ_ACL("x-amz-acl"),
+    CWA_HASH("cwa-hash");
 
     public final String keyValue;
 
     HeaderKey(String keyValue) {
       this.keyValue = keyValue;
+    }
+
+    public String withMetaPrefix() {
+      return "x-amz-meta-" + this.keyValue;
     }
   }
 }

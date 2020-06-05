@@ -23,7 +23,7 @@ package app.coronawarn.server.services.distribution.assembly.diagnosiskeys.struc
 import app.coronawarn.server.common.persistence.domain.DiagnosisKey;
 import app.coronawarn.server.common.protocols.external.exposurenotification.TemporaryExposureKey;
 import app.coronawarn.server.common.protocols.external.exposurenotification.TemporaryExposureKeyExport;
-import app.coronawarn.server.services.distribution.assembly.structure.file.FileOnDisk;
+import app.coronawarn.server.services.distribution.assembly.structure.file.FileOnDiskWithChecksum;
 import app.coronawarn.server.services.distribution.assembly.structure.util.ImmutableStack;
 import app.coronawarn.server.services.distribution.config.DistributionServiceConfig;
 import com.google.protobuf.ByteString;
@@ -37,7 +37,7 @@ import java.util.stream.Collectors;
  * A {@link app.coronawarn.server.services.distribution.assembly.structure.file.File} containing a {@link
  * TemporaryExposureKeyExport}.
  */
-public class TemporaryExposureKeyExportFile extends FileOnDisk {
+public class TemporaryExposureKeyExportFile extends FileOnDiskWithChecksum {
 
   private final Collection<TemporaryExposureKey> temporaryExposureKeys;
   private final String region;
@@ -48,11 +48,15 @@ public class TemporaryExposureKeyExportFile extends FileOnDisk {
   private TemporaryExposureKeyExportFile(Collection<TemporaryExposureKey> temporaryExposureKeys, String region,
       long startTimestamp, long endTimestamp, DistributionServiceConfig distributionServiceConfig) {
     super(distributionServiceConfig.getTekExport().getFileName(), new byte[0]);
-    this.temporaryExposureKeys = temporaryExposureKeys;
     this.region = region;
     this.startTimestamp = startTimestamp;
     this.endTimestamp = endTimestamp;
     this.distributionServiceConfig = distributionServiceConfig;
+
+    this.temporaryExposureKeys = temporaryExposureKeys
+      .stream()
+      .sorted(new TemporaryExposureKeyComparator())
+      .collect(Collectors.toList());
   }
 
   /**

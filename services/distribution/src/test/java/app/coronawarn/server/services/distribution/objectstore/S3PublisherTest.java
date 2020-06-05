@@ -40,9 +40,9 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 class S3PublisherTest {
 
   private static final String PUBLISHING_PATH = "testsetups/s3publishertest/topublish";
-  private static final S3Object FILE_1 = new S3Object("file1.txt", "cf7fb1ca5c32adc0941c35a6f7fc5eba-1");
-  private static final S3Object FILE_2 = new S3Object("file2.txt", "d882afb9fa9c26f7e9d0965b8faa79b8-1");
-  private static final S3Object FILE_3 = new S3Object("file3.txt", "0385524c9fdc83634467a11667c851ac-1");
+  private static final S3Object FILE_1 = new S3Object("file1.txt", "cf7fb1ca5c32adc0941c35a6f7fc5eba");
+  private static final S3Object FILE_2 = new S3Object("file2.txt", "d882afb9fa9c26f7e9d0965b8faa79b8");
+  private static final S3Object FILE_3 = new S3Object("file3.txt", "0385524c9fdc83634467a11667c851ac");
 
   @MockBean
   private ObjectStoreAccess objectStoreAccess;
@@ -92,8 +92,8 @@ class S3PublisherTest {
 
   private List<S3Object> otherExisting() {
     return List.of(
-        new S3Object("some_old_file.txt", "1fb772815c837b6294d9f163db89e962-1"),
-        new S3Object("other_old_file.txt", "2fb772815c837b6294d9f163db89e962-1")
+        new S3Object("some_old_file.txt", "1fb772815c837b6294d9f163db89e962"),
+        new S3Object("other_old_file.txt", "2fb772815c837b6294d9f163db89e962")
     );
   }
 
@@ -107,10 +107,10 @@ class S3PublisherTest {
 
   private List<S3Object> twoIdenticalOneOtherOneChange() {
     return List.of(
-        new S3Object("newfile.txt", "1fb772815c837b6294d9f163db89e962-1"), // new
+        new S3Object("newfile.txt", "1fb772815c837b6294d9f163db89e962"), // new
         FILE_1,
         FILE_2,
-        new S3Object("file3.txt", "111772815c837b6294d9f163db89e962-1") // changed
+        new S3Object("file3.txt", "111772815c837b6294d9f163db89e962") // changed
     );
   }
 

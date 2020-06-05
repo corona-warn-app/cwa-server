@@ -28,6 +28,7 @@ import app.coronawarn.server.services.distribution.assembly.structure.directory.
 import app.coronawarn.server.services.distribution.assembly.structure.directory.DirectoryOnDisk;
 import app.coronawarn.server.services.distribution.assembly.structure.file.File;
 import app.coronawarn.server.services.distribution.assembly.structure.file.FileOnDisk;
+import app.coronawarn.server.services.distribution.assembly.structure.file.FileOnDiskWithChecksum;
 import app.coronawarn.server.services.distribution.assembly.structure.util.ImmutableStack;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -40,9 +41,14 @@ import java.util.zip.ZipOutputStream;
 /**
  * An {@link Archive} that can be written to disk as a ZIP archive.
  */
-public class ArchiveOnDisk extends FileOnDisk implements Archive<WritableOnDisk> {
+public class ArchiveOnDisk extends FileOnDiskWithChecksum implements Archive<WritableOnDisk> {
 
   private DirectoryOnDisk tempDirectory;
+
+  /**
+   * The checksum-relevant content of this {@link ArchiveOnDisk}.
+   */
+  private byte[] bytesForChecksum;
 
   /**
    * Constructs an {@link Archive} with an internal, temporary directory to store writables in.
@@ -50,8 +56,7 @@ public class ArchiveOnDisk extends FileOnDisk implements Archive<WritableOnDisk>
   public ArchiveOnDisk(String name) {
     super(name, new byte[0]);
     try {
-      tempDirectory = new DirectoryOnDisk(
-          Files.createTempDirectory("temporary").toFile());
+      tempDirectory = new DirectoryOnDisk(Files.createTempDirectory("temporary").toFile());
     } catch (IOException e) {
       throw new UncheckedIOException("Failed to create temporary directory for zip archive " + this.getFileOnDisk(), e);
     }
@@ -76,6 +81,8 @@ public class ArchiveOnDisk extends FileOnDisk implements Archive<WritableOnDisk>
   @Override
   public void prepare(ImmutableStack<Object> indices) {
     this.tempDirectory.prepare(indices);
+
+    updateBytesForChecksum();
   }
 
   @Override
@@ -101,5 +108,20 @@ public class ArchiveOnDisk extends FileOnDisk implements Archive<WritableOnDisk>
   @Override
   public void setBytes(byte[] bytes) {
     throw new UnsupportedOperationException("Can not set bytes on an archive.");
+  }
+
+  private void updateBytesForChecksum() {
+    var targetFile = this.getWritables().stream()
+        .filter(Writable::isFile)
+        .map(file -> (FileOnDisk) file)
+        .findFirst()
+        .orElseThrow();
+
+    this.bytesForChecksum = targetFile.getBytes();
+  }
+
+  @Override
+  protected byte[] getBytesForChecksum() {
+    return this.bytesForChecksum;
   }
 }

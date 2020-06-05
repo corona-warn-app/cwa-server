@@ -18,7 +18,7 @@
  * ---license-end
  */
 
-package app.coronawarn.server.services.submission.healthindicator;
+package app.coronawarn.server.services.submission.monitoring;
 
 import app.coronawarn.server.services.submission.verification.Tan;
 import app.coronawarn.server.services.submission.verification.VerificationServerClient;

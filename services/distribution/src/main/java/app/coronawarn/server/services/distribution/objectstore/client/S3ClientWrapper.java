@@ -38,6 +38,7 @@ import software.amazon.awssdk.services.s3.S3Client;
 import software.amazon.awssdk.services.s3.model.Delete;
 import software.amazon.awssdk.services.s3.model.DeleteObjectsRequest;
 import software.amazon.awssdk.services.s3.model.DeleteObjectsResponse;
+import software.amazon.awssdk.services.s3.model.HeadObjectRequest;
 import software.amazon.awssdk.services.s3.model.ListObjectsV2Request;
 import software.amazon.awssdk.services.s3.model.ListObjectsV2Response;
 import software.amazon.awssdk.services.s3.model.NoSuchBucketException;
@@ -77,9 +78,13 @@ public class S3ClientWrapper implements ObjectStoreClient {
       backoff = @Backoff(delayExpression = "${services.distribution.objectstore.retry-backoff}"))
   public List<S3Object> getObjects(String bucket, String prefix) {
     logRetryStatus("object download");
+
     ListObjectsV2Response response =
         s3Client.listObjectsV2(ListObjectsV2Request.builder().prefix(prefix).bucket(bucket).build());
-    return response.contents().stream().map(S3ClientWrapper::buildS3Object).collect(toList());
+
+    return response.contents().stream()
+        .map(s3Object -> buildS3Object(s3Object, bucket))
+        .collect(toList());
   }
 
   @Recover
@@ -94,8 +99,6 @@ public class S3ClientWrapper implements ObjectStoreClient {
       backoff = @Backoff(delayExpression = "${services.distribution.objectstore.retry-backoff}"))
   public void putObject(String bucket, String objectName, Path filePath, Map<HeaderKey, String> headers) {
     logRetryStatus("object upload");
-    RequestBody bodyFile = RequestBody.fromFile(filePath);
-
     var requestBuilder = PutObjectRequest.builder().bucket(bucket).key(objectName);
     if (headers.containsKey(HeaderKey.AMZ_ACL)) {
       requestBuilder.acl(headers.get(HeaderKey.AMZ_ACL));
@@ -103,7 +106,11 @@ public class S3ClientWrapper implements ObjectStoreClient {
     if (headers.containsKey(HeaderKey.CACHE_CONTROL)) {
       requestBuilder.cacheControl(headers.get(HeaderKey.CACHE_CONTROL));
     }
+    if (headers.containsKey(HeaderKey.CWA_HASH)) {
+      requestBuilder.metadata(Map.of(HeaderKey.CWA_HASH.withMetaPrefix(), headers.get(HeaderKey.CWA_HASH)));
+    }
 
+    RequestBody bodyFile = RequestBody.fromFile(filePath);
     s3Client.putObject(requestBuilder.build(), bodyFile);
   }
 
@@ -135,9 +142,23 @@ public class S3ClientWrapper implements ObjectStoreClient {
     throw new ObjectStoreOperationFailedException("Failed to modify objects on object store.", cause);
   }
 
-  private static S3Object buildS3Object(software.amazon.awssdk.services.s3.model.S3Object s3Object) {
-    String etag = s3Object.eTag().replaceAll("\"", "");
-    return new S3Object(s3Object.key(), etag);
+  /**
+   * Fetches the CWA Hash for the given S3Object. Unfortunately, this is necessary for the AWS SDK, as it does not
+   * support fetching metadata within the {@link ListObjectsV2Request}.<br> MinIO actually does support this, so when
+   * they release 7.0.3, we can remove this code here.
+   *
+   * @param s3Object the S3Object to fetch the CWA hash for
+   * @param bucket   the target bucket
+   * @return the CWA hash as a String, or null, if there is no CWA hash available on that object.
+   */
+  private String fetchCwaHash(software.amazon.awssdk.services.s3.model.S3Object s3Object, String bucket) {
+    var result = this.s3Client.headObject(HeadObjectRequest.builder().bucket(bucket).key(s3Object.key()).build());
+    return result.metadata().get(HeaderKey.CWA_HASH.keyValue);
+  }
+
+  private S3Object buildS3Object(software.amazon.awssdk.services.s3.model.S3Object s3Object, String bucket) {
+    String cwaHash = fetchCwaHash(s3Object, bucket);
+    return new S3Object(s3Object.key(), cwaHash);
   }
 
   private void logRetryStatus(String action) {
