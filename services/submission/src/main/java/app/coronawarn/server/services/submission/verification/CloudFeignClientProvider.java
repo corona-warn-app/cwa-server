@@ -27,7 +27,6 @@ import javax.net.ssl.SSLContext;
 import javax.net.ssl.SSLSocketFactory;
 import org.apache.http.conn.ssl.NoopHostnameVerifier;
 import org.apache.http.ssl.SSLContextBuilder;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Profile;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
@@ -37,8 +36,11 @@ import org.springframework.util.ResourceUtils;
 @Profile("ssl-client-verification")
 public class CloudFeignClientProvider implements FeignClientProvider {
 
-  @Autowired
   Environment environment;
+
+  public CloudFeignClientProvider(Environment environment) {
+    this.environment = environment;
+  }
 
   @Override
   public Client createFeignClient() {
