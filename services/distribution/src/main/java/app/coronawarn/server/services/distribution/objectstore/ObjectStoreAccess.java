@@ -28,6 +28,7 @@ import app.coronawarn.server.services.distribution.objectstore.publish.LocalFile
 import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -87,8 +88,9 @@ public class ObjectStoreAccess {
    * @param localFile The file to be published.
    */
   @Async("s3TaskExecutor")
-  public void putObject(LocalFile localFile) {
+  public CompletableFuture<Integer> putObject(LocalFile localFile) {
     putObject(localFile, DEFAULT_MAX_CACHE_AGE);
+    return CompletableFuture.completedFuture(1);
   }
 
   /**

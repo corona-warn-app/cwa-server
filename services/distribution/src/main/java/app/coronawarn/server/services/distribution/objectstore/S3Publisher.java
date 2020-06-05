@@ -26,13 +26,15 @@ import app.coronawarn.server.services.distribution.objectstore.publish.PublishFi
 import app.coronawarn.server.services.distribution.objectstore.publish.PublishedFileSet;
 import java.io.IOException;
 import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.concurrent.Future;
 import java.util.stream.Collectors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Publishes a folder on the disk to S3 while keeping the folder and file structure.<br>
- * Moreover, does the following:
+ * Publishes a folder on the disk to S3 while keeping the folder and file structure.<br> Moreover, does the following:
  * <br>
  * <ul>
  *   <li>Publishes index files on a different route, removing the trailing "/index" part.</li>
@@ -48,13 +50,19 @@ public class S3Publisher {
 
   private static final Logger logger = LoggerFactory.getLogger(S3Publisher.class);
 
-  /** The default CWA root folder, which contains all CWA related files. */
+  /**
+   * The default CWA root folder, which contains all CWA related files.
+   */
   private static final String CWA_S3_ROOT = CwaApiStructureProvider.VERSION_DIRECTORY;
 
-  /** root folder for the upload on the local disk. */
+  /**
+   * root folder for the upload on the local disk.
+   */
   private final Path root;
 
-  /** access to the object store. */
+  /**
+   * access to the object store.
+   */
   private final ObjectStoreAccess access;
 
   public S3Publisher(Path root, ObjectStoreAccess access) {
@@ -78,9 +86,21 @@ public class S3Publisher {
         .collect(Collectors.toList());
 
     logger.info("Beginning upload... ");
+
+    Collection<Future<Integer>> results = new ArrayList<>();
+
     for (LocalFile file : diff) {
-      this.access.putObject(file);
+      results.add(this.access.putObject(file));
     }
+    results.forEach(result -> {
+      try {
+        result.get();
+      } catch (Exception e) {
+        //will be handled in conjunction with PR #419
+        logger.error("Exception: ", e);
+      }
+    });
+
     logger.info("Upload completed.");
   }
 }
