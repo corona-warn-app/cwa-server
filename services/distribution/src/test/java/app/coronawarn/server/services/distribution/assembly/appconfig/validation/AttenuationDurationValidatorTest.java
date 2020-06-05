@@ -20,8 +20,7 @@
 
 package app.coronawarn.server.services.distribution.assembly.appconfig.validation;
 
-import static app.coronawarn.server.services.distribution.assembly.appconfig.validation.GeneralValidationError.ErrorType.MIN_GREATER_THAN_MAX;
-import static app.coronawarn.server.services.distribution.assembly.appconfig.validation.GeneralValidationError.ErrorType.VALUE_OUT_OF_BOUNDS;
+import static app.coronawarn.server.services.distribution.assembly.appconfig.validation.AttenuationDurationValidator.CONFIG_PREFIX;
 import static app.coronawarn.server.services.distribution.assembly.appconfig.validation.ParameterSpec.ATTENUATION_DURATION_THRESHOLD_MAX;
 import static app.coronawarn.server.services.distribution.assembly.appconfig.validation.ParameterSpec.ATTENUATION_DURATION_THRESHOLD_MIN;
 import static app.coronawarn.server.services.distribution.assembly.appconfig.validation.ParameterSpec.ATTENUATION_DURATION_WEIGHT_MAX;
@@ -32,8 +31,9 @@ import static app.coronawarn.server.services.distribution.assembly.appconfig.val
 import static app.coronawarn.server.services.distribution.assembly.appconfig.validation.ParameterSpec.RISK_SCORE_NORMALIZATION_DIVISOR_MIN;
 import static app.coronawarn.server.services.distribution.assembly.appconfig.validation.RiskScoreClassificationValidatorTest.buildError;
 import static app.coronawarn.server.services.distribution.assembly.appconfig.validation.RiskScoreClassificationValidatorTest.buildExpectedResult;
-import static app.coronawarn.server.services.distribution.assembly.appconfig.validation.WeightValidationError.ErrorType.OUT_OF_RANGE;
-import static app.coronawarn.server.services.distribution.assembly.appconfig.validation.WeightValidationError.ErrorType.TOO_MANY_DECIMAL_PLACES;
+import static app.coronawarn.server.services.distribution.assembly.appconfig.validation.ValidationError.ErrorType.MIN_GREATER_THAN_MAX;
+import static app.coronawarn.server.services.distribution.assembly.appconfig.validation.ValidationError.ErrorType.TOO_MANY_DECIMAL_PLACES;
+import static app.coronawarn.server.services.distribution.assembly.appconfig.validation.ValidationError.ErrorType.VALUE_OUT_OF_BOUNDS;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import app.coronawarn.server.common.protocols.internal.AttenuationDuration;
@@ -44,6 +44,7 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 
 class AttenuationDurationValidatorTest {
+
   private static final Thresholds VALID_THRESHOLDS =
       buildThresholds(ATTENUATION_DURATION_THRESHOLD_MIN, ATTENUATION_DURATION_THRESHOLD_MAX);
   private static final Weights VALID_WEIGHTS =
@@ -58,8 +59,8 @@ class AttenuationDurationValidatorTest {
         buildThresholds(invalidThresholdValue, invalidThresholdValue));
 
     ValidationResult expectedResult = buildExpectedResult(
-        buildError("attenuation-duration.thresholds.lower", invalidThresholdValue, VALUE_OUT_OF_BOUNDS),
-        buildError("attenuation-duration.thresholds.upper", invalidThresholdValue, VALUE_OUT_OF_BOUNDS));
+        buildError(CONFIG_PREFIX + "thresholds.lower", invalidThresholdValue, VALUE_OUT_OF_BOUNDS),
+        buildError(CONFIG_PREFIX + "thresholds.upper", invalidThresholdValue, VALUE_OUT_OF_BOUNDS));
 
     assertThat(validator.validate()).isEqualTo(expectedResult);
   }
@@ -71,7 +72,7 @@ class AttenuationDurationValidatorTest {
         invalidDefaultBucketOffsetValue, VALID_NORMALIZATION_DIVISOR);
 
     ValidationResult expectedResult = buildExpectedResult(
-        buildError("attenuation-duration.default-bucket-offset", invalidDefaultBucketOffsetValue, VALUE_OUT_OF_BOUNDS));
+        buildError(CONFIG_PREFIX + "default-bucket-offset", invalidDefaultBucketOffsetValue, VALUE_OUT_OF_BOUNDS));
 
     assertThat(validator.validate()).isEqualTo(expectedResult);
   }
@@ -83,7 +84,7 @@ class AttenuationDurationValidatorTest {
         invalidRiskScoreNormalizationDivisorValue);
 
     ValidationResult expectedResult = buildExpectedResult(
-        buildError("attenuation-duration.risk-score-normalization-divisor", invalidRiskScoreNormalizationDivisorValue,
+        buildError(CONFIG_PREFIX + "risk-score-normalization-divisor", invalidRiskScoreNormalizationDivisorValue,
             VALUE_OUT_OF_BOUNDS));
 
     assertThat(validator.validate()).isEqualTo(expectedResult);
@@ -95,7 +96,7 @@ class AttenuationDurationValidatorTest {
         buildThresholds(ATTENUATION_DURATION_THRESHOLD_MAX, ATTENUATION_DURATION_THRESHOLD_MIN));
 
     ValidationResult expectedResult = buildExpectedResult(
-        new GeneralValidationError("attenuation-duration.thresholds.lower, attenuation-duration.thresholds.upper",
+        new ValidationError(CONFIG_PREFIX + "thresholds.[lower + upper]",
             (ATTENUATION_DURATION_THRESHOLD_MAX + ", " + ATTENUATION_DURATION_THRESHOLD_MIN), MIN_GREATER_THAN_MAX));
 
     assertThat(validator.validate()).isEqualTo(expectedResult);
@@ -108,9 +109,9 @@ class AttenuationDurationValidatorTest {
         buildWeights(invalidWeightValue, invalidWeightValue, invalidWeightValue));
 
     ValidationResult expectedResult = buildExpectedResult(
-        new WeightValidationError("attenuation-duration.weights.low", invalidWeightValue, OUT_OF_RANGE),
-        new WeightValidationError("attenuation-duration.weights.mid", invalidWeightValue, OUT_OF_RANGE),
-        new WeightValidationError("attenuation-duration.weights.high", invalidWeightValue, OUT_OF_RANGE));
+        buildError(CONFIG_PREFIX + "weights.low", invalidWeightValue, VALUE_OUT_OF_BOUNDS),
+        buildError(CONFIG_PREFIX + "weights.mid", invalidWeightValue, VALUE_OUT_OF_BOUNDS),
+        buildError(CONFIG_PREFIX + "weights.high", invalidWeightValue, VALUE_OUT_OF_BOUNDS));
 
     assertThat(validator.validate()).isEqualTo(expectedResult);
   }
@@ -122,9 +123,9 @@ class AttenuationDurationValidatorTest {
         buildWeights(invalidWeightValue, invalidWeightValue, invalidWeightValue));
 
     ValidationResult expectedResult = buildExpectedResult(
-        new WeightValidationError("attenuation-duration.weights.low", invalidWeightValue, TOO_MANY_DECIMAL_PLACES),
-        new WeightValidationError("attenuation-duration.weights.mid", invalidWeightValue, TOO_MANY_DECIMAL_PLACES),
-        new WeightValidationError("attenuation-duration.weights.high", invalidWeightValue, TOO_MANY_DECIMAL_PLACES));
+        buildError(CONFIG_PREFIX + "weights.low", invalidWeightValue, TOO_MANY_DECIMAL_PLACES),
+        buildError(CONFIG_PREFIX + "weights.mid", invalidWeightValue, TOO_MANY_DECIMAL_PLACES),
+        buildError(CONFIG_PREFIX + "weights.high", invalidWeightValue, TOO_MANY_DECIMAL_PLACES));
 
     assertThat(validator.validate()).isEqualTo(expectedResult);
   }

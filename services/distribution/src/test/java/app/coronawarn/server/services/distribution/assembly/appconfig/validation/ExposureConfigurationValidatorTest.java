@@ -20,12 +20,17 @@
 
 package app.coronawarn.server.services.distribution.assembly.appconfig.validation;
 
+import static app.coronawarn.server.services.distribution.assembly.appconfig.validation.ExposureConfigurationValidator.CONFIG_PREFIX;
+import static app.coronawarn.server.services.distribution.assembly.appconfig.validation.RiskScoreClassificationValidatorTest.buildError;
+import static app.coronawarn.server.services.distribution.assembly.appconfig.validation.ValidationError.ErrorType.MISSING_ENTRY;
+import static app.coronawarn.server.services.distribution.assembly.appconfig.validation.ValidationError.ErrorType.TOO_MANY_DECIMAL_PLACES;
+import static app.coronawarn.server.services.distribution.assembly.appconfig.validation.ValidationError.ErrorType.VALUE_OUT_OF_BOUNDS;
 import static org.assertj.core.api.Assertions.assertThat;
 
+import app.coronawarn.server.common.protocols.internal.RiskLevel;
 import app.coronawarn.server.common.protocols.internal.RiskScoreParameters;
 import app.coronawarn.server.services.distribution.assembly.appconfig.UnableToLoadFileException;
 import app.coronawarn.server.services.distribution.assembly.appconfig.YamlLoader;
-import app.coronawarn.server.services.distribution.assembly.appconfig.validation.WeightValidationError.ErrorType;
 import java.util.stream.Stream;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
@@ -85,28 +90,28 @@ class ExposureConfigurationValidatorTest {
 
   public static TestWithExpectedResult WeightNegative() {
     return new TestWithExpectedResult("weight_negative.yaml")
-        .with(new WeightValidationError("transmission", -10d, ErrorType.OUT_OF_RANGE))
-        .with(new WeightValidationError("attenuation", 0.0001, ErrorType.TOO_MANY_DECIMAL_PLACES))
-        .with(new WeightValidationError("attenuation", 0.0001, ErrorType.OUT_OF_RANGE))
-        .with(new WeightValidationError("duration", 0, ErrorType.OUT_OF_RANGE));
+        .with(buildError(CONFIG_PREFIX + "transmission", -10d, VALUE_OUT_OF_BOUNDS))
+        .with(buildError(CONFIG_PREFIX + "attenuation", 0.0001, TOO_MANY_DECIMAL_PLACES))
+        .with(buildError(CONFIG_PREFIX + "attenuation", 0.0001, VALUE_OUT_OF_BOUNDS))
+        .with(buildError(CONFIG_PREFIX + "duration", .0, VALUE_OUT_OF_BOUNDS));
   }
 
   public static TestWithExpectedResult WeightTooHigh() {
     return new TestWithExpectedResult("weight_too_high.yaml")
-        .with(new WeightValidationError("duration", 99999999d, ErrorType.OUT_OF_RANGE))
-        .with(new WeightValidationError("attenuation", 100.001d, ErrorType.OUT_OF_RANGE))
-        .with(new WeightValidationError("transmission", 101d, ErrorType.OUT_OF_RANGE));
+        .with(buildError(CONFIG_PREFIX + "duration", 99999999d, VALUE_OUT_OF_BOUNDS))
+        .with(buildError(CONFIG_PREFIX + "attenuation", 100.001d, VALUE_OUT_OF_BOUNDS))
+        .with(buildError(CONFIG_PREFIX + "transmission", 101d, VALUE_OUT_OF_BOUNDS));
   }
 
   public static TestWithExpectedResult ScoreNegative() {
     return new TestWithExpectedResult("score_negative.yaml")
-         .with(new RiskLevelValidationError("transmission", "appDefined1"))
-         .with(new RiskLevelValidationError("transmission", "appDefined3"));
+        .with(buildError(CONFIG_PREFIX + "transmission.appDefined1", RiskLevel.UNRECOGNIZED, VALUE_OUT_OF_BOUNDS))
+        .with(buildError(CONFIG_PREFIX + "transmission.appDefined3", null, MISSING_ENTRY));
   }
 
   public static TestWithExpectedResult ScoreTooHigh() {
     return new TestWithExpectedResult("score_too_high.yaml")
-        .with(new RiskLevelValidationError("transmission", "appDefined1"))
-        .with(new RiskLevelValidationError("transmission", "appDefined2"));
+        .with(buildError(CONFIG_PREFIX + "transmission.appDefined1", RiskLevel.UNRECOGNIZED, VALUE_OUT_OF_BOUNDS))
+        .with(buildError(CONFIG_PREFIX + "transmission.appDefined2", RiskLevel.UNRECOGNIZED, VALUE_OUT_OF_BOUNDS));
   }
 }

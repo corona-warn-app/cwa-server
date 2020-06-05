@@ -20,18 +20,18 @@
 
 package app.coronawarn.server.services.distribution.assembly.appconfig.validation;
 
-import static app.coronawarn.server.services.distribution.assembly.appconfig.validation.GeneralValidationError.ErrorType.MIN_GREATER_THAN_MAX;
-import static app.coronawarn.server.services.distribution.assembly.appconfig.validation.GeneralValidationError.ErrorType.VALUE_OUT_OF_BOUNDS;
 import static app.coronawarn.server.services.distribution.assembly.appconfig.validation.ParameterSpec.ATTENUATION_DURATION_THRESHOLD_MAX;
 import static app.coronawarn.server.services.distribution.assembly.appconfig.validation.ParameterSpec.ATTENUATION_DURATION_THRESHOLD_MIN;
 import static app.coronawarn.server.services.distribution.assembly.appconfig.validation.ParameterSpec.ATTENUATION_DURATION_WEIGHT_MAX;
+import static app.coronawarn.server.services.distribution.assembly.appconfig.validation.ParameterSpec.ATTENUATION_DURATION_WEIGHT_MAX_DECIMALS;
 import static app.coronawarn.server.services.distribution.assembly.appconfig.validation.ParameterSpec.ATTENUATION_DURATION_WEIGHT_MIN;
 import static app.coronawarn.server.services.distribution.assembly.appconfig.validation.ParameterSpec.DEFAULT_BUCKET_OFFSET_MAX;
 import static app.coronawarn.server.services.distribution.assembly.appconfig.validation.ParameterSpec.DEFAULT_BUCKET_OFFSET_MIN;
 import static app.coronawarn.server.services.distribution.assembly.appconfig.validation.ParameterSpec.RISK_SCORE_NORMALIZATION_DIVISOR_MAX;
 import static app.coronawarn.server.services.distribution.assembly.appconfig.validation.ParameterSpec.RISK_SCORE_NORMALIZATION_DIVISOR_MIN;
-import static app.coronawarn.server.services.distribution.assembly.appconfig.validation.WeightValidationError.ErrorType.OUT_OF_RANGE;
-import static app.coronawarn.server.services.distribution.assembly.appconfig.validation.WeightValidationError.ErrorType.TOO_MANY_DECIMAL_PLACES;
+import static app.coronawarn.server.services.distribution.assembly.appconfig.validation.ValidationError.ErrorType.MIN_GREATER_THAN_MAX;
+import static app.coronawarn.server.services.distribution.assembly.appconfig.validation.ValidationError.ErrorType.TOO_MANY_DECIMAL_PLACES;
+import static app.coronawarn.server.services.distribution.assembly.appconfig.validation.ValidationError.ErrorType.VALUE_OUT_OF_BOUNDS;
 
 import app.coronawarn.server.common.protocols.internal.AttenuationDuration;
 import java.math.BigDecimal;
@@ -40,6 +40,8 @@ import java.math.BigDecimal;
  * The AttenuationDurationValidator validates the values of an associated {@link AttenuationDuration} instance.
  */
 public class AttenuationDurationValidator extends ConfigurationValidator {
+
+  public static final String CONFIG_PREFIX = "attenuation-duration.";
 
   private final AttenuationDuration attenuationDuration;
 
@@ -67,16 +69,16 @@ public class AttenuationDurationValidator extends ConfigurationValidator {
     checkValueRange("thresholds.upper", upper, ATTENUATION_DURATION_THRESHOLD_MIN, ATTENUATION_DURATION_THRESHOLD_MAX);
 
     if (lower > upper) {
-      String parameters = "attenuation-duration.thresholds.lower, attenuation-duration.thresholds.upper";
+      String parameters = CONFIG_PREFIX + "thresholds.[lower + upper]";
       String values = lower + ", " + upper;
-      this.errors.add(new GeneralValidationError(parameters, values, MIN_GREATER_THAN_MAX));
+      this.errors.add(new ValidationError(parameters, values, MIN_GREATER_THAN_MAX));
     }
   }
 
   private void checkValueRange(String parameterLabel, int value, int min, int max) {
     if (value < min || value > max) {
-      this.errors.add(new GeneralValidationError(
-          "attenuation-duration." + parameterLabel, value, VALUE_OUT_OF_BOUNDS));
+      this.errors.add(new ValidationError(
+          CONFIG_PREFIX + parameterLabel, value, VALUE_OUT_OF_BOUNDS));
     }
   }
 
@@ -88,13 +90,13 @@ public class AttenuationDurationValidator extends ConfigurationValidator {
 
   private void checkWeight(String weightLabel, double weightValue) {
     if (weightValue < ATTENUATION_DURATION_WEIGHT_MIN || weightValue > ATTENUATION_DURATION_WEIGHT_MAX) {
-      this.errors.add(new WeightValidationError(
-          "attenuation-duration.weights." + weightLabel, weightValue, OUT_OF_RANGE));
+      this.errors.add(new ValidationError(
+          CONFIG_PREFIX + "weights." + weightLabel, weightValue, VALUE_OUT_OF_BOUNDS));
     }
 
-    if (BigDecimal.valueOf(weightValue).scale() > ParameterSpec.ATTENUATION_DURATION_WEIGHT_MAX_DECIMALS) {
-      this.errors.add(new WeightValidationError(
-          "attenuation-duration.weights." + weightLabel, weightValue, TOO_MANY_DECIMAL_PLACES));
+    if (BigDecimal.valueOf(weightValue).scale() > ATTENUATION_DURATION_WEIGHT_MAX_DECIMALS) {
+      this.errors.add(new ValidationError(
+          CONFIG_PREFIX + "weights." + weightLabel, weightValue, TOO_MANY_DECIMAL_PLACES));
     }
   }
 

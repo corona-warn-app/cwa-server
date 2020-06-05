@@ -20,14 +20,12 @@
 
 package app.coronawarn.server.services.distribution.assembly.diagnosiskeys.structure.directory;
 
-import static app.coronawarn.server.services.distribution.common.Helpers.buildDiagnosisKeyForSubmissionTimestamp;
 import static app.coronawarn.server.services.distribution.common.Helpers.buildDiagnosisKeys;
 import static java.lang.String.join;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import app.coronawarn.server.common.persistence.domain.DiagnosisKey;
 import app.coronawarn.server.services.distribution.assembly.component.CryptoProvider;
-import app.coronawarn.server.services.distribution.assembly.diagnosiskeys.DemoDiagnosisKeyBundler;
 import app.coronawarn.server.services.distribution.assembly.diagnosiskeys.DiagnosisKeyBundler;
 import app.coronawarn.server.services.distribution.assembly.diagnosiskeys.ProdDiagnosisKeyBundler;
 import app.coronawarn.server.services.distribution.assembly.structure.WritableOnDisk;

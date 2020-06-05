@@ -20,6 +20,7 @@
 
 package app.coronawarn.server.services.distribution.assembly.appconfig.validation;
 
+import static app.coronawarn.server.services.distribution.assembly.appconfig.validation.ApplicationVersionConfigurationValidator.CONFIG_PREFIX;
 import static app.coronawarn.server.services.distribution.assembly.appconfig.validation.RiskScoreClassificationValidatorTest.buildError;
 import static app.coronawarn.server.services.distribution.assembly.appconfig.validation.RiskScoreClassificationValidatorTest.buildExpectedResult;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -27,7 +28,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import app.coronawarn.server.common.protocols.internal.ApplicationVersionConfiguration;
 import app.coronawarn.server.services.distribution.assembly.appconfig.UnableToLoadFileException;
 import app.coronawarn.server.services.distribution.assembly.appconfig.YamlLoader;
-import app.coronawarn.server.services.distribution.assembly.appconfig.validation.GeneralValidationError.ErrorType;
+import app.coronawarn.server.services.distribution.assembly.appconfig.validation.ValidationError.ErrorType;
 import org.junit.jupiter.api.Test;
 
 class ApplicationVersionConfigurationValidatorTest {
@@ -49,8 +50,8 @@ class ApplicationVersionConfigurationValidatorTest {
   @Test
   void failsIfLatestLowerThanMin() throws UnableToLoadFileException {
     var validator = buildValidator("app-version/latest-lower-than-min.yaml");
-    assertThat(validator.validate())
-        .isEqualTo(buildExpectedResult(buildError("ios: latest/min", "1.2.2", ErrorType.MIN_GREATER_THAN_MAX)));
+    assertThat(validator.validate()).isEqualTo(
+        buildExpectedResult(buildError(CONFIG_PREFIX + "ios.[latest|min]", "1.2.2", ErrorType.MIN_GREATER_THAN_MAX)));
   }
 
   private ConfigurationValidator buildValidator(String filePath) throws UnableToLoadFileException {
