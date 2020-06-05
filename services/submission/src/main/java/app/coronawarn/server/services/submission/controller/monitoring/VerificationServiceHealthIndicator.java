@@ -18,7 +18,7 @@
  * ---license-end
  */
 
-package app.coronawarn.server.services.submission.monitoring;
+package app.coronawarn.server.services.submission.controller.monitoring;
 
 import app.coronawarn.server.services.submission.verification.Tan;
 import app.coronawarn.server.services.submission.verification.VerificationServerClient;

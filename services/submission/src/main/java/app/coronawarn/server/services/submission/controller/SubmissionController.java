@@ -25,7 +25,7 @@ import app.coronawarn.server.common.persistence.service.DiagnosisKeyService;
 import app.coronawarn.server.common.protocols.external.exposurenotification.TemporaryExposureKey;
 import app.coronawarn.server.common.protocols.internal.SubmissionPayload;
 import app.coronawarn.server.services.submission.config.SubmissionServiceConfig;
-import app.coronawarn.server.services.submission.monitoring.SubmissionControllerMonitor;
+import app.coronawarn.server.services.submission.controller.monitoring.SubmissionControllerMonitor;
 import app.coronawarn.server.services.submission.validation.ValidSubmissionPayload;
 import app.coronawarn.server.services.submission.verification.TanVerifier;
 import java.util.ArrayList;
@@ -66,7 +66,6 @@ public class SubmissionController {
   private final TanVerifier tanVerifier;
   private final Double fakeDelayMovingAverageSamples;
   private final Integer retentionDays;
-  // TODO: gauge for fake delay
   private Double fakeDelay;
 
   SubmissionController(DiagnosisKeyService diagnosisKeyService, TanVerifier tanVerifier,
@@ -74,6 +73,7 @@ public class SubmissionController {
     this.diagnosisKeyService = diagnosisKeyService;
     this.tanVerifier = tanVerifier;
     this.submissionControllerMonitor = submissionControllerMonitor;
+    submissionControllerMonitor.initializeGauges(this);
     fakeDelay = submissionServiceConfig.getInitialFakeDelayMilliseconds();
     fakeDelayMovingAverageSamples = submissionServiceConfig.getFakeDelayMovingAverageSamples();
     retentionDays = submissionServiceConfig.getRetentionDays();
@@ -171,5 +171,13 @@ public class SubmissionController {
 
   private synchronized void updateFakeDelay(long realRequestDuration) {
     fakeDelay = fakeDelay + (1 / fakeDelayMovingAverageSamples) * (realRequestDuration - fakeDelay);
+  }
+
+  /**
+   * Gets the current fake delay. Used for monitoring.
+   * @return the current fake delay
+   */
+  public Double getFakeDelay() {
+    return fakeDelay;
   }
 }

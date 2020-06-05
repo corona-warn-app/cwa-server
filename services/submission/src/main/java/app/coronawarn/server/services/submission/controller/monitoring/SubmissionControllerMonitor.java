@@ -20,9 +20,11 @@
  *
  */
 
-package app.coronawarn.server.services.submission.monitoring;
+package app.coronawarn.server.services.submission.controller.monitoring;
 
+import app.coronawarn.server.services.submission.controller.SubmissionController;
 import io.micrometer.core.instrument.Counter;
+import io.micrometer.core.instrument.Gauge;
 import io.micrometer.core.instrument.MeterRegistry;
 import org.springframework.stereotype.Component;
 
@@ -32,7 +34,9 @@ import org.springframework.stereotype.Component;
  */
 @Component
 public class SubmissionControllerMonitor {
+
   private static final String SUBMISSION_CONTROLLER_REQUESTS_COUNTER_NAME = "submissionController.requests";
+  private static final String SUBMISSION_CONTROLLER_CURRENT_FAKE_DELAY = "submissionController.fakeDelay";
 
   private final MeterRegistry meterRegistry;
 
@@ -41,11 +45,11 @@ public class SubmissionControllerMonitor {
   private Counter invalidTanRequests;
 
   /**
-   * Constructor for {@link SubmissionControllerMonitor}. Initializes
-   * all metrics upon being called.
+   * Constructor for {@link SubmissionControllerMonitor}. Initializes all metrics upon being called.
+   *
    * @param meterRegistry the meterRegistry
    */
-  public SubmissionControllerMonitor(MeterRegistry meterRegistry) {
+  protected SubmissionControllerMonitor(MeterRegistry meterRegistry) {
     this.meterRegistry = meterRegistry;
     initializeCounters();
   }
@@ -63,6 +67,17 @@ public class SubmissionControllerMonitor {
 
     invalidTanRequests = Counter.builder(SUBMISSION_CONTROLLER_REQUESTS_COUNTER_NAME)
         .tag("type", "invalidTan")
+        .description("")
+        .register(meterRegistry);
+  }
+
+  /**
+   * init gauges.
+   * @param submissionController init
+   */
+  public void initializeGauges(SubmissionController submissionController) {
+    Gauge.builder(SUBMISSION_CONTROLLER_CURRENT_FAKE_DELAY, submissionController,
+        __ -> submissionController.getFakeDelay())
         .description("")
         .register(meterRegistry);
   }
