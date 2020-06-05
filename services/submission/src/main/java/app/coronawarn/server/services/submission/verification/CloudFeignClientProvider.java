@@ -21,6 +21,8 @@
 package app.coronawarn.server.services.submission.verification;
 
 import feign.Client;
+import java.io.IOException;
+import java.security.GeneralSecurityException;
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.SSLSocketFactory;
 import org.apache.http.conn.ssl.NoopHostnameVerifier;
@@ -59,8 +61,8 @@ public class CloudFeignClientProvider extends FeignClientProvider {
           .loadTrustMaterial(ResourceUtils.getFile(trustStorePath), trustStorePassword.toCharArray())
           .build();
       return sslContext.getSocketFactory();
-    } catch (Exception exception) {
-      throw new RuntimeException(exception);
+    } catch (IOException | GeneralSecurityException e) {
+      throw new RuntimeException(e);
     }
   }
 }
