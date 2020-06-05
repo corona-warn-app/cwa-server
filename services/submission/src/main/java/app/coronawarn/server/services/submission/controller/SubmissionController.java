@@ -25,8 +25,10 @@ import app.coronawarn.server.common.persistence.service.DiagnosisKeyService;
 import app.coronawarn.server.common.protocols.external.exposurenotification.TemporaryExposureKey;
 import app.coronawarn.server.common.protocols.internal.SubmissionPayload;
 import app.coronawarn.server.services.submission.config.SubmissionServiceConfig;
+import app.coronawarn.server.services.submission.monitoring.SubmissionControllerMonitor;
 import app.coronawarn.server.services.submission.validation.ValidSubmissionPayload;
 import app.coronawarn.server.services.submission.verification.TanVerifier;
+import io.micrometer.core.annotation.Timed;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Executors;
@@ -58,6 +60,7 @@ public class SubmissionController {
    */
   public static final String SUBMISSION_ROUTE = "/diagnosis-keys";
 
+  private final SubmissionControllerMonitor submissionControllerMonitor;
   private final ScheduledExecutorService scheduledExecutor = Executors.newSingleThreadScheduledExecutor();
   private final ForkJoinPool forkJoinPool = ForkJoinPool.commonPool();
   private final DiagnosisKeyService diagnosisKeyService;
@@ -67,12 +70,14 @@ public class SubmissionController {
   private Double fakeDelay;
 
   SubmissionController(DiagnosisKeyService diagnosisKeyService, TanVerifier tanVerifier,
-      SubmissionServiceConfig submissionServiceConfig) {
+      SubmissionServiceConfig submissionServiceConfig, SubmissionControllerMonitor submissionControllerMonitor) {
     this.diagnosisKeyService = diagnosisKeyService;
     this.tanVerifier = tanVerifier;
+    this.submissionControllerMonitor = submissionControllerMonitor;
     fakeDelay = submissionServiceConfig.getInitialFakeDelayMilliseconds();
     fakeDelayMovingAverageSamples = submissionServiceConfig.getFakeDelayMovingAverageSamples();
     retentionDays = submissionServiceConfig.getRetentionDays();
+    submissionControllerMonitor.initializeGauges(this);
   }
 
   /**
@@ -84,13 +89,17 @@ public class SubmissionController {
    * @return An empty response body.
    */
   @PostMapping(SUBMISSION_ROUTE)
+  @Timed(description = "Time spent handling submission.")
   public DeferredResult<ResponseEntity<Void>> submitDiagnosisKey(
       @ValidSubmissionPayload @RequestBody SubmissionPayload exposureKeys,
       @RequestHeader("cwa-fake") Integer fake,
       @RequestHeader("cwa-authorization") String tan) {
+    submissionControllerMonitor.incrementRequestCounter();
     if (fake != 0) {
+      submissionControllerMonitor.incrementFakeRequestCounter();
       return buildFakeDeferredResult();
     } else {
+      submissionControllerMonitor.incrementRealRequestCounter();
       return buildRealDeferredResult(exposureKeys, tan);
     }
   }
@@ -110,8 +119,8 @@ public class SubmissionController {
       try {
         StopWatch stopWatch = new StopWatch();
         stopWatch.start();
-
         if (!this.tanVerifier.verifyTan(tan)) {
+          submissionControllerMonitor.incrementInvalidTanRequestCounter();
           deferredResult.setResult(buildTanInvalidResponseEntity());
         } else {
           persistDiagnosisKeysPayload(exposureKeys);
@@ -166,5 +175,13 @@ public class SubmissionController {
   private void updateFakeDelay(long realRequestDuration) {
     final Double currentDelay = fakeDelay;
     fakeDelay = currentDelay + (1 / fakeDelayMovingAverageSamples) * (realRequestDuration - currentDelay);
+  }
+
+  /**
+   * Gets the current fake delay. Used for monitoring.
+   * @return the current fake delay
+   */
+  public Double getFakeDelay() {
+    return fakeDelay;
   }
 }

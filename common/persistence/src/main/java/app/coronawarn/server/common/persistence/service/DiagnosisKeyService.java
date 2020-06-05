@@ -24,6 +24,7 @@ import static java.time.ZoneOffset.UTC;
 
 import app.coronawarn.server.common.persistence.domain.DiagnosisKey;
 import app.coronawarn.server.common.persistence.repository.DiagnosisKeyRepository;
+import io.micrometer.core.annotation.Timed;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.util.Collection;
@@ -54,6 +55,7 @@ public class DiagnosisKeyService {
    * @param diagnosisKeys must not contain {@literal null}.
    * @throws IllegalArgumentException in case the given collection contains {@literal null}.
    */
+  @Timed
   @Transactional
   public void saveDiagnosisKeys(Collection<DiagnosisKey> diagnosisKeys) {
     for (DiagnosisKey diagnosisKey : diagnosisKeys) {
