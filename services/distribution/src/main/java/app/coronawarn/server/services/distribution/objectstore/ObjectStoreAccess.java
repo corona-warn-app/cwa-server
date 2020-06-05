@@ -31,6 +31,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 
 /**
@@ -85,6 +86,7 @@ public class ObjectStoreAccess {
    *
    * @param localFile The file to be published.
    */
+  @Async("s3TaskExecutor")
   public void putObject(LocalFile localFile) {
     putObject(localFile, DEFAULT_MAX_CACHE_AGE);
   }
