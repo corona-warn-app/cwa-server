@@ -68,7 +68,7 @@ public class FileOnDiskWithChecksum extends FileOnDisk {
    *
    * @return the checksum bytes
    */
-  public byte[] getBytesForChecksum() {
+  protected byte[] getBytesForChecksum() {
     return super.getBytes();
   }
 

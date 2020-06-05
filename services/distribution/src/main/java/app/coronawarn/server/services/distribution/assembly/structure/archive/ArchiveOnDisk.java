@@ -118,7 +118,7 @@ public class ArchiveOnDisk extends FileOnDiskWithChecksum implements Archive<Wri
   }
 
   @Override
-  public byte[] getBytesForChecksum() {
+  protected byte[] getBytesForChecksum() {
     return this.checksumBytes;
   }
 }
