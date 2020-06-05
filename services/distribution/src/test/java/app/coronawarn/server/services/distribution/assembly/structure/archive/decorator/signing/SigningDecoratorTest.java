@@ -125,7 +125,7 @@ class SigningDecoratorTest {
     SignatureInfo signatureInfo = signatureList.getSignaturesList().get(0).getSignatureInfo();
 
     assertThat(signatureInfo.getAppBundleId()).isEqualTo("de.rki.coronawarnapp");
-    assertThat(signatureInfo.getAndroidPackage()).isEqualTo("de.rki.coronawarnapp");
+    assertThat(signatureInfo.getAndroidPackage()).isEmpty();
     assertThat(signatureInfo.getSignatureAlgorithm()).isEqualTo("1.2.840.10045.4.3.2");
     assertThat(signatureInfo.getVerificationKeyId()).isEqualTo("262");
     assertThat(signatureInfo.getVerificationKeyVersion()).isEqualTo("v1");
