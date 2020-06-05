@@ -25,6 +25,7 @@ import app.coronawarn.server.services.distribution.config.DistributionServiceCon
 import java.net.URI;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.retry.annotation.EnableRetry;
 import software.amazon.awssdk.auth.credentials.AwsBasicCredentials;
 import software.amazon.awssdk.auth.credentials.AwsCredentialsProvider;
 import software.amazon.awssdk.auth.credentials.StaticCredentialsProvider;
@@ -35,6 +36,7 @@ import software.amazon.awssdk.services.s3.S3Client;
  * Manages the instantiation of the {@link ObjectStoreClient} bean.
  */
 @Configuration
+@EnableRetry
 public class ObjectStoreClientConfig {
 
   private static final Region DEFAULT_REGION = Region.EU_CENTRAL_1;

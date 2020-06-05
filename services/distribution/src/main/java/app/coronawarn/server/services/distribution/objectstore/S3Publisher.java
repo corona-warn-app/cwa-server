@@ -21,11 +21,13 @@
 package app.coronawarn.server.services.distribution.objectstore;
 
 import app.coronawarn.server.services.distribution.assembly.component.CwaApiStructureProvider;
+import app.coronawarn.server.services.distribution.objectstore.client.ObjectStoreOperationFailedException;
 import app.coronawarn.server.services.distribution.objectstore.publish.LocalFile;
 import app.coronawarn.server.services.distribution.objectstore.publish.PublishFileSet;
 import app.coronawarn.server.services.distribution.objectstore.publish.PublishedFileSet;
 import java.io.IOException;
 import java.nio.file.Path;
+import java.util.List;
 import java.util.stream.Collectors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -48,18 +50,29 @@ public class S3Publisher {
 
   private static final Logger logger = LoggerFactory.getLogger(S3Publisher.class);
 
-  /** The default CWA root folder, which contains all CWA related files. */
+  /**
+   * The default CWA root folder, which contains all CWA related files.
+   */
   private static final String CWA_S3_ROOT = CwaApiStructureProvider.VERSION_DIRECTORY;
 
-  /** root folder for the upload on the local disk. */
   private final Path root;
+  private final ObjectStoreAccess objectStoreAccess;
+  private final FailedObjectStoreOperationsCounter failedOperationsCounter;
 
-  /** access to the object store. */
-  private final ObjectStoreAccess access;
-
-  public S3Publisher(Path root, ObjectStoreAccess access) {
+  /**
+   * Creates an {@link S3Publisher} instance that attempts to publish the files at the specified location to an object
+   * store. Object store operations are performed through the specified {@link ObjectStoreAccess} instance.
+   *
+   * @param root                    The path of the directory that shall be published.
+   * @param objectStoreAccess       The {@link ObjectStoreAccess} used to communicate with the object store.
+   * @param failedOperationsCounter The {@link FailedObjectStoreOperationsCounter} that is used to monitor the number of
+   *                                failed operations.
+   */
+  public S3Publisher(Path root, ObjectStoreAccess objectStoreAccess,
+      FailedObjectStoreOperationsCounter failedOperationsCounter) {
     this.root = root;
-    this.access = access;
+    this.objectStoreAccess = objectStoreAccess;
+    this.failedOperationsCounter = failedOperationsCounter;
   }
 
   /**
@@ -68,18 +81,29 @@ public class S3Publisher {
    * @throws IOException in case there were problems reading files from the disk.
    */
   public void publish() throws IOException {
-    var published = new PublishedFileSet(access.getObjectsWithPrefix(CWA_S3_ROOT));
-    var toPublish = new PublishFileSet(root);
+    PublishedFileSet published;
+    List<LocalFile> toPublish = new PublishFileSet(root).getFiles();
+    List<LocalFile> diff;
 
-    var diff = toPublish
-        .getFiles()
-        .stream()
-        .filter(published::isNotYetPublished)
-        .collect(Collectors.toList());
+    try {
+      published = new PublishedFileSet(objectStoreAccess.getObjectsWithPrefix(CWA_S3_ROOT));
+      diff = toPublish
+          .stream()
+          .filter(published::isNotYetPublished)
+          .collect(Collectors.toList());
+    } catch (ObjectStoreOperationFailedException e) {
+      failedOperationsCounter.incrementAndCheckThreshold(e);
+      // failed to retrieve existing files; publish everything
+      diff = toPublish;
+    }
 
     logger.info("Beginning upload... ");
     for (LocalFile file : diff) {
-      this.access.putObject(file);
+      try {
+        this.objectStoreAccess.putObject(file);
+      } catch (ObjectStoreOperationFailedException e) {
+        failedOperationsCounter.incrementAndCheckThreshold(e);
+      }
     }
     logger.info("Upload completed.");
   }
