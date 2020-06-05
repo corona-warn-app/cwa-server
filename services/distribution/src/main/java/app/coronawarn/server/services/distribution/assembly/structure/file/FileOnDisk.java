@@ -43,8 +43,12 @@ public class FileOnDisk extends WritableOnDisk implements File<WritableOnDisk> {
    */
   @Override
   public void write() {
-    IO.makeNewFile(((WritableOnDisk) this.getParent()).getFileOnDisk(), this.getName());
+    IO.makeNewFile(getRoot(), this.getName());
     IO.writeBytesToFile(this.getBytes(), this.getFileOnDisk());
+  }
+
+  protected java.io.File getRoot() {
+    return ((WritableOnDisk) this.getParent()).getFileOnDisk();
   }
 
   @Override
@@ -63,5 +67,9 @@ public class FileOnDisk extends WritableOnDisk implements File<WritableOnDisk> {
   @Override
   public void prepare(ImmutableStack<Object> indices) {
     // Method override exists here to comply with the implementation rules for the Writable interface.
+  }
+
+  public byte[] getBytesForChecksum() {
+    return this.getBytes();
   }
 }

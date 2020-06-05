@@ -131,8 +131,7 @@ class S3ClientWrapperTest {
     var responseObjects = s3Objects.stream().map(
         s3Object -> software.amazon.awssdk.services.s3.model.S3Object.builder()
             .key(s3Object.getObjectName())
-            .eTag(s3Object.getEtag()))
-        .map(SdkBuilder::build).collect(Collectors.toList());
+        ).map(SdkBuilder::build).collect(Collectors.toList());
     return ListObjectsV2Response.builder().contents(responseObjects).build();
   }
 

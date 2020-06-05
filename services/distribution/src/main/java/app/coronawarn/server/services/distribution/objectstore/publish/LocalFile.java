@@ -20,13 +20,12 @@
 
 package app.coronawarn.server.services.distribution.objectstore.publish;
 
+import app.coronawarn.server.services.distribution.assembly.structure.file.FileOnDiskWithChecksum;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import org.bouncycastle.util.encoders.Hex;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.util.DigestUtils;
 
 /**
  * Represents a file, which is subject for publishing to S3.
@@ -46,9 +45,9 @@ public abstract class LocalFile {
   private final String s3Key;
 
   /**
-   * the etag of this file.
+   * the checksum of this file.
    */
-  private final String etag;
+  private String checksum = "";
 
   /**
    * Constructs a new file representing a file on the disk.
@@ -58,7 +57,6 @@ public abstract class LocalFile {
    */
   public LocalFile(Path file, Path basePath) {
     this.file = file;
-    this.etag = computeS3ETag();
     this.s3Key = createS3Key(file, basePath);
   }
 
@@ -66,25 +64,22 @@ public abstract class LocalFile {
     return s3Key;
   }
 
-  public String getEtag() {
-    return etag;
+  public String getChecksum() {
+    return checksum;
   }
 
   public Path getFile() {
     return file;
   }
 
-  private String computeS3ETag() {
+  LocalFile loadChecksum() {
     try {
-      String md5 = DigestUtils.md5DigestAsHex(Files.readAllBytes(file));
-      byte[] raw = Hex.decode(md5.toUpperCase());
-
-      return DigestUtils.md5DigestAsHex(raw) + "-1";
+      this.checksum = Files.readString(FileOnDiskWithChecksum.buildChecksumPathForFile(file)).trim();
     } catch (IOException e) {
-      logger.warn("Unable to compute E-Tag", e);
+      logger.debug("Unable to load checksum file.");
     }
 
-    return "";
+    return this;
   }
 
   protected String createS3Key(Path file, Path rootFolder) {

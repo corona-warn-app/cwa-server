@@ -28,6 +28,7 @@ import app.coronawarn.server.services.distribution.assembly.structure.directory.
 import app.coronawarn.server.services.distribution.assembly.structure.directory.DirectoryOnDisk;
 import app.coronawarn.server.services.distribution.assembly.structure.file.File;
 import app.coronawarn.server.services.distribution.assembly.structure.file.FileOnDisk;
+import app.coronawarn.server.services.distribution.assembly.structure.file.FileOnDiskWithChecksum;
 import app.coronawarn.server.services.distribution.assembly.structure.util.ImmutableStack;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -40,9 +41,11 @@ import java.util.zip.ZipOutputStream;
 /**
  * An {@link Archive} that can be written to disk as a ZIP archive.
  */
-public class ArchiveOnDisk extends FileOnDisk implements Archive<WritableOnDisk> {
+public class ArchiveOnDisk extends FileOnDiskWithChecksum implements Archive<WritableOnDisk> {
 
   private DirectoryOnDisk tempDirectory;
+
+  private byte[] checksumBytes;
 
   /**
    * Constructs an {@link Archive} with an internal, temporary directory to store writables in.
@@ -76,6 +79,8 @@ public class ArchiveOnDisk extends FileOnDisk implements Archive<WritableOnDisk>
   @Override
   public void prepare(ImmutableStack<Object> indices) {
     this.tempDirectory.prepare(indices);
+
+    updateChecksumBytes();
   }
 
   @Override
@@ -101,5 +106,20 @@ public class ArchiveOnDisk extends FileOnDisk implements Archive<WritableOnDisk>
   @Override
   public void setBytes(byte[] bytes) {
     throw new UnsupportedOperationException("Can not set bytes on an archive.");
+  }
+
+  private void updateChecksumBytes() {
+    var targetFile = this.getWritables().stream()
+      .filter(writable -> writable instanceof File)
+      .map(file -> (FileOnDisk) file)
+      .findFirst()
+      .orElseThrow();
+
+    this.checksumBytes = targetFile.getBytes();
+  }
+
+  @Override
+  public byte[] getBytesForChecksum() {
+    return this.checksumBytes;
   }
 }

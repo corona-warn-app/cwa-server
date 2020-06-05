@@ -98,7 +98,7 @@ public class ObjectStoreAccess {
    */
   public void putObject(LocalFile localFile, int maxAge) {
     String s3Key = localFile.getS3Key();
-    Map<HeaderKey, String> headers = createHeaders(maxAge);
+    Map<HeaderKey, String> headers = createHeaders(maxAge, localFile);
 
     logger.info("... uploading {}", s3Key);
     this.client.putObject(bucket, s3Key, localFile.getFile(), headers);
@@ -129,11 +129,16 @@ public class ObjectStoreAccess {
     return client.getObjects(bucket, prefix);
   }
 
-  private Map<HeaderKey, String> createHeaders(int maxAge) {
+  private Map<HeaderKey, String> createHeaders(int maxAge, LocalFile file) {
     EnumMap<HeaderKey, String> headers = new EnumMap<>(Map.of(HeaderKey.CACHE_CONTROL, "public,max-age=" + maxAge));
     if (this.isSetPublicReadAclOnPutObject) {
       headers.put(HeaderKey.AMZ_ACL, "public-read");
     }
+
+    if (!file.getChecksum().isEmpty()) {
+      headers.put(HeaderKey.CWA_HASH, file.getChecksum());
+    }
+
     return headers;
   }
 }
