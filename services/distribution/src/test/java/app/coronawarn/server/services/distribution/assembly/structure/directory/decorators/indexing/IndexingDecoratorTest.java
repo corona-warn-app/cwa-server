@@ -29,6 +29,7 @@ import app.coronawarn.server.services.distribution.assembly.structure.directory.
 import app.coronawarn.server.services.distribution.assembly.structure.directory.IndexDirectory;
 import app.coronawarn.server.services.distribution.assembly.structure.directory.IndexDirectoryOnDisk;
 import app.coronawarn.server.services.distribution.assembly.structure.directory.decorator.indexing.IndexingDecoratorOnDisk;
+import app.coronawarn.server.services.distribution.assembly.structure.file.FileOnDiskWithChecksum;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
@@ -75,6 +76,7 @@ class IndexingDecoratorTest {
         .map(File::listFiles)
         .flatMap(Arrays::stream)
         .filter(File::isFile)
+        .filter(file -> !FileOnDiskWithChecksum.isChecksumFile(file.toPath()))
         .findFirst()
         .get();
 

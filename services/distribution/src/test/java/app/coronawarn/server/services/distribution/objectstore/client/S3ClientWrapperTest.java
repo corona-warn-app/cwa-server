@@ -52,6 +52,8 @@ import software.amazon.awssdk.services.s3.S3Client;
 import software.amazon.awssdk.services.s3.model.Delete;
 import software.amazon.awssdk.services.s3.model.DeleteObjectsRequest;
 import software.amazon.awssdk.services.s3.model.DeleteObjectsResponse;
+import software.amazon.awssdk.services.s3.model.HeadObjectRequest;
+import software.amazon.awssdk.services.s3.model.HeadObjectResponse;
 import software.amazon.awssdk.services.s3.model.ListObjectsV2Request;
 import software.amazon.awssdk.services.s3.model.ListObjectsV2Response;
 import software.amazon.awssdk.services.s3.model.NoSuchBucketException;
@@ -113,6 +115,7 @@ class S3ClientWrapperTest {
   void testGetObjects(List<S3Object> expResult) {
     ListObjectsV2Response actResponse = buildListObjectsResponse(expResult);
     when(s3Client.listObjectsV2(any(ListObjectsV2Request.class))).thenReturn(actResponse);
+    when(s3Client.headObject(any(HeadObjectRequest.class))).thenReturn(HeadObjectResponse.builder().build());
 
     List<S3Object> actResult = s3ClientWrapper.getObjects(VALID_BUCKET_NAME, VALID_PREFIX);
 
@@ -122,8 +125,8 @@ class S3ClientWrapperTest {
   private static Stream<Arguments> createGetObjectsResults() {
     return Stream.of(
         Lists.emptyList(),
-        Lists.list(new S3Object("objName", "eTag")),
-        Lists.list(new S3Object("objName1", "eTag1"), new S3Object("objName2", "eTag2"))
+        Lists.list(new S3Object("objName")),
+        Lists.list(new S3Object("objName1"), new S3Object("objName2"))
     ).map(Arguments::of);
   }
 
@@ -133,18 +136,6 @@ class S3ClientWrapperTest {
             .key(s3Object.getObjectName())
         ).map(SdkBuilder::build).collect(Collectors.toList());
     return ListObjectsV2Response.builder().contents(responseObjects).build();
-  }
-
-  @Test
-  void getObjectsRemovesDoubleQuotesFromEtags() {
-    String expEtag = "eTag";
-    ListObjectsV2Response actResponse =
-        buildListObjectsResponse(List.of(new S3Object(VALID_NAME, "\"" + expEtag + "\"")));
-    when(s3Client.listObjectsV2(any(ListObjectsV2Request.class))).thenReturn(actResponse);
-
-    List<S3Object> actResult = s3ClientWrapper.getObjects(VALID_BUCKET_NAME, VALID_PREFIX);
-
-    assertThat(actResult).isEqualTo(List.of(new S3Object(VALID_NAME, expEtag)));
   }
 
   @ParameterizedTest

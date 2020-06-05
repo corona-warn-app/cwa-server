@@ -32,6 +32,7 @@ import java.util.stream.Collectors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
+import org.springframework.util.StringUtils;
 
 /**
  * <p>Grants access to the S3 compatible object storage hosted by Telekom in Germany, enabling
@@ -135,7 +136,7 @@ public class ObjectStoreAccess {
       headers.put(HeaderKey.AMZ_ACL, "public-read");
     }
 
-    if (!file.getChecksum().isEmpty()) {
+    if (!StringUtils.isEmpty(file.getChecksum())) {
       headers.put(HeaderKey.CWA_HASH, file.getChecksum());
     }
 
