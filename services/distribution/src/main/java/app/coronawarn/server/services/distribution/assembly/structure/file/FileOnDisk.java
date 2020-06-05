@@ -69,7 +69,4 @@ public class FileOnDisk extends WritableOnDisk implements File<WritableOnDisk> {
     // Method override exists here to comply with the implementation rules for the Writable interface.
   }
 
-  public byte[] getBytesForChecksum() {
-    return this.getBytes();
-  }
 }
