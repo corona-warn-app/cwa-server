@@ -71,12 +71,12 @@ public class TanVerifier {
    */
   private boolean verifyWithVerificationService(Tan tan) {
     try {
-      logger.debug("Calling Verification Service for TAN verification ...");
+      logger.info("Calling Verification Service for TAN verification ...");
       verificationServerClient.verifyTan(tan);
-      logger.debug("Received response from Verification Service");
+      logger.info("Received response from Verification Service");
       return true;
     } catch (FeignException.NotFound e) {
-      logger.debug("Verification Service reported unverified TAN");
+      logger.info("Verification Service reported unverified TAN");
       return false;
     }
   }
