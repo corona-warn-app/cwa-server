@@ -21,13 +21,9 @@
 package app.coronawarn.server.services.distribution.assembly.structure.directory.decorator.indexing;
 
 import app.coronawarn.server.services.distribution.assembly.structure.Writable;
-import app.coronawarn.server.services.distribution.assembly.structure.WritableOnDisk;
 import app.coronawarn.server.services.distribution.assembly.structure.directory.IndexDirectory;
 import app.coronawarn.server.services.distribution.assembly.structure.directory.decorator.IndexDirectoryDecorator;
-import app.coronawarn.server.services.distribution.assembly.structure.file.File;
-import app.coronawarn.server.services.distribution.assembly.structure.file.FileOnDisk;
 import app.coronawarn.server.services.distribution.assembly.structure.util.ImmutableStack;
-import java.math.BigInteger;
 
 public abstract class AbstractIndexingDecorator<T, W extends Writable<W>> extends
     IndexDirectoryDecorator<T, W> implements IndexingDecorator<T, W> {
@@ -43,7 +39,7 @@ public abstract class AbstractIndexingDecorator<T, W extends Writable<W>> extend
     this.directory = directory;
     this.indexFileName = indexFileName;
   }
-  
+
   /**
    * See {@link AbstractIndexingDecorator} class documentation.
    */
