@@ -15,12 +15,3 @@ services:
   submission:
     verification:
       base-url: ${VERIFICATION_BASE_URL}
-
-server:
-  ssl:
-    enabled: true
-    key-password: ${SSL_PASSWORD}
-    key-store: ${SSL_KEYSTORE_PATH}
-    key-store-password: ${SSL_PASSWORD}
-    key-store-provider: SUN
-    key-store-type: JKS

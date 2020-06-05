@@ -31,6 +31,11 @@
       <version>2.2.3.RELEASE</version>
     </dependency>
     <dependency>
+      <groupId>io.github.openfeign</groupId>
+      <artifactId>feign-httpclient</artifactId>
+      <version>11.0</version>
+    </dependency>
+    <dependency>
       <groupId>org.apache.commons</groupId>
       <artifactId>commons-math3</artifactId>
       <version>3.2</version>
