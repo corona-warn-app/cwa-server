@@ -23,7 +23,7 @@ package app.coronawarn.server.services.distribution.assembly.appconfig.validatio
 import java.util.Objects;
 
 /**
- * {@link ValidationError} instances hold information about a errors that occurred during app configuration validation.
+ * {@link ValidationError} instances hold information about errors that occurred during app configuration validation.
  */
 public class ValidationError {
 
@@ -47,9 +47,9 @@ public class ValidationError {
 
   @Override
   public String toString() {
-    return "GeneralValidationError{"
+    return "ValidationError{"
         + "errorType=" + reason
-        + ", parameter='" + errorSource + '\''
+        + ", errorSource='" + errorSource + '\''
         + ", givenValue=" + value
         + '}';
   }
