@@ -83,8 +83,8 @@ public class S3ClientWrapper implements ObjectStoreClient {
         s3Client.listObjectsV2(ListObjectsV2Request.builder().prefix(prefix).bucket(bucket).build());
 
     return response.contents().stream()
-      .map(s3Object -> buildS3Object(s3Object, bucket))
-      .collect(toList());
+        .map(s3Object -> buildS3Object(s3Object, bucket))
+        .collect(toList());
   }
 
   @Recover
@@ -105,15 +105,15 @@ public class S3ClientWrapper implements ObjectStoreClient {
     if (headers.containsKey(HeaderKey.AMZ_ACL)) {
       requestBuilder.acl(headers.get(HeaderKey.AMZ_ACL));
     }
-    
+
     if (headers.containsKey(HeaderKey.CACHE_CONTROL)) {
       requestBuilder.cacheControl(headers.get(HeaderKey.CACHE_CONTROL));
     }
 
     if (headers.containsKey(HeaderKey.CWA_HASH)) {
       requestBuilder.metadata(Map.of(HeaderKey.CWA_HASH.withMetaPrefix(), headers.get(HeaderKey.CWA_HASH)));
-    }    
-    
+    }
+
     s3Client.putObject(requestBuilder.build(), bodyFile);
   }
 
