@@ -43,12 +43,7 @@ public abstract class AbstractIndexingDecorator<T, W extends Writable<W>> extend
     this.directory = directory;
     this.indexFileName = indexFileName;
   }
-
-  @Override
-  public void addWritable(Writable<W> writable) {
-    super.addWritable(writable);
-  }
-
+  
   /**
    * See {@link AbstractIndexingDecorator} class documentation.
    */
