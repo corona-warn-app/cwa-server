@@ -78,6 +78,11 @@
       <groupId>org.apache.commons</groupId>
       <version>3.2</version>
     </dependency>
+    <dependency>
+      <artifactId>spring-retry</artifactId>
+      <groupId>org.springframework.retry</groupId>
+      <version>1.3.0</version>
+    </dependency>
   </dependencies>
 
 </project>
