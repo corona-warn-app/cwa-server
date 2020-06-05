@@ -21,6 +21,7 @@
 package app.coronawarn.server.services.distribution.objectstore;
 
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -115,6 +116,6 @@ class S3PublisherTest {
 
   private S3Publisher createTestPublisher() throws IOException {
     var publishPath = resourceLoader.getResource(PUBLISHING_PATH).getFile().toPath();
-    return new S3Publisher(publishPath, objectStoreAccess);
+    return new S3Publisher(publishPath, objectStoreAccess, mock(FailedObjectStoreOperationsCounter.class));
   }
 }

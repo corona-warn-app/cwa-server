@@ -20,6 +20,8 @@
 
 package app.coronawarn.server.services.submission;
 
+import io.micrometer.core.aop.TimedAspect;
+import io.micrometer.core.instrument.MeterRegistry;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.domain.EntityScan;
@@ -38,6 +40,11 @@ import org.springframework.http.converter.protobuf.ProtobufHttpMessageConverter;
 @EnableConfigurationProperties
 @EnableFeignClients
 public class ServerApplication {
+
+  @Bean
+  TimedAspect timedAspect(MeterRegistry registry) {
+    return new TimedAspect(registry);
+  }
 
   @Bean
   ProtobufHttpMessageConverter protobufHttpMessageConverter() {

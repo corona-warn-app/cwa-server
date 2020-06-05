@@ -20,6 +20,7 @@
 
 package app.coronawarn.server.services.submission.verification;
 
+import io.micrometer.core.annotation.Timed;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -37,6 +38,7 @@ public interface VerificationServerClient {
    * @param tan the tan to verify.
    * @return 404 when the tan is not valid.
    */
+  @Timed
   @PostMapping(value = "${services.submission.verification.path}", consumes = MediaType.APPLICATION_JSON_VALUE)
   String verifyTan(Tan tan);
 }

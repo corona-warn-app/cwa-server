@@ -20,14 +20,18 @@
 
 package app.coronawarn.server.services.distribution.assembly.appconfig.validation;
 
-import static app.coronawarn.server.services.distribution.assembly.appconfig.validation.GeneralValidationError.ErrorType.INVALID_PARTITIONING;
-import static app.coronawarn.server.services.distribution.assembly.appconfig.validation.GeneralValidationError.ErrorType.MIN_GREATER_THAN_MAX;
+import static app.coronawarn.server.services.distribution.assembly.appconfig.validation.RiskScoreClassificationValidator.CONFIG_PREFIX;
+import static app.coronawarn.server.services.distribution.assembly.appconfig.validation.ValidationError.ErrorType.BLANK_LABEL;
+import static app.coronawarn.server.services.distribution.assembly.appconfig.validation.ValidationError.ErrorType.INVALID_PARTITIONING;
+import static app.coronawarn.server.services.distribution.assembly.appconfig.validation.ValidationError.ErrorType.INVALID_URL;
+import static app.coronawarn.server.services.distribution.assembly.appconfig.validation.ValidationError.ErrorType.MIN_GREATER_THAN_MAX;
+import static app.coronawarn.server.services.distribution.assembly.appconfig.validation.ValidationError.ErrorType.VALUE_OUT_OF_BOUNDS;
 import static java.util.Arrays.asList;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import app.coronawarn.server.common.protocols.internal.RiskScoreClass;
 import app.coronawarn.server.common.protocols.internal.RiskScoreClassification;
-import app.coronawarn.server.services.distribution.assembly.appconfig.validation.GeneralValidationError.ErrorType;
+import app.coronawarn.server.services.distribution.assembly.appconfig.validation.ValidationError.ErrorType;
 import java.util.Arrays;
 import java.util.stream.Stream;
 import org.junit.jupiter.api.Test;
@@ -49,7 +53,8 @@ class RiskScoreClassificationValidatorTest {
   @ValueSource(strings = {"", " "})
   void failsForBlankLabels(String invalidLabel) {
     var validator = buildValidator(buildRiskClass(invalidLabel, 0, MAX_SCORE, VALID_URL));
-    var expectedResult = buildExpectedResult(buildError("label", invalidLabel, ErrorType.BLANK_LABEL));
+    var expectedResult =
+        buildExpectedResult(buildError(CONFIG_PREFIX + "risk-classes.label", invalidLabel, BLANK_LABEL));
 
     assertThat(validator.validate()).isEqualTo(expectedResult);
   }
@@ -58,7 +63,8 @@ class RiskScoreClassificationValidatorTest {
   @ValueSource(strings = {"invalid.Url", "invalid-url", "$$$://invalid.url", "", " "})
   void failsForInvalidUrl(String invalidUrl) {
     var validator = buildValidator(buildRiskClass(VALID_LABEL, 0, MAX_SCORE, invalidUrl));
-    var expectedResult = buildExpectedResult(buildError("url", invalidUrl, ErrorType.INVALID_URL));
+    var expectedResult =
+        buildExpectedResult(buildError(CONFIG_PREFIX + "risk-classes.url", invalidUrl, INVALID_URL));
 
     assertThat(validator.validate()).isEqualTo(expectedResult);
   }
@@ -70,8 +76,8 @@ class RiskScoreClassificationValidatorTest {
     int negativeMax = -1;
     var validator = buildValidator(buildRiskClass(VALID_LABEL, negativeMin, negativeMax, VALID_URL));
     var expectedResult = buildExpectedResult(
-        buildError("minRiskLevel/maxRiskLevel", negativeMin, ErrorType.VALUE_OUT_OF_BOUNDS),
-        buildError("minRiskLevel/maxRiskLevel", negativeMax, ErrorType.VALUE_OUT_OF_BOUNDS));
+        buildError(CONFIG_PREFIX + "risk-classes.[minRiskLevel|maxRiskLevel]", negativeMin, VALUE_OUT_OF_BOUNDS),
+        buildError(CONFIG_PREFIX + "risk-classes.[minRiskLevel|maxRiskLevel]", negativeMax, VALUE_OUT_OF_BOUNDS));
 
     assertThat(validator.validate()).isEqualTo(expectedResult);
   }
@@ -83,8 +89,8 @@ class RiskScoreClassificationValidatorTest {
     int tooLargeMax = 2 * MAX_SCORE + 1;
     var validator = buildValidator(buildRiskClass(VALID_LABEL, tooLargeMin, tooLargeMax, VALID_URL));
     var expectedResult = buildExpectedResult(
-        buildError("minRiskLevel/maxRiskLevel", tooLargeMin, ErrorType.VALUE_OUT_OF_BOUNDS),
-        buildError("minRiskLevel/maxRiskLevel", tooLargeMax, ErrorType.VALUE_OUT_OF_BOUNDS));
+        buildError(CONFIG_PREFIX + "risk-classes.[minRiskLevel|maxRiskLevel]", tooLargeMin, VALUE_OUT_OF_BOUNDS),
+        buildError(CONFIG_PREFIX + "risk-classes.[minRiskLevel|maxRiskLevel]", tooLargeMax, VALUE_OUT_OF_BOUNDS));
 
     assertThat(validator.validate()).isEqualTo(expectedResult);
   }
@@ -96,7 +102,9 @@ class RiskScoreClassificationValidatorTest {
     // Note: additional classes have to be added in order to reach the expected value range size
     var validator = buildValidator(buildRiskClass(VALID_LABEL, min, max, VALID_URL),
         buildRiskClass(VALID_LABEL, 0, MAX_SCORE, VALID_URL));
-    var expectedResult = buildError("minRiskLevel, maxRiskLevel", (min + ", " + max), MIN_GREATER_THAN_MAX);
+    var expectedResult =
+        buildError(CONFIG_PREFIX + "risk-classes.[minRiskLevel+maxRiskLevel]",
+            (min + ", " + max), MIN_GREATER_THAN_MAX);
 
     assertThat(validator.validate().hasError(expectedResult)).isTrue();
   }
@@ -109,7 +117,7 @@ class RiskScoreClassificationValidatorTest {
         .mapToInt(riskScoreClass -> (riskScoreClass.getMax() - riskScoreClass.getMin()))
         .sum();
     var expectedResult = buildExpectedResult(
-        buildError("covered value range", coveredRange, INVALID_PARTITIONING));
+        buildError(CONFIG_PREFIX + "risk-classes", coveredRange, INVALID_PARTITIONING));
 
     assertThat(validator.validate()).isEqualTo(expectedResult);
   }
@@ -145,12 +153,12 @@ class RiskScoreClassificationValidatorTest {
         buildClassification(
             buildRiskClass(VALID_LABEL, 0, MAX_SCORE - 10, VALID_URL),
             buildRiskClass(VALID_LABEL, MAX_SCORE - 10, MAX_SCORE - 10, VALID_URL),
-            buildRiskClass(VALID_LABEL, MAX_SCORE - 10,  MAX_SCORE, VALID_URL))
+            buildRiskClass(VALID_LABEL, MAX_SCORE - 10, MAX_SCORE, VALID_URL))
     ).map(Arguments::of);
   }
 
-  public static GeneralValidationError buildError(String parameter, Object value, ErrorType reason) {
-    return new GeneralValidationError(parameter, value, reason);
+  public static ValidationError buildError(String parameter, Object value, ErrorType reason) {
+    return new ValidationError(parameter, value, reason);
   }
 
   private static RiskScoreClassificationValidator buildValidator(RiskScoreClass... riskScoreClasses) {

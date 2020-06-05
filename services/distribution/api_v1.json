@@ -215,9 +215,9 @@
                     "200": {
                         "description": "All diagnosis keys for a specific date.",
                         "content": {
-                            "application/octet-stream": {
+                            "application/zip": {
                                 "schema": {
-                                    "$ref": "#/components/schemas/app.coronawarn.server.common.protocols.generated.SignedPayload"
+                                    "$ref": "#/components/schemas/app.coronawarn.server.common.protocols.external.TemporaryExposureKeyExport"
                                 },
                                 "example": "<BINARY DATA>"
                             }
@@ -335,9 +335,9 @@
                     "200": {
                         "description": "All diagnosis keys for that hour.",
                         "content": {
-                            "application/octet-stream": {
+                            "application/zip": {
                                 "schema": {
-                                    "$ref": "#/components/schemas/app.coronawarn.server.common.protocols.generated.SignedPayload"
+                                    "$ref": "#/components/schemas/app.coronawarn.server.common.protocols.external.TemporaryExposureKeyExport"
                                 },
                                 "example": "<BINARY DATA>"
                             }
@@ -346,50 +346,15 @@
                 }
             }
         },
-        "/version/{version}/parameters/country": {
+        "/version/{version}/configuration/country/{country}/app_config": {
             "get": {
-                "summary": "Get all countries for which risk score parameters are available.",
+                "summary": "Get Application configuration for a country.",
                 "tags": [
-                    "Risk score parameters"
-                ],
-                "parameters": [
-                    {
-                        "name": "version",
-                        "in": "path",
-                        "description": "API version",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/components/schemas/Version"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "All countries for which risk score parameters are available",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "type": "array",
-                                    "items": {
-                                        "$ref": "#/components/schemas/Country"
-                                    },
-                                    "example": [
-                                        "DE",
-                                        "FR",
-                                        "PL"
-                                    ]
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        },
-        "/version/{version}/parameters/country/{country}": {
-            "get": {
-                "summary": "Get risk score parameters for a country.",
-                "tags": [
-                    "Risk score parameters"
+                    "Minimum risk score",
+                    "Risk score classification",
+                    "Risk score parameters",
+                    "Attenuation duration",
+                    "Application version configuration"
                 ],
                 "parameters": [
                     {
@@ -413,11 +378,11 @@
                 ],
                 "responses": {
                     "200": {
-                        "description": "Risk score parameters for a country.",
+                        "description": "Application configuration for a country.",
                         "content": {
-                            "application/octet-stream": {
+                            "application/zip": {
                                 "schema": {
-                                    "$ref": "#/components/schemas/app.coronawarn.server.common.protocols.generated.SignedPayload"
+                                    "$ref": "#/components/schemas/app.coronawarn.server.common.protocols.external.TemporaryExposureKeyExport"
                                 },
                                 "example": "<BINARY DATA>"
                             }
@@ -487,7 +452,7 @@
                 "description": "An integer number between 0 and 23. Server time zone is UTC.",
                 "example": "17"
             },
-            "app.coronawarn.server.common.protocols.generated.SignedPayload": {
+            "app.coronawarn.server.common.protocols.external.TemporaryExposureKeyExport": {
                 "type": "string",
                 "format": "binary"
             }
