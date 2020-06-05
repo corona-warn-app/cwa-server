@@ -24,12 +24,10 @@ package app.coronawarn.server.services.distribution.assembly.io;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
 import java.io.File;
 import java.io.UncheckedIOException;
-import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 class IOTest {

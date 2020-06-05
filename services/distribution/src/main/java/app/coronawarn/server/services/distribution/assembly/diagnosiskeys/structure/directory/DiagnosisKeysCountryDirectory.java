@@ -67,6 +67,6 @@ public class DiagnosisKeysCountryDirectory extends IndexDirectoryOnDisk<String> 
 
   private IndexDirectory<LocalDate, WritableOnDisk> decorateDateDirectory(DiagnosisKeysDateDirectory dateDirectory) {
     return new DateAggregatingDecorator(new DateIndexingDecorator(dateDirectory, distributionServiceConfig),
-        cryptoProvider, distributionServiceConfig);
+        cryptoProvider, distributionServiceConfig, diagnosisKeyBundler);
   }
 }

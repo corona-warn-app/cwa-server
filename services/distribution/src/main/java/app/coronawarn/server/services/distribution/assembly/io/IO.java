@@ -20,20 +20,15 @@
 
 package app.coronawarn.server.services.distribution.assembly.io;
 
-import app.coronawarn.server.services.distribution.assembly.diagnosiskeys.structure.file.TemporaryExposureKeyExportFile;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.UncheckedIOException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * A class containing helper functions for general purpose file IO.
  */
 public class IO {
-
-  private static final Logger logger = LoggerFactory.getLogger(IO.class);
 
   /**
    * The maximum acceptable file size in bytes.

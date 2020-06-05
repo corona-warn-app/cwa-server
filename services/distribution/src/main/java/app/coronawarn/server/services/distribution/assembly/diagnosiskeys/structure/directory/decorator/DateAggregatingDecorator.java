@@ -25,6 +25,7 @@ import static app.coronawarn.server.services.distribution.assembly.structure.uti
 import app.coronawarn.server.common.protocols.external.exposurenotification.TemporaryExposureKey;
 import app.coronawarn.server.common.protocols.external.exposurenotification.TemporaryExposureKeyExport;
 import app.coronawarn.server.services.distribution.assembly.component.CryptoProvider;
+import app.coronawarn.server.services.distribution.assembly.diagnosiskeys.DiagnosisKeyBundler;
 import app.coronawarn.server.services.distribution.assembly.diagnosiskeys.structure.archive.decorator.singing.DiagnosisKeySigningDecorator;
 import app.coronawarn.server.services.distribution.assembly.diagnosiskeys.structure.file.TemporaryExposureKeyExportFile;
 import app.coronawarn.server.services.distribution.assembly.structure.Writable;
@@ -54,15 +55,17 @@ public class DateAggregatingDecorator extends IndexDirectoryDecorator<LocalDate,
 
   private final CryptoProvider cryptoProvider;
   private final DistributionServiceConfig distributionServiceConfig;
+  private final DiagnosisKeyBundler diagnosisKeyBundler;
 
   /**
    * Creates a new DateAggregatingDecorator.
    */
   public DateAggregatingDecorator(IndexDirectory<LocalDate, WritableOnDisk> directory, CryptoProvider cryptoProvider,
-      DistributionServiceConfig distributionServiceConfig) {
+      DistributionServiceConfig distributionServiceConfig, DiagnosisKeyBundler diagnosisKeyBundler) {
     super(directory);
     this.cryptoProvider = cryptoProvider;
     this.distributionServiceConfig = distributionServiceConfig;
+    this.diagnosisKeyBundler = diagnosisKeyBundler;
   }
 
   @Override
@@ -77,6 +80,7 @@ public class DateAggregatingDecorator extends IndexDirectoryDecorator<LocalDate,
     }
 
     Set<String> dates = this.getIndex(indices).stream()
+        .filter(diagnosisKeyBundler::numberOfKeysForDateBelowMaximum)
         .map(this.getIndexFormatter())
         .map(Object::toString)
         .collect(Collectors.toSet());
