@@ -53,8 +53,7 @@ public class ArchiveOnDisk extends FileOnDiskWithChecksum implements Archive<Wri
   public ArchiveOnDisk(String name) {
     super(name, new byte[0]);
     try {
-      tempDirectory = new DirectoryOnDisk(
-        Files.createTempDirectory("temporary").toFile());
+      tempDirectory = new DirectoryOnDisk(Files.createTempDirectory("temporary").toFile());
     } catch (IOException e) {
       throw new UncheckedIOException("Failed to create temporary directory for zip archive " + this.getFileOnDisk(), e);
     }
