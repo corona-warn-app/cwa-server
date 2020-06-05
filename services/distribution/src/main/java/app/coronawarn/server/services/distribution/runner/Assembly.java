@@ -67,6 +67,7 @@ public class Assembly implements ApplicationRunner {
       outputDirectory.addWritable(cwaApiStructureProvider.getDirectory());
       this.outputDirectoryProvider.clear();
       logger.debug("Preparing files...");
+      logger.info("Start signing...");
       outputDirectory.prepare(new ImmutableStack<>());
       logger.debug("Writing files...");
       outputDirectory.write();
