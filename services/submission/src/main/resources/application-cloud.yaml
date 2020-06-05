@@ -19,9 +19,9 @@ services:
 server:
   ssl:
     enabled: true
-    key-password: ${SSL_PASSWORD}
+    key-password: ${SSL_KEYSTORE_PASSWORD}
     key-store: ${SSL_KEYSTORE_PATH}
-    key-store-password: ${SSL_PASSWORD}
+    key-store-password: ${SSL_KEYSTORE_PASSWORD}
     key-store-provider: SUN
     key-store-type: JKS
 
@@ -29,10 +29,13 @@ client:
   ssl:
     one-way-authentication-enabled: false
     two-way-authentication-enabled: true
-    key-password: ${SSL_PASSWORD}
+    key-password: ${SSL_KEYSTORE_PASSWORD}
     key-store: ${SSL_KEYSTORE_PATH}
-    key-store-password: ${SSL_PASSWORD}
+    key-store-password: ${SSL_KEYSTORE_PASSWORD}
     key-store-provider: SUN
     key-store-type: JKS
-    #trust-store: truststore.jks
-    #trust-store-password: secret
+    verification:
+      trust-store: ${SSL_VERIFICATION_TRUSTSTORE_PATH}
+      trust-store-password: ${SSL_VERIFICATION_TRUSTSTORE_PASSWORD}
+      trust-store-provider: SUN
+      trust-store-type: JKS
