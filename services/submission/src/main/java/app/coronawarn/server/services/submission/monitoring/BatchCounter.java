@@ -26,29 +26,30 @@ import io.micrometer.core.instrument.Counter;
 import io.micrometer.core.instrument.MeterRegistry;
 
 /**
- * Batch counter for counting requests for monitoring. Counts up in batches,
- * given batch size. This way, single requests cannot be traced to semantics
- * of the counter by comparing time stamps.
+ * Batch counter for counting requests for monitoring. Counts up in batches, given batch size. This way, single requests
+ * cannot be traced to semantics of the counter by comparing time stamps.
  */
 public class BatchCounter {
 
   private static final String SUBMISSION_CONTROLLER_REQUESTS_COUNTER_NAME = "submissionController.requests";
+  private static final String SUBMISSION_CONTROLLER_REQUESTS_COUNTER_DESCRIPTION
+      = "Counts requests to the Submission Controller.";
 
   private final Integer batchSize;
   private final Counter counter;
   private Double batch = 0.;
 
-  BatchCounter(MeterRegistry meterRegistry, Integer batchSize, String type, String description) {
+  BatchCounter(MeterRegistry meterRegistry, Integer batchSize, String type) {
     this.batchSize = batchSize;
     counter = Counter.builder(SUBMISSION_CONTROLLER_REQUESTS_COUNTER_NAME)
         .tag("type", type)
-        .description(description)
+        .description(SUBMISSION_CONTROLLER_REQUESTS_COUNTER_DESCRIPTION)
         .register(meterRegistry);
   }
 
   /**
-   * Increments the {@link BatchCounter}. If the batch size is reached, it is provided
-   * to monitoring, else, the internal counter is incremented.
+   * Increments the {@link BatchCounter}. If the batch size is reached, it is provided to monitoring, else, the internal
+   * counter is incremented.
    */
   public void increment() {
     if (batch < batchSize) {

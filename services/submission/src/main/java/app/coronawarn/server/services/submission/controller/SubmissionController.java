@@ -94,6 +94,7 @@ public class SubmissionController {
       @ValidSubmissionPayload @RequestBody SubmissionPayload exposureKeys,
       @RequestHeader("cwa-fake") Integer fake,
       @RequestHeader("cwa-authorization") String tan) {
+    submissionControllerMonitor.incrementAll();
     if (fake != 0) {
       submissionControllerMonitor.incrementFake();
       return buildFakeDeferredResult();

@@ -43,6 +43,7 @@ public class SubmissionControllerMonitor {
   private final MeterRegistry meterRegistry;
 
   private final Integer batchSize;
+  private BatchCounter allRequests;
   private BatchCounter realRequests;
   private BatchCounter fakeRequests;
   private BatchCounter invalidTanRequests;
@@ -59,10 +60,10 @@ public class SubmissionControllerMonitor {
   }
 
   private void initializeCounters() {
-    realRequests = new BatchCounter(meterRegistry, batchSize, "real", "The number of non-fake requests.");
-    fakeRequests = new BatchCounter(meterRegistry, batchSize, "fake", "The number of fake requests.");
-    invalidTanRequests = new BatchCounter(meterRegistry, batchSize, "invalidTan",
-        "The number requests with invalid TAN.");
+    allRequests = new BatchCounter(meterRegistry, batchSize, "all");
+    realRequests = new BatchCounter(meterRegistry, batchSize, "real");
+    fakeRequests = new BatchCounter(meterRegistry, batchSize, "fake");
+    invalidTanRequests = new BatchCounter(meterRegistry, batchSize, "invalidTan");
   }
 
   /**
@@ -76,6 +77,10 @@ public class SubmissionControllerMonitor {
         __ -> submissionController.getFakeDelay())
         .description("The time that fake requests are delayed to make them indistinguishable from real requests.")
         .register(meterRegistry);
+  }
+
+  public void incrementAll() {
+    allRequests.increment();
   }
 
   public void incrementReal() {
