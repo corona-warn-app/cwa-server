@@ -22,6 +22,8 @@ package app.coronawarn.server.services.distribution.assembly.diagnosiskeys.struc
 
 import static app.coronawarn.server.services.distribution.common.Helpers.buildDiagnosisKeys;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 import app.coronawarn.server.common.persistence.domain.DiagnosisKey;
 import app.coronawarn.server.services.distribution.assembly.component.CryptoProvider;
@@ -34,8 +36,6 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Set;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -65,26 +65,27 @@ class HourIndexingDecoratorTest {
   }
 
   @Test
-  void excludesEmptyHoursFromIndex() {
-    List<DiagnosisKey> diagnosisKeys = Stream
-        .of(buildDiagnosisKeys(6, LocalDateTime.of(1970, 1, 3, 4, 0), 5),
-            buildDiagnosisKeys(6, LocalDateTime.of(1970, 1, 3, 5, 0), 0),
-            buildDiagnosisKeys(6, LocalDateTime.of(1970, 1, 3, 6, 0), 5))
-        .flatMap(List::stream)
-        .collect(Collectors.toList());
-    diagnosisKeyBundler.setDiagnosisKeys(diagnosisKeys, LocalDateTime.of(1970, 1, 5, 0, 0));
-    HourIndexingDecorator decorator = makeDecoratedHourDirectory(diagnosisKeyBundler);
-    decorator.prepare(new ImmutableStack<>().push("DE").push(LocalDate.of(1970, 1, 3)));
+  void excludesHoursThatExceedTheMaximumNumberOfKeys() {
+    List<DiagnosisKey> diagnosisKeys = buildDiagnosisKeys(6, LocalDateTime.of(1970, 1, 3, 4, 0), 2);
 
+    DistributionServiceConfig svcConfig = mock(DistributionServiceConfig.class);
+    when(svcConfig.getExpiryPolicyMinutes()).thenReturn(120);
+    when(svcConfig.getShiftingPolicyThreshold()).thenReturn(1);
+    when(svcConfig.getMaximumNumberOfKeysPerBundle()).thenReturn(1);
+
+    DiagnosisKeyBundler diagnosisKeyBundler = new ProdDiagnosisKeyBundler(svcConfig);
+    diagnosisKeyBundler.setDiagnosisKeys(diagnosisKeys, LocalDateTime.of(1970, 1, 5, 0, 0));
+
+    HourIndexingDecorator decorator = makeDecoratedHourDirectory(diagnosisKeyBundler);
+
+    decorator.prepare(new ImmutableStack<>().push("DE").push(LocalDate.of(1970, 1, 3)));
     Set<LocalDateTime> index = decorator.getIndex(new ImmutableStack<>().push(LocalDate.of(1970, 1, 3)));
 
-    assertThat(index).contains(LocalDateTime.of(1970, 1, 3, 4, 0));
-    assertThat(index).doesNotContain(LocalDateTime.of(1970, 1, 3, 5, 0));
-    assertThat(index).contains(LocalDateTime.of(1970, 1, 3, 6, 0));
+    assertThat(index).isEmpty();
   }
 
   @Test
-  void excludesCurrentHourFromIndex() {
+  void excludesEmptyHoursFromIndex() {
     List<DiagnosisKey> diagnosisKeys = buildDiagnosisKeys(6, LocalDateTime.of(1970, 1, 5, 0, 0), 5);
     diagnosisKeyBundler.setDiagnosisKeys(diagnosisKeys, LocalDateTime.of(1970, 1, 5, 1, 0));
     HourIndexingDecorator decorator = makeDecoratedHourDirectory(diagnosisKeyBundler);

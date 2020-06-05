@@ -33,6 +33,7 @@ public class DistributionServiceConfig {
   private Integer retentionDays;
   private Integer expiryPolicyMinutes;
   private Integer shiftingPolicyThreshold;
+  private Integer maximumNumberOfKeysPerBundle;
   private String outputFileName;
   private Boolean includeIncompleteDays;
   private Boolean includeIncompleteHours;
@@ -79,6 +80,14 @@ public class DistributionServiceConfig {
 
   public void setShiftingPolicyThreshold(Integer shiftingPolicyThreshold) {
     this.shiftingPolicyThreshold = shiftingPolicyThreshold;
+  }
+
+  public Integer getMaximumNumberOfKeysPerBundle() {
+    return this.maximumNumberOfKeysPerBundle;
+  }
+
+  public void setMaximumNumberOfKeysPerBundle(Integer maximumNumberOfKeysPerBundle) {
+    this.maximumNumberOfKeysPerBundle = maximumNumberOfKeysPerBundle;
   }
 
   public String getOutputFileName() {

@@ -11,6 +11,7 @@ services:
     retention-days: 14
     expiry-policy-minutes: 120
     shifting-policy-threshold: 5
+    maximum-number-of-keys-per-bundle: 600000
     include-incomplete-days: false
     include-incomplete-hours: false
     paths:
