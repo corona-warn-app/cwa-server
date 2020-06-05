@@ -24,12 +24,10 @@ package app.coronawarn.server.services.submission.monitoring;
 
 import app.coronawarn.server.services.submission.config.SubmissionServiceConfig;
 import app.coronawarn.server.services.submission.controller.SubmissionController;
-import io.micrometer.core.aop.TimedAspect;
 import io.micrometer.core.instrument.Counter;
 import io.micrometer.core.instrument.Gauge;
 import io.micrometer.core.instrument.MeterRegistry;
 import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Component;
 
 /**
@@ -54,7 +52,7 @@ public class SubmissionControllerMonitor {
   private Double invalidTanRequestsBatch = 0.;
 
   /**
-   * Constructor for {@link SubmissionControllerMonitor}. Initializes all counters upon being called.
+   * Constructor for {@link SubmissionControllerMonitor}. Initializes all counters to 0 upon being called.
    *
    * @param meterRegistry the meterRegistry
    */
@@ -82,9 +80,9 @@ public class SubmissionControllerMonitor {
   }
 
   /**
-   * Initializes the gauges of this monitor.
+   * Initializes the gauges for the {@link SubmissionController} that is being monitored.
    *
-   * @param submissionController init
+   * @param submissionController the submission controller for which the gauges shall be initialized
    */
   public void initializeGauges(SubmissionController submissionController) {
     Gauge.builder(SUBMISSION_CONTROLLER_CURRENT_FAKE_DELAY, submissionController,
@@ -131,6 +129,5 @@ public class SubmissionControllerMonitor {
       invalidTanRequestsBatch = 1.;
     }
   }
-
 
 }
