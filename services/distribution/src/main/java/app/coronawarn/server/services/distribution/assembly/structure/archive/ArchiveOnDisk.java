@@ -110,7 +110,7 @@ public class ArchiveOnDisk extends FileOnDiskWithChecksum implements Archive<Wri
 
   private void updateChecksumBytes() {
     var targetFile = this.getWritables().stream()
-      .filter(writable -> writable instanceof File)
+      .filter(Writable::isFile)
       .map(file -> (FileOnDisk) file)
       .findFirst()
       .orElseThrow();
