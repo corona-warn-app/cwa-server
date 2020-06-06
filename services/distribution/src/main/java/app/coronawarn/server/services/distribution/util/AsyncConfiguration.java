@@ -55,8 +55,8 @@ public class AsyncConfiguration {
   @Bean(name = "s3TaskExecutor")
   public Executor taskExecutor() {
     final ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
-    executor.setCorePoolSize(this.objectStore.getS3MaxThreads());
-    executor.setMaxPoolSize(this.objectStore.getS3MaxThreads());
+    executor.setCorePoolSize(this.objectStore.getMaxNumberOfS3Threads());
+    executor.setMaxPoolSize(this.objectStore.getMaxNumberOfS3Threads());
     executor.setThreadNamePrefix("s3Op-");
     executor.setThreadFactory(new DaemonThreadFactory());
     executor.initialize();

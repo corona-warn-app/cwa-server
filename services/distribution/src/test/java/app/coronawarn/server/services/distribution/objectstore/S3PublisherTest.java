@@ -29,11 +29,13 @@ import static org.mockito.Mockito.when;
 import app.coronawarn.server.services.distribution.objectstore.client.S3Object;
 import java.io.IOException;
 import java.util.List;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.core.io.ResourceLoader;
+import org.springframework.scheduling.annotation.AsyncResult;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 @ExtendWith(SpringExtension.class)
@@ -49,6 +51,11 @@ class S3PublisherTest {
 
   @Autowired
   private ResourceLoader resourceLoader;
+
+  @BeforeEach
+  void setupMockBean() {
+    when(objectStoreAccess.putObject(any())).thenReturn(new AsyncResult<>(null));
+  }
 
   @Test
   void allNewNoExisting() throws IOException {

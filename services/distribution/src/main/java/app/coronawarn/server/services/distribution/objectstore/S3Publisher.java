@@ -108,7 +108,6 @@ public class S3Publisher {
     fileUploads.forEach(result -> {
       try {
         result.get();
-        result.cancel(true);
       } catch (ExecutionException | InterruptedException e) {
         failedOperationsCounter.incrementAndCheckThreshold(new ObjectStoreOperationFailedException(e.getMessage(), e));
         logger.error("Exception: ", e);
