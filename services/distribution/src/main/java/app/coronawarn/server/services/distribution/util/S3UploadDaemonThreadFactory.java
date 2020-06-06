@@ -22,12 +22,15 @@ package app.coronawarn.server.services.distribution.util;
 
 import java.util.concurrent.ThreadFactory;
 
-public class DaemonThreadFactory implements ThreadFactory {
+public class S3UploadDaemonThreadFactory implements ThreadFactory {
+  private Integer currentThread = 0;
 
   @Override
   public Thread newThread(Runnable r) {
     Thread t = new Thread(r);
     t.setDaemon(true);
+    t.setName("s3Op-" + currentThread);
+    currentThread++;
     return t;
   }
 }

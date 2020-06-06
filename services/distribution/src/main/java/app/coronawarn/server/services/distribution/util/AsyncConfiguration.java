@@ -52,12 +52,12 @@ public class AsyncConfiguration {
    *
    * @return the executor, which tells SpringBoot the basic parameters.
    */
-  @Bean(name = "s3TaskExecutor")
-  public Executor taskExecutor() {
+  @Bean()
+  public Executor s3TaskExecutor() {
     final ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
     executor.setCorePoolSize(this.objectStore.getMaxNumberOfS3Threads());
     executor.setMaxPoolSize(this.objectStore.getMaxNumberOfS3Threads());
-    executor.setThreadFactory(new DaemonThreadFactory());
+    executor.setThreadFactory(new S3UploadDaemonThreadFactory());
     executor.initialize();
     return executor;
   }

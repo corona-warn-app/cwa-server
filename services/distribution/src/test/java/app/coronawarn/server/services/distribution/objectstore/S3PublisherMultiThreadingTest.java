@@ -72,15 +72,9 @@ public class S3PublisherMultiThreadingTest {
     createPublisher().publish();
     // mvn test & mvn install does create an extra thread, so Thread-1 and Thread-2 will be used by @Async, IntelliJ
     // testing will not use an JVM Thread, so Thread-0 and Thread-1 will be used by @Async.
-    if (output.getAll().contains("Thread-0")) {
-      assertThat(output).contains("Thread-0");
-      assertThat(output).contains("Thread-1");
-      assertThat(output).doesNotContain("Thread-2");
-    } else {
-      assertThat(output).contains("Thread-1");
-      assertThat(output).contains("Thread-2");
-      assertThat(output).doesNotContain("Thread-3");
-    }
+    assertThat(output).contains("s3Op-0");
+    assertThat(output).contains("s3Op-1");
+    assertThat(output).doesNotContain("s3Op-2");
   }
 
   private S3Publisher createPublisher() throws IOException {
