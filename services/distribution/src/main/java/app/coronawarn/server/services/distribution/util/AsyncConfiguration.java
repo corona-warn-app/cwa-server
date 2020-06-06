@@ -57,7 +57,6 @@ public class AsyncConfiguration {
     final ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
     executor.setCorePoolSize(this.objectStore.getMaxNumberOfS3Threads());
     executor.setMaxPoolSize(this.objectStore.getMaxNumberOfS3Threads());
-    executor.setThreadNamePrefix("s3Op-");
     executor.setThreadFactory(new DaemonThreadFactory());
     executor.initialize();
     return executor;

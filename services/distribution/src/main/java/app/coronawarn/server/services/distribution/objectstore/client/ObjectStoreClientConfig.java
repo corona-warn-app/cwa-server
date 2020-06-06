@@ -26,6 +26,7 @@ import java.net.URI;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.retry.annotation.EnableRetry;
+import org.springframework.scheduling.annotation.EnableAsync;
 import software.amazon.awssdk.auth.credentials.AwsBasicCredentials;
 import software.amazon.awssdk.auth.credentials.AwsCredentialsProvider;
 import software.amazon.awssdk.auth.credentials.StaticCredentialsProvider;
@@ -37,6 +38,7 @@ import software.amazon.awssdk.services.s3.S3Client;
  */
 @Configuration
 @EnableRetry
+@EnableAsync
 public class ObjectStoreClientConfig {
 
   private static final Region DEFAULT_REGION = Region.EU_CENTRAL_1;
