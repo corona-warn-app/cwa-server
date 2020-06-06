@@ -27,17 +27,17 @@ import app.coronawarn.server.services.distribution.objectstore.publish.PublishFi
 import app.coronawarn.server.services.distribution.objectstore.publish.PublishedFileSet;
 import java.io.IOException;
 import java.nio.file.Path;
-import java.util.List;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 import java.util.stream.Collectors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Publishes a folder on the disk to S3 while keeping the folder and file structure.<br>
- * Moreover, does the following:
+ * Publishes a folder on the disk to S3 while keeping the folder and file structure.<br> Moreover, does the following:
  * <br>
  * <ul>
  *   <li>Publishes index files on a different route, removing the trailing "/index" part.</li>
@@ -103,18 +103,14 @@ public class S3Publisher {
 
     logger.info("Beginning upload... ");
     for (LocalFile file : diff) {
-      try {
-        fileUploads.add(this.access.putObject(file));
-      } catch (ObjectStoreOperationFailedException e) {
-        failedOperationsCounter.incrementAndCheckThreshold(e);
-      }
+      fileUploads.add(this.objectStoreAccess.putObject(file));
     }
     fileUploads.forEach(result -> {
       try {
         result.get();
         result.cancel(true);
-      } catch (Exception e) {
-        //will be handled in conjunction with PR #419
+      } catch (ExecutionException | InterruptedException e) {
+        failedOperationsCounter.incrementAndCheckThreshold(new ObjectStoreOperationFailedException(e.getMessage(), e));
         logger.error("Exception: ", e);
       }
     });
