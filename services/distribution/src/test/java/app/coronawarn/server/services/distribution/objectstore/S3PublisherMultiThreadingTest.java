@@ -29,6 +29,10 @@ import app.coronawarn.server.services.distribution.config.DistributionServiceCon
 import app.coronawarn.server.services.distribution.objectstore.client.ObjectStoreClientConfig;
 import app.coronawarn.server.services.distribution.util.AsyncConfiguration;
 import java.io.IOException;
+import org.apache.logging.log4j.Level;
+import org.apache.logging.log4j.core.config.Configurator;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -52,12 +56,31 @@ public class S3PublisherMultiThreadingTest {
   @Autowired
   private ResourceLoader resourceLoader;
 
+  @BeforeAll
+  public static void setup() {
+    Configurator.setLevel("app.coronawarn.server.services.distribution.objectstore", Level.INFO);
+  }
+
+  @AfterAll
+  public static void teardown() {
+    Configurator.setLevel("app.coronawarn.server.services.distribution.objectstore", Level.OFF);
+  }
+
   @Test
   @ExtendWith(OutputCaptureExtension.class)
   void shouldRunMultiThreaded(CapturedOutput output) throws IOException {
     createPublisher().publish();
-    assertThat(output).contains("Thread-0");
-    assertThat(output).contains("Thread-1");
+    // mvn test & mvn install does create an extra thread, so Thread-1 and Thread-2 will be used by @Async, IntelliJ
+    // testing will not use an JVM Thread, so Thread-0 and Thread-1 will be used by @Async.
+    if (output.getAll().contains("Thread-0")) {
+      assertThat(output).contains("Thread-0");
+      assertThat(output).contains("Thread-1");
+      assertThat(output).doesNotContain("Thread-2");
+    } else {
+      assertThat(output).contains("Thread-1");
+      assertThat(output).contains("Thread-2");
+      assertThat(output).doesNotContain("Thread-3");
+    }
   }
 
   private S3Publisher createPublisher() throws IOException {

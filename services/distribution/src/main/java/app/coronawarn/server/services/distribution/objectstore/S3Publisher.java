@@ -110,10 +110,8 @@ public class S3Publisher {
         result.get();
       } catch (ExecutionException | InterruptedException e) {
         failedOperationsCounter.incrementAndCheckThreshold(new ObjectStoreOperationFailedException(e.getMessage(), e));
-        logger.error("Exception: ", e);
       }
     });
-
     logger.info("Upload completed.");
   }
 }
