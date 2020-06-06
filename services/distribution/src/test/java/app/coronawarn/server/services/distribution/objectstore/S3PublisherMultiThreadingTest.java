@@ -21,10 +21,12 @@
 package app.coronawarn.server.services.distribution.objectstore;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 import app.coronawarn.server.services.distribution.config.DistributionServiceConfig;
-import app.coronawarn.server.services.distribution.objectstore.client.ObjectStoreClientConfig;
+import app.coronawarn.server.services.distribution.objectstore.client.ObjectStoreClient;
 import app.coronawarn.server.services.distribution.util.AsyncConfiguration;
 import app.coronawarn.server.services.distribution.util.S3UploadDaemonThreadFactory;
 import java.io.IOException;
@@ -33,12 +35,13 @@ import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.core.config.Configurator;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.boot.test.system.CapturedOutput;
 import org.springframework.boot.test.system.OutputCaptureExtension;
 import org.springframework.core.io.ResourceLoader;
@@ -46,16 +49,15 @@ import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 @ExtendWith({SpringExtension.class})
-@SpringBootTest(classes = {ObjectStoreAccess.class, ObjectStoreClientConfig.class, AsyncConfiguration.class,
-    S3UploadDaemonThreadFactory.class})
+@SpringBootTest(classes = {AsyncConfiguration.class, S3UploadDaemonThreadFactory.class})
 @EnableConfigurationProperties(value = DistributionServiceConfig.class)
-@Tag("s3-integration")
 class S3PublisherMultiThreadingTest {
 
   private static final String PUBLISHING_PATH = "testsetups/s3publishertest/topublish";
-
-  @Autowired
   private ObjectStoreAccess objectStoreAccess;
+
+  @MockBean
+  private ObjectStoreClient objectStoreClient;
 
   @Autowired
   private ResourceLoader resourceLoader;
@@ -65,6 +67,9 @@ class S3PublisherMultiThreadingTest {
 
   @Autowired
   private S3UploadDaemonThreadFactory s3UploadDaemonThreadFactory;
+
+  @Autowired
+  private DistributionServiceConfig distributionServiceConfig;
 
   @BeforeAll
   public static void setup() {
@@ -76,12 +81,18 @@ class S3PublisherMultiThreadingTest {
     Configurator.setLevel("app.coronawarn.server.services.distribution.objectstore", Level.OFF);
   }
 
+  @BeforeEach
+  public void setUpMocks() {
+    when(objectStoreClient.bucketExists(any())).thenReturn(true);
+    this.objectStoreAccess = new ObjectStoreAccess(distributionServiceConfig, objectStoreClient);
+  }
+
   @Test
   @ExtendWith(OutputCaptureExtension.class)
   void shouldRunMultiThreaded(CapturedOutput output) throws IOException {
-    createPublisher().publish();
-    // mvn test & mvn install does create an extra thread, so Thread-1 and Thread-2 will be used by @Async, IntelliJ
-    // testing will not use an JVM Thread, so Thread-0 and Thread-1 will be used by @Async.
+    var publishPath = resourceLoader.getResource(PUBLISHING_PATH).getFile().toPath();
+    new S3Publisher(publishPath, objectStoreAccess, mock(FailedObjectStoreOperationsCounter.class)).publish();
+
     assertThat(output).contains("s3Op-0");
     assertThat(output).contains("s3Op-1");
     assertThat(output).doesNotContain("s3Op-2");
@@ -99,11 +110,6 @@ class S3PublisherMultiThreadingTest {
     });
     assertThat(createdThread.getName()).contains("s3Op");
     assertThat(createdThread.isDaemon()).isEqualTo(true);
-  }
-
-  private S3Publisher createPublisher() throws IOException {
-    var publishPath = resourceLoader.getResource(PUBLISHING_PATH).getFile().toPath();
-    return new S3Publisher(publishPath, objectStoreAccess, mock(FailedObjectStoreOperationsCounter.class));
   }
 
 }
