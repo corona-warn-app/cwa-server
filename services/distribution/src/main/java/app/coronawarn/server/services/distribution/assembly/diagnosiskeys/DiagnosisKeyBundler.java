@@ -27,6 +27,7 @@ import app.coronawarn.server.common.persistence.domain.DiagnosisKey;
 import app.coronawarn.server.services.distribution.config.DistributionServiceConfig;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.temporal.Temporal;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
@@ -35,11 +36,15 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * An instance of this class contains a collection of {@link DiagnosisKey DiagnosisKeys}.
  */
 public abstract class DiagnosisKeyBundler {
+
+  private static final Logger logger = LoggerFactory.getLogger(DiagnosisKeyBundler.class);
 
   /**
    * The submission timestamp is counted in 1 hour intervals since epoch.
@@ -51,8 +56,9 @@ public abstract class DiagnosisKeyBundler {
    */
   public static final long TEN_MINUTES_INTERVAL_SECONDS = TimeUnit.MINUTES.toSeconds(10);
 
-  protected final int minNumberOfKeysPerBundle;
   protected final long expiryPolicyMinutes;
+  protected final int minNumberOfKeysPerBundle;
+  private final int maxNumberOfKeysPerBundle;
 
   // The hour at which the distribution runs. This field is needed to prevent the run from distributing any keys that
   // have already been submitted but may only be distributed in the future (e.g. because they are not expired yet).
@@ -61,9 +67,13 @@ public abstract class DiagnosisKeyBundler {
   // A map containing diagnosis keys, grouped by the LocalDateTime on which they may be distributed
   protected final Map<LocalDateTime, List<DiagnosisKey>> distributableDiagnosisKeys = new HashMap<>();
 
+  /**
+   * Constructs a DiagnosisKeyBundler based on the specified service configuration.
+   */
   public DiagnosisKeyBundler(DistributionServiceConfig distributionServiceConfig) {
-    this.minNumberOfKeysPerBundle = distributionServiceConfig.getShiftingPolicyThreshold();
     this.expiryPolicyMinutes = distributionServiceConfig.getExpiryPolicyMinutes();
+    this.minNumberOfKeysPerBundle = distributionServiceConfig.getShiftingPolicyThreshold();
+    this.maxNumberOfKeysPerBundle = distributionServiceConfig.getMaximumNumberOfKeysPerBundle();
   }
 
   /**
@@ -106,7 +116,12 @@ public abstract class DiagnosisKeyBundler {
   public Set<LocalDate> getDatesWithDistributableDiagnosisKeys() {
     return this.distributableDiagnosisKeys.keySet().stream()
         .map(LocalDateTime::toLocalDate)
+        .filter(this::numberOfKeysForDateBelowMaximum)
         .collect(Collectors.toSet());
+  }
+
+  public boolean numberOfKeysForDateBelowMaximum(LocalDate date) {
+    return numberOfKeysBelowMaximum(getDiagnosisKeysForDate(date).size(), date);
   }
 
   /**
@@ -116,7 +131,21 @@ public abstract class DiagnosisKeyBundler {
   public Set<LocalDateTime> getHoursWithDistributableDiagnosisKeys(LocalDate currentDate) {
     return this.distributableDiagnosisKeys.keySet().stream()
         .filter(dateTime -> dateTime.toLocalDate().equals(currentDate))
+        .filter(this::numberOfKeysForHourBelowMaximum)
         .collect(Collectors.toSet());
+  }
+
+  private boolean numberOfKeysForHourBelowMaximum(LocalDateTime hour) {
+    return numberOfKeysBelowMaximum(getDiagnosisKeysForHour(hour).size(), hour);
+  }
+
+  private boolean numberOfKeysBelowMaximum(int numberOfKeys, Temporal time) {
+    if (numberOfKeys > maxNumberOfKeysPerBundle) {
+      logger.error("Number of diagnosis keys ({}) for {} exceeds the configured maximum.", numberOfKeys, time);
+      return false;
+    } else {
+      return true;
+    }
   }
 
   /**

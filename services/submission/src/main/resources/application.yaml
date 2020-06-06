@@ -5,9 +5,9 @@ logging:
       springframework:
         web: INFO
 
-# The initial value of the moving average for fake request delays.
 services:
   submission:
+    # The initial value of the moving average for fake request delays.
     initial-fake-delay-milliseconds: 10
     # The number of samples for the calculation of the moving average for fake request delays.
     fake-delay-moving-average-samples: 10
@@ -17,6 +17,8 @@ services:
     verification:
       base-url: ${VERIFICATION_BASE_URL:http://localhost:8004}
       path: /version/v1/tan/verify
+    monitoring:
+      batch-size: 5
 
 spring:
   jpa:

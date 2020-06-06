@@ -22,13 +22,14 @@ package app.coronawarn.server.services.distribution.assembly.diagnosiskeys.struc
 
 import static app.coronawarn.server.services.distribution.common.Helpers.buildDiagnosisKeys;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 import app.coronawarn.server.common.persistence.domain.DiagnosisKey;
 import app.coronawarn.server.services.distribution.assembly.component.CryptoProvider;
 import app.coronawarn.server.services.distribution.assembly.diagnosiskeys.DiagnosisKeyBundler;
 import app.coronawarn.server.services.distribution.assembly.diagnosiskeys.ProdDiagnosisKeyBundler;
 import app.coronawarn.server.services.distribution.assembly.diagnosiskeys.structure.directory.DiagnosisKeysDateDirectory;
-import app.coronawarn.server.services.distribution.assembly.diagnosiskeys.structure.directory.DiagnosisKeysHourDirectory;
 import app.coronawarn.server.services.distribution.assembly.structure.util.ImmutableStack;
 import app.coronawarn.server.services.distribution.config.DistributionServiceConfig;
 import java.time.LocalDate;
@@ -95,6 +96,30 @@ class DateIndexingDecoratorTest {
 
     assertThat(index).contains(LocalDate.of(1970, 1, 4));
     assertThat(index).doesNotContain(LocalDate.of(1970, 1, 5));
+  }
+
+  @Test
+  void excludesDatesThatExceedTheMaximumNumberOfKeys() {
+    List<DiagnosisKey> diagnosisKeys = Stream
+        .of(buildDiagnosisKeys(6, LocalDateTime.of(1970, 1, 3, 6, 0), 1),
+            buildDiagnosisKeys(6, LocalDateTime.of(1970, 1, 3, 10, 0), 1))
+        .flatMap(List::stream)
+        .collect(Collectors.toList());
+
+    DistributionServiceConfig svcConfig = mock(DistributionServiceConfig.class);
+    when(svcConfig.getExpiryPolicyMinutes()).thenReturn(120);
+    when(svcConfig.getShiftingPolicyThreshold()).thenReturn(1);
+    when(svcConfig.getMaximumNumberOfKeysPerBundle()).thenReturn(1);
+
+    DiagnosisKeyBundler diagnosisKeyBundler = new ProdDiagnosisKeyBundler(svcConfig);
+    diagnosisKeyBundler.setDiagnosisKeys(diagnosisKeys, LocalDateTime.of(1970, 1, 5, 0, 0));
+
+    DateIndexingDecorator decorator = makeDecoratedDateDirectory(diagnosisKeyBundler);
+
+    decorator.prepare(new ImmutableStack<>().push("DE"));
+
+    Set<LocalDate> index = decorator.getIndex(new ImmutableStack<>());
+    assertThat(index).isEmpty();
   }
 
   private DateIndexingDecorator makeDecoratedDateDirectory(DiagnosisKeyBundler diagnosisKeyBundler) {

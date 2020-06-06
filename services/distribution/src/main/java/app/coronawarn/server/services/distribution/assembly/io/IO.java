@@ -30,6 +30,11 @@ import java.io.UncheckedIOException;
  */
 public class IO {
 
+  /**
+   * The maximum acceptable file size in bytes.
+   */
+  public static final int MAXIMUM_FILE_SIZE = 16000000;
+
   private IO() {
   }
 
@@ -51,12 +56,20 @@ public class IO {
   }
 
   /**
-   * Writes bytes into a file.
+   * Writes bytes into a file. If the resulting file would exceed the specified maximum file size, it is not written but
+   * removed instead.
    *
    * @param bytes      The content to write
    * @param outputFile The file to write the content into.
    */
   public static void writeBytesToFile(byte[] bytes, File outputFile) {
+    if (bytes.length > MAXIMUM_FILE_SIZE) {
+      String fileName = outputFile.getName();
+      throw new UncheckedIOException(
+          new IOException(
+              "File size of " + bytes.length + " bytes exceeds the maximum file size. Deleting" + fileName));
+    }
+
     try (FileOutputStream outputFileStream = new FileOutputStream(outputFile)) {
       outputFileStream.write(bytes);
     } catch (IOException e) {

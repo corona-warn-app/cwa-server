@@ -20,6 +20,8 @@
 
 package app.coronawarn.server.services.distribution.assembly.appconfig.validation;
 
+import static app.coronawarn.server.services.distribution.assembly.appconfig.validation.ValidationError.ErrorType.VALUE_OUT_OF_BOUNDS;
+
 import app.coronawarn.server.common.protocols.internal.ApplicationConfiguration;
 import app.coronawarn.server.common.protocols.internal.RiskScoreClassification;
 import app.coronawarn.server.common.protocols.internal.RiskScoreParameters;
@@ -59,7 +61,7 @@ public class ApplicationConfigurationValidator extends ConfigurationValidator {
     int minLevel = this.config.getMinRiskScore();
 
     if (!RiskScoreValidator.isInBounds(minLevel)) {
-      this.errors.add(new MinimumRiskLevelValidationError(minLevel));
+      this.errors.add(new ValidationError("min-risk-score", minLevel, VALUE_OUT_OF_BOUNDS));
     }
   }
 }

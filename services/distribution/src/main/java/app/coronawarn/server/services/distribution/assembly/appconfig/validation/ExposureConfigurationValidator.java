@@ -20,9 +20,11 @@
 
 package app.coronawarn.server.services.distribution.assembly.appconfig.validation;
 
+import static app.coronawarn.server.services.distribution.assembly.appconfig.validation.ValidationError.ErrorType.TOO_MANY_DECIMAL_PLACES;
+import static app.coronawarn.server.services.distribution.assembly.appconfig.validation.ValidationError.ErrorType.VALUE_OUT_OF_BOUNDS;
+
 import app.coronawarn.server.common.protocols.internal.RiskLevel;
 import app.coronawarn.server.common.protocols.internal.RiskScoreParameters;
-import app.coronawarn.server.services.distribution.assembly.appconfig.validation.WeightValidationError.ErrorType;
 import java.beans.BeanInfo;
 import java.beans.IntrospectionException;
 import java.beans.Introspector;
@@ -38,6 +40,8 @@ import java.util.Arrays;
  * Weights must be in the range of 0.001 to 100.<br> Scores must be in the range of 1 to 8.<br>
  */
 public class ExposureConfigurationValidator extends ConfigurationValidator {
+
+  public static final String CONFIG_PREFIX = "exposure-config.";
 
   private final RiskScoreParameters config;
 
@@ -69,8 +73,7 @@ public class ExposureConfigurationValidator extends ConfigurationValidator {
     return errors;
   }
 
-  private void validateParameterRiskLevels(String name, Object object)
-      throws IntrospectionException {
+  private void validateParameterRiskLevels(String name, Object object) throws IntrospectionException {
     BeanInfo bean = Introspector.getBeanInfo(object.getClass());
 
     Arrays.stream(bean.getPropertyDescriptors())
@@ -78,17 +81,16 @@ public class ExposureConfigurationValidator extends ConfigurationValidator {
         .forEach(propertyDescriptor -> validateScore(propertyDescriptor, object, name));
   }
 
-  private void validateScore(
-      PropertyDescriptor propertyDescriptor, Object object, String parameter) {
+  private void validateScore(PropertyDescriptor propertyDescriptor, Object object, String parameter) {
     try {
       RiskLevel level = (RiskLevel) propertyDescriptor.getReadMethod().invoke(object);
 
       if (level == RiskLevel.UNRECOGNIZED) {
-        this.errors.add(new RiskLevelValidationError(parameter, propertyDescriptor.getName()));
+        var riskLevelName = CONFIG_PREFIX + parameter + "." + propertyDescriptor.getName();
+        this.errors.add(new ValidationError(riskLevelName, level, VALUE_OUT_OF_BOUNDS));
       }
     } catch (IllegalAccessException | InvocationTargetException e) {
-      throw new ValidationExecutionException(
-          "Unable to read property " + propertyDescriptor.getName(), e);
+      throw new ValidationExecutionException("Unable to read property " + propertyDescriptor.getName(), e);
     }
   }
 
@@ -100,11 +102,11 @@ public class ExposureConfigurationValidator extends ConfigurationValidator {
 
   private void validateWeight(double weight, String name) {
     if (isOutOfRange(ParameterSpec.WEIGHT_MIN, ParameterSpec.WEIGHT_MAX, weight)) {
-      this.errors.add(new WeightValidationError(name, weight, ErrorType.OUT_OF_RANGE));
+      this.errors.add(new ValidationError(CONFIG_PREFIX + name, weight, VALUE_OUT_OF_BOUNDS));
     }
 
     if (!respectsMaximumDecimalPlaces(weight)) {
-      this.errors.add(new WeightValidationError(name, weight, ErrorType.TOO_MANY_DECIMAL_PLACES));
+      this.errors.add(new ValidationError(CONFIG_PREFIX + name, weight, TOO_MANY_DECIMAL_PLACES));
     }
   }
 
@@ -113,7 +115,6 @@ public class ExposureConfigurationValidator extends ConfigurationValidator {
 
     return bd.scale() <= ParameterSpec.WEIGHT_MAX_DECIMALS;
   }
-
 
   private boolean isOutOfRange(double min, double max, double x) {
     return x < min || x > max;

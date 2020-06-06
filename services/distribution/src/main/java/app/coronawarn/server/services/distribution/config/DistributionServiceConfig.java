@@ -33,6 +33,7 @@ public class DistributionServiceConfig {
   private Integer retentionDays;
   private Integer expiryPolicyMinutes;
   private Integer shiftingPolicyThreshold;
+  private Integer maximumNumberOfKeysPerBundle;
   private String outputFileName;
   private Boolean includeIncompleteDays;
   private Boolean includeIncompleteHours;
@@ -79,6 +80,14 @@ public class DistributionServiceConfig {
 
   public void setShiftingPolicyThreshold(Integer shiftingPolicyThreshold) {
     this.shiftingPolicyThreshold = shiftingPolicyThreshold;
+  }
+
+  public Integer getMaximumNumberOfKeysPerBundle() {
+    return this.maximumNumberOfKeysPerBundle;
+  }
+
+  public void setMaximumNumberOfKeysPerBundle(Integer maximumNumberOfKeysPerBundle) {
+    this.maximumNumberOfKeysPerBundle = maximumNumberOfKeysPerBundle;
   }
 
   public String getOutputFileName() {
@@ -394,6 +403,7 @@ public class DistributionServiceConfig {
     private Integer port;
     private String bucket;
     private Boolean setPublicReadAclOnPutObject;
+    private Integer maxNumberOfFailedOperations;
     private Integer s3MaxThreads;
 
     public String getAccessKey() {
@@ -442,6 +452,14 @@ public class DistributionServiceConfig {
 
     public void setSetPublicReadAclOnPutObject(Boolean setPublicReadAclOnPutObject) {
       this.setPublicReadAclOnPutObject = setPublicReadAclOnPutObject;
+    }
+
+    public Integer getMaxNumberOfFailedOperations() {
+      return maxNumberOfFailedOperations;
+    }
+
+    public void setMaxNumberOfFailedOperations(Integer maxNumberOfFailedOperations) {
+      this.maxNumberOfFailedOperations = maxNumberOfFailedOperations;
     }
 
     public Integer getS3MaxThreads() {

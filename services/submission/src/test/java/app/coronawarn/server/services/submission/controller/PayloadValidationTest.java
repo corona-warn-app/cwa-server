@@ -93,7 +93,7 @@ class PayloadValidationTest {
   }
 
   @Test
-  void check400ResponseStatusForGapsInTimeIntervals() {
+  void check200ResponseStatusForGapsInTimeIntervals() {
     int rollingStartIntervalNumber1 = createRollingStartIntervalNumber(6);
     int rollingStartIntervalNumber2 = rollingStartIntervalNumber1 + DiagnosisKey.EXPECTED_ROLLING_PERIOD;
     int rollingStartIntervalNumber3 = rollingStartIntervalNumber2 + 2 * DiagnosisKey.EXPECTED_ROLLING_PERIOD;
@@ -104,7 +104,7 @@ class PayloadValidationTest {
 
     ResponseEntity<Void> actResponse = executor.executeRequest(keysWithDuplicateStartIntervalNumber, buildOkHeaders());
 
-    assertThat(actResponse.getStatusCode()).isEqualTo(BAD_REQUEST);
+    assertThat(actResponse.getStatusCode()).isEqualTo(OK);
   }
 
   @Test

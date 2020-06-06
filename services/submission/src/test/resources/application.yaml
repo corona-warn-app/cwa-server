@@ -32,6 +32,8 @@ services:
     verification:
       base-url: http://localhost:1234
       path: /version/v1/tan/verify
+    monitoring:
+      batch-size: 5
 
 management:
   endpoint:

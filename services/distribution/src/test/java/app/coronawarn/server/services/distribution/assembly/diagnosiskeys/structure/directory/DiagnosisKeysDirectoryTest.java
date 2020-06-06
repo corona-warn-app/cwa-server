@@ -20,25 +20,25 @@
 
 package app.coronawarn.server.services.distribution.assembly.diagnosiskeys.structure.directory;
 
-import static app.coronawarn.server.services.distribution.common.Helpers.buildDiagnosisKeyForSubmissionTimestamp;
 import static app.coronawarn.server.services.distribution.common.Helpers.buildDiagnosisKeys;
 import static java.lang.String.join;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import app.coronawarn.server.common.persistence.domain.DiagnosisKey;
 import app.coronawarn.server.services.distribution.assembly.component.CryptoProvider;
-import app.coronawarn.server.services.distribution.assembly.diagnosiskeys.DemoDiagnosisKeyBundler;
 import app.coronawarn.server.services.distribution.assembly.diagnosiskeys.DiagnosisKeyBundler;
 import app.coronawarn.server.services.distribution.assembly.diagnosiskeys.ProdDiagnosisKeyBundler;
 import app.coronawarn.server.services.distribution.assembly.structure.WritableOnDisk;
 import app.coronawarn.server.services.distribution.assembly.structure.directory.Directory;
 import app.coronawarn.server.services.distribution.assembly.structure.directory.DirectoryOnDisk;
+import app.coronawarn.server.services.distribution.assembly.structure.file.FileOnDiskWithChecksum;
 import app.coronawarn.server.services.distribution.assembly.structure.util.ImmutableStack;
 import app.coronawarn.server.services.distribution.config.DistributionServiceConfig;
 import java.io.File;
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
@@ -110,7 +110,7 @@ class DiagnosisKeysDirectoryTest {
 
     Set<String> actualFiles = getActualFiles(outputFile);
 
-    assertThat(actualFiles).isEqualTo(expectedFiles);
+    assertThat(actualFiles).isEqualTo(amendWithChecksumFiles(expectedFiles));
   }
 
   @Test
@@ -165,7 +165,18 @@ class DiagnosisKeysDirectoryTest {
 
     Set<String> actualFiles = getActualFiles(outputFile);
 
-    assertThat(actualFiles).isEqualTo(expectedFiles);
+    assertThat(actualFiles).isEqualTo(amendWithChecksumFiles(expectedFiles));
+  }
+
+  private Set<String> amendWithChecksumFiles(Set<String> expectedFiles) {
+    Set<String> allExpectedFiles = new HashSet<>(expectedFiles);
+
+    var checksumFiles = expectedFiles.stream()
+        .map(file -> file + FileOnDiskWithChecksum.CHECKSUM_FILE_SUFFIX)
+        .collect(Collectors.toSet());
+    allExpectedFiles.addAll(checksumFiles);
+
+    return allExpectedFiles;
   }
 
   private Set<String> getActualFiles(java.io.File root) {

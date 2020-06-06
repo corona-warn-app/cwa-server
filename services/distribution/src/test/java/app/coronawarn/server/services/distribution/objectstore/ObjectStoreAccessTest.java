@@ -24,7 +24,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.when;
 
-import app.coronawarn.server.services.distribution.Application;
+import app.coronawarn.server.services.distribution.config.DistributionServiceConfig;
+import app.coronawarn.server.services.distribution.objectstore.client.ObjectStoreClientConfig;
 import app.coronawarn.server.services.distribution.objectstore.publish.LocalFile;
 import app.coronawarn.server.services.distribution.objectstore.publish.LocalGenericFile;
 import java.io.IOException;
@@ -36,14 +37,14 @@ import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.ConfigFileApplicationContextInitializer;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.core.io.ResourceLoader;
-import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 @ExtendWith(SpringExtension.class)
-@ContextConfiguration(classes = {Application.class},
-    initializers = ConfigFileApplicationContextInitializer.class)
+@SpringBootTest(classes = {ObjectStoreAccess.class, ObjectStoreClientConfig.class})
+@EnableConfigurationProperties(value = DistributionServiceConfig.class)
 @Tag("s3-integration")
 class ObjectStoreAccessTest {
 

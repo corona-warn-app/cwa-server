@@ -32,8 +32,8 @@ public class S3Object {
    */
   private final String objectName;
 
-  /** The e-Tag of this S3 Object. */
-  private String etag;
+  /** The cwaHash of this S3 Object. */
+  private String cwaHash;
 
   /**
    * Constructs a new S3Object for the given object name.
@@ -48,19 +48,19 @@ public class S3Object {
    * Constructs a new S3Object for the given object name.
    *
    * @param objectName the target object name
-   * @param etag the e-etag
+   * @param cwaHash the checksum for that file
    */
-  public S3Object(String objectName, String etag) {
+  public S3Object(String objectName, String cwaHash) {
     this(objectName);
-    this.etag = etag;
+    this.cwaHash = cwaHash;
   }
 
   public String getObjectName() {
     return objectName;
   }
 
-  public String getEtag() {
-    return etag;
+  public String getCwaHash() {
+    return cwaHash;
   }
 
   @Override
@@ -72,11 +72,11 @@ public class S3Object {
       return false;
     }
     S3Object s3Object = (S3Object) o;
-    return Objects.equals(objectName, s3Object.objectName) && Objects.equals(etag, s3Object.etag);
+    return Objects.equals(objectName, s3Object.objectName) && Objects.equals(cwaHash, s3Object.cwaHash);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(objectName, etag);
+    return Objects.hash(objectName, cwaHash);
   }
 }
