@@ -46,6 +46,7 @@ services:
       bucket: ${CWA_OBJECTSTORE_BUCKET:cwa}
       port: ${CWA_OBJECTSTORE_PORT:8003}
       set-public-read-acl-on-put-object: true
+      s3-max-threads: 2
 spring:
   main:
     banner-mode: off

@@ -394,6 +394,7 @@ public class DistributionServiceConfig {
     private Integer port;
     private String bucket;
     private Boolean setPublicReadAclOnPutObject;
+    private Integer s3MaxThreads;
 
     public String getAccessKey() {
       return accessKey;
@@ -441,6 +442,14 @@ public class DistributionServiceConfig {
 
     public void setSetPublicReadAclOnPutObject(Boolean setPublicReadAclOnPutObject) {
       this.setPublicReadAclOnPutObject = setPublicReadAclOnPutObject;
+    }
+
+    public Integer getS3MaxThreads() {
+      return s3MaxThreads;
+    }
+
+    public void setS3MaxThreads(Integer s3MaxThreads) {
+      this.s3MaxThreads = s3MaxThreads;
     }
   }
 }
