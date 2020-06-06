@@ -25,8 +25,6 @@ import app.coronawarn.server.services.distribution.config.DistributionServiceCon
 import app.coronawarn.server.services.distribution.objectstore.ObjectStoreAccess;
 import app.coronawarn.server.services.distribution.objectstore.S3Publisher;
 import java.util.concurrent.Executor;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.scheduling.annotation.EnableAsync;
@@ -37,8 +35,6 @@ import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 public class AsyncConfiguration {
 
   ObjectStore objectStore;
-
-  private static final Logger logger = LoggerFactory.getLogger(AsyncConfiguration.class);
 
   public AsyncConfiguration(DistributionServiceConfig distributionServiceConfig) {
     this.objectStore = distributionServiceConfig.getObjectStore();

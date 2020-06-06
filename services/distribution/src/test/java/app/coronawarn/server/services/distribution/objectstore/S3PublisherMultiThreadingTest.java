@@ -26,7 +26,9 @@ import static org.mockito.Mockito.mock;
 import app.coronawarn.server.services.distribution.config.DistributionServiceConfig;
 import app.coronawarn.server.services.distribution.objectstore.client.ObjectStoreClientConfig;
 import app.coronawarn.server.services.distribution.util.AsyncConfiguration;
+import app.coronawarn.server.services.distribution.util.S3UploadDaemonThreadFactory;
 import java.io.IOException;
+import java.util.concurrent.Executor;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.core.config.Configurator;
 import org.junit.jupiter.api.AfterAll;
@@ -40,13 +42,15 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.system.CapturedOutput;
 import org.springframework.boot.test.system.OutputCaptureExtension;
 import org.springframework.core.io.ResourceLoader;
+import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 @ExtendWith({SpringExtension.class})
-@SpringBootTest(classes = {ObjectStoreAccess.class, ObjectStoreClientConfig.class, AsyncConfiguration.class})
+@SpringBootTest(classes = {ObjectStoreAccess.class, ObjectStoreClientConfig.class, AsyncConfiguration.class,
+    S3UploadDaemonThreadFactory.class})
 @EnableConfigurationProperties(value = DistributionServiceConfig.class)
 @Tag("s3-integration")
-public class S3PublisherMultiThreadingTest {
+class S3PublisherMultiThreadingTest {
 
   private static final String PUBLISHING_PATH = "testsetups/s3publishertest/topublish";
 
@@ -55,6 +59,12 @@ public class S3PublisherMultiThreadingTest {
 
   @Autowired
   private ResourceLoader resourceLoader;
+
+  @Autowired
+  private AsyncConfiguration asyncConfiguration;
+
+  @Autowired
+  private S3UploadDaemonThreadFactory s3UploadDaemonThreadFactory;
 
   @BeforeAll
   public static void setup() {
@@ -75,6 +85,20 @@ public class S3PublisherMultiThreadingTest {
     assertThat(output).contains("s3Op-0");
     assertThat(output).contains("s3Op-1");
     assertThat(output).doesNotContain("s3Op-2");
+  }
+
+  @Test
+  void threadFactoryShouldBeCorrectlyInstantiated() {
+    Executor executor = asyncConfiguration.s3TaskExecutor();
+    assertThat(executor).isInstanceOf(ThreadPoolTaskExecutor.class);
+  }
+
+  @Test
+  void testS3UploadDaemonThreadFactory() {
+    Thread createdThread = s3UploadDaemonThreadFactory.newThread(() -> {
+    });
+    assertThat(createdThread.getName()).contains("s3Op");
+    assertThat(createdThread.isDaemon()).isEqualTo(true);
   }
 
   private S3Publisher createPublisher() throws IOException {
