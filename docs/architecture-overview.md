@@ -123,7 +123,7 @@ CWA-Fake: <0 or 1>
 There is currently no official specification for publishing diagnosis keys to the server.
 Google currently uses the following in their reference implementation.
 
-[exposure_model.go](https://github.com/google/exposure-notifications-server/blob/master/internal/database/exposure_model.go)
+[exposure_model.go](https://github.com/google/exposure-notifications-server/blob/master/pkg/api/v1alpha1/exposure_types.go)
 
 ```golang
 type Publish struct {
