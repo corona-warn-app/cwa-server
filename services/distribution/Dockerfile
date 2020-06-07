@@ -2,6 +2,20 @@ FROM maven:3.6.3-jdk-11 as build
 
 ARG WORK_DIR=/build
 
+# copy the pom and config files only which do not change very often
+COPY ./.mvn ${WORK_DIR}/.mvn
+COPY ./pom.xml ${WORK_DIR}/pom.xml
+COPY ./common/pom.xml ${WORK_DIR}/common/pom.xml
+COPY ./common/protocols/pom.xml ${WORK_DIR}/common/protocols/pom.xml
+COPY ./common/persistence/pom.xml ${WORK_DIR}/common/persistence/pom.xml
+COPY ./services/pom.xml ${WORK_DIR}/services/pom.xml
+COPY ./services/distribution/pom.xml ${WORK_DIR}/services/distribution/pom.xml
+COPY ./services/submission/pom.xml ${WORK_DIR}/services/submission/pom.xml
+
+# build all dependencies for offline use and let Docker cache them against above file set
+RUN mvn dependency:go-offline --file ${WORK_DIR}/pom.xml -B
+
+# copy rest of files - any changes in those will invalidate Docker cache for following mvn clean install
 COPY . ${WORK_DIR}/
 
 RUN mkdir -p /root/.m2 /usr/sap/distribution-service
