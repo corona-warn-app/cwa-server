@@ -178,10 +178,10 @@ public class SubmissionController {
   }
 
   /**
-   * Gets the current fake delay. Used for monitoring.
+   * Gets the current fake delay in seconds. Used for monitoring.
    * @return the current fake delay
    */
-  public Double getFakeDelay() {
-    return fakeDelay;
+  public Double getFakeDelayInSeconds() {
+    return fakeDelay / 1000.;
   }
 }
