@@ -27,8 +27,6 @@ import app.coronawarn.server.services.distribution.objectstore.publish.PublishFi
 import app.coronawarn.server.services.distribution.objectstore.publish.PublishedFileSet;
 import java.io.IOException;
 import java.nio.file.Path;
-import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
@@ -39,7 +37,8 @@ import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.stereotype.Component;
 
 /**
- * Publishes a folder on the disk to S3 while keeping the folder and file structure.<br> Moreover, does the following:
+ * Publishes a folder on the disk to S3 while keeping the folder and file structure.<br>
+ * Moreover, does the following:
  * <br>
  * <ul>
  *   <li>Publishes index files on a different route, removing the trailing "/index" part.</li>
@@ -91,7 +90,6 @@ public class S3Publisher {
     PublishedFileSet published;
     List<LocalFile> toPublish = new PublishFileSet(root).getFiles();
     List<LocalFile> diff;
-    Collection<Future<Void>> fileUploads = new ArrayList<>();
 
     try {
       published = new PublishedFileSet(objectStoreAccess.getObjectsWithPrefix(CWA_S3_ROOT));
