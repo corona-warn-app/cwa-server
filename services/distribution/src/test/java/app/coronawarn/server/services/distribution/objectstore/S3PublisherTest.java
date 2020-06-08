@@ -147,19 +147,6 @@ class S3PublisherTest {
     verify(executor, times(1)).shutdown();
   }
 
-  @Test
-  void interruptedExceptionHandling() throws ExecutionException, InterruptedException {
-    var result = mock(Future.class);
-    when(result.get()).thenThrow(new InterruptedException());
-    doReturn(result).when(executor).submit(any(Runnable.class));
-    when(objectStoreAccess.getObjectsWithPrefix("version")).thenReturn(emptyList());
-
-    Assertions.assertThatExceptionOfType(ObjectStoreOperationFailedException.class)
-        .isThrownBy(() -> s3Publisher.publish(publishingPath));
-
-    verify(executor, times(1)).shutdown();
-  }
-
   private void setUpFailureThresholdExceededOnSecondUpload() {
     doThrow(ObjectStoreOperationFailedException.class).when(objectStoreAccess).putObject(any());
     doAnswer(__ -> null)
