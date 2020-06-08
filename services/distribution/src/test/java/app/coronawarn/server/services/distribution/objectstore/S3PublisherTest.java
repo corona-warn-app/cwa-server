@@ -23,7 +23,6 @@ package app.coronawarn.server.services.distribution.objectstore;
 import static org.assertj.core.util.Lists.emptyList;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doAnswer;
-import static org.mockito.Mockito.doCallRealMethod;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.times;
@@ -42,7 +41,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.core.io.ResourceLoader;
-import org.springframework.scheduling.annotation.AsyncResult;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
@@ -59,14 +57,11 @@ class S3PublisherTest {
   @MockBean
   private FailedObjectStoreOperationsCounter failedObjectStoreOperationsCounter;
 
-  //  @MockBean
-  private ThreadPoolTaskExecutor executor;
-
   @Autowired
   private ResourceLoader resourceLoader;
 
+  private ThreadPoolTaskExecutor executor;
   private Path publishingPath;
-
   private S3Publisher s3Publisher;
 
   @BeforeEach
@@ -78,11 +73,6 @@ class S3PublisherTest {
     executor.initialize();
     executor = spy(executor);
     s3Publisher = new S3Publisher(objectStoreAccess, failedObjectStoreOperationsCounter, executor);
-
-//    when(executor.submit(any(Runnable.class))).then(invocation -> {
-//      invocation.getArgument(0, Runnable.class).run();
-//      return new AsyncResult<Void>(null);
-//    });
   }
 
   @Test
@@ -133,15 +123,31 @@ class S3PublisherTest {
   @Test
   void taskExecutionHaltsWhenMaximumFailedOperationsReached() {
     when(objectStoreAccess.getObjectsWithPrefix("version")).thenReturn(emptyList());
+    setUpFailureThresholdExceededOnSecondUpload();
+
+    Assertions.assertThatExceptionOfType(ObjectStoreOperationFailedException.class)
+        .isThrownBy(() -> s3Publisher.publish(publishingPath));
+
+    verify(objectStoreAccess, times(2)).putObject(any());
+  }
+
+  @Test
+  void threadPoolShutDownWhenMaximumFailedOperationsReached() {
+    when(objectStoreAccess.getObjectsWithPrefix("version")).thenReturn(emptyList());
+    setUpFailureThresholdExceededOnSecondUpload();
+
+    Assertions.assertThatExceptionOfType(ObjectStoreOperationFailedException.class)
+        .isThrownBy(() -> s3Publisher.publish(publishingPath));
+
+    verify(executor, times(1)).shutdown();
+  }
+
+  private void setUpFailureThresholdExceededOnSecondUpload() {
     doThrow(ObjectStoreOperationFailedException.class).when(objectStoreAccess).putObject(any());
     doAnswer(__ -> null)
         .doThrow(ObjectStoreOperationFailedException.class)
         .when(failedObjectStoreOperationsCounter)
         .incrementAndCheckThreshold(any(ObjectStoreOperationFailedException.class));
-
-    Assertions.assertThatExceptionOfType(ObjectStoreOperationFailedException.class)
-        .isThrownBy(() -> s3Publisher.publish(publishingPath));
-    verify(objectStoreAccess, times(2)).putObject(any());
   }
 
   private List<S3Object> otherExisting() {

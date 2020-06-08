@@ -104,11 +104,14 @@ public class S3Publisher {
     }
 
     logger.info("Beginning upload of {} files... ", diff.size());
-    diff.stream()
-        .map(file -> executor.submit(() -> objectStoreAccess.putObject(file)))
-        .forEach(this::awaitThread);
+    try {
+      diff.stream()
+          .map(file -> executor.submit(() -> objectStoreAccess.putObject(file)))
+          .forEach(this::awaitThread);
+    } finally {
+      executor.shutdown();
+    }
     logger.info("Upload completed.");
-    executor.shutdown();
   }
 
   private void awaitThread(Future<?> result) {
@@ -117,7 +120,7 @@ public class S3Publisher {
     } catch (ExecutionException e) {
       failedOperationsCounter.incrementAndCheckThreshold(new ObjectStoreOperationFailedException(e.getMessage(), e));
     } catch (InterruptedException e) {
-      executor.shutdown();
+      Thread.currentThread().interrupt();
       throw new ObjectStoreOperationFailedException(e.getMessage(), e);
     }
   }
