@@ -34,7 +34,7 @@ import org.springframework.stereotype.Component;
 @Component
 @ConfigurationProperties(prefix = "services.submission.monitoring")
 public class SubmissionControllerMonitor {
-  private static final String SUBMISSION_CONTROLLER_CURRENT_FAKE_DELAY = "submissionController.fakeDelay";
+  private static final String SUBMISSION_CONTROLLER_CURRENT_FAKE_DELAY = "submission_controller.fake_delay_seconds";
 
   private final MeterRegistry meterRegistry;
 
@@ -79,7 +79,7 @@ public class SubmissionControllerMonitor {
    */
   public void initializeGauges(SubmissionController submissionController) {
     Gauge.builder(SUBMISSION_CONTROLLER_CURRENT_FAKE_DELAY, submissionController,
-        __ -> submissionController.getFakeDelay())
+        __ -> submissionController.getFakeDelayInSeconds())
         .description("The time that fake requests are delayed to make them indistinguishable from real requests.")
         .register(meterRegistry);
   }
