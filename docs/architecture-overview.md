@@ -127,15 +127,15 @@ Google currently uses the following in their reference implementation.
 
 ```golang
 type Publish struct {
-	  Keys                []ExposureKey `json:"temporaryExposureKeys"`
-	  Regions             []string      `json:"regions"`
-	  AppPackageName      string        `json:"appPackageName"`
-	  VerificationPayload string        `json:"verificationPayload"`
-	  HMACKey             string        `json:"hmackey"`
-	  Padding             string        `json:"padding"`
+  Keys                []ExposureKey `json:"temporaryExposureKeys"`
+  Regions             []string      `json:"regions"`
+  AppPackageName      string        `json:"appPackageName"`
+  VerificationPayload string        `json:"verificationPayload"`
+  HMACKey             string        `json:"hmackey"`
+  Padding             string        `json:"padding"`
 
-	  Platform                  string `json:"platform"`                  // DEPRECATED
-	  DeviceVerificationPayload string `json:"deviceVerificationPayload"` // DEPRECATED
+  Platform                  string `json:"platform"`                  // DEPRECATED
+  DeviceVerificationPayload string `json:"deviceVerificationPayload"` // DEPRECATED
 }
 ```
 
