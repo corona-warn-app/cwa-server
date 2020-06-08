@@ -23,7 +23,9 @@ package app.coronawarn.server.services.distribution.objectstore;
 import static org.assertj.core.util.Lists.emptyList;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doAnswer;
+import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -34,6 +36,8 @@ import app.coronawarn.server.services.distribution.objectstore.client.S3Object;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Future;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -135,6 +139,19 @@ class S3PublisherTest {
   void threadPoolShutDownWhenMaximumFailedOperationsReached() {
     when(objectStoreAccess.getObjectsWithPrefix("version")).thenReturn(emptyList());
     setUpFailureThresholdExceededOnSecondUpload();
+
+    Assertions.assertThatExceptionOfType(ObjectStoreOperationFailedException.class)
+        .isThrownBy(() -> s3Publisher.publish(publishingPath));
+
+    verify(executor, times(1)).shutdown();
+  }
+
+  @Test
+  void interruptedExceptionHandling() throws ExecutionException, InterruptedException {
+    var result = mock(Future.class);
+    when(result.get()).thenThrow(new InterruptedException());
+    doReturn(result).when(executor).submit(any(Runnable.class));
+    when(objectStoreAccess.getObjectsWithPrefix("version")).thenReturn(emptyList());
 
     Assertions.assertThatExceptionOfType(ObjectStoreOperationFailedException.class)
         .isThrownBy(() -> s3Publisher.publish(publishingPath));

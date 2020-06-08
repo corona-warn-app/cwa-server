@@ -20,10 +20,12 @@
 
 package app.coronawarn.server.services.distribution.objectstore;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
 import app.coronawarn.server.services.distribution.config.DistributionServiceConfig;
 import app.coronawarn.server.services.distribution.objectstore.client.ObjectStoreClient;
 import app.coronawarn.server.services.distribution.objectstore.client.ObjectStorePublishingConfig;
-import org.assertj.core.api.Assertions;
+import app.coronawarn.server.services.distribution.objectstore.client.S3ClientWrapper;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -48,9 +50,15 @@ class ObjectStorePublishingConfigTest {
   private DistributionServiceConfig distributionServiceConfig;
 
   @Test
+  void testS3ClientWrapperInstantiation() {
+    ObjectStorePublishingConfig config = new ObjectStorePublishingConfig();
+    assertThat(config.createObjectStoreClient(distributionServiceConfig)).isInstanceOf(S3ClientWrapper.class);
+  }
+
+  @Test
   void testThreadPoolExecutorPoolSize() {
     int expNumberOfThreads = distributionServiceConfig.getObjectStore().getMaxNumberOfS3Threads();
-    Assertions.assertThat(executor.getCorePoolSize()).isEqualTo(expNumberOfThreads);
-    Assertions.assertThat(executor.getMaxPoolSize()).isEqualTo(expNumberOfThreads);
+    assertThat(executor.getCorePoolSize()).isEqualTo(expNumberOfThreads);
+    assertThat(executor.getMaxPoolSize()).isEqualTo(expNumberOfThreads);
   }
 }
