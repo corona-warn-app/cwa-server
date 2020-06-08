@@ -21,8 +21,6 @@
 package app.coronawarn.server.services.distribution.runner;
 
 import app.coronawarn.server.services.distribution.assembly.component.OutputDirectoryProvider;
-import app.coronawarn.server.services.distribution.objectstore.FailedObjectStoreOperationsCounter;
-import app.coronawarn.server.services.distribution.objectstore.ObjectStoreAccess;
 import app.coronawarn.server.services.distribution.objectstore.S3Publisher;
 import app.coronawarn.server.services.distribution.objectstore.client.ObjectStoreOperationFailedException;
 import java.io.IOException;
@@ -44,23 +42,19 @@ public class S3Distribution implements ApplicationRunner {
   private static final Logger logger = LoggerFactory.getLogger(S3Distribution.class);
 
   private final OutputDirectoryProvider outputDirectoryProvider;
-  private final ObjectStoreAccess objectStoreAccess;
-  private final FailedObjectStoreOperationsCounter failedOperationsCounter;
+  private final S3Publisher s3Publisher;
 
-  S3Distribution(OutputDirectoryProvider outputDirectoryProvider, ObjectStoreAccess objectStoreAccess,
-      FailedObjectStoreOperationsCounter failedOperationsCounter) {
+  S3Distribution(OutputDirectoryProvider outputDirectoryProvider, S3Publisher s3Publisher) {
     this.outputDirectoryProvider = outputDirectoryProvider;
-    this.objectStoreAccess = objectStoreAccess;
-    this.failedOperationsCounter = failedOperationsCounter;
+    this.s3Publisher = s3Publisher;
   }
 
   @Override
   public void run(ApplicationArguments args) {
     try {
       Path pathToDistribute = outputDirectoryProvider.getFileOnDisk().toPath().toAbsolutePath();
-      S3Publisher s3Publisher = new S3Publisher(pathToDistribute, objectStoreAccess, failedOperationsCounter);
 
-      s3Publisher.publish();
+      s3Publisher.publish(pathToDistribute);
       logger.info("Data pushed to Object Store successfully.");
     } catch (UnsupportedOperationException | ObjectStoreOperationFailedException | IOException e) {
       logger.error("Distribution failed.", e);
