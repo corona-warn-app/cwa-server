@@ -20,6 +20,7 @@
 
 package app.coronawarn.server.services.distribution.objectstore;
 
+import static org.assertj.core.util.Lists.emptyList;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
@@ -37,6 +38,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.core.io.ResourceLoader;
 import org.springframework.scheduling.annotation.AsyncResult;
+import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 @ExtendWith(SpringExtension.class)
@@ -49,22 +51,33 @@ class S3PublisherTest {
   @MockBean
   private ObjectStoreAccess objectStoreAccess;
 
+  @MockBean
+  private ThreadPoolTaskExecutor executor;
+
   @Autowired
   private ResourceLoader resourceLoader;
 
   private Path publishingPath;
 
+  private S3Publisher s3Publisher;
+
   @BeforeEach
-  void setupMockBean() throws IOException {
-    when(objectStoreAccess.putObject(any())).thenReturn(new AsyncResult<>(null));
+  void setup() throws IOException {
     publishingPath = resourceLoader.getResource("testsetups/s3publishertest/topublish").getFile().toPath();
+
+    when(executor.submit(any(Runnable.class))).then(invocation -> {
+      invocation.getArgument(0, Runnable.class).run();
+      return new AsyncResult<Void>(null);
+    });
+
+    s3Publisher = new S3Publisher(objectStoreAccess, mock(FailedObjectStoreOperationsCounter.class), executor);
   }
 
   @Test
   void allNewNoExisting() throws IOException {
-    when(objectStoreAccess.getObjectsWithPrefix("version")).thenReturn(noneExisting());
+    when(objectStoreAccess.getObjectsWithPrefix("version")).thenReturn(emptyList());
 
-    createTestPublisher().publish(publishingPath);
+    s3Publisher.publish(publishingPath);
 
     verify(objectStoreAccess, times(3)).putObject(any());
   }
@@ -73,7 +86,7 @@ class S3PublisherTest {
   void noUploadsDueToAlreadyExist() throws IOException {
     when(objectStoreAccess.getObjectsWithPrefix("version")).thenReturn(allExistAllSame());
 
-    createTestPublisher().publish(publishingPath);
+    s3Publisher.publish(publishingPath);
 
     verify(objectStoreAccess, times(0)).putObject(any());
   }
@@ -82,7 +95,7 @@ class S3PublisherTest {
   void uploadAllOtherFilesDifferentNames() throws IOException {
     when(objectStoreAccess.getObjectsWithPrefix("version")).thenReturn(otherExisting());
 
-    createTestPublisher().publish(publishingPath);
+    s3Publisher.publish(publishingPath);
 
     verify(objectStoreAccess, times(3)).putObject(any());
   }
@@ -91,28 +104,31 @@ class S3PublisherTest {
   void uploadOneDueToOneChanged() throws IOException {
     when(objectStoreAccess.getObjectsWithPrefix("version")).thenReturn(twoIdenticalOneOtherOneChange());
 
-    createTestPublisher().publish(publishingPath);
+    s3Publisher.publish(publishingPath);
 
     verify(objectStoreAccess, times(1)).putObject(any());
   }
 
-  private List<S3Object> noneExisting() {
-    return List.of();
+  @Test
+  void executorGetsShutDown() throws IOException {
+    when(objectStoreAccess.getObjectsWithPrefix("version")).thenReturn(emptyList());
+
+    s3Publisher.publish(publishingPath);
+
+    verify(executor, times(1)).shutdown();
   }
 
   private List<S3Object> otherExisting() {
     return List.of(
         new S3Object("some_old_file.txt", "1fb772815c837b6294d9f163db89e962"),
-        new S3Object("other_old_file.txt", "2fb772815c837b6294d9f163db89e962")
-    );
+        new S3Object("other_old_file.txt", "2fb772815c837b6294d9f163db89e962"));
   }
 
   private List<S3Object> allExistAllSame() {
     return List.of(
         FILE_1,
         FILE_2,
-        FILE_3
-    );
+        FILE_3);
   }
 
   private List<S3Object> twoIdenticalOneOtherOneChange() {
@@ -120,12 +136,6 @@ class S3PublisherTest {
         new S3Object("newfile.txt", "1fb772815c837b6294d9f163db89e962"), // new
         FILE_1,
         FILE_2,
-        new S3Object("file3.txt", "111772815c837b6294d9f163db89e962") // changed
-    );
-  }
-
-  private S3Publisher createTestPublisher() {
-    return new S3Publisher(
-        objectStoreAccess, mock(FailedObjectStoreOperationsCounter.class));
+        new S3Object("file3.txt", "111772815c837b6294d9f163db89e962")); // changed
   }
 }

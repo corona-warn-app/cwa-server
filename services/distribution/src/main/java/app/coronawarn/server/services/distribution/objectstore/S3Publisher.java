@@ -35,6 +35,7 @@ import java.util.concurrent.Future;
 import java.util.stream.Collectors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.stereotype.Component;
 
 /**
@@ -62,6 +63,7 @@ public class S3Publisher {
 
   private final ObjectStoreAccess objectStoreAccess;
   private final FailedObjectStoreOperationsCounter failedOperationsCounter;
+  private final ThreadPoolTaskExecutor executor;
 
   /**
    * Creates an {@link S3Publisher} instance that attempts to publish the files at the specified location to an object
@@ -70,10 +72,13 @@ public class S3Publisher {
    * @param objectStoreAccess       The {@link ObjectStoreAccess} used to communicate with the object store.
    * @param failedOperationsCounter The {@link FailedObjectStoreOperationsCounter} that is used to monitor the number of
    *                                failed operations.
+   * @param executor                The executor that manages the upload task submission.
    */
-  public S3Publisher(ObjectStoreAccess objectStoreAccess, FailedObjectStoreOperationsCounter failedOperationsCounter) {
+  public S3Publisher(ObjectStoreAccess objectStoreAccess, FailedObjectStoreOperationsCounter failedOperationsCounter,
+      ThreadPoolTaskExecutor executor) {
     this.objectStoreAccess = objectStoreAccess;
     this.failedOperationsCounter = failedOperationsCounter;
+    this.executor = executor;
   }
 
   /**
@@ -100,20 +105,21 @@ public class S3Publisher {
       diff = toPublish;
     }
 
-    logger.info("Beginning upload... ");
-
-    diff.stream().map(objectStoreAccess::putObject).forEach(this::awaitThreads);
+    logger.info("Beginning upload of {} files... ", diff.size());
+    diff.stream()
+        .map(file -> executor.submit(() -> objectStoreAccess.putObject(file)))
+        .forEach(this::awaitThread);
     logger.info("Upload completed.");
+    executor.shutdown();
   }
 
-  private void awaitThreads(Future<Void> result) {
+  private void awaitThread(Future<?> result) {
     try {
       result.get();
     } catch (ExecutionException e) {
       failedOperationsCounter.incrementAndCheckThreshold(new ObjectStoreOperationFailedException(e.getMessage(), e));
     } catch (InterruptedException e) {
-      Thread.currentThread().interrupt();
-      failedOperationsCounter.incrementAndCheckThreshold(new ObjectStoreOperationFailedException(e.getMessage(), e));
+      throw new ObjectStoreOperationFailedException(e.getMessage(), e);
     }
   }
 }
