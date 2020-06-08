@@ -123,17 +123,19 @@ CWA-Fake: <0 or 1>
 There is currently no official specification for publishing diagnosis keys to the server.
 Google currently uses the following in their reference implementation.
 
-[exposure_model.go](https://github.com/google/exposure-notifications-server/blob/master/internal/database/exposure_model.go)
+[exposure_types.go](https://github.com/google/exposure-notifications-server/blob/master/pkg/api/v1alpha1/exposure_types.go)
 
 ```golang
 type Publish struct {
-    Keys                      []ExposureKey `json:"temporaryExposureKeys"`
-    Regions                   []string      `json:"regions"`
-    AppPackageName            string        `json:"appPackageName"`
-    Platform                  string        `json:"platform"`
-    DeviceVerificationPayload string        `json:"deviceVerificationPayload"`
-    VerificationPayload       string        `json:"verificationPayload"`
-    Padding                   string        `json:"padding"`
+  Keys                []ExposureKey `json:"temporaryExposureKeys"`
+  Regions             []string      `json:"regions"`
+  AppPackageName      string        `json:"appPackageName"`
+  VerificationPayload string        `json:"verificationPayload"`
+  HMACKey             string        `json:"hmackey"`
+  Padding             string        `json:"padding"`
+
+  Platform                  string `json:"platform"`                  // DEPRECATED
+  DeviceVerificationPayload string `json:"deviceVerificationPayload"` // DEPRECATED
 }
 ```
 
