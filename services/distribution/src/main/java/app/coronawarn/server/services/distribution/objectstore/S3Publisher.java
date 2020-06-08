@@ -117,6 +117,7 @@ public class S3Publisher {
     } catch (ExecutionException e) {
       failedOperationsCounter.incrementAndCheckThreshold(new ObjectStoreOperationFailedException(e.getMessage(), e));
     } catch (InterruptedException e) {
+      executor.shutdown();
       throw new ObjectStoreOperationFailedException(e.getMessage(), e);
     }
   }

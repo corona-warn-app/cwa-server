@@ -22,7 +22,6 @@ package app.coronawarn.server.services.distribution.objectstore.client;
 
 import app.coronawarn.server.services.distribution.config.DistributionServiceConfig;
 import app.coronawarn.server.services.distribution.config.DistributionServiceConfig.ObjectStore;
-import app.coronawarn.server.services.distribution.objectstore.S3Publisher;
 import java.net.URI;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -65,7 +64,7 @@ public class ObjectStorePublishingConfig {
   }
 
   /**
-   * Creates an Executor, which is used by {@link S3Publisher} to multi-thread the S3 put operation.
+   * Creates a {@link ThreadPoolTaskExecutor}, which is used to submit object store upload tasks.
    */
   @Bean
   public ThreadPoolTaskExecutor createExecutor(DistributionServiceConfig distributionServiceConfig) {
