@@ -51,6 +51,7 @@ services:
       retry-attempts: 3
       retry-backoff: 2000
       max-number-of-failed-operations: 5
+      max-number-of-s3-threads: 4
 
 spring:
   main:

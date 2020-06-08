@@ -404,6 +404,7 @@ public class DistributionServiceConfig {
     private String bucket;
     private Boolean setPublicReadAclOnPutObject;
     private Integer maxNumberOfFailedOperations;
+    private Integer maxNumberOfS3Threads;
 
     public String getAccessKey() {
       return accessKey;
@@ -459,6 +460,14 @@ public class DistributionServiceConfig {
 
     public void setMaxNumberOfFailedOperations(Integer maxNumberOfFailedOperations) {
       this.maxNumberOfFailedOperations = maxNumberOfFailedOperations;
+    }
+
+    public Integer getMaxNumberOfS3Threads() {
+      return maxNumberOfS3Threads;
+    }
+
+    public void setMaxNumberOfS3Threads(Integer maxNumberOfS3Threads) {
+      this.maxNumberOfS3Threads = maxNumberOfS3Threads;
     }
   }
 }
