@@ -29,7 +29,7 @@ import io.micrometer.core.instrument.MeterRegistry;
  */
 public class BatchCounter {
 
-  private static final String SUBMISSION_CONTROLLER_REQUESTS_COUNTER_NAME = "submissionController.requests";
+  private static final String SUBMISSION_CONTROLLER_REQUESTS_COUNTER_NAME = "submission_controller.requests";
   private static final String SUBMISSION_CONTROLLER_REQUESTS_COUNTER_DESCRIPTION
       = "Counts requests to the Submission Controller.";
 
