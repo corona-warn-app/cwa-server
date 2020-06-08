@@ -25,7 +25,7 @@ import java.io.IOException;
 import java.security.GeneralSecurityException;
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.SSLSocketFactory;
-import org.apache.http.conn.ssl.NoopHostnameVerifier;
+import org.apache.http.conn.ssl.DefaultHostnameVerifier;
 import org.apache.http.ssl.SSLContextBuilder;
 import org.springframework.context.annotation.Profile;
 import org.springframework.core.env.Environment;
@@ -44,7 +44,7 @@ public class CloudFeignClientProvider implements FeignClientProvider {
 
   @Override
   public Client createFeignClient() {
-    return new Client.Default(getSslSocketFactory(), new NoopHostnameVerifier());
+    return new Client.Default(getSslSocketFactory(), new DefaultHostnameVerifier());
   }
 
   private SSLSocketFactory getSslSocketFactory() {
