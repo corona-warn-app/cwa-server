@@ -46,21 +46,22 @@ public class S3Distribution implements ApplicationRunner {
   private final OutputDirectoryProvider outputDirectoryProvider;
   private final ObjectStoreAccess objectStoreAccess;
   private final FailedObjectStoreOperationsCounter failedOperationsCounter;
+  private final S3Publisher s3Publisher;
 
   S3Distribution(OutputDirectoryProvider outputDirectoryProvider, ObjectStoreAccess objectStoreAccess,
-      FailedObjectStoreOperationsCounter failedOperationsCounter) {
+      FailedObjectStoreOperationsCounter failedOperationsCounter, S3Publisher s3Publisher) {
     this.outputDirectoryProvider = outputDirectoryProvider;
     this.objectStoreAccess = objectStoreAccess;
     this.failedOperationsCounter = failedOperationsCounter;
+    this.s3Publisher = s3Publisher;
   }
 
   @Override
   public void run(ApplicationArguments args) {
     try {
       Path pathToDistribute = outputDirectoryProvider.getFileOnDisk().toPath().toAbsolutePath();
-      S3Publisher s3Publisher = new S3Publisher(pathToDistribute, objectStoreAccess, failedOperationsCounter);
 
-      s3Publisher.publish();
+      s3Publisher.publish(pathToDistribute);
       logger.info("Data pushed to Object Store successfully.");
     } catch (UnsupportedOperationException | ObjectStoreOperationFailedException | IOException e) {
       logger.error("Distribution failed.", e);

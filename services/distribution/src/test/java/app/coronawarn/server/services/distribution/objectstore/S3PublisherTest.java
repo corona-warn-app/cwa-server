@@ -28,6 +28,7 @@ import static org.mockito.Mockito.when;
 
 import app.coronawarn.server.services.distribution.objectstore.client.S3Object;
 import java.io.IOException;
+import java.nio.file.Path;
 import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -41,7 +42,6 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 @ExtendWith(SpringExtension.class)
 class S3PublisherTest {
 
-  private static final String PUBLISHING_PATH = "testsetups/s3publishertest/topublish";
   private static final S3Object FILE_1 = new S3Object("file1.txt", "cf7fb1ca5c32adc0941c35a6f7fc5eba");
   private static final S3Object FILE_2 = new S3Object("file2.txt", "d882afb9fa9c26f7e9d0965b8faa79b8");
   private static final S3Object FILE_3 = new S3Object("file3.txt", "0385524c9fdc83634467a11667c851ac");
@@ -52,16 +52,19 @@ class S3PublisherTest {
   @Autowired
   private ResourceLoader resourceLoader;
 
+  private Path publishingPath;
+
   @BeforeEach
-  void setupMockBean() {
+  void setupMockBean() throws IOException {
     when(objectStoreAccess.putObject(any())).thenReturn(new AsyncResult<>(null));
+    publishingPath = resourceLoader.getResource("testsetups/s3publishertest/topublish").getFile().toPath();
   }
 
   @Test
   void allNewNoExisting() throws IOException {
     when(objectStoreAccess.getObjectsWithPrefix("version")).thenReturn(noneExisting());
 
-    createTestPublisher().publish();
+    createTestPublisher().publish(publishingPath);
 
     verify(objectStoreAccess, times(3)).putObject(any());
   }
@@ -70,7 +73,7 @@ class S3PublisherTest {
   void noUploadsDueToAlreadyExist() throws IOException {
     when(objectStoreAccess.getObjectsWithPrefix("version")).thenReturn(allExistAllSame());
 
-    createTestPublisher().publish();
+    createTestPublisher().publish(publishingPath);
 
     verify(objectStoreAccess, times(0)).putObject(any());
   }
@@ -79,7 +82,7 @@ class S3PublisherTest {
   void uploadAllOtherFilesDifferentNames() throws IOException {
     when(objectStoreAccess.getObjectsWithPrefix("version")).thenReturn(otherExisting());
 
-    createTestPublisher().publish();
+    createTestPublisher().publish(publishingPath);
 
     verify(objectStoreAccess, times(3)).putObject(any());
   }
@@ -88,7 +91,7 @@ class S3PublisherTest {
   void uploadOneDueToOneChanged() throws IOException {
     when(objectStoreAccess.getObjectsWithPrefix("version")).thenReturn(twoIdenticalOneOtherOneChange());
 
-    createTestPublisher().publish();
+    createTestPublisher().publish(publishingPath);
 
     verify(objectStoreAccess, times(1)).putObject(any());
   }
@@ -121,8 +124,8 @@ class S3PublisherTest {
     );
   }
 
-  private S3Publisher createTestPublisher() throws IOException {
-    var publishPath = resourceLoader.getResource(PUBLISHING_PATH).getFile().toPath();
-    return new S3Publisher(publishPath, objectStoreAccess, mock(FailedObjectStoreOperationsCounter.class));
+  private S3Publisher createTestPublisher() {
+    return new S3Publisher(
+        objectStoreAccess, mock(FailedObjectStoreOperationsCounter.class));
   }
 }
