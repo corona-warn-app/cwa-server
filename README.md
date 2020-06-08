@@ -60,7 +60,7 @@ Service           | Description | Endpoint and Default Credentials
 ------------------|-------------|-----------
 submission        | The Corona-Warn-App submission service                                                      | `http://localhost:8000` <br> `http://localhost:8006` (for actuator endpoint)
 distribution      | The Corona-Warn-App distribution service                                                    | NO ENDPOINT
-postgres          | A [postgres] database installation                                                          | `localhost:8001` <br> Username: postgres <br> Password: postgres
+postgres          | A [postgres] database installation                                                          | `localhost:8001` <br> `postgres:5432` (from containerized pgadmin) <br> Username: postgres <br> Password: postgres
 pgadmin           | A [pgadmin](https://www.pgadmin.org/) installation for the postgres database                | `http://localhost:8002` <br> Username: user@domain.com <br> Password: password
 cloudserver       | [Zenko CloudServer] is a S3-compliant object store  | `http://localhost:8003/` <br> Access key: accessKey1 <br> Secret key: verySecretKey1
 verification-fake | A very simple fake implementation for the tan verification.                                 | `http://localhost:8004/version/v1/tan/verify` <br> The only valid tan is "edc07f08-a1aa-11ea-bb37-0242ac130002"
