@@ -89,6 +89,13 @@
       <artifactId>snakeyaml</artifactId>
       <version>1.26</version>
     </dependency>
+    <dependency>
+      <!-- https://nvd.nist.gov/vuln/detail/CVE-2020-13692 -->
+      <groupId>org.postgresql</groupId>
+      <artifactId>postgresql</artifactId>
+      <version>42.2.13</version>
+      <scope>runtime</scope>
+    </dependency>
   </dependencies>
 
   <build>
