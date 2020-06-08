@@ -25,7 +25,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatCode;
 import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException;
 
-import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import org.junit.jupiter.api.DisplayName;
@@ -35,7 +35,7 @@ import org.junit.jupiter.params.provider.ValueSource;
 
 class DiagnosisKeyTest {
 
-  final static byte[] expKeyData = "testKey111111111".getBytes(Charset.defaultCharset());
+  final static byte[] expKeyData = "testKey111111111".getBytes(StandardCharsets.US_ASCII);
   final static int expRollingStartIntervalNumber = 1;
   final static int expRollingPeriod = 2;
   final static int expTransmissionRiskLevel = 3;
