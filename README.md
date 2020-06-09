@@ -102,14 +102,14 @@ set the following environment-variables when running the Spring project:
 
 For the distribution module:
 
-```
+```bash
 POSTGRESQL_SERVICE_PORT=8001
 VAULT_FILESIGNING_SECRET=</path/to/your/private_key>
 ```
 
 For the submission module:
 
-```
+```bash
 POSTGRESQL_SERVICE_PORT=8001
 ```
 
