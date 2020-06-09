@@ -55,6 +55,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         .mvcMatchers(HttpMethod.POST, SUBMISSION_ROUTE).permitAll()
         .anyRequest().denyAll()
         .and().csrf().disable();
+    http.headers().contentSecurityPolicy("default-src 'self'");
   }
 
 }
