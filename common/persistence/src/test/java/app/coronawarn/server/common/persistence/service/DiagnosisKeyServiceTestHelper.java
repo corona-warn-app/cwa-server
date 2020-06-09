@@ -29,7 +29,7 @@ public class DiagnosisKeyServiceTestHelper {
 
   public static void assertDiagnosisKeysEqual(List<DiagnosisKey> expKeys,
       List<DiagnosisKey> actKeys) {
-    assertThat(actKeys).withFailMessage("Cardinality mismatch").isNotNull().hasSize(expKeys.size());
+    assertThat(actKeys).withFailMessage("Cardinality mismatch").hasSameSizeAs(expKeys);
 
     for (int i = 0; i < expKeys.size(); i++) {
       var expKey = expKeys.get(i);

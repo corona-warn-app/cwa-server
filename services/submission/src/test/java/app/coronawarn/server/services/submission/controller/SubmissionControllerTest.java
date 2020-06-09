@@ -243,9 +243,9 @@ class SubmissionControllerTest {
         .map(aSubmittedKey -> DiagnosisKey.builder().fromProtoBuf(aSubmittedKey).build())
         .collect(Collectors.toSet());
 
-    assertThat(keyEntities.size())
+    assertThat(keyEntities)
         .withFailMessage("Number of submitted keys and generated key entities don't match.")
-        .isEqualTo(expKeys.size());
+        .hasSameSizeAs(expKeys);
     keyEntities.forEach(anActKey -> assertThat(expKeys)
         .withFailMessage("Key entity does not correspond to a submitted key.")
         .contains(anActKey)
