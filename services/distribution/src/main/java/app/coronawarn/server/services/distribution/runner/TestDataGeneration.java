@@ -28,6 +28,7 @@ import app.coronawarn.server.common.persistence.service.DiagnosisKeyService;
 import app.coronawarn.server.common.protocols.internal.RiskLevel;
 import app.coronawarn.server.services.distribution.config.DistributionServiceConfig;
 import app.coronawarn.server.services.distribution.config.DistributionServiceConfig.TestData;
+import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
@@ -144,7 +145,7 @@ public class TestDataGeneration implements ApplicationRunner {
    * this function would return the timestamp for today 14:00 UTC.
    */
   private long getGeneratorEndTimestamp() {
-    return (LocalDateTime.now().toEpochSecond(ZoneOffset.UTC) / ONE_HOUR_INTERVAL_SECONDS) - 1;
+    return (Instant.now().getEpochSecond() / ONE_HOUR_INTERVAL_SECONDS) - 1;
   }
 
   /**
@@ -153,7 +154,7 @@ public class TestDataGeneration implements ApplicationRunner {
    * 14 days ago (from now) at 00:00 UTC.
    */
   private long getRetentionStartTimestamp() {
-    return LocalDate.now().minusDays(retentionDays).atStartOfDay()
+    return LocalDate.now(ZoneOffset.UTC).minusDays(retentionDays).atStartOfDay()
         .toEpochSecond(ZoneOffset.UTC) / ONE_HOUR_INTERVAL_SECONDS;
   }
 
