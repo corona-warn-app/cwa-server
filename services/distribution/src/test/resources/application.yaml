@@ -50,6 +50,7 @@ services:
       retry-attempts: 3
       retry-backoff: 1
       max-number-of-failed-operations: 5
+      max-number-of-s3-threads: 2
 spring:
   main:
     banner-mode: off

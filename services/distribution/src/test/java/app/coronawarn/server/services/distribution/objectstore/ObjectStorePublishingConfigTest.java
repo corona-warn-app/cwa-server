@@ -23,62 +23,42 @@ package app.coronawarn.server.services.distribution.objectstore;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import app.coronawarn.server.services.distribution.config.DistributionServiceConfig;
+import app.coronawarn.server.services.distribution.objectstore.client.ObjectStoreClient;
 import app.coronawarn.server.services.distribution.objectstore.client.ObjectStorePublishingConfig;
-import app.coronawarn.server.services.distribution.objectstore.client.S3Object;
-import java.io.IOException;
-import java.nio.file.Path;
-import java.util.List;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Tag;
+import app.coronawarn.server.services.distribution.objectstore.client.S3ClientWrapper;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.core.io.ResourceLoader;
+import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
-@ExtendWith(SpringExtension.class)
-@SpringBootTest(classes = {ObjectStoreAccess.class, ObjectStorePublishingConfig.class, S3Publisher.class})
+@ExtendWith({SpringExtension.class})
+@SpringBootTest(classes = {ObjectStorePublishingConfig.class})
 @EnableConfigurationProperties(value = DistributionServiceConfig.class)
-@Tag("s3-integration")
-class S3PublisherIntegrationTest {
-
-  private final String rootTestFolder = "objectstore/publisher/";
-
-  @Autowired
-  private ObjectStoreAccess objectStoreAccess;
-
-  @Autowired
-  private ResourceLoader resourceLoader;
+class ObjectStorePublishingConfigTest {
 
   @MockBean
-  private FailedObjectStoreOperationsCounter failedObjectStoreOperationsCounter;
+  private ObjectStoreClient objectStoreClient;
 
   @Autowired
-  private S3Publisher s3Publisher;
+  private ThreadPoolTaskExecutor executor;
+
+  @Autowired
+  private DistributionServiceConfig distributionServiceConfig;
 
   @Test
-  void publishTestFolderOk() throws IOException {
-    s3Publisher.publish(getFolderAsPath(rootTestFolder));
-    List<S3Object> s3Objects = objectStoreAccess.getObjectsWithPrefix("version");
-
-    assertThat(s3Objects).hasSize(5);
+  void testS3ClientWrapperInstantiation() {
+    ObjectStorePublishingConfig config = new ObjectStorePublishingConfig();
+    assertThat(config.createObjectStoreClient(distributionServiceConfig)).isInstanceOf(S3ClientWrapper.class);
   }
 
-  private Path getFolderAsPath(String path) throws IOException {
-    return resourceLoader.getResource(path).getFile().toPath();
-  }
-
-  @BeforeEach
-  public void setup() {
-    objectStoreAccess.deleteObjectsWithPrefix("");
-  }
-
-  @AfterEach
-  public void teardown() {
-    objectStoreAccess.deleteObjectsWithPrefix("");
+  @Test
+  void testThreadPoolExecutorPoolSize() {
+    int expNumberOfThreads = distributionServiceConfig.getObjectStore().getMaxNumberOfS3Threads();
+    assertThat(executor.getCorePoolSize()).isEqualTo(expNumberOfThreads);
+    assertThat(executor.getMaxPoolSize()).isEqualTo(expNumberOfThreads);
   }
 }
