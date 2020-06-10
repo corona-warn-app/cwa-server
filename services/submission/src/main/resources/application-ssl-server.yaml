@@ -4,6 +4,7 @@ server:
     enabled: true
     enabled-protocols: TLSv1.2,TLSv1.3
     protocol: TLS
+    ciphers: TLS_AES_128_GCM_SHA256,TLS_AES_256_GCM_SHA384,TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256,TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
     key-password: ${SSL_SUBMISSION_KEYSTORE_PASSWORD}
     key-store: ${SSL_SUBMISSION_KEYSTORE_PATH}
     key-store-password: ${SSL_SUBMISSION_KEYSTORE_PASSWORD}
