@@ -32,7 +32,6 @@ import io.micrometer.core.annotation.Timed;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Executors;
-import java.util.concurrent.ForkJoinPool;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 import org.apache.commons.math3.distribution.PoissonDistribution;
@@ -62,7 +61,6 @@ public class SubmissionController {
 
   private final SubmissionControllerMonitor submissionControllerMonitor;
   private final ScheduledExecutorService scheduledExecutor = Executors.newSingleThreadScheduledExecutor();
-  private final ForkJoinPool forkJoinPool = ForkJoinPool.commonPool();
   private final DiagnosisKeyService diagnosisKeyService;
   private final TanVerifier tanVerifier;
   private final Double fakeDelayMovingAverageSamples;
@@ -115,23 +113,21 @@ public class SubmissionController {
   private DeferredResult<ResponseEntity<Void>> buildRealDeferredResult(SubmissionPayload exposureKeys, String tan) {
     DeferredResult<ResponseEntity<Void>> deferredResult = new DeferredResult<>();
 
-    forkJoinPool.submit(() -> {
-      try {
-        StopWatch stopWatch = new StopWatch();
-        stopWatch.start();
-        if (!this.tanVerifier.verifyTan(tan)) {
-          submissionControllerMonitor.incrementInvalidTanRequestCounter();
-          deferredResult.setResult(buildTanInvalidResponseEntity());
-        } else {
-          persistDiagnosisKeysPayload(exposureKeys);
-          deferredResult.setResult(buildSuccessResponseEntity());
-          stopWatch.stop();
-          updateFakeDelay(stopWatch.getTotalTimeMillis());
-        }
-      } catch (Exception e) {
-        deferredResult.setErrorResult(e);
+    try {
+      StopWatch stopWatch = new StopWatch();
+      stopWatch.start();
+      if (!this.tanVerifier.verifyTan(tan)) {
+        submissionControllerMonitor.incrementInvalidTanRequestCounter();
+        deferredResult.setResult(buildTanInvalidResponseEntity());
+      } else {
+        persistDiagnosisKeysPayload(exposureKeys);
+        deferredResult.setResult(buildSuccessResponseEntity());
+        stopWatch.stop();
+        updateFakeDelay(stopWatch.getTotalTimeMillis());
       }
-    });
+    } catch (Exception e) {
+      deferredResult.setErrorResult(e);
+    }
 
     return deferredResult;
   }

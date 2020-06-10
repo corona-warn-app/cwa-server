@@ -37,9 +37,12 @@ public class DevelopmentFeignClientProvider implements FeignClientProvider {
 
   @Override
   public Client createFeignClient() {
-    return new ApacheHttpClient();
+    return new ApacheHttpClient(createHttpClientFactory().createBuilder().build());
   }
 
+  /**
+   * Creates an {@link ApacheHttpClientFactory} that neither validates SSL certificates nor host names.
+   */
   @Bean
   public ApacheHttpClientFactory createHttpClientFactory() {
     return new DefaultApacheHttpClientFactory(HttpClientBuilder.create());
