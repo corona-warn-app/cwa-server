@@ -43,9 +43,11 @@ import org.springframework.util.ResourceUtils;
 public class CloudFeignClientProvider implements FeignClientProvider {
 
   private final Environment environment;
+  private final HostnameVerifierProvider hostnameVerifierProvider;
 
-  public CloudFeignClientProvider(Environment environment) {
+  public CloudFeignClientProvider(Environment environment, HostnameVerifierProvider hostnameVerifierProvider) {
     this.environment = environment;
+    this.hostnameVerifierProvider = hostnameVerifierProvider;
   }
 
   @Override
@@ -80,7 +82,7 @@ public class CloudFeignClientProvider implements FeignClientProvider {
   public ApacheHttpClientFactory createHttpClientFactory() {
     return new DefaultApacheHttpClientFactory(HttpClientBuilder.create()
         .setSSLContext(getSslContext())
-        .setSSLHostnameVerifier(new DefaultHostnameVerifier()));
+        .setSSLHostnameVerifier(this.hostnameVerifierProvider.createHostnameVerifier()));
   }
 
   @Bean
