@@ -60,3 +60,8 @@ management:
   health:
     probes:
       enabled: true
+
+feign:
+  httpclient:
+    maxConnections: 200
+    maxConnectionsPerRoute: 200
