@@ -2,6 +2,8 @@
 server:
   ssl:
     enabled: true
+    enabled-protocols: TLSv1.2,TLSv1.3
+    protocol: TLS
     key-password: ${SSL_SUBMISSION_KEYSTORE_PASSWORD}
     key-store: ${SSL_SUBMISSION_KEYSTORE_PATH}
     key-store-password: ${SSL_SUBMISSION_KEYSTORE_PASSWORD}
