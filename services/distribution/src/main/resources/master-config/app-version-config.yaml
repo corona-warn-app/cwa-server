@@ -17,9 +17,9 @@ ios:
 android:
   latest:
     major: 0
-    minor: 8
-    patch: 3
+    minor: 9
+    patch: 1
   min:
     major: 0
-    minor: 8
+    minor: 9
     patch: 0
