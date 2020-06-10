@@ -56,7 +56,7 @@
     <dependency>
       <groupId>software.amazon.awssdk</groupId>
       <artifactId>s3</artifactId>
-      <version>2.13.25</version>
+      <version>2.13.26</version>
     </dependency>
     <dependency>
       <artifactId>bcpkix-jdk15on</artifactId>
@@ -76,7 +76,7 @@
     <dependency>
       <artifactId>commons-math3</artifactId>
       <groupId>org.apache.commons</groupId>
-      <version>3.2</version>
+      <version>3.6.1</version>
     </dependency>
     <dependency>
       <artifactId>spring-retry</artifactId>
