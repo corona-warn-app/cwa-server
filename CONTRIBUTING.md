@@ -50,6 +50,10 @@ The following rule governs documentation contributions:
 
 * Commits should be as small as possible while ensuring that each commit is correct independently (i.e., each commit should compile and pass tests).
 
+* Make sure each new `.java` source file you add has a correct license header. This is enforced by a blocking Github Action on your pull request. To add the correct license header, either:
+  * Add it manually by copying it from another file.
+  * Run `mvn license:update-file-header` in the root directory to quickly generate missing headers everywhere.
+
 * Test your changes as thoroughly as possible before you commit them. Preferably, automate your test by unit/integration tests. If tested manually, provide information about the test scope in the PR description (e.g. “Test passed: Upgrade version from 0.42 to 0.42.23.”).
 
 * Create _Work In Progress [WIP]_ pull requests only if you need clarification or an explicit review before you can continue your work item.

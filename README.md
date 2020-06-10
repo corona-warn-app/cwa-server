@@ -97,6 +97,22 @@ To prepare your machine to run the CWA project locally, we recommend that you fi
 * [Postgres]
 * [Zenko CloudServer]
 
+You can also use `docker-compose` to start Postgres and Zenko. If you do that, you have to
+set the following environment-variables when running the Spring project:
+
+For the distribution module:
+
+```bash
+POSTGRESQL_SERVICE_PORT=8001
+VAULT_FILESIGNING_SECRET=</path/to/your/private_key>
+```
+
+For the submission module:
+
+```bash
+POSTGRESQL_SERVICE_PORT=8001
+```
+
 #### Configure
 
 After you made sure that the specified dependencies are running, configure them in the respective configuration files.
@@ -126,7 +142,7 @@ If you want to start the submission service, for example, you start it as follow
 To enable the `DEBUG` log level, you can run the application using the Spring `dev` profile.
 
 ```bash
-mvn spring-boot:run -Dspring-boot.run.profiles=dev
+mvn spring-boot:run -Dspring.profiles.active=dev
 ```
 
 To be able to set breakpoints (e.g. in IntelliJ), it may be necessary to use the ```-Dspring-boot.run.fork=false``` parameter.
