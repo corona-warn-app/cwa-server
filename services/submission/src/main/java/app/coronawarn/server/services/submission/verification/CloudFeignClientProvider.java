@@ -21,12 +21,18 @@
 package app.coronawarn.server.services.submission.verification;
 
 import feign.Client;
+import feign.httpclient.ApacheHttpClient;
 import java.io.IOException;
 import java.security.GeneralSecurityException;
 import javax.net.ssl.SSLContext;
-import javax.net.ssl.SSLSocketFactory;
 import org.apache.http.conn.ssl.DefaultHostnameVerifier;
+import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.ssl.SSLContextBuilder;
+import org.springframework.cloud.commons.httpclient.ApacheHttpClientConnectionManagerFactory;
+import org.springframework.cloud.commons.httpclient.ApacheHttpClientFactory;
+import org.springframework.cloud.commons.httpclient.DefaultApacheHttpClientConnectionManagerFactory;
+import org.springframework.cloud.commons.httpclient.DefaultApacheHttpClientFactory;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Profile;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
@@ -36,7 +42,7 @@ import org.springframework.util.ResourceUtils;
 @Profile("ssl-client-verification")
 public class CloudFeignClientProvider implements FeignClientProvider {
 
-  Environment environment;
+  private final Environment environment;
 
   public CloudFeignClientProvider(Environment environment) {
     this.environment = environment;
@@ -44,10 +50,10 @@ public class CloudFeignClientProvider implements FeignClientProvider {
 
   @Override
   public Client createFeignClient() {
-    return new Client.Default(getSslSocketFactory(), new DefaultHostnameVerifier());
+    return new ApacheHttpClient(createHttpClientFactory().createBuilder().build());
   }
 
-  private SSLSocketFactory getSslSocketFactory() {
+  private SSLContext getSslContext() {
     try {
       String keyStorePath = environment.getProperty("client.ssl.key-store");
       String keyStorePassword = environment.getProperty("client.ssl.key-store-password");
@@ -56,15 +62,29 @@ public class CloudFeignClientProvider implements FeignClientProvider {
       String trustStorePath = environment.getProperty("client.ssl.verification.trust-store");
       String trustStorePassword = environment.getProperty("client.ssl.verification.trust-store-password");
 
-      SSLContext sslContext = SSLContextBuilder
+      return SSLContextBuilder
           .create()
           .loadKeyMaterial(ResourceUtils.getFile(keyStorePath), keyStorePassword.toCharArray(),
               keyPassword.toCharArray())
           .loadTrustMaterial(ResourceUtils.getFile(trustStorePath), trustStorePassword.toCharArray())
           .build();
-      return sslContext.getSocketFactory();
     } catch (IOException | GeneralSecurityException e) {
       throw new RuntimeException(e);
     }
+  }
+
+  /**
+   * Creates an {@link ApacheHttpClientFactory} that validates SSL certificates and host names.
+   */
+  @Bean
+  public ApacheHttpClientFactory createHttpClientFactory() {
+    return new DefaultApacheHttpClientFactory(HttpClientBuilder.create()
+        .setSSLContext(getSslContext())
+        .setSSLHostnameVerifier(new DefaultHostnameVerifier()));
+  }
+
+  @Bean
+  public ApacheHttpClientConnectionManagerFactory createConnectionManager() {
+    return new DefaultApacheHttpClientConnectionManagerFactory();
   }
 }
