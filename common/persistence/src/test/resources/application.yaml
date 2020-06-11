@@ -12,9 +12,7 @@ spring:
       hibernate:
         show_sql: false
   datasource:
-    url: jdbc:h2:mem:test;MODE=PostgreSQL
-    driverClassName: org.h2.Driver
-    platform: h2
+    url: jdbc:tc:postgresql:11.8:///databasename
   main:
     banner-mode: off
 logging:
