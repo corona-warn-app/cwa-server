@@ -12,7 +12,7 @@ spring:
       hibernate:
         show_sql: false
   datasource:
-    url: jdbc:tc:postgresql:11.8:///databasename
+    url: jdbc:tc:postgresql:11.8:///databasename?TC_TMPFS=/testtmpfs:rw
   main:
     banner-mode: off
 logging:
