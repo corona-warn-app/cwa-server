@@ -29,7 +29,7 @@ In this documentation, Corona-Warn-App services are also referred to as CWA serv
 
 ## Architecture Overview
 
-You can find the architecture overview [here](/docs/architecture-overview.md), which will give you
+You can find the architecture overview [here](/docs/ARCHITECTURE.md), which will give you
 a good starting point in how the backend services interact with other services, and what purpose
 they serve.
 
