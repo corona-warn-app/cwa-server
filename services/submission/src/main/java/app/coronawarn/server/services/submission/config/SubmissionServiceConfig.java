@@ -116,13 +116,13 @@ public class SubmissionServiceConfig {
   }
 
   private static class Monitoring {
-    private Integer batchSize;
+    private Long batchSize;
 
-    public Integer getBatchSize() {
+    public Long getBatchSize() {
       return batchSize;
     }
 
-    public void setBatchSize(Integer batchSize) {
+    public void setBatchSize(Long batchSize) {
       this.batchSize = batchSize;
     }
   }
@@ -135,11 +135,11 @@ public class SubmissionServiceConfig {
     this.monitoring = monitoring;
   }
 
-  public Integer getMonitoringBatchSize() {
+  public Long getMonitoringBatchSize() {
     return this.monitoring.getBatchSize();
   }
 
-  public void setMonitoringBatchSize(Integer batchSize) {
+  public void setMonitoringBatchSize(Long batchSize) {
     this.monitoring.setBatchSize(batchSize);
   }
 }
