@@ -35,7 +35,11 @@ import org.springframework.security.web.firewall.StrictHttpFirewall;
 @EnableWebSecurity
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
-  private static final String ACTUATOR_ROUTE = "/actuator/**";
+  private static final String ACTUATOR_ROUTE = "/actuator/";
+  private static final String HEALTH_ROUTE = ACTUATOR_ROUTE + "health";
+  private static final String PROMETHEUS_ROUTE = ACTUATOR_ROUTE + "prometheus";
+  private static final String READINESS_ROUTE = ACTUATOR_ROUTE + "readiness";
+  private static final String LIVENESS_ROUTE = ACTUATOR_ROUTE + "liveness";
   private static final String SUBMISSION_ROUTE =
       "/version/v1" + SubmissionController.SUBMISSION_ROUTE;
 
@@ -51,7 +55,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
   @Override
   protected void configure(HttpSecurity http) throws Exception {
     http.authorizeRequests()
-        .mvcMatchers(HttpMethod.GET, ACTUATOR_ROUTE).permitAll()
+        .mvcMatchers(HttpMethod.GET, HEALTH_ROUTE, PROMETHEUS_ROUTE, READINESS_ROUTE, LIVENESS_ROUTE).permitAll()
         .mvcMatchers(HttpMethod.POST, SUBMISSION_ROUTE).permitAll()
         .anyRequest().denyAll()
         .and().csrf().disable();
