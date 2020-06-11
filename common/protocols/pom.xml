@@ -20,7 +20,7 @@
     <dependency>
       <groupId>com.google.protobuf</groupId>
       <artifactId>protobuf-java</artifactId>
-      <version>3.11.4</version>
+      <version>3.12.2</version>
     </dependency>
   </dependencies>
 
@@ -46,7 +46,7 @@
           </execution>
         </executions>
         <configuration>
-          <protocArtifact>com.google.protobuf:protoc:3.11.4:exe:${os.detected.classifier}</protocArtifact>
+          <protocArtifact>com.google.protobuf:protoc:3.12.2:exe:${os.detected.classifier}</protocArtifact>
         </configuration>
       </plugin>
     </plugins>

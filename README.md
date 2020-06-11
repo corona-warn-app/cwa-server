@@ -23,7 +23,7 @@
   <a href="#licensing">Licensing</a>
 </p>
 
-The goal of this project is to develop the official Corona-Warn-App for Germany based on the exposure notification API from [Apple](https://www.apple.com/covid19/contacttracing/) and [Google](https://www.google.com/covid19/exposurenotifications/). The apps (for both iOS and Android) use Bluetooth technology to exchange anonymous encrypted data with other mobile phones (on which the app is also installed) in the vicinity of an app user's phone. The data is stored locally on each user's device, preventing authorities or other parties from accessing or controlling the data. This repository contains the **implementation of the server for encryption keys** for the Corona-Warn-App. This implementation is still a **work in progress**, and the code it contains is currently alpha-quality code.
+The goal of this project is to develop the official Corona-Warn-App for Germany based on the exposure notification API from [Apple](https://www.apple.com/covid19/contacttracing/) and [Google](https://www.google.com/covid19/exposurenotifications/). The apps (for both iOS and Android) use Bluetooth technology to exchange anonymous encrypted data with other mobile phones (on which the app is also installed) in the vicinity of an app user's phone. The data is stored locally on each user's device, preventing authorities or other parties from accessing or controlling the data. This repository contains the **implementation of the server for encryption keys** for the Corona-Warn-App.
 
 In this documentation, Corona-Warn-App services are also referred to as CWA services.
 
@@ -96,6 +96,22 @@ To prepare your machine to run the CWA project locally, we recommend that you fi
 * [Maven 3.6](https://maven.apache.org/)
 * [Postgres]
 * [Zenko CloudServer]
+
+You can also use `docker-compose` to start Postgres and Zenko. If you do that, you have to
+set the following environment-variables when running the Spring project:
+
+For the distribution module:
+
+```bash
+POSTGRESQL_SERVICE_PORT=8001
+VAULT_FILESIGNING_SECRET=</path/to/your/private_key>
+```
+
+For the submission module:
+
+```bash
+POSTGRESQL_SERVICE_PORT=8001
+```
 
 #### Configure
 
