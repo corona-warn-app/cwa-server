@@ -32,7 +32,7 @@ import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 
 @Component
-@Profile("!ssl-client-verification")
+@Profile("disable-ssl-client-verification")
 public class DevelopmentFeignClientProvider implements FeignClientProvider {
 
   @Override

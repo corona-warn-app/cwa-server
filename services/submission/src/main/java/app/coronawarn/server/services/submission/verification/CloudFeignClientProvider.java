@@ -38,7 +38,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.ResourceUtils;
 
 @Component
-@Profile("ssl-client-verification")
+@Profile("!disable-ssl-client-verification")
 public class CloudFeignClientProvider implements FeignClientProvider {
 
   private final Environment environment;
