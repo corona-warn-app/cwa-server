@@ -1,7 +1,8 @@
 version: 2.1
-machine: true
 jobs:
   build:
+    machine:
+      enabled: true
     working_directory: ~/cwa-server
     steps:
       - checkout
