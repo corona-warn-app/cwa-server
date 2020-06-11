@@ -1,4 +1,4 @@
-# Architecture CWA Server
+# CWA-Server Architecture
 
 This document outlines the CWA server architecture on high level. This document
 does not necessarily reflect the current implementation status in this repository, as development
