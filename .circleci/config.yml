@@ -3,8 +3,6 @@ machine: true
 jobs:
   build:
     working_directory: ~/cwa-server
-    docker:
-      - image: circleci/openjdk:11-jdk
     steps:
       - checkout
       - run:
