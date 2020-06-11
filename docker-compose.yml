@@ -29,7 +29,7 @@ services:
      - objectstore
      - create-bucket
     environment:
-      SPRING_PROFILES_ACTIVE: dev,signature-dev,testdata
+      SPRING_PROFILES_ACTIVE: dev,signature-dev,testdata,disable-ssl-client-postgres
       POSTGRESQL_SERVICE_PORT: '5432'
       POSTGRESQL_SERVICE_HOST: postgres
       POSTGRESQL_DATABASE: ${POSTGRES_DB}
