@@ -37,7 +37,6 @@ import org.springframework.cloud.commons.httpclient.DefaultApacheHttpClientFacto
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
-import org.springframework.util.ResourceUtils;
 
 @Component
 @Profile("!disable-ssl-client-verification")
