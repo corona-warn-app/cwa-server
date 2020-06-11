@@ -97,6 +97,11 @@ To prepare your machine to run the CWA project locally, we recommend that you fi
 * [Postgres]
 * [Zenko CloudServer]
 
+If you are already running a local Postgres, you need to create a database `cwa` and run the setup scripts in the
+[local-setup](./local-setup) folder first. It is necessary to run the [create-roles.sql](./local-setup/create-roles.sql).
+In order to enable support for multiple database users based on their respective responsibility, you may run
+[create-users.sql](./local-setup/create-users.sql).
+
 You can also use `docker-compose` to start Postgres and Zenko. If you do that, you have to
 set the following environment-variables when running the Spring project:
 
