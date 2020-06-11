@@ -4,7 +4,7 @@
 
 Spring profiles are used to apply submission service configuration based on the running environment, determined by the active profile.
 
-You will find `.yaml` and `.xml` based profile-specific configuration files at [`/services/submission/src/main/resources`](/services/submission/src/main/resources). 
+You will find `.yaml` and `.xml` based profile-specific configuration files at [`/services/submission/src/main/resources`](/services/submission/src/main/resources).
 
 ### Configuration Properties
 
