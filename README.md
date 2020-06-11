@@ -172,13 +172,7 @@ Profile               | Effect
 
 ### Submission
 
-Profile                   | Effect
---------------------------|-------------
-`dev`                     | Turns the log level to `DEBUG`.
-`cloud`                   | Removes default values for the `datasource` configuration.
-`ssl-server`              | Enables SSL for the submission endpoint (see [here](https://github.com/corona-warn-app/cwa-server/blob/master/services/submission/src/main/resources/application-ssl-server.yaml)).
-`ssl-client-postgres`     | Enforces SSL with a pinned certificate for the connection to the postgres (see [here](https://github.com/corona-warn-app/cwa-server/blob/master/services/submission/src/main/resources/application-ssl-client-postgres.yaml)).
-`ssl-client-verification` | Enforces SSL with a pinned certificate for the connection to the verification server (see [here](https://github.com/corona-warn-app/cwa-server/blob/master/services/submission/src/main/resources/application-ssl-client-verification.yaml)).
+See [Submission Service - Spring Profiles](/docs/SUBMISSION.md#spring-profiles).
 
 ## Documentation
 
