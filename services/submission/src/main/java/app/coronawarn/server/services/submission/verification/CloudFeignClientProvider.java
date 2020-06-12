@@ -43,6 +43,7 @@ import org.springframework.stereotype.Component;
 public class CloudFeignClientProvider implements FeignClientProvider {
 
   private final HostnameVerifierProvider hostnameVerifierProvider;
+  private final Integer connectionPoolSize;
   private final File keyStore;
   private final String keyStorePassword;
   private final String keyPassword;
@@ -59,6 +60,7 @@ public class CloudFeignClientProvider implements FeignClientProvider {
     this.keyPassword = sslConfig.getKeyPassword();
     this.trustStore = sslConfig.getTrustStore();
     this.trustStorePassword = sslConfig.getTrustStorePassword();
+    this.connectionPoolSize = config.getConnectionPoolSize();
     this.hostnameVerifierProvider = hostnameVerifierProvider;
   }
 
@@ -85,6 +87,8 @@ public class CloudFeignClientProvider implements FeignClientProvider {
   @Bean
   public ApacheHttpClientFactory createHttpClientFactory() {
     return new DefaultApacheHttpClientFactory(HttpClientBuilder.create()
+        .setMaxConnPerRoute(this.connectionPoolSize)
+        .setMaxConnTotal(this.connectionPoolSize)
         .setSSLContext(getSslContext())
         .setSSLHostnameVerifier(this.hostnameVerifierProvider.createHostnameVerifier()));
   }
