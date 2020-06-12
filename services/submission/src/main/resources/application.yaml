@@ -4,6 +4,8 @@ logging:
     org:
       springframework:
         web: INFO
+    app:
+      coronawarn: INFO
 
 services:
   submission:
