@@ -12,6 +12,7 @@ services:
     # The number of samples for the calculation of the moving average for fake request delays.
     fake-delay-moving-average-samples: 10
     retention-days: 14
+    connection-pool-size: 200
     payload:
       max-number-of-keys: 14
     verification:
@@ -60,8 +61,3 @@ management:
   health:
     probes:
       enabled: true
-
-feign:
-  httpclient:
-    maxConnections: 200
-    maxConnectionsPerRoute: 200

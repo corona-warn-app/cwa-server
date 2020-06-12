@@ -33,6 +33,7 @@ public class SubmissionServiceConfig {
   private Double initialFakeDelayMilliseconds;
   private Double fakeDelayMovingAverageSamples;
   private Integer retentionDays;
+  private Integer connectionPoolSize;
   private Payload payload;
   private Verification verification;
   private Monitoring monitoring;
@@ -60,6 +61,14 @@ public class SubmissionServiceConfig {
 
   public void setRetentionDays(Integer retentionDays) {
     this.retentionDays = retentionDays;
+  }
+
+  public Integer getConnectionPoolSize() {
+    return connectionPoolSize;
+  }
+
+  public void setConnectionPoolSize(Integer connectionPoolSize) {
+    this.connectionPoolSize = connectionPoolSize;
   }
 
   public Integer getMaxNumberOfKeys() {
