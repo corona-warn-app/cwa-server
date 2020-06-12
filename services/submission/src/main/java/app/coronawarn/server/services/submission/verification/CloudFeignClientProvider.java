@@ -20,12 +20,12 @@
 
 package app.coronawarn.server.services.submission.verification;
 
+import app.coronawarn.server.services.submission.config.SubmissionServiceConfig;
 import feign.Client;
 import feign.httpclient.ApacheHttpClient;
 import java.io.IOException;
 import java.security.GeneralSecurityException;
 import javax.net.ssl.SSLContext;
-import org.apache.http.conn.ssl.DefaultHostnameVerifier;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.ssl.SSLContextBuilder;
 import org.springframework.cloud.commons.httpclient.ApacheHttpClientConnectionManagerFactory;
@@ -44,8 +44,14 @@ public class CloudFeignClientProvider implements FeignClientProvider {
 
   private final Environment environment;
   private final HostnameVerifierProvider hostnameVerifierProvider;
+  private final Integer connectionPoolSize;
 
-  public CloudFeignClientProvider(Environment environment, HostnameVerifierProvider hostnameVerifierProvider) {
+  /**
+   * Creates a {@link CloudFeignClientProvider} with a fixed connection pool size and SSL key+trust material.
+   */
+  public CloudFeignClientProvider(SubmissionServiceConfig config, Environment environment,
+      HostnameVerifierProvider hostnameVerifierProvider) {
+    this.connectionPoolSize = config.getConnectionPoolSize();
     this.environment = environment;
     this.hostnameVerifierProvider = hostnameVerifierProvider;
   }
@@ -81,6 +87,8 @@ public class CloudFeignClientProvider implements FeignClientProvider {
   @Bean
   public ApacheHttpClientFactory createHttpClientFactory() {
     return new DefaultApacheHttpClientFactory(HttpClientBuilder.create()
+        .setMaxConnPerRoute(this.connectionPoolSize)
+        .setMaxConnTotal(this.connectionPoolSize)
         .setSSLContext(getSslContext())
         .setSSLHostnameVerifier(this.hostnameVerifierProvider.createHostnameVerifier()));
   }
