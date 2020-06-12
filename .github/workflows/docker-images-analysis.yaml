@@ -1,0 +1,55 @@
+name: Docker Images Analysis
+on:
+  push:
+    paths:
+      - '**/Dockerfile'
+      - '.github/workflows/docker-images-analysis.yaml'
+  schedule:
+      - cron: '0 5 * * 4'
+jobs:
+  distribution-docker-image-scan:
+      runs-on: ubuntu-latest
+      steps:
+      - uses: actions/checkout@v2
+      - name: Build the Docker image
+        run: docker build . --file services/distribution/Dockerfile --tag localbuild/testimage:latest
+      - uses: anchore/scan-action@master
+        with:
+          image-reference: "localbuild/testimage:latest"
+          dockerfile-path: "services/distribution/Dockerfile"
+          fail-build: true
+          acs-report-enable: true
+          acs-report-severity-cutoff: "High"
+      - name: anchore inline scan JSON results
+        run: for j in `ls ./anchore-reports/*.json`; do echo "---- ${j} ----"; cat ${j}; echo; done
+      - name: Prepare SARIF report for distribution Dockerfile
+        run: |
+          sed -i.bak -e 's|"name": "Anchore Container Vulnerability Report"|"name": "Anchore Distribution Docker"|g' results.sarif
+          cat results.sarif
+      - name: upload Anchore scan SARIF report
+        uses: github/codeql-action/upload-sarif@v1
+        with:
+          sarif_file: results.sarif
+  submission-docker-image-scan:
+      runs-on: ubuntu-latest
+      steps:
+      - uses: actions/checkout@v2
+      - name: Build the Docker image
+        run: docker build . --file services/submission/Dockerfile --tag localbuild/testimage:latest
+      - uses: anchore/scan-action@master
+        with:
+          image-reference: "localbuild/testimage:latest"
+          dockerfile-path: "services/submission/Dockerfile"
+          fail-build: true
+          acs-report-enable: true
+          acs-report-severity-cutoff: "High"
+      - name: anchore inline scan JSON results
+        run: for j in `ls ./anchore-reports/*.json`; do echo "---- ${j} ----"; cat ${j}; echo; done
+      - name: Prepare SARIF report for submission dockerfile
+        run: |
+          sed -i.bak -e 's|"name": "Anchore Container Vulnerability Report"|"name": "Anchore Submission Docker"|g' results.sarif
+          cat results.sarif
+      - name: upload Anchore scan SARIF report
+        uses: github/codeql-action/upload-sarif@v1
+        with:
+          sarif_file: results.sarif
