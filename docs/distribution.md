@@ -13,7 +13,7 @@ All of the configurable parameters, that are used throught this service can be f
 
 ## Object Store
 
-The communication with the S3 compatible object storage, that is hosted by Deutsche Telekom is done through the AWS SDK v2. The files, that will be updated to the S3 compatible storage are created on local storage first (ouput path defined in [`application.yaml`](https://github.com/corona-warn-app/cwa-server/blob/master/services/distribution/src/main/resources/application.yaml#L20)) and are then uploaded to the storage provider.
+The communication with the S3 compatible object storage, that is hosted by Deutsche Telekom is done through the AWS SDK v2. The files, that will be updated to the S3 compatible storage are created on local storage first (ouput path defined in application configuration) and are then uploaded to the storage provider.
 
 ### Headers
 
@@ -25,7 +25,7 @@ Defines the maximum amount of time a published resource is considered fresh, whe
 
 #### `x-amz-acl`
 
-Defines the canned ACL for the uploaded file. Is only set if [`set-public-read-acl-on-put-object`](https://github.com/corona-warn-app/cwa-server/blob/master/services/distribution/src/main/resources/application.yaml#L50) is set to true in the configuration properties. Will be `public-read` in that case, which grants full controll to the Owners and read-access to AllUsers.
+Defines the canned ACL for the uploaded file. Is only set if [`set-public-read-acl-on-put-object`] is set to true in the configuration properties. Will be `public-read` in that case, which grants full controll to the Owners and read-access to AllUsers.
 
 #### `cwa-hash`
 
@@ -35,10 +35,14 @@ This header is needed, since it is not possible to create byte-identical archive
 
 ### Threading
 
-The upload operations are being run in multiple threads to increase performance. The number of threads is defined in the [`application.yaml`](https://github.com/corona-warn-app/cwa-server/blob/master/services/distribution/src/main/resources/application.yaml#L54). SpringBoot's `ThreadPoolTaskExecutor` is used to create and manage the threads. Each upload operation will be submitted as a single task, which then will be distributed across the available threads. Once all threads are submitted, the logic checks, whether all threads are finished before shutting down the Thread Pool. If errors are thrown, there are handled like explained in the next section.
+The upload operations are being run in multiple threads to increase performance. The number of threads is defined in the application configuration. SpringBoot's `ThreadPoolTaskExecutor` is used to create and manage the threads. Each upload operation will be submitted as a single task, which then will be distributed across the available threads. Once all threads are submitted, the logic checks, whether all threads are finished before shutting down the Thread Pool. If errors are thrown, there are handled like explained in the next section.
 
 ### Error Handling
 
 To make the distribution service as resilient as possible two error handling measures were have been introduced.
 
-The first one being SpringBoot's Retry logic, which is applied to all S3 operations with the number of retries being specified in the ['application.yaml'](https://github.com/corona-warn-app/cwa-server/blob/master/services/distribution/src/main/resources/application.yaml#L51). This results in SpringBoot retrying the operation up to three times, with a two second pause in between.
+The first one being SpringBoot's Retry logic, which is applied to all S3 operations with the number of retries being specified in the application configuration. This results in SpringBoot retrying the operation up to three times, with a two second pause in between.
+
+The second part will catch operations, that have failed even after retrying them through SpringBoot's Retry logic. If more than five uploads fail (can be configured in the application configuration) the program will terminate with an error, if less than five operations have failed so far the error will just be logged to console, but the upload will continue.
+
+The error handling is designed to handle intermediate errors, like short connection problems. If too many operations fail it is safe to assume, that a bigger problem is occuring and that subsequent operations will also fail. In this case the program is terminated to prevent unnecessary load.
