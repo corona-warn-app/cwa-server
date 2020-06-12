@@ -46,3 +46,18 @@ The first one being SpringBoot's Retry logic, which is applied to all S3 operati
 The second part will catch operations, that have failed even after retrying them through SpringBoot's Retry logic. If more than five uploads fail (can be configured in the application configuration) the program will terminate with an error, if less than five operations have failed so far the error will just be logged to console, but the upload will continue.
 
 The error handling is designed to handle intermediate errors, like short connection problems. If too many operations fail it is safe to assume, that a bigger problem is occuring and that subsequent operations will also fail. In this case the program is terminated to prevent unnecessary load.
+
+### Retention
+
+The same retention period, as on the datbase is also enforced on the S3 compatible storage.
+
+## Assembly Process
+
+The exported diagnosis-keys are being organized in hourly archives. The folder structure is as follows:
+`/version/<version>/diagnosis-keys/country/<ISO-3166-country>/date/<YYYY-MM-DD>/hour/<hh>/index`. The version, country, date and hour directory also contain an index file each, listing all the subdirectories.
+
+For each assembly run the diagnosis keys for the last 14 days are queried. Based on the result hour and their parent directories are created and the keys are added to their respective archives. To which archive the key should be added is determined by the distribution timestamp.
+
+The diagnosis keys needs to be expired for at least two hours, before it can be distributed. This means that if the timestamp has been submitted within two hours after the expiry date, the key cannot be published immediately. Therefore a distribution timestamp is calculated, which is either the submission timestamp, or, if the submission timestamp is within two hours after the expiry date, the expiry date plus two hours. This ensures compliance with the specification from Google and Apple.
+
+Since all hourly archives are always created for the last 14 days it is possible, that the exact same archive already resides within the S3 compatible storage. To prevent the unnecessary reupload of files the [`cwa-hash`](#cwa-hash) header has been introduced.
