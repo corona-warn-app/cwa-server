@@ -23,6 +23,7 @@ package app.coronawarn.server.services.distribution.objectstore.client;
 import static java.util.stream.Collectors.toList;
 
 import java.nio.file.Path;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
@@ -78,13 +79,20 @@ public class S3ClientWrapper implements ObjectStoreClient {
       backoff = @Backoff(delayExpression = "${services.distribution.objectstore.retry-backoff}"))
   public List<S3Object> getObjects(String bucket, String prefix) {
     logRetryStatus("object download");
+    List<S3Object> allS3Objects = new ArrayList<>();
+    ListObjectsV2Request request = ListObjectsV2Request.builder().prefix(prefix).bucket(bucket).build();
+    ListObjectsV2Response response;
 
-    ListObjectsV2Response response =
-        s3Client.listObjectsV2(ListObjectsV2Request.builder().prefix(prefix).bucket(bucket).build());
+    do {
+      response = s3Client.listObjectsV2(request);
+      response.contents().stream()
+          .map(s3Object -> buildS3Object(s3Object, bucket))
+          .forEach(allS3Objects::add);
+      request = ListObjectsV2Request.builder().prefix(prefix).bucket(bucket)
+          .continuationToken(response.continuationToken()).build();
+    } while (response.isTruncated());
 
-    return response.contents().stream()
-        .map(s3Object -> buildS3Object(s3Object, bucket))
-        .collect(toList());
+    return allS3Objects;
   }
 
   @Recover
