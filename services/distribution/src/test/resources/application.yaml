@@ -3,7 +3,7 @@ logging:
   level:
     org:
       springframework: off
-    root: info
+    root: off
 
 services:
   distribution:
