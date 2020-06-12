@@ -8,14 +8,15 @@ You will find `.yaml` and `.xml` based profile-specific configuration files at [
 
 ### Configuration Properties
 
-Please refer to the inline comments in the `.yaml` configuration files for further details.
+Please refer to the inline comments in the base `application.yaml` configuration file for further details.
 
 ### Available Profiles
 
-Profile                   | Effect
---------------------------|-------------
-`dev`                     | Sets the log level to `DEBUG` and changes the `CONSOLE_LOG_PATTERN` used by Log4j 2.
-`cloud`                   | Removes default values for the `spring.flyway`, `spring.datasource` and `services.submission.verification.base-url` configurations.
-`ssl-server`              | Enables SSL for the submission endpoint.
-`ssl-client-postgres`     | Enforces SSL with a pinned certificate for the connection to the postgres.
-`ssl-client-verification` | Enforces SSL with a pinned certificate for the connection to the verification server.
+Profile                                           | Effect
+--------------------------------------------------|-------------
+`dev`                                             | Sets the log level to `DEBUG` and changes the `CONSOLE_LOG_PATTERN` used by Log4j 2.
+`cloud`                                           | Removes default values for the `spring.flyway`, `spring.datasource` and `services.submission.verification.base-url` configurations.
+`disable-ssl-server`                              | Disables SSL for the submission endpoint.
+`disable-ssl-client-postgres`                     | Disables SSL with a pinned certificate for the connection to the postgres.
+`disable-ssl-client-verification`                 | Disables SSL with a pinned certificate for the connection to the verification server.
+`disable-ssl-client-verification-verify-hostname` | Disables the verification of the SSL hostname for the connection to the verification server.
