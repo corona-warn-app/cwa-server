@@ -28,9 +28,13 @@ import app.coronawarn.server.services.distribution.objectstore.publish.Published
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Future;
 import java.util.stream.Collectors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
+import org.springframework.stereotype.Component;
 
 /**
  * Publishes a folder on the disk to S3 while keeping the folder and file structure.<br>
@@ -46,6 +50,7 @@ import org.slf4j.LoggerFactory;
  *   <li>Currently not implemented: Supports multi threaded upload of files.</li>
  * </ul>
  */
+@Component
 public class S3Publisher {
 
   private static final Logger logger = LoggerFactory.getLogger(S3Publisher.class);
@@ -55,32 +60,33 @@ public class S3Publisher {
    */
   private static final String CWA_S3_ROOT = CwaApiStructureProvider.VERSION_DIRECTORY;
 
-  private final Path root;
   private final ObjectStoreAccess objectStoreAccess;
   private final FailedObjectStoreOperationsCounter failedOperationsCounter;
+  private final ThreadPoolTaskExecutor executor;
 
   /**
    * Creates an {@link S3Publisher} instance that attempts to publish the files at the specified location to an object
    * store. Object store operations are performed through the specified {@link ObjectStoreAccess} instance.
    *
-   * @param root                    The path of the directory that shall be published.
    * @param objectStoreAccess       The {@link ObjectStoreAccess} used to communicate with the object store.
    * @param failedOperationsCounter The {@link FailedObjectStoreOperationsCounter} that is used to monitor the number of
    *                                failed operations.
+   * @param executor                The executor that manages the upload task submission.
    */
-  public S3Publisher(Path root, ObjectStoreAccess objectStoreAccess,
-      FailedObjectStoreOperationsCounter failedOperationsCounter) {
-    this.root = root;
+  public S3Publisher(ObjectStoreAccess objectStoreAccess, FailedObjectStoreOperationsCounter failedOperationsCounter,
+      ThreadPoolTaskExecutor executor) {
     this.objectStoreAccess = objectStoreAccess;
     this.failedOperationsCounter = failedOperationsCounter;
+    this.executor = executor;
   }
 
   /**
    * Synchronizes the files to S3.
    *
+   * @param root The path of the directory that shall be published.
    * @throws IOException in case there were problems reading files from the disk.
    */
-  public void publish() throws IOException {
+  public void publish(Path root) throws IOException {
     PublishedFileSet published;
     List<LocalFile> toPublish = new PublishFileSet(root).getFiles();
     List<LocalFile> diff;
@@ -97,14 +103,25 @@ public class S3Publisher {
       diff = toPublish;
     }
 
-    logger.info("Beginning upload... ");
-    for (LocalFile file : diff) {
-      try {
-        this.objectStoreAccess.putObject(file);
-      } catch (ObjectStoreOperationFailedException e) {
-        failedOperationsCounter.incrementAndCheckThreshold(e);
-      }
+    logger.info("Beginning upload of {} files... ", diff.size());
+    try {
+      diff.stream()
+          .map(file -> executor.submit(() -> objectStoreAccess.putObject(file)))
+          .forEach(this::awaitThread);
+    } finally {
+      executor.shutdown();
     }
     logger.info("Upload completed.");
+  }
+
+  private void awaitThread(Future<?> result) {
+    try {
+      result.get();
+    } catch (ExecutionException e) {
+      failedOperationsCounter.incrementAndCheckThreshold(new ObjectStoreOperationFailedException(e.getMessage(), e));
+    } catch (InterruptedException e) {
+      Thread.currentThread().interrupt();
+      throw new ObjectStoreOperationFailedException(e.getMessage(), e);
+    }
   }
 }

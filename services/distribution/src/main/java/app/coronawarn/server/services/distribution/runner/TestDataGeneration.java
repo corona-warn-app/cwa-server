@@ -144,7 +144,7 @@ public class TestDataGeneration implements ApplicationRunner {
    * this function would return the timestamp for today 14:00 UTC.
    */
   private long getGeneratorEndTimestamp() {
-    return (LocalDateTime.now().toEpochSecond(ZoneOffset.UTC) / ONE_HOUR_INTERVAL_SECONDS) - 1;
+    return (LocalDateTime.now(ZoneOffset.UTC).toEpochSecond(ZoneOffset.UTC) / ONE_HOUR_INTERVAL_SECONDS) - 1;
   }
 
   /**
@@ -153,7 +153,7 @@ public class TestDataGeneration implements ApplicationRunner {
    * 14 days ago (from now) at 00:00 UTC.
    */
   private long getRetentionStartTimestamp() {
-    return LocalDate.now().minusDays(retentionDays).atStartOfDay()
+    return LocalDate.now(ZoneOffset.UTC).minusDays(retentionDays).atStartOfDay()
         .toEpochSecond(ZoneOffset.UTC) / ONE_HOUR_INTERVAL_SECONDS;
   }
 

@@ -7,6 +7,7 @@ Before submitting, please take the time to check the points below and provide so
 * [ ] [Link your Pull Request to an issue](https://help.github.com/en/github/managing-your-work-on-github/linking-a-pull-request-to-an-issue) (if applicable)
 * [ ] Create Work In Progress [WIP] pull requests only if you need clarification or an explicit review before you can continue your work item.
 * [ ] Make sure that your PR is not introducing _unncessary_ reformatting (e.g., introduced by on-save hooks in your IDE)
+* [ ] Make sure each new `.java` source file you add has a correct license header.
 
 -->
 

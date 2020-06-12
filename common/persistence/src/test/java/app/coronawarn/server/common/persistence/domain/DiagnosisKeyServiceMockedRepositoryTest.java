@@ -26,7 +26,7 @@ import static org.mockito.Mockito.when;
 
 import app.coronawarn.server.common.persistence.repository.DiagnosisKeyRepository;
 import app.coronawarn.server.common.persistence.service.DiagnosisKeyService;
-import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 import org.junit.jupiter.api.Test;
@@ -39,7 +39,7 @@ import org.springframework.data.domain.Sort.Direction;
 @DataJpaTest
 class DiagnosisKeyServiceMockedRepositoryTest {
 
-  static final byte[] expKeyData = "16-bytelongarray".getBytes(Charset.defaultCharset());
+  static final byte[] expKeyData = "16-bytelongarray".getBytes(StandardCharsets.US_ASCII);
   static final int expRollingStartIntervalNumber = 73800;
   static final int expTransmissionRiskLevel = 1;
 
@@ -89,7 +89,7 @@ class DiagnosisKeyServiceMockedRepositoryTest {
   }
 
   private DiagnosisKey invalidKey(long expSubmissionTimestamp) {
-    byte[] expKeyData = "17--bytelongarray".getBytes(Charset.defaultCharset());
+    byte[] expKeyData = "17--bytelongarray".getBytes(StandardCharsets.US_ASCII);
     return new DiagnosisKey(expKeyData, expRollingStartIntervalNumber,
         DiagnosisKey.EXPECTED_ROLLING_PERIOD, expTransmissionRiskLevel, expSubmissionTimestamp);
   }

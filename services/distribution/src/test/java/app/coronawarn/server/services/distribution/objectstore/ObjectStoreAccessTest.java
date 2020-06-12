@@ -25,7 +25,7 @@ import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.when;
 
 import app.coronawarn.server.services.distribution.config.DistributionServiceConfig;
-import app.coronawarn.server.services.distribution.objectstore.client.ObjectStoreClientConfig;
+import app.coronawarn.server.services.distribution.objectstore.client.ObjectStorePublishingConfig;
 import app.coronawarn.server.services.distribution.objectstore.publish.LocalFile;
 import app.coronawarn.server.services.distribution.objectstore.publish.LocalGenericFile;
 import java.io.IOException;
@@ -43,7 +43,7 @@ import org.springframework.core.io.ResourceLoader;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 @ExtendWith(SpringExtension.class)
-@SpringBootTest(classes = {ObjectStoreAccess.class, ObjectStoreClientConfig.class})
+@SpringBootTest(classes = {ObjectStoreAccess.class, ObjectStorePublishingConfig.class})
 @EnableConfigurationProperties(value = DistributionServiceConfig.class)
 @Tag("s3-integration")
 class ObjectStoreAccessTest {

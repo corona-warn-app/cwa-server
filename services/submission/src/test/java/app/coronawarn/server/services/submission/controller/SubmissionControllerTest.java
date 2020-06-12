@@ -34,6 +34,7 @@ import static org.mockito.Mockito.any;
 import static org.mockito.Mockito.anyString;
 import static org.mockito.Mockito.atLeastOnce;
 import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.springframework.http.HttpStatus.BAD_REQUEST;
@@ -46,6 +47,7 @@ import app.coronawarn.server.common.persistence.domain.DiagnosisKey;
 import app.coronawarn.server.common.persistence.service.DiagnosisKeyService;
 import app.coronawarn.server.common.protocols.external.exposurenotification.TemporaryExposureKey;
 import app.coronawarn.server.services.submission.config.SubmissionServiceConfig;
+import app.coronawarn.server.services.submission.monitoring.SubmissionControllerMonitor;
 import app.coronawarn.server.services.submission.verification.TanVerifier;
 import com.google.protobuf.ByteString;
 import java.net.URI;
@@ -82,6 +84,9 @@ class SubmissionControllerTest {
 
   @MockBean
   private TanVerifier tanVerifier;
+
+  @MockBean
+  private SubmissionControllerMonitor submissionControllerMonitor;
 
   @Autowired
   private TestRestTemplate testRestTemplate;
@@ -205,6 +210,41 @@ class SubmissionControllerTest {
     assertThat(actResponse.getStatusCode()).isEqualTo(OK);
   }
 
+  @Test
+  void checkRealRequestHandlingIsMonitored() {
+    ResponseEntity<Void> actResponse = executor.executeRequest(buildPayloadWithOneKey(), buildOkHeaders());
+
+    verify(submissionControllerMonitor, times(1)).incrementRequestCounter();
+    verify(submissionControllerMonitor, times(1)).incrementRealRequestCounter();
+    verify(submissionControllerMonitor, never()).incrementFakeRequestCounter();
+    verify(submissionControllerMonitor, never()).incrementInvalidTanRequestCounter();
+  }
+
+  @Test
+  void checkFakeRequestHandlingIsMonitored() {
+    HttpHeaders headers = buildOkHeaders();
+    setCwaFakeHeader(headers, "1");
+
+    ResponseEntity<Void> actResponse = executor.executeRequest(buildPayloadWithOneKey(), headers);
+
+    verify(submissionControllerMonitor, times(1)).incrementRequestCounter();
+    verify(submissionControllerMonitor, never()).incrementRealRequestCounter();
+    verify(submissionControllerMonitor, times(1)).incrementFakeRequestCounter();
+    verify(submissionControllerMonitor, never()).incrementInvalidTanRequestCounter();
+  }
+
+  @Test
+  void checkInvalidTanHandlingIsMonitored() {
+    when(tanVerifier.verifyTan(anyString())).thenReturn(false);
+
+    ResponseEntity<Void> actResponse = executor.executeRequest(buildPayloadWithOneKey(), buildOkHeaders());
+
+    verify(submissionControllerMonitor, times(1)).incrementRequestCounter();
+    verify(submissionControllerMonitor, times(1)).incrementRealRequestCounter();
+    verify(submissionControllerMonitor, never()).incrementFakeRequestCounter();
+    verify(submissionControllerMonitor, times(1)).incrementInvalidTanRequestCounter();
+  }
+
   private static Collection<TemporaryExposureKey> buildPayloadWithOneKey() {
     return Collections.singleton(buildTemporaryExposureKey(VALID_KEY_DATA_1, 1, 3));
   }
@@ -243,9 +283,9 @@ class SubmissionControllerTest {
         .map(aSubmittedKey -> DiagnosisKey.builder().fromProtoBuf(aSubmittedKey).build())
         .collect(Collectors.toSet());
 
-    assertThat(keyEntities.size())
+    assertThat(keyEntities)
         .withFailMessage("Number of submitted keys and generated key entities don't match.")
-        .isEqualTo(expKeys.size());
+        .hasSameSizeAs(expKeys);
     keyEntities.forEach(anActKey -> assertThat(expKeys)
         .withFailMessage("Key entity does not correspond to a submitted key.")
         .contains(anActKey)

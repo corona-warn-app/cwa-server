@@ -27,7 +27,7 @@ import static org.assertj.core.api.Assertions.catchThrowable;
 import app.coronawarn.server.common.persistence.exception.InvalidDiagnosisKeyException;
 import app.coronawarn.server.common.protocols.external.exposurenotification.TemporaryExposureKey;
 import com.google.protobuf.ByteString;
-import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.ZoneOffset;
@@ -37,7 +37,7 @@ import org.junit.jupiter.params.provider.ValueSource;
 
 class DiagnosisKeyBuilderTest {
 
-  private final byte[] expKeyData = "16-bytelongarray".getBytes(Charset.defaultCharset());
+  private final byte[] expKeyData = "16-bytelongarray".getBytes(StandardCharsets.US_ASCII);
   private final int expRollingStartIntervalNumber = 73800;
   private final int expTransmissionRiskLevel = 1;
   private final long expSubmissionTimestamp = 2L;
@@ -179,13 +179,13 @@ class DiagnosisKeyBuilderTest {
   @ValueSource(strings = {"17--bytelongarray", "", "1"})
   void keyDataMustHaveValidLength(String invalidKeyString) {
     assertThat(
-        catchThrowable(() -> keyWithKeyData(invalidKeyString.getBytes(Charset.defaultCharset()))))
+        catchThrowable(() -> keyWithKeyData(invalidKeyString.getBytes(StandardCharsets.US_ASCII))))
         .isInstanceOf(InvalidDiagnosisKeyException.class);
   }
 
   @Test
   void keyDataDoesNotThrowOnValid() {
-    assertThatCode(() -> keyWithKeyData("16-bytelongarray".getBytes(Charset.defaultCharset())))
+    assertThatCode(() -> keyWithKeyData("16-bytelongarray".getBytes(StandardCharsets.US_ASCII)))
         .doesNotThrowAnyException();
   }
 

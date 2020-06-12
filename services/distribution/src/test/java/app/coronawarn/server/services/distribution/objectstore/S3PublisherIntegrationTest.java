@@ -21,10 +21,9 @@
 package app.coronawarn.server.services.distribution.objectstore;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Mockito.mock;
 
 import app.coronawarn.server.services.distribution.config.DistributionServiceConfig;
-import app.coronawarn.server.services.distribution.objectstore.client.ObjectStoreClientConfig;
+import app.coronawarn.server.services.distribution.objectstore.client.ObjectStorePublishingConfig;
 import app.coronawarn.server.services.distribution.objectstore.client.S3Object;
 import java.io.IOException;
 import java.nio.file.Path;
@@ -37,11 +36,12 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.core.io.ResourceLoader;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 @ExtendWith(SpringExtension.class)
-@SpringBootTest(classes = {ObjectStoreAccess.class, ObjectStoreClientConfig.class})
+@SpringBootTest(classes = {ObjectStoreAccess.class, ObjectStorePublishingConfig.class, S3Publisher.class})
 @EnableConfigurationProperties(value = DistributionServiceConfig.class)
 @Tag("s3-integration")
 class S3PublisherIntegrationTest {
@@ -54,12 +54,15 @@ class S3PublisherIntegrationTest {
   @Autowired
   private ResourceLoader resourceLoader;
 
+  @MockBean
+  private FailedObjectStoreOperationsCounter failedObjectStoreOperationsCounter;
+
+  @Autowired
+  private S3Publisher s3Publisher;
+
   @Test
   void publishTestFolderOk() throws IOException {
-    S3Publisher publisher = new S3Publisher(
-        getFolderAsPath(rootTestFolder), objectStoreAccess, mock(FailedObjectStoreOperationsCounter.class));
-
-    publisher.publish();
+    s3Publisher.publish(getFolderAsPath(rootTestFolder));
     List<S3Object> s3Objects = objectStoreAccess.getObjectsWithPrefix("version");
 
     assertThat(s3Objects).hasSize(5);

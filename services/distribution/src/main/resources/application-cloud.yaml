@@ -1,8 +1,6 @@
 ---
 spring:
   flyway:
-    enabled: true
-    locations: classpath:db/migration/postgres
     password: ${POSTGRESQL_PASSWORD_FLYWAY}
     user: ${POSTGRESQL_USER_FLYWAY}
   datasource:

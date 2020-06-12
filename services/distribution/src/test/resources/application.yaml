@@ -3,7 +3,7 @@ logging:
   level:
     org:
       springframework: off
-    root: info
+    root: off
 
 services:
   distribution:
@@ -50,13 +50,12 @@ services:
       retry-attempts: 3
       retry-backoff: 1
       max-number-of-failed-operations: 5
+      max-number-of-s3-threads: 2
 spring:
   main:
     banner-mode: off
   flyway:
     enabled: true
-# default case is H2 - value will be overwritten by profile cloud or postgres
-    locations: classpath:db/migration/h2
   jpa:
     hibernate:
       ddl-auto: validate

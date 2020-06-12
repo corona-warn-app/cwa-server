@@ -25,6 +25,7 @@ import app.coronawarn.server.services.distribution.assembly.structure.directory.
 import app.coronawarn.server.services.distribution.assembly.structure.file.FileOnDisk;
 import app.coronawarn.server.services.distribution.assembly.structure.file.FileOnDiskWithChecksum;
 import app.coronawarn.server.services.distribution.assembly.structure.util.ImmutableStack;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -46,6 +47,6 @@ public class IndexingDecoratorOnDisk<T> extends AbstractIndexingDecorator<T, Wri
         .sorted()
         .collect(Collectors.toList());
     array.addAll(elements);
-    return new FileOnDiskWithChecksum(indexFileName, array.toJSONString().getBytes());
+    return new FileOnDiskWithChecksum(indexFileName, array.toJSONString().getBytes(StandardCharsets.UTF_8));
   }
 }
