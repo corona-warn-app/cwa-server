@@ -9,8 +9,6 @@ spring:
     banner-mode: off
   flyway:
     enabled: true
-    # default case is H2 - value will be overwritten by profile cloud or postgres
-    locations: classpath:db/migration/h2
   datasource:
     url: jdbc:h2:mem:test;MODE=PostgreSQL
     driverClassName: org.h2.Driver
