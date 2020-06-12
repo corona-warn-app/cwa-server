@@ -66,21 +66,20 @@ public class ServerApplication implements EnvironmentAware {
   @Override
   public void setEnvironment(Environment environment) {
     List<String> profiles = Arrays.asList(environment.getActiveProfiles());
+    String neverUseInProduction = "This should never be used in PRODUCTION!";
     if (profiles.contains("disable-ssl-server")) {
-      logger.warn("The submission service is started with endpoint TLS disabled. "
-          + "This should never be used in PRODUCTION!");
+      logger.warn("The submission service is started with endpoint TLS disabled. " + neverUseInProduction);
     }
     if (profiles.contains("disable-ssl-client-postgres")) {
-      logger.warn("The submission service is started with postgres connection TLS disabled. "
-          + "This should never be used in PRODUCTION!");
+      logger.warn("The submission service is started with postgres connection TLS disabled. " + neverUseInProduction);
     }
     if (profiles.contains("disable-ssl-client-verification")) {
       logger.warn("The submission service is started with verification service connection TLS disabled. "
-          + "This should never be used in PRODUCTION!");
+          + neverUseInProduction);
     }
     if (profiles.contains("disable-ssl-client-verification-verify-hostname")) {
       logger.warn("The submission service is started with verification service TLS hostname validation disabled. "
-          + "This should never be used in PRODUCTION!");
+          + neverUseInProduction);
     }
   }
 }
