@@ -32,8 +32,14 @@ import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 
 @Component
-@Profile("!ssl-client-verification")
+@Profile("disable-ssl-client-verification")
 public class DevelopmentFeignClientProvider implements FeignClientProvider {
+
+  private final HostnameVerifierProvider hostnameVerifierProvider;
+
+  public DevelopmentFeignClientProvider(HostnameVerifierProvider hostnameVerifierProvider) {
+    this.hostnameVerifierProvider = hostnameVerifierProvider;
+  }
 
   @Override
   public Client createFeignClient() {
@@ -45,7 +51,8 @@ public class DevelopmentFeignClientProvider implements FeignClientProvider {
    */
   @Bean
   public ApacheHttpClientFactory createHttpClientFactory() {
-    return new DefaultApacheHttpClientFactory(HttpClientBuilder.create());
+    return new DefaultApacheHttpClientFactory(HttpClientBuilder.create()
+        .setSSLHostnameVerifier(this.hostnameVerifierProvider.createHostnameVerifier()));
   }
 
   @Bean

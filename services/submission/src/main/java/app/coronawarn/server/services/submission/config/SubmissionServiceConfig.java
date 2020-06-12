@@ -20,6 +20,7 @@
 
 package app.coronawarn.server.services.submission.config;
 
+import java.io.File;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Component;
 
@@ -35,6 +36,7 @@ public class SubmissionServiceConfig {
   private Payload payload;
   private Verification verification;
   private Monitoring monitoring;
+  private Client client;
 
   public Double getInitialFakeDelayMilliseconds() {
     return initialFakeDelayMilliseconds;
@@ -141,5 +143,75 @@ public class SubmissionServiceConfig {
 
   public void setMonitoringBatchSize(Long batchSize) {
     this.monitoring.setBatchSize(batchSize);
+  }
+
+  public Client getClient() {
+    return client;
+  }
+
+  public void setClient(Client client) {
+    this.client = client;
+  }
+
+  public static class Client {
+
+    private Ssl ssl;
+
+    public Ssl getSsl() {
+      return ssl;
+    }
+
+    public void setSsl(Ssl ssl) {
+      this.ssl = ssl;
+    }
+
+    public static class Ssl {
+
+      private File keyStore;
+      private String keyStorePassword;
+      private String keyPassword;
+      private File trustStore;
+      private String trustStorePassword;
+
+      public File getKeyStore() {
+        return keyStore;
+      }
+
+      public void setKeyStore(File keyStore) {
+        this.keyStore = keyStore;
+      }
+
+      public String getKeyStorePassword() {
+        return keyStorePassword;
+      }
+
+      public void setKeyStorePassword(String keyStorePassword) {
+        this.keyStorePassword = keyStorePassword;
+      }
+
+      public String getKeyPassword() {
+        return keyPassword;
+      }
+
+      public void setKeyPassword(String keyPassword) {
+        this.keyPassword = keyPassword;
+      }
+
+      public File getTrustStore() {
+        return trustStore;
+      }
+
+      public void setTrustStore(File trustStore) {
+        this.trustStore = trustStore;
+      }
+
+      public String getTrustStorePassword() {
+        return trustStorePassword;
+      }
+
+      public void setTrustStorePassword(String trustStorePassword) {
+        this.trustStorePassword = trustStorePassword;
+      }
+    }
   }
 }

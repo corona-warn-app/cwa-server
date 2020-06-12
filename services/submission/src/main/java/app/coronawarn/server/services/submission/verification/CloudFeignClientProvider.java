@@ -20,8 +20,11 @@
 
 package app.coronawarn.server.services.submission.verification;
 
+import app.coronawarn.server.services.submission.config.SubmissionServiceConfig;
+import app.coronawarn.server.services.submission.config.SubmissionServiceConfig.Client.Ssl;
 import feign.Client;
 import feign.httpclient.ApacheHttpClient;
+import java.io.File;
 import java.io.IOException;
 import java.security.GeneralSecurityException;
 import javax.net.ssl.SSLContext;
@@ -33,19 +36,29 @@ import org.springframework.cloud.commons.httpclient.DefaultApacheHttpClientConne
 import org.springframework.cloud.commons.httpclient.DefaultApacheHttpClientFactory;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Profile;
-import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
-import org.springframework.util.ResourceUtils;
 
 @Component
-@Profile("ssl-client-verification")
+@Profile("!disable-ssl-client-verification")
 public class CloudFeignClientProvider implements FeignClientProvider {
 
-  private final Environment environment;
   private final HostnameVerifierProvider hostnameVerifierProvider;
+  private final File keyStore;
+  private final String keyStorePassword;
+  private final String keyPassword;
+  private final File trustStore;
+  private final String trustStorePassword;
 
-  public CloudFeignClientProvider(Environment environment, HostnameVerifierProvider hostnameVerifierProvider) {
-    this.environment = environment;
+  /**
+   * Creates a {@link CloudFeignClientProvider} that provides feign clients with fixed key and trust material.
+   */
+  public CloudFeignClientProvider(SubmissionServiceConfig config, HostnameVerifierProvider hostnameVerifierProvider) {
+    Ssl sslConfig = config.getClient().getSsl();
+    this.keyStore = sslConfig.getKeyStore();
+    this.keyStorePassword = sslConfig.getKeyStorePassword();
+    this.keyPassword = sslConfig.getKeyPassword();
+    this.trustStore = sslConfig.getTrustStore();
+    this.trustStorePassword = sslConfig.getTrustStorePassword();
     this.hostnameVerifierProvider = hostnameVerifierProvider;
   }
 
@@ -56,18 +69,10 @@ public class CloudFeignClientProvider implements FeignClientProvider {
 
   private SSLContext getSslContext() {
     try {
-      String keyStorePath = environment.getProperty("client.ssl.key-store");
-      String keyStorePassword = environment.getProperty("client.ssl.key-store-password");
-      String keyPassword = environment.getProperty("client.ssl.key-password");
-
-      String trustStorePath = environment.getProperty("client.ssl.verification.trust-store");
-      String trustStorePassword = environment.getProperty("client.ssl.verification.trust-store-password");
-
       return SSLContextBuilder
           .create()
-          .loadKeyMaterial(ResourceUtils.getFile(keyStorePath), keyStorePassword.toCharArray(),
-              keyPassword.toCharArray())
-          .loadTrustMaterial(ResourceUtils.getFile(trustStorePath), trustStorePassword.toCharArray())
+          .loadKeyMaterial(this.keyStore, this.keyStorePassword.toCharArray(), this.keyPassword.toCharArray())
+          .loadTrustMaterial(this.trustStore, this.trustStorePassword.toCharArray())
           .build();
     } catch (IOException | GeneralSecurityException e) {
       throw new RuntimeException(e);
