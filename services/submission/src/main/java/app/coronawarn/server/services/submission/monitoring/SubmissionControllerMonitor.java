@@ -38,7 +38,7 @@ public class SubmissionControllerMonitor {
 
   private final MeterRegistry meterRegistry;
 
-  private final Integer batchSize;
+  private final long batchSize;
   private BatchCounter requests;
   private BatchCounter realRequests;
   private BatchCounter fakeRequests;
