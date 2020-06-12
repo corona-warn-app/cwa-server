@@ -18,7 +18,7 @@
  * ---license-end
  */
 
-package app.coronawarn.server.services.distribution.assembly.structure.directory.decorators.indexing;
+package app.coronawarn.server.services.distribution.assembly.structure.directory.decorator.indexing;
 
 import static app.coronawarn.server.services.distribution.common.Helpers.prepareAndWrite;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -28,7 +28,6 @@ import app.coronawarn.server.services.distribution.assembly.structure.directory.
 import app.coronawarn.server.services.distribution.assembly.structure.directory.DirectoryOnDisk;
 import app.coronawarn.server.services.distribution.assembly.structure.directory.IndexDirectory;
 import app.coronawarn.server.services.distribution.assembly.structure.directory.IndexDirectoryOnDisk;
-import app.coronawarn.server.services.distribution.assembly.structure.directory.decorator.indexing.IndexingDecoratorOnDisk;
 import app.coronawarn.server.services.distribution.assembly.structure.file.FileOnDiskWithChecksum;
 import java.io.File;
 import java.io.FileReader;
