@@ -22,6 +22,7 @@ package app.coronawarn.server.services.submission.monitoring;
 
 import io.micrometer.core.instrument.Counter;
 import io.micrometer.core.instrument.MeterRegistry;
+import java.util.concurrent.atomic.AtomicLong;
 
 /**
  * Batch counter for counting requests for monitoring. Counts up in batches, given batch size. This way, single requests
@@ -33,11 +34,11 @@ public class BatchCounter {
   private static final String SUBMISSION_CONTROLLER_REQUESTS_COUNTER_DESCRIPTION
       = "Counts requests to the Submission Controller.";
 
-  private final int batchSize;
+  private final long batchSize;
   private final Counter counter;
-  private Double batch = 0.;
+  private final AtomicLong count = new AtomicLong(0L);
 
-  BatchCounter(MeterRegistry meterRegistry, int batchSize, String type) {
+  BatchCounter(MeterRegistry meterRegistry, long batchSize, String type) {
     this.batchSize = batchSize;
     counter = Counter.builder(SUBMISSION_CONTROLLER_REQUESTS_COUNTER_NAME)
         .tag("type", type)
@@ -50,11 +51,8 @@ public class BatchCounter {
    * counter is incremented.
    */
   public void increment() {
-    if (batch < batchSize) {
-      batch++;
-    } else {
-      counter.increment(batch);
-      batch = 1.;
+    if (0 == count.incrementAndGet() % batchSize) {
+      counter.increment(batchSize);
     }
   }
 }

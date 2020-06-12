@@ -18,7 +18,7 @@
  * ---license-end
  */
 
-package app.coronawarn.server.services.distribution.assembly.structure.directory.decorators;
+package app.coronawarn.server.services.distribution.assembly.structure.directory.decorator;
 
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
@@ -26,7 +26,6 @@ import static org.mockito.Mockito.verify;
 import app.coronawarn.server.services.distribution.assembly.structure.WritableOnDisk;
 import app.coronawarn.server.services.distribution.assembly.structure.directory.Directory;
 import app.coronawarn.server.services.distribution.assembly.structure.directory.DirectoryOnDisk;
-import app.coronawarn.server.services.distribution.assembly.structure.directory.decorator.DirectoryDecorator;
 import app.coronawarn.server.services.distribution.assembly.structure.util.ImmutableStack;
 import org.junit.jupiter.api.Test;
 
