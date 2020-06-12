@@ -170,7 +170,7 @@ Profile                       | Effect
 `testdata`                    | Causes test data to be inserted into the database before each distribution run. By default, around 1000 random diagnosis keys will be generated per hour. If there are no diagnosis keys in the database yet, random keys will be generated for every hour from the beginning of the retention period (14 days ago at 00:00 UTC) until one hour before the present hour. If there are already keys in the database, the random keys will be generated for every hour from the latest diagnosis key in the database (by submission timestamp) until one hour before the present hour (or none at all, if the latest diagnosis key in the database was submitted one hour ago or later).
 `signature-dev`               | Sets the app package ID in the export packages' signature info to `de.rki.coronawarnapp-dev` so that the non-productive/test public key will be used for client-side validation.
 `signature-prod`              | Sets the app package ID in the export packages' signature info to `de.rki.coronawarnapp` so that the productive public key will be used for client-side validation.
-`disable-ssl-client-postgres` | Disables SSL for the connection to the postgres.
+`disable-ssl-client-postgres` | Disables SSL for the connection to the postgres database.
 
 ### Submission
 
@@ -179,7 +179,7 @@ Profile                                           | Effect
 `dev`                                             | Turns the log level to `DEBUG`.
 `cloud`                                           | Removes default values for the `datasource` configuration.
 `disable-ssl-server`                              | Disables SSL for the submission endpoint.
-`disable-ssl-client-postgres`                     | Disables SSL with a pinned certificate for the connection to the postgres.
+`disable-ssl-client-postgres`                     | Disables SSL with a pinned certificate for the connection to the postgres database.
 `disable-ssl-client-verification`                 | Disables SSL with a pinned certificate for the connection to the verification server.
 `disable-ssl-client-verification-verify-hostname` | Disables the verification of the SSL hostname for the connection to the verification server.
 
