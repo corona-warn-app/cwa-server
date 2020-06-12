@@ -1,3 +1,8 @@
+/*
+ * This SQL file needs to be executed when a new CWA database is set up.
+ * It will create the necessary roles & restrict permissions to the CWA scope.
+ */
+
 /* Revoke all default access to the database */
 REVOKE ALL ON DATABASE cwa FROM PUBLIC;
 REVOKE USAGE ON SCHEMA public FROM PUBLIC;

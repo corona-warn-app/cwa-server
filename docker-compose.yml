@@ -60,9 +60,9 @@ services:
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
     volumes:
        - postgres_volume:/data/postgres
-       - ./local-setup/create-roles.sql:/docker-entrypoint-initdb.d/1-roles.sql
+       - ./setup/setup-roles.sql:/docker-entrypoint-initdb.d/1-roles.sql
        - ./local-setup/create-users.sql:/docker-entrypoint-initdb.d/2-users.sql
-       - ./local-setup/enable-test-data.sql:/docker-entrypoint-initdb.d/3-enable-testdata.sql
+       - ./local-setup/enable-test-data-docker-compose.sql:/docker-entrypoint-initdb.d/3-enable-testdata.sql
   pgadmin:
     container_name: pgadmin_container
     image: dpage/pgadmin4
