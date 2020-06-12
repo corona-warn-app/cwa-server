@@ -62,12 +62,12 @@ spring:
       ddl-auto: validate
   flyway:
     enabled: true
-    locations: classpath:db/migration/postgres
-    password: ${POSTGRESQL_PASSWORD_FLYWAY:postgres}
-    user: ${POSTGRESQL_USER_FLYWAY:postgres}
+    locations: classpath:/db/migration, classpath:/db/specific/{vendor}
+    password: ${POSTGRESQL_PASSWORD_FLYWAY:local_setup_flyway}
+    user: ${POSTGRESQL_USER_FLYWAY:local_setup_flyway}
 
   datasource:
     driver-class-name: org.postgresql.Driver
     url: jdbc:postgresql://${POSTGRESQL_SERVICE_HOST:localhost}:${POSTGRESQL_SERVICE_PORT:5432}/${POSTGRESQL_DATABASE:cwa}
-    username: ${POSTGRESQL_USER_DISTRIBUTION:postgres}
-    password: ${POSTGRESQL_PASSWORD_DISTRIBUTION:postgres}
+    username: ${POSTGRESQL_USER_DISTRIBUTION:local_setup_distribution}
+    password: ${POSTGRESQL_PASSWORD_DISTRIBUTION:local_setup_distribution}
