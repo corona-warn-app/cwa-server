@@ -13,7 +13,7 @@ services:
     output-file-name: index
     # The number of days to retain diagnosis keys for both database persistency layer and files stored on the object store.
     retention-days: 14
-    # The number of minutes which diagnosis keys are allowed to be expired for (since submission) before they can be distributed.
+    # The number of minutes that diagnosis keys must have been expired for (since the end of the rolling interval window) before they can be distributed.
     expiry-policy-minutes: 120
     # The minimum number of diagnosis keys per bundle.
     shifting-policy-threshold: 140
@@ -23,11 +23,13 @@ services:
     include-incomplete-days: false
     # Indicates whether the current incomplete hour will be included in the distribution (used for testing purposes).
     include-incomplete-hours: false
+    # Local paths, that are used during the export creation.
     paths:
       # The output path.
       output: out
       # The location of the private key.
       privatekey: ${VAULT_FILESIGNING_SECRET}
+    # Configuration for the exported archive, that is saved on the S3-compatible storage.
     tek-export:
       # The TEK file name included in the zip archive, containing the list of diagnosis keys.
       file-name: export.bin
@@ -35,7 +37,7 @@ services:
       file-header: EK Export v1
       # The fixed (ensured by right whitespace padding) TEK file header width.
       file-header-width: 16
-    # API path parts.
+    # Configuration for the API which is used by the mobile app to query diagnosis keys.
     api:
       version-path: version
       version-v1: v1
@@ -46,6 +48,7 @@ services:
       diagnosis-keys-path: diagnosis-keys
       parameters-path: configuration
       app-config-file-name: app_config
+    # Signature configuration, used for signing the exports.
     signature:
       # The alias with which to identify public key to be used for verification.
       verification-key-id: 262
