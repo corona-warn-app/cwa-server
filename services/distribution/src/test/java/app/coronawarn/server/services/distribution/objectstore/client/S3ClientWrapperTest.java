@@ -129,7 +129,8 @@ class S3ClientWrapperTest {
 
   @Test
   void testGetObjectsSendsCorrectRequest() {
-    when(s3Client.listObjectsV2(any(ListObjectsV2Request.class))).thenReturn(ListObjectsV2Response.builder().build());
+    when(s3Client.listObjectsV2(any(ListObjectsV2Request.class)))
+        .thenReturn(ListObjectsV2Response.builder().isTruncated(false).build());
 
     s3ClientWrapper.getObjects(VALID_BUCKET_NAME, VALID_PREFIX);
 
@@ -150,6 +151,25 @@ class S3ClientWrapperTest {
     assertThat(actResult).isEqualTo(expResult);
   }
 
+  @Test
+  void testContinuationToken() {
+    var continuationToken = "1ueGcxLPRx1Tr/XYExHnhbYLgveDs2J/wm36Hy4vbOwM=<";
+
+    when(s3Client.listObjectsV2(any(ListObjectsV2Request.class)))
+        .thenReturn(ListObjectsV2Response.builder().isTruncated(true).continuationToken(continuationToken).build(),
+            ListObjectsV2Response.builder().isTruncated(false).build());
+
+    s3ClientWrapper.getObjects(VALID_BUCKET_NAME, VALID_PREFIX);
+
+    ListObjectsV2Request continuationRequest = ListObjectsV2Request.builder()
+        .prefix(VALID_PREFIX).bucket(VALID_BUCKET_NAME).continuationToken(continuationToken).build();
+    ListObjectsV2Request noContinuationRequest = ListObjectsV2Request.builder()
+        .prefix(VALID_PREFIX).bucket(VALID_BUCKET_NAME).build();
+
+    verify(s3Client, times(1)).listObjectsV2(eq(continuationRequest));
+    verify(s3Client, times(1)).listObjectsV2(eq(noContinuationRequest));
+  }
+
   private static Stream<Arguments> createGetObjectsResults() {
     return Stream.of(
         Lists.emptyList(),
@@ -163,7 +183,7 @@ class S3ClientWrapperTest {
         s3Object -> software.amazon.awssdk.services.s3.model.S3Object.builder()
             .key(s3Object.getObjectName()))
         .map(SdkBuilder::build).collect(Collectors.toList());
-    return ListObjectsV2Response.builder().contents(responseObjects).build();
+    return ListObjectsV2Response.builder().isTruncated(false).contents(responseObjects).build();
   }
 
   @ParameterizedTest
