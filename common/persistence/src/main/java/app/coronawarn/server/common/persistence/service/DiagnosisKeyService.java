@@ -20,6 +20,7 @@
 
 package app.coronawarn.server.common.persistence.service;
 
+import static app.coronawarn.server.common.persistence.domain.validation.ValidSubmissionTimestampValidator.SECONDS_PER_HOUR;
 import static java.time.ZoneOffset.UTC;
 
 import app.coronawarn.server.common.persistence.domain.DiagnosisKey;
@@ -109,7 +110,7 @@ public class DiagnosisKeyService {
     long threshold = LocalDateTime
         .ofInstant(Instant.now(), UTC)
         .minusDays(daysToRetain)
-        .toEpochSecond(UTC) / 3600L;
+        .toEpochSecond(UTC) / SECONDS_PER_HOUR;
     int numberOfDeletions = keyRepository.deleteBySubmissionTimestampIsLessThanEqual(threshold);
     logger.info("Deleted {} diagnosis key(s) with a submission timestamp older than {} day(s) ago.",
         numberOfDeletions, daysToRetain);

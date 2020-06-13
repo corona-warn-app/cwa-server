@@ -20,17 +20,19 @@
 
 package app.coronawarn.server.common.persistence.domain;
 
+import static app.coronawarn.server.common.persistence.domain.validation.ValidSubmissionTimestampValidator.SECONDS_PER_HOUR;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatCode;
 import static org.assertj.core.api.Assertions.catchThrowable;
-
 import app.coronawarn.server.common.persistence.exception.InvalidDiagnosisKeyException;
 import app.coronawarn.server.common.protocols.external.exposurenotification.TemporaryExposureKey;
 import com.google.protobuf.ByteString;
 import java.nio.charset.StandardCharsets;
+import java.time.Duration;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.ZoneOffset;
+import java.time.temporal.ChronoUnit;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
@@ -189,6 +191,33 @@ class DiagnosisKeyBuilderTest {
         .doesNotThrowAnyException();
   }
 
+  @ParameterizedTest
+  @ValueSource(longs = {-1L, Long.MAX_VALUE})
+  void submissionTimestampMustBeValid(long submissionTimestamp) {
+    assertThat(
+        catchThrowable(() -> keyWithSubmissionTimestamp(submissionTimestamp)))
+        .isInstanceOf(InvalidDiagnosisKeyException.class);
+  }
+
+  @Test
+  void submissionTimestampMustNotBeInTheFuture() {
+    assertThat(catchThrowable(
+        () -> keyWithSubmissionTimestamp(getCurrentHoursSinceEpoch() + 1)))
+            .isInstanceOf(InvalidDiagnosisKeyException.class);
+    assertThat(catchThrowable(() -> keyWithSubmissionTimestamp(
+        Instant.now().getEpochSecond() /* accidentally forgot to divide by SECONDS_PER_HOUR */)))
+            .isInstanceOf(InvalidDiagnosisKeyException.class);
+  }
+
+  @Test
+  void submissionTimestampDoesNotThrowOnValid() {
+    assertThatCode(() -> keyWithSubmissionTimestamp(0L)).doesNotThrowAnyException();
+    assertThatCode(() -> keyWithSubmissionTimestamp(getCurrentHoursSinceEpoch())).doesNotThrowAnyException();
+    assertThatCode(
+        () -> keyWithSubmissionTimestamp(Instant.now().minus(Duration.ofHours(2)).getEpochSecond() / SECONDS_PER_HOUR))
+            .doesNotThrowAnyException();
+  }
+  
   private DiagnosisKey keyWithKeyData(byte[] expKeyData) {
     return DiagnosisKey.builder()
         .withKeyData(expKeyData)
@@ -218,12 +247,20 @@ class DiagnosisKeyBuilderTest {
         .withTransmissionRiskLevel(expTransmissionRiskLevel).build();
   }
 
+  private DiagnosisKey keyWithSubmissionTimestamp(long submissionTimestamp) {
+    return DiagnosisKey.builder()
+        .withKeyData(expKeyData)
+        .withRollingStartIntervalNumber(expRollingStartIntervalNumber)
+        .withTransmissionRiskLevel(expTransmissionRiskLevel)
+        .withSubmissionTimestamp(submissionTimestamp).build();
+  }
+
   private void assertDiagnosisKeyEquals(DiagnosisKey actDiagnosisKey) {
     assertDiagnosisKeyEquals(actDiagnosisKey, getCurrentHoursSinceEpoch());
   }
 
   private long getCurrentHoursSinceEpoch() {
-    return Instant.now().getEpochSecond() / 3600L;
+    return Instant.now().getEpochSecond() / SECONDS_PER_HOUR;
   }
 
   private void assertDiagnosisKeyEquals(DiagnosisKey actDiagnosisKey, long expSubmissionTimestamp) {
