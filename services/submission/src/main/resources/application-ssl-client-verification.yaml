@@ -1,9 +1,0 @@
----
-client:
-  ssl:
-    key-password: ${SSL_SUBMISSION_KEYSTORE_PASSWORD}
-    key-store: ${SSL_SUBMISSION_KEYSTORE_PATH}
-    key-store-password: ${SSL_SUBMISSION_KEYSTORE_PASSWORD}
-    verification:
-      trust-store: ${SSL_VERIFICATION_TRUSTSTORE_PATH}
-      trust-store-password: ${SSL_VERIFICATION_TRUSTSTORE_PASSWORD}

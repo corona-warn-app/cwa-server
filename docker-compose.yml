@@ -11,14 +11,14 @@ services:
       - "8000:8080"
       - "8006:8081"
     environment:
-      SPRING_PROFILES_ACTIVE: dev
+      SPRING_PROFILES_ACTIVE: dev,disable-ssl-server,disable-ssl-client-postgres,disable-ssl-client-verification,disable-ssl-client-verification-verify-hostname
       POSTGRESQL_SERVICE_PORT: '5432'
       POSTGRESQL_SERVICE_HOST: postgres
       POSTGRESQL_DATABASE: ${POSTGRES_DB}
-      POSTGRESQL_PASSWORD_SUBMISION: ${POSTGRES_PASSWORD}
-      POSTGRESQL_USER_SUBMISION: ${POSTGRES_USER}
-      POSTGRESQL_PASSWORD_FLYWAY: ${POSTGRES_PASSWORD}
-      POSTGRESQL_USER_FLYWAY: ${POSTGRES_USER}
+      POSTGRESQL_PASSWORD_SUBMISION: ${POSTGRES_SUBMISSION_PASSWORD}
+      POSTGRESQL_USER_SUBMISION: ${POSTGRES_SUBMISSION_USER}
+      POSTGRESQL_PASSWORD_FLYWAY: ${POSTGRES_FLYWAY_PASSWORD}
+      POSTGRESQL_USER_FLYWAY: ${POSTGRES_FLYWAY_USER}
       VERIFICATION_BASE_URL: http://verification-fake:8004
   distribution:
     build:
@@ -29,14 +29,14 @@ services:
      - objectstore
      - create-bucket
     environment:
-      SPRING_PROFILES_ACTIVE: dev,signature-dev,testdata
+      SPRING_PROFILES_ACTIVE: dev,signature-dev,testdata,disable-ssl-client-postgres
       POSTGRESQL_SERVICE_PORT: '5432'
       POSTGRESQL_SERVICE_HOST: postgres
       POSTGRESQL_DATABASE: ${POSTGRES_DB}
-      POSTGRESQL_PASSWORD_DISTRIBUTION: ${POSTGRES_PASSWORD}
-      POSTGRESQL_USER_DISTRIBUTION: ${POSTGRES_USER}
-      POSTGRESQL_PASSWORD_FLYWAY: ${POSTGRES_PASSWORD}
-      POSTGRESQL_USER_FLYWAY: ${POSTGRES_USER}
+      POSTGRESQL_PASSWORD_DISTRIBUTION: ${POSTGRES_DISTRIBUTION_PASSWORD}
+      POSTGRESQL_USER_DISTRIBUTION: ${POSTGRES_DISTRIBUTION_USER}
+      POSTGRESQL_PASSWORD_FLYWAY: ${POSTGRES_FLYWAY_PASSWORD}
+      POSTGRESQL_USER_FLYWAY: ${POSTGRES_FLYWAY_USER}
       # Settings for the S3 compatible objectstore
       CWA_OBJECTSTORE_ACCESSKEY: ${OBJECTSTORE_ACCESSKEY}
       CWA_OBJECTSTORE_SECRETKEY: ${OBJECTSTORE_SECRETKEY}
@@ -60,6 +60,9 @@ services:
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
     volumes:
        - postgres_volume:/data/postgres
+       - ./setup/setup-roles.sql:/docker-entrypoint-initdb.d/1-roles.sql
+       - ./local-setup/create-users.sql:/docker-entrypoint-initdb.d/2-users.sql
+       - ./local-setup/enable-test-data-docker-compose.sql:/docker-entrypoint-initdb.d/3-enable-testdata.sql
   pgadmin:
     container_name: pgadmin_container
     image: dpage/pgadmin4

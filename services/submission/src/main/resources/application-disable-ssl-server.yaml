@@ -1,0 +1,4 @@
+---
+server:
+  ssl:
+    enabled: false

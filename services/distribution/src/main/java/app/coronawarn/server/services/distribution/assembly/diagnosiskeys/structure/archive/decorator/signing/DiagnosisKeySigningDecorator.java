@@ -18,7 +18,7 @@
  * ---license-end
  */
 
-package app.coronawarn.server.services.distribution.assembly.diagnosiskeys.structure.archive.decorator.singing;
+package app.coronawarn.server.services.distribution.assembly.diagnosiskeys.structure.archive.decorator.signing;
 
 import app.coronawarn.server.services.distribution.assembly.component.CryptoProvider;
 import app.coronawarn.server.services.distribution.assembly.structure.Writable;

@@ -1,4 +1,4 @@
-/*
+/*-
  * ---license-start
  * Corona-Warn-App
  * ---
@@ -8,7 +8,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -18,19 +18,23 @@
  * ---license-end
  */
 
-package app.coronawarn.server.services.submission.verification;
+package io.micrometer.core.instrument;
 
-import javax.net.ssl.HostnameVerifier;
-import org.apache.http.conn.ssl.DefaultHostnameVerifier;
-import org.springframework.context.annotation.Profile;
-import org.springframework.stereotype.Component;
+import io.micrometer.core.instrument.simple.SimpleMeterRegistry;
 
-@Component
-@Profile("!disable-ssl-client-verification-verify-hostname")
-public class DefaultHostnameVerifierProvider implements HostnameVerifierProvider {
+/**
+ * Used to get access to the {@link Counter} instance in BatchCounterTest.
+ */
+public class MeterRegistryMock extends SimpleMeterRegistry {
+
+  final Counter counter;
+
+  public MeterRegistryMock(Counter counter) {
+    this.counter = counter;
+  }
 
   @Override
-  public HostnameVerifier createHostnameVerifier() {
-    return new DefaultHostnameVerifier();
+  Counter counter(Meter.Id id) {
+    return counter;
   }
 }
