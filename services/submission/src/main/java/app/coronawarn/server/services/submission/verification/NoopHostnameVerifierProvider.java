@@ -26,7 +26,7 @@ import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 
 @Component
-@Profile("!ssl-client-verification-verify-hostname")
+@Profile("disable-ssl-client-verification-verify-hostname")
 public class NoopHostnameVerifierProvider implements HostnameVerifierProvider {
 
   @Override

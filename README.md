@@ -97,6 +97,14 @@ To prepare your machine to run the CWA project locally, we recommend that you fi
 * [Postgres]
 * [Zenko CloudServer]
 
+If you are already running a local Postgres, you need to create a database `cwa` and run the following setup scripts:
+
+* Create the different CWA roles first by executing [create-roles.sql](setup/create-roles.sql).
+* Create local database users for the specific roles by running [create-users.sql](./local-setup/create-users.sql).
+* It is recommended to also run [enable-test-data-docker-compose.sql](./local-setup/enable-test-data-docker-compose.sql)
+, which enables the test data generation profile. If you already had CWA running before and an existing `diagnosis-key`
+table on your database, you need to run [enable-test-data.sql](./local-setup/enable-test-data.sql) instead.
+
 You can also use `docker-compose` to start Postgres and Zenko. If you do that, you have to
 set the following environment-variables when running the Spring project:
 
@@ -105,12 +113,14 @@ For the distribution module:
 ```bash
 POSTGRESQL_SERVICE_PORT=8001
 VAULT_FILESIGNING_SECRET=</path/to/your/private_key>
+SPRING_PROFILES_ACTIVE=signature-dev,disable-ssl-client-postgres
 ```
 
 For the submission module:
 
 ```bash
 POSTGRESQL_SERVICE_PORT=8001
+SPRING_PROFILES_ACTIVE=disable-ssl-server,disable-ssl-client-postgres,disable-ssl-client-verification,disable-ssl-client-verification-verify-hostname
 ```
 
 #### Configure
@@ -151,8 +161,8 @@ To be able to set breakpoints (e.g. in IntelliJ), it may be necessary to use the
 
 The API that is being exposed by the backend services is documented in an [OpenAPI](https://www.openapis.org/) specification. The specification files are available at the following locations:
 
-Service      | OpenAPI Specification
--------------|-------------
+Service                   | OpenAPI Specification
+--------------------------|-------------
 Submission Service        | [services/submission/api_v1.json](https://github.com/corona-warn-app/cwa-server/raw/master/services/submission/api_v1.json)
 Distribution Service      | [services/distribution/api_v1.json](https://github.com/corona-warn-app/cwa-server/raw/master/services/distribution/api_v1.json)
 
@@ -160,15 +170,15 @@ Distribution Service      | [services/distribution/api_v1.json](https://github.c
 
 ### Distribution
 
-Profile               | Effect
-----------------------|-------------
-`dev`                 | Turns the log level to `DEBUG`.
-`cloud`               | Removes default values for the `datasource` and `objectstore` configurations.
-`demo`                | Includes incomplete days and hours into the distribution run, thus creating aggregates for the current day and the current hour (and including both in the respective indices). When running multiple distributions in one hour with this profile, the date aggregate for today and the hours aggregate for the current hour will be updated and overwritten. This profile also turns off the expiry policy (Keys must be expired for at least 2 hours before distribution) and the shifting policy (there must be at least 140 keys in a distribution).
-`testdata`            | Causes test data to be inserted into the database before each distribution run. By default, around 1000 random diagnosis keys will be generated per hour. If there are no diagnosis keys in the database yet, random keys will be generated for every hour from the beginning of the retention period (14 days ago at 00:00 UTC) until one hour before the present hour. If there are already keys in the database, the random keys will be generated for every hour from the latest diagnosis key in the database (by submission timestamp) until one hour before the present hour (or none at all, if the latest diagnosis key in the database was submitted one hour ago or later).
-`signature-dev`       | Sets the app package ID in the export packages' signature info to `de.rki.coronawarnapp-dev` so that the non-productive/test public key will be used for client-side validation.
-`signature-prod`      | Sets the app package ID in the export packages' signature info to `de.rki.coronawarnapp` so that the productive public key will be used for client-side validation.
-`ssl-client-postgres` | Enforces SSL with a pinned certificate for the connection to the postgres (see [here](https://github.com/corona-warn-app/cwa-server/blob/master/services/distribution/src/main/resources/application-ssl-client-postgres.yaml)).
+Profile                       | Effect
+------------------------------|-------------
+`dev`                         | Turns the log level to `DEBUG`.
+`cloud`                       | Removes default values for the `datasource` and `objectstore` configurations.
+`demo`                        | Includes incomplete days and hours into the distribution run, thus creating aggregates for the current day and the current hour (and including both in the respective indices). When running multiple distributions in one hour with this profile, the date aggregate for today and the hours aggregate for the current hour will be updated and overwritten. This profile also turns off the expiry policy (Keys must be expired for at least 2 hours before distribution) and the shifting policy (there must be at least 140 keys in a distribution).
+`testdata`                    | Causes test data to be inserted into the database before each distribution run. By default, around 1000 random diagnosis keys will be generated per hour. If there are no diagnosis keys in the database yet, random keys will be generated for every hour from the beginning of the retention period (14 days ago at 00:00 UTC) until one hour before the present hour. If there are already keys in the database, the random keys will be generated for every hour from the latest diagnosis key in the database (by submission timestamp) until one hour before the present hour (or none at all, if the latest diagnosis key in the database was submitted one hour ago or later).
+`signature-dev`               | Sets the app package ID in the export packages' signature info to `de.rki.coronawarnapp-dev` so that the non-productive/test public key will be used for client-side validation.
+`signature-prod`              | Sets the app package ID in the export packages' signature info to `de.rki.coronawarnapp` so that the productive public key will be used for client-side validation.
+`disable-ssl-client-postgres` | Disables SSL for the connection to the postgres database.
 
 ### Submission
 
