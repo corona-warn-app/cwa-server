@@ -60,7 +60,7 @@ public class SubmissionController {
   public static final String SUBMISSION_ROUTE = "/diagnosis-keys";
 
   private final SubmissionControllerMonitor submissionControllerMonitor;
-  private final ScheduledExecutorService scheduledExecutor = Executors.newSingleThreadScheduledExecutor();
+  private final ScheduledExecutorService scheduledExecutor = Executors.newScheduledThreadPool(4);
   private final DiagnosisKeyService diagnosisKeyService;
   private final TanVerifier tanVerifier;
   private final Double fakeDelayMovingAverageSamples;
