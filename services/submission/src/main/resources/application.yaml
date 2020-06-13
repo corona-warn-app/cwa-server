@@ -15,6 +15,7 @@ services:
     fake-delay-moving-average-samples: 10
     # The retention threshold for acceptable diagnosis keys during submission.
     retention-days: 14
+    # The ApacheHttpClient's connection pool size.
     connection-pool-size: 200
     payload:
       # The maximum number of keys accepted for any submission.
