@@ -58,11 +58,11 @@ public class CwaApiStructureProvider {
   public Directory<WritableOnDisk> getDirectory() {
     IndexDirectoryOnDisk<String> versionDirectory =
         new IndexDirectoryOnDisk<>(distributionServiceConfig.getApi().getVersionPath(),
-            __ -> Set.of(distributionServiceConfig.getApi().getVersionV1()), Object::toString);
+            ignoredValue -> Set.of(distributionServiceConfig.getApi().getVersionV1()), Object::toString);
 
     versionDirectory
-        .addWritableToAll(__ -> appConfigurationStructureProvider.getAppConfiguration());
-    versionDirectory.addWritableToAll(__ -> diagnosisKeysStructureProvider.getDiagnosisKeys());
+        .addWritableToAll(ignoredValue -> appConfigurationStructureProvider.getAppConfiguration());
+    versionDirectory.addWritableToAll(ignoredValue -> diagnosisKeysStructureProvider.getDiagnosisKeys());
 
     return new IndexingDecoratorOnDisk<>(versionDirectory, distributionServiceConfig.getOutputFileName());
   }

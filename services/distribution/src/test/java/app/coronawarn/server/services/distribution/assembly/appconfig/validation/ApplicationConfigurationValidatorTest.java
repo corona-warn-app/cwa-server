@@ -55,9 +55,8 @@ class ApplicationConfigurationValidatorTest {
 
   @Test
   void circular() {
-    assertThatThrownBy(() -> {
-      loadApplicationConfiguration("configtests/app-config_circular.yaml");
-    }).isInstanceOf(UnableToLoadFileException.class);
+    assertThatThrownBy(() -> loadApplicationConfiguration("configtests/app-config_circular.yaml"))
+      .isInstanceOf(UnableToLoadFileException.class);
   }
 
   private ValidationResult getResultForTest(TestWithExpectedResult test)

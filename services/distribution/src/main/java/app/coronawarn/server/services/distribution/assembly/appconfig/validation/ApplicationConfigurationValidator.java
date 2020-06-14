@@ -60,7 +60,7 @@ public class ApplicationConfigurationValidator extends ConfigurationValidator {
   private void validateMinRisk() {
     int minLevel = this.config.getMinRiskScore();
 
-    if (!RiskScoreValidator.isInBounds(minLevel)) {
+    if (!RiskScoreValidator.isWithinBounds(minLevel)) {
       this.errors.add(new ValidationError("min-risk-score", minLevel, VALUE_OUT_OF_BOUNDS));
     }
   }

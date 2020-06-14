@@ -73,6 +73,7 @@ class IndexingDecoratorTest {
     java.io.File actualIndexDirectoryFile = Objects.requireNonNull(outputFile.listFiles())[0];
     java.io.File actualPhysicalFile = Stream.of(actualIndexDirectoryFile)
         .map(File::listFiles)
+        .filter(Objects::nonNull)
         .flatMap(Arrays::stream)
         .filter(File::isFile)
         .filter(file -> !FileOnDiskWithChecksum.isChecksumFile(file.toPath()))
