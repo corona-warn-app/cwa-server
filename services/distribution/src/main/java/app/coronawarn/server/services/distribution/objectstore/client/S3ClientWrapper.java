@@ -20,6 +20,7 @@
 
 package app.coronawarn.server.services.distribution.objectstore.client;
 
+import static java.lang.Boolean.TRUE;
 import static java.util.stream.Collectors.toList;
 
 import java.nio.file.Path;
@@ -80,17 +81,17 @@ public class S3ClientWrapper implements ObjectStoreClient {
   public List<S3Object> getObjects(String bucket, String prefix) {
     logRetryStatus("object download");
     List<S3Object> allS3Objects = new ArrayList<>();
-    ListObjectsV2Request request = ListObjectsV2Request.builder().prefix(prefix).bucket(bucket).build();
-    ListObjectsV2Response response;
+    String continuationToken = null;
 
     do {
-      response = s3Client.listObjectsV2(request);
+      ListObjectsV2Request request =
+          ListObjectsV2Request.builder().prefix(prefix).bucket(bucket).continuationToken(continuationToken).build();
+      ListObjectsV2Response response = s3Client.listObjectsV2(request);
       response.contents().stream()
           .map(s3Object -> buildS3Object(s3Object, bucket))
           .forEach(allS3Objects::add);
-      request = ListObjectsV2Request.builder().prefix(prefix).bucket(bucket)
-          .continuationToken(response.continuationToken()).build();
-    } while (response.isTruncated());
+      continuationToken = TRUE.equals(response.isTruncated()) ? response.continuationToken() : null;
+    } while (continuationToken != null);
 
     return allS3Objects;
   }
