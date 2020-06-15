@@ -25,15 +25,18 @@ import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.any;
 import static org.mockito.Mockito.atLeastOnce;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import app.coronawarn.server.services.distribution.config.DistributionServiceConfig;
 import app.coronawarn.server.services.distribution.objectstore.client.ObjectStoreClient;
 import app.coronawarn.server.services.distribution.objectstore.client.ObjectStoreClient.HeaderKey;
+import app.coronawarn.server.services.distribution.objectstore.client.S3Object;
 import app.coronawarn.server.services.distribution.objectstore.publish.LocalFile;
 import java.io.File;
 import java.nio.file.Path;
+import java.util.List;
 import java.util.Map;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -110,5 +113,37 @@ class ObjectStoreAccessUnitTest {
     verify(objectStoreClient, atLeastOnce())
         .putObject(eq(expBucketName), eq(EXP_S3_KEY), eq(expPath), headers.capture());
     Assertions.assertThat(headers.getValue()).contains(expHeader);
+  }
+
+  @Test
+  void putObjectSetsSpecifiedFileChecksum() {
+    when(testLocalFile.getChecksum()).thenReturn("test-hash");
+
+    ArgumentCaptor<Map<HeaderKey, String>> headers = ArgumentCaptor.forClass(Map.class);
+    var expHash = "test-hash";
+    var expHeader = entry(HeaderKey.CWA_HASH, expHash);
+
+    objectStoreAccess.putObject(testLocalFile);
+
+    verify(objectStoreClient, atLeastOnce())
+        .putObject(eq(expBucketName), eq(EXP_S3_KEY), eq(expPath), headers.capture());
+    Assertions.assertThat(headers.getValue()).contains(expHeader);
+  }
+
+  @Test
+  void shouldDeleteMatchingFiles() {
+    var fileToDelete1 = new S3Object("test-file-1");
+    var fileToDelete2 = new S3Object("test-file-2");
+    var fileToDelete3 = new S3Object("test-file-3");
+
+    var filesToDelete = List.of(fileToDelete1, fileToDelete2, fileToDelete3);
+    var filesToDeleteObjectName = List
+        .of(fileToDelete1.getObjectName(), fileToDelete2.getObjectName(), fileToDelete3.getObjectName());
+
+    when(objectStoreClient.getObjects(any(), any())).thenReturn(filesToDelete);
+
+    objectStoreAccess.deleteObjectsWithPrefix("");
+
+    verify(objectStoreClient, times(1)).removeObjects(eq(expBucketName), eq(filesToDeleteObjectName));
   }
 }
