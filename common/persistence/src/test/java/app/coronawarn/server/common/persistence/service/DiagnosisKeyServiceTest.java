@@ -21,6 +21,8 @@
 package app.coronawarn.server.common.persistence.service;
 
 import static app.coronawarn.server.common.persistence.service.DiagnosisKeyServiceTestHelper.assertDiagnosisKeysEqual;
+import static app.coronawarn.server.common.persistence.service.DiagnosisKeyServiceTestHelper.buildDiagnosisKeyForDateTime;
+import static app.coronawarn.server.common.persistence.service.DiagnosisKeyServiceTestHelper.buildDiagnosisKeyForSubmissionTimestamp;
 import static java.time.ZoneOffset.UTC;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatCode;
@@ -33,7 +35,6 @@ import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Random;
 import org.assertj.core.util.Lists;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;
@@ -170,20 +171,5 @@ class DiagnosisKeyServiceTest {
 
     assertThat(actKeys.size()).isEqualTo(1);
     assertThat(actKeys.iterator().next().getTransmissionRiskLevel()).isEqualTo(2);
-  }
-
-  public static DiagnosisKey buildDiagnosisKeyForSubmissionTimestamp(long submissionTimeStamp) {
-    byte[] randomBytes = new byte[16];
-    Random random = new Random(submissionTimeStamp);
-    random.nextBytes(randomBytes);
-    return DiagnosisKey.builder()
-        .withKeyData(randomBytes)
-        .withRollingStartIntervalNumber(600)
-        .withTransmissionRiskLevel(2)
-        .withSubmissionTimestamp(submissionTimeStamp).build();
-  }
-
-  public static DiagnosisKey buildDiagnosisKeyForDateTime(OffsetDateTime dateTime) {
-    return buildDiagnosisKeyForSubmissionTimestamp(dateTime.toEpochSecond() / 3600);
   }
 }
