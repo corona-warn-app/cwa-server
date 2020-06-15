@@ -60,7 +60,7 @@ public class SubmissionController {
   public static final String SUBMISSION_ROUTE = "/diagnosis-keys";
 
   private final SubmissionControllerMonitor submissionControllerMonitor;
-  private final ScheduledExecutorService scheduledExecutor = Executors.newSingleThreadScheduledExecutor();
+  private final ScheduledExecutorService scheduledExecutor = Executors.newScheduledThreadPool(4);
   private final DiagnosisKeyService diagnosisKeyService;
   private final TanVerifier tanVerifier;
   private final Double fakeDelayMovingAverageSamples;
@@ -113,20 +113,21 @@ public class SubmissionController {
   private DeferredResult<ResponseEntity<Void>> buildRealDeferredResult(SubmissionPayload exposureKeys, String tan) {
     DeferredResult<ResponseEntity<Void>> deferredResult = new DeferredResult<>();
 
+    StopWatch stopWatch = new StopWatch();
+    stopWatch.start();
     try {
-      StopWatch stopWatch = new StopWatch();
-      stopWatch.start();
       if (!this.tanVerifier.verifyTan(tan)) {
         submissionControllerMonitor.incrementInvalidTanRequestCounter();
         deferredResult.setResult(buildTanInvalidResponseEntity());
       } else {
         persistDiagnosisKeysPayload(exposureKeys);
         deferredResult.setResult(buildSuccessResponseEntity());
-        stopWatch.stop();
-        updateFakeDelay(stopWatch.getTotalTimeMillis());
       }
     } catch (Exception e) {
       deferredResult.setErrorResult(e);
+    } finally {
+      stopWatch.stop();
+      updateFakeDelay(stopWatch.getTotalTimeMillis());
     }
 
     return deferredResult;
