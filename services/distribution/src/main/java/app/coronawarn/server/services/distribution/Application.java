@@ -59,7 +59,7 @@ public class Application implements EnvironmentAware {
   public static void main(String[] args) {
     SpringApplication.run(Application.class);
 
-    // Manual shutdown hook needed to avoid Log4j shutdown issues (see cwa-server/#)
+    // Manual shutdown hook needed to avoid Log4j shutdown issues (see cwa-server/#589)
     Runtime.getRuntime().addShutdownHook(new Thread(() -> {
       try {
         logger.info("Shutting down log4j2.");
