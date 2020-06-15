@@ -33,7 +33,7 @@ public class RiskScoreValidator {
    * Validates the bounds of a risk score value.
    *
    * @param value the risk score value
-   * @return true if is in bounds, false otherwise
+   * @return true if value is within bounds, false otherwise
    */
   public static boolean isWithinBounds(int value) {
     return ParameterSpec.RISK_SCORE_MIN <= value && value <= ParameterSpec.RISK_SCORE_MAX;
