@@ -109,6 +109,18 @@ class TanVerifierTest {
   }
 
   @Test
+  void checkTooLongTan() {
+    server.stubFor(
+        post(urlEqualTo(verificationPath))
+            .withHeader(CONTENT_TYPE, equalTo(MediaType.APPLICATION_JSON.toString()))
+            .willReturn(aResponse().withStatus(HttpStatus.NOT_FOUND.value())));
+
+    boolean tanVerificationResponse = tanVerifier.verifyTan(randomUUID + randomUUID);
+
+    assertThat(tanVerificationResponse).isFalse();
+  }
+
+  @Test
   void checkInternalServerError() {
     server.stubFor(
         post(urlEqualTo(verificationPath))
