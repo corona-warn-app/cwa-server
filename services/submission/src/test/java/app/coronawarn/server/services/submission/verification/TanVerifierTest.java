@@ -115,7 +115,7 @@ class TanVerifierTest {
             .withHeader(CONTENT_TYPE, equalTo(MediaType.APPLICATION_JSON.toString()))
             .willReturn(aResponse().withStatus(HttpStatus.NOT_FOUND.value())));
 
-    boolean tanVerificationResponse = tanVerifier.verifyTan(randomUUID+randomUUID);
+    boolean tanVerificationResponse = tanVerifier.verifyTan(randomUUID + randomUUID);
 
     assertThat(tanVerificationResponse).isFalse();
   }
