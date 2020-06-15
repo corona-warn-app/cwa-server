@@ -23,6 +23,7 @@ package app.coronawarn.server.services.distribution;
 import app.coronawarn.server.services.distribution.config.DistributionServiceConfig;
 import java.util.Arrays;
 import java.util.List;
+import org.apache.logging.log4j.LogManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.SpringApplication;
@@ -50,8 +51,23 @@ public class Application implements EnvironmentAware {
 
   private static final Logger logger = LoggerFactory.getLogger(Application.class);
 
+  /**
+   * The application's entry point.
+   *
+   * @param args command-line arguments for the application (unused).
+   */
   public static void main(String[] args) {
     SpringApplication.run(Application.class);
+
+    // Manual shutdown hook needed to avoid Log4j shutdown issues (see cwa-server/#)
+    Runtime.getRuntime().addShutdownHook(new Thread(() -> {
+      try {
+        logger.info("Shutting down log4j2.");
+        LogManager.shutdown();
+      } catch (Exception e) {
+        logger.warn("Unable to shutdown log4j2.", e);
+      }
+    }));
   }
 
   /**
