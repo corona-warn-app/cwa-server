@@ -57,7 +57,8 @@ public class TanVerifier {
 
       return verifyWithVerificationService(tan);
     } catch (IllegalArgumentException e) {
-      logger.error("TAN Syntax check failed for TAN: {}", tanString.trim());
+      logger.error("TAN Syntax check failed for TAN: {}, length: {}",
+          tanString.substring(0, Math.min(36, tanString.length())), tanString.length());
       return false;
     }
   }
