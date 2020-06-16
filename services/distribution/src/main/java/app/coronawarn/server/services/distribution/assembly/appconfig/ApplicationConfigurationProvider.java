@@ -30,28 +30,11 @@ import app.coronawarn.server.common.protocols.internal.ApplicationConfiguration;
  *   <li>Risk Score Classification</li>
  *   <li>App Config, e.g. minimum risk threshold</li>
  * </ul>
- *
- * <p>The application config is fetched from the master-config folder.</p>
  */
 public class ApplicationConfigurationProvider {
 
-  /**
-   * The location of the exposure configuration master file.
-   */
-  public static final String MASTER_FILE = "master-config/app-config.yaml";
-
   private ApplicationConfigurationProvider() {
 
-  }
-
-  /**
-   * Fetches the master configuration as a ApplicationConfiguration instance.
-   *
-   * @return the exposure configuration as ApplicationConfiguration
-   * @throws UnableToLoadFileException when the file/transformation did not succeed
-   */
-  public static ApplicationConfiguration readMasterFile() throws UnableToLoadFileException {
-    return readFile(MASTER_FILE);
   }
 
   /**

@@ -51,6 +51,7 @@ services:
       retry-backoff: 1
       max-number-of-failed-operations: 5
       max-number-of-s3-threads: 2
+    app-configuration-parameters-file: master-config/app-config.yaml
 spring:
   main:
     banner-mode: off

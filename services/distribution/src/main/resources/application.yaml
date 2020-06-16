@@ -79,6 +79,8 @@ services:
       max-number-of-failed-operations: 5
       # The ThreadPoolTaskExecutor's maximum thread pool size.
       max-number-of-s3-threads: 4
+    # The location of the app configuration parameters file on the classpath
+    app-configuration-parameters-file: master-config/app-config.yaml
 
 spring:
   main:
