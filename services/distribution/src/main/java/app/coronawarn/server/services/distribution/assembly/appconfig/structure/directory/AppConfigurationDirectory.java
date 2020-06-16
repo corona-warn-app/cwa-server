@@ -83,8 +83,7 @@ public class AppConfigurationDirectory extends DirectoryOnDisk {
     try {
       ApplicationConfiguration appConfig = ApplicationConfigurationProvider.readMasterFile();
       ConfigurationValidator validator = new ApplicationConfigurationValidator(appConfig);
-      addArchiveIfMessageValid(distributionServiceConfig.getApi().getAppConfigFileName(),
-          appConfig, validator);
+      addArchiveIfMessageValid(distributionServiceConfig.getApi().getAppConfigFileName(), appConfig, validator);
     } catch (UnableToLoadFileException e) {
       logger.error("Exposure configuration will not be published! Unable to read configuration file from disk.", e);
     }
@@ -98,8 +97,9 @@ public class AppConfigurationDirectory extends DirectoryOnDisk {
     ValidationResult validationResult = validator.validate();
 
     if (validationResult.hasErrors()) {
-      logger.error("App configuration file creation failed. Validation failed for {}./n{}",
+      logger.error("App configuration file creation failed. Validation failed for {}, {}",
           archiveName, validationResult);
+      return;
     }
 
     ArchiveOnDisk appConfigurationFile = new ArchiveOnDisk(archiveName);
