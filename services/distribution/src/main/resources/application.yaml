@@ -9,20 +9,35 @@ logging:
 
 services:
   distribution:
+    # The name of the distribution output file.
     output-file-name: index
+    # The number of days to retain diagnosis keys for both database persistency layer and files stored on the object store.
     retention-days: 14
+    # The number of minutes that diagnosis keys must have been expired for (since the end of the rolling interval window) before they can be distributed.
     expiry-policy-minutes: 120
+    # The minimum number of diagnosis keys per bundle.
     shifting-policy-threshold: 140
+    # The maximum number of keys per bundle.
     maximum-number-of-keys-per-bundle: 600000
+    # Indicates whether the current incomplete day will be included in the distribution (used for testing purposes).
     include-incomplete-days: false
+    # Indicates whether the current incomplete hour will be included in the distribution (used for testing purposes).
     include-incomplete-hours: false
+    # Local paths, that are used during the export creation.
     paths:
+      # The output path.
       output: out
+      # The location of the private key.
       privatekey: ${VAULT_FILESIGNING_SECRET}
+    # Configuration for the exported archive, that is saved on the S3-compatible storage.
     tek-export:
+      # The TEK file name included in the zip archive, containing the list of diagnosis keys.
       file-name: export.bin
+      # The TEK file header.
       file-header: EK Export v1
+      # The fixed (ensured by right whitespace padding) TEK file header width.
       file-header-width: 16
+    # Configuration for the API which is used by the mobile app to query diagnosis keys.
     api:
       version-path: version
       version-v1: v1
@@ -33,30 +48,42 @@ services:
       diagnosis-keys-path: diagnosis-keys
       parameters-path: configuration
       app-config-file-name: app_config
+    # Signature configuration, used for signing the exports.
     signature:
+      # The alias with which to identify public key to be used for verification.
       verification-key-id: 262
+      # The key version for rollovers.
       verification-key-version: v1
+      # The ASN.1 OID for algorithm identifier.
       algorithm-oid: 1.2.840.10045.4.3.2
+      # The algorithm name.
       algorithm-name: SHA256withECDSA
+      # The signature file name included in the zip archive.
       file-name: export.sig
+      # The security provider.
       security-provider: BC
-    # Configuration for the S3 compatible object storage hosted by Telekom in Germany
+    # Configuration for the S3 compatible object storage hosted by Telekom in Germany.
     objectstore:
       access-key: ${CWA_OBJECTSTORE_ACCESSKEY:accessKey1}
       secret-key: ${CWA_OBJECTSTORE_SECRETKEY:verySecretKey1}
       endpoint: ${CWA_OBJECTSTORE_ENDPOINT:http://localhost}
       bucket: ${CWA_OBJECTSTORE_BUCKET:cwa}
       port: ${CWA_OBJECTSTORE_PORT:8003}
+      # Indicates whether the S3 Access Control List (ACL) header should be set to 'public-read' on put object.
       set-public-read-acl-on-put-object: true
+      # The number of maximum retry attempts used for configuring Spring @Retryable annotation.
       retry-attempts: 3
+      # The backoff period in milliseconds used for configuring Spring @Retryable annotation.
       retry-backoff: 2000
+      # The maximum number of failed operations before giving up.
       max-number-of-failed-operations: 5
+      # The ThreadPoolTaskExecutor's maximum thread pool size.
       max-number-of-s3-threads: 4
 
 spring:
   main:
     web-application-type: NONE
-# Postgres configuration
+  # Postgres configuration
   jpa:
     hibernate:
       ddl-auto: validate

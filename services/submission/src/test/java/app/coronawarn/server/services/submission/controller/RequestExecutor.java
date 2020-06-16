@@ -29,6 +29,7 @@ import java.net.URI;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.util.Collection;
+import java.util.Collections;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -43,21 +44,25 @@ import org.springframework.stereotype.Component;
  */
 @Component
 public class RequestExecutor {
+
   public static final String VALID_KEY_DATA_1 = "testKey111111111";
   public static final String VALID_KEY_DATA_2 = "testKey222222222";
   public static final String VALID_KEY_DATA_3 = "testKey333333333";
   private static final URI SUBMISSION_URL = URI.create("/version/v1/diagnosis-keys");
+
   private final TestRestTemplate testRestTemplate;
 
   public RequestExecutor(TestRestTemplate testRestTemplate) {
     this.testRestTemplate = testRestTemplate;
   }
 
-  public ResponseEntity<Void> executeRequest(Collection<TemporaryExposureKey> keys, HttpHeaders headers) {
+  public ResponseEntity<Void> execute(HttpMethod method, RequestEntity<SubmissionPayload> requestEntity) {
+    return testRestTemplate.exchange(SUBMISSION_URL, method, requestEntity, Void.class);
+  }
+
+  public ResponseEntity<Void> executePost(Collection<TemporaryExposureKey> keys, HttpHeaders headers) {
     SubmissionPayload body = SubmissionPayload.newBuilder().addAllKeys(keys).build();
-    RequestEntity<SubmissionPayload> request =
-        new RequestEntity<>(body, headers, HttpMethod.POST, SUBMISSION_URL);
-    return testRestTemplate.postForEntity(SUBMISSION_URL, request, Void.class);
+    return execute(HttpMethod.POST, new RequestEntity<>(body, headers, HttpMethod.POST, SUBMISSION_URL));
   }
 
   public static HttpHeaders buildOkHeaders() {
@@ -94,5 +99,9 @@ public class RequestExecutor {
         .ofInstant(Instant.now(), UTC)
         .minusDays(daysAgo).atStartOfDay()
         .toEpochSecond(UTC) / (60 * 10));
+  }
+
+  public static Collection<TemporaryExposureKey> buildPayloadWithOneKey() {
+    return Collections.singleton(buildTemporaryExposureKey(VALID_KEY_DATA_1, 1, 3));
   }
 }
