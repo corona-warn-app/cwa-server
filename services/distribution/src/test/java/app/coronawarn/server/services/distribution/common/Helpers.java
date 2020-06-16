@@ -68,7 +68,7 @@ public class Helpers {
         .collect(Collectors.toList());
   }
 
-  public static Set<String> getFiles(java.io.File root, String basePath) {
+  public static Set<String> getFilePaths(java.io.File root, String basePath) {
     Set<String> files = Arrays.stream(Objects.requireNonNull(root.listFiles()))
         .filter(File::isFile)
         .map(File::getAbsolutePath)
@@ -80,7 +80,7 @@ public class Helpers {
         .collect(Collectors.toSet());
 
     Set<String> subFiles = directories.stream()
-        .map(subDirectory -> getFiles(subDirectory, basePath))
+        .map(subDirectory -> getFilePaths(subDirectory, basePath))
         .flatMap(Set::stream)
         .collect(Collectors.toSet());
 

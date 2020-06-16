@@ -21,7 +21,7 @@
 package app.coronawarn.server.services.distribution.assembly.diagnosiskeys.structure.directory;
 
 import static app.coronawarn.server.services.distribution.common.Helpers.buildDiagnosisKeys;
-import static app.coronawarn.server.services.distribution.common.Helpers.getFiles;
+import static app.coronawarn.server.services.distribution.common.Helpers.getFilePaths;
 import static java.lang.String.join;
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -107,7 +107,7 @@ class DiagnosisKeysDirectoryTest {
         join(s, "diagnosis-keys", "country", "DE", "date", "index")
     );
 
-    Set<String> actualFiles = getFiles(outputFile, outputFile.getAbsolutePath());
+    Set<String> actualFiles = getFilePaths(outputFile, outputFile.getAbsolutePath());
 
     assertThat(actualFiles).isEqualTo(amendWithChecksumFiles(expectedFiles));
   }
@@ -162,7 +162,7 @@ class DiagnosisKeysDirectoryTest {
         join(s, "diagnosis-keys", "country", "DE", "date", "1970-01-04", "hour", "5", "index")
     );
 
-    Set<String> actualFiles = getFiles(outputFile, outputFile.getAbsolutePath());
+    Set<String> actualFiles = getFilePaths(outputFile, outputFile.getAbsolutePath());
 
     assertThat(actualFiles).isEqualTo(amendWithChecksumFiles(expectedFiles));
   }
