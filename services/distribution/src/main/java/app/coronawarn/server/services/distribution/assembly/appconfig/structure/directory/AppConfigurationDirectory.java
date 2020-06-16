@@ -21,10 +21,6 @@
 package app.coronawarn.server.services.distribution.assembly.appconfig.structure.directory;
 
 import app.coronawarn.server.common.protocols.internal.ApplicationConfiguration;
-import app.coronawarn.server.common.protocols.internal.ApplicationVersionConfiguration;
-import app.coronawarn.server.common.protocols.internal.AttenuationDuration;
-import app.coronawarn.server.common.protocols.internal.RiskScoreClassification;
-import app.coronawarn.server.common.protocols.internal.RiskScoreParameters;
 import app.coronawarn.server.services.distribution.assembly.appconfig.ApplicationConfigurationProvider;
 import app.coronawarn.server.services.distribution.assembly.appconfig.UnableToLoadFileException;
 import app.coronawarn.server.services.distribution.assembly.appconfig.structure.archive.decorator.signing.AppConfigurationSigningDecorator;
@@ -44,13 +40,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Creates the directory structure {@code /configuration/country/:country} and writes the following five files,
- * wrapped in a signed zip archive:
- * 1. File containing minimum risk score
- * 2. File containing {@link RiskScoreParameters}
- * 3. File containing {@link RiskScoreClassification}
- * 4. File containing {@link AttenuationDuration}
- * 5. File containing {@link ApplicationVersionConfiguration}
+ * Creates the directory structure {@code /configuration/country/:country} and writes the app configuration parameters
+ * into a zip file.
  */
 public class AppConfigurationDirectory extends DirectoryOnDisk {
 
