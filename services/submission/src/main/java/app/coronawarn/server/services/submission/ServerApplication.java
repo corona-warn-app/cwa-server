@@ -73,18 +73,18 @@ public class ServerApplication implements EnvironmentAware {
     }
     if (profiles.contains("disable-ssl-client-postgres")) {
       logger.warn(
-          "The submission service is started with postgres connection TLS disabled. This should never be used in"
-              + "PRODUCTION!");
+          "The submission service is started with postgres connection TLS disabled. "
+              + "This should never be used in PRODUCTION!");
     }
     if (profiles.contains("disable-ssl-client-verification")) {
       logger.warn(
-          "The submission service is started with verification service connection TLS disabled. This should never be"
-              + "used in PRODUCTION!");
+          "The submission service is started with verification service connection TLS disabled. "
+              + "This should never be used in PRODUCTION!");
     }
     if (profiles.contains("disable-ssl-client-verification-verify-hostname")) {
       logger.warn(
-          "The submission service is started with verification service TLS hostname validation disabled. This should"
-              + "never be used in PRODUCTION!");
+          "The submission service is started with verification service TLS hostname validation disabled. "
+              + "This should never be used in PRODUCTION!");
     }
   }
 }
