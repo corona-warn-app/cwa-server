@@ -23,12 +23,7 @@ package app.coronawarn.server.services.distribution.assembly.appconfig.structure
 import static java.io.File.separator;
 import static java.lang.String.join;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 
-import app.coronawarn.server.common.protocols.external.exposurenotification.SignatureInfo;
-import app.coronawarn.server.services.distribution.assembly.appconfig.ApplicationConfigurationProvider;
-import app.coronawarn.server.services.distribution.assembly.appconfig.UnableToLoadFileException;
 import app.coronawarn.server.services.distribution.assembly.appconfig.structure.directory.AppConfigurationDirectory;
 import app.coronawarn.server.services.distribution.assembly.component.CryptoProvider;
 import app.coronawarn.server.services.distribution.assembly.structure.WritableOnDisk;
@@ -37,17 +32,13 @@ import app.coronawarn.server.services.distribution.assembly.structure.directory.
 import app.coronawarn.server.services.distribution.assembly.structure.util.ImmutableStack;
 import app.coronawarn.server.services.distribution.common.Helpers;
 import app.coronawarn.server.services.distribution.config.DistributionServiceConfig;
-import app.coronawarn.server.services.distribution.config.DistributionServiceConfig.Api;
-import app.coronawarn.server.services.distribution.config.DistributionServiceConfig.Signature;
 import java.io.File;
 import java.io.IOException;
 import java.util.Set;
 import org.junit.Rule;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.rules.TemporaryFolder;
-import org.powermock.api.mockito.PowerMockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.ConfigFileApplicationContextInitializer;
@@ -62,8 +53,6 @@ class AppConfigurationDirectoryTest {
 
   @Rule
   private TemporaryFolder outputFolder = new TemporaryFolder();
-  private File outputFile;
-  private AppConfigurationDirectory configurationDirectory;
 
   @Autowired
   CryptoProvider cryptoProvider;
@@ -71,27 +60,24 @@ class AppConfigurationDirectoryTest {
   @Autowired
   DistributionServiceConfig distributionServiceConfig;
 
-  @BeforeEach
-  void setup() throws IOException {
+  @Test
+  void createsCorrectFiles() throws IOException {
     outputFolder.create();
-    outputFile = outputFolder.newFolder();
-    configurationDirectory = new AppConfigurationDirectory(cryptoProvider, distributionServiceConfig);
+    File outputFile = outputFolder.newFolder();
+    AppConfigurationDirectory configurationDirectory =
+        new AppConfigurationDirectory(cryptoProvider, distributionServiceConfig);
     Directory<WritableOnDisk> parentDirectory = new DirectoryOnDisk(outputFile);
     parentDirectory.addWritable(configurationDirectory);
-  }
 
-  @Test
-  void createsCorrectFiles() {
     configurationDirectory.prepare(new ImmutableStack<>());
     configurationDirectory.write();
+    Set<String> actFiles = Helpers.getFiles(outputFile, outputFile.getAbsolutePath());
 
     Set<String> expFiles = Set.of(
         join(separator, "configuration", "country", "index"),
         join(separator, "configuration", "country", "index.checksum"),
         join(separator, "configuration", "country", "DE", "app_config"),
         join(separator, "configuration", "country", "DE", "app_config.checksum"));
-
-    Set<String> actFiles = Helpers.getFiles(outputFile, outputFile.getAbsolutePath());
 
     assertThat(actFiles).isEqualTo(expFiles);
   }
