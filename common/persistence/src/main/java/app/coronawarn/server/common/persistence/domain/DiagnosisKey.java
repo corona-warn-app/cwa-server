@@ -24,6 +24,7 @@ import static java.time.ZoneOffset.UTC;
 
 import app.coronawarn.server.common.persistence.domain.DiagnosisKeyBuilders.Builder;
 import app.coronawarn.server.common.persistence.domain.validation.ValidRollingStartIntervalNumber;
+import app.coronawarn.server.common.persistence.domain.validation.ValidSubmissionTimestamp;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.util.Arrays;
@@ -70,6 +71,7 @@ public class DiagnosisKey {
   @Range(min = 0, max = 8, message = "Risk level must be between 0 and 8.")
   private int transmissionRiskLevel;
 
+  @ValidSubmissionTimestamp
   private long submissionTimestamp;
 
   protected DiagnosisKey() {

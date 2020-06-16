@@ -41,16 +41,16 @@ days_since_last_exposure:
   ge_14_days: 5
   ge_12_lt_14_days: 5
   ge_10_lt_12_days: 5
-  ge_8_lt_10_days: 4
-  ge_6_lt_8_days: 4
-  ge_4_lt_6_days: 4
-  ge_2_lt_4_days: 4
-  ge_0_lt_2_days: 4
+  ge_8_lt_10_days: 5
+  ge_6_lt_8_days: 5
+  ge_4_lt_6_days: 5
+  ge_2_lt_4_days: 5
+  ge_0_lt_2_days: 5
 
 attenuation:
   gt_73_dbm: 0
-  gt_63_le_73_dbm: 0
-  gt_51_le_63_dbm: 0
+  gt_63_le_73_dbm: 1
+  gt_51_le_63_dbm: 1
   gt_33_le_51_dbm: 1
   gt_27_le_33_dbm: 1
   gt_15_le_27_dbm: 1
