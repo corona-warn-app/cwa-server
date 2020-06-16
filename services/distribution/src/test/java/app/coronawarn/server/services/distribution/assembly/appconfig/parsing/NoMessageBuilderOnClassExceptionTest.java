@@ -18,30 +18,23 @@
  * ---license-end
  */
 
-package app.coronawarn.server.services.submission;
+package app.coronawarn.server.services.distribution.assembly.appconfig.parsing;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
-import app.coronawarn.server.services.submission.controller.SubmissionController;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.boot.test.web.client.TestRestTemplate;
-import org.springframework.test.context.ActiveProfiles;
+import org.yaml.snakeyaml.nodes.Node;
 
-@SpringBootTest
-@ActiveProfiles({ "disable-ssl-client-verification", "disable-ssl-client-verification-verify-hostname" })
-class ServerApplicationTests {
-
-  @Autowired
-  private SubmissionController controller;
-
-  @MockBean
-  private TestRestTemplate testRestTemplate;
+class NoMessageBuilderOnClassExceptionTest {
 
   @Test
-  void contextLoads() {
-    assertThat(this.controller).isNotNull();
+  void testCorrectMessage() {
+    Node node = mock(Node.class);
+    Class expType = String.class;
+    when(node.getType()).thenReturn(expType);
+    NoMessageBuilderOnClassException actException = new NoMessageBuilderOnClassException(node);
+    assertThat(actException.getMessage()).isEqualTo("No Message.Builder on class: " + expType.getSimpleName());
   }
 }
