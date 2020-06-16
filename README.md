@@ -174,14 +174,7 @@ See [Distribution Service - Spring Profiles](/docs/DISTRIBUTION.md#spring-profil
 
 ### Submission
 
-Profile                                           | Effect
---------------------------------------------------|-------------
-`dev`                                             | Turns the log level to `DEBUG`.
-`cloud`                                           | Removes default values for the `datasource` configuration.
-`disable-ssl-server`                              | Disables SSL for the submission endpoint.
-`disable-ssl-client-postgres`                     | Disables SSL with a pinned certificate for the connection to the postgres database.
-`disable-ssl-client-verification`                 | Disables SSL with a pinned certificate for the connection to the verification server.
-`disable-ssl-client-verification-verify-hostname` | Disables the verification of the SSL hostname for the connection to the verification server.
+See [Submission Service - Spring Profiles](/docs/SUBMISSION.md#spring-profiles).
 
 ## Documentation
 
