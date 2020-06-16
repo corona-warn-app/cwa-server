@@ -31,6 +31,8 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import app.coronawarn.server.services.distribution.config.DistributionServiceConfig;
+import app.coronawarn.server.services.distribution.config.DistributionServiceConfig.Api;
 import app.coronawarn.server.services.distribution.objectstore.client.ObjectStoreOperationFailedException;
 import app.coronawarn.server.services.distribution.objectstore.client.S3Object;
 import java.io.IOException;
@@ -43,12 +45,17 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.boot.test.context.ConfigFileApplicationContextInitializer;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.core.io.ResourceLoader;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
+import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
+@EnableConfigurationProperties(value = DistributionServiceConfig.class)
 @ExtendWith(SpringExtension.class)
+@ContextConfiguration(classes = {Api.class}, initializers = ConfigFileApplicationContextInitializer.class)
 class S3PublisherTest {
 
   private static final S3Object FILE_1 = new S3Object("file1.txt", "cf7fb1ca5c32adc0941c35a6f7fc5eba");
@@ -64,6 +71,9 @@ class S3PublisherTest {
   @Autowired
   private ResourceLoader resourceLoader;
 
+  @Autowired
+  private DistributionServiceConfig distributionServiceConfig;
+
   private ThreadPoolTaskExecutor executor;
   private Path publishingPath;
   private S3Publisher s3Publisher;
@@ -76,7 +86,8 @@ class S3PublisherTest {
     executor.setCorePoolSize(1);
     executor.initialize();
     executor = spy(executor);
-    s3Publisher = new S3Publisher(objectStoreAccess, failedObjectStoreOperationsCounter, executor);
+    s3Publisher = new S3Publisher(objectStoreAccess, failedObjectStoreOperationsCounter, executor,
+        distributionServiceConfig);
   }
 
   @Test
