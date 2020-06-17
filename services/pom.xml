@@ -143,6 +143,11 @@
       <plugin>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-maven-plugin</artifactId>
+        <configuration>
+          <jvmArguments>
+            -Djdk.tls.namedGroups="secp256r1, secp384r1, brainpoolP256r1, brainpoolP384r1, brainpoolP512r1, ffdhe2048, ffdhe3072, ffdhe4096"
+          </jvmArguments>
+        </configuration>
       </plugin>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
