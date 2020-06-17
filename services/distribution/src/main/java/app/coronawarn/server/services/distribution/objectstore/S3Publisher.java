@@ -20,7 +20,7 @@
 
 package app.coronawarn.server.services.distribution.objectstore;
 
-import app.coronawarn.server.services.distribution.assembly.component.CwaApiStructureProvider;
+import app.coronawarn.server.services.distribution.config.DistributionServiceConfig;
 import app.coronawarn.server.services.distribution.objectstore.client.ObjectStoreOperationFailedException;
 import app.coronawarn.server.services.distribution.objectstore.publish.LocalFile;
 import app.coronawarn.server.services.distribution.objectstore.publish.PublishFileSet;
@@ -37,8 +37,7 @@ import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.stereotype.Component;
 
 /**
- * Publishes a folder on the disk to S3 while keeping the folder and file structure.<br>
- * Moreover, does the following:
+ * Publishes a folder on the disk to S3 while keeping the folder and file structure.<br> Moreover, does the following:
  * <br>
  * <ul>
  *   <li>Publishes index files on a different route, removing the trailing "/index" part.</li>
@@ -55,29 +54,28 @@ public class S3Publisher {
 
   private static final Logger logger = LoggerFactory.getLogger(S3Publisher.class);
 
-  /**
-   * The default CWA root folder, which contains all CWA related files.
-   */
-  private static final String CWA_S3_ROOT = CwaApiStructureProvider.VERSION_DIRECTORY;
-
   private final ObjectStoreAccess objectStoreAccess;
   private final FailedObjectStoreOperationsCounter failedOperationsCounter;
   private final ThreadPoolTaskExecutor executor;
+  private final DistributionServiceConfig distributionServiceConfig;
 
   /**
    * Creates an {@link S3Publisher} instance that attempts to publish the files at the specified location to an object
    * store. Object store operations are performed through the specified {@link ObjectStoreAccess} instance.
    *
-   * @param objectStoreAccess       The {@link ObjectStoreAccess} used to communicate with the object store.
-   * @param failedOperationsCounter The {@link FailedObjectStoreOperationsCounter} that is used to monitor the number of
-   *                                failed operations.
-   * @param executor                The executor that manages the upload task submission.
+   * @param objectStoreAccess         The {@link ObjectStoreAccess} used to communicate with the object store.
+   * @param failedOperationsCounter   The {@link FailedObjectStoreOperationsCounter} that is used to monitor the number
+   *                                  of failed operations.
+   * @param executor                  The executor that manages the upload task submission.
+   * @param distributionServiceConfig The {@link DistributionServiceConfig} used for distribution service
+   *                                  configuration.
    */
   public S3Publisher(ObjectStoreAccess objectStoreAccess, FailedObjectStoreOperationsCounter failedOperationsCounter,
-      ThreadPoolTaskExecutor executor) {
+      ThreadPoolTaskExecutor executor, DistributionServiceConfig distributionServiceConfig) {
     this.objectStoreAccess = objectStoreAccess;
     this.failedOperationsCounter = failedOperationsCounter;
     this.executor = executor;
+    this.distributionServiceConfig = distributionServiceConfig;
   }
 
   /**
@@ -92,7 +90,8 @@ public class S3Publisher {
     List<LocalFile> diff;
 
     try {
-      published = new PublishedFileSet(objectStoreAccess.getObjectsWithPrefix(CWA_S3_ROOT));
+      published = new PublishedFileSet(
+          objectStoreAccess.getObjectsWithPrefix(distributionServiceConfig.getApi().getVersionPath()));
       diff = toPublish
           .stream()
           .filter(published::isNotYetPublished)
