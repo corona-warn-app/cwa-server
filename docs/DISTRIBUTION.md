@@ -35,7 +35,7 @@ AllUsers.
 
 #### `cwa-hash`
 
-Custom header, which adds the SHA-256 hash of the archive contents. This header is used to determine, whether a file
+Custom header, which adds the MD5 hash of the archive contents. This header is used to determine, whether a file
 should be uploaded or not. If the hash for the file is the same as the hash available on the S3 compatible storage it
 will not be uploaded, since the contents of that specific file did not change, so there is no need to re-upload the
 file. If the hash differs, or the file is not available on the S3 compatible storage the file will be uploaded.
