@@ -40,7 +40,7 @@ should be uploaded or not. If the hash for the file is the same as the hash avai
 will not be uploaded, since the contents of that specific file did not change, so there is no need to re-upload the
 file. If the hash differs, or the file is not available on the S3 compatible storage the file will be uploaded.
 
-This header is needed, since it is not possible to create byte-identical archives, due to the signing algorithms.
+This header is needed, since it is not possible to create byte-identical archives when using ECDSA, since it is non-deterministic.
 
 ### Threading
 
