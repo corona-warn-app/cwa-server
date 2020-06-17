@@ -20,7 +20,11 @@
 
 package app.coronawarn.server.services.distribution.common;
 
+import static app.coronawarn.server.services.distribution.assembly.appconfig.YamlLoader.loadYamlIntoProtobufBuilder;
+
 import app.coronawarn.server.common.persistence.domain.DiagnosisKey;
+import app.coronawarn.server.common.protocols.internal.ApplicationConfiguration;
+import app.coronawarn.server.services.distribution.assembly.appconfig.UnableToLoadFileException;
 import app.coronawarn.server.services.distribution.assembly.structure.directory.Directory;
 import app.coronawarn.server.services.distribution.assembly.structure.util.ImmutableStack;
 import java.io.File;
@@ -86,5 +90,9 @@ public class Helpers {
 
     files.addAll(subFiles);
     return files;
+  }
+
+  public static ApplicationConfiguration loadApplicationConfiguration(String path) throws UnableToLoadFileException {
+    return loadYamlIntoProtobufBuilder(path, ApplicationConfiguration.Builder.class).build();
   }
 }

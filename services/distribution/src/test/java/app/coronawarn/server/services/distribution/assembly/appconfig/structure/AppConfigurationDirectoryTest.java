@@ -20,13 +20,14 @@
 
 package app.coronawarn.server.services.distribution.assembly.appconfig.structure;
 
+import static app.coronawarn.server.services.distribution.common.Helpers.loadApplicationConfiguration;
 import static java.io.File.separator;
 import static java.lang.String.join;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.reset;
-import static org.mockito.Mockito.spy;
 
+import app.coronawarn.server.common.protocols.internal.ApplicationConfiguration;
+import app.coronawarn.server.services.distribution.assembly.appconfig.ApplicationConfigurationPublicationConfig;
+import app.coronawarn.server.services.distribution.assembly.appconfig.UnableToLoadFileException;
 import app.coronawarn.server.services.distribution.assembly.appconfig.structure.directory.AppConfigurationDirectory;
 import app.coronawarn.server.services.distribution.assembly.component.CryptoProvider;
 import app.coronawarn.server.services.distribution.assembly.structure.WritableOnDisk;
@@ -39,7 +40,6 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Set;
 import org.junit.Rule;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.rules.TemporaryFolder;
@@ -51,26 +51,21 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 @EnableConfigurationProperties(value = DistributionServiceConfig.class)
 @ExtendWith(SpringExtension.class)
-@ContextConfiguration(classes = {CryptoProvider.class}, initializers = ConfigFileApplicationContextInitializer.class)
+@ContextConfiguration(classes = {CryptoProvider.class, ApplicationConfigurationPublicationConfig.class},
+    initializers = ConfigFileApplicationContextInitializer.class)
 class AppConfigurationDirectoryTest {
 
   @Rule
   private TemporaryFolder outputFolder = new TemporaryFolder();
 
-  private final CryptoProvider cryptoProvider;
-  private final DistributionServiceConfig distributionServiceConfigSpy;
-
-  @BeforeEach
-  void setup() throws IOException {
-    reset(distributionServiceConfigSpy);
-    outputFolder.create();
-  }
+  @Autowired
+  private CryptoProvider cryptoProvider;
 
   @Autowired
-  AppConfigurationDirectoryTest(DistributionServiceConfig distributionServiceConfig, CryptoProvider cryptoProvider) {
-    this.distributionServiceConfigSpy = spy(distributionServiceConfig);
-    this.cryptoProvider = cryptoProvider;
-  }
+  private DistributionServiceConfig distributionServiceConfigSpy;
+
+  @Autowired
+  private ApplicationConfiguration applicationConfiguration;
 
   @Test
   void createsCorrectFiles() throws IOException {
@@ -80,37 +75,27 @@ class AppConfigurationDirectoryTest {
         join(separator, "configuration", "country", "DE", "app_config"),
         join(separator, "configuration", "country", "DE", "app_config.checksum"));
 
-    assertThat(writeDirectoryAndGetFiles()).isEqualTo(expFiles);
+    assertThat(writeDirectoryAndGetFiles(applicationConfiguration)).isEqualTo(expFiles);
   }
 
   @Test
-  void doesNotWriteAppConfigIfValidationFails() throws IOException {
-    doReturn("configtests/app-config_mrs_negative.yaml").when(distributionServiceConfigSpy)
-        .getAppConfigurationParametersFile();
+  void doesNotWriteAppConfigIfValidationFails() throws IOException, UnableToLoadFileException {
+    ApplicationConfiguration invalidConfiguration =
+        loadApplicationConfiguration("configtests/app-config_mrs_negative.yaml");
 
     Set<String> expFiles = Set.of(
         join(separator, "configuration", "country", "index"),
         join(separator, "configuration", "country", "index.checksum"));
 
-    assertThat(writeDirectoryAndGetFiles()).isEqualTo(expFiles);
+    assertThat(writeDirectoryAndGetFiles(invalidConfiguration)).isEqualTo(expFiles);
   }
 
-  @Test
-  void doesNotWriteAppConfigIfUnableToLoadFile() throws IOException {
-    doReturn("invalidPath").when(distributionServiceConfigSpy).getAppConfigurationParametersFile();
-
-    Set<String> expFiles = Set.of(
-        join(separator, "configuration", "country", "index"),
-        join(separator, "configuration", "country", "index.checksum"));
-
-    assertThat(writeDirectoryAndGetFiles()).isEqualTo(expFiles);
-  }
-
-  private Set<String> writeDirectoryAndGetFiles() throws IOException {
+  private Set<String> writeDirectoryAndGetFiles(ApplicationConfiguration applicationConfiguration) throws IOException {
+    outputFolder.create();
     File outputFile = outputFolder.newFolder();
     Directory<WritableOnDisk> parentDirectory = new DirectoryOnDisk(outputFile);
     AppConfigurationDirectory configurationDirectory =
-        new AppConfigurationDirectory(cryptoProvider, distributionServiceConfigSpy);
+        new AppConfigurationDirectory(applicationConfiguration, cryptoProvider, distributionServiceConfigSpy);
     parentDirectory.addWritable(configurationDirectory);
 
     configurationDirectory.prepare(new ImmutableStack<>());
