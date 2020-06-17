@@ -72,8 +72,7 @@ public class AppConfigurationDirectory extends DirectoryOnDisk {
 
   private void addApplicationConfigurationIfValid() {
     try {
-      ApplicationConfiguration appConfig =
-          ApplicationConfigurationProvider.readFile(distributionServiceConfig.getAppConfigurationParametersFile());
+      ApplicationConfiguration appConfig = ApplicationConfigurationProvider.readMasterFile();
       ConfigurationValidator validator = new ApplicationConfigurationValidator(appConfig);
       addArchiveIfMessageValid(distributionServiceConfig.getApi().getAppConfigFileName(), appConfig, validator);
     } catch (UnableToLoadFileException e) {

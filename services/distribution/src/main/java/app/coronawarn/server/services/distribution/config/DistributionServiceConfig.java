@@ -41,7 +41,6 @@ public class DistributionServiceConfig {
   private Signature signature;
   private Api api;
   private ObjectStore objectStore;
-  private String appConfigurationParametersFile;
 
   public Paths getPaths() {
     return paths;
@@ -470,13 +469,5 @@ public class DistributionServiceConfig {
     public void setMaxNumberOfS3Threads(Integer maxNumberOfS3Threads) {
       this.maxNumberOfS3Threads = maxNumberOfS3Threads;
     }
-  }
-
-  public String getAppConfigurationParametersFile() {
-    return appConfigurationParametersFile;
-  }
-
-  public void setAppConfigurationParametersFile(String appConfigurationParametersFile) {
-    this.appConfigurationParametersFile = appConfigurationParametersFile;
   }
 }
