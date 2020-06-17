@@ -33,7 +33,6 @@ class YamlLoaderTest {
   @Test
   void okFile() throws UnableToLoadFileException {
     var result = loadApplicationConfiguration("configtests/app-config_ok.yaml");
-
     assertThat(result).withFailMessage("File is null, indicating loading failed").isNotNull();
   }
 
