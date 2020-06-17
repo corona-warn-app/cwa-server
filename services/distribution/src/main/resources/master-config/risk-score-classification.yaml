@@ -1,10 +1,10 @@
 # This is the Risk Score Classification master file which partitions the risk
-# score value range (0-255) into distinct risk classes that will be used to by
+# score value range (0-72) into distinct risk classes that will be used to by
 # the app in order to present the correct risk classification in a user
 # friendly manner, based on the underlying total risk score, to the user.
 #
 # The risk classes must not overlap and
-# cover the full risk score value range (0-255).
+# cover the full risk score value range (0-72).
 #
 # Change this file with caution!
 

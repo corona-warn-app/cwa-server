@@ -20,6 +20,7 @@
 
 package app.coronawarn.server.services.distribution.assembly.appconfig;
 
+import static app.coronawarn.server.services.distribution.common.Helpers.loadApplicationConfiguration;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 
@@ -27,11 +28,11 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 
-class ApplicationConfigurationProviderTest {
+class YamlLoaderTest {
 
   @Test
   void okFile() throws UnableToLoadFileException {
-    var result = ApplicationConfigurationProvider.readFile("configtests/app-config_ok.yaml");
+    var result = loadApplicationConfiguration("configtests/app-config_ok.yaml");
     assertThat(result).withFailMessage("File is null, indicating loading failed").isNotNull();
   }
 
@@ -43,7 +44,6 @@ class ApplicationConfigurationProviderTest {
       "file_does_not_exist_anywhere.yaml"
   })
   void throwsLoadFailure(String fileName) {
-    assertThatExceptionOfType(UnableToLoadFileException.class)
-        .isThrownBy(() -> ApplicationConfigurationProvider.readFile(fileName));
+    assertThatExceptionOfType(UnableToLoadFileException.class).isThrownBy(() -> loadApplicationConfiguration(fileName));
   }
 }

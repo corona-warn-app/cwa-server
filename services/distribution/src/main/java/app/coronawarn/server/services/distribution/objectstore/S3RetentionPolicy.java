@@ -58,7 +58,8 @@ public class S3RetentionPolicy {
    * @param retentionDays the number of days, that files should be retained on S3.
    */
   public void applyRetentionPolicy(int retentionDays) {
-    List<S3Object> diagnosisKeysObjects = objectStoreAccess.getObjectsWithPrefix("version/v1/"
+    List<S3Object> diagnosisKeysObjects = objectStoreAccess.getObjectsWithPrefix(api.getVersionPath() + "/"
+        + api.getVersionV1() + "/"
         + api.getDiagnosisKeysPath() + "/"
         + api.getCountryPath() + "/"
         + api.getCountryGermany() + "/"
