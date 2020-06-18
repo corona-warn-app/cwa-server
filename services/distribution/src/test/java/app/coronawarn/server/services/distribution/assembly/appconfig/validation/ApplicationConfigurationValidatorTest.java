@@ -24,10 +24,10 @@ import static app.coronawarn.server.services.distribution.assembly.appconfig.val
 import static app.coronawarn.server.services.distribution.assembly.appconfig.validation.ParameterSpec.RISK_SCORE_MIN;
 import static app.coronawarn.server.services.distribution.assembly.appconfig.validation.RiskScoreClassificationValidatorTest.buildError;
 import static app.coronawarn.server.services.distribution.assembly.appconfig.validation.ValidationError.ErrorType.VALUE_OUT_OF_BOUNDS;
+import static app.coronawarn.server.services.distribution.common.Helpers.loadApplicationConfiguration;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-import app.coronawarn.server.services.distribution.assembly.appconfig.ApplicationConfigurationProvider;
 import app.coronawarn.server.services.distribution.assembly.appconfig.UnableToLoadFileException;
 import java.util.stream.Stream;
 import org.junit.jupiter.api.Test;
@@ -56,13 +56,13 @@ class ApplicationConfigurationValidatorTest {
   @Test
   void circular() {
     assertThatThrownBy(() -> {
-      ApplicationConfigurationProvider.readFile("configtests/app-config_circular.yaml");
+      loadApplicationConfiguration("configtests/app-config_circular.yaml");
     }).isInstanceOf(UnableToLoadFileException.class);
   }
 
   private ValidationResult getResultForTest(TestWithExpectedResult test)
       throws UnableToLoadFileException {
-    var config = ApplicationConfigurationProvider.readFile(test.path());
+    var config = loadApplicationConfiguration(test.path());
     var validator = new ApplicationConfigurationValidator(config);
     return validator.validate();
   }

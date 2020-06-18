@@ -1,5 +1,4 @@
 FROM maven:3.6.3-jdk-11 as build
-
 ARG WORK_DIR=/build
 
 # copy the pom and config files first (which do not change very often)
@@ -28,4 +27,5 @@ FROM gcr.io/distroless/java:11
 COPY --from=build /DpkgHelper.java .
 COPY --from=build /usr/sap/submission-service/submission.jar .
 RUN ["java", "DpkgHelper.java"]
+USER 65534:65534
 CMD ["submission.jar"]
