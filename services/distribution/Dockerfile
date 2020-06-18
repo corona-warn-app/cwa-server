@@ -28,4 +28,5 @@ FROM gcr.io/distroless/java:11
 COPY --from=build /DpkgHelper.java .
 COPY --from=build /usr/sap/distribution-service/distribution.jar .
 RUN ["java", "DpkgHelper.java"]
+USER 65534:65534
 CMD ["distribution.jar"]
