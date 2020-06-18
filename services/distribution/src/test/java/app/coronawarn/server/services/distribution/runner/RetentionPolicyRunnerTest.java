@@ -20,24 +20,18 @@
 
 package app.coronawarn.server.services.distribution.runner;
 
-import static org.mockito.Mockito.doNothing;
-import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
 
 import app.coronawarn.server.common.persistence.service.DiagnosisKeyService;
-import app.coronawarn.server.services.distribution.Application;
 import app.coronawarn.server.services.distribution.config.DistributionServiceConfig;
 import app.coronawarn.server.services.distribution.objectstore.S3RetentionPolicy;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.ConfigFileApplicationContextInitializer;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.context.ApplicationContext;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
@@ -52,12 +46,6 @@ public class RetentionPolicyRunnerTest {
   @MockBean
   S3RetentionPolicy s3RetentionPolicy;
 
-  @MockBean
-  ApplicationContext applicationContext;
-
-  @MockBean
-  Application application;
-
   @Autowired
   DistributionServiceConfig distributionServiceConfig;
 
@@ -71,17 +59,5 @@ public class RetentionPolicyRunnerTest {
 
     verify(diagnosisKeyService, times(1)).applyRetentionPolicy(distributionServiceConfig.getRetentionDays());
     verify(s3RetentionPolicy, times(1)).applyRetentionPolicy(distributionServiceConfig.getRetentionDays());
-  }
-
-  @Test
-  void shouldExitIfDiagnosisKeyServiceThrows() {
-
-    doNothing().when(application);
-    Application.killApplication(applicationContext);
-
-    doThrow(new IllegalArgumentException()).when(diagnosisKeyService)
-        .applyRetentionPolicy(distributionServiceConfig.getRetentionDays());
-
-    retentionPolicy.run(null);
   }
 }

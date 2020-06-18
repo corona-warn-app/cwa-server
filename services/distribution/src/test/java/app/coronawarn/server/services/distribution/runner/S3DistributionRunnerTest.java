@@ -55,10 +55,13 @@ public class S3DistributionRunnerTest {
   @Test
   void shouldPublishCorrectFolder() throws IOException {
     var outputPath = Paths.get("test", "mock", "folder");
+    var outputFile = new java.io.File(String.valueOf(outputPath));
 
-    when(outputDirectoryProvider.getFileOnDisk().toPath().toAbsolutePath()).thenReturn(outputPath);
+    when(outputDirectoryProvider.getFileOnDisk()).thenReturn(outputFile);
 
-    verify(s3Publisher, times(1)).publish(outputPath);
+    s3Distribution.run(null);
+
+    verify(s3Publisher, times(1)).publish(outputPath.toAbsolutePath());
   }
 
 }
