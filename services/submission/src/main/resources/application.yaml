@@ -28,6 +28,8 @@ services:
       batch-size: 5
 
 spring:
+  transaction:
+    default-timeout: 20
   jpa:
     hibernate:
       ddl-auto: validate
