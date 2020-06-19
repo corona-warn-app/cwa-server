@@ -25,16 +25,12 @@ import app.coronawarn.server.common.persistence.service.DiagnosisKeyService;
 import app.coronawarn.server.common.protocols.external.exposurenotification.TemporaryExposureKey;
 import app.coronawarn.server.common.protocols.internal.SubmissionPayload;
 import app.coronawarn.server.services.submission.config.SubmissionServiceConfig;
-import app.coronawarn.server.services.submission.monitoring.SubmissionControllerMonitor;
+import app.coronawarn.server.services.submission.monitoring.SubmissionMonitor;
 import app.coronawarn.server.services.submission.validation.ValidSubmissionPayload;
 import app.coronawarn.server.services.submission.verification.TanVerifier;
 import io.micrometer.core.annotation.Timed;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
-import org.apache.commons.math3.distribution.PoissonDistribution;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
@@ -59,55 +55,37 @@ public class SubmissionController {
    */
   public static final String SUBMISSION_ROUTE = "/diagnosis-keys";
 
-  private final SubmissionControllerMonitor submissionControllerMonitor;
-  private final ScheduledExecutorService scheduledExecutor = Executors.newScheduledThreadPool(4);
+  private final SubmissionMonitor submissionMonitor;
   private final DiagnosisKeyService diagnosisKeyService;
   private final TanVerifier tanVerifier;
-  private final Double fakeDelayMovingAverageSamples;
   private final Integer retentionDays;
-  private Double fakeDelay;
+  private final FakeDelayManager fakeDelayManager;
 
-  SubmissionController(DiagnosisKeyService diagnosisKeyService, TanVerifier tanVerifier,
-      SubmissionServiceConfig submissionServiceConfig, SubmissionControllerMonitor submissionControllerMonitor) {
+  SubmissionController(
+      DiagnosisKeyService diagnosisKeyService, TanVerifier tanVerifier, FakeDelayManager fakeDelayManager,
+      SubmissionServiceConfig submissionServiceConfig, SubmissionMonitor submissionMonitor) {
     this.diagnosisKeyService = diagnosisKeyService;
     this.tanVerifier = tanVerifier;
-    this.submissionControllerMonitor = submissionControllerMonitor;
-    fakeDelay = submissionServiceConfig.getInitialFakeDelayMilliseconds();
-    fakeDelayMovingAverageSamples = submissionServiceConfig.getFakeDelayMovingAverageSamples();
+    this.submissionMonitor = submissionMonitor;
+    this.fakeDelayManager = fakeDelayManager;
     retentionDays = submissionServiceConfig.getRetentionDays();
-    submissionControllerMonitor.initializeGauges(this);
   }
 
   /**
    * Handles diagnosis key submission requests.
    *
    * @param exposureKeys The unmarshalled protocol buffers submission payload.
-   * @param fake         A header flag, marking fake requests.
    * @param tan          A tan for diagnosis verification.
    * @return An empty response body.
    */
-  @PostMapping(SUBMISSION_ROUTE)
+  @PostMapping(value = SUBMISSION_ROUTE, headers = {"cwa-fake=0"})
   @Timed(description = "Time spent handling submission.")
   public DeferredResult<ResponseEntity<Void>> submitDiagnosisKey(
       @ValidSubmissionPayload @RequestBody SubmissionPayload exposureKeys,
-      @RequestHeader("cwa-fake") Integer fake,
       @RequestHeader("cwa-authorization") String tan) {
-    submissionControllerMonitor.incrementRequestCounter();
-    if (fake != 0) {
-      submissionControllerMonitor.incrementFakeRequestCounter();
-      return buildFakeDeferredResult();
-    } else {
-      submissionControllerMonitor.incrementRealRequestCounter();
-      return buildRealDeferredResult(exposureKeys, tan);
-    }
-  }
-
-  private DeferredResult<ResponseEntity<Void>> buildFakeDeferredResult() {
-    DeferredResult<ResponseEntity<Void>> deferredResult = new DeferredResult<>();
-    long delay = new PoissonDistribution(fakeDelay).sample();
-    scheduledExecutor.schedule(() -> deferredResult.setResult(buildSuccessResponseEntity()),
-        delay, TimeUnit.MILLISECONDS);
-    return deferredResult;
+    submissionMonitor.incrementRequestCounter();
+    submissionMonitor.incrementRealRequestCounter();
+    return buildRealDeferredResult(exposureKeys, tan);
   }
 
   private DeferredResult<ResponseEntity<Void>> buildRealDeferredResult(SubmissionPayload exposureKeys, String tan) {
@@ -117,34 +95,20 @@ public class SubmissionController {
     stopWatch.start();
     try {
       if (!this.tanVerifier.verifyTan(tan)) {
-        submissionControllerMonitor.incrementInvalidTanRequestCounter();
-        deferredResult.setResult(buildTanInvalidResponseEntity());
+        submissionMonitor.incrementInvalidTanRequestCounter();
+        deferredResult.setResult(ResponseEntity.status(HttpStatus.FORBIDDEN).build());
       } else {
         persistDiagnosisKeysPayload(exposureKeys);
-        deferredResult.setResult(buildSuccessResponseEntity());
+        deferredResult.setResult(ResponseEntity.ok().build());
       }
     } catch (Exception e) {
       deferredResult.setErrorResult(e);
     } finally {
       stopWatch.stop();
-      updateFakeDelay(stopWatch.getTotalTimeMillis());
+      fakeDelayManager.updateFakeRequestDelay(stopWatch.getTotalTimeMillis());
     }
 
     return deferredResult;
-  }
-
-  /**
-   * Returns a response that indicates successful request processing.
-   */
-  private ResponseEntity<Void> buildSuccessResponseEntity() {
-    return ResponseEntity.ok().build();
-  }
-
-  /**
-   * Returns a response that indicates that an invalid TAN was specified in the request.
-   */
-  private ResponseEntity<Void> buildTanInvalidResponseEntity() {
-    return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
   }
 
   /**
@@ -167,18 +131,5 @@ public class SubmissionController {
     }
 
     diagnosisKeyService.saveDiagnosisKeys(diagnosisKeys);
-  }
-
-  private void updateFakeDelay(long realRequestDuration) {
-    final Double currentDelay = fakeDelay;
-    fakeDelay = currentDelay + (1 / fakeDelayMovingAverageSamples) * (realRequestDuration - currentDelay);
-  }
-
-  /**
-   * Gets the current fake delay in seconds. Used for monitoring.
-   * @return the current fake delay
-   */
-  public Double getFakeDelayInSeconds() {
-    return fakeDelay / 1000.;
   }
 }
