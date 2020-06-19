@@ -48,7 +48,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 @EnableConfigurationProperties(value = DistributionServiceConfig.class)
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration(classes = {Assembly.class}, initializers = ConfigFileApplicationContextInitializer.class)
-public class AssemblyRunnerTest {
+class AssemblyRunnerTest {
 
   @MockBean
   OutputDirectoryProvider outputDirectoryProvider;
@@ -66,7 +66,7 @@ public class AssemblyRunnerTest {
   private TemporaryFolder outputFolder = new TemporaryFolder();
 
   @BeforeEach
-  public void setup() throws IOException {
+  void setup() throws IOException {
     outputFolder.create();
     var outputDirectory = outputFolder.newFolder("parent");
     var outputSubDirectory = outputFolder.newFolder("parent/child");

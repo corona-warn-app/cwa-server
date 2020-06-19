@@ -41,7 +41,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 @EnableConfigurationProperties(value = DistributionServiceConfig.class)
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration(classes = {S3Distribution.class}, initializers = ConfigFileApplicationContextInitializer.class)
-public class S3DistributionRunnerTest {
+class S3DistributionRunnerTest {
 
   @MockBean
   OutputDirectoryProvider outputDirectoryProvider;
