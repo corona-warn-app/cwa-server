@@ -63,5 +63,4 @@ public class S3DistributionRunnerTest {
 
     verify(s3Publisher, times(1)).publish(outputPath.toAbsolutePath());
   }
-
 }

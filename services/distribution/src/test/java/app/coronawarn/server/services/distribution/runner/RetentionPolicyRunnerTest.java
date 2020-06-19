@@ -52,7 +52,6 @@ public class RetentionPolicyRunnerTest {
   @Autowired
   RetentionPolicy retentionPolicy;
 
-
   @Test
   void shouldCallDatabaseAndS3RetentionRunner() {
     retentionPolicy.run(null);

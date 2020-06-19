@@ -89,5 +89,4 @@ public class AssemblyRunnerTest {
     verify(spyParentDirectory, times(1)).prepare(any());
     verify(spyParentDirectory, times(1)).write();
   }
-
 }
