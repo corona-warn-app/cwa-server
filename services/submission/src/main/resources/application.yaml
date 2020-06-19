@@ -13,14 +13,18 @@ services:
     initial-fake-delay-milliseconds: 10
     # The number of samples for the calculation of the moving average for fake request delays.
     fake-delay-moving-average-samples: 10
+    # The retention threshold for acceptable diagnosis keys during submission.
     retention-days: 14
+    # The ApacheHttpClient's connection pool size.
     connection-pool-size: 200
     payload:
+      # The maximum number of keys accepted for any submission.
       max-number-of-keys: 14
     verification:
       base-url: ${VERIFICATION_BASE_URL:http://localhost:8004}
       path: /version/v1/tan/verify
     monitoring:
+      # The batch size (number of requests) to use for monitoring request count.
       batch-size: 5
 
 spring:
@@ -32,13 +36,14 @@ spring:
     locations: classpath:/db/migration, classpath:/db/specific/{vendor}
     password: ${POSTGRESQL_PASSWORD_FLYWAY:local_setup_flyway}
     user: ${POSTGRESQL_USER_FLYWAY:local_setup_flyway}
-# Postgres configuration
+  # Postgres configuration
   datasource:
     driver-class-name: org.postgresql.Driver
     url: jdbc:postgresql://${POSTGRESQL_SERVICE_HOST}:${POSTGRESQL_SERVICE_PORT}/${POSTGRESQL_DATABASE}?ssl=true&sslmode=verify-full&sslrootcert=${SSL_POSTGRES_CERTIFICATE_PATH}&sslcert=${SSL_SUBMISSION_CERTIFICATE_PATH}&sslkey=${SSL_SUBMISSION_PRIVATE_KEY_PATH}
     username: ${POSTGRESQL_USER_SUBMISSION:local_setup_submission}
     password: ${POSTGRESQL_PASSWORD_SUBMISSION:local_setup_submission}
 
+# Actuator configuration
 management:
   server:
     port: 8081

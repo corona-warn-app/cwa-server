@@ -30,8 +30,8 @@ public class SubmissionServiceConfig {
 
   // Exponential moving average of the last N real request durations (in ms), where
   // N = fakeDelayMovingAverageSamples.
-  private Double initialFakeDelayMilliseconds;
-  private Double fakeDelayMovingAverageSamples;
+  private Long initialFakeDelayMilliseconds;
+  private Long fakeDelayMovingAverageSamples;
   private Integer retentionDays;
   private Integer connectionPoolSize;
   private Payload payload;
@@ -39,19 +39,19 @@ public class SubmissionServiceConfig {
   private Monitoring monitoring;
   private Client client;
 
-  public Double getInitialFakeDelayMilliseconds() {
+  public Long getInitialFakeDelayMilliseconds() {
     return initialFakeDelayMilliseconds;
   }
 
-  public void setInitialFakeDelayMilliseconds(Double initialFakeDelayMilliseconds) {
+  public void setInitialFakeDelayMilliseconds(Long initialFakeDelayMilliseconds) {
     this.initialFakeDelayMilliseconds = initialFakeDelayMilliseconds;
   }
 
-  public Double getFakeDelayMovingAverageSamples() {
+  public Long getFakeDelayMovingAverageSamples() {
     return fakeDelayMovingAverageSamples;
   }
 
-  public void setFakeDelayMovingAverageSamples(Double fakeDelayMovingAverageSamples) {
+  public void setFakeDelayMovingAverageSamples(Long fakeDelayMovingAverageSamples) {
     this.fakeDelayMovingAverageSamples = fakeDelayMovingAverageSamples;
   }
 

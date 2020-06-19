@@ -20,6 +20,7 @@
 
 package app.coronawarn.server.services.distribution.assembly.component;
 
+import app.coronawarn.server.common.protocols.internal.ApplicationConfiguration;
 import app.coronawarn.server.services.distribution.assembly.appconfig.structure.directory.AppConfigurationDirectory;
 import app.coronawarn.server.services.distribution.assembly.structure.WritableOnDisk;
 import app.coronawarn.server.services.distribution.assembly.structure.directory.Directory;
@@ -35,14 +36,16 @@ public class AppConfigurationStructureProvider {
 
   private final CryptoProvider cryptoProvider;
   private final DistributionServiceConfig distributionServiceConfig;
+  private final ApplicationConfiguration applicationConfiguration;
 
-  AppConfigurationStructureProvider(CryptoProvider cryptoProvider,
-      DistributionServiceConfig distributionServiceConfig) {
+  AppConfigurationStructureProvider(CryptoProvider cryptoProvider, DistributionServiceConfig distributionServiceConfig,
+      ApplicationConfiguration applicationConfiguration) {
     this.cryptoProvider = cryptoProvider;
     this.distributionServiceConfig = distributionServiceConfig;
+    this.applicationConfiguration = applicationConfiguration;
   }
 
   public Directory<WritableOnDisk> getAppConfiguration() {
-    return new AppConfigurationDirectory(cryptoProvider, distributionServiceConfig);
+    return new AppConfigurationDirectory(applicationConfiguration, cryptoProvider, distributionServiceConfig);
   }
 }
