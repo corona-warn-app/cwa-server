@@ -186,7 +186,7 @@ class SubmissionControllerTest {
     return Arrays.stream(HttpMethod.values())
         .filter(method -> method != HttpMethod.POST)
         .filter(method -> method != HttpMethod.PATCH) /* not supported by Rest Template */
-        .map(elem -> Arguments.of(elem));
+        .map(Arguments::of);
   }
 
   @Test
