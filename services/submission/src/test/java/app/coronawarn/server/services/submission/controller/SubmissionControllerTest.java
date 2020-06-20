@@ -253,17 +253,33 @@ class SubmissionControllerTest {
   }
 
   private void assertElementsCorrespondToEachOther
-      (Collection<TemporaryExposureKey> submittedKeys, Collection<DiagnosisKey> keyEntities) {
-    Set<DiagnosisKey> expKeys = submittedKeys.stream()
-        .map(aSubmittedKey -> DiagnosisKey.builder().fromProtoBuf(aSubmittedKey).build())
+      (Collection<TemporaryExposureKey> actTemporaryExposureKeys, Collection<DiagnosisKey> expDiagnosisKeys) {
+    Set<DiagnosisKey> actDiagnosisKeys = actTemporaryExposureKeys.stream()
+        .map(anActDiagnosisKey -> DiagnosisKey.builder().fromProtoBuf(anActDiagnosisKey).build())
         .collect(Collectors.toSet());
 
-    assertThat(keyEntities)
-        .withFailMessage("Number of submitted keys and generated key entities don't match.")
-        .hasSameSizeAs(expKeys);
-    keyEntities.forEach(anActKey -> assertThat(expKeys)
-        .withFailMessage("Key entity does not correspond to a submitted key.")
-        .contains(anActKey)
-    );
+    assertThat(expDiagnosisKeys).hasSize(actDiagnosisKeys.size() * 10);
+    assertThat(expDiagnosisKeys).containsAll(actDiagnosisKeys);
+    actDiagnosisKeys.forEach(actDiagnosisKey -> {
+      List<DiagnosisKey> expKeyEntities = expDiagnosisKeys.stream()
+          .filter(expDiagnosisKey ->
+              expDiagnosisKey.getRollingPeriod() == actDiagnosisKey.getRollingPeriod())
+          .filter(expDiagnosisKey ->
+              expDiagnosisKey.getTransmissionRiskLevel() == actDiagnosisKey.getTransmissionRiskLevel())
+          .filter(expDiagnosisKey ->
+              expDiagnosisKey.getRollingStartIntervalNumber() == actDiagnosisKey.getRollingStartIntervalNumber())
+          .collect(Collectors.toList());
+
+      assertThat(expKeyEntities).hasSize(10);
+      assertThat(expKeyEntities.stream().filter(expKeyEntity ->
+          Arrays.equals(expKeyEntity.getKeyData(), actDiagnosisKey.getKeyData()))).hasSize(1);
+      assertThat(expKeyEntities).allMatch(
+          expKeyEntity -> expKeyEntity.getRollingPeriod() == actDiagnosisKey.getRollingPeriod());
+      assertThat(expKeyEntities).allMatch(
+          expKeyEntity -> expKeyEntity.getRollingStartIntervalNumber() == actDiagnosisKey
+              .getRollingStartIntervalNumber());
+      assertThat(expKeyEntities).allMatch(
+          expKeyEntity -> expKeyEntity.getTransmissionRiskLevel() == actDiagnosisKey.getTransmissionRiskLevel());
+    });
   }
 }
