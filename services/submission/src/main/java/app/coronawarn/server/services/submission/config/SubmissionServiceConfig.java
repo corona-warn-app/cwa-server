@@ -33,6 +33,7 @@ public class SubmissionServiceConfig {
   private Long initialFakeDelayMilliseconds;
   private Long fakeDelayMovingAverageSamples;
   private Integer retentionDays;
+  private Integer randomKeyPaddingMultiplier;
   private Integer connectionPoolSize;
   private Payload payload;
   private Verification verification;
@@ -61,6 +62,14 @@ public class SubmissionServiceConfig {
 
   public void setRetentionDays(Integer retentionDays) {
     this.retentionDays = retentionDays;
+  }
+
+  public Integer getRandomKeyPaddingMultiplier() {
+    return randomKeyPaddingMultiplier;
+  }
+
+  public void setRandomKeyPaddingMultiplier(Integer randomKeyPaddingMultiplier) {
+    this.randomKeyPaddingMultiplier = randomKeyPaddingMultiplier;
   }
 
   public Integer getConnectionPoolSize() {
