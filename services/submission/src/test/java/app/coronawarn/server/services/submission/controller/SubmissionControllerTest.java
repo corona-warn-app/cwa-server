@@ -127,28 +127,28 @@ class SubmissionControllerTest {
 
   @Test
   void keysWithOutdatedRollingStartIntervalNumberDoNotGetSaved() {
-    Collection<TemporaryExposureKey> keys = buildPayloadWithMultipleKeys();
+    Collection<TemporaryExposureKey> submittedKeys = buildPayloadWithMultipleKeys();
     TemporaryExposureKey outdatedKey = createOutdatedKey();
-    keys.add(outdatedKey);
+    submittedKeys.add(outdatedKey);
     ArgumentCaptor<Collection<DiagnosisKey>> argument = ArgumentCaptor.forClass(Collection.class);
 
-    executor.executePost(keys, buildOkHeaders());
+    executor.executePost(submittedKeys, buildOkHeaders());
 
     verify(diagnosisKeyService, atLeastOnce()).saveDiagnosisKeys(argument.capture());
-    keys.remove(outdatedKey);
-    assertElementsCorrespondToEachOther(keys, argument.getValue());
+    submittedKeys.remove(outdatedKey);
+    assertElementsCorrespondToEachOther(submittedKeys, argument.getValue());
   }
 
   @Test
   void checkSaveOperationCallAndFakeDelayUpdateForValidParameters() {
-    Collection<TemporaryExposureKey> keys = buildPayloadWithMultipleKeys();
+    Collection<TemporaryExposureKey> submittedKeys = buildPayloadWithMultipleKeys();
     ArgumentCaptor<Collection<DiagnosisKey>> argument = ArgumentCaptor.forClass(Collection.class);
 
-    executor.executePost(keys, buildOkHeaders());
+    executor.executePost(submittedKeys, buildOkHeaders());
 
     verify(diagnosisKeyService, atLeastOnce()).saveDiagnosisKeys(argument.capture());
     verify(fakeDelayManager, times(1)).updateFakeRequestDelay(anyLong());
-    assertElementsCorrespondToEachOther(keys, argument.getValue());
+    assertElementsCorrespondToEachOther(submittedKeys, argument.getValue());
   }
 
   @ParameterizedTest
@@ -252,34 +252,36 @@ class SubmissionControllerTest {
         .collect(Collectors.toCollection(ArrayList::new));
   }
 
-  private void assertElementsCorrespondToEachOther
-      (Collection<TemporaryExposureKey> actTemporaryExposureKeys, Collection<DiagnosisKey> expDiagnosisKeys) {
-    Set<DiagnosisKey> actDiagnosisKeys = actTemporaryExposureKeys.stream()
-        .map(anActDiagnosisKey -> DiagnosisKey.builder().fromProtoBuf(anActDiagnosisKey).build())
+  private void assertElementsCorrespondToEachOther(Collection<TemporaryExposureKey> submittedTemporaryExposureKeys,
+      Collection<DiagnosisKey> savedDiagnosisKeys) {
+
+    Set<DiagnosisKey> submittedDiagnosisKeys = submittedTemporaryExposureKeys.stream()
+        .map(submittedDiagnosisKey -> DiagnosisKey.builder().fromProtoBuf(submittedDiagnosisKey).build())
         .collect(Collectors.toSet());
 
-    assertThat(expDiagnosisKeys).hasSize(actDiagnosisKeys.size() * 10);
-    assertThat(expDiagnosisKeys).containsAll(actDiagnosisKeys);
-    actDiagnosisKeys.forEach(actDiagnosisKey -> {
-      List<DiagnosisKey> expKeyEntities = expDiagnosisKeys.stream()
-          .filter(expDiagnosisKey ->
-              expDiagnosisKey.getRollingPeriod() == actDiagnosisKey.getRollingPeriod())
-          .filter(expDiagnosisKey ->
-              expDiagnosisKey.getTransmissionRiskLevel() == actDiagnosisKey.getTransmissionRiskLevel())
-          .filter(expDiagnosisKey ->
-              expDiagnosisKey.getRollingStartIntervalNumber() == actDiagnosisKey.getRollingStartIntervalNumber())
+    assertThat(savedDiagnosisKeys).hasSize(submittedDiagnosisKeys.size() * 10);
+    assertThat(savedDiagnosisKeys).containsAll(submittedDiagnosisKeys);
+
+    submittedDiagnosisKeys.forEach(submittedDiagnosisKey -> {
+      List<DiagnosisKey> savedKeysForSingleSubmittedKey = savedDiagnosisKeys.stream()
+          .filter(savedDiagnosisKey -> savedDiagnosisKey.getRollingPeriod() ==
+              submittedDiagnosisKey.getRollingPeriod())
+          .filter(savedDiagnosisKey -> savedDiagnosisKey.getTransmissionRiskLevel() ==
+              submittedDiagnosisKey.getTransmissionRiskLevel())
+          .filter(savedDiagnosisKey -> savedDiagnosisKey.getRollingStartIntervalNumber() ==
+              submittedDiagnosisKey.getRollingStartIntervalNumber())
           .collect(Collectors.toList());
 
-      assertThat(expKeyEntities).hasSize(10);
-      assertThat(expKeyEntities.stream().filter(expKeyEntity ->
-          Arrays.equals(expKeyEntity.getKeyData(), actDiagnosisKey.getKeyData()))).hasSize(1);
-      assertThat(expKeyEntities).allMatch(
-          expKeyEntity -> expKeyEntity.getRollingPeriod() == actDiagnosisKey.getRollingPeriod());
-      assertThat(expKeyEntities).allMatch(
-          expKeyEntity -> expKeyEntity.getRollingStartIntervalNumber() == actDiagnosisKey
+      assertThat(savedKeysForSingleSubmittedKey).hasSize(10);
+      assertThat(savedKeysForSingleSubmittedKey.stream().filter(savedKey ->
+          Arrays.equals(savedKey.getKeyData(), submittedDiagnosisKey.getKeyData()))).hasSize(1);
+      assertThat(savedKeysForSingleSubmittedKey).allMatch(
+          savedKey -> savedKey.getRollingPeriod() == submittedDiagnosisKey.getRollingPeriod());
+      assertThat(savedKeysForSingleSubmittedKey).allMatch(
+          savedKey -> savedKey.getRollingStartIntervalNumber() == submittedDiagnosisKey
               .getRollingStartIntervalNumber());
-      assertThat(expKeyEntities).allMatch(
-          expKeyEntity -> expKeyEntity.getTransmissionRiskLevel() == actDiagnosisKey.getTransmissionRiskLevel());
+      assertThat(savedKeysForSingleSubmittedKey).allMatch(
+          savedKey -> savedKey.getTransmissionRiskLevel() == submittedDiagnosisKey.getTransmissionRiskLevel());
     });
   }
 }
