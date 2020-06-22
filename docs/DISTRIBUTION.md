@@ -100,8 +100,8 @@ prefix:
 
 `version/v1/diagnosis-keys/country/DE/<date>`
 
-In which `<date>` stands for the ISO formatted date (e.g. `2012-06-05`), and is before the retention cutoff date (today
-- 14 days).
+In which `<date>` stands for the ISO formatted date (e.g. `2012-06-05`), and is before the retention cutoff date
+(today - 14 days).
 
 ## Assembly Process
 
