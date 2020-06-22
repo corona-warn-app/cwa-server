@@ -122,27 +122,27 @@ class SubmissionControllerTest {
 
   @Test
   void keysWithOutdatedRollingStartIntervalNumberDoNotGetSaved() {
-    Collection<TemporaryExposureKey> keys = buildPayloadWithMultipleKeys();
+    Collection<TemporaryExposureKey> submittedKeys = buildPayloadWithMultipleKeys();
     TemporaryExposureKey outdatedKey = createOutdatedKey();
-    keys.add(outdatedKey);
+    submittedKeys.add(outdatedKey);
     ArgumentCaptor<Collection<DiagnosisKey>> argument = ArgumentCaptor.forClass(Collection.class);
 
-    executor.executeRequest(keys, buildOkHeaders());
+    executor.executeRequest(submittedKeys, buildOkHeaders());
 
     verify(diagnosisKeyService, atLeastOnce()).saveDiagnosisKeys(argument.capture());
-    keys.remove(outdatedKey);
-    assertElementsCorrespondToEachOther(keys, argument.getValue());
+    submittedKeys.remove(outdatedKey);
+    assertElementsCorrespondToEachOther(submittedKeys, argument.getValue());
   }
 
   @Test
-  void checkSaveOperationCallForValidParameters() {
-    Collection<TemporaryExposureKey> keys = buildPayloadWithMultipleKeys();
+  void checkSaveOperationCallAndFakeDelayUpdateForValidParameters() {
+    Collection<TemporaryExposureKey> submittedKeys = buildPayloadWithMultipleKeys();
     ArgumentCaptor<Collection<DiagnosisKey>> argument = ArgumentCaptor.forClass(Collection.class);
 
-    executor.executeRequest(keys, buildOkHeaders());
+    executor.executeRequest(submittedKeys, buildOkHeaders());
 
     verify(diagnosisKeyService, atLeastOnce()).saveDiagnosisKeys(argument.capture());
-    assertElementsCorrespondToEachOther(keys, argument.getValue());
+    assertElementsCorrespondToEachOther(submittedKeys, argument.getValue());
   }
 
   @ParameterizedTest
@@ -181,7 +181,7 @@ class SubmissionControllerTest {
     return Arrays.stream(HttpMethod.values())
         .filter(method -> method != HttpMethod.POST)
         .filter(method -> method != HttpMethod.PATCH) /* not supported by Rest Template */
-        .map(elem -> Arguments.of(elem));
+        .map(Arguments::of);
   }
 
   @Test
@@ -237,18 +237,37 @@ class SubmissionControllerTest {
         buildTemporaryExposureKey(VALID_KEY_DATA_1, createRollingStartIntervalNumber(2), 999))
         .collect(Collectors.toCollection(ArrayList::new));
   }
-  private void assertElementsCorrespondToEachOther
-      (Collection<TemporaryExposureKey> submittedKeys, Collection<DiagnosisKey> keyEntities) {
-    Set<DiagnosisKey> expKeys = submittedKeys.stream()
-        .map(aSubmittedKey -> DiagnosisKey.builder().fromProtoBuf(aSubmittedKey).build())
+
+  private void assertElementsCorrespondToEachOther(Collection<TemporaryExposureKey> submittedTemporaryExposureKeys,
+      Collection<DiagnosisKey> savedDiagnosisKeys) {
+
+    Set<DiagnosisKey> submittedDiagnosisKeys = submittedTemporaryExposureKeys.stream()
+        .map(submittedDiagnosisKey -> DiagnosisKey.builder().fromProtoBuf(submittedDiagnosisKey).build())
         .collect(Collectors.toSet());
 
-    assertThat(keyEntities.size())
-        .withFailMessage("Number of submitted keys and generated key entities don't match.")
-        .isEqualTo(expKeys.size());
-    keyEntities.forEach(anActKey -> assertThat(expKeys)
-        .withFailMessage("Key entity does not correspond to a submitted key.")
-        .contains(anActKey)
-    );
+    assertThat(savedDiagnosisKeys).hasSize(submittedDiagnosisKeys.size() * config.getRandomKeyPaddingMultiplier());
+    assertThat(savedDiagnosisKeys).containsAll(submittedDiagnosisKeys);
+
+    submittedDiagnosisKeys.forEach(submittedDiagnosisKey -> {
+      List<DiagnosisKey> savedKeysForSingleSubmittedKey = savedDiagnosisKeys.stream()
+          .filter(savedDiagnosisKey -> savedDiagnosisKey.getRollingPeriod() ==
+              submittedDiagnosisKey.getRollingPeriod())
+          .filter(savedDiagnosisKey -> savedDiagnosisKey.getTransmissionRiskLevel() ==
+              submittedDiagnosisKey.getTransmissionRiskLevel())
+          .filter(savedDiagnosisKey -> savedDiagnosisKey.getRollingStartIntervalNumber() ==
+              submittedDiagnosisKey.getRollingStartIntervalNumber())
+          .collect(Collectors.toList());
+
+      assertThat(savedKeysForSingleSubmittedKey).hasSize(config.getRandomKeyPaddingMultiplier());
+      assertThat(savedKeysForSingleSubmittedKey.stream().filter(savedKey ->
+          Arrays.equals(savedKey.getKeyData(), submittedDiagnosisKey.getKeyData()))).hasSize(1);
+      assertThat(savedKeysForSingleSubmittedKey).allMatch(
+          savedKey -> savedKey.getRollingPeriod() == submittedDiagnosisKey.getRollingPeriod());
+      assertThat(savedKeysForSingleSubmittedKey).allMatch(
+          savedKey -> savedKey.getRollingStartIntervalNumber() == submittedDiagnosisKey
+              .getRollingStartIntervalNumber());
+      assertThat(savedKeysForSingleSubmittedKey).allMatch(
+          savedKey -> savedKey.getTransmissionRiskLevel() == submittedDiagnosisKey.getTransmissionRiskLevel());
+    });
   }
 }

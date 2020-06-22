@@ -29,11 +29,13 @@ import app.coronawarn.server.services.submission.monitoring.SubmissionController
 import app.coronawarn.server.services.submission.validation.ValidSubmissionPayload;
 import app.coronawarn.server.services.submission.verification.TanVerifier;
 import io.micrometer.core.annotation.Timed;
+import java.security.SecureRandom;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.IntStream;
 import org.apache.commons.math3.distribution.PoissonDistribution;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -65,6 +67,7 @@ public class SubmissionController {
   private final TanVerifier tanVerifier;
   private final Double fakeDelayMovingAverageSamples;
   private final Integer retentionDays;
+  private final Integer randomKeyPaddingMultiplier;
   private Double fakeDelay;
 
   SubmissionController(DiagnosisKeyService diagnosisKeyService, TanVerifier tanVerifier,
@@ -75,6 +78,7 @@ public class SubmissionController {
     fakeDelay = submissionServiceConfig.getInitialFakeDelayMilliseconds();
     fakeDelayMovingAverageSamples = submissionServiceConfig.getFakeDelayMovingAverageSamples();
     retentionDays = submissionServiceConfig.getRetentionDays();
+    randomKeyPaddingMultiplier = submissionServiceConfig.getRandomKeyPaddingMultiplier();
     submissionControllerMonitor.initializeGauges(this);
   }
 
@@ -166,7 +170,29 @@ public class SubmissionController {
       }
     }
 
-    diagnosisKeyService.saveDiagnosisKeys(diagnosisKeys);
+    diagnosisKeyService.saveDiagnosisKeys(padDiagnosisKeys(diagnosisKeys));
+  }
+
+  private List<DiagnosisKey> padDiagnosisKeys(List<DiagnosisKey> diagnosisKeys) {
+    List<DiagnosisKey> paddedDiagnosisKeys = new ArrayList<>();
+    diagnosisKeys.forEach(diagnosisKey -> {
+      paddedDiagnosisKeys.add(diagnosisKey);
+      IntStream.range(1, randomKeyPaddingMultiplier)
+          .mapToObj(index -> DiagnosisKey.builder()
+              .withKeyData(generateRandomKeyData())
+              .withRollingStartIntervalNumber(diagnosisKey.getRollingStartIntervalNumber())
+              .withTransmissionRiskLevel(diagnosisKey.getTransmissionRiskLevel())
+              .withRollingPeriod(diagnosisKey.getRollingPeriod())
+              .build())
+          .forEach(paddedDiagnosisKeys::add);
+    });
+    return paddedDiagnosisKeys;
+  }
+
+  private static byte[] generateRandomKeyData() {
+    byte[] randomKeyData = new byte[16];
+    new SecureRandom().nextBytes(randomKeyData);
+    return randomKeyData;
   }
 
   private void updateFakeDelay(long realRequestDuration) {
