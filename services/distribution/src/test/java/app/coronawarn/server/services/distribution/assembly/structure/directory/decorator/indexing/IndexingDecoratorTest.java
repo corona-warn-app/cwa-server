@@ -72,8 +72,8 @@ class IndexingDecoratorTest {
   void checkWritesIndexFile() throws IOException, ParseException {
     java.io.File actualIndexDirectoryFile = Objects.requireNonNull(outputFile.listFiles())[0];
     java.io.File actualPhysicalFile = Stream.of(actualIndexDirectoryFile)
+        .filter(File::isDirectory)
         .map(File::listFiles)
-        .filter(Objects::nonNull)
         .flatMap(Arrays::stream)
         .filter(File::isFile)
         .filter(file -> !FileOnDiskWithChecksum.isChecksumFile(file.toPath()))
@@ -88,7 +88,6 @@ class IndexingDecoratorTest {
     INDEX.forEach(expected ->
         assertThat(indexJson.contains(expected.longValue()))
             .withFailMessage(expected.toString())
-            .isTrue()
-    );
+            .isTrue());
   }
 }
