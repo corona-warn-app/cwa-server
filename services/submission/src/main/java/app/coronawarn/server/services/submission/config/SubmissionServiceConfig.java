@@ -20,11 +20,15 @@
 
 package app.coronawarn.server.services.submission.config;
 
+import javax.validation.constraints.Max;
+import javax.validation.constraints.Min;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Component;
+import org.springframework.validation.annotation.Validated;
 
 @Component
 @ConfigurationProperties(prefix = "services.submission")
+@Validated
 public class SubmissionServiceConfig {
 
   // Exponential moving average of the last N real request durations (in ms), where
@@ -32,6 +36,9 @@ public class SubmissionServiceConfig {
   private Double initialFakeDelayMilliseconds;
   private Double fakeDelayMovingAverageSamples;
   private Integer retentionDays;
+  @Min(1)
+  @Max(100)
+  private Integer randomKeyPaddingMultiplier;
   private Integer connectionPoolSize;
   private Payload payload;
   private Verification verification;
@@ -59,6 +66,14 @@ public class SubmissionServiceConfig {
 
   public void setRetentionDays(Integer retentionDays) {
     this.retentionDays = retentionDays;
+  }
+
+  public Integer getRandomKeyPaddingMultiplier() {
+    return randomKeyPaddingMultiplier;
+  }
+
+  public void setRandomKeyPaddingMultiplier(Integer randomKeyPaddingMultiplier) {
+    this.randomKeyPaddingMultiplier = randomKeyPaddingMultiplier;
   }
 
   public Integer getConnectionPoolSize() {
