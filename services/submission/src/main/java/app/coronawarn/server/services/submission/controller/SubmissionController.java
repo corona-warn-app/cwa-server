@@ -142,18 +142,20 @@ public class SubmissionController {
     diagnosisKeys.forEach(diagnosisKey -> {
       paddedDiagnosisKeys.add(diagnosisKey);
       IntStream.range(1, randomKeyPaddingMultiplier)
-          .mapToObj(index -> {
-            byte[] randomKeyData = new byte[16];
-            new SecureRandom().nextBytes(randomKeyData);
-            return DiagnosisKey.builder()
-                .withKeyData(randomKeyData)
-                .withRollingStartIntervalNumber(diagnosisKey.getRollingStartIntervalNumber())
-                .withTransmissionRiskLevel(diagnosisKey.getTransmissionRiskLevel())
-                .withRollingPeriod(diagnosisKey.getRollingPeriod())
-                .build();
-          })
+          .mapToObj(index -> DiagnosisKey.builder()
+              .withKeyData(generateRandomKeyData())
+              .withRollingStartIntervalNumber(diagnosisKey.getRollingStartIntervalNumber())
+              .withTransmissionRiskLevel(diagnosisKey.getTransmissionRiskLevel())
+              .withRollingPeriod(diagnosisKey.getRollingPeriod())
+              .build())
           .forEach(paddedDiagnosisKeys::add);
     });
     return paddedDiagnosisKeys;
+  }
+
+  private static byte[] generateRandomKeyData() {
+    byte[] randomKeyData = new byte[16];
+    new SecureRandom().nextBytes(randomKeyData);
+    return randomKeyData;
   }
 }
