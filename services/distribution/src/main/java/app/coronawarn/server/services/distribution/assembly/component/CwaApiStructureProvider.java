@@ -34,9 +34,6 @@ import org.springframework.stereotype.Component;
 @Component
 public class CwaApiStructureProvider {
 
-  public static final String VERSION_DIRECTORY = "version";
-  public static final String VERSION_V1 = "v1";
-
   private final AppConfigurationStructureProvider appConfigurationStructureProvider;
 
   private final DiagnosisKeysStructureProvider diagnosisKeysStructureProvider;
@@ -60,7 +57,8 @@ public class CwaApiStructureProvider {
    */
   public Directory<WritableOnDisk> getDirectory() {
     IndexDirectoryOnDisk<String> versionDirectory =
-        new IndexDirectoryOnDisk<>(VERSION_DIRECTORY, __ -> Set.of(VERSION_V1), Object::toString);
+        new IndexDirectoryOnDisk<>(distributionServiceConfig.getApi().getVersionPath(),
+            __ -> Set.of(distributionServiceConfig.getApi().getVersionV1()), Object::toString);
 
     versionDirectory
         .addWritableToAll(__ -> appConfigurationStructureProvider.getAppConfiguration());
