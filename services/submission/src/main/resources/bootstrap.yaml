@@ -1,0 +1,20 @@
+---
+spring:
+  application:
+    name: cwa-server
+  cloud:
+    vault:
+      generic:
+        enabled: false
+      kv:
+        enabled: true
+        backend: {VAULT_BACKEND}
+        profile-separator: '/'
+        application-name: 'supersecret'
+      fail-fast: true
+      authentication: NONE
+      uri: {VAULT_URI}
+      connection-timeout: 5000
+      read-timeout: 15000
+      config:
+        order: -10
