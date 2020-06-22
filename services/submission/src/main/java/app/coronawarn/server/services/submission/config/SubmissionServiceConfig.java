@@ -37,7 +37,7 @@ public class SubmissionServiceConfig {
   private Double fakeDelayMovingAverageSamples;
   private Integer retentionDays;
   @Min(1)
-  @Max(100)
+  @Max(25)
   private Integer randomKeyPaddingMultiplier;
   private Integer connectionPoolSize;
   private Payload payload;
