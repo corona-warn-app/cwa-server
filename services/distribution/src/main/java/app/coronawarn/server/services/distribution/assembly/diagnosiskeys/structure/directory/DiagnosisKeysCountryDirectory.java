@@ -57,11 +57,9 @@ public class DiagnosisKeysCountryDirectory extends IndexDirectoryOnDisk<String> 
 
   @Override
   public void prepare(ImmutableStack<Object> indices) {
-    this.addWritableToAll(ignoredValue -> {
-      DiagnosisKeysDateDirectory dateDirectory = new DiagnosisKeysDateDirectory(diagnosisKeyBundler, cryptoProvider,
-          distributionServiceConfig);
-      return decorateDateDirectory(dateDirectory);
-    });
+    this.addWritableToAll(ignoredValue ->
+        decorateDateDirectory(
+            new DiagnosisKeysDateDirectory(diagnosisKeyBundler, cryptoProvider, distributionServiceConfig)));
     super.prepare(indices);
   }
 
