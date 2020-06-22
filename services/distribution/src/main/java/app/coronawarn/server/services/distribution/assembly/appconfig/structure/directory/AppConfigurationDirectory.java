@@ -62,7 +62,7 @@ public class AppConfigurationDirectory extends DirectoryOnDisk {
     this.distributionServiceConfig = distributionServiceConfig;
 
     countryDirectory = new IndexDirectoryOnDisk<>(distributionServiceConfig.getApi().getCountryPath(),
-        __ -> Set.of(distributionServiceConfig.getApi().getCountryGermany()), Object::toString);
+        ignoredValue -> Set.of(distributionServiceConfig.getApi().getCountryGermany()), Object::toString);
 
     addConfigurationArchiveIfValid(distributionServiceConfig.getApi().getAppConfigFileName());
 
@@ -85,7 +85,7 @@ public class AppConfigurationDirectory extends DirectoryOnDisk {
 
     ArchiveOnDisk appConfigurationFile = new ArchiveOnDisk(archiveName);
     appConfigurationFile.addWritable(new FileOnDisk("export.bin", applicationConfiguration.toByteArray()));
-    countryDirectory.addWritableToAll(__ -> new AppConfigurationSigningDecorator(appConfigurationFile, cryptoProvider,
-        distributionServiceConfig));
+    countryDirectory.addWritableToAll(ignoredValue ->
+        new AppConfigurationSigningDecorator(appConfigurationFile, cryptoProvider, distributionServiceConfig));
   }
 }
