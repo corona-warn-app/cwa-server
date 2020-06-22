@@ -14,7 +14,7 @@ spring:
       fail-fast: true
       authentication: KUBERNETES
       kubernetes:
-        role: tracing-ro
+        role: cwa-server-ck
         kubernetes-path: kubernetes
         service-account-token-file: /var/run/secrets/kubernetes.io/serviceaccount/token
       uri: ${VAULT_URI}
