@@ -8,12 +8,12 @@ spring:
         enabled: false
       kv:
         enabled: true
-        backend: {VAULT_BACKEND}
+        backend: ${VAULT_BACKEND}
         profile-separator: '/'
         application-name: 'supersecret'
       fail-fast: true
       authentication: NONE
-      uri: {VAULT_URI}
+      uri: ${VAULT_URI}
       connection-timeout: 5000
       read-timeout: 15000
       config:
