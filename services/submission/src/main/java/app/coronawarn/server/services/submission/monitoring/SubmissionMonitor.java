@@ -81,7 +81,7 @@ public class SubmissionMonitor {
    */
   private void initializeGauges(FakeDelayManager fakeDelayManager) {
     Gauge.builder(SUBMISSION_CONTROLLER_CURRENT_FAKE_DELAY, fakeDelayManager,
-        __ -> fakeDelayManager.getFakeDelayInSeconds())
+        ignoredValue -> fakeDelayManager.getFakeDelayInSeconds())
         .description("The time that fake requests are delayed to make them indistinguishable from real requests.")
         .register(meterRegistry);
   }
