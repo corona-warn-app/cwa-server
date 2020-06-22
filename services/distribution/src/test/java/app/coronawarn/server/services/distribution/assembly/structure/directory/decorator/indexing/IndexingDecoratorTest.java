@@ -49,7 +49,7 @@ class IndexingDecoratorTest {
   @Rule
   private TemporaryFolder outputFolder = new TemporaryFolder();
 
-  private static final Set<Integer> index = Set.of(1, 2, 3);
+  private static final Set<Integer> INDEX = Set.of(1, 2, 3);
   private java.io.File outputFile;
   private Directory<WritableOnDisk> parent;
   private IndexDirectory<Integer, WritableOnDisk> decoratee;
@@ -60,7 +60,7 @@ class IndexingDecoratorTest {
     outputFolder.create();
     outputFile = outputFolder.newFolder();
     parent = new DirectoryOnDisk(outputFile);
-    decoratee = new IndexDirectoryOnDisk<>("foo", ignoredValue -> index, Object::toString);
+    decoratee = new IndexDirectoryOnDisk<>("foo", ignoredValue -> INDEX, value -> value);
     decorator = new IndexingDecoratorOnDisk<>(decoratee, "foo");
 
     parent.addWritable(decorator);
@@ -85,7 +85,7 @@ class IndexingDecoratorTest {
     Object obj = jsonParser.parse(reader);
     JSONArray indexJson = (JSONArray) obj;
 
-    index.forEach(expected ->
+    INDEX.forEach(expected ->
         assertThat(indexJson.contains(expected.longValue()))
             .withFailMessage(expected.toString())
             .isTrue()
