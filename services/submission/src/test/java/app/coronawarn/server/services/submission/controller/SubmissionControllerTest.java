@@ -259,7 +259,7 @@ class SubmissionControllerTest {
         .map(submittedDiagnosisKey -> DiagnosisKey.builder().fromProtoBuf(submittedDiagnosisKey).build())
         .collect(Collectors.toSet());
 
-    assertThat(savedDiagnosisKeys).hasSize(submittedDiagnosisKeys.size() * 10);
+    assertThat(savedDiagnosisKeys).hasSize(submittedDiagnosisKeys.size() * config.getRandomKeyPaddingMultiplier());
     assertThat(savedDiagnosisKeys).containsAll(submittedDiagnosisKeys);
 
     submittedDiagnosisKeys.forEach(submittedDiagnosisKey -> {
@@ -272,7 +272,7 @@ class SubmissionControllerTest {
               submittedDiagnosisKey.getRollingStartIntervalNumber())
           .collect(Collectors.toList());
 
-      assertThat(savedKeysForSingleSubmittedKey).hasSize(10);
+      assertThat(savedKeysForSingleSubmittedKey).hasSize(config.getRandomKeyPaddingMultiplier());
       assertThat(savedKeysForSingleSubmittedKey.stream().filter(savedKey ->
           Arrays.equals(savedKey.getKeyData(), submittedDiagnosisKey.getKeyData()))).hasSize(1);
       assertThat(savedKeysForSingleSubmittedKey).allMatch(
