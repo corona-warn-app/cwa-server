@@ -15,6 +15,12 @@ services:
     fake-delay-moving-average-samples: 10
     # The retention threshold for acceptable diagnosis keys during submission.
     retention-days: 14
+    # The number of keys to save to the DB for every real submitted key.
+    # Example: If the 'random-key-padding-multiplier' is set to 10, and 5 keys are being submitted,
+    # then the 5 real submitted keys will be saved to the DB, plus an additional 45 keys with
+    # random 'key_data'. All properties, besides the 'key_data', of the additional keys will be
+    # identical to the real key.
+    random-key-padding-multiplier: ${RANDOM_KEY_PADDING_MULTIPLIER:1}
     # The ApacheHttpClient's connection pool size.
     connection-pool-size: 200
     payload:

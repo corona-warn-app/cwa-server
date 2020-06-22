@@ -29,8 +29,10 @@ import app.coronawarn.server.services.submission.monitoring.SubmissionMonitor;
 import app.coronawarn.server.services.submission.validation.ValidSubmissionPayload;
 import app.coronawarn.server.services.submission.verification.TanVerifier;
 import io.micrometer.core.annotation.Timed;
+import java.security.SecureRandom;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.IntStream;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
@@ -59,6 +61,7 @@ public class SubmissionController {
   private final DiagnosisKeyService diagnosisKeyService;
   private final TanVerifier tanVerifier;
   private final Integer retentionDays;
+  private final Integer randomKeyPaddingMultiplier;
   private final FakeDelayManager fakeDelayManager;
 
   SubmissionController(
@@ -69,6 +72,7 @@ public class SubmissionController {
     this.submissionMonitor = submissionMonitor;
     this.fakeDelayManager = fakeDelayManager;
     retentionDays = submissionServiceConfig.getRetentionDays();
+    randomKeyPaddingMultiplier = submissionServiceConfig.getRandomKeyPaddingMultiplier();
   }
 
   /**
@@ -130,6 +134,26 @@ public class SubmissionController {
       }
     }
 
-    diagnosisKeyService.saveDiagnosisKeys(diagnosisKeys);
+    diagnosisKeyService.saveDiagnosisKeys(padDiagnosisKeys(diagnosisKeys));
+  }
+
+  private List<DiagnosisKey> padDiagnosisKeys(List<DiagnosisKey> diagnosisKeys) {
+    List<DiagnosisKey> paddedDiagnosisKeys = new ArrayList<>();
+    diagnosisKeys.forEach(diagnosisKey -> {
+      paddedDiagnosisKeys.add(diagnosisKey);
+      IntStream.range(1, randomKeyPaddingMultiplier)
+          .mapToObj(index -> {
+            byte[] randomKeyData = new byte[16];
+            new SecureRandom().nextBytes(randomKeyData);
+            return DiagnosisKey.builder()
+                .withKeyData(randomKeyData)
+                .withRollingStartIntervalNumber(diagnosisKey.getRollingStartIntervalNumber())
+                .withTransmissionRiskLevel(diagnosisKey.getTransmissionRiskLevel())
+                .withRollingPeriod(diagnosisKey.getRollingPeriod())
+                .build();
+          })
+          .forEach(paddedDiagnosisKeys::add);
+    });
+    return paddedDiagnosisKeys;
   }
 }
