@@ -52,7 +52,7 @@ upload, default is 300 seconds.
 
 Defines the canned ACL for the uploaded file. Is only set if [`set-public-read-acl-on-put-object`] is set to true in the
 configuration properties. Will be `public-read` in that case, which grants full control to the Owners and read-access to
-AllUsers.
+AllUsers. This setting should only be used when running with the application with the local Zenko Cloudserver.
 
 #### `cwa-hash`
 
@@ -92,7 +92,16 @@ case the program is terminated to prevent unnecessary load.
 
 ### Retention
 
-The same retention period, as on the database is also enforced on the S3 compatible storage.
+The same 14 days retention period (like the database) is also enforced on the S3 compatible storage. Each distribution
+run will execute the retention policy.
+
+When data deletion is executed on the object store, the object store is instructed to delete all files with the following
+prefix:
+
+`version/v1/diagnosis-keys/country/DE/<date>`
+
+In which `<date>` stands for the ISO formatted date (e.g. `2012-06-05`), and is before the retention cutoff date (today
+- 14 days).
 
 ## Assembly Process
 
