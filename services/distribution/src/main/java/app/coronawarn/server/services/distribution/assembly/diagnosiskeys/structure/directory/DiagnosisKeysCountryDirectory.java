@@ -48,7 +48,7 @@ public class DiagnosisKeysCountryDirectory extends IndexDirectoryOnDisk<String> 
    */
   public DiagnosisKeysCountryDirectory(DiagnosisKeyBundler diagnosisKeyBundler,
       CryptoProvider cryptoProvider, DistributionServiceConfig distributionServiceConfig) {
-    super(distributionServiceConfig.getApi().getCountryPath(), __ ->
+    super(distributionServiceConfig.getApi().getCountryPath(), ignoredValue ->
         Set.of(distributionServiceConfig.getApi().getCountryGermany()), Object::toString);
     this.diagnosisKeyBundler = diagnosisKeyBundler;
     this.cryptoProvider = cryptoProvider;
@@ -57,11 +57,9 @@ public class DiagnosisKeysCountryDirectory extends IndexDirectoryOnDisk<String> 
 
   @Override
   public void prepare(ImmutableStack<Object> indices) {
-    this.addWritableToAll(__ -> {
-      DiagnosisKeysDateDirectory dateDirectory = new DiagnosisKeysDateDirectory(diagnosisKeyBundler, cryptoProvider,
-          distributionServiceConfig);
-      return decorateDateDirectory(dateDirectory);
-    });
+    this.addWritableToAll(ignoredValue ->
+        decorateDateDirectory(
+            new DiagnosisKeysDateDirectory(diagnosisKeyBundler, cryptoProvider, distributionServiceConfig)));
     super.prepare(indices);
   }
 

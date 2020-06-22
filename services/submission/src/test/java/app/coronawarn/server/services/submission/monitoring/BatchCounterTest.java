@@ -50,7 +50,7 @@ class BatchCounterTest {
   @ValueSource(longs = {1L, 2L, 4L})
   void incrementSubmittedOnceIfBatchSizeReached(long batchSize) {
     BatchCounter batchCounter = new BatchCounter(meterRegistry, batchSize, COUNTER_TYPE);
-    LongStream.range(0, batchSize).forEach(__ -> batchCounter.increment());
+    LongStream.range(0, batchSize).forEach(ignoredValue -> batchCounter.increment());
     verify(meterCounter, times(1)).increment(batchSize);
   }
 
@@ -58,7 +58,7 @@ class BatchCounterTest {
   @ValueSource(longs = {2L, 4L, 7L})
   void doesNotIncrementIfLesserThanBatchSize(long batchSize) {
     BatchCounter batchCounter = new BatchCounter(meterRegistry, batchSize, COUNTER_TYPE);
-    LongStream.range(0, batchSize - 1).forEach(__ -> batchCounter.increment());
+    LongStream.range(0, batchSize - 1).forEach(ignoredValue -> batchCounter.increment());
     verify(meterCounter, never()).increment(batchSize);
   }
 }
