@@ -13,10 +13,10 @@ spring:
         application-name: 'supersecret'
       fail-fast: true
       authentication: KUBERNETES
-        kubernetes:
-          role: tracing-ro
-          kubernetes-path: kubernetes
-          service-account-token-file: /var/run/secrets/kubernetes.io/serviceaccount/token
+      kubernetes:
+        role: tracing-ro
+        kubernetes-path: kubernetes
+        service-account-token-file: /var/run/secrets/kubernetes.io/serviceaccount/token
       uri: ${VAULT_URI}
       connection-timeout: 5000
       read-timeout: 15000
