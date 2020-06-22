@@ -64,7 +64,7 @@ public class Helpers {
 
   public static List<DiagnosisKey> buildDiagnosisKeys(int startIntervalNumber, long submissionTimestamp, int number) {
     return IntStream.range(0, number)
-        .mapToObj(__ -> DiagnosisKey.builder()
+        .mapToObj(ignoredValue -> DiagnosisKey.builder()
             .withKeyData(new byte[16])
             .withRollingStartIntervalNumber(startIntervalNumber)
             .withTransmissionRiskLevel(2)
