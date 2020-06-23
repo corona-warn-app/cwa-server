@@ -33,13 +33,13 @@ import org.springframework.validation.annotation.Validated;
 @Validated
 public class DistributionServiceConfig {
 
-  private final static String pathRegex = "^[/]?[a-zA-Z0-9_]+[/[a-zA-Z0-9_]+]*$";
-  private final static String fileNameRegex = "^[a-zA-Z0-9_-]+$";
-  private final static String fileNameWithTypeRegex = "^[a-zA-Z0-9_-]+\\.[a-z]+$";
-  private final static String charAndNumberRegex = "^[a-zA-Z0-9]+$";
-  private final static String charNumberAndSpaceRegex = "^[a-zA-Z0-9_\\s]+$";
-  private final static String urlPathRegex = "^[a-zA-Z_-]+$";
-  private final static String versionRegex = "^v[0-9]+$";
+  private static final String pathRegex = "^[/]?[a-zA-Z0-9_]+[/[a-zA-Z0-9_]+]*$";
+  private static final String fileNameRegex = "^[a-zA-Z0-9_-]+$";
+  private static final String fileNameWithTypeRegex = "^[a-zA-Z0-9_-]+\\.[a-z]+$";
+  private static final String charAndNumberRegex = "^[a-zA-Z0-9]+$";
+  private static final String charNumberAndSpaceRegex = "^[a-zA-Z0-9_\\s]+$";
+  private static final String urlPathRegex = "^[a-zA-Z_-]+$";
+  private static final String versionRegex = "^v[0-9]+$";
   private static final String numberRegex = "^[0-9]+$";
   private static final String bundleRegex = "^[a-z-]+[\\.[a-z-]+]*$";
   private static final String algorithmOidRegex = "^[0-9]+[\\.[0-9]+]*$";
