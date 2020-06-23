@@ -33,6 +33,20 @@ import org.springframework.validation.annotation.Validated;
 @Validated
 public class DistributionServiceConfig {
 
+  private final static String pathRegex = "^[/]?[a-zA-Z0-9_]+[/[a-zA-Z0-9_]+]*$";
+  private final static String fileNameRegex = "^[a-zA-Z0-9_-]+$";
+  private final static String fileNameWithTypeRegex = "^[a-zA-Z0-9_-]+\\.[a-z]+$";
+  private final static String charAndNumberRegex = "^[a-zA-Z0-9]+$";
+  private final static String charNumberAndSpaceRegex = "^[a-zA-Z0-9_\\s]+$";
+  private final static String urlPathRegex = "^[a-zA-Z_-]+$";
+  private final static String versionRegex = "^v[0-9]+$";
+  private static final String numberRegex = "^[0-9]+$";
+  private static final String bundleRegex = "^[a-z-]+[\\.[a-z-]+]*$";
+  private static final String algorithmOidRegex = "^[0-9]+[\\.[0-9]+]*$";
+  private static final String noWhitespaceString = "^[\\S]+$";
+  private static final String urlRegex = "^http[s]?://[a-z0-9]+[\\.[a-z0-9]+]*";
+  private static final String privateKeyRegex = "^(classpath:|file://)[/]?[a-zA-Z0-9_]+[/[a-zA-Z0-9_]+]*.pem$";
+
   private Paths paths;
   private TestData testData;
   @Min(7)
@@ -47,7 +61,7 @@ public class DistributionServiceConfig {
   @Min(600000)
   @Max(1000000)
   private Integer maximumNumberOfKeysPerBundle;
-  @Pattern(regexp = "^[a-zA-Z0-9_-]+$")
+  @Pattern(regexp = fileNameRegex)
   private String outputFileName;
   private Boolean includeIncompleteDays;
   private Boolean includeIncompleteHours;
@@ -163,9 +177,9 @@ public class DistributionServiceConfig {
 
   public static class TekExport {
 
-    @Pattern(regexp = "^[a-zA-Z0-9_-]+\\.[a-z]+$")
+    @Pattern(regexp = fileNameWithTypeRegex)
     private String fileName;
-    @Pattern(regexp = "^[a-zA-Z0-9_\\s]+$")
+    @Pattern(regexp = charNumberAndSpaceRegex)
     private String fileHeader;
     @Min(16)
     @Max(32)
@@ -220,9 +234,9 @@ public class DistributionServiceConfig {
 
   public static class Paths {
 
-    @Pattern(regexp = "^classpath:[/]?[a-zA-Z0-9_]+[/[a-zA-Z0-9_]+]*.pem$")
+    @Pattern(regexp = privateKeyRegex)
     private String privateKey;
-    @Pattern(regexp = "^[/]?[a-zA-Z0-9_]+[/[a-zA-Z0-9_]+]*$")
+    @Pattern(regexp = pathRegex)
     private String output;
 
     public String getPrivateKey() {
@@ -244,23 +258,23 @@ public class DistributionServiceConfig {
 
   public static class Api {
 
-    @Pattern(regexp = "^[a-z-]+$")
+    @Pattern(regexp = urlPathRegex)
     private String versionPath;
-    @Pattern(regexp = "^v[0-9]+$")
+    @Pattern(regexp = versionRegex)
     private String versionV1;
-    @Pattern(regexp = "^[a-z-]+$")
+    @Pattern(regexp = urlPathRegex)
     private String countryPath;
-    @Pattern(regexp = "^[A-Z]+$")
+    @Pattern(regexp = urlPathRegex)
     private String countryGermany;
-    @Pattern(regexp = "^[a-z-]+$")
+    @Pattern(regexp = urlPathRegex)
     private String datePath;
-    @Pattern(regexp = "^[a-z-]+$")
+    @Pattern(regexp = urlPathRegex)
     private String hourPath;
-    @Pattern(regexp = "^[a-z-]+$")
+    @Pattern(regexp = urlPathRegex)
     private String diagnosisKeysPath;
-    @Pattern(regexp = "^[a-z-]+$")
+    @Pattern(regexp = urlPathRegex)
     private String parametersPath;
-    @Pattern(regexp = "^[a-z-_]+$")
+    @Pattern(regexp = urlPathRegex)
     private String appConfigFileName;
 
     public String getVersionPath() {
@@ -338,21 +352,20 @@ public class DistributionServiceConfig {
 
   public static class Signature {
 
-    @Pattern(regexp = "^[a-z-]+[\\.[a-z-]+]*$")
+    @Pattern(regexp = bundleRegex)
     private String appBundleId;
-    //TODO: is this still used?
     private String androidPackage;
-    @Pattern(regexp = "^[0-9]+$")
+    @Pattern(regexp = numberRegex)
     private String verificationKeyId;
-    @Pattern(regexp = "^v[0-9]+$")
+    @Pattern(regexp = versionRegex)
     private String verificationKeyVersion;
-    @Pattern(regexp = "^[0-9]+[\\.[0-9]+]*$")
+    @Pattern(regexp = algorithmOidRegex)
     private String algorithmOid;
-    @Pattern(regexp = "^[a-zA-Z0-9]+$")
+    @Pattern(regexp = charAndNumberRegex)
     private String algorithmName;
-    @Pattern(regexp = "^[a-zA-Z0-9_-]+\\.[a-z]+$")
+    @Pattern(regexp = fileNameWithTypeRegex)
     private String fileName;
-    @Pattern(regexp = "^[A-Z]+$")
+    @Pattern(regexp = charAndNumberRegex)
     private String securityProvider;
 
     public String getAppBundleId() {
@@ -434,16 +447,16 @@ public class DistributionServiceConfig {
 
   public static class ObjectStore {
 
-    @Pattern(regexp = "^[\\S]+$")
+    @Pattern(regexp = noWhitespaceString)
     private String accessKey;
-    @Pattern(regexp = "^[\\S]+$")
+    @Pattern(regexp = noWhitespaceString)
     private String secretKey;
-    @Pattern(regexp = "^http[s]?://[a-z0-9]+[\\.[a-z0-9]+]*")
+    @Pattern(regexp = urlRegex)
     private String endpoint;
     @Min(1)
     @Max(65535)
     private Integer port;
-    @Pattern(regexp = "^[a-z0-9]+$")
+    @Pattern(regexp = charAndNumberRegex)
     private String bucket;
     private Boolean setPublicReadAclOnPutObject;
     @Min(1)
