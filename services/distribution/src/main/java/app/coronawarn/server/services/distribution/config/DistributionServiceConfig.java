@@ -49,17 +49,17 @@ public class DistributionServiceConfig {
 
   private Paths paths;
   private TestData testData;
-  @Min(7)
+  @Min(0)
   @Max(28)
   private Integer retentionDays;
   @Min(120)
   @Max(720)
   private Integer expiryPolicyMinutes;
-  @Min(5)
-  @Max(10)
+  @Min(0)
+  @Max(200)
   private Integer shiftingPolicyThreshold;
   @Min(600000)
-  @Max(1000000)
+  @Max(750000)
   private Integer maximumNumberOfKeysPerBundle;
   @Pattern(regexp = fileNameRegex)
   private String outputFileName;
@@ -181,7 +181,7 @@ public class DistributionServiceConfig {
     private String fileName;
     @Pattern(regexp = charNumberAndSpaceRegex)
     private String fileHeader;
-    @Min(16)
+    @Min(0)
     @Max(32)
     private Integer fileHeaderWidth;
 

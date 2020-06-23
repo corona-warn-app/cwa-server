@@ -50,7 +50,7 @@ public class SubmissionServiceConfig {
   @Min(1)
   @Max(25)
   private Integer randomKeyPaddingMultiplier;
-  @Min(100)
+  @Min(1)
   @Max(10000)
   private Integer connectionPoolSize;
   private Payload payload;
