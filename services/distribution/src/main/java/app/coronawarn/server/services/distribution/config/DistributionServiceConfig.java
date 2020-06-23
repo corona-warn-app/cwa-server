@@ -21,19 +21,33 @@
 package app.coronawarn.server.services.distribution.config;
 
 import app.coronawarn.server.common.protocols.external.exposurenotification.SignatureInfo;
+import javax.validation.constraints.Max;
+import javax.validation.constraints.Min;
+import javax.validation.constraints.Pattern;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Component;
+import org.springframework.validation.annotation.Validated;
 
 @Component
 @ConfigurationProperties(prefix = "services.distribution")
+@Validated
 public class DistributionServiceConfig {
 
   private Paths paths;
   private TestData testData;
+  @Min(7)
+  @Max(28)
   private Integer retentionDays;
+  @Min(120)
+  @Max(720)
   private Integer expiryPolicyMinutes;
+  @Min(5)
+  @Max(10)
   private Integer shiftingPolicyThreshold;
+  @Min(600000)
+  @Max(1000000)
   private Integer maximumNumberOfKeysPerBundle;
+  @Pattern(regexp = "^[a-zA-Z0-9_-]+$")
   private String outputFileName;
   private Boolean includeIncompleteDays;
   private Boolean includeIncompleteHours;
@@ -149,8 +163,12 @@ public class DistributionServiceConfig {
 
   public static class TekExport {
 
+    @Pattern(regexp = "^[a-zA-Z0-9_-]+\\.[a-z]+$")
     private String fileName;
+    @Pattern(regexp = "^[a-zA-Z0-9_\\s]+$")
     private String fileHeader;
+    @Min(16)
+    @Max(32)
     private Integer fileHeaderWidth;
 
     public String getFileName() {
@@ -202,7 +220,9 @@ public class DistributionServiceConfig {
 
   public static class Paths {
 
+    @Pattern(regexp = "^classpath:[/]?[a-zA-Z0-9_]+[/[a-zA-Z0-9_]+]*.pem$")
     private String privateKey;
+    @Pattern(regexp = "^[/]?[a-zA-Z0-9_]+[/[a-zA-Z0-9_]+]*$")
     private String output;
 
     public String getPrivateKey() {
@@ -224,14 +244,23 @@ public class DistributionServiceConfig {
 
   public static class Api {
 
+    @Pattern(regexp = "^[a-z-]+$")
     private String versionPath;
+    @Pattern(regexp = "^v[0-9]+$")
     private String versionV1;
+    @Pattern(regexp = "^[a-z-]+$")
     private String countryPath;
+    @Pattern(regexp = "^[A-Z]+$")
     private String countryGermany;
+    @Pattern(regexp = "^[a-z-]+$")
     private String datePath;
+    @Pattern(regexp = "^[a-z-]+$")
     private String hourPath;
+    @Pattern(regexp = "^[a-z-]+$")
     private String diagnosisKeysPath;
+    @Pattern(regexp = "^[a-z-]+$")
     private String parametersPath;
+    @Pattern(regexp = "^[a-z-_]+$")
     private String appConfigFileName;
 
     public String getVersionPath() {
@@ -309,13 +338,21 @@ public class DistributionServiceConfig {
 
   public static class Signature {
 
+    @Pattern(regexp = "^[a-z-]+[\\.[a-z-]+]*$")
     private String appBundleId;
+    //TODO: is this still used?
     private String androidPackage;
+    @Pattern(regexp = "^[0-9]+$")
     private String verificationKeyId;
+    @Pattern(regexp = "^v[0-9]+$")
     private String verificationKeyVersion;
+    @Pattern(regexp = "^[0-9]+[\\.[0-9]+]*$")
     private String algorithmOid;
+    @Pattern(regexp = "^[a-zA-Z0-9]+$")
     private String algorithmName;
+    @Pattern(regexp = "^[a-zA-Z0-9_-]+\\.[a-z]+$")
     private String fileName;
+    @Pattern(regexp = "^[A-Z]+$")
     private String securityProvider;
 
     public String getAppBundleId() {
@@ -397,13 +434,23 @@ public class DistributionServiceConfig {
 
   public static class ObjectStore {
 
+    @Pattern(regexp = "^[\\S]+$")
     private String accessKey;
+    @Pattern(regexp = "^[\\S]+$")
     private String secretKey;
+    @Pattern(regexp = "^http[s]?://[a-z]+[\\.[a-z]+]*")
     private String endpoint;
+    @Min(1)
+    @Max(65535)
     private Integer port;
+    @Pattern(regexp = "^[a-z0-9]+$")
     private String bucket;
     private Boolean setPublicReadAclOnPutObject;
+    @Min(1)
+    @Max(64)
     private Integer maxNumberOfFailedOperations;
+    @Min(1)
+    @Max(64)
     private Integer maxNumberOfS3Threads;
 
     public String getAccessKey() {
