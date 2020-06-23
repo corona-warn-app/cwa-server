@@ -107,7 +107,11 @@ In which `<date>` stands for the ISO formatted date (e.g. `2012-06-05`), and is 
 
 The exported diagnosis-keys are being organized in hourly and daily archives. The folder structure is as follows:
 `/version/<version>/diagnosis-keys/country/<ISO-3166-country>/date/<YYYY-MM-DD>/hour/<hh>/index`. The version, country,
-date and hour directory also contain an index file each, listing all the subdirectories.
+date and hour directory also contain an index file each, listing all the subdirectories. All generated files are named
+`index`, which acts as a workaround to also support files & folders with the same name - e.g.
+`version/v1/diagnosis-keys/country` is both a file and the folder `version/v1/diagnosis-keys/country/`. S3 supports this
+concept, but writing this structure to the local disk is not supported. Therefore, this country file will be assembled as
+`version/v1/diagnosis-keys/country/index`. The `/index` part will then be removed upon S3 upload.
 
 For each assembly run the diagnosis keys for the last 14 days are queried. Based on the result, hour and their parent
 directories are created and the keys are added to their respective archives. To which archive the key should be added is
