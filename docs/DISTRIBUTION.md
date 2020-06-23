@@ -27,17 +27,17 @@ All of the configurable parameters, that are used throughout this service can be
 divided into different sub-categories:
 
 - Some general configuration, which isn't divided into sub-categories
-- `paths` - Local Paths, that are used during the export creation
+- `paths` - Local paths, that are used during the export creation
 - `tek-export` - Configuration for the exported archive, that is saved on the S3-compatible storage
-- `api` - API Configuration, configures the API, which is used by the mobile app to query diagnosis keys
-- `signature` - Signature Configuration, used for signing the exports
+- `api` - API configuration, configures the API, which is used by the mobile app to query diagnosis keys
+- `signature` - Signature configuration, used for signing the exports
 - `objectstore` - Configuration for the S3 compatible object storage
 
 ## Object Store
 
-The communication with the S3 compatible object storage, that is hosted by Deutsche Telekom is done through the AWS SDK
-v2. The files, that will be updated to the S3 compatible storage are created on local storage first (output path defined
-in application configuration) and are then uploaded to the storage provider.
+The communication with the S3 compatible object storage, that is hosted by Deutsche Telekom is achieved through AWS SDK
+v2. The files, that will be uploaded to the S3 compatible storage are created on local storage first (output path
+defined in application configuration) and are then uploaded to the storage provider.
 
 ### Headers
 
@@ -46,12 +46,12 @@ Up to three headers are set during upload, depending on the configuration proper
 #### `Cache-Control`
 
 Defines the maximum amount of time a published resource is considered fresh, when held in cache. Will be set for each
-upload, default is 300 seconds.
+upload. The default value is 300 seconds.
 
 #### `x-amz-acl`
 
 Defines the canned ACL for the uploaded file. Is only set if [`set-public-read-acl-on-put-object`] is set to true in the
-configuration properties. Will be `public-read` in that case, which grants full control to the Owners and read-access to
+configuration properties. Will be `public-read` in that case, which grants full control to the owners and read-access to
 AllUsers. This setting should only be used when running with the application with the local Zenko Cloudserver.
 
 #### `cwa-hash`
@@ -67,15 +67,15 @@ non-deterministic nature.
 
 ### Threading
 
-The upload operations are being run in multiple threads to increase performance. The number of threads is defined in the
-application configuration. Each upload operation is passed to Spring Boot's `ThreadPoolTaskExecutor`, which then
-distributes them across the available threads. Once all tasks are submitted, the logic checks, whether all threads have
-terminated before shutting down the Thread Pool. If errors are thrown, they are handled as explained in the following
-section.
+The upload operations are being run in multiple threads in order to increase performance. The number of threads is
+defined in the application configuration. Each upload operation is passed to Spring Boot's `ThreadPoolTaskExecutor`,
+which then distributes them across the available threads. Once all tasks are submitted, the logic checks, whether all
+threads have terminated before shutting down the thread pool. If errors are thrown, they are handled as explained in the
+following section.
 
 ### Error Handling
 
-To make the distribution service more resilient two error handling measures were introduced.
+In order to increase resilience of the distribution service two error handling measures were introduced.
 
 The first one being Spring Boot's Retry logic, which is applied to all S3 operations with the number of retries being
 specified in the application configuration. This results in Spring Boot retrying the operation up to three times, with a
