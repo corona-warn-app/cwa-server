@@ -438,7 +438,7 @@ public class DistributionServiceConfig {
     private String accessKey;
     @Pattern(regexp = "^[\\S]+$")
     private String secretKey;
-    @Pattern(regexp = "^http[s]?://[a-z]+[\\.[a-z]+]*")
+    @Pattern(regexp = "^http[s]?://[a-z0-9]+[\\.[a-z0-9]+]*")
     private String endpoint;
     @Min(1)
     @Max(65535)
