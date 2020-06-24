@@ -88,11 +88,6 @@ public @interface ValidSubmissionPayload {
       List<TemporaryExposureKey> exposureKeys = submissionPayload.getKeysList();
       validatorContext.disableDefaultConstraintViolation();
 
-      if (Objects.isNull(exposureKeys)) {
-        addViolation(validatorContext, "Field 'keys' points to Null.");
-        return false;
-      }
-
       boolean isValid = checkKeyCollectionSize(exposureKeys, validatorContext);
       isValid &= checkUniqueStartIntervalNumbers(exposureKeys, validatorContext);
       isValid &= checkNoOverlapsInTimeWindow(exposureKeys, validatorContext);
