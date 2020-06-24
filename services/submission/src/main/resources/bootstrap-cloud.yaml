@@ -4,6 +4,7 @@ spring:
     name: cwa-server
   cloud:
     vault:
+      enabled: true
       generic:
         enabled: false
       kv:
