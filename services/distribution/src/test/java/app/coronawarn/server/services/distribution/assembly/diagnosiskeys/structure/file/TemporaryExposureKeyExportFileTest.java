@@ -20,7 +20,9 @@
 
 package app.coronawarn.server.services.distribution.assembly.diagnosiskeys.structure.file;
 
-import app.coronawarn.server.common.persistence.domain.DiagnosisKey;
+import static app.coronawarn.server.services.distribution.common.Helpers.buildDiagnosisKeyForSubmissionTimestamp;
+import static org.assertj.core.api.Assertions.assertThat;
+
 import app.coronawarn.server.services.distribution.assembly.structure.WritableOnDisk;
 import app.coronawarn.server.services.distribution.assembly.structure.directory.Directory;
 import app.coronawarn.server.services.distribution.assembly.structure.directory.DirectoryOnDisk;
@@ -45,7 +47,6 @@ import org.springframework.test.annotation.DirtiesContext.ClassMode;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
-import static org.assertj.core.api.Assertions.assertThat;
 
 @EnableConfigurationProperties(value = DistributionServiceConfig.class)
 @ExtendWith(SpringExtension.class)
@@ -94,13 +95,7 @@ class TemporaryExposureKeyExportFileTest {
   private TemporaryExposureKeyExportFile createTemporaryExposureKeyExportFile() {
     return TemporaryExposureKeyExportFile.fromDiagnosisKeys(
         Set.of(
-            DiagnosisKey.builder()
-                .withKeyData(new byte[16])
-                .withRollingStartIntervalNumber(1)
-                .withTransmissionRiskLevel(1)
-                .withRollingPeriod(144)
-                .withSubmissionTimestamp(1)
-                .build()
+            buildDiagnosisKeyForSubmissionTimestamp(1)
         ),
         "DE", 0, 10, distributionServiceConfig
     );
