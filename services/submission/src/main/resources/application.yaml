@@ -2,11 +2,8 @@
 logging:
   level:
     org:
-      apache:
-        http: DEBUG
       springframework:
         web: INFO
-        vault: DEBUG
     app:
       coronawarn: INFO
 
