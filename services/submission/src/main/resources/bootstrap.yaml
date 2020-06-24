@@ -11,6 +11,8 @@ spring:
         backend: ${VAULT_BACKEND}
         profile-separator: '/'
         application-name: 'submission'
+        default-context: ''
+        profiles: cloud
       fail-fast: true
       authentication: KUBERNETES
       kubernetes:
