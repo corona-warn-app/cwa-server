@@ -10,7 +10,7 @@ spring:
         enabled: true
         backend: ${VAULT_BACKEND}
         profile-separator: '/'
-        application-name: 'supersecret'
+        application-name: 'submission'
       fail-fast: true
       authentication: KUBERNETES
       kubernetes:
