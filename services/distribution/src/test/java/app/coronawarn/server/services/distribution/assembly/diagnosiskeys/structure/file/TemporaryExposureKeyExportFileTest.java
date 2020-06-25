@@ -32,7 +32,6 @@ import app.coronawarn.server.services.distribution.config.DistributionServiceCon
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
-import java.util.Arrays;
 import java.util.Set;
 import org.junit.Rule;
 import org.junit.jupiter.api.BeforeEach;
