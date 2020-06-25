@@ -50,11 +50,11 @@ class ValidationResultTest {
   @Test
   void toStringReturnsCorrectErrorInformation() {
     emptyValidationResult.add(EXP_VALIDATION_ERROR);
-    assertThat(emptyValidationResult.toString()).isEqualTo("[" + EXP_VALIDATION_ERROR.toString() + "]");
+    assertThat(emptyValidationResult).hasToString("[" + EXP_VALIDATION_ERROR.toString() + "]");
   }
 
   @Test
   void toStringReturnsCorrectErrorInformationIfEmpty() {
-    assertThat(emptyValidationResult.toString()).isEqualTo("[]");
+    assertThat(emptyValidationResult).hasToString("[]");
   }
 }
