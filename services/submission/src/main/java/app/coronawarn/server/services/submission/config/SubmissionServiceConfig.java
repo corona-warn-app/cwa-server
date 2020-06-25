@@ -33,8 +33,8 @@ import org.springframework.validation.annotation.Validated;
 @Validated
 public class SubmissionServiceConfig {
 
-  private static final String urlRegexWithPort = "^http[s]?://[a-z0-9]+[\\.[a-z0-9]+]*:[0-9]{2,6}";
-  private static final String pathRegex = "^[/]?[a-zA-Z0-9_]+[/[a-zA-Z0-9_]+]*$";
+  private static final String PATH_REGEX = "^[/]?[a-zA-Z0-9_]+[/[a-zA-Z0-9_]+]*$";
+  private static final String URL_WITH_PORT_REGEX = "^http[s]?://[a-z0-9]+[\\.[a-z0-9]+]*:[0-9]{2,6}";
 
   // Exponential moving average of the last N real request durations (in ms), where
   // N = fakeDelayMovingAverageSamples.
@@ -135,10 +135,10 @@ public class SubmissionServiceConfig {
 
   private static class Verification {
 
-    @Pattern(regexp = urlRegexWithPort)
+    @Pattern(regexp = URL_WITH_PORT_REGEX)
     private String baseUrl;
 
-    @Pattern(regexp = pathRegex)
+    @Pattern(regexp = PATH_REGEX)
     private String path;
 
     public String getBaseUrl() {
