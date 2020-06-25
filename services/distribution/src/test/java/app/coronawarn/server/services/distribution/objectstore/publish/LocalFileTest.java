@@ -26,7 +26,7 @@ import java.nio.file.Path;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 
-final class LocalFileTest {
+class LocalFileTest {
   @ParameterizedTest
   @ValueSource(strings = { 
       "version", 
@@ -34,8 +34,8 @@ final class LocalFileTest {
       "version/v1/diagnosis-keys/country",
       "version/v1/diagnosis-keys/country/DE/date", 
       "version/v1/diagnosis-keys/country/DE/date/2020-06-11/hour" })
-  void testGetContentTypeJson(final String path) {
-    final LocalFile test = new LocalIndexFile(Path.of("/root", path, "/index"), Path.of("/root"));
+  void testGetContentTypeJson(String path) {
+    LocalFile test = new LocalIndexFile(Path.of("/root", path, "/index"), Path.of("/root"));
     assertEquals("application/json", test.getContentType());
   }
 
@@ -44,8 +44,8 @@ final class LocalFileTest {
       "version/v1/configuration/country/DE/app_config", 
       "version/v1/diagnosis-keys/country/DE/date/2020-06-11", 
       "version/v1/diagnosis-keys/country/DE/date/2020-06-11/hour/13" })
-  void testGetContentTypeZip(final String path) {
-    final LocalFile test = new LocalIndexFile(Path.of("/root", path, "/index"), Path.of("/root"));
+  void testGetContentTypeZip(String path) {
+    LocalFile test = new LocalIndexFile(Path.of("/root", path, "/index"), Path.of("/root"));
     assertEquals("application/zip", test.getContentType());
   }
 }

@@ -214,7 +214,7 @@ class S3ClientWrapperTest {
 
   @Test
   void testPutObjectForContentTypeHeader() {
-    final String contentType = "foo-content-type";
+    String contentType = "foo-content-type";
     s3ClientWrapper.putObject(VALID_BUCKET_NAME, VALID_NAME, Path.of(""), 
         newHashMap(HeaderKey.CONTENT_TYPE, contentType));
 
