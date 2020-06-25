@@ -59,7 +59,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration(classes = {CryptoProvider.class, DistributionServiceConfig.class},
     initializers = ConfigFileApplicationContextInitializer.class)
-public class DiagnosisKeysHourDirectoryTest {
+class DiagnosisKeysHourDirectoryTest {
 
   @Rule
   private final TemporaryFolder outputFolder = new TemporaryFolder();
