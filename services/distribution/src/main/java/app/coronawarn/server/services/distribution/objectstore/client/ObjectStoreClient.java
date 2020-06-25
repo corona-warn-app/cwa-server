@@ -23,7 +23,6 @@ package app.coronawarn.server.services.distribution.objectstore.client;
 import java.nio.file.Path;
 import java.util.List;
 import java.util.Map;
-import software.amazon.awssdk.http.Header;
 
 /**
  * Simple Storage Service (aka S3) client to perform bucket and object operations.
@@ -79,8 +78,7 @@ public interface ObjectStoreClient {
     /**
      * To control which content type is sent, when objects are retrieved from the object store.
      */
-    CONTENT_TYPE(Header.CONTENT_TYPE)
-    ;
+    CONTENT_TYPE("Content-Type");
 
     public final String keyValue;
 
