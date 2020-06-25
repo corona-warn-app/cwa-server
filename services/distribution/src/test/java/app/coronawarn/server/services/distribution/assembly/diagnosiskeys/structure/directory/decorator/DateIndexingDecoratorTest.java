@@ -80,9 +80,9 @@ class DateIndexingDecoratorTest {
 
     Set<LocalDate> index = decorator.getIndex(new ImmutableStack<>());
 
-    assertThat(index).contains(LocalDate.of(1970, 1, 3));
-    assertThat(index).doesNotContain(LocalDate.of(1970, 1, 4));
-    assertThat(index).contains(LocalDate.of(1970, 1, 5));
+    assertThat(index).contains(LocalDate.of(1970, 1, 3))
+        .doesNotContain(LocalDate.of(1970, 1, 4))
+        .contains(LocalDate.of(1970, 1, 5));
   }
 
   @Test
@@ -94,8 +94,8 @@ class DateIndexingDecoratorTest {
 
     Set<LocalDate> index = decorator.getIndex(new ImmutableStack<>());
 
-    assertThat(index).contains(LocalDate.of(1970, 1, 4));
-    assertThat(index).doesNotContain(LocalDate.of(1970, 1, 5));
+    assertThat(index).contains(LocalDate.of(1970, 1, 4))
+        .doesNotContain(LocalDate.of(1970, 1, 5));
   }
 
   @Test
@@ -125,7 +125,6 @@ class DateIndexingDecoratorTest {
   private DateIndexingDecorator makeDecoratedDateDirectory(DiagnosisKeyBundler diagnosisKeyBundler) {
     return new DateIndexingDecorator(
         new DiagnosisKeysDateDirectory(diagnosisKeyBundler, cryptoProvider, distributionServiceConfig),
-        distributionServiceConfig
-    );
+        distributionServiceConfig);
   }
 }
