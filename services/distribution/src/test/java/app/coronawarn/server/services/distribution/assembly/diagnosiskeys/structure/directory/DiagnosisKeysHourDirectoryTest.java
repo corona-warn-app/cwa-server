@@ -1,9 +1,7 @@
 package app.coronawarn.server.services.distribution.assembly.diagnosiskeys.structure.directory;
 
 import static app.coronawarn.server.services.distribution.common.Helpers.buildDiagnosisKeys;
-import static java.io.File.separator;
 
-import app.coronawarn.server.common.persistence.domain.DiagnosisKey;
 import app.coronawarn.server.services.distribution.assembly.component.CryptoProvider;
 import app.coronawarn.server.services.distribution.assembly.diagnosiskeys.DiagnosisKeyBundler;
 import app.coronawarn.server.services.distribution.assembly.diagnosiskeys.ProdDiagnosisKeyBundler;
@@ -12,12 +10,12 @@ import app.coronawarn.server.services.distribution.assembly.structure.directory.
 import app.coronawarn.server.services.distribution.assembly.structure.directory.DirectoryOnDisk;
 import app.coronawarn.server.services.distribution.assembly.structure.util.ImmutableStack;
 import app.coronawarn.server.services.distribution.common.Helpers;
+import app.coronawarn.server.services.distribution.common.Helpers.TestTuple;
 import app.coronawarn.server.services.distribution.config.DistributionServiceConfig;
 import java.io.File;
 import java.io.IOException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -66,8 +64,7 @@ public class DiagnosisKeysHourDirectoryTest {
 
     DiagnosisKeyBundler bundler = new ProdDiagnosisKeyBundler(distributionServiceConfig);
 
-    bundler.setDiagnosisKeys(testTuple.diagnosisKeys,
-        testTuple.distributionRun);
+    bundler.setDiagnosisKeys(testTuple.diagnosisKeys, testTuple.distributionRun);
 
     DiagnosisKeysHourDirectory hourDirectory = new DiagnosisKeysHourDirectory(bundler, cryptoProvider,
         distributionServiceConfig);
@@ -89,15 +86,18 @@ public class DiagnosisKeysHourDirectoryTest {
   }
 
   private static Stream<Arguments> createDiagnosisKeysAndExpectedFiles() {
-    return Stream.of(new TestTuple(
+    return Stream.of(
+        //Creates correct structure for multiple hours
+        new TestTuple(
             IntStream.range(0, 5)
                 .mapToObj(
                     currentHour -> buildDiagnosisKeys(6, LocalDateTime.of(1970, 1, 3, 0, 0).plusHours(currentHour), 5))
                 .flatMap(List::stream)
                 .collect(Collectors.toList()),
-            getExpectedFiles(Set.of("0", "1", "2", "3", "4")),
+            Helpers.getExpectedHourFiles(Set.of("0", "1", "2", "3", "4")),
             LocalDateTime.of(1970, 1, 5, 0, 0)
         ),
+        //Does not include empty hours
         new TestTuple(
             IntStream.range(0, 5)
                 .filter(currentHour -> currentHour != 3)
@@ -105,46 +105,45 @@ public class DiagnosisKeysHourDirectoryTest {
                     currentHour -> buildDiagnosisKeys(6, LocalDateTime.of(1970, 1, 3, 0, 0).plusHours(currentHour), 5))
                 .flatMap(List::stream)
                 .collect(Collectors.toList()),
-            getExpectedFiles(Set.of("0", "1", "2", "4")),
+            Helpers.getExpectedHourFiles(Set.of("0", "1", "2", "4")),
             LocalDateTime.of(1970, 1, 5, 0, 0)
         ),
+        //Does not include the current hour
         new TestTuple(
             IntStream.range(0, 5)
                 .mapToObj(
                     currentHour -> buildDiagnosisKeys(6, LocalDateTime.of(1970, 1, 3, 0, 0).plusHours(currentHour), 5))
                 .flatMap(List::stream)
                 .collect(Collectors.toList()),
-            getExpectedFiles(Set.of("0", "1", "2", "3")),
+            Helpers.getExpectedHourFiles(Set.of("0", "1", "2", "3")),
             LocalDateTime.of(1970, 1, 3, 4, 0)
+        ),
+        //Does not include hours with too few keys
+        new TestTuple(
+            List.of(
+                buildDiagnosisKeys(6, LocalDateTime.of(1970, 1, 3, 0, 0), 5),
+                buildDiagnosisKeys(6, LocalDateTime.of(1970, 1, 3, 1, 0), 4),
+                buildDiagnosisKeys(6, LocalDateTime.of(1970, 1, 3, 2, 0), 5))
+                .stream()
+                .flatMap(List::stream)
+                .collect(Collectors.toList()),
+            Helpers.getExpectedHourFiles(Set.of("0", "2")),
+            LocalDateTime.of(1970, 1, 6, 12, 0)
+        ),
+        //Does not include hours in the future
+        new TestTuple(
+            List.of(
+                buildDiagnosisKeys(6, LocalDateTime.of(1970, 1, 3, 0, 0), 5),
+                buildDiagnosisKeys(6, LocalDateTime.of(1970, 1, 3, 1, 0), 5),
+                buildDiagnosisKeys(6, LocalDateTime.of(1970, 1, 3, 2, 0), 5))
+                .stream()
+                .flatMap(List::stream)
+                .collect(Collectors.toList()),
+            Helpers.getExpectedHourFiles(Set.of("0")),
+            LocalDateTime.of(1970, 1, 3, 1, 0)
         )
-    )
-        .map(Arguments::of);
+    ).map(Arguments::of);
   }
 
-  private static Set<String> getExpectedFiles(Collection<String> hours) {
-
-    return hours.stream()
-        .map(hour -> Set.of(
-            String.join(separator, "hour", hour, "index"),
-            String.join(separator, "hour", hour, "index.checksum")))
-        .flatMap(Set::stream)
-        .collect(Collectors.toSet());
-  }
-
-
-  private static class TestTuple {
-
-    Collection<DiagnosisKey> diagnosisKeys;
-    Collection<String> expectedFiles;
-    LocalDateTime distributionRun;
-
-    public TestTuple(Collection<DiagnosisKey> diagnosisKeys, Collection<String> expectedFiles,
-        LocalDateTime distributionRun) {
-      this.diagnosisKeys = diagnosisKeys;
-      this.expectedFiles = expectedFiles;
-      this.distributionRun = distributionRun;
-    }
-
-  }
 
 }
