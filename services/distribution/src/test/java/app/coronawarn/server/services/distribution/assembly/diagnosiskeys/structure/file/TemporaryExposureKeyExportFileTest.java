@@ -76,7 +76,7 @@ class TemporaryExposureKeyExportFileTest {
     File outputFile2 = createFile();
     byte[] checksum2 = readChecksumFile(outputFile2);
 
-    assertThat(Arrays.equals(checksum1, checksum2)).isTrue();
+    assertThat(checksum1).isEqualTo(checksum2);
   }
 
   @Test
@@ -89,7 +89,7 @@ class TemporaryExposureKeyExportFileTest {
     File outputFile2 = createFile();
     byte[] checksum2 = readChecksumFile(outputFile2);
 
-    assertThat(Arrays.equals(checksum1, checksum2)).isFalse();
+    assertThat(checksum1).isNotEqualTo(checksum2);
   }
 
   private TemporaryExposureKeyExportFile createTemporaryExposureKeyExportFile() {
