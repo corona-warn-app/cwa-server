@@ -27,6 +27,7 @@ import app.coronawarn.server.services.distribution.assembly.structure.util.funct
 import app.coronawarn.server.services.distribution.assembly.structure.util.functional.IndexFunction;
 import app.coronawarn.server.services.distribution.assembly.structure.util.functional.WritableFunction;
 import java.util.HashSet;
+import java.util.Objects;
 import java.util.Set;
 
 /**
@@ -105,8 +106,10 @@ public class IndexDirectoryOnDisk<T> extends DirectoryOnDisk implements IndexDir
   private void prepareMetaWritables(ImmutableStack<Object> indices, DirectoryOnDisk target) {
     this.metaWritables.forEach(metaWritableFunction -> {
       Writable<WritableOnDisk> newWritable = metaWritableFunction.apply(indices);
-      target.addWritable(newWritable);
-      newWritable.prepare(indices);
+      if (Objects.nonNull(newWritable)) {
+        target.addWritable(newWritable);
+        newWritable.prepare(indices);
+      }
     });
   }
 }

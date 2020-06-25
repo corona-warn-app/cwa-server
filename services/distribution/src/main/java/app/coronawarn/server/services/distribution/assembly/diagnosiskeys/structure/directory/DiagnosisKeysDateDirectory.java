@@ -23,14 +23,21 @@ package app.coronawarn.server.services.distribution.assembly.diagnosiskeys.struc
 import app.coronawarn.server.common.persistence.domain.DiagnosisKey;
 import app.coronawarn.server.services.distribution.assembly.component.CryptoProvider;
 import app.coronawarn.server.services.distribution.assembly.diagnosiskeys.DiagnosisKeyBundler;
+import app.coronawarn.server.services.distribution.assembly.diagnosiskeys.structure.archive.decorator.signing.DiagnosisKeySigningDecorator;
 import app.coronawarn.server.services.distribution.assembly.diagnosiskeys.structure.directory.decorator.HourIndexingDecorator;
+import app.coronawarn.server.services.distribution.assembly.diagnosiskeys.structure.file.TemporaryExposureKeyExportFile;
 import app.coronawarn.server.services.distribution.assembly.structure.WritableOnDisk;
+import app.coronawarn.server.services.distribution.assembly.structure.archive.Archive;
+import app.coronawarn.server.services.distribution.assembly.structure.archive.ArchiveOnDisk;
 import app.coronawarn.server.services.distribution.assembly.structure.directory.Directory;
 import app.coronawarn.server.services.distribution.assembly.structure.directory.IndexDirectoryOnDisk;
+import app.coronawarn.server.services.distribution.assembly.structure.file.File;
 import app.coronawarn.server.services.distribution.assembly.structure.util.ImmutableStack;
 import app.coronawarn.server.services.distribution.config.DistributionServiceConfig;
 import java.time.LocalDate;
+import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
+import java.util.List;
 
 public class DiagnosisKeysDateDirectory extends IndexDirectoryOnDisk<LocalDate> {
 
@@ -63,10 +70,35 @@ public class DiagnosisKeysDateDirectory extends IndexDirectoryOnDisk<LocalDate> 
           new DiagnosisKeysHourDirectory(diagnosisKeyBundler, cryptoProvider, distributionServiceConfig);
       return decorateHourDirectory(hourDirectory);
     });
+    this.addWritableToAll(currentIndices -> {
+      LocalDate currentDate = (LocalDate) currentIndices.peek();
+      if (currentDate.equals(diagnosisKeyBundler.getDistributionTime().toLocalDate())) {
+        return null;
+      }
+      String region = (String) currentIndices.pop().peek();
+
+      List<DiagnosisKey> diagnosisKeysForCurrentHour =
+          this.diagnosisKeyBundler.getDiagnosisKeysForDate(currentDate);
+
+      long startTimestamp = currentDate.atStartOfDay().toEpochSecond(ZoneOffset.UTC);
+      long endTimestamp = currentDate.plusDays(1).atStartOfDay().toEpochSecond(ZoneOffset.UTC);
+
+      File<WritableOnDisk> temporaryExposureKeyExportFile = TemporaryExposureKeyExportFile.fromDiagnosisKeys(
+          diagnosisKeysForCurrentHour, region, startTimestamp, endTimestamp, distributionServiceConfig);
+
+      Archive<WritableOnDisk> dateArchive = new ArchiveOnDisk(distributionServiceConfig.getOutputFileName());
+      dateArchive.addWritable(temporaryExposureKeyExportFile);
+
+      return decorateDiagnosisKeyArchive(dateArchive);
+    });
     super.prepare(indices);
   }
 
   private Directory<WritableOnDisk> decorateHourDirectory(DiagnosisKeysHourDirectory hourDirectory) {
     return new HourIndexingDecorator(hourDirectory, distributionServiceConfig);
+  }
+
+  private Directory<WritableOnDisk> decorateDiagnosisKeyArchive(Archive<WritableOnDisk> archive) {
+    return new DiagnosisKeySigningDecorator(archive, cryptoProvider, distributionServiceConfig);
   }
 }
