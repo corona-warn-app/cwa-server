@@ -86,4 +86,22 @@ public abstract class LocalFile {
     Path relativePath = rootFolder.relativize(file);
     return relativePath.toString().replaceAll("\\\\", "/");
   }
+
+  /**
+   * Value for the <code>content-type</code> header.
+   * 
+   * @return Either <a href="https://www.iana.org/assignments/media-types/application/zip">zip</a> or
+   *         <a href="https://www.iana.org/assignments/media-types/application/json">json</a>.
+   */
+  public String getContentType() {
+    if (s3Key.endsWith("app_config")) {
+      return "application/zip";
+    }
+    if (s3Key.matches(".*\\d")) {
+      // date and hourly diagnosis key files
+      return "application/zip";
+    }
+    // list of versions, dates, hours
+    return "application/json";
+  }
 }
