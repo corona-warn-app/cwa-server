@@ -7,8 +7,6 @@ logging:
 spring:
   main:
     banner-mode: off
-  flyway:
-    enabled: true
   datasource:
     url: jdbc:h2:mem:test;MODE=PostgreSQL
     driverClassName: org.h2.Driver
@@ -16,9 +14,6 @@ spring:
   test:
     database:
       replace: none
-  jpa:
-    hibernate:
-      ddl-auto: validate
 
 services:
   submission:

@@ -36,11 +36,11 @@ import org.springframework.context.EnvironmentAware;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.core.env.Environment;
-import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
+import org.springframework.data.jdbc.repository.config.EnableJdbcRepositories;
 import org.springframework.http.converter.protobuf.ProtobufHttpMessageConverter;
 
 @SpringBootApplication(exclude = {UserDetailsServiceAutoConfiguration.class})
-@EnableJpaRepositories(basePackages = "app.coronawarn.server.common.persistence")
+@EnableJdbcRepositories(basePackages = "app.coronawarn.server.common.persistence")
 @EntityScan(basePackages = "app.coronawarn.server.common.persistence")
 @ComponentScan({"app.coronawarn.server.common.persistence",
     "app.coronawarn.server.services.submission"})
