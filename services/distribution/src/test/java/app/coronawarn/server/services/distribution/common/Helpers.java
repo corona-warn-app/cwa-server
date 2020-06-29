@@ -101,7 +101,6 @@ public class Helpers {
   }
 
   public static Set<String> getExpectedHourFiles(Collection<String> hours) {
-
     return hours.stream()
         .map(hour -> Set.of(
             String.join(separator, "hour", hour, "index"),
@@ -143,6 +142,5 @@ public class Helpers {
       this.expectedFiles = expectedFiles;
       this.distributionRun = distributionRun;
     }
-
   }
 }

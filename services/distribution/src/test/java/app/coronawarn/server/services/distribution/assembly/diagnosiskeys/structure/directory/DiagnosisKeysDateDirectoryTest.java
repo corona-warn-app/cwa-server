@@ -159,28 +159,18 @@ class DiagnosisKeysDateDirectoryTest {
   @ParameterizedTest
   @MethodSource("createDiagnosisKeysAndExpectedFiles")
   void checkBuildsTheCorrectDateDirectoryStructure(TestTuple testTuple) {
-
     DiagnosisKeyBundler bundler = new ProdDiagnosisKeyBundler(distributionServiceConfig);
-
     bundler.setDiagnosisKeys(testTuple.diagnosisKeys, testTuple.distributionRun);
-
     DiagnosisKeysDateDirectory dateDirectory = new DiagnosisKeysDateDirectory(bundler, cryptoProvider,
         distributionServiceConfig);
-
     Directory<WritableOnDisk> outputDirectory = new DirectoryOnDisk(outputFile);
-
     outputDirectory.addWritable(dateDirectory);
-
     dateDirectory.prepare(new ImmutableStack<>()
         .push("version-directory")
         .push("country-directory")
     );
     outputDirectory.write();
-
-    final Set<String> actualFiles = Helpers.getFilePaths(outputFile, outputFile.getAbsolutePath());
-
+    Set<String> actualFiles = Helpers.getFilePaths(outputFile, outputFile.getAbsolutePath());
     Assertions.assertThat(actualFiles).isEqualTo(testTuple.expectedFiles);
   }
-
-
 }

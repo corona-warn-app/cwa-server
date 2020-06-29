@@ -81,27 +81,19 @@ class DiagnosisKeysHourDirectoryTest {
   @ParameterizedTest
   @MethodSource("createDiagnosisKeysAndExpectedFiles")
   void checkBuildsTheCorrectHourDirectoryStructure(TestTuple testTuple) {
-
     DiagnosisKeyBundler bundler = new ProdDiagnosisKeyBundler(distributionServiceConfig);
-
     bundler.setDiagnosisKeys(testTuple.diagnosisKeys, testTuple.distributionRun);
-
     DiagnosisKeysHourDirectory hourDirectory = new DiagnosisKeysHourDirectory(bundler, cryptoProvider,
         distributionServiceConfig);
-
     Directory<WritableOnDisk> outputDirectory = new DirectoryOnDisk(outputFile);
-
     outputDirectory.addWritable(hourDirectory);
-
     hourDirectory.prepare(new ImmutableStack<>()
         .push("version-directory")
         .push("country-directory")
-        .push(LocalDate.of(1970, 1, 3))//date-directory
+        .push(LocalDate.of(1970, 1, 3)) //date-directory
     );
     outputDirectory.write();
-
     final Set<String> actualFiles = Helpers.getFilePaths(outputFile, outputFile.getAbsolutePath());
-
     Assertions.assertThat(actualFiles).isEqualTo(testTuple.expectedFiles);
   }
 
@@ -164,6 +156,4 @@ class DiagnosisKeysHourDirectoryTest {
         )
     ).map(Arguments::of);
   }
-
-
 }
