@@ -16,7 +16,7 @@ functions and interacts with other components.
 
 ## Overview
 
-The Corona Warn App ("CWA") server runs in a Kubernetes cluster on the OpenShift (“OSP”) platform.
+The Corona Warn App ("CWA") server runs in a Kubernetes cluster on the OpenShift (“OCP”) platform.
 Its main objective is to enable users to take part in the exposure notification framework based
 on Apple/Google specifications. Although CWA aims at compliance to the spec on a protocol level, it
 does not mean automatically that all features will be implemented. Main driver for these assessments is data privacy and protection (DPP) concerns.
