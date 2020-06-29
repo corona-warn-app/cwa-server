@@ -118,6 +118,9 @@ public class S3ClientWrapper implements ObjectStoreClient {
     if (headers.containsKey(HeaderKey.CWA_HASH)) {
       requestBuilder.metadata(Map.of(HeaderKey.CWA_HASH.withMetaPrefix(), headers.get(HeaderKey.CWA_HASH)));
     }
+    if (headers.containsKey(HeaderKey.CONTENT_TYPE)) {
+      requestBuilder.contentType(headers.get(HeaderKey.CONTENT_TYPE));
+    }
 
     RequestBody bodyFile = RequestBody.fromFile(filePath);
     s3Client.putObject(requestBuilder.build(), bodyFile);

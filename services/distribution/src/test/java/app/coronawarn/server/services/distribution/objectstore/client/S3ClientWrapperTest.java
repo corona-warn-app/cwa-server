@@ -213,6 +213,17 @@ class S3ClientWrapperTest {
   }
 
   @Test
+  void testPutObjectForContentTypeHeader() {
+    String contentType = "foo-content-type";
+    s3ClientWrapper.putObject(VALID_BUCKET_NAME, VALID_NAME, Path.of(""), 
+        newHashMap(HeaderKey.CONTENT_TYPE, contentType));
+
+    PutObjectRequest expRequest =
+        PutObjectRequest.builder().bucket(VALID_BUCKET_NAME).key(VALID_NAME).contentType(contentType).build();
+    verify(s3Client, atLeastOnce()).putObject(eq(expRequest), any(RequestBody.class));
+  }
+
+  @Test
   void testPutObjectForCacheControlHeader() {
     var expCacheControl = "foo-cache-control";
     s3ClientWrapper
