@@ -21,7 +21,11 @@
 package app.coronawarn.server.services.distribution.assembly.diagnosiskeys.structure.directory;
 
 import static app.coronawarn.server.services.distribution.common.Helpers.buildDiagnosisKeys;
+import static app.coronawarn.server.services.distribution.common.Helpers.getExpectedHourFiles;
+import static app.coronawarn.server.services.distribution.common.Helpers.getFilePaths;
+import static org.assertj.core.api.Assertions.assertThat;
 
+import app.coronawarn.server.common.persistence.domain.DiagnosisKey;
 import app.coronawarn.server.services.distribution.assembly.component.CryptoProvider;
 import app.coronawarn.server.services.distribution.assembly.diagnosiskeys.DiagnosisKeyBundler;
 import app.coronawarn.server.services.distribution.assembly.diagnosiskeys.ProdDiagnosisKeyBundler;
@@ -29,25 +33,20 @@ import app.coronawarn.server.services.distribution.assembly.structure.WritableOn
 import app.coronawarn.server.services.distribution.assembly.structure.directory.Directory;
 import app.coronawarn.server.services.distribution.assembly.structure.directory.DirectoryOnDisk;
 import app.coronawarn.server.services.distribution.assembly.structure.util.ImmutableStack;
-import app.coronawarn.server.services.distribution.common.Helpers;
-import app.coronawarn.server.services.distribution.common.Helpers.TestTuple;
 import app.coronawarn.server.services.distribution.config.DistributionServiceConfig;
 import java.io.File;
 import java.io.IOException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
-import java.util.stream.Stream;
-import org.assertj.core.api.Assertions;
 import org.junit.Rule;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.Arguments;
-import org.junit.jupiter.params.provider.MethodSource;
 import org.junit.rules.TemporaryFolder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -78,11 +77,9 @@ class DiagnosisKeysHourDirectoryTest {
     outputFile = outputFolder.newFolder();
   }
 
-  @ParameterizedTest
-  @MethodSource("createDiagnosisKeysAndExpectedFiles")
-  void checkBuildsTheCorrectHourDirectoryStructure(TestTuple testTuple) {
+  private void runHourDistribution(Collection<DiagnosisKey> diagnosisKeys, LocalDateTime distributionTime) {
     DiagnosisKeyBundler bundler = new ProdDiagnosisKeyBundler(distributionServiceConfig);
-    bundler.setDiagnosisKeys(testTuple.diagnosisKeys, testTuple.distributionRun);
+    bundler.setDiagnosisKeys(diagnosisKeys, distributionTime);
     DiagnosisKeysHourDirectory hourDirectory = new DiagnosisKeysHourDirectory(bundler, cryptoProvider,
         distributionServiceConfig);
     Directory<WritableOnDisk> outputDirectory = new DirectoryOnDisk(outputFile);
@@ -93,67 +90,70 @@ class DiagnosisKeysHourDirectoryTest {
         .push(LocalDate.of(1970, 1, 3)) //date-directory
     );
     outputDirectory.write();
-    final Set<String> actualFiles = Helpers.getFilePaths(outputFile, outputFile.getAbsolutePath());
-    Assertions.assertThat(actualFiles).isEqualTo(testTuple.expectedFiles);
   }
 
-  private static Stream<Arguments> createDiagnosisKeysAndExpectedFiles() {
-    return Stream.of(
-        //Creates correct structure for multiple hours
-        new TestTuple(
-            IntStream.range(0, 5)
-                .mapToObj(
-                    currentHour -> buildDiagnosisKeys(6, LocalDateTime.of(1970, 1, 3, 0, 0).plusHours(currentHour), 5))
-                .flatMap(List::stream)
-                .collect(Collectors.toList()),
-            Helpers.getExpectedHourFiles(Set.of("0", "1", "2", "3", "4")),
-            LocalDateTime.of(1970, 1, 5, 0, 0)
-        ),
-        //Does not include empty hours
-        new TestTuple(
-            IntStream.range(0, 5)
-                .filter(currentHour -> currentHour != 3)
-                .mapToObj(
-                    currentHour -> buildDiagnosisKeys(6, LocalDateTime.of(1970, 1, 3, 0, 0).plusHours(currentHour), 5))
-                .flatMap(List::stream)
-                .collect(Collectors.toList()),
-            Helpers.getExpectedHourFiles(Set.of("0", "1", "2", "4")),
-            LocalDateTime.of(1970, 1, 5, 0, 0)
-        ),
-        //Does not include the current hour
-        new TestTuple(
-            IntStream.range(0, 5)
-                .mapToObj(
-                    currentHour -> buildDiagnosisKeys(6, LocalDateTime.of(1970, 1, 3, 0, 0).plusHours(currentHour), 5))
-                .flatMap(List::stream)
-                .collect(Collectors.toList()),
-            Helpers.getExpectedHourFiles(Set.of("0", "1", "2", "3")),
-            LocalDateTime.of(1970, 1, 3, 4, 0)
-        ),
-        //Does not include hours with too few keys
-        new TestTuple(
-            List.of(
-                buildDiagnosisKeys(6, LocalDateTime.of(1970, 1, 3, 0, 0), 5),
-                buildDiagnosisKeys(6, LocalDateTime.of(1970, 1, 3, 1, 0), 4),
-                buildDiagnosisKeys(6, LocalDateTime.of(1970, 1, 3, 2, 0), 5))
-                .stream()
-                .flatMap(List::stream)
-                .collect(Collectors.toList()),
-            Helpers.getExpectedHourFiles(Set.of("0", "2")),
-            LocalDateTime.of(1970, 1, 6, 12, 0)
-        ),
-        //Does not include hours in the future
-        new TestTuple(
-            List.of(
-                buildDiagnosisKeys(6, LocalDateTime.of(1970, 1, 3, 0, 0), 5),
-                buildDiagnosisKeys(6, LocalDateTime.of(1970, 1, 3, 1, 0), 5),
-                buildDiagnosisKeys(6, LocalDateTime.of(1970, 1, 3, 2, 0), 5))
-                .stream()
-                .flatMap(List::stream)
-                .collect(Collectors.toList()),
-            Helpers.getExpectedHourFiles(Set.of("0")),
-            LocalDateTime.of(1970, 1, 3, 1, 0)
-        )
-    ).map(Arguments::of);
+  @Test
+  void testCreatesCorrectStructureForMultipleHours() {
+    Collection<DiagnosisKey> diagnosisKeys = IntStream.range(0, 5)
+        .mapToObj(
+            currentHour -> buildDiagnosisKeys(6, LocalDateTime.of(1970, 1, 3, 0, 0).plusHours(currentHour), 5))
+        .flatMap(List::stream)
+        .collect(Collectors.toList());
+    runHourDistribution(diagnosisKeys, LocalDateTime.of(1970, 1, 5, 0, 0));
+    Set<String> actualFiles = getFilePaths(outputFile, outputFile.getAbsolutePath());
+    assertThat(actualFiles).isEqualTo(getExpectedHourFiles(Set.of("0", "1", "2", "3", "4")));
+  }
+
+  @Test
+  void testDoesNotIncludeEmptyHours() {
+    Collection<DiagnosisKey> diagnosisKeys = IntStream.range(0, 5)
+        .filter(currentHour -> currentHour != 3)
+        .mapToObj(
+            currentHour -> buildDiagnosisKeys(6, LocalDateTime.of(1970, 1, 3, 0, 0).plusHours(currentHour), 5))
+        .flatMap(List::stream)
+        .collect(Collectors.toList());
+    runHourDistribution(diagnosisKeys, LocalDateTime.of(1970, 1, 5, 0, 0));
+    Set<String> actualFiles = getFilePaths(outputFile, outputFile.getAbsolutePath());
+    assertThat(actualFiles).isEqualTo(getExpectedHourFiles(Set.of("0", "1", "2", "4")));
+  }
+
+  @Test
+  void testDoesNotIncludeCurrentHour() {
+    Collection<DiagnosisKey> diagnosisKeys = IntStream.range(0, 5)
+        .mapToObj(
+            currentHour -> buildDiagnosisKeys(6, LocalDateTime.of(1970, 1, 3, 0, 0).plusHours(currentHour), 5))
+        .flatMap(List::stream)
+        .collect(Collectors.toList());
+    runHourDistribution(diagnosisKeys, LocalDateTime.of(1970, 1, 3, 4, 0));
+    Set<String> actualFiles = getFilePaths(outputFile, outputFile.getAbsolutePath());
+    assertThat(actualFiles).isEqualTo(getExpectedHourFiles(Set.of("0", "1", "2", "3")));
+  }
+
+  @Test
+  void testDoesNotIncludeHoursWithTooFewKeys() {
+    Collection<DiagnosisKey> diagnosisKeys = List.of(
+        buildDiagnosisKeys(6, LocalDateTime.of(1970, 1, 3, 0, 0), 5),
+        buildDiagnosisKeys(6, LocalDateTime.of(1970, 1, 3, 1, 0), 4),
+        buildDiagnosisKeys(6, LocalDateTime.of(1970, 1, 3, 2, 0), 5))
+        .stream()
+        .flatMap(List::stream)
+        .collect(Collectors.toList());
+    runHourDistribution(diagnosisKeys, LocalDateTime.of(1970, 1, 6, 12, 0));
+    Set<String> actualFiles = getFilePaths(outputFile, outputFile.getAbsolutePath());
+    assertThat(actualFiles).isEqualTo(getExpectedHourFiles(Set.of("0", "2")));
+  }
+
+  @Test
+  void testDoesNotIncludeHoursInTheFuture() {
+    Collection<DiagnosisKey> diagnosisKeys = List.of(
+        buildDiagnosisKeys(6, LocalDateTime.of(1970, 1, 3, 0, 0), 5),
+        buildDiagnosisKeys(6, LocalDateTime.of(1970, 1, 3, 1, 0), 5),
+        buildDiagnosisKeys(6, LocalDateTime.of(1970, 1, 3, 2, 0), 5))
+        .stream()
+        .flatMap(List::stream)
+        .collect(Collectors.toList());
+    runHourDistribution(diagnosisKeys, LocalDateTime.of(1970, 1, 3, 1, 0));
+    Set<String> actualFiles = getFilePaths(outputFile, outputFile.getAbsolutePath());
+    assertThat(actualFiles).isEqualTo(getExpectedHourFiles(Set.of("0")));
   }
 }
