@@ -144,18 +144,18 @@ class ProdDiagnosisKeyBundlerKeyRetrievalTest {
         .flatMap(List::stream)
         .collect(Collectors.toList());
     bundler.setDiagnosisKeys(diagnosisKeys, LocalDateTime.of(1970, 1, 5, 20, 0));
-    assertThat(bundler.getDiagnosisKeysForDate(LocalDate.of(1970, 1, 1))).hasSize(0);
+    assertThat(bundler.getDiagnosisKeysForDate(LocalDate.of(1970, 1, 1))).isEmpty();
     assertThat(bundler.getDiagnosisKeysForDate(LocalDate.of(1970, 1, 2))).hasSize(5);
-    assertThat(bundler.getDiagnosisKeysForDate(LocalDate.of(1970, 1, 3))).hasSize(0);
+    assertThat(bundler.getDiagnosisKeysForDate(LocalDate.of(1970, 1, 3))).isEmpty();
     assertThat(bundler.getDiagnosisKeysForDate(LocalDate.of(1970, 1, 4))).hasSize(6);
-    assertThat(bundler.getDiagnosisKeysForDate(LocalDate.of(1970, 1, 5))).hasSize(0);
+    assertThat(bundler.getDiagnosisKeysForDate(LocalDate.of(1970, 1, 5))).isEmpty();
   }
 
   @Test
   void testEmptyListWhenGettingDiagnosisKeysForDateBeforeEarliestDiagnosisKey() {
     List<DiagnosisKey> diagnosisKeys = buildDiagnosisKeys(6, LocalDateTime.of(1970, 1, 2, 4, 0), 5);
     bundler.setDiagnosisKeys(diagnosisKeys, LocalDateTime.of(1970, 1, 5, 0, 0));
-    assertThat(bundler.getDiagnosisKeysForDate(LocalDate.of(1970, 1, 1))).hasSize(0);
+    assertThat(bundler.getDiagnosisKeysForDate(LocalDate.of(1970, 1, 1))).isEmpty();
   }
 
   @Test
@@ -167,17 +167,17 @@ class ProdDiagnosisKeyBundlerKeyRetrievalTest {
         .flatMap(List::stream)
         .collect(Collectors.toList());
     bundler.setDiagnosisKeys(diagnosisKeys, LocalDateTime.of(1970, 1, 5, 0, 0));
-    assertThat(bundler.getDiagnosisKeysForHour(LocalDateTime.of(1970, 1, 2, 3, 0))).hasSize(0);
+    assertThat(bundler.getDiagnosisKeysForHour(LocalDateTime.of(1970, 1, 2, 3, 0))).isEmpty();
     assertThat(bundler.getDiagnosisKeysForHour(LocalDateTime.of(1970, 1, 2, 4, 0))).hasSize(5);
-    assertThat(bundler.getDiagnosisKeysForHour(LocalDateTime.of(1970, 1, 2, 5, 0))).hasSize(0);
+    assertThat(bundler.getDiagnosisKeysForHour(LocalDateTime.of(1970, 1, 2, 5, 0))).isEmpty();
     assertThat(bundler.getDiagnosisKeysForHour(LocalDateTime.of(1970, 1, 2, 6, 0))).hasSize(6);
-    assertThat(bundler.getDiagnosisKeysForHour(LocalDateTime.of(1970, 1, 2, 7, 0))).hasSize(0);
+    assertThat(bundler.getDiagnosisKeysForHour(LocalDateTime.of(1970, 1, 2, 7, 0))).isEmpty();
   }
 
   @Test
   void testEmptyListWhenGettingDiagnosisKeysForHourBeforeEarliestDiagnosisKey() {
     List<DiagnosisKey> diagnosisKeys = buildDiagnosisKeys(6, LocalDateTime.of(1970, 1, 2, 4, 0), 5);
     bundler.setDiagnosisKeys(diagnosisKeys, LocalDateTime.of(1970, 1, 5, 0, 0));
-    assertThat(bundler.getDiagnosisKeysForHour(LocalDateTime.of(1970, 1, 1, 0, 0, 0))).hasSize(0);
+    assertThat(bundler.getDiagnosisKeysForHour(LocalDateTime.of(1970, 1, 1, 0, 0, 0))).isEmpty();
   }
 }

@@ -20,7 +20,7 @@
 
 package app.coronawarn.server.services.distribution.objectstore.client;
 
-import static java.util.Collections.emptyMap;
+import static java.util.Collections.EMPTY_MAP;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 import static org.assertj.core.util.Maps.newHashMap;
@@ -82,6 +82,7 @@ class S3ClientWrapperTest {
   private static final String VALID_BUCKET_NAME = "myBucket";
   private static final String VALID_PREFIX = "prefix";
   private static final String VALID_NAME = "object key";
+  private static final Path VALID_PATH = Path.of("");
 
   @Value("${services.distribution.objectstore.retry-attempts}")
   private int configuredNumberOfRetries;
@@ -150,6 +151,25 @@ class S3ClientWrapperTest {
     assertThat(actResult).isEqualTo(expResult);
   }
 
+  @Test
+  void testContinuationToken() {
+    var continuationToken = "1ueGcxLPRx1Tr/XYExHnhbYLgveDs2J/wm36Hy4vbOwM=<";
+
+    when(s3Client.listObjectsV2(any(ListObjectsV2Request.class)))
+        .thenReturn(ListObjectsV2Response.builder().isTruncated(true).continuationToken(continuationToken).build(),
+            ListObjectsV2Response.builder().isTruncated(false).build());
+
+    s3ClientWrapper.getObjects(VALID_BUCKET_NAME, VALID_PREFIX);
+
+    ListObjectsV2Request continuationRequest = ListObjectsV2Request.builder()
+        .prefix(VALID_PREFIX).bucket(VALID_BUCKET_NAME).continuationToken(continuationToken).build();
+    ListObjectsV2Request noContinuationRequest = ListObjectsV2Request.builder()
+        .prefix(VALID_PREFIX).bucket(VALID_BUCKET_NAME).build();
+
+    verify(s3Client, times(1)).listObjectsV2(eq(continuationRequest));
+    verify(s3Client, times(1)).listObjectsV2(eq(noContinuationRequest));
+  }
+
   private static Stream<Arguments> createGetObjectsResults() {
     return Stream.of(
         Lists.emptyList(),
@@ -186,9 +206,20 @@ class S3ClientWrapperTest {
 
   @Test
   void testPutObjectForNoHeaders() {
-    s3ClientWrapper.putObject(VALID_BUCKET_NAME, VALID_NAME, Path.of(""), emptyMap());
+    s3ClientWrapper.putObject(VALID_BUCKET_NAME, VALID_NAME, VALID_PATH, EMPTY_MAP);
 
     PutObjectRequest expRequest = PutObjectRequest.builder().bucket(VALID_BUCKET_NAME).key(VALID_NAME).build();
+    verify(s3Client, atLeastOnce()).putObject(eq(expRequest), any(RequestBody.class));
+  }
+
+  @Test
+  void testPutObjectForContentTypeHeader() {
+    String contentType = "foo-content-type";
+    s3ClientWrapper.putObject(VALID_BUCKET_NAME, VALID_NAME, Path.of(""), 
+        newHashMap(HeaderKey.CONTENT_TYPE, contentType));
+
+    PutObjectRequest expRequest =
+        PutObjectRequest.builder().bucket(VALID_BUCKET_NAME).key(VALID_NAME).contentType(contentType).build();
     verify(s3Client, atLeastOnce()).putObject(eq(expRequest), any(RequestBody.class));
   }
 
@@ -196,7 +227,7 @@ class S3ClientWrapperTest {
   void testPutObjectForCacheControlHeader() {
     var expCacheControl = "foo-cache-control";
     s3ClientWrapper
-        .putObject(VALID_BUCKET_NAME, VALID_NAME, Path.of(""), newHashMap(HeaderKey.CACHE_CONTROL, expCacheControl));
+        .putObject(VALID_BUCKET_NAME, VALID_NAME, VALID_PATH, newHashMap(HeaderKey.CACHE_CONTROL, expCacheControl));
 
     PutObjectRequest expRequest =
         PutObjectRequest.builder().bucket(VALID_BUCKET_NAME).key(VALID_NAME).cacheControl(expCacheControl).build();
@@ -206,7 +237,7 @@ class S3ClientWrapperTest {
   @Test
   void testPutObjectForAmzAclHeader() {
     String expAcl = "foo-acl";
-    s3ClientWrapper.putObject(VALID_BUCKET_NAME, VALID_NAME, Path.of(""), newHashMap(HeaderKey.AMZ_ACL, expAcl));
+    s3ClientWrapper.putObject(VALID_BUCKET_NAME, VALID_NAME, VALID_PATH, newHashMap(HeaderKey.AMZ_ACL, expAcl));
 
     PutObjectRequest expRequest =
         PutObjectRequest.builder().bucket(VALID_BUCKET_NAME).key(VALID_NAME).acl(expAcl).build();
@@ -218,7 +249,7 @@ class S3ClientWrapperTest {
   void putObjectsThrowsObjectStoreOperationFailedExceptionIfClientThrows(Class<Exception> cause) {
     when(s3Client.putObject(any(PutObjectRequest.class), any(RequestBody.class))).thenThrow(cause);
     assertThatExceptionOfType(ObjectStoreOperationFailedException.class)
-        .isThrownBy(() -> s3ClientWrapper.putObject(VALID_BUCKET_NAME, VALID_PREFIX, Path.of(""), emptyMap()));
+        .isThrownBy(() -> s3ClientWrapper.putObject(VALID_BUCKET_NAME, VALID_PREFIX, VALID_PATH, EMPTY_MAP));
   }
 
   @ParameterizedTest
@@ -226,7 +257,7 @@ class S3ClientWrapperTest {
   void shouldRetryUploadingObjectAndThenThrow(Class<Exception> cause) {
     when(s3Client.putObject(any(PutObjectRequest.class), any(RequestBody.class))).thenThrow(cause);
     assertThatExceptionOfType(ObjectStoreOperationFailedException.class)
-        .isThrownBy(() -> s3ClientWrapper.putObject(VALID_BUCKET_NAME, VALID_PREFIX, Path.of(""), emptyMap()));
+        .isThrownBy(() -> s3ClientWrapper.putObject(VALID_BUCKET_NAME, VALID_PREFIX, VALID_PATH, EMPTY_MAP));
 
     verify(s3Client, times(configuredNumberOfRetries)).putObject(any(PutObjectRequest.class), any(RequestBody.class));
   }
@@ -251,27 +282,31 @@ class S3ClientWrapperTest {
   @Test
   void removeObjectsThrowsOnDeletionErrors() {
     DeleteObjectsResponse actResponse = DeleteObjectsResponse.builder().errors(S3Error.builder().build()).build();
-
     when(s3Client.deleteObjects(any(DeleteObjectsRequest.class))).thenReturn(actResponse);
+    List<String> targetObjects = List.of(VALID_NAME);
 
     assertThatExceptionOfType(ObjectStoreOperationFailedException.class)
-        .isThrownBy(() -> s3ClientWrapper.removeObjects(VALID_BUCKET_NAME, List.of(VALID_NAME)));
+        .isThrownBy(() -> s3ClientWrapper.removeObjects(VALID_BUCKET_NAME, targetObjects));
   }
 
   @ParameterizedTest
   @ValueSource(classes = {NoSuchBucketException.class, S3Exception.class, SdkClientException.class, SdkException.class})
   void removeObjectsThrowsObjectStoreOperationFailedExceptionIfClientThrows(Class<Exception> cause) {
     when(s3Client.deleteObjects(any(DeleteObjectsRequest.class))).thenThrow(cause);
+    List<String> targetObjects = List.of(VALID_NAME);
+
     assertThatExceptionOfType(ObjectStoreOperationFailedException.class)
-        .isThrownBy(() -> s3ClientWrapper.removeObjects(VALID_BUCKET_NAME, List.of(VALID_NAME)));
+        .isThrownBy(() -> s3ClientWrapper.removeObjects(VALID_BUCKET_NAME, targetObjects));
   }
 
   @ParameterizedTest
   @ValueSource(classes = {NoSuchBucketException.class, S3Exception.class, SdkClientException.class, SdkException.class})
   void shouldRetryRemovingObjectAndThenThrow(Class<Exception> cause) {
     when(s3Client.deleteObjects(any(DeleteObjectsRequest.class))).thenThrow(cause);
+    List<String> targetObjects = List.of(VALID_NAME);
+
     assertThatExceptionOfType(ObjectStoreOperationFailedException.class)
-        .isThrownBy(() -> s3ClientWrapper.removeObjects(VALID_BUCKET_NAME, List.of(VALID_NAME)));
+        .isThrownBy(() -> s3ClientWrapper.removeObjects(VALID_BUCKET_NAME, targetObjects));
 
     verify(s3Client, times(configuredNumberOfRetries)).deleteObjects(any(DeleteObjectsRequest.class));
   }

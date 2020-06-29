@@ -74,7 +74,11 @@ public interface ObjectStoreClient {
   enum HeaderKey {
     CACHE_CONTROL("Cache-Control"),
     AMZ_ACL("x-amz-acl"),
-    CWA_HASH("cwa-hash");
+    CWA_HASH("cwa-hash"),
+    /**
+     * To control which content type is sent, when objects are retrieved from the object store.
+     */
+    CONTENT_TYPE("Content-Type");
 
     public final String keyValue;
 

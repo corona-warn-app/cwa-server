@@ -21,37 +21,44 @@
 package app.coronawarn.server.services.submission.config;
 
 import java.io.File;
+import javax.validation.constraints.Max;
+import javax.validation.constraints.Min;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Component;
+import org.springframework.validation.annotation.Validated;
 
 @Component
 @ConfigurationProperties(prefix = "services.submission")
+@Validated
 public class SubmissionServiceConfig {
 
   // Exponential moving average of the last N real request durations (in ms), where
   // N = fakeDelayMovingAverageSamples.
-  private Double initialFakeDelayMilliseconds;
-  private Double fakeDelayMovingAverageSamples;
+  private Long initialFakeDelayMilliseconds;
+  private Long fakeDelayMovingAverageSamples;
   private Integer retentionDays;
+  @Min(1)
+  @Max(25)
+  private Integer randomKeyPaddingMultiplier;
   private Integer connectionPoolSize;
   private Payload payload;
   private Verification verification;
   private Monitoring monitoring;
   private Client client;
 
-  public Double getInitialFakeDelayMilliseconds() {
+  public Long getInitialFakeDelayMilliseconds() {
     return initialFakeDelayMilliseconds;
   }
 
-  public void setInitialFakeDelayMilliseconds(Double initialFakeDelayMilliseconds) {
+  public void setInitialFakeDelayMilliseconds(Long initialFakeDelayMilliseconds) {
     this.initialFakeDelayMilliseconds = initialFakeDelayMilliseconds;
   }
 
-  public Double getFakeDelayMovingAverageSamples() {
+  public Long getFakeDelayMovingAverageSamples() {
     return fakeDelayMovingAverageSamples;
   }
 
-  public void setFakeDelayMovingAverageSamples(Double fakeDelayMovingAverageSamples) {
+  public void setFakeDelayMovingAverageSamples(Long fakeDelayMovingAverageSamples) {
     this.fakeDelayMovingAverageSamples = fakeDelayMovingAverageSamples;
   }
 
@@ -61,6 +68,14 @@ public class SubmissionServiceConfig {
 
   public void setRetentionDays(Integer retentionDays) {
     this.retentionDays = retentionDays;
+  }
+
+  public Integer getRandomKeyPaddingMultiplier() {
+    return randomKeyPaddingMultiplier;
+  }
+
+  public void setRandomKeyPaddingMultiplier(Integer randomKeyPaddingMultiplier) {
+    this.randomKeyPaddingMultiplier = randomKeyPaddingMultiplier;
   }
 
   public Integer getConnectionPoolSize() {

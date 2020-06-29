@@ -34,13 +34,8 @@ import org.springframework.stereotype.Component;
 @Component
 public class CwaApiStructureProvider {
 
-  public static final String VERSION_DIRECTORY = "version";
-  public static final String VERSION_V1 = "v1";
-
   private final AppConfigurationStructureProvider appConfigurationStructureProvider;
-
   private final DiagnosisKeysStructureProvider diagnosisKeysStructureProvider;
-
   private final DistributionServiceConfig distributionServiceConfig;
 
   /**
@@ -59,12 +54,13 @@ public class CwaApiStructureProvider {
    * Returns the base directory.
    */
   public Directory<WritableOnDisk> getDirectory() {
-    IndexDirectoryOnDisk<String> versionDirectory =
-        new IndexDirectoryOnDisk<>(VERSION_DIRECTORY, __ -> Set.of(VERSION_V1), Object::toString);
+    IndexDirectoryOnDisk<String> versionDirectory = new IndexDirectoryOnDisk<>(
+        distributionServiceConfig.getApi().getVersionPath(),
+        ignoredValue -> Set.of(distributionServiceConfig.getApi().getVersionV1()),
+        Object::toString);
 
-    versionDirectory
-        .addWritableToAll(__ -> appConfigurationStructureProvider.getAppConfiguration());
-    versionDirectory.addWritableToAll(__ -> diagnosisKeysStructureProvider.getDiagnosisKeys());
+    versionDirectory.addWritableToAll(ignoredValue -> appConfigurationStructureProvider.getAppConfiguration());
+    versionDirectory.addWritableToAll(ignoredValue -> diagnosisKeysStructureProvider.getDiagnosisKeys());
 
     return new IndexingDecoratorOnDisk<>(versionDirectory, distributionServiceConfig.getOutputFileName());
   }

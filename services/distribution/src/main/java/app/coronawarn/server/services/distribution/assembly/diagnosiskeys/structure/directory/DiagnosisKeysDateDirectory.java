@@ -50,7 +50,7 @@ public class DiagnosisKeysDateDirectory extends IndexDirectoryOnDisk<LocalDate> 
   public DiagnosisKeysDateDirectory(DiagnosisKeyBundler diagnosisKeyBundler,
       CryptoProvider cryptoProvider, DistributionServiceConfig distributionServiceConfig) {
     super(distributionServiceConfig.getApi().getDatePath(),
-        __ -> diagnosisKeyBundler.getDatesWithDistributableDiagnosisKeys(), ISO8601::format);
+        ignoredValue -> diagnosisKeyBundler.getDatesWithDistributableDiagnosisKeys(), ISO8601::format);
     this.cryptoProvider = cryptoProvider;
     this.diagnosisKeyBundler = diagnosisKeyBundler;
     this.distributionServiceConfig = distributionServiceConfig;
@@ -58,7 +58,7 @@ public class DiagnosisKeysDateDirectory extends IndexDirectoryOnDisk<LocalDate> 
 
   @Override
   public void prepare(ImmutableStack<Object> indices) {
-    this.addWritableToAll(__ -> {
+    this.addWritableToAll(ignoredValue -> {
       DiagnosisKeysHourDirectory hourDirectory =
           new DiagnosisKeysHourDirectory(diagnosisKeyBundler, cryptoProvider, distributionServiceConfig);
       return decorateHourDirectory(hourDirectory);
