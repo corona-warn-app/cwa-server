@@ -26,10 +26,12 @@ import static org.mockito.Mockito.when;
 
 import app.coronawarn.server.services.distribution.config.DistributionServiceConfig;
 import app.coronawarn.server.services.distribution.objectstore.client.ObjectStorePublishingConfig;
+import app.coronawarn.server.services.distribution.objectstore.client.S3Object;
 import app.coronawarn.server.services.distribution.objectstore.publish.LocalFile;
 import app.coronawarn.server.services.distribution.objectstore.publish.LocalGenericFile;
 import java.io.IOException;
 import java.nio.file.Path;
+import java.util.List;
 import java.util.UUID;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -49,9 +51,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 class ObjectStoreAccessTest {
 
   private static final String testRunId = "testing/cwa/" + UUID.randomUUID().toString() + "/";
-
   private static final String rootTestFolder = "objectstore/";
-
   private static final String textFile = rootTestFolder + "store-test-file";
 
   @Autowired
@@ -93,15 +93,15 @@ class ObjectStoreAccessTest {
     when(localFileSpy.getS3Key()).thenReturn(testRunId + localFile.getS3Key());
 
     objectStoreAccess.putObject(localFileSpy);
-    var files = objectStoreAccess.getObjectsWithPrefix(testRunId);
-    assertThat(files.size()).isEqualTo(1);
+    List<S3Object> files = objectStoreAccess.getObjectsWithPrefix(testRunId);
+    assertThat(files).hasSize(1);
 
     assertThat(files.get(0).getObjectName()).isEqualTo(testFileTargetKey);
 
     objectStoreAccess.deleteObjectsWithPrefix(testRunId);
 
-    var filesAfterDeletion = objectStoreAccess.getObjectsWithPrefix(testRunId);
-    assertThat(filesAfterDeletion.size()).isEqualTo(0);
+    List<S3Object> filesAfterDeletion = objectStoreAccess.getObjectsWithPrefix(testRunId);
+    assertThat(filesAfterDeletion).isEmpty();
   }
 
   private Path getExampleFile() throws IOException {
@@ -111,5 +111,4 @@ class ObjectStoreAccessTest {
   private Path getRootTestFolder() throws IOException {
     return resourceLoader.getResource(rootTestFolder).getFile().toPath();
   }
-
 }

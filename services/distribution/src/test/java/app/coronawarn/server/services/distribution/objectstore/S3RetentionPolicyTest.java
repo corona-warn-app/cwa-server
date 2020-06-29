@@ -103,7 +103,8 @@ class S3RetentionPolicyTest {
   private String generateFileName(LocalDate date) {
     var api = distributionServiceConfig.getApi();
 
-    return "version/v1/" + api.getDiagnosisKeysPath() + "/"  + api.getCountryPath() + "/"
-        + api.getCountryGermany() + "/" + api.getDatePath() + "/" + date.toString() + "/hour/0";
+    return api.getVersionPath() + "/" + api.getVersionV1() + "/" + api.getDiagnosisKeysPath() + "/"
+        + api.getCountryPath() + "/" + api.getCountryGermany() + "/" + api.getDatePath() + "/" + date.toString() + "/"
+        + api.getHourPath() + "/0";
   }
 }

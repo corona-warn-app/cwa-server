@@ -21,10 +21,11 @@
 package app.coronawarn.server.services.distribution.assembly.appconfig;
 
 import app.coronawarn.server.common.protocols.internal.ApplicationConfiguration;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 
 /**
- * Provides the application configuration needed for the mobile client. Contains all necessary
- * sub-configs, including:
+ * Provides the application configuration needed for the mobile client. Contains all necessary sub-configs, including:
  * <ul>
  *   <li>Exposure Configuration</li>
  *   <li>Risk Score Classification</li>
@@ -33,16 +34,13 @@ import app.coronawarn.server.common.protocols.internal.ApplicationConfiguration;
  *
  * <p>The application config is fetched from the master-config folder.</p>
  */
-public class ApplicationConfigurationProvider {
+@Configuration
+public class ApplicationConfigurationPublicationConfig {
 
   /**
    * The location of the exposure configuration master file.
    */
   public static final String MASTER_FILE = "master-config/app-config.yaml";
-
-  private ApplicationConfigurationProvider() {
-
-  }
 
   /**
    * Fetches the master configuration as a ApplicationConfiguration instance.
@@ -50,18 +48,8 @@ public class ApplicationConfigurationProvider {
    * @return the exposure configuration as ApplicationConfiguration
    * @throws UnableToLoadFileException when the file/transformation did not succeed
    */
-  public static ApplicationConfiguration readMasterFile() throws UnableToLoadFileException {
-    return readFile(MASTER_FILE);
-  }
-
-  /**
-   * Fetches an exposure configuration file based on the given path. The path must be available in the classloader.
-   *
-   * @param path the path, e.g. folder/my-exposure-configuration.yaml
-   * @return the ApplicationConfiguration
-   * @throws UnableToLoadFileException when the file/transformation did not succeed
-   */
-  public static ApplicationConfiguration readFile(String path) throws UnableToLoadFileException {
-    return YamlLoader.loadYamlIntoProtobufBuilder(path, ApplicationConfiguration.Builder.class).build();
+  @Bean
+  public ApplicationConfiguration createMasterConfiguration() throws UnableToLoadFileException {
+    return YamlLoader.loadYamlIntoProtobufBuilder(MASTER_FILE, ApplicationConfiguration.Builder.class).build();
   }
 }

@@ -29,6 +29,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.domain.EntityScan;
+import org.springframework.boot.autoconfigure.security.servlet.UserDetailsServiceAutoConfiguration;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.openfeign.EnableFeignClients;
 import org.springframework.context.EnvironmentAware;
@@ -38,7 +39,7 @@ import org.springframework.core.env.Environment;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.http.converter.protobuf.ProtobufHttpMessageConverter;
 
-@SpringBootApplication
+@SpringBootApplication(exclude = {UserDetailsServiceAutoConfiguration.class})
 @EnableJpaRepositories(basePackages = "app.coronawarn.server.common.persistence")
 @EntityScan(basePackages = "app.coronawarn.server.common.persistence")
 @ComponentScan({"app.coronawarn.server.common.persistence",
@@ -66,24 +67,26 @@ public class ServerApplication implements EnvironmentAware {
   @Override
   public void setEnvironment(Environment environment) {
     List<String> profiles = Arrays.asList(environment.getActiveProfiles());
+
+    logger.info("Enabled named groups: {}", System.getProperty("jdk.tls.namedGroups"));
     if (profiles.contains("disable-ssl-server")) {
       logger.warn(
           "The submission service is started with endpoint TLS disabled. This should never be used in PRODUCTION!");
     }
     if (profiles.contains("disable-ssl-client-postgres")) {
       logger.warn(
-          "The submission service is started with postgres connection TLS disabled. This should never be used in"
-              + "PRODUCTION!");
+          "The submission service is started with postgres connection TLS disabled. "
+              + "This should never be used in PRODUCTION!");
     }
     if (profiles.contains("disable-ssl-client-verification")) {
       logger.warn(
-          "The submission service is started with verification service connection TLS disabled. This should never be"
-              + "used in PRODUCTION!");
+          "The submission service is started with verification service connection TLS disabled. "
+              + "This should never be used in PRODUCTION!");
     }
     if (profiles.contains("disable-ssl-client-verification-verify-hostname")) {
       logger.warn(
-          "The submission service is started with verification service TLS hostname validation disabled. This should"
-              + "never be used in PRODUCTION!");
+          "The submission service is started with verification service TLS hostname validation disabled. "
+              + "This should never be used in PRODUCTION!");
     }
   }
 }

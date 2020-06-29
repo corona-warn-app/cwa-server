@@ -114,7 +114,7 @@ public class TestDataGeneration implements ApplicationRunner {
     logger.debug("Generating diagnosis keys between {} and {}...", startTimestamp, endTimestamp);
     List<DiagnosisKey> newDiagnosisKeys = LongStream.range(startTimestamp, endTimestamp)
         .mapToObj(submissionTimestamp -> IntStream.range(0, poisson.sample())
-            .mapToObj(__ -> generateDiagnosisKey(submissionTimestamp))
+            .mapToObj(ignoredValue -> generateDiagnosisKey(submissionTimestamp))
             .collect(Collectors.toList()))
         .flatMap(List::stream)
         .collect(Collectors.toList());

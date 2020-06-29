@@ -140,6 +140,8 @@ public class ObjectStoreAccess {
       headers.put(HeaderKey.CWA_HASH, file.getChecksum());
     }
 
+    headers.put(HeaderKey.CONTENT_TYPE, file.getContentType());
+
     return headers;
   }
 }
