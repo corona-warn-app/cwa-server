@@ -1,31 +1,42 @@
-/*
+/*-
+ * ---license-start
  * Corona-Warn-App
- *
- * SAP SE and all other contributors /
- * copyright owners license this file to you under the Apache
- * License, Version 2.0 (the "License"); you may not use this
- * file except in compliance with the License.
+ * ---
+ * Copyright (C) 2020 SAP SE and all other contributors
+ * ---
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
- * specific language governing permissions and limitations
- * under the License.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ * ---license-end
  */
 
 package app.coronawarn.server.services.submission.controller;
 
-import static java.time.ZoneOffset.UTC;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static app.coronawarn.server.services.submission.controller.RequestExecutor.VALID_KEY_DATA_1;
+import static app.coronawarn.server.services.submission.controller.RequestExecutor.VALID_KEY_DATA_2;
+import static app.coronawarn.server.services.submission.controller.RequestExecutor.VALID_KEY_DATA_3;
+import static app.coronawarn.server.services.submission.controller.RequestExecutor.buildOkHeaders;
+import static app.coronawarn.server.services.submission.controller.RequestExecutor.buildPayloadWithOneKey;
+import static app.coronawarn.server.services.submission.controller.RequestExecutor.buildTemporaryExposureKey;
+import static app.coronawarn.server.services.submission.controller.RequestExecutor.createRollingStartIntervalNumber;
+import static app.coronawarn.server.services.submission.controller.RequestExecutor.setContentTypeProtoBufHeader;
+import static app.coronawarn.server.services.submission.controller.RequestExecutor.setCwaAuthHeader;
+import static app.coronawarn.server.services.submission.controller.RequestExecutor.setCwaFakeHeader;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.any;
 import static org.mockito.Mockito.anyString;
 import static org.mockito.Mockito.atLeastOnce;
 import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.springframework.http.HttpStatus.BAD_REQUEST;
@@ -36,17 +47,14 @@ import static org.springframework.http.HttpStatus.OK;
 
 import app.coronawarn.server.common.persistence.domain.DiagnosisKey;
 import app.coronawarn.server.common.persistence.service.DiagnosisKeyService;
-import app.coronawarn.server.common.protocols.external.exposurenotification.Key;
-import app.coronawarn.server.common.protocols.internal.SubmissionPayload;
+import app.coronawarn.server.common.protocols.external.exposurenotification.TemporaryExposureKey;
+import app.coronawarn.server.services.submission.config.SubmissionServiceConfig;
+import app.coronawarn.server.services.submission.monitoring.SubmissionMonitor;
 import app.coronawarn.server.services.submission.verification.TanVerifier;
 import com.google.protobuf.ByteString;
-import java.net.URI;
-import java.time.Instant;
-import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -60,18 +68,15 @@ import org.mockito.ArgumentCaptor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
-import org.springframework.http.RequestEntity;
 import org.springframework.http.ResponseEntity;
+import org.springframework.test.context.ActiveProfiles;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-public class SubmissionControllerTest {
-
-  private static final URI SUBMISSION_URL = URI.create("/version/v1/diagnosis-keys");
+@ActiveProfiles({"disable-ssl-client-verification", "disable-ssl-client-verification-verify-hostname"})
+class SubmissionControllerTest {
 
   @MockBean
   private DiagnosisKeyService diagnosisKeyService;
@@ -79,89 +84,80 @@ public class SubmissionControllerTest {
   @MockBean
   private TanVerifier tanVerifier;
 
+  @MockBean
+  private SubmissionMonitor submissionMonitor;
+
+  @MockBean
+  private FakeDelayManager fakeDelayManager;
+
   @Autowired
-  private TestRestTemplate testRestTemplate;
+  private RequestExecutor executor;
+
+  @Autowired
+  private SubmissionServiceConfig config;
 
   @BeforeEach
   public void setUpMocks() {
     when(tanVerifier.verifyTan(anyString())).thenReturn(true);
+    when(fakeDelayManager.getJitteredFakeDelay()).thenReturn(1000L);
   }
 
   @Test
-  public void checkResponseStatusForValidParameters() {
-    ResponseEntity<Void> actResponse =
-        executeRequest(buildPayloadWithMultipleKeys(), buildOkHeaders());
-
-    assertEquals(OK, actResponse.getStatusCode());
+  void checkResponseStatusForValidParameters() {
+    ResponseEntity<Void> actResponse = executor.executePost(buildPayloadWithMultipleKeys(), buildOkHeaders());
+    assertThat(actResponse.getStatusCode()).isEqualTo(OK);
   }
 
   @Test
-  public void check400ResponseStatusForInvalidParameters() {
-    ResponseEntity<Void> actResponse =
-        executeRequest(buildPayloadWithInvalidKey(), buildOkHeaders());
-
-    assertEquals(BAD_REQUEST, actResponse.getStatusCode());
+  void check400ResponseStatusForInvalidParameters() {
+    ResponseEntity<Void> actResponse = executor.executePost(buildPayloadWithInvalidKey(), buildOkHeaders());
+    assertThat(actResponse.getStatusCode()).isEqualTo(BAD_REQUEST);
   }
 
   @Test
-  public void check400ResponseStatusForMissingKeys() {
-    ResponseEntity<Void> actResponse =
-        executeRequest(new ArrayList<>(), buildOkHeaders());
-
-    assertEquals(BAD_REQUEST, actResponse.getStatusCode());
-  }
-
-  @Test
-  public void check400ResponseStatusForTooManyKeys() {
-    ResponseEntity<Void> actResponse =
-        executeRequest(buildPayloadWithTooManyKeys(), buildOkHeaders());
-
-    assertEquals(BAD_REQUEST, actResponse.getStatusCode());
-  }
-
-  @Test
-  public void singleKeyWithOutdatedRollingStartNumberDoesNotGetSaved() {
-    Collection<Key> keys = buildPayloadWithSingleOutdatedKey();
+  void singleKeyWithOutdatedRollingStartIntervalNumberDoesNotGetSaved() {
+    Collection<TemporaryExposureKey> keys = buildPayloadWithSingleOutdatedKey();
     ArgumentCaptor<Collection<DiagnosisKey>> argument = ArgumentCaptor.forClass(Collection.class);
 
-    executeRequest(keys, buildOkHeaders());
+    executor.executePost(keys, buildOkHeaders());
 
     verify(diagnosisKeyService, atLeastOnce()).saveDiagnosisKeys(argument.capture());
-    assertTrue(argument.getValue().isEmpty());
+    assertThat(argument.getValue()).isEmpty();
   }
 
   @Test
-  public void keysWithOutdatedRollingStartNumberDoNotGetSaved() {
-    Collection<Key> keys = buildPayloadWithMultipleKeys();
-    Key outdatedKey = createOutdatedKey();
-    keys.add(outdatedKey);
+  void keysWithOutdatedRollingStartIntervalNumberDoNotGetSaved() {
+    Collection<TemporaryExposureKey> submittedKeys = buildPayloadWithMultipleKeys();
+    TemporaryExposureKey outdatedKey = createOutdatedKey();
+    submittedKeys.add(outdatedKey);
     ArgumentCaptor<Collection<DiagnosisKey>> argument = ArgumentCaptor.forClass(Collection.class);
 
-    executeRequest(keys, buildOkHeaders());
+    executor.executePost(submittedKeys, buildOkHeaders());
 
     verify(diagnosisKeyService, atLeastOnce()).saveDiagnosisKeys(argument.capture());
-    keys.remove(outdatedKey);
-    assertElementsCorrespondToEachOther(keys, argument.getValue());
+    submittedKeys.remove(outdatedKey);
+    assertElementsCorrespondToEachOther(submittedKeys, argument.getValue());
   }
 
   @Test
-  public void checkSaveOperationCallForValidParameters() {
-    Collection<Key> keys = buildPayloadWithMultipleKeys();
+  void checkSaveOperationCallAndFakeDelayUpdateForValidParameters() {
+    Collection<TemporaryExposureKey> submittedKeys = buildPayloadWithMultipleKeys();
     ArgumentCaptor<Collection<DiagnosisKey>> argument = ArgumentCaptor.forClass(Collection.class);
 
-    executeRequest(keys, buildOkHeaders());
+    executor.executePost(submittedKeys, buildOkHeaders());
 
     verify(diagnosisKeyService, atLeastOnce()).saveDiagnosisKeys(argument.capture());
-    assertElementsCorrespondToEachOther(keys, argument.getValue());
+    verify(fakeDelayManager, times(1)).updateFakeRequestDelay(anyLong());
+    assertElementsCorrespondToEachOther(submittedKeys, argument.getValue());
   }
 
   @ParameterizedTest
   @MethodSource("createIncompleteHeaders")
-  public void badRequestIfCwaHeadersMissing(HttpHeaders headers) {
-    ResponseEntity<Void> actResponse = executeRequest(buildPayloadWithOneKey(), headers);
+  void badRequestIfCwaHeadersMissing(HttpHeaders headers) {
+    ResponseEntity<Void> actResponse = executor.executePost(buildPayloadWithOneKey(), headers);
 
     verify(diagnosisKeyService, never()).saveDiagnosisKeys(any());
-    assertEquals(BAD_REQUEST, actResponse.getStatusCode());
+    assertThat(actResponse.getStatusCode()).isEqualTo(BAD_REQUEST);
   }
 
   private static Stream<Arguments> createIncompleteHeaders() {
@@ -173,142 +169,119 @@ public class SubmissionControllerTest {
 
   @ParameterizedTest
   @MethodSource("createDeniedHttpMethods")
-  public void checkOnlyPostAllowed(HttpMethod deniedHttpMethod) {
+  void checkOnlyPostAllowed(HttpMethod deniedHttpMethod) {
     // INTERNAL_SERVER_ERROR is the result of blocking by StrictFirewall for non POST calls.
     //                       We can change this when Spring Security 5.4.x is released.
     // METHOD_NOT_ALLOWED is the result of TRACE calls (disabled by default in tomcat)
-    List<HttpStatus> allowedErrors = Arrays.asList(INTERNAL_SERVER_ERROR, METHOD_NOT_ALLOWED);
+    List<HttpStatus> allowedErrors = Arrays.asList(INTERNAL_SERVER_ERROR, FORBIDDEN, METHOD_NOT_ALLOWED);
 
-    HttpStatus actStatus = testRestTemplate
-        .exchange(SUBMISSION_URL, deniedHttpMethod, null, Void.class).getStatusCode();
+    HttpStatus actStatus = executor.execute(deniedHttpMethod, null).getStatusCode();
 
-    assertTrue(allowedErrors.contains(actStatus),
-        deniedHttpMethod + " resulted in unexpected status: " + actStatus);
+    assertThat(allowedErrors)
+        .withFailMessage(deniedHttpMethod + " resulted in unexpected status: " + actStatus)
+        .contains(actStatus);
   }
 
   private static Stream<Arguments> createDeniedHttpMethods() {
     return Arrays.stream(HttpMethod.values())
         .filter(method -> method != HttpMethod.POST)
         .filter(method -> method != HttpMethod.PATCH) /* not supported by Rest Template */
-        .map(elem -> Arguments.of(elem));
+        .map(Arguments::of);
   }
 
   @Test
-  public void invalidTanHandling() {
+  void invalidTanHandling() {
     when(tanVerifier.verifyTan(anyString())).thenReturn(false);
 
-    ResponseEntity<Void> actResponse =
-        executeRequest(buildPayloadWithOneKey(), buildOkHeaders());
+    ResponseEntity<Void> actResponse = executor.executePost(buildPayloadWithOneKey(), buildOkHeaders());
 
     verify(diagnosisKeyService, never()).saveDiagnosisKeys(any());
-    assertEquals(FORBIDDEN, actResponse.getStatusCode());
+    verify(fakeDelayManager, times(1)).updateFakeRequestDelay(anyLong());
+    assertThat(actResponse.getStatusCode()).isEqualTo(FORBIDDEN);
   }
 
   @Test
-  public void fakeRequestHandling() {
-    HttpHeaders headers = buildOkHeaders();
-    setCwaFakeHeader(headers, "1");
+  void checkRealRequestHandlingIsMonitored() {
+    executor.executePost(buildPayloadWithOneKey(), buildOkHeaders());
 
-    ResponseEntity<Void> actResponse = executeRequest(buildPayloadWithOneKey(), headers);
-
-    verify(diagnosisKeyService, never()).saveDiagnosisKeys(any());
-    assertEquals(OK, actResponse.getStatusCode());
+    verify(submissionMonitor, times(1)).incrementRequestCounter();
+    verify(submissionMonitor, times(1)).incrementRealRequestCounter();
+    verify(submissionMonitor, never()).incrementFakeRequestCounter();
+    verify(submissionMonitor, never()).incrementInvalidTanRequestCounter();
   }
 
-  private static HttpHeaders buildOkHeaders() {
-    HttpHeaders headers = setCwaAuthHeader(setContentTypeProtoBufHeader(new HttpHeaders()));
+  @Test
+  void checkInvalidTanHandlingIsMonitored() {
+    when(tanVerifier.verifyTan(anyString())).thenReturn(false);
 
-    return setCwaFakeHeader(headers, "0");
+    executor.executePost(buildPayloadWithOneKey(), buildOkHeaders());
+
+    verify(submissionMonitor, times(1)).incrementRequestCounter();
+    verify(submissionMonitor, times(1)).incrementRealRequestCounter();
+    verify(submissionMonitor, never()).incrementFakeRequestCounter();
+    verify(submissionMonitor, times(1)).incrementInvalidTanRequestCounter();
   }
 
-  private static HttpHeaders setContentTypeProtoBufHeader(HttpHeaders headers) {
-    headers.setContentType(MediaType.valueOf("application/x-protobuf"));
-    return headers;
-  }
-
-  private static HttpHeaders setCwaAuthHeader(HttpHeaders headers) {
-    headers.set("cwa-authorization", "TAN okTan");
-    return headers;
-  }
-
-  private static HttpHeaders setCwaFakeHeader(HttpHeaders headers, String value) {
-    headers.set("cwa-fake", value);
-    return headers;
-  }
-
-  private static Collection<Key> buildPayloadWithOneKey() {
-    return Collections.singleton(buildTemporaryExposureKey("testKey111111111", 1, 2, 3));
-  }
-
-  private static Collection<Key> buildPayloadWithMultipleKeys() {
+  private Collection<TemporaryExposureKey> buildPayloadWithMultipleKeys() {
+    int rollingStartIntervalNumber1 = createRollingStartIntervalNumber(config.getRetentionDays() - 1);
+    int rollingStartIntervalNumber2 = rollingStartIntervalNumber1 + DiagnosisKey.EXPECTED_ROLLING_PERIOD;
+    int rollingStartIntervalNumber3 = rollingStartIntervalNumber2 + DiagnosisKey.EXPECTED_ROLLING_PERIOD;
     return Stream.of(
-        buildTemporaryExposureKey("testKey111111111", createRollingStartNumber(2), 2, 3),
-        buildTemporaryExposureKey("testKey222222222", createRollingStartNumber(4), 5, 6),
-        buildTemporaryExposureKey("testKey333333333", createRollingStartNumber(10), 8, 8))
+        buildTemporaryExposureKey(VALID_KEY_DATA_1, rollingStartIntervalNumber1, 3),
+        buildTemporaryExposureKey(VALID_KEY_DATA_2, rollingStartIntervalNumber3, 6),
+        buildTemporaryExposureKey(VALID_KEY_DATA_3, rollingStartIntervalNumber2, 8))
         .collect(Collectors.toCollection(ArrayList::new));
   }
 
-  private static Collection<Key> buildPayloadWithSingleOutdatedKey() {
-    Key outdatedKey = createOutdatedKey();
+  private Collection<TemporaryExposureKey> buildPayloadWithSingleOutdatedKey() {
+    TemporaryExposureKey outdatedKey = createOutdatedKey();
     return Stream.of(outdatedKey).collect(Collectors.toCollection(ArrayList::new));
   }
 
-  private static Key createOutdatedKey() {
-    return Key.newBuilder()
-        .setKeyData(ByteString.copyFromUtf8("testKey222222222"))
-        .setRollingStartNumber(createRollingStartNumber(99))
-        .setRollingPeriod(10)
+  private TemporaryExposureKey createOutdatedKey() {
+    return TemporaryExposureKey.newBuilder()
+        .setKeyData(ByteString.copyFromUtf8(VALID_KEY_DATA_2))
+        .setRollingStartIntervalNumber(createRollingStartIntervalNumber(config.getRetentionDays()))
+        .setRollingPeriod(DiagnosisKey.EXPECTED_ROLLING_PERIOD)
         .setTransmissionRiskLevel(5).build();
   }
 
-  private Collection<Key> buildPayloadWithTooManyKeys() {
-    ArrayList<Key> tooMany = new ArrayList<>();
-    for (int i = 0; i <= 99; i++) {
-      tooMany.add(
-          buildTemporaryExposureKey("testKey111111111", createRollingStartNumber(2), 2, 3));
-    }
-
-    return tooMany;
-  }
-
-  private static Collection<Key> buildPayloadWithInvalidKey() {
+  private static Collection<TemporaryExposureKey> buildPayloadWithInvalidKey() {
     return Stream.of(
-        buildTemporaryExposureKey("testKey111111111", createRollingStartNumber(2), 2, 999))
+        buildTemporaryExposureKey(VALID_KEY_DATA_1, createRollingStartIntervalNumber(2), 999))
         .collect(Collectors.toCollection(ArrayList::new));
   }
 
-  private static int createRollingStartNumber(Integer daysAgo) {
-    return Math.toIntExact(LocalDate
-        .ofInstant(Instant.now(), UTC)
-        .minusDays(daysAgo).atStartOfDay()
-        .toEpochSecond(UTC) / (60 * 10));
-  }
+  private void assertElementsCorrespondToEachOther(Collection<TemporaryExposureKey> submittedTemporaryExposureKeys,
+      Collection<DiagnosisKey> savedDiagnosisKeys) {
 
-  private static Key buildTemporaryExposureKey(
-      String keyData, int rollingStartNumber, int rollingPeriod, int transmissionRiskLevel) {
-    return Key.newBuilder()
-        .setKeyData(ByteString.copyFromUtf8(keyData))
-        .setRollingStartNumber(rollingStartNumber)
-        .setRollingPeriod(rollingPeriod)
-        .setTransmissionRiskLevel(transmissionRiskLevel).build();
-  }
-
-  private void assertElementsCorrespondToEachOther
-      (Collection<Key> submittedKeys, Collection<DiagnosisKey> keyEntities) {
-    Set<DiagnosisKey> expKeys = submittedKeys.stream()
-        .map(aSubmittedKey -> DiagnosisKey.builder().fromProtoBuf(aSubmittedKey).build())
+    Set<DiagnosisKey> submittedDiagnosisKeys = submittedTemporaryExposureKeys.stream()
+        .map(submittedDiagnosisKey -> DiagnosisKey.builder().fromProtoBuf(submittedDiagnosisKey).build())
         .collect(Collectors.toSet());
 
-    assertEquals(expKeys.size(), keyEntities.size(),
-        "Number of submitted keys and generated key entities don't match.");
-    keyEntities.forEach(anActKey -> assertTrue(expKeys.contains(anActKey),
-        "Key entity does not correspond to a submitted key."));
-  }
+    assertThat(savedDiagnosisKeys).hasSize(submittedDiagnosisKeys.size() * config.getRandomKeyPaddingMultiplier());
+    assertThat(savedDiagnosisKeys).containsAll(submittedDiagnosisKeys);
 
-  private ResponseEntity<Void> executeRequest(Collection<Key> keys, HttpHeaders headers) {
-    SubmissionPayload body = SubmissionPayload.newBuilder().addAllKeys(keys).build();
-    RequestEntity<SubmissionPayload> request =
-        new RequestEntity<>(body, headers, HttpMethod.POST, SUBMISSION_URL);
-    return testRestTemplate.postForEntity(SUBMISSION_URL, request, Void.class);
+    submittedDiagnosisKeys.forEach(submittedDiagnosisKey -> {
+      List<DiagnosisKey> savedKeysForSingleSubmittedKey = savedDiagnosisKeys.stream()
+          .filter(savedDiagnosisKey -> savedDiagnosisKey.getRollingPeriod() ==
+              submittedDiagnosisKey.getRollingPeriod())
+          .filter(savedDiagnosisKey -> savedDiagnosisKey.getTransmissionRiskLevel() ==
+              submittedDiagnosisKey.getTransmissionRiskLevel())
+          .filter(savedDiagnosisKey -> savedDiagnosisKey.getRollingStartIntervalNumber() ==
+              submittedDiagnosisKey.getRollingStartIntervalNumber())
+          .collect(Collectors.toList());
+
+      assertThat(savedKeysForSingleSubmittedKey).hasSize(config.getRandomKeyPaddingMultiplier());
+      assertThat(savedKeysForSingleSubmittedKey.stream().filter(savedKey ->
+          Arrays.equals(savedKey.getKeyData(), submittedDiagnosisKey.getKeyData()))).hasSize(1);
+      assertThat(savedKeysForSingleSubmittedKey).allMatch(
+          savedKey -> savedKey.getRollingPeriod() == submittedDiagnosisKey.getRollingPeriod());
+      assertThat(savedKeysForSingleSubmittedKey).allMatch(
+          savedKey -> savedKey.getRollingStartIntervalNumber() == submittedDiagnosisKey
+              .getRollingStartIntervalNumber());
+      assertThat(savedKeysForSingleSubmittedKey).allMatch(
+          savedKey -> savedKey.getTransmissionRiskLevel() == submittedDiagnosisKey.getTransmissionRiskLevel());
+    });
   }
 }

@@ -1,27 +1,33 @@
-/*
+/*-
+ * ---license-start
  * Corona-Warn-App
- *
- * SAP SE and all other contributors /
- * copyright owners license this file to you under the Apache
- * License, Version 2.0 (the "License"); you may not use this
- * file except in compliance with the License.
+ * ---
+ * Copyright (C) 2020 SAP SE and all other contributors
+ * ---
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
- * specific language governing permissions and limitations
- * under the License.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ * ---license-end
  */
 
 package app.coronawarn.server.services.distribution.runner;
 
+import static app.coronawarn.server.services.distribution.assembly.diagnosiskeys.DiagnosisKeyBundler.ONE_HOUR_INTERVAL_SECONDS;
+import static app.coronawarn.server.services.distribution.assembly.diagnosiskeys.DiagnosisKeyBundler.TEN_MINUTES_INTERVAL_SECONDS;
+
 import app.coronawarn.server.common.persistence.domain.DiagnosisKey;
 import app.coronawarn.server.common.persistence.service.DiagnosisKeyService;
 import app.coronawarn.server.common.protocols.internal.RiskLevel;
+import app.coronawarn.server.services.distribution.config.DistributionServiceConfig;
+import app.coronawarn.server.services.distribution.config.DistributionServiceConfig.TestData;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
@@ -35,8 +41,6 @@ import org.apache.commons.math3.random.JDKRandomGenerator;
 import org.apache.commons.math3.random.RandomGenerator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.context.annotation.Profile;
@@ -57,32 +61,25 @@ public class TestDataGeneration implements ApplicationRunner {
 
   private final Logger logger = LoggerFactory.getLogger(TestDataGeneration.class);
 
-  @Value("${services.distribution.retention-days}")
-  private Integer retentionDays;
+  private final Integer retentionDays;
 
-  @Value("${services.distribution.testdata.seed}")
-  private Integer seed;
-
-  @Value("${services.distribution.testdata.exposures-per-hour}")
-  private Integer exposuresPerHour;
+  private final TestData config;
 
   private final DiagnosisKeyService diagnosisKeyService;
 
-  private RandomGenerator random = new JDKRandomGenerator();
+  private final RandomGenerator random = new JDKRandomGenerator();
 
   private static final int POISSON_MAX_ITERATIONS = 10_000_000;
   private static final double POISSON_EPSILON = 1e-12;
-  private PoissonDistribution poisson;
 
-  // The submission timestamp is counted in 1 hour intervals since epoch
-  private static final long ONE_HOUR_INTERVAL_SECONDS = TimeUnit.HOURS.toSeconds(1);
-
-  // The rolling start number is counted in 10 minute intervals since epoch
-  private static final long TEN_MINUTES_INTERVAL_SECONDS = TimeUnit.MINUTES.toSeconds(10);
-
-  @Autowired
-  public TestDataGeneration(DiagnosisKeyService diagnosisKeyService) {
+  /**
+   * Creates a new TestDataGeneration runner.
+   */
+  TestDataGeneration(DiagnosisKeyService diagnosisKeyService,
+      DistributionServiceConfig distributionServiceConfig) {
     this.diagnosisKeyService = diagnosisKeyService;
+    this.retentionDays = distributionServiceConfig.getRetentionDays();
+    this.config = distributionServiceConfig.getTestData();
   }
 
   /**
@@ -100,19 +97,24 @@ public class TestDataGeneration implements ApplicationRunner {
     logger.debug("Querying diagnosis keys from the database...");
     List<DiagnosisKey> existingDiagnosisKeys = diagnosisKeyService.getDiagnosisKeys();
 
-    // Timestamps in hours since epoch
-    long startTimestamp = getGeneratorStartTimestamp(existingDiagnosisKeys);
-    long endTimestamp = getGeneratorEndTimestamp();
+    // Timestamps in hours since epoch. Test data generation starts one hour after the latest diagnosis key in the
+    // database and ends one hour before the current one.
+    long startTimestamp = getGeneratorStartTimestamp(existingDiagnosisKeys) + 1; // Inclusive
+    long endTimestamp = getGeneratorEndTimestamp(); // Exclusive
 
     // Add the startTimestamp to the seed. Otherwise we would generate the same data every hour.
-    random.setSeed(seed + startTimestamp);
-    poisson =
-        new PoissonDistribution(random, exposuresPerHour, POISSON_EPSILON, POISSON_MAX_ITERATIONS);
+    random.setSeed(this.config.getSeed() + startTimestamp);
+    PoissonDistribution poisson =
+        new PoissonDistribution(random, this.config.getExposuresPerHour(), POISSON_EPSILON, POISSON_MAX_ITERATIONS);
 
+    if (startTimestamp == endTimestamp) {
+      logger.debug("Skipping test data generation, latest diagnosis keys are still up-to-date.");
+      return;
+    }
     logger.debug("Generating diagnosis keys between {} and {}...", startTimestamp, endTimestamp);
     List<DiagnosisKey> newDiagnosisKeys = LongStream.range(startTimestamp, endTimestamp)
         .mapToObj(submissionTimestamp -> IntStream.range(0, poisson.sample())
-            .mapToObj(__ -> generateDiagnosisKey(submissionTimestamp))
+            .mapToObj(ignoredValue -> generateDiagnosisKey(submissionTimestamp))
             .collect(Collectors.toList()))
         .flatMap(List::stream)
         .collect(Collectors.toList());
@@ -142,7 +144,7 @@ public class TestDataGeneration implements ApplicationRunner {
    * this function would return the timestamp for today 14:00 UTC.
    */
   private long getGeneratorEndTimestamp() {
-    return (LocalDateTime.now().toEpochSecond(ZoneOffset.UTC) / ONE_HOUR_INTERVAL_SECONDS) - 1;
+    return (LocalDateTime.now(ZoneOffset.UTC).toEpochSecond(ZoneOffset.UTC) / ONE_HOUR_INTERVAL_SECONDS) - 1;
   }
 
   /**
@@ -151,7 +153,7 @@ public class TestDataGeneration implements ApplicationRunner {
    * 14 days ago (from now) at 00:00 UTC.
    */
   private long getRetentionStartTimestamp() {
-    return LocalDate.now().minusDays(retentionDays).atStartOfDay()
+    return LocalDate.now(ZoneOffset.UTC).minusDays(retentionDays).atStartOfDay()
         .toEpochSecond(ZoneOffset.UTC) / ONE_HOUR_INTERVAL_SECONDS;
   }
 
@@ -161,8 +163,7 @@ public class TestDataGeneration implements ApplicationRunner {
   private DiagnosisKey generateDiagnosisKey(long submissionTimestamp) {
     return DiagnosisKey.builder()
         .withKeyData(generateDiagnosisKeyBytes())
-        .withRollingStartNumber(generateRollingStartNumber(submissionTimestamp))
-        .withRollingPeriod(generateRollingPeriod())
+        .withRollingStartIntervalNumber(generateRollingStartIntervalNumber(submissionTimestamp))
         .withTransmissionRiskLevel(generateTransmissionRiskLevel())
         .withSubmissionTimestamp(submissionTimestamp)
         .build();
@@ -178,23 +179,16 @@ public class TestDataGeneration implements ApplicationRunner {
   }
 
   /**
-   * Returns a random rolling start number (timestamp since when a key was active, represented by a 10 minute interval
-   * counter.) between a specific submission timestamp and the beginning of the retention period.
+   * Returns a random rolling start interval number (timestamp since when a key was active, represented by a 10 minute
+   * interval counter) between a specific submission timestamp and the beginning of the retention period.
    */
-  private long generateRollingStartNumber(long submissionTimestamp) {
-    long maxRollingStartNumber =
+  private int generateRollingStartIntervalNumber(long submissionTimestamp) {
+    long maxRollingStartIntervalNumber =
         submissionTimestamp * ONE_HOUR_INTERVAL_SECONDS / TEN_MINUTES_INTERVAL_SECONDS;
-    long minRollingStartNumber =
-        maxRollingStartNumber
+    long minRollingStartIntervalNumber =
+        maxRollingStartIntervalNumber
             - TimeUnit.DAYS.toSeconds(retentionDays) / TEN_MINUTES_INTERVAL_SECONDS;
-    return getRandomBetween(minRollingStartNumber, maxRollingStartNumber);
-  }
-
-  /**
-   * Returns a rolling period (number of 10 minute intervals that a key was active for) of 1 day.
-   */
-  private long generateRollingPeriod() {
-    return TimeUnit.DAYS.toSeconds(1) / TEN_MINUTES_INTERVAL_SECONDS;
+    return Math.toIntExact(getRandomBetween(minRollingStartIntervalNumber, maxRollingStartIntervalNumber));
   }
 
   /**

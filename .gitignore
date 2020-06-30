@@ -38,3 +38,7 @@ out/
 .settings
 .project
 .classpath
+.factorypath
+
+pom.xml.versionsBackup
+**/.flattened-pom.xml

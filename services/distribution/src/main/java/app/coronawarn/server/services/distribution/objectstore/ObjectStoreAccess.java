@@ -1,43 +1,38 @@
-/*
+/*-
+ * ---license-start
  * Corona-Warn-App
- *
- * SAP SE and all other contributors /
- * copyright owners license this file to you under the Apache
- * License, Version 2.0 (the "License"); you may not use this
- * file except in compliance with the License.
+ * ---
+ * Copyright (C) 2020 SAP SE and all other contributors
+ * ---
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
- * specific language governing permissions and limitations
- * under the License.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ * ---license-end
  */
 
 package app.coronawarn.server.services.distribution.objectstore;
 
+import app.coronawarn.server.services.distribution.config.DistributionServiceConfig;
+import app.coronawarn.server.services.distribution.objectstore.client.ObjectStoreClient;
+import app.coronawarn.server.services.distribution.objectstore.client.ObjectStoreClient.HeaderKey;
+import app.coronawarn.server.services.distribution.objectstore.client.S3Object;
 import app.coronawarn.server.services.distribution.objectstore.publish.LocalFile;
-import io.minio.MinioClient;
-import io.minio.PutObjectOptions;
-import io.minio.Result;
-import io.minio.errors.InvalidEndpointException;
-import io.minio.errors.InvalidPortException;
-import io.minio.errors.MinioException;
-import io.minio.messages.DeleteError;
-import io.minio.messages.Item;
-import java.io.IOException;
-import java.security.GeneralSecurityException;
-import java.util.ArrayList;
+import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.util.StringUtils;
 
 /**
  * <p>Grants access to the S3 compatible object storage hosted by Telekom in Germany, enabling
@@ -45,11 +40,11 @@ import org.springframework.stereotype.Component;
  * <br>
  * Make sure the following properties are available on the env:
  * <ul>
- * <li>cwa.objectstore.endpoint</li>
- * <li>cwa.objectstore.bucket</li>
- * <li>cwa.objectstore.accessKey</li>
- * <li>cwa.objectstore.secretKey</li>
- * <li>cwa.objectstore.port</li>
+ * <li>services.distribution.objectstore.endpoint</li>
+ * <li>services.distribution.objectstore.bucket</li>
+ * <li>services.distribution.objectstore.accessKey</li>
+ * <li>services.distribution.objectstore.secretKey</li>
+ * <li>services.distribution.objectstore.port</li>
  * </ul>
  */
 @Component
@@ -57,72 +52,57 @@ public class ObjectStoreAccess {
 
   private static final Logger logger = LoggerFactory.getLogger(ObjectStoreAccess.class);
 
-  private static final String DEFAULT_REGION = "eu-west-1";
+  /**
+   * Specifies the default maximum amount of time in seconds that a published resource can be considered "fresh" when
+   * held in a cache.
+   */
+  public static final int DEFAULT_MAX_CACHE_AGE = 300;
+
+  private final boolean isSetPublicReadAclOnPutObject;
 
   private final String bucket;
 
-  private MinioClient client;
-
+  private final ObjectStoreClient client;
 
   /**
-   * Constructs an {@link ObjectStoreAccess} instance for communication with the specified object
-   * store endpoint and bucket.
+   * Constructs an {@link ObjectStoreAccess} instance for communication with the specified object store endpoint and
+   * bucket.
    *
-   * @param configurationProperties The config properties
-   * @throws IOException When there were problems creating the S3 client
-   * @throws GeneralSecurityException When there were problems creating the S3 client
-   * @throws MinioException When there were problems creating the S3 client
+   * @param distributionServiceConfig The config properties
+   * @param objectStoreClient         The client used for interaction with the object store
    */
-  @Autowired
-  public ObjectStoreAccess(ObjectStoreConfigurationProperties configurationProperties)
-      throws IOException, GeneralSecurityException, MinioException {
-    this.client = createClient(configurationProperties);
-
-    this.bucket = configurationProperties.getBucket();
+  ObjectStoreAccess(DistributionServiceConfig distributionServiceConfig, ObjectStoreClient objectStoreClient) {
+    this.client = objectStoreClient;
+    this.bucket = distributionServiceConfig.getObjectStore().getBucket();
+    this.isSetPublicReadAclOnPutObject = distributionServiceConfig.getObjectStore().isSetPublicReadAclOnPutObject();
 
     if (!this.client.bucketExists(this.bucket)) {
-      throw new IllegalArgumentException("Supplied bucket does not exist " + bucket);
+      throw new IllegalArgumentException("No bucket with the specified name exists: " + bucket);
     }
-  }
-
-  private MinioClient createClient(ObjectStoreConfigurationProperties configurationProperties)
-      throws InvalidPortException, InvalidEndpointException {
-    if (isSsl(configurationProperties)) {
-      return new MinioClient(
-          configurationProperties.getEndpoint(),
-          configurationProperties.getPort(),
-          configurationProperties.getAccessKey(), configurationProperties.getSecretKey(),
-          DEFAULT_REGION,
-          true
-      );
-    } else {
-      return new MinioClient(
-          configurationProperties.getEndpoint(),
-          configurationProperties.getPort(),
-          configurationProperties.getAccessKey(), configurationProperties.getSecretKey()
-      );
-    }
-  }
-
-  private boolean isSsl(ObjectStoreConfigurationProperties configurationProperties) {
-    return configurationProperties.getEndpoint().startsWith("https://");
   }
 
   /**
-   * Stores the target file on the S3.
+   * Stores the target file on the S3 and sets cache control headers according to the default maximum age value.
    *
-   * @param localFile the file to be published
+   * @param localFile The file to be published.
    */
-  public void putObject(LocalFile localFile)
-      throws IOException, GeneralSecurityException, MinioException {
+  public void putObject(LocalFile localFile) {
+    putObject(localFile, DEFAULT_MAX_CACHE_AGE);
+  }
+
+  /**
+   * Stores the target file on the S3 and sets cache control headers according to the specified maximum age value.
+   *
+   * @param localFile The file to be published.
+   * @param maxAge    A cache control parameter that specifies the maximum amount of time in seconds that a resource can
+   *                  be considered "fresh" when held in a cache.
+   */
+  public void putObject(LocalFile localFile, int maxAge) {
     String s3Key = localFile.getS3Key();
+    Map<HeaderKey, String> headers = createHeaders(maxAge, localFile);
 
-
-    var options = new PutObjectOptions(localFile.getFile().toFile().length(), -1);
-    options.setHeaders(createMetadataFor(localFile));
-
-    logger.info("... uploading " + s3Key);
-    this.client.putObject(bucket, s3Key, localFile.getFile().toString(), options);
+    logger.info("... uploading {}", s3Key);
+    this.client.putObject(bucket, s3Key, localFile.getFile(), headers);
   }
 
   /**
@@ -130,24 +110,14 @@ public class ObjectStoreAccess {
    *
    * @param prefix the prefix, e.g. my/folder/
    */
-  public List<DeleteError> deleteObjectsWithPrefix(String prefix)
-      throws MinioException, GeneralSecurityException, IOException {
+  public void deleteObjectsWithPrefix(String prefix) {
     List<String> toDelete = getObjectsWithPrefix(prefix)
         .stream()
         .map(S3Object::getObjectName)
         .collect(Collectors.toList());
 
-    logger.info("Deleting " + toDelete.size() + " entries with prefix " + prefix);
-    var deletionResponse = this.client.removeObjects(bucket, toDelete);
-
-    List<DeleteError> errors = new ArrayList<>();
-    for (Result<DeleteError> deleteErrorResult : deletionResponse) {
-      errors.add(deleteErrorResult.get());
-    }
-
-    logger.info("Deletion result: " + errors.size());
-
-    return errors;
+    logger.info("Deleting {} entries with prefix {}", toDelete.size(), prefix);
+    this.client.removeObjects(bucket, toDelete);
   }
 
   /**
@@ -156,19 +126,22 @@ public class ObjectStoreAccess {
    * @param prefix the prefix, e.g. my/folder/
    * @return the list of objects
    */
-  public List<S3Object> getObjectsWithPrefix(String prefix)
-      throws IOException, GeneralSecurityException, MinioException {
-    var objects = this.client.listObjects(bucket, prefix, true, true, false);
-
-    var list = new ArrayList<S3Object>();
-    for (Result<Item> item : objects) {
-      list.add(S3Object.of(item.get()));
-    }
-
-    return list;
+  public List<S3Object> getObjectsWithPrefix(String prefix) {
+    return client.getObjects(bucket, prefix);
   }
 
-  private Map<String, String> createMetadataFor(LocalFile file) {
-    return Map.of("cwa.hash", file.getHash());
+  private Map<HeaderKey, String> createHeaders(int maxAge, LocalFile file) {
+    EnumMap<HeaderKey, String> headers = new EnumMap<>(Map.of(HeaderKey.CACHE_CONTROL, "public,max-age=" + maxAge));
+    if (this.isSetPublicReadAclOnPutObject) {
+      headers.put(HeaderKey.AMZ_ACL, "public-read");
+    }
+
+    if (!StringUtils.isEmpty(file.getChecksum())) {
+      headers.put(HeaderKey.CWA_HASH, file.getChecksum());
+    }
+
+    headers.put(HeaderKey.CONTENT_TYPE, file.getContentType());
+
+    return headers;
   }
 }

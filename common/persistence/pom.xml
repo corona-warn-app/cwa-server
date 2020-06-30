@@ -5,14 +5,18 @@
   <parent>
     <groupId>org.springframework.boot</groupId>
     <artifactId>spring-boot-starter-parent</artifactId>
-    <version>2.2.6.RELEASE</version>
+    <version>2.3.0.RELEASE</version>
     <relativePath></relativePath>
   </parent>
   <modelVersion>4.0.0</modelVersion>
 
   <groupId>org.opencwa</groupId>
   <artifactId>persistence</artifactId>
-  <version>0.3.3-SNAPSHOT</version>
+  <version>${revision}</version>
+
+  <organization>
+    <name>SAP SE</name>
+  </organization>
 
   <properties>
     <java.version>11</java.version>
@@ -20,17 +24,26 @@
     <maven.compiler.target>11</maven.compiler.target>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+    <sonar.projectKey>corona-warn-app_cwa-server_common_persistence</sonar.projectKey>
   </properties>
 
   <dependencies>
     <dependency>
       <groupId>org.opencwa</groupId>
       <artifactId>protocols</artifactId>
-      <version>0.3.3-SNAPSHOT</version>
+      <version>${project.version}</version>
     </dependency>
     <dependency>
       <groupId>org.springframework.boot</groupId>
       <artifactId>spring-boot-starter-data-jpa</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-validation</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>io.micrometer</groupId>
+      <artifactId>micrometer-core</artifactId>
     </dependency>
     <dependency>
       <groupId>org.springframework.boot</groupId>
@@ -60,16 +73,18 @@
     <dependency>
       <groupId>org.flywaydb</groupId>
       <artifactId>flyway-core</artifactId>
+      <version>6.4.3</version>
     </dependency>
     <dependency>
       <groupId>org.postgresql</groupId>
       <artifactId>postgresql</artifactId>
+      <version>42.2.13</version>
       <scope>runtime</scope>
     </dependency>
     <dependency>
       <groupId>com.h2database</groupId>
       <artifactId>h2</artifactId>
-      <version>1.4.199</version>
+      <version>1.4.200</version>
       <scope>runtime</scope>
     </dependency>
     <dependency>
@@ -101,6 +116,43 @@
   <build>
     <plugins>
       <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>license-maven-plugin</artifactId>
+        <version>2.0.0</version>
+        <configuration>
+          <includes>**/*.java</includes>
+          <copyrightOwners>${project.organization.name} and all other contributors</copyrightOwners>
+          <processStartTag>---license-start</processStartTag>
+          <processEndTag>---license-end</processEndTag>
+          <sectionDelimiter>---</sectionDelimiter>
+          <addJavaLicenseAfterPackage>false</addJavaLicenseAfterPackage>
+          <trimHeaderLine>true</trimHeaderLine>
+          <emptyLineAfterHeader>true</emptyLineAfterHeader>
+        </configuration>
+      </plugin>
+      <plugin>
+        <!-- see https://maven.apache.org/maven-ci-friendly.html#install-deploy -->
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>flatten-maven-plugin</artifactId>
+        <version>1.1.0</version>
+        <configuration>
+          <updatePomFile>true</updatePomFile>
+          <flattenMode>resolveCiFriendliesOnly</flattenMode>
+        </configuration>
+        <executions>
+          <execution>
+            <id>flatten</id>
+            <phase>process-resources</phase>
+            <goals><goal>flatten</goal></goals>
+          </execution>
+          <execution>
+            <id>flatten-clean</id>
+            <phase>clean</phase>
+            <goals><goal>clean</goal></goals>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-checkstyle-plugin</artifactId>
         <version>3.1.1</version>
@@ -121,6 +173,25 @@
             <goals>
               <goal>check</goal>
             </goals>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <groupId>org.jacoco</groupId>
+        <artifactId>jacoco-maven-plugin</artifactId>
+        <version>0.8.5</version>
+        <executions>
+          <execution>
+            <goals>
+              <goal>prepare-agent</goal>
+            </goals>
+          </execution>
+          <execution>
+            <id>report</id>
+            <goals>
+              <goal>report</goal>
+            </goals>
+            <phase>verify</phase>
           </execution>
         </executions>
       </plugin>
