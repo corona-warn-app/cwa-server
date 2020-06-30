@@ -53,23 +53,20 @@ public class DiagnosisKey {
 
   @Id
   @Size(min = 16, max = 16, message = "Key data must be a byte array of length 16.")
-  private byte[] keyData;
+  private final byte[] keyData;
 
   @ValidRollingStartIntervalNumber
-  private int rollingStartIntervalNumber;
+  private final int rollingStartIntervalNumber;
 
   @Range(min = EXPECTED_ROLLING_PERIOD, max = EXPECTED_ROLLING_PERIOD,
       message = "Rolling period must be " + EXPECTED_ROLLING_PERIOD + ".")
-  private int rollingPeriod;
+  private final int rollingPeriod;
 
   @Range(min = 0, max = 8, message = "Risk level must be between 0 and 8.")
-  private int transmissionRiskLevel;
+  private final int transmissionRiskLevel;
 
   @ValidSubmissionTimestamp
-  private long submissionTimestamp;
-
-  protected DiagnosisKey() {
-  }
+  private final long submissionTimestamp;
 
   /**
    * Should be called by builders.
