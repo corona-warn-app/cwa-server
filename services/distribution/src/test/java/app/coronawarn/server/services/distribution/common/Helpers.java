@@ -129,18 +129,4 @@ public class Helpers {
 
     return expectedFiles;
   }
-
-  public static class TestTuple {
-
-    public Collection<DiagnosisKey> diagnosisKeys;
-    public Collection<String> expectedFiles;
-    public LocalDateTime distributionRun;
-
-    public TestTuple(Collection<DiagnosisKey> diagnosisKeys, Collection<String> expectedFiles,
-        LocalDateTime distributionRun) {
-      this.diagnosisKeys = diagnosisKeys;
-      this.expectedFiles = expectedFiles;
-      this.distributionRun = distributionRun;
-    }
-  }
 }
