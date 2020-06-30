@@ -26,7 +26,6 @@ import app.coronawarn.server.services.distribution.assembly.diagnosiskeys.Diagno
 import app.coronawarn.server.services.distribution.assembly.diagnosiskeys.structure.archive.decorator.signing.DiagnosisKeySigningDecorator;
 import app.coronawarn.server.services.distribution.assembly.diagnosiskeys.structure.directory.decorator.HourIndexingDecorator;
 import app.coronawarn.server.services.distribution.assembly.diagnosiskeys.structure.file.TemporaryExposureKeyExportFile;
-import app.coronawarn.server.services.distribution.assembly.structure.Writable;
 import app.coronawarn.server.services.distribution.assembly.structure.WritableOnDisk;
 import app.coronawarn.server.services.distribution.assembly.structure.archive.Archive;
 import app.coronawarn.server.services.distribution.assembly.structure.archive.ArchiveOnDisk;
@@ -39,9 +38,7 @@ import app.coronawarn.server.services.distribution.config.DistributionServiceCon
 import java.time.LocalDate;
 import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
-import java.util.Collections;
 import java.util.List;
-import java.util.Set;
 
 public class DiagnosisKeysDateDirectory extends IndexDirectoryOnDisk<LocalDate> {
 
@@ -110,54 +107,4 @@ public class DiagnosisKeysDateDirectory extends IndexDirectoryOnDisk<LocalDate> 
     return new DiagnosisKeySigningDecorator(archive, cryptoProvider, distributionServiceConfig);
   }
 
-  private static class NilDirectory implements Directory<WritableOnDisk> {
-
-    private static final NilDirectory self = new NilDirectory();
-
-    @Override
-    public void addWritable(Writable<WritableOnDisk> writable) {
-    }
-
-    @Override
-    public Set<Writable<WritableOnDisk>> getWritables() {
-      return Collections.emptySet();
-    }
-
-    @Override
-    public void write() {
-    }
-
-    @Override
-    public String getName() {
-      return "";
-    }
-
-    @Override
-    public Directory<WritableOnDisk> getParent() {
-      return self;
-    }
-
-    @Override
-    public void setParent(Directory<WritableOnDisk> parent) {
-    }
-
-    @Override
-    public void prepare(ImmutableStack<Object> indices) {
-    }
-
-    @Override
-    public boolean isFile() {
-      return false;
-    }
-
-    @Override
-    public boolean isDirectory() {
-      return false;
-    }
-
-    @Override
-    public boolean isArchive() {
-      return false;
-    }
-  }
 }
