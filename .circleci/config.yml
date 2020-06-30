@@ -12,7 +12,6 @@ jobs:
           command: |
             sudo apt-get install openjdk-11-jre
             sudo update-alternatives --set java /usr/lib/jvm/java-11-openjdk-amd64/bin/java
-            export JAVA_HOME=/usr/lib/jvm/java-11-openjdk-amd64
             java -version
       - run:
           name: Generate cumulative pom.xml checksum
@@ -25,7 +24,9 @@ jobs:
       - run: ./mvnw --batch-mode dependency:go-offline
       - run:
           name: Analyze on SonarCloud
-          command: ./mvnw --batch-mode verify sonar:sonar --fail-never
+          command: |
+            export JAVA_HOME=/usr/lib/jvm/java-11-openjdk-amd64
+            ./mvnw --batch-mode verify sonar:sonar --fail-never
       - save_cache:
           paths:
             - ~/.m2
