@@ -44,7 +44,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 @SpringBootTest(classes = {ObjectStoreAccess.class, ObjectStorePublishingConfig.class, S3Publisher.class})
 @EnableConfigurationProperties(value = DistributionServiceConfig.class)
 @Tag("s3-integration")
-class S3PublisherIntegrationTest {
+class S3PublisherIT {
 
   private final String rootTestFolder = "objectstore/publisher/";
 

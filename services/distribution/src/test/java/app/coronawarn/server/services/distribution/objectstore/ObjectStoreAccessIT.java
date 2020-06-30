@@ -48,7 +48,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 @SpringBootTest(classes = {ObjectStoreAccess.class, ObjectStorePublishingConfig.class})
 @EnableConfigurationProperties(value = DistributionServiceConfig.class)
 @Tag("s3-integration")
-class ObjectStoreAccessTest {
+class ObjectStoreAccessIT {
 
   private static final String testRunId = "testing/cwa/" + UUID.randomUUID().toString() + "/";
   private static final String rootTestFolder = "objectstore/";
