@@ -26,6 +26,7 @@ import app.coronawarn.server.services.distribution.assembly.diagnosiskeys.Diagno
 import app.coronawarn.server.services.distribution.assembly.diagnosiskeys.structure.archive.decorator.signing.DiagnosisKeySigningDecorator;
 import app.coronawarn.server.services.distribution.assembly.diagnosiskeys.structure.directory.decorator.HourIndexingDecorator;
 import app.coronawarn.server.services.distribution.assembly.diagnosiskeys.structure.file.TemporaryExposureKeyExportFile;
+import app.coronawarn.server.services.distribution.assembly.structure.Writable;
 import app.coronawarn.server.services.distribution.assembly.structure.WritableOnDisk;
 import app.coronawarn.server.services.distribution.assembly.structure.archive.Archive;
 import app.coronawarn.server.services.distribution.assembly.structure.archive.ArchiveOnDisk;
@@ -33,11 +34,14 @@ import app.coronawarn.server.services.distribution.assembly.structure.directory.
 import app.coronawarn.server.services.distribution.assembly.structure.directory.IndexDirectoryOnDisk;
 import app.coronawarn.server.services.distribution.assembly.structure.file.File;
 import app.coronawarn.server.services.distribution.assembly.structure.util.ImmutableStack;
+import app.coronawarn.server.services.distribution.assembly.structure.util.functional.WritableFunction;
 import app.coronawarn.server.services.distribution.config.DistributionServiceConfig;
 import java.time.LocalDate;
 import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
+import java.util.Collections;
 import java.util.List;
+import java.util.Set;
 
 public class DiagnosisKeysDateDirectory extends IndexDirectoryOnDisk<LocalDate> {
 
@@ -70,10 +74,15 @@ public class DiagnosisKeysDateDirectory extends IndexDirectoryOnDisk<LocalDate> 
           new DiagnosisKeysHourDirectory(diagnosisKeyBundler, cryptoProvider, distributionServiceConfig);
       return decorateHourDirectory(hourDirectory);
     });
-    this.addWritableToAll(currentIndices -> {
+    this.addWritableToAll(indicesToDateDirectoryArchive());
+    super.prepare(indices);
+  }
+
+  private WritableFunction<WritableOnDisk> indicesToDateDirectoryArchive() {
+    return currentIndices -> {
       LocalDate currentDate = (LocalDate) currentIndices.peek();
       if (currentDate.equals(diagnosisKeyBundler.getDistributionTime().toLocalDate())) {
-        return null;
+        return NilDirectory.self;
       }
       String region = (String) currentIndices.pop().peek();
 
@@ -90,8 +99,7 @@ public class DiagnosisKeysDateDirectory extends IndexDirectoryOnDisk<LocalDate> 
       dateArchive.addWritable(temporaryExposureKeyExportFile);
 
       return decorateDiagnosisKeyArchive(dateArchive);
-    });
-    super.prepare(indices);
+    };
   }
 
   private Directory<WritableOnDisk> decorateHourDirectory(DiagnosisKeysHourDirectory hourDirectory) {
@@ -100,5 +108,56 @@ public class DiagnosisKeysDateDirectory extends IndexDirectoryOnDisk<LocalDate> 
 
   private Directory<WritableOnDisk> decorateDiagnosisKeyArchive(Archive<WritableOnDisk> archive) {
     return new DiagnosisKeySigningDecorator(archive, cryptoProvider, distributionServiceConfig);
+  }
+
+  private static class NilDirectory implements Directory<WritableOnDisk> {
+
+    private static final NilDirectory self = new NilDirectory();
+
+    @Override
+    public void addWritable(Writable<WritableOnDisk> writable) {
+    }
+
+    @Override
+    public Set<Writable<WritableOnDisk>> getWritables() {
+      return Collections.emptySet();
+    }
+
+    @Override
+    public void write() {
+    }
+
+    @Override
+    public String getName() {
+      return "";
+    }
+
+    @Override
+    public Directory<WritableOnDisk> getParent() {
+      return self;
+    }
+
+    @Override
+    public void setParent(Directory<WritableOnDisk> parent) {
+    }
+
+    @Override
+    public void prepare(ImmutableStack<Object> indices) {
+    }
+
+    @Override
+    public boolean isFile() {
+      return false;
+    }
+
+    @Override
+    public boolean isDirectory() {
+      return false;
+    }
+
+    @Override
+    public boolean isArchive() {
+      return false;
+    }
   }
 }
