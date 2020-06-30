@@ -23,7 +23,7 @@ jobs:
             java -version
       - run:
           name: Analyze on SonarCloud
-          command: mvn --batch-mode verify sonar:sonar --fail-never
+          command: ./mvnw --batch-mode verify sonar:sonar --fail-never
       - save_cache:
           paths:
             - ~/.m2
