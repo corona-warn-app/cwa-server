@@ -105,8 +105,8 @@ public class IndexDirectoryOnDisk<T> extends DirectoryOnDisk implements IndexDir
   private void prepareMetaWritables(ImmutableStack<Object> indices, DirectoryOnDisk target) {
     this.metaWritables.forEach(metaWritableFunction -> {
       Writable<WritableOnDisk> newWritable = metaWritableFunction.apply(indices);
-        target.addWritable(newWritable);
-        newWritable.prepare(indices);
+      target.addWritable(newWritable);
+      newWritable.prepare(indices);
     });
   }
 }
