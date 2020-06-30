@@ -13,6 +13,7 @@ COPY ./services/distribution/pom.xml ${WORK_DIR}/services/distribution/pom.xml
 COPY ./services/submission/pom.xml ${WORK_DIR}/services/submission/pom.xml
 
 WORKDIR ${WORK_DIR}
+
 # build all dependencies for offline use
 RUN ${WORK_DIR}/mvnw dependency:go-offline --file ${WORK_DIR}/pom.xml -B
 
