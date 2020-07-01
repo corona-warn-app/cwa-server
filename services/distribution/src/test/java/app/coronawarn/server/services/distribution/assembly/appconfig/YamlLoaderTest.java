@@ -40,7 +40,8 @@ class YamlLoaderTest {
   @ValueSource(strings = {
       "configtests/app-config_empty.yaml",
       "configtests/wrong_file.yaml",
-      "configtests/broken_syntax.yaml",
+      "configtests/app-config_broken_syntax.yaml",
+      "parameters/naming_mismatch.yaml",
       "file_does_not_exist_anywhere.yaml"
   })
   void throwsLoadFailure(String fileName) {

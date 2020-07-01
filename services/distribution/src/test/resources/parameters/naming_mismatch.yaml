@@ -1,9 +1,9 @@
 transmission_weight: 10.001
 duration_weight: 0.001
-  attenuation_weight: 100 # broken syntax
+attenuation_weight: 100
 
 transmission:
-    app_defined_1: 2 # wrong syntax, indent too high
+  foo: 2 # "foo" does not exist in proto
   app_defined_2: 2
   app_defined_3: 3
   app_defined_4: 4

@@ -55,4 +55,4 @@ attenuation:
   gt_27_le_33_dbm: 1
   gt_15_le_27_dbm: 1
   gt_10_le_15_dbm: 1
-  lt_10_dbm: 1
+  le_10_dbm: 1

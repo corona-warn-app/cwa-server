@@ -80,6 +80,7 @@ public class ValidationError {
     INVALID_URL,
     INVALID_PARTITIONING,
     TOO_MANY_DECIMAL_PLACES,
-    MISSING_ENTRY
+    MISSING_ENTRY,
+    UNKOWN_ENTRY
   }
 }

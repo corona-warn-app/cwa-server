@@ -41,4 +41,4 @@ attenuation:
   gt_27_le_33_dbm: 5
   gt_15_le_27_dbm: 6
   gt_10_le_15_dbm: 7
-  lt_10_dbm: 8
+  le_10_dbm: 8
