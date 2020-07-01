@@ -37,6 +37,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.util.List;
+import java.util.Optional;
 
 public class DiagnosisKeysHourDirectory extends IndexDirectoryOnDisk<LocalDateTime> {
 
@@ -80,7 +81,7 @@ public class DiagnosisKeysHourDirectory extends IndexDirectoryOnDisk<LocalDateTi
       Archive<WritableOnDisk> hourArchive = new ArchiveOnDisk(distributionServiceConfig.getOutputFileName());
       hourArchive.addWritable(temporaryExposureKeyExportFile);
 
-      return decorateDiagnosisKeyArchive(hourArchive);
+      return Optional.of(decorateDiagnosisKeyArchive(hourArchive));
     });
     super.prepare(indices);
   }

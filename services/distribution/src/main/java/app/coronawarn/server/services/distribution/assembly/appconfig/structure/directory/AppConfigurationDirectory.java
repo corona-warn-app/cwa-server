@@ -32,6 +32,7 @@ import app.coronawarn.server.services.distribution.assembly.structure.directory.
 import app.coronawarn.server.services.distribution.assembly.structure.directory.decorator.indexing.IndexingDecoratorOnDisk;
 import app.coronawarn.server.services.distribution.assembly.structure.file.FileOnDisk;
 import app.coronawarn.server.services.distribution.config.DistributionServiceConfig;
+import java.util.Optional;
 import java.util.Set;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -86,6 +87,7 @@ public class AppConfigurationDirectory extends DirectoryOnDisk {
     ArchiveOnDisk appConfigurationFile = new ArchiveOnDisk(archiveName);
     appConfigurationFile.addWritable(new FileOnDisk("export.bin", applicationConfiguration.toByteArray()));
     countryDirectory.addWritableToAll(ignoredValue ->
-        new AppConfigurationSigningDecorator(appConfigurationFile, cryptoProvider, distributionServiceConfig));
+        Optional
+            .of(new AppConfigurationSigningDecorator(appConfigurationFile, cryptoProvider, distributionServiceConfig)));
   }
 }

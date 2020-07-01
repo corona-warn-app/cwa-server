@@ -26,6 +26,7 @@ import app.coronawarn.server.services.distribution.assembly.diagnosiskeys.Diagno
 import app.coronawarn.server.services.distribution.assembly.diagnosiskeys.structure.archive.decorator.signing.DiagnosisKeySigningDecorator;
 import app.coronawarn.server.services.distribution.assembly.diagnosiskeys.structure.directory.decorator.HourIndexingDecorator;
 import app.coronawarn.server.services.distribution.assembly.diagnosiskeys.structure.file.TemporaryExposureKeyExportFile;
+import app.coronawarn.server.services.distribution.assembly.structure.Writable;
 import app.coronawarn.server.services.distribution.assembly.structure.WritableOnDisk;
 import app.coronawarn.server.services.distribution.assembly.structure.archive.Archive;
 import app.coronawarn.server.services.distribution.assembly.structure.archive.ArchiveOnDisk;
@@ -33,12 +34,12 @@ import app.coronawarn.server.services.distribution.assembly.structure.directory.
 import app.coronawarn.server.services.distribution.assembly.structure.directory.IndexDirectoryOnDisk;
 import app.coronawarn.server.services.distribution.assembly.structure.file.File;
 import app.coronawarn.server.services.distribution.assembly.structure.util.ImmutableStack;
-import app.coronawarn.server.services.distribution.assembly.structure.util.functional.WritableFunction;
 import app.coronawarn.server.services.distribution.config.DistributionServiceConfig;
 import java.time.LocalDate;
 import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
+import java.util.Optional;
 
 public class DiagnosisKeysDateDirectory extends IndexDirectoryOnDisk<LocalDate> {
 
@@ -69,34 +70,32 @@ public class DiagnosisKeysDateDirectory extends IndexDirectoryOnDisk<LocalDate> 
     this.addWritableToAll(ignoredValue -> {
       DiagnosisKeysHourDirectory hourDirectory =
           new DiagnosisKeysHourDirectory(diagnosisKeyBundler, cryptoProvider, distributionServiceConfig);
-      return decorateHourDirectory(hourDirectory);
+      return Optional.of(decorateHourDirectory(hourDirectory));
     });
-    this.addWritableToAll(indicesToDateDirectoryArchive());
+    this.addWritableToAll(this::indicesToDateDirectoryArchive);
     super.prepare(indices);
   }
 
-  private WritableFunction<WritableOnDisk> indicesToDateDirectoryArchive() {
-    return currentIndices -> {
-      LocalDate currentDate = (LocalDate) currentIndices.peek();
-      if (currentDate.equals(diagnosisKeyBundler.getDistributionTime().toLocalDate())) {
-        return NilDirectory.self;
-      }
-      String region = (String) currentIndices.pop().peek();
+  private Optional<Writable<WritableOnDisk>> indicesToDateDirectoryArchive(ImmutableStack<Object> currentIndices) {
+    LocalDate currentDate = (LocalDate) currentIndices.peek();
+    if (currentDate.equals(diagnosisKeyBundler.getDistributionTime().toLocalDate())) {
+      return Optional.empty();
+    }
+    String region = (String) currentIndices.pop().peek();
 
-      List<DiagnosisKey> diagnosisKeysForCurrentHour =
-          this.diagnosisKeyBundler.getDiagnosisKeysForDate(currentDate);
+    List<DiagnosisKey> diagnosisKeysForCurrentHour =
+        this.diagnosisKeyBundler.getDiagnosisKeysForDate(currentDate);
 
-      long startTimestamp = currentDate.atStartOfDay().toEpochSecond(ZoneOffset.UTC);
-      long endTimestamp = currentDate.plusDays(1).atStartOfDay().toEpochSecond(ZoneOffset.UTC);
+    long startTimestamp = currentDate.atStartOfDay().toEpochSecond(ZoneOffset.UTC);
+    long endTimestamp = currentDate.plusDays(1).atStartOfDay().toEpochSecond(ZoneOffset.UTC);
 
-      File<WritableOnDisk> temporaryExposureKeyExportFile = TemporaryExposureKeyExportFile.fromDiagnosisKeys(
-          diagnosisKeysForCurrentHour, region, startTimestamp, endTimestamp, distributionServiceConfig);
+    File<WritableOnDisk> temporaryExposureKeyExportFile = TemporaryExposureKeyExportFile.fromDiagnosisKeys(
+        diagnosisKeysForCurrentHour, region, startTimestamp, endTimestamp, distributionServiceConfig);
 
-      Archive<WritableOnDisk> dateArchive = new ArchiveOnDisk(distributionServiceConfig.getOutputFileName());
-      dateArchive.addWritable(temporaryExposureKeyExportFile);
+    Archive<WritableOnDisk> dateArchive = new ArchiveOnDisk(distributionServiceConfig.getOutputFileName());
+    dateArchive.addWritable(temporaryExposureKeyExportFile);
 
-      return decorateDiagnosisKeyArchive(dateArchive);
-    };
+    return Optional.of(decorateDiagnosisKeyArchive(dateArchive));
   }
 
   private Directory<WritableOnDisk> decorateHourDirectory(DiagnosisKeysHourDirectory hourDirectory) {
