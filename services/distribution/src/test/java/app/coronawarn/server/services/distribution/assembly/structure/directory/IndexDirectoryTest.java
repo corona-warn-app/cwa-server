@@ -32,6 +32,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -79,7 +80,7 @@ class IndexDirectoryTest {
     indexDirectory.addWritableToAll(ignoredValue -> {
       FileOnDisk newFile = new FileOnDisk("index", new byte[0]);
       expectedFileList.add(newFile);
-      return newFile;
+      return Optional.of(newFile);
     });
 
     prepareAndWrite(outputDirectory);
@@ -104,7 +105,7 @@ class IndexDirectoryTest {
     indexDirectory.addWritableToAll(ignoredValue -> {
       DirectoryOnDisk newDirectory = new DirectoryOnDisk("something");
       expectedFileList.add(newDirectory);
-      return newDirectory;
+      return Optional.of(newDirectory);
     });
 
     prepareAndWrite(outputDirectory);

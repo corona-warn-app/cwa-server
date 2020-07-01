@@ -180,4 +180,12 @@ class ProdDiagnosisKeyBundlerKeyRetrievalTest {
     bundler.setDiagnosisKeys(diagnosisKeys, LocalDateTime.of(1970, 1, 5, 0, 0));
     assertThat(bundler.getDiagnosisKeysForHour(LocalDateTime.of(1970, 1, 1, 0, 0, 0))).isEmpty();
   }
+
+  @Test
+  void testGetsCorrectDistributionDate(){
+    LocalDateTime expected = LocalDateTime.of(1970, 1, 5, 0, 0);
+    List<DiagnosisKey> diagnosisKeys = buildDiagnosisKeys(6, LocalDateTime.of(1970, 1, 2, 4, 0), 5);
+    bundler.setDiagnosisKeys(diagnosisKeys, expected);
+    assertThat(bundler.getDistributionTime()).isEqualTo(expected);
+  }
 }
