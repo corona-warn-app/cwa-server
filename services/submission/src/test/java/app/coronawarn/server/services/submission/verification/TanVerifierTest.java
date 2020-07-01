@@ -130,4 +130,14 @@ class TanVerifierTest {
     assertThatExceptionOfType(FeignException.class).isThrownBy(() -> tanVerifier.verifyTan(randomUUID));
   }
 
+  @Test
+  void checkTimeout() {
+    server.stubFor(
+        post(urlEqualTo(verificationPath))
+            .withRequestBody(matchingJsonPath("tan", equalTo(randomUUID)))
+            .withHeader(CONTENT_TYPE, equalTo(MediaType.APPLICATION_JSON.toString()))
+            .willReturn(aResponse().withStatus(HttpStatus.OK.value()).withFixedDelay(1000)));
+
+    assertThatExceptionOfType(FeignException.class).isThrownBy(() -> tanVerifier.verifyTan(randomUUID));
+  }
 }
