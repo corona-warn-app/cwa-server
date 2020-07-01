@@ -105,5 +105,4 @@ public class DiagnosisKeysDateDirectory extends IndexDirectoryOnDisk<LocalDate> 
   private Directory<WritableOnDisk> decorateDiagnosisKeyArchive(Archive<WritableOnDisk> archive) {
     return new DiagnosisKeySigningDecorator(archive, cryptoProvider, distributionServiceConfig);
   }
-
 }

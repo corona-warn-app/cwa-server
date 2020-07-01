@@ -87,7 +87,7 @@ class DiagnosisKeysHourDirectoryTest {
     hourDirectory.prepare(new ImmutableStack<>()
         .push("version-directory")
         .push("country-directory")
-        .push(LocalDate.of(1970, 1, 3)) //date-directory
+        .push(LocalDate.of(1970, 1, 3)) // date-directory
     );
     outputDirectory.write();
   }
@@ -95,8 +95,7 @@ class DiagnosisKeysHourDirectoryTest {
   @Test
   void testCreatesCorrectStructureForMultipleHours() {
     Collection<DiagnosisKey> diagnosisKeys = IntStream.range(0, 5)
-        .mapToObj(
-            currentHour -> buildDiagnosisKeys(6, LocalDateTime.of(1970, 1, 3, 0, 0).plusHours(currentHour), 5))
+        .mapToObj(currentHour -> buildDiagnosisKeys(6, LocalDateTime.of(1970, 1, 3, 0, 0).plusHours(currentHour), 5))
         .flatMap(List::stream)
         .collect(Collectors.toList());
     runHourDistribution(diagnosisKeys, LocalDateTime.of(1970, 1, 5, 0, 0));
@@ -108,8 +107,7 @@ class DiagnosisKeysHourDirectoryTest {
   void testDoesNotIncludeEmptyHours() {
     Collection<DiagnosisKey> diagnosisKeys = IntStream.range(0, 5)
         .filter(currentHour -> currentHour != 3)
-        .mapToObj(
-            currentHour -> buildDiagnosisKeys(6, LocalDateTime.of(1970, 1, 3, 0, 0).plusHours(currentHour), 5))
+        .mapToObj(currentHour -> buildDiagnosisKeys(6, LocalDateTime.of(1970, 1, 3, 0, 0).plusHours(currentHour), 5))
         .flatMap(List::stream)
         .collect(Collectors.toList());
     runHourDistribution(diagnosisKeys, LocalDateTime.of(1970, 1, 5, 0, 0));
@@ -120,8 +118,7 @@ class DiagnosisKeysHourDirectoryTest {
   @Test
   void testDoesNotIncludeCurrentHour() {
     Collection<DiagnosisKey> diagnosisKeys = IntStream.range(0, 5)
-        .mapToObj(
-            currentHour -> buildDiagnosisKeys(6, LocalDateTime.of(1970, 1, 3, 0, 0).plusHours(currentHour), 5))
+        .mapToObj(currentHour -> buildDiagnosisKeys(6, LocalDateTime.of(1970, 1, 3, 0, 0).plusHours(currentHour), 5))
         .flatMap(List::stream)
         .collect(Collectors.toList());
     runHourDistribution(diagnosisKeys, LocalDateTime.of(1970, 1, 3, 4, 0));

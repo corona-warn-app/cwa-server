@@ -87,8 +87,7 @@ class DiagnosisKeysDateDirectoryTest {
     outputDirectory.addWritable(dateDirectory);
     dateDirectory.prepare(new ImmutableStack<>()
         .push("version-directory")
-        .push("country-directory")
-    );
+        .push("country-directory"));
     outputDirectory.write();
   }
 
