@@ -169,7 +169,7 @@ class S3PublisherTest {
 
   private void setUpFailureThresholdExceededOnSecondUpload() {
     doThrow(ObjectStoreOperationFailedException.class).when(objectStoreAccess).putObject(any());
-    doAnswer(__ -> null)
+    doAnswer(ignoredValue -> null)
         .doThrow(ObjectStoreOperationFailedException.class)
         .when(failedObjectStoreOperationsCounter)
         .incrementAndCheckThreshold(any(ObjectStoreOperationFailedException.class));

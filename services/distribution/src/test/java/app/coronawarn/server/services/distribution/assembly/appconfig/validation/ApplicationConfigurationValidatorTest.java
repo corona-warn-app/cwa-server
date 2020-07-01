@@ -26,7 +26,7 @@ import static app.coronawarn.server.services.distribution.assembly.appconfig.val
 import static app.coronawarn.server.services.distribution.assembly.appconfig.validation.ValidationError.ErrorType.VALUE_OUT_OF_BOUNDS;
 import static app.coronawarn.server.services.distribution.common.Helpers.loadApplicationConfiguration;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 
 import app.coronawarn.server.services.distribution.assembly.appconfig.UnableToLoadFileException;
 import java.util.stream.Stream;
@@ -38,8 +38,7 @@ import org.junit.jupiter.params.provider.MethodSource;
 class ApplicationConfigurationValidatorTest {
 
   private static final ValidationResult SUCCESS = new ValidationResult();
-
-  private static final TestWithExpectedResult.Builder testBuilder = new TestWithExpectedResult.Builder("configtests/");
+  private static final TestWithExpectedResult.Builder TEST_BUILDER = new TestWithExpectedResult.Builder("configtests/");
 
   @ParameterizedTest
   @MethodSource("createOkTests")
@@ -55,22 +54,18 @@ class ApplicationConfigurationValidatorTest {
 
   @Test
   void circular() {
-    assertThatThrownBy(() -> {
-      loadApplicationConfiguration("configtests/app-config_circular.yaml");
-    }).isInstanceOf(UnableToLoadFileException.class);
+    assertThatExceptionOfType(UnableToLoadFileException.class)
+        .isThrownBy(() -> loadApplicationConfiguration("configtests/app-config_circular.yaml"));
   }
 
-  private ValidationResult getResultForTest(TestWithExpectedResult test)
-      throws UnableToLoadFileException {
+  private ValidationResult getResultForTest(TestWithExpectedResult test) throws UnableToLoadFileException {
     var config = loadApplicationConfiguration(test.path());
     var validator = new ApplicationConfigurationValidator(config);
     return validator.validate();
   }
 
   private static Stream<Arguments> createOkTests() {
-    return Stream.of(
-        AllOk()
-    ).map(Arguments::of);
+    return Stream.of(AllOk()).map(Arguments::of);
   }
 
   private static Stream<Arguments> createNegativeTests() {
@@ -81,16 +76,16 @@ class ApplicationConfigurationValidatorTest {
   }
 
   public static TestWithExpectedResult AllOk() {
-    return testBuilder.build("app-config_ok.yaml");
+    return TEST_BUILDER.build("app-config_ok.yaml");
   }
 
   public static TestWithExpectedResult MinRiskThresholdOutOfBoundsNegative() {
-    return testBuilder.build("app-config_mrs_negative.yaml")
+    return TEST_BUILDER.build("app-config_mrs_negative.yaml")
         .with(buildError("min-risk-score", RISK_SCORE_MIN - 1, VALUE_OUT_OF_BOUNDS));
   }
 
   public static TestWithExpectedResult MinRiskThresholdOutOfBoundsPositive() {
-    return testBuilder.build("app-config_mrs_oob.yaml")
+    return TEST_BUILDER.build("app-config_mrs_oob.yaml")
         .with(buildError("min-risk-score", RISK_SCORE_MAX + 1, VALUE_OUT_OF_BOUNDS));
   }
 }

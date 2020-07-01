@@ -85,7 +85,7 @@ public class RiskScoreClassificationValidator extends ConfigurationValidator {
   }
 
   private void validateRiskScoreValueBounds(int value) {
-    if (!RiskScoreValidator.isInBounds(value)) {
+    if (!RiskScoreValidator.isWithinBounds(value)) {
       errors.add(
           new ValidationError(CONFIG_PREFIX + "risk-classes.[minRiskLevel|maxRiskLevel]", value, VALUE_OUT_OF_BOUNDS));
     }

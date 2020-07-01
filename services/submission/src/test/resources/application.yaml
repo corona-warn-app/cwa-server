@@ -25,6 +25,7 @@ services:
     initial-fake-delay-milliseconds: 1
     fake-delay-moving-average-samples: 1
     retention-days: 14
+    random-key-padding-multiplier: 10
     connection-pool-size: 200
     payload:
       max-number-of-keys: 14
