@@ -34,6 +34,8 @@ services:
       batch-size: 5
 
 spring:
+  transaction:
+    default-timeout: 20
   jpa:
     hibernate:
       ddl-auto: validate
@@ -107,3 +109,10 @@ server:
     key-store-password: ${SSL_SUBMISSION_KEYSTORE_PASSWORD}
     key-store-provider: SUN
     key-store-type: JKS
+
+feign:
+  client:
+    config:
+      default:
+        connect-timeout: 5000
+        read-timeout: 5000
