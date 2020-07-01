@@ -21,6 +21,7 @@
 package app.coronawarn.server.services.distribution.common;
 
 import static app.coronawarn.server.services.distribution.assembly.appconfig.YamlLoader.loadYamlIntoProtobufBuilder;
+import static java.io.File.separator;
 
 import app.coronawarn.server.common.persistence.domain.DiagnosisKey;
 import app.coronawarn.server.common.protocols.internal.ApplicationConfiguration;
@@ -31,7 +32,10 @@ import java.io.File;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.util.Arrays;
+import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -94,5 +98,35 @@ public class Helpers {
 
   public static ApplicationConfiguration loadApplicationConfiguration(String path) throws UnableToLoadFileException {
     return loadYamlIntoProtobufBuilder(path, ApplicationConfiguration.Builder.class).build();
+  }
+
+  public static Set<String> getExpectedHourFiles(Collection<String> hours) {
+    return hours.stream()
+        .map(hour -> Set.of(
+            String.join(separator, "hour", hour, "index"),
+            String.join(separator, "hour", hour, "index.checksum")))
+        .flatMap(Set::stream)
+        .collect(Collectors.toSet());
+  }
+
+  public static Set<String> getExpectedDateAndHourFiles(Map<String, List<String>> datesAndHours, String currentDate) {
+    Set<String> expectedFiles = new HashSet<>();
+
+    datesAndHours.forEach((date, hours) -> {
+      if (!date.equals(currentDate)) {
+        expectedFiles.add(String.join(separator, "date", date, "index"));
+        expectedFiles.add(String.join(separator, "date", date, "index.checksum"));
+      }
+
+      expectedFiles.add(String.join(separator, "date", date, "hour", "index"));
+      expectedFiles.add(String.join(separator, "date", date, "hour", "index.checksum"));
+
+      hours.forEach(hour -> {
+        expectedFiles.add(String.join(separator, "date", date, "hour", hour, "index"));
+        expectedFiles.add(String.join(separator, "date", date, "hour", hour, "index.checksum"));
+      });
+    });
+
+    return expectedFiles;
   }
 }

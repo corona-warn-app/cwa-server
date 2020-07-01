@@ -48,3 +48,10 @@ management:
   health:
     probes:
       enabled: true
+
+feign:
+  client:
+    config:
+      default:
+        connect-timeout: 500
+        read-timeout: 500
