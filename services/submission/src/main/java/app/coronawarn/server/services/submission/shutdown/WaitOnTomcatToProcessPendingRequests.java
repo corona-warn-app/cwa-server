@@ -34,8 +34,6 @@ public class WaitOnTomcatToProcessPendingRequests
         logger.debug(e.getLocalizedMessage(), e);
         Thread.currentThread().interrupt();
       }
-    } else {
-      logger.warn("unsupported executor found: {}", executor);
     }
   }
 
