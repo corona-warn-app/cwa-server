@@ -69,9 +69,11 @@ public class ServerApplication implements EnvironmentAware {
     return new WaitOnTomcatToProcessPendingRequests();
   }
 
+  /**
+   * Customize TomcatServletWebServerFactory by adding {@link WaitOnTomcatToProcessPendingRequests}.
+   */
   @Bean
-  public ConfigurableServletWebServerFactory webServerFactory(
-      final WaitOnTomcatToProcessPendingRequests gracefulShutdown) {
+  public ConfigurableServletWebServerFactory webServerFactory(WaitOnTomcatToProcessPendingRequests gracefulShutdown) {
     TomcatServletWebServerFactory factory = new TomcatServletWebServerFactory();
     factory.addConnectorCustomizers(gracefulShutdown);
     return factory;
