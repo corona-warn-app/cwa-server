@@ -20,6 +20,8 @@
 
 package app.coronawarn.server.services.distribution.assembly.diagnosiskeys.structure.directory;
 
+import static java.lang.Boolean.FALSE;
+
 import app.coronawarn.server.common.persistence.domain.DiagnosisKey;
 import app.coronawarn.server.services.distribution.assembly.component.CryptoProvider;
 import app.coronawarn.server.services.distribution.assembly.diagnosiskeys.DiagnosisKeyBundler;
@@ -78,7 +80,7 @@ public class DiagnosisKeysDateDirectory extends IndexDirectoryOnDisk<LocalDate> 
 
   private Optional<Writable<WritableOnDisk>> indicesToDateDirectoryArchive(ImmutableStack<Object> currentIndices) {
     LocalDate currentDate = (LocalDate) currentIndices.peek();
-    if (currentDate.equals(diagnosisKeyBundler.getDistributionTime().toLocalDate())) {
+    if (shouldNotInclude(currentDate)) {
       return Optional.empty();
     }
     String region = (String) currentIndices.pop().peek();
@@ -96,6 +98,11 @@ public class DiagnosisKeysDateDirectory extends IndexDirectoryOnDisk<LocalDate> 
     dateArchive.addWritable(temporaryExposureKeyExportFile);
 
     return Optional.of(decorateDiagnosisKeyArchive(dateArchive));
+  }
+
+  private boolean shouldNotInclude(LocalDate currentDate) {
+    return FALSE.equals(distributionServiceConfig.getIncludeIncompleteDays())
+        && currentDate.equals(diagnosisKeyBundler.getDistributionTime().toLocalDate());
   }
 
   private Directory<WritableOnDisk> decorateHourDirectory(DiagnosisKeysHourDirectory hourDirectory) {

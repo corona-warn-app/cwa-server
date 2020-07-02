@@ -31,8 +31,8 @@ services:
     depends_on:
      - objectstore
      - create-bucket
-    image: maven:3.6.3-jdk-11
-    command: mvn failsafe:integration-test --batch-mode package
+    image: openjdk:11
+    command: ./mvnw failsafe:integration-test --batch-mode package
     volumes:
       - $PWD:$PWD
       - /var/run/docker.sock:/var/run/docker.sock

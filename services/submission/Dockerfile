@@ -1,8 +1,9 @@
-FROM maven:3.6.3-jdk-11 as build
+FROM openjdk:11 as build
 ARG WORK_DIR=/build
 
 # copy the pom and config files first (which do not change very often)
 COPY ./.mvn ${WORK_DIR}/.mvn
+COPY ./mvnw ${WORK_DIR}/mvnw
 COPY ./pom.xml ${WORK_DIR}/pom.xml
 COPY ./common/pom.xml ${WORK_DIR}/common/pom.xml
 COPY ./common/protocols/pom.xml ${WORK_DIR}/common/protocols/pom.xml
@@ -11,15 +12,17 @@ COPY ./services/pom.xml ${WORK_DIR}/services/pom.xml
 COPY ./services/distribution/pom.xml ${WORK_DIR}/services/distribution/pom.xml
 COPY ./services/submission/pom.xml ${WORK_DIR}/services/submission/pom.xml
 
+WORKDIR ${WORK_DIR}
+
 # build all dependencies for offline use
-RUN mvn dependency:go-offline --file ${WORK_DIR}/pom.xml -B
+RUN ${WORK_DIR}/mvnw dependency:go-offline --file ${WORK_DIR}/pom.xml -B
 
 # copy rest of files
 COPY . ${WORK_DIR}/
 
-RUN mkdir -p /root/.m2 /usr/sap/submission-service
+RUN mkdir -p /usr/sap/submission-service
 # hadolint ignore=SC2086
-RUN mvn --batch-mode -DskipTests=true --file ${WORK_DIR}/pom.xml ${MAVEN_ARGS} clean install
+RUN ${WORK_DIR}/mvnw --batch-mode -DskipTests=true --file ${WORK_DIR}/pom.xml ${MAVEN_ARGS} clean install
 RUN cp ${WORK_DIR}/services/submission/target/submission-*.jar /usr/sap/submission-service/submission.jar
 RUN cp ${WORK_DIR}/scripts/DpkgHelper.java /DpkgHelper.java
 
