@@ -20,6 +20,7 @@
 
 package app.coronawarn.server.services.submission;
 
+import app.coronawarn.server.services.submission.shutdown.WaitOnTomcatToProcessPendingRequests;
 import io.micrometer.core.aop.TimedAspect;
 import io.micrometer.core.instrument.MeterRegistry;
 import java.util.Arrays;
@@ -31,6 +32,8 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.domain.EntityScan;
 import org.springframework.boot.autoconfigure.security.servlet.UserDetailsServiceAutoConfiguration;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.boot.web.embedded.tomcat.TomcatServletWebServerFactory;
+import org.springframework.boot.web.servlet.server.ConfigurableServletWebServerFactory;
 import org.springframework.cloud.openfeign.EnableFeignClients;
 import org.springframework.context.EnvironmentAware;
 import org.springframework.context.annotation.Bean;
@@ -57,6 +60,19 @@ public class ServerApplication implements EnvironmentAware {
   @Bean
   TimedAspect timedAspect(MeterRegistry registry) {
     return new TimedAspect(registry);
+  }
+
+  @Bean
+  public WaitOnTomcatToProcessPendingRequests gracefulShutdown() {
+    return new WaitOnTomcatToProcessPendingRequests();
+  }
+
+  @Bean
+  public ConfigurableServletWebServerFactory webServerFactory(
+      final WaitOnTomcatToProcessPendingRequests gracefulShutdown) {
+    TomcatServletWebServerFactory factory = new TomcatServletWebServerFactory();
+    factory.addConnectorCustomizers(gracefulShutdown);
+    return factory;
   }
 
   @Bean
