@@ -25,6 +25,8 @@ import io.micrometer.core.aop.TimedAspect;
 import io.micrometer.core.instrument.MeterRegistry;
 import java.util.Arrays;
 import java.util.List;
+import javax.annotation.PreDestroy;
+import org.apache.logging.log4j.LogManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.SpringApplication;
@@ -73,6 +75,11 @@ public class ServerApplication implements EnvironmentAware {
     TomcatServletWebServerFactory factory = new TomcatServletWebServerFactory();
     factory.addConnectorCustomizers(gracefulShutdown);
     return factory;
+  }
+
+  @PreDestroy
+  public void onDestroy() throws Exception {
+    LogManager.shutdown();
   }
 
   @Bean
