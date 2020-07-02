@@ -35,7 +35,7 @@ public class WaitOnTomcatToProcessPendingRequests
 
   private static final Logger logger = LoggerFactory.getLogger(WaitOnTomcatToProcessPendingRequests.class);
 
-  private volatile Connector connector;
+  private Connector connector;
 
   @Override
   public void onApplicationEvent(ContextClosedEvent event) {

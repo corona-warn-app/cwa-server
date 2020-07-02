@@ -80,7 +80,7 @@ public class ServerApplication implements EnvironmentAware {
   }
 
   @PreDestroy
-  public void onDestroy() throws Exception {
+  public void onDestroy() {
     LogManager.shutdown();
   }
 
