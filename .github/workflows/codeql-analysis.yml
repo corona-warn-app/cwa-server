@@ -2,7 +2,7 @@ name: "Code scanning - action"
 
 on:
   push:
-    branches: 
+    branches:
       - master
 
 jobs:
@@ -22,14 +22,14 @@ jobs:
       uses: github/codeql-action/init@v1
       with:
         languages: java
-        
+
     - name: Java Setup
       uses: actions/setup-java@v1
       with:
         java-version: 11
 
     - name: Build
-      run: mvn --batch-mode clean compile
+      run: ./mvnw --batch-mode clean compile
 
     - name: Perform CodeQL Analysis
       uses: github/codeql-action/analyze@v1
