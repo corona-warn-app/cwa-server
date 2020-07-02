@@ -25,6 +25,7 @@ import app.coronawarn.server.services.distribution.assembly.structure.directory.
 import app.coronawarn.server.services.distribution.assembly.structure.directory.IndexDirectoryOnDisk;
 import app.coronawarn.server.services.distribution.assembly.structure.directory.decorator.indexing.IndexingDecoratorOnDisk;
 import app.coronawarn.server.services.distribution.config.DistributionServiceConfig;
+import java.util.Optional;
 import java.util.Set;
 import org.springframework.stereotype.Component;
 
@@ -59,8 +60,10 @@ public class CwaApiStructureProvider {
         ignoredValue -> Set.of(distributionServiceConfig.getApi().getVersionV1()),
         Object::toString);
 
-    versionDirectory.addWritableToAll(ignoredValue -> appConfigurationStructureProvider.getAppConfiguration());
-    versionDirectory.addWritableToAll(ignoredValue -> diagnosisKeysStructureProvider.getDiagnosisKeys());
+    versionDirectory.addWritableToAll(ignoredValue ->
+        Optional.of(appConfigurationStructureProvider.getAppConfiguration()));
+    versionDirectory.addWritableToAll(ignoredValue ->
+        Optional.of(diagnosisKeysStructureProvider.getDiagnosisKeys()));
 
     return new IndexingDecoratorOnDisk<>(versionDirectory, distributionServiceConfig.getOutputFileName());
   }
