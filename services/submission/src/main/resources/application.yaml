@@ -43,10 +43,6 @@ services:
 spring:
   transaction:
     default-timeout: 20
-  jpa:
-    hibernate:
-      ddl-auto: validate
-    open-in-view: false
   flyway:
     enabled: true
     locations: classpath:/db/migration, classpath:/db/specific/{vendor}

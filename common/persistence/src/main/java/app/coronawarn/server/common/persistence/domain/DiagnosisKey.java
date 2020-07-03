@@ -30,21 +30,16 @@ import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.Objects;
 import java.util.Set;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Table;
 import javax.validation.ConstraintViolation;
 import javax.validation.Validation;
 import javax.validation.Validator;
 import javax.validation.constraints.Size;
 import org.hibernate.validator.constraints.Range;
+import org.springframework.data.annotation.Id;
 
 /**
  * A key generated for advertising over a window of time.
  */
-@Entity
-@Table(name = "diagnosis_key")
 public class DiagnosisKey {
 
   /**
@@ -58,24 +53,20 @@ public class DiagnosisKey {
 
   @Id
   @Size(min = 16, max = 16, message = "Key data must be a byte array of length 16.")
-  @Column(unique = true)
-  private byte[] keyData;
+  private final byte[] keyData;
 
   @ValidRollingStartIntervalNumber
-  private int rollingStartIntervalNumber;
+  private final int rollingStartIntervalNumber;
 
   @Range(min = EXPECTED_ROLLING_PERIOD, max = EXPECTED_ROLLING_PERIOD,
       message = "Rolling period must be " + EXPECTED_ROLLING_PERIOD + ".")
-  private int rollingPeriod;
+  private final int rollingPeriod;
 
   @Range(min = 0, max = 8, message = "Risk level must be between 0 and 8.")
-  private int transmissionRiskLevel;
+  private final int transmissionRiskLevel;
 
   @ValidSubmissionTimestamp
-  private long submissionTimestamp;
-
-  protected DiagnosisKey() {
-  }
+  private final long submissionTimestamp;
 
   /**
    * Should be called by builders.
