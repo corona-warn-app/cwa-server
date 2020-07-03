@@ -54,7 +54,7 @@ public class PublishedFileSet {
    * </ul>
    *
    * @param file the to-be-published file which should be checked
-   * @return true, if it exists & is identical
+   * @return true, if it exists and is identical
    */
   public boolean isNotYetPublished(LocalFile file) {
     S3Object published = s3Objects.get(file.getS3Key());
