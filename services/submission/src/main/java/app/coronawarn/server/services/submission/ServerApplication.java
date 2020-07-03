@@ -24,10 +24,10 @@ import io.micrometer.core.aop.TimedAspect;
 import io.micrometer.core.instrument.MeterRegistry;
 import java.util.Arrays;
 import java.util.List;
-import javax.annotation.PreDestroy;
 import org.apache.logging.log4j.LogManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.DisposableBean;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.domain.EntityScan;
@@ -48,7 +48,7 @@ import org.springframework.http.converter.protobuf.ProtobufHttpMessageConverter;
     "app.coronawarn.server.services.submission"})
 @EnableConfigurationProperties
 @EnableFeignClients
-public class ServerApplication implements EnvironmentAware {
+public class ServerApplication implements EnvironmentAware, DisposableBean {
 
   private static final Logger logger = LoggerFactory.getLogger(ServerApplication.class);
 
@@ -61,8 +61,11 @@ public class ServerApplication implements EnvironmentAware {
     return new TimedAspect(registry);
   }
 
-  @PreDestroy
-  public void onDestroy() {
+  /**
+   * Manual shutdown hook needed to avoid Log4j shutdown issues (see cwa-server/#589).
+   */
+  @Override
+  public void destroy() {
     LogManager.shutdown();
   }
 
