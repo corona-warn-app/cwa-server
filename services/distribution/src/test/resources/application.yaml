@@ -54,8 +54,11 @@ services:
 spring:
   main:
     banner-mode: off
-  flyway:
-    enabled: true
-  jpa:
-    hibernate:
-      ddl-auto: validate
+  datasource:
+    url: jdbc:h2:mem:test;MODE=PostgreSQL
+    driverClassName: org.h2.Driver
+    platform: h2
+  test:
+    database:
+      # Use datasource as defined above.
+      replace: none
