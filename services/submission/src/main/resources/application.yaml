@@ -34,6 +34,8 @@ services:
       batch-size: 5
 
 spring:
+  lifecycle:
+    timeout-per-shutdown-phase: 20s
   transaction:
     default-timeout: 20
   jpa:
@@ -88,6 +90,7 @@ client:
       trust-store-password: ${SSL_VERIFICATION_TRUSTSTORE_PASSWORD}
 
 server:
+  shutdown: graceful
   ssl:
     enabled: true
     enabled-protocols: TLSv1.2,TLSv1.3
