@@ -32,6 +32,13 @@ services:
     monitoring:
       # The batch size (number of requests) to use for monitoring request count.
       batch-size: 5
+    client:
+      ssl:
+        key-password: ${SSL_SUBMISSION_KEYSTORE_PASSWORD}
+        key-store: ${SSL_SUBMISSION_KEYSTORE_PATH}
+        key-store-password: ${SSL_SUBMISSION_KEYSTORE_PASSWORD}
+        trust-store: ${SSL_VERIFICATION_TRUSTSTORE_PATH}
+        trust-store-password: ${SSL_VERIFICATION_TRUSTSTORE_PASSWORD}
 
 spring:
   transaction:
@@ -77,15 +84,6 @@ management:
   health:
     probes:
       enabled: true
-
-client:
-  ssl:
-    key-password: ${SSL_SUBMISSION_KEYSTORE_PASSWORD}
-    key-store: ${SSL_SUBMISSION_KEYSTORE_PATH}
-    key-store-password: ${SSL_SUBMISSION_KEYSTORE_PASSWORD}
-    verification:
-      trust-store: ${SSL_VERIFICATION_TRUSTSTORE_PATH}
-      trust-store-password: ${SSL_VERIFICATION_TRUSTSTORE_PASSWORD}
 
 server:
   ssl:
