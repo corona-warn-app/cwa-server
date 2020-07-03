@@ -13,6 +13,7 @@ spring:
     platform: h2
   test:
     database:
+      # Use datasource as defined above.
       replace: none
 
 services:
