@@ -41,8 +41,8 @@ class YamlLoaderTest {
       "configtests/app-config_empty.yaml",
       "configtests/wrong_file.yaml",
       "configtests/app-config_broken_syntax.yaml",
-      "parameters/naming_mismatch.yaml",
-      "file_does_not_exist_anywhere.yaml"
+      "configtests/naming_mismatch.yaml",
+      "configtests/file_does_not_exist_anywhere.yaml"
   })
   void throwsLoadFailure(String fileName) {
     assertThatExceptionOfType(UnableToLoadFileException.class).isThrownBy(() -> loadApplicationConfiguration(fileName));
