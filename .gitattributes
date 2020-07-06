@@ -1,1 +1,3 @@
 wait-for-it.sh text eol=lf
+maven-wrapper.properties text eol=lf
+mvnw text eol=lf
