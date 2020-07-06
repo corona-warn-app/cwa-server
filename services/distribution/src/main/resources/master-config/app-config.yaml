@@ -4,7 +4,9 @@
 #
 # This configuration file will be fetched by the mobile app in order to function.
 #
-# It currently provides settings for minimum risk score, score classes and exposure configuration.
+# min-risk-score: exposure incidents with scores lower than the value of this property will be excluded by the ExposureNotification framework.
+#
+# For details regarding other properties - please see their respective configuration files.
 #
 # Change this file with caution!
 

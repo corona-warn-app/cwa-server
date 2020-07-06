@@ -114,7 +114,7 @@ public class TestDataGeneration implements ApplicationRunner {
     logger.debug("Generating diagnosis keys between {} and {}...", startTimestamp, endTimestamp);
     List<DiagnosisKey> newDiagnosisKeys = LongStream.range(startTimestamp, endTimestamp)
         .mapToObj(submissionTimestamp -> IntStream.range(0, poisson.sample())
-            .mapToObj(__ -> generateDiagnosisKey(submissionTimestamp))
+            .mapToObj(ignoredValue -> generateDiagnosisKey(submissionTimestamp))
             .collect(Collectors.toList()))
         .flatMap(List::stream)
         .collect(Collectors.toList());
@@ -144,7 +144,7 @@ public class TestDataGeneration implements ApplicationRunner {
    * this function would return the timestamp for today 14:00 UTC.
    */
   private long getGeneratorEndTimestamp() {
-    return (LocalDateTime.now(ZoneOffset.UTC).toEpochSecond(ZoneOffset.UTC) / ONE_HOUR_INTERVAL_SECONDS) - 1;
+    return (LocalDateTime.now().toEpochSecond(ZoneOffset.UTC) / ONE_HOUR_INTERVAL_SECONDS) - 1;
   }
 
   /**
@@ -153,7 +153,7 @@ public class TestDataGeneration implements ApplicationRunner {
    * 14 days ago (from now) at 00:00 UTC.
    */
   private long getRetentionStartTimestamp() {
-    return LocalDate.now(ZoneOffset.UTC).minusDays(retentionDays).atStartOfDay()
+    return LocalDate.now().minusDays(retentionDays).atStartOfDay()
         .toEpochSecond(ZoneOffset.UTC) / ONE_HOUR_INTERVAL_SECONDS;
   }
 

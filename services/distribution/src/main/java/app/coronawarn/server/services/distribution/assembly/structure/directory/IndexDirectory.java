@@ -49,8 +49,8 @@ public interface IndexDirectory<T, W extends Writable<W>> extends Directory<W> {
    * Calls the {@link app.coronawarn.server.services.distribution.assembly.structure.util.functional.IndexFunction} with
    * the {@code indices} to calculate and return the elements of the index of this {@link IndexDirectory}.
    *
-   * @param indices A {@link Stack} of parameters from all {@link IndexDirectory IndexDirectories} further up in the
-   *                hierarchy. The Stack may contain different types, depending on the types {@code T} of {@link
+   * @param indices A {@link ImmutableStack} of parameters from all {@link IndexDirectory IndexDirectories} further up
+   *                in the hierarchy. The Stack may contain different types, depending on the types {@code T} of {@link
    *                IndexDirectory IndexDirectories} further up in the hierarchy.
    */
   Set<T> getIndex(ImmutableStack<Object> indices);

@@ -7,24 +7,21 @@ logging:
 spring:
   main:
     banner-mode: off
-  flyway:
-    enabled: true
   datasource:
     url: jdbc:h2:mem:test;MODE=PostgreSQL
     driverClassName: org.h2.Driver
     platform: h2
   test:
     database:
+      # Use datasource as defined above.
       replace: none
-  jpa:
-    hibernate:
-      ddl-auto: validate
 
 services:
   submission:
     initial-fake-delay-milliseconds: 1
     fake-delay-moving-average-samples: 1
     retention-days: 14
+    random-key-padding-multiplier: 10
     connection-pool-size: 200
     payload:
       max-number-of-keys: 14
@@ -47,3 +44,10 @@ management:
   health:
     probes:
       enabled: true
+
+feign:
+  client:
+    config:
+      default:
+        connect-timeout: 500
+        read-timeout: 500

@@ -27,6 +27,7 @@ import app.coronawarn.server.services.distribution.assembly.structure.util.funct
 import app.coronawarn.server.services.distribution.assembly.structure.util.functional.IndexFunction;
 import app.coronawarn.server.services.distribution.assembly.structure.util.functional.WritableFunction;
 import java.util.HashSet;
+import java.util.Optional;
 import java.util.Set;
 
 /**
@@ -74,9 +75,9 @@ public class IndexDirectoryOnDisk<T> extends DirectoryOnDisk implements IndexDir
   }
 
   /**
-   * Creates a new subdirectory for every element of the {@link IndexDirectory#getIndex index} and writes all its
-   * {@link IndexDirectory#addWritableToAll writables} to those. The respective element of the index will be pushed
-   * onto the Stack for subsequent {@link Writable#prepare} calls.
+   * Creates a new subdirectory for every element of the {@link IndexDirectory#getIndex index} and writes all its {@link
+   * IndexDirectory#addWritableToAll writables} to those. The respective element of the index will be pushed onto the
+   * Stack for subsequent {@link Writable#prepare} calls.
    *
    * @param indices A {@link ImmutableStack} of parameters from all {@link IndexDirectory IndexDirectories} further up
    *                in the hierarchy. The Stack may contain different types, depending on the types {@code T} of {@link
@@ -104,9 +105,11 @@ public class IndexDirectoryOnDisk<T> extends DirectoryOnDisk implements IndexDir
 
   private void prepareMetaWritables(ImmutableStack<Object> indices, DirectoryOnDisk target) {
     this.metaWritables.forEach(metaWritableFunction -> {
-      Writable<WritableOnDisk> newWritable = metaWritableFunction.apply(indices);
-      target.addWritable(newWritable);
-      newWritable.prepare(indices);
+      Optional<Writable<WritableOnDisk>> maybeNewWritable = metaWritableFunction.apply(indices);
+      maybeNewWritable.ifPresent(newWritable -> {
+        target.addWritable(newWritable);
+        newWritable.prepare(indices);
+      });
     });
   }
 }

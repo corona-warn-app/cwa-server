@@ -21,6 +21,8 @@
 package app.coronawarn.server.services.distribution.objectstore;
 
 import static java.util.Map.entry;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.any;
 import static org.mockito.Mockito.atLeastOnce;
@@ -38,7 +40,6 @@ import java.io.File;
 import java.nio.file.Path;
 import java.util.List;
 import java.util.Map;
-import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -91,6 +92,14 @@ class ObjectStoreAccessUnitTest {
   }
 
   @Test
+  void illegalArgumentExceptionIfBucketDoesNotExist() {
+    when(objectStoreClient.bucketExists(any())).thenReturn(false);
+
+    assertThatExceptionOfType(IllegalArgumentException.class)
+        .isThrownBy(() -> new ObjectStoreAccess(distributionServiceConfig, objectStoreClient));
+  }
+
+  @Test
   void testPutObjectSetsDefaultCacheControlHeader() {
     ArgumentCaptor<Map<HeaderKey, String>> headers = ArgumentCaptor.forClass(Map.class);
     var expHeader = entry(HeaderKey.CACHE_CONTROL, "public,max-age=" + ObjectStoreAccess.DEFAULT_MAX_CACHE_AGE);
@@ -99,7 +108,7 @@ class ObjectStoreAccessUnitTest {
 
     verify(objectStoreClient, atLeastOnce())
         .putObject(eq(expBucketName), eq(EXP_S3_KEY), eq(expPath), headers.capture());
-    Assertions.assertThat(headers.getValue()).contains(expHeader);
+    assertThat(headers.getValue()).contains(expHeader);
   }
 
   @Test
@@ -112,7 +121,7 @@ class ObjectStoreAccessUnitTest {
 
     verify(objectStoreClient, atLeastOnce())
         .putObject(eq(expBucketName), eq(EXP_S3_KEY), eq(expPath), headers.capture());
-    Assertions.assertThat(headers.getValue()).contains(expHeader);
+    assertThat(headers.getValue()).contains(expHeader);
   }
 
   @Test
@@ -127,7 +136,7 @@ class ObjectStoreAccessUnitTest {
 
     verify(objectStoreClient, atLeastOnce())
         .putObject(eq(expBucketName), eq(EXP_S3_KEY), eq(expPath), headers.capture());
-    Assertions.assertThat(headers.getValue()).contains(expHeader);
+    assertThat(headers.getValue()).contains(expHeader);
   }
 
   @Test

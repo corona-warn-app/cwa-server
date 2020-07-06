@@ -93,14 +93,13 @@ class HourIndexingDecoratorTest {
 
     Set<LocalDateTime> index = decorator.getIndex(new ImmutableStack<>().push(LocalDate.of(1970, 1, 5)));
 
-    assertThat(index).contains(LocalDateTime.of(1970, 1, 5, 0, 0));
-    assertThat(index).doesNotContain(LocalDateTime.of(1970, 1, 5, 1, 0));
+    assertThat(index).contains(LocalDateTime.of(1970, 1, 5, 0, 0))
+        .doesNotContain(LocalDateTime.of(1970, 1, 5, 1, 0));
   }
 
   private HourIndexingDecorator makeDecoratedHourDirectory(DiagnosisKeyBundler diagnosisKeyBundler) {
     return new HourIndexingDecorator(
         new DiagnosisKeysHourDirectory(diagnosisKeyBundler, cryptoProvider, distributionServiceConfig),
-        distributionServiceConfig
-    );
+        distributionServiceConfig);
   }
 }

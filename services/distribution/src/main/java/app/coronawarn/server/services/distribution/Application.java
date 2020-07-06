@@ -23,8 +23,10 @@ package app.coronawarn.server.services.distribution;
 import app.coronawarn.server.services.distribution.config.DistributionServiceConfig;
 import java.util.Arrays;
 import java.util.List;
+import org.apache.logging.log4j.LogManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.DisposableBean;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.domain.EntityScan;
@@ -33,7 +35,7 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.EnvironmentAware;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.core.env.Environment;
-import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
+import org.springframework.data.jdbc.repository.config.EnableJdbcRepositories;
 
 /**
  * The retrieval, assembly and distribution of configuration and diagnosis key data is handled by a chain of {@link
@@ -41,17 +43,25 @@ import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
  * the chain execution.
  */
 @SpringBootApplication
-@EnableJpaRepositories(basePackages = "app.coronawarn.server.common.persistence")
+@EnableJdbcRepositories(basePackages = "app.coronawarn.server.common.persistence")
 @EntityScan(basePackages = "app.coronawarn.server.common.persistence")
-@ComponentScan({"app.coronawarn.server.common.persistence",
-    "app.coronawarn.server.services.distribution"})
+@ComponentScan({"app.coronawarn.server.common.persistence", "app.coronawarn.server.services.distribution"})
 @EnableConfigurationProperties({DistributionServiceConfig.class})
-public class Application implements EnvironmentAware {
+public class Application implements EnvironmentAware, DisposableBean {
 
   private static final Logger logger = LoggerFactory.getLogger(Application.class);
 
   public static void main(String[] args) {
     SpringApplication.run(Application.class);
+  }
+
+  /**
+   * Manual shutdown hook needed to avoid Log4j shutdown issues (see cwa-server/#589).
+   */
+  @Override
+  public void destroy() {
+    logger.info("Shutting down log4j2.");
+    LogManager.shutdown();
   }
 
   /**

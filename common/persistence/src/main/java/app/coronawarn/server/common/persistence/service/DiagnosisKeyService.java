@@ -22,6 +22,7 @@ package app.coronawarn.server.common.persistence.service;
 
 import static app.coronawarn.server.common.persistence.domain.validation.ValidSubmissionTimestampValidator.SECONDS_PER_HOUR;
 import static java.time.ZoneOffset.UTC;
+import static org.springframework.data.util.StreamUtils.createStreamFromIterator;
 
 import app.coronawarn.server.common.persistence.domain.DiagnosisKey;
 import app.coronawarn.server.common.persistence.repository.DiagnosisKeyRepository;
@@ -70,7 +71,8 @@ public class DiagnosisKeyService {
    * Returns all valid persisted diagnosis keys, sorted by their submission timestamp.
    */
   public List<DiagnosisKey> getDiagnosisKeys() {
-    List<DiagnosisKey> diagnosisKeys = keyRepository.findAll(Sort.by(Direction.ASC, "submissionTimestamp"));
+    List<DiagnosisKey> diagnosisKeys = createStreamFromIterator(
+        keyRepository.findAll(Sort.by(Direction.ASC, "submissionTimestamp")).iterator()).collect(Collectors.toList());
     List<DiagnosisKey> validDiagnosisKeys =
         diagnosisKeys.stream().filter(DiagnosisKeyService::isDiagnosisKeyValid).collect(Collectors.toList());
 
@@ -111,8 +113,9 @@ public class DiagnosisKeyService {
         .ofInstant(Instant.now(), UTC)
         .minusDays(daysToRetain)
         .toEpochSecond(UTC) / SECONDS_PER_HOUR;
-    int numberOfDeletions = keyRepository.deleteBySubmissionTimestampIsLessThanEqual(threshold);
-    logger.info("Deleted {} diagnosis key(s) with a submission timestamp older than {} day(s) ago.",
+    int numberOfDeletions = keyRepository.countOlderThanOrEqual(threshold);
+    logger.info("Deleting {} diagnosis key(s) with a submission timestamp older than {} day(s) ago.",
         numberOfDeletions, daysToRetain);
+    keyRepository.deleteOlderThanOrEqual(threshold);
   }
 }
