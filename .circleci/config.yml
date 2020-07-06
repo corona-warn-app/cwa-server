@@ -1,5 +1,4 @@
-version: 2.1
-jobs:
-  build:
-    branches:
-      ignore: gh-pages
+general:
+  branches:
+    ignore:
+      - gh-pages
