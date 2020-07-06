@@ -37,6 +37,11 @@
 
   <dependencies>
     <dependency>
+      <groupId>org.springframework.cloud</groupId>
+      <artifactId>spring-cloud-starter-vault-config</artifactId>
+      <version>2.2.3.RELEASE</version>
+    </dependency>
+    <dependency>
       <groupId>org.opencwa</groupId>
       <artifactId>persistence</artifactId>
       <version>${project.version}</version>
