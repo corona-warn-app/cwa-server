@@ -32,14 +32,21 @@ services:
     monitoring:
       # The batch size (number of requests) to use for monitoring request count.
       batch-size: 5
+    client:
+      ssl:
+        key-password: ${SSL_SUBMISSION_KEYSTORE_PASSWORD}
+        key-store: ${SSL_SUBMISSION_KEYSTORE_PATH}
+        key-store-password: ${SSL_SUBMISSION_KEYSTORE_PASSWORD}
+        trust-store: ${SSL_VERIFICATION_TRUSTSTORE_PATH}
+        trust-store-password: ${SSL_VERIFICATION_TRUSTSTORE_PASSWORD}
 
 spring:
+  lifecycle:
+    # keep in sync or lower than the kubernetes setting 'terminationGracePeriodSeconds'
+    # 5s +5s Feign client + 20s DB timeout
+    timeout-per-shutdown-phase: 30s
   transaction:
     default-timeout: 20
-  jpa:
-    hibernate:
-      ddl-auto: validate
-    open-in-view: false
   flyway:
     enabled: true
     locations: classpath:/db/migration, classpath:/db/specific/{vendor}
@@ -78,16 +85,8 @@ management:
     probes:
       enabled: true
 
-client:
-  ssl:
-    key-password: ${SSL_SUBMISSION_KEYSTORE_PASSWORD}
-    key-store: ${SSL_SUBMISSION_KEYSTORE_PATH}
-    key-store-password: ${SSL_SUBMISSION_KEYSTORE_PASSWORD}
-    verification:
-      trust-store: ${SSL_VERIFICATION_TRUSTSTORE_PATH}
-      trust-store-password: ${SSL_VERIFICATION_TRUSTSTORE_PASSWORD}
-
 server:
+  shutdown: graceful
   ssl:
     enabled: true
     enabled-protocols: TLSv1.2,TLSv1.3

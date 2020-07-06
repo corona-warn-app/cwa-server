@@ -24,8 +24,10 @@ import io.micrometer.core.aop.TimedAspect;
 import io.micrometer.core.instrument.MeterRegistry;
 import java.util.Arrays;
 import java.util.List;
+import org.apache.logging.log4j.LogManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.DisposableBean;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.domain.EntityScan;
@@ -36,17 +38,17 @@ import org.springframework.context.EnvironmentAware;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.core.env.Environment;
-import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
+import org.springframework.data.jdbc.repository.config.EnableJdbcRepositories;
 import org.springframework.http.converter.protobuf.ProtobufHttpMessageConverter;
 
 @SpringBootApplication(exclude = {UserDetailsServiceAutoConfiguration.class})
-@EnableJpaRepositories(basePackages = "app.coronawarn.server.common.persistence")
+@EnableJdbcRepositories(basePackages = "app.coronawarn.server.common.persistence")
 @EntityScan(basePackages = "app.coronawarn.server.common.persistence")
 @ComponentScan({"app.coronawarn.server.common.persistence",
     "app.coronawarn.server.services.submission"})
 @EnableConfigurationProperties
 @EnableFeignClients
-public class ServerApplication implements EnvironmentAware {
+public class ServerApplication implements EnvironmentAware, DisposableBean {
 
   private static final Logger logger = LoggerFactory.getLogger(ServerApplication.class);
 
@@ -57,6 +59,14 @@ public class ServerApplication implements EnvironmentAware {
   @Bean
   TimedAspect timedAspect(MeterRegistry registry) {
     return new TimedAspect(registry);
+  }
+
+  /**
+   * Manual shutdown hook needed to avoid Log4j shutdown issues (see cwa-server/#589).
+   */
+  @Override
+  public void destroy() {
+    LogManager.shutdown();
   }
 
   @Bean

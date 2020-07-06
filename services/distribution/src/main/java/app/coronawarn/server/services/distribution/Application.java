@@ -35,7 +35,7 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.EnvironmentAware;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.core.env.Environment;
-import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
+import org.springframework.data.jdbc.repository.config.EnableJdbcRepositories;
 
 /**
  * The retrieval, assembly and distribution of configuration and diagnosis key data is handled by a chain of {@link
@@ -43,7 +43,7 @@ import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
  * the chain execution.
  */
 @SpringBootApplication
-@EnableJpaRepositories(basePackages = "app.coronawarn.server.common.persistence")
+@EnableJdbcRepositories(basePackages = "app.coronawarn.server.common.persistence")
 @EntityScan(basePackages = "app.coronawarn.server.common.persistence")
 @ComponentScan({"app.coronawarn.server.common.persistence", "app.coronawarn.server.services.distribution"})
 @EnableConfigurationProperties({DistributionServiceConfig.class})
