@@ -3,6 +3,8 @@ app.coronawarn.server.common.persistence.domain.validation
 app.coronawarn.server.common.persistence.exception
 app.coronawarn.server.common.persistence.repository
 app.coronawarn.server.common.persistence.service
+app.coronawarn.server.common.protocols.external.exposurenotification
+app.coronawarn.server.common.protocols.internal
 app.coronawarn.server.services.distribution
 app.coronawarn.server.services.distribution.assembly.appconfig
 app.coronawarn.server.services.distribution.assembly.appconfig.parsing
