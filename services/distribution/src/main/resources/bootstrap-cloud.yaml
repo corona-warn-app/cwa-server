@@ -1,0 +1,27 @@
+---
+spring:
+  application:
+    name: cwa-server
+  cloud:
+    vault:
+      enabled: true
+      generic:
+        enabled: false
+      kv:
+        enabled: true
+        backend: ${VAULT_BACKEND}
+        profile-separator: '/'
+        application-name: 'distribution'
+        default-context: ''
+        profiles: cloud
+      fail-fast: true
+      authentication: KUBERNETES
+      kubernetes:
+        role: ${VAULT_ROLE}
+        kubernetes-path: kubernetes
+        service-account-token-file: /var/run/secrets/kubernetes.io/serviceaccount/token
+      uri: ${VAULT_URI}
+      connection-timeout: 5000
+      read-timeout: 15000
+      config:
+        order: -10
