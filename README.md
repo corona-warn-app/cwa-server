@@ -8,7 +8,7 @@ You can simply run `mvn site` in the root project directory. You will find the n
 
 Then commit the generated output files under a new folder named after the release version.
 
-Don't forget to add a new link to the new JavaDoc documentation version to the root `index.html` file.
+Don't forget to add a new link to the new JavaDoc documentation version to this branch's root `index.html` file.
 
 > **_NOTE:_** If you wish, you can instruct Github to skip the CircleCI build for any commit to this branch by including the text `[skip ci]` in your commit message.
 
