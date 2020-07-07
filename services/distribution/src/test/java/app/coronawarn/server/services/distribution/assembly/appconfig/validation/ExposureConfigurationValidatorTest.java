@@ -67,8 +67,6 @@ class ExposureConfigurationValidatorTest {
   private static Stream<Arguments> createFailedTests() {
     return Stream.of(
         ScoreTooHigh(),
-        // TODO cwa-server/#320 Validate that no attributes are missing in .yaml
-        // ScoreNegative(),
         WeightNegative(),
         WeightTooHigh()
     ).map(Arguments::of);
@@ -99,12 +97,6 @@ class ExposureConfigurationValidatorTest {
         .with(buildError(CONFIG_PREFIX + "duration", 99999999d, VALUE_OUT_OF_BOUNDS))
         .with(buildError(CONFIG_PREFIX + "attenuation", 100.001d, VALUE_OUT_OF_BOUNDS))
         .with(buildError(CONFIG_PREFIX + "transmission", 101d, VALUE_OUT_OF_BOUNDS));
-  }
-
-  public static TestWithExpectedResult ScoreNegative() {
-    return new TestWithExpectedResult("score_negative.yaml")
-        .with(buildError(CONFIG_PREFIX + "transmission.appDefined1", RiskLevel.UNRECOGNIZED, VALUE_OUT_OF_BOUNDS))
-        .with(buildError(CONFIG_PREFIX + "transmission.appDefined3", null, MISSING_ENTRY));
   }
 
   public static TestWithExpectedResult ScoreTooHigh() {
