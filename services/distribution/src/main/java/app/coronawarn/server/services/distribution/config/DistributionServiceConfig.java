@@ -33,7 +33,7 @@ import org.springframework.validation.annotation.Validated;
 @Validated
 public class DistributionServiceConfig {
 
-  private static final String PATH_REGEX = "^[/]?[a-zA-Z0-9_]+[/[a-zA-Z0-9_]+]*$";
+  private static final String PATH_REGEX = "^[/]?[a-zA-Z0-9_]+(/[a-zA-Z0-9_]+)*[/]?$";
   private static final String FILE_NAME_REGEX = "^[a-zA-Z0-9_-]+$";
   private static final String FILE_NAME_WITH_TYPE_REGEX = "^[a-zA-Z0-9_-]+\\.[a-z]+$";
   private static final String CHAR_AND_NUMBER_REGEX = "^[a-zA-Z0-9]+$";
