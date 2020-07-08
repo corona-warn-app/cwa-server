@@ -29,7 +29,7 @@ import java.nio.file.Path;
  * those files easier for the consumers. Index files are assembled with the name "index", but should
  * be published on S3 w/o the index part, to make e.g.:
  * <br>
- * /diagnosis-keys/date/2020-12-12/index -> /diagnosis-keys/date/2020-12-12
+ * /diagnosis-keys/date/2020-12-12/index is published to /diagnosis-keys/date/2020-12-12
  */
 public class LocalIndexFile extends LocalFile {
 

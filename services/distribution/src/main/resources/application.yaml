@@ -84,9 +84,6 @@ spring:
   main:
     web-application-type: NONE
   # Postgres configuration
-  jpa:
-    hibernate:
-      ddl-auto: validate
   flyway:
     enabled: true
     locations: classpath:/db/migration, classpath:/db/specific/{vendor}

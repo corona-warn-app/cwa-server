@@ -37,6 +37,11 @@
 
   <dependencies>
     <dependency>
+      <groupId>org.springframework.cloud</groupId>
+      <artifactId>spring-cloud-starter-vault-config</artifactId>
+      <version>2.2.3.RELEASE</version>
+    </dependency>
+    <dependency>
       <groupId>org.opencwa</groupId>
       <artifactId>persistence</artifactId>
       <version>${project.version}</version>
@@ -98,8 +103,40 @@
     </dependency>
   </dependencies>
 
+  <reporting>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-javadoc-plugin</artifactId>
+        <version>3.2.0</version>
+        <configuration>
+          <bottom>
+            <![CDATA[
+                    <script>
+                    if (typeof useModuleDirectories !== 'undefined') {
+                      useModuleDirectories = false;
+                    }
+                    </script>
+                ]]>
+          </bottom>
+          <additionalJOption>--allow-script-in-comments</additionalJOption>
+        </configuration>
+      </plugin>
+    </plugins>
+  </reporting>
+
   <build>
     <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-site-plugin</artifactId>
+        <version>3.7.1</version>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-project-info-reports-plugin</artifactId>
+        <version>3.0.0</version>
+      </plugin>
       <plugin>
         <groupId>org.codehaus.mojo</groupId>
         <artifactId>license-maven-plugin</artifactId>

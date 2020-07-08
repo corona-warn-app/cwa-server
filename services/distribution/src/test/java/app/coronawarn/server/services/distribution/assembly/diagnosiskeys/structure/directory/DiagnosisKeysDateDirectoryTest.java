@@ -22,6 +22,7 @@ package app.coronawarn.server.services.distribution.assembly.diagnosiskeys.struc
 
 import static app.coronawarn.server.services.distribution.common.Helpers.buildDiagnosisKeys;
 import static app.coronawarn.server.services.distribution.common.Helpers.getExpectedDateAndHourFiles;
+import static java.io.File.separator;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import app.coronawarn.server.common.persistence.domain.DiagnosisKey;
@@ -180,6 +181,29 @@ class DiagnosisKeysDateDirectoryTest {
     Set<String> expectedDateAndHourFiles = getExpectedDateAndHourFiles(Map.of(
         "1970-01-03", List.of("1"),
         "1970-01-04", List.of("1")), "1970-01-04");
+    assertThat(actualFiles).isEqualTo(expectedDateAndHourFiles);
+  }
+
+  @Test
+  void testWhenDemoProfileIsActiveItDoesIncludeCurrentDateInDirectoryStructure() {
+    distributionServiceConfig.setIncludeIncompleteDays(true);
+    Collection<DiagnosisKey> diagnosisKeys = IntStream.range(0, 3)
+        .mapToObj(currentDate -> IntStream.range(0, 5)
+            .mapToObj(currentHour ->
+                buildDiagnosisKeys(6, LocalDateTime.of(1970, 1, 3 + currentDate, 0, 0).plusHours(currentHour), 5))
+            .flatMap(List::stream)
+            .collect(Collectors.toList()))
+        .flatMap(List::stream)
+        .collect(Collectors.toList());
+    runDateDistribution(diagnosisKeys, LocalDateTime.of(1970, 1, 5, 12, 0));
+    Set<String> actualFiles = Helpers.getFilePaths(outputFile, outputFile.getAbsolutePath());
+    Set<String> expectedDateAndHourFiles = getExpectedDateAndHourFiles(Map.of(
+        "1970-01-03", List.of("0", "1", "2", "3", "4"),
+        "1970-01-04", List.of("0", "1", "2", "3", "4"),
+        "1970-01-05", List.of("0", "1", "2", "3", "4")), "1970-01-05");
+    expectedDateAndHourFiles.addAll(Set.of(
+        String.join(separator, "date", "1970-01-05", "index"),
+        String.join(separator, "date", "1970-01-05", "index.checksum")));
     assertThat(actualFiles).isEqualTo(expectedDateAndHourFiles);
   }
 }

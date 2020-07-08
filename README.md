@@ -180,6 +180,10 @@ See [Submission Service - Spring Profiles](/docs/SUBMISSION.md#spring-profiles).
 
 The full documentation for the Corona-Warn-App can be found in the [cwa-documentation](https://github.com/corona-warn-app/cwa-documentation) repository. The documentation repository contains technical documents, architecture information, and whitepapers related to this implementation.
 
+The documentation for cwa-server can be found under the [/docs](./docs) folder.
+
+The JavaDoc documentation for cwa-server is hosted by Github Pages at [https://corona-warn-app.github.io/cwa-server](https://corona-warn-app.github.io/cwa-server).
+
 ## Support and Feedback
 
 The following channels are available for discussions, feedback, and support requests:
