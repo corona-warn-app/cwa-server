@@ -65,6 +65,10 @@ public class RequestExecutor {
     return execute(HttpMethod.POST, new RequestEntity<>(body, headers, HttpMethod.POST, SUBMISSION_URL));
   }
 
+  public ResponseEntity<Void> executeSubmissionPayloadPost(SubmissionPayload body, HttpHeaders headers) {
+    return execute(HttpMethod.POST, new RequestEntity<>(body, headers, HttpMethod.POST, SUBMISSION_URL));
+  }
+
   public static HttpHeaders buildOkHeaders() {
     HttpHeaders headers = setCwaAuthHeader(setContentTypeProtoBufHeader(new HttpHeaders()));
 
