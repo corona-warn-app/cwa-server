@@ -48,10 +48,12 @@ import static org.springframework.http.HttpStatus.OK;
 import app.coronawarn.server.common.persistence.domain.DiagnosisKey;
 import app.coronawarn.server.common.persistence.service.DiagnosisKeyService;
 import app.coronawarn.server.common.protocols.external.exposurenotification.TemporaryExposureKey;
+import app.coronawarn.server.common.protocols.internal.SubmissionPayload;
 import app.coronawarn.server.services.submission.config.SubmissionServiceConfig;
 import app.coronawarn.server.services.submission.monitoring.SubmissionMonitor;
 import app.coronawarn.server.services.submission.verification.TanVerifier;
 import com.google.protobuf.ByteString;
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -71,6 +73,7 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.RequestEntity;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.ActiveProfiles;
 
@@ -222,6 +225,20 @@ class SubmissionControllerTest {
     verify(submissionMonitor, times(1)).incrementInvalidTanRequestCounter();
   }
 
+  @Test
+  void checkResponseStatusForValidParametersWithPadding() {
+    URI SUBMISSION_URL = URI.create("/version/v1/diagnosis-keys");
+    
+    SubmissionPayload payload = SubmissionPayload.newBuilder()
+        .addAllKeys(buildPayloadWithMultipleKeys())
+        .setPadding("TestPadding")
+        .build();
+
+    RequestEntity requestEntity =  new RequestEntity<>(payload, buildOkHeaders(), HttpMethod.POST, SUBMISSION_URL);
+    ResponseEntity<Void> actResponse = executor.execute(HttpMethod.POST,requestEntity);
+
+    assertThat(actResponse.getStatusCode()).isEqualTo(OK);
+  }
   private Collection<TemporaryExposureKey> buildPayloadWithMultipleKeys() {
     int rollingStartIntervalNumber1 = createRollingStartIntervalNumber(config.getRetentionDays() - 1);
     int rollingStartIntervalNumber2 = rollingStartIntervalNumber1 + DiagnosisKey.EXPECTED_ROLLING_PERIOD;
