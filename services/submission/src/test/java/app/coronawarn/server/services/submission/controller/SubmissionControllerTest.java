@@ -110,6 +110,12 @@ class SubmissionControllerTest {
   }
 
   @Test
+  void checkResponseStatusForValidParametersWithPadding() {
+    ResponseEntity<Void> actResponse = executor.executePost(buildPayloadWithPadding(), buildOkHeaders());
+    assertThat(actResponse.getStatusCode()).isEqualTo(OK);
+  }
+
+  @Test
   void check400ResponseStatusForInvalidParameters() {
     ResponseEntity<Void> actResponse = executor.executePost(buildPayloadWithInvalidKey(), buildOkHeaders());
     assertThat(actResponse.getStatusCode()).isEqualTo(BAD_REQUEST);
@@ -223,16 +229,6 @@ class SubmissionControllerTest {
     verify(submissionMonitor, times(1)).incrementInvalidTanRequestCounter();
   }
 
-  @Test
-  void checkResponseStatusForValidParametersWithPadding() {
-    SubmissionPayload payload = SubmissionPayload.newBuilder()
-        .addAllKeys(buildPayloadWithMultipleKeys())
-        .setPadding("TestPadding")
-        .build();
-    ResponseEntity<Void> actResponse = executor.executeSubmissionPayloadPost(payload,buildOkHeaders());
-    
-    assertThat(actResponse.getStatusCode()).isEqualTo(OK);
-  }
   private Collection<TemporaryExposureKey> buildPayloadWithMultipleKeys() {
     int rollingStartIntervalNumber1 = createRollingStartIntervalNumber(config.getRetentionDays() - 1);
     int rollingStartIntervalNumber2 = rollingStartIntervalNumber1 + DiagnosisKey.EXPECTED_ROLLING_PERIOD;
@@ -242,6 +238,13 @@ class SubmissionControllerTest {
         buildTemporaryExposureKey(VALID_KEY_DATA_2, rollingStartIntervalNumber3, 6),
         buildTemporaryExposureKey(VALID_KEY_DATA_3, rollingStartIntervalNumber2, 8))
         .collect(Collectors.toCollection(ArrayList::new));
+  }
+
+  private SubmissionPayload buildPayloadWithPadding() {
+    return SubmissionPayload.newBuilder()
+        .addAllKeys(buildPayloadWithMultipleKeys())
+        .setPadding("PaddingString")
+        .build();
   }
 
   private Collection<TemporaryExposureKey> buildPayloadWithSingleOutdatedKey() {

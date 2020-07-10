@@ -62,10 +62,10 @@ public class RequestExecutor {
 
   public ResponseEntity<Void> executePost(Collection<TemporaryExposureKey> keys, HttpHeaders headers) {
     SubmissionPayload body = SubmissionPayload.newBuilder().addAllKeys(keys).build();
-    return execute(HttpMethod.POST, new RequestEntity<>(body, headers, HttpMethod.POST, SUBMISSION_URL));
+    return executePost(body, headers);
   }
 
-  public ResponseEntity<Void> executeSubmissionPayloadPost(SubmissionPayload body, HttpHeaders headers) {
+  public ResponseEntity<Void> executePost(SubmissionPayload body, HttpHeaders headers) {
     return execute(HttpMethod.POST, new RequestEntity<>(body, headers, HttpMethod.POST, SUBMISSION_URL));
   }
 
