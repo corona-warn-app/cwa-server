@@ -50,10 +50,10 @@ CREATE ROLE cwa_distribution
   IN ROLE cwa_user;
 
 CREATE ROLE cwa_federation_callback
-    NOLOGIN
-    NOSUPERUSER
-    INHERIT
-    NOCREATEDB
-    NOCREATEROLE
-    NOREPLICATION
-    IN ROLE cwa_user;
+  NOLOGIN
+  NOSUPERUSER
+  INHERIT
+  NOCREATEDB
+  NOCREATEROLE
+  NOREPLICATION
+  IN ROLE cwa_user;
