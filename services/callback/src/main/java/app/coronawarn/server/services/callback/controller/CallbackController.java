@@ -20,7 +20,6 @@
 
 package app.coronawarn.server.services.callback.controller;
 
-import app.coronawarn.server.common.persistence.domain.FederationBatchDownload;
 import app.coronawarn.server.common.persistence.repository.FederationBatchDownloadRepository;
 import io.micrometer.core.annotation.Timed;
 import java.text.ParseException;
@@ -30,6 +29,7 @@ import javax.validation.Valid;
 import javax.validation.constraints.Pattern;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -56,20 +56,24 @@ public class CallbackController {
   /**
    * Handles diagnosis key submission requests.
    *
-   * @param batchTag The batchTag for the latest batch.
-   * @param date     The date of the batch.
+   * @param batchTag   The batchTag for the latest batch.
+   * @param date The date of the batch.
    * @return An empty response body.
    */
   @GetMapping(value = CALLBACK_ROUTE)
   @Timed(description = "Time spent handling callback.")
-  public String handleCallback(@RequestParam String batchTag,
+  public ResponseEntity<Void> handleCallback(@RequestParam String batchTag,
       @Valid @Pattern(regexp = dateRegex) @RequestParam String date)
       throws ParseException {
-    SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-    Date date2 = sdf.parse(date);
+    federationBatchDownloadRepository.saveDoNothingOnConflict(batchTag, parseDateString(date));
+    return ResponseEntity.ok().build();
+  }
 
-    federationBatchDownloadRepository.save(new FederationBatchDownload(batchTag, date2));
-    return "Hello, Callback" + batchTag + "/" + date;
+  private Date parseDateString(
+      @RequestParam @Valid @Pattern(regexp = dateRegex) String date)
+      throws ParseException {
+    SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+    return sdf.parse(date);
   }
 
 }

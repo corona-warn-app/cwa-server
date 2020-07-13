@@ -21,10 +21,23 @@
 package app.coronawarn.server.common.persistence.repository;
 
 import app.coronawarn.server.common.persistence.domain.FederationBatchDownload;
+import java.util.Date;
+import org.springframework.data.jdbc.repository.query.Modifying;
+import org.springframework.data.jdbc.repository.query.Query;
 import org.springframework.data.repository.CrudRepository;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 @Repository
 public interface FederationBatchDownloadRepository extends CrudRepository<FederationBatchDownload, String> {
 
+  @Modifying
+  @Query("INSERT INTO federation_batch_download "
+      + "(batch_tag, date) "
+      + "VALUES (:batchTag, :date) "
+      + "ON CONFLICT DO NOTHING")
+  void saveDoNothingOnConflict(
+      @Param("batchTag") String batchTag,
+      @Param("date") Date date
+  );
 }

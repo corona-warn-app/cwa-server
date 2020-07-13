@@ -20,15 +20,11 @@
 
 package app.coronawarn.server.services.callback.controller;
 
-import app.coronawarn.server.common.persistence.exception.InvalidDiagnosisKeyException;
-import com.google.protobuf.InvalidProtocolBufferException;
+import java.text.ParseException;
 import javax.validation.ConstraintViolationException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.http.converter.HttpMessageNotReadableException;
-import org.springframework.web.bind.ServletRequestBindingException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -45,9 +41,9 @@ public class ApiExceptionHandler {
     logger.error("Unable to handle {}", wr.getDescription(false), ex);
   }
 
-  @ExceptionHandler({ConstraintViolationException.class})
+  @ExceptionHandler({ConstraintViolationException.class, ParseException.class})
   @ResponseStatus(HttpStatus.BAD_REQUEST)
-  public void handle(Exception ex, WebRequest wr) {
+  public void handleConstraintViolationException(Exception ex, WebRequest wr) {
     logger.error("Erroneous callback url call {}", wr.getDescription(false), ex);
   }
 
