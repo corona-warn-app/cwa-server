@@ -99,7 +99,7 @@ public class TestDataGeneration implements ApplicationRunner {
     // Timestamps in hours since epoch. Test data generation starts one hour after the latest diagnosis key in the
     // database and ends one hour before the current one.
     long startTimestamp = getGeneratorStartTimestamp(existingDiagnosisKeys) + 1; // Inclusive
-    long endTimestamp = getGeneratorEndTimestamp(); // Exclusive
+    long endTimestamp = getGeneratorEndTimestamp(); // Inclusive
 
     // Add the startTimestamp to the seed. Otherwise we would generate the same data every hour.
     random.setSeed(this.config.getSeed() + startTimestamp);
@@ -111,7 +111,7 @@ public class TestDataGeneration implements ApplicationRunner {
       return;
     }
     logger.debug("Generating diagnosis keys between {} and {}...", startTimestamp, endTimestamp);
-    List<DiagnosisKey> newDiagnosisKeys = LongStream.range(startTimestamp, endTimestamp)
+    List<DiagnosisKey> newDiagnosisKeys = LongStream.rangeClosed(startTimestamp, endTimestamp)
         .mapToObj(submissionTimestamp -> IntStream.range(0, poisson.sample())
             .mapToObj(ignoredValue -> generateDiagnosisKey(submissionTimestamp))
             .collect(Collectors.toList()))
@@ -139,11 +139,11 @@ public class TestDataGeneration implements ApplicationRunner {
   }
 
   /**
-   * Returns the timestamp (in 1 hour intervals since epoch) of the last full hour. Example: If called at 15:38 UTC,
-   * this function would return the timestamp for today 14:00 UTC.
+   * Returns the timestamp (in 1 hour intervals since epoch) of the current hour. Example: If called at 15:38 UTC,
+   * this function would return the timestamp for today 15:00 UTC.
    */
   private long getGeneratorEndTimestamp() {
-    return (TimeUtils.getNow().getEpochSecond() / ONE_HOUR_INTERVAL_SECONDS) - 1;
+    return (TimeUtils.getNow().getEpochSecond() / ONE_HOUR_INTERVAL_SECONDS);
   }
 
   /**
