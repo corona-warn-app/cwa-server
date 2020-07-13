@@ -26,11 +26,10 @@ import static app.coronawarn.server.services.distribution.assembly.diagnosiskeys
 import app.coronawarn.server.common.persistence.domain.DiagnosisKey;
 import app.coronawarn.server.common.persistence.service.DiagnosisKeyService;
 import app.coronawarn.server.common.protocols.internal.RiskLevel;
+import app.coronawarn.server.services.distribution.assembly.structure.util.TimeUtils;
 import app.coronawarn.server.services.distribution.config.DistributionServiceConfig;
 import app.coronawarn.server.services.distribution.config.DistributionServiceConfig.TestData;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.ZoneOffset;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
@@ -144,7 +143,7 @@ public class TestDataGeneration implements ApplicationRunner {
    * this function would return the timestamp for today 14:00 UTC.
    */
   private long getGeneratorEndTimestamp() {
-    return (LocalDateTime.now().toEpochSecond(ZoneOffset.UTC) / ONE_HOUR_INTERVAL_SECONDS) - 1;
+    return (TimeUtils.getNow().getEpochSecond() / ONE_HOUR_INTERVAL_SECONDS) - 1;
   }
 
   /**
@@ -153,8 +152,8 @@ public class TestDataGeneration implements ApplicationRunner {
    * 14 days ago (from now) at 00:00 UTC.
    */
   private long getRetentionStartTimestamp() {
-    return LocalDate.now().minusDays(retentionDays).atStartOfDay()
-        .toEpochSecond(ZoneOffset.UTC) / ONE_HOUR_INTERVAL_SECONDS;
+    return TimeUtils.getNow().truncatedTo(ChronoUnit.DAYS).minus(retentionDays, ChronoUnit.DAYS).getEpochSecond()
+        / ONE_HOUR_INTERVAL_SECONDS;
   }
 
   /**
