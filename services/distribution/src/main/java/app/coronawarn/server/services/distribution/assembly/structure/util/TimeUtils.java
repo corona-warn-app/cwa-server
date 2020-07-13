@@ -43,6 +43,15 @@ public class TimeUtils {
     return utcHour;
   }
 
+
+  /**
+   * Injects UTC date time value
+   * @param dateTime
+   */
+  public static void setUtcHour(LocalDateTime dateTime) {
+    utcHour = dateTime;
+  }
+
   /**
    * Returns the UTC date or creates a new instance if called the first time.
    */
@@ -51,6 +60,14 @@ public class TimeUtils {
       utcDate = LocalDate.now(ZoneOffset.UTC);
     }
     return utcDate;
+  }
+
+  /**
+   * Injects UTC date value
+   * @param date
+   */
+  public static void setUtcDate(LocalDate date) {
+    utcDate = date;
   }
 
   /**

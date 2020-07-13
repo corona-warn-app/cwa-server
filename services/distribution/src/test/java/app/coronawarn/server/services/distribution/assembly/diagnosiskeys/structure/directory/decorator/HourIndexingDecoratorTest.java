@@ -31,6 +31,7 @@ import app.coronawarn.server.services.distribution.assembly.diagnosiskeys.Diagno
 import app.coronawarn.server.services.distribution.assembly.diagnosiskeys.ProdDiagnosisKeyBundler;
 import app.coronawarn.server.services.distribution.assembly.diagnosiskeys.structure.directory.DiagnosisKeysHourDirectory;
 import app.coronawarn.server.services.distribution.assembly.structure.util.ImmutableStack;
+import app.coronawarn.server.services.distribution.assembly.structure.util.TimeUtils;
 import app.coronawarn.server.services.distribution.config.DistributionServiceConfig;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -68,6 +69,9 @@ class HourIndexingDecoratorTest {
   void excludesHoursThatExceedTheMaximumNumberOfKeys() {
     List<DiagnosisKey> diagnosisKeys = buildDiagnosisKeys(6, LocalDateTime.of(1970, 1, 3, 4, 0), 2);
 
+    TimeUtils.setUtcDate(LocalDate.of(1970, 1, 3));
+    TimeUtils.setUtcHour(LocalDateTime.of(1970, 1, 3, 0, 0));
+
     DistributionServiceConfig svcConfig = mock(DistributionServiceConfig.class);
     when(svcConfig.getExpiryPolicyMinutes()).thenReturn(120);
     when(svcConfig.getShiftingPolicyThreshold()).thenReturn(1);
@@ -87,6 +91,10 @@ class HourIndexingDecoratorTest {
   @Test
   void excludesEmptyHoursFromIndex() {
     List<DiagnosisKey> diagnosisKeys = buildDiagnosisKeys(6, LocalDateTime.of(1970, 1, 5, 0, 0), 5);
+
+    TimeUtils.setUtcDate(LocalDate.of(1970, 1, 5));
+    TimeUtils.setUtcHour(LocalDateTime.of(1970, 1, 5, 1, 0));
+
     diagnosisKeyBundler.setDiagnosisKeys(diagnosisKeys, LocalDateTime.of(1970, 1, 5, 1, 0));
     HourIndexingDecorator decorator = makeDecoratedHourDirectory(diagnosisKeyBundler);
     decorator.prepare(new ImmutableStack<>().push("DE").push(LocalDate.of(1970, 1, 5)));
