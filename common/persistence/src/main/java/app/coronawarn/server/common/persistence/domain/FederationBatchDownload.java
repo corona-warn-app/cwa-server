@@ -20,8 +20,8 @@
 
 package app.coronawarn.server.common.persistence.domain;
 
-import org.springframework.data.annotation.Id;
 import java.util.Date;
+import org.springframework.data.annotation.Id;
 
 /**
  * A key generated for advertising over a window of time.
