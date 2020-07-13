@@ -49,7 +49,7 @@ If you want to use Docker-based deployment, you need to install Docker on your l
 
 #### Running the Full CWA Backend Using Docker Compose
 
-For your convenience, a full setup including the generation of test data has been prepared using [Docker Compose](https://docs.docker.com/compose/reference/overview/). To build the backend services, run ```docker-compose build``` in the repository's root directory. A default configuration file can be found under ```.env``` in the root folder of the repository. The default values for the local Postgres and Zenko Cloudserver should be changed in this file before docker-compose is run.
+For your convenience, a full setup for local development and testing purposes, including the generation of test data has been prepared using [Docker Compose](https://docs.docker.com/compose/reference/overview/). To build the backend services, run ```docker-compose build``` in the repository's root directory. A default configuration file can be found under ```.env``` in the root folder of the repository. If the endpoints are to be exposed to the network the default values in this file should be changed before docker-compose is run.
 
 Once the services are built, you can start the whole backend using ```docker-compose up```.
 The distribution service runs once and then finishes. If you want to trigger additional distribution runs, run ```docker-compose run distribution```.
