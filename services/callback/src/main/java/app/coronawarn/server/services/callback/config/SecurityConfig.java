@@ -42,15 +42,13 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
   protected HttpFirewall strictFirewall() {
     StrictHttpFirewall firewall = new StrictHttpFirewall();
     firewall.setAllowedHttpMethods(Arrays.asList(
-        HttpMethod.GET.name(),
-        HttpMethod.POST.name()));
+        HttpMethod.GET.name()));
     return firewall;
   }
 
   @Override
   protected void configure(HttpSecurity http) throws Exception {
     http.authorizeRequests()
-        //.mvcMatchers(HttpMethod.GET, HEALTH_ROUTE, PROMETHEUS_ROUTE, READINESS_ROUTE, LIVENESS_ROUTE).permitAll()
         .mvcMatchers(HttpMethod.GET, CALLBACK_ROUTE).permitAll()
         .anyRequest().denyAll()
         .and().csrf().disable();
