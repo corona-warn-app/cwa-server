@@ -29,12 +29,12 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import app.coronawarn.server.services.distribution.assembly.structure.util.TimeUtils;
 import app.coronawarn.server.services.distribution.config.DistributionServiceConfig;
 import app.coronawarn.server.services.distribution.config.DistributionServiceConfig.ObjectStore;
 import app.coronawarn.server.services.distribution.objectstore.client.ObjectStoreOperationFailedException;
 import app.coronawarn.server.services.distribution.objectstore.client.S3Object;
 import java.time.LocalDate;
-import java.time.ZoneOffset;
 import java.util.List;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -65,11 +65,11 @@ class S3RetentionPolicyTest {
 
   @Test
   void shouldDeleteOldFiles() {
-    String expectedFileToBeDeleted = generateFileName(LocalDate.now(ZoneOffset.UTC).minusDays(2));
+    String expectedFileToBeDeleted = generateFileName(TimeUtils.getUtcDate().minusDays(2));
 
     when(objectStoreAccess.getObjectsWithPrefix(any())).thenReturn(List.of(
         new S3Object(expectedFileToBeDeleted),
-        new S3Object(generateFileName(LocalDate.now())),
+        new S3Object(generateFileName(TimeUtils.getUtcDate())),
         new S3Object("version/v1/configuration/country/DE/app_config")));
 
     s3RetentionPolicy.applyRetentionPolicy(1);
@@ -80,9 +80,9 @@ class S3RetentionPolicyTest {
   @Test
   void shouldNotDeleteFilesIfAllAreValid() {
     when(objectStoreAccess.getObjectsWithPrefix(any())).thenReturn(List.of(
-        new S3Object(generateFileName(LocalDate.now().minusDays(1))),
-        new S3Object(generateFileName(LocalDate.now().plusDays(1))),
-        new S3Object(generateFileName(LocalDate.now())),
+        new S3Object(generateFileName(TimeUtils.getUtcDate().minusDays(1))),
+        new S3Object(generateFileName(TimeUtils.getUtcDate().plusDays(1))),
+        new S3Object(generateFileName(TimeUtils.getUtcDate())),
         new S3Object("version/v1/configuration/country/DE/app_config")));
 
     s3RetentionPolicy.applyRetentionPolicy(1);

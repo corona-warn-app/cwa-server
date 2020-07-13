@@ -33,13 +33,12 @@ import app.coronawarn.server.services.distribution.assembly.structure.WritableOn
 import app.coronawarn.server.services.distribution.assembly.structure.directory.Directory;
 import app.coronawarn.server.services.distribution.assembly.structure.directory.DirectoryOnDisk;
 import app.coronawarn.server.services.distribution.assembly.structure.util.ImmutableStack;
+import app.coronawarn.server.services.distribution.assembly.structure.util.TimeUtils;
 import app.coronawarn.server.services.distribution.config.DistributionServiceConfig;
 import java.io.File;
 import java.io.IOException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.ZoneOffset;
-import java.time.temporal.ChronoUnit;
 import java.util.Collection;
 import java.util.List;
 import java.util.Set;
@@ -80,7 +79,7 @@ class DiagnosisKeysHourDirectoryTest {
   }
 
   private void runHourDistribution(Collection<DiagnosisKey> diagnosisKeys, LocalDateTime distributionTime,
-      LocalDate keyDistributionDate) {
+      LocalDate keysSubmissionDate) {
     DiagnosisKeyBundler bundler = new ProdDiagnosisKeyBundler(distributionServiceConfig);
     bundler.setDiagnosisKeys(diagnosisKeys, distributionTime);
     DiagnosisKeysHourDirectory hourDirectory = new DiagnosisKeysHourDirectory(bundler, cryptoProvider,
@@ -90,7 +89,7 @@ class DiagnosisKeysHourDirectoryTest {
     hourDirectory.prepare(new ImmutableStack<>()
         .push("version-directory")
         .push("country-directory")
-        .push(keyDistributionDate) // date-directory
+        .push(keysSubmissionDate) // date-directory
     );
     outputDirectory.write();
   }
@@ -163,23 +162,21 @@ class DiagnosisKeysHourDirectoryTest {
   }
 
   @Test
-  void testWhenDemoProfileIsActiveAndDistributionTimeIsNowItDoesIncludeCurrentHour() {
-    distributionServiceConfig.setIncludeIncompleteHours(true);
-    distributionServiceConfig.setIncludeIncompleteDays(true);
-    final LocalDateTime nowUtc = LocalDateTime.now(ZoneOffset.UTC);
+  void testDistributionTimeIsNowItDoesIncludeCurrentHour() {
+    final LocalDateTime nowUtc = TimeUtils.getCurrentUtcHour();
     Collection<DiagnosisKey> diagnosisKeys = List.of(
+        buildDiagnosisKeys(6, nowUtc.minusHours(3), 5),
         buildDiagnosisKeys(6, nowUtc.minusHours(2), 5),
-        buildDiagnosisKeys(6, nowUtc.minusHours(1), 5),
-        buildDiagnosisKeys(6, nowUtc.truncatedTo(ChronoUnit.HOURS), 5))
+        buildDiagnosisKeys(6, nowUtc.minusHours(1), 5))
         .stream()
         .flatMap(List::stream)
         .collect(Collectors.toList());
-    runHourDistribution(diagnosisKeys, nowUtc.truncatedTo(ChronoUnit.HOURS), nowUtc.toLocalDate());
+    runHourDistribution(diagnosisKeys, nowUtc, TimeUtils.getUtcDate());
     Set<String> actualFiles = getFilePaths(outputFile, outputFile.getAbsolutePath());
     assertThat(actualFiles).isEqualTo(getExpectedHourFiles(Set.of(
+        String.valueOf(nowUtc.minusHours(3).getHour()),
         String.valueOf(nowUtc.minusHours(2).getHour()),
-        String.valueOf(nowUtc.minusHours(1).getHour()),
-        String.valueOf(nowUtc.getHour())
+        String.valueOf(nowUtc.minusHours(1).getHour())
     )));
   }
 }
