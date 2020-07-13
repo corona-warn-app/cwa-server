@@ -20,9 +20,7 @@
 
 package app.coronawarn.server.services.submission.controller;
 
-import static app.coronawarn.server.services.submission.controller.RequestExecutor.buildOkHeaders;
 import static app.coronawarn.server.services.submission.controller.RequestExecutor.buildPayloadWithOneKey;
-import static app.coronawarn.server.services.submission.controller.RequestExecutor.setCwaFakeHeader;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.never;
@@ -59,10 +57,14 @@ class FakeRequestControllerTest {
     when(fakeDelayManager.getJitteredFakeDelay()).thenReturn(1000L);
   }
 
+  // TODO Before
   @Test
   void fakeRequestHandling() {
-    HttpHeaders headers = buildOkHeaders();
-    setCwaFakeHeader(headers, "1");
+    HttpHeaders headers = HttpHeaderBuilder.builder()
+        .contentTypeProtoBufHeader()
+        .cwaAuthHeader()
+        .cwaFakeHeader("1")
+        .build();
 
     ResponseEntity<Void> actResponse = executor.executePost(buildPayloadWithOneKey(), headers);
 
@@ -73,8 +75,11 @@ class FakeRequestControllerTest {
 
   @Test
   void checkFakeRequestHandlingIsMonitored() {
-    HttpHeaders headers = buildOkHeaders();
-    setCwaFakeHeader(headers, "1");
+    HttpHeaders headers = HttpHeaderBuilder.builder()
+        .contentTypeProtoBufHeader()
+        .cwaAuthHeader()
+        .cwaFakeHeader("1")
+        .build();
 
     executor.executePost(buildPayloadWithOneKey(), headers);
 
