@@ -5,8 +5,8 @@ spring:
     user: ${POSTGRESQL_USER_FLYWAY}
   datasource:
     driver-class-name: org.postgresql.Driver
-    username: ${POSTGRESQL_USER_SUBMISSION}
-    password: ${POSTGRESQL_PASSWORD_SUBMISSION}
+    username: ${POSTGRESQL_USER_CALLBACK}
+    password: ${POSTGRESQL_PASSWORD_CALLBACK}
 
 services:
   submission:

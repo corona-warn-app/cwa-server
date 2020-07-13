@@ -8,7 +8,7 @@ logging:
       coronawarn: INFO
 
 services:
-  submission:
+  callback:
     # The initial value of the moving average for fake request delays.
     initial-fake-delay-milliseconds: 10
     # The number of samples for the calculation of the moving average for fake request delays.
@@ -56,8 +56,8 @@ spring:
   datasource:
     driver-class-name: org.postgresql.Driver
     url: jdbc:postgresql://${POSTGRESQL_SERVICE_HOST}:${POSTGRESQL_SERVICE_PORT}/${POSTGRESQL_DATABASE}?ssl=true&sslmode=verify-full&sslrootcert=${SSL_POSTGRES_CERTIFICATE_PATH}&sslcert=${SSL_SUBMISSION_CERTIFICATE_PATH}&sslkey=${SSL_SUBMISSION_PRIVATE_KEY_PATH}
-    username: ${POSTGRESQL_USER_SUBMISSION:local_setup_submission}
-    password: ${POSTGRESQL_PASSWORD_SUBMISSION:local_setup_submission}
+    username: ${POSTGRESQL_USER_CALLBACK:local_setup_callback}
+    password: ${POSTGRESQL_PASSWORD_CALLBACK:local_setup_callback}
 
 # Actuator configuration
 management:
