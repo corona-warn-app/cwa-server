@@ -20,46 +20,32 @@
 
 package app.coronawarn.server.services.distribution.assembly.structure.util;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.time.temporal.ChronoUnit;
+import org.junit.jupiter.api.Test;
 
-public class TimeUtils {
+class TimeUtilsTest {
 
-  private static LocalDate utcDate;
-  private static LocalDateTime utcHour;
-  private static Instant now;
-
-  /**
-   * Returns the UTC date and time at the beginning of the current hour or creates a new instance if called the first
-   * time.
-   */
-  public static LocalDateTime getCurrentUtcHour() {
-    if (utcHour == null) {
-      utcHour = LocalDateTime.now(ZoneOffset.UTC).truncatedTo(ChronoUnit.HOURS);
-    }
-    return utcHour;
+  @Test
+  void testGetCurrentUtcDateIsLocalDateNowInUtc() {
+    assertEquals(LocalDate.now(ZoneOffset.UTC), TimeUtils.getUtcDate());
   }
 
-  /**
-   * Returns the UTC date or creates a new instance if called the first time.
-   */
-  public static LocalDate getUtcDate() {
-    if (utcDate == null) {
-      utcDate = LocalDate.now(ZoneOffset.UTC);
-    }
-    return utcDate;
+  @Test
+  void testGetUtcHour() {
+    assertEquals(LocalDateTime.now(ZoneOffset.UTC).truncatedTo(ChronoUnit.HOURS), TimeUtils.getCurrentUtcHour());
   }
 
-  /**
-   * Returns the UTC {@link Instant} time or creates a new instance if called the first time.
-   */
-  public static Instant getNow() {
-    if (now == null) {
-      now = Instant.now();
-    }
-    return now;
+  @Test
+  void testGetNowIsLocalDateTimeInUtc() {
+    final Instant now = Instant.now().truncatedTo(ChronoUnit.SECONDS);
+    assertEquals(now, TimeUtils.getNow().truncatedTo(ChronoUnit.SECONDS));
+    System.out.println(Instant.now());
   }
+
 }
