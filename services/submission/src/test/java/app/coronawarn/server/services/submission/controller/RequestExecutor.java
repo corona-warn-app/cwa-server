@@ -65,25 +65,15 @@ public class RequestExecutor {
     return execute(HttpMethod.POST, new RequestEntity<>(body, headers, HttpMethod.POST, SUBMISSION_URL));
   }
 
-  public static HttpHeaders buildOkHeaders() {
-    HttpHeaders headers = setCwaAuthHeader(setContentTypeProtoBufHeader(new HttpHeaders()));
+  public ResponseEntity<Void> executePost(Collection<TemporaryExposureKey> keys) {
+    SubmissionPayload body = SubmissionPayload.newBuilder().addAllKeys(keys).build();
+    HttpHeaders headers = HttpHeaderBuilder.builder()
+        .contentTypeProtoBufHeader()
+        .cwaAuthHeader()
+        .cwaFakeHeader("0")
+        .build();
 
-    return setCwaFakeHeader(headers, "0");
-  }
-
-  public static HttpHeaders setContentTypeProtoBufHeader(HttpHeaders headers) {
-    headers.setContentType(MediaType.valueOf("application/x-protobuf"));
-    return headers;
-  }
-
-  public static HttpHeaders setCwaAuthHeader(HttpHeaders headers) {
-    headers.set("cwa-authorization", "TAN okTan");
-    return headers;
-  }
-
-  public static HttpHeaders setCwaFakeHeader(HttpHeaders headers, String value) {
-    headers.set("cwa-fake", value);
-    return headers;
+    return execute(HttpMethod.POST, new RequestEntity<>(body, headers, HttpMethod.POST, SUBMISSION_URL));
   }
 
   public static TemporaryExposureKey buildTemporaryExposureKey(

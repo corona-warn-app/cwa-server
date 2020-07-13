@@ -23,13 +23,9 @@ package app.coronawarn.server.services.submission.controller;
 import static app.coronawarn.server.services.submission.controller.RequestExecutor.VALID_KEY_DATA_1;
 import static app.coronawarn.server.services.submission.controller.RequestExecutor.VALID_KEY_DATA_2;
 import static app.coronawarn.server.services.submission.controller.RequestExecutor.VALID_KEY_DATA_3;
-import static app.coronawarn.server.services.submission.controller.RequestExecutor.buildOkHeaders;
 import static app.coronawarn.server.services.submission.controller.RequestExecutor.buildPayloadWithOneKey;
 import static app.coronawarn.server.services.submission.controller.RequestExecutor.buildTemporaryExposureKey;
 import static app.coronawarn.server.services.submission.controller.RequestExecutor.createRollingStartIntervalNumber;
-import static app.coronawarn.server.services.submission.controller.RequestExecutor.setContentTypeProtoBufHeader;
-import static app.coronawarn.server.services.submission.controller.RequestExecutor.setCwaAuthHeader;
-import static app.coronawarn.server.services.submission.controller.RequestExecutor.setCwaFakeHeader;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.any;
@@ -104,13 +100,13 @@ class SubmissionControllerTest {
 
   @Test
   void checkResponseStatusForValidParameters() {
-    ResponseEntity<Void> actResponse = executor.executePost(buildPayloadWithMultipleKeys(), buildOkHeaders());
+    ResponseEntity<Void> actResponse = executor.executePost(buildPayloadWithMultipleKeys());
     assertThat(actResponse.getStatusCode()).isEqualTo(OK);
   }
 
   @Test
   void check400ResponseStatusForInvalidParameters() {
-    ResponseEntity<Void> actResponse = executor.executePost(buildPayloadWithInvalidKey(), buildOkHeaders());
+    ResponseEntity<Void> actResponse = executor.executePost(buildPayloadWithInvalidKey());
     assertThat(actResponse.getStatusCode()).isEqualTo(BAD_REQUEST);
   }
 
@@ -119,7 +115,7 @@ class SubmissionControllerTest {
     Collection<TemporaryExposureKey> keys = buildPayloadWithSingleOutdatedKey();
     ArgumentCaptor<Collection<DiagnosisKey>> argument = ArgumentCaptor.forClass(Collection.class);
 
-    executor.executePost(keys, buildOkHeaders());
+    executor.executePost(keys);
 
     verify(diagnosisKeyService, atLeastOnce()).saveDiagnosisKeys(argument.capture());
     assertThat(argument.getValue()).isEmpty();
@@ -132,7 +128,7 @@ class SubmissionControllerTest {
     submittedKeys.add(outdatedKey);
     ArgumentCaptor<Collection<DiagnosisKey>> argument = ArgumentCaptor.forClass(Collection.class);
 
-    executor.executePost(submittedKeys, buildOkHeaders());
+    executor.executePost(submittedKeys);
 
     verify(diagnosisKeyService, atLeastOnce()).saveDiagnosisKeys(argument.capture());
     submittedKeys.remove(outdatedKey);
@@ -144,7 +140,7 @@ class SubmissionControllerTest {
     Collection<TemporaryExposureKey> submittedKeys = buildPayloadWithMultipleKeys();
     ArgumentCaptor<Collection<DiagnosisKey>> argument = ArgumentCaptor.forClass(Collection.class);
 
-    executor.executePost(submittedKeys, buildOkHeaders());
+    executor.executePost(submittedKeys);
 
     verify(diagnosisKeyService, atLeastOnce()).saveDiagnosisKeys(argument.capture());
     verify(fakeDelayManager, times(1)).updateFakeRequestDelay(anyLong());
@@ -162,9 +158,10 @@ class SubmissionControllerTest {
 
   private static Stream<Arguments> createIncompleteHeaders() {
     return Stream.of(
-        Arguments.of(setContentTypeProtoBufHeader(new HttpHeaders())),
-        Arguments.of(setContentTypeProtoBufHeader(setCwaFakeHeader(new HttpHeaders(), "0"))),
-        Arguments.of(setContentTypeProtoBufHeader(setCwaAuthHeader(new HttpHeaders()))));
+        Arguments.of(HttpHeaderBuilder.builder().build()),
+        Arguments.of(HttpHeaderBuilder.builder().contentTypeProtoBufHeader().build()),
+        Arguments.of(HttpHeaderBuilder.builder().contentTypeProtoBufHeader().cwaFakeHeader("0").build()),
+        Arguments.of(HttpHeaderBuilder.builder().contentTypeProtoBufHeader().cwaAuthHeader().build()));
   }
 
   @ParameterizedTest
@@ -193,7 +190,7 @@ class SubmissionControllerTest {
   void invalidTanHandling() {
     when(tanVerifier.verifyTan(anyString())).thenReturn(false);
 
-    ResponseEntity<Void> actResponse = executor.executePost(buildPayloadWithOneKey(), buildOkHeaders());
+    ResponseEntity<Void> actResponse = executor.executePost(buildPayloadWithOneKey());
 
     verify(diagnosisKeyService, never()).saveDiagnosisKeys(any());
     verify(fakeDelayManager, times(1)).updateFakeRequestDelay(anyLong());
@@ -202,7 +199,7 @@ class SubmissionControllerTest {
 
   @Test
   void checkRealRequestHandlingIsMonitored() {
-    executor.executePost(buildPayloadWithOneKey(), buildOkHeaders());
+    executor.executePost(buildPayloadWithOneKey());
 
     verify(submissionMonitor, times(1)).incrementRequestCounter();
     verify(submissionMonitor, times(1)).incrementRealRequestCounter();
@@ -214,7 +211,7 @@ class SubmissionControllerTest {
   void checkInvalidTanHandlingIsMonitored() {
     when(tanVerifier.verifyTan(anyString())).thenReturn(false);
 
-    executor.executePost(buildPayloadWithOneKey(), buildOkHeaders());
+    executor.executePost(buildPayloadWithOneKey());
 
     verify(submissionMonitor, times(1)).incrementRequestCounter();
     verify(submissionMonitor, times(1)).incrementRealRequestCounter();
