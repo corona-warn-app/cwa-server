@@ -20,28 +20,13 @@
 
 package app.coronawarn.server.services.callback.controller;
 
-import static java.time.ZoneOffset.UTC;
-
-
-import app.coronawarn.server.common.protocols.external.exposurenotification.TemporaryExposureKey;
-import app.coronawarn.server.common.protocols.internal.SubmissionPayload;
-import com.google.protobuf.ByteString;
 import java.net.URI;
-import java.time.Instant;
-import java.time.LocalDate;
-import java.util.Collection;
-import java.util.Collections;
 import org.springframework.boot.test.web.client.TestRestTemplate;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.MediaType;
-import org.springframework.http.RequestEntity;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 
 /**
- * RequestExecutor executes requests against the diagnosis key submission endpoint and holds a various methods for test
- * request generation.
+ * RequestExecutor executes requests against the diagnosis key callback endpoint for testing purposes.
  */
 @Component
 public class RequestExecutor {

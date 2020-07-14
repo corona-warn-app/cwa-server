@@ -54,13 +54,13 @@ public class CallbackController {
   }
 
   /**
-   * Handles diagnosis key submission requests.
+   * Handles Callback GET requests from Federation Gateway.
    *
-   * @param batchTag   The batchTag for the latest batch.
-   * @param date The date of the batch.
+   * @param batchTag The batchTag for the latest batch.
+   * @param date     The date of the batch.
    * @return An empty response body.
    */
-  @GetMapping(value = CALLBACK_ROUTE, params = {"batchTag!="} )
+  @GetMapping(value = CALLBACK_ROUTE, params = {"batchTag!="})
   @Timed(description = "Time spent handling callback.")
   public ResponseEntity<Void> handleCallback(@RequestParam(required = true) String batchTag,
       @Valid @Pattern(regexp = dateRegex) @RequestParam String date) throws ParseException {
