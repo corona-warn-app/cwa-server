@@ -25,6 +25,8 @@ import javax.validation.ConstraintViolationException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.MethodArgumentNotValidException;
+import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -41,7 +43,8 @@ public class ApiExceptionHandler {
     logger.error("Unable to handle {}", wr.getDescription(false), ex);
   }
 
-  @ExceptionHandler({ConstraintViolationException.class, ParseException.class})
+  @ExceptionHandler({ConstraintViolationException.class, ParseException.class, IllegalArgumentException.class,
+      MissingServletRequestParameterException.class})
   @ResponseStatus(HttpStatus.BAD_REQUEST)
   public void handleConstraintViolationException(Exception ex, WebRequest wr) {
     logger.error("Erroneous callback url call {}", wr.getDescription(false), ex);

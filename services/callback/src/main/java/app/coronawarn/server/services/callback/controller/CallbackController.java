@@ -60,9 +60,9 @@ public class CallbackController {
    * @param date The date of the batch.
    * @return An empty response body.
    */
-  @GetMapping(value = CALLBACK_ROUTE)
+  @GetMapping(value = CALLBACK_ROUTE, params = {"batchTag!="} )
   @Timed(description = "Time spent handling callback.")
-  public ResponseEntity<Void> handleCallback(@RequestParam String batchTag,
+  public ResponseEntity<Void> handleCallback(@RequestParam(required = true) String batchTag,
       @Valid @Pattern(regexp = dateRegex) @RequestParam String date) throws ParseException {
     federationBatchDownloadRepository.saveDoNothingOnConflict(batchTag, parseDateString(date));
     return ResponseEntity.ok().build();
