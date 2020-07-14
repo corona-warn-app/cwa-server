@@ -37,6 +37,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Set;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -63,6 +64,12 @@ class HourIndexingDecoratorTest {
   @BeforeEach
   void setup() {
     diagnosisKeyBundler = new ProdDiagnosisKeyBundler(distributionServiceConfig);
+  }
+
+  @AfterEach
+  void tearDown() {
+    TimeUtils.setUtcDate(null);
+    TimeUtils.setUtcHour(null);
   }
 
   @Test
