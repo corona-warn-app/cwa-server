@@ -45,6 +45,7 @@ import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
 import static org.springframework.http.HttpStatus.METHOD_NOT_ALLOWED;
 import static org.springframework.http.HttpStatus.OK;
 
+
 import app.coronawarn.server.common.persistence.domain.DiagnosisKey;
 import app.coronawarn.server.common.persistence.service.DiagnosisKeyService;
 import app.coronawarn.server.common.protocols.external.exposurenotification.TemporaryExposureKey;
@@ -69,7 +70,6 @@ import org.mockito.ArgumentCaptor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.boot.web.servlet.server.Encoding;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
@@ -209,6 +209,12 @@ class SubmissionControllerTest {
   }
 
   @Test
+  void invalidSubmissionPayload() {
+    ResponseEntity<Void> actResponse = executor.executePost(buildPayloadWithTooLargePadding(), buildOkHeaders());
+    assertThat(actResponse.getStatusCode()).isEqualTo(BAD_REQUEST);
+  }
+
+  @Test
   void checkRealRequestHandlingIsMonitored() {
     executor.executePost(buildPayloadWithOneKey(), buildOkHeaders());
 
@@ -248,6 +254,17 @@ class SubmissionControllerTest {
         .build();
   }
 
+  private SubmissionPayload buildPayloadWithTooLargePadding() {
+
+    byte[] bytes = new byte[200000];
+    Arrays.fill(bytes, (byte) 2);
+
+    return SubmissionPayload.newBuilder()
+        .addAllKeys(buildPayloadWithMultipleKeys())
+        .setPadding(ByteString.copyFrom(bytes))
+        .build();
+  }
+
   private Collection<TemporaryExposureKey> buildPayloadWithSingleOutdatedKey() {
     TemporaryExposureKey outdatedKey = createOutdatedKey();
     return Stream.of(outdatedKey).collect(Collectors.toCollection(ArrayList::new));
@@ -268,7 +285,7 @@ class SubmissionControllerTest {
   }
 
   private void assertElementsCorrespondToEachOther(Collection<TemporaryExposureKey> submittedTemporaryExposureKeys,
-      Collection<DiagnosisKey> savedDiagnosisKeys) {
+                                                   Collection<DiagnosisKey> savedDiagnosisKeys) {
 
     Set<DiagnosisKey> submittedDiagnosisKeys = submittedTemporaryExposureKeys.stream()
         .map(submittedDiagnosisKey -> DiagnosisKey.builder().fromProtoBuf(submittedDiagnosisKey).build())
