@@ -63,14 +63,12 @@ public class CallbackController {
   @GetMapping(value = CALLBACK_ROUTE)
   @Timed(description = "Time spent handling callback.")
   public ResponseEntity<Void> handleCallback(@RequestParam String batchTag,
-      @Valid @Pattern(regexp = dateRegex) @RequestParam String date)
-      throws ParseException {
+      @Valid @Pattern(regexp = dateRegex) @RequestParam String date) throws ParseException {
     federationBatchDownloadRepository.saveDoNothingOnConflict(batchTag, parseDateString(date));
     return ResponseEntity.ok().build();
   }
 
-  private Date parseDateString(
-      @RequestParam @Valid @Pattern(regexp = dateRegex) String date)
+  private Date parseDateString(String date)
       throws ParseException {
     SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
     return sdf.parse(date);
