@@ -35,6 +35,7 @@ import app.coronawarn.server.services.distribution.assembly.structure.util.TimeU
 import app.coronawarn.server.services.distribution.config.DistributionServiceConfig;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.ZoneOffset;
 import java.util.List;
 import java.util.Set;
 import org.junit.jupiter.api.AfterEach;
@@ -68,14 +69,14 @@ class HourIndexingDecoratorTest {
 
   @AfterEach
   void tearDown() {
-    TimeUtils.setUtcHour(null);
+    TimeUtils.setNow(null);
   }
 
   @Test
   void excludesHoursThatExceedTheMaximumNumberOfKeys() {
     List<DiagnosisKey> diagnosisKeys = buildDiagnosisKeys(6, LocalDateTime.of(1970, 1, 3, 4, 0), 2);
 
-    TimeUtils.setUtcHour(LocalDateTime.of(1970, 1, 3, 0, 0));
+    TimeUtils.setNow(LocalDateTime.of(1970, 1, 3, 0, 0).toInstant(ZoneOffset.UTC));
 
     DistributionServiceConfig svcConfig = mock(DistributionServiceConfig.class);
     when(svcConfig.getExpiryPolicyMinutes()).thenReturn(120);
@@ -97,7 +98,7 @@ class HourIndexingDecoratorTest {
   void excludesEmptyHoursFromIndex() {
     List<DiagnosisKey> diagnosisKeys = buildDiagnosisKeys(6, LocalDateTime.of(1970, 1, 5, 0, 0), 5);
 
-    TimeUtils.setUtcHour(LocalDateTime.of(1970, 1, 5, 1, 0));
+    TimeUtils.setNow(LocalDateTime.of(1970, 1, 5, 1, 0).toInstant(ZoneOffset.UTC));
 
     diagnosisKeyBundler.setDiagnosisKeys(diagnosisKeys, LocalDateTime.of(1970, 1, 5, 1, 0));
     HourIndexingDecorator decorator = makeDecoratedHourDirectory(diagnosisKeyBundler);
