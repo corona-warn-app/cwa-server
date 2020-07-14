@@ -45,7 +45,6 @@ class TimeUtilsTest {
   void testGetNowIsLocalDateTimeInUtc() {
     final Instant now = Instant.now().truncatedTo(ChronoUnit.SECONDS);
     assertEquals(now, TimeUtils.getNow().truncatedTo(ChronoUnit.SECONDS));
-    System.out.println(Instant.now());
   }
 
 }

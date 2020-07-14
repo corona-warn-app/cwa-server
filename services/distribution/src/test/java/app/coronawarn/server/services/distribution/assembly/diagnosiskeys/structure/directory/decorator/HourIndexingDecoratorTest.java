@@ -68,7 +68,6 @@ class HourIndexingDecoratorTest {
 
   @AfterEach
   void tearDown() {
-    TimeUtils.setUtcDate(null);
     TimeUtils.setUtcHour(null);
   }
 
@@ -76,7 +75,6 @@ class HourIndexingDecoratorTest {
   void excludesHoursThatExceedTheMaximumNumberOfKeys() {
     List<DiagnosisKey> diagnosisKeys = buildDiagnosisKeys(6, LocalDateTime.of(1970, 1, 3, 4, 0), 2);
 
-    TimeUtils.setUtcDate(LocalDate.of(1970, 1, 3));
     TimeUtils.setUtcHour(LocalDateTime.of(1970, 1, 3, 0, 0));
 
     DistributionServiceConfig svcConfig = mock(DistributionServiceConfig.class);
@@ -99,7 +97,6 @@ class HourIndexingDecoratorTest {
   void excludesEmptyHoursFromIndex() {
     List<DiagnosisKey> diagnosisKeys = buildDiagnosisKeys(6, LocalDateTime.of(1970, 1, 5, 0, 0), 5);
 
-    TimeUtils.setUtcDate(LocalDate.of(1970, 1, 5));
     TimeUtils.setUtcHour(LocalDateTime.of(1970, 1, 5, 1, 0));
 
     diagnosisKeyBundler.setDiagnosisKeys(diagnosisKeys, LocalDateTime.of(1970, 1, 5, 1, 0));

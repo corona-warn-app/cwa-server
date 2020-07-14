@@ -28,9 +28,11 @@ import java.time.temporal.ChronoUnit;
 
 public class TimeUtils {
 
-  private static LocalDate utcDate;
   private static LocalDateTime utcHour;
   private static Instant now;
+
+  private TimeUtils() {
+  }
 
   /**
    * Returns the UTC date and time at the beginning of the current hour or creates a new instance if called the first
@@ -45,8 +47,9 @@ public class TimeUtils {
 
 
   /**
-   * Injects UTC date time value
-   * @param dateTime
+   * Injects UTC date time value.
+   *
+   * @param dateTime a LocalDateTime object in UTC timezone.
    */
   public static void setUtcHour(LocalDateTime dateTime) {
     utcHour = dateTime;
@@ -56,18 +59,7 @@ public class TimeUtils {
    * Returns the UTC date or creates a new instance if called the first time.
    */
   public static LocalDate getUtcDate() {
-    if (utcDate == null) {
-      utcDate = LocalDate.now(ZoneOffset.UTC);
-    }
-    return utcDate;
-  }
-
-  /**
-   * Injects UTC date value
-   * @param date
-   */
-  public static void setUtcDate(LocalDate date) {
-    utcDate = date;
+    return getCurrentUtcHour().toLocalDate();
   }
 
   /**
