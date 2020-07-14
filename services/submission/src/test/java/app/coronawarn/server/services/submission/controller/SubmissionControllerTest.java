@@ -69,6 +69,7 @@ import org.mockito.ArgumentCaptor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.boot.web.servlet.server.Encoding;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
@@ -243,7 +244,7 @@ class SubmissionControllerTest {
   private SubmissionPayload buildPayloadWithPadding() {
     return SubmissionPayload.newBuilder()
         .addAllKeys(buildPayloadWithMultipleKeys())
-        .setPadding("PaddingString")
+        .setPadding(ByteString.copyFrom("PaddingString".getBytes()))
         .build();
   }
 

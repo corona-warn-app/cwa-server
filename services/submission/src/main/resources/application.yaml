@@ -41,6 +41,9 @@ services:
         trust-store-password: ${SSL_VERIFICATION_TRUSTSTORE_PASSWORD}
 
 spring:
+  http:
+    multipart:
+      max-request-size: 100KB
   lifecycle:
     # keep in sync or lower than the kubernetes setting 'terminationGracePeriodSeconds'
     # 5s +5s Feign client + 20s DB timeout
