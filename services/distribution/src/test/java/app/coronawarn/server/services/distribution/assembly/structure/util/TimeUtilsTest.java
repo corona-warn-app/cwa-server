@@ -20,31 +20,31 @@
 
 package app.coronawarn.server.services.distribution.assembly.structure.util;
 
+import static java.time.ZoneOffset.UTC;
+import static java.time.temporal.ChronoUnit.HOURS;
+import static java.time.temporal.ChronoUnit.MINUTES;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.ZoneOffset;
-import java.time.temporal.ChronoUnit;
 import org.junit.jupiter.api.Test;
 
 class TimeUtilsTest {
 
   @Test
   void testGetCurrentUtcDateIsLocalDateNowInUtc() {
-    assertEquals(LocalDate.now(ZoneOffset.UTC), TimeUtils.getUtcDate());
+    assertEquals(LocalDate.now(UTC), TimeUtils.getUtcDate());
   }
 
   @Test
   void testGetUtcHour() {
-    assertEquals(LocalDateTime.now(ZoneOffset.UTC).truncatedTo(ChronoUnit.HOURS), TimeUtils.getCurrentUtcHour());
+    assertEquals(LocalDateTime.now(UTC).truncatedTo(HOURS), TimeUtils.getCurrentUtcHour());
   }
 
   @Test
   void testGetNowIsLocalDateTimeInUtc() {
-    final Instant now = Instant.now().truncatedTo(ChronoUnit.SECONDS);
-    assertEquals(now, TimeUtils.getNow().truncatedTo(ChronoUnit.SECONDS));
+    assertEquals(Instant.now().truncatedTo(MINUTES), TimeUtils.getNow().truncatedTo(MINUTES));
   }
 
 }
