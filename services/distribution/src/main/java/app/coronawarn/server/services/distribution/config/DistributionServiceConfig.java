@@ -405,6 +405,7 @@ public class DistributionServiceConfig {
     private Boolean setPublicReadAclOnPutObject;
     private Integer maxNumberOfFailedOperations;
     private Integer maxNumberOfS3Threads;
+    private Boolean forceUpdateKeyfiles = Boolean.FALSE;
 
     public String getAccessKey() {
       return accessKey;
@@ -468,6 +469,14 @@ public class DistributionServiceConfig {
 
     public void setMaxNumberOfS3Threads(Integer maxNumberOfS3Threads) {
       this.maxNumberOfS3Threads = maxNumberOfS3Threads;
+    }
+
+    public Boolean getForceUpdateKeyfiles() {
+      return forceUpdateKeyfiles;
+    }
+
+    public void setForceUpdateKeyfiles(Boolean forceUpdateKeyfiles) {
+      this.forceUpdateKeyfiles = forceUpdateKeyfiles;
     }
   }
 }
