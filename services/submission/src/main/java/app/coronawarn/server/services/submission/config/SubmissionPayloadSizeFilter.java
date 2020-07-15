@@ -35,13 +35,7 @@ public class SubmissionPayloadSizeFilter extends OncePerRequestFilter {
   public static final int MAX_REQUEST_SIZE = 100 * 1024;
 
   /**
-   * Filters each request that exceeds the maximum size of 100KB
-   *
-   * @param request
-   * @param response
-   * @param filterChain
-   * @throws ServletException
-   * @throws IOException
+   * Filters each request that exceeds the maximum size of 100KB.
    */
   @Override
   protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
