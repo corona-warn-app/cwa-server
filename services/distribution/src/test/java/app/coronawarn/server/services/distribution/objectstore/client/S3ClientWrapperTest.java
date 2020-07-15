@@ -32,12 +32,11 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-import app.coronawarn.server.services.distribution.config.DistributionServiceConfig;
-import app.coronawarn.server.services.distribution.objectstore.client.ObjectStoreClient.HeaderKey;
 import java.nio.file.Path;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+
 import org.assertj.core.util.Lists;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -48,6 +47,7 @@ import org.junit.jupiter.params.provider.MethodSource;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.ConfigFileApplicationContextInitializer;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -56,6 +56,9 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.retry.annotation.EnableRetry;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
+
+import app.coronawarn.server.services.distribution.config.DistributionServiceConfig;
+import app.coronawarn.server.services.distribution.objectstore.client.ObjectStoreClient.HeaderKey;
 import software.amazon.awssdk.core.exception.SdkClientException;
 import software.amazon.awssdk.core.exception.SdkException;
 import software.amazon.awssdk.core.sync.RequestBody;
@@ -98,7 +101,8 @@ class S3ClientWrapperTest {
   public static class RetryS3ClientConfig {
 
     @Bean
-    public ObjectStoreClient createS3ClientWrapper(S3Client s3Client) {
+    @ConditionalOnMissingBean
+    public ObjectStoreClient createObjectStoreClient(S3Client s3Client) {
       return new S3ClientWrapper(s3Client);
     }
   }
