@@ -47,9 +47,9 @@ import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
 /**
- * Generates random diagnosis keys for the time frame between the last diagnosis key in the database and now (last full
- * hour) and writes them to the database. If there are no diagnosis keys in the database yet, then random diagnosis keys
- * for the time frame between the last full hour and the beginning of the retention period (14 days ago) will be
+ * Generates random diagnosis keys for the time frame between the last diagnosis key in the database and now
+ * and writes them to the database. If there are no diagnosis keys in the database yet, then random diagnosis keys
+ * for the time frame between current hour and the beginning of the retention period (14 days ago) will be
  * generated. The average number of exposure keys to be generated per hour is configurable in the application properties
  * (profile = {@code testdata}).
  */
@@ -106,7 +106,7 @@ public class TestDataGeneration implements ApplicationRunner {
     PoissonDistribution poisson =
         new PoissonDistribution(random, this.config.getExposuresPerHour(), POISSON_EPSILON, POISSON_MAX_ITERATIONS);
 
-    if (startTimestamp == endTimestamp) {
+    if (startTimestamp > endTimestamp) {
       logger.debug("Skipping test data generation, latest diagnosis keys are still up-to-date.");
       return;
     }
