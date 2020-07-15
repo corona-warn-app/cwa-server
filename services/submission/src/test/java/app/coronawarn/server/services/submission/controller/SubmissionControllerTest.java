@@ -50,6 +50,7 @@ import app.coronawarn.server.common.persistence.domain.DiagnosisKey;
 import app.coronawarn.server.common.persistence.service.DiagnosisKeyService;
 import app.coronawarn.server.common.protocols.external.exposurenotification.TemporaryExposureKey;
 import app.coronawarn.server.common.protocols.internal.SubmissionPayload;
+import app.coronawarn.server.services.submission.config.SubmissionPayloadSizeFilter;
 import app.coronawarn.server.services.submission.config.SubmissionServiceConfig;
 import app.coronawarn.server.services.submission.monitoring.SubmissionMonitor;
 import app.coronawarn.server.services.submission.verification.TanVerifier;
@@ -255,9 +256,8 @@ class SubmissionControllerTest {
   }
 
   private SubmissionPayload buildPayloadWithTooLargePadding() {
-
-    byte[] bytes = new byte[200000];
-    Arrays.fill(bytes, (byte) 2);
+    int exceedingSize = 2 * SubmissionPayloadSizeFilter.MAX_REQUEST_SIZE;
+    byte[] bytes = new byte[exceedingSize];
 
     return SubmissionPayload.newBuilder()
         .addAllKeys(buildPayloadWithMultipleKeys())

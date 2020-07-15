@@ -12,7 +12,7 @@ import org.springframework.web.filter.OncePerRequestFilter;
 @Component
 public class SubmissionPayloadSizeFilter extends OncePerRequestFilter {
 
-  private static final int MAX_REQUEST_SIZE = 100 * 1024;
+  public static final int MAX_REQUEST_SIZE = 100 * 1024;
 
   /**
    * Filters each request that exceeds the maximum size of 100KB
