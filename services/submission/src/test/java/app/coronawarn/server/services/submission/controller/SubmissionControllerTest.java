@@ -107,7 +107,7 @@ class SubmissionControllerTest {
 
   @Test
   void checkResponseStatusForValidParameters() {
-    ResponseEntity<Void> actResponse = executor.executePost(buildPayloadWithMultipleKeys(), buildOkHeaders());
+    ResponseEntity<Void> actResponse = executor.executePost(buildPayload(buildMultipleKeys()), buildOkHeaders());
     assertThat(actResponse.getStatusCode()).isEqualTo(OK);
   }
 
@@ -125,10 +125,9 @@ class SubmissionControllerTest {
 
   @Test
   void singleKeyWithOutdatedRollingStartIntervalNumberDoesNotGetSaved() {
-    Collection<TemporaryExposureKey> keys = buildPayloadWithSingleOutdatedKey();
     ArgumentCaptor<Collection<DiagnosisKey>> argument = ArgumentCaptor.forClass(Collection.class);
 
-    executor.executePost(keys, buildOkHeaders());
+    executor.executePost(buildPayload(createOutdatedKey()), buildOkHeaders());
 
     verify(diagnosisKeyService, atLeastOnce()).saveDiagnosisKeys(argument.capture());
     assertThat(argument.getValue()).isEmpty();
@@ -136,12 +135,12 @@ class SubmissionControllerTest {
 
   @Test
   void keysWithOutdatedRollingStartIntervalNumberDoNotGetSaved() {
-    Collection<TemporaryExposureKey> submittedKeys = buildPayloadWithMultipleKeys();
+    Collection<TemporaryExposureKey> submittedKeys = buildMultipleKeys();
     TemporaryExposureKey outdatedKey = createOutdatedKey();
     submittedKeys.add(outdatedKey);
     ArgumentCaptor<Collection<DiagnosisKey>> argument = ArgumentCaptor.forClass(Collection.class);
 
-    executor.executePost(submittedKeys, buildOkHeaders());
+    executor.executePost(buildPayload(submittedKeys), buildOkHeaders());
 
     verify(diagnosisKeyService, atLeastOnce()).saveDiagnosisKeys(argument.capture());
     submittedKeys.remove(outdatedKey);
@@ -150,10 +149,10 @@ class SubmissionControllerTest {
 
   @Test
   void checkSaveOperationCallAndFakeDelayUpdateForValidParameters() {
-    Collection<TemporaryExposureKey> submittedKeys = buildPayloadWithMultipleKeys();
+    Collection<TemporaryExposureKey> submittedKeys = buildMultipleKeys();
     ArgumentCaptor<Collection<DiagnosisKey>> argument = ArgumentCaptor.forClass(Collection.class);
 
-    executor.executePost(submittedKeys, buildOkHeaders());
+    executor.executePost(buildPayload(submittedKeys), buildOkHeaders());
 
     verify(diagnosisKeyService, atLeastOnce()).saveDiagnosisKeys(argument.capture());
     verify(fakeDelayManager, times(1)).updateFakeRequestDelay(anyLong());
@@ -237,7 +236,35 @@ class SubmissionControllerTest {
     verify(submissionMonitor, times(1)).incrementInvalidTanRequestCounter();
   }
 
-  private Collection<TemporaryExposureKey> buildPayloadWithMultipleKeys() {
+  private SubmissionPayload buildPayload(TemporaryExposureKey key) {
+    Collection<TemporaryExposureKey> keys = Stream.of(key).collect(Collectors.toCollection(ArrayList::new));
+    return buildPayload(keys);
+  }
+
+  private SubmissionPayload buildPayload(Collection<TemporaryExposureKey> keys) {
+    return SubmissionPayload.newBuilder()
+        .addAllKeys(keys)
+        .build();
+  }
+
+  private SubmissionPayload buildPayloadWithPadding() {
+    return SubmissionPayload.newBuilder()
+        .addAllKeys(buildMultipleKeys())
+        .setPadding(ByteString.copyFrom("PaddingString".getBytes()))
+        .build();
+  }
+
+  private SubmissionPayload buildPayloadWithTooLargePadding() {
+    int exceedingSize = 2 * SubmissionPayloadSizeFilter.MAX_REQUEST_SIZE;
+    byte[] bytes = new byte[exceedingSize];
+
+    return SubmissionPayload.newBuilder()
+        .addAllKeys(buildMultipleKeys())
+        .setPadding(ByteString.copyFrom(bytes))
+        .build();
+  }
+
+  private Collection<TemporaryExposureKey> buildMultipleKeys() {
     int rollingStartIntervalNumber1 = createRollingStartIntervalNumber(config.getRetentionDays() - 1);
     int rollingStartIntervalNumber2 = rollingStartIntervalNumber1 + DiagnosisKey.EXPECTED_ROLLING_PERIOD;
     int rollingStartIntervalNumber3 = rollingStartIntervalNumber2 + DiagnosisKey.EXPECTED_ROLLING_PERIOD;
@@ -248,28 +275,6 @@ class SubmissionControllerTest {
         .collect(Collectors.toCollection(ArrayList::new));
   }
 
-  private SubmissionPayload buildPayloadWithPadding() {
-    return SubmissionPayload.newBuilder()
-        .addAllKeys(buildPayloadWithMultipleKeys())
-        .setPadding(ByteString.copyFrom("PaddingString".getBytes()))
-        .build();
-  }
-
-  private SubmissionPayload buildPayloadWithTooLargePadding() {
-    int exceedingSize = 2 * SubmissionPayloadSizeFilter.MAX_REQUEST_SIZE;
-    byte[] bytes = new byte[exceedingSize];
-
-    return SubmissionPayload.newBuilder()
-        .addAllKeys(buildPayloadWithMultipleKeys())
-        .setPadding(ByteString.copyFrom(bytes))
-        .build();
-  }
-
-  private Collection<TemporaryExposureKey> buildPayloadWithSingleOutdatedKey() {
-    TemporaryExposureKey outdatedKey = createOutdatedKey();
-    return Stream.of(outdatedKey).collect(Collectors.toCollection(ArrayList::new));
-  }
-
   private TemporaryExposureKey createOutdatedKey() {
     return TemporaryExposureKey.newBuilder()
         .setKeyData(ByteString.copyFromUtf8(VALID_KEY_DATA_2))
@@ -278,10 +283,9 @@ class SubmissionControllerTest {
         .setTransmissionRiskLevel(5).build();
   }
 
-  private static Collection<TemporaryExposureKey> buildPayloadWithInvalidKey() {
-    return Stream.of(
-        buildTemporaryExposureKey(VALID_KEY_DATA_1, createRollingStartIntervalNumber(2), 999))
-        .collect(Collectors.toCollection(ArrayList::new));
+  private SubmissionPayload buildPayloadWithInvalidKey() {
+    TemporaryExposureKey invalidKey = buildTemporaryExposureKey(VALID_KEY_DATA_1, createRollingStartIntervalNumber(2), 999);
+    return buildPayload(invalidKey);
   }
 
   private void assertElementsCorrespondToEachOther(Collection<TemporaryExposureKey> submittedTemporaryExposureKeys,
