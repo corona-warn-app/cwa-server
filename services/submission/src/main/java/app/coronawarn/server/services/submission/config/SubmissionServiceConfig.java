@@ -23,6 +23,7 @@ package app.coronawarn.server.services.submission.config;
 import java.io.File;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
+import javax.validation.constraints.Pattern;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.annotation.Validated;
@@ -32,14 +33,25 @@ import org.springframework.validation.annotation.Validated;
 @Validated
 public class SubmissionServiceConfig {
 
+  private static final String PATH_REGEX = "^[/]?[a-zA-Z0-9_]+[/[a-zA-Z0-9_]+]*$";
+  private static final String URL_WITH_PORT_REGEX = "^http[s]?://[a-z0-9-]+(\\.[a-z0-9-]+)*:[0-9]{2,6}$";
+
   // Exponential moving average of the last N real request durations (in ms), where
   // N = fakeDelayMovingAverageSamples.
+  @Min(1)
+  @Max(3000)
   private Long initialFakeDelayMilliseconds;
+  @Min(1)
+  @Max(100)
   private Long fakeDelayMovingAverageSamples;
+  @Min(7)
+  @Max(28)
   private Integer retentionDays;
   @Min(1)
   @Max(25)
   private Integer randomKeyPaddingMultiplier;
+  @Min(1)
+  @Max(10000)
   private Integer connectionPoolSize;
   private Payload payload;
   private Verification verification;
@@ -96,6 +108,8 @@ public class SubmissionServiceConfig {
 
   private static class Payload {
 
+    @Min(7)
+    @Max(28)
     private Integer maxNumberOfKeys;
 
     public Integer getMaxNumberOfKeys() {
@@ -120,8 +134,11 @@ public class SubmissionServiceConfig {
   }
 
   private static class Verification {
+
+    @Pattern(regexp = URL_WITH_PORT_REGEX)
     private String baseUrl;
 
+    @Pattern(regexp = PATH_REGEX)
     private String path;
 
     public String getBaseUrl() {
@@ -142,6 +159,9 @@ public class SubmissionServiceConfig {
   }
 
   private static class Monitoring {
+
+    @Min(1)
+    @Max(1000)
     private Long batchSize;
 
     public Long getBatchSize() {

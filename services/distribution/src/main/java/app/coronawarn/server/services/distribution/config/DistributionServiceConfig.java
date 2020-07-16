@@ -21,19 +21,47 @@
 package app.coronawarn.server.services.distribution.config;
 
 import app.coronawarn.server.common.protocols.external.exposurenotification.SignatureInfo;
+import javax.validation.constraints.Max;
+import javax.validation.constraints.Min;
+import javax.validation.constraints.Pattern;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Component;
+import org.springframework.validation.annotation.Validated;
 
 @Component
 @ConfigurationProperties(prefix = "services.distribution")
+@Validated
 public class DistributionServiceConfig {
+
+  private static final String PATH_REGEX = "^[/]?[a-zA-Z0-9_]+(/[a-zA-Z0-9_]+)*[/]?$";
+  private static final String FILE_NAME_REGEX = "^[a-zA-Z0-9_-]+$";
+  private static final String FILE_NAME_WITH_TYPE_REGEX = "^[a-zA-Z0-9_-]+\\.[a-z]+$";
+  private static final String CHAR_AND_NUMBER_REGEX = "^[a-zA-Z0-9]+$";
+  private static final String CHAR_NUMBER_AND_SPACE_REGEX = "^[a-zA-Z0-9_\\s]+$";
+  private static final String NO_WHITESPACE_REGEX = "^[\\S]+$";
+  private static final String URL_PATH_REGEX = "^[a-zA-Z_-]+$";
+  private static final String URL_REGEX = "^http[s]?://[a-z0-9]+[\\.[a-z0-9]+]*";
+  private static final String NUMBER_REGEX = "^[0-9]+$";
+  private static final String VERSION_REGEX = "^v[0-9]+$";
+  private static final String ALGORITHM_OID_REGEX = "^[0-9]+[\\.[0-9]+]*$";
+  private static final String BUNDLE_REGEX = "^[a-z-]+[\\.[a-z-]+]*$";
+  private static final String PRIVATE_KEY_REGEX = "^(classpath:|file://)[/]?[a-zA-Z0-9_]+[/[a-zA-Z0-9_]+]*.pem$";
 
   private Paths paths;
   private TestData testData;
+  @Min(0)
+  @Max(28)
   private Integer retentionDays;
+  @Min(120)
+  @Max(720)
   private Integer expiryPolicyMinutes;
+  @Min(0)
+  @Max(200)
   private Integer shiftingPolicyThreshold;
+  @Min(600000)
+  @Max(750000)
   private Integer maximumNumberOfKeysPerBundle;
+  @Pattern(regexp = FILE_NAME_REGEX)
   private String outputFileName;
   private Boolean includeIncompleteDays;
   private Boolean includeIncompleteHours;
@@ -149,8 +177,12 @@ public class DistributionServiceConfig {
 
   public static class TekExport {
 
+    @Pattern(regexp = FILE_NAME_WITH_TYPE_REGEX)
     private String fileName;
+    @Pattern(regexp = CHAR_NUMBER_AND_SPACE_REGEX)
     private String fileHeader;
+    @Min(0)
+    @Max(32)
     private Integer fileHeaderWidth;
 
     public String getFileName() {
@@ -202,7 +234,9 @@ public class DistributionServiceConfig {
 
   public static class Paths {
 
+    @Pattern(regexp = PRIVATE_KEY_REGEX)
     private String privateKey;
+    @Pattern(regexp = PATH_REGEX)
     private String output;
 
     public String getPrivateKey() {
@@ -224,14 +258,23 @@ public class DistributionServiceConfig {
 
   public static class Api {
 
+    @Pattern(regexp = URL_PATH_REGEX)
     private String versionPath;
+    @Pattern(regexp = VERSION_REGEX)
     private String versionV1;
+    @Pattern(regexp = URL_PATH_REGEX)
     private String countryPath;
+    @Pattern(regexp = URL_PATH_REGEX)
     private String countryGermany;
+    @Pattern(regexp = URL_PATH_REGEX)
     private String datePath;
+    @Pattern(regexp = URL_PATH_REGEX)
     private String hourPath;
+    @Pattern(regexp = URL_PATH_REGEX)
     private String diagnosisKeysPath;
+    @Pattern(regexp = URL_PATH_REGEX)
     private String parametersPath;
+    @Pattern(regexp = URL_PATH_REGEX)
     private String appConfigFileName;
 
     public String getVersionPath() {
@@ -309,13 +352,20 @@ public class DistributionServiceConfig {
 
   public static class Signature {
 
+    @Pattern(regexp = BUNDLE_REGEX)
     private String appBundleId;
     private String androidPackage;
+    @Pattern(regexp = NUMBER_REGEX)
     private String verificationKeyId;
+    @Pattern(regexp = VERSION_REGEX)
     private String verificationKeyVersion;
+    @Pattern(regexp = ALGORITHM_OID_REGEX)
     private String algorithmOid;
+    @Pattern(regexp = CHAR_AND_NUMBER_REGEX)
     private String algorithmName;
+    @Pattern(regexp = FILE_NAME_WITH_TYPE_REGEX)
     private String fileName;
+    @Pattern(regexp = CHAR_AND_NUMBER_REGEX)
     private String securityProvider;
 
     public String getAppBundleId() {
@@ -397,13 +447,23 @@ public class DistributionServiceConfig {
 
   public static class ObjectStore {
 
+    @Pattern(regexp = NO_WHITESPACE_REGEX)
     private String accessKey;
+    @Pattern(regexp = NO_WHITESPACE_REGEX)
     private String secretKey;
+    @Pattern(regexp = URL_REGEX)
     private String endpoint;
+    @Min(1)
+    @Max(65535)
     private Integer port;
+    @Pattern(regexp = CHAR_AND_NUMBER_REGEX)
     private String bucket;
     private Boolean setPublicReadAclOnPutObject;
+    @Min(1)
+    @Max(64)
     private Integer maxNumberOfFailedOperations;
+    @Min(1)
+    @Max(64)
     private Integer maxNumberOfS3Threads;
 
     public String getAccessKey() {
