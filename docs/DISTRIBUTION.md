@@ -125,3 +125,15 @@ Apple.
 
 Each run creates all hourly and daily archives for the last 14 days. To prevent unnecessary uploads the
 [`cwa-hash`](#cwa-hash) header has been introduced.
+
+## Diagnosis Key Export Files
+
+Coming soon
+
+## Signing
+
+Coming soon
+
+## Bundling and Shifting
+
+Coming soon
