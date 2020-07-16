@@ -33,7 +33,6 @@ import java.util.Collections;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
-import org.springframework.http.MediaType;
 import org.springframework.http.RequestEntity;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
@@ -66,14 +65,15 @@ public class RequestExecutor {
   }
 
   public ResponseEntity<Void> executePost(Collection<TemporaryExposureKey> keys) {
-    SubmissionPayload body = SubmissionPayload.newBuilder().addAllKeys(keys).build();
-    HttpHeaders headers = HttpHeaderBuilder.builder()
-        .contentTypeProtoBufHeader()
-        .cwaAuthHeader()
-        .cwaFakeHeader("0")
-        .build();
+    return executePost(keys, buildDefaultHeader());
+  }
 
-    return execute(HttpMethod.POST, new RequestEntity<>(body, headers, HttpMethod.POST, SUBMISSION_URL));
+  private HttpHeaders buildDefaultHeader() {
+    return HttpHeaderBuilder.builder()
+        .contentTypeProtoBuf()
+        .cwaAuth()
+        .withoutCwaFake()
+        .build();
   }
 
   public static TemporaryExposureKey buildTemporaryExposureKey(
