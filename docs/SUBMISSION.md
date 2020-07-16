@@ -18,3 +18,15 @@ Profile                                           | Effect
 `disable-ssl-client-verification-verify-hostname` | Disables the verification of the SSL hostname for the connection to the verification server.
 
 Please refer to the inline comments in the base `application.yaml` configuration file for further details on the configuration properties impacted by the above profiles.
+
+## Validation
+
+Custom Annotation `@ValidSubmissionPayload`
+   
+You will find the implementation file at [`/Users/i353910/Work/cwa/cwa-server/services/submission/src/main/java/app/coronawarn/server/services/submission/validation/ValidSubmissionPayload.java`](/Users/i353910/Work/cwa/cwa-server/services/submission/src/main/java/app/coronawarn/server/services/submission/validation/ValidSubmissionPayload.java)
+   
+    Validation Constraints:
+
+        StartIntervalNumber values from the same `SubmissionPayload` shall be unique(should not receive the same key twice in the same package.
+        There must not be any keys in the `SubmissionPayload` that have overlapping time windows.
+        The period of time covered by the data file must not exceed the configured maximum number of days( limit of 14 days/package). No submission with more than 14 keys.
