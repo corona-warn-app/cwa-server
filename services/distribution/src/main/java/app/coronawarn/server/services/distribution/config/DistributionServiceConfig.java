@@ -40,12 +40,12 @@ public class DistributionServiceConfig {
   private static final String CHAR_NUMBER_AND_SPACE_REGEX = "^[a-zA-Z0-9_\\s]+$";
   private static final String NO_WHITESPACE_REGEX = "^[\\S]+$";
   private static final String URL_PATH_REGEX = "^[a-zA-Z_-]+$";
-  private static final String URL_REGEX = "^http[s]?://[a-z0-9]+[\\.[a-z0-9]+]*";
+  private static final String URL_REGEX = "^http[s]?://[a-z0-9-]+([\\./][a-z0-9-]+)*[/]?$";
   private static final String NUMBER_REGEX = "^[0-9]+$";
   private static final String VERSION_REGEX = "^v[0-9]+$";
   private static final String ALGORITHM_OID_REGEX = "^[0-9]+[\\.[0-9]+]*$";
   private static final String BUNDLE_REGEX = "^[a-z-]+[\\.[a-z-]+]*$";
-  private static final String PRIVATE_KEY_REGEX = "^(classpath:|file://)[/]?[a-zA-Z0-9_]+[/[a-zA-Z0-9_]+]*.pem$";
+  private static final String PRIVATE_KEY_REGEX = "^(classpath:|file://)[/]?[a-zA-Z0-9_]+[/[a-zA-Z0-9_]+]*(.pem)?$";
 
   private Paths paths;
   private TestData testData;
