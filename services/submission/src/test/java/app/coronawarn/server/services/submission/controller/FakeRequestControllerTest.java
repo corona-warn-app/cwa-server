@@ -52,20 +52,20 @@ class FakeRequestControllerTest {
   @MockBean
   private SubmissionMonitor submissionMonitor;
 
+  private HttpHeaders headers;
+
   @BeforeEach
   public void setUpMocks() {
     when(fakeDelayManager.getJitteredFakeDelay()).thenReturn(1000L);
+    headers = HttpHeaderBuilder.builder()
+        .contentTypeProtoBuf()
+        .cwaAuth()
+        .withCwaFake()
+        .build();
   }
 
-  // TODO Before
   @Test
   void fakeRequestHandling() {
-    HttpHeaders headers = HttpHeaderBuilder.builder()
-        .contentTypeProtoBufHeader()
-        .cwaAuthHeader()
-        .cwaFakeHeader("1")
-        .build();
-
     ResponseEntity<Void> actResponse = executor.executePost(buildPayloadWithOneKey(), headers);
 
     verify(fakeDelayManager, times(1)).getJitteredFakeDelay();
@@ -75,12 +75,6 @@ class FakeRequestControllerTest {
 
   @Test
   void checkFakeRequestHandlingIsMonitored() {
-    HttpHeaders headers = HttpHeaderBuilder.builder()
-        .contentTypeProtoBufHeader()
-        .cwaAuthHeader()
-        .cwaFakeHeader("1")
-        .build();
-
     executor.executePost(buildPayloadWithOneKey(), headers);
 
     verify(submissionMonitor, times(1)).incrementRequestCounter();

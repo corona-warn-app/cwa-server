@@ -26,24 +26,28 @@ import org.springframework.http.MediaType;
 
 public class HttpHeaderBuilder {
 
-  private HttpHeaders headers = new HttpHeaders();
+  private final HttpHeaders headers = new HttpHeaders();
 
   public static HttpHeaderBuilder builder() {
     return new HttpHeaderBuilder();
   }
 
-  public HttpHeaderBuilder contentTypeProtoBufHeader() {
+  public HttpHeaderBuilder contentTypeProtoBuf() {
     headers.setContentType(MediaType.valueOf("application/x-protobuf"));
     return this;
   }
 
-  public HttpHeaderBuilder cwaAuthHeader() {
+  public HttpHeaderBuilder cwaAuth() {
     headers.set("cwa-authorization", "TAN okTan");
     return this;
   }
+  public HttpHeaderBuilder withCwaFake() {
+    headers.set("cwa-fake", "1");
+    return this;
+  }
 
-  public HttpHeaderBuilder cwaFakeHeader(String value) {
-    headers.set("cwa-fake", value);
+  public HttpHeaderBuilder withoutCwaFake() {
+    headers.set("cwa-fake", "0");
     return this;
   }
 

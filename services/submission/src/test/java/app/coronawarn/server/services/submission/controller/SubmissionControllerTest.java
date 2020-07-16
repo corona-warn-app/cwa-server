@@ -167,9 +167,9 @@ class SubmissionControllerTest {
   private static Stream<Arguments> createIncompleteHeaders() {
     return Stream.of(
         Arguments.of(HttpHeaderBuilder.builder().build()),
-        Arguments.of(HttpHeaderBuilder.builder().contentTypeProtoBufHeader().build()),
-        Arguments.of(HttpHeaderBuilder.builder().contentTypeProtoBufHeader().cwaFakeHeader("0").build()),
-        Arguments.of(HttpHeaderBuilder.builder().contentTypeProtoBufHeader().cwaAuthHeader().build()));
+        Arguments.of(HttpHeaderBuilder.builder().contentTypeProtoBuf().build()),
+        Arguments.of(HttpHeaderBuilder.builder().contentTypeProtoBuf().withoutCwaFake().build()),
+        Arguments.of(HttpHeaderBuilder.builder().contentTypeProtoBuf().cwaAuth().build()));
   }
 
   @ParameterizedTest
