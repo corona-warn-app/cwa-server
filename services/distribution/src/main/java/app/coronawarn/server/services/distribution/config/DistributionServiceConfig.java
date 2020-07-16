@@ -36,10 +36,9 @@ public class DistributionServiceConfig {
   private static final String PATH_REGEX = "^[/]?[a-zA-Z0-9_]+(/[a-zA-Z0-9_]+)*[/]?$";
   private static final String FILE_NAME_REGEX = "^[a-zA-Z0-9_-]+$";
   private static final String FILE_NAME_WITH_TYPE_REGEX = "^[a-zA-Z0-9_-]+\\.[a-z]+$";
-  private static final String CHAR_AND_NUMBER_REGEX = "^[a-zA-Z0-9]+$";
+  private static final String CHAR_AND_NUMBER_REGEX = "^[a-zA-Z0-9_-]+$";
   private static final String CHAR_NUMBER_AND_SPACE_REGEX = "^[a-zA-Z0-9_\\s]+$";
   private static final String NO_WHITESPACE_REGEX = "^[\\S]+$";
-  private static final String URL_PATH_REGEX = "^[a-zA-Z_-]+$";
   private static final String URL_REGEX = "^http[s]?://[a-z0-9-]+([\\./][a-z0-9-]+)*[/]?$";
   private static final String NUMBER_REGEX = "^[0-9]+$";
   private static final String VERSION_REGEX = "^v[0-9]+$";
@@ -258,23 +257,23 @@ public class DistributionServiceConfig {
 
   public static class Api {
 
-    @Pattern(regexp = URL_PATH_REGEX)
+    @Pattern(regexp = CHAR_AND_NUMBER_REGEX)
     private String versionPath;
     @Pattern(regexp = VERSION_REGEX)
     private String versionV1;
-    @Pattern(regexp = URL_PATH_REGEX)
+    @Pattern(regexp = CHAR_AND_NUMBER_REGEX)
     private String countryPath;
-    @Pattern(regexp = URL_PATH_REGEX)
+    @Pattern(regexp = CHAR_AND_NUMBER_REGEX)
     private String countryGermany;
-    @Pattern(regexp = URL_PATH_REGEX)
+    @Pattern(regexp = CHAR_AND_NUMBER_REGEX)
     private String datePath;
-    @Pattern(regexp = URL_PATH_REGEX)
+    @Pattern(regexp = CHAR_AND_NUMBER_REGEX)
     private String hourPath;
-    @Pattern(regexp = URL_PATH_REGEX)
+    @Pattern(regexp = CHAR_AND_NUMBER_REGEX)
     private String diagnosisKeysPath;
-    @Pattern(regexp = URL_PATH_REGEX)
+    @Pattern(regexp = CHAR_AND_NUMBER_REGEX)
     private String parametersPath;
-    @Pattern(regexp = URL_PATH_REGEX)
+    @Pattern(regexp = CHAR_AND_NUMBER_REGEX)
     private String appConfigFileName;
 
     public String getVersionPath() {
