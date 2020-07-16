@@ -24,7 +24,7 @@ services:
     # The ApacheHttpClient's connection pool size.
     connection-pool-size: 200
     # The maximum request size accepted by the SubmissionController in Bytes.
-    maximum-request-size: 102400
+    maximum-request-size: ${MAXIMUM_REQUEST_SIZE:102400}
     payload:
       # The maximum number of keys accepted for any submission.
       max-number-of-keys: 14

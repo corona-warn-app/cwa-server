@@ -39,7 +39,7 @@ public class SubmissionPayloadSizeFilter extends OncePerRequestFilter {
   }
 
   /**
-   * Filters each request that exceeds the maximum size of 100KB.
+   * Filters each request that exceeds the maximum size.
    */
   @Override
   protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
