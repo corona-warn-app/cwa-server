@@ -255,7 +255,7 @@ class SubmissionControllerTest {
   }
 
   private SubmissionPayload buildPayloadWithTooLargePadding() {
-    int exceedingSize = 2 * config.getMaximumRequestSize();
+    int exceedingSize = (int) (2 * config.getMaximumRequestSize().toBytes());
     byte[] bytes = new byte[exceedingSize];
 
     return SubmissionPayload.newBuilder()

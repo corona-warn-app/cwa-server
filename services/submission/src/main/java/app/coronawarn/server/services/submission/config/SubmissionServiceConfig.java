@@ -25,6 +25,7 @@ import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Component;
+import org.springframework.util.unit.DataSize;
 import org.springframework.validation.annotation.Validated;
 
 @Component
@@ -41,7 +42,7 @@ public class SubmissionServiceConfig {
   @Max(25)
   private Integer randomKeyPaddingMultiplier;
   private Integer connectionPoolSize;
-  private Integer maximumRequestSize;
+  private DataSize maximumRequestSize;
   private Payload payload;
   private Verification verification;
   private Monitoring monitoring;
@@ -87,11 +88,11 @@ public class SubmissionServiceConfig {
     this.connectionPoolSize = connectionPoolSize;
   }
 
-  public Integer getMaximumRequestSize() {
+  public DataSize getMaximumRequestSize() {
     return maximumRequestSize;
   }
 
-  public void setMaximumRequestSize(Integer maximumRequestSize) {
+  public void setMaximumRequestSize(DataSize maximumRequestSize) {
     this.maximumRequestSize = maximumRequestSize;
   }
 

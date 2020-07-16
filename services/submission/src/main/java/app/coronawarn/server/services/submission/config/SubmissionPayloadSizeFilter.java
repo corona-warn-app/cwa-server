@@ -32,10 +32,10 @@ import org.springframework.web.filter.OncePerRequestFilter;
 @Component
 public class SubmissionPayloadSizeFilter extends OncePerRequestFilter {
 
-  private final Integer maximumRequestSize;
+  private final long maximumRequestSize;
 
   public SubmissionPayloadSizeFilter(SubmissionServiceConfig config) {
-    this.maximumRequestSize = config.getMaximumRequestSize();
+    this.maximumRequestSize = config.getMaximumRequestSize().toBytes();
   }
 
   /**
