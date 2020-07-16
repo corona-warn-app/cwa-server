@@ -97,7 +97,7 @@ public abstract class LocalFile {
     if (s3Key.endsWith("app_config")) {
       return "application/zip";
     }
-    if (s3Key.matches(".*\\d")) {
+    if (isKeyFile()) {
       // date and hourly diagnosis key files
       return "application/zip";
     }

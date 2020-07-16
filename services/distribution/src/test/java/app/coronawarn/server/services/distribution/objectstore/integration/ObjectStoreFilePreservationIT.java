@@ -42,6 +42,7 @@ import org.springframework.boot.test.context.ConfigFileApplicationContextInitial
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.ApplicationContext;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
+import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
@@ -59,13 +60,13 @@ import app.coronawarn.server.services.distribution.objectstore.S3RetentionPolicy
 import app.coronawarn.server.services.distribution.objectstore.client.S3Object;
 import app.coronawarn.server.services.distribution.runner.Assembly;
 import app.coronawarn.server.services.distribution.runner.RetentionPolicy;
-import app.coronawarn.server.services.distribution.runner.S3Distribution;
 
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration(classes = {Application.class}, 
 					  initializers = ConfigFileApplicationContextInitializer.class)
-@Tag("s3-integration")
+@DirtiesContext
 @ActiveProfiles("integration-test")
+@Tag("s3-integration")
 public class ObjectStoreFilePreservationIT {
 
 	@Autowired
@@ -73,13 +74,11 @@ public class ObjectStoreFilePreservationIT {
 	@Autowired
 	private Assembly fileAssembler;
 	@Autowired
-	private S3Distribution s3Distribution;
-	@Autowired
 	private ApplicationContext applicationContext;
 	@Autowired
-	private  S3RetentionPolicy s3RetentionPolicy;
+	private S3RetentionPolicy s3RetentionPolicy;
 	@Autowired
-	private  ObjectStoreAccess objectStoreAccess;
+	private ObjectStoreAccess objectStoreAccess;
 	@Autowired
 	private DistributionServiceConfig distributionServiceConfig;
 	
@@ -97,10 +96,9 @@ public class ObjectStoreFilePreservationIT {
 	}
 	
 	/**
-	 * 
 	 *  The test covers a behaviour that manifests itself when data retention and shifting policies cause 
 	 *  the file distribution logic to generate, in subsequent runs, different content for the same timeframes.
-	 *  In order to test the distribution problem we need to simulate a simple daily scenario as test fixture:
+	 *  Below the distribution problem is described with a concerete daily scenario.
 	 *  
 	 *  The test presumes there are 4 consecutive days with 80 keys submitted daily. Running a distribution in Day 4
 	 *  would result in:
@@ -109,9 +107,11 @@ public class ObjectStoreFilePreservationIT {
 	 *      Day 3   -> submission of 80 keys   -> 1 empty file distributed
 	 *      Day 4   -> submission of 80 keys   -> 1 distributed containing 160 keys
 	 *      
-	 *  All these files should not be changed/removed from S3 even after retention policies have been applied. 
-	 *  For example, if data in Day 1 gets removed completely, then a second 
-	 *  distribution run causes a shifting of keys in different files compared to the previous run, the result being:
+	 *  All day & hour files already generated should not be changed/removed from S3 even after retention policies
+	 *  have been applied and a second distribution is triggered. 
+	 *  
+	 *  If for example, data in Day 1 gets removed completely, then a second distribution run causes a shifting of keys 
+	 *  in different files compared to the previous run, the result being:
 	 *      Day 2   -> submission of 80 keys   -> 1 empty file generated (different than what is currently on S3)
 	 *      Day 3   -> submission of 80 keys   -> 1 distributed containing 160 keys (different than 1 empty file on S3)
 	 *      Day 4   -> submission of 80 keys   -> 1 empty file (different than 1 empty file on S3)
@@ -120,51 +120,59 @@ public class ObjectStoreFilePreservationIT {
 	void files_once_published_to_objectstore_should_not_be_overriden_because_of_retention_or_shifting_policies() 
 			throws IOException {
 		
+		//keep data in the past for this test
 		LocalDate testStartDate = LocalDate.of(2020, Month.JULY, 1);
+		LocalDate testEndDate   = LocalDate.of(2020, Month.JULY, 1);
 		
-		createDiagnosisKeyTestData(
-				testStartDate,  					//keep data in the past for consistency
-				LocalDate.of(2020, Month.JULY, 4),
-				80); 								// 80 cases per day
+		//setup the 80 keys per day scenario
+		createDiagnosisKeyTestData(testStartDate, testEndDate, 80);
 		
 		assembleAndDistribute(testOutputFolder.newFolder("output-before-retention"));
 		List<S3Object> filesBeforeRetention = getPublishedFiles();
 		
 		triggerRetentionPolicy(testStartDate);
 		
-		/*trigger second distrubution after data retention policies were applied */
+		/* Trigger second distrubution after data retention policies were applied */
 		assembleAndDistribute(testOutputFolder.newFolder("output-after-retention"));
 		List<S3Object> filesAfterRetention = getPublishedFiles();
 		
-		assertFilesNotChangedInObjectStore(filesBeforeRetention, filesAfterRetention);
+		assertFilesAreTheSame(filesBeforeRetention, filesAfterRetention);
 	}
 
 	private List<S3Object> getPublishedFiles() {
 		return objectStoreAccess.getObjectsWithPrefix(distributionServiceConfig.getApi().getVersionPath());
 	}
 
-	private void assertFilesNotChangedInObjectStore(List<S3Object> filesBeforeRetention, 
-													List<S3Object> filesAfterRetention) {
+	private void assertFilesAreTheSame(List<S3Object> filesBeforeRetention, 
+										List<S3Object> filesAfterRetention) {
 
-		Map<String, S3Object> afterRetentionMap = filesAfterRetention.stream()
+		Map<String, S3Object> beforeRetentionFileMap = filesBeforeRetention.stream()
 	            .collect(Collectors.toMap(S3Object::getObjectName, s3object -> s3object));
 		
-		filesBeforeRetention.stream().forEach( previouslyPublished -> {
-			S3Object secondPublishedVersion = afterRetentionMap.get(previouslyPublished.getObjectName());
-			if(secondPublishedVersion == null || secondPublishedVersion.getCwaHash().equals(previouslyPublished.getCwaHash()))
+		filesAfterRetention.stream().forEach( secondVersion -> {
+			S3Object previouslyPublished = beforeRetentionFileMap.get(secondVersion.getObjectName());
+			
+			if(filesAreDifferent(previouslyPublished, secondVersion))
 					throw new AssertionError("Files have been changed on object store "
 							+ "due to retention policy. Before: " + previouslyPublished.getObjectName() 
-							+ "-" + secondPublishedVersion.getCwaHash()
-							+ "| After:" + secondPublishedVersion.getObjectName()  
-							+ "-" + secondPublishedVersion.getCwaHash());
+							+ "-" + previouslyPublished.getCwaHash()
+							+ "| After:" + secondVersion.getObjectName()  
+							+ "-" + secondVersion.getCwaHash());
 		});
 	}
 
-	private void triggerRetentionPolicy(LocalDate testStartDate) {
-		//remove data from test start date
+	private boolean filesAreDifferent(S3Object previouslyPublished, S3Object newVerion) {
+		return previouslyPublished == null || 
+				!newVerion.getCwaHash().equals(previouslyPublished.getCwaHash());
+	}
+
+	/**
+	 * Remove test data inserted for the given date
+	 */
+	private void triggerRetentionPolicy(LocalDate fromDate) {
 		//TODO: Refactor and find a better way to call the retention policy with mock config
 		DistributionServiceConfig mockDistributionConfig = new DistributionServiceConfig();
-		mockDistributionConfig.setRetentionDays(numberOfDaysSince(testStartDate));
+		mockDistributionConfig.setRetentionDays(numberOfDaysSince(fromDate));
 		new RetentionPolicy( diagnosisKeyService, applicationContext, mockDistributionConfig,
 							 s3RetentionPolicy).run(null);
 	}
