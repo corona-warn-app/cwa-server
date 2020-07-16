@@ -24,22 +24,30 @@ import org.springframework.util.unit.DataSize;
 import org.springframework.validation.Errors;
 import org.springframework.validation.Validator;
 
+/**
+ * {@link SubmissionPayloadSizeFilter} instances validate the values of the SubmissionServiceConfig.
+ */
 public class SubmissionServiceConfigValidator implements Validator {
+
+  private static final DataSize MIN_MAXIMUM_REQUEST_SIZE = DataSize.ofBytes(280);
+  private static final DataSize MAX_MAXIMUM_REQUEST_SIZE = DataSize.ofKilobytes(200);
 
   @Override
   public boolean supports(Class<?> type) {
     return type == SubmissionServiceConfig.class;
   }
 
+  /**
+   * Validate if the MaximumRequestSize of the {@link SubmissionServiceConfig} is in the defined range.
+   */
   @Override
   public void validate(Object o, Errors errors) {
     SubmissionServiceConfig properties = (SubmissionServiceConfig) o;
-    DataSize minMaximumRequestSize = DataSize.ofBytes(280);
-    DataSize maxMaximumRequestSize = DataSize.ofKilobytes(200);
-    if (properties.getMaximumRequestSize().compareTo(minMaximumRequestSize) < 0
-        || properties.getMaximumRequestSize().compareTo(maxMaximumRequestSize) > 0) {
+
+    if (properties.getMaximumRequestSize().compareTo(MIN_MAXIMUM_REQUEST_SIZE) < 0
+        || properties.getMaximumRequestSize().compareTo(MAX_MAXIMUM_REQUEST_SIZE) > 0) {
       errors.rejectValue("maximumRequestSize",
-          "Must be at least " + minMaximumRequestSize + " and not more than " + maxMaximumRequestSize + ".");
+          "Must be at least " + MIN_MAXIMUM_REQUEST_SIZE + " and not more than " + MAX_MAXIMUM_REQUEST_SIZE + ".");
     }
   }
 

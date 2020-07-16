@@ -20,6 +20,7 @@
 
 package app.coronawarn.server.services.submission.config;
 
+import app.coronawarn.server.services.submission.controller.FakeDelayManager;
 import java.io.IOException;
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
@@ -29,6 +30,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
+/**
+ * {@link SubmissionPayloadSizeFilter} instances filter requests exceeding a certain size limit.
+ */
 @Component
 public class SubmissionPayloadSizeFilter extends OncePerRequestFilter {
 
