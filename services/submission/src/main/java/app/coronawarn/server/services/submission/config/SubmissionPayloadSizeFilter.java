@@ -32,7 +32,11 @@ import org.springframework.web.filter.OncePerRequestFilter;
 @Component
 public class SubmissionPayloadSizeFilter extends OncePerRequestFilter {
 
-  public static final int MAX_REQUEST_SIZE = 100 * 1024;
+  private final Integer maximumRequestSize;
+
+  public SubmissionPayloadSizeFilter(SubmissionServiceConfig config) {
+    this.maximumRequestSize = config.getMaximumRequestSize();
+  }
 
   /**
    * Filters each request that exceeds the maximum size of 100KB.
@@ -40,9 +44,9 @@ public class SubmissionPayloadSizeFilter extends OncePerRequestFilter {
   @Override
   protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
       throws ServletException, IOException {
-    if (request.getContentLengthLong() > MAX_REQUEST_SIZE) {
+    if (request.getContentLengthLong() > maximumRequestSize) {
       response.setStatus(HttpStatus.BAD_REQUEST.value());
-      response.getWriter().write("Request size exceeded limit of " + MAX_REQUEST_SIZE + " bytes");
+      response.getWriter().write("Request size exceeded limit of " + maximumRequestSize + " bytes");
     } else {
       filterChain.doFilter(request, response);
     }

@@ -41,6 +41,7 @@ public class SubmissionServiceConfig {
   @Max(25)
   private Integer randomKeyPaddingMultiplier;
   private Integer connectionPoolSize;
+  private Integer maximumRequestSize;
   private Payload payload;
   private Verification verification;
   private Monitoring monitoring;
@@ -84,6 +85,14 @@ public class SubmissionServiceConfig {
 
   public void setConnectionPoolSize(Integer connectionPoolSize) {
     this.connectionPoolSize = connectionPoolSize;
+  }
+
+  public Integer getMaximumRequestSize() {
+    return maximumRequestSize;
+  }
+
+  public void setMaximumRequestSize(Integer maximumRequestSize) {
+    this.maximumRequestSize = maximumRequestSize;
   }
 
   public Integer getMaxNumberOfKeys() {
