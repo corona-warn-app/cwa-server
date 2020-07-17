@@ -8,7 +8,3 @@ spring:
     username: ${POSTGRESQL_USER_CALLBACK}
     password: ${POSTGRESQL_PASSWORD_CALLBACK}
 
-services:
-  submission:
-    verification:
-      base-url: ${VERIFICATION_BASE_URL}

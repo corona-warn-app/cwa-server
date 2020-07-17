@@ -28,8 +28,6 @@ import org.springframework.data.annotation.Id;
  */
 public class FederationBatchDownload {
 
-  // private static final Validator VALIDATOR = Validation.buildDefaultValidatorFactory().getValidator();
-
   @Id
   private String batchTag;
 
