@@ -33,6 +33,7 @@ import app.coronawarn.server.services.distribution.assembly.structure.WritableOn
 import app.coronawarn.server.services.distribution.assembly.structure.directory.Directory;
 import app.coronawarn.server.services.distribution.assembly.structure.directory.DirectoryOnDisk;
 import app.coronawarn.server.services.distribution.assembly.structure.util.ImmutableStack;
+import app.coronawarn.server.services.distribution.assembly.structure.util.TimeUtils;
 import app.coronawarn.server.services.distribution.config.DistributionServiceConfig;
 import java.io.File;
 import java.io.IOException;
@@ -77,7 +78,8 @@ class DiagnosisKeysHourDirectoryTest {
     outputFile = outputFolder.newFolder();
   }
 
-  private void runHourDistribution(Collection<DiagnosisKey> diagnosisKeys, LocalDateTime distributionTime) {
+  private void runHourDistribution(Collection<DiagnosisKey> diagnosisKeys, LocalDateTime distributionTime,
+      LocalDate keysSubmissionDate) {
     DiagnosisKeyBundler bundler = new ProdDiagnosisKeyBundler(distributionServiceConfig);
     bundler.setDiagnosisKeys(diagnosisKeys, distributionTime);
     DiagnosisKeysHourDirectory hourDirectory = new DiagnosisKeysHourDirectory(bundler, cryptoProvider,
@@ -87,7 +89,7 @@ class DiagnosisKeysHourDirectoryTest {
     hourDirectory.prepare(new ImmutableStack<>()
         .push("version-directory")
         .push("country-directory")
-        .push(LocalDate.of(1970, 1, 3)) // date-directory
+        .push(keysSubmissionDate) // date-directory
     );
     outputDirectory.write();
   }
@@ -98,7 +100,8 @@ class DiagnosisKeysHourDirectoryTest {
         .mapToObj(currentHour -> buildDiagnosisKeys(6, LocalDateTime.of(1970, 1, 3, 0, 0).plusHours(currentHour), 5))
         .flatMap(List::stream)
         .collect(Collectors.toList());
-    runHourDistribution(diagnosisKeys, LocalDateTime.of(1970, 1, 5, 0, 0));
+    runHourDistribution(diagnosisKeys, LocalDateTime.of(1970, 1, 5, 0, 0),
+        LocalDate.of(1970, 1, 3));
     Set<String> actualFiles = getFilePaths(outputFile, outputFile.getAbsolutePath());
     assertThat(actualFiles).isEqualTo(getExpectedHourFiles(Set.of("0", "1", "2", "3", "4")));
   }
@@ -110,7 +113,8 @@ class DiagnosisKeysHourDirectoryTest {
         .mapToObj(currentHour -> buildDiagnosisKeys(6, LocalDateTime.of(1970, 1, 3, 0, 0).plusHours(currentHour), 5))
         .flatMap(List::stream)
         .collect(Collectors.toList());
-    runHourDistribution(diagnosisKeys, LocalDateTime.of(1970, 1, 5, 0, 0));
+    runHourDistribution(diagnosisKeys, LocalDateTime.of(1970, 1, 5, 0, 0),
+        LocalDate.of(1970, 1, 3));
     Set<String> actualFiles = getFilePaths(outputFile, outputFile.getAbsolutePath());
     assertThat(actualFiles).isEqualTo(getExpectedHourFiles(Set.of("0", "1", "2", "4")));
   }
@@ -121,7 +125,8 @@ class DiagnosisKeysHourDirectoryTest {
         .mapToObj(currentHour -> buildDiagnosisKeys(6, LocalDateTime.of(1970, 1, 3, 0, 0).plusHours(currentHour), 5))
         .flatMap(List::stream)
         .collect(Collectors.toList());
-    runHourDistribution(diagnosisKeys, LocalDateTime.of(1970, 1, 3, 4, 0));
+    runHourDistribution(diagnosisKeys, LocalDateTime.of(1970, 1, 3, 4, 0),
+        LocalDate.of(1970, 1, 3));
     Set<String> actualFiles = getFilePaths(outputFile, outputFile.getAbsolutePath());
     assertThat(actualFiles).isEqualTo(getExpectedHourFiles(Set.of("0", "1", "2", "3")));
   }
@@ -135,7 +140,8 @@ class DiagnosisKeysHourDirectoryTest {
         .stream()
         .flatMap(List::stream)
         .collect(Collectors.toList());
-    runHourDistribution(diagnosisKeys, LocalDateTime.of(1970, 1, 6, 12, 0));
+    runHourDistribution(diagnosisKeys, LocalDateTime.of(1970, 1, 6, 12, 0),
+        LocalDate.of(1970, 1, 3));
     Set<String> actualFiles = getFilePaths(outputFile, outputFile.getAbsolutePath());
     assertThat(actualFiles).isEqualTo(getExpectedHourFiles(Set.of("0", "2")));
   }
@@ -149,8 +155,28 @@ class DiagnosisKeysHourDirectoryTest {
         .stream()
         .flatMap(List::stream)
         .collect(Collectors.toList());
-    runHourDistribution(diagnosisKeys, LocalDateTime.of(1970, 1, 3, 1, 0));
+    runHourDistribution(diagnosisKeys, LocalDateTime.of(1970, 1, 3, 1, 0),
+        LocalDate.of(1970, 1, 3));
     Set<String> actualFiles = getFilePaths(outputFile, outputFile.getAbsolutePath());
     assertThat(actualFiles).isEqualTo(getExpectedHourFiles(Set.of("0")));
+  }
+
+  @Test
+  void testDistributionTimeIsNowItDoesIncludeCurrentHour() {
+    final LocalDateTime nowUtc = TimeUtils.getCurrentUtcHour();
+    Collection<DiagnosisKey> diagnosisKeys = List.of(
+        buildDiagnosisKeys(6, nowUtc.minusHours(3), 5),
+        buildDiagnosisKeys(6, nowUtc.minusHours(2), 5),
+        buildDiagnosisKeys(6, nowUtc.minusHours(1), 5))
+        .stream()
+        .flatMap(List::stream)
+        .collect(Collectors.toList());
+    runHourDistribution(diagnosisKeys, nowUtc, TimeUtils.getUtcDate());
+    Set<String> actualFiles = getFilePaths(outputFile, outputFile.getAbsolutePath());
+    assertThat(actualFiles).isEqualTo(getExpectedHourFiles(Set.of(
+        String.valueOf(nowUtc.minusHours(3).getHour()),
+        String.valueOf(nowUtc.minusHours(2).getHour()),
+        String.valueOf(nowUtc.minusHours(1).getHour())
+    )));
   }
 }
