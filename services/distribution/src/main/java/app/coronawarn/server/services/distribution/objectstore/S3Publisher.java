@@ -85,22 +85,14 @@ public class S3Publisher {
    * @throws IOException in case there were problems reading files from the disk.
    */
   public void publish(Path root) throws IOException {
-    PublishedFileSet published;
     List<LocalFile> toPublish = new PublishFileSet(root).getFiles();
-    List<LocalFile> diff;
 
-    try {
-      published = new PublishedFileSet(
+    PublishedFileSet published = new PublishedFileSet(
           objectStoreAccess.getObjectsWithPrefix(distributionServiceConfig.getApi().getVersionPath()));
-      diff = toPublish
-          .stream()
-          .filter(published::isNotYetPublished)
-          .collect(Collectors.toList());
-    } catch (ObjectStoreOperationFailedException e) {
-      failedOperationsCounter.incrementAndCheckThreshold(e);
-      // failed to retrieve existing files; publish everything
-      diff = toPublish;
-    }
+    List<LocalFile> diff = toPublish
+						    	  .stream()
+						          .filter(published::isNotYetPublished)
+						          .collect(Collectors.toList());
 
     logger.info("Beginning upload of {} files... ", diff.size());
     try {
