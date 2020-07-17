@@ -122,7 +122,7 @@ public class ObjectStoreFilePreservationIT {
 		
 		//keep data in the past for this test
 		LocalDate testStartDate = LocalDate.of(2020, Month.JULY, 1);
-		LocalDate testEndDate   = LocalDate.of(2020, Month.JULY, 1);
+		LocalDate testEndDate   = LocalDate.of(2020, Month.JULY, 4);
 		
 		//setup the 80 keys per day scenario
 		createDiagnosisKeyTestData(testStartDate, testEndDate, 80);
@@ -136,29 +136,34 @@ public class ObjectStoreFilePreservationIT {
 		assembleAndDistribute(testOutputFolder.newFolder("output-after-retention"));
 		List<S3Object> filesAfterRetention = getPublishedFiles();
 		
-		assertFilesAreTheSame(filesBeforeRetention, filesAfterRetention);
+		assertPreviouslyPublishedKeyFilesAreTheSame(filesBeforeRetention, filesAfterRetention);
 	}
 
 	private List<S3Object> getPublishedFiles() {
 		return objectStoreAccess.getObjectsWithPrefix(distributionServiceConfig.getApi().getVersionPath());
 	}
 
-	private void assertFilesAreTheSame(List<S3Object> filesBeforeRetention, 
+	private void assertPreviouslyPublishedKeyFilesAreTheSame(List<S3Object> filesBeforeRetention, 
 										List<S3Object> filesAfterRetention) {
 
-		Map<String, S3Object> beforeRetentionFileMap = filesBeforeRetention.stream()
+		Map<String, S3Object> beforeRetentionFileMap = filesBeforeRetention
+				.stream()
+				.filter(S3Object::isDiagnosisKeyFile)
 	            .collect(Collectors.toMap(S3Object::getObjectName, s3object -> s3object));
 		
-		filesAfterRetention.stream().forEach( secondVersion -> {
-			S3Object previouslyPublished = beforeRetentionFileMap.get(secondVersion.getObjectName());
-			
-			if(filesAreDifferent(previouslyPublished, secondVersion))
-					throw new AssertionError("Files have been changed on object store "
-							+ "due to retention policy. Before: " + previouslyPublished.getObjectName() 
-							+ "-" + previouslyPublished.getCwaHash()
-							+ "| After:" + secondVersion.getObjectName()  
-							+ "-" + secondVersion.getCwaHash());
-		});
+		filesAfterRetention
+			.stream()
+			.filter(S3Object::isDiagnosisKeyFile)
+			.forEach( secondVersion -> {
+						S3Object previouslyPublished = beforeRetentionFileMap.get(secondVersion.getObjectName());
+						
+						if(filesAreDifferent(previouslyPublished, secondVersion))
+								throw new AssertionError("Files have been changed on object store "
+										+ "due to retention policy. Before: " + previouslyPublished.getObjectName() 
+										+ "-" + previouslyPublished.getCwaHash()
+										+ "| After:" + secondVersion.getObjectName()  
+										+ "-" + secondVersion.getCwaHash());
+			});
 	}
 
 	private boolean filesAreDifferent(S3Object previouslyPublished, S3Object newVerion) {
