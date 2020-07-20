@@ -65,7 +65,7 @@ class HourIndexingDecoratorTest {
   }
 
   @Test
-  void excludesHoursThatExceedTheMaximumNumberOfKeys() {
+  void excludesHoursThatExceedTheMaximumNumberOfKeysPerBundle() {
     List<DiagnosisKey> diagnosisKeys = buildDiagnosisKeys(6, LocalDateTime.of(1970, 1, 3, 4, 0), 2);
 
     DistributionServiceConfig svcConfig = mock(DistributionServiceConfig.class);
@@ -74,7 +74,7 @@ class HourIndexingDecoratorTest {
     when(svcConfig.getMaximumNumberOfKeysPerBundle()).thenReturn(1);
 
     DiagnosisKeyBundler diagnosisKeyBundler = new ProdDiagnosisKeyBundler(svcConfig);
-    diagnosisKeyBundler.setDiagnosisKeys(diagnosisKeys, LocalDateTime.of(1970, 1, 5, 0, 0));
+    diagnosisKeyBundler.setDiagnosisKeys(diagnosisKeys, LocalDateTime.of(1970, 1, 3, 5, 0));
 
     HourIndexingDecorator decorator = makeDecoratedHourDirectory(diagnosisKeyBundler);
 
