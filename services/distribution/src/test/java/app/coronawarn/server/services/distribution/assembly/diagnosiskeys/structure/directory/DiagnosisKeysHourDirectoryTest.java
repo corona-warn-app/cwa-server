@@ -43,8 +43,11 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
+
+import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.rules.TemporaryFolder;
@@ -98,21 +101,10 @@ class DiagnosisKeysHourDirectoryTest {
         .mapToObj(currentHour -> buildDiagnosisKeys(6, LocalDateTime.of(1970, 1, 3, 0, 0).plusHours(currentHour), 5))
         .flatMap(List::stream)
         .collect(Collectors.toList());
-    runHourDistribution(diagnosisKeys, LocalDateTime.of(1970, 1, 5, 0, 0));
+    runHourDistribution(diagnosisKeys, LocalDateTime.of(1970, 1, 4, 0, 0));
     Set<String> actualFiles = getFilePaths(outputFile, outputFile.getAbsolutePath());
-    assertThat(actualFiles).isEqualTo(getExpectedHourFiles(Set.of("0", "1", "2", "3", "4")));
-  }
-
-  @Test
-  void testDoesNotIncludeEmptyHours() {
-    Collection<DiagnosisKey> diagnosisKeys = IntStream.range(0, 5)
-        .filter(currentHour -> currentHour != 3)
-        .mapToObj(currentHour -> buildDiagnosisKeys(6, LocalDateTime.of(1970, 1, 3, 0, 0).plusHours(currentHour), 5))
-        .flatMap(List::stream)
-        .collect(Collectors.toList());
-    runHourDistribution(diagnosisKeys, LocalDateTime.of(1970, 1, 5, 0, 0));
-    Set<String> actualFiles = getFilePaths(outputFile, outputFile.getAbsolutePath());
-    assertThat(actualFiles).isEqualTo(getExpectedHourFiles(Set.of("0", "1", "2", "4")));
+    assertThat(actualFiles).isEqualTo(getExpectedHourFiles(
+    		IntStream.range(0, 24).mapToObj(String::valueOf).collect(Collectors.toSet())));
   }
 
   @Test
@@ -124,20 +116,6 @@ class DiagnosisKeysHourDirectoryTest {
     runHourDistribution(diagnosisKeys, LocalDateTime.of(1970, 1, 3, 4, 0));
     Set<String> actualFiles = getFilePaths(outputFile, outputFile.getAbsolutePath());
     assertThat(actualFiles).isEqualTo(getExpectedHourFiles(Set.of("0", "1", "2", "3")));
-  }
-
-  @Test
-  void testDoesNotIncludeHoursWithTooFewKeys() {
-    Collection<DiagnosisKey> diagnosisKeys = List.of(
-        buildDiagnosisKeys(6, LocalDateTime.of(1970, 1, 3, 0, 0), 5),
-        buildDiagnosisKeys(6, LocalDateTime.of(1970, 1, 3, 1, 0), 4),
-        buildDiagnosisKeys(6, LocalDateTime.of(1970, 1, 3, 2, 0), 5))
-        .stream()
-        .flatMap(List::stream)
-        .collect(Collectors.toList());
-    runHourDistribution(diagnosisKeys, LocalDateTime.of(1970, 1, 6, 12, 0));
-    Set<String> actualFiles = getFilePaths(outputFile, outputFile.getAbsolutePath());
-    assertThat(actualFiles).isEqualTo(getExpectedHourFiles(Set.of("0", "2")));
   }
 
   @Test
