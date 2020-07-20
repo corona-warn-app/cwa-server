@@ -21,6 +21,7 @@
 package app.coronawarn.server.services.submission.config;
 
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
@@ -41,42 +42,44 @@ class SubmissionServiceConfigValidatorTest {
   @Autowired
   private SubmissionServiceConfigValidator submissionServiceConfigValidator;
 
+  private SubmissionServiceConfig submissionServiceConfig;
+
+  @BeforeEach
+  void setup() {
+    submissionServiceConfig = new SubmissionServiceConfig();
+  }
+
   @ParameterizedTest
-  @MethodSource("validRequestSizes")
+  @MethodSource("validRequestDataSizes")
   void ok(DataSize dataSize) {
-    SubmissionServiceConfig submissionServiceConfig = new SubmissionServiceConfig();
-    submissionServiceConfig.setMaximumRequestSize(dataSize);
-    Errors errors = new BeanPropertyBindingResult(submissionServiceConfig, "validSubmissionServiceConfig");
-
-    submissionServiceConfigValidator.validate(submissionServiceConfig, errors);
-
+    Errors errors = validateConfig(dataSize);
     assertThat(errors.hasErrors()).isFalse();
-
   }
 
   @ParameterizedTest
-  @MethodSource("invalidRequestSizes")
+  @MethodSource("invalidRequestDataSizes")
   void fail(DataSize dataSize) {
-    SubmissionServiceConfig submissionServiceConfig = new SubmissionServiceConfig();
-    submissionServiceConfig.setMaximumRequestSize(dataSize);
-    Errors errors = new BeanPropertyBindingResult(submissionServiceConfig, "invalidSubmissionServiceConfig");
-
-    submissionServiceConfigValidator.validate(submissionServiceConfig, errors);
-
+    Errors errors = validateConfig(dataSize);
     assertThat(errors.hasErrors()).isTrue();
-
   }
 
-  private static Stream<Arguments> validRequestSizes() {
+  private Errors validateConfig(DataSize dataSize) {
+    Errors errors = new BeanPropertyBindingResult(submissionServiceConfig, "submissionServiceConfig");
+    submissionServiceConfig.setMaximumRequestSize(dataSize);
+    submissionServiceConfigValidator.validate(submissionServiceConfig, errors);
+    return errors;
+  }
+
+  private static Stream<Arguments> validRequestDataSizes() {
     return Stream.of(
         SubmissionServiceConfigValidator.MAX_MAXIMUM_REQUEST_SIZE,
         SubmissionServiceConfigValidator.MIN_MAXIMUM_REQUEST_SIZE
     ).map(Arguments::of);
   }
 
-  private static Stream<Arguments> invalidRequestSizes() {
+  private static Stream<Arguments> invalidRequestDataSizes() {
     return Stream.of(
-        DataSize.ofKilobytes(SubmissionServiceConfigValidator.MAX_MAXIMUM_REQUEST_SIZE.toKilobytes() + 1),
+        DataSize.ofBytes(SubmissionServiceConfigValidator.MAX_MAXIMUM_REQUEST_SIZE.toBytes() + 1),
         DataSize.ofBytes(SubmissionServiceConfigValidator.MIN_MAXIMUM_REQUEST_SIZE.toBytes() - 1)
     ).map(Arguments::of);
   }
