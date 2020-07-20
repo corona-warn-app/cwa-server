@@ -29,8 +29,8 @@ import org.springframework.validation.Validator;
  */
 public class SubmissionServiceConfigValidator implements Validator {
 
-  private static final DataSize MIN_MAXIMUM_REQUEST_SIZE = DataSize.ofBytes(280);
-  private static final DataSize MAX_MAXIMUM_REQUEST_SIZE = DataSize.ofKilobytes(200);
+  public static final DataSize MIN_MAXIMUM_REQUEST_SIZE = DataSize.ofBytes(280);
+  public static final DataSize MAX_MAXIMUM_REQUEST_SIZE = DataSize.ofKilobytes(200);
 
   @Override
   public boolean supports(Class<?> type) {
