@@ -20,7 +20,6 @@
 
 package app.coronawarn.server.services.submission.config;
 
-import app.coronawarn.server.services.submission.controller.FakeDelayManager;
 import java.io.IOException;
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
