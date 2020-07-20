@@ -48,7 +48,7 @@ public class S3Distribution implements ApplicationRunner {
   private final ApplicationContext applicationContext;
 
   S3Distribution(OutputDirectoryProvider outputDirectoryProvider, S3Publisher s3Publisher,
-		  		 ApplicationContext applicationContext) {
+                 ApplicationContext applicationContext) {
     this.outputDirectoryProvider = outputDirectoryProvider;
     this.s3Publisher = s3Publisher;
     this.applicationContext = applicationContext;

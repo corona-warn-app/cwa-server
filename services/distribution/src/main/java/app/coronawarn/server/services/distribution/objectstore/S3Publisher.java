@@ -90,10 +90,10 @@ public class S3Publisher {
     PublishedFileSet published = new PublishedFileSet(
           objectStoreAccess.getObjectsWithPrefix(distributionServiceConfig.getApi().getVersionPath()));
     List<LocalFile> diff = toPublish
-						    	  .stream()
-						          .filter(published::isNotYetPublished)
-						          .collect(Collectors.toList());
-
+                                .stream()
+                                .filter(published::isNotYetPublished)
+                                .collect(Collectors.toList());
+    
     logger.info("Beginning upload of {} files... ", diff.size());
     try {
       diff.stream()
