@@ -133,7 +133,7 @@ class DiagnosisKeysDateDirectoryTest {
   }
 
   @Test
-  @Disabled("Teporarily disabling this test as part of the fix for issue #650."
+  @Disabled("Temporarily disabling this test as part of the fix for issue #650."
   		+ "There seems to be a timing issue with this test because running it individually works, but running it"
   		+ " in a suite will cause it to produce a different output then expected. Further investigation is required here ")
   void testIncludesEmptyDatesInDirectoryStructure() {
