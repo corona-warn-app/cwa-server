@@ -65,6 +65,23 @@ services:
       VAULT_FILESIGNING_SECRET: ${SECRET_PRIVATE}
     volumes:
       - ./docker-compose-test-secrets:/secrets
+  federationdownload:
+    build:
+      context: ./
+      dockerfile: ./services/federationdownload/Dockerfile
+    depends_on:
+      - postgres
+    ports:
+      - "8011:8080"
+    environment:
+      SPRING_PROFILES_ACTIVE: dev,disable-ssl-server,disable-ssl-client-postgres,disable-ssl-client-verification,disable-ssl-client-verification-verify-hostname
+      POSTGRESQL_SERVICE_PORT: '5432'
+      POSTGRESQL_SERVICE_HOST: postgres
+      POSTGRESQL_DATABASE: ${POSTGRES_DB}
+      POSTGRESQL_PASSWORD_CALLBACK: ${POSTGRES_CALLBACK_PASSWORD}
+      POSTGRESQL_USER_CALLBACK: ${POSTGRES_CALLBACK_USER}
+      POSTGRESQL_PASSWORD_FLYWAY: ${POSTGRES_FLYWAY_PASSWORD}
+      POSTGRESQL_USER_FLYWAY: ${POSTGRES_FLYWAY_USER}
   postgres:
     image: postgres:11.8
     restart: always
