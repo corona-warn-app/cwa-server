@@ -69,13 +69,7 @@ public class RequestExecutor {
   }
 
   public ResponseEntity<Void> executePost(SubmissionPayload body) {
-    HttpHeaders headers = HttpHeaderBuilder.builder()
-        .contentTypeProtoBufHeader()
-        .cwaAuthHeader()
-        .cwaFakeHeader("0")
-        .build();
-
-    return executePost(body, headers);
+    return executePost(body, buildDefaultHeader());
   }
 
   public ResponseEntity<Void> executePost(Collection<TemporaryExposureKey> keys) {
