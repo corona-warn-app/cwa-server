@@ -117,8 +117,8 @@ public class ObjectStoreFilePreservationIT {
       throws IOException {
 
     //keep data in the past for this test
-    LocalDate testStartDate = LocalDate.of(2020, Month.JULY, 1);
-    LocalDate testEndDate = LocalDate.of(2020, Month.JULY, 4);
+    LocalDate testStartDate = LocalDate.now().minusDays(10);
+    LocalDate testEndDate = LocalDate.now().minusDays(6);
 
     //setup the 80 keys per day scenario
     createDiagnosisKeyTestData(testStartDate, testEndDate, 80);
@@ -172,7 +172,6 @@ public class ObjectStoreFilePreservationIT {
    * Remove test data inserted for the given date
    */
   private void triggerRetentionPolicy(LocalDate fromDate) {
-    //TODO: Refactor and find a better way to call the retention policy with mock config
     DistributionServiceConfig mockDistributionConfig = new DistributionServiceConfig();
     mockDistributionConfig.setRetentionDays(numberOfDaysSince(fromDate));
     new RetentionPolicy(diagnosisKeyService, applicationContext, mockDistributionConfig,
