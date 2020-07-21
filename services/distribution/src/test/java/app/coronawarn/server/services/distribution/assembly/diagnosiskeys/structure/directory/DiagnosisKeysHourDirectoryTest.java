@@ -104,7 +104,7 @@ class DiagnosisKeysHourDirectoryTest {
     runHourDistribution(diagnosisKeys, LocalDateTime.of(1970, 1, 4, 0, 0));
     Set<String> actualFiles = getFilePaths(outputFile, outputFile.getAbsolutePath());
     assertThat(actualFiles).isEqualTo(getExpectedHourFiles(
-    		IntStream.range(0, 24).mapToObj(String::valueOf).collect(Collectors.toSet())));
+        IntStream.range(0, 24).mapToObj(String::valueOf).collect(Collectors.toSet())));
   }
 
   @Test
