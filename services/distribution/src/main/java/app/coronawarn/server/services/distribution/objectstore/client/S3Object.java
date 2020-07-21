@@ -22,7 +22,6 @@ package app.coronawarn.server.services.distribution.objectstore.client;
 
 import java.util.Objects;
 
-
 /**
  * Represents an object as discovered on S3.
  */
@@ -63,10 +62,10 @@ public class S3Object {
   public String getCwaHash() {
     return cwaHash;
   }
-  
+
   /**
-   * Indicates if the S3 object is a file with diagnosis key content. 
-   * The evaluation is based on the distribution logic which implies that such files are generated 
+   * Indicates if the S3 object is a file with diagnosis key content.
+   * The evaluation is based on the distribution logic which implies that such files are generated
    * with a Date / Hour S3 key format (days: 1-31 / hours: 0-23) ending in 2 digits.
    */
   public boolean isDiagnosisKeyFile() {

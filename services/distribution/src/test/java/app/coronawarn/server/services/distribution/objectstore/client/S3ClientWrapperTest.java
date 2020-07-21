@@ -32,11 +32,12 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import app.coronawarn.server.services.distribution.config.DistributionServiceConfig;
+import app.coronawarn.server.services.distribution.objectstore.client.ObjectStoreClient.HeaderKey;
 import java.nio.file.Path;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-
 import org.assertj.core.util.Lists;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -56,9 +57,6 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.retry.annotation.EnableRetry;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
-
-import app.coronawarn.server.services.distribution.config.DistributionServiceConfig;
-import app.coronawarn.server.services.distribution.objectstore.client.ObjectStoreClient.HeaderKey;
 import software.amazon.awssdk.core.exception.SdkClientException;
 import software.amazon.awssdk.core.exception.SdkException;
 import software.amazon.awssdk.core.sync.RequestBody;
@@ -219,7 +217,7 @@ class S3ClientWrapperTest {
   @Test
   void testPutObjectForContentTypeHeader() {
     String contentType = "foo-content-type";
-    s3ClientWrapper.putObject(VALID_BUCKET_NAME, VALID_NAME, Path.of(""), 
+    s3ClientWrapper.putObject(VALID_BUCKET_NAME, VALID_NAME, Path.of(""),
         newHashMap(HeaderKey.CONTENT_TYPE, contentType));
 
     PutObjectRequest expRequest =

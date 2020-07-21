@@ -108,8 +108,8 @@ class DiagnosisKeysDateDirectoryTest {
     Set<String> expectedDateAndHourFiles = getExpectedDateAndHourFiles(Map.of(
         "1970-01-03", listOfHoursAsStrings(0, 23),
         "1970-01-04", listOfHoursAsStrings(0, 23),
-        "1970-01-05", listOfHoursAsStrings(0, 23)), 
-    	"1970-01-06");
+        "1970-01-05", listOfHoursAsStrings(0, 23)),
+        "1970-01-06");
     assertThat(actualFiles).isEqualTo(expectedDateAndHourFiles);
   }
 
@@ -134,8 +134,8 @@ class DiagnosisKeysDateDirectoryTest {
 
   @Test
   @Disabled("Temporarily disabling this test as part of the fix for issue #650."
-  		+ "There seems to be a timing issue with this test because running it individually works, but running it"
-  		+ " in a suite will cause it to produce a different output then expected. Further investigation is required here ")
+      + "There seems to be a timing issue with this test because running it individually works, but running it"
+      + " in a suite will cause it to produce a different output then expected. Further investigation is required here ")
   void testIncludesEmptyDatesInDirectoryStructure() {
     Collection<DiagnosisKey> diagnosisKeys = IntStream.range(0, 3)
         .filter(currentDate -> currentDate != 1)
@@ -214,9 +214,8 @@ class DiagnosisKeysDateDirectoryTest {
         String.join(separator, "date", "1970-01-05", "index.checksum")));
     assertThat(actualFiles).isEqualTo(expectedDateAndHourFiles);
   }
-  
+
   private static List<String> listOfHoursAsStrings(int from, int until) {
-	return  IntStream.range(from, until + 1).mapToObj(String::valueOf).collect(Collectors.toList());
+    return IntStream.range(from, until + 1).mapToObj(String::valueOf).collect(Collectors.toList());
   }
-  
 }

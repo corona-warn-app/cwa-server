@@ -46,17 +46,16 @@ public class PublishedFileSet {
   }
 
   /**
-   * Checks whether the given file, which is subject for publishing, is already available on the S3.
-   * Will return true, when:
+   * Checks whether the given file, which is subject for publishing, is already available on the S3. Will return true,
+   * when:
    * <ul>
-   *   <li>The S3 object key does NOT exist on S3</li>
-   *   <li>If FORCE_UPDATE_KEYFILES is true</li>
-   *   <li>The checksum of the existing S3 object differs to the hash of the given file</li>
+   *   <li>The S3 object key does NOT exist on S3.</li>
+   *   <li>The environment variable FORCE_UPDATE_KEYFILES is set to true.</li>
+   *   <li>The checksum of the existing S3 object differs to the hash of the given file.</li>
    * </ul>
    *
    * @param file the to-be-published file which should be checked
-   * @return <code>true</code>, if it doesn't exist or differs -
-   *         <code>false</code> if it's a key file that has been published already
+   * @return {@code true}, if it doesn't exist or differs - {@code false}, if the file has been published already
    */
   public boolean isNotYetPublished(LocalFile file) {
     S3Object published = s3Objects.get(file.getS3Key());

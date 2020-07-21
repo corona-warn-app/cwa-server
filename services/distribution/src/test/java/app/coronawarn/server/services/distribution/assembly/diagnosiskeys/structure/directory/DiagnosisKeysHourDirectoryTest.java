@@ -43,11 +43,8 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
-
-import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.rules.TemporaryFolder;
@@ -104,7 +101,7 @@ class DiagnosisKeysHourDirectoryTest {
     runHourDistribution(diagnosisKeys, LocalDateTime.of(1970, 1, 4, 0, 0));
     Set<String> actualFiles = getFilePaths(outputFile, outputFile.getAbsolutePath());
     assertThat(actualFiles).isEqualTo(getExpectedHourFiles(
-    		IntStream.range(0, 24).mapToObj(String::valueOf).collect(Collectors.toSet())));
+        IntStream.range(0, 24).mapToObj(String::valueOf).collect(Collectors.toSet())));
   }
 
   @Test
