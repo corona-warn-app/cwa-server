@@ -41,6 +41,7 @@ public class HttpHeaderBuilder {
     headers.set("cwa-authorization", "TAN okTan");
     return this;
   }
+  
   public HttpHeaderBuilder withCwaFake() {
     headers.set("cwa-fake", "1");
     return this;
