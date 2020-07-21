@@ -18,3 +18,16 @@ Profile                                           | Effect
 `disable-ssl-client-verification-verify-hostname` | Disables the verification of the SSL hostname for the connection to the verification server.
 
 Please refer to the inline comments in the base `application.yaml` configuration file for further details on the configuration properties impacted by the above profiles.
+
+
+## TAN Verification
+
+When submitting diagnosis keys a TAN token must be present in the request header section (`cwa-authorization`).
+Before delegating the TAN validation to the verification server, the TAN is verified to be an UUID on the Submission Service side.
+Then the TAN token is sent to the [verification server](https://github.com/corona-warn-app/cwa-verification-server/blob/master/docs/architecture-overview.md)
+to check its validity. If the TAN is valid then it means it is linked to a valid test.
+In case the TAN is not valid the verification server will respond with 404.
+
+Implementation details can be found in [`TanVerifier.java`](/services/submission/src/main/java/app/coronawarn/server/services/submission/verification/TanVerifier.java)
+
+>Note: TAN stands for Transaction Authorization Number
