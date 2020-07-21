@@ -23,6 +23,8 @@ services:
     random-key-padding-multiplier: ${RANDOM_KEY_PADDING_MULTIPLIER:1}
     # The ApacheHttpClient's connection pool size.
     connection-pool-size: 200
+    # The maximum request size accepted by the SubmissionController (e.g. 200B or 100KB).
+    maximum-request-size: ${MAXIMUM_REQUEST_SIZE:100KB}
     payload:
       # The maximum number of keys accepted for any submission.
       max-number-of-keys: 14
