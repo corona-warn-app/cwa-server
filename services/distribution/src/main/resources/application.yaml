@@ -79,8 +79,8 @@ services:
       max-number-of-failed-operations: 5
       # The ThreadPoolTaskExecutor's maximum thread pool size.
       max-number-of-s3-threads: 4
-      # once published key-files should normally NOT be changed - default is 'false'
-      # force-update-keyfiles: ${FORCE_UPDATE_KEYFILES}
+      # allows distribution to overwrite files which are published on the object store
+      force-update-keyfiles: ${FORCE_UPDATE_KEYFILES}
 
 spring:
   main:

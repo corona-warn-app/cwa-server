@@ -20,6 +20,7 @@
 
 package app.coronawarn.server.services.distribution.objectstore.publish;
 
+import app.coronawarn.server.services.distribution.config.DistributionServiceConfig;
 import app.coronawarn.server.services.distribution.objectstore.client.S3Object;
 import java.util.List;
 import java.util.Map;
@@ -32,6 +33,8 @@ public class PublishedFileSet {
 
   /** ta map of S3 objects with the S3 object name as the key component of the map. */
   private Map<String, S3Object> s3Objects;
+  private DistributionServiceConfig distributionConiguration;
+
 
   /**
    * Creates a new PublishedFileSet for the given S3 objects with the help of the metadata provider.
@@ -39,10 +42,12 @@ public class PublishedFileSet {
    * re-upload.
    *
    * @param s3Objects the list of s3 objects.
+   * @param distributionConiguration the system configuration wrt to distribution
    */
-  public PublishedFileSet(List<S3Object> s3Objects) {
+  public PublishedFileSet(List<S3Object> s3Objects, DistributionServiceConfig distributionConiguration) {
     this.s3Objects = s3Objects.stream()
         .collect(Collectors.toMap(S3Object::getObjectName, s3object -> s3object));
+    this.distributionConiguration = distributionConiguration;
   }
 
   /**
@@ -57,7 +62,7 @@ public class PublishedFileSet {
    * @param file the to-be-published file which should be checked
    * @return {@code true}, if it doesn't exist or differs - {@code false}, if the file has been published already
    */
-  public boolean isNotYetPublished(LocalFile file) {
+  public boolean shouldPublish(LocalFile file) {
     S3Object published = s3Objects.get(file.getS3Key());
 
     if (published == null) {
@@ -65,10 +70,15 @@ public class PublishedFileSet {
     }
 
     if (file.isKeyFile()) {
-      // #650 - once published key files should not be changed anymore
-      return false; // FIXME replace with configurable parameter 'FORCE_UPDATE_KEYFILES'
+      // #650 - once published key files should not be changed anymore unless explicitly forced
+      return distributionConiguration.getObjectStore().getForceUpdateKeyfiles()
+              && contentChanged(file, published);
     }
 
+    return contentChanged(file, published);
+  }
+
+  private boolean contentChanged(LocalFile file, S3Object published) {
     return !file.getChecksum().equals(published.getCwaHash());
   }
 
