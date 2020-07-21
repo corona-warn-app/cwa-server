@@ -65,7 +65,7 @@ import app.coronawarn.server.services.distribution.runner.RetentionPolicy;
 @DirtiesContext
 @ActiveProfiles("integration-test")
 @Tag("s3-integration")
-public class ObjectStoreFilePreservationIT {
+class ObjectStoreFilePreservationIT {
 
   @Autowired
   private DiagnosisKeyService diagnosisKeyService;
