@@ -108,7 +108,7 @@ class DiagnosisKeysDateDirectoryTest {
     Set<String> expectedDateAndHourFiles = getExpectedDateAndHourFiles(Map.of(
         "1970-01-03", listOfHoursAsStrings(0, 23),
         "1970-01-04", listOfHoursAsStrings(0, 23),
-        "1970-01-05", listOfHoursAsStrings(0, 23)),
+        "1970-01-05", listOfHoursAsStrings(0, 23)), 
     	"1970-01-06");
     assertThat(actualFiles).isEqualTo(expectedDateAndHourFiles);
   }
@@ -216,6 +216,7 @@ class DiagnosisKeysDateDirectoryTest {
   }
 
   private static List<String> listOfHoursAsStrings(int from, int until) {
-	return  IntStream.range(from, until + 1).mapToObj(String::valueOf).collect(Collectors.toList());
+    return IntStream.range(from, until + 1).mapToObj(String::valueOf).collect(Collectors.toList());
   }
+  
 }

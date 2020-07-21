@@ -20,6 +20,7 @@
 
 package app.coronawarn.server.services.distribution.common;
 
+import app.coronawarn.server.common.persistence.domain.DiagnosisKey;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
@@ -28,8 +29,6 @@ import java.util.List;
 import java.util.Random;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
-
-import app.coronawarn.server.common.persistence.domain.DiagnosisKey;
 
 /**
  * A simple container class able to create diagnosis keys test data, given a set of days or day intervals expresed in
