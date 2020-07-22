@@ -57,3 +57,12 @@ CREATE ROLE cwa_federation_callback
   NOCREATEROLE
   NOREPLICATION
   IN ROLE cwa_user;
+
+  CREATE ROLE cwa_federation_download
+    NOLOGIN
+    NOSUPERUSER
+    INHERIT
+    NOCREATEDB
+    NOCREATEROLE
+    NOREPLICATION
+    IN ROLE cwa_user;
