@@ -20,7 +20,6 @@
 
 package app.coronawarn.server.services.distribution.objectstore.publish;
 
-import app.coronawarn.server.services.distribution.config.DistributionServiceConfig;
 import app.coronawarn.server.services.distribution.objectstore.client.S3Object;
 import java.util.List;
 import java.util.Map;
