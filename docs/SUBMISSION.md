@@ -28,3 +28,7 @@ to check its validity. If the TAN is valid then it means it is linked to a valid
 In case the TAN is not valid the verification server will respond with 404.
 
 Implementation details can be found in [`TanVerifier.java`](/services/submission/src/main/java/app/coronawarn/server/services/submission/verification/TanVerifier.java)
+
+## Submission Validations
+
+Coming soon
