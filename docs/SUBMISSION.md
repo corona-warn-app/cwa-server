@@ -19,7 +19,6 @@ Profile                                           | Effect
 
 Please refer to the inline comments in the base `application.yaml` configuration file for further details on the configuration properties impacted by the above profiles.
 
-
 ## TAN Verification
 
 When submitting diagnosis keys a TAN token must be present in the request header section (`cwa-authorization`).
