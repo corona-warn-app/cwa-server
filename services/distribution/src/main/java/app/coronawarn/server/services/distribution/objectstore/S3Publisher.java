@@ -93,7 +93,7 @@ public class S3Publisher {
 
     PublishedFileSet published = new PublishedFileSet(
         objectStoreAccess.getObjectsWithPrefix(distributionServiceConfig.getApi().getVersionPath()),
-        distributionServiceConfig);
+        distributionServiceConfig.getObjectStore().getForceUpdateKeyfiles());
     List<LocalFile> diff = toPublish
         .stream()
         .filter(published::shouldPublish)

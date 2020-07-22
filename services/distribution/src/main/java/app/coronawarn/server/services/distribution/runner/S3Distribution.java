@@ -61,11 +61,9 @@ public class S3Distribution implements ApplicationRunner {
 
       s3Publisher.publish(pathToDistribute);
       logger.info("Data pushed to Object Store successfully.");
-    } catch (ObjectStoreOperationFailedException  e) {
-      logger.error("Communication with Object Store failed. Distribution run will be aborted", e);
-      Application.killApplication(applicationContext);
-    } catch (UnsupportedOperationException | IOException e) {
+    } catch (UnsupportedOperationException | ObjectStoreOperationFailedException | IOException e) {
       logger.error("Distribution failed.", e);
+      Application.killApplication(applicationContext);
     }
   }
 }

@@ -52,10 +52,10 @@ public final class DiagnosisTestData {
    */
   public static DiagnosisTestData of(LocalDate fromDay, LocalDate untilDay, int casesPerDay) {
 
-    int numberOFDays = (int) ChronoUnit.DAYS.between(fromDay, untilDay) + 1;
+    int numberOfDays = (int) ChronoUnit.DAYS.between(fromDay, untilDay) + 1;
     DiagnosisTestData testData = new DiagnosisTestData();
 
-    testData.diagnosisKeys = computeDiagnosisKeys(testData, fromDay, numberOFDays, casesPerDay);
+    testData.diagnosisKeys = computeDiagnosisKeys(testData, fromDay, numberOfDays, casesPerDay);
     return testData;
   }
 
@@ -67,7 +67,6 @@ public final class DiagnosisTestData {
         ).flatMap(List::stream).collect(Collectors.toList());
   }
 
-  ///TODO: Move this to Helpers (or create a similar method in that class to be used here)
   private static List<DiagnosisKey> randomDiagnosisKeys(LocalDateTime submissionTime, int casesPerDay) {
     long timestamp = submissionTime.toEpochSecond(ZoneOffset.UTC) / 3600;
     return IntStream.range(0, casesPerDay)

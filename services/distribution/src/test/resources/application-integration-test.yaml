@@ -1,10 +1,4 @@
 ---
-logging:
-  level:
-    org:
-      springframework: debug
-    root: debug
-
 services:
   distribution:
     shifting-policy-threshold: 140

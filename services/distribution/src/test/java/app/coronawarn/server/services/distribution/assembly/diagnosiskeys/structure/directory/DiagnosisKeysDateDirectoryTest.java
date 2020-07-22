@@ -108,7 +108,7 @@ class DiagnosisKeysDateDirectoryTest {
     Set<String> expectedDateAndHourFiles = getExpectedDateAndHourFiles(Map.of(
         "1970-01-03", listOfHoursAsStrings(0, 23),
         "1970-01-04", listOfHoursAsStrings(0, 23),
-        "1970-01-05", listOfHoursAsStrings(0, 23)), 
+        "1970-01-05", listOfHoursAsStrings(0, 23)),
     	"1970-01-06");
     assertThat(actualFiles).isEqualTo(expectedDateAndHourFiles);
   }
@@ -194,6 +194,9 @@ class DiagnosisKeysDateDirectoryTest {
 
   @Test
   void testWhenDemoProfileIsActiveItDoesIncludeCurrentDateInDirectoryStructure() {
+    // set the incomplete days configuration for this particular test but revert before test ends
+    // such that other tests are
+    Boolean currentIncompleteDaysConfig = distributionServiceConfig.getIncludeIncompleteDays();
     distributionServiceConfig.setIncludeIncompleteDays(true);
     Collection<DiagnosisKey> diagnosisKeys = IntStream.range(0, 3)
         .mapToObj(currentDate -> IntStream.range(0, 5)
@@ -212,11 +215,13 @@ class DiagnosisKeysDateDirectoryTest {
     expectedDateAndHourFiles.addAll(Set.of(
         String.join(separator, "date", "1970-01-05", "index"),
         String.join(separator, "date", "1970-01-05", "index.checksum")));
+
+    distributionServiceConfig.setIncludeIncompleteDays(currentIncompleteDaysConfig);
     assertThat(actualFiles).isEqualTo(expectedDateAndHourFiles);
   }
 
   private static List<String> listOfHoursAsStrings(int from, int until) {
     return IntStream.range(from, until + 1).mapToObj(String::valueOf).collect(Collectors.toList());
   }
-  
+
 }

@@ -464,7 +464,7 @@ public class DistributionServiceConfig {
     @Min(1)
     @Max(64)
     private Integer maxNumberOfS3Threads;
-    private Boolean forceUpdateKeyfiles = Boolean.FALSE;
+    private Boolean forceUpdateKeyfiles;
 
     public String getAccessKey() {
       return accessKey;

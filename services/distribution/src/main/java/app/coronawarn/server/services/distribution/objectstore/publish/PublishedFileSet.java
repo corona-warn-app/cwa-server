@@ -33,21 +33,22 @@ public class PublishedFileSet {
 
   /** ta map of S3 objects with the S3 object name as the key component of the map. */
   private Map<String, S3Object> s3Objects;
-  private DistributionServiceConfig distributionConiguration;
+  private boolean isKeyFilePublishingAllowed;
 
 
   /**
-   * Creates a new PublishedFileSet for the given S3 objects with the help of the metadata provider.
-   * The metadata provider helps to determine whether files have been changed, and are requiring
-   * re-upload.
+   * Creates a new PublishedFileSet for the given S3 objects with the help of the
+   * metadata provider. The metadata provider helps to determine whether files
+   * have been changed, and are requiring re-upload.
    *
-   * @param s3Objects the list of s3 objects.
-   * @param distributionConiguration the system configuration wrt to distribution
+   * @param s3Objects                  the list of s3 objects.
+   * @param isKeyFilePublishingAllowed whether the system is currently configured
+   *                                   to allow diagnosis key file updates on S3
    */
-  public PublishedFileSet(List<S3Object> s3Objects, DistributionServiceConfig distributionConiguration) {
+  public PublishedFileSet(List<S3Object> s3Objects, boolean isKeyFilePublishingAllowed) {
     this.s3Objects = s3Objects.stream()
         .collect(Collectors.toMap(S3Object::getObjectName, s3object -> s3object));
-    this.distributionConiguration = distributionConiguration;
+    this.isKeyFilePublishingAllowed = isKeyFilePublishingAllowed;
   }
 
   /**
@@ -71,8 +72,7 @@ public class PublishedFileSet {
 
     if (file.isKeyFile()) {
       // #650 - once published key files should not be changed anymore unless explicitly forced
-      return distributionConiguration.getObjectStore().getForceUpdateKeyfiles()
-              && contentChanged(file, published);
+      return isKeyFilePublishingAllowed && contentChanged(file, published);
     }
 
     return contentChanged(file, published);

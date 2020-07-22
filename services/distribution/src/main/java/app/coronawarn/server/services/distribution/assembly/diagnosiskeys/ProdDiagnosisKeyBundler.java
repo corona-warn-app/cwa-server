@@ -85,7 +85,7 @@ public class ProdDiagnosisKeyBundler extends DiagnosisKeyBundler {
             this.distributableDiagnosisKeys.put(currentHour, new ArrayList<>(diagnosisKeyAccumulator));
             diagnosisKeyAccumulator.clear();
           } else {
-            /* placeholder list is needed to be able to generate empty file - see issue #650 */
+            // placeholder list is needed to be able to generate empty file - see issue #650
             this.distributableDiagnosisKeys.put(currentHour, Collections.emptyList());
           }
         });
