@@ -10,9 +10,43 @@
   </parent>
   <modelVersion>4.0.0</modelVersion>
 
+  <artifactId>federationdownload</artifactId>
+
   <properties>
     <sonar.projectKey>corona-warn-app_cwa-server_services_federationdownload</sonar.projectKey>
   </properties>
+
+  <dependencies>
+    <dependency>
+      <artifactId>bcpkix-jdk15on</artifactId>
+      <groupId>org.bouncycastle</groupId>
+      <version>1.65</version>
+    </dependency>
+    <dependency>
+      <artifactId>json-simple</artifactId>
+      <groupId>com.googlecode.json-simple</groupId>
+      <version>1.1.1</version>
+    </dependency>
+    <dependency>
+      <groupId>commons-io</groupId>
+      <artifactId>commons-io</artifactId>
+      <version>2.5</version>
+    </dependency>
+    <dependency>
+      <artifactId>commons-math3</artifactId>
+      <groupId>org.apache.commons</groupId>
+      <version>3.6.1</version>
+    </dependency>
+    <dependency>
+      <artifactId>spring-retry</artifactId>
+      <groupId>org.springframework.retry</groupId>
+      <version>1.3.0</version>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-aop</artifactId>
+    </dependency>
+  </dependencies>
 
   <build>
     <pluginManagement>
@@ -62,43 +96,5 @@
       </plugin>
     </plugins>
   </build>
-
-  <artifactId>federationdownload</artifactId>
-  <dependencies>
-    <dependency>
-      <groupId>software.amazon.awssdk</groupId>
-      <artifactId>s3</artifactId>
-      <version>2.13.26</version>
-    </dependency>
-    <dependency>
-      <artifactId>bcpkix-jdk15on</artifactId>
-      <groupId>org.bouncycastle</groupId>
-      <version>1.65</version>
-    </dependency>
-    <dependency>
-      <artifactId>json-simple</artifactId>
-      <groupId>com.googlecode.json-simple</groupId>
-      <version>1.1.1</version>
-    </dependency>
-    <dependency>
-      <groupId>commons-io</groupId>
-      <artifactId>commons-io</artifactId>
-      <version>2.5</version>
-    </dependency>
-    <dependency>
-      <artifactId>commons-math3</artifactId>
-      <groupId>org.apache.commons</groupId>
-      <version>3.6.1</version>
-    </dependency>
-    <dependency>
-      <artifactId>spring-retry</artifactId>
-      <groupId>org.springframework.retry</groupId>
-      <version>1.3.0</version>
-    </dependency>
-    <dependency>
-      <groupId>org.springframework.boot</groupId>
-      <artifactId>spring-boot-starter-aop</artifactId>
-    </dependency>
-  </dependencies>
 
 </project>

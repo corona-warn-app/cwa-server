@@ -5,11 +5,11 @@ spring:
     user: ${POSTGRESQL_USER_FLYWAY}
   datasource:
     driver-class-name: org.postgresql.Driver
-    username: ${POSTGRESQL_USER_DISTRIBUTION}
-    password: ${POSTGRESQL_PASSWORD_DISTRIBUTION}
+    username: ${POSTGRESQL_USER_DOWNLOAD}
+    password: ${POSTGRESQL_PASSWORD_DOWNLOAD}
 
 services:
-  distribution:
+  federationdownload:
     paths:
       output: /tmp/distribution
     objectstore:

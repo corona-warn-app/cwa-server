@@ -8,9 +8,9 @@ cd ../..
 
 docker build                                              \
   --rm                                                    \
-  -f services/distribution/Dockerfile                     \
-  -t distribution . &&                                    \
+  -f services/federationdownload/Dockerfile                     \
+  -t federationdownload . &&                                    \
 docker run                                                \
-  -it distribution
+  -it federationdownload
 
 popd > /dev/null || exit

@@ -1,4 +1,0 @@
-services:
-  distribution:
-    include-incomplete-days: true
-    include-incomplete-hours: true
