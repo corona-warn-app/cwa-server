@@ -46,6 +46,7 @@ services:
       services.distribution.paths.output: /tmp/distribution
       # Settings for cryptographic artifacts
       VAULT_FILESIGNING_SECRET: ${SECRET_PRIVATE}
+      FORCE_UPDATE_KEYFILES: 'false'
     volumes:
       - ./docker-compose-test-secrets:/secrets
   postgres:

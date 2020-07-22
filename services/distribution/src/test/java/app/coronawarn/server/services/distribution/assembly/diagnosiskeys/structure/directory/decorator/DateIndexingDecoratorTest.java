@@ -66,24 +66,6 @@ class DateIndexingDecoratorTest {
     diagnosisKeyBundler = new ProdDiagnosisKeyBundler(distributionServiceConfig);
   }
 
-  @Test
-  void excludesEmptyDatesFromIndex() {
-    List<DiagnosisKey> diagnosisKeys = Stream
-        .of(buildDiagnosisKeys(6, LocalDateTime.of(1970, 1, 3, 0, 0), 5),
-            buildDiagnosisKeys(6, LocalDateTime.of(1970, 1, 4, 0, 0), 0),
-            buildDiagnosisKeys(6, LocalDateTime.of(1970, 1, 5, 0, 0), 5))
-        .flatMap(List::stream)
-        .collect(Collectors.toList());
-    diagnosisKeyBundler.setDiagnosisKeys(diagnosisKeys, LocalDateTime.of(1970, 1, 6, 0, 0));
-    DateIndexingDecorator decorator = makeDecoratedDateDirectory(diagnosisKeyBundler);
-    decorator.prepare(new ImmutableStack<>().push("DE"));
-
-    Set<LocalDate> index = decorator.getIndex(new ImmutableStack<>());
-
-    assertThat(index).contains(LocalDate.of(1970, 1, 3))
-        .doesNotContain(LocalDate.of(1970, 1, 4))
-        .contains(LocalDate.of(1970, 1, 5));
-  }
 
   @Test
   void excludesCurrentDateFromIndex() {
@@ -112,7 +94,7 @@ class DateIndexingDecoratorTest {
     when(svcConfig.getMaximumNumberOfKeysPerBundle()).thenReturn(1);
 
     DiagnosisKeyBundler diagnosisKeyBundler = new ProdDiagnosisKeyBundler(svcConfig);
-    diagnosisKeyBundler.setDiagnosisKeys(diagnosisKeys, LocalDateTime.of(1970, 1, 5, 0, 0));
+    diagnosisKeyBundler.setDiagnosisKeys(diagnosisKeys, LocalDateTime.of(1970, 1, 4, 0, 0));
 
     DateIndexingDecorator decorator = makeDecoratedDateDirectory(diagnosisKeyBundler);
 

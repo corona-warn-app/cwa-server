@@ -79,28 +79,25 @@ public class S3Publisher {
   }
 
   /**
-   * Synchronizes the files to S3.
+   * Synchronizes the files to S3. Current strategy is to never update diagnosis key archive files already
+   * published on S3, even if the retention and shifting policies cause a diff between subsequent distribution runs.
+   * Thus, by default distribution will only add new key files, but still modify indexes. This behaviour can however
+   * be controlled through the configuration parameter <code>DistributionServiceConfig.forceUpdateKeyFiles</code>
    *
    * @param root The path of the directory that shall be published.
+   * @see Github issue #650
    * @throws IOException in case there were problems reading files from the disk.
    */
   public void publish(Path root) throws IOException {
-    PublishedFileSet published;
     List<LocalFile> toPublish = new PublishFileSet(root).getFiles();
-    List<LocalFile> diff;
 
-    try {
-      published = new PublishedFileSet(
-          objectStoreAccess.getObjectsWithPrefix(distributionServiceConfig.getApi().getVersionPath()));
-      diff = toPublish
-          .stream()
-          .filter(published::isNotYetPublished)
-          .collect(Collectors.toList());
-    } catch (ObjectStoreOperationFailedException e) {
-      failedOperationsCounter.incrementAndCheckThreshold(e);
-      // failed to retrieve existing files; publish everything
-      diff = toPublish;
-    }
+    PublishedFileSet published = new PublishedFileSet(
+        objectStoreAccess.getObjectsWithPrefix(distributionServiceConfig.getApi().getVersionPath()),
+        distributionServiceConfig.getObjectStore().getForceUpdateKeyfiles());
+    List<LocalFile> diff = toPublish
+        .stream()
+        .filter(published::shouldPublish)
+        .collect(Collectors.toList());
 
     logger.info("Beginning upload of {} files... ", diff.size());
     try {
