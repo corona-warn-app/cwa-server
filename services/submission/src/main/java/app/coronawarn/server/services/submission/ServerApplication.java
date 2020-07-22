@@ -20,6 +20,7 @@
 
 package app.coronawarn.server.services.submission;
 
+import app.coronawarn.server.services.submission.config.SubmissionServiceConfigValidator;
 import io.micrometer.core.aop.TimedAspect;
 import io.micrometer.core.instrument.MeterRegistry;
 import java.util.Arrays;
@@ -40,6 +41,7 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.core.env.Environment;
 import org.springframework.data.jdbc.repository.config.EnableJdbcRepositories;
 import org.springframework.http.converter.protobuf.ProtobufHttpMessageConverter;
+import org.springframework.validation.Validator;
 
 @SpringBootApplication(exclude = {UserDetailsServiceAutoConfiguration.class})
 @EnableJdbcRepositories(basePackages = "app.coronawarn.server.common.persistence")
@@ -72,6 +74,11 @@ public class ServerApplication implements EnvironmentAware, DisposableBean {
   @Bean
   ProtobufHttpMessageConverter protobufHttpMessageConverter() {
     return new ProtobufHttpMessageConverter();
+  }
+
+  @Bean
+  public static Validator configurationPropertiesValidator() {
+    return new SubmissionServiceConfigValidator();
   }
 
   @Override
