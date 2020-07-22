@@ -1,5 +1,9 @@
 # CWA-Server Persistence
 
+## Data Migration / Flyway
+
+Coming soon
+
 ## Data Retention Policy
 
 We enforce a certain retention policy in the database which means that we don't hold diagnosis keys that are older than 14 days.
