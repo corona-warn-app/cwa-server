@@ -101,6 +101,12 @@
       <version>42.2.13</version>
       <scope>runtime</scope>
     </dependency>
+    <dependency>
+      <!-- https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2020-13935 -->
+      <groupId>org.apache.tomcat.embed</groupId>
+      <artifactId>tomcat-embed-core</artifactId>
+      <version>9.0.37</version>
+    </dependency>
   </dependencies>
 
   <reporting>
