@@ -24,12 +24,12 @@ import app.coronawarn.server.common.persistence.domain.FederationBatchDownload;
 import java.util.Date;
 import org.springframework.data.jdbc.repository.query.Modifying;
 import org.springframework.data.jdbc.repository.query.Query;
-import org.springframework.data.repository.CrudRepository;
+import org.springframework.data.repository.PagingAndSortingRepository;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface FederationBatchDownloadRepository extends CrudRepository<FederationBatchDownload, String> {
+public interface FederationBatchDownloadRepository extends PagingAndSortingRepository<FederationBatchDownload, Long> {
 
   @Modifying
   @Query("INSERT INTO federation_batch_download "

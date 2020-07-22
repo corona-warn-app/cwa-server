@@ -21,11 +21,9 @@
 package app.coronawarn.server.common.persistence.domain;
 
 import java.util.Date;
+import java.util.Objects;
 import org.springframework.data.annotation.Id;
 
-/**
- * A key generated for advertising over a window of time.
- */
 public class FederationBatchDownload {
 
   @Id
@@ -33,11 +31,41 @@ public class FederationBatchDownload {
 
   private Date date;
 
-  /**
-   * Should be called by builders.
-   */
   public FederationBatchDownload(String batchTag, Date date) {
     this.batchTag = batchTag;
     this.date = date;
+  }
+
+  public String getBatchTag() {
+    return batchTag;
+  }
+
+  public void setBatchTag(String batchTag) {
+    this.batchTag = batchTag;
+  }
+
+  public Date getDate() {
+    return date;
+  }
+
+  public void setDate(Date date) {
+    this.date = date;
+  }
+
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) {
+      return true;
+    }
+    if (o == null || getClass() != o.getClass()) {
+      return false;
+    }
+    FederationBatchDownload that = (FederationBatchDownload) o;
+    return Objects.equals(batchTag, that.batchTag) && Objects.equals(date, that.date);
+  }
+
+  @Override
+  public int hashCode() {
+    return Objects.hash(batchTag, date);
   }
 }

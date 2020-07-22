@@ -20,7 +20,8 @@
 
 package app.coronawarn.server.services.callback.controller;
 
-import app.coronawarn.server.common.persistence.repository.FederationBatchDownloadRepository;
+import app.coronawarn.server.common.persistence.domain.FederationBatchDownload;
+import app.coronawarn.server.common.persistence.service.FederationBatchDownloadService;
 import io.micrometer.core.annotation.Timed;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -47,10 +48,10 @@ public class CallbackController {
   public static final String CALLBACK_ROUTE = "/callback";
   private static final Logger logger = LoggerFactory.getLogger(CallbackController.class);
   private static final String dateRegex = "^\\d{4}-(0[1-9]|1[012])-(0[1-9]|[12][0-9]|3[01])$";
-  private final FederationBatchDownloadRepository federationBatchDownloadRepository;
+  private final FederationBatchDownloadService federationBatchDownloadService;
 
-  public CallbackController(FederationBatchDownloadRepository federationBatchDownloadRepository) {
-    this.federationBatchDownloadRepository = federationBatchDownloadRepository;
+  public CallbackController(FederationBatchDownloadService federationBatchDownloadService) {
+    this.federationBatchDownloadService = federationBatchDownloadService;
   }
 
   /**
@@ -64,7 +65,8 @@ public class CallbackController {
   @Timed(description = "Time spent handling callback.")
   public ResponseEntity<Void> handleCallback(@RequestParam(required = true) String batchTag,
       @Valid @Pattern(regexp = dateRegex) @RequestParam String date) throws ParseException {
-    federationBatchDownloadRepository.saveDoNothingOnConflict(batchTag, parseDateString(date));
+    FederationBatchDownload federationBatchDownload = new FederationBatchDownload(batchTag, parseDateString(date));
+    federationBatchDownloadService.saveFederationBatchDownload(federationBatchDownload);
     return ResponseEntity.ok().build();
   }
 
