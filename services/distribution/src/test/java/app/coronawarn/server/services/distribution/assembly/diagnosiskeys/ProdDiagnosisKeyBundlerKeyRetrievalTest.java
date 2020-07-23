@@ -89,7 +89,7 @@ class ProdDiagnosisKeyBundlerKeyRetrievalTest {
   @MethodSource("createDiagnosisKeysForEpochDay0")
   void testGetDatesForEpochDay0(Collection<DiagnosisKey> diagnosisKeys) {
     bundler.setDiagnosisKeys(diagnosisKeys, LocalDateTime.of(1970, 1, 5, 0, 0));
-    var expDates = Set.of(LocalDate.ofEpochDay(2L));
+    var expDates = Set.of(LocalDate.ofEpochDay(2L), LocalDate.ofEpochDay(3L));
     var actDates = bundler.getDatesWithDistributableDiagnosisKeys();
     assertThat(actDates).isEqualTo(expDates);
   }
