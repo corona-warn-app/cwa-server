@@ -10,15 +10,20 @@ logging:
 services:
   federationdownload:
 
-    expiry-policy-minutes: 120
+    #expiry-policy-minutes: 120
     # The minimum number of diagnosis keys per bundle.
-    shifting-policy-threshold: 140
+    #shifting-policy-threshold: 140
     # The maximum number of keys per bundle.
-    maximum-number-of-keys-per-bundle: 600000
+    #maximum-number-of-keys-per-bundle: 600000
     # Indicates whether the current incomplete day will be included in the distribution (used for testing purposes).
-    include-incomplete-days: false
+    #include-incomplete-days: false
     # Indicates whether the current incomplete hour will be included in the distribution (used for testing purposes).
-    include-incomplete-hours: false
+    #include-incomplete-hours: false
+      # The ApacheHttpClient's connection pool size.
+    connection-pool-size: 200
+    federationgateway:
+      base-url: ${FEDERATION_GATEWAY_BASE_URL:https://postman-echo.com}
+      path: /get
     # Local paths, that are used during the export creation.
     paths:
       # The output path.
@@ -62,3 +67,10 @@ spring:
     url: jdbc:postgresql://${POSTGRESQL_SERVICE_HOST}:${POSTGRESQL_SERVICE_PORT}/${POSTGRESQL_DATABASE}?ssl=true&sslmode=verify-full&sslrootcert=${SSL_POSTGRES_CERTIFICATE_PATH}&sslcert=${SSL_DISTRIBUTION_CERTIFICATE_PATH}&sslkey=${SSL_DISTRIBUTION_PRIVATE_KEY_PATH}
     username: ${POSTGRESQL_USER_DOWNLOAD:local_setup_download}
     password: ${POSTGRESQL_PASSWORD_DOWNLOAD:local_setup_download}
+
+feign:
+  client:
+    config:
+      default:
+        connect-timeout: 5000
+        read-timeout: 5000

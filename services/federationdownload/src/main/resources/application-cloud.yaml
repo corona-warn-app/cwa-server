@@ -10,6 +10,8 @@ spring:
 
 services:
   federationdownload:
+    base-url: ${FEDERATION_GATEWAY_BASE_URL}
+    path: /version/v1/batch
     paths:
       output: /tmp/distribution
     objectstore:
