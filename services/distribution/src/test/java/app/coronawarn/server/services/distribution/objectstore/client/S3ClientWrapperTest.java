@@ -48,6 +48,7 @@ import org.junit.jupiter.params.provider.MethodSource;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.ConfigFileApplicationContextInitializer;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -98,7 +99,8 @@ class S3ClientWrapperTest {
   public static class RetryS3ClientConfig {
 
     @Bean
-    public ObjectStoreClient createS3ClientWrapper(S3Client s3Client) {
+    @ConditionalOnMissingBean
+    public ObjectStoreClient createObjectStoreClient(S3Client s3Client) {
       return new S3ClientWrapper(s3Client);
     }
   }
@@ -215,7 +217,7 @@ class S3ClientWrapperTest {
   @Test
   void testPutObjectForContentTypeHeader() {
     String contentType = "foo-content-type";
-    s3ClientWrapper.putObject(VALID_BUCKET_NAME, VALID_NAME, Path.of(""), 
+    s3ClientWrapper.putObject(VALID_BUCKET_NAME, VALID_NAME, Path.of(""),
         newHashMap(HeaderKey.CONTENT_TYPE, contentType));
 
     PutObjectRequest expRequest =

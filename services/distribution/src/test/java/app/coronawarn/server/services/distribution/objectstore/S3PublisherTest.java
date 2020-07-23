@@ -127,15 +127,6 @@ class S3PublisherTest {
   }
 
   @Test
-  void uploadAllDueToError() throws IOException {
-    when(objectStoreAccess.getObjectsWithPrefix("version")).thenThrow(new ObjectStoreOperationFailedException(""));
-
-    s3Publisher.publish(publishingPath);
-
-    verify(objectStoreAccess, times(3)).putObject(any());
-  }
-
-  @Test
   void executorGetsShutDown() throws IOException {
     when(objectStoreAccess.getObjectsWithPrefix("version")).thenReturn(emptyList());
 

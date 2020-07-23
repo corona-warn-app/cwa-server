@@ -31,6 +31,7 @@ import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -83,6 +84,9 @@ public class ProdDiagnosisKeyBundler extends DiagnosisKeyBundler {
           if (diagnosisKeyAccumulator.size() >= minNumberOfKeysPerBundle) {
             this.distributableDiagnosisKeys.put(currentHour, new ArrayList<>(diagnosisKeyAccumulator));
             diagnosisKeyAccumulator.clear();
+          } else {
+            // placeholder list is needed to be able to generate empty file - see issue #650
+            this.distributableDiagnosisKeys.put(currentHour, Collections.emptyList());
           }
         });
   }

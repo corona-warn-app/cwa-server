@@ -148,7 +148,8 @@ class DiagnosisKeysDirectoryTest {
         join(s, "diagnosis-keys", "country", "DE", "date", "1970-01-03", "hour", "17", "index"),
         join(s, "diagnosis-keys", "country", "DE", "date", "1970-01-03", "hour", "18", "index"),
         join(s, "diagnosis-keys", "country", "DE", "date", "1970-01-03", "hour", "19", "index"),
-        // One missing
+        // One missing from data, but still we should a structure created because of the empty file (issue #650)
+        join(s, "diagnosis-keys", "country", "DE", "date", "1970-01-03", "hour", "20", "index"),
         join(s, "diagnosis-keys", "country", "DE", "date", "1970-01-03", "hour", "21", "index"),
         join(s, "diagnosis-keys", "country", "DE", "date", "1970-01-03", "hour", "22", "index"),
         join(s, "diagnosis-keys", "country", "DE", "date", "1970-01-03", "hour", "23", "index"),
@@ -159,7 +160,25 @@ class DiagnosisKeysDirectoryTest {
         join(s, "diagnosis-keys", "country", "DE", "date", "1970-01-04", "hour", "2", "index"),
         join(s, "diagnosis-keys", "country", "DE", "date", "1970-01-04", "hour", "3", "index"),
         join(s, "diagnosis-keys", "country", "DE", "date", "1970-01-04", "hour", "4", "index"),
-        join(s, "diagnosis-keys", "country", "DE", "date", "1970-01-04", "hour", "5", "index")
+        join(s, "diagnosis-keys", "country", "DE", "date", "1970-01-04", "hour", "5", "index"),
+        join(s, "diagnosis-keys", "country", "DE", "date", "1970-01-04", "hour", "6", "index"),
+        join(s, "diagnosis-keys", "country", "DE", "date", "1970-01-04", "hour", "7", "index"),
+        join(s, "diagnosis-keys", "country", "DE", "date", "1970-01-04", "hour", "8", "index"),
+        join(s, "diagnosis-keys", "country", "DE", "date", "1970-01-04", "hour", "9", "index"),
+        join(s, "diagnosis-keys", "country", "DE", "date", "1970-01-04", "hour", "10", "index"),
+        join(s, "diagnosis-keys", "country", "DE", "date", "1970-01-04", "hour", "11", "index"),
+        join(s, "diagnosis-keys", "country", "DE", "date", "1970-01-04", "hour", "12", "index"),
+        join(s, "diagnosis-keys", "country", "DE", "date", "1970-01-04", "hour", "13", "index"),
+        join(s, "diagnosis-keys", "country", "DE", "date", "1970-01-04", "hour", "14", "index"),
+        join(s, "diagnosis-keys", "country", "DE", "date", "1970-01-04", "hour", "15", "index"),
+        join(s, "diagnosis-keys", "country", "DE", "date", "1970-01-04", "hour", "16", "index"),
+        join(s, "diagnosis-keys", "country", "DE", "date", "1970-01-04", "hour", "17", "index"),
+        join(s, "diagnosis-keys", "country", "DE", "date", "1970-01-04", "hour", "18", "index"),
+        join(s, "diagnosis-keys", "country", "DE", "date", "1970-01-04", "hour", "19", "index"),
+        join(s, "diagnosis-keys", "country", "DE", "date", "1970-01-04", "hour", "20", "index"),
+        join(s, "diagnosis-keys", "country", "DE", "date", "1970-01-04", "hour", "21", "index"),
+        join(s, "diagnosis-keys", "country", "DE", "date", "1970-01-04", "hour", "22", "index"),
+        join(s, "diagnosis-keys", "country", "DE", "date", "1970-01-04", "hour", "23", "index")
     );
 
     Set<String> actualFiles = getFilePaths(outputFile, outputFile.getAbsolutePath());
