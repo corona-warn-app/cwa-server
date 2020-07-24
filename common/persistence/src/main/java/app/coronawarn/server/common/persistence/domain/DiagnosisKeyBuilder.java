@@ -29,6 +29,7 @@ import static app.coronawarn.server.common.persistence.domain.validation.ValidSu
 import app.coronawarn.server.common.persistence.exception.InvalidDiagnosisKeyException;
 import app.coronawarn.server.common.protocols.external.exposurenotification.TemporaryExposureKey;
 import java.time.Instant;
+import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 import javax.validation.ConstraintViolation;
@@ -49,6 +50,8 @@ public class DiagnosisKeyBuilder implements
   private int rollingPeriod = DiagnosisKey.EXPECTED_ROLLING_PERIOD;
   private int transmissionRiskLevel;
   private Long submissionTimestamp = null;
+  private String countryCode;
+  private List<String> visitedCountries;
 
   DiagnosisKeyBuilder() {
   }
@@ -87,6 +90,18 @@ public class DiagnosisKeyBuilder implements
   }
 
   @Override
+  public FinalBuilder withCountryCode(String countryCode) {
+    this.countryCode = countryCode;
+    return this;
+  }
+
+  @Override
+  public FinalBuilder withVisitedCountries(List<String> visitedCountries) {
+    this.visitedCountries = visitedCountries;
+    return this;
+  }
+
+  @Override
   public FinalBuilder withRollingPeriod(int rollingPeriod) {
     this.rollingPeriod = rollingPeriod;
     return this;
@@ -100,7 +115,8 @@ public class DiagnosisKeyBuilder implements
     }
 
     var diagnosisKey = new DiagnosisKey(
-        keyData, rollingStartIntervalNumber, rollingPeriod, transmissionRiskLevel, submissionTimestamp);
+        keyData, rollingStartIntervalNumber, rollingPeriod, transmissionRiskLevel, submissionTimestamp, countryCode,
+        visitedCountries);
     return throwIfValidationFails(diagnosisKey);
   }
 

@@ -24,6 +24,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import app.coronawarn.server.common.persistence.domain.DiagnosisKey;
 import java.time.OffsetDateTime;
+import java.util.Collections;
 import java.util.List;
 import java.util.Random;
 
@@ -51,7 +52,8 @@ public class DiagnosisKeyServiceTestHelper {
     }
   }
 
-  public static DiagnosisKey buildDiagnosisKeyForSubmissionTimestamp(long submissionTimeStamp) {
+  public static DiagnosisKey buildDiagnosisKeyForSubmissionTimestamp(long submissionTimeStamp,
+      String countryCode, List<String> visitedCountries) {
     byte[] randomBytes = new byte[16];
     Random random = new Random(submissionTimeStamp);
     random.nextBytes(randomBytes);
@@ -62,7 +64,16 @@ public class DiagnosisKeyServiceTestHelper {
         .withSubmissionTimestamp(submissionTimeStamp).build();
   }
 
+  public static DiagnosisKey buildDiagnosisKeyForSubmissionTimestamp(long submissionTimeStamp) {
+    return buildDiagnosisKeyForSubmissionTimestamp(submissionTimeStamp, "DE", Collections.singletonList("DE"));
+  }
+
   public static DiagnosisKey buildDiagnosisKeyForDateTime(OffsetDateTime dateTime) {
     return buildDiagnosisKeyForSubmissionTimestamp(dateTime.toEpochSecond() / 3600);
+  }
+
+  public static DiagnosisKey buildDiagnosisKeyForDateTime(OffsetDateTime dateTime,
+      String countryCode, List<String> visitedCountries) {
+    return buildDiagnosisKeyForSubmissionTimestamp(dateTime.toEpochSecond() / 3600, countryCode, visitedCountries);
   }
 }

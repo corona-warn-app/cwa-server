@@ -135,6 +135,17 @@ class DiagnosisKeyServiceTest {
   }
 
   @Test
+  void testShouldNotDeleteKeysFromAnotherCountry() {
+    var expKeys = List.of(buildDiagnosisKeyForDateTime(OffsetDateTime.now(UTC).minusDays(1L), "DE", Collections.singletonList("DE")));
+
+    diagnosisKeyService.saveDiagnosisKeys(expKeys);
+    diagnosisKeyService.applyRetentionPolicy(1, "FR");
+    var actKeys = diagnosisKeyService.getDiagnosisKeys();
+
+    assertDiagnosisKeysEqual(actKeys, expKeys);
+  }
+
+  @Test
   void testNoPersistOnValidationError() {
     assertThat(catchThrowable(() -> {
       var keys = List.of(DiagnosisKey.builder()

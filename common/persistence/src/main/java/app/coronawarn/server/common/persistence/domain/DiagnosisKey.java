@@ -28,6 +28,7 @@ import app.coronawarn.server.common.persistence.domain.validation.ValidSubmissio
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 import javax.validation.ConstraintViolation;
@@ -68,16 +69,24 @@ public class DiagnosisKey {
   @ValidSubmissionTimestamp
   private final long submissionTimestamp;
 
+  @Size(max = 2)
+  private String originCountry;
+
+  private List<String> visitedCountries;
+
   /**
    * Should be called by builders.
    */
   DiagnosisKey(byte[] keyData, int rollingStartIntervalNumber, int rollingPeriod,
-      int transmissionRiskLevel, long submissionTimestamp) {
+      int transmissionRiskLevel, long submissionTimestamp,
+      @Size String originCountry, List<String> visitedCountries) {
     this.keyData = keyData;
     this.rollingStartIntervalNumber = rollingStartIntervalNumber;
     this.rollingPeriod = rollingPeriod;
     this.transmissionRiskLevel = transmissionRiskLevel;
     this.submissionTimestamp = submissionTimestamp;
+    this.originCountry = originCountry;
+    this.visitedCountries = visitedCountries;
   }
 
   /**
@@ -124,6 +133,22 @@ public class DiagnosisKey {
    */
   public long getSubmissionTimestamp() {
     return submissionTimestamp;
+  }
+
+  public String getOriginCountry() {
+    return originCountry;
+  }
+
+  public void setOriginCountry(String originCountry) {
+    this.originCountry = originCountry;
+  }
+
+  public List<String> getVisitedCountries() {
+    return visitedCountries;
+  }
+
+  public void setVisitedCountries(List<String> visitedCountries) {
+    this.visitedCountries = visitedCountries;
   }
 
   /**

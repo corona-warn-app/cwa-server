@@ -68,6 +68,24 @@ public class DiagnosisKeyService {
   }
 
   /**
+   * Persists the specified collection of {@link DiagnosisKey} instances. If the key data of a particular diagnosis key
+   * already exists in the database, this diagnosis key is not persisted.
+   *
+   * @param diagnosisKeys must not contain {@literal null}.
+   * @throws IllegalArgumentException in case the given collection contains {@literal null}.
+   */
+  @Timed
+  @Transactional
+  public void saveDiagnosisKeysWithCountry(Collection<DiagnosisKey> diagnosisKeys) {
+    for (DiagnosisKey diagnosisKey : diagnosisKeys) {
+      keyRepository.saveDoNothingOnConflictCountries(
+          diagnosisKey.getKeyData(), diagnosisKey.getRollingStartIntervalNumber(), diagnosisKey.getRollingPeriod(),
+          diagnosisKey.getSubmissionTimestamp(), diagnosisKey.getTransmissionRiskLevel(),
+          diagnosisKey.getOriginCountry(), (String[]) diagnosisKey.getVisitedCountries().toArray());
+    }
+  }
+
+  /**
    * Returns all valid persisted diagnosis keys, sorted by their submission timestamp.
    */
   public List<DiagnosisKey> getDiagnosisKeys() {
@@ -104,7 +122,7 @@ public class DiagnosisKeyService {
    * @throws IllegalArgumentException if {@code daysToRetain} is negative.
    */
   @Transactional
-  public void applyRetentionPolicy(int daysToRetain) {
+  public void applyRetentionPolicy(int daysToRetain, String countryCode) {
     if (daysToRetain < 0) {
       throw new IllegalArgumentException("Number of days to retain must be greater or equal to 0.");
     }
@@ -113,9 +131,13 @@ public class DiagnosisKeyService {
         .ofInstant(Instant.now(), UTC)
         .minusDays(daysToRetain)
         .toEpochSecond(UTC) / SECONDS_PER_HOUR;
-    int numberOfDeletions = keyRepository.countOlderThanOrEqual(threshold);
+    int numberOfDeletions = keyRepository.countOlderThanOrEqual(threshold, countryCode);
     logger.info("Deleting {} diagnosis key(s) with a submission timestamp older than {} day(s) ago.",
         numberOfDeletions, daysToRetain);
-    keyRepository.deleteOlderThanOrEqual(threshold);
+    keyRepository.deleteOlderThanOrEqual(threshold, countryCode);
+  }
+
+  public void applyRetentionPolicy(int daysToRetain) {
+    this.applyRetentionPolicy(daysToRetain, "DE");
   }
 }
