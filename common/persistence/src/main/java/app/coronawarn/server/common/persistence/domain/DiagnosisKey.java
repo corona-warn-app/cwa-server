@@ -24,22 +24,26 @@ import static java.time.ZoneOffset.UTC;
 
 import app.coronawarn.server.common.persistence.domain.DiagnosisKeyBuilders.Builder;
 import app.coronawarn.server.common.persistence.domain.validation.ValidRollingStartIntervalNumber;
-import app.coronawarn.server.common.persistence.domain.validation.ValidSubmissionTimestamp;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.Objects;
 import java.util.Set;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.Table;
 import javax.validation.ConstraintViolation;
 import javax.validation.Validation;
 import javax.validation.Validator;
 import javax.validation.constraints.Size;
 import org.hibernate.validator.constraints.Range;
-import org.springframework.data.annotation.Id;
 
 /**
  * A key generated for advertising over a window of time.
  */
+@Entity
+@Table(name = "diagnosis_key")
 public class DiagnosisKey {
 
   /**
@@ -53,20 +57,23 @@ public class DiagnosisKey {
 
   @Id
   @Size(min = 16, max = 16, message = "Key data must be a byte array of length 16.")
-  private final byte[] keyData;
+  @Column(unique = true)
+  private byte[] keyData;
 
   @ValidRollingStartIntervalNumber
-  private final int rollingStartIntervalNumber;
+  private int rollingStartIntervalNumber;
 
   @Range(min = EXPECTED_ROLLING_PERIOD, max = EXPECTED_ROLLING_PERIOD,
       message = "Rolling period must be " + EXPECTED_ROLLING_PERIOD + ".")
-  private final int rollingPeriod;
+  private int rollingPeriod;
 
   @Range(min = 0, max = 8, message = "Risk level must be between 0 and 8.")
-  private final int transmissionRiskLevel;
+  private int transmissionRiskLevel;
 
-  @ValidSubmissionTimestamp
-  private final long submissionTimestamp;
+  private long submissionTimestamp;
+
+  protected DiagnosisKey() {
+  }
 
   /**
    * Should be called by builders.

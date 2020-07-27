@@ -5,18 +5,13 @@ does not necessarily reflect the current implementation status in this repositor
 is still ongoing. Also, details of the exposure notification API by Google/Apple might change
 in the future.
 
-The high level overview of CWA can be found in the [cwa-documentation](https://github.com/corona-warn-app/cwa-documentation)
-repository. The [solution architecture](https://github.com/corona-warn-app/cwa-documentation/blob/master/solution_architecture.md)
-is outlined in detail.
-![Solution Architecture](https://raw.githubusercontent.com/corona-warn-app/cwa-documentation/master/images/solution_architecture/figure_1.svg)
-
-The above illustration shows all components of the CWA project. This repository reflects the `Corona-Warn-App Server`
-component, which can be found in the left bottom corner. This document explains in more detail how this component
-functions and interacts with other components.
+Please note: This overview document only focuses on the architecture of this component.
+If you are interested in the full architectural overview, check out the [solution architecture](https://github.com/corona-warn-app/cwa-documentation/blob/master/solution_architecture.md)
+in the [cwa-documentation](https://github.com/corona-warn-app/cwa-documentation) repository.
 
 ## Overview
 
-The Corona Warn App ("CWA") server runs in a Kubernetes cluster on the OpenShift (“OCP”) platform.
+The Corona Warn App ("CWA") server runs in a Kubernetes cluster on the Open Shift (“OSP”) platform.
 Its main objective is to enable users to take part in the exposure notification framework based
 on Apple/Google specifications. Although CWA aims at compliance to the spec on a protocol level, it
 does not mean automatically that all features will be implemented. Main driver for these assessments is data privacy and protection (DPP) concerns.

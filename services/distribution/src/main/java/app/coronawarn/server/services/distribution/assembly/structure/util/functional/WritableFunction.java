@@ -22,7 +22,6 @@ package app.coronawarn.server.services.distribution.assembly.structure.util.func
 
 import app.coronawarn.server.services.distribution.assembly.structure.Writable;
 import app.coronawarn.server.services.distribution.assembly.structure.util.ImmutableStack;
-import java.util.Optional;
 import java.util.function.Function;
 
 /**
@@ -31,8 +30,7 @@ import java.util.function.Function;
  * @param <T> The specific type of {@link Writable} that this {@link WritableFunction} can create.
  */
 @FunctionalInterface
-public interface WritableFunction<T extends Writable<T>> extends
-    Function<ImmutableStack<Object>, Optional<Writable<T>>> {
+public interface WritableFunction<T extends Writable<T>> extends Function<ImmutableStack<Object>, Writable<T>> {
 
-  Optional<Writable<T>> apply(ImmutableStack<Object> t);
+  Writable<T> apply(ImmutableStack<Object> t);
 }

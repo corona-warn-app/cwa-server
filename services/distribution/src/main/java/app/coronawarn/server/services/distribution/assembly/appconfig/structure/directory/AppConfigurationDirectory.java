@@ -21,6 +21,12 @@
 package app.coronawarn.server.services.distribution.assembly.appconfig.structure.directory;
 
 import app.coronawarn.server.common.protocols.internal.ApplicationConfiguration;
+import app.coronawarn.server.common.protocols.internal.ApplicationVersionConfiguration;
+import app.coronawarn.server.common.protocols.internal.AttenuationDuration;
+import app.coronawarn.server.common.protocols.internal.RiskScoreClassification;
+import app.coronawarn.server.common.protocols.internal.RiskScoreParameters;
+import app.coronawarn.server.services.distribution.assembly.appconfig.ApplicationConfigurationProvider;
+import app.coronawarn.server.services.distribution.assembly.appconfig.UnableToLoadFileException;
 import app.coronawarn.server.services.distribution.assembly.appconfig.structure.archive.decorator.signing.AppConfigurationSigningDecorator;
 import app.coronawarn.server.services.distribution.assembly.appconfig.validation.ApplicationConfigurationValidator;
 import app.coronawarn.server.services.distribution.assembly.appconfig.validation.ConfigurationValidator;
@@ -32,21 +38,26 @@ import app.coronawarn.server.services.distribution.assembly.structure.directory.
 import app.coronawarn.server.services.distribution.assembly.structure.directory.decorator.indexing.IndexingDecoratorOnDisk;
 import app.coronawarn.server.services.distribution.assembly.structure.file.FileOnDisk;
 import app.coronawarn.server.services.distribution.config.DistributionServiceConfig;
-import java.util.Optional;
+import com.google.protobuf.Message;
 import java.util.Set;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Creates the directory structure {@code /configuration/country/:country} and writes the app configuration parameters
- * into a zip file.
+ * Creates the directory structure {@code /configuration/country/:country} and writes the following five files,
+ * wrapped in a signed zip archive:
+ * 1. File containing minimum risk score
+ * 2. File containing {@link RiskScoreParameters}
+ * 3. File containing {@link RiskScoreClassification}
+ * 4. File containing {@link AttenuationDuration}
+ * 5. File containing {@link ApplicationVersionConfiguration}
  */
 public class AppConfigurationDirectory extends DirectoryOnDisk {
 
   private static final Logger logger = LoggerFactory.getLogger(AppConfigurationDirectory.class);
 
   private final IndexDirectoryOnDisk<String> countryDirectory;
-  private final ApplicationConfiguration applicationConfiguration;
+
   private final CryptoProvider cryptoProvider;
   private final DistributionServiceConfig distributionServiceConfig;
 
@@ -55,39 +66,45 @@ public class AppConfigurationDirectory extends DirectoryOnDisk {
    *
    * @param cryptoProvider The {@link CryptoProvider} whose artifacts to use for creating the signature.
    */
-  public AppConfigurationDirectory(ApplicationConfiguration applicationConfiguration, CryptoProvider cryptoProvider,
-      DistributionServiceConfig distributionServiceConfig) {
+  public AppConfigurationDirectory(CryptoProvider cryptoProvider, DistributionServiceConfig distributionServiceConfig) {
     super(distributionServiceConfig.getApi().getParametersPath());
-    this.applicationConfiguration = applicationConfiguration;
     this.cryptoProvider = cryptoProvider;
     this.distributionServiceConfig = distributionServiceConfig;
 
     countryDirectory = new IndexDirectoryOnDisk<>(distributionServiceConfig.getApi().getCountryPath(),
-        ignoredValue -> Set.of(distributionServiceConfig.getApi().getCountryGermany()), Object::toString);
+        __ -> Set.of(distributionServiceConfig.getApi().getCountryGermany()), Object::toString);
 
-    addConfigurationArchiveIfValid(distributionServiceConfig.getApi().getAppConfigFileName());
+    addApplicationConfigurationIfValid();
 
     this.addWritable(new IndexingDecoratorOnDisk<>(countryDirectory, distributionServiceConfig.getOutputFileName()));
   }
 
+  private void addApplicationConfigurationIfValid() {
+    try {
+      ApplicationConfiguration appConfig = ApplicationConfigurationProvider.readMasterFile();
+      ConfigurationValidator validator = new ApplicationConfigurationValidator(appConfig);
+      addArchiveIfMessageValid(distributionServiceConfig.getApi().getAppConfigFileName(),
+          appConfig, validator);
+    } catch (UnableToLoadFileException e) {
+      logger.error("Exposure configuration will not be published! Unable to read configuration file from disk.", e);
+    }
+  }
+
   /**
-   * If validation of the {@link ApplicationConfiguration} succeeds, it is written into a file, put into an archive with
-   * the specified name and added to the specified parent directory.
+   * If validation of the {@link Message} succeeds, it is written into a file, put into an archive with the specified
+   * name and added to the specified parent directory.
    */
-  private void addConfigurationArchiveIfValid(String archiveName) {
-    ConfigurationValidator validator = new ApplicationConfigurationValidator(applicationConfiguration);
+  private void addArchiveIfMessageValid(String archiveName, Message message, ConfigurationValidator validator) {
     ValidationResult validationResult = validator.validate();
 
     if (validationResult.hasErrors()) {
-      logger.error("App configuration file creation failed. Validation failed for {}, {}",
+      logger.error("App configuration file creation failed. Validation failed for {}./n{}",
           archiveName, validationResult);
-      return;
     }
 
     ArchiveOnDisk appConfigurationFile = new ArchiveOnDisk(archiveName);
-    appConfigurationFile.addWritable(new FileOnDisk("export.bin", applicationConfiguration.toByteArray()));
-    countryDirectory.addWritableToAll(ignoredValue ->
-        Optional
-            .of(new AppConfigurationSigningDecorator(appConfigurationFile, cryptoProvider, distributionServiceConfig)));
+    appConfigurationFile.addWritable(new FileOnDisk("export.bin", message.toByteArray()));
+    countryDirectory.addWritableToAll(__ -> new AppConfigurationSigningDecorator(appConfigurationFile, cryptoProvider,
+        distributionServiceConfig));
   }
 }

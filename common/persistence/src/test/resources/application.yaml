@@ -1,8 +1,16 @@
 ---
 spring:
+  test:
+    database:
+      replace: none
   flyway:
-    enabled: true
-    locations: classpath:/db/migration, classpath:/db/specific/{vendor}
+    enabled: false
+  jpa:
+    hibernate:
+      ddl-auto: create
+    properties:
+      hibernate:
+        show_sql: false
   datasource:
     url: jdbc:tc:postgresql:11.8:///databasename?TC_TMPFS=/testtmpfs:rw
   main:

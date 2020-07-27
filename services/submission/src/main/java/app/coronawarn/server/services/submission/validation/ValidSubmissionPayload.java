@@ -32,6 +32,7 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 import javax.validation.Constraint;
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
@@ -86,6 +87,11 @@ public @interface ValidSubmissionPayload {
     public boolean isValid(SubmissionPayload submissionPayload, ConstraintValidatorContext validatorContext) {
       List<TemporaryExposureKey> exposureKeys = submissionPayload.getKeysList();
       validatorContext.disableDefaultConstraintViolation();
+
+      if (Objects.isNull(exposureKeys)) {
+        addViolation(validatorContext, "Field 'keys' points to Null.");
+        return false;
+      }
 
       boolean isValid = checkKeyCollectionSize(exposureKeys, validatorContext);
       isValid &= checkUniqueStartIntervalNumbers(exposureKeys, validatorContext);

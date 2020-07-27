@@ -23,7 +23,7 @@ package app.coronawarn.server.services.distribution.assembly.diagnosiskeys.struc
 import app.coronawarn.server.common.persistence.domain.DiagnosisKey;
 import app.coronawarn.server.services.distribution.assembly.component.CryptoProvider;
 import app.coronawarn.server.services.distribution.assembly.diagnosiskeys.DiagnosisKeyBundler;
-import app.coronawarn.server.services.distribution.assembly.diagnosiskeys.structure.archive.decorator.signing.DiagnosisKeySigningDecorator;
+import app.coronawarn.server.services.distribution.assembly.diagnosiskeys.structure.archive.decorator.singing.DiagnosisKeySigningDecorator;
 import app.coronawarn.server.services.distribution.assembly.diagnosiskeys.structure.file.TemporaryExposureKeyExportFile;
 import app.coronawarn.server.services.distribution.assembly.structure.WritableOnDisk;
 import app.coronawarn.server.services.distribution.assembly.structure.archive.Archive;
@@ -37,7 +37,6 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.util.List;
-import java.util.Optional;
 
 public class DiagnosisKeysHourDirectory extends IndexDirectoryOnDisk<LocalDateTime> {
 
@@ -81,7 +80,7 @@ public class DiagnosisKeysHourDirectory extends IndexDirectoryOnDisk<LocalDateTi
       Archive<WritableOnDisk> hourArchive = new ArchiveOnDisk(distributionServiceConfig.getOutputFileName());
       hourArchive.addWritable(temporaryExposureKeyExportFile);
 
-      return Optional.of(decorateDiagnosisKeyArchive(hourArchive));
+      return decorateDiagnosisKeyArchive(hourArchive);
     });
     super.prepare(indices);
   }

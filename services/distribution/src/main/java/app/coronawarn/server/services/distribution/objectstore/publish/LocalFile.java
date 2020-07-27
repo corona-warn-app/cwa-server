@@ -86,32 +86,4 @@ public abstract class LocalFile {
     Path relativePath = rootFolder.relativize(file);
     return relativePath.toString().replaceAll("\\\\", "/");
   }
-
-  /**
-   * Value for the <code>content-type</code> header.
-   * 
-   * @return Either <a href="https://www.iana.org/assignments/media-types/application/zip">zip</a> or
-   *         <a href="https://www.iana.org/assignments/media-types/application/json">json</a>.
-   */
-  public String getContentType() {
-    if (s3Key.endsWith("app_config")) {
-      return "application/zip";
-    }
-    if (isKeyFile()) {
-      // date and hourly diagnosis key files
-      return "application/zip";
-    }
-    // list of versions, dates, hours
-    return "application/json";
-  }
-
-  /**
-   * Indicates if a local file is a Key-file or not. Only the Key files are stored in the Date / Hour tree structure.
-   * One file per sub-folder (days: 1-31 / hours: 0-23). The index files are not stored in folders ending with a digit.
-   * 
-   * @return <code>true</code> if and only if the {@link #s3Key} ends with a digit, false otherwise.
-   */
-  public boolean isKeyFile() {
-    return s3Key.matches(".*\\d");
-  }
 }

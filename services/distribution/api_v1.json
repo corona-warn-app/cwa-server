@@ -348,10 +348,13 @@
         },
         "/version/{version}/configuration/country/{country}/app_config": {
             "get": {
-                "summary": "Get application configuration for a country.",
-                "description": "Gives application configuration for a specific country, which includes:\n- Minimum risk score\n- Risk score classification\n- Risk score parameters\n- Attenuation duration\n- Application version configuration",
+                "summary": "Get Application configuration for a country.",
                 "tags": [
-                    "Application configuration"
+                    "Minimum risk score",
+                    "Risk score classification",
+                    "Risk score parameters",
+                    "Attenuation duration",
+                    "Application version configuration"
                 ],
                 "parameters": [
                     {

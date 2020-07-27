@@ -25,10 +25,11 @@ import static java.util.function.Predicate.not;
 import app.coronawarn.server.services.distribution.assembly.diagnosiskeys.structure.directory.DiagnosisKeysHourDirectory;
 import app.coronawarn.server.services.distribution.assembly.structure.directory.decorator.indexing.IndexingDecoratorOnDisk;
 import app.coronawarn.server.services.distribution.assembly.structure.util.ImmutableStack;
-import app.coronawarn.server.services.distribution.assembly.structure.util.TimeUtils;
 import app.coronawarn.server.services.distribution.config.DistributionServiceConfig;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.ZoneOffset;
+import java.time.temporal.ChronoUnit;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -51,8 +52,8 @@ public class HourIndexingDecorator extends IndexingDecoratorOnDisk<LocalDateTime
   public Set<LocalDateTime> getIndex(ImmutableStack<Object> indices) {
     LocalDate currentDateIndex = (LocalDate) indices.peek();
     if (Boolean.FALSE.equals(distributionServiceConfig.getIncludeIncompleteHours())
-        && TimeUtils.getUtcDate().equals(currentDateIndex)) {
-      LocalDateTime currentHour = TimeUtils.getCurrentUtcHour();
+        && LocalDate.now(ZoneOffset.UTC).equals(currentDateIndex)) {
+      LocalDateTime currentHour = LocalDateTime.now(ZoneOffset.UTC).truncatedTo(ChronoUnit.HOURS);
       return super.getIndex(indices).stream()
           .filter(not(currentHour::equals))
           .collect(Collectors.toSet());

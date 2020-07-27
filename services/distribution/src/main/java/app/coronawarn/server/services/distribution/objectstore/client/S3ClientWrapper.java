@@ -20,11 +20,9 @@
 
 package app.coronawarn.server.services.distribution.objectstore.client;
 
-import static java.lang.Boolean.TRUE;
 import static java.util.stream.Collectors.toList;
 
 import java.nio.file.Path;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
@@ -80,20 +78,13 @@ public class S3ClientWrapper implements ObjectStoreClient {
       backoff = @Backoff(delayExpression = "${services.distribution.objectstore.retry-backoff}"))
   public List<S3Object> getObjects(String bucket, String prefix) {
     logRetryStatus("object download");
-    List<S3Object> allS3Objects = new ArrayList<>();
-    String continuationToken = null;
 
-    do {
-      ListObjectsV2Request request =
-          ListObjectsV2Request.builder().prefix(prefix).bucket(bucket).continuationToken(continuationToken).build();
-      ListObjectsV2Response response = s3Client.listObjectsV2(request);
-      response.contents().stream()
-          .map(s3Object -> buildS3Object(s3Object, bucket))
-          .forEach(allS3Objects::add);
-      continuationToken = TRUE.equals(response.isTruncated()) ? response.continuationToken() : null;
-    } while (continuationToken != null);
+    ListObjectsV2Response response =
+        s3Client.listObjectsV2(ListObjectsV2Request.builder().prefix(prefix).bucket(bucket).build());
 
-    return allS3Objects;
+    return response.contents().stream()
+        .map(s3Object -> buildS3Object(s3Object, bucket))
+        .collect(toList());
   }
 
   @Recover
@@ -117,9 +108,6 @@ public class S3ClientWrapper implements ObjectStoreClient {
     }
     if (headers.containsKey(HeaderKey.CWA_HASH)) {
       requestBuilder.metadata(Map.of(HeaderKey.CWA_HASH.withMetaPrefix(), headers.get(HeaderKey.CWA_HASH)));
-    }
-    if (headers.containsKey(HeaderKey.CONTENT_TYPE)) {
-      requestBuilder.contentType(headers.get(HeaderKey.CONTENT_TYPE));
     }
 
     RequestBody bodyFile = RequestBody.fromFile(filePath);

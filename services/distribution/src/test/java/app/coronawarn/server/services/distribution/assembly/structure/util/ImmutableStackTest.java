@@ -61,7 +61,7 @@ class ImmutableStackTest {
 
   @Test
   void throwsExceptionWhenPopsFromEmptyStack() {
-    ImmutableStack<Object> stack = new ImmutableStack<>();
-    assertThatExceptionOfType(NoSuchElementException.class).isThrownBy(() -> stack.pop());
+    assertThatExceptionOfType(NoSuchElementException.class)
+        .isThrownBy(() -> new ImmutableStack<>().pop());
   }
 }

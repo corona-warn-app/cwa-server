@@ -18,18 +18,6 @@
     <pluginManagement>
       <plugins>
         <plugin>
-          <artifactId>maven-failsafe-plugin</artifactId>
-          <version>3.0.0-M4</version>
-          <executions>
-            <execution>
-              <goals>
-                <goal>integration-test</goal>
-                <goal>verify</goal>
-              </goals>
-            </execution>
-          </executions>
-        </plugin>
-        <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-surefire-plugin</artifactId>
           <version>3.0.0-M3</version>
@@ -100,10 +88,6 @@
       <artifactId>postgresql</artifactId>
       <version>1.14.3</version>
       <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.springframework.boot</groupId>
-      <artifactId>spring-boot-starter-aop</artifactId>
     </dependency>
   </dependencies>
 

@@ -26,8 +26,10 @@ import app.coronawarn.server.services.distribution.assembly.diagnosiskeys.Diagno
 import app.coronawarn.server.services.distribution.assembly.diagnosiskeys.structure.directory.DiagnosisKeysDirectory;
 import app.coronawarn.server.services.distribution.assembly.structure.WritableOnDisk;
 import app.coronawarn.server.services.distribution.assembly.structure.directory.Directory;
-import app.coronawarn.server.services.distribution.assembly.structure.util.TimeUtils;
 import app.coronawarn.server.services.distribution.config.DistributionServiceConfig;
+import java.time.LocalDateTime;
+import java.time.ZoneOffset;
+import java.time.temporal.ChronoUnit;
 import java.util.Collection;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -66,7 +68,8 @@ public class DiagnosisKeysStructureProvider {
   public Directory<WritableOnDisk> getDiagnosisKeys() {
     logger.debug("Querying diagnosis keys from the database...");
     Collection<DiagnosisKey> diagnosisKeys = diagnosisKeyService.getDiagnosisKeys();
-    diagnosisKeyBundler.setDiagnosisKeys(diagnosisKeys, TimeUtils.getCurrentUtcHour());
+    diagnosisKeyBundler.setDiagnosisKeys(diagnosisKeys,
+        LocalDateTime.now(ZoneOffset.UTC).truncatedTo(ChronoUnit.HOURS));
     return new DiagnosisKeysDirectory(diagnosisKeyBundler, cryptoProvider, distributionServiceConfig);
   }
 }

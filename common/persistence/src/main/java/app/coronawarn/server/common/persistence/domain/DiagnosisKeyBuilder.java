@@ -24,7 +24,6 @@ import static app.coronawarn.server.common.persistence.domain.DiagnosisKeyBuilde
 import static app.coronawarn.server.common.persistence.domain.DiagnosisKeyBuilders.FinalBuilder;
 import static app.coronawarn.server.common.persistence.domain.DiagnosisKeyBuilders.RollingStartIntervalNumberBuilder;
 import static app.coronawarn.server.common.persistence.domain.DiagnosisKeyBuilders.TransmissionRiskLevelBuilder;
-import static app.coronawarn.server.common.persistence.domain.validation.ValidSubmissionTimestampValidator.SECONDS_PER_HOUR;
 
 import app.coronawarn.server.common.persistence.exception.InvalidDiagnosisKeyException;
 import app.coronawarn.server.common.protocols.external.exposurenotification.TemporaryExposureKey;
@@ -48,7 +47,7 @@ public class DiagnosisKeyBuilder implements
   private int rollingStartIntervalNumber;
   private int rollingPeriod = DiagnosisKey.EXPECTED_ROLLING_PERIOD;
   private int transmissionRiskLevel;
-  private Long submissionTimestamp = null;
+  private long submissionTimestamp = -1L;
 
   DiagnosisKeyBuilder() {
   }
@@ -94,9 +93,9 @@ public class DiagnosisKeyBuilder implements
 
   @Override
   public DiagnosisKey build() {
-    if (submissionTimestamp == null) {
+    if (submissionTimestamp < 0) {
       // hours since epoch
-      submissionTimestamp = Instant.now().getEpochSecond() / SECONDS_PER_HOUR;
+      submissionTimestamp = Instant.now().getEpochSecond() / 3600L;
     }
 
     var diagnosisKey = new DiagnosisKey(

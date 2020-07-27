@@ -20,7 +20,7 @@
 
 package app.coronawarn.server.services.distribution.objectstore;
 
-import app.coronawarn.server.services.distribution.config.DistributionServiceConfig;
+import app.coronawarn.server.services.distribution.assembly.component.CwaApiStructureProvider;
 import app.coronawarn.server.services.distribution.objectstore.client.ObjectStoreOperationFailedException;
 import app.coronawarn.server.services.distribution.objectstore.publish.LocalFile;
 import app.coronawarn.server.services.distribution.objectstore.publish.PublishFileSet;
@@ -37,7 +37,8 @@ import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.stereotype.Component;
 
 /**
- * Publishes a folder on the disk to S3 while keeping the folder and file structure.<br> Moreover, does the following:
+ * Publishes a folder on the disk to S3 while keeping the folder and file structure.<br>
+ * Moreover, does the following:
  * <br>
  * <ul>
  *   <li>Publishes index files on a different route, removing the trailing "/index" part.</li>
@@ -54,50 +55,53 @@ public class S3Publisher {
 
   private static final Logger logger = LoggerFactory.getLogger(S3Publisher.class);
 
+  /**
+   * The default CWA root folder, which contains all CWA related files.
+   */
+  private static final String CWA_S3_ROOT = CwaApiStructureProvider.VERSION_DIRECTORY;
+
   private final ObjectStoreAccess objectStoreAccess;
   private final FailedObjectStoreOperationsCounter failedOperationsCounter;
   private final ThreadPoolTaskExecutor executor;
-  private final DistributionServiceConfig distributionServiceConfig;
 
   /**
    * Creates an {@link S3Publisher} instance that attempts to publish the files at the specified location to an object
    * store. Object store operations are performed through the specified {@link ObjectStoreAccess} instance.
    *
-   * @param objectStoreAccess         The {@link ObjectStoreAccess} used to communicate with the object store.
-   * @param failedOperationsCounter   The {@link FailedObjectStoreOperationsCounter} that is used to monitor the number
-   *                                  of failed operations.
-   * @param executor                  The executor that manages the upload task submission.
-   * @param distributionServiceConfig The {@link DistributionServiceConfig} used for distribution service
-   *                                  configuration.
+   * @param objectStoreAccess       The {@link ObjectStoreAccess} used to communicate with the object store.
+   * @param failedOperationsCounter The {@link FailedObjectStoreOperationsCounter} that is used to monitor the number of
+   *                                failed operations.
+   * @param executor                The executor that manages the upload task submission.
    */
   public S3Publisher(ObjectStoreAccess objectStoreAccess, FailedObjectStoreOperationsCounter failedOperationsCounter,
-      ThreadPoolTaskExecutor executor, DistributionServiceConfig distributionServiceConfig) {
+      ThreadPoolTaskExecutor executor) {
     this.objectStoreAccess = objectStoreAccess;
     this.failedOperationsCounter = failedOperationsCounter;
     this.executor = executor;
-    this.distributionServiceConfig = distributionServiceConfig;
   }
 
   /**
-   * Synchronizes the files to S3. Current strategy is to never update diagnosis key archive files already
-   * published on S3, even if the retention and shifting policies cause a diff between subsequent distribution runs.
-   * Thus, by default distribution will only add new key files, but still modify indexes. This behaviour can however
-   * be controlled through the configuration parameter <code>DistributionServiceConfig.forceUpdateKeyFiles</code>
+   * Synchronizes the files to S3.
    *
    * @param root The path of the directory that shall be published.
-   * @see Github issue #650
    * @throws IOException in case there were problems reading files from the disk.
    */
   public void publish(Path root) throws IOException {
+    PublishedFileSet published;
     List<LocalFile> toPublish = new PublishFileSet(root).getFiles();
+    List<LocalFile> diff;
 
-    PublishedFileSet published = new PublishedFileSet(
-        objectStoreAccess.getObjectsWithPrefix(distributionServiceConfig.getApi().getVersionPath()),
-        distributionServiceConfig.getObjectStore().getForceUpdateKeyfiles());
-    List<LocalFile> diff = toPublish
-        .stream()
-        .filter(published::shouldPublish)
-        .collect(Collectors.toList());
+    try {
+      published = new PublishedFileSet(objectStoreAccess.getObjectsWithPrefix(CWA_S3_ROOT));
+      diff = toPublish
+          .stream()
+          .filter(published::isNotYetPublished)
+          .collect(Collectors.toList());
+    } catch (ObjectStoreOperationFailedException e) {
+      failedOperationsCounter.incrementAndCheckThreshold(e);
+      // failed to retrieve existing files; publish everything
+      diff = toPublish;
+    }
 
     logger.info("Beginning upload of {} files... ", diff.size());
     try {

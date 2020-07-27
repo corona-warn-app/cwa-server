@@ -96,13 +96,6 @@ public abstract class DiagnosisKeyBundler {
   }
 
   /**
-   * Returns the {@link LocalDateTime} at which the distribution runs.
-   */
-  public LocalDateTime getDistributionTime() {
-    return this.distributionTime;
-  }
-
-  /**
    * Returns all {@link DiagnosisKey DiagnosisKeys} contained by this {@link DiagnosisKeyBundler}.
    */
   public List<DiagnosisKey> getAllDiagnosisKeys() {

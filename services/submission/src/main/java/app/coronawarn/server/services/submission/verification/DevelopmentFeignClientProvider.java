@@ -20,7 +20,6 @@
 
 package app.coronawarn.server.services.submission.verification;
 
-import app.coronawarn.server.services.submission.config.SubmissionServiceConfig;
 import feign.Client;
 import feign.httpclient.ApacheHttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
@@ -33,17 +32,8 @@ import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 
 @Component
-@Profile("disable-ssl-client-verification")
+@Profile("!ssl-client-verification")
 public class DevelopmentFeignClientProvider implements FeignClientProvider {
-
-  private final HostnameVerifierProvider hostnameVerifierProvider;
-  private final Integer connectionPoolSize;
-
-  public DevelopmentFeignClientProvider(SubmissionServiceConfig config,
-      HostnameVerifierProvider hostnameVerifierProvider) {
-    this.connectionPoolSize = config.getConnectionPoolSize();
-    this.hostnameVerifierProvider = hostnameVerifierProvider;
-  }
 
   @Override
   public Client createFeignClient() {
@@ -55,10 +45,7 @@ public class DevelopmentFeignClientProvider implements FeignClientProvider {
    */
   @Bean
   public ApacheHttpClientFactory createHttpClientFactory() {
-    return new DefaultApacheHttpClientFactory(HttpClientBuilder.create()
-        .setMaxConnPerRoute(this.connectionPoolSize)
-        .setMaxConnTotal(this.connectionPoolSize)
-        .setSSLHostnameVerifier(this.hostnameVerifierProvider.createHostnameVerifier()));
+    return new DefaultApacheHttpClientFactory(HttpClientBuilder.create());
   }
 
   @Bean
