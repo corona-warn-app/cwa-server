@@ -1,8 +1,6 @@
 version: 2.1
 jobs:
   build:
-    machine:
-      enabled: true
     working_directory: ~/cwa-server
     machine:
       image: ubuntu-1604:202004-01
