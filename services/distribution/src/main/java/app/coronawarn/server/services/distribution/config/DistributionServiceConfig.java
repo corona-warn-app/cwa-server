@@ -44,7 +44,7 @@ public class DistributionServiceConfig {
   private static final String VERSION_REGEX = "^v[0-9]+$";
   private static final String ALGORITHM_OID_REGEX = "^[0-9]+[\\.[0-9]+]*$";
   private static final String BUNDLE_REGEX = "^[a-z-]+[\\.[a-z-]+]*$";
-  private static final String PRIVATE_KEY_REGEX = "^(classpath:|file:[/]{1,2})[a-zA-Z0-9_-]+[/[a-zA-Z0-9_-]+]*(.pem)?$";
+  private static final String PRIVATE_KEY_REGEX = "^(classpath:|file:[/]+)[a-zA-Z0-9_-]+[/[a-zA-Z0-9_-]+]*(.pem)?$";
 
   private Paths paths;
   private TestData testData;
