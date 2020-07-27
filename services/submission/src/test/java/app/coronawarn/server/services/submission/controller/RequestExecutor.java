@@ -33,7 +33,6 @@ import java.util.Collections;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
-import org.springframework.http.MediaType;
 import org.springframework.http.RequestEntity;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
@@ -69,25 +68,20 @@ public class RequestExecutor {
     return execute(HttpMethod.POST, new RequestEntity<>(body, headers, HttpMethod.POST, SUBMISSION_URL));
   }
 
-  public static HttpHeaders buildOkHeaders() {
-    HttpHeaders headers = setCwaAuthHeader(setContentTypeProtoBufHeader(new HttpHeaders()));
-
-    return setCwaFakeHeader(headers, "0");
+  public ResponseEntity<Void> executePost(SubmissionPayload body) {
+    return executePost(body, buildDefaultHeader());
   }
 
-  public static HttpHeaders setContentTypeProtoBufHeader(HttpHeaders headers) {
-    headers.setContentType(MediaType.valueOf("application/x-protobuf"));
-    return headers;
+  public ResponseEntity<Void> executePost(Collection<TemporaryExposureKey> keys) {
+    return executePost(keys, buildDefaultHeader());
   }
 
-  public static HttpHeaders setCwaAuthHeader(HttpHeaders headers) {
-    headers.set("cwa-authorization", "TAN okTan");
-    return headers;
-  }
-
-  public static HttpHeaders setCwaFakeHeader(HttpHeaders headers, String value) {
-    headers.set("cwa-fake", value);
-    return headers;
+  private HttpHeaders buildDefaultHeader() {
+    return HttpHeaderBuilder.builder()
+        .contentTypeProtoBuf()
+        .cwaAuth()
+        .withoutCwaFake()
+        .build();
   }
 
   public static TemporaryExposureKey buildTemporaryExposureKey(
