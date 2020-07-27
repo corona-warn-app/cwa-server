@@ -23,7 +23,9 @@ package app.coronawarn.server.common.persistence.service;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import app.coronawarn.server.common.persistence.domain.DiagnosisKey;
+import java.time.OffsetDateTime;
 import java.util.List;
+import java.util.Random;
 
 public class DiagnosisKeyServiceTestHelper {
 
@@ -47,5 +49,20 @@ public class DiagnosisKeyServiceTestHelper {
       assertThat(actKey.getSubmissionTimestamp()).withFailMessage("submissionTimestamp mismatch")
           .isEqualTo(expKey.getSubmissionTimestamp());
     }
+  }
+
+  public static DiagnosisKey buildDiagnosisKeyForSubmissionTimestamp(long submissionTimeStamp) {
+    byte[] randomBytes = new byte[16];
+    Random random = new Random(submissionTimeStamp);
+    random.nextBytes(randomBytes);
+    return DiagnosisKey.builder()
+        .withKeyData(randomBytes)
+        .withRollingStartIntervalNumber(600)
+        .withTransmissionRiskLevel(2)
+        .withSubmissionTimestamp(submissionTimeStamp).build();
+  }
+
+  public static DiagnosisKey buildDiagnosisKeyForDateTime(OffsetDateTime dateTime) {
+    return buildDiagnosisKeyForSubmissionTimestamp(dateTime.toEpochSecond() / 3600);
   }
 }

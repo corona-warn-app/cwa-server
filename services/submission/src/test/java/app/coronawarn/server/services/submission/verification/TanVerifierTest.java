@@ -20,7 +20,6 @@
 
 package app.coronawarn.server.services.submission.verification;
 
-
 import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
 import static com.github.tomakehurst.wiremock.client.WireMock.equalTo;
 import static com.github.tomakehurst.wiremock.client.WireMock.matchingJsonPath;
@@ -49,11 +48,11 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.ActiveProfiles;
 
-@SpringBootTest(classes = {TanVerifier.class, DevelopmentFeignClientProvider.class})
+@SpringBootTest(classes = {TanVerifier.class, DevelopmentFeignClientProvider.class, NoopHostnameVerifierProvider.class})
 @ImportAutoConfiguration({FeignAutoConfiguration.class, FeignTestConfiguration.class})
 @EnableConfigurationProperties(value = SubmissionServiceConfig.class)
 @EnableFeignClients
-@ActiveProfiles("feign")
+@ActiveProfiles({ "feign", "disable-ssl-client-verification", "disable-ssl-client-verification-verify-hostname" })
 class TanVerifierTest {
 
   @Autowired
@@ -110,6 +109,18 @@ class TanVerifierTest {
   }
 
   @Test
+  void checkTooLongTan() {
+    server.stubFor(
+        post(urlEqualTo(verificationPath))
+            .withHeader(CONTENT_TYPE, equalTo(MediaType.APPLICATION_JSON.toString()))
+            .willReturn(aResponse().withStatus(HttpStatus.NOT_FOUND.value())));
+
+    boolean tanVerificationResponse = tanVerifier.verifyTan(randomUUID + randomUUID);
+
+    assertThat(tanVerificationResponse).isFalse();
+  }
+
+  @Test
   void checkInternalServerError() {
     server.stubFor(
         post(urlEqualTo(verificationPath))
@@ -119,4 +130,14 @@ class TanVerifierTest {
     assertThatExceptionOfType(FeignException.class).isThrownBy(() -> tanVerifier.verifyTan(randomUUID));
   }
 
+  @Test
+  void checkTimeout() {
+    server.stubFor(
+        post(urlEqualTo(verificationPath))
+            .withRequestBody(matchingJsonPath("tan", equalTo(randomUUID)))
+            .withHeader(CONTENT_TYPE, equalTo(MediaType.APPLICATION_JSON.toString()))
+            .willReturn(aResponse().withStatus(HttpStatus.OK.value()).withFixedDelay(1000)));
+
+    assertThatExceptionOfType(FeignException.class).isThrownBy(() -> tanVerifier.verifyTan(randomUUID));
+  }
 }

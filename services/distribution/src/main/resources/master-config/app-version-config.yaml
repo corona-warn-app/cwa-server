@@ -16,10 +16,10 @@ ios:
     patch: 0
 android:
   latest:
-    major: 0
-    minor: 8
-    patch: 3
+    major: 1
+    minor: 0
+    patch: 4
   min:
-    major: 0
-    minor: 8
-    patch: 0
+    major: 1
+    minor: 0
+    patch: 4

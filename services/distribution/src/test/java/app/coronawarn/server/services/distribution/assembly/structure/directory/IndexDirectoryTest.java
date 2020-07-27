@@ -32,6 +32,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -44,7 +45,7 @@ class IndexDirectoryTest {
 
   private static final String name = "Numbers";
   private static final Set<Integer> index = Set.of(0, 1, 2);
-  private static final IndexFunction<Integer> indexFunction = __ -> index;
+  private static final IndexFunction<Integer> indexFunction = ignoredValue -> index;
   private static final Formatter<Integer> indexFormatter = Integer::valueOf;
   private IndexDirectory<Integer, WritableOnDisk> indexDirectory;
   private Directory<WritableOnDisk> outputDirectory;
@@ -76,10 +77,10 @@ class IndexDirectoryTest {
   @Test
   void checkAddFileToAll() {
     List<FileOnDisk> expectedFileList = new ArrayList<>();
-    indexDirectory.addWritableToAll(__ -> {
+    indexDirectory.addWritableToAll(ignoredValue -> {
       FileOnDisk newFile = new FileOnDisk("index", new byte[0]);
       expectedFileList.add(newFile);
-      return newFile;
+      return Optional.of(newFile);
     });
 
     prepareAndWrite(outputDirectory);
@@ -101,10 +102,10 @@ class IndexDirectoryTest {
   @Test
   void checkAddDirectoryToAll() {
     List<DirectoryOnDisk> expectedFileList = new ArrayList<>();
-    indexDirectory.addWritableToAll(__ -> {
+    indexDirectory.addWritableToAll(ignoredValue -> {
       DirectoryOnDisk newDirectory = new DirectoryOnDisk("something");
       expectedFileList.add(newDirectory);
-      return newDirectory;
+      return Optional.of(newDirectory);
     });
 
     prepareAndWrite(outputDirectory);

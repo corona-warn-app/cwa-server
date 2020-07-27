@@ -20,35 +20,59 @@
 
 package app.coronawarn.server.services.submission.config;
 
+import java.io.File;
+import javax.validation.constraints.Max;
+import javax.validation.constraints.Min;
+import javax.validation.constraints.Pattern;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Component;
+import org.springframework.util.unit.DataSize;
+import org.springframework.validation.annotation.Validated;
 
 @Component
 @ConfigurationProperties(prefix = "services.submission")
+@Validated
 public class SubmissionServiceConfig {
+
+  private static final String PATH_REGEX = "^[/]?[a-zA-Z0-9_]+[/[a-zA-Z0-9_]+]*$";
+  private static final String URL_WITH_PORT_REGEX = "^http[s]?://[a-z0-9-]+(\\.[a-z0-9-]+)*(:[0-9]{2,6})?$";
 
   // Exponential moving average of the last N real request durations (in ms), where
   // N = fakeDelayMovingAverageSamples.
-  private Double initialFakeDelayMilliseconds;
-  private Double fakeDelayMovingAverageSamples;
+  @Min(1)
+  @Max(3000)
+  private Long initialFakeDelayMilliseconds;
+  @Min(1)
+  @Max(100)
+  private Long fakeDelayMovingAverageSamples;
+  @Min(7)
+  @Max(28)
   private Integer retentionDays;
+  @Min(1)
+  @Max(25)
+  private Integer randomKeyPaddingMultiplier;
+  @Min(1)
+  @Max(10000)
+  private Integer connectionPoolSize;
+  private DataSize maximumRequestSize;
   private Payload payload;
   private Verification verification;
   private Monitoring monitoring;
+  private Client client;
 
-  public Double getInitialFakeDelayMilliseconds() {
+  public Long getInitialFakeDelayMilliseconds() {
     return initialFakeDelayMilliseconds;
   }
 
-  public void setInitialFakeDelayMilliseconds(Double initialFakeDelayMilliseconds) {
+  public void setInitialFakeDelayMilliseconds(Long initialFakeDelayMilliseconds) {
     this.initialFakeDelayMilliseconds = initialFakeDelayMilliseconds;
   }
 
-  public Double getFakeDelayMovingAverageSamples() {
+  public Long getFakeDelayMovingAverageSamples() {
     return fakeDelayMovingAverageSamples;
   }
 
-  public void setFakeDelayMovingAverageSamples(Double fakeDelayMovingAverageSamples) {
+  public void setFakeDelayMovingAverageSamples(Long fakeDelayMovingAverageSamples) {
     this.fakeDelayMovingAverageSamples = fakeDelayMovingAverageSamples;
   }
 
@@ -58,6 +82,30 @@ public class SubmissionServiceConfig {
 
   public void setRetentionDays(Integer retentionDays) {
     this.retentionDays = retentionDays;
+  }
+
+  public Integer getRandomKeyPaddingMultiplier() {
+    return randomKeyPaddingMultiplier;
+  }
+
+  public void setRandomKeyPaddingMultiplier(Integer randomKeyPaddingMultiplier) {
+    this.randomKeyPaddingMultiplier = randomKeyPaddingMultiplier;
+  }
+
+  public Integer getConnectionPoolSize() {
+    return connectionPoolSize;
+  }
+
+  public void setConnectionPoolSize(Integer connectionPoolSize) {
+    this.connectionPoolSize = connectionPoolSize;
+  }
+
+  public DataSize getMaximumRequestSize() {
+    return maximumRequestSize;
+  }
+
+  public void setMaximumRequestSize(DataSize maximumRequestSize) {
+    this.maximumRequestSize = maximumRequestSize;
   }
 
   public Integer getMaxNumberOfKeys() {
@@ -70,6 +118,8 @@ public class SubmissionServiceConfig {
 
   private static class Payload {
 
+    @Min(7)
+    @Max(28)
     private Integer maxNumberOfKeys;
 
     public Integer getMaxNumberOfKeys() {
@@ -94,8 +144,11 @@ public class SubmissionServiceConfig {
   }
 
   private static class Verification {
+
+    @Pattern(regexp = URL_WITH_PORT_REGEX)
     private String baseUrl;
 
+    @Pattern(regexp = PATH_REGEX)
     private String path;
 
     public String getBaseUrl() {
@@ -116,13 +169,16 @@ public class SubmissionServiceConfig {
   }
 
   private static class Monitoring {
-    private Integer batchSize;
 
-    public Integer getBatchSize() {
+    @Min(1)
+    @Max(1000)
+    private Long batchSize;
+
+    public Long getBatchSize() {
       return batchSize;
     }
 
-    public void setBatchSize(Integer batchSize) {
+    public void setBatchSize(Long batchSize) {
       this.batchSize = batchSize;
     }
   }
@@ -135,11 +191,81 @@ public class SubmissionServiceConfig {
     this.monitoring = monitoring;
   }
 
-  public Integer getMonitoringBatchSize() {
+  public Long getMonitoringBatchSize() {
     return this.monitoring.getBatchSize();
   }
 
-  public void setMonitoringBatchSize(Integer batchSize) {
+  public void setMonitoringBatchSize(Long batchSize) {
     this.monitoring.setBatchSize(batchSize);
+  }
+
+  public Client getClient() {
+    return client;
+  }
+
+  public void setClient(Client client) {
+    this.client = client;
+  }
+
+  public static class Client {
+
+    private Ssl ssl;
+
+    public Ssl getSsl() {
+      return ssl;
+    }
+
+    public void setSsl(Ssl ssl) {
+      this.ssl = ssl;
+    }
+
+    public static class Ssl {
+
+      private File keyStore;
+      private String keyStorePassword;
+      private String keyPassword;
+      private File trustStore;
+      private String trustStorePassword;
+
+      public File getKeyStore() {
+        return keyStore;
+      }
+
+      public void setKeyStore(File keyStore) {
+        this.keyStore = keyStore;
+      }
+
+      public String getKeyStorePassword() {
+        return keyStorePassword;
+      }
+
+      public void setKeyStorePassword(String keyStorePassword) {
+        this.keyStorePassword = keyStorePassword;
+      }
+
+      public String getKeyPassword() {
+        return keyPassword;
+      }
+
+      public void setKeyPassword(String keyPassword) {
+        this.keyPassword = keyPassword;
+      }
+
+      public File getTrustStore() {
+        return trustStore;
+      }
+
+      public void setTrustStore(File trustStore) {
+        this.trustStore = trustStore;
+      }
+
+      public String getTrustStorePassword() {
+        return trustStorePassword;
+      }
+
+      public void setTrustStorePassword(String trustStorePassword) {
+        this.trustStorePassword = trustStorePassword;
+      }
+    }
   }
 }

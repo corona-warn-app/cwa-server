@@ -20,12 +20,12 @@
 
 package app.coronawarn.server.services.distribution.objectstore;
 
+import app.coronawarn.server.services.distribution.assembly.structure.util.TimeUtils;
 import app.coronawarn.server.services.distribution.config.DistributionServiceConfig;
 import app.coronawarn.server.services.distribution.config.DistributionServiceConfig.Api;
 import app.coronawarn.server.services.distribution.objectstore.client.ObjectStoreOperationFailedException;
 import app.coronawarn.server.services.distribution.objectstore.client.S3Object;
 import java.time.LocalDate;
-import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.regex.Matcher;
@@ -58,7 +58,8 @@ public class S3RetentionPolicy {
    * @param retentionDays the number of days, that files should be retained on S3.
    */
   public void applyRetentionPolicy(int retentionDays) {
-    List<S3Object> diagnosisKeysObjects = objectStoreAccess.getObjectsWithPrefix("version/v1/"
+    List<S3Object> diagnosisKeysObjects = objectStoreAccess.getObjectsWithPrefix(api.getVersionPath() + "/"
+        + api.getVersionV1() + "/"
         + api.getDiagnosisKeysPath() + "/"
         + api.getCountryPath() + "/"
         + api.getCountryGermany() + "/"
@@ -66,7 +67,7 @@ public class S3RetentionPolicy {
     final String regex = ".*([0-9]{4}-[0-9]{2}-[0-9]{2}).*";
     final Pattern pattern = Pattern.compile(regex);
 
-    final LocalDate cutOffDate = LocalDate.now(ZoneOffset.UTC).minusDays(retentionDays);
+    final LocalDate cutOffDate = TimeUtils.getUtcDate().minusDays(retentionDays);
 
     diagnosisKeysObjects.stream()
         .filter(diagnosisKeysObject -> {

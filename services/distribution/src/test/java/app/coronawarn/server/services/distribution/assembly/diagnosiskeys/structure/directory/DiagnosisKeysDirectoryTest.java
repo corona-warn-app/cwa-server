@@ -21,6 +21,7 @@
 package app.coronawarn.server.services.distribution.assembly.diagnosiskeys.structure.directory;
 
 import static app.coronawarn.server.services.distribution.common.Helpers.buildDiagnosisKeys;
+import static app.coronawarn.server.services.distribution.common.Helpers.getFilePaths;
 import static java.lang.String.join;
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -37,10 +38,8 @@ import app.coronawarn.server.services.distribution.config.DistributionServiceCon
 import java.io.File;
 import java.io.IOException;
 import java.time.LocalDateTime;
-import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
@@ -108,7 +107,7 @@ class DiagnosisKeysDirectoryTest {
         join(s, "diagnosis-keys", "country", "DE", "date", "index")
     );
 
-    Set<String> actualFiles = getActualFiles(outputFile);
+    Set<String> actualFiles = getFilePaths(outputFile, outputFile.getAbsolutePath());
 
     assertThat(actualFiles).isEqualTo(amendWithChecksumFiles(expectedFiles));
   }
@@ -149,7 +148,8 @@ class DiagnosisKeysDirectoryTest {
         join(s, "diagnosis-keys", "country", "DE", "date", "1970-01-03", "hour", "17", "index"),
         join(s, "diagnosis-keys", "country", "DE", "date", "1970-01-03", "hour", "18", "index"),
         join(s, "diagnosis-keys", "country", "DE", "date", "1970-01-03", "hour", "19", "index"),
-        // One missing
+        // One missing from data, but still we should a structure created because of the empty file (issue #650)
+        join(s, "diagnosis-keys", "country", "DE", "date", "1970-01-03", "hour", "20", "index"),
         join(s, "diagnosis-keys", "country", "DE", "date", "1970-01-03", "hour", "21", "index"),
         join(s, "diagnosis-keys", "country", "DE", "date", "1970-01-03", "hour", "22", "index"),
         join(s, "diagnosis-keys", "country", "DE", "date", "1970-01-03", "hour", "23", "index"),
@@ -160,10 +160,28 @@ class DiagnosisKeysDirectoryTest {
         join(s, "diagnosis-keys", "country", "DE", "date", "1970-01-04", "hour", "2", "index"),
         join(s, "diagnosis-keys", "country", "DE", "date", "1970-01-04", "hour", "3", "index"),
         join(s, "diagnosis-keys", "country", "DE", "date", "1970-01-04", "hour", "4", "index"),
-        join(s, "diagnosis-keys", "country", "DE", "date", "1970-01-04", "hour", "5", "index")
+        join(s, "diagnosis-keys", "country", "DE", "date", "1970-01-04", "hour", "5", "index"),
+        join(s, "diagnosis-keys", "country", "DE", "date", "1970-01-04", "hour", "6", "index"),
+        join(s, "diagnosis-keys", "country", "DE", "date", "1970-01-04", "hour", "7", "index"),
+        join(s, "diagnosis-keys", "country", "DE", "date", "1970-01-04", "hour", "8", "index"),
+        join(s, "diagnosis-keys", "country", "DE", "date", "1970-01-04", "hour", "9", "index"),
+        join(s, "diagnosis-keys", "country", "DE", "date", "1970-01-04", "hour", "10", "index"),
+        join(s, "diagnosis-keys", "country", "DE", "date", "1970-01-04", "hour", "11", "index"),
+        join(s, "diagnosis-keys", "country", "DE", "date", "1970-01-04", "hour", "12", "index"),
+        join(s, "diagnosis-keys", "country", "DE", "date", "1970-01-04", "hour", "13", "index"),
+        join(s, "diagnosis-keys", "country", "DE", "date", "1970-01-04", "hour", "14", "index"),
+        join(s, "diagnosis-keys", "country", "DE", "date", "1970-01-04", "hour", "15", "index"),
+        join(s, "diagnosis-keys", "country", "DE", "date", "1970-01-04", "hour", "16", "index"),
+        join(s, "diagnosis-keys", "country", "DE", "date", "1970-01-04", "hour", "17", "index"),
+        join(s, "diagnosis-keys", "country", "DE", "date", "1970-01-04", "hour", "18", "index"),
+        join(s, "diagnosis-keys", "country", "DE", "date", "1970-01-04", "hour", "19", "index"),
+        join(s, "diagnosis-keys", "country", "DE", "date", "1970-01-04", "hour", "20", "index"),
+        join(s, "diagnosis-keys", "country", "DE", "date", "1970-01-04", "hour", "21", "index"),
+        join(s, "diagnosis-keys", "country", "DE", "date", "1970-01-04", "hour", "22", "index"),
+        join(s, "diagnosis-keys", "country", "DE", "date", "1970-01-04", "hour", "23", "index")
     );
 
-    Set<String> actualFiles = getActualFiles(outputFile);
+    Set<String> actualFiles = getFilePaths(outputFile, outputFile.getAbsolutePath());
 
     assertThat(actualFiles).isEqualTo(amendWithChecksumFiles(expectedFiles));
   }
@@ -177,25 +195,5 @@ class DiagnosisKeysDirectoryTest {
     allExpectedFiles.addAll(checksumFiles);
 
     return allExpectedFiles;
-  }
-
-  private Set<String> getActualFiles(java.io.File root) {
-    Set<String> files = Arrays.stream(Objects.requireNonNull(root.listFiles()))
-        .filter(File::isFile)
-        .map(File::getAbsolutePath)
-        .map(path -> path.substring(outputFile.getAbsolutePath().length() + 1))
-        .collect(Collectors.toSet());
-
-    Set<java.io.File> directories = Arrays.stream(Objects.requireNonNull(root.listFiles()))
-        .filter(File::isDirectory)
-        .collect(Collectors.toSet());
-
-    Set<String> subFiles = directories.stream()
-        .map(this::getActualFiles)
-        .flatMap(Set::stream)
-        .collect(Collectors.toSet());
-
-    files.addAll(subFiles);
-    return files;
   }
 }

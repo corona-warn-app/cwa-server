@@ -23,7 +23,6 @@ package app.coronawarn.server.services.submission.controller;
 import static app.coronawarn.server.services.submission.controller.RequestExecutor.VALID_KEY_DATA_1;
 import static app.coronawarn.server.services.submission.controller.RequestExecutor.VALID_KEY_DATA_2;
 import static app.coronawarn.server.services.submission.controller.RequestExecutor.VALID_KEY_DATA_3;
-import static app.coronawarn.server.services.submission.controller.RequestExecutor.buildOkHeaders;
 import static app.coronawarn.server.services.submission.controller.RequestExecutor.buildTemporaryExposureKey;
 import static app.coronawarn.server.services.submission.controller.RequestExecutor.createRollingStartIntervalNumber;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -44,8 +43,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.ResponseEntity;
+import org.springframework.test.context.ActiveProfiles;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+@ActiveProfiles({"disable-ssl-client-verification", "disable-ssl-client-verification-verify-hostname"})
 class PayloadValidationTest {
 
   @MockBean
@@ -61,13 +62,13 @@ class PayloadValidationTest {
 
   @Test
   void check400ResponseStatusForMissingKeys() {
-    ResponseEntity<Void> actResponse = executor.executeRequest(Lists.emptyList(), buildOkHeaders());
+    ResponseEntity<Void> actResponse = executor.executePost(Lists.emptyList());
     assertThat(actResponse.getStatusCode()).isEqualTo(BAD_REQUEST);
   }
 
   @Test
   void check400ResponseStatusForTooManyKeys() {
-    ResponseEntity<Void> actResponse = executor.executeRequest(buildPayloadWithTooManyKeys(), buildOkHeaders());
+    ResponseEntity<Void> actResponse = executor.executePost(buildPayloadWithTooManyKeys());
 
     assertThat(actResponse.getStatusCode()).isEqualTo(BAD_REQUEST);
   }
@@ -87,7 +88,7 @@ class PayloadValidationTest {
         buildTemporaryExposureKey(VALID_KEY_DATA_1, rollingStartIntervalNumber, 1),
         buildTemporaryExposureKey(VALID_KEY_DATA_2, rollingStartIntervalNumber, 2));
 
-    ResponseEntity<Void> actResponse = executor.executeRequest(keysWithDuplicateStartIntervalNumber, buildOkHeaders());
+    ResponseEntity<Void> actResponse = executor.executePost(keysWithDuplicateStartIntervalNumber);
 
     assertThat(actResponse.getStatusCode()).isEqualTo(BAD_REQUEST);
   }
@@ -102,7 +103,7 @@ class PayloadValidationTest {
         buildTemporaryExposureKey(VALID_KEY_DATA_3, rollingStartIntervalNumber3, 3),
         buildTemporaryExposureKey(VALID_KEY_DATA_2, rollingStartIntervalNumber2, 2));
 
-    ResponseEntity<Void> actResponse = executor.executeRequest(keysWithDuplicateStartIntervalNumber, buildOkHeaders());
+    ResponseEntity<Void> actResponse = executor.executePost(keysWithDuplicateStartIntervalNumber);
 
     assertThat(actResponse.getStatusCode()).isEqualTo(OK);
   }
@@ -115,7 +116,7 @@ class PayloadValidationTest {
         buildTemporaryExposureKey(VALID_KEY_DATA_1, rollingStartIntervalNumber1, 1),
         buildTemporaryExposureKey(VALID_KEY_DATA_2, rollingStartIntervalNumber2, 2));
 
-    ResponseEntity<Void> actResponse = executor.executeRequest(keysWithDuplicateStartIntervalNumber, buildOkHeaders());
+    ResponseEntity<Void> actResponse = executor.executePost(keysWithDuplicateStartIntervalNumber);
 
     assertThat(actResponse.getStatusCode()).isEqualTo(BAD_REQUEST);
   }
@@ -130,7 +131,7 @@ class PayloadValidationTest {
         buildTemporaryExposureKey(VALID_KEY_DATA_3, rollingStartIntervalNumber3, 3),
         buildTemporaryExposureKey(VALID_KEY_DATA_2, rollingStartIntervalNumber2, 2));
 
-    ResponseEntity<Void> actResponse = executor.executeRequest(keysWithDuplicateStartIntervalNumber, buildOkHeaders());
+    ResponseEntity<Void> actResponse = executor.executePost(keysWithDuplicateStartIntervalNumber);
 
     assertThat(actResponse.getStatusCode()).isEqualTo(OK);
   }

@@ -10,20 +10,15 @@ spring:
   flyway:
     enabled: true
     locations: classpath:db/migration/postgres
-  datasource:
-    url: jdbc:tc:postgresql:11.8:///databasename?TC_TMPFS=/testtmpfs:rw
-  test:
-    database:
-      replace: none
-  jpa:
-    hibernate:
-      ddl-auto: validate
 
 services:
   submission:
     initial-fake-delay-milliseconds: 1
     fake-delay-moving-average-samples: 1
     retention-days: 14
+    random-key-padding-multiplier: 10
+    connection-pool-size: 200
+    maximum-request-size: 100KB
     payload:
       max-number-of-keys: 14
     verification:
@@ -45,3 +40,10 @@ management:
   health:
     probes:
       enabled: true
+
+feign:
+  client:
+    config:
+      default:
+        connect-timeout: 500
+        read-timeout: 500

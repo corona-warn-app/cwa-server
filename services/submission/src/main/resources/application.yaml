@@ -4,6 +4,8 @@ logging:
     org:
       springframework:
         web: INFO
+    app:
+      coronawarn: INFO
 
 services:
   submission:
@@ -11,31 +13,55 @@ services:
     initial-fake-delay-milliseconds: 10
     # The number of samples for the calculation of the moving average for fake request delays.
     fake-delay-moving-average-samples: 10
+    # The retention threshold for acceptable diagnosis keys during submission.
     retention-days: 14
+    # The number of keys to save to the DB for every real submitted key.
+    # Example: If the 'random-key-padding-multiplier' is set to 10, and 5 keys are being submitted,
+    # then the 5 real submitted keys will be saved to the DB, plus an additional 45 keys with
+    # random 'key_data'. All properties, besides the 'key_data', of the additional keys will be
+    # identical to the real key.
+    random-key-padding-multiplier: ${RANDOM_KEY_PADDING_MULTIPLIER:1}
+    # The ApacheHttpClient's connection pool size.
+    connection-pool-size: 200
+    # The maximum request size accepted by the SubmissionController (e.g. 200B or 100KB).
+    maximum-request-size: ${MAXIMUM_REQUEST_SIZE:100KB}
     payload:
+      # The maximum number of keys accepted for any submission.
       max-number-of-keys: 14
     verification:
       base-url: ${VERIFICATION_BASE_URL:http://localhost:8004}
       path: /version/v1/tan/verify
     monitoring:
+      # The batch size (number of requests) to use for monitoring request count.
       batch-size: 5
+    client:
+      ssl:
+        key-password: ${SSL_SUBMISSION_KEYSTORE_PASSWORD}
+        key-store: ${SSL_SUBMISSION_KEYSTORE_PATH}
+        key-store-password: ${SSL_SUBMISSION_KEYSTORE_PASSWORD}
+        trust-store: ${SSL_VERIFICATION_TRUSTSTORE_PATH}
+        trust-store-password: ${SSL_VERIFICATION_TRUSTSTORE_PASSWORD}
 
 spring:
-  jpa:
-    hibernate:
-      ddl-auto: validate
+  lifecycle:
+    # keep in sync or lower than the kubernetes setting 'terminationGracePeriodSeconds'
+    # 5s +5s Feign client + 20s DB timeout
+    timeout-per-shutdown-phase: 30s
+  transaction:
+    default-timeout: 20
   flyway:
     enabled: true
-    locations: classpath:db/migration/postgres
-    password: ${POSTGRESQL_PASSWORD_FLYWAY:postgres}
-    user: ${POSTGRESQL_USER_FLYWAY:postgres}
-# Postgres configuration
+    locations: classpath:/db/migration, classpath:/db/specific/{vendor}
+    password: ${POSTGRESQL_PASSWORD_FLYWAY:local_setup_flyway}
+    user: ${POSTGRESQL_USER_FLYWAY:local_setup_flyway}
+  # Postgres configuration
   datasource:
     driver-class-name: org.postgresql.Driver
-    url: jdbc:postgresql://${POSTGRESQL_SERVICE_HOST:localhost}:${POSTGRESQL_SERVICE_PORT:5432}/${POSTGRESQL_DATABASE:cwa}
-    username: ${POSTGRESQL_USER_SUBMISSION:postgres}
-    password: ${POSTGRESQL_PASSWORD_SUBMISSION:postgres}
+    url: jdbc:postgresql://${POSTGRESQL_SERVICE_HOST}:${POSTGRESQL_SERVICE_PORT}/${POSTGRESQL_DATABASE}?ssl=true&sslmode=verify-full&sslrootcert=${SSL_POSTGRES_CERTIFICATE_PATH}&sslcert=${SSL_SUBMISSION_CERTIFICATE_PATH}&sslkey=${SSL_SUBMISSION_PRIVATE_KEY_PATH}
+    username: ${POSTGRESQL_USER_SUBMISSION:local_setup_submission}
+    password: ${POSTGRESQL_PASSWORD_SUBMISSION:local_setup_submission}
 
+# Actuator configuration
 management:
   server:
     port: 8081
@@ -61,7 +87,33 @@ management:
     probes:
       enabled: true
 
+server:
+  shutdown: graceful
+  ssl:
+    enabled: true
+    enabled-protocols: TLSv1.2,TLSv1.3
+    protocol: TLS
+    ciphers: >-
+      TLS_ECDHE_ECDSA_WITH_AES_128_GCM_SHA256
+      TLS_ECDHE_ECDSA_WITH_AES_256_GCM_SHA384
+      TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
+      TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+      TLS_DHE_DSS_WITH_AES_128_GCM_SHA256
+      TLS_DHE_DSS_WITH_AES_256_GCM_SHA384
+      TLS_DHE_RSA_WITH_AES_128_GCM_SHA256
+      TLS_DHE_RSA_WITH_AES_256_GCM_SHA384
+      TLS_AES_128_GCM_SHA256
+      TLS_AES_256_GCM_SHA384
+      TLS_AES_128_CCM_SHA256
+    key-password: ${SSL_SUBMISSION_KEYSTORE_PASSWORD}
+    key-store: ${SSL_SUBMISSION_KEYSTORE_PATH}
+    key-store-password: ${SSL_SUBMISSION_KEYSTORE_PASSWORD}
+    key-store-provider: SUN
+    key-store-type: JKS
+
 feign:
-  httpclient:
-    maxConnections: 200
-    maxConnectionsPerRoute: 200
+  client:
+    config:
+      default:
+        connect-timeout: 5000
+        read-timeout: 5000
