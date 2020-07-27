@@ -23,13 +23,9 @@ package app.coronawarn.server.services.submission.controller;
 import static app.coronawarn.server.services.submission.controller.RequestExecutor.VALID_KEY_DATA_1;
 import static app.coronawarn.server.services.submission.controller.RequestExecutor.VALID_KEY_DATA_2;
 import static app.coronawarn.server.services.submission.controller.RequestExecutor.VALID_KEY_DATA_3;
-import static app.coronawarn.server.services.submission.controller.RequestExecutor.buildOkHeaders;
 import static app.coronawarn.server.services.submission.controller.RequestExecutor.buildPayloadWithOneKey;
 import static app.coronawarn.server.services.submission.controller.RequestExecutor.buildTemporaryExposureKey;
 import static app.coronawarn.server.services.submission.controller.RequestExecutor.createRollingStartIntervalNumber;
-import static app.coronawarn.server.services.submission.controller.RequestExecutor.setContentTypeProtoBufHeader;
-import static app.coronawarn.server.services.submission.controller.RequestExecutor.setCwaAuthHeader;
-import static app.coronawarn.server.services.submission.controller.RequestExecutor.setCwaFakeHeader;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.any;
@@ -45,12 +41,10 @@ import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
 import static org.springframework.http.HttpStatus.METHOD_NOT_ALLOWED;
 import static org.springframework.http.HttpStatus.OK;
 
-
 import app.coronawarn.server.common.persistence.domain.DiagnosisKey;
 import app.coronawarn.server.common.persistence.service.DiagnosisKeyService;
 import app.coronawarn.server.common.protocols.external.exposurenotification.TemporaryExposureKey;
 import app.coronawarn.server.common.protocols.internal.SubmissionPayload;
-import app.coronawarn.server.services.submission.config.SubmissionPayloadSizeFilter;
 import app.coronawarn.server.services.submission.config.SubmissionServiceConfig;
 import app.coronawarn.server.services.submission.monitoring.SubmissionMonitor;
 import app.coronawarn.server.services.submission.verification.TanVerifier;
@@ -107,19 +101,19 @@ class SubmissionControllerTest {
 
   @Test
   void checkResponseStatusForValidParameters() {
-    ResponseEntity<Void> actResponse = executor.executePost(buildPayload(buildMultipleKeys()), buildOkHeaders());
+    ResponseEntity<Void> actResponse = executor.executePost(buildPayload(buildMultipleKeys()));
     assertThat(actResponse.getStatusCode()).isEqualTo(OK);
   }
 
   @Test
   void checkResponseStatusForValidParametersWithPadding() {
-    ResponseEntity<Void> actResponse = executor.executePost(buildPayloadWithPadding(), buildOkHeaders());
+    ResponseEntity<Void> actResponse = executor.executePost(buildPayloadWithPadding());
     assertThat(actResponse.getStatusCode()).isEqualTo(OK);
   }
 
   @Test
   void check400ResponseStatusForInvalidParameters() {
-    ResponseEntity<Void> actResponse = executor.executePost(buildPayloadWithInvalidKey(), buildOkHeaders());
+    ResponseEntity<Void> actResponse = executor.executePost(buildPayloadWithInvalidKey());
     assertThat(actResponse.getStatusCode()).isEqualTo(BAD_REQUEST);
   }
 
@@ -127,7 +121,7 @@ class SubmissionControllerTest {
   void singleKeyWithOutdatedRollingStartIntervalNumberDoesNotGetSaved() {
     ArgumentCaptor<Collection<DiagnosisKey>> argument = ArgumentCaptor.forClass(Collection.class);
 
-    executor.executePost(buildPayload(createOutdatedKey()), buildOkHeaders());
+    executor.executePost(buildPayload(createOutdatedKey()));
 
     verify(diagnosisKeyService, atLeastOnce()).saveDiagnosisKeys(argument.capture());
     assertThat(argument.getValue()).isEmpty();
@@ -140,7 +134,7 @@ class SubmissionControllerTest {
     submittedKeys.add(outdatedKey);
     ArgumentCaptor<Collection<DiagnosisKey>> argument = ArgumentCaptor.forClass(Collection.class);
 
-    executor.executePost(buildPayload(submittedKeys), buildOkHeaders());
+    executor.executePost(buildPayload(submittedKeys));
 
     verify(diagnosisKeyService, atLeastOnce()).saveDiagnosisKeys(argument.capture());
     submittedKeys.remove(outdatedKey);
@@ -152,7 +146,7 @@ class SubmissionControllerTest {
     Collection<TemporaryExposureKey> submittedKeys = buildMultipleKeys();
     ArgumentCaptor<Collection<DiagnosisKey>> argument = ArgumentCaptor.forClass(Collection.class);
 
-    executor.executePost(buildPayload(submittedKeys), buildOkHeaders());
+    executor.executePost(buildPayload(submittedKeys));
 
     verify(diagnosisKeyService, atLeastOnce()).saveDiagnosisKeys(argument.capture());
     verify(fakeDelayManager, times(1)).updateFakeRequestDelay(anyLong());
@@ -170,9 +164,10 @@ class SubmissionControllerTest {
 
   private static Stream<Arguments> createIncompleteHeaders() {
     return Stream.of(
-        Arguments.of(setContentTypeProtoBufHeader(new HttpHeaders())),
-        Arguments.of(setContentTypeProtoBufHeader(setCwaFakeHeader(new HttpHeaders(), "0"))),
-        Arguments.of(setContentTypeProtoBufHeader(setCwaAuthHeader(new HttpHeaders()))));
+        Arguments.of(HttpHeaderBuilder.builder().build()),
+        Arguments.of(HttpHeaderBuilder.builder().contentTypeProtoBuf().build()),
+        Arguments.of(HttpHeaderBuilder.builder().contentTypeProtoBuf().withoutCwaFake().build()),
+        Arguments.of(HttpHeaderBuilder.builder().contentTypeProtoBuf().cwaAuth().build()));
   }
 
   @ParameterizedTest
@@ -201,7 +196,7 @@ class SubmissionControllerTest {
   void invalidTanHandling() {
     when(tanVerifier.verifyTan(anyString())).thenReturn(false);
 
-    ResponseEntity<Void> actResponse = executor.executePost(buildPayloadWithOneKey(), buildOkHeaders());
+    ResponseEntity<Void> actResponse = executor.executePost(buildPayloadWithOneKey());
 
     verify(diagnosisKeyService, never()).saveDiagnosisKeys(any());
     verify(fakeDelayManager, times(1)).updateFakeRequestDelay(anyLong());
@@ -210,13 +205,13 @@ class SubmissionControllerTest {
 
   @Test
   void invalidSubmissionPayload() {
-    ResponseEntity<Void> actResponse = executor.executePost(buildPayloadWithTooLargePadding(), buildOkHeaders());
+    ResponseEntity<Void> actResponse = executor.executePost(buildPayloadWithTooLargePadding());
     assertThat(actResponse.getStatusCode()).isEqualTo(BAD_REQUEST);
   }
 
   @Test
   void checkRealRequestHandlingIsMonitored() {
-    executor.executePost(buildPayloadWithOneKey(), buildOkHeaders());
+    executor.executePost(buildPayloadWithOneKey());
 
     verify(submissionMonitor, times(1)).incrementRequestCounter();
     verify(submissionMonitor, times(1)).incrementRealRequestCounter();
@@ -228,7 +223,7 @@ class SubmissionControllerTest {
   void checkInvalidTanHandlingIsMonitored() {
     when(tanVerifier.verifyTan(anyString())).thenReturn(false);
 
-    executor.executePost(buildPayloadWithOneKey(), buildOkHeaders());
+    executor.executePost(buildPayloadWithOneKey());
 
     verify(submissionMonitor, times(1)).incrementRequestCounter();
     verify(submissionMonitor, times(1)).incrementRealRequestCounter();
