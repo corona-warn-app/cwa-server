@@ -2,9 +2,13 @@
 spring:
   flyway:
     enabled: true
-    locations: classpath:/db/migration, classpath:/db/specific/{vendor}
+    locations: classpath:/db/migration
   datasource:
     url: jdbc:tc:postgresql:11.8:///databasename?TC_TMPFS=/testtmpfs:rw
+  test:
+    database:
+      # Use datasource as defined above.
+      replace: none
   main:
     banner-mode: off
 logging:
