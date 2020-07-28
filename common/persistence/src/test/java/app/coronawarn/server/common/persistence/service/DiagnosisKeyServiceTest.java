@@ -37,6 +37,7 @@ import java.util.Collections;
 import java.util.List;
 import org.assertj.core.util.Lists;
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -127,7 +128,7 @@ class DiagnosisKeyServiceTest {
   void testApplyRetentionPolicyForOneApplicableEntry() {
     var keys = List.of(buildDiagnosisKeyForDateTime(OffsetDateTime.now(UTC).minusDays(1L)));
 
-    diagnosisKeyService.saveDiagnosisKeys(keys);
+    diagnosisKeyService.saveDiagnosisKeysWithCountry(keys);
     diagnosisKeyService.applyRetentionPolicy(1);
     var actKeys = diagnosisKeyService.getDiagnosisKeys();
 

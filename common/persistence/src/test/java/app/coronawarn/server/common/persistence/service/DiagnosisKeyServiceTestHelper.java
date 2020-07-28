@@ -61,7 +61,10 @@ public class DiagnosisKeyServiceTestHelper {
         .withKeyData(randomBytes)
         .withRollingStartIntervalNumber(600)
         .withTransmissionRiskLevel(2)
-        .withSubmissionTimestamp(submissionTimeStamp).build();
+        .withSubmissionTimestamp(submissionTimeStamp)
+        .withCountryCode(countryCode)
+        .withVisitedCountries(visitedCountries)
+        .build();
   }
 
   public static DiagnosisKey buildDiagnosisKeyForSubmissionTimestamp(long submissionTimeStamp) {

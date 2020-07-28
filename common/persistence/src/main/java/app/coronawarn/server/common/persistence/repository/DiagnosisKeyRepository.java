@@ -46,7 +46,8 @@ public interface DiagnosisKeyRepository extends PagingAndSortingRepository<Diagn
    * @param submissionTimestamp The submission timestamp up to which entries will be expired.
    * @return The number of expired keys.
    */
-  @Query("SELECT COUNT(*) FROM diagnosis_key WHERE submission_timestamp<=:threshold AND :country_code = ANY(visited_countries)")
+  @Query("SELECT COUNT(*) FROM diagnosis_key WHERE submission_timestamp<=:threshold AND "
+      + ":country_code = ANY(visited_countries)")
   int countOlderThanOrEqual(@Param("threshold") long submissionTimestamp, @Param("country_code") String countryCode);
 
   /**

@@ -81,7 +81,7 @@ public class DiagnosisKeyService {
       keyRepository.saveDoNothingOnConflictCountries(
           diagnosisKey.getKeyData(), diagnosisKey.getRollingStartIntervalNumber(), diagnosisKey.getRollingPeriod(),
           diagnosisKey.getSubmissionTimestamp(), diagnosisKey.getTransmissionRiskLevel(),
-          diagnosisKey.getOriginCountry(), (String[]) diagnosisKey.getVisitedCountries().toArray());
+          diagnosisKey.getOriginCountry(), diagnosisKey.getVisitedCountries().toArray(new String[0]));
     }
   }
 
