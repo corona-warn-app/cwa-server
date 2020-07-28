@@ -44,6 +44,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class DiagnosisKeyService {
 
   private static final Logger logger = LoggerFactory.getLogger(DiagnosisKeyService.class);
+  public static final String DEFAULT_COUNTRY = "DE";
   private final DiagnosisKeyRepository keyRepository;
 
   public DiagnosisKeyService(DiagnosisKeyRepository keyRepository) {
@@ -138,6 +139,6 @@ public class DiagnosisKeyService {
   }
 
   public void applyRetentionPolicy(int daysToRetain) {
-    this.applyRetentionPolicy(daysToRetain, "DE");
+    this.applyRetentionPolicy(daysToRetain, DEFAULT_COUNTRY);
   }
 }

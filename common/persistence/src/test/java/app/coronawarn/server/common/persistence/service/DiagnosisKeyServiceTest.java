@@ -27,6 +27,7 @@ import static java.time.ZoneOffset.UTC;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatCode;
 import static org.assertj.core.api.Assertions.catchThrowable;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import app.coronawarn.server.common.persistence.domain.DiagnosisKey;
 import app.coronawarn.server.common.persistence.exception.InvalidDiagnosisKeyException;
@@ -37,7 +38,6 @@ import java.util.Collections;
 import java.util.List;
 import org.assertj.core.util.Lists;
 import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -137,13 +137,48 @@ class DiagnosisKeyServiceTest {
 
   @Test
   void testShouldNotDeleteKeysFromAnotherCountry() {
-    var expKeys = List.of(buildDiagnosisKeyForDateTime(OffsetDateTime.now(UTC).minusDays(1L), "DE", Collections.singletonList("DE")));
+    var expKeys = List.of(
+        buildDiagnosisKeyForDateTime(OffsetDateTime.now(UTC).minusDays(1L), "DE", Collections.singletonList("DE")));
 
-    diagnosisKeyService.saveDiagnosisKeys(expKeys);
+    diagnosisKeyService.saveDiagnosisKeysWithCountry(expKeys);
     diagnosisKeyService.applyRetentionPolicy(1, "FR");
     var actKeys = diagnosisKeyService.getDiagnosisKeys();
 
     assertDiagnosisKeysEqual(actKeys, expKeys);
+  }
+
+  @Test
+  void testShouldDeleteKeysWithMatchingVisitedCountry() {
+    var frenchKeys = buildDiagnosisKeyForDateTime(OffsetDateTime.now(UTC).minusDays(1L), "DE", Collections.singletonList("FR"));
+    var germanKeys = buildDiagnosisKeyForDateTime(OffsetDateTime.now(UTC).minusDays(2L), "DE", Collections.singletonList("DE"));
+
+    diagnosisKeyService.saveDiagnosisKeysWithCountry(List.of(germanKeys, frenchKeys));
+    diagnosisKeyService.applyRetentionPolicy(1, "FR");
+    var actKeys = diagnosisKeyService.getDiagnosisKeys();
+
+    assertDiagnosisKeysEqual(List.of(germanKeys), actKeys);
+  }
+
+  @Test
+  void testShouldDeleteKeysWhereAnyOfVisitedCountriesMatch() {
+    var keys = List.of(
+        buildDiagnosisKeyForDateTime(OffsetDateTime.now(UTC).minusDays(1L), "DE", List.of("DE", "FR", "LU")));
+    diagnosisKeyService.saveDiagnosisKeysWithCountry(keys);
+    diagnosisKeyService.applyRetentionPolicy(1, "FR");
+    var actKeys = diagnosisKeyService.getDiagnosisKeys();
+    assertTrue(actKeys.isEmpty());
+  }
+
+  @Test
+  void testShouldDeleteKeysFromDifferentOriginCountriesWithMatchingVisitedCountry() {
+    var keys = List.of(
+        buildDiagnosisKeyForDateTime(OffsetDateTime.now(UTC).minusDays(1L), "DE", List.of("FR")),
+        buildDiagnosisKeyForDateTime(OffsetDateTime.now(UTC).minusDays(1L), "FR", List.of("FR")),
+        buildDiagnosisKeyForDateTime(OffsetDateTime.now(UTC).minusDays(1L), "LU", List.of("FR")));
+    diagnosisKeyService.saveDiagnosisKeysWithCountry(keys);
+    diagnosisKeyService.applyRetentionPolicy(1, "FR");
+    var actKeys = diagnosisKeyService.getDiagnosisKeys();
+    assertTrue(actKeys.isEmpty());
   }
 
   @Test
