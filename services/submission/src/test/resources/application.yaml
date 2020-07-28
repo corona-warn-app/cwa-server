@@ -7,9 +7,6 @@ logging:
 spring:
   main:
     banner-mode: off
-  flyway:
-    enabled: true
-    locations: classpath:db/migration/postgres
   datasource:
     url: jdbc:tc:postgresql:11.8:///databasename?TC_TMPFS=/testtmpfs:rw
   test:
