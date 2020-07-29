@@ -32,6 +32,7 @@ import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.context.ApplicationContext;
 import org.springframework.core.annotation.Order;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 
 
@@ -47,7 +48,6 @@ public class Download implements ApplicationRunner {
 
   private final ApplicationContext applicationContext;
   private final FederationBatchDownloadService federationBatchDownloadService;
-  private final String url = "https://postman-echo.com/get?foo1=bar1&foo2=bar2";
 
   private final BatchDownloader batchDownloader;
 
@@ -69,7 +69,7 @@ public class Download implements ApplicationRunner {
           federationBatchDownloadService.getFederationBatchDownloads();
 
       for (FederationBatchDownload federationBatchDownload : federationBatchDownloads) {
-        this.batchDownloader.downloadBatch(federationBatchDownload);
+        ResponseEntity<String> result = this.batchDownloader.downloadBatch(federationBatchDownload);
 
       }
 

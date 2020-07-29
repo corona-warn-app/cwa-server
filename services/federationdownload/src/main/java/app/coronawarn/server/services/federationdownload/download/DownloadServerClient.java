@@ -21,15 +21,21 @@
 package app.coronawarn.server.services.federationdownload.download;
 
 import app.coronawarn.server.common.persistence.domain.FederationBatchDownload;
+import app.coronawarn.server.services.federationdownload.validation.ValidDiagnosisKeyBatchPayload;
+import feign.Headers;
 import io.micrometer.core.annotation.Timed;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.cloud.openfeign.SpringQueryMap;
+import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 /**
  * This is a Spring Cloud Feign based HTTP client that allows type-safe HTTP calls and abstract the implementation
  * away.
  */
+@Validated
 @FeignClient(name = "download-server", configuration = DownloadServerClientConfiguration.class,
     url = "${services.federationdownload.federationgateway.base-url}")
 public interface DownloadServerClient {
@@ -38,7 +44,8 @@ public interface DownloadServerClient {
    * This methods calls the download service with the given batchTag & date.
    */
   @Timed
+  @Headers("Content-Type: application/protobuf; version=1.0")
   @GetMapping(value = "${services.federationdownload.federationgateway.path}")
-  String downloadBatch(@SpringQueryMap FederationBatchDownload params);
+  ResponseEntity<String> downloadBatch( @SpringQueryMap FederationBatchDownload params);
 
 }

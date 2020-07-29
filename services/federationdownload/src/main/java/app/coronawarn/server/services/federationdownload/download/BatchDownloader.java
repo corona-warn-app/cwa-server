@@ -21,9 +21,12 @@
 package app.coronawarn.server.services.federationdownload.download;
 
 import app.coronawarn.server.common.persistence.domain.FederationBatchDownload;
+import app.coronawarn.server.services.federationdownload.validation.ValidDiagnosisKeyBatchPayload;
 import feign.FeignException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.cloud.client.loadbalancer.reactive.Response;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestClientException;
 
@@ -52,10 +55,10 @@ public class BatchDownloader {
    * @return Returns the downloaded batch
    * @throws RestClientException if status code is neither 2xx nor 4xx
    */
-  public String downloadBatch(FederationBatchDownload federationBatchDownload) throws Exception {
+  public ResponseEntity<String> downloadBatch(FederationBatchDownload federationBatchDownload) throws Exception {
     try {
       logger.info("Calling federation gateway download service for batch download ...");
-      String result = downloadServerClient.downloadBatch(federationBatchDownload);
+      ResponseEntity<String> result = downloadServerClient.downloadBatch(federationBatchDownload);
       logger.info("Received batch from federation gateway service");
       return result;
     } catch (Exception e) {
