@@ -30,6 +30,7 @@ import io.micrometer.core.annotation.Timed;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 import javax.validation.ConstraintViolation;
@@ -62,9 +63,10 @@ public class DiagnosisKeyService {
   @Transactional
   public void saveDiagnosisKeys(Collection<DiagnosisKey> diagnosisKeys) {
     for (DiagnosisKey diagnosisKey : diagnosisKeys) {
-      keyRepository.saveDoNothingOnConflict(
+      keyRepository.saveDoNothingOnConflictCountries(
           diagnosisKey.getKeyData(), diagnosisKey.getRollingStartIntervalNumber(), diagnosisKey.getRollingPeriod(),
-          diagnosisKey.getSubmissionTimestamp(), diagnosisKey.getTransmissionRiskLevel());
+          diagnosisKey.getSubmissionTimestamp(), diagnosisKey.getTransmissionRiskLevel(),
+          diagnosisKey.getOriginCountry(), diagnosisKey.getVisitedCountries().toArray(new String[0]));
     }
   }
 
@@ -100,6 +102,17 @@ public class DiagnosisKeyService {
         diagnosisKeys.size(), numberOfDiscardedKeys);
 
     return validDiagnosisKeys;
+  }
+
+  /**
+   * Return all valid persisted diagnosis keys, sorted by their submission timestamp where visited_countries
+   * constains {@param countryCode}.
+   *
+   * @param countryCode country filter.
+   * @return Collection of {@link DiagnosisKey} that have visited_country in their array.
+   */
+  public List<DiagnosisKey> getDiagnosisKeysByVisitedCountry(String countryCode) {
+    return Collections.emptyList();
   }
 
   private static boolean isDiagnosisKeyValid(DiagnosisKey diagnosisKey) {

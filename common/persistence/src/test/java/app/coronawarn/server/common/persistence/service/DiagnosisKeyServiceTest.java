@@ -188,6 +188,8 @@ class DiagnosisKeyServiceTest {
           .withKeyData(new byte[16])
           .withRollingStartIntervalNumber((int) (OffsetDateTime.now(UTC).toEpochSecond() / 600))
           .withTransmissionRiskLevel(2)
+          .withCountryCode("DE")
+          .withVisitedCountries(Collections.singletonList("DE"))
           .withSubmissionTimestamp(0L).build());
 
       diagnosisKeyService.saveDiagnosisKeys(keys);
@@ -205,11 +207,15 @@ class DiagnosisKeyServiceTest {
             .withKeyData(keyData.getBytes())
             .withRollingStartIntervalNumber(600)
             .withTransmissionRiskLevel(2)
+            .withCountryCode("DE")
+            .withVisitedCountries(Collections.singletonList("DE"))
             .withSubmissionTimestamp(0L).build(),
         DiagnosisKey.builder()
             .withKeyData(keyData.getBytes())
             .withRollingStartIntervalNumber(600)
             .withTransmissionRiskLevel(3)
+            .withCountryCode("DE")
+            .withVisitedCountries(Collections.singletonList("DE"))
             .withSubmissionTimestamp(0L).build());
 
     diagnosisKeyService.saveDiagnosisKeys(keys);
@@ -219,4 +225,5 @@ class DiagnosisKeyServiceTest {
     assertThat(actKeys.size()).isEqualTo(1);
     assertThat(actKeys.iterator().next().getTransmissionRiskLevel()).isEqualTo(2);
   }
+
 }

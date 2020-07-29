@@ -28,6 +28,7 @@ import app.coronawarn.server.common.persistence.domain.validation.ValidSubmissio
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
@@ -86,7 +87,7 @@ public class DiagnosisKey {
     this.transmissionRiskLevel = transmissionRiskLevel;
     this.submissionTimestamp = submissionTimestamp;
     this.originCountry = originCountry;
-    this.visitedCountries = visitedCountries;
+    this.visitedCountries = visitedCountries == null ? Collections.emptyList() : visitedCountries;
   }
 
   /**

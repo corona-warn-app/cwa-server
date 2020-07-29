@@ -30,6 +30,7 @@ import app.coronawarn.server.services.distribution.assembly.structure.util.TimeU
 import app.coronawarn.server.services.distribution.config.DistributionServiceConfig;
 import app.coronawarn.server.services.distribution.config.DistributionServiceConfig.TestData;
 import java.time.temporal.ChronoUnit;
+import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
@@ -66,6 +67,10 @@ public class TestDataGeneration implements ApplicationRunner {
 
   private final DiagnosisKeyService diagnosisKeyService;
 
+  private final String distributionCountry;
+
+  private final String logPrefix;
+
   private final RandomGenerator random = new JDKRandomGenerator();
 
   private static final int POISSON_MAX_ITERATIONS = 10_000_000;
@@ -79,6 +84,8 @@ public class TestDataGeneration implements ApplicationRunner {
     this.diagnosisKeyService = diagnosisKeyService;
     this.retentionDays = distributionServiceConfig.getRetentionDays();
     this.config = distributionServiceConfig.getTestData();
+    this.distributionCountry = distributionServiceConfig.getApi().getDistributionCountry();
+    this.logPrefix = "[" + this.distributionCountry + "]";
   }
 
   /**
@@ -93,7 +100,7 @@ public class TestDataGeneration implements ApplicationRunner {
    * See {@link TestDataGeneration} class documentation.
    */
   private void writeTestData() {
-    logger.debug("Querying diagnosis keys from the database...");
+    logger.debug(this.logPrefix + "Querying diagnosis keys from the database...");
     List<DiagnosisKey> existingDiagnosisKeys = diagnosisKeyService.getDiagnosisKeys();
 
     // Timestamps in hours since epoch. Test data generation starts one hour after the latest diagnosis key in the
@@ -107,21 +114,21 @@ public class TestDataGeneration implements ApplicationRunner {
         new PoissonDistribution(random, this.config.getExposuresPerHour(), POISSON_EPSILON, POISSON_MAX_ITERATIONS);
 
     if (startTimestamp > endTimestamp) {
-      logger.debug("Skipping test data generation, latest diagnosis keys are still up-to-date.");
+      logger.debug(this.logPrefix + "Skipping test data generation, latest diagnosis keys are still up-to-date.");
       return;
     }
-    logger.debug("Generating diagnosis keys between {} and {}...", startTimestamp, endTimestamp);
+    logger.debug(this.logPrefix + "Generating diagnosis keys between {} and {}...", startTimestamp, endTimestamp);
     List<DiagnosisKey> newDiagnosisKeys = LongStream.rangeClosed(startTimestamp, endTimestamp)
         .mapToObj(submissionTimestamp -> IntStream.range(0, poisson.sample())
-            .mapToObj(ignoredValue -> generateDiagnosisKey(submissionTimestamp))
+            .mapToObj(ignoredValue -> generateDiagnosisKey(submissionTimestamp, distributionCountry))
             .collect(Collectors.toList()))
         .flatMap(List::stream)
         .collect(Collectors.toList());
 
-    logger.debug("Writing {} new diagnosis keys to the database...", newDiagnosisKeys.size());
+    logger.debug(this.logPrefix + "Writing {} new diagnosis keys to the database...", newDiagnosisKeys.size());
     diagnosisKeyService.saveDiagnosisKeys(newDiagnosisKeys);
 
-    logger.debug("Test data generation finished successfully.");
+    logger.debug(this.logPrefix + "Test data generation finished successfully.");
   }
 
   /**
@@ -157,14 +164,29 @@ public class TestDataGeneration implements ApplicationRunner {
   }
 
   /**
+   * Either returns the list of all possible visited countries or only current distribution
+   * This ensure that when test generation runs for a country (e.g. FR) all keys in the
+   * distribution will contain FR in the vistied_countries array.
+   */
+  private List<String> generateListOfVisitedCountries(String distributionCountry) {
+    if (random.nextBoolean()) {
+      return List.of("DE", "DK", "FR");
+    } else {
+      return Collections.singletonList(distributionCountry);
+    }
+  }
+
+  /**
    * Returns a random diagnosis key with a specific submission timestamp.
    */
-  private DiagnosisKey generateDiagnosisKey(long submissionTimestamp) {
+  private DiagnosisKey generateDiagnosisKey(long submissionTimestamp, String country) {
     return DiagnosisKey.builder()
         .withKeyData(generateDiagnosisKeyBytes())
         .withRollingStartIntervalNumber(generateRollingStartIntervalNumber(submissionTimestamp))
         .withTransmissionRiskLevel(generateTransmissionRiskLevel())
         .withSubmissionTimestamp(submissionTimestamp)
+        .withCountryCode(country)
+        .withVisitedCountries(generateListOfVisitedCountries(country))
         .build();
   }
 
