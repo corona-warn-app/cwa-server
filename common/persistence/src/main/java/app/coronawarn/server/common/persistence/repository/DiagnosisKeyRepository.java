@@ -51,6 +51,16 @@ public interface DiagnosisKeyRepository extends PagingAndSortingRepository<Diagn
   int countOlderThanOrEqual(@Param("threshold") long submissionTimestamp, @Param("country_code") String countryCode);
 
   /**
+   * Returns all diagnosis keys where visited_countries list contains {@param countryCode} ordered by
+   * submission_timestamp.
+   *
+   * @param countryCode filter country code.
+   * @return list of DiagnosisKeys.
+   */
+  @Query("SELECT * FROM diagnosis_key WHERE :country_code = ANY(visited_countries) ORDER BY submission_timestamp ASC")
+  Iterable<DiagnosisKey> findAllKeysWhereVisitedCountryContains(@Param("country_code") String countryCode);
+
+  /**
    * Deletes all entries that have a submission timestamp less or equal than the specified one.
    *
    * @param submissionTimestamp The submission timestamp up to which entries will be deleted.

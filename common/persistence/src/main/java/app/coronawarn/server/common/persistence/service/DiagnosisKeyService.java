@@ -94,6 +94,23 @@ public class DiagnosisKeyService {
   public List<DiagnosisKey> getDiagnosisKeys() {
     List<DiagnosisKey> diagnosisKeys = createStreamFromIterator(
         keyRepository.findAll(Sort.by(Direction.ASC, "submissionTimestamp")).iterator()).collect(Collectors.toList());
+    return this.filterValidDiagnosisKeys(diagnosisKeys);
+  }
+
+  /**
+   * Return all valid persisted diagnosis keys, sorted by their submission timestamp where visited_countries
+   * contains {@param countryCode}.
+   *
+   * @param countryCode country filter.
+   * @return Collection of {@link DiagnosisKey} that have visited_country in their array.
+   */
+  public List<DiagnosisKey> getDiagnosisKeysByVisitedCountry(String countryCode) {
+    var diagnosisKeys = createStreamFromIterator(
+        keyRepository.findAllKeysWhereVisitedCountryContains(countryCode).iterator()).collect(Collectors.toList());
+    return this.filterValidDiagnosisKeys(diagnosisKeys);
+  }
+
+  private List<DiagnosisKey> filterValidDiagnosisKeys(List<DiagnosisKey> diagnosisKeys) {
     List<DiagnosisKey> validDiagnosisKeys =
         diagnosisKeys.stream().filter(DiagnosisKeyService::isDiagnosisKeyValid).collect(Collectors.toList());
 
@@ -102,17 +119,6 @@ public class DiagnosisKeyService {
         diagnosisKeys.size(), numberOfDiscardedKeys);
 
     return validDiagnosisKeys;
-  }
-
-  /**
-   * Return all valid persisted diagnosis keys, sorted by their submission timestamp where visited_countries
-   * constains {@param countryCode}.
-   *
-   * @param countryCode country filter.
-   * @return Collection of {@link DiagnosisKey} that have visited_country in their array.
-   */
-  public List<DiagnosisKey> getDiagnosisKeysByVisitedCountry(String countryCode) {
-    return Collections.emptyList();
   }
 
   private static boolean isDiagnosisKeyValid(DiagnosisKey diagnosisKey) {

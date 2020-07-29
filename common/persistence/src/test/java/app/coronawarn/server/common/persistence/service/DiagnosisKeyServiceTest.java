@@ -27,18 +27,22 @@ import static java.time.ZoneOffset.UTC;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatCode;
 import static org.assertj.core.api.Assertions.catchThrowable;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import app.coronawarn.server.common.persistence.domain.DiagnosisKey;
 import app.coronawarn.server.common.persistence.exception.InvalidDiagnosisKeyException;
 import app.coronawarn.server.common.persistence.repository.DiagnosisKeyRepository;
+import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import org.assertj.core.util.Lists;
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
@@ -224,6 +228,40 @@ class DiagnosisKeyServiceTest {
 
     assertThat(actKeys.size()).isEqualTo(1);
     assertThat(actKeys.iterator().next().getTransmissionRiskLevel()).isEqualTo(2);
+  }
+
+  @Nested
+  class TestRetrieveKeysFromVisitedCountry {
+
+    @AfterEach
+    public void tearDown() {
+      diagnosisKeyRepository.deleteAll();
+    }
+
+    @BeforeEach
+    public void setup() {
+      var keys = List.of(
+          buildDiagnosisKeyForDateTime(OffsetDateTime.now(UTC).minusDays(1L), "DE", Collections.singletonList("DE")),
+          buildDiagnosisKeyForDateTime(OffsetDateTime.now(UTC).minusDays(2L), "DE", List.of("DE", "FR")),
+          buildDiagnosisKeyForDateTime(OffsetDateTime.now(UTC).minusDays(3L), "DE", List.of("DE", "FR", "DK"))
+      );
+      diagnosisKeyService.saveDiagnosisKeys(keys);
+    }
+
+    @Test
+    public void testShouldGetThreeEntriesDE() {
+      assertEquals(3, diagnosisKeyService.getDiagnosisKeysByVisitedCountry("DE").size());
+    }
+
+    @Test
+    public void testShouldGetTwoEntriesFR() {
+      assertEquals(2, diagnosisKeyService.getDiagnosisKeysByVisitedCountry("FR").size());
+    }
+
+    @Test
+    public void testShouldGetOneEntryDK() {
+      assertEquals(1, diagnosisKeyService.getDiagnosisKeysByVisitedCountry("DK").size());
+    }
   }
 
 }

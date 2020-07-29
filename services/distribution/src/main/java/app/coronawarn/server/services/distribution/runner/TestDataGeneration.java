@@ -101,7 +101,8 @@ public class TestDataGeneration implements ApplicationRunner {
    */
   private void writeTestData() {
     logger.debug(this.logPrefix + "Querying diagnosis keys from the database...");
-    List<DiagnosisKey> existingDiagnosisKeys = diagnosisKeyService.getDiagnosisKeys();
+    List<DiagnosisKey> existingDiagnosisKeys =
+        diagnosisKeyService.getDiagnosisKeysByVisitedCountry(distributionCountry);
 
     // Timestamps in hours since epoch. Test data generation starts one hour after the latest diagnosis key in the
     // database and ends one hour before the current one.
