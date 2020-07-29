@@ -1,0 +1,1 @@
+-- no permissions on H2 necessary
