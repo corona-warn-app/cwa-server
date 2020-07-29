@@ -8,10 +8,14 @@ spring:
   main:
     banner-mode: off
   datasource:
-    url: jdbc:tc:postgresql:11.8:///databasename?TC_TMPFS=/testtmpfs:rw
+    url: jdbc:h2:mem:test;MODE=PostgreSQL
+    driverClassName: org.h2.Driver
+    platform: h2
   test:
     database:
+      # Use datasource as defined above.
       replace: none
+
 services:
   submission:
     initial-fake-delay-milliseconds: 1
