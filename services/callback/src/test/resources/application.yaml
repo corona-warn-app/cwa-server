@@ -1,0 +1,44 @@
+---
+logging:
+  level:
+    org:
+      springframework: off
+    root: off
+spring:
+  main:
+    banner-mode: off
+  datasource:
+    url: jdbc:h2:mem:test;MODE=PostgreSQL
+    driverClassName: org.h2.Driver
+    platform: h2
+  test:
+    database:
+      # Use datasource as defined above.
+      replace: none
+
+services:
+  callback:
+    connection-pool-size: 200
+    monitoring:
+      batch-size: 5
+
+management:
+  endpoint:
+    health:
+      group:
+        readiness:
+          include: db
+  endpoints:
+    web:
+      exposure:
+        include: 'health'
+  health:
+    probes:
+      enabled: true
+
+feign:
+  client:
+    config:
+      default:
+        connect-timeout: 500
+        read-timeout: 500

@@ -11,6 +11,7 @@ COPY ./common/persistence/pom.xml ${WORK_DIR}/common/persistence/pom.xml
 COPY ./services/pom.xml ${WORK_DIR}/services/pom.xml
 COPY ./services/distribution/pom.xml ${WORK_DIR}/services/distribution/pom.xml
 COPY ./services/submission/pom.xml ${WORK_DIR}/services/submission/pom.xml
+COPY ./services/callback/pom.xml ${WORK_DIR}/services/callback/pom.xml
 
 WORKDIR ${WORK_DIR}
 
