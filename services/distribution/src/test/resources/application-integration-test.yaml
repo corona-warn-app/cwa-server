@@ -1,0 +1,4 @@
+---
+services:
+  distribution:
+    shifting-policy-threshold: 140

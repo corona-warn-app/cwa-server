@@ -26,11 +26,10 @@ import static app.coronawarn.server.services.distribution.assembly.diagnosiskeys
 import app.coronawarn.server.common.persistence.domain.DiagnosisKey;
 import app.coronawarn.server.common.persistence.service.DiagnosisKeyService;
 import app.coronawarn.server.common.protocols.internal.RiskLevel;
+import app.coronawarn.server.services.distribution.assembly.structure.util.TimeUtils;
 import app.coronawarn.server.services.distribution.config.DistributionServiceConfig;
 import app.coronawarn.server.services.distribution.config.DistributionServiceConfig.TestData;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.ZoneOffset;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
@@ -48,9 +47,9 @@ import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
 /**
- * Generates random diagnosis keys for the time frame between the last diagnosis key in the database and now (last full
- * hour) and writes them to the database. If there are no diagnosis keys in the database yet, then random diagnosis keys
- * for the time frame between the last full hour and the beginning of the retention period (14 days ago) will be
+ * Generates random diagnosis keys for the time frame between the last diagnosis key in the database and now
+ * and writes them to the database. If there are no diagnosis keys in the database yet, then random diagnosis keys
+ * for the time frame between current hour and the beginning of the retention period (14 days ago) will be
  * generated. The average number of exposure keys to be generated per hour is configurable in the application properties
  * (profile = {@code testdata}).
  */
@@ -100,19 +99,19 @@ public class TestDataGeneration implements ApplicationRunner {
     // Timestamps in hours since epoch. Test data generation starts one hour after the latest diagnosis key in the
     // database and ends one hour before the current one.
     long startTimestamp = getGeneratorStartTimestamp(existingDiagnosisKeys) + 1; // Inclusive
-    long endTimestamp = getGeneratorEndTimestamp(); // Exclusive
+    long endTimestamp = getGeneratorEndTimestamp(); // Inclusive
 
     // Add the startTimestamp to the seed. Otherwise we would generate the same data every hour.
     random.setSeed(this.config.getSeed() + startTimestamp);
     PoissonDistribution poisson =
         new PoissonDistribution(random, this.config.getExposuresPerHour(), POISSON_EPSILON, POISSON_MAX_ITERATIONS);
 
-    if (startTimestamp == endTimestamp) {
+    if (startTimestamp > endTimestamp) {
       logger.debug("Skipping test data generation, latest diagnosis keys are still up-to-date.");
       return;
     }
     logger.debug("Generating diagnosis keys between {} and {}...", startTimestamp, endTimestamp);
-    List<DiagnosisKey> newDiagnosisKeys = LongStream.range(startTimestamp, endTimestamp)
+    List<DiagnosisKey> newDiagnosisKeys = LongStream.rangeClosed(startTimestamp, endTimestamp)
         .mapToObj(submissionTimestamp -> IntStream.range(0, poisson.sample())
             .mapToObj(ignoredValue -> generateDiagnosisKey(submissionTimestamp))
             .collect(Collectors.toList()))
@@ -140,11 +139,11 @@ public class TestDataGeneration implements ApplicationRunner {
   }
 
   /**
-   * Returns the timestamp (in 1 hour intervals since epoch) of the last full hour. Example: If called at 15:38 UTC,
-   * this function would return the timestamp for today 14:00 UTC.
+   * Returns the timestamp (in 1 hour intervals since epoch) of the current hour. Example: If called at 15:38 UTC,
+   * this function would return the timestamp for today 15:00 UTC.
    */
   private long getGeneratorEndTimestamp() {
-    return (LocalDateTime.now().toEpochSecond(ZoneOffset.UTC) / ONE_HOUR_INTERVAL_SECONDS) - 1;
+    return (TimeUtils.getNow().getEpochSecond() / ONE_HOUR_INTERVAL_SECONDS);
   }
 
   /**
@@ -153,8 +152,8 @@ public class TestDataGeneration implements ApplicationRunner {
    * 14 days ago (from now) at 00:00 UTC.
    */
   private long getRetentionStartTimestamp() {
-    return LocalDate.now().minusDays(retentionDays).atStartOfDay()
-        .toEpochSecond(ZoneOffset.UTC) / ONE_HOUR_INTERVAL_SECONDS;
+    return TimeUtils.getNow().truncatedTo(ChronoUnit.DAYS).minus(retentionDays, ChronoUnit.DAYS).getEpochSecond()
+        / ONE_HOUR_INTERVAL_SECONDS;
   }
 
   /**

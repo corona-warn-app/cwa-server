@@ -51,6 +51,7 @@ services:
       retry-backoff: 1
       max-number-of-failed-operations: 5
       max-number-of-s3-threads: 2
+      force-update-keyfiles: ${FORCE_UPDATE_KEYFILES:false}
 spring:
   main:
     banner-mode: off

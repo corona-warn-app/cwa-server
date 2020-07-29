@@ -1,1 +1,0 @@
-# CWA-Server Quality Assurance
