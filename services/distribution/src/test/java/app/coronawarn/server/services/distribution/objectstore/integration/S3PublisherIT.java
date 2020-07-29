@@ -18,11 +18,14 @@
  * ---license-end
  */
 
-package app.coronawarn.server.services.distribution.objectstore;
+package app.coronawarn.server.services.distribution.objectstore.integration;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
 import app.coronawarn.server.services.distribution.config.DistributionServiceConfig;
+import app.coronawarn.server.services.distribution.objectstore.FailedObjectStoreOperationsCounter;
+import app.coronawarn.server.services.distribution.objectstore.ObjectStoreAccess;
+import app.coronawarn.server.services.distribution.objectstore.S3Publisher;
 import app.coronawarn.server.services.distribution.objectstore.client.ObjectStorePublishingConfig;
 import app.coronawarn.server.services.distribution.objectstore.client.S3Object;
 import java.io.IOException;
