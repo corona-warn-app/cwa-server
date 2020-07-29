@@ -8,9 +8,9 @@ spring:
   main:
     banner-mode: off
   datasource:
-    url: jdbc:h2:mem:test;MODE=PostgreSQL
-    driverClassName: org.h2.Driver
-    platform: h2
+    enabled: true
+    url: jdbc:tc:postgresql:11.8:///databasename?TC_TMPFS=/testtmpfs:rw
+    locations: classpath:db/migration/postgres
   test:
     database:
       # Use datasource as defined above.
