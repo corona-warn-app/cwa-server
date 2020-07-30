@@ -41,7 +41,7 @@ public interface DiagnosisKeyRepository extends PagingAndSortingRepository<Diagn
 
   /**
    * Counts all entries that have a submission timestamp less or equal than the specified one
-   *  and match the origin country_code.
+   *  and match the given country_code.
    *
    * @param submissionTimestamp The submission timestamp up to which entries will be expired.
    * @return The number of expired keys.
@@ -88,19 +88,9 @@ public interface DiagnosisKeyRepository extends PagingAndSortingRepository<Diagn
    * @param rollingPeriod              The rolling period of the diagnosis key.
    * @param submissionTimestamp        The submission timestamp of the diagnosis key.
    * @param transmissionRisk           The transmission risk level of the diagnosis key.
+   * @param originCountry              The origin country from the app.
+   * @param visitedCountries           The list of countries this transmissions is relevant for.
    */
-  @Modifying
-  @Query("INSERT INTO diagnosis_key "
-      + "(key_data, rolling_start_interval_number, rolling_period, submission_timestamp, transmission_risk_level) "
-      + "VALUES (:keyData, :rollingStartIntervalNumber, :rollingPeriod, :submissionTimestamp, :transmissionRisk) "
-      + "ON CONFLICT DO NOTHING")
-  void saveDoNothingOnConflict(
-      @Param("keyData") byte[] keyData,
-      @Param("rollingStartIntervalNumber") int rollingStartIntervalNumber,
-      @Param("rollingPeriod") int rollingPeriod,
-      @Param("submissionTimestamp") long submissionTimestamp,
-      @Param("transmissionRisk") int transmissionRisk);
-
   @Modifying
   @Query("INSERT INTO diagnosis_key "
       + "(key_data, rolling_start_interval_number, rolling_period, submission_timestamp, transmission_risk_level, "
@@ -108,7 +98,7 @@ public interface DiagnosisKeyRepository extends PagingAndSortingRepository<Diagn
       + "VALUES (:keyData, :rollingStartIntervalNumber, :rollingPeriod, :submissionTimestamp, :transmissionRisk, "
         + ":origin_country, :visited_countries) "
       + "ON CONFLICT DO NOTHING")
-  void saveDoNothingOnConflictCountries(
+  void saveDoNothingOnConflict(
       @Param("keyData") byte[] keyData,
       @Param("rollingStartIntervalNumber") int rollingStartIntervalNumber,
       @Param("rollingPeriod") int rollingPeriod,

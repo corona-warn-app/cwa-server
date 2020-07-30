@@ -33,7 +33,6 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import app.coronawarn.server.common.persistence.domain.DiagnosisKey;
 import app.coronawarn.server.common.persistence.exception.InvalidDiagnosisKeyException;
 import app.coronawarn.server.common.persistence.repository.DiagnosisKeyRepository;
-import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -98,7 +97,7 @@ class DiagnosisKeyServiceTest {
   @ValueSource(ints = {0, 1, Integer.MAX_VALUE})
   @ParameterizedTest
   void testApplyRetentionPolicyForValidNumberOfDays(int daysToRetain) {
-    assertThatCode(() -> diagnosisKeyService.applyRetentionPolicy(daysToRetain))
+    assertThatCode(() -> diagnosisKeyService.applyRetentionPolicy(daysToRetain, "DE"))
         .doesNotThrowAnyException();
   }
 
@@ -106,13 +105,13 @@ class DiagnosisKeyServiceTest {
   @ValueSource(ints = {Integer.MIN_VALUE, -1})
   @ParameterizedTest
   void testApplyRetentionPolicyForNegativeNumberOfDays(int daysToRetain) {
-    assertThat(catchThrowable(() -> diagnosisKeyService.applyRetentionPolicy(daysToRetain)))
+    assertThat(catchThrowable(() -> diagnosisKeyService.applyRetentionPolicy(daysToRetain, "DE")))
         .isInstanceOf(IllegalArgumentException.class);
   }
 
   @Test
   void testApplyRetentionPolicyForEmptyDb() {
-    diagnosisKeyService.applyRetentionPolicy(1);
+    diagnosisKeyService.applyRetentionPolicy(1, "DE");
     var actKeys = diagnosisKeyService.getDiagnosisKeys();
     assertDiagnosisKeysEqual(Lists.emptyList(), actKeys);
   }
@@ -122,7 +121,7 @@ class DiagnosisKeyServiceTest {
     var expKeys = List.of(buildDiagnosisKeyForDateTime(OffsetDateTime.now(UTC).minusHours(23)));
 
     diagnosisKeyService.saveDiagnosisKeys(expKeys);
-    diagnosisKeyService.applyRetentionPolicy(1);
+    diagnosisKeyService.applyRetentionPolicy(1, "DE");
     var actKeys = diagnosisKeyService.getDiagnosisKeys();
 
     assertDiagnosisKeysEqual(expKeys, actKeys);
@@ -132,8 +131,8 @@ class DiagnosisKeyServiceTest {
   void testApplyRetentionPolicyForOneApplicableEntry() {
     var keys = List.of(buildDiagnosisKeyForDateTime(OffsetDateTime.now(UTC).minusDays(1L)));
 
-    diagnosisKeyService.saveDiagnosisKeysWithCountry(keys);
-    diagnosisKeyService.applyRetentionPolicy(1);
+    diagnosisKeyService.saveDiagnosisKeys(keys);
+    diagnosisKeyService.applyRetentionPolicy(1, "DE");
     var actKeys = diagnosisKeyService.getDiagnosisKeys();
 
     assertDiagnosisKeysEqual(Lists.emptyList(), actKeys);
@@ -144,7 +143,7 @@ class DiagnosisKeyServiceTest {
     var expKeys = List.of(
         buildDiagnosisKeyForDateTime(OffsetDateTime.now(UTC).minusDays(1L), "DE", Collections.singletonList("DE")));
 
-    diagnosisKeyService.saveDiagnosisKeysWithCountry(expKeys);
+    diagnosisKeyService.saveDiagnosisKeys(expKeys);
     diagnosisKeyService.applyRetentionPolicy(1, "FR");
     var actKeys = diagnosisKeyService.getDiagnosisKeys();
 
@@ -156,7 +155,7 @@ class DiagnosisKeyServiceTest {
     var frenchKeys = buildDiagnosisKeyForDateTime(OffsetDateTime.now(UTC).minusDays(1L), "DE", Collections.singletonList("FR"));
     var germanKeys = buildDiagnosisKeyForDateTime(OffsetDateTime.now(UTC).minusDays(2L), "DE", Collections.singletonList("DE"));
 
-    diagnosisKeyService.saveDiagnosisKeysWithCountry(List.of(germanKeys, frenchKeys));
+    diagnosisKeyService.saveDiagnosisKeys(List.of(germanKeys, frenchKeys));
     diagnosisKeyService.applyRetentionPolicy(1, "FR");
     var actKeys = diagnosisKeyService.getDiagnosisKeys();
 
@@ -167,7 +166,7 @@ class DiagnosisKeyServiceTest {
   void testShouldDeleteKeysWhereAnyOfVisitedCountriesMatch() {
     var keys = List.of(
         buildDiagnosisKeyForDateTime(OffsetDateTime.now(UTC).minusDays(1L), "DE", List.of("DE", "FR", "LU")));
-    diagnosisKeyService.saveDiagnosisKeysWithCountry(keys);
+    diagnosisKeyService.saveDiagnosisKeys(keys);
     diagnosisKeyService.applyRetentionPolicy(1, "FR");
     var actKeys = diagnosisKeyService.getDiagnosisKeys();
     assertTrue(actKeys.isEmpty());
@@ -179,7 +178,7 @@ class DiagnosisKeyServiceTest {
         buildDiagnosisKeyForDateTime(OffsetDateTime.now(UTC).minusDays(1L), "DE", List.of("FR")),
         buildDiagnosisKeyForDateTime(OffsetDateTime.now(UTC).minusDays(1L), "FR", List.of("FR")),
         buildDiagnosisKeyForDateTime(OffsetDateTime.now(UTC).minusDays(1L), "LU", List.of("FR")));
-    diagnosisKeyService.saveDiagnosisKeysWithCountry(keys);
+    diagnosisKeyService.saveDiagnosisKeys(keys);
     diagnosisKeyService.applyRetentionPolicy(1, "FR");
     var actKeys = diagnosisKeyService.getDiagnosisKeys();
     assertTrue(actKeys.isEmpty());

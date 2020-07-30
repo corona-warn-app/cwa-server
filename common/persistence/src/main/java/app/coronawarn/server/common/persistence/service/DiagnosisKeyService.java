@@ -45,7 +45,6 @@ import org.springframework.transaction.annotation.Transactional;
 public class DiagnosisKeyService {
 
   private static final Logger logger = LoggerFactory.getLogger(DiagnosisKeyService.class);
-  public static final String DEFAULT_COUNTRY = "DE";
   private final DiagnosisKeyRepository keyRepository;
 
   public DiagnosisKeyService(DiagnosisKeyRepository keyRepository) {
@@ -63,25 +62,7 @@ public class DiagnosisKeyService {
   @Transactional
   public void saveDiagnosisKeys(Collection<DiagnosisKey> diagnosisKeys) {
     for (DiagnosisKey diagnosisKey : diagnosisKeys) {
-      keyRepository.saveDoNothingOnConflictCountries(
-          diagnosisKey.getKeyData(), diagnosisKey.getRollingStartIntervalNumber(), diagnosisKey.getRollingPeriod(),
-          diagnosisKey.getSubmissionTimestamp(), diagnosisKey.getTransmissionRiskLevel(),
-          diagnosisKey.getOriginCountry(), diagnosisKey.getVisitedCountries().toArray(new String[0]));
-    }
-  }
-
-  /**
-   * Persists the specified collection of {@link DiagnosisKey} instances. If the key data of a particular diagnosis key
-   * already exists in the database, this diagnosis key is not persisted.
-   *
-   * @param diagnosisKeys must not contain {@literal null}.
-   * @throws IllegalArgumentException in case the given collection contains {@literal null}.
-   */
-  @Timed
-  @Transactional
-  public void saveDiagnosisKeysWithCountry(Collection<DiagnosisKey> diagnosisKeys) {
-    for (DiagnosisKey diagnosisKey : diagnosisKeys) {
-      keyRepository.saveDoNothingOnConflictCountries(
+      keyRepository.saveDoNothingOnConflict(
           diagnosisKey.getKeyData(), diagnosisKey.getRollingStartIntervalNumber(), diagnosisKey.getRollingPeriod(),
           diagnosisKey.getSubmissionTimestamp(), diagnosisKey.getTransmissionRiskLevel(),
           diagnosisKey.getOriginCountry(), diagnosisKey.getVisitedCountries().toArray(new String[0]));
@@ -152,12 +133,8 @@ public class DiagnosisKeyService {
         .minusDays(daysToRetain)
         .toEpochSecond(UTC) / SECONDS_PER_HOUR;
     int numberOfDeletions = keyRepository.countOlderThanOrEqual(threshold, countryCode);
-    logger.info("Deleting {} diagnosis key(s) with a submission timestamp older than {} day(s) ago.",
-        numberOfDeletions, daysToRetain);
+    logger.info("[{}] Deleting {} diagnosis key(s) with a submission timestamp older than {} day(s) ago.",
+        countryCode, numberOfDeletions, daysToRetain);
     keyRepository.deleteOlderThanOrEqual(threshold, countryCode);
-  }
-
-  public void applyRetentionPolicy(int daysToRetain) {
-    this.applyRetentionPolicy(daysToRetain, DEFAULT_COUNTRY);
   }
 }

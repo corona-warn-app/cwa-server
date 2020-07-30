@@ -71,9 +71,9 @@ public class DiagnosisKey {
   private final long submissionTimestamp;
 
   @Size(max = 2)
-  private String originCountry;
+  private final String originCountry;
 
-  private List<String> visitedCountries;
+  private final List<String> visitedCountries;
 
   /**
    * Should be called by builders.
@@ -140,16 +140,8 @@ public class DiagnosisKey {
     return originCountry;
   }
 
-  public void setOriginCountry(String originCountry) {
-    this.originCountry = originCountry;
-  }
-
   public List<String> getVisitedCountries() {
     return visitedCountries;
-  }
-
-  public void setVisitedCountries(List<String> visitedCountries) {
-    this.visitedCountries = visitedCountries;
   }
 
   /**
