@@ -8,7 +8,7 @@
   <parent>
     <groupId>org.springframework.boot</groupId>
     <artifactId>spring-boot-starter-parent</artifactId>
-    <version>2.3.1.RELEASE</version>
+    <version>2.3.2.RELEASE</version>
     <relativePath></relativePath>
   </parent>
 
@@ -100,12 +100,6 @@
       <artifactId>postgresql</artifactId>
       <version>42.2.13</version>
       <scope>runtime</scope>
-    </dependency>
-    <dependency>
-      <!-- https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2020-13935 -->
-      <groupId>org.apache.tomcat.embed</groupId>
-      <artifactId>tomcat-embed-core</artifactId>
-      <version>9.0.37</version>
     </dependency>
   </dependencies>
 
