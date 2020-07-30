@@ -120,6 +120,7 @@ public class DiagnosisKeyService {
    * days.
    *
    * @param daysToRetain the number of days until which diagnosis keys will be retained.
+   * @param countryCode country filter.
    * @throws IllegalArgumentException if {@code daysToRetain} is negative.
    */
   @Transactional
