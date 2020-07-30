@@ -25,7 +25,7 @@ import org.springframework.validation.Errors;
 import org.springframework.validation.Validator;
 
 /**
- * {@link SubmissionPayloadSizeFilter} instances validate the values of the SubmissionServiceConfig.
+ * Validate the values of the SubmissionServiceConfig.
  */
 public class SubmissionServiceConfigValidator implements Validator {
 
