@@ -32,10 +32,17 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 import javax.validation.Constraint;
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
 import javax.validation.Payload;
+
+import org.apache.tomcat.util.buf.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+
 
 @Constraint(validatedBy = ValidSubmissionPayload.SubmissionPayloadValidator.class)
 @Target({ElementType.PARAMETER})
@@ -67,19 +74,22 @@ public @interface ValidSubmissionPayload {
   class SubmissionPayloadValidator implements
       ConstraintValidator<ValidSubmissionPayload, SubmissionPayload> {
 
-    private final int maxNumberOfKeys;
+    private static final Logger logger = LoggerFactory.getLogger(SubmissionPayloadValidator.class);
+
+    private SubmissionServiceConfig config;
 
     public SubmissionPayloadValidator(SubmissionServiceConfig submissionServiceConfig) {
-      maxNumberOfKeys = submissionServiceConfig.getMaxNumberOfKeys();
+       this.config = submissionServiceConfig;
     }
 
     /**
      * Validates the following constraints.
      * <ul>
      *   <li>StartIntervalNumber values from the same {@link SubmissionPayload} shall be unique.</li>
-     *   <li>There must be no gaps for StartIntervalNumber values for a user.</li>
      *   <li>There must not be any keys in the {@link SubmissionPayload} have overlapping time windows.</li>
-     *   <li>The period of time covered by the data file must not exceed the configured maximum number of days.</li>
+     *   <li>Number of keys submitted must not exceed the configured maximum (see <code>application.yml
+     *       services.submission.payload.max-number-of-keys</code></li>
+     *   <li>Visited countries field must be a value from within the accepted country codes.</li>
      * </ul>
      */
     @Override
@@ -90,8 +100,43 @@ public @interface ValidSubmissionPayload {
       boolean isValid = checkKeyCollectionSize(exposureKeys, validatorContext);
       isValid &= checkUniqueStartIntervalNumbers(exposureKeys, validatorContext);
       isValid &= checkNoOverlapsInTimeWindow(exposureKeys, validatorContext);
+      isValid &= checkOriginCountryIsAccepted(submissionPayload, validatorContext);
+      logIfVisitedCountriesNotAllowed(submissionPayload, validatorContext);
 
       return isValid;
+    }
+
+    /**
+     * @return false if the originCountry field of the given payload does not contain
+     * a country code from the configured <code>application.yml/allowed-countries</code>
+     */
+    private boolean checkOriginCountryIsAccepted(SubmissionPayload submissionPayload,
+        ConstraintValidatorContext validatorContext) {
+
+      // TODO: Uncomment below when the proto definition is changed
+      // String originCountry = submissionPayload.getOriginCountry();
+      String originCountry = "DE";
+      if (!config.isCountryAllowed(originCountry)) {
+        addViolation(validatorContext, String.format(
+            "Origin country %s is not part of the allowed countries list", originCountry));
+        return false;
+      }
+      return true;
+    }
+
+    /**
+     * Log a warning if the payload contains a visited country which is not
+     * part of the <code>allowed-countries</code> list
+     */
+    private void logIfVisitedCountriesNotAllowed(SubmissionPayload submissionPayload,
+        ConstraintValidatorContext validatorContext) {
+      // TODO: Uncomment below when the proto definition is changed
+      // List<String> visitedCountries = submissionPayload.getVisitedCountries();
+      List<String> visitedCountries = List.of("DE", "FR");
+      if (!config.areCountriesAllowed(visitedCountries)) {
+           logger.warn("Submission Payload contains some"
+               + " visited countries which are not allowed: {}", StringUtils.join(visitedCountries, ','));
+      }
     }
 
     private void addViolation(ConstraintValidatorContext validatorContext, String message) {
@@ -100,12 +145,16 @@ public @interface ValidSubmissionPayload {
 
     private boolean checkKeyCollectionSize(List<TemporaryExposureKey> exposureKeys,
         ConstraintValidatorContext validatorContext) {
-      if (exposureKeys.isEmpty() || exposureKeys.size() > maxNumberOfKeys) {
+      if (exposureKeys.isEmpty() || exceedsMaxNumberOfKeysPerSubmission(exposureKeys)) {
         addViolation(validatorContext, String.format(
-            "Number of keys must be between 1 and %s, but is %s.", maxNumberOfKeys, exposureKeys.size()));
+            "Number of keys must be between 1 and %s, but is %s.", config.getMaxNumberOfKeys(), exposureKeys.size()));
         return false;
       }
       return true;
+    }
+
+    private boolean exceedsMaxNumberOfKeysPerSubmission(List<TemporaryExposureKey> exposureKeys) {
+      return exposureKeys.size() > config.getMaxNumberOfKeys();
     }
 
     private boolean checkUniqueStartIntervalNumbers(List<TemporaryExposureKey> exposureKeys,
@@ -118,7 +167,8 @@ public @interface ValidSubmissionPayload {
 
       if (distinctSize < exposureKeys.size()) {
         addViolation(validatorContext, String.format(
-            "Duplicate StartIntervalNumber found. StartIntervalNumbers: %s", startIntervalNumbers));
+            "Duplicate StartIntervalNumber found. StartIntervalNumbers: %s",
+            Arrays.stream(startIntervalNumbers).map(String::valueOf).collect(Collectors.joining(","))));
         return false;
       }
       return true;
@@ -137,7 +187,8 @@ public @interface ValidSubmissionPayload {
       for (int i = 1; i < sortedStartIntervalNumbers.length; i++) {
         if ((sortedStartIntervalNumbers[i - 1] + EXPECTED_ROLLING_PERIOD) > sortedStartIntervalNumbers[i]) {
           addViolation(validatorContext, String.format(
-              "Subsequent intervals overlap. StartIntervalNumbers: %s", sortedStartIntervalNumbers));
+              "Subsequent intervals overlap. StartIntervalNumbers: %s",
+              Arrays.stream(sortedStartIntervalNumbers).map(String::valueOf).collect(Collectors.joining(","))));
           return false;
         }
       }
