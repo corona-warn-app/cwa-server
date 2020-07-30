@@ -21,6 +21,7 @@
 package app.coronawarn.server.common.persistence.domain;
 
 import app.coronawarn.server.common.protocols.external.exposurenotification.TemporaryExposureKey;
+import java.util.List;
 
 /**
  * This interface bundles interfaces that are used for the implementation of {@link DiagnosisKeyBuilder}.
@@ -78,6 +79,10 @@ interface DiagnosisKeyBuilders {
      * @return this Builder instance.
      */
     FinalBuilder withSubmissionTimestamp(long submissionTimestamp);
+
+    FinalBuilder withCountryCode(String countryCode);
+
+    FinalBuilder withVisitedCountries(List<String> visitedCountries);
 
     /**
      * Adds the specified rolling period to this builder. If not specified, the rolling period defaults to {@link

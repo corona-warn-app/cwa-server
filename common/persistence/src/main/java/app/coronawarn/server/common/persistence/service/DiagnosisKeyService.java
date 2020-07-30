@@ -63,7 +63,8 @@ public class DiagnosisKeyService {
     for (DiagnosisKey diagnosisKey : diagnosisKeys) {
       keyRepository.saveDoNothingOnConflict(
           diagnosisKey.getKeyData(), diagnosisKey.getRollingStartIntervalNumber(), diagnosisKey.getRollingPeriod(),
-          diagnosisKey.getSubmissionTimestamp(), diagnosisKey.getTransmissionRiskLevel());
+          diagnosisKey.getSubmissionTimestamp(), diagnosisKey.getTransmissionRiskLevel(),
+          diagnosisKey.getOriginCountry(), diagnosisKey.getVisitedCountries().toArray(new String[0]));
     }
   }
 
@@ -73,6 +74,23 @@ public class DiagnosisKeyService {
   public List<DiagnosisKey> getDiagnosisKeys() {
     List<DiagnosisKey> diagnosisKeys = createStreamFromIterator(
         keyRepository.findAll(Sort.by(Direction.ASC, "submissionTimestamp")).iterator()).collect(Collectors.toList());
+    return this.filterValidDiagnosisKeys(diagnosisKeys);
+  }
+
+  /**
+   * Return all valid persisted diagnosis keys, sorted by their submission timestamp where visited_countries
+   * contains {@param countryCode}.
+   *
+   * @param countryCode country filter.
+   * @return Collection of {@link DiagnosisKey} that have visited_country in their array.
+   */
+  public List<DiagnosisKey> getDiagnosisKeysByVisitedCountry(String countryCode) {
+    var diagnosisKeys = createStreamFromIterator(
+        keyRepository.findAllKeysWhereVisitedCountryContains(countryCode).iterator()).collect(Collectors.toList());
+    return this.filterValidDiagnosisKeys(diagnosisKeys);
+  }
+
+  private List<DiagnosisKey> filterValidDiagnosisKeys(List<DiagnosisKey> diagnosisKeys) {
     List<DiagnosisKey> validDiagnosisKeys =
         diagnosisKeys.stream().filter(DiagnosisKeyService::isDiagnosisKeyValid).collect(Collectors.toList());
 
@@ -101,10 +119,11 @@ public class DiagnosisKeyService {
    * days.
    *
    * @param daysToRetain the number of days until which diagnosis keys will be retained.
+   * @param countryCode country filter.
    * @throws IllegalArgumentException if {@code daysToRetain} is negative.
    */
   @Transactional
-  public void applyRetentionPolicy(int daysToRetain) {
+  public void applyRetentionPolicy(int daysToRetain, String countryCode) {
     if (daysToRetain < 0) {
       throw new IllegalArgumentException("Number of days to retain must be greater or equal to 0.");
     }
@@ -113,9 +132,9 @@ public class DiagnosisKeyService {
         .ofInstant(Instant.now(), UTC)
         .minusDays(daysToRetain)
         .toEpochSecond(UTC) / SECONDS_PER_HOUR;
-    int numberOfDeletions = keyRepository.countOlderThanOrEqual(threshold);
-    logger.info("Deleting {} diagnosis key(s) with a submission timestamp older than {} day(s) ago.",
-        numberOfDeletions, daysToRetain);
-    keyRepository.deleteOlderThanOrEqual(threshold);
+    int numberOfDeletions = keyRepository.countOlderThanOrEqual(threshold, countryCode);
+    logger.info("[{}] Deleting {} diagnosis key(s) with a submission timestamp older than {} day(s) ago.",
+        countryCode, numberOfDeletions, daysToRetain);
+    keyRepository.deleteOlderThanOrEqual(threshold, countryCode);
   }
 }

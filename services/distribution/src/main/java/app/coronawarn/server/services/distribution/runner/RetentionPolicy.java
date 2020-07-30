@@ -48,7 +48,10 @@ public class RetentionPolicy implements ApplicationRunner {
 
   private final Integer retentionDays;
 
+  private final String distributionCountry;
+
   private final S3RetentionPolicy s3RetentionPolicy;
+
 
   /**
    * Creates a new RetentionPolicy.
@@ -61,12 +64,13 @@ public class RetentionPolicy implements ApplicationRunner {
     this.applicationContext = applicationContext;
     this.retentionDays = distributionServiceConfig.getRetentionDays();
     this.s3RetentionPolicy = s3RetentionPolicy;
+    this.distributionCountry = distributionServiceConfig.getApi().getDistributionCountry();
   }
 
   @Override
   public void run(ApplicationArguments args) {
     try {
-      diagnosisKeyService.applyRetentionPolicy(retentionDays);
+      diagnosisKeyService.applyRetentionPolicy(retentionDays, distributionCountry);
       s3RetentionPolicy.applyRetentionPolicy(retentionDays);
     } catch (Exception e) {
       logger.error("Application of retention policy failed.", e);
