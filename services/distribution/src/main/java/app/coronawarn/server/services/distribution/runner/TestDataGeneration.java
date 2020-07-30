@@ -100,7 +100,7 @@ public class TestDataGeneration implements ApplicationRunner {
    * See {@link TestDataGeneration} class documentation.
    */
   private void writeTestData() {
-    logger.debug(this.logPrefix + "Querying diagnosis keys from the database...");
+    logger.debug("{} Querying diagnosis keys from the database...", this.logPrefix);
     List<DiagnosisKey> existingDiagnosisKeys =
         diagnosisKeyService.getDiagnosisKeysByVisitedCountry(distributionCountry);
 
@@ -115,10 +115,10 @@ public class TestDataGeneration implements ApplicationRunner {
         new PoissonDistribution(random, this.config.getExposuresPerHour(), POISSON_EPSILON, POISSON_MAX_ITERATIONS);
 
     if (startTimestamp > endTimestamp) {
-      logger.debug(this.logPrefix + "Skipping test data generation, latest diagnosis keys are still up-to-date.");
+      logger.debug("{} Skipping test data generation, latest diagnosis keys are still up-to-date.", this.logPrefix);
       return;
     }
-    logger.debug(this.logPrefix + "Generating diagnosis keys between {} and {}...", startTimestamp, endTimestamp);
+    logger.debug("{} Generating diagnosis keys between {} and {}...", this.logPrefix, startTimestamp, endTimestamp);
     List<DiagnosisKey> newDiagnosisKeys = LongStream.rangeClosed(startTimestamp, endTimestamp)
         .mapToObj(submissionTimestamp -> IntStream.range(0, poisson.sample())
             .mapToObj(ignoredValue -> generateDiagnosisKey(submissionTimestamp, distributionCountry))
@@ -126,10 +126,10 @@ public class TestDataGeneration implements ApplicationRunner {
         .flatMap(List::stream)
         .collect(Collectors.toList());
 
-    logger.debug(this.logPrefix + "Writing {} new diagnosis keys to the database...", newDiagnosisKeys.size());
+    logger.debug("{} Writing {} new diagnosis keys to the database...", this.logPrefix, newDiagnosisKeys.size());
     diagnosisKeyService.saveDiagnosisKeys(newDiagnosisKeys);
 
-    logger.debug(this.logPrefix + "Test data generation finished successfully.");
+    logger.debug("{} Test data generation finished successfully.", this.logPrefix);
   }
 
   /**

@@ -30,7 +30,6 @@ import io.micrometer.core.annotation.Timed;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 import javax.validation.ConstraintViolation;

@@ -248,17 +248,17 @@ class DiagnosisKeyServiceTest {
     }
 
     @Test
-    public void testShouldGetThreeEntriesDE() {
+    void testShouldGetThreeEntriesDE() {
       assertEquals(3, diagnosisKeyService.getDiagnosisKeysByVisitedCountry("DE").size());
     }
 
     @Test
-    public void testShouldGetTwoEntriesFR() {
+    void testShouldGetTwoEntriesFR() {
       assertEquals(2, diagnosisKeyService.getDiagnosisKeysByVisitedCountry("FR").size());
     }
 
     @Test
-    public void testShouldGetOneEntryDK() {
+    void testShouldGetOneEntryDK() {
       assertEquals(1, diagnosisKeyService.getDiagnosisKeysByVisitedCountry("DK").size());
     }
   }
