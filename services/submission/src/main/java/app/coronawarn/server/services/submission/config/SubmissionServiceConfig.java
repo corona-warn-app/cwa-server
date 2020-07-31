@@ -23,7 +23,6 @@ package app.coronawarn.server.services.submission.config;
 import java.io.File;
 import java.util.Arrays;
 import java.util.List;
-
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.Pattern;
@@ -117,21 +116,23 @@ public class SubmissionServiceConfig {
   }
 
   /**
+   * Check if country is whitelisted.
+   *
    * @return False if the given string is null, empty or is not part
-   * of the allowed list defined in the <code>application.yml</code>
+   *         of the allowed list defined in the <code>application.yml</code>.
    */
   public boolean isCountryAllowed(String country) {
     return payload.isCountryCodeAllowed(country);
   }
 
   /**
-   * See also <code>isCountryAllowed</code>
+   * See also <code>isCountryAllowed</code>.
    */
   public boolean areCountriesAllowed(List<String> countries) {
-    for(String country : countries) {
-        if(!isCountryAllowed(country)) {
-           return false;
-        }
+    for (String country : countries) {
+      if (!isCountryAllowed(country)) {
+        return false;
+      }
     }
     return true;
   }
@@ -171,8 +172,8 @@ public class SubmissionServiceConfig {
     }
 
     private boolean containsInLowerCase(List<String> countryList, String country) {
-      for(String acceptedCountry : countryList) {
-        if(acceptedCountry.equalsIgnoreCase(country)) {
+      for (String acceptedCountry : countryList) {
+        if (acceptedCountry.equalsIgnoreCase(country)) {
           return true;
         }
       }

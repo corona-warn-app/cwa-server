@@ -37,7 +37,6 @@ import javax.validation.Constraint;
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
 import javax.validation.Payload;
-
 import org.apache.tomcat.util.buf.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -79,7 +78,7 @@ public @interface ValidSubmissionPayload {
     private SubmissionServiceConfig config;
 
     public SubmissionPayloadValidator(SubmissionServiceConfig submissionServiceConfig) {
-       this.config = submissionServiceConfig;
+      this.config = submissionServiceConfig;
     }
 
     /**
@@ -107,8 +106,9 @@ public @interface ValidSubmissionPayload {
     }
 
     /**
+     * Verify if payload contains invalid or unaccepted countries.
      * @return false if the originCountry field of the given payload does not contain
-     * a country code from the configured <code>application.yml/allowed-countries</code>
+     *         a country code from the configured <code>application.yml/allowed-countries</code>
      */
     private boolean checkOriginCountryIsAccepted(SubmissionPayload submissionPayload,
         ConstraintValidatorContext validatorContext) {
@@ -126,7 +126,7 @@ public @interface ValidSubmissionPayload {
 
     /**
      * Log a warning if the payload contains a visited country which is not
-     * part of the <code>allowed-countries</code> list
+     * part of the <code>allowed-countries</code> list.
      */
     private void logIfVisitedCountriesNotAllowed(SubmissionPayload submissionPayload,
         ConstraintValidatorContext validatorContext) {
@@ -134,8 +134,8 @@ public @interface ValidSubmissionPayload {
       // List<String> visitedCountries = submissionPayload.getVisitedCountries();
       List<String> visitedCountries = List.of("DE", "FR");
       if (!config.areCountriesAllowed(visitedCountries)) {
-           logger.warn("Submission Payload contains some"
-               + " visited countries which are not allowed: {}", StringUtils.join(visitedCountries, ','));
+        logger.warn("Submission Payload contains some" + " visited countries which are not allowed: {}",
+            StringUtils.join(visitedCountries, ','));
       }
     }
 
