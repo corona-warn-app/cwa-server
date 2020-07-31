@@ -28,6 +28,8 @@ import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException
 import java.nio.charset.StandardCharsets;
 import java.time.Instant;
 import java.time.LocalDateTime;
+import java.util.Collections;
+import java.util.List;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -40,8 +42,11 @@ class DiagnosisKeyTest {
   final static int expRollingPeriod = 2;
   final static int expTransmissionRiskLevel = 3;
   final static long expSubmissionTimestamp = 4L;
+  static final String originCountry = "DE";
+  static final List<String> visitedCountries = Collections.singletonList("DE");
+
   final static DiagnosisKey diagnosisKey = new DiagnosisKey(expKeyData, expRollingStartIntervalNumber,
-      expRollingPeriod, expTransmissionRiskLevel, expSubmissionTimestamp);
+      expRollingPeriod, expTransmissionRiskLevel, expSubmissionTimestamp, originCountry, visitedCountries);
 
   @Test
   void testRollingStartIntervalNumberGetter() {
@@ -70,7 +75,7 @@ class DiagnosisKeyTest {
         .minusDays(5).minusMinutes(10)
         .toEpochSecond(UTC) / (60 * 10));
     DiagnosisKey diagnosisKeyFiveDays = new DiagnosisKey(expKeyData, fiveDaysAgo,
-        expRollingPeriod, expTransmissionRiskLevel, expSubmissionTimestamp);
+        expRollingPeriod, expTransmissionRiskLevel, expSubmissionTimestamp, originCountry, visitedCountries);
 
     assertThat(diagnosisKeyFiveDays.isYoungerThanRetentionThreshold(4)).isFalse();
     assertThat(diagnosisKeyFiveDays.isYoungerThanRetentionThreshold(5)).isFalse();

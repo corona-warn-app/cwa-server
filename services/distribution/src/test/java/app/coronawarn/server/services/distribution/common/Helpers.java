@@ -33,6 +33,7 @@ import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -66,13 +67,32 @@ public class Helpers {
     return buildDiagnosisKeys(startIntervalNumber, timestamp, number);
   }
 
+  public static List<DiagnosisKey> buildDiagnosisKeys(
+      int startIntervalNumber, LocalDateTime submissionTimestamp, int number,
+      String originCountry, List<String> visitedCountries) {
+    long timestamp = submissionTimestamp.toEpochSecond(ZoneOffset.UTC) / 3600;
+    return buildDiagnosisKeys(startIntervalNumber, timestamp, number, originCountry, visitedCountries);
+  }
+
+
   public static List<DiagnosisKey> buildDiagnosisKeys(int startIntervalNumber, long submissionTimestamp, int number) {
+    return Helpers.buildDiagnosisKeys(startIntervalNumber, submissionTimestamp, number,
+        "DE", Collections.singletonList("DE"));
+  }
+
+  public static List<DiagnosisKey> buildDiagnosisKeys(int startIntervalNumber,
+      long submissionTimestamp,
+      int number,
+      String originCountry,
+      List<String> visitedCountries) {
     return IntStream.range(0, number)
         .mapToObj(ignoredValue -> DiagnosisKey.builder()
             .withKeyData(new byte[16])
             .withRollingStartIntervalNumber(startIntervalNumber)
             .withTransmissionRiskLevel(2)
-            .withSubmissionTimestamp(submissionTimestamp).build())
+            .withSubmissionTimestamp(submissionTimestamp)
+            .withCountryCode(originCountry)
+            .withVisitedCountries(visitedCountries).build())
         .collect(Collectors.toList());
   }
 
