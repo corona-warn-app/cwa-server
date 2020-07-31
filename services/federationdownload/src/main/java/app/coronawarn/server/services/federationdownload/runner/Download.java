@@ -22,9 +22,16 @@ package app.coronawarn.server.services.federationdownload.runner;
 
 
 import app.coronawarn.server.common.persistence.domain.FederationBatchDownload;
+import app.coronawarn.server.common.persistence.service.DiagnosisKeyService;
 import app.coronawarn.server.common.persistence.service.FederationBatchDownloadService;
+import app.coronawarn.server.common.protocols.external.exposurenotification.DiagnosisKey;
+import app.coronawarn.server.common.protocols.external.exposurenotification.DiagnosisKeyBatch;
+import app.coronawarn.server.common.protocols.external.exposurenotification.TemporaryExposureKey;
+import app.coronawarn.server.common.protocols.internal.SubmissionPayload;
 import app.coronawarn.server.services.federationdownload.Application;
 import app.coronawarn.server.services.federationdownload.download.BatchDownloader;
+import feign.Response;
+import java.util.ArrayList;
 import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -32,8 +39,8 @@ import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.context.ApplicationContext;
 import org.springframework.core.annotation.Order;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
+import org.springframework.web.client.RestClientException;
 
 
 /**
@@ -48,17 +55,19 @@ public class Download implements ApplicationRunner {
 
   private final ApplicationContext applicationContext;
   private final FederationBatchDownloadService federationBatchDownloadService;
-
+  private final DiagnosisKeyService diagnosisKeyService;
   private final BatchDownloader batchDownloader;
+
 
   /**
    * Creates an Download, using {@link ApplicationContext}.
    */
 
   Download(ApplicationContext applicationContext, FederationBatchDownloadService federationBatchDownloadService,
-          BatchDownloader batchDownloader) {
+           DiagnosisKeyService diagnosisKeyService, BatchDownloader batchDownloader) {
     this.applicationContext = applicationContext;
     this.federationBatchDownloadService = federationBatchDownloadService;
+    this.diagnosisKeyService = diagnosisKeyService;
     this.batchDownloader = batchDownloader;
   }
 
@@ -69,8 +78,10 @@ public class Download implements ApplicationRunner {
           federationBatchDownloadService.getFederationBatchDownloads();
 
       for (FederationBatchDownload federationBatchDownload : federationBatchDownloads) {
-        ResponseEntity<String> result = this.batchDownloader.downloadBatch(federationBatchDownload);
-
+        Response result = this.batchDownloader.downloadBatch(federationBatchDownload);
+        DiagnosisKeyBatch diagnosisKeyBatch = DiagnosisKeyBatch.parseFrom(result.body().asInputStream());
+        //DiagnosisKey diagnosisKey = diagnosisKeyBatch.getKeys(1);
+        persistDiagnosisKeysPayload(diagnosisKeyBatch);
       }
 
 
@@ -81,4 +92,24 @@ public class Download implements ApplicationRunner {
     logger.debug("Batch successfully downloaded.");
   }
 
+  /**
+   * Persists the diagnosis keys contained in the specified request payload.
+   *
+   * @param diagnosisKeyBatch Diagnosis keys that were specified in the request.
+   * @throws IllegalArgumentException in case the given collection contains {@literal null}.
+   */
+  public void persistDiagnosisKeysPayload(DiagnosisKeyBatch diagnosisKeyBatch) {
+    List<DiagnosisKey> protoBufferKeysList = diagnosisKeyBatch.getKeysList();
+    List<app.coronawarn.server.common.persistence.domain.DiagnosisKey> diagnosisKeys = new ArrayList<>();
+
+    for (DiagnosisKey protoBufferKey : protoBufferKeysList) {
+      app.coronawarn.server.common.persistence.domain.FederationDiagnosisKey
+          diagnosisKey = app.coronawarn.server.common.persistence.domain.FederationDiagnosisKey
+          .builder()
+          .fromProtoBuf(protoBufferKey)
+          .build();
+    }
+
+    diagnosisKeyService.saveDiagnosisKeys(diagnosisKeys);
+  }
 }
