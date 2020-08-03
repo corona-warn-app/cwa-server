@@ -128,7 +128,7 @@ public class SubmissionServiceConfig {
   /**
    * See also <code>isCountryAllowed</code>.
    */
-  public boolean areCountriesAllowed(List<String> countries) {
+  public boolean areAllCountriesAllowed(List<String> countries) {
     for (String country : countries) {
       if (!isCountryAllowed(country)) {
         return false;

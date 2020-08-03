@@ -133,7 +133,7 @@ public @interface ValidSubmissionPayload {
       // TODO: Uncomment below when the proto definition is changed
       // List<String> visitedCountries = submissionPayload.getVisitedCountries();
       List<String> visitedCountries = List.of("DE", "FR");
-      if (!config.areCountriesAllowed(visitedCountries)) {
+      if (!config.areAllCountriesAllowed(visitedCountries)) {
         logger.warn("Submission Payload contains some" + " visited countries which are not allowed: {}",
             StringUtils.join(visitedCountries, ','));
       }
