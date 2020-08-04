@@ -103,11 +103,7 @@ public class Download implements ApplicationRunner {
     List<app.coronawarn.server.common.persistence.domain.DiagnosisKey> diagnosisKeys = new ArrayList<>();
 
     for (DiagnosisKey protoBufferKey : protoBufferKeysList) {
-      app.coronawarn.server.common.persistence.domain.FederationDiagnosisKey
-          diagnosisKey = app.coronawarn.server.common.persistence.domain.FederationDiagnosisKey
-          .builder()
-          .fromProtoBuf(protoBufferKey)
-          .build();
+
     }
 
     diagnosisKeyService.saveDiagnosisKeys(diagnosisKeys);
