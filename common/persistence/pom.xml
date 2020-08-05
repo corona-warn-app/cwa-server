@@ -82,10 +82,10 @@
       <scope>runtime</scope>
     </dependency>
     <dependency>
-      <groupId>org.testcontainers</groupId>
-      <artifactId>postgresql</artifactId>
-      <version>1.14.3</version>
-      <scope>test</scope>
+      <groupId>com.h2database</groupId>
+      <artifactId>h2</artifactId>
+      <version>1.4.200</version>
+      <scope>runtime</scope>
     </dependency>
     <dependency>
       <!-- https://nvd.nist.gov/vuln/detail/CVE-2020-9488 -->
