@@ -21,6 +21,8 @@
 package app.coronawarn.server.services.submission.config;
 
 import java.io.File;
+import java.util.Arrays;
+import java.util.List;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.Pattern;
@@ -36,6 +38,7 @@ public class SubmissionServiceConfig {
 
   private static final String PATH_REGEX = "^[/]?[a-zA-Z0-9_]+[/[a-zA-Z0-9_]+]*$";
   private static final String URL_WITH_PORT_REGEX = "^http[s]?://[a-z0-9-]+(\\.[a-z0-9-]+)*(:[0-9]{2,6})?$";
+  private static final String ALLOWED_COUNTRY_CODES_REGEX = "^([a-zA-Z]{2}(\\,*[a-zA-Z]{2})*)$";
 
   // Exponential moving average of the last N real request durations (in ms), where
   // N = fakeDelayMovingAverageSamples.
@@ -112,6 +115,28 @@ public class SubmissionServiceConfig {
     return payload.getMaxNumberOfKeys();
   }
 
+  /**
+   * Check if country is whitelisted.
+   *
+   * @return False if the given string is null, empty or is not part
+   *         of the allowed list defined in the <code>application.yml</code>.
+   */
+  public boolean isCountryAllowed(String country) {
+    return payload.isCountryCodeAllowed(country);
+  }
+
+  /**
+   * See also <code>isCountryAllowed</code>.
+   */
+  public boolean areAllCountriesAllowed(List<String> countries) {
+    for (String country : countries) {
+      if (!isCountryAllowed(country)) {
+        return false;
+      }
+    }
+    return true;
+  }
+
   public void setPayload(Payload payload) {
     this.payload = payload;
   }
@@ -122,12 +147,37 @@ public class SubmissionServiceConfig {
     @Max(28)
     private Integer maxNumberOfKeys;
 
+    @Pattern(regexp = ALLOWED_COUNTRY_CODES_REGEX)
+    private String allowedCountries;
+
     public Integer getMaxNumberOfKeys() {
       return maxNumberOfKeys;
     }
 
+    public boolean isCountryCodeAllowed(String country) {
+      return country != null && !country.isEmpty()
+                             && containsInLowerCase(Arrays.asList(getAllowedCountries()), country);
+    }
+
     public void setMaxNumberOfKeys(Integer maxNumberOfKeys) {
       this.maxNumberOfKeys = maxNumberOfKeys;
+    }
+
+    public String[] getAllowedCountries() {
+      return allowedCountries.split(",");
+    }
+
+    public void setAllowedCountries(String allowedCountries) {
+      this.allowedCountries = allowedCountries;
+    }
+
+    private boolean containsInLowerCase(List<String> countryList, String country) {
+      for (String acceptedCountry : countryList) {
+        if (acceptedCountry.equalsIgnoreCase(country)) {
+          return true;
+        }
+      }
+      return false;
     }
   }
 
