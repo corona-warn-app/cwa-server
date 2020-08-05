@@ -22,8 +22,8 @@ package app.coronawarn.server.services.federationdownload.validation;
 
 import static app.coronawarn.server.common.persistence.domain.DiagnosisKey.EXPECTED_ROLLING_PERIOD;
 
-import app.coronawarn.server.common.protocols.external.exposurenotification.DiagnosisKey;
 import app.coronawarn.server.common.protocols.external.exposurenotification.DiagnosisKeyBatch;
+import app.coronawarn.server.common.protocols.external.exposurenotification.TemporaryExposureKey;
 import app.coronawarn.server.common.protocols.internal.SubmissionPayload;
 import app.coronawarn.server.services.federationdownload.config.FederationDownloadServiceConfig;
 import java.lang.annotation.Documented;
@@ -101,7 +101,7 @@ public @interface ValidDiagnosisKeyBatchPayload {
     }
 
 
-    private boolean checkKeyCollectionSize(List<DiagnosisKey> diagnosisKey,
+    private boolean checkKeyCollectionSize(List<TemporaryExposureKey> diagnosisKey,
                                            ConstraintValidatorContext validatorContext) {
       /*
       if (exposureKeys.isEmpty() || exposureKeys.size() > maxNumberOfKeys) {
@@ -116,10 +116,10 @@ public @interface ValidDiagnosisKeyBatchPayload {
     }
 
 
-    private boolean checkUniqueStartIntervalNumbers(List<DiagnosisKey> diagnosisKeys,
+    private boolean checkUniqueStartIntervalNumbers(List<TemporaryExposureKey> diagnosisKeys,
                                                     ConstraintValidatorContext validatorContext) {
       Integer[] startIntervalNumbers = diagnosisKeys.stream()
-          .mapToInt(DiagnosisKey::getRollingStartIntervalNumber).boxed().toArray(Integer[]::new);
+          .mapToInt(TemporaryExposureKey::getRollingStartIntervalNumber).boxed().toArray(Integer[]::new);
       long distinctSize = Arrays.stream(startIntervalNumbers)
           .distinct()
           .count();
@@ -132,14 +132,14 @@ public @interface ValidDiagnosisKeyBatchPayload {
       return true;
     }
 
-    private boolean checkNoOverlapsInTimeWindow(List<DiagnosisKey> diagnosisKeys,
+    private boolean checkNoOverlapsInTimeWindow(List<TemporaryExposureKey> diagnosisKeys,
                                                 ConstraintValidatorContext validatorContext) {
       if (diagnosisKeys.size() < 2) {
         return true;
       }
 
       Integer[] sortedStartIntervalNumbers = diagnosisKeys.stream()
-          .mapToInt(DiagnosisKey::getRollingStartIntervalNumber)
+          .mapToInt(TemporaryExposureKey::getRollingStartIntervalNumber)
           .sorted().boxed().toArray(Integer[]::new);
 
       for (int i = 1; i < sortedStartIntervalNumbers.length; i++) {

@@ -3,21 +3,8 @@ syntax = "proto3";
 package app.coronawarn.server.common.protocols.external.exposurenotification;
 option java_package = "app.coronawarn.server.common.protocols.external.exposurenotification";
 option java_multiple_files = true;
+import "app/coronawarn/server/common/protocols/external/exposurenotification/temporary_exposure_key_export.proto";
 
 message DiagnosisKeyBatch {
-  repeated DiagnosisKey keys = 1;
-}
-
-message DiagnosisKey {
-  bytes keyData = 1; // key
-  uint32 rollingStartIntervalNumber = 2;
-  uint32 rollingPeriod = 3; // number of 10-minute windows between key rolling
-  int32 transmissionRiskLevel = 4; // risk of transmission
-  repeated string visitedCountries = 5;
-  string origin = 6; // country of origin
-  VerificationType verificationType = 7; // set by backend
-}
-enum VerificationType {
-  LAB_VERIFIED = 0;
-  SELF_REPORTED = 1;
+  repeated TemporaryExposureKey keys = 1;
 }

@@ -24,10 +24,8 @@ package app.coronawarn.server.services.federationdownload.runner;
 import app.coronawarn.server.common.persistence.domain.FederationBatchDownload;
 import app.coronawarn.server.common.persistence.service.DiagnosisKeyService;
 import app.coronawarn.server.common.persistence.service.FederationBatchDownloadService;
-import app.coronawarn.server.common.protocols.external.exposurenotification.DiagnosisKey;
 import app.coronawarn.server.common.protocols.external.exposurenotification.DiagnosisKeyBatch;
 import app.coronawarn.server.common.protocols.external.exposurenotification.TemporaryExposureKey;
-import app.coronawarn.server.common.protocols.internal.SubmissionPayload;
 import app.coronawarn.server.services.federationdownload.Application;
 import app.coronawarn.server.services.federationdownload.download.BatchDownloader;
 import feign.Response;
@@ -40,7 +38,7 @@ import org.springframework.boot.ApplicationRunner;
 import org.springframework.context.ApplicationContext;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
-import org.springframework.web.client.RestClientException;
+
 
 
 /**
@@ -99,10 +97,10 @@ public class Download implements ApplicationRunner {
    * @throws IllegalArgumentException in case the given collection contains {@literal null}.
    */
   public void persistDiagnosisKeysPayload(DiagnosisKeyBatch diagnosisKeyBatch) {
-    List<DiagnosisKey> protoBufferKeysList = diagnosisKeyBatch.getKeysList();
+    List<TemporaryExposureKey> protoBufferKeysList = diagnosisKeyBatch.getKeysList();
     List<app.coronawarn.server.common.persistence.domain.DiagnosisKey> diagnosisKeys = new ArrayList<>();
 
-    for (DiagnosisKey protoBufferKey : protoBufferKeysList) {
+    for (TemporaryExposureKey protoBufferKey : protoBufferKeysList) {
 
     }
 

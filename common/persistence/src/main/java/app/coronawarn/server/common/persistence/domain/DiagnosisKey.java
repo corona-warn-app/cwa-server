@@ -75,6 +75,7 @@ public class DiagnosisKey {
 
   private final List<String> visitedCountries;
 
+
   /**
    * Should be called by builders.
    */
