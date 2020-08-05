@@ -24,14 +24,14 @@ import java.util.Date;
 import java.util.Objects;
 import org.springframework.data.annotation.Id;
 
-public class FederationBatchDownload {
+public class FederationBatch {
 
   @Id
   private String batchTag;
 
   private Date date;
 
-  public FederationBatchDownload(String batchTag, Date date) {
+  public FederationBatch(String batchTag, Date date) {
     this.batchTag = batchTag;
     this.date = date;
   }
@@ -60,7 +60,7 @@ public class FederationBatchDownload {
     if (o == null || getClass() != o.getClass()) {
       return false;
     }
-    FederationBatchDownload that = (FederationBatchDownload) o;
+    FederationBatch that = (FederationBatch) o;
     return Objects.equals(batchTag, that.batchTag) && Objects.equals(date, that.date);
   }
 

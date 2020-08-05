@@ -20,7 +20,7 @@
 
 package app.coronawarn.server.common.persistence.repository;
 
-import app.coronawarn.server.common.persistence.domain.FederationBatchDownload;
+import app.coronawarn.server.common.persistence.domain.FederationBatch;
 import java.util.Date;
 import org.springframework.data.jdbc.repository.query.Modifying;
 import org.springframework.data.jdbc.repository.query.Query;
@@ -29,10 +29,10 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface FederationBatchDownloadRepository extends PagingAndSortingRepository<FederationBatchDownload, Long> {
+public interface FederationBatchRepository extends PagingAndSortingRepository<FederationBatch, Long> {
 
   @Modifying
-  @Query("INSERT INTO federation_batch_download "
+  @Query("INSERT INTO federation_batch "
       + "(batch_tag, date) "
       + "VALUES (:batchTag, :date) "
       + "ON CONFLICT DO NOTHING")

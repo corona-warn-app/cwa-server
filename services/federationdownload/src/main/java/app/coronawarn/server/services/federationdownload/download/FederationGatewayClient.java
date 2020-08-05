@@ -20,7 +20,7 @@
 
 package app.coronawarn.server.services.federationdownload.download;
 
-import app.coronawarn.server.common.persistence.domain.FederationBatchDownload;
+import app.coronawarn.server.common.persistence.domain.FederationBatch;
 import feign.Headers;
 import feign.Response;
 import io.micrometer.core.annotation.Timed;
@@ -36,7 +36,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 @Validated
 @FeignClient(name = "download-server", configuration = DownloadServerClientConfiguration.class,
     url = "${services.federationdownload.federationgateway.base-url}")
-public interface DownloadServerClient {
+public interface FederationGatewayClient {
 
   /**
    * This methods calls the download service with the given batchTag & date.
@@ -44,6 +44,6 @@ public interface DownloadServerClient {
   @Timed
   @Headers("Content-Type: application/protobuf; version=1.0")
   @GetMapping(value = "${services.federationdownload.federationgateway.path}")
-  Response downloadBatch(@SpringQueryMap FederationBatchDownload params);
+  Response downloadDiagnosisKeyBatch(@SpringQueryMap FederationBatch params);
 
 }

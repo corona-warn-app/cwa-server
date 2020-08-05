@@ -22,8 +22,8 @@ package app.coronawarn.server.common.persistence.service;
 
 import static org.springframework.data.util.StreamUtils.createStreamFromIterator;
 
-import app.coronawarn.server.common.persistence.domain.FederationBatchDownload;
-import app.coronawarn.server.common.persistence.repository.FederationBatchDownloadRepository;
+import app.coronawarn.server.common.persistence.domain.FederationBatch;
+import app.coronawarn.server.common.persistence.repository.FederationBatchRepository;
 import io.micrometer.core.annotation.Timed;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -35,40 +35,51 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 @Component
-public class FederationBatchDownloadService {
+public class FederationBatchService {
 
-  private static final Logger logger = LoggerFactory.getLogger(FederationBatchDownloadService.class);
-  private final FederationBatchDownloadRepository federationBatchDownloadRepository;
+  private static final Logger logger = LoggerFactory.getLogger(FederationBatchService.class);
+  private final FederationBatchRepository federationBatchRepository;
 
-  public FederationBatchDownloadService(FederationBatchDownloadRepository federationBatchDownloadRepository) {
-    this.federationBatchDownloadRepository = federationBatchDownloadRepository;
+  public FederationBatchService(FederationBatchRepository federationBatchRepository) {
+    this.federationBatchRepository = federationBatchRepository;
   }
 
   /**
-   * Persists the {@link FederationBatchDownload} instance. If the data of a particular federation batch
+   * Persists the {@link FederationBatch} instance. If the data of a particular federation batch
    * already exists in the database, this federation batch is not persisted.
    *
-   * @param federationBatchDownload must not contain {@literal null}.
+   * @param federationBatch must not contain {@literal null}.
    */
   @Timed
   @Transactional
-  public void saveFederationBatchDownload(FederationBatchDownload federationBatchDownload) {
-    federationBatchDownloadRepository
-        .saveDoNothingOnConflict(federationBatchDownload.getBatchTag(), federationBatchDownload.getDate());
+  public void saveFederationBatch(FederationBatch federationBatch) {
+    federationBatchRepository
+        .saveDoNothingOnConflict(federationBatch.getBatchTag(), federationBatch.getDate());
+  }
+
+  /**
+   * Deletes the {@link FederationBatch} instance.
+   *
+   * @param federationBatch must not contain {@literal null}.
+   */
+  @Timed
+  @Transactional
+  public void deleteFederationBatch(FederationBatch federationBatch) {
+    federationBatchRepository.delete(federationBatch);
   }
 
   /**
    * Returns all valid persisted federation batches, sorted by their submission timestamp.
    */
-  public List<FederationBatchDownload> getFederationBatchDownloads() {
-    List<FederationBatchDownload> federationBatchDownloads = createStreamFromIterator(
-        federationBatchDownloadRepository.findAll(Sort.by(Direction.ASC, "date")).iterator())
+  public List<FederationBatch> getFederationBatches() {
+    List<FederationBatch> federationBatches = createStreamFromIterator(
+        federationBatchRepository.findAll(Sort.by(Direction.ASC, "date")).iterator())
         .collect(Collectors.toList());
 
     logger.info("Retrieved {} federation batch(es).",
-        federationBatchDownloads.size());
+        federationBatches.size());
 
-    return federationBatchDownloads;
+    return federationBatches;
   }
 
 

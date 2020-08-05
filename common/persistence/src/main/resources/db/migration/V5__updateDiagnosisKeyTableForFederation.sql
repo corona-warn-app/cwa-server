@@ -7,4 +7,4 @@ ALTER TABLE diagnosis_key
     ADD visited_countries VARCHAR (2) [];
 
 ALTER TABLE diagnosis_key
-    ADD validation_type int;
+    ADD verification_type VARCHAR(20);

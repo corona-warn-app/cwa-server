@@ -64,7 +64,8 @@ public class DiagnosisKeyService {
       keyRepository.saveDoNothingOnConflict(
           diagnosisKey.getKeyData(), diagnosisKey.getRollingStartIntervalNumber(), diagnosisKey.getRollingPeriod(),
           diagnosisKey.getSubmissionTimestamp(), diagnosisKey.getTransmissionRiskLevel(),
-          diagnosisKey.getOriginCountry(), diagnosisKey.getVisitedCountries().toArray(new String[0]));
+          diagnosisKey.getOriginCountry(), diagnosisKey.getVisitedCountries().toArray(new String[0]),
+          diagnosisKey.getVerificationType().name());
     }
   }
 
@@ -78,8 +79,8 @@ public class DiagnosisKeyService {
   }
 
   /**
-   * Return all valid persisted diagnosis keys, sorted by their submission timestamp where visited_countries
-   * contains {@param countryCode}.
+   * Return all valid persisted diagnosis keys, sorted by their submission timestamp where visited_countries contains
+   * {@param countryCode}.
    *
    * @param countryCode country filter.
    * @return Collection of {@link DiagnosisKey} that have visited_country in their array.
@@ -119,7 +120,7 @@ public class DiagnosisKeyService {
    * days.
    *
    * @param daysToRetain the number of days until which diagnosis keys will be retained.
-   * @param countryCode country filter.
+   * @param countryCode  country filter.
    * @throws IllegalArgumentException if {@code daysToRetain} is negative.
    */
   @Transactional

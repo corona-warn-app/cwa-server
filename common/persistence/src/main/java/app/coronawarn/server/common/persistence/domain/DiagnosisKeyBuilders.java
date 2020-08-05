@@ -21,6 +21,7 @@
 package app.coronawarn.server.common.persistence.domain;
 
 import app.coronawarn.server.common.protocols.external.exposurenotification.TemporaryExposureKey;
+import app.coronawarn.server.common.protocols.external.exposurenotification.VerificationType;
 import java.util.List;
 
 /**
@@ -52,8 +53,8 @@ interface DiagnosisKeyBuilders {
     /**
      * Adds the specified rolling start interval number to this builder.
      *
-     * @param rollingStartIntervalNumber number describing when a key starts. It is equal to
-     *                                   startTimeOfKeySinceEpochInSecs / (60 * 10).
+     * @param rollingStartIntervalNumber number describing when a key starts.
+     *                                   It is equal to startTimeOfKeySinceEpochInSecs / (60 * 10).
      * @return this Builder instance.
      */
     TransmissionRiskLevelBuilder withRollingStartIntervalNumber(int rollingStartIntervalNumber);
@@ -80,10 +81,6 @@ interface DiagnosisKeyBuilders {
      */
     FinalBuilder withSubmissionTimestamp(long submissionTimestamp);
 
-    FinalBuilder withCountryCode(String countryCode);
-
-    FinalBuilder withVisitedCountries(List<String> visitedCountries);
-
     /**
      * Adds the specified rolling period to this builder. If not specified, the rolling period defaults to {@link
      * DiagnosisKey#EXPECTED_ROLLING_PERIOD}
@@ -93,6 +90,12 @@ interface DiagnosisKeyBuilders {
      * @return this Builder instance.
      */
     FinalBuilder withRollingPeriod(int rollingPeriod);
+
+    FinalBuilder withCountryCode(String countryCode);
+
+    FinalBuilder withVisitedCountries(List<String> visitedCountries);
+
+    FinalBuilder withVerificationType(VerificationType verificationType);
 
     /**
      * Builds a {@link DiagnosisKey} instance. If no submission timestamp has been specified it will be set to "now" as

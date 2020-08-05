@@ -20,8 +20,9 @@
 
 package app.coronawarn.server.services.federationdownload.download;
 
-import app.coronawarn.server.common.persistence.domain.FederationBatchDownload;
+import app.coronawarn.server.common.persistence.domain.FederationBatch;
 import feign.Response;
+import feign.Response.Body;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -32,34 +33,34 @@ import org.springframework.web.client.RestClientException;
  * The BatchDownloader downloads the batches containing the keys.
  */
 @Service
-public class BatchDownloader {
+public class DiagnosisKeyBatchDownloader {
 
-  private static final Logger logger = LoggerFactory.getLogger(BatchDownloader.class);
-  private final DownloadServerClient downloadServerClient;
+  private static final Logger logger = LoggerFactory.getLogger(DiagnosisKeyBatchDownloader.class);
+  private final FederationGatewayClient federationGatewayClient;
 
   /**
    * This class can be used to get the batches of the configured federation gateway.
    *
-   * @param downloadServerClient The REST client to communicate with the federation gateway server
+   * @param federationGatewayClient The REST client to communicate with the federation gateway server
    */
-  public BatchDownloader(DownloadServerClient downloadServerClient) {
-    this.downloadServerClient = downloadServerClient;
+  public DiagnosisKeyBatchDownloader(FederationGatewayClient federationGatewayClient) {
+    this.federationGatewayClient = federationGatewayClient;
   }
 
   /**
    * Used to download the batches.
    *
-   * @param federationBatchDownload Contains the BatchTag and date
+   * @param federationBatch Contains the BatchTag and date
    * @return Returns the downloaded batch
    * @throws RestClientException if status code is neither 2xx nor 4xx
    */
-  public Response downloadBatch(FederationBatchDownload federationBatchDownload)
+  public Body downloadBatch(FederationBatch federationBatch)
       throws Exception {
     try {
       logger.info("Calling federation gateway download service for batch download ...");
-      Response result = downloadServerClient.downloadBatch(federationBatchDownload);
+      Response result = federationGatewayClient.downloadDiagnosisKeyBatch(federationBatch);
       logger.info("Received batch from federation gateway service");
-      return result;
+      return result.body();
     } catch (Exception e) {
       logger.info("Federation gateway service error");
       throw new Exception(e.getMessage());
