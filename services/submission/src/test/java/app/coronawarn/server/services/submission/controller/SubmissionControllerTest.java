@@ -26,6 +26,7 @@ import static app.coronawarn.server.services.submission.controller.RequestExecut
 import static app.coronawarn.server.services.submission.controller.RequestExecutor.buildPayloadWithOneKey;
 import static app.coronawarn.server.services.submission.controller.RequestExecutor.buildTemporaryExposureKey;
 import static app.coronawarn.server.services.submission.controller.RequestExecutor.createRollingStartIntervalNumber;
+import static app.coronawarn.server.services.submission.controller.SubmissionPayloadMockData.*;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.any;
@@ -44,7 +45,6 @@ import static org.springframework.http.HttpStatus.OK;
 import app.coronawarn.server.common.persistence.domain.DiagnosisKey;
 import app.coronawarn.server.common.persistence.service.DiagnosisKeyService;
 import app.coronawarn.server.common.protocols.external.exposurenotification.TemporaryExposureKey;
-import app.coronawarn.server.common.protocols.internal.SubmissionPayload;
 import app.coronawarn.server.services.submission.config.SubmissionServiceConfig;
 import app.coronawarn.server.services.submission.monitoring.SubmissionMonitor;
 import app.coronawarn.server.services.submission.verification.TanVerifier;
@@ -57,6 +57,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
@@ -107,7 +108,7 @@ class SubmissionControllerTest {
 
   @Test
   void checkResponseStatusForValidParametersWithPadding() {
-    ResponseEntity<Void> actResponse = executor.executePost(buildPayloadWithPadding());
+    ResponseEntity<Void> actResponse = executor.executePost(buildPayloadWithPadding(this.buildMultipleKeys()));
     assertThat(actResponse.getStatusCode()).isEqualTo(OK);
   }
 
@@ -204,9 +205,25 @@ class SubmissionControllerTest {
   }
 
   @Test
-  void invalidSubmissionPayload() {
-    ResponseEntity<Void> actResponse = executor.executePost(buildPayloadWithTooLargePadding());
+  void testInvalidPaddingSubmissionPayload() {
+    ResponseEntity<Void> actResponse = executor
+        .executePost(buildPayloadWithTooLargePadding(config, this.buildMultipleKeys()));
     assertThat(actResponse.getStatusCode()).isEqualTo(BAD_REQUEST);
+  }
+
+  @Test
+  @Disabled("Enable this once submission payload proto is defined")
+  void testInvalidOriginCountrySubmissionPayload() {
+    ResponseEntity<Void> actResponse = executor.executePost(buildPayloadWithInvalidOriginCountry());
+    assertThat(actResponse.getStatusCode()).isEqualTo(BAD_REQUEST);
+  }
+
+  @Test
+  @Disabled("Enable this once submission payload proto is defined")
+  void testInvalidVisitedCountriesSubmissionPayload() {
+    ResponseEntity<Void> actResponse = executor.executePost(buildPayloadWithInvalidVisitedCountries());
+    // visited countries is an optional information, thus the application must ignore in case invalid
+    assertThat(actResponse.getStatusCode()).isEqualTo(OK);
   }
 
   @Test
@@ -231,34 +248,6 @@ class SubmissionControllerTest {
     verify(submissionMonitor, times(1)).incrementInvalidTanRequestCounter();
   }
 
-  private SubmissionPayload buildPayload(TemporaryExposureKey key) {
-    Collection<TemporaryExposureKey> keys = Stream.of(key).collect(Collectors.toCollection(ArrayList::new));
-    return buildPayload(keys);
-  }
-
-  private SubmissionPayload buildPayload(Collection<TemporaryExposureKey> keys) {
-    return SubmissionPayload.newBuilder()
-        .addAllKeys(keys)
-        .build();
-  }
-
-  private SubmissionPayload buildPayloadWithPadding() {
-    return SubmissionPayload.newBuilder()
-        .addAllKeys(buildMultipleKeys())
-        .setPadding(ByteString.copyFrom("PaddingString".getBytes()))
-        .build();
-  }
-
-  private SubmissionPayload buildPayloadWithTooLargePadding() {
-    int exceedingSize = (int) (2 * config.getMaximumRequestSize().toBytes());
-    byte[] bytes = new byte[exceedingSize];
-
-    return SubmissionPayload.newBuilder()
-        .addAllKeys(buildMultipleKeys())
-        .setPadding(ByteString.copyFrom(bytes))
-        .build();
-  }
-
   private Collection<TemporaryExposureKey> buildMultipleKeys() {
     int rollingStartIntervalNumber1 = createRollingStartIntervalNumber(config.getRetentionDays() - 1);
     int rollingStartIntervalNumber2 = rollingStartIntervalNumber1 + DiagnosisKey.EXPECTED_ROLLING_PERIOD;
@@ -276,11 +265,6 @@ class SubmissionControllerTest {
         .setRollingStartIntervalNumber(createRollingStartIntervalNumber(config.getRetentionDays()))
         .setRollingPeriod(DiagnosisKey.EXPECTED_ROLLING_PERIOD)
         .setTransmissionRiskLevel(5).build();
-  }
-
-  private SubmissionPayload buildPayloadWithInvalidKey() {
-    TemporaryExposureKey invalidKey = buildTemporaryExposureKey(VALID_KEY_DATA_1, createRollingStartIntervalNumber(2), 999);
-    return buildPayload(invalidKey);
   }
 
   private void assertElementsCorrespondToEachOther(Collection<TemporaryExposureKey> submittedTemporaryExposureKeys,
