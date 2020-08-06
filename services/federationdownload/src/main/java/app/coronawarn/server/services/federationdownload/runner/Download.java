@@ -21,6 +21,7 @@
 package app.coronawarn.server.services.federationdownload.runner;
 
 
+import app.coronawarn.server.common.persistence.domain.DiagnosisKey;
 import app.coronawarn.server.common.persistence.domain.FederationBatch;
 import app.coronawarn.server.common.persistence.service.DiagnosisKeyService;
 import app.coronawarn.server.common.persistence.service.FederationBatchService;
@@ -76,9 +77,9 @@ public class Download implements ApplicationRunner {
 
       for (FederationBatch federationBatch : federationBatches) {
         try {
-          Body body = this.diagnosisKeyBatchDownloader.downloadBatch(federationBatch);
+          Body body = diagnosisKeyBatchDownloader.downloadBatch(federationBatch);
           DiagnosisKeyBatch diagnosisKeyBatch = DiagnosisKeyBatch.parseFrom(body.asInputStream());
-
+          //TODO: Call audit from federation gateway
           persistDiagnosisKeysPayload(diagnosisKeyBatch);
           federationBatchService.deleteFederationBatch(federationBatch);
 
@@ -102,11 +103,10 @@ public class Download implements ApplicationRunner {
    */
   public void persistDiagnosisKeysPayload(DiagnosisKeyBatch diagnosisKeyBatch) {
     List<TemporaryExposureKey> protoBufferKeysList = diagnosisKeyBatch.getKeysList();
-    List<app.coronawarn.server.common.persistence.domain.DiagnosisKey> diagnosisKeys = new ArrayList<>();
+    List<DiagnosisKey> diagnosisKeys = new ArrayList<>();
 
     for (TemporaryExposureKey protoBufferKey : protoBufferKeysList) {
-      app.coronawarn.server.common.persistence.domain.DiagnosisKey
-          diagnosisKey = app.coronawarn.server.common.persistence.domain.DiagnosisKey
+      DiagnosisKey diagnosisKey = DiagnosisKey
           .builder()
           .fromProtoBuf(protoBufferKey)
           .build();
