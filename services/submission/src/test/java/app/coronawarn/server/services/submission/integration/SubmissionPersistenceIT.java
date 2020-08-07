@@ -29,17 +29,21 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.jdbc.Sql.ExecutionPhase;
+
+import com.google.protobuf.util.JsonFormat;
+
 import app.coronawarn.server.common.persistence.service.DiagnosisKeyService;
 import app.coronawarn.server.common.protocols.internal.SubmissionPayload;
 import app.coronawarn.server.services.submission.config.SubmissionServiceConfig;
@@ -58,6 +62,8 @@ import app.coronawarn.server.services.submission.verification.TanVerifier;
 @Sql(scripts = {"classpath:db/clean_db_state.sql"},
                 executionPhase = ExecutionPhase.BEFORE_TEST_METHOD)
 public class SubmissionPersistenceIT {
+
+  private static final Logger logger = LoggerFactory.getLogger(SubmissionPersistenceIT.class);
 
   @Autowired
   private DiagnosisKeyService diagnosisKeyService;
@@ -88,6 +94,9 @@ public class SubmissionPersistenceIT {
     Path path = Paths.get(testFile);
     InputStream input = new FileInputStream(path.toFile());
     SubmissionPayload payload = SubmissionPayload.parseFrom(input);
+
+    logger.info("Submitting payload: " + System.lineSeparator()
+        + JsonFormat.printer().preservingProtoFieldNames().omittingInsignificantWhitespace().print(payload));
 
     executor.executePost(payload);
     assertElementsCorrespondToEachOther(payload.getKeysList(), diagnosisKeyService.getDiagnosisKeys(), config);
