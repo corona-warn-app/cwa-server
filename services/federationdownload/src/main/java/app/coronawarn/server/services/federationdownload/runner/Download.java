@@ -32,6 +32,7 @@ import app.coronawarn.server.services.federationdownload.download.DiagnosisKeyBa
 import feign.Response.Body;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.ApplicationArguments;
@@ -95,16 +96,12 @@ public class Download implements ApplicationRunner {
   }
 
   private List<DiagnosisKey> extractTemporaryExposureKeysFromDiagnosisKeyBatch(DiagnosisKeyBatch diagnosisKeyBatch) {
-    List<TemporaryExposureKey> temporaryExposureKeys = diagnosisKeyBatch.getKeysList();
-    List<DiagnosisKey> diagnosisKeys = new ArrayList<>();
-
-    temporaryExposureKeys.forEach(temporaryExposureKey -> {
-      DiagnosisKey diagnosisKey = DiagnosisKey
-          .builder()
-          .fromProtoBuf(temporaryExposureKey)
-          .build();
-      diagnosisKeys.add(diagnosisKey);
-    });
-    return diagnosisKeys;
+    return diagnosisKeyBatch.getKeysList().stream()
+        .map(temporaryExposureKey ->
+            DiagnosisKey
+                .builder()
+                .fromProtoBuf(temporaryExposureKey)
+                .build()
+        ).collect(Collectors.toList());
   }
 }
