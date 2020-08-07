@@ -20,6 +20,7 @@
 
 package app.coronawarn.server.services.submission.integration;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
 import static app.coronawarn.server.services.submission.assertions.SubmissionAssertions.*;
@@ -29,6 +30,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.List;
+import java.util.stream.Collectors;
+import org.apache.tomcat.util.buf.StringUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -38,13 +42,14 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.jdbc.Sql.ExecutionPhase;
-
+import com.google.common.io.BaseEncoding;
 import com.google.protobuf.util.JsonFormat;
-
 import app.coronawarn.server.common.persistence.service.DiagnosisKeyService;
+import app.coronawarn.server.common.protocols.external.exposurenotification.TemporaryExposureKey;
 import app.coronawarn.server.common.protocols.internal.SubmissionPayload;
 import app.coronawarn.server.services.submission.config.SubmissionServiceConfig;
 import app.coronawarn.server.services.submission.controller.FakeDelayManager;
@@ -74,6 +79,9 @@ public class SubmissionPersistenceIT {
   @Autowired
   private SubmissionServiceConfig config;
 
+  @Autowired
+  private JdbcTemplate jdbcTemplate;
+
   @MockBean
   private TanVerifier tanVerifier;
 
@@ -99,6 +107,25 @@ public class SubmissionPersistenceIT {
         + JsonFormat.printer().preservingProtoFieldNames().omittingInsignificantWhitespace().print(payload));
 
     executor.executePost(payload);
+
+    String presenceVerificationSql = generateDebugSqlStatement(payload);
+    logger.info("SQL debugging statement: " + System.lineSeparator() + presenceVerificationSql);
+    Integer result = jdbcTemplate.queryForObject(presenceVerificationSql, Integer.class);
+
+    assertEquals(payload.getKeysList().size(), result);
     assertElementsCorrespondToEachOther(payload.getKeysList(), diagnosisKeyService.getDiagnosisKeys(), config);
+  }
+
+  private String generateDebugSqlStatement(SubmissionPayload payload) {
+    List<String> base64Keys = payload.getKeysList()
+        .stream()
+        .map(key -> "'" + toBase64(key) + "'")
+        .collect(Collectors.toList());
+    return "SELECT count(*) FROM diagnosis_key where ENCODE(key_data, 'BASE64') IN ("
+        + StringUtils.join(base64Keys, ',') + ")";
+  }
+
+  private String toBase64(TemporaryExposureKey key) {
+    return BaseEncoding.base64().encode((key.getKeyData()).toByteArray());
   }
 }
