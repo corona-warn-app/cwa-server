@@ -26,11 +26,9 @@ import app.coronawarn.server.common.persistence.domain.FederationBatch;
 import app.coronawarn.server.common.persistence.service.DiagnosisKeyService;
 import app.coronawarn.server.common.persistence.service.FederationBatchService;
 import app.coronawarn.server.common.protocols.external.exposurenotification.DiagnosisKeyBatch;
-import app.coronawarn.server.common.protocols.external.exposurenotification.TemporaryExposureKey;
 import app.coronawarn.server.services.federationdownload.Application;
 import app.coronawarn.server.services.federationdownload.download.DiagnosisKeyBatchDownloader;
 import feign.Response.Body;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 import org.slf4j.Logger;
@@ -79,7 +77,7 @@ public class Download implements ApplicationRunner {
           Body body = diagnosisKeyBatchDownloader.downloadBatch(federationBatch);
           DiagnosisKeyBatch diagnosisKeyBatch = DiagnosisKeyBatch.parseFrom(body.asInputStream());
           // TODO: Call audit from federation gateway
-          List<DiagnosisKey> diagnosisKeys = extractTemporaryExposureKeysFromDiagnosisKeyBatch(diagnosisKeyBatch);
+          List<DiagnosisKey> diagnosisKeys = convertFederationDiagnosisKeysToDiagnosisKeys(diagnosisKeyBatch);
           diagnosisKeyService.saveDiagnosisKeys(diagnosisKeys);
           federationBatchService.deleteFederationBatch(federationBatch);
         } catch (Exception e) {
@@ -95,12 +93,22 @@ public class Download implements ApplicationRunner {
     logger.debug("Batch successfully downloaded.");
   }
 
-  private List<DiagnosisKey> extractTemporaryExposureKeysFromDiagnosisKeyBatch(DiagnosisKeyBatch diagnosisKeyBatch) {
+  private List<DiagnosisKey> convertFederationDiagnosisKeysToDiagnosisKeys(DiagnosisKeyBatch diagnosisKeyBatch) {
+    List<app.coronawarn.server.common.protocols.external.exposurenotification.DiagnosisKey> keys =
+        diagnosisKeyBatch.getKeysList();
+
     return diagnosisKeyBatch.getKeysList().stream()
-        .map(temporaryExposureKey ->
+        .map(federationDiagnosisKey ->
             DiagnosisKey
                 .builder()
-                .fromProtoBuf(temporaryExposureKey)
+                .withKeyData(federationDiagnosisKey.getKeyData().toByteArray())
+                .withRollingStartIntervalNumber(federationDiagnosisKey.getRollingStartIntervalNumber())
+                .withTransmissionRiskLevel(federationDiagnosisKey.getTransmissionRiskLevel())
+                .withCountryCode(federationDiagnosisKey.getOrigin())
+                .withRollingPeriod(federationDiagnosisKey.getRollingPeriod())
+                //.withSubmissionTimestamp(federationDiagnosisKey)
+                .withVerificationType(federationDiagnosisKey.getVerificationType())
+                .withVisitedCountries(federationDiagnosisKey.getVisitedCountriesList())
                 .build()
         ).collect(Collectors.toList());
   }

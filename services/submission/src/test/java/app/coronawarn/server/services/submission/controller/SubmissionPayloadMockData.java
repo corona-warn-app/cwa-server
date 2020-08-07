@@ -24,6 +24,8 @@ import static app.coronawarn.server.services.submission.controller.RequestExecut
 import static app.coronawarn.server.services.submission.controller.RequestExecutor.buildTemporaryExposureKey;
 import static app.coronawarn.server.services.submission.controller.RequestExecutor.createRollingStartIntervalNumber;
 
+
+import app.coronawarn.server.common.protocols.external.exposurenotification.VerificationType;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.stream.Collectors;
@@ -43,24 +45,32 @@ public final class SubmissionPayloadMockData {
   public static SubmissionPayload buildPayload(Collection<TemporaryExposureKey> keys) {
     return SubmissionPayload.newBuilder()
         .addAllKeys(keys)
+        .addVisitedCountries("DE")
+        .addVisitedCountries("FR")
+        .setOrigin("DE")
+        .setVerificationType(VerificationType.LAB_VERIFIED)
         .build();
   }
 
   public static SubmissionPayload buildPayloadWithPadding(Collection<TemporaryExposureKey> keys) {
-    return SubmissionPayload.newBuilder()
-        .addAllKeys(keys)
-        .setPadding(ByteString.copyFrom("PaddingString".getBytes()))
-        .build();
+    return buildPayloadWithPadding(keys, "PaddingString".getBytes());
   }
 
   public static SubmissionPayload buildPayloadWithTooLargePadding(SubmissionServiceConfig config,
       Collection<TemporaryExposureKey> keys) {
     int exceedingSize = (int) (2 * config.getMaximumRequestSize().toBytes());
     byte[] bytes = new byte[exceedingSize];
+    return buildPayloadWithPadding(keys, bytes);
+  }
 
+  private static SubmissionPayload buildPayloadWithPadding(Collection<TemporaryExposureKey> keys, byte[] bytes) {
     return SubmissionPayload.newBuilder()
         .addAllKeys(keys)
         .setPadding(ByteString.copyFrom(bytes))
+        .addVisitedCountries("DE")
+        .addVisitedCountries("FR")
+        .setOrigin("DE")
+        .setVerificationType(VerificationType.LAB_VERIFIED)
         .build();
   }
 

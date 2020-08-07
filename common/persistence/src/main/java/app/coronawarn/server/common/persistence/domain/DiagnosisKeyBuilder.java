@@ -82,10 +82,7 @@ public class DiagnosisKeyBuilder implements
         .withKeyData(protoBufObject.getKeyData().toByteArray())
         .withRollingStartIntervalNumber(protoBufObject.getRollingStartIntervalNumber())
         .withTransmissionRiskLevel(protoBufObject.getTransmissionRiskLevel())
-        .withRollingPeriod(protoBufObject.getRollingPeriod())
-        .withVisitedCountries(protoBufObject.getVisitedCountriesList())
-        .withCountryCode(protoBufObject.getOrigin())
-        .withVerificationType(protoBufObject.getVerificationType());
+        .withRollingPeriod(protoBufObject.getRollingPeriod());
   }
 
   @Override

@@ -102,7 +102,9 @@ public class SubmissionController {
         submissionMonitor.incrementInvalidTanRequestCounter();
         deferredResult.setResult(ResponseEntity.status(HttpStatus.FORBIDDEN).build());
       } else {
-        persistDiagnosisKeysPayload(exposureKeys);
+        List<DiagnosisKey> diagnosisKeys = extractDiagnosisKeysFromPayload(exposureKeys);
+        diagnosisKeyService.saveDiagnosisKeys(padDiagnosisKeys(diagnosisKeys));
+
         deferredResult.setResult(ResponseEntity.ok().build());
       }
     } catch (Exception e) {
@@ -115,18 +117,19 @@ public class SubmissionController {
     return deferredResult;
   }
 
-  /**
-   * Persists the diagnosis keys contained in the specified request payload.
-   *
-   * @param protoBufDiagnosisKeys Diagnosis keys that were specified in the request.
-   * @throws IllegalArgumentException in case the given collection contains {@literal null}.
-   */
-  public void persistDiagnosisKeysPayload(SubmissionPayload protoBufDiagnosisKeys) {
-    List<TemporaryExposureKey> protoBufferKeysList = protoBufDiagnosisKeys.getKeysList();
+  private List<DiagnosisKey> extractDiagnosisKeysFromPayload(SubmissionPayload submissionPayload) {
+    List<TemporaryExposureKey> protoBufferKeys = submissionPayload.getKeysList();
     List<DiagnosisKey> diagnosisKeys = new ArrayList<>();
 
-    for (TemporaryExposureKey protoBufferKey : protoBufferKeysList) {
-      DiagnosisKey diagnosisKey = DiagnosisKey.builder().fromProtoBuf(protoBufferKey).build();
+    for (TemporaryExposureKey protoBufferKey : protoBufferKeys) {
+      DiagnosisKey diagnosisKey = DiagnosisKey.builder()
+          .fromProtoBuf(protoBufferKey)
+          //TODO default values
+          .withVisitedCountries(submissionPayload.getVisitedCountriesList())
+          .withCountryCode(submissionPayload.getOrigin())
+          .withVerificationType(submissionPayload.getVerificationType())
+          .build();
+
       if (diagnosisKey.isYoungerThanRetentionThreshold(retentionDays)) {
         diagnosisKeys.add(diagnosisKey);
       } else {
@@ -134,7 +137,7 @@ public class SubmissionController {
       }
     }
 
-    diagnosisKeyService.saveDiagnosisKeys(padDiagnosisKeys(diagnosisKeys));
+    return diagnosisKeys;
   }
 
   private List<DiagnosisKey> padDiagnosisKeys(List<DiagnosisKey> diagnosisKeys) {
