@@ -1,0 +1,18 @@
+ios:
+  latest:
+      major: 1 # wrong syntax, indent too high
+    minor: 5
+    patch: 2
+  min:
+    major: 1
+    minor: 2
+    patch: 2
+android:
+  latest:
+    major: 1
+    minor: 3
+    patch: 2
+  min:
+    major: 1
+    minor: 1
+    patch: 2

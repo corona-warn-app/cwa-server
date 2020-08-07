@@ -1,4 +1,4 @@
-/*-
+/*
  * ---license-start
  * Corona-Warn-App
  * ---
@@ -8,7 +8,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -18,26 +18,19 @@
  * ---license-end
  */
 
-package app.coronawarn.server.common.persistence.domain;
+package app.coronawarn.server.services.federationdownload.download;
 
-import java.util.Date;
-import org.springframework.data.annotation.Id;
+import javax.net.ssl.HostnameVerifier;
+import org.apache.http.conn.ssl.DefaultHostnameVerifier;
+import org.springframework.context.annotation.Profile;
+import org.springframework.stereotype.Component;
 
-/**
- * A key generated for advertising over a window of time.
- */
-public class FederationBatchDownload {
+@Component
+@Profile("!disable-ssl-client-verification-verify-hostname")
+public class DefaultHostnameVerifierProvider implements HostnameVerifierProvider {
 
-  @Id
-  private String batchTag;
-
-  private Date date;
-
-  /**
-   * Should be called by builders.
-   */
-  public FederationBatchDownload(String batchTag, Date date) {
-    this.batchTag = batchTag;
-    this.date = date;
+  @Override
+  public HostnameVerifier createHostnameVerifier() {
+    return new DefaultHostnameVerifier();
   }
 }

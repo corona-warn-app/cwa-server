@@ -23,6 +23,7 @@ package app.coronawarn.server.common.persistence.service;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import app.coronawarn.server.common.persistence.domain.DiagnosisKey;
+import app.coronawarn.server.common.protocols.external.exposurenotification.VerificationType;
 import java.time.OffsetDateTime;
 import java.util.Collections;
 import java.util.List;
@@ -53,7 +54,7 @@ public class DiagnosisKeyServiceTestHelper {
   }
 
   public static DiagnosisKey buildDiagnosisKeyForSubmissionTimestamp(long submissionTimeStamp,
-      String countryCode, List<String> visitedCountries) {
+      String countryCode, List<String> visitedCountries, VerificationType verificationType) {
     byte[] randomBytes = new byte[16];
     Random random = new Random(submissionTimeStamp);
     random.nextBytes(randomBytes);
@@ -64,11 +65,12 @@ public class DiagnosisKeyServiceTestHelper {
         .withSubmissionTimestamp(submissionTimeStamp)
         .withCountryCode(countryCode)
         .withVisitedCountries(visitedCountries)
+        .withVerificationType(verificationType)
         .build();
   }
 
   public static DiagnosisKey buildDiagnosisKeyForSubmissionTimestamp(long submissionTimeStamp) {
-    return buildDiagnosisKeyForSubmissionTimestamp(submissionTimeStamp, "DE", Collections.singletonList("DE"));
+    return buildDiagnosisKeyForSubmissionTimestamp(submissionTimeStamp, "DE", Collections.singletonList("DE"), VerificationType.LAB_VERIFIED);
   }
 
   public static DiagnosisKey buildDiagnosisKeyForDateTime(OffsetDateTime dateTime) {
@@ -76,7 +78,7 @@ public class DiagnosisKeyServiceTestHelper {
   }
 
   public static DiagnosisKey buildDiagnosisKeyForDateTime(OffsetDateTime dateTime,
-      String countryCode, List<String> visitedCountries) {
-    return buildDiagnosisKeyForSubmissionTimestamp(dateTime.toEpochSecond() / 3600, countryCode, visitedCountries);
+      String countryCode, List<String> visitedCountries, VerificationType verificationType) {
+    return buildDiagnosisKeyForSubmissionTimestamp(dateTime.toEpochSecond() / 3600, countryCode, visitedCountries, verificationType);
   }
 }

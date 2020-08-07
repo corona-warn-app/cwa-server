@@ -147,6 +147,9 @@ public class SubmissionController {
               .withRollingStartIntervalNumber(diagnosisKey.getRollingStartIntervalNumber())
               .withTransmissionRiskLevel(diagnosisKey.getTransmissionRiskLevel())
               .withRollingPeriod(diagnosisKey.getRollingPeriod())
+              .withVisitedCountries(diagnosisKey.getVisitedCountries())
+              .withCountryCode(diagnosisKey.getOriginCountry())
+              .withVerificationType(diagnosisKey.getVerificationType())
               .build())
           .forEach(paddedDiagnosisKeys::add);
     });

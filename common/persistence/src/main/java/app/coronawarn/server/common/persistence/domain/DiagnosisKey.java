@@ -25,6 +25,7 @@ import static java.time.ZoneOffset.UTC;
 import app.coronawarn.server.common.persistence.domain.DiagnosisKeyBuilders.Builder;
 import app.coronawarn.server.common.persistence.domain.validation.ValidRollingStartIntervalNumber;
 import app.coronawarn.server.common.persistence.domain.validation.ValidSubmissionTimestamp;
+import app.coronawarn.server.common.protocols.external.exposurenotification.VerificationType;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.util.Arrays;
@@ -75,12 +76,15 @@ public class DiagnosisKey {
 
   private final List<String> visitedCountries;
 
+  private final VerificationType verificationType;
+
   /**
    * Should be called by builders.
    */
   DiagnosisKey(byte[] keyData, int rollingStartIntervalNumber, int rollingPeriod,
       int transmissionRiskLevel, long submissionTimestamp,
-      @Size String originCountry, List<String> visitedCountries) {
+      @Size String originCountry, List<String> visitedCountries,
+      VerificationType verificationType) {
     this.keyData = keyData;
     this.rollingStartIntervalNumber = rollingStartIntervalNumber;
     this.rollingPeriod = rollingPeriod;
@@ -88,6 +92,7 @@ public class DiagnosisKey {
     this.submissionTimestamp = submissionTimestamp;
     this.originCountry = originCountry;
     this.visitedCountries = visitedCountries == null ? Collections.emptyList() : visitedCountries;
+    this.verificationType = verificationType;
   }
 
   /**
@@ -144,6 +149,10 @@ public class DiagnosisKey {
     return visitedCountries;
   }
 
+  public VerificationType getVerificationType() {
+    return verificationType;
+  }
+
   /**
    * Checks if this diagnosis key falls into the period between now, and the retention threshold.
    *
@@ -193,13 +202,17 @@ public class DiagnosisKey {
         && rollingPeriod == that.rollingPeriod
         && transmissionRiskLevel == that.transmissionRiskLevel
         && submissionTimestamp == that.submissionTimestamp
-        && Arrays.equals(keyData, that.keyData);
+        && Arrays.equals(keyData, that.keyData)
+        && Objects.equals(originCountry, that.originCountry)
+        && Objects.equals(visitedCountries, that.visitedCountries)
+        && verificationType == that.verificationType;
   }
 
   @Override
   public int hashCode() {
     int result = Objects
-        .hash(rollingStartIntervalNumber, rollingPeriod, transmissionRiskLevel, submissionTimestamp);
+        .hash(rollingStartIntervalNumber, rollingPeriod, transmissionRiskLevel, submissionTimestamp, originCountry,
+            visitedCountries, verificationType);
     result = 31 * result + Arrays.hashCode(keyData);
     return result;
   }

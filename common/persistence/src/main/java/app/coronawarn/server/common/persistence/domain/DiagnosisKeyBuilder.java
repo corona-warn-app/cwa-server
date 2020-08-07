@@ -28,6 +28,7 @@ import static app.coronawarn.server.common.persistence.domain.validation.ValidSu
 
 import app.coronawarn.server.common.persistence.exception.InvalidDiagnosisKeyException;
 import app.coronawarn.server.common.protocols.external.exposurenotification.TemporaryExposureKey;
+import app.coronawarn.server.common.protocols.external.exposurenotification.VerificationType;
 import java.time.Instant;
 import java.util.List;
 import java.util.Set;
@@ -52,6 +53,7 @@ public class DiagnosisKeyBuilder implements
   private Long submissionTimestamp = null;
   private String countryCode;
   private List<String> visitedCountries;
+  private VerificationType verificationType;
 
   DiagnosisKeyBuilder() {
   }
@@ -80,7 +82,10 @@ public class DiagnosisKeyBuilder implements
         .withKeyData(protoBufObject.getKeyData().toByteArray())
         .withRollingStartIntervalNumber(protoBufObject.getRollingStartIntervalNumber())
         .withTransmissionRiskLevel(protoBufObject.getTransmissionRiskLevel())
-        .withRollingPeriod(protoBufObject.getRollingPeriod());
+        .withRollingPeriod(protoBufObject.getRollingPeriod())
+        .withVisitedCountries(protoBufObject.getVisitedCountriesList())
+        .withCountryCode(protoBufObject.getOrigin())
+        .withVerificationType(protoBufObject.getVerificationType());
   }
 
   @Override
@@ -108,6 +113,12 @@ public class DiagnosisKeyBuilder implements
   }
 
   @Override
+  public FinalBuilder withVerificationType(VerificationType verificationType) {
+    this.verificationType = verificationType;
+    return this;
+  }
+
+  @Override
   public DiagnosisKey build() {
     if (submissionTimestamp == null) {
       // hours since epoch
@@ -116,7 +127,7 @@ public class DiagnosisKeyBuilder implements
 
     var diagnosisKey = new DiagnosisKey(
         keyData, rollingStartIntervalNumber, rollingPeriod, transmissionRiskLevel, submissionTimestamp, countryCode,
-        visitedCountries);
+        visitedCountries, verificationType);
     return throwIfValidationFails(diagnosisKey);
   }
 
