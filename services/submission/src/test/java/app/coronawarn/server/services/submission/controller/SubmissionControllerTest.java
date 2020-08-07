@@ -40,6 +40,7 @@ import static org.springframework.http.HttpStatus.FORBIDDEN;
 import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
 import static org.springframework.http.HttpStatus.METHOD_NOT_ALLOWED;
 import static org.springframework.http.HttpStatus.OK;
+import static app.coronawarn.server.services.submission.assertions.SubmissionAssertions.*;
 
 import app.coronawarn.server.common.persistence.domain.DiagnosisKey;
 import app.coronawarn.server.common.persistence.service.DiagnosisKeyService;
@@ -53,7 +54,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
-import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import org.junit.jupiter.api.BeforeEach;
@@ -138,7 +138,7 @@ class SubmissionControllerTest {
 
     verify(diagnosisKeyService, atLeastOnce()).saveDiagnosisKeys(argument.capture());
     submittedKeys.remove(outdatedKey);
-    assertElementsCorrespondToEachOther(submittedKeys, argument.getValue());
+    assertElementsCorrespondToEachOther(submittedKeys, argument.getValue(), config);
   }
 
   @Test
@@ -150,7 +150,7 @@ class SubmissionControllerTest {
 
     verify(diagnosisKeyService, atLeastOnce()).saveDiagnosisKeys(argument.capture());
     verify(fakeDelayManager, times(1)).updateFakeRequestDelay(anyLong());
-    assertElementsCorrespondToEachOther(submittedKeys, argument.getValue());
+    assertElementsCorrespondToEachOther(submittedKeys, argument.getValue(), config);
   }
 
   @ParameterizedTest
@@ -160,14 +160,6 @@ class SubmissionControllerTest {
 
     verify(diagnosisKeyService, never()).saveDiagnosisKeys(any());
     assertThat(actResponse.getStatusCode()).isEqualTo(BAD_REQUEST);
-  }
-
-  private static Stream<Arguments> createIncompleteHeaders() {
-    return Stream.of(
-        Arguments.of(HttpHeaderBuilder.builder().build()),
-        Arguments.of(HttpHeaderBuilder.builder().contentTypeProtoBuf().build()),
-        Arguments.of(HttpHeaderBuilder.builder().contentTypeProtoBuf().withoutCwaFake().build()),
-        Arguments.of(HttpHeaderBuilder.builder().contentTypeProtoBuf().cwaAuth().build()));
   }
 
   @ParameterizedTest
@@ -183,13 +175,6 @@ class SubmissionControllerTest {
     assertThat(allowedErrors)
         .withFailMessage(deniedHttpMethod + " resulted in unexpected status: " + actStatus)
         .contains(actStatus);
-  }
-
-  private static Stream<Arguments> createDeniedHttpMethods() {
-    return Arrays.stream(HttpMethod.values())
-        .filter(method -> method != HttpMethod.POST)
-        .filter(method -> method != HttpMethod.PATCH) /* not supported by Rest Template */
-        .map(Arguments::of);
   }
 
   @Test
@@ -283,36 +268,18 @@ class SubmissionControllerTest {
     return buildPayload(invalidKey);
   }
 
-  private void assertElementsCorrespondToEachOther(Collection<TemporaryExposureKey> submittedTemporaryExposureKeys,
-                                                   Collection<DiagnosisKey> savedDiagnosisKeys) {
+  private static Stream<Arguments> createDeniedHttpMethods() {
+    return Arrays.stream(HttpMethod.values())
+        .filter(method -> method != HttpMethod.POST)
+        .filter(method -> method != HttpMethod.PATCH) /* not supported by Rest Template */
+        .map(Arguments::of);
+  }
 
-    Set<DiagnosisKey> submittedDiagnosisKeys = submittedTemporaryExposureKeys.stream()
-        .map(submittedDiagnosisKey -> DiagnosisKey.builder().fromProtoBuf(submittedDiagnosisKey).build())
-        .collect(Collectors.toSet());
-
-    assertThat(savedDiagnosisKeys).hasSize(submittedDiagnosisKeys.size() * config.getRandomKeyPaddingMultiplier());
-    assertThat(savedDiagnosisKeys).containsAll(submittedDiagnosisKeys);
-
-    submittedDiagnosisKeys.forEach(submittedDiagnosisKey -> {
-      List<DiagnosisKey> savedKeysForSingleSubmittedKey = savedDiagnosisKeys.stream()
-          .filter(savedDiagnosisKey -> savedDiagnosisKey.getRollingPeriod() ==
-              submittedDiagnosisKey.getRollingPeriod())
-          .filter(savedDiagnosisKey -> savedDiagnosisKey.getTransmissionRiskLevel() ==
-              submittedDiagnosisKey.getTransmissionRiskLevel())
-          .filter(savedDiagnosisKey -> savedDiagnosisKey.getRollingStartIntervalNumber() ==
-              submittedDiagnosisKey.getRollingStartIntervalNumber())
-          .collect(Collectors.toList());
-
-      assertThat(savedKeysForSingleSubmittedKey).hasSize(config.getRandomKeyPaddingMultiplier());
-      assertThat(savedKeysForSingleSubmittedKey.stream().filter(savedKey ->
-          Arrays.equals(savedKey.getKeyData(), submittedDiagnosisKey.getKeyData()))).hasSize(1);
-      assertThat(savedKeysForSingleSubmittedKey).allMatch(
-          savedKey -> savedKey.getRollingPeriod() == submittedDiagnosisKey.getRollingPeriod());
-      assertThat(savedKeysForSingleSubmittedKey).allMatch(
-          savedKey -> savedKey.getRollingStartIntervalNumber() == submittedDiagnosisKey
-              .getRollingStartIntervalNumber());
-      assertThat(savedKeysForSingleSubmittedKey).allMatch(
-          savedKey -> savedKey.getTransmissionRiskLevel() == submittedDiagnosisKey.getTransmissionRiskLevel());
-    });
+  private static Stream<Arguments> createIncompleteHeaders() {
+    return Stream.of(
+        Arguments.of(HttpHeaderBuilder.builder().build()),
+        Arguments.of(HttpHeaderBuilder.builder().contentTypeProtoBuf().build()),
+        Arguments.of(HttpHeaderBuilder.builder().contentTypeProtoBuf().withoutCwaFake().build()),
+        Arguments.of(HttpHeaderBuilder.builder().contentTypeProtoBuf().cwaAuth().build()));
   }
 }
