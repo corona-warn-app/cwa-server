@@ -56,13 +56,11 @@ public class Download implements ApplicationRunner {
   private final DiagnosisKeyService diagnosisKeyService;
   private final DiagnosisKeyBatchDownloader diagnosisKeyBatchDownloader;
 
-
   /**
-   * Creates an Download, using {@link ApplicationContext}.
+   * Creates a Download, using {@link ApplicationContext}.
    */
-
   Download(ApplicationContext applicationContext, FederationBatchService federationBatchService,
-      DiagnosisKeyService diagnosisKeyService, DiagnosisKeyBatchDownloader diagnosisKeyBatchDownloader) {
+           DiagnosisKeyService diagnosisKeyService, DiagnosisKeyBatchDownloader diagnosisKeyBatchDownloader) {
     this.applicationContext = applicationContext;
     this.federationBatchService = federationBatchService;
     this.diagnosisKeyService = diagnosisKeyService;
@@ -75,18 +73,19 @@ public class Download implements ApplicationRunner {
       List<FederationBatch> federationBatches =
           federationBatchService.getFederationBatches();
 
-      for (FederationBatch federationBatch : federationBatches) {
+      federationBatches.forEach(federationBatch -> {
         try {
           Body body = diagnosisKeyBatchDownloader.downloadBatch(federationBatch);
           DiagnosisKeyBatch diagnosisKeyBatch = DiagnosisKeyBatch.parseFrom(body.asInputStream());
-          //TODO: Call audit from federation gateway
-          persistDiagnosisKeysPayload(diagnosisKeyBatch);
+          // TODO: Call audit from federation gateway
+          List<DiagnosisKey> diagnosisKeys = extractTemporaryExposureKeysFromDiagnosisKeyBatch(diagnosisKeyBatch);
+          diagnosisKeyService.saveDiagnosisKeys(diagnosisKeys);
           federationBatchService.deleteFederationBatch(federationBatch);
-
         } catch (Exception e) {
+          // TODO: error handling for failure during handling of single federationBatch?
           logger.error(e.getMessage());
         }
-      }
+      });
 
     } catch (Exception e) {
       logger.error("Download of diagnosis key batch failed.", e);
@@ -95,24 +94,17 @@ public class Download implements ApplicationRunner {
     logger.debug("Batch successfully downloaded.");
   }
 
-  /**
-   * Persists the diagnosis keys contained in the specified request payload.
-   *
-   * @param diagnosisKeyBatch Diagnosis keys that were specified in the request.
-   * @throws IllegalArgumentException in case the given collection contains {@literal null}.
-   */
-  public void persistDiagnosisKeysPayload(DiagnosisKeyBatch diagnosisKeyBatch) {
-    List<TemporaryExposureKey> protoBufferKeysList = diagnosisKeyBatch.getKeysList();
+  private List<DiagnosisKey> extractTemporaryExposureKeysFromDiagnosisKeyBatch(DiagnosisKeyBatch diagnosisKeyBatch) {
+    List<TemporaryExposureKey> temporaryExposureKeys = diagnosisKeyBatch.getKeysList();
     List<DiagnosisKey> diagnosisKeys = new ArrayList<>();
 
-    for (TemporaryExposureKey protoBufferKey : protoBufferKeysList) {
+    temporaryExposureKeys.forEach(temporaryExposureKey -> {
       DiagnosisKey diagnosisKey = DiagnosisKey
           .builder()
-          .fromProtoBuf(protoBufferKey)
+          .fromProtoBuf(temporaryExposureKey)
           .build();
       diagnosisKeys.add(diagnosisKey);
-    }
-
-    diagnosisKeyService.saveDiagnosisKeys(diagnosisKeys);
+    });
+    return diagnosisKeys;
   }
 }
