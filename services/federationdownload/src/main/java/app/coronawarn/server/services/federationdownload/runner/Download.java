@@ -101,14 +101,7 @@ public class Download implements ApplicationRunner {
         .map(federationDiagnosisKey ->
             DiagnosisKey
                 .builder()
-                .withKeyData(federationDiagnosisKey.getKeyData().toByteArray())
-                .withRollingStartIntervalNumber(federationDiagnosisKey.getRollingStartIntervalNumber())
-                .withTransmissionRiskLevel(federationDiagnosisKey.getTransmissionRiskLevel())
-                .withCountryCode(federationDiagnosisKey.getOrigin())
-                .withRollingPeriod(federationDiagnosisKey.getRollingPeriod())
-                //.withSubmissionTimestamp(federationDiagnosisKey)
-                .withVerificationType(federationDiagnosisKey.getVerificationType())
-                .withVisitedCountries(federationDiagnosisKey.getVisitedCountriesList())
+                .fromFederationDiagnosisKey(federationDiagnosisKey)
                 .build()
         ).collect(Collectors.toList());
   }
