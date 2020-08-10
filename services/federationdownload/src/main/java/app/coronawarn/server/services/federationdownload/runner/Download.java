@@ -72,7 +72,7 @@ public class Download implements ApplicationRunner {
       List<FederationBatch> federationBatches =
           federationBatchService.getFederationBatches();
 
-      federationBatches.forEach(federationBatch -> {
+      for (FederationBatch federationBatch : federationBatches) {
         try {
           Body body = diagnosisKeyBatchDownloader.downloadBatch(federationBatch);
           DiagnosisKeyBatch diagnosisKeyBatch = DiagnosisKeyBatch.parseFrom(body.asInputStream());
@@ -84,7 +84,7 @@ public class Download implements ApplicationRunner {
           // TODO: error handling for failure during handling of single federationBatch?
           logger.error(e.getMessage());
         }
-      });
+      }
 
     } catch (Exception e) {
       logger.error("Download of diagnosis key batch failed.", e);
