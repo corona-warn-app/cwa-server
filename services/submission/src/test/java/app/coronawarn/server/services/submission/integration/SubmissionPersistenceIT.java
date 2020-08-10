@@ -60,7 +60,7 @@ import app.coronawarn.server.services.submission.verification.TanVerifier;
  * This test serves more like a dev tool which helps with debugging production issues.
  * It inserts keys parsed from a proto buf file whos content was captured by the mobile
  * client during requests to the server. The content of the current test resource file
- * can be quckly replaced durng the investigation of an issue.
+ * can be quickly replaced during the investigation of an issue.
  */
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @ActiveProfiles({ "disable-ssl-client-verification", "disable-ssl-client-verification-verify-hostname" })
