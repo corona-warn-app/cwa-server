@@ -88,7 +88,6 @@ public class DiagnosisKeyBuilder implements
   @Override
   public FinalBuilder fromFederationDiagnosisKey(
       app.coronawarn.server.common.protocols.external.exposurenotification.DiagnosisKey federationDiagnosisKey) {
-    // TODO default values?
     return this
         .withKeyData(federationDiagnosisKey.getKeyData().toByteArray())
         .withRollingStartIntervalNumber(federationDiagnosisKey.getRollingStartIntervalNumber())

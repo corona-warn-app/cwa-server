@@ -20,6 +20,7 @@
 
 package app.coronawarn.server.services.submission.config;
 
+import app.coronawarn.server.common.protocols.external.exposurenotification.VerificationType;
 import java.io.File;
 import java.util.Arrays;
 import java.util.List;
@@ -115,6 +116,10 @@ public class SubmissionServiceConfig {
     return payload.getMaxNumberOfKeys();
   }
 
+  public String getDefaultOriginCountry() {
+    return payload.defaultOriginCountry;
+  }
+
   /**
    * Check if country is whitelisted.
    *
@@ -150,6 +155,8 @@ public class SubmissionServiceConfig {
     @Pattern(regexp = ALLOWED_COUNTRY_CODES_REGEX)
     private String allowedCountries;
 
+    private String defaultOriginCountry;
+
     public Integer getMaxNumberOfKeys() {
       return maxNumberOfKeys;
     }
@@ -178,6 +185,14 @@ public class SubmissionServiceConfig {
         }
       }
       return false;
+    }
+
+    public String getDefaultOriginCountry() {
+      return defaultOriginCountry;
+    }
+
+    public void setDefaultOriginCountry(String defaultOriginCountry) {
+      this.defaultOriginCountry = defaultOriginCountry;
     }
   }
 

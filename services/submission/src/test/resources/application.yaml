@@ -23,6 +23,7 @@ services:
     payload:
       max-number-of-keys: 14
       allowed-countries: DE,FR,UK,DK
+      default-origin-country: DE
     verification:
       base-url: http://localhost:1234
       path: /version/v1/tan/verify
