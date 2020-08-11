@@ -77,7 +77,7 @@ public class DiagnosisKeyBuilder implements
   }
 
   @Override
-  public FinalBuilder fromProtoBuf(TemporaryExposureKey protoBufObject) {
+  public FinalBuilder fromTemporaryExposureKey(TemporaryExposureKey protoBufObject) {
     return this
         .withKeyData(protoBufObject.getKeyData().toByteArray())
         .withRollingStartIntervalNumber(protoBufObject.getRollingStartIntervalNumber())

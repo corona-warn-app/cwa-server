@@ -123,7 +123,7 @@ public class SubmissionController {
 
     for (TemporaryExposureKey protoBufferKey : protoBufferKeys) {
       DiagnosisKey diagnosisKey = DiagnosisKey.builder()
-          .fromProtoBuf(protoBufferKey)
+          .fromTemporaryExposureKey(protoBufferKey)
           .withVisitedCountries(submissionPayload.getVisitedCountriesList())
           .withCountryCode(submissionPayload.getOrigin())
           .withVerificationType(submissionPayload.getVerificationType())

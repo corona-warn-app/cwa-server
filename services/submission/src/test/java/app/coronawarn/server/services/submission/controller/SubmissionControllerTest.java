@@ -284,7 +284,7 @@ class SubmissionControllerTest {
     Set<DiagnosisKey> submittedDiagnosisKeys = submittedTemporaryExposureKeys.stream()
         .map(submittedDiagnosisKey -> DiagnosisKey
             .builder()
-            .fromProtoBuf(submittedDiagnosisKey)
+            .fromTemporaryExposureKey(submittedDiagnosisKey)
             .withVisitedCountries(submissionPayload.getVisitedCountriesList())
             .withCountryCode(submissionPayload.getOrigin())
             .withVerificationType(submissionPayload.getVerificationType())

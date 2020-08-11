@@ -45,7 +45,7 @@ interface DiagnosisKeyBuilders {
      * @param protoBufObject ProtocolBuffer object associated with the temporary exposure key.
      * @return this Builder instance.
      */
-    FinalBuilder fromProtoBuf(TemporaryExposureKey protoBufObject);
+    FinalBuilder fromTemporaryExposureKey(TemporaryExposureKey protoBufObject);
 
     /**
      * Adds the data contained in the specified federation diagnosis key key object to this builder.
