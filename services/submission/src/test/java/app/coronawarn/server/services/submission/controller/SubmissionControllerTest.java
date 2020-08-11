@@ -217,7 +217,7 @@ class SubmissionControllerTest {
   @Test
   void testInvalidPaddingSubmissionPayload() {
     ResponseEntity<Void> actResponse = executor
-        .executePost(buildPayloadWithTooLargePadding(config, this.buildMultipleKeys()));
+        .executePost(buildPayloadWithTooLargePadding(config, buildMultipleKeys()));
     assertThat(actResponse.getStatusCode()).isEqualTo(BAD_REQUEST);
   }
 
