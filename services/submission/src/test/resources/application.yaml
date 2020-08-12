@@ -4,6 +4,12 @@ logging:
     org:
       springframework: off
     root: off
+    app:
+      coronawarn:
+        server:
+          services:
+            submission:
+              integration: info
 spring:
   main:
     banner-mode: off
