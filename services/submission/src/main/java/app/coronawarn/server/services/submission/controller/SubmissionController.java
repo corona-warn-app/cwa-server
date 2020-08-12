@@ -162,6 +162,7 @@ public class SubmissionController {
               .withVisitedCountries(diagnosisKey.getVisitedCountries())
               .withCountryCode(diagnosisKey.getOriginCountry())
               .withVerificationType(diagnosisKey.getVerificationType())
+              .withConsentToFederation(diagnosisKey.isConsentToFederation())
               .build())
           .forEach(paddedDiagnosisKeys::add);
     });

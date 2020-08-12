@@ -167,6 +167,32 @@ class SubmissionControllerTest {
   }
 
   @Test
+  void submissionPayloadWithoutConsentIsPersistedCorrectly() {
+    Collection<TemporaryExposureKey> submittedKeys = buildMultipleKeys();
+    ArgumentCaptor<Collection<DiagnosisKey>> argument = ArgumentCaptor.forClass(Collection.class);
+
+    boolean consentToFederation = false;
+    SubmissionPayload submissionPayload = buildPayload(submittedKeys, consentToFederation);
+    executor.executePost(submissionPayload);
+
+    verify(diagnosisKeyService, atLeastOnce()).saveDiagnosisKeys(argument.capture());
+    assertSubmissionPayloadKeysCorrespondToEachOther(submittedKeys, argument.getValue(), submissionPayload);
+  }
+
+  @Test
+  void submissionPayloadWithConsentIsPersistedCorrectly() {
+    Collection<TemporaryExposureKey> submittedKeys = buildMultipleKeys();
+    ArgumentCaptor<Collection<DiagnosisKey>> argument = ArgumentCaptor.forClass(Collection.class);
+
+    boolean consentToFederation = true;
+    SubmissionPayload submissionPayload = buildPayload(submittedKeys, consentToFederation);
+    executor.executePost(submissionPayload);
+
+    verify(diagnosisKeyService, atLeastOnce()).saveDiagnosisKeys(argument.capture());
+    assertSubmissionPayloadKeysCorrespondToEachOther(submittedKeys, argument.getValue(), submissionPayload);
+  }
+
+  @Test
   void checkSaveOperationCallAndFakeDelayUpdateForValidParameters() {
     Collection<TemporaryExposureKey> submittedKeys = buildMultipleKeys();
     ArgumentCaptor<Collection<DiagnosisKey>> argument = ArgumentCaptor.forClass(Collection.class);

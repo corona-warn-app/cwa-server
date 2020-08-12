@@ -71,14 +71,14 @@ public class DiagnosisKey {
   @ValidSubmissionTimestamp
   private final long submissionTimestamp;
 
+  private final boolean consentToFederation;
+
   @Size(max = 2)
   private final String originCountry;
 
   private final List<String> visitedCountries;
 
   private final VerificationType verificationType;
-
-  private final boolean consentToFederation;
 
   /**
    * Should be called by builders.
@@ -142,6 +142,10 @@ public class DiagnosisKey {
    */
   public long getSubmissionTimestamp() {
     return submissionTimestamp;
+  }
+
+  public boolean isConsentToFederation() {
+    return consentToFederation;
   }
 
   public String getOriginCountry() {

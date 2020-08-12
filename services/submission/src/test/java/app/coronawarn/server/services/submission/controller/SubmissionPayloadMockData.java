@@ -47,6 +47,13 @@ public final class SubmissionPayloadMockData {
         .build();
   }
 
+  public static SubmissionPayload buildPayload(Collection<TemporaryExposureKey> keys, boolean consentToFederation) {
+    return SubmissionPayload.newBuilder()
+        .addAllKeys(keys)
+        .setConsentToFederation(consentToFederation)
+        .build();
+  }
+
   public static SubmissionPayload buildPayloadWithPadding(Collection<TemporaryExposureKey> keys) {
     return buildPayloadWithPadding(keys, "PaddingString".getBytes());
   }
