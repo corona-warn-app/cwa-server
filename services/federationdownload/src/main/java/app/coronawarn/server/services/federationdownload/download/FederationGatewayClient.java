@@ -42,8 +42,8 @@ public interface FederationGatewayClient {
    * This methods calls the download service with the given batchTag & date.
    */
   @Timed
-  @Headers("Content-Type: application/protobuf; version=1.0")
+  @Headers("Content-Type: application/json; version=1.0")
   @GetMapping(value = "${services.federationdownload.federationgateway.path}")
-  Response downloadDiagnosisKeyBatch(@SpringQueryMap FederationBatch params);
+  Response downloadDiagnosisKeyBatch();
 
 }
