@@ -45,7 +45,16 @@ interface DiagnosisKeyBuilders {
      * @param protoBufObject ProtocolBuffer object associated with the temporary exposure key.
      * @return this Builder instance.
      */
-    FinalBuilder fromProtoBuf(TemporaryExposureKey protoBufObject);
+    FinalBuilder fromTemporaryExposureKey(TemporaryExposureKey protoBufObject);
+
+    /**
+     * Adds the data contained in the specified federation diagnosis key key object to this builder.
+     *
+     * @param federationDiagnosisKey DiagnosisKey object associated with the temporary exposure key.
+     * @return this Builder instance.
+     */
+    FinalBuilder fromFederationDiagnosisKey(
+        app.coronawarn.server.common.protocols.external.exposurenotification.DiagnosisKey federationDiagnosisKey);
   }
 
   interface RollingStartIntervalNumberBuilder {
@@ -90,6 +99,8 @@ interface DiagnosisKeyBuilders {
      * @return this Builder instance.
      */
     FinalBuilder withRollingPeriod(int rollingPeriod);
+
+    FinalBuilder withConsentToFederation(boolean consentToFederation);
 
     FinalBuilder withCountryCode(String countryCode);
 

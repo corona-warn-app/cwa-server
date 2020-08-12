@@ -1,6 +1,9 @@
 -- Migrate current values -> origin_country = DE
 
 ALTER TABLE diagnosis_key
+    ADD consent_to_federation BOOLEAN NOT NULL DEFAULT FALSE;
+
+ALTER TABLE diagnosis_key
     ADD origin_country VARCHAR (2);
 
 ALTER TABLE diagnosis_key

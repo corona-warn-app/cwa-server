@@ -56,7 +56,7 @@ class DiagnosisKeyBuilderTest {
         .build();
 
     DiagnosisKey actDiagnosisKey = DiagnosisKey.builder()
-        .fromProtoBuf(protoBufObj)
+        .fromTemporaryExposureKey(protoBufObj)
         .withSubmissionTimestamp(this.expSubmissionTimestamp)
         .build();
 
@@ -73,7 +73,7 @@ class DiagnosisKeyBuilderTest {
         .setTransmissionRiskLevel(this.expTransmissionRiskLevel)
         .build();
 
-    DiagnosisKey actDiagnosisKey = DiagnosisKey.builder().fromProtoBuf(protoBufObj).build();
+    DiagnosisKey actDiagnosisKey = DiagnosisKey.builder().fromTemporaryExposureKey(protoBufObj).build();
 
     assertDiagnosisKeyEquals(actDiagnosisKey);
   }

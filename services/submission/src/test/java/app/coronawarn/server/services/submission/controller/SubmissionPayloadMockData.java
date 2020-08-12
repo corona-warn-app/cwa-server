@@ -24,14 +24,15 @@ import static app.coronawarn.server.services.submission.controller.RequestExecut
 import static app.coronawarn.server.services.submission.controller.RequestExecutor.buildTemporaryExposureKey;
 import static app.coronawarn.server.services.submission.controller.RequestExecutor.createRollingStartIntervalNumber;
 
+
+import app.coronawarn.server.common.protocols.external.exposurenotification.TemporaryExposureKey;
+import app.coronawarn.server.common.protocols.internal.SubmissionPayload;
+import app.coronawarn.server.services.submission.config.SubmissionServiceConfig;
+import com.google.protobuf.ByteString;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-import com.google.protobuf.ByteString;
-import app.coronawarn.server.common.protocols.external.exposurenotification.TemporaryExposureKey;
-import app.coronawarn.server.common.protocols.internal.SubmissionPayload;
-import app.coronawarn.server.services.submission.config.SubmissionServiceConfig;
 
 public final class SubmissionPayloadMockData {
 
@@ -46,18 +47,25 @@ public final class SubmissionPayloadMockData {
         .build();
   }
 
-  public static SubmissionPayload buildPayloadWithPadding(Collection<TemporaryExposureKey> keys) {
+  public static SubmissionPayload buildPayload(Collection<TemporaryExposureKey> keys, boolean consentToFederation) {
     return SubmissionPayload.newBuilder()
         .addAllKeys(keys)
-        .setPadding(ByteString.copyFrom("PaddingString".getBytes()))
+        .setConsentToFederation(consentToFederation)
         .build();
   }
 
+  public static SubmissionPayload buildPayloadWithPadding(Collection<TemporaryExposureKey> keys) {
+    return buildPayloadWithPadding(keys, "PaddingString".getBytes());
+  }
+
   public static SubmissionPayload buildPayloadWithTooLargePadding(SubmissionServiceConfig config,
-      Collection<TemporaryExposureKey> keys) {
+                                                                  Collection<TemporaryExposureKey> keys) {
     int exceedingSize = (int) (2 * config.getMaximumRequestSize().toBytes());
     byte[] bytes = new byte[exceedingSize];
+    return buildPayloadWithPadding(keys, bytes);
+  }
 
+  private static SubmissionPayload buildPayloadWithPadding(Collection<TemporaryExposureKey> keys, byte[] bytes) {
     return SubmissionPayload.newBuilder()
         .addAllKeys(keys)
         .setPadding(ByteString.copyFrom(bytes))
@@ -65,7 +73,8 @@ public final class SubmissionPayloadMockData {
   }
 
   public static SubmissionPayload buildPayloadWithInvalidKey() {
-    TemporaryExposureKey invalidKey = buildTemporaryExposureKey(VALID_KEY_DATA_1, createRollingStartIntervalNumber(2), 999);
+    TemporaryExposureKey invalidKey =
+        buildTemporaryExposureKey(VALID_KEY_DATA_1, createRollingStartIntervalNumber(2), 999);
     return buildPayload(invalidKey);
   }
 

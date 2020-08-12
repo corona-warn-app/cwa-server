@@ -71,6 +71,8 @@ public class DiagnosisKey {
   @ValidSubmissionTimestamp
   private final long submissionTimestamp;
 
+  private final boolean consentToFederation;
+
   @Size(max = 2)
   private final String originCountry;
 
@@ -83,13 +85,14 @@ public class DiagnosisKey {
    */
   DiagnosisKey(byte[] keyData, int rollingStartIntervalNumber, int rollingPeriod,
       int transmissionRiskLevel, long submissionTimestamp,
-      @Size String originCountry, List<String> visitedCountries,
+      boolean consentToFederation, @Size String originCountry, List<String> visitedCountries,
       VerificationType verificationType) {
     this.keyData = keyData;
     this.rollingStartIntervalNumber = rollingStartIntervalNumber;
     this.rollingPeriod = rollingPeriod;
     this.transmissionRiskLevel = transmissionRiskLevel;
     this.submissionTimestamp = submissionTimestamp;
+    this.consentToFederation = consentToFederation;
     this.originCountry = originCountry;
     this.visitedCountries = visitedCountries == null ? Collections.emptyList() : visitedCountries;
     this.verificationType = verificationType;
@@ -139,6 +142,10 @@ public class DiagnosisKey {
    */
   public long getSubmissionTimestamp() {
     return submissionTimestamp;
+  }
+
+  public boolean isConsentToFederation() {
+    return consentToFederation;
   }
 
   public String getOriginCountry() {

@@ -23,6 +23,7 @@ package app.coronawarn.server.services.submission.controller;
 import app.coronawarn.server.common.persistence.domain.DiagnosisKey;
 import app.coronawarn.server.common.persistence.service.DiagnosisKeyService;
 import app.coronawarn.server.common.protocols.external.exposurenotification.TemporaryExposureKey;
+import app.coronawarn.server.common.protocols.external.exposurenotification.VerificationType;
 import app.coronawarn.server.common.protocols.internal.SubmissionPayload;
 import app.coronawarn.server.services.submission.config.SubmissionServiceConfig;
 import app.coronawarn.server.services.submission.monitoring.SubmissionMonitor;
@@ -33,6 +34,7 @@ import java.security.SecureRandom;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.IntStream;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
@@ -51,18 +53,18 @@ import org.springframework.web.context.request.async.DeferredResult;
 @Validated
 public class SubmissionController {
 
-  private static final Logger logger = LoggerFactory.getLogger(SubmissionController.class);
   /**
    * The route to the submission endpoint (version agnostic).
    */
   public static final String SUBMISSION_ROUTE = "/diagnosis-keys";
-
+  private static final Logger logger = LoggerFactory.getLogger(SubmissionController.class);
   private final SubmissionMonitor submissionMonitor;
   private final DiagnosisKeyService diagnosisKeyService;
   private final TanVerifier tanVerifier;
   private final Integer retentionDays;
   private final Integer randomKeyPaddingMultiplier;
   private final FakeDelayManager fakeDelayManager;
+  private final SubmissionServiceConfig submissionServiceConfig;
 
   SubmissionController(
       DiagnosisKeyService diagnosisKeyService, TanVerifier tanVerifier, FakeDelayManager fakeDelayManager,
@@ -71,6 +73,7 @@ public class SubmissionController {
     this.tanVerifier = tanVerifier;
     this.submissionMonitor = submissionMonitor;
     this.fakeDelayManager = fakeDelayManager;
+    this.submissionServiceConfig = submissionServiceConfig;
     retentionDays = submissionServiceConfig.getRetentionDays();
     randomKeyPaddingMultiplier = submissionServiceConfig.getRandomKeyPaddingMultiplier();
   }
@@ -92,7 +95,8 @@ public class SubmissionController {
     return buildRealDeferredResult(exposureKeys, tan);
   }
 
-  private DeferredResult<ResponseEntity<Void>> buildRealDeferredResult(SubmissionPayload exposureKeys, String tan) {
+  private DeferredResult<ResponseEntity<Void>> buildRealDeferredResult(SubmissionPayload submissionPayload,
+                                                                       String tan) {
     DeferredResult<ResponseEntity<Void>> deferredResult = new DeferredResult<>();
 
     StopWatch stopWatch = new StopWatch();
@@ -102,7 +106,9 @@ public class SubmissionController {
         submissionMonitor.incrementInvalidTanRequestCounter();
         deferredResult.setResult(ResponseEntity.status(HttpStatus.FORBIDDEN).build());
       } else {
-        persistDiagnosisKeysPayload(exposureKeys);
+        List<DiagnosisKey> diagnosisKeys = extractValidDiagnosisKeysFromPayload(submissionPayload);
+        diagnosisKeyService.saveDiagnosisKeys(padDiagnosisKeys(diagnosisKeys));
+
         deferredResult.setResult(ResponseEntity.ok().build());
       }
     } catch (Exception e) {
@@ -115,18 +121,24 @@ public class SubmissionController {
     return deferredResult;
   }
 
-  /**
-   * Persists the diagnosis keys contained in the specified request payload.
-   *
-   * @param protoBufDiagnosisKeys Diagnosis keys that were specified in the request.
-   * @throws IllegalArgumentException in case the given collection contains {@literal null}.
-   */
-  public void persistDiagnosisKeysPayload(SubmissionPayload protoBufDiagnosisKeys) {
-    List<TemporaryExposureKey> protoBufferKeysList = protoBufDiagnosisKeys.getKeysList();
+  private List<DiagnosisKey> extractValidDiagnosisKeysFromPayload(SubmissionPayload submissionPayload) {
+    List<TemporaryExposureKey> protoBufferKeys = submissionPayload.getKeysList();
     List<DiagnosisKey> diagnosisKeys = new ArrayList<>();
 
-    for (TemporaryExposureKey protoBufferKey : protoBufferKeysList) {
-      DiagnosisKey diagnosisKey = DiagnosisKey.builder().fromProtoBuf(protoBufferKey).build();
+    for (TemporaryExposureKey protoBufferKey : protoBufferKeys) {
+      String originCountry = StringUtils.defaultIfBlank(submissionPayload.getOrigin(),
+          submissionServiceConfig.getDefaultOriginCountry());
+      // The protobuf will default the enum to LAB_VERIFIED, since its index is 0
+      VerificationType verificationType = submissionPayload.getVerificationType();
+
+      DiagnosisKey diagnosisKey = DiagnosisKey.builder()
+          .fromTemporaryExposureKey(protoBufferKey)
+          .withVisitedCountries(submissionPayload.getVisitedCountriesList())
+          .withCountryCode(originCountry)
+          .withVerificationType(verificationType)
+          .withConsentToFederation(submissionPayload.getConsentToFederation())
+          .build();
+
       if (diagnosisKey.isYoungerThanRetentionThreshold(retentionDays)) {
         diagnosisKeys.add(diagnosisKey);
       } else {
@@ -134,7 +146,7 @@ public class SubmissionController {
       }
     }
 
-    diagnosisKeyService.saveDiagnosisKeys(padDiagnosisKeys(diagnosisKeys));
+    return diagnosisKeys;
   }
 
   private List<DiagnosisKey> padDiagnosisKeys(List<DiagnosisKey> diagnosisKeys) {
@@ -150,6 +162,7 @@ public class SubmissionController {
               .withVisitedCountries(diagnosisKey.getVisitedCountries())
               .withCountryCode(diagnosisKey.getOriginCountry())
               .withVerificationType(diagnosisKey.getVerificationType())
+              .withConsentToFederation(diagnosisKey.isConsentToFederation())
               .build())
           .forEach(paddedDiagnosisKeys::add);
     });

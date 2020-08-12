@@ -90,14 +90,14 @@ class DiagnosisKeyServiceMockedRepositoryTest {
 
   private DiagnosisKey validKey(long expSubmissionTimestamp) {
     return new DiagnosisKey(expKeyData, expRollingStartIntervalNumber,
-        DiagnosisKey.EXPECTED_ROLLING_PERIOD, expTransmissionRiskLevel, expSubmissionTimestamp, originCountry,
-        visitedCountries, verificationType);
+        DiagnosisKey.EXPECTED_ROLLING_PERIOD, expTransmissionRiskLevel, expSubmissionTimestamp, false,
+        originCountry, visitedCountries, verificationType);
   }
 
   private DiagnosisKey invalidKey(long expSubmissionTimestamp) {
     byte[] expKeyData = "17--bytelongarray".getBytes(StandardCharsets.US_ASCII);
     return new DiagnosisKey(expKeyData, expRollingStartIntervalNumber,
-        DiagnosisKey.EXPECTED_ROLLING_PERIOD, expTransmissionRiskLevel, expSubmissionTimestamp, originCountry,
-        visitedCountries, verificationType);
+        DiagnosisKey.EXPECTED_ROLLING_PERIOD, expTransmissionRiskLevel, expSubmissionTimestamp, false,
+        originCountry, visitedCountries, verificationType);
   }
 }

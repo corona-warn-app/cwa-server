@@ -34,4 +34,4 @@ COPY --from=build /usr/sap/federationdownload-service/federationdownload.jar .
 RUN ["java", "DpkgHelper.java"]
 USER 65534:65534
 ENTRYPOINT ["/usr/bin/java", "-Djdk.tls.namedGroups=\"secp256r1,secp384r1,brainpoolP256r1,brainpoolP384r1,brainpoolP512r1,ffdhe2048,ffdhe3072,ffdhe4096\"", "-jar"]
-CMD ["distribution.jar"]
+CMD ["federationdownload.jar"]
