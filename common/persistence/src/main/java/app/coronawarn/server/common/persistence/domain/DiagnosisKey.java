@@ -78,18 +78,21 @@ public class DiagnosisKey {
 
   private final VerificationType verificationType;
 
+  private final boolean consentToFederation;
+
   /**
    * Should be called by builders.
    */
   DiagnosisKey(byte[] keyData, int rollingStartIntervalNumber, int rollingPeriod,
       int transmissionRiskLevel, long submissionTimestamp,
-      @Size String originCountry, List<String> visitedCountries,
+      boolean consentToFederation, @Size String originCountry, List<String> visitedCountries,
       VerificationType verificationType) {
     this.keyData = keyData;
     this.rollingStartIntervalNumber = rollingStartIntervalNumber;
     this.rollingPeriod = rollingPeriod;
     this.transmissionRiskLevel = transmissionRiskLevel;
     this.submissionTimestamp = submissionTimestamp;
+    this.consentToFederation = consentToFederation;
     this.originCountry = originCountry;
     this.visitedCountries = visitedCountries == null ? Collections.emptyList() : visitedCountries;
     this.verificationType = verificationType;

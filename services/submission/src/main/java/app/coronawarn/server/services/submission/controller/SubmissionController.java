@@ -136,6 +136,7 @@ public class SubmissionController {
           .withVisitedCountries(submissionPayload.getVisitedCountriesList())
           .withCountryCode(originCountry)
           .withVerificationType(verificationType)
+          .withConsentToFederation(submissionPayload.getConsentToFederation())
           .build();
 
       if (diagnosisKey.isYoungerThanRetentionThreshold(retentionDays)) {

@@ -54,6 +54,7 @@ public class DiagnosisKeyBuilder implements
   private String countryCode;
   private List<String> visitedCountries;
   private VerificationType verificationType;
+  private boolean consentToFederation;
 
   DiagnosisKeyBuilder() {
   }
@@ -105,6 +106,18 @@ public class DiagnosisKeyBuilder implements
   }
 
   @Override
+  public FinalBuilder withRollingPeriod(int rollingPeriod) {
+    this.rollingPeriod = rollingPeriod;
+    return this;
+  }
+
+  @Override
+  public FinalBuilder withConsentToFederation(boolean consentToFederation) {
+    this.consentToFederation = consentToFederation;
+    return this;
+  }
+
+  @Override
   public FinalBuilder withCountryCode(String countryCode) {
     this.countryCode = countryCode;
     return this;
@@ -113,12 +126,6 @@ public class DiagnosisKeyBuilder implements
   @Override
   public FinalBuilder withVisitedCountries(List<String> visitedCountries) {
     this.visitedCountries = visitedCountries;
-    return this;
-  }
-
-  @Override
-  public FinalBuilder withRollingPeriod(int rollingPeriod) {
-    this.rollingPeriod = rollingPeriod;
     return this;
   }
 
@@ -136,8 +143,8 @@ public class DiagnosisKeyBuilder implements
     }
 
     var diagnosisKey = new DiagnosisKey(
-        keyData, rollingStartIntervalNumber, rollingPeriod, transmissionRiskLevel, submissionTimestamp, countryCode,
-        visitedCountries, verificationType);
+        keyData, rollingStartIntervalNumber, rollingPeriod, transmissionRiskLevel, submissionTimestamp,
+        consentToFederation, countryCode, visitedCountries, verificationType);
     return throwIfValidationFails(diagnosisKey);
   }
 

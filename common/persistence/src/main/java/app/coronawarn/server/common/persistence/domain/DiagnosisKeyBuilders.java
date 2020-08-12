@@ -100,6 +100,8 @@ interface DiagnosisKeyBuilders {
      */
     FinalBuilder withRollingPeriod(int rollingPeriod);
 
+    FinalBuilder withConsentToFederation(boolean consentToFederation);
+
     FinalBuilder withCountryCode(String countryCode);
 
     FinalBuilder withVisitedCountries(List<String> visitedCountries);

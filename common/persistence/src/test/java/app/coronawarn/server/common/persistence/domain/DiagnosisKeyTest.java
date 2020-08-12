@@ -48,7 +48,7 @@ class DiagnosisKeyTest {
   static final VerificationType verificationType = VerificationType.LAB_VERIFIED;
 
   final static DiagnosisKey diagnosisKey = new DiagnosisKey(expKeyData, expRollingStartIntervalNumber,
-      expRollingPeriod, expTransmissionRiskLevel, expSubmissionTimestamp, originCountry, visitedCountries, verificationType);
+      expRollingPeriod, expTransmissionRiskLevel, expSubmissionTimestamp, false, originCountry, visitedCountries, verificationType);
 
   @Test
   void testRollingStartIntervalNumberGetter() {
@@ -77,7 +77,7 @@ class DiagnosisKeyTest {
         .minusDays(5).minusMinutes(10)
         .toEpochSecond(UTC) / (60 * 10));
     DiagnosisKey diagnosisKeyFiveDays = new DiagnosisKey(expKeyData, fiveDaysAgo,
-        expRollingPeriod, expTransmissionRiskLevel, expSubmissionTimestamp, originCountry, visitedCountries, verificationType);
+        expRollingPeriod, expTransmissionRiskLevel, expSubmissionTimestamp, false, originCountry, visitedCountries, verificationType);
 
     assertThat(diagnosisKeyFiveDays.isYoungerThanRetentionThreshold(4)).isFalse();
     assertThat(diagnosisKeyFiveDays.isYoungerThanRetentionThreshold(5)).isFalse();

@@ -286,6 +286,7 @@ class SubmissionControllerTest {
         .map(submittedDiagnosisKey -> DiagnosisKey
             .builder()
             .fromTemporaryExposureKey(submittedDiagnosisKey)
+            .withConsentToFederation(submissionPayload.getConsentToFederation())
             .withVisitedCountries(submissionPayload.getVisitedCountriesList())
             .withCountryCode(StringUtils.defaultIfBlank(submissionPayload.getOrigin(),
                 config.getDefaultOriginCountry()))

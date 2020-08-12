@@ -11,4 +11,5 @@ message SubmissionPayload {
   repeated string visitedCountries = 3;
   string origin = 4;
   app.coronawarn.server.common.protocols.external.exposurenotification.VerificationType verificationType = 5;
+  bool consentToFederation = 6;
 }
