@@ -26,6 +26,7 @@ import static app.coronawarn.server.services.submission.controller.RequestExecut
 import static app.coronawarn.server.services.submission.controller.RequestExecutor.buildPayloadWithOneKey;
 import static app.coronawarn.server.services.submission.controller.RequestExecutor.buildTemporaryExposureKey;
 import static app.coronawarn.server.services.submission.controller.RequestExecutor.createRollingStartIntervalNumber;
+import static java.time.ZoneOffset.UTC;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.any;
@@ -40,6 +41,7 @@ import static org.springframework.http.HttpStatus.FORBIDDEN;
 import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
 import static org.springframework.http.HttpStatus.METHOD_NOT_ALLOWED;
 import static org.springframework.http.HttpStatus.OK;
+import static app.coronawarn.server.services.submission.assertions.SubmissionAssertions.*;
 
 import app.coronawarn.server.common.persistence.domain.DiagnosisKey;
 import app.coronawarn.server.common.persistence.service.DiagnosisKeyService;
@@ -49,15 +51,19 @@ import app.coronawarn.server.services.submission.config.SubmissionServiceConfig;
 import app.coronawarn.server.services.submission.monitoring.SubmissionMonitor;
 import app.coronawarn.server.services.submission.verification.TanVerifier;
 import com.google.protobuf.ByteString;
+
+import java.time.Instant;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
-import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInstance;
+import org.junit.jupiter.api.TestInstance.Lifecycle;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
@@ -73,6 +79,7 @@ import org.springframework.test.context.ActiveProfiles;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @ActiveProfiles({"disable-ssl-client-verification", "disable-ssl-client-verification-verify-hostname"})
+@TestInstance(Lifecycle.PER_CLASS)
 class SubmissionControllerTest {
 
   @MockBean
@@ -111,9 +118,10 @@ class SubmissionControllerTest {
     assertThat(actResponse.getStatusCode()).isEqualTo(OK);
   }
 
-  @Test
-  void check400ResponseStatusForInvalidParameters() {
-    ResponseEntity<Void> actResponse = executor.executePost(buildPayloadWithInvalidKey());
+  @ParameterizedTest
+  @MethodSource({"buildPayloadWithInvalidKeys"})
+  void check400ResponseStatusForInvalidKeys(SubmissionPayload invalidPayload ) {
+    ResponseEntity<Void> actResponse = executor.executePost(invalidPayload);
     assertThat(actResponse.getStatusCode()).isEqualTo(BAD_REQUEST);
   }
 
@@ -138,7 +146,7 @@ class SubmissionControllerTest {
 
     verify(diagnosisKeyService, atLeastOnce()).saveDiagnosisKeys(argument.capture());
     submittedKeys.remove(outdatedKey);
-    assertElementsCorrespondToEachOther(submittedKeys, argument.getValue());
+    assertElementsCorrespondToEachOther(submittedKeys, argument.getValue(), config);
   }
 
   @Test
@@ -150,7 +158,7 @@ class SubmissionControllerTest {
 
     verify(diagnosisKeyService, atLeastOnce()).saveDiagnosisKeys(argument.capture());
     verify(fakeDelayManager, times(1)).updateFakeRequestDelay(anyLong());
-    assertElementsCorrespondToEachOther(submittedKeys, argument.getValue());
+    assertElementsCorrespondToEachOther(submittedKeys, argument.getValue(), config);
   }
 
   @ParameterizedTest
@@ -160,14 +168,6 @@ class SubmissionControllerTest {
 
     verify(diagnosisKeyService, never()).saveDiagnosisKeys(any());
     assertThat(actResponse.getStatusCode()).isEqualTo(BAD_REQUEST);
-  }
-
-  private static Stream<Arguments> createIncompleteHeaders() {
-    return Stream.of(
-        Arguments.of(HttpHeaderBuilder.builder().build()),
-        Arguments.of(HttpHeaderBuilder.builder().contentTypeProtoBuf().build()),
-        Arguments.of(HttpHeaderBuilder.builder().contentTypeProtoBuf().withoutCwaFake().build()),
-        Arguments.of(HttpHeaderBuilder.builder().contentTypeProtoBuf().cwaAuth().build()));
   }
 
   @ParameterizedTest
@@ -183,13 +183,6 @@ class SubmissionControllerTest {
     assertThat(allowedErrors)
         .withFailMessage(deniedHttpMethod + " resulted in unexpected status: " + actStatus)
         .contains(actStatus);
-  }
-
-  private static Stream<Arguments> createDeniedHttpMethods() {
-    return Arrays.stream(HttpMethod.values())
-        .filter(method -> method != HttpMethod.POST)
-        .filter(method -> method != HttpMethod.PATCH) /* not supported by Rest Template */
-        .map(Arguments::of);
   }
 
   @Test
@@ -278,41 +271,50 @@ class SubmissionControllerTest {
         .setTransmissionRiskLevel(5).build();
   }
 
-  private SubmissionPayload buildPayloadWithInvalidKey() {
+  private Stream<Arguments> buildPayloadWithInvalidKeys() {
+    return Stream.of(
+          Arguments.of(buildPayloadWithInvalidTransmissionRiskLevel()),
+          Arguments.of(buildPayloadWithNegativeRollingStartInterval()),
+          Arguments.of(buildPayloadWithFutureRollingStartInterval()),
+          Arguments.of(buildPayloadWithInvalidKeyData())
+          );
+  }
+
+  private SubmissionPayload buildPayloadWithInvalidTransmissionRiskLevel() {
     TemporaryExposureKey invalidKey = buildTemporaryExposureKey(VALID_KEY_DATA_1, createRollingStartIntervalNumber(2), 999);
     return buildPayload(invalidKey);
   }
 
-  private void assertElementsCorrespondToEachOther(Collection<TemporaryExposureKey> submittedTemporaryExposureKeys,
-                                                   Collection<DiagnosisKey> savedDiagnosisKeys) {
+  private SubmissionPayload buildPayloadWithNegativeRollingStartInterval() {
+    TemporaryExposureKey invalidKey = buildTemporaryExposureKey(VALID_KEY_DATA_1,
+        createRollingStartIntervalNumber(-1), 5);
+    return buildPayload(invalidKey);
+  }
 
-    Set<DiagnosisKey> submittedDiagnosisKeys = submittedTemporaryExposureKeys.stream()
-        .map(submittedDiagnosisKey -> DiagnosisKey.builder().fromProtoBuf(submittedDiagnosisKey).build())
-        .collect(Collectors.toSet());
+  private SubmissionPayload buildPayloadWithFutureRollingStartInterval() {
+    int currentPeriod = Math.toIntExact(LocalDateTime.ofInstant(Instant.now(), UTC).toEpochSecond(UTC) / 600L);
+    TemporaryExposureKey invalidKey = buildTemporaryExposureKey(VALID_KEY_DATA_1,
+        createRollingStartIntervalNumber(currentPeriod), 5);
+    return buildPayload(invalidKey);
+  }
 
-    assertThat(savedDiagnosisKeys).hasSize(submittedDiagnosisKeys.size() * config.getRandomKeyPaddingMultiplier());
-    assertThat(savedDiagnosisKeys).containsAll(submittedDiagnosisKeys);
+  private SubmissionPayload buildPayloadWithInvalidKeyData() {
+    TemporaryExposureKey invalidKey = buildTemporaryExposureKey("  ", createRollingStartIntervalNumber(2), 999);
+    return buildPayload(invalidKey);
+  }
 
-    submittedDiagnosisKeys.forEach(submittedDiagnosisKey -> {
-      List<DiagnosisKey> savedKeysForSingleSubmittedKey = savedDiagnosisKeys.stream()
-          .filter(savedDiagnosisKey -> savedDiagnosisKey.getRollingPeriod() ==
-              submittedDiagnosisKey.getRollingPeriod())
-          .filter(savedDiagnosisKey -> savedDiagnosisKey.getTransmissionRiskLevel() ==
-              submittedDiagnosisKey.getTransmissionRiskLevel())
-          .filter(savedDiagnosisKey -> savedDiagnosisKey.getRollingStartIntervalNumber() ==
-              submittedDiagnosisKey.getRollingStartIntervalNumber())
-          .collect(Collectors.toList());
+  private static Stream<Arguments> createDeniedHttpMethods() {
+    return Arrays.stream(HttpMethod.values())
+        .filter(method -> method != HttpMethod.POST)
+        .filter(method -> method != HttpMethod.PATCH) /* not supported by Rest Template */
+        .map(Arguments::of);
+  }
 
-      assertThat(savedKeysForSingleSubmittedKey).hasSize(config.getRandomKeyPaddingMultiplier());
-      assertThat(savedKeysForSingleSubmittedKey.stream().filter(savedKey ->
-          Arrays.equals(savedKey.getKeyData(), submittedDiagnosisKey.getKeyData()))).hasSize(1);
-      assertThat(savedKeysForSingleSubmittedKey).allMatch(
-          savedKey -> savedKey.getRollingPeriod() == submittedDiagnosisKey.getRollingPeriod());
-      assertThat(savedKeysForSingleSubmittedKey).allMatch(
-          savedKey -> savedKey.getRollingStartIntervalNumber() == submittedDiagnosisKey
-              .getRollingStartIntervalNumber());
-      assertThat(savedKeysForSingleSubmittedKey).allMatch(
-          savedKey -> savedKey.getTransmissionRiskLevel() == submittedDiagnosisKey.getTransmissionRiskLevel());
-    });
+  private static Stream<Arguments> createIncompleteHeaders() {
+    return Stream.of(
+        Arguments.of(HttpHeaderBuilder.builder().build()),
+        Arguments.of(HttpHeaderBuilder.builder().contentTypeProtoBuf().build()),
+        Arguments.of(HttpHeaderBuilder.builder().contentTypeProtoBuf().withoutCwaFake().build()),
+        Arguments.of(HttpHeaderBuilder.builder().contentTypeProtoBuf().cwaAuth().build()));
   }
 }
