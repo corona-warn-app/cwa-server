@@ -21,6 +21,8 @@
 package app.coronawarn.server.services.distribution.config;
 
 import app.coronawarn.server.common.protocols.external.exposurenotification.SignatureInfo;
+import java.util.List;
+import java.util.stream.Collectors;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.Pattern;
@@ -68,6 +70,7 @@ public class DistributionServiceConfig {
   private Signature signature;
   private Api api;
   private ObjectStore objectStore;
+  private List<AppFeature> appFeatures;
 
   public Paths getPaths() {
     return paths;
@@ -172,6 +175,26 @@ public class DistributionServiceConfig {
   public void setObjectStore(
       ObjectStore objectStore) {
     this.objectStore = objectStore;
+  }
+
+  public List<AppFeature> getAppFeatures() {
+    return appFeatures;
+  }
+
+  public void setAppFeatures(List<AppFeature> appFeatures) {
+    this.appFeatures = appFeatures;
+  }
+
+  /**
+   * Get app features as list of protobuf objects.
+   * @return list of {@link app.coronawarn.server.common.protocols.internal.AppFeature}
+   */
+  public List<app.coronawarn.server.common.protocols.internal.AppFeature> getAppFeaturesProto() {
+    return getAppFeatures().stream()
+        .map(appFeature -> app.coronawarn.server.common.protocols.internal.AppFeature.newBuilder()
+            .setLabel(appFeature.getLabel())
+            .setValue(appFeature.getValue()).build())
+        .collect(Collectors.toList());
   }
 
   public static class TekExport {
@@ -536,6 +559,28 @@ public class DistributionServiceConfig {
 
     public void setForceUpdateKeyfiles(Boolean forceUpdateKeyfiles) {
       this.forceUpdateKeyfiles = forceUpdateKeyfiles;
+    }
+  }
+
+  private static class AppFeature {
+
+    private String label;
+    private Integer value;
+
+    public String getLabel() {
+      return label;
+    }
+
+    public void setLabel(String label) {
+      this.label = label;
+    }
+
+    public Integer getValue() {
+      return value;
+    }
+
+    public void setValue(Integer value) {
+      this.value = value;
     }
   }
 }
