@@ -83,8 +83,8 @@ services:
       force-update-keyfiles: ${FORCE_UPDATE_KEYFILES:false}
 
     app-features:
-      - label: ${APPFEATURES_0_LABEL:isPlausibleDeniabilityActive}
-        active: ${APPFEATURES_0_ACTIVE:true}
+      - label: isPlausibleDeniabilityActive
+        active: ${PLAUSIBLE_DENIABILITY_ACTIVE:true}
 
 spring:
   main:
