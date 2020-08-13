@@ -6,6 +6,7 @@ import "app/coronawarn/server/common/protocols/internal/risk_score_classificatio
 import "app/coronawarn/server/common/protocols/internal/risk_score_parameters.proto";
 import "app/coronawarn/server/common/protocols/internal/app_version_config.proto";
 import "app/coronawarn/server/common/protocols/internal/attenuation_duration.proto";
+import "app/coronawarn/server/common/protocols/internal/app_features.proto";
 
 message ApplicationConfiguration {
 
@@ -18,4 +19,6 @@ message ApplicationConfiguration {
   app.coronawarn.server.common.protocols.internal.AttenuationDuration attenuationDuration = 4;
 
   app.coronawarn.server.common.protocols.internal.ApplicationVersionConfiguration appVersion = 5;
+
+  app.coronawarn.server.common.protocols.internal.AppFeatures appFeatures = 6;
 }

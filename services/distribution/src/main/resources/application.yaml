@@ -82,6 +82,10 @@ services:
       # Allows distribution to overwrite files which are published on the object store
       force-update-keyfiles: ${FORCE_UPDATE_KEYFILES:false}
 
+    app-features:
+      - label: isPlausibleDeniabilityActive
+        value: ${PLAUSIBLE_DENIABILITY_ACTIVE:1}
+
 spring:
   main:
     web-application-type: NONE

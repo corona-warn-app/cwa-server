@@ -20,7 +20,10 @@
 
 package app.coronawarn.server.services.distribution.assembly.appconfig;
 
+import app.coronawarn.server.common.protocols.internal.AppFeatures;
 import app.coronawarn.server.common.protocols.internal.ApplicationConfiguration;
+import app.coronawarn.server.common.protocols.internal.ApplicationConfiguration.Builder;
+import app.coronawarn.server.services.distribution.config.DistributionServiceConfig;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -49,7 +52,11 @@ public class ApplicationConfigurationPublicationConfig {
    * @throws UnableToLoadFileException when the file/transformation did not succeed
    */
   @Bean
-  public ApplicationConfiguration createMasterConfiguration() throws UnableToLoadFileException {
-    return YamlLoader.loadYamlIntoProtobufBuilder(MASTER_FILE, ApplicationConfiguration.Builder.class).build();
+  public ApplicationConfiguration createMasterConfiguration(DistributionServiceConfig distributionServiceConfig)
+      throws UnableToLoadFileException {
+    return YamlLoader.loadYamlIntoProtobufBuilder(MASTER_FILE, Builder.class)
+        .setAppFeatures(
+            AppFeatures.newBuilder().addAllAppFeatures(distributionServiceConfig.getAppFeaturesProto()).build())
+        .build();
   }
 }
