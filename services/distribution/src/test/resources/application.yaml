@@ -52,6 +52,10 @@ services:
       max-number-of-failed-operations: 5
       max-number-of-s3-threads: 2
       force-update-keyfiles: ${FORCE_UPDATE_KEYFILES:false}
+
+    app-features:
+      - label: ${APPFEATURES_0_LABEL:isPlausibleDeniabilityActive}
+        active: ${APPFEATURES_0_ACTIVE:true}
 spring:
   main:
     banner-mode: off
