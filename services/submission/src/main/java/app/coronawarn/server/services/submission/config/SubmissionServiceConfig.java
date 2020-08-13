@@ -24,6 +24,7 @@ import java.io.File;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.Pattern;
+import app.coronawarn.server.common.persistence.domain.DiagnosisKey;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Component;
 import org.springframework.util.unit.DataSize;
@@ -59,6 +60,7 @@ public class SubmissionServiceConfig {
   private Verification verification;
   private Monitoring monitoring;
   private Client client;
+  private DiagnosisKey diagnosisKey;
 
   public Long getInitialFakeDelayMilliseconds() {
     return initialFakeDelayMilliseconds;
@@ -119,7 +121,7 @@ public class SubmissionServiceConfig {
   private static class Payload {
 
     @Min(7)
-    @Max(28)
+    @Max(100)
     private Integer maxNumberOfKeys;
 
     public Integer getMaxNumberOfKeys() {
@@ -267,5 +269,27 @@ public class SubmissionServiceConfig {
         this.trustStorePassword = trustStorePassword;
       }
     }
+  }
+
+  public void setDiagnosisKey(DiagnosisKey diagnosisKey) {
+    this.diagnosisKey = diagnosisKey;
+  }
+
+  private static class DiagnosisKey {
+
+    @Min(0)
+    @Max(144)
+    private Integer rollingPeriod;
+
+    public Integer getRollingPeriod() {
+      return rollingPeriod;
+    }
+
+    public void setRollingPeriod(Integer rollingPeriod) {
+      this.rollingPeriod = rollingPeriod;
+    }
+  }
+  public Integer getRollingPeriod() {
+    return diagnosisKey.getRollingPeriod();
   }
 }

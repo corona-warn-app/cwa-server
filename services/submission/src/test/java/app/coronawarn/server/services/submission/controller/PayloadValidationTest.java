@@ -20,11 +20,7 @@
 
 package app.coronawarn.server.services.submission.controller;
 
-import static app.coronawarn.server.services.submission.controller.RequestExecutor.VALID_KEY_DATA_1;
-import static app.coronawarn.server.services.submission.controller.RequestExecutor.VALID_KEY_DATA_2;
-import static app.coronawarn.server.services.submission.controller.RequestExecutor.VALID_KEY_DATA_3;
-import static app.coronawarn.server.services.submission.controller.RequestExecutor.buildTemporaryExposureKey;
-import static app.coronawarn.server.services.submission.controller.RequestExecutor.createRollingStartIntervalNumber;
+import static app.coronawarn.server.services.submission.controller.RequestExecutor.*;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
@@ -96,8 +92,8 @@ class PayloadValidationTest {
   @Test
   void check200ResponseStatusForGapsInTimeIntervals() {
     int rollingStartIntervalNumber1 = createRollingStartIntervalNumber(6);
-    int rollingStartIntervalNumber2 = rollingStartIntervalNumber1 + DiagnosisKey.EXPECTED_ROLLING_PERIOD;
-    int rollingStartIntervalNumber3 = rollingStartIntervalNumber2 + 2 * DiagnosisKey.EXPECTED_ROLLING_PERIOD;
+    int rollingStartIntervalNumber2 = rollingStartIntervalNumber1 + DiagnosisKey.MAX_ROLLING_PERIOD;
+    int rollingStartIntervalNumber3 = rollingStartIntervalNumber2 + 2 * DiagnosisKey.MAX_ROLLING_PERIOD;
     var keysWithDuplicateStartIntervalNumber = Lists.list(
         buildTemporaryExposureKey(VALID_KEY_DATA_1, rollingStartIntervalNumber1, 1),
         buildTemporaryExposureKey(VALID_KEY_DATA_3, rollingStartIntervalNumber3, 3),
@@ -111,7 +107,7 @@ class PayloadValidationTest {
   @Test
   void check400ResponseStatusForOverlappingTimeIntervals() {
     int rollingStartIntervalNumber1 = createRollingStartIntervalNumber(6);
-    int rollingStartIntervalNumber2 = rollingStartIntervalNumber1 + (DiagnosisKey.EXPECTED_ROLLING_PERIOD / 2);
+    int rollingStartIntervalNumber2 = rollingStartIntervalNumber1 + (DiagnosisKey.MAX_ROLLING_PERIOD / 2);
     var keysWithDuplicateStartIntervalNumber = Lists.list(
         buildTemporaryExposureKey(VALID_KEY_DATA_1, rollingStartIntervalNumber1, 1),
         buildTemporaryExposureKey(VALID_KEY_DATA_2, rollingStartIntervalNumber2, 2));
@@ -124,8 +120,8 @@ class PayloadValidationTest {
   @Test
   void check200ResponseStatusForValidSubmissionPayload() {
     int rollingStartIntervalNumber1 = createRollingStartIntervalNumber(6);
-    int rollingStartIntervalNumber2 = rollingStartIntervalNumber1 + DiagnosisKey.EXPECTED_ROLLING_PERIOD;
-    int rollingStartIntervalNumber3 = rollingStartIntervalNumber2 + DiagnosisKey.EXPECTED_ROLLING_PERIOD;
+    int rollingStartIntervalNumber2 = rollingStartIntervalNumber1 + DiagnosisKey.MAX_ROLLING_PERIOD;
+    int rollingStartIntervalNumber3 = rollingStartIntervalNumber2 + DiagnosisKey.MAX_ROLLING_PERIOD;
     var keysWithDuplicateStartIntervalNumber = Lists.list(
         buildTemporaryExposureKey(VALID_KEY_DATA_1, rollingStartIntervalNumber1, 1),
         buildTemporaryExposureKey(VALID_KEY_DATA_3, rollingStartIntervalNumber3, 3),
@@ -134,5 +130,82 @@ class PayloadValidationTest {
     ResponseEntity<Void> actResponse = executor.executePost(keysWithDuplicateStartIntervalNumber);
 
     assertThat(actResponse.getStatusCode()).isEqualTo(OK);
+  }
+
+  @Test
+  void check200ResponseStatusForMoreThan14KeysWithFlexibleRollingPeriodValidSubmissionPayload() {
+    ResponseEntity<Void> actResponse = executor.executePost(buildPayloadWithMoreThan14KeysAndFlexibleRollingPeriod());
+
+    assertThat(actResponse.getStatusCode()).isEqualTo(OK);
+  }
+
+  private Collection<TemporaryExposureKey> buildPayloadWithMoreThan14KeysAndFlexibleRollingPeriod() {
+    ArrayList<TemporaryExposureKey> flexibleRollingPeriodKeys = new ArrayList<>();
+    int counter = 0;
+    for ( ; counter <= 20; counter++) {
+      flexibleRollingPeriodKeys.add(buildTemporaryExposureKeyWithFlexibleRollingPeriod(VALID_KEY_DATA_1,
+          createRollingStartIntervalNumber(2) - counter * DiagnosisKey.MAX_ROLLING_PERIOD, 3, 144));
+    }
+    for ( ; counter < 30; counter++) {
+      flexibleRollingPeriodKeys.add(buildTemporaryExposureKeyWithFlexibleRollingPeriod(VALID_KEY_DATA_1,
+          createRollingStartIntervalNumber(2) - counter * DiagnosisKey.MAX_ROLLING_PERIOD, 3, 133));
+
+    }
+    return flexibleRollingPeriodKeys;
+  }
+
+  @Test
+    //Check duplicate start interval number
+  void check200ResponseStatusForDuplicateStartDateWithFlexibleRollingPeriod() {
+    ResponseEntity<Void> actResponse = executor.executePost(buildPayloadWithDuplicateStartDateWithFlexibleRollingPeriod());
+
+    assertThat(actResponse.getStatusCode()).isEqualTo(OK);
+  }
+  private Collection<TemporaryExposureKey> buildPayloadWithDuplicateStartDateWithFlexibleRollingPeriod() {
+    ArrayList<TemporaryExposureKey> flexibleRollingPeriodKeys = new ArrayList<>();
+
+    for (int i=0; i <= 10; i++) {
+      flexibleRollingPeriodKeys.add(buildTemporaryExposureKeyWithFlexibleRollingPeriod(VALID_KEY_DATA_1,
+          createRollingStartIntervalNumber(2), 3, 100));
+    }
+    return flexibleRollingPeriodKeys;
+  }
+
+  @Test
+  void check400ResponseStatusWithTwoKeysOneWithDefaultRollingPeriodAndOneWithFlexible() {
+    ResponseEntity<Void> actResponse = executor.executePost(buildPayloadWithTwoKeysOneWithDefaultRollingPeriodAndOneWithFlexible());
+
+    assertThat(actResponse.getStatusCode()).isEqualTo(OK);
+  }
+
+  private Collection<TemporaryExposureKey> buildPayloadWithTwoKeysOneWithDefaultRollingPeriodAndOneWithFlexible() {
+    ArrayList<TemporaryExposureKey> flexibleRollingPeriodKeys = new ArrayList<>();
+
+    flexibleRollingPeriodKeys.add(buildTemporaryExposureKeyWithFlexibleRollingPeriod(VALID_KEY_DATA_1,
+        createRollingStartIntervalNumber(2), 3, 100));
+    flexibleRollingPeriodKeys.add(buildTemporaryExposureKeyWithFlexibleRollingPeriod(VALID_KEY_DATA_1,
+        createRollingStartIntervalNumber(2), 3, 144));
+
+
+    return flexibleRollingPeriodKeys;
+  }
+
+  @Test
+  void check200ResponseStatusWithTwoKeysWithFlexibleRollingPeriod() {
+    ResponseEntity<Void> actResponse = executor.executePost(buildPayloadWithTwoKeysWithFlexibleRollingPeriod());
+
+    assertThat(actResponse.getStatusCode()).isEqualTo(OK);
+  }
+
+  private Collection<TemporaryExposureKey> buildPayloadWithTwoKeysWithFlexibleRollingPeriod() {
+    ArrayList<TemporaryExposureKey> flexibleRollingPeriodKeys = new ArrayList<>();
+
+    flexibleRollingPeriodKeys.add(buildTemporaryExposureKeyWithFlexibleRollingPeriod(VALID_KEY_DATA_1,
+        createRollingStartIntervalNumber(2), 3, 100));
+    flexibleRollingPeriodKeys.add(buildTemporaryExposureKeyWithFlexibleRollingPeriod(VALID_KEY_DATA_1,
+        createRollingStartIntervalNumber(2), 3, 44));
+
+
+    return flexibleRollingPeriodKeys;
   }
 }

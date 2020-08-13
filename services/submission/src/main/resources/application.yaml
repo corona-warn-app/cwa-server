@@ -34,6 +34,8 @@ services:
     monitoring:
       # The batch size (number of requests) to use for monitoring request count.
       batch-size: 5
+    diagnosis-key:
+      rolling-period: 144
     client:
       ssl:
         key-password: ${SSL_SUBMISSION_KEYSTORE_PASSWORD}

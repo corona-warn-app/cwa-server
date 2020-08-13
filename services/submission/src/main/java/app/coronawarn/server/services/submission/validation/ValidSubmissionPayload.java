@@ -20,8 +20,9 @@
 
 package app.coronawarn.server.services.submission.validation;
 
-import static app.coronawarn.server.common.persistence.domain.DiagnosisKey.EXPECTED_ROLLING_PERIOD;
+import static app.coronawarn.server.common.persistence.domain.DiagnosisKey.MAX_ROLLING_PERIOD;
 
+import app.coronawarn.server.common.persistence.domain.DiagnosisKey;
 import app.coronawarn.server.common.protocols.external.exposurenotification.TemporaryExposureKey;
 import app.coronawarn.server.common.protocols.internal.SubmissionPayload;
 import app.coronawarn.server.services.submission.config.SubmissionServiceConfig;
@@ -31,7 +32,11 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 import java.util.Arrays;
+import java.util.Dictionary;
+import java.util.Hashtable;
 import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 import javax.validation.Constraint;
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
@@ -68,9 +73,11 @@ public @interface ValidSubmissionPayload {
       ConstraintValidator<ValidSubmissionPayload, SubmissionPayload> {
 
     private final int maxNumberOfKeys;
+    private final int rollingPeriod;
 
     public SubmissionPayloadValidator(SubmissionServiceConfig submissionServiceConfig) {
       maxNumberOfKeys = submissionServiceConfig.getMaxNumberOfKeys();
+      rollingPeriod = submissionServiceConfig.getRollingPeriod();
     }
 
     /**
@@ -86,10 +93,21 @@ public @interface ValidSubmissionPayload {
     public boolean isValid(SubmissionPayload submissionPayload, ConstraintValidatorContext validatorContext) {
       List<TemporaryExposureKey> exposureKeys = submissionPayload.getKeysList();
       validatorContext.disableDefaultConstraintViolation();
+      boolean isValid = false;
 
-      boolean isValid = checkKeyCollectionSize(exposureKeys, validatorContext);
-      isValid &= checkUniqueStartIntervalNumbers(exposureKeys, validatorContext);
-      isValid &= checkNoOverlapsInTimeWindow(exposureKeys, validatorContext);
+      List<TemporaryExposureKey> keyDates;
+
+      for (TemporaryExposureKey exposureKey: exposureKeys) {
+        if(exposureKey.getRollingPeriod() < rollingPeriod ){
+          isValid = true;
+        }
+        else {
+          isValid = checkKeyCollectionSize(exposureKeys, validatorContext);
+          isValid &= checkUniqueStartIntervalNumbers(exposureKeys, validatorContext);
+          isValid &= checkNoOverlapsInTimeWindow(exposureKeys, validatorContext);
+        }
+      }
+
 
       return isValid;
     }
@@ -135,11 +153,38 @@ public @interface ValidSubmissionPayload {
           .sorted().boxed().toArray(Integer[]::new);
 
       for (int i = 1; i < sortedStartIntervalNumbers.length; i++) {
-        if ((sortedStartIntervalNumbers[i - 1] + EXPECTED_ROLLING_PERIOD) > sortedStartIntervalNumbers[i]) {
+        if ((sortedStartIntervalNumbers[i - 1] + rollingPeriod) > sortedStartIntervalNumbers[i]) {
           addViolation(validatorContext, String.format(
               "Subsequent intervals overlap. StartIntervalNumbers: %s", sortedStartIntervalNumbers));
           return false;
         }
+      }
+      return true;
+    }
+
+    private boolean checkDuplicateStartIntervalNumber(List<TemporaryExposureKey> exposureKeys,
+        ConstraintValidatorContext validatorContext) {
+
+
+      Hashtable<Integer, Integer> daysKeys = new Hashtable<Integer, Integer>();
+
+      for (TemporaryExposureKey exposureKey: exposureKeys) {
+        if(daysKeys.containsKey( exposureKey.getRollingStartIntervalNumber() ) {
+          int currentNum = daysKeys.get( exposureKey.getRollingStartIntervalNumber() ) ;
+          //daysKeys.set
+        }
+        else {
+          daysKeys.put(exposureKey.getRollingStartIntervalNumber(), exposureKey.getRollingPeriod());
+        }
+      }
+
+
+
+
+      if (distinctSize < exposureKeys.size()) {
+        addViolation(validatorContext, String.format(
+            "Duplicate StartIntervalNumber found. StartIntervalNumbers: %s", startIntervalNumbers));
+        return false;
       }
       return true;
     }

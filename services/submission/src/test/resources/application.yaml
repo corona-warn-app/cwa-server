@@ -33,6 +33,8 @@ services:
       path: /version/v1/tan/verify
     monitoring:
       batch-size: 5
+    diagnosis-key:
+      rolling-period: 144
 
 management:
   endpoint:

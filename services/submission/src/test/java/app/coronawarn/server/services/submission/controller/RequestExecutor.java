@@ -92,6 +92,15 @@ public class RequestExecutor {
         .setTransmissionRiskLevel(transmissionRiskLevel).build();
   }
 
+  public static TemporaryExposureKey buildTemporaryExposureKeyWithFlexibleRollingPeriod(
+      String keyData, int rollingStartIntervalNumber, int transmissionRiskLevel, int rollingPeriod) {
+    return TemporaryExposureKey.newBuilder()
+        .setKeyData(ByteString.copyFromUtf8(keyData))
+        .setRollingStartIntervalNumber(rollingStartIntervalNumber)
+        .setTransmissionRiskLevel(transmissionRiskLevel)
+        .setRollingPeriod(rollingPeriod).build();
+  }
+
   public static int createRollingStartIntervalNumber(Integer daysAgo) {
     return Math.toIntExact(LocalDate
         .ofInstant(Instant.now(), UTC)
