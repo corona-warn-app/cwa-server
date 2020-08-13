@@ -9,5 +9,5 @@ message AppFeatures {
 
 message AppFeature {
   string label = 1;
-  bool active = 2;
+  int32 active = 2;
 }

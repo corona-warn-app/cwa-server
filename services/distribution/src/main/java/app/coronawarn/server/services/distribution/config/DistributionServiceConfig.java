@@ -193,7 +193,7 @@ public class DistributionServiceConfig {
     return getAppFeatures().stream()
         .map(appFeature -> app.coronawarn.server.common.protocols.internal.AppFeature.newBuilder()
             .setLabel(appFeature.getLabel())
-            .setActive(appFeature.isActive()).build())
+            .setActive(appFeature.getActive()).build())
         .collect(Collectors.toList());
   }
 
@@ -565,7 +565,7 @@ public class DistributionServiceConfig {
   private static class AppFeature {
 
     private String label;
-    private boolean active;
+    private Integer active;
 
     public String getLabel() {
       return label;
@@ -575,11 +575,11 @@ public class DistributionServiceConfig {
       this.label = label;
     }
 
-    public boolean isActive() {
+    public Integer getActive() {
       return active;
     }
 
-    public void setActive(boolean active) {
+    public void setActive(Integer active) {
       this.active = active;
     }
   }

@@ -55,7 +55,7 @@ services:
 
     app-features:
       - label: isPlausibleDeniabilityActive
-        active: ${PLAUSIBLE_DENIABILITY_ACTIVE:true}
+        active: ${PLAUSIBLE_DENIABILITY_ACTIVE:1}
 spring:
   main:
     banner-mode: off
