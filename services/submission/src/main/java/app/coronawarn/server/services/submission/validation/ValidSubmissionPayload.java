@@ -99,7 +99,7 @@ public @interface ValidSubmissionPayload {
 
       for (TemporaryExposureKey exposureKey: exposureKeys) {
         if(exposureKey.getRollingPeriod() < rollingPeriod ){
-          isValid = true;
+          isValid = checkDuplicateStartIntervalNumberLimit(exposureKeys, validatorContext);
         }
         else {
           isValid = checkKeyCollectionSize(exposureKeys, validatorContext);
@@ -162,30 +162,33 @@ public @interface ValidSubmissionPayload {
       return true;
     }
 
-    private boolean checkDuplicateStartIntervalNumber(List<TemporaryExposureKey> exposureKeys,
+    private boolean checkDuplicateStartIntervalNumberLimit(List<TemporaryExposureKey> exposureKeys,
         ConstraintValidatorContext validatorContext) {
 
 
-      Hashtable<Integer, Integer> daysKeys = new Hashtable<Integer, Integer>();
+      Hashtable<Integer, Integer> totalKeysPerDay = new Hashtable<Integer, Integer>();
 
       for (TemporaryExposureKey exposureKey: exposureKeys) {
-        if(daysKeys.containsKey( exposureKey.getRollingStartIntervalNumber() ) {
-          int currentNum = daysKeys.get( exposureKey.getRollingStartIntervalNumber() ) ;
-          //daysKeys.set
+
+        int numberOfKeys = exposureKey.getRollingPeriod();
+        if(totalKeysPerDay.containsKey( exposureKey.getRollingStartIntervalNumber() )) {
+          numberOfKeys += totalKeysPerDay.get( exposureKey.getRollingStartIntervalNumber() );
+
+          if(numberOfKeys > exposureKeys.size()) {
+            addViolation(validatorContext, String.format(
+                "Keys in excess of %s per day.", exposureKeys.size()));
+            return false;
+          }
         }
-        else {
-          daysKeys.put(exposureKey.getRollingStartIntervalNumber(), exposureKey.getRollingPeriod());
-        }
+
+        totalKeysPerDay.put(exposureKey.getRollingStartIntervalNumber(), numberOfKeys);
       }
 
-
-
-
-      if (distinctSize < exposureKeys.size()) {
-        addViolation(validatorContext, String.format(
-            "Duplicate StartIntervalNumber found. StartIntervalNumbers: %s", startIntervalNumbers));
-        return false;
-      }
+//      if (distinctSize < exposureKeys.size()) {
+//        addViolation(validatorContext, String.format(
+//            "Duplicate StartIntervalNumber found. StartIntervalNumbers: %s", startIntervalNumbers));
+//        return false;
+//      }
       return true;
     }
   }
