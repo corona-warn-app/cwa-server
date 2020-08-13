@@ -155,36 +155,34 @@ class PayloadValidationTest {
   }
 
   @Test
-    //Check duplicate start interval number
-  void check200ResponseStatusForDuplicateStartDateWithFlexibleRollingPeriod() {
-    ResponseEntity<Void> actResponse = executor.executePost(buildPayloadWithDuplicateStartDateWithFlexibleRollingPeriod());
-
-    assertThat(actResponse.getStatusCode()).isEqualTo(OK);
+  void check400ResponseStatusWithTwoKeysOneWithDefaultRollingPeriodAndOneWithFlexible() {
+    ResponseEntity<Void> actResponse = executor.executePost(buildPayloadWithTwoKeysOneWithDefaultRollingPeriodAndOneWithFlexible());
+    assertThat(actResponse.getStatusCode()).isEqualTo(BAD_REQUEST);
   }
-  private Collection<TemporaryExposureKey> buildPayloadWithDuplicateStartDateWithFlexibleRollingPeriod() {
-    ArrayList<TemporaryExposureKey> flexibleRollingPeriodKeys = new ArrayList<>();
+  private Collection<TemporaryExposureKey> buildPayloadWithTwoKeysOneWithDefaultRollingPeriodAndOneWithFlexible() {
+    ArrayList<TemporaryExposureKey> temporaryExposureKeys = new ArrayList<>();
+    temporaryExposureKeys.add(buildTemporaryExposureKeyWithFlexibleRollingPeriod(VALID_KEY_DATA_1,
+        createRollingStartIntervalNumber(2), 3, 100));
+    temporaryExposureKeys.add(buildTemporaryExposureKeyWithFlexibleRollingPeriod(VALID_KEY_DATA_1,
+        createRollingStartIntervalNumber(2), 3, 144));
 
-    for (int i=0; i <= 10; i++) {
-      flexibleRollingPeriodKeys.add(buildTemporaryExposureKeyWithFlexibleRollingPeriod(VALID_KEY_DATA_1,
-          createRollingStartIntervalNumber(2), 3, 100));
-    }
-    return flexibleRollingPeriodKeys;
+    return temporaryExposureKeys;
   }
 
   @Test
-  void check400ResponseStatusWithTwoKeysOneWithDefaultRollingPeriodAndOneWithFlexible() {
-    ResponseEntity<Void> actResponse = executor.executePost(buildPayloadWithTwoKeysOneWithDefaultRollingPeriodAndOneWithFlexible());
+  void check200ResponseStatusWithTwoKeysOneFlexibleAndOneDefaultOnDifferentDays() {
+    ResponseEntity<Void> actResponse = executor.executePost(buildPayloadWithTwoKeysOneFlexibleAndOneDefaultOnDifferentDays());
 
     assertThat(actResponse.getStatusCode()).isEqualTo(OK);
   }
 
-  private Collection<TemporaryExposureKey> buildPayloadWithTwoKeysOneWithDefaultRollingPeriodAndOneWithFlexible() {
+  private Collection<TemporaryExposureKey> buildPayloadWithTwoKeysOneFlexibleAndOneDefaultOnDifferentDays() {
     ArrayList<TemporaryExposureKey> flexibleRollingPeriodKeys = new ArrayList<>();
 
     flexibleRollingPeriodKeys.add(buildTemporaryExposureKeyWithFlexibleRollingPeriod(VALID_KEY_DATA_1,
         createRollingStartIntervalNumber(2), 3, 100));
     flexibleRollingPeriodKeys.add(buildTemporaryExposureKeyWithFlexibleRollingPeriod(VALID_KEY_DATA_1,
-        createRollingStartIntervalNumber(2), 3, 144));
+        createRollingStartIntervalNumber(3), 3, 144));
 
 
     return flexibleRollingPeriodKeys;
