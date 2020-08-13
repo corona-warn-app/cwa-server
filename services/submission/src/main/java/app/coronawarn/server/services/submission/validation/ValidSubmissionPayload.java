@@ -174,7 +174,7 @@ public @interface ValidSubmissionPayload {
         if(totalKeysPerDay.containsKey( exposureKey.getRollingStartIntervalNumber() )) {
           numberOfKeys += totalKeysPerDay.get( exposureKey.getRollingStartIntervalNumber() );
 
-          if(numberOfKeys > exposureKeys.size()) {
+          if(numberOfKeys > rollingPeriod) {
             addViolation(validatorContext, String.format(
                 "Keys in excess of %s per day.", exposureKeys.size()));
             return false;
@@ -184,11 +184,6 @@ public @interface ValidSubmissionPayload {
         totalKeysPerDay.put(exposureKey.getRollingStartIntervalNumber(), numberOfKeys);
       }
 
-//      if (distinctSize < exposureKeys.size()) {
-//        addViolation(validatorContext, String.format(
-//            "Duplicate StartIntervalNumber found. StartIntervalNumbers: %s", startIntervalNumbers));
-//        return false;
-//      }
       return true;
     }
   }
