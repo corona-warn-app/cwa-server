@@ -46,8 +46,8 @@ public class FederationDownloadServiceConfig {
     return federationGateway.getBaseUrl();
   }
 
-  public void setFederationDownload(FederationGateway federationDownload) {
-    this.federationGateway = federationDownload;
+  public void setFederationGateway(FederationGateway federationGateway) {
+    this.federationGateway = federationGateway;
   }
 
   public String getFederationDownloadPath() {

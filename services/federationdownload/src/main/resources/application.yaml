@@ -11,9 +11,9 @@ services:
   federationdownload:
     # The ApacheHttpClient's connection pool size.
     connection-pool-size: 200
-    federationgateway:
+    federation-gateway:
       base-url: ${FEDERATION_GATEWAY_BASE_URL:http://localhost:8005}
-      path: /diagnosiskeys/download
+      path: /diagnosiskeys/download/
     # Local paths, that are used during the export creation.
     paths:
       # The output path.

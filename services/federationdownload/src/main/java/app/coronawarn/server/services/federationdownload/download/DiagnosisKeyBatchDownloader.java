@@ -21,6 +21,7 @@
 package app.coronawarn.server.services.federationdownload.download;
 
 import app.coronawarn.server.common.persistence.domain.FederationBatch;
+import app.coronawarn.server.services.federationdownload.config.FederationDownloadServiceConfig;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.io.ByteArrayResource;
@@ -38,10 +39,13 @@ public class DiagnosisKeyBatchDownloader {
 
   private static final Logger logger = LoggerFactory.getLogger(DiagnosisKeyBatchDownloader.class);
 
+  private final FederationDownloadServiceConfig federationDownloadServiceConfig;
   private final WebClient webClient;
 
-  public DiagnosisKeyBatchDownloader(WebClient.Builder webClientBuilder) {
-    this.webClient = webClientBuilder.baseUrl("http://localhost:8005").build();
+  public DiagnosisKeyBatchDownloader(FederationDownloadServiceConfig federationDownloadServiceConfig,
+                                     WebClient.Builder webClientBuilder) {
+    this.federationDownloadServiceConfig = federationDownloadServiceConfig;
+    this.webClient = webClientBuilder.baseUrl(federationDownloadServiceConfig.getFederationDownloadBaseUrl()).build();
   }
 
   /**
@@ -51,15 +55,16 @@ public class DiagnosisKeyBatchDownloader {
    * @return Returns the downloaded batch
    * @throws RestClientException if status code is neither 2xx nor 4xx
    */
-  public byte[] downloadBatch(FederationBatch federationBatch)
+  public Mono<byte[]> downloadBatch(FederationBatch federationBatch)
       throws Exception {
     try {
       logger.info("Calling federation gateway download service for batch download ...");
 
       Mono<byte[]> mono = webClient.get()
           .uri(uriBuilder -> uriBuilder
-              .path("/diagnosiskeys/download/{date}")
-              .build("2020-10-10"))
+              .path(federationDownloadServiceConfig.getFederationDownloadPath())
+              .path(federationBatch.getDate().toString())
+              .build())
           .exchange()
           .flatMap(response -> {
             if (response.statusCode().is2xxSuccessful()) {
@@ -71,7 +76,7 @@ public class DiagnosisKeyBatchDownloader {
           .map(ByteArrayResource::getByteArray);
 
       logger.info("Received batch from federation gateway service");
-      return mono.block();
+      return mono;
     } catch (Exception e) {
       logger.info("Federation gateway service error");
       throw new Exception(e.getMessage());

@@ -37,6 +37,7 @@ import org.springframework.boot.ApplicationRunner;
 import org.springframework.context.ApplicationContext;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
+import reactor.core.publisher.Mono;
 
 
 /**
@@ -73,8 +74,8 @@ public class Download implements ApplicationRunner {
 
       for (FederationBatch federationBatch : federationBatches) {
         try {
-          byte[] body = diagnosisKeyBatchDownloader.downloadBatch(federationBatch);
-          DiagnosisKeyBatch diagnosisKeyBatch = DiagnosisKeyBatch.parseFrom(body);
+          Mono<byte[]> body = diagnosisKeyBatchDownloader.downloadBatch(federationBatch);
+          DiagnosisKeyBatch diagnosisKeyBatch = DiagnosisKeyBatch.parseFrom(body.block());
 
           // TODO: Call audit from federation gateway
 
