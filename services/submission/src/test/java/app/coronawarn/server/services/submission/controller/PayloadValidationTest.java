@@ -76,7 +76,7 @@ class PayloadValidationTest {
   private Collection<TemporaryExposureKey> buildPayloadWithTooManyKeys() {
     ArrayList<TemporaryExposureKey> tooMany = new ArrayList<>();
     for (int i = 0; i <= 20; i++) {
-      tooMany.add(buildTemporaryExposureKey(VALID_KEY_DATA_1, createRollingStartIntervalNumber(2), 3));
+      tooMany.add(buildTemporaryExposureKey(VALID_KEY_DATA_1, createRollingStartIntervalNumber(2) + i * DiagnosisKey.EXPECTED_ROLLING_PERIOD , 3));
     }
     return tooMany;
   }
@@ -98,12 +98,12 @@ class PayloadValidationTest {
     int rollingStartIntervalNumber1 = createRollingStartIntervalNumber(6);
     int rollingStartIntervalNumber2 = rollingStartIntervalNumber1 + DiagnosisKey.EXPECTED_ROLLING_PERIOD;
     int rollingStartIntervalNumber3 = rollingStartIntervalNumber2 + 2 * DiagnosisKey.EXPECTED_ROLLING_PERIOD;
-    var keysWithDuplicateStartIntervalNumber = Lists.list(
+    var keysWithGapsInStartIntervalNumber = Lists.list(
         buildTemporaryExposureKey(VALID_KEY_DATA_1, rollingStartIntervalNumber1, 1),
         buildTemporaryExposureKey(VALID_KEY_DATA_3, rollingStartIntervalNumber3, 3),
         buildTemporaryExposureKey(VALID_KEY_DATA_2, rollingStartIntervalNumber2, 2));
 
-    ResponseEntity<Void> actResponse = executor.executePost(keysWithDuplicateStartIntervalNumber);
+    ResponseEntity<Void> actResponse = executor.executePost(keysWithGapsInStartIntervalNumber);
 
     assertThat(actResponse.getStatusCode()).isEqualTo(OK);
   }
@@ -112,11 +112,11 @@ class PayloadValidationTest {
   void check400ResponseStatusForOverlappingTimeIntervals() {
     int rollingStartIntervalNumber1 = createRollingStartIntervalNumber(6);
     int rollingStartIntervalNumber2 = rollingStartIntervalNumber1 + (DiagnosisKey.EXPECTED_ROLLING_PERIOD / 2);
-    var keysWithDuplicateStartIntervalNumber = Lists.list(
+    var keysWithOverlappingStartIntervalNumber = Lists.list(
         buildTemporaryExposureKey(VALID_KEY_DATA_1, rollingStartIntervalNumber1, 1),
         buildTemporaryExposureKey(VALID_KEY_DATA_2, rollingStartIntervalNumber2, 2));
 
-    ResponseEntity<Void> actResponse = executor.executePost(keysWithDuplicateStartIntervalNumber);
+    ResponseEntity<Void> actResponse = executor.executePost(keysWithOverlappingStartIntervalNumber);
 
     assertThat(actResponse.getStatusCode()).isEqualTo(BAD_REQUEST);
   }
@@ -126,12 +126,12 @@ class PayloadValidationTest {
     int rollingStartIntervalNumber1 = createRollingStartIntervalNumber(6);
     int rollingStartIntervalNumber2 = rollingStartIntervalNumber1 + DiagnosisKey.EXPECTED_ROLLING_PERIOD;
     int rollingStartIntervalNumber3 = rollingStartIntervalNumber2 + DiagnosisKey.EXPECTED_ROLLING_PERIOD;
-    var keysWithDuplicateStartIntervalNumber = Lists.list(
+    var keysWithValidStartIntervalNumber = Lists.list(
         buildTemporaryExposureKey(VALID_KEY_DATA_1, rollingStartIntervalNumber1, 1),
         buildTemporaryExposureKey(VALID_KEY_DATA_3, rollingStartIntervalNumber3, 3),
         buildTemporaryExposureKey(VALID_KEY_DATA_2, rollingStartIntervalNumber2, 2));
 
-    ResponseEntity<Void> actResponse = executor.executePost(keysWithDuplicateStartIntervalNumber);
+    ResponseEntity<Void> actResponse = executor.executePost(keysWithValidStartIntervalNumber);
 
     assertThat(actResponse.getStatusCode()).isEqualTo(OK);
   }
