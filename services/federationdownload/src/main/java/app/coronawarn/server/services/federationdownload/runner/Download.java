@@ -28,7 +28,6 @@ import app.coronawarn.server.common.persistence.service.FederationBatchService;
 import app.coronawarn.server.common.protocols.external.exposurenotification.DiagnosisKeyBatch;
 import app.coronawarn.server.services.federationdownload.Application;
 import app.coronawarn.server.services.federationdownload.download.DiagnosisKeyBatchDownloader;
-import feign.Response.Body;
 import java.util.List;
 import java.util.stream.Collectors;
 import org.slf4j.Logger;
@@ -74,12 +73,21 @@ public class Download implements ApplicationRunner {
 
       for (FederationBatch federationBatch : federationBatches) {
         try {
-          Body body = diagnosisKeyBatchDownloader.downloadBatch(federationBatch);
-          DiagnosisKeyBatch diagnosisKeyBatch = DiagnosisKeyBatch.parseFrom(body.asInputStream());
+          byte[] body = diagnosisKeyBatchDownloader.downloadBatch(federationBatch);
+          DiagnosisKeyBatch diagnosisKeyBatch = DiagnosisKeyBatch.parseFrom(body);
+
           // TODO: Call audit from federation gateway
-          List<DiagnosisKey> diagnosisKeys = convertFederationDiagnosisKeysToDiagnosisKeys(diagnosisKeyBatch);
+
+          List<DiagnosisKey> diagnosisKeys = diagnosisKeyBatch.getKeysList().stream()
+              .map(federationDiagnosisKey ->
+                  DiagnosisKey
+                      .builder()
+                      .fromFederationDiagnosisKey(federationDiagnosisKey)
+                      .build()
+              ).collect(Collectors.toList());
+
           diagnosisKeyService.saveDiagnosisKeys(diagnosisKeys);
-          federationBatchService.deleteFederationBatch(federationBatch);
+          //federationBatchService.deleteFederationBatch(federationBatch);
         } catch (Exception e) {
           // TODO: error handling for failure during handling of single federationBatch?
           logger.error(e.getMessage());
@@ -91,18 +99,5 @@ public class Download implements ApplicationRunner {
       Application.killApplication(applicationContext);
     }
     logger.debug("Batch successfully downloaded.");
-  }
-
-  private List<DiagnosisKey> convertFederationDiagnosisKeysToDiagnosisKeys(DiagnosisKeyBatch diagnosisKeyBatch) {
-    List<app.coronawarn.server.common.protocols.external.exposurenotification.DiagnosisKey> keys =
-        diagnosisKeyBatch.getKeysList();
-
-    return diagnosisKeyBatch.getKeysList().stream()
-        .map(federationDiagnosisKey ->
-            DiagnosisKey
-                .builder()
-                .fromFederationDiagnosisKey(federationDiagnosisKey)
-                .build()
-        ).collect(Collectors.toList());
   }
 }
