@@ -138,4 +138,17 @@ public class DiagnosisKeyService {
         countryCode, numberOfDeletions, daysToRetain);
     keyRepository.deleteOlderThanOrEqual(threshold, countryCode);
   }
+
+  /**
+   * Return all valid persisted diagnosis keys, sorted by their submission timestamp where origin_country contains
+   * {@param countryCode}.
+   *
+   * @param originCountry country filter.
+   * @return Collection of {@link DiagnosisKey} that have origin_country the same as the passed param originCountry
+   */
+  public List<DiagnosisKey> getDiagnosisKeysByOriginCountry(String originCountry) {
+    var diagnosisKeys = createStreamFromIterator(
+        keyRepository.findAllKeysWhereOriginCountryIs(originCountry).iterator()).collect(Collectors.toList());
+    return this.filterValidDiagnosisKeys(diagnosisKeys);
+  }
 }

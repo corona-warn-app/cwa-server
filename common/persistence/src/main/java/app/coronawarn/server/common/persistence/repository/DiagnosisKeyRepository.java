@@ -107,4 +107,14 @@ public interface DiagnosisKeyRepository extends PagingAndSortingRepository<Diagn
       @Param("origin_country") String originCountry,
       @Param("visited_countries") String[] visitedCountries,
       @Param("verificationType") String verificationType);
+
+  /**
+   * Returns all diagnosis keys where origin_country is equal to the specified country code and ordered by the
+   * submission_timestamp.
+   *
+   * @param countryCode filter country code.
+   * @return list of DiagnosisKeys.
+   */
+  @Query("SELECT * FROM diagnosis_key WHERE :origin_country = origin_country ORDER BY submission_timestamp ASC")
+  Iterable<DiagnosisKey> findAllKeysWhereOriginCountryIs(@Param("origin_country") String countryCode);
 }
