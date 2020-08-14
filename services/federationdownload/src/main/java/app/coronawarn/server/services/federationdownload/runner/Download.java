@@ -74,21 +74,7 @@ public class Download implements ApplicationRunner {
 
       for (FederationBatch federationBatch : federationBatches) {
         try {
-          Mono<byte[]> body = diagnosisKeyBatchDownloader.downloadBatch(federationBatch);
-          DiagnosisKeyBatch diagnosisKeyBatch = DiagnosisKeyBatch.parseFrom(body.block());
-
-          // TODO: Call audit from federation gateway
-
-          List<DiagnosisKey> diagnosisKeys = diagnosisKeyBatch.getKeysList().stream()
-              .map(federationDiagnosisKey ->
-                  DiagnosisKey
-                      .builder()
-                      .fromFederationDiagnosisKey(federationDiagnosisKey)
-                      .build()
-              ).collect(Collectors.toList());
-
-          diagnosisKeyService.saveDiagnosisKeys(diagnosisKeys);
-          //federationBatchService.deleteFederationBatch(federationBatch);
+          processFederationBatch(federationBatch);
         } catch (Exception e) {
           // TODO: error handling for failure during handling of single federationBatch?
           logger.error(e.getMessage());
@@ -100,5 +86,24 @@ public class Download implements ApplicationRunner {
       Application.killApplication(applicationContext);
     }
     logger.debug("Batch successfully downloaded.");
+  }
+
+  private void processFederationBatch(FederationBatch federationBatch) throws Exception {
+    Mono<byte[]> body = diagnosisKeyBatchDownloader.downloadBatch(federationBatch);
+    DiagnosisKeyBatch diagnosisKeyBatch = DiagnosisKeyBatch.parseFrom(body.block());
+
+    // TODO: Call audit from federation gateway
+
+    List<DiagnosisKey> diagnosisKeys = diagnosisKeyBatch.getKeysList().stream()
+        .map(federationDiagnosisKey ->
+            DiagnosisKey
+                .builder()
+                .fromFederationDiagnosisKey(federationDiagnosisKey)
+                .build()
+        ).collect(Collectors.toList());
+
+    diagnosisKeyService.saveDiagnosisKeys(diagnosisKeys);
+
+    //federationBatchService.deleteFederationBatch(federationBatch);
   }
 }
