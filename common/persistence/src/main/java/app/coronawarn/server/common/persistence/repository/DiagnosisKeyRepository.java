@@ -36,7 +36,7 @@ public interface DiagnosisKeyRepository extends PagingAndSortingRepository<Diagn
    * @param submissionTimestamp The submission timestamp up to which entries will be expired.
    * @return The number of expired keys.
    */
-  @Query("SELECT COUNT(*) FROM diagnosis_key WHERE submission_timestamp<=:threshold")
+  @Query("SELECT COUNT(*) FROM diagnosis_key WHERE submission_timestamp<:threshold")
   int countOlderThanOrEqual(@Param("threshold") long submissionTimestamp);
 
   /**
@@ -45,7 +45,7 @@ public interface DiagnosisKeyRepository extends PagingAndSortingRepository<Diagn
    * @param submissionTimestamp The submission timestamp up to which entries will be deleted.
    */
   @Modifying
-  @Query("DELETE FROM diagnosis_key WHERE submission_timestamp<=:threshold")
+  @Query("DELETE FROM diagnosis_key WHERE submission_timestamp<:threshold")
   void deleteOlderThanOrEqual(@Param("threshold") long submissionTimestamp);
 
   /**
