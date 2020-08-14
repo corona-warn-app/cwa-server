@@ -24,7 +24,6 @@ import java.io.File;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.Pattern;
-import app.coronawarn.server.common.persistence.domain.DiagnosisKey;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Component;
 import org.springframework.util.unit.DataSize;
@@ -289,6 +288,7 @@ public class SubmissionServiceConfig {
       this.rollingPeriod = rollingPeriod;
     }
   }
+
   public Integer getRollingPeriod() {
     return diagnosisKey.getRollingPeriod();
   }

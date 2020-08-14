@@ -20,9 +20,6 @@
 
 package app.coronawarn.server.services.submission.validation;
 
-import static app.coronawarn.server.common.persistence.domain.DiagnosisKey.MAX_ROLLING_PERIOD;
-
-import app.coronawarn.server.common.persistence.domain.DiagnosisKey;
 import app.coronawarn.server.common.protocols.external.exposurenotification.TemporaryExposureKey;
 import app.coronawarn.server.common.protocols.internal.SubmissionPayload;
 import app.coronawarn.server.services.submission.config.SubmissionServiceConfig;
@@ -32,12 +29,8 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 import java.util.Arrays;
-import java.util.Dictionary;
-import java.util.Hashtable;
-import java.util.List;
 import java.util.HashMap;
-import java.util.stream.Collectors;
-import java.util.stream.IntStream;
+import java.util.List;
 import javax.validation.Constraint;
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
@@ -99,16 +92,14 @@ public @interface ValidSubmissionPayload {
       List<TemporaryExposureKey> keyDates;
 
       for (TemporaryExposureKey exposureKey: exposureKeys) {
-        if(exposureKey.getRollingPeriod() < rollingPeriod ){
+        if (exposureKey.getRollingPeriod() < rollingPeriod) {
           isValid = checkDuplicateStartIntervalNumberLimit(exposureKeys, validatorContext);
-        }
-        else {
+        } else {
           isValid = checkKeyCollectionSize(exposureKeys, validatorContext);
           isValid &= checkUniqueStartIntervalNumbers(exposureKeys, validatorContext);
           isValid &= checkNoOverlapsInTimeWindow(exposureKeys, validatorContext);
         }
       }
-
 
       return isValid;
     }
@@ -170,12 +161,11 @@ public @interface ValidSubmissionPayload {
       HashMap<Integer, Integer> totalKeysPerDay = new HashMap<Integer, Integer>();
 
       for (TemporaryExposureKey exposureKey: exposureKeys) {
-
         int numberOfKeys = exposureKey.getRollingPeriod();
-        if(totalKeysPerDay.containsKey( exposureKey.getRollingStartIntervalNumber() )) {
-          numberOfKeys += totalKeysPerDay.get( exposureKey.getRollingStartIntervalNumber() );
+        if (totalKeysPerDay.containsKey(exposureKey.getRollingStartIntervalNumber())) {
+          numberOfKeys += totalKeysPerDay.get(exposureKey.getRollingStartIntervalNumber());
 
-          if(numberOfKeys > rollingPeriod) {
+          if (numberOfKeys > rollingPeriod) {
             addViolation(validatorContext, String.format(
                 "Keys in excess of %s per day.", exposureKeys.size()));
             return false;
