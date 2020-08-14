@@ -35,7 +35,6 @@ import app.coronawarn.server.common.persistence.exception.InvalidDiagnosisKeyExc
 import app.coronawarn.server.common.persistence.repository.DiagnosisKeyRepository;
 import java.time.OffsetDateTime;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import app.coronawarn.server.common.protocols.external.exposurenotification.VerificationType;
@@ -236,17 +235,6 @@ class DiagnosisKeyServiceTest {
 
     assertThat(actKeys.size()).isEqualTo(1);
     assertThat(actKeys.iterator().next().getTransmissionRiskLevel()).isEqualTo(2);
-  }
-
-  @Test
-  void testFilterByOriginCountryFrShouldReturnOneFrKey() {
-    diagnosisKeyService.saveDiagnosisKeys(
-        Collections.singletonList(
-            buildDiagnosisKeyForDateTime(OffsetDateTime.now(UTC).minusDays(1), "FR", List.of("DE", "FR", "DK"),
-                VerificationType.LAB_VERIFIED)));
-    final Collection<DiagnosisKey> frKey = diagnosisKeyService.getDiagnosisKeysByOriginCountry("FR");
-    assertThat(frKey.size()).isEqualTo(1);
-    assertThat(frKey.stream().findAny().map(DiagnosisKey::getOriginCountry).orElse("")).isEqualTo("FR");
   }
 
   @Nested
