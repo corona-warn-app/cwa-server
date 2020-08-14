@@ -35,6 +35,7 @@ import java.util.Arrays;
 import java.util.Dictionary;
 import java.util.Hashtable;
 import java.util.List;
+import java.util.HashMap;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import javax.validation.Constraint;
@@ -166,7 +167,7 @@ public @interface ValidSubmissionPayload {
         ConstraintValidatorContext validatorContext) {
 
 
-      Hashtable<Integer, Integer> totalKeysPerDay = new Hashtable<Integer, Integer>();
+      HashMap<Integer, Integer> totalKeysPerDay = new HashMap<Integer, Integer>();
 
       for (TemporaryExposureKey exposureKey: exposureKeys) {
 
