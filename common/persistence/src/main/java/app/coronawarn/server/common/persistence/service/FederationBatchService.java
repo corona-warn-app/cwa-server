@@ -54,7 +54,7 @@ public class FederationBatchService {
   @Transactional
   public void saveFederationBatch(FederationBatch federationBatch) {
     federationBatchRepository
-        .saveDoNothingOnConflict(federationBatch.getBatchTag(), federationBatch.getDate());
+        .saveDoNothingOnConflict(federationBatch.getBatchTag(), federationBatch.getDate(), federationBatch.getStatus());
   }
 
   /**
