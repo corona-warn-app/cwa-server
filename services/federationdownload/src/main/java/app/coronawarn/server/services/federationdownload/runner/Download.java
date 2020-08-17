@@ -69,12 +69,23 @@ public class Download implements ApplicationRunner {
   @Override
   public void run(ApplicationArguments args) {
     try {
+      // Download federation batches from day before
+      // process them, add batchTag from this response to federationbatch table
+
+      FederationBatch batchToProcess = federationBatchService.getNextFederationBatchToProcess();
+
+      if (batchToProcess == null) {
+        logger.debug("No (further) batches to process found in table.");
+        return;
+      }
+
       List<FederationBatch> federationBatches =
           federationBatchService.getFederationBatches();
 
       for (FederationBatch federationBatch : federationBatches) {
         try {
           processFederationBatch(federationBatch);
+          federationBatchService.markFederationBatchAsProcessed(batchToProcess);
         } catch (Exception e) {
           // TODO: error handling for failure during handling of single federationBatch?
           logger.error(e.getMessage());
@@ -103,7 +114,5 @@ public class Download implements ApplicationRunner {
         ).collect(Collectors.toList());
 
     diagnosisKeyService.saveDiagnosisKeys(diagnosisKeys);
-
-    //federationBatchService.deleteFederationBatch(federationBatch);
   }
 }
