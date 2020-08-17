@@ -37,14 +37,13 @@ You will find the implementation file at [`/services/submission/src/main/java/ap
 
 ### Validation Constraints
 
-
 Temporary Exposure Keys (TEK's) are submitted by the client device (iOS/Android phone) via the submission service.
 
 Constraints maintained as enviroment variables which are present as secrets in the Vault /cwa-server/submission
 
-The constraints put on submitted TEK's are as follows;
+The constraints put on submitted TEK's are as follows:
+
 * Each TEK contains a `StartIntervalNumber` (a date e.g. 2nd July 2020)
 * The period covered by the data file must not exceed the configured maximum number of days, represented by the `MAX_NUMBER_OF_KEYS` property which is in the vault.
 * The total combined rolling period for a single TEK cannot exceed maximum rolling period, represented by the `MAX_ROLLING_PERIOD` property which is in the vault.
-* More than one TEK with the same `StartIntervalNumber` may be submitted, these will have their rolling period's combined
-
+* More than one TEK with the same `StartIntervalNumber` may be submitted, these will have their rolling period's combined.
