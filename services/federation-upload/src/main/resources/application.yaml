@@ -1,0 +1,24 @@
+---
+logging:
+  level:
+    org:
+      springframework:
+        web: INFO
+    app:
+      coronawarn: INFO
+
+
+spring:
+  transaction:
+    default-timeout: 20
+  flyway:
+    enabled: true
+    locations: classpath:/db/migration, classpath:/db/specific/{vendor}
+    password: ${POSTGRESQL_PASSWORD_FLYWAY:local_setup_flyway}
+    user: ${POSTGRESQL_USER_FLYWAY:local_setup_flyway}
+  # Postgres configuration
+  datasource:
+    driver-class-name: org.postgresql.Driver
+    url: jdbc:postgresql://${POSTGRESQL_SERVICE_HOST}:${POSTGRESQL_SERVICE_PORT}/${POSTGRESQL_DATABASE}?ssl=true&sslmode=verify-full&sslrootcert=${SSL_POSTGRES_CERTIFICATE_PATH}&sslcert=${SSL_SUBMISSION_CERTIFICATE_PATH}&sslkey=${SSL_SUBMISSION_PRIVATE_KEY_PATH}
+    username: ${POSTGRESQL_USER_SUBMISSION:local_setup_submission}
+    password: ${POSTGRESQL_PASSWORD_SUBMISSION:local_setup_submission}

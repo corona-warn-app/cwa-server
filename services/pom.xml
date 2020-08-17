@@ -26,6 +26,7 @@
     <module>submission</module>
     <module>callback</module>
     <module>federationdownload</module>
+    <module>federation-upload</module>
   </modules>
 
   <properties>
