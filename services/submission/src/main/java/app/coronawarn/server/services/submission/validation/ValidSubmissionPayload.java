@@ -89,8 +89,6 @@ public @interface ValidSubmissionPayload {
       validatorContext.disableDefaultConstraintViolation();
       boolean isValid = false;
 
-      List<TemporaryExposureKey> keyDates;
-
       for (TemporaryExposureKey exposureKey: exposureKeys) {
         if (exposureKey.getRollingPeriod() < rollingPeriod) {
           isValid = checkDuplicateStartIntervalNumberLimit(exposureKeys, validatorContext);
@@ -158,7 +156,7 @@ public @interface ValidSubmissionPayload {
         ConstraintValidatorContext validatorContext) {
 
 
-      HashMap<Integer, Integer> totalKeysPerDay = new HashMap<Integer, Integer>();
+      HashMap<Integer, Integer> totalKeysPerDay = new HashMap<>();
 
       for (TemporaryExposureKey exposureKey: exposureKeys) {
         int numberOfKeys = exposureKey.getRollingPeriod();
