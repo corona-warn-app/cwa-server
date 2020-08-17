@@ -173,9 +173,10 @@ class DiagnosisKeyBuilderTest {
             + ". Invalid Value: " + invalidRollingPeriod + "]");
   }
 
-  @Test
-  void rollingPeriodDoesNotThrowForValid() {
-    assertThatCode(() -> keyWithRollingPeriod(DiagnosisKey.MAX_ROLLING_PERIOD)).doesNotThrowAnyException();
+  @ParameterizedTest
+  @ValueSource(ints = {DiagnosisKey.MIN_ROLLING_PERIOD, 100, DiagnosisKey.MAX_ROLLING_PERIOD})
+  void rollingPeriodDoesNotThrowForValid(int validRollingPeriod) {
+    assertThatCode(() -> keyWithRollingPeriod(validRollingPeriod)).doesNotThrowAnyException();
   }
 
   @ParameterizedTest
