@@ -171,12 +171,12 @@ public @interface ValidSubmissionPayload {
 
     private boolean checkIfFlexibleRollingPeriod(List<TemporaryExposureKey> exposureKeys,
         ConstraintValidatorContext validatorContext) {
-      if(!exposureKeys.stream()
+      if (!exposureKeys.stream()
           .filter(temporaryExposureKey -> temporaryExposureKey.getRollingPeriod() < maxRollingPeriod)
           .findAny()
-          .isPresent()){
+          .isPresent()) {
         addViolation(validatorContext, String.format(
-            "Keys in excess of %s per day.", exposureKeys.size()));
+            "Rolling Period is under the limit size %s set per day.", maxRollingPeriod));
         return false;
       }
       return true;
