@@ -18,7 +18,7 @@
  * ---license-end
  */
 
-package app.coronawarn.server.services.federationdownload.runner;
+package app.coronawarn.server.services.federationdownload.repository.runner;
 
 
 import app.coronawarn.server.common.persistence.domain.DiagnosisKey;
@@ -26,8 +26,8 @@ import app.coronawarn.server.common.persistence.domain.FederationBatch;
 import app.coronawarn.server.common.persistence.service.DiagnosisKeyService;
 import app.coronawarn.server.common.persistence.service.FederationBatchService;
 import app.coronawarn.server.common.protocols.external.exposurenotification.DiagnosisKeyBatch;
-import app.coronawarn.server.services.federationdownload.Application;
-import app.coronawarn.server.services.federationdownload.download.DiagnosisKeyBatchDownloader;
+import app.coronawarn.server.services.federationdownload.repository.Application;
+import app.coronawarn.server.services.federationdownload.repository.download.DiagnosisKeyBatchDownloader;
 import java.util.List;
 import java.util.stream.Collectors;
 import org.slf4j.Logger;

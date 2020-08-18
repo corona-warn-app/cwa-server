@@ -18,14 +18,14 @@
  * ---license-end
  */
 
-package app.coronawarn.server.services.federationdownload.validation;
+package app.coronawarn.server.services.federationdownload.repository.validation;
 
 import static app.coronawarn.server.common.persistence.domain.DiagnosisKey.EXPECTED_ROLLING_PERIOD;
 
 import app.coronawarn.server.common.protocols.external.exposurenotification.DiagnosisKeyBatch;
 import app.coronawarn.server.common.protocols.external.exposurenotification.TemporaryExposureKey;
 import app.coronawarn.server.common.protocols.internal.SubmissionPayload;
-import app.coronawarn.server.services.federationdownload.config.FederationDownloadServiceConfig;
+import app.coronawarn.server.services.federationdownload.repository.config.FederationDownloadServiceConfig;
 import java.lang.annotation.Documented;
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Target;

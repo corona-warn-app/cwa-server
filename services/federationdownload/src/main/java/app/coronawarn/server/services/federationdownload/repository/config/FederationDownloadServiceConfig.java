@@ -18,7 +18,7 @@
  * ---license-end
  */
 
-package app.coronawarn.server.services.federationdownload.config;
+package app.coronawarn.server.services.federationdownload.repository.config;
 
 import java.io.File;
 import org.springframework.boot.context.properties.ConfigurationProperties;

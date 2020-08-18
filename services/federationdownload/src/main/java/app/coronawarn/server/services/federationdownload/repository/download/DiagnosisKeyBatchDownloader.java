@@ -18,10 +18,10 @@
  * ---license-end
  */
 
-package app.coronawarn.server.services.federationdownload.download;
+package app.coronawarn.server.services.federationdownload.repository.download;
 
 import app.coronawarn.server.common.persistence.domain.FederationBatch;
-import app.coronawarn.server.services.federationdownload.config.FederationDownloadServiceConfig;
+import app.coronawarn.server.services.federationdownload.repository.config.FederationDownloadServiceConfig;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.io.ByteArrayResource;
