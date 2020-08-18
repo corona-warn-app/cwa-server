@@ -67,11 +67,11 @@ public @interface ValidSubmissionPayload {
       ConstraintValidator<ValidSubmissionPayload, SubmissionPayload> {
 
     private final int maxNumberOfKeys;
-    private final int rollingPeriod;
+    private final int maxRollingPeriod;
 
     public SubmissionPayloadValidator(SubmissionServiceConfig submissionServiceConfig) {
       maxNumberOfKeys = submissionServiceConfig.getMaxNumberOfKeys();
-      rollingPeriod = submissionServiceConfig.getRollingPeriod();
+      maxRollingPeriod = submissionServiceConfig.getRollingPeriod();
     }
 
     /**
@@ -90,7 +90,7 @@ public @interface ValidSubmissionPayload {
       boolean isValid = false;
 
       for (TemporaryExposureKey exposureKey: exposureKeys) {
-        if (exposureKey.getRollingPeriod() < rollingPeriod) {
+        if (exposureKey.getRollingPeriod() < maxRollingPeriod) {
           isValid = checkDuplicateStartIntervalNumberLimit(exposureKeys, validatorContext);
         } else {
           isValid = checkKeyCollectionSize(exposureKeys, validatorContext);
@@ -143,7 +143,7 @@ public @interface ValidSubmissionPayload {
           .sorted().boxed().toArray(Integer[]::new);
 
       for (int i = 1; i < sortedStartIntervalNumbers.length; i++) {
-        if ((sortedStartIntervalNumbers[i - 1] + rollingPeriod) > sortedStartIntervalNumbers[i]) {
+        if ((sortedStartIntervalNumbers[i - 1] + maxRollingPeriod) > sortedStartIntervalNumbers[i]) {
           addViolation(validatorContext, String.format(
               "Subsequent intervals overlap. StartIntervalNumbers: %s", sortedStartIntervalNumbers));
           return false;
@@ -163,7 +163,7 @@ public @interface ValidSubmissionPayload {
         if (totalKeysPerDay.containsKey(exposureKey.getRollingStartIntervalNumber())) {
           numberOfKeys += totalKeysPerDay.get(exposureKey.getRollingStartIntervalNumber());
 
-          if (numberOfKeys > rollingPeriod) {
+          if (numberOfKeys > maxRollingPeriod) {
             addViolation(validatorContext, String.format(
                 "Keys in excess of %s per day.", exposureKeys.size()));
             return false;

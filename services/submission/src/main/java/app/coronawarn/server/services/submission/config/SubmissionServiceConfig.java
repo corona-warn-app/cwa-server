@@ -278,18 +278,18 @@ public class SubmissionServiceConfig {
 
     @Min(0)
     @Max(144)
-    private Integer rollingPeriod;
+    private Integer maxRollingPeriod;
 
-    public Integer getRollingPeriod() {
-      return rollingPeriod;
+    public Integer getMaxRollingPeriod() {
+      return maxRollingPeriod;
     }
 
-    public void setRollingPeriod(Integer rollingPeriod) {
-      this.rollingPeriod = rollingPeriod;
+    public void setMaxRollingPeriod(Integer maxRollingPeriod) {
+      this.maxRollingPeriod = maxRollingPeriod;
     }
   }
 
   public Integer getRollingPeriod() {
-    return diagnosisKey.getRollingPeriod();
+    return diagnosisKey.getMaxRollingPeriod();
   }
 }

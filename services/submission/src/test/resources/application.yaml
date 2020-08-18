@@ -34,7 +34,7 @@ services:
     monitoring:
       batch-size: 5
     diagnosis-key:
-      rolling-period: 144
+      max-rolling-period: 144
 
 management:
   endpoint:

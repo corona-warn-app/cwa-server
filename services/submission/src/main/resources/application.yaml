@@ -35,7 +35,7 @@ services:
       # The batch size (number of requests) to use for monitoring request count.
       batch-size: 5
     diagnosis-key:
-      rolling-period: ${MAX_ROLLING_PERIOD:144}
+      max-rolling-period: ${MAX_ROLLING_PERIOD:144}
     client:
       ssl:
         key-password: ${SSL_SUBMISSION_KEYSTORE_PASSWORD}
