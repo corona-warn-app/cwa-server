@@ -289,7 +289,7 @@ public class SubmissionServiceConfig {
     }
   }
 
-  public Integer getRollingPeriod() {
+  public Integer getMaxRollingPeriod() {
     return diagnosisKey.getMaxRollingPeriod();
   }
 }

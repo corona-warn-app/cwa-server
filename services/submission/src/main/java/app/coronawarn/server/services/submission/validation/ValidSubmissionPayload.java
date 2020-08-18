@@ -71,7 +71,7 @@ public @interface ValidSubmissionPayload {
 
     public SubmissionPayloadValidator(SubmissionServiceConfig submissionServiceConfig) {
       maxNumberOfKeys = submissionServiceConfig.getMaxNumberOfKeys();
-      maxRollingPeriod = submissionServiceConfig.getRollingPeriod();
+      maxRollingPeriod = submissionServiceConfig.getMaxRollingPeriod();
     }
 
     /**
