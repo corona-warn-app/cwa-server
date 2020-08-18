@@ -143,7 +143,7 @@ class DiagnosisKeyServiceTest {
   void testShouldNotDeleteKeysFromAnotherCountry() {
     var expKeys = List.of(
         buildDiagnosisKeyForDateTime(OffsetDateTime.now(UTC).minusDays(1L), "DE", Collections.singletonList("DE"),
-            VerificationType.LAB_VERIFIED));
+            VerificationType.CONFIRMED_TEST));
 
     diagnosisKeyService.saveDiagnosisKeys(expKeys);
     diagnosisKeyService.applyRetentionPolicy(1, "FR");
@@ -154,8 +154,8 @@ class DiagnosisKeyServiceTest {
 
   @Test
   void testShouldDeleteKeysWithMatchingVisitedCountry() {
-    var frenchKeys = buildDiagnosisKeyForDateTime(OffsetDateTime.now(UTC).minusDays(1L), "DE", Collections.singletonList("FR"), VerificationType.LAB_VERIFIED);
-    var germanKeys = buildDiagnosisKeyForDateTime(OffsetDateTime.now(UTC).minusDays(2L), "DE", Collections.singletonList("DE"), VerificationType.LAB_VERIFIED);
+    var frenchKeys = buildDiagnosisKeyForDateTime(OffsetDateTime.now(UTC).minusDays(1L), "DE", Collections.singletonList("FR"), VerificationType.CONFIRMED_TEST);
+    var germanKeys = buildDiagnosisKeyForDateTime(OffsetDateTime.now(UTC).minusDays(2L), "DE", Collections.singletonList("DE"), VerificationType.CONFIRMED_TEST);
 
     diagnosisKeyService.saveDiagnosisKeys(List.of(germanKeys, frenchKeys));
     diagnosisKeyService.applyRetentionPolicy(1, "FR");
@@ -167,7 +167,7 @@ class DiagnosisKeyServiceTest {
   @Test
   void testShouldDeleteKeysWhereAnyOfVisitedCountriesMatch() {
     var keys = List.of(
-        buildDiagnosisKeyForDateTime(OffsetDateTime.now(UTC).minusDays(1L), "DE", List.of("DE", "FR", "LU"), VerificationType.LAB_VERIFIED));
+        buildDiagnosisKeyForDateTime(OffsetDateTime.now(UTC).minusDays(1L), "DE", List.of("DE", "FR", "LU"), VerificationType.CONFIRMED_TEST));
     diagnosisKeyService.saveDiagnosisKeys(keys);
     diagnosisKeyService.applyRetentionPolicy(1, "FR");
     var actKeys = diagnosisKeyService.getDiagnosisKeys();
@@ -177,9 +177,9 @@ class DiagnosisKeyServiceTest {
   @Test
   void testShouldDeleteKeysFromDifferentOriginCountriesWithMatchingVisitedCountry() {
     var keys = List.of(
-        buildDiagnosisKeyForDateTime(OffsetDateTime.now(UTC).minusDays(1L), "DE", List.of("FR"), VerificationType.LAB_VERIFIED),
-        buildDiagnosisKeyForDateTime(OffsetDateTime.now(UTC).minusDays(1L), "FR", List.of("FR"),VerificationType.LAB_VERIFIED),
-        buildDiagnosisKeyForDateTime(OffsetDateTime.now(UTC).minusDays(1L), "LU", List.of("FR"), VerificationType.LAB_VERIFIED));
+        buildDiagnosisKeyForDateTime(OffsetDateTime.now(UTC).minusDays(1L), "DE", List.of("FR"), VerificationType.CONFIRMED_TEST),
+        buildDiagnosisKeyForDateTime(OffsetDateTime.now(UTC).minusDays(1L), "FR", List.of("FR"),VerificationType.CONFIRMED_TEST),
+        buildDiagnosisKeyForDateTime(OffsetDateTime.now(UTC).minusDays(1L), "LU", List.of("FR"), VerificationType.CONFIRMED_TEST));
     diagnosisKeyService.saveDiagnosisKeys(keys);
     diagnosisKeyService.applyRetentionPolicy(1, "FR");
     var actKeys = diagnosisKeyService.getDiagnosisKeys();
@@ -196,7 +196,7 @@ class DiagnosisKeyServiceTest {
           .withCountryCode("DE")
           .withVisitedCountries(Collections.singletonList("DE"))
           .withSubmissionTimestamp(0L)
-          .withVerificationType(VerificationType.LAB_VERIFIED)
+          .withVerificationType(VerificationType.CONFIRMED_TEST)
           .build());
 
       diagnosisKeyService.saveDiagnosisKeys(keys);
@@ -217,7 +217,7 @@ class DiagnosisKeyServiceTest {
             .withCountryCode("DE")
             .withVisitedCountries(Collections.singletonList("DE"))
             .withSubmissionTimestamp(0L)
-            .withVerificationType(VerificationType.LAB_VERIFIED)
+            .withVerificationType(VerificationType.CONFIRMED_TEST)
             .build(),
         DiagnosisKey.builder()
             .withKeyData(keyData.getBytes())
@@ -226,7 +226,7 @@ class DiagnosisKeyServiceTest {
             .withCountryCode("DE")
             .withVisitedCountries(Collections.singletonList("DE"))
             .withSubmissionTimestamp(0L)
-            .withVerificationType(VerificationType.LAB_VERIFIED)
+            .withVerificationType(VerificationType.CONFIRMED_TEST)
             .build());
 
     diagnosisKeyService.saveDiagnosisKeys(keys);
@@ -248,9 +248,9 @@ class DiagnosisKeyServiceTest {
     @BeforeEach
     public void setup() {
       var keys = List.of(
-          buildDiagnosisKeyForDateTime(OffsetDateTime.now(UTC).minusDays(1L), "DE", Collections.singletonList("DE"),VerificationType.LAB_VERIFIED),
-          buildDiagnosisKeyForDateTime(OffsetDateTime.now(UTC).minusDays(2L), "DE", List.of("DE", "FR"),VerificationType.LAB_VERIFIED),
-          buildDiagnosisKeyForDateTime(OffsetDateTime.now(UTC).minusDays(3L), "DE", List.of("DE", "FR", "DK"),VerificationType.LAB_VERIFIED)
+          buildDiagnosisKeyForDateTime(OffsetDateTime.now(UTC).minusDays(1L), "DE", Collections.singletonList("DE"),VerificationType.CONFIRMED_TEST),
+          buildDiagnosisKeyForDateTime(OffsetDateTime.now(UTC).minusDays(2L), "DE", List.of("DE", "FR"),VerificationType.CONFIRMED_TEST),
+          buildDiagnosisKeyForDateTime(OffsetDateTime.now(UTC).minusDays(3L), "DE", List.of("DE", "FR", "DK"),VerificationType.CONFIRMED_TEST)
       );
       diagnosisKeyService.saveDiagnosisKeys(keys);
     }

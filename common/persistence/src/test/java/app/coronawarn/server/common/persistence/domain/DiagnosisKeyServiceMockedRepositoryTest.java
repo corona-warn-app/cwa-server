@@ -46,7 +46,7 @@ class DiagnosisKeyServiceMockedRepositoryTest {
   static final int expTransmissionRiskLevel = 1;
   static final String originCountry = "DE";
   static final List<String> visitedCountries = Collections.singletonList("DE");
-  static final VerificationType verificationType = VerificationType.LAB_VERIFIED;
+  static final VerificationType verificationType = VerificationType.CONFIRMED_TEST;
 
   @Autowired
   private DiagnosisKeyService diagnosisKeyService;

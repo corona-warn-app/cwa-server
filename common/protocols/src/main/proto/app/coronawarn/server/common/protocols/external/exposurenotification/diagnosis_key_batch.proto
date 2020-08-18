@@ -17,9 +17,14 @@ message DiagnosisKey {
   repeated string visitedCountries = 5;
   string origin = 6; // country of origin
   VerificationType verificationType = 7; // set by backend
+  uint32 days_since_onset_of_symptoms = 8;
 }
 
 enum VerificationType {
-  LAB_VERIFIED = 0;
-  SELF_REPORTED = 1;
+  UNKNOWN = 0;
+  CONFIRMED_TEST = 1;
+  CONFIRMED_CLINICAL_DIAGNOSIS = 2;
+  SELF_REPORT = 3;
+  RECURSIVE = 4;
+  REVOKED = 5;
 }

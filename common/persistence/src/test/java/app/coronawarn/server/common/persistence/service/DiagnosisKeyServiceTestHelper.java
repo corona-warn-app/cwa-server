@@ -71,7 +71,7 @@ public class DiagnosisKeyServiceTestHelper {
   }
 
   public static DiagnosisKey buildDiagnosisKeyForSubmissionTimestamp(long submissionTimeStamp) {
-    return buildDiagnosisKeyForSubmissionTimestamp(submissionTimeStamp, false, "DE", Collections.singletonList("DE"), VerificationType.LAB_VERIFIED);
+    return buildDiagnosisKeyForSubmissionTimestamp(submissionTimeStamp, false, "DE", Collections.singletonList("DE"), VerificationType.CONFIRMED_TEST);
   }
 
   public static DiagnosisKey buildDiagnosisKeyForDateTime(OffsetDateTime dateTime) {

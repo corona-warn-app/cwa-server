@@ -45,7 +45,7 @@ class DiagnosisKeyTest {
   final static long expSubmissionTimestamp = 4L;
   static final String originCountry = "DE";
   static final List<String> visitedCountries = Collections.singletonList("DE");
-  static final VerificationType verificationType = VerificationType.LAB_VERIFIED;
+  static final VerificationType verificationType = VerificationType.CONFIRMED_TEST;
 
   final static DiagnosisKey diagnosisKey = new DiagnosisKey(expKeyData, expRollingStartIntervalNumber,
       expRollingPeriod, expTransmissionRiskLevel, expSubmissionTimestamp, false, originCountry, visitedCountries, verificationType);
