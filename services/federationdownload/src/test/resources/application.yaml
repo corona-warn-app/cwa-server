@@ -1,4 +1,19 @@
 ---
+spring:
+  flyway:
+    enabled: true
+    locations: classpath:/db/migration
+  datasource:
+    url:  jdbc:tc:postgresql:11.8:///databasename?TC_TMPFS=/testtmpfs:rw
+#    if
+#    driver-class-name: org.testcontainers.jdbc.ContainerDatabaseDriver
+  test:
+    database:
+      # Use datasource as defined above.
+      replace: none
+  main:
+    banner-mode: off
+
 logging:
   level:
     org:
@@ -51,14 +66,34 @@ services:
       retry-backoff: 1
       max-number-of-failed-operations: 5
       max-number-of-s3-threads: 2
-spring:
-  main:
-    banner-mode: off
-  datasource:
-    url: jdbc:h2:mem:test;MODE=PostgreSQL
-    driverClassName: org.h2.Driver
-    platform: h2
-  test:
-    database:
-      # Use datasource as defined above.
-      replace: none
+  federationdownload:
+    # The ApacheHttpClient's connection pool size.
+    connection-pool-size: 200
+    federation-gateway:
+      base-url: ${FEDERATION_GATEWAY_BASE_URL:http://localhost:8005}
+      path: /diagnosiskeys/download/
+    # Local paths, that are used during the export creation.
+    paths:
+      # The output path.
+      output: out
+      # The location of the private key.
+      privatekey: ${VAULT_FILESIGNING_SECRET}
+    # Configuration for the exported archive, that is saved on the S3-compatible storage.
+    tek-export:
+      # The TEK file name included in the zip archive, containing the list of diagnosis keys.
+      file-name: export.bin
+      # The TEK file header.
+      file-header: EK Export v1
+      # The fixed (ensured by right whitespace padding) TEK file header width.
+      file-header-width: 16
+    # Configuration for the API which is used by the mobile app to query diagnosis keys.
+    api:
+      version-path: version
+      version-v1: v1
+      country-path: country
+      country-germany: DE
+      date-path: date
+      hour-path: hour
+      diagnosis-keys-path: diagnosis-keys
+      parameters-path: configuration
+      app-config-file-name: app_config

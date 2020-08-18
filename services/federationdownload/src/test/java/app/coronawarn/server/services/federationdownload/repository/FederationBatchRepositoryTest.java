@@ -9,16 +9,22 @@ import app.coronawarn.server.common.persistence.repository.FederationBatchReposi
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Objects;
 import java.util.stream.Stream;
-import org.junit.Test;
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.data.jdbc.DataJdbcTest;
+import org.springframework.boot.test.autoconfigure.web.reactive.AutoConfigureWebTestClient;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 
-@DataJdbcTest
+@SpringBootTest
+@ExtendWith({SpringExtension.class})
+@AutoConfigureWebTestClient
 public class FederationBatchRepositoryTest {
 
   @Autowired
@@ -94,8 +100,8 @@ public class FederationBatchRepositoryTest {
   private boolean validateBatchPropertiesOfOldestUnprocessedBatch(String batchTag, Date date,
       FederationBatchStatus status) {
     FederationBatch federationBatch = federationBatchRepository.findOldestUnprocessedFederationBatch();
-    return federationBatch.getBatchTag().equals(batchTag)
-        && federationBatch.getDate().equals(date)
-        && federationBatch.getStatus().equals(status);
+    return Objects.equals(federationBatch.getBatchTag(), batchTag)
+        && Objects.equals(federationBatch.getDate(), date)
+        && Objects.equals(federationBatch.getStatus(), status);
   }
 }
