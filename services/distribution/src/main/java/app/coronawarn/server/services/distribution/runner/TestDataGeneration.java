@@ -98,7 +98,7 @@ public class TestDataGeneration implements ApplicationRunner {
 
     // Timestamps in hours since epoch. Test data generation starts one hour after the latest diagnosis key in the
     // database and ends one hour before the current one.
-    long startTimestamp = getGeneratorStartTimestamp(existingDiagnosisKeys) + 1; // Inclusive
+    long startTimestamp = getGeneratorStartTimestamp(existingDiagnosisKeys); // Inclusive
     long endTimestamp = getGeneratorEndTimestamp(); // Inclusive
 
     // Add the startTimestamp to the seed. Otherwise we would generate the same data every hour.
@@ -134,7 +134,7 @@ public class TestDataGeneration implements ApplicationRunner {
       return getRetentionStartTimestamp();
     } else {
       DiagnosisKey latestDiagnosisKey = diagnosisKeys.get(diagnosisKeys.size() - 1);
-      return latestDiagnosisKey.getSubmissionTimestamp();
+      return latestDiagnosisKey.getSubmissionTimestamp() + 1;
     }
   }
 
