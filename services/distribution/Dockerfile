@@ -14,6 +14,7 @@ COPY ./services/distribution/pom.xml ${WORK_DIR}/services/distribution/pom.xml
 COPY ./services/submission/pom.xml ${WORK_DIR}/services/submission/pom.xml
 COPY ./services/callback/pom.xml ${WORK_DIR}/services/callback/pom.xml
 COPY ./services/federationdownload/pom.xml ${WORK_DIR}/services/federationdownload/pom.xml
+COPY ./services/federation-upload/pom.xml ${WORK_DIR}/services/federation-upload/pom.xml
 
 WORKDIR ${WORK_DIR}
 
