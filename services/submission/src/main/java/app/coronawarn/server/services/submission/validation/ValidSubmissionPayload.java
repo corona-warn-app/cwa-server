@@ -89,15 +89,13 @@ public @interface ValidSubmissionPayload {
       validatorContext.disableDefaultConstraintViolation();
       boolean isValid = false;
 
-      for (TemporaryExposureKey exposureKey: exposureKeys) {
-        if (exposureKey.getRollingPeriod() < maxRollingPeriod) {
+      if(isFlexibleRollingPeriod(exposureKeys)){
           isValid = checkDuplicateStartIntervalNumberLimit(exposureKeys, validatorContext);
         } else {
           isValid = checkKeyCollectionSize(exposureKeys, validatorContext);
           isValid &= checkUniqueStartIntervalNumbers(exposureKeys, validatorContext);
           isValid &= checkNoOverlapsInTimeWindow(exposureKeys, validatorContext);
         }
-      }
 
       return isValid;
     }
@@ -155,7 +153,6 @@ public @interface ValidSubmissionPayload {
     private boolean checkDuplicateStartIntervalNumberLimit(List<TemporaryExposureKey> exposureKeys,
         ConstraintValidatorContext validatorContext) {
 
-
       HashMap<Integer, Integer> totalKeysPerDay = new HashMap<>();
 
       for (TemporaryExposureKey exposureKey: exposureKeys) {
@@ -174,6 +171,10 @@ public @interface ValidSubmissionPayload {
       }
 
       return true;
+    }
+
+    private boolean isFlexibleRollingPeriod(List<TemporaryExposureKey> exposureKeys) {
+      return exposureKeys.stream().filter(temporaryExposureKey -> temporaryExposureKey.getRollingPeriod() < maxRollingPeriod).findAny().isPresent();
     }
   }
 }
