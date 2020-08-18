@@ -87,15 +87,11 @@ public @interface ValidSubmissionPayload {
     public boolean isValid(SubmissionPayload submissionPayload, ConstraintValidatorContext validatorContext) {
       List<TemporaryExposureKey> exposureKeys = submissionPayload.getKeysList();
       validatorContext.disableDefaultConstraintViolation();
-      boolean isValid = false;
-
-      if(isFlexibleRollingPeriod(exposureKeys)){
-          isValid = checkDuplicateStartIntervalNumberLimit(exposureKeys, validatorContext);
-        } else {
-          isValid = checkKeyCollectionSize(exposureKeys, validatorContext);
-          isValid &= checkUniqueStartIntervalNumbers(exposureKeys, validatorContext);
-          isValid &= checkNoOverlapsInTimeWindow(exposureKeys, validatorContext);
-        }
+      boolean isValid = checkKeyCollectionSize(exposureKeys, validatorContext);
+      isValid &= checkUniqueStartIntervalNumbers(exposureKeys, validatorContext);
+      isValid &= checkNoOverlapsInTimeWindow(exposureKeys, validatorContext);
+      isValid |= checkIfFlexibleRollingPeriod(exposureKeys, validatorContext);
+      isValid &= checkDuplicateStartIntervalNumberLimit(exposureKeys, validatorContext);
 
       return isValid;
     }
@@ -155,7 +151,7 @@ public @interface ValidSubmissionPayload {
 
       HashMap<Integer, Integer> totalKeysPerDay = new HashMap<>();
 
-      for (TemporaryExposureKey exposureKey: exposureKeys) {
+      for (TemporaryExposureKey exposureKey : exposureKeys) {
         int numberOfKeys = exposureKey.getRollingPeriod();
         if (totalKeysPerDay.containsKey(exposureKey.getRollingStartIntervalNumber())) {
           numberOfKeys += totalKeysPerDay.get(exposureKey.getRollingStartIntervalNumber());
@@ -173,8 +169,17 @@ public @interface ValidSubmissionPayload {
       return true;
     }
 
-    private boolean isFlexibleRollingPeriod(List<TemporaryExposureKey> exposureKeys) {
-      return exposureKeys.stream().filter(temporaryExposureKey -> temporaryExposureKey.getRollingPeriod() < maxRollingPeriod).findAny().isPresent();
+    private boolean checkIfFlexibleRollingPeriod(List<TemporaryExposureKey> exposureKeys,
+        ConstraintValidatorContext validatorContext) {
+      if(!exposureKeys.stream()
+          .filter(temporaryExposureKey -> temporaryExposureKey.getRollingPeriod() < maxRollingPeriod)
+          .findAny()
+          .isPresent()){
+        addViolation(validatorContext, String.format(
+            "Keys in excess of %s per day.", exposureKeys.size()));
+        return false;
+      }
+      return true;
     }
   }
 }
