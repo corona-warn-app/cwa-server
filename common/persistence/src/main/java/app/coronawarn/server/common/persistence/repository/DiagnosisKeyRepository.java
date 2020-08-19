@@ -67,7 +67,7 @@ public interface DiagnosisKeyRepository extends PagingAndSortingRepository<Diagn
    */
   @Modifying
   @Query("DELETE FROM diagnosis_key WHERE submission_timestamp<=:threshold")
-  void deleteOlderThanOrEqual(@Param("thresholDiagnosisKeyBatchd") long submissionTimestamp);
+  void deleteOlderThanOrEqual(@Param("threshold") long submissionTimestamp);
 
   /**
    * Deletes all entries that have a submission timestamp less or equal than the specified one
