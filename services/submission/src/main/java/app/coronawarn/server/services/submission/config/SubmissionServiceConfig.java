@@ -20,7 +20,6 @@
 
 package app.coronawarn.server.services.submission.config;
 
-import app.coronawarn.server.common.protocols.external.exposurenotification.VerificationType;
 import java.io.File;
 import java.util.Arrays;
 import java.util.List;
