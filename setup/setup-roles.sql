@@ -49,6 +49,7 @@ CREATE ROLE cwa_distribution
   NOREPLICATION
   IN ROLE cwa_user;
 
+/* --------------- Interoperability --------------- */
 CREATE ROLE cwa_federation_callback
   NOLOGIN
   NOSUPERUSER
