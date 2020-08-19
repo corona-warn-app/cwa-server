@@ -1,4 +1,4 @@
-package app.coronawarn.server.services.federationdownload.repository;
+package app.coronawarn.server.services.federationdownload;
 
 
 import static org.assertj.core.api.Assertions.assertThat;

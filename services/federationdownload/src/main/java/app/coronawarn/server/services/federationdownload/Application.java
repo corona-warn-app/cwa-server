@@ -18,7 +18,7 @@
  * ---license-end
  */
 
-package app.coronawarn.server.services.federationdownload.repository;
+package app.coronawarn.server.services.federationdownload;
 
 import java.util.Arrays;
 import java.util.List;
