@@ -22,8 +22,8 @@ package app.coronawarn.server.services.submission.controller;
 
 import app.coronawarn.server.common.persistence.domain.DiagnosisKey;
 import app.coronawarn.server.common.persistence.service.DiagnosisKeyService;
+import app.coronawarn.server.common.protocols.external.exposurenotification.ReportType;
 import app.coronawarn.server.common.protocols.external.exposurenotification.TemporaryExposureKey;
-import app.coronawarn.server.common.protocols.external.exposurenotification.VerificationType;
 import app.coronawarn.server.common.protocols.internal.SubmissionPayload;
 import app.coronawarn.server.services.submission.config.SubmissionServiceConfig;
 import app.coronawarn.server.services.submission.monitoring.SubmissionMonitor;
@@ -129,13 +129,13 @@ public class SubmissionController {
       String originCountry = StringUtils.defaultIfBlank(submissionPayload.getOrigin(),
           submissionServiceConfig.getDefaultOriginCountry());
       // The protobuf will default the enum to LAB_VERIFIED, since its index is 0
-      VerificationType verificationType = submissionPayload.getVerificationType();
+      ReportType reportType = submissionPayload.getReportType();
 
       DiagnosisKey diagnosisKey = DiagnosisKey.builder()
           .fromTemporaryExposureKey(protoBufferKey)
           .withVisitedCountries(submissionPayload.getVisitedCountriesList())
           .withCountryCode(originCountry)
-          .withVerificationType(verificationType)
+          .withReportType(reportType)
           .withConsentToFederation(submissionPayload.getConsentToFederation())
           .build();
 
@@ -161,7 +161,7 @@ public class SubmissionController {
               .withRollingPeriod(diagnosisKey.getRollingPeriod())
               .withVisitedCountries(diagnosisKey.getVisitedCountries())
               .withCountryCode(diagnosisKey.getOriginCountry())
-              .withVerificationType(diagnosisKey.getVerificationType())
+              .withReportType(diagnosisKey.getReportType())
               .withConsentToFederation(diagnosisKey.isConsentToFederation())
               .build())
           .forEach(paddedDiagnosisKeys::add);
