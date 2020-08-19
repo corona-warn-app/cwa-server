@@ -48,7 +48,7 @@ interface DiagnosisKeyBuilders {
     FinalBuilder fromTemporaryExposureKey(TemporaryExposureKey protoBufObject);
 
     /**
-     * Adds the data contained in the specified federation diagnosis key key object to this builder.
+     * Adds the data contained in the specified federation diagnosis key object to this builder.
      *
      * @param federationDiagnosisKey DiagnosisKey object associated with the temporary exposure key.
      * @return this Builder instance.
