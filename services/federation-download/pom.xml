@@ -30,6 +30,11 @@
       <artifactId>spring-boot-starter-webflux</artifactId>
     </dependency>
     <dependency>
+      <groupId>io.github.openfeign</groupId>
+      <artifactId>feign-httpclient</artifactId>
+      <version>11.0</version>
+    </dependency>
+    <dependency>
       <artifactId>commons-math3</artifactId>
       <groupId>org.apache.commons</groupId>
       <version>3.6.1</version>
