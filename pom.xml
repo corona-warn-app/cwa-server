@@ -38,6 +38,8 @@
     <sonar.projectKey>corona-warn-app_cwa-server</sonar.projectKey>
     <sonar.organization>corona-warn-app</sonar.organization>
     <sonar.host.url>https://sonarcloud.io</sonar.host.url>
+    <!-- https://spring.io/projects/spring-boot -->
+    <spring-boot-version>2.3.3.RELEASE</spring-boot-version>
   </properties>
 
   <reporting>
