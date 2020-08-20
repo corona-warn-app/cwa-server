@@ -30,7 +30,7 @@ import java.time.Instant;
 import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
-import app.coronawarn.server.common.protocols.external.exposurenotification.VerificationType;
+import app.coronawarn.server.common.protocols.external.exposurenotification.ReportType;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -45,10 +45,12 @@ class DiagnosisKeyTest {
   final static long expSubmissionTimestamp = 4L;
   static final String originCountry = "DE";
   static final List<String> visitedCountries = Collections.singletonList("DE");
-  static final VerificationType verificationType = VerificationType.LAB_VERIFIED;
+  static final ReportType reportType = ReportType.CONFIRMED_CLINICAL_DIAGNOSIS;
+  static final int daysSinceOnsetOfSymptoms = 1;
 
   final static DiagnosisKey diagnosisKey = new DiagnosisKey(expKeyData, expRollingStartIntervalNumber,
-      expRollingPeriod, expTransmissionRiskLevel, expSubmissionTimestamp, false, originCountry, visitedCountries, verificationType);
+      expRollingPeriod, expTransmissionRiskLevel, expSubmissionTimestamp, false, originCountry, visitedCountries,
+      reportType, daysSinceOnsetOfSymptoms);
 
   @Test
   void testRollingStartIntervalNumberGetter() {
@@ -77,7 +79,8 @@ class DiagnosisKeyTest {
         .minusDays(5).minusMinutes(10)
         .toEpochSecond(UTC) / (60 * 10));
     DiagnosisKey diagnosisKeyFiveDays = new DiagnosisKey(expKeyData, fiveDaysAgo,
-        expRollingPeriod, expTransmissionRiskLevel, expSubmissionTimestamp, false, originCountry, visitedCountries, verificationType);
+        expRollingPeriod, expTransmissionRiskLevel, expSubmissionTimestamp, false, originCountry, visitedCountries,
+        reportType, daysSinceOnsetOfSymptoms);
 
     assertThat(diagnosisKeyFiveDays.isYoungerThanRetentionThreshold(4)).isFalse();
     assertThat(diagnosisKeyFiveDays.isYoungerThanRetentionThreshold(5)).isFalse();
