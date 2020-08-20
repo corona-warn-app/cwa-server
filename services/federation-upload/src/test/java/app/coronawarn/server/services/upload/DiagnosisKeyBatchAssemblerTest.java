@@ -1,7 +1,7 @@
 package app.coronawarn.server.services.upload;
 
 import app.coronawarn.server.common.persistence.domain.DiagnosisKey;
-import app.coronawarn.server.common.protocols.external.exposurenotification.VerificationType;
+import app.coronawarn.server.common.protocols.external.exposurenotification.ReportType;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -36,7 +36,7 @@ class DiagnosisKeyBatchAssemblerTest {
         "Visited countries should be the same");
     Assertions.assertEquals(persistenceKey.getRollingPeriod(), exportKey.getRollingPeriod(),
         "Rolling Period should be the same");
-    Assertions.assertEquals(persistenceKey.getVerificationType(), exportKey.getVerificationType(),
+    Assertions.assertEquals(persistenceKey.getReportType(), exportKey.getReportType(),
         "Verification Type should be the same");
     Assertions.assertEquals(persistenceKey.getTransmissionRiskLevel(), exportKey.getTransmissionRiskLevel(),
         "Transmission Risk Level should be the same");
@@ -51,7 +51,7 @@ class DiagnosisKeyBatchAssemblerTest {
         .withTransmissionRiskLevel(2)
         .withCountryCode("DE")
         .withConsentToFederation(consent)
-        .withVerificationType(VerificationType.CONFIRMED_CLINICAL_DIAGNOSIS)
+        .withReportType(ReportType.CONFIRMED_CLINICAL_DIAGNOSIS)
         .withRollingPeriod(144)
         .withSubmissionTimestamp(LocalDateTime.of(2020, 7, 15, 12, 0, 0).toEpochSecond(ZoneOffset.UTC) / 3600)
         .withVisitedCountries(List.of("DE"))

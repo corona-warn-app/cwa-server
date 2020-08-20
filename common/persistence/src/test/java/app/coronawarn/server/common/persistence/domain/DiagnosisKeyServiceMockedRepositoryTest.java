@@ -30,7 +30,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import app.coronawarn.server.common.protocols.external.exposurenotification.VerificationType;
+import app.coronawarn.server.common.protocols.external.exposurenotification.ReportType;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.data.jdbc.DataJdbcTest;
@@ -46,7 +46,8 @@ class DiagnosisKeyServiceMockedRepositoryTest {
   static final int expTransmissionRiskLevel = 1;
   static final String originCountry = "DE";
   static final List<String> visitedCountries = Collections.singletonList("DE");
-  static final VerificationType verificationType = VerificationType.CONFIRMED_TEST;
+  static final ReportType reportType = ReportType.CONFIRMED_CLINICAL_DIAGNOSIS;
+  static final int daysSinceOnsetOfSymptoms = 1;
 
   @Autowired
   private DiagnosisKeyService diagnosisKeyService;
@@ -91,13 +92,13 @@ class DiagnosisKeyServiceMockedRepositoryTest {
   private DiagnosisKey validKey(long expSubmissionTimestamp) {
     return new DiagnosisKey(expKeyData, expRollingStartIntervalNumber,
         DiagnosisKey.EXPECTED_ROLLING_PERIOD, expTransmissionRiskLevel, expSubmissionTimestamp, false,
-        originCountry, visitedCountries, verificationType);
+        originCountry, visitedCountries, reportType, daysSinceOnsetOfSymptoms);
   }
 
   private DiagnosisKey invalidKey(long expSubmissionTimestamp) {
     byte[] expKeyData = "17--bytelongarray".getBytes(StandardCharsets.US_ASCII);
     return new DiagnosisKey(expKeyData, expRollingStartIntervalNumber,
         DiagnosisKey.EXPECTED_ROLLING_PERIOD, expTransmissionRiskLevel, expSubmissionTimestamp, false,
-        originCountry, visitedCountries, verificationType);
+        originCountry, visitedCountries, reportType, daysSinceOnsetOfSymptoms);
   }
 }

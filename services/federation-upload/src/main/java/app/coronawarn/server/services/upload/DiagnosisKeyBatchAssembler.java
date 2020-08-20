@@ -3,20 +3,21 @@ package app.coronawarn.server.services.upload;
 import app.coronawarn.server.common.persistence.domain.DiagnosisKey;
 import app.coronawarn.server.common.protocols.external.exposurenotification.DiagnosisKeyBatch;
 import com.google.protobuf.ByteString;
-import org.springframework.stereotype.Component;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
+import org.springframework.stereotype.Component;
 
 @Component
 public class DiagnosisKeyBatchAssembler {
 
-  private app.coronawarn.server.common.protocols.external.exposurenotification.DiagnosisKey convertKey(DiagnosisKey key) {
+  private app.coronawarn.server.common.protocols.external.exposurenotification.DiagnosisKey convertKey(
+      DiagnosisKey key) {
     return app.coronawarn.server.common.protocols.external.exposurenotification.DiagnosisKey.newBuilder()
         .setKeyData(ByteString.copyFrom(key.getKeyData()))
         .addAllVisitedCountries(key.getVisitedCountries())
         .setRollingPeriod(key.getRollingPeriod())
-        .setVerificationType(key.getVerificationType())
+        .setReportType(key.getReportType())
         .setTransmissionRiskLevel(key.getTransmissionRiskLevel())
         .setOrigin(key.getOriginCountry())
         .build();
