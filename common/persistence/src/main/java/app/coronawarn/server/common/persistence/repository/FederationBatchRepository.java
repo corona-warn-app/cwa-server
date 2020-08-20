@@ -22,6 +22,7 @@ package app.coronawarn.server.common.persistence.repository;
 
 import app.coronawarn.server.common.persistence.domain.FederationBatch;
 import app.coronawarn.server.common.persistence.domain.FederationBatchStatus;
+import java.time.LocalDate;
 import java.util.Date;
 import org.springframework.data.jdbc.repository.query.Modifying;
 import org.springframework.data.jdbc.repository.query.Query;
@@ -39,7 +40,7 @@ public interface FederationBatchRepository extends PagingAndSortingRepository<Fe
       + "ON CONFLICT DO NOTHING")
   void saveDoNothingOnConflict(
       @Param("batchTag") String batchTag,
-      @Param("date") Date date,
+      @Param("date") LocalDate date,
       @Param("status") FederationBatchStatus status
   );
 

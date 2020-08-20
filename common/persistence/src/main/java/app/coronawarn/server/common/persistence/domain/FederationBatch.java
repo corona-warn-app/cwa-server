@@ -20,6 +20,7 @@
 
 package app.coronawarn.server.common.persistence.domain;
 
+import java.time.LocalDate;
 import java.util.Date;
 import java.util.Objects;
 import org.springframework.data.annotation.Id;
@@ -29,14 +30,14 @@ public class FederationBatch {
   @Id
   private String batchTag;
 
-  private Date date;
+  private LocalDate date;
 
   private FederationBatchStatus status;
 
   /**
    * Creates a FederationBatch.
    */
-  public FederationBatch(String batchTag, Date date, FederationBatchStatus status) {
+  public FederationBatch(String batchTag, LocalDate date, FederationBatchStatus status) {
     this.batchTag = batchTag;
     this.date = date;
     this.status = status;
@@ -50,11 +51,11 @@ public class FederationBatch {
     this.batchTag = batchTag;
   }
 
-  public Date getDate() {
+  public LocalDate getDate() {
     return date;
   }
 
-  public void setDate(Date date) {
+  public void setDate(LocalDate date) {
     this.date = date;
   }
 

@@ -25,6 +25,7 @@ import app.coronawarn.server.common.persistence.service.FederationBatchService;
 import io.micrometer.core.annotation.Timed;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
 import java.util.Date;
 import javax.validation.Valid;
 import javax.validation.constraints.Pattern;
@@ -64,16 +65,10 @@ public class CallbackController {
   @GetMapping(value = CALLBACK_ROUTE, params = {"batchTag!="})
   @Timed(description = "Time spent handling callback.")
   public ResponseEntity<Void> handleCallback(@RequestParam(required = true) String batchTag,
-      @Valid @Pattern(regexp = dateRegex) @RequestParam String date) throws ParseException {
-    FederationBatch federationBatch = new FederationBatch(batchTag, parseDateString(date), null);
+      @Valid @Pattern(regexp = dateRegex) @RequestParam String date) {
+    FederationBatch federationBatch = new FederationBatch(batchTag, LocalDate.parse(date), null);
     federationBatchService.saveFederationBatch(federationBatch);
     return ResponseEntity.ok().build();
-  }
-
-  private Date parseDateString(String date)
-      throws ParseException {
-    SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-    return sdf.parse(date);
   }
 
 }
