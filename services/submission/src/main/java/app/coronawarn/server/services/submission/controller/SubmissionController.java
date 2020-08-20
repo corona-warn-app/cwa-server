@@ -128,14 +128,12 @@ public class SubmissionController {
     for (TemporaryExposureKey protoBufferKey : protoBufferKeys) {
       String originCountry = StringUtils.defaultIfBlank(submissionPayload.getOrigin(),
           submissionServiceConfig.getDefaultOriginCountry());
-      // The protobuf will default the enum to LAB_VERIFIED, since its index is 0
-      ReportType reportType = submissionPayload.getReportType();
 
       DiagnosisKey diagnosisKey = DiagnosisKey.builder()
           .fromTemporaryExposureKey(protoBufferKey)
           .withVisitedCountries(submissionPayload.getVisitedCountriesList())
           .withCountryCode(originCountry)
-          .withReportType(reportType)
+          .withReportType(submissionPayload.getReportType())
           .withConsentToFederation(submissionPayload.getConsentToFederation())
           .build();
 
