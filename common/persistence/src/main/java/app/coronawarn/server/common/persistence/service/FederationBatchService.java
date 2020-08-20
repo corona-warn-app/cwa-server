@@ -27,6 +27,7 @@ import app.coronawarn.server.common.persistence.domain.FederationBatchStatus;
 import app.coronawarn.server.common.persistence.repository.FederationBatchRepository;
 import io.micrometer.core.annotation.Timed;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -59,17 +60,6 @@ public class FederationBatchService {
   }
 
   /**
-   * Deletes the {@link FederationBatch} instance.
-   *
-   * @param federationBatch must not contain {@literal null}.
-   */
-  @Timed
-  @Transactional
-  public void deleteFederationBatch(FederationBatch federationBatch) {
-    federationBatchRepository.delete(federationBatch);
-  }
-
-  /**
    * Returns all valid persisted federation batches, sorted by their submission timestamp.
    */
   public List<FederationBatch> getFederationBatches() {
@@ -91,11 +81,13 @@ public class FederationBatchService {
   }
 
   /**
-   * Sets the status of the provided federation batch to 'processed'.
+   * Sets the status of the provided federation batch.
    */
-  public void markFederationBatchAsProcessed(FederationBatch federationBatch) {
-    federationBatch.setStatus(FederationBatchStatus.PROCESSED);
+  public void markFederationBatchWithStatus(FederationBatch federationBatch, FederationBatchStatus status) {
+    federationBatch.setStatus(status);
     federationBatchRepository.save(federationBatch);
+
+    logger.info("Marked batch with status.");
   }
 
 }

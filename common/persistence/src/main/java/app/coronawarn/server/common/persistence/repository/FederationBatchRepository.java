@@ -31,7 +31,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface FederationBatchRepository extends PagingAndSortingRepository<FederationBatch, Long> {
+public interface FederationBatchRepository extends PagingAndSortingRepository<FederationBatch, String> {
 
   @Modifying
   @Query("INSERT INTO federation_batch "

@@ -21,15 +21,18 @@
 package app.coronawarn.server.services.federation.download.runner;
 
 
-import app.coronawarn.server.common.persistence.domain.DiagnosisKey;
 import app.coronawarn.server.common.persistence.domain.FederationBatch;
+import app.coronawarn.server.common.persistence.domain.FederationBatchStatus;
 import app.coronawarn.server.common.persistence.service.DiagnosisKeyService;
 import app.coronawarn.server.common.persistence.service.FederationBatchService;
+import app.coronawarn.server.common.protocols.external.exposurenotification.DiagnosisKey;
 import app.coronawarn.server.common.protocols.external.exposurenotification.DiagnosisKeyBatch;
-import app.coronawarn.server.services.federation.download.Application;
-import app.coronawarn.server.services.federation.download.download.DiagnosisKeyBatchDownloader;
+import app.coronawarn.server.services.federation.download.download.DiagnosisKeyBatchContainer;
+import app.coronawarn.server.services.federation.download.download.DiagnosisKeyBatchDownloaders;
+import java.time.Instant;
+import java.time.LocalDate;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
-import java.util.stream.Collectors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.ApplicationArguments;
@@ -37,7 +40,7 @@ import org.springframework.boot.ApplicationRunner;
 import org.springframework.context.ApplicationContext;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
-import reactor.core.publisher.Mono;
+import org.springframework.util.StringUtils;
 
 
 /**
@@ -53,13 +56,13 @@ public class Download implements ApplicationRunner {
   private final ApplicationContext applicationContext;
   private final FederationBatchService federationBatchService;
   private final DiagnosisKeyService diagnosisKeyService;
-  private final DiagnosisKeyBatchDownloader diagnosisKeyBatchDownloader;
+  private final DiagnosisKeyBatchDownloaders diagnosisKeyBatchDownloader;
 
   /**
    * Creates a Download, using {@link ApplicationContext}.
    */
   Download(ApplicationContext applicationContext, FederationBatchService federationBatchService,
-           DiagnosisKeyService diagnosisKeyService, DiagnosisKeyBatchDownloader diagnosisKeyBatchDownloader) {
+           DiagnosisKeyService diagnosisKeyService, DiagnosisKeyBatchDownloaders diagnosisKeyBatchDownloader) {
     this.applicationContext = applicationContext;
     this.federationBatchService = federationBatchService;
     this.diagnosisKeyService = diagnosisKeyService;
@@ -68,51 +71,55 @@ public class Download implements ApplicationRunner {
 
   @Override
   public void run(ApplicationArguments args) {
-    try {
-      // Download federation batches from day before
-      // process them, add batchTag from this response to federationbatch table
-
-      FederationBatch batchToProcess = federationBatchService.getNextFederationBatchToProcess();
-
-      if (batchToProcess == null) {
-        logger.debug("No (further) batches to process found in table.");
-        return;
-      }
-
-      List<FederationBatch> federationBatches =
-          federationBatchService.getFederationBatches();
-
-      for (FederationBatch federationBatch : federationBatches) {
-        try {
-          processFederationBatch(federationBatch);
-          federationBatchService.markFederationBatchAsProcessed(batchToProcess);
-        } catch (Exception e) {
-          // TODO: error handling for failure during handling of single federationBatch?
-          logger.error(e.getMessage());
-        }
-      }
-
-    } catch (Exception e) {
-      logger.error("Download of diagnosis key batch failed.", e);
-      Application.killApplication(applicationContext);
-    }
-    logger.debug("Batch successfully downloaded.");
+    // run();
   }
 
-  private void processFederationBatch(FederationBatch federationBatch) throws Exception {
-    Mono<byte[]> body = diagnosisKeyBatchDownloader.downloadBatch(federationBatch);
-    DiagnosisKeyBatch diagnosisKeyBatch = DiagnosisKeyBatch.parseFrom(body.block());
+  private void run() {
+    LocalDate yesterday = LocalDate.from(Instant.now().minus(1, ChronoUnit.DAYS));
+    downloadBatch(yesterday);
 
-    // TODO: Call audit from federation gateway
+    FederationBatch batchToProcess = federationBatchService.getNextFederationBatchToProcess();
+    while (batchToProcess != null) {
+      downloadBatch(batchToProcess);
+      batchToProcess = federationBatchService.getNextFederationBatchToProcess();
+    }
+  }
 
-    List<DiagnosisKey> diagnosisKeys = diagnosisKeyBatch.getKeysList().stream()
-        .map(federationDiagnosisKey ->
-            DiagnosisKey
-                .builder()
-                .fromFederationDiagnosisKey(federationDiagnosisKey)
-                .build()
-        ).collect(Collectors.toList());
+  private void downloadBatch(LocalDate date) {
+    DiagnosisKeyBatchContainer diagnosisKeyBatchContainer = diagnosisKeyBatchDownloader.downloadBatch(date);
 
-    diagnosisKeyService.saveDiagnosisKeys(diagnosisKeys);
+    if (diagnosisKeyBatchContainer == null) {
+      return;
+    }
+
+    storeDiagnosisKeyBatch(diagnosisKeyBatchContainer.getDiagnosisKeyBatch());
+    String nextBatchTag = diagnosisKeyBatchContainer.getNextBatchTag();
+
+    if (!StringUtils.isEmpty(nextBatchTag)) {
+      federationBatchService.saveFederationBatch(new FederationBatch(nextBatchTag, date));
+    }
+
+  }
+
+  private void downloadBatch(FederationBatch federationBatch) {
+    DiagnosisKeyBatchContainer diagnosisKeyBatchContainer =
+        diagnosisKeyBatchDownloader.downloadBatch(federationBatch.getDate(), federationBatch.getBatchTag());
+
+    if (diagnosisKeyBatchContainer == null) {
+      federationBatchService.markFederationBatchWithStatus(federationBatch, FederationBatchStatus.ERROR);
+      return;
+    }
+
+    storeDiagnosisKeyBatch(diagnosisKeyBatchContainer.getDiagnosisKeyBatch());
+    String nextBatchTag = diagnosisKeyBatchContainer.getNextBatchTag();
+
+    if (!StringUtils.isEmpty(nextBatchTag)) {
+      federationBatchService.saveFederationBatch(new FederationBatch(nextBatchTag, federationBatch.getDate()));
+    }
+  }
+
+  private void storeDiagnosisKeyBatch(DiagnosisKeyBatch diagnosisKeyBatch) {
+    List<DiagnosisKey> keys = diagnosisKeyBatch.getKeysList();
+    // TODO
   }
 }

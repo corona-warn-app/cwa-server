@@ -20,13 +20,13 @@
 
 package app.coronawarn.server.services.federation.download.download;
 
-import app.coronawarn.server.common.persistence.domain.FederationBatch;
 import app.coronawarn.server.services.federation.download.config.FederationDownloadServiceConfig;
+import java.time.LocalDate;
+import java.util.Date;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.RestClientException;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
 
@@ -35,7 +35,7 @@ import reactor.core.publisher.Mono;
  * The BatchDownloader downloads the batches containing the keys.
  */
 @Service
-public class DiagnosisKeyBatchDownloader {
+public class DiagnosisKeyBatchDownloader implements DiagnosisKeyBatchDownloaders {
 
   private static final Logger logger = LoggerFactory.getLogger(DiagnosisKeyBatchDownloader.class);
 
@@ -48,38 +48,45 @@ public class DiagnosisKeyBatchDownloader {
     this.webClient = webClientBuilder.baseUrl(federationDownloadServiceConfig.getFederationDownloadBaseUrl()).build();
   }
 
-  /**
-   * Used to download the batches.
-   *
-   * @param federationBatch Contains the BatchTag and date
-   * @return Returns the downloaded batch
-   * @throws RestClientException if status code is neither 2xx nor 4xx
-   */
-  public Mono<byte[]> downloadBatch(FederationBatch federationBatch)
-      throws Exception {
+  @Override
+  public DiagnosisKeyBatchContainer downloadBatch(LocalDate date) {
+    return null;
+    /*
     try {
-      logger.info("Calling federation gateway download service for batch download ...");
-
-      Mono<byte[]> mono = webClient.get()
-          .uri(uriBuilder -> uriBuilder
-              .path(federationDownloadServiceConfig.getFederationDownloadPath())
-              .path(federationBatch.getDate().toString())
-              .build())
-          .exchange()
-          .flatMap(response -> {
-            if (response.statusCode().is2xxSuccessful()) {
-              return response.bodyToMono(ByteArrayResource.class);
-            } else {
-              return response.bodyToMono(Void.class).then(Mono.empty());
-            }
-          })
-          .map(ByteArrayResource::getByteArray);
-
+      logger.info("Calling federation gateway download service for batch download");
+      Mono<byte[]> mono = getMono(date);
       logger.info("Received batch from federation gateway service");
-      return mono;
+      return new DiagnosisKeyBatchContainer(DiagnosisKeyBatch.parseFrom(mono.block()), null, null);
     } catch (Exception e) {
       logger.info("Federation gateway service error");
-      throw new Exception(e.getMessage());
+      return null;
+      // throw new Exception(e.getMessage());
     }
+     */
   }
+
+  @Override
+  public DiagnosisKeyBatchContainer downloadBatch(LocalDate date, String batchTag) {
+    return null;
+  }
+
+  /*
+  private Mono<byte[]> getMono(Date date) {
+    Mono<byte[]> mono = webClient.get()
+        .uri(uriBuilder -> uriBuilder
+            .path(federationDownloadServiceConfig.getFederationDownloadPath())
+            .path(date.toString()) // TODO simpledateformat?
+            .build())
+        .exchange()
+        .flatMap(response -> {
+          if (response.statusCode().is2xxSuccessful()) {
+            return response.bodyToMono(ByteArrayResource.class);
+          } else {
+            return response.bodyToMono(Void.class).then(Mono.empty());
+          }
+        })
+        .map(ByteArrayResource::getByteArray);
+    return mono;
+  }
+   */
 }
