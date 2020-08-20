@@ -10,7 +10,6 @@ spring:
   datasource:
     enabled: true
     url: jdbc:tc:postgresql:11.8:///databasename?TC_TMPFS=/testtmpfs:rw
-    locations: classpath:db/migration/postgres
   test:
     database:
       # Use datasource as defined above.
