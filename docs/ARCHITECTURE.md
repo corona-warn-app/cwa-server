@@ -29,7 +29,7 @@ Find the latest specifications of Google/Apple here:
 - [Google Framework Specifications (1.3.2)](https://static.googleusercontent.com/media/www.google.com/en//covid19/exposurenotifications/pdfs/Android-Exposure-Notification-API-documentation-v1.3.2.pdf)
 On a high level, the application consists of two main parts, as shown below.
 
-![Overview Diagram](./images/v4.png)
+![Overview Diagram](./images/v5.png)
 
 1. CWA Server: Handles submission and aggregation/distribution of diagnosis keys and configuration files.
 2. Verification Server: Deals with test result retrieval and verification (including issuing TANs).
