@@ -90,7 +90,7 @@ public @interface ValidSubmissionPayload {
 
       boolean isValid = checkNoOverlapsInTimeWindow(exposureKeys, validatorContext);
       if (keysHaveFlexibleRollingPeriod(exposureKeys)) {
-        isValid &= checkKeysCummulateMaxRollingPeriodPerDay(exposureKeys, validatorContext);
+        isValid &= checkKeysCummulateEqualOrLessThanMaxRollingPeriodPerDay(exposureKeys, validatorContext);
       }else{
         isValid &= checkKeyCollectionSize(exposureKeys, validatorContext);
         isValid &= checkUniqueStartIntervalNumbers(exposureKeys, validatorContext);
@@ -148,7 +148,7 @@ public @interface ValidSubmissionPayload {
       return true;
     }
 
-    private boolean checkKeysCummulateMaxRollingPeriodPerDay(List<TemporaryExposureKey> exposureKeys,
+    private boolean checkKeysCummulateEqualOrLessThanMaxRollingPeriodPerDay(List<TemporaryExposureKey> exposureKeys,
         ConstraintValidatorContext validatorContext) {
 
       HashMap<Integer, Integer> totalKeysPerDay = new HashMap<>();

@@ -32,9 +32,15 @@ import app.coronawarn.server.common.protocols.external.exposurenotification.Temp
 import app.coronawarn.server.services.submission.verification.TanVerifier;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
+import java.util.stream.Stream;
+
 import org.assertj.core.util.Lists;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -63,9 +69,8 @@ class PayloadValidationTest {
   }
 
   @Test
-  void check400ResponseStatusForTooManyKeys() {
+  void check400ResponseStatusForTooManyKeysWithFixedRollingPeriod() {
     ResponseEntity<Void> actResponse = executor.executePost(buildPayloadWithTooManyKeys());
-
     assertThat(actResponse.getStatusCode()).isEqualTo(BAD_REQUEST);
   }
 
@@ -78,7 +83,7 @@ class PayloadValidationTest {
   }
 
   @Test
-  void check400ResponseStatusForDuplicateStartIntervalNumber() {
+  void check400ResponseStatusForKeysWithFixedRollingPeriodAndDuplicateStartIntervals() {
     int rollingStartIntervalNumber = createRollingStartIntervalNumber(2);
     var keysWithDuplicateStartIntervalNumber = Lists.list(
         buildTemporaryExposureKey(VALID_KEY_DATA_1, rollingStartIntervalNumber, 1),
@@ -90,10 +95,10 @@ class PayloadValidationTest {
   }
 
   @Test
-  void check200ResponseStatusForGapsInTimeIntervals() {
+  void check200ResponseStatusForGapsInTimeIntervalsOfKeysWithFixedRollingPeriod() {
     int rollingStartIntervalNumber1 = createRollingStartIntervalNumber(6);
     int rollingStartIntervalNumber2 = rollingStartIntervalNumber1 + DiagnosisKey.MAX_ROLLING_PERIOD;
-    int rollingStartIntervalNumber3 = rollingStartIntervalNumber2 + 2 * DiagnosisKey.MAX_ROLLING_PERIOD;
+    int rollingStartIntervalNumber3 = rollingStartIntervalNumber2 + 3 * DiagnosisKey.MAX_ROLLING_PERIOD;
     var keysWithGapsInStartIntervalNumber = Lists.list(
         buildTemporaryExposureKey(VALID_KEY_DATA_1, rollingStartIntervalNumber1, 1),
         buildTemporaryExposureKey(VALID_KEY_DATA_3, rollingStartIntervalNumber3, 3),
@@ -105,49 +110,54 @@ class PayloadValidationTest {
   }
 
   @Test
-  void check400ResponseStatusForOverlappingTimeIntervals() {
+  void check200ResponseStatusForGapsInTimeIntervalsOfKeysWithFlexibleRollingPeriod() {
     int rollingStartIntervalNumber1 = createRollingStartIntervalNumber(6);
-    int rollingStartIntervalNumber2 = rollingStartIntervalNumber1 + (DiagnosisKey.MAX_ROLLING_PERIOD / 2);
-    var keysWithOverlappingStartIntervalNumber = Lists.list(
-        buildTemporaryExposureKey(VALID_KEY_DATA_1, rollingStartIntervalNumber1, 1),
-        buildTemporaryExposureKey(VALID_KEY_DATA_2, rollingStartIntervalNumber2, 2));
+    int rollingStartIntervalNumber2 = rollingStartIntervalNumber1 + DiagnosisKey.MAX_ROLLING_PERIOD;
+    int rollingStartIntervalNumber3 = rollingStartIntervalNumber2 + 3 * DiagnosisKey.MAX_ROLLING_PERIOD;
+    var keysWithGapsInStartIntervalNumber = Lists.list(
+        buildTemporaryExposureKeyWithFlexibleRollingPeriod(VALID_KEY_DATA_1, rollingStartIntervalNumber1, 1, 54),
+        buildTemporaryExposureKeyWithFlexibleRollingPeriod(VALID_KEY_DATA_1, rollingStartIntervalNumber1, 1, 90),
+        buildTemporaryExposureKeyWithFlexibleRollingPeriod(VALID_KEY_DATA_3, rollingStartIntervalNumber3, 3, 133),
+        buildTemporaryExposureKeyWithFlexibleRollingPeriod(VALID_KEY_DATA_2, rollingStartIntervalNumber2, 2, 144));
 
-    ResponseEntity<Void> actResponse = executor.executePost(keysWithOverlappingStartIntervalNumber);
+    ResponseEntity<Void> actResponse = executor.executePost(keysWithGapsInStartIntervalNumber);
 
+    assertThat(actResponse.getStatusCode()).isEqualTo(OK);
+  }
+
+  @ParameterizedTest
+  @MethodSource("getOverlappingTestDatasets")
+  void check400ResponseStatusForOverlappingTimeIntervalsI(List<TemporaryExposureKey> dataset) {
+    ResponseEntity<Void> actResponse = executor.executePost(dataset);
     assertThat(actResponse.getStatusCode()).isEqualTo(BAD_REQUEST);
   }
 
-  @Test
-  void check200ResponseStatusForValidSubmissionPayload() {
-    int rollingStartIntervalNumber1 = createRollingStartIntervalNumber(6);
-    int rollingStartIntervalNumber2 = rollingStartIntervalNumber1 + DiagnosisKey.MAX_ROLLING_PERIOD;
-    int rollingStartIntervalNumber3 = rollingStartIntervalNumber2 + DiagnosisKey.MAX_ROLLING_PERIOD;
-    var keysWithValidStartIntervalNumber = Lists.list(
-        buildTemporaryExposureKey(VALID_KEY_DATA_1, rollingStartIntervalNumber1, 1),
-        buildTemporaryExposureKey(VALID_KEY_DATA_3, rollingStartIntervalNumber3, 3),
-        buildTemporaryExposureKey(VALID_KEY_DATA_2, rollingStartIntervalNumber2, 2));
-
-    ResponseEntity<Void> actResponse = executor.executePost(keysWithValidStartIntervalNumber);
-
+  @ParameterizedTest
+  @MethodSource("getRollingPeriodDatasets")
+  void check200ResponseStatusForValidSubmissionPayload(List<TemporaryExposureKey> dataset) {
+    ResponseEntity<Void> actResponse = executor.executePost(dataset);
     assertThat(actResponse.getStatusCode()).isEqualTo(OK);
   }
 
+  /**
+   *  This test generates a payload with keys for the past 30 days. It verifies that validation passes even
+   *  though keys older than <code>application.yml/retention-period</code> would not be stored.
+   */
   @Test
   void check200ResponseStatusForMoreThan14KeysWithValidFlexibleRollingPeriod() {
     ResponseEntity<Void> actResponse = executor.executePost(buildPayloadWithMoreThan14KeysAndFlexibleRollingPeriod());
-
     assertThat(actResponse.getStatusCode()).isEqualTo(OK);
   }
 
-  //TODO: Clarify if this scenario is valid or not?
   private Collection<TemporaryExposureKey> buildPayloadWithMoreThan14KeysAndFlexibleRollingPeriod() {
     ArrayList<TemporaryExposureKey> flexibleRollingPeriodKeys = new ArrayList<>();
     int counter = 0;
+    /* Generate keys with fixed rolling period (144) for the past 20 days */
     for ( ; counter <= 20; counter++) {
-      flexibleRollingPeriodKeys.add(buildTemporaryExposureKeyWithFlexibleRollingPeriod(VALID_KEY_DATA_1,
-          createRollingStartIntervalNumber(2) - counter * DiagnosisKey.MAX_ROLLING_PERIOD, 3, 144));
+      flexibleRollingPeriodKeys.add(buildTemporaryExposureKey(VALID_KEY_DATA_1,
+          createRollingStartIntervalNumber(2) - counter * DiagnosisKey.MAX_ROLLING_PERIOD, 3));
     }
-    /* Generate keys which have incomplete rolling period (<144) for past days */
+    /* Generate another 10 keys with flexible rolling period (<144) */
     for ( ; counter < 30; counter++) {
       flexibleRollingPeriodKeys.add(buildTemporaryExposureKeyWithFlexibleRollingPeriod(VALID_KEY_DATA_1,
           createRollingStartIntervalNumber(2) - counter * DiagnosisKey.MAX_ROLLING_PERIOD, 3, 133));
@@ -179,7 +189,6 @@ class PayloadValidationTest {
     assertThat(actResponse.getStatusCode()).isEqualTo(OK);
   }
 
-  //TODO: Clarify if this scenario is valid or not?
   private Collection<TemporaryExposureKey> buildPayloadWithTwoKeysOneFlexibleAndOneDefaultOnDifferentDays() {
     ArrayList<TemporaryExposureKey> flexibleRollingPeriodKeys = new ArrayList<>();
 
@@ -211,13 +220,81 @@ class PayloadValidationTest {
     return flexibleRollingPeriodKeys;
   }
 
-  @Test
-  void check400ResponseStatusWhenKeysWithFlexibleRollingPeriodHaveOverlappingStartIntervals() {
-    //TODO: ...
+  private static Stream<Arguments> getOverlappingTestDatasets() {
+    return Stream.of(
+        getOverlappingDatasetWithFixedPeriods(),
+        getOverlappingDatasetWithFlexiblePeriods(),
+        getMixedOverlappingDataset()
+    ).map(Arguments::of);
   }
 
-  private Collection<TemporaryExposureKey> buildPayloadWithFlexibleRollingPeriodKeyxThatOverlapInStartIntervals() {
-    //TODO ..
-    return null;
+  private static List<TemporaryExposureKey> getOverlappingDatasetWithFixedPeriods(){
+    int rollingStartIntervalNumber1 = createRollingStartIntervalNumber(6);
+    int rollingStartIntervalNumber2 = rollingStartIntervalNumber1 + (DiagnosisKey.MAX_ROLLING_PERIOD / 2);
+    return Lists.list(
+        buildTemporaryExposureKey(VALID_KEY_DATA_1, rollingStartIntervalNumber1, 1),
+        buildTemporaryExposureKey(VALID_KEY_DATA_2, rollingStartIntervalNumber2, 2));
+
+  }
+
+  private static List<TemporaryExposureKey> getOverlappingDatasetWithFlexiblePeriods(){
+    int rollingStartIntervalNumber1 = createRollingStartIntervalNumber(6);
+    int rollingStartIntervalNumber2 = rollingStartIntervalNumber1 + (DiagnosisKey.MAX_ROLLING_PERIOD / 2);
+    return Lists.list(
+        buildTemporaryExposureKeyWithFlexibleRollingPeriod(VALID_KEY_DATA_1, rollingStartIntervalNumber1, 1, 54),
+        buildTemporaryExposureKeyWithFlexibleRollingPeriod(VALID_KEY_DATA_1, rollingStartIntervalNumber1, 1, 90),
+        buildTemporaryExposureKeyWithFlexibleRollingPeriod(VALID_KEY_DATA_2, rollingStartIntervalNumber2, 2, 133));
+
+  }
+
+  private static List<TemporaryExposureKey> getMixedOverlappingDataset(){
+    int rollingStartIntervalNumber1 = createRollingStartIntervalNumber(6);
+    int rollingStartIntervalNumber2 = rollingStartIntervalNumber1 + (DiagnosisKey.MAX_ROLLING_PERIOD / 2);
+    return Lists.list(
+        buildTemporaryExposureKeyWithFlexibleRollingPeriod(VALID_KEY_DATA_1, rollingStartIntervalNumber1, 1, 54),
+        buildTemporaryExposureKeyWithFlexibleRollingPeriod(VALID_KEY_DATA_1, rollingStartIntervalNumber1, 1, 90),
+        buildTemporaryExposureKey(VALID_KEY_DATA_2, rollingStartIntervalNumber2, 2));
+
+  }
+
+  private static Stream<Arguments> getRollingPeriodDatasets() {
+    return Stream.of(
+        getFixedRollingPeriodDataset(),
+        getFlexibleRollingPeriodDataset(),
+        getMixedRollingPeriodDataset()
+    ).map(Arguments::of);
+  }
+
+  private static List<TemporaryExposureKey> getFixedRollingPeriodDataset(){
+    int rollingStartIntervalNumber1 = createRollingStartIntervalNumber(6);
+    int rollingStartIntervalNumber2 = rollingStartIntervalNumber1 + DiagnosisKey.MAX_ROLLING_PERIOD;
+    int rollingStartIntervalNumber3 = rollingStartIntervalNumber2 + DiagnosisKey.MAX_ROLLING_PERIOD;
+    return Lists.list(
+        buildTemporaryExposureKey(VALID_KEY_DATA_3, rollingStartIntervalNumber1, 3),
+        buildTemporaryExposureKey(VALID_KEY_DATA_3, rollingStartIntervalNumber3, 3),
+        buildTemporaryExposureKey(VALID_KEY_DATA_2, rollingStartIntervalNumber2, 2));
+  }
+
+  private static List<TemporaryExposureKey> getFlexibleRollingPeriodDataset(){
+    int rollingStartIntervalNumber1 = createRollingStartIntervalNumber(6);
+    int rollingStartIntervalNumber2 = rollingStartIntervalNumber1 + DiagnosisKey.MAX_ROLLING_PERIOD;
+    int rollingStartIntervalNumber3 = rollingStartIntervalNumber2 + DiagnosisKey.MAX_ROLLING_PERIOD;
+    return Lists.list(
+        buildTemporaryExposureKeyWithFlexibleRollingPeriod(VALID_KEY_DATA_1, rollingStartIntervalNumber1,3, 54),
+        buildTemporaryExposureKeyWithFlexibleRollingPeriod(VALID_KEY_DATA_1, rollingStartIntervalNumber1,3, 90),
+        buildTemporaryExposureKeyWithFlexibleRollingPeriod(VALID_KEY_DATA_3, rollingStartIntervalNumber3,3, 133),
+        buildTemporaryExposureKeyWithFlexibleRollingPeriod(VALID_KEY_DATA_3, rollingStartIntervalNumber3,2, 11),
+        buildTemporaryExposureKeyWithFlexibleRollingPeriod(VALID_KEY_DATA_2, rollingStartIntervalNumber2,2, 100));
+  }
+
+  private static List<TemporaryExposureKey> getMixedRollingPeriodDataset(){
+    int rollingStartIntervalNumber1 = createRollingStartIntervalNumber(6);
+    int rollingStartIntervalNumber2 = rollingStartIntervalNumber1 + DiagnosisKey.MAX_ROLLING_PERIOD;
+    int rollingStartIntervalNumber3 = rollingStartIntervalNumber2 + DiagnosisKey.MAX_ROLLING_PERIOD;
+    return Lists.list(
+        buildTemporaryExposureKeyWithFlexibleRollingPeriod(VALID_KEY_DATA_1, rollingStartIntervalNumber1,3, 54),
+        buildTemporaryExposureKeyWithFlexibleRollingPeriod(VALID_KEY_DATA_1, rollingStartIntervalNumber1,3, 90),
+        buildTemporaryExposureKey(VALID_KEY_DATA_3, rollingStartIntervalNumber3, 3),
+        buildTemporaryExposureKey(VALID_KEY_DATA_2, rollingStartIntervalNumber2, 2));
   }
 }
