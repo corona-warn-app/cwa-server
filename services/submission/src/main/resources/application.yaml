@@ -27,7 +27,7 @@ services:
     maximum-request-size: ${MAXIMUM_REQUEST_SIZE:100KB}
     payload:
       # The maximum number of keys accepted for any submission.
-      max-number-of-keys: ${MAX_NUMBER_OF_KEYS:10}
+      max-number-of-keys: ${MAX_NUMBER_OF_KEYS:14}
     verification:
       base-url: ${VERIFICATION_BASE_URL:http://localhost:8004}
       path: /version/v1/tan/verify

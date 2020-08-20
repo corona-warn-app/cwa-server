@@ -133,12 +133,13 @@ class PayloadValidationTest {
   }
 
   @Test
-  void check200ResponseStatusForMoreThan14KeysWithFlexibleRollingPeriodValidSubmissionPayload() {
+  void check200ResponseStatusForMoreThan14KeysWithValidFlexibleRollingPeriod() {
     ResponseEntity<Void> actResponse = executor.executePost(buildPayloadWithMoreThan14KeysAndFlexibleRollingPeriod());
 
     assertThat(actResponse.getStatusCode()).isEqualTo(OK);
   }
 
+  //TODO: Clarify if this scenario is valid or not?
   private Collection<TemporaryExposureKey> buildPayloadWithMoreThan14KeysAndFlexibleRollingPeriod() {
     ArrayList<TemporaryExposureKey> flexibleRollingPeriodKeys = new ArrayList<>();
     int counter = 0;
@@ -146,6 +147,7 @@ class PayloadValidationTest {
       flexibleRollingPeriodKeys.add(buildTemporaryExposureKeyWithFlexibleRollingPeriod(VALID_KEY_DATA_1,
           createRollingStartIntervalNumber(2) - counter * DiagnosisKey.MAX_ROLLING_PERIOD, 3, 144));
     }
+    /* Generate keys which have incomplete rolling period (<144) for past days */
     for ( ; counter < 30; counter++) {
       flexibleRollingPeriodKeys.add(buildTemporaryExposureKeyWithFlexibleRollingPeriod(VALID_KEY_DATA_1,
           createRollingStartIntervalNumber(2) - counter * DiagnosisKey.MAX_ROLLING_PERIOD, 3, 133));
@@ -155,11 +157,12 @@ class PayloadValidationTest {
   }
 
   @Test
-  void check400ResponseStatusWithTwoKeysOneWithDefaultRollingPeriodAndOneWithFlexible() {
-    ResponseEntity<Void> actResponse = executor.executePost(buildPayloadWithTwoKeysOneWithDefaultRollingPeriodAndOneWithFlexible());
+  void check400ResponseStatusWhenTwoKeysCummulateMoreThanMaxRollingPeriodInSameDay() {
+    ResponseEntity<Void> actResponse = executor.executePost(buildPayloadWithKeysThatCummulateMoreThanMaxRollingPeriodPerDay());
     assertThat(actResponse.getStatusCode()).isEqualTo(BAD_REQUEST);
   }
-  private Collection<TemporaryExposureKey> buildPayloadWithTwoKeysOneWithDefaultRollingPeriodAndOneWithFlexible() {
+
+  private Collection<TemporaryExposureKey> buildPayloadWithKeysThatCummulateMoreThanMaxRollingPeriodPerDay() {
     ArrayList<TemporaryExposureKey> temporaryExposureKeys = new ArrayList<>();
     temporaryExposureKeys.add(buildTemporaryExposureKeyWithFlexibleRollingPeriod(VALID_KEY_DATA_1,
         createRollingStartIntervalNumber(2), 3, 100));
@@ -176,6 +179,7 @@ class PayloadValidationTest {
     assertThat(actResponse.getStatusCode()).isEqualTo(OK);
   }
 
+  //TODO: Clarify if this scenario is valid or not?
   private Collection<TemporaryExposureKey> buildPayloadWithTwoKeysOneFlexibleAndOneDefaultOnDifferentDays() {
     ArrayList<TemporaryExposureKey> flexibleRollingPeriodKeys = new ArrayList<>();
 
@@ -189,7 +193,7 @@ class PayloadValidationTest {
   }
 
   @Test
-  void check200ResponseStatusWithTwoKeysWithFlexibleRollingPeriod() {
+  void check200ResponseStatusWhenKeysCummulateToMaxRollingPeriodInSameDay() {
     ResponseEntity<Void> actResponse = executor.executePost(buildPayloadWithTwoKeysWithFlexibleRollingPeriod());
 
     assertThat(actResponse.getStatusCode()).isEqualTo(OK);
@@ -205,5 +209,15 @@ class PayloadValidationTest {
 
 
     return flexibleRollingPeriodKeys;
+  }
+
+  @Test
+  void check400ResponseStatusWhenKeysWithFlexibleRollingPeriodHaveOverlappingStartIntervals() {
+    //TODO: ...
+  }
+
+  private Collection<TemporaryExposureKey> buildPayloadWithFlexibleRollingPeriodKeyxThatOverlapInStartIntervals() {
+    //TODO ..
+    return null;
   }
 }
