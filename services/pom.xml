@@ -43,7 +43,7 @@
     <dependency>
       <groupId>org.springframework.cloud</groupId>
       <artifactId>spring-cloud-starter-vault-config</artifactId>
-      <version>${spring-cloud-version}</version><!-- https://github.com/corona-warn-app/cwa-server/pull/695 -->
+      <version>${spring-cloud-version}</version>
     </dependency>
     <dependency>
       <groupId>org.opencwa</groupId>
