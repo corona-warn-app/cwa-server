@@ -87,11 +87,11 @@ public @interface ValidSubmissionPayload {
     public boolean isValid(SubmissionPayload submissionPayload, ConstraintValidatorContext validatorContext) {
       List<TemporaryExposureKey> exposureKeys = submissionPayload.getKeysList();
       validatorContext.disableDefaultConstraintViolation();
-
       boolean isValid = checkNoOverlapsInTimeWindow(exposureKeys, validatorContext);
+
       if (keysHaveFlexibleRollingPeriod(exposureKeys)) {
         isValid &= checkKeysCummulateEqualOrLessThanMaxRollingPeriodPerDay(exposureKeys, validatorContext);
-      }else{
+      } else {
         isValid &= checkKeyCollectionSize(exposureKeys, validatorContext);
         isValid &= checkUniqueStartIntervalNumbers(exposureKeys, validatorContext);
       }
