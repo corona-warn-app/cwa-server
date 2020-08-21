@@ -18,7 +18,7 @@
  * ---license-end
  */
 
-package app.coronawarn.server.services.upload;
+package app.coronawarn.server.services.federation.upload;
 
 import org.apache.logging.log4j.LogManager;
 import org.slf4j.Logger;

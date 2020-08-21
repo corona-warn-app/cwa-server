@@ -1,4 +1,4 @@
-package app.coronawarn.server.services.upload.runner;
+package app.coronawarn.server.services.federation.upload.runner;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
