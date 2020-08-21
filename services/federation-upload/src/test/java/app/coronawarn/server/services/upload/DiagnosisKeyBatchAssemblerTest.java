@@ -65,7 +65,7 @@ class DiagnosisKeyBatchAssemblerTest {
   }
 
   @Test
-  public void shouldReturnSingleKeyInPackage() {
+  void shouldReturnSingleKeyInPackage() {
     var fakeKey = makeFakeKey();
     var result = diagnosisKeyBatchAssembler.assembleDiagnosisKeyBatch(List.of(fakeKey));
     Assertions.assertEquals(1, result.size());
@@ -74,14 +74,14 @@ class DiagnosisKeyBatchAssemblerTest {
   }
 
   @Test
-  public void shouldReturnMultipleKeysInPackage() {
+  void shouldReturnMultipleKeysInPackage() {
     var result = diagnosisKeyBatchAssembler.assembleDiagnosisKeyBatch(List.of(makeFakeKey(), makeFakeKey()));
     Assertions.assertEquals(1, result.size());
     Assertions.assertEquals(2, result.get(0).getKeysCount());
   }
 
   @Test
-  public void shouldNotPackageKeysIfConsentFlagIsNotSet() {
+  void shouldNotPackageKeysIfConsentFlagIsNotSet() {
     var result = diagnosisKeyBatchAssembler.assembleDiagnosisKeyBatch(List.of(makeFakeKey(), makeFakeKey(false)));
     Assertions.assertEquals(1, result.size());
     Assertions.assertEquals(1, result.get(0).getKeysCount());
