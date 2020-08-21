@@ -1,4 +1,4 @@
-/*
+/*-
  * ---license-start
  * Corona-Warn-App
  * ---
@@ -8,7 +8,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -18,24 +18,15 @@
  * ---license-end
  */
 
-package app.coronawarn.server.services.submission.verification;
+package app.coronawarn.server.common.federation;
 
-import app.coronawarn.server.common.federation.client.FeignClientProvider;
-import feign.Client;
-import org.springframework.context.annotation.Bean;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.cloud.openfeign.EnableFeignClients;
 import org.springframework.context.annotation.Configuration;
 
+@SpringBootApplication
+@EnableFeignClients
 @Configuration
-public class VerificationServerClientConfiguration {
+public class TestApplication {
 
-  private final FeignClientProvider feignClientProvider;
-
-  public VerificationServerClientConfiguration(FeignClientProvider feignClientProvider) {
-    this.feignClientProvider = feignClientProvider;
-  }
-
-  @Bean
-  public Client feignClient() {
-    return feignClientProvider.createFeignClient();
-  }
 }

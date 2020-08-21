@@ -18,10 +18,24 @@
  * ---license-end
  */
 
-package app.coronawarn.server.services.submission.verification;
+package app.coronawarn.server.common.federation.client;
 
 import feign.Client;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 
-public interface FeignClientProvider {
-  Client createFeignClient();
+@Configuration
+public class FederationServerClientConfiguration {
+
+  private final FeignClientProvider feignClientProvider;
+
+  public FederationServerClientConfiguration(
+       FederationFeignClientProvider feignClientProvider) {
+    this.feignClientProvider = feignClientProvider;
+  }
+
+  @Bean
+  public Client federationFeignClient() {
+    return feignClientProvider.createFeignClient();
+  }
 }

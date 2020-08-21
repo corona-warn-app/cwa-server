@@ -42,10 +42,18 @@ public class DiagnosisKeyBatchDownloader {
   private final FederationDownloadServiceConfig federationDownloadServiceConfig;
   private final WebClient webClient;
 
+  /**
+   * Constructs {@link DiagnosisKeyBatchDownloader}.
+   *
+   * @param federationDownloadServiceConfig federation configuration
+   * @param webClientBuilder web client builder
+   */
   public DiagnosisKeyBatchDownloader(FederationDownloadServiceConfig federationDownloadServiceConfig,
-                                     WebClient.Builder webClientBuilder) {
+      WebClient.Builder webClientBuilder) {
+
     this.federationDownloadServiceConfig = federationDownloadServiceConfig;
-    this.webClient = webClientBuilder.baseUrl(federationDownloadServiceConfig.getFederationDownloadBaseUrl()).build();
+    this.webClient = webClientBuilder
+        .baseUrl(federationDownloadServiceConfig.getFederationDownloadBaseUrl()).build();
   }
 
   /**
