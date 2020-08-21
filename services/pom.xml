@@ -6,15 +6,13 @@
   <modelVersion>4.0.0</modelVersion>
 
   <parent>
-    <groupId>org.springframework.boot</groupId>
-    <artifactId>spring-boot-starter-parent</artifactId>
-    <version>2.3.3.RELEASE</version>
-    <relativePath></relativePath>
+    <artifactId>server</artifactId>
+    <groupId>org.opencwa</groupId>
+    <version>${revision}</version>
+    <relativePath>../pom.xml</relativePath>
   </parent>
 
   <artifactId>services</artifactId>
-  <groupId>org.opencwa</groupId>
-  <version>${revision}</version>
 
   <organization>
     <name>SAP SE</name>
