@@ -29,8 +29,8 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
+import java.util.stream.Collectors;
 import javax.validation.Constraint;
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
@@ -87,15 +87,15 @@ public @interface ValidSubmissionPayload {
     public boolean isValid(SubmissionPayload submissionPayload, ConstraintValidatorContext validatorContext) {
       List<TemporaryExposureKey> exposureKeys = submissionPayload.getKeysList();
       validatorContext.disableDefaultConstraintViolation();
-      boolean isValid = checkNoOverlapsInTimeWindow(exposureKeys, validatorContext);
 
       if (keysHaveFlexibleRollingPeriod(exposureKeys)) {
-        isValid &= checkKeysCummulateEqualOrLessThanMaxRollingPeriodPerDay(exposureKeys, validatorContext);
+        return checkStartIntervalNumberIsAtMidNight(exposureKeys, validatorContext) &&
+            checkKeysCumulateEqualOrLessThanMaxRollingPeriodPerDay(exposureKeys, validatorContext);
       } else {
-        isValid &= checkKeyCollectionSize(exposureKeys, validatorContext);
-        isValid &= checkUniqueStartIntervalNumbers(exposureKeys, validatorContext);
+        return checkStartIntervalNumberIsAtMidNight(exposureKeys, validatorContext) &&
+            checkKeyCollectionSize(exposureKeys, validatorContext) &&
+            checkUniqueStartIntervalNumbers(exposureKeys, validatorContext);
       }
-      return isValid;
     }
 
     private void addViolation(ConstraintValidatorContext validatorContext, String message) {
@@ -128,53 +128,39 @@ public @interface ValidSubmissionPayload {
       return true;
     }
 
-    private boolean checkNoOverlapsInTimeWindow(List<TemporaryExposureKey> exposureKeys,
-        ConstraintValidatorContext validatorContext) {
-      if (exposureKeys.size() < 2) {
-        return true;
-      }
-
-      Integer[] sortedStartIntervalNumbers = exposureKeys.stream()
-          .mapToInt(TemporaryExposureKey::getRollingStartIntervalNumber)
-          .distinct().sorted().boxed().toArray(Integer[]::new);
-
-      for (int i = 1; i < sortedStartIntervalNumbers.length; i++) {
-        if ((sortedStartIntervalNumbers[i - 1] + maxRollingPeriod) > sortedStartIntervalNumbers[i]) {
-          addViolation(validatorContext, String.format(
-              "Subsequent intervals overlap. StartIntervalNumbers: %s", sortedStartIntervalNumbers));
-          return false;
-        }
-      }
-      return true;
-    }
-
-    private boolean checkKeysCummulateEqualOrLessThanMaxRollingPeriodPerDay(List<TemporaryExposureKey> exposureKeys,
+    private boolean checkKeysCumulateEqualOrLessThanMaxRollingPeriodPerDay(List<TemporaryExposureKey> exposureKeys,
         ConstraintValidatorContext validatorContext) {
 
-      HashMap<Integer, Integer> totalKeysPerDay = new HashMap<>();
+      boolean isValidRollingPeriod = exposureKeys.stream().collect(Collectors
+          .groupingBy(TemporaryExposureKey::getRollingStartIntervalNumber,
+              Collectors.summingInt(TemporaryExposureKey::getRollingPeriod)))
+          .values().stream()
+          .anyMatch(sum -> sum <= maxRollingPeriod);
 
-      for (TemporaryExposureKey exposureKey : exposureKeys) {
-        int numberOfKeys = exposureKey.getRollingPeriod();
-        if (totalKeysPerDay.containsKey(exposureKey.getRollingStartIntervalNumber())) {
-          numberOfKeys += totalKeysPerDay.get(exposureKey.getRollingStartIntervalNumber());
-
-          if (numberOfKeys > maxRollingPeriod) {
-            addViolation(validatorContext, String.format(
-                "Keys in excess of %s per day.", exposureKeys.size()));
-            return false;
-          }
-        }
-
-        totalKeysPerDay.put(exposureKey.getRollingStartIntervalNumber(), numberOfKeys);
+      if (!isValidRollingPeriod) {
+        addViolation(validatorContext, "The sum of the rolling periods exceeds 144 per day");
+        return false;
       }
-
       return true;
     }
 
     private boolean keysHaveFlexibleRollingPeriod(List<TemporaryExposureKey> exposureKeys) {
       return exposureKeys.stream()
-                    .anyMatch(temporaryExposureKey -> temporaryExposureKey.getRollingPeriod() < maxRollingPeriod);
+          .anyMatch(temporaryExposureKey -> temporaryExposureKey.getRollingPeriod() < maxRollingPeriod);
     }
 
+    private boolean checkStartIntervalNumberIsAtMidNight(List<TemporaryExposureKey> exposureKeys,
+        ConstraintValidatorContext validatorContext) {
+      boolean isNotMidNight00UTC = exposureKeys.stream()
+          .filter(exposureKey -> exposureKey.getRollingStartIntervalNumber() % maxRollingPeriod > 0)
+          .findAny().isPresent();
+
+      if (isNotMidNight00UTC) {
+        addViolation(validatorContext, "Start Interval Number must be at midnight ( 00:00 UTC )");
+        return false;
+      }
+
+      return true;
+    }
   }
 }

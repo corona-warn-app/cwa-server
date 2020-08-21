@@ -59,7 +59,10 @@ public class SubmissionServiceConfig {
   private Verification verification;
   private Monitoring monitoring;
   private Client client;
-  private DiagnosisKey diagnosisKey;
+  @Min(0)
+  @Max(144)
+  private Integer maxRollingPeriod;
+
 
   public Long getInitialFakeDelayMilliseconds() {
     return initialFakeDelayMilliseconds;
@@ -107,6 +110,14 @@ public class SubmissionServiceConfig {
 
   public void setMaximumRequestSize(DataSize maximumRequestSize) {
     this.maximumRequestSize = maximumRequestSize;
+  }
+
+  public Integer getMaxRollingPeriod() {
+    return maxRollingPeriod;
+  }
+
+  public void setMaxRollingPeriod(Integer maxRollingPeriod) {
+    this.maxRollingPeriod = maxRollingPeriod;
   }
 
   public Integer getMaxNumberOfKeys() {
@@ -268,28 +279,5 @@ public class SubmissionServiceConfig {
         this.trustStorePassword = trustStorePassword;
       }
     }
-  }
-
-  public void setDiagnosisKey(DiagnosisKey diagnosisKey) {
-    this.diagnosisKey = diagnosisKey;
-  }
-
-  private static class DiagnosisKey {
-
-    @Min(0)
-    @Max(144)
-    private Integer maxRollingPeriod;
-
-    public Integer getMaxRollingPeriod() {
-      return maxRollingPeriod;
-    }
-
-    public void setMaxRollingPeriod(Integer maxRollingPeriod) {
-      this.maxRollingPeriod = maxRollingPeriod;
-    }
-  }
-
-  public Integer getMaxRollingPeriod() {
-    return diagnosisKey.getMaxRollingPeriod();
   }
 }

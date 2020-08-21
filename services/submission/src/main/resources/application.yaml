@@ -25,6 +25,7 @@ services:
     connection-pool-size: 200
     # The maximum request size accepted by the SubmissionController (e.g. 200B or 100KB).
     maximum-request-size: ${MAXIMUM_REQUEST_SIZE:100KB}
+    max-rolling-period: ${MAX_ROLLING_PERIOD:144}
     payload:
       # The maximum number of keys accepted for any submission.
       max-number-of-keys: ${MAX_NUMBER_OF_KEYS:14}
@@ -34,8 +35,6 @@ services:
     monitoring:
       # The batch size (number of requests) to use for monitoring request count.
       batch-size: 5
-    diagnosis-key:
-      max-rolling-period: ${MAX_ROLLING_PERIOD:144}
     client:
       ssl:
         key-password: ${SSL_SUBMISSION_KEYSTORE_PASSWORD}

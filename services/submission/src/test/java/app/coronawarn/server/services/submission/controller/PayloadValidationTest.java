@@ -33,13 +33,11 @@ import app.coronawarn.server.services.submission.verification.TanVerifier;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import java.util.stream.Stream;
 
 import org.assertj.core.util.Lists;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -151,28 +149,27 @@ class PayloadValidationTest {
 
   private Collection<TemporaryExposureKey> buildPayloadWithMoreThan14KeysAndFlexibleRollingPeriod() {
     ArrayList<TemporaryExposureKey> flexibleRollingPeriodKeys = new ArrayList<>();
-    int counter = 0;
     /* Generate keys with fixed rolling period (144) for the past 20 days */
-    for ( ; counter <= 20; counter++) {
+    for (int i = 0 ; i < 20; i++) {
       flexibleRollingPeriodKeys.add(buildTemporaryExposureKey(VALID_KEY_DATA_1,
-          createRollingStartIntervalNumber(2) - counter * DiagnosisKey.MAX_ROLLING_PERIOD, 3));
+          createRollingStartIntervalNumber(2) - i * DiagnosisKey.MAX_ROLLING_PERIOD, 3));
     }
     /* Generate another 10 keys with flexible rolling period (<144) */
-    for ( ; counter < 30; counter++) {
+    for (int i = 20 ; i < 30; i++) {
       flexibleRollingPeriodKeys.add(buildTemporaryExposureKeyWithFlexibleRollingPeriod(VALID_KEY_DATA_1,
-          createRollingStartIntervalNumber(2) - counter * DiagnosisKey.MAX_ROLLING_PERIOD, 3, 133));
+          createRollingStartIntervalNumber(2) - i * DiagnosisKey.MAX_ROLLING_PERIOD, 3, 133));
 
     }
     return flexibleRollingPeriodKeys;
   }
 
   @Test
-  void check400ResponseStatusWhenTwoKeysCummulateMoreThanMaxRollingPeriodInSameDay() {
-    ResponseEntity<Void> actResponse = executor.executePost(buildPayloadWithKeysThatCummulateMoreThanMaxRollingPeriodPerDay());
+  void check400ResponseStatusWhenTwoKeysCumulateMoreThanMaxRollingPeriodInSameDay() {
+    ResponseEntity<Void> actResponse = executor.executePost(buildPayloadWithKeysThatCumulateMoreThanMaxRollingPeriodPerDay());
     assertThat(actResponse.getStatusCode()).isEqualTo(BAD_REQUEST);
   }
 
-  private Collection<TemporaryExposureKey> buildPayloadWithKeysThatCummulateMoreThanMaxRollingPeriodPerDay() {
+  private Collection<TemporaryExposureKey> buildPayloadWithKeysThatCumulateMoreThanMaxRollingPeriodPerDay() {
     ArrayList<TemporaryExposureKey> temporaryExposureKeys = new ArrayList<>();
     temporaryExposureKeys.add(buildTemporaryExposureKeyWithFlexibleRollingPeriod(VALID_KEY_DATA_1,
         createRollingStartIntervalNumber(2), 3, 100));
@@ -202,7 +199,7 @@ class PayloadValidationTest {
   }
 
   @Test
-  void check200ResponseStatusWhenKeysCummulateToMaxRollingPeriodInSameDay() {
+  void check200ResponseStatusWhenKeysCumulateToMaxRollingPeriodInSameDay() {
     ResponseEntity<Void> actResponse = executor.executePost(buildPayloadWithTwoKeysWithFlexibleRollingPeriod());
 
     assertThat(actResponse.getStatusCode()).isEqualTo(OK);

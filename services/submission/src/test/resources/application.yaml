@@ -26,6 +26,7 @@ services:
     random-key-padding-multiplier: 10
     connection-pool-size: 200
     maximum-request-size: 100KB
+    max-rolling-period: 144
     payload:
       max-number-of-keys: 14
     verification:
@@ -33,9 +34,6 @@ services:
       path: /version/v1/tan/verify
     monitoring:
       batch-size: 5
-    diagnosis-key:
-      max-rolling-period: 144
-
 management:
   endpoint:
     health:
