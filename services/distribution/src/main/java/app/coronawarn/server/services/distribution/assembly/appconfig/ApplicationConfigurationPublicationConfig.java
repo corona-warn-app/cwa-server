@@ -71,9 +71,4 @@ public class ApplicationConfigurationPublicationConfig {
         .addAllSupportedCountries(suggestedCountries)
         .build();
   }
-
-  public Integer getSemanticVersionNumber(String version, Integer position) {
-    List<String> items = Arrays.asList(version.split("\\."));
-    return Integer.valueOf(items.get(position));
-  }
 }
