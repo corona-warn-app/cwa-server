@@ -36,7 +36,8 @@ public class DiagnosisKeyBatchAssembler {
     return List.of(DiagnosisKeyBatch.newBuilder()
         .addAllKeys(diagnosisKeys.stream()
             .filter(DiagnosisKey::isConsentToFederation)
-            .map(this::convertKey).collect(Collectors.toList()))
+            .map(this::convertKey)
+            .collect(Collectors.toList()))
         .build());
   }
 

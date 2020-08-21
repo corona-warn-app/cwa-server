@@ -25,6 +25,7 @@ import static app.coronawarn.server.services.distribution.assembly.diagnosiskeys
 
 import app.coronawarn.server.common.persistence.domain.DiagnosisKey;
 import app.coronawarn.server.common.persistence.service.DiagnosisKeyService;
+import app.coronawarn.server.common.protocols.external.exposurenotification.ReportType;
 import app.coronawarn.server.common.protocols.internal.RiskLevel;
 import app.coronawarn.server.services.distribution.assembly.structure.util.TimeUtils;
 import app.coronawarn.server.services.distribution.config.DistributionServiceConfig;
@@ -188,6 +189,7 @@ public class TestDataGeneration implements ApplicationRunner {
         .withSubmissionTimestamp(submissionTimestamp)
         .withCountryCode(country)
         .withVisitedCountries(generateListOfVisitedCountries(country))
+        .withReportType(ReportType.CONFIRMED_CLINICAL_DIAGNOSIS)
         .build();
   }
 

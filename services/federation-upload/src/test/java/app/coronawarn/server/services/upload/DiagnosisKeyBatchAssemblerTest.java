@@ -25,12 +25,6 @@ class DiagnosisKeyBatchAssemblerTest {
   @Autowired
   DiagnosisKeyBatchAssembler diagnosisKeyBatchAssembler;
 
-  @Test
-  public void shouldReturnEmptyListIfNoKeysGive() {
-    var result = diagnosisKeyBatchAssembler.assembleDiagnosisKeyBatch(emptyList());
-    Assertions.assertTrue(result.isEmpty());
-  }
-
   private void assertKeysAreEqual(DiagnosisKey persistenceKey, app.coronawarn.server.common.protocols.external.exposurenotification.DiagnosisKey exportKey) {
     Assertions.assertArrayEquals(persistenceKey.getKeyData(), exportKey.getKeyData().toByteArray(),
         "Key Data should be the same");
@@ -62,6 +56,12 @@ class DiagnosisKeyBatchAssemblerTest {
 
   private DiagnosisKey makeFakeKey() {
     return this.makeFakeKey(true);
+  }
+
+  @Test
+  public void shouldReturnEmptyListIfNoKeysGiven() {
+    var result = diagnosisKeyBatchAssembler.assembleDiagnosisKeyBatch(emptyList());
+    Assertions.assertTrue(result.isEmpty());
   }
 
   @Test
