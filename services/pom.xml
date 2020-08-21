@@ -25,7 +25,7 @@
     <module>distribution</module>
     <module>submission</module>
     <module>callback</module>
-    <module>federationdownload</module>
+    <module>federation-download</module>
   </modules>
 
   <properties>

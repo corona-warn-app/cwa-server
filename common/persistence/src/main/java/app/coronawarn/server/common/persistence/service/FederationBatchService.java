@@ -23,6 +23,7 @@ package app.coronawarn.server.common.persistence.service;
 import static org.springframework.data.util.StreamUtils.createStreamFromIterator;
 
 import app.coronawarn.server.common.persistence.domain.FederationBatch;
+import app.coronawarn.server.common.persistence.domain.FederationBatchStatus;
 import app.coronawarn.server.common.persistence.repository.FederationBatchRepository;
 import io.micrometer.core.annotation.Timed;
 import java.util.List;
@@ -54,7 +55,7 @@ public class FederationBatchService {
   @Transactional
   public void saveFederationBatch(FederationBatch federationBatch) {
     federationBatchRepository
-        .saveDoNothingOnConflict(federationBatch.getBatchTag(), federationBatch.getDate());
+        .saveDoNothingOnConflict(federationBatch.getBatchTag(), federationBatch.getDate(), federationBatch.getStatus());
   }
 
   /**
@@ -82,6 +83,19 @@ public class FederationBatchService {
     return federationBatches;
   }
 
+  /**
+   * Returns the oldest, not yet processed federation batch.
+   */
+  public FederationBatch getNextFederationBatchToProcess() {
+    return federationBatchRepository.findOldestUnprocessedFederationBatch();
+  }
 
-  //Todo delete batches
+  /**
+   * Sets the status of the provided federation batch to 'processed'.
+   */
+  public void markFederationBatchAsProcessed(FederationBatch federationBatch) {
+    federationBatch.setStatus(FederationBatchStatus.PROCESSED);
+    federationBatchRepository.save(federationBatch);
+  }
+
 }
