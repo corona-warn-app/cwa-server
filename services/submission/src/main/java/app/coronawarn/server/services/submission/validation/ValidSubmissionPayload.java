@@ -89,12 +89,12 @@ public @interface ValidSubmissionPayload {
       validatorContext.disableDefaultConstraintViolation();
 
       if (keysHaveFlexibleRollingPeriod(exposureKeys)) {
-        return checkStartIntervalNumberIsAtMidNight(exposureKeys, validatorContext) &&
-            checkKeysCumulateEqualOrLessThanMaxRollingPeriodPerDay(exposureKeys, validatorContext);
+        return checkStartIntervalNumberIsAtMidNight(exposureKeys, validatorContext)
+            && checkKeysCumulateEqualOrLessThanMaxRollingPeriodPerDay(exposureKeys, validatorContext);
       } else {
-        return checkStartIntervalNumberIsAtMidNight(exposureKeys, validatorContext) &&
-            checkKeyCollectionSize(exposureKeys, validatorContext) &&
-            checkUniqueStartIntervalNumbers(exposureKeys, validatorContext);
+        return checkStartIntervalNumberIsAtMidNight(exposureKeys, validatorContext)
+            && checkKeyCollectionSize(exposureKeys, validatorContext)
+            && checkUniqueStartIntervalNumbers(exposureKeys, validatorContext);
       }
     }
 
@@ -151,11 +151,11 @@ public @interface ValidSubmissionPayload {
 
     private boolean checkStartIntervalNumberIsAtMidNight(List<TemporaryExposureKey> exposureKeys,
         ConstraintValidatorContext validatorContext) {
-      boolean isNotMidNight00UTC = exposureKeys.stream()
+      boolean isNotMidNight00Utc = exposureKeys.stream()
           .filter(exposureKey -> exposureKey.getRollingStartIntervalNumber() % maxRollingPeriod > 0)
           .findAny().isPresent();
 
-      if (isNotMidNight00UTC) {
+      if (isNotMidNight00Utc) {
         addViolation(validatorContext, "Start Interval Number must be at midnight ( 00:00 UTC )");
         return false;
       }
