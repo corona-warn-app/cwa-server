@@ -25,7 +25,9 @@ import app.coronawarn.server.common.persistence.service.DiagnosisKeyService;
 import app.coronawarn.server.services.distribution.assembly.structure.util.TimeUtils;
 import app.coronawarn.server.services.distribution.config.DistributionServiceConfig;
 import app.coronawarn.server.services.distribution.config.DistributionServiceConfig.TestData;
+import org.junit.After;
 import org.junit.Assert;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -74,6 +76,11 @@ class TestDataGenerationTest {
     testData.setSeed(0);
     distributionServiceConfig.setRetentionDays(1);
     distributionServiceConfig.setTestData(testData);
+  }
+
+  @AfterEach
+  void tearDown() {
+    TimeUtils.setNow(null);
   }
 
   @Test
