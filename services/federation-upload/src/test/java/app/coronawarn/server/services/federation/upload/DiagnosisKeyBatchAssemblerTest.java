@@ -1,4 +1,4 @@
-package app.coronawarn.server.services.upload;
+package app.coronawarn.server.services.federation.upload;
 
 import app.coronawarn.server.common.persistence.domain.DiagnosisKey;
 import app.coronawarn.server.common.protocols.external.exposurenotification.ReportType;
