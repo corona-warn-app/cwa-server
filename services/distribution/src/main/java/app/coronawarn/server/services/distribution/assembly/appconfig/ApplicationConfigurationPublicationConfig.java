@@ -23,9 +23,15 @@ package app.coronawarn.server.services.distribution.assembly.appconfig;
 import app.coronawarn.server.common.protocols.internal.AppFeatures;
 import app.coronawarn.server.common.protocols.internal.ApplicationConfiguration;
 import app.coronawarn.server.common.protocols.internal.ApplicationConfiguration.Builder;
+import app.coronawarn.server.common.protocols.internal.ApplicationVersionConfiguration;
+import app.coronawarn.server.common.protocols.internal.ApplicationVersionInfo;
+import app.coronawarn.server.common.protocols.internal.SemanticVersion;
 import app.coronawarn.server.services.distribution.config.DistributionServiceConfig;
+import java.util.Arrays;
+import java.util.List;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+
 
 /**
  * Provides the application configuration needed for the mobile client. Contains all necessary sub-configs, including:
@@ -54,11 +60,20 @@ public class ApplicationConfigurationPublicationConfig {
   @Bean
   public ApplicationConfiguration createMasterConfiguration(DistributionServiceConfig distributionServiceConfig)
       throws UnableToLoadFileException {
+
+    List<String> suggestedCountries = distributionServiceConfig.getSupportedCountries() == null ? List.of("")
+        : distributionServiceConfig.getSupportedCountries();
+
     return YamlLoader.loadYamlIntoProtobufBuilder(MASTER_FILE, Builder.class)
         .setAppFeatures(
-            AppFeatures.newBuilder().addAllAppFeatures(distributionServiceConfig.getAppFeaturesProto()).build())
-        .addAllSupportedCountries(distributionServiceConfig.getSupportedCountries())
+            AppFeatures.newBuilder().addAllAppFeatures(distributionServiceConfig.getAppFeaturesProto()).build()
+        )
+        .addAllSupportedCountries(suggestedCountries)
         .build();
+  }
 
+  public Integer getSemanticVersionNumber(String version, Integer position) {
+    List<String> items = Arrays.asList(version.split("\\."));
+    return Integer.valueOf(items.get(position));
   }
 }
