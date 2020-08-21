@@ -1,3 +1,0 @@
-min-risk-score: 50
-risk-score-classes: !include app-config_circular.yaml
-exposure-config: !include app-config_circular.yaml
