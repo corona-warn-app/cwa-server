@@ -71,6 +71,7 @@ public class DistributionServiceConfig {
   private Api api;
   private ObjectStore objectStore;
   private List<AppFeature> appFeatures;
+  private List<String> supportedCountries;
 
   public Paths getPaths() {
     return paths;
@@ -183,6 +184,14 @@ public class DistributionServiceConfig {
 
   public void setAppFeatures(List<AppFeature> appFeatures) {
     this.appFeatures = appFeatures;
+  }
+
+  public List<String> getSupportedCountries() {
+    return supportedCountries;
+  }
+
+  public void setSupportedCountries(List<String> supportedCountries) {
+    this.supportedCountries = supportedCountries;
   }
 
   /**

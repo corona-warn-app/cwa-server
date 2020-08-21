@@ -57,6 +57,8 @@ public class ApplicationConfigurationPublicationConfig {
     return YamlLoader.loadYamlIntoProtobufBuilder(MASTER_FILE, Builder.class)
         .setAppFeatures(
             AppFeatures.newBuilder().addAllAppFeatures(distributionServiceConfig.getAppFeaturesProto()).build())
+        .addAllSupportedCountries(distributionServiceConfig.getSupportedCountries())
         .build();
+
   }
 }
