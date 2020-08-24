@@ -4,13 +4,10 @@ ALTER TABLE diagnosis_key
     ADD consent_to_federation BOOLEAN NOT NULL DEFAULT FALSE;
 
 ALTER TABLE diagnosis_key
-    ADD origin_country VARCHAR(2);
+    ADD origin_country VARCHAR (2);
 
 ALTER TABLE diagnosis_key
-    ADD visited_countries VARCHAR(2)[];
+    ADD visited_countries VARCHAR (2) [];
 
 ALTER TABLE diagnosis_key
-    ADD report_type VARCHAR(30);
-
-ALTER TABLE diagnosis_key
-    ADD days_since_onset_of_symptoms INTEGER;
+    ADD verification_type VARCHAR(20);

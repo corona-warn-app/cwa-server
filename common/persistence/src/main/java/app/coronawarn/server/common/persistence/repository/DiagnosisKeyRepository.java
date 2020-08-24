@@ -64,22 +64,21 @@ public interface DiagnosisKeyRepository extends PagingAndSortingRepository<Diagn
   /**
    * Attempts to write the specified diagnosis key information into the database. If a row with the specified key data
    * already exists, no data is inserted.
-   *
-   * @param keyData                    The key data of the diagnosis key.
+   *  @param keyData                    The key data of the diagnosis key.
    * @param rollingStartIntervalNumber The rolling start interval number of the diagnosis key.
    * @param rollingPeriod              The rolling period of the diagnosis key.
    * @param submissionTimestamp        The submission timestamp of the diagnosis key.
    * @param transmissionRisk           The transmission risk level of the diagnosis key.
    * @param originCountry              The origin country from the app.
    * @param visitedCountries           The list of countries this transmissions is relevant for.
-   * @param reportType                 The report type of the diagnosis key.
+   * @param verificationType           The verification type of the diagnosis key.
    */
   @Modifying
   @Query("INSERT INTO diagnosis_key "
       + "(key_data, rolling_start_interval_number, rolling_period, submission_timestamp, transmission_risk_level, "
-      + "origin_country, visited_countries, report_type, days_since_onset_of_symptoms) "
+        + "origin_country, visited_countries, verification_type) "
       + "VALUES (:keyData, :rollingStartIntervalNumber, :rollingPeriod, :submissionTimestamp, :transmissionRisk, "
-      + ":origin_country, :visited_countries, :report_type, :days_since_onset_of_symptoms) "
+        + ":origin_country, :visited_countries, :verificationType) "
       + "ON CONFLICT DO NOTHING")
   void saveDoNothingOnConflict(
       @Param("keyData") byte[] keyData,
@@ -89,6 +88,5 @@ public interface DiagnosisKeyRepository extends PagingAndSortingRepository<Diagn
       @Param("transmissionRisk") int transmissionRisk,
       @Param("origin_country") String originCountry,
       @Param("visited_countries") String[] visitedCountries,
-      @Param("report_type") String reportType,
-      @Param("days_since_onset_of_symptoms") int daysSinceOnsetOfSymptoms);
+      @Param("verificationType") String verificationType);
 }

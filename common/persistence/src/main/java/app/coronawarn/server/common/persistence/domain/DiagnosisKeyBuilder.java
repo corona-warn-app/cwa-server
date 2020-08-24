@@ -27,8 +27,8 @@ import static app.coronawarn.server.common.persistence.domain.DiagnosisKeyBuilde
 import static app.coronawarn.server.common.persistence.domain.validation.ValidSubmissionTimestampValidator.SECONDS_PER_HOUR;
 
 import app.coronawarn.server.common.persistence.exception.InvalidDiagnosisKeyException;
-import app.coronawarn.server.common.protocols.external.exposurenotification.ReportType;
 import app.coronawarn.server.common.protocols.external.exposurenotification.TemporaryExposureKey;
+import app.coronawarn.server.common.protocols.external.exposurenotification.VerificationType;
 import java.time.Instant;
 import java.util.List;
 import java.util.Set;
@@ -53,9 +53,8 @@ public class DiagnosisKeyBuilder implements
   private Long submissionTimestamp = null;
   private String countryCode;
   private List<String> visitedCountries;
-  private ReportType reportType;
+  private VerificationType verificationType;
   private boolean consentToFederation;
-  private int daysSinceOnsetOfSymptoms;
 
   DiagnosisKeyBuilder() {
   }
@@ -96,7 +95,7 @@ public class DiagnosisKeyBuilder implements
         .withTransmissionRiskLevel(federationDiagnosisKey.getTransmissionRiskLevel())
         .withRollingPeriod(federationDiagnosisKey.getRollingPeriod())
         .withCountryCode(federationDiagnosisKey.getOrigin())
-        .withReportType(federationDiagnosisKey.getReportType())
+        .withVerificationType(federationDiagnosisKey.getVerificationType())
         .withVisitedCountries(federationDiagnosisKey.getVisitedCountriesList());
   }
 
@@ -131,14 +130,8 @@ public class DiagnosisKeyBuilder implements
   }
 
   @Override
-  public FinalBuilder withReportType(ReportType reportType) {
-    this.reportType = reportType;
-    return this;
-  }
-
-  @Override
-  public FinalBuilder withDaysSinceOnsetOfSymptoms(int daysSinceOnsetOfSymptoms) {
-    this.daysSinceOnsetOfSymptoms = daysSinceOnsetOfSymptoms;
+  public FinalBuilder withVerificationType(VerificationType verificationType) {
+    this.verificationType = verificationType;
     return this;
   }
 
@@ -151,7 +144,7 @@ public class DiagnosisKeyBuilder implements
 
     var diagnosisKey = new DiagnosisKey(
         keyData, rollingStartIntervalNumber, rollingPeriod, transmissionRiskLevel, submissionTimestamp,
-        consentToFederation, countryCode, visitedCountries, reportType, daysSinceOnsetOfSymptoms);
+        consentToFederation, countryCode, visitedCountries, verificationType);
     return throwIfValidationFails(diagnosisKey);
   }
 

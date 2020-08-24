@@ -12,21 +12,14 @@ message DiagnosisKeyBatch {
 message DiagnosisKey {
   bytes keyData = 1; // key
   uint32 rollingStartIntervalNumber = 2;
-  uint32 rollingPeriod = 3; // number of 10-minute windows between key-rolling
+  uint32 rollingPeriod = 3; // number of 10-minute windows between key rolling
   int32 transmissionRiskLevel = 4; // risk of transmission
   repeated string visitedCountries = 5;
   string origin = 6; // country of origin
-  ReportType reportType = 7; // set by backend
-  // Number of days elapsed between symptom onset and the TEK being used.
-  // E.g. 2 means TEK is 2 days after onset of symptoms.
-  uint32 days_since_onset_of_symptoms = 8;
+  VerificationType verificationType = 7; // set by backend
 }
-// Data type representing why this key was published.
-enum ReportType {
-  UNKNOWN = 0;  // Never returned by the client API.
-  CONFIRMED_TEST = 1;
-  CONFIRMED_CLINICAL_DIAGNOSIS = 2;
-  SELF_REPORT = 3;
-  RECURSIVE = 4;  // Reserved for future use.
-  REVOKED = 5;  // Used to revoke a key, never returned by client API.
+
+enum VerificationType {
+  LAB_VERIFIED = 0;
+  SELF_REPORTED = 1;
 }

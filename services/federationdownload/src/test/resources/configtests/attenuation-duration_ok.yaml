@@ -1,0 +1,9 @@
+thresholds:
+  lower: 50
+  upper: 70
+weights:
+  low: 1.0
+  mid: 0.5
+  high: 0.0
+default-bucket-offset: 0
+risk-score-normalization-divisor: 25
