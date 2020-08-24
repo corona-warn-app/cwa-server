@@ -8,6 +8,17 @@ logging:
       coronawarn: INFO
 
 
+services:
+  upload:
+    privatekey: ${VAULT_FILESIGNING_SECRET}
+    signature:
+      # The ASN.1 OID for algorithm identifier.
+      algorithm-oid: 1.2.840.10045.4.3.2
+      # The algorithm name.
+      algorithm-name: SHA256withECDSA
+      # The security provider.
+      security-provider: BC
+
 spring:
   transaction:
     default-timeout: 20

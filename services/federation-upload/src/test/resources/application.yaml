@@ -1,0 +1,27 @@
+---
+logging:
+  level:
+    org:
+      springframework: off
+    root: off
+
+services:
+  upload:
+    privatekey: ${VAULT_FILESIGNING_SECRET:file:/Users/i850193/workspaces/cwa/cwa-server/docker-compose-test-secrets/private.pem}
+    signature:
+      # The ASN.1 OID for algorithm identifier.
+      algorithm-oid: 1.2.840.10045.4.3.2
+      # The algorithm name.
+      algorithm-name: SHA256withECDSA
+      # The security provider.
+      security-provider: BC
+
+spring:
+  main:
+    banner-mode: off
+  flyway:
+    enabled: true
+    locations: classpath:db/migration/postgres
+    jpa:
+      hibernate:
+        ddl-auto: validate
