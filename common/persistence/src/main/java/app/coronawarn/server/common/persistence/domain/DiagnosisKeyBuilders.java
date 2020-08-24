@@ -20,8 +20,8 @@
 
 package app.coronawarn.server.common.persistence.domain;
 
+import app.coronawarn.server.common.protocols.external.exposurenotification.ReportType;
 import app.coronawarn.server.common.protocols.external.exposurenotification.TemporaryExposureKey;
-import app.coronawarn.server.common.protocols.external.exposurenotification.VerificationType;
 import java.util.List;
 
 /**
@@ -48,7 +48,7 @@ interface DiagnosisKeyBuilders {
     FinalBuilder fromTemporaryExposureKey(TemporaryExposureKey protoBufObject);
 
     /**
-     * Adds the data contained in the specified federation diagnosis key key object to this builder.
+     * Adds the data contained in the specified federation diagnosis key object to this builder.
      *
      * @param federationDiagnosisKey DiagnosisKey object associated with the temporary exposure key.
      * @return this Builder instance.
@@ -106,7 +106,9 @@ interface DiagnosisKeyBuilders {
 
     FinalBuilder withVisitedCountries(List<String> visitedCountries);
 
-    FinalBuilder withVerificationType(VerificationType verificationType);
+    FinalBuilder withReportType(ReportType reportType);
+
+    FinalBuilder withDaysSinceOnsetOfSymptoms(int daysSinceOnsetOfSymptoms);
 
     /**
      * Builds a {@link DiagnosisKey} instance. If no submission timestamp has been specified it will be set to "now" as

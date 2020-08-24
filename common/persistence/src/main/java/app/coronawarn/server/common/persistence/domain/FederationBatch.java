@@ -31,9 +31,15 @@ public class FederationBatch {
 
   private Date date;
 
-  public FederationBatch(String batchTag, Date date) {
+  private FederationBatchStatus status;
+
+  /**
+   * Creates a FederationBatch.
+   */
+  public FederationBatch(String batchTag, Date date, FederationBatchStatus status) {
     this.batchTag = batchTag;
     this.date = date;
+    this.status = status;
   }
 
   public String getBatchTag() {
@@ -52,6 +58,15 @@ public class FederationBatch {
     this.date = date;
   }
 
+  public FederationBatchStatus getStatus() {
+    return status;
+  }
+
+  public void setStatus(
+      FederationBatchStatus status) {
+    this.status = status;
+  }
+
   @Override
   public boolean equals(Object o) {
     if (this == o) {
@@ -61,7 +76,9 @@ public class FederationBatch {
       return false;
     }
     FederationBatch that = (FederationBatch) o;
-    return Objects.equals(batchTag, that.batchTag) && Objects.equals(date, that.date);
+    return Objects.equals(batchTag, that.batchTag)
+        && Objects.equals(date, that.date)
+        && status == that.status;
   }
 
   @Override
