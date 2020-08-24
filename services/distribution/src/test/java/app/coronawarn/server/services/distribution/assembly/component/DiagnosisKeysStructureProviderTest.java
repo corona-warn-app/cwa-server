@@ -33,7 +33,6 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
-import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -76,7 +75,6 @@ class DiagnosisKeysStructureProviderTest {
     Mockito.when(diagnosisKeyService.getDiagnosisKeysByVisitedCountry(distributionCountry)).thenReturn(diagnosisKeys);
   }
 
-  @NotNull
   private LocalDateTime buildTimestamp(int currentHour) {
     return LocalDateTime.of(1970, 1, 3, 0, 0).plusHours(currentHour);
   }
