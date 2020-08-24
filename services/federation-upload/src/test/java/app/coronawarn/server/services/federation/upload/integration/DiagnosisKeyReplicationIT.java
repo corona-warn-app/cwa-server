@@ -25,9 +25,8 @@ import static org.junit.Assert.assertTrue;
 import java.util.Collection;
 import java.util.List;
 import java.util.Random;
-
-import org.apache.commons.codec.binary.StringUtils;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,6 +36,7 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import app.coronawarn.server.common.persistence.domain.DiagnosisKey;
+import app.coronawarn.server.common.persistence.repository.DiagnosisKeyRepository;
 import app.coronawarn.server.common.persistence.repository.FederationUploadKeyRepository;
 import app.coronawarn.server.common.persistence.service.DiagnosisKeyService;
 import app.coronawarn.server.common.protocols.external.exposurenotification.ReportType;
@@ -45,10 +45,16 @@ import app.coronawarn.server.services.federation.upload.Application;
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration(classes = {Application.class}, initializers = ConfigFileApplicationContextInitializer.class)
 @ActiveProfiles({"integration-test"})
-public class KeyReplicationIT {
+@Tag("s3-integration")
+public class DiagnosisKeyReplicationIT {
+
+    private static final String TEST_ORIGIN_COUNTRY = "DE";
 
     @Autowired
     private DiagnosisKeyService keyService;
+
+    @Autowired
+    private DiagnosisKeyRepository keyRepository;
 
     @Autowired
     private FederationUploadKeyRepository uploadKeyRepository;
@@ -58,27 +64,58 @@ public class KeyReplicationIT {
 
     @BeforeEach
     public void setUpMocks() {
+      // cleanup before tests
       jdbcTemplate.execute("truncate table federation_upload_key");
     }
 
     @Test
     void diagnosisKeysWithConsentShouldBeReplicatedOnInsert() {
-       DiagnosisKey dummyKey = DiagnosisKey.builder().withKeyData(randomByteData())
+       persistNewKeyAndCheckReplication();
+    }
+
+    @Test
+    void diagnosisKeysWithoutConsentShouldNotBeReplicatedOnInsert() {
+       DiagnosisKey dummyKey = generateRandomDiagnosisKey(false);
+       keyService.saveDiagnosisKeys(List.of(dummyKey));
+
+       Collection<DiagnosisKey> uploadableKeys = uploadKeyRepository.findAllUploadableKeys();
+
+       assertTrue(uploadableKeys.isEmpty());
+    }
+
+    @Test
+    void deletionOfDiagnosisKeysSHouldBeReplicatedToUploadTable() {
+       DiagnosisKey dummyKey = persistNewKeyAndCheckReplication();
+       keyRepository.delete(dummyKey);
+       Collection<DiagnosisKey> uploadableKeys = uploadKeyRepository.findAllUploadableKeys();
+
+       assertTrue(uploadableKeys.isEmpty());
+    }
+
+
+    private DiagnosisKey persistNewKeyAndCheckReplication() {
+      DiagnosisKey dummyKey = generateRandomDiagnosisKey(true);
+      keyService.saveDiagnosisKeys(List.of(dummyKey));
+
+      Collection<DiagnosisKey> uploadableKeys = uploadKeyRepository.findAllUploadableKeys();
+
+      assertTrue(uploadableKeys.size() == 1);
+      assertTrue(uploadableKeys.iterator().next().equals(dummyKey));
+      return dummyKey;
+    }
+
+    private DiagnosisKey generateRandomDiagnosisKey(boolean consentToShare) {
+      DiagnosisKey dummyKey = DiagnosisKey.builder().withKeyData(randomByteData())
                               .withRollingStartIntervalNumber(1)
                               .withTransmissionRiskLevel(2)
-                              .withConsentToFederation(true)
-                              .withCountryCode("DE")
+                              .withConsentToFederation(consentToShare)
+                              .withCountryCode(TEST_ORIGIN_COUNTRY)
                               .withDaysSinceOnsetOfSymptoms(1)
                               .withSubmissionTimestamp(12)
                               .withVisitedCountries(List.of("FR","DK"))
                               .withReportType(ReportType.CONFIRMED_TEST)
                               .build();
-       keyService.saveDiagnosisKeys(List.of(dummyKey));
-
-       Collection<DiagnosisKey> uploadableKeys = uploadKeyRepository.findAllUploadableKeys();
-
-       assertTrue(uploadableKeys.size() == 1);
-       assertTrue(uploadableKeys.iterator().next().equals(dummyKey));
+      return dummyKey;
     }
 
     private byte[] randomByteData() {
