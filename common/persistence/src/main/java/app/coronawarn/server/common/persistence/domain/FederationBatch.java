@@ -45,15 +45,6 @@ public class FederationBatch {
   /**
    * Creates a FederationBatch.
    */
-  public FederationBatch(String batchTag, LocalDate date, FederationBatchStatus status) {
-    this.batchTag = batchTag;
-    this.date = date;
-    this.status = status;
-  }
-
-  /**
-   * Creates a FederationBatch.
-   */
   public FederationBatch(String batchTag, LocalDate date) {
     this.batchTag = batchTag;
     this.date = date;

@@ -66,7 +66,7 @@ public class CallbackController {
   @Timed(description = "Time spent handling callback.")
   public ResponseEntity<Void> handleCallback(@RequestParam(required = true) String batchTag,
       @Valid @Pattern(regexp = dateRegex) @RequestParam String date) {
-    FederationBatch federationBatch = new FederationBatch(batchTag, LocalDate.parse(date), null);
+    FederationBatch federationBatch = new FederationBatch(batchTag, LocalDate.parse(date));
     federationBatchService.saveFederationBatch(federationBatch);
     return ResponseEntity.ok().build();
   }
