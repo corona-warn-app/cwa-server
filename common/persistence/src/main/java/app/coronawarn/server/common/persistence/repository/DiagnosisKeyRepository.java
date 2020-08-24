@@ -95,9 +95,9 @@ public interface DiagnosisKeyRepository extends PagingAndSortingRepository<Diagn
   @Modifying
   @Query("INSERT INTO diagnosis_key "
       + "(key_data, rolling_start_interval_number, rolling_period, submission_timestamp, transmission_risk_level, "
-      + "origin_country, visited_countries, report_type, days_since_onset_of_symptoms) "
+      + "origin_country, visited_countries, report_type, days_since_onset_of_symptoms, consent_to_federation) "
       + "VALUES (:keyData, :rollingStartIntervalNumber, :rollingPeriod, :submissionTimestamp, :transmissionRisk, "
-      + ":origin_country, :visited_countries, :report_type, :days_since_onset_of_symptoms) "
+      + ":origin_country, :visited_countries, :report_type, :days_since_onset_of_symptoms, :consent_to_federation) "
       + "ON CONFLICT DO NOTHING")
   void saveDoNothingOnConflict(
       @Param("keyData") byte[] keyData,
@@ -108,5 +108,6 @@ public interface DiagnosisKeyRepository extends PagingAndSortingRepository<Diagn
       @Param("origin_country") String originCountry,
       @Param("visited_countries") String[] visitedCountries,
       @Param("report_type") String reportType,
-      @Param("days_since_onset_of_symptoms") int daysSinceOnsetOfSymptoms);
+      @Param("days_since_onset_of_symptoms") int daysSinceOnsetOfSymptoms,
+      @Param("consent_to_federation") boolean consentToFederation);
 }
