@@ -68,16 +68,26 @@ public class Helpers {
   }
 
   public static List<DiagnosisKey> buildDiagnosisKeys(
+      int startIntervalNumber, LocalDateTime submissionTimestamp, int number, String originCountry) {
+    long timestamp = submissionTimestamp.toEpochSecond(ZoneOffset.UTC) / 3600;
+    return buildDiagnosisKeys(startIntervalNumber, timestamp, number, originCountry);
+  }
+
+  public static List<DiagnosisKey> buildDiagnosisKeys(
       int startIntervalNumber, LocalDateTime submissionTimestamp, int number,
       String originCountry, List<String> visitedCountries) {
     long timestamp = submissionTimestamp.toEpochSecond(ZoneOffset.UTC) / 3600;
     return buildDiagnosisKeys(startIntervalNumber, timestamp, number, originCountry, visitedCountries);
   }
 
+  public static List<DiagnosisKey> buildDiagnosisKeys(
+      int startIntervalNumber, long submissionTimestamp, int number, String originCountry) {
+    return Helpers.buildDiagnosisKeys(startIntervalNumber, submissionTimestamp, number,
+       originCountry, Collections.singletonList("DE"));
+  }
 
   public static List<DiagnosisKey> buildDiagnosisKeys(int startIntervalNumber, long submissionTimestamp, int number) {
-    return Helpers.buildDiagnosisKeys(startIntervalNumber, submissionTimestamp, number,
-        "DE", Collections.singletonList("DE"));
+    return buildDiagnosisKeys(startIntervalNumber, submissionTimestamp, number, "DE");
   }
 
   public static List<DiagnosisKey> buildDiagnosisKeys(int startIntervalNumber,

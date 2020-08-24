@@ -33,6 +33,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
+import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -64,10 +65,16 @@ class DiagnosisKeysStructureProviderTest {
   @BeforeEach
   void setup() {
     diagnosisKeys = IntStream.range(0, 30)
-        .mapToObj(currentHour -> buildDiagnosisKeys(6, LocalDateTime.of(1970, 1, 3, 0, 0).plusHours(currentHour), 5))
+        .mapToObj(currentHour -> buildDiagnosisKeys(
+            6, buildTimestamp(currentHour), 5, "DE"))
         .flatMap(List::stream)
         .collect(Collectors.toList());
-    Mockito.when(diagnosisKeyService.getDiagnosisKeys()).thenReturn(diagnosisKeys);
+    Mockito.when(diagnosisKeyService.getDiagnosisKeysByVisitedCountry(Mockito.anyString())).thenReturn(diagnosisKeys);
+  }
+
+  @NotNull
+  private LocalDateTime buildTimestamp(int currentHour) {
+    return LocalDateTime.of(1970, 1, 3, 0, 0).plusHours(currentHour);
   }
 
   @Test
@@ -75,8 +82,15 @@ class DiagnosisKeysStructureProviderTest {
     DiagnosisKeyBundler bundler = new ProdDiagnosisKeyBundler(distributionServiceConfig);
     DiagnosisKeysStructureProvider diagnosisKeysStructureProvider = new DiagnosisKeysStructureProvider(
         diagnosisKeyService, cryptoProvider, distributionServiceConfig, bundler);
+
     Directory<WritableOnDisk> diagnosisKeys = diagnosisKeysStructureProvider.getDiagnosisKeys();
     Assertions.assertEquals("diagnosis-keys", diagnosisKeys.getName());
+
+    List<DiagnosisKey> allDiagnosisKeys = bundler.getAllDiagnosisKeys();
+    Assertions.assertFalse(allDiagnosisKeys.isEmpty());
+    for (DiagnosisKey diagnosisKey : allDiagnosisKeys) {
+      Assertions.assertEquals(distributionServiceConfig.getApi().getDistributionCountry(), diagnosisKey.getOriginCountry());
+    }
   }
 
 }
