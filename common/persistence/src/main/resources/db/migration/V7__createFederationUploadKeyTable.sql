@@ -7,5 +7,6 @@ CREATE TABLE federation_upload_key (
     consent_to_federation boolean NOT NULL DEFAULT FALSE,
     origin_country varchar (2),
     visited_countries varchar (2) [],
-    verification_type varchar(20)
+    report_type varchar(30),
+    days_since_onset_of_symptoms INTEGER
 );
