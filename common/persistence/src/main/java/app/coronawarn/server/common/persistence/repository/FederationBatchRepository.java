@@ -21,7 +21,6 @@
 package app.coronawarn.server.common.persistence.repository;
 
 import app.coronawarn.server.common.persistence.domain.FederationBatch;
-import app.coronawarn.server.common.persistence.domain.FederationBatchStatus;
 import java.util.Date;
 import org.springframework.data.jdbc.repository.query.Modifying;
 import org.springframework.data.jdbc.repository.query.Query;
@@ -34,15 +33,11 @@ public interface FederationBatchRepository extends PagingAndSortingRepository<Fe
 
   @Modifying
   @Query("INSERT INTO federation_batch "
-      + "(batch_tag, date, status) "
-      + "VALUES (:batchTag, :date, :status) "
+      + "(batch_tag, date) "
+      + "VALUES (:batchTag, :date) "
       + "ON CONFLICT DO NOTHING")
   void saveDoNothingOnConflict(
       @Param("batchTag") String batchTag,
-      @Param("date") Date date,
-      @Param("status") FederationBatchStatus status
+      @Param("date") Date date
   );
-
-  @Query("SELECT * FROM federation_batch WHERE status != 'PROCESSED' OR status is null ORDER BY date asc LIMIT 1")
-  FederationBatch findOldestUnprocessedFederationBatch();
 }

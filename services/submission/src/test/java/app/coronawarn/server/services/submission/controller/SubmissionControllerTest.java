@@ -47,9 +47,9 @@ import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
 import static org.springframework.http.HttpStatus.METHOD_NOT_ALLOWED;
 import static org.springframework.http.HttpStatus.OK;
 
+
 import app.coronawarn.server.common.persistence.domain.DiagnosisKey;
 import app.coronawarn.server.common.persistence.service.DiagnosisKeyService;
-import app.coronawarn.server.common.protocols.external.exposurenotification.ReportType;
 import app.coronawarn.server.common.protocols.external.exposurenotification.TemporaryExposureKey;
 import app.coronawarn.server.common.protocols.internal.SubmissionPayload;
 import app.coronawarn.server.services.submission.config.SubmissionServiceConfig;
@@ -193,19 +193,6 @@ class SubmissionControllerTest {
   }
 
   @Test
-  void submissionPayloadWithDefaultReportType() {
-    Collection<TemporaryExposureKey> submittedKeys = buildMultipleKeys();
-    ArgumentCaptor<Collection<DiagnosisKey>> argument = ArgumentCaptor.forClass(Collection.class);
-    ReportType expectedDefaultReportType = ReportType.CONFIRMED_CLINICAL_DIAGNOSIS;
-
-    SubmissionPayload submissionPayload = buildPayload(submittedKeys);
-    executor.executePost(submissionPayload);
-
-    verify(diagnosisKeyService, atLeastOnce()).saveDiagnosisKeys(argument.capture());
-    assertThat(submissionPayload.getReportType()).isEqualTo(expectedDefaultReportType);
-  }
-
-  @Test
   void checkSaveOperationCallAndFakeDelayUpdateForValidParameters() {
     Collection<TemporaryExposureKey> submittedKeys = buildMultipleKeys();
     ArgumentCaptor<Collection<DiagnosisKey>> argument = ArgumentCaptor.forClass(Collection.class);
@@ -329,7 +316,7 @@ class SubmissionControllerTest {
             .withVisitedCountries(submissionPayload.getVisitedCountriesList())
             .withCountryCode(StringUtils.defaultIfBlank(submissionPayload.getOrigin(),
                 config.getDefaultOriginCountry()))
-            .withReportType(submissionPayload.getReportType())
+            .withVerificationType(submissionPayload.getVerificationType())
             .build())
         .collect(Collectors.toSet());
 

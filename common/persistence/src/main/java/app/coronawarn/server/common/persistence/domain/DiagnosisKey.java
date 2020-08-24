@@ -25,7 +25,7 @@ import static java.time.ZoneOffset.UTC;
 import app.coronawarn.server.common.persistence.domain.DiagnosisKeyBuilders.Builder;
 import app.coronawarn.server.common.persistence.domain.validation.ValidRollingStartIntervalNumber;
 import app.coronawarn.server.common.persistence.domain.validation.ValidSubmissionTimestamp;
-import app.coronawarn.server.common.protocols.external.exposurenotification.ReportType;
+import app.coronawarn.server.common.protocols.external.exposurenotification.VerificationType;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.util.Arrays;
@@ -78,9 +78,7 @@ public class DiagnosisKey {
 
   private final List<String> visitedCountries;
 
-  private final ReportType reportType;
-
-  private final int daysSinceOnsetOfSymptoms;
+  private final VerificationType verificationType;
 
   /**
    * Should be called by builders.
@@ -88,7 +86,7 @@ public class DiagnosisKey {
   DiagnosisKey(byte[] keyData, int rollingStartIntervalNumber, int rollingPeriod,
       int transmissionRiskLevel, long submissionTimestamp,
       boolean consentToFederation, @Size String originCountry, List<String> visitedCountries,
-      ReportType reportType, int daysSinceOnsetOfSymptoms) {
+      VerificationType verificationType) {
     this.keyData = keyData;
     this.rollingStartIntervalNumber = rollingStartIntervalNumber;
     this.rollingPeriod = rollingPeriod;
@@ -97,8 +95,7 @@ public class DiagnosisKey {
     this.consentToFederation = consentToFederation;
     this.originCountry = originCountry;
     this.visitedCountries = visitedCountries == null ? Collections.emptyList() : visitedCountries;
-    this.reportType = reportType;
-    this.daysSinceOnsetOfSymptoms = daysSinceOnsetOfSymptoms;
+    this.verificationType = verificationType;
   }
 
   /**
@@ -159,12 +156,8 @@ public class DiagnosisKey {
     return visitedCountries;
   }
 
-  public ReportType getReportType() {
-    return reportType;
-  }
-
-  public int getDaysSinceOnsetOfSymptoms() {
-    return daysSinceOnsetOfSymptoms;
+  public VerificationType getVerificationType() {
+    return verificationType;
   }
 
   /**
@@ -219,15 +212,14 @@ public class DiagnosisKey {
         && Arrays.equals(keyData, that.keyData)
         && Objects.equals(originCountry, that.originCountry)
         && Objects.equals(visitedCountries, that.visitedCountries)
-        && reportType == that.reportType
-        && daysSinceOnsetOfSymptoms == that.daysSinceOnsetOfSymptoms;
+        && verificationType == that.verificationType;
   }
 
   @Override
   public int hashCode() {
     int result = Objects
         .hash(rollingStartIntervalNumber, rollingPeriod, transmissionRiskLevel, submissionTimestamp, originCountry,
-            visitedCountries, reportType, daysSinceOnsetOfSymptoms);
+            visitedCountries, verificationType);
     result = 31 * result + Arrays.hashCode(keyData);
     return result;
   }

@@ -20,8 +20,8 @@
 
 package app.coronawarn.server.common.persistence.domain;
 
-import app.coronawarn.server.common.protocols.external.exposurenotification.ReportType;
 import app.coronawarn.server.common.protocols.external.exposurenotification.TemporaryExposureKey;
+import app.coronawarn.server.common.protocols.external.exposurenotification.VerificationType;
 import java.util.List;
 
 /**
@@ -106,9 +106,7 @@ interface DiagnosisKeyBuilders {
 
     FinalBuilder withVisitedCountries(List<String> visitedCountries);
 
-    FinalBuilder withReportType(ReportType reportType);
-
-    FinalBuilder withDaysSinceOnsetOfSymptoms(int daysSinceOnsetOfSymptoms);
+    FinalBuilder withVerificationType(VerificationType verificationType);
 
     /**
      * Builds a {@link DiagnosisKey} instance. If no submission timestamp has been specified it will be set to "now" as
