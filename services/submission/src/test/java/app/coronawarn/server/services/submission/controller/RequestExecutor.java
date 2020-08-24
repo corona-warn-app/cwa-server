@@ -109,6 +109,6 @@ public class RequestExecutor {
   }
 
   public static Collection<TemporaryExposureKey> buildPayloadWithOneKey() {
-    return Collections.singleton(buildTemporaryExposureKey(VALID_KEY_DATA_1, 1, 3));
+    return Collections.singleton(buildTemporaryExposureKey(VALID_KEY_DATA_1, createRollingStartIntervalNumber(1), 3));
   }
 }
