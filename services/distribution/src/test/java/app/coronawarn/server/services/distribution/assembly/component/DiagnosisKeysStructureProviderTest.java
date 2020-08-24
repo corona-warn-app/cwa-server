@@ -64,15 +64,16 @@ class DiagnosisKeysStructureProviderTest {
 
   @BeforeEach
   void setup() {
+    String distributionCountry = distributionServiceConfig.getApi().getDistributionCountry();
     diagnosisKeys = IntStream.range(0, 30)
         .mapToObj(currentHour -> buildDiagnosisKeys(
             6,
             buildTimestamp(currentHour),
             5,
-            distributionServiceConfig.getApi().getDistributionCountry()))
+            distributionCountry))
         .flatMap(List::stream)
         .collect(Collectors.toList());
-    Mockito.when(diagnosisKeyService.getDiagnosisKeysByVisitedCountry(Mockito.anyString())).thenReturn(diagnosisKeys);
+    Mockito.when(diagnosisKeyService.getDiagnosisKeysByVisitedCountry(distributionCountry)).thenReturn(diagnosisKeys);
   }
 
   @NotNull
