@@ -14,6 +14,10 @@ services:
     federation-gateway:
       base-url: ${FEDERATION_GATEWAY_BASE_URL:http://localhost:8005}
       path: /diagnosiskeys/download/
+      ssl:
+        key-store-path: ${FEDERATION_GATEWAY_KEY_STORE_PATH}
+        key-store-pass: ${FEDERATION_GATEWAY_KEY_STORE_PASS}
+        certificate-type: PKCS12
     # Local paths, that are used during the export creation.
     paths:
       # The output path.

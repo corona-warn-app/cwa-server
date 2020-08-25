@@ -3,13 +3,10 @@ package app.coronawarn.server.services.federation.download;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import app.coronawarn.server.common.persistence.domain.FederationBatch;
-import app.coronawarn.server.common.persistence.domain.FederationBatchStatus;
-import app.coronawarn.server.common.persistence.repository.FederationBatchRepository;
 import java.time.LocalDate;
-import java.util.Date;
 import java.util.Objects;
 import java.util.stream.Stream;
+
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -19,7 +16,12 @@ import org.junit.jupiter.params.provider.MethodSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.reactive.AutoConfigureWebTestClient;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
+
+import app.coronawarn.server.common.persistence.domain.FederationBatch;
+import app.coronawarn.server.common.persistence.domain.FederationBatchStatus;
+import app.coronawarn.server.common.persistence.repository.FederationBatchRepository;
 
 @SpringBootTest
 @ExtendWith({SpringExtension.class})

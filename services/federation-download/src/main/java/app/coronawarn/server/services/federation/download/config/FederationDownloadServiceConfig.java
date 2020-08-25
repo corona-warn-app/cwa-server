@@ -20,7 +20,6 @@
 
 package app.coronawarn.server.services.federation.download.config;
 
-import java.io.File;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.annotation.Validated;
@@ -32,7 +31,6 @@ public class FederationDownloadServiceConfig {
 
   private Integer connectionPoolSize;
   private FederationGateway federationGateway;
-  private Client client;
 
   public Integer getConnectionPoolSize() {
     return connectionPoolSize;
@@ -54,10 +52,55 @@ public class FederationDownloadServiceConfig {
     return federationGateway.getPath();
   }
 
-  private static class FederationGateway {
+  public FederationGateway getFederationGateway() {
+    return federationGateway;
+  }
+
+  public static class Ssl {
+
+    private String keyStorePath;
+    private String keyStorePass;
+    private String certificateType;
+
+    public String getKeyStorePath() {
+      return keyStorePath;
+    }
+
+    public void setKeyStorePath(String keyStorePath) {
+      this.keyStorePath = keyStorePath;
+    }
+
+    public String getKeyStorePass() {
+      return keyStorePass;
+    }
+
+    public void setKeyStorePass(String keyStorePass) {
+      this.keyStorePass = keyStorePass;
+    }
+
+    public String getCertificateType() {
+      return certificateType;
+    }
+
+    public void setCertificateType(String certificateType) {
+      this.certificateType = certificateType;
+    }
+  }
+
+  public static class FederationGateway {
     private String baseUrl;
 
     private String path;
+
+    private Ssl ssl;
+
+    public Ssl getSsl() {
+      return ssl;
+    }
+
+    public void setSsl(Ssl ssl) {
+      this.ssl = ssl;
+    }
 
     public String getBaseUrl() {
       return baseUrl;
@@ -73,76 +116,6 @@ public class FederationDownloadServiceConfig {
 
     public void setPath(String path) {
       this.path = path;
-    }
-  }
-
-  public Client getClient() {
-    return client;
-  }
-
-  public void setClient(Client client) {
-    this.client = client;
-  }
-
-  public static class Client {
-
-    private Ssl ssl;
-
-    public Ssl getSsl() {
-      return ssl;
-    }
-
-    public void setSsl(Ssl ssl) {
-      this.ssl = ssl;
-    }
-
-    public static class Ssl {
-
-      private File keyStore;
-      private String keyStorePassword;
-      private String keyPassword;
-      private File trustStore;
-      private String trustStorePassword;
-
-      public File getKeyStore() {
-        return keyStore;
-      }
-
-      public void setKeyStore(File keyStore) {
-        this.keyStore = keyStore;
-      }
-
-      public String getKeyStorePassword() {
-        return keyStorePassword;
-      }
-
-      public void setKeyStorePassword(String keyStorePassword) {
-        this.keyStorePassword = keyStorePassword;
-      }
-
-      public String getKeyPassword() {
-        return keyPassword;
-      }
-
-      public void setKeyPassword(String keyPassword) {
-        this.keyPassword = keyPassword;
-      }
-
-      public File getTrustStore() {
-        return trustStore;
-      }
-
-      public void setTrustStore(File trustStore) {
-        this.trustStore = trustStore;
-      }
-
-      public String getTrustStorePassword() {
-        return trustStorePassword;
-      }
-
-      public void setTrustStorePassword(String trustStorePassword) {
-        this.trustStorePassword = trustStorePassword;
-      }
     }
   }
 }
