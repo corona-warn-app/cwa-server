@@ -20,8 +20,6 @@
 
 package app.coronawarn.server.services.submission.validation;
 
-import static app.coronawarn.server.common.persistence.domain.DiagnosisKey.EXPECTED_ROLLING_PERIOD;
-
 import app.coronawarn.server.common.protocols.external.exposurenotification.TemporaryExposureKey;
 import app.coronawarn.server.common.protocols.internal.SubmissionPayload;
 import app.coronawarn.server.services.submission.config.SubmissionServiceConfig;
@@ -32,6 +30,7 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 import javax.validation.Constraint;
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
@@ -68,9 +67,11 @@ public @interface ValidSubmissionPayload {
       ConstraintValidator<ValidSubmissionPayload, SubmissionPayload> {
 
     private final int maxNumberOfKeys;
+    private final int maxRollingPeriod;
 
     public SubmissionPayloadValidator(SubmissionServiceConfig submissionServiceConfig) {
       maxNumberOfKeys = submissionServiceConfig.getMaxNumberOfKeys();
+      maxRollingPeriod = submissionServiceConfig.getMaxRollingPeriod();
     }
 
     /**
@@ -87,11 +88,14 @@ public @interface ValidSubmissionPayload {
       List<TemporaryExposureKey> exposureKeys = submissionPayload.getKeysList();
       validatorContext.disableDefaultConstraintViolation();
 
-      boolean isValid = checkKeyCollectionSize(exposureKeys, validatorContext);
-      isValid &= checkUniqueStartIntervalNumbers(exposureKeys, validatorContext);
-      isValid &= checkNoOverlapsInTimeWindow(exposureKeys, validatorContext);
-
-      return isValid;
+      if (keysHaveFlexibleRollingPeriod(exposureKeys)) {
+        return checkStartIntervalNumberIsAtMidNight(exposureKeys, validatorContext)
+            && checkKeysCumulateEqualOrLessThanMaxRollingPeriodPerDay(exposureKeys, validatorContext);
+      } else {
+        return checkStartIntervalNumberIsAtMidNight(exposureKeys, validatorContext)
+            && checkKeyCollectionSize(exposureKeys, validatorContext)
+            && checkUniqueStartIntervalNumbers(exposureKeys, validatorContext);
+      }
     }
 
     private void addViolation(ConstraintValidatorContext validatorContext, String message) {
@@ -124,23 +128,37 @@ public @interface ValidSubmissionPayload {
       return true;
     }
 
-    private boolean checkNoOverlapsInTimeWindow(List<TemporaryExposureKey> exposureKeys,
+    private boolean checkKeysCumulateEqualOrLessThanMaxRollingPeriodPerDay(List<TemporaryExposureKey> exposureKeys,
         ConstraintValidatorContext validatorContext) {
-      if (exposureKeys.size() < 2) {
-        return true;
+
+      boolean isValidRollingPeriod = exposureKeys.stream().collect(Collectors
+          .groupingBy(TemporaryExposureKey::getRollingStartIntervalNumber,
+              Collectors.summingInt(TemporaryExposureKey::getRollingPeriod)))
+          .values().stream()
+          .anyMatch(sum -> sum <= maxRollingPeriod);
+
+      if (!isValidRollingPeriod) {
+        addViolation(validatorContext, "The sum of the rolling periods exceeds 144 per day");
+        return false;
+      }
+      return true;
+    }
+
+    private boolean keysHaveFlexibleRollingPeriod(List<TemporaryExposureKey> exposureKeys) {
+      return exposureKeys.stream()
+          .anyMatch(temporaryExposureKey -> temporaryExposureKey.getRollingPeriod() < maxRollingPeriod);
+    }
+
+    private boolean checkStartIntervalNumberIsAtMidNight(List<TemporaryExposureKey> exposureKeys,
+        ConstraintValidatorContext validatorContext) {
+      boolean isNotMidNight00Utc = exposureKeys.stream()
+          .anyMatch(exposureKey -> exposureKey.getRollingStartIntervalNumber() % maxRollingPeriod > 0);
+
+      if (isNotMidNight00Utc) {
+        addViolation(validatorContext, "Start Interval Number must be at midnight ( 00:00 UTC )");
+        return false;
       }
 
-      Integer[] sortedStartIntervalNumbers = exposureKeys.stream()
-          .mapToInt(TemporaryExposureKey::getRollingStartIntervalNumber)
-          .sorted().boxed().toArray(Integer[]::new);
-
-      for (int i = 1; i < sortedStartIntervalNumbers.length; i++) {
-        if ((sortedStartIntervalNumbers[i - 1] + EXPECTED_ROLLING_PERIOD) > sortedStartIntervalNumbers[i]) {
-          addViolation(validatorContext, String.format(
-              "Subsequent intervals overlap. StartIntervalNumbers: %s", sortedStartIntervalNumbers));
-          return false;
-        }
-      }
       return true;
     }
   }

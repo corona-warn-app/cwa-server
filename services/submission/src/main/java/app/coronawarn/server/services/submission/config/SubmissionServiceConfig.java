@@ -59,6 +59,10 @@ public class SubmissionServiceConfig {
   private Verification verification;
   private Monitoring monitoring;
   private Client client;
+  @Min(0)
+  @Max(144)
+  private Integer maxRollingPeriod;
+
 
   public Long getInitialFakeDelayMilliseconds() {
     return initialFakeDelayMilliseconds;
@@ -108,6 +112,14 @@ public class SubmissionServiceConfig {
     this.maximumRequestSize = maximumRequestSize;
   }
 
+  public Integer getMaxRollingPeriod() {
+    return maxRollingPeriod;
+  }
+
+  public void setMaxRollingPeriod(Integer maxRollingPeriod) {
+    this.maxRollingPeriod = maxRollingPeriod;
+  }
+
   public Integer getMaxNumberOfKeys() {
     return payload.getMaxNumberOfKeys();
   }
@@ -119,7 +131,7 @@ public class SubmissionServiceConfig {
   private static class Payload {
 
     @Min(7)
-    @Max(28)
+    @Max(100)
     private Integer maxNumberOfKeys;
 
     public Integer getMaxNumberOfKeys() {
