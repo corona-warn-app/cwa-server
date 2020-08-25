@@ -254,8 +254,8 @@ class SubmissionControllerTest {
 
   private Collection<TemporaryExposureKey> buildMultipleKeys() {
     int rollingStartIntervalNumber1 = createRollingStartIntervalNumber(config.getRetentionDays() - 1);
-    int rollingStartIntervalNumber2 = rollingStartIntervalNumber1 + DiagnosisKey.EXPECTED_ROLLING_PERIOD;
-    int rollingStartIntervalNumber3 = rollingStartIntervalNumber2 + DiagnosisKey.EXPECTED_ROLLING_PERIOD;
+    int rollingStartIntervalNumber2 = rollingStartIntervalNumber1 + DiagnosisKey.MAX_ROLLING_PERIOD;
+    int rollingStartIntervalNumber3 = rollingStartIntervalNumber2 + DiagnosisKey.MAX_ROLLING_PERIOD;
     return Stream.of(
         buildTemporaryExposureKey(VALID_KEY_DATA_1, rollingStartIntervalNumber1, 3),
         buildTemporaryExposureKey(VALID_KEY_DATA_2, rollingStartIntervalNumber3, 6),
@@ -267,7 +267,7 @@ class SubmissionControllerTest {
     return TemporaryExposureKey.newBuilder()
         .setKeyData(ByteString.copyFromUtf8(VALID_KEY_DATA_2))
         .setRollingStartIntervalNumber(createRollingStartIntervalNumber(config.getRetentionDays()))
-        .setRollingPeriod(DiagnosisKey.EXPECTED_ROLLING_PERIOD)
+        .setRollingPeriod(DiagnosisKey.MAX_ROLLING_PERIOD)
         .setTransmissionRiskLevel(5).build();
   }
 

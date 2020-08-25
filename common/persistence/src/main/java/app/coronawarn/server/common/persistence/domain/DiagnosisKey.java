@@ -47,7 +47,8 @@ public class DiagnosisKey {
    * reject any diagnosis keys that do not have a rolling period of a certain fixed value. See
    * https://developer.apple.com/documentation/exposurenotification/setting_up_an_exposure_notification_server
    */
-  public static final int EXPECTED_ROLLING_PERIOD = 144;
+  public static final int MIN_ROLLING_PERIOD = 0;
+  public static final int MAX_ROLLING_PERIOD = 144;
 
   private static final Validator VALIDATOR = Validation.buildDefaultValidatorFactory().getValidator();
 
@@ -58,8 +59,8 @@ public class DiagnosisKey {
   @ValidRollingStartIntervalNumber
   private final int rollingStartIntervalNumber;
 
-  @Range(min = EXPECTED_ROLLING_PERIOD, max = EXPECTED_ROLLING_PERIOD,
-      message = "Rolling period must be " + EXPECTED_ROLLING_PERIOD + ".")
+  @Range(min = MIN_ROLLING_PERIOD, max = MAX_ROLLING_PERIOD,
+      message = "Rolling period must be between " + MIN_ROLLING_PERIOD + " and " + MAX_ROLLING_PERIOD + ".")
   private final int rollingPeriod;
 
   @Range(min = 0, max = 8, message = "Risk level must be between 0 and 8.")
