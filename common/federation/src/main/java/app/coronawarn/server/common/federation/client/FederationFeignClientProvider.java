@@ -11,41 +11,32 @@ import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.ssl.SSLContextBuilder;
 import org.springframework.cloud.commons.httpclient.ApacheHttpClientFactory;
 import org.springframework.cloud.commons.httpclient.DefaultApacheHttpClientFactory;
-import org.springframework.context.annotation.Bean;
-import org.springframework.stereotype.Component;
 
-@Component
 public class FederationFeignClientProvider implements FeignClientProvider {
 
-
-  //TODO:: extenalize configuration in application.yaml to point to vault
-  private static final String KEYSTOREPATH = "<keystore-path>";
-  private static final String KEYSTOREPASS = "<keystore-pass>";
-  private static final String KEYPASS = "<key-pass>";
-  private static final String CERTIFICATE_TYPE = "PKCS12";
-
   @Override
-  public Client createFeignClient() {
-    return new ApacheHttpClient(federationHttpClientFactory().createBuilder().build());
+  public Client createFeignClient(String keyStorePath, String keyStorePass, String certificateType) {
+    return new ApacheHttpClient(
+        federationHttpClientFactory(keyStorePath, keyStorePass, certificateType).createBuilder().build());
   }
 
   /**
    * Creates an {@link ApacheHttpClientFactory} that validates SSL certificates but no host names.
    */
-  @Bean
-  public ApacheHttpClientFactory federationHttpClientFactory() {
+  private ApacheHttpClientFactory federationHttpClientFactory(String keyStorePath, String keyStorePass,
+      String certificateType) {
     return new DefaultApacheHttpClientFactory(HttpClientBuilder.create()
         .setMaxConnPerRoute(10)
         .setMaxConnTotal(10)
-        .setSSLContext(getSslContext())
+        .setSSLContext(getSslContext(keyStorePass, certificateType))
         .setSSLHostnameVerifier(NoopHostnameVerifier.INSTANCE));//TODO:: investigate if verify host name is necessary
   }
 
-  private SSLContext getSslContext() {
+  private SSLContext getSslContext(String keyStorePass, String certificateType) {
     try {
       return SSLContextBuilder
           .create()
-          .loadKeyMaterial(readStore(), KEYPASS.toCharArray())
+          .loadKeyMaterial(readStore(keyStorePass, certificateType), keyStorePass.toCharArray())
           .loadTrustMaterial(TrustSelfSignedStrategy.INSTANCE)
           .build();
     } catch (Exception e) {
@@ -53,10 +44,10 @@ public class FederationFeignClientProvider implements FeignClientProvider {
     }
   }
 
-  private KeyStore readStore() throws Exception {
-    try (InputStream keyStoreStream = this.getClass().getResourceAsStream(KEYSTOREPATH)) {
-      KeyStore keyStore = KeyStore.getInstance(CERTIFICATE_TYPE);
-      keyStore.load(keyStoreStream, KEYSTOREPASS.toCharArray());
+  private KeyStore readStore(String keyStorePass, String certificateType) throws Exception {
+    try (InputStream keyStoreStream = this.getClass().getResourceAsStream(keyStorePass)) {
+      KeyStore keyStore = KeyStore.getInstance(certificateType);
+      keyStore.load(keyStoreStream, keyStorePass.toCharArray());
       return keyStore;
     }
   }
