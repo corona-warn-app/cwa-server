@@ -25,14 +25,6 @@
       <artifactId>spring-boot-starter-security</artifactId>
     </dependency>
     <dependency>
-      <groupId>org.springframework.boot</groupId>
-      <artifactId>spring-boot-starter-webflux</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>io.github.openfeign</groupId>
-      <artifactId>feign-httpclient</artifactId>
-    </dependency>
-    <dependency>
       <artifactId>commons-math3</artifactId>
       <groupId>org.apache.commons</groupId>
     </dependency>

@@ -22,13 +22,9 @@ package app.coronawarn.server.services.federation.download.download;
 
 import app.coronawarn.server.services.federation.download.config.FederationDownloadServiceConfig;
 import java.time.LocalDate;
-import java.util.Date;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.core.io.ByteArrayResource;
 import org.springframework.stereotype.Service;
-import org.springframework.web.reactive.function.client.WebClient;
-import reactor.core.publisher.Mono;
 
 
 /**
@@ -40,29 +36,14 @@ public class DiagnosisKeyBatchDownloader implements DiagnosisKeyBatchDownloaders
   private static final Logger logger = LoggerFactory.getLogger(DiagnosisKeyBatchDownloader.class);
 
   private final FederationDownloadServiceConfig federationDownloadServiceConfig;
-  private final WebClient webClient;
 
-  public DiagnosisKeyBatchDownloader(FederationDownloadServiceConfig federationDownloadServiceConfig,
-                                     WebClient.Builder webClientBuilder) {
+  public DiagnosisKeyBatchDownloader(FederationDownloadServiceConfig federationDownloadServiceConfig) {
     this.federationDownloadServiceConfig = federationDownloadServiceConfig;
-    this.webClient = webClientBuilder.baseUrl(federationDownloadServiceConfig.getFederationDownloadBaseUrl()).build();
   }
 
   @Override
   public DiagnosisKeyBatchContainer downloadBatch(LocalDate date) {
     return null;
-    /*
-    try {
-      logger.info("Calling federation gateway download service for batch download");
-      Mono<byte[]> mono = getMono(date);
-      logger.info("Received batch from federation gateway service");
-      return new DiagnosisKeyBatchContainer(DiagnosisKeyBatch.parseFrom(mono.block()), null, null);
-    } catch (Exception e) {
-      logger.info("Federation gateway service error");
-      return null;
-      // throw new Exception(e.getMessage());
-    }
-     */
   }
 
   @Override
@@ -70,23 +51,4 @@ public class DiagnosisKeyBatchDownloader implements DiagnosisKeyBatchDownloaders
     return null;
   }
 
-  /*
-  private Mono<byte[]> getMono(Date date) {
-    Mono<byte[]> mono = webClient.get()
-        .uri(uriBuilder -> uriBuilder
-            .path(federationDownloadServiceConfig.getFederationDownloadPath())
-            .path(date.toString()) // TODO simpledateformat?
-            .build())
-        .exchange()
-        .flatMap(response -> {
-          if (response.statusCode().is2xxSuccessful()) {
-            return response.bodyToMono(ByteArrayResource.class);
-          } else {
-            return response.bodyToMono(Void.class).then(Mono.empty());
-          }
-        })
-        .map(ByteArrayResource::getByteArray);
-    return mono;
-  }
-   */
 }
