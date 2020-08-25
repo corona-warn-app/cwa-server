@@ -77,7 +77,7 @@ class DiagnosisKeyBatchAssemblerTest {
   }
 
   @Test
-  public void shouldReturnEmptyListIfNoKeysGiven() {
+  void shouldReturnEmptyListIfNoKeysGiven() {
     var result = diagnosisKeyBatchAssembler.assembleDiagnosisKeyBatch(emptyList());
     Assertions.assertTrue(result.isEmpty());
   }
