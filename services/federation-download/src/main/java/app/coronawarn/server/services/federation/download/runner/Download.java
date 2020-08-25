@@ -98,7 +98,6 @@ public class Download implements ApplicationRunner {
     if (!StringUtils.isEmpty(nextBatchTag)) {
       federationBatchService.saveFederationBatch(new FederationBatch(nextBatchTag, date));
     }
-
   }
 
   private void downloadBatch(FederationBatch federationBatch) {
