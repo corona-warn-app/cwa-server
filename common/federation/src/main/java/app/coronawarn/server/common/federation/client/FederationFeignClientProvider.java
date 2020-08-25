@@ -12,9 +12,8 @@ import org.apache.http.ssl.SSLContextBuilder;
 import org.springframework.cloud.commons.httpclient.ApacheHttpClientFactory;
 import org.springframework.cloud.commons.httpclient.DefaultApacheHttpClientFactory;
 
-public class FederationFeignClientProvider implements FeignClientProvider {
+public class FederationFeignClientProvider {
 
-  @Override
   public Client createFeignClient(String keyStorePath, String keyStorePass, String certificateType) {
     return new ApacheHttpClient(
         federationHttpClientFactory(keyStorePath, keyStorePass, certificateType).createBuilder().build());
@@ -28,15 +27,15 @@ public class FederationFeignClientProvider implements FeignClientProvider {
     return new DefaultApacheHttpClientFactory(HttpClientBuilder.create()
         .setMaxConnPerRoute(10)
         .setMaxConnTotal(10)
-        .setSSLContext(getSslContext(keyStorePass, certificateType))
+        .setSSLContext(getSslContext(keyStorePath, keyStorePass, certificateType))
         .setSSLHostnameVerifier(NoopHostnameVerifier.INSTANCE));//TODO:: investigate if verify host name is necessary
   }
 
-  private SSLContext getSslContext(String keyStorePass, String certificateType) {
+  private SSLContext getSslContext(String keyStorePath, String keyStorePass, String certificateType) {
     try {
       return SSLContextBuilder
           .create()
-          .loadKeyMaterial(readStore(keyStorePass, certificateType), keyStorePass.toCharArray())
+          .loadKeyMaterial(readStore(keyStorePath, keyStorePass, certificateType), keyStorePass.toCharArray())
           .loadTrustMaterial(TrustSelfSignedStrategy.INSTANCE)
           .build();
     } catch (Exception e) {
@@ -44,8 +43,8 @@ public class FederationFeignClientProvider implements FeignClientProvider {
     }
   }
 
-  private KeyStore readStore(String keyStorePass, String certificateType) throws Exception {
-    try (InputStream keyStoreStream = this.getClass().getResourceAsStream(keyStorePass)) {
+  private KeyStore readStore(String keyStorePath, String keyStorePass, String certificateType) throws Exception {
+    try (InputStream keyStoreStream = this.getClass().getResourceAsStream(keyStorePath)) {
       KeyStore keyStore = KeyStore.getInstance(certificateType);
       keyStore.load(keyStoreStream, keyStorePass.toCharArray());
       return keyStore;
