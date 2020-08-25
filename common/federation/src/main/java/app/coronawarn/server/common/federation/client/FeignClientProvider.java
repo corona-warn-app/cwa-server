@@ -18,10 +18,10 @@
  * ---license-end
  */
 
-package app.coronawarn.server.services.submission.verification;
+package app.coronawarn.server.common.federation.client;
 
 import feign.Client;
 
 public interface FeignClientProvider {
-  Client createFeignClient();
+  Client createFeignClient(String keyStorePath, String keyStorePass, String certificateType);
 }

@@ -1,0 +1,11 @@
+---
+logging:
+  level:
+    org:
+      springframework: off
+    root: off
+services:
+  common:
+    federation-gateway:
+      base-url: base-url
+      batch-download-url: download-url
