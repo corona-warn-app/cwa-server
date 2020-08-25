@@ -21,6 +21,7 @@
 package app.coronawarn.server.services.federation.upload.integration;
 
 import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.Collection;
 import java.util.List;
@@ -46,7 +47,7 @@ import app.coronawarn.server.services.federation.upload.Application;
 @ContextConfiguration(classes = {Application.class}, initializers = ConfigFileApplicationContextInitializer.class)
 @ActiveProfiles({"integration-test"})
 @Tag("s3-integration")
-public class DiagnosisKeyReplicationIT {
+class DiagnosisKeyReplicationIT {
 
     private static final String TEST_ORIGIN_COUNTRY = "DE";
 
@@ -99,8 +100,8 @@ public class DiagnosisKeyReplicationIT {
 
       Collection<DiagnosisKey> uploadableKeys = uploadKeyRepository.findAllUploadableKeys();
 
-      assertTrue(uploadableKeys.size() == 1);
-      assertTrue(uploadableKeys.iterator().next().equals(dummyKey));
+      assertEquals(1, uploadableKeys.size());
+      assertEquals(dummyKey, uploadableKeys.iterator().next());
       return dummyKey;
     }
 

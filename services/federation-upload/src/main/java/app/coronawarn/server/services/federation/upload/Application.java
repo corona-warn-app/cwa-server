@@ -20,6 +20,8 @@
 
 package app.coronawarn.server.services.federation.upload;
 
+import java.util.Arrays;
+import java.util.List;
 import org.apache.logging.log4j.LogManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -34,7 +36,9 @@ import org.springframework.core.env.Environment;
 import org.springframework.data.jdbc.repository.config.EnableJdbcRepositories;
 
 /**
- * TODO...
+ * Service responsible for creating batches of diagnosis keys and uploading them to the Federation Gateway
+ * conforming to the EU specification. Its source of data is a dedicated table where diagnosis keys are replicated
+ * during the submission process.
  */
 @SpringBootApplication
 @EnableJdbcRepositories(basePackages = "app.coronawarn.server.common.persistence")
@@ -60,6 +64,12 @@ public class Application implements EnvironmentAware, DisposableBean {
 
   @Override
   public void setEnvironment(Environment environment) {
-    //TODO: Check whether this is needed
+    List<String> profiles = Arrays.asList(environment.getActiveProfiles());
+    logger.info("Enabled named groups: {}", System.getProperty("jdk.tls.namedGroups"));
+    if (profiles.contains("disable-ssl-client-postgres")) {
+      logger.warn(
+          "The upload service is started with postgres connection TLS disabled. "
+              + "This should never be used in PRODUCTION!");
+    }
   }
 }
