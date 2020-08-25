@@ -18,7 +18,7 @@
  * ---license-end
  */
 
-package app.coronawarn.server.services.federation.upload;
+package app.coronawarn.server.services.federation.upload.payload;
 
 import app.coronawarn.server.common.persistence.domain.DiagnosisKey;
 import app.coronawarn.server.common.protocols.external.exposurenotification.ReportType;
@@ -29,7 +29,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.ConfigFileApplicationContextInitializer;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
-
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.util.List;
@@ -37,16 +36,19 @@ import java.util.List;
 import static java.util.Collections.emptyList;
 
 @ExtendWith(SpringExtension.class)
-@ContextConfiguration(classes = {DiagnosisKeyBatchAssembler.class}, initializers = ConfigFileApplicationContextInitializer.class)
+@ContextConfiguration(classes = {
+    DiagnosisKeyBatchAssembler.class}, initializers = ConfigFileApplicationContextInitializer.class)
 class DiagnosisKeyBatchAssemblerTest {
 
   @Autowired
   DiagnosisKeyBatchAssembler diagnosisKeyBatchAssembler;
 
-  private void assertKeysAreEqual(DiagnosisKey persistenceKey, app.coronawarn.server.common.protocols.external.exposurenotification.DiagnosisKey exportKey) {
+  private void assertKeysAreEqual(DiagnosisKey persistenceKey,
+      app.coronawarn.server.common.protocols.external.exposurenotification.DiagnosisKey exportKey) {
     Assertions.assertArrayEquals(persistenceKey.getKeyData(), exportKey.getKeyData().toByteArray(),
         "Key Data should be the same");
-    Assertions.assertArrayEquals(persistenceKey.getVisitedCountries().toArray(), exportKey.getVisitedCountriesList().toArray(),
+    Assertions.assertArrayEquals(persistenceKey.getVisitedCountries().toArray(),
+        exportKey.getVisitedCountriesList().toArray(),
         "Visited countries should be the same");
     Assertions.assertEquals(persistenceKey.getRollingPeriod(), exportKey.getRollingPeriod(),
         "Rolling Period should be the same");

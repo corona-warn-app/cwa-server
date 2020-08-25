@@ -1,4 +1,4 @@
-package app.coronawarn.server.services.federation.upload.signing;
+package app.coronawarn.server.services.federation.upload.payload.signing;
 
 import app.coronawarn.server.common.protocols.external.exposurenotification.DiagnosisKeyBatch;
 import app.coronawarn.server.services.federation.upload.config.UploadServiceConfig;

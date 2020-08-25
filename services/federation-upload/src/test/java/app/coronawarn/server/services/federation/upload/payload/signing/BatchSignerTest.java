@@ -1,9 +1,8 @@
-package app.coronawarn.server.services.federation.upload.signing;
+package app.coronawarn.server.services.federation.upload.payload.signing;
 
-import app.coronawarn.server.common.protocols.external.exposurenotification.DiagnosisKey;
 import app.coronawarn.server.common.protocols.external.exposurenotification.DiagnosisKeyBatch;
 import app.coronawarn.server.services.federation.upload.config.UploadServiceConfig;
-import com.google.protobuf.ByteString;
+import app.coronawarn.server.services.federation.upload.payload.helper.DiagnosisKeyBatchGenerator;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -20,7 +19,6 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 import java.security.GeneralSecurityException;
 import java.security.PrivateKey;
 import java.util.Arrays;
-import java.util.Random;
 
 import static org.mockito.Mockito.when;
 
@@ -125,17 +123,8 @@ class BatchSignerTest {
 
     @Test
     void shouldSignBatchesDifferently() throws GeneralSecurityException {
-      Random random = new Random();
-      byte[] bytes = new byte[16];
-      random.nextBytes(bytes);
-      var batch1 = DiagnosisKeyBatch.newBuilder()
-          .addKeys(DiagnosisKey.newBuilder().setKeyData(ByteString.copyFrom(bytes)).build()).build();
-      random.nextBytes(bytes);
-      var batch2 = DiagnosisKeyBatch.newBuilder()
-          .addKeys(DiagnosisKey.newBuilder().setKeyData(ByteString.copyFrom(bytes)).build()).build();
-
-      var signature1 = batchSigner.createSignatureBytes(batch1);
-      var signature2 = batchSigner.createSignatureBytes(batch2);
+      var signature1 = batchSigner.createSignatureBytes(DiagnosisKeyBatchGenerator.makeSingleKeyBatch());
+      var signature2 = batchSigner.createSignatureBytes(DiagnosisKeyBatchGenerator.makeSingleKeyBatch());
       Assertions.assertFalse(Arrays.equals(signature1, signature2));
     }
   }
