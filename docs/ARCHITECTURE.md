@@ -146,6 +146,21 @@ type Publish struct {
 
 Due to concerns regarding data privacy and protection, device attestation is currently not being used by CWA.
 
+### Federation Key Upload Service
+
+This service (running as a cronjob) will deal with the upload of DE keys to the federation gateway. When keys are submitted to the CWA Backend and identified as applicable for sharing with the federation gateway, determined by the consent to share, they are mirrored to a temporary table for processing an upload. Keys which are uploaded are validated against the same rules in place for normal DE key distribution:
+
+- Minimum number of keys required prior to uploading
+- Minimum period of time delay post submission of the keys
+
+The job will be configured to run periodically throughout the day to enable keys to be shared as soon as possible to the federation gateway.
+
+### Federation Key Download Service
+
+This service (running as a cronjob) will deal with the download, validation, extraction, and storage of the keys from the federation gateway. Based on the batch tags which are known it will trigger the downloads from the gateway. The download service will initially be implemented to poll based on batchTag and Date combinations and it will keep track of its last processed state within the database. When the callback service and integration is fully realized the polling mechanism would only be used for mass loading of scenarios.
+
+On the download of keys from the federation gateway a process of normalization needs to take place. This is done to enable the keys to be consumable by the DE CWA app such that the risk calculations can be done.
+
 ### Distribution Service
 
 The distribution service's objective is to publish all CWA-related files to the object store, from which
@@ -155,7 +170,7 @@ the clients will fetch their data. There are three types of files.
 
 Key Export files are files, which hold published diagnosis keys from users that have tested positive for SARS-CoV-2.
 These files are based on the specification of Google/Apple and are generated in regular intervals.
-Each interval generates a `.zip` file, containing two files:
+Each interval generates a `.zip` file for each applicable country where keys are known. Each `.zip file` contains two files:
 
 1. export.bin: Contains the list of diagnosis keys.
 2. export.sig: Contains signature information needed for validating the export.bin file.
@@ -199,6 +214,6 @@ cleaned up when auto vacuuming is executed.
 When data deletion is executed on the object store, the object store is instructed to delete all
 files with the following prefix:
 
-`version/v1/diagnosis-keys/country/DE/<date>`
+`version/v1/diagnosis-keys/country/<country_code>/<date>`
 
 In which `<date>` stands for the ISO formatted date (e.g. `2012-06-05`), and is before the retention cutoff date (today - 14 days).
