@@ -30,6 +30,7 @@ import java.time.Instant;
 import java.time.LocalDate;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.List;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -60,7 +61,10 @@ public class RequestExecutor {
   }
 
   public ResponseEntity<Void> executePost(Collection<TemporaryExposureKey> keys, HttpHeaders headers) {
-    SubmissionPayload body = SubmissionPayload.newBuilder().addAllKeys(keys).build();
+    SubmissionPayload body = SubmissionPayload.newBuilder()
+        .setOrigin("DE")
+        .addAllVisitedCountries(List.of("FR","UK"))
+        .addAllKeys(keys).build();
     return executePost(body, headers);
   }
 
