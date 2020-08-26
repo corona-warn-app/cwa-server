@@ -20,6 +20,7 @@
 
 package app.coronawarn.server.common.federation.client;
 
+import feign.Headers;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -47,7 +48,13 @@ public interface FederationGatewayClient {
       @PathVariable("date") String date);
 
   @PostMapping(value = "/diagnosiskeys/upload")
-  String postBatchUpload(byte[] raw,
+  @Headers({"Accept: application/json; version=1.0",
+      "Content-Type: application/protobuf; version=1.0",
+      "X-SSL-Client-SHA256: abc",
+      "X-SSL-Client-DN: C=DE"
+  })
+  String postBatchUpload(
+      byte[] raw,
       @RequestHeader("batchTag") String batchTag,
       @RequestHeader("batchSignature") String batchSignature);
 }

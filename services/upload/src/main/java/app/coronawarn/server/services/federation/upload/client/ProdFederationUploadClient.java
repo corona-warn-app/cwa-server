@@ -9,15 +9,15 @@ import org.springframework.stereotype.Component;
 @Profile("!fake-client")
 public class ProdFederationUploadClient implements FederationUploadClient {
 
-  private final FederationGatewayClient federationServerClient;
+  private final FederationGatewayClient federationGatewayClient;
 
-  public ProdFederationUploadClient(FederationGatewayClient federationServerClient) {
-    this.federationServerClient = federationServerClient;
+  public ProdFederationUploadClient(FederationGatewayClient federationGatewayClient) {
+    this.federationGatewayClient = federationGatewayClient;
   }
 
   @Override
   public void postBatchUpload(UploadPayload uploadPayload) {
-    federationServerClient.postBatchUpload(
+    federationGatewayClient.postBatchUpload(
         uploadPayload.getBatch().toByteArray(),
         uploadPayload.getBatchTag(),
         uploadPayload.getBatchSignature());
