@@ -18,7 +18,7 @@
  * ---license-end
  */
 
-package app.coronawarn.server.services.federation.download.download;
+package app.coronawarn.server.services.download.download;
 
 import app.coronawarn.server.common.federation.client.FederationGatewayClient;
 import app.coronawarn.server.common.protocols.external.exposurenotification.DiagnosisKeyBatch;
@@ -40,10 +40,18 @@ public class DiagnosisKeyBatchDownloader {
 
   private FederationGatewayClient federationGatewayClient;
 
+  /**
+   * Creates a DiagnosisKeyBatchDownloader.
+   */
   public DiagnosisKeyBatchDownloader(FederationGatewayClient federationGatewayClient) {
     this.federationGatewayClient = federationGatewayClient;
   }
 
+  /**
+   * Downloads the batch specified for this date.
+   * @param date the date for which the batch should be downloaded
+   * @return DiagnosisKeyBatchContainer
+   */
   public DiagnosisKeyBatchContainer downloadBatch(LocalDate date) {
     try (Response response = federationGatewayClient.getDiagnosisKeys(
         "application/json; version=1.0",

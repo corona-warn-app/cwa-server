@@ -1,4 +1,4 @@
-package app.coronawarn.server.services.federation.download;
+package app.coronawarn.server.services.download;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -19,8 +19,9 @@ class FederationGatewayClientDownloaderTest {
   @Test
   @Disabled
   void testFederationClient() {
-    final String diagnosisKeys = federationGatewayClient
-        .getDiagnosisKeys("application/json; version=1.0", "abc", "C=DE", "2020-08-18");
+    final String diagnosisKeys = "";
+    //federationGatewayClient
+    //    .getDiagnosisKeys("application/json; version=1.0", "abc", "C=DE", "2020-08-18");
     assertNotNull(diagnosisKeys);
     assertFalse(diagnosisKeys.isBlank());
   }

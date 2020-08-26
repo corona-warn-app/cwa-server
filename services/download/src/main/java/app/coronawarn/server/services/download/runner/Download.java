@@ -18,7 +18,7 @@
  * ---license-end
  */
 
-package app.coronawarn.server.services.federation.download.runner;
+package app.coronawarn.server.services.download.runner;
 
 
 import app.coronawarn.server.common.persistence.domain.FederationBatch;
@@ -27,8 +27,8 @@ import app.coronawarn.server.common.persistence.service.DiagnosisKeyService;
 import app.coronawarn.server.common.persistence.service.FederationBatchService;
 import app.coronawarn.server.common.protocols.external.exposurenotification.DiagnosisKey;
 import app.coronawarn.server.common.protocols.external.exposurenotification.DiagnosisKeyBatch;
-import app.coronawarn.server.services.federation.download.download.DiagnosisKeyBatchContainer;
-import app.coronawarn.server.services.federation.download.download.DiagnosisKeyBatchDownloader;
+import app.coronawarn.server.services.download.download.DiagnosisKeyBatchContainer;
+import app.coronawarn.server.services.download.download.DiagnosisKeyBatchDownloader;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;

@@ -1,4 +1,4 @@
-package app.coronawarn.server.services.federation.download.download;
+package app.coronawarn.server.services.download.download;
 
 import app.coronawarn.server.common.protocols.external.exposurenotification.DiagnosisKeyBatch;
 

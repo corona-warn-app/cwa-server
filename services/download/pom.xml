@@ -9,10 +9,10 @@
   </parent>
   <modelVersion>4.0.0</modelVersion>
 
-  <artifactId>federation-download</artifactId>
+  <artifactId>download</artifactId>
 
   <properties>
-    <sonar.projectKey>corona-warn-app_cwa-server_services_federation-download</sonar.projectKey>
+    <sonar.projectKey>corona-warn-app_cwa-server_services_download</sonar.projectKey>
   </properties>
 
   <dependencies>
