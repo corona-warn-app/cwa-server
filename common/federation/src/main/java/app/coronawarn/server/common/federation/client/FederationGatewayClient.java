@@ -20,28 +20,36 @@
 
 package app.coronawarn.server.common.federation.client;
 
+import feign.Response;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestHeader;
 
 /**
- *  Declarative web service client for the Federation Gateway API.
+ * Declarative web service client for the Federation Gateway API.
  *
- *  <p>Any application that wants to uses it must make sure the required configuration
- *  beans in this module are registered (scan root package of the module). There is also
- *  a constraint imposed on application properties, such that values for the following
- *  structure must be declared:
- *  <li> federation-gateway.base-url
- *  <li> federation-gateway.ssl.key-store-path
- *  <li> federation-gateway.ssl.key-store-pass
- *  <li> federation-gateway.ssl.certificate-type
+ * <p>Any application that wants to uses it must make sure the required configuration
+ * beans in this module are registered (scan root package of the module). There is also
+ * a constraint imposed on application properties, such that values for the following
+ * structure must be declared:
+ * <li> federation-gateway.base-url
+ * <li> federation-gateway.ssl.key-store-path
+ * <li> federation-gateway.ssl.key-store-pass
+ * <li> federation-gateway.ssl.certificate-type
  */
 @FeignClient(name = "federation-server", url = "${federation-gateway.base-url}")
 public interface FederationGatewayClient {
 
   @GetMapping(value = "/diagnosiskeys/download/{date}")
-  String getDiagnosisKeys(@RequestHeader("Accept") String accept,
-      @RequestHeader("X-SSL-Client-SHA256") String shaClient, @RequestHeader("X-SSL-Client-DN") String dnClient,
-      @PathVariable("date") String date);
+  String getDiagnosisKeysString(@RequestHeader("Accept") String accept,
+                          @RequestHeader("X-SSL-Client-SHA256") String shaClient,
+                          @RequestHeader("X-SSL-Client-DN") String dnClient,
+                          @PathVariable("date") String date);
+
+  @GetMapping(value = "/diagnosiskeys/download/{date}")
+  Response getDiagnosisKeys(@RequestHeader("Accept") String accept,
+                            @RequestHeader("X-SSL-Client-SHA256") String shaClient,
+                            @RequestHeader("X-SSL-Client-DN") String dnClient,
+                            @PathVariable("date") String date);
 }

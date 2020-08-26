@@ -28,7 +28,7 @@ import app.coronawarn.server.common.persistence.service.FederationBatchService;
 import app.coronawarn.server.common.protocols.external.exposurenotification.DiagnosisKey;
 import app.coronawarn.server.common.protocols.external.exposurenotification.DiagnosisKeyBatch;
 import app.coronawarn.server.services.federation.download.download.DiagnosisKeyBatchContainer;
-import app.coronawarn.server.services.federation.download.download.DiagnosisKeyBatchDownloaders;
+import app.coronawarn.server.services.federation.download.download.DiagnosisKeyBatchDownloader;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
@@ -56,13 +56,13 @@ public class Download implements ApplicationRunner {
   private final ApplicationContext applicationContext;
   private final FederationBatchService federationBatchService;
   private final DiagnosisKeyService diagnosisKeyService;
-  private final DiagnosisKeyBatchDownloaders diagnosisKeyBatchDownloader;
+  private final DiagnosisKeyBatchDownloader diagnosisKeyBatchDownloader;
 
   /**
    * Creates a Download, using {@link ApplicationContext}.
    */
   Download(ApplicationContext applicationContext, FederationBatchService federationBatchService,
-           DiagnosisKeyService diagnosisKeyService, DiagnosisKeyBatchDownloaders diagnosisKeyBatchDownloader) {
+           DiagnosisKeyService diagnosisKeyService, DiagnosisKeyBatchDownloader diagnosisKeyBatchDownloader) {
     this.applicationContext = applicationContext;
     this.federationBatchService = federationBatchService;
     this.diagnosisKeyService = diagnosisKeyService;

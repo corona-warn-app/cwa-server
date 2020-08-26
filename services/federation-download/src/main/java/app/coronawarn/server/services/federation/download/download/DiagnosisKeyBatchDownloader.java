@@ -22,6 +22,8 @@ package app.coronawarn.server.services.federation.download.download;
 
 import app.coronawarn.server.common.federation.client.FederationGatewayClient;
 import app.coronawarn.server.common.protocols.external.exposurenotification.DiagnosisKeyBatch;
+import feign.Response;
+import java.io.IOException;
 import java.time.LocalDate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -32,7 +34,7 @@ import org.springframework.stereotype.Service;
  * The BatchDownloader downloads the batches containing the keys.
  */
 @Service
-public class DiagnosisKeyBatchDownloader implements DiagnosisKeyBatchDownloaders {
+public class DiagnosisKeyBatchDownloader {
 
   private static final Logger logger = LoggerFactory.getLogger(DiagnosisKeyBatchDownloader.class);
 
@@ -42,12 +44,20 @@ public class DiagnosisKeyBatchDownloader implements DiagnosisKeyBatchDownloaders
     this.federationGatewayClient = federationGatewayClient;
   }
 
-  @Override
   public DiagnosisKeyBatchContainer downloadBatch(LocalDate date) {
+    try (Response response = federationGatewayClient.getDiagnosisKeys(
+        "application/json; version=1.0",
+        "abc",
+        "C=DE",
+        "2020-08-18")) {
+      DiagnosisKeyBatch.parseFrom(response.body().asInputStream());
+      // work with is
+    } catch (IOException e) {
+      e.printStackTrace();
+    }
     return null;
   }
 
-  @Override
   public DiagnosisKeyBatchContainer downloadBatch(LocalDate date, String batchTag) {
     return null;
   }
