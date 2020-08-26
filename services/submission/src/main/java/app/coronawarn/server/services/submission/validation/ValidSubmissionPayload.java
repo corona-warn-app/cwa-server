@@ -72,15 +72,10 @@ public @interface ValidSubmissionPayload {
       ConstraintValidator<ValidSubmissionPayload, SubmissionPayload> {
 
     private static final Logger logger = LoggerFactory.getLogger(SubmissionPayloadValidator.class);
-    private SubmissionServiceConfig config;
-
-    private final int maxNumberOfKeys;
-    private final int maxRollingPeriod;
+    private SubmissionServiceConfig submissionServiceConfig;
 
     public SubmissionPayloadValidator(SubmissionServiceConfig submissionServiceConfig) {
-      this.config = submissionServiceConfig;
-      maxNumberOfKeys = submissionServiceConfig.getMaxNumberOfKeys();
-      maxRollingPeriod = submissionServiceConfig.getMaxRollingPeriod();
+      this.submissionServiceConfig = submissionServiceConfig;
     }
 
     /**
@@ -97,7 +92,8 @@ public @interface ValidSubmissionPayload {
     public boolean isValid(SubmissionPayload submissionPayload, ConstraintValidatorContext validatorContext) {
       List<TemporaryExposureKey> exposureKeys = submissionPayload.getKeysList();
       validatorContext.disableDefaultConstraintViolation();
-      logIfVisitedCountriesNotAllowed(submissionPayload, validatorContext);
+
+      logIfVisitedCountriesNotAllowed(submissionPayload);
 
       if (keysHaveFlexibleRollingPeriod(exposureKeys)) {
         return checkStartIntervalNumberIsAtMidNight(exposureKeys, validatorContext)
@@ -120,7 +116,7 @@ public @interface ValidSubmissionPayload {
         ConstraintValidatorContext validatorContext) {
 
       String originCountry = submissionPayload.getOrigin();
-      if (!config.isCountryAllowed(originCountry)) {
+      if (!submissionServiceConfig.isCountryAllowed(originCountry)) {
         addViolation(validatorContext, String.format(
             "Origin country %s is not part of the allowed countries list", originCountry));
         return false;
@@ -132,10 +128,9 @@ public @interface ValidSubmissionPayload {
      * Log a warning if the payload contains a visited country which is not
      * part of the <code>allowed-countries</code> list.
      */
-    private void logIfVisitedCountriesNotAllowed(SubmissionPayload submissionPayload,
-        ConstraintValidatorContext validatorContext) {
+    private void logIfVisitedCountriesNotAllowed(SubmissionPayload submissionPayload) {
       List<String> visitedCountries = submissionPayload.getVisitedCountriesList();
-      if (!config.areAllCountriesAllowed(visitedCountries)) {
+      if (!submissionServiceConfig.areAllCountriesAllowed(visitedCountries)) {
         logger.warn("Submission Payload contains some" + " visited countries which are not allowed: {}",
             StringUtils.join(visitedCountries, ','));
       }
@@ -149,14 +144,15 @@ public @interface ValidSubmissionPayload {
         ConstraintValidatorContext validatorContext) {
       if (exposureKeys.isEmpty() || exceedsMaxNumberOfKeysPerSubmission(exposureKeys)) {
         addViolation(validatorContext, String.format(
-            "Number of keys must be between 1 and %s, but is %s.", config.getMaxNumberOfKeys(), exposureKeys.size()));
+            "Number of keys must be between 1 and %s, but is %s.",
+            submissionServiceConfig.getMaxNumberOfKeys(), exposureKeys.size()));
         return false;
       }
       return true;
     }
 
     private boolean exceedsMaxNumberOfKeysPerSubmission(List<TemporaryExposureKey> exposureKeys) {
-      return exposureKeys.size() > config.getMaxNumberOfKeys();
+      return exposureKeys.size() > submissionServiceConfig.getMaxNumberOfKeys();
     }
 
     private boolean checkUniqueStartIntervalNumbers(List<TemporaryExposureKey> exposureKeys,
@@ -183,7 +179,7 @@ public @interface ValidSubmissionPayload {
           .groupingBy(TemporaryExposureKey::getRollingStartIntervalNumber,
               Collectors.summingInt(TemporaryExposureKey::getRollingPeriod)))
           .values().stream()
-          .anyMatch(sum -> sum <= maxRollingPeriod);
+          .anyMatch(sum -> sum <= submissionServiceConfig.getMaxRollingPeriod());
 
       if (!isValidRollingPeriod) {
         addViolation(validatorContext, "The sum of the rolling periods exceeds 144 per day");
@@ -194,13 +190,15 @@ public @interface ValidSubmissionPayload {
 
     private boolean keysHaveFlexibleRollingPeriod(List<TemporaryExposureKey> exposureKeys) {
       return exposureKeys.stream()
-          .anyMatch(temporaryExposureKey -> temporaryExposureKey.getRollingPeriod() < maxRollingPeriod);
+          .anyMatch(temporaryExposureKey ->
+              temporaryExposureKey.getRollingPeriod() < submissionServiceConfig.getMaxRollingPeriod());
     }
 
     private boolean checkStartIntervalNumberIsAtMidNight(List<TemporaryExposureKey> exposureKeys,
         ConstraintValidatorContext validatorContext) {
       boolean isNotMidNight00Utc = exposureKeys.stream()
-          .anyMatch(exposureKey -> exposureKey.getRollingStartIntervalNumber() % maxRollingPeriod > 0);
+          .anyMatch(exposureKey ->
+              exposureKey.getRollingStartIntervalNumber() % submissionServiceConfig.getMaxRollingPeriod() > 0);
 
       if (isNotMidNight00Utc) {
         addViolation(validatorContext, "Start Interval Number must be at midnight ( 00:00 UTC )");
