@@ -9,13 +9,6 @@ In order to determine which keys are applicable for upload the following use cas
 - Existing Keys on the CWA Backend Prior to Federation Integration: In this case **NO** existing keys will be shared with the federation gateway. This is due to the fact that these keys are from users which did not have the capability to provide a consent for sharing.
 - New Submissions post Federation Integration: This will be determined based on new attributes of the submission payload and these keys replicated for use by the upload service. See details under the [Submission Service](./SUBMISSION.md)
 
-### Key Sharing
-
-Due to the nature of sharing keys separately from the distribution runs it is possible that keys from DE Citizens are initially found on federated countries prior to them being released to the DE CDN. This can occur primarily in the following situations:
-
-- The distribution job is failing to run
-- The distribution run where the keys are able to be distributed runs after the upload
-
 ## DPP Validations for Publishing
 
 During the upload process it must be ensured that the DPP restrictions which are in place for the normal distribution to the CDN are respected when sending to the federation gateway as much as possible. Therefore, the following validations will be put in place when evaluating keys during the cronjob execution:
@@ -25,11 +18,11 @@ During the upload process it must be ensured that the DPP restrictions which are
 
 ## Key Normalization
 
-TODO: Not sure if this will occur here or in the submission workflow
+TODO
 
 ## Supporting Data Model
 
-Just put a diagram of the table
+TODO
 
 ## Resilience
 
@@ -40,7 +33,12 @@ As this service is a cronjob running inside of kubernetes it will be ensured by 
 
 ## Security
 
+TODO
+
 ## Batch Signatures
+
+TODO
 
 ## Batch Tag Generation
 
+TODO
