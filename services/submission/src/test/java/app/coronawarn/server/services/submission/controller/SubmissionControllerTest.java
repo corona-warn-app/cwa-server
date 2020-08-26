@@ -26,11 +26,7 @@ import static app.coronawarn.server.services.submission.controller.RequestExecut
 import static app.coronawarn.server.services.submission.controller.RequestExecutor.buildPayloadWithOneKey;
 import static app.coronawarn.server.services.submission.controller.RequestExecutor.buildTemporaryExposureKey;
 import static app.coronawarn.server.services.submission.controller.RequestExecutor.createRollingStartIntervalNumber;
-import static app.coronawarn.server.services.submission.controller.SubmissionPayloadMockData.buildPayload;
-import static app.coronawarn.server.services.submission.controller.SubmissionPayloadMockData.buildPayloadWithInvalidOriginCountry;
-import static app.coronawarn.server.services.submission.controller.SubmissionPayloadMockData.buildPayloadWithInvalidVisitedCountries;
-import static app.coronawarn.server.services.submission.controller.SubmissionPayloadMockData.buildPayloadWithPadding;
-import static app.coronawarn.server.services.submission.controller.SubmissionPayloadMockData.buildPayloadWithTooLargePadding;
+import static app.coronawarn.server.services.submission.controller.SubmissionPayloadMockData.*;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.any;
@@ -138,10 +134,9 @@ class SubmissionControllerTest {
     assertThat(actResponse.getStatusCode()).isEqualTo(OK);
   }
 
-  @ParameterizedTest
-  @MethodSource({"buildPayloadWithInvalidKeys"})
-  void check400ResponseStatusForInvalidKeys(SubmissionPayload invalidPayload ) {
-    ResponseEntity<Void> actResponse = executor.executePost(invalidPayload);
+  @Test
+  void check400ResponseStatusForInvalidKeys() {
+    ResponseEntity<Void> actResponse = executor.executePost(buildPayloadWithInvalidKey());
     assertThat(actResponse.getStatusCode()).isEqualTo(BAD_REQUEST);
   }
 
@@ -265,7 +260,6 @@ class SubmissionControllerTest {
   }
 
   @Test
-  @Disabled("Enable this once submission payload proto is defined")
   void testInvalidOriginCountrySubmissionPayload() {
     ResponseEntity<Void> actResponse = executor.executePost(buildPayloadWithInvalidOriginCountry());
     assertThat(actResponse.getStatusCode()).isEqualTo(BAD_REQUEST);
