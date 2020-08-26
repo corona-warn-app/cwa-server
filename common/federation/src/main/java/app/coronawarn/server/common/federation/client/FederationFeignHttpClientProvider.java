@@ -33,7 +33,7 @@ import org.springframework.cloud.commons.httpclient.ApacheHttpClientFactory;
 import org.springframework.cloud.commons.httpclient.DefaultApacheHttpClientFactory;
 
 /**
- * Creates a dedicated http client used by Feign to initite http calls to the Federation Gateway Service.
+ * Creates a dedicated http client used by Feign when performing http calls to the Federation Gateway Service.
  */
 public class FederationFeignHttpClientProvider {
 
