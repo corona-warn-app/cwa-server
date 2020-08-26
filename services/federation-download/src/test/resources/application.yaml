@@ -20,39 +20,10 @@ logging:
       springframework: off
     root: off
 
-services:
-  federation-download:
-    # The ApacheHttpClient's connection pool size.
-    connection-pool-size: 200
-    federation-gateway:
-      base-url: ${FEDERATION_GATEWAY_BASE_URL}
-      path: /diagnosiskeys/download
-      ssl:
-        key-store-path: ${FEDERATION_GATEWAY_KEY_STORE_PATH}
-        key-store-pass: ${FEDERATION_GATEWAY_KEY_STORE_PASS}
-        certificate-type: PKCS12
-    # Local paths, that are used during the export creation.
-    paths:
-      # The output path.
-      output: out
-      # The location of the private key.
-      privatekey: ${VAULT_FILESIGNING_SECRET}
-    # Configuration for the exported archive, that is saved on the S3-compatible storage.
-    tek-export:
-      # The TEK file name included in the zip archive, containing the list of diagnosis keys.
-      file-name: export.bin
-      # The TEK file header.
-      file-header: EK Export v1
-      # The fixed (ensured by right whitespace padding) TEK file header width.
-      file-header-width: 16
-    # Configuration for the API which is used by the mobile app to query diagnosis keys.
-    api:
-      version-path: version
-      version-v1: v1
-      country-path: country
-      country-germany: DE
-      date-path: date
-      hour-path: hour
-      diagnosis-keys-path: diagnosis-keys
-      parameters-path: configuration
-      app-config-file-name: app_config
+federation-gateway:
+  base-url: ${FEDERATION_GATEWAY_BASE_URL:http://localhost:8005}
+  connection-pool-size: 200
+  ssl:
+    key-store-path: ${FEDERATION_GATEWAY_KEYSTORE_PATH}
+    key-store-pass: ${FEDERATION_GATEWAY_KEYSTORE_PASS}
+    certificate-type: PKCS12

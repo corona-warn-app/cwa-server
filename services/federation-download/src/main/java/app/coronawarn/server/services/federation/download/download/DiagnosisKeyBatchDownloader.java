@@ -20,7 +20,8 @@
 
 package app.coronawarn.server.services.federation.download.download;
 
-import app.coronawarn.server.services.federation.download.config.FederationDownloadServiceConfig;
+import app.coronawarn.server.common.federation.client.FederationGatewayClient;
+import app.coronawarn.server.common.protocols.external.exposurenotification.DiagnosisKeyBatch;
 import java.time.LocalDate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -35,10 +36,10 @@ public class DiagnosisKeyBatchDownloader implements DiagnosisKeyBatchDownloaders
 
   private static final Logger logger = LoggerFactory.getLogger(DiagnosisKeyBatchDownloader.class);
 
-  private final FederationDownloadServiceConfig federationDownloadServiceConfig;
+  private FederationGatewayClient federationGatewayClient;
 
-  public DiagnosisKeyBatchDownloader(FederationDownloadServiceConfig federationDownloadServiceConfig) {
-    this.federationDownloadServiceConfig = federationDownloadServiceConfig;
+  public DiagnosisKeyBatchDownloader(FederationGatewayClient federationGatewayClient) {
+    this.federationGatewayClient = federationGatewayClient;
   }
 
   @Override
