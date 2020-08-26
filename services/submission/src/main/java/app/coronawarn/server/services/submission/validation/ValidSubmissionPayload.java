@@ -20,8 +20,6 @@
 
 package app.coronawarn.server.services.submission.validation;
 
-import static app.coronawarn.server.common.persistence.domain.DiagnosisKey.EXPECTED_ROLLING_PERIOD;
-
 import app.coronawarn.server.common.protocols.external.exposurenotification.TemporaryExposureKey;
 import app.coronawarn.server.common.protocols.internal.SubmissionPayload;
 import app.coronawarn.server.services.submission.config.SubmissionServiceConfig;
@@ -74,11 +72,15 @@ public @interface ValidSubmissionPayload {
       ConstraintValidator<ValidSubmissionPayload, SubmissionPayload> {
 
     private static final Logger logger = LoggerFactory.getLogger(SubmissionPayloadValidator.class);
-
     private SubmissionServiceConfig config;
+
+    private final int maxNumberOfKeys;
+    private final int maxRollingPeriod;
 
     public SubmissionPayloadValidator(SubmissionServiceConfig submissionServiceConfig) {
       this.config = submissionServiceConfig;
+      maxNumberOfKeys = submissionServiceConfig.getMaxNumberOfKeys();
+      maxRollingPeriod = submissionServiceConfig.getMaxRollingPeriod();
     }
 
     /**
@@ -96,13 +98,18 @@ public @interface ValidSubmissionPayload {
       List<TemporaryExposureKey> exposureKeys = submissionPayload.getKeysList();
       validatorContext.disableDefaultConstraintViolation();
 
-      boolean isValid = checkKeyCollectionSize(exposureKeys, validatorContext);
-      isValid &= checkUniqueStartIntervalNumbers(exposureKeys, validatorContext);
-      isValid &= checkNoOverlapsInTimeWindow(exposureKeys, validatorContext);
-      isValid &= checkOriginCountryIsAccepted(submissionPayload, validatorContext);
-      logIfVisitedCountriesNotAllowed(submissionPayload, validatorContext);
+      if (keysHaveFlexibleRollingPeriod(exposureKeys)) {
+        return checkStartIntervalNumberIsAtMidNight(exposureKeys, validatorContext)
+            && checkKeysCumulateEqualOrLessThanMaxRollingPeriodPerDay(exposureKeys, validatorContext)
+            && checkOriginCountryIsAccepted(submissionPayload, validatorContext);
+      } else {
+        return checkStartIntervalNumberIsAtMidNight(exposureKeys, validatorContext)
+            && checkKeyCollectionSize(exposureKeys, validatorContext)
+            && checkUniqueStartIntervalNumbers(exposureKeys, validatorContext)
+            && checkOriginCountryIsAccepted(submissionPayload, validatorContext);
+      }
 
-      return isValid;
+      logIfVisitedCountriesNotAllowed(submissionPayload, validatorContext);
     }
 
     /**
@@ -174,23 +181,35 @@ public @interface ValidSubmissionPayload {
       return true;
     }
 
-    private boolean checkNoOverlapsInTimeWindow(List<TemporaryExposureKey> exposureKeys,
+    private boolean checkKeysCumulateEqualOrLessThanMaxRollingPeriodPerDay(List<TemporaryExposureKey> exposureKeys,
         ConstraintValidatorContext validatorContext) {
-      if (exposureKeys.size() < 2) {
-        return true;
+
+      boolean isValidRollingPeriod = exposureKeys.stream().collect(Collectors
+          .groupingBy(TemporaryExposureKey::getRollingStartIntervalNumber,
+              Collectors.summingInt(TemporaryExposureKey::getRollingPeriod)))
+          .values().stream()
+          .anyMatch(sum -> sum <= maxRollingPeriod);
+
+      if (!isValidRollingPeriod) {
+        addViolation(validatorContext, "The sum of the rolling periods exceeds 144 per day");
+        return false;
       }
+      return true;
+    }
 
-      Integer[] sortedStartIntervalNumbers = exposureKeys.stream()
-          .mapToInt(TemporaryExposureKey::getRollingStartIntervalNumber)
-          .sorted().boxed().toArray(Integer[]::new);
+    private boolean keysHaveFlexibleRollingPeriod(List<TemporaryExposureKey> exposureKeys) {
+      return exposureKeys.stream()
+          .anyMatch(temporaryExposureKey -> temporaryExposureKey.getRollingPeriod() < maxRollingPeriod);
+    }
 
-      for (int i = 1; i < sortedStartIntervalNumbers.length; i++) {
-        if ((sortedStartIntervalNumbers[i - 1] + EXPECTED_ROLLING_PERIOD) > sortedStartIntervalNumbers[i]) {
-          addViolation(validatorContext, String.format(
-              "Subsequent intervals overlap. StartIntervalNumbers: %s",
-              Arrays.stream(sortedStartIntervalNumbers).map(String::valueOf).collect(Collectors.joining(","))));
-          return false;
-        }
+    private boolean checkStartIntervalNumberIsAtMidNight(List<TemporaryExposureKey> exposureKeys,
+        ConstraintValidatorContext validatorContext) {
+      boolean isNotMidNight00Utc = exposureKeys.stream()
+          .anyMatch(exposureKey -> exposureKey.getRollingStartIntervalNumber() % maxRollingPeriod > 0);
+
+      if (isNotMidNight00Utc) {
+        addViolation(validatorContext, "Start Interval Number must be at midnight ( 00:00 UTC )");
+        return false;
       }
       return true;
     }

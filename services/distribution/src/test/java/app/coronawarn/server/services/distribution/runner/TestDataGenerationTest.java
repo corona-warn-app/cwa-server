@@ -26,9 +26,8 @@ import app.coronawarn.server.services.distribution.assembly.structure.util.TimeU
 import app.coronawarn.server.services.distribution.config.DistributionServiceConfig;
 import app.coronawarn.server.services.distribution.config.DistributionServiceConfig.TestData;
 import org.junit.Assert;
-import org.junit.Ignore;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
@@ -84,6 +83,11 @@ class TestDataGenerationTest {
     distributionServiceConfig.setTestData(testData);
     distributionServiceConfig.getApi().setDistributionCountry(GERMANY);
     testDataGeneration = new TestDataGeneration(diagnosisKeyService, distributionServiceConfig);
+  }
+
+  @AfterEach
+  void tearDown() {
+    TimeUtils.setNow(null);
   }
 
   @Test

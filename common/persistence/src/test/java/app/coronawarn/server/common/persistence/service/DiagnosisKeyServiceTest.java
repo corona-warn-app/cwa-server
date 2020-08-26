@@ -119,7 +119,7 @@ class DiagnosisKeyServiceTest {
 
   @Test
   void testApplyRetentionPolicyForOneNotApplicableEntry() {
-    var expKeys = List.of(buildDiagnosisKeyForDateTime(OffsetDateTime.now(UTC).minusHours(23)));
+    var expKeys = List.of(buildDiagnosisKeyForDateTime(OffsetDateTime.now(UTC).minusDays(1L)));
 
     diagnosisKeyService.saveDiagnosisKeys(expKeys);
     diagnosisKeyService.applyRetentionPolicy(1, "DE");
@@ -130,7 +130,7 @@ class DiagnosisKeyServiceTest {
 
   @Test
   void testApplyRetentionPolicyForOneApplicableEntry() {
-    var keys = List.of(buildDiagnosisKeyForDateTime(OffsetDateTime.now(UTC).minusDays(1L)));
+    var keys = List.of(buildDiagnosisKeyForDateTime(OffsetDateTime.now(UTC).minusDays(1L).minusHours(1)));
 
     diagnosisKeyService.saveDiagnosisKeys(keys);
     diagnosisKeyService.applyRetentionPolicy(1, "DE");
