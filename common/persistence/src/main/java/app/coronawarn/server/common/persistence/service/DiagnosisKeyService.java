@@ -133,9 +133,9 @@ public class DiagnosisKeyService {
         .ofInstant(Instant.now(), UTC)
         .minusDays(daysToRetain)
         .toEpochSecond(UTC) / SECONDS_PER_HOUR;
-    int numberOfDeletions = keyRepository.countOlderThan(threshold, countryCode);
+    int numberOfDeletions = keyRepository.countOlderThanOrEqual(threshold, countryCode);
     logger.info("[{}] Deleting {} diagnosis key(s) with a submission timestamp older than {} day(s) ago.",
         countryCode, numberOfDeletions, daysToRetain);
-    keyRepository.deleteOlderThan(threshold, countryCode);
+    keyRepository.deleteOlderThanOrEqual(threshold, countryCode);
   }
 }

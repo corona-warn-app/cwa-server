@@ -97,6 +97,7 @@ public @interface ValidSubmissionPayload {
     public boolean isValid(SubmissionPayload submissionPayload, ConstraintValidatorContext validatorContext) {
       List<TemporaryExposureKey> exposureKeys = submissionPayload.getKeysList();
       validatorContext.disableDefaultConstraintViolation();
+      logIfVisitedCountriesNotAllowed(submissionPayload, validatorContext);
 
       if (keysHaveFlexibleRollingPeriod(exposureKeys)) {
         return checkStartIntervalNumberIsAtMidNight(exposureKeys, validatorContext)
@@ -108,8 +109,6 @@ public @interface ValidSubmissionPayload {
             && checkUniqueStartIntervalNumbers(exposureKeys, validatorContext)
             && checkOriginCountryIsAccepted(submissionPayload, validatorContext);
       }
-
-      logIfVisitedCountriesNotAllowed(submissionPayload, validatorContext);
     }
 
     /**
@@ -120,9 +119,7 @@ public @interface ValidSubmissionPayload {
     private boolean checkOriginCountryIsAccepted(SubmissionPayload submissionPayload,
         ConstraintValidatorContext validatorContext) {
 
-      // TODO: Uncomment below when the proto definition is changed
-      // String originCountry = submissionPayload.getOriginCountry();
-      String originCountry = "DE";
+      String originCountry = submissionPayload.getOrigin();
       if (!config.isCountryAllowed(originCountry)) {
         addViolation(validatorContext, String.format(
             "Origin country %s is not part of the allowed countries list", originCountry));
@@ -137,9 +134,7 @@ public @interface ValidSubmissionPayload {
      */
     private void logIfVisitedCountriesNotAllowed(SubmissionPayload submissionPayload,
         ConstraintValidatorContext validatorContext) {
-      // TODO: Uncomment below when the proto definition is changed
-      // List<String> visitedCountries = submissionPayload.getVisitedCountries();
-      List<String> visitedCountries = List.of("DE", "FR");
+      List<String> visitedCountries = submissionPayload.getVisitedCountriesList();
       if (!config.areAllCountriesAllowed(visitedCountries)) {
         logger.warn("Submission Payload contains some" + " visited countries which are not allowed: {}",
             StringUtils.join(visitedCountries, ','));

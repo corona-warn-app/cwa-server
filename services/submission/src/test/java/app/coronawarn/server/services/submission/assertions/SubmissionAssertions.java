@@ -38,7 +38,7 @@ public final class SubmissionAssertions {
       Collection<DiagnosisKey> savedDiagnosisKeys, SubmissionServiceConfig config) {
 
     Set<DiagnosisKey> submittedDiagnosisKeys = submittedTemporaryExposureKeys.stream()
-        .map(submittedDiagnosisKey -> DiagnosisKey.builder().fromProtoBuf(submittedDiagnosisKey).build())
+        .map(submittedDiagnosisKey -> DiagnosisKey.builder().fromTemporaryExposureKey(submittedDiagnosisKey).build())
         .collect(Collectors.toSet());
 
     assertThat(savedDiagnosisKeys).hasSize(submittedDiagnosisKeys.size() * config.getRandomKeyPaddingMultiplier());
