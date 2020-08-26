@@ -31,9 +31,13 @@ On a high level, the application consists of two main parts, as shown below.
 
 ![Overview Diagram](./images/v5.png)
 
-1. CWA Server: Handles submission and aggregation/distribution of diagnosis keys and configuration files.
+1. CWA Server: Handles the following tasks:
+    - accepting submission of new keys
+    - aggregation/distribution of diagnosis keys and configuration files
+    - uploading and downloading keys to/from the federation gateway to enable interoperability with other EU nations
 2. Verification Server: Deals with test result retrieval and verification (including issuing TANs).
 The components regarding the verification are managed and deployed separately.
+3. Federation Gateway: Enables the sharing of keys across integrated app backends of nations within the European Union
 
 This document outlines the CWA Server components, which are part of this repository. For the full architectural
 overview, check out the [solution architecture](https://github.com/corona-warn-app/cwa-documentation/blob/master/solution_architecture.md).
@@ -44,8 +48,8 @@ overview, check out the [solution architecture](https://github.com/corona-warn-a
 
 All mobile app relevant files will be stored on the S3 Object Store. Those files are:
 
-- Aggregated files containing the diagnosis keys, which were reported in a specific interval (e.g. hourly).
-- Daily aggregated files containing the diagnosis keys, which were reported for the respective days.
+- Aggregated files containing the diagnosis keys, which were reported in a specific interval (e.g. hourly). These are organized into country specific buckets.
+- Daily aggregated files containing the diagnosis keys, which were reported for the respective days. These are organized into country specific buckets.
 - Configuration files containing the [exposure configuration](https://developer.apple.com/documentation/exposurenotification/enexposureconfiguration) and CWA mobile app config.
 - Additional files regarding meta information of available files/structures/etc.
 
@@ -68,6 +72,24 @@ Therefore, from a CWA Server perspective, the Verification Server provides an en
 
 A detailed description of the process can be found in the chapter ["Retrieval of lab results and verification process"](https://github.com/corona-warn-app/cwa-documentation/blob/master/solution_architecture.md#retrieval-of-lab-results-and-verification-process) of the solution architecture document.
 
+### Federation Gateway
+
+Many countries are developing proximity tracing apps to reduce the spreading of COVID-19, generally using the Exposure Notifications API from Google and Apple. While these national solutions reflect the specifics of each country a solution is required to allow interoperability between those national solutions. This software implements a pan european solution a "European Federation Gateway Service" allowing a national backend to upload keys of newly infected people and download the diagnosis keys from the other countries participating in this scheme. The integration with the Federation Gateway supports an approach called the "Country of Interest" which dictates that:
+
+- Newly submitted keys must be shared with a listing of countries which the user may have visited prior (visitedCountries)
+- An approach to download keys to the device based on a selection of countries which are applicable for the user. Meaning the distribution will generate country specific archives allowing the mobile application to download targeted sets of keys per country that is relevant for the user.
+
+From a CWA-SERVER perspective, the Federation Gateway provides a set of API's with which we need to integrate in order to enable the following:
+
+- Upload of applicable DE keys
+- Download of connected (non-DE) country keys 
+- Auditing of download keys for signature verification
+- Callback notification process for Federation Gateway to notify CWA-SERVER that new download batches are available. Note: This is not implemented in the initial release of the federation gateway integration and would potentially come at a later point in time.
+
+Details of the Federation Gateway itself can be found in the following locations:
+- [efgs-federation-gateway github repository](https://github.com/eu-federation-gateway-service/efgs-federation-gateway)
+- [eHealth Network Guidelines](https://ec.europa.eu/health/sites/health/files/ehealth/docs/mobileapps_interoperabilitydetailedelements_en.pdf)
+
 ## Security
 
 ### Endpoint Protection
@@ -76,7 +98,7 @@ The CWA Server exposes only one endpoint – the submission endpoint.
 The endpoint is public (unauthenticated), and authorization for calls is granted to users who are passing a valid TAN.
 The TAN verification cannot be done on CWA Server, but the task is delegated to the verification server (see Verification Server chapter in *Integration with other Systems*).
 
-### Authenticity
+### Authenticity to CDN
 
 All files published by CWA will be digitally signed by CWA.
 This ensures that clients can trust the file they have received from the third-party CDN.
@@ -86,6 +108,15 @@ is a zip file, containing two files - one carries the actual payload. The other 
 
 CWA is be required to share the public key with Google/Apple, so that the API on the mobile client
 is able verify against it.
+
+### Authenticity to Federation Gateway
+
+The requirements for authenticity to the Federation gateway are outlined in the [eHealth Network Guidelines](https://ec.europa.eu/health/sites/health/files/ehealth/docs/mobileapps_interoperabilitydetailedelements_en.pdf) and pertain to how the CWA Backend must interact with the service. These guidelines discuss:
+
+- How to verify the data integrity of the data downloaded within each batch. This is discussed in section 5.7 Audit Interface.
+- How country backend servers are intended to interact and authenticate themselves to the Federation Gateway. This is covered section 6 Security and talks about the process for handling certificates, mTLS, and communication protocols of HTTP(s)
+
+The CWA Server for Upload and Download will adhere to these guidelines in order to facilitate a proper integration.
 
 ### Fake Submissions (Plausible Deniability)
 
@@ -97,123 +128,11 @@ The CWA server does not persist the entry on the database and ensures that dummy
 
 ## Services
 
-### Submission Service
+* [Submission Service](./SUBMISSION.md)
+* [Distribution Service](./DISTRIBUTION.md)
+* [Federation Upload Service](./FEDERATION-UPLOAD.md)
+* [Federation Download Service](./FEDERATION-DOWNLOAD.md)
 
-The submission service's only task is to process uploaded diagnosis keys and persist them to the database after the TAN has been verified.
-The actual task of the verification is handed over to the verification server, which provides the verification result back to CWA.
-After verification was successfully done, the diagnosis keys are persisted in the database, and will be published in the next batch.
 
-The payload to be sent by the mobile applications is defined as:
 
-```protobuf
-message SubmissionPayload {
-  repeated Key keys = 1;
-}
 
-message Key {
-  bytes keyData = 1; // Key of infected user
-  uint32 rollingStartIntervalNumber = 2; // Interval number when the key's EKRollingPeriod started.
-  uint32 rollingPeriod = 3; // Number of 10-minute windows between key rolling.
-  int32 transmissionRiskLevel = 4; // Risk of transmission associated with the person this key came from.
-}
-```
-
-Additionally, the endpoint requires the following headers to be set:
-
-```http
-CWA-Authorization: TAN <TAN>
-CWA-Fake: <0 or 1>
-```
-
-There is currently no official specification for publishing diagnosis keys to the server.
-Google currently uses the following in their reference implementation.
-
-[exposure_types.go](https://github.com/google/exposure-notifications-server/blob/master/pkg/api/v1alpha1/exposure_types.go)
-
-```golang
-type Publish struct {
-  Keys                []ExposureKey `json:"temporaryExposureKeys"`
-  Regions             []string      `json:"regions"`
-  AppPackageName      string        `json:"appPackageName"`
-  VerificationPayload string        `json:"verificationPayload"`
-  HMACKey             string        `json:"hmackey"`
-  Padding             string        `json:"padding"`
-
-  Platform                  string `json:"platform"`                  // DEPRECATED
-  DeviceVerificationPayload string `json:"deviceVerificationPayload"` // DEPRECATED
-}
-```
-
-Due to concerns regarding data privacy and protection, device attestation is currently not being used by CWA.
-
-### Federation Key Upload Service
-
-This service (running as a cronjob) will deal with the upload of DE keys to the federation gateway. When keys are submitted to the CWA Backend and identified as applicable for sharing with the federation gateway, determined by the consent to share, they are mirrored to a temporary table for processing an upload. Keys which are uploaded are validated against the same rules in place for normal DE key distribution:
-
-- Minimum number of keys required prior to uploading
-- Minimum period of time delay post submission of the keys
-
-The job will be configured to run periodically throughout the day to enable keys to be shared as soon as possible to the federation gateway.
-
-### Federation Key Download Service
-
-This service (running as a cronjob) will deal with the download, validation, extraction, and storage of the keys from the federation gateway. Based on the batch tags which are known it will trigger the downloads from the gateway. The download service will initially be implemented to poll based on batchTag and Date combinations and it will keep track of its last processed state within the database. When the callback service and integration is fully realized the polling mechanism would only be used for mass loading of scenarios.
-
-On the download of keys from the federation gateway a process of normalization needs to take place. This is done to enable the keys to be consumable by the DE CWA app such that the risk calculations can be done.
-
-### Distribution Service
-
-The distribution service's objective is to publish all CWA-related files to the object store, from which
-the clients will fetch their data. There are three types of files.
-
-#### Key Export
-
-Key Export files are files, which hold published diagnosis keys from users that have tested positive for SARS-CoV-2.
-These files are based on the specification of Google/Apple and are generated in regular intervals.
-Each interval generates a `.zip` file for each applicable country where keys are known. Each `.zip file` contains two files:
-
-1. export.bin: Contains the list of diagnosis keys.
-2. export.sig: Contains signature information needed for validating the export.bin file.
-The file structure definition can be found [here](https://github.com/google/exposure-notifications-server/blob/master/internal/pb/export/export.proto).
-
-The distribution service is triggered by a CRON scheduler, currently set to 1 hour. However, this
-will change, since the Exposure Notification APIs have a rate-limiting in place (Apple: 15 files/day, Google 20 API calls/day).
-
-In case there is an insufficient number of diagnosis keys for the target interval available, the
-creation of the file will be skipped in order to prevent attackers from being potentially able to
-de-obfuscate individuals.
-
-Another alternative is to put fake diagnosis keys into the payload, which would serve the same purpose.
-In that case, it needs to be guaranteed, that those fake diagnosis keys are indistinguishable from real ones.
-
-#### Configuration
-
-Configuration files are needed for two use cases:
-
-1. Exposure Configuration: In order to calculate a risk score for each exposure incident, the mobile
-API requires a list of the following parameters, requiring weights and levels: duration, days, attenuation and transmission.
-The function and impact of those parameters is described on the [Apple Exposure Configuration Page](https://developer.apple.com/documentation/exposurenotification/enexposureconfiguration) and in the chapter [*Risk score calculation*](https://github.com/corona-warn-app/cwa-documentation/blob/master/solution_architecture.md#risk-score-calculation) of the solution architecture document.
-2. Mobile App Configuration: Provides configuration values needed for the CWA mobile app, which are
-not part of the exposure notification framework. These values are required for controlling the
-application behavior.
-
-#### Discovery
-
-Files on CWA may be discovered with the help of index files. There is one central index file,
-containing all available key export files on the server, separated by new-line.
-The index will be regenerated whenever new export files are distributed to the object store.
-
-## Data Retention
-
-The retention period is set to 14 days. Therefore, all keys whose _submission date_ is older than 14 days are removed from the system. This includes the database persistency layer, as well as files stored on the object store.
-The retention mechanism is enforced automatically by the Distribution Service upon each distribution run (multiple runs per day).
-No manual trigger or action is required.
-
-Data is deleted by normal means. For PostgreSQL, the identified rows will be deleted by normal __DELETE__ calls to the database, and
-cleaned up when auto vacuuming is executed.
-When data deletion is executed on the object store, the object store is instructed to delete all
-files with the following prefix:
-
-`version/v1/diagnosis-keys/country/<country_code>/<date>`
-
-In which `<date>` stands for the ISO formatted date (e.g. `2012-06-05`), and is before the retention cutoff date (today - 14 days).
