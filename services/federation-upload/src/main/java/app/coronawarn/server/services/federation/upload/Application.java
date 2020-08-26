@@ -53,9 +53,6 @@ public class Application implements EnvironmentAware, DisposableBean {
     SpringApplication.run(Application.class);
   }
 
-  /**
-   * Manual shutdown hook needed to avoid Log4j shutdown issues (see cwa-server/#589).
-   */
   @Override
   public void destroy() {
     logger.info("Shutting down log4j2.");
