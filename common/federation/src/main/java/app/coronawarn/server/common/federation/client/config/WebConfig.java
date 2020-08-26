@@ -32,9 +32,11 @@ import org.springframework.context.annotation.Configuration;
 public class WebConfig {
 
   @Bean
-  Client feignDedicatedHttpClient(FederationGatewaySslConfig sslConfig) {
-    return new FederationFeignHttpClientProvider().createFeignClient(sslConfig.getKeyStorePath(),
-        sslConfig.getKeyStorePass(), sslConfig.getCertificateType());
+  Client feignDedicatedHttpClient(FederationGatewayConfig federationGatewayConfig) {
+    FederationGatewayConfig.Ssl sslConfig = federationGatewayConfig.getSsl();
+    return new FederationFeignHttpClientProvider()
+        .createFeignClient(federationGatewayConfig.getConnectionPoolSize(), sslConfig.getKeyStorePath(),
+            sslConfig.getKeyStorePass(), sslConfig.getCertificateType());
   }
 
 }

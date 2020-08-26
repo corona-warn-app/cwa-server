@@ -37,19 +37,25 @@ import org.springframework.cloud.commons.httpclient.DefaultApacheHttpClientFacto
  */
 public class FederationFeignHttpClientProvider {
 
-  public Client createFeignClient(String keyStorePath, String keyStorePass, String certificateType) {
+  /**
+   * Creates a FeignClient.
+   */
+  public Client createFeignClient(int connectionPoolSize, String keyStorePath, String keyStorePass,
+                                  String certificateType) {
     return new ApacheHttpClient(
-        federationHttpClientFactory(keyStorePath, keyStorePass, certificateType).createBuilder().build());
+        federationHttpClientFactory(connectionPoolSize, keyStorePath, keyStorePass, certificateType)
+            .createBuilder().build());
   }
 
   /**
    * Creates an {@link ApacheHttpClientFactory} that validates SSL certificates but no host names.
    */
-  private ApacheHttpClientFactory federationHttpClientFactory(String keyStorePath, String keyStorePass,
-      String certificateType) {
+  private ApacheHttpClientFactory federationHttpClientFactory(int connectionPoolSize, String keyStorePath,
+                                                              String keyStorePass,
+                                                              String certificateType) {
     return new DefaultApacheHttpClientFactory(HttpClientBuilder.create()
-        .setMaxConnPerRoute(10)
-        .setMaxConnTotal(10)
+        .setMaxConnPerRoute(connectionPoolSize)
+        .setMaxConnTotal(connectionPoolSize)
         .setSSLContext(getSslContext(keyStorePath, keyStorePass, certificateType))
         .setSSLHostnameVerifier(NoopHostnameVerifier.INSTANCE));
   }
