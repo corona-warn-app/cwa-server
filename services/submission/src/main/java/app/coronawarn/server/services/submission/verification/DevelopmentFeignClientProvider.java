@@ -20,7 +20,6 @@
 
 package app.coronawarn.server.services.submission.verification;
 
-import app.coronawarn.server.common.federation.client.FeignClientProvider;
 import app.coronawarn.server.services.submission.config.SubmissionServiceConfig;
 import feign.Client;
 import feign.httpclient.ApacheHttpClient;
