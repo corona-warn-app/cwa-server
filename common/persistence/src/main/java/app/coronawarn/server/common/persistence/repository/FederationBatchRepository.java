@@ -23,6 +23,7 @@ package app.coronawarn.server.common.persistence.repository;
 import app.coronawarn.server.common.persistence.domain.FederationBatch;
 import app.coronawarn.server.common.persistence.domain.FederationBatchStatus;
 import java.time.LocalDate;
+import java.util.List;
 import org.springframework.data.jdbc.repository.query.Modifying;
 import org.springframework.data.jdbc.repository.query.Query;
 import org.springframework.data.repository.PagingAndSortingRepository;
@@ -45,4 +46,7 @@ public interface FederationBatchRepository extends PagingAndSortingRepository<Fe
 
   @Query("SELECT * FROM federation_batch WHERE status != 'PROCESSED' OR status is null ORDER BY date asc LIMIT 1")
   FederationBatch findOldestUnprocessedFederationBatch();
+
+  @Query("SELECT * FROM federation_batch WHERE status = :status")
+  List<FederationBatch> findByStatus(@Param("status") String status);
 }

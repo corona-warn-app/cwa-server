@@ -89,4 +89,8 @@ public class FederationBatchService {
     logger.info("Marked batch with status.");
   }
 
+  public List<FederationBatch> findByStatus(FederationBatchStatus federationBatchStatus) {
+    return federationBatchRepository.findByStatus(federationBatchStatus.name());
+  }
+
 }
