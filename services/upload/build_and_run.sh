@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# Builds and runs the federationdownload module
+# Builds and runs the upload module
 
 pushd "$(dirname "${BASH_SOURCE[0]}")" > /dev/null || exit
 
@@ -8,9 +8,9 @@ cd ../..
 
 docker build                                              \
   --rm                                                    \
-  -f services/federation-download/Dockerfile                     \
-  -t federation-download . &&                                    \
+  -f services/upload/Dockerfile                     \
+  -t upload . &&                                    \
 docker run                                                \
-  -it federation-download
+  -it upload
 
 popd > /dev/null || exit

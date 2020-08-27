@@ -23,6 +23,7 @@
     <module>distribution</module>
     <module>submission</module>
     <module>callback</module>
+    <module>upload</module>
     <module>federation-download</module>
   </modules>
 
