@@ -74,6 +74,31 @@ public class DiagnosisKeyBatchDownloader {
     }
   }
 
+  /**
+   * Downloads the batch specified for this date.
+   *
+   * @param date the date for which the batch should be downloaded
+   * @return DiagnosisKeyBatchContainer
+   */
+  public Optional<DiagnosisKeyBatchContainer> downloadBatch(LocalDate date, String batchTag) {
+    try (Response response = federationGatewayClient.getDiagnosisKeys(
+        "application/protobuf; version=1.0",
+        "abcd",
+        "C=PL",
+        batchTag,
+        date.format(DateTimeFormatter.ISO_LOCAL_DATE))) {
+
+      // String batchTag = getHeader(response, "batchTag");
+      String nextBatchTag = getHeader(response, "nextBatchTag");
+
+      InputStream is = response.body().asInputStream();
+      DiagnosisKeyBatch diagnosisKeyBatch = DiagnosisKeyBatch.parseFrom(is);
+      return Optional.of(new DiagnosisKeyBatchContainer(diagnosisKeyBatch, batchTag, nextBatchTag));
+    } catch (IOException e) {
+      return Optional.empty();
+    }
+  }
+
   private String getHeader(Response response, String header) {
     Collection<String> headerStrings = response.headers().get(header);
     if (headerStrings != null) {

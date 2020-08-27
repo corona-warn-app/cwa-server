@@ -48,4 +48,12 @@ public interface FederationGatewayClient {
                             @RequestHeader("X-SSL-Client-SHA256") String shaClient,
                             @RequestHeader("X-SSL-Client-DN") String dnClient,
                             @PathVariable("date") String date);
+
+  @GetMapping(value = "/diagnosiskeys/download/{date}")
+    // @Headers({"Accept: application/json; version=1.0", "X-SSL-Client-SHA256: abcd", "X-SSL-Client-DN: C=PL"})
+  Response getDiagnosisKeys(@RequestHeader("Accept") String accept,
+                            @RequestHeader("X-SSL-Client-SHA256") String shaClient,
+                            @RequestHeader("X-SSL-Client-DN") String dnClient,
+                            @RequestHeader("batchTag") String batchTag,
+                            @PathVariable("date") String date);
 }
