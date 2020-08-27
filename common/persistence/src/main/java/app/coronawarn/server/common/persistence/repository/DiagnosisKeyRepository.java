@@ -31,24 +31,15 @@ import org.springframework.stereotype.Repository;
 public interface DiagnosisKeyRepository extends PagingAndSortingRepository<DiagnosisKey, Long> {
 
   /**
-   * Counts all entries that have a submission timestamp less or equal than the specified one.
-   *
-   * @param submissionTimestamp The submission timestamp up to which entries will be expired.
-   * @return The number of expired keys.
-   */
-  @Query("SELECT COUNT(*) FROM diagnosis_key WHERE submission_timestamp<=:threshold")
-  int countOlderThanOrEqual(@Param("threshold") long submissionTimestamp);
-
-  /**
    * Counts all entries that have a submission timestamp less or equal than the specified one
    *  and match the given country_code.
    *
    * @param submissionTimestamp The submission timestamp up to which entries will be expired.
    * @return The number of expired keys.
    */
-  @Query("SELECT COUNT(*) FROM diagnosis_key WHERE submission_timestamp<=:threshold AND "
+  @Query("SELECT COUNT(*) FROM diagnosis_key WHERE submission_timestamp<:threshold AND "
       + ":country_code = ANY(visited_countries)")
-  int countOlderThanOrEqual(@Param("threshold") long submissionTimestamp, @Param("country_code") String countryCode);
+  int countOlderThan(@Param("threshold") long submissionTimestamp, @Param("country_code") String countryCode);
 
   /**
    * Returns all diagnosis keys where visited_countries list contains {@param countryCode} ordered by
@@ -61,23 +52,14 @@ public interface DiagnosisKeyRepository extends PagingAndSortingRepository<Diagn
   Iterable<DiagnosisKey> findAllKeysWhereVisitedCountryContains(@Param("country_code") String countryCode);
 
   /**
-   * Deletes all entries that have a submission timestamp less or equal than the specified one.
-   *
-   * @param submissionTimestamp The submission timestamp up to which entries will be deleted.
-   */
-  @Modifying
-  @Query("DELETE FROM diagnosis_key WHERE submission_timestamp<=:threshold")
-  void deleteOlderThanOrEqual(@Param("threshold") long submissionTimestamp);
-
-  /**
    * Deletes all entries that have a submission timestamp less or equal than the specified one
    *  and match the origin country_code.
    *
    * @param submissionTimestamp The submission timestamp up to which entries will be deleted.
    */
   @Modifying
-  @Query("DELETE FROM diagnosis_key WHERE submission_timestamp<=:threshold AND :country_code = ANY(visited_countries)")
-  void deleteOlderThanOrEqual(@Param("threshold") long submissionTimestamp, @Param("country_code") String countryCode);
+  @Query("DELETE FROM diagnosis_key WHERE submission_timestamp<:threshold AND :country_code = ANY(visited_countries)")
+  void deleteOlderThan(@Param("threshold") long submissionTimestamp, @Param("country_code") String countryCode);
 
   /**
    * Attempts to write the specified diagnosis key information into the database. If a row with the specified key data

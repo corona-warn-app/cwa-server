@@ -51,7 +51,7 @@ class DiagnosisKeyBuilderTest {
         .newBuilder()
         .setKeyData(ByteString.copyFrom(this.expKeyData))
         .setRollingStartIntervalNumber(this.expRollingStartIntervalNumber)
-        .setRollingPeriod(DiagnosisKey.EXPECTED_ROLLING_PERIOD)
+        .setRollingPeriod(DiagnosisKey.MAX_ROLLING_PERIOD)
         .setTransmissionRiskLevel(this.expTransmissionRiskLevel)
         .build();
 
@@ -69,7 +69,7 @@ class DiagnosisKeyBuilderTest {
         .newBuilder()
         .setKeyData(ByteString.copyFrom(this.expKeyData))
         .setRollingStartIntervalNumber(this.expRollingStartIntervalNumber)
-        .setRollingPeriod(DiagnosisKey.EXPECTED_ROLLING_PERIOD)
+        .setRollingPeriod(DiagnosisKey.MAX_ROLLING_PERIOD)
         .setTransmissionRiskLevel(this.expTransmissionRiskLevel)
         .build();
 
@@ -106,7 +106,7 @@ class DiagnosisKeyBuilderTest {
         .withRollingStartIntervalNumber(this.expRollingStartIntervalNumber)
         .withTransmissionRiskLevel(this.expTransmissionRiskLevel)
         .withSubmissionTimestamp(this.expSubmissionTimestamp)
-        .withRollingPeriod(DiagnosisKey.EXPECTED_ROLLING_PERIOD).build();
+        .withRollingPeriod(DiagnosisKey.MAX_ROLLING_PERIOD).build();
 
     assertDiagnosisKeyEquals(actDiagnosisKey, this.expSubmissionTimestamp);
   }
@@ -165,17 +165,18 @@ class DiagnosisKeyBuilderTest {
   }
 
   @ParameterizedTest
-  @ValueSource(ints = {-3, 143, 145})
+  @ValueSource(ints = {-3, 145})
   void rollingPeriodMustBeEpectedValue(int invalidRollingPeriod) {
     assertThat(catchThrowable(() -> keyWithRollingPeriod(invalidRollingPeriod)))
         .isInstanceOf(InvalidDiagnosisKeyException.class)
-        .hasMessage("[Rolling period must be " + DiagnosisKey.EXPECTED_ROLLING_PERIOD
+        .hasMessage("[Rolling period must be between "+ DiagnosisKey.MIN_ROLLING_PERIOD + " and " + DiagnosisKey.MAX_ROLLING_PERIOD
             + ". Invalid Value: " + invalidRollingPeriod + "]");
   }
 
-  @Test
-  void rollingPeriodDoesNotThrowForValid() {
-    assertThatCode(() -> keyWithRollingPeriod(DiagnosisKey.EXPECTED_ROLLING_PERIOD)).doesNotThrowAnyException();
+  @ParameterizedTest
+  @ValueSource(ints = {DiagnosisKey.MIN_ROLLING_PERIOD, 100, DiagnosisKey.MAX_ROLLING_PERIOD})
+  void rollingPeriodDoesNotThrowForValid(int validRollingPeriod) {
+    assertThatCode(() -> keyWithRollingPeriod(validRollingPeriod)).doesNotThrowAnyException();
   }
 
   @ParameterizedTest
@@ -218,7 +219,7 @@ class DiagnosisKeyBuilderTest {
         () -> buildDiagnosisKeyForSubmissionTimestamp(Instant.now().minus(Duration.ofHours(2)).getEpochSecond() / SECONDS_PER_HOUR))
             .doesNotThrowAnyException();
   }
-  
+
   private DiagnosisKey keyWithKeyData(byte[] expKeyData) {
     return DiagnosisKey.builder()
         .withKeyData(expKeyData)
@@ -260,7 +261,7 @@ class DiagnosisKeyBuilderTest {
     assertThat(actDiagnosisKey.getSubmissionTimestamp()).isEqualTo(expSubmissionTimestamp);
     assertThat(actDiagnosisKey.getKeyData()).isEqualTo(this.expKeyData);
     assertThat(actDiagnosisKey.getRollingStartIntervalNumber()).isEqualTo(this.expRollingStartIntervalNumber);
-    assertThat(actDiagnosisKey.getRollingPeriod()).isEqualTo(DiagnosisKey.EXPECTED_ROLLING_PERIOD);
+    assertThat(actDiagnosisKey.getRollingPeriod()).isEqualTo(DiagnosisKey.MAX_ROLLING_PERIOD);
     assertThat(actDiagnosisKey.getTransmissionRiskLevel()).isEqualTo(this.expTransmissionRiskLevel);
   }
 }

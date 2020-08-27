@@ -1,0 +1,13 @@
+syntax = "proto3";
+package app.coronawarn.server.common.protocols.internal;
+option java_package = "app.coronawarn.server.common.protocols.internal";
+option java_multiple_files = true;
+
+message AppFeatures {
+  repeated AppFeature app_features = 1;
+}
+
+message AppFeature {
+  string label = 1;
+  int32 value = 2;
+}
