@@ -21,7 +21,6 @@
 package app.coronawarn.server.services.download.runner;
 
 
-import app.coronawarn.server.common.persistence.domain.DiagnosisKeyBuilder;
 import app.coronawarn.server.common.persistence.domain.FederationBatch;
 import app.coronawarn.server.common.persistence.domain.FederationBatchStatus;
 import app.coronawarn.server.common.persistence.service.DiagnosisKeyService;
@@ -53,17 +52,15 @@ public class Download implements ApplicationRunner {
   private static final Logger logger = LoggerFactory
       .getLogger(Download.class);
 
-  private final ApplicationContext applicationContext;
   private final FederationBatchService federationBatchService;
   private final DiagnosisKeyService diagnosisKeyService;
   private final DiagnosisKeyBatchDownloader diagnosisKeyBatchDownloader;
 
   /**
-   * Creates a Download, using {@link ApplicationContext}.
+   * Creates a Download.
    */
-  Download(ApplicationContext applicationContext, FederationBatchService federationBatchService,
+  Download(FederationBatchService federationBatchService,
            DiagnosisKeyService diagnosisKeyService, DiagnosisKeyBatchDownloader diagnosisKeyBatchDownloader) {
-    this.applicationContext = applicationContext;
     this.federationBatchService = federationBatchService;
     this.diagnosisKeyService = diagnosisKeyService;
     this.diagnosisKeyBatchDownloader = diagnosisKeyBatchDownloader;
