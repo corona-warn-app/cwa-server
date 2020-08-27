@@ -65,7 +65,8 @@ public class DiagnosisKeyService {
           diagnosisKey.getKeyData(), diagnosisKey.getRollingStartIntervalNumber(), diagnosisKey.getRollingPeriod(),
           diagnosisKey.getSubmissionTimestamp(), diagnosisKey.getTransmissionRiskLevel(),
           diagnosisKey.getOriginCountry(), diagnosisKey.getVisitedCountries().toArray(new String[0]),
-          diagnosisKey.getReportType().name(), diagnosisKey.getDaysSinceOnsetOfSymptoms());
+          diagnosisKey.getReportType().name(), diagnosisKey.getDaysSinceOnsetOfSymptoms(),
+          diagnosisKey.isConsentToFederation());
     }
   }
 
@@ -133,9 +134,9 @@ public class DiagnosisKeyService {
         .ofInstant(Instant.now(), UTC)
         .minusDays(daysToRetain)
         .toEpochSecond(UTC) / SECONDS_PER_HOUR;
-    int numberOfDeletions = keyRepository.countOlderThanOrEqual(threshold, countryCode);
+    int numberOfDeletions = keyRepository.countOlderThan(threshold, countryCode);
     logger.info("[{}] Deleting {} diagnosis key(s) with a submission timestamp older than {} day(s) ago.",
         countryCode, numberOfDeletions, daysToRetain);
-    keyRepository.deleteOlderThanOrEqual(threshold, countryCode);
+    keyRepository.deleteOlderThan(threshold, countryCode);
   }
 }

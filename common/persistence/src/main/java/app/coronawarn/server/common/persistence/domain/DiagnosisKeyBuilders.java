@@ -92,7 +92,7 @@ interface DiagnosisKeyBuilders {
 
     /**
      * Adds the specified rolling period to this builder. If not specified, the rolling period defaults to {@link
-     * DiagnosisKey#EXPECTED_ROLLING_PERIOD}
+     * DiagnosisKey#MAX_ROLLING_PERIOD}
      *
      * @param rollingPeriod Number describing how long a key is valid. It is expressed in increments of 10 minutes (e.g.
      *                      144 for 24 hours).

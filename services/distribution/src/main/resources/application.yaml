@@ -83,6 +83,16 @@ services:
       # Allows distribution to overwrite files which are published on the object store
       force-update-keyfiles: ${FORCE_UPDATE_KEYFILES:false}
 
+    app-features:
+      - label: reserved
+        value: ${reserved:1}
+    supported-countries: ${SUPPORTED_COUNTRIES:DE}
+    app-versions:
+      latest-ios: ${LATEST_IOS_VERSION:0.8.2}
+      min-ios: ${MIN_IOS_VERSION:0.5.0}
+      latest-android: ${LATEST_IOS_VERSION:1.0.4}
+      min-android: ${MIN_ANDROID_VERSION:1.0.4}
+
 spring:
   main:
     web-application-type: NONE
@@ -95,6 +105,7 @@ spring:
 
   datasource:
     driver-class-name: org.postgresql.Driver
+
     url: jdbc:postgresql://${POSTGRESQL_SERVICE_HOST}:${POSTGRESQL_SERVICE_PORT}/${POSTGRESQL_DATABASE}?ssl=true&sslmode=verify-full&sslrootcert=${SSL_POSTGRES_CERTIFICATE_PATH}&sslcert=${SSL_DISTRIBUTION_CERTIFICATE_PATH}&sslkey=${SSL_DISTRIBUTION_PRIVATE_KEY_PATH}
     username: ${POSTGRESQL_USER_DISTRIBUTION:local_setup_distribution}
     password: ${POSTGRESQL_PASSWORD_DISTRIBUTION:local_setup_distribution}

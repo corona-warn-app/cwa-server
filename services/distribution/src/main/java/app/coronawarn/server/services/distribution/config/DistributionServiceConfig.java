@@ -21,6 +21,10 @@
 package app.coronawarn.server.services.distribution.config;
 
 import app.coronawarn.server.common.protocols.external.exposurenotification.SignatureInfo;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.Pattern;
@@ -45,6 +49,7 @@ public class DistributionServiceConfig {
   private static final String ALGORITHM_OID_REGEX = "^[0-9]+[\\.[0-9]+]*$";
   private static final String BUNDLE_REGEX = "^[a-z-]+[\\.[a-z-]+]*$";
   private static final String PRIVATE_KEY_REGEX = "^(classpath:|file:[/]+)[a-zA-Z0-9_-]+[/[a-zA-Z0-9_-]+]*(.pem)?$";
+  private static final String SUPPORTED_COUNTRY_CODES_REGEX = "^([a-zA-Z]{2}(\\,*[a-zA-Z]{2})*)$";
 
   private Paths paths;
   private TestData testData;
@@ -68,6 +73,10 @@ public class DistributionServiceConfig {
   private Signature signature;
   private Api api;
   private ObjectStore objectStore;
+  private List<AppFeature> appFeatures;
+  @Pattern(regexp = SUPPORTED_COUNTRY_CODES_REGEX)
+  private String supportedCountries;
+  private AppVersions appVersions;
 
   public Paths getPaths() {
     return paths;
@@ -172,6 +181,44 @@ public class DistributionServiceConfig {
   public void setObjectStore(
       ObjectStore objectStore) {
     this.objectStore = objectStore;
+  }
+
+  public List<AppFeature> getAppFeatures() {
+    return appFeatures;
+  }
+
+  public void setAppFeatures(List<AppFeature> appFeatures) {
+    this.appFeatures = appFeatures;
+  }
+
+  public String[] getSupportedCountries() {
+    return supportedCountries.split(",");
+  }
+
+  public void setSupportedCountries(String supportedCountries) {
+    this.supportedCountries = supportedCountries;
+  }
+
+  public AppVersions getAppVersions() {
+    return appVersions;
+  }
+
+  public void setAppVersions(AppVersions appVersions) {
+    this.appVersions = appVersions;
+  }
+
+
+  /**
+   * Get app features as list of protobuf objects.
+   *
+   * @return list of {@link app.coronawarn.server.common.protocols.internal.AppFeature}
+   */
+  public List<app.coronawarn.server.common.protocols.internal.AppFeature> getAppFeaturesProto() {
+    return getAppFeatures().stream()
+        .map(appFeature -> app.coronawarn.server.common.protocols.internal.AppFeature.newBuilder()
+            .setLabel(appFeature.getLabel())
+            .setValue(appFeature.getValue()).build())
+        .collect(Collectors.toList());
   }
 
   public static class TekExport {
@@ -547,5 +594,69 @@ public class DistributionServiceConfig {
     public void setForceUpdateKeyfiles(Boolean forceUpdateKeyfiles) {
       this.forceUpdateKeyfiles = forceUpdateKeyfiles;
     }
+  }
+
+  private static class AppFeature {
+
+    private String label;
+    private Integer value;
+
+    public String getLabel() {
+      return label;
+    }
+
+    public void setLabel(String label) {
+      this.label = label;
+    }
+
+    public Integer getValue() {
+      return value;
+    }
+
+    public void setValue(Integer value) {
+      this.value = value;
+    }
+  }
+
+  public static class AppVersions {
+
+    private String latestIos;
+    private String minIos;
+    private String latestAndroid;
+    private String minAndroid;
+
+
+    public String getLatestIos() {
+      return latestIos;
+    }
+
+    public void setLatestIos(String latestIos) {
+      this.latestIos = latestIos;
+    }
+
+    public String getMinIos() {
+      return minIos;
+    }
+
+    public void setMinIos(String minIos) {
+      this.minIos = minIos;
+    }
+
+    public String getLatestAndroid() {
+      return latestAndroid;
+    }
+
+    public void setLatestAndroid(String latestAndroid) {
+      this.latestAndroid = latestAndroid;
+    }
+
+    public String getMinAndroid() {
+      return minAndroid;
+    }
+
+    public void setMinAndroid(String minAndroid) {
+      this.minAndroid = minAndroid;
+    }
+
   }
 }
