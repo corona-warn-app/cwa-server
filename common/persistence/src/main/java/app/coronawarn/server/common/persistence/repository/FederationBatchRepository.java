@@ -23,7 +23,6 @@ package app.coronawarn.server.common.persistence.repository;
 import app.coronawarn.server.common.persistence.domain.FederationBatch;
 import app.coronawarn.server.common.persistence.domain.FederationBatchStatus;
 import java.time.LocalDate;
-import java.util.Date;
 import org.springframework.data.jdbc.repository.query.Modifying;
 import org.springframework.data.jdbc.repository.query.Query;
 import org.springframework.data.repository.PagingAndSortingRepository;

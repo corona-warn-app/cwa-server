@@ -59,9 +59,8 @@ public class DiagnosisKeyBatchDownloader {
         "C=DE",
         "2020-08-18")) {
       DiagnosisKeyBatch.parseFrom(response.body().asInputStream());
-      // work with is
     } catch (IOException e) {
-      e.printStackTrace();
+      // TODO
     }
     return null;
   }

@@ -60,14 +60,14 @@ public class FederationBatchRepositoryTest {
   @Test
   void testReturnsNullIfNoUnprocessedBatch() {
     federationBatchRepository.saveDoNothingOnConflict(batchTag1, date1, statusProcessed);
-    assertThat(federationBatchRepository.findOldestUnprocessedFederationBatch() == null);
+    assertThat(federationBatchRepository.findOldestUnprocessedFederationBatch()).isNull();
   }
 
   @ParameterizedTest
   @MethodSource("getUnprocessedBatchArgumentsSortedByDateDescending")
   void testOnlyOldestBatchIsReturned(String batchTag, LocalDate date, FederationBatchStatus status) {
     federationBatchRepository.saveDoNothingOnConflict(batchTag, date, status);
-    assertThat(validateBatchPropertiesOfOldestUnprocessedBatch(batchTag, date, status));
+    assertThat(validateBatchPropertiesOfOldestUnprocessedBatch(batchTag, date, status)).isTrue();
   }
 
   @Test
