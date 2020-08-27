@@ -5,8 +5,6 @@ spring:
     locations: classpath:/db/migration
   datasource:
     url:  jdbc:tc:postgresql:11.8:///databasename?TC_TMPFS=/testtmpfs:rw
-#    if
-#    driver-class-name: org.testcontainers.jdbc.ContainerDatabaseDriver
   test:
     database:
       # Use datasource as defined above.
