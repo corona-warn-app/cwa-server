@@ -20,6 +20,7 @@
 
 package app.coronawarn.server.common.federation.client;
 
+import feign.Headers;
 import feign.Response;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -42,12 +43,7 @@ import org.springframework.web.bind.annotation.RequestHeader;
 public interface FederationGatewayClient {
 
   @GetMapping(value = "/diagnosiskeys/download/{date}")
-  String getDiagnosisKeysString(@RequestHeader("Accept") String accept,
-                          @RequestHeader("X-SSL-Client-SHA256") String shaClient,
-                          @RequestHeader("X-SSL-Client-DN") String dnClient,
-                          @PathVariable("date") String date);
-
-  @GetMapping(value = "/diagnosiskeys/download/{date}")
+  // @Headers({"Accept: application/json; version=1.0", "X-SSL-Client-SHA256: abcd", "X-SSL-Client-DN: C=PL"})
   Response getDiagnosisKeys(@RequestHeader("Accept") String accept,
                             @RequestHeader("X-SSL-Client-SHA256") String shaClient,
                             @RequestHeader("X-SSL-Client-DN") String dnClient,

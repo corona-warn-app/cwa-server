@@ -24,7 +24,11 @@ import app.coronawarn.server.common.federation.client.FederationGatewayClient;
 import app.coronawarn.server.common.protocols.external.exposurenotification.DiagnosisKeyBatch;
 import feign.Response;
 import java.io.IOException;
+import java.io.InputStream;
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.util.Collection;
+import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -37,7 +41,6 @@ import org.springframework.stereotype.Service;
 public class DiagnosisKeyBatchDownloader {
 
   private static final Logger logger = LoggerFactory.getLogger(DiagnosisKeyBatchDownloader.class);
-
   private FederationGatewayClient federationGatewayClient;
 
   /**
@@ -49,23 +52,33 @@ public class DiagnosisKeyBatchDownloader {
 
   /**
    * Downloads the batch specified for this date.
+   *
    * @param date the date for which the batch should be downloaded
    * @return DiagnosisKeyBatchContainer
    */
-  public DiagnosisKeyBatchContainer downloadBatch(LocalDate date) {
+  public Optional<DiagnosisKeyBatchContainer> downloadBatch(LocalDate date) {
     try (Response response = federationGatewayClient.getDiagnosisKeys(
-        "application/json; version=1.0",
-        "abc",
-        "C=DE",
-        "2020-08-18")) {
-      DiagnosisKeyBatch.parseFrom(response.body().asInputStream());
+        "application/protobuf; version=1.0",
+        "abcd",
+        "C=PL",
+        date.format(DateTimeFormatter.ISO_LOCAL_DATE))) {
+
+      String batchTag = getHeader(response, "batchTag");
+      String nextBatchTag = getHeader(response, "nextBatchTag");
+
+      InputStream is = response.body().asInputStream();
+      DiagnosisKeyBatch diagnosisKeyBatch = DiagnosisKeyBatch.parseFrom(is);
+      return Optional.of(new DiagnosisKeyBatchContainer(diagnosisKeyBatch, batchTag, nextBatchTag));
     } catch (IOException e) {
-      // TODO
+      return Optional.empty();
     }
-    return null;
   }
 
-  public DiagnosisKeyBatchContainer downloadBatch(LocalDate date, String batchTag) {
+  private String getHeader(Response response, String header) {
+    Collection<String> headerStrings = response.headers().get(header);
+    if (headerStrings != null) {
+      return headerStrings.iterator().next();
+    }
     return null;
   }
 
