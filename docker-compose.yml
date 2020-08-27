@@ -83,10 +83,10 @@ services:
       POSTGRESQL_USER_CALLBACK: ${POSTGRES_CALLBACK_USER}
       POSTGRESQL_PASSWORD_FLYWAY: ${POSTGRES_FLYWAY_PASSWORD}
       POSTGRESQL_USER_FLYWAY: ${POSTGRES_FLYWAY_USER}
-  federation-upload:
+  upload:
     build:
       context: ./
-      dockerfile: ./services/federation-upload/Dockerfile
+      dockerfile: ./services/upload/Dockerfile
     depends_on:
       - postgres
     ports:

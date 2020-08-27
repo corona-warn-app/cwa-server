@@ -10,10 +10,10 @@
   </parent>
   <modelVersion>4.0.0</modelVersion>
 
-  <artifactId>federation-upload</artifactId>
+  <artifactId>upload</artifactId>
 
   <properties>
-    <sonar.projectKey>corona-warn-app_cwa-server_services_federation_upload</sonar.projectKey>
+    <sonar.projectKey>corona-warn-app_cwa-server_services_upload</sonar.projectKey>
   </properties>
 
   <dependencies>
