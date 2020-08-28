@@ -2,11 +2,14 @@ package app.coronawarn.server.services.download.download;
 
 import app.coronawarn.server.common.protocols.external.exposurenotification.DiagnosisKeyBatch;
 
+/**
+ * Contains the {@link DiagnosisKeyBatch} and batch tag metadata as served by the federation gateway.
+ */
 public class DiagnosisKeyBatchContainer {
 
   private final DiagnosisKeyBatch diagnosisKeyBatch;
-  private String batchTag;
-  private String nextBatchTag;
+  private final String batchTag;
+  private final String nextBatchTag;
 
   /**
    * Creates a DiagnosisKeyBatchContainer.
@@ -25,15 +28,7 @@ public class DiagnosisKeyBatchContainer {
     return batchTag;
   }
 
-  public void setBatchTag(String batchTag) {
-    this.batchTag = batchTag;
-  }
-
   public String getNextBatchTag() {
     return nextBatchTag;
-  }
-
-  public void setNextBatchTag(String nextBatchTag) {
-    this.nextBatchTag = nextBatchTag;
   }
 }
