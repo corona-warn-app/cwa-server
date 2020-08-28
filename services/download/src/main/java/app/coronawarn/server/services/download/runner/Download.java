@@ -102,7 +102,7 @@ public class Download implements ApplicationRunner {
             diagnosisKeyBatchDownloader.downloadBatch(federationBatch.getDate(), federationBatch.getBatchTag());
 
         if (diagnosisKeyBatchContainerOptional.isEmpty()) {
-          federationBatchService.markFederationBatchWithStatus(federationBatch, FederationBatchStatus.ERROR_WONT_RETRY);
+          federationBatchService.updateStatus(federationBatch, FederationBatchStatus.ERROR_WONT_RETRY);
         }
 
         // store nextBatchTag
@@ -122,10 +122,10 @@ public class Download implements ApplicationRunner {
         diagnosisKeyService.saveDiagnosisKeys(diagnosisKeys);
 
         //set status to processed
-        federationBatchService.markFederationBatchWithStatus(federationBatch, FederationBatchStatus.PROCESSED);
+        federationBatchService.updateStatus(federationBatch, FederationBatchStatus.PROCESSED);
       } catch (Exception e) {
         System.out.println("oh oh");
-        federationBatchService.markFederationBatchWithStatus(federationBatch, FederationBatchStatus.ERROR_WONT_RETRY);
+        federationBatchService.updateStatus(federationBatch, FederationBatchStatus.ERROR_WONT_RETRY);
       }
     });
   }

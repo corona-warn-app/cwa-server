@@ -82,7 +82,7 @@ public class FederationBatchService {
   /**
    * Sets the status of the provided federation batch.
    */
-  public void markFederationBatchWithStatus(FederationBatch federationBatch, FederationBatchStatus status) {
+  public void updateStatus(FederationBatch federationBatch, FederationBatchStatus status) {
     federationBatch.setStatus(status);
     federationBatchRepository.save(federationBatch);
 
