@@ -72,20 +72,20 @@ public class Download implements ApplicationRunner {
     saveFirstBatchTagForDate(yesterday);
 
     processErrorFederationBatches();
+    
+    processFederationBatches();
+  }
 
-    // fetch one unprocessed (and no error state) federation batch
-    // store nextbatchTag, store diagnosis keys, update status to processed
-    // in case of error: set status to error
-    // loop
+  private void saveFirstBatchTagForDate(LocalDate date) {
+    Optional<DiagnosisKeyBatchContainer> diagnosisKeyBatchContainerOptional =
+        diagnosisKeyBatchDownloader.downloadBatch(date);
 
-    /*
-    FederationBatch batchToProcess = federationBatchService.getNextFederationBatchToProcess();
-    while (batchToProcess != null) {
-      downloadBatch(batchToProcess);
-      batchToProcess = federationBatchService.getNextFederationBatchToProcess();
+    if (diagnosisKeyBatchContainerOptional.isEmpty()) {
+      return;
     }
 
-     */
+    DiagnosisKeyBatchContainer diagnosisKeyBatchContainer = diagnosisKeyBatchContainerOptional.get();
+    federationBatchService.saveFederationBatch(new FederationBatch(diagnosisKeyBatchContainer.getBatchTag(), date));
   }
 
   private void processErrorFederationBatches() {
@@ -112,9 +112,9 @@ public class Download implements ApplicationRunner {
         }
 
         // convert DiagnosisKey (federation) to DiagnosisKey (persistence)
-        List<DiagnosisKey> diagnosisKeys = diagnosisKeyBatchContainer.getDiagnosisKeyBatch().getKeysList().stream()
-            .map(federationDiagnosisKey -> DiagnosisKey.builder().fromFederationDiagnosisKey(federationDiagnosisKey)
-                .build())
+        List<DiagnosisKey> diagnosisKeys = diagnosisKeyBatchContainer.getDiagnosisKeyBatch().getKeysList()
+            .stream()
+            .map(diagnosisKey -> DiagnosisKey.builder().fromFederationDiagnosisKey(diagnosisKey).build())
             .collect(Collectors.toList());
 
         // store diagnosis keys
@@ -129,16 +129,19 @@ public class Download implements ApplicationRunner {
     });
   }
 
-  private void saveFirstBatchTagForDate(LocalDate date) {
-    Optional<DiagnosisKeyBatchContainer> diagnosisKeyBatchContainerOptional =
-        diagnosisKeyBatchDownloader.downloadBatch(date);
+  private void processFederationBatches() {
+    // fetch one unprocessed (and no error state) federation batch
+    // store nextbatchTag, store diagnosis keys, update status to processed
+    // in case of error: set status to error
+    // loop
 
-    if (diagnosisKeyBatchContainerOptional.isEmpty()) {
-      return;
+    /*
+    FederationBatch batchToProcess = federationBatchService.getNextFederationBatchToProcess();
+    while (batchToProcess != null) {
+      downloadBatch(batchToProcess);
+      batchToProcess = federationBatchService.getNextFederationBatchToProcess();
     }
-
-    DiagnosisKeyBatchContainer diagnosisKeyBatchContainer = diagnosisKeyBatchContainerOptional.get();
-    federationBatchService.saveFederationBatch(new FederationBatch(diagnosisKeyBatchContainer.getBatchTag(), date));
+     */
   }
 
 }
