@@ -21,22 +21,21 @@
 package app.coronawarn.server.services.download.runner;
 
 
+import app.coronawarn.server.common.persistence.domain.DiagnosisKey;
 import app.coronawarn.server.common.persistence.domain.FederationBatch;
 import app.coronawarn.server.common.persistence.domain.FederationBatchStatus;
 import app.coronawarn.server.common.persistence.service.DiagnosisKeyService;
 import app.coronawarn.server.common.persistence.service.FederationBatchService;
-import app.coronawarn.server.common.protocols.external.exposurenotification.DiagnosisKey;
-import app.coronawarn.server.common.protocols.external.exposurenotification.DiagnosisKeyBatch;
 import app.coronawarn.server.services.download.download.DiagnosisKeyBatchContainer;
 import app.coronawarn.server.services.download.download.DiagnosisKeyBatchDownloader;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
-import org.springframework.context.ApplicationContext;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
@@ -97,27 +96,36 @@ public class Download implements ApplicationRunner {
     List<FederationBatch> federationBatchesWithErrors =
         federationBatchService.findByStatus(FederationBatchStatus.ERROR);
     federationBatchesWithErrors.forEach(federationBatch -> {
-      Optional<DiagnosisKeyBatchContainer> diagnosisKeyBatchContainerOptional =
-          diagnosisKeyBatchDownloader.downloadBatch(federationBatch.getDate(), federationBatch.getBatchTag());
+      try {
+        Optional<DiagnosisKeyBatchContainer> diagnosisKeyBatchContainerOptional =
+            diagnosisKeyBatchDownloader.downloadBatch(federationBatch.getDate(), federationBatch.getBatchTag());
 
-      if (diagnosisKeyBatchContainerOptional.isEmpty()) {
+        if (diagnosisKeyBatchContainerOptional.isEmpty()) {
+          federationBatchService.markFederationBatchWithStatus(federationBatch, FederationBatchStatus.ERROR_WONT_RETRY);
+        }
+
+        // store nextBatchTag
+        DiagnosisKeyBatchContainer diagnosisKeyBatchContainer = diagnosisKeyBatchContainerOptional.get();
+        if (!StringUtils.isEmpty(diagnosisKeyBatchContainer.getNextBatchTag())) {
+          federationBatchService.saveFederationBatch(
+              new FederationBatch(diagnosisKeyBatchContainer.getNextBatchTag(), federationBatch.getDate()));
+        }
+
+        // convert DiagnosisKey (federation) to DiagnosisKey (persistence)
+        List<DiagnosisKey> diagnosisKeys = diagnosisKeyBatchContainer.getDiagnosisKeyBatch().getKeysList().stream()
+            .map(federationDiagnosisKey -> DiagnosisKey.builder().fromFederationDiagnosisKey(federationDiagnosisKey)
+                .build())
+            .collect(Collectors.toList());
+
+        // store diagnosis keys
+        diagnosisKeyService.saveDiagnosisKeys(diagnosisKeys);
+
+        //set status to processed
+        federationBatchService.markFederationBatchWithStatus(federationBatch, FederationBatchStatus.PROCESSED);
+      } catch (Exception e) {
+        System.out.println("oh oh");
         federationBatchService.markFederationBatchWithStatus(federationBatch, FederationBatchStatus.ERROR_WONT_RETRY);
       }
-
-      // store nextBatchTag
-      DiagnosisKeyBatchContainer diagnosisKeyBatchContainer = diagnosisKeyBatchContainerOptional.get();
-      if (!StringUtils.isEmpty(diagnosisKeyBatchContainer.getNextBatchTag())) {
-        federationBatchService.saveFederationBatch(
-            new FederationBatch(diagnosisKeyBatchContainer.getNextBatchTag(), federationBatch.getDate()));
-      }
-
-      // convert DiagnosisKey (federation) to DiagnosisKey (persistence)
-
-      // store diagnosis keys
-      //diagnosisKeyService.saveDiagnosisKeys(diagnosisKeyBatchContainer.getDiagnosisKeyBatch().getKeysList());
-
-      //set status to processed
-      federationBatchService.markFederationBatchWithStatus(federationBatch, FederationBatchStatus.PROCESSED);
     });
   }
 
@@ -133,29 +141,4 @@ public class Download implements ApplicationRunner {
     federationBatchService.saveFederationBatch(new FederationBatch(diagnosisKeyBatchContainer.getBatchTag(), date));
   }
 
-  private void downloadBatch(LocalDate date) {
-    Optional<DiagnosisKeyBatchContainer> diagnosisKeyBatchContainerOptional =
-        diagnosisKeyBatchDownloader.downloadBatch(date);
-
-    if (diagnosisKeyBatchContainerOptional.isEmpty()) {
-      return;
-    }
-
-    DiagnosisKeyBatchContainer diagnosisKeyBatchContainer = diagnosisKeyBatchContainerOptional.get();
-
-
-    // TODO check if already in table before processing
-    //federationBatchService.saveFederationBatch(new FederationBatch(batchTag, date, FederationBatchStatus.PROCESSED));
-    storeDiagnosisKeyBatch(diagnosisKeyBatchContainer.getDiagnosisKeyBatch());
-    String nextBatchTag = diagnosisKeyBatchContainer.getNextBatchTag();
-
-    if (!StringUtils.isEmpty(nextBatchTag)) {
-      federationBatchService.saveFederationBatch(new FederationBatch(nextBatchTag, date));
-    }
-  }
-
-  private void storeDiagnosisKeyBatch(DiagnosisKeyBatch diagnosisKeyBatch) {
-    List<DiagnosisKey> keys = diagnosisKeyBatch.getKeysList();
-    // TODO
-  }
 }
