@@ -29,6 +29,8 @@ import app.coronawarn.server.common.persistence.service.FederationBatchService;
 import app.coronawarn.server.services.download.download.DiagnosisKeyBatchContainer;
 import app.coronawarn.server.services.download.download.DiagnosisKeyBatchDownloader;
 import java.time.LocalDate;
+import java.time.Period;
+import java.time.ZoneOffset;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -67,8 +69,7 @@ public class Download implements ApplicationRunner {
 
   @Override
   public void run(ApplicationArguments args) {
-    // TODO UTC handling?
-    LocalDate yesterday = LocalDate.now(); //LocalDate.now().minus(Period.ofDays(1));
+    LocalDate yesterday = LocalDate.now(ZoneOffset.UTC).minus(Period.ofDays(1));
     saveFirstBatchTagForDate(yesterday);
 
     processErrorFederationBatches();
