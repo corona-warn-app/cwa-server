@@ -46,8 +46,8 @@ public class FederationBatchService {
   }
 
   /**
-   * Persists the {@link FederationBatch} instance. If the data of a particular federation batch
-   * already exists in the database, this federation batch is not persisted.
+   * Persists the {@link FederationBatch} instance. If the data of a particular federation batch already exists in the
+   * database, this federation batch is not persisted.
    *
    * @param federationBatch must not contain {@literal null}.
    */
@@ -73,10 +73,10 @@ public class FederationBatchService {
   }
 
   /**
-   * Returns the oldest, not yet processed federation batch.
+   * TODO consider merging with {@link #findByStatus(FederationBatchStatus)}
    */
-  public FederationBatch getNextFederationBatchToProcess() {
-    return federationBatchRepository.findOldestUnprocessedFederationBatch();
+  public List<FederationBatch> getUnprocessedFederationBatches() {
+    return federationBatchRepository.findUnprocessedFederationBatches();
   }
 
   /**

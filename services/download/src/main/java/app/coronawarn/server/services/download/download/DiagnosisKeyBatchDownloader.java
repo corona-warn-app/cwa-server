@@ -68,7 +68,7 @@ public class DiagnosisKeyBatchDownloader {
 
       InputStream is = response.body().asInputStream();
       DiagnosisKeyBatch diagnosisKeyBatch = DiagnosisKeyBatch.parseFrom(is);
-      return Optional.of(new DiagnosisKeyBatchContainer(diagnosisKeyBatch, batchTag, nextBatchTag));
+      return Optional.of(new DiagnosisKeyBatchContainer(diagnosisKeyBatch, batchTag, nextBatchTag, date));
     } catch (IOException e) {
       return Optional.empty();
     }
@@ -92,7 +92,7 @@ public class DiagnosisKeyBatchDownloader {
 
       InputStream is = response.body().asInputStream();
       DiagnosisKeyBatch diagnosisKeyBatch = DiagnosisKeyBatch.parseFrom(is);
-      return Optional.of(new DiagnosisKeyBatchContainer(diagnosisKeyBatch, batchTag, nextBatchTag));
+      return Optional.of(new DiagnosisKeyBatchContainer(diagnosisKeyBatch, batchTag, nextBatchTag, date));
     } catch (IOException e) {
       return Optional.empty();
     }

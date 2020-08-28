@@ -1,20 +1,18 @@
 package app.coronawarn.server.common.persistence.repository;
 
 
+import static java.util.Collections.singletonList;
 import static org.assertj.core.api.Assertions.assertThat;
-
 
 import app.coronawarn.server.common.persistence.domain.FederationBatch;
 import app.coronawarn.server.common.persistence.domain.FederationBatchStatus;
 import java.time.LocalDate;
-import java.util.Objects;
+import java.util.List;
 import java.util.stream.Stream;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
-import org.junit.jupiter.params.provider.MethodSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.reactive.AutoConfigureWebTestClient;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -57,40 +55,17 @@ public class FederationBatchRepositoryTest {
   }
 
   @Test
-  void testReturnsNullIfNoUnprocessedBatch() {
+  void testReturnsEmptyListIfNoUnprocessedBatch() {
     federationBatchRepository.saveDoNothingOnConflict(batchTag1, date1, statusProcessed);
-    assertThat(federationBatchRepository.findOldestUnprocessedFederationBatch()).isNull();
-  }
-
-  @ParameterizedTest
-  @MethodSource("getUnprocessedBatchArgumentsSortedByDateDescending")
-  void testOnlyOldestBatchIsReturned(String batchTag, LocalDate date, FederationBatchStatus status) {
-    federationBatchRepository.saveDoNothingOnConflict(batchTag, date, status);
-    assertThat(validateBatchPropertiesOfOldestUnprocessedBatch(batchTag, date, status)).isTrue();
-  }
-
-  @Test
-  void testProcessedBatchDoesNotOverwriteUnprocessedBatch() {
-    federationBatchRepository.saveDoNothingOnConflict(batchTag2, date2, statusError);
-    federationBatchRepository.saveDoNothingOnConflict(batchTag3, date3, statusError);
-    assertThat(validateBatchPropertiesOfOldestUnprocessedBatch(batchTag2, date2, statusError)).isTrue();
-    federationBatchRepository.saveDoNothingOnConflict(batchTag1, date1, statusProcessed);
-    assertThat(validateBatchPropertiesOfOldestUnprocessedBatch(batchTag2, date2, statusError)).isTrue();
+    assertThat(federationBatchRepository.findUnprocessedFederationBatches()).isEmpty();
   }
 
   @Test
   void testDoesNothingOnConflict() {
-    federationBatchRepository.saveDoNothingOnConflict(batchTag2, date2, statusError);
+    federationBatchRepository.saveDoNothingOnConflict(batchTag2, date2, null);
     federationBatchRepository.saveDoNothingOnConflict(batchTag2, date1, statusError);
 
-    assertThat(validateBatchPropertiesOfOldestUnprocessedBatch(batchTag2, date2, statusError)).isTrue();
-  }
-
-  private boolean validateBatchPropertiesOfOldestUnprocessedBatch(String batchTag, LocalDate date,
-      FederationBatchStatus status) {
-    FederationBatch federationBatch = federationBatchRepository.findOldestUnprocessedFederationBatch();
-    return Objects.equals(federationBatch.getBatchTag(), batchTag)
-        && Objects.equals(federationBatch.getDate(), date)
-        && Objects.equals(federationBatch.getStatus(), status);
+    List<FederationBatch> actBatches = federationBatchRepository.findUnprocessedFederationBatches();
+    assertThat(actBatches).isEqualTo(singletonList(new FederationBatch(batchTag2, date2)));
   }
 }

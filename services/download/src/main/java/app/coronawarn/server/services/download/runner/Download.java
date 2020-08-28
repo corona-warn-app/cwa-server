@@ -24,7 +24,6 @@ package app.coronawarn.server.services.download.runner;
 import static app.coronawarn.server.common.persistence.domain.FederationBatchStatus.ERROR;
 import static app.coronawarn.server.common.persistence.domain.FederationBatchStatus.ERROR_WONT_RETRY;
 import static app.coronawarn.server.common.persistence.domain.FederationBatchStatus.PROCESSED;
-import static org.apache.commons.lang3.StringUtils.isBlank;
 
 import app.coronawarn.server.common.persistence.domain.DiagnosisKey;
 import app.coronawarn.server.common.persistence.domain.FederationBatch;
@@ -35,6 +34,8 @@ import app.coronawarn.server.services.download.download.DiagnosisKeyBatchDownloa
 import java.time.LocalDate;
 import java.time.Period;
 import java.time.ZoneOffset;
+import java.util.ArrayDeque;
+import java.util.Deque;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -100,10 +101,9 @@ public class Download implements ApplicationRunner {
       Optional<DiagnosisKeyBatchContainer> diagnosisKeyBatchContainerOptional =
           diagnosisKeyBatchDownloader.downloadBatch(federationBatch.getDate(), federationBatch.getBatchTag());
       DiagnosisKeyBatchContainer diagnosisKeyBatchContainer = diagnosisKeyBatchContainerOptional.orElseThrow();
-
-      saveNextBatchTag(diagnosisKeyBatchContainer, federationBatch.getDate());
-
+      saveNextBatchTag(diagnosisKeyBatchContainer);
       diagnosisKeyService.saveDiagnosisKeys(convertDiagnosisKeys(diagnosisKeyBatchContainer));
+
       federationBatchService.updateStatus(federationBatch, PROCESSED);
     } catch (Exception e) {
       logger.error("Retry of federation batch processing failed. Will not try again.", e);
@@ -118,27 +118,34 @@ public class Download implements ApplicationRunner {
         .collect(Collectors.toList());
   }
 
-  private void saveNextBatchTag(DiagnosisKeyBatchContainer diagnosisKeyBatchContainer, LocalDate batchDate) {
-    if (!isBlank(diagnosisKeyBatchContainer.getNextBatchTag())) {
-      federationBatchService.saveFederationBatch(
-          new FederationBatch(diagnosisKeyBatchContainer.getNextBatchTag(), batchDate));
-    }
+  private void saveNextBatchTag(DiagnosisKeyBatchContainer diagnosisKeyBatchContainer) {
+    diagnosisKeyBatchContainer.getNextBatchTag().ifPresent(batchTag -> {
+      FederationBatch federationBatch = new FederationBatch(batchTag, diagnosisKeyBatchContainer.getDate());
+      federationBatchService.saveFederationBatch(federationBatch);
+    });
   }
-
 
   private void processFederationBatches() {
-    // fetch one unprocessed (and no error state) federation batch
-    // store nextbatchTag, store diagnosis keys, update status to processed
-    // in case of error: set status to error
-    // loop
+    Deque<FederationBatch> unprocessedBatches = new ArrayDeque<>();
+    unprocessedBatches.addAll(federationBatchService.getUnprocessedFederationBatches());
 
-    /*
-    FederationBatch batchToProcess = federationBatchService.getNextFederationBatchToProcess();
-    while (batchToProcess != null) {
-      downloadBatch(batchToProcess);
-      batchToProcess = federationBatchService.getNextFederationBatchToProcess();
+    while (!unprocessedBatches.isEmpty()) {
+      FederationBatch currentBatch = unprocessedBatches.pop();
+
+      try {
+        Optional<DiagnosisKeyBatchContainer> diagnosisKeyBatchContainerOptional =
+            diagnosisKeyBatchDownloader.downloadBatch(currentBatch.getDate(), currentBatch.getBatchTag());
+        DiagnosisKeyBatchContainer diagnosisKeyBatchContainer = diagnosisKeyBatchContainerOptional.orElseThrow();
+
+        diagnosisKeyBatchContainer.getNextBatchTag().ifPresent(nextBatchTag ->
+            unprocessedBatches.push(new FederationBatch(nextBatchTag, currentBatch.getDate())));
+
+        diagnosisKeyService.saveDiagnosisKeys(convertDiagnosisKeys(diagnosisKeyBatchContainer));
+        federationBatchService.updateStatus(currentBatch, PROCESSED);
+      } catch (Exception e) {
+        logger.error("Federation batch processing failed. Will retry on next run.", e);
+        federationBatchService.updateStatus(currentBatch, ERROR);
+      }
     }
-     */
   }
-
 }

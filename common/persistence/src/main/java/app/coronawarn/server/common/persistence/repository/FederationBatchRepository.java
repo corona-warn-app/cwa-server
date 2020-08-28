@@ -44,8 +44,8 @@ public interface FederationBatchRepository extends PagingAndSortingRepository<Fe
       @Param("status") FederationBatchStatus status
   );
 
-  @Query("SELECT * FROM federation_batch WHERE status != 'PROCESSED' OR status is null ORDER BY date asc LIMIT 1")
-  FederationBatch findOldestUnprocessedFederationBatch();
+  @Query("SELECT * FROM federation_batch WHERE status is null LIMIT 1")
+  List<FederationBatch> findUnprocessedFederationBatches();
 
   @Query("SELECT * FROM federation_batch WHERE status = :status")
   List<FederationBatch> findByStatus(@Param("status") String status);
