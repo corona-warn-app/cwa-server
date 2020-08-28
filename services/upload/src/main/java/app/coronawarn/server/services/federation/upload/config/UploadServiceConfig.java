@@ -8,6 +8,7 @@ import org.springframework.stereotype.Component;
 public class UploadServiceConfig {
 
   private String privateKey;
+  private String privateKeyPassword;
   private Signature signature;
 
   public String getPrivateKey() {
@@ -16,6 +17,14 @@ public class UploadServiceConfig {
 
   public void setPrivateKey(String privateKey) {
     this.privateKey = privateKey;
+  }
+
+  public String getPrivateKeyPassword() {
+    return privateKeyPassword;
+  }
+
+  public void setPrivateKeyPassword(String privateKeyPassword) {
+    this.privateKeyPassword = privateKeyPassword;
   }
 
   public Signature getSignature() {

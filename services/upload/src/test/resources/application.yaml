@@ -5,6 +5,18 @@ logging:
       springframework: off
     root: off
 
+services:
+  upload:
+    privatekey: testkey.pem
+    privatekey-password: testpass
+    signature:
+      # The ASN.1 OID for algorithm identifier.
+      algorithm-oid: 1.2.840.10045.4.3.2
+      # The algorithm name.
+      algorithm-name: SHA256withECDSA
+      # The security provider.
+      security-provider: BC
+
 spring:
   flyway:
     enabled: true

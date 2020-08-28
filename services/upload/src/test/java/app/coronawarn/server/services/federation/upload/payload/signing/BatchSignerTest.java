@@ -3,23 +3,32 @@ package app.coronawarn.server.services.federation.upload.payload.signing;
 import app.coronawarn.server.common.protocols.external.exposurenotification.DiagnosisKeyBatch;
 import app.coronawarn.server.services.federation.upload.config.UploadServiceConfig;
 import app.coronawarn.server.services.federation.upload.payload.helper.DiagnosisKeyBatchGenerator;
+import org.apache.commons.io.IOUtils;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.ConfigFileApplicationContextInitializer;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.ResourceLoader;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
+import java.io.IOException;
+import java.io.StringReader;
 import java.security.GeneralSecurityException;
 import java.security.PrivateKey;
 import java.util.Arrays;
 
+import static app.coronawarn.server.services.federation.upload.payload.helper.FakePrivateKeyResource.makeFakeResourceLoader;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
 
 class FakePrivateKey implements PrivateKey {
@@ -108,12 +117,19 @@ class BatchSignerTest {
   @DisplayName("Real Crypto Tests")
   @EnableConfigurationProperties(value = UploadServiceConfig.class)
   @ExtendWith(SpringExtension.class)
-  @SpringBootTest(classes = {BatchSigner.class, CryptoProvider.class })
-//  @ContextConfiguration(classes = {BatchSigner.class}, initializers = ConfigFileApplicationContextInitializer.class)
+  @ContextConfiguration(classes = {UploadServiceConfig.class}, initializers = ConfigFileApplicationContextInitializer.class)
   class RealTest {
 
-    @Autowired
     private BatchSigner batchSigner;
+
+    @Autowired
+    private UploadServiceConfig uploadServiceConfig;
+
+    @BeforeEach
+    void setup() throws IOException {
+      var cryptoProvider = new CryptoProvider(makeFakeResourceLoader(), uploadServiceConfig);
+      batchSigner = new BatchSigner(cryptoProvider, uploadServiceConfig);
+    }
 
     @Test
     void shouldSignBatchWithBouncyCastle() throws GeneralSecurityException {

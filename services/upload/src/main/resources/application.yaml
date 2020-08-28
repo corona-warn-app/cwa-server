@@ -18,6 +18,7 @@ federation-gateway:
 services:
   upload:
     privatekey: ${VAULT_FILESIGNING_SECRET}
+    privatekey-password: ${VAULT_FILESIGNING_PASSWORD}
     signature:
       # The ASN.1 OID for algorithm identifier.
       algorithm-oid: 1.2.840.10045.4.3.2
