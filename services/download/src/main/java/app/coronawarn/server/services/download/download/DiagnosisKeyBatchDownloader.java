@@ -88,7 +88,6 @@ public class DiagnosisKeyBatchDownloader {
         batchTag,
         date.format(DateTimeFormatter.ISO_LOCAL_DATE))) {
 
-      // String batchTag = getHeader(response, "batchTag");
       String nextBatchTag = getHeader(response, "nextBatchTag");
 
       InputStream is = response.body().asInputStream();
