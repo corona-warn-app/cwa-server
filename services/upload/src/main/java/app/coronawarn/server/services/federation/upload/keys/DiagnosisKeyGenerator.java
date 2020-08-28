@@ -2,13 +2,12 @@ package app.coronawarn.server.services.federation.upload.keys;
 
 import app.coronawarn.server.common.persistence.domain.DiagnosisKey;
 import app.coronawarn.server.common.protocols.external.exposurenotification.ReportType;
-import org.springframework.context.annotation.Profile;
-import org.springframework.stereotype.Component;
 import java.util.List;
 import java.util.Random;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
-import java.util.stream.LongStream;
+import org.springframework.context.annotation.Profile;
+import org.springframework.stereotype.Component;
 
 @Component
 @Profile("testdata")
@@ -33,7 +32,7 @@ public class DiagnosisKeyGenerator implements DiagnosisKeyLoader {
   @Override
   public List<DiagnosisKey> loadDiagnosisKeys() {
     return IntStream.rangeClosed(0, 250)
-      .mapToObj(this::generateKey)
-      .collect(Collectors.toList());
+        .mapToObj(this::generateKey)
+        .collect(Collectors.toList());
   }
 }
