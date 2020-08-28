@@ -19,23 +19,26 @@ public class UploadPayload {
     return batch;
   }
 
-  public void setBatch(DiagnosisKeyBatch batch) {
+  public UploadPayload setBatch(DiagnosisKeyBatch batch) {
     this.batch = batch;
+    return this;
   }
 
   public String getBatchSignature() {
     return batchSignature;
   }
 
-  public void setBatchSignature(String batchSignature) {
+  public UploadPayload setBatchSignature(String batchSignature) {
     this.batchSignature = batchSignature;
+    return this;
   }
 
   public String getBatchTag() {
     return batchTag;
   }
 
-  public void setBatchTag(String batchTag) {
+  public UploadPayload setBatchTag(String batchTag) {
     this.batchTag = batchTag;
+    return this;
   }
 }

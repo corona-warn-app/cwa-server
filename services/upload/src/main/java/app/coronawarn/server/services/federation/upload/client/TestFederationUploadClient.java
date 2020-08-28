@@ -1,7 +1,6 @@
 package app.coronawarn.server.services.federation.upload.client;
 
 import app.coronawarn.server.services.federation.upload.payload.UploadPayload;
-import app.coronawarn.server.services.federation.upload.runner.Upload;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Profile;
@@ -12,7 +11,7 @@ import org.springframework.stereotype.Component;
 public class TestFederationUploadClient implements FederationUploadClient {
 
   private static final Logger logger = LoggerFactory
-      .getLogger(Upload.class);
+      .getLogger(TestFederationUploadClient.class);
 
   @Override
   public void postBatchUpload(UploadPayload uploadPayload) {

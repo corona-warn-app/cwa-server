@@ -3,7 +3,6 @@ package app.coronawarn.server.services.federation.upload.payload;
 import app.coronawarn.server.common.persistence.domain.DiagnosisKey;
 import app.coronawarn.server.common.protocols.external.exposurenotification.DiagnosisKeyBatch;
 import app.coronawarn.server.services.federation.upload.payload.signing.BatchSigner;
-import app.coronawarn.server.services.federation.upload.runner.Upload;
 import java.security.GeneralSecurityException;
 import java.util.Base64;
 import java.util.List;
@@ -17,7 +16,7 @@ import org.springframework.stereotype.Component;
 public class PayloadFactory {
 
   private static final Logger logger = LoggerFactory
-      .getLogger(Upload.class);
+      .getLogger(PayloadFactory.class);
 
   private final DiagnosisKeyBatchAssembler assembler;
   private final BatchSigner signer;
@@ -46,6 +45,7 @@ public class PayloadFactory {
   /**
    * Generates the Payload objects based on a list of Diagnosis Keys. This method will generate batches, add a proper
    * batch tag and sign them with the server private key.
+   *
    * @param diagnosisKeys List of Diagnosis Keys.
    * @return upload payload object {@link UploadPayload}.
    */
@@ -54,7 +54,7 @@ public class PayloadFactory {
     var batchTag = this.generateBatchTag();
     return batches.stream()
         .map(this::mapToPayloadAndSign)
-        .peek(p -> p.setBatchTag(batchTag))
+        .map(p -> p.setBatchTag(batchTag))
         .collect(Collectors.toList());
   }
 

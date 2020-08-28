@@ -89,12 +89,6 @@ class BatchSignerTest {
     private UploadServiceConfig uploadServiceConfig;
 
     @Test
-    void shouldCreateBatchSigner() {
-      when(cryptoProvider.getPrivateKey()).thenReturn(new FakePrivateKey("1.2.840.10045.4.3.2", "SHA256withECDSA", new byte[254]));
-      var signer = new BatchSigner(cryptoProvider, uploadServiceConfig);
-    }
-
-    @Test
     void shouldThrowErrorIfPrivateKeyIsNull() {
       when(cryptoProvider.getPrivateKey()).thenReturn(null);
       var signer = new BatchSigner(cryptoProvider, uploadServiceConfig);
