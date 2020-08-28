@@ -40,7 +40,7 @@ public class MockData {
   }
 
   public static DiagnosisKey generateRandomDiagnosisKey(boolean consentToShare) {
-    DiagnosisKey dummyKey = DiagnosisKey.builder().withKeyData(randomByteData())
+   return DiagnosisKey.builder().withKeyData(randomByteData())
                             .withRollingStartIntervalNumber(1)
                             .withTransmissionRiskLevel(2)
                             .withConsentToFederation(consentToShare)
@@ -50,7 +50,6 @@ public class MockData {
                             .withVisitedCountries(List.of("FR","DK"))
                             .withReportType(ReportType.CONFIRMED_TEST)
                             .build();
-    return dummyKey;
   }
 
   private static byte[] randomByteData() {
