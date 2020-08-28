@@ -2,7 +2,6 @@ package app.coronawarn.server.services.federation.upload.runner;
 
 import app.coronawarn.server.common.persistence.domain.DiagnosisKey;
 import app.coronawarn.server.common.persistence.service.FederationUploadKeyService;
-import app.coronawarn.server.common.protocols.external.exposurenotification.DiagnosisKeyBatch;
 import app.coronawarn.server.services.federation.upload.Application;
 import app.coronawarn.server.services.federation.upload.DiagnosisKeyBatchAssembler;
 import java.util.List;
@@ -36,7 +35,7 @@ public class Upload implements ApplicationRunner {
     logger.info("Running Upload Job");
     try {
       List<DiagnosisKey> pendingUploadKeys = uploadKeyService.getPendingUploadKeys();
-      List<DiagnosisKeyBatch> batches = batchAssembler.assembleDiagnosisKeyBatch(pendingUploadKeys);
+      batchAssembler.assembleDiagnosisKeyBatch(pendingUploadKeys);
     } catch (Exception e) {
       logger.error("Upload diagnosis key data failed.", e);
       Application.killApplication(applicationContext);

@@ -33,7 +33,7 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import app.coronawarn.server.common.persistence.repository.FederationUploadKeyRepository;
 
 @DataJdbcTest
-public class FederationUploadKeyServiceTest {
+class FederationUploadKeyServiceTest {
 
   @Autowired
   private FederationUploadKeyService uploadKeyService;
