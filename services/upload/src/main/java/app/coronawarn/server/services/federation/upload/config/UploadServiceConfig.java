@@ -9,7 +9,16 @@ public class UploadServiceConfig {
 
   private String privateKey;
   private String privateKeyPassword;
+  private String certificate;
   private Signature signature;
+
+  public String getCertificate() {
+    return certificate;
+  }
+
+  public void setCertificate(String certificate) {
+    this.certificate = certificate;
+  }
 
   public String getPrivateKey() {
     return privateKey;

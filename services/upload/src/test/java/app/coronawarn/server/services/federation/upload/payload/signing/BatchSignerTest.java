@@ -4,6 +4,8 @@ import app.coronawarn.server.common.protocols.external.exposurenotification.Diag
 import app.coronawarn.server.services.federation.upload.config.UploadServiceConfig;
 import app.coronawarn.server.services.federation.upload.payload.helper.DiagnosisKeyBatchGenerator;
 import org.apache.commons.io.IOUtils;
+import org.bouncycastle.cms.CMSException;
+import org.bouncycastle.operator.OperatorCreationException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -25,6 +27,7 @@ import java.io.IOException;
 import java.io.StringReader;
 import java.security.GeneralSecurityException;
 import java.security.PrivateKey;
+import java.security.cert.CertificateException;
 import java.util.Arrays;
 
 import static app.coronawarn.server.services.federation.upload.payload.helper.FakePrivateKeyResource.makeFakeResourceLoader;
@@ -77,37 +80,6 @@ class FakePrivateKey implements PrivateKey {
 class BatchSignerTest {
 
   @Nested
-  @DisplayName("Mocked Crypto Tests")
-  @EnableConfigurationProperties(value = UploadServiceConfig.class)
-  @ExtendWith(SpringExtension.class)
-  @ContextConfiguration(classes = {BatchSigner.class}, initializers = ConfigFileApplicationContextInitializer.class)
-  class MockedTest {
-    @MockBean
-    private CryptoProvider cryptoProvider;
-
-    @MockBean
-    private UploadServiceConfig uploadServiceConfig;
-
-    @Test
-    void shouldThrowErrorIfPrivateKeyIsNull() {
-      when(cryptoProvider.getPrivateKey()).thenReturn(null);
-      var signer = new BatchSigner(cryptoProvider, uploadServiceConfig);
-      Assertions.assertThrows(GeneralSecurityException.class, () -> {
-        signer.createSignatureBytes(DiagnosisKeyBatch.newBuilder().build());
-      });
-    }
-
-    @Test
-    void shouldThrowErrorIfPrivateKeyIsDestroyed() {
-      when(cryptoProvider.getPrivateKey()).thenReturn(new FakePrivateKey("algo1", "format1", new byte[254], true));
-      var signer = new BatchSigner(cryptoProvider, uploadServiceConfig);
-      Assertions.assertThrows(GeneralSecurityException.class, () -> {
-        signer.createSignatureBytes(DiagnosisKeyBatch.newBuilder().build());
-      });
-    }
-  }
-
-  @Nested
   @DisplayName("Real Crypto Tests")
   @EnableConfigurationProperties(value = UploadServiceConfig.class)
   @ExtendWith(SpringExtension.class)
@@ -120,22 +92,24 @@ class BatchSignerTest {
     private UploadServiceConfig uploadServiceConfig;
 
     @BeforeEach
-    void setup() throws IOException {
+    void setup() throws IOException, CertificateException {
       var cryptoProvider = new CryptoProvider(makeFakeResourceLoader(), uploadServiceConfig);
       batchSigner = new BatchSigner(cryptoProvider, uploadServiceConfig);
     }
 
     @Test
-    void shouldSignBatchWithBouncyCastle() throws GeneralSecurityException {
+    void shouldSignBatchWithBouncyCastle()
+        throws GeneralSecurityException, CMSException, OperatorCreationException, IOException {
       var result = batchSigner.createSignatureBytes(DiagnosisKeyBatch.newBuilder().build());
       Assertions.assertNotNull(result);
     }
 
     @Test
-    void shouldSignBatchesDifferently() throws GeneralSecurityException {
+    void shouldSignBatchesDifferently()
+        throws GeneralSecurityException, CMSException, OperatorCreationException, IOException {
       var signature1 = batchSigner.createSignatureBytes(DiagnosisKeyBatchGenerator.makeSingleKeyBatch());
       var signature2 = batchSigner.createSignatureBytes(DiagnosisKeyBatchGenerator.makeSingleKeyBatch());
-      Assertions.assertFalse(Arrays.equals(signature1, signature2));
+      Assertions.assertFalse(signature1.equals(signature2));
     }
   }
 

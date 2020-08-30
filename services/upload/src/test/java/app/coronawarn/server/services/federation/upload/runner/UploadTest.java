@@ -54,7 +54,7 @@ class UploadTest {
   void shouldRunUpload() throws Exception {
     upload.run(null);
     Mockito.verify(federationGatewayClient, Mockito.atMostOnce())
-        .postBatchUpload(any(), anyString(), anyString());
+        .postBatchUpload(any(), anyString(), anyString(), anyString(), anyString(), anyString());
   }
 
 }

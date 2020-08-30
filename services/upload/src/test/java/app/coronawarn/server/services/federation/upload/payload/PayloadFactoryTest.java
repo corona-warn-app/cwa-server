@@ -5,6 +5,8 @@ import app.coronawarn.server.services.federation.upload.payload.helper.Diagnosis
 import app.coronawarn.server.services.federation.upload.payload.helper.PersistenceKeysGenerator;
 import app.coronawarn.server.services.federation.upload.payload.signing.BatchSigner;
 import app.coronawarn.server.services.federation.upload.payload.signing.CryptoProvider;
+import org.bouncycastle.cms.CMSException;
+import org.bouncycastle.operator.OperatorCreationException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -17,9 +19,12 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.security.GeneralSecurityException;
 import java.util.List;
 import java.util.Random;
+import java.util.stream.Collectors;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
@@ -41,12 +46,12 @@ class PayloadFactoryTest {
   PayloadFactory payloadFactory;
 
   @BeforeEach
-  void setup() throws GeneralSecurityException {
-    byte[] signatureBytes = new byte[32];
-    var random = new Random();
-    random.nextBytes(signatureBytes);
+  void setup() throws GeneralSecurityException, CMSException, OperatorCreationException, IOException {
+    String signature = new String();
+//    var random = new Random();
+//    random.nextBytes(signatureBytes);
     when(mockSigner.createSignatureBytes(any()))
-        .thenReturn(signatureBytes);
+        .thenReturn(signature);
   }
 
   @Test
@@ -64,7 +69,7 @@ class PayloadFactoryTest {
   }
 
   @Test
-  void payloadsShouldHaveSameBatchTag() {
+  void payloadsShouldNotHaveSameBatchTag() {
     var diagnosisKeys = List.of(PersistenceKeysGenerator.makeDiagnosisKey());
 
     when(mockAssembler.assembleDiagnosisKeyBatch(anyList()))
@@ -75,9 +80,11 @@ class PayloadFactoryTest {
 
     var result = payloadFactory.makePayloadList(diagnosisKeys);
     Assertions.assertEquals(3, result.size());
-    Assertions.assertTrue(
-        result.stream().allMatch(b -> b.getBatchTag().equals(result.get(0).getBatchTag())),
-        "All payload objects should have same batchTag");
+    Assertions.assertArrayEquals(
+        result.stream().distinct().toArray(),
+        result.toArray(),
+        "All payload objects should have different batchTag"
+    );
   }
 
 }

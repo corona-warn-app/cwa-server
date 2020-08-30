@@ -7,7 +7,8 @@ logging:
 
 services:
   upload:
-    privatekey: testkey.pem
+    privatekey: testprivatekey.pem
+    certificate: testpublickey.pem
     privatekey-password: testpass
     signature:
       # The ASN.1 OID for algorithm identifier.

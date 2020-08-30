@@ -26,6 +26,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestHeader;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 
 /**
  *  Declarative web service client for the Federation Gateway API.
@@ -47,14 +49,12 @@ public interface FederationGatewayClient {
       @RequestHeader("X-SSL-Client-SHA256") String shaClient, @RequestHeader("X-SSL-Client-DN") String dnClient,
       @PathVariable("date") String date);
 
-  @PostMapping(value = "/diagnosiskeys/upload")
-  @Headers({"Accept: application/json; version=1.0",
-      "Content-Type: application/protobuf; version=1.0",
-      "X-SSL-Client-SHA256: abc",
-      "X-SSL-Client-DN: C=DE"
-  })
+  @RequestMapping(method = RequestMethod.POST, value = "/diagnosiskeys/upload", consumes = "application/protobuf; version=1.0")
   String postBatchUpload(
       byte[] raw,
+      @RequestHeader("Accept") String accept,
+      @RequestHeader("X-SSL-Client-SHA256") String shaClient,
+      @RequestHeader("X-SSL-Client-DN") String dnClient,
       @RequestHeader("batchTag") String batchTag,
       @RequestHeader("batchSignature") String batchSignature);
 }
