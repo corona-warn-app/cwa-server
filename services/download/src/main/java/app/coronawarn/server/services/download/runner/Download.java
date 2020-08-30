@@ -34,8 +34,8 @@ import app.coronawarn.server.services.download.download.DiagnosisKeyBatchDownloa
 import java.time.LocalDate;
 import java.time.Period;
 import java.time.ZoneOffset;
-import java.util.ArrayDeque;
 import java.util.Deque;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -126,11 +126,11 @@ public class Download implements ApplicationRunner {
   }
 
   private void processFederationBatches() {
-    Deque<FederationBatch> unprocessedBatches = new ArrayDeque<>();
+    Deque<FederationBatch> unprocessedBatches = new LinkedList<>();
     unprocessedBatches.addAll(federationBatchService.getUnprocessedFederationBatches());
 
     while (!unprocessedBatches.isEmpty()) {
-      FederationBatch currentBatch = unprocessedBatches.pop();
+      FederationBatch currentBatch = unprocessedBatches.remove();
 
       try {
         Optional<DiagnosisKeyBatchContainer> diagnosisKeyBatchContainerOptional =
@@ -138,7 +138,7 @@ public class Download implements ApplicationRunner {
         DiagnosisKeyBatchContainer diagnosisKeyBatchContainer = diagnosisKeyBatchContainerOptional.orElseThrow();
 
         diagnosisKeyBatchContainer.getNextBatchTag().ifPresent(nextBatchTag ->
-            unprocessedBatches.push(new FederationBatch(nextBatchTag, currentBatch.getDate())));
+            unprocessedBatches.add(new FederationBatch(nextBatchTag, currentBatch.getDate())));
 
         diagnosisKeyService.saveDiagnosisKeys(convertDiagnosisKeys(diagnosisKeyBatchContainer));
         federationBatchService.updateStatus(currentBatch, PROCESSED);
