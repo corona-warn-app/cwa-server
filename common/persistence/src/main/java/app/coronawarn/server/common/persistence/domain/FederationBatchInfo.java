@@ -30,51 +30,38 @@ import org.springframework.data.annotation.Id;
 public class FederationBatchInfo {
 
   @Id
-  private String batchTag;
+  private final String batchTag;
 
-  private LocalDate date;
+  private final LocalDate date;
 
-  private FederationBatchStatus status = FederationBatchStatus.UNPROCESSED;
-
-  /**
-   * Creates a FederationBatchInfo.
-   * TODO alternatives?
-   */
-  public FederationBatchInfo() {
-    // default constructor
-  }
+  private final FederationBatchStatus status;
 
   /**
    * Creates a FederationBatchInfo.
    */
   public FederationBatchInfo(String batchTag, LocalDate date) {
+    this(batchTag, date, FederationBatchStatus.UNPROCESSED);
+  }
+
+  /**
+   * Creates a FederationBatchInfo.
+   */
+  public FederationBatchInfo(String batchTag, LocalDate date, FederationBatchStatus status) {
     this.batchTag = batchTag;
     this.date = date;
+    this.status = status;
   }
 
   public String getBatchTag() {
     return batchTag;
   }
 
-  public void setBatchTag(String batchTag) {
-    this.batchTag = batchTag;
-  }
-
   public LocalDate getDate() {
     return date;
   }
 
-  public void setDate(LocalDate date) {
-    this.date = date;
-  }
-
   public FederationBatchStatus getStatus() {
     return status;
-  }
-
-  public void setStatus(
-      FederationBatchStatus status) {
-    this.status = status;
   }
 
   @Override
