@@ -59,7 +59,7 @@ public class DiagnosisKeyBatchDownloader {
    * @param date the date for which the batch should be downloaded
    * @return DiagnosisKeyBatchContainer
    */
-  public Optional<DiagnosisKeyBatchContainer> downloadBatch(LocalDate date) {
+  public Optional<FederationGatewayResponse> downloadBatch(LocalDate date) {
     // TODO try to put headers into client class
     try (Response response = federationGatewayClient.getDiagnosisKeys(
         "application/protobuf; version=1.0",
@@ -72,7 +72,7 @@ public class DiagnosisKeyBatchDownloader {
 
       InputStream is = response.body().asInputStream(); // TODO close?
       DiagnosisKeyBatch diagnosisKeyBatch = DiagnosisKeyBatch.parseFrom(is);
-      return Optional.of(new DiagnosisKeyBatchContainer(diagnosisKeyBatch, batchTag, nextBatchTag, date));
+      return Optional.of(new FederationGatewayResponse(diagnosisKeyBatch, batchTag, nextBatchTag, date));
     } catch (IOException e) {
       return Optional.empty();
     }
@@ -84,7 +84,7 @@ public class DiagnosisKeyBatchDownloader {
    * @param date the date for which the batch should be downloaded
    * @return DiagnosisKeyBatchContainer
    */
-  public Optional<DiagnosisKeyBatchContainer> downloadBatch(LocalDate date, String batchTag) {
+  public Optional<FederationGatewayResponse> downloadBatch(LocalDate date, String batchTag) {
     try (Response response = federationGatewayClient.getDiagnosisKeys(
         "application/protobuf; version=1.0",
         "abcd",
@@ -96,7 +96,7 @@ public class DiagnosisKeyBatchDownloader {
 
       InputStream is = response.body().asInputStream();
       DiagnosisKeyBatch diagnosisKeyBatch = DiagnosisKeyBatch.parseFrom(is);
-      return Optional.of(new DiagnosisKeyBatchContainer(diagnosisKeyBatch, batchTag, nextBatchTag, date));
+      return Optional.of(new FederationGatewayResponse(diagnosisKeyBatch, batchTag, nextBatchTag, date));
     } catch (IOException e) {
       return Optional.empty();
     }
