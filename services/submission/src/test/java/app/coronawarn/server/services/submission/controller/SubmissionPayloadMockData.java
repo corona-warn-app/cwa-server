@@ -24,14 +24,16 @@ import static app.coronawarn.server.services.submission.controller.RequestExecut
 import static app.coronawarn.server.services.submission.controller.RequestExecutor.buildTemporaryExposureKey;
 import static app.coronawarn.server.services.submission.controller.RequestExecutor.createRollingStartIntervalNumber;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
-import com.google.protobuf.ByteString;
+
 import app.coronawarn.server.common.protocols.external.exposurenotification.TemporaryExposureKey;
 import app.coronawarn.server.common.protocols.internal.SubmissionPayload;
 import app.coronawarn.server.services.submission.config.SubmissionServiceConfig;
+import com.google.protobuf.ByteString;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public final class SubmissionPayloadMockData {
 
@@ -43,35 +45,63 @@ public final class SubmissionPayloadMockData {
   public static SubmissionPayload buildPayload(Collection<TemporaryExposureKey> keys) {
     return SubmissionPayload.newBuilder()
         .addAllKeys(keys)
+        .addAllVisitedCountries(List.of("FR","UK"))
+        .setOrigin("DE")
+        .build();
+  }
+
+  public static SubmissionPayload buildPayload(Collection<TemporaryExposureKey> keys, boolean consentToFederation) {
+    return SubmissionPayload.newBuilder()
+        .addAllKeys(keys)
+        .addAllVisitedCountries(List.of("FR","UK"))
+        .setOrigin("DE")
+        .setConsentToFederation(consentToFederation)
+        .build();
+  }
+
+  public static SubmissionPayload buildInvalidPayload(TemporaryExposureKey key) {
+    Collection<TemporaryExposureKey> keys = Stream.of(key).collect(Collectors.toCollection(ArrayList::new));
+    return buildInvalidPayload(keys);
+  }
+
+  public static SubmissionPayload buildInvalidPayload(Collection<TemporaryExposureKey> keys) {
+    return SubmissionPayload.newBuilder()
+        .addAllKeys(keys)
+        .addAllVisitedCountries(List.of("FR","UK"))
+        .setOrigin("DE3")
         .build();
   }
 
   public static SubmissionPayload buildPayloadWithPadding(Collection<TemporaryExposureKey> keys) {
-    return SubmissionPayload.newBuilder()
-        .addAllKeys(keys)
-        .setPadding(ByteString.copyFrom("PaddingString".getBytes()))
-        .build();
+    return buildPayloadWithPadding(keys, "PaddingString".getBytes());
   }
 
   public static SubmissionPayload buildPayloadWithTooLargePadding(SubmissionServiceConfig config,
-      Collection<TemporaryExposureKey> keys) {
+                                                                  Collection<TemporaryExposureKey> keys) {
     int exceedingSize = (int) (2 * config.getMaximumRequestSize().toBytes());
     byte[] bytes = new byte[exceedingSize];
+    return buildPayloadWithPadding(keys, bytes);
+  }
 
+  private static SubmissionPayload buildPayloadWithPadding(Collection<TemporaryExposureKey> keys, byte[] bytes) {
     return SubmissionPayload.newBuilder()
         .addAllKeys(keys)
+        .addAllVisitedCountries(List.of("FR","UK"))
+        .setOrigin("DE")
         .setPadding(ByteString.copyFrom(bytes))
         .build();
   }
 
   public static SubmissionPayload buildPayloadWithInvalidKey() {
-    TemporaryExposureKey invalidKey = buildTemporaryExposureKey(VALID_KEY_DATA_1, createRollingStartIntervalNumber(2), 999);
+    TemporaryExposureKey invalidKey =
+        buildTemporaryExposureKey(VALID_KEY_DATA_1, createRollingStartIntervalNumber(2), 999);
     return buildPayload(invalidKey);
   }
 
   public static SubmissionPayload buildPayloadWithInvalidOriginCountry() {
-    //TODO Implement this once submission payload proto is defined
-    return null;
+    TemporaryExposureKey key =
+        buildTemporaryExposureKey(VALID_KEY_DATA_1, createRollingStartIntervalNumber(2), 2);
+    return buildInvalidPayload(key);
   }
 
   public static SubmissionPayload buildPayloadWithInvalidVisitedCountries() {

@@ -132,7 +132,7 @@ class ObjectStoreFilePreservationIT {
 
     triggerRetentionPolicy(testStartDate);
 
-    // Trigger second distrubution after data retention policies were applied
+    // Trigger second distribution after data retention policies were applied
     assembleAndDistribute(testOutputFolder.newFolder("output-after-retention"));
     List<S3Object> filesAfterRetention = getPublishedFiles();
 

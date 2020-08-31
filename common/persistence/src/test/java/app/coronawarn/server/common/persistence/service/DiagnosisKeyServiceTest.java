@@ -33,6 +33,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import app.coronawarn.server.common.persistence.domain.DiagnosisKey;
 import app.coronawarn.server.common.persistence.exception.InvalidDiagnosisKeyException;
 import app.coronawarn.server.common.persistence.repository.DiagnosisKeyRepository;
+import app.coronawarn.server.common.protocols.external.exposurenotification.ReportType;
 import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -118,7 +119,7 @@ class DiagnosisKeyServiceTest {
 
   @Test
   void testApplyRetentionPolicyForOneNotApplicableEntry() {
-    var expKeys = List.of(buildDiagnosisKeyForDateTime(OffsetDateTime.now(UTC).minusHours(23)));
+    var expKeys = List.of(buildDiagnosisKeyForDateTime(OffsetDateTime.now(UTC).minusDays(1L)));
 
     diagnosisKeyService.saveDiagnosisKeys(expKeys);
     diagnosisKeyService.applyRetentionPolicy(1, "DE");
@@ -129,7 +130,7 @@ class DiagnosisKeyServiceTest {
 
   @Test
   void testApplyRetentionPolicyForOneApplicableEntry() {
-    var keys = List.of(buildDiagnosisKeyForDateTime(OffsetDateTime.now(UTC).minusDays(1L)));
+    var keys = List.of(buildDiagnosisKeyForDateTime(OffsetDateTime.now(UTC).minusDays(1L).minusHours(1)));
 
     diagnosisKeyService.saveDiagnosisKeys(keys);
     diagnosisKeyService.applyRetentionPolicy(1, "DE");
@@ -141,7 +142,8 @@ class DiagnosisKeyServiceTest {
   @Test
   void testShouldNotDeleteKeysFromAnotherCountry() {
     var expKeys = List.of(
-        buildDiagnosisKeyForDateTime(OffsetDateTime.now(UTC).minusDays(1L), "DE", Collections.singletonList("DE")));
+        buildDiagnosisKeyForDateTime(OffsetDateTime.now(UTC).minusDays(1L), "DE", Collections.singletonList("DE"),
+            ReportType.CONFIRMED_CLINICAL_DIAGNOSIS));
 
     diagnosisKeyService.saveDiagnosisKeys(expKeys);
     diagnosisKeyService.applyRetentionPolicy(1, "FR");
@@ -152,8 +154,8 @@ class DiagnosisKeyServiceTest {
 
   @Test
   void testShouldDeleteKeysWithMatchingVisitedCountry() {
-    var frenchKeys = buildDiagnosisKeyForDateTime(OffsetDateTime.now(UTC).minusDays(1L), "DE", Collections.singletonList("FR"));
-    var germanKeys = buildDiagnosisKeyForDateTime(OffsetDateTime.now(UTC).minusDays(2L), "DE", Collections.singletonList("DE"));
+    var frenchKeys = buildDiagnosisKeyForDateTime(OffsetDateTime.now(UTC).minusDays(1L).minusHours(1), "DE", Collections.singletonList("FR"), ReportType.CONFIRMED_CLINICAL_DIAGNOSIS);
+    var germanKeys = buildDiagnosisKeyForDateTime(OffsetDateTime.now(UTC).minusDays(2L), "DE", Collections.singletonList("DE"), ReportType.CONFIRMED_CLINICAL_DIAGNOSIS);
 
     diagnosisKeyService.saveDiagnosisKeys(List.of(germanKeys, frenchKeys));
     diagnosisKeyService.applyRetentionPolicy(1, "FR");
@@ -165,7 +167,7 @@ class DiagnosisKeyServiceTest {
   @Test
   void testShouldDeleteKeysWhereAnyOfVisitedCountriesMatch() {
     var keys = List.of(
-        buildDiagnosisKeyForDateTime(OffsetDateTime.now(UTC).minusDays(1L), "DE", List.of("DE", "FR", "LU")));
+        buildDiagnosisKeyForDateTime(OffsetDateTime.now(UTC).minusDays(1L).minusHours(1), "DE", List.of("DE", "FR", "LU"), ReportType.CONFIRMED_CLINICAL_DIAGNOSIS));
     diagnosisKeyService.saveDiagnosisKeys(keys);
     diagnosisKeyService.applyRetentionPolicy(1, "FR");
     var actKeys = diagnosisKeyService.getDiagnosisKeys();
@@ -175,9 +177,9 @@ class DiagnosisKeyServiceTest {
   @Test
   void testShouldDeleteKeysFromDifferentOriginCountriesWithMatchingVisitedCountry() {
     var keys = List.of(
-        buildDiagnosisKeyForDateTime(OffsetDateTime.now(UTC).minusDays(1L), "DE", List.of("FR")),
-        buildDiagnosisKeyForDateTime(OffsetDateTime.now(UTC).minusDays(1L), "FR", List.of("FR")),
-        buildDiagnosisKeyForDateTime(OffsetDateTime.now(UTC).minusDays(1L), "LU", List.of("FR")));
+        buildDiagnosisKeyForDateTime(OffsetDateTime.now(UTC).minusDays(1L).minusHours(1L), "DE", List.of("FR"), ReportType.CONFIRMED_CLINICAL_DIAGNOSIS),
+        buildDiagnosisKeyForDateTime(OffsetDateTime.now(UTC).minusDays(1L).minusHours(1L), "FR", List.of("FR"),ReportType.CONFIRMED_CLINICAL_DIAGNOSIS),
+        buildDiagnosisKeyForDateTime(OffsetDateTime.now(UTC).minusDays(1L).minusHours(1L), "LU", List.of("FR"), ReportType.CONFIRMED_CLINICAL_DIAGNOSIS));
     diagnosisKeyService.saveDiagnosisKeys(keys);
     diagnosisKeyService.applyRetentionPolicy(1, "FR");
     var actKeys = diagnosisKeyService.getDiagnosisKeys();
@@ -193,7 +195,9 @@ class DiagnosisKeyServiceTest {
           .withTransmissionRiskLevel(2)
           .withCountryCode("DE")
           .withVisitedCountries(Collections.singletonList("DE"))
-          .withSubmissionTimestamp(0L).build());
+          .withSubmissionTimestamp(0L)
+          .withReportType(ReportType.CONFIRMED_CLINICAL_DIAGNOSIS)
+          .build());
 
       diagnosisKeyService.saveDiagnosisKeys(keys);
     })).isInstanceOf(InvalidDiagnosisKeyException.class);
@@ -212,14 +216,18 @@ class DiagnosisKeyServiceTest {
             .withTransmissionRiskLevel(2)
             .withCountryCode("DE")
             .withVisitedCountries(Collections.singletonList("DE"))
-            .withSubmissionTimestamp(0L).build(),
+            .withSubmissionTimestamp(0L)
+            .withReportType(ReportType.CONFIRMED_CLINICAL_DIAGNOSIS)
+            .build(),
         DiagnosisKey.builder()
             .withKeyData(keyData.getBytes())
             .withRollingStartIntervalNumber(600)
             .withTransmissionRiskLevel(3)
             .withCountryCode("DE")
             .withVisitedCountries(Collections.singletonList("DE"))
-            .withSubmissionTimestamp(0L).build());
+            .withSubmissionTimestamp(0L)
+            .withReportType(ReportType.CONFIRMED_CLINICAL_DIAGNOSIS)
+            .build());
 
     diagnosisKeyService.saveDiagnosisKeys(keys);
 
@@ -240,9 +248,9 @@ class DiagnosisKeyServiceTest {
     @BeforeEach
     public void setup() {
       var keys = List.of(
-          buildDiagnosisKeyForDateTime(OffsetDateTime.now(UTC).minusDays(1L), "DE", Collections.singletonList("DE")),
-          buildDiagnosisKeyForDateTime(OffsetDateTime.now(UTC).minusDays(2L), "DE", List.of("DE", "FR")),
-          buildDiagnosisKeyForDateTime(OffsetDateTime.now(UTC).minusDays(3L), "DE", List.of("DE", "FR", "DK"))
+          buildDiagnosisKeyForDateTime(OffsetDateTime.now(UTC).minusDays(1L), "DE", Collections.singletonList("DE"),ReportType.CONFIRMED_CLINICAL_DIAGNOSIS),
+          buildDiagnosisKeyForDateTime(OffsetDateTime.now(UTC).minusDays(2L), "DE", List.of("DE", "FR"), ReportType.CONFIRMED_CLINICAL_DIAGNOSIS),
+          buildDiagnosisKeyForDateTime(OffsetDateTime.now(UTC).minusDays(3L), "DE", List.of("DE", "FR", "DK"),ReportType.CONFIRMED_CLINICAL_DIAGNOSIS)
       );
       diagnosisKeyService.saveDiagnosisKeys(keys);
     }

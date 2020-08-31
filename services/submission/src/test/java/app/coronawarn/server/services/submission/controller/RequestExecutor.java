@@ -30,6 +30,7 @@ import java.time.Instant;
 import java.time.LocalDate;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.List;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -60,7 +61,10 @@ public class RequestExecutor {
   }
 
   public ResponseEntity<Void> executePost(Collection<TemporaryExposureKey> keys, HttpHeaders headers) {
-    SubmissionPayload body = SubmissionPayload.newBuilder().addAllKeys(keys).build();
+    SubmissionPayload body = SubmissionPayload.newBuilder()
+        .setOrigin("DE")
+        .addAllVisitedCountries(List.of("FR","UK"))
+        .addAllKeys(keys).build();
     return executePost(body, headers);
   }
 
@@ -92,6 +96,15 @@ public class RequestExecutor {
         .setTransmissionRiskLevel(transmissionRiskLevel).build();
   }
 
+  public static TemporaryExposureKey buildTemporaryExposureKeyWithFlexibleRollingPeriod(
+      String keyData, int rollingStartIntervalNumber, int transmissionRiskLevel, int rollingPeriod) {
+    return TemporaryExposureKey.newBuilder()
+        .setKeyData(ByteString.copyFromUtf8(keyData))
+        .setRollingStartIntervalNumber(rollingStartIntervalNumber)
+        .setTransmissionRiskLevel(transmissionRiskLevel)
+        .setRollingPeriod(rollingPeriod).build();
+  }
+
   public static int createRollingStartIntervalNumber(Integer daysAgo) {
     return Math.toIntExact(LocalDate
         .ofInstant(Instant.now(), UTC)
@@ -100,6 +113,6 @@ public class RequestExecutor {
   }
 
   public static Collection<TemporaryExposureKey> buildPayloadWithOneKey() {
-    return Collections.singleton(buildTemporaryExposureKey(VALID_KEY_DATA_1, 1, 3));
+    return Collections.singleton(buildTemporaryExposureKey(VALID_KEY_DATA_1, createRollingStartIntervalNumber(1), 3));
   }
 }

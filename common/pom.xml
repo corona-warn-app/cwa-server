@@ -22,6 +22,7 @@
   <modules>
     <module>protocols</module>
     <module>persistence</module>
+    <module>federation</module>
   </modules>
 
 </project>

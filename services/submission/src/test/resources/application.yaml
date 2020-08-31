@@ -4,6 +4,12 @@ logging:
     org:
       springframework: off
     root: off
+    app:
+      coronawarn:
+        server:
+          services:
+            submission:
+              integration: info
 spring:
   main:
     banner-mode: off
@@ -20,9 +26,11 @@ services:
     random-key-padding-multiplier: 10
     connection-pool-size: 200
     maximum-request-size: 100KB
+    max-rolling-period: 144
     payload:
       max-number-of-keys: 14
       allowed-countries: DE,FR,UK,DK
+      default-origin-country: DE
     verification:
       base-url: http://localhost:1234
       path: /version/v1/tan/verify

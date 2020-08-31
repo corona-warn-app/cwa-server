@@ -1,0 +1,23 @@
+---
+spring:
+  flyway:
+    password: ${POSTGRESQL_PASSWORD_FLYWAY}
+    user: ${POSTGRESQL_USER_FLYWAY}
+  datasource:
+    driver-class-name: org.postgresql.Driver
+    username: ${POSTGRESQL_USER_DOWNLOAD}
+    password: ${POSTGRESQL_PASSWORD_DOWNLOAD}
+
+services:
+  federation-download:
+    base-url: ${FEDERATION_GATEWAY_BASE_URL}
+    path: /version/v1/batch
+    paths:
+      output: /tmp/distribution
+    objectstore:
+      access-key: ${CWA_OBJECTSTORE_ACCESSKEY}
+      secret-key: ${CWA_OBJECTSTORE_SECRETKEY}
+      endpoint: ${CWA_OBJECTSTORE_ENDPOINT}
+      bucket: ${CWA_OBJECTSTORE_BUCKET}
+      port: ${CWA_OBJECTSTORE_PORT}
+      set-public-read-acl-on-put-object: false

@@ -8,10 +8,13 @@ COPY ./pom.xml ${WORK_DIR}/pom.xml
 COPY ./common/pom.xml ${WORK_DIR}/common/pom.xml
 COPY ./common/protocols/pom.xml ${WORK_DIR}/common/protocols/pom.xml
 COPY ./common/persistence/pom.xml ${WORK_DIR}/common/persistence/pom.xml
+COPY ./common/federation/pom.xml ${WORK_DIR}/common/federation/pom.xml
 COPY ./services/pom.xml ${WORK_DIR}/services/pom.xml
 COPY ./services/distribution/pom.xml ${WORK_DIR}/services/distribution/pom.xml
 COPY ./services/submission/pom.xml ${WORK_DIR}/services/submission/pom.xml
 COPY ./services/callback/pom.xml ${WORK_DIR}/services/callback/pom.xml
+COPY ./services/upload/pom.xml ${WORK_DIR}/services/upload/pom.xml
+COPY ./services/federation-download/pom.xml ${WORK_DIR}/services/federation-download/pom.xml
 
 WORKDIR ${WORK_DIR}
 
@@ -33,4 +36,4 @@ COPY --from=build /usr/sap/callback-service/callback.jar .
 RUN ["java", "DpkgHelper.java"]
 USER 65534:65534
 ENTRYPOINT ["/usr/bin/java", "-Djdk.tls.namedGroups=\"secp256r1,secp384r1,brainpoolP256r1,brainpoolP384r1,brainpoolP512r1,ffdhe2048,ffdhe3072,ffdhe4096\"", "-jar"]
-CMD ["submission.jar"]
+CMD ["callback.jar"]

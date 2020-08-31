@@ -44,11 +44,14 @@ import static org.springframework.http.HttpStatus.OK;
 
 import app.coronawarn.server.common.persistence.domain.DiagnosisKey;
 import app.coronawarn.server.common.persistence.service.DiagnosisKeyService;
+import app.coronawarn.server.common.protocols.external.exposurenotification.ReportType;
 import app.coronawarn.server.common.protocols.external.exposurenotification.TemporaryExposureKey;
+import app.coronawarn.server.common.protocols.internal.SubmissionPayload;
 import app.coronawarn.server.services.submission.config.SubmissionServiceConfig;
 import app.coronawarn.server.services.submission.monitoring.SubmissionMonitor;
 import app.coronawarn.server.services.submission.verification.TanVerifier;
 import com.google.protobuf.ByteString;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -56,9 +59,12 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInstance;
+import org.junit.jupiter.api.TestInstance.Lifecycle;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
@@ -74,6 +80,7 @@ import org.springframework.test.context.ActiveProfiles;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @ActiveProfiles({"disable-ssl-client-verification", "disable-ssl-client-verification-verify-hostname"})
+@TestInstance(Lifecycle.PER_CLASS)
 class SubmissionControllerTest {
 
   @MockBean
@@ -94,6 +101,21 @@ class SubmissionControllerTest {
   @Autowired
   private SubmissionServiceConfig config;
 
+  private static Stream<Arguments> createIncompleteHeaders() {
+    return Stream.of(
+        Arguments.of(HttpHeaderBuilder.builder().build()),
+        Arguments.of(HttpHeaderBuilder.builder().contentTypeProtoBuf().build()),
+        Arguments.of(HttpHeaderBuilder.builder().contentTypeProtoBuf().withoutCwaFake().build()),
+        Arguments.of(HttpHeaderBuilder.builder().contentTypeProtoBuf().cwaAuth().build()));
+  }
+
+  private static Stream<Arguments> createDeniedHttpMethods() {
+    return Arrays.stream(HttpMethod.values())
+        .filter(method -> method != HttpMethod.POST)
+        .filter(method -> method != HttpMethod.PATCH) /* not supported by Rest Template */
+        .map(Arguments::of);
+  }
+
   @BeforeEach
   public void setUpMocks() {
     when(tanVerifier.verifyTan(anyString())).thenReturn(true);
@@ -113,7 +135,7 @@ class SubmissionControllerTest {
   }
 
   @Test
-  void check400ResponseStatusForInvalidParameters() {
+  void check400ResponseStatusForInvalidKeys() {
     ResponseEntity<Void> actResponse = executor.executePost(buildPayloadWithInvalidKey());
     assertThat(actResponse.getStatusCode()).isEqualTo(BAD_REQUEST);
   }
@@ -135,11 +157,51 @@ class SubmissionControllerTest {
     submittedKeys.add(outdatedKey);
     ArgumentCaptor<Collection<DiagnosisKey>> argument = ArgumentCaptor.forClass(Collection.class);
 
-    executor.executePost(buildPayload(submittedKeys));
+    SubmissionPayload submissionPayload = buildPayload(submittedKeys);
+    executor.executePost(submissionPayload);
 
     verify(diagnosisKeyService, atLeastOnce()).saveDiagnosisKeys(argument.capture());
     submittedKeys.remove(outdatedKey);
-    assertElementsCorrespondToEachOther(submittedKeys, argument.getValue());
+    assertSubmissionPayloadKeysCorrespondToEachOther(submittedKeys, argument.getValue(), submissionPayload);
+  }
+
+  @Test
+  void submissionPayloadWithoutConsentIsPersistedCorrectly() {
+    Collection<TemporaryExposureKey> submittedKeys = buildMultipleKeys();
+    ArgumentCaptor<Collection<DiagnosisKey>> argument = ArgumentCaptor.forClass(Collection.class);
+
+    boolean consentToFederation = false;
+    SubmissionPayload submissionPayload = buildPayload(submittedKeys, consentToFederation);
+    executor.executePost(submissionPayload);
+
+    verify(diagnosisKeyService, atLeastOnce()).saveDiagnosisKeys(argument.capture());
+    assertSubmissionPayloadKeysCorrespondToEachOther(submittedKeys, argument.getValue(), submissionPayload);
+  }
+
+  @Test
+  void submissionPayloadWithConsentIsPersistedCorrectly() {
+    Collection<TemporaryExposureKey> submittedKeys = buildMultipleKeys();
+    ArgumentCaptor<Collection<DiagnosisKey>> argument = ArgumentCaptor.forClass(Collection.class);
+
+    boolean consentToFederation = true;
+    SubmissionPayload submissionPayload = buildPayload(submittedKeys, consentToFederation);
+    executor.executePost(submissionPayload);
+
+    verify(diagnosisKeyService, atLeastOnce()).saveDiagnosisKeys(argument.capture());
+    assertSubmissionPayloadKeysCorrespondToEachOther(submittedKeys, argument.getValue(), submissionPayload);
+  }
+
+  @Test
+  void submissionPayloadWithDefaultReportType() {
+    Collection<TemporaryExposureKey> submittedKeys = buildMultipleKeys();
+    ArgumentCaptor<Collection<DiagnosisKey>> argument = ArgumentCaptor.forClass(Collection.class);
+    ReportType expectedDefaultReportType = ReportType.CONFIRMED_CLINICAL_DIAGNOSIS;
+
+    SubmissionPayload submissionPayload = buildPayload(submittedKeys);
+    executor.executePost(submissionPayload);
+
+    verify(diagnosisKeyService, atLeastOnce()).saveDiagnosisKeys(argument.capture());
+    assertThat(submissionPayload.getReportType()).isEqualTo(expectedDefaultReportType);
   }
 
   @Test
@@ -147,11 +209,12 @@ class SubmissionControllerTest {
     Collection<TemporaryExposureKey> submittedKeys = buildMultipleKeys();
     ArgumentCaptor<Collection<DiagnosisKey>> argument = ArgumentCaptor.forClass(Collection.class);
 
-    executor.executePost(buildPayload(submittedKeys));
+    SubmissionPayload submissionPayload = buildPayload(submittedKeys);
+    executor.executePost(submissionPayload);
 
     verify(diagnosisKeyService, atLeastOnce()).saveDiagnosisKeys(argument.capture());
     verify(fakeDelayManager, times(1)).updateFakeRequestDelay(anyLong());
-    assertElementsCorrespondToEachOther(submittedKeys, argument.getValue());
+    assertSubmissionPayloadKeysCorrespondToEachOther(submittedKeys, argument.getValue(), submissionPayload);
   }
 
   @ParameterizedTest
@@ -161,14 +224,6 @@ class SubmissionControllerTest {
 
     verify(diagnosisKeyService, never()).saveDiagnosisKeys(any());
     assertThat(actResponse.getStatusCode()).isEqualTo(BAD_REQUEST);
-  }
-
-  private static Stream<Arguments> createIncompleteHeaders() {
-    return Stream.of(
-        Arguments.of(HttpHeaderBuilder.builder().build()),
-        Arguments.of(HttpHeaderBuilder.builder().contentTypeProtoBuf().build()),
-        Arguments.of(HttpHeaderBuilder.builder().contentTypeProtoBuf().withoutCwaFake().build()),
-        Arguments.of(HttpHeaderBuilder.builder().contentTypeProtoBuf().cwaAuth().build()));
   }
 
   @ParameterizedTest
@@ -186,13 +241,6 @@ class SubmissionControllerTest {
         .contains(actStatus);
   }
 
-  private static Stream<Arguments> createDeniedHttpMethods() {
-    return Arrays.stream(HttpMethod.values())
-        .filter(method -> method != HttpMethod.POST)
-        .filter(method -> method != HttpMethod.PATCH) /* not supported by Rest Template */
-        .map(Arguments::of);
-  }
-
   @Test
   void invalidTanHandling() {
     when(tanVerifier.verifyTan(anyString())).thenReturn(false);
@@ -207,12 +255,11 @@ class SubmissionControllerTest {
   @Test
   void testInvalidPaddingSubmissionPayload() {
     ResponseEntity<Void> actResponse = executor
-        .executePost(buildPayloadWithTooLargePadding(config, this.buildMultipleKeys()));
+        .executePost(buildPayloadWithTooLargePadding(config, buildMultipleKeys()));
     assertThat(actResponse.getStatusCode()).isEqualTo(BAD_REQUEST);
   }
 
   @Test
-  @Disabled("Enable this once submission payload proto is defined")
   void testInvalidOriginCountrySubmissionPayload() {
     ResponseEntity<Void> actResponse = executor.executePost(buildPayloadWithInvalidOriginCountry());
     assertThat(actResponse.getStatusCode()).isEqualTo(BAD_REQUEST);
@@ -250,8 +297,8 @@ class SubmissionControllerTest {
 
   private Collection<TemporaryExposureKey> buildMultipleKeys() {
     int rollingStartIntervalNumber1 = createRollingStartIntervalNumber(config.getRetentionDays() - 1);
-    int rollingStartIntervalNumber2 = rollingStartIntervalNumber1 + DiagnosisKey.EXPECTED_ROLLING_PERIOD;
-    int rollingStartIntervalNumber3 = rollingStartIntervalNumber2 + DiagnosisKey.EXPECTED_ROLLING_PERIOD;
+    int rollingStartIntervalNumber2 = rollingStartIntervalNumber1 + DiagnosisKey.MAX_ROLLING_PERIOD;
+    int rollingStartIntervalNumber3 = rollingStartIntervalNumber2 + DiagnosisKey.MAX_ROLLING_PERIOD;
     return Stream.of(
         buildTemporaryExposureKey(VALID_KEY_DATA_1, rollingStartIntervalNumber1, 3),
         buildTemporaryExposureKey(VALID_KEY_DATA_2, rollingStartIntervalNumber3, 6),
@@ -263,15 +310,25 @@ class SubmissionControllerTest {
     return TemporaryExposureKey.newBuilder()
         .setKeyData(ByteString.copyFromUtf8(VALID_KEY_DATA_2))
         .setRollingStartIntervalNumber(createRollingStartIntervalNumber(config.getRetentionDays()))
-        .setRollingPeriod(DiagnosisKey.EXPECTED_ROLLING_PERIOD)
+        .setRollingPeriod(DiagnosisKey.MAX_ROLLING_PERIOD)
         .setTransmissionRiskLevel(5).build();
   }
 
-  private void assertElementsCorrespondToEachOther(Collection<TemporaryExposureKey> submittedTemporaryExposureKeys,
-                                                   Collection<DiagnosisKey> savedDiagnosisKeys) {
+  private void assertSubmissionPayloadKeysCorrespondToEachOther(
+      Collection<TemporaryExposureKey> submittedTemporaryExposureKeys,
+      Collection<DiagnosisKey> savedDiagnosisKeys,
+      SubmissionPayload submissionPayload) {
 
     Set<DiagnosisKey> submittedDiagnosisKeys = submittedTemporaryExposureKeys.stream()
-        .map(submittedDiagnosisKey -> DiagnosisKey.builder().fromProtoBuf(submittedDiagnosisKey).build())
+        .map(submittedDiagnosisKey -> DiagnosisKey
+            .builder()
+            .fromTemporaryExposureKey(submittedDiagnosisKey)
+            .withConsentToFederation(submissionPayload.getConsentToFederation())
+            .withVisitedCountries(submissionPayload.getVisitedCountriesList())
+            .withCountryCode(StringUtils.defaultIfBlank(submissionPayload.getOrigin(),
+                config.getDefaultOriginCountry()))
+            .withReportType(submissionPayload.getReportType())
+            .build())
         .collect(Collectors.toSet());
 
     assertThat(savedDiagnosisKeys).hasSize(submittedDiagnosisKeys.size() * config.getRandomKeyPaddingMultiplier());
