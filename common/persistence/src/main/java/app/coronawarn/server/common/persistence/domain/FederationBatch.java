@@ -31,7 +31,7 @@ public class FederationBatch {
 
   private LocalDate date;
 
-  private FederationBatchStatus status;
+  private FederationBatchStatus status = FederationBatchStatus.UNPROCESSED;
 
   /**
    * Creates a FederationBatch.
