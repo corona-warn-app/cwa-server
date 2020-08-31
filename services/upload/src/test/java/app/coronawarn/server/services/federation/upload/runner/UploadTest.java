@@ -12,7 +12,9 @@ import app.coronawarn.server.common.persistence.repository.FederationUploadKeyRe
 import app.coronawarn.server.common.persistence.service.DiagnosisKeyService;
 import app.coronawarn.server.common.persistence.service.FederationUploadKeyService;
 import app.coronawarn.server.common.persistence.service.common.ValidDiagnosisKeyFilter;
+import app.coronawarn.server.common.protocols.external.exposurenotification.DiagnosisKeyBatch;
 import app.coronawarn.server.services.federation.upload.client.ProdFederationUploadClient;
+import app.coronawarn.server.services.federation.upload.client.TestFederationUploadClient;
 import app.coronawarn.server.services.federation.upload.config.UploadServiceConfig;
 import app.coronawarn.server.services.federation.upload.keys.DiagnosisKeyGenerator;
 import app.coronawarn.server.services.federation.upload.keys.DiagnosisKeyPersistenceLoader;
@@ -21,6 +23,7 @@ import app.coronawarn.server.services.federation.upload.payload.PayloadFactory;
 import app.coronawarn.server.services.federation.upload.payload.signing.BatchSigner;
 import app.coronawarn.server.services.federation.upload.payload.signing.CryptoProvider;
 import java.util.List;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mockito;
@@ -29,50 +32,72 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.boot.test.context.ConfigFileApplicationContextInitializer;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.boot.test.mock.mockito.SpyBean;
-import org.springframework.context.ApplicationContext;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
-@EnableConfigurationProperties(value = UploadServiceConfig.class)
-@ExtendWith(SpringExtension.class)
-@ContextConfiguration(classes = {
-    Upload.class, PayloadFactory.class, DiagnosisKeyBatchAssembler.class,
-    BatchSigner.class, CryptoProvider.class, DiagnosisKeyGenerator.class,
-    ProdFederationUploadClient.class, DiagnosisKeyPersistenceLoader.class,
-    FederationUploadKeyService.class, ValidDiagnosisKeyFilter.class
-},
-    initializers = ConfigFileApplicationContextInitializer.class)
+
 class UploadTest {
 
-  @MockBean
-  FederationGatewayClient federationGatewayClient;
+  @Nested
+  @EnableConfigurationProperties(value = UploadServiceConfig.class)
+  @ExtendWith(SpringExtension.class)
+  @ContextConfiguration(classes = {
+      Upload.class, PayloadFactory.class, DiagnosisKeyBatchAssembler.class,
+      BatchSigner.class, CryptoProvider.class, DiagnosisKeyGenerator.class,
+      ProdFederationUploadClient.class, DiagnosisKeyPersistenceLoader.class,
+      FederationUploadKeyService.class, ValidDiagnosisKeyFilter.class
+  },
+      initializers = ConfigFileApplicationContextInitializer.class)
+  class MockedUpload {
+    @MockBean
+    FederationGatewayClient federationGatewayClient;
 
-  @Autowired
-  private Upload upload;
+    @Autowired
+    private Upload upload;
 
-  @MockBean
-  private FederationUploadKeyRepository uploadKeyRepository;
+    @MockBean
+    private FederationUploadKeyRepository uploadKeyRepository;
 
-  @MockBean
-  private ApplicationContext applicationContext;
+    @SpyBean
+    private DiagnosisKeyBatchAssembler batchAssembler;
 
-  @SpyBean
-  private DiagnosisKeyBatchAssembler batchAssembler;
+    @Test
+    void shouldRunUpload() throws Exception {
+      upload.run(null);
+      Mockito.verify(federationGatewayClient, Mockito.atMostOnce())
+          .postBatchUpload(any(), anyString(), anyString(), anyString(), anyString(), anyString());
+    }
 
-  @Test
-  void shouldRunUpload() throws Exception {
-    upload.run(null);
-    Mockito.verify(federationGatewayClient, Mockito.atMostOnce())
-        .postBatchUpload(any(), anyString(), anyString(), anyString(), anyString(), anyString());
+    @Test
+    void batchesShouldBeCreatedFromPendingUploadKeys() throws Exception {
+      List<DiagnosisKey> testKeys = generateRandomDiagnosisKeys(true, 20);
+      Mockito.when(uploadKeyRepository.findAllUploadableKeys()).thenReturn(testKeys);
+      upload.run(null);
+      verify(batchAssembler, times(1)).assembleDiagnosisKeyBatch(testKeys);
+    }
   }
 
-  @Test
-  void batchesShouldBeCreatedFromPendingUploadKeys() throws Exception {
-    List<DiagnosisKey> testKeys = generateRandomDiagnosisKeys(true, 20);
-    Mockito.when(uploadKeyRepository.findAllUploadableKeys()).thenReturn(testKeys);
-    upload.run(null);
-    verify(batchAssembler, times(1)).assembleDiagnosisKeyBatch(testKeys);
+  @Nested
+  @EnableConfigurationProperties(value = UploadServiceConfig.class)
+  @ExtendWith(SpringExtension.class)
+  @ActiveProfiles({"testdata", "fake-client"})
+  @ContextConfiguration(classes = {
+      Upload.class, PayloadFactory.class, DiagnosisKeyBatchAssembler.class,
+      BatchSigner.class, CryptoProvider.class, DiagnosisKeyGenerator.class,
+      TestFederationUploadClient.class, DiagnosisKeyGenerator.class
+  }, initializers = ConfigFileApplicationContextInitializer.class)
+  class TestDataUpload {
+
+    @Autowired
+    private Upload upload;
+
+    @Test
+    void shouldGenerateTestKeys() throws Exception {
+      upload.run(null);
+//      verify(diagnosisKeyGenerator, times(1)).loadDiagnosisKeys();
+    }
+
   }
 
 }
