@@ -24,6 +24,9 @@ import java.time.LocalDate;
 import java.util.Objects;
 import org.springframework.data.annotation.Id;
 
+/**
+ * TODO Javadoc.
+ */
 public class FederationBatch {
 
   @Id
@@ -35,6 +38,7 @@ public class FederationBatch {
 
   /**
    * Creates a FederationBatch.
+   * TODO alternatives?
    */
   public FederationBatch() {
     // default constructor

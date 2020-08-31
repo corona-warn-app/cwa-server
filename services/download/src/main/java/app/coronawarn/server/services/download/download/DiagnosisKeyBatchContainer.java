@@ -8,6 +8,7 @@ import java.util.Optional;
 
 /**
  * Contains the {@link DiagnosisKeyBatch} and batch tag metadata as served by the federation gateway.
+ * TODO consider "FederationGatewayResponse" as name
  */
 public class DiagnosisKeyBatchContainer {
 

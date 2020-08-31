@@ -40,6 +40,7 @@ import org.springframework.stereotype.Service;
 @Service
 public class DiagnosisKeyBatchDownloader {
 
+  // TODO to log or not to log
   private static final Logger logger = LoggerFactory.getLogger(DiagnosisKeyBatchDownloader.class);
   private FederationGatewayClient federationGatewayClient;
 
@@ -57,6 +58,7 @@ public class DiagnosisKeyBatchDownloader {
    * @return DiagnosisKeyBatchContainer
    */
   public Optional<DiagnosisKeyBatchContainer> downloadBatch(LocalDate date) {
+    // TODO try to put headers into client class
     try (Response response = federationGatewayClient.getDiagnosisKeys(
         "application/protobuf; version=1.0",
         "abcd",
