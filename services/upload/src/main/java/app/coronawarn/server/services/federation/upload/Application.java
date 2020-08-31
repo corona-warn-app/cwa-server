@@ -20,6 +20,7 @@
 
 package app.coronawarn.server.services.federation.upload;
 
+import app.coronawarn.server.services.federation.upload.config.UploadServiceConfig;
 import java.util.Arrays;
 import java.util.List;
 import org.apache.logging.log4j.LogManager;
@@ -37,15 +38,17 @@ import org.springframework.core.env.Environment;
 import org.springframework.data.jdbc.repository.config.EnableJdbcRepositories;
 
 /**
- * Service responsible for creating batches of diagnosis keys and uploading them to the Federation Gateway
- * conforming to the EU specification. Its source of data is a dedicated table where diagnosis keys are replicated
- * during the submission process.
+ * Service responsible for creating batches of diagnosis keys and uploading them to the Federation Gateway conforming to
+ * the EU specification. Its source of data is a dedicated table where diagnosis keys are replicated during the
+ * submission process.
  */
 @SpringBootApplication
 @EnableJdbcRepositories(basePackages = "app.coronawarn.server.common.persistence")
 @EntityScan(basePackages = "app.coronawarn.server.common.persistence")
-@ComponentScan({"app.coronawarn.server.common.persistence", "app.coronawarn.server.services.federation.upload"})
-@EnableConfigurationProperties
+@ComponentScan({"app.coronawarn.server.common.persistence",
+    "app.coronawarn.server.services.federation.upload",
+    "app.coronawarn.server.common.federation.client"})
+@EnableConfigurationProperties({UploadServiceConfig.class})
 public class Application implements EnvironmentAware, DisposableBean {
 
   private static final Logger logger = LoggerFactory.getLogger(Application.class);

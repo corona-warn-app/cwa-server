@@ -42,8 +42,8 @@ public class FederationUploadKeyService {
   }
 
   /**
-   * Returns all valid persisted diagnosis keys which are ready to be uploaded
-   * to the external Federation Gateway service.
+   * Returns all valid persisted diagnosis keys which are ready to be uploaded to the external Federation Gateway
+   * service.
    */
   public List<DiagnosisKey> getPendingUploadKeys() {
     List<DiagnosisKey> diagnosisKeys = createStreamFromIterator(
