@@ -1,6 +1,7 @@
 package app.coronawarn.server.services.federation.upload.runner;
 
 import app.coronawarn.server.common.persistence.domain.DiagnosisKey;
+import app.coronawarn.server.services.federation.upload.Application;
 import app.coronawarn.server.services.federation.upload.client.FederationUploadClient;
 import app.coronawarn.server.services.federation.upload.keys.DiagnosisKeyLoader;
 import app.coronawarn.server.services.federation.upload.payload.PayloadFactory;
@@ -10,6 +11,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
+import org.springframework.context.ApplicationContext;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
@@ -22,6 +24,7 @@ public class Upload implements ApplicationRunner {
   private final FederationUploadClient federationUploadClient;
   private final PayloadFactory payloadFactory;
   private final DiagnosisKeyLoader diagnosisKeyLoader;
+  private final ApplicationContext applicationContext;
 
   /**
    * Creates an upload runner instance that reads Upload keys and send them to the Federation Gateway.
@@ -34,10 +37,12 @@ public class Upload implements ApplicationRunner {
   public Upload(
       FederationUploadClient federationUploadClient,
       PayloadFactory payloadFactory,
-      DiagnosisKeyLoader diagnosisKeyLoader) {
+      DiagnosisKeyLoader diagnosisKeyLoader,
+      ApplicationContext applicationContext) {
     this.federationUploadClient = federationUploadClient;
     this.payloadFactory = payloadFactory;
     this.diagnosisKeyLoader = diagnosisKeyLoader;
+    this.applicationContext = applicationContext;
   }
 
   private void executeFederationUpload(UploadPayload payload) {
@@ -48,10 +53,15 @@ public class Upload implements ApplicationRunner {
   @Override
   public void run(ApplicationArguments args) throws Exception {
     logger.info("Running Upload Job");
-    List<DiagnosisKey> diagnosisKeys = this.diagnosisKeyLoader.loadDiagnosisKeys();
-    logger.info("Generating Upload Payload for {} keys", diagnosisKeys.size());
-    List<UploadPayload> requests = this.payloadFactory.makePayloadList(diagnosisKeys);
-    logger.info("Executing {} batch request", requests.size());
-    requests.forEach(this::executeFederationUpload);
+    try {
+      List<DiagnosisKey> diagnosisKeys = this.diagnosisKeyLoader.loadDiagnosisKeys();
+      logger.info("Generating Upload Payload for {} keys", diagnosisKeys.size());
+      List<UploadPayload> requests = this.payloadFactory.makePayloadList(diagnosisKeys);
+      logger.info("Executing {} batch request", requests.size());
+      requests.forEach(this::executeFederationUpload);
+    } catch (Exception e) {
+      logger.error("Upload diagnosis key data failed.", e);
+      Application.killApplication(applicationContext);
+    }
   }
 }
