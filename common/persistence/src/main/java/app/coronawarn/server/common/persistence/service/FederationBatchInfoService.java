@@ -58,8 +58,9 @@ public class FederationBatchInfoService {
    * Sets the status of the provided federation batch.
    */
   public void updateStatus(FederationBatchInfo federationBatchInfo, FederationBatchStatus status) {
-    federationBatchInfo.setStatus(status);
-    federationBatchInfoRepository.save(federationBatchInfo);
+    federationBatchInfoRepository
+        .saveDoUpdateOnConflict(federationBatchInfo.getBatchTag(), federationBatchInfo.getDate(),
+            status.name());
 
     logger.info("Marked batch with status.");
   }
