@@ -25,6 +25,7 @@ import static java.time.ZoneOffset.UTC;
 import app.coronawarn.server.common.persistence.domain.DiagnosisKeyBuilders.Builder;
 import app.coronawarn.server.common.persistence.domain.validation.ValidRollingStartIntervalNumber;
 import app.coronawarn.server.common.persistence.domain.validation.ValidSubmissionTimestamp;
+import app.coronawarn.server.common.protocols.external.exposurenotification.ReportType;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.util.Arrays;
@@ -49,7 +50,8 @@ public class DiagnosisKey {
    * reject any diagnosis keys that do not have a rolling period of a certain fixed value. See
    * https://developer.apple.com/documentation/exposurenotification/setting_up_an_exposure_notification_server
    */
-  public static final int EXPECTED_ROLLING_PERIOD = 144;
+  public static final int MIN_ROLLING_PERIOD = 0;
+  public static final int MAX_ROLLING_PERIOD = 144;
 
   private static final Validator VALIDATOR = Validation.buildDefaultValidatorFactory().getValidator();
 
@@ -60,8 +62,8 @@ public class DiagnosisKey {
   @ValidRollingStartIntervalNumber
   private final int rollingStartIntervalNumber;
 
-  @Range(min = EXPECTED_ROLLING_PERIOD, max = EXPECTED_ROLLING_PERIOD,
-      message = "Rolling period must be " + EXPECTED_ROLLING_PERIOD + ".")
+  @Range(min = MIN_ROLLING_PERIOD, max = MAX_ROLLING_PERIOD,
+      message = "Rolling period must be between " + MIN_ROLLING_PERIOD + " and " + MAX_ROLLING_PERIOD + ".")
   private final int rollingPeriod;
 
   @Range(min = 0, max = 8, message = "Risk level must be between 0 and 8.")
@@ -70,24 +72,34 @@ public class DiagnosisKey {
   @ValidSubmissionTimestamp
   private final long submissionTimestamp;
 
+  private final boolean consentToFederation;
+
   @Size(max = 2)
   private final String originCountry;
 
   private final List<String> visitedCountries;
+
+  private final ReportType reportType;
+
+  private final int daysSinceOnsetOfSymptoms;
 
   /**
    * Should be called by builders.
    */
   DiagnosisKey(byte[] keyData, int rollingStartIntervalNumber, int rollingPeriod,
       int transmissionRiskLevel, long submissionTimestamp,
-      @Size String originCountry, List<String> visitedCountries) {
+      boolean consentToFederation, @Size String originCountry, List<String> visitedCountries,
+      ReportType reportType, int daysSinceOnsetOfSymptoms) {
     this.keyData = keyData;
     this.rollingStartIntervalNumber = rollingStartIntervalNumber;
     this.rollingPeriod = rollingPeriod;
     this.transmissionRiskLevel = transmissionRiskLevel;
     this.submissionTimestamp = submissionTimestamp;
+    this.consentToFederation = consentToFederation;
     this.originCountry = originCountry;
     this.visitedCountries = visitedCountries == null ? Collections.emptyList() : visitedCountries;
+    this.reportType = reportType;
+    this.daysSinceOnsetOfSymptoms = daysSinceOnsetOfSymptoms;
   }
 
   /**
@@ -136,12 +148,24 @@ public class DiagnosisKey {
     return submissionTimestamp;
   }
 
+  public boolean isConsentToFederation() {
+    return consentToFederation;
+  }
+
   public String getOriginCountry() {
     return originCountry;
   }
 
   public List<String> getVisitedCountries() {
     return visitedCountries;
+  }
+
+  public ReportType getReportType() {
+    return reportType;
+  }
+
+  public int getDaysSinceOnsetOfSymptoms() {
+    return daysSinceOnsetOfSymptoms;
   }
 
   /**
@@ -193,13 +217,18 @@ public class DiagnosisKey {
         && rollingPeriod == that.rollingPeriod
         && transmissionRiskLevel == that.transmissionRiskLevel
         && submissionTimestamp == that.submissionTimestamp
-        && Arrays.equals(keyData, that.keyData);
+        && Arrays.equals(keyData, that.keyData)
+        && Objects.equals(originCountry, that.originCountry)
+        && Objects.equals(visitedCountries, that.visitedCountries)
+        && reportType == that.reportType
+        && daysSinceOnsetOfSymptoms == that.daysSinceOnsetOfSymptoms;
   }
 
   @Override
   public int hashCode() {
     int result = Objects
-        .hash(rollingStartIntervalNumber, rollingPeriod, transmissionRiskLevel, submissionTimestamp);
+        .hash(rollingStartIntervalNumber, rollingPeriod, transmissionRiskLevel, submissionTimestamp, originCountry,
+            visitedCountries, reportType, daysSinceOnsetOfSymptoms);
     result = 31 * result + Arrays.hashCode(keyData);
     return result;
   }

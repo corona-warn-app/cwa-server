@@ -20,6 +20,7 @@
 
 package app.coronawarn.server.common.persistence.domain;
 
+import app.coronawarn.server.common.protocols.external.exposurenotification.ReportType;
 import app.coronawarn.server.common.protocols.external.exposurenotification.TemporaryExposureKey;
 import java.util.List;
 
@@ -44,7 +45,16 @@ interface DiagnosisKeyBuilders {
      * @param protoBufObject ProtocolBuffer object associated with the temporary exposure key.
      * @return this Builder instance.
      */
-    FinalBuilder fromProtoBuf(TemporaryExposureKey protoBufObject);
+    FinalBuilder fromTemporaryExposureKey(TemporaryExposureKey protoBufObject);
+
+    /**
+     * Adds the data contained in the specified federation diagnosis key object to this builder.
+     *
+     * @param federationDiagnosisKey DiagnosisKey object associated with the temporary exposure key.
+     * @return this Builder instance.
+     */
+    FinalBuilder fromFederationDiagnosisKey(
+        app.coronawarn.server.common.protocols.external.exposurenotification.DiagnosisKey federationDiagnosisKey);
   }
 
   interface RollingStartIntervalNumberBuilder {
@@ -52,8 +62,8 @@ interface DiagnosisKeyBuilders {
     /**
      * Adds the specified rolling start interval number to this builder.
      *
-     * @param rollingStartIntervalNumber number describing when a key starts. It is equal to
-     *                                   startTimeOfKeySinceEpochInSecs / (60 * 10).
+     * @param rollingStartIntervalNumber number describing when a key starts.
+     *                                   It is equal to startTimeOfKeySinceEpochInSecs / (60 * 10).
      * @return this Builder instance.
      */
     TransmissionRiskLevelBuilder withRollingStartIntervalNumber(int rollingStartIntervalNumber);
@@ -80,19 +90,25 @@ interface DiagnosisKeyBuilders {
      */
     FinalBuilder withSubmissionTimestamp(long submissionTimestamp);
 
-    FinalBuilder withCountryCode(String countryCode);
-
-    FinalBuilder withVisitedCountries(List<String> visitedCountries);
-
     /**
      * Adds the specified rolling period to this builder. If not specified, the rolling period defaults to {@link
-     * DiagnosisKey#EXPECTED_ROLLING_PERIOD}
+     * DiagnosisKey#MAX_ROLLING_PERIOD}
      *
      * @param rollingPeriod Number describing how long a key is valid. It is expressed in increments of 10 minutes (e.g.
      *                      144 for 24 hours).
      * @return this Builder instance.
      */
     FinalBuilder withRollingPeriod(int rollingPeriod);
+
+    FinalBuilder withConsentToFederation(boolean consentToFederation);
+
+    FinalBuilder withCountryCode(String countryCode);
+
+    FinalBuilder withVisitedCountries(List<String> visitedCountries);
+
+    FinalBuilder withReportType(ReportType reportType);
+
+    FinalBuilder withDaysSinceOnsetOfSymptoms(int daysSinceOnsetOfSymptoms);
 
     /**
      * Builds a {@link DiagnosisKey} instance. If no submission timestamp has been specified it will be set to "now" as

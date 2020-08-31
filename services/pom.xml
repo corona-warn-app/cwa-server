@@ -6,15 +6,13 @@
   <modelVersion>4.0.0</modelVersion>
 
   <parent>
-    <groupId>org.springframework.boot</groupId>
-    <artifactId>spring-boot-starter-parent</artifactId>
-    <version>2.3.1.RELEASE</version>
-    <relativePath></relativePath>
+    <artifactId>server</artifactId>
+    <groupId>org.opencwa</groupId>
+    <version>${revision}</version>
+    <relativePath>../pom.xml</relativePath>
   </parent>
 
   <artifactId>services</artifactId>
-  <groupId>org.opencwa</groupId>
-  <version>${revision}</version>
 
   <organization>
     <name>SAP SE</name>
@@ -25,6 +23,8 @@
     <module>distribution</module>
     <module>submission</module>
     <module>callback</module>
+    <module>upload</module>
+    <module>federation-download</module>
   </modules>
 
   <properties>
@@ -34,22 +34,26 @@
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
     <sonar.projectKey>corona-warn-app_cwa-server_services</sonar.projectKey>
+    <!-- https://spring.io/projects/spring-cloud#release-trains -->
+    <spring-cloud-version>2.2.4.RELEASE</spring-cloud-version>
   </properties>
 
   <dependencies>
     <dependency>
       <groupId>org.springframework.cloud</groupId>
       <artifactId>spring-cloud-starter-vault-config</artifactId>
-      <version>2.2.3.RELEASE</version>
     </dependency>
     <dependency>
       <groupId>org.opencwa</groupId>
       <artifactId>persistence</artifactId>
-      <version>${project.version}</version>
     </dependency>
     <dependency>
       <groupId>org.opencwa</groupId>
       <artifactId>protocols</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.opencwa</groupId>
+      <artifactId>federation</artifactId>
       <version>${project.version}</version>
     </dependency>
     <dependency>
@@ -78,35 +82,25 @@
       <artifactId>spring-boot-starter-log4j2</artifactId>
     </dependency>
     <dependency>
-      <!-- https://nvd.nist.gov/vuln/detail/CVE-2020-9488 -->
       <groupId>org.apache.logging.log4j</groupId>
       <artifactId>log4j-core</artifactId>
-      <version>2.13.3</version>
     </dependency>
     <dependency>
-      <!-- https://nvd.nist.gov/vuln/detail/CVE-2020-9488 -->
       <groupId>org.apache.logging.log4j</groupId>
       <artifactId>log4j-api</artifactId>
-      <version>2.13.3</version>
     </dependency>
     <dependency>
-      <!-- https://nvd.nist.gov/vuln/detail/CVE-2017-18640 -->
       <groupId>org.yaml</groupId>
       <artifactId>snakeyaml</artifactId>
-      <version>1.26</version>
     </dependency>
     <dependency>
-      <!-- https://nvd.nist.gov/vuln/detail/CVE-2020-13692 -->
       <groupId>org.postgresql</groupId>
       <artifactId>postgresql</artifactId>
-      <version>42.2.13</version>
       <scope>runtime</scope>
     </dependency>
     <dependency>
-      <!-- https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2020-13935 -->
-      <groupId>org.apache.tomcat.embed</groupId>
-      <artifactId>tomcat-embed-core</artifactId>
-      <version>9.0.37</version>
+      <groupId>org.apache.commons</groupId>
+      <artifactId>commons-lang3</artifactId>
     </dependency>
   </dependencies>
 
@@ -175,12 +169,16 @@
           <execution>
             <id>flatten</id>
             <phase>process-resources</phase>
-            <goals><goal>flatten</goal></goals>
+            <goals>
+              <goal>flatten</goal>
+            </goals>
           </execution>
           <execution>
             <id>flatten-clean</id>
             <phase>clean</phase>
-            <goals><goal>clean</goal></goals>
+            <goals>
+              <goal>clean</goal>
+            </goals>
           </execution>
         </executions>
       </plugin>

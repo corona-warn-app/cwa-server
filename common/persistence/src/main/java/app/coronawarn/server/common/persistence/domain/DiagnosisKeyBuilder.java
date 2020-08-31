@@ -27,6 +27,7 @@ import static app.coronawarn.server.common.persistence.domain.DiagnosisKeyBuilde
 import static app.coronawarn.server.common.persistence.domain.validation.ValidSubmissionTimestampValidator.SECONDS_PER_HOUR;
 
 import app.coronawarn.server.common.persistence.exception.InvalidDiagnosisKeyException;
+import app.coronawarn.server.common.protocols.external.exposurenotification.ReportType;
 import app.coronawarn.server.common.protocols.external.exposurenotification.TemporaryExposureKey;
 import java.time.Instant;
 import java.util.List;
@@ -47,11 +48,14 @@ public class DiagnosisKeyBuilder implements
 
   private byte[] keyData;
   private int rollingStartIntervalNumber;
-  private int rollingPeriod = DiagnosisKey.EXPECTED_ROLLING_PERIOD;
+  private int rollingPeriod = DiagnosisKey.MAX_ROLLING_PERIOD;
   private int transmissionRiskLevel;
   private Long submissionTimestamp = null;
   private String countryCode;
   private List<String> visitedCountries;
+  private ReportType reportType;
+  private boolean consentToFederation;
+  private int daysSinceOnsetOfSymptoms;
 
   DiagnosisKeyBuilder() {
   }
@@ -75,7 +79,7 @@ public class DiagnosisKeyBuilder implements
   }
 
   @Override
-  public FinalBuilder fromProtoBuf(TemporaryExposureKey protoBufObject) {
+  public FinalBuilder fromTemporaryExposureKey(TemporaryExposureKey protoBufObject) {
     return this
         .withKeyData(protoBufObject.getKeyData().toByteArray())
         .withRollingStartIntervalNumber(protoBufObject.getRollingStartIntervalNumber())
@@ -84,8 +88,33 @@ public class DiagnosisKeyBuilder implements
   }
 
   @Override
+  public FinalBuilder fromFederationDiagnosisKey(
+      app.coronawarn.server.common.protocols.external.exposurenotification.DiagnosisKey federationDiagnosisKey) {
+    return this
+        .withKeyData(federationDiagnosisKey.getKeyData().toByteArray())
+        .withRollingStartIntervalNumber(federationDiagnosisKey.getRollingStartIntervalNumber())
+        .withTransmissionRiskLevel(federationDiagnosisKey.getTransmissionRiskLevel())
+        .withRollingPeriod(federationDiagnosisKey.getRollingPeriod())
+        .withCountryCode(federationDiagnosisKey.getOrigin())
+        .withReportType(federationDiagnosisKey.getReportType())
+        .withVisitedCountries(federationDiagnosisKey.getVisitedCountriesList());
+  }
+
+  @Override
   public FinalBuilder withSubmissionTimestamp(long submissionTimestamp) {
     this.submissionTimestamp = submissionTimestamp;
+    return this;
+  }
+
+  @Override
+  public FinalBuilder withRollingPeriod(int rollingPeriod) {
+    this.rollingPeriod = rollingPeriod;
+    return this;
+  }
+
+  @Override
+  public FinalBuilder withConsentToFederation(boolean consentToFederation) {
+    this.consentToFederation = consentToFederation;
     return this;
   }
 
@@ -102,8 +131,14 @@ public class DiagnosisKeyBuilder implements
   }
 
   @Override
-  public FinalBuilder withRollingPeriod(int rollingPeriod) {
-    this.rollingPeriod = rollingPeriod;
+  public FinalBuilder withReportType(ReportType reportType) {
+    this.reportType = reportType;
+    return this;
+  }
+
+  @Override
+  public FinalBuilder withDaysSinceOnsetOfSymptoms(int daysSinceOnsetOfSymptoms) {
+    this.daysSinceOnsetOfSymptoms = daysSinceOnsetOfSymptoms;
     return this;
   }
 
@@ -115,8 +150,8 @@ public class DiagnosisKeyBuilder implements
     }
 
     var diagnosisKey = new DiagnosisKey(
-        keyData, rollingStartIntervalNumber, rollingPeriod, transmissionRiskLevel, submissionTimestamp, countryCode,
-        visitedCountries);
+        keyData, rollingStartIntervalNumber, rollingPeriod, transmissionRiskLevel, submissionTimestamp,
+        consentToFederation, countryCode, visitedCountries, reportType, daysSinceOnsetOfSymptoms);
     return throwIfValidationFails(diagnosisKey);
   }
 

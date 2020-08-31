@@ -3,16 +3,14 @@
   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <parent>
-    <groupId>org.springframework.boot</groupId>
-    <artifactId>spring-boot-starter-parent</artifactId>
-    <version>2.3.1.RELEASE</version>
-    <relativePath></relativePath>
+    <artifactId>common</artifactId>
+    <groupId>org.opencwa</groupId>
+    <version>${revision}</version>
+    <relativePath>../pom.xml</relativePath>
   </parent>
   <modelVersion>4.0.0</modelVersion>
 
-  <groupId>org.opencwa</groupId>
   <artifactId>persistence</artifactId>
-  <version>${revision}</version>
 
   <organization>
     <name>SAP SE</name>
@@ -73,43 +71,32 @@
     <dependency>
       <groupId>org.flywaydb</groupId>
       <artifactId>flyway-core</artifactId>
-      <version>6.4.3</version>
     </dependency>
     <dependency>
       <groupId>org.postgresql</groupId>
       <artifactId>postgresql</artifactId>
-      <version>42.2.13</version>
       <scope>runtime</scope>
     </dependency>
     <dependency>
       <groupId>org.testcontainers</groupId>
       <artifactId>postgresql</artifactId>
-      <version>1.14.3</version>
       <scope>test</scope>
     </dependency>
     <dependency>
-      <!-- https://nvd.nist.gov/vuln/detail/CVE-2020-9488 -->
       <groupId>org.apache.logging.log4j</groupId>
       <artifactId>log4j-core</artifactId>
-      <version>2.13.3</version>
     </dependency>
     <dependency>
-      <!-- https://nvd.nist.gov/vuln/detail/CVE-2020-9488 -->
       <groupId>org.apache.logging.log4j</groupId>
       <artifactId>log4j-api</artifactId>
-      <version>2.13.3</version>
     </dependency>
     <dependency>
-      <!-- Due to https://nvd.nist.gov/vuln/detail/CVE-2020-10683 -->
       <groupId>org.dom4j</groupId>
       <artifactId>dom4j</artifactId>
-      <version>2.1.3</version>
     </dependency>
     <dependency>
-      <!-- https://nvd.nist.gov/vuln/detail/CVE-2017-18640 -->
       <groupId>org.yaml</groupId>
       <artifactId>snakeyaml</artifactId>
-      <version>1.26</version>
     </dependency>
   </dependencies>
 
@@ -137,6 +124,11 @@
 
   <build>
     <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-surefire-plugin</artifactId>
+        <version>3.0.0-M3</version>
+      </plugin>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-site-plugin</artifactId>
@@ -175,12 +167,16 @@
           <execution>
             <id>flatten</id>
             <phase>process-resources</phase>
-            <goals><goal>flatten</goal></goals>
+            <goals>
+              <goal>flatten</goal>
+            </goals>
           </execution>
           <execution>
             <id>flatten-clean</id>
             <phase>clean</phase>
-            <goals><goal>clean</goal></goals>
+            <goals>
+              <goal>clean</goal>
+            </goals>
           </execution>
         </executions>
       </plugin>

@@ -52,12 +52,23 @@ services:
       max-number-of-failed-operations: 5
       max-number-of-s3-threads: 2
       force-update-keyfiles: ${FORCE_UPDATE_KEYFILES:false}
+
+    app-features:
+      - label: isPlausibleDeniabilityActive
+        value: ${PLAUSIBLE_DENIABILITY_ACTIVE:1}
+    supported-countries: ${SUPPORTED_COUNTRIES:DE}
+    app-versions:
+      latest-ios: ${LATEST_IOS_VERSION:0.8.2}
+      min-ios: ${MIN_IOS_VERSION:0.5.0}
+      latest-android: ${LATEST_IOS_VERSION:1.0.4}
+      min-android: ${MIN_ANDROID_VERSION:1.0.4}
+
 spring:
   main:
     banner-mode: off
   flyway:
     enabled: true
-    locations: classpath:db/migration/postgres
+    locations: classpath:/db/migration, classpath:/db/specific/{vendor}
     jpa:
       hibernate:
         ddl-auto: validate
