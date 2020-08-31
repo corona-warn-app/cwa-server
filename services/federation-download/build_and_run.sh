@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# Builds and runs the distribution module
+# Builds and runs the federationdownload module
 
 pushd "$(dirname "${BASH_SOURCE[0]}")" > /dev/null || exit
 

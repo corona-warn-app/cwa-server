@@ -31,6 +31,9 @@ import java.util.Random;
 
 public class DiagnosisKeyServiceTestHelper {
 
+  private static final Random random = new Random();
+
+
   public static void assertDiagnosisKeysEqual(List<DiagnosisKey> expKeys,
       List<DiagnosisKey> actKeys) {
     assertThat(actKeys).withFailMessage("Cardinality mismatch").hasSameSizeAs(expKeys);
@@ -56,7 +59,6 @@ public class DiagnosisKeyServiceTestHelper {
   public static DiagnosisKey buildDiagnosisKeyForSubmissionTimestamp(long submissionTimeStamp,
       boolean consentToFederation, String countryCode, List<String> visitedCountries, ReportType reportType) {
     byte[] randomBytes = new byte[16];
-    Random random = new Random(submissionTimeStamp);
     random.nextBytes(randomBytes);
     return DiagnosisKey.builder()
         .withKeyData(randomBytes)

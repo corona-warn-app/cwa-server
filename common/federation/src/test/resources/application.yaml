@@ -1,0 +1,13 @@
+---
+logging:
+  level:
+    org:
+      springframework: off
+    root: off
+federation-gateway:
+  base-url: ${FEDERATION_GATEWAY_BASE_URL:http://localhost:8005}
+  connection-pool-size: 200
+  ssl:
+    key-store-path: ${FEDERATION_GATEWAY_KEYSTORE_PATH}
+    key-store-pass: ${FEDERATION_GATEWAY_KEYSTORE_PASS}
+    certificate-type: PKCS12

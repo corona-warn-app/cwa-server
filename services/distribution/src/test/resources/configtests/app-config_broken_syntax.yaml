@@ -3,4 +3,3 @@ min-risk-score:
 attenuation-duration: !include attenuation-duration_ok.yaml
   risk-score-classes: !include risk-score-class_ok.yaml # illegal indentation
 exposure-config: !include exposure-config_ok.yaml
-app-version: !include app-version-config_ok.yaml

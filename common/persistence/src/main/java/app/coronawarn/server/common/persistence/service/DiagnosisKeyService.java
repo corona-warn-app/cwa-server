@@ -26,13 +26,13 @@ import static org.springframework.data.util.StreamUtils.createStreamFromIterator
 
 import app.coronawarn.server.common.persistence.domain.DiagnosisKey;
 import app.coronawarn.server.common.persistence.repository.DiagnosisKeyRepository;
+import app.coronawarn.server.common.persistence.service.common.ValidDiagnosisKeyFilter;
 import io.micrometer.core.annotation.Timed;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
-import javax.validation.ConstraintViolation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Sort;
@@ -45,9 +45,11 @@ public class DiagnosisKeyService {
 
   private static final Logger logger = LoggerFactory.getLogger(DiagnosisKeyService.class);
   private final DiagnosisKeyRepository keyRepository;
+  private final ValidDiagnosisKeyFilter validationFilter;
 
-  public DiagnosisKeyService(DiagnosisKeyRepository keyRepository) {
+  public DiagnosisKeyService(DiagnosisKeyRepository keyRepository, ValidDiagnosisKeyFilter filter) {
     this.keyRepository = keyRepository;
+    this.validationFilter = filter;
   }
 
   /**
@@ -65,7 +67,8 @@ public class DiagnosisKeyService {
           diagnosisKey.getKeyData(), diagnosisKey.getRollingStartIntervalNumber(), diagnosisKey.getRollingPeriod(),
           diagnosisKey.getSubmissionTimestamp(), diagnosisKey.getTransmissionRiskLevel(),
           diagnosisKey.getOriginCountry(), diagnosisKey.getVisitedCountries().toArray(new String[0]),
-          diagnosisKey.getReportType().name(), diagnosisKey.getDaysSinceOnsetOfSymptoms());
+          diagnosisKey.getReportType().name(), diagnosisKey.getDaysSinceOnsetOfSymptoms(),
+          diagnosisKey.isConsentToFederation());
     }
   }
 
@@ -75,7 +78,7 @@ public class DiagnosisKeyService {
   public List<DiagnosisKey> getDiagnosisKeys() {
     List<DiagnosisKey> diagnosisKeys = createStreamFromIterator(
         keyRepository.findAll(Sort.by(Direction.ASC, "submissionTimestamp")).iterator()).collect(Collectors.toList());
-    return this.filterValidDiagnosisKeys(diagnosisKeys);
+    return validationFilter.filter(diagnosisKeys);
   }
 
   /**
@@ -88,31 +91,7 @@ public class DiagnosisKeyService {
   public List<DiagnosisKey> getDiagnosisKeysByVisitedCountry(String countryCode) {
     var diagnosisKeys = createStreamFromIterator(
         keyRepository.findAllKeysWhereVisitedCountryContains(countryCode).iterator()).collect(Collectors.toList());
-    return this.filterValidDiagnosisKeys(diagnosisKeys);
-  }
-
-  private List<DiagnosisKey> filterValidDiagnosisKeys(List<DiagnosisKey> diagnosisKeys) {
-    List<DiagnosisKey> validDiagnosisKeys =
-        diagnosisKeys.stream().filter(DiagnosisKeyService::isDiagnosisKeyValid).collect(Collectors.toList());
-
-    int numberOfDiscardedKeys = diagnosisKeys.size() - validDiagnosisKeys.size();
-    logger.info("Retrieved {} diagnosis key(s). Discarded {} diagnosis key(s) from the result as invalid.",
-        diagnosisKeys.size(), numberOfDiscardedKeys);
-
-    return validDiagnosisKeys;
-  }
-
-  private static boolean isDiagnosisKeyValid(DiagnosisKey diagnosisKey) {
-    Collection<ConstraintViolation<DiagnosisKey>> violations = diagnosisKey.validate();
-    boolean isValid = violations.isEmpty();
-
-    if (!isValid) {
-      List<String> violationMessages =
-          violations.stream().map(ConstraintViolation::getMessage).collect(Collectors.toList());
-      logger.warn("Validation failed for diagnosis key from database. Violations: {}", violationMessages);
-    }
-
-    return isValid;
+    return validationFilter.filter(diagnosisKeys);
   }
 
   /**
@@ -133,9 +112,9 @@ public class DiagnosisKeyService {
         .ofInstant(Instant.now(), UTC)
         .minusDays(daysToRetain)
         .toEpochSecond(UTC) / SECONDS_PER_HOUR;
-    int numberOfDeletions = keyRepository.countOlderThanOrEqual(threshold, countryCode);
+    int numberOfDeletions = keyRepository.countOlderThan(threshold, countryCode);
     logger.info("[{}] Deleting {} diagnosis key(s) with a submission timestamp older than {} day(s) ago.",
         countryCode, numberOfDeletions, daysToRetain);
-    keyRepository.deleteOlderThanOrEqual(threshold, countryCode);
+    keyRepository.deleteOlderThan(threshold, countryCode);
   }
 }

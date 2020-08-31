@@ -48,7 +48,7 @@ public class DiagnosisKeyBuilder implements
 
   private byte[] keyData;
   private int rollingStartIntervalNumber;
-  private int rollingPeriod = DiagnosisKey.EXPECTED_ROLLING_PERIOD;
+  private int rollingPeriod = DiagnosisKey.MAX_ROLLING_PERIOD;
   private int transmissionRiskLevel;
   private Long submissionTimestamp = null;
   private String countryCode;

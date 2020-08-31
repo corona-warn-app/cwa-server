@@ -44,7 +44,8 @@ import org.springframework.data.jdbc.repository.config.EnableJdbcRepositories;
 @SpringBootApplication
 @EnableJdbcRepositories(basePackages = "app.coronawarn.server.common.persistence")
 @EntityScan(basePackages = "app.coronawarn.server.common.persistence")
-@ComponentScan({"app.coronawarn.server.common.persistence", "app.coronawarn.server.services.federation.download"})
+@ComponentScan({ "app.coronawarn.server.common.persistence", "app.coronawarn.server.services.federation.download",
+    "app.coronawarn.server.common.federation.client" })
 @EnableConfigurationProperties
 public class Application implements EnvironmentAware, DisposableBean {
 
