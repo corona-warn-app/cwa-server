@@ -73,7 +73,7 @@ public class DiagnosisKeyBatchDownloader {
       InputStream is = response.body().asInputStream(); // TODO close?
       DiagnosisKeyBatch diagnosisKeyBatch = DiagnosisKeyBatch.parseFrom(is);
       return Optional.of(new FederationGatewayResponse(diagnosisKeyBatch, batchTag, nextBatchTag, date));
-    } catch (IOException e) {
+    } catch (Exception e) {
       return Optional.empty();
     }
   }
