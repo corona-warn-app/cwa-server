@@ -113,7 +113,7 @@ is able verify against it.
 
 The requirements for authenticity to the Federation gateway are outlined in the [eHealth Network Guidelines](https://ec.europa.eu/health/sites/health/files/ehealth/docs/mobileapps_interoperabilitydetailedelements_en.pdf) and pertain to how the CWA Backend must interact with the service. These guidelines discuss:
 
-- How to verify the data integrity of the data downloaded within each batch. This is discussed in section 5.7 Audit Interface.
+- How to verify the integrity of the data downloaded within each batch. This is discussed in section 5.7 Audit Interface.
 - How country backend servers are intended to interact and authenticate themselves to the Federation Gateway. This is covered section 6 Security and talks about the process for handling certificates, mTLS, and communication protocols of HTTP(s)
 
 The CWA Server for Upload and Download will adhere to these guidelines in order to facilitate a proper integration.
