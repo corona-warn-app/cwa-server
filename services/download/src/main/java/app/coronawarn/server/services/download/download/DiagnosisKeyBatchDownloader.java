@@ -62,14 +62,12 @@ public class DiagnosisKeyBatchDownloader {
         "application/protobuf; version=1.0",
         "abcd",
         "C=PL",
-        date.format(DateTimeFormatter.ISO_LOCAL_DATE))) {
+        date.format(DateTimeFormatter.ISO_LOCAL_DATE));
+        InputStream responseBody = response.body().asInputStream()) {
       logger.info("Downloading batch for date " + date + " started");
-
       String batchTag = getHeader(response, "batchTag").orElseThrow();
       Optional<String> nextBatchTag = extractNextBatchTag(response);
-
-      InputStream is = response.body().asInputStream(); // TODO close?
-      DiagnosisKeyBatch diagnosisKeyBatch = DiagnosisKeyBatch.parseFrom(is);
+      DiagnosisKeyBatch diagnosisKeyBatch = DiagnosisKeyBatch.parseFrom(responseBody);
       return Optional.of(new FederationGatewayResponse(diagnosisKeyBatch, batchTag, nextBatchTag, date));
     } catch (Exception e) {
       logger.info("Downloading batch for date " + date + " failed", e);
@@ -89,13 +87,11 @@ public class DiagnosisKeyBatchDownloader {
         "abcd",
         "C=PL",
         batchTag,
-        date.format(DateTimeFormatter.ISO_LOCAL_DATE))) {
+        date.format(DateTimeFormatter.ISO_LOCAL_DATE));
+        InputStream responseBody = response.body().asInputStream()) {
       logger.info("Downloading batch for date " + date + " and batchTag " + batchTag + " started");
-
       Optional<String> nextBatchTag = extractNextBatchTag(response);
-
-      InputStream is = response.body().asInputStream();
-      DiagnosisKeyBatch diagnosisKeyBatch = DiagnosisKeyBatch.parseFrom(is);
+      DiagnosisKeyBatch diagnosisKeyBatch = DiagnosisKeyBatch.parseFrom(responseBody);
       return Optional.of(new FederationGatewayResponse(diagnosisKeyBatch, batchTag, nextBatchTag, date));
     } catch (Exception e) {
       logger.info("Downloading batch for date " + date + " and batchTag " + batchTag + " failed", e);
