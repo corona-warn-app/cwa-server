@@ -20,26 +20,32 @@
 
 package app.coronawarn.server.services.federation.upload;
 
+import static java.util.Collections.emptyList;
+
 import app.coronawarn.server.common.persistence.domain.DiagnosisKey;
 import app.coronawarn.server.common.protocols.external.exposurenotification.ReportType;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.ConfigFileApplicationContextInitializer;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
-
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
+import java.util.ArrayList;
 import java.util.List;
-
-import static java.util.Collections.emptyList;
+import java.util.stream.Stream;
 
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration(classes = {DiagnosisKeyBatchAssembler.class}, initializers = ConfigFileApplicationContextInitializer.class)
 class DiagnosisKeyBatchAssemblerTest {
 
+  private static final int SIZE_THRESHOLD = 4000;
+  private static final int MINIMUM_THRESHOLD = 140;
   @Autowired
   DiagnosisKeyBatchAssembler diagnosisKeyBatchAssembler;
 
@@ -58,7 +64,7 @@ class DiagnosisKeyBatchAssemblerTest {
         "Origin Country should be the same");
   }
 
-  private DiagnosisKey makeFakeKey(boolean consent) {
+  private static DiagnosisKey makeFakeKey(boolean consent) {
     return DiagnosisKey.builder()
         .withKeyData(new byte[16])
         .withRollingStartIntervalNumber(1)
@@ -72,8 +78,17 @@ class DiagnosisKeyBatchAssemblerTest {
         .build();
   }
 
-  private DiagnosisKey makeFakeKey() {
-    return this.makeFakeKey(true);
+  private static DiagnosisKey makeFakeKey() {
+    return makeFakeKey(true);
+  }
+
+  private static List<DiagnosisKey> makeFakeKeys(boolean consent, int numberOfKeys) {
+    List<DiagnosisKey> keys = new ArrayList<DiagnosisKey>(numberOfKeys);
+    while (numberOfKeys > 0) {
+      keys.add(makeFakeKey(consent));
+      numberOfKeys--;
+    }
+    return keys;
   }
 
   @Test
@@ -105,5 +120,31 @@ class DiagnosisKeyBatchAssemblerTest {
     Assertions.assertEquals(1, result.get(0).getKeysCount());
   }
 
+  @ParameterizedTest
+  @MethodSource("keysToPartitionAndBatchNumberExpectations")
+  void shouldGenerateCorrectNumberOfBatches(List<DiagnosisKey> dataset, Integer expectedBatches) {
+    var result = diagnosisKeyBatchAssembler.assembleDiagnosisKeyBatch(dataset);
+    Assertions.assertEquals(expectedBatches, result.size());
+  }
 
+  /**
+   * @return A stream of tuples which represents the dataset together with the
+   * expectation required to test batch key partioning.
+   */
+  private static Stream<Arguments> keysToPartitionAndBatchNumberExpectations() {
+    return Stream.of(
+        Arguments.of(makeFakeKeys(true, MINIMUM_THRESHOLD - 1), 0),
+        Arguments.of(makeFakeKeys(true, MINIMUM_THRESHOLD), 1),
+        Arguments.of(makeFakeKeys(true, SIZE_THRESHOLD), 1),
+        Arguments.of(makeFakeKeys(true, SIZE_THRESHOLD / 2), 1),
+        Arguments.of(makeFakeKeys(true, SIZE_THRESHOLD - 1), 1),
+        Arguments.of(makeFakeKeys(true, SIZE_THRESHOLD + 1), 2),
+        Arguments.of(makeFakeKeys(true, 2 * SIZE_THRESHOLD), 2),
+        Arguments.of(makeFakeKeys(true, 3 * SIZE_THRESHOLD), 3),
+        Arguments.of(makeFakeKeys(true, 4 * SIZE_THRESHOLD), 4),
+        Arguments.of(makeFakeKeys(true, 2 * SIZE_THRESHOLD + 1), 3),
+        Arguments.of(makeFakeKeys(true, 2 * SIZE_THRESHOLD + SIZE_THRESHOLD / 2), 3),
+        Arguments.of(makeFakeKeys(true, 2 * SIZE_THRESHOLD - SIZE_THRESHOLD / 2), 2)
+    );
+  }
 }
