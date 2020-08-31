@@ -40,19 +40,17 @@ public interface FederationBatchInfoRepository extends PagingAndSortingRepositor
   void saveDoNothingOnConflict(
       @Param("batchTag") String batchTag,
       @Param("date") LocalDate date,
-      @Param("status") String status
-  );
+      @Param("status") String status);
 
   @Modifying
   @Query("INSERT INTO federation_batch_info "
       + "(batch_tag, date, status) "
       + "VALUES (:batchTag, :date, :status) "
       + "ON CONFLICT (batch_tag) DO UPDATE SET status=:status")
-  void saveDoUpdateOnConflict(
+  void saveDoUpdateStatusOnConflict(
       @Param("batchTag") String batchTag,
       @Param("date") LocalDate date,
-      @Param("status") String status
-  );
+      @Param("status") String status);
 
   List<FederationBatchInfo> findByStatus(@Param("status") String status);
 }

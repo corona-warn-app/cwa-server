@@ -41,8 +41,8 @@ public class FederationBatchInfoService {
   }
 
   /**
-   * Persists the {@link FederationBatchInfo} instance. If the data of a particular federation batch already
-   * exists in the database, this federation batch is not persisted.
+   * Persists the {@link FederationBatchInfo} instance. If the data of a particular federation batch already exists in
+   * the database, this federation batch is not persisted.
    *
    * @param federationBatchInfo must not contain {@literal null}.
    */
@@ -59,7 +59,7 @@ public class FederationBatchInfoService {
    */
   public void updateStatus(FederationBatchInfo federationBatchInfo, FederationBatchStatus status) {
     federationBatchInfoRepository
-        .saveDoUpdateOnConflict(federationBatchInfo.getBatchTag(), federationBatchInfo.getDate(),
+        .saveDoUpdateStatusOnConflict(federationBatchInfo.getBatchTag(), federationBatchInfo.getDate(),
             status.name());
 
     logger.info("Marked batch with status.");
