@@ -5,9 +5,12 @@ import app.coronawarn.server.common.protocols.external.exposurenotification.Diag
 /**
  * This class represents an Upload call to the Federation Gateway. The payload for EFGS must contain the following
  * information:
- * - The bytes of the protobuf ({@link DiagnosisKeyBatch} batch).
- * - The signature bytes (String batchSignature).
- * - The unique batch tag (String batchTag).
+ *
+ * <p><ul>
+ * <li> The bytes of the protobuf ({@link DiagnosisKeyBatch} batch). </li>
+ * <li> The signature bytes (String batchSignature). </li>
+ * <li> The unique batch tag (String batchTag). </li>
+ * </p></ul>
  */
 public class UploadPayload {
 

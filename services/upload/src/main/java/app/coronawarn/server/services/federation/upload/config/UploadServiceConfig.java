@@ -11,9 +11,18 @@ public class UploadServiceConfig {
   private String privateKeyPassword;
   private String certificate;
   private Signature signature;
+  private TestData testData;
 
   public String getCertificate() {
     return certificate;
+  }
+
+  public TestData getTestData() {
+    return testData;
+  }
+
+  public void setTestData(TestData testData) {
+    this.testData = testData;
   }
 
   public void setCertificate(String certificate) {
@@ -42,6 +51,18 @@ public class UploadServiceConfig {
 
   public void setSignature(Signature signature) {
     this.signature = signature;
+  }
+
+  public static class TestData {
+    private int keys;
+
+    public int getKeys() {
+      return keys;
+    }
+
+    public void setKeys(int keys) {
+      this.keys = keys;
+    }
   }
 
   public static class Signature {

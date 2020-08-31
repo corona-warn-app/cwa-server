@@ -41,7 +41,7 @@ public class Upload implements ApplicationRunner {
   }
 
   private void executeFederationUpload(UploadPayload payload) {
-    logger.info("Executing batch request: {}", payload.getBatchTag());
+    logger.info("Executing batch request(s): {}", payload.getBatchTag());
     this.federationUploadClient.postBatchUpload(payload);
   }
 

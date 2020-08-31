@@ -20,6 +20,8 @@ services:
     privatekey: ${VAULT_EFGS_BATCHIGNING_SECRET}
     certificate: ${VAULT_EFGS_BATCHIGNING_CERTIFICATE}
     privatekey-password: ${VAULT_EFGS_BATCHSIGNING_PASSWORD}
+    test-data:
+      keys: 750
     signature:
       # The ASN.1 OID for algorithm identifier.
       algorithm-oid: 1.2.840.10045.4.3.2
