@@ -1,7 +1,5 @@
 package app.coronawarn.server.services.download.download;
 
-import static org.apache.commons.lang3.StringUtils.isBlank;
-
 import app.coronawarn.server.common.protocols.external.exposurenotification.DiagnosisKeyBatch;
 import java.time.LocalDate;
 import java.util.Optional;
@@ -21,10 +19,10 @@ public class DiagnosisKeyBatchContainer {
    * Creates a DiagnosisKeyBatchContainer.
    */
   public DiagnosisKeyBatchContainer(
-      DiagnosisKeyBatch diagnosisKeyBatch, String batchTag, String nextBatchTag, LocalDate date) {
+      DiagnosisKeyBatch diagnosisKeyBatch, String batchTag, Optional<String> nextBatchTag, LocalDate date) {
     this.diagnosisKeyBatch = diagnosisKeyBatch;
     this.batchTag = batchTag;
-    this.nextBatchTag = !isBlank(nextBatchTag) ? Optional.of(nextBatchTag) : Optional.empty();
+    this.nextBatchTag = nextBatchTag;
     this.date = date;
   }
 

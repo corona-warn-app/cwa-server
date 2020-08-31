@@ -73,13 +73,6 @@ public class FederationBatchService {
   }
 
   /**
-   * TODO consider merging with {@link #findByStatus(FederationBatchStatus)}
-   */
-  public List<FederationBatch> getUnprocessedFederationBatches() {
-    return federationBatchRepository.findUnprocessedFederationBatches();
-  }
-
-  /**
    * Sets the status of the provided federation batch.
    */
   public void updateStatus(FederationBatch federationBatch, FederationBatchStatus status) {
@@ -92,5 +85,4 @@ public class FederationBatchService {
   public List<FederationBatch> findByStatus(FederationBatchStatus federationBatchStatus) {
     return federationBatchRepository.findByStatus(federationBatchStatus.name());
   }
-
 }

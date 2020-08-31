@@ -20,6 +20,8 @@
 
 package app.coronawarn.server.services.download.download;
 
+import static org.apache.commons.lang3.StringUtils.isBlank;
+
 import app.coronawarn.server.common.federation.client.FederationGatewayClient;
 import app.coronawarn.server.common.protocols.external.exposurenotification.DiagnosisKeyBatch;
 import feign.Response;
@@ -65,10 +67,10 @@ public class DiagnosisKeyBatchDownloader {
         "C=PL",
         date.format(DateTimeFormatter.ISO_LOCAL_DATE))) {
 
-      String batchTag = getHeader(response, "batchTag");
-      String nextBatchTag = getHeader(response, "nextBatchTag");
+      String batchTag = getHeader(response, "batchTag").orElseThrow();
+      Optional<String> nextBatchTag = extractNextBatchTag(response);
 
-      InputStream is = response.body().asInputStream();
+      InputStream is = response.body().asInputStream(); // TODO close?
       DiagnosisKeyBatch diagnosisKeyBatch = DiagnosisKeyBatch.parseFrom(is);
       return Optional.of(new DiagnosisKeyBatchContainer(diagnosisKeyBatch, batchTag, nextBatchTag, date));
     } catch (IOException e) {
@@ -90,7 +92,7 @@ public class DiagnosisKeyBatchDownloader {
         batchTag,
         date.format(DateTimeFormatter.ISO_LOCAL_DATE))) {
 
-      String nextBatchTag = getHeader(response, "nextBatchTag");
+      Optional<String> nextBatchTag = extractNextBatchTag(response);
 
       InputStream is = response.body().asInputStream();
       DiagnosisKeyBatch diagnosisKeyBatch = DiagnosisKeyBatch.parseFrom(is);
@@ -100,12 +102,15 @@ public class DiagnosisKeyBatchDownloader {
     }
   }
 
-  private String getHeader(Response response, String header) {
-    Collection<String> headerStrings = response.headers().get(header);
-    if (headerStrings != null) {
-      return headerStrings.iterator().next();
-    }
-    return null;
+  private Optional<String> extractNextBatchTag(Response serverResponse) {
+    return getHeader(serverResponse, "nextBatchTag")
+        .flatMap(headerValue -> !isBlank(headerValue) ? Optional.of(headerValue) : Optional.empty());
   }
 
+  private Optional<String> getHeader(Response response, String header) {
+    Collection<String> headerStrings = response.headers().get(header);
+    return (headerStrings != null && !headerStrings.isEmpty())
+        ? Optional.of(headerStrings.iterator().next())
+        : Optional.empty();
+  }
 }
