@@ -28,8 +28,10 @@ import app.coronawarn.server.services.distribution.config.DistributionServiceCon
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.temporal.Temporal;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -38,6 +40,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.cglib.core.Local;
 
 /**
  * An instance of this class contains a collection of {@link DiagnosisKey DiagnosisKeys}.
@@ -59,18 +62,19 @@ public abstract class DiagnosisKeyBundler {
   protected final long expiryPolicyMinutes;
   protected final int minNumberOfKeysPerBundle;
   private final int maxNumberOfKeysPerBundle;
-
+  private final List<String> supportedCountries;
   // The hour at which the distribution runs. This field is needed to prevent the run from distributing any keys that
   // have already been submitted but may only be distributed in the future (e.g. because they are not expired yet).
   protected LocalDateTime distributionTime;
 
   // A map containing diagnosis keys, grouped by the LocalDateTime on which they may be distributed
-  protected final Map<LocalDateTime, List<DiagnosisKey>> distributableDiagnosisKeys = new HashMap<>();
+  protected final Map<String, Map<LocalDateTime, List<DiagnosisKey>>> distributableDiagnosisKeys = new HashMap<>();
 
   /**
    * Constructs a DiagnosisKeyBundler based on the specified service configuration.
    */
   public DiagnosisKeyBundler(DistributionServiceConfig distributionServiceConfig) {
+    this.supportedCountries = List.of(distributionServiceConfig.getSupportedCountries());
     this.expiryPolicyMinutes = distributionServiceConfig.getExpiryPolicyMinutes();
     this.minNumberOfKeysPerBundle = distributionServiceConfig.getShiftingPolicyThreshold();
     this.maxNumberOfKeysPerBundle = distributionServiceConfig.getMaximumNumberOfKeysPerBundle();
@@ -105,10 +109,12 @@ public abstract class DiagnosisKeyBundler {
   /**
    * Returns all {@link DiagnosisKey DiagnosisKeys} contained by this {@link DiagnosisKeyBundler}.
    */
-  public List<DiagnosisKey> getAllDiagnosisKeys() {
-    return this.distributableDiagnosisKeys.values().stream()
-        .flatMap(List::stream)
-        .collect(Collectors.toList());
+  public List<DiagnosisKey> getAllDiagnosisKeys(String country) {
+    List<DiagnosisKey> diagnosisKeys = new ArrayList<>();
+    //todo:add a test to check if there is a country
+    //which does not exist
+    return this.distributableDiagnosisKeys.get(country).values()
+        .stream().flatMap(Collection::stream).collect(Collectors.toList());
   }
 
   /**
@@ -120,30 +126,31 @@ public abstract class DiagnosisKeyBundler {
   /**
    * Returns a set of all {@link LocalDate dates} on which {@link DiagnosisKey diagnosis keys} shall be distributed.
    */
-  public Set<LocalDate> getDatesWithDistributableDiagnosisKeys() {
-    return this.distributableDiagnosisKeys.keySet().stream()
+  public Set<LocalDate> getDatesWithDistributableDiagnosisKeys(String country) {
+    return this.distributableDiagnosisKeys.get(country).keySet().stream()
         .map(LocalDateTime::toLocalDate)
-        .filter(this::numberOfKeysForDateBelowMaximum)
+        .filter(date -> numberOfKeysForDateBelowMaximum(date, country))
         .collect(Collectors.toSet());
   }
 
-  public boolean numberOfKeysForDateBelowMaximum(LocalDate date) {
-    return numberOfKeysBelowMaximum(getDiagnosisKeysForDate(date).size(), date);
+  public boolean numberOfKeysForDateBelowMaximum(LocalDate date, String country) {
+    return numberOfKeysBelowMaximum(getDiagnosisKeysForDate(date, country).size(), date);
   }
 
   /**
-   * Returns a set of all {@link LocalDateTime hours} of a specified {@link LocalDate date} during which {@link
+   * Returns a map of all {@link LocalDateTime hours} of a specified {@link LocalDate date} and country
+   * during which {@link
    * DiagnosisKey diagnosis keys} shall be distributed.
    */
-  public Set<LocalDateTime> getHoursWithDistributableDiagnosisKeys(LocalDate currentDate) {
-    return this.distributableDiagnosisKeys.keySet().stream()
+  public Set<LocalDateTime> getHoursWithDistributableDiagnosisKeys(LocalDate currentDate, String country) {
+    return this.distributableDiagnosisKeys.get(country).keySet().stream()
         .filter(dateTime -> dateTime.toLocalDate().equals(currentDate))
-        .filter(this::numberOfKeysForHourBelowMaximum)
+        .filter(dateTime -> numberOfKeysForHourBelowMaximum(dateTime, country))
         .collect(Collectors.toSet());
   }
 
-  private boolean numberOfKeysForHourBelowMaximum(LocalDateTime hour) {
-    return numberOfKeysBelowMaximum(getDiagnosisKeysForHour(hour).size(), hour);
+  private boolean numberOfKeysForHourBelowMaximum(LocalDateTime hour, String country) {
+    return numberOfKeysBelowMaximum(getDiagnosisKeysForHour(hour, country).size(), hour);
   }
 
   private boolean numberOfKeysBelowMaximum(int numberOfKeys, Temporal time) {
@@ -165,10 +172,10 @@ public abstract class DiagnosisKeyBundler {
   /**
    * Returns all diagnosis keys that should be distributed on a specific date.
    */
-  public List<DiagnosisKey> getDiagnosisKeysForDate(LocalDate date) {
-    return this.distributableDiagnosisKeys.keySet().stream()
+  public List<DiagnosisKey> getDiagnosisKeysForDate(LocalDate date, String country) {
+    return this.distributableDiagnosisKeys.get(country).keySet().stream()
         .filter(dateTime -> dateTime.toLocalDate().equals(date))
-        .map(this::getDiagnosisKeysForHour)
+        .map(dateTime -> getDiagnosisKeysForHour(dateTime, country))
         .flatMap(List::stream)
         .collect(Collectors.toList());
   }
@@ -176,9 +183,23 @@ public abstract class DiagnosisKeyBundler {
   /**
    * Returns all diagnosis keys that should be distributed in a specific hour.
    */
-  public List<DiagnosisKey> getDiagnosisKeysForHour(LocalDateTime hour) {
+  public List<DiagnosisKey> getDiagnosisKeysForHour(LocalDateTime hour, String country) {
+    //todo: We can use optional for getting the diagnosis for country check
     return Optional
-        .ofNullable(this.distributableDiagnosisKeys.get(hour))
+        .ofNullable(this.distributableDiagnosisKeys.get(country).get(hour))
         .orElse(emptyList());
+  }
+
+  protected Map<String, List<DiagnosisKey>> groupDiagnosisKeysByCountry(Collection<DiagnosisKey> diagnosisKeys) {
+    Map<String, List<DiagnosisKey>> diagnosisKeysMapped = new HashMap<>();
+
+    supportedCountries.forEach(supportedCountry -> {
+      diagnosisKeysMapped.put(supportedCountry, new ArrayList<>());
+    });
+    // diagnosis keys mapped by country
+    diagnosisKeys.forEach(diagnosisKey -> diagnosisKey.getVisitedCountries().stream()
+        .filter(supportedCountries::contains)
+        .forEach(visitedCountry -> diagnosisKeysMapped.get(visitedCountry).add(diagnosisKey)));
+    return diagnosisKeysMapped;
   }
 }

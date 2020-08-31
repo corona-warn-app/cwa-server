@@ -81,7 +81,6 @@ class TestDataGenerationTest {
     testData.setSeed(0);
     distributionServiceConfig.setRetentionDays(1);
     distributionServiceConfig.setTestData(testData);
-    distributionServiceConfig.getApi().setDistributionCountry(GERMANY);
     testDataGeneration = new TestDataGeneration(diagnosisKeyService, distributionServiceConfig);
   }
 
@@ -95,7 +94,7 @@ class TestDataGenerationTest {
     var now = LocalDateTime.of(2020, 7, 15, 12, 0, 0).toInstant(ZoneOffset.UTC);
     TimeUtils.setNow(now);
 
-    when(diagnosisKeyService.getDiagnosisKeysByVisitedCountry(GERMANY)).thenReturn(Collections.emptyList());
+    when(diagnosisKeyService.getDiagnosisKeys()).thenReturn(Collections.emptyList());
     testDataGeneration.run(null);
 
     verify(diagnosisKeyService).saveDiagnosisKeys(captor.capture());
@@ -107,7 +106,7 @@ class TestDataGenerationTest {
     var now = LocalDateTime.of(2020, 7, 15, 12, 0, 0).toInstant(ZoneOffset.UTC);
     TimeUtils.setNow(now);
 
-    when(diagnosisKeyService.getDiagnosisKeysByVisitedCountry(GERMANY))
+    when(diagnosisKeyService.getDiagnosisKeys())
         .thenReturn(buildDiagnosisKeys(6, LocalDateTime.of(2020, 7, 15, 12, 0, 0), 10));
 
     testDataGeneration.run(null);
@@ -119,7 +118,7 @@ class TestDataGenerationTest {
     var now = LocalDateTime.of(2020, 7, 15, 12, 0, 0).toInstant(ZoneOffset.UTC);
     TimeUtils.setNow(now);
 
-    when(diagnosisKeyService.getDiagnosisKeysByVisitedCountry(GERMANY))
+    when(diagnosisKeyService.getDiagnosisKeys())
         .thenReturn(buildDiagnosisKeys(6, LocalDateTime.of(2020, 7, 15, 11, 0, 0), 10));
 
     testDataGeneration.run(null);
@@ -128,6 +127,7 @@ class TestDataGenerationTest {
         .allMatch(k -> k.getSubmissionTimestamp() != 443003));
   }
 
+/*  todo: generates test data for all supported countries
   @Test
   void shouldGenerateValuesForGivenCountry() {
     distributionServiceConfig.getApi().setDistributionCountry(FRANCE);
@@ -171,4 +171,6 @@ class TestDataGenerationTest {
     verify(diagnosisKeyService, atMostOnce()).getDiagnosisKeysByVisitedCountry(filterCountryCapture.capture());
     Assert.assertEquals(FRANCE, filterCountryCapture.getValue());
   }
+
+ */
 }

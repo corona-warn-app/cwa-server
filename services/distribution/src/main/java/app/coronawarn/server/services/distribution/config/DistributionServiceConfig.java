@@ -322,8 +322,6 @@ public class DistributionServiceConfig {
     private String parametersPath;
     @Pattern(regexp = CHAR_AND_NUMBER_REGEX)
     private String appConfigFileName;
-    @Pattern(regexp = CHAR_AND_NUMBER_REGEX)
-    private String distributionCountry;
 
     public String getVersionPath() {
       return versionPath;
@@ -397,13 +395,6 @@ public class DistributionServiceConfig {
       this.appConfigFileName = appConfigFileName;
     }
 
-    public String getDistributionCountry() {
-      return distributionCountry;
-    }
-
-    public void setDistributionCountry(String distributionCountry) {
-      this.distributionCountry = distributionCountry;
-    }
   }
 
   public static class Signature {

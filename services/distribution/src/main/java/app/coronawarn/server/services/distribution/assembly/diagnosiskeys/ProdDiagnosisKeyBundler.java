@@ -50,11 +50,14 @@ import org.springframework.stereotype.Component;
 @Component
 public class ProdDiagnosisKeyBundler extends DiagnosisKeyBundler {
 
+  private DistributionServiceConfig distributionServiceConfig;
+
   /**
    * Creates a new {@link ProdDiagnosisKeyBundler}.
    */
   public ProdDiagnosisKeyBundler(DistributionServiceConfig distributionServiceConfig) {
     super(distributionServiceConfig);
+    this.distributionServiceConfig = distributionServiceConfig;
   }
 
   /**
@@ -67,28 +70,43 @@ public class ProdDiagnosisKeyBundler extends DiagnosisKeyBundler {
     if (diagnosisKeys.isEmpty()) {
       return;
     }
-    Map<LocalDateTime, List<DiagnosisKey>> distributableDiagnosisKeysGroupedByExpiryPolicy = new HashMap<>(
-        diagnosisKeys.stream().collect(groupingBy(this::getDistributionDateTimeByExpiryPolicy)));
-    LocalDateTime earliestDistributableTimestamp =
-        getEarliestDistributableTimestamp(distributableDiagnosisKeysGroupedByExpiryPolicy).orElseThrow();
-    LocalDateTime latestDistributableTimestamp = this.distributionTime;
+    List<String> supportedCountries = List.of(distributionServiceConfig.getSupportedCountries());
+    Map<String, List<DiagnosisKey>> diagnosisKeysMapped = new HashMap<>();
 
-    List<DiagnosisKey> diagnosisKeyAccumulator = new ArrayList<>();
-    LongStream.range(0, earliestDistributableTimestamp.until(latestDistributableTimestamp, ChronoUnit.HOURS))
-        .forEach(hourCounter -> {
-          LocalDateTime currentHour = earliestDistributableTimestamp.plusHours(hourCounter);
-          Collection<DiagnosisKey> currentHourDiagnosisKeys = Optional
-              .ofNullable(distributableDiagnosisKeysGroupedByExpiryPolicy.get(currentHour))
-              .orElse(emptyList());
-          diagnosisKeyAccumulator.addAll(currentHourDiagnosisKeys);
-          if (diagnosisKeyAccumulator.size() >= minNumberOfKeysPerBundle) {
-            this.distributableDiagnosisKeys.put(currentHour, new ArrayList<>(diagnosisKeyAccumulator));
-            diagnosisKeyAccumulator.clear();
-          } else {
-            // placeholder list is needed to be able to generate empty file - see issue #650
-            this.distributableDiagnosisKeys.put(currentHour, Collections.emptyList());
-          }
-        });
+    supportedCountries.forEach(supportedCountry -> {
+      diagnosisKeysMapped.put(supportedCountry, new ArrayList<>());
+      this.distributableDiagnosisKeys.put(supportedCountry, new HashMap<LocalDateTime, List<DiagnosisKey>>());
+    });
+    // diagnosis keys mapped by country
+    diagnosisKeys.forEach(diagnosisKey -> diagnosisKey.getVisitedCountries().stream()
+        .filter(supportedCountries::contains)
+        .forEach(visitedCountry -> diagnosisKeysMapped.get(visitedCountry).add(diagnosisKey)));
+
+    //get the keys for all supported countries and map
+    diagnosisKeysMapped.keySet().forEach(country-> {
+      Map<LocalDateTime, List<DiagnosisKey>> distributableDiagnosisKeysGroupedByExpiryPolicy = new HashMap<>(
+          diagnosisKeysMapped.get(country).stream().collect(groupingBy(this::getDistributionDateTimeByExpiryPolicy)));
+      LocalDateTime earliestDistributableTimestamp =
+          getEarliestDistributableTimestamp(distributableDiagnosisKeysGroupedByExpiryPolicy).orElseThrow();
+      LocalDateTime latestDistributableTimestamp = this.distributionTime;
+
+      List<DiagnosisKey> diagnosisKeyAccumulator = new ArrayList<>();
+      LongStream.range(0, earliestDistributableTimestamp.until(latestDistributableTimestamp, ChronoUnit.HOURS))
+          .forEach(hourCounter -> {
+            LocalDateTime currentHour = earliestDistributableTimestamp.plusHours(hourCounter);
+            Collection<DiagnosisKey> currentHourDiagnosisKeys = Optional
+                .ofNullable(distributableDiagnosisKeysGroupedByExpiryPolicy.get(currentHour))
+                .orElse(emptyList());
+            diagnosisKeyAccumulator.addAll(currentHourDiagnosisKeys);
+            if (diagnosisKeyAccumulator.size() >= minNumberOfKeysPerBundle) {
+              this.distributableDiagnosisKeys.get(country).put(currentHour,new ArrayList<>(diagnosisKeyAccumulator));
+              diagnosisKeyAccumulator.clear();
+            } else {
+              // placeholder list is needed to be able to generate empty file - see issue #650
+              this.distributableDiagnosisKeys.get(country).put(currentHour, Collections.emptyList());
+            }
+          });
+    });
   }
 
   private static Optional<LocalDateTime> getEarliestDistributableTimestamp(

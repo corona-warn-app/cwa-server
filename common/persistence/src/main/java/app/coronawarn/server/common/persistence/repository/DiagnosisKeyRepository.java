@@ -37,19 +37,8 @@ public interface DiagnosisKeyRepository extends PagingAndSortingRepository<Diagn
    * @param submissionTimestamp The submission timestamp up to which entries will be expired.
    * @return The number of expired keys.
    */
-  @Query("SELECT COUNT(*) FROM diagnosis_key WHERE submission_timestamp<:threshold AND "
-      + ":country_code = ANY(visited_countries)")
-  int countOlderThan(@Param("threshold") long submissionTimestamp, @Param("country_code") String countryCode);
-
-  /**
-   * Returns all diagnosis keys where visited_countries list contains {@param countryCode} ordered by
-   * submission_timestamp.
-   *
-   * @param countryCode filter country code.
-   * @return list of DiagnosisKeys.
-   */
-  @Query("SELECT * FROM diagnosis_key WHERE :country_code = ANY(visited_countries) ORDER BY submission_timestamp ASC")
-  Iterable<DiagnosisKey> findAllKeysWhereVisitedCountryContains(@Param("country_code") String countryCode);
+  @Query("SELECT COUNT(*) FROM diagnosis_key WHERE submission_timestamp<:threshold")
+  int countOlderThan(@Param("threshold") long submissionTimestamp);
 
   /**
    * Deletes all entries that have a submission timestamp less or equal than the specified one
@@ -58,8 +47,8 @@ public interface DiagnosisKeyRepository extends PagingAndSortingRepository<Diagn
    * @param submissionTimestamp The submission timestamp up to which entries will be deleted.
    */
   @Modifying
-  @Query("DELETE FROM diagnosis_key WHERE submission_timestamp<:threshold AND :country_code = ANY(visited_countries)")
-  void deleteOlderThan(@Param("threshold") long submissionTimestamp, @Param("country_code") String countryCode);
+  @Query("DELETE FROM diagnosis_key WHERE submission_timestamp<:threshold")
+  void deleteOlderThan(@Param("threshold") long submissionTimestamp);
 
   /**
    * Attempts to write the specified diagnosis key information into the database. If a row with the specified key data

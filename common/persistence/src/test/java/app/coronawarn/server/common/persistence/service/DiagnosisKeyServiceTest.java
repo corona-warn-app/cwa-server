@@ -98,7 +98,7 @@ class DiagnosisKeyServiceTest {
   @ValueSource(ints = {0, 1, Integer.MAX_VALUE})
   @ParameterizedTest
   void testApplyRetentionPolicyForValidNumberOfDays(int daysToRetain) {
-    assertThatCode(() -> diagnosisKeyService.applyRetentionPolicy(daysToRetain, "DE"))
+    assertThatCode(() -> diagnosisKeyService.applyRetentionPolicy(daysToRetain))
         .doesNotThrowAnyException();
   }
 
@@ -106,13 +106,13 @@ class DiagnosisKeyServiceTest {
   @ValueSource(ints = {Integer.MIN_VALUE, -1})
   @ParameterizedTest
   void testApplyRetentionPolicyForNegativeNumberOfDays(int daysToRetain) {
-    assertThat(catchThrowable(() -> diagnosisKeyService.applyRetentionPolicy(daysToRetain, "DE")))
+    assertThat(catchThrowable(() -> diagnosisKeyService.applyRetentionPolicy(daysToRetain)))
         .isInstanceOf(IllegalArgumentException.class);
   }
 
   @Test
   void testApplyRetentionPolicyForEmptyDb() {
-    diagnosisKeyService.applyRetentionPolicy(1, "DE");
+    diagnosisKeyService.applyRetentionPolicy(1);
     var actKeys = diagnosisKeyService.getDiagnosisKeys();
     assertDiagnosisKeysEqual(Lists.emptyList(), actKeys);
   }
@@ -122,7 +122,7 @@ class DiagnosisKeyServiceTest {
     var expKeys = List.of(buildDiagnosisKeyForDateTime(OffsetDateTime.now(UTC).minusDays(1L)));
 
     diagnosisKeyService.saveDiagnosisKeys(expKeys);
-    diagnosisKeyService.applyRetentionPolicy(1, "DE");
+    diagnosisKeyService.applyRetentionPolicy(1);
     var actKeys = diagnosisKeyService.getDiagnosisKeys();
 
     assertDiagnosisKeysEqual(expKeys, actKeys);
@@ -133,57 +133,10 @@ class DiagnosisKeyServiceTest {
     var keys = List.of(buildDiagnosisKeyForDateTime(OffsetDateTime.now(UTC).minusDays(1L).minusHours(1)));
 
     diagnosisKeyService.saveDiagnosisKeys(keys);
-    diagnosisKeyService.applyRetentionPolicy(1, "DE");
+    diagnosisKeyService.applyRetentionPolicy(1);
     var actKeys = diagnosisKeyService.getDiagnosisKeys();
 
     assertDiagnosisKeysEqual(Lists.emptyList(), actKeys);
-  }
-
-  @Test
-  void testShouldNotDeleteKeysFromAnotherCountry() {
-    var expKeys = List.of(
-        buildDiagnosisKeyForDateTime(OffsetDateTime.now(UTC).minusDays(1L), "DE", Collections.singletonList("DE"),
-            ReportType.CONFIRMED_CLINICAL_DIAGNOSIS));
-
-    diagnosisKeyService.saveDiagnosisKeys(expKeys);
-    diagnosisKeyService.applyRetentionPolicy(1, "FR");
-    var actKeys = diagnosisKeyService.getDiagnosisKeys();
-
-    assertDiagnosisKeysEqual(actKeys, expKeys);
-  }
-
-  @Test
-  void testShouldDeleteKeysWithMatchingVisitedCountry() {
-    var frenchKeys = buildDiagnosisKeyForDateTime(OffsetDateTime.now(UTC).minusDays(1L).minusHours(1), "DE", Collections.singletonList("FR"), ReportType.CONFIRMED_CLINICAL_DIAGNOSIS);
-    var germanKeys = buildDiagnosisKeyForDateTime(OffsetDateTime.now(UTC).minusDays(2L), "DE", Collections.singletonList("DE"), ReportType.CONFIRMED_CLINICAL_DIAGNOSIS);
-
-    diagnosisKeyService.saveDiagnosisKeys(List.of(germanKeys, frenchKeys));
-    diagnosisKeyService.applyRetentionPolicy(1, "FR");
-    var actKeys = diagnosisKeyService.getDiagnosisKeys();
-
-    assertDiagnosisKeysEqual(List.of(germanKeys), actKeys);
-  }
-
-  @Test
-  void testShouldDeleteKeysWhereAnyOfVisitedCountriesMatch() {
-    var keys = List.of(
-        buildDiagnosisKeyForDateTime(OffsetDateTime.now(UTC).minusDays(1L).minusHours(1), "DE", List.of("DE", "FR", "LU"), ReportType.CONFIRMED_CLINICAL_DIAGNOSIS));
-    diagnosisKeyService.saveDiagnosisKeys(keys);
-    diagnosisKeyService.applyRetentionPolicy(1, "FR");
-    var actKeys = diagnosisKeyService.getDiagnosisKeys();
-    assertTrue(actKeys.isEmpty());
-  }
-
-  @Test
-  void testShouldDeleteKeysFromDifferentOriginCountriesWithMatchingVisitedCountry() {
-    var keys = List.of(
-        buildDiagnosisKeyForDateTime(OffsetDateTime.now(UTC).minusDays(1L).minusHours(1L), "DE", List.of("FR"), ReportType.CONFIRMED_CLINICAL_DIAGNOSIS),
-        buildDiagnosisKeyForDateTime(OffsetDateTime.now(UTC).minusDays(1L).minusHours(1L), "FR", List.of("FR"),ReportType.CONFIRMED_CLINICAL_DIAGNOSIS),
-        buildDiagnosisKeyForDateTime(OffsetDateTime.now(UTC).minusDays(1L).minusHours(1L), "LU", List.of("FR"), ReportType.CONFIRMED_CLINICAL_DIAGNOSIS));
-    diagnosisKeyService.saveDiagnosisKeys(keys);
-    diagnosisKeyService.applyRetentionPolicy(1, "FR");
-    var actKeys = diagnosisKeyService.getDiagnosisKeys();
-    assertTrue(actKeys.isEmpty());
   }
 
   @Test
@@ -255,9 +208,9 @@ class DiagnosisKeyServiceTest {
       diagnosisKeyService.saveDiagnosisKeys(keys);
     }
 
-    @Test
+    /*@Test
     void testShouldGetThreeEntriesDE() {
-      assertEquals(3, diagnosisKeyService.getDiagnosisKeysByVisitedCountry("DE").size());
+      assertEquals(3, diagnosisKeyService.ge("DE").size());
     }
 
     @Test
@@ -268,7 +221,7 @@ class DiagnosisKeyServiceTest {
     @Test
     void testShouldGetOneEntryDK() {
       assertEquals(1, diagnosisKeyService.getDiagnosisKeysByVisitedCountry("DK").size());
-    }
+    }*/
   }
 
 }
