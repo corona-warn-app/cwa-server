@@ -34,7 +34,7 @@ public class FederationBatchInfo {
 
   private final LocalDate date;
 
-  private final FederationBatchStatus status;
+  private FederationBatchStatus status;
 
   /**
    * Creates a FederationBatchInfo.
@@ -62,6 +62,10 @@ public class FederationBatchInfo {
 
   public FederationBatchStatus getStatus() {
     return status;
+  }
+
+  public void setStatus(FederationBatchStatus status) {
+    this.status = status;
   }
 
   @Override

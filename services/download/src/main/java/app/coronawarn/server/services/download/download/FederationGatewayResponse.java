@@ -15,7 +15,7 @@ public class FederationGatewayResponse {
   private final LocalDate date;
 
   /**
-   * Creates a DiagnosisKeyBatchContainer.
+   * Creates a FederationGatewayResponse.
    */
   public FederationGatewayResponse(
       DiagnosisKeyBatch diagnosisKeyBatch, String batchTag, Optional<String> nextBatchTag, LocalDate date) {

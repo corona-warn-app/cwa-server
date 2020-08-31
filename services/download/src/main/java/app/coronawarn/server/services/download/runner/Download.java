@@ -78,13 +78,13 @@ public class Download implements ApplicationRunner {
   }
 
   private void saveFirstBatchTagForDate(LocalDate date) {
-    Optional<FederationGatewayResponse> diagnosisKeyBatchContainerOptional =
+    Optional<FederationGatewayResponse> federationGatewayResponseOptional =
         diagnosisKeyBatchDownloader.downloadBatch(date);
 
-    if (diagnosisKeyBatchContainerOptional.isPresent()) {
-      FederationGatewayResponse federationGatewayResponse = diagnosisKeyBatchContainerOptional.get();
+    if (federationGatewayResponseOptional.isPresent()) {
+      FederationGatewayResponse federationGatewayResponse = federationGatewayResponseOptional.get();
       federationBatchInfoService
-          .save(new FederationBatchInfo(federationGatewayResponse.getBatchTag(), date));
+          .save(new FederationBatchInfo(federationGatewayResponse.getBatchTag(), federationGatewayResponse.getDate()));
     }
   }
 
@@ -121,12 +121,12 @@ public class Download implements ApplicationRunner {
   private Optional<String> processBatchAndReturnNextBatchId(
       FederationBatchInfo currentBatch, FederationBatchStatus errorStatus) {
     try {
-      FederationGatewayResponse diagnosisKeyBatchContainer =
+      FederationGatewayResponse federationGatewayResponse =
           diagnosisKeyBatchDownloader.downloadBatch(currentBatch.getDate(), currentBatch.getBatchTag()).orElseThrow();
 
-      diagnosisKeyService.saveDiagnosisKeys(convertDiagnosisKeys(diagnosisKeyBatchContainer));
+      diagnosisKeyService.saveDiagnosisKeys(convertDiagnosisKeys(federationGatewayResponse));
       federationBatchInfoService.updateStatus(currentBatch, PROCESSED);
-      return diagnosisKeyBatchContainer.getNextBatchTag();
+      return federationGatewayResponse.getNextBatchTag();
     } catch (Exception e) {
       logger.error("Federation batch processing failed. Status set to {}", e, errorStatus.name());
       federationBatchInfoService.updateStatus(currentBatch, errorStatus);
