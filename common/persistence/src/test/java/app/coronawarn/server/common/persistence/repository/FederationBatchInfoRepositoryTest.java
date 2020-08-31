@@ -9,15 +9,10 @@ import app.coronawarn.server.common.persistence.domain.FederationBatchStatus;
 import java.time.LocalDate;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.reactive.AutoConfigureWebTestClient;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
+import org.springframework.boot.test.autoconfigure.data.jdbc.DataJdbcTest;
 
-@SpringBootTest
-@ExtendWith({SpringExtension.class})
-@AutoConfigureWebTestClient
+@DataJdbcTest
 public class FederationBatchInfoRepositoryTest {
 
   private static final String batchTag1 = "11111";

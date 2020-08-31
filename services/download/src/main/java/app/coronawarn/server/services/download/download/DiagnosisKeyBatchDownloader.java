@@ -22,11 +22,9 @@ package app.coronawarn.server.services.download.download;
 
 import static org.apache.commons.lang3.StringUtils.isBlank;
 
-
 import app.coronawarn.server.common.federation.client.FederationGatewayClient;
 import app.coronawarn.server.common.protocols.external.exposurenotification.DiagnosisKeyBatch;
 import feign.Response;
-import java.io.IOException;
 import java.io.InputStream;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
@@ -57,7 +55,7 @@ public class DiagnosisKeyBatchDownloader {
    * Downloads the batch specified for this date.
    *
    * @param date the date for which the batch should be downloaded
-   * @return Optional<FederationGatewayResponse>
+   * @return The server response.
    */
   public Optional<FederationGatewayResponse> downloadBatch(LocalDate date) {
     // TODO try to put headers into client class
@@ -84,7 +82,7 @@ public class DiagnosisKeyBatchDownloader {
    * Downloads the batch specified for this date.
    *
    * @param date the date for which the batch should be downloaded
-   * @return Optional<FederationGatewayResponse>
+   * @return The server response.
    */
   public Optional<FederationGatewayResponse> downloadBatch(LocalDate date, String batchTag) {
     try (Response response = federationGatewayClient.getDiagnosisKeys(

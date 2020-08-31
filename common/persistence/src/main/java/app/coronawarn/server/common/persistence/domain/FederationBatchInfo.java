@@ -23,6 +23,7 @@ package app.coronawarn.server.common.persistence.domain;
 import java.time.LocalDate;
 import java.util.Objects;
 import org.springframework.data.annotation.Id;
+import org.springframework.data.annotation.PersistenceConstructor;
 
 /**
  * TODO Javadoc.
@@ -31,9 +32,7 @@ public class FederationBatchInfo {
 
   @Id
   private final String batchTag;
-
   private final LocalDate date;
-
   private FederationBatchStatus status;
 
   /**
@@ -46,6 +45,7 @@ public class FederationBatchInfo {
   /**
    * Creates a FederationBatchInfo.
    */
+  @PersistenceConstructor
   public FederationBatchInfo(String batchTag, LocalDate date, FederationBatchStatus status) {
     this.batchTag = batchTag;
     this.date = date;

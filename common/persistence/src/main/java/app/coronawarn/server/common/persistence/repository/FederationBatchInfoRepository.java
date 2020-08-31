@@ -21,7 +21,6 @@
 package app.coronawarn.server.common.persistence.repository;
 
 import app.coronawarn.server.common.persistence.domain.FederationBatchInfo;
-import app.coronawarn.server.common.persistence.domain.FederationBatchStatus;
 import java.time.LocalDate;
 import java.util.List;
 import org.springframework.data.jdbc.repository.query.Modifying;
@@ -44,6 +43,5 @@ public interface FederationBatchInfoRepository extends PagingAndSortingRepositor
       @Param("status") String status
   );
 
-  @Query("SELECT * FROM federation_batch_info WHERE status = :status")
   List<FederationBatchInfo> findByStatus(@Param("status") String status);
 }
