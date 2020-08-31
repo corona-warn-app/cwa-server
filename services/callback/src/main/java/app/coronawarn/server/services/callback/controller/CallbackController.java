@@ -20,8 +20,8 @@
 
 package app.coronawarn.server.services.callback.controller;
 
-import app.coronawarn.server.common.persistence.domain.FederationBatch;
-import app.coronawarn.server.common.persistence.service.FederationBatchService;
+import app.coronawarn.server.common.persistence.domain.FederationBatchInfo;
+import app.coronawarn.server.common.persistence.service.FederationBatchInfoService;
 import io.micrometer.core.annotation.Timed;
 import java.time.LocalDate;
 import javax.validation.Valid;
@@ -46,10 +46,10 @@ public class CallbackController {
   public static final String CALLBACK_ROUTE = "/callback";
   private static final Logger logger = LoggerFactory.getLogger(CallbackController.class);
   private static final String dateRegex = "^\\d{4}-(0[1-9]|1[012])-(0[1-9]|[12][0-9]|3[01])$";
-  private final FederationBatchService federationBatchService;
+  private final FederationBatchInfoService federationBatchInfoService;
 
-  public CallbackController(FederationBatchService federationBatchService) {
-    this.federationBatchService = federationBatchService;
+  public CallbackController(FederationBatchInfoService federationBatchInfoService) {
+    this.federationBatchInfoService = federationBatchInfoService;
   }
 
   /**
@@ -63,8 +63,8 @@ public class CallbackController {
   @Timed(description = "Time spent handling callback.")
   public ResponseEntity<Void> handleCallback(@RequestParam(required = true) String batchTag,
       @Valid @Pattern(regexp = dateRegex) @RequestParam String date) {
-    FederationBatch federationBatch = new FederationBatch(batchTag, LocalDate.parse(date));
-    federationBatchService.saveFederationBatch(federationBatch);
+    FederationBatchInfo federationBatchInfo = new FederationBatchInfo(batchTag, LocalDate.parse(date));
+    federationBatchInfoService.save(federationBatchInfo);
     return ResponseEntity.ok().build();
   }
 
