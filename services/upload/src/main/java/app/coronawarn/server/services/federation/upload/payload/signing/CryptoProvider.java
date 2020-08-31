@@ -59,7 +59,7 @@ public class CryptoProvider {
     }
   }
 
-  public X509Certificate getCertificate() throws CertificateException {
+  public X509Certificate getCertificate() {
     return this.publicKey;
   }
 

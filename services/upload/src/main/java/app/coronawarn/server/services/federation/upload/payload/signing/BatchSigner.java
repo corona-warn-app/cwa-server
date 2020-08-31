@@ -58,9 +58,8 @@ public class BatchSigner {
       batchBytes.writeBytes(ByteBuffer.allocate(4).putInt(diagnosisKey.getRollingPeriod()).array());
       batchBytes.writeBytes(ByteBuffer.allocate(4).putInt(diagnosisKey.getTransmissionRiskLevel()).array());
 
-      diagnosisKey.getVisitedCountriesList().forEach(country -> {
-        batchBytes.writeBytes(country.getBytes(StandardCharsets.UTF_8));
-      });
+      diagnosisKey.getVisitedCountriesList()
+          .forEach(country -> batchBytes.writeBytes(country.getBytes(StandardCharsets.UTF_8)));
 
       batchBytes.writeBytes(diagnosisKey.getOrigin().getBytes(StandardCharsets.UTF_8));
       batchBytes.writeBytes(ByteBuffer.allocate(4).putInt(diagnosisKey.getReportTypeValue()).array());

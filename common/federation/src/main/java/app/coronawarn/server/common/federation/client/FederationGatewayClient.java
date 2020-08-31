@@ -23,6 +23,7 @@ package app.coronawarn.server.common.federation.client;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -56,7 +57,7 @@ public interface FederationGatewayClient {
    * @param batchTag Unique batchTag to be identified by EFGS.
    * @param batchSignature Batch Signature as per PKCS#7 spec using Authorized Signing Certificate.
    */
-  @RequestMapping(method = RequestMethod.POST, value = "/diagnosiskeys/upload",
+  @PostMapping(value = "/diagnosiskeys/upload",
       consumes = "application/protobuf; version=1.0")
   String postBatchUpload(
       byte[] raw,

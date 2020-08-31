@@ -5,13 +5,8 @@ import app.coronawarn.server.common.protocols.external.exposurenotification.Diag
 import app.coronawarn.server.services.federation.upload.payload.signing.BatchSigner;
 import java.io.IOException;
 import java.security.GeneralSecurityException;
-import java.time.Instant;
 import java.time.LocalDateTime;
-import java.time.ZoneId;
 import java.time.ZoneOffset;
-import java.time.temporal.ChronoUnit;
-import java.time.temporal.TemporalField;
-import java.util.Base64;
 import java.util.List;
 import java.util.Random;
 import java.util.stream.Collectors;
@@ -30,14 +25,13 @@ public class PayloadFactory {
 
   private final DiagnosisKeyBatchAssembler assembler;
   private final BatchSigner signer;
-  private final Random random = new Random();
 
   public PayloadFactory(DiagnosisKeyBatchAssembler assembler, BatchSigner signer) {
     this.assembler = assembler;
     this.signer = signer;
   }
 
-  private UploadPayload mapToPayloadAndSign(Pair<Integer,DiagnosisKeyBatch> batchPair) {
+  private UploadPayload mapToPayloadAndSign(Pair<Integer, DiagnosisKeyBatch> batchPair) {
     var payload = new UploadPayload();
     payload.setBatch(batchPair.getRight());
     payload.setBatchTag(this.generateBatchTag(batchPair.getLeft()));

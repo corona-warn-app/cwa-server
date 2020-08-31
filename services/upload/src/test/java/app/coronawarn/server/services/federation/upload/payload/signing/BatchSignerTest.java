@@ -109,7 +109,7 @@ class BatchSignerTest {
         throws GeneralSecurityException, CMSException, OperatorCreationException, IOException {
       var signature1 = batchSigner.createSignatureBytes(DiagnosisKeyBatchGenerator.makeSingleKeyBatch());
       var signature2 = batchSigner.createSignatureBytes(DiagnosisKeyBatchGenerator.makeSingleKeyBatch());
-      Assertions.assertFalse(signature1.equals(signature2));
+      Assertions.assertNotEquals(signature1, signature2);
     }
   }
 
