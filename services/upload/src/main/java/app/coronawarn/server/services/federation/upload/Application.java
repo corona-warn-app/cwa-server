@@ -30,6 +30,7 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.domain.EntityScan;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.context.ApplicationContext;
 import org.springframework.context.EnvironmentAware;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.core.env.Environment;
@@ -57,6 +58,15 @@ public class Application implements EnvironmentAware, DisposableBean {
   public void destroy() {
     logger.info("Shutting down log4j2.");
     LogManager.shutdown();
+  }
+
+  /**
+   * Terminates this application with exit code 1 (general error).
+   */
+  public static void killApplication(ApplicationContext appContext) {
+    SpringApplication.exit(appContext);
+    logger.error("Federation Upload Service terminated abnormally.");
+    System.exit(1);
   }
 
   @Override

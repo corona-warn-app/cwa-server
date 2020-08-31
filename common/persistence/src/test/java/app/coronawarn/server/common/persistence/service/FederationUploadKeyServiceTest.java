@@ -18,45 +18,36 @@
  * ---license-end
  */
 
-package app.coronawarn.server.services.federation.upload.runner;
+package app.coronawarn.server.common.persistence.service;
 
-import static app.coronawarn.server.services.federation.upload.utils.MockData.*;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
+import static app.coronawarn.server.common.persistence.service.DiagnosisKeyServiceTestHelper.assertDiagnosisKeysEqual;
+import static app.coronawarn.server.common.persistence.service.DiagnosisKeyServiceTestHelper.buildDiagnosisKeyForSubmissionTimestamp;
 
+import java.util.ArrayList;
 import java.util.List;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.autoconfigure.data.jdbc.DataJdbcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.boot.test.mock.mockito.SpyBean;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
-
-import app.coronawarn.server.common.persistence.domain.DiagnosisKey;
 import app.coronawarn.server.common.persistence.repository.FederationUploadKeyRepository;
-import app.coronawarn.server.services.federation.upload.DiagnosisKeyBatchAssembler;
 
-@ExtendWith(SpringExtension.class)
-@SpringBootTest
-class UploadTest {
+@DataJdbcTest
+class FederationUploadKeyServiceTest {
 
   @Autowired
-  private Upload upload;
+  private FederationUploadKeyService uploadKeyService;
 
   @MockBean
   private FederationUploadKeyRepository uploadKeyRepository;
 
-  @SpyBean
-  private DiagnosisKeyBatchAssembler batchAssembler;
-
   @Test
-  void batchesShouldBeCreatedFromPendingUploadKeys() throws Exception {
-    List<DiagnosisKey> testKeys = generateRandomDiagnosisKeys(true, 20);
+  void testRetrievalOfPendingUploadKeys() {
+    var testKeys = new ArrayList<>(List.of(
+        buildDiagnosisKeyForSubmissionTimestamp(1L),
+        buildDiagnosisKeyForSubmissionTimestamp(0L)));
     Mockito.when(uploadKeyRepository.findAllUploadableKeys()).thenReturn(testKeys);
-    upload.run(null);
-    verify(batchAssembler, times(1)).assembleDiagnosisKeyBatch(testKeys);
+    var actKeys = uploadKeyService.getPendingUploadKeys();
+    assertDiagnosisKeysEqual(testKeys, actKeys);
   }
-
 }
