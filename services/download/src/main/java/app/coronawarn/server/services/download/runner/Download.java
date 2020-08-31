@@ -20,32 +20,14 @@
 
 package app.coronawarn.server.services.download.runner;
 
-import static app.coronawarn.server.common.persistence.domain.FederationBatchStatus.ERROR;
-import static app.coronawarn.server.common.persistence.domain.FederationBatchStatus.ERROR_WONT_RETRY;
-import static app.coronawarn.server.common.persistence.domain.FederationBatchStatus.PROCESSED;
-
-import app.coronawarn.server.common.persistence.domain.DiagnosisKey;
-import app.coronawarn.server.common.persistence.domain.FederationBatchInfo;
-import app.coronawarn.server.common.persistence.domain.FederationBatchStatus;
-import app.coronawarn.server.common.persistence.service.DiagnosisKeyService;
-import app.coronawarn.server.common.persistence.service.FederationBatchInfoService;
-import app.coronawarn.server.services.download.download.DiagnosisKeyBatchDownloader;
-import app.coronawarn.server.services.download.download.FederationGatewayResponse;
+import app.coronawarn.server.services.download.download.DiagnosisKeyBatchProcessor;
 import java.time.LocalDate;
 import java.time.Period;
 import java.time.ZoneOffset;
-import java.util.Deque;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
-
 
 /**
  * This runner retrieves diagnosis key batches.
@@ -53,91 +35,17 @@ import org.springframework.stereotype.Component;
 @Component
 @Order(1)
 public class Download implements ApplicationRunner {
+  private final DiagnosisKeyBatchProcessor batchProcessor;
 
-  private static final Logger logger = LoggerFactory.getLogger(Download.class);
-  private final FederationBatchInfoService federationBatchInfoService;
-  private final DiagnosisKeyService diagnosisKeyService;
-  private final DiagnosisKeyBatchDownloader diagnosisKeyBatchDownloader;
-
-  /**
-   * Creates a Download.
-   */
-  Download(FederationBatchInfoService federationBatchInfoService,
-      DiagnosisKeyService diagnosisKeyService, DiagnosisKeyBatchDownloader diagnosisKeyBatchDownloader) {
-    this.federationBatchInfoService = federationBatchInfoService;
-    this.diagnosisKeyService = diagnosisKeyService;
-    this.diagnosisKeyBatchDownloader = diagnosisKeyBatchDownloader;
+  Download(DiagnosisKeyBatchProcessor batchProcessor) {
+    this.batchProcessor = batchProcessor;
   }
 
   @Override
   public void run(ApplicationArguments args) {
     LocalDate yesterday = LocalDate.now(ZoneOffset.UTC).minus(Period.ofDays(1));
-    saveFirstBatchTagForDate(yesterday);
-    processErrorFederationBatches();
-    processFederationBatches();
-  }
-
-  private void saveFirstBatchTagForDate(LocalDate date) {
-    Optional<FederationGatewayResponse> federationGatewayResponseOptional =
-        diagnosisKeyBatchDownloader.downloadBatch(date);
-
-    if (federationGatewayResponseOptional.isPresent()) {
-      FederationGatewayResponse federationGatewayResponse = federationGatewayResponseOptional.get();
-      federationBatchInfoService
-          .save(new FederationBatchInfo(federationGatewayResponse.getBatchTag(), federationGatewayResponse.getDate()));
-    }
-  }
-
-  private void processErrorFederationBatches() {
-    List<FederationBatchInfo> federationBatchInfosWithError = federationBatchInfoService.findByStatus(ERROR);
-    federationBatchInfosWithError.forEach(this::retryProcessingBatch);
-  }
-
-  private void retryProcessingBatch(FederationBatchInfo federationBatchInfo) {
-    try {
-      processBatchAndReturnNextBatchId(federationBatchInfo, ERROR_WONT_RETRY)
-          .ifPresent(batchTag -> {
-            FederationBatchInfo nextBatchInfo = new FederationBatchInfo(batchTag, federationBatchInfo.getDate());
-            federationBatchInfoService.save(nextBatchInfo);
-          });
-    } catch (Exception e) {
-      logger.error("Retry of federation batch processing failed. Will not try again.", e);
-      federationBatchInfoService.updateStatus(federationBatchInfo, ERROR_WONT_RETRY);
-    }
-  }
-
-  private void processFederationBatches() {
-    Deque<FederationBatchInfo> unprocessedBatches =
-        new LinkedList<>(federationBatchInfoService.findByStatus(FederationBatchStatus.UNPROCESSED));
-
-    while (!unprocessedBatches.isEmpty()) {
-      FederationBatchInfo currentBatch = unprocessedBatches.remove();
-      processBatchAndReturnNextBatchId(currentBatch, ERROR)
-          .ifPresent(nextBatchTag ->
-              unprocessedBatches.add(new FederationBatchInfo(nextBatchTag, currentBatch.getDate())));
-    }
-  }
-
-  private Optional<String> processBatchAndReturnNextBatchId(
-      FederationBatchInfo currentBatch, FederationBatchStatus errorStatus) {
-    try {
-      FederationGatewayResponse federationGatewayResponse =
-          diagnosisKeyBatchDownloader.downloadBatch(currentBatch.getDate(), currentBatch.getBatchTag()).orElseThrow();
-
-      diagnosisKeyService.saveDiagnosisKeys(convertDiagnosisKeys(federationGatewayResponse));
-      federationBatchInfoService.updateStatus(currentBatch, PROCESSED);
-      return federationGatewayResponse.getNextBatchTag();
-    } catch (Exception e) {
-      logger.error("Federation batch processing failed. Status set to {}", e, errorStatus.name());
-      federationBatchInfoService.updateStatus(currentBatch, errorStatus);
-      return Optional.empty();
-    }
-  }
-
-  private List<DiagnosisKey> convertDiagnosisKeys(FederationGatewayResponse federationGatewayResponse) {
-    return federationGatewayResponse.getDiagnosisKeyBatch().getKeysList()
-        .stream()
-        .map(diagnosisKey -> DiagnosisKey.builder().fromFederationDiagnosisKey(diagnosisKey).build())
-        .collect(Collectors.toList());
+    batchProcessor.saveFirstBatchInfoForDate(yesterday);
+    batchProcessor.processErrorFederationBatches();
+    batchProcessor.processUnprocessedFederationBatches();
   }
 }

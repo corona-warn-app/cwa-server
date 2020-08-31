@@ -40,7 +40,6 @@ import org.springframework.stereotype.Service;
 @Service
 public class DiagnosisKeyBatchDownloader {
 
-  // TODO to log or not to log
   private static final Logger logger = LoggerFactory.getLogger(DiagnosisKeyBatchDownloader.class);
   private FederationGatewayClient federationGatewayClient;
 
