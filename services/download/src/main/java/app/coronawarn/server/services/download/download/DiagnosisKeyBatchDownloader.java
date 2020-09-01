@@ -20,8 +20,6 @@
 
 package app.coronawarn.server.services.download.download;
 
-import static org.apache.commons.lang3.StringUtils.isBlank;
-
 import app.coronawarn.server.common.federation.client.FederationGatewayClient;
 import app.coronawarn.server.common.protocols.external.exposurenotification.DiagnosisKeyBatch;
 import feign.Response;
@@ -43,7 +41,7 @@ public class DiagnosisKeyBatchDownloader {
 
   public static final String HEADER_BATCH_TAG = "batchTag";
   public static final String HEADER_NEXT_BATCH_TAG = "nextBatchTag";
-  public static final String EMPTY_NEXT_BATCH_TAG = "null";
+  public static final String EMPTY_HEADER = "null";
 
   private static final Logger logger = LoggerFactory.getLogger(DiagnosisKeyBatchDownloader.class);
   private FederationGatewayClient federationGatewayClient;
@@ -71,7 +69,7 @@ public class DiagnosisKeyBatchDownloader {
         InputStream responseBody = response.body().asInputStream()) {
       logger.info("Downloading batch for date " + date + " started");
       String batchTag = getHeader(response, HEADER_BATCH_TAG).orElseThrow();
-      Optional<String> nextBatchTag = extractNextBatchTag(response);
+      Optional<String> nextBatchTag = getHeader(response, HEADER_NEXT_BATCH_TAG);
       DiagnosisKeyBatch diagnosisKeyBatch = DiagnosisKeyBatch.parseFrom(responseBody);
       return Optional.of(new FederationGatewayResponse(diagnosisKeyBatch, batchTag, nextBatchTag, date));
     } catch (Exception e) {
@@ -95,7 +93,7 @@ public class DiagnosisKeyBatchDownloader {
         date.format(DateTimeFormatter.ISO_LOCAL_DATE));
         InputStream responseBody = response.body().asInputStream()) {
       logger.info("Downloading batch for date " + date + " and batchTag " + batchTag + " started");
-      Optional<String> nextBatchTag = extractNextBatchTag(response);
+      Optional<String> nextBatchTag = getHeader(response, HEADER_NEXT_BATCH_TAG);
       DiagnosisKeyBatch diagnosisKeyBatch = DiagnosisKeyBatch.parseFrom(responseBody);
       return Optional.of(new FederationGatewayResponse(diagnosisKeyBatch, batchTag, nextBatchTag, date));
     } catch (Exception e) {
@@ -104,15 +102,10 @@ public class DiagnosisKeyBatchDownloader {
     }
   }
 
-  private Optional<String> extractNextBatchTag(Response serverResponse) {
-    return getHeader(serverResponse, HEADER_NEXT_BATCH_TAG)
-        .flatMap(headerValue -> !isBlank(headerValue) ? Optional.of(headerValue) : Optional.empty());
-  }
-
   private Optional<String> getHeader(Response response, String header) {
     Collection<String> headerStrings = response.headers().get(header);
     String headerString = headerStrings.iterator().next();
-    return (!StringUtils.equals(EMPTY_NEXT_BATCH_TAG, headerString))
+    return (!StringUtils.equals(EMPTY_HEADER, headerString))
         ? Optional.of(headerString)
         : Optional.empty();
   }
