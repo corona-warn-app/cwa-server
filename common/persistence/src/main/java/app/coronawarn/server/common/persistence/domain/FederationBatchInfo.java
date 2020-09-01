@@ -26,7 +26,7 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.annotation.PersistenceConstructor;
 
 /**
- * TODO Javadoc.
+ * Information about federation batches with their status.
  */
 public class FederationBatchInfo {
 
