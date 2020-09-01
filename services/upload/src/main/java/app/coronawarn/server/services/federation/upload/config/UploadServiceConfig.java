@@ -7,11 +7,30 @@ import org.springframework.stereotype.Component;
 @ConfigurationProperties(prefix = "services.upload")
 public class UploadServiceConfig {
 
+  private Integer minBatchKeyCount;
+  private Integer maxBatchKeyCount;
   private String privateKey;
   private String privateKeyPassword;
   private String certificate;
   private Signature signature;
   private TestData testData;
+
+
+  public Integer getMinBatchKeyCount() {
+    return minBatchKeyCount;
+  }
+
+  public void setMinBatchKeyCount(Integer minBatchKeyCount) {
+    this.minBatchKeyCount = minBatchKeyCount;
+  }
+
+  public Integer getMaxBatchKeyCount() {
+    return maxBatchKeyCount;
+  }
+
+  public void setMaxBatchKeyCount(Integer maxBatchKeyCount) {
+    this.maxBatchKeyCount = maxBatchKeyCount;
+  }
 
   public String getCertificate() {
     return certificate;

@@ -21,38 +21,48 @@
 package app.coronawarn.server.services.federation.upload.payload;
 
 import app.coronawarn.server.common.persistence.domain.DiagnosisKey;
-import app.coronawarn.server.common.protocols.external.exposurenotification.DiagnosisKeyBatch;
 import app.coronawarn.server.common.protocols.external.exposurenotification.ReportType;
+import app.coronawarn.server.services.federation.upload.config.UploadServiceConfig;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
-import org.junit.platform.commons.util.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.ConfigFileApplicationContextInitializer;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.stream.Stream;
 
 import static java.util.Collections.emptyList;
 
+@EnableConfigurationProperties(value = UploadServiceConfig.class)
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration(classes = {
     DiagnosisKeyBatchAssembler.class}, initializers = ConfigFileApplicationContextInitializer.class)
 class DiagnosisKeyBatchAssemblerTest {
 
-  private static final int SIZE_THRESHOLD = 4000;
-  private static final int MINIMUM_THRESHOLD = 140;
+  private static volatile int minKeyThreshold;
+  private static volatile int maxKeyCount;
 
   @Autowired
   DiagnosisKeyBatchAssembler diagnosisKeyBatchAssembler;
+
+  @Autowired
+  UploadServiceConfig uploadServiceConfig;
+
+  @BeforeEach
+  public void setup() {
+    minKeyThreshold = uploadServiceConfig.getMinBatchKeyCount();
+    maxKeyCount = uploadServiceConfig.getMaxBatchKeyCount();
+  }
 
   private void assertKeysAreEqual(DiagnosisKey persistenceKey,
       app.coronawarn.server.common.protocols.external.exposurenotification.DiagnosisKey exportKey) {
@@ -102,13 +112,13 @@ class DiagnosisKeyBatchAssemblerTest {
 
   @Test
   void shouldReturnEmptyListIfLessThenThresholdKeysGiven() {
-    var result = diagnosisKeyBatchAssembler.assembleDiagnosisKeyBatch(makeFakeKeys(true, MINIMUM_THRESHOLD - 1));
+    var result = diagnosisKeyBatchAssembler.assembleDiagnosisKeyBatch(makeFakeKeys(true, minKeyThreshold - 1));
     Assertions.assertTrue(result.isEmpty());
   }
 
   @Test
   void packagedKeysShouldContainInitialInformation() {
-    var fakeKeys = makeFakeKeys(true, MINIMUM_THRESHOLD);
+    var fakeKeys = makeFakeKeys(true, minKeyThreshold);
     var result = diagnosisKeyBatchAssembler.assembleDiagnosisKeyBatch(fakeKeys);
 
     Assertions.assertTrue(fakeKeys.size() == result.get(0).getKeysCount());
@@ -118,11 +128,11 @@ class DiagnosisKeyBatchAssemblerTest {
 
   @Test
   void shouldNotPackageKeysIfConsentFlagIsNotSet() {
-    var dataset = makeFakeKeys(true, MINIMUM_THRESHOLD);
+    var dataset = makeFakeKeys(true, minKeyThreshold);
     dataset.add(makeFakeKey(false));
     var result = diagnosisKeyBatchAssembler.assembleDiagnosisKeyBatch(dataset);
     Assertions.assertEquals(1, result.size());
-    Assertions.assertEquals(MINIMUM_THRESHOLD, result.get(0).getKeysCount());
+    Assertions.assertEquals(minKeyThreshold, result.get(0).getKeysCount());
   }
 
   @ParameterizedTest
@@ -138,18 +148,18 @@ class DiagnosisKeyBatchAssemblerTest {
    */
   private static Stream<Arguments> keysToPartitionAndBatchNumberExpectations() {
     return Stream.of(
-        Arguments.of(makeFakeKeys(true, MINIMUM_THRESHOLD - 1), 0),
-        Arguments.of(makeFakeKeys(true, MINIMUM_THRESHOLD), 1),
-        Arguments.of(makeFakeKeys(true, SIZE_THRESHOLD), 1),
-        Arguments.of(makeFakeKeys(true, SIZE_THRESHOLD / 2), 1),
-        Arguments.of(makeFakeKeys(true, SIZE_THRESHOLD - 1), 1),
-        Arguments.of(makeFakeKeys(true, SIZE_THRESHOLD + 1), 2),
-        Arguments.of(makeFakeKeys(true, 2 * SIZE_THRESHOLD), 2),
-        Arguments.of(makeFakeKeys(true, 3 * SIZE_THRESHOLD), 3),
-        Arguments.of(makeFakeKeys(true, 4 * SIZE_THRESHOLD), 4),
-        Arguments.of(makeFakeKeys(true, 2 * SIZE_THRESHOLD + 1), 3),
-        Arguments.of(makeFakeKeys(true, 2 * SIZE_THRESHOLD + SIZE_THRESHOLD / 2), 3),
-        Arguments.of(makeFakeKeys(true, 2 * SIZE_THRESHOLD - SIZE_THRESHOLD / 2), 2)
+        Arguments.of(makeFakeKeys(true, minKeyThreshold - 1), 0),
+        Arguments.of(makeFakeKeys(true, minKeyThreshold), 1),
+        Arguments.of(makeFakeKeys(true, maxKeyCount), 1),
+        Arguments.of(makeFakeKeys(true, maxKeyCount / 2), 1),
+        Arguments.of(makeFakeKeys(true, maxKeyCount - 1), 1),
+        Arguments.of(makeFakeKeys(true, maxKeyCount + 1), 2),
+        Arguments.of(makeFakeKeys(true, 2 * maxKeyCount), 2),
+        Arguments.of(makeFakeKeys(true, 3 * maxKeyCount), 3),
+        Arguments.of(makeFakeKeys(true, 4 * maxKeyCount), 4),
+        Arguments.of(makeFakeKeys(true, 2 * maxKeyCount + 1), 3),
+        Arguments.of(makeFakeKeys(true, 2 * maxKeyCount + maxKeyCount / 2), 3),
+        Arguments.of(makeFakeKeys(true, 2 * maxKeyCount - maxKeyCount / 2), 2)
     );
   }
 }

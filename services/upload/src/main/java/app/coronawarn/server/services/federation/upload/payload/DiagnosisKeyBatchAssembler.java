@@ -2,6 +2,7 @@ package app.coronawarn.server.services.federation.upload.payload;
 
 import app.coronawarn.server.common.persistence.domain.DiagnosisKey;
 import app.coronawarn.server.common.protocols.external.exposurenotification.DiagnosisKeyBatch;
+import app.coronawarn.server.services.federation.upload.config.UploadServiceConfig;
 import com.google.protobuf.ByteString;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -16,8 +17,12 @@ import org.springframework.stereotype.Component;
 public class DiagnosisKeyBatchAssembler {
 
   private static final Logger logger = LoggerFactory.getLogger(DiagnosisKeyBatchAssembler.class);
-  private static final int THRESHOLD = 140;
-  private static final int SIZE_THRESHOLD = 4000;
+
+  private UploadServiceConfig uploadConfig;
+
+  public DiagnosisKeyBatchAssembler(UploadServiceConfig uploadConfig) {
+    this.uploadConfig = uploadConfig;
+  }
 
   private app.coronawarn.server.common.protocols.external.exposurenotification.DiagnosisKey convertKey(
       DiagnosisKey key) {
@@ -42,8 +47,9 @@ public class DiagnosisKeyBatchAssembler {
       logger.info("Batches not generated: no pending upload diagnosis keys found.");
       return Collections.emptyList();
     }
-    if (diagnosisKeys.size() < THRESHOLD) {
-      logger.info("Batches not generated: less then minimum {} pending upload diagnosis keys.", THRESHOLD);
+    if (diagnosisKeys.size() < uploadConfig.getMinBatchKeyCount()) {
+      logger.info("Batches not generated: less then minimum {} pending upload diagnosis keys.",
+          uploadConfig.getMinBatchKeyCount());
       return Collections.emptyList();
     }
 
@@ -53,7 +59,7 @@ public class DiagnosisKeyBatchAssembler {
   private List<DiagnosisKeyBatch>  partionIntoBatches(
       List<app.coronawarn.server.common.protocols.external.exposurenotification.DiagnosisKey> keysToUpload) {
 
-    return  partitionListBySize(keysToUpload, SIZE_THRESHOLD).stream()
+    return  partitionListBySize(keysToUpload, uploadConfig.getMaxBatchKeyCount()).stream()
                               .map(partition -> DiagnosisKeyBatch.newBuilder().addAllKeys(partition).build())
                               .collect(Collectors.toList());
   }
