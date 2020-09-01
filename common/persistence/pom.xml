@@ -12,19 +12,6 @@
 
   <artifactId>persistence</artifactId>
 
-  <organization>
-    <name>SAP SE</name>
-  </organization>
-
-  <properties>
-    <java.version>11</java.version>
-    <maven.compiler.source>11</maven.compiler.source>
-    <maven.compiler.target>11</maven.compiler.target>
-    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-    <sonar.projectKey>corona-warn-app_cwa-server_common_persistence</sonar.projectKey>
-  </properties>
-
   <dependencies>
     <dependency>
       <groupId>org.opencwa</groupId>

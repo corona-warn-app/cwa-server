@@ -14,10 +14,6 @@
 
   <artifactId>services</artifactId>
 
-  <organization>
-    <name>SAP SE</name>
-  </organization>
-
   <packaging>pom</packaging>
   <modules>
     <module>distribution</module>
@@ -26,17 +22,6 @@
     <module>upload</module>
     <module>federation-download</module>
   </modules>
-
-  <properties>
-    <java.version>11</java.version>
-    <maven.compiler.source>11</maven.compiler.source>
-    <maven.compiler.target>11</maven.compiler.target>
-    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-    <sonar.projectKey>corona-warn-app_cwa-server_services</sonar.projectKey>
-    <!-- https://spring.io/projects/spring-cloud#release-trains -->
-    <spring-cloud-version>2.2.4.RELEASE</spring-cloud-version>
-  </properties>
 
   <dependencies>
     <dependency>

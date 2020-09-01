@@ -11,10 +11,6 @@
 
   <artifactId>federation-download</artifactId>
 
-  <properties>
-    <sonar.projectKey>corona-warn-app_cwa-server_services_federation-download</sonar.projectKey>
-  </properties>
-
   <dependencies>
     <dependency>
       <groupId>org.springframework.boot</groupId>

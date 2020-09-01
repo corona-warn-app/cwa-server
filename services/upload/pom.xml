@@ -12,10 +12,6 @@
 
   <artifactId>upload</artifactId>
 
-  <properties>
-    <sonar.projectKey>corona-warn-app_cwa-server_services_upload</sonar.projectKey>
-  </properties>
-
   <dependencies>
     <dependency>
       <groupId>org.springframework.boot</groupId>
