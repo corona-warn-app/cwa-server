@@ -44,7 +44,6 @@ class DownloadTest {
     download = new Download(diagnosisKeyBatchProcessor);
   }
 
-  @Disabled
   @Test
   void testRun() {
     download.run(null);
