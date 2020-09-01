@@ -13,7 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.data.jdbc.DataJdbcTest;
 
 @DataJdbcTest
-public class FederationBatchInfoRepositoryTest {
+class FederationBatchInfoRepositoryTest {
 
   private static final String batchTag1 = "11111";
   private static final String batchTag2 = "22222";
@@ -31,20 +31,20 @@ public class FederationBatchInfoRepositoryTest {
   }
 
   @Test
-  public void testStatusIsReturnedCorrectly() {
+  void testStatusIsReturnedCorrectly() {
     federationBatchInfoRepository.saveDoNothingOnConflict(batchTag1, date1, statusProcessed);
     assertThat(federationBatchInfoRepository.findByStatus(statusProcessed))
         .isEqualTo(singletonList(new FederationBatchInfo(batchTag1, date1, FederationBatchStatus.PROCESSED)));
   }
 
   @Test
-  public void testReturnsEmptyIfStatusDoesNotMatch() {
+  void testReturnsEmptyIfStatusDoesNotMatch() {
     federationBatchInfoRepository.saveDoNothingOnConflict(batchTag1, date1, statusProcessed);
     assertThat(federationBatchInfoRepository.findByStatus(statusUnprocessed)).isEmpty();
   }
 
   @Test
-  public void testDoesNothingOnConflict() {
+  void testDoesNothingOnConflict() {
     federationBatchInfoRepository.saveDoNothingOnConflict(batchTag1, date1, statusUnprocessed);
     federationBatchInfoRepository.saveDoNothingOnConflict(batchTag1, date2, statusError);
     federationBatchInfoRepository.saveDoNothingOnConflict(batchTag2, date2, statusError);
