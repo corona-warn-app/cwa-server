@@ -60,12 +60,7 @@ public class DiagnosisKeyBatchDownloader {
    * @return The server response.
    */
   public Optional<FederationGatewayResponse> downloadBatch(LocalDate date) {
-    // TODO try to put headers into client class
-    try (Response response = federationGatewayClient.getDiagnosisKeys(
-        "application/protobuf; version=1.0",
-        "abcd",
-        "C=PL",
-        date.format(DateTimeFormatter.ISO_LOCAL_DATE));
+    try (Response response = federationGatewayClient.getDiagnosisKeys(date.format(DateTimeFormatter.ISO_LOCAL_DATE));
         InputStream responseBody = response.body().asInputStream()) {
       logger.info("Downloading batch for date {} started", date);
       String batchTag = getHeader(response, HEADER_BATCH_TAG).orElseThrow();
@@ -86,9 +81,6 @@ public class DiagnosisKeyBatchDownloader {
    */
   public Optional<FederationGatewayResponse> downloadBatch(LocalDate date, String batchTag) {
     try (Response response = federationGatewayClient.getDiagnosisKeys(
-        "application/protobuf; version=1.0",
-        "abcd",
-        "C=PL",
         batchTag,
         date.format(DateTimeFormatter.ISO_LOCAL_DATE));
         InputStream responseBody = response.body().asInputStream()) {
