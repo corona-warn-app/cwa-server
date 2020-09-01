@@ -132,6 +132,22 @@
         <version>1.14.3</version>
         <scope>test</scope>
       </dependency>
+      <dependency>
+        <groupId>com.google.protobuf</groupId>
+        <artifactId>protobuf-java-util</artifactId>
+        <version>3.12.4</version>
+        <scope>test</scope>
+      </dependency>
+      <dependency>
+        <groupId>org.opencwa</groupId>
+        <artifactId>federation</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>io.github.openfeign</groupId>
+        <artifactId>feign-core</artifactId>
+        <version>11.0</version>
+      </dependency>
     </dependencies>
   </dependencyManagement>
 
