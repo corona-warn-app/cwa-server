@@ -123,7 +123,7 @@ public class DiagnosisKeyBatchProcessor {
       batchInfoService.updateStatus(batchInfo, PROCESSED);
       return federationGatewayResponse.getNextBatchTag();
     } catch (Exception e) {
-      logger.error("Federation batch processing failed. Status set to {}", e, errorStatus.name());
+      logger.error("Federation batch processing failed. Status set to {}", errorStatus.name(), e);
       batchInfoService.updateStatus(batchInfo, errorStatus);
       return Optional.empty();
     }

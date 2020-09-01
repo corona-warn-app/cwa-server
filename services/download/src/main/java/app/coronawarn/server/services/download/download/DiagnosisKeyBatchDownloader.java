@@ -67,13 +67,13 @@ public class DiagnosisKeyBatchDownloader {
         "C=PL",
         date.format(DateTimeFormatter.ISO_LOCAL_DATE));
         InputStream responseBody = response.body().asInputStream()) {
-      logger.info("Downloading batch for date " + date + " started");
+      logger.info("Downloading batch for date {} started", date);
       String batchTag = getHeader(response, HEADER_BATCH_TAG).orElseThrow();
       Optional<String> nextBatchTag = getHeader(response, HEADER_NEXT_BATCH_TAG);
       DiagnosisKeyBatch diagnosisKeyBatch = DiagnosisKeyBatch.parseFrom(responseBody);
       return Optional.of(new FederationGatewayResponse(diagnosisKeyBatch, batchTag, nextBatchTag, date));
     } catch (Exception e) {
-      logger.info("Downloading batch for date " + date + " failed", e);
+      logger.info("Downloading batch for date {} failed", date, e);
       return Optional.empty();
     }
   }
@@ -92,12 +92,12 @@ public class DiagnosisKeyBatchDownloader {
         batchTag,
         date.format(DateTimeFormatter.ISO_LOCAL_DATE));
         InputStream responseBody = response.body().asInputStream()) {
-      logger.info("Downloading batch for date " + date + " and batchTag " + batchTag + " started");
+      logger.info("Downloading batch for date {} and batchTag {} started", date, batchTag);
       Optional<String> nextBatchTag = getHeader(response, HEADER_NEXT_BATCH_TAG);
       DiagnosisKeyBatch diagnosisKeyBatch = DiagnosisKeyBatch.parseFrom(responseBody);
       return Optional.of(new FederationGatewayResponse(diagnosisKeyBatch, batchTag, nextBatchTag, date));
     } catch (Exception e) {
-      logger.info("Downloading batch for date " + date + " and batchTag " + batchTag + " failed", e);
+      logger.info("Downloading batch for date {} and batchTag {} failed", date, batchTag, e);
       return Optional.empty();
     }
   }
