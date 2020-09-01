@@ -74,7 +74,7 @@ class DateIndexingDecoratorTest {
     DateIndexingDecorator decorator = makeDecoratedDateDirectory(diagnosisKeyBundler);
     decorator.prepare(new ImmutableStack<>().push("DE"));
 
-    Set<LocalDate> index = decorator.getIndex(new ImmutableStack<>());
+    Set<LocalDate> index = decorator.getIndex(new ImmutableStack<>().push("DE"));
 
     assertThat(index).contains(LocalDate.of(1970, 1, 4))
         .doesNotContain(LocalDate.of(1970, 1, 5));
@@ -92,6 +92,7 @@ class DateIndexingDecoratorTest {
     when(svcConfig.getExpiryPolicyMinutes()).thenReturn(120);
     when(svcConfig.getShiftingPolicyThreshold()).thenReturn(1);
     when(svcConfig.getMaximumNumberOfKeysPerBundle()).thenReturn(1);
+    when(svcConfig.getSupportedCountries()).thenReturn(new String[]{"DE"});
 
     DiagnosisKeyBundler diagnosisKeyBundler = new ProdDiagnosisKeyBundler(svcConfig);
     diagnosisKeyBundler.setDiagnosisKeys(diagnosisKeys, LocalDateTime.of(1970, 1, 4, 0, 0));
@@ -100,7 +101,7 @@ class DateIndexingDecoratorTest {
 
     decorator.prepare(new ImmutableStack<>().push("DE"));
 
-    Set<LocalDate> index = decorator.getIndex(new ImmutableStack<>());
+    Set<LocalDate> index = decorator.getIndex(new ImmutableStack<>().push("DE"));
     assertThat(index).isEmpty();
   }
 

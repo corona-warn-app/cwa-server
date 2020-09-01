@@ -38,6 +38,7 @@ import app.coronawarn.server.services.distribution.config.DistributionServiceCon
 import java.io.File;
 import java.io.IOException;
 import java.time.LocalDateTime;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -97,8 +98,9 @@ class DiagnosisKeysDirectoryTest {
     DiagnosisKeyBundler bundler = new ProdDiagnosisKeyBundler(distributionServiceConfig);
     Directory<WritableOnDisk> directory = new DiagnosisKeysDirectory(bundler, cryptoProvider,
         distributionServiceConfig);
+    bundler.setDiagnosisKeys(Collections.emptyList(), LocalDateTime.of(1970, 1, 5, 0, 0));
     parentDirectory.addWritable(directory);
-    directory.prepare(new ImmutableStack<>());
+    directory.prepare(new ImmutableStack<>().push("DE"));
     directory.write();
 
     String s = File.separator;
@@ -114,12 +116,13 @@ class DiagnosisKeysDirectoryTest {
 
   @Test
   void checkBuildsTheCorrectDirectoryStructure() {
+    distributionServiceConfig.setSupportedCountries("DE");
     DiagnosisKeyBundler bundler = new ProdDiagnosisKeyBundler(distributionServiceConfig);
     bundler.setDiagnosisKeys(diagnosisKeys, LocalDateTime.of(1970, 1, 5, 0, 0));
     Directory<WritableOnDisk> directory = new DiagnosisKeysDirectory(bundler, cryptoProvider,
         distributionServiceConfig);
     parentDirectory.addWritable(directory);
-    directory.prepare(new ImmutableStack<>());
+    directory.prepare(new ImmutableStack<>().push("DE"));
     directory.write();
 
     String s = File.separator;

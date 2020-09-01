@@ -41,6 +41,7 @@ public class S3RetentionPolicy {
   private final ObjectStoreAccess objectStoreAccess;
   private final Api api;
   private final FailedObjectStoreOperationsCounter failedObjectStoreOperationsCounter;
+  private final List<String> supportedCountries;
 
   /**
    * Creates an {@link S3RetentionPolicy} instance with the specified parameters.
@@ -50,6 +51,7 @@ public class S3RetentionPolicy {
     this.objectStoreAccess = objectStoreAccess;
     this.api = distributionServiceConfig.getApi();
     this.failedObjectStoreOperationsCounter = failedOperationsCounter;
+    this.supportedCountries = List.of(distributionServiceConfig.getSupportedCountries());
   }
 
   /**
@@ -58,24 +60,27 @@ public class S3RetentionPolicy {
    * @param retentionDays the number of days, that files should be retained on S3.
    */
   public void applyRetentionPolicy(int retentionDays) {
-    List<S3Object> diagnosisKeysObjects = objectStoreAccess.getObjectsWithPrefix(api.getVersionPath() + "/"
-        + api.getVersionV1() + "/"
-        + api.getDiagnosisKeysPath() + "/"
-        + api.getCountryPath() + "/"
-        + api.getCountryGermany() + "/"
-        + api.getDatePath() + "/");
-    final String regex = ".*([0-9]{4}-[0-9]{2}-[0-9]{2}).*";
-    final Pattern pattern = Pattern.compile(regex);
+    supportedCountries.forEach(supportedCountry -> {
+      List<S3Object> diagnosisKeysObjects = objectStoreAccess.getObjectsWithPrefix(api.getVersionPath() + "/"
+            + api.getVersionV1() + "/"
+            + api.getDiagnosisKeysPath() + "/"
+            + api.getCountryPath() + "/"
+            + supportedCountry + "/"
+            + api.getDatePath() + "/");
+      final String regex = ".*([0-9]{4}-[0-9]{2}-[0-9]{2}).*";
+      final Pattern pattern = Pattern.compile(regex);
 
-    final LocalDate cutOffDate = TimeUtils.getUtcDate().minusDays(retentionDays);
+      final LocalDate cutOffDate = TimeUtils.getUtcDate().minusDays(retentionDays);
 
-    diagnosisKeysObjects.stream()
-        .filter(diagnosisKeysObject -> {
-          Matcher matcher = pattern.matcher(diagnosisKeysObject.getObjectName());
-          return matcher.matches() && LocalDate.parse(matcher.group(1), DateTimeFormatter.ISO_LOCAL_DATE)
-              .isBefore(cutOffDate);
-        })
-        .forEach(this::deleteDiagnosisKey);
+      diagnosisKeysObjects.stream()
+          .filter(diagnosisKeysObject -> {
+            Matcher matcher = pattern.matcher(diagnosisKeysObject.getObjectName());
+            return matcher.matches() && LocalDate.parse(matcher.group(1), DateTimeFormatter.ISO_LOCAL_DATE)
+                .isBefore(cutOffDate);
+          })
+          .forEach(this::deleteDiagnosisKey);
+    }
+    );
   }
 
   /**

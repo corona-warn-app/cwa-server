@@ -104,7 +104,7 @@ class S3RetentionPolicyTest {
     var api = distributionServiceConfig.getApi();
 
     return api.getVersionPath() + "/" + api.getVersionV1() + "/" + api.getDiagnosisKeysPath() + "/"
-        + api.getCountryPath() + "/" + api.getCountryGermany() + "/" + api.getDatePath() + "/" + date.toString() + "/"
+        + api.getCountryPath() + "/" + api.getOriginCountry() + "/" + api.getDatePath() + "/" + date.toString() + "/"
         + api.getHourPath() + "/0";
   }
 }

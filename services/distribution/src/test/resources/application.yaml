@@ -25,7 +25,7 @@ services:
       version-path: version
       version-v1: v1
       country-path: country
-      country-germany: DE
+      origin-country: DE
       date-path: date
       hour-path: hour
       diagnosis-keys-path: diagnosis-keys
@@ -56,7 +56,7 @@ services:
     app-features:
       - label: isPlausibleDeniabilityActive
         value: ${PLAUSIBLE_DENIABILITY_ACTIVE:1}
-    supported-countries: ${SUPPORTED_COUNTRIES:DE}
+    supported-countries: ${SUPPORTED_COUNTRIES:DE,FR}
     app-versions:
       latest-ios: ${LATEST_IOS_VERSION:0.8.2}
       min-ios: ${MIN_IOS_VERSION:0.5.0}

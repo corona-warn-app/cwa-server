@@ -42,13 +42,12 @@ services:
       version-path: version
       version-v1: v1
       country-path: country
-      country-germany: DE
+      origin-country: DE
       date-path: date
       hour-path: hour
       diagnosis-keys-path: diagnosis-keys
       parameters-path: configuration
       app-config-file-name: app_config
-      distribution-country: ${DISTRIBUTION_COUNTRY:DE}
     # Signature configuration, used for signing the exports.
     signature:
       # The alias with which to identify public key to be used for verification.
@@ -86,7 +85,7 @@ services:
     app-features:
       - label: reserved
         value: ${reserved:1}
-    supported-countries: ${SUPPORTED_COUNTRIES:DE}
+    supported-countries: ${SUPPORTED_COUNTRIES:DE,FR}
     app-versions:
       latest-ios: ${LATEST_IOS_VERSION:0.8.2}
       min-ios: ${MIN_IOS_VERSION:0.5.0}

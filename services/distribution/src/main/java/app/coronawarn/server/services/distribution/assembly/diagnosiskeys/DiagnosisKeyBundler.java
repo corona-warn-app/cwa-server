@@ -30,6 +30,7 @@ import java.time.LocalDateTime;
 import java.time.temporal.Temporal;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -186,6 +187,7 @@ public abstract class DiagnosisKeyBundler {
   public List<DiagnosisKey> getDiagnosisKeysForHour(LocalDateTime hour, String country) {
     //todo: We can use optional for getting the diagnosis for country check
     return Optional
+        .ofNullable(country)
         .ofNullable(this.distributableDiagnosisKeys.get(country).get(hour))
         .orElse(emptyList());
   }
@@ -196,7 +198,7 @@ public abstract class DiagnosisKeyBundler {
     supportedCountries.forEach(supportedCountry -> {
       diagnosisKeysMapped.put(supportedCountry, new ArrayList<>());
     });
-    // diagnosis keys mapped by country
+
     diagnosisKeys.forEach(diagnosisKey -> diagnosisKey.getVisitedCountries().stream()
         .filter(supportedCountries::contains)
         .forEach(visitedCountry -> diagnosisKeysMapped.get(visitedCountry).add(diagnosisKey)));

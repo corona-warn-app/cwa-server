@@ -99,7 +99,8 @@ public class DiagnosisKeyService {
         .minusDays(daysToRetain)
         .toEpochSecond(UTC) / SECONDS_PER_HOUR;
     int numberOfDeletions = keyRepository.countOlderThan(threshold);
-    logger.info("Deleting {} diagnosis key(s) with a submission timestamp older than {} day(s) ago.", numberOfDeletions, daysToRetain);
+    logger.info("Deleting {} diagnosis key(s) with a submission timestamp older than {} day(s) ago.",
+        numberOfDeletions, daysToRetain);
     keyRepository.deleteOlderThan(threshold);
   }
 }

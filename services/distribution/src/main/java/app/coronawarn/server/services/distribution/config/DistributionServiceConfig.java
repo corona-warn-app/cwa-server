@@ -311,7 +311,7 @@ public class DistributionServiceConfig {
     @Pattern(regexp = CHAR_AND_NUMBER_REGEX)
     private String countryPath;
     @Pattern(regexp = CHAR_AND_NUMBER_REGEX)
-    private String countryGermany;
+    private String originCountry;
     @Pattern(regexp = CHAR_AND_NUMBER_REGEX)
     private String datePath;
     @Pattern(regexp = CHAR_AND_NUMBER_REGEX)
@@ -345,14 +345,6 @@ public class DistributionServiceConfig {
 
     public void setCountryPath(String countryPath) {
       this.countryPath = countryPath;
-    }
-
-    public String getCountryGermany() {
-      return countryGermany;
-    }
-
-    public void setCountryGermany(String countryGermany) {
-      this.countryGermany = countryGermany;
     }
 
     public String getDatePath() {
@@ -395,6 +387,13 @@ public class DistributionServiceConfig {
       this.appConfigFileName = appConfigFileName;
     }
 
+    public String getOriginCountry() {
+      return originCountry;
+    }
+
+    public void setOriginCountry(String originCountry) {
+      this.originCountry = originCountry;
+    }
   }
 
   public static class Signature {
