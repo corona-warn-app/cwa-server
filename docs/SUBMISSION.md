@@ -60,6 +60,11 @@ Due to concerns regarding data privacy and protection, device attestation is cur
 
 In order to support federation of keys, when new keys are submitted to the CWA Server they will be evaluated to determine if they are applicable for federation. This will be decided based on an attribute provided in the submission payload `optional bool consentToFederation = 6;`. If this is set it means that the user on the mobile device has agreed to have the keys they are submitting sent to the other nations connected to the federation gateway. When processed via submission the keys provided will be duplicated (for a short period) to a table which will be specifically monitored by the Federation Key Upload service. Only keys which are found within this table will be considered for the upload.
 
+## External Dependencies
+
+- **Vault**: Used for secrets and certificate storage
+- **RDBMS**: PostgreSQL as the persistent storage for keys which are downloaded
+
 ## Spring Profiles
 
 Spring profiles are used to apply submission service configuration based on the running environment, determined by the active profile.
@@ -100,3 +105,14 @@ You will find the implementation file at [`/services/submission/src/main/java/ap
 * `StartIntervalNumber` values from the same [`SubmissionPayload`](https://corona-warn-app.github.io/cwa-server/1.0.0/app/coronawarn/server/common/protocols/internal/SubmissionPayload.html) shall be unique.
 * There must not be any keys in the [`SubmissionPayload`](https://corona-warn-app.github.io/cwa-server/1.0.0/app/coronawarn/server/common/protocols/internal/SubmissionPayload.html) that have overlapping time windows.
 * The period covered by the data file must not exceed the configured maximum number of days, which is defined by `max-number-of-keys` property in [`application.yaml`](/services/submission/src/main/resources/application.yaml). Currently no submissions with more than 14 keys are accepted
+* Visited Counties: TODO: Align with team as current implementation might not be sufficient. 
+
+## Data Derivations & Defaults
+
+To support integration with the Federation Gateway some attributes are placed into the Submission Proto as this information is required to be passed along. The attributes are optional and if no provided may have information derived and defaulted per the blow:
+
+- **Visited Countries**: This is used for the user to indicate what countries they had visited prior to a positive test result. TODO: Validate the Other Countries scenario as in this case we would default essentially all country codes.
+- **Consent To Federation**: This is used in order to later determine if the associated keys (and generated padded keys) should be uploaded to the federation gateway. If consent is not provided by the user this is be default set to false.
+- **Origin Country**: This is used by the federation gateway to know the source country for the key data. As CWA is intended for use within DE this value is defaulted to DE
+- **Report Type**: Indicates how the test/verification of COVID-19 was confirmed. For the CWA app `CONFIRMED_CLINICAL_DIAGNOSIS` is defaulted as this is the only way submissions can be made at this time.
+- **Days Since onset of Symptoms**: 

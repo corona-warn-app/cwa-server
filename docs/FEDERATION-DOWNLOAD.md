@@ -16,3 +16,28 @@ The rules above would be defined at 2 levels:
 They would also take into consideration other attributes provided within the key data for example report type. The full set of attributes to be evaluated and how is still TBD.
 
 These rules will allow the keys sourced from the federation gateway to be processed within the CWA App and be considered with the risk detection algorithms.
+
+## External Dependencies
+
+- **Vault**: Used for secrets and certificate storage
+- **RDBMS**: PostgreSQL as the persistent storage for keys which are downloaded
+- **Federation Gateway Service**: The service where the service downloads the keys
+
+## Data Model
+
+This service doesn't specifically introduce any new data model concepts. It will reuse the existing diagnosis key table where it will store the keys that it downloads.
+
+```sql
+
+CREATE TABLE diagnosis_key (
+    key_data bytea PRIMARY KEY,
+    rolling_period integer NOT NULL,
+    rolling_start_interval_number integer NOT NULL,
+    submission_timestamp bigint NOT NULL,
+    transmission_risk_level integer NOT NULL,
+    consent_to_federation boolean NOT NULL DEFAULT FALSE,
+    origin_country varchar (2),
+    visited_countries varchar (2) [],
+    verification_type varchar(20)
+);
+```
