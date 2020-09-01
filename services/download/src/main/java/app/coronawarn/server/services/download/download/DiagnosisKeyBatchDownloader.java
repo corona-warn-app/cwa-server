@@ -30,6 +30,7 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.Collection;
 import java.util.Optional;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -39,6 +40,10 @@ import org.springframework.stereotype.Service;
  */
 @Service
 public class DiagnosisKeyBatchDownloader {
+
+  public static final String HEADER_BATCH_TAG = "batchTag";
+  public static final String HEADER_NEXT_BATCH_TAG = "nextBatchTag";
+  public static final String EMPTY_NEXT_BATCH_TAG = "null";
 
   private static final Logger logger = LoggerFactory.getLogger(DiagnosisKeyBatchDownloader.class);
   private FederationGatewayClient federationGatewayClient;
@@ -65,7 +70,7 @@ public class DiagnosisKeyBatchDownloader {
         date.format(DateTimeFormatter.ISO_LOCAL_DATE));
         InputStream responseBody = response.body().asInputStream()) {
       logger.info("Downloading batch for date " + date + " started");
-      String batchTag = getHeader(response, "batchTag").orElseThrow();
+      String batchTag = getHeader(response, HEADER_BATCH_TAG).orElseThrow();
       Optional<String> nextBatchTag = extractNextBatchTag(response);
       DiagnosisKeyBatch diagnosisKeyBatch = DiagnosisKeyBatch.parseFrom(responseBody);
       return Optional.of(new FederationGatewayResponse(diagnosisKeyBatch, batchTag, nextBatchTag, date));
@@ -100,14 +105,15 @@ public class DiagnosisKeyBatchDownloader {
   }
 
   private Optional<String> extractNextBatchTag(Response serverResponse) {
-    return getHeader(serverResponse, "nextBatchTag")
+    return getHeader(serverResponse, HEADER_NEXT_BATCH_TAG)
         .flatMap(headerValue -> !isBlank(headerValue) ? Optional.of(headerValue) : Optional.empty());
   }
 
   private Optional<String> getHeader(Response response, String header) {
     Collection<String> headerStrings = response.headers().get(header);
-    return (headerStrings != null && !headerStrings.isEmpty())
-        ? Optional.of(headerStrings.iterator().next())
+    String headerString = headerStrings.iterator().next();
+    return (!StringUtils.equals(EMPTY_NEXT_BATCH_TAG, headerString))
+        ? Optional.of(headerString)
         : Optional.empty();
   }
 }
