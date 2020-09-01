@@ -20,14 +20,11 @@
 
 package app.coronawarn.server.common.federation.client;
 
-import feign.Headers;
 import feign.Response;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestHeader;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 
 /**
  * Declarative web service client for the Federation Gateway API.
@@ -44,11 +41,11 @@ import org.springframework.web.bind.annotation.RequestMethod;
 @FeignClient(name = "federation-server", url = "${federation-gateway.base-url}")
 public interface FederationGatewayClient {
 
-  @RequestMapping(method = RequestMethod.GET, value = "/diagnosiskeys/download/{date}",
+  @GetMapping(value = "/diagnosiskeys/download/{date}",
       headers = {"Accept=application/protobuf; version=1.0", "X-SSL-Client-SHA256=abcd", "X-SSL-Client-DN=C=PL"})
   Response getDiagnosisKeys(@PathVariable("date") String date);
 
-  @RequestMapping(method = RequestMethod.GET, value = "/diagnosiskeys/download/{date}",
+  @GetMapping(value = "/diagnosiskeys/download/{date}",
       headers = {"Accept=application/protobuf; version=1.0", "X-SSL-Client-SHA256=abcd", "X-SSL-Client-DN=C=PL"})
   Response getDiagnosisKeys(@RequestHeader("batchTag") String batchTag,
                             @PathVariable("date") String date);

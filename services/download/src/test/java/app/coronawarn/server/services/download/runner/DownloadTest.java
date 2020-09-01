@@ -32,7 +32,6 @@ import app.coronawarn.server.services.download.download.DownloadServiceConfig;
 import java.time.LocalDate;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.testcontainers.shaded.com.google.common.util.concurrent.Service;
 
 class DownloadTest {
 
