@@ -40,7 +40,7 @@
     <!-- https://spring.io/projects/spring-boot -->
     <spring-boot-version>2.3.3.RELEASE</spring-boot-version>
     <!-- https://spring.io/projects/spring-cloud#release-trains -->
-    <spring-cloud-version>2.2.4.RELEASE</spring-cloud-version>
+    <spring-cloud-version>2.2.5.RELEASE</spring-cloud-version>
   </properties>
 
   <dependencyManagement>
