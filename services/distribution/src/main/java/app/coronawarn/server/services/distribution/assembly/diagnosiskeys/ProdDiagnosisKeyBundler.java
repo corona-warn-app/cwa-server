@@ -50,14 +50,12 @@ import org.springframework.stereotype.Component;
 @Component
 public class ProdDiagnosisKeyBundler extends DiagnosisKeyBundler {
 
-  private List<String> supportedCountries;
 
   /**
    * Creates a new {@link ProdDiagnosisKeyBundler}.
    */
   public ProdDiagnosisKeyBundler(DistributionServiceConfig distributionServiceConfig) {
     super(distributionServiceConfig);
-    this.supportedCountries = List.of(distributionServiceConfig.getSupportedCountries());
   }
 
   /**

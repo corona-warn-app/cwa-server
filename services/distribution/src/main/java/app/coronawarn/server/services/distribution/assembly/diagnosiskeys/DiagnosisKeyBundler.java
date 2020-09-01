@@ -63,7 +63,7 @@ public abstract class DiagnosisKeyBundler {
   protected final long expiryPolicyMinutes;
   protected final int minNumberOfKeysPerBundle;
   private final int maxNumberOfKeysPerBundle;
-  private final List<String> supportedCountries;
+  protected final List<String> supportedCountries;
   /**
    * The hour at which the distribution runs. This field is needed to prevent the run from distributing any keys that
    * have already been submitted but may only be distributed in the future (e.g. because they are not expired yet).
