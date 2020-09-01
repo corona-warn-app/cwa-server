@@ -89,8 +89,8 @@ public class DiagnosisKeyBatchProcessor {
   private void retryProcessingBatch(FederationBatchInfo federationBatchInfo) {
     try {
       processBatchAndReturnNextBatchId(federationBatchInfo, ERROR_WONT_RETRY)
-          .ifPresent(batchTag ->
-              batchInfoService.save(new FederationBatchInfo(batchTag, federationBatchInfo.getDate())));
+          .ifPresent(nextBatchTag ->
+              batchInfoService.save(new FederationBatchInfo(nextBatchTag, federationBatchInfo.getDate())));
     } catch (Exception e) {
       logger.error("Retry of federation batch processing failed. Will not try again.", e);
       batchInfoService.updateStatus(federationBatchInfo, ERROR_WONT_RETRY);
