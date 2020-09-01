@@ -64,11 +64,16 @@ public abstract class DiagnosisKeyBundler {
   protected final int minNumberOfKeysPerBundle;
   private final int maxNumberOfKeysPerBundle;
   private final List<String> supportedCountries;
-  // The hour at which the distribution runs. This field is needed to prevent the run from distributing any keys that
-  // have already been submitted but may only be distributed in the future (e.g. because they are not expired yet).
+  /**
+   * The hour at which the distribution runs. This field is needed to prevent the run from distributing any keys that
+   * have already been submitted but may only be distributed in the future (e.g. because they are not expired yet).
+   */
   protected LocalDateTime distributionTime;
 
-  // A map containing diagnosis keys, grouped by country and mapped by the LocalDateTime on which they may be distributed
+  /**
+   * A map containing diagnosis keys, grouped by country and mapped by the LocalDateTime
+   * on which they may be distributed.
+   */
   protected final Map<String, Map<LocalDateTime, List<DiagnosisKey>>> distributableDiagnosisKeys = new HashMap<>();
 
   /**
@@ -127,7 +132,7 @@ public abstract class DiagnosisKeyBundler {
 
   /**
    * Returns a set of all {@link LocalDate dates} on which {@link DiagnosisKey diagnosis keys} shall be distributed
-   * based on country
+   * based on country.
    */
   public Set<LocalDate> getDatesWithDistributableDiagnosisKeys(String country) {
     return this.distributableDiagnosisKeys.get(country).keySet().stream()
