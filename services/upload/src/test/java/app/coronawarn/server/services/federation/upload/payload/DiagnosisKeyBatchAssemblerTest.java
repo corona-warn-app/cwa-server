@@ -18,11 +18,10 @@
  * ---license-end
  */
 
-package app.coronawarn.server.services.federation.upload;
-
-import static java.util.Collections.emptyList;
+package app.coronawarn.server.services.federation.upload.payload;
 
 import app.coronawarn.server.common.persistence.domain.DiagnosisKey;
+import app.coronawarn.server.common.protocols.external.exposurenotification.DiagnosisKeyBatch;
 import app.coronawarn.server.common.protocols.external.exposurenotification.ReportType;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -30,6 +29,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
+import org.junit.platform.commons.util.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.ConfigFileApplicationContextInitializer;
 import org.springframework.test.context.ContextConfiguration;
@@ -37,22 +37,29 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Stream;
 
+import static java.util.Collections.emptyList;
+
 @ExtendWith(SpringExtension.class)
-@ContextConfiguration(classes = {DiagnosisKeyBatchAssembler.class}, initializers = ConfigFileApplicationContextInitializer.class)
+@ContextConfiguration(classes = {
+    DiagnosisKeyBatchAssembler.class}, initializers = ConfigFileApplicationContextInitializer.class)
 class DiagnosisKeyBatchAssemblerTest {
 
   private static final int SIZE_THRESHOLD = 4000;
   private static final int MINIMUM_THRESHOLD = 140;
+
   @Autowired
   DiagnosisKeyBatchAssembler diagnosisKeyBatchAssembler;
 
-  private void assertKeysAreEqual(DiagnosisKey persistenceKey, app.coronawarn.server.common.protocols.external.exposurenotification.DiagnosisKey exportKey) {
+  private void assertKeysAreEqual(DiagnosisKey persistenceKey,
+      app.coronawarn.server.common.protocols.external.exposurenotification.DiagnosisKey exportKey) {
     Assertions.assertArrayEquals(persistenceKey.getKeyData(), exportKey.getKeyData().toByteArray(),
         "Key Data should be the same");
-    Assertions.assertArrayEquals(persistenceKey.getVisitedCountries().toArray(), exportKey.getVisitedCountriesList().toArray(),
+    Assertions.assertArrayEquals(persistenceKey.getVisitedCountries().toArray(),
+        exportKey.getVisitedCountriesList().toArray(),
         "Visited countries should be the same");
     Assertions.assertEquals(persistenceKey.getRollingPeriod(), exportKey.getRollingPeriod(),
         "Rolling Period should be the same");
@@ -78,10 +85,6 @@ class DiagnosisKeyBatchAssemblerTest {
         .build();
   }
 
-  private static DiagnosisKey makeFakeKey() {
-    return makeFakeKey(true);
-  }
-
   private static List<DiagnosisKey> makeFakeKeys(boolean consent, int numberOfKeys) {
     List<DiagnosisKey> keys = new ArrayList<DiagnosisKey>(numberOfKeys);
     while (numberOfKeys > 0) {
@@ -98,26 +101,28 @@ class DiagnosisKeyBatchAssemblerTest {
   }
 
   @Test
-  void shouldReturnSingleKeyInPackage() {
-    var fakeKey = makeFakeKey();
-    var result = diagnosisKeyBatchAssembler.assembleDiagnosisKeyBatch(List.of(fakeKey));
-    Assertions.assertEquals(1, result.size());
-    Assertions.assertEquals(1, result.get(0).getKeysCount());
-    this.assertKeysAreEqual(fakeKey, result.get(0).getKeys(0));
+  void shouldReturnEmptyListIfLessThenThresholdKeysGiven() {
+    var result = diagnosisKeyBatchAssembler.assembleDiagnosisKeyBatch(makeFakeKeys(true, MINIMUM_THRESHOLD - 1));
+    Assertions.assertTrue(result.isEmpty());
   }
 
   @Test
-  void shouldReturnMultipleKeysInPackage() {
-    var result = diagnosisKeyBatchAssembler.assembleDiagnosisKeyBatch(List.of(makeFakeKey(), makeFakeKey()));
-    Assertions.assertEquals(1, result.size());
-    Assertions.assertEquals(2, result.get(0).getKeysCount());
+  void packagedKeysShouldContainInitialInformation() {
+    var fakeKeys = makeFakeKeys(true, MINIMUM_THRESHOLD);
+    var result = diagnosisKeyBatchAssembler.assembleDiagnosisKeyBatch(fakeKeys);
+
+    Assertions.assertTrue(fakeKeys.size() == result.get(0).getKeysCount());
+    // as keys are created equal we need to compare just the first two elements of each list
+    assertKeysAreEqual(fakeKeys.get(0), result.get(0).getKeys(0));
   }
 
   @Test
   void shouldNotPackageKeysIfConsentFlagIsNotSet() {
-    var result = diagnosisKeyBatchAssembler.assembleDiagnosisKeyBatch(List.of(makeFakeKey(), makeFakeKey(false)));
+    var dataset = makeFakeKeys(true, MINIMUM_THRESHOLD);
+    dataset.add(makeFakeKey(false));
+    var result = diagnosisKeyBatchAssembler.assembleDiagnosisKeyBatch(dataset);
     Assertions.assertEquals(1, result.size());
-    Assertions.assertEquals(1, result.get(0).getKeysCount());
+    Assertions.assertEquals(MINIMUM_THRESHOLD, result.get(0).getKeysCount());
   }
 
   @ParameterizedTest
