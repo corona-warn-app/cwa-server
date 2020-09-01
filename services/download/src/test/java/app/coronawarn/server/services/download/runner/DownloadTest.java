@@ -28,20 +28,24 @@ import static org.mockito.Mockito.verify;
 
 
 import app.coronawarn.server.services.download.download.DiagnosisKeyBatchProcessor;
+import app.coronawarn.server.services.download.download.DownloadServiceConfig;
 import java.time.LocalDate;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
+import org.testcontainers.shaded.com.google.common.util.concurrent.Service;
 
 class DownloadTest {
 
   private DiagnosisKeyBatchProcessor diagnosisKeyBatchProcessor;
   private Download download;
+  private DownloadServiceConfig serviceConfig;
 
   @BeforeEach
   void setUpBatchProcessor() {
+    this.serviceConfig = new DownloadServiceConfig();
+    serviceConfig.setEfgsOffsetDays(1);
     diagnosisKeyBatchProcessor = spy(mock(DiagnosisKeyBatchProcessor.class));
-    download = new Download(diagnosisKeyBatchProcessor);
+    download = new Download(diagnosisKeyBatchProcessor, serviceConfig);
   }
 
   @Test

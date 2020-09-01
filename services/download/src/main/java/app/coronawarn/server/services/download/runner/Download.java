@@ -21,6 +21,7 @@
 package app.coronawarn.server.services.download.runner;
 
 import app.coronawarn.server.services.download.download.DiagnosisKeyBatchProcessor;
+import app.coronawarn.server.services.download.download.DownloadServiceConfig;
 import java.time.LocalDate;
 import java.time.Period;
 import java.time.ZoneOffset;
@@ -35,15 +36,18 @@ import org.springframework.stereotype.Component;
 @Component
 @Order(1)
 public class Download implements ApplicationRunner {
-  private final DiagnosisKeyBatchProcessor batchProcessor;
 
-  Download(DiagnosisKeyBatchProcessor batchProcessor) {
+  private final DiagnosisKeyBatchProcessor batchProcessor;
+  private final DownloadServiceConfig serviceConfig;
+
+  Download(DiagnosisKeyBatchProcessor batchProcessor, DownloadServiceConfig serviceConfig) {
     this.batchProcessor = batchProcessor;
+    this.serviceConfig = serviceConfig;
   }
 
   @Override
   public void run(ApplicationArguments args) {
-    LocalDate yesterday = LocalDate.now(ZoneOffset.UTC).minus(Period.ofDays(1));
+    LocalDate yesterday = LocalDate.now(ZoneOffset.UTC).minus(Period.ofDays(serviceConfig.getEfgsOffsetDays()));
     batchProcessor.saveFirstBatchInfoForDate(yesterday);
     batchProcessor.processErrorFederationBatches();
     batchProcessor.processUnprocessedFederationBatches();

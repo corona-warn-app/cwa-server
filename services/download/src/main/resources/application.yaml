@@ -7,6 +7,14 @@ logging:
     app:
       coronawarn: INFO
 
+services:
+  download:
+    # The offset in days for which the keys from the federation gateway shall be downloaded from.
+    # Example: If the 'efgs-offset-days' is set to 0, the download service will start downloading
+    # the keys for today. If it is set to 1, the keys from yesterday will be downloaded.
+    # The value must be between 0 and 14.
+    efgs-offset-days: ${EFGS_OFFSET_DAYS:1}
+
 federation-gateway:
   base-url: ${FEDERATION_GATEWAY_BASE_URL:http://localhost:8005}
   connection-pool-size: 200
