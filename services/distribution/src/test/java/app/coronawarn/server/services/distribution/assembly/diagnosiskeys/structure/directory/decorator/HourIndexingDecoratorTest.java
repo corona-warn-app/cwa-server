@@ -82,6 +82,7 @@ class HourIndexingDecoratorTest {
     when(svcConfig.getExpiryPolicyMinutes()).thenReturn(120);
     when(svcConfig.getShiftingPolicyThreshold()).thenReturn(1);
     when(svcConfig.getMaximumNumberOfKeysPerBundle()).thenReturn(1);
+    when(svcConfig.getSupportedCountries()).thenReturn(new String[]{"DE"});
 
     DiagnosisKeyBundler diagnosisKeyBundler = new ProdDiagnosisKeyBundler(svcConfig);
     diagnosisKeyBundler.setDiagnosisKeys(diagnosisKeys, LocalDateTime.of(1970, 1, 3, 5, 0));

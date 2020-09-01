@@ -90,7 +90,9 @@ class DiagnosisKeysHourDirectoryTest {
     hourDirectory.prepare(new ImmutableStack<>()
         .push("version-directory")
         .push("country-directory")
-        .push(keysSubmissionDate) // date-directory
+        .push("DE")
+        .push(keysSubmissionDate)
+        // date-directory
     );
     outputDirectory.write();
   }
