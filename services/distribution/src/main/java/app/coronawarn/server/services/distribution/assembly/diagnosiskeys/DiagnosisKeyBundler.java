@@ -117,7 +117,7 @@ public abstract class DiagnosisKeyBundler {
    */
   public List<DiagnosisKey> getAllDiagnosisKeys(String country) {
     if (!supportedCountries.contains(country)) {
-      throw new IllegalArgumentException(
+      throw new InvalidCountryException(
           String.join("The country {} received is not included in the list of supported countries", country));
     }
     return this.distributableDiagnosisKeys.get(country).values()
@@ -135,6 +135,10 @@ public abstract class DiagnosisKeyBundler {
    * based on country.
    */
   public Set<LocalDate> getDatesWithDistributableDiagnosisKeys(String country) {
+    if (!supportedCountries.contains(country)) {
+      throw new InvalidCountryException(
+          String.join("The country {} received is not included in the list of supported countries", country));
+    }
     return this.distributableDiagnosisKeys.get(country).keySet().stream()
         .map(LocalDateTime::toLocalDate)
         .filter(date -> numberOfKeysForDateBelowMaximum(date, country))
@@ -180,6 +184,10 @@ public abstract class DiagnosisKeyBundler {
    * Returns all diagnosis keys that should be distributed on a specific date for a specific country.
    */
   public List<DiagnosisKey> getDiagnosisKeysForDate(LocalDate date, String country) {
+    if (!supportedCountries.contains(country)) {
+      throw new InvalidCountryException(
+          String.join("The country {} received is not included in the list of supported countries", country));
+    }
     return this.distributableDiagnosisKeys.get(country).keySet().stream()
         .filter(dateTime -> dateTime.toLocalDate().equals(date))
         .map(dateTime -> getDiagnosisKeysForHour(dateTime, country))
@@ -191,9 +199,11 @@ public abstract class DiagnosisKeyBundler {
    * Returns all diagnosis keys that should be distributed in a specific hour for a specific country.
    */
   public List<DiagnosisKey> getDiagnosisKeysForHour(LocalDateTime hour, String country) {
-    //todo: We can use optional for getting the diagnosis for country check
+    if (!supportedCountries.contains(country)) {
+      throw new InvalidCountryException(
+          String.join("The country {} received is not included in the list of supported countries", country));
+    }
     return Optional
-        .ofNullable(country)
         .ofNullable(this.distributableDiagnosisKeys.get(country).get(hour))
         .orElse(emptyList());
   }
