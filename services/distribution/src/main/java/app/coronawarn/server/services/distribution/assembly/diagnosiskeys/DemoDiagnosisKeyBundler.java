@@ -41,16 +41,13 @@ import org.springframework.stereotype.Component;
 @Component
 public class DemoDiagnosisKeyBundler extends DiagnosisKeyBundler {
 
-  private DistributionServiceConfig distributionServiceConfig;
-
   public DemoDiagnosisKeyBundler(DistributionServiceConfig distributionServiceConfig) {
     super(distributionServiceConfig);
-    this.distributionServiceConfig = distributionServiceConfig;
   }
 
   /**
-   * Initializes the internal {@code distributableDiagnosisKeys} map, grouping the diagnosis keys by the submission
-   * timestamp, thus ignoring the expiry and shifting policies.
+   * Initializes the internal {@code distributableDiagnosisKeys} map, grouping the diagnosis keys by country and
+   * the submission timestamp, thus ignoring the expiry and shifting policies.
    */
   @Override
   protected void createDiagnosisKeyDistributionMap(Collection<DiagnosisKey> diagnosisKeys) {

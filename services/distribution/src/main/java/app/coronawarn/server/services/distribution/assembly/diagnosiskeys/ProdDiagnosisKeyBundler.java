@@ -50,24 +50,23 @@ import org.springframework.stereotype.Component;
 @Component
 public class ProdDiagnosisKeyBundler extends DiagnosisKeyBundler {
 
-  private DistributionServiceConfig distributionServiceConfig;
+  private List<String> supportedCountries;
 
   /**
    * Creates a new {@link ProdDiagnosisKeyBundler}.
    */
   public ProdDiagnosisKeyBundler(DistributionServiceConfig distributionServiceConfig) {
     super(distributionServiceConfig);
-    this.distributionServiceConfig = distributionServiceConfig;
+    this.supportedCountries = List.of(distributionServiceConfig.getSupportedCountries());
   }
 
   /**
-   * Initializes the internal {@code distributableDiagnosisKeys} map, grouping the diagnosis keys by the date on which
-   * they may be distributed, while respecting the expiry and shifting policies.
+   * Initializes the internal {@code distributableDiagnosisKeys} map, grouping the diagnosis keys based on the
+   * country and by the date on which they may be distributed, while respecting the expiry and shifting policies.
    */
   @Override
   protected void createDiagnosisKeyDistributionMap(Collection<DiagnosisKey> diagnosisKeys) {
     this.distributableDiagnosisKeys.clear();
-    List<String> supportedCountries = List.of(distributionServiceConfig.getSupportedCountries());
     Map<String, List<DiagnosisKey>> diagnosisKeysMapped = new HashMap<>();
 
     supportedCountries.forEach(supportedCountry -> {

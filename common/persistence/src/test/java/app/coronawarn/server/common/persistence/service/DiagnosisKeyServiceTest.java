@@ -190,38 +190,4 @@ class DiagnosisKeyServiceTest {
     assertThat(actKeys.iterator().next().getTransmissionRiskLevel()).isEqualTo(2);
   }
 
-  @Nested
-  class TestRetrieveKeysFromVisitedCountry {
-
-    @AfterEach
-    public void tearDown() {
-      diagnosisKeyRepository.deleteAll();
-    }
-
-    @BeforeEach
-    public void setup() {
-      var keys = List.of(
-          buildDiagnosisKeyForDateTime(OffsetDateTime.now(UTC).minusDays(1L), "DE", Collections.singletonList("DE"),ReportType.CONFIRMED_CLINICAL_DIAGNOSIS),
-          buildDiagnosisKeyForDateTime(OffsetDateTime.now(UTC).minusDays(2L), "DE", List.of("DE", "FR"), ReportType.CONFIRMED_CLINICAL_DIAGNOSIS),
-          buildDiagnosisKeyForDateTime(OffsetDateTime.now(UTC).minusDays(3L), "DE", List.of("DE", "FR", "DK"),ReportType.CONFIRMED_CLINICAL_DIAGNOSIS)
-      );
-      diagnosisKeyService.saveDiagnosisKeys(keys);
-    }
-
-    /*@Test
-    void testShouldGetThreeEntriesDE() {
-      assertEquals(3, diagnosisKeyService.ge("DE").size());
-    }
-
-    @Test
-    void testShouldGetTwoEntriesFR() {
-      assertEquals(2, diagnosisKeyService.getDiagnosisKeysByVisitedCountry("FR").size());
-    }
-
-    @Test
-    void testShouldGetOneEntryDK() {
-      assertEquals(1, diagnosisKeyService.getDiagnosisKeysByVisitedCountry("DK").size());
-    }*/
-  }
-
 }

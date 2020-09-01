@@ -68,7 +68,7 @@ public abstract class DiagnosisKeyBundler {
   // have already been submitted but may only be distributed in the future (e.g. because they are not expired yet).
   protected LocalDateTime distributionTime;
 
-  // A map containing diagnosis keys, grouped by the LocalDateTime on which they may be distributed
+  // A map containing diagnosis keys, grouped by country and mapped by the LocalDateTime on which they may be distributed
   protected final Map<String, Map<LocalDateTime, List<DiagnosisKey>>> distributableDiagnosisKeys = new HashMap<>();
 
   /**
@@ -111,9 +111,10 @@ public abstract class DiagnosisKeyBundler {
    * Returns all {@link DiagnosisKey DiagnosisKeys} contained by this {@link DiagnosisKeyBundler}.
    */
   public List<DiagnosisKey> getAllDiagnosisKeys(String country) {
-    List<DiagnosisKey> diagnosisKeys = new ArrayList<>();
-    //todo:add a test to check if there is a country
-    //which does not exist
+    if (!supportedCountries.contains(country)) {
+      throw new IllegalArgumentException(
+          String.join("The country {} received is not included in the list of supported countries", country));
+    }
     return this.distributableDiagnosisKeys.get(country).values()
         .stream().flatMap(Collection::stream).collect(Collectors.toList());
   }
@@ -125,7 +126,8 @@ public abstract class DiagnosisKeyBundler {
   protected abstract void createDiagnosisKeyDistributionMap(Collection<DiagnosisKey> diagnosisKeys);
 
   /**
-   * Returns a set of all {@link LocalDate dates} on which {@link DiagnosisKey diagnosis keys} shall be distributed.
+   * Returns a set of all {@link LocalDate dates} on which {@link DiagnosisKey diagnosis keys} shall be distributed
+   * based on country
    */
   public Set<LocalDate> getDatesWithDistributableDiagnosisKeys(String country) {
     return this.distributableDiagnosisKeys.get(country).keySet().stream()
@@ -139,9 +141,8 @@ public abstract class DiagnosisKeyBundler {
   }
 
   /**
-   * Returns a map of all {@link LocalDateTime hours} of a specified {@link LocalDate date} and country
-   * during which {@link
-   * DiagnosisKey diagnosis keys} shall be distributed.
+   * Returns a map of all {@link LocalDateTime hours} of a specified {@link LocalDate date} and country during which
+   * {@link DiagnosisKey diagnosis keys} shall be distributed.
    */
   public Set<LocalDateTime> getHoursWithDistributableDiagnosisKeys(LocalDate currentDate, String country) {
     return this.distributableDiagnosisKeys.get(country).keySet().stream()
@@ -171,7 +172,7 @@ public abstract class DiagnosisKeyBundler {
   }
 
   /**
-   * Returns all diagnosis keys that should be distributed on a specific date.
+   * Returns all diagnosis keys that should be distributed on a specific date for a specific country.
    */
   public List<DiagnosisKey> getDiagnosisKeysForDate(LocalDate date, String country) {
     return this.distributableDiagnosisKeys.get(country).keySet().stream()
@@ -182,7 +183,7 @@ public abstract class DiagnosisKeyBundler {
   }
 
   /**
-   * Returns all diagnosis keys that should be distributed in a specific hour.
+   * Returns all diagnosis keys that should be distributed in a specific hour for a specific country.
    */
   public List<DiagnosisKey> getDiagnosisKeysForHour(LocalDateTime hour, String country) {
     //todo: We can use optional for getting the diagnosis for country check
