@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.ListIterator;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -56,12 +57,17 @@ public class DiagnosisKeyBatchAssembler {
     return partionIntoBatches(filterAndConvertToUploadStructure(diagnosisKeys));
   }
 
-  private List<DiagnosisKeyBatch>  partionIntoBatches(
+  private List<DiagnosisKeyBatch> partionIntoBatches(
       List<app.coronawarn.server.common.protocols.external.exposurenotification.DiagnosisKey> keysToUpload) {
 
     return  partitionListBySize(keysToUpload, uploadConfig.getMaxBatchKeyCount()).stream()
-                              .map(partition -> DiagnosisKeyBatch.newBuilder().addAllKeys(partition).build())
+                              .map(this::makeBatchFromPartition)
                               .collect(Collectors.toList());
+  }
+
+  private DiagnosisKeyBatch makeBatchFromPartition(
+      List<app.coronawarn.server.common.protocols.external.exposurenotification.DiagnosisKey> paritionOfKeys) {
+    return DiagnosisKeyBatch.newBuilder().addAllKeys(paritionOfKeys).build();
   }
 
   private <T> List<List<T>> partitionListBySize(List<T> keysToUpload, int size) {
