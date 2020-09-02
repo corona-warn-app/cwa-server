@@ -20,12 +20,14 @@
 
 package app.coronawarn.server.services.download.download;
 
+import static java.time.format.DateTimeFormatter.ISO_LOCAL_DATE;
+
 import app.coronawarn.server.common.federation.client.FederationGatewayClient;
 import app.coronawarn.server.common.protocols.external.exposurenotification.DiagnosisKeyBatch;
 import feign.Response;
+import java.io.IOException;
 import java.io.InputStream;
 import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
 import java.util.Collection;
 import java.util.Optional;
 import org.apache.commons.lang3.StringUtils;
@@ -54,21 +56,17 @@ public class DiagnosisKeyBatchDownloader {
   }
 
   /**
-   * Downloads the batch specified for this date.
+   * Downloads the first batch of the specified date.
    *
-   * @param date the date for which the batch should be downloaded
+   * @param date the date for which the first batch should be downloaded
    * @return The server response.
    */
-  public Optional<FederationGatewayResponse> downloadBatch(LocalDate date) {
-    try (Response response = federationGatewayClient.getDiagnosisKeys(date.format(DateTimeFormatter.ISO_LOCAL_DATE));
-        InputStream responseBody = response.body().asInputStream()) {
-      logger.info("Downloading batch for date {} started", date);
-      String batchTag = getHeader(response, HEADER_BATCH_TAG).orElseThrow();
-      Optional<String> nextBatchTag = getHeader(response, HEADER_NEXT_BATCH_TAG);
-      DiagnosisKeyBatch diagnosisKeyBatch = DiagnosisKeyBatch.parseFrom(responseBody);
-      return Optional.of(new FederationGatewayResponse(diagnosisKeyBatch, batchTag, nextBatchTag, date));
+  public Optional<FederationGatewayResponse> downloadFirstBatch(LocalDate date) {
+    try (Response response = federationGatewayClient.getDiagnosisKeys(date.format(ISO_LOCAL_DATE))) {
+      logger.info("Downloading first batch for date {} started", date);
+      return parseServerResponse(response, date);
     } catch (Exception e) {
-      logger.info("Downloading batch for date {} failed", date, e);
+      logger.error("Downloading batch for date {} failed", date, e);
       return Optional.empty();
     }
   }
@@ -80,17 +78,22 @@ public class DiagnosisKeyBatchDownloader {
    * @return The server response.
    */
   public Optional<FederationGatewayResponse> downloadBatch(LocalDate date, String batchTag) {
-    try (Response response = federationGatewayClient.getDiagnosisKeys(
-        batchTag,
-        date.format(DateTimeFormatter.ISO_LOCAL_DATE));
-        InputStream responseBody = response.body().asInputStream()) {
+    try (Response response = federationGatewayClient.getDiagnosisKeys(batchTag, date.format(ISO_LOCAL_DATE))) {
       logger.info("Downloading batch for date {} and batchTag {} started", date, batchTag);
+      return parseServerResponse(response, date);
+    } catch (Exception e) {
+      logger.error("Downloading batch for date {} and batchTag {} failed", date, batchTag, e);
+      return Optional.empty();
+    }
+  }
+
+  private Optional<FederationGatewayResponse> parseServerResponse(Response response, LocalDate date)
+      throws IOException {
+    try (InputStream responseBody = response.body().asInputStream()) {
+      String batchTag = getHeader(response, HEADER_BATCH_TAG).orElseThrow();
       Optional<String> nextBatchTag = getHeader(response, HEADER_NEXT_BATCH_TAG);
       DiagnosisKeyBatch diagnosisKeyBatch = DiagnosisKeyBatch.parseFrom(responseBody);
       return Optional.of(new FederationGatewayResponse(diagnosisKeyBatch, batchTag, nextBatchTag, date));
-    } catch (Exception e) {
-      logger.info("Downloading batch for date {} and batchTag {} failed", date, batchTag, e);
-      return Optional.empty();
     }
   }
 

@@ -20,19 +20,27 @@
 
 package app.coronawarn.server.services.download;
 
+import static app.coronawarn.server.services.download.download.DiagnosisKeyBatchDownloader.EMPTY_HEADER;
+import static app.coronawarn.server.services.download.download.DiagnosisKeyBatchDownloader.HEADER_BATCH_TAG;
+import static app.coronawarn.server.services.download.download.DiagnosisKeyBatchDownloader.HEADER_NEXT_BATCH_TAG;
 import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
 import static com.github.tomakehurst.wiremock.client.WireMock.anyUrl;
 import static com.github.tomakehurst.wiremock.client.WireMock.get;
 import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.options;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.http.HttpStatus.NOT_FOUND;
+import static org.springframework.http.HttpStatus.OK;
 
 import app.coronawarn.server.common.federation.client.FederationFeignHttpClientProvider;
 import app.coronawarn.server.common.federation.client.FederationGatewayClient;
 import app.coronawarn.server.common.federation.client.config.FederationGatewayConfig;
+import app.coronawarn.server.common.protocols.external.exposurenotification.DiagnosisKeyBatch;
 import app.coronawarn.server.services.download.download.DiagnosisKeyBatchDownloader;
+import app.coronawarn.server.services.download.download.FederationGatewayResponse;
 import com.github.tomakehurst.wiremock.WireMockServer;
+import com.github.tomakehurst.wiremock.client.ResponseDefinitionBuilder;
 import java.time.LocalDate;
-import org.assertj.core.api.Assertions;
+import java.util.Optional;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
@@ -51,7 +59,12 @@ import org.springframework.test.context.ActiveProfiles;
 @ActiveProfiles({"feign"})
 class DiagnosisKeyBatchDownloaderTest {
 
-  LocalDate EXP_DATE = LocalDate.of(2020, 9, 1);
+  private static final LocalDate EXP_DATE = LocalDate.of(2020, 9, 1);
+  private static final String EXP_BATCH_TAG = "507f191e810c19729de860ea";
+  private static final ResponseDefinitionBuilder RESPONSE_NOT_FOUND = aResponse().withStatus(NOT_FOUND.value());
+  private static final ResponseDefinitionBuilder RESPONSE_INVALID_PAYLOAD =
+      aResponse().withStatus(OK.value()).withBody("somethingInvalid");
+
   private static WireMockServer server;
 
   @Autowired
@@ -74,9 +87,50 @@ class DiagnosisKeyBatchDownloaderTest {
   }
 
   @Test
-  void downloadBatchForDateReturnsEmptyIfNotFound() {
-    server.stubFor(get(anyUrl()).willReturn(aResponse().withStatus(NOT_FOUND.value())));
-    var actResponse = batchDownloader.downloadBatch(EXP_DATE);
-    Assertions.assertThat(actResponse).isEmpty();
+  void downloadFirstBatchReturnsEmptyIfNotFound() {
+    server.stubFor(get(anyUrl()).willReturn(RESPONSE_NOT_FOUND));
+    Optional<FederationGatewayResponse> actResponse = batchDownloader.downloadFirstBatch(EXP_DATE);
+    assertThat(actResponse).isEmpty();
+  }
+
+  @Test
+  void downloadBatchReturnsEmptyIfNotFound() {
+    server.stubFor(get(anyUrl()).willReturn(RESPONSE_NOT_FOUND));
+    Optional<FederationGatewayResponse> actResponse = batchDownloader.downloadBatch(EXP_DATE, EXP_BATCH_TAG);
+    assertThat(actResponse).isEmpty();
+  }
+
+  @Test
+  void downloadFirstBatchReturnsEmptyIfPayloadInvalid() {
+    server.stubFor(get(anyUrl()).willReturn(RESPONSE_INVALID_PAYLOAD));
+    Optional<FederationGatewayResponse> actResponse = batchDownloader.downloadFirstBatch(EXP_DATE);
+    assertThat(actResponse).isEmpty();
+  }
+
+  @Test
+  void downloadBatchReturnsEmptyIfPayloadInvalid() {
+    server.stubFor(get(anyUrl()).willReturn(RESPONSE_INVALID_PAYLOAD));
+    Optional<FederationGatewayResponse> actResponse = batchDownloader.downloadBatch(EXP_DATE, EXP_BATCH_TAG);
+    assertThat(actResponse).isEmpty();
+  }
+
+  @Test
+  void downloadFirstBatchReturnsResponseWithoutNextBatchTag() {
+    server.stubFor(get(anyUrl()).willReturn(RESPONSE_NO_NEXT_BATCH));
+    Optional<FederationGatewayResponse> actResponse = batchDownloader.downloadFirstBatch(EXP_DATE);
+    assertThat(actResponse).contains(
+        new FederationGatewayResponse(DiagnosisKeyBatch.newBuilder().build(), EXP_BATCH_TAG, Optional.empty(),
+            EXP_DATE));
+  }
+
+  private static final ResponseDefinitionBuilder RESPONSE_NO_NEXT_BATCH = aResponse()
+      .withStatus(OK.value())
+      .withHeader(HEADER_BATCH_TAG, EXP_BATCH_TAG)
+      .withHeader(HEADER_NEXT_BATCH_TAG, EMPTY_HEADER)
+      .withBody(DiagnosisKeyBatch.newBuilder().build().toByteArray());
+
+  private String buildValidPayload() {
+    DiagnosisKeyBatch.newBuilder().build().toByteArray();
+    return null;
   }
 }

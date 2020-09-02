@@ -22,6 +22,7 @@ package app.coronawarn.server.services.download.download;
 
 import app.coronawarn.server.common.protocols.external.exposurenotification.DiagnosisKeyBatch;
 import java.time.LocalDate;
+import java.util.Objects;
 import java.util.Optional;
 
 /**
@@ -59,5 +60,25 @@ public class FederationGatewayResponse {
 
   public LocalDate getDate() {
     return date;
+  }
+
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) {
+      return true;
+    }
+    if (o == null || getClass() != o.getClass()) {
+      return false;
+    }
+    FederationGatewayResponse that = (FederationGatewayResponse) o;
+    return Objects.equals(diagnosisKeyBatch, that.diagnosisKeyBatch) &&
+        Objects.equals(batchTag, that.batchTag) &&
+        Objects.equals(nextBatchTag, that.nextBatchTag) &&
+        Objects.equals(date, that.date);
+  }
+
+  @Override
+  public int hashCode() {
+    return Objects.hash(diagnosisKeyBatch, batchTag, nextBatchTag, date);
   }
 }

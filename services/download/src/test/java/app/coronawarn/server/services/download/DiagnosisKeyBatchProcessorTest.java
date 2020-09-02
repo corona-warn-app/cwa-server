@@ -84,7 +84,7 @@ class DiagnosisKeyBatchProcessorTest {
 
     @Test
     void testBatchInfoForDateDoesNotExist() {
-      when(batchDownloader.downloadBatch(any(LocalDate.class))).thenReturn(Optional.empty());
+      when(batchDownloader.downloadFirstBatch(any(LocalDate.class))).thenReturn(Optional.empty());
       batchProcessor.saveFirstBatchInfoForDate(LocalDate.of(2020, 9, 1));
       verify(batchInfoService, never()).save(any(FederationBatchInfo.class));
     }
@@ -93,7 +93,7 @@ class DiagnosisKeyBatchProcessorTest {
     void testBatchInfoForDateExists() {
       FederationGatewayResponse serverResponse = mock(FederationGatewayResponse.class);
       when(serverResponse.getBatchTag()).thenReturn(batchTag1);
-      when(batchDownloader.downloadBatch(any(LocalDate.class))).thenReturn(Optional.of(serverResponse));
+      when(batchDownloader.downloadFirstBatch(any(LocalDate.class))).thenReturn(Optional.of(serverResponse));
 
       batchProcessor.saveFirstBatchInfoForDate(date);
 

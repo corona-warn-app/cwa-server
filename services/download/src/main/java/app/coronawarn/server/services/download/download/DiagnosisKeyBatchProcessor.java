@@ -72,7 +72,7 @@ public class DiagnosisKeyBatchProcessor {
    * @param date The date for which the first batch info is stored.
    */
   public void saveFirstBatchInfoForDate(LocalDate date) {
-    batchDownloader.downloadBatch(date)
+    batchDownloader.downloadFirstBatch(date)
         .ifPresent(serverResponse ->
             batchInfoService.save(new FederationBatchInfo(serverResponse.getBatchTag(), date)));
   }
