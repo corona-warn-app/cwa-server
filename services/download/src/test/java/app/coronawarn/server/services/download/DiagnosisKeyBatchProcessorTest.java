@@ -29,6 +29,7 @@ import static java.util.Collections.singletonList;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.any;
+import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.spy;
@@ -226,9 +227,23 @@ class DiagnosisKeyBatchProcessorTest {
     }
 
     @Test
+    void testOneErrorBatchRetryNotFound() {
+      when(batchInfoService.findByStatus(ERROR))
+          .thenReturn(singletonList(new FederationBatchInfo(batchTag1, date, ERROR)));
+      when(batchDownloader.downloadBatch(date, batchTag1)).thenReturn(Optional.empty());
+
+      batchProcessor.processErrorFederationBatches();
+
+      verify(batchInfoService, times(1)).findByStatus(ERROR);
+      verify(batchDownloader, times(1)).downloadBatch(eq(date), eq(batchTag1));
+      verify(batchInfoService, times(1)).updateStatus(any(FederationBatchInfo.class), eq(ERROR_WONT_RETRY));
+    }
+
+    @Test
     void testOneErrorBatchRetryFails() {
       when(batchInfoService.findByStatus(ERROR))
           .thenReturn(singletonList(new FederationBatchInfo(batchTag1, date, ERROR)));
+      doThrow(RuntimeException.class).when(batchInfoService).save(any(FederationBatchInfo.class));
       when(batchDownloader.downloadBatch(date, batchTag1)).thenReturn(Optional.empty());
 
       batchProcessor.processErrorFederationBatches();
