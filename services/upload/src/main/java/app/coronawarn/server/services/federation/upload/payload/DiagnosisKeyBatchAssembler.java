@@ -8,7 +8,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.ListIterator;
-import java.util.function.Function;
 import java.util.stream.Collectors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -72,9 +71,9 @@ public class DiagnosisKeyBatchAssembler {
 
   private <T> List<List<T>> partitionListBySize(List<T> keysToUpload, int size) {
     ListIterator<T> iterator = keysToUpload.listIterator();
-    List<List<T>> partitions = new ArrayList<List<T>>();
+    List<List<T>> partitions = new ArrayList<>();
 
-    ArrayList<T> currentPartition = new ArrayList<T>(size / 2);
+    ArrayList<T> currentPartition = new ArrayList<>(size / 2);
     while (iterator.hasNext()) {
       currentPartition = newPartitionIfThresholdMet(partitions, currentPartition, size);
       currentPartition.add(iterator.next());
@@ -87,7 +86,7 @@ public class DiagnosisKeyBatchAssembler {
       int size) {
     if (currentPartition.size() == size) {
       partitions.add(currentPartition); // Add this to the set when done with it
-      currentPartition = new ArrayList<T>();
+      currentPartition = new ArrayList<>();
     }
     return currentPartition;
   }

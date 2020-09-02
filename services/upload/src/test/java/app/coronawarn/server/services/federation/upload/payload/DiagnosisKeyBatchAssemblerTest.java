@@ -121,7 +121,7 @@ class DiagnosisKeyBatchAssemblerTest {
     var fakeKeys = makeFakeKeys(true, minKeyThreshold);
     var result = diagnosisKeyBatchAssembler.assembleDiagnosisKeyBatch(fakeKeys);
 
-    Assertions.assertTrue(fakeKeys.size() == result.get(0).getKeysCount());
+    Assertions.assertEquals(fakeKeys.size(),result.get(0).getKeysCount());
     // as keys are created equal we need to compare just the first two elements of each list
     assertKeysAreEqual(fakeKeys.get(0), result.get(0).getKeys(0));
   }
