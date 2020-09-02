@@ -30,9 +30,8 @@ import org.springframework.web.bind.annotation.RequestHeader;
  * Declarative web service client for the Federation Gateway API.
  *
  * <p>Any application that wants to uses it must make sure the required configuration
- * beans in this module are registered (scan root package of the module). There is also
- * a constraint imposed on application properties, such that values for the following
- * structure must be declared:
+ * beans in this module are registered (scan root package of the module). There is also a constraint imposed on
+ * application properties, such that values for the following structure must be declared:
  * <li> federation-gateway.base-url
  * <li> federation-gateway.ssl.key-store-path
  * <li> federation-gateway.ssl.key-store-pass
@@ -48,5 +47,5 @@ public interface FederationGatewayClient {
   @GetMapping(value = "/diagnosiskeys/download/{date}",
       headers = {"Accept=application/protobuf; version=1.0", "X-SSL-Client-SHA256=abcd", "X-SSL-Client-DN=C=PL"})
   Response getDiagnosisKeys(@RequestHeader("batchTag") String batchTag,
-                            @PathVariable("date") String date);
+      @PathVariable("date") String date);
 }
