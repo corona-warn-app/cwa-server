@@ -15,6 +15,8 @@ federation-gateway:
 
 services:
   upload:
+    min-batch-key-count: 140
+    max-batch-key-count: 4000
     privatekey: testprivatekey.pem
     certificate: testpublickey.pem
     privatekey-password: testpass

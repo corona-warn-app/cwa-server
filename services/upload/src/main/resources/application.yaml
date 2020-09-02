@@ -17,6 +17,10 @@ federation-gateway:
 
 services:
   upload:
+    # The minimum number of keys that must be present to create an upload batch
+    min-batch-key-count: 140
+    # The maximum number of keys that an upload batch can contain
+    max-batch-key-count: 4000
     privatekey: ${VAULT_EFGS_BATCHIGNING_SECRET}
     certificate: ${VAULT_EFGS_BATCHIGNING_CERTIFICATE}
     privatekey-password: ${VAULT_EFGS_BATCHSIGNING_PASSWORD}
