@@ -57,6 +57,7 @@ import org.junit.jupiter.api.Test;
 
 class DiagnosisKeyBatchProcessorTest {
 
+  // TODO add visibility modifiers
   LocalDate date = LocalDate.of(2020, 9, 1);
   String batchTag1 = "507f191e810c19729de860ea";
   String batchTag2 = "507f191e810c19729de860eb";
@@ -156,7 +157,7 @@ class DiagnosisKeyBatchProcessorTest {
     }
 
     @Test
-    void testOneUnProcessedBatchFails() {
+    void testOneUnprocessedBatchFails() {
       when(batchInfoService.findByStatus(UNPROCESSED))
           .thenReturn(singletonList(new FederationBatchInfo(batchTag1, date, UNPROCESSED)));
       when(batchDownloader.downloadBatch(date, batchTag1)).thenReturn(Optional.empty());
@@ -240,11 +241,11 @@ class DiagnosisKeyBatchProcessorTest {
     }
 
     @Test
-    void testOneErrorBatchRetryFails() {
+    void testOneErrorBatchSavingNextBatchInfoFails() {
       when(batchInfoService.findByStatus(ERROR))
           .thenReturn(singletonList(new FederationBatchInfo(batchTag1, date, ERROR)));
       doThrow(RuntimeException.class).when(batchInfoService).save(any(FederationBatchInfo.class));
-      when(batchDownloader.downloadBatch(date, batchTag1)).thenReturn(Optional.empty());
+      when(batchDownloader.downloadBatch(date, batchTag1)).thenReturn(Optional.empty()); // TODO stuff things stuff
 
       batchProcessor.processErrorFederationBatches();
 

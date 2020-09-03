@@ -38,6 +38,7 @@ import org.springframework.stereotype.Service;
 /**
  * Manages querying the federation gateway service and parsing of the responses.
  */
+// TODO rename FederationBat...
 @Service
 public class DiagnosisKeyBatchDownloader {
 
