@@ -23,7 +23,6 @@ package app.coronawarn.server.common.persistence.service;
 import app.coronawarn.server.common.persistence.domain.FederationBatchInfo;
 import app.coronawarn.server.common.persistence.domain.FederationBatchStatus;
 import app.coronawarn.server.common.persistence.repository.FederationBatchInfoRepository;
-import io.micrometer.core.annotation.Timed;
 import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -46,7 +45,6 @@ public class FederationBatchInfoService {
    *
    * @param federationBatchInfo must not contain {@literal null}.
    */
-  @Timed
   @Transactional
   public void save(FederationBatchInfo federationBatchInfo) {
     federationBatchInfoRepository
