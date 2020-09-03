@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <parent>
     <artifactId>services</artifactId>
@@ -11,10 +10,6 @@
   <modelVersion>4.0.0</modelVersion>
 
   <artifactId>upload</artifactId>
-
-  <properties>
-    <sonar.projectKey>corona-warn-app_cwa-server_services_upload</sonar.projectKey>
-  </properties>
 
   <dependencies>
     <dependency>
@@ -32,23 +27,25 @@
     <dependency>
       <artifactId>bcpkix-jdk15on</artifactId>
       <groupId>org.bouncycastle</groupId>
-      <version>1.65</version>
     </dependency>
     <dependency>
       <artifactId>json-simple</artifactId>
       <groupId>com.googlecode.json-simple</groupId>
-      <version>1.1.1</version>
     </dependency>
+    <!-- test scope only -->
     <dependency>
       <groupId>org.testcontainers</groupId>
       <artifactId>postgresql</artifactId>
-      <version>1.14.3</version>
-      <scope>test</scope>
     </dependency>
   </dependencies>
 
   <build>
     <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-surefire-plugin</artifactId>
+        <version>3.0.0-M3</version>
+      </plugin>
       <plugin>
         <groupId>org.jacoco</groupId>
         <artifactId>jacoco-maven-plugin</artifactId>
