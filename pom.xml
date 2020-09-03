@@ -33,12 +33,15 @@
     <java.version>11</java.version>
     <maven.compiler.source>${java.version}</maven.compiler.source>
     <maven.compiler.target>${java.version}</maven.compiler.target>
+    <maven.compiler.debug>true</maven.compiler.debug>
+    <maven.compiler.debuglevel>lines,vars,source</maven.compiler.debuglevel>
     <project.build.sourceEncoding>${encoding}</project.build.sourceEncoding>
     <project.reporting.outputEncoding>${encoding}</project.reporting.outputEncoding>
     <!-- https://spring.io/projects/spring-boot -->
     <spring-boot-version>2.3.3.RELEASE</spring-boot-version>
     <!-- https://spring.io/projects/spring-cloud#release-trains -->
     <spring-cloud-version>2.2.5.RELEASE</spring-cloud-version>
+    <protobuf-version>3.13.0</protobuf-version>
   </properties>
 
   <dependencyManagement>
@@ -75,7 +78,7 @@
       <dependency>
         <groupId>com.google.protobuf</groupId>
         <artifactId>protobuf-java</artifactId>
-        <version>3.12.2</version>
+        <version>${protobuf-version}</version>
       </dependency>
       <dependency>
         <groupId>com.googlecode.json-simple</groupId>
@@ -139,7 +142,7 @@
       <dependency>
         <groupId>com.google.protobuf</groupId>
         <artifactId>protobuf-java-util</artifactId>
-        <version>3.12.4</version>
+        <version>${protobuf-version}</version>
         <scope>test</scope>
       </dependency>
       <dependency>
@@ -178,6 +181,14 @@
   </reporting>
 
   <build>
+    <extensions>
+      <extension>
+        <groupId>kr.motd.maven</groupId>
+        <artifactId>os-maven-plugin</artifactId>
+        <version>1.6.2</version>
+      </extension>
+    </extensions>
+
     <pluginManagement>
       <plugins>
         <plugin>
@@ -194,6 +205,15 @@
           </executions>
         </plugin>
         <plugin>
+          <artifactId>maven-compiler-plugin</artifactId>
+          <version>3.8.1</version>
+          <configuration>
+            <compilerArgs>
+              <arg>-Xlint:all</arg>
+            </compilerArgs>
+          </configuration>
+        </plugin>
+        <plugin>
           <artifactId>maven-dependency-plugin</artifactId>
           <version>3.1.2</version>
         </plugin>
@@ -204,6 +224,10 @@
         <plugin>
           <artifactId>maven-site-plugin</artifactId>
           <version>3.7.1</version>
+        </plugin>
+        <plugin>
+          <artifactId>maven-surefire-plugin</artifactId>
+          <version>3.0.0-M5</version>
         </plugin>
         <plugin>
           <groupId>org.codehaus.mojo</groupId>
@@ -242,6 +266,25 @@
           </configuration>
         </plugin>
         <plugin>
+          <groupId>org.jacoco</groupId>
+          <artifactId>jacoco-maven-plugin</artifactId>
+          <version>0.8.5</version>
+          <executions>
+            <execution>
+              <goals>
+                <goal>prepare-agent</goal>
+              </goals>
+            </execution>
+            <execution>
+              <id>report</id>
+              <goals>
+                <goal>report</goal>
+              </goals>
+              <phase>verify</phase>
+            </execution>
+          </executions>
+        </plugin>
+        <plugin>
           <groupId>org.springframework.boot</groupId>
           <artifactId>spring-boot-maven-plugin</artifactId>
           <version>${spring-boot-version}</version>
@@ -257,8 +300,25 @@
             <mainClass>${start-class}</mainClass>
           </configuration>
         </plugin>
+        <plugin>
+          <groupId>org.xolstice.maven.plugins</groupId>
+          <artifactId>protobuf-maven-plugin</artifactId>
+          <version>0.6.1</version>
+          <executions>
+            <execution>
+              <goals>
+                <goal>compile</goal>
+              </goals>
+            </execution>
+          </executions>
+          <configuration>
+            <protocArtifact>com.google.protobuf:protoc:${protobuf-version}:exe:${os.detected.classifier}</protocArtifact>
+          </configuration>
+        </plugin>
       </plugins>
     </pluginManagement>
+
+    <!-- plugin executions for ALL sub modules -->
     <plugins>
       <plugin>
         <artifactId>maven-checkstyle-plugin</artifactId>
@@ -290,6 +350,9 @@
       </plugin>
       <plugin>
         <artifactId>maven-site-plugin</artifactId>
+      </plugin>
+      <plugin>
+        <artifactId>maven-surefire-plugin</artifactId>
       </plugin>
       <plugin>
         <!-- see https://maven.apache.org/maven-ci-friendly.html#install-deploy -->
@@ -329,6 +392,10 @@
           <trimHeaderLine>true</trimHeaderLine>
           <emptyLineAfterHeader>true</emptyLineAfterHeader>
         </configuration>
+      </plugin>
+      <plugin>
+        <groupId>org.jacoco</groupId>
+        <artifactId>jacoco-maven-plugin</artifactId>
       </plugin>
     </plugins>
   </build>
