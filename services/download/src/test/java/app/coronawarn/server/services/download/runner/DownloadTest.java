@@ -26,7 +26,6 @@ import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
-
 import app.coronawarn.server.services.download.download.DiagnosisKeyBatchProcessor;
 import app.coronawarn.server.services.download.download.DownloadServiceConfig;
 import java.time.LocalDate;

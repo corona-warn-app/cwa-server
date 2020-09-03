@@ -30,7 +30,6 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.domain.EntityScan;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
-import org.springframework.context.ApplicationContext;
 import org.springframework.context.EnvironmentAware;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.core.env.Environment;
@@ -44,8 +43,8 @@ import org.springframework.data.jdbc.repository.config.EnableJdbcRepositories;
 @SpringBootApplication
 @EnableJdbcRepositories(basePackages = "app.coronawarn.server.common.persistence")
 @EntityScan(basePackages = "app.coronawarn.server.common.persistence")
-@ComponentScan({ "app.coronawarn.server.common.persistence", "app.coronawarn.server.services.download",
-    "app.coronawarn.server.common.federation.client" })
+@ComponentScan({"app.coronawarn.server.common.persistence", "app.coronawarn.server.services.download",
+    "app.coronawarn.server.common.federation.client"})
 @EnableConfigurationProperties
 public class Application implements EnvironmentAware, DisposableBean {
 

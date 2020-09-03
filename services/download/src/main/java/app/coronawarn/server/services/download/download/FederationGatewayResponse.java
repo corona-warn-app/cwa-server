@@ -37,8 +37,8 @@ public class FederationGatewayResponse {
    * Creates a FederationGatewayResponse that holds a {@link DiagnosisKeyBatch} and batch tag metadata as served by the
    * federation gateway.
    */
-  public FederationGatewayResponse(DiagnosisKeyBatch diagnosisKeyBatch, String batchTag,
-      Optional<String> nextBatchTag) {
+  public FederationGatewayResponse(
+      DiagnosisKeyBatch diagnosisKeyBatch, String batchTag, Optional<String> nextBatchTag) {
     this.diagnosisKeyBatch = diagnosisKeyBatch;
     this.batchTag = batchTag;
     this.nextBatchTag = nextBatchTag;
