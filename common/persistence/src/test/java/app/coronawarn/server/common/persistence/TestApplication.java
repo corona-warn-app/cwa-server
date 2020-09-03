@@ -21,7 +21,9 @@
 package app.coronawarn.server.common.persistence;
 
 import app.coronawarn.server.common.persistence.repository.DiagnosisKeyRepository;
+import app.coronawarn.server.common.persistence.repository.FederationBatchInfoRepository;
 import app.coronawarn.server.common.persistence.service.DiagnosisKeyService;
+import app.coronawarn.server.common.persistence.service.FederationBatchInfoService;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -29,8 +31,14 @@ import org.springframework.context.annotation.Configuration;
 @SpringBootApplication
 @Configuration
 public class TestApplication {
+
   @Bean
   DiagnosisKeyService createDiagnosisKeyService(DiagnosisKeyRepository keyRepository) {
     return new DiagnosisKeyService(keyRepository);
+  }
+
+  @Bean
+  FederationBatchInfoService createFederationBatchInfoService(FederationBatchInfoRepository federationBatchInfoRepository) {
+    return new FederationBatchInfoService(federationBatchInfoRepository);
   }
 }
