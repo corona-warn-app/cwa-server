@@ -28,17 +28,20 @@ import static com.github.tomakehurst.wiremock.client.WireMock.anyUrl;
 import static com.github.tomakehurst.wiremock.client.WireMock.get;
 import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.options;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.springframework.http.HttpHeaders.CONTENT_TYPE;
 import static org.springframework.http.HttpStatus.NOT_FOUND;
 import static org.springframework.http.HttpStatus.OK;
 
 import app.coronawarn.server.common.federation.client.FederationFeignHttpClientProvider;
 import app.coronawarn.server.common.federation.client.FederationGatewayClient;
 import app.coronawarn.server.common.federation.client.config.FederationGatewayConfig;
+import app.coronawarn.server.common.protocols.external.exposurenotification.DiagnosisKey;
 import app.coronawarn.server.common.protocols.external.exposurenotification.DiagnosisKeyBatch;
 import app.coronawarn.server.services.download.download.DiagnosisKeyBatchDownloader;
 import app.coronawarn.server.services.download.download.FederationGatewayResponse;
 import com.github.tomakehurst.wiremock.WireMockServer;
 import com.github.tomakehurst.wiremock.client.ResponseDefinitionBuilder;
+import com.google.protobuf.ByteString;
 import java.time.LocalDate;
 import java.util.Optional;
 import org.junit.jupiter.api.AfterAll;
@@ -48,22 +51,25 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.cloud.openfeign.EnableFeignClients;
 import org.springframework.cloud.openfeign.FeignAutoConfiguration;
-import org.springframework.test.context.ActiveProfiles;
 
-@EnableFeignClients
 @ImportAutoConfiguration({FeignAutoConfiguration.class, FederationGatewayConfig.class, FeignClientConfiguration.class})
 @SpringBootTest(classes = {DiagnosisKeyBatchDownloader.class, FederationGatewayClient.class,
     FederationFeignHttpClientProvider.class})
-@ActiveProfiles({"feign"})
 class DiagnosisKeyBatchDownloaderTest {
 
   private static final LocalDate EXP_DATE = LocalDate.of(2020, 9, 1);
   private static final String EXP_BATCH_TAG = "507f191e810c19729de860ea";
-  private static final ResponseDefinitionBuilder RESPONSE_NOT_FOUND = aResponse().withStatus(NOT_FOUND.value());
-  private static final ResponseDefinitionBuilder RESPONSE_INVALID_PAYLOAD =
-      aResponse().withStatus(OK.value()).withBody("somethingInvalid");
+  private static final String EXP_NEXT_BATCH_TAG = "507f191e810c19729de860ea";
+  private static final DiagnosisKeyBatch EXP_DIAGNOSIS_KEY_BATCH = DiagnosisKeyBatch.newBuilder()
+      .addKeys(
+          DiagnosisKey.newBuilder()
+              .setKeyData(ByteString.copyFromUtf8("0123456789ABCDEF"))
+              .addVisitedCountries("DE")
+              .setRollingStartIntervalNumber(0)
+              .setRollingPeriod(144)
+              .setTransmissionRiskLevel(2)
+              .build()).build();
 
   private static WireMockServer server;
 
@@ -86,6 +92,8 @@ class DiagnosisKeyBatchDownloaderTest {
     server.stop();
   }
 
+  private static final ResponseDefinitionBuilder RESPONSE_NOT_FOUND = aServerResponse().withStatus(NOT_FOUND.value());
+
   @Test
   void downloadFirstBatchReturnsEmptyIfNotFound() {
     server.stubFor(get(anyUrl()).willReturn(RESPONSE_NOT_FOUND));
@@ -99,6 +107,9 @@ class DiagnosisKeyBatchDownloaderTest {
     Optional<FederationGatewayResponse> actResponse = batchDownloader.downloadBatch(EXP_DATE, EXP_BATCH_TAG);
     assertThat(actResponse).isEmpty();
   }
+
+  private static final ResponseDefinitionBuilder RESPONSE_INVALID_PAYLOAD =
+      aServerResponse().withStatus(OK.value()).withBody("somethingInvalid");
 
   @Test
   void downloadFirstBatchReturnsEmptyIfPayloadInvalid() {
@@ -114,22 +125,51 @@ class DiagnosisKeyBatchDownloaderTest {
     assertThat(actResponse).isEmpty();
   }
 
+  private static final ResponseDefinitionBuilder RESPONSE_NO_NEXT_BATCH = aServerResponse()
+      .withStatus(OK.value())
+      .withHeader(HEADER_BATCH_TAG, EXP_BATCH_TAG)
+      .withHeader(HEADER_NEXT_BATCH_TAG, EMPTY_HEADER)
+      .withBody(EXP_DIAGNOSIS_KEY_BATCH.toByteArray());
+
   @Test
   void downloadFirstBatchReturnsResponseWithoutNextBatchTag() {
     server.stubFor(get(anyUrl()).willReturn(RESPONSE_NO_NEXT_BATCH));
     Optional<FederationGatewayResponse> actResponse = batchDownloader.downloadFirstBatch(EXP_DATE);
     assertThat(actResponse).contains(
-        new FederationGatewayResponse(DiagnosisKeyBatch.newBuilder().build(), EXP_BATCH_TAG, Optional.empty()));
+        new FederationGatewayResponse(EXP_DIAGNOSIS_KEY_BATCH, EXP_BATCH_TAG, Optional.empty()));
   }
 
-  private static final ResponseDefinitionBuilder RESPONSE_NO_NEXT_BATCH = aResponse()
+  @Test
+  void downloadBatchReturnsResponseWithoutNextBatchTag() {
+    server.stubFor(get(anyUrl()).willReturn(RESPONSE_NO_NEXT_BATCH));
+    Optional<FederationGatewayResponse> actResponse = batchDownloader.downloadBatch(EXP_DATE, EXP_BATCH_TAG);
+    assertThat(actResponse).contains(
+        new FederationGatewayResponse(EXP_DIAGNOSIS_KEY_BATCH, EXP_BATCH_TAG, Optional.empty()));
+  }
+
+  private static final ResponseDefinitionBuilder RESPONSE_NEXT_BATCH_PRESENT = aServerResponse()
       .withStatus(OK.value())
       .withHeader(HEADER_BATCH_TAG, EXP_BATCH_TAG)
-      .withHeader(HEADER_NEXT_BATCH_TAG, EMPTY_HEADER)
-      .withBody(DiagnosisKeyBatch.newBuilder().build().toByteArray());
+      .withHeader(HEADER_NEXT_BATCH_TAG, EXP_NEXT_BATCH_TAG)
+      .withBody(EXP_DIAGNOSIS_KEY_BATCH.toByteArray());
 
-  private String buildValidPayload() {
-    DiagnosisKeyBatch.newBuilder().build().toByteArray();
-    return null;
+  @Test
+  void downloadFirstBatchReturnsResponseWithNextBatchTag() {
+    server.stubFor(get(anyUrl()).willReturn(RESPONSE_NEXT_BATCH_PRESENT));
+    Optional<FederationGatewayResponse> actResponse = batchDownloader.downloadFirstBatch(EXP_DATE);
+    assertThat(actResponse).contains(
+        new FederationGatewayResponse(EXP_DIAGNOSIS_KEY_BATCH, EXP_BATCH_TAG, Optional.of(EXP_NEXT_BATCH_TAG)));
+  }
+
+  @Test
+  void downloadBatchReturnsResponseWithNextBatchTag() {
+    server.stubFor(get(anyUrl()).willReturn(RESPONSE_NEXT_BATCH_PRESENT));
+    Optional<FederationGatewayResponse> actResponse = batchDownloader.downloadBatch(EXP_DATE, EXP_BATCH_TAG);
+    assertThat(actResponse).contains(
+        new FederationGatewayResponse(EXP_DIAGNOSIS_KEY_BATCH, EXP_BATCH_TAG, Optional.of(EXP_NEXT_BATCH_TAG)));
+  }
+
+  private static ResponseDefinitionBuilder aServerResponse() {
+    return aResponse().withHeader(CONTENT_TYPE, "application/protobuf; version=1.0");
   }
 }
