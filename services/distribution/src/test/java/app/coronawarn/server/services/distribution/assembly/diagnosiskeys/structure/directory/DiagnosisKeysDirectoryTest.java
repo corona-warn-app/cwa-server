@@ -183,7 +183,7 @@ class DiagnosisKeysDirectoryTest {
   }
 
   @Test
-  void checkBuildsTheCorrectDirectoryStructure() {
+  void checkBuildsTheCorrectDirectoryStructureForTwoCountriesWithDifferentKeys() {
     distributionServiceConfig.setSupportedCountries("DE,FR,DK");
     DiagnosisKeyBundler bundler = new ProdDiagnosisKeyBundler(distributionServiceConfig);
 
