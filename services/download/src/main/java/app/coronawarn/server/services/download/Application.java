@@ -64,15 +64,6 @@ public class Application implements EnvironmentAware, DisposableBean {
     LogManager.shutdown();
   }
 
-  /**
-   * Terminates this application with exit code 1 (general error).
-   */
-  public static void killApplication(ApplicationContext appContext) {
-    SpringApplication.exit(appContext);
-    logger.error("Application terminated abnormally.");
-    System.exit(1);
-  }
-
   @Override
   public void setEnvironment(Environment environment) {
     List<String> profiles = Arrays.asList(environment.getActiveProfiles());
