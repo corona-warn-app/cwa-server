@@ -20,11 +20,25 @@
 
 package app.coronawarn.server.services.distribution.runner;
 
+import static app.coronawarn.server.services.distribution.common.Helpers.buildDiagnosisKeys;
+import static org.mockito.Mockito.any;
+import static org.mockito.Mockito.atMostOnce;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.spy;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
 import app.coronawarn.server.common.persistence.domain.DiagnosisKey;
 import app.coronawarn.server.common.persistence.service.DiagnosisKeyService;
 import app.coronawarn.server.services.distribution.assembly.structure.util.TimeUtils;
 import app.coronawarn.server.services.distribution.config.DistributionServiceConfig;
 import app.coronawarn.server.services.distribution.config.DistributionServiceConfig.TestData;
+import java.time.LocalDateTime;
+import java.time.ZoneOffset;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
 import org.junit.Assert;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -39,15 +53,6 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
-
-import java.time.LocalDateTime;
-import java.time.ZoneOffset;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
-
-import static app.coronawarn.server.services.distribution.common.Helpers.buildDiagnosisKeys;
-import static org.mockito.Mockito.*;
 
 @EnableConfigurationProperties(value = DistributionServiceConfig.class)
 @ExtendWith(SpringExtension.class)
@@ -66,12 +71,6 @@ class TestDataGenerationTest {
 
   @Captor
   private ArgumentCaptor<Collection<DiagnosisKey>> captor;
-
-  @Captor
-  private ArgumentCaptor<String> filterCountryCapture;
-
-  private static final String GERMANY = "DE";
-  private static final String FRANCE = "FR";
 
   @BeforeEach
   void setup() {
@@ -97,7 +96,8 @@ class TestDataGenerationTest {
     when(diagnosisKeyService.getDiagnosisKeys()).thenReturn(Collections.emptyList());
     testDataGeneration.run(null);
 
-    verify(diagnosisKeyService).saveDiagnosisKeys(captor.capture());
+    verify(diagnosisKeyService, times(distributionServiceConfig.getSupportedCountries().length))
+        .saveDiagnosisKeys(captor.capture());
     Assert.assertFalse(captor.getValue().isEmpty());
   }
 
@@ -107,7 +107,10 @@ class TestDataGenerationTest {
     TimeUtils.setNow(now);
 
     when(diagnosisKeyService.getDiagnosisKeys())
-        .thenReturn(buildDiagnosisKeys(6, LocalDateTime.of(2020, 7, 15, 12, 0, 0), 10));
+        .thenReturn(buildDiagnosisKeys(6,
+            LocalDateTime.of(2020, 7, 15, 12, 0, 0), 10, "DE", List.of("DE", "FR")))
+        .thenReturn(buildDiagnosisKeys(6,
+            LocalDateTime.of(2020, 7, 15, 12, 0, 0), 10, "FR", List.of("DE", "FR")));
 
     testDataGeneration.run(null);
     verify(diagnosisKeyService, never()).saveDiagnosisKeys(captor.capture());
@@ -119,58 +122,59 @@ class TestDataGenerationTest {
     TimeUtils.setNow(now);
 
     when(diagnosisKeyService.getDiagnosisKeys())
-        .thenReturn(buildDiagnosisKeys(6, LocalDateTime.of(2020, 7, 15, 11, 0, 0), 10));
+        .thenReturn(buildDiagnosisKeys(6,
+            LocalDateTime.of(2020, 7, 15, 11, 0, 0), 10))
+        .thenReturn(buildDiagnosisKeys(6,
+            LocalDateTime.of(2020, 7, 15, 11, 0, 0), 10, "FR", List.of("DE", "FR")));
 
     testDataGeneration.run(null);
-    verify(diagnosisKeyService, atMostOnce()).saveDiagnosisKeys(captor.capture());
+    verify(diagnosisKeyService, times(distributionServiceConfig.getSupportedCountries().length))
+        .saveDiagnosisKeys(captor.capture());
     Assert.assertTrue(captor.getValue().stream()
         .allMatch(k -> k.getSubmissionTimestamp() != 443003));
   }
 
-/*  todo: generates test data for all supported countries
   @Test
   void shouldGenerateValuesForGivenCountry() {
-    distributionServiceConfig.getApi().setDistributionCountry(FRANCE);
-    testDataGeneration = new TestDataGeneration(diagnosisKeyService, distributionServiceConfig);
+    DistributionServiceConfig serviceConfigSpy = spy(distributionServiceConfig);
+    serviceConfigSpy.setSupportedCountries("FR");
+    testDataGeneration = new TestDataGeneration(diagnosisKeyService, serviceConfigSpy);
     var now = LocalDateTime.of(2020, 7, 15, 12, 0, 0).toInstant(ZoneOffset.UTC);
     TimeUtils.setNow(now);
 
-    when(diagnosisKeyService.getDiagnosisKeysByVisitedCountry(FRANCE)).thenReturn(Collections.emptyList());
+    when(diagnosisKeyService.getDiagnosisKeys()).thenReturn(Collections.emptyList());
 
     testDataGeneration.run(null);
     verify(diagnosisKeyService, atMostOnce()).saveDiagnosisKeys(captor.capture());
     Assert.assertTrue(captor.getValue().stream()
-        .allMatch(k -> k.getVisitedCountries().contains(FRANCE)));
+        .allMatch(k -> k.getOriginCountry().equals("FR")));
   }
 
   @Test
-  void shouldNotGenerateAnyKeysForGivenCountry() {
-    distributionServiceConfig.getApi().setDistributionCountry(FRANCE);
+  void shouldNotGenerateAnyKeysForSupportedCountries() {
     testDataGeneration = new TestDataGeneration(diagnosisKeyService, distributionServiceConfig);
     var now = LocalDateTime.of(2020, 7, 15, 12, 0, 0).toInstant(ZoneOffset.UTC);
     TimeUtils.setNow(now);
 
-    when(diagnosisKeyService.getDiagnosisKeysByVisitedCountry(FRANCE))
-        .thenReturn(buildDiagnosisKeys(6, LocalDateTime.of(2020, 7, 15, 12, 0, 0), 10, GERMANY, List.of(GERMANY, FRANCE)));
+    when(diagnosisKeyService.getDiagnosisKeys())
+        .thenReturn(buildDiagnosisKeys(6, LocalDateTime.of(2020, 7, 15, 12, 0, 0), 10, "DE", List.of("DE", "FR")))
+        .thenReturn(buildDiagnosisKeys(6, LocalDateTime.of(2020, 7, 15, 12, 0, 0), 10, "FR", List.of("DE", "FR")));
 
     testDataGeneration.run(null);
     verify(diagnosisKeyService, never()).saveDiagnosisKeys(any());
-    verify(diagnosisKeyService, atMostOnce()).getDiagnosisKeysByVisitedCountry(filterCountryCapture.capture());
   }
 
   @Test
-  void shouldFilterVisitedCountryByGivenCountry() {
-    distributionServiceConfig.getApi().setDistributionCountry(FRANCE);
+  void shouldGenerateAnyKeysForSupportedCountries() {
     testDataGeneration = new TestDataGeneration(diagnosisKeyService, distributionServiceConfig);
     var now = LocalDateTime.of(2020, 7, 15, 12, 0, 0).toInstant(ZoneOffset.UTC);
     TimeUtils.setNow(now);
 
-    when(diagnosisKeyService.getDiagnosisKeysByVisitedCountry(FRANCE)).thenReturn(Collections.emptyList());
+    when(diagnosisKeyService.getDiagnosisKeys())
+        .thenReturn(buildDiagnosisKeys(6, LocalDateTime.of(2020, 7, 14, 12, 0, 0), 10, "DE", List.of("DE", "FR")))
+        .thenReturn(buildDiagnosisKeys(6, LocalDateTime.of(2020, 7, 14, 12, 0, 0), 10, "FR", List.of("DE", "FR")));
 
     testDataGeneration.run(null);
-    verify(diagnosisKeyService, atMostOnce()).getDiagnosisKeysByVisitedCountry(filterCountryCapture.capture());
-    Assert.assertEquals(FRANCE, filterCountryCapture.getValue());
+    verify(diagnosisKeyService, times(2)).saveDiagnosisKeys(any());
   }
-
- */
 }
