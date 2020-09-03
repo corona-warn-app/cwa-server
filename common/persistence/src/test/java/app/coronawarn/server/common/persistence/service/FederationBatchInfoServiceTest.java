@@ -35,8 +35,7 @@ import org.springframework.boot.test.autoconfigure.data.jdbc.DataJdbcTest;
 class FederationBatchInfoServiceTest {
 
   LocalDate date = LocalDate.of(2020, 9, 1);
-  String batchTag1 = "91e810c19729de860ea";
-  String batchTag2 = "91e810c19729de860eb";
+  String batchTag = "91e810c19729de860ea";
 
   @Autowired
   private FederationBatchInfoService federationBatchInfoService;
@@ -57,7 +56,7 @@ class FederationBatchInfoServiceTest {
 
   @Test
   void testSaveAndRetrieve() {
-    FederationBatchInfo federationBatchInfo = new FederationBatchInfo(batchTag1, date);
+    FederationBatchInfo federationBatchInfo = new FederationBatchInfo(batchTag, date);
     federationBatchInfoService.save(federationBatchInfo);
     var actualKeys = federationBatchInfoService.findByStatus(FederationBatchStatus.UNPROCESSED);
     assertThat(actualKeys.size()).isEqualTo(1);
@@ -66,7 +65,7 @@ class FederationBatchInfoServiceTest {
 
   @Test
   void testSaveAndRetrieveDifferentStatus() {
-    FederationBatchInfo federationBatchInfo = new FederationBatchInfo(batchTag1, date);
+    FederationBatchInfo federationBatchInfo = new FederationBatchInfo(batchTag, date);
     federationBatchInfoService.save(federationBatchInfo);
     var actualKeys = federationBatchInfoService.findByStatus(FederationBatchStatus.ERROR);
     assertThat(actualKeys).isEmpty();
@@ -74,7 +73,7 @@ class FederationBatchInfoServiceTest {
 
   @Test
   void testUpdateStatus() {
-    FederationBatchInfo federationBatchInfo = new FederationBatchInfo(batchTag1, date, FederationBatchStatus.UNPROCESSED);
+    FederationBatchInfo federationBatchInfo = new FederationBatchInfo(batchTag, date, FederationBatchStatus.UNPROCESSED);
     federationBatchInfoService.updateStatus(federationBatchInfo,FederationBatchStatus.PROCESSED);
 
     var actualUnprocessedKeys = federationBatchInfoService.findByStatus(FederationBatchStatus.UNPROCESSED);
@@ -82,15 +81,15 @@ class FederationBatchInfoServiceTest {
 
     var actualProcessedKeys = federationBatchInfoService.findByStatus(FederationBatchStatus.PROCESSED);
     assertThat(actualProcessedKeys.size()).isEqualTo(1);
-    assertThat(actualProcessedKeys.get(0)).isEqualTo(new FederationBatchInfo(batchTag1, date, FederationBatchStatus.PROCESSED));
+    assertThat(actualProcessedKeys.get(0)).isEqualTo(new FederationBatchInfo(batchTag, date, FederationBatchStatus.PROCESSED));
   }
 
   @Test
   void testSaveAndRetrieveOnConflict() {
-    FederationBatchInfo federationBatchInfo1 = new FederationBatchInfo(batchTag1, date, FederationBatchStatus.UNPROCESSED);
+    FederationBatchInfo federationBatchInfo1 = new FederationBatchInfo(batchTag, date, FederationBatchStatus.UNPROCESSED);
     federationBatchInfoService.save(federationBatchInfo1);
 
-    FederationBatchInfo federationBatchInfo2 = new FederationBatchInfo(batchTag1, date, FederationBatchStatus.ERROR);
+    FederationBatchInfo federationBatchInfo2 = new FederationBatchInfo(batchTag, date, FederationBatchStatus.ERROR);
     federationBatchInfoService.save(federationBatchInfo2);
 
     var actualErrorKeys = federationBatchInfoService.findByStatus(FederationBatchStatus.ERROR);
