@@ -119,8 +119,7 @@ class DiagnosisKeyBatchDownloaderTest {
     server.stubFor(get(anyUrl()).willReturn(RESPONSE_NO_NEXT_BATCH));
     Optional<FederationGatewayResponse> actResponse = batchDownloader.downloadFirstBatch(EXP_DATE);
     assertThat(actResponse).contains(
-        new FederationGatewayResponse(DiagnosisKeyBatch.newBuilder().build(), EXP_BATCH_TAG, Optional.empty(),
-            EXP_DATE));
+        new FederationGatewayResponse(DiagnosisKeyBatch.newBuilder().build(), EXP_BATCH_TAG, Optional.empty()));
   }
 
   private static final ResponseDefinitionBuilder RESPONSE_NO_NEXT_BATCH = aResponse()

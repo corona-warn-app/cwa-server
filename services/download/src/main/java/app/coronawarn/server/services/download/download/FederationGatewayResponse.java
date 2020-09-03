@@ -21,7 +21,6 @@
 package app.coronawarn.server.services.download.download;
 
 import app.coronawarn.server.common.protocols.external.exposurenotification.DiagnosisKeyBatch;
-import java.time.LocalDate;
 import java.util.Objects;
 import java.util.Optional;
 
@@ -33,17 +32,16 @@ public class FederationGatewayResponse {
   private final DiagnosisKeyBatch diagnosisKeyBatch;
   private final String batchTag;
   private final Optional<String> nextBatchTag;
-  private final LocalDate date;
 
   /**
-   * Creates a FederationGatewayResponse.
+   * Creates a FederationGatewayResponse that holds a {@link DiagnosisKeyBatch} and batch tag metadata as served by the
+   * federation gateway.
    */
-  public FederationGatewayResponse(
-      DiagnosisKeyBatch diagnosisKeyBatch, String batchTag, Optional<String> nextBatchTag, LocalDate date) {
+  public FederationGatewayResponse(DiagnosisKeyBatch diagnosisKeyBatch, String batchTag,
+      Optional<String> nextBatchTag) {
     this.diagnosisKeyBatch = diagnosisKeyBatch;
     this.batchTag = batchTag;
     this.nextBatchTag = nextBatchTag;
-    this.date = date;
   }
 
   public DiagnosisKeyBatch getDiagnosisKeyBatch() {
@@ -58,10 +56,6 @@ public class FederationGatewayResponse {
     return nextBatchTag;
   }
 
-  public LocalDate getDate() {
-    return date;
-  }
-
   @Override
   public boolean equals(Object o) {
     if (this == o) {
@@ -73,12 +67,11 @@ public class FederationGatewayResponse {
     FederationGatewayResponse that = (FederationGatewayResponse) o;
     return Objects.equals(diagnosisKeyBatch, that.diagnosisKeyBatch)
         && Objects.equals(batchTag, that.batchTag)
-        && Objects.equals(nextBatchTag, that.nextBatchTag)
-        && Objects.equals(date, that.date);
+        && Objects.equals(nextBatchTag, that.nextBatchTag);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(diagnosisKeyBatch, batchTag, nextBatchTag, date);
+    return Objects.hash(diagnosisKeyBatch, batchTag, nextBatchTag);
   }
 }
