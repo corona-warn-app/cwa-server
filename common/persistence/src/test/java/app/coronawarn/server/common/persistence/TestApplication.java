@@ -36,7 +36,6 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class TestApplication {
 
-
   @Bean
   ValidDiagnosisKeyFilter validKeysFilter() {
     return new ValidDiagnosisKeyFilter();
