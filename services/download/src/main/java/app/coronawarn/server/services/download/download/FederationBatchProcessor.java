@@ -41,32 +41,32 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 /**
- * Responsible for downloading and storing diagnosis key batches from the federation gateway.
+ * Responsible for downloading and storing batch information from the federation gateway.
  */
 @Component
-public class DiagnosisKeyBatchProcessor {
+public class FederationBatchProcessor {
 
-  private static final Logger logger = LoggerFactory.getLogger(DiagnosisKeyBatchProcessor.class);
+  private static final Logger logger = LoggerFactory.getLogger(FederationBatchProcessor.class);
   private final FederationBatchInfoService batchInfoService;
   private final DiagnosisKeyService diagnosisKeyService;
-  private final DiagnosisKeyBatchDownloader batchDownloader;
+  private final FederationBatchDownloader batchDownloader;
 
   /**
    * Constructor.
    *
    * @param batchInfoService    A {@link FederationBatchInfoService} for accessing diagnosis key batch info instances.
    * @param diagnosisKeyService A {@link DiagnosisKeyService} for storing diagnosis keys from the federation batches.
-   * @param batchDownloader     A {@link DiagnosisKeyBatchDownloader} for retrieving federation diagnosis key batches.
+   * @param batchDownloader     A {@link FederationBatchDownloader} for retrieving federation diagnosis key batches.
    */
-  public DiagnosisKeyBatchProcessor(FederationBatchInfoService batchInfoService,
-      DiagnosisKeyService diagnosisKeyService, DiagnosisKeyBatchDownloader batchDownloader) {
+  public FederationBatchProcessor(FederationBatchInfoService batchInfoService,
+                                  DiagnosisKeyService diagnosisKeyService, FederationBatchDownloader batchDownloader) {
     this.batchInfoService = batchInfoService;
     this.diagnosisKeyService = diagnosisKeyService;
     this.batchDownloader = batchDownloader;
   }
 
   /**
-   * Stores the batch info of the first diagnosis key batch for the specified date. Its status is set to {@link
+   * Stores the batch info for the specified date. Its status is set to {@link
    * FederationBatchStatus#UNPROCESSED}.
    *
    * @param date The date for which the first batch info is stored.
@@ -78,7 +78,7 @@ public class DiagnosisKeyBatchProcessor {
   }
 
   /**
-   * Downloads and processes all diagnosis key batches from the federation gateway that have previously been marked with
+   * Downloads and processes all batches from the federation gateway that have previously been marked with
    * the status value {@link FederationBatchStatus#ERROR}.
    */
   public void processErrorFederationBatches() {
@@ -98,7 +98,7 @@ public class DiagnosisKeyBatchProcessor {
   }
 
   /**
-   * Downloads and processes all diagnosis key batches from the federation gateway that have previously been marked with
+   * Downloads and processes all batches from the federation gateway that have previously been marked with
    * status value {@link FederationBatchStatus#UNPROCESSED}.
    */
   public void processUnprocessedFederationBatches() {
