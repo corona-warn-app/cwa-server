@@ -18,6 +18,7 @@
       - [Data Retention](./DISTRIBUTION.md#data-retention)
     - [Federation Key Upload Service](./FEDERATION-UPLOAD.md)
     - [Federation Key Download Service](./FEDERATION-DOWNLOAD.md)
+    - [Federation Callback Service](./FEDERATION-CALLBACK.md)
 - [Distribution Service](./DISTRIBUTION.md)
   - [Spring Profiles](./DISTRIBUTION.md#spring-profiles)
     - [Available Profiles](./DISTRIBUTION.md#available-profiles)
