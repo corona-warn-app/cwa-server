@@ -117,7 +117,7 @@ public abstract class DiagnosisKeyBundler {
   public List<DiagnosisKey> getAllDiagnosisKeys(String country) {
     if (!supportedCountries.contains(country)) {
       throw new InvalidCountryException(
-          String.join("The country {} received is not included in the list of supported countries", country));
+          String.join(COUNTRY_ERROR_MESSAGE, country));
     }
     return this.distributableDiagnosisKeys.get(country).values()
         .stream().flatMap(Collection::stream).collect(Collectors.toList());
@@ -186,7 +186,7 @@ public abstract class DiagnosisKeyBundler {
   public List<DiagnosisKey> getDiagnosisKeysForDate(LocalDate date, String country) {
     if (!supportedCountries.contains(country)) {
       throw new InvalidCountryException(
-          String.join("The country {} received is not included in the list of supported countries", country));
+          String.join(COUNTRY_ERROR_MESSAGE, country));
     }
     return this.distributableDiagnosisKeys.get(country).keySet().stream()
         .filter(dateTime -> dateTime.toLocalDate().equals(date))
@@ -201,7 +201,7 @@ public abstract class DiagnosisKeyBundler {
   public List<DiagnosisKey> getDiagnosisKeysForHour(LocalDateTime hour, String country) {
     if (!supportedCountries.contains(country)) {
       throw new InvalidCountryException(
-          String.join("The country {} received is not included in the list of supported countries", country));
+          String.join(COUNTRY_ERROR_MESSAGE, country));
     }
     return Optional
         .ofNullable(this.distributableDiagnosisKeys.get(country).get(hour))
