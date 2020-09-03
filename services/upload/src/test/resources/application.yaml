@@ -5,31 +5,6 @@ logging:
       springframework: off
     root: off
 
-federation-gateway:
-  base-url: fake-url
-  connection-pool-size: 200
-  ssl:
-    key-store-path: test.p12
-    key-store-pass: test1234
-    certificate-type: PKCS12
-
-services:
-  upload:
-    min-batch-key-count: 140
-    max-batch-key-count: 4000
-    privatekey: testprivatekey.pem
-    certificate: testpublickey.pem
-    privatekey-password: testpass
-    test-data:
-      keys: 250
-    signature:
-      # The ASN.1 OID for algorithm identifier.
-      algorithm-oid: 1.2.840.10045.4.3.2
-      # The algorithm name.
-      algorithm-name: SHA256withECDSA
-      # The security provider.
-      security-provider: BC
-
 spring:
   flyway:
     enabled: true

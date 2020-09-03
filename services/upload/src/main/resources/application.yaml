@@ -7,32 +7,6 @@ logging:
     app:
       coronawarn: INFO
 
-federation-gateway:
-  base-url: ${FEDERATION_GATEWAY_BASE_URL:http://localhost:8005}
-  connection-pool-size: 200
-  ssl:
-    key-store-path: ${FEDERATION_GATEWAY_KEYSTORE_PATH}
-    key-store-pass: ${FEDERATION_GATEWAY_KEYSTORE_PASS}
-    certificate-type: PKCS12
-
-services:
-  upload:
-    # The minimum number of keys that must be present to create an upload batch
-    min-batch-key-count: 140
-    # The maximum number of keys that an upload batch can contain
-    max-batch-key-count: 4000
-    privatekey: ${VAULT_EFGS_BATCHIGNING_SECRET}
-    certificate: ${VAULT_EFGS_BATCHIGNING_CERTIFICATE}
-    privatekey-password: ${VAULT_EFGS_BATCHSIGNING_PASSWORD}
-    test-data:
-      keys: 750
-    signature:
-      # The ASN.1 OID for algorithm identifier.
-      algorithm-oid: 1.2.840.10045.4.3.2
-      # The algorithm name.
-      algorithm-name: SHA256withECDSA
-      # The security provider.
-      security-provider: BC
 
 spring:
   transaction:

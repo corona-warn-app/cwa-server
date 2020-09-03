@@ -59,39 +59,10 @@ self_sign_certificate_request()
     -out "$3"
 }
 
-# Self-sign a certificate for EFGS batch signing
-# $1 = IN  Private key
-# $2 = IN  Certificate Header Parameters
-# $3 = OUT New certificate file
-self_sign_efgs_signing_certificate()
-{
-  openssl req -x509 -new \
-    -days 365 \
-    -key "$1" \
-    -extensions v3_req \
-    -subj "$2" \
-    -nodes \
-    -out "$3"
-}
-
-# Generate Certificate SHA256 thumbprint
-# $1 = IN  X509 Certificate File
-# $2 = OUT Thumbprint File
-generate_certificate_thumbprint()
-{
-  openssl x509 -in "$1" -noout -hash -sha256 -fingerprint \
-    | grep Fingerprint | sed 's/SHA256 Fingerprint=//' | sed 's/://g' >> "$2"
-}
-
-
 generate_private_key private.pem
 extract_public_key private.pem public.pem
 generate_certificate_signing_request private.pem '/CN=CWA Test Certificate' request.csr
 self_sign_certificate_request request.csr private.pem certificate.crt
-
-generate_private_key efgs_signing_key.pem
-self_sign_efgs_signing_certificate efgs_signing_key.pem '/CN=CWA Test Certificate/OU=CWA-Team/C=DE' efgs_signing_cert.pem
-generate_certificate_thumbprint efgs_signing_cert.pem efgs_x509_thumbprint.txt
 
 popd > /dev/null || exit
 popd > /dev/null || exit

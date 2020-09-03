@@ -12,6 +12,10 @@
 
   <artifactId>protocols</artifactId>
 
+  <properties>
+    <sonar.projectKey>corona-warn-app_cwa-server_common_protocols</sonar.projectKey>
+  </properties>
+
   <dependencies>
     <dependency>
       <groupId>com.google.protobuf</groupId>
