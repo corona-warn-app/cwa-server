@@ -36,7 +36,7 @@ public class FederationBatchInfo {
   private FederationBatchStatus status;
 
   /**
-   * Creates a FederationBatchInfo.
+   * Creates a FederationBatchInfo and sets its status to {@link FederationBatchStatus#UNPROCESSED}.
    */
   public FederationBatchInfo(String batchTag, LocalDate date) {
     this(batchTag, date, FederationBatchStatus.UNPROCESSED);
