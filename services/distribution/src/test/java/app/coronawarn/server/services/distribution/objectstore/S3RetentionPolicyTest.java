@@ -38,8 +38,11 @@ import app.coronawarn.server.services.distribution.config.DistributionServiceCon
 import app.coronawarn.server.services.distribution.objectstore.client.ObjectStoreOperationFailedException;
 import app.coronawarn.server.services.distribution.objectstore.client.S3Object;
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
+import java.util.stream.Collectors;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -91,11 +94,15 @@ class S3RetentionPolicyTest {
 
   @Test
   void shouldNotDeleteFilesIfAllAreValid() {
-    when(objectStoreAccess.getObjectsWithPrefix(any())).thenReturn(List.of(
-        new S3Object(generateFileName(getUtcDate().minusDays(1))), // TODO specify country
-        new S3Object(generateFileName(getUtcDate().plusDays(1))),
-        new S3Object(generateFileName(getUtcDate())),
-        new S3Object("version/v1/configuration/country/DE/app_config")));
+    Collection<String> supportedCounties = asList(distributionServiceConfig.getSupportedCountries());
+
+    List<S3Object> mockResponse = list(new S3Object("version/v1/configuration/country/DE/app_config"));
+    mockResponse.addAll(
+        supportedCounties.stream().map(country -> asList(
+            new S3Object(generateFileName(getUtcDate().minusDays(1), country)),
+            new S3Object(generateFileName(getUtcDate().plusDays(1), country)),
+            new S3Object(generateFileName(getUtcDate(), country)))).flatMap(List::stream)
+            .collect(toList()));
 
     s3RetentionPolicy.applyRetentionPolicy(1);
 
