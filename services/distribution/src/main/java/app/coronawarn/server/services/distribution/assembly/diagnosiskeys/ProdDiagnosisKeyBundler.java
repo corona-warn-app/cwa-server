@@ -69,7 +69,7 @@ public class ProdDiagnosisKeyBundler extends DiagnosisKeyBundler {
 
     supportedCountries.forEach(supportedCountry -> {
       diagnosisKeysMapped.put(supportedCountry, new ArrayList<>());
-      this.distributableDiagnosisKeys.put(supportedCountry, new HashMap<LocalDateTime, List<DiagnosisKey>>());
+      this.distributableDiagnosisKeys.put(supportedCountry, new HashMap<>());
     });
 
     diagnosisKeys.forEach(diagnosisKey -> diagnosisKey.getVisitedCountries().stream()

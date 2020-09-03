@@ -30,9 +30,7 @@ import java.time.LocalDateTime;
 import java.time.temporal.Temporal;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -41,13 +39,14 @@ import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.cglib.core.Local;
 
 /**
  * An instance of this class contains a collection of {@link DiagnosisKey DiagnosisKeys}.
  */
 public abstract class DiagnosisKeyBundler {
 
+  public static final String COUNTRY_ERROR_MESSAGE =
+      "The country {} received is not included in the list of supported countries";
   private static final Logger logger = LoggerFactory.getLogger(DiagnosisKeyBundler.class);
 
   /**
@@ -71,8 +70,8 @@ public abstract class DiagnosisKeyBundler {
   protected LocalDateTime distributionTime;
 
   /**
-   * A map containing diagnosis keys, grouped by country and mapped by the LocalDateTime
-   * on which they may be distributed.
+   * A map containing diagnosis keys, grouped by country and mapped by the LocalDateTime on which they may be
+   * distributed.
    */
   protected final Map<String, Map<LocalDateTime, List<DiagnosisKey>>> distributableDiagnosisKeys = new HashMap<>();
 
@@ -137,9 +136,10 @@ public abstract class DiagnosisKeyBundler {
   public Set<LocalDate> getDatesWithDistributableDiagnosisKeys(String country) {
     if (!supportedCountries.contains(country)) {
       throw new InvalidCountryException(
-          String.join("The country {} received is not included in the list of supported countries", country));
+          String.join(COUNTRY_ERROR_MESSAGE, country));
     }
     return this.distributableDiagnosisKeys.get(country).keySet().stream()
+
         .map(LocalDateTime::toLocalDate)
         .filter(date -> numberOfKeysForDateBelowMaximum(date, country))
         .collect(Collectors.toSet());
@@ -211,9 +211,8 @@ public abstract class DiagnosisKeyBundler {
   protected Map<String, List<DiagnosisKey>> groupDiagnosisKeysByCountry(Collection<DiagnosisKey> diagnosisKeys) {
     Map<String, List<DiagnosisKey>> diagnosisKeysMapped = new HashMap<>();
 
-    supportedCountries.forEach(supportedCountry -> {
-      diagnosisKeysMapped.put(supportedCountry, new ArrayList<>());
-    });
+    supportedCountries.forEach(supportedCountry ->
+        diagnosisKeysMapped.put(supportedCountry, new ArrayList<>()));
 
     diagnosisKeys.forEach(diagnosisKey -> diagnosisKey.getVisitedCountries().stream()
         .filter(supportedCountries::contains)

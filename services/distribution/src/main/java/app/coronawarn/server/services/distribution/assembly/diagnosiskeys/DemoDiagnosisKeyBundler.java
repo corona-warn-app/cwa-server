@@ -24,12 +24,7 @@ import static java.util.stream.Collectors.groupingBy;
 
 import app.coronawarn.server.common.persistence.domain.DiagnosisKey;
 import app.coronawarn.server.services.distribution.config.DistributionServiceConfig;
-import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 
@@ -46,15 +41,14 @@ public class DemoDiagnosisKeyBundler extends DiagnosisKeyBundler {
   }
 
   /**
-   * Initializes the internal {@code distributableDiagnosisKeys} map, grouping the diagnosis keys by country and
-   * the submission timestamp, thus ignoring the expiry and shifting policies.
+   * Initializes the internal {@code distributableDiagnosisKeys} map, grouping the diagnosis keys by country and the
+   * submission timestamp, thus ignoring the expiry and shifting policies.
    */
   @Override
   protected void createDiagnosisKeyDistributionMap(Collection<DiagnosisKey> diagnosisKeys) {
     this.distributableDiagnosisKeys.clear();
-    groupDiagnosisKeysByCountry(diagnosisKeys).forEach((country, diagnosisKeysPerCountry) -> {
-      this.distributableDiagnosisKeys.get(country).putAll(diagnosisKeysPerCountry.stream()
-          .collect(groupingBy(this::getSubmissionDateTime)));
-    });
+    groupDiagnosisKeysByCountry(diagnosisKeys).forEach((country, diagnosisKeysPerCountry) ->
+        this.distributableDiagnosisKeys.get(country).putAll(diagnosisKeysPerCountry.stream()
+            .collect(groupingBy(this::getSubmissionDateTime))));
   }
 }
