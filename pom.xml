@@ -163,19 +163,6 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-javadoc-plugin</artifactId>
-        <version>3.2.0</version>
-        <configuration>
-          <bottom>
-            <![CDATA[
-                    <script>
-                    if (typeof useModuleDirectories !== 'undefined') {
-                      useModuleDirectories = false;
-                    }
-                    </script>
-                ]]>
-          </bottom>
-          <additionalJOption>--allow-script-in-comments</additionalJOption>
-        </configuration>
       </plugin>
     </plugins>
   </reporting>
@@ -218,12 +205,29 @@
           <version>3.1.2</version>
         </plugin>
         <plugin>
+          <artifactId>maven-javadoc-plugin</artifactId>
+          <version>3.2.0</version>
+          <configuration>
+            <bottom>
+            <![CDATA[
+                    <script>
+                    if (typeof useModuleDirectories !== 'undefined') {
+                      useModuleDirectories = false;
+                    }
+                    </script>
+                ]]>
+            </bottom>
+            <additionalJOption>--allow-script-in-comments</additionalJOption>
+            <failOnError>false</failOnError>
+          </configuration>
+        </plugin>
+        <plugin>
           <artifactId>maven-project-info-reports-plugin</artifactId>
-          <version>3.0.0</version>
+          <version>3.1.0</version>
         </plugin>
         <plugin>
           <artifactId>maven-site-plugin</artifactId>
-          <version>3.7.1</version>
+          <version>3.9.1</version>
         </plugin>
         <plugin>
           <artifactId>maven-surefire-plugin</artifactId>
@@ -233,6 +237,10 @@
           <groupId>org.codehaus.mojo</groupId>
           <artifactId>flatten-maven-plugin</artifactId>
           <version>1.1.0</version>
+          <configuration>
+            <updatePomFile>true</updatePomFile>
+            <flattenMode>resolveCiFriendliesOnly</flattenMode>
+          </configuration>
           <executions>
             <execution>
               <id>flatten</id>
@@ -263,7 +271,17 @@
             <addJavaLicenseAfterPackage>false</addJavaLicenseAfterPackage>
             <trimHeaderLine>true</trimHeaderLine>
             <emptyLineAfterHeader>true</emptyLineAfterHeader>
+            <failOnMissingHeader>true</failOnMissingHeader>
+            <failOnNotUptodateHeader>true</failOnNotUptodateHeader>
           </configuration>
+          <executions>
+            <execution>
+              <goals>
+                <goal>check-file-header</goal>
+              </goals>
+              <phase>initialize</phase>
+            </execution>
+          </executions>
         </plugin>
         <plugin>
           <groupId>org.jacoco</groupId>
@@ -355,43 +373,12 @@
         <artifactId>maven-surefire-plugin</artifactId>
       </plugin>
       <plugin>
-        <!-- see https://maven.apache.org/maven-ci-friendly.html#install-deploy -->
         <groupId>org.codehaus.mojo</groupId>
         <artifactId>flatten-maven-plugin</artifactId>
-        <configuration>
-          <updatePomFile>true</updatePomFile>
-          <flattenMode>resolveCiFriendliesOnly</flattenMode>
-        </configuration>
-        <executions>
-          <execution>
-            <id>flatten</id>
-            <phase>process-resources</phase>
-            <goals>
-              <goal>flatten</goal>
-            </goals>
-          </execution>
-          <execution>
-            <id>flatten-clean</id>
-            <phase>clean</phase>
-            <goals>
-              <goal>clean</goal>
-            </goals>
-          </execution>
-        </executions>
       </plugin>
       <plugin>
         <groupId>org.codehaus.mojo</groupId>
         <artifactId>license-maven-plugin</artifactId>
-        <configuration>
-          <includes>**/*.java</includes>
-          <copyrightOwners>${project.organization.name} and all other contributors</copyrightOwners>
-          <processStartTag>---license-start</processStartTag>
-          <processEndTag>---license-end</processEndTag>
-          <sectionDelimiter>---</sectionDelimiter>
-          <addJavaLicenseAfterPackage>false</addJavaLicenseAfterPackage>
-          <trimHeaderLine>true</trimHeaderLine>
-          <emptyLineAfterHeader>true</emptyLineAfterHeader>
-        </configuration>
       </plugin>
       <plugin>
         <groupId>org.jacoco</groupId>
@@ -399,4 +386,5 @@
       </plugin>
     </plugins>
   </build>
+
 </project>
