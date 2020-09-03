@@ -21,7 +21,6 @@ message DiagnosisKey {
   // E.g. 2 means TEK is 2 days after onset of symptoms.
   uint32 days_since_onset_of_symptoms = 8;
 }
-
 // Data type representing why this key was published.
 enum ReportType {
   UNKNOWN = 0;  // Never returned by the client API.
