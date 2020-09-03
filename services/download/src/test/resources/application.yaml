@@ -12,3 +12,4 @@ logging:
 services:
   download:
     efgs-offset-days: 1
+    retention-days: 14

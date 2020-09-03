@@ -14,6 +14,8 @@ services:
     # the keys for today. If it is set to 1, the keys from yesterday will be downloaded.
     # The value must be between 0 and 14.
     efgs-offset-days: ${EFGS_OFFSET_DAYS:1}
+    # The number of days to retain batch information in the database.
+    retention-days: 14
 
 federation-gateway:
   base-url: ${FEDERATION_GATEWAY_BASE_URL:http://localhost:8005}

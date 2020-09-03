@@ -34,7 +34,7 @@ import org.springframework.stereotype.Component;
  * This runner retrieves diagnosis key batches.
  */
 @Component
-@Order(1)
+@Order(2)
 public class Download implements ApplicationRunner {
 
   private final FederationBatchProcessor batchProcessor;
