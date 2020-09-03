@@ -20,8 +20,8 @@
 
 package app.coronawarn.server.services.download.runner;
 
-import app.coronawarn.server.services.download.download.FederationBatchProcessor;
 import app.coronawarn.server.services.download.download.DownloadServiceConfig;
+import app.coronawarn.server.services.download.download.FederationBatchProcessor;
 import java.time.LocalDate;
 import java.time.Period;
 import java.time.ZoneOffset;
