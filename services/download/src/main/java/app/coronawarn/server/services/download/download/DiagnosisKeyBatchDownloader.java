@@ -36,7 +36,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 /**
- * The BatchDownloader downloads the batches containing the keys.
+ * Manages querying the federation gateway service and parsing of the responses.
  */
 @Service
 public class DiagnosisKeyBatchDownloader {
