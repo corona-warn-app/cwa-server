@@ -22,9 +22,13 @@ package app.coronawarn.server.services.distribution.assembly.diagnosiskeys.struc
 
 import static app.coronawarn.server.services.distribution.common.Helpers.buildDiagnosisKeys;
 import static app.coronawarn.server.services.distribution.common.Helpers.getFilePaths;
+import static java.io.File.separator;
 import static java.lang.String.join;
+import static java.util.Collections.emptyList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.util.Lists.list;
+import static org.mockito.Mockito.spy;
+import static org.mockito.Mockito.when;
 
 import app.coronawarn.server.common.persistence.domain.DiagnosisKey;
 import app.coronawarn.server.services.distribution.assembly.component.CryptoProvider;
@@ -40,7 +44,6 @@ import java.io.File;
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -71,7 +74,7 @@ class DiagnosisKeysDirectoryTest {
   DistributionServiceConfig distributionServiceConfig;
 
   @Rule
-  private TemporaryFolder outputFolder = new TemporaryFolder();
+  private final TemporaryFolder outputFolder = new TemporaryFolder();
 
   private File outputFile;
   private Directory<WritableOnDisk> parentDirectory;
@@ -85,19 +88,11 @@ class DiagnosisKeysDirectoryTest {
 
   @Test
   void checkBuildsTheCorrectDirectoryStructureForOneCountryWhenNoKeys() {
-    distributionServiceConfig.setSupportedCountries("DE");
-    DiagnosisKeyBundler bundler = new ProdDiagnosisKeyBundler(distributionServiceConfig);
-    Directory<WritableOnDisk> directory = new DiagnosisKeysDirectory(bundler, cryptoProvider,
-        distributionServiceConfig);
-    bundler.setDiagnosisKeys(Collections.emptyList(), LocalDateTime.of(1970, 1, 5, 0, 0));
-    parentDirectory.addWritable(directory);
-    directory.prepare(new ImmutableStack<>());
-    directory.write();
+    buildDirectoryStructure(emptyList(), "DE");
 
-    String s = File.separator;
     Set<String> expectedFiles = Set.of(
-        join(s, "diagnosis-keys", "country", "index"),
-        join(s, "diagnosis-keys", "country", "DE", "date", "index")
+        join(separator, "diagnosis-keys", "country", "index"),
+        join(separator, "diagnosis-keys", "country", "DE", "date", "index")
     );
 
     Set<String> actualFiles = getFilePaths(outputFile, outputFile.getAbsolutePath());
@@ -107,20 +102,12 @@ class DiagnosisKeysDirectoryTest {
 
   @Test
   void checkBuildsTheCorrectDirectoryStructureForMultipleSupportedCountriesWhenNoKeys() {
-    distributionServiceConfig.setSupportedCountries("DE,FR");
-    DiagnosisKeyBundler bundler = new ProdDiagnosisKeyBundler(distributionServiceConfig);
-    Directory<WritableOnDisk> directory = new DiagnosisKeysDirectory(bundler, cryptoProvider,
-        distributionServiceConfig);
-    bundler.setDiagnosisKeys(Collections.emptyList(), LocalDateTime.of(1970, 1, 5, 0, 0));
-    parentDirectory.addWritable(directory);
-    directory.prepare(new ImmutableStack<>());
-    directory.write();
+    buildDirectoryStructure(emptyList(), "DE", "FR");
 
-    String s = File.separator;
     Set<String> expectedFiles = Set.of(
-        join(s, "diagnosis-keys", "country", "index"),
-        join(s, "diagnosis-keys", "country", "DE", "date", "index"),
-        join(s, "diagnosis-keys", "country", "FR", "date", "index")
+        join(separator, "diagnosis-keys", "country", "index"),
+        join(separator, "diagnosis-keys", "country", "DE", "date", "index"),
+        join(separator, "diagnosis-keys", "country", "FR", "date", "index")
     );
 
     Set<String> actualFiles = getFilePaths(outputFile, outputFile.getAbsolutePath());
@@ -130,21 +117,14 @@ class DiagnosisKeysDirectoryTest {
 
   @Test
   void checkBuildsTheCorrectDirectoryStructureForOneCountry() {
-    distributionServiceConfig.setSupportedCountries("DE");
-    DiagnosisKeyBundler bundler = new ProdDiagnosisKeyBundler(distributionServiceConfig);
     List<DiagnosisKey> diagnosisKeys = buildDiagnosisKeys(6, LocalDateTime.of(1970, 1, 3, 0, 0), 5);
-    bundler.setDiagnosisKeys(diagnosisKeys, LocalDateTime.of(1970, 1, 5, 0, 0));
-    Directory<WritableOnDisk> directory = new DiagnosisKeysDirectory(bundler, cryptoProvider,
-        distributionServiceConfig);
-    parentDirectory.addWritable(directory);
-    directory.prepare(new ImmutableStack<>());
-    directory.write();
 
-    String s = File.separator;
-    Set<String> expectedFiles = Sets.newLinkedHashSet(join(s, "diagnosis-keys", "country", "index"),
-        join(s, "diagnosis-keys", "country", "DE", "date", "index"));
-    expectedFiles.addAll(generateDirectoryStructureForDate("DE", "1970-01-03"));
-    expectedFiles.addAll(generateDirectoryStructureForDate("DE", "1970-01-04"));
+    buildDirectoryStructure(diagnosisKeys, "DE");
+
+    Set<String> expectedFiles = Sets.newLinkedHashSet(join(separator, "diagnosis-keys", "country", "index"),
+        join(separator, "diagnosis-keys", "country", "DE", "date", "index"));
+    expectedFiles.addAll(generateExpectedDirectoryStructure("DE", "1970-01-03"));
+    expectedFiles.addAll(generateExpectedDirectoryStructure("DE", "1970-01-04"));
 
     Set<String> actualFiles = getFilePaths(outputFile, outputFile.getAbsolutePath());
 
@@ -153,29 +133,19 @@ class DiagnosisKeysDirectoryTest {
 
   @Test
   void checkBuildsTheCorrectDirectoryStructureForDifferentVisitedCountries() {
-    distributionServiceConfig.setSupportedCountries("DE,FR,DK");
-    DiagnosisKeyBundler bundler = new ProdDiagnosisKeyBundler(distributionServiceConfig);
+    Collection<DiagnosisKey> diagnosisKeysOfCountries =
+        buildDiagnosisKeys(6, LocalDateTime.of(1970, 1, 3, 0, 0), 5, "FR", list("DE", "FR"));
 
-    Collection<DiagnosisKey> diagnosisKeysOfCountries = buildDiagnosisKeys(6,
-        LocalDateTime.of(1970, 1, 3, 0, 0), 5, "FR",
-        list("DE", "FR"));
+    buildDirectoryStructure(diagnosisKeysOfCountries, "DE", "FR", "DK");
 
-    bundler.setDiagnosisKeys(diagnosisKeysOfCountries, LocalDateTime.of(1970, 1, 5, 0, 0));
-    Directory<WritableOnDisk> directory = new DiagnosisKeysDirectory(bundler, cryptoProvider,
-        distributionServiceConfig);
-    parentDirectory.addWritable(directory);
-    directory.prepare(new ImmutableStack<>());
-    directory.write();
-
-    String s = File.separator;
-    Set<String> expectedFiles = Sets.newLinkedHashSet(join(s, "diagnosis-keys", "country", "index"),
-        join(s, "diagnosis-keys", "country", "DE", "date", "index"),
-        join(s, "diagnosis-keys", "country", "FR", "date", "index"),
-        join(s, "diagnosis-keys", "country", "DK", "date", "index"));
-    expectedFiles.addAll(generateDirectoryStructureForDate("DE", "1970-01-03"));
-    expectedFiles.addAll(generateDirectoryStructureForDate("DE", "1970-01-04"));
-    expectedFiles.addAll(generateDirectoryStructureForDate("FR", "1970-01-03"));
-    expectedFiles.addAll(generateDirectoryStructureForDate("FR", "1970-01-04"));
+    Set<String> expectedFiles = Sets.newLinkedHashSet(join(separator, "diagnosis-keys", "country", "index"),
+        join(separator, "diagnosis-keys", "country", "DE", "date", "index"),
+        join(separator, "diagnosis-keys", "country", "FR", "date", "index"),
+        join(separator, "diagnosis-keys", "country", "DK", "date", "index"));
+    expectedFiles.addAll(generateExpectedDirectoryStructure("DE", "1970-01-03"));
+    expectedFiles.addAll(generateExpectedDirectoryStructure("DE", "1970-01-04"));
+    expectedFiles.addAll(generateExpectedDirectoryStructure("FR", "1970-01-03"));
+    expectedFiles.addAll(generateExpectedDirectoryStructure("FR", "1970-01-04"));
 
     Set<String> actualFiles = getFilePaths(outputFile, outputFile.getAbsolutePath());
 
@@ -184,31 +154,19 @@ class DiagnosisKeysDirectoryTest {
 
   @Test
   void checkBuildsTheCorrectDirectoryStructureForTwoCountriesWithDifferentKeys() {
-    distributionServiceConfig.setSupportedCountries("DE,FR,DK");
-    DiagnosisKeyBundler bundler = new ProdDiagnosisKeyBundler(distributionServiceConfig);
+    Collection<DiagnosisKey> diagnosisKeysOfCountries =
+        buildDiagnosisKeys(6, LocalDateTime.of(1970, 1, 3, 0, 0), 5, "FR", list("DE"));
+    diagnosisKeysOfCountries.addAll(buildDiagnosisKeys(6, LocalDateTime.of(1970, 1, 4, 0, 0), 5, "FR", list("FR")));
 
-    Collection<DiagnosisKey> diagnosisKeysOfCountries = buildDiagnosisKeys(6,
-        LocalDateTime.of(1970, 1, 3, 0, 0), 5, "FR",
-        list("DE"));
-    diagnosisKeysOfCountries.addAll(buildDiagnosisKeys(6,
-        LocalDateTime.of(1970, 1, 4, 0, 0), 5, "FR",
-        list("FR")));
+    buildDirectoryStructure(diagnosisKeysOfCountries, "DE", "FR", "DK");
 
-    bundler.setDiagnosisKeys(diagnosisKeysOfCountries, LocalDateTime.of(1970, 1, 5, 0, 0));
-    Directory<WritableOnDisk> directory = new DiagnosisKeysDirectory(bundler, cryptoProvider,
-        distributionServiceConfig);
-    parentDirectory.addWritable(directory);
-    directory.prepare(new ImmutableStack<>());
-    directory.write();
-
-    String s = File.separator;
-    Set<String> expectedFiles = Sets.newLinkedHashSet(join(s, "diagnosis-keys", "country", "index"),
-        join(s, "diagnosis-keys", "country", "DE", "date", "index"),
-        join(s, "diagnosis-keys", "country", "FR", "date", "index"),
-        join(s, "diagnosis-keys", "country", "DK", "date", "index"));
-    expectedFiles.addAll(generateDirectoryStructureForDate("DE", "1970-01-03"));
-    expectedFiles.addAll(generateDirectoryStructureForDate("DE", "1970-01-04"));
-    expectedFiles.addAll(generateDirectoryStructureForDate("FR", "1970-01-04"));
+    Set<String> expectedFiles = Sets.newLinkedHashSet(join(separator, "diagnosis-keys", "country", "index"),
+        join(separator, "diagnosis-keys", "country", "DE", "date", "index"),
+        join(separator, "diagnosis-keys", "country", "FR", "date", "index"),
+        join(separator, "diagnosis-keys", "country", "DK", "date", "index"));
+    expectedFiles.addAll(generateExpectedDirectoryStructure("DE", "1970-01-03"));
+    expectedFiles.addAll(generateExpectedDirectoryStructure("DE", "1970-01-04"));
+    expectedFiles.addAll(generateExpectedDirectoryStructure("FR", "1970-01-04"));
 
     Set<String> actualFiles = getFilePaths(outputFile, outputFile.getAbsolutePath());
 
@@ -217,31 +175,34 @@ class DiagnosisKeysDirectoryTest {
 
   @Test
   void checkBuildsTheCorrectDirectoryStructureForMultipleSupportedCountriesAndSingleVisitedCountry() {
-    distributionServiceConfig.setSupportedCountries("DE,FR,DK");
-    DiagnosisKeyBundler bundler = new ProdDiagnosisKeyBundler(distributionServiceConfig);
+    Collection<DiagnosisKey> diagnosisKeysOfCountries =
+        buildDiagnosisKeys(6, LocalDateTime.of(1970, 1, 3, 0, 0), 5, "FR", list("FR"));
 
-    Collection<DiagnosisKey> diagnosisKeysOfCountries = buildDiagnosisKeys(6,
-        LocalDateTime.of(1970, 1, 3, 0, 0), 5, "FR",
-        list("FR"));
+    buildDirectoryStructure(diagnosisKeysOfCountries, "DE", "FR", "DK");
 
-    bundler.setDiagnosisKeys(diagnosisKeysOfCountries, LocalDateTime.of(1970, 1, 5, 0, 0));
-    Directory<WritableOnDisk> directory = new DiagnosisKeysDirectory(bundler, cryptoProvider,
-        distributionServiceConfig);
-    parentDirectory.addWritable(directory);
-    directory.prepare(new ImmutableStack<>());
-    directory.write();
-
-    String s = File.separator;
-    Set<String> expectedFiles = Sets.newLinkedHashSet(join(s, "diagnosis-keys", "country", "index"),
-        join(s, "diagnosis-keys", "country", "DE", "date", "index"),
-        join(s, "diagnosis-keys", "country", "FR", "date", "index"),
-        join(s, "diagnosis-keys", "country", "DK", "date", "index"));
-    expectedFiles.addAll(generateDirectoryStructureForDate("FR", "1970-01-03"));
-    expectedFiles.addAll(generateDirectoryStructureForDate("FR", "1970-01-04"));
+    Set<String> expectedFiles = Sets.newLinkedHashSet(join(separator, "diagnosis-keys", "country", "index"),
+        join(separator, "diagnosis-keys", "country", "DE", "date", "index"),
+        join(separator, "diagnosis-keys", "country", "FR", "date", "index"),
+        join(separator, "diagnosis-keys", "country", "DK", "date", "index"));
+    expectedFiles.addAll(generateExpectedDirectoryStructure("FR", "1970-01-03"));
+    expectedFiles.addAll(generateExpectedDirectoryStructure("FR", "1970-01-04"));
 
     Set<String> actualFiles = getFilePaths(outputFile, outputFile.getAbsolutePath());
 
     assertThat(actualFiles).isEqualTo(amendWithChecksumFiles(expectedFiles));
+  }
+
+  private void buildDirectoryStructure(Collection<DiagnosisKey> keyseparator, String... supportedCountries) {
+    DistributionServiceConfig serviceConfigSpy = spy(distributionServiceConfig);
+    when(serviceConfigSpy.getSupportedCountries()).thenReturn(supportedCountries);
+
+    DiagnosisKeyBundler bundler = new ProdDiagnosisKeyBundler(serviceConfigSpy);
+    bundler.setDiagnosisKeys(keyseparator, LocalDateTime.of(1970, 1, 5, 0, 0));
+
+    Directory<WritableOnDisk> directory = new DiagnosisKeysDirectory(bundler, cryptoProvider, serviceConfigSpy);
+    parentDirectory.addWritable(directory);
+    directory.prepare(new ImmutableStack<>());
+    directory.write();
   }
 
   private Set<String> amendWithChecksumFiles(Set<String> expectedFiles) {
@@ -255,13 +216,12 @@ class DiagnosisKeysDirectoryTest {
     return allExpectedFiles;
   }
 
-  private Set<String> generateDirectoryStructureForDate(String country, String date) {
-    String s = File.separator;
+  private Set<String> generateExpectedDirectoryStructure(String country, String date) {
     Set<String> directoryStructure = IntStream.range(0, 24).mapToObj(Integer::toString)
-        .map(hour -> join(s, "diagnosis-keys", "country", country, "date", date, "hour", hour, "index"))
+        .map(hour -> join(separator, "diagnosis-keys", "country", country, "date", date, "hour", hour, "index"))
         .collect(Collectors.toSet());
-    directoryStructure.add(join(s, "diagnosis-keys", "country", country, "date", date, "index"));
-    directoryStructure.add(join(s, "diagnosis-keys", "country", country, "date", date, "hour", "index"));
+    directoryStructure.add(join(separator, "diagnosis-keys", "country", country, "date", date, "index"));
+    directoryStructure.add(join(separator, "diagnosis-keys", "country", country, "date", date, "hour", "index"));
     return directoryStructure;
   }
 }
