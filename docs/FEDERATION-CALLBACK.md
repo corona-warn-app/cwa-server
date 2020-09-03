@@ -13,7 +13,7 @@ This service will expose an API which is registered with the federation gateways
 
 Spring profiles are used to apply federation key download service configuration based on the running environment, determined by the active profile.
 
-You will find `.yaml` and `.xml` based profile-specific configuration files at [`/services/federation-download/src/main/resources`](/services/federation-download/src/main/resources).
+You will find `.yaml` and `.xml` based profile-specific configuration files at [`/services/callback/src/main/resources`](/services/callbacksrc/main/resources).
 
 ### Available Profiles
 
