@@ -13,7 +13,7 @@ This service will expose an API which is registered with the federation gateways
 
 Spring profiles are used to apply federation key download service configuration based on the running environment, determined by the active profile.
 
-You will find `.yaml` and `.xml` based profile-specific configuration files at [`/services/callback/src/main/resources`](/services/callbacksrc/main/resources).
+You will find `.yaml` and `.xml` based profile-specific configuration files at [`/services/callback/src/main/resources`](/services/callback/src/main/resources).
 
 ### Available Profiles
 
@@ -38,6 +38,11 @@ CREATE TABLE federation_batch (
 );
 ```
 
-## API
+## Federation Gateway Requirements on the Callback API
 
-TODO
+The federation gateway expects callback API's to have a specific API and specific authentication mechanisms:
+
+- The Federation Gateway Service performs mutual authentication with the national backends. This means the API validates the provided server certificate of the national backend and provides its identity as a client certificate to them. Each national backend has to explicitly whitelist this identity and has to provide a server certificate public key to the Federation Gateway Service for whitelisting. 
+- The Federation Gateway will send a **GET** request to the callback service and provide the following attributes as query paraeers:
+    * `batchTag: type string`: Represents the ID of the batch
+    * `date` type date: The day from which the batch is available IE: `04-03-2020` 
