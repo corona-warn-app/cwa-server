@@ -23,6 +23,23 @@ These rules will allow the keys sourced from the federation gateway to be proces
 - **RDBMS**: PostgreSQL as the persistent storage for keys which are downloaded
 - **Federation Gateway Service**: The service where the service downloads the keys
 
+## Spring Profiles
+
+Spring profiles are used to apply federation key download service configuration based on the running environment, determined by the active profile.
+
+You will find `.yaml` and `.xml` based profile-specific configuration files at [`/services/federation-download/src/main/resources`](/services/federation-download/src/main/resources).
+
+### Available Profiles
+
+Profile                                           | Effect
+--------------------------------------------------|-------------
+`dev`                                             | Sets the log level to `DEBUG` and changes the `CONSOLE_LOG_PATTERN` used by Log4j 2.
+`cloud`                                           | Removes default values for the `spring.flyway`, `spring.datasource` and sets federation gateway contexts
+`disable-ssl-server`                              | Disables SSL for the submission endpoint.
+`disable-ssl-client-postgres`                     | Disables SSL with a pinned certificate for the connection to the postgres.
+
+Please refer to the inline comments in the base `application.yaml` configuration file for further details on the configuration properties impacted by the above profiles.
+
 ## Data Model
 
 This service doesn't specifically introduce any new data model concepts. It will reuse the existing diagnosis key table where it will store the keys that it downloads.

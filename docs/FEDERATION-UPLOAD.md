@@ -8,6 +8,20 @@ This is a spring boot [ApplicationRunner](https://docs.spring.io/spring-boot/doc
 - **RDBMS**: PostgreSQL as the persistent storage for keys which need to be uploaded
 - **Federation Gateway Service**: The service where the service publishes the keys
 
+## Spring Profiles
+
+Spring profiles are used to apply federation key upload service configuration based on the running environment, determined by the active profile.
+
+You will find `.yaml` and `.xml` based profile-specific configuration files at [`/services/upload/src/main/resources`](/services/upload/src/main/resources).
+
+### Available Profiles
+
+Profile                                           | Effect
+--------------------------------------------------|-------------
+`disable-ssl-client-postgres`                     | Disables SSL with a pinned certificate for the connection to the postgres.
+
+Please refer to the inline comments in the base `application.yaml` configuration file for further details on the configuration properties impacted by the above profiles.
+
 ## Data Model
 
 As the upload service will work from a table containing the keys submitted to the CWA Submission service it will have a data model which mirrors the diagnosis key table. This table will be updated in the following cases:
