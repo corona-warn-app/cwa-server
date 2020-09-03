@@ -272,8 +272,7 @@ public class SubmissionServiceConfig {
   }
 
   public void setMonitoringBatchSize(Long batchSize) {
-    this.monitoring
-        .setBatchSize(batchSize);
+    this.monitoring.setBatchSize(batchSize);
   }
 
   public Client getClient() {
