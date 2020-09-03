@@ -71,10 +71,10 @@ public class FederationGatewayResponse {
       return false;
     }
     FederationGatewayResponse that = (FederationGatewayResponse) o;
-    return Objects.equals(diagnosisKeyBatch, that.diagnosisKeyBatch) &&
-        Objects.equals(batchTag, that.batchTag) &&
-        Objects.equals(nextBatchTag, that.nextBatchTag) &&
-        Objects.equals(date, that.date);
+    return Objects.equals(diagnosisKeyBatch, that.diagnosisKeyBatch)
+        && Objects.equals(batchTag, that.batchTag)
+        && Objects.equals(nextBatchTag, that.nextBatchTag)
+        && Objects.equals(date, that.date);
   }
 
   @Override
