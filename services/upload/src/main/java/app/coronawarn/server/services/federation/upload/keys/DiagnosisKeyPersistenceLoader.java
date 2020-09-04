@@ -4,7 +4,6 @@ import app.coronawarn.server.common.persistence.domain.DiagnosisKey;
 import app.coronawarn.server.common.persistence.service.FederationUploadKeyService;
 import app.coronawarn.server.common.persistence.service.common.ExpirationPolicy;
 import app.coronawarn.server.services.federation.upload.config.UploadServiceConfig;
-
 import java.time.temporal.ChronoUnit;
 import java.util.List;
 import org.springframework.context.annotation.Profile;

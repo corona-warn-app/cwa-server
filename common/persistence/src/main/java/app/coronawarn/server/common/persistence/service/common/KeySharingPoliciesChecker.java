@@ -33,10 +33,14 @@ import java.util.function.Function;
 import org.springframework.stereotype.Component;
 
 
+/**
+ * Responsible for verifying that all policies enforced by DPP regulations (or stakeholders) are
+ * met prior to sharing diagnosis keys with other external systems. Examples of such rules:
+ *
+ * <p><li> {@link ExpirationPolicy}
+ */
 @Component
-public class DiagnosisKeyExpirationChecker {
-
-  public static final long ROLLING_PERIOD_MINUTES_INTERVAL = 10;
+public class KeySharingPoliciesChecker {
 
   /**
    * The submission timestamp is counted in 1 hour intervals since epoch.
@@ -46,7 +50,8 @@ public class DiagnosisKeyExpirationChecker {
   /**
    * The rolling start interval number is counted in 10 minute intervals since epoch.
    */
-  public static final long TEN_MINUTES_INTERVAL_SECONDS = TimeUnit.MINUTES.toSeconds(ROLLING_PERIOD_MINUTES_INTERVAL);
+  public static final long TEN_MINUTES_INTERVAL_SECONDS = TimeUnit.MINUTES
+      .toSeconds(DiagnosisKey.ROLLING_PERIOD_MINUTES_INTERVAL);
 
   private static final Map<ChronoUnit, Function<Duration, Long>> TIME_CONVERTERS
        = Map.of(ChronoUnit.SECONDS, (duration) -> duration.toSeconds(),
@@ -54,8 +59,8 @@ public class DiagnosisKeyExpirationChecker {
                 ChronoUnit.HOURS, (duration) -> duration.toHours());
 
   /**
-   * Returns true if the given diagnosis key has expired conforming to both its rolling
-   * period and the given policy.
+   * Returns true if the given diagnosis key can be shared at the given time taking into account
+   * the expiration policy.
    */
   public boolean canShareKeyAtTime(DiagnosisKey key, ExpirationPolicy policy, LocalDateTime timeToShare) {
     LocalDateTime earliestTimeToShare = getEarliestTimeForSharingKey(key, policy);
@@ -63,9 +68,8 @@ public class DiagnosisKeyExpirationChecker {
   }
 
   /**
-   * Calculates the earliest point in time at which the specified {@link DiagnosisKey} can be shared with 3rd parties,
-   * while respecting the expiry policy and the submission timestamp. According to DPP rules, before keys are allowed
-   * to be shared, they must be expired for a configured amount of time.
+   * Calculates the earliest point in time at which the specified {@link DiagnosisKey} can be shared with external
+   * systems, while respecting the expiry policy and the submission timestamp.
    *
    * @return {@link LocalDateTime} at which the specified {@link DiagnosisKey} can be shared.
    */
@@ -88,7 +92,7 @@ public class DiagnosisKeyExpirationChecker {
   private LocalDateTime getRollingPeriodExpiryTime(DiagnosisKey diagnosisKey) {
     return LocalDateTime
         .ofEpochSecond(diagnosisKey.getRollingStartIntervalNumber() * TEN_MINUTES_INTERVAL_SECONDS, 0, UTC)
-        .plusMinutes(diagnosisKey.getRollingPeriod() * ROLLING_PERIOD_MINUTES_INTERVAL);
+        .plusMinutes(diagnosisKey.getRollingPeriod() * DiagnosisKey.ROLLING_PERIOD_MINUTES_INTERVAL);
   }
 
   /**

@@ -20,13 +20,10 @@
 
 package app.coronawarn.server.common.persistence.service;
 
-import static app.coronawarn.server.common.persistence.service.common.DiagnosisKeyExpirationChecker.ROLLING_PERIOD_MINUTES_INTERVAL;
-import static app.coronawarn.server.common.persistence.service.common.DiagnosisKeyExpirationChecker.TEN_MINUTES_INTERVAL_SECONDS;
+import static app.coronawarn.server.common.persistence.domain.DiagnosisKey.ROLLING_PERIOD_MINUTES_INTERVAL;
+import static app.coronawarn.server.common.persistence.service.common.KeySharingPoliciesChecker.TEN_MINUTES_INTERVAL_SECONDS;
 import static java.time.ZoneOffset.UTC;
 import static org.assertj.core.api.Assertions.assertThat;
-
-import app.coronawarn.server.common.persistence.domain.DiagnosisKey;
-import app.coronawarn.server.common.protocols.external.exposurenotification.ReportType;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -37,6 +34,9 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Random;
 import java.util.concurrent.TimeUnit;
+
+import app.coronawarn.server.common.persistence.domain.DiagnosisKey;
+import app.coronawarn.server.common.protocols.external.exposurenotification.ReportType;
 
 public class DiagnosisKeyServiceTestHelper {
 

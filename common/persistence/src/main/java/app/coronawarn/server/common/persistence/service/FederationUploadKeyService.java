@@ -26,8 +26,8 @@ import static org.springframework.data.util.StreamUtils.createStreamFromIterator
 import app.coronawarn.server.common.persistence.domain.DiagnosisKey;
 import app.coronawarn.server.common.persistence.exception.InvalidDiagnosisKeyException;
 import app.coronawarn.server.common.persistence.repository.FederationUploadKeyRepository;
-import app.coronawarn.server.common.persistence.service.common.DiagnosisKeyExpirationChecker;
 import app.coronawarn.server.common.persistence.service.common.ExpirationPolicy;
+import app.coronawarn.server.common.persistence.service.common.KeySharingPoliciesChecker;
 import app.coronawarn.server.common.persistence.service.common.ValidDiagnosisKeyFilter;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -44,16 +44,16 @@ public class FederationUploadKeyService {
 
   private final FederationUploadKeyRepository keyRepository;
   private final ValidDiagnosisKeyFilter validationFilter;
-  private final DiagnosisKeyExpirationChecker expirationChecker;
+  private final KeySharingPoliciesChecker sharingPoliciesChecker;
 
   /**
    * Constructs the key upload service.
    */
   public FederationUploadKeyService(FederationUploadKeyRepository keyRepository, ValidDiagnosisKeyFilter filter,
-      DiagnosisKeyExpirationChecker expirationChecker) {
+      KeySharingPoliciesChecker sharingPoliciesChecker) {
     this.keyRepository = keyRepository;
     this.validationFilter = filter;
-    this.expirationChecker = expirationChecker;
+    this.sharingPoliciesChecker = sharingPoliciesChecker;
   }
 
   /**
@@ -69,7 +69,7 @@ public class FederationUploadKeyService {
            keyRepository.findAllUploadableKeys().iterator())
            .filter(DiagnosisKey::isConsentToFederation)
            .filter(this::isKeyValid)
-           .filter(key -> expirationChecker.canShareKeyAtTime(key, policy, LocalDateTime.now(UTC)))
+           .filter(key -> sharingPoliciesChecker.canShareKeyAtTime(key, policy, LocalDateTime.now(UTC)))
            .collect(Collectors.toList());
   }
 

@@ -24,8 +24,8 @@ import static java.util.Collections.emptyList;
 import static java.util.stream.Collectors.groupingBy;
 
 import app.coronawarn.server.common.persistence.domain.DiagnosisKey;
-import app.coronawarn.server.common.persistence.service.common.DiagnosisKeyExpirationChecker;
 import app.coronawarn.server.common.persistence.service.common.ExpirationPolicy;
+import app.coronawarn.server.common.persistence.service.common.KeySharingPoliciesChecker;
 import app.coronawarn.server.services.distribution.config.DistributionServiceConfig;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
@@ -50,15 +50,15 @@ import org.springframework.stereotype.Component;
 @Component
 public class ProdDiagnosisKeyBundler extends DiagnosisKeyBundler {
 
-  private DiagnosisKeyExpirationChecker keyExpirationChecker;
+  private KeySharingPoliciesChecker sharingPoliciesChecker;
 
   /**
    * Creates a new {@link ProdDiagnosisKeyBundler}.
    */
   public ProdDiagnosisKeyBundler(DistributionServiceConfig distributionServiceConfig,
-      DiagnosisKeyExpirationChecker keyExpirationChecker) {
+      KeySharingPoliciesChecker sharingPoliciesChecker) {
     super(distributionServiceConfig);
-    this.keyExpirationChecker = keyExpirationChecker;
+    this.sharingPoliciesChecker = sharingPoliciesChecker;
   }
 
   /**
@@ -101,7 +101,7 @@ public class ProdDiagnosisKeyBundler extends DiagnosisKeyBundler {
   }
 
   private LocalDateTime getDistributionDateTimeByExpiryPolicy(DiagnosisKey diagnosisKey) {
-    return keyExpirationChecker.getEarliestTimeForSharingKey(diagnosisKey,
+    return sharingPoliciesChecker.getEarliestTimeForSharingKey(diagnosisKey,
         ExpirationPolicy.of(expiryPolicyMinutes, ChronoUnit.MINUTES));
   }
 }

@@ -23,6 +23,7 @@ package app.coronawarn.server.services.distribution.assembly.diagnosiskeys;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import app.coronawarn.server.common.persistence.domain.DiagnosisKey;
+import app.coronawarn.server.common.persistence.service.common.KeySharingPoliciesChecker;
 import app.coronawarn.server.services.distribution.common.Helpers;
 import app.coronawarn.server.services.distribution.config.DistributionServiceConfig;
 import java.time.LocalDateTime;
@@ -39,12 +40,15 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 @EnableConfigurationProperties(value = DistributionServiceConfig.class)
 @ExtendWith(SpringExtension.class)
-@ContextConfiguration(classes = {DistributionServiceConfig.class, ProdDiagnosisKeyBundler.class},
+@ContextConfiguration(classes = {DistributionServiceConfig.class, KeySharingPoliciesChecker.class, ProdDiagnosisKeyBundler.class},
     initializers = ConfigFileApplicationContextInitializer.class)
 class ProdDiagnosisKeyBundlerExpiryPolicyTest {
 
   @Autowired
   DistributionServiceConfig distributionServiceConfig;
+
+  @Autowired
+  KeySharingPoliciesChecker keySharingPoliciesChecker;
 
   @Autowired
   DiagnosisKeyBundler bundler;

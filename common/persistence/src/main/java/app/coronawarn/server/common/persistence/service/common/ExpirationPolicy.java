@@ -25,7 +25,7 @@ import java.time.temporal.ChronoUnit;
 /**
  * Refers to the time that needs to pass after a key's rolling period has passed,
  * such that the key can be considered completely expired. This is a DPP policy enforced
- * upon processes which involve publishing/distributing/sharing keys with other 3rd party
+ * upon processes which involve publishing/distributing/sharing keys with other external
  * systems.
  */
 public final class ExpirationPolicy {

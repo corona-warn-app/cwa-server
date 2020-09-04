@@ -36,7 +36,7 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 
 import app.coronawarn.server.common.persistence.domain.DiagnosisKey;
 import app.coronawarn.server.common.persistence.repository.FederationUploadKeyRepository;
-import app.coronawarn.server.common.persistence.service.common.DiagnosisKeyExpirationChecker;
+import app.coronawarn.server.common.persistence.service.common.KeySharingPoliciesChecker;
 import app.coronawarn.server.common.persistence.service.common.ExpirationPolicy;
 
 @DataJdbcTest
@@ -49,7 +49,7 @@ class FederationUploadKeyServiceTest {
   private FederationUploadKeyRepository uploadKeyRepository;
 
   @MockBean
-  private DiagnosisKeyExpirationChecker expirationChecker;
+  private KeySharingPoliciesChecker keySharingPoliciesChecker;
 
 
   @Test
@@ -59,7 +59,7 @@ class FederationUploadKeyServiceTest {
         buildDiagnosisKeyForSubmissionTimestamp(2000L, false)));
 
     when(uploadKeyRepository.findAllUploadableKeys()).thenReturn(testKeys);
-    when(expirationChecker.canShareKeyAtTime(any(), any(), any())).thenReturn(true);
+    when(keySharingPoliciesChecker.canShareKeyAtTime(any(), any(), any())).thenReturn(true);
 
     var actKeys = uploadKeyService.getPendingUploadKeys(ExpirationPolicy.of(0, ChronoUnit.MINUTES));
     Assertions.assertEquals(1,actKeys.size());
@@ -73,8 +73,8 @@ class FederationUploadKeyServiceTest {
     var testKeys = new ArrayList<>(List.of(key1,key2));
 
     when(uploadKeyRepository.findAllUploadableKeys()).thenReturn(testKeys);
-    when(expirationChecker.canShareKeyAtTime(eq(key1), any(), any())).thenReturn(true);
-    when(expirationChecker.canShareKeyAtTime(eq(key2), any(), any())).thenReturn(false);
+    when(keySharingPoliciesChecker.canShareKeyAtTime(eq(key1), any(), any())).thenReturn(true);
+    when(keySharingPoliciesChecker.canShareKeyAtTime(eq(key2), any(), any())).thenReturn(false);
 
     var actKeys = uploadKeyService.getPendingUploadKeys(ExpirationPolicy.of(120, ChronoUnit.MINUTES));
     Assertions.assertEquals(1,actKeys.size());

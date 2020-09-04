@@ -17,19 +17,19 @@ import app.coronawarn.server.common.persistence.domain.DiagnosisKey;
 
 class DiagnosisKeyExpirationCheckerTest {
 
-  private final DiagnosisKeyExpirationChecker expirationChecker = new DiagnosisKeyExpirationChecker();
+  private final KeySharingPoliciesChecker sharingPoliciesChecker = new KeySharingPoliciesChecker();
 
 
   @ParameterizedTest
   @MethodSource("notExpiredKeysDataset")
   void shouldComputeThatKeyIsNotExpired(DiagnosisKey key, ExpirationPolicy expirationPolicy, LocalDateTime shareTime) {
-    assertFalse(expirationChecker.canShareKeyAtTime(key, expirationPolicy, shareTime));
+    assertFalse(sharingPoliciesChecker.canShareKeyAtTime(key, expirationPolicy, shareTime));
   }
 
   @ParameterizedTest
   @MethodSource("expiredKeysDataset")
   void shouldComputeThatKeyIsExpired(DiagnosisKey key, ExpirationPolicy expirationPolicy, LocalDateTime shareTime) {
-    assertTrue(expirationChecker.canShareKeyAtTime(key, expirationPolicy, shareTime));
+    assertTrue(sharingPoliciesChecker.canShareKeyAtTime(key, expirationPolicy, shareTime));
   }
 
   private static Stream<Arguments> expiredKeysDataset() {
