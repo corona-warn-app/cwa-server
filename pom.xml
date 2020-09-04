@@ -49,7 +49,7 @@
     <protobuf-version>3.13.0</protobuf-version>
     <sonar.host.url>https://sonarcloud.io</sonar.host.url>
     <sonar.organization>corona-warn-app</sonar.organization>
-    <sonar.projectKey>${sonar.organization}_cwa-server_${project.artifactId}</sonar.projectKey>
+    <sonar.projectKey>${sonar.organization}_cwa-${project.artifactId}</sonar.projectKey>
   </properties>
 
   <dependencyManagement>
