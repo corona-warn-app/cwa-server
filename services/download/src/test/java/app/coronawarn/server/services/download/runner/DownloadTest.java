@@ -26,15 +26,15 @@ import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
-import app.coronawarn.server.services.download.download.DiagnosisKeyBatchProcessor;
 import app.coronawarn.server.services.download.download.DownloadServiceConfig;
+import app.coronawarn.server.services.download.download.FederationBatchProcessor;
 import java.time.LocalDate;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 class DownloadTest {
 
-  private DiagnosisKeyBatchProcessor diagnosisKeyBatchProcessor;
+  private FederationBatchProcessor federationBatchProcessor;
   private Download download;
   private DownloadServiceConfig serviceConfig;
 
@@ -42,16 +42,16 @@ class DownloadTest {
   void setUpBatchProcessor() {
     this.serviceConfig = new DownloadServiceConfig();
     serviceConfig.setEfgsOffsetDays(1);
-    diagnosisKeyBatchProcessor = spy(mock(DiagnosisKeyBatchProcessor.class));
-    download = new Download(diagnosisKeyBatchProcessor, serviceConfig);
+    federationBatchProcessor = spy(mock(FederationBatchProcessor.class));
+    download = new Download(federationBatchProcessor, serviceConfig);
   }
 
   @Test
   void testRun() {
     download.run(null);
 
-    verify(diagnosisKeyBatchProcessor, times(1)).saveFirstBatchInfoForDate(any(LocalDate.class));
-    verify(diagnosisKeyBatchProcessor, times(1)).processErrorFederationBatches();
-    verify(diagnosisKeyBatchProcessor, times(1)).processUnprocessedFederationBatches();
+    verify(federationBatchProcessor, times(1)).saveFirstBatchInfoForDate(any(LocalDate.class));
+    verify(federationBatchProcessor, times(1)).processErrorFederationBatches();
+    verify(federationBatchProcessor, times(1)).processUnprocessedFederationBatches();
   }
 }

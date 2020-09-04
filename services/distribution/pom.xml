@@ -9,10 +9,6 @@
   </parent>
   <modelVersion>4.0.0</modelVersion>
 
-  <properties>
-    <sonar.projectKey>corona-warn-app_cwa-server_services_distribution</sonar.projectKey>
-  </properties>
-
   <build>
     <pluginManagement>
       <plugins>

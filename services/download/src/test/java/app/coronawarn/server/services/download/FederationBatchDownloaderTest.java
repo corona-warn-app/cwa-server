@@ -20,9 +20,9 @@
 
 package app.coronawarn.server.services.download;
 
-import static app.coronawarn.server.services.download.download.DiagnosisKeyBatchDownloader.EMPTY_HEADER;
-import static app.coronawarn.server.services.download.download.DiagnosisKeyBatchDownloader.HEADER_BATCH_TAG;
-import static app.coronawarn.server.services.download.download.DiagnosisKeyBatchDownloader.HEADER_NEXT_BATCH_TAG;
+import static app.coronawarn.server.services.download.download.FederationBatchDownloader.EMPTY_HEADER;
+import static app.coronawarn.server.services.download.download.FederationBatchDownloader.HEADER_BATCH_TAG;
+import static app.coronawarn.server.services.download.download.FederationBatchDownloader.HEADER_NEXT_BATCH_TAG;
 import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
 import static com.github.tomakehurst.wiremock.client.WireMock.anyUrl;
 import static com.github.tomakehurst.wiremock.client.WireMock.get;
@@ -37,7 +37,7 @@ import app.coronawarn.server.common.federation.client.FederationGatewayClient;
 import app.coronawarn.server.common.federation.client.config.FederationGatewayConfig;
 import app.coronawarn.server.common.protocols.external.exposurenotification.DiagnosisKey;
 import app.coronawarn.server.common.protocols.external.exposurenotification.DiagnosisKeyBatch;
-import app.coronawarn.server.services.download.download.DiagnosisKeyBatchDownloader;
+import app.coronawarn.server.services.download.download.FederationBatchDownloader;
 import app.coronawarn.server.services.download.download.FederationGatewayResponse;
 import com.github.tomakehurst.wiremock.WireMockServer;
 import com.github.tomakehurst.wiremock.client.ResponseDefinitionBuilder;
@@ -54,9 +54,9 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.openfeign.FeignAutoConfiguration;
 
 @ImportAutoConfiguration({FeignAutoConfiguration.class, FederationGatewayConfig.class, FeignClientConfiguration.class})
-@SpringBootTest(classes = {DiagnosisKeyBatchDownloader.class, FederationGatewayClient.class,
+@SpringBootTest(classes = {FederationBatchDownloader.class, FederationGatewayClient.class,
     FederationFeignHttpClientProvider.class})
-class DiagnosisKeyBatchDownloaderTest {
+class FederationBatchDownloaderTest {
 
   private static final LocalDate EXP_DATE = LocalDate.of(2020, 9, 1);
   private static final String EXP_BATCH_TAG = "507f191e810c19729de860ea";
@@ -74,7 +74,7 @@ class DiagnosisKeyBatchDownloaderTest {
   private static WireMockServer server;
 
   @Autowired
-  private DiagnosisKeyBatchDownloader batchDownloader;
+  private FederationBatchDownloader batchDownloader;
 
   @BeforeAll
   static void setupWireMock() {

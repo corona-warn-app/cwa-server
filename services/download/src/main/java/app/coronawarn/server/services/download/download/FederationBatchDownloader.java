@@ -38,21 +38,20 @@ import org.springframework.stereotype.Service;
 /**
  * Manages querying the federation gateway service and parsing of the responses.
  */
-// TODO rename FederationBat...
 @Service
-public class DiagnosisKeyBatchDownloader {
+public class FederationBatchDownloader {
 
   public static final String HEADER_BATCH_TAG = "batchTag";
   public static final String HEADER_NEXT_BATCH_TAG = "nextBatchTag";
   public static final String EMPTY_HEADER = "null";
 
-  private static final Logger logger = LoggerFactory.getLogger(DiagnosisKeyBatchDownloader.class);
+  private static final Logger logger = LoggerFactory.getLogger(FederationBatchDownloader.class);
   private FederationGatewayClient federationGatewayClient;
 
   /**
-   * Creates a DiagnosisKeyBatchDownloader.
+   * Creates a FederationBatchDownloader.
    */
-  public DiagnosisKeyBatchDownloader(FederationGatewayClient federationGatewayClient) {
+  public FederationBatchDownloader(FederationGatewayClient federationGatewayClient) {
     this.federationGatewayClient = federationGatewayClient;
   }
 

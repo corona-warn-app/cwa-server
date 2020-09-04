@@ -20,8 +20,8 @@
 
 package app.coronawarn.server.services.download.runner;
 
-import app.coronawarn.server.services.download.download.DiagnosisKeyBatchProcessor;
 import app.coronawarn.server.services.download.download.DownloadServiceConfig;
+import app.coronawarn.server.services.download.download.FederationBatchProcessor;
 import java.time.LocalDate;
 import java.time.Period;
 import java.time.ZoneOffset;
@@ -37,10 +37,10 @@ import org.springframework.stereotype.Component;
 @Order(1)
 public class Download implements ApplicationRunner {
 
-  private final DiagnosisKeyBatchProcessor batchProcessor;
+  private final FederationBatchProcessor batchProcessor;
   private final DownloadServiceConfig serviceConfig;
 
-  Download(DiagnosisKeyBatchProcessor batchProcessor, DownloadServiceConfig serviceConfig) {
+  Download(FederationBatchProcessor batchProcessor, DownloadServiceConfig serviceConfig) {
     this.batchProcessor = batchProcessor;
     this.serviceConfig = serviceConfig;
   }

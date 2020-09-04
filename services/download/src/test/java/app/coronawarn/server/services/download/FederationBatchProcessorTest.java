@@ -43,8 +43,8 @@ import app.coronawarn.server.common.persistence.service.DiagnosisKeyService;
 import app.coronawarn.server.common.persistence.service.FederationBatchInfoService;
 import app.coronawarn.server.common.protocols.external.exposurenotification.DiagnosisKey;
 import app.coronawarn.server.common.protocols.external.exposurenotification.DiagnosisKeyBatch;
-import app.coronawarn.server.services.download.download.DiagnosisKeyBatchDownloader;
-import app.coronawarn.server.services.download.download.DiagnosisKeyBatchProcessor;
+import app.coronawarn.server.services.download.download.FederationBatchDownloader;
+import app.coronawarn.server.services.download.download.FederationBatchProcessor;
 import app.coronawarn.server.services.download.download.FederationGatewayResponse;
 import java.time.LocalDate;
 import java.util.Collections;
@@ -55,7 +55,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
-class DiagnosisKeyBatchProcessorTest {
+class FederationBatchProcessorTest {
 
   private final LocalDate date = LocalDate.of(2020, 9, 1);
   private final String batchTag1 = "507f191e810c19729de860ea";
@@ -63,15 +63,15 @@ class DiagnosisKeyBatchProcessorTest {
 
   private FederationBatchInfoService batchInfoService;
   private DiagnosisKeyService diagnosisKeyService;
-  private DiagnosisKeyBatchDownloader batchDownloader;
-  private DiagnosisKeyBatchProcessor batchProcessor;
+  private FederationBatchDownloader batchDownloader;
+  private FederationBatchProcessor batchProcessor;
 
   @BeforeEach
   void setUpBatchProcessor() {
     batchInfoService = spy(mock(FederationBatchInfoService.class));
     diagnosisKeyService = spy(mock(DiagnosisKeyService.class));
-    batchDownloader = spy(mock(DiagnosisKeyBatchDownloader.class));
-    batchProcessor = new DiagnosisKeyBatchProcessor(batchInfoService, diagnosisKeyService, batchDownloader);
+    batchDownloader = spy(mock(FederationBatchDownloader.class));
+    batchProcessor = new FederationBatchProcessor(batchInfoService, diagnosisKeyService, batchDownloader);
   }
 
   private DiagnosisKeyBatch buildDiagnosisKeyBatch(List<DiagnosisKey> diagnosisKeys) {
