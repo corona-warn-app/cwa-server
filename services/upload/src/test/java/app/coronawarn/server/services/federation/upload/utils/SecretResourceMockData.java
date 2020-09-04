@@ -1,14 +1,14 @@
-package app.coronawarn.server.services.federation.upload.payload.helper;
+package app.coronawarn.server.services.federation.upload.utils;
 
-import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
-import java.io.IOException;
 import org.apache.commons.io.IOUtils;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.ResourceLoader;
+import java.io.IOException;
 
-public class FakePrivateKeyResource {
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+
+public class SecretResourceMockData {
 
   public static String TEST_PRIVATE_KEY = "-----BEGIN PRIVATE KEY-----\n"
       + "MIGHAgEAMBMGByqGSM49AgEGCCqGSM49AwEHBG0wawIBAQQgjPus/CYkGPQhgBtC\n"
@@ -39,9 +39,9 @@ public class FakePrivateKeyResource {
     when(publicKeyResource.getInputStream())
         .thenReturn(IOUtils.toInputStream(publicKey, "UTF8"));
 
-    when(resourceLoader.getResource("testprivatekey.pem"))
+    when(resourceLoader.getResource("classpath:testprivatekey.pem"))
         .thenReturn(privateKeyResource);
-    when(resourceLoader.getResource("testpublickey.pem"))
+    when(resourceLoader.getResource("classpath:testpublickey.pem"))
         .thenReturn(publicKeyResource);
 
     return resourceLoader;

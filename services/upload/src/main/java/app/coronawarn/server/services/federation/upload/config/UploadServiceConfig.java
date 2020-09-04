@@ -3,7 +3,6 @@ package app.coronawarn.server.services.federation.upload.config;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Component;
 
-@Component
 @ConfigurationProperties(prefix = "services.upload")
 public class UploadServiceConfig {
 

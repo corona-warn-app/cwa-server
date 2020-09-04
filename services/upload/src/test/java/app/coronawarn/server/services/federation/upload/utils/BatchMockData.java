@@ -1,4 +1,4 @@
-package app.coronawarn.server.services.federation.upload.payload.helper;
+package app.coronawarn.server.services.federation.upload.utils;
 
 import app.coronawarn.server.common.protocols.external.exposurenotification.DiagnosisKey;
 import app.coronawarn.server.common.protocols.external.exposurenotification.DiagnosisKeyBatch;
@@ -6,7 +6,7 @@ import com.google.protobuf.ByteString;
 import java.util.List;
 import java.util.Random;
 
-public class DiagnosisKeyBatchGenerator {
+public class BatchMockData {
 
   private static final Random RANDOM = new Random();
 
