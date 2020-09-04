@@ -24,8 +24,10 @@ import static app.coronawarn.server.common.persistence.domain.FederationBatchSta
 import static app.coronawarn.server.common.persistence.domain.FederationBatchStatus.ERROR_WONT_RETRY;
 import static app.coronawarn.server.common.persistence.domain.FederationBatchStatus.PROCESSED;
 import static app.coronawarn.server.common.persistence.domain.FederationBatchStatus.UNPROCESSED;
+import static java.time.format.DateTimeFormatter.ISO_LOCAL_DATE;
 import static java.util.stream.Collectors.toList;
 
+import app.coronawarn.server.common.federation.client.FederationGatewayClient;
 import app.coronawarn.server.common.federation.client.download.BatchDownloadResponse;
 import app.coronawarn.server.common.persistence.domain.DiagnosisKey;
 import app.coronawarn.server.common.persistence.domain.FederationBatchInfo;
@@ -50,37 +52,40 @@ public class FederationBatchProcessor {
   private static final Logger logger = LoggerFactory.getLogger(FederationBatchProcessor.class);
   private final FederationBatchInfoService batchInfoService;
   private final DiagnosisKeyService diagnosisKeyService;
-  private final FederationBatchDownloader batchDownloader;
+  private final FederationGatewayClient federationGatewayClient;
 
   /**
    * Constructor.
    *
-   * @param batchInfoService    A {@link FederationBatchInfoService} for accessing diagnosis key batch info instances.
-   * @param diagnosisKeyService A {@link DiagnosisKeyService} for storing diagnosis keys from the federation batches.
-   * @param batchDownloader     A {@link FederationBatchDownloader} for retrieving federation diagnosis key batches.
+   * @param batchInfoService        A {@link FederationBatchInfoService} for accessing diagnosis key batch information.
+   * @param diagnosisKeyService     A {@link DiagnosisKeyService} for storing retrieved diagnosis keys.
+   * @param federationGatewayClient A {@link FederationGatewayClient} for retrieving federation diagnosis key batches.
    */
   public FederationBatchProcessor(FederationBatchInfoService batchInfoService,
-                                  DiagnosisKeyService diagnosisKeyService, FederationBatchDownloader batchDownloader) {
+      DiagnosisKeyService diagnosisKeyService, FederationGatewayClient federationGatewayClient) {
     this.batchInfoService = batchInfoService;
     this.diagnosisKeyService = diagnosisKeyService;
-    this.batchDownloader = batchDownloader;
+    this.federationGatewayClient = federationGatewayClient;
   }
 
   /**
-   * Stores the batch info for the specified date. Its status is set to {@link
-   * FederationBatchStatus#UNPROCESSED}.
+   * Stores the batch info for the specified date. Its status is set to {@link FederationBatchStatus#UNPROCESSED}.
    *
    * @param date The date for which the first batch info is stored.
    */
   public void saveFirstBatchInfoForDate(LocalDate date) {
-    batchDownloader.downloadFirstBatch(date)
-        .ifPresent(serverResponse ->
-            batchInfoService.save(new FederationBatchInfo(serverResponse.getBatchTag(), date)));
+    try {
+      logger.info("Downloading first batch for date {}", date);
+      BatchDownloadResponse response = federationGatewayClient.getDiagnosisKeys(date.format(ISO_LOCAL_DATE));
+      batchInfoService.save(new FederationBatchInfo(response.getBatchTag(), date));
+    } catch (Exception e) {
+      logger.error("Downloading batch for date {} failed", date, e);
+    }
   }
 
   /**
-   * Downloads and processes all batches from the federation gateway that have previously been marked with
-   * the status value {@link FederationBatchStatus#ERROR}.
+   * Downloads and processes all batches from the federation gateway that have previously been marked with the status
+   * value {@link FederationBatchStatus#ERROR}.
    */
   public void processErrorFederationBatches() {
     List<FederationBatchInfo> federationBatchInfosWithError = batchInfoService.findByStatus(ERROR);
@@ -99,8 +104,8 @@ public class FederationBatchProcessor {
   }
 
   /**
-   * Downloads and processes all batches from the federation gateway that have previously been marked with
-   * status value {@link FederationBatchStatus#UNPROCESSED}.
+   * Downloads and processes all batches from the federation gateway that have previously been marked with status value
+   * {@link FederationBatchStatus#UNPROCESSED}.
    */
   public void processUnprocessedFederationBatches() {
     Deque<FederationBatchInfo> unprocessedBatches = new LinkedList<>(batchInfoService.findByStatus(UNPROCESSED));
@@ -115,16 +120,18 @@ public class FederationBatchProcessor {
 
   private Optional<String> processBatchAndReturnNextBatchId(
       FederationBatchInfo batchInfo, FederationBatchStatus errorStatus) {
+    String date = batchInfo.getDate().format(ISO_LOCAL_DATE);
+    String batchTag = batchInfo.getBatchTag();
+    logger.info("Processing batch for date {} and batchTag {}", date, batchTag);
     try {
-      BatchDownloadResponse batchDownloadResponse = batchDownloader
-          .downloadBatch(batchInfo.getDate(), batchInfo.getBatchTag())
-          .orElseThrow();
+      BatchDownloadResponse response = federationGatewayClient.getDiagnosisKeys(batchTag, date);
 
-      diagnosisKeyService.saveDiagnosisKeys(convertDiagnosisKeys(batchDownloadResponse));
+      diagnosisKeyService.saveDiagnosisKeys(convertDiagnosisKeys(response));
       batchInfoService.updateStatus(batchInfo, PROCESSED);
-      return batchDownloadResponse.getNextBatchTag();
+      return response.getNextBatchTag();
     } catch (Exception e) {
-      logger.error("Federation batch processing failed. Status set to {}", errorStatus.name(), e);
+      logger.error("Federation batch processing for date {} and batchTag {} failed. Status set to {}",
+          date, batchTag, errorStatus.name(), e);
       batchInfoService.updateStatus(batchInfo, errorStatus);
       return Optional.empty();
     }

@@ -21,10 +21,10 @@
 package app.coronawarn.server.common.federation.client.download;
 
 import app.coronawarn.server.common.protocols.external.exposurenotification.DiagnosisKeyBatch;
+import com.google.protobuf.InvalidProtocolBufferException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.Optional;
 import org.springframework.http.HttpInputMessage;
@@ -59,20 +59,22 @@ public class FederationGatewayHttpMessageConverter extends AbstractHttpMessageCo
   @Override
   protected BatchDownloadResponse readInternal(Class<? extends BatchDownloadResponse> clazz, HttpInputMessage message)
       throws IOException, HttpMessageNotReadableException {
-    String batchTag = getHeader(message, HEADER_BATCH_TAG).orElseThrow();
+    String batchTag = getHeader(message, HEADER_BATCH_TAG)
+        .orElseThrow(() -> new HttpMessageNotReadableException("Missing " + HEADER_BATCH_TAG + " header.", message));
     Optional<String> nextBatchTag = getHeader(message, HEADER_NEXT_BATCH_TAG);
 
     try (InputStream body = message.getBody()) {
       DiagnosisKeyBatch diagnosisKeyBatch = DiagnosisKeyBatch.parseFrom(body);
       return new BatchDownloadResponse(diagnosisKeyBatch, batchTag, nextBatchTag);
+    } catch (InvalidProtocolBufferException e) {
+      throw new HttpMessageNotReadableException("Failed to parse protocol buffers message", e, message);
     }
   }
 
   private Optional<String> getHeader(HttpInputMessage response, String header) {
-    Collection<String> headerStrings = response.getHeaders().get(header);
-    String headerString = headerStrings.iterator().next();
+    String headerString = response.getHeaders().getFirst(header);
     return (!EMPTY_HEADER.equals(headerString))
-        ? Optional.of(headerString)
+        ? Optional.ofNullable(headerString)
         : Optional.empty();
   }
 

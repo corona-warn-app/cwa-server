@@ -99,5 +99,4 @@ class FederationBatchInfoServiceTest {
     assertThat(actualKeys.size()).isEqualTo(1);
     assertThat(actualKeys.get(0)).isEqualTo(federationBatchInfo1);
   }
-
 }
