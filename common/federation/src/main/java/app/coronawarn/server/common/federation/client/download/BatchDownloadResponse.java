@@ -18,7 +18,7 @@
  * ---license-end
  */
 
-package app.coronawarn.server.services.download.download;
+package app.coronawarn.server.common.federation.client.download;
 
 import app.coronawarn.server.common.protocols.external.exposurenotification.DiagnosisKeyBatch;
 import java.util.Objects;
@@ -27,7 +27,7 @@ import java.util.Optional;
 /**
  * Contains the {@link DiagnosisKeyBatch} and batch tag metadata as served by the federation gateway.
  */
-public class FederationGatewayResponse {
+public class BatchDownloadResponse {
 
   private final DiagnosisKeyBatch diagnosisKeyBatch;
   private final String batchTag;
@@ -37,7 +37,7 @@ public class FederationGatewayResponse {
    * Creates a FederationGatewayResponse that holds a {@link DiagnosisKeyBatch} and batch tag metadata as served by the
    * federation gateway.
    */
-  public FederationGatewayResponse(
+  public BatchDownloadResponse(
       DiagnosisKeyBatch diagnosisKeyBatch, String batchTag, Optional<String> nextBatchTag) {
     this.diagnosisKeyBatch = diagnosisKeyBatch;
     this.batchTag = batchTag;
@@ -64,7 +64,7 @@ public class FederationGatewayResponse {
     if (o == null || getClass() != o.getClass()) {
       return false;
     }
-    FederationGatewayResponse that = (FederationGatewayResponse) o;
+    BatchDownloadResponse that = (BatchDownloadResponse) o;
     return Objects.equals(diagnosisKeyBatch, that.diagnosisKeyBatch)
         && Objects.equals(batchTag, that.batchTag)
         && Objects.equals(nextBatchTag, that.nextBatchTag);

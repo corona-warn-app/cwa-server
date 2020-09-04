@@ -21,9 +21,11 @@
 package app.coronawarn.server.services.download;
 
 import app.coronawarn.server.common.federation.client.config.FederationGatewayConfig;
+import app.coronawarn.server.common.federation.client.download.FederationGatewayHttpMessageConverter;
 import feign.Client;
 import feign.httpclient.ApacheHttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
+import org.springframework.boot.autoconfigure.http.HttpMessageConverters;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.cloud.commons.httpclient.ApacheHttpClientConnectionManagerFactory;
 import org.springframework.cloud.commons.httpclient.ApacheHttpClientFactory;
@@ -35,6 +37,11 @@ import org.springframework.context.annotation.Bean;
 @TestConfiguration
 @EnableFeignClients("app.coronawarn.server.common.federation.client")
 public class FeignClientConfiguration {
+
+  @Bean
+  public HttpMessageConverters httpMessageConverters() {
+    return new HttpMessageConverters(new FederationGatewayHttpMessageConverter());
+  }
 
   @Bean
   Client feignDedicatedHttpClient(FederationGatewayConfig federationGatewayConfig) {

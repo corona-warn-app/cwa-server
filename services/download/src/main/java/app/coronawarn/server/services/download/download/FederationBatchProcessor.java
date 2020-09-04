@@ -28,6 +28,7 @@ import static app.coronawarn.server.common.persistence.domain.FederationBatchSta
 import static app.coronawarn.server.common.persistence.domain.FederationBatchStatus.UNPROCESSED;
 import static java.util.stream.Collectors.toList;
 
+import app.coronawarn.server.common.federation.client.download.BatchDownloadResponse;
 import app.coronawarn.server.common.persistence.domain.DiagnosisKey;
 import app.coronawarn.server.common.persistence.domain.FederationBatchInfo;
 import app.coronawarn.server.common.persistence.domain.FederationBatchStatus;
@@ -117,13 +118,13 @@ public class FederationBatchProcessor {
   private Optional<String> processBatchAndReturnNextBatchId(
       FederationBatchInfo batchInfo, FederationBatchStatus errorStatus) {
     try {
-      FederationGatewayResponse federationGatewayResponse = batchDownloader
+      BatchDownloadResponse batchDownloadResponse = batchDownloader
           .downloadBatch(batchInfo.getDate(), batchInfo.getBatchTag())
           .orElseThrow();
 
-      diagnosisKeyService.saveDiagnosisKeys(convertDiagnosisKeys(federationGatewayResponse));
+      diagnosisKeyService.saveDiagnosisKeys(convertDiagnosisKeys(batchDownloadResponse));
       batchInfoService.updateStatus(batchInfo, PROCESSED);
-      return federationGatewayResponse.getNextBatchTag();
+      return batchDownloadResponse.getNextBatchTag();
     } catch (Exception e) {
       logger.error("Federation batch processing failed. Status set to {}", errorStatus.name(), e);
       batchInfoService.updateStatus(batchInfo, errorStatus);
@@ -131,8 +132,8 @@ public class FederationBatchProcessor {
     }
   }
 
-  private List<DiagnosisKey> convertDiagnosisKeys(FederationGatewayResponse federationGatewayResponse) {
-    return federationGatewayResponse.getDiagnosisKeyBatch().getKeysList()
+  private List<DiagnosisKey> convertDiagnosisKeys(BatchDownloadResponse batchDownloadResponse) {
+    return batchDownloadResponse.getDiagnosisKeyBatch().getKeysList()
         .stream()
         .map(diagnosisKey -> DiagnosisKey.builder().fromFederationDiagnosisKey(diagnosisKey).build())
         .collect(toList());

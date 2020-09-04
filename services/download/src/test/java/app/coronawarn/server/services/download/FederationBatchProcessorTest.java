@@ -45,7 +45,7 @@ import app.coronawarn.server.common.protocols.external.exposurenotification.Diag
 import app.coronawarn.server.common.protocols.external.exposurenotification.DiagnosisKeyBatch;
 import app.coronawarn.server.services.download.download.FederationBatchDownloader;
 import app.coronawarn.server.services.download.download.FederationBatchProcessor;
-import app.coronawarn.server.services.download.download.FederationGatewayResponse;
+import app.coronawarn.server.common.federation.client.download.BatchDownloadResponse;
 import java.time.LocalDate;
 import java.util.Collections;
 import java.util.List;
@@ -91,7 +91,7 @@ class FederationBatchProcessorTest {
 
     @Test
     void testBatchInfoForDateExists() {
-      FederationGatewayResponse serverResponse = createFederationGatewayResponse(batchTag1, Optional.empty());
+      BatchDownloadResponse serverResponse = createFederationGatewayResponse(batchTag1, Optional.empty());
       when(batchDownloader.downloadFirstBatch(eq(date))).thenReturn(Optional.of(serverResponse));
 
       batchProcessor.saveFirstBatchInfoForDate(date);
@@ -117,7 +117,7 @@ class FederationBatchProcessorTest {
       FederationBatchInfo federationBatchInfo = new FederationBatchInfo(batchTag1, date, UNPROCESSED);
 
       when(batchInfoService.findByStatus(eq(UNPROCESSED))).thenReturn(singletonList(federationBatchInfo));
-      FederationGatewayResponse serverResponse = createFederationGatewayResponse(batchTag1, Optional.empty());
+      BatchDownloadResponse serverResponse = createFederationGatewayResponse(batchTag1, Optional.empty());
       when(batchDownloader.downloadBatch(date, batchTag1)).thenReturn(Optional.of(serverResponse));
 
       batchProcessor.processUnprocessedFederationBatches();
@@ -132,9 +132,9 @@ class FederationBatchProcessorTest {
       FederationBatchInfo batchInfo2 = new FederationBatchInfo(batchTag2, date, UNPROCESSED);
       when(batchInfoService.findByStatus(UNPROCESSED)).thenReturn(Collections.singletonList(batchInfo1));
 
-      FederationGatewayResponse serverResponse1 = createFederationGatewayResponse(batchTag1, Optional.of(batchTag2));
+      BatchDownloadResponse serverResponse1 = createFederationGatewayResponse(batchTag1, Optional.of(batchTag2));
       when(batchDownloader.downloadBatch(date, batchTag1)).thenReturn(Optional.of(serverResponse1));
-      FederationGatewayResponse serverResponse2 = createFederationGatewayResponse(batchTag2, Optional.empty());
+      BatchDownloadResponse serverResponse2 = createFederationGatewayResponse(batchTag2, Optional.empty());
       when(batchDownloader.downloadBatch(date, batchTag2)).thenReturn(Optional.of(serverResponse2));
 
       batchProcessor.processUnprocessedFederationBatches();
@@ -182,7 +182,7 @@ class FederationBatchProcessorTest {
     void testOneErrorBatchNoNextBatch() {
       when(batchInfoService.findByStatus(ERROR))
           .thenReturn(singletonList(new FederationBatchInfo(batchTag1, date, ERROR)));
-      FederationGatewayResponse serverResponse = createFederationGatewayResponse(batchTag1, Optional.empty());
+      BatchDownloadResponse serverResponse = createFederationGatewayResponse(batchTag1, Optional.empty());
       when(batchDownloader.downloadBatch(date, batchTag1)).thenReturn(Optional.of(serverResponse));
 
       batchProcessor.processErrorFederationBatches();
@@ -201,9 +201,9 @@ class FederationBatchProcessorTest {
       when(batchInfoService.findByStatus(ERROR))
           .thenReturn(singletonList(batchInfo1));
 
-      FederationGatewayResponse serverResponse1 = createFederationGatewayResponse(batchTag1, Optional.of(batchTag2));
+      BatchDownloadResponse serverResponse1 = createFederationGatewayResponse(batchTag1, Optional.of(batchTag2));
       when(batchDownloader.downloadBatch(date, batchTag1)).thenReturn(Optional.of(serverResponse1));
-      FederationGatewayResponse serverResponse2 = createFederationGatewayResponse(batchTag2, Optional.empty());
+      BatchDownloadResponse serverResponse2 = createFederationGatewayResponse(batchTag2, Optional.empty());
       when(batchDownloader.downloadBatch(date, batchTag2)).thenReturn(Optional.of(serverResponse2));
 
       batchProcessor.processErrorFederationBatches();
@@ -236,7 +236,7 @@ class FederationBatchProcessorTest {
           .thenReturn(singletonList(new FederationBatchInfo(batchTag1, date, ERROR)));
       doThrow(RuntimeException.class).when(batchInfoService).save(any(FederationBatchInfo.class));
 
-      FederationGatewayResponse serverResponse = createFederationGatewayResponse(batchTag1, Optional.of(batchTag2));
+      BatchDownloadResponse serverResponse = createFederationGatewayResponse(batchTag1, Optional.of(batchTag2));
       when(batchDownloader.downloadBatch(date, batchTag1)).thenReturn(Optional.of(serverResponse));
 
       batchProcessor.processErrorFederationBatches();
@@ -248,8 +248,8 @@ class FederationBatchProcessorTest {
     }
   }
 
-  private FederationGatewayResponse createFederationGatewayResponse(String batchTag, Optional<String> nextBatchTag) {
-    FederationGatewayResponse gatewayResponse = mock(FederationGatewayResponse.class);
+  private BatchDownloadResponse createFederationGatewayResponse(String batchTag, Optional<String> nextBatchTag) {
+    BatchDownloadResponse gatewayResponse = mock(BatchDownloadResponse.class);
     when(gatewayResponse.getBatchTag()).thenReturn(batchTag);
     when(gatewayResponse.getNextBatchTag()).thenReturn(nextBatchTag);
     when(gatewayResponse.getDiagnosisKeyBatch()).thenReturn(buildDiagnosisKeyBatch(emptyList()));
