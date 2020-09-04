@@ -65,16 +65,7 @@ public class ProdDiagnosisKeyBundler extends DiagnosisKeyBundler {
   @Override
   protected void createDiagnosisKeyDistributionMap(Collection<DiagnosisKey> diagnosisKeys) {
     this.distributableDiagnosisKeys.clear();
-    Map<String, List<DiagnosisKey>> diagnosisKeysMapped = new HashMap<>();
-
-    supportedCountries.forEach(supportedCountry -> {
-      diagnosisKeysMapped.put(supportedCountry, new ArrayList<>());
-      this.distributableDiagnosisKeys.put(supportedCountry, new HashMap<>());
-    });
-
-    diagnosisKeys.forEach(diagnosisKey -> diagnosisKey.getVisitedCountries().stream()
-        .filter(supportedCountries::contains)
-        .forEach(visitedCountry -> diagnosisKeysMapped.get(visitedCountry).add(diagnosisKey)));
+    Map<String, List<DiagnosisKey>> diagnosisKeysMapped = groupDiagnosisKeysByCountry(diagnosisKeys);
 
     diagnosisKeysMapped.keySet().forEach(country -> populateDistributableDiagnosisKeys(diagnosisKeysMapped, country));
   }

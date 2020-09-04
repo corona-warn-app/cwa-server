@@ -86,13 +86,6 @@ public abstract class DiagnosisKeyBundler {
   }
 
   /**
-   * Creates a {@link LocalDateTime} based on the specified epoch timestamp.
-   */
-  public static LocalDateTime getLocalDateTimeFromHoursSinceEpoch(long timestamp) {
-    return LocalDateTime.ofEpochSecond(TimeUnit.HOURS.toSeconds(timestamp), 0, UTC);
-  }
-
-  /**
    * Sets the {@link DiagnosisKey DiagnosisKeys} contained by this {@link DiagnosisKeyBundler} and the time at which the
    * distribution runs and calls {@link DiagnosisKeyBundler#createDiagnosisKeyDistributionMap}.
    *
@@ -211,8 +204,10 @@ public abstract class DiagnosisKeyBundler {
   protected Map<String, List<DiagnosisKey>> groupDiagnosisKeysByCountry(Collection<DiagnosisKey> diagnosisKeys) {
     Map<String, List<DiagnosisKey>> diagnosisKeysMapped = new HashMap<>();
 
-    supportedCountries.forEach(supportedCountry ->
-        diagnosisKeysMapped.put(supportedCountry, new ArrayList<>()));
+    supportedCountries.forEach(supportedCountry -> {
+      diagnosisKeysMapped.put(supportedCountry, new ArrayList<>());
+      this.distributableDiagnosisKeys.put(supportedCountry, new HashMap<>());
+    });
 
     diagnosisKeys.forEach(diagnosisKey -> diagnosisKey.getVisitedCountries().stream()
         .filter(supportedCountries::contains)

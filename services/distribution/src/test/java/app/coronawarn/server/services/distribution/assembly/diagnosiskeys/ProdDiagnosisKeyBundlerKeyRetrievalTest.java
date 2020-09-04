@@ -23,6 +23,9 @@ package app.coronawarn.server.services.distribution.assembly.diagnosiskeys;
 import static app.coronawarn.server.services.distribution.common.Helpers.buildDiagnosisKeys;
 import static java.util.Collections.emptySet;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
+import static org.mockito.Mockito.spy;
+import static org.mockito.Mockito.when;
 
 import app.coronawarn.server.common.persistence.domain.DiagnosisKey;
 import app.coronawarn.server.services.distribution.config.DistributionServiceConfig;
@@ -32,7 +35,9 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 import java.util.stream.Stream;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -53,8 +58,12 @@ class ProdDiagnosisKeyBundlerKeyRetrievalTest {
   @Autowired
   DistributionServiceConfig distributionServiceConfig;
 
-  @Autowired
   DiagnosisKeyBundler bundler;
+
+  @BeforeEach
+  void setupAll() {
+    bundler = new ProdDiagnosisKeyBundler(distributionServiceConfig);
+  }
 
   @Test
   void testGetsAllDiagnosisKeys() {
@@ -67,11 +76,30 @@ class ProdDiagnosisKeyBundlerKeyRetrievalTest {
   }
 
   @Test
+  void testGetsAllDiagnosisKeysWithWrongCountry() {
+    List<DiagnosisKey> diagnosisKeys = Stream
+        .of(buildDiagnosisKeys(6, 50L, 5),
+            buildDiagnosisKeys(6, 51L, 5),
+            buildDiagnosisKeys(6, 52L, 5))
+        .flatMap(List::stream)
+        .collect(Collectors.toList());
+    bundler.setDiagnosisKeys(diagnosisKeys, LocalDateTime.of(1970, 1, 5, 0, 0));
+    assertThatExceptionOfType(InvalidCountryException.class)
+        .isThrownBy(() -> bundler.getAllDiagnosisKeys("TR"));
+  }
+
+  @Test
+  void testGetDatesForEmptyListWithWrongCountry() {
+    bundler.setDiagnosisKeys(emptySet(), LocalDateTime.of(1970, 1, 5, 0, 0));
+    assertThatExceptionOfType(InvalidCountryException.class)
+        .isThrownBy(() -> bundler.getDatesWithDistributableDiagnosisKeys("TR"));
+  }
+
+  @Test
   void testGetDatesForEmptyList() {
     bundler.setDiagnosisKeys(emptySet(), LocalDateTime.of(1970, 1, 5, 0, 0));
     assertThat(bundler.getDatesWithDistributableDiagnosisKeys("DE")).isEmpty();
   }
-
   @Test
   void testGetsDatesWithDistributableDiagnosisKeys() {
     List<DiagnosisKey> diagnosisKeys = Stream
@@ -187,5 +215,38 @@ class ProdDiagnosisKeyBundlerKeyRetrievalTest {
     List<DiagnosisKey> diagnosisKeys = buildDiagnosisKeys(6, LocalDateTime.of(1970, 1, 2, 4, 0), 5);
     bundler.setDiagnosisKeys(diagnosisKeys, expected);
     assertThat(bundler.getDistributionTime()).isEqualTo(expected);
+  }
+
+  @Test
+  void testGetDiagnosisKeysForDateWithWrongCountry() {
+    List<DiagnosisKey> diagnosisKeys = buildDiagnosisKeys(6, LocalDateTime.of(1970, 1, 2, 4, 0), 5);
+    bundler.setDiagnosisKeys(diagnosisKeys, LocalDateTime.of(1970, 1, 5, 0, 0));
+    assertThatExceptionOfType(InvalidCountryException.class)
+        .isThrownBy(() -> bundler.getDiagnosisKeysForDate(LocalDate.of(1970, 1,1), "TR"));
+  }
+
+  @Test
+  void testGetDiagnosisKeysForHourWithWrongCountry() {
+    List<DiagnosisKey> diagnosisKeys = buildDiagnosisKeys(6, LocalDateTime.of(1970, 1, 2, 4, 0), 5);
+    bundler.setDiagnosisKeys(diagnosisKeys, LocalDateTime.of(1970, 1, 5, 0, 0));
+    assertThatExceptionOfType(InvalidCountryException.class)
+        .isThrownBy(() -> bundler.getDiagnosisKeysForHour(LocalDateTime.of(1970, 1, 1, 0, 0, 0), "TR"));
+  }
+
+  @Test
+  void testGetsHoursWithDistributableDiagnosisKeysExceedingMaximumNumberOfKeys() {
+    DistributionServiceConfig spyConfig = spy(distributionServiceConfig);
+    when(spyConfig.getMaximumNumberOfKeysPerBundle()).thenReturn(3);
+    when(spyConfig.getShiftingPolicyThreshold()).thenReturn(1);
+    DiagnosisKeyBundler keyBundler = new ProdDiagnosisKeyBundler(spyConfig);
+
+    List<DiagnosisKey> diagnosisKeys = IntStream.range(0,24).mapToObj(hour ->
+        buildDiagnosisKeys(6, LocalDateTime.of(1970, 1, 4, hour, 0), 4))
+        .flatMap(List::stream)
+        .collect(Collectors.toList());
+    keyBundler.setDiagnosisKeys(diagnosisKeys, LocalDateTime.of(1970, 1, 5, 0, 0));
+
+    Set<LocalDateTime> expectedKeys = keyBundler.getHoursWithDistributableDiagnosisKeys(LocalDate.of(1970, 1, 4), "DE");
+    assertThat(expectedKeys).isEmpty();
   }
 }
