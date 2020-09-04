@@ -32,7 +32,6 @@ import org.springframework.http.HttpOutputMessage;
 import org.springframework.http.MediaType;
 import org.springframework.http.converter.AbstractHttpMessageConverter;
 import org.springframework.http.converter.HttpMessageNotReadableException;
-import org.springframework.http.converter.HttpMessageNotWritableException;
 
 /**
  * Converter for converting federation gateway HTTP responses into {@link BatchDownloadResponse} objects.
@@ -58,7 +57,7 @@ public class FederationGatewayHttpMessageConverter extends AbstractHttpMessageCo
 
   @Override
   protected BatchDownloadResponse readInternal(Class<? extends BatchDownloadResponse> clazz, HttpInputMessage message)
-      throws IOException, HttpMessageNotReadableException {
+      throws IOException {
     String batchTag = getHeader(message, HEADER_BATCH_TAG)
         .orElseThrow(() -> new HttpMessageNotReadableException("Missing " + HEADER_BATCH_TAG + " header.", message));
     Optional<String> nextBatchTag = getHeader(message, HEADER_NEXT_BATCH_TAG);
@@ -79,8 +78,7 @@ public class FederationGatewayHttpMessageConverter extends AbstractHttpMessageCo
   }
 
   @Override
-  protected void writeInternal(BatchDownloadResponse message, HttpOutputMessage outputMessage)
-      throws HttpMessageNotWritableException {
+  protected void writeInternal(BatchDownloadResponse message, HttpOutputMessage outputMessage) {
     throw new UnsupportedOperationException();
   }
 }

@@ -68,8 +68,10 @@ class FederationGatewayHttpMessageConverterTest {
 
   @Test
   void writeInternalThrowsUnsupportedOperationException() {
+    BatchDownloadResponse message = mock(BatchDownloadResponse.class);
+    HttpOutputMessage outputMessage = mock(HttpOutputMessage.class);
     assertThatExceptionOfType(UnsupportedOperationException.class)
-        .isThrownBy(() -> converter.writeInternal(mock(BatchDownloadResponse.class), mock(HttpOutputMessage.class)));
+        .isThrownBy(() -> converter.writeInternal(message, outputMessage));
   }
 
   @Test
