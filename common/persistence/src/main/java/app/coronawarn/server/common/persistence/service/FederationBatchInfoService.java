@@ -56,11 +56,10 @@ public class FederationBatchInfoService {
    * Sets the status of the provided federation batch.
    */
   public void updateStatus(FederationBatchInfo federationBatchInfo, FederationBatchStatus status) {
+    String statusValue = status.name();
     federationBatchInfoRepository
-        .saveDoUpdateStatusOnConflict(federationBatchInfo.getBatchTag(), federationBatchInfo.getDate(),
-            status.name());
-
-    logger.info("Marked batch with status.");
+        .saveDoUpdateStatusOnConflict(federationBatchInfo.getBatchTag(), federationBatchInfo.getDate(), statusValue);
+    logger.info("Marked batch with status {}.", statusValue);
   }
 
   public List<FederationBatchInfo> findByStatus(FederationBatchStatus federationBatchStatus) {
