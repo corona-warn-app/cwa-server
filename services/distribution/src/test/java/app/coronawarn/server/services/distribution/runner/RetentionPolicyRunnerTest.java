@@ -20,7 +20,6 @@
 
 package app.coronawarn.server.services.distribution.runner;
 
-import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
