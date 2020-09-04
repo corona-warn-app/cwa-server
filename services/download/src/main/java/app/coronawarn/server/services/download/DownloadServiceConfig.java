@@ -18,7 +18,7 @@
  * ---license-end
  */
 
-package app.coronawarn.server.services.download.download;
+package app.coronawarn.server.services.download;
 
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;

@@ -18,9 +18,7 @@
  * ---license-end
  */
 
-// TODO: remove duplicate "download", move classes one level up
-
-package app.coronawarn.server.services.download.download;
+package app.coronawarn.server.services.download;
 
 import static app.coronawarn.server.common.persistence.domain.FederationBatchStatus.ERROR;
 import static app.coronawarn.server.common.persistence.domain.FederationBatchStatus.ERROR_WONT_RETRY;

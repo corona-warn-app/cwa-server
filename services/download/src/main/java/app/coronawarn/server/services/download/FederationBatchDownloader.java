@@ -18,7 +18,7 @@
  * ---license-end
  */
 
-package app.coronawarn.server.services.download.download;
+package app.coronawarn.server.services.download;
 
 import static java.time.format.DateTimeFormatter.ISO_LOCAL_DATE;
 

@@ -43,8 +43,6 @@ import app.coronawarn.server.common.persistence.service.DiagnosisKeyService;
 import app.coronawarn.server.common.persistence.service.FederationBatchInfoService;
 import app.coronawarn.server.common.protocols.external.exposurenotification.DiagnosisKey;
 import app.coronawarn.server.common.protocols.external.exposurenotification.DiagnosisKeyBatch;
-import app.coronawarn.server.services.download.download.FederationBatchDownloader;
-import app.coronawarn.server.services.download.download.FederationBatchProcessor;
 import app.coronawarn.server.common.federation.client.download.BatchDownloadResponse;
 import java.time.LocalDate;
 import java.util.Collections;

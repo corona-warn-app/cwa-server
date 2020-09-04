@@ -26,8 +26,8 @@ import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
-import app.coronawarn.server.services.download.download.DownloadServiceConfig;
-import app.coronawarn.server.services.download.download.FederationBatchProcessor;
+import app.coronawarn.server.services.download.DownloadServiceConfig;
+import app.coronawarn.server.services.download.FederationBatchProcessor;
 import java.time.LocalDate;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
