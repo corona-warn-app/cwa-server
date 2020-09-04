@@ -15,6 +15,7 @@ federation-gateway:
 
 services:
   upload:
+    expiry-policy-minutes: 120  
     min-batch-key-count: 140
     max-batch-key-count: 4000
     privatekey: testprivatekey.pem

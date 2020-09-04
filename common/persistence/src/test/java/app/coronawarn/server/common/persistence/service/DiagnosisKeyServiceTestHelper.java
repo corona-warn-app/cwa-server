@@ -42,27 +42,31 @@ public class DiagnosisKeyServiceTestHelper {
       var expKey = expKeys.get(i);
       var actKey = actKeys.get(i);
 
-      assertThat(actKey.getKeyData()).withFailMessage("keyData mismatch")
-          .isEqualTo(expKey.getKeyData());
-      assertThat(actKey.getRollingStartIntervalNumber()).withFailMessage("rollingStartIntervalNumber mismatch")
-          .isEqualTo(expKey.getRollingStartIntervalNumber());
-      assertThat(actKey.getRollingPeriod()).withFailMessage("rollingPeriod mismatch")
-          .isEqualTo(expKey.getRollingPeriod());
-      assertThat(actKey.getTransmissionRiskLevel())
-          .withFailMessage("transmissionRiskLevel mismatch")
-          .isEqualTo(expKey.getTransmissionRiskLevel());
-      assertThat(actKey.getSubmissionTimestamp()).withFailMessage("submissionTimestamp mismatch")
-          .isEqualTo(expKey.getSubmissionTimestamp());
+      assertDiagnosisKeysEqual(expKey, actKey);
     }
   }
 
-  public static DiagnosisKey buildDiagnosisKeyForSubmissionTimestamp(long submissionTimeStamp,
+  public static void assertDiagnosisKeysEqual(DiagnosisKey expKey, DiagnosisKey actKey) {
+    assertThat(actKey.getKeyData()).withFailMessage("keyData mismatch")
+        .isEqualTo(expKey.getKeyData());
+    assertThat(actKey.getRollingStartIntervalNumber()).withFailMessage("rollingStartIntervalNumber mismatch")
+        .isEqualTo(expKey.getRollingStartIntervalNumber());
+    assertThat(actKey.getRollingPeriod()).withFailMessage("rollingPeriod mismatch")
+        .isEqualTo(expKey.getRollingPeriod());
+    assertThat(actKey.getTransmissionRiskLevel())
+        .withFailMessage("transmissionRiskLevel mismatch")
+        .isEqualTo(expKey.getTransmissionRiskLevel());
+    assertThat(actKey.getSubmissionTimestamp()).withFailMessage("submissionTimestamp mismatch")
+        .isEqualTo(expKey.getSubmissionTimestamp());
+  }
+
+  public static DiagnosisKey buildDiagnosisKeyForSubmissionTimestamp(long submissionTimeStamp, int rollingStartInterval,
       boolean consentToFederation, String countryCode, List<String> visitedCountries, ReportType reportType) {
     byte[] randomBytes = new byte[16];
     random.nextBytes(randomBytes);
     return DiagnosisKey.builder()
         .withKeyData(randomBytes)
-        .withRollingStartIntervalNumber(600)
+        .withRollingStartIntervalNumber(rollingStartInterval)
         .withTransmissionRiskLevel(2)
         .withSubmissionTimestamp(submissionTimeStamp)
         .withCountryCode(countryCode)
@@ -73,7 +77,17 @@ public class DiagnosisKeyServiceTestHelper {
   }
 
   public static DiagnosisKey buildDiagnosisKeyForSubmissionTimestamp(long submissionTimeStamp) {
-    return buildDiagnosisKeyForSubmissionTimestamp(submissionTimeStamp, false, "DE", Collections.singletonList("DE"), ReportType.CONFIRMED_CLINICAL_DIAGNOSIS);
+    return buildDiagnosisKeyForSubmissionTimestamp(submissionTimeStamp, false);
+  }
+
+  public static DiagnosisKey buildDiagnosisKeyForSubmissionTimestamp(long submissionTimeStamp, boolean consentToShare) {
+    return buildDiagnosisKeyForSubmissionTimestamp(submissionTimeStamp, 600, consentToShare);
+  }
+
+  public static DiagnosisKey buildDiagnosisKeyForSubmissionTimestamp(long submissionTimeStamp,
+      int rollingStartInterval, boolean consentToShare) {
+    return buildDiagnosisKeyForSubmissionTimestamp(submissionTimeStamp, rollingStartInterval, consentToShare, "DE",
+        Collections.singletonList("DE"), ReportType.CONFIRMED_CLINICAL_DIAGNOSIS);
   }
 
   public static DiagnosisKey buildDiagnosisKeyForDateTime(OffsetDateTime dateTime) {
@@ -82,6 +96,6 @@ public class DiagnosisKeyServiceTestHelper {
 
   public static DiagnosisKey buildDiagnosisKeyForDateTime(OffsetDateTime dateTime,
       String countryCode, List<String> visitedCountries, ReportType reportType) {
-    return buildDiagnosisKeyForSubmissionTimestamp(dateTime.toEpochSecond() / 3600, false, countryCode, visitedCountries, reportType);
+    return buildDiagnosisKeyForSubmissionTimestamp(dateTime.toEpochSecond() / 3600, 600, false, countryCode, visitedCountries, reportType);
   }
 }

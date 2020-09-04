@@ -24,6 +24,7 @@ import app.coronawarn.server.common.persistence.repository.DiagnosisKeyRepositor
 import app.coronawarn.server.common.persistence.repository.FederationUploadKeyRepository;
 import app.coronawarn.server.common.persistence.service.DiagnosisKeyService;
 import app.coronawarn.server.common.persistence.service.FederationUploadKeyService;
+import app.coronawarn.server.common.persistence.service.common.DiagnosisKeyExpirationChecker;
 import app.coronawarn.server.common.persistence.service.common.ValidDiagnosisKeyFilter;
 
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -40,12 +41,17 @@ public class TestApplication {
   }
 
   @Bean
+  DiagnosisKeyExpirationChecker keyExpirationPolicyChecker() {
+    return new DiagnosisKeyExpirationChecker();
+  }
+
+  @Bean
   DiagnosisKeyService createDiagnosisKeyService(DiagnosisKeyRepository keyRepository) {
     return new DiagnosisKeyService(keyRepository, validKeysFilter());
   }
 
   @Bean
   FederationUploadKeyService createFederationUploadKeyService(FederationUploadKeyRepository keyRepository) {
-    return new FederationUploadKeyService(keyRepository, validKeysFilter());
+    return new FederationUploadKeyService(keyRepository, validKeysFilter(), keyExpirationPolicyChecker());
   }
 }

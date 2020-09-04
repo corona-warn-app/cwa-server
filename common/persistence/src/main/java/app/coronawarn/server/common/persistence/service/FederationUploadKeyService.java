@@ -23,31 +23,62 @@ package app.coronawarn.server.common.persistence.service;
 import static org.springframework.data.util.StreamUtils.createStreamFromIterator;
 
 import app.coronawarn.server.common.persistence.domain.DiagnosisKey;
+import app.coronawarn.server.common.persistence.exception.InvalidDiagnosisKeyException;
 import app.coronawarn.server.common.persistence.repository.FederationUploadKeyRepository;
+import app.coronawarn.server.common.persistence.service.common.DiagnosisKeyExpirationChecker;
+import app.coronawarn.server.common.persistence.service.common.ExpirationPolicy;
 import app.coronawarn.server.common.persistence.service.common.ValidDiagnosisKeyFilter;
 import java.util.List;
 import java.util.stream.Collectors;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 
 @Component
 public class FederationUploadKeyService {
 
+  private static final Logger logger = LoggerFactory.getLogger(FederationUploadKeyService.class);
+
   private final FederationUploadKeyRepository keyRepository;
   private final ValidDiagnosisKeyFilter validationFilter;
+  private final DiagnosisKeyExpirationChecker expirationChecker;
 
-  public FederationUploadKeyService(FederationUploadKeyRepository keyRepository, ValidDiagnosisKeyFilter filter) {
+  /**
+   * Constructs the key upload service.
+   */
+  public FederationUploadKeyService(FederationUploadKeyRepository keyRepository, ValidDiagnosisKeyFilter filter,
+      DiagnosisKeyExpirationChecker expirationChecker) {
     this.keyRepository = keyRepository;
     this.validationFilter = filter;
+    this.expirationChecker = expirationChecker;
   }
 
   /**
    * Returns all valid persisted diagnosis keys which are ready to be uploaded to the external Federation Gateway
-   * service.
+   * service. Readiness of keys means:
+   *
+   * <p><li> Consent is given by the user (this should always be the case for keys in this table,
+   * but a safety check is performed anyway
+   * <li> Key is expired conforming to the given policy
    */
-  public List<DiagnosisKey> getPendingUploadKeys() {
-    List<DiagnosisKey> diagnosisKeys = createStreamFromIterator(
-        keyRepository.findAllUploadableKeys().iterator()).collect(Collectors.toList());
-    return validationFilter.filter(diagnosisKeys);
+  public List<DiagnosisKey> getPendingUploadKeys(ExpirationPolicy policy) {
+    return createStreamFromIterator(
+           keyRepository.findAllUploadableKeys().iterator())
+           .filter(DiagnosisKey::isConsentToFederation)
+           .filter(this::isKeyValid)
+           .filter(key -> expirationChecker.isKeyExpiredForPolicy(key, policy))
+           .collect(Collectors.toList());
+  }
+
+  private boolean isKeyValid(DiagnosisKey key) {
+    boolean isValid = false;
+    try {
+      isValid = validationFilter.isDiagnosisKeyValid(key);
+    } catch  (InvalidDiagnosisKeyException e) {
+      // log and allow collection of other keys by ignoring the runtime exception
+      logger.debug("Invalid key found in pending upload table. {}", e.getMessage());
+    }
+    return isValid;
   }
 }

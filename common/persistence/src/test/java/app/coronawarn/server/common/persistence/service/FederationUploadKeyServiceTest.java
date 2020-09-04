@@ -22,15 +22,22 @@ package app.coronawarn.server.common.persistence.service;
 
 import static app.coronawarn.server.common.persistence.service.DiagnosisKeyServiceTestHelper.assertDiagnosisKeysEqual;
 import static app.coronawarn.server.common.persistence.service.DiagnosisKeyServiceTestHelper.buildDiagnosisKeyForSubmissionTimestamp;
+import static java.time.ZoneOffset.UTC;
 
+import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.data.jdbc.DataJdbcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import app.coronawarn.server.common.persistence.repository.FederationUploadKeyRepository;
+import app.coronawarn.server.common.persistence.service.common.ExpirationPolicy;
 
 @DataJdbcTest
 class FederationUploadKeyServiceTest {
@@ -41,13 +48,30 @@ class FederationUploadKeyServiceTest {
   @MockBean
   private FederationUploadKeyRepository uploadKeyRepository;
 
+
   @Test
-  void testRetrievalOfPendingUploadKeys() {
+  void shouldRetrieveKeysWithConsentOnly() {
     var testKeys = new ArrayList<>(List.of(
-        buildDiagnosisKeyForSubmissionTimestamp(1L),
-        buildDiagnosisKeyForSubmissionTimestamp(0L)));
+        buildDiagnosisKeyForSubmissionTimestamp(1000L, true),
+        buildDiagnosisKeyForSubmissionTimestamp(2000L, false)));
     Mockito.when(uploadKeyRepository.findAllUploadableKeys()).thenReturn(testKeys);
-    var actKeys = uploadKeyService.getPendingUploadKeys();
-    assertDiagnosisKeysEqual(testKeys, actKeys);
+    var actKeys = uploadKeyService.getPendingUploadKeys(ExpirationPolicy.of(0, ChronoUnit.MINUTES));
+    Assertions.assertEquals(1,actKeys.size());
+    assertDiagnosisKeysEqual(testKeys.get(0), actKeys.get(0));
+  }
+
+  @Test
+  void shouldRetrieveExpiredKeysOnly() {
+    LocalDateTime fiveMinutesAgo = LocalDateTime.ofInstant(Instant.now(), UTC).minusMinutes(5);
+    long currentHoursSinceEpoch = fiveMinutesAgo.toEpochSecond(UTC) / TimeUnit.HOURS.toSeconds(1);
+    int rollingStart = Math.toIntExact(fiveMinutesAgo.toEpochSecond(UTC) / 600L);
+
+    var testKeys = new ArrayList<>(List.of(
+        buildDiagnosisKeyForSubmissionTimestamp(1000L, 600, true),
+        buildDiagnosisKeyForSubmissionTimestamp(currentHoursSinceEpoch, rollingStart, true)));
+    Mockito.when(uploadKeyRepository.findAllUploadableKeys()).thenReturn(testKeys);
+    var actKeys = uploadKeyService.getPendingUploadKeys(ExpirationPolicy.of(10, ChronoUnit.MINUTES));
+    Assertions.assertEquals(1,actKeys.size());
+    assertDiagnosisKeysEqual(testKeys.get(0), actKeys.get(0));
   }
 }
