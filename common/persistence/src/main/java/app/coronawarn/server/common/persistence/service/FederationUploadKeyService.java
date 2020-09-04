@@ -20,6 +20,7 @@
 
 package app.coronawarn.server.common.persistence.service;
 
+import static java.time.ZoneOffset.UTC;
 import static org.springframework.data.util.StreamUtils.createStreamFromIterator;
 
 import app.coronawarn.server.common.persistence.domain.DiagnosisKey;
@@ -28,6 +29,7 @@ import app.coronawarn.server.common.persistence.repository.FederationUploadKeyRe
 import app.coronawarn.server.common.persistence.service.common.DiagnosisKeyExpirationChecker;
 import app.coronawarn.server.common.persistence.service.common.ExpirationPolicy;
 import app.coronawarn.server.common.persistence.service.common.ValidDiagnosisKeyFilter;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 import org.slf4j.Logger;
@@ -67,7 +69,7 @@ public class FederationUploadKeyService {
            keyRepository.findAllUploadableKeys().iterator())
            .filter(DiagnosisKey::isConsentToFederation)
            .filter(this::isKeyValid)
-           .filter(key -> expirationChecker.isKeyExpiredForPolicy(key, policy))
+           .filter(key -> expirationChecker.canShareKeyAtTime(key, policy, LocalDateTime.now(UTC)))
            .collect(Collectors.toList());
   }
 

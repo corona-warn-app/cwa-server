@@ -50,37 +50,45 @@ public class DiagnosisKeyExpirationChecker {
 
   private static final Map<ChronoUnit, Function<Duration, Long>> TIME_CONVERTERS
        = Map.of(ChronoUnit.SECONDS, (duration) -> duration.toSeconds(),
-              ChronoUnit.MINUTES, (duration) -> duration.toMinutes(),
-              ChronoUnit.HOURS, (duration) -> duration.toHours());
+                ChronoUnit.MINUTES, (duration) -> duration.toMinutes(),
+                ChronoUnit.HOURS, (duration) -> duration.toHours());
 
   /**
    * Returns true if the given diagnosis key has expired conforming to both its rolling
    * period and the given policy.
    */
-  public boolean isKeyExpiredForPolicy(DiagnosisKey key, ExpirationPolicy policy) {
-    LocalDateTime submissionDateTime = getSubmissionDateTime(key);
-    LocalDateTime expiryDateTime = calculateRollingPeriodExpiryTime(key);
+  public boolean canShareKeyAtTime(DiagnosisKey key, ExpirationPolicy policy, LocalDateTime timeToShare) {
+    LocalDateTime earliestTimeToShare = getEarliestTimeForSharingKey(key, policy);
+    return timeToShare.isAfter(earliestTimeToShare) || timeToShare.isEqual(earliestTimeToShare);
+  }
+
+  /**
+   * Calculates the earliest point in time at which the specified {@link DiagnosisKey} can be shared with 3rd parties,
+   * while respecting the expiry policy and the submission timestamp. According to DPP rules, before keys are allowed
+   * to be shared, they must be expired for a configured amount of time.
+   *
+   * @return {@link LocalDateTime} at which the specified {@link DiagnosisKey} can be shared.
+   */
+  public LocalDateTime getEarliestTimeForSharingKey(DiagnosisKey diagnosisKey, ExpirationPolicy policy) {
+    LocalDateTime submissionDateTime = getSubmissionDateTime(diagnosisKey);
+    LocalDateTime expiryDateTime = getRollingPeriodExpiryTime(diagnosisKey);
     long timeBetweenExpiryAndSubmission = TIME_CONVERTERS.get(policy.getTimeUnit())
         .apply(Duration.between(expiryDateTime, submissionDateTime));
-    return timeBetweenExpiryAndSubmission >= policy.getExpirationTime();
+    if (timeBetweenExpiryAndSubmission <= policy.getExpirationTime()) {
+      // truncatedTo floors the value, so we need to add an hour to the DISTRIBUTION_PADDING to compensate that.
+      return expiryDateTime.plusMinutes(policy.getExpirationTime() + 60).truncatedTo(ChronoUnit.HOURS);
+    } else {
+      return submissionDateTime;
+    }
   }
 
   /**
    * Returns the end of the rolling time window that a {@link DiagnosisKey} was active for as a {@link LocalDateTime}.
    */
-  public LocalDateTime calculateRollingPeriodExpiryTime(DiagnosisKey diagnosisKey) {
-    return calculateRollingPeriodExpiryTime(diagnosisKey.getRollingStartIntervalNumber(),
-        diagnosisKey.getRollingPeriod());
-  }
-
-  /**
-   * Returns the end of the rolling time window for the given rolling period and start interval numbers,
-   * as a {@link LocalDateTime}.
-   */
-  public LocalDateTime calculateRollingPeriodExpiryTime(long rollingStartInterval, int rollingPeriod) {
+  private LocalDateTime getRollingPeriodExpiryTime(DiagnosisKey diagnosisKey) {
     return LocalDateTime
-        .ofEpochSecond(rollingStartInterval * TEN_MINUTES_INTERVAL_SECONDS, 0, UTC)
-        .plusMinutes(rollingPeriod * ROLLING_PERIOD_MINUTES_INTERVAL);
+        .ofEpochSecond(diagnosisKey.getRollingStartIntervalNumber() * TEN_MINUTES_INTERVAL_SECONDS, 0, UTC)
+        .plusMinutes(diagnosisKey.getRollingPeriod() * ROLLING_PERIOD_MINUTES_INTERVAL);
   }
 
   /**

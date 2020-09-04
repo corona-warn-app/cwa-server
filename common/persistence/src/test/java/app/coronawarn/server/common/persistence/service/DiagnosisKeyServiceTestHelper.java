@@ -20,14 +20,23 @@
 
 package app.coronawarn.server.common.persistence.service;
 
+import static app.coronawarn.server.common.persistence.service.common.DiagnosisKeyExpirationChecker.ROLLING_PERIOD_MINUTES_INTERVAL;
+import static app.coronawarn.server.common.persistence.service.common.DiagnosisKeyExpirationChecker.TEN_MINUTES_INTERVAL_SECONDS;
+import static java.time.ZoneOffset.UTC;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import app.coronawarn.server.common.persistence.domain.DiagnosisKey;
 import app.coronawarn.server.common.protocols.external.exposurenotification.ReportType;
+
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.time.OffsetDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.Collections;
 import java.util.List;
 import java.util.Random;
+import java.util.concurrent.TimeUnit;
 
 public class DiagnosisKeyServiceTestHelper {
 
@@ -97,5 +106,35 @@ public class DiagnosisKeyServiceTestHelper {
   public static DiagnosisKey buildDiagnosisKeyForDateTime(OffsetDateTime dateTime,
       String countryCode, List<String> visitedCountries, ReportType reportType) {
     return buildDiagnosisKeyForSubmissionTimestamp(dateTime.toEpochSecond() / 3600, 600, false, countryCode, visitedCountries, reportType);
+  }
+
+  /**
+   * @return A key whos rolling period ended today (relative to test the test run) at 00:00,
+   * but was submitted X hours after that time.
+   * Altough the application uses minutes for expiration policies, the submission times are
+   * computed relative to the top of the hours.
+   */
+  public static DiagnosisKey getKeySubmittedHoursAfterMidnightExpiration(int hours) {
+    LocalDateTime yesterday = LocalDateTime.of(LocalDate.now(), LocalTime.MIDNIGHT).minusDays(1);
+
+    // key rolled out yesterday (relative to the test run) at 00:00
+    int rollingStart = Math.toIntExact(yesterday.toEpochSecond(UTC) / 600L);
+    LocalDateTime rollingPeriodExpiryTime = calculateRollingPeriodExpiryTime(rollingStart, 144);
+
+    // submission time is minutes after rolling period has passed
+    long submissionTime = rollingPeriodExpiryTime.plus(hours, ChronoUnit.HOURS)
+            .toEpochSecond(UTC) / TimeUnit.HOURS.toSeconds(1);
+
+    return buildDiagnosisKeyForSubmissionTimestamp(submissionTime, rollingStart, true);
+  }
+
+  /**
+   * Returns the end of the rolling time window for the given rolling period and start interval numbers,
+   * as a {@link LocalDateTime}.
+   */
+  private static LocalDateTime calculateRollingPeriodExpiryTime(long rollingStartInterval, int rollingPeriod) {
+    return LocalDateTime
+        .ofEpochSecond(rollingStartInterval * TEN_MINUTES_INTERVAL_SECONDS, 0, UTC)
+        .plusMinutes(rollingPeriod * ROLLING_PERIOD_MINUTES_INTERVAL);
   }
 }
