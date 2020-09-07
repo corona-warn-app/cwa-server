@@ -143,7 +143,7 @@ public class SubmissionServiceConfig {
     this.payload = payload;
   }
 
-  private static class Payload {
+  public static class Payload {
 
     @Min(7)
     @Max(100)

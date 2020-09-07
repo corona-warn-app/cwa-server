@@ -20,16 +20,14 @@
 
 package app.coronawarn.server.services.submission.config;
 
+import java.util.Arrays;
+import java.util.List;
+import java.util.Locale;
 import org.springframework.util.unit.DataSize;
 import org.springframework.validation.Errors;
 import org.springframework.validation.Validator;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Locale;
-import java.util.Set;
 
-import static java.lang.String.join;
+
 
 /**
  * Validate the values of the SubmissionServiceConfig.

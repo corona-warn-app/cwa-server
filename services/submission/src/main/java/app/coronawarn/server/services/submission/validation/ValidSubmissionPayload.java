@@ -34,6 +34,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Set;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import javax.validation.Constraint;
@@ -174,14 +175,18 @@ public @interface ValidSubmissionPayload {
     private boolean checkVisitedCountriesAreValid(SubmissionPayload submissionPayload,
         ConstraintValidatorContext validatorContext) {
       List<String> supportedCountriesList = List.of(supportedCountries);
+      AtomicBoolean validCountries = new AtomicBoolean(true);
 
       submissionPayload.getVisitedCountriesList().forEach(country -> {
         if (!supportedCountriesList.contains(country)) {
           addViolation(validatorContext,
               country + " is not of the supported countries list");
 
+          validCountries.set(false);
         }
       });
 
+      return validCountries.get();
+    }
   }
 }
