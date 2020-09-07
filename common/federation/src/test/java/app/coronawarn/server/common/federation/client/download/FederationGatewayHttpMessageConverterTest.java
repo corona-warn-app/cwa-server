@@ -24,6 +24,7 @@ import static app.coronawarn.server.common.federation.client.download.Federation
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
+import static org.assertj.core.util.Lists.list;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 import static org.springframework.http.HttpHeaders.CONTENT_TYPE;
@@ -57,8 +58,8 @@ class FederationGatewayHttpMessageConverterTest {
   private final FederationGatewayHttpMessageConverter converter = new FederationGatewayHttpMessageConverter();
 
   @Test
-  void supportedMediaTypesIncludeProtobuf() {
-    assertThat(converter.getSupportedMediaTypes()).contains(PROTOBUF);
+  void supportedMediaTypesIsProtobuf() {
+    assertThat(converter.getSupportedMediaTypes()).isEqualTo(list(PROTOBUF));
   }
 
   @Test
