@@ -64,10 +64,6 @@ public class FederationBatchInfo {
     return status;
   }
 
-  public void setStatus(FederationBatchStatus status) {
-    this.status = status;
-  }
-
   @Override
   public boolean equals(Object o) {
     if (this == o) {
