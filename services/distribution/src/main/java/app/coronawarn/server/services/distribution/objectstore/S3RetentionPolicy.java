@@ -62,14 +62,13 @@ public class S3RetentionPolicy {
   public void applyRetentionPolicy(int retentionDays) {
     supportedCountries.forEach(supportedCountry -> {
       List<S3Object> diagnosisKeysObjects = objectStoreAccess.getObjectsWithPrefix(api.getVersionPath() + "/"
-            + api.getVersionV1() + "/"
-            + api.getDiagnosisKeysPath() + "/"
-            + api.getCountryPath() + "/"
-            + supportedCountry + "/"
-            + api.getDatePath() + "/");
+          + api.getVersionV1() + "/"
+          + api.getDiagnosisKeysPath() + "/"
+          + api.getCountryPath() + "/"
+          + supportedCountry + "/"
+          + api.getDatePath() + "/");
       final String regex = ".*([0-9]{4}-[0-9]{2}-[0-9]{2}).*";
       final Pattern pattern = Pattern.compile(regex);
-
       final LocalDate cutOffDate = TimeUtils.getUtcDate().minusDays(retentionDays);
 
       diagnosisKeysObjects.stream()

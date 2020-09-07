@@ -110,7 +110,11 @@ class TestDataGenerationTest {
         .thenReturn(buildDiagnosisKeys(6,
             LocalDateTime.of(2020, 7, 15, 12, 0, 0), 10, "DE", List.of("DE", "FR")))
         .thenReturn(buildDiagnosisKeys(6,
-            LocalDateTime.of(2020, 7, 15, 12, 0, 0), 10, "FR", List.of("DE", "FR")));
+            LocalDateTime.of(2020, 7, 15, 12, 0, 0), 10, "FR", List.of("DE", "FR")))
+        .thenReturn(buildDiagnosisKeys(6,
+            LocalDateTime.of(2020, 7, 15, 12, 0, 0), 10, "NL", List.of("DE", "FR", "NL", "IE")))
+        .thenReturn(buildDiagnosisKeys(6,
+            LocalDateTime.of(2020, 7, 15, 12, 0, 0), 10, "IE", List.of("DE", "FR", "NL", "IE")));
 
     testDataGeneration.run(null);
     verify(diagnosisKeyService, never()).saveDiagnosisKeys(captor.capture());
@@ -125,7 +129,11 @@ class TestDataGenerationTest {
         .thenReturn(buildDiagnosisKeys(6,
             LocalDateTime.of(2020, 7, 15, 11, 0, 0), 10))
         .thenReturn(buildDiagnosisKeys(6,
-            LocalDateTime.of(2020, 7, 15, 11, 0, 0), 10, "FR", List.of("DE", "FR")));
+            LocalDateTime.of(2020, 7, 15, 11, 0, 0), 10, "FR", List.of("DE", "FR")))
+        .thenReturn(buildDiagnosisKeys(6,
+            LocalDateTime.of(2020, 7, 15, 11, 0, 0), 10, "NL", List.of("DE", "FR", "NL", "IE")))
+        .thenReturn(buildDiagnosisKeys(6,
+            LocalDateTime.of(2020, 7, 15, 11, 0, 0), 10, "IE", List.of("DE", "FR", "NL", "IE")));
 
     testDataGeneration.run(null);
     verify(diagnosisKeyService, times(distributionServiceConfig.getSupportedCountries().length))
@@ -158,7 +166,11 @@ class TestDataGenerationTest {
 
     when(diagnosisKeyService.getDiagnosisKeys())
         .thenReturn(buildDiagnosisKeys(6, LocalDateTime.of(2020, 7, 15, 12, 0, 0), 10, "DE", List.of("DE", "FR")))
-        .thenReturn(buildDiagnosisKeys(6, LocalDateTime.of(2020, 7, 15, 12, 0, 0), 10, "FR", List.of("DE", "FR")));
+        .thenReturn(buildDiagnosisKeys(6, LocalDateTime.of(2020, 7, 15, 12, 0, 0), 10, "FR", List.of("DE", "FR")))
+        .thenReturn(buildDiagnosisKeys(6,
+            LocalDateTime.of(2020, 7, 15, 12, 0, 0), 10, "NL", List.of("DE", "FR", "NL", "IE")))
+        .thenReturn(buildDiagnosisKeys(6,
+            LocalDateTime.of(2020, 7, 15, 12, 0, 0), 10, "IE", List.of("DE", "FR", "NL", "IE")));
 
     testDataGeneration.run(null);
     verify(diagnosisKeyService, never()).saveDiagnosisKeys(any());
@@ -175,6 +187,7 @@ class TestDataGenerationTest {
         .thenReturn(buildDiagnosisKeys(6, LocalDateTime.of(2020, 7, 14, 12, 0, 0), 10, "FR", List.of("DE", "FR")));
 
     testDataGeneration.run(null);
-    verify(diagnosisKeyService, times(distributionServiceConfig.getSupportedCountries().length)).saveDiagnosisKeys(any());
+    verify(diagnosisKeyService, times(distributionServiceConfig.getSupportedCountries().length))
+        .saveDiagnosisKeys(any());
   }
 }

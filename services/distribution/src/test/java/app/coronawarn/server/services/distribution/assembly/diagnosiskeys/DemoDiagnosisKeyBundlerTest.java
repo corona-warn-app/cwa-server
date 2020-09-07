@@ -43,7 +43,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 @ContextConfiguration(classes = {DistributionServiceConfig.class, DemoDiagnosisKeyBundler.class},
     initializers = ConfigFileApplicationContextInitializer.class)
 @ActiveProfiles("demo")
-public class DemoDiagnosisKeyBundlerTest {
+class DemoDiagnosisKeyBundlerTest {
 
   @Autowired
   DiagnosisKeyBundler bundler;

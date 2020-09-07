@@ -24,8 +24,7 @@ import static app.coronawarn.server.services.distribution.common.Helpers.buildDi
 import static java.util.Collections.emptySet;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
-import static org.mockito.Mockito.spy;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 import app.coronawarn.server.common.persistence.domain.DiagnosisKey;
 import app.coronawarn.server.services.distribution.config.DistributionServiceConfig;
@@ -54,6 +53,8 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 @ContextConfiguration(classes = {DistributionServiceConfig.class, ProdDiagnosisKeyBundler.class},
     initializers = ConfigFileApplicationContextInitializer.class)
 class ProdDiagnosisKeyBundlerKeyRetrievalTest {
+
+  private static final String INVALID_COUNTRY = "TR";
 
   @Autowired
   DistributionServiceConfig distributionServiceConfig;
@@ -84,15 +85,13 @@ class ProdDiagnosisKeyBundlerKeyRetrievalTest {
         .flatMap(List::stream)
         .collect(Collectors.toList());
     bundler.setDiagnosisKeys(diagnosisKeys, LocalDateTime.of(1970, 1, 5, 0, 0));
-    assertThatExceptionOfType(InvalidCountryException.class)
-        .isThrownBy(() -> bundler.getAllDiagnosisKeys("TR"));
+    assertThat(bundler.getAllDiagnosisKeys("TR")).isEmpty();
   }
 
   @Test
   void testGetDatesForEmptyListWithWrongCountry() {
     bundler.setDiagnosisKeys(emptySet(), LocalDateTime.of(1970, 1, 5, 0, 0));
-    assertThatExceptionOfType(InvalidCountryException.class)
-        .isThrownBy(() -> bundler.getDatesWithDistributableDiagnosisKeys("TR"));
+    assertThat(bundler.getDiagnosisKeysForHour(LocalDateTime.of(1970, 1, 1, 0, 0, 0), INVALID_COUNTRY)).isEmpty();
   }
 
   @Test
@@ -218,19 +217,17 @@ class ProdDiagnosisKeyBundlerKeyRetrievalTest {
   }
 
   @Test
-  void testGetDiagnosisKeysForDateWithWrongCountry() {
+  void testGetDiagnosisKeysForDateWithInvalidCountry() {
     List<DiagnosisKey> diagnosisKeys = buildDiagnosisKeys(6, LocalDateTime.of(1970, 1, 2, 4, 0), 5);
     bundler.setDiagnosisKeys(diagnosisKeys, LocalDateTime.of(1970, 1, 5, 0, 0));
-    assertThatExceptionOfType(InvalidCountryException.class)
-        .isThrownBy(() -> bundler.getDiagnosisKeysForDate(LocalDate.of(1970, 1,1), "TR"));
+    assertThat(bundler.getDiagnosisKeysForHour(LocalDateTime.of(1970, 1, 1, 0, 0, 0), INVALID_COUNTRY)).isEmpty();
   }
 
   @Test
-  void testGetDiagnosisKeysForHourWithWrongCountry() {
+  void testGetDiagnosisKeysForHourWithInvalidCountry() {
     List<DiagnosisKey> diagnosisKeys = buildDiagnosisKeys(6, LocalDateTime.of(1970, 1, 2, 4, 0), 5);
     bundler.setDiagnosisKeys(diagnosisKeys, LocalDateTime.of(1970, 1, 5, 0, 0));
-    assertThatExceptionOfType(InvalidCountryException.class)
-        .isThrownBy(() -> bundler.getDiagnosisKeysForHour(LocalDateTime.of(1970, 1, 1, 0, 0, 0), "TR"));
+    assertThat(bundler.getDiagnosisKeysForHour(LocalDateTime.of(1970, 1, 1, 0, 0, 0), INVALID_COUNTRY)).isEmpty();
   }
 
   @Test
