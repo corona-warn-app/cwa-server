@@ -20,11 +20,13 @@
 
 package app.coronawarn.server.services.distribution.assembly.appconfig.validation;
 
+import static app.coronawarn.server.services.distribution.assembly.appconfig.validation.ValidationError.ErrorType.INVALID_VALUES;
 import static app.coronawarn.server.services.distribution.assembly.appconfig.validation.ValidationError.ErrorType.VALUE_OUT_OF_BOUNDS;
 
 import app.coronawarn.server.common.protocols.internal.ApplicationConfiguration;
 import app.coronawarn.server.common.protocols.internal.RiskScoreClassification;
 import app.coronawarn.server.common.protocols.internal.RiskScoreParameters;
+import java.util.List;
 
 /**
  * This validator validates a {@link ApplicationConfiguration}. It will re-use the {@link ConfigurationValidator} from
@@ -48,7 +50,7 @@ public class ApplicationConfigurationValidator extends ConfigurationValidator {
     this.errors = new ValidationResult();
 
     validateMinRisk();
-
+    validateSupportedCountries();
     errors.with(new ExposureConfigurationValidator(config.getExposureConfig()).validate());
     errors.with(new RiskScoreClassificationValidator(config.getRiskScoreClasses()).validate());
     errors.with(new ApplicationVersionConfigurationValidator(config.getAppVersion()).validate());
@@ -64,4 +66,13 @@ public class ApplicationConfigurationValidator extends ConfigurationValidator {
       this.errors.add(new ValidationError("min-risk-score", minLevel, VALUE_OUT_OF_BOUNDS));
     }
   }
+
+  private void validateSupportedCountries() {
+    List<String> supportedCountries = this.config.getSupportedCountriesList();
+
+    if (!SupportedCountriesValidator.validateSupportedCountries(supportedCountries)) {
+      this.errors.add(new ValidationError("supported-countries", supportedCountries, INVALID_VALUES));
+    }
+  }
+
 }

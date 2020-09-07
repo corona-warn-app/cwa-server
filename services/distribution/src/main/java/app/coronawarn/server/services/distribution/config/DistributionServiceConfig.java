@@ -21,8 +21,7 @@
 package app.coronawarn.server.services.distribution.config;
 
 import app.coronawarn.server.common.protocols.external.exposurenotification.SignatureInfo;
-import java.util.ArrayList;
-import java.util.Arrays;
+import app.coronawarn.server.services.distribution.assembly.appconfig.validation.ValidSupportedCountries;
 import java.util.List;
 import java.util.stream.Collectors;
 import javax.validation.constraints.Max;
@@ -49,7 +48,6 @@ public class DistributionServiceConfig {
   private static final String ALGORITHM_OID_REGEX = "^[0-9]+[\\.[0-9]+]*$";
   private static final String BUNDLE_REGEX = "^[a-z-]+[\\.[a-z-]+]*$";
   private static final String PRIVATE_KEY_REGEX = "^(classpath:|file:[/]+)[a-zA-Z0-9_-]+[/[a-zA-Z0-9_-]+]*(.pem)?$";
-  private static final String SUPPORTED_COUNTRY_CODES_REGEX = "^([a-zA-Z]{2}(\\,*[a-zA-Z]{2})*)$";
 
   private Paths paths;
   private TestData testData;
@@ -74,7 +72,7 @@ public class DistributionServiceConfig {
   private Api api;
   private ObjectStore objectStore;
   private List<AppFeature> appFeatures;
-  @Pattern(regexp = SUPPORTED_COUNTRY_CODES_REGEX)
+  @ValidSupportedCountries
   private String supportedCountries;
   private AppVersions appVersions;
 

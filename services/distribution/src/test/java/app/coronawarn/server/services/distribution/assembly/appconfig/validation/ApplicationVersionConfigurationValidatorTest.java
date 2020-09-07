@@ -29,7 +29,6 @@ import app.coronawarn.server.common.protocols.internal.ApplicationVersionConfigu
 import app.coronawarn.server.services.distribution.assembly.appconfig.ApplicationConfigurationPublicationConfig;
 import app.coronawarn.server.services.distribution.assembly.appconfig.validation.ValidationError.ErrorType;
 import app.coronawarn.server.services.distribution.config.DistributionServiceConfig;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
@@ -50,12 +49,11 @@ class ApplicationVersionConfigurationValidatorTest {
 
   private static final ValidationResult SUCCESS = new ValidationResult();
 
-  private ConfigurationValidator buildValidator(DistributionServiceConfig distributionServiceConfig) {
+  private ConfigurationValidator buildVersionValidator(DistributionServiceConfig distributionServiceConfig) {
     ApplicationVersionConfiguration appConfig = applicationConfigurationPublicationConfig
         .buildApplicationVersionConfiguration(distributionServiceConfig);
     return new ApplicationVersionConfigurationValidator(appConfig);
   }
-
   @Autowired
   DistributionServiceConfig distributionServiceConfig;
 
@@ -70,7 +68,7 @@ class ApplicationVersionConfigurationValidatorTest {
     distributionServiceConfig.getAppVersions().setLatestIos(latestIos);
     distributionServiceConfig.getAppVersions().setMinIos(minIos);
 
-    var validator = buildValidator(distributionServiceConfig);
+    var validator = buildVersionValidator(distributionServiceConfig);
     assertThat(validator.validate()).isEqualTo(SUCCESS);
   }
   private static Stream<Arguments> setSemanticVersionsLatestHigherThanMin() {
@@ -93,7 +91,7 @@ class ApplicationVersionConfigurationValidatorTest {
     distributionServiceConfig.getAppVersions().setLatestIos(latestIos);
     distributionServiceConfig.getAppVersions().setMinIos(minIos);
 
-    var validator = buildValidator(distributionServiceConfig);
+    var validator = buildVersionValidator(distributionServiceConfig);
     assertThat(validator.validate()).isEqualTo(SUCCESS);
   }
 
@@ -117,7 +115,7 @@ class ApplicationVersionConfigurationValidatorTest {
     distributionServiceConfig.getAppVersions().setLatestIos(latestIos);
     distributionServiceConfig.getAppVersions().setMinIos(minIos);
 
-    var validator = buildValidator(distributionServiceConfig);
+    var validator = buildVersionValidator(distributionServiceConfig);
 
     assertThat(validator.validate()).isEqualTo(buildExpectedResult(buildError(CONFIG_PREFIX + "android.[latest|min]", minAndroid, ErrorType.MIN_GREATER_THAN_MAX)));
   }
@@ -138,7 +136,7 @@ class ApplicationVersionConfigurationValidatorTest {
     distributionServiceConfig.getAppVersions().setLatestIos(latestIos);
     distributionServiceConfig.getAppVersions().setMinIos(minIos);
 
-    var validator = buildValidator(distributionServiceConfig);
+    var validator = buildVersionValidator(distributionServiceConfig);
 
     assertThat(validator.validate()).isEqualTo(buildExpectedResult(buildError(CONFIG_PREFIX + "ios.[latest|min]", minIos, ErrorType.MIN_GREATER_THAN_MAX)));
   }
