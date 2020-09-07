@@ -21,7 +21,6 @@
 package app.coronawarn.server.services.distribution.config;
 
 import app.coronawarn.server.common.protocols.external.exposurenotification.SignatureInfo;
-import app.coronawarn.server.services.distribution.assembly.appconfig.validation.ValidSupportedCountries;
 import java.util.List;
 import java.util.stream.Collectors;
 import javax.validation.constraints.Max;
@@ -72,8 +71,7 @@ public class DistributionServiceConfig {
   private Api api;
   private ObjectStore objectStore;
   private List<AppFeature> appFeatures;
-  @ValidSupportedCountries
-  private String supportedCountries;
+  private String[] supportedCountries;
   private AppVersions appVersions;
 
   public Paths getPaths() {
@@ -190,10 +188,10 @@ public class DistributionServiceConfig {
   }
 
   public String[] getSupportedCountries() {
-    return supportedCountries.split(",");
+    return supportedCountries;
   }
 
-  public void setSupportedCountries(String supportedCountries) {
+  public void setSupportedCountries(String[] supportedCountries) {
     this.supportedCountries = supportedCountries;
   }
 

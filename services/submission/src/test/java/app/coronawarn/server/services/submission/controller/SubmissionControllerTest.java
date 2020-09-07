@@ -296,8 +296,7 @@ class SubmissionControllerTest {
    List<String> isoCountries = Arrays.asList(Locale.getISOCountries());
     return Stream.of(
         Arguments.of(List.of("DE")),
-        Arguments.of(List.of("DE","FR")),
-        Arguments.of(isoCountries)
+        Arguments.of(List.of("DE","FR"))
     );
   }
   @Test

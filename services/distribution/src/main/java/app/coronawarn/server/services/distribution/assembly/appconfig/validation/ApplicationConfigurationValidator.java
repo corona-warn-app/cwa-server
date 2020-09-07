@@ -50,11 +50,12 @@ public class ApplicationConfigurationValidator extends ConfigurationValidator {
     this.errors = new ValidationResult();
 
     validateMinRisk();
-    validateSupportedCountries();
+
     errors.with(new ExposureConfigurationValidator(config.getExposureConfig()).validate());
     errors.with(new RiskScoreClassificationValidator(config.getRiskScoreClasses()).validate());
     errors.with(new ApplicationVersionConfigurationValidator(config.getAppVersion()).validate());
     errors.with(new AttenuationDurationValidator(config.getAttenuationDuration()).validate());
+    errors.with(new SupportedCountriesValidator(config.getSupportedCountriesList()).validate());
 
     return errors;
   }
@@ -64,14 +65,6 @@ public class ApplicationConfigurationValidator extends ConfigurationValidator {
 
     if (!RiskScoreValidator.isWithinBounds(minLevel)) {
       this.errors.add(new ValidationError("min-risk-score", minLevel, VALUE_OUT_OF_BOUNDS));
-    }
-  }
-
-  private void validateSupportedCountries() {
-    List<String> supportedCountries = this.config.getSupportedCountriesList();
-
-    if (!SupportedCountriesValidator.validateSupportedCountries(supportedCountries)) {
-      this.errors.add(new ValidationError("supported-countries", supportedCountries, INVALID_VALUES));
     }
   }
 

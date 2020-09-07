@@ -33,7 +33,6 @@ import app.coronawarn.server.common.protocols.internal.ApplicationConfiguration;
 import app.coronawarn.server.services.distribution.assembly.appconfig.ApplicationConfigurationPublicationConfig;
 import app.coronawarn.server.services.distribution.assembly.appconfig.UnableToLoadFileException;
 import java.util.Arrays;
-import java.util.List;
 import java.util.stream.Stream;
 import app.coronawarn.server.services.distribution.config.DistributionServiceConfig;
 import org.junit.jupiter.api.Test;
@@ -121,10 +120,10 @@ class ApplicationConfigurationValidatorTest {
   @ParameterizedTest
   @MethodSource("setInvalidSupportedCountries")
   void failsOnInvalidSupportedCountries(String supportedCountries) throws UnableToLoadFileException {
-    distributionServiceConfig.setSupportedCountries(supportedCountries);
+    String[] supportedCountriesList = supportedCountries.split(",");
+    distributionServiceConfig.setSupportedCountries(supportedCountriesList);
 
     var validator = buildApplicationConfigurationValidator(distributionServiceConfig);
-    List<String> supportedCountriesList = Arrays.asList(supportedCountries.split(","));
     assertThat(validator.validate()).isEqualToComparingOnlyGivenFields(
         buildExpectedResult(new ValidationError("supported-countries", supportedCountriesList, INVALID_VALUES)));
 
@@ -141,7 +140,8 @@ class ApplicationConfigurationValidatorTest {
   @ParameterizedTest
   @MethodSource("setValidSupportedCountries")
   void successOnValidSupportedCountries(String supportedCountries) throws UnableToLoadFileException {
-    distributionServiceConfig.setSupportedCountries(supportedCountries);
+    String[] supportedCountriesList = supportedCountries.split(",");
+    distributionServiceConfig.setSupportedCountries(supportedCountriesList);
 
     var validator = buildApplicationConfigurationValidator(distributionServiceConfig);
 

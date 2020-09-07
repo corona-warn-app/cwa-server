@@ -20,50 +20,39 @@
 
 package app.coronawarn.server.services.distribution.assembly.appconfig.validation;
 
+import static app.coronawarn.server.services.distribution.assembly.appconfig.validation.ValidationError.ErrorType.INVALID_VALUES;
+
 import java.util.Arrays;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
-import java.util.Set;
-import javax.validation.ConstraintValidator;
-import javax.validation.ConstraintValidatorContext;
+
 
 
 /**
  * Validates the supported countries according to ISO 3166.
  */
-public class SupportedCountriesValidator extends ConfigurationValidator
-    implements ConstraintValidator<ValidSupportedCountries, String> {
+public class SupportedCountriesValidator extends ConfigurationValidator {
 
-  public SupportedCountriesValidator() {
+  public static final List<String> ISO_COUNTRIES = Arrays.asList(Locale.getISOCountries());
+  private final List<String> supportedCountries;
 
+  public SupportedCountriesValidator(List<String> supportedCountries) {
+    this.supportedCountries = supportedCountries;
   }
 
   @Override
   public ValidationResult validate() {
     errors = new ValidationResult();
-
+    validateSupportedCountries();
     return errors;
   }
 
-  /**
-   * Validates the supported countries in the protobuf according to ISO 3166.
-   */
-  public static boolean validateSupportedCountries(List<String> supportedCountries) {
-    Set<String> isoCountries = new HashSet<>(Arrays.asList(Locale.getISOCountries()));
-    boolean areIsoCountries = isoCountries.containsAll(supportedCountries);
-
-    return areIsoCountries;
-  }
-
-  /**
-   * Validates the supported countries coming from the application.yaml according to ISO 3166.
-   */
-  @Override
-  public boolean isValid(String supportedCountries, ConstraintValidatorContext constraintValidatorContext) {
-    Set<String> isoCountries = new HashSet<>(Arrays.asList(Locale.getISOCountries()));
-    boolean areIsoCountries = isoCountries.containsAll(List.of(supportedCountries.split(",")));
-
-    return areIsoCountries;
+  private void validateSupportedCountries() {
+    supportedCountries.forEach(country -> {
+          if (!ISO_COUNTRIES.contains(country)) {
+            errors.add(new ValidationError("supported-countries", country, INVALID_VALUES));
+          }
+        }
+    );
   }
 }
