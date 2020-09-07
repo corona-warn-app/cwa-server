@@ -29,7 +29,7 @@ services:
     max-rolling-period: 144
     payload:
       max-number-of-keys: 14
-      allowed-countries: DE,FR,UK,DK
+      supported-countries: ${SUPPORTED_COUNTRIES:DE,FR}
       default-origin-country: DE
     verification:
       base-url: http://localhost:1234

@@ -23,6 +23,13 @@ package app.coronawarn.server.services.submission.config;
 import org.springframework.util.unit.DataSize;
 import org.springframework.validation.Errors;
 import org.springframework.validation.Validator;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Locale;
+import java.util.Set;
+
+import static java.lang.String.join;
 
 /**
  * Validate the values of the SubmissionServiceConfig.
@@ -31,6 +38,7 @@ public class SubmissionServiceConfigValidator implements Validator {
 
   public static final DataSize MIN_MAXIMUM_REQUEST_SIZE = DataSize.ofBytes(280);
   public static final DataSize MAX_MAXIMUM_REQUEST_SIZE = DataSize.ofKilobytes(200);
+  public static final List<String> ISO_COUNTRIES = Arrays.asList(Locale.getISOCountries());
 
   @Override
   public boolean supports(Class<?> type) {
@@ -44,6 +52,20 @@ public class SubmissionServiceConfigValidator implements Validator {
   public void validate(Object o, Errors errors) {
     SubmissionServiceConfig properties = (SubmissionServiceConfig) o;
 
+    validateMaxRequestsize(errors, properties);
+    validateSupportedCountries(errors, properties);
+  }
+
+  private void validateSupportedCountries(Errors errors, SubmissionServiceConfig properties) {
+    Arrays.stream(properties.getSupportedCountries()).forEach(country -> {
+      if (!ISO_COUNTRIES.contains(country)) {
+        errors.rejectValue("supportedCountries",
+            country + " country is not conform to the ISO 3166.");
+      }
+    });
+  }
+
+  private void validateMaxRequestsize(Errors errors, SubmissionServiceConfig properties) {
     if (properties.getMaximumRequestSize().compareTo(MIN_MAXIMUM_REQUEST_SIZE) < 0
         || properties.getMaximumRequestSize().compareTo(MAX_MAXIMUM_REQUEST_SIZE) > 0) {
       errors.rejectValue("maximumRequestSize",

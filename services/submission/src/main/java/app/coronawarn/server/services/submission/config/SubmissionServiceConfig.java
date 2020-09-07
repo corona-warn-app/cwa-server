@@ -21,24 +21,24 @@
 package app.coronawarn.server.services.submission.config;
 
 import java.io.File;
-import java.util.Arrays;
-import java.util.List;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.Pattern;
 import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.stereotype.Component;
 import org.springframework.util.unit.DataSize;
 import org.springframework.validation.annotation.Validated;
 
 @Component
 @ConfigurationProperties(prefix = "services.submission")
+@Configuration
 @Validated
 public class SubmissionServiceConfig {
 
   private static final String PATH_REGEX = "^[/]?[a-zA-Z0-9_]+[/[a-zA-Z0-9_]+]*$";
   private static final String URL_WITH_PORT_REGEX = "^http[s]?://[a-z0-9-]+(\\.[a-z0-9-]+)*(:[0-9]{2,6})?$";
-  private static final String ALLOWED_COUNTRY_CODES_REGEX = "^([a-zA-Z]{2}(\\,*[a-zA-Z]{2})*)$";
+
 
   // Exponential moving average of the last N real request durations (in ms), where
   // N = fakeDelayMovingAverageSamples.
@@ -131,26 +131,12 @@ public class SubmissionServiceConfig {
     return payload.defaultOriginCountry;
   }
 
-  /**
-   * Check if country is whitelisted.
-   *
-   * @return False if the given string is null, empty or is not part
-   *         of the allowed list defined in the <code>application.yml</code>.
-   */
-  public boolean isCountryAllowed(String country) {
-    return payload.isCountryCodeAllowed(country);
+  public String[] getSupportedCountries() {
+    return payload.getSupportedCountries();
   }
 
-  /**
-   * See also <code>isCountryAllowed</code>.
-   */
-  public boolean areAllCountriesAllowed(List<String> countries) {
-    for (String country : countries) {
-      if (!isCountryAllowed(country)) {
-        return false;
-      }
-    }
-    return true;
+  public void setSupportedCountries(String[] supportedCountries) {
+    payload.setSupportedCountries(supportedCountries);
   }
 
   public void setPayload(Payload payload) {
@@ -163,8 +149,7 @@ public class SubmissionServiceConfig {
     @Max(100)
     private Integer maxNumberOfKeys;
 
-    @Pattern(regexp = ALLOWED_COUNTRY_CODES_REGEX)
-    private String allowedCountries;
+    private String[] supportedCountries;
 
     private String defaultOriginCountry;
 
@@ -172,31 +157,18 @@ public class SubmissionServiceConfig {
       return maxNumberOfKeys;
     }
 
-    public boolean isCountryCodeAllowed(String country) {
-      return country != null && !country.isEmpty()
-                             && containsInLowerCase(Arrays.asList(getAllowedCountries()), country);
-    }
-
     public void setMaxNumberOfKeys(Integer maxNumberOfKeys) {
       this.maxNumberOfKeys = maxNumberOfKeys;
     }
 
-    public String[] getAllowedCountries() {
-      return allowedCountries.split(",");
+    public String[] getSupportedCountries() {
+      return supportedCountries;
     }
 
-    public void setAllowedCountries(String allowedCountries) {
-      this.allowedCountries = allowedCountries;
+    public void setSupportedCountries(String[] supportedCountries) {
+      this.supportedCountries = supportedCountries;
     }
 
-    private boolean containsInLowerCase(List<String> countryList, String country) {
-      for (String acceptedCountry : countryList) {
-        if (acceptedCountry.equalsIgnoreCase(country)) {
-          return true;
-        }
-      }
-      return false;
-    }
 
     public String getDefaultOriginCountry() {
       return defaultOriginCountry;
