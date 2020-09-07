@@ -109,11 +109,11 @@ class FederationBatchProcessorTest {
     @Test
     void testBatchInfoForDateExists() {
       BatchDownloadResponse serverResponse = createBatchDownloadResponse(batchTag1, Optional.empty());
-      when(federationGatewayClient.getDiagnosisKeys(eq(isoDate(date)))).thenReturn(serverResponse);
+      when(federationGatewayClient.getDiagnosisKeys(isoDate(date))).thenReturn(serverResponse);
 
       batchProcessor.saveFirstBatchInfoForDate(date);
 
-      verify(batchInfoService, times(1)).save(eq(new FederationBatchInfo(batchTag1, date)));
+      verify(batchInfoService, times(1)).save(new FederationBatchInfo(batchTag1, date));
     }
   }
 
