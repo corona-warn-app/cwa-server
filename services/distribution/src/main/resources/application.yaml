@@ -85,7 +85,7 @@ services:
     app-features:
       - label: reserved
         value: ${reserved:1}
-    supported-countries: ${SUPPORTED_COUNTRIES:DE,FR}
+    supported-countries: ${SUPPORTED_COUNTRIES:DE}
     app-versions:
       latest-ios: ${LATEST_IOS_VERSION:0.8.2}
       min-ios: ${MIN_IOS_VERSION:0.5.0}

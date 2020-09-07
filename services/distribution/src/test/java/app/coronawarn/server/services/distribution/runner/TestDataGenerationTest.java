@@ -175,6 +175,6 @@ class TestDataGenerationTest {
         .thenReturn(buildDiagnosisKeys(6, LocalDateTime.of(2020, 7, 14, 12, 0, 0), 10, "FR", List.of("DE", "FR")));
 
     testDataGeneration.run(null);
-    verify(diagnosisKeyService, times(2)).saveDiagnosisKeys(any());
+    verify(diagnosisKeyService, times(distributionServiceConfig.getSupportedCountries().length)).saveDiagnosisKeys(any());
   }
 }
