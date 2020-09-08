@@ -1,5 +1,0 @@
----
-services:
-  distribution:
-    signature:
-      app-bundle-id: de.rki.coronawarnapp-dev
