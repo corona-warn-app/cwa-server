@@ -23,6 +23,7 @@ package app.coronawarn.server.common.federation.client.config;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.annotation.Validated;
+import java.io.File;
 
 @Component
 @ConfigurationProperties(prefix = "federation-gateway")
@@ -58,16 +59,16 @@ public class FederationGatewayConfig {
   }
 
   public static class Ssl {
-    private String keyStorePath;
+    private File keyStore;
     private String keyStorePass;
     private String certificateType;
 
-    public String getKeyStorePath() {
-      return keyStorePath;
+    public File getKeyStore() {
+      return keyStore;
     }
 
-    public void setKeyStorePath(String keyStorePath) {
-      this.keyStorePath = keyStorePath;
+    public void setKeyStore(File keyStore) {
+      this.keyStore = keyStore;
     }
 
     public String getKeyStorePass() {

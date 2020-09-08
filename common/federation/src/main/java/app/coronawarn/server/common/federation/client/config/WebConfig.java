@@ -32,17 +32,17 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 @EnableFeignClients("app.coronawarn.server.common.federation.client")
 public class WebConfig {
-  
+
   @Bean
   public HttpMessageConverters httpMessageConverters() {
     return new HttpMessageConverters(new FederationGatewayHttpMessageConverter());
   }
 
-  @Bean
-  Client feignDedicatedHttpClient(FederationGatewayConfig federationGatewayConfig) {
-    FederationGatewayConfig.Ssl sslConfig = federationGatewayConfig.getSsl();
-    return new FederationFeignHttpClientProvider()
-        .createFeignClient(federationGatewayConfig.getConnectionPoolSize(), sslConfig.getKeyStorePath(),
-            sslConfig.getKeyStorePass(), sslConfig.getCertificateType());
-  }
+//  @Bean
+//  Client feignDedicatedHttpClient(FederationGatewayConfig federationGatewayConfig) {
+//    FederationGatewayConfig.Ssl sslConfig = federationGatewayConfig.getSsl();
+//    return new FederationFeignHttpClientProvider()
+//        .createFeignClient(federationGatewayConfig.getConnectionPoolSize(), sslConfig.getKeyStore(),
+//            sslConfig.getKeyStorePass(), sslConfig.getCertificateType());
+//  }
 }
