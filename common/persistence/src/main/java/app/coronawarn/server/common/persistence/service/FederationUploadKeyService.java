@@ -24,7 +24,6 @@ import static java.time.ZoneOffset.UTC;
 import static org.springframework.data.util.StreamUtils.createStreamFromIterator;
 
 import app.coronawarn.server.common.persistence.domain.DiagnosisKey;
-import app.coronawarn.server.common.persistence.exception.InvalidDiagnosisKeyException;
 import app.coronawarn.server.common.persistence.repository.FederationUploadKeyRepository;
 import app.coronawarn.server.common.persistence.service.common.ExpirationPolicy;
 import app.coronawarn.server.common.persistence.service.common.KeySharingPoliciesChecker;
@@ -68,19 +67,8 @@ public class FederationUploadKeyService {
     return createStreamFromIterator(
            keyRepository.findAllUploadableKeys().iterator())
            .filter(DiagnosisKey::isConsentToFederation)
-           .filter(this::isKeyValid)
+           .filter(validationFilter::isDiagnosisKeyValid)
            .filter(key -> sharingPoliciesChecker.canShareKeyAtTime(key, policy, LocalDateTime.now(UTC)))
            .collect(Collectors.toList());
-  }
-
-  private boolean isKeyValid(DiagnosisKey key) {
-    boolean isValid = false;
-    try {
-      isValid = validationFilter.isDiagnosisKeyValid(key);
-    } catch  (InvalidDiagnosisKeyException e) {
-      // log and allow collection of other keys by ignoring the runtime exception
-      logger.debug("Invalid key found in pending upload table. {}", e.getMessage());
-    }
-    return isValid;
   }
 }

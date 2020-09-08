@@ -21,6 +21,7 @@
 package app.coronawarn.server.common.persistence.service.common;
 
 import java.time.temporal.ChronoUnit;
+import java.util.Objects;
 
 /**
  * Refers to the time that needs to pass after a key's rolling period has passed,
@@ -30,10 +31,12 @@ import java.time.temporal.ChronoUnit;
  */
 public final class ExpirationPolicy {
 
-  private long expirationTime;
-  private ChronoUnit timeUnit;
+  private final long expirationTime;
+  private final ChronoUnit timeUnit;
 
-  private ExpirationPolicy() {
+  private ExpirationPolicy(long expirationTime, ChronoUnit timeUnit) {
+    this.expirationTime = expirationTime;
+    this.timeUnit = timeUnit;
   }
 
   public long getExpirationTime() {
@@ -48,9 +51,10 @@ public final class ExpirationPolicy {
    * Get an instance of an expiration policy.
    */
   public static ExpirationPolicy of(long timeValue, ChronoUnit timeUnit) {
-    ExpirationPolicy policy = new ExpirationPolicy();
-    policy.expirationTime = timeValue;
-    policy.timeUnit = timeUnit;
+    if (Objects.isNull(timeUnit)) {
+      throw new IllegalArgumentException("Time unit parameter must not be null.");
+    }
+    ExpirationPolicy policy = new ExpirationPolicy(timeValue, timeUnit);
     return policy;
   }
 }

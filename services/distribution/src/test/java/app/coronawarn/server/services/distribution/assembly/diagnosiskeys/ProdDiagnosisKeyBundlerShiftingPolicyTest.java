@@ -48,9 +48,6 @@ class ProdDiagnosisKeyBundlerShiftingPolicyTest {
   DistributionServiceConfig distributionServiceConfig;
 
   @Autowired
-  KeySharingPoliciesChecker sharingPoliciesChecker;
-
-  @Autowired
   DiagnosisKeyBundler bundler;
 
   @Test

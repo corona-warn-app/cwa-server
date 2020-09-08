@@ -48,9 +48,6 @@ class ProdDiagnosisKeyBundlerExpiryPolicyTest {
   DistributionServiceConfig distributionServiceConfig;
 
   @Autowired
-  KeySharingPoliciesChecker keySharingPoliciesChecker;
-
-  @Autowired
   DiagnosisKeyBundler bundler;
 
   @ParameterizedTest

@@ -27,9 +27,8 @@ import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.junit.jupiter.api.Assertions;
+import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.data.jdbc.DataJdbcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -62,7 +61,7 @@ class FederationUploadKeyServiceTest {
     when(keySharingPoliciesChecker.canShareKeyAtTime(any(), any(), any())).thenReturn(true);
 
     var actKeys = uploadKeyService.getPendingUploadKeys(ExpirationPolicy.of(0, ChronoUnit.MINUTES));
-    Assertions.assertEquals(1,actKeys.size());
+    Assertions.assertThat(actKeys).hasSize(1);
     assertDiagnosisKeysEqual(testKeys.get(0), actKeys.get(0));
   }
 
@@ -70,14 +69,14 @@ class FederationUploadKeyServiceTest {
   void shouldRetrieveExpiredKeysOnly() {
     DiagnosisKey key1 = buildDiagnosisKeyForSubmissionTimestamp(1000L, true);
     DiagnosisKey key2 = buildDiagnosisKeyForSubmissionTimestamp(2000L, false);
-    var testKeys = new ArrayList<>(List.of(key1,key2));
+    var testKeys = new ArrayList<>(List.of(key1, key2));
 
     when(uploadKeyRepository.findAllUploadableKeys()).thenReturn(testKeys);
     when(keySharingPoliciesChecker.canShareKeyAtTime(eq(key1), any(), any())).thenReturn(true);
     when(keySharingPoliciesChecker.canShareKeyAtTime(eq(key2), any(), any())).thenReturn(false);
 
     var actKeys = uploadKeyService.getPendingUploadKeys(ExpirationPolicy.of(120, ChronoUnit.MINUTES));
-    Assertions.assertEquals(1,actKeys.size());
+    Assertions.assertThat(actKeys).hasSize(1);
     assertDiagnosisKeysEqual(testKeys.get(0), actKeys.get(0));
   }
 }
