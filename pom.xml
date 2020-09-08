@@ -187,6 +187,17 @@
         <artifactId>maven-surefire-plugin</artifactId>
       </plugin>
       <plugin>
+        <artifactId>maven-surefire-report-plugin</artifactId>
+        <reportSets>
+          <reportSet>
+            <id>integration-tests</id>
+            <reports>
+              <report>failsafe-report-only</report>
+            </reports>
+          </reportSet>
+        </reportSets>
+      </plugin>
+      <plugin>
         <groupId>org.codehaus.mojo</groupId>
         <artifactId>versions-maven-plugin</artifactId>
         <reportSets>
@@ -328,6 +339,10 @@
             <excludedGroups>s3-integration</excludedGroups>
             <trimStackTrace>false</trimStackTrace>
           </configuration>
+        </plugin>
+        <plugin>
+          <artifactId>maven-surefire-report-plugin</artifactId>
+          <version>3.0.0-M5</version>
         </plugin>
         <plugin>
           <groupId>org.codehaus.mojo</groupId>
@@ -473,9 +488,6 @@
       </plugin>
       <plugin>
         <artifactId>maven-enforcer-plugin</artifactId>
-      </plugin>
-      <plugin>
-        <artifactId>maven-failsafe-plugin</artifactId>
       </plugin>
       <plugin>
         <artifactId>maven-project-info-reports-plugin</artifactId>
