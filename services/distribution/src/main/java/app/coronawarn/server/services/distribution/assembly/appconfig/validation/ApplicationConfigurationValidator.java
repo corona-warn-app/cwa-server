@@ -64,5 +64,4 @@ public class ApplicationConfigurationValidator extends ConfigurationValidator {
       this.errors.add(new ValidationError("min-risk-score", minLevel, VALUE_OUT_OF_BOUNDS));
     }
   }
-
 }

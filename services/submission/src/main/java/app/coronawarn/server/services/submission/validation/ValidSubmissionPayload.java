@@ -70,8 +70,10 @@ public @interface ValidSubmissionPayload {
     private final int maxNumberOfKeys;
     private final int maxRollingPeriod;
     private final String[] supportedCountries;
+    private final SubmissionServiceConfig submissionServiceConfig;
 
     public SubmissionPayloadValidator(SubmissionServiceConfig submissionServiceConfig) {
+      this.submissionServiceConfig = submissionServiceConfig;
       maxNumberOfKeys = submissionServiceConfig.getMaxNumberOfKeys();
       maxRollingPeriod = submissionServiceConfig.getMaxRollingPeriod();
       supportedCountries = submissionServiceConfig.getSupportedCountries();
@@ -84,6 +86,8 @@ public @interface ValidSubmissionPayload {
      *   <li>There must be no gaps for StartIntervalNumber values for a user.</li>
      *   <li>There must not be any keys in the {@link SubmissionPayload} have overlapping time windows.</li>
      *   <li>The period of time covered by the data file must not exceed the configured maximum number of days.</li>
+     *   <li>The origin country must be part of the supported countries.</li>
+     *   <li>The visited countries must be part of the supported countries.</li>
      * </ul>
      */
     @Override
@@ -94,6 +98,7 @@ public @interface ValidSubmissionPayload {
       if (keysHaveFlexibleRollingPeriod(exposureKeys)) {
         return checkStartIntervalNumberIsAtMidNight(exposureKeys, validatorContext)
             && checkKeysCumulateEqualOrLessThanMaxRollingPeriodPerDay(exposureKeys, validatorContext)
+            && checkOriginCountryIsValid(submissionPayload, validatorContext)
             && checkVisitedCountriesAreValid(submissionPayload, validatorContext);
       } else {
         return checkStartIntervalNumberIsAtMidNight(exposureKeys, validatorContext)
@@ -167,6 +172,25 @@ public @interface ValidSubmissionPayload {
       return true;
     }
 
+    /**
+     * Verify if payload contains invalid or unaccepted origin country.
+     *
+     * @return false if the originCountry field of the given payload does not contain a country code from the configured
+     * <code>application.yml/supported-countries</code>
+     */
+    private boolean checkOriginCountryIsValid(SubmissionPayload submissionPayload,
+        ConstraintValidatorContext validatorContext) {
+      String originCountry = submissionPayload.getOrigin();
+      List<String> supportedCountriesList = List.of(supportedCountries);
+
+      if (!supportedCountriesList.contains(originCountry)) {
+        addViolation(validatorContext, String.format(
+            "Origin country %s is not part of the supported countries list", originCountry));
+        return false;
+      }
+      return true;
+    }
+
     private boolean checkVisitedCountriesAreValid(SubmissionPayload submissionPayload,
         ConstraintValidatorContext validatorContext) {
       List<String> supportedCountriesList = List.of(supportedCountries);
@@ -175,7 +199,7 @@ public @interface ValidSubmissionPayload {
       submissionPayload.getVisitedCountriesList().forEach(country -> {
         if (!supportedCountriesList.contains(country)) {
           addViolation(validatorContext,
-              country + " is not of the supported countries list");
+              "[" + country + "]: Visited country is not part of the supported countries list");
 
           validCountries.set(false);
         }
