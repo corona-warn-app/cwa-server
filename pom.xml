@@ -184,6 +184,9 @@
         <artifactId>maven-javadoc-plugin</artifactId>
       </plugin>
       <plugin>
+        <artifactId>maven-surefire-plugin</artifactId>
+      </plugin>
+      <plugin>
         <groupId>org.codehaus.mojo</groupId>
         <artifactId>versions-maven-plugin</artifactId>
         <reportSets>

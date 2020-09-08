@@ -7,7 +7,7 @@ import "app/coronawarn/server/common/protocols/external/exposurenotification/dia
 
 message SubmissionPayload {
   repeated app.coronawarn.server.common.protocols.external.exposurenotification.TemporaryExposureKey keys = 1;
-  optional bytes padding = 2;
+  optional bytes requestPadding = 2;
   repeated string visitedCountries = 3;
   optional string origin = 4;
   optional app.coronawarn.server.common.protocols.external.exposurenotification.ReportType reportType = 5 [default = CONFIRMED_CLINICAL_DIAGNOSIS];
