@@ -34,7 +34,7 @@ public class SubmissionServiceConfigValidator implements Validator {
 
   public static final DataSize MIN_MAXIMUM_REQUEST_SIZE = DataSize.ofBytes(280);
   public static final DataSize MAX_MAXIMUM_REQUEST_SIZE = DataSize.ofKilobytes(200);
-  public static final List<String> ISO_COUNTRIES = Arrays.asList(Locale.getISOCountries());
+  private static final List<String> ISO_COUNTRIES = Arrays.asList(Locale.getISOCountries());
 
   @Override
   public boolean supports(Class<?> type) {

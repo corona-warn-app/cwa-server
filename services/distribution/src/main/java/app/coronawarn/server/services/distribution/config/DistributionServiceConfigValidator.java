@@ -31,7 +31,7 @@ import org.springframework.validation.Validator;
  */
 public class DistributionServiceConfigValidator implements Validator {
 
-  public static final List<String> ISO_COUNTRIES = Arrays.asList(Locale.getISOCountries());
+  private static final List<String> ISO_COUNTRIES = Arrays.asList(Locale.getISOCountries());
 
   @Override
   public boolean supports(Class<?> type) {
@@ -44,11 +44,10 @@ public class DistributionServiceConfigValidator implements Validator {
   @Override
   public void validate(Object o, Errors errors) {
     DistributionServiceConfig properties = (DistributionServiceConfig) o;
-
     Arrays.stream(properties.getSupportedCountries()).forEach(country -> {
       if (!ISO_COUNTRIES.contains(country)) {
         errors.rejectValue("supportedCountries",
-            country + " country is not conform to the ISO 3166.");
+            "[" + country + "]: Country code isn't compliant to ISO 3166.");
       }
     });
   }
