@@ -20,15 +20,26 @@
 
 package app.coronawarn.server.services.distribution.objectstore.integration;
 
+import app.coronawarn.server.common.persistence.service.DiagnosisKeyService;
+import app.coronawarn.server.services.distribution.Application;
+import app.coronawarn.server.services.distribution.assembly.component.OutputDirectoryProvider;
+import app.coronawarn.server.services.distribution.assembly.structure.directory.DirectoryOnDisk;
+import app.coronawarn.server.services.distribution.common.DiagnosisTestData;
+import app.coronawarn.server.services.distribution.config.DistributionServiceConfig;
+import app.coronawarn.server.services.distribution.objectstore.FailedObjectStoreOperationsCounter;
+import app.coronawarn.server.services.distribution.objectstore.ObjectStoreAccess;
+import app.coronawarn.server.services.distribution.objectstore.S3Publisher;
+import app.coronawarn.server.services.distribution.objectstore.S3RetentionPolicy;
+import app.coronawarn.server.services.distribution.objectstore.client.S3Object;
+import app.coronawarn.server.services.distribution.runner.Assembly;
+import app.coronawarn.server.services.distribution.runner.RetentionPolicy;
 import java.io.File;
 import java.io.IOException;
 import java.time.LocalDate;
-import java.time.Month;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
-
 import org.junit.Rule;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
@@ -45,20 +56,6 @@ import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
-
-import app.coronawarn.server.common.persistence.service.DiagnosisKeyService;
-import app.coronawarn.server.services.distribution.Application;
-import app.coronawarn.server.services.distribution.assembly.component.OutputDirectoryProvider;
-import app.coronawarn.server.services.distribution.assembly.structure.directory.DirectoryOnDisk;
-import app.coronawarn.server.services.distribution.common.DiagnosisTestData;
-import app.coronawarn.server.services.distribution.config.DistributionServiceConfig;
-import app.coronawarn.server.services.distribution.objectstore.FailedObjectStoreOperationsCounter;
-import app.coronawarn.server.services.distribution.objectstore.ObjectStoreAccess;
-import app.coronawarn.server.services.distribution.objectstore.S3Publisher;
-import app.coronawarn.server.services.distribution.objectstore.S3RetentionPolicy;
-import app.coronawarn.server.services.distribution.objectstore.client.S3Object;
-import app.coronawarn.server.services.distribution.runner.Assembly;
-import app.coronawarn.server.services.distribution.runner.RetentionPolicy;
 
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration(classes = Application.class, initializers = ConfigFileApplicationContextInitializer.class)
