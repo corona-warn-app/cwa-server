@@ -70,10 +70,8 @@ public @interface ValidSubmissionPayload {
     private final int maxNumberOfKeys;
     private final int maxRollingPeriod;
     private final String[] supportedCountries;
-    private final SubmissionServiceConfig submissionServiceConfig;
 
     public SubmissionPayloadValidator(SubmissionServiceConfig submissionServiceConfig) {
-      this.submissionServiceConfig = submissionServiceConfig;
       maxNumberOfKeys = submissionServiceConfig.getMaxNumberOfKeys();
       maxRollingPeriod = submissionServiceConfig.getMaxRollingPeriod();
       supportedCountries = submissionServiceConfig.getSupportedCountries();
