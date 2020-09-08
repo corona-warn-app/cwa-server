@@ -18,23 +18,28 @@
  * ---license-end
  */
 
-package app.coronawarn.server.common.persistence.domain;
+package app.coronawarn.server.services.download;
 
-public enum FederationBatchStatus {
-  /**
-   * The corresponding batch has not been processed yet.
-   */
-  UNPROCESSED,
-  /**
-   * The corresponding batch has been processed.
-   */
-  PROCESSED,
-  /**
-   * An error occurred while processing the batch.
-   */
-  ERROR,
-  /**
-   * Processing a batch failed for the second time and will not be attempted again.
-   */
-  ERROR_WONT_RETRY
+import javax.validation.constraints.Max;
+import javax.validation.constraints.Min;
+import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.stereotype.Component;
+import org.springframework.validation.annotation.Validated;
+
+@Component
+@ConfigurationProperties(prefix = "services.download")
+@Validated
+public class DownloadServiceConfig {
+
+  @Min(0)
+  @Max(14)
+  private Integer efgsOffsetDays;
+
+  public Integer getEfgsOffsetDays() {
+    return efgsOffsetDays;
+  }
+
+  public void setEfgsOffsetDays(Integer efgsOffsetDays) {
+    this.efgsOffsetDays = efgsOffsetDays;
+  }
 }
