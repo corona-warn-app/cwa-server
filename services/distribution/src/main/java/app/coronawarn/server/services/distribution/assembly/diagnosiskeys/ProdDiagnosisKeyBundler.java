@@ -49,7 +49,7 @@ import org.springframework.stereotype.Component;
 @Profile("!demo")
 @Component
 public class ProdDiagnosisKeyBundler extends DiagnosisKeyBundler {
-
+  
   /**
    * Creates a new {@link ProdDiagnosisKeyBundler}.
    */
@@ -58,17 +58,25 @@ public class ProdDiagnosisKeyBundler extends DiagnosisKeyBundler {
   }
 
   /**
-   * Initializes the internal {@code distributableDiagnosisKeys} map, grouping the diagnosis keys by the date on which
-   * they may be distributed, while respecting the expiry and shifting policies.
+   * Initializes the internal {@code distributableDiagnosisKeys} map, grouping the diagnosis keys based on the
+   * country and by the date on which they may be distributed, while respecting the expiry and shifting policies.
    */
   @Override
   protected void createDiagnosisKeyDistributionMap(Collection<DiagnosisKey> diagnosisKeys) {
     this.distributableDiagnosisKeys.clear();
-    if (diagnosisKeys.isEmpty()) {
+    Map<String, List<DiagnosisKey>> diagnosisKeysMapped = groupDiagnosisKeysByCountry(diagnosisKeys);
+
+    diagnosisKeysMapped.keySet().forEach(country -> populateDistributableDiagnosisKeys(diagnosisKeysMapped, country));
+  }
+
+  private void populateDistributableDiagnosisKeys(Map<String, List<DiagnosisKey>> diagnosisKeysMapped, String country) {
+    Map<LocalDateTime, List<DiagnosisKey>> distributableDiagnosisKeysGroupedByExpiryPolicy = new HashMap<>(
+        diagnosisKeysMapped.get(country).stream().collect(groupingBy(this::getDistributionDateTimeByExpiryPolicy)));
+
+    if (distributableDiagnosisKeysGroupedByExpiryPolicy.isEmpty()) {
       return;
     }
-    Map<LocalDateTime, List<DiagnosisKey>> distributableDiagnosisKeysGroupedByExpiryPolicy = new HashMap<>(
-        diagnosisKeys.stream().collect(groupingBy(this::getDistributionDateTimeByExpiryPolicy)));
+
     LocalDateTime earliestDistributableTimestamp =
         getEarliestDistributableTimestamp(distributableDiagnosisKeysGroupedByExpiryPolicy).orElseThrow();
     LocalDateTime latestDistributableTimestamp = this.distributionTime;
@@ -82,11 +90,11 @@ public class ProdDiagnosisKeyBundler extends DiagnosisKeyBundler {
               .orElse(emptyList());
           diagnosisKeyAccumulator.addAll(currentHourDiagnosisKeys);
           if (diagnosisKeyAccumulator.size() >= minNumberOfKeysPerBundle) {
-            this.distributableDiagnosisKeys.put(currentHour, new ArrayList<>(diagnosisKeyAccumulator));
+            this.distributableDiagnosisKeys.get(country).put(currentHour, new ArrayList<>(diagnosisKeyAccumulator));
             diagnosisKeyAccumulator.clear();
           } else {
             // placeholder list is needed to be able to generate empty file - see issue #650
-            this.distributableDiagnosisKeys.put(currentHour, Collections.emptyList());
+            this.distributableDiagnosisKeys.get(country).put(currentHour, Collections.emptyList());
           }
         });
   }

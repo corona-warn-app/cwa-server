@@ -22,12 +22,14 @@ package app.coronawarn.server.services.distribution.assembly.diagnosiskeys;
 
 import static java.time.ZoneOffset.UTC;
 import static java.util.Collections.emptyList;
+import static java.util.Collections.emptySet;
 
 import app.coronawarn.server.common.persistence.domain.DiagnosisKey;
 import app.coronawarn.server.services.distribution.config.DistributionServiceConfig;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.temporal.Temporal;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
@@ -44,6 +46,8 @@ import org.slf4j.LoggerFactory;
  */
 public abstract class DiagnosisKeyBundler {
 
+  public static final String COUNTRY_ERROR_MESSAGE =
+      "The country {} received is not included in the list of supported countries";
   private static final Logger logger = LoggerFactory.getLogger(DiagnosisKeyBundler.class);
 
   /**
@@ -59,28 +63,27 @@ public abstract class DiagnosisKeyBundler {
   protected final long expiryPolicyMinutes;
   protected final int minNumberOfKeysPerBundle;
   private final int maxNumberOfKeysPerBundle;
-
-  // The hour at which the distribution runs. This field is needed to prevent the run from distributing any keys that
-  // have already been submitted but may only be distributed in the future (e.g. because they are not expired yet).
+  protected final List<String> supportedCountries;
+  /**
+   * The hour at which the distribution runs. This field is needed to prevent the run from distributing any keys that
+   * have already been submitted but may only be distributed in the future (e.g. because they are not expired yet).
+   */
   protected LocalDateTime distributionTime;
 
-  // A map containing diagnosis keys, grouped by the LocalDateTime on which they may be distributed
-  protected final Map<LocalDateTime, List<DiagnosisKey>> distributableDiagnosisKeys = new HashMap<>();
+  /**
+   * A map containing diagnosis keys, grouped by country and mapped by the LocalDateTime on which they may be
+   * distributed.
+   */
+  protected final Map<String, Map<LocalDateTime, List<DiagnosisKey>>> distributableDiagnosisKeys = new HashMap<>();
 
   /**
    * Constructs a DiagnosisKeyBundler based on the specified service configuration.
    */
   public DiagnosisKeyBundler(DistributionServiceConfig distributionServiceConfig) {
+    this.supportedCountries = List.of(distributionServiceConfig.getSupportedCountries());
     this.expiryPolicyMinutes = distributionServiceConfig.getExpiryPolicyMinutes();
     this.minNumberOfKeysPerBundle = distributionServiceConfig.getShiftingPolicyThreshold();
     this.maxNumberOfKeysPerBundle = distributionServiceConfig.getMaximumNumberOfKeysPerBundle();
-  }
-
-  /**
-   * Creates a {@link LocalDateTime} based on the specified epoch timestamp.
-   */
-  public static LocalDateTime getLocalDateTimeFromHoursSinceEpoch(long timestamp) {
-    return LocalDateTime.ofEpochSecond(TimeUnit.HOURS.toSeconds(timestamp), 0, UTC);
   }
 
   /**
@@ -105,10 +108,12 @@ public abstract class DiagnosisKeyBundler {
   /**
    * Returns all {@link DiagnosisKey DiagnosisKeys} contained by this {@link DiagnosisKeyBundler}.
    */
-  public List<DiagnosisKey> getAllDiagnosisKeys() {
-    return this.distributableDiagnosisKeys.values().stream()
-        .flatMap(List::stream)
-        .collect(Collectors.toList());
+  public List<DiagnosisKey> getAllDiagnosisKeys(String country) {
+    if (isCountrySupported(country)) {
+      return this.distributableDiagnosisKeys.get(country).values()
+          .stream().flatMap(Collection::stream).collect(Collectors.toList());
+    }
+    return emptyList();
   }
 
   /**
@@ -118,32 +123,36 @@ public abstract class DiagnosisKeyBundler {
   protected abstract void createDiagnosisKeyDistributionMap(Collection<DiagnosisKey> diagnosisKeys);
 
   /**
-   * Returns a set of all {@link LocalDate dates} on which {@link DiagnosisKey diagnosis keys} shall be distributed.
+   * Returns a set of all {@link LocalDate dates} on which {@link DiagnosisKey diagnosis keys} shall be distributed
+   * based on country.
    */
-  public Set<LocalDate> getDatesWithDistributableDiagnosisKeys() {
-    return this.distributableDiagnosisKeys.keySet().stream()
-        .map(LocalDateTime::toLocalDate)
-        .filter(this::numberOfKeysForDateBelowMaximum)
-        .collect(Collectors.toSet());
+  public Set<LocalDate> getDatesWithDistributableDiagnosisKeys(String country) {
+    if (isCountrySupported(country)) {
+      return this.distributableDiagnosisKeys.get(country).keySet().stream()
+          .map(LocalDateTime::toLocalDate)
+          .filter(date -> numberOfKeysForDateBelowMaximum(date, country))
+          .collect(Collectors.toSet());
+    }
+    return emptySet();
   }
 
-  public boolean numberOfKeysForDateBelowMaximum(LocalDate date) {
-    return numberOfKeysBelowMaximum(getDiagnosisKeysForDate(date).size(), date);
+  public boolean numberOfKeysForDateBelowMaximum(LocalDate date, String country) {
+    return numberOfKeysBelowMaximum(getDiagnosisKeysForDate(date, country).size(), date);
   }
 
   /**
-   * Returns a set of all {@link LocalDateTime hours} of a specified {@link LocalDate date} during which {@link
-   * DiagnosisKey diagnosis keys} shall be distributed.
+   * Returns a map of all {@link LocalDateTime hours} of a specified {@link LocalDate date} and country during which
+   * {@link DiagnosisKey diagnosis keys} shall be distributed.
    */
-  public Set<LocalDateTime> getHoursWithDistributableDiagnosisKeys(LocalDate currentDate) {
-    return this.distributableDiagnosisKeys.keySet().stream()
+  public Set<LocalDateTime> getHoursWithDistributableDiagnosisKeys(LocalDate currentDate, String country) {
+    return this.distributableDiagnosisKeys.get(country).keySet().stream()
         .filter(dateTime -> dateTime.toLocalDate().equals(currentDate))
-        .filter(this::numberOfKeysForHourBelowMaximum)
+        .filter(dateTime -> numberOfKeysForHourBelowMaximum(dateTime, country))
         .collect(Collectors.toSet());
   }
 
-  private boolean numberOfKeysForHourBelowMaximum(LocalDateTime hour) {
-    return numberOfKeysBelowMaximum(getDiagnosisKeysForHour(hour).size(), hour);
+  private boolean numberOfKeysForHourBelowMaximum(LocalDateTime hour, String country) {
+    return numberOfKeysBelowMaximum(getDiagnosisKeysForHour(hour, country).size(), hour);
   }
 
   private boolean numberOfKeysBelowMaximum(int numberOfKeys, Temporal time) {
@@ -163,22 +172,50 @@ public abstract class DiagnosisKeyBundler {
   }
 
   /**
-   * Returns all diagnosis keys that should be distributed on a specific date.
+   * Returns all diagnosis keys that should be distributed on a specific date for a specific country.
    */
-  public List<DiagnosisKey> getDiagnosisKeysForDate(LocalDate date) {
-    return this.distributableDiagnosisKeys.keySet().stream()
-        .filter(dateTime -> dateTime.toLocalDate().equals(date))
-        .map(this::getDiagnosisKeysForHour)
-        .flatMap(List::stream)
-        .collect(Collectors.toList());
+  public List<DiagnosisKey> getDiagnosisKeysForDate(LocalDate date, String country) {
+    if (isCountrySupported(country)) {
+      return this.distributableDiagnosisKeys.get(country).keySet().stream()
+          .filter(dateTime -> dateTime.toLocalDate().equals(date))
+          .map(dateTime -> getDiagnosisKeysForHour(dateTime, country))
+          .flatMap(List::stream)
+          .collect(Collectors.toList());
+    }
+    return emptyList();
   }
 
   /**
-   * Returns all diagnosis keys that should be distributed in a specific hour.
+   * Returns all diagnosis keys that should be distributed in a specific hour for a specific country.
    */
-  public List<DiagnosisKey> getDiagnosisKeysForHour(LocalDateTime hour) {
-    return Optional
-        .ofNullable(this.distributableDiagnosisKeys.get(hour))
-        .orElse(emptyList());
+  public List<DiagnosisKey> getDiagnosisKeysForHour(LocalDateTime hour, String country) {
+    if (isCountrySupported(country)) {
+      return Optional
+          .ofNullable(this.distributableDiagnosisKeys.get(country).get(hour))
+          .orElse(emptyList());
+    }
+    return emptyList();
+  }
+
+  private boolean isCountrySupported(String country) {
+    if (!supportedCountries.contains(country)) {
+      logger.warn(COUNTRY_ERROR_MESSAGE, country);
+      return false;
+    }
+    return true;
+  }
+
+  protected Map<String, List<DiagnosisKey>> groupDiagnosisKeysByCountry(Collection<DiagnosisKey> diagnosisKeys) {
+    Map<String, List<DiagnosisKey>> diagnosisKeysMapped = new HashMap<>();
+
+    supportedCountries.forEach(supportedCountry -> {
+      diagnosisKeysMapped.put(supportedCountry, new ArrayList<>());
+      this.distributableDiagnosisKeys.put(supportedCountry, new HashMap<>());
+    });
+
+    diagnosisKeys.forEach(diagnosisKey -> diagnosisKey.getVisitedCountries().stream()
+        .filter(supportedCountries::contains)
+        .forEach(visitedCountry -> diagnosisKeysMapped.get(visitedCountry).add(diagnosisKey)));
+    return diagnosisKeysMapped;
   }
 }
