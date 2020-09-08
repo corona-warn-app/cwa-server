@@ -20,15 +20,16 @@
 
 package app.coronawarn.server.common.persistence.repository;
 
-import app.coronawarn.server.common.persistence.domain.DiagnosisKey;
-import java.util.Collection;
+
+import app.coronawarn.server.common.persistence.domain.FederationUploadKey;
+import java.util.List;
 import org.springframework.data.jdbc.repository.query.Query;
 import org.springframework.stereotype.Repository;
 
 @Repository
 public interface FederationUploadKeyRepository
-    extends org.springframework.data.repository.Repository<DiagnosisKey, Long> {
+    extends org.springframework.data.repository.Repository<FederationUploadKey, Long> {
 
   @Query("SELECT * FROM federation_upload_key")
-  Collection<DiagnosisKey> findAllUploadableKeys();
+  List<FederationUploadKey> findAllUploadableKeys();
 }
