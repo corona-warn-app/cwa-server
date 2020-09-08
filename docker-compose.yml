@@ -66,10 +66,10 @@ services:
       FORCE_UPDATE_KEYFILES: 'false'
     volumes:
       - ./docker-compose-test-secrets:/secrets
-  federation-download:
+  download:
     build:
       context: ./
-      dockerfile: ./services/federation-download/Dockerfile
+      dockerfile: ./services/download/Dockerfile
     depends_on:
       - postgres
     ports:
