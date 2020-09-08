@@ -111,7 +111,7 @@ public final class SubmissionPayloadMockData {
         .addKeys(key)
         .addAllVisitedCountries(visitedCountries)
         .setOrigin("DE")
-        .setPadding(ByteString.copyFrom("PaddingString".getBytes()))
+        .setRequestPadding(ByteString.copyFrom("PaddingString".getBytes()))
         .build();
   }
 
