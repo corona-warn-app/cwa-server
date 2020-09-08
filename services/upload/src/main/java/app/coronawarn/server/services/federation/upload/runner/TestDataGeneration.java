@@ -10,6 +10,7 @@ import java.time.temporal.ChronoUnit;
 import java.util.Collection;
 import java.util.List;
 import java.util.Random;
+import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
@@ -39,7 +40,7 @@ public class TestDataGeneration implements ApplicationRunner {
 
   private static byte[] randomByteData() {
     byte[] keydata = new byte[16];
-    new Random().nextBytes(keydata);
+    ThreadLocalRandom.current().nextBytes(keydata);
     return keydata;
   }
 

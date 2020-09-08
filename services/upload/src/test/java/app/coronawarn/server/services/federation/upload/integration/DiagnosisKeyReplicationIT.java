@@ -45,8 +45,6 @@ import java.util.Random;
 import static org.junit.Assert.assertTrue;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-@ExtendWith(SpringExtension.class)
-//@ContextConfiguration(classes = {Application.class}, initializers = ConfigFileApplicationContextInitializer.class)
 @SpringBootTest
 @ActiveProfiles({"integration-test"})
 @Tag("s3-integration")

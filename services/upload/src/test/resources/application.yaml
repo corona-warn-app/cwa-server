@@ -20,8 +20,6 @@ services:
     privatekey: classpath:testprivatekey.pem
     certificate: classpath:testpublickey.pem
     privatekey-password: testpass
-    test-data:
-      keys: 250
     signature:
       # The ASN.1 OID for algorithm identifier.
       algorithm-oid: 1.2.840.10045.4.3.2

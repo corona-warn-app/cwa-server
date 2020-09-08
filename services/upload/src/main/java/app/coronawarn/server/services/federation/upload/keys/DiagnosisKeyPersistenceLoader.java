@@ -3,7 +3,6 @@ package app.coronawarn.server.services.federation.upload.keys;
 import app.coronawarn.server.common.persistence.domain.DiagnosisKey;
 import app.coronawarn.server.common.persistence.service.FederationUploadKeyService;
 import java.util.List;
-import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 
 @Component

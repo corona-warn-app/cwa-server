@@ -15,7 +15,6 @@ import static org.mockito.Mockito.atMostOnce;
 import static org.mockito.Mockito.verify;
 
 @EnableConfigurationProperties(value = UploadServiceConfig.class)
-@ExtendWith(SpringExtension.class)
 @ActiveProfiles({"testdata", "fake-client"})
 @SpringBootTest
 class UploadTest {
