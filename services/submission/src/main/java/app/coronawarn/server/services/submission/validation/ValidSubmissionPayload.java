@@ -104,6 +104,7 @@ public @interface ValidSubmissionPayload {
         return checkStartIntervalNumberIsAtMidNight(exposureKeys, validatorContext)
             && checkKeyCollectionSize(exposureKeys, validatorContext)
             && checkUniqueStartIntervalNumbers(exposureKeys, validatorContext)
+            && checkOriginCountryIsValid(submissionPayload, validatorContext)
             && checkVisitedCountriesAreValid(submissionPayload, validatorContext);
       }
     }
