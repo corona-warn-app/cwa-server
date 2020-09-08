@@ -49,8 +49,7 @@ import org.springframework.stereotype.Component;
 @Profile("!demo")
 @Component
 public class ProdDiagnosisKeyBundler extends DiagnosisKeyBundler {
-
-
+  
   /**
    * Creates a new {@link ProdDiagnosisKeyBundler}.
    */

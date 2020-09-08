@@ -78,8 +78,7 @@ public class S3RetentionPolicy {
                 .isBefore(cutOffDate);
           })
           .forEach(this::deleteDiagnosisKey);
-    }
-    );
+    });
   }
 
   /**
