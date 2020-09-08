@@ -20,13 +20,11 @@
 
 package app.coronawarn.server.services.distribution.assembly.appconfig.validation;
 
-import static app.coronawarn.server.services.distribution.assembly.appconfig.validation.ValidationError.ErrorType.INVALID_VALUES;
 import static app.coronawarn.server.services.distribution.assembly.appconfig.validation.ValidationError.ErrorType.VALUE_OUT_OF_BOUNDS;
 
 import app.coronawarn.server.common.protocols.internal.ApplicationConfiguration;
 import app.coronawarn.server.common.protocols.internal.RiskScoreClassification;
 import app.coronawarn.server.common.protocols.internal.RiskScoreParameters;
-import java.util.List;
 
 /**
  * This validator validates a {@link ApplicationConfiguration}. It will re-use the {@link ConfigurationValidator} from
@@ -55,7 +53,6 @@ public class ApplicationConfigurationValidator extends ConfigurationValidator {
     errors.with(new RiskScoreClassificationValidator(config.getRiskScoreClasses()).validate());
     errors.with(new ApplicationVersionConfigurationValidator(config.getAppVersion()).validate());
     errors.with(new AttenuationDurationValidator(config.getAttenuationDuration()).validate());
-    errors.with(new SupportedCountriesValidator(config.getSupportedCountriesList()).validate());
 
     return errors;
   }

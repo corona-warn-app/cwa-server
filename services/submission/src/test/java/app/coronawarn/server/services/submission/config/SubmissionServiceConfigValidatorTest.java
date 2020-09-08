@@ -26,13 +26,13 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.util.unit.DataSize;
 import org.springframework.validation.BeanPropertyBindingResult;
 import org.springframework.validation.Errors;
-import java.util.Locale;
 import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -54,28 +54,28 @@ class SubmissionServiceConfigValidatorTest {
   @ParameterizedTest
   @MethodSource("validRequestDataSizes")
   void ok(DataSize dataSize) {
-    Errors errors = validateConfig(dataSize,"DE");
+    Errors errors = validateConfig(dataSize, "DE");
     assertThat(errors.hasErrors()).isFalse();
   }
 
   @ParameterizedTest
   @MethodSource("invalidRequestDataSizes")
   void fail(DataSize dataSize) {
-    Errors errors = validateConfig(dataSize,"DE");
+    Errors errors = validateConfig(dataSize, "DE");
     assertThat(errors.hasErrors()).isTrue();
   }
 
   @ParameterizedTest
   @MethodSource("setInvalidSupportedCountries")
   void fail(String supportedCountries) {
-    Errors errors = validateConfig(SubmissionServiceConfigValidator.MAX_MAXIMUM_REQUEST_SIZE,supportedCountries);
+    Errors errors = validateConfig(SubmissionServiceConfigValidator.MAX_MAXIMUM_REQUEST_SIZE, supportedCountries);
     assertThat(errors.hasErrors()).isTrue();
   }
 
   @ParameterizedTest
-  @MethodSource("setValidSupportedCountries")
+  @ValueSource(strings = {"DE", "DE,FR"})
   void ok(String supportedCountries) {
-    Errors errors = validateConfig(SubmissionServiceConfigValidator.MAX_MAXIMUM_REQUEST_SIZE,supportedCountries);
+    Errors errors = validateConfig(SubmissionServiceConfigValidator.MAX_MAXIMUM_REQUEST_SIZE, supportedCountries);
     assertThat(errors.hasErrors()).isFalse();
   }
 
@@ -113,13 +113,6 @@ class SubmissionServiceConfigValidatorTest {
         Arguments.of(" "),
         Arguments.of(""),
         Arguments.of("\\")
-    );
-  }
-  private static Stream<Arguments> setValidSupportedCountries() {
-    return Stream.of(
-        Arguments.of("DE,FR"),
-        Arguments.of("DE"),
-        Arguments.of(String.join(",", Locale.getISOCountries()))
     );
   }
 }

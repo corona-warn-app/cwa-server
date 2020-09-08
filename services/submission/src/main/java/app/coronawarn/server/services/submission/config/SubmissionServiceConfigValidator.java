@@ -27,8 +27,6 @@ import org.springframework.util.unit.DataSize;
 import org.springframework.validation.Errors;
 import org.springframework.validation.Validator;
 
-
-
 /**
  * Validate the values of the SubmissionServiceConfig.
  */
@@ -50,7 +48,7 @@ public class SubmissionServiceConfigValidator implements Validator {
   public void validate(Object o, Errors errors) {
     SubmissionServiceConfig properties = (SubmissionServiceConfig) o;
 
-    validateMaxRequestsize(errors, properties);
+    validateMaxRequestSize(errors, properties);
     validateSupportedCountries(errors, properties);
   }
 
@@ -58,12 +56,12 @@ public class SubmissionServiceConfigValidator implements Validator {
     Arrays.stream(properties.getSupportedCountries()).forEach(country -> {
       if (!ISO_COUNTRIES.contains(country)) {
         errors.rejectValue("supportedCountries",
-            country + " country is not conform to the ISO 3166.");
+            "[" + country + "]: Country code isn't compliant to ISO 3166.");
       }
     });
   }
 
-  private void validateMaxRequestsize(Errors errors, SubmissionServiceConfig properties) {
+  private void validateMaxRequestSize(Errors errors, SubmissionServiceConfig properties) {
     if (properties.getMaximumRequestSize().compareTo(MIN_MAXIMUM_REQUEST_SIZE) < 0
         || properties.getMaximumRequestSize().compareTo(MAX_MAXIMUM_REQUEST_SIZE) > 0) {
       errors.rejectValue("maximumRequestSize",

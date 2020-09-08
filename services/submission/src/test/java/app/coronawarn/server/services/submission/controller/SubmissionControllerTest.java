@@ -280,25 +280,27 @@ class SubmissionControllerTest {
         Arguments.of(List.of("")),
         Arguments.of(List.of("D")),
         Arguments.of(List.of("FRE")),
-        Arguments.of(List.of("DE","XX")),
-        Arguments.of(List.of("DE","FRE"))
+        Arguments.of(List.of("DE", "XX")),
+        Arguments.of(List.of("DE", "FRE"))
     );
   }
 
   @ParameterizedTest
   @MethodSource("validVisitedCountries")
   void testValidVisitedCountriesSubmissionPayload(List<String> visitedCountries) {
+    config.setSupportedCountries(new String[]{"DE,FR"});
     ResponseEntity<Void> actResponse = executor.executePost(buildPayloadWithVisitedCountries(visitedCountries));
     assertThat(actResponse.getStatusCode()).isEqualTo(OK);
   }
 
   private static Stream<Arguments> validVisitedCountries() {
-   List<String> isoCountries = Arrays.asList(Locale.getISOCountries());
+    List<String> isoCountries = Arrays.asList(Locale.getISOCountries());
     return Stream.of(
         Arguments.of(List.of("DE")),
-        Arguments.of(List.of("DE","FR"))
+        Arguments.of(List.of("DE", "FR"))
     );
   }
+
   @Test
   void checkRealRequestHandlingIsMonitored() {
     executor.executePost(buildPayloadWithOneKey());
