@@ -42,6 +42,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Random;
 
+import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertTrue;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -103,7 +104,7 @@ class DiagnosisKeyReplicationIT {
     Collection<FederationUploadKey> uploadableKeys = uploadKeyRepository.findAllUploadableKeys();
 
     assertEquals(1, uploadableKeys.size());
-    assertEquals(dummyKey, uploadableKeys.iterator().next());
+    assertArrayEquals(dummyKey.getKeyData(), uploadableKeys.iterator().next().getKeyData());
     return dummyKey;
   }
 
