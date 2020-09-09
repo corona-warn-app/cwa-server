@@ -4,12 +4,12 @@ import app.coronawarn.server.common.persistence.domain.DiagnosisKey;
 import app.coronawarn.server.common.protocols.external.exposurenotification.ReportType;
 import app.coronawarn.server.services.federation.upload.config.UploadServiceConfig;
 import app.coronawarn.server.services.federation.upload.testdata.TestDataUploadRepository;
+import java.security.SecureRandom;
 import java.time.Clock;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.Collection;
 import java.util.List;
-import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
@@ -39,7 +39,7 @@ public class TestDataGeneration implements ApplicationRunner {
 
   private static byte[] randomByteData() {
     byte[] keydata = new byte[16];
-    ThreadLocalRandom.current().nextBytes(keydata);
+    new SecureRandom().nextBytes(keydata);
     return keydata;
   }
 
@@ -95,7 +95,7 @@ public class TestDataGeneration implements ApplicationRunner {
   }
 
   @Override
-  public void run(ApplicationArguments args) throws Exception {
+  public void run(ApplicationArguments args) {
     var fakeKeys = generateFakeKeysForToday();
     logger.info("Storing keys in the DB");
     this.storeUploadKeys(fakeKeys);
