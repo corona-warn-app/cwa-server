@@ -26,6 +26,7 @@ import static app.coronawarn.server.services.distribution.common.Helpers.getFile
 import static org.assertj.core.api.Assertions.assertThat;
 
 import app.coronawarn.server.common.persistence.domain.DiagnosisKey;
+import app.coronawarn.server.common.persistence.service.common.KeySharingPoliciesChecker;
 import app.coronawarn.server.services.distribution.assembly.component.CryptoProvider;
 import app.coronawarn.server.services.distribution.assembly.diagnosiskeys.DiagnosisKeyBundler;
 import app.coronawarn.server.services.distribution.assembly.diagnosiskeys.ProdDiagnosisKeyBundler;
@@ -57,7 +58,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 @EnableConfigurationProperties(value = DistributionServiceConfig.class)
 @ExtendWith(SpringExtension.class)
-@ContextConfiguration(classes = {CryptoProvider.class, DistributionServiceConfig.class},
+@ContextConfiguration(classes = {CryptoProvider.class, DistributionServiceConfig.class, KeySharingPoliciesChecker.class},
     initializers = ConfigFileApplicationContextInitializer.class)
 class DiagnosisKeysHourDirectoryTest {
 
@@ -66,6 +67,9 @@ class DiagnosisKeysHourDirectoryTest {
 
   @Autowired
   CryptoProvider cryptoProvider;
+
+  @Autowired
+  KeySharingPoliciesChecker sharingPoliciesChecker;
 
   @Autowired
   DistributionServiceConfig distributionServiceConfig;
@@ -80,7 +84,7 @@ class DiagnosisKeysHourDirectoryTest {
 
   private void runHourDistribution(Collection<DiagnosisKey> diagnosisKeys, LocalDateTime distributionTime,
       LocalDate keysSubmissionDate) {
-    DiagnosisKeyBundler bundler = new ProdDiagnosisKeyBundler(distributionServiceConfig);
+    DiagnosisKeyBundler bundler = new ProdDiagnosisKeyBundler(distributionServiceConfig, sharingPoliciesChecker);
     bundler.setDiagnosisKeys(diagnosisKeys, distributionTime);
     DiagnosisKeysHourDirectory hourDirectory = new DiagnosisKeysHourDirectory(bundler, cryptoProvider,
         distributionServiceConfig);

@@ -31,6 +31,7 @@ import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.when;
 
 import app.coronawarn.server.common.persistence.domain.DiagnosisKey;
+import app.coronawarn.server.common.persistence.service.common.KeySharingPoliciesChecker;
 import app.coronawarn.server.services.distribution.assembly.component.CryptoProvider;
 import app.coronawarn.server.services.distribution.assembly.diagnosiskeys.DiagnosisKeyBundler;
 import app.coronawarn.server.services.distribution.assembly.diagnosiskeys.ProdDiagnosisKeyBundler;
@@ -63,7 +64,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 @EnableConfigurationProperties(value = DistributionServiceConfig.class)
 @ExtendWith(SpringExtension.class)
-@ContextConfiguration(classes = {CryptoProvider.class, DistributionServiceConfig.class},
+@ContextConfiguration(classes = {CryptoProvider.class, DistributionServiceConfig.class, KeySharingPoliciesChecker.class},
     initializers = ConfigFileApplicationContextInitializer.class)
 class DiagnosisKeysDirectoryTest {
 
@@ -72,6 +73,9 @@ class DiagnosisKeysDirectoryTest {
 
   @Autowired
   DistributionServiceConfig distributionServiceConfig;
+
+  @Autowired
+  KeySharingPoliciesChecker sharingPolicyChecker;
 
   @Rule
   private final TemporaryFolder outputFolder = new TemporaryFolder();
@@ -196,7 +200,7 @@ class DiagnosisKeysDirectoryTest {
     DistributionServiceConfig serviceConfigSpy = spy(distributionServiceConfig);
     when(serviceConfigSpy.getSupportedCountries()).thenReturn(supportedCountries);
 
-    DiagnosisKeyBundler bundler = new ProdDiagnosisKeyBundler(serviceConfigSpy);
+    DiagnosisKeyBundler bundler = new ProdDiagnosisKeyBundler(serviceConfigSpy, sharingPolicyChecker);
     bundler.setDiagnosisKeys(keyseparator, LocalDateTime.of(1970, 1, 5, 0, 0));
 
     Directory<WritableOnDisk> directory = new DiagnosisKeysDirectory(bundler, cryptoProvider, serviceConfigSpy);

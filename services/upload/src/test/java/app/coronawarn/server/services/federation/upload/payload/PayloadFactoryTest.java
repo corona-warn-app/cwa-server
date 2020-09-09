@@ -21,10 +21,9 @@
 package app.coronawarn.server.services.federation.upload.payload;
 
 import app.coronawarn.server.services.federation.upload.config.UploadServiceConfig;
-import app.coronawarn.server.services.federation.upload.payload.helper.DiagnosisKeyBatchGenerator;
-import app.coronawarn.server.services.federation.upload.payload.helper.PersistenceKeysGenerator;
+import app.coronawarn.server.services.federation.upload.utils.BatchMockData;
 import app.coronawarn.server.services.federation.upload.payload.signing.BatchSigner;
-import app.coronawarn.server.services.federation.upload.payload.signing.CryptoProvider;
+import app.coronawarn.server.services.federation.upload.utils.PersistenceMockData;
 import org.bouncycastle.cms.CMSException;
 import org.bouncycastle.operator.OperatorCreationException;
 import org.junit.jupiter.api.Assertions;
@@ -34,19 +33,14 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.ConfigFileApplicationContextInitializer;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.security.GeneralSecurityException;
 import java.util.List;
-import java.util.Random;
-import java.util.stream.Collectors;
 
-import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.Mockito.when;
@@ -76,10 +70,10 @@ class PayloadFactoryTest {
 
   @Test
   void shouldMakePayloadFromListOfDiagnosisKeys() {
-    var diagnosisKeys = List.of(PersistenceKeysGenerator.makeDiagnosisKey());
+    var diagnosisKeys = List.of(PersistenceMockData.generateRandomDiagnosisKey(true));
 
     when(mockAssembler.assembleDiagnosisKeyBatch(anyList()))
-        .thenReturn(List.of(DiagnosisKeyBatchGenerator.makeSingleKeyBatch()));
+        .thenReturn(List.of(BatchMockData.makeSingleKeyBatch()));
 
     var result = payloadFactory.makePayloadList(diagnosisKeys);
     Assertions.assertEquals(1, result.size());
@@ -90,13 +84,13 @@ class PayloadFactoryTest {
 
   @Test
   void payloadsShouldNotHaveSameBatchTag() {
-    var diagnosisKeys = List.of(PersistenceKeysGenerator.makeDiagnosisKey());
+    var diagnosisKeys = List.of(PersistenceMockData.generateRandomDiagnosisKey(true));
 
     when(mockAssembler.assembleDiagnosisKeyBatch(anyList()))
         .thenReturn(List.of(
-            DiagnosisKeyBatchGenerator.makeSingleKeyBatch(),
-            DiagnosisKeyBatchGenerator.makeSingleKeyBatch(),
-            DiagnosisKeyBatchGenerator.makeSingleKeyBatch()));
+            BatchMockData.makeSingleKeyBatch(),
+            BatchMockData.makeSingleKeyBatch(),
+            BatchMockData.makeSingleKeyBatch()));
 
     var result = payloadFactory.makePayloadList(diagnosisKeys);
     Assertions.assertEquals(3, result.size());

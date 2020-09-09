@@ -17,6 +17,8 @@ federation-gateway:
 
 services:
   upload:
+    # The number of minutes that diagnosis keys must have been expired for (since the end of the rolling interval window) before they can be shared.
+    expiry-policy-minutes: 120
     # The minimum number of keys that must be present to create an upload batch
     min-batch-key-count: 140
     # The maximum number of keys that an upload batch can contain
@@ -24,8 +26,6 @@ services:
     privatekey: ${VAULT_EFGS_BATCHIGNING_SECRET}
     certificate: ${VAULT_EFGS_BATCHIGNING_CERTIFICATE}
     privatekey-password: ${VAULT_EFGS_BATCHSIGNING_PASSWORD}
-    test-data:
-      keys: 750
     signature:
       # The ASN.1 OID for algorithm identifier.
       algorithm-oid: 1.2.840.10045.4.3.2

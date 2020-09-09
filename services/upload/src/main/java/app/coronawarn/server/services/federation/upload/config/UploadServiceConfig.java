@@ -21,12 +21,11 @@
 package app.coronawarn.server.services.federation.upload.config;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.stereotype.Component;
 
-@Component
 @ConfigurationProperties(prefix = "services.upload")
 public class UploadServiceConfig {
 
+  private Integer expiryPolicyMinutes;
   private Integer minBatchKeyCount;
   private Integer maxBatchKeyCount;
   private String privateKey;
@@ -35,6 +34,14 @@ public class UploadServiceConfig {
   private Signature signature;
   private TestData testData;
 
+
+  public Integer getExpiryPolicyMinutes() {
+    return expiryPolicyMinutes;
+  }
+
+  public void setExpiryPolicyMinutes(Integer expiryPolicyMinutes) {
+    this.expiryPolicyMinutes = expiryPolicyMinutes;
+  }
 
   public Integer getMinBatchKeyCount() {
     return minBatchKeyCount;

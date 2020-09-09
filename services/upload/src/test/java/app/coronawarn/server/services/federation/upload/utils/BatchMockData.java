@@ -18,17 +18,16 @@
  * ---license-end
  */
 
-package app.coronawarn.server.services.federation.upload.payload.helper;
+package app.coronawarn.server.services.federation.upload.utils;
 
 import app.coronawarn.server.common.protocols.external.exposurenotification.DiagnosisKey;
 import app.coronawarn.server.common.protocols.external.exposurenotification.DiagnosisKeyBatch;
 import com.google.protobuf.ByteString;
 import java.util.List;
 import java.util.Random;
+import java.util.concurrent.ThreadLocalRandom;
 
-public class DiagnosisKeyBatchGenerator {
-
-  private static final Random RANDOM = new Random();
+public class BatchMockData {
 
   public static DiagnosisKeyBatch makeSingleKeyBatch() {
     return makeBatch(List.of(makeDiagnosisKey()));
@@ -41,7 +40,7 @@ public class DiagnosisKeyBatchGenerator {
 
   public static DiagnosisKey makeDiagnosisKey() {
     byte[] bytes = new byte[16];
-    RANDOM.nextBytes(bytes);
+    ThreadLocalRandom.current().nextBytes(bytes);
     return DiagnosisKey.newBuilder().setKeyData(ByteString.copyFrom(bytes)).build();
   }
 

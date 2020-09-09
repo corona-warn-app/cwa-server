@@ -23,10 +23,10 @@ package app.coronawarn.server.services.distribution.assembly.diagnosiskeys;
 import static app.coronawarn.server.services.distribution.common.Helpers.buildDiagnosisKeys;
 import static java.util.Collections.emptySet;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 import static org.mockito.Mockito.*;
 
 import app.coronawarn.server.common.persistence.domain.DiagnosisKey;
+import app.coronawarn.server.common.persistence.service.common.KeySharingPoliciesChecker;
 import app.coronawarn.server.services.distribution.config.DistributionServiceConfig;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -50,7 +50,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 @EnableConfigurationProperties(value = DistributionServiceConfig.class)
 @ExtendWith(SpringExtension.class)
-@ContextConfiguration(classes = {DistributionServiceConfig.class, ProdDiagnosisKeyBundler.class},
+@ContextConfiguration(classes = {DistributionServiceConfig.class, KeySharingPoliciesChecker.class, ProdDiagnosisKeyBundler.class},
     initializers = ConfigFileApplicationContextInitializer.class)
 class ProdDiagnosisKeyBundlerKeyRetrievalTest {
 
@@ -59,11 +59,14 @@ class ProdDiagnosisKeyBundlerKeyRetrievalTest {
   @Autowired
   DistributionServiceConfig distributionServiceConfig;
 
+  @Autowired
+  KeySharingPoliciesChecker sharingPolicyChecker;
+
   DiagnosisKeyBundler bundler;
 
   @BeforeEach
   void setupAll() {
-    bundler = new ProdDiagnosisKeyBundler(distributionServiceConfig);
+    bundler = new ProdDiagnosisKeyBundler(distributionServiceConfig, sharingPolicyChecker);
   }
 
   @Test
@@ -248,7 +251,7 @@ class ProdDiagnosisKeyBundlerKeyRetrievalTest {
     DistributionServiceConfig spyConfig = spy(distributionServiceConfig);
     when(spyConfig.getMaximumNumberOfKeysPerBundle()).thenReturn(3);
     when(spyConfig.getShiftingPolicyThreshold()).thenReturn(1);
-    DiagnosisKeyBundler keyBundler = new ProdDiagnosisKeyBundler(spyConfig);
+    DiagnosisKeyBundler keyBundler = new ProdDiagnosisKeyBundler(spyConfig, sharingPolicyChecker);
 
     List<DiagnosisKey> diagnosisKeys = IntStream.range(0,24).mapToObj(hour ->
         buildDiagnosisKeys(6, LocalDateTime.of(1970, 1, 4, hour, 0), 4))
