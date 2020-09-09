@@ -1,6 +1,6 @@
 package app.coronawarn.server.services.federation.upload.payload;
 
-import app.coronawarn.server.common.persistence.domain.DiagnosisKey;
+import app.coronawarn.server.common.persistence.domain.FederationUploadKey;
 import app.coronawarn.server.common.protocols.external.exposurenotification.DiagnosisKeyBatch;
 import app.coronawarn.server.services.federation.upload.payload.signing.BatchSigner;
 import java.io.IOException;
@@ -8,7 +8,6 @@ import java.security.GeneralSecurityException;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.util.List;
-import java.util.Random;
 import java.util.stream.Collectors;
 import org.apache.commons.lang3.tuple.Pair;
 import org.bouncycastle.cms.CMSException;
@@ -62,7 +61,7 @@ public class PayloadFactory {
    * @param diagnosisKeys List of Diagnosis Keys.
    * @return upload payload object {@link UploadPayload}.
    */
-  public List<UploadPayload> makePayloadList(List<DiagnosisKey> diagnosisKeys) {
+  public List<UploadPayload> makePayloadList(List<FederationUploadKey> diagnosisKeys) {
     var batches = assembler.assembleDiagnosisKeyBatch(diagnosisKeys);
     return batches.stream()
         .map(b -> Pair.of(batches.indexOf(b), b))

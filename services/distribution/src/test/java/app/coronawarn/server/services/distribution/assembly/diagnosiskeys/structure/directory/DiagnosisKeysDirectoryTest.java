@@ -22,10 +22,16 @@ package app.coronawarn.server.services.distribution.assembly.diagnosiskeys.struc
 
 import static app.coronawarn.server.services.distribution.common.Helpers.buildDiagnosisKeys;
 import static app.coronawarn.server.services.distribution.common.Helpers.getFilePaths;
+import static java.io.File.separator;
 import static java.lang.String.join;
+import static java.util.Collections.emptyList;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.util.Lists.list;
+import static org.mockito.Mockito.spy;
+import static org.mockito.Mockito.when;
 
 import app.coronawarn.server.common.persistence.domain.DiagnosisKey;
+import app.coronawarn.server.common.persistence.service.common.KeySharingPoliciesChecker;
 import app.coronawarn.server.services.distribution.assembly.component.CryptoProvider;
 import app.coronawarn.server.services.distribution.assembly.diagnosiskeys.DiagnosisKeyBundler;
 import app.coronawarn.server.services.distribution.assembly.diagnosiskeys.ProdDiagnosisKeyBundler;
@@ -38,11 +44,13 @@ import app.coronawarn.server.services.distribution.config.DistributionServiceCon
 import java.io.File;
 import java.io.IOException;
 import java.time.LocalDateTime;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
+import org.assertj.core.util.Sets;
 import org.junit.Rule;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -56,7 +64,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 @EnableConfigurationProperties(value = DistributionServiceConfig.class)
 @ExtendWith(SpringExtension.class)
-@ContextConfiguration(classes = {CryptoProvider.class, DistributionServiceConfig.class},
+@ContextConfiguration(classes = {CryptoProvider.class, DistributionServiceConfig.class, KeySharingPoliciesChecker.class},
     initializers = ConfigFileApplicationContextInitializer.class)
 class DiagnosisKeysDirectoryTest {
 
@@ -66,45 +74,29 @@ class DiagnosisKeysDirectoryTest {
   @Autowired
   DistributionServiceConfig distributionServiceConfig;
 
+  @Autowired
+  KeySharingPoliciesChecker sharingPolicyChecker;
+
   @Rule
-  private TemporaryFolder outputFolder = new TemporaryFolder();
+  private final TemporaryFolder outputFolder = new TemporaryFolder();
 
   private File outputFile;
   private Directory<WritableOnDisk> parentDirectory;
-
-  List<DiagnosisKey> diagnosisKeys;
 
   @BeforeEach
   void setupAll() throws IOException {
     outputFolder.create();
     outputFile = outputFolder.newFolder();
     parentDirectory = new DirectoryOnDisk(outputFile);
-
-    // 01.01.1970 - 00:00 UTC
-    long startTimestamp = 0;
-
-    // Generate diagnosis keys covering 29 hours of submission timestamps (one gap)
-    // Until 04.01.1970 - 06:00 UTC -> 1 full day + 5 hours
-    diagnosisKeys = IntStream.range(0, 30)
-        .filter(currentHour -> currentHour != 20)
-        .mapToObj(currentHour -> buildDiagnosisKeys(6, LocalDateTime.of(1970, 1, 3, 0, 0).plusHours(currentHour), 5))
-        .flatMap(List::stream)
-        .collect(Collectors.toList());
   }
 
   @Test
-  void checkBuildsTheCorrectDirectoryStructureWhenNoKeys() {
-    DiagnosisKeyBundler bundler = new ProdDiagnosisKeyBundler(distributionServiceConfig);
-    Directory<WritableOnDisk> directory = new DiagnosisKeysDirectory(bundler, cryptoProvider,
-        distributionServiceConfig);
-    parentDirectory.addWritable(directory);
-    directory.prepare(new ImmutableStack<>());
-    directory.write();
+  void checkBuildsTheCorrectDirectoryStructureForOneCountryWhenNoKeys() {
+    buildDirectoryStructure(emptyList(), "DE");
 
-    String s = File.separator;
     Set<String> expectedFiles = Set.of(
-        join(s, "diagnosis-keys", "country", "index"),
-        join(s, "diagnosis-keys", "country", "DE", "date", "index")
+        join(separator, "diagnosis-keys", "country", "index"),
+        join(separator, "diagnosis-keys", "country", "DE", "date", "index")
     );
 
     Set<String> actualFiles = getFilePaths(outputFile, outputFile.getAbsolutePath());
@@ -113,77 +105,108 @@ class DiagnosisKeysDirectoryTest {
   }
 
   @Test
-  void checkBuildsTheCorrectDirectoryStructure() {
-    DiagnosisKeyBundler bundler = new ProdDiagnosisKeyBundler(distributionServiceConfig);
-    bundler.setDiagnosisKeys(diagnosisKeys, LocalDateTime.of(1970, 1, 5, 0, 0));
-    Directory<WritableOnDisk> directory = new DiagnosisKeysDirectory(bundler, cryptoProvider,
-        distributionServiceConfig);
-    parentDirectory.addWritable(directory);
-    directory.prepare(new ImmutableStack<>());
-    directory.write();
+  void checkBuildsTheCorrectDirectoryStructureForMultipleSupportedCountriesWhenNoKeys() {
+    buildDirectoryStructure(emptyList(), "DE", "FR");
 
-    String s = File.separator;
     Set<String> expectedFiles = Set.of(
-        join(s, "diagnosis-keys", "country", "index"),
-        join(s, "diagnosis-keys", "country", "DE", "date", "index"),
-        join(s, "diagnosis-keys", "country", "DE", "date", "1970-01-03", "index"),
-        join(s, "diagnosis-keys", "country", "DE", "date", "1970-01-03", "hour", "index"),
-        join(s, "diagnosis-keys", "country", "DE", "date", "1970-01-03", "hour", "0", "index"),
-        join(s, "diagnosis-keys", "country", "DE", "date", "1970-01-03", "hour", "1", "index"),
-        join(s, "diagnosis-keys", "country", "DE", "date", "1970-01-03", "hour", "2", "index"),
-        join(s, "diagnosis-keys", "country", "DE", "date", "1970-01-03", "hour", "3", "index"),
-        join(s, "diagnosis-keys", "country", "DE", "date", "1970-01-03", "hour", "4", "index"),
-        join(s, "diagnosis-keys", "country", "DE", "date", "1970-01-03", "hour", "5", "index"),
-        join(s, "diagnosis-keys", "country", "DE", "date", "1970-01-03", "hour", "6", "index"),
-        join(s, "diagnosis-keys", "country", "DE", "date", "1970-01-03", "hour", "7", "index"),
-        join(s, "diagnosis-keys", "country", "DE", "date", "1970-01-03", "hour", "8", "index"),
-        join(s, "diagnosis-keys", "country", "DE", "date", "1970-01-03", "hour", "9", "index"),
-        join(s, "diagnosis-keys", "country", "DE", "date", "1970-01-03", "hour", "10", "index"),
-        join(s, "diagnosis-keys", "country", "DE", "date", "1970-01-03", "hour", "11", "index"),
-        join(s, "diagnosis-keys", "country", "DE", "date", "1970-01-03", "hour", "12", "index"),
-        join(s, "diagnosis-keys", "country", "DE", "date", "1970-01-03", "hour", "13", "index"),
-        join(s, "diagnosis-keys", "country", "DE", "date", "1970-01-03", "hour", "14", "index"),
-        join(s, "diagnosis-keys", "country", "DE", "date", "1970-01-03", "hour", "15", "index"),
-        join(s, "diagnosis-keys", "country", "DE", "date", "1970-01-03", "hour", "16", "index"),
-        join(s, "diagnosis-keys", "country", "DE", "date", "1970-01-03", "hour", "17", "index"),
-        join(s, "diagnosis-keys", "country", "DE", "date", "1970-01-03", "hour", "18", "index"),
-        join(s, "diagnosis-keys", "country", "DE", "date", "1970-01-03", "hour", "19", "index"),
-        // One missing from data, but still we should a structure created because of the empty file (issue #650)
-        join(s, "diagnosis-keys", "country", "DE", "date", "1970-01-03", "hour", "20", "index"),
-        join(s, "diagnosis-keys", "country", "DE", "date", "1970-01-03", "hour", "21", "index"),
-        join(s, "diagnosis-keys", "country", "DE", "date", "1970-01-03", "hour", "22", "index"),
-        join(s, "diagnosis-keys", "country", "DE", "date", "1970-01-03", "hour", "23", "index"),
-        join(s, "diagnosis-keys", "country", "DE", "date", "1970-01-04", "index"),
-        join(s, "diagnosis-keys", "country", "DE", "date", "1970-01-04", "hour", "index"),
-        join(s, "diagnosis-keys", "country", "DE", "date", "1970-01-04", "hour", "0", "index"),
-        join(s, "diagnosis-keys", "country", "DE", "date", "1970-01-04", "hour", "1", "index"),
-        join(s, "diagnosis-keys", "country", "DE", "date", "1970-01-04", "hour", "2", "index"),
-        join(s, "diagnosis-keys", "country", "DE", "date", "1970-01-04", "hour", "3", "index"),
-        join(s, "diagnosis-keys", "country", "DE", "date", "1970-01-04", "hour", "4", "index"),
-        join(s, "diagnosis-keys", "country", "DE", "date", "1970-01-04", "hour", "5", "index"),
-        join(s, "diagnosis-keys", "country", "DE", "date", "1970-01-04", "hour", "6", "index"),
-        join(s, "diagnosis-keys", "country", "DE", "date", "1970-01-04", "hour", "7", "index"),
-        join(s, "diagnosis-keys", "country", "DE", "date", "1970-01-04", "hour", "8", "index"),
-        join(s, "diagnosis-keys", "country", "DE", "date", "1970-01-04", "hour", "9", "index"),
-        join(s, "diagnosis-keys", "country", "DE", "date", "1970-01-04", "hour", "10", "index"),
-        join(s, "diagnosis-keys", "country", "DE", "date", "1970-01-04", "hour", "11", "index"),
-        join(s, "diagnosis-keys", "country", "DE", "date", "1970-01-04", "hour", "12", "index"),
-        join(s, "diagnosis-keys", "country", "DE", "date", "1970-01-04", "hour", "13", "index"),
-        join(s, "diagnosis-keys", "country", "DE", "date", "1970-01-04", "hour", "14", "index"),
-        join(s, "diagnosis-keys", "country", "DE", "date", "1970-01-04", "hour", "15", "index"),
-        join(s, "diagnosis-keys", "country", "DE", "date", "1970-01-04", "hour", "16", "index"),
-        join(s, "diagnosis-keys", "country", "DE", "date", "1970-01-04", "hour", "17", "index"),
-        join(s, "diagnosis-keys", "country", "DE", "date", "1970-01-04", "hour", "18", "index"),
-        join(s, "diagnosis-keys", "country", "DE", "date", "1970-01-04", "hour", "19", "index"),
-        join(s, "diagnosis-keys", "country", "DE", "date", "1970-01-04", "hour", "20", "index"),
-        join(s, "diagnosis-keys", "country", "DE", "date", "1970-01-04", "hour", "21", "index"),
-        join(s, "diagnosis-keys", "country", "DE", "date", "1970-01-04", "hour", "22", "index"),
-        join(s, "diagnosis-keys", "country", "DE", "date", "1970-01-04", "hour", "23", "index")
+        join(separator, "diagnosis-keys", "country", "index"),
+        join(separator, "diagnosis-keys", "country", "DE", "date", "index"),
+        join(separator, "diagnosis-keys", "country", "FR", "date", "index")
     );
 
     Set<String> actualFiles = getFilePaths(outputFile, outputFile.getAbsolutePath());
 
     assertThat(actualFiles).isEqualTo(amendWithChecksumFiles(expectedFiles));
+  }
+
+  @Test
+  void checkBuildsTheCorrectDirectoryStructureForOneCountry() {
+    List<DiagnosisKey> diagnosisKeys = buildDiagnosisKeys(6, LocalDateTime.of(1970, 1, 3, 0, 0), 5);
+
+    buildDirectoryStructure(diagnosisKeys, "DE");
+
+    Set<String> expectedFiles = Sets.newLinkedHashSet(join(separator, "diagnosis-keys", "country", "index"),
+        join(separator, "diagnosis-keys", "country", "DE", "date", "index"));
+    expectedFiles.addAll(generateExpectedDirectoryStructure("DE", "1970-01-03"));
+    expectedFiles.addAll(generateExpectedDirectoryStructure("DE", "1970-01-04"));
+
+    Set<String> actualFiles = getFilePaths(outputFile, outputFile.getAbsolutePath());
+
+    assertThat(actualFiles).isEqualTo(amendWithChecksumFiles(expectedFiles));
+  }
+
+  @Test
+  void checkBuildsTheCorrectDirectoryStructureForDifferentVisitedCountries() {
+    Collection<DiagnosisKey> diagnosisKeysOfCountries =
+        buildDiagnosisKeys(6, LocalDateTime.of(1970, 1, 3, 0, 0), 5, "FR", list("DE", "FR"));
+
+    buildDirectoryStructure(diagnosisKeysOfCountries, "DE", "FR", "DK");
+
+    Set<String> expectedFiles = Sets.newLinkedHashSet(join(separator, "diagnosis-keys", "country", "index"),
+        join(separator, "diagnosis-keys", "country", "DE", "date", "index"),
+        join(separator, "diagnosis-keys", "country", "FR", "date", "index"),
+        join(separator, "diagnosis-keys", "country", "DK", "date", "index"));
+    expectedFiles.addAll(generateExpectedDirectoryStructure("DE", "1970-01-03"));
+    expectedFiles.addAll(generateExpectedDirectoryStructure("DE", "1970-01-04"));
+    expectedFiles.addAll(generateExpectedDirectoryStructure("FR", "1970-01-03"));
+    expectedFiles.addAll(generateExpectedDirectoryStructure("FR", "1970-01-04"));
+
+    Set<String> actualFiles = getFilePaths(outputFile, outputFile.getAbsolutePath());
+
+    assertThat(actualFiles).isEqualTo(amendWithChecksumFiles(expectedFiles));
+  }
+
+  @Test
+  void checkBuildsTheCorrectDirectoryStructureForTwoCountriesWithDifferentKeys() {
+    Collection<DiagnosisKey> diagnosisKeysOfCountries =
+        buildDiagnosisKeys(6, LocalDateTime.of(1970, 1, 3, 0, 0), 5, "FR", list("DE"));
+    diagnosisKeysOfCountries.addAll(buildDiagnosisKeys(6, LocalDateTime.of(1970, 1, 4, 0, 0), 5, "FR", list("FR")));
+
+    buildDirectoryStructure(diagnosisKeysOfCountries, "DE", "FR", "DK");
+
+    Set<String> expectedFiles = Sets.newLinkedHashSet(join(separator, "diagnosis-keys", "country", "index"),
+        join(separator, "diagnosis-keys", "country", "DE", "date", "index"),
+        join(separator, "diagnosis-keys", "country", "FR", "date", "index"),
+        join(separator, "diagnosis-keys", "country", "DK", "date", "index"));
+    expectedFiles.addAll(generateExpectedDirectoryStructure("DE", "1970-01-03"));
+    expectedFiles.addAll(generateExpectedDirectoryStructure("DE", "1970-01-04"));
+    expectedFiles.addAll(generateExpectedDirectoryStructure("FR", "1970-01-04"));
+
+    Set<String> actualFiles = getFilePaths(outputFile, outputFile.getAbsolutePath());
+
+    assertThat(actualFiles).isEqualTo(amendWithChecksumFiles(expectedFiles));
+  }
+
+  @Test
+  void checkBuildsTheCorrectDirectoryStructureForMultipleSupportedCountriesAndSingleVisitedCountry() {
+    Collection<DiagnosisKey> diagnosisKeysOfCountries =
+        buildDiagnosisKeys(6, LocalDateTime.of(1970, 1, 3, 0, 0), 5, "FR", list("FR"));
+
+    buildDirectoryStructure(diagnosisKeysOfCountries, "DE", "FR", "DK");
+
+    Set<String> expectedFiles = Sets.newLinkedHashSet(join(separator, "diagnosis-keys", "country", "index"),
+        join(separator, "diagnosis-keys", "country", "DE", "date", "index"),
+        join(separator, "diagnosis-keys", "country", "FR", "date", "index"),
+        join(separator, "diagnosis-keys", "country", "DK", "date", "index"));
+    expectedFiles.addAll(generateExpectedDirectoryStructure("FR", "1970-01-03"));
+    expectedFiles.addAll(generateExpectedDirectoryStructure("FR", "1970-01-04"));
+
+    Set<String> actualFiles = getFilePaths(outputFile, outputFile.getAbsolutePath());
+
+    assertThat(actualFiles).isEqualTo(amendWithChecksumFiles(expectedFiles));
+  }
+
+  private void buildDirectoryStructure(Collection<DiagnosisKey> keyseparator, String... supportedCountries) {
+    DistributionServiceConfig serviceConfigSpy = spy(distributionServiceConfig);
+    when(serviceConfigSpy.getSupportedCountries()).thenReturn(supportedCountries);
+
+    DiagnosisKeyBundler bundler = new ProdDiagnosisKeyBundler(serviceConfigSpy, sharingPolicyChecker);
+    bundler.setDiagnosisKeys(keyseparator, LocalDateTime.of(1970, 1, 5, 0, 0));
+
+    Directory<WritableOnDisk> directory = new DiagnosisKeysDirectory(bundler, cryptoProvider, serviceConfigSpy);
+    parentDirectory.addWritable(directory);
+    directory.prepare(new ImmutableStack<>());
+    directory.write();
   }
 
   private Set<String> amendWithChecksumFiles(Set<String> expectedFiles) {
@@ -195,5 +218,14 @@ class DiagnosisKeysDirectoryTest {
     allExpectedFiles.addAll(checksumFiles);
 
     return allExpectedFiles;
+  }
+
+  private Set<String> generateExpectedDirectoryStructure(String country, String date) {
+    Set<String> directoryStructure = IntStream.range(0, 24).mapToObj(Integer::toString)
+        .map(hour -> join(separator, "diagnosis-keys", "country", country, "date", date, "hour", hour, "index"))
+        .collect(Collectors.toSet());
+    directoryStructure.add(join(separator, "diagnosis-keys", "country", country, "date", date, "index"));
+    directoryStructure.add(join(separator, "diagnosis-keys", "country", country, "date", date, "hour", "index"));
+    return directoryStructure;
   }
 }

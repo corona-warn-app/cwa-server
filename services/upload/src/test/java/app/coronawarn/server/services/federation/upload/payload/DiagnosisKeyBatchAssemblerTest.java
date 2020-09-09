@@ -21,6 +21,7 @@
 package app.coronawarn.server.services.federation.upload.payload;
 
 import app.coronawarn.server.common.persistence.domain.DiagnosisKey;
+import app.coronawarn.server.common.persistence.domain.FederationUploadKey;
 import app.coronawarn.server.common.protocols.external.exposurenotification.ReportType;
 import app.coronawarn.server.services.federation.upload.config.UploadServiceConfig;
 import org.junit.jupiter.api.Assertions;
@@ -81,8 +82,9 @@ class DiagnosisKeyBatchAssemblerTest {
         "Origin Country should be the same");
   }
 
-  private static DiagnosisKey makeFakeKey(boolean consent) {
-    return DiagnosisKey.builder()
+  private static FederationUploadKey makeFakeKey(boolean consent) {
+    return FederationUploadKey.from(
+        DiagnosisKey.builder()
         .withKeyData(new byte[16])
         .withRollingStartIntervalNumber(1)
         .withTransmissionRiskLevel(2)
@@ -92,11 +94,11 @@ class DiagnosisKeyBatchAssemblerTest {
         .withRollingPeriod(144)
         .withSubmissionTimestamp(LocalDateTime.of(2020, 7, 15, 12, 0, 0).toEpochSecond(ZoneOffset.UTC) / 3600)
         .withVisitedCountries(List.of("DE"))
-        .build();
+        .build());
   }
 
-  private static List<DiagnosisKey> makeFakeKeys(boolean consent, int numberOfKeys) {
-    List<DiagnosisKey> keys = new ArrayList<DiagnosisKey>(numberOfKeys);
+  private static List<FederationUploadKey> makeFakeKeys(boolean consent, int numberOfKeys) {
+    List<FederationUploadKey> keys = new ArrayList<>(numberOfKeys);
     while (numberOfKeys > 0) {
       keys.add(makeFakeKey(consent));
       numberOfKeys--;
@@ -137,7 +139,7 @@ class DiagnosisKeyBatchAssemblerTest {
 
   @ParameterizedTest
   @MethodSource("keysToPartitionAndBatchNumberExpectations")
-  void shouldGenerateCorrectNumberOfBatches(List<DiagnosisKey> dataset, Integer expectedBatches) {
+  void shouldGenerateCorrectNumberOfBatches(List<FederationUploadKey> dataset, Integer expectedBatches) {
     var result = diagnosisKeyBatchAssembler.assembleDiagnosisKeyBatch(dataset);
     Assertions.assertEquals(expectedBatches, result.size());
   }

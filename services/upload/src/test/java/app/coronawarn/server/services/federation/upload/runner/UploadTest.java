@@ -1,6 +1,6 @@
 package app.coronawarn.server.services.federation.upload.runner;
 
-import static app.coronawarn.server.services.federation.upload.utils.MockData.generateRandomDiagnosisKeys;
+import static app.coronawarn.server.services.federation.upload.utils.MockData.generateRandomUploadKeys;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.times;
@@ -8,9 +8,11 @@ import static org.mockito.Mockito.verify;
 
 import app.coronawarn.server.common.federation.client.FederationGatewayClient;
 import app.coronawarn.server.common.persistence.domain.DiagnosisKey;
+import app.coronawarn.server.common.persistence.domain.FederationUploadKey;
 import app.coronawarn.server.common.persistence.repository.FederationUploadKeyRepository;
 import app.coronawarn.server.common.persistence.service.DiagnosisKeyService;
 import app.coronawarn.server.common.persistence.service.FederationUploadKeyService;
+import app.coronawarn.server.common.persistence.service.common.KeySharingPoliciesChecker;
 import app.coronawarn.server.common.persistence.service.common.ValidDiagnosisKeyFilter;
 import app.coronawarn.server.common.protocols.external.exposurenotification.DiagnosisKeyBatch;
 import app.coronawarn.server.services.federation.upload.client.ProdFederationUploadClient;
@@ -45,6 +47,7 @@ class UploadTest {
   @ContextConfiguration(classes = {
       Upload.class, PayloadFactory.class, DiagnosisKeyBatchAssembler.class,
       BatchSigner.class, CryptoProvider.class, DiagnosisKeyGenerator.class,
+      KeySharingPoliciesChecker.class,
       ProdFederationUploadClient.class, DiagnosisKeyPersistenceLoader.class,
       FederationUploadKeyService.class, ValidDiagnosisKeyFilter.class
   },
@@ -71,7 +74,7 @@ class UploadTest {
 
     @Test
     void batchesShouldBeCreatedFromPendingUploadKeys() throws Exception {
-      List<DiagnosisKey> testKeys = generateRandomDiagnosisKeys(true, 20);
+      List<FederationUploadKey> testKeys = generateRandomUploadKeys(true, 20);
       Mockito.when(uploadKeyRepository.findAllUploadableKeys()).thenReturn(testKeys);
       upload.run(null);
       verify(batchAssembler, times(1)).assembleDiagnosisKeyBatch(testKeys);

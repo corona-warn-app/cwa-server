@@ -20,32 +20,34 @@
 
 package app.coronawarn.server.common.federation.client;
 
+import app.coronawarn.server.common.federation.client.download.BatchDownloadResponse;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestHeader;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 
 /**
- *  Declarative web service client for the Federation Gateway API.
+ * Declarative web service client for the Federation Gateway API.
  *
- *  <p>Any application that wants to uses it must make sure the required configuration
- *  beans in this module are registered (scan root package of the module). There is also
- *  a constraint imposed on application properties, such that values for the following
- *  structure must be declared:
- *  <li> federation-gateway.base-url
- *  <li> federation-gateway.ssl.key-store-path
- *  <li> federation-gateway.ssl.key-store-pass
- *  <li> federation-gateway.ssl.certificate-type
+ * <p>Any application that wants to uses it must make sure the required configuration
+ * beans in this module are registered (scan root package of the module). There is also a constraint imposed on
+ * application properties, such that values for the following structure must be declared:
+ * <li> federation-gateway.base-url
+ * <li> federation-gateway.ssl.key-store-path
+ * <li> federation-gateway.ssl.key-store-pass
+ * <li> federation-gateway.ssl.certificate-type
  */
 @FeignClient(name = "federation-server", url = "${federation-gateway.base-url}")
 public interface FederationGatewayClient {
 
-  @GetMapping(value = "/diagnosiskeys/download/{date}")
-  String getDiagnosisKeys(@RequestHeader("Accept") String accept,
-      @RequestHeader("X-SSL-Client-SHA256") String shaClient, @RequestHeader("X-SSL-Client-DN") String dnClient,
+  @GetMapping(value = "/diagnosiskeys/download/{date}",
+      headers = {"Accept=application/protobuf; version=1.0", "X-SSL-Client-SHA256=abcd", "X-SSL-Client-DN=C=PL"})
+  BatchDownloadResponse getDiagnosisKeys(@PathVariable("date") String date);
+
+  @GetMapping(value = "/diagnosiskeys/download/{date}",
+      headers = {"Accept=application/protobuf; version=1.0", "X-SSL-Client-SHA256=abcd", "X-SSL-Client-DN=C=PL"})
+  BatchDownloadResponse getDiagnosisKeys(@RequestHeader("batchTag") String batchTag,
       @PathVariable("date") String date);
 
   /**

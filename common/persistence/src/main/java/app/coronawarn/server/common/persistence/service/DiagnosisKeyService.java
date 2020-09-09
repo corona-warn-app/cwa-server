@@ -82,28 +82,14 @@ public class DiagnosisKeyService {
   }
 
   /**
-   * Return all valid persisted diagnosis keys, sorted by their submission timestamp where visited_countries contains
-   * {@param countryCode}.
-   *
-   * @param countryCode country filter.
-   * @return Collection of {@link DiagnosisKey} that have visited_country in their array.
-   */
-  public List<DiagnosisKey> getDiagnosisKeysByVisitedCountry(String countryCode) {
-    var diagnosisKeys = createStreamFromIterator(
-        keyRepository.findAllKeysWhereVisitedCountryContains(countryCode).iterator()).collect(Collectors.toList());
-    return validationFilter.filter(diagnosisKeys);
-  }
-
-  /**
    * Deletes all diagnosis key entries which have a submission timestamp that is older than the specified number of
    * days.
    *
    * @param daysToRetain the number of days until which diagnosis keys will be retained.
-   * @param countryCode  country filter.
    * @throws IllegalArgumentException if {@code daysToRetain} is negative.
    */
   @Transactional
-  public void applyRetentionPolicy(int daysToRetain, String countryCode) {
+  public void applyRetentionPolicy(int daysToRetain) {
     if (daysToRetain < 0) {
       throw new IllegalArgumentException("Number of days to retain must be greater or equal to 0.");
     }
@@ -112,9 +98,9 @@ public class DiagnosisKeyService {
         .ofInstant(Instant.now(), UTC)
         .minusDays(daysToRetain)
         .toEpochSecond(UTC) / SECONDS_PER_HOUR;
-    int numberOfDeletions = keyRepository.countOlderThan(threshold, countryCode);
-    logger.info("[{}] Deleting {} diagnosis key(s) with a submission timestamp older than {} day(s) ago.",
-        countryCode, numberOfDeletions, daysToRetain);
-    keyRepository.deleteOlderThan(threshold, countryCode);
+    int numberOfDeletions = keyRepository.countOlderThan(threshold);
+    logger.info("Deleting {} diagnosis key(s) with a submission timestamp older than {} day(s) ago.",
+        numberOfDeletions, daysToRetain);
+    keyRepository.deleteOlderThan(threshold);
   }
 }

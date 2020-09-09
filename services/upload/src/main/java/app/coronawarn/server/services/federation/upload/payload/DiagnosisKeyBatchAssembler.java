@@ -1,6 +1,7 @@
 package app.coronawarn.server.services.federation.upload.payload;
 
 import app.coronawarn.server.common.persistence.domain.DiagnosisKey;
+import app.coronawarn.server.common.persistence.domain.FederationUploadKey;
 import app.coronawarn.server.common.protocols.external.exposurenotification.DiagnosisKeyBatch;
 import app.coronawarn.server.services.federation.upload.config.UploadServiceConfig;
 import com.google.protobuf.ByteString;
@@ -42,7 +43,7 @@ public class DiagnosisKeyBatchAssembler {
    * @param diagnosisKeys raw list of {@link DiagnosisKey} to be assembled in batches.
    * @return List of {@link DiagnosisKeyBatch} to be uploaded.
    */
-  public List<DiagnosisKeyBatch> assembleDiagnosisKeyBatch(List<DiagnosisKey> diagnosisKeys) {
+  public List<DiagnosisKeyBatch> assembleDiagnosisKeyBatch(List<FederationUploadKey> diagnosisKeys) {
     if (diagnosisKeys.isEmpty()) {
       logger.info("Batches not generated: no pending upload diagnosis keys found.");
       return Collections.emptyList();
@@ -92,7 +93,7 @@ public class DiagnosisKeyBatchAssembler {
   }
 
   private List<app.coronawarn.server.common.protocols.external.exposurenotification.DiagnosisKey>
-      filterAndConvertToUploadStructure(List<DiagnosisKey> diagnosisKeys) {
+      filterAndConvertToUploadStructure(List<FederationUploadKey> diagnosisKeys) {
     return diagnosisKeys.stream()
         .filter(DiagnosisKey::isConsentToFederation)
         .map(this::convertKey)

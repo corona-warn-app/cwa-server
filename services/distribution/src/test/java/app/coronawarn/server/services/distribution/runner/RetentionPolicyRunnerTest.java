@@ -20,7 +20,6 @@
 
 package app.coronawarn.server.services.distribution.runner;
 
-import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
@@ -57,8 +56,7 @@ class RetentionPolicyRunnerTest {
   void shouldCallDatabaseAndS3RetentionRunner() {
     retentionPolicy.run(null);
 
-    verify(diagnosisKeyService, times(1)).applyRetentionPolicy(distributionServiceConfig.getRetentionDays(),
-        distributionServiceConfig.getApi().getDistributionCountry());
+    verify(diagnosisKeyService, times(1)).applyRetentionPolicy(distributionServiceConfig.getRetentionDays());
     verify(s3RetentionPolicy, times(1)).applyRetentionPolicy(distributionServiceConfig.getRetentionDays());
   }
 }

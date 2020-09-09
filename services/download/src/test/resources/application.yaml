@@ -1,0 +1,14 @@
+---
+spring:
+  main:
+    banner-mode: off
+
+logging:
+  level:
+    org:
+      springframework: off
+    root: off
+
+services:
+  download:
+    efgs-offset-days: 1

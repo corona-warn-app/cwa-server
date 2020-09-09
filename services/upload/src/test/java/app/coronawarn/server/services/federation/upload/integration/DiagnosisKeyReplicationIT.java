@@ -21,6 +21,7 @@
 package app.coronawarn.server.services.federation.upload.integration;
 
 import app.coronawarn.server.common.persistence.domain.DiagnosisKey;
+import app.coronawarn.server.common.persistence.domain.FederationUploadKey;
 import app.coronawarn.server.common.persistence.repository.DiagnosisKeyRepository;
 import app.coronawarn.server.common.persistence.repository.FederationUploadKeyRepository;
 import app.coronawarn.server.common.persistence.service.DiagnosisKeyService;
@@ -80,7 +81,7 @@ class DiagnosisKeyReplicationIT {
     DiagnosisKey dummyKey = generateRandomDiagnosisKey(false);
     keyService.saveDiagnosisKeys(List.of(dummyKey));
 
-    Collection<DiagnosisKey> uploadableKeys = uploadKeyRepository.findAllUploadableKeys();
+    Collection<FederationUploadKey> uploadableKeys = uploadKeyRepository.findAllUploadableKeys();
 
     assertTrue(uploadableKeys.isEmpty());
   }
@@ -89,7 +90,7 @@ class DiagnosisKeyReplicationIT {
   void deletionOfDiagnosisKeysSHouldBeReplicatedToUploadTable() {
     DiagnosisKey dummyKey = persistNewKeyAndCheckReplication();
     keyRepository.delete(dummyKey);
-    Collection<DiagnosisKey> uploadableKeys = uploadKeyRepository.findAllUploadableKeys();
+    Collection<FederationUploadKey> uploadableKeys = uploadKeyRepository.findAllUploadableKeys();
 
     assertTrue(uploadableKeys.isEmpty());
   }
@@ -99,7 +100,7 @@ class DiagnosisKeyReplicationIT {
     DiagnosisKey dummyKey = generateRandomDiagnosisKey(true);
     keyService.saveDiagnosisKeys(List.of(dummyKey));
 
-    Collection<DiagnosisKey> uploadableKeys = uploadKeyRepository.findAllUploadableKeys();
+    Collection<FederationUploadKey> uploadableKeys = uploadKeyRepository.findAllUploadableKeys();
 
     assertEquals(1, uploadableKeys.size());
     assertEquals(dummyKey, uploadableKeys.iterator().next());

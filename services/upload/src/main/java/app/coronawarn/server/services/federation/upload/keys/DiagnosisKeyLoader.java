@@ -1,11 +1,11 @@
 package app.coronawarn.server.services.federation.upload.keys;
 
 
-import app.coronawarn.server.common.persistence.domain.DiagnosisKey;
+import app.coronawarn.server.common.persistence.domain.FederationUploadKey;
 import java.util.List;
 
 public interface DiagnosisKeyLoader {
 
-  List<DiagnosisKey> loadDiagnosisKeys();
+  List<FederationUploadKey> loadDiagnosisKeys();
 
 }

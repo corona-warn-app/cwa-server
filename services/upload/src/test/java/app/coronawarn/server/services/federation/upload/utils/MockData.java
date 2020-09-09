@@ -24,23 +24,25 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 import app.coronawarn.server.common.persistence.domain.DiagnosisKey;
+import app.coronawarn.server.common.persistence.domain.FederationUploadKey;
 import app.coronawarn.server.common.protocols.external.exposurenotification.ReportType;
 
 public class MockData {
 
   public static final String TEST_ORIGIN_COUNTRY = "DE";
 
-  public static List<DiagnosisKey> generateRandomDiagnosisKeys(boolean consentToShare, int numberOfKeys) {
-    List<DiagnosisKey> fakeKeys = new ArrayList<DiagnosisKey>();
+  public static List<FederationUploadKey> generateRandomUploadKeys(boolean consentToShare, int numberOfKeys) {
+    List<FederationUploadKey> fakeKeys = new ArrayList<>();
     while (numberOfKeys >= 0) {
-      fakeKeys.add(generateRandomDiagnosisKey(consentToShare));
+      fakeKeys.add(generateRandomUploadKey(consentToShare));
       numberOfKeys--;
     }
     return fakeKeys;
   }
 
-  public static DiagnosisKey generateRandomDiagnosisKey(boolean consentToShare) {
-   return DiagnosisKey.builder().withKeyData(randomByteData())
+  public static FederationUploadKey generateRandomUploadKey(boolean consentToShare) {
+   return FederationUploadKey.from(
+            DiagnosisKey.builder().withKeyData(randomByteData())
                             .withRollingStartIntervalNumber(1)
                             .withTransmissionRiskLevel(2)
                             .withConsentToFederation(consentToShare)
@@ -49,7 +51,7 @@ public class MockData {
                             .withSubmissionTimestamp(12)
                             .withVisitedCountries(List.of("FR","DK"))
                             .withReportType(ReportType.CONFIRMED_TEST)
-                            .build();
+                            .build());
   }
 
   private static byte[] randomByteData() {

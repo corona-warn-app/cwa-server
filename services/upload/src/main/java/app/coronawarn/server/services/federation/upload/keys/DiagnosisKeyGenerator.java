@@ -1,6 +1,7 @@
 package app.coronawarn.server.services.federation.upload.keys;
 
 import app.coronawarn.server.common.persistence.domain.DiagnosisKey;
+import app.coronawarn.server.common.persistence.domain.FederationUploadKey;
 import app.coronawarn.server.common.protocols.external.exposurenotification.ReportType;
 import app.coronawarn.server.services.federation.upload.config.UploadServiceConfig;
 import java.util.List;
@@ -27,10 +28,10 @@ public class DiagnosisKeyGenerator implements DiagnosisKeyLoader {
     this.uploadServiceConfig = uploadServiceConfig;
   }
 
-  private DiagnosisKey generateKey(int ignoredValue) {
+  private FederationUploadKey generateKey(int ignoredValue) {
     byte[] randomKeyData = new byte[16];
     random.nextBytes(randomKeyData);
-    return DiagnosisKey.builder()
+    return FederationUploadKey.from(DiagnosisKey.builder()
         .withKeyData(randomKeyData)
         .withRollingStartIntervalNumber(1)
         .withTransmissionRiskLevel(1)
@@ -38,11 +39,11 @@ public class DiagnosisKeyGenerator implements DiagnosisKeyLoader {
         .withConsentToFederation(true)
         .withCountryCode("DE")
         .withVisitedCountries(List.of("DE"))
-        .build();
+        .build());
   }
 
   @Override
-  public List<DiagnosisKey> loadDiagnosisKeys() {
+  public List<FederationUploadKey> loadDiagnosisKeys() {
     var keys = uploadServiceConfig.getTestData().getKeys();
     logger.info("Generating {} fake diagnosis keys for upload", keys);
     return IntStream.range(0, keys)

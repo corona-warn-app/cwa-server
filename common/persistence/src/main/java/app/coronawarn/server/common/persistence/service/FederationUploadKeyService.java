@@ -20,14 +20,16 @@
 
 package app.coronawarn.server.common.persistence.service;
 
+import static java.time.ZoneOffset.UTC;
 import static org.springframework.data.util.StreamUtils.createStreamFromIterator;
 
 import app.coronawarn.server.common.persistence.domain.DiagnosisKey;
 import app.coronawarn.server.common.persistence.domain.FederationUploadKey;
 import app.coronawarn.server.common.persistence.repository.FederationUploadKeyRepository;
+import app.coronawarn.server.common.persistence.service.common.ExpirationPolicy;
+import app.coronawarn.server.common.persistence.service.common.KeySharingPoliciesChecker;
 import app.coronawarn.server.common.persistence.service.common.ValidDiagnosisKeyFilter;
-
-import java.util.Collection;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 import org.springframework.stereotype.Component;
@@ -38,22 +40,32 @@ public class FederationUploadKeyService {
 
   private final FederationUploadKeyRepository keyRepository;
   private final ValidDiagnosisKeyFilter validationFilter;
+  private final KeySharingPoliciesChecker sharingPoliciesChecker;
 
-  public FederationUploadKeyService(FederationUploadKeyRepository keyRepository, ValidDiagnosisKeyFilter filter) {
+  /**
+   * Constructs the key upload service.
+   */
+  public FederationUploadKeyService(FederationUploadKeyRepository keyRepository, ValidDiagnosisKeyFilter filter,
+      KeySharingPoliciesChecker sharingPoliciesChecker) {
     this.keyRepository = keyRepository;
     this.validationFilter = filter;
+    this.sharingPoliciesChecker = sharingPoliciesChecker;
   }
 
   /**
    * Returns all valid persisted diagnosis keys which are ready to be uploaded to the external Federation Gateway
-   * service.
+   * service. Readiness of keys means:
+   *
+   * <p><li> Consent is given by the user (this should always be the case for keys in this table,
+   * but a safety check is performed anyway
+   * <li> Key is expired conforming to the given policy
    */
-  public List<FederationUploadKey> getPendingUploadKeys() {
-    Collection<FederationUploadKey> uploadableKeys = keyRepository.findAllUploadableKeys();
-    return validationFilter.filter(safeCast(uploadableKeys, DiagnosisKey.class));
-  }
-
-  private <F,T> List<T> safeCast(Collection<T> fromClassCollection, T toClass) {
-    return null;
+  public List<FederationUploadKey> getPendingUploadKeys(ExpirationPolicy policy) {
+    return createStreamFromIterator(
+           keyRepository.findAllUploadableKeys().iterator())
+           .filter(DiagnosisKey::isConsentToFederation)
+           .filter(validationFilter::isDiagnosisKeyValid)
+           .filter(key -> sharingPoliciesChecker.canShareKeyAtTime(key, policy, LocalDateTime.now(UTC)))
+           .collect(Collectors.toList());
   }
 }

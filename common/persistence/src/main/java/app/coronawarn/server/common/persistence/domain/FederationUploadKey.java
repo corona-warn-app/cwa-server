@@ -1,11 +1,10 @@
 package app.coronawarn.server.common.persistence.domain;
 
-import java.util.List;
-
 import app.coronawarn.server.common.protocols.external.exposurenotification.ReportType;
+import java.util.List;
 import javax.validation.constraints.Size;
 
-public class FederationUploadKey extends DiagnosisKey{
+public class FederationUploadKey extends DiagnosisKey {
 
   private String batchTagId;
 
@@ -22,6 +21,17 @@ public class FederationUploadKey extends DiagnosisKey{
 
   public void setBatchTagId(String batchTagId) {
     this.batchTagId = batchTagId;
+  }
+
+  /**
+   * Create a new instance of an upload key by copying the properties of the given source diagnosis key.
+   */
+  public static FederationUploadKey from(DiagnosisKey diagnosisKeySource) {
+    return new FederationUploadKey(diagnosisKeySource.getKeyData(), diagnosisKeySource.getRollingStartIntervalNumber(),
+        diagnosisKeySource.getRollingPeriod(), diagnosisKeySource.getTransmissionRiskLevel(),
+        diagnosisKeySource.getSubmissionTimestamp(), diagnosisKeySource.isConsentToFederation(),
+        diagnosisKeySource.getOriginCountry(), diagnosisKeySource.getVisitedCountries(),
+        diagnosisKeySource.getReportType(), diagnosisKeySource.getDaysSinceOnsetOfSymptoms());
   }
 
 }

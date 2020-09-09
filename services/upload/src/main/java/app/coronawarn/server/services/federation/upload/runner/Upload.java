@@ -1,6 +1,6 @@
 package app.coronawarn.server.services.federation.upload.runner;
 
-import app.coronawarn.server.common.persistence.domain.DiagnosisKey;
+import app.coronawarn.server.common.persistence.domain.FederationUploadKey;
 import app.coronawarn.server.services.federation.upload.Application;
 import app.coronawarn.server.services.federation.upload.client.FederationUploadClient;
 import app.coronawarn.server.services.federation.upload.keys.DiagnosisKeyLoader;
@@ -54,7 +54,7 @@ public class Upload implements ApplicationRunner {
   public void run(ApplicationArguments args) throws Exception {
     logger.info("Running Upload Job");
     try {
-      List<DiagnosisKey> diagnosisKeys = this.diagnosisKeyLoader.loadDiagnosisKeys();
+      List<FederationUploadKey> diagnosisKeys = this.diagnosisKeyLoader.loadDiagnosisKeys();
       logger.info("Generating Upload Payload for {} keys", diagnosisKeys.size());
       List<UploadPayload> requests = this.payloadFactory.makePayloadList(diagnosisKeys);
       logger.info("Executing {} batch request", requests.size());
