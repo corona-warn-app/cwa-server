@@ -1,4 +1,4 @@
-package app.coronawarn.server.common.persistence.repository;
+package app.coronawarn.server.services.federation.upload.testdata;
 
 import app.coronawarn.server.common.persistence.domain.DiagnosisKey;
 import org.springframework.context.annotation.Profile;
