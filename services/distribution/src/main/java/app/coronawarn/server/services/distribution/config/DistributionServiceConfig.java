@@ -21,8 +21,6 @@
 package app.coronawarn.server.services.distribution.config;
 
 import app.coronawarn.server.common.protocols.external.exposurenotification.SignatureInfo;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 import javax.validation.constraints.Max;
@@ -311,7 +309,7 @@ public class DistributionServiceConfig {
     @Pattern(regexp = CHAR_AND_NUMBER_REGEX)
     private String countryPath;
     @Pattern(regexp = CHAR_AND_NUMBER_REGEX)
-    private String countryGermany;
+    private String originCountry;
     @Pattern(regexp = CHAR_AND_NUMBER_REGEX)
     private String datePath;
     @Pattern(regexp = CHAR_AND_NUMBER_REGEX)
@@ -322,8 +320,6 @@ public class DistributionServiceConfig {
     private String parametersPath;
     @Pattern(regexp = CHAR_AND_NUMBER_REGEX)
     private String appConfigFileName;
-    @Pattern(regexp = CHAR_AND_NUMBER_REGEX)
-    private String distributionCountry;
 
     public String getVersionPath() {
       return versionPath;
@@ -347,14 +343,6 @@ public class DistributionServiceConfig {
 
     public void setCountryPath(String countryPath) {
       this.countryPath = countryPath;
-    }
-
-    public String getCountryGermany() {
-      return countryGermany;
-    }
-
-    public void setCountryGermany(String countryGermany) {
-      this.countryGermany = countryGermany;
     }
 
     public String getDatePath() {
@@ -397,12 +385,12 @@ public class DistributionServiceConfig {
       this.appConfigFileName = appConfigFileName;
     }
 
-    public String getDistributionCountry() {
-      return distributionCountry;
+    public String getOriginCountry() {
+      return originCountry;
     }
 
-    public void setDistributionCountry(String distributionCountry) {
-      this.distributionCountry = distributionCountry;
+    public void setOriginCountry(String originCountry) {
+      this.originCountry = originCountry;
     }
   }
 
