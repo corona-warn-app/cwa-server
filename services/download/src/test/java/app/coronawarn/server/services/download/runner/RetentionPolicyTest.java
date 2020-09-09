@@ -23,7 +23,6 @@ package app.coronawarn.server.services.download.runner;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
-import app.coronawarn.server.common.persistence.service.DiagnosisKeyService;
 import app.coronawarn.server.common.persistence.service.FederationBatchInfoService;
 import app.coronawarn.server.services.download.DownloadServiceConfig;
 import org.junit.jupiter.api.Test;

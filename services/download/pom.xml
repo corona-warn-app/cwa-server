@@ -15,6 +15,13 @@
     <sonar.projectKey>corona-warn-app_cwa-server_services_download</sonar.projectKey>
   </properties>
 
+  <dependencies>
+    <dependency>
+      <groupId>org.testcontainers</groupId>
+      <artifactId>postgresql</artifactId>
+    </dependency>
+  </dependencies>
+
   <build>
     <plugins>
       <plugin>

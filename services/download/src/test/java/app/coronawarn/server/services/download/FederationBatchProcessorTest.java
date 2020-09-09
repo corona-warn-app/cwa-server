@@ -44,9 +44,6 @@ import app.coronawarn.server.common.persistence.domain.FederationBatchInfo;
 import app.coronawarn.server.common.persistence.domain.FederationBatchStatus;
 import app.coronawarn.server.common.persistence.service.DiagnosisKeyService;
 import app.coronawarn.server.common.persistence.service.FederationBatchInfoService;
-import app.coronawarn.server.common.protocols.external.exposurenotification.DiagnosisKey;
-import app.coronawarn.server.common.protocols.external.exposurenotification.DiagnosisKeyBatch;
-import com.google.protobuf.ByteString;
 import feign.FeignException;
 import java.time.LocalDate;
 import java.util.Optional;
@@ -60,20 +57,14 @@ class FederationBatchProcessorTest {
   private final LocalDate date = LocalDate.of(2020, 9, 1);
   private final String batchTag1 = "507f191e810c19729de860ea";
   private final String batchTag2 = "507f191e810c19729de860eb";
-  private final DiagnosisKeyBatch diagnosisKeyBatch = DiagnosisKeyBatch.newBuilder()
-      .addKeys(
-          DiagnosisKey.newBuilder()
-              .setKeyData(ByteString.copyFromUtf8("0123456789ABCDEF"))
-              .addVisitedCountries("DE")
-              .setRollingStartIntervalNumber(1596153600 / 600)
-              .setRollingPeriod(144)
-              .setTransmissionRiskLevel(2)
-              .build()).build();
-
   private FederationBatchInfoService batchInfoService;
   private DiagnosisKeyService diagnosisKeyService;
   private FederationGatewayClient federationGatewayClient;
   private FederationBatchProcessor batchProcessor;
+
+  private static String isoDate(LocalDate date) {
+    return date.format(ISO_LOCAL_DATE);
+  }
 
   @BeforeEach
   void setUpBatchProcessor() {
@@ -83,15 +74,11 @@ class FederationBatchProcessorTest {
     batchProcessor = new FederationBatchProcessor(batchInfoService, diagnosisKeyService, federationGatewayClient);
   }
 
-  private static String isoDate(LocalDate date) {
-    return date.format(ISO_LOCAL_DATE);
-  }
-
   private BatchDownloadResponse createBatchDownloadResponse(String batchTag, Optional<String> nextBatchTag) {
     BatchDownloadResponse gatewayResponse = mock(BatchDownloadResponse.class);
     when(gatewayResponse.getBatchTag()).thenReturn(batchTag);
     when(gatewayResponse.getNextBatchTag()).thenReturn(nextBatchTag);
-    when(gatewayResponse.getDiagnosisKeyBatch()).thenReturn(diagnosisKeyBatch);
+    when(gatewayResponse.getDiagnosisKeyBatch()).thenReturn(FederationBatchUtils.diagnosisKeyBatch);
     return gatewayResponse;
   }
 

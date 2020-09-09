@@ -2,6 +2,16 @@
 spring:
   main:
     banner-mode: off
+  flyway:
+    enabled: true
+    locations: classpath:/db/migration
+  datasource:
+    driver-class-name: org.testcontainers.jdbc.ContainerDatabaseDriver
+    url: jdbc:tc:postgresql:11.8:///databasename?TC_TMPFS=/testtmpfs:rw
+  test:
+    database:
+      # Use datasource as defined above.
+      replace: none
 
 logging:
   level:
@@ -13,3 +23,11 @@ services:
   download:
     efgs-offset-days: 1
     retention-days: 14
+
+federation-gateway:
+  base-url: fake-url
+  connection-pool-size: 200
+  ssl:
+    key-store-path: test.p12
+    key-store-pass: test1234
+    certificate-type: PKCS12
