@@ -10,6 +10,5 @@ message SubmissionPayload {
   optional bytes requestPadding = 2;
   repeated string visitedCountries = 3;
   optional string origin = 4;
-  optional app.coronawarn.server.common.protocols.external.exposurenotification.ReportType reportType = 5 [default = CONFIRMED_CLINICAL_DIAGNOSIS];
-  optional bool consentToFederation = 6;
+  optional bool consentToFederation = 5;
 }

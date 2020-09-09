@@ -1,5 +1,5 @@
 //https://static.googleusercontent.com/media/www.google.com/en//covid19/exposurenotifications/pdfs/Exposure-Key-File-Format-and-Verification.pdf
-syntax = "proto3";
+syntax = "proto2";
 package app.coronawarn.server.common.protocols.external.exposurenotification;
 option java_package = "app.coronawarn.server.common.protocols.external.exposurenotification";
 option java_multiple_files = true;
@@ -8,25 +8,15 @@ import "app/coronawarn/server/common/protocols/external/exposurenotification/tem
 message DiagnosisKeyBatch {
   repeated DiagnosisKey keys = 1;
 }
-
 message DiagnosisKey {
-  bytes keyData = 1; // key
-  uint32 rollingStartIntervalNumber = 2;
-  uint32 rollingPeriod = 3; // number of 10-minute windows between key-rolling
-  int32 transmissionRiskLevel = 4; // risk of transmission
+  optional bytes keyData = 1; // key
+  optional uint32 rollingStartIntervalNumber = 2;
+  optional uint32 rollingPeriod = 3; // number of 10-minute windows between key-rolling
+  optional int32 transmissionRiskLevel = 4; // risk of transmission
   repeated string visitedCountries = 5;
-  string origin = 6; // country of origin
-  ReportType reportType = 7; // set by backend
+  optional string origin = 6; // country of origin
+  optional ReportType reportType = 7; // set by backend
   // Number of days elapsed between symptom onset and the TEK being used.
   // E.g. 2 means TEK is 2 days after onset of symptoms.
-  uint32 days_since_onset_of_symptoms = 8;
-}
-// Data type representing why this key was published.
-enum ReportType {
-  UNKNOWN = 0;  // Never returned by the client API.
-  CONFIRMED_TEST = 1;
-  CONFIRMED_CLINICAL_DIAGNOSIS = 2;
-  SELF_REPORT = 3;
-  RECURSIVE = 4;  // Reserved for future use.
-  REVOKED = 5;  // Used to revoke a key, never returned by client API.
+  optional uint32 days_since_onset_of_symptoms = 8;
 }

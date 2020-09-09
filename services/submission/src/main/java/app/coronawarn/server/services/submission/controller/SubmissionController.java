@@ -22,7 +22,6 @@ package app.coronawarn.server.services.submission.controller;
 
 import app.coronawarn.server.common.persistence.domain.DiagnosisKey;
 import app.coronawarn.server.common.persistence.service.DiagnosisKeyService;
-import app.coronawarn.server.common.protocols.external.exposurenotification.ReportType;
 import app.coronawarn.server.common.protocols.external.exposurenotification.TemporaryExposureKey;
 import app.coronawarn.server.common.protocols.internal.SubmissionPayload;
 import app.coronawarn.server.services.submission.config.SubmissionServiceConfig;
@@ -133,7 +132,6 @@ public class SubmissionController {
           .fromTemporaryExposureKey(protoBufferKey)
           .withVisitedCountries(submissionPayload.getVisitedCountriesList())
           .withCountryCode(originCountry)
-          .withReportType(submissionPayload.getReportType())
           .withConsentToFederation(submissionPayload.getConsentToFederation())
           .build();
 

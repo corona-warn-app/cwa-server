@@ -62,7 +62,7 @@ public class BatchSigner {
           .forEach(country -> batchBytes.writeBytes(country.getBytes(StandardCharsets.UTF_8)));
 
       batchBytes.writeBytes(diagnosisKey.getOrigin().getBytes(StandardCharsets.UTF_8));
-      batchBytes.writeBytes(ByteBuffer.allocate(4).putInt(diagnosisKey.getReportTypeValue()).array());
+      batchBytes.writeBytes(ByteBuffer.allocate(4).putInt(diagnosisKey.getReportType().getNumber()).array());
       batchBytes.writeBytes(ByteBuffer.allocate(4).putInt(diagnosisKey.getDaysSinceOnsetOfSymptoms()).array());
     }
     return batchBytes.toByteArray();

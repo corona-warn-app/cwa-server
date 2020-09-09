@@ -192,19 +192,6 @@ class SubmissionControllerTest {
   }
 
   @Test
-  void submissionPayloadWithDefaultReportType() {
-    Collection<TemporaryExposureKey> submittedKeys = buildMultipleKeys();
-    ArgumentCaptor<Collection<DiagnosisKey>> argument = ArgumentCaptor.forClass(Collection.class);
-    ReportType expectedDefaultReportType = ReportType.CONFIRMED_CLINICAL_DIAGNOSIS;
-
-    SubmissionPayload submissionPayload = buildPayload(submittedKeys);
-    executor.executePost(submissionPayload);
-
-    verify(diagnosisKeyService, atLeastOnce()).saveDiagnosisKeys(argument.capture());
-    assertThat(submissionPayload.getReportType()).isEqualTo(expectedDefaultReportType);
-  }
-
-  @Test
   void checkSaveOperationCallAndFakeDelayUpdateForValidParameters() {
     Collection<TemporaryExposureKey> submittedKeys = buildMultipleKeys();
     ArgumentCaptor<Collection<DiagnosisKey>> argument = ArgumentCaptor.forClass(Collection.class);
@@ -327,7 +314,6 @@ class SubmissionControllerTest {
             .withVisitedCountries(submissionPayload.getVisitedCountriesList())
             .withCountryCode(StringUtils.defaultIfBlank(submissionPayload.getOrigin(),
                 config.getDefaultOriginCountry()))
-            .withReportType(submissionPayload.getReportType())
             .build())
         .collect(Collectors.toSet());
 
