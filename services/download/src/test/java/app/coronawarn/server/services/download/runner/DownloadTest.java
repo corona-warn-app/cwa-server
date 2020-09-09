@@ -21,6 +21,7 @@
 package app.coronawarn.server.services.download.runner;
 
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
@@ -80,7 +81,7 @@ class DownloadTest {
 
     @Test
     @DirtiesContext
-    void testRunSuccessfully() {
+    void testDownloadRunSuccessfully() {
       BatchDownloadResponse serverResponse = FederationBatchUtils.createBatchDownloadResponse("abc", Optional.empty());
       when(federationGatewayClient.getDiagnosisKeys(anyString())).thenReturn(serverResponse);
 
@@ -90,12 +91,26 @@ class DownloadTest {
 
     @Test
     @DirtiesContext
-    void testExceptionInBatchInfoService() {
+    void testDownloadFailsDueToExceptionInBatchInfoService() {
       BatchDownloadResponse serverResponse = FederationBatchUtils.createBatchDownloadResponse("abc", Optional.empty());
       when(federationGatewayClient.getDiagnosisKeys(anyString())).thenReturn(serverResponse);
       doThrow(RuntimeException.class).when(federationBatchInfoService).save(any());
 
       verify(federationGatewayClient, times(1)).getDiagnosisKeys(anyString());
+    }
+
+    @Test
+    @DirtiesContext
+    void testRetentionRunSuccessfully() {
+      verify(federationBatchInfoService, times(1)).applyRetentionPolicy(anyInt());
+    }
+
+    @Test
+    @DirtiesContext
+    void testRetentionFailsDueToExceptionInBatchInfoService() {
+      doThrow(RuntimeException.class).when(federationBatchInfoService).applyRetentionPolicy(anyInt());
+      
+      verify(federationBatchInfoService, times(1)).applyRetentionPolicy(anyInt());
     }
   }
 }
