@@ -34,7 +34,11 @@ services:
 spring:
   flyway:
     enabled: true
+    baselineOnMigrate: true
+    baseline-version: 0
     locations: classpath:/db/migration
+    password: local_setup_flyway
+    user: local_setup_flyway
   datasource:
     url:  jdbc:tc:postgresql:11.8:///databasename?TC_TMPFS=/testtmpfs:rw
   #    if
