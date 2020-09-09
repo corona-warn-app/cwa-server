@@ -23,6 +23,7 @@ package app.coronawarn.server.common.federation.client.config;
 import app.coronawarn.server.common.federation.client.FederationFeignHttpClientProvider;
 import app.coronawarn.server.common.federation.client.download.FederationGatewayHttpMessageConverter;
 import feign.Client;
+import feign.Logger;
 import org.springframework.boot.autoconfigure.http.HttpMessageConverters;
 import org.springframework.cloud.openfeign.EnableFeignClients;
 import org.springframework.context.annotation.Bean;
@@ -34,15 +35,12 @@ import org.springframework.context.annotation.Configuration;
 public class WebConfig {
 
   @Bean
+  Logger.Level feignLoggerLevel() {
+    return Logger.Level.FULL;
+  }
+
+  @Bean
   public HttpMessageConverters httpMessageConverters() {
     return new HttpMessageConverters(new FederationGatewayHttpMessageConverter());
   }
-
-//  @Bean
-//  Client feignDedicatedHttpClient(FederationGatewayConfig federationGatewayConfig) {
-//    FederationGatewayConfig.Ssl sslConfig = federationGatewayConfig.getSsl();
-//    return new FederationFeignHttpClientProvider()
-//        .createFeignClient(federationGatewayConfig.getConnectionPoolSize(), sslConfig.getKeyStore(),
-//            sslConfig.getKeyStorePass(), sslConfig.getCertificateType());
-//  }
 }

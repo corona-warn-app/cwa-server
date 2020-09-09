@@ -49,6 +49,10 @@ public class FederationFeignHttpClientProvider {
   private final String keyStorePassword;
   private final String keyPassword;
 
+  /**
+   * Construct Provider.
+   * @param config .
+   */
   public FederationFeignHttpClientProvider(FederationGatewayConfig config) {
     var ssl = config.getSsl();
     this.connectionPoolSize = config.getConnectionPoolSize();
@@ -92,16 +96,12 @@ public class FederationFeignHttpClientProvider {
     }
   }
 
+  /**
+   * Creates connection manager.
+   * @return ApacheHttpClientConnectionManagerFactory.
+   */
   @Bean
   public ApacheHttpClientConnectionManagerFactory createConnectionManager() {
     return new DefaultApacheHttpClientConnectionManagerFactory();
   }
-
-//  private KeyStore readStore(String keyStorePath, String keyStorePass, String certificateType) throws Exception {
-//    try (InputStream keyStoreStream = this.getClass().getResourceAsStream(keyStorePath)) {
-//      KeyStore keyStore = KeyStore.getInstance(certificateType);
-//      keyStore.load(keyStoreStream, keyStorePass.toCharArray());
-//      return keyStore;
-//    }
-//  }
 }
