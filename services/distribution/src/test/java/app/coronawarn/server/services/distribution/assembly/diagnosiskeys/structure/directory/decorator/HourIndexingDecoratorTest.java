@@ -86,6 +86,7 @@ class HourIndexingDecoratorTest {
     when(svcConfig.getExpiryPolicyMinutes()).thenReturn(120);
     when(svcConfig.getShiftingPolicyThreshold()).thenReturn(1);
     when(svcConfig.getMaximumNumberOfKeysPerBundle()).thenReturn(1);
+    when(svcConfig.getSupportedCountries()).thenReturn(new String[]{"DE"});
 
     DiagnosisKeyBundler diagnosisKeyBundler = new ProdDiagnosisKeyBundler(svcConfig, sharingPoliciesChecker);
     diagnosisKeyBundler.setDiagnosisKeys(diagnosisKeys, LocalDateTime.of(1970, 1, 3, 5, 0));
@@ -93,7 +94,7 @@ class HourIndexingDecoratorTest {
     HourIndexingDecorator decorator = makeDecoratedHourDirectory(diagnosisKeyBundler);
 
     decorator.prepare(new ImmutableStack<>().push("DE").push(LocalDate.of(1970, 1, 3)));
-    Set<LocalDateTime> index = decorator.getIndex(new ImmutableStack<>().push(LocalDate.of(1970, 1, 3)));
+    Set<LocalDateTime> index = decorator.getIndex(new ImmutableStack<>().push("DE").push(LocalDate.of(1970, 1, 3)));
 
     assertThat(index).isEmpty();
   }
@@ -108,7 +109,7 @@ class HourIndexingDecoratorTest {
     HourIndexingDecorator decorator = makeDecoratedHourDirectory(diagnosisKeyBundler);
     decorator.prepare(new ImmutableStack<>().push("DE").push(LocalDate.of(1970, 1, 5)));
 
-    Set<LocalDateTime> index = decorator.getIndex(new ImmutableStack<>().push(LocalDate.of(1970, 1, 5)));
+    Set<LocalDateTime> index = decorator.getIndex(new ImmutableStack<>().push("DE").push(LocalDate.of(1970, 1, 5)));
 
     assertThat(index).contains(LocalDateTime.of(1970, 1, 5, 0, 0))
         .doesNotContain(LocalDateTime.of(1970, 1, 5, 1, 0));

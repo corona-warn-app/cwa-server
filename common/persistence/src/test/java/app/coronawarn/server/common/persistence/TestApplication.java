@@ -21,8 +21,10 @@
 package app.coronawarn.server.common.persistence;
 
 import app.coronawarn.server.common.persistence.repository.DiagnosisKeyRepository;
+import app.coronawarn.server.common.persistence.repository.FederationBatchInfoRepository;
 import app.coronawarn.server.common.persistence.repository.FederationUploadKeyRepository;
 import app.coronawarn.server.common.persistence.service.DiagnosisKeyService;
+import app.coronawarn.server.common.persistence.service.FederationBatchInfoService;
 import app.coronawarn.server.common.persistence.service.FederationUploadKeyService;
 import app.coronawarn.server.common.persistence.service.common.KeySharingPoliciesChecker;
 import app.coronawarn.server.common.persistence.service.common.ValidDiagnosisKeyFilter;
@@ -53,5 +55,10 @@ public class TestApplication {
   @Bean
   FederationUploadKeyService createFederationUploadKeyService(FederationUploadKeyRepository keyRepository) {
     return new FederationUploadKeyService(keyRepository, validKeysFilter(), keySharingPoliciesChecker());
+  }
+
+  @Bean
+  FederationBatchInfoService createFederationBatchInfoService(FederationBatchInfoRepository federationBatchInfoRepository) {
+    return new FederationBatchInfoService(federationBatchInfoRepository);
   }
 }

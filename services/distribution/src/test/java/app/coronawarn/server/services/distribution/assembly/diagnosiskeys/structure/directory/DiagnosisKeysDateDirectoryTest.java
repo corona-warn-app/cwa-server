@@ -93,7 +93,8 @@ class DiagnosisKeysDateDirectoryTest {
     outputDirectory.addWritable(dateDirectory);
     dateDirectory.prepare(new ImmutableStack<>()
         .push("version-directory")
-        .push("country-directory"));
+        .push("country-directory")
+        .push("DE"));
     outputDirectory.write();
   }
 
@@ -113,7 +114,7 @@ class DiagnosisKeysDateDirectoryTest {
         "1970-01-03", listOfHoursAsStrings(0, 23),
         "1970-01-04", listOfHoursAsStrings(0, 23),
         "1970-01-05", listOfHoursAsStrings(0, 23)),
-    	"1970-01-06");
+        "1970-01-06");
     assertThat(actualFiles).isEqualTo(expectedDateAndHourFiles);
   }
 
@@ -138,8 +139,8 @@ class DiagnosisKeysDateDirectoryTest {
 
   @Test
   @Disabled("Temporarily disabling this test as part of the fix for issue #650."
-  		+ "There seems to be a timing issue with this test because running it individually works, but running it"
-  		+ " in a suite will cause it to produce a different output then expected. Further investigation is required here ")
+      + "There seems to be a timing issue with this test because running it individually works, but running it"
+      + " in a suite will cause it to produce a different output then expected. Further investigation is required here ")
   void testIncludesEmptyDatesInDirectoryStructure() {
     Collection<DiagnosisKey> diagnosisKeys = IntStream.range(0, 3)
         .filter(currentDate -> currentDate != 1)
