@@ -39,8 +39,6 @@ import org.springframework.stereotype.Component;
 @Component
 public class FederationUploadKeyService {
 
-  private static final Logger logger = LoggerFactory.getLogger(FederationUploadKeyService.class);
-
   private final FederationUploadKeyRepository keyRepository;
   private final ValidDiagnosisKeyFilter validationFilter;
   private final KeySharingPoliciesChecker sharingPoliciesChecker;

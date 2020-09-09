@@ -54,9 +54,9 @@ public class KeySharingPoliciesChecker {
       .toSeconds(DiagnosisKey.ROLLING_PERIOD_MINUTES_INTERVAL);
 
   private static final Map<ChronoUnit, Function<Duration, Long>> TIME_CONVERTERS
-       = Map.of(ChronoUnit.SECONDS, (duration) -> duration.toSeconds(),
-                ChronoUnit.MINUTES, (duration) -> duration.toMinutes(),
-                ChronoUnit.HOURS, (duration) -> duration.toHours());
+       = Map.of(ChronoUnit.SECONDS, Duration::toSeconds,
+                ChronoUnit.MINUTES, Duration::toMinutes,
+                ChronoUnit.HOURS, Duration::toHours);
 
   /**
    * Returns true if the given diagnosis key can be shared at the given time taking into account

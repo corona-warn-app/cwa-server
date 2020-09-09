@@ -54,7 +54,6 @@ public final class ExpirationPolicy {
     if (Objects.isNull(timeUnit)) {
       throw new IllegalArgumentException("Time unit parameter must not be null.");
     }
-    ExpirationPolicy policy = new ExpirationPolicy(timeValue, timeUnit);
-    return policy;
+    return new ExpirationPolicy(timeValue, timeUnit);
   }
 }
