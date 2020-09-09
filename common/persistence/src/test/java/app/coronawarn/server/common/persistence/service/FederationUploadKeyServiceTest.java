@@ -53,9 +53,9 @@ class FederationUploadKeyServiceTest {
 
   @Test
   void shouldRetrieveKeysWithConsentOnly() {
-    var testKeys = new ArrayList<>(List.of(
+    var testKeys = List.of(
         buildDiagnosisKeyForSubmissionTimestamp(1000L, true),
-        buildDiagnosisKeyForSubmissionTimestamp(2000L, false)));
+        buildDiagnosisKeyForSubmissionTimestamp(2000L, false));
 
     when(uploadKeyRepository.findAllUploadableKeys()).thenReturn(testKeys);
     when(keySharingPoliciesChecker.canShareKeyAtTime(any(), any(), any())).thenReturn(true);
@@ -69,7 +69,7 @@ class FederationUploadKeyServiceTest {
   void shouldRetrieveExpiredKeysOnly() {
     DiagnosisKey key1 = buildDiagnosisKeyForSubmissionTimestamp(1000L, true);
     DiagnosisKey key2 = buildDiagnosisKeyForSubmissionTimestamp(2000L, false);
-    var testKeys = new ArrayList<>(List.of(key1, key2));
+    var testKeys = List.of(key1, key2);
 
     when(uploadKeyRepository.findAllUploadableKeys()).thenReturn(testKeys);
     when(keySharingPoliciesChecker.canShareKeyAtTime(eq(key1), any(), any())).thenReturn(true);
