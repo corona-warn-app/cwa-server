@@ -26,7 +26,7 @@ import java.util.Random;
 import app.coronawarn.server.common.persistence.domain.DiagnosisKey;
 import app.coronawarn.server.common.protocols.external.exposurenotification.ReportType;
 
-public class MockData {
+public class PersistenceMockData {
 
   public static final String TEST_ORIGIN_COUNTRY = "DE";
 

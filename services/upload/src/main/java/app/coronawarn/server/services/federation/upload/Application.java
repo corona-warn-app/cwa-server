@@ -43,7 +43,8 @@ import org.springframework.data.jdbc.repository.config.EnableJdbcRepositories;
  * submission process.
  */
 @SpringBootApplication
-@EnableJdbcRepositories(basePackages = "app.coronawarn.server.common.persistence")
+@EnableJdbcRepositories(basePackages = {"app.coronawarn.server.common.persistence",
+    "app.coronawarn.server.services.federation.upload.testdata"})
 @EntityScan(basePackages = "app.coronawarn.server.common.persistence")
 @ComponentScan({"app.coronawarn.server.common.persistence",
     "app.coronawarn.server.services.federation.upload",
@@ -57,12 +58,6 @@ public class Application implements EnvironmentAware, DisposableBean {
     SpringApplication.run(Application.class);
   }
 
-  @Override
-  public void destroy() {
-    logger.info("Shutting down log4j2.");
-    LogManager.shutdown();
-  }
-
   /**
    * Terminates this application with exit code 1 (general error).
    */
@@ -70,6 +65,12 @@ public class Application implements EnvironmentAware, DisposableBean {
     SpringApplication.exit(appContext);
     logger.error("Federation Upload Service terminated abnormally.");
     System.exit(1);
+  }
+
+  @Override
+  public void destroy() {
+    logger.info("Shutting down log4j2.");
+    LogManager.shutdown();
   }
 
   @Override
