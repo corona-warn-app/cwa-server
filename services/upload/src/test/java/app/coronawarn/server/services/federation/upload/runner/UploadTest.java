@@ -11,6 +11,7 @@ import app.coronawarn.server.common.persistence.domain.DiagnosisKey;
 import app.coronawarn.server.common.persistence.repository.FederationUploadKeyRepository;
 import app.coronawarn.server.common.persistence.service.DiagnosisKeyService;
 import app.coronawarn.server.common.persistence.service.FederationUploadKeyService;
+import app.coronawarn.server.common.persistence.service.common.KeySharingPoliciesChecker;
 import app.coronawarn.server.common.persistence.service.common.ValidDiagnosisKeyFilter;
 import app.coronawarn.server.common.protocols.external.exposurenotification.DiagnosisKeyBatch;
 import app.coronawarn.server.services.federation.upload.client.ProdFederationUploadClient;
@@ -45,6 +46,7 @@ class UploadTest {
   @ContextConfiguration(classes = {
       Upload.class, PayloadFactory.class, DiagnosisKeyBatchAssembler.class,
       BatchSigner.class, CryptoProvider.class, DiagnosisKeyGenerator.class,
+      KeySharingPoliciesChecker.class,
       ProdFederationUploadClient.class, DiagnosisKeyPersistenceLoader.class,
       FederationUploadKeyService.class, ValidDiagnosisKeyFilter.class
   },
