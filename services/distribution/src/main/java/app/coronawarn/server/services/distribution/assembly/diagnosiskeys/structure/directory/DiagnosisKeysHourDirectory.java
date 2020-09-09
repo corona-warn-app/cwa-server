@@ -54,8 +54,12 @@ public class DiagnosisKeysHourDirectory extends IndexDirectoryOnDisk<LocalDateTi
   public DiagnosisKeysHourDirectory(DiagnosisKeyBundler diagnosisKeyBundler, CryptoProvider cryptoProvider,
       DistributionServiceConfig distributionServiceConfig) {
     super(distributionServiceConfig.getApi().getHourPath(),
-        indices -> diagnosisKeyBundler.getHoursWithDistributableDiagnosisKeys(((LocalDate) indices.peek())),
+        indices -> {
+          String country = (String) indices.pop().peek();
+          return diagnosisKeyBundler.getHoursWithDistributableDiagnosisKeys(((LocalDate) indices.peek()), country);
+        },
         LocalDateTime::getHour);
+
     this.diagnosisKeyBundler = diagnosisKeyBundler;
     this.cryptoProvider = cryptoProvider;
     this.distributionServiceConfig = distributionServiceConfig;
@@ -68,15 +72,15 @@ public class DiagnosisKeysHourDirectory extends IndexDirectoryOnDisk<LocalDateTi
       // The LocalDateTime currentHour already contains both the date and the hour information, so
       // we can throw away the LocalDate that's the second item on the stack from the "/date"
       // IndexDirectory.
-      String region = (String) currentIndices.pop().pop().peek();
+      String country = (String) currentIndices.pop().pop().peek();
 
       List<DiagnosisKey> diagnosisKeysForCurrentHour =
-          this.diagnosisKeyBundler.getDiagnosisKeysForHour(currentHour);
+          this.diagnosisKeyBundler.getDiagnosisKeysForHour(currentHour, country);
 
       long startTimestamp = currentHour.toEpochSecond(ZoneOffset.UTC);
       long endTimestamp = currentHour.plusHours(1).toEpochSecond(ZoneOffset.UTC);
       File<WritableOnDisk> temporaryExposureKeyExportFile = TemporaryExposureKeyExportFile.fromDiagnosisKeys(
-          diagnosisKeysForCurrentHour, region, startTimestamp, endTimestamp, distributionServiceConfig);
+          diagnosisKeysForCurrentHour, country, startTimestamp, endTimestamp, distributionServiceConfig);
 
       Archive<WritableOnDisk> hourArchive = new ArchiveOnDisk(distributionServiceConfig.getOutputFileName());
       hourArchive.addWritable(temporaryExposureKeyExportFile);

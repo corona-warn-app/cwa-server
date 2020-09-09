@@ -31,6 +31,7 @@ import app.coronawarn.server.services.distribution.assembly.structure.util.TimeU
 import app.coronawarn.server.services.distribution.config.DistributionServiceConfig;
 import app.coronawarn.server.services.distribution.config.DistributionServiceConfig.TestData;
 import java.time.temporal.ChronoUnit;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
@@ -68,11 +69,9 @@ public class TestDataGeneration implements ApplicationRunner {
 
   private final DiagnosisKeyService diagnosisKeyService;
 
-  private final String distributionCountry;
-
-  private final String logPrefix;
-
   private final RandomGenerator random = new JDKRandomGenerator();
+
+  private final List<String> supportedCountries;
 
   private static final int POISSON_MAX_ITERATIONS = 10_000_000;
   private static final double POISSON_EPSILON = 1e-12;
@@ -85,8 +84,7 @@ public class TestDataGeneration implements ApplicationRunner {
     this.diagnosisKeyService = diagnosisKeyService;
     this.retentionDays = distributionServiceConfig.getRetentionDays();
     this.config = distributionServiceConfig.getTestData();
-    this.distributionCountry = distributionServiceConfig.getApi().getDistributionCountry();
-    this.logPrefix = "[" + this.distributionCountry + "]";
+    this.supportedCountries = Arrays.asList(distributionServiceConfig.getSupportedCountries());
   }
 
   /**
@@ -101,36 +99,39 @@ public class TestDataGeneration implements ApplicationRunner {
    * See {@link TestDataGeneration} class documentation.
    */
   private void writeTestData() {
-    logger.debug("{} Querying diagnosis keys from the database...", this.logPrefix);
-    List<DiagnosisKey> existingDiagnosisKeys =
-        diagnosisKeyService.getDiagnosisKeysByVisitedCountry(distributionCountry);
+    supportedCountries.forEach(country -> {
+      logger.debug("Querying diagnosis keys from the database...");
+      List<DiagnosisKey> existingDiagnosisKeys = diagnosisKeyService.getDiagnosisKeys().stream()
+          .filter(diagnosisKey -> diagnosisKey.getOriginCountry().equals(country))
+          .collect(Collectors.toList());
 
-    // Timestamps in hours since epoch. Test data generation starts one hour after the latest diagnosis key in the
-    // database and ends one hour before the current one.
-    long startTimestamp = getGeneratorStartTimestamp(existingDiagnosisKeys); // Inclusive
-    long endTimestamp = getGeneratorEndTimestamp(); // Inclusive
+      // Timestamps in hours since epoch. Test data generation starts one hour after the latest diagnosis key in the
+      // database and ends one hour before the current one.
+      long startTimestamp = getGeneratorStartTimestamp(existingDiagnosisKeys); // Inclusive
+      long endTimestamp = getGeneratorEndTimestamp(); // Inclusive
 
-    // Add the startTimestamp to the seed. Otherwise we would generate the same data every hour.
-    random.setSeed(this.config.getSeed() + startTimestamp);
-    PoissonDistribution poisson =
-        new PoissonDistribution(random, this.config.getExposuresPerHour(), POISSON_EPSILON, POISSON_MAX_ITERATIONS);
+      // Add the startTimestamp to the seed. Otherwise we would generate the same data every hour.
+      random.setSeed(this.config.getSeed() + startTimestamp);
+      PoissonDistribution poisson =
+          new PoissonDistribution(random, this.config.getExposuresPerHour(), POISSON_EPSILON, POISSON_MAX_ITERATIONS);
 
-    if (startTimestamp > endTimestamp) {
-      logger.debug("{} Skipping test data generation, latest diagnosis keys are still up-to-date.", this.logPrefix);
-      return;
-    }
-    logger.debug("{} Generating diagnosis keys between {} and {}...", this.logPrefix, startTimestamp, endTimestamp);
-    List<DiagnosisKey> newDiagnosisKeys = LongStream.rangeClosed(startTimestamp, endTimestamp)
-        .mapToObj(submissionTimestamp -> IntStream.range(0, poisson.sample())
-            .mapToObj(ignoredValue -> generateDiagnosisKey(submissionTimestamp, distributionCountry))
-            .collect(Collectors.toList()))
-        .flatMap(List::stream)
-        .collect(Collectors.toList());
+      if (startTimestamp > endTimestamp) {
+        logger.debug("Skipping test data generation, latest diagnosis keys are still up-to-date.");
+        return;
+      }
+      logger.debug("Generating diagnosis keys between {} and {}...", startTimestamp, endTimestamp);
+      List<DiagnosisKey> newDiagnosisKeys = LongStream.rangeClosed(startTimestamp, endTimestamp)
+          .mapToObj(submissionTimestamp -> IntStream.range(0, poisson.sample())
+              .mapToObj(ignoredValue -> generateDiagnosisKey(submissionTimestamp,country))
+              .collect(Collectors.toList()))
+          .flatMap(List::stream)
+          .collect(Collectors.toList());
 
-    logger.debug("{} Writing {} new diagnosis keys to the database...", this.logPrefix, newDiagnosisKeys.size());
-    diagnosisKeyService.saveDiagnosisKeys(newDiagnosisKeys);
+      logger.debug("Writing {} new diagnosis keys to the database...", newDiagnosisKeys.size());
+      diagnosisKeyService.saveDiagnosisKeys(newDiagnosisKeys);
 
-    logger.debug("{} Test data generation finished successfully.", this.logPrefix);
+      logger.debug("Test data generation finished successfully.");
+    });
   }
 
   /**

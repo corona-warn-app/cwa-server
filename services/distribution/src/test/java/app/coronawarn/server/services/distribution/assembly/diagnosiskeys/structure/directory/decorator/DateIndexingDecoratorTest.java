@@ -26,6 +26,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import app.coronawarn.server.common.persistence.domain.DiagnosisKey;
+import app.coronawarn.server.common.persistence.service.common.KeySharingPoliciesChecker;
 import app.coronawarn.server.services.distribution.assembly.component.CryptoProvider;
 import app.coronawarn.server.services.distribution.assembly.diagnosiskeys.DiagnosisKeyBundler;
 import app.coronawarn.server.services.distribution.assembly.diagnosiskeys.ProdDiagnosisKeyBundler;
@@ -49,12 +50,15 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 @EnableConfigurationProperties(value = DistributionServiceConfig.class)
 @ExtendWith(SpringExtension.class)
-@ContextConfiguration(classes = {CryptoProvider.class, DistributionServiceConfig.class},
+@ContextConfiguration(classes = {CryptoProvider.class, DistributionServiceConfig.class, KeySharingPoliciesChecker.class},
     initializers = ConfigFileApplicationContextInitializer.class)
 class DateIndexingDecoratorTest {
 
   @Autowired
   DistributionServiceConfig distributionServiceConfig;
+
+  @Autowired
+  KeySharingPoliciesChecker sharingPoliciesChecker;
 
   @Autowired
   CryptoProvider cryptoProvider;
@@ -63,7 +67,7 @@ class DateIndexingDecoratorTest {
 
   @BeforeEach
   void setup() {
-    diagnosisKeyBundler = new ProdDiagnosisKeyBundler(distributionServiceConfig);
+    diagnosisKeyBundler = new ProdDiagnosisKeyBundler(distributionServiceConfig, sharingPoliciesChecker);
   }
 
 
@@ -74,7 +78,7 @@ class DateIndexingDecoratorTest {
     DateIndexingDecorator decorator = makeDecoratedDateDirectory(diagnosisKeyBundler);
     decorator.prepare(new ImmutableStack<>().push("DE"));
 
-    Set<LocalDate> index = decorator.getIndex(new ImmutableStack<>());
+    Set<LocalDate> index = decorator.getIndex(new ImmutableStack<>().push("DE"));
 
     assertThat(index).contains(LocalDate.of(1970, 1, 4))
         .doesNotContain(LocalDate.of(1970, 1, 5));
@@ -92,15 +96,16 @@ class DateIndexingDecoratorTest {
     when(svcConfig.getExpiryPolicyMinutes()).thenReturn(120);
     when(svcConfig.getShiftingPolicyThreshold()).thenReturn(1);
     when(svcConfig.getMaximumNumberOfKeysPerBundle()).thenReturn(1);
+    when(svcConfig.getSupportedCountries()).thenReturn(new String[]{"DE"});
 
-    DiagnosisKeyBundler diagnosisKeyBundler = new ProdDiagnosisKeyBundler(svcConfig);
+    DiagnosisKeyBundler diagnosisKeyBundler = new ProdDiagnosisKeyBundler(svcConfig, sharingPoliciesChecker);
     diagnosisKeyBundler.setDiagnosisKeys(diagnosisKeys, LocalDateTime.of(1970, 1, 4, 0, 0));
 
     DateIndexingDecorator decorator = makeDecoratedDateDirectory(diagnosisKeyBundler);
 
     decorator.prepare(new ImmutableStack<>().push("DE"));
 
-    Set<LocalDate> index = decorator.getIndex(new ImmutableStack<>());
+    Set<LocalDate> index = decorator.getIndex(new ImmutableStack<>().push("DE"));
     assertThat(index).isEmpty();
   }
 

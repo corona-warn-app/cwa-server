@@ -3,12 +3,10 @@ package app.coronawarn.server.services.federation.upload.runner;
 import app.coronawarn.server.services.federation.upload.client.TestFederationUploadClient;
 import app.coronawarn.server.services.federation.upload.config.UploadServiceConfig;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.SpyBean;
 import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.atMostOnce;

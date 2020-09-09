@@ -5,6 +5,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 @ConfigurationProperties(prefix = "services.upload")
 public class UploadServiceConfig {
 
+  private Integer expiryPolicyMinutes;
   private Integer minBatchKeyCount;
   private Integer maxBatchKeyCount;
   private String privateKey;
@@ -13,6 +14,14 @@ public class UploadServiceConfig {
   private Signature signature;
   private TestData testData;
 
+
+  public Integer getExpiryPolicyMinutes() {
+    return expiryPolicyMinutes;
+  }
+
+  public void setExpiryPolicyMinutes(Integer expiryPolicyMinutes) {
+    this.expiryPolicyMinutes = expiryPolicyMinutes;
+  }
 
   public Integer getMinBatchKeyCount() {
     return minBatchKeyCount;

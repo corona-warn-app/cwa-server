@@ -42,13 +42,12 @@ services:
       version-path: version
       version-v1: v1
       country-path: country
-      country-germany: DE
+      origin-country: DE
       date-path: date
       hour-path: hour
       diagnosis-keys-path: diagnosis-keys
       parameters-path: configuration
       app-config-file-name: app_config
-      distribution-country: ${DISTRIBUTION_COUNTRY:DE}
     # Signature configuration, used for signing the exports.
     signature:
       # The alias with which to identify public key to be used for verification.
