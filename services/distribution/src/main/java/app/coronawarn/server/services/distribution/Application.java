@@ -38,6 +38,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.core.env.Environment;
 import org.springframework.data.jdbc.repository.config.EnableJdbcRepositories;
+import org.springframework.validation.Validator;
 
 /**
  * The retrieval, assembly and distribution of configuration and diagnosis key data is handled by a chain of {@link
@@ -66,6 +67,11 @@ public class Application implements EnvironmentAware, DisposableBean {
     LogManager.shutdown();
   }
 
+  @Bean
+  public static Validator configurationPropertiesValidator() {
+    return new DistributionServiceConfigValidator();
+  }
+
   /**
    * Terminates this application with exit code 1 (general error).
    */
@@ -82,10 +88,5 @@ public class Application implements EnvironmentAware, DisposableBean {
       logger.warn("The distribution runner is started with postgres connection TLS disabled. "
           + "This should never be used in PRODUCTION!");
     }
-  }
-
-  @Bean
-  public static DistributionServiceConfigValidator configurationPropertiesValidator() {
-    return new DistributionServiceConfigValidator();
   }
 }

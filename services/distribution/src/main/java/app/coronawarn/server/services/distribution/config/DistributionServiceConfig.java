@@ -25,6 +25,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
+import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.Pattern;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.validation.annotation.Validated;
@@ -69,6 +70,7 @@ public class DistributionServiceConfig {
   private Api api;
   private ObjectStore objectStore;
   private List<AppFeature> appFeatures;
+  @NotEmpty
   private String[] supportedCountries;
   private AppVersions appVersions;
 

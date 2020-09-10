@@ -23,6 +23,7 @@ package app.coronawarn.server.services.submission.config;
 import java.io.File;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
+import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.Pattern;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Component;
@@ -145,7 +146,7 @@ public class SubmissionServiceConfig {
     @Min(7)
     @Max(100)
     private Integer maxNumberOfKeys;
-
+    @NotEmpty
     private String[] supportedCountries;
 
     private String defaultOriginCountry;
