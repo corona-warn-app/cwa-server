@@ -36,6 +36,7 @@ import app.coronawarn.server.services.distribution.config.DistributionServiceCon
 import app.coronawarn.server.services.distribution.config.DistributionServiceConfig.TestData;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
@@ -145,7 +146,7 @@ class TestDataGenerationTest {
   @Test
   void shouldGenerateValuesForGivenCountry() {
     DistributionServiceConfig serviceConfigSpy = spy(distributionServiceConfig);
-    serviceConfigSpy.setSupportedCountries("FR");
+    serviceConfigSpy.setSupportedCountries(new String[]{"FR"});
     testDataGeneration = new TestDataGeneration(diagnosisKeyService, serviceConfigSpy);
     var now = LocalDateTime.of(2020, 7, 15, 12, 0, 0).toInstant(ZoneOffset.UTC);
     TimeUtils.setNow(now);

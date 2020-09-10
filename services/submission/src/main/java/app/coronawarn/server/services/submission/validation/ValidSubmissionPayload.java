@@ -30,16 +30,12 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 import java.util.Arrays;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Collectors;
 import javax.validation.Constraint;
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
 import javax.validation.Payload;
-import org.apache.tomcat.util.buf.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-
 
 @Constraint(validatedBy = ValidSubmissionPayload.SubmissionPayloadValidator.class)
 @Target({ElementType.PARAMETER})
@@ -71,21 +67,25 @@ public @interface ValidSubmissionPayload {
   class SubmissionPayloadValidator implements
       ConstraintValidator<ValidSubmissionPayload, SubmissionPayload> {
 
-    private static final Logger logger = LoggerFactory.getLogger(SubmissionPayloadValidator.class);
-    private SubmissionServiceConfig submissionServiceConfig;
+    private final int maxNumberOfKeys;
+    private final int maxRollingPeriod;
+    private final String[] supportedCountries;
 
     public SubmissionPayloadValidator(SubmissionServiceConfig submissionServiceConfig) {
-      this.submissionServiceConfig = submissionServiceConfig;
+      maxNumberOfKeys = submissionServiceConfig.getMaxNumberOfKeys();
+      maxRollingPeriod = submissionServiceConfig.getMaxRollingPeriod();
+      supportedCountries = submissionServiceConfig.getSupportedCountries();
     }
 
     /**
      * Validates the following constraints.
      * <ul>
      *   <li>StartIntervalNumber values from the same {@link SubmissionPayload} shall be unique.</li>
+     *   <li>There must be no gaps for StartIntervalNumber values for a user.</li>
      *   <li>There must not be any keys in the {@link SubmissionPayload} have overlapping time windows.</li>
-     *   <li>Number of keys submitted must not exceed the configured maximum (see <code>application.yml
-     *       services.submission.payload.max-number-of-keys</code></li>
-     *   <li>Visited countries field must be a value from within the accepted country codes.</li>
+     *   <li>The period of time covered by the data file must not exceed the configured maximum number of days.</li>
+     *   <li>The origin country must be part of the supported countries.</li>
+     *   <li>The visited countries must be part of the supported countries.</li>
      * </ul>
      */
     @Override
@@ -93,46 +93,17 @@ public @interface ValidSubmissionPayload {
       List<TemporaryExposureKey> exposureKeys = submissionPayload.getKeysList();
       validatorContext.disableDefaultConstraintViolation();
 
-      logIfVisitedCountriesNotAllowed(submissionPayload);
-
       if (keysHaveFlexibleRollingPeriod(exposureKeys)) {
         return checkStartIntervalNumberIsAtMidNight(exposureKeys, validatorContext)
             && checkKeysCumulateEqualOrLessThanMaxRollingPeriodPerDay(exposureKeys, validatorContext)
-            && checkOriginCountryIsAccepted(submissionPayload, validatorContext);
+            && checkOriginCountryIsValid(submissionPayload, validatorContext)
+            && checkVisitedCountriesAreValid(submissionPayload, validatorContext);
       } else {
         return checkStartIntervalNumberIsAtMidNight(exposureKeys, validatorContext)
             && checkKeyCollectionSize(exposureKeys, validatorContext)
             && checkUniqueStartIntervalNumbers(exposureKeys, validatorContext)
-            && checkOriginCountryIsAccepted(submissionPayload, validatorContext);
-      }
-    }
-
-    /**
-     * Verify if payload contains invalid or unaccepted countries.
-     * @return false if the originCountry field of the given payload does not contain
-     *         a country code from the configured <code>application.yml/allowed-countries</code>
-     */
-    private boolean checkOriginCountryIsAccepted(SubmissionPayload submissionPayload,
-        ConstraintValidatorContext validatorContext) {
-
-      String originCountry = submissionPayload.getOrigin();
-      if (!submissionServiceConfig.isCountryAllowed(originCountry)) {
-        addViolation(validatorContext, String.format(
-            "Origin country %s is not part of the allowed countries list", originCountry));
-        return false;
-      }
-      return true;
-    }
-
-    /**
-     * Log a warning if the payload contains a visited country which is not
-     * part of the <code>allowed-countries</code> list.
-     */
-    private void logIfVisitedCountriesNotAllowed(SubmissionPayload submissionPayload) {
-      List<String> visitedCountries = submissionPayload.getVisitedCountriesList();
-      if (!submissionServiceConfig.areAllCountriesAllowed(visitedCountries)) {
-        logger.warn("Submission Payload contains some" + " visited countries which are not allowed: {}",
-            StringUtils.join(visitedCountries, ','));
+            && checkOriginCountryIsValid(submissionPayload, validatorContext)
+            && checkVisitedCountriesAreValid(submissionPayload, validatorContext);
       }
     }
 
@@ -142,17 +113,12 @@ public @interface ValidSubmissionPayload {
 
     private boolean checkKeyCollectionSize(List<TemporaryExposureKey> exposureKeys,
         ConstraintValidatorContext validatorContext) {
-      if (exposureKeys.isEmpty() || exceedsMaxNumberOfKeysPerSubmission(exposureKeys)) {
+      if (exposureKeys.isEmpty() || exposureKeys.size() > maxNumberOfKeys) {
         addViolation(validatorContext, String.format(
-            "Number of keys must be between 1 and %s, but is %s.",
-            submissionServiceConfig.getMaxNumberOfKeys(), exposureKeys.size()));
+            "Number of keys must be between 1 and %s, but is %s.", maxNumberOfKeys, exposureKeys.size()));
         return false;
       }
       return true;
-    }
-
-    private boolean exceedsMaxNumberOfKeysPerSubmission(List<TemporaryExposureKey> exposureKeys) {
-      return exposureKeys.size() > submissionServiceConfig.getMaxNumberOfKeys();
     }
 
     private boolean checkUniqueStartIntervalNumbers(List<TemporaryExposureKey> exposureKeys,
@@ -165,8 +131,7 @@ public @interface ValidSubmissionPayload {
 
       if (distinctSize < exposureKeys.size()) {
         addViolation(validatorContext, String.format(
-            "Duplicate StartIntervalNumber found. StartIntervalNumbers: %s",
-            Arrays.stream(startIntervalNumbers).map(String::valueOf).collect(Collectors.joining(","))));
+            "Duplicate StartIntervalNumber found. StartIntervalNumbers: %s", startIntervalNumbers));
         return false;
       }
       return true;
@@ -179,7 +144,7 @@ public @interface ValidSubmissionPayload {
           .groupingBy(TemporaryExposureKey::getRollingStartIntervalNumber,
               Collectors.summingInt(TemporaryExposureKey::getRollingPeriod)))
           .values().stream()
-          .anyMatch(sum -> sum <= submissionServiceConfig.getMaxRollingPeriod());
+          .anyMatch(sum -> sum <= maxRollingPeriod);
 
       if (!isValidRollingPeriod) {
         addViolation(validatorContext, "The sum of the rolling periods exceeds 144 per day");
@@ -190,21 +155,56 @@ public @interface ValidSubmissionPayload {
 
     private boolean keysHaveFlexibleRollingPeriod(List<TemporaryExposureKey> exposureKeys) {
       return exposureKeys.stream()
-          .anyMatch(temporaryExposureKey ->
-              temporaryExposureKey.getRollingPeriod() < submissionServiceConfig.getMaxRollingPeriod());
+          .anyMatch(temporaryExposureKey -> temporaryExposureKey.getRollingPeriod() < maxRollingPeriod);
     }
 
     private boolean checkStartIntervalNumberIsAtMidNight(List<TemporaryExposureKey> exposureKeys,
         ConstraintValidatorContext validatorContext) {
       boolean isNotMidNight00Utc = exposureKeys.stream()
-          .anyMatch(exposureKey ->
-              exposureKey.getRollingStartIntervalNumber() % submissionServiceConfig.getMaxRollingPeriod() > 0);
+          .anyMatch(exposureKey -> exposureKey.getRollingStartIntervalNumber() % maxRollingPeriod > 0);
 
       if (isNotMidNight00Utc) {
         addViolation(validatorContext, "Start Interval Number must be at midnight ( 00:00 UTC )");
         return false;
       }
+
       return true;
+    }
+
+    /**
+     * Verify if payload contains invalid or unaccepted origin country.
+     *
+     * @return false if the originCountry field of the given payload does not contain a country code from the configured
+     * <code>application.yml/supported-countries</code>
+     */
+    private boolean checkOriginCountryIsValid(SubmissionPayload submissionPayload,
+        ConstraintValidatorContext validatorContext) {
+      String originCountry = submissionPayload.getOrigin();
+      List<String> supportedCountriesList = List.of(supportedCountries);
+
+      if (!supportedCountriesList.contains(originCountry)) {
+        addViolation(validatorContext, String.format(
+            "Origin country %s is not part of the supported countries list", originCountry));
+        return false;
+      }
+      return true;
+    }
+
+    private boolean checkVisitedCountriesAreValid(SubmissionPayload submissionPayload,
+        ConstraintValidatorContext validatorContext) {
+      List<String> supportedCountriesList = List.of(supportedCountries);
+      AtomicBoolean validCountries = new AtomicBoolean(true);
+
+      submissionPayload.getVisitedCountriesList().forEach(country -> {
+        if (!supportedCountriesList.contains(country)) {
+          addViolation(validatorContext,
+              "[" + country + "]: Visited country is not part of the supported countries list");
+
+          validCountries.set(false);
+        }
+      });
+
+      return validCountries.get();
     }
   }
 }
