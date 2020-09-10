@@ -63,7 +63,7 @@ public class AppConfigurationDirectory extends DirectoryOnDisk {
     this.distributionServiceConfig = distributionServiceConfig;
 
     countryDirectory = new IndexDirectoryOnDisk<>(distributionServiceConfig.getApi().getCountryPath(),
-        ignoredValue -> Set.of(distributionServiceConfig.getApi().getCountryGermany()), Object::toString);
+        ignoredValue -> Set.of(distributionServiceConfig.getApi().getOriginCountry()), Object::toString);
 
     addConfigurationArchiveIfValid(distributionServiceConfig.getApi().getAppConfigFileName());
 

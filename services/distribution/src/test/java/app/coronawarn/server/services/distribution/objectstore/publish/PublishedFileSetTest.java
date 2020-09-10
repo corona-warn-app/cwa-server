@@ -23,14 +23,12 @@ package app.coronawarn.server.services.distribution.objectstore.publish;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
+import app.coronawarn.server.services.distribution.objectstore.client.S3Object;
 import java.nio.file.Path;
 import java.util.Collections;
 import java.util.List;
-
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
-
-import app.coronawarn.server.services.distribution.objectstore.client.S3Object;
 
 class PublishedFileSetTest {
 

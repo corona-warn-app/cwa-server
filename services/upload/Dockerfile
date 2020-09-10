@@ -13,7 +13,7 @@ COPY ./services/pom.xml ${WORK_DIR}/services/pom.xml
 COPY ./services/distribution/pom.xml ${WORK_DIR}/services/distribution/pom.xml
 COPY ./services/submission/pom.xml ${WORK_DIR}/services/submission/pom.xml
 COPY ./services/callback/pom.xml ${WORK_DIR}/services/callback/pom.xml
-COPY ./services/federation-download/pom.xml ${WORK_DIR}/services/federation-download/pom.xml
+COPY ./services/download/pom.xml ${WORK_DIR}/services/download/pom.xml
 COPY ./services/upload/pom.xml ${WORK_DIR}/services/upload/pom.xml
 
 WORKDIR ${WORK_DIR}

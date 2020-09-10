@@ -15,13 +15,12 @@ federation-gateway:
 
 services:
   upload:
+    expiry-policy-minutes: 120  
     min-batch-key-count: 140
     max-batch-key-count: 4000
-    privatekey: testprivatekey.pem
-    certificate: testpublickey.pem
+    privatekey: classpath:testprivatekey.pem
+    certificate: classpath:testpublickey.pem
     privatekey-password: testpass
-    test-data:
-      keys: 250
     signature:
       # The ASN.1 OID for algorithm identifier.
       algorithm-oid: 1.2.840.10045.4.3.2
@@ -35,9 +34,8 @@ spring:
     enabled: true
     locations: classpath:/db/migration
   datasource:
+    driver-class-name: org.testcontainers.jdbc.ContainerDatabaseDriver
     url:  jdbc:tc:postgresql:11.8:///databasename?TC_TMPFS=/testtmpfs:rw
-  #    if
-  #    driver-class-name: org.testcontainers.jdbc.ContainerDatabaseDriver
   test:
     database:
       # Use datasource as defined above.

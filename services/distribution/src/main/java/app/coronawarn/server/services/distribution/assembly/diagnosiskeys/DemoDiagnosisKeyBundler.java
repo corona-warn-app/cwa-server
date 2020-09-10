@@ -41,12 +41,14 @@ public class DemoDiagnosisKeyBundler extends DiagnosisKeyBundler {
   }
 
   /**
-   * Initializes the internal {@code distributableDiagnosisKeys} map, grouping the diagnosis keys by the submission
-   * timestamp, thus ignoring the expiry and shifting policies.
+   * Initializes the internal {@code distributableDiagnosisKeys} map, grouping the diagnosis keys by country and the
+   * submission timestamp, thus ignoring the expiry and shifting policies.
    */
   @Override
   protected void createDiagnosisKeyDistributionMap(Collection<DiagnosisKey> diagnosisKeys) {
     this.distributableDiagnosisKeys.clear();
-    this.distributableDiagnosisKeys.putAll(diagnosisKeys.stream().collect(groupingBy(this::getSubmissionDateTime)));
+    groupDiagnosisKeysByCountry(diagnosisKeys).forEach((country, diagnosisKeysPerCountry) ->
+        this.distributableDiagnosisKeys.get(country).putAll(diagnosisKeysPerCountry.stream()
+            .collect(groupingBy(this::getSubmissionDateTime))));
   }
 }

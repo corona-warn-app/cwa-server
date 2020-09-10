@@ -45,6 +45,8 @@ import org.springframework.data.annotation.Id;
  */
 public class DiagnosisKey {
 
+  public static final long ROLLING_PERIOD_MINUTES_INTERVAL = 10;
+
   /**
    * According to "Setting Up an Exposure Notification Server" by Apple, exposure notification servers are expected to
    * reject any diagnosis keys that do not have a rolling period of a certain fixed value. See

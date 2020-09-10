@@ -61,7 +61,10 @@ public class DiagnosisKeysDateDirectory extends IndexDirectoryOnDisk<LocalDate> 
   public DiagnosisKeysDateDirectory(DiagnosisKeyBundler diagnosisKeyBundler,
       CryptoProvider cryptoProvider, DistributionServiceConfig distributionServiceConfig) {
     super(distributionServiceConfig.getApi().getDatePath(),
-        ignoredValue -> diagnosisKeyBundler.getDatesWithDistributableDiagnosisKeys(), ISO8601::format);
+        indices -> {
+          String country = (String) indices.peek();
+          return diagnosisKeyBundler.getDatesWithDistributableDiagnosisKeys(country);
+        }, ISO8601::format);
     this.cryptoProvider = cryptoProvider;
     this.diagnosisKeyBundler = diagnosisKeyBundler;
     this.distributionServiceConfig = distributionServiceConfig;
@@ -83,16 +86,16 @@ public class DiagnosisKeysDateDirectory extends IndexDirectoryOnDisk<LocalDate> 
     if (shouldNotInclude(currentDate)) {
       return Optional.empty();
     }
-    String region = (String) currentIndices.pop().peek();
+    String country = (String) currentIndices.pop().peek();
 
     List<DiagnosisKey> diagnosisKeysForCurrentHour =
-        this.diagnosisKeyBundler.getDiagnosisKeysForDate(currentDate);
+        this.diagnosisKeyBundler.getDiagnosisKeysForDate(currentDate, country);
 
     long startTimestamp = currentDate.atStartOfDay().toEpochSecond(ZoneOffset.UTC);
     long endTimestamp = currentDate.plusDays(1).atStartOfDay().toEpochSecond(ZoneOffset.UTC);
 
     File<WritableOnDisk> temporaryExposureKeyExportFile = TemporaryExposureKeyExportFile.fromDiagnosisKeys(
-        diagnosisKeysForCurrentHour, region, startTimestamp, endTimestamp, distributionServiceConfig);
+        diagnosisKeysForCurrentHour, country, startTimestamp, endTimestamp, distributionServiceConfig);
 
     Archive<WritableOnDisk> dateArchive = new ArchiveOnDisk(distributionServiceConfig.getOutputFileName());
     dateArchive.addWritable(temporaryExposureKeyExportFile);

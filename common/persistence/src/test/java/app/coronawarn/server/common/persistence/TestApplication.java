@@ -26,6 +26,7 @@ import app.coronawarn.server.common.persistence.repository.FederationUploadKeyRe
 import app.coronawarn.server.common.persistence.service.DiagnosisKeyService;
 import app.coronawarn.server.common.persistence.service.FederationBatchInfoService;
 import app.coronawarn.server.common.persistence.service.FederationUploadKeyService;
+import app.coronawarn.server.common.persistence.service.common.KeySharingPoliciesChecker;
 import app.coronawarn.server.common.persistence.service.common.ValidDiagnosisKeyFilter;
 
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -42,13 +43,18 @@ public class TestApplication {
   }
 
   @Bean
+  KeySharingPoliciesChecker keySharingPoliciesChecker() {
+    return new KeySharingPoliciesChecker();
+  }
+
+  @Bean
   DiagnosisKeyService createDiagnosisKeyService(DiagnosisKeyRepository keyRepository) {
     return new DiagnosisKeyService(keyRepository, validKeysFilter());
   }
 
   @Bean
   FederationUploadKeyService createFederationUploadKeyService(FederationUploadKeyRepository keyRepository) {
-    return new FederationUploadKeyService(keyRepository, validKeysFilter());
+    return new FederationUploadKeyService(keyRepository, validKeysFilter(), keySharingPoliciesChecker());
   }
 
   @Bean
