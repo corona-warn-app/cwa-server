@@ -50,6 +50,8 @@ import org.springframework.stereotype.Component;
 @Component
 public class ProdDiagnosisKeyBundler extends DiagnosisKeyBundler {
 
+  public static final int ONE_DAY_INTERVAL_ROLLING_PERIOD = 144;
+
   /**
    * Creates a new {@link ProdDiagnosisKeyBundler}.
    */
@@ -102,7 +104,7 @@ public class ProdDiagnosisKeyBundler extends DiagnosisKeyBundler {
   private LocalDateTime getExpiryDateTime(DiagnosisKey diagnosisKey) {
     return LocalDateTime
         .ofEpochSecond(diagnosisKey.getRollingStartIntervalNumber() * TEN_MINUTES_INTERVAL_SECONDS, 0, UTC)
-        .plusMinutes(diagnosisKey.getRollingPeriod() * 10L);
+        .plusMinutes(ONE_DAY_INTERVAL_ROLLING_PERIOD * 10L);
   }
 
   /**
