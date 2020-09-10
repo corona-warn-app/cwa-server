@@ -33,11 +33,6 @@ import org.springframework.context.annotation.Configuration;
 public class WebConfig {
 
   @Bean
-  Logger.Level feignLoggerLevel() {
-    return Logger.Level.FULL;
-  }
-
-  @Bean
   public HttpMessageConverters httpMessageConverters() {
     return new HttpMessageConverters(new FederationGatewayHttpMessageConverter());
   }
