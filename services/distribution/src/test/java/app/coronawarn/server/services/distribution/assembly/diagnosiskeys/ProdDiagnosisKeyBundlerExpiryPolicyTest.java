@@ -85,4 +85,47 @@ class ProdDiagnosisKeyBundlerExpiryPolicyTest {
     bundler.setDiagnosisKeys(diagnosisKeys, LocalDateTime.of(1970, 1, 5, 0, 0));
     assertThat(bundler.getDiagnosisKeysForHour(LocalDateTime.of(1970, 1, 2, 4, 0, 0))).hasSize(10);
   }
+
+  @ParameterizedTest
+  @ValueSource(longs = {0L, 24L, 24L + 2L})
+  void testLastPeriodOfHourAndSubmissionLessThanDistributionDateTimeWithFlexibleRollingPeriod(
+      long submissionTimestamp) {
+    List<DiagnosisKey> diagnosisKeys = Helpers.buildDiagnosisKeysWithFlexibleRollingPeriod(5, submissionTimestamp, 5, 44);
+    diagnosisKeys.addAll(Helpers.buildDiagnosisKeysWithFlexibleRollingPeriod(5, submissionTimestamp, 5, 100));
+    bundler.setDiagnosisKeys(diagnosisKeys, LocalDateTime.of(1970, 1, 5, 0, 0));
+    assertThat(bundler.getDiagnosisKeysForHour(LocalDateTime.of(1970, 1, 2, 3, 0, 0))).hasSize(10);
+  }
+
+  @Test
+  void testLastPeriodOfHourAndSubmissionEqualsDistributionDateTimeWithFlexibleRollingPeriod() {
+    List<DiagnosisKey> diagnosisKeys = Helpers.buildDiagnosisKeysWithFlexibleRollingPeriod(5, 24L + 3L, 5, 44);
+    diagnosisKeys.addAll(Helpers.buildDiagnosisKeysWithFlexibleRollingPeriod(5, 24L + 3L, 5, 100));
+    bundler.setDiagnosisKeys(diagnosisKeys, LocalDateTime.of(1970, 1, 5, 0, 0));
+    assertThat(bundler.getDiagnosisKeysForHour(LocalDateTime.of(1970, 1, 2, 3, 0, 0))).hasSize(10);
+  }
+
+  @ParameterizedTest
+  @ValueSource(longs = {0L, 24L, 24L + 2L, 24L + 3L})
+  void testFirstPeriodOfHourAndSubmissionLessThanDistributionDateTimeWithFlexibleRollingPeriod(long submissionTimestamp) {
+    List<DiagnosisKey> diagnosisKeys = Helpers.buildDiagnosisKeysWithFlexibleRollingPeriod(6, submissionTimestamp, 5, 44);
+    diagnosisKeys.addAll(Helpers.buildDiagnosisKeysWithFlexibleRollingPeriod(6, submissionTimestamp, 5, 100));
+    bundler.setDiagnosisKeys(diagnosisKeys, LocalDateTime.of(1970, 1, 5, 0, 0));
+    assertThat(bundler.getDiagnosisKeysForHour(LocalDateTime.of(1970, 1, 2, 4, 0, 0))).hasSize(10);
+  }
+
+  @Test
+  void testFirstPeriodOfHourAndSubmissionEqualsDistributionDateTimeWithFlexibleRollingPeriod() {
+    List<DiagnosisKey> diagnosisKeys = Helpers.buildDiagnosisKeysWithFlexibleRollingPeriod(6, 24L + 4L, 5, 44);
+    diagnosisKeys.addAll(Helpers.buildDiagnosisKeysWithFlexibleRollingPeriod(6, 24L + 4L, 5, 100));
+    bundler.setDiagnosisKeys(diagnosisKeys, LocalDateTime.of(1970, 1, 5, 0, 0));
+    assertThat(bundler.getDiagnosisKeysForHour(LocalDateTime.of(1970, 1, 2, 4, 0, 0))).hasSize(10);
+  }
+
+  @Test
+  void testLastPeriodOfHourAndSubmissionGreaterDistributionDateTimeWithFlexibleRollingPeriod() {
+    List<DiagnosisKey> diagnosisKeys = Helpers.buildDiagnosisKeysWithFlexibleRollingPeriod(5, 24L + 4L, 5, 44);
+    diagnosisKeys.addAll(Helpers.buildDiagnosisKeysWithFlexibleRollingPeriod(5, 24L + 4L, 5, 80));
+    bundler.setDiagnosisKeys(diagnosisKeys, LocalDateTime.of(1970, 1, 5, 0, 0));
+    assertThat(bundler.getDiagnosisKeysForHour(LocalDateTime.of(1970, 1, 2, 4, 0, 0))).hasSize(10);
+  }
 }
