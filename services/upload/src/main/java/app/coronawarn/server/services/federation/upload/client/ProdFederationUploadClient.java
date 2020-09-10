@@ -24,9 +24,6 @@ public class ProdFederationUploadClient implements FederationUploadClient {
   public void postBatchUpload(UploadPayload uploadPayload) {
     var result = federationGatewayClient.postBatchUpload(
         uploadPayload.getBatch().toByteArray(),
-        "application/json; version=1.0",
-        "abc",
-        "C=DE",
         uploadPayload.getBatchTag(),
         uploadPayload.getBatchSignature());
     logger.info("Response from EFGS: {}", result);

@@ -57,19 +57,16 @@ public interface FederationGatewayClient {
   /**
    * HTTP POST request federation gateway endpoint /diagnosiskyes/upload.
    * @param raw Payload body. This property contains a raw byte array with the encoded protobuf DiagnosisKeyBatch.
-   * @param accept HTTP Header Accept.
-   * @param shaClient HTTP Header X-SSL-Client-SHA256.
-   * @param dnClient HTTP Header X-SSL-Client-DN.
    * @param batchTag Unique batchTag to be identified by EFGS.
    * @param batchSignature Batch Signature as per PKCS#7 spec using Authorized Signing Certificate.
    */
   @PostMapping(value = "/diagnosiskeys/upload",
-      consumes = "application/protobuf; version=1.0")
+      consumes = "application/protobuf; version=1.0",
+      headers = {"Accept=application/json; version=1.0",
+          "X-SSL-Client-SHA256=${federation-gateway.ssl.certificate-sha}",
+          "X-SSL-Client-DN=${federation-gateway.ssl.certificate-dn}"})
   String postBatchUpload(
       byte[] raw,
-      @RequestHeader("Accept") String accept,
-      @RequestHeader("X-SSL-Client-SHA256") String shaClient,
-      @RequestHeader("X-SSL-Client-DN") String dnClient,
       @RequestHeader("batchTag") String batchTag,
       @RequestHeader("batchSignature") String batchSignature);
 }
