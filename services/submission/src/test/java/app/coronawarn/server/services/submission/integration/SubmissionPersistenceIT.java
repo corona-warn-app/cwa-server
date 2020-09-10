@@ -57,16 +57,15 @@ import app.coronawarn.server.services.submission.controller.RequestExecutor;
 import app.coronawarn.server.services.submission.verification.TanVerifier;
 
 /**
- * This test serves more like a dev tool which helps with debugging production issues.
- * It inserts keys parsed from a proto buf file whos content was captured by the mobile
- * client during requests to the server. The content of the current test resource file
- * can be quickly replaced during the investigation of an issue.
+ * This test serves more like a dev tool which helps with debugging production issues. It inserts keys parsed from a
+ * proto buf file whos content was captured by the mobile client during requests to the server. The content of the
+ * current test resource file can be quickly replaced during the investigation of an issue.
  */
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-@ActiveProfiles({ "disable-ssl-client-verification", "disable-ssl-client-verification-verify-hostname" })
+@ActiveProfiles({"disable-ssl-client-verification", "disable-ssl-client-verification-verify-hostname"})
 @Sql(scripts = {"classpath:db/clean_db_state.sql"},
-                executionPhase = ExecutionPhase.BEFORE_TEST_METHOD)
-public class SubmissionPersistenceIT {
+    executionPhase = ExecutionPhase.BEFORE_TEST_METHOD)
+class SubmissionPersistenceIT {
 
   private static final Logger logger = LoggerFactory.getLogger(SubmissionPersistenceIT.class);
 
@@ -97,8 +96,8 @@ public class SubmissionPersistenceIT {
   @Disabled("Because the content of the .pb file becomes old and retention time passes, this test will fail. "
       + "Enable when debugging of a new payload is required.")
   @ParameterizedTest
-  @ValueSource(strings = { "src/test/resources/payload/mobile-client-payload.pb" })
-  public void testKeyInsertionWithMobileClientProtoBuf(String testFile) throws IOException {
+  @ValueSource(strings = {"src/test/resources/payload/mobile-client-payload.pb"})
+  void testKeyInsertionWithMobileClientProtoBuf(String testFile) throws IOException {
     Path path = Paths.get(testFile);
     InputStream input = new FileInputStream(path.toFile());
     SubmissionPayload payload = SubmissionPayload.parseFrom(input);

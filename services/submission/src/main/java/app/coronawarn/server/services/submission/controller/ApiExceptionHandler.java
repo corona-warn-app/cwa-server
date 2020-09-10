@@ -41,19 +41,23 @@ public class ApiExceptionHandler {
   @ExceptionHandler(Exception.class)
   @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
   public void unknownException(Exception ex, WebRequest wr) {
-    logger.error("Unable to handle {}", wr.getDescription(false), ex);
+    logger.error("Unable to handle {}", getFormattedDescription(wr), ex);
   }
 
   @ExceptionHandler({HttpMessageNotReadableException.class, ServletRequestBindingException.class,
       InvalidProtocolBufferException.class})
   @ResponseStatus(HttpStatus.BAD_REQUEST)
   public void bindingExceptions(Exception ex, WebRequest wr) {
-    logger.error("Binding failed {}", wr.getDescription(false), ex);
+    logger.error("Binding failed {}", getFormattedDescription(wr), ex);
   }
 
   @ExceptionHandler({InvalidDiagnosisKeyException.class, ConstraintViolationException.class})
   @ResponseStatus(HttpStatus.BAD_REQUEST)
   public void diagnosisKeyExceptions(Exception ex, WebRequest wr) {
-    logger.error("Erroneous Submission Payload {}", wr.getDescription(false), ex);
+    logger.error("Erroneous Submission Payload {}", getFormattedDescription(wr), ex);
+  }
+
+  private String getFormattedDescription(WebRequest wr) {
+    return wr.getDescription(false).replaceAll("[\n|\r|\t]", "_");
   }
 }
