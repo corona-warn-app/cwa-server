@@ -1,5 +1,5 @@
 # This is the Risk Score Classification master file. It partitions the risk
-# score value range (0.000 - 72.000) into 2 distinct risk classes. These are
+# score value range (0.000 - 9999.000) into 2 distinct risk classes. These are
 # used by the respective app in order to present the correct risk classification
 # in a user friendly manner, based on the underlying total risk score.
 #
@@ -9,7 +9,7 @@
 # - "HIGH" class: [min, max]
 #
 # The risk classes must not overlap and
-# cover the full risk score value range (0.000 - 72.000).
+# cover the full risk score value range (0.000 - 9999.000).
 #
 # Change this file with caution!
 
