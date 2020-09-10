@@ -30,6 +30,7 @@ import app.coronawarn.server.common.persistence.service.common.ExpirationPolicy;
 import app.coronawarn.server.common.persistence.service.common.KeySharingPoliciesChecker;
 import app.coronawarn.server.common.persistence.service.common.ValidDiagnosisKeyFilter;
 import java.time.LocalDateTime;
+import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
 import org.springframework.stereotype.Component;
@@ -75,7 +76,7 @@ public class FederationUploadKeyService {
    * with the persisted ones, thus no other sideeffects are to be expected.
    */
   @Transactional
-  public void updateBatchTagIdForKeys(List<FederationUploadKey> originalKeys, String batchTagId) {
+  public void updateBatchTagIdForKeys(Collection<FederationUploadKey> originalKeys, String batchTagId) {
     originalKeys.forEach(key -> {
       keyRepository.updateBatchTagId(key.getKeyData(), batchTagId);
     });
