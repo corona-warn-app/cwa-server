@@ -21,6 +21,7 @@
 package app.coronawarn.server.services.distribution;
 
 import app.coronawarn.server.services.distribution.config.DistributionServiceConfig;
+import app.coronawarn.server.services.distribution.config.DistributionServiceConfigValidator;
 import java.util.Arrays;
 import java.util.List;
 import org.apache.logging.log4j.LogManager;
@@ -33,6 +34,7 @@ import org.springframework.boot.autoconfigure.domain.EntityScan;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.EnvironmentAware;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.core.env.Environment;
 import org.springframework.data.jdbc.repository.config.EnableJdbcRepositories;
@@ -80,5 +82,10 @@ public class Application implements EnvironmentAware, DisposableBean {
       logger.warn("The distribution runner is started with postgres connection TLS disabled. "
           + "This should never be used in PRODUCTION!");
     }
+  }
+
+  @Bean
+  public static DistributionServiceConfigValidator configurationPropertiesValidator() {
+    return new DistributionServiceConfigValidator();
   }
 }

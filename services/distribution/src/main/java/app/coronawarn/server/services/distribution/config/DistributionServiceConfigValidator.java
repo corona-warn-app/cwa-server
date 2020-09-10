@@ -35,7 +35,7 @@ public class DistributionServiceConfigValidator implements Validator {
 
   @Override
   public boolean supports(Class<?> type) {
-    return type == DistributionServiceConfig.class;
+    return DistributionServiceConfig.class.isAssignableFrom(type);
   }
 
   /**
