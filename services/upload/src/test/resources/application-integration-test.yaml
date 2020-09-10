@@ -7,6 +7,8 @@ logging:
 
 spring:
   flyway:
+    password: local_setup_flyway
+    user: local_setup_flyway
     baseline-on-migrate: true
     baseline-version: 0
   datasource:
