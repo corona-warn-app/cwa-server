@@ -67,7 +67,7 @@ public class SubmissionServiceConfigTest {
 
   @Test
   void testCountriesAllowed() {
-    Assert.assertTrue(config.areAllCountriesAllowed(List.of("DE", "uK", "Fr", "dk")));
+    Assert.assertTrue(config.areAllCountriesAllowed(List.of("DE")));
   }
 
   @Test

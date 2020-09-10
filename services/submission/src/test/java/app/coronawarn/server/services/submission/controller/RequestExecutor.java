@@ -63,7 +63,7 @@ public class RequestExecutor {
   public ResponseEntity<Void> executePost(Collection<TemporaryExposureKey> keys, HttpHeaders headers) {
     SubmissionPayload body = SubmissionPayload.newBuilder()
         .setOrigin("DE")
-        .addAllVisitedCountries(List.of("FR","UK"))
+        .addAllVisitedCountries(List.of("DE"))
         .addAllKeys(keys).build();
     return executePost(body, headers);
   }
@@ -93,7 +93,8 @@ public class RequestExecutor {
     return TemporaryExposureKey.newBuilder()
         .setKeyData(ByteString.copyFromUtf8(keyData))
         .setRollingStartIntervalNumber(rollingStartIntervalNumber)
-        .setTransmissionRiskLevel(transmissionRiskLevel).build();
+        .setTransmissionRiskLevel(transmissionRiskLevel)
+        .build();
   }
 
   public static TemporaryExposureKey buildTemporaryExposureKeyWithFlexibleRollingPeriod(

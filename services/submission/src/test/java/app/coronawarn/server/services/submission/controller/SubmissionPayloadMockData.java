@@ -45,7 +45,7 @@ public final class SubmissionPayloadMockData {
   public static SubmissionPayload buildPayload(Collection<TemporaryExposureKey> keys) {
     return SubmissionPayload.newBuilder()
         .addAllKeys(keys)
-        .addAllVisitedCountries(List.of("FR","UK"))
+        .addAllVisitedCountries(List.of("DE"))
         .setOrigin("DE")
         .build();
   }
@@ -53,7 +53,7 @@ public final class SubmissionPayloadMockData {
   public static SubmissionPayload buildPayload(Collection<TemporaryExposureKey> keys, boolean consentToFederation) {
     return SubmissionPayload.newBuilder()
         .addAllKeys(keys)
-        .addAllVisitedCountries(List.of("FR","UK"))
+        .addAllVisitedCountries(List.of("DE"))
         .setOrigin("DE")
         .setConsentToFederation(consentToFederation)
         .build();
@@ -67,7 +67,7 @@ public final class SubmissionPayloadMockData {
   public static SubmissionPayload buildInvalidPayload(Collection<TemporaryExposureKey> keys) {
     return SubmissionPayload.newBuilder()
         .addAllKeys(keys)
-        .addAllVisitedCountries(List.of("FR","UK"))
+        .addAllVisitedCountries(List.of("DE"))
         .setOrigin("DE3")
         .build();
   }
@@ -86,7 +86,7 @@ public final class SubmissionPayloadMockData {
   private static SubmissionPayload buildPayloadWithPadding(Collection<TemporaryExposureKey> keys, byte[] bytes) {
     return SubmissionPayload.newBuilder()
         .addAllKeys(keys)
-        .addAllVisitedCountries(List.of("FR","UK"))
+        .addAllVisitedCountries(List.of("DE"))
         .setOrigin("DE")
         .setRequestPadding(ByteString.copyFrom(bytes))
         .build();
