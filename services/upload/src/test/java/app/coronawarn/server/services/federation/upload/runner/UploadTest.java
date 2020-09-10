@@ -7,14 +7,11 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
 import app.coronawarn.server.common.federation.client.FederationGatewayClient;
-import app.coronawarn.server.common.persistence.domain.DiagnosisKey;
 import app.coronawarn.server.common.persistence.domain.FederationUploadKey;
 import app.coronawarn.server.common.persistence.repository.FederationUploadKeyRepository;
-import app.coronawarn.server.common.persistence.service.DiagnosisKeyService;
 import app.coronawarn.server.common.persistence.service.FederationUploadKeyService;
 import app.coronawarn.server.common.persistence.service.common.KeySharingPoliciesChecker;
 import app.coronawarn.server.common.persistence.service.common.ValidDiagnosisKeyFilter;
-import app.coronawarn.server.common.protocols.external.exposurenotification.DiagnosisKeyBatch;
 import app.coronawarn.server.services.federation.upload.client.ProdFederationUploadClient;
 import app.coronawarn.server.services.federation.upload.client.TestFederationUploadClient;
 import app.coronawarn.server.services.federation.upload.config.UploadServiceConfig;
@@ -88,15 +85,22 @@ class UploadTest {
   @ContextConfiguration(classes = {
       Upload.class, PayloadFactory.class, DiagnosisKeyBatchAssembler.class,
       BatchSigner.class, CryptoProvider.class, DiagnosisKeyGenerator.class,
-      TestFederationUploadClient.class, DiagnosisKeyGenerator.class
+      TestFederationUploadClient.class, DiagnosisKeyGenerator.class,
+      FederationUploadKeyService.class, ValidDiagnosisKeyFilter.class,
+      KeySharingPoliciesChecker.class
   }, initializers = ConfigFileApplicationContextInitializer.class)
   class TestDataUpload {
 
     @Autowired
     private Upload upload;
 
+    @MockBean
+    private FederationUploadKeyRepository uploadKeyRepository;
+
     @Test
     void shouldGenerateTestKeys() throws Exception {
+      List<FederationUploadKey> testKeys = generateRandomUploadKeys(true, 20);
+      Mockito.when(uploadKeyRepository.findAllUploadableKeys()).thenReturn(testKeys);
       upload.run(null);
 //      verify(diagnosisKeyGenerator, times(1)).loadDiagnosisKeys();
     }

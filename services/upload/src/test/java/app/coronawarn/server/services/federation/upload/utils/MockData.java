@@ -33,7 +33,7 @@ public class MockData {
 
   public static List<FederationUploadKey> generateRandomUploadKeys(boolean consentToShare, int numberOfKeys) {
     List<FederationUploadKey> fakeKeys = new ArrayList<>();
-    while (numberOfKeys >= 0) {
+    while (numberOfKeys > 0) {
       fakeKeys.add(generateRandomUploadKey(consentToShare));
       numberOfKeys--;
     }

@@ -33,6 +33,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 
 @Component
@@ -67,5 +68,17 @@ public class FederationUploadKeyService {
            .filter(validationFilter::isDiagnosisKeyValid)
            .filter(key -> sharingPoliciesChecker.canShareKeyAtTime(key, policy, LocalDateTime.now(UTC)))
            .collect(Collectors.toList());
+  }
+
+  /**
+   * Updates only the batchTagId field of all given upload keys. The entities are not merged
+   * with the persisted ones, thus no other sideeffects are to be expected.
+   */
+  @Transactional
+  public void updateBatchTagIdForKeys(List<FederationUploadKey> originalKeys, String batchTagId) {
+    originalKeys.forEach(key -> {
+      keyRepository.updateBatchTagId(key.getKeyData(), batchTagId);
+    });
+
   }
 }

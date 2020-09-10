@@ -22,7 +22,9 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import java.io.IOException;
 import java.security.GeneralSecurityException;
+import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
 
 @EnableConfigurationProperties(value = UploadServiceConfig.class)
@@ -53,7 +55,7 @@ class PayloadFactoryTest {
     var diagnosisKeys = List.of(PersistenceKeysGenerator.makeDiagnosisKey());
 
     when(mockAssembler.assembleDiagnosisKeyBatch(anyList()))
-        .thenReturn(List.of(DiagnosisKeyBatchGenerator.makeSingleKeyBatch()));
+        .thenReturn(Map.of(DiagnosisKeyBatchGenerator.makeSingleKeyBatch(), diagnosisKeys));
 
     var result = payloadFactory.makePayloadList(diagnosisKeys);
     Assertions.assertEquals(1, result.size());
@@ -67,10 +69,10 @@ class PayloadFactoryTest {
     var diagnosisKeys = List.of(PersistenceKeysGenerator.makeDiagnosisKey());
 
     when(mockAssembler.assembleDiagnosisKeyBatch(anyList()))
-        .thenReturn(List.of(
-            DiagnosisKeyBatchGenerator.makeSingleKeyBatch(),
-            DiagnosisKeyBatchGenerator.makeSingleKeyBatch(),
-            DiagnosisKeyBatchGenerator.makeSingleKeyBatch()));
+        .thenReturn(Map.of(
+            DiagnosisKeyBatchGenerator.makeSingleKeyBatch(), diagnosisKeys,
+            DiagnosisKeyBatchGenerator.makeSingleKeyBatch(), diagnosisKeys,
+            DiagnosisKeyBatchGenerator.makeSingleKeyBatch(), diagnosisKeys));
 
     var result = payloadFactory.makePayloadList(diagnosisKeys);
     Assertions.assertEquals(3, result.size());

@@ -23,13 +23,20 @@ package app.coronawarn.server.common.persistence.repository;
 
 import app.coronawarn.server.common.persistence.domain.FederationUploadKey;
 import java.util.List;
+import org.springframework.data.jdbc.repository.query.Modifying;
 import org.springframework.data.jdbc.repository.query.Query;
+import org.springframework.data.repository.PagingAndSortingRepository;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 @Repository
 public interface FederationUploadKeyRepository
-    extends org.springframework.data.repository.Repository<FederationUploadKey, Long> {
+    extends PagingAndSortingRepository<FederationUploadKey, Long> {
 
   @Query("SELECT * FROM federation_upload_key")
   List<FederationUploadKey> findAllUploadableKeys();
+
+  @Modifying
+  @Query("update federation_upload_key key set key.batch_tag_id = :batchTagId where key.key_data = :key_data")
+  void updateBatchTagId(@Param("keyData") byte[] keyData, @Param("batchTagId") String batchTagId);
 }
