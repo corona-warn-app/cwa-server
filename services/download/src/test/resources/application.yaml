@@ -25,7 +25,7 @@ services:
     retention-days: 14
 
 federation-gateway:
-  base-url: fake-url
+  base-url: http://localhost:1234
   connection-pool-size: 200
   ssl:
     key-store-path: test.p12
