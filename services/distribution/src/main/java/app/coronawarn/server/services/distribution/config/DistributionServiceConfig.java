@@ -25,12 +25,11 @@ import java.util.List;
 import java.util.stream.Collectors;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
+import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.Pattern;
 import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.stereotype.Component;
 import org.springframework.validation.annotation.Validated;
 
-@Component
 @ConfigurationProperties(prefix = "services.distribution")
 @Validated
 public class DistributionServiceConfig {
@@ -47,7 +46,6 @@ public class DistributionServiceConfig {
   private static final String ALGORITHM_OID_REGEX = "^[0-9]+[\\.[0-9]+]*$";
   private static final String BUNDLE_REGEX = "^[a-z-]+[\\.[a-z-]+]*$";
   private static final String PRIVATE_KEY_REGEX = "^(classpath:|file:[/]+)[a-zA-Z0-9_-]+[/[a-zA-Z0-9_-]+]*(.pem)?$";
-  private static final String SUPPORTED_COUNTRY_CODES_REGEX = "^([a-zA-Z]{2}(\\,*[a-zA-Z]{2})*)$";
 
   private Paths paths;
   private TestData testData;
@@ -72,8 +70,8 @@ public class DistributionServiceConfig {
   private Api api;
   private ObjectStore objectStore;
   private List<AppFeature> appFeatures;
-  @Pattern(regexp = SUPPORTED_COUNTRY_CODES_REGEX)
-  private String supportedCountries;
+  @NotEmpty
+  private String[] supportedCountries;
   private AppVersions appVersions;
 
   public Paths getPaths() {
@@ -190,10 +188,10 @@ public class DistributionServiceConfig {
   }
 
   public String[] getSupportedCountries() {
-    return supportedCountries.split(",");
+    return supportedCountries;
   }
 
-  public void setSupportedCountries(String supportedCountries) {
+  public void setSupportedCountries(String[] supportedCountries) {
     this.supportedCountries = supportedCountries;
   }
 

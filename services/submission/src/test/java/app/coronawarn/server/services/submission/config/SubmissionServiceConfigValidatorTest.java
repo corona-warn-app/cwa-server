@@ -21,10 +21,12 @@
 package app.coronawarn.server.services.submission.config;
 
 
+import app.coronawarn.server.services.submission.config.SubmissionServiceConfig.Payload;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
@@ -52,20 +54,37 @@ class SubmissionServiceConfigValidatorTest {
   @ParameterizedTest
   @MethodSource("validRequestDataSizes")
   void ok(DataSize dataSize) {
-    Errors errors = validateConfig(dataSize);
+    Errors errors = validateConfig(dataSize, "DE");
     assertThat(errors.hasErrors()).isFalse();
   }
 
   @ParameterizedTest
   @MethodSource("invalidRequestDataSizes")
   void fail(DataSize dataSize) {
-    Errors errors = validateConfig(dataSize);
+    Errors errors = validateConfig(dataSize, "DE");
     assertThat(errors.hasErrors()).isTrue();
   }
 
-  private Errors validateConfig(DataSize dataSize) {
+  @ParameterizedTest
+  @MethodSource("setInvalidSupportedCountries")
+  void fail(String supportedCountries) {
+    Errors errors = validateConfig(SubmissionServiceConfigValidator.MAX_MAXIMUM_REQUEST_SIZE, supportedCountries);
+    assertThat(errors.hasErrors()).isTrue();
+  }
+
+  @ParameterizedTest
+  @ValueSource(strings = {"DE", "DE,FR"})
+  void ok(String supportedCountries) {
+    Errors errors = validateConfig(SubmissionServiceConfigValidator.MAX_MAXIMUM_REQUEST_SIZE, supportedCountries);
+    assertThat(errors.hasErrors()).isFalse();
+  }
+
+  private Errors validateConfig(DataSize dataSize, String supportedCountries) {
+    String[] supportedCountriesList = supportedCountries.split(",");
     Errors errors = new BeanPropertyBindingResult(submissionServiceConfig, "submissionServiceConfig");
     submissionServiceConfig.setMaximumRequestSize(dataSize);
+    submissionServiceConfig.setPayload(new Payload());
+    submissionServiceConfig.setSupportedCountries(supportedCountriesList);
     submissionServiceConfigValidator.validate(submissionServiceConfig, errors);
     return errors;
   }
@@ -83,4 +102,18 @@ class SubmissionServiceConfigValidatorTest {
         DataSize.ofBytes(SubmissionServiceConfigValidator.MIN_MAXIMUM_REQUEST_SIZE.toBytes() - 1)
     ).map(Arguments::of);
   }
+
+  private static Stream<Arguments> setInvalidSupportedCountries() {
+    return Stream.of(
+        Arguments.of("DE,FRE"),
+        Arguments.of("DE, "),
+        Arguments.of("de"),
+        Arguments.of("dE"),
+        Arguments.of("De"),
+        Arguments.of(" "),
+        Arguments.of(""),
+        Arguments.of("\\")
+    );
+  }
 }
+

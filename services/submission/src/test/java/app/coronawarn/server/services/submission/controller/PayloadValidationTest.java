@@ -54,7 +54,7 @@ class PayloadValidationTest {
 
   @BeforeEach
   public void setUpMocks() {
-    when(tanVerifier.verifyTan(anyString())).thenReturn(true);
+    when(this.tanVerifier.verifyTan(anyString())).thenReturn(true);
   }
 
   @Autowired
