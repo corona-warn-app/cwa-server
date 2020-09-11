@@ -74,7 +74,7 @@ import org.springframework.test.context.ActiveProfiles;
  * BATCH1_DATA, BATCH2_DATA and RETRY_BATCH_SUCCESSFUL_DATA
  *
  */
-public class DownloadAndRetentionPolicyIT {
+class DownloadAndRetentionPolicyIT {
 
   public static final String BATCH1_DATA = "0123456789ABCDED";
   public static final String BATCH2_DATA = "0123456789ABCDEE";
