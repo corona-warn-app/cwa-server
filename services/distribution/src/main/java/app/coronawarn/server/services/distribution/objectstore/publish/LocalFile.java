@@ -84,12 +84,12 @@ public abstract class LocalFile {
 
   protected String createS3Key(Path file, Path rootFolder) {
     Path relativePath = rootFolder.relativize(file);
-    return relativePath.toString().replaceAll("\\\\", "/");
+    return relativePath.toString().replace("\\\\", "/");
   }
 
   /**
    * Value for the <code>content-type</code> header.
-   * 
+   *
    * @return Either <a href="https://www.iana.org/assignments/media-types/application/zip">zip</a> or
    *         <a href="https://www.iana.org/assignments/media-types/application/json">json</a>.
    */
@@ -108,7 +108,7 @@ public abstract class LocalFile {
   /**
    * Indicates if a local file is a Key-file or not. Only the Key files are stored in the Date / Hour tree structure.
    * One file per sub-folder (days: 1-31 / hours: 0-23). The index files are not stored in folders ending with a digit.
-   * 
+   *
    * @return <code>true</code> if and only if the {@link #s3Key} ends with a digit, false otherwise.
    */
   public boolean isKeyFile() {
