@@ -9,11 +9,9 @@ import static org.mockito.Mockito.verify;
 import app.coronawarn.server.common.federation.client.FederationGatewayClient;
 import app.coronawarn.server.common.persistence.domain.DiagnosisKey;
 import app.coronawarn.server.common.persistence.repository.FederationUploadKeyRepository;
-import app.coronawarn.server.common.persistence.service.DiagnosisKeyService;
 import app.coronawarn.server.common.persistence.service.FederationUploadKeyService;
 import app.coronawarn.server.common.persistence.service.common.KeySharingPoliciesChecker;
 import app.coronawarn.server.common.persistence.service.common.ValidDiagnosisKeyFilter;
-import app.coronawarn.server.common.protocols.external.exposurenotification.DiagnosisKeyBatch;
 import app.coronawarn.server.services.federation.upload.client.ProdFederationUploadClient;
 import app.coronawarn.server.services.federation.upload.client.TestFederationUploadClient;
 import app.coronawarn.server.services.federation.upload.config.UploadServiceConfig;
@@ -52,6 +50,7 @@ class UploadTest {
   },
       initializers = ConfigFileApplicationContextInitializer.class)
   class MockedUpload {
+
     @MockBean
     FederationGatewayClient federationGatewayClient;
 
