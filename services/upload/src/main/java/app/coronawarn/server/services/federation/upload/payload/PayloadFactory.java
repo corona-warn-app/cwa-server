@@ -28,7 +28,6 @@ import java.security.GeneralSecurityException;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.util.List;
-import java.util.Random;
 import java.util.stream.Collectors;
 import org.apache.commons.lang3.tuple.Pair;
 import org.bouncycastle.cms.CMSException;
@@ -57,10 +56,8 @@ public class PayloadFactory {
     payload.setBatchTag(this.generateBatchTag(batchPair.getLeft()));
     try {
       payload.setBatchSignature(signer.createSignatureBytes(batchPair.getRight()));
-    } catch (GeneralSecurityException e) {
+    } catch (GeneralSecurityException | OperatorCreationException | IOException | CMSException e) {
       logger.error("Failed to generate upload payload signature", e);
-    } catch (OperatorCreationException | IOException | CMSException e) {
-      e.printStackTrace();
     }
     return payload;
   }
