@@ -26,7 +26,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
-import org.springframework.context.ApplicationContext;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
@@ -38,22 +37,18 @@ import org.springframework.stereotype.Component;
 @Order(1)
 public class RetentionPolicy implements ApplicationRunner {
 
-  private static final Logger logger = LoggerFactory
-      .getLogger(RetentionPolicy.class);
+  private static final Logger logger = LoggerFactory.getLogger(RetentionPolicy.class);
 
   private final FederationBatchInfoService federationBatchInfoService;
-  private final ApplicationContext applicationContext;
   private final Integer retentionDays;
 
   /**
    * Creates a new RetentionPolicy.
    */
   public RetentionPolicy(FederationBatchInfoService federationBatchInfoService,
-      ApplicationContext applicationContext,
       DownloadServiceConfig downloadServiceConfig) {
     this.federationBatchInfoService = federationBatchInfoService;
     this.retentionDays = downloadServiceConfig.getRetentionDays();
-    this.applicationContext = applicationContext;
   }
 
   @Override
@@ -63,7 +58,6 @@ public class RetentionPolicy implements ApplicationRunner {
     } catch (Exception e) {
       logger.error("Application of retention policy failed.", e);
     }
-
     logger.debug("Retention policy applied successfully.");
   }
 }
