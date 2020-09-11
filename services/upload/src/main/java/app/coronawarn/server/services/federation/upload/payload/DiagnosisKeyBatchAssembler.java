@@ -33,12 +33,14 @@ public class DiagnosisKeyBatchAssembler {
         .setReportType(key.getReportType())
         .setTransmissionRiskLevel(key.getTransmissionRiskLevel())
         .setOrigin(key.getOriginCountry())
+        .setDaysSinceOnsetOfSymptoms(key.getDaysSinceOnsetOfSymptoms())
         .build();
   }
 
   /**
-   * Converts persisted keys into Federation Gateway compatible Diagnosis Keys as specified in the protobuf spec.
-   * If data can be uploaded with a single request, a list with a single {@link DiagnosisKeyBatch} is returned.
+   * Converts persisted keys into Federation Gateway compatible Diagnosis Keys as specified in the protobuf spec. If
+   * data can be uploaded with a single request, a list with a single {@link DiagnosisKeyBatch} is returned.
+   *
    * @param diagnosisKeys raw list of {@link DiagnosisKey} to be assembled in batches.
    * @return List of {@link DiagnosisKeyBatch} to be uploaded.
    */
@@ -59,9 +61,9 @@ public class DiagnosisKeyBatchAssembler {
   private List<DiagnosisKeyBatch> partionIntoBatches(
       List<app.coronawarn.server.common.protocols.external.exposurenotification.DiagnosisKey> keysToUpload) {
 
-    return  partitionListBySize(keysToUpload, uploadConfig.getMaxBatchKeyCount()).stream()
-                              .map(this::makeBatchFromPartition)
-                              .collect(Collectors.toList());
+    return partitionListBySize(keysToUpload, uploadConfig.getMaxBatchKeyCount()).stream()
+        .map(this::makeBatchFromPartition)
+        .collect(Collectors.toList());
   }
 
   private DiagnosisKeyBatch makeBatchFromPartition(
@@ -92,7 +94,7 @@ public class DiagnosisKeyBatchAssembler {
   }
 
   private List<app.coronawarn.server.common.protocols.external.exposurenotification.DiagnosisKey>
-      filterAndConvertToUploadStructure(List<DiagnosisKey> diagnosisKeys) {
+  filterAndConvertToUploadStructure(List<DiagnosisKey> diagnosisKeys) {
     return diagnosisKeys.stream()
         .filter(DiagnosisKey::isConsentToFederation)
         .map(this::convertKey)

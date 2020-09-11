@@ -38,6 +38,7 @@ public class DiagnosisKeyGenerator implements DiagnosisKeyLoader {
         .withConsentToFederation(true)
         .withCountryCode("DE")
         .withVisitedCountries(List.of("DE"))
+        .withDaysSinceOnsetOfSymptoms(1)
         .build();
   }
 

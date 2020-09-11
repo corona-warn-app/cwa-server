@@ -92,6 +92,7 @@ class DiagnosisKeyBatchAssemblerTest {
         .withRollingPeriod(144)
         .withSubmissionTimestamp(LocalDateTime.of(2020, 7, 15, 12, 0, 0).toEpochSecond(ZoneOffset.UTC) / 3600)
         .withVisitedCountries(List.of("DE"))
+        .withDaysSinceOnsetOfSymptoms(1)
         .build();
   }
 
@@ -121,7 +122,7 @@ class DiagnosisKeyBatchAssemblerTest {
     var fakeKeys = makeFakeKeys(true, minKeyThreshold);
     var result = diagnosisKeyBatchAssembler.assembleDiagnosisKeyBatch(fakeKeys);
 
-    Assertions.assertEquals(fakeKeys.size(),result.get(0).getKeysCount());
+    Assertions.assertEquals(fakeKeys.size(), result.get(0).getKeysCount());
     // as keys are created equal we need to compare just the first two elements of each list
     assertKeysAreEqual(fakeKeys.get(0), result.get(0).getKeys(0));
   }
@@ -143,8 +144,8 @@ class DiagnosisKeyBatchAssemblerTest {
   }
 
   /**
-   * @return A stream of tuples which represents the dataset together with the
-   * expectation required to test batch key partioning.
+   * @return A stream of tuples which represents the dataset together with the expectation required to test batch key
+   * partioning.
    */
   private static Stream<Arguments> keysToPartitionAndBatchNumberExpectations() {
     return Stream.of(
