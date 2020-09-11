@@ -21,33 +21,28 @@
 package app.coronawarn.server.services.download.runner;
 
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
 import app.coronawarn.server.services.download.DownloadServiceConfig;
 import app.coronawarn.server.services.download.FederationBatchProcessor;
 import java.time.LocalDate;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 
+@SpringBootTest(classes = {FederationBatchProcessor.class})
 class DownloadTest {
 
+  @MockBean
   private FederationBatchProcessor federationBatchProcessor;
-  private Download download;
-  private DownloadServiceConfig serviceConfig;
-
-  @BeforeEach
-  void setUpBatchProcessor() {
-    this.serviceConfig = new DownloadServiceConfig();
-    serviceConfig.setEfgsOffsetDays(1);
-    federationBatchProcessor = spy(mock(FederationBatchProcessor.class));
-    download = new Download(federationBatchProcessor, serviceConfig);
-  }
 
   @Test
   void testRun() {
+    DownloadServiceConfig serviceConfig = new DownloadServiceConfig();
+    serviceConfig.setEfgsOffsetDays(1);
+    Download download = new Download(federationBatchProcessor, serviceConfig);
+
     download.run(null);
 
     verify(federationBatchProcessor, times(1)).saveFirstBatchInfoForDate(any(LocalDate.class));

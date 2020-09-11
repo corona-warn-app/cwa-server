@@ -79,7 +79,7 @@ class FederationBatchProcessorTest {
   }
 
   @AfterEach
-  void setUpBatchProcessor() {
+  void resetMocks() {
     reset(federationGatewayClient);
     reset(diagnosisKeyService);
     reset(batchInfoService);
