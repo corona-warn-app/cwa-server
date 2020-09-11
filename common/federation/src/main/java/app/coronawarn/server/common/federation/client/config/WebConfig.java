@@ -21,7 +21,6 @@
 package app.coronawarn.server.common.federation.client.config;
 
 import app.coronawarn.server.common.federation.client.download.FederationGatewayHttpMessageConverter;
-import feign.Logger;
 import org.springframework.boot.autoconfigure.http.HttpMessageConverters;
 import org.springframework.cloud.openfeign.EnableFeignClients;
 import org.springframework.context.annotation.Bean;
