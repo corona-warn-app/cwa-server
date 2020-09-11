@@ -159,6 +159,7 @@ public class SubmissionController {
               .withCountryCode(diagnosisKey.getOriginCountry())
               .withReportType(diagnosisKey.getReportType())
               .withConsentToFederation(diagnosisKey.isConsentToFederation())
+              .withDaysSinceOnsetOfSymptoms(diagnosisKey.getDaysSinceOnsetOfSymptoms())
               .build())
           .forEach(paddedDiagnosisKeys::add);
     });

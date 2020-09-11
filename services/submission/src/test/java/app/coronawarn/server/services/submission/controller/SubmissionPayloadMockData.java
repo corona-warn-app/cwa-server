@@ -25,6 +25,7 @@ import static app.coronawarn.server.services.submission.controller.RequestExecut
 import static app.coronawarn.server.services.submission.controller.RequestExecutor.createRollingStartIntervalNumber;
 
 
+import app.coronawarn.server.common.protocols.external.exposurenotification.ReportType;
 import app.coronawarn.server.common.protocols.external.exposurenotification.TemporaryExposureKey;
 import app.coronawarn.server.common.protocols.internal.SubmissionPayload;
 import app.coronawarn.server.services.submission.config.SubmissionServiceConfig;
@@ -94,13 +95,13 @@ public final class SubmissionPayloadMockData {
 
   public static SubmissionPayload buildPayloadWithInvalidKey() {
     TemporaryExposureKey invalidKey =
-        buildTemporaryExposureKey(VALID_KEY_DATA_1, createRollingStartIntervalNumber(2), 999);
+        buildTemporaryExposureKey(VALID_KEY_DATA_1, createRollingStartIntervalNumber(2), 999, ReportType.CONFIRMED_CLINICAL_DIAGNOSIS,1);
     return buildPayload(invalidKey);
   }
 
   public static SubmissionPayload buildPayloadWithInvalidOriginCountry() {
     TemporaryExposureKey key =
-        buildTemporaryExposureKey(VALID_KEY_DATA_1, createRollingStartIntervalNumber(2), 2);
+        buildTemporaryExposureKey(VALID_KEY_DATA_1, createRollingStartIntervalNumber(2), 2, ReportType.CONFIRMED_CLINICAL_DIAGNOSIS,1);
     return buildInvalidPayload(key);
   }
 

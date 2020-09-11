@@ -287,9 +287,9 @@ class SubmissionControllerTest {
     int rollingStartIntervalNumber2 = rollingStartIntervalNumber1 + DiagnosisKey.MAX_ROLLING_PERIOD;
     int rollingStartIntervalNumber3 = rollingStartIntervalNumber2 + DiagnosisKey.MAX_ROLLING_PERIOD;
     return Stream.of(
-        buildTemporaryExposureKey(VALID_KEY_DATA_1, rollingStartIntervalNumber1, 3),
-        buildTemporaryExposureKey(VALID_KEY_DATA_2, rollingStartIntervalNumber3, 6),
-        buildTemporaryExposureKey(VALID_KEY_DATA_3, rollingStartIntervalNumber2, 8))
+        buildTemporaryExposureKey(VALID_KEY_DATA_1, rollingStartIntervalNumber1, 3, ReportType.CONFIRMED_CLINICAL_DIAGNOSIS,1),
+        buildTemporaryExposureKey(VALID_KEY_DATA_2, rollingStartIntervalNumber3, 6, ReportType.CONFIRMED_CLINICAL_DIAGNOSIS,1),
+        buildTemporaryExposureKey(VALID_KEY_DATA_3, rollingStartIntervalNumber2, 8, ReportType.CONFIRMED_CLINICAL_DIAGNOSIS,1))
         .collect(Collectors.toCollection(ArrayList::new));
   }
 
