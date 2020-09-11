@@ -151,8 +151,9 @@ public @interface ValidSubmissionPayload {
 
     private boolean checkStartIntervalNumberIsAtMidNight(List<TemporaryExposureKey> exposureKeys,
         ConstraintValidatorContext validatorContext) {
+      // check if any start interval number is not set to midnight by performing modulo 24 hrs in minutes/10
       boolean isNotMidNight00Utc = exposureKeys.stream()
-          .anyMatch(exposureKey -> exposureKey.getRollingStartIntervalNumber() % maxRollingPeriod > 0);
+          .anyMatch(exposureKey -> exposureKey.getRollingStartIntervalNumber() % 144 > 0);
 
       if (isNotMidNight00Utc) {
         addViolation(validatorContext, "Start Interval Number must be at midnight ( 00:00 UTC )");

@@ -76,6 +76,18 @@ public class Helpers {
         .collect(Collectors.toList());
   }
 
+  public static List<DiagnosisKey> buildDiagnosisKeysWithFlexibleRollingPeriod(
+      int startIntervalNumber, long submissionTimestamp, int number, int rollingPeriod) {
+    return IntStream.range(0, number)
+        .mapToObj(ignoredValue -> DiagnosisKey.builder()
+            .withKeyData(new byte[16])
+            .withRollingStartIntervalNumber(startIntervalNumber)
+            .withTransmissionRiskLevel(2)
+            .withSubmissionTimestamp(submissionTimestamp)
+            .withRollingPeriod(rollingPeriod).build())
+        .collect(Collectors.toList());
+  }
+
   public static Set<String> getFilePaths(java.io.File root, String basePath) {
     Set<String> files = Arrays.stream(Objects.requireNonNull(root.listFiles()))
         .filter(File::isFile)
