@@ -21,7 +21,6 @@
 package app.coronawarn.server.services.download.runner;
 
 import app.coronawarn.server.common.persistence.service.FederationBatchInfoService;
-import app.coronawarn.server.services.download.Application;
 import app.coronawarn.server.services.download.DownloadServiceConfig;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
