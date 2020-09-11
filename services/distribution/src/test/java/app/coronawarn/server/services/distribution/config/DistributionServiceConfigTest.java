@@ -18,98 +18,80 @@
  * ---license-end
  */
 
-package app.coronawarn.server.services.distribution.assembly.appconfig.validation;
+package app.coronawarn.server.services.distribution.config;
 
 import static app.coronawarn.server.services.distribution.assembly.appconfig.validation.ParameterSpec.RISK_SCORE_MAX;
 import static app.coronawarn.server.services.distribution.assembly.appconfig.validation.ParameterSpec.RISK_SCORE_MIN;
-import static app.coronawarn.server.services.distribution.assembly.appconfig.validation.RiskScoreClassificationValidatorTest.buildError;
+import static app.coronawarn.server.services.distribution.assembly.appconfig.validation.ValidationError.ErrorType.INVALID_VALUES;
 import static app.coronawarn.server.services.distribution.assembly.appconfig.validation.ValidationError.ErrorType.VALUE_OUT_OF_BOUNDS;
 import static app.coronawarn.server.services.distribution.common.Helpers.loadApplicationConfiguration;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
+import static org.mockito.Mockito.when;
 
 import app.coronawarn.server.common.protocols.internal.ApplicationConfiguration;
 import app.coronawarn.server.services.distribution.assembly.appconfig.ApplicationConfigurationPublicationConfig;
 import app.coronawarn.server.services.distribution.assembly.appconfig.UnableToLoadFileException;
 import java.util.Arrays;
 import java.util.stream.Stream;
-import app.coronawarn.server.services.distribution.config.DistributionServiceConfig;
+
+import app.coronawarn.server.services.distribution.assembly.appconfig.validation.*;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
+import org.junit.jupiter.params.provider.ValueSource;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.ConfigFileApplicationContextInitializer;
+import org.springframework.test.annotation.DirtiesContext;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
+import org.springframework.validation.BindException;
+import org.springframework.validation.Errors;
 
 @EnableConfigurationProperties(value = DistributionServiceConfig.class)
 @ExtendWith(SpringExtension.class)
-@ContextConfiguration(classes = {DistributionServiceConfig.class, ApplicationConfigurationPublicationConfig.class},
+@ContextConfiguration(classes = {DistributionServiceConfig.class, ApplicationConfigurationPublicationConfig.class,
+    ApplicationConfigurationValidatorTestConfiguration.class},
     initializers = ConfigFileApplicationContextInitializer.class)
-class ApplicationConfigurationValidatorTest {
+@ActiveProfiles("applicationConfigurationValidatorTest")
+class DistributionServiceConfigTest {
 
   private static final ValidationResult SUCCESS = new ValidationResult();
   private static final TestWithExpectedResult.Builder TEST_BUILDER = new TestWithExpectedResult.Builder("configtests/");
 
-  @ParameterizedTest
-  @MethodSource("createOkTests")
-  void ok(TestWithExpectedResult test) throws UnableToLoadFileException {
-    assertThat(getResultForTest(test)).isEqualTo(SUCCESS);
-  }
+  @Autowired
+  DistributionServiceConfig distributionServiceConfig;
+
+  DistributionServiceConfigValidator distributionServiceConfigValidator = new DistributionServiceConfigValidator();
+
 
   @ParameterizedTest
-  @MethodSource("createNegativeTests")
-  void negative(TestWithExpectedResult test) throws UnableToLoadFileException {
-    assertThat(getResultForTest(test)).isEqualTo(test.result);
+  @ValueSource(strings = {"DE,FRE", "DE, ", " "})
+  void failsOnInvalidSupportedCountries(String supportedCountries) {
+    String[] supportedCountriesList = supportedCountries.split(",");
+    when(distributionServiceConfig.getSupportedCountries()).thenReturn(supportedCountriesList);
+
+    Errors errors = new BindException(distributionServiceConfig, "distributionServiceConfig");
+    distributionServiceConfigValidator.validate(distributionServiceConfig, errors);
+
+    assertThat(errors.getAllErrors()).hasSize(1);
   }
 
-  @Test
-  void circular() {
-    assertThatExceptionOfType(UnableToLoadFileException.class)
-        .isThrownBy(() -> loadApplicationConfiguration("configtests/app-config_circular.yaml"));
-  }
+  @ParameterizedTest
+  @ValueSource(strings = {"DE,FR", "DE"})
+  void successOnValidSupportedCountries(String supportedCountries) throws UnableToLoadFileException {
+    String[] supportedCountriesList = supportedCountries.split(",");
+    when(distributionServiceConfig.getSupportedCountries()).thenReturn(supportedCountriesList);
 
-  private ValidationResult getResultForTest(TestWithExpectedResult test) throws UnableToLoadFileException {
-    var config = loadApplicationConfiguration(test.path());
-    var validator = new ApplicationConfigurationValidator(config);
-    return validator.validate();
-  }
+    Errors errors = new BindException(distributionServiceConfig, "distributionServiceConfig");
+    distributionServiceConfigValidator.validate(distributionServiceConfig, errors);
 
-  private static Stream<Arguments> createOkTests() {
-    return Stream.of(AllOk()).map(Arguments::of);
-  }
+    assertThat(errors.getAllErrors()).isEmpty();
 
-  private static Stream<Arguments> createNegativeTests() {
-    return Stream.of(
-        MinRiskThresholdOutOfBoundsNegative(),
-        MinRiskThresholdOutOfBoundsPositive()
-    ).map(Arguments::of);
-  }
-
-  public static TestWithExpectedResult AllOk() {
-    return TEST_BUILDER.build("app-config_ok.yaml");
-  }
-
-  public static TestWithExpectedResult MinRiskThresholdOutOfBoundsNegative() {
-    return TEST_BUILDER.build("app-config_mrs_negative.yaml")
-        .with(buildError("min-risk-score", RISK_SCORE_MIN - 1, VALUE_OUT_OF_BOUNDS));
-  }
-
-  public static TestWithExpectedResult MinRiskThresholdOutOfBoundsPositive() {
-    return TEST_BUILDER.build("app-config_mrs_oob.yaml")
-        .with(buildError("min-risk-score", RISK_SCORE_MAX + 1, VALUE_OUT_OF_BOUNDS));
-  }
-
-  private ConfigurationValidator buildApplicationConfigurationValidator(
-      DistributionServiceConfig distributionServiceConfig)
-      throws UnableToLoadFileException {
-    ApplicationConfigurationPublicationConfig applicationConfigurationPublicationConfig = new ApplicationConfigurationPublicationConfig();
-    ApplicationConfiguration appConfig = applicationConfigurationPublicationConfig
-        .createMasterConfiguration(distributionServiceConfig);
-
-    return new ApplicationConfigurationValidator(appConfig);
   }
 
   public static ValidationResult buildExpectedResult(ValidationError... errors) {

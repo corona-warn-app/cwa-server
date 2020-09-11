@@ -39,6 +39,7 @@ out/
 .project
 .classpath
 .factorypath
+.checkstyle
 
 pom.xml.versionsBackup
 **/.flattened-pom.xml

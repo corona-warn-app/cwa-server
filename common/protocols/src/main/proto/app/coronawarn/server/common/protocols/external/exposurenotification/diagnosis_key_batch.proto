@@ -3,7 +3,6 @@ syntax = "proto2";
 package app.coronawarn.server.common.protocols.external.exposurenotification;
 option java_package = "app.coronawarn.server.common.protocols.external.exposurenotification";
 option java_multiple_files = true;
-import "app/coronawarn/server/common/protocols/external/exposurenotification/temporary_exposure_key_export.proto";
 
 message DiagnosisKeyBatch {
   repeated DiagnosisKey keys = 1;

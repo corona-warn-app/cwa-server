@@ -46,7 +46,7 @@ public final class SubmissionPayloadMockData {
   public static SubmissionPayload buildPayload(Collection<TemporaryExposureKey> keys) {
     return SubmissionPayload.newBuilder()
         .addAllKeys(keys)
-        .addAllVisitedCountries(List.of("DE"))
+        .addAllVisitedCountries(List.of("FR"))
         .setOrigin("DE")
         .build();
   }
@@ -54,7 +54,7 @@ public final class SubmissionPayloadMockData {
   public static SubmissionPayload buildPayload(Collection<TemporaryExposureKey> keys, boolean consentToFederation) {
     return SubmissionPayload.newBuilder()
         .addAllKeys(keys)
-        .addAllVisitedCountries(List.of("DE"))
+        .addAllVisitedCountries(List.of("FR"))
         .setOrigin("DE")
         .setConsentToFederation(consentToFederation)
         .build();
@@ -68,7 +68,7 @@ public final class SubmissionPayloadMockData {
   public static SubmissionPayload buildInvalidPayload(Collection<TemporaryExposureKey> keys) {
     return SubmissionPayload.newBuilder()
         .addAllKeys(keys)
-        .addAllVisitedCountries(List.of("DE"))
+        .addAllVisitedCountries(List.of("FR"))
         .setOrigin("DE3")
         .build();
   }
@@ -87,7 +87,7 @@ public final class SubmissionPayloadMockData {
   private static SubmissionPayload buildPayloadWithPadding(Collection<TemporaryExposureKey> keys, byte[] bytes) {
     return SubmissionPayload.newBuilder()
         .addAllKeys(keys)
-        .addAllVisitedCountries(List.of("DE"))
+        .addAllVisitedCountries(List.of("FR"))
         .setOrigin("DE")
         .setRequestPadding(ByteString.copyFrom(bytes))
         .build();
@@ -95,19 +95,25 @@ public final class SubmissionPayloadMockData {
 
   public static SubmissionPayload buildPayloadWithInvalidKey() {
     TemporaryExposureKey invalidKey =
-        buildTemporaryExposureKey(VALID_KEY_DATA_1, createRollingStartIntervalNumber(2), 999, ReportType.CONFIRMED_CLINICAL_DIAGNOSIS,1);
+        buildTemporaryExposureKey(VALID_KEY_DATA_1, createRollingStartIntervalNumber(2), 999, ReportType.CONFIRMED_CLINICAL_DIAGNOSIS, 1);
     return buildPayload(invalidKey);
   }
 
   public static SubmissionPayload buildPayloadWithInvalidOriginCountry() {
     TemporaryExposureKey key =
-        buildTemporaryExposureKey(VALID_KEY_DATA_1, createRollingStartIntervalNumber(2), 2, ReportType.CONFIRMED_CLINICAL_DIAGNOSIS,1);
+        buildTemporaryExposureKey(VALID_KEY_DATA_1, createRollingStartIntervalNumber(2), 2, ReportType.CONFIRMED_CLINICAL_DIAGNOSIS, 1);
     return buildInvalidPayload(key);
   }
 
-  public static SubmissionPayload buildPayloadWithInvalidVisitedCountries() {
-    //TODO Implement this once submission payload proto is defined
-    return null;
+  public static SubmissionPayload buildPayloadWithVisitedCountries(List<String> visitedCountries) {
+    TemporaryExposureKey key =
+        buildTemporaryExposureKey(VALID_KEY_DATA_1, createRollingStartIntervalNumber(2), 2, ReportType.CONFIRMED_CLINICAL_DIAGNOSIS, 1);
+    return SubmissionPayload.newBuilder()
+        .addKeys(key)
+        .addAllVisitedCountries(visitedCountries)
+        .setOrigin("DE")
+        .setRequestPadding(ByteString.copyFrom("PaddingString".getBytes()))
+        .build();
   }
 
 }
