@@ -63,7 +63,6 @@ public class RetentionPolicy implements ApplicationRunner {
       federationBatchInfoService.applyRetentionPolicy(retentionDays);
     } catch (Exception e) {
       logger.error("Application of retention policy failed.", e);
-      Application.killApplication(applicationContext);
     }
 
     logger.debug("Retention policy applied successfully.");
