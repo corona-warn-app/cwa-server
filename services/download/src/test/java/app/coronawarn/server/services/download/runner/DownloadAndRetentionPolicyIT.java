@@ -78,13 +78,18 @@ class DownloadAndRetentionPolicyIT {
 
   public static final String BATCH1_DATA = "0123456789ABCDED";
   public static final String BATCH2_DATA = "0123456789ABCDEE";
-  public static final String RETRY_BATCH_SUCCESSFUL_TAG = "retry_batch_successful";
-  public static final String RETRY_BATCH_SUCCESSFUL_DATA = "0123456789ABCDEF";
-  public static final String RETRY_BATCH_FAILS_TAG = "retry_batch_tag_fail";
-  public static final String EMPTY_BATCH_TAG = "null";
+
   private static final String BATCH1_TAG = "batch1_tag";
   private static final String BATCH2_TAG = "batch2_tag";
+  
   private static final String BATCH3_TAG = "batch3_tag";
+
+  private static final String RETRY_BATCH_SUCCESSFUL_TAG = "retry_batch_successful";
+  private static final String RETRY_BATCH_SUCCESSFUL_DATA = "0123456789ABCDEF";
+
+  private static final String RETRY_BATCH_FAILS_TAG = "retry_batch_tag_fail";
+  private static final String EMPTY_BATCH_TAG = "null";
+
   private static WireMockServer server;
 
   @Autowired
