@@ -38,7 +38,7 @@ import org.springframework.web.bind.annotation.RequestHeader;
  * <li> federation-gateway.ssl.key-store-pass
  * <li> federation-gateway.ssl.certificate-type
  */
-@FeignClient(name = "federation-server", url = "${federation-gateway.base-url}", primary = false)
+@FeignClient(name = "federation-server", url = "${federation-gateway.base-url}")
 public interface FederationGatewayClient {
 
   @GetMapping(value = "/diagnosiskeys/download/{date}",

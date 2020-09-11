@@ -46,17 +46,45 @@ import org.springframework.test.context.ActiveProfiles;
 
 @SpringBootTest
 @ActiveProfiles("federation-download-integration")
-// TODO rename test
-public class SpringContextRunnerTest {
+/**
+ * This integration test is responsible for testing the runners for download and retention policy.
+ * The Spring profile "federation-download-integration" enables the test data generation in
+ * /db/testdata/V99__createTestDataForIntegrationTest.sql via the application-federation-download-integration.yaml.
+ *
+ * The sql script for the test data contains
+ * * a batch info for an expired batch that should be deleted by the retention policy
+ * * and two batch info from the current date of status 'ERROR', which should be reprocessed.
+ * One of them will be successfully reprocessed and the other one will fail. The WireMockServer is configured
+ * accordingly.
+ *
+ * The WireMockServer will additionally return a series of three batches, where the first batch of the
+ * corresponding date is batch1, that  can be processed successfully. Batch2 is returned by an explicit
+ * call to its batch tag and can be processed successfully as well. Its successor batch3 fails with a 404 Not Found.
+ *
+ * Hence, after the execution of both runners, the federation_batch_info table should be the following:
+ * * "expired_batch_tag" is deleted
+ * * "retry_batch_tag_successful" has state "PROCESSED"
+ * * "retry_batch_tag_fail" has state "ERROR_WONT_RETRY"
+ * * "batch1_tag" has state "PROCESSED"
+ * * "batch2_tag" has state "PROCESSED"
+ * * "batch3_tag" has state "ERROR"
+ * * no batch has state "UNPROCESSED"
+ *
+ * The diagnosis_key table should contain the data that correspond to the three batches with state "PROCESSED":
+ * BATCH1_DATA, BATCH2_DATA and RETRY_BATCH_SUCCESSFUL_DATA
+ *
+ */
+public class DownloadAndRetentionPolicyIT {
 
-  public static final String KEY_DATA_1 = "0123456789ABCDED";
-  public static final String KEY_DATA_2 = "0123456789ABCDEE";
-  public static final String KEY_DATA_3 = "0123456789ABCDEF";
-  private static final String BATCH_TAG_1 = "19729de860ea";
-  private static final String BATCH_TAG_2 = "19729de860eb";
-  private static final String BATCH_TAG_3 = "19729de860ec";
+  public static final String BATCH1_DATA = "0123456789ABCDED";
+  public static final String BATCH2_DATA = "0123456789ABCDEE";
+  public static final String RETRY_BATCH_SUCCESSFUL_TAG = "retry_batch_successful";
+  public static final String RETRY_BATCH_SUCCESSFUL_DATA = "0123456789ABCDEF";
+  public static final String RETRY_BATCH_FAILS_TAG = "retry_batch_tag_fail";
   public static final String EMPTY_BATCH_TAG = "null";
-
+  private static final String BATCH1_TAG = "batch1_tag";
+  private static final String BATCH2_TAG = "batch2_tag";
+  private static final String BATCH3_TAG = "batch3_tag";
   private static WireMockServer server;
 
   @Autowired
@@ -67,16 +95,17 @@ public class SpringContextRunnerTest {
 
   @BeforeAll
   static void setupWireMock() {
-    HttpHeaders batchHeaders1 = getHttpHeaders(BATCH_TAG_1, BATCH_TAG_2);
-    DiagnosisKeyBatch batch1 = FederationBatchTestHelper.createDiagnosisKeyBatch(KEY_DATA_1);
+    HttpHeaders batch1Headers = getHttpHeaders(BATCH1_TAG, BATCH2_TAG);
+    DiagnosisKeyBatch batch1 = FederationBatchTestHelper.createDiagnosisKeyBatch(BATCH1_DATA);
 
-    HttpHeaders batchHeaders2 = getHttpHeaders(BATCH_TAG_2, BATCH_TAG_3);
-    DiagnosisKeyBatch batch2 = FederationBatchTestHelper.createDiagnosisKeyBatch(KEY_DATA_2);
+    HttpHeaders batch2Headers = getHttpHeaders(BATCH2_TAG, BATCH3_TAG);
+    DiagnosisKeyBatch batch2 = FederationBatchTestHelper.createDiagnosisKeyBatch(BATCH2_DATA);
 
-    HttpHeaders batchHeaders3 = getHttpHeaders(BATCH_TAG_3, EMPTY_BATCH_TAG);
+    HttpHeaders batch3Headers = getHttpHeaders(BATCH3_TAG, EMPTY_BATCH_TAG);
 
-    HttpHeaders retryBatchHeaders = getHttpHeaders("retry_batch_tag_1", EMPTY_BATCH_TAG);
-    DiagnosisKeyBatch retryDiagnosisKeyBatch = FederationBatchTestHelper.createDiagnosisKeyBatch(KEY_DATA_3);
+    HttpHeaders retryBatchSuccessfulHeaders = getHttpHeaders(RETRY_BATCH_SUCCESSFUL_TAG, EMPTY_BATCH_TAG);
+    DiagnosisKeyBatch retryBatchSuccessful = FederationBatchTestHelper.createDiagnosisKeyBatch(
+        RETRY_BATCH_SUCCESSFUL_DATA);
 
     server = new WireMockServer(options().port(1234));
     server.start();
@@ -85,38 +114,38 @@ public class SpringContextRunnerTest {
             .willReturn(
                 aResponse()
                     .withStatus(HttpStatus.OK.value())
-                    .withHeaders(batchHeaders1)
+                    .withHeaders(batch1Headers)
                     .withBody(batch1.toByteArray())));
     server.stubFor(
         get(anyUrl())
-            .withHeader("batchTag", equalTo(BATCH_TAG_2))
+            .withHeader("batchTag", equalTo(BATCH2_TAG))
             .willReturn(
                 aResponse()
                     .withStatus(HttpStatus.OK.value())
-                    .withHeaders(batchHeaders2)
+                    .withHeaders(batch2Headers)
                     .withBody(batch2.toByteArray())));
     server.stubFor(
         get(anyUrl())
-            .withHeader("batchTag", equalTo(BATCH_TAG_3))
+            .withHeader("batchTag", equalTo(BATCH3_TAG))
             .willReturn(
                 aResponse()
                     .withStatus(HttpStatus.NOT_FOUND.value())
-                    .withHeaders(batchHeaders3)));
+                    .withHeaders(batch3Headers)));
     server.stubFor(
         get(anyUrl())
-            .withHeader("batchTag", equalTo("retry_batch_tag_1"))
+            .withHeader("batchTag", equalTo(RETRY_BATCH_FAILS_TAG))
             .willReturn(
                 aResponse()
                     .withStatus(HttpStatus.NOT_FOUND.value())
-                    .withHeaders(batchHeaders3)));
+                    .withHeaders(batch3Headers)));
     server.stubFor(
         get(anyUrl())
-            .withHeader("batchTag", equalTo("retry_batch_tag_2"))
+            .withHeader("batchTag", equalTo(RETRY_BATCH_SUCCESSFUL_TAG))
             .willReturn(
                 aResponse()
                     .withStatus(HttpStatus.OK.value())
-                    .withHeaders(retryBatchHeaders)
-                    .withBody(retryDiagnosisKeyBatch.toByteArray())));
+                    .withHeaders(retryBatchSuccessfulHeaders)
+                    .withBody(retryBatchSuccessful.toByteArray())));
   }
 
   private static HttpHeaders getHttpHeaders(String batchTag, String nextBatchTag) {
@@ -132,19 +161,19 @@ public class SpringContextRunnerTest {
   }
 
   @Test
-  //TODO failure messages in asserts
   void testDownloadRunSuccessfully() {
     assertThat(federationBatchInfoRepository.findAll()).hasSize(5);
-    assertThat(federationBatchInfoRepository.findByStatus("UNPROCESSED")).hasSize(0);
+    assertThat(federationBatchInfoRepository.findByStatus("UNPROCESSED")).isEmpty();
     assertThat(federationBatchInfoRepository.findByStatus("PROCESSED")).hasSize(3);
     assertThat(federationBatchInfoRepository.findByStatus("ERROR")).hasSize(1);
     assertThat(federationBatchInfoRepository.findByStatus("ERROR_WONT_RETRY")).hasSize(1);
 
     Iterable<DiagnosisKey> diagnosisKeys = diagnosisKeyRepository.findAll();
-    assertThat(diagnosisKeys).hasSize(3);
-    assertThat(diagnosisKeys).contains(createDiagnosisKey(KEY_DATA_1));
-    assertThat(diagnosisKeys).contains(createDiagnosisKey(KEY_DATA_2));
-    assertThat(diagnosisKeys).contains(createDiagnosisKey(KEY_DATA_3));
+    assertThat(diagnosisKeys)
+        .hasSize(3)
+        .contains(createDiagnosisKey(BATCH1_DATA))
+        .contains(createDiagnosisKey(BATCH2_DATA))
+        .contains(createDiagnosisKey(RETRY_BATCH_SUCCESSFUL_DATA));
   }
 
   private DiagnosisKey createDiagnosisKey(String keyData1) {
