@@ -30,6 +30,7 @@ import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.Collection;
 import java.util.List;
+import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
@@ -51,6 +52,9 @@ public class TestDataGeneration implements ApplicationRunner {
   private final Logger logger = LoggerFactory.getLogger(TestDataGeneration.class);
   private final TestDataUploadRepository keyRepository;
 
+  public static final long ONE_HOUR_INTERVAL_SECONDS = TimeUnit.HOURS.toSeconds(1);
+  public static final long TEN_MINUTES_INTERVAL_SECONDS = TimeUnit.MINUTES.toSeconds(10);
+
   public TestDataGeneration(UploadServiceConfig uploadServiceConfig,
       TestDataUploadRepository keyRepository) {
     this.uploadServiceConfig = uploadServiceConfig;
@@ -65,7 +69,7 @@ public class TestDataGeneration implements ApplicationRunner {
 
   private DiagnosisKey makeKeyFromTimestamp(long timestamp) {
     return DiagnosisKey.builder().withKeyData(randomByteData())
-        .withRollingStartIntervalNumber(1)
+        .withRollingStartIntervalNumber(generateRollingStartIntervalNumber(timestamp))
         .withTransmissionRiskLevel(2)
         .withConsentToFederation(true)
         .withCountryCode("DE")
@@ -74,6 +78,19 @@ public class TestDataGeneration implements ApplicationRunner {
         .withVisitedCountries(List.of("FR", "DK"))
         .withReportType(ReportType.CONFIRMED_TEST)
         .build();
+  }
+
+  private int generateRollingStartIntervalNumber(long submissionTimestamp) {
+    long maxRollingStartIntervalNumber =
+        submissionTimestamp * ONE_HOUR_INTERVAL_SECONDS / TEN_MINUTES_INTERVAL_SECONDS;
+    long minRollingStartIntervalNumber =
+        maxRollingStartIntervalNumber
+            - TimeUnit.DAYS.toSeconds(14) / TEN_MINUTES_INTERVAL_SECONDS;
+    return Math.toIntExact(getRandomBetween(minRollingStartIntervalNumber, maxRollingStartIntervalNumber));
+  }
+
+  private long getRandomBetween(long minIncluding, long maxIncluding) {
+    return minIncluding + (long) (ThreadLocalRandom.current().nextDouble() * (maxIncluding - minIncluding));
   }
 
   private List<DiagnosisKey> makeKeysFromTimestamp(long timestamp, int quantity) {
