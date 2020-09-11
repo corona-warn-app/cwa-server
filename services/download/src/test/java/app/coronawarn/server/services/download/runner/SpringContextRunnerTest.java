@@ -1,75 +1,89 @@
 package app.coronawarn.server.services.download.runner;
 
-import static com.github.tomakehurst.wiremock.client.WireMock.*;
 import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
+import static com.github.tomakehurst.wiremock.client.WireMock.anyUrl;
+import static com.github.tomakehurst.wiremock.client.WireMock.equalTo;
+import static com.github.tomakehurst.wiremock.client.WireMock.get;
 import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.options;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.ArgumentMatchers.anyInt;
-import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.Mockito.*;
 import static org.springframework.http.HttpHeaders.CONTENT_TYPE;
 
-import app.coronawarn.server.common.federation.client.FederationGatewayClient;
-import app.coronawarn.server.common.federation.client.download.BatchDownloadResponse;
-import app.coronawarn.server.common.persistence.service.FederationBatchInfoService;
-import app.coronawarn.server.common.protocols.external.exposurenotification.DiagnosisKey;
+import app.coronawarn.server.common.persistence.domain.DiagnosisKey;
+import app.coronawarn.server.common.persistence.repository.DiagnosisKeyRepository;
+import app.coronawarn.server.common.persistence.repository.FederationBatchInfoRepository;
 import app.coronawarn.server.common.protocols.external.exposurenotification.DiagnosisKeyBatch;
-import app.coronawarn.server.services.download.FederationBatchUtils;
+import app.coronawarn.server.services.download.FederationBatchTestHelper;
 import com.github.tomakehurst.wiremock.WireMockServer;
-import java.util.Optional;
 import com.github.tomakehurst.wiremock.http.HttpHeader;
 import com.github.tomakehurst.wiremock.http.HttpHeaders;
-import com.google.protobuf.ByteString;
+import javax.annotation.PostConstruct;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.context.TestConfiguration;
-import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.boot.test.mock.mockito.SpyBean;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Primary;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.test.annotation.DirtiesContext;
 
 @SpringBootTest
 public class SpringContextRunnerTest {
 
-  private static final String EXP_BATCH_TAG = "507f191e810c19729de860ea";
-  private static final String EXP_NEXT_BATCH_TAG = "507f191e810c19729de860ea";
-  private static final DiagnosisKeyBatch EXP_DIAGNOSIS_KEY_BATCH = DiagnosisKeyBatch.newBuilder()
-      .addKeys(
-          DiagnosisKey.newBuilder()
-              .setKeyData(ByteString.copyFromUtf8("0123456789ABCDEF"))
-              .addVisitedCountries("DE")
-              .setRollingStartIntervalNumber(0)
-              .setRollingPeriod(144)
-              .setTransmissionRiskLevel(2)
-              .build()).build();
-
-  @SpyBean
-  private FederationGatewayClient federationGatewayClient;
-
-  @MockBean
-  private FederationBatchInfoService federationBatchInfoService;
+  public static final String keyData1 = "0123456789ABCDED";
+  public static final String keyData2 = "0123456789ABCDEE";
+  public static final String keyData3 = "0123456789ABCDEF";
+  private static final String batchTag1 = "19729de860ea";
+  private static final String batchTag2 = "19729de860eb";
+  private static final String batchTag3 = "19729de860ec";
 
   private static WireMockServer server;
 
+  @Autowired
+  private FederationBatchInfoRepository federationBatchInfoRepository;
+
+  @Autowired
+  private DiagnosisKeyRepository diagnosisKeyRepository;
+
   @BeforeAll
   static void setupWireMock() {
-    server = new WireMockServer(options().port(1234));
-    HttpHeaders headers = new HttpHeaders();
-    headers.plus(new HttpHeader(CONTENT_TYPE, "application/protobuf; version=1.0"));
-    headers.plus(new HttpHeader("batchTag", EXP_BATCH_TAG));
-    headers.plus(new HttpHeader("nextBatchTag", EXP_NEXT_BATCH_TAG));
+    HttpHeaders batchHeaders1 = getHttpHeaders(batchTag1, batchTag2);
+    DiagnosisKeyBatch batch1 = FederationBatchTestHelper.createDiagnosisKeyBatch(keyData1);
 
+    HttpHeaders batchHeaders2 = getHttpHeaders(batchTag2, batchTag3);
+    DiagnosisKeyBatch batch2 = FederationBatchTestHelper.createDiagnosisKeyBatch(keyData2);
+
+    HttpHeaders batchHeaders3 = getHttpHeaders(batchTag3, "null");
+
+    server = new WireMockServer(options().port(1234));
     server.start();
     server.stubFor(
         get(anyUrl())
-          .willReturn(aResponse().withStatus(HttpStatus.OK.value()).withHeaders(headers).withBody(EXP_DIAGNOSIS_KEY_BATCH.toByteArray()))
-    );
+            .willReturn(
+                aResponse()
+                    .withStatus(HttpStatus.OK.value())
+                    .withHeaders(batchHeaders1)
+                    .withBody(batch1.toByteArray())));
+    server.stubFor(
+        get(anyUrl())
+            .withHeader("batchTag", equalTo(batchTag2))
+            .willReturn(
+                aResponse()
+                    .withStatus(HttpStatus.OK.value())
+                    .withHeaders(batchHeaders2)
+                    .withBody(batch2.toByteArray())));
+    server.stubFor(
+        get(anyUrl())
+            .withHeader("batchTag", equalTo(batchTag3))
+            .willReturn(
+                aResponse()
+                    .withStatus(HttpStatus.NOT_FOUND.value())
+                    .withHeaders(batchHeaders3)));
+  }
+
+  private static HttpHeaders getHttpHeaders(String batchTag, String nextBatchTag) {
+    return new HttpHeaders()
+        .plus(new HttpHeader(CONTENT_TYPE, "application/protobuf; version=1.0"))
+        .plus(new HttpHeader("batchTag", batchTag))
+        .plus(new HttpHeader("nextBatchTag", nextBatchTag));
   }
 
   @AfterAll
@@ -77,28 +91,20 @@ public class SpringContextRunnerTest {
     server.stop();
   }
 
-  /*
-  @TestConfiguration
-  public static class TestConfig {
-
-    @Primary
-    @Bean
-    public FederationGatewayClient mockFederationGatewayClient(FederationGatewayClient mockFederationGatewayClient) {
-      // FederationGatewayClient federationGatewayClient = mock(FederationGatewayClient.class);
-      // BatchDownloadResponse serverResponse = FederationBatchUtils.createBatchDownloadResponse("abc", Optional.empty());
-      // when(federationGatewayClient.getDiagnosisKeys(anyString())).thenReturn(serverResponse);
-      // return federationGatewayClient;
-      return spy(mockFederationGatewayClient);
-    }
-  }
-
-   */
-
   @Test
   @DirtiesContext
   void testDownloadRunSuccessfully() {
-    verify(federationGatewayClient, times(1)).getDiagnosisKeys(anyString());
-    verify(federationGatewayClient, never()).getDiagnosisKeys(anyString(), anyString());
-    verify(federationBatchInfoService, times(1)).applyRetentionPolicy(anyInt());
+    assertThat(federationBatchInfoRepository.findAll()).hasSize(3);
+    assertThat(federationBatchInfoRepository.findByStatus("PROCESSED")).hasSize(2);
+    assertThat(federationBatchInfoRepository.findByStatus("ERROR")).hasSize(1);
+
+    Iterable<DiagnosisKey> diagnosisKeys = diagnosisKeyRepository.findAll();
+    assertThat(diagnosisKeys).hasSize(2);
+    assertThat(diagnosisKeys).contains(
+        DiagnosisKey.builder()
+            .fromFederationDiagnosisKey(FederationBatchTestHelper.createDiagnosisKey(keyData1)).build());
+    assertThat(diagnosisKeys).contains(
+        DiagnosisKey.builder()
+            .fromFederationDiagnosisKey(FederationBatchTestHelper.createDiagnosisKey(keyData2)).build());
   }
 }
