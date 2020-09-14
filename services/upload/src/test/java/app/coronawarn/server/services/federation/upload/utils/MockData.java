@@ -41,8 +41,20 @@ public class MockData {
   }
 
   public static FederationUploadKey generateRandomUploadKey(boolean consentToShare) {
-   return FederationUploadKey.from(
-            DiagnosisKey.builder().withKeyData(randomByteData())
+   return FederationUploadKey.from(generateRandomDiagnosisKey(consentToShare));
+  }
+
+  public static List<DiagnosisKey> generateRandomDiagnosisKeys(boolean consentToShare, int numberOfKeys) {
+    List<DiagnosisKey> fakeKeys = new ArrayList<>();
+    while (numberOfKeys > 0) {
+      fakeKeys.add(generateRandomDiagnosisKey(consentToShare));
+      numberOfKeys--;
+    }
+    return fakeKeys;
+  }
+
+  public static DiagnosisKey generateRandomDiagnosisKey(boolean consentToShare) {
+     return DiagnosisKey.builder().withKeyData(randomByteData())
                             .withRollingStartIntervalNumber(1)
                             .withTransmissionRiskLevel(2)
                             .withConsentToFederation(consentToShare)
@@ -51,7 +63,7 @@ public class MockData {
                             .withSubmissionTimestamp(12)
                             .withVisitedCountries(List.of("FR","DK"))
                             .withReportType(ReportType.CONFIRMED_TEST)
-                            .build());
+                            .build();
   }
 
   private static byte[] randomByteData() {

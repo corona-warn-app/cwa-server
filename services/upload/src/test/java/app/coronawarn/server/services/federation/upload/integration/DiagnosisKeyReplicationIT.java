@@ -20,39 +20,24 @@
 
 package app.coronawarn.server.services.federation.upload.integration;
 
+import static app.coronawarn.server.services.federation.upload.utils.MockData.generateRandomUploadKey;
+import static org.junit.Assert.assertArrayEquals;
+import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
+
 import app.coronawarn.server.common.persistence.domain.DiagnosisKey;
 import app.coronawarn.server.common.persistence.domain.FederationUploadKey;
 import app.coronawarn.server.common.persistence.repository.DiagnosisKeyRepository;
 import app.coronawarn.server.common.persistence.repository.FederationUploadKeyRepository;
 import app.coronawarn.server.common.persistence.service.DiagnosisKeyService;
-import app.coronawarn.server.common.protocols.external.exposurenotification.ReportType;
-import app.coronawarn.server.services.federation.upload.Application;
-import org.junit.Ignore;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Tag;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.ConfigFileApplicationContextInitializer;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
 import java.util.Collection;
 import java.util.List;
-import java.util.Random;
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 
-import static org.junit.Assert.assertArrayEquals;
-import static org.junit.Assert.assertTrue;
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
-@SpringBootTest
-@ActiveProfiles({"integration-test"})
-@Tag("s3-integration")
-class DiagnosisKeyReplicationIT {
-
-  private static final String TEST_ORIGIN_COUNTRY = "DE";
+class DiagnosisKeyReplicationIT extends UploadKeyIT {
 
   @Autowired
   private DiagnosisKeyService keyService;
@@ -63,14 +48,6 @@ class DiagnosisKeyReplicationIT {
   @Autowired
   private FederationUploadKeyRepository uploadKeyRepository;
 
-  @Autowired
-  private JdbcTemplate jdbcTemplate;
-
-  @BeforeEach
-  public void setUpMocks() {
-    // cleanup before tests
-    jdbcTemplate.execute("truncate table federation_upload_key");
-  }
 
   @Test
   void diagnosisKeysWithConsentShouldBeReplicatedOnInsert() {
@@ -79,7 +56,7 @@ class DiagnosisKeyReplicationIT {
 
   @Test
   void diagnosisKeysWithoutConsentShouldNotBeReplicatedOnInsert() {
-    DiagnosisKey dummyKey = generateRandomDiagnosisKey(false);
+    DiagnosisKey dummyKey = generateRandomUploadKey(false);
     keyService.saveDiagnosisKeys(List.of(dummyKey));
 
     Collection<FederationUploadKey> uploadableKeys = uploadKeyRepository.findAllUploadableKeys();
@@ -98,7 +75,7 @@ class DiagnosisKeyReplicationIT {
 
 
   private DiagnosisKey persistNewKeyAndCheckReplication() {
-    DiagnosisKey dummyKey = generateRandomDiagnosisKey(true);
+    DiagnosisKey dummyKey = generateRandomUploadKey(true);
     keyService.saveDiagnosisKeys(List.of(dummyKey));
 
     Collection<FederationUploadKey> uploadableKeys = uploadKeyRepository.findAllUploadableKeys();
@@ -108,23 +85,4 @@ class DiagnosisKeyReplicationIT {
     return dummyKey;
   }
 
-  private DiagnosisKey generateRandomDiagnosisKey(boolean consentToShare) {
-    DiagnosisKey dummyKey = DiagnosisKey.builder().withKeyData(randomByteData())
-        .withRollingStartIntervalNumber(1)
-        .withTransmissionRiskLevel(2)
-        .withConsentToFederation(consentToShare)
-        .withCountryCode(TEST_ORIGIN_COUNTRY)
-        .withDaysSinceOnsetOfSymptoms(1)
-        .withSubmissionTimestamp(12)
-        .withVisitedCountries(List.of("FR", "DK"))
-        .withReportType(ReportType.CONFIRMED_TEST)
-        .build();
-    return dummyKey;
-  }
-
-  private byte[] randomByteData() {
-    byte[] keydata = new byte[16];
-    new Random().nextBytes(keydata);
-    return keydata;
-  }
 }

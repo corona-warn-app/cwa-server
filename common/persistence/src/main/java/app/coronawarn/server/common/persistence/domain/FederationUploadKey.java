@@ -24,6 +24,14 @@ import app.coronawarn.server.common.protocols.external.exposurenotification.Repo
 import java.util.List;
 import javax.validation.constraints.Size;
 
+/**
+ * This entity is mapped to a table which serves as data source for the
+ * uploading of diagnosis keys to the Federation Gateway Service. The underlying table
+ * is filled by replicating diagnosis keys on insert (currently via database triggers).
+ *
+ * <p>The entity is almost equivalent to the {@link DiagnosisKey} in content, but carries
+ * some additional specific metadata, and could diverge in the future.
+ */
 public class FederationUploadKey extends DiagnosisKey {
 
   private String batchTagId;
