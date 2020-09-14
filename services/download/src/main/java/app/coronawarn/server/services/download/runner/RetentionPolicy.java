@@ -20,36 +20,44 @@
 
 package app.coronawarn.server.services.download.runner;
 
+import app.coronawarn.server.common.persistence.service.FederationBatchInfoService;
 import app.coronawarn.server.services.download.DownloadServiceConfig;
-import app.coronawarn.server.services.download.FederationBatchProcessor;
-import java.time.LocalDate;
-import java.time.Period;
-import java.time.ZoneOffset;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
 /**
- * This runner retrieves diagnosis key batches.
+ * This runner removes any batch information from the database that were submitted before a configured threshold of
+ * days.
  */
 @Component
-@Order(2)
-public class Download implements ApplicationRunner {
+@Order(1)
+public class RetentionPolicy implements ApplicationRunner {
 
-  private final FederationBatchProcessor batchProcessor;
-  private final DownloadServiceConfig serviceConfig;
+  private static final Logger logger = LoggerFactory.getLogger(RetentionPolicy.class);
 
-  Download(FederationBatchProcessor batchProcessor, DownloadServiceConfig serviceConfig) {
-    this.batchProcessor = batchProcessor;
-    this.serviceConfig = serviceConfig;
+  private final FederationBatchInfoService federationBatchInfoService;
+  private final Integer retentionDays;
+
+  /**
+   * Creates a new RetentionPolicy.
+   */
+  public RetentionPolicy(FederationBatchInfoService federationBatchInfoService,
+      DownloadServiceConfig downloadServiceConfig) {
+    this.federationBatchInfoService = federationBatchInfoService;
+    this.retentionDays = downloadServiceConfig.getRetentionDays();
   }
 
   @Override
   public void run(ApplicationArguments args) {
-    LocalDate yesterday = LocalDate.now(ZoneOffset.UTC).minus(Period.ofDays(serviceConfig.getEfgsOffsetDays()));
-    batchProcessor.saveFirstBatchInfoForDate(yesterday);
-    batchProcessor.processErrorFederationBatches();
-    batchProcessor.processUnprocessedFederationBatches();
+    try {
+      federationBatchInfoService.applyRetentionPolicy(retentionDays);
+    } catch (Exception e) {
+      logger.error("Application of retention policy failed.", e);
+    }
+    logger.debug("Retention policy applied successfully.");
   }
 }

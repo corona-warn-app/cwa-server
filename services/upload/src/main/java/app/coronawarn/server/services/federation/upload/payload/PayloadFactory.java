@@ -59,10 +59,8 @@ public class PayloadFactory {
     payload.setOriginalKeys(originalKeys);
     try {
       payload.setBatchSignature(signer.createSignatureBytes(batch));
-    } catch (GeneralSecurityException e) {
+    } catch (GeneralSecurityException | OperatorCreationException | IOException | CMSException e) {
       logger.error("Failed to generate upload payload signature", e);
-    } catch (OperatorCreationException | IOException | CMSException e) {
-      e.printStackTrace();
     }
     return payload;
   }

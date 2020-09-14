@@ -11,6 +11,8 @@ spring:
     user: local_setup_flyway
     baseline-on-migrate: true
     baseline-version: 0
+    password: local_setup_flyway
+    user: local_setup_flyway
   datasource:
     driver-class-name: org.postgresql.Driver
     url: jdbc:postgresql://${POSTGRESQL_SERVICE_HOST:localhost}:${POSTGRESQL_SERVICE_PORT:8001}/${POSTGRESQL_DATABASE:cwa}

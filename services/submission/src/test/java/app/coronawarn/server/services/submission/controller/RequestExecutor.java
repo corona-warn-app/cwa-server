@@ -63,7 +63,7 @@ public class RequestExecutor {
   public ResponseEntity<Void> executePost(Collection<TemporaryExposureKey> keys, HttpHeaders headers) {
     SubmissionPayload body = SubmissionPayload.newBuilder()
         .setOrigin("DE")
-        .addAllVisitedCountries(List.of("FR","UK"))
+        .addAllVisitedCountries(List.of("DE"))
         .addAllKeys(keys).build();
     return executePost(body, headers);
   }

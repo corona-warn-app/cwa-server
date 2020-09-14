@@ -24,6 +24,7 @@ import app.coronawarn.server.common.persistence.domain.DiagnosisKey;
 import app.coronawarn.server.common.protocols.external.exposurenotification.ReportType;
 import app.coronawarn.server.services.federation.upload.config.UploadServiceConfig;
 import app.coronawarn.server.services.federation.upload.testdata.TestDataUploadRepository;
+import java.security.SecureRandom;
 import java.time.Clock;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
@@ -51,6 +52,9 @@ public class TestDataGeneration implements ApplicationRunner {
   private final Logger logger = LoggerFactory.getLogger(TestDataGeneration.class);
   private final TestDataUploadRepository keyRepository;
 
+  public static final long ONE_HOUR_INTERVAL_SECONDS = TimeUnit.HOURS.toSeconds(1);
+  public static final long TEN_MINUTES_INTERVAL_SECONDS = TimeUnit.MINUTES.toSeconds(10);
+
   public TestDataGeneration(UploadServiceConfig uploadServiceConfig,
       TestDataUploadRepository keyRepository) {
     this.uploadServiceConfig = uploadServiceConfig;
@@ -59,13 +63,13 @@ public class TestDataGeneration implements ApplicationRunner {
 
   private static byte[] randomByteData() {
     byte[] keydata = new byte[16];
-    ThreadLocalRandom.current().nextBytes(keydata);
+    new SecureRandom().nextBytes(keydata);
     return keydata;
   }
 
   private DiagnosisKey makeKeyFromTimestamp(long timestamp) {
     return DiagnosisKey.builder().withKeyData(randomByteData())
-        .withRollingStartIntervalNumber(1)
+        .withRollingStartIntervalNumber(generateRollingStartIntervalNumber(timestamp))
         .withTransmissionRiskLevel(2)
         .withConsentToFederation(true)
         .withCountryCode("DE")
@@ -74,6 +78,19 @@ public class TestDataGeneration implements ApplicationRunner {
         .withVisitedCountries(List.of("FR", "DK"))
         .withReportType(ReportType.CONFIRMED_TEST)
         .build();
+  }
+
+  private int generateRollingStartIntervalNumber(long submissionTimestamp) {
+    long maxRollingStartIntervalNumber =
+        submissionTimestamp * ONE_HOUR_INTERVAL_SECONDS / TEN_MINUTES_INTERVAL_SECONDS;
+    long minRollingStartIntervalNumber =
+        maxRollingStartIntervalNumber
+            - TimeUnit.DAYS.toSeconds(14) / TEN_MINUTES_INTERVAL_SECONDS;
+    return Math.toIntExact(getRandomBetween(minRollingStartIntervalNumber, maxRollingStartIntervalNumber));
+  }
+
+  private long getRandomBetween(long minIncluding, long maxIncluding) {
+    return minIncluding + (long) (ThreadLocalRandom.current().nextDouble() * (maxIncluding - minIncluding));
   }
 
   private List<DiagnosisKey> makeKeysFromTimestamp(long timestamp, int quantity) {
@@ -115,7 +132,7 @@ public class TestDataGeneration implements ApplicationRunner {
   }
 
   @Override
-  public void run(ApplicationArguments args) throws Exception {
+  public void run(ApplicationArguments args) {
     var fakeKeys = generateFakeKeysForToday();
     logger.info("Storing keys in the DB");
     this.storeUploadKeys(fakeKeys);
