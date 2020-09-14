@@ -48,10 +48,11 @@ public class DiagnosisKeyBatchAssembler {
       DiagnosisKey key) {
     return app.coronawarn.server.common.protocols.external.exposurenotification.DiagnosisKey.newBuilder()
         .setKeyData(ByteString.copyFrom(key.getKeyData()))
-        .addAllVisitedCountries(key.getVisitedCountries())
+        .setRollingStartIntervalNumber(key.getRollingStartIntervalNumber())
         .setRollingPeriod(key.getRollingPeriod())
         .setReportType(key.getReportType())
         .setTransmissionRiskLevel(key.getTransmissionRiskLevel())
+        .addAllVisitedCountries(key.getVisitedCountries())
         .setOrigin(key.getOriginCountry())
         .setDaysSinceOnsetOfSymptoms(key.getDaysSinceOnsetOfSymptoms())
         .build();
