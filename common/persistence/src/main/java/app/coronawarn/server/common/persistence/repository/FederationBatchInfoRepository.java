@@ -53,4 +53,11 @@ public interface FederationBatchInfoRepository extends PagingAndSortingRepositor
       @Param("status") String status);
 
   List<FederationBatchInfo> findByStatus(@Param("status") String status);
+
+  @Query("SELECT COUNT(*) FROM federation_batch_info WHERE date<:threshold")
+  int countOlderThan(@Param("threshold") LocalDate date);
+
+  @Modifying
+  @Query("DELETE FROM federation_batch_info WHERE date<:threshold")
+  void deleteOlderThan(@Param("threshold") LocalDate date);
 }
