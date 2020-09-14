@@ -54,9 +54,9 @@ public class TemporaryExposureKeyExportFile extends FileOnDiskWithChecksum {
     this.distributionServiceConfig = distributionServiceConfig;
 
     this.temporaryExposureKeys = temporaryExposureKeys
-      .stream()
-      .sorted(new TemporaryExposureKeyComparator())
-      .collect(Collectors.toList());
+        .stream()
+        .sorted(new TemporaryExposureKeyComparator())
+        .collect(Collectors.toList());
   }
 
   /**
@@ -134,6 +134,8 @@ public class TemporaryExposureKeyExportFile extends FileOnDiskWithChecksum {
         .setTransmissionRiskLevel(diagnosisKey.getTransmissionRiskLevel())
         .setRollingStartIntervalNumber(diagnosisKey.getRollingStartIntervalNumber())
         .setRollingPeriod(diagnosisKey.getRollingPeriod())
+        .setReportType(diagnosisKey.getReportType())
+        .setDaysSinceOnsetOfSymptoms(diagnosisKey.getDaysSinceOnsetOfSymptoms())
         .build())
         .collect(Collectors.toSet());
   }

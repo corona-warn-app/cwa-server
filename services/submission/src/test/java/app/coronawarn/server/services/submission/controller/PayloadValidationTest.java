@@ -28,6 +28,7 @@ import static org.springframework.http.HttpStatus.BAD_REQUEST;
 import static org.springframework.http.HttpStatus.OK;
 
 import app.coronawarn.server.common.persistence.domain.DiagnosisKey;
+import app.coronawarn.server.common.protocols.external.exposurenotification.ReportType;
 import app.coronawarn.server.common.protocols.external.exposurenotification.TemporaryExposureKey;
 import app.coronawarn.server.services.submission.verification.TanVerifier;
 import java.util.ArrayList;
@@ -75,7 +76,8 @@ class PayloadValidationTest {
   private Collection<TemporaryExposureKey> buildPayloadWithTooManyKeys() {
     ArrayList<TemporaryExposureKey> tooMany = new ArrayList<>();
     for (int i = 0; i <= 20; i++) {
-      tooMany.add(buildTemporaryExposureKey(VALID_KEY_DATA_1, createRollingStartIntervalNumber(2) + i * DiagnosisKey.MAX_ROLLING_PERIOD , 3));
+      tooMany.add(buildTemporaryExposureKey(VALID_KEY_DATA_1, createRollingStartIntervalNumber(2) + i * DiagnosisKey.MAX_ROLLING_PERIOD , 3,
+          ReportType.CONFIRMED_CLINICAL_DIAGNOSIS,1));
     }
     return tooMany;
   }
@@ -84,8 +86,9 @@ class PayloadValidationTest {
   void check400ResponseStatusForKeysWithFixedRollingPeriodAndDuplicateStartIntervals() {
     int rollingStartIntervalNumber = createRollingStartIntervalNumber(2);
     var keysWithDuplicateStartIntervalNumber = Lists.list(
-        buildTemporaryExposureKey(VALID_KEY_DATA_1, rollingStartIntervalNumber, 1),
-        buildTemporaryExposureKey(VALID_KEY_DATA_2, rollingStartIntervalNumber, 2));
+        buildTemporaryExposureKey(VALID_KEY_DATA_1, rollingStartIntervalNumber, 1,
+            ReportType.CONFIRMED_CLINICAL_DIAGNOSIS,1),
+        buildTemporaryExposureKey(VALID_KEY_DATA_2, rollingStartIntervalNumber, 2, ReportType.CONFIRMED_CLINICAL_DIAGNOSIS,1));
 
     ResponseEntity<Void> actResponse = executor.executePost(keysWithDuplicateStartIntervalNumber);
 
@@ -98,9 +101,9 @@ class PayloadValidationTest {
     int rollingStartIntervalNumber2 = rollingStartIntervalNumber1 + DiagnosisKey.MAX_ROLLING_PERIOD;
     int rollingStartIntervalNumber3 = rollingStartIntervalNumber2 + 3 * DiagnosisKey.MAX_ROLLING_PERIOD;
     var keysWithGapsInStartIntervalNumber = Lists.list(
-        buildTemporaryExposureKey(VALID_KEY_DATA_1, rollingStartIntervalNumber1, 1),
-        buildTemporaryExposureKey(VALID_KEY_DATA_3, rollingStartIntervalNumber3, 3),
-        buildTemporaryExposureKey(VALID_KEY_DATA_2, rollingStartIntervalNumber2, 2));
+        buildTemporaryExposureKey(VALID_KEY_DATA_1, rollingStartIntervalNumber1, 1, ReportType.CONFIRMED_CLINICAL_DIAGNOSIS,1),
+        buildTemporaryExposureKey(VALID_KEY_DATA_3, rollingStartIntervalNumber3, 3, ReportType.CONFIRMED_CLINICAL_DIAGNOSIS,1),
+        buildTemporaryExposureKey(VALID_KEY_DATA_2, rollingStartIntervalNumber2, 2, ReportType.CONFIRMED_CLINICAL_DIAGNOSIS,1));
 
     ResponseEntity<Void> actResponse = executor.executePost(keysWithGapsInStartIntervalNumber);
 
@@ -152,7 +155,7 @@ class PayloadValidationTest {
     /* Generate keys with fixed rolling period (144) for the past 20 days */
     for (int i = 0 ; i < 20; i++) {
       flexibleRollingPeriodKeys.add(buildTemporaryExposureKey(VALID_KEY_DATA_1,
-          createRollingStartIntervalNumber(2) - i * DiagnosisKey.MAX_ROLLING_PERIOD, 3));
+          createRollingStartIntervalNumber(2) - i * DiagnosisKey.MAX_ROLLING_PERIOD, 3, ReportType.CONFIRMED_CLINICAL_DIAGNOSIS,1));
     }
     /* Generate another 10 keys with flexible rolling period (<144) */
     for (int i = 20 ; i < 30; i++) {
