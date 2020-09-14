@@ -205,14 +205,15 @@ class DiagnosisKeyBuilderTest {
     ).isInstanceOf(InvalidDiagnosisKeyException.class);
   }
 
-  @Test
-  void failsForInvalidVisitedCountries() {
+  @ParameterizedTest
+  @ValueSource(strings = {"DER","xx","De","dE","DE,FRE"})
+  void failsForInvalidVisitedCountries(String visitedCountries) {
     assertThat(
         catchThrowable(() -> DiagnosisKey.builder()
             .withKeyData(expKeyData)
             .withRollingStartIntervalNumber(expRollingStartIntervalNumber)
             .withTransmissionRiskLevel(expTransmissionRiskLevel)
-            .withVisitedCountries(Arrays.asList("DE", "FRE"))
+            .withVisitedCountries(Arrays.asList(visitedCountries))
             .build()
         )
     ).isInstanceOf(InvalidDiagnosisKeyException.class);
