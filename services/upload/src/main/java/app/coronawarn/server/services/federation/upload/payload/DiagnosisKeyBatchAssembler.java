@@ -115,8 +115,8 @@ public class DiagnosisKeyBatchAssembler {
   }
 
   private List<app.coronawarn.server.common.protocols.external.exposurenotification.DiagnosisKey>
-  filterAndConvertToUploadStructure(
-      List<DiagnosisKey> diagnosisKeys) {
+        filterAndConvertToUploadStructure(
+            List<DiagnosisKey> diagnosisKeys) {
     return diagnosisKeys.stream()
         .filter(DiagnosisKey::isConsentToFederation)
         .map(this::convertKey)
