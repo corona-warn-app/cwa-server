@@ -235,7 +235,7 @@ class DiagnosisKeyBuilderTest {
 
   @ParameterizedTest
   @ValueSource(ints = {-3, 145})
-  void rollingPeriodMustBeEpectedValue(int invalidRollingPeriod) {
+  void rollingPeriodMustBeExpectedValue(int invalidRollingPeriod) {
     assertThat(catchThrowable(() -> keyWithRollingPeriod(invalidRollingPeriod)))
         .isInstanceOf(InvalidDiagnosisKeyException.class)
         .hasMessage("[Rolling period must be between " + DiagnosisKey.MIN_ROLLING_PERIOD + " and "
