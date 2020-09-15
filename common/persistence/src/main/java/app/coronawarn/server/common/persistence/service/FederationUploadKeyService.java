@@ -76,7 +76,7 @@ public class FederationUploadKeyService {
    * with the persisted ones, thus no other side effects are to be expected.
    */
   @Transactional
-  public void updateBatchTagIdForKeys(Collection<FederationUploadKey> originalKeys, String batchTagId) {
-    originalKeys.forEach(key -> keyRepository.updateBatchTagId(key.getKeyData(), batchTagId));
+  public void updateBatchTagForKeys(Collection<FederationUploadKey> originalKeys, String batchTagId) {
+    originalKeys.forEach(key -> keyRepository.updateBatchTag(key.getKeyData(), batchTagId));
   }
 }

@@ -35,7 +35,7 @@ import javax.validation.constraints.Size;
  */
 public class FederationUploadKey extends DiagnosisKey {
 
-  private String batchTagId;
+  private String batchTag;
 
   FederationUploadKey(byte[] keyData, int rollingStartIntervalNumber, int rollingPeriod, int transmissionRiskLevel,
       long submissionTimestamp, boolean consentToFederation, @Size String originCountry, List<String> visitedCountries,
@@ -44,8 +44,8 @@ public class FederationUploadKey extends DiagnosisKey {
         consentToFederation, originCountry, visitedCountries, reportType, daysSinceOnsetOfSymptoms);
   }
 
-  public String getBatchTagId() {
-    return batchTagId;
+  public String getBatchTag() {
+    return batchTag;
   }
 
   /**
@@ -68,12 +68,11 @@ public class FederationUploadKey extends DiagnosisKey {
       return false;
     }
     FederationUploadKey that = (FederationUploadKey) o;
-    return super.equals(o) && Objects.equals(batchTagId, that.batchTagId);
+    return super.equals(o) && Objects.equals(batchTag, that.batchTag);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(super.hashCode(), batchTagId);
+    return Objects.hash(super.hashCode(), batchTag);
   }
-
 }

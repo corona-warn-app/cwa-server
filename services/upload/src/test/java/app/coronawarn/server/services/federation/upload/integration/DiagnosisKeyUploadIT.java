@@ -65,10 +65,10 @@ class DiagnosisKeyUploadIT extends UploadKeyIT {
 
     Iterable<FederationUploadKey> currentKeys = uploadKeyRepository.findAll();
 
-    currentKeys.forEach(this::assertKeyWasMarkedWithBatchTagId);
+    currentKeys.forEach(this::assertKeyWasMarkedWithBatchTag);
   }
 
-  private void assertKeyWasMarkedWithBatchTagId(FederationUploadKey uploadKey) {
-    Assertions.assertNotNull(uploadKey.getBatchTagId());
+  private void assertKeyWasMarkedWithBatchTag(FederationUploadKey uploadKey) {
+    Assertions.assertNotNull(uploadKey.getBatchTag());
   }
 }

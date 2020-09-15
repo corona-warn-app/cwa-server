@@ -94,7 +94,7 @@ public class Upload implements ApplicationRunner {
 
   private void markSuccessfullyUploadedKeys(UploadPayload payload) {
     try {
-      uploadKeyService.updateBatchTagIdForKeys(payload.getOriginalKeys(), payload.getBatchTag());
+      uploadKeyService.updateBatchTagForKeys(payload.getOriginalKeys(), payload.getBatchTag());
     } catch (Exception ex) {
       // in case of an error with marking, try to move forward to the next upload batch if any unprocessed
       logger.error("Post-upload marking of diagnosis keys with batch tag id failed", ex);
