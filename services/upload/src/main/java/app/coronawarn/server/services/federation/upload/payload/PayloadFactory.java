@@ -51,7 +51,8 @@ public class PayloadFactory {
     this.signer = signer;
   }
 
-  private static List<app.coronawarn.server.common.protocols.external.exposurenotification.DiagnosisKey> sortBatchByKeyData(DiagnosisKeyBatch batch) {
+  private static List<app.coronawarn.server.common.protocols.external.exposurenotification.DiagnosisKey>
+        sortBatchByKeyData(DiagnosisKeyBatch batch) {
     return batch.getKeysList()
         .stream()
         .sorted(Comparator.comparing(diagnosisKey -> diagnosisKey.getKeyData().toStringUtf8()))
