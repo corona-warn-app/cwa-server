@@ -117,7 +117,9 @@ public class Helpers {
             .withRollingStartIntervalNumber(startIntervalNumber)
             .withTransmissionRiskLevel(2)
             .withSubmissionTimestamp(submissionTimestamp)
-            .withRollingPeriod(rollingPeriod).build())
+            .withRollingPeriod(rollingPeriod)
+            .withVisitedCountries(Collections.singletonList("DE"))
+            .withCountryCode("DE").build())
         .collect(Collectors.toList());
   }
 

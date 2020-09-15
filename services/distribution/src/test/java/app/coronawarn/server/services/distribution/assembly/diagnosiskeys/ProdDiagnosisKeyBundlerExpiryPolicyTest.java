@@ -94,7 +94,7 @@ class ProdDiagnosisKeyBundlerExpiryPolicyTest {
     List<DiagnosisKey> diagnosisKeys = Helpers.buildDiagnosisKeysWithFlexibleRollingPeriod(5, submissionTimestamp, 5, 44);
     diagnosisKeys.addAll(Helpers.buildDiagnosisKeysWithFlexibleRollingPeriod(5, submissionTimestamp, 5, 100));
     bundler.setDiagnosisKeys(diagnosisKeys, LocalDateTime.of(1970, 1, 5, 0, 0));
-    assertThat(bundler.getDiagnosisKeysForHour(LocalDateTime.of(1970, 1, 2, 3, 0, 0))).hasSize(10);
+    assertThat(bundler.getDiagnosisKeysForHour(LocalDateTime.of(1970, 1, 2, 3, 0, 0),"DE")).hasSize(10);
   }
 
   @Test
@@ -102,7 +102,7 @@ class ProdDiagnosisKeyBundlerExpiryPolicyTest {
     List<DiagnosisKey> diagnosisKeys = Helpers.buildDiagnosisKeysWithFlexibleRollingPeriod(5, 24L + 3L, 5, 44);
     diagnosisKeys.addAll(Helpers.buildDiagnosisKeysWithFlexibleRollingPeriod(5, 24L + 3L, 5, 100));
     bundler.setDiagnosisKeys(diagnosisKeys, LocalDateTime.of(1970, 1, 5, 0, 0));
-    assertThat(bundler.getDiagnosisKeysForHour(LocalDateTime.of(1970, 1, 2, 3, 0, 0))).hasSize(10);
+    assertThat(bundler.getDiagnosisKeysForHour(LocalDateTime.of(1970, 1, 2, 3, 0, 0),"DE")).hasSize(10);
   }
 
   @ParameterizedTest
@@ -111,7 +111,7 @@ class ProdDiagnosisKeyBundlerExpiryPolicyTest {
     List<DiagnosisKey> diagnosisKeys = Helpers.buildDiagnosisKeysWithFlexibleRollingPeriod(6, submissionTimestamp, 5, 44);
     diagnosisKeys.addAll(Helpers.buildDiagnosisKeysWithFlexibleRollingPeriod(6, submissionTimestamp, 5, 100));
     bundler.setDiagnosisKeys(diagnosisKeys, LocalDateTime.of(1970, 1, 5, 0, 0));
-    assertThat(bundler.getDiagnosisKeysForHour(LocalDateTime.of(1970, 1, 2, 4, 0, 0))).hasSize(10);
+    assertThat(bundler.getDiagnosisKeysForHour(LocalDateTime.of(1970, 1, 2, 4, 0, 0),"DE")).hasSize(10);
   }
 
   @Test
@@ -119,7 +119,7 @@ class ProdDiagnosisKeyBundlerExpiryPolicyTest {
     List<DiagnosisKey> diagnosisKeys = Helpers.buildDiagnosisKeysWithFlexibleRollingPeriod(6, 24L + 4L, 5, 44);
     diagnosisKeys.addAll(Helpers.buildDiagnosisKeysWithFlexibleRollingPeriod(6, 24L + 4L, 5, 100));
     bundler.setDiagnosisKeys(diagnosisKeys, LocalDateTime.of(1970, 1, 5, 0, 0));
-    assertThat(bundler.getDiagnosisKeysForHour(LocalDateTime.of(1970, 1, 2, 4, 0, 0))).hasSize(10);
+    assertThat(bundler.getDiagnosisKeysForHour(LocalDateTime.of(1970, 1, 2, 4, 0, 0),"DE")).hasSize(10);
   }
 
   @Test
@@ -127,6 +127,6 @@ class ProdDiagnosisKeyBundlerExpiryPolicyTest {
     List<DiagnosisKey> diagnosisKeys = Helpers.buildDiagnosisKeysWithFlexibleRollingPeriod(5, 24L + 4L, 5, 44);
     diagnosisKeys.addAll(Helpers.buildDiagnosisKeysWithFlexibleRollingPeriod(5, 24L + 4L, 5, 80));
     bundler.setDiagnosisKeys(diagnosisKeys, LocalDateTime.of(1970, 1, 5, 0, 0));
-    assertThat(bundler.getDiagnosisKeysForHour(LocalDateTime.of(1970, 1, 2, 4, 0, 0))).hasSize(10);
+    assertThat(bundler.getDiagnosisKeysForHour(LocalDateTime.of(1970, 1, 2, 4, 0, 0),"DE")).hasSize(10);
   }
 }
