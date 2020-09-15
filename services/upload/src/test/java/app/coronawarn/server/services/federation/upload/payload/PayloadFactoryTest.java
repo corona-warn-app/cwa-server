@@ -27,7 +27,7 @@ import static org.mockito.Mockito.when;
 import app.coronawarn.server.services.federation.upload.config.UploadServiceConfig;
 import app.coronawarn.server.services.federation.upload.payload.signing.BatchSigner;
 import app.coronawarn.server.services.federation.upload.utils.BatchMockData;
-import app.coronawarn.server.services.federation.upload.utils.PersistenceMockData;
+import app.coronawarn.server.services.federation.upload.utils.MockData;
 import org.bouncycastle.cms.CMSException;
 import org.bouncycastle.operator.OperatorCreationException;
 import org.junit.jupiter.api.Assertions;
@@ -71,7 +71,7 @@ class PayloadFactoryTest {
 
   @Test
   void shouldMakePayloadFromListOfDiagnosisKeys() {
-    var diagnosisKeys = List.of(PersistenceMockData.generateRandomDiagnosisKey(true));
+    var diagnosisKeys = List.of(MockData.generateRandomUploadKey(true));
 
     when(mockAssembler.assembleDiagnosisKeyBatch(anyList()))
         .thenReturn(Map.of(BatchMockData.makeSingleKeyBatch(), diagnosisKeys));
@@ -85,7 +85,7 @@ class PayloadFactoryTest {
 
   @Test
   void payloadsShouldNotHaveSameBatchTag() {
-    var diagnosisKeys = List.of(PersistenceMockData.generateRandomDiagnosisKey(true));
+    var diagnosisKeys = List.of(MockData.generateRandomUploadKey(true));
 
     when(mockAssembler.assembleDiagnosisKeyBatch(anyList()))
         .thenReturn(Map.of(
