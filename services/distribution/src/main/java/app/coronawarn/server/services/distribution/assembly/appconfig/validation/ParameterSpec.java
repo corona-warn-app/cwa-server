@@ -52,7 +52,7 @@ public class ParameterSpec {
   /**
    * The allowed maximum value for a risk score.
    */
-  public static final int RISK_SCORE_MAX = 72;
+  public static final int RISK_SCORE_MAX = 9999;
 
   /**
    * The allowed minimum value for an attenuation threshold.

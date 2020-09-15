@@ -137,9 +137,10 @@ class SubmissionControllerTest {
     assertThat(actResponse.getStatusCode()).isEqualTo(OK);
   }
 
-  @Test
-  void check400ResponseStatusForInvalidKeys() {
-    ResponseEntity<Void> actResponse = executor.executePost(buildPayloadWithInvalidKey());
+  @ParameterizedTest
+  @MethodSource({"buildPayloadWithInvalidKeys"})
+  void check400ResponseStatusForInvalidKeys(SubmissionPayload invalidPayload ) {
+    ResponseEntity<Void> actResponse = executor.executePost(invalidPayload);
     assertThat(actResponse.getStatusCode()).isEqualTo(BAD_REQUEST);
   }
 
@@ -192,6 +193,7 @@ class SubmissionControllerTest {
 
     verify(diagnosisKeyService, atLeastOnce()).saveDiagnosisKeys(argument.capture());
     assertSubmissionPayloadKeysCorrespondToEachOther(submittedKeys, argument.getValue(), submissionPayload);
+    assertElementsCorrespondToEachOther(submittedKeys, argument.getValue(), config);
   }
 
   @Test
@@ -204,6 +206,7 @@ class SubmissionControllerTest {
 
     verify(diagnosisKeyService, atLeastOnce()).saveDiagnosisKeys(argument.capture());
     verify(fakeDelayManager, times(1)).updateFakeRequestDelay(anyLong());
+    assertElementsCorrespondToEachOther(submittedKeys, argument.getValue(), config);
     assertSubmissionPayloadKeysCorrespondToEachOther(submittedKeys, argument.getValue(), submissionPayload);
   }
 

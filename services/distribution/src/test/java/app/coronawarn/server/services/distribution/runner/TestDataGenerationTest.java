@@ -35,6 +35,7 @@ import app.coronawarn.server.common.protocols.external.exposurenotification.Repo
 import app.coronawarn.server.services.distribution.assembly.structure.util.TimeUtils;
 import app.coronawarn.server.services.distribution.config.DistributionServiceConfig;
 import app.coronawarn.server.services.distribution.config.DistributionServiceConfig.TestData;
+import org.junit.After;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.util.Arrays;
