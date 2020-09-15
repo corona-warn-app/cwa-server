@@ -1,5 +1,5 @@
 CREATE TABLE federation_batch_info (
-    batch_tag   varchar(50) PRIMARY KEY,
+    batch_tag   varchar(64) PRIMARY KEY,
     date        date NOT NULL,
     status      varchar(20) NOT NULL DEFAULT 'UNPROCESSED'
 );
