@@ -17,4 +17,4 @@ weights:
   mid: 0.5
   high: 0.0
 default-bucket-offset: 0
-risk-score-normalization-divisor: 25
+risk-score-normalization-divisor: 50
