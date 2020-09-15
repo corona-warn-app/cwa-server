@@ -75,5 +75,4 @@ public class FederationUploadKey extends DiagnosisKey {
   public int hashCode() {
     return Objects.hash(super.hashCode(), batchTagId);
   }
-
 }

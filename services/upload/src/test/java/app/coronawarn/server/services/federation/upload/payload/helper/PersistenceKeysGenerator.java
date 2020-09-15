@@ -17,6 +17,7 @@
  * limitations under the License.
  * ---license-end
  */
+
 package app.coronawarn.server.services.federation.upload.payload.helper;
 
 import app.coronawarn.server.common.persistence.domain.DiagnosisKey;

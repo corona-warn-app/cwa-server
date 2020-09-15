@@ -88,7 +88,7 @@ class FederationUploadKeyServiceTest {
     var testKeys = List.of(key1, key2);
 
     uploadKeyService.updateBatchTagIdForKeys(testKeys, BATCH_TAG_ID);
-    verify(uploadKeyRepository, times(1)).updateBatchTagId(eq(key1.getKeyData()), eq(BATCH_TAG_ID));
-    verify(uploadKeyRepository, times(1)).updateBatchTagId(eq(key2.getKeyData()), eq(BATCH_TAG_ID));
+    verify(uploadKeyRepository, times(1)).updateBatchTagId(key1.getKeyData(), BATCH_TAG_ID);
+    verify(uploadKeyRepository, times(1)).updateBatchTagId(key2.getKeyData(), BATCH_TAG_ID);
   }
 }
