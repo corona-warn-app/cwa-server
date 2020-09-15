@@ -20,7 +20,7 @@
 
 package app.coronawarn.server.services.federation.upload.payload;
 
-import app.coronawarn.server.common.persistence.domain.DiagnosisKey;
+import app.coronawarn.server.common.persistence.domain.FederationUploadKey;
 import app.coronawarn.server.common.protocols.external.exposurenotification.DiagnosisKeyBatch;
 import app.coronawarn.server.services.federation.upload.payload.signing.BatchSigner;
 import java.io.IOException;
@@ -29,8 +29,9 @@ import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Map;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
-import org.apache.commons.lang3.tuple.Pair;
 import org.bouncycastle.cms.CMSException;
 import org.bouncycastle.operator.OperatorCreationException;
 import org.slf4j.Logger;
@@ -59,14 +60,16 @@ public class PayloadFactory {
         .collect(Collectors.toList());
   }
 
-  private UploadPayload mapToPayloadAndSign(Pair<Integer, DiagnosisKeyBatch> batchPair) {
+  private UploadPayload mapToPayloadAndSign(Integer batchCounter, DiagnosisKeyBatch batch,
+      List<FederationUploadKey> originalKeys) {
     var payload = new UploadPayload();
-    payload.setBatch(batchPair.getRight());
-    payload.setBatchTag(this.generateBatchTag(batchPair.getLeft()));
+    payload.setBatch(batch);
+    payload.setBatchTag(this.generateBatchTag(batchCounter));
+    payload.setOriginalKeys(originalKeys);
     try {
-      var orderedDiagnosisKeys = sortBatchByKeyData(batchPair.getRight());
+      var orderedDiagnosisKeys = sortBatchByKeyData(batch);
       payload.setOrderedKeys(orderedDiagnosisKeys);
-      payload.setBatchSignature(signer.createSignatureBytes(batchPair.getRight(), orderedDiagnosisKeys));
+      payload.setBatchSignature(signer.createSignatureBytes(batch, orderedDiagnosisKeys));
     } catch (GeneralSecurityException | OperatorCreationException | IOException | CMSException e) {
       logger.error("Failed to generate upload payload signature", e);
     }
@@ -90,12 +93,13 @@ public class PayloadFactory {
    * @param diagnosisKeys List of Diagnosis Keys.
    * @return upload payload object {@link UploadPayload}.
    */
-  public List<UploadPayload> makePayloadList(List<DiagnosisKey> diagnosisKeys) {
-    var batches = assembler.assembleDiagnosisKeyBatch(diagnosisKeys);
-    return batches.stream()
-        .map(b -> Pair.of(batches.indexOf(b), b))
-        .map(this::mapToPayloadAndSign)
+  public List<UploadPayload> makePayloadList(List<FederationUploadKey> diagnosisKeys) {
+    Map<DiagnosisKeyBatch, List<FederationUploadKey>> batchesAndOriginalKeys = assembler
+        .assembleDiagnosisKeyBatch(diagnosisKeys);
+    AtomicInteger batchCounter = new AtomicInteger(0);
+
+    return batchesAndOriginalKeys.entrySet().stream()
+        .map(entry -> this.mapToPayloadAndSign(batchCounter.incrementAndGet(), entry.getKey(), entry.getValue()))
         .collect(Collectors.toList());
   }
-
 }

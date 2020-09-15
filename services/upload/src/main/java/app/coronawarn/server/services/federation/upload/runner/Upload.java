@@ -20,7 +20,8 @@
 
 package app.coronawarn.server.services.federation.upload.runner;
 
-import app.coronawarn.server.common.persistence.domain.DiagnosisKey;
+import app.coronawarn.server.common.persistence.domain.FederationUploadKey;
+import app.coronawarn.server.common.persistence.service.FederationUploadKeyService;
 import app.coronawarn.server.services.federation.upload.Application;
 import app.coronawarn.server.services.federation.upload.client.FederationUploadClient;
 import app.coronawarn.server.services.federation.upload.keys.DiagnosisKeyLoader;
@@ -40,12 +41,13 @@ import org.springframework.stereotype.Component;
 @Order(1)
 public class Upload implements ApplicationRunner {
 
-  private static final Logger logger = LoggerFactory
-      .getLogger(Upload.class);
+  private static final Logger logger = LoggerFactory.getLogger(Upload.class);
+
   private final FederationUploadClient federationUploadClient;
   private final PayloadFactory payloadFactory;
   private final DiagnosisKeyLoader diagnosisKeyLoader;
   private final ApplicationContext applicationContext;
+  private final FederationUploadKeyService uploadKeyService;
 
   /**
    * Creates an upload runner instance that reads Upload keys and send them to the Federation Gateway.
@@ -59,11 +61,13 @@ public class Upload implements ApplicationRunner {
       FederationUploadClient federationUploadClient,
       PayloadFactory payloadFactory,
       DiagnosisKeyLoader diagnosisKeyLoader,
-      ApplicationContext applicationContext) {
+      ApplicationContext applicationContext,
+      FederationUploadKeyService uploadKeyService) {
     this.federationUploadClient = federationUploadClient;
     this.payloadFactory = payloadFactory;
     this.diagnosisKeyLoader = diagnosisKeyLoader;
     this.applicationContext = applicationContext;
+    this.uploadKeyService = uploadKeyService;
   }
 
   private void executeFederationUpload(UploadPayload payload) {
@@ -81,14 +85,26 @@ public class Upload implements ApplicationRunner {
   public void run(ApplicationArguments args) throws Exception {
     logger.info("Running Upload Job");
     try {
-      List<DiagnosisKey> diagnosisKeys = this.diagnosisKeyLoader.loadDiagnosisKeys();
+      List<FederationUploadKey> diagnosisKeys = this.diagnosisKeyLoader.loadDiagnosisKeys();
       logger.info("Generating Upload Payload for {} keys", diagnosisKeys.size());
       List<UploadPayload> requests = this.payloadFactory.makePayloadList(diagnosisKeys);
       logger.info("Executing {} batch request", requests.size());
-      requests.forEach(this::executeFederationUpload);
+      requests.forEach(payload -> {
+        this.executeFederationUpload(payload);
+        this.markSuccessfullyUploadedKeys(payload);
+      });
     } catch (Exception e) {
       logger.error("Upload diagnosis key data failed.", e);
       Application.killApplication(applicationContext);
+    }
+  }
+
+  private void markSuccessfullyUploadedKeys(UploadPayload payload) {
+    try {
+      uploadKeyService.updateBatchTagForKeys(payload.getOriginalKeys(), payload.getBatchTag());
+    } catch (Exception ex) {
+      // in case of an error with marking, try to move forward to the next upload batch if any unprocessed
+      logger.error("Post-upload marking of diagnosis keys with batch tag id failed", ex);
     }
   }
 }

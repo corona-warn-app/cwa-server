@@ -37,7 +37,6 @@ import app.coronawarn.server.services.distribution.config.DistributionServiceCon
 import app.coronawarn.server.services.distribution.config.DistributionServiceConfig.TestData;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
