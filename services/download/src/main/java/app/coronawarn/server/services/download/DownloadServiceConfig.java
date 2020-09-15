@@ -34,6 +34,9 @@ public class DownloadServiceConfig {
   @Min(0)
   @Max(14)
   private Integer efgsOffsetDays;
+  @Min(0)
+  @Max(28)
+  private Integer retentionDays;
 
   public Integer getEfgsOffsetDays() {
     return efgsOffsetDays;
@@ -41,5 +44,13 @@ public class DownloadServiceConfig {
 
   public void setEfgsOffsetDays(Integer efgsOffsetDays) {
     this.efgsOffsetDays = efgsOffsetDays;
+  }
+
+  public Integer getRetentionDays() {
+    return retentionDays;
+  }
+
+  public void setRetentionDays(Integer retentionDays) {
+    this.retentionDays = retentionDays;
   }
 }

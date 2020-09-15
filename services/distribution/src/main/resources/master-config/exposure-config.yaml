@@ -18,8 +18,8 @@ days_weight: 20
 # Parameters Section
 
 transmission:
-  app_defined_1: 1
-  app_defined_2: 2
+  app_defined_1: 0
+  app_defined_2: 0
   app_defined_3: 3
   app_defined_4: 4
   app_defined_5: 5

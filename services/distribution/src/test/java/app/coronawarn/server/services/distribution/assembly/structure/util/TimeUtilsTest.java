@@ -22,7 +22,6 @@ package app.coronawarn.server.services.distribution.assembly.structure.util;
 
 import static java.time.ZoneOffset.UTC;
 import static java.time.temporal.ChronoUnit.HOURS;
-import static java.time.temporal.ChronoUnit.MINUTES;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.time.Instant;
@@ -44,7 +43,7 @@ class TimeUtilsTest {
 
   @Test
   void testGetNowIsLocalDateTimeInUtc() {
-    assertEquals(Instant.now().truncatedTo(MINUTES), TimeUtils.getNow().truncatedTo(MINUTES));
+    assertEquals(Instant.now().truncatedTo(HOURS), TimeUtils.getNow().truncatedTo(HOURS));
   }
 
 }

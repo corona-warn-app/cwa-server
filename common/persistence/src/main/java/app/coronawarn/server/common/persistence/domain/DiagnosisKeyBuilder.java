@@ -84,7 +84,9 @@ public class DiagnosisKeyBuilder implements
         .withKeyData(protoBufObject.getKeyData().toByteArray())
         .withRollingStartIntervalNumber(protoBufObject.getRollingStartIntervalNumber())
         .withTransmissionRiskLevel(protoBufObject.getTransmissionRiskLevel())
-        .withRollingPeriod(protoBufObject.getRollingPeriod());
+        .withRollingPeriod(protoBufObject.getRollingPeriod())
+        .withReportType(protoBufObject.getReportType())
+        .withDaysSinceOnsetOfSymptoms(protoBufObject.getDaysSinceOnsetOfSymptoms());
   }
 
   @Override

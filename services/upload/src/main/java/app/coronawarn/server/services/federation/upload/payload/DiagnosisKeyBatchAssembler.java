@@ -1,6 +1,27 @@
+/*-
+ * ---license-start
+ * Corona-Warn-App
+ * ---
+ * Copyright (C) 2020 SAP SE and all other contributors
+ * ---
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ * ---license-end
+ */
+
 package app.coronawarn.server.services.federation.upload.payload;
 
 import app.coronawarn.server.common.persistence.domain.DiagnosisKey;
+import app.coronawarn.server.common.persistence.domain.FederationUploadKey;
 import app.coronawarn.server.common.protocols.external.exposurenotification.DiagnosisKeyBatch;
 import app.coronawarn.server.services.federation.upload.config.UploadServiceConfig;
 import com.google.protobuf.ByteString;
@@ -8,7 +29,9 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.ListIterator;
+import java.util.Map;
 import java.util.stream.Collectors;
+import org.apache.commons.lang3.tuple.Pair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
@@ -24,49 +47,34 @@ public class DiagnosisKeyBatchAssembler {
     this.uploadConfig = uploadConfig;
   }
 
-  private app.coronawarn.server.common.protocols.external.exposurenotification.DiagnosisKey convertKey(
-      DiagnosisKey key) {
-    return app.coronawarn.server.common.protocols.external.exposurenotification.DiagnosisKey.newBuilder()
-        .setKeyData(ByteString.copyFrom(key.getKeyData()))
-        .addAllVisitedCountries(key.getVisitedCountries())
-        .setRollingPeriod(key.getRollingPeriod())
-        .setReportType(key.getReportType())
-        .setTransmissionRiskLevel(key.getTransmissionRiskLevel())
-        .setOrigin(key.getOriginCountry())
-        .build();
-  }
-
   /**
    * Converts persisted keys into Federation Gateway compatible Diagnosis Keys as specified in the protobuf spec.
-   * If data can be uploaded with a single request, a list with a single {@link DiagnosisKeyBatch} is returned.
-   * @param diagnosisKeys raw list of {@link DiagnosisKey} to be assembled in batches.
-   * @return List of {@link DiagnosisKeyBatch} to be uploaded.
+   * If data can be uploaded with a single request, a map with a single {@link DiagnosisKeyBatch} entry is returned.
+   * @param diagnosisKeys raw list of {@link FederationUploadKey} to be assembled in batches.
+   * @return Map containing {@link DiagnosisKeyBatch} and the associated original keys to be uploaded.
    */
-  public List<DiagnosisKeyBatch> assembleDiagnosisKeyBatch(List<DiagnosisKey> diagnosisKeys) {
+  public Map<DiagnosisKeyBatch, List<FederationUploadKey>> assembleDiagnosisKeyBatch(
+      List<FederationUploadKey> diagnosisKeys) {
     if (diagnosisKeys.isEmpty()) {
       logger.info("Batches not generated: no pending upload diagnosis keys found.");
-      return Collections.emptyList();
+      return Collections.emptyMap();
     }
     if (diagnosisKeys.size() < uploadConfig.getMinBatchKeyCount()) {
       logger.info("Batches not generated: less then minimum {} pending upload diagnosis keys.",
           uploadConfig.getMinBatchKeyCount());
-      return Collections.emptyList();
+      return Collections.emptyMap();
     }
-
-    return partionIntoBatches(filterAndConvertToUploadStructure(diagnosisKeys));
+    return partionIntoBatches(diagnosisKeys);
   }
 
-  private List<DiagnosisKeyBatch> partionIntoBatches(
-      List<app.coronawarn.server.common.protocols.external.exposurenotification.DiagnosisKey> keysToUpload) {
-
-    return  partitionListBySize(keysToUpload, uploadConfig.getMaxBatchKeyCount()).stream()
-                              .map(this::makeBatchFromPartition)
-                              .collect(Collectors.toList());
+  private Map<DiagnosisKeyBatch, List<FederationUploadKey>> partionIntoBatches(List<FederationUploadKey> keysToUpload) {
+    return partitionListBySize(filterByConsent(keysToUpload), uploadConfig.getMaxBatchKeyCount()).stream()
+        .map(partition -> Pair.of(this.makeBatchFromPartition(partition), partition))
+        .collect(Collectors.toMap(pair -> pair.getLeft(), pair -> pair.getRight()));
   }
 
-  private DiagnosisKeyBatch makeBatchFromPartition(
-      List<app.coronawarn.server.common.protocols.external.exposurenotification.DiagnosisKey> paritionOfKeys) {
-    return DiagnosisKeyBatch.newBuilder().addAllKeys(paritionOfKeys).build();
+  private DiagnosisKeyBatch makeBatchFromPartition(List<FederationUploadKey> paritionOfKeys) {
+    return DiagnosisKeyBatch.newBuilder().addAllKeys(convertForUpload(paritionOfKeys)).build();
   }
 
   private <T> List<List<T>> partitionListBySize(List<T> keysToUpload, int size) {
@@ -91,11 +99,30 @@ public class DiagnosisKeyBatchAssembler {
     return currentPartition;
   }
 
-  private List<app.coronawarn.server.common.protocols.external.exposurenotification.DiagnosisKey>
-      filterAndConvertToUploadStructure(List<DiagnosisKey> diagnosisKeys) {
+  private List<FederationUploadKey> filterByConsent(List<FederationUploadKey> diagnosisKeys) {
     return diagnosisKeys.stream()
         .filter(DiagnosisKey::isConsentToFederation)
-        .map(this::convertKey)
         .collect(Collectors.toList());
+  }
+
+  private static Iterable<? extends app.coronawarn.server.common.protocols.external.exposurenotification.DiagnosisKey>
+      convertForUpload(List<FederationUploadKey> keys) {
+    return keys.stream()
+        .map(DiagnosisKeyBatchAssembler::convertKey)
+        .collect(Collectors.toList());
+  }
+
+  private static app.coronawarn.server.common.protocols.external.exposurenotification.DiagnosisKey convertKey(
+      DiagnosisKey key) {
+    return app.coronawarn.server.common.protocols.external.exposurenotification.DiagnosisKey.newBuilder()
+        .setKeyData(ByteString.copyFrom(key.getKeyData()))
+        .setRollingStartIntervalNumber(key.getRollingStartIntervalNumber())
+        .setRollingPeriod(key.getRollingPeriod())
+        .setTransmissionRiskLevel(key.getTransmissionRiskLevel())
+        .addAllVisitedCountries(key.getVisitedCountries())
+        .setOrigin(key.getOriginCountry())
+        .setReportType(key.getReportType())
+        .setDaysSinceOnsetOfSymptoms(key.getDaysSinceOnsetOfSymptoms())
+        .build();
   }
 }

@@ -23,6 +23,9 @@ package app.coronawarn.server.common.persistence.service;
 import app.coronawarn.server.common.persistence.domain.FederationBatchInfo;
 import app.coronawarn.server.common.persistence.domain.FederationBatchStatus;
 import app.coronawarn.server.common.persistence.repository.FederationBatchInfoRepository;
+import java.time.LocalDate;
+import java.time.Period;
+import java.time.ZoneOffset;
 import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -64,5 +67,25 @@ public class FederationBatchInfoService {
 
   public List<FederationBatchInfo> findByStatus(FederationBatchStatus federationBatchStatus) {
     return federationBatchInfoRepository.findByStatus(federationBatchStatus.name());
+  }
+
+  /**
+   * Deletes all federation batch information entries which have a date that is older than the specified number of
+   * days.
+   *
+   * @param daysToRetain the number of days until which batch information will be retained.
+   * @throws IllegalArgumentException if {@code daysToRetain} is negative.
+   */
+  @Transactional
+  public void applyRetentionPolicy(int daysToRetain) {
+    if (daysToRetain < 0) {
+      throw new IllegalArgumentException("Number of days to retain must be greater or equal to 0.");
+    }
+
+    LocalDate threshold = LocalDate.now(ZoneOffset.UTC).minus(Period.ofDays(daysToRetain));
+    int numberOfDeletions = federationBatchInfoRepository.countOlderThan(threshold);
+    logger.info("Deleting {} batch info(s) with a date older than {} day(s) ago.",
+        numberOfDeletions, daysToRetain);
+    federationBatchInfoRepository.deleteOlderThan(threshold);
   }
 }

@@ -1,6 +1,27 @@
+/*-
+ * ---license-start
+ * Corona-Warn-App
+ * ---
+ * Copyright (C) 2020 SAP SE and all other contributors
+ * ---
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ * ---license-end
+ */
+
 package app.coronawarn.server.services.federation.upload.keys;
 
 import app.coronawarn.server.common.persistence.domain.DiagnosisKey;
+import app.coronawarn.server.common.persistence.domain.FederationUploadKey;
 import app.coronawarn.server.common.protocols.external.exposurenotification.ReportType;
 import app.coronawarn.server.services.federation.upload.config.UploadServiceConfig;
 import java.util.List;
@@ -18,8 +39,7 @@ public class DiagnosisKeyGenerator implements DiagnosisKeyLoader {
 
   private final Random random = new Random();
 
-  private static final Logger logger = LoggerFactory
-      .getLogger(DiagnosisKeyGenerator.class);
+  private static final Logger logger = LoggerFactory.getLogger(DiagnosisKeyGenerator.class);
 
   private final UploadServiceConfig uploadServiceConfig;
 
@@ -27,10 +47,10 @@ public class DiagnosisKeyGenerator implements DiagnosisKeyLoader {
     this.uploadServiceConfig = uploadServiceConfig;
   }
 
-  private DiagnosisKey generateKey(int ignoredValue) {
+  private FederationUploadKey generateKey(int ignoredValue) {
     byte[] randomKeyData = new byte[16];
     random.nextBytes(randomKeyData);
-    return DiagnosisKey.builder()
+    return FederationUploadKey.from(DiagnosisKey.builder()
         .withKeyData(randomKeyData)
         .withRollingStartIntervalNumber(1)
         .withTransmissionRiskLevel(1)
@@ -38,11 +58,11 @@ public class DiagnosisKeyGenerator implements DiagnosisKeyLoader {
         .withConsentToFederation(true)
         .withCountryCode("DE")
         .withVisitedCountries(List.of("DE"))
-        .build();
+        .build());
   }
 
   @Override
-  public List<DiagnosisKey> loadDiagnosisKeys() {
+  public List<FederationUploadKey> loadDiagnosisKeys() {
     var keys = uploadServiceConfig.getTestData().getKeys();
     logger.info("Generating {} fake diagnosis keys for upload", keys);
     return IntStream.range(0, keys)

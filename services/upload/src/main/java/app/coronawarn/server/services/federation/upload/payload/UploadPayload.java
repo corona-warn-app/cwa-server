@@ -1,6 +1,30 @@
+/*-
+ * ---license-start
+ * Corona-Warn-App
+ * ---
+ * Copyright (C) 2020 SAP SE and all other contributors
+ * ---
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ * ---license-end
+ */
+
 package app.coronawarn.server.services.federation.upload.payload;
 
+import app.coronawarn.server.common.persistence.domain.DiagnosisKey;
+import app.coronawarn.server.common.persistence.domain.FederationUploadKey;
 import app.coronawarn.server.common.protocols.external.exposurenotification.DiagnosisKeyBatch;
+import java.util.List;
+
 
 /**
  * This class represents an Upload call to the Federation Gateway. The payload for EFGS must contain the following
@@ -15,6 +39,7 @@ import app.coronawarn.server.common.protocols.external.exposurenotification.Diag
 public class UploadPayload {
 
   private DiagnosisKeyBatch batch;
+  private List<FederationUploadKey> originalKeys;
   private String batchSignature;
   private String batchTag;
 
@@ -43,5 +68,16 @@ public class UploadPayload {
   public UploadPayload setBatchTag(String batchTag) {
     this.batchTag = batchTag;
     return this;
+  }
+
+  /**
+   * Returns {@link DiagnosisKey} entities that are part of this upload payload.
+   */
+  public List<FederationUploadKey> getOriginalKeys() {
+    return originalKeys;
+  }
+
+  public void setOriginalKeys(List<FederationUploadKey> originalKeys) {
+    this.originalKeys = originalKeys;
   }
 }

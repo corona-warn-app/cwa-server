@@ -22,6 +22,7 @@ package app.coronawarn.server.services.submission.controller;
 
 import static java.time.ZoneOffset.UTC;
 
+import app.coronawarn.server.common.protocols.external.exposurenotification.ReportType;
 import app.coronawarn.server.common.protocols.external.exposurenotification.TemporaryExposureKey;
 import app.coronawarn.server.common.protocols.internal.SubmissionPayload;
 import com.google.protobuf.ByteString;
@@ -63,7 +64,7 @@ public class RequestExecutor {
   public ResponseEntity<Void> executePost(Collection<TemporaryExposureKey> keys, HttpHeaders headers) {
     SubmissionPayload body = SubmissionPayload.newBuilder()
         .setOrigin("DE")
-        .addAllVisitedCountries(List.of("FR","UK"))
+        .addAllVisitedCountries(List.of("DE"))
         .addAllKeys(keys).build();
     return executePost(body, headers);
   }
@@ -89,11 +90,14 @@ public class RequestExecutor {
   }
 
   public static TemporaryExposureKey buildTemporaryExposureKey(
-      String keyData, int rollingStartIntervalNumber, int transmissionRiskLevel) {
+      String keyData, int rollingStartIntervalNumber, int transmissionRiskLevel, ReportType reportType, int daysSinceOnsetOfSymptoms){
     return TemporaryExposureKey.newBuilder()
         .setKeyData(ByteString.copyFromUtf8(keyData))
         .setRollingStartIntervalNumber(rollingStartIntervalNumber)
-        .setTransmissionRiskLevel(transmissionRiskLevel).build();
+        .setTransmissionRiskLevel(transmissionRiskLevel)
+        .setReportType(reportType)
+        .setDaysSinceOnsetOfSymptoms(daysSinceOnsetOfSymptoms)
+        .build();
   }
 
   public static TemporaryExposureKey buildTemporaryExposureKeyWithFlexibleRollingPeriod(
@@ -113,6 +117,6 @@ public class RequestExecutor {
   }
 
   public static Collection<TemporaryExposureKey> buildPayloadWithOneKey() {
-    return Collections.singleton(buildTemporaryExposureKey(VALID_KEY_DATA_1, createRollingStartIntervalNumber(1), 3));
+    return Collections.singleton(buildTemporaryExposureKey(VALID_KEY_DATA_1, createRollingStartIntervalNumber(1), 3,ReportType.CONFIRMED_CLINICAL_DIAGNOSIS,1));
   }
 }

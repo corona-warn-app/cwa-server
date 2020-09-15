@@ -25,6 +25,7 @@ services:
       version-path: version
       version-v1: v1
       country-path: country
+      # This is used to generate the application configuration directory for Germany
       origin-country: DE
       date-path: date
       hour-path: hour
