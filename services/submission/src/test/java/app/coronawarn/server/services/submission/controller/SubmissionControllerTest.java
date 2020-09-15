@@ -195,19 +195,6 @@ class SubmissionControllerTest {
   }
 
   @Test
-  void submissionPayloadWithDefaultReportType() {
-    Collection<TemporaryExposureKey> submittedKeys = buildMultipleKeys();
-    ArgumentCaptor<Collection<DiagnosisKey>> argument = ArgumentCaptor.forClass(Collection.class);
-    ReportType expectedDefaultReportType = ReportType.CONFIRMED_CLINICAL_DIAGNOSIS;
-
-    SubmissionPayload submissionPayload = buildPayload(submittedKeys);
-    executor.executePost(submissionPayload);
-
-    verify(diagnosisKeyService, atLeastOnce()).saveDiagnosisKeys(argument.capture());
-    assertThat(submissionPayload.getReportType()).isEqualTo(expectedDefaultReportType);
-  }
-
-  @Test
   void checkSaveOperationCallAndFakeDelayUpdateForValidParameters() {
     Collection<TemporaryExposureKey> submittedKeys = buildMultipleKeys();
     ArgumentCaptor<Collection<DiagnosisKey>> argument = ArgumentCaptor.forClass(Collection.class);
@@ -328,9 +315,9 @@ class SubmissionControllerTest {
     int rollingStartIntervalNumber2 = rollingStartIntervalNumber1 + DiagnosisKey.MAX_ROLLING_PERIOD;
     int rollingStartIntervalNumber3 = rollingStartIntervalNumber2 + DiagnosisKey.MAX_ROLLING_PERIOD;
     return Stream.of(
-        buildTemporaryExposureKey(VALID_KEY_DATA_1, rollingStartIntervalNumber1, 3),
-        buildTemporaryExposureKey(VALID_KEY_DATA_2, rollingStartIntervalNumber3, 6),
-        buildTemporaryExposureKey(VALID_KEY_DATA_3, rollingStartIntervalNumber2, 8))
+        buildTemporaryExposureKey(VALID_KEY_DATA_1, rollingStartIntervalNumber1, 3, ReportType.CONFIRMED_CLINICAL_DIAGNOSIS,1),
+        buildTemporaryExposureKey(VALID_KEY_DATA_2, rollingStartIntervalNumber3, 6, ReportType.CONFIRMED_CLINICAL_DIAGNOSIS,1),
+        buildTemporaryExposureKey(VALID_KEY_DATA_3, rollingStartIntervalNumber2, 8, ReportType.CONFIRMED_CLINICAL_DIAGNOSIS,1))
         .collect(Collectors.toCollection(ArrayList::new));
   }
 
@@ -355,7 +342,6 @@ class SubmissionControllerTest {
             .withVisitedCountries(submissionPayload.getVisitedCountriesList())
             .withCountryCode(StringUtils.defaultIfBlank(submissionPayload.getOrigin(),
                 config.getDefaultOriginCountry()))
-            .withReportType(submissionPayload.getReportType())
             .build())
         .collect(Collectors.toSet());
 

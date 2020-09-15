@@ -23,6 +23,7 @@ package app.coronawarn.server.common.persistence.domain;
 import static java.time.ZoneOffset.UTC;
 
 import app.coronawarn.server.common.persistence.domain.DiagnosisKeyBuilders.Builder;
+import app.coronawarn.server.common.persistence.domain.validation.ValidCountries;
 import app.coronawarn.server.common.persistence.domain.validation.ValidRollingStartIntervalNumber;
 import app.coronawarn.server.common.persistence.domain.validation.ValidSubmissionTimestamp;
 import app.coronawarn.server.common.protocols.external.exposurenotification.ReportType;
@@ -79,6 +80,7 @@ public class DiagnosisKey {
   @Size(max = 2)
   private final String originCountry;
 
+  @ValidCountries
   private final List<String> visitedCountries;
 
   private final ReportType reportType;

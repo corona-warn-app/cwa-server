@@ -32,6 +32,7 @@ import static org.mockito.Mockito.when;
 
 import app.coronawarn.server.common.persistence.domain.DiagnosisKey;
 import app.coronawarn.server.common.persistence.service.common.KeySharingPoliciesChecker;
+import app.coronawarn.server.common.protocols.external.exposurenotification.ReportType;
 import app.coronawarn.server.services.distribution.assembly.component.CryptoProvider;
 import app.coronawarn.server.services.distribution.assembly.diagnosiskeys.DiagnosisKeyBundler;
 import app.coronawarn.server.services.distribution.assembly.diagnosiskeys.ProdDiagnosisKeyBundler;
@@ -64,7 +65,8 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 @EnableConfigurationProperties(value = DistributionServiceConfig.class)
 @ExtendWith(SpringExtension.class)
-@ContextConfiguration(classes = {CryptoProvider.class, DistributionServiceConfig.class, KeySharingPoliciesChecker.class},
+@ContextConfiguration(classes = {CryptoProvider.class, DistributionServiceConfig.class,
+    KeySharingPoliciesChecker.class},
     initializers = ConfigFileApplicationContextInitializer.class)
 class DiagnosisKeysDirectoryTest {
 
@@ -138,7 +140,8 @@ class DiagnosisKeysDirectoryTest {
   @Test
   void checkBuildsTheCorrectDirectoryStructureForDifferentVisitedCountries() {
     Collection<DiagnosisKey> diagnosisKeysOfCountries =
-        buildDiagnosisKeys(6, LocalDateTime.of(1970, 1, 3, 0, 0), 5, "FR", list("DE", "FR"));
+        buildDiagnosisKeys(6, LocalDateTime.of(1970, 1, 3, 0, 0), 5, "FR", list("DE", "FR"),
+            ReportType.CONFIRMED_CLINICAL_DIAGNOSIS, 1);
 
     buildDirectoryStructure(diagnosisKeysOfCountries, "DE", "FR", "DK");
 
@@ -159,8 +162,10 @@ class DiagnosisKeysDirectoryTest {
   @Test
   void checkBuildsTheCorrectDirectoryStructureForTwoCountriesWithDifferentKeys() {
     Collection<DiagnosisKey> diagnosisKeysOfCountries =
-        buildDiagnosisKeys(6, LocalDateTime.of(1970, 1, 3, 0, 0), 5, "FR", list("DE"));
-    diagnosisKeysOfCountries.addAll(buildDiagnosisKeys(6, LocalDateTime.of(1970, 1, 4, 0, 0), 5, "FR", list("FR")));
+        buildDiagnosisKeys(6, LocalDateTime.of(1970, 1, 3, 0, 0), 5, "FR", list("DE"),
+            ReportType.CONFIRMED_CLINICAL_DIAGNOSIS, 1);
+    diagnosisKeysOfCountries.addAll(buildDiagnosisKeys(6, LocalDateTime.of(1970, 1, 4, 0, 0), 5, "FR", list("FR"),
+        ReportType.CONFIRMED_CLINICAL_DIAGNOSIS, 1));
 
     buildDirectoryStructure(diagnosisKeysOfCountries, "DE", "FR", "DK");
 
@@ -180,7 +185,8 @@ class DiagnosisKeysDirectoryTest {
   @Test
   void checkBuildsTheCorrectDirectoryStructureForMultipleSupportedCountriesAndSingleVisitedCountry() {
     Collection<DiagnosisKey> diagnosisKeysOfCountries =
-        buildDiagnosisKeys(6, LocalDateTime.of(1970, 1, 3, 0, 0), 5, "FR", list("FR"));
+        buildDiagnosisKeys(6, LocalDateTime.of(1970, 1, 3, 0, 0), 5, "FR", list("FR"),
+            ReportType.CONFIRMED_CLINICAL_DIAGNOSIS, 1);
 
     buildDirectoryStructure(diagnosisKeysOfCountries, "DE", "FR", "DK");
 

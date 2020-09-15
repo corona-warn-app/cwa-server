@@ -37,6 +37,8 @@ services:
       security-provider: BC
 
 spring:
+  main:
+    web-application-type: NONE
   transaction:
     default-timeout: 20
   flyway:

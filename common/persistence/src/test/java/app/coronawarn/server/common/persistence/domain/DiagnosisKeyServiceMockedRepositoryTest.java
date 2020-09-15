@@ -22,15 +22,14 @@ package app.coronawarn.server.common.persistence.domain;
 
 import static app.coronawarn.server.common.persistence.service.DiagnosisKeyServiceTestHelper.assertDiagnosisKeysEqual;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.util.Lists.list;
 import static org.mockito.Mockito.when;
 
 import app.coronawarn.server.common.persistence.repository.DiagnosisKeyRepository;
 import app.coronawarn.server.common.persistence.service.DiagnosisKeyService;
-import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
 import app.coronawarn.server.common.protocols.external.exposurenotification.ReportType;
+import java.nio.charset.StandardCharsets;
+import java.util.List;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.data.jdbc.DataJdbcTest;
@@ -45,7 +44,7 @@ class DiagnosisKeyServiceMockedRepositoryTest {
   static final int expRollingStartIntervalNumber = 73800;
   static final int expTransmissionRiskLevel = 1;
   static final String originCountry = "DE";
-  static final List<String> visitedCountries = Collections.singletonList("DE");
+  static final List<String> visitedCountries = list("DE");
   static final ReportType reportType = ReportType.CONFIRMED_CLINICAL_DIAGNOSIS;
   static final int daysSinceOnsetOfSymptoms = 1;
 
@@ -59,23 +58,22 @@ class DiagnosisKeyServiceMockedRepositoryTest {
   void testKeyRetrievalWithInvalidDbEntries() {
     DiagnosisKey invalidKey1 = invalidKey(1L);
     DiagnosisKey invalidKey2 = invalidKey(3L);
-    var expKeys = List.of(invalidKey1, invalidKey2);
 
-    mockInvalidKeyInDb(expKeys);
+    mockInvalidKeyInDb(list(invalidKey1, invalidKey2));
 
     List<DiagnosisKey> actualKeys = diagnosisKeyService.getDiagnosisKeys();
-    assertThat(actualKeys.isEmpty()).isTrue();
+    assertThat(actualKeys).isEmpty();
   }
 
   @Test
   void testKeyRetrievalWithInvalidAndValidDbEntries() {
     DiagnosisKey invalidKey1 = invalidKey(1L);
     DiagnosisKey invalidKey2 = invalidKey(3L);
-    var expKeys = new ArrayList<>(List.of(
+    var expKeys = list(
         validKey(2L),
         invalidKey1,
         validKey(0L),
-        invalidKey2));
+        invalidKey2);
 
     mockInvalidKeyInDb(expKeys);
 
