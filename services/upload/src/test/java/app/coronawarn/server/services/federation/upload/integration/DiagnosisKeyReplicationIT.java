@@ -25,7 +25,6 @@ import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertTrue;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-
 import app.coronawarn.server.common.persistence.domain.DiagnosisKey;
 import app.coronawarn.server.common.persistence.domain.FederationUploadKey;
 import app.coronawarn.server.common.persistence.repository.DiagnosisKeyRepository;
@@ -35,7 +34,6 @@ import java.util.Collection;
 import java.util.List;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-
 
 class DiagnosisKeyReplicationIT extends UploadKeyIT {
 
@@ -47,7 +45,6 @@ class DiagnosisKeyReplicationIT extends UploadKeyIT {
 
   @Autowired
   private FederationUploadKeyRepository uploadKeyRepository;
-
 
   @Test
   void diagnosisKeysWithConsentShouldBeReplicatedOnInsert() {
@@ -73,7 +70,6 @@ class DiagnosisKeyReplicationIT extends UploadKeyIT {
     assertTrue(uploadableKeys.isEmpty());
   }
 
-
   private DiagnosisKey persistNewKeyAndCheckReplication() {
     DiagnosisKey dummyKey = generateRandomUploadKey(true);
     keyService.saveDiagnosisKeys(List.of(dummyKey));
@@ -84,5 +80,4 @@ class DiagnosisKeyReplicationIT extends UploadKeyIT {
     assertArrayEquals(dummyKey.getKeyData(), uploadableKeys.iterator().next().getKeyData());
     return dummyKey;
   }
-
 }

@@ -88,8 +88,7 @@ public class PayloadFactory {
     AtomicInteger batchCounter = new AtomicInteger(0);
 
     return batchesAndOriginalKeys.entrySet().stream()
-        .map(entry -> this.mapToPayloadAndSign(batchCounter.incrementAndGet(),entry.getKey(), entry.getValue()))
+        .map(entry -> this.mapToPayloadAndSign(batchCounter.incrementAndGet(), entry.getKey(), entry.getValue()))
         .collect(Collectors.toList());
   }
-
 }
