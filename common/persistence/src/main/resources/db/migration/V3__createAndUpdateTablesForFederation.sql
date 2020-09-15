@@ -1,10 +1,9 @@
 CREATE TABLE federation_batch_info (
-    batch_tag   varchar(20) PRIMARY KEY,
+    batch_tag   varchar(50) PRIMARY KEY,
     date        date NOT NULL,
     status      varchar(20) NOT NULL DEFAULT 'UNPROCESSED'
 );
 
--- TODO? Migrate current values: origin_country = DE, etc.?
 ALTER TABLE diagnosis_key
     ADD consent_to_federation BOOLEAN NOT NULL DEFAULT FALSE;
 ALTER TABLE diagnosis_key
