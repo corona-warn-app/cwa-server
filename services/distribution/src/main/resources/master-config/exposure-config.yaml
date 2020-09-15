@@ -49,10 +49,10 @@ days_since_last_exposure:
 
 attenuation:
   gt_73_dbm: 0
-  gt_63_le_73_dbm: 1
-  gt_51_le_63_dbm: 1
-  gt_33_le_51_dbm: 1
-  gt_27_le_33_dbm: 1
-  gt_15_le_27_dbm: 1
-  gt_10_le_15_dbm: 1
-  le_10_dbm: 1
+  gt_63_le_73_dbm: 2
+  gt_51_le_63_dbm: 2
+  gt_33_le_51_dbm: 2
+  gt_27_le_33_dbm: 2
+  gt_15_le_27_dbm: 2
+  gt_10_le_15_dbm: 2
+  le_10_dbm: 2
