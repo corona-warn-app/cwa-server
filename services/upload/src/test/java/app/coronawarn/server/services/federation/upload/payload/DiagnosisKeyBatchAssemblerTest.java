@@ -20,8 +20,11 @@
 
 package app.coronawarn.server.services.federation.upload.payload;
 
+import static app.coronawarn.server.services.federation.upload.utils.MockData.*;
+import static java.util.Collections.emptyList;
+
 import app.coronawarn.server.common.persistence.domain.DiagnosisKey;
-import app.coronawarn.server.common.protocols.external.exposurenotification.ReportType;
+import app.coronawarn.server.common.persistence.domain.FederationUploadKey;
 import app.coronawarn.server.services.federation.upload.config.UploadServiceConfig;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -35,13 +38,8 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.boot.test.context.ConfigFileApplicationContextInitializer;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
-import java.time.LocalDateTime;
-import java.time.ZoneOffset;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Stream;
-
-import static java.util.Collections.emptyList;
 
 @EnableConfigurationProperties(value = UploadServiceConfig.class)
 @ExtendWith(SpringExtension.class)
@@ -81,30 +79,6 @@ class DiagnosisKeyBatchAssemblerTest {
         "Origin Country should be the same");
   }
 
-  private static DiagnosisKey makeFakeKey(boolean consent) {
-    return DiagnosisKey.builder()
-        .withKeyData(new byte[16])
-        .withRollingStartIntervalNumber(1)
-        .withTransmissionRiskLevel(2)
-        .withCountryCode("DE")
-        .withConsentToFederation(consent)
-        .withReportType(ReportType.CONFIRMED_CLINICAL_DIAGNOSIS)
-        .withRollingPeriod(144)
-        .withSubmissionTimestamp(LocalDateTime.of(2020, 7, 15, 12, 0, 0).toEpochSecond(ZoneOffset.UTC) / 3600)
-        .withVisitedCountries(List.of("DE"))
-        .withDaysSinceOnsetOfSymptoms(1)
-        .build();
-  }
-
-  private static List<DiagnosisKey> makeFakeKeys(boolean consent, int numberOfKeys) {
-    List<DiagnosisKey> keys = new ArrayList<DiagnosisKey>(numberOfKeys);
-    while (numberOfKeys > 0) {
-      keys.add(makeFakeKey(consent));
-      numberOfKeys--;
-    }
-    return keys;
-  }
-
   @Test
   void shouldReturnEmptyListIfNoKeysGiven() {
     var result = diagnosisKeyBatchAssembler.assembleDiagnosisKeyBatch(emptyList());
@@ -113,54 +87,54 @@ class DiagnosisKeyBatchAssemblerTest {
 
   @Test
   void shouldReturnEmptyListIfLessThenThresholdKeysGiven() {
-    var result = diagnosisKeyBatchAssembler.assembleDiagnosisKeyBatch(makeFakeKeys(true, minKeyThreshold - 1));
+    var result = diagnosisKeyBatchAssembler.assembleDiagnosisKeyBatch(generateRandomUploadKeys(true, minKeyThreshold - 1));
     Assertions.assertTrue(result.isEmpty());
   }
 
   @Test
   void packagedKeysShouldContainInitialInformation() {
-    var fakeKeys = makeFakeKeys(true, minKeyThreshold);
+    var fakeKeys = generateRandomUploadKeys(true, minKeyThreshold);
     var result = diagnosisKeyBatchAssembler.assembleDiagnosisKeyBatch(fakeKeys);
-
-    Assertions.assertEquals(fakeKeys.size(), result.get(0).getKeysCount());
+    var firstBatch = result.keySet().iterator().next();
+    Assertions.assertEquals(fakeKeys.size(), firstBatch.getKeysCount());
     // as keys are created equal we need to compare just the first two elements of each list
-    assertKeysAreEqual(fakeKeys.get(0), result.get(0).getKeys(0));
+    assertKeysAreEqual(fakeKeys.get(0), firstBatch.getKeys(0));
   }
 
   @Test
   void shouldNotPackageKeysIfConsentFlagIsNotSet() {
-    var dataset = makeFakeKeys(true, minKeyThreshold);
-    dataset.add(makeFakeKey(false));
+    var dataset = generateRandomUploadKeys(true, minKeyThreshold);
+    dataset.add(generateRandomUploadKey(false));
     var result = diagnosisKeyBatchAssembler.assembleDiagnosisKeyBatch(dataset);
     Assertions.assertEquals(1, result.size());
-    Assertions.assertEquals(minKeyThreshold, result.get(0).getKeysCount());
+    Assertions.assertEquals(minKeyThreshold, result.keySet().iterator().next().getKeysCount());
   }
 
   @ParameterizedTest
   @MethodSource("keysToPartitionAndBatchNumberExpectations")
-  void shouldGenerateCorrectNumberOfBatches(List<DiagnosisKey> dataset, Integer expectedBatches) {
+  void shouldGenerateCorrectNumberOfBatches(List<FederationUploadKey> dataset, Integer expectedBatches) {
     var result = diagnosisKeyBatchAssembler.assembleDiagnosisKeyBatch(dataset);
     Assertions.assertEquals(expectedBatches, result.size());
   }
 
   /**
-   * @return A stream of tuples which represents the dataset together with the expectation required to test batch key
-   * partioning.
+   * @return A stream of tuples which represents the dataset together with the
+   * expectation required to test batch key partioning.
    */
   private static Stream<Arguments> keysToPartitionAndBatchNumberExpectations() {
     return Stream.of(
-        Arguments.of(makeFakeKeys(true, minKeyThreshold - 1), 0),
-        Arguments.of(makeFakeKeys(true, minKeyThreshold), 1),
-        Arguments.of(makeFakeKeys(true, maxKeyCount), 1),
-        Arguments.of(makeFakeKeys(true, maxKeyCount / 2), 1),
-        Arguments.of(makeFakeKeys(true, maxKeyCount - 1), 1),
-        Arguments.of(makeFakeKeys(true, maxKeyCount + 1), 2),
-        Arguments.of(makeFakeKeys(true, 2 * maxKeyCount), 2),
-        Arguments.of(makeFakeKeys(true, 3 * maxKeyCount), 3),
-        Arguments.of(makeFakeKeys(true, 4 * maxKeyCount), 4),
-        Arguments.of(makeFakeKeys(true, 2 * maxKeyCount + 1), 3),
-        Arguments.of(makeFakeKeys(true, 2 * maxKeyCount + maxKeyCount / 2), 3),
-        Arguments.of(makeFakeKeys(true, 2 * maxKeyCount - maxKeyCount / 2), 2)
+        Arguments.of(generateRandomUploadKeys(true, minKeyThreshold - 1), 0),
+        Arguments.of(generateRandomUploadKeys(true, minKeyThreshold), 1),
+        Arguments.of(generateRandomUploadKeys(true, maxKeyCount), 1),
+        Arguments.of(generateRandomUploadKeys(true, maxKeyCount / 2), 1),
+        Arguments.of(generateRandomUploadKeys(true, maxKeyCount - 1), 1),
+        Arguments.of(generateRandomUploadKeys(true, maxKeyCount + 1), 2),
+        Arguments.of(generateRandomUploadKeys(true, 2 * maxKeyCount), 2),
+        Arguments.of(generateRandomUploadKeys(true, 3 * maxKeyCount), 3),
+        Arguments.of(generateRandomUploadKeys(true, 4 * maxKeyCount), 4),
+        Arguments.of(generateRandomUploadKeys(true, 2 * maxKeyCount + 1), 3),
+        Arguments.of(generateRandomUploadKeys(true, 2 * maxKeyCount + maxKeyCount / 2), 3),
+        Arguments.of(generateRandomUploadKeys(true, 2 * maxKeyCount - maxKeyCount / 2), 2)
     );
   }
 }
