@@ -27,6 +27,7 @@ import app.coronawarn.server.services.federation.upload.keys.DiagnosisKeyLoader;
 import app.coronawarn.server.services.federation.upload.payload.PayloadFactory;
 import app.coronawarn.server.services.federation.upload.payload.UploadPayload;
 import java.util.List;
+import java.util.stream.Collectors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.ApplicationArguments;
@@ -67,7 +68,13 @@ public class Upload implements ApplicationRunner {
 
   private void executeFederationUpload(UploadPayload payload) {
     logger.info("Executing batch request(s): {}", payload.getBatchTag());
-    this.federationUploadClient.postBatchUpload(payload);
+    var result = this.federationUploadClient.postBatchUpload(payload);
+    var retryKeys = result.getStatus500()
+        .stream()
+        .map(Integer::parseInt)
+        .map(index -> payload.getOrderedKeys().get(index))
+        .collect(Collectors.toList());
+    logger.info("Error on {} keys, marking them for retry", retryKeys.size());
   }
 
   @Override

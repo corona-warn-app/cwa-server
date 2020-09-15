@@ -64,7 +64,7 @@ class PayloadFactoryTest {
     String signature = new String();
 //    var random = new Random();
 //    random.nextBytes(signatureBytes);
-    when(mockSigner.createSignatureBytes(any()))
+    when(mockSigner.createSignatureBytes(any(), anyList()))
         .thenReturn(signature);
   }
 
@@ -80,6 +80,7 @@ class PayloadFactoryTest {
     Assertions.assertNotNull(result.get(0).getBatch());
     Assertions.assertNotNull(result.get(0).getBatchSignature());
     Assertions.assertNotNull(result.get(0).getBatchTag());
+    Assertions.assertNotNull(result.get(0).getOrderedKeys());
   }
 
   @Test

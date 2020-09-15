@@ -27,6 +27,7 @@ import java.io.IOException;
 import java.security.GeneralSecurityException;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
+import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 import org.apache.commons.lang3.tuple.Pair;
@@ -50,12 +51,21 @@ public class PayloadFactory {
     this.signer = signer;
   }
 
+  private static List<app.coronawarn.server.common.protocols.external.exposurenotification.DiagnosisKey> sortBatchByKeyData(DiagnosisKeyBatch batch) {
+    return batch.getKeysList()
+        .stream()
+        .sorted(Comparator.comparing(diagnosisKey -> diagnosisKey.getKeyData().toStringUtf8()))
+        .collect(Collectors.toList());
+  }
+
   private UploadPayload mapToPayloadAndSign(Pair<Integer, DiagnosisKeyBatch> batchPair) {
     var payload = new UploadPayload();
     payload.setBatch(batchPair.getRight());
     payload.setBatchTag(this.generateBatchTag(batchPair.getLeft()));
     try {
-      payload.setBatchSignature(signer.createSignatureBytes(batchPair.getRight()));
+      var orderedDiagnosisKeys = sortBatchByKeyData(batchPair.getRight());
+      payload.setOrderedKeys(orderedDiagnosisKeys);
+      payload.setBatchSignature(signer.createSignatureBytes(batchPair.getRight(), orderedDiagnosisKeys));
     } catch (GeneralSecurityException | OperatorCreationException | IOException | CMSException e) {
       logger.error("Failed to generate upload payload signature", e);
     }

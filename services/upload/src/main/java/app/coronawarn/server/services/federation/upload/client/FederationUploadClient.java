@@ -20,10 +20,12 @@
 
 package app.coronawarn.server.services.federation.upload.client;
 
+import app.coronawarn.server.common.federation.client.download.BatchUploadResponse;
 import app.coronawarn.server.services.federation.upload.payload.UploadPayload;
+import java.util.List;
 
 public interface FederationUploadClient {
 
-  void postBatchUpload(UploadPayload uploadPayload);
+  BatchUploadResponse postBatchUpload(UploadPayload uploadPayload);
 
 }

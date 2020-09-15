@@ -20,7 +20,9 @@
 
 package app.coronawarn.server.services.federation.upload.payload;
 
+import app.coronawarn.server.common.protocols.external.exposurenotification.DiagnosisKey;
 import app.coronawarn.server.common.protocols.external.exposurenotification.DiagnosisKeyBatch;
+import java.util.List;
 
 /**
  * This class represents an Upload call to the Federation Gateway. The payload for EFGS must contain the following
@@ -37,6 +39,7 @@ public class UploadPayload {
   private DiagnosisKeyBatch batch;
   private String batchSignature;
   private String batchTag;
+  private List<DiagnosisKey> orderedKeys;
 
   public DiagnosisKeyBatch getBatch() {
     return batch;
@@ -63,5 +66,13 @@ public class UploadPayload {
   public UploadPayload setBatchTag(String batchTag) {
     this.batchTag = batchTag;
     return this;
+  }
+
+  public List<DiagnosisKey> getOrderedKeys() {
+    return orderedKeys;
+  }
+
+  public void setOrderedKeys(List<DiagnosisKey> orderedKeys) {
+    this.orderedKeys = orderedKeys;
   }
 }

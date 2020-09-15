@@ -38,6 +38,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 import java.io.IOException;
 import java.security.GeneralSecurityException;
 import java.security.cert.CertificateException;
+import java.util.List;
 
 import static app.coronawarn.server.services.federation.upload.utils.SecretResourceMockData.makeFakeResourceLoader;
 
@@ -60,15 +61,21 @@ class BatchSignerTest {
   @Test
   void shouldSignBatchWithBouncyCastle()
       throws GeneralSecurityException, CMSException, OperatorCreationException, IOException {
-    var result = batchSigner.createSignatureBytes(DiagnosisKeyBatch.newBuilder().build());
+    var result = batchSigner.createSignatureBytes(
+        DiagnosisKeyBatch.newBuilder().build(),
+        List.of(BatchMockData.makeDiagnosisKey()));
     Assertions.assertNotNull(result);
   }
 
   @Test
   void shouldSignBatchesDifferently()
       throws GeneralSecurityException, CMSException, OperatorCreationException, IOException {
-    var signature1 = batchSigner.createSignatureBytes(BatchMockData.makeSingleKeyBatch());
-    var signature2 = batchSigner.createSignatureBytes(BatchMockData.makeSingleKeyBatch());
+    var signature1 = batchSigner.createSignatureBytes(
+            BatchMockData.makeSingleKeyBatch(),
+            List.of(BatchMockData.makeDiagnosisKey()));
+    var signature2 = batchSigner.createSignatureBytes(
+            BatchMockData.makeSingleKeyBatch(),
+            List.of(BatchMockData.makeDiagnosisKey()));
     Assertions.assertNotEquals(signature1, signature2);
   }
 
