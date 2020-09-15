@@ -38,5 +38,4 @@ public class PersistenceKeysGenerator {
         .withTransmissionRiskLevel(0)
         .build());
   }
-
 }

@@ -73,13 +73,10 @@ public class FederationUploadKeyService {
 
   /**
    * Updates only the batchTagId field of all given upload keys. The entities are not merged
-   * with the persisted ones, thus no other sideeffects are to be expected.
+   * with the persisted ones, thus no other side effects are to be expected.
    */
   @Transactional
   public void updateBatchTagIdForKeys(Collection<FederationUploadKey> originalKeys, String batchTagId) {
-    originalKeys.forEach(key -> {
-      keyRepository.updateBatchTagId(key.getKeyData(), batchTagId);
-    });
-
+    originalKeys.forEach(key -> keyRepository.updateBatchTagId(key.getKeyData(), batchTagId));
   }
 }

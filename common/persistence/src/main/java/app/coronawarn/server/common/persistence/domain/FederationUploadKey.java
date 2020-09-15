@@ -22,6 +22,7 @@ package app.coronawarn.server.common.persistence.domain;
 
 import app.coronawarn.server.common.protocols.external.exposurenotification.ReportType;
 import java.util.List;
+import java.util.Objects;
 import javax.validation.constraints.Size;
 
 /**
@@ -47,10 +48,6 @@ public class FederationUploadKey extends DiagnosisKey {
     return batchTagId;
   }
 
-  public void setBatchTagId(String batchTagId) {
-    this.batchTagId = batchTagId;
-  }
-
   /**
    * Create a new instance of an upload key by copying the properties of the given source diagnosis key.
    */
@@ -60,6 +57,23 @@ public class FederationUploadKey extends DiagnosisKey {
         diagnosisKeySource.getSubmissionTimestamp(), diagnosisKeySource.isConsentToFederation(),
         diagnosisKeySource.getOriginCountry(), diagnosisKeySource.getVisitedCountries(),
         diagnosisKeySource.getReportType(), diagnosisKeySource.getDaysSinceOnsetOfSymptoms());
+  }
+
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) {
+      return true;
+    }
+    if (o == null || getClass() != o.getClass()) {
+      return false;
+    }
+    FederationUploadKey that = (FederationUploadKey) o;
+    return super.equals(o) && Objects.equals(batchTagId, that.batchTagId);
+  }
+
+  @Override
+  public int hashCode() {
+    return Objects.hash(super.hashCode(), batchTagId);
   }
 
 }

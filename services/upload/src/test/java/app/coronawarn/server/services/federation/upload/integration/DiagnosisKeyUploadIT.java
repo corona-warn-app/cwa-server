@@ -71,5 +71,4 @@ class DiagnosisKeyUploadIT extends UploadKeyIT {
   private void assertKeyWasMarkedWithBatchTagId(FederationUploadKey uploadKey) {
     Assertions.assertNotNull(uploadKey.getBatchTagId());
   }
-
 }

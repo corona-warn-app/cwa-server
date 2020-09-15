@@ -80,5 +80,4 @@ public class UploadPayload {
   public void setOriginalKeys(List<FederationUploadKey> originalKeys) {
     this.originalKeys = originalKeys;
   }
-
 }

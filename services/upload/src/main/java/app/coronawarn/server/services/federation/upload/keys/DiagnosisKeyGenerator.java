@@ -39,8 +39,7 @@ public class DiagnosisKeyGenerator implements DiagnosisKeyLoader {
 
   private final Random random = new Random();
 
-  private static final Logger logger = LoggerFactory
-      .getLogger(DiagnosisKeyGenerator.class);
+  private static final Logger logger = LoggerFactory.getLogger(DiagnosisKeyGenerator.class);
 
   private final UploadServiceConfig uploadServiceConfig;
 

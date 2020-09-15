@@ -23,6 +23,9 @@ package app.coronawarn.server.services.federation.upload.utils;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
+
 import app.coronawarn.server.common.persistence.domain.DiagnosisKey;
 import app.coronawarn.server.common.persistence.domain.FederationUploadKey;
 import app.coronawarn.server.common.protocols.external.exposurenotification.ReportType;
@@ -32,12 +35,9 @@ public class PersistenceMockData {
   public static final String TEST_ORIGIN_COUNTRY = "DE";
 
   public static List<FederationUploadKey> generateRandomDiagnosisKeys(boolean consentToShare, int numberOfKeys) {
-    List<FederationUploadKey> fakeKeys = new ArrayList<>();
-    while (numberOfKeys >= 0) {
-      fakeKeys.add(generateRandomDiagnosisKey(consentToShare));
-      numberOfKeys--;
-    }
-    return fakeKeys;
+    return IntStream.range(0, numberOfKeys)
+        .mapToObj(ignore -> generateRandomDiagnosisKey(consentToShare))
+        .collect(Collectors.toList());
   }
 
   public static FederationUploadKey generateRandomDiagnosisKey(boolean consentToShare) {
