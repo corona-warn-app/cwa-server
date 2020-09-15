@@ -18,5 +18,5 @@ message DiagnosisKey {
   optional ReportType reportType = 7; // set by backend
   // Number of days elapsed between symptom onset and the TEK being used.
   // E.g. 2 means TEK is 2 days after onset of symptoms.
-  optional uint32 days_since_onset_of_symptoms = 8;
+  optional sint32 days_since_onset_of_symptoms = 8;
 }
