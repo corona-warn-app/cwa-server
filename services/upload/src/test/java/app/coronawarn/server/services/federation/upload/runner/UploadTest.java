@@ -29,8 +29,7 @@ import org.springframework.boot.test.mock.mockito.SpyBean;
 import org.springframework.test.context.ActiveProfiles;
 
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.atMostOnce;
-import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.*;
 
 @EnableConfigurationProperties(value = UploadServiceConfig.class)
 @ActiveProfiles({"testdata", "fake-client"})
@@ -42,7 +41,7 @@ class UploadTest {
 
   @Test
   void shouldGenerateTestKeys() {
-    verify(spyFederationClient, atMostOnce()).postBatchUpload(any());
+    verify(spyFederationClient, times(2)).postBatchUpload(any());
   }
 
 }

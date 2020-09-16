@@ -22,6 +22,7 @@ package app.coronawarn.server.services.federation.upload.runner;
 
 import app.coronawarn.server.common.persistence.domain.FederationUploadKey;
 import app.coronawarn.server.common.persistence.service.FederationUploadKeyService;
+import app.coronawarn.server.common.protocols.external.exposurenotification.DiagnosisKey;
 import app.coronawarn.server.services.federation.upload.Application;
 import app.coronawarn.server.services.federation.upload.client.FederationUploadClient;
 import app.coronawarn.server.services.federation.upload.keys.DiagnosisKeyLoader;
@@ -70,7 +71,7 @@ public class Upload implements ApplicationRunner {
     this.uploadKeyService = uploadKeyService;
   }
 
-  private void executeFederationUpload(UploadPayload payload) {
+  private List<DiagnosisKey> executeFederationUpload(UploadPayload payload) {
     logger.info("Executing batch request(s): {}", payload.getBatchTag());
     var result = this.federationUploadClient.postBatchUpload(payload);
     var retryKeys = result.getStatus500()
@@ -79,6 +80,7 @@ public class Upload implements ApplicationRunner {
         .map(index -> payload.getOrderedKeys().get(index))
         .collect(Collectors.toList());
     logger.info("Error on {} keys, marking them for retry", retryKeys.size());
+    return retryKeys;
   }
 
   @Override
@@ -90,8 +92,8 @@ public class Upload implements ApplicationRunner {
       List<UploadPayload> requests = this.payloadFactory.makePayloadList(diagnosisKeys);
       logger.info("Executing {} batch request", requests.size());
       requests.forEach(payload -> {
-        this.executeFederationUpload(payload);
-        this.markSuccessfullyUploadedKeys(payload);
+        List<DiagnosisKey> retryKeys = this.executeFederationUpload(payload);
+        this.markSuccessfullyUploadedKeys(payload, retryKeys);
       });
     } catch (Exception e) {
       logger.error("Upload diagnosis key data failed.", e);
@@ -99,8 +101,11 @@ public class Upload implements ApplicationRunner {
     }
   }
 
-  private void markSuccessfullyUploadedKeys(UploadPayload payload) {
+  private void markSuccessfullyUploadedKeys(UploadPayload payload, List<DiagnosisKey> retryKeys) {
     try {
+      if (!retryKeys.isEmpty()) {
+        payload.getOriginalKeys().removeIf(retryKeys::contains);
+      }
       uploadKeyService.updateBatchTagForKeys(payload.getOriginalKeys(), payload.getBatchTag());
     } catch (Exception ex) {
       // in case of an error with marking, try to move forward to the next upload batch if any unprocessed
