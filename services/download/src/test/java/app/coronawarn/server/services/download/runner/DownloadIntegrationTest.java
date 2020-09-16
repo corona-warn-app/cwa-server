@@ -73,7 +73,7 @@ import org.springframework.test.context.ActiveProfiles;
  */
 @SpringBootTest
 @ActiveProfiles("federation-download-integration")
-class DownloadAndRetentionPolicyIT {
+class DownloadIntegrationTest {
 
   public static final String BATCH1_DATA = "0123456789ABCDED";
   public static final String BATCH2_DATA = "0123456789ABCDEE";
