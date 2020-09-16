@@ -31,8 +31,7 @@ import org.springframework.stereotype.Repository;
 public interface DiagnosisKeyRepository extends PagingAndSortingRepository<DiagnosisKey, Long> {
 
   /**
-   * Counts all entries that have a submission timestamp less or equal than the specified one
-   *  and match the given country_code.
+   * Counts all entries that have a submission timestamp older than the specified one.
    *
    * @param submissionTimestamp The submission timestamp up to which entries will be expired.
    * @return The number of expired keys.
@@ -41,8 +40,7 @@ public interface DiagnosisKeyRepository extends PagingAndSortingRepository<Diagn
   int countOlderThan(@Param("threshold") long submissionTimestamp);
 
   /**
-   * Deletes all entries that have a submission timestamp less or equal than the specified one
-   *  and match the origin country_code.
+   * Deletes all entries that have a submission timestamp older than the specified one.
    *
    * @param submissionTimestamp The submission timestamp up to which entries will be deleted.
    */
