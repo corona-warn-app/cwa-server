@@ -62,6 +62,7 @@ public interface DiagnosisKeyRepository extends PagingAndSortingRepository<Diagn
    * @param originCountry              The origin country from the app.
    * @param visitedCountries           The list of countries this transmissions is relevant for.
    * @param reportType                 The report type of the diagnosis key.
+   * @return {@literal true} if the diagnosis key was inserted successfully, {@literal false} otherwise.
    */
   @Modifying
   @Query("INSERT INTO diagnosis_key "
@@ -70,7 +71,7 @@ public interface DiagnosisKeyRepository extends PagingAndSortingRepository<Diagn
       + "VALUES (:keyData, :rollingStartIntervalNumber, :rollingPeriod, :submissionTimestamp, :transmissionRisk, "
       + ":origin_country, :visited_countries, :report_type, :days_since_onset_of_symptoms, :consent_to_federation) "
       + "ON CONFLICT DO NOTHING")
-  void saveDoNothingOnConflict(
+  boolean saveDoNothingOnConflict(
       @Param("keyData") byte[] keyData,
       @Param("rollingStartIntervalNumber") int rollingStartIntervalNumber,
       @Param("rollingPeriod") int rollingPeriod,
