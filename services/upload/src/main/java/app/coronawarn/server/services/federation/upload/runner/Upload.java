@@ -79,7 +79,7 @@ public class Upload implements ApplicationRunner {
         .map(Integer::parseInt)
         .map(index -> payload.getOrderedKeys().get(index))
         .collect(Collectors.toList());
-    logger.info("Error on {} keys, marking them for retry", retryKeys.size());
+    logger.error("Error on {} keys, marking them for retry", retryKeys.size());
     return retryKeys;
   }
 
