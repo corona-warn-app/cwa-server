@@ -22,6 +22,7 @@ package app.coronawarn.server.services.federation.upload.client;
 
 import app.coronawarn.server.common.federation.client.download.BatchUploadResponse;
 import app.coronawarn.server.services.federation.upload.payload.UploadPayload;
+import java.util.Collections;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Profile;
@@ -40,6 +41,10 @@ public class TestFederationUploadClient implements FederationUploadClient {
         uploadPayload.getBatch().getKeysCount(),
         uploadPayload.getBatchTag(),
         uploadPayload.getBatchSignature());
-    return new BatchUploadResponse();
+    return new BatchUploadResponse(
+        Collections.emptyList(),
+        Collections.emptyList(),
+        Collections.emptyList()
+    );
   }
 }
