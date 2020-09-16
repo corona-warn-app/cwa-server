@@ -26,7 +26,12 @@ import static app.coronawarn.server.services.submission.controller.RequestExecut
 import static app.coronawarn.server.services.submission.controller.RequestExecutor.buildPayloadWithOneKey;
 import static app.coronawarn.server.services.submission.controller.RequestExecutor.buildTemporaryExposureKey;
 import static app.coronawarn.server.services.submission.controller.RequestExecutor.createRollingStartIntervalNumber;
-import static app.coronawarn.server.services.submission.controller.SubmissionPayloadMockData.*;
+import static app.coronawarn.server.services.submission.controller.SubmissionPayloadMockData.buildPayload;
+import static app.coronawarn.server.services.submission.controller.SubmissionPayloadMockData.buildPayloadWithInvalidKey;
+import static app.coronawarn.server.services.submission.controller.SubmissionPayloadMockData.buildPayloadWithInvalidOriginCountry;
+import static app.coronawarn.server.services.submission.controller.SubmissionPayloadMockData.buildPayloadWithPadding;
+import static app.coronawarn.server.services.submission.controller.SubmissionPayloadMockData.buildPayloadWithTooLargePadding;
+import static app.coronawarn.server.services.submission.controller.SubmissionPayloadMockData.buildPayloadWithVisitedCountries;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.any;
@@ -55,7 +60,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
-import java.util.Locale;
 import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -271,17 +275,14 @@ class SubmissionControllerTest {
   @ParameterizedTest
   @MethodSource("validVisitedCountries")
   void testValidVisitedCountriesSubmissionPayload(List<String> visitedCountries) {
-    config.setSupportedCountries(new String[]{"DE,FR"});
     ResponseEntity<Void> actResponse = executor.executePost(buildPayloadWithVisitedCountries(visitedCountries));
     assertThat(actResponse.getStatusCode()).isEqualTo(OK);
   }
 
   private static Stream<Arguments> validVisitedCountries() {
-    List<String> isoCountries = Arrays.asList(Locale.getISOCountries());
     return Stream.of(
         Arguments.of(List.of("DE")),
-        Arguments.of(List.of("DE", "FR"))
-    );
+        Arguments.of(List.of("DE", "FR")));
   }
 
   @Test
@@ -311,9 +312,12 @@ class SubmissionControllerTest {
     int rollingStartIntervalNumber2 = rollingStartIntervalNumber1 + DiagnosisKey.MAX_ROLLING_PERIOD;
     int rollingStartIntervalNumber3 = rollingStartIntervalNumber2 + DiagnosisKey.MAX_ROLLING_PERIOD;
     return Stream.of(
-        buildTemporaryExposureKey(VALID_KEY_DATA_1, rollingStartIntervalNumber1, 3, ReportType.CONFIRMED_CLINICAL_DIAGNOSIS,1),
-        buildTemporaryExposureKey(VALID_KEY_DATA_2, rollingStartIntervalNumber3, 6, ReportType.CONFIRMED_CLINICAL_DIAGNOSIS,1),
-        buildTemporaryExposureKey(VALID_KEY_DATA_3, rollingStartIntervalNumber2, 8, ReportType.CONFIRMED_CLINICAL_DIAGNOSIS,1))
+        buildTemporaryExposureKey(VALID_KEY_DATA_1, rollingStartIntervalNumber1, 3,
+            ReportType.CONFIRMED_CLINICAL_DIAGNOSIS, 1),
+        buildTemporaryExposureKey(VALID_KEY_DATA_2, rollingStartIntervalNumber3, 6,
+            ReportType.CONFIRMED_CLINICAL_DIAGNOSIS, 1),
+        buildTemporaryExposureKey(VALID_KEY_DATA_3, rollingStartIntervalNumber2, 8,
+            ReportType.CONFIRMED_CLINICAL_DIAGNOSIS, 1))
         .collect(Collectors.toCollection(ArrayList::new));
   }
 
