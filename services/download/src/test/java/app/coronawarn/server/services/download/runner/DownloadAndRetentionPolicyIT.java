@@ -81,7 +81,7 @@ class DownloadAndRetentionPolicyIT {
 
   private static final String BATCH1_TAG = "batch1_tag";
   private static final String BATCH2_TAG = "batch2_tag";
-  
+
   private static final String BATCH3_TAG = "batch3_tag";
 
   private static final String RETRY_BATCH_SUCCESSFUL_TAG = "retry_batch_successful";
