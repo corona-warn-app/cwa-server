@@ -44,8 +44,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpStatus;
 import org.springframework.test.context.ActiveProfiles;
 
-@SpringBootTest
-@ActiveProfiles("federation-download-integration")
 /**
  * This integration test is responsible for testing the runners for download and retention policy.
  * The Spring profile "federation-download-integration" enables the test data generation in
@@ -72,8 +70,9 @@ import org.springframework.test.context.ActiveProfiles;
  *
  * The diagnosis_key table should contain the data that correspond to the three batches with state "PROCESSED":
  * BATCH1_DATA, BATCH2_DATA and RETRY_BATCH_SUCCESSFUL_DATA
- *
  */
+@SpringBootTest
+@ActiveProfiles("federation-download-integration")
 class DownloadAndRetentionPolicyIT {
 
   public static final String BATCH1_DATA = "0123456789ABCDED";
@@ -84,7 +83,7 @@ class DownloadAndRetentionPolicyIT {
 
   private static final String BATCH3_TAG = "batch3_tag";
 
-  private static final String RETRY_BATCH_SUCCESSFUL_TAG = "retry_batch_successful";
+  private static final String RETRY_BATCH_SUCCESSFUL_TAG = "retry_batch_tag_successful";
   private static final String RETRY_BATCH_SUCCESSFUL_DATA = "0123456789ABCDEF";
 
   private static final String RETRY_BATCH_FAILS_TAG = "retry_batch_tag_fail";
@@ -181,8 +180,8 @@ class DownloadAndRetentionPolicyIT {
         .contains(createDiagnosisKey(RETRY_BATCH_SUCCESSFUL_DATA));
   }
 
-  private DiagnosisKey createDiagnosisKey(String keyData1) {
+  private DiagnosisKey createDiagnosisKey(String keyData) {
     return DiagnosisKey.builder()
-        .fromFederationDiagnosisKey(FederationBatchTestHelper.createDiagnosisKey(keyData1)).build();
+        .fromFederationDiagnosisKey(FederationBatchTestHelper.createDiagnosisKey(keyData)).build();
   }
 }
