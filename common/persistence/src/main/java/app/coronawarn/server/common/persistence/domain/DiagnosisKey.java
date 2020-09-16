@@ -77,7 +77,7 @@ public class DiagnosisKey {
 
   private final boolean consentToFederation;
 
-  @Size(max = 2)
+  @Size(max = 2, message = "Origin country code must have length of 2.")
   private final String originCountry;
 
   @ValidCountries
