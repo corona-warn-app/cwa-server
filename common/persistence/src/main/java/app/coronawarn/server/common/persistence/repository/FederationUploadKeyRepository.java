@@ -37,6 +37,6 @@ public interface FederationUploadKeyRepository
   List<FederationUploadKey> findAllUploadableKeys();
 
   @Modifying
-  @Query("update federation_upload_key set batch_tag_id = :batchTagId where key_data = :keyData")
-  void updateBatchTag(@Param("keyData") byte[] keyData, @Param("batchTagId") String batchTagId);
+  @Query("update federation_upload_key set batch_tag = :batchTag where key_data = :keyData")
+  void updateBatchTag(@Param("keyData") byte[] keyData, @Param("batchTag") String batchTag);
 }
