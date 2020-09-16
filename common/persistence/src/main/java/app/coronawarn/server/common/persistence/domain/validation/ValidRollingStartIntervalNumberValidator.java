@@ -20,10 +20,7 @@
 
 package app.coronawarn.server.common.persistence.domain.validation;
 
-import static java.time.ZoneOffset.UTC;
-
 import java.time.Instant;
-import java.time.LocalDateTime;
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
 
@@ -32,7 +29,7 @@ public class ValidRollingStartIntervalNumberValidator
 
   @Override
   public boolean isValid(Integer rollingStartIntervalNumber, ConstraintValidatorContext constraintValidatorContext) {
-    int currentInstant = Math.toIntExact(LocalDateTime.ofInstant(Instant.now(), UTC).toEpochSecond(UTC) / 600L);
+    int currentInstant = Math.toIntExact(Instant.now().getEpochSecond() / 600L);
     return rollingStartIntervalNumber > 0 && rollingStartIntervalNumber < currentInstant;
   }
 }

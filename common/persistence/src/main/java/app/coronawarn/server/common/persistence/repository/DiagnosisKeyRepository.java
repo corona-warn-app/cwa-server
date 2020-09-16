@@ -31,8 +31,7 @@ import org.springframework.stereotype.Repository;
 public interface DiagnosisKeyRepository extends PagingAndSortingRepository<DiagnosisKey, Long> {
 
   /**
-   * Counts all entries that have a submission timestamp less or equal than the specified one
-   *  and match the given country_code.
+   * Counts all entries that have a submission timestamp older than the specified one.
    *
    * @param submissionTimestamp The submission timestamp up to which entries will be expired.
    * @return The number of expired keys.
@@ -41,8 +40,7 @@ public interface DiagnosisKeyRepository extends PagingAndSortingRepository<Diagn
   int countOlderThan(@Param("threshold") long submissionTimestamp);
 
   /**
-   * Deletes all entries that have a submission timestamp less or equal than the specified one
-   *  and match the origin country_code.
+   * Deletes all entries that have a submission timestamp older than the specified one.
    *
    * @param submissionTimestamp The submission timestamp up to which entries will be deleted.
    */
@@ -62,6 +60,7 @@ public interface DiagnosisKeyRepository extends PagingAndSortingRepository<Diagn
    * @param originCountry              The origin country from the app.
    * @param visitedCountries           The list of countries this transmissions is relevant for.
    * @param reportType                 The report type of the diagnosis key.
+   * @return {@literal true} if the diagnosis key was inserted successfully, {@literal false} otherwise.
    */
   @Modifying
   @Query("INSERT INTO diagnosis_key "
@@ -70,7 +69,7 @@ public interface DiagnosisKeyRepository extends PagingAndSortingRepository<Diagn
       + "VALUES (:keyData, :rollingStartIntervalNumber, :rollingPeriod, :submissionTimestamp, :transmissionRisk, "
       + ":origin_country, :visited_countries, :report_type, :days_since_onset_of_symptoms, :consent_to_federation) "
       + "ON CONFLICT DO NOTHING")
-  void saveDoNothingOnConflict(
+  boolean saveDoNothingOnConflict(
       @Param("keyData") byte[] keyData,
       @Param("rollingStartIntervalNumber") int rollingStartIntervalNumber,
       @Param("rollingPeriod") int rollingPeriod,

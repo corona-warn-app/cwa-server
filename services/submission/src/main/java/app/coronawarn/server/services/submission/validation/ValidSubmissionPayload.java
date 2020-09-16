@@ -20,6 +20,11 @@
 
 package app.coronawarn.server.services.submission.validation;
 
+import static java.util.function.Predicate.not;
+import static java.util.stream.Collectors.groupingBy;
+import static java.util.stream.Collectors.summingInt;
+import static java.util.stream.Collectors.toList;
+
 import app.coronawarn.server.common.protocols.external.exposurenotification.TemporaryExposureKey;
 import app.coronawarn.server.common.protocols.internal.SubmissionPayload;
 import app.coronawarn.server.services.submission.config.SubmissionServiceConfig;
@@ -29,9 +34,8 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
-import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.stream.Collectors;
 import javax.validation.Constraint;
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
@@ -52,15 +56,11 @@ public @interface ValidSubmissionPayload {
 
   /**
    * Groups.
-   *
-   * @return
    */
   Class<?>[] groups() default {};
 
   /**
    * Payload.
-   *
-   * @return
    */
   Class<? extends Payload>[] payload() default {};
 
@@ -69,12 +69,12 @@ public @interface ValidSubmissionPayload {
 
     private final int maxNumberOfKeys;
     private final int maxRollingPeriod;
-    private final String[] supportedCountries;
+    private final Collection<String> supportedCountries;
 
     public SubmissionPayloadValidator(SubmissionServiceConfig submissionServiceConfig) {
       maxNumberOfKeys = submissionServiceConfig.getMaxNumberOfKeys();
       maxRollingPeriod = submissionServiceConfig.getMaxRollingPeriod();
-      supportedCountries = submissionServiceConfig.getSupportedCountries();
+      supportedCountries = List.of(submissionServiceConfig.getSupportedCountries());
     }
 
     /**
@@ -140,9 +140,9 @@ public @interface ValidSubmissionPayload {
     private boolean checkKeysCumulateEqualOrLessThanMaxRollingPeriodPerDay(List<TemporaryExposureKey> exposureKeys,
         ConstraintValidatorContext validatorContext) {
 
-      boolean isValidRollingPeriod = exposureKeys.stream().collect(Collectors
-          .groupingBy(TemporaryExposureKey::getRollingStartIntervalNumber,
-              Collectors.summingInt(TemporaryExposureKey::getRollingPeriod)))
+      boolean isValidRollingPeriod = exposureKeys.stream()
+          .collect(groupingBy(TemporaryExposureKey::getRollingStartIntervalNumber,
+              summingInt(TemporaryExposureKey::getRollingPeriod)))
           .values().stream()
           .anyMatch(sum -> sum <= maxRollingPeriod);
 
@@ -180,9 +180,8 @@ public @interface ValidSubmissionPayload {
     private boolean checkOriginCountryIsValid(SubmissionPayload submissionPayload,
         ConstraintValidatorContext validatorContext) {
       String originCountry = submissionPayload.getOrigin();
-      List<String> supportedCountriesList = List.of(supportedCountries);
 
-      if (!supportedCountriesList.contains(originCountry)) {
+      if (!supportedCountries.contains(originCountry)) {
         addViolation(validatorContext, String.format(
             "Origin country %s is not part of the supported countries list", originCountry));
         return false;
@@ -192,19 +191,14 @@ public @interface ValidSubmissionPayload {
 
     private boolean checkVisitedCountriesAreValid(SubmissionPayload submissionPayload,
         ConstraintValidatorContext validatorContext) {
-      List<String> supportedCountriesList = List.of(supportedCountries);
-      AtomicBoolean validCountries = new AtomicBoolean(true);
+      Collection<String> invalidVisitedCountries = submissionPayload.getVisitedCountriesList().stream()
+          .filter(not(supportedCountries::contains)).collect(toList());
 
-      submissionPayload.getVisitedCountriesList().forEach(country -> {
-        if (!supportedCountriesList.contains(country)) {
-          addViolation(validatorContext,
-              "[" + country + "]: Visited country is not part of the supported countries list");
-
-          validCountries.set(false);
-        }
-      });
-
-      return validCountries.get();
+      if (!invalidVisitedCountries.isEmpty()) {
+        invalidVisitedCountries.forEach(country -> addViolation(validatorContext,
+            "[" + country + "]: Visited country is not part of the supported countries list"));
+      }
+      return invalidVisitedCountries.isEmpty();
     }
   }
 }
