@@ -24,6 +24,7 @@ import app.coronawarn.server.common.persistence.domain.DiagnosisKey;
 import app.coronawarn.server.common.persistence.domain.FederationUploadKey;
 import app.coronawarn.server.common.protocols.external.exposurenotification.ReportType;
 import app.coronawarn.server.services.federation.upload.config.UploadServiceConfig;
+import java.security.SecureRandom;
 import java.util.List;
 import java.util.Random;
 import java.util.stream.Collectors;
@@ -37,7 +38,7 @@ import org.springframework.stereotype.Component;
 @Profile("testdata")
 public class DiagnosisKeyGenerator implements DiagnosisKeyLoader {
 
-  private final Random random = new Random();
+  private final Random random = new SecureRandom();
 
   private static final Logger logger = LoggerFactory.getLogger(DiagnosisKeyGenerator.class);
 
