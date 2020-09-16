@@ -125,8 +125,11 @@ public class FederationBatchProcessor {
     logger.info("Processing batch for date {} and batchTag {}", date, batchTag);
     try {
       BatchDownloadResponse response = federationGatewayClient.getDiagnosisKeys(batchTag, date);
-
-      diagnosisKeyService.saveDiagnosisKeys(convertDiagnosisKeys(response));
+      logger
+          .info("Downloaded {} keys for date {} and batchTag {}", response.getDiagnosisKeyBatch().getKeysCount(), date,
+              batchTag);
+      int insertedKeys = diagnosisKeyService.saveDiagnosisKeys(convertDiagnosisKeys(response));
+      logger.info("Successfully inserted {} keys for date {} and batchTag {}", insertedKeys, date, batchTag);
       batchInfoService.updateStatus(batchInfo, PROCESSED);
       return response.getNextBatchTag();
     } catch (Exception e) {
