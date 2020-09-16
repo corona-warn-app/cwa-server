@@ -28,6 +28,6 @@ federation-gateway:
   base-url: http://localhost:1234
   connection-pool-size: 200
   ssl:
-    key-store-path: test.p12
+    key-store: test.p12
     key-store-pass: test1234
     certificate-type: PKCS12
