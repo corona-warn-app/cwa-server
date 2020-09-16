@@ -18,7 +18,7 @@
  * ---license-end
  */
 
-package app.coronawarn.server.services.download.runner;
+package app.coronawarn.server.services.download;
 
 import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
 import static com.github.tomakehurst.wiremock.client.WireMock.anyUrl;
