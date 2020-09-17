@@ -106,6 +106,15 @@ class FederationBatchProcessorTest {
 
       verify(batchInfoService, times(1)).save(new FederationBatchInfo(batchTag1, date));
     }
+
+    @Test
+    void testBatchInfoForDateReturnsNull() {
+      when(federationGatewayClient.getDiagnosisKeys(isoDate(date))).thenReturn(Optional.empty());
+
+      batchProcessor.saveFirstBatchInfoForDate(date);
+
+      verify(batchInfoService, never()).save(any());
+    }
   }
 
   @Nested
