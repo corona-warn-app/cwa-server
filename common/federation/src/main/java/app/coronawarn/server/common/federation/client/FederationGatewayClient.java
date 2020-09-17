@@ -21,6 +21,7 @@
 package app.coronawarn.server.common.federation.client;
 
 import app.coronawarn.server.common.federation.client.download.BatchDownloadResponse;
+import java.util.Optional;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -45,13 +46,13 @@ public interface FederationGatewayClient {
       headers = {"Accept=application/protobuf; version=1.0",
           "X-SSL-Client-SHA256=${federation-gateway.ssl.certificate-sha}",
           "X-SSL-Client-DN=${federation-gateway.ssl.certificate-dn}"})
-  BatchDownloadResponse getDiagnosisKeys(@PathVariable("date") String date);
+  Optional<BatchDownloadResponse> getDiagnosisKeys(@PathVariable("date") String date);
 
   @GetMapping(value = "/diagnosiskeys/download/{date}",
       headers = {"Accept=application/protobuf; version=1.0",
           "X-SSL-Client-SHA256=${federation-gateway.ssl.certificate-sha}",
           "X-SSL-Client-DN=${federation-gateway.ssl.certificate-dn}"})
-  BatchDownloadResponse getDiagnosisKeys(@RequestHeader("batchTag") String batchTag,
+  Optional<BatchDownloadResponse> getDiagnosisKeys(@RequestHeader("batchTag") String batchTag,
       @PathVariable("date") String date);
 
   /**
