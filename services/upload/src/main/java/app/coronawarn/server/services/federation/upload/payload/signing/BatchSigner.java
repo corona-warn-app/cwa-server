@@ -62,13 +62,6 @@ public class BatchSigner {
     this.uploadServiceConfig = uploadServiceConfig;
   }
 
-  private static List<DiagnosisKey> sortBatchByKeyData(DiagnosisKeyBatch batch) {
-    return batch.getKeysList()
-        .stream()
-        .sorted(Comparator.comparing(diagnosisKey -> diagnosisKey.getKeyData().toStringUtf8()))
-        .collect(Collectors.toList());
-  }
-
   private byte[] createBytesToSign(final DiagnosisKeyBatch batch, final List<DiagnosisKey> orderedKeys) {
     final ByteArrayOutputStream batchBytes = new ByteArrayOutputStream();
     for (DiagnosisKey diagnosisKey : orderedKeys) {

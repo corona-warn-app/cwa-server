@@ -30,6 +30,7 @@ import app.coronawarn.server.services.federation.upload.payload.PayloadFactory;
 import app.coronawarn.server.services.federation.upload.payload.UploadPayload;
 import java.util.List;
 import java.util.stream.Collectors;
+import com.google.protobuf.ByteString;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.ApplicationArguments;
@@ -104,7 +105,9 @@ public class Upload implements ApplicationRunner {
   private void markSuccessfullyUploadedKeys(UploadPayload payload, List<DiagnosisKey> retryKeys) {
     try {
       if (!retryKeys.isEmpty()) {
-        payload.getOriginalKeys().removeIf(retryKeys::contains);
+        payload.getOriginalKeys().removeIf(
+            originalKey ->
+                retryKeys.stream().anyMatch(retryKey -> retryKey.getKeyData().equals(ByteString.copyFrom(originalKey.getKeyData()))));
       }
       uploadKeyService.updateBatchTagForKeys(payload.getOriginalKeys(), payload.getBatchTag());
     } catch (Exception ex) {
