@@ -26,11 +26,9 @@ import app.coronawarn.server.common.persistence.service.common.ExpirationPolicy;
 import app.coronawarn.server.services.federation.upload.config.UploadServiceConfig;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
-import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 
 @Component
-@Profile("!testdata")
 public class DiagnosisKeyPersistenceLoader implements DiagnosisKeyLoader {
 
   private final FederationUploadKeyService uploadKeyService;
