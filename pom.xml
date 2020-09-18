@@ -381,31 +381,6 @@
           </executions>
         </plugin>
         <plugin>
-          <groupId>org.codehaus.mojo</groupId>
-          <artifactId>license-maven-plugin</artifactId>
-          <version>2.0.0</version>
-          <configuration>
-            <includes>**/*.java</includes>
-            <copyrightOwners>${project.organization.name} and all other contributors</copyrightOwners>
-            <processStartTag>---license-start</processStartTag>
-            <processEndTag>---license-end</processEndTag>
-            <sectionDelimiter>---</sectionDelimiter>
-            <addJavaLicenseAfterPackage>false</addJavaLicenseAfterPackage>
-            <trimHeaderLine>true</trimHeaderLine>
-            <emptyLineAfterHeader>true</emptyLineAfterHeader>
-            <failOnMissingHeader>true</failOnMissingHeader>
-            <failOnNotUptodateHeader>true</failOnNotUptodateHeader>
-          </configuration>
-          <executions>
-            <execution>
-              <goals>
-                <goal>check-file-header</goal>
-              </goals>
-              <phase>initialize</phase>
-            </execution>
-          </executions>
-        </plugin>
-        <plugin>
           <groupId>org.jacoco</groupId>
           <artifactId>jacoco-maven-plugin</artifactId>
           <version>0.8.5</version>
@@ -501,10 +476,6 @@
       <plugin>
         <groupId>org.codehaus.mojo</groupId>
         <artifactId>flatten-maven-plugin</artifactId>
-      </plugin>
-      <plugin>
-        <groupId>org.codehaus.mojo</groupId>
-        <artifactId>license-maven-plugin</artifactId>
       </plugin>
       <plugin>
         <groupId>org.jacoco</groupId>

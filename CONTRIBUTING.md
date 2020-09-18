@@ -77,3 +77,7 @@ The following rule governs documentation contributions:
 * When creating an issue, try using one of our issue templates which already contain some guidelines on which content is expected to process the issue most efficiently. If no template applies, you can of course also create an issue from scratch.
 
 * Please apply one or more applicable [labels](https://github.com/corona-warn-app/cwa-server/labels) to your issue so that all community members are able to cluster the issues better.
+
+## Developer Certificate of Origin (DCO)
+
+Due to legal reasons, contributors will be asked to accept a DCO before they submit the first pull request to this projects, this happens in an automated fashion during the submission process. SAP uses [the standard DCO text of the Linux Foundation](https://developercertificate.org/).
