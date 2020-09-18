@@ -125,13 +125,13 @@ class UploadResponseTest {
   }
 
   @Test
-  void check201An409UploadResponseStatus() throws Exception {
+  void check201And409UploadResponseStatus() throws Exception {
     var testKey1 = MockData.generateRandomUploadKey(true);
     var testKey2 = MockData.generateRandomUploadKey(true);
 
     when(uploadServiceConfig.getMinBatchKeyCount()).thenReturn(2);
     when(mockDiagnosisKeyLoader.loadDiagnosisKeys()).thenReturn(List.of(testKey1, testKey2));
-    when(mockUploadClient.postBatchUpload(any())).thenReturn(createFake201And409Response());
+    when(mockUploadClient.postBatchUpload(any())).thenReturn(createFake409And201Response());
     upload.run(null);
     verify(mockUploadKeyRepository, times(1))
         .updateBatchTag(eq(testKey1.getKeyData()), any());
@@ -140,23 +140,22 @@ class UploadResponseTest {
   }
 
   @Test
-  void check201An500UploadResponseStatus() throws Exception {
+  void check201And500UploadResponseStatus() throws Exception {
     var testKey1 = MockData.generateRandomUploadKey(true);
     var testKey2 = MockData.generateRandomUploadKey(true);
 
     when(uploadServiceConfig.getMinBatchKeyCount()).thenReturn(2);
     when(mockDiagnosisKeyLoader.loadDiagnosisKeys()).thenReturn(List.of(testKey1, testKey2));
-    when(mockUploadClient.postBatchUpload(any())).thenReturn(createFake201And500Response());
+    when(mockUploadClient.postBatchUpload(any())).thenReturn(createFake500And201Response());
     upload.run(null);
-    verify(mockUploadKeyRepository, times(1))
-        .updateBatchTag(eq(testKey1.getKeyData()), any());
-    verify(mockUploadKeyRepository, never())
-        .updateBatchTag(eq(testKey2.getKeyData()), any());
-
+      verify(mockUploadKeyRepository, times(1))
+          .updateBatchTag(eq(testKey1.getKeyData()), any());
+      verify(mockUploadKeyRepository, times(1))
+          .updateBatchTag(eq(testKey2.getKeyData()), any());
   }
 
   @Test
-  void check409An500UploadResponseStatus() throws Exception {
+  void check409And500UploadResponseStatus() throws Exception {
     var testKey1 = MockData.generateRandomUploadKey(true);
     var testKey2 = MockData.generateRandomUploadKey(true);
 
@@ -171,23 +170,23 @@ class UploadResponseTest {
   }
 
   private BatchUploadResponse createFake409And500Response() {
-    return new BatchUploadResponse(emptyList(), list("0"), list("1"));
-  }
-
-  private BatchUploadResponse createFake201And500Response() {
     return new BatchUploadResponse(list("0"), list("1"), emptyList());
   }
 
-  private BatchUploadResponse createFake201And409Response() {
+  private BatchUploadResponse createFake500And201Response() {
+    return new BatchUploadResponse(emptyList(), list("0"), list("1"));
+  }
+
+  private BatchUploadResponse createFake409And201Response() {
     return new BatchUploadResponse(list("0"), emptyList(), list("1"));
   }
 
   private BatchUploadResponse createFake201Response() {
-    return new BatchUploadResponse(list("0", "1"), emptyList(), emptyList());
+    return new BatchUploadResponse(emptyList(), emptyList(), list("0", "1"));
   }
 
   private BatchUploadResponse createFake409Response() {
-    return new BatchUploadResponse(emptyList(), emptyList(), list("0", "1"));
+    return new BatchUploadResponse(list("0", "1"), emptyList(), emptyList());
   }
 
   private BatchUploadResponse createFake500Response() {
