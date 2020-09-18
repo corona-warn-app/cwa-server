@@ -62,9 +62,9 @@ public class BatchSigner {
     this.uploadServiceConfig = uploadServiceConfig;
   }
 
-  private byte[] createBytesToSign(final DiagnosisKeyBatch batch, final List<DiagnosisKey> orderedKeys) {
+  private byte[] createBytesToSign(final DiagnosisKeyBatch batch) {
     final ByteArrayOutputStream batchBytes = new ByteArrayOutputStream();
-    for (DiagnosisKey diagnosisKey : orderedKeys) {
+    for (DiagnosisKey diagnosisKey : sortBatchByKeyData(batch)) {
       batchBytes.writeBytes(diagnosisKey.getKeyData().toStringUtf8().getBytes(StandardCharsets.UTF_8));
       batchBytes.writeBytes(ByteBuffer.allocate(4).putInt(diagnosisKey.getRollingStartIntervalNumber()).array());
       batchBytes.writeBytes(ByteBuffer.allocate(4).putInt(diagnosisKey.getRollingPeriod()).array());
@@ -79,6 +79,14 @@ public class BatchSigner {
       batchBytes.writeBytes(ByteBuffer.allocate(4).putInt(diagnosisKey.getDaysSinceOnsetOfSymptoms()).array());
     }
     return batchBytes.toByteArray();
+  }
+
+  private static List<app.coronawarn.server.common.protocols.external.exposurenotification.DiagnosisKey>
+        sortBatchByKeyData(DiagnosisKeyBatch batch) {
+    return batch.getKeysList()
+        .stream()
+        .sorted(Comparator.comparing(diagnosisKey -> diagnosisKey.getKeyData().toStringUtf8()))
+        .collect(Collectors.toList());
   }
 
   private SignerInfoGenerator createSignerInfo(X509Certificate cert)
@@ -121,9 +129,9 @@ public class BatchSigner {
    * @throws OperatorCreationException .
    * @throws IOException               .
    */
-  public String createSignatureBytes(DiagnosisKeyBatch batch, List<DiagnosisKey> orderedKeys)
+  public String createSignatureBytes(DiagnosisKeyBatch batch)
       throws GeneralSecurityException, CMSException, OperatorCreationException, IOException {
-    var bytesToSign = this.createBytesToSign(batch, orderedKeys);
+    var bytesToSign = this.createBytesToSign(batch);
     return this.sign(bytesToSign, getCertificateFromPublicKey());
   }
 

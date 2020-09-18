@@ -62,8 +62,7 @@ class BatchSignerTest {
   void shouldSignBatchWithBouncyCastle()
       throws GeneralSecurityException, CMSException, OperatorCreationException, IOException {
     var result = batchSigner.createSignatureBytes(
-        DiagnosisKeyBatch.newBuilder().build(),
-        List.of(BatchMockData.makeDiagnosisKey()));
+        DiagnosisKeyBatch.newBuilder().build());
     Assertions.assertNotNull(result);
   }
 
@@ -71,11 +70,9 @@ class BatchSignerTest {
   void shouldSignBatchesDifferently()
       throws GeneralSecurityException, CMSException, OperatorCreationException, IOException {
     var signature1 = batchSigner.createSignatureBytes(
-            BatchMockData.makeSingleKeyBatch(),
-            List.of(BatchMockData.makeDiagnosisKey()));
+            BatchMockData.makeSingleKeyBatch());
     var signature2 = batchSigner.createSignatureBytes(
-            BatchMockData.makeSingleKeyBatch(),
-            List.of(BatchMockData.makeDiagnosisKey()));
+            BatchMockData.makeSingleKeyBatch());
     Assertions.assertNotEquals(signature1, signature2);
   }
 

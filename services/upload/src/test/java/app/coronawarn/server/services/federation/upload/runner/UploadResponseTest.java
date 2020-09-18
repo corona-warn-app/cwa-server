@@ -24,9 +24,8 @@ import static org.assertj.core.util.Lists.emptyList;
 import static org.assertj.core.util.Lists.list;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.never;
 
 import app.coronawarn.server.common.federation.client.download.BatchUploadResponse;
 import app.coronawarn.server.common.persistence.repository.FederationUploadKeyRepository;
@@ -41,6 +40,7 @@ import app.coronawarn.server.services.federation.upload.payload.PayloadFactory;
 import app.coronawarn.server.services.federation.upload.payload.signing.BatchSigner;
 import app.coronawarn.server.services.federation.upload.payload.signing.CryptoProvider;
 import app.coronawarn.server.services.federation.upload.utils.MockData;
+import java.util.Arrays;
 import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -118,9 +118,9 @@ class UploadResponseTest {
     when(mockDiagnosisKeyLoader.loadDiagnosisKeys()).thenReturn(List.of(testKey1, testKey2));
     when(mockUploadClient.postBatchUpload(any())).thenReturn(createFake500Response());
     upload.run(null);
-    verify(mockUploadKeyRepository, times(0))
+    verify(mockUploadKeyRepository, never())
         .updateBatchTag(eq(testKey1.getKeyData()), any());
-    verify(mockUploadKeyRepository, times(0))
+    verify(mockUploadKeyRepository, never())
         .updateBatchTag(eq(testKey2.getKeyData()), any());
   }
 
@@ -150,8 +150,9 @@ class UploadResponseTest {
     upload.run(null);
     verify(mockUploadKeyRepository, times(1))
         .updateBatchTag(eq(testKey1.getKeyData()), any());
-    verify(mockUploadKeyRepository, times(0))
+    verify(mockUploadKeyRepository, never())
         .updateBatchTag(eq(testKey2.getKeyData()), any());
+
   }
 
   @Test
@@ -163,14 +164,14 @@ class UploadResponseTest {
     when(mockDiagnosisKeyLoader.loadDiagnosisKeys()).thenReturn(List.of(testKey1, testKey2));
     when(mockUploadClient.postBatchUpload(any())).thenReturn(createFake409And500Response());
     upload.run(null);
-    verify(mockUploadKeyRepository, times(1))
+    verify(mockUploadKeyRepository, times(0))
         .updateBatchTag(eq(testKey1.getKeyData()), any());
     verify(mockUploadKeyRepository, times(1))
         .updateBatchTag(eq(testKey2.getKeyData()), any());
   }
 
   private BatchUploadResponse createFake409And500Response() {
-    return new BatchUploadResponse(list("0"), emptyList(), list("1"));
+    return new BatchUploadResponse(emptyList(), list("0"), list("1"));
   }
 
   private BatchUploadResponse createFake201And500Response() {

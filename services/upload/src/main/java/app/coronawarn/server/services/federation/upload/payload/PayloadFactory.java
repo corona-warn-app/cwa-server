@@ -25,12 +25,11 @@ import app.coronawarn.server.common.protocols.external.exposurenotification.Diag
 import app.coronawarn.server.services.federation.upload.payload.signing.BatchSigner;
 import java.io.IOException;
 import java.security.GeneralSecurityException;
+import java.security.SecureRandom;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
-import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 import org.apache.commons.codec.binary.Base64;
@@ -54,14 +53,6 @@ public class PayloadFactory {
     this.signer = signer;
   }
 
-  private static List<app.coronawarn.server.common.protocols.external.exposurenotification.DiagnosisKey>
-        sortBatchByKeyData(DiagnosisKeyBatch batch) {
-    return batch.getKeysList()
-        .stream()
-        .sorted(Comparator.comparing(diagnosisKey -> diagnosisKey.getKeyData().toStringUtf8()))
-        .collect(Collectors.toList());
-  }
-
   private UploadPayload mapToPayloadAndSign(String batchTag, DiagnosisKeyBatch batch,
       List<FederationUploadKey> originalKeys) {
     var payload = new UploadPayload();
@@ -69,9 +60,7 @@ public class PayloadFactory {
     payload.setBatchTag(batchTag);
     payload.setOriginalKeys(originalKeys);
     try {
-      var orderedDiagnosisKeys = sortBatchByKeyData(batch);
-      payload.setOrderedKeys(orderedDiagnosisKeys);
-      payload.setBatchSignature(signer.createSignatureBytes(batch, orderedDiagnosisKeys));
+      payload.setBatchSignature(signer.createSignatureBytes(batch));
     } catch (GeneralSecurityException | OperatorCreationException | IOException | CMSException e) {
       logger.error("Failed to generate upload payload signature", e);
     }
@@ -99,7 +88,7 @@ public class PayloadFactory {
     Map<DiagnosisKeyBatch, List<FederationUploadKey>> batchesAndOriginalKeys = assembler
         .assembleDiagnosisKeyBatch(diagnosisKeys);
     byte[] hash = new byte[4];
-    ThreadLocalRandom.current().nextBytes(hash);
+    new SecureRandom().nextBytes(hash);
     AtomicInteger batchCounter = new AtomicInteger(0);
 
     return batchesAndOriginalKeys.entrySet().stream()

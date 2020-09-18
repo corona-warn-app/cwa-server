@@ -41,7 +41,6 @@ public class UploadPayload {
   private List<FederationUploadKey> originalKeys;
   private String batchSignature;
   private String batchTag;
-  private List<DiagnosisKey> orderedKeys;
 
   public DiagnosisKeyBatch getBatch() {
     return batch;
@@ -68,14 +67,6 @@ public class UploadPayload {
   public UploadPayload setBatchTag(String batchTag) {
     this.batchTag = batchTag;
     return this;
-  }
-
-  public List<DiagnosisKey> getOrderedKeys() {
-    return orderedKeys;
-  }
-
-  public void setOrderedKeys(List<DiagnosisKey> orderedKeys) {
-    this.orderedKeys = orderedKeys;
   }
 
   /**

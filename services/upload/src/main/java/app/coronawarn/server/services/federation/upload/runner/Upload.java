@@ -22,13 +22,14 @@ package app.coronawarn.server.services.federation.upload.runner;
 
 import app.coronawarn.server.common.persistence.domain.FederationUploadKey;
 import app.coronawarn.server.common.persistence.service.FederationUploadKeyService;
-import app.coronawarn.server.common.protocols.external.exposurenotification.DiagnosisKey;
 import app.coronawarn.server.services.federation.upload.Application;
 import app.coronawarn.server.services.federation.upload.client.FederationUploadClient;
 import app.coronawarn.server.services.federation.upload.keys.DiagnosisKeyLoader;
 import app.coronawarn.server.services.federation.upload.payload.PayloadFactory;
 import app.coronawarn.server.services.federation.upload.payload.UploadPayload;
 import com.google.protobuf.ByteString;
+import java.util.Arrays;
+import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 import org.slf4j.Logger;
@@ -72,13 +73,16 @@ public class Upload implements ApplicationRunner {
     this.uploadKeyService = uploadKeyService;
   }
 
-  private List<DiagnosisKey> executeFederationUpload(UploadPayload payload) {
+  private List<FederationUploadKey> executeUploadAndCollectErrors(UploadPayload payload) {
     logger.info("Executing batch request(s): {}", payload.getBatchTag());
     var result = this.federationUploadClient.postBatchUpload(payload);
     var retryKeys = result.getStatus500()
         .stream()
         .map(Integer::parseInt)
-        .map(index -> payload.getOrderedKeys().get(index))
+        .map(index -> payload.getOriginalKeys().stream()
+            .sorted(Comparator.comparing(diagnosisKey ->
+                ByteString.copyFrom(diagnosisKey.getKeyData()).toStringUtf8()))
+            .collect(Collectors.toList()).get(index))
         .collect(Collectors.toList());
     logger.error("Error on {} keys, marking them for retry", retryKeys.size());
     return retryKeys;
@@ -93,7 +97,7 @@ public class Upload implements ApplicationRunner {
       List<UploadPayload> requests = this.payloadFactory.makePayloadList(diagnosisKeys);
       logger.info("Executing {} batch request", requests.size());
       requests.forEach(payload -> {
-        List<DiagnosisKey> retryKeys = this.executeFederationUpload(payload);
+        List<FederationUploadKey> retryKeys = this.executeUploadAndCollectErrors(payload);
         this.markSuccessfullyUploadedKeys(payload, retryKeys);
       });
     } catch (Exception e) {
@@ -102,13 +106,13 @@ public class Upload implements ApplicationRunner {
     }
   }
 
-  private void markSuccessfullyUploadedKeys(UploadPayload payload, List<DiagnosisKey> retryKeys) {
+  private void markSuccessfullyUploadedKeys(UploadPayload payload, List<FederationUploadKey> retryKeys) {
     try {
       if (!retryKeys.isEmpty()) {
         payload.getOriginalKeys().removeIf(
             originalKey ->
                 retryKeys.stream().anyMatch(retryKey ->
-                    retryKey.getKeyData().equals(ByteString.copyFrom(originalKey.getKeyData()))));
+                    Arrays.equals(retryKey.getKeyData(), originalKey.getKeyData())));
       }
       uploadKeyService.updateBatchTagForKeys(payload.getOriginalKeys(), payload.getBatchTag());
     } catch (Exception ex) {

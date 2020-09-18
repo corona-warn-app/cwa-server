@@ -20,6 +20,8 @@
 
 package app.coronawarn.server.common.federation.client.download;
 
+import static java.util.Collections.emptyList;
+
 import com.fasterxml.jackson.annotation.JsonProperty;
 import java.util.List;
 
@@ -33,13 +35,13 @@ import java.util.List;
 public class BatchUploadResponse {
 
   @JsonProperty("409")
-  private List<String> status409;
+  private List<String> status409 = emptyList();
 
   @JsonProperty("500")
-  private List<String> status500;
+  private List<String> status500 = emptyList();
 
   @JsonProperty("201")
-  private List<String> status201;
+  private List<String> status201 = emptyList();
 
   /**
    * Create the BatchUploadResponse.
