@@ -39,7 +39,7 @@ import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.List;
+import java.util.Set;
 import org.junit.Assert;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -109,16 +109,16 @@ class TestDataGenerationTest {
 
     when(diagnosisKeyService.getDiagnosisKeys())
         .thenReturn(buildDiagnosisKeys(6,
-            LocalDateTime.of(2020, 7, 15, 12, 0, 0), 10, "DE", List.of("DE", "FR"),
+            LocalDateTime.of(2020, 7, 15, 12, 0, 0), 10, "DE", Set.of("DE", "FR"),
             ReportType.CONFIRMED_CLINICAL_DIAGNOSIS, 1))
         .thenReturn(buildDiagnosisKeys(6,
-            LocalDateTime.of(2020, 7, 15, 12, 0, 0), 10, "FR", List.of("DE", "FR"),
+            LocalDateTime.of(2020, 7, 15, 12, 0, 0), 10, "FR", Set.of("DE", "FR"),
             ReportType.CONFIRMED_CLINICAL_DIAGNOSIS, 1))
         .thenReturn(buildDiagnosisKeys(6,
-            LocalDateTime.of(2020, 7, 15, 12, 0, 0), 10, "NL", List.of("DE", "FR", "NL", "IE"),
+            LocalDateTime.of(2020, 7, 15, 12, 0, 0), 10, "NL", Set.of("DE", "FR", "NL", "IE"),
             ReportType.CONFIRMED_CLINICAL_DIAGNOSIS, 1))
         .thenReturn(buildDiagnosisKeys(6,
-            LocalDateTime.of(2020, 7, 15, 12, 0, 0), 10, "IE", List.of("DE", "FR", "NL", "IE"),
+            LocalDateTime.of(2020, 7, 15, 12, 0, 0), 10, "IE", Set.of("DE", "FR", "NL", "IE"),
             ReportType.CONFIRMED_CLINICAL_DIAGNOSIS, 1));
 
     testDataGeneration.run(null);
@@ -136,15 +136,15 @@ class TestDataGenerationTest {
                 LocalDateTime.of(2020, 7, 15, 11, 0, 0), 10))
         .thenReturn(
             buildDiagnosisKeys(6,
-                LocalDateTime.of(2020, 7, 15, 11, 0, 0), 10, "FR", List.of("DE", "FR"),
+                LocalDateTime.of(2020, 7, 15, 11, 0, 0), 10, "FR", Set.of("DE", "FR"),
                 ReportType.CONFIRMED_CLINICAL_DIAGNOSIS, 1))
         .thenReturn(
             buildDiagnosisKeys(6,
-                LocalDateTime.of(2020, 7, 15, 11, 0, 0), 10, "NL", List.of("DE", "FR", "NL", "IE"),
+                LocalDateTime.of(2020, 7, 15, 11, 0, 0), 10, "NL", Set.of("DE", "FR", "NL", "IE"),
                 ReportType.CONFIRMED_CLINICAL_DIAGNOSIS, 1))
         .thenReturn(
             buildDiagnosisKeys(6,
-                LocalDateTime.of(2020, 7, 15, 11, 0, 0), 10, "IE", List.of("DE", "FR", "NL", "IE"),
+                LocalDateTime.of(2020, 7, 15, 11, 0, 0), 10, "IE", Set.of("DE", "FR", "NL", "IE"),
                 ReportType.CONFIRMED_CLINICAL_DIAGNOSIS, 1));
 
     testDataGeneration.run(null);
@@ -177,15 +177,15 @@ class TestDataGenerationTest {
     TimeUtils.setNow(now);
 
     when(diagnosisKeyService.getDiagnosisKeys())
-        .thenReturn(buildDiagnosisKeys(6, LocalDateTime.of(2020, 7, 15, 12, 0, 0), 10, "DE", List.of("DE", "FR"),
+        .thenReturn(buildDiagnosisKeys(6, LocalDateTime.of(2020, 7, 15, 12, 0, 0), 10, "DE", Set.of("DE", "FR"),
             ReportType.CONFIRMED_CLINICAL_DIAGNOSIS, 1))
-        .thenReturn(buildDiagnosisKeys(6, LocalDateTime.of(2020, 7, 15, 12, 0, 0), 10, "FR", List.of("DE", "FR"),
-            ReportType.CONFIRMED_CLINICAL_DIAGNOSIS, 1))
-        .thenReturn(buildDiagnosisKeys(6,
-            LocalDateTime.of(2020, 7, 15, 12, 0, 0), 10, "NL", List.of("DE", "FR", "NL", "IE"),
+        .thenReturn(buildDiagnosisKeys(6, LocalDateTime.of(2020, 7, 15, 12, 0, 0), 10, "FR", Set.of("DE", "FR"),
             ReportType.CONFIRMED_CLINICAL_DIAGNOSIS, 1))
         .thenReturn(buildDiagnosisKeys(6,
-            LocalDateTime.of(2020, 7, 15, 12, 0, 0), 10, "IE", List.of("DE", "FR", "NL", "IE"),
+            LocalDateTime.of(2020, 7, 15, 12, 0, 0), 10, "NL", Set.of("DE", "FR", "NL", "IE"),
+            ReportType.CONFIRMED_CLINICAL_DIAGNOSIS, 1))
+        .thenReturn(buildDiagnosisKeys(6,
+            LocalDateTime.of(2020, 7, 15, 12, 0, 0), 10, "IE", Set.of("DE", "FR", "NL", "IE"),
             ReportType.CONFIRMED_CLINICAL_DIAGNOSIS, 1));
 
     testDataGeneration.run(null);
@@ -200,10 +200,10 @@ class TestDataGenerationTest {
 
     when(diagnosisKeyService.getDiagnosisKeys())
         .thenReturn(
-            buildDiagnosisKeys(6, LocalDateTime.of(2020, 7, 14, 12, 0, 0), 10, "DE", List.of("DE", "FR"),
+            buildDiagnosisKeys(6, LocalDateTime.of(2020, 7, 14, 12, 0, 0), 10, "DE", Set.of("DE", "FR"),
                 ReportType.CONFIRMED_CLINICAL_DIAGNOSIS, 1))
         .thenReturn(
-            buildDiagnosisKeys(6, LocalDateTime.of(2020, 7, 14, 12, 0, 0), 10, "FR", List.of("DE", "FR"),
+            buildDiagnosisKeys(6, LocalDateTime.of(2020, 7, 14, 12, 0, 0), 10, "FR", Set.of("DE", "FR"),
                 ReportType.CONFIRMED_CLINICAL_DIAGNOSIS, 1));
 
     testDataGeneration.run(null);

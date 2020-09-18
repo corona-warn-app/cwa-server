@@ -31,6 +31,7 @@ import app.coronawarn.server.services.submission.verification.TanVerifier;
 import io.micrometer.core.annotation.Timed;
 import java.security.SecureRandom;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.stream.IntStream;
 import org.apache.commons.lang3.StringUtils;
@@ -130,7 +131,7 @@ public class SubmissionController {
 
       DiagnosisKey diagnosisKey = DiagnosisKey.builder()
           .fromTemporaryExposureKey(protoBufferKey)
-          .withVisitedCountries(submissionPayload.getVisitedCountriesList())
+          .withVisitedCountries(new HashSet<>(submissionPayload.getVisitedCountriesList()))
           .withCountryCode(originCountry)
           .withConsentToFederation(submissionPayload.getConsentToFederation())
           .build();

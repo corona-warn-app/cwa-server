@@ -140,7 +140,7 @@ class DiagnosisKeysDirectoryTest {
   @Test
   void checkBuildsTheCorrectDirectoryStructureForDifferentVisitedCountries() {
     Collection<DiagnosisKey> diagnosisKeysOfCountries =
-        buildDiagnosisKeys(6, LocalDateTime.of(1970, 1, 3, 0, 0), 5, "FR", list("DE", "FR"),
+        buildDiagnosisKeys(6, LocalDateTime.of(1970, 1, 3, 0, 0), 5, "FR", Set.of("DE", "FR"),
             ReportType.CONFIRMED_CLINICAL_DIAGNOSIS, 1);
 
     buildDirectoryStructure(diagnosisKeysOfCountries, "DE", "FR", "DK");
@@ -162,9 +162,9 @@ class DiagnosisKeysDirectoryTest {
   @Test
   void checkBuildsTheCorrectDirectoryStructureForTwoCountriesWithDifferentKeys() {
     Collection<DiagnosisKey> diagnosisKeysOfCountries =
-        buildDiagnosisKeys(6, LocalDateTime.of(1970, 1, 3, 0, 0), 5, "FR", list("DE"),
+        buildDiagnosisKeys(6, LocalDateTime.of(1970, 1, 3, 0, 0), 5, "FR", Set.of("DE"),
             ReportType.CONFIRMED_CLINICAL_DIAGNOSIS, 1);
-    diagnosisKeysOfCountries.addAll(buildDiagnosisKeys(6, LocalDateTime.of(1970, 1, 4, 0, 0), 5, "FR", list("FR"),
+    diagnosisKeysOfCountries.addAll(buildDiagnosisKeys(6, LocalDateTime.of(1970, 1, 4, 0, 0), 5, "FR", Set.of("FR"),
         ReportType.CONFIRMED_CLINICAL_DIAGNOSIS, 1));
 
     buildDirectoryStructure(diagnosisKeysOfCountries, "DE", "FR", "DK");
@@ -185,7 +185,7 @@ class DiagnosisKeysDirectoryTest {
   @Test
   void checkBuildsTheCorrectDirectoryStructureForMultipleSupportedCountriesAndSingleVisitedCountry() {
     Collection<DiagnosisKey> diagnosisKeysOfCountries =
-        buildDiagnosisKeys(6, LocalDateTime.of(1970, 1, 3, 0, 0), 5, "FR", list("FR"),
+        buildDiagnosisKeys(6, LocalDateTime.of(1970, 1, 3, 0, 0), 5, "FR", Set.of("FR"),
             ReportType.CONFIRMED_CLINICAL_DIAGNOSIS, 1);
 
     buildDirectoryStructure(diagnosisKeysOfCountries, "DE", "FR", "DK");

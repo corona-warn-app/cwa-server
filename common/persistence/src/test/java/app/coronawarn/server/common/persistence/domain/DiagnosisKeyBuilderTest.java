@@ -36,7 +36,9 @@ import java.time.Instant;
 import java.time.LocalDate;
 import java.time.ZoneOffset;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
@@ -49,7 +51,7 @@ class DiagnosisKeyBuilderTest {
   private final long expSubmissionTimestamp = 2L;
   private final boolean expConsentToFederation = false;
   private final String originCountry = "DE";
-  private final List<String> visitedCountries = Arrays.asList("DE");
+  private final Set<String> visitedCountries = Set.of("DE");
   private final ReportType reportType = ReportType.CONFIRMED_CLINICAL_DIAGNOSIS;
   private final int daysSinceOnsetOfSymptoms = 2;
 
@@ -213,7 +215,7 @@ class DiagnosisKeyBuilderTest {
             .withKeyData(expKeyData)
             .withRollingStartIntervalNumber(expRollingStartIntervalNumber)
             .withTransmissionRiskLevel(expTransmissionRiskLevel)
-            .withVisitedCountries(Arrays.asList(visitedCountries))
+            .withVisitedCountries(Set.of(visitedCountries))
             .build()
         )
     ).isInstanceOf(InvalidDiagnosisKeyException.class);

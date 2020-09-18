@@ -34,6 +34,7 @@ import java.time.temporal.ChronoUnit;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.Set;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
@@ -170,12 +171,13 @@ public class TestDataGeneration implements ApplicationRunner {
    * Either returns the list of all possible visited countries or only current distribution
    * This ensure that when test generation runs for a country (e.g. FR) all keys in the
    * distribution will contain FR in the vistied_countries array.
+   * @return
    */
-  private List<String> generateListOfVisitedCountries(String distributionCountry) {
+  private Set<String> generateSetOfVisitedCountries(String distributionCountry) {
     if (random.nextBoolean()) {
-      return List.of("DE", "DK", "FR");
+      return Set.of("DE", "DK", "FR");
     } else {
-      return Collections.singletonList(distributionCountry);
+      return Set.of(distributionCountry);
     }
   }
 
@@ -189,7 +191,7 @@ public class TestDataGeneration implements ApplicationRunner {
         .withTransmissionRiskLevel(generateTransmissionRiskLevel())
         .withSubmissionTimestamp(submissionTimestamp)
         .withCountryCode(country)
-        .withVisitedCountries(generateListOfVisitedCountries(country))
+        .withVisitedCountries(generateSetOfVisitedCountries(country))
         .withReportType(ReportType.CONFIRMED_CLINICAL_DIAGNOSIS)
         .build();
   }

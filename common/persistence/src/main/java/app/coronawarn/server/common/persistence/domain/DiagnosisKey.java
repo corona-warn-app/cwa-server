@@ -31,6 +31,7 @@ import java.time.Instant;
 import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
@@ -81,7 +82,7 @@ public class DiagnosisKey {
   private final String originCountry;
 
   @ValidCountries
-  private final List<String> visitedCountries;
+  private final Set<String> visitedCountries;
 
   private final ReportType reportType;
 
@@ -92,7 +93,7 @@ public class DiagnosisKey {
    */
   DiagnosisKey(byte[] keyData, int rollingStartIntervalNumber, int rollingPeriod,
       int transmissionRiskLevel, long submissionTimestamp,
-      boolean consentToFederation, @Size String originCountry, List<String> visitedCountries,
+      boolean consentToFederation, @Size String originCountry, Set<String> visitedCountries,
       ReportType reportType, int daysSinceOnsetOfSymptoms) {
     this.keyData = keyData;
     this.rollingStartIntervalNumber = rollingStartIntervalNumber;
@@ -101,7 +102,7 @@ public class DiagnosisKey {
     this.submissionTimestamp = submissionTimestamp;
     this.consentToFederation = consentToFederation;
     this.originCountry = originCountry;
-    this.visitedCountries = visitedCountries == null ? Collections.emptyList() : visitedCountries;
+    this.visitedCountries = visitedCountries == null ? new HashSet<>() : visitedCountries;
     this.reportType = reportType;
     this.daysSinceOnsetOfSymptoms = daysSinceOnsetOfSymptoms;
   }
@@ -160,7 +161,7 @@ public class DiagnosisKey {
     return originCountry;
   }
 
-  public List<String> getVisitedCountries() {
+  public Set<String> getVisitedCountries() {
     return visitedCountries;
   }
 

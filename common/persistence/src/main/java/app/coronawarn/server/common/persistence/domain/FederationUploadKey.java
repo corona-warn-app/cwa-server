@@ -23,6 +23,7 @@ package app.coronawarn.server.common.persistence.domain;
 import app.coronawarn.server.common.protocols.external.exposurenotification.ReportType;
 import java.util.List;
 import java.util.Objects;
+import java.util.Set;
 import javax.validation.constraints.Size;
 
 /**
@@ -38,7 +39,7 @@ public class FederationUploadKey extends DiagnosisKey {
   private String batchTag;
 
   FederationUploadKey(byte[] keyData, int rollingStartIntervalNumber, int rollingPeriod, int transmissionRiskLevel,
-      long submissionTimestamp, boolean consentToFederation, @Size String originCountry, List<String> visitedCountries,
+      long submissionTimestamp, boolean consentToFederation, @Size String originCountry, Set<String> visitedCountries,
       ReportType reportType, int daysSinceOnsetOfSymptoms) {
     super(keyData, rollingStartIntervalNumber, rollingPeriod, transmissionRiskLevel, submissionTimestamp,
         consentToFederation, originCountry, visitedCountries, reportType, daysSinceOnsetOfSymptoms);
