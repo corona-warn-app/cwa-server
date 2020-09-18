@@ -24,10 +24,13 @@ import static org.assertj.core.util.Lists.emptyList;
 import static org.assertj.core.util.Lists.list;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.*;
 import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 import app.coronawarn.server.common.federation.client.download.BatchUploadResponse;
+import app.coronawarn.server.common.persistence.domain.FederationUploadKey;
 import app.coronawarn.server.common.persistence.repository.FederationUploadKeyRepository;
 import app.coronawarn.server.common.persistence.service.FederationUploadKeyService;
 import app.coronawarn.server.common.persistence.service.common.KeySharingPoliciesChecker;
@@ -40,8 +43,10 @@ import app.coronawarn.server.services.federation.upload.payload.PayloadFactory;
 import app.coronawarn.server.services.federation.upload.payload.signing.BatchSigner;
 import app.coronawarn.server.services.federation.upload.payload.signing.CryptoProvider;
 import app.coronawarn.server.services.federation.upload.utils.MockData;
-import java.util.Arrays;
+import com.google.protobuf.ByteString;
+import java.util.Comparator;
 import java.util.List;
+import java.util.stream.Collectors;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -141,32 +146,35 @@ class UploadResponseTest {
 
   @Test
   void check201And500UploadResponseStatus() throws Exception {
-    var testKey1 = MockData.generateRandomUploadKey(true);
-    var testKey2 = MockData.generateRandomUploadKey(true);
-
+    List<FederationUploadKey> orderedKeys = list(MockData.generateRandomUploadKey(true),
+        MockData.generateRandomUploadKey(true)).stream()
+        .sorted(Comparator.comparing(diagnosisKey ->
+            ByteString.copyFrom(diagnosisKey.getKeyData()).toStringUtf8())).collect(Collectors.toList());
     when(uploadServiceConfig.getMinBatchKeyCount()).thenReturn(2);
-    when(mockDiagnosisKeyLoader.loadDiagnosisKeys()).thenReturn(List.of(testKey1, testKey2));
+    when(mockDiagnosisKeyLoader.loadDiagnosisKeys()).thenReturn(orderedKeys);
     when(mockUploadClient.postBatchUpload(any())).thenReturn(createFake500And201Response());
     upload.run(null);
+    verify(mockUploadKeyRepository, never())
+        .updateBatchTag(eq(orderedKeys.get(0).getKeyData()), any());
       verify(mockUploadKeyRepository, times(1))
-          .updateBatchTag(eq(testKey1.getKeyData()), any());
-      verify(mockUploadKeyRepository, times(1))
-          .updateBatchTag(eq(testKey2.getKeyData()), any());
+          .updateBatchTag(eq(orderedKeys.get(1).getKeyData()), any());
   }
 
   @Test
   void check409And500UploadResponseStatus() throws Exception {
-    var testKey1 = MockData.generateRandomUploadKey(true);
-    var testKey2 = MockData.generateRandomUploadKey(true);
+    List<FederationUploadKey> orderedKeys = list(MockData.generateRandomUploadKey(true),
+        MockData.generateRandomUploadKey(true)).stream()
+        .sorted(Comparator.comparing(diagnosisKey ->
+            ByteString.copyFrom(diagnosisKey.getKeyData()).toStringUtf8())).collect(Collectors.toList());
 
     when(uploadServiceConfig.getMinBatchKeyCount()).thenReturn(2);
-    when(mockDiagnosisKeyLoader.loadDiagnosisKeys()).thenReturn(List.of(testKey1, testKey2));
+    when(mockDiagnosisKeyLoader.loadDiagnosisKeys()).thenReturn(orderedKeys);
     when(mockUploadClient.postBatchUpload(any())).thenReturn(createFake409And500Response());
     upload.run(null);
-    verify(mockUploadKeyRepository, times(0))
-        .updateBatchTag(eq(testKey1.getKeyData()), any());
     verify(mockUploadKeyRepository, times(1))
-        .updateBatchTag(eq(testKey2.getKeyData()), any());
+        .updateBatchTag(eq(orderedKeys.get(0).getKeyData()), any());
+    verify(mockUploadKeyRepository, never())
+        .updateBatchTag(eq(orderedKeys.get(1).getKeyData()), any());
   }
 
   private BatchUploadResponse createFake409And500Response() {
