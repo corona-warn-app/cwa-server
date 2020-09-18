@@ -20,6 +20,7 @@ import java.time.LocalDate;
 import java.util.Deque;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -61,8 +62,10 @@ public class FederationBatchProcessor {
       BatchDownloadResponse response =
           federationGatewayClient.getDiagnosisKeys(date.format(ISO_LOCAL_DATE)).orElseThrow();
       batchInfoService.save(new FederationBatchInfo(response.getBatchTag(), date));
+    } catch (NoSuchElementException e) {
+      logger.error("Batch for date {} was empty.", date);
     } catch (Exception e) {
-      logger.error("Downloading batch for date {} failed", date, e);
+      logger.error("Downloading batch for date {} failed.", date, e);
     }
   }
 
