@@ -21,9 +21,11 @@
 package app.coronawarn.server.services.submission.config;
 
 import java.io.File;
+import java.util.Map;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Component;
@@ -63,6 +65,7 @@ public class SubmissionServiceConfig {
   @Min(0)
   @Max(144)
   private Integer maxRollingPeriod;
+  private TEKPropertyDerivations tekPropertyDerivations;
 
 
   public Long getInitialFakeDelayMilliseconds() {
@@ -119,6 +122,14 @@ public class SubmissionServiceConfig {
 
   public void setMaxRollingPeriod(Integer maxRollingPeriod) {
     this.maxRollingPeriod = maxRollingPeriod;
+  }
+
+  public TEKPropertyDerivations getTekPropertyDerivations() {
+    return tekPropertyDerivations;
+  }
+
+  public void setTekPropertyDerivations(TEKPropertyDerivations tekPropertyDerivations) {
+    this.tekPropertyDerivations = tekPropertyDerivations;
   }
 
   public Integer getMaxNumberOfKeys() {
@@ -313,5 +324,16 @@ public class SubmissionServiceConfig {
         this.trustStorePassword = trustStorePassword;
       }
     }
+  }
+
+  public static class TEKPropertyDerivations {
+
+      @NotNull
+      @NotEmpty
+      private Map<Integer, Integer> dsosFromTrl;
+
+      public Integer deriveDSOSFromTRL(Integer trlValue) {
+        return dsosFromTrl.get(trlValue);
+      }
   }
 }
