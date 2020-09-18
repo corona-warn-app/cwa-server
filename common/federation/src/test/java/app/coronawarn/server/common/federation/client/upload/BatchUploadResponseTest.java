@@ -21,19 +21,19 @@
 package app.coronawarn.server.common.federation.client.upload;
 
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
 
-import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 class BatchUploadResponseTest {
 
   @Test
-  void checkEmptyBatchUploadResponse(){
+  void checkEmptyBatchUploadResponse() {
     BatchUploadResponse batchUploadResponse = mock(BatchUploadResponse.class);
 
-    Assertions.assertThat(batchUploadResponse.getStatus201()).isEmpty();
-    Assertions.assertThat(batchUploadResponse.getStatus409()).isEmpty();
-    Assertions.assertThat(batchUploadResponse.getStatus500()).isEmpty();
+    assertThat(batchUploadResponse.getStatus201()).isEmpty();
+    assertThat(batchUploadResponse.getStatus409()).isEmpty();
+    assertThat(batchUploadResponse.getStatus500()).isEmpty();
   }
 }
