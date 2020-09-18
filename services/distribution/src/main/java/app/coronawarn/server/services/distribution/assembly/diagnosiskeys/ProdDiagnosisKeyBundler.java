@@ -62,18 +62,25 @@ public class ProdDiagnosisKeyBundler extends DiagnosisKeyBundler {
   }
 
   /**
-   * Initializes the internal {@code distributableDiagnosisKeys} map, grouping the diagnosis keys based on the
-   * country and by the date on which they may be distributed, while respecting the expiry and shifting policies.
+   * Initializes the internal {@code distributableDiagnosisKeys} map, grouping the diagnosis keys based on the country
+   * and by the date on which they may be distributed, while respecting the expiry and shifting policies.
    */
   @Override
   protected void createDiagnosisKeyDistributionMap(Collection<DiagnosisKey> diagnosisKeys) {
     this.distributableDiagnosisKeys.clear();
     Map<String, List<DiagnosisKey>> diagnosisKeysMapped = groupDiagnosisKeysByCountry(diagnosisKeys);
 
-    diagnosisKeysMapped.keySet().forEach(country -> populateDistributableDiagnosisKeys(diagnosisKeysMapped, country));
+    diagnosisKeysMapped.keySet().forEach(country -> {
+      if (!country.equals("DE")) {
+        populateDistributableDiagnosisKeysWithoutPolicies(diagnosisKeysMapped, country);
+      } else {
+        populateDistributableDiagnosisKeys(diagnosisKeysMapped, country);
+      }
+    });
   }
 
   private void populateDistributableDiagnosisKeys(Map<String, List<DiagnosisKey>> diagnosisKeysMapped, String country) {
+
     Map<LocalDateTime, List<DiagnosisKey>> distributableDiagnosisKeysGroupedByExpiryPolicy = new HashMap<>(
         diagnosisKeysMapped.get(country).stream().collect(groupingBy(this::getDistributionDateTimeByExpiryPolicy)));
 
@@ -101,6 +108,12 @@ public class ProdDiagnosisKeyBundler extends DiagnosisKeyBundler {
             this.distributableDiagnosisKeys.get(country).put(currentHour, Collections.emptyList());
           }
         });
+  }
+
+  private void populateDistributableDiagnosisKeysWithoutPolicies(Map<String, List<DiagnosisKey>> diagnosisKeysMapped,
+      String country) {
+    this.distributableDiagnosisKeys.get(country).putAll(diagnosisKeysMapped.get(country).stream()
+        .collect(groupingBy(this::getSubmissionDateTime)));
   }
 
   private static Optional<LocalDateTime> getEarliestDistributableTimestamp(
