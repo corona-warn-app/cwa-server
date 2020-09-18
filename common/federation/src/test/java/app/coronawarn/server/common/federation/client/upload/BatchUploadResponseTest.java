@@ -30,7 +30,7 @@ class BatchUploadResponseTest {
 
   @Test
   void checkEmptyBatchUploadResponse() {
-    BatchUploadResponse batchUploadResponse = mock(BatchUploadResponse.class);
+    BatchUploadResponse batchUploadResponse = new BatchUploadResponse();
 
     assertThat(batchUploadResponse.getStatus201()).isEmpty();
     assertThat(batchUploadResponse.getStatus409()).isEmpty();
