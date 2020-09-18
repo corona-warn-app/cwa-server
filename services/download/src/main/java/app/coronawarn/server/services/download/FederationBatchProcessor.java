@@ -38,6 +38,7 @@ import java.time.LocalDate;
 import java.util.Deque;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -76,10 +77,13 @@ public class FederationBatchProcessor {
   public void saveFirstBatchInfoForDate(LocalDate date) {
     try {
       logger.info("Downloading first batch for date {}", date);
-      BatchDownloadResponse response = federationGatewayClient.getDiagnosisKeys(date.format(ISO_LOCAL_DATE));
+      BatchDownloadResponse response =
+          federationGatewayClient.getDiagnosisKeys(date.format(ISO_LOCAL_DATE)).orElseThrow();
       batchInfoService.save(new FederationBatchInfo(response.getBatchTag(), date));
+    } catch (NoSuchElementException e) {
+      logger.error("Batch for date {} was empty.", date);
     } catch (Exception e) {
-      logger.error("Downloading batch for date {} failed", date, e);
+      logger.error("Downloading batch for date {} failed.", date, e);
     }
   }
 
@@ -89,6 +93,7 @@ public class FederationBatchProcessor {
    */
   public void processErrorFederationBatches() {
     List<FederationBatchInfo> federationBatchInfosWithError = batchInfoService.findByStatus(ERROR);
+    logger.info("{} error federation batches for reprocessing found", federationBatchInfosWithError.size());
     federationBatchInfosWithError.forEach(this::retryProcessingBatch);
   }
 
@@ -109,6 +114,7 @@ public class FederationBatchProcessor {
    */
   public void processUnprocessedFederationBatches() {
     Deque<FederationBatchInfo> unprocessedBatches = new LinkedList<>(batchInfoService.findByStatus(UNPROCESSED));
+    logger.info("{} unprocessed federation batches found", unprocessedBatches.size());
 
     while (!unprocessedBatches.isEmpty()) {
       FederationBatchInfo currentBatch = unprocessedBatches.remove();
@@ -124,9 +130,12 @@ public class FederationBatchProcessor {
     String batchTag = batchInfo.getBatchTag();
     logger.info("Processing batch for date {} and batchTag {}", date, batchTag);
     try {
-      BatchDownloadResponse response = federationGatewayClient.getDiagnosisKeys(batchTag, date);
-
-      diagnosisKeyService.saveDiagnosisKeys(convertDiagnosisKeys(response));
+      BatchDownloadResponse response = federationGatewayClient.getDiagnosisKeys(batchTag, date).orElseThrow();
+      logger
+          .info("Downloaded {} keys for date {} and batchTag {}", response.getDiagnosisKeyBatch().getKeysCount(), date,
+              batchTag);
+      int insertedKeys = diagnosisKeyService.saveDiagnosisKeys(convertDiagnosisKeys(response));
+      logger.info("Successfully inserted {} keys for date {} and batchTag {}", insertedKeys, date, batchTag);
       batchInfoService.updateStatus(batchInfo, PROCESSED);
       return response.getNextBatchTag();
     } catch (Exception e) {

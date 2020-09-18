@@ -33,7 +33,7 @@ import org.springframework.stereotype.Repository;
 public interface FederationUploadKeyRepository
     extends PagingAndSortingRepository<FederationUploadKey, Long> {
 
-  @Query("SELECT * FROM federation_upload_key")
+  @Query("SELECT * FROM federation_upload_key WHERE (batch_tag is null or batch_tag = '')")
   List<FederationUploadKey> findAllUploadableKeys();
 
   @Modifying
