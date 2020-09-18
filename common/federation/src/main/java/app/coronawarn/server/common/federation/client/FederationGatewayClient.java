@@ -21,7 +21,7 @@
 package app.coronawarn.server.common.federation.client;
 
 import app.coronawarn.server.common.federation.client.download.BatchDownloadResponse;
-import app.coronawarn.server.common.federation.client.download.BatchUploadResponse;
+import app.coronawarn.server.common.federation.client.upload.BatchUploadResponse;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;

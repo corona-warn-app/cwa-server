@@ -18,7 +18,7 @@
  * ---license-end
  */
 
-package app.coronawarn.server.common.federation.client.download;
+package app.coronawarn.server.common.federation.client.upload;
 
 import static java.util.Collections.emptyList;
 
@@ -62,23 +62,12 @@ public class BatchUploadResponse {
     return status409;
   }
 
-  public void setStatus409(List<String> status409) {
-    this.status409 = status409;
-  }
-
   public List<String> getStatus500() {
     return status500;
-  }
-
-  public void setStatus500(List<String> status500) {
-    this.status500 = status500;
   }
 
   public List<String> getStatus201() {
     return status201;
   }
 
-  public void setStatus201(List<String> status201) {
-    this.status201 = status201;
-  }
 }

@@ -18,13 +18,22 @@
  * ---license-end
  */
 
-package app.coronawarn.server.services.federation.upload.client;
+package app.coronawarn.server.common.federation.client.upload;
 
-import app.coronawarn.server.common.federation.client.upload.BatchUploadResponse;
-import app.coronawarn.server.services.federation.upload.payload.UploadPayload;
 
-public interface FederationUploadClient {
+import static org.mockito.Mockito.mock;
 
-  BatchUploadResponse postBatchUpload(UploadPayload uploadPayload);
+import org.assertj.core.api.Assertions;
+import org.junit.jupiter.api.Test;
 
+class BatchUploadResponseTest {
+
+  @Test
+  void checkEmptyBatchUploadResponse(){
+    BatchUploadResponse batchUploadResponse = mock(BatchUploadResponse.class);
+
+    Assertions.assertThat(batchUploadResponse.getStatus201()).isEmpty();
+    Assertions.assertThat(batchUploadResponse.getStatus409()).isEmpty();
+    Assertions.assertThat(batchUploadResponse.getStatus500()).isEmpty();
+  }
 }

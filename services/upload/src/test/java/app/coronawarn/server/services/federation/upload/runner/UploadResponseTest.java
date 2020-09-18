@@ -29,7 +29,7 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-import app.coronawarn.server.common.federation.client.download.BatchUploadResponse;
+import app.coronawarn.server.common.federation.client.upload.BatchUploadResponse;
 import app.coronawarn.server.common.persistence.domain.FederationUploadKey;
 import app.coronawarn.server.common.persistence.repository.FederationUploadKeyRepository;
 import app.coronawarn.server.common.persistence.service.FederationUploadKeyService;
