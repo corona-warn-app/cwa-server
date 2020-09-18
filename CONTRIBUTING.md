@@ -32,17 +32,9 @@ We kindly ask you to follow the [Pull Request Checklist](#Pull-Request-Checklist
 
 You are welcome to contribute code in order to fix a bug or to implement a new feature.
 
-The following rule governs code contributions:
-
-* Contributions must be licensed under the [Apache 2.0 License](LICENSE)
-
 ## Contributing Documentation
 
 You are welcome to contribute documentation to the project.
-
-The following rule governs documentation contributions:
-
-* Contributions must be licensed under the same license as code, the [Apache 2.0 License](LICENSE)
 
 ## Pull Request Checklist
 
