@@ -21,8 +21,10 @@
 package app.coronawarn.server.common.federation.client;
 
 import app.coronawarn.server.common.federation.client.download.BatchDownloadResponse;
+import app.coronawarn.server.common.federation.client.upload.BatchUploadResponse;
 import java.util.Optional;
 import org.springframework.cloud.openfeign.FeignClient;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -66,7 +68,7 @@ public interface FederationGatewayClient {
       headers = {"Accept=application/json; version=1.0",
           "X-SSL-Client-SHA256=${federation-gateway.ssl.certificate-sha}",
           "X-SSL-Client-DN=${federation-gateway.ssl.certificate-dn}"})
-  String postBatchUpload(
+  ResponseEntity<BatchUploadResponse> postBatchUpload(
       byte[] raw,
       @RequestHeader("batchTag") String batchTag,
       @RequestHeader("batchSignature") String batchSignature);

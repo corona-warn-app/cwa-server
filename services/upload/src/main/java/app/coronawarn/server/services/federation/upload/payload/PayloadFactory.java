@@ -25,12 +25,11 @@ import app.coronawarn.server.common.protocols.external.exposurenotification.Diag
 import app.coronawarn.server.services.federation.upload.payload.signing.BatchSigner;
 import java.io.IOException;
 import java.security.GeneralSecurityException;
+import java.security.SecureRandom;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
-import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 import org.apache.commons.codec.binary.Base64;
@@ -89,7 +88,7 @@ public class PayloadFactory {
     Map<DiagnosisKeyBatch, List<FederationUploadKey>> batchesAndOriginalKeys = assembler
         .assembleDiagnosisKeyBatch(diagnosisKeys);
     byte[] hash = new byte[4];
-    ThreadLocalRandom.current().nextBytes(hash);
+    new SecureRandom().nextBytes(hash);
     AtomicInteger batchCounter = new AtomicInteger(0);
 
     return batchesAndOriginalKeys.entrySet().stream()

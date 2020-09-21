@@ -20,11 +20,10 @@
 
 package app.coronawarn.server.services.federation.upload.payload;
 
-import app.coronawarn.server.common.persistence.domain.DiagnosisKey;
 import app.coronawarn.server.common.persistence.domain.FederationUploadKey;
+import app.coronawarn.server.common.protocols.external.exposurenotification.DiagnosisKey;
 import app.coronawarn.server.common.protocols.external.exposurenotification.DiagnosisKeyBatch;
 import java.util.List;
-
 
 /**
  * This class represents an Upload call to the Federation Gateway. The payload for EFGS must contain the following
