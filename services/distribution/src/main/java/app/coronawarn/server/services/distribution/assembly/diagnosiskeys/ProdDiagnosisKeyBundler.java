@@ -33,9 +33,11 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 import java.util.stream.LongStream;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
@@ -51,6 +53,8 @@ import org.springframework.stereotype.Component;
 public class ProdDiagnosisKeyBundler extends DiagnosisKeyBundler {
 
   private KeySharingPoliciesChecker sharingPoliciesChecker;
+  private String euPackageName;
+  private boolean applyPoliciesForAllCountries;
 
   /**
    * Creates a new {@link ProdDiagnosisKeyBundler}.
@@ -59,6 +63,8 @@ public class ProdDiagnosisKeyBundler extends DiagnosisKeyBundler {
       KeySharingPoliciesChecker sharingPoliciesChecker) {
     super(distributionServiceConfig);
     this.sharingPoliciesChecker = sharingPoliciesChecker;
+    this.euPackageName = distributionServiceConfig.getEuPackageName();
+    this.applyPoliciesForAllCountries = distributionServiceConfig.getApplyPoliciesForAllCountries();
   }
 
   /**
@@ -71,15 +77,37 @@ public class ProdDiagnosisKeyBundler extends DiagnosisKeyBundler {
     Map<String, List<DiagnosisKey>> diagnosisKeysMapped = groupDiagnosisKeysByCountry(diagnosisKeys);
 
     diagnosisKeysMapped.keySet().forEach(country -> {
-      if (!country.equals("DE")) {
+      if (!country.equals("DE") && !applyPoliciesForAllCountries) {
         populateDistributableDiagnosisKeysWithoutPolicies(diagnosisKeysMapped, country);
       } else {
-        populateDistributableDiagnosisKeys(diagnosisKeysMapped, country);
+        populateDistributableDiagnosisKeysWithPolicies(diagnosisKeysMapped, country);
       }
     });
+    populateEuPackageWithDistributableDiagnosisKeys();
   }
 
-  private void populateDistributableDiagnosisKeys(Map<String, List<DiagnosisKey>> diagnosisKeysMapped, String country) {
+  private void populateEuPackageWithDistributableDiagnosisKeys() {
+    Map<LocalDateTime, Set<DiagnosisKey>> euPackage = new HashMap<>();
+
+    this.distributableDiagnosisKeys.forEach((country, diagnosisKeyMap) -> {
+      diagnosisKeyMap.forEach((distributionDateTime, diagnosisKeys) -> {
+        Set<DiagnosisKey> currentHourDiagnosisKeys = Optional
+            .ofNullable(euPackage.get(distributionDateTime))
+            .orElse(new HashSet<>());
+        currentHourDiagnosisKeys.addAll(diagnosisKeys);
+        euPackage.put(distributionDateTime, currentHourDiagnosisKeys);
+      });
+
+    });
+    Map<LocalDateTime, List<DiagnosisKey>> worldBucketList = new HashMap<>();
+    euPackage.forEach((distributionDateTime, diagnosisKeys) -> {
+      worldBucketList.put(distributionDateTime, new ArrayList<>(diagnosisKeys));
+    });
+    this.distributableDiagnosisKeys.put(euPackageName, worldBucketList);
+  }
+
+  private void populateDistributableDiagnosisKeysWithPolicies(Map<String, List<DiagnosisKey>> diagnosisKeysMapped,
+      String country) {
 
     Map<LocalDateTime, List<DiagnosisKey>> distributableDiagnosisKeysGroupedByExpiryPolicy = new HashMap<>(
         diagnosisKeysMapped.get(country).stream().collect(groupingBy(this::getDistributionDateTimeByExpiryPolicy)));
@@ -112,7 +140,9 @@ public class ProdDiagnosisKeyBundler extends DiagnosisKeyBundler {
 
   private void populateDistributableDiagnosisKeysWithoutPolicies(Map<String, List<DiagnosisKey>> diagnosisKeysMapped,
       String country) {
+
     this.distributableDiagnosisKeys.get(country).putAll(diagnosisKeysMapped.get(country).stream()
+        .filter(diagnosisKey -> this.getSubmissionDateTime(diagnosisKey).isBefore(this.distributionTime))
         .collect(groupingBy(this::getSubmissionDateTime)));
   }
 
