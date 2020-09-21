@@ -352,7 +352,7 @@
             <rulesUri>file:///${session.executionRootDirectory}/maven-version-rules.xml</rulesUri>
 
           </configuration>
-          <!-- ${project.basedir} docker-compose -f .\docker-compose-it.yaml build <reportSets> <reportSet> <reports> <report>dependency-updates-report</report> 
+          <!-- ${project.basedir} docker-compose -f .\docker-compose-it.yaml build <reportSets> <reportSet> <reports> <report>dependency-updates-report</report>
             <report>plugin-updates-report</report> <report>property-updates-report</report> </reports> </reportSet> </reportSets> -->
         </plugin>
         <plugin>

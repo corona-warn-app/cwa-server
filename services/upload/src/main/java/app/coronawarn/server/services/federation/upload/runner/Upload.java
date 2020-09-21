@@ -9,7 +9,11 @@ import app.coronawarn.server.services.federation.upload.client.FederationUploadC
 import app.coronawarn.server.services.federation.upload.keys.DiagnosisKeyLoader;
 import app.coronawarn.server.services.federation.upload.payload.PayloadFactory;
 import app.coronawarn.server.services.federation.upload.payload.UploadPayload;
+import com.google.protobuf.ByteString;
+import java.util.Arrays;
+import java.util.Comparator;
 import java.util.List;
+import java.util.stream.Collectors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.ApplicationArguments;
@@ -51,6 +55,21 @@ public class Upload implements ApplicationRunner {
     this.uploadKeyService = uploadKeyService;
   }
 
+  private List<FederationUploadKey> executeUploadAndCollectErrors(UploadPayload payload) {
+    logger.info("Executing batch request(s): {}", payload.getBatchTag());
+    var result = this.federationUploadClient.postBatchUpload(payload);
+    var retryKeys = result.getStatus500()
+        .stream()
+        .map(Integer::parseInt)
+        .map(index -> payload.getOriginalKeys().stream()
+            .sorted(Comparator.comparing(diagnosisKey ->
+                ByteString.copyFrom(diagnosisKey.getKeyData()).toStringUtf8()))
+            .collect(Collectors.toList()).get(index))
+        .collect(Collectors.toList());
+    logger.error("Error on {} keys, marking them for retry", retryKeys.size());
+    return retryKeys;
+  }
+
   @Override
   public void run(ApplicationArguments args) throws Exception {
     logger.info("Running Upload Job");
@@ -60,8 +79,8 @@ public class Upload implements ApplicationRunner {
       List<UploadPayload> requests = this.payloadFactory.makePayloadList(diagnosisKeys);
       logger.info("Executing {} batch request", requests.size());
       requests.forEach(payload -> {
-        this.executeFederationUpload(payload);
-        this.markSuccessfullyUploadedKeys(payload);
+        List<FederationUploadKey> retryKeys = this.executeUploadAndCollectErrors(payload);
+        this.markSuccessfullyUploadedKeys(payload, retryKeys);
       });
     } catch (Exception e) {
       logger.error("Upload diagnosis key data failed.", e);
@@ -69,13 +88,14 @@ public class Upload implements ApplicationRunner {
     }
   }
 
-  private void executeFederationUpload(UploadPayload payload) {
-    logger.info("Executing batch request(s): {}", payload.getBatchTag());
-    this.federationUploadClient.postBatchUpload(payload);
-  }
-
-  private void markSuccessfullyUploadedKeys(UploadPayload payload) {
+  private void markSuccessfullyUploadedKeys(UploadPayload payload, List<FederationUploadKey> retryKeys) {
     try {
+      if (!retryKeys.isEmpty()) {
+        payload.getOriginalKeys().removeIf(
+            originalKey ->
+                retryKeys.stream().anyMatch(retryKey ->
+                    Arrays.equals(retryKey.getKeyData(), originalKey.getKeyData())));
+      }
       uploadKeyService.updateBatchTagForKeys(payload.getOriginalKeys(), payload.getBatchTag());
     } catch (Exception ex) {
       // in case of an error with marking, try to move forward to the next upload batch if any unprocessed

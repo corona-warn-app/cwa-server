@@ -3,6 +3,7 @@
 package app.coronawarn.server.services.federation.upload.client;
 
 import app.coronawarn.server.common.federation.client.FederationGatewayClient;
+import app.coronawarn.server.common.federation.client.upload.BatchUploadResponse;
 import app.coronawarn.server.services.federation.upload.payload.UploadPayload;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -23,11 +24,12 @@ public class ProdFederationUploadClient implements FederationUploadClient {
   }
 
   @Override
-  public void postBatchUpload(UploadPayload uploadPayload) {
+  public BatchUploadResponse postBatchUpload(UploadPayload uploadPayload) {
     var result = federationGatewayClient.postBatchUpload(
         uploadPayload.getBatch().toByteArray(),
         uploadPayload.getBatchTag(),
         uploadPayload.getBatchSignature());
     logger.info("Response from EFGS: {}", result);
+    return result.getBody();
   }
 }
