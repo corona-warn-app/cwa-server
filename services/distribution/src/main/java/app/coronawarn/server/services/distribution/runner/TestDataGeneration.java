@@ -101,7 +101,7 @@ public class TestDataGeneration implements ApplicationRunner {
    */
   private void writeTestData() {
     supportedCountries.forEach(country -> {
-      logger.debug("Querying diagnosis keys from the database...");
+      logger.debug("Querying diagnosis keys [{}] from the database...", country);
       List<DiagnosisKey> existingDiagnosisKeys = diagnosisKeyService.getDiagnosisKeys().stream()
           .filter(diagnosisKey -> diagnosisKey.getOriginCountry().equals(country))
           .collect(Collectors.toList());
@@ -112,7 +112,7 @@ public class TestDataGeneration implements ApplicationRunner {
       long endTimestamp = getGeneratorEndTimestamp(); // Inclusive
 
       // Add the startTimestamp to the seed. Otherwise we would generate the same data every hour.
-      random.setSeed(this.config.getSeed() + startTimestamp);
+      random.setSeed(this.config.getSeed() + startTimestamp + country.hashCode());
       PoissonDistribution poisson =
           new PoissonDistribution(random, this.config.getExposuresPerHour(), POISSON_EPSILON, POISSON_MAX_ITERATIONS);
 
@@ -120,7 +120,7 @@ public class TestDataGeneration implements ApplicationRunner {
         logger.debug("Skipping test data generation, latest diagnosis keys are still up-to-date.");
         return;
       }
-      logger.debug("Generating diagnosis keys between {} and {}...", startTimestamp, endTimestamp);
+      logger.debug("Generating diagnosis keys  [{}] between {} and {}...", country, startTimestamp, endTimestamp);
       List<DiagnosisKey> newDiagnosisKeys = LongStream.rangeClosed(startTimestamp, endTimestamp)
           .mapToObj(submissionTimestamp -> IntStream.range(0, poisson.sample())
               .mapToObj(ignoredValue -> generateDiagnosisKey(submissionTimestamp,country))
@@ -128,7 +128,7 @@ public class TestDataGeneration implements ApplicationRunner {
           .flatMap(List::stream)
           .collect(Collectors.toList());
 
-      logger.debug("Writing {} new diagnosis keys to the database...", newDiagnosisKeys.size());
+      logger.debug("Writing {} new diagnosis keys [{}] to the database...", country, newDiagnosisKeys.size());
       diagnosisKeyService.saveDiagnosisKeys(newDiagnosisKeys);
 
       logger.debug("Test data generation finished successfully.");
