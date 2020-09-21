@@ -25,12 +25,14 @@ import app.coronawarn.server.common.protocols.external.exposurenotification.Diag
 import app.coronawarn.server.services.federation.upload.payload.signing.BatchSigner;
 import java.io.IOException;
 import java.security.GeneralSecurityException;
+import java.security.SecureRandom;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
+import org.apache.commons.codec.binary.Base64;
 import org.bouncycastle.cms.CMSException;
 import org.bouncycastle.operator.OperatorCreationException;
 import org.slf4j.Logger;
@@ -51,11 +53,11 @@ public class PayloadFactory {
     this.signer = signer;
   }
 
-  private UploadPayload mapToPayloadAndSign(Integer batchCounter, DiagnosisKeyBatch batch,
+  private UploadPayload mapToPayloadAndSign(String batchTag, DiagnosisKeyBatch batch,
       List<FederationUploadKey> originalKeys) {
     var payload = new UploadPayload();
     payload.setBatch(batch);
-    payload.setBatchTag(this.generateBatchTag(batchCounter));
+    payload.setBatchTag(batchTag);
     payload.setOriginalKeys(originalKeys);
     try {
       payload.setBatchSignature(signer.createSignatureBytes(batch));
@@ -65,13 +67,13 @@ public class PayloadFactory {
     return payload;
   }
 
-  private String generateBatchTag(int counter) {
+  private String generateBatchTag(int counter, byte[] runnerHash) {
     var currentTime = LocalDateTime.now(ZoneOffset.UTC);
-    return String.format("%d-%d-%d_%dh-%d",
+    return String.format("%d-%d-%d-%s-%d",
         currentTime.getYear(),
         currentTime.getMonth().getValue(),
         currentTime.getDayOfMonth(),
-        currentTime.getHour(),
+        Base64.encodeBase64String(runnerHash),
         counter);
   }
 
@@ -85,10 +87,15 @@ public class PayloadFactory {
   public List<UploadPayload> makePayloadList(List<FederationUploadKey> diagnosisKeys) {
     Map<DiagnosisKeyBatch, List<FederationUploadKey>> batchesAndOriginalKeys = assembler
         .assembleDiagnosisKeyBatch(diagnosisKeys);
+    byte[] hash = new byte[4];
+    new SecureRandom().nextBytes(hash);
     AtomicInteger batchCounter = new AtomicInteger(0);
 
     return batchesAndOriginalKeys.entrySet().stream()
-        .map(entry -> this.mapToPayloadAndSign(batchCounter.incrementAndGet(), entry.getKey(), entry.getValue()))
+        .map(entry -> this.mapToPayloadAndSign(
+            generateBatchTag(batchCounter.getAndIncrement(), hash),
+            entry.getKey(),
+            entry.getValue()))
         .collect(Collectors.toList());
   }
 }
