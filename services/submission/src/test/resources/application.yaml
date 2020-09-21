@@ -31,6 +31,13 @@ services:
       max-number-of-keys: 14
       supported-countries: DE,FR
       default-origin-country: DE
+      tek-property-derivations:
+        # Map containing the derived values of DSOS (days since onset of symptoms) from TRL (transmission risk level)
+        dsos-from-trl:
+          1: -4
+          3: -3
+          5: -2
+          8:  0
     verification:
       base-url: http://localhost:1234
       path: /version/v1/tan/verify

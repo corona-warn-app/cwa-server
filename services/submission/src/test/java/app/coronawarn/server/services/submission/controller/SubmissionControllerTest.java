@@ -46,6 +46,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import org.apache.commons.lang3.tuple.Pair;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
@@ -375,7 +376,8 @@ class SubmissionControllerTest {
                       int tekTRL = pair.getLeft().getTransmissionRiskLevel();
                       int dkDSOS = pair.getRight().getDaysSinceOnsetOfSymptoms();
                       //TODO: Check config mapping and assert equality
-
+                      Integer expectedDsos = config.getTekPropertyDerivations().deriveDSOSFromTRL(tekTRL);
+                      Assertions.assertEquals(expectedDsos, dkDSOS);
                    });
   }
 

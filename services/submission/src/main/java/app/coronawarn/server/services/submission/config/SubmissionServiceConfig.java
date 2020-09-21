@@ -65,7 +65,6 @@ public class SubmissionServiceConfig {
   @Min(0)
   @Max(144)
   private Integer maxRollingPeriod;
-  private TEKPropertyDerivations tekPropertyDerivations;
 
 
   public Long getInitialFakeDelayMilliseconds() {
@@ -124,14 +123,6 @@ public class SubmissionServiceConfig {
     this.maxRollingPeriod = maxRollingPeriod;
   }
 
-  public TEKPropertyDerivations getTekPropertyDerivations() {
-    return tekPropertyDerivations;
-  }
-
-  public void setTekPropertyDerivations(TEKPropertyDerivations tekPropertyDerivations) {
-    this.tekPropertyDerivations = tekPropertyDerivations;
-  }
-
   public Integer getMaxNumberOfKeys() {
     return payload.getMaxNumberOfKeys();
   }
@@ -152,6 +143,10 @@ public class SubmissionServiceConfig {
     this.payload = payload;
   }
 
+  public TEKPropertyDerivations getTekPropertyDerivations() {
+    return payload.getTekPropertyDerivations();
+  }
+
   public static class Payload {
 
     @Min(7)
@@ -159,8 +154,8 @@ public class SubmissionServiceConfig {
     private Integer maxNumberOfKeys;
     @NotEmpty
     private String[] supportedCountries;
-
     private String defaultOriginCountry;
+    private TEKPropertyDerivations tekPropertyDerivations;
 
     public Integer getMaxNumberOfKeys() {
       return maxNumberOfKeys;
@@ -178,13 +173,20 @@ public class SubmissionServiceConfig {
       this.supportedCountries = supportedCountries;
     }
 
-
     public String getDefaultOriginCountry() {
       return defaultOriginCountry;
     }
 
     public void setDefaultOriginCountry(String defaultOriginCountry) {
       this.defaultOriginCountry = defaultOriginCountry;
+    }
+
+    public TEKPropertyDerivations getTekPropertyDerivations() {
+      return tekPropertyDerivations;
+    }
+
+    public void setTekPropertyDerivations(TEKPropertyDerivations tekPropertyDerivations) {
+      this.tekPropertyDerivations = tekPropertyDerivations;
     }
   }
 
@@ -331,6 +333,14 @@ public class SubmissionServiceConfig {
       @NotNull
       @NotEmpty
       private Map<Integer, Integer> dsosFromTrl;
+
+      public Map<Integer, Integer> getDsosFromTrl() {
+        return dsosFromTrl;
+      }
+
+      public void setDsosFromTrl(Map<Integer, Integer> dsosFromTrl) {
+        this.dsosFromTrl = dsosFromTrl;
+      }
 
       public Integer deriveDSOSFromTRL(Integer trlValue) {
         return dsosFromTrl.get(trlValue);
