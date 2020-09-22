@@ -165,11 +165,22 @@ class DiagnosisKeyServiceTest {
             .withTransmissionRiskLevel(3)
             .withSubmissionTimestamp(0L).build());
 
-    diagnosisKeyService.saveDiagnosisKeys(keys);
-
+    int actNumberOfInsertedRows = diagnosisKeyService.saveDiagnosisKeys(keys);
     var actKeys = diagnosisKeyService.getDiagnosisKeys();
 
-    assertThat(actKeys.size()).isEqualTo(1);
+    assertThat(actNumberOfInsertedRows).isEqualTo(1);
+    assertThat(actKeys).hasSize(1);
     assertThat(actKeys.iterator().next().getTransmissionRiskLevel()).isEqualTo(2);
+  }
+
+  @Test
+  void testReturnedNumberOfInsertedKeysForNoConflict() {
+    var keys = List.of(
+        buildDiagnosisKeyForSubmissionTimestamp(1L),
+        buildDiagnosisKeyForSubmissionTimestamp(0L));
+
+    int actNumberOfInsertedRows = diagnosisKeyService.saveDiagnosisKeys(keys);
+
+    assertThat(actNumberOfInsertedRows).isEqualTo(2);
   }
 }

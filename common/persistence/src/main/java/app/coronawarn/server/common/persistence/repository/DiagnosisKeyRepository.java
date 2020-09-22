@@ -57,13 +57,14 @@ public interface DiagnosisKeyRepository extends PagingAndSortingRepository<Diagn
    * @param rollingPeriod              The rolling period of the diagnosis key.
    * @param submissionTimestamp        The submission timestamp of the diagnosis key.
    * @param transmissionRisk           The transmission risk level of the diagnosis key.
+   * @return {@literal true} if the diagnosis key was inserted successfully, {@literal false} otherwise.
    */
   @Modifying
   @Query("INSERT INTO diagnosis_key "
       + "(key_data, rolling_start_interval_number, rolling_period, submission_timestamp, transmission_risk_level) "
       + "VALUES (:keyData, :rollingStartIntervalNumber, :rollingPeriod, :submissionTimestamp, :transmissionRisk) "
       + "ON CONFLICT DO NOTHING")
-  void saveDoNothingOnConflict(
+  boolean saveDoNothingOnConflict(
       @Param("keyData") byte[] keyData,
       @Param("rollingStartIntervalNumber") int rollingStartIntervalNumber,
       @Param("rollingPeriod") int rollingPeriod,
