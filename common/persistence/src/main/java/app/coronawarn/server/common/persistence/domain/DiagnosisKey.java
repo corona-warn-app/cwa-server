@@ -246,7 +246,7 @@ public class DiagnosisKey {
         + ", transmissionRiskLevel=" + transmissionRiskLevel
         + ", submissionTimestamp=" + submissionTimestamp
         + ", consentToFederation=" + consentToFederation
-        + ", originCountry='" + originCountry + '\''
+        + ", originCountry=" + originCountry
         + ", visitedCountries=" + visitedCountries
         + ", reportType=" + reportType
         + ", daysSinceOnsetOfSymptoms=" + daysSinceOnsetOfSymptoms
