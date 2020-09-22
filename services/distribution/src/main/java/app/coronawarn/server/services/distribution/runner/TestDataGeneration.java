@@ -72,7 +72,7 @@ public class TestDataGeneration implements ApplicationRunner {
 
   private final RandomGenerator random = new JDKRandomGenerator();
 
-  private final List<String> supportedCountries;
+  private final Set<String> supportedCountries;
 
   private static final int POISSON_MAX_ITERATIONS = 10_000_000;
   private static final double POISSON_EPSILON = 1e-12;
@@ -85,7 +85,7 @@ public class TestDataGeneration implements ApplicationRunner {
     this.diagnosisKeyService = diagnosisKeyService;
     this.retentionDays = distributionServiceConfig.getRetentionDays();
     this.config = distributionServiceConfig.getTestData();
-    this.supportedCountries = Arrays.asList(distributionServiceConfig.getSupportedCountries());
+    this.supportedCountries = Set.of(distributionServiceConfig.getSupportedCountries());
   }
 
   /**
@@ -128,7 +128,7 @@ public class TestDataGeneration implements ApplicationRunner {
           .flatMap(List::stream)
           .collect(Collectors.toList());
 
-      logger.debug("Writing {} new diagnosis keys [{}] to the database...", country, newDiagnosisKeys.size());
+      logger.debug("Writing {} new diagnosis keys [{}] to the database...", newDiagnosisKeys.size(), country);
       diagnosisKeyService.saveDiagnosisKeys(newDiagnosisKeys);
 
       logger.debug("Test data generation finished successfully.");
@@ -175,7 +175,7 @@ public class TestDataGeneration implements ApplicationRunner {
    */
   private Set<String> generateSetOfVisitedCountries(String distributionCountry) {
     if (random.nextBoolean()) {
-      return Set.of("DE", "DK", "FR");
+      return supportedCountries;
     } else {
       return Set.of(distributionCountry);
     }
