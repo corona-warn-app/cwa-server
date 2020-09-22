@@ -155,11 +155,11 @@ public class SubmissionController {
 
   private void checkDiagnosisKeysStructure(List<DiagnosisKey> diagnosisKeys) {
     diagnosisKeys.sort(Comparator.comparing(DiagnosisKey::getRollingStartIntervalNumber));
+    String keysString = Arrays.toString(diagnosisKeys.toArray());
     Predicate<DiagnosisKey> hasRiskLevel6 = diagnosisKey -> diagnosisKey.getTransmissionRiskLevel() == 6;
 
     if (diagnosisKeys.stream().noneMatch(hasRiskLevel6)) {
-      logger.warn("Submission payload was sent with missing key having transmission risk level 6. {}",
-          Arrays.toString(diagnosisKeys.toArray()));
+      logger.warn("Submission payload was sent with missing key having transmission risk level 6. {}", keysString);
     }
 
     diagnosisKeys.stream().filter(hasRiskLevel6).findFirst().ifPresent(diagnosisKey -> {
@@ -169,8 +169,7 @@ public class SubmissionController {
           .toEpochSecond(UTC) / (60 * 10);
       if (diagnosisKey.getRollingStartIntervalNumber() == todayMidnightUtc) {
         logger.warn("Submission payload was sent with a key having transmission risk level 6"
-                + " and rolling start interval number of today midnight. {}",
-            Arrays.toString(diagnosisKeys.toArray()));
+            + " and rolling start interval number of today midnight. {}", keysString);
       }
     });
   }
