@@ -21,16 +21,19 @@
 package app.coronawarn.server.services.federation.upload.testdata;
 
 import app.coronawarn.server.common.persistence.domain.DiagnosisKey;
+import app.coronawarn.server.common.persistence.domain.FederationUploadKey;
 import org.springframework.context.annotation.Profile;
 import org.springframework.data.jdbc.repository.query.Modifying;
 import org.springframework.data.jdbc.repository.query.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
+import java.util.List;
+import java.util.Optional;
 
 @Repository
 @Profile("testdata")
 public interface TestDataUploadRepository
-    extends org.springframework.data.repository.Repository<DiagnosisKey, Long> {
+    extends org.springframework.data.repository.Repository<FederationUploadKey, Long> {
 
   @Modifying
   @Query("INSERT INTO federation_upload_key "
@@ -50,4 +53,7 @@ public interface TestDataUploadRepository
       @Param("report_type") String reportType,
       @Param("days_since_onset_of_symptoms") int daysSinceOnsetOfSymptoms,
       @Param("consent_to_federation") boolean consentToFederation);
+
+  @Query("SELECT MAX(submission_timestamp) FROM federation_upload_key")
+  Optional<Long> getMaxSubmissionTimestamp();
 }

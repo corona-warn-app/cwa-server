@@ -21,14 +21,19 @@
 package app.coronawarn.server.services.federation.upload.runner;
 
 import app.coronawarn.server.common.persistence.domain.DiagnosisKey;
+import app.coronawarn.server.common.persistence.domain.FederationUploadKey;
+import app.coronawarn.server.common.persistence.service.FederationUploadKeyService;
+import app.coronawarn.server.common.persistence.service.common.ExpirationPolicy;
 import app.coronawarn.server.common.protocols.external.exposurenotification.ReportType;
 import app.coronawarn.server.services.federation.upload.config.UploadServiceConfig;
 import app.coronawarn.server.services.federation.upload.testdata.TestDataUploadRepository;
 import java.security.SecureRandom;
-import java.time.Clock;
 import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.ZoneOffset;
 import java.time.temporal.ChronoUnit;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.TimeUnit;
@@ -56,7 +61,8 @@ public class TestDataGeneration implements ApplicationRunner {
   public static final long TEN_MINUTES_INTERVAL_SECONDS = TimeUnit.MINUTES.toSeconds(10);
 
   public TestDataGeneration(UploadServiceConfig uploadServiceConfig,
-      TestDataUploadRepository keyRepository) {
+      TestDataUploadRepository keyRepository,
+      FederationUploadKeyService federationUploadKeyService) {
     this.uploadServiceConfig = uploadServiceConfig;
     this.keyRepository = keyRepository;
   }
@@ -67,8 +73,8 @@ public class TestDataGeneration implements ApplicationRunner {
     return keydata;
   }
 
-  private DiagnosisKey makeKeyFromTimestamp(long timestamp) {
-    return DiagnosisKey.builder().withKeyData(randomByteData())
+  private FederationUploadKey makeKeyFromTimestamp(long timestamp) {
+    return FederationUploadKey.from(DiagnosisKey.builder().withKeyData(randomByteData())
         .withRollingStartIntervalNumber(generateRollingStartIntervalNumber(timestamp))
         .withTransmissionRiskLevel(2)
         .withConsentToFederation(true)
@@ -77,7 +83,7 @@ public class TestDataGeneration implements ApplicationRunner {
         .withSubmissionTimestamp(timestamp)
         .withVisitedCountries(List.of("FR", "DK"))
         .withReportType(ReportType.CONFIRMED_TEST)
-        .build();
+        .build());
   }
 
   private int generateRollingStartIntervalNumber(long submissionTimestamp) {
@@ -93,28 +99,64 @@ public class TestDataGeneration implements ApplicationRunner {
     return minIncluding + (long) (ThreadLocalRandom.current().nextDouble() * (maxIncluding - minIncluding));
   }
 
-  private List<DiagnosisKey> makeKeysFromTimestamp(long timestamp, int quantity) {
+  private List<FederationUploadKey> makeKeysFromTimestamp(long timestamp, int quantity) {
     return IntStream.range(0, quantity)
         .mapToObj(ignoredValue -> makeKeyFromTimestamp(timestamp))
         .collect(Collectors.toList());
   }
 
-  private List<DiagnosisKey> generateFakeKeysForToday() {
-    int keysToGenerate = this.uploadServiceConfig.getTestData().getKeys();
-    long upperHour = Instant.now(Clock.systemUTC()).truncatedTo(ChronoUnit.HOURS).getEpochSecond()
-        / TimeUnit.HOURS.toSeconds(1);
-    long lowerHour = upperHour - 24;
-    logger.info("Generating {} upload test keys between {} and {}. ({} keys / hour)", keysToGenerate,
-        lowerHour,
-        upperHour,
-        keysToGenerate / 24);
-    return LongStream.range(lowerHour, upperHour)
-        .mapToObj(i -> this.makeKeysFromTimestamp(i, keysToGenerate / 24))
-        .flatMap(Collection::stream)
-        .collect(Collectors.toList());
+  private LocalDateTime getCurrentTimestampTruncatedHour() {
+    return LocalDateTime.ofInstant(Instant.now(), ZoneOffset.UTC).truncatedTo(ChronoUnit.HOURS);
   }
 
-  private void storeUploadKey(DiagnosisKey key) {
+  private long secondsToHours(long timestampInSeconds) {
+    return timestampInSeconds / ONE_HOUR_INTERVAL_SECONDS;
+  }
+
+  /**
+   * Creates a list of Fake Upload keys for the day before.
+   * If there are already upload keys in the table, generate keys only between latest submission timestamp and
+   * yesterday.
+   * -> No keys in the DB: Generates keys from Now-49h until Now-25h
+   * -> Keys in the DB: Generates keys from Last Timestamp until Now-25h
+   * Keys need to be created with 1 full day + 2 hour offset to make sure that they are expired.
+   * For each hour free N Diagnosis Keys will be created.
+   * Where N is defined by property services.upload.test-data.keys-per-hour
+   * @return List of Federation Upload Keys generated
+   */
+  private List<FederationUploadKey> generateFakeKeysForYesterday() {
+    long latestStartTimestamp = keyRepository.getMaxSubmissionTimestamp().orElse(0L) + 1;
+    int keysToGeneratePerHour = this.uploadServiceConfig.getTestData().getKeys();
+
+    LocalDateTime upperHour = getCurrentTimestampTruncatedHour()
+        .minusDays(1L)
+        .minusHours(2L);
+    LocalDateTime lowerHour = upperHour
+        .minusDays(1L);
+
+    long hourStart = secondsToHours(lowerHour.toEpochSecond(ZoneOffset.UTC));
+    if (hourStart < latestStartTimestamp) {
+      hourStart = latestStartTimestamp;
+    }
+    long hourEnd = secondsToHours(upperHour.toEpochSecond(ZoneOffset.UTC));
+
+    long keysToGenerate = keysToGeneratePerHour * (hourEnd - hourStart);
+    if (keysToGenerate > 0) {
+      logger.info("Generating {} upload keys between hours {} and {}",
+          keysToGenerate,
+          hourStart,
+          hourEnd);
+      return LongStream.range(hourStart, hourEnd)
+          .mapToObj(i -> this.makeKeysFromTimestamp(i, keysToGeneratePerHour))
+          .flatMap(Collection::stream)
+          .collect(Collectors.toList());
+    } else {
+      logger.info("Keys for earliest distributable hour already generated, skipping generation");
+      return Collections.emptyList();
+    }
+  }
+
+  private void storeUploadKey(FederationUploadKey key) {
     keyRepository.storeUploadKey(key.getKeyData(),
         key.getRollingStartIntervalNumber(),
         key.getRollingPeriod(),
@@ -127,13 +169,13 @@ public class TestDataGeneration implements ApplicationRunner {
         key.isConsentToFederation());
   }
 
-  public void storeUploadKeys(List<DiagnosisKey> diagnosisKeys) {
+  public void storeUploadKeys(List<FederationUploadKey> diagnosisKeys) {
     diagnosisKeys.forEach(this::storeUploadKey);
   }
 
   @Override
   public void run(ApplicationArguments args) {
-    var fakeKeys = generateFakeKeysForToday();
+    var fakeKeys = generateFakeKeysForYesterday();
     logger.info("Storing keys in the DB");
     this.storeUploadKeys(fakeKeys);
     logger.info("Finished Test Data Generation Step");

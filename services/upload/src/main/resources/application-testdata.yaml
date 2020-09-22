@@ -2,4 +2,4 @@
 services:
   upload:
     test-data:
-      keys: 1000
+      keys: 350
