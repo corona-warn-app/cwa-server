@@ -24,8 +24,6 @@ import app.coronawarn.server.common.federation.client.config.FederationGatewayCo
 import feign.Client;
 import feign.httpclient.ApacheHttpClient;
 import java.io.File;
-import java.io.InputStream;
-import java.security.KeyStore;
 import javax.net.ssl.SSLContext;
 import org.apache.http.conn.ssl.NoopHostnameVerifier;
 import org.apache.http.conn.ssl.TrustSelfSignedStrategy;
@@ -47,10 +45,10 @@ public class FederationFeignHttpClientProvider {
   private final Integer connectionPoolSize;
   private final File keyStore;
   private final String keyStorePassword;
-  private final String keyPassword;
 
   /**
    * Construct Provider.
+   *
    * @param config .
    */
   public FederationFeignHttpClientProvider(FederationGatewayConfig config) {
@@ -58,7 +56,6 @@ public class FederationFeignHttpClientProvider {
     this.connectionPoolSize = config.getConnectionPoolSize();
     this.keyStore = ssl.getKeyStore();
     this.keyStorePassword = ssl.getKeyStorePass();
-    this.keyPassword = ssl.getKeyStorePass();
   }
 
   /**
@@ -67,7 +64,7 @@ public class FederationFeignHttpClientProvider {
   @Bean
   public Client createFeignClient() {
     return new ApacheHttpClient(
-        federationHttpClientFactory(connectionPoolSize, keyStore, keyStorePassword, "JKS")
+        federationHttpClientFactory(connectionPoolSize, keyStore, keyStorePassword)
             .createBuilder().build());
   }
 
@@ -75,16 +72,15 @@ public class FederationFeignHttpClientProvider {
    * Creates an {@link ApacheHttpClientFactory} that validates SSL certificates but no host names.
    */
   private ApacheHttpClientFactory federationHttpClientFactory(int connectionPoolSize, File keyStorePath,
-                                                              String keyStorePass,
-                                                              String certificateType) {
+      String keyStorePass) {
     return new DefaultApacheHttpClientFactory(HttpClientBuilder.create()
         .setMaxConnPerRoute(connectionPoolSize)
         .setMaxConnTotal(connectionPoolSize)
-        .setSSLContext(getSslContext(keyStorePath, keyStorePass, certificateType))
+        .setSSLContext(getSslContext(keyStorePath, keyStorePass))
         .setSSLHostnameVerifier(NoopHostnameVerifier.INSTANCE));
   }
 
-  private SSLContext getSslContext(File keyStorePath, String keyStorePass, String certificateType) {
+  private SSLContext getSslContext(File keyStorePath, String keyStorePass) {
     try {
       return SSLContextBuilder
           .create()
@@ -98,6 +94,7 @@ public class FederationFeignHttpClientProvider {
 
   /**
    * Creates connection manager.
+   *
    * @return ApacheHttpClientConnectionManagerFactory.
    */
   @Bean
