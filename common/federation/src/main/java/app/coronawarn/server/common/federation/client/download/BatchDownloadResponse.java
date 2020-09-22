@@ -29,7 +29,7 @@ import java.util.Optional;
  */
 public class BatchDownloadResponse {
 
-  private final DiagnosisKeyBatch diagnosisKeyBatch;
+  private final Optional<DiagnosisKeyBatch> diagnosisKeyBatch;
   private final String batchTag;
   private final Optional<String> nextBatchTag;
 
@@ -39,12 +39,18 @@ public class BatchDownloadResponse {
    */
   public BatchDownloadResponse(
       DiagnosisKeyBatch diagnosisKeyBatch, String batchTag, Optional<String> nextBatchTag) {
-    this.diagnosisKeyBatch = diagnosisKeyBatch;
+    this.diagnosisKeyBatch = Optional.of(diagnosisKeyBatch);
     this.batchTag = batchTag;
     this.nextBatchTag = nextBatchTag;
   }
 
-  public DiagnosisKeyBatch getDiagnosisKeyBatch() {
+  public BatchDownloadResponse(String batchTag, Optional<String> nextBatchTag) {
+    this.diagnosisKeyBatch = Optional.empty();
+    this.batchTag = batchTag;
+    this.nextBatchTag = nextBatchTag;
+  }
+
+  public Optional<DiagnosisKeyBatch> getDiagnosisKeyBatch() {
     return diagnosisKeyBatch;
   }
 

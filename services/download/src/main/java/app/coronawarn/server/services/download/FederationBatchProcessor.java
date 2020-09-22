@@ -34,6 +34,7 @@ import app.coronawarn.server.common.persistence.domain.FederationBatchInfo;
 import app.coronawarn.server.common.persistence.domain.FederationBatchStatus;
 import app.coronawarn.server.common.persistence.service.DiagnosisKeyService;
 import app.coronawarn.server.common.persistence.service.FederationBatchInfoService;
+import app.coronawarn.server.common.protocols.external.exposurenotification.DiagnosisKeyBatch;
 import java.time.LocalDate;
 import java.util.Deque;
 import java.util.LinkedList;
@@ -131,12 +132,13 @@ public class FederationBatchProcessor {
     logger.info("Processing batch for date {} and batchTag {}", date, batchTag);
     try {
       BatchDownloadResponse response = federationGatewayClient.getDiagnosisKeys(batchTag, date).orElseThrow();
-      logger
-          .info("Downloaded {} keys for date {} and batchTag {}", response.getDiagnosisKeyBatch().getKeysCount(), date,
-              batchTag);
-      int insertedKeys = diagnosisKeyService.saveDiagnosisKeys(convertDiagnosisKeys(response));
-      logger.info("Successfully inserted {} keys for date {} and batchTag {}", insertedKeys, date, batchTag);
-      batchInfoService.updateStatus(batchInfo, PROCESSED);
+      if (response.getDiagnosisKeyBatch().isPresent()) {
+        DiagnosisKeyBatch diagnosisKeyBatch = response.getDiagnosisKeyBatch().get();
+        logger.info("Downloaded {} keys for date {} and batchTag {}", diagnosisKeyBatch.getKeysCount(), date, batchTag);
+        int insertedKeys = diagnosisKeyService.saveDiagnosisKeys(convertDiagnosisKeys(diagnosisKeyBatch));
+        logger.info("Successfully inserted {} keys for date {} and batchTag {}", insertedKeys, date, batchTag);
+        batchInfoService.updateStatus(batchInfo, PROCESSED);
+      }
       return response.getNextBatchTag();
     } catch (Exception e) {
       logger.error("Federation batch processing for date {} and batchTag {} failed. Status set to {}",
@@ -146,8 +148,8 @@ public class FederationBatchProcessor {
     }
   }
 
-  private List<DiagnosisKey> convertDiagnosisKeys(BatchDownloadResponse batchDownloadResponse) {
-    return batchDownloadResponse.getDiagnosisKeyBatch().getKeysList()
+  private List<DiagnosisKey> convertDiagnosisKeys(DiagnosisKeyBatch diagnosisKeyBatch) {
+    return diagnosisKeyBatch.getKeysList()
         .stream()
         .map(diagnosisKey -> DiagnosisKey.builder().fromFederationDiagnosisKey(diagnosisKey).build())
         .collect(toList());

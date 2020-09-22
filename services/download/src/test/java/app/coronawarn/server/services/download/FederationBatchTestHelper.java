@@ -51,7 +51,7 @@ public class FederationBatchTestHelper {
     BatchDownloadResponse gatewayResponse = mock(BatchDownloadResponse.class);
     when(gatewayResponse.getBatchTag()).thenReturn(batchTag);
     when(gatewayResponse.getNextBatchTag()).thenReturn(nextBatchTag);
-    when(gatewayResponse.getDiagnosisKeyBatch()).thenReturn(createDiagnosisKeyBatch("0123456789ABCDEF"));
+    when(gatewayResponse.getDiagnosisKeyBatch()).thenReturn(Optional.of(createDiagnosisKeyBatch("0123456789ABCDEF")));
     return Optional.of(gatewayResponse);
   }
 }

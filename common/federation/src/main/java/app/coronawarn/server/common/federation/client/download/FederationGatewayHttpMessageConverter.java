@@ -66,6 +66,7 @@ public class FederationGatewayHttpMessageConverter extends AbstractHttpMessageCo
       DiagnosisKeyBatch diagnosisKeyBatch = DiagnosisKeyBatch.parseFrom(body);
       return new BatchDownloadResponse(diagnosisKeyBatch, batchTag, nextBatchTag);
     } catch (InvalidProtocolBufferException e) {
+      // TODO check if empty
       throw new HttpMessageNotReadableException("Failed to parse protocol buffers message", e, message);
     }
   }
