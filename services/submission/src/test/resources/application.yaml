@@ -37,6 +37,7 @@ services:
           1: -4
           3: -3
           5: -2
+          6: -1
           8:  0
     verification:
       base-url: http://localhost:1234

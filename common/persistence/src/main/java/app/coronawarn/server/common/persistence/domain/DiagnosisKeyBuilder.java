@@ -24,18 +24,15 @@ import static app.coronawarn.server.common.persistence.domain.DiagnosisKeyBuilde
 import static app.coronawarn.server.common.persistence.domain.DiagnosisKeyBuilders.FinalBuilder;
 import static app.coronawarn.server.common.persistence.domain.DiagnosisKeyBuilders.RollingStartIntervalNumberBuilder;
 import static app.coronawarn.server.common.persistence.domain.DiagnosisKeyBuilders.TransmissionRiskLevelBuilder;
-import static app.coronawarn.server.common.persistence.domain.normalization.NormalizableField.*;
 import static app.coronawarn.server.common.persistence.domain.validation.ValidSubmissionTimestampValidator.SECONDS_PER_HOUR;
 
 import app.coronawarn.server.common.persistence.domain.normalization.DiagnosisKeyNormalizer;
-import app.coronawarn.server.common.persistence.domain.normalization.NormalizableField;
 import app.coronawarn.server.common.persistence.domain.normalization.NormalizableFields;
 import app.coronawarn.server.common.persistence.exception.InvalidDiagnosisKeyException;
 import app.coronawarn.server.common.protocols.external.exposurenotification.ReportType;
 import app.coronawarn.server.common.protocols.external.exposurenotification.TemporaryExposureKey;
 import java.time.Instant;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 import javax.validation.ConstraintViolation;
@@ -163,14 +160,14 @@ public class DiagnosisKeyBuilder implements
       submissionTimestamp = Instant.now().getEpochSecond() / SECONDS_PER_HOUR;
     }
 
-    NormalizableFields normalizedValuesMap = normalizeValues();
+    NormalizableFields normalizedValues = normalizeValues();
 
     var diagnosisKey = new DiagnosisKey(
         keyData, rollingStartIntervalNumber, rollingPeriod,
-        normalizedValuesMap.getTransmissionRiskLevel(),
+        normalizedValues.getTransmissionRiskLevel(),
         submissionTimestamp,
         consentToFederation, countryCode, visitedCountries, reportType,
-        normalizedValuesMap.getDaysSinceOnsetOfSymptoms());
+        normalizedValues.getDaysSinceOnsetOfSymptoms());
 
     return throwIfValidationFails(diagnosisKey);
   }

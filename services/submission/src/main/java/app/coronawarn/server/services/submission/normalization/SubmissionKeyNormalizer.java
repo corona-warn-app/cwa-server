@@ -25,12 +25,7 @@ import app.coronawarn.server.common.persistence.domain.normalization.Normalizabl
 import app.coronawarn.server.services.submission.config.SubmissionServiceConfig;
 import java.util.Map;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 public final class SubmissionKeyNormalizer implements DiagnosisKeyNormalizer{
-
-  private static final Logger logger = LoggerFactory.getLogger(SubmissionKeyNormalizer.class);
 
   private final Map<Integer, Integer> dsosFromTrlMap;
 
