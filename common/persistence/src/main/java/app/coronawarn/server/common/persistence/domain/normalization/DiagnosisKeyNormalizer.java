@@ -40,8 +40,8 @@ import java.util.Map;
 public interface DiagnosisKeyNormalizer {
 
   /**
-   * Given a map of fields from the {@link DiagnosisKey} and their respective values,
-   * return a new map containing the normalized values.
+   * Given a container of fields from the {@link DiagnosisKey} with their respective values,
+   * return a new container with the normalized values.
    */
-  Map<NormalizableField, Object> normalize(Map<NormalizableField, Object> fieldsAndValues);
+  NormalizableFields normalize(NormalizableFields fieldsAndValues);
 }

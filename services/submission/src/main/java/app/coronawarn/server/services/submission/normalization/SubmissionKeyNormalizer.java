@@ -20,14 +20,17 @@
 
 package app.coronawarn.server.services.submission.normalization;
 
-import java.util.Collections;
+import app.coronawarn.server.common.persistence.domain.normalization.DiagnosisKeyNormalizer;
+import app.coronawarn.server.common.persistence.domain.normalization.NormalizableFields;
+import app.coronawarn.server.services.submission.config.SubmissionServiceConfig;
 import java.util.Map;
 
-import app.coronawarn.server.common.persistence.domain.normalization.DiagnosisKeyNormalizer;
-import app.coronawarn.server.common.persistence.domain.normalization.NormalizableField;
-import app.coronawarn.server.services.submission.config.SubmissionServiceConfig;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public final class SubmissionKeyNormalizer implements DiagnosisKeyNormalizer{
+
+  private static final Logger logger = LoggerFactory.getLogger(SubmissionKeyNormalizer.class);
 
   private final Map<Integer, Integer> dsosFromTrlMap;
 
@@ -36,9 +39,25 @@ public final class SubmissionKeyNormalizer implements DiagnosisKeyNormalizer{
   }
 
   @Override
-  public Map<NormalizableField, Object> normalize(Map<NormalizableField, Object> fieldsAndValues) {
-    //TODO
-    return Collections.emptyMap();
+  public NormalizableFields normalize(NormalizableFields fieldsAndValues) {
+    int trlValue = fieldsAndValues.getTransmissionRiskLevel();
+    int dsos = fieldsAndValues.getDaysSinceOnsetOfSymptoms();
+
+    if(isMissing(trlValue) && isMissing(dsos)) {
+      throw new IllegalArgumentException("Normalization of key values failed. A key was provided with"
+          + " both 'transmission risk level' and 'days since onset of symptoms' fields missing");
+    }
+
+    if (isMissing(trlValue)) {
+      //TODO ...implement for trl
+    } else if(isMissing(dsos)) {
+      dsos = dsosFromTrlMap.getOrDefault(trlValue, 0); //TODO : What is the default? Should this pass validation?
+    }
+
+    return NormalizableFields.of(trlValue, dsos);
   }
 
+  private boolean isMissing(int fieldValue) {
+    return fieldValue <= 0;
+  }
 }
