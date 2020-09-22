@@ -25,12 +25,12 @@ import app.coronawarn.server.common.persistence.domain.normalization.Normalizabl
 import app.coronawarn.server.services.submission.config.SubmissionServiceConfig;
 import java.util.Map;
 
-public final class SubmissionKeyNormalizer implements DiagnosisKeyNormalizer{
+public final class SubmissionKeyNormalizer implements DiagnosisKeyNormalizer {
 
   private final Map<Integer, Integer> dsosFromTrlMap;
 
   public SubmissionKeyNormalizer(SubmissionServiceConfig config) {
-     dsosFromTrlMap = config.getTekPropertyDerivations().getDsosFromTrl();
+    dsosFromTrlMap = config.getTekFieldDerivations().getDsosFromTrl();
   }
 
   @Override
@@ -38,18 +38,20 @@ public final class SubmissionKeyNormalizer implements DiagnosisKeyNormalizer{
     int trlValue = fieldsAndValues.getTransmissionRiskLevel();
     int dsos = fieldsAndValues.getDaysSinceOnsetOfSymptoms();
 
-    if(isMissing(trlValue) && isMissing(dsos)) {
-      throw new IllegalArgumentException("Normalization of key values failed. A key was provided with"
-          + " both 'transmission risk level' and 'days since onset of symptoms' fields missing");
-    }
+    throwIfAllRequiredFieldsMissing(trlValue, dsos);
 
-    if (isMissing(trlValue)) {
-      //TODO ...implement for trl
-    } else if(isMissing(dsos)) {
-      dsos = dsosFromTrlMap.getOrDefault(trlValue, 0); //TODO : What is the default? Should this pass validation?
+    if (isMissing(dsos)) {
+      dsos = dsosFromTrlMap.getOrDefault(trlValue, 0);
     }
 
     return NormalizableFields.of(trlValue, dsos);
+  }
+
+  private void throwIfAllRequiredFieldsMissing(int trlValue, int dsos) {
+    if (isMissing(trlValue) && isMissing(dsos)) {
+      throw new IllegalArgumentException("Normalization of key values failed. A key was provided with"
+          + " both 'transmission risk level' and 'days since onset of symptoms' fields missing");
+    }
   }
 
   private boolean isMissing(int fieldValue) {

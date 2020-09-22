@@ -31,8 +31,7 @@ services:
       max-number-of-keys: 14
       supported-countries: DE,FR
       default-origin-country: DE
-      tek-property-derivations:
-        # Map containing the derived values of DSOS (days since onset of symptoms) from TRL (transmission risk level)
+      tek-field-derivations:
         dsos-from-trl:
           1: -4
           3: -3

@@ -143,8 +143,8 @@ public class SubmissionServiceConfig {
     this.payload = payload;
   }
 
-  public TEKPropertyDerivations getTekPropertyDerivations() {
-    return payload.getTekPropertyDerivations();
+  public TekFieldDerivations getTekFieldDerivations() {
+    return payload.getTekFieldDerivations();
   }
 
   public static class Payload {
@@ -155,7 +155,7 @@ public class SubmissionServiceConfig {
     @NotEmpty
     private String[] supportedCountries;
     private String defaultOriginCountry;
-    private TEKPropertyDerivations tekPropertyDerivations;
+    private TekFieldDerivations tekFieldDerivations;
 
     public Integer getMaxNumberOfKeys() {
       return maxNumberOfKeys;
@@ -181,12 +181,12 @@ public class SubmissionServiceConfig {
       this.defaultOriginCountry = defaultOriginCountry;
     }
 
-    public TEKPropertyDerivations getTekPropertyDerivations() {
-      return tekPropertyDerivations;
+    public TekFieldDerivations getTekFieldDerivations() {
+      return tekFieldDerivations;
     }
 
-    public void setTekPropertyDerivations(TEKPropertyDerivations tekPropertyDerivations) {
-      this.tekPropertyDerivations = tekPropertyDerivations;
+    public void setTekFieldDerivations(TekFieldDerivations tekFieldDerivations) {
+      this.tekFieldDerivations = tekFieldDerivations;
     }
   }
 
@@ -328,22 +328,25 @@ public class SubmissionServiceConfig {
     }
   }
 
-  public static class TEKPropertyDerivations {
+  /**
+   * Wrapper over properties defined in the application.yaml which map DSOS to TRL
+   * and vice-versa. These maps are used to derive each property from the other.
+   */
+  public static class TekFieldDerivations {
+    @NotNull
+    @NotEmpty
+    private Map<Integer, Integer> dsosFromTrl;
 
-      @NotNull
-      @NotEmpty
-      private Map<Integer, Integer> dsosFromTrl;
+    public Map<Integer, Integer> getDsosFromTrl() {
+      return dsosFromTrl;
+    }
 
-      public Map<Integer, Integer> getDsosFromTrl() {
-        return dsosFromTrl;
-      }
+    public void setDsosFromTrl(Map<Integer, Integer> dsosFromTrl) {
+      this.dsosFromTrl = dsosFromTrl;
+    }
 
-      public void setDsosFromTrl(Map<Integer, Integer> dsosFromTrl) {
-        this.dsosFromTrl = dsosFromTrl;
-      }
-
-      public Integer deriveDSOSFromTRL(Integer trlValue) {
-        return dsosFromTrl.get(trlValue);
-      }
+    public Integer deriveDsosFromTrl(Integer trlValue) {
+      return dsosFromTrl.get(trlValue);
+    }
   }
 }

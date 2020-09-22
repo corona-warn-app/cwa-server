@@ -373,7 +373,7 @@ class SubmissionControllerTest {
                    .forEach( pair -> {
                       int tekTRL = pair.getLeft().getTransmissionRiskLevel();
                       int dkDSOS = pair.getRight().getDaysSinceOnsetOfSymptoms();
-                      Integer expectedDsos = config.getTekPropertyDerivations().deriveDSOSFromTRL(tekTRL);
+                      Integer expectedDsos = config.getTekFieldDerivations().deriveDsosFromTrl(tekTRL);
                       if(expectedDsos == null)
                         System.out.println();
                       Assertions.assertEquals(expectedDsos, dkDSOS);
