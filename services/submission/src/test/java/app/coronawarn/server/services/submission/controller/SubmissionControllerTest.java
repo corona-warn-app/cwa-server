@@ -37,14 +37,19 @@ import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
 import static org.springframework.http.HttpStatus.METHOD_NOT_ALLOWED;
 import static org.springframework.http.HttpStatus.OK;
 
+import app.coronawarn.server.common.persistence.domain.DiagnosisKey;
+import app.coronawarn.server.common.persistence.service.DiagnosisKeyService;
+import app.coronawarn.server.common.protocols.external.exposurenotification.TemporaryExposureKey;
+import app.coronawarn.server.common.protocols.internal.SubmissionPayload;
+import app.coronawarn.server.services.submission.config.SubmissionServiceConfig;
+import app.coronawarn.server.services.submission.monitoring.SubmissionMonitor;
+import app.coronawarn.server.services.submission.verification.TanVerifier;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
-import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-
 import org.apache.commons.lang3.tuple.Pair;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -64,13 +69,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.ActiveProfiles;
 import com.google.protobuf.ByteString;
-import app.coronawarn.server.common.persistence.domain.DiagnosisKey;
-import app.coronawarn.server.common.persistence.service.DiagnosisKeyService;
-import app.coronawarn.server.common.protocols.external.exposurenotification.TemporaryExposureKey;
-import app.coronawarn.server.common.protocols.internal.SubmissionPayload;
-import app.coronawarn.server.services.submission.config.SubmissionServiceConfig;
-import app.coronawarn.server.services.submission.monitoring.SubmissionMonitor;
-import app.coronawarn.server.services.submission.verification.TanVerifier;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @ActiveProfiles({"disable-ssl-client-verification", "disable-ssl-client-verification-verify-hostname"})
@@ -375,7 +373,6 @@ class SubmissionControllerTest {
                    .forEach( pair -> {
                       int tekTRL = pair.getLeft().getTransmissionRiskLevel();
                       int dkDSOS = pair.getRight().getDaysSinceOnsetOfSymptoms();
-                      //TODO: Check config mapping and assert equality
                       Integer expectedDsos = config.getTekPropertyDerivations().deriveDSOSFromTRL(tekTRL);
                       Assertions.assertEquals(expectedDsos, dkDSOS);
                    });
