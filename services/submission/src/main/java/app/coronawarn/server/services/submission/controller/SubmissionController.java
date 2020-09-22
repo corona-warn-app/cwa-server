@@ -20,6 +20,8 @@
 
 package app.coronawarn.server.services.submission.controller;
 
+import static java.time.ZoneOffset.UTC;
+
 import app.coronawarn.server.common.persistence.domain.DiagnosisKey;
 import app.coronawarn.server.common.persistence.service.DiagnosisKeyService;
 import app.coronawarn.server.common.protocols.external.exposurenotification.TemporaryExposureKey;
@@ -30,8 +32,13 @@ import app.coronawarn.server.services.submission.validation.ValidSubmissionPaylo
 import app.coronawarn.server.services.submission.verification.TanVerifier;
 import io.micrometer.core.annotation.Timed;
 import java.security.SecureRandom;
+import java.time.Instant;
+import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Comparator;
 import java.util.List;
+import java.util.function.Predicate;
 import java.util.stream.IntStream;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -106,6 +113,7 @@ public class SubmissionController {
         deferredResult.setResult(ResponseEntity.status(HttpStatus.FORBIDDEN).build());
       } else {
         List<DiagnosisKey> diagnosisKeys = extractValidDiagnosisKeysFromPayload(submissionPayload);
+        checkDiagnosisKeysStructure(diagnosisKeys);
         diagnosisKeyService.saveDiagnosisKeys(padDiagnosisKeys(diagnosisKeys));
 
         deferredResult.setResult(ResponseEntity.ok().build());
@@ -143,6 +151,28 @@ public class SubmissionController {
     }
 
     return diagnosisKeys;
+  }
+
+  private void checkDiagnosisKeysStructure(List<DiagnosisKey> diagnosisKeys) {
+    diagnosisKeys.sort(Comparator.comparing(DiagnosisKey::getRollingStartIntervalNumber));
+    Predicate<DiagnosisKey> hasRiskLevel6 = diagnosisKey -> diagnosisKey.getTransmissionRiskLevel() == 6;
+
+    if (diagnosisKeys.stream().noneMatch(hasRiskLevel6)) {
+      logger.warn("Submission payload was sent with missing key having transmission risk level 6. {}",
+          Arrays.toString(diagnosisKeys.toArray()));
+    }
+
+    diagnosisKeys.stream().filter(hasRiskLevel6).findFirst().ifPresent(diagnosisKey -> {
+      long todayMidnightUtc = LocalDate
+          .ofInstant(Instant.now(), UTC)
+          .atStartOfDay()
+          .toEpochSecond(UTC) / (60 * 10);
+      if (diagnosisKey.getRollingStartIntervalNumber() == todayMidnightUtc) {
+        logger.warn("Submission payload was sent with a key having transmission risk level 6"
+                + " and rolling start interval number of today midnight. {}",
+            Arrays.toString(diagnosisKeys.toArray()));
+      }
+    });
   }
 
   private List<DiagnosisKey> padDiagnosisKeys(List<DiagnosisKey> diagnosisKeys) {
