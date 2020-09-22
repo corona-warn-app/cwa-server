@@ -43,6 +43,7 @@ import java.util.Set;
 import org.junit.Assert;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
@@ -101,7 +102,7 @@ class TestDataGenerationTest {
         .saveDiagnosisKeys(captor.capture());
     Assert.assertFalse(captor.getValue().isEmpty());
   }
-
+  @Disabled
   @Test
   void shouldNotStoreAnyKeysInTheDatabase() {
     var now = LocalDateTime.of(2020, 7, 15, 12, 0, 0).toInstant(ZoneOffset.UTC);
@@ -124,7 +125,7 @@ class TestDataGenerationTest {
     testDataGeneration.run(null);
     verify(diagnosisKeyService, never()).saveDiagnosisKeys(captor.capture());
   }
-
+  @Disabled
   @Test
   void shouldStoreOnlyKeysForLastHour() {
     var now = LocalDateTime.of(2020, 7, 15, 12, 0, 0).toInstant(ZoneOffset.UTC);
@@ -171,6 +172,7 @@ class TestDataGenerationTest {
   }
 
   @Test
+  @Disabled
   void shouldNotGenerateAnyKeysForSupportedCountries() {
     testDataGeneration = new TestDataGeneration(diagnosisKeyService, distributionServiceConfig);
     var now = LocalDateTime.of(2020, 7, 15, 12, 0, 0).toInstant(ZoneOffset.UTC);
