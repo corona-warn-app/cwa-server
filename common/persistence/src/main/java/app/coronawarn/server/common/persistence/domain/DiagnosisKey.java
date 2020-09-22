@@ -186,4 +186,15 @@ public class DiagnosisKey {
     result = 31 * result + Arrays.hashCode(keyData);
     return result;
   }
+
+  @Override
+  public String toString() {
+    return "DiagnosisKey{"
+        + "keyData=HIDDEN"
+        + ", rollingStartIntervalNumber=" + rollingStartIntervalNumber
+        + ", rollingPeriod=" + rollingPeriod
+        + ", transmissionRiskLevel=" + transmissionRiskLevel
+        + ", submissionTimestamp=" + submissionTimestamp
+        + '}';
+  }
 }
