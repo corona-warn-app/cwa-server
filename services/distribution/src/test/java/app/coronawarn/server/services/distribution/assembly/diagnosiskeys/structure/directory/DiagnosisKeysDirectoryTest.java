@@ -63,7 +63,7 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.boot.test.context.ConfigFileApplicationContextInitializer;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
-@Disabled("TODO")
+
 @EnableConfigurationProperties(value = DistributionServiceConfig.class)
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration(classes = {CryptoProvider.class, DistributionServiceConfig.class,
@@ -99,7 +99,8 @@ class DiagnosisKeysDirectoryTest {
 
     Set<String> expectedFiles = Set.of(
         join(separator, "diagnosis-keys", "country", "index"),
-        join(separator, "diagnosis-keys", "country", "DE", "date", "index")
+        join(separator, "diagnosis-keys", "country", "DE", "date", "index"),
+        join(separator, "diagnosis-keys", "country", distributionServiceConfig.getEuPackageName(), "date", "index")
     );
 
     Set<String> actualFiles = getFilePaths(outputFile, outputFile.getAbsolutePath());
@@ -114,7 +115,8 @@ class DiagnosisKeysDirectoryTest {
     Set<String> expectedFiles = Set.of(
         join(separator, "diagnosis-keys", "country", "index"),
         join(separator, "diagnosis-keys", "country", "DE", "date", "index"),
-        join(separator, "diagnosis-keys", "country", "FR", "date", "index")
+        join(separator, "diagnosis-keys", "country", "FR", "date", "index"),
+        join(separator, "diagnosis-keys", "country", distributionServiceConfig.getEuPackageName(), "date", "index")
     );
 
     Set<String> actualFiles = getFilePaths(outputFile, outputFile.getAbsolutePath());
@@ -129,9 +131,14 @@ class DiagnosisKeysDirectoryTest {
     buildDirectoryStructure(diagnosisKeys, "DE");
 
     Set<String> expectedFiles = Sets.newLinkedHashSet(join(separator, "diagnosis-keys", "country", "index"),
-        join(separator, "diagnosis-keys", "country", "DE", "date", "index"));
+        join(separator, "diagnosis-keys", "country", "DE", "date", "index"),
+        join(separator, "diagnosis-keys", "country", distributionServiceConfig.getEuPackageName(), "date", "index"));
     expectedFiles.addAll(generateExpectedDirectoryStructure("DE", "1970-01-03"));
     expectedFiles.addAll(generateExpectedDirectoryStructure("DE", "1970-01-04"));
+    expectedFiles
+        .addAll(generateExpectedDirectoryStructure(distributionServiceConfig.getEuPackageName(), "1970-01-03"));
+    expectedFiles
+        .addAll(generateExpectedDirectoryStructure(distributionServiceConfig.getEuPackageName(), "1970-01-04"));
 
     Set<String> actualFiles = getFilePaths(outputFile, outputFile.getAbsolutePath());
 
@@ -141,20 +148,24 @@ class DiagnosisKeysDirectoryTest {
   @Test
   void checkBuildsTheCorrectDirectoryStructureForDifferentVisitedCountries() {
     Collection<DiagnosisKey> diagnosisKeysOfCountries =
-        buildDiagnosisKeys(6, LocalDateTime.of(1970, 1, 3, 0, 0), 5, "FR", Set.of("DE", "FR"),
+        buildDiagnosisKeys(6, LocalDateTime.of(1970, 1, 3, 0, 0), 1, "FR", Set.of("DE", "FR"),
             ReportType.CONFIRMED_CLINICAL_DIAGNOSIS, 1);
 
-    buildDirectoryStructure(diagnosisKeysOfCountries, "DE", "FR", "DK");
+    buildDirectoryStructure(diagnosisKeysOfCountries, "DE", "FR");
 
     Set<String> expectedFiles = Sets.newLinkedHashSet(join(separator, "diagnosis-keys", "country", "index"),
         join(separator, "diagnosis-keys", "country", "DE", "date", "index"),
         join(separator, "diagnosis-keys", "country", "FR", "date", "index"),
-        join(separator, "diagnosis-keys", "country", "DK", "date", "index"));
+        join(separator, "diagnosis-keys", "country", distributionServiceConfig.getEuPackageName(), "date", "index"));
+
     expectedFiles.addAll(generateExpectedDirectoryStructure("DE", "1970-01-03"));
     expectedFiles.addAll(generateExpectedDirectoryStructure("DE", "1970-01-04"));
     expectedFiles.addAll(generateExpectedDirectoryStructure("FR", "1970-01-03"));
-    expectedFiles.addAll(generateExpectedDirectoryStructure("FR", "1970-01-04"));
 
+    expectedFiles
+        .addAll(generateExpectedDirectoryStructure(distributionServiceConfig.getEuPackageName(), "1970-01-03"));
+    expectedFiles
+        .addAll(generateExpectedDirectoryStructure(distributionServiceConfig.getEuPackageName(), "1970-01-04"));
     Set<String> actualFiles = getFilePaths(outputFile, outputFile.getAbsolutePath());
 
     assertThat(actualFiles).isEqualTo(amendWithChecksumFiles(expectedFiles));
@@ -163,20 +174,26 @@ class DiagnosisKeysDirectoryTest {
   @Test
   void checkBuildsTheCorrectDirectoryStructureForTwoCountriesWithDifferentKeys() {
     Collection<DiagnosisKey> diagnosisKeysOfCountries =
-        buildDiagnosisKeys(6, LocalDateTime.of(1970, 1, 3, 0, 0), 5, "FR", Set.of("DE"),
+        buildDiagnosisKeys(6, LocalDateTime.of(1970, 1, 3, 0, 0), 5, "FR", Set.of("FR", "DE"),
             ReportType.CONFIRMED_CLINICAL_DIAGNOSIS, 1);
-    diagnosisKeysOfCountries.addAll(buildDiagnosisKeys(6, LocalDateTime.of(1970, 1, 4, 0, 0), 5, "FR", Set.of("FR"),
+    diagnosisKeysOfCountries.addAll(buildDiagnosisKeys(6, LocalDateTime.of(1970, 1, 3, 0, 0), 5, "FR", Set.of("FR"),
         ReportType.CONFIRMED_CLINICAL_DIAGNOSIS, 1));
 
-    buildDirectoryStructure(diagnosisKeysOfCountries, "DE", "FR", "DK");
+    buildDirectoryStructure(diagnosisKeysOfCountries, "DE", "FR");
 
     Set<String> expectedFiles = Sets.newLinkedHashSet(join(separator, "diagnosis-keys", "country", "index"),
         join(separator, "diagnosis-keys", "country", "DE", "date", "index"),
         join(separator, "diagnosis-keys", "country", "FR", "date", "index"),
-        join(separator, "diagnosis-keys", "country", "DK", "date", "index"));
+        join(separator, "diagnosis-keys", "country", distributionServiceConfig.getEuPackageName(), "date", "index")
+    );
+
     expectedFiles.addAll(generateExpectedDirectoryStructure("DE", "1970-01-03"));
     expectedFiles.addAll(generateExpectedDirectoryStructure("DE", "1970-01-04"));
-    expectedFiles.addAll(generateExpectedDirectoryStructure("FR", "1970-01-04"));
+    expectedFiles.addAll(generateExpectedDirectoryStructure("FR", "1970-01-03"));
+    expectedFiles
+        .addAll(generateExpectedDirectoryStructure(distributionServiceConfig.getEuPackageName(), "1970-01-03"));
+    expectedFiles
+        .addAll(generateExpectedDirectoryStructure(distributionServiceConfig.getEuPackageName(), "1970-01-04"));
 
     Set<String> actualFiles = getFilePaths(outputFile, outputFile.getAbsolutePath());
 
@@ -186,7 +203,7 @@ class DiagnosisKeysDirectoryTest {
   @Test
   void checkBuildsTheCorrectDirectoryStructureForMultipleSupportedCountriesAndSingleVisitedCountry() {
     Collection<DiagnosisKey> diagnosisKeysOfCountries =
-        buildDiagnosisKeys(6, LocalDateTime.of(1970, 1, 3, 0, 0), 5, "FR", Set.of("FR"),
+        buildDiagnosisKeys(6, LocalDateTime.of(1970, 1, 3, 0, 0), 5, "DE", Set.of("DE", "FR"),
             ReportType.CONFIRMED_CLINICAL_DIAGNOSIS, 1);
 
     buildDirectoryStructure(diagnosisKeysOfCountries, "DE", "FR", "DK");
@@ -194,21 +211,33 @@ class DiagnosisKeysDirectoryTest {
     Set<String> expectedFiles = Sets.newLinkedHashSet(join(separator, "diagnosis-keys", "country", "index"),
         join(separator, "diagnosis-keys", "country", "DE", "date", "index"),
         join(separator, "diagnosis-keys", "country", "FR", "date", "index"),
-        join(separator, "diagnosis-keys", "country", "DK", "date", "index"));
+        join(separator, "diagnosis-keys", "country", "DK", "date", "index"),
+        join(separator, "diagnosis-keys", "country", distributionServiceConfig.getEuPackageName(), "date", "index"));
+    expectedFiles.addAll(generateExpectedDirectoryStructure("DE", "1970-01-03"));
+    expectedFiles.addAll(generateExpectedDirectoryStructure("DE", "1970-01-04"));
     expectedFiles.addAll(generateExpectedDirectoryStructure("FR", "1970-01-03"));
-    expectedFiles.addAll(generateExpectedDirectoryStructure("FR", "1970-01-04"));
+    expectedFiles
+        .addAll(generateExpectedDirectoryStructure(distributionServiceConfig.getEuPackageName(), "1970-01-03"));
+    expectedFiles
+        .addAll(generateExpectedDirectoryStructure(distributionServiceConfig.getEuPackageName(), "1970-01-04"));
 
     Set<String> actualFiles = getFilePaths(outputFile, outputFile.getAbsolutePath());
+
+    Set<String> actualminusexpected = new HashSet<>(actualFiles);
+    actualminusexpected.removeAll(amendWithChecksumFiles(expectedFiles));
+
+    Set<String> expectedminusactual = new HashSet<>(expectedFiles);
+    expectedminusactual.removeAll(actualFiles);
 
     assertThat(actualFiles).isEqualTo(amendWithChecksumFiles(expectedFiles));
   }
 
-  private void buildDirectoryStructure(Collection<DiagnosisKey> keyseparator, String... supportedCountries) {
+  private void buildDirectoryStructure(Collection<DiagnosisKey> keys, String... supportedCountries) {
     DistributionServiceConfig serviceConfigSpy = spy(distributionServiceConfig);
     when(serviceConfigSpy.getSupportedCountries()).thenReturn(supportedCountries);
 
     DiagnosisKeyBundler bundler = new ProdDiagnosisKeyBundler(serviceConfigSpy, sharingPolicyChecker);
-    bundler.setDiagnosisKeys(keyseparator, LocalDateTime.of(1970, 1, 5, 0, 0));
+    bundler.setDiagnosisKeys(keys, LocalDateTime.of(1970, 1, 5, 0, 0));
 
     Directory<WritableOnDisk> directory = new DiagnosisKeysDirectory(bundler, cryptoProvider, serviceConfigSpy);
     parentDirectory.addWritable(directory);
@@ -228,9 +257,17 @@ class DiagnosisKeysDirectoryTest {
   }
 
   private Set<String> generateExpectedDirectoryStructure(String country, String date) {
-    Set<String> directoryStructure = IntStream.range(0, 24).mapToObj(Integer::toString)
-        .map(hour -> join(separator, "diagnosis-keys", "country", country, "date", date, "hour", hour, "index"))
-        .collect(Collectors.toSet());
+    Set<String> directoryStructure = new HashSet<>();
+
+    if (country.equals("DE") || country.equals(distributionServiceConfig.getEuPackageName())) {
+      directoryStructure = IntStream.range(0, 24).mapToObj(Integer::toString)
+          .map(hour -> join(separator, "diagnosis-keys", "country", country, "date", date, "hour", hour, "index"))
+          .collect(Collectors.toSet());
+
+    } else {
+      directoryStructure.add(join(separator, "diagnosis-keys", "country", country, "date", date, "hour", "0", "index"));
+    }
+
     directoryStructure.add(join(separator, "diagnosis-keys", "country", country, "date", date, "index"));
     directoryStructure.add(join(separator, "diagnosis-keys", "country", country, "date", date, "hour", "index"));
     return directoryStructure;
