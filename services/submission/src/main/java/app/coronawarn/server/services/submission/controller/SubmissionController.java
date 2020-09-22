@@ -72,16 +72,22 @@ public class SubmissionController {
   private final FakeDelayManager fakeDelayManager;
   private final SubmissionServiceConfig submissionServiceConfig;
 
-  SubmissionController(
-      DiagnosisKeyService diagnosisKeyService, TanVerifier tanVerifier, FakeDelayManager fakeDelayManager,
-      SubmissionServiceConfig submissionServiceConfig, SubmissionMonitor submissionMonitor) {
+  SubmissionController(DiagnosisKeyService diagnosisKeyService, TanVerifier tanVerifier,
+      FakeDelayManager fakeDelayManager, SubmissionServiceConfig submissionServiceConfig,
+      SubmissionMonitor submissionMonitor) {
     this.diagnosisKeyService = diagnosisKeyService;
     this.tanVerifier = tanVerifier;
     this.submissionMonitor = submissionMonitor;
     this.fakeDelayManager = fakeDelayManager;
     this.submissionServiceConfig = submissionServiceConfig;
-    retentionDays = submissionServiceConfig.getRetentionDays();
-    randomKeyPaddingMultiplier = submissionServiceConfig.getRandomKeyPaddingMultiplier();
+    this.retentionDays = submissionServiceConfig.getRetentionDays();
+    this.randomKeyPaddingMultiplier = submissionServiceConfig.getRandomKeyPaddingMultiplier();
+  }
+
+  private static byte[] generateRandomKeyData() {
+    byte[] randomKeyData = new byte[16];
+    new SecureRandom().nextBytes(randomKeyData);
+    return randomKeyData;
   }
 
   /**
@@ -102,7 +108,7 @@ public class SubmissionController {
   }
 
   private DeferredResult<ResponseEntity<Void>> buildRealDeferredResult(SubmissionPayload submissionPayload,
-                                                                       String tan) {
+      String tan) {
     DeferredResult<ResponseEntity<Void>> deferredResult = new DeferredResult<>();
 
     StopWatch stopWatch = new StopWatch();
@@ -193,11 +199,5 @@ public class SubmissionController {
           .forEach(paddedDiagnosisKeys::add);
     });
     return paddedDiagnosisKeys;
-  }
-
-  private static byte[] generateRandomKeyData() {
-    byte[] randomKeyData = new byte[16];
-    new SecureRandom().nextBytes(randomKeyData);
-    return randomKeyData;
   }
 }
