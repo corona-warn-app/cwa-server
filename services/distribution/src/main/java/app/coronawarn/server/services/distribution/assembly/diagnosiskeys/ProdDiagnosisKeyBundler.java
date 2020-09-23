@@ -101,9 +101,8 @@ public class ProdDiagnosisKeyBundler extends DiagnosisKeyBundler {
         }));
 
     Map<LocalDateTime, List<DiagnosisKey>> euPackageList = new HashMap<>();
-    euPackage.forEach((distributionDateTime, diagnosisKeys) -> {
-      euPackageList.put(distributionDateTime, new ArrayList<>(diagnosisKeys));
-    });
+    euPackage.forEach((distributionDateTime, diagnosisKeys) ->
+        euPackageList.put(distributionDateTime, new ArrayList<>(diagnosisKeys)));
     distributableDiagnosisKeys.put(euPackageName, euPackageList);
   }
 

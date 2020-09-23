@@ -21,7 +21,6 @@
 package app.coronawarn.server.common.persistence.domain;
 
 import app.coronawarn.server.common.protocols.external.exposurenotification.ReportType;
-import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 import javax.validation.constraints.Size;
