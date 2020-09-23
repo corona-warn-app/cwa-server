@@ -20,6 +20,7 @@
 
 package app.coronawarn.server.common.persistence.domain;
 
+import app.coronawarn.server.common.persistence.domain.normalization.DiagnosisKeyNormalizer;
 import app.coronawarn.server.common.protocols.external.exposurenotification.ReportType;
 import app.coronawarn.server.common.protocols.external.exposurenotification.TemporaryExposureKey;
 import java.util.List;
@@ -77,7 +78,7 @@ interface DiagnosisKeyBuilders {
      * @param transmissionRiskLevel risk of transmission associated with the person this key came from.
      * @return this Builder instance.
      */
-    FinalBuilder withTransmissionRiskLevel(int transmissionRiskLevel);
+    FinalBuilder withTransmissionRiskLevel(Integer transmissionRiskLevel);
   }
 
   interface FinalBuilder {
@@ -108,7 +109,14 @@ interface DiagnosisKeyBuilders {
 
     FinalBuilder withReportType(ReportType reportType);
 
-    FinalBuilder withDaysSinceOnsetOfSymptoms(int daysSinceOnsetOfSymptoms);
+    FinalBuilder withDaysSinceOnsetOfSymptoms(Integer daysSinceOnsetOfSymptoms);
+
+    /**
+     * Field normalization is applied after all values have been provided, but prior
+     * to construction of the {@link DiagnosisKey}. For flexibility purpose, providing a
+     * normalizer object is optional.
+     */
+    FinalBuilder withFieldNormalization(DiagnosisKeyNormalizer fieldNormalizer);
 
     /**
      * Builds a {@link DiagnosisKey} instance. If no submission timestamp has been specified it will be set to "now" as
