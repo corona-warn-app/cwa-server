@@ -40,6 +40,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
+import app.coronawarn.server.services.download.normalization.FederationKeyNormalizer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
@@ -54,6 +55,7 @@ public class FederationBatchProcessor {
   private final FederationBatchInfoService batchInfoService;
   private final DiagnosisKeyService diagnosisKeyService;
   private final FederationGatewayClient federationGatewayClient;
+  private final DownloadServiceConfig config;
 
   /**
    * Constructor.
@@ -61,12 +63,15 @@ public class FederationBatchProcessor {
    * @param batchInfoService        A {@link FederationBatchInfoService} for accessing diagnosis key batch information.
    * @param diagnosisKeyService     A {@link DiagnosisKeyService} for storing retrieved diagnosis keys.
    * @param federationGatewayClient A {@link FederationGatewayClient} for retrieving federation diagnosis key batches.
+   * @param config                  A {@link DownloadServiceConfig} for retrieving federation configuration.
    */
   public FederationBatchProcessor(FederationBatchInfoService batchInfoService,
-      DiagnosisKeyService diagnosisKeyService, FederationGatewayClient federationGatewayClient) {
+      DiagnosisKeyService diagnosisKeyService, FederationGatewayClient federationGatewayClient,
+      DownloadServiceConfig config) {
     this.batchInfoService = batchInfoService;
     this.diagnosisKeyService = diagnosisKeyService;
     this.federationGatewayClient = federationGatewayClient;
+    this.config = config;
   }
 
   /**
@@ -149,7 +154,9 @@ public class FederationBatchProcessor {
   private List<DiagnosisKey> convertDiagnosisKeys(BatchDownloadResponse batchDownloadResponse) {
     return batchDownloadResponse.getDiagnosisKeyBatch().getKeysList()
         .stream()
-        .map(diagnosisKey -> DiagnosisKey.builder().fromFederationDiagnosisKey(diagnosisKey).build())
+        .map(diagnosisKey -> DiagnosisKey.builder().fromFederationDiagnosisKey(diagnosisKey)
+            .withFieldNormalization(new FederationKeyNormalizer(config.getTekFieldDerivations().getTrlFromDsos()))
+            .build())
         .collect(toList());
   }
 }

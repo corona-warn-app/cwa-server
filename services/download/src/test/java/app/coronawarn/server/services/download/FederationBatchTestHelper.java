@@ -47,7 +47,19 @@ public class FederationBatchTestHelper {
             .build();
   }
 
-  public static Optional<BatchDownloadResponse> createBatchDownloadResponse(String batchTag, Optional<String> nextBatchTag) {
+  public static DiagnosisKey createDiagnosisKey(String keyData, int daysSinceOnsetOfSymptoms) {
+    return
+        DiagnosisKey.newBuilder()
+            .setKeyData(ByteString.copyFromUtf8(keyData))
+            .addVisitedCountries("DE")
+            .setRollingStartIntervalNumber(1596153600 / 600)
+            .setRollingPeriod(144)
+            .setDaysSinceOnsetOfSymptoms(daysSinceOnsetOfSymptoms)
+            .build();
+  }
+
+  public static Optional<BatchDownloadResponse> createBatchDownloadResponse(String batchTag,
+      Optional<String> nextBatchTag) {
     BatchDownloadResponse gatewayResponse = mock(BatchDownloadResponse.class);
     when(gatewayResponse.getBatchTag()).thenReturn(batchTag);
     when(gatewayResponse.getNextBatchTag()).thenReturn(nextBatchTag);

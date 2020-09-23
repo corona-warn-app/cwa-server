@@ -104,7 +104,8 @@ public class DiagnosisKeyBuilder implements
         .withRollingPeriod(federationDiagnosisKey.getRollingPeriod())
         .withCountryCode(federationDiagnosisKey.getOrigin())
         .withReportType(federationDiagnosisKey.getReportType())
-        .withVisitedCountries(federationDiagnosisKey.getVisitedCountriesList());
+        .withVisitedCountries(federationDiagnosisKey.getVisitedCountriesList())
+        .withDaysSinceOnsetOfSymptoms(federationDiagnosisKey.getDaysSinceOnsetOfSymptoms());
   }
 
   @Override
