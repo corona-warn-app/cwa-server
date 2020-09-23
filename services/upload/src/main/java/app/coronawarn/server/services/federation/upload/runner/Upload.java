@@ -84,7 +84,15 @@ public class Upload implements ApplicationRunner {
                 ByteString.copyFrom(diagnosisKey.getKeyData()).toStringUtf8()))
             .collect(Collectors.toList()).get(index))
         .collect(Collectors.toList());
-    logger.error("Error on {} keys, marking them for retry", retryKeys.size());
+
+    if (result.getStatus409().size() > 0 || result.getStatus500().size() > 0) {
+      logger.info("Some keys were not processed correctly");
+      logger.info("{} keys marked with status 201 (Successful)", result.getStatus201().size());
+      logger.info("{} keys marked with status 409 (Conflict)", result.getStatus409().size());
+      logger.info("{} keys marked with status 500 (Retry)", result.getStatus500().size());
+    } else {
+      logger.info("All keys processed successfully");
+    }
     return retryKeys;
   }
 
