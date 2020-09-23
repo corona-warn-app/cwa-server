@@ -51,11 +51,11 @@ import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
 /**
- * Generates random diagnosis keys for the time frame between the last diagnosis key in the database and now
- * and writes them to the database. If there are no diagnosis keys in the database yet, then random diagnosis keys
- * for the time frame between current hour and the beginning of the retention period (14 days ago) will be
- * generated. The average number of exposure keys to be generated per hour is configurable in the application properties
- * (profile = {@code testdata}).
+ * Generates random diagnosis keys for the time frame between the last diagnosis key in the database and now and writes
+ * them to the database. If there are no diagnosis keys in the database yet, then random diagnosis keys for the time
+ * frame between current hour and the beginning of the retention period (14 days ago) will be generated. The average
+ * number of exposure keys to be generated per hour is configurable in the application properties (profile = {@code
+ * testdata}).
  */
 @Component
 @Order(-1)
@@ -123,7 +123,7 @@ public class TestDataGeneration implements ApplicationRunner {
       logger.debug("Generating diagnosis keys  [{}] between {} and {}...", country, startTimestamp, endTimestamp);
       List<DiagnosisKey> newDiagnosisKeys = LongStream.rangeClosed(startTimestamp, endTimestamp)
           .mapToObj(submissionTimestamp -> IntStream.range(0, poisson.sample())
-              .mapToObj(ignoredValue -> generateDiagnosisKey(submissionTimestamp,country))
+              .mapToObj(ignoredValue -> generateDiagnosisKey(submissionTimestamp, country))
               .collect(Collectors.toList()))
           .flatMap(List::stream)
           .collect(Collectors.toList());
@@ -150,8 +150,8 @@ public class TestDataGeneration implements ApplicationRunner {
   }
 
   /**
-   * Returns the timestamp (in 1 hour intervals since epoch) of the current hour. Example: If called at 15:38 UTC,
-   * this function would return the timestamp for today 15:00 UTC.
+   * Returns the timestamp (in 1 hour intervals since epoch) of the current hour. Example: If called at 15:38 UTC, this
+   * function would return the timestamp for today 15:00 UTC.
    */
   private long getGeneratorEndTimestamp() {
     return (TimeUtils.getNow().getEpochSecond() / ONE_HOUR_INTERVAL_SECONDS);
@@ -168,9 +168,10 @@ public class TestDataGeneration implements ApplicationRunner {
   }
 
   /**
-   * Either returns the list of all possible visited countries or only current distribution
-   * This ensure that when test generation runs for a country (e.g. FR) all keys in the
-   * distribution will contain FR in the vistied_countries array.
+   * Either returns the list of all possible visited countries or only current distribution This ensure that when test
+   * generation runs for a country (e.g. FR) all keys in the distribution will contain FR in the vistied_countries
+   * array.
+   *
    * @return
    */
   private Set<String> generateSetOfVisitedCountries(String distributionCountry) {
