@@ -32,7 +32,6 @@ import app.coronawarn.server.common.persistence.domain.DiagnosisKey;
 import app.coronawarn.server.common.persistence.repository.DiagnosisKeyRepository;
 import app.coronawarn.server.common.persistence.repository.FederationBatchInfoRepository;
 import app.coronawarn.server.common.protocols.external.exposurenotification.DiagnosisKeyBatch;
-import app.coronawarn.server.services.download.FederationBatchTestHelper;
 import com.github.tomakehurst.wiremock.WireMockServer;
 import com.github.tomakehurst.wiremock.http.HttpHeader;
 import com.github.tomakehurst.wiremock.http.HttpHeaders;
@@ -42,37 +41,33 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpStatus;
+import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
 
 /**
- * This integration test is responsible for testing the runners for download and retention policy.
- * The Spring profile "federation-download-integration" enables the test data generation in
- * /db/testdata/V99__createTestDataForIntegrationTest.sql via the application-federation-download-integration.yaml.
- *
- * The sql script for the test data contains
- * * a batch info for an expired batch that should be deleted by the retention policy
- * * and two batch info from the current date of status 'ERROR', which should be reprocessed.
- * One of them will be successfully reprocessed and the other one will fail. The WireMockServer is configured
- * accordingly.
- *
- * The WireMockServer will additionally return a series of three batches, where the first batch of the
- * corresponding date is batch1, that  can be processed successfully. Batch2 is returned by an explicit
- * call to its batch tag and can be processed successfully as well. Its successor batch3 fails with a 404 Not Found.
- *
- * Hence, after the execution of both runners, the federation_batch_info table should be the following:
- * * "expired_batch_tag" is deleted
- * * "retry_batch_tag_successful" has state "PROCESSED"
- * * "retry_batch_tag_fail" has state "ERROR_WONT_RETRY"
- * * "batch1_tag" has state "PROCESSED"
- * * "batch2_tag" has state "PROCESSED"
- * * "batch3_tag" has state "ERROR"
- * * no batch has state "UNPROCESSED"
- *
+ * This integration test is responsible for testing the runners for download and retention policy. The Spring profile
+ * "federation-download-integration" enables the test data generation in /db/testdata/V99__createTestDataForIntegrationTest.sql
+ * via the application-federation-download-integration.yaml.
+ * <p>
+ * The sql script for the test data contains * a batch info for an expired batch that should be deleted by the retention
+ * policy * and two batch info from the current date of status 'ERROR', which should be reprocessed. One of them will be
+ * successfully reprocessed and the other one will fail. The WireMockServer is configured accordingly.
+ * <p>
+ * The WireMockServer will additionally return a series of three batches, where the first batch of the corresponding
+ * date is batch1, that  can be processed successfully. Batch2 is returned by an explicit call to its batch tag and can
+ * be processed successfully as well. Its successor batch3 fails with a 404 Not Found.
+ * <p>
+ * Hence, after the execution of both runners, the federation_batch_info table should be the following: *
+ * "expired_batch_tag" is deleted * "retry_batch_tag_successful" has state "PROCESSED" * "retry_batch_tag_fail" has
+ * state "ERROR_WONT_RETRY" * "batch1_tag" has state "PROCESSED" * "batch2_tag" has state "PROCESSED" * "batch3_tag" has
+ * state "ERROR" * no batch has state "UNPROCESSED"
+ * <p>
  * The diagnosis_key table should contain the data that correspond to the three batches with state "PROCESSED":
  * BATCH1_DATA, BATCH2_DATA and RETRY_BATCH_SUCCESSFUL_DATA
  */
 @SpringBootTest
 @ActiveProfiles("federation-download-integration")
+@DirtiesContext
 class DownloadIntegrationTest {
 
   public static final String BATCH1_DATA = "0123456789ABCDED";

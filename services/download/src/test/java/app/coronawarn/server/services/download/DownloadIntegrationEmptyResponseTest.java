@@ -26,6 +26,7 @@ import static com.github.tomakehurst.wiremock.client.WireMock.equalTo;
 import static com.github.tomakehurst.wiremock.client.WireMock.get;
 import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.options;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.reset;
 import static org.springframework.http.HttpHeaders.CONTENT_TYPE;
 
 import app.coronawarn.server.common.persistence.domain.DiagnosisKey;
@@ -37,18 +38,19 @@ import com.github.tomakehurst.wiremock.http.HttpHeader;
 import com.github.tomakehurst.wiremock.http.HttpHeaders;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpStatus;
+import org.springframework.test.annotation.DirtiesContext;
 
 /**
  * This integration test is responsible for testing the runners for download and retention policy.
  * <p>
  * The WireMockServer will return a series of three batches, where the first batch of the corresponding
  * date is batch1, that can be processed successfully. Batch2 is returned by an explicit call to its batch tag, but
- * cannot be processed since the response is empty (like it is the case on EFGS). Its successor batch3 fails with
- * a 404 Not Found.
+ * the response is empty (like it is the case on EFGS). Its successor batch3 fails with a 404 Not Found.
  * <p>
  * Hence, after the execution of both runners, the federation_batch_info table should be the following:
  * * "batch1_tag" has state "PROCESSED"
@@ -59,6 +61,7 @@ import org.springframework.http.HttpStatus;
  * The diagnosis_key table should contain the data of batch1.
  */
 @SpringBootTest
+@DirtiesContext
 class DownloadIntegrationEmptyResponseTest {
 
   public static final String BATCH1_DATA = "0123456789ABCDED";
@@ -102,7 +105,6 @@ class DownloadIntegrationEmptyResponseTest {
                 aResponse()
                     .withStatus(HttpStatus.OK.value())
                     .withHeaders(batch2Headers)));
-    //.withBody((byte[]) null)));
     server.stubFor(
         get(anyUrl())
             .withHeader("batchTag", equalTo(BATCH3_TAG))
@@ -128,8 +130,8 @@ class DownloadIntegrationEmptyResponseTest {
   void testDownloadRunSuccessfully() {
     assertThat(federationBatchInfoRepository.findAll()).hasSize(3);
     assertThat(federationBatchInfoRepository.findByStatus("UNPROCESSED")).isEmpty();
-    assertThat(federationBatchInfoRepository.findByStatus("PROCESSED")).hasSize(1);
-    assertThat(federationBatchInfoRepository.findByStatus("ERROR")).hasSize(2);
+    assertThat(federationBatchInfoRepository.findByStatus("PROCESSED")).hasSize(2);
+    assertThat(federationBatchInfoRepository.findByStatus("ERROR")).hasSize(1);
 
     Iterable<DiagnosisKey> diagnosisKeys = diagnosisKeyRepository.findAll();
     assertThat(diagnosisKeys)

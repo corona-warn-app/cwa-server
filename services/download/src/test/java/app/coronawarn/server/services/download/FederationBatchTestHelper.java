@@ -23,7 +23,6 @@ package app.coronawarn.server.services.download;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-import app.coronawarn.server.common.federation.client.download.BatchDownloadResponse;
 import app.coronawarn.server.common.protocols.external.exposurenotification.DiagnosisKey;
 import app.coronawarn.server.common.protocols.external.exposurenotification.DiagnosisKeyBatch;
 import com.google.protobuf.ByteString;
@@ -47,11 +46,12 @@ public class FederationBatchTestHelper {
             .build();
   }
 
-  public static Optional<BatchDownloadResponse> createBatchDownloadResponse(String batchTag, Optional<String> nextBatchTag) {
+  public static BatchDownloadResponse createBatchDownloadResponse(String batchTag,
+      Optional<String> nextBatchTag) {
     BatchDownloadResponse gatewayResponse = mock(BatchDownloadResponse.class);
     when(gatewayResponse.getBatchTag()).thenReturn(batchTag);
     when(gatewayResponse.getNextBatchTag()).thenReturn(nextBatchTag);
     when(gatewayResponse.getDiagnosisKeyBatch()).thenReturn(Optional.of(createDiagnosisKeyBatch("0123456789ABCDEF")));
-    return Optional.of(gatewayResponse);
+    return gatewayResponse;
   }
 }
