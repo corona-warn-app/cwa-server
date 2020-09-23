@@ -33,6 +33,7 @@ import app.coronawarn.server.common.protocols.external.exposurenotification.Repo
 import app.coronawarn.server.common.protocols.external.exposurenotification.TemporaryExposureKey;
 import java.time.Instant;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 import javax.validation.ConstraintViolation;
@@ -191,12 +192,14 @@ public class DiagnosisKeyBuilder implements
    * If a {@link DiagnosisKeyNormalizer} object was configured in this builder,
    * apply normalization where possibile, and return a container with the new
    * values. Otherwise return a container with the original unchanged values.
+   * For boxed types, primitive zero like values will be chosen if they have not been
+   * provided by the client of the builder.
    */
   private NormalizableFields normalizeValues() {
-    NormalizableFields fieldsAndValues = NormalizableFields.of(transmissionRiskLevel, daysSinceOnsetOfSymptoms);
     if (fieldNormalizer != null) {
-      return fieldNormalizer.normalize(fieldsAndValues);
+      return fieldNormalizer.normalize(NormalizableFields.of(transmissionRiskLevel, daysSinceOnsetOfSymptoms));
     }
-    return fieldsAndValues;
+    return NormalizableFields.of(Objects.isNull(transmissionRiskLevel) ? 0 : transmissionRiskLevel,
+        Objects.isNull(daysSinceOnsetOfSymptoms) ? 0 : daysSinceOnsetOfSymptoms);
   }
 }

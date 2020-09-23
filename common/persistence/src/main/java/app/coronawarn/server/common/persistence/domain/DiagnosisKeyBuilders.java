@@ -20,7 +20,6 @@
 
 package app.coronawarn.server.common.persistence.domain;
 
-import app.coronawarn.server.common.persistence.domain.DiagnosisKeyBuilders.FinalBuilder;
 import app.coronawarn.server.common.persistence.domain.normalization.DiagnosisKeyNormalizer;
 import app.coronawarn.server.common.protocols.external.exposurenotification.ReportType;
 import app.coronawarn.server.common.protocols.external.exposurenotification.TemporaryExposureKey;

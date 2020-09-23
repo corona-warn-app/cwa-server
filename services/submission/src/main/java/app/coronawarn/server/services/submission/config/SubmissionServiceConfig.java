@@ -346,7 +346,8 @@ public class SubmissionServiceConfig {
     }
 
     public Integer deriveDsosFromTrl(Integer trlValue) {
-      return dsosFromTrl.get(trlValue);
+      // the derivation logic must be refined to take into account missing trl values.
+      return dsosFromTrl.getOrDefault(trlValue, 0);
     }
   }
 }

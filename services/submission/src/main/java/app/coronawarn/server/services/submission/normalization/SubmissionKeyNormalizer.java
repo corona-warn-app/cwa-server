@@ -24,8 +24,6 @@ import app.coronawarn.server.common.persistence.domain.normalization.DiagnosisKe
 import app.coronawarn.server.common.persistence.domain.normalization.NormalizableFields;
 import app.coronawarn.server.services.submission.config.SubmissionServiceConfig;
 import app.coronawarn.server.services.submission.config.SubmissionServiceConfig.TekFieldDerivations;
-
-import java.util.Map;
 import java.util.Objects;
 
 public final class SubmissionKeyNormalizer implements DiagnosisKeyNormalizer {
