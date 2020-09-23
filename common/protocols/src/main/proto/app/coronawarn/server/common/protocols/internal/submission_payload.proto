@@ -3,7 +3,6 @@ package app.coronawarn.server.common.protocols.internal;
 option java_package = "app.coronawarn.server.common.protocols.internal";
 option java_multiple_files = true;
 import "app/coronawarn/server/common/protocols/external/exposurenotification/temporary_exposure_key_export.proto";
-import "app/coronawarn/server/common/protocols/external/exposurenotification/diagnosis_key_batch.proto";
 
 message SubmissionPayload {
   repeated app.coronawarn.server.common.protocols.external.exposurenotification.TemporaryExposureKey keys = 1;
