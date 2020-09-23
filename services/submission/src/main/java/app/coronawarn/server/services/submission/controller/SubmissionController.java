@@ -28,6 +28,7 @@ import app.coronawarn.server.common.protocols.external.exposurenotification.Temp
 import app.coronawarn.server.common.protocols.internal.SubmissionPayload;
 import app.coronawarn.server.services.submission.config.SubmissionServiceConfig;
 import app.coronawarn.server.services.submission.monitoring.SubmissionMonitor;
+import app.coronawarn.server.services.submission.normalization.SubmissionKeyNormalizer;
 import app.coronawarn.server.services.submission.validation.ValidSubmissionPayload;
 import app.coronawarn.server.services.submission.verification.TanVerifier;
 import io.micrometer.core.annotation.Timed;
@@ -147,6 +148,7 @@ public class SubmissionController {
           .withVisitedCountries(submissionPayload.getVisitedCountriesList())
           .withCountryCode(originCountry)
           .withConsentToFederation(submissionPayload.getConsentToFederation())
+          .withFieldNormalization(new SubmissionKeyNormalizer(submissionServiceConfig))
           .build();
 
       if (diagnosisKey.isYoungerThanRetentionThreshold(retentionDays)) {
