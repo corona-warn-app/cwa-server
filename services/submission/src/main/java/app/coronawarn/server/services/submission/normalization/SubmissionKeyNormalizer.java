@@ -23,38 +23,41 @@ package app.coronawarn.server.services.submission.normalization;
 import app.coronawarn.server.common.persistence.domain.normalization.DiagnosisKeyNormalizer;
 import app.coronawarn.server.common.persistence.domain.normalization.NormalizableFields;
 import app.coronawarn.server.services.submission.config.SubmissionServiceConfig;
+import app.coronawarn.server.services.submission.config.SubmissionServiceConfig.TekFieldDerivations;
+
 import java.util.Map;
+import java.util.Objects;
 
 public final class SubmissionKeyNormalizer implements DiagnosisKeyNormalizer {
 
-  private final Map<Integer, Integer> dsosFromTrlMap;
+  private TekFieldDerivations tekFieldMappings;
 
   public SubmissionKeyNormalizer(SubmissionServiceConfig config) {
-    dsosFromTrlMap = config.getTekFieldDerivations().getDsosFromTrl();
+    tekFieldMappings = config.getTekFieldDerivations();
   }
 
   @Override
   public NormalizableFields normalize(NormalizableFields fieldsAndValues) {
-    int trlValue = fieldsAndValues.getTransmissionRiskLevel();
-    int dsos = fieldsAndValues.getDaysSinceOnsetOfSymptoms();
+    Integer trlValue = fieldsAndValues.getTransmissionRiskLevel();
+    Integer dsos = fieldsAndValues.getDaysSinceOnsetOfSymptoms();
 
     throwIfAllRequiredFieldsMissing(trlValue, dsos);
 
     if (isMissing(dsos)) {
-      dsos = dsosFromTrlMap.getOrDefault(trlValue, 0);
+      dsos = tekFieldMappings.deriveDsosFromTrl(trlValue);
     }
 
     return NormalizableFields.of(trlValue, dsos);
   }
 
-  private void throwIfAllRequiredFieldsMissing(int trlValue, int dsos) {
+  private void throwIfAllRequiredFieldsMissing(Integer trlValue, Integer dsos) {
     if (isMissing(trlValue) && isMissing(dsos)) {
       throw new IllegalArgumentException("Normalization of key values failed. A key was provided with"
-          + " both 'transmission risk level' and 'days since onset of symptoms' fields missing");
+          + " both 'transmissionRiskLevel' and 'daysSinceOnsetOfSymptoms' fields missing");
     }
   }
 
-  private boolean isMissing(int fieldValue) {
-    return fieldValue <= 0;
+  private boolean isMissing(Integer fieldValue) {
+    return Objects.isNull(fieldValue);
   }
 }

@@ -79,7 +79,7 @@ interface DiagnosisKeyBuilders {
      * @param transmissionRiskLevel risk of transmission associated with the person this key came from.
      * @return this Builder instance.
      */
-    FinalBuilder withTransmissionRiskLevel(int transmissionRiskLevel);
+    FinalBuilder withTransmissionRiskLevel(Integer transmissionRiskLevel);
   }
 
   interface FinalBuilder {
@@ -110,7 +110,7 @@ interface DiagnosisKeyBuilders {
 
     FinalBuilder withReportType(ReportType reportType);
 
-    FinalBuilder withDaysSinceOnsetOfSymptoms(int daysSinceOnsetOfSymptoms);
+    FinalBuilder withDaysSinceOnsetOfSymptoms(Integer daysSinceOnsetOfSymptoms);
 
     /**
      * Field normalization is applied after all values have been provided, but prior

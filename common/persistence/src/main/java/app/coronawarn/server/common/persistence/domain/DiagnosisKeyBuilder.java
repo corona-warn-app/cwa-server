@@ -51,13 +51,13 @@ public class DiagnosisKeyBuilder implements
   private byte[] keyData;
   private int rollingStartIntervalNumber;
   private int rollingPeriod = DiagnosisKey.MAX_ROLLING_PERIOD;
-  private int transmissionRiskLevel;
+  private Integer transmissionRiskLevel;
   private Long submissionTimestamp = null;
   private String countryCode;
   private List<String> visitedCountries;
   private ReportType reportType;
   private boolean consentToFederation;
-  private int daysSinceOnsetOfSymptoms;
+  private Integer daysSinceOnsetOfSymptoms;
   private DiagnosisKeyNormalizer fieldNormalizer;
 
   DiagnosisKeyBuilder() {
@@ -76,7 +76,7 @@ public class DiagnosisKeyBuilder implements
   }
 
   @Override
-  public FinalBuilder withTransmissionRiskLevel(int transmissionRiskLevel) {
+  public FinalBuilder withTransmissionRiskLevel(Integer transmissionRiskLevel) {
     this.transmissionRiskLevel = transmissionRiskLevel;
     return this;
   }
@@ -86,10 +86,11 @@ public class DiagnosisKeyBuilder implements
     return this
         .withKeyData(protoBufObject.getKeyData().toByteArray())
         .withRollingStartIntervalNumber(protoBufObject.getRollingStartIntervalNumber())
-        .withTransmissionRiskLevel(protoBufObject.getTransmissionRiskLevel())
+        .withTransmissionRiskLevel(
+            protoBufObject.hasTransmissionRiskLevel() ? protoBufObject.getTransmissionRiskLevel() : null)
         .withRollingPeriod(protoBufObject.getRollingPeriod())
-        .withReportType(protoBufObject.getReportType())
-        .withDaysSinceOnsetOfSymptoms(protoBufObject.getDaysSinceOnsetOfSymptoms());
+        .withReportType(protoBufObject.getReportType()).withDaysSinceOnsetOfSymptoms(
+            protoBufObject.hasDaysSinceOnsetOfSymptoms() ? protoBufObject.getDaysSinceOnsetOfSymptoms() : null);
   }
 
   @Override
@@ -142,7 +143,7 @@ public class DiagnosisKeyBuilder implements
   }
 
   @Override
-  public FinalBuilder withDaysSinceOnsetOfSymptoms(int daysSinceOnsetOfSymptoms) {
+  public FinalBuilder withDaysSinceOnsetOfSymptoms(Integer daysSinceOnsetOfSymptoms) {
     this.daysSinceOnsetOfSymptoms = daysSinceOnsetOfSymptoms;
     return this;
   }
@@ -186,6 +187,11 @@ public class DiagnosisKeyBuilder implements
     return diagnosisKey;
   }
 
+  /**
+   * If a {@link DiagnosisKeyNormalizer} object was configured in this builder,
+   * apply normalization where possibile, and return a container with the new
+   * values. Otherwise return a container with the original unchanged values.
+   */
   private NormalizableFields normalizeValues() {
     NormalizableFields fieldsAndValues = NormalizableFields.of(transmissionRiskLevel, daysSinceOnsetOfSymptoms);
     if (fieldNormalizer != null) {

@@ -28,23 +28,23 @@ import app.coronawarn.server.common.persistence.domain.DiagnosisKey;
  */
 public final class NormalizableFields {
 
-  private final int transmissionRiskLevel;
-  private final int daysSinceOnsetOfSymptoms;
+  private final Integer transmissionRiskLevel;
+  private final Integer daysSinceOnsetOfSymptoms;
 
-  private NormalizableFields(int transmissionRiskLevel, int daysSinceOnsetOfSymptoms) {
+  private NormalizableFields(Integer transmissionRiskLevel, Integer daysSinceOnsetOfSymptoms) {
     this.transmissionRiskLevel = transmissionRiskLevel;
     this.daysSinceOnsetOfSymptoms = daysSinceOnsetOfSymptoms;
   }
 
-  public int getTransmissionRiskLevel() {
+  public Integer getTransmissionRiskLevel() {
     return transmissionRiskLevel;
   }
 
-  public int getDaysSinceOnsetOfSymptoms() {
+  public Integer getDaysSinceOnsetOfSymptoms() {
     return daysSinceOnsetOfSymptoms;
   }
 
-  public static NormalizableFields of(int transmissionRiskLevel, int daysSinceOnsetOfSymptoms) {
+  public static NormalizableFields of(Integer transmissionRiskLevel, Integer daysSinceOnsetOfSymptoms) {
     return new NormalizableFields(transmissionRiskLevel, daysSinceOnsetOfSymptoms);
   }
 }
