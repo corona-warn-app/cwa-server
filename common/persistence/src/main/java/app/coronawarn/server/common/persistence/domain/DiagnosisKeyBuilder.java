@@ -31,7 +31,6 @@ import app.coronawarn.server.common.protocols.external.exposurenotification.Repo
 import app.coronawarn.server.common.protocols.external.exposurenotification.TemporaryExposureKey;
 import java.time.Instant;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 import javax.validation.ConstraintViolation;

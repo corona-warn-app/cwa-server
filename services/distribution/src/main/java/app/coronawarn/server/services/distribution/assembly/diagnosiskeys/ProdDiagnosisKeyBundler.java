@@ -91,15 +91,14 @@ public class ProdDiagnosisKeyBundler extends DiagnosisKeyBundler {
   private void populateEuPackageWithDistributableDiagnosisKeys() {
     Map<LocalDateTime, Set<DiagnosisKey>> euPackage = new HashMap<>();
 
-    distributableDiagnosisKeys.forEach((country, diagnosisKeyMap) -> {
-      diagnosisKeyMap.forEach((distributionDateTime, diagnosisKeys) -> {
-        Set<DiagnosisKey> currentHourDiagnosisKeys = Optional
-            .ofNullable(euPackage.get(distributionDateTime))
-            .orElse(new HashSet<>());
-        currentHourDiagnosisKeys.addAll(diagnosisKeys);
-        euPackage.put(distributionDateTime, currentHourDiagnosisKeys);
-      });
-    });
+    distributableDiagnosisKeys
+        .forEach((country, diagnosisKeyMap) -> diagnosisKeyMap.forEach((distributionDateTime, diagnosisKeys) -> {
+          Set<DiagnosisKey> currentHourDiagnosisKeys = Optional
+              .ofNullable(euPackage.get(distributionDateTime))
+              .orElse(new HashSet<>());
+          currentHourDiagnosisKeys.addAll(diagnosisKeys);
+          euPackage.put(distributionDateTime, currentHourDiagnosisKeys);
+        }));
 
     Map<LocalDateTime, List<DiagnosisKey>> euPackageList = new HashMap<>();
     euPackage.forEach((distributionDateTime, diagnosisKeys) -> {
