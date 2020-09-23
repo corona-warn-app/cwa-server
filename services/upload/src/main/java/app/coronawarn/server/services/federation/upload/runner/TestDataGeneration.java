@@ -24,6 +24,7 @@ import app.coronawarn.server.common.persistence.domain.DiagnosisKey;
 import app.coronawarn.server.common.persistence.domain.FederationUploadKey;
 import app.coronawarn.server.common.persistence.service.FederationUploadKeyService;
 import app.coronawarn.server.common.protocols.external.exposurenotification.ReportType;
+import app.coronawarn.server.common.protocols.internal.RiskLevel;
 import app.coronawarn.server.services.federation.upload.config.UploadServiceConfig;
 import app.coronawarn.server.services.federation.upload.testdata.TestDataUploadRepository;
 import java.security.SecureRandom;
@@ -60,8 +61,7 @@ public class TestDataGeneration implements ApplicationRunner {
   public static final long TEN_MINUTES_INTERVAL_SECONDS = TimeUnit.MINUTES.toSeconds(10);
 
   public TestDataGeneration(UploadServiceConfig uploadServiceConfig,
-      TestDataUploadRepository keyRepository,
-      FederationUploadKeyService federationUploadKeyService) {
+      TestDataUploadRepository keyRepository) {
     this.uploadServiceConfig = uploadServiceConfig;
     this.keyRepository = keyRepository;
   }
@@ -75,7 +75,7 @@ public class TestDataGeneration implements ApplicationRunner {
   private FederationUploadKey makeKeyFromTimestamp(long timestamp) {
     return FederationUploadKey.from(DiagnosisKey.builder().withKeyData(randomByteData())
         .withRollingStartIntervalNumber(generateRollingStartIntervalNumber(timestamp))
-        .withTransmissionRiskLevel(2)
+        .withTransmissionRiskLevel(generateTransmissionRiskLevel())
         .withConsentToFederation(true)
         .withCountryCode("DE")
         .withDaysSinceOnsetOfSymptoms(1)
@@ -83,6 +83,11 @@ public class TestDataGeneration implements ApplicationRunner {
         .withVisitedCountries(List.of("FR", "DK"))
         .withReportType(ReportType.CONFIRMED_TEST)
         .build());
+  }
+
+  private int generateTransmissionRiskLevel() {
+    return Math.toIntExact(
+        getRandomBetween(RiskLevel.RISK_LEVEL_LOWEST_VALUE, RiskLevel.RISK_LEVEL_HIGHEST_VALUE));
   }
 
   private int generateRollingStartIntervalNumber(long submissionTimestamp) {
