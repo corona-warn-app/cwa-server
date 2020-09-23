@@ -85,7 +85,7 @@ public class Upload implements ApplicationRunner {
             .collect(Collectors.toList()).get(index))
         .collect(Collectors.toList());
 
-    if (result.getStatus409().size() > 0 || result.getStatus500().size() > 0) {
+    if (!result.getStatus409().isEmpty() || !result.getStatus500().isEmpty()) {
       logger.info("Some keys were not processed correctly");
       logger.info("{} keys marked with status 201 (Successful)", result.getStatus201().size());
       logger.info("{} keys marked with status 409 (Conflict)", result.getStatus409().size());

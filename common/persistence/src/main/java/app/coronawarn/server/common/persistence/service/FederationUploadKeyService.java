@@ -33,13 +33,11 @@ import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
-import java.util.stream.Collector;
 import java.util.stream.Collectors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
-
 
 @Component
 public class FederationUploadKeyService {
@@ -83,6 +81,7 @@ public class FederationUploadKeyService {
         .filter(key -> sharingPoliciesChecker.canShareKeyAtTime(key, policy, LocalDateTime.now(UTC)))
         .peek(k -> keysPickedAfterSharePolicy.addAndGet(1))
         .collect(Collectors.toList());
+    logger.info("Keys selected for upload: {}", listOfKeys.size());
 
     logger.info("{} keys picked after read from upload table", keysPicked.get());
     logger.info("{} keys remaining after filtering by consent", keysPickedAfterConsent.get());
@@ -93,8 +92,8 @@ public class FederationUploadKeyService {
   }
 
   /**
-   * Updates only the batchTagId field of all given upload keys. The entities are not merged
-   * with the persisted ones, thus no other side effects are to be expected.
+   * Updates only the batchTagId field of all given upload keys. The entities are not merged with the persisted ones,
+   * thus no other side effects are to be expected.
    */
   @Transactional
   public void updateBatchTagForKeys(Collection<FederationUploadKey> originalKeys, String batchTagId) {
