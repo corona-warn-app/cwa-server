@@ -53,6 +53,7 @@ import org.springframework.stereotype.Component;
 public class ProdDiagnosisKeyBundler extends DiagnosisKeyBundler {
 
   private KeySharingPoliciesChecker sharingPoliciesChecker;
+  private String originCountry;
   private String euPackageName;
   private boolean applyPoliciesForAllCountries;
 
@@ -63,6 +64,7 @@ public class ProdDiagnosisKeyBundler extends DiagnosisKeyBundler {
       KeySharingPoliciesChecker sharingPoliciesChecker) {
     super(distributionServiceConfig);
     this.sharingPoliciesChecker = sharingPoliciesChecker;
+    this.originCountry = distributionServiceConfig.getApi().getOriginCountry();
     this.euPackageName = distributionServiceConfig.getEuPackageName();
     this.applyPoliciesForAllCountries = distributionServiceConfig.getApplyPoliciesForAllCountries();
   }
@@ -77,7 +79,7 @@ public class ProdDiagnosisKeyBundler extends DiagnosisKeyBundler {
     Map<String, List<DiagnosisKey>> diagnosisKeysMapped = groupDiagnosisKeysByCountry(diagnosisKeys);
 
     diagnosisKeysMapped.keySet().forEach(country -> {
-      if (!country.equals("DE") && !applyPoliciesForAllCountries) {
+      if (!country.equals(originCountry) && !applyPoliciesForAllCountries) {
         populateDistributableDiagnosisKeysWithoutPolicies(diagnosisKeysMapped, country);
       } else {
         populateDistributableDiagnosisKeysWithPolicies(diagnosisKeysMapped, country);
@@ -99,11 +101,11 @@ public class ProdDiagnosisKeyBundler extends DiagnosisKeyBundler {
       });
 
     });
-    Map<LocalDateTime, List<DiagnosisKey>> worldBucketList = new HashMap<>();
+    Map<LocalDateTime, List<DiagnosisKey>> euPackageList = new HashMap<>();
     euPackage.forEach((distributionDateTime, diagnosisKeys) -> {
-      worldBucketList.put(distributionDateTime, new ArrayList<>(diagnosisKeys));
+      euPackageList.put(distributionDateTime, new ArrayList<>(diagnosisKeys));
     });
-    this.distributableDiagnosisKeys.put(euPackageName, worldBucketList);
+    this.distributableDiagnosisKeys.put(euPackageName, euPackageList);
   }
 
   private void populateDistributableDiagnosisKeysWithPolicies(Map<String, List<DiagnosisKey>> diagnosisKeysMapped,

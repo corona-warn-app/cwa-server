@@ -26,7 +26,6 @@ import static java.io.File.separator;
 import static java.lang.String.join;
 import static java.util.Collections.emptyList;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.util.Lists.list;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.when;
 
@@ -54,7 +53,6 @@ import java.util.stream.IntStream;
 import org.assertj.core.util.Sets;
 import org.junit.Rule;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.rules.TemporaryFolder;
@@ -222,12 +220,6 @@ class DiagnosisKeysDirectoryTest {
         .addAll(generateExpectedDirectoryStructure(distributionServiceConfig.getEuPackageName(), "1970-01-04"));
 
     Set<String> actualFiles = getFilePaths(outputFile, outputFile.getAbsolutePath());
-
-    Set<String> actualminusexpected = new HashSet<>(actualFiles);
-    actualminusexpected.removeAll(amendWithChecksumFiles(expectedFiles));
-
-    Set<String> expectedminusactual = new HashSet<>(expectedFiles);
-    expectedminusactual.removeAll(actualFiles);
 
     assertThat(actualFiles).isEqualTo(amendWithChecksumFiles(expectedFiles));
   }
