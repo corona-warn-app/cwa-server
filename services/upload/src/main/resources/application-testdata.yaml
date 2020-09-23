@@ -2,4 +2,4 @@
 services:
   upload:
     test-data:
-      keys: 350
+      keys-per-hour: 350
