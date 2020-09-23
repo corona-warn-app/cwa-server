@@ -20,15 +20,13 @@
 
 package app.coronawarn.server.services.federation.upload.testdata;
 
-import app.coronawarn.server.common.persistence.domain.DiagnosisKey;
 import app.coronawarn.server.common.persistence.domain.FederationUploadKey;
+import java.util.Optional;
 import org.springframework.context.annotation.Profile;
 import org.springframework.data.jdbc.repository.query.Modifying;
 import org.springframework.data.jdbc.repository.query.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
-import java.util.List;
-import java.util.Optional;
 
 @Repository
 @Profile("testdata")
