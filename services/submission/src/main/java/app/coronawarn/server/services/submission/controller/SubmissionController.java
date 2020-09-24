@@ -162,12 +162,12 @@ public class SubmissionController {
   }
 
   /**
-   * Checks if a key with transmission risk level 6 is missing in the submitted diagnosis keys. If there is one,
-   * it should not have a rolling start interval number of today midnight. In case of violations, these are logged.
-   *
-   * The check is only done for the key with transmission risk level 6, since the number of keys to be submitted
-   * depends on the time how long the app is installed on the phone. The key with transmission risk level 6 is
-   * the one from the day before the submission and should always be present.
+   * Checks if a key with transmission risk level 6 is missing in the submitted diagnosis keys. If there is one, it
+   * should not have a rolling start interval number of today midnight. In case of violations, these are logged.
+   * <p>
+   * The check is only done for the key with transmission risk level 6, since the number of keys to be submitted depends
+   * on the time how long the app is installed on the phone. The key with transmission risk level 6 is the one from the
+   * day before the submission and should always be present.
    *
    * @param diagnosisKeys The diagnosis keys to check.
    */
