@@ -32,7 +32,9 @@ import app.coronawarn.server.services.submission.verification.TanVerifier;
 import io.micrometer.core.annotation.Timed;
 import java.security.SecureRandom;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.IntStream;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -96,7 +98,7 @@ public class SubmissionController {
   }
 
   private DeferredResult<ResponseEntity<Void>> buildRealDeferredResult(SubmissionPayload submissionPayload,
-                                                                       String tan) {
+      String tan) {
     DeferredResult<ResponseEntity<Void>> deferredResult = new DeferredResult<>();
 
     StopWatch stopWatch = new StopWatch();
@@ -126,12 +128,13 @@ public class SubmissionController {
     List<DiagnosisKey> diagnosisKeys = new ArrayList<>();
 
     for (TemporaryExposureKey protoBufferKey : protoBufferKeys) {
-      String originCountry = StringUtils.defaultIfBlank(submissionPayload.getOrigin(),
-          submissionServiceConfig.getDefaultOriginCountry());
+      String originCountry = defaultIfEmptyOriginCountry(submissionPayload.getOrigin());
+      List<String> visitedCountries = extendVisitedCountriesWithOriginCountry(
+          submissionPayload.getVisitedCountriesList());
 
       DiagnosisKey diagnosisKey = DiagnosisKey.builder()
           .fromTemporaryExposureKey(protoBufferKey)
-          .withVisitedCountries(submissionPayload.getVisitedCountriesList())
+          .withVisitedCountries(visitedCountries)
           .withCountryCode(originCountry)
           .withConsentToFederation(submissionPayload.getConsentToFederation())
           .withFieldNormalization(new SubmissionKeyNormalizer(submissionServiceConfig))
@@ -145,6 +148,16 @@ public class SubmissionController {
     }
 
     return diagnosisKeys;
+  }
+
+  private String defaultIfEmptyOriginCountry(String originCountry) {
+    return StringUtils.defaultIfBlank(originCountry, submissionServiceConfig.getDefaultOriginCountry());
+  }
+
+  private List<String> extendVisitedCountriesWithOriginCountry(List<String> visitedCountries) {
+    Set<String> visitedCountriesSet = new HashSet<>(visitedCountries);
+    visitedCountriesSet.add(submissionServiceConfig.getDefaultOriginCountry());
+    return new ArrayList<>(visitedCountriesSet);
   }
 
   private List<DiagnosisKey> padDiagnosisKeys(List<DiagnosisKey> diagnosisKeys) {

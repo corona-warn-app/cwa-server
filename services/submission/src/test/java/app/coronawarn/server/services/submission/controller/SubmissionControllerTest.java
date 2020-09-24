@@ -69,6 +69,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.ActiveProfiles;
 import com.google.protobuf.ByteString;
+import javax.validation.constraints.AssertTrue;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @ActiveProfiles({"disable-ssl-client-verification", "disable-ssl-client-verification-verify-hostname"})
@@ -183,9 +184,28 @@ class SubmissionControllerTest {
     assertSubmissionPayloadKeysCorrespondToEachOther(submittedKeys, argument.getValue(), submissionPayload);
   }
 
+  @Test
+  void submissionPayloadAddMissingOriginCountryAsVisitedCountry() {
+    ArgumentCaptor<Collection<DiagnosisKey>> argument = ArgumentCaptor.forClass(Collection.class);
+
+    SubmissionPayload submissionPayload = buildPayloadWithVisitedCountries(List.of("FR"));
+    Collection<TemporaryExposureKey> submittedKeys = submissionPayload.getKeysList();
+    executor.executePost(submissionPayload);
+
+    verify(diagnosisKeyService, times(1)).saveDiagnosisKeys(argument.capture());
+
+    Collection<DiagnosisKey> values = argument.getValue();
+    String originCountry = config.getDefaultOriginCountry();
+
+    assertThat(values).allMatch(
+        savedKey -> savedKey.getVisitedCountries().contains(originCountry));
+    assertThat(values).hasSize(submittedKeys.size() * config.getRandomKeyPaddingMultiplier());
+  }
+
+
   /**
-   * The test verifies that even if the payload does not provide keys with DSOS, the information
-   * is still derived from the TRL field and correctly persisted.
+   * The test verifies that even if the payload does not provide keys with DSOS, the information is still derived from
+   * the TRL field and correctly persisted.
    *
    * <li>DSOS - days since onset of symptoms
    * <li>TRL  - transmission risk level
@@ -379,7 +399,7 @@ class SubmissionControllerTest {
   private DiagnosisKey findDiagnosisKeyMatch(TemporaryExposureKey tek, Collection<DiagnosisKey> diagnosisKeys) {
     return diagnosisKeys
         .stream()
-        .filter( dk -> tek.getKeyData().equals(ByteString.copyFrom(dk.getKeyData())))
+        .filter(dk -> tek.getKeyData().equals(ByteString.copyFrom(dk.getKeyData())))
         .findFirst().orElseThrow();
   }
 }
