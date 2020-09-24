@@ -6,6 +6,7 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 import app.coronawarn.server.services.distribution.objectstore.client.S3Object;
+import java.io.File;
 import java.nio.file.Path;
 import java.util.Collections;
 import java.util.List;
@@ -20,7 +21,7 @@ class PublishedFileSetTest {
       "version/v1/diagnosis-keys/country/DE/date/2020-06-11/hour/0",
       "version/v1/diagnosis-keys/country/DE/date/2020-06-11/hour/23"})
   void testShouldNotPublishWithoutForceUpdateConfiguration(String key) {
-    List<S3Object> s3Objects = List.of(new S3Object(key, "1234"));
+    List<S3Object> s3Objects = List.of(new S3Object(key.replace('/', File.separatorChar), "1234"));
     PublishedFileSet publishedSet = new PublishedFileSet(s3Objects,  false);
     LocalFile testFile = new LocalIndexFile(Path.of("/root", key, "/index"), Path.of("/root"));
     assertFalse(publishedSet.shouldPublish(testFile));

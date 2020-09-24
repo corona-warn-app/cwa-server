@@ -2,23 +2,29 @@
 
 package app.coronawarn.server.services.submission.controller;
 
-import static app.coronawarn.server.services.submission.controller.RequestExecutor.VALID_KEY_DATA_1;
-import static app.coronawarn.server.services.submission.controller.RequestExecutor.buildTemporaryExposureKey;
-import static app.coronawarn.server.services.submission.controller.RequestExecutor.createRollingStartIntervalNumber;
+import static app.coronawarn.server.common.protocols.external.exposurenotification.ReportType.CONFIRMED_CLINICAL_DIAGNOSIS;
+import static java.time.ZoneOffset.UTC;
 
-
+import app.coronawarn.server.common.persistence.domain.DiagnosisKey;
 import app.coronawarn.server.common.protocols.external.exposurenotification.ReportType;
 import app.coronawarn.server.common.protocols.external.exposurenotification.TemporaryExposureKey;
 import app.coronawarn.server.common.protocols.internal.SubmissionPayload;
 import app.coronawarn.server.services.submission.config.SubmissionServiceConfig;
 import com.google.protobuf.ByteString;
+import java.time.Instant;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public final class SubmissionPayloadMockData {
+
+  public static final String VALID_KEY_DATA_1 = "testKey111111111";
+  public static final String VALID_KEY_DATA_2 = "testKey222222222";
+  public static final String VALID_KEY_DATA_3 = "testKey333333333";
 
   public static SubmissionPayload buildPayload(TemporaryExposureKey key) {
     Collection<TemporaryExposureKey> keys = Stream.of(key).collect(Collectors.toCollection(ArrayList::new));
@@ -66,13 +72,26 @@ public final class SubmissionPayloadMockData {
     return buildPayloadWithPadding(keys, bytes);
   }
 
-  private static SubmissionPayload buildPayloadWithPadding(Collection<TemporaryExposureKey> keys, byte[] bytes) {
-    return SubmissionPayload.newBuilder()
-        .addAllKeys(keys)
-        .addAllVisitedCountries(List.of("FR"))
-        .setOrigin("DE")
-        .setRequestPadding(ByteString.copyFrom(bytes))
-        .build();
+  public static Collection<TemporaryExposureKey> buildMultipleKeys(SubmissionServiceConfig config) {
+    int rollingStartIntervalNumber1 = createRollingStartIntervalNumber(config.getRetentionDays() - 1);
+    int rollingStartIntervalNumber2 = rollingStartIntervalNumber1 + DiagnosisKey.MAX_ROLLING_PERIOD;
+    int rollingStartIntervalNumber3 = rollingStartIntervalNumber2 + DiagnosisKey.MAX_ROLLING_PERIOD;
+    return Stream.of(
+        buildTemporaryExposureKey(VALID_KEY_DATA_1, rollingStartIntervalNumber1, 3, CONFIRMED_CLINICAL_DIAGNOSIS, 1),
+        buildTemporaryExposureKey(VALID_KEY_DATA_2, rollingStartIntervalNumber3, 6, CONFIRMED_CLINICAL_DIAGNOSIS, 1),
+        buildTemporaryExposureKey(VALID_KEY_DATA_3, rollingStartIntervalNumber2, 8, CONFIRMED_CLINICAL_DIAGNOSIS, 1))
+        .collect(Collectors.toCollection(ArrayList::new));
+  }
+
+  public static Collection<TemporaryExposureKey> buildMultipleKeysWithoutDSOS(SubmissionServiceConfig config) {
+    int rollingStartIntervalNumber1 = createRollingStartIntervalNumber(config.getRetentionDays() - 1);
+    int rollingStartIntervalNumber2 = rollingStartIntervalNumber1 + DiagnosisKey.MAX_ROLLING_PERIOD;
+    int rollingStartIntervalNumber3 = rollingStartIntervalNumber2 + DiagnosisKey.MAX_ROLLING_PERIOD;
+    return Stream.of(
+        buildTemporaryExposureKeyWithoutDSOS(VALID_KEY_DATA_1, rollingStartIntervalNumber1, 3, CONFIRMED_CLINICAL_DIAGNOSIS),
+        buildTemporaryExposureKeyWithoutDSOS(VALID_KEY_DATA_2, rollingStartIntervalNumber3, 6, CONFIRMED_CLINICAL_DIAGNOSIS),
+        buildTemporaryExposureKeyWithoutDSOS(VALID_KEY_DATA_3, rollingStartIntervalNumber2, 8, CONFIRMED_CLINICAL_DIAGNOSIS))
+        .collect(Collectors.toCollection(ArrayList::new));
   }
 
   public static SubmissionPayload buildPayloadWithInvalidKey() {
@@ -98,4 +117,53 @@ public final class SubmissionPayloadMockData {
         .build();
   }
 
+  public static TemporaryExposureKey buildTemporaryExposureKey(
+      String keyData, int rollingStartIntervalNumber, int transmissionRiskLevel, ReportType reportType, int daysSinceOnsetOfSymptoms){
+    return TemporaryExposureKey.newBuilder()
+        .setKeyData(ByteString.copyFromUtf8(keyData))
+        .setRollingStartIntervalNumber(rollingStartIntervalNumber)
+        .setTransmissionRiskLevel(transmissionRiskLevel)
+        .setReportType(reportType)
+        .setDaysSinceOnsetOfSymptoms(daysSinceOnsetOfSymptoms)
+        .build();
+  }
+
+  public static TemporaryExposureKey buildTemporaryExposureKeyWithoutDSOS(
+      String keyData, int rollingStartIntervalNumber, int transmissionRiskLevel, ReportType reportType){
+    return TemporaryExposureKey.newBuilder()
+        .setKeyData(ByteString.copyFromUtf8(keyData))
+        .setRollingStartIntervalNumber(rollingStartIntervalNumber)
+        .setTransmissionRiskLevel(transmissionRiskLevel)
+        .setReportType(reportType)
+        .build();
+  }
+
+  public static TemporaryExposureKey buildTemporaryExposureKeyWithFlexibleRollingPeriod(
+      String keyData, int rollingStartIntervalNumber, int transmissionRiskLevel, int rollingPeriod) {
+    return TemporaryExposureKey.newBuilder()
+        .setKeyData(ByteString.copyFromUtf8(keyData))
+        .setRollingStartIntervalNumber(rollingStartIntervalNumber)
+        .setTransmissionRiskLevel(transmissionRiskLevel)
+        .setRollingPeriod(rollingPeriod).build();
+  }
+
+  public static int createRollingStartIntervalNumber(Integer daysAgo) {
+    return Math.toIntExact(LocalDate
+        .ofInstant(Instant.now(), UTC)
+        .minusDays(daysAgo).atStartOfDay()
+        .toEpochSecond(UTC) / (60 * 10));
+  }
+
+  public static Collection<TemporaryExposureKey> buildPayloadWithOneKey() {
+    return Collections.singleton(buildTemporaryExposureKey(VALID_KEY_DATA_1, createRollingStartIntervalNumber(1), 3,ReportType.CONFIRMED_CLINICAL_DIAGNOSIS,1));
+  }
+
+  private static SubmissionPayload buildPayloadWithPadding(Collection<TemporaryExposureKey> keys, byte[] bytes) {
+    return SubmissionPayload.newBuilder()
+        .addAllKeys(keys)
+        .addAllVisitedCountries(List.of("FR"))
+        .setOrigin("DE")
+        .setRequestPadding(ByteString.copyFrom(bytes))
+        .build();
+  }
 }

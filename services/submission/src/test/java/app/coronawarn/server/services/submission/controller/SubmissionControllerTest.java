@@ -2,24 +2,12 @@
 
 package app.coronawarn.server.services.submission.controller;
 
-import static app.coronawarn.server.common.protocols.external.exposurenotification.ReportType.CONFIRMED_CLINICAL_DIAGNOSIS;
-import static app.coronawarn.server.services.submission.controller.RequestExecutor.VALID_KEY_DATA_1;
-import static app.coronawarn.server.services.submission.controller.RequestExecutor.VALID_KEY_DATA_2;
-import static app.coronawarn.server.services.submission.controller.RequestExecutor.VALID_KEY_DATA_3;
-import static app.coronawarn.server.services.submission.controller.RequestExecutor.buildPayloadWithOneKey;
-import static app.coronawarn.server.services.submission.controller.RequestExecutor.buildTemporaryExposureKey;
-import static app.coronawarn.server.services.submission.controller.RequestExecutor.createRollingStartIntervalNumber;
-import static app.coronawarn.server.services.submission.controller.SubmissionPayloadMockData.buildPayload;
-import static app.coronawarn.server.services.submission.controller.SubmissionPayloadMockData.buildPayloadWithInvalidKey;
-import static app.coronawarn.server.services.submission.controller.SubmissionPayloadMockData.buildPayloadWithInvalidOriginCountry;
-import static app.coronawarn.server.services.submission.controller.SubmissionPayloadMockData.buildPayloadWithPadding;
-import static app.coronawarn.server.services.submission.controller.SubmissionPayloadMockData.buildPayloadWithTooLargePadding;
-import static app.coronawarn.server.services.submission.controller.SubmissionPayloadMockData.buildPayloadWithVisitedCountries;
+import static app.coronawarn.server.services.submission.controller.SubmissionPayloadMockData.*;
 import static org.apache.commons.lang3.StringUtils.defaultIfBlank;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
-import static org.mockito.Mockito.any;
-import static org.mockito.Mockito.anyString;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.atLeastOnce;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
@@ -38,14 +26,14 @@ import app.coronawarn.server.common.protocols.internal.SubmissionPayload;
 import app.coronawarn.server.services.submission.config.SubmissionServiceConfig;
 import app.coronawarn.server.services.submission.monitoring.SubmissionMonitor;
 import app.coronawarn.server.services.submission.verification.TanVerifier;
-import com.google.protobuf.ByteString;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+import org.apache.commons.lang3.tuple.Pair;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
@@ -62,6 +50,7 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.ActiveProfiles;
+import com.google.protobuf.ByteString;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @ActiveProfiles({"disable-ssl-client-verification", "disable-ssl-client-verification-verify-hostname"})
@@ -109,13 +98,13 @@ class SubmissionControllerTest {
 
   @Test
   void checkResponseStatusForValidParameters() {
-    ResponseEntity<Void> actResponse = executor.executePost(buildPayload(buildMultipleKeys()));
+    ResponseEntity<Void> actResponse = executor.executePost(buildPayload(buildMultipleKeys(config)));
     assertThat(actResponse.getStatusCode()).isEqualTo(OK);
   }
 
   @Test
   void checkResponseStatusForValidParametersWithPadding() {
-    ResponseEntity<Void> actResponse = executor.executePost(buildPayloadWithPadding(this.buildMultipleKeys()));
+    ResponseEntity<Void> actResponse = executor.executePost(buildPayloadWithPadding(buildMultipleKeys(config)));
     assertThat(actResponse.getStatusCode()).isEqualTo(OK);
   }
 
@@ -137,7 +126,7 @@ class SubmissionControllerTest {
 
   @Test
   void keysWithOutdatedRollingStartIntervalNumberDoNotGetSaved() {
-    Collection<TemporaryExposureKey> submittedKeys = buildMultipleKeys();
+    Collection<TemporaryExposureKey> submittedKeys = buildMultipleKeys(config);
     TemporaryExposureKey outdatedKey = createOutdatedKey();
     submittedKeys.add(outdatedKey);
     ArgumentCaptor<Collection<DiagnosisKey>> argument = ArgumentCaptor.forClass(Collection.class);
@@ -152,7 +141,7 @@ class SubmissionControllerTest {
 
   @Test
   void submissionPayloadWithoutConsentIsPersistedCorrectly() {
-    Collection<TemporaryExposureKey> submittedKeys = buildMultipleKeys();
+    Collection<TemporaryExposureKey> submittedKeys = buildMultipleKeys(config);
     ArgumentCaptor<Collection<DiagnosisKey>> argument = ArgumentCaptor.forClass(Collection.class);
 
     boolean consentToFederation = false;
@@ -165,7 +154,7 @@ class SubmissionControllerTest {
 
   @Test
   void submissionPayloadWithConsentIsPersistedCorrectly() {
-    Collection<TemporaryExposureKey> submittedKeys = buildMultipleKeys();
+    Collection<TemporaryExposureKey> submittedKeys = buildMultipleKeys(config);
     ArgumentCaptor<Collection<DiagnosisKey>> argument = ArgumentCaptor.forClass(Collection.class);
 
     boolean consentToFederation = true;
@@ -176,9 +165,30 @@ class SubmissionControllerTest {
     assertSubmissionPayloadKeysCorrespondToEachOther(submittedKeys, argument.getValue(), submissionPayload);
   }
 
+  /**
+   * The test verifies that even if the payload does not provide keys with DSOS, the information
+   * is still derived from the TRL field and correctly persisted.
+   *
+   * <li>DSOS - days since onset of symptoms
+   * <li>TRL  - transmission risk level
+   */
+  @Test
+  void checkDSOSIsPersistedForKeysWithTRLOnly() {
+    Collection<TemporaryExposureKey> submittedKeys = buildMultipleKeysWithoutDSOS(config);
+    ArgumentCaptor<Collection<DiagnosisKey>> argument = ArgumentCaptor.forClass(Collection.class);
+
+    SubmissionPayload submissionPayload = buildPayload(submittedKeys);
+    executor.executePost(submissionPayload);
+
+    verify(diagnosisKeyService, times(1)).saveDiagnosisKeys(argument.capture());
+
+    Collection<DiagnosisKey> values = argument.getValue();
+    assertDSOSCorrectlyComputedFromTRL(config, submittedKeys, values);
+  }
+
   @Test
   void checkSaveOperationCallAndFakeDelayUpdateForValidParameters() {
-    Collection<TemporaryExposureKey> submittedKeys = buildMultipleKeys();
+    Collection<TemporaryExposureKey> submittedKeys = buildMultipleKeys(config);
     ArgumentCaptor<Collection<DiagnosisKey>> argument = ArgumentCaptor.forClass(Collection.class);
 
     SubmissionPayload submissionPayload = buildPayload(submittedKeys);
@@ -227,7 +237,7 @@ class SubmissionControllerTest {
   @Test
   void testInvalidPaddingSubmissionPayload() {
     ResponseEntity<Void> actResponse = executor
-        .executePost(buildPayloadWithTooLargePadding(config, buildMultipleKeys()));
+        .executePost(buildPayloadWithTooLargePadding(config, buildMultipleKeys(config)));
     assertThat(actResponse.getStatusCode()).isEqualTo(BAD_REQUEST);
   }
 
@@ -289,17 +299,6 @@ class SubmissionControllerTest {
     verify(submissionMonitor, times(1)).incrementInvalidTanRequestCounter();
   }
 
-  private Collection<TemporaryExposureKey> buildMultipleKeys() {
-    int rollingStartIntervalNumber1 = createRollingStartIntervalNumber(config.getRetentionDays() - 1);
-    int rollingStartIntervalNumber2 = rollingStartIntervalNumber1 + DiagnosisKey.MAX_ROLLING_PERIOD;
-    int rollingStartIntervalNumber3 = rollingStartIntervalNumber2 + DiagnosisKey.MAX_ROLLING_PERIOD;
-    return Stream.of(
-        buildTemporaryExposureKey(VALID_KEY_DATA_1, rollingStartIntervalNumber1, 3, CONFIRMED_CLINICAL_DIAGNOSIS, 1),
-        buildTemporaryExposureKey(VALID_KEY_DATA_2, rollingStartIntervalNumber3, 6, CONFIRMED_CLINICAL_DIAGNOSIS, 1),
-        buildTemporaryExposureKey(VALID_KEY_DATA_3, rollingStartIntervalNumber2, 8, CONFIRMED_CLINICAL_DIAGNOSIS, 1))
-        .collect(Collectors.toCollection(ArrayList::new));
-  }
-
   private TemporaryExposureKey createOutdatedKey() {
     return TemporaryExposureKey.newBuilder()
         .setKeyData(ByteString.copyFromUtf8(VALID_KEY_DATA_2))
@@ -347,5 +346,22 @@ class SubmissionControllerTest {
       assertThat(savedKeysForSingleSubmittedKey).allMatch(
           savedKey -> savedKey.getTransmissionRiskLevel() == submittedDiagnosisKey.getTransmissionRiskLevel());
     });
+  }
+
+  private void assertDSOSCorrectlyComputedFromTRL(SubmissionServiceConfig config,
+      Collection<TemporaryExposureKey> submittedTEKs, Collection<DiagnosisKey> diagnosisKeys) {
+    submittedTEKs.stream().map(tek -> Pair.of(tek, findDiagnosisKeyMatch(tek, diagnosisKeys))).forEach(pair -> {
+      int tekTRL = pair.getLeft().getTransmissionRiskLevel();
+      int dkDSOS = pair.getRight().getDaysSinceOnsetOfSymptoms();
+      Integer expectedDsos = config.getTekFieldDerivations().deriveDsosFromTrl(tekTRL);
+      Assertions.assertEquals(expectedDsos, dkDSOS);
+    });
+  }
+
+  private DiagnosisKey findDiagnosisKeyMatch(TemporaryExposureKey tek, Collection<DiagnosisKey> diagnosisKeys) {
+    return diagnosisKeys
+        .stream()
+        .filter( dk -> tek.getKeyData().equals(ByteString.copyFrom(dk.getKeyData())))
+        .findFirst().orElseThrow();
   }
 }

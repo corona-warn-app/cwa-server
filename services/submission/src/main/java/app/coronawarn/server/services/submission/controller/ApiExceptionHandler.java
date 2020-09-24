@@ -33,7 +33,8 @@ public class ApiExceptionHandler {
     logger.error("Binding failed {}", getFormattedDescription(wr), ex);
   }
 
-  @ExceptionHandler({InvalidDiagnosisKeyException.class, ConstraintViolationException.class})
+  @ExceptionHandler({
+      InvalidDiagnosisKeyException.class, ConstraintViolationException.class, IllegalArgumentException.class})
   @ResponseStatus(HttpStatus.BAD_REQUEST)
   public void diagnosisKeyExceptions(Exception ex, WebRequest wr) {
     logger.error("Erroneous Submission Payload {}", getFormattedDescription(wr), ex);
