@@ -197,9 +197,9 @@ class SubmissionControllerTest {
     Collection<DiagnosisKey> values = argument.getValue();
     String originCountry = config.getDefaultOriginCountry();
 
-    assertThat(values).allMatch(
-        savedKey -> savedKey.getVisitedCountries().contains(originCountry));
-    assertThat(values).hasSize(submittedKeys.size() * config.getRandomKeyPaddingMultiplier());
+    assertThat(values)
+        .allMatch(savedKey -> savedKey.getVisitedCountries().contains(originCountry))
+        .hasSize(submittedKeys.size() * config.getRandomKeyPaddingMultiplier());
   }
 
 
