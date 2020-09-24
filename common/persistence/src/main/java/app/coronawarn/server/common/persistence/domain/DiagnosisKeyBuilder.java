@@ -26,11 +26,14 @@ import static app.coronawarn.server.common.persistence.domain.DiagnosisKeyBuilde
 import static app.coronawarn.server.common.persistence.domain.DiagnosisKeyBuilders.TransmissionRiskLevelBuilder;
 import static app.coronawarn.server.common.persistence.domain.validation.ValidSubmissionTimestampValidator.SECONDS_PER_HOUR;
 
+import app.coronawarn.server.common.persistence.domain.normalization.DiagnosisKeyNormalizer;
+import app.coronawarn.server.common.persistence.domain.normalization.NormalizableFields;
 import app.coronawarn.server.common.persistence.exception.InvalidDiagnosisKeyException;
 import app.coronawarn.server.common.protocols.external.exposurenotification.ReportType;
 import app.coronawarn.server.common.protocols.external.exposurenotification.TemporaryExposureKey;
 import java.time.Instant;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 import javax.validation.ConstraintViolation;
@@ -49,13 +52,14 @@ public class DiagnosisKeyBuilder implements
   private byte[] keyData;
   private int rollingStartIntervalNumber;
   private int rollingPeriod = DiagnosisKey.MAX_ROLLING_PERIOD;
-  private int transmissionRiskLevel;
+  private Integer transmissionRiskLevel;
   private Long submissionTimestamp = null;
   private String countryCode;
   private List<String> visitedCountries;
   private ReportType reportType;
   private boolean consentToFederation;
-  private int daysSinceOnsetOfSymptoms;
+  private Integer daysSinceOnsetOfSymptoms;
+  private DiagnosisKeyNormalizer fieldNormalizer;
 
   DiagnosisKeyBuilder() {
   }
@@ -73,7 +77,7 @@ public class DiagnosisKeyBuilder implements
   }
 
   @Override
-  public FinalBuilder withTransmissionRiskLevel(int transmissionRiskLevel) {
+  public FinalBuilder withTransmissionRiskLevel(Integer transmissionRiskLevel) {
     this.transmissionRiskLevel = transmissionRiskLevel;
     return this;
   }
@@ -83,10 +87,11 @@ public class DiagnosisKeyBuilder implements
     return this
         .withKeyData(protoBufObject.getKeyData().toByteArray())
         .withRollingStartIntervalNumber(protoBufObject.getRollingStartIntervalNumber())
-        .withTransmissionRiskLevel(protoBufObject.getTransmissionRiskLevel())
+        .withTransmissionRiskLevel(
+            protoBufObject.hasTransmissionRiskLevel() ? protoBufObject.getTransmissionRiskLevel() : null)
         .withRollingPeriod(protoBufObject.getRollingPeriod())
-        .withReportType(protoBufObject.getReportType())
-        .withDaysSinceOnsetOfSymptoms(protoBufObject.getDaysSinceOnsetOfSymptoms());
+        .withReportType(protoBufObject.getReportType()).withDaysSinceOnsetOfSymptoms(
+            protoBufObject.hasDaysSinceOnsetOfSymptoms() ? protoBufObject.getDaysSinceOnsetOfSymptoms() : null);
   }
 
   @Override
@@ -139,8 +144,14 @@ public class DiagnosisKeyBuilder implements
   }
 
   @Override
-  public FinalBuilder withDaysSinceOnsetOfSymptoms(int daysSinceOnsetOfSymptoms) {
+  public FinalBuilder withDaysSinceOnsetOfSymptoms(Integer daysSinceOnsetOfSymptoms) {
     this.daysSinceOnsetOfSymptoms = daysSinceOnsetOfSymptoms;
+    return this;
+  }
+
+  @Override
+  public FinalBuilder withFieldNormalization(DiagnosisKeyNormalizer fieldNormalizer) {
+    this.fieldNormalizer = fieldNormalizer;
     return this;
   }
 
@@ -151,9 +162,15 @@ public class DiagnosisKeyBuilder implements
       submissionTimestamp = Instant.now().getEpochSecond() / SECONDS_PER_HOUR;
     }
 
+    NormalizableFields normalizedValues = normalizeValues();
+
     var diagnosisKey = new DiagnosisKey(
-        keyData, rollingStartIntervalNumber, rollingPeriod, transmissionRiskLevel, submissionTimestamp,
-        consentToFederation, countryCode, visitedCountries, reportType, daysSinceOnsetOfSymptoms);
+        keyData, rollingStartIntervalNumber, rollingPeriod,
+        normalizedValues.getTransmissionRiskLevel(),
+        submissionTimestamp,
+        consentToFederation, countryCode, visitedCountries, reportType,
+        normalizedValues.getDaysSinceOnsetOfSymptoms());
+
     return throwIfValidationFails(diagnosisKey);
   }
 
@@ -169,5 +186,20 @@ public class DiagnosisKeyBuilder implements
     }
 
     return diagnosisKey;
+  }
+
+  /**
+   * If a {@link DiagnosisKeyNormalizer} object was configured in this builder,
+   * apply normalization where possibile, and return a container with the new
+   * values. Otherwise return a container with the original unchanged values.
+   * For boxed types, primitive zero like values will be chosen if they have not been
+   * provided by the client of the builder.
+   */
+  private NormalizableFields normalizeValues() {
+    if (fieldNormalizer != null) {
+      return fieldNormalizer.normalize(NormalizableFields.of(transmissionRiskLevel, daysSinceOnsetOfSymptoms));
+    }
+    return NormalizableFields.of(Objects.isNull(transmissionRiskLevel) ? 0 : transmissionRiskLevel,
+        Objects.isNull(daysSinceOnsetOfSymptoms) ? 0 : daysSinceOnsetOfSymptoms);
   }
 }
