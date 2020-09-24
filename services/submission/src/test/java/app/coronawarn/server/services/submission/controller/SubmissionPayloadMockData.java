@@ -112,6 +112,17 @@ public final class SubmissionPayloadMockData {
         .collect(Collectors.toCollection(ArrayList::new));
   }
 
+  public static Collection<TemporaryExposureKey> buildMultipleKeysWithoutDSOSAndTRL(SubmissionServiceConfig config) {
+    int rollingStartIntervalNumber1 = createRollingStartIntervalNumber(config.getRetentionDays() - 1);
+    int rollingStartIntervalNumber2 = rollingStartIntervalNumber1 + DiagnosisKey.MAX_ROLLING_PERIOD;
+    int rollingStartIntervalNumber3 = rollingStartIntervalNumber2 + DiagnosisKey.MAX_ROLLING_PERIOD;
+    return Stream.of(
+        buildTemporaryExposureKeyWithoutDSOSAndTRL(VALID_KEY_DATA_1, rollingStartIntervalNumber1, CONFIRMED_CLINICAL_DIAGNOSIS),
+        buildTemporaryExposureKeyWithoutDSOSAndTRL(VALID_KEY_DATA_2, rollingStartIntervalNumber3, CONFIRMED_CLINICAL_DIAGNOSIS),
+        buildTemporaryExposureKeyWithoutDSOSAndTRL(VALID_KEY_DATA_3, rollingStartIntervalNumber2, CONFIRMED_CLINICAL_DIAGNOSIS))
+        .collect(Collectors.toCollection(ArrayList::new));
+  }
+
   public static SubmissionPayload buildPayloadWithInvalidKey() {
     TemporaryExposureKey invalidKey =
         buildTemporaryExposureKey(VALID_KEY_DATA_1, createRollingStartIntervalNumber(2), 999, ReportType.CONFIRMED_CLINICAL_DIAGNOSIS, 1);
@@ -152,6 +163,15 @@ public final class SubmissionPayloadMockData {
         .setKeyData(ByteString.copyFromUtf8(keyData))
         .setRollingStartIntervalNumber(rollingStartIntervalNumber)
         .setTransmissionRiskLevel(transmissionRiskLevel)
+        .setReportType(reportType)
+        .build();
+  }
+
+  public static TemporaryExposureKey buildTemporaryExposureKeyWithoutDSOSAndTRL(
+      String keyData, int rollingStartIntervalNumber, ReportType reportType){
+    return TemporaryExposureKey.newBuilder()
+        .setKeyData(ByteString.copyFromUtf8(keyData))
+        .setRollingStartIntervalNumber(rollingStartIntervalNumber)
         .setReportType(reportType)
         .build();
   }

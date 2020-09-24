@@ -205,6 +205,16 @@ class SubmissionControllerTest {
   }
 
   @Test
+  void checkErrorIsThrownWhenKeysAreMissingDSOSAndTRL() {
+    Collection<TemporaryExposureKey> submittedKeys = buildMultipleKeysWithoutDSOSAndTRL(config);
+    ArgumentCaptor<Collection<DiagnosisKey>> argument = ArgumentCaptor.forClass(Collection.class);
+
+    SubmissionPayload submissionPayload = buildPayload(submittedKeys);
+    ResponseEntity<Void> response = executor.executePost(submissionPayload);
+    assertThat(response.getStatusCode()).isEqualTo(BAD_REQUEST);
+  }
+
+  @Test
   void checkSaveOperationCallAndFakeDelayUpdateForValidParameters() {
     Collection<TemporaryExposureKey> submittedKeys = buildMultipleKeys(config);
     ArgumentCaptor<Collection<DiagnosisKey>> argument = ArgumentCaptor.forClass(Collection.class);
