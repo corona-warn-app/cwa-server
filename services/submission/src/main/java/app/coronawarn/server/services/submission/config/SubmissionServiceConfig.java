@@ -364,7 +364,7 @@ public class SubmissionServiceConfig {
 
     public Integer deriveTrlFromDsos(Integer dsosValue) {
       // the derivation logic is subject to refinement
-      return trlFromDsos.getOrDefault(dsosFromTrl, 1);
+      return trlFromDsos.getOrDefault(dsosValue, 1);
     }
   }
 }

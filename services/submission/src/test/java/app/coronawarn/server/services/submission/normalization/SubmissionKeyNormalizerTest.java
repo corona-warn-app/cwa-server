@@ -75,8 +75,9 @@ class SubmissionKeyNormalizerTest {
     when(mockedDerivationRules.deriveDsosFromTrl(1)).thenReturn(2);
 
     SubmissionKeyNormalizer normalizer = new SubmissionKeyNormalizer(mockedConfig);
+    NormalizableFields missingValues = NormalizableFields.of(null, null);
     Assertions.assertThatThrownBy(() -> {
-      normalizer.normalize(NormalizableFields.of(null, null));
+      normalizer.normalize(missingValues);
     }).isOfAnyClassIn(IllegalArgumentException.class);
   }
 
