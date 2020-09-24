@@ -404,10 +404,10 @@ class SubmissionControllerTest {
   private void assertTRLCorrectlyComputedFromDSOS(SubmissionServiceConfig config,
       Collection<TemporaryExposureKey> submittedTEKs, Collection<DiagnosisKey> diagnosisKeys) {
     submittedTEKs.stream().map(tek -> Pair.of(tek, findDiagnosisKeyMatch(tek, diagnosisKeys))).forEach(pair -> {
-      int tekTRL = pair.getLeft().getTransmissionRiskLevel();
-      int dkDSOS = pair.getRight().getDaysSinceOnsetOfSymptoms();
-      Integer expectedTRL = config.getTekFieldDerivations().deriveTrlFromDsos(dkDSOS);
-      Assertions.assertEquals(expectedTRL, tekTRL);
+      int tekDSOS = pair.getLeft().getDaysSinceOnsetOfSymptoms();
+      int dkTRL = pair.getRight().getTransmissionRiskLevel();
+      Integer expectedTRL = config.getTekFieldDerivations().deriveTrlFromDsos(tekDSOS);
+      Assertions.assertEquals(expectedTRL, dkTRL);
     });
   }
 

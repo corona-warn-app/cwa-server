@@ -36,7 +36,7 @@ import app.coronawarn.server.services.submission.config.SubmissionServiceConfig.
 class SubmissionKeyNormalizerTest {
 
   @ParameterizedTest
-  @MethodSource("dsosFromTrlParameters")
+  @MethodSource("dsosTrlDummyPairValues")
   void testDsosIsCorrectlyDerived(int inputTrlValue, int expectedDsosValue) {
     SubmissionServiceConfig mockedConfig = mock(SubmissionServiceConfig.class);
     TekFieldDerivations mockedDerivationRules = mock(TekFieldDerivations.class);
@@ -49,6 +49,22 @@ class SubmissionKeyNormalizerTest {
 
     result = normalizer.normalize(NormalizableFields.of(inputTrlValue - 1, null));
     Assertions.assertThat(result.getDaysSinceOnsetOfSymptoms()).isNotEqualTo(expectedDsosValue);
+  }
+
+  @ParameterizedTest
+  @MethodSource("dsosTrlDummyPairValues")
+  void testTrlIsCorrectlyDerived(int inputDsosValue, int expectedTrlValue) {
+    SubmissionServiceConfig mockedConfig = mock(SubmissionServiceConfig.class);
+    TekFieldDerivations mockedDerivationRules = mock(TekFieldDerivations.class);
+    when(mockedConfig.getTekFieldDerivations()).thenReturn(mockedDerivationRules);
+    when(mockedDerivationRules.deriveTrlFromDsos(inputDsosValue)).thenReturn(expectedTrlValue);
+
+    SubmissionKeyNormalizer normalizer = new SubmissionKeyNormalizer(mockedConfig);
+    NormalizableFields result = normalizer.normalize(NormalizableFields.of(null, inputDsosValue));
+    Assertions.assertThat(result.getTransmissionRiskLevel()).isEqualTo(expectedTrlValue);
+
+    result = normalizer.normalize(NormalizableFields.of(inputDsosValue - 1, null));
+    Assertions.assertThat(result.getTransmissionRiskLevel()).isNotEqualTo(expectedTrlValue);
   }
 
   @Test
@@ -64,7 +80,10 @@ class SubmissionKeyNormalizerTest {
     }).isOfAnyClassIn(IllegalArgumentException.class);
   }
 
-  private static Stream<Arguments> dsosFromTrlParameters() {
+  /**
+   * A dummy mapping of TRL/DSOS values that can be used in tests.
+   */
+  private static Stream<Arguments> dsosTrlDummyPairValues() {
     return Stream.of(
         Arguments.of(1, 14),
         Arguments.of(3, 10),
