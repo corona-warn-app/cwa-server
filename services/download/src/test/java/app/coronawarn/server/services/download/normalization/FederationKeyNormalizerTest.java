@@ -15,12 +15,12 @@ import app.coronawarn.server.common.protocols.external.exposurenotification.Diag
 import app.coronawarn.server.common.protocols.external.exposurenotification.DiagnosisKeyBatch;
 import app.coronawarn.server.services.download.DownloadServiceConfig;
 import app.coronawarn.server.services.download.FederationBatchProcessor;
+import com.google.protobuf.ByteString;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
-import com.google.protobuf.ByteString;
 import org.apache.commons.lang3.tuple.Pair;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -33,9 +33,7 @@ import org.springframework.boot.test.mock.mockito.SpyBean;
 @SpringBootTest
 class FederationKeyNormalizerTest {
 
-  public static final String KEY_DATA = "0123456789ABCDED";
   private final LocalDate date = LocalDate.of(2020, 9, 1);
-  private final String batchTag1 = "507f191e810c19729de860ea";
   @Autowired
   FederationBatchProcessor processor;
   @Autowired
@@ -73,8 +71,21 @@ class FederationKeyNormalizerTest {
 
   @Test
   void testBatchKeysWithDsosAndWithoutTrlAreNormalized() {
-    FederationBatchInfo federationBatchInfo = new FederationBatchInfo(batchTag1, date, UNPROCESSED);
+    String batchTag = "507f191e810c19729de860ea";
+    FederationBatchInfo federationBatchInfo = new FederationBatchInfo(batchTag, date, UNPROCESSED);
     when(batchInfoService.findByStatus(UNPROCESSED)).thenReturn(list(federationBatchInfo));
+    Optional<BatchDownloadResponse> serverResponse = getBatchDownloadResponse(batchTag);
+    when(federationGatewayClient.getDiagnosisKeys(batchTag, isoDate(date))).thenReturn(serverResponse);
+    processor.processUnprocessedFederationBatches();
+
+    diagnosisKeyService.getDiagnosisKeys().forEach(dk -> {
+      final String keyData = ByteString.copyFrom(dk.getKeyData()).toStringUtf8();
+      Assertions.assertEquals(dk.getTransmissionRiskLevel(), getKeysAndDsos().get(keyData).getRight());
+    });
+
+  }
+
+  private Optional<BatchDownloadResponse> getBatchDownloadResponse(String batchTag) {
     List<DiagnosisKey> diagnosisKeys = getKeysAndDsos().entrySet()
         .stream()
         .map(e -> createDiagnosisKey(e.getKey(), e.getValue().getLeft()))
@@ -84,16 +95,7 @@ class FederationKeyNormalizerTest {
         .addAllKeys(diagnosisKeys)
         .build();
 
-    Optional<BatchDownloadResponse> serverResponse = Optional
-        .of(new BatchDownloadResponse(diagnosisKeyBatch, batchTag1, Optional.empty()));
-
-    when(federationGatewayClient.getDiagnosisKeys(batchTag1, isoDate(date))).thenReturn(serverResponse);
-    processor.processUnprocessedFederationBatches();
-
-    diagnosisKeyService.getDiagnosisKeys().forEach(dk -> {
-      final String keyData = ByteString.copyFrom(dk.getKeyData()).toStringUtf8();
-      Assertions.assertEquals(dk.getTransmissionRiskLevel(), getKeysAndDsos().get(keyData).getRight());
-    });
-
+    return Optional
+        .of(new BatchDownloadResponse(diagnosisKeyBatch, batchTag, Optional.empty()));
   }
 }
