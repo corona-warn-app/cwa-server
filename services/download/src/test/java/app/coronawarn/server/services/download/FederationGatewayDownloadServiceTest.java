@@ -77,10 +77,7 @@ class FederationGatewayDownloadServiceTest {
                 aResponse()
                     .withStatus(HttpStatus.NOT_FOUND.value())));
 
-    assertThatExceptionOfType(FederationGatewayException.class)
-        .isThrownBy(() -> downloadService.downloadBatch(DATE));
-    assertThatExceptionOfType(FederationGatewayException.class)
-        .isThrownBy(() -> downloadService.downloadBatch(BATCH_TAG, DATE));
+    assertExceptionIsThrown();
   }
 
   @Test
@@ -91,10 +88,7 @@ class FederationGatewayDownloadServiceTest {
                 aResponse()
                     .withStatus(HttpStatus.OK.value())));
 
-    assertThatExceptionOfType(FederationGatewayException.class)
-        .isThrownBy(() -> downloadService.downloadBatch(DATE));
-    assertThatExceptionOfType(FederationGatewayException.class)
-        .isThrownBy(() -> downloadService.downloadBatch(BATCH_TAG, DATE));
+    assertExceptionIsThrown();
   }
 
   @Test
@@ -153,5 +147,12 @@ class FederationGatewayDownloadServiceTest {
   void assertDownloadResponseMatches(BatchDownloadResponse expResponse) {
     assertThat(downloadService.downloadBatch(DATE)).isEqualTo(expResponse);
     assertThat(downloadService.downloadBatch(BATCH_TAG, DATE)).isEqualTo(expResponse);
+  }
+
+  void assertExceptionIsThrown() {
+    assertThatExceptionOfType(FederationGatewayException.class)
+        .isThrownBy(() -> downloadService.downloadBatch(DATE));
+    assertThatExceptionOfType(FederationGatewayException.class)
+        .isThrownBy(() -> downloadService.downloadBatch(BATCH_TAG, DATE));
   }
 }
