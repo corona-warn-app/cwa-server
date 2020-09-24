@@ -32,7 +32,9 @@ import app.coronawarn.server.common.protocols.external.exposurenotification.Diag
 import com.github.tomakehurst.wiremock.WireMockServer;
 import java.time.LocalDate;
 import java.util.Optional;
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -44,19 +46,26 @@ import org.springframework.test.annotation.DirtiesContext;
 @DirtiesContext
 class FederationGatewayDownloadServiceTest {
 
-  private static WireMockServer server;
+  @Autowired
+  private static final WireMockServer server = new WireMockServer(1234);
 
   @Autowired
   private FederationGatewayDownloadService federationGatewayDownloadService;
 
   @BeforeEach
-  void startServer() {
-    server = new WireMockServer(options().port(1234));
-    server.start();
+  void ensureRunningServer() {
+    if (!server.isRunning()) {
+      server.start();
+    }
   }
 
   @AfterEach
-  void stopServer() {
+  void resetServer() {
+    server.resetAll();
+  }
+
+  @AfterAll
+  static void stopServer() {
     server.stop();
   }
 
@@ -124,8 +133,8 @@ class FederationGatewayDownloadServiceTest {
                     .withBody(batch.toByteArray())));
 
     LocalDate date = mock(LocalDate.class);
-
-    validateResponse(federationGatewayDownloadService.downloadBatch(date), batchTag, nextBatchTag, batch);
+    BatchDownloadResponse response = federationGatewayDownloadService.downloadBatch(date);
+    validateResponse(response, batchTag, nextBatchTag, batch);
     validateResponse(federationGatewayDownloadService.downloadBatch(batchTag, date), batchTag, nextBatchTag, batch);
   }
 
