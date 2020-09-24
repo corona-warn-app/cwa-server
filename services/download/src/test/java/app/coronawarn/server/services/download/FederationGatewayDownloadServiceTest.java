@@ -44,72 +44,73 @@ import org.springframework.test.annotation.DirtiesContext;
 @DirtiesContext
 class FederationGatewayDownloadServiceTest {
 
-  private static final WireMockServer server = new WireMockServer(1234);
-  private static final String batchTag = "batch-tag";
-  private static final String nextBatchTag = "next-batch-tag";
+  private static final WireMockServer SERVER = new WireMockServer(1234);
+  private static final String BATCH_TAG = "batch-tag";
+  private static final String NEXT_BATCH_TAG = "next-batch-tag";
+  private static final LocalDate DATE = mock(LocalDate.class);
 
   @Autowired
   private FederationGatewayDownloadService downloadService;
 
   @BeforeEach
   void ensureRunningServer() {
-    if (!server.isRunning()) {
-      server.start();
+    if (!SERVER.isRunning()) {
+      SERVER.start();
     }
   }
 
   @AfterEach
   void resetServer() {
-    server.resetAll();
+    SERVER.resetAll();
   }
 
   @AfterAll
   static void stopServer() {
-    server.stop();
+    SERVER.stop();
   }
 
   @Test
   void test404IsCaught() {
-    server.stubFor(
+    SERVER.stubFor(
         get(anyUrl())
             .willReturn(
                 aResponse()
                     .withStatus(HttpStatus.NOT_FOUND.value())));
 
     assertThatExceptionOfType(FederationGatewayException.class)
-        .isThrownBy(() -> downloadService.downloadBatch(mock(LocalDate.class)));
+        .isThrownBy(() -> downloadService.downloadBatch(DATE));
     assertThatExceptionOfType(FederationGatewayException.class)
-        .isThrownBy(() -> downloadService.downloadBatch("batchTag", mock(LocalDate.class)));
+        .isThrownBy(() -> downloadService.downloadBatch(BATCH_TAG, DATE));
   }
 
   @Test
   void testMissingBatchTagInResponseHeader() {
-    server.stubFor(
+    SERVER.stubFor(
         get(anyUrl())
             .willReturn(
                 aResponse()
                     .withStatus(HttpStatus.OK.value())));
 
     assertThatExceptionOfType(FederationGatewayException.class)
-        .isThrownBy(() -> downloadService.downloadBatch(mock(LocalDate.class)));
+        .isThrownBy(() -> downloadService.downloadBatch(DATE));
     assertThatExceptionOfType(FederationGatewayException.class)
-        .isThrownBy(() -> downloadService.downloadBatch("batchTag", mock(LocalDate.class)));
+        .isThrownBy(() -> downloadService.downloadBatch(BATCH_TAG, DATE));
   }
 
   @Test
   void testNextBatchTagIsParsedWithEmptyResponseBody() {
 
-    server.stubFor(
+    SERVER.stubFor(
         get(anyUrl())
             .willReturn(
                 aResponse()
                     .withStatus(HttpStatus.OK.value())
                     .withHeader("Content-Type", "application/protobuf; version=1.0")
-                    .withHeader("batchTag", batchTag)
-                    .withHeader("nextBatchTag", nextBatchTag)));
+                    .withHeader("batchTag", BATCH_TAG)
+                    .withHeader("nextBatchTag", NEXT_BATCH_TAG)));
 
-    BatchDownloadResponse expResponse = new BatchDownloadResponse(batchTag, Optional.empty(),
-        Optional.of(nextBatchTag));
+    BatchDownloadResponse expResponse = new BatchDownloadResponse(BATCH_TAG, Optional.empty(),
+        Optional.of(NEXT_BATCH_TAG));
     assertDownloadResponseMatches(expResponse);
   }
 
@@ -117,18 +118,18 @@ class FederationGatewayDownloadServiceTest {
   void testDownloadSuccessful() {
     DiagnosisKeyBatch batch = FederationBatchTestHelper.createDiagnosisKeyBatch("batch-data");
 
-    server.stubFor(
+    SERVER.stubFor(
         get(anyUrl())
             .willReturn(
                 aResponse()
                     .withStatus(HttpStatus.OK.value())
                     .withHeader("Content-Type", "application/protobuf; version=1.0")
-                    .withHeader("batchTag", batchTag)
-                    .withHeader("nextBatchTag", nextBatchTag)
+                    .withHeader("batchTag", BATCH_TAG)
+                    .withHeader("nextBatchTag", NEXT_BATCH_TAG)
                     .withBody(batch.toByteArray())));
 
-    BatchDownloadResponse expResponse = new BatchDownloadResponse(batchTag, Optional.of(batch),
-        Optional.of(nextBatchTag));
+    BatchDownloadResponse expResponse = new BatchDownloadResponse(BATCH_TAG, Optional.of(batch),
+        Optional.of(NEXT_BATCH_TAG));
     assertDownloadResponseMatches(expResponse);
   }
 
@@ -136,22 +137,21 @@ class FederationGatewayDownloadServiceTest {
   void testDownloadSuccessfulWithoutNextBatchTag() {
     DiagnosisKeyBatch batch = FederationBatchTestHelper.createDiagnosisKeyBatch("batch-data");
 
-    server.stubFor(
+    SERVER.stubFor(
         get(anyUrl())
             .willReturn(
                 aResponse()
                     .withStatus(HttpStatus.OK.value())
                     .withHeader("Content-Type", "application/protobuf; version=1.0")
-                    .withHeader("batchTag", batchTag)
+                    .withHeader("batchTag", BATCH_TAG)
                     .withBody(batch.toByteArray())));
 
-    BatchDownloadResponse expResponse = new BatchDownloadResponse(batchTag, Optional.of(batch), Optional.empty());
+    BatchDownloadResponse expResponse = new BatchDownloadResponse(BATCH_TAG, Optional.of(batch), Optional.empty());
     assertDownloadResponseMatches(expResponse);
   }
 
   void assertDownloadResponseMatches(BatchDownloadResponse expResponse) {
-    LocalDate date = mock(LocalDate.class);
-    assertThat(downloadService.downloadBatch(date)).isEqualTo(expResponse);
-    assertThat(downloadService.downloadBatch(batchTag, date)).isEqualTo(expResponse);
+    assertThat(downloadService.downloadBatch(DATE)).isEqualTo(expResponse);
+    assertThat(downloadService.downloadBatch(BATCH_TAG, DATE)).isEqualTo(expResponse);
   }
 }
