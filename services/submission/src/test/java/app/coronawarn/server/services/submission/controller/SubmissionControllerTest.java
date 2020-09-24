@@ -204,11 +204,36 @@ class SubmissionControllerTest {
     assertDSOSCorrectlyComputedFromTRL(config, submittedKeys, values);
   }
 
+  /**
+   * The test verifies that even if the payload does not provide keys with TRL, the information
+   * is still derived from the DSOS field and correctly persisted.
+   *
+   * <li>DSOS - days since onset of symptoms
+   * <li>TRL  - transmission risk level
+   */
+  @Test
+  void checkTRLIsPersistedForKeysWithDSOSOnly() {
+    Collection<TemporaryExposureKey> submittedKeys = buildMultipleKeysWithoutTRL(config);
+    ArgumentCaptor<Collection<DiagnosisKey>> argument = ArgumentCaptor.forClass(Collection.class);
+
+    SubmissionPayload submissionPayload = buildPayload(submittedKeys);
+    executor.executePost(submissionPayload);
+
+    verify(diagnosisKeyService, times(1)).saveDiagnosisKeys(argument.capture());
+
+    Collection<DiagnosisKey> values = argument.getValue();
+    assertTRLCorrectlyComputedFromDSOS(config, submittedKeys, values);
+  }
+
+  /**
+   * The test verifies that a payload is rejected when both TRL and DSOS are missing from a single key.
+   *
+   * <li>DSOS - days since onset of symptoms
+   * <li>TRL  - transmission risk level
+   */
   @Test
   void checkErrorIsThrownWhenKeysAreMissingDSOSAndTRL() {
     Collection<TemporaryExposureKey> submittedKeys = buildMultipleKeysWithoutDSOSAndTRL(config);
-    ArgumentCaptor<Collection<DiagnosisKey>> argument = ArgumentCaptor.forClass(Collection.class);
-
     SubmissionPayload submissionPayload = buildPayload(submittedKeys);
     ResponseEntity<Void> response = executor.executePost(submissionPayload);
     assertThat(response.getStatusCode()).isEqualTo(BAD_REQUEST);
@@ -373,6 +398,16 @@ class SubmissionControllerTest {
               .getRollingStartIntervalNumber());
       assertThat(savedKeysForSingleSubmittedKey).allMatch(
           savedKey -> savedKey.getTransmissionRiskLevel() == submittedDiagnosisKey.getTransmissionRiskLevel());
+    });
+  }
+
+  private void assertTRLCorrectlyComputedFromDSOS(SubmissionServiceConfig config,
+      Collection<TemporaryExposureKey> submittedTEKs, Collection<DiagnosisKey> diagnosisKeys) {
+    submittedTEKs.stream().map(tek -> Pair.of(tek, findDiagnosisKeyMatch(tek, diagnosisKeys))).forEach(pair -> {
+      int tekTRL = pair.getLeft().getTransmissionRiskLevel();
+      int dkDSOS = pair.getRight().getDaysSinceOnsetOfSymptoms();
+      Integer expectedTRL = config.getTekFieldDerivations().deriveTrlFromDsos(dkDSOS);
+      Assertions.assertEquals(expectedTRL, tekTRL);
     });
   }
 
