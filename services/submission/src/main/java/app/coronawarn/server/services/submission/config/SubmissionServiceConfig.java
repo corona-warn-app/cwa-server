@@ -337,6 +337,10 @@ public class SubmissionServiceConfig {
     @NotEmpty
     private Map<Integer, Integer> dsosFromTrl;
 
+    @NotNull
+    @NotEmpty
+    private Map<Integer, Integer> trlFromDSOS;
+
     public Map<Integer, Integer> getDsosFromTrl() {
       return dsosFromTrl;
     }
@@ -345,9 +349,22 @@ public class SubmissionServiceConfig {
       this.dsosFromTrl = dsosFromTrl;
     }
 
+    public Map<Integer, Integer> getTrlFromDSOS() {
+      return trlFromDSOS;
+    }
+
+    public void setTrlFromDSOS(Map<Integer, Integer> trlFromDSOS) {
+      this.trlFromDSOS = trlFromDSOS;
+    }
+
     public Integer deriveDsosFromTrl(Integer trlValue) {
       // the derivation logic must be refined to take into account missing trl values.
       return dsosFromTrl.getOrDefault(trlValue, 0);
+    }
+
+    public Integer deriveTrlFromDsos(int dkDSOS) {
+      // the derivation logic must be refined to take into account missing trl values.
+      return trlFromDSOS.getOrDefault(dsosFromTrl, 1);
     }
   }
 }
