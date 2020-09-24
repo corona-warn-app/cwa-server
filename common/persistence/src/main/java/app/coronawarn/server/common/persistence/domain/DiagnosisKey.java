@@ -93,7 +93,7 @@ public class DiagnosisKey {
   DiagnosisKey(byte[] keyData, int rollingStartIntervalNumber, int rollingPeriod,
       int transmissionRiskLevel, long submissionTimestamp,
       boolean consentToFederation, @Size String originCountry, List<String> visitedCountries,
-      ReportType reportType, int daysSinceOnsetOfSymptoms) {
+      ReportType reportType, Integer daysSinceOnsetOfSymptoms) {
     this.keyData = keyData;
     this.rollingStartIntervalNumber = rollingStartIntervalNumber;
     this.rollingPeriod = rollingPeriod;
@@ -103,7 +103,8 @@ public class DiagnosisKey {
     this.originCountry = originCountry;
     this.visitedCountries = visitedCountries == null ? Collections.emptyList() : visitedCountries;
     this.reportType = reportType;
-    this.daysSinceOnsetOfSymptoms = daysSinceOnsetOfSymptoms;
+    // Workaround to avoid exception on loading old DiagnosisKeys after migration to EFGS
+    this.daysSinceOnsetOfSymptoms = daysSinceOnsetOfSymptoms == null ? 0 : daysSinceOnsetOfSymptoms;
   }
 
   /**
