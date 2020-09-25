@@ -66,7 +66,6 @@ public class FederationGatewayDownloadService {
           .getDiagnosisKeys(date.format(ISO_LOCAL_DATE));
       return parseResponseEntity(response);
     } catch (FeignException e) {
-      logger.error("Triggering download of first batch for date {} failed.", date, e);
       throw new FederationGatewayException("Downloading batch for date " + date.format(ISO_LOCAL_DATE) + " failed.", e);
     }
   }
