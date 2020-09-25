@@ -36,7 +36,6 @@ import java.time.LocalDate;
 import java.util.Deque;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.NoSuchElementException;
 import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -76,11 +75,11 @@ public class FederationBatchProcessor {
    */
   public void saveFirstBatchInfoForDate(LocalDate date) {
     try {
-      logger.info("Downloading first batch for date {}", date);
+      logger.info("Triggering download of first batch for date {}.", date);
       BatchDownloadResponse response = federationGatewayDownloadService.downloadBatch(date);
       batchInfoService.save(new FederationBatchInfo(response.getBatchTag(), date));
     } catch (Exception e) {
-      logger.error("Downloading batch for date {} failed.", date, e);
+      logger.error("Triggering download of first batch for date {} failed.", date, e);
     }
   }
 

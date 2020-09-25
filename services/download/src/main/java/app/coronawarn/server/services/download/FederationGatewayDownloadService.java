@@ -61,10 +61,12 @@ public class FederationGatewayDownloadService {
    */
   public BatchDownloadResponse downloadBatch(LocalDate date) {
     try {
+      logger.info("Downloading first batch for date {}", date);
       ResponseEntity<DiagnosisKeyBatch> response = federationGatewayClient
           .getDiagnosisKeys(date.format(ISO_LOCAL_DATE));
       return parseResponseEntity(response);
     } catch (FeignException e) {
+      logger.error("Triggering download of first batch for date {} failed.", date, e);
       throw new FederationGatewayException("Downloading batch for date " + date.format(ISO_LOCAL_DATE) + " failed.", e);
     }
   }
@@ -77,11 +79,14 @@ public class FederationGatewayDownloadService {
    * @return The {@link BatchDownloadResponse} containing the downloaded batch, batchTag and nextBatchTag.
    */
   public BatchDownloadResponse downloadBatch(String batchTag, LocalDate date) {
+    String dateString = date.format(ISO_LOCAL_DATE);
     try {
+      logger.info("Downloading batch for date {} and batchTag {}.", batchTag, dateString);
       ResponseEntity<DiagnosisKeyBatch> response = federationGatewayClient
-          .getDiagnosisKeys(batchTag, date.format(ISO_LOCAL_DATE));
+          .getDiagnosisKeys(batchTag, dateString);
       return parseResponseEntity(response);
     } catch (FeignException e) {
+      logger.error("Downloading batch for date {} and batchTag {} failed.", batchTag, dateString);
       throw new FederationGatewayException("Downloading batch " + batchTag + " for date " + date + " failed.", e);
     }
   }
@@ -99,36 +104,4 @@ public class FederationGatewayDownloadService {
         ? Optional.ofNullable(headerString)
         : Optional.empty();
   }
-
-  // TODO tests:
-  /*
-
-  @Test
-  void readInternalThrowsHttpMessageNotReadableExceptionIfBatchTagMissing() throws IOException {
-    HttpInputMessage message = buildHttpInputMessageWithValidBody(null, "null");
-    assertThatExceptionOfType(HttpMessageNotReadableException.class)
-        .isThrownBy(() -> converter.readInternal(BatchDownloadResponse.class, message));
-  }
-
-  @Test
-  void readInternalReturnsResponseWithoutNextBatchTag() throws IOException {
-    HttpInputMessage message = buildHttpInputMessageWithValidBody(EXP_BATCH_TAG, "null");
-    BatchDownloadResponse actResponse = converter.readInternal(BatchDownloadResponse.class, message);
-    assertThat(actResponse)
-        .isEqualTo(new BatchDownloadResponse(EXP_DIAGNOSIS_KEY_BATCH, EXP_BATCH_TAG, Optional.empty()));
-  }
-
-  @Test
-  void readInternalReturnsResponseWithNextBatchTag() throws IOException {
-    HttpInputMessage message = buildHttpInputMessageWithValidBody(EXP_BATCH_TAG, EXP_NEXT_BATCH_TAG);
-    BatchDownloadResponse actResponse = converter.readInternal(BatchDownloadResponse.class, message);
-    assertThat(actResponse)
-        .isEqualTo(new BatchDownloadResponse(EXP_DIAGNOSIS_KEY_BATCH, EXP_BATCH_TAG, Optional.of(EXP_NEXT_BATCH_TAG)));
-  }
-
-    private static HttpInputMessage buildHttpInputMessageWithValidBody(String batchTag, String nextBatchTag)
-      throws IOException {
-    return buildHttpInputMessage(EXP_DIAGNOSIS_KEY_BATCH.toByteArray(), batchTag, nextBatchTag);
-  }
-   */
 }
