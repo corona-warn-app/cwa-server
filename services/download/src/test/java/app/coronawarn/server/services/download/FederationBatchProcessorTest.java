@@ -58,7 +58,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 
 @SpringBootTest(classes = {FederationBatchProcessor.class, FederationBatchInfoService.class, DiagnosisKeyService.class,
-    FederationGatewayClient.class,DownloadServiceConfig.class})
+    FederationGatewayClient.class, DownloadServiceConfig.class})
 class FederationBatchProcessorTest {
 
   private final LocalDate date = LocalDate.of(2020, 9, 1);

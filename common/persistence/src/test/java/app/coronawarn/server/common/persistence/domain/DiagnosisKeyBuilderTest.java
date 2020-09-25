@@ -314,7 +314,7 @@ class DiagnosisKeyBuilderTest {
     app.coronawarn.server.common.protocols.external.exposurenotification.DiagnosisKey federationKey = app.coronawarn.server.common.protocols.external.exposurenotification.DiagnosisKey
         .newBuilder()
         .setKeyData(ByteString.copyFrom(expKeyData))
-        .addVisitedCountries("DE")
+        .addAllVisitedCountries(visitedCountries)
         .setRollingStartIntervalNumber(expRollingStartIntervalNumber)
         .setTransmissionRiskLevel(expTransmissionRiskLevel)
         .setRollingPeriod(DiagnosisKey.MAX_ROLLING_PERIOD)
@@ -324,9 +324,7 @@ class DiagnosisKeyBuilderTest {
         .build();
     DiagnosisKey actDiagnosisKey = DiagnosisKey.builder()
         .fromFederationDiagnosisKey(federationKey).build();
-
     assertDiagnosisKeyEquals(actDiagnosisKey);
-
   }
 
   private DiagnosisKey keyWithKeyData(byte[] expKeyData) {
