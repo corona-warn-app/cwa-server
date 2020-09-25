@@ -113,7 +113,7 @@ class FederationKeyNormalizerTest {
 
   @Test
   void testWhenBatchKeyWithoutDsosShouldThrowException() {
-    DiagnosisKeyNormalizer normalizer = new FederationKeyNormalizer(config.getTekFieldDerivations().getTrlFromDsos());
+    DiagnosisKeyNormalizer normalizer = new FederationKeyNormalizer(config);
     assertThrows(IllegalArgumentException.class, () -> normalizer.normalize(NormalizableFields.of(1, null)));
   }
 

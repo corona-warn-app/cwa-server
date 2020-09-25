@@ -155,7 +155,7 @@ public class FederationBatchProcessor {
     return batchDownloadResponse.getDiagnosisKeyBatch().getKeysList()
         .stream()
         .map(diagnosisKey -> DiagnosisKey.builder().fromFederationDiagnosisKey(diagnosisKey)
-            .withFieldNormalization(new FederationKeyNormalizer(config.getTekFieldDerivations().getTrlFromDsos()))
+            .withFieldNormalization(new FederationKeyNormalizer(config))
             .build())
         .collect(toList());
   }

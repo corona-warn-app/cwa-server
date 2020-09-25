@@ -23,29 +23,29 @@ package app.coronawarn.server.services.download.normalization;
 
 import app.coronawarn.server.common.persistence.domain.normalization.DiagnosisKeyNormalizer;
 import app.coronawarn.server.common.persistence.domain.normalization.NormalizableFields;
-import java.util.Map;
+import app.coronawarn.server.services.download.DownloadServiceConfig;
+import app.coronawarn.server.services.download.DownloadServiceConfig.TekFieldDerivations;
 
 /**
- * This class is used to derive days since onset of symptoms.
+ * This class is used to derive transmission risk level using the days since onset of symptoms.
  */
 public class FederationKeyNormalizer implements DiagnosisKeyNormalizer {
 
-  private final Map<Integer, Integer> dsosAndTrl;
+  private final TekFieldDerivations tekFieldDerivations;
 
   /**
    * Constructor for this class.
    *
-   * @param dsosAndTrl A map containing integer key-pair values of days since onset of symptoms and transmission risk
-   *                   level.
+   * @param config A {@link DownloadServiceConfig} object.
    */
-  public FederationKeyNormalizer(Map<Integer, Integer> dsosAndTrl) {
-    this.dsosAndTrl = dsosAndTrl;
+  public FederationKeyNormalizer(DownloadServiceConfig config) {
+    this.tekFieldDerivations = config.getTekFieldDerivations();
   }
 
   @Override
   public NormalizableFields normalize(NormalizableFields fieldsAndValues) {
     validateNormalizableFields(fieldsAndValues);
-    int trl = dsosAndTrl.getOrDefault(fieldsAndValues.getDaysSinceOnsetOfSymptoms(), 1);
+    int trl = tekFieldDerivations.deriveTrlFromDsos(fieldsAndValues.getDaysSinceOnsetOfSymptoms());
     return NormalizableFields.of(trl, fieldsAndValues.getDaysSinceOnsetOfSymptoms());
   }
 

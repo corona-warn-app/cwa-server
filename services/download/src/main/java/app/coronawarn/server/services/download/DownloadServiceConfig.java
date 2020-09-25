@@ -81,7 +81,7 @@ public class DownloadServiceConfig {
     }
 
     public Integer deriveTrlFromDsos(Integer dsos) {
-      return trlFromDsos.get(dsos);
+      return trlFromDsos.getOrDefault(dsos, 1);
     }
 
   }
