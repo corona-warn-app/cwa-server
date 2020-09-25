@@ -57,26 +57,18 @@ import org.springframework.boot.test.mock.mockito.SpyBean;
 @SpringBootTest
 class FederationKeyNormalizerTest {
 
-  private final LocalDate date = LocalDate.of(2020, 9, 1);
+  private static final String BATCH_TAG = "507f191e810c19729de860ea";
   FederationBatchProcessor processor;
   @Autowired
   DownloadServiceConfig config;
-  @MockBean
-  private FederationBatchInfoService batchInfoService;
-
-  @SpyBean
-  private DiagnosisKeyService diagnosisKeyService;
-
   @Autowired
   DiagnosisKeyRepository repository;
-
+  @SpyBean
+  private DiagnosisKeyService diagnosisKeyService;
+  @MockBean
+  private FederationBatchInfoService batchInfoService;
   @MockBean
   private FederationGatewayClient federationGatewayClient;
-  private static final String BATCH_TAG = "507f191e810c19729de860ea";
-
-  private static String isoDate(LocalDate date) {
-    return date.format(ISO_LOCAL_DATE);
-  }
 
   private Map<String, Pair<Integer, Integer>> getKeysAndDsos() {
     return Map.of("0123456789ABCDEX", Pair.of(4, 1),
@@ -99,10 +91,11 @@ class FederationKeyNormalizerTest {
 
   @Test
   void testBatchKeysWithDsosAndWithoutTrlAreNormalized() {
+    LocalDate date = LocalDate.of(2020, 9, 1);
     FederationBatchInfo federationBatchInfo = new FederationBatchInfo(BATCH_TAG, date, UNPROCESSED);
     when(batchInfoService.findByStatus(UNPROCESSED)).thenReturn(list(federationBatchInfo));
     Optional<BatchDownloadResponse> serverResponse = getBatchDownloadResponse();
-    when(federationGatewayClient.getDiagnosisKeys(BATCH_TAG, isoDate(date))).thenReturn(serverResponse);
+    when(federationGatewayClient.getDiagnosisKeys(BATCH_TAG, date.format(ISO_LOCAL_DATE))).thenReturn(serverResponse);
     processor.processUnprocessedFederationBatches();
     diagnosisKeyService.getDiagnosisKeys().forEach(dk -> {
       String keyData = ByteString.copyFrom(dk.getKeyData()).toStringUtf8();
@@ -114,7 +107,8 @@ class FederationKeyNormalizerTest {
   @Test
   void testWhenBatchKeyWithoutDsosShouldThrowException() {
     DiagnosisKeyNormalizer normalizer = new FederationKeyNormalizer(config);
-    assertThrows(IllegalArgumentException.class, () -> normalizer.normalize(NormalizableFields.of(1, null)));
+    NormalizableFields nf = NormalizableFields.of(1, null);
+    assertThrows(IllegalArgumentException.class, () -> normalizer.normalize(nf));
   }
 
   private Optional<BatchDownloadResponse> getBatchDownloadResponse() {
@@ -122,11 +116,9 @@ class FederationKeyNormalizerTest {
         .stream()
         .map(e -> createDiagnosisKey(e.getKey(), e.getValue().getLeft()))
         .collect(Collectors.toList());
-
     DiagnosisKeyBatch diagnosisKeyBatch = DiagnosisKeyBatch.newBuilder()
         .addAllKeys(diagnosisKeys)
         .build();
-
     return Optional
         .of(new BatchDownloadResponse(diagnosisKeyBatch, BATCH_TAG, Optional.empty()));
   }
