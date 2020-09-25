@@ -77,11 +77,8 @@ public class FederationBatchProcessor {
   public void saveFirstBatchInfoForDate(LocalDate date) {
     try {
       logger.info("Downloading first batch for date {}", date);
-      BatchDownloadResponse response =
-          federationGatewayDownloadService.downloadBatch(date);
+      BatchDownloadResponse response = federationGatewayDownloadService.downloadBatch(date);
       batchInfoService.save(new FederationBatchInfo(response.getBatchTag(), date));
-    } catch (NoSuchElementException e) {
-      logger.error("Batch for date {} was empty.", date);
     } catch (Exception e) {
       logger.error("Downloading batch for date {} failed.", date, e);
     }
@@ -131,12 +128,11 @@ public class FederationBatchProcessor {
     logger.info("Processing batch for date {} and batchTag {}", date, batchTag);
     try {
       BatchDownloadResponse response = federationGatewayDownloadService.downloadBatch(batchTag, date);
-      if (response.getDiagnosisKeyBatch().isPresent()) {
-        DiagnosisKeyBatch diagnosisKeyBatch = response.getDiagnosisKeyBatch().get();
+      response.getDiagnosisKeyBatch().ifPresent(diagnosisKeyBatch -> {
         logger.info("Downloaded {} keys for date {} and batchTag {}", diagnosisKeyBatch.getKeysCount(), date, batchTag);
         int insertedKeys = diagnosisKeyService.saveDiagnosisKeys(convertDiagnosisKeys(diagnosisKeyBatch));
         logger.info("Successfully inserted {} keys for date {} and batchTag {}", insertedKeys, date, batchTag);
-      }
+      });
       batchInfoService.updateStatus(batchInfo, PROCESSED);
       return response.getNextBatchTag();
     } catch (Exception e) {

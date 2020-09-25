@@ -26,7 +26,6 @@ import app.coronawarn.server.common.federation.client.FederationGatewayClient;
 import app.coronawarn.server.common.protocols.external.exposurenotification.DiagnosisKeyBatch;
 import feign.FeignException;
 import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
 import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -74,7 +73,7 @@ public class FederationGatewayDownloadService {
    * Download the batch from the EFGS with the given batchTag for the given date.
    *
    * @param batchTag The batchTag of the batch that should be downloaded.
-   * @param date The date for which the batch should be downloaded.
+   * @param date     The date for which the batch should be downloaded.
    * @return The {@link BatchDownloadResponse} containing the downloaded batch, batchTag and nextBatchTag.
    */
   public BatchDownloadResponse downloadBatch(String batchTag, LocalDate date) {
