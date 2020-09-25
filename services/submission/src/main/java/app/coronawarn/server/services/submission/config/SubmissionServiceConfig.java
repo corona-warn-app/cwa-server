@@ -21,9 +21,11 @@
 package app.coronawarn.server.services.submission.config;
 
 import java.io.File;
+import java.util.Map;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Component;
@@ -141,6 +143,10 @@ public class SubmissionServiceConfig {
     this.payload = payload;
   }
 
+  public TekFieldDerivations getTekFieldDerivations() {
+    return payload.getTekFieldDerivations();
+  }
+
   public static class Payload {
 
     @Min(7)
@@ -148,8 +154,8 @@ public class SubmissionServiceConfig {
     private Integer maxNumberOfKeys;
     @NotEmpty
     private String[] supportedCountries;
-
     private String defaultOriginCountry;
+    private TekFieldDerivations tekFieldDerivations;
 
     public Integer getMaxNumberOfKeys() {
       return maxNumberOfKeys;
@@ -167,13 +173,20 @@ public class SubmissionServiceConfig {
       this.supportedCountries = supportedCountries;
     }
 
-
     public String getDefaultOriginCountry() {
       return defaultOriginCountry;
     }
 
     public void setDefaultOriginCountry(String defaultOriginCountry) {
       this.defaultOriginCountry = defaultOriginCountry;
+    }
+
+    public TekFieldDerivations getTekFieldDerivations() {
+      return tekFieldDerivations;
+    }
+
+    public void setTekFieldDerivations(TekFieldDerivations tekFieldDerivations) {
+      this.tekFieldDerivations = tekFieldDerivations;
     }
   }
 
@@ -312,6 +325,29 @@ public class SubmissionServiceConfig {
       public void setTrustStorePassword(String trustStorePassword) {
         this.trustStorePassword = trustStorePassword;
       }
+    }
+  }
+
+  /**
+   * Wrapper over properties defined in the application.yaml which map DSOS to TRL
+   * and vice-versa. These maps are used to derive each property from the other.
+   */
+  public static class TekFieldDerivations {
+    @NotNull
+    @NotEmpty
+    private Map<Integer, Integer> dsosFromTrl;
+
+    public Map<Integer, Integer> getDsosFromTrl() {
+      return dsosFromTrl;
+    }
+
+    public void setDsosFromTrl(Map<Integer, Integer> dsosFromTrl) {
+      this.dsosFromTrl = dsosFromTrl;
+    }
+
+    public Integer deriveDsosFromTrl(Integer trlValue) {
+      // the derivation logic must be refined to take into account missing trl values.
+      return dsosFromTrl.getOrDefault(trlValue, 0);
     }
   }
 }
