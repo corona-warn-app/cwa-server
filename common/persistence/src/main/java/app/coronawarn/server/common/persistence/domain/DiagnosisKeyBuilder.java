@@ -95,6 +95,15 @@ public class DiagnosisKeyBuilder implements
   }
 
   @Override
+  public FinalBuilder fromTemporaryExposureKeyAndSubmissionPayload(TemporaryExposureKey protoBufObject,
+      List<String> visitedCountries, String originCountry, boolean consentToFederation) {
+    return fromTemporaryExposureKey(protoBufObject)
+        .withVisitedCountries(visitedCountries)
+        .withCountryCode(originCountry)
+        .withConsentToFederation(consentToFederation);
+  }
+
+  @Override
   public FinalBuilder fromFederationDiagnosisKey(
       app.coronawarn.server.common.protocols.external.exposurenotification.DiagnosisKey federationDiagnosisKey) {
     return this
@@ -189,11 +198,9 @@ public class DiagnosisKeyBuilder implements
   }
 
   /**
-   * If a {@link DiagnosisKeyNormalizer} object was configured in this builder,
-   * apply normalization where possibile, and return a container with the new
-   * values. Otherwise return a container with the original unchanged values.
-   * For boxed types, primitive zero like values will be chosen if they have not been
-   * provided by the client of the builder.
+   * If a {@link DiagnosisKeyNormalizer} object was configured in this builder, apply normalization where possibile, and
+   * return a container with the new values. Otherwise return a container with the original unchanged values. For boxed
+   * types, primitive zero like values will be chosen if they have not been provided by the client of the builder.
    */
   private NormalizableFields normalizeValues() {
     if (fieldNormalizer != null) {

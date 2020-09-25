@@ -42,6 +42,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.function.Predicate;
+import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -121,7 +122,6 @@ public class SubmissionController {
         submissionMonitor.incrementInvalidTanRequestCounter();
         deferredResult.setResult(ResponseEntity.status(HttpStatus.FORBIDDEN).build());
       } else {
-
         List<DiagnosisKey> diagnosisKeys = extractValidDiagnosisKeysFromPayload(
             setDefaultValuesIfMissing(submissionPayload));
         checkDiagnosisKeysStructure(diagnosisKeys);
@@ -135,31 +135,29 @@ public class SubmissionController {
       stopWatch.stop();
       fakeDelayManager.updateFakeRequestDelay(stopWatch.getTotalTimeMillis());
     }
-
     return deferredResult;
   }
 
   private List<DiagnosisKey> extractValidDiagnosisKeysFromPayload(SubmissionPayload submissionPayload) {
     List<TemporaryExposureKey> protoBufferKeys = submissionPayload.getKeysList();
-    List<DiagnosisKey> diagnosisKeys = new ArrayList<>();
 
-    for (TemporaryExposureKey protoBufferKey : protoBufferKeys) {
+    List<DiagnosisKey> diagnosisKeys = protoBufferKeys.stream()
+        .map(protoBufferKey -> DiagnosisKey.builder()
+            .fromTemporaryExposureKeyAndSubmissionPayload(
+                protoBufferKey,
+                submissionPayload.getVisitedCountriesList(),
+                submissionPayload.getOrigin(),
+                submissionPayload.getConsentToFederation())
+            .withFieldNormalization(new SubmissionKeyNormalizer(submissionServiceConfig))
+            .build()
+        )
+        .filter(diagnosisKey -> diagnosisKey.isYoungerThanRetentionThreshold(retentionDays))
+        .collect(Collectors.toList());
 
-      DiagnosisKey diagnosisKey = DiagnosisKey.builder()
-          .fromTemporaryExposureKey(protoBufferKey)
-          .withVisitedCountries(submissionPayload.getVisitedCountriesList())
-          .withCountryCode(submissionPayload.getOrigin())
-          .withConsentToFederation(submissionPayload.getConsentToFederation())
-          .withFieldNormalization(new SubmissionKeyNormalizer(submissionServiceConfig))
-          .build();
-
-      if (diagnosisKey.isYoungerThanRetentionThreshold(retentionDays)) {
-        diagnosisKeys.add(diagnosisKey);
-      } else {
-        logger.warn("Not persisting a diagnosis key, as it is outdated beyond retention threshold.");
-      }
+    if (protoBufferKeys.size() > diagnosisKeys.size()) {
+      logger.warn("Not persisting {} diagnosis key(s), as it is outdated beyond retention threshold.",
+          protoBufferKeys.size() - diagnosisKeys.size());
     }
-
     return diagnosisKeys;
   }
 

@@ -49,6 +49,21 @@ interface DiagnosisKeyBuilders {
     FinalBuilder fromTemporaryExposureKey(TemporaryExposureKey protoBufObject);
 
     /**
+     * Adds the data contained in the specified protocol buffers key object and the submission payload to this builder.
+     *
+     * @param protoBufObject      ProtocolBuffer object associated with the temporary exposure key.
+     * @param visitedCountries    The list of visited countries to add to the diagnosis key.
+     * @param originCountry       The origin country to set in the diagnosis key.
+     * @param consentToFederation Indicates if the user has given his consent to share this diagnosis key via
+     *                            federation.
+     * @return this Builder instance.
+     */
+    // TODO merge with fromTemporaryExposureKey?
+    // TODO tests
+    FinalBuilder fromTemporaryExposureKeyAndSubmissionPayload(TemporaryExposureKey protoBufObject,
+        List<String> visitedCountries, String originCountry, boolean consentToFederation);
+
+    /**
      * Adds the data contained in the specified federation diagnosis key object to this builder.
      *
      * @param federationDiagnosisKey DiagnosisKey object associated with the temporary exposure key.
@@ -63,8 +78,8 @@ interface DiagnosisKeyBuilders {
     /**
      * Adds the specified rolling start interval number to this builder.
      *
-     * @param rollingStartIntervalNumber number describing when a key starts.
-     *                                   It is equal to startTimeOfKeySinceEpochInSecs / (60 * 10).
+     * @param rollingStartIntervalNumber number describing when a key starts. It is equal to startTimeOfKeySinceEpochInSecs
+     *                                   / (60 * 10).
      * @return this Builder instance.
      */
     TransmissionRiskLevelBuilder withRollingStartIntervalNumber(int rollingStartIntervalNumber);
@@ -112,9 +127,8 @@ interface DiagnosisKeyBuilders {
     FinalBuilder withDaysSinceOnsetOfSymptoms(Integer daysSinceOnsetOfSymptoms);
 
     /**
-     * Field normalization is applied after all values have been provided, but prior
-     * to construction of the {@link DiagnosisKey}. For flexibility purpose, providing a
-     * normalizer object is optional.
+     * Field normalization is applied after all values have been provided, but prior to construction of the {@link
+     * DiagnosisKey}. For flexibility purpose, providing a normalizer object is optional.
      */
     FinalBuilder withFieldNormalization(DiagnosisKeyNormalizer fieldNormalizer);
 
