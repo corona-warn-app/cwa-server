@@ -32,7 +32,6 @@ import static org.springframework.http.HttpHeaders.CONTENT_TYPE;
 import app.coronawarn.server.common.protocols.external.exposurenotification.DiagnosisKeyBatch;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpInputMessage;
@@ -68,11 +67,9 @@ class FederationGatewayHttpMessageConverterTest {
     assertThat(converter.supports(DiagnosisKeyBatch.class)).isTrue();
   }
 
-  // TODO fix
-  @Disabled
   @Test
   void writeInternalThrowsUnsupportedOperationException() {
-    DiagnosisKeyBatch message = mock(DiagnosisKeyBatch.class);
+    DiagnosisKeyBatch message = DiagnosisKeyBatch.newBuilder().build();
     HttpOutputMessage outputMessage = mock(HttpOutputMessage.class);
     assertThatExceptionOfType(UnsupportedOperationException.class)
         .isThrownBy(() -> converter.writeInternal(message, outputMessage));
