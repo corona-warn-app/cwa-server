@@ -4,11 +4,14 @@ import static app.coronawarn.server.common.persistence.domain.FederationBatchSta
 import static app.coronawarn.server.services.download.FederationBatchTestHelper.createDiagnosisKey;
 import static java.time.format.DateTimeFormatter.ISO_LOCAL_DATE;
 import static org.assertj.core.util.Lists.list;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.when;
 
 import app.coronawarn.server.common.federation.client.FederationGatewayClient;
 import app.coronawarn.server.common.federation.client.download.BatchDownloadResponse;
 import app.coronawarn.server.common.persistence.domain.FederationBatchInfo;
+import app.coronawarn.server.common.persistence.domain.normalization.DiagnosisKeyNormalizer;
+import app.coronawarn.server.common.persistence.domain.normalization.NormalizableFields;
 import app.coronawarn.server.common.persistence.service.DiagnosisKeyService;
 import app.coronawarn.server.common.persistence.service.FederationBatchInfoService;
 import app.coronawarn.server.common.protocols.external.exposurenotification.DiagnosisKey;
@@ -34,7 +37,6 @@ import org.springframework.boot.test.mock.mockito.SpyBean;
 class FederationKeyNormalizerTest {
 
   private final LocalDate date = LocalDate.of(2020, 9, 1);
-  @Autowired
   FederationBatchProcessor processor;
   @Autowired
   DownloadServiceConfig config;
@@ -46,12 +48,13 @@ class FederationKeyNormalizerTest {
 
   @MockBean
   private FederationGatewayClient federationGatewayClient;
+  private static final String BATCH_TAG = "507f191e810c19729de860ea";
 
   private static String isoDate(LocalDate date) {
     return date.format(ISO_LOCAL_DATE);
   }
 
-  private Map<String, Pair<Integer, Integer>> getKeysAndDsos() {
+  private static Map<String, Pair<Integer, Integer>> getKeysAndDsos() {
     return Map.of("0123456789ABCDEA", Pair.of(-4, 1),
         "0123456789ABCDEB", Pair.of(-3, 3),
         "0123456789ABCDEC", Pair.of(-2, 5),
@@ -71,21 +74,25 @@ class FederationKeyNormalizerTest {
 
   @Test
   void testBatchKeysWithDsosAndWithoutTrlAreNormalized() {
-    String batchTag = "507f191e810c19729de860ea";
-    FederationBatchInfo federationBatchInfo = new FederationBatchInfo(batchTag, date, UNPROCESSED);
+    FederationBatchInfo federationBatchInfo = new FederationBatchInfo(BATCH_TAG, date, UNPROCESSED);
     when(batchInfoService.findByStatus(UNPROCESSED)).thenReturn(list(federationBatchInfo));
-    Optional<BatchDownloadResponse> serverResponse = getBatchDownloadResponse(batchTag);
-    when(federationGatewayClient.getDiagnosisKeys(batchTag, isoDate(date))).thenReturn(serverResponse);
+    Optional<BatchDownloadResponse> serverResponse = getBatchDownloadResponse();
+    when(federationGatewayClient.getDiagnosisKeys(BATCH_TAG, isoDate(date))).thenReturn(serverResponse);
     processor.processUnprocessedFederationBatches();
-
     diagnosisKeyService.getDiagnosisKeys().forEach(dk -> {
-      final String keyData = ByteString.copyFrom(dk.getKeyData()).toStringUtf8();
+      String keyData = ByteString.copyFrom(dk.getKeyData()).toStringUtf8();
       Assertions.assertEquals(dk.getTransmissionRiskLevel(), getKeysAndDsos().get(keyData).getRight());
     });
 
   }
 
-  private Optional<BatchDownloadResponse> getBatchDownloadResponse(String batchTag) {
+  @Test
+  void testWhenBatchKeyWithoutDsosShouldThrowException() {
+    DiagnosisKeyNormalizer normalizer = new FederationKeyNormalizer(config.getTekFieldDerivations().getTrlFromDsos());
+    assertThrows(IllegalArgumentException.class, () -> normalizer.normalize(NormalizableFields.of(1, null)));
+  }
+
+  private Optional<BatchDownloadResponse> getBatchDownloadResponse() {
     List<DiagnosisKey> diagnosisKeys = getKeysAndDsos().entrySet()
         .stream()
         .map(e -> createDiagnosisKey(e.getKey(), e.getValue().getLeft()))
@@ -96,6 +103,6 @@ class FederationKeyNormalizerTest {
         .build();
 
     return Optional
-        .of(new BatchDownloadResponse(diagnosisKeyBatch, batchTag, Optional.empty()));
+        .of(new BatchDownloadResponse(diagnosisKeyBatch, BATCH_TAG, Optional.empty()));
   }
 }

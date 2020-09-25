@@ -20,6 +20,7 @@
 
 package app.coronawarn.server.services.download;
 
+import java.util.Map;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotEmpty;
@@ -27,7 +28,6 @@ import javax.validation.constraints.NotNull;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.annotation.Validated;
-import java.util.Map;
 
 @Component
 @ConfigurationProperties(prefix = "services.download")

@@ -33,7 +33,7 @@ public class FederationBatchTestHelper {
 
   public static DiagnosisKeyBatch createDiagnosisKeyBatch(String keyData) {
     return DiagnosisKeyBatch.newBuilder()
-        .addKeys(createDiagnosisKey(keyData)).build();
+        .addKeys(createDiagnosisKey(keyData,2)).build();
   }
 
   public static DiagnosisKey createDiagnosisKey(String keyData) {

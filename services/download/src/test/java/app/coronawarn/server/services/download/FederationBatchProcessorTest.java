@@ -43,10 +43,13 @@ import app.coronawarn.server.common.persistence.domain.FederationBatchInfo;
 import app.coronawarn.server.common.persistence.domain.FederationBatchStatus;
 import app.coronawarn.server.common.persistence.service.DiagnosisKeyService;
 import app.coronawarn.server.common.persistence.service.FederationBatchInfoService;
+import app.coronawarn.server.services.download.DownloadServiceConfig.TekFieldDerivations;
 import feign.FeignException;
 import java.time.LocalDate;
+import java.util.Map;
 import java.util.Optional;
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -73,9 +76,18 @@ class FederationBatchProcessorTest {
 
   @Autowired
   private FederationBatchProcessor batchProcessor;
+  @MockBean
+  DownloadServiceConfig config;
 
   private static String isoDate(LocalDate date) {
     return date.format(ISO_LOCAL_DATE);
+  }
+
+  @BeforeEach
+  void setUp() {
+    final TekFieldDerivations tekDerivations = new TekFieldDerivations();
+    tekDerivations.setTrlFromDsos(Map.of(1, 1, 2, 2, 3, 3));
+    when(config.getTekFieldDerivations()).thenReturn(tekDerivations);
   }
 
   @AfterEach
