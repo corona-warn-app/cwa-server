@@ -82,14 +82,14 @@ public class UploadServiceConfig {
   }
 
   public static class TestData {
-    private int keys;
+    private int keysPerHour;
 
-    public int getKeys() {
-      return keys;
+    public int getKeysPerHour() {
+      return keysPerHour;
     }
 
-    public void setKeys(int keys) {
-      this.keys = keys;
+    public void setKeysPerHour(int keysPerHour) {
+      this.keysPerHour = keysPerHour;
     }
   }
 

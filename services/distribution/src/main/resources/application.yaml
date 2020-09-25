@@ -83,8 +83,8 @@ services:
       force-update-keyfiles: ${FORCE_UPDATE_KEYFILES:false}
 
     app-features:
-      - label: enable-days-since-onset-of-symptoms-transmission
-        value: ${ENABLE_DAYS_SINCE_ONSET_OF_SYMPTOMS_TRANSMISSION:1}
+      - label: reserved
+        value: ${reserved:1}
     supported-countries: ${SUPPORTED_COUNTRIES}
     app-versions:
       latest-ios: ${LATEST_IOS_VERSION:0.8.2}
