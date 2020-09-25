@@ -108,7 +108,10 @@ public class SubmissionController {
         submissionMonitor.incrementInvalidTanRequestCounter();
         deferredResult.setResult(ResponseEntity.status(HttpStatus.FORBIDDEN).build());
       } else {
-        List<DiagnosisKey> diagnosisKeys = extractValidDiagnosisKeysFromPayload(submissionPayload);
+
+        List<DiagnosisKey> diagnosisKeys = extractValidDiagnosisKeysFromPayload(
+            setDefaultValuesIfMissing(submissionPayload));
+
         diagnosisKeyService.saveDiagnosisKeys(padDiagnosisKeys(diagnosisKeys));
 
         deferredResult.setResult(ResponseEntity.ok().build());
@@ -128,14 +131,11 @@ public class SubmissionController {
     List<DiagnosisKey> diagnosisKeys = new ArrayList<>();
 
     for (TemporaryExposureKey protoBufferKey : protoBufferKeys) {
-      String originCountry = defaultIfEmptyOriginCountry(submissionPayload.getOrigin());
-      List<String> visitedCountries = extendVisitedCountriesWithOriginCountry(
-          submissionPayload.getVisitedCountriesList());
 
       DiagnosisKey diagnosisKey = DiagnosisKey.builder()
           .fromTemporaryExposureKey(protoBufferKey)
-          .withVisitedCountries(visitedCountries)
-          .withCountryCode(originCountry)
+          .withVisitedCountries(submissionPayload.getVisitedCountriesList())
+          .withCountryCode(submissionPayload.getOrigin())
           .withConsentToFederation(submissionPayload.getConsentToFederation())
           .withFieldNormalization(new SubmissionKeyNormalizer(submissionServiceConfig))
           .build();
@@ -148,6 +148,20 @@ public class SubmissionController {
     }
 
     return diagnosisKeys;
+  }
+
+  private SubmissionPayload setDefaultValuesIfMissing(SubmissionPayload submissionPayload) {
+    String originCountry = defaultIfEmptyOriginCountry(submissionPayload.getOrigin());
+    List<String> visitedCountries = extendVisitedCountriesWithOriginCountry(
+        submissionPayload.getVisitedCountriesList());
+
+    return SubmissionPayload.newBuilder()
+        .addAllKeys(submissionPayload.getKeysList())
+        .setRequestPadding(submissionPayload.getRequestPadding())
+        .addAllVisitedCountries(visitedCountries)
+        .setOrigin(originCountry)
+        .setConsentToFederation(submissionPayload.getConsentToFederation())
+        .build();
   }
 
   private String defaultIfEmptyOriginCountry(String originCountry) {
