@@ -20,6 +20,8 @@
 
 package app.coronawarn.server.services.submission.controller;
 
+import static java.time.ZoneOffset.UTC;
+
 import app.coronawarn.server.common.persistence.domain.DiagnosisKey;
 import app.coronawarn.server.common.persistence.service.DiagnosisKeyService;
 import app.coronawarn.server.common.protocols.external.exposurenotification.TemporaryExposureKey;
@@ -31,8 +33,13 @@ import app.coronawarn.server.services.submission.validation.ValidSubmissionPaylo
 import app.coronawarn.server.services.submission.verification.TanVerifier;
 import io.micrometer.core.annotation.Timed;
 import java.security.SecureRandom;
+import java.time.Instant;
+import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Comparator;
 import java.util.List;
+import java.util.function.Predicate;
 import java.util.stream.IntStream;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -66,16 +73,22 @@ public class SubmissionController {
   private final FakeDelayManager fakeDelayManager;
   private final SubmissionServiceConfig submissionServiceConfig;
 
-  SubmissionController(
-      DiagnosisKeyService diagnosisKeyService, TanVerifier tanVerifier, FakeDelayManager fakeDelayManager,
-      SubmissionServiceConfig submissionServiceConfig, SubmissionMonitor submissionMonitor) {
+  SubmissionController(DiagnosisKeyService diagnosisKeyService, TanVerifier tanVerifier,
+      FakeDelayManager fakeDelayManager, SubmissionServiceConfig submissionServiceConfig,
+      SubmissionMonitor submissionMonitor) {
     this.diagnosisKeyService = diagnosisKeyService;
     this.tanVerifier = tanVerifier;
     this.submissionMonitor = submissionMonitor;
     this.fakeDelayManager = fakeDelayManager;
     this.submissionServiceConfig = submissionServiceConfig;
-    retentionDays = submissionServiceConfig.getRetentionDays();
-    randomKeyPaddingMultiplier = submissionServiceConfig.getRandomKeyPaddingMultiplier();
+    this.retentionDays = submissionServiceConfig.getRetentionDays();
+    this.randomKeyPaddingMultiplier = submissionServiceConfig.getRandomKeyPaddingMultiplier();
+  }
+
+  private static byte[] generateRandomKeyData() {
+    byte[] randomKeyData = new byte[16];
+    new SecureRandom().nextBytes(randomKeyData);
+    return randomKeyData;
   }
 
   /**
@@ -96,7 +109,7 @@ public class SubmissionController {
   }
 
   private DeferredResult<ResponseEntity<Void>> buildRealDeferredResult(SubmissionPayload submissionPayload,
-                                                                       String tan) {
+      String tan) {
     DeferredResult<ResponseEntity<Void>> deferredResult = new DeferredResult<>();
 
     StopWatch stopWatch = new StopWatch();
@@ -107,6 +120,7 @@ public class SubmissionController {
         deferredResult.setResult(ResponseEntity.status(HttpStatus.FORBIDDEN).build());
       } else {
         List<DiagnosisKey> diagnosisKeys = extractValidDiagnosisKeysFromPayload(submissionPayload);
+        checkDiagnosisKeysStructure(diagnosisKeys);
         diagnosisKeyService.saveDiagnosisKeys(padDiagnosisKeys(diagnosisKeys));
 
         deferredResult.setResult(ResponseEntity.ok().build());
@@ -147,6 +161,39 @@ public class SubmissionController {
     return diagnosisKeys;
   }
 
+  /**
+   * Checks if a key with transmission risk level 6 is missing in the submitted diagnosis keys. If there is one, it
+   * should not have a rolling start interval number of today midnight. In case of violations, these are logged.
+   *
+   * <p>The check is only done for the key with transmission risk level 6, since the number of keys to be submitted
+   * depends on the time how long the app is installed on the phone. The key with transmission risk level 6 is the one
+   * from the day before the submission and should always be present.
+   *
+   * @param diagnosisKeys The diagnosis keys to check.
+   */
+  private void checkDiagnosisKeysStructure(List<DiagnosisKey> diagnosisKeys) {
+    diagnosisKeys.sort(Comparator.comparing(DiagnosisKey::getRollingStartIntervalNumber));
+    String keysString = Arrays.toString(diagnosisKeys.toArray());
+    Predicate<DiagnosisKey> hasRiskLevel6 = diagnosisKey -> diagnosisKey.getTransmissionRiskLevel() == 6;
+
+    if (diagnosisKeys.stream().noneMatch(hasRiskLevel6)) {
+      logger.warn("Submission payload was sent with missing key having transmission risk level 6. {}", keysString);
+    } else {
+      logger.debug("Submission payload was sent with key having transmission risk level 6. {}", keysString);
+    }
+
+    diagnosisKeys.stream().filter(hasRiskLevel6).findFirst().ifPresent(diagnosisKey -> {
+      long todayMidnightUtc = LocalDate
+          .ofInstant(Instant.now(), UTC)
+          .atStartOfDay()
+          .toEpochSecond(UTC) / (60 * 10);
+      if (diagnosisKey.getRollingStartIntervalNumber() == todayMidnightUtc) {
+        logger.warn("Submission payload was sent with a key having transmission risk level 6"
+            + " and rolling start interval number of today midnight. {}", keysString);
+      }
+    });
+  }
+
   private List<DiagnosisKey> padDiagnosisKeys(List<DiagnosisKey> diagnosisKeys) {
     List<DiagnosisKey> paddedDiagnosisKeys = new ArrayList<>();
     diagnosisKeys.forEach(diagnosisKey -> {
@@ -166,11 +213,5 @@ public class SubmissionController {
           .forEach(paddedDiagnosisKeys::add);
     });
     return paddedDiagnosisKeys;
-  }
-
-  private static byte[] generateRandomKeyData() {
-    byte[] randomKeyData = new byte[16];
-    new SecureRandom().nextBytes(randomKeyData);
-    return randomKeyData;
   }
 }
