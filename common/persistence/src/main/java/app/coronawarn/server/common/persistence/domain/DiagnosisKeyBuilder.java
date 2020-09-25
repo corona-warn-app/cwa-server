@@ -83,7 +83,8 @@ public class DiagnosisKeyBuilder implements
   }
 
   @Override
-  public FinalBuilder fromTemporaryExposureKey(TemporaryExposureKey protoBufObject) {
+  public FinalBuilder fromTemporaryExposureKeyAndSubmissionPayload(TemporaryExposureKey protoBufObject,
+      List<String> visitedCountries, String originCountry, boolean consentToFederation) {
     return this
         .withKeyData(protoBufObject.getKeyData().toByteArray())
         .withRollingStartIntervalNumber(protoBufObject.getRollingStartIntervalNumber())
@@ -91,13 +92,7 @@ public class DiagnosisKeyBuilder implements
             protoBufObject.hasTransmissionRiskLevel() ? protoBufObject.getTransmissionRiskLevel() : null)
         .withRollingPeriod(protoBufObject.getRollingPeriod())
         .withReportType(protoBufObject.getReportType()).withDaysSinceOnsetOfSymptoms(
-            protoBufObject.hasDaysSinceOnsetOfSymptoms() ? protoBufObject.getDaysSinceOnsetOfSymptoms() : null);
-  }
-
-  @Override
-  public FinalBuilder fromTemporaryExposureKeyAndSubmissionPayload(TemporaryExposureKey protoBufObject,
-      List<String> visitedCountries, String originCountry, boolean consentToFederation) {
-    return fromTemporaryExposureKey(protoBufObject)
+            protoBufObject.hasDaysSinceOnsetOfSymptoms() ? protoBufObject.getDaysSinceOnsetOfSymptoms() : null)
         .withVisitedCountries(visitedCountries)
         .withCountryCode(originCountry)
         .withConsentToFederation(consentToFederation);

@@ -351,9 +351,12 @@ class SubmissionControllerTest {
       SubmissionPayload submissionPayload) {
 
     Set<DiagnosisKey> submittedDiagnosisKeys = submittedTemporaryExposureKeys.stream()
-        .map(submittedDiagnosisKey -> DiagnosisKey
+        .map(submittedTemporaryExposureKey -> DiagnosisKey
             .builder()
-            .fromTemporaryExposureKey(submittedDiagnosisKey)
+            .fromTemporaryExposureKeyAndSubmissionPayload(submittedTemporaryExposureKey,
+                submissionPayload.getVisitedCountriesList(),
+                submissionPayload.getOrigin(),
+                submissionPayload.getConsentToFederation())
             .withConsentToFederation(submissionPayload.getConsentToFederation())
             .withVisitedCountries(submissionPayload.getVisitedCountriesList())
             .withCountryCode(defaultIfBlank(submissionPayload.getOrigin(), config.getDefaultOriginCountry()))

@@ -30,16 +30,25 @@ import java.util.stream.Collectors;
 
 import app.coronawarn.server.common.persistence.domain.DiagnosisKey;
 import app.coronawarn.server.common.protocols.external.exposurenotification.TemporaryExposureKey;
+import app.coronawarn.server.common.protocols.internal.SubmissionPayload;
 import app.coronawarn.server.services.submission.config.SubmissionServiceConfig;
+import app.coronawarn.server.services.submission.normalization.SubmissionKeyNormalizer;
 
 public final class SubmissionAssertions {
 
-  public static void assertElementsCorrespondToEachOther(Collection<TemporaryExposureKey> submittedTemporaryExposureKeys,
+  public static void assertElementsCorrespondToEachOther(SubmissionPayload submissionPayload,
       Collection<DiagnosisKey> savedDiagnosisKeys, SubmissionServiceConfig config) {
 
-    Set<DiagnosisKey> submittedDiagnosisKeys = submittedTemporaryExposureKeys.stream()
-        .map(submittedDiagnosisKey -> DiagnosisKey.builder().fromTemporaryExposureKey(submittedDiagnosisKey).build())
-        .collect(Collectors.toSet());
+    List<TemporaryExposureKey> protoBufferKeys = submissionPayload.getKeysList();
+    Set<DiagnosisKey> submittedDiagnosisKeys = protoBufferKeys.stream()
+        .map(protoBufferKey -> DiagnosisKey.builder()
+            .fromTemporaryExposureKeyAndSubmissionPayload(
+                protoBufferKey,
+                submissionPayload.getVisitedCountriesList(),
+                submissionPayload.getOrigin(),
+                submissionPayload.getConsentToFederation())
+            .build()
+        ).collect(Collectors.toSet());
 
     assertThat(savedDiagnosisKeys).hasSize(submittedDiagnosisKeys.size() * config.getRandomKeyPaddingMultiplier());
     assertThat(savedDiagnosisKeys).containsAll(submittedDiagnosisKeys);

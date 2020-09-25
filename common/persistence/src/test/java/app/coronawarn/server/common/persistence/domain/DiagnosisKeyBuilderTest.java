@@ -56,6 +56,7 @@ class DiagnosisKeyBuilderTest {
 
   @Test
   void buildFromProtoBufObjWithSubmissionTimestamp() {
+
     TemporaryExposureKey protoBufObj = TemporaryExposureKey
         .newBuilder()
         .setKeyData(ByteString.copyFrom(expKeyData))
@@ -67,7 +68,7 @@ class DiagnosisKeyBuilderTest {
         .build();
 
     DiagnosisKey actDiagnosisKey = DiagnosisKey.builder()
-        .fromTemporaryExposureKey(protoBufObj)
+        .fromTemporaryExposureKeyAndSubmissionPayload(protoBufObj, List.of("DE"), "DE", true)
         .withSubmissionTimestamp(expSubmissionTimestamp)
         .withReportType(reportType)
         .withDaysSinceOnsetOfSymptoms(daysSinceOnsetOfSymptoms)
@@ -92,7 +93,7 @@ class DiagnosisKeyBuilderTest {
         .build();
 
     DiagnosisKey actDiagnosisKey = DiagnosisKey.builder()
-        .fromTemporaryExposureKey(protoBufObj)
+        .fromTemporaryExposureKeyAndSubmissionPayload(protoBufObj, List.of("DE"), "DE", true)
         .withReportType(reportType)
         .withDaysSinceOnsetOfSymptoms(daysSinceOnsetOfSymptoms)
         .withConsentToFederation(expConsentToFederation)
@@ -206,7 +207,7 @@ class DiagnosisKeyBuilderTest {
   }
 
   @ParameterizedTest
-  @ValueSource(strings = {"DER","xx","De","dE","DE,FRE"})
+  @ValueSource(strings = {"DER", "xx", "De", "dE", "DE,FRE"})
   void failsForInvalidVisitedCountries(String visitedCountries) {
     assertThat(
         catchThrowable(() -> DiagnosisKey.builder()
@@ -303,7 +304,9 @@ class DiagnosisKeyBuilderTest {
         .setTransmissionRiskLevel(expTransmissionRiskLevel)
         .build();
 
-    DiagnosisKey actDiagnosisKey = DiagnosisKey.builder().fromTemporaryExposureKey(protoBufObj).build();
+    DiagnosisKey actDiagnosisKey = DiagnosisKey.builder()
+        .fromTemporaryExposureKeyAndSubmissionPayload(protoBufObj, List.of("DE"), "DE", true)
+        .build();
 
     assertThat(actDiagnosisKey.getReportType()).isEqualTo(reportType);
   }
