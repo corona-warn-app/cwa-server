@@ -72,11 +72,11 @@ public class DownloadServiceConfig {
     @NotEmpty
     private Map<Integer, Integer> trlFromDsos;
 
-    public Map<Integer, Integer> getTrlFromDsos() {
+    public Map<Integer, Integer> getTransmissionRiskLevelFromDaysSinceOnsetOfSymptoms() {
       return trlFromDsos;
     }
 
-    public void setTrlFromDsos(Map<Integer, Integer> trlFromDsos) {
+    public void setTransmissionRiskLevelFromDaysSinceOnsetOfSymptoms(Map<Integer, Integer> trlFromDsos) {
       this.trlFromDsos = trlFromDsos;
     }
 

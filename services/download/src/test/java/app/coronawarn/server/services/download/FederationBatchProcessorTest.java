@@ -86,7 +86,7 @@ class FederationBatchProcessorTest {
   @BeforeEach
   void setUp() {
     final TekFieldDerivations tekDerivations = new TekFieldDerivations();
-    tekDerivations.setTrlFromDsos(Map.of(1, 1, 2, 2, 3, 3));
+    tekDerivations.setTransmissionRiskLevelFromDaysSinceOnsetOfSymptoms(Map.of(1, 1, 2, 2, 3, 3));
     when(config.getTekFieldDerivations()).thenReturn(tekDerivations);
   }
 
