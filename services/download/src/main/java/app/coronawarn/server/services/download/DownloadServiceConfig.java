@@ -72,7 +72,7 @@ public class DownloadServiceConfig {
     @NotEmpty
     private Map<Integer, Integer> trlFromDsos;
 
-    public Map<Integer, Integer> getTrlFromDsos() {
+    public Map<Integer, Integer> getTransmissionRiskLevelFromDaysSinceOnsetOfSymptoms() {
       return trlFromDsos;
     }
 
