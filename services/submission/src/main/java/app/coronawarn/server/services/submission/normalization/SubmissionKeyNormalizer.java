@@ -37,15 +37,17 @@ public final class SubmissionKeyNormalizer implements DiagnosisKeyNormalizer {
   @Override
   public NormalizableFields normalize(NormalizableFields fieldsAndValues) {
     Integer trlValue = fieldsAndValues.getTransmissionRiskLevel();
-    Integer dsos = fieldsAndValues.getDaysSinceOnsetOfSymptoms();
+    Integer dsosValue = fieldsAndValues.getDaysSinceOnsetOfSymptoms();
 
-    throwIfAllRequiredFieldsMissing(trlValue, dsos);
+    throwIfAllRequiredFieldsMissing(trlValue, dsosValue);
 
-    if (isMissing(dsos)) {
-      dsos = tekFieldMappings.deriveDsosFromTrl(trlValue);
+    if (isMissing(dsosValue)) {
+      dsosValue = tekFieldMappings.deriveDsosFromTrl(trlValue);
+    } else if (isMissing(trlValue)) {
+      trlValue = tekFieldMappings.deriveTrlFromDsos(dsosValue);
     }
 
-    return NormalizableFields.of(trlValue, dsos);
+    return NormalizableFields.of(trlValue, dsosValue);
   }
 
   private void throwIfAllRequiredFieldsMissing(Integer trlValue, Integer dsos) {
