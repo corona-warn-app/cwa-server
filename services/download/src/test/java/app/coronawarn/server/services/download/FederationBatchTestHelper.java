@@ -33,7 +33,7 @@ public class FederationBatchTestHelper {
 
   public static DiagnosisKeyBatch createDiagnosisKeyBatch(String keyData) {
     return DiagnosisKeyBatch.newBuilder()
-        .addKeys(createDiagnosisKey(keyData)).build();
+        .addKeys(createDiagnosisKey(keyData, 2)).build();
   }
 
   public static DiagnosisKey createDiagnosisKey(String keyData) {
@@ -43,11 +43,24 @@ public class FederationBatchTestHelper {
             .addVisitedCountries("DE")
             .setRollingStartIntervalNumber(1596153600 / 600)
             .setRollingPeriod(144)
-            .setTransmissionRiskLevel(2)
+            .setTransmissionRiskLevel(5)
+            .setDaysSinceOnsetOfSymptoms(2)
             .build();
   }
 
-  public static Optional<BatchDownloadResponse> createBatchDownloadResponse(String batchTag, Optional<String> nextBatchTag) {
+  public static DiagnosisKey createDiagnosisKey(String keyData, int daysSinceOnsetOfSymptoms) {
+    return
+        DiagnosisKey.newBuilder()
+            .setKeyData(ByteString.copyFromUtf8(keyData))
+            .addVisitedCountries("DE")
+            .setRollingStartIntervalNumber(1596153600 / 600)
+            .setRollingPeriod(144)
+            .setDaysSinceOnsetOfSymptoms(daysSinceOnsetOfSymptoms)
+            .build();
+  }
+
+  public static Optional<BatchDownloadResponse> createBatchDownloadResponse(String batchTag,
+      Optional<String> nextBatchTag) {
     BatchDownloadResponse gatewayResponse = mock(BatchDownloadResponse.class);
     when(gatewayResponse.getBatchTag()).thenReturn(batchTag);
     when(gatewayResponse.getNextBatchTag()).thenReturn(nextBatchTag);

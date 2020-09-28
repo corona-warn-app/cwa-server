@@ -23,6 +23,17 @@ services:
   download:
     efgs-offset-days: 1
     retention-days: 14
+    tek-field-derivations:
+      trl-from-dsos:
+        4: 1
+        3: 3
+        2: 5
+        1: 6
+        0: 8
+        -1: 6
+        -2: 5
+        -3: 3
+        -4: 1
 
 federation-gateway:
   base-url: http://localhost:1234
