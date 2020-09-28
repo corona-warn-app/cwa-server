@@ -38,6 +38,7 @@ import app.coronawarn.server.common.persistence.service.common.ValidDiagnosisKey
 import app.coronawarn.server.services.federation.upload.client.FederationUploadClient;
 import app.coronawarn.server.services.federation.upload.config.UploadServiceConfig;
 import app.coronawarn.server.services.federation.upload.keys.DiagnosisKeyLoader;
+import app.coronawarn.server.services.federation.upload.payload.AllowedPropertiesMap;
 import app.coronawarn.server.services.federation.upload.payload.DiagnosisKeyBatchAssembler;
 import app.coronawarn.server.services.federation.upload.payload.PayloadFactory;
 import app.coronawarn.server.services.federation.upload.payload.signing.BatchSigner;
@@ -62,7 +63,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration(classes = {Upload.class, PayloadFactory.class, DiagnosisKeyBatchAssembler.class,
     BatchSigner.class, CryptoProvider.class, FederationUploadKeyService.class, ValidDiagnosisKeyFilter.class,
-    KeySharingPoliciesChecker.class},
+    KeySharingPoliciesChecker.class, AllowedPropertiesMap.class},
     initializers = ConfigFileApplicationContextInitializer.class)
 class UploadResponseTest {
 
