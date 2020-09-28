@@ -26,6 +26,7 @@ import static java.util.stream.Collectors.summingInt;
 import static java.util.stream.Collectors.toList;
 
 import app.coronawarn.server.common.protocols.external.exposurenotification.TemporaryExposureKey;
+import app.coronawarn.server.common.protocols.external.exposurenotification.TemporaryExposureKeyExport;
 import app.coronawarn.server.common.protocols.internal.SubmissionPayload;
 import app.coronawarn.server.services.submission.config.SubmissionServiceConfig;
 import java.lang.annotation.Documented;
@@ -36,7 +37,10 @@ import java.lang.annotation.Target;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
+import java.util.Optional;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.function.Function;
+import java.util.stream.Stream;
 
 import javax.validation.Constraint;
 import javax.validation.ConstraintValidator;
@@ -100,6 +104,7 @@ public @interface ValidSubmissionPayload {
             && checkKeysCumulateEqualOrLessThanMaxRollingPeriodPerDay(exposureKeys, validatorContext)
             && checkOriginCountryIsValid(submissionPayload, validatorContext)
             && checkVisitedCountriesAreValid(submissionPayload, validatorContext)
+            && checkTransmissionRiskLevelIsAcceptable(exposureKeys, validatorContext)
             && checkDaysSinceOnsetOfSymptomsIsInRange(exposureKeys, validatorContext);
       } else {
         return checkStartIntervalNumberIsAtMidNight(exposureKeys, validatorContext)
@@ -107,6 +112,7 @@ public @interface ValidSubmissionPayload {
             && checkUniqueStartIntervalNumbers(exposureKeys, validatorContext)
             && checkOriginCountryIsValid(submissionPayload, validatorContext)
             && checkVisitedCountriesAreValid(submissionPayload, validatorContext)
+            && checkTransmissionRiskLevelIsAcceptable(exposureKeys, validatorContext)
             && checkDaysSinceOnsetOfSymptomsIsInRange(exposureKeys, validatorContext);
       }
     }
@@ -207,22 +213,49 @@ public @interface ValidSubmissionPayload {
 
     private boolean checkDaysSinceOnsetOfSymptomsIsInRange(List<TemporaryExposureKey> exposureKeys,
         ConstraintValidatorContext validatorContext) {
-      AtomicBoolean foundInvalid = new AtomicBoolean(true);
-      exposureKeys.stream()
-        .filter( TemporaryExposureKey::hasDaysSinceOnsetOfSymptoms)
-        .filter( this::hasInvalidDsosValue)
-        .findFirst()
-          .ifPresent( invalidTek -> {
-             foundInvalid.set(false);
-             addViolation(validatorContext,
-                "'" + invalidTek.getDaysSinceOnsetOfSymptoms() + "' is not a valid daysSinceOnsetOfSymptoms value.");
-      });
-      return foundInvalid.get();
+      return addViolationForInvalidTek(exposureKeys,
+          tekStream -> tekStream.filter(TemporaryExposureKey::hasDaysSinceOnsetOfSymptoms)
+                                .filter(this::hasInvalidDsosValue),
+          validatorContext,
+          invalidTek -> "'" + invalidTek.getDaysSinceOnsetOfSymptoms() + "' is not a valid daysSinceOnsetOfSymptoms value.");
+    }
+
+    private boolean checkTransmissionRiskLevelIsAcceptable(List<TemporaryExposureKey> exposureKeys,
+        ConstraintValidatorContext validatorContext) {
+      return addViolationForInvalidTek(exposureKeys,
+          tekStream -> tekStream.filter(TemporaryExposureKey::hasTransmissionRiskLevel)
+                                .filter(this::hasInvalidTrlValue),
+          validatorContext,
+          invalidTek -> "'" + invalidTek.getTransmissionRiskLevel() + "' is not a valid transmissionRiskLevel value.");
     }
 
     private boolean hasInvalidDsosValue(TemporaryExposureKey key) {
       int dsos = key.getDaysSinceOnsetOfSymptoms();
       return dsos < -14 || dsos > 14;
+    }
+
+    private boolean hasInvalidTrlValue(TemporaryExposureKey key) {
+      int trl = key.getTransmissionRiskLevel();
+      // get this from application yaml
+      return !Arrays.asList(1,3,5,6,8).contains(trl);
+    }
+
+    /**
+     * Add a violation to the validation context, in case a key is found that matches the filtering function.
+     * @return True if an invalid key was found.
+     */
+    private boolean addViolationForInvalidTek(List<TemporaryExposureKey> exposureKeys,
+        Function<Stream<TemporaryExposureKey>, Stream<TemporaryExposureKey>> filterFunction,
+        ConstraintValidatorContext validatorContext,
+        Function<TemporaryExposureKey, String> messageConstructor) {
+      AtomicBoolean foundInvalid = new AtomicBoolean(true);
+      filterFunction.apply(exposureKeys.stream())
+        .findFirst()
+          .ifPresent( invalidTek -> {
+             foundInvalid.set(false);
+             addViolation(validatorContext, messageConstructor.apply(invalidTek));
+      });
+      return foundInvalid.get();
     }
   }
 }

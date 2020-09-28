@@ -46,8 +46,6 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.ActiveProfiles;
 
-import com.fasterxml.jackson.databind.ser.std.StdArraySerializers.IntArraySerializer;
-
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @ActiveProfiles({"disable-ssl-client-verification", "disable-ssl-client-verification-verify-hostname"})
 class PayloadValidationTest {
@@ -87,20 +85,39 @@ class PayloadValidationTest {
   @ParameterizedTest
   @ValueSource(ints = {-15, -100, 16, 20})
   void check400ResponseStatusForDsosNotInRange(int invalidDsosValue) {
-    ResponseEntity<Void> actResponse = executor.executePost(buildPayloadWithDsosInKeys(invalidDsosValue));
+    ResponseEntity<Void> actResponse = executor.executePost(buildKeysWithDsos(invalidDsosValue));
     assertThat(actResponse.getStatusCode()).isEqualTo(BAD_REQUEST);
   }
 
   @ParameterizedTest
   @ValueSource(ints = {-14, -9, 0, 14})
   void check200ResponseStatusForDsosInRange(int validDsosValue) {
-    ResponseEntity<Void> actResponse = executor.executePost(buildPayloadWithDsosInKeys(validDsosValue));
+    ResponseEntity<Void> actResponse = executor.executePost(buildKeysWithDsos(validDsosValue));
     assertThat(actResponse.getStatusCode()).isEqualTo(OK);
   }
 
-  private Collection<TemporaryExposureKey>  buildPayloadWithDsosInKeys(int dsos) {
+  private Collection<TemporaryExposureKey>  buildKeysWithDsos(int dsos) {
     return List.of(buildTemporaryExposureKey(VALID_KEY_DATA_1, createRollingStartIntervalNumber(2), 3,
         ReportType.CONFIRMED_CLINICAL_DIAGNOSIS, dsos));
+  }
+
+  @ParameterizedTest
+  @ValueSource(ints = {0, 2, 4, 7, 9})
+  void check400ResponseStatusForTrlNotAccepted(int invalidTrlValue) {
+    ResponseEntity<Void> actResponse = executor.executePost(buildKeysWithTrl(invalidTrlValue));
+    assertThat(actResponse.getStatusCode()).isEqualTo(BAD_REQUEST);
+  }
+
+  @ParameterizedTest
+  @ValueSource(ints = {1, 3, 5, 6, 8})
+  void check200ResponseStatusForTrlAccepted(int validTrlValue) {
+    ResponseEntity<Void> actResponse = executor.executePost(buildKeysWithTrl(validTrlValue));
+    assertThat(actResponse.getStatusCode()).isEqualTo(OK);
+  }
+
+  private Collection<TemporaryExposureKey> buildKeysWithTrl(int trl) {
+    return List.of(buildTemporaryExposureKey(VALID_KEY_DATA_1, createRollingStartIntervalNumber(2), trl,
+        ReportType.CONFIRMED_CLINICAL_DIAGNOSIS, 1));
   }
 
   @Test
