@@ -123,7 +123,7 @@ public class SubmissionController {
         deferredResult.setResult(ResponseEntity.status(HttpStatus.FORBIDDEN).build());
       } else {
         List<DiagnosisKey> diagnosisKeys = extractValidDiagnosisKeysFromPayload(
-            setDefaultValuesIfMissing(submissionPayload));
+            enhanceWithDefaultValuesIfMissing(submissionPayload));
         checkDiagnosisKeysStructure(diagnosisKeys);
         diagnosisKeyService.saveDiagnosisKeys(padDiagnosisKeys(diagnosisKeys));
 
@@ -194,7 +194,7 @@ public class SubmissionController {
     });
   }
 
-  private SubmissionPayload setDefaultValuesIfMissing(SubmissionPayload submissionPayload) {
+  private SubmissionPayload enhanceWithDefaultValuesIfMissing(SubmissionPayload submissionPayload) {
     String originCountry = defaultIfEmptyOriginCountry(submissionPayload.getOrigin());
     List<String> visitedCountries = extendVisitedCountriesWithOriginCountry(
         submissionPayload.getVisitedCountriesList());

@@ -68,7 +68,8 @@ interface DiagnosisKeyBuilders {
     /**
      * Adds the specified rolling start interval number to this builder.
      *
-     * @param rollingStartIntervalNumber number describing when a key starts. It is equal to startTimeOfKeySinceEpochInSecs
+     * @param rollingStartIntervalNumber number describing when a key starts. It is equal to
+     *                                   startTimeOfKeySinceEpochInSecs
      *                                   / (60 * 10).
      * @return this Builder instance.
      */
