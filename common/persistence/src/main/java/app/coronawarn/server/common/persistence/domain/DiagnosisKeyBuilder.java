@@ -83,7 +83,7 @@ public class DiagnosisKeyBuilder implements
   }
 
   @Override
-  public FinalBuilder fromTemporaryExposureKeyAndSubmissionPayload(TemporaryExposureKey protoBufObject,
+  public FinalBuilder fromTemporaryExposureKeyAndMetadata(TemporaryExposureKey protoBufObject,
       List<String> visitedCountries, String originCountry, boolean consentToFederation) {
     return this
         .withKeyData(protoBufObject.getKeyData().toByteArray())

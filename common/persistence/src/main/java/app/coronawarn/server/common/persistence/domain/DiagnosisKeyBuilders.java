@@ -41,7 +41,7 @@ interface DiagnosisKeyBuilders {
     RollingStartIntervalNumberBuilder withKeyData(byte[] keyData);
 
     /**
-     * Adds the data contained in the specified protocol buffers key object and the submission payload to this builder.
+     * Adds the data contained in the specified protocol buffers key object and metadata to this builder.
      *
      * @param protoBufObject      ProtocolBuffer object associated with the temporary exposure key.
      * @param visitedCountries    The list of visited countries to add to the diagnosis key.
@@ -50,7 +50,7 @@ interface DiagnosisKeyBuilders {
      *                            federation.
      * @return this Builder instance.
      */
-    FinalBuilder fromTemporaryExposureKeyAndSubmissionPayload(TemporaryExposureKey protoBufObject,
+    FinalBuilder fromTemporaryExposureKeyAndMetadata(TemporaryExposureKey protoBufObject,
         List<String> visitedCountries, String originCountry, boolean consentToFederation);
 
     /**
@@ -68,8 +68,7 @@ interface DiagnosisKeyBuilders {
     /**
      * Adds the specified rolling start interval number to this builder.
      *
-     * @param rollingStartIntervalNumber number describing when a key starts. It is equal to
-     *                                   startTimeOfKeySinceEpochInSecs
+     * @param rollingStartIntervalNumber number describing when a key starts. It is equal to startTimeOfKeySinceEpochInSecs
      *                                   / (60 * 10).
      * @return this Builder instance.
      */

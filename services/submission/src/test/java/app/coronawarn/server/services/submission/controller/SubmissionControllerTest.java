@@ -69,7 +69,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.ActiveProfiles;
 import com.google.protobuf.ByteString;
-import javax.validation.constraints.AssertTrue;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @ActiveProfiles({"disable-ssl-client-verification", "disable-ssl-client-verification-verify-hostname"})
@@ -353,7 +352,7 @@ class SubmissionControllerTest {
     Set<DiagnosisKey> submittedDiagnosisKeys = submittedTemporaryExposureKeys.stream()
         .map(submittedTemporaryExposureKey -> DiagnosisKey
             .builder()
-            .fromTemporaryExposureKeyAndSubmissionPayload(submittedTemporaryExposureKey,
+            .fromTemporaryExposureKeyAndMetadata(submittedTemporaryExposureKey,
                 submissionPayload.getVisitedCountriesList(),
                 submissionPayload.getOrigin(),
                 submissionPayload.getConsentToFederation())

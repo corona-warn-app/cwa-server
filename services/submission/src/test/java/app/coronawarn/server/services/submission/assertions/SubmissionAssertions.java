@@ -32,7 +32,6 @@ import app.coronawarn.server.common.persistence.domain.DiagnosisKey;
 import app.coronawarn.server.common.protocols.external.exposurenotification.TemporaryExposureKey;
 import app.coronawarn.server.common.protocols.internal.SubmissionPayload;
 import app.coronawarn.server.services.submission.config.SubmissionServiceConfig;
-import app.coronawarn.server.services.submission.normalization.SubmissionKeyNormalizer;
 
 public final class SubmissionAssertions {
 
@@ -42,7 +41,7 @@ public final class SubmissionAssertions {
     List<TemporaryExposureKey> protoBufferKeys = submissionPayload.getKeysList();
     Set<DiagnosisKey> submittedDiagnosisKeys = protoBufferKeys.stream()
         .map(protoBufferKey -> DiagnosisKey.builder()
-            .fromTemporaryExposureKeyAndSubmissionPayload(
+            .fromTemporaryExposureKeyAndMetadata(
                 protoBufferKey,
                 submissionPayload.getVisitedCountriesList(),
                 submissionPayload.getOrigin(),

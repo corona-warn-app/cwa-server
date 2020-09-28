@@ -143,7 +143,7 @@ public class SubmissionController {
 
     List<DiagnosisKey> diagnosisKeys = protoBufferKeys.stream()
         .map(protoBufferKey -> DiagnosisKey.builder()
-            .fromTemporaryExposureKeyAndSubmissionPayload(
+            .fromTemporaryExposureKeyAndMetadata(
                 protoBufferKey,
                 submissionPayload.getVisitedCountriesList(),
                 submissionPayload.getOrigin(),
