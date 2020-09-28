@@ -28,16 +28,13 @@ import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.options
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.http.HttpHeaders.CONTENT_TYPE;
 
+import app.coronawarn.server.common.persistence.domain.DiagnosisKey;
 import app.coronawarn.server.common.persistence.repository.DiagnosisKeyRepository;
 import app.coronawarn.server.common.persistence.repository.FederationBatchInfoRepository;
 import app.coronawarn.server.common.protocols.external.exposurenotification.DiagnosisKeyBatch;
 import com.github.tomakehurst.wiremock.WireMockServer;
 import com.github.tomakehurst.wiremock.http.HttpHeader;
 import com.github.tomakehurst.wiremock.http.HttpHeaders;
-import com.google.protobuf.ByteString;
-import java.util.Set;
-import java.util.stream.Collectors;
-import java.util.stream.StreamSupport;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -174,14 +171,16 @@ class DownloadIntegrationTest {
     assertThat(federationBatchInfoRepository.findByStatus("ERROR")).hasSize(1);
     assertThat(federationBatchInfoRepository.findByStatus("ERROR_WONT_RETRY")).hasSize(1);
 
-    final Set<String> diagnosisKeys = StreamSupport
-        .stream(diagnosisKeyRepository.findAll().spliterator(), false)
-        .collect(Collectors.groupingBy(d -> ByteString.copyFrom(d.getKeyData()).toStringUtf8()))
-        .keySet();
+    Iterable<DiagnosisKey> diagnosisKeys = diagnosisKeyRepository.findAll();
     assertThat(diagnosisKeys)
         .hasSize(3)
-        .contains(BATCH1_DATA)
-        .contains(BATCH2_DATA)
-        .contains(RETRY_BATCH_SUCCESSFUL_DATA);
+        .contains(createDiagnosisKey(BATCH1_DATA))
+        .contains(createDiagnosisKey(BATCH2_DATA))
+        .contains(createDiagnosisKey(RETRY_BATCH_SUCCESSFUL_DATA));
+  }
+
+  private DiagnosisKey createDiagnosisKey(String keyData) {
+    return DiagnosisKey.builder()
+        .fromFederationDiagnosisKey(FederationBatchTestHelper.createDiagnosisKey(keyData)).build();
   }
 }

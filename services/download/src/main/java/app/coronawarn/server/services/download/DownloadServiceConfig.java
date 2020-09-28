@@ -76,7 +76,7 @@ public class DownloadServiceConfig {
       return trlFromDsos;
     }
 
-    public void setTransmissionRiskLevelFromDaysSinceOnsetOfSymptoms(Map<Integer, Integer> trlFromDsos) {
+    public void setTrlFromDsos(Map<Integer, Integer> trlFromDsos) {
       this.trlFromDsos = trlFromDsos;
     }
 

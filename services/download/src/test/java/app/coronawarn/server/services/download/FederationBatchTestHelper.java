@@ -43,7 +43,8 @@ public class FederationBatchTestHelper {
             .addVisitedCountries("DE")
             .setRollingStartIntervalNumber(1596153600 / 600)
             .setRollingPeriod(144)
-            .setTransmissionRiskLevel(2)
+            .setTransmissionRiskLevel(5)
+            .setDaysSinceOnsetOfSymptoms(2)
             .build();
   }
 
