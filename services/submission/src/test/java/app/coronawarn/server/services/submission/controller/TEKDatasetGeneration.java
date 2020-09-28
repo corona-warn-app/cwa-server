@@ -27,9 +27,7 @@ import org.assertj.core.util.Lists;
 import org.junit.jupiter.params.provider.Arguments;
 import java.util.List;
 import java.util.stream.Stream;
-
-import static app.coronawarn.server.services.submission.controller.RequestExecutor.*;
-import static app.coronawarn.server.services.submission.controller.RequestExecutor.VALID_KEY_DATA_2;
+import static app.coronawarn.server.services.submission.controller.SubmissionPayloadMockData.*;
 
 public class TEKDatasetGeneration {
 

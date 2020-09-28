@@ -36,6 +36,16 @@ services:
       supported-countries: ${SUPPORTED_COUNTRIES}
       # The default 'origin country' when not provided in submission payload
       default-origin-country: ${ORIGIN_COUNTRY:DE}
+      tek-field-derivations:
+        # Map containing the derived values of DSOS (days since onset of symptoms) from TRL (transmission risk level)
+        # The values below are subject to change
+        dsos-from-trl:
+          1: -4
+          3: -3
+          5: -2
+          6: -1
+          8:  0
+         
     verification:
       base-url: ${VERIFICATION_BASE_URL:http://localhost:8004}
       path: /version/v1/tan/verify
