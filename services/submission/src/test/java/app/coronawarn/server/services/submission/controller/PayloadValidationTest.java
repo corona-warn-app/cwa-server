@@ -34,17 +34,19 @@ import app.coronawarn.server.services.submission.verification.TanVerifier;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-
 import org.assertj.core.util.Lists;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.ActiveProfiles;
+
+import com.fasterxml.jackson.databind.ser.std.StdArraySerializers.IntArraySerializer;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @ActiveProfiles({"disable-ssl-client-verification", "disable-ssl-client-verification-verify-hostname"})
@@ -80,6 +82,25 @@ class PayloadValidationTest {
           ReportType.CONFIRMED_CLINICAL_DIAGNOSIS,1));
     }
     return tooMany;
+  }
+
+  @ParameterizedTest
+  @ValueSource(ints = {-15, -100, 16, 20})
+  void check400ResponseStatusForDsosNotInRange(int invalidDsosValue) {
+    ResponseEntity<Void> actResponse = executor.executePost(buildPayloadWithDsosInKeys(invalidDsosValue));
+    assertThat(actResponse.getStatusCode()).isEqualTo(BAD_REQUEST);
+  }
+
+  @ParameterizedTest
+  @ValueSource(ints = {-14, -9, 0, 14})
+  void check200ResponseStatusForDsosInRange(int validDsosValue) {
+    ResponseEntity<Void> actResponse = executor.executePost(buildPayloadWithDsosInKeys(validDsosValue));
+    assertThat(actResponse.getStatusCode()).isEqualTo(OK);
+  }
+
+  private Collection<TemporaryExposureKey>  buildPayloadWithDsosInKeys(int dsos) {
+    return List.of(buildTemporaryExposureKey(VALID_KEY_DATA_1, createRollingStartIntervalNumber(2), 3,
+        ReportType.CONFIRMED_CLINICAL_DIAGNOSIS, dsos));
   }
 
   @Test

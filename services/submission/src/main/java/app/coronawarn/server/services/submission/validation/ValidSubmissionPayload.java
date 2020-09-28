@@ -36,6 +36,8 @@ import java.lang.annotation.Target;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicBoolean;
+
 import javax.validation.Constraint;
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
@@ -97,13 +99,15 @@ public @interface ValidSubmissionPayload {
         return checkStartIntervalNumberIsAtMidNight(exposureKeys, validatorContext)
             && checkKeysCumulateEqualOrLessThanMaxRollingPeriodPerDay(exposureKeys, validatorContext)
             && checkOriginCountryIsValid(submissionPayload, validatorContext)
-            && checkVisitedCountriesAreValid(submissionPayload, validatorContext);
+            && checkVisitedCountriesAreValid(submissionPayload, validatorContext)
+            && checkDaysSinceOnsetOfSymptomsIsInRange(exposureKeys, validatorContext);
       } else {
         return checkStartIntervalNumberIsAtMidNight(exposureKeys, validatorContext)
             && checkKeyCollectionSize(exposureKeys, validatorContext)
             && checkUniqueStartIntervalNumbers(exposureKeys, validatorContext)
             && checkOriginCountryIsValid(submissionPayload, validatorContext)
-            && checkVisitedCountriesAreValid(submissionPayload, validatorContext);
+            && checkVisitedCountriesAreValid(submissionPayload, validatorContext)
+            && checkDaysSinceOnsetOfSymptomsIsInRange(exposureKeys, validatorContext);
       }
     }
 
@@ -199,6 +203,26 @@ public @interface ValidSubmissionPayload {
             "[" + country + "]: Visited country is not part of the supported countries list"));
       }
       return invalidVisitedCountries.isEmpty();
+    }
+
+    private boolean checkDaysSinceOnsetOfSymptomsIsInRange(List<TemporaryExposureKey> exposureKeys,
+        ConstraintValidatorContext validatorContext) {
+      AtomicBoolean foundInvalid = new AtomicBoolean(true);
+      exposureKeys.stream()
+        .filter( TemporaryExposureKey::hasDaysSinceOnsetOfSymptoms)
+        .filter( this::hasInvalidDsosValue)
+        .findFirst()
+          .ifPresent( invalidTek -> {
+             foundInvalid.set(false);
+             addViolation(validatorContext,
+                "'" + invalidTek.getDaysSinceOnsetOfSymptoms() + "' is not a valid daysSinceOnsetOfSymptoms value.");
+      });
+      return foundInvalid.get();
+    }
+
+    private boolean hasInvalidDsosValue(TemporaryExposureKey key) {
+      int dsos = key.getDaysSinceOnsetOfSymptoms();
+      return dsos < -14 || dsos > 14;
     }
   }
 }
