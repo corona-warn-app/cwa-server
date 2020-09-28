@@ -23,6 +23,8 @@ package app.coronawarn.server.services.submission.controller;
 import static app.coronawarn.server.services.submission.controller.SubmissionPayloadMockData.VALID_KEY_DATA_2;
 import static app.coronawarn.server.services.submission.controller.SubmissionPayloadMockData.buildMultipleKeys;
 import static app.coronawarn.server.services.submission.controller.SubmissionPayloadMockData.buildMultipleKeysWithoutDSOS;
+import static app.coronawarn.server.services.submission.controller.SubmissionPayloadMockData.buildMultipleKeysWithoutDSOSAndTRL;
+import static app.coronawarn.server.services.submission.controller.SubmissionPayloadMockData.buildMultipleKeysWithoutTRL;
 import static app.coronawarn.server.services.submission.controller.SubmissionPayloadMockData.buildPayload;
 import static app.coronawarn.server.services.submission.controller.SubmissionPayloadMockData.buildPayloadWithInvalidKey;
 import static app.coronawarn.server.services.submission.controller.SubmissionPayloadMockData.buildPayloadWithInvalidOriginCountry;
