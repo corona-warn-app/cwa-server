@@ -85,6 +85,7 @@ public class DiagnosisKey {
 
   private final ReportType reportType;
 
+  @Range(min = -14, max = 14, message = "Days since onset of symptoms value must be between -14 and 14.")
   private final int daysSinceOnsetOfSymptoms;
 
   /**
