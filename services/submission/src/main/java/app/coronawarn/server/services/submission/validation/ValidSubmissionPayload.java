@@ -26,7 +26,6 @@ import static java.util.stream.Collectors.summingInt;
 import static java.util.stream.Collectors.toList;
 
 import app.coronawarn.server.common.protocols.external.exposurenotification.TemporaryExposureKey;
-import app.coronawarn.server.common.protocols.external.exposurenotification.TemporaryExposureKeyExport;
 import app.coronawarn.server.common.protocols.internal.SubmissionPayload;
 import app.coronawarn.server.services.submission.config.SubmissionServiceConfig;
 import java.lang.annotation.Documented;
@@ -37,11 +36,9 @@ import java.lang.annotation.Target;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
-import java.util.Optional;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Function;
 import java.util.stream.Stream;
-
 import javax.validation.Constraint;
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
@@ -104,6 +101,7 @@ public @interface ValidSubmissionPayload {
             && checkKeysCumulateEqualOrLessThanMaxRollingPeriodPerDay(exposureKeys, validatorContext)
             && checkOriginCountryIsValid(submissionPayload, validatorContext)
             && checkVisitedCountriesAreValid(submissionPayload, validatorContext)
+            && checkRequiredFieldsNotMissing(exposureKeys, validatorContext)
             && checkTransmissionRiskLevelIsAcceptable(exposureKeys, validatorContext)
             && checkDaysSinceOnsetOfSymptomsIsInRange(exposureKeys, validatorContext);
       } else {
@@ -112,6 +110,7 @@ public @interface ValidSubmissionPayload {
             && checkUniqueStartIntervalNumbers(exposureKeys, validatorContext)
             && checkOriginCountryIsValid(submissionPayload, validatorContext)
             && checkVisitedCountriesAreValid(submissionPayload, validatorContext)
+            && checkRequiredFieldsNotMissing(exposureKeys, validatorContext)
             && checkTransmissionRiskLevelIsAcceptable(exposureKeys, validatorContext)
             && checkDaysSinceOnsetOfSymptomsIsInRange(exposureKeys, validatorContext);
       }
@@ -217,7 +216,8 @@ public @interface ValidSubmissionPayload {
           tekStream -> tekStream.filter(TemporaryExposureKey::hasDaysSinceOnsetOfSymptoms)
                                 .filter(this::hasInvalidDsosValue),
           validatorContext,
-          invalidTek -> "'" + invalidTek.getDaysSinceOnsetOfSymptoms() + "' is not a valid daysSinceOnsetOfSymptoms value.");
+          invalidTek -> "'" + invalidTek.getDaysSinceOnsetOfSymptoms()
+              + "' is not a valid daysSinceOnsetOfSymptoms value.");
     }
 
     private boolean checkTransmissionRiskLevelIsAcceptable(List<TemporaryExposureKey> exposureKeys,
@@ -229,14 +229,25 @@ public @interface ValidSubmissionPayload {
           invalidTek -> "'" + invalidTek.getTransmissionRiskLevel() + "' is not a valid transmissionRiskLevel value.");
     }
 
+    private boolean checkRequiredFieldsNotMissing(List<TemporaryExposureKey> exposureKeys,
+        ConstraintValidatorContext validatorContext) {
+      // we check for DSOS and TRL. They are optional fields, but it is expected to receive either one of them.
+      return addViolationForInvalidTek(exposureKeys,
+          tekStream -> tekStream.filter(key -> !key.hasTransmissionRiskLevel())
+                                .filter(key -> !key.hasDaysSinceOnsetOfSymptoms()),
+          validatorContext,
+          invalidTek -> "A key was found which is missing both 'transmissionRiskLevel' and 'daysSinceOnsetOfSymptoms'");
+    }
+
     private boolean hasInvalidDsosValue(TemporaryExposureKey key) {
       int dsos = key.getDaysSinceOnsetOfSymptoms();
+      //range will be externalized to yaml
       return dsos < -14 || dsos > 14;
     }
 
     private boolean hasInvalidTrlValue(TemporaryExposureKey key) {
       int trl = key.getTransmissionRiskLevel();
-      // get this from application yaml
+      // will be externalized to yaml
       return !Arrays.asList(1,3,5,6,8).contains(trl);
     }
 
@@ -249,11 +260,9 @@ public @interface ValidSubmissionPayload {
         ConstraintValidatorContext validatorContext,
         Function<TemporaryExposureKey, String> messageConstructor) {
       AtomicBoolean foundInvalid = new AtomicBoolean(true);
-      filterFunction.apply(exposureKeys.stream())
-        .findFirst()
-          .ifPresent( invalidTek -> {
-             foundInvalid.set(false);
-             addViolation(validatorContext, messageConstructor.apply(invalidTek));
+      filterFunction.apply(exposureKeys.stream()).findFirst().ifPresent(invalidTek -> {
+        foundInvalid.set(false);
+        addViolation(validatorContext, messageConstructor.apply(invalidTek));
       });
       return foundInvalid.get();
     }

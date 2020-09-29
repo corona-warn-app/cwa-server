@@ -98,7 +98,18 @@ class PayloadValidationTest {
 
   private Collection<TemporaryExposureKey>  buildKeysWithDsos(int dsos) {
     return List.of(buildTemporaryExposureKey(VALID_KEY_DATA_1, createRollingStartIntervalNumber(2), 3,
-        ReportType.CONFIRMED_CLINICAL_DIAGNOSIS, dsos));
+        ReportType.CONFIRMED_CLINICAL_DIAGNOSIS, dsos),
+        // also add a key without DSOS since this can happen in production and should be supported
+        buildTemporaryExposureKey(VALID_KEY_DATA_1, createRollingStartIntervalNumber(2), 3,
+            ReportType.CONFIRMED_CLINICAL_DIAGNOSIS, null));
+  }
+
+  private Collection<TemporaryExposureKey>  buildKeysWithoutDsosAndTrl() {
+    return List.of(buildTemporaryExposureKey(VALID_KEY_DATA_1, createRollingStartIntervalNumber(2), null,
+        ReportType.CONFIRMED_CLINICAL_DIAGNOSIS, null),
+        // also add a key without DSOS since this can happen in production and should be supported
+        buildTemporaryExposureKey(VALID_KEY_DATA_1, createRollingStartIntervalNumber(2), null,
+            ReportType.CONFIRMED_CLINICAL_DIAGNOSIS, null));
   }
 
   @ParameterizedTest
@@ -117,7 +128,16 @@ class PayloadValidationTest {
 
   private Collection<TemporaryExposureKey> buildKeysWithTrl(int trl) {
     return List.of(buildTemporaryExposureKey(VALID_KEY_DATA_1, createRollingStartIntervalNumber(2), trl,
-        ReportType.CONFIRMED_CLINICAL_DIAGNOSIS, 1));
+        ReportType.CONFIRMED_CLINICAL_DIAGNOSIS, 1),
+        // also add a key without TRL since this can happen in production and should be supported
+        buildTemporaryExposureKey(VALID_KEY_DATA_1, createRollingStartIntervalNumber(2), null,
+            ReportType.CONFIRMED_CLINICAL_DIAGNOSIS, 1));
+  }
+
+  @Test
+  void check400ResponseStatusForMissingTrlAndDsos() {
+    ResponseEntity<Void> actResponse = executor.executePost(buildKeysWithoutDsosAndTrl());
+    assertThat(actResponse.getStatusCode()).isEqualTo(BAD_REQUEST);
   }
 
   @Test
