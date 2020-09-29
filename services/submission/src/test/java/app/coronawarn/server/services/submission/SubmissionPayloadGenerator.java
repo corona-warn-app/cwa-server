@@ -34,6 +34,14 @@ import java.util.Random;
 
 public class SubmissionPayloadGenerator {
 
+  private int numberOfKeys = 10;
+  private int transmissionRiskLevel = 4;
+  private int rollingStartIntervalNumber = 144;
+  private ReportType reportType = ReportType.CONFIRMED_CLINICAL_DIAGNOSIS;
+  private final List<String> visitedCountries = List.of("DE", "FR");
+  private String originCountry = "DE";
+  private boolean consentToFederation = true;
+
   public static void main(String[] args) throws IOException {
     SubmissionPayloadGenerator submissionPayloadGenerator = new SubmissionPayloadGenerator();
     submissionPayloadGenerator.writeSubmissionPayloadProtobufFile();
@@ -44,24 +52,25 @@ public class SubmissionPayloadGenerator {
   }
 
   public SubmissionPayload createValidSubmissionPayload() throws IOException {
-    LocalDateTime now = LocalDateTime.now();
-    now.minusDays(14);
+    LocalDateTime startDate = LocalDateTime.now();
+    startDate.minusDays(11);
 
-    List<TemporaryExposureKey> temporaryExposureKeys = createTemporaryExposureKeys(10, now, 1,
-        ReportType.CONFIRMED_CLINICAL_DIAGNOSIS);
+    List<TemporaryExposureKey> temporaryExposureKeys = createTemporaryExposureKeys(numberOfKeys, startDate,
+        transmissionRiskLevel, rollingStartIntervalNumber,
+        reportType);
 
     SubmissionPayload.Builder submissionPayload = SubmissionPayload.newBuilder();
     submissionPayload.addAllKeys(temporaryExposureKeys);
     submissionPayload.setRequestPadding(ByteString.copyFrom(new byte[100]));
-    submissionPayload.addAllVisitedCountries(List.of("DE", "FR"));
-    submissionPayload.setOrigin("DE");
-    submissionPayload.setConsentToFederation(true);
+    submissionPayload.addAllVisitedCountries(visitedCountries);
+    submissionPayload.setOrigin(originCountry);
+    submissionPayload.setConsentToFederation(consentToFederation);
 
     return submissionPayload.build();
   }
 
   private List<TemporaryExposureKey> createTemporaryExposureKeys(int numberOfKeys, LocalDateTime startDate,
-      int transmissionRiskLevel, ReportType reportType) {
+      int transmissionRiskLevel, int rollingStartIntervalNumber, ReportType reportType) {
     List<TemporaryExposureKey> temporaryExposureKeys = new ArrayList<>();
     for (int i = 0; i < numberOfKeys; i++) {
       byte[] keyData = new byte[16];
@@ -71,8 +80,8 @@ public class SubmissionPayloadGenerator {
       TemporaryExposureKey.Builder key = TemporaryExposureKey.newBuilder();
       key.setKeyData(ByteString.copyFrom(keyData));
       key.setTransmissionRiskLevel(transmissionRiskLevel);
-      key.setRollingStartIntervalNumber((int) startDate.toEpochSecond(ZoneOffset.UTC) + 144 * i);
-      key.setRollingPeriod(144);
+      key.setRollingStartIntervalNumber((int) startDate.toEpochSecond(ZoneOffset.UTC) + rollingStartIntervalNumber * i);
+      key.setRollingPeriod(rollingStartIntervalNumber);
       key.setReportType(reportType);
 
       temporaryExposureKeys.add(key.build());
