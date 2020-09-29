@@ -30,6 +30,7 @@ import app.coronawarn.server.services.distribution.assembly.structure.directory.
 import app.coronawarn.server.services.distribution.assembly.structure.util.ImmutableStack;
 import app.coronawarn.server.services.distribution.config.DistributionServiceConfig;
 import java.time.LocalDate;
+import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
 
@@ -48,8 +49,11 @@ public class DiagnosisKeysCountryDirectory extends IndexDirectoryOnDisk<String> 
    */
   public DiagnosisKeysCountryDirectory(DiagnosisKeyBundler diagnosisKeyBundler,
       CryptoProvider cryptoProvider, DistributionServiceConfig distributionServiceConfig) {
-    super(distributionServiceConfig.getApi().getCountryPath(), ignoredValue ->
-        Set.of(distributionServiceConfig.getSupportedCountries()), Object::toString);
+    super(distributionServiceConfig.getApi().getCountryPath(), ignoredValue -> {
+      Set<String> countries = new HashSet<>(Set.of(distributionServiceConfig.getSupportedCountries()));
+      countries.add(distributionServiceConfig.getEuPackageName());
+      return countries;
+    }, Object::toString);
     this.diagnosisKeyBundler = diagnosisKeyBundler;
     this.cryptoProvider = cryptoProvider;
     this.distributionServiceConfig = distributionServiceConfig;

@@ -23,7 +23,7 @@ package app.coronawarn.server.common.persistence.domain;
 import app.coronawarn.server.common.persistence.domain.normalization.DiagnosisKeyNormalizer;
 import app.coronawarn.server.common.protocols.external.exposurenotification.ReportType;
 import app.coronawarn.server.common.protocols.external.exposurenotification.TemporaryExposureKey;
-import java.util.List;
+import java.util.Set;
 
 /**
  * This interface bundles interfaces that are used for the implementation of {@link DiagnosisKeyBuilder}.
@@ -105,7 +105,7 @@ interface DiagnosisKeyBuilders {
 
     FinalBuilder withCountryCode(String countryCode);
 
-    FinalBuilder withVisitedCountries(List<String> visitedCountries);
+    FinalBuilder withVisitedCountries(Set<String> visitedCountries);
 
     FinalBuilder withReportType(ReportType reportType);
 

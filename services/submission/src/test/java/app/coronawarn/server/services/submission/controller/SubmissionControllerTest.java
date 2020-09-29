@@ -46,6 +46,7 @@ import app.coronawarn.server.services.submission.monitoring.SubmissionMonitor;
 import app.coronawarn.server.services.submission.verification.TanVerifier;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -370,7 +371,7 @@ class SubmissionControllerTest {
             .builder()
             .fromTemporaryExposureKey(submittedDiagnosisKey)
             .withConsentToFederation(submissionPayload.getConsentToFederation())
-            .withVisitedCountries(submissionPayload.getVisitedCountriesList())
+            .withVisitedCountries(new HashSet<>(submissionPayload.getVisitedCountriesList()))
             .withCountryCode(defaultIfBlank(submissionPayload.getOrigin(), config.getDefaultOriginCountry()))
             .build())
         .collect(Collectors.toSet());

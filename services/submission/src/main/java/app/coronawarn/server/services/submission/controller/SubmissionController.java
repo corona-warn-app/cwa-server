@@ -38,6 +38,7 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
+import java.util.HashSet;
 import java.util.List;
 import java.util.function.Predicate;
 import java.util.stream.IntStream;
@@ -145,7 +146,7 @@ public class SubmissionController {
 
       DiagnosisKey diagnosisKey = DiagnosisKey.builder()
           .fromTemporaryExposureKey(protoBufferKey)
-          .withVisitedCountries(submissionPayload.getVisitedCountriesList())
+          .withVisitedCountries(new HashSet<>(submissionPayload.getVisitedCountriesList()))
           .withCountryCode(originCountry)
           .withConsentToFederation(submissionPayload.getConsentToFederation())
           .withFieldNormalization(new SubmissionKeyNormalizer(submissionServiceConfig))
