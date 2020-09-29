@@ -125,7 +125,7 @@ class PayloadValidationTest {
 
   @ParameterizedTest
   @MethodSource("app.coronawarn.server.services.submission.controller.TEKDatasetGeneration#getOverlappingTestDatasets")
-  void check400ResponseStatusForOverlappingTimeIntervalsI(List<TemporaryExposureKey> dataset) {
+  void check400ResponseStatusForOverlappingTimeIntervals(List<TemporaryExposureKey> dataset) {
     ResponseEntity<Void> actResponse = executor.executePost(dataset);
     assertThat(actResponse.getStatusCode()).isEqualTo(BAD_REQUEST);
   }
@@ -164,22 +164,6 @@ class PayloadValidationTest {
   }
 
   @Test
-  void check400ResponseStatusWhenTwoKeysCumulateMoreThanMaxRollingPeriodInSameDay() {
-    ResponseEntity<Void> actResponse = executor.executePost(buildPayloadWithKeysThatCumulateMoreThanMaxRollingPeriodPerDay());
-    assertThat(actResponse.getStatusCode()).isEqualTo(BAD_REQUEST);
-  }
-
-  private Collection<TemporaryExposureKey> buildPayloadWithKeysThatCumulateMoreThanMaxRollingPeriodPerDay() {
-    ArrayList<TemporaryExposureKey> temporaryExposureKeys = new ArrayList<>();
-    temporaryExposureKeys.add(buildTemporaryExposureKeyWithFlexibleRollingPeriod(VALID_KEY_DATA_1,
-        createRollingStartIntervalNumber(2), 3, 100));
-    temporaryExposureKeys.add(buildTemporaryExposureKeyWithFlexibleRollingPeriod(VALID_KEY_DATA_1,
-        createRollingStartIntervalNumber(2), 3, 144));
-
-    return temporaryExposureKeys;
-  }
-
-  @Test
   void check200ResponseStatusWithTwoKeysOneFlexibleAndOneDefaultOnDifferentDays() {
     ResponseEntity<Void> actResponse = executor.executePost(buildPayloadWithTwoKeysOneFlexibleAndOneDefaultOnDifferentDays());
 
@@ -199,13 +183,13 @@ class PayloadValidationTest {
   }
 
   @Test
-  void check200ResponseStatusWhenKeysCumulateToMaxRollingPeriodInSameDay() {
-    ResponseEntity<Void> actResponse = executor.executePost(buildPayloadWithTwoKeysWithFlexibleRollingPeriod());
+  void check200ResponseStatusWhenReceivingMultipleKeysForTheSameDay() {
+    ResponseEntity<Void> actResponse = executor.executePost(buildPayloadWithKeysWithFlexibleRollingPeriod());
 
     assertThat(actResponse.getStatusCode()).isEqualTo(OK);
   }
 
-  private Collection<TemporaryExposureKey> buildPayloadWithTwoKeysWithFlexibleRollingPeriod() {
+  private Collection<TemporaryExposureKey> buildPayloadWithKeysWithFlexibleRollingPeriod() {
     ArrayList<TemporaryExposureKey> flexibleRollingPeriodKeys = new ArrayList<>();
 
     flexibleRollingPeriodKeys.add(buildTemporaryExposureKeyWithFlexibleRollingPeriod(VALID_KEY_DATA_1,
