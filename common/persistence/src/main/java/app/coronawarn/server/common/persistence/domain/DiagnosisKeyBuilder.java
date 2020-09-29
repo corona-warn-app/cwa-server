@@ -32,7 +32,7 @@ import app.coronawarn.server.common.persistence.exception.InvalidDiagnosisKeyExc
 import app.coronawarn.server.common.protocols.external.exposurenotification.ReportType;
 import app.coronawarn.server.common.protocols.external.exposurenotification.TemporaryExposureKey;
 import java.time.Instant;
-import java.util.List;
+import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -55,7 +55,7 @@ public class DiagnosisKeyBuilder implements
   private Integer transmissionRiskLevel;
   private Long submissionTimestamp = null;
   private String countryCode;
-  private List<String> visitedCountries;
+  private Set<String> visitedCountries;
   private ReportType reportType;
   private boolean consentToFederation;
   private Integer daysSinceOnsetOfSymptoms;
@@ -108,7 +108,7 @@ public class DiagnosisKeyBuilder implements
         .withRollingPeriod(federationDiagnosisKey.getRollingPeriod())
         .withCountryCode(federationDiagnosisKey.getOrigin())
         .withReportType(federationDiagnosisKey.getReportType())
-        .withVisitedCountries(federationDiagnosisKey.getVisitedCountriesList())
+        .withVisitedCountries(new HashSet<>(federationDiagnosisKey.getVisitedCountriesList()))
         .withDaysSinceOnsetOfSymptoms(
             federationDiagnosisKey.hasDaysSinceOnsetOfSymptoms() ? federationDiagnosisKey.getDaysSinceOnsetOfSymptoms()
                 : null);
@@ -139,7 +139,7 @@ public class DiagnosisKeyBuilder implements
   }
 
   @Override
-  public FinalBuilder withVisitedCountries(List<String> visitedCountries) {
+  public FinalBuilder withVisitedCountries(Set<String> visitedCountries) {
     this.visitedCountries = visitedCountries;
     return this;
   }

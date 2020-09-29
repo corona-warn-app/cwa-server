@@ -18,7 +18,7 @@
  * ---license-end
  */
 
-package app.coronawarn.server.common.federation.client.download;
+package app.coronawarn.server.services.download;
 
 import app.coronawarn.server.common.protocols.external.exposurenotification.DiagnosisKeyBatch;
 import java.util.Objects;
@@ -29,7 +29,7 @@ import java.util.Optional;
  */
 public class BatchDownloadResponse {
 
-  private final DiagnosisKeyBatch diagnosisKeyBatch;
+  private final Optional<DiagnosisKeyBatch> diagnosisKeyBatch;
   private final String batchTag;
   private final Optional<String> nextBatchTag;
 
@@ -37,14 +37,14 @@ public class BatchDownloadResponse {
    * Creates a FederationGatewayResponse that holds a {@link DiagnosisKeyBatch} and batch tag metadata as served by the
    * federation gateway.
    */
-  public BatchDownloadResponse(
-      DiagnosisKeyBatch diagnosisKeyBatch, String batchTag, Optional<String> nextBatchTag) {
-    this.diagnosisKeyBatch = diagnosisKeyBatch;
+  public BatchDownloadResponse(String batchTag, Optional<DiagnosisKeyBatch> diagnosisKeyBatch,
+      Optional<String> nextBatchTag) {
     this.batchTag = batchTag;
+    this.diagnosisKeyBatch = diagnosisKeyBatch;
     this.nextBatchTag = nextBatchTag;
   }
 
-  public DiagnosisKeyBatch getDiagnosisKeyBatch() {
+  public Optional<DiagnosisKeyBatch> getDiagnosisKeyBatch() {
     return diagnosisKeyBatch;
   }
 

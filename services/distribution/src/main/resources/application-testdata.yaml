@@ -3,4 +3,4 @@ services:
   distribution:
     testdata:
       seed: 123456
-      exposures-per-hour: 1000
+      exposures-per-hour: 100

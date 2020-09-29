@@ -30,8 +30,7 @@ import app.coronawarn.server.common.protocols.external.exposurenotification.Repo
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
+import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
 import javax.validation.ConstraintViolation;
@@ -81,7 +80,7 @@ public class DiagnosisKey {
   private final String originCountry;
 
   @ValidCountries
-  private final List<String> visitedCountries;
+  private final Set<String> visitedCountries;
 
   private final ReportType reportType;
 
@@ -92,7 +91,7 @@ public class DiagnosisKey {
    */
   DiagnosisKey(byte[] keyData, int rollingStartIntervalNumber, int rollingPeriod,
       int transmissionRiskLevel, long submissionTimestamp,
-      boolean consentToFederation, @Size String originCountry, List<String> visitedCountries,
+      boolean consentToFederation, @Size String originCountry, Set<String> visitedCountries,
       ReportType reportType, Integer daysSinceOnsetOfSymptoms) {
     this.keyData = keyData;
     this.rollingStartIntervalNumber = rollingStartIntervalNumber;
@@ -101,7 +100,7 @@ public class DiagnosisKey {
     this.submissionTimestamp = submissionTimestamp;
     this.consentToFederation = consentToFederation;
     this.originCountry = originCountry;
-    this.visitedCountries = visitedCountries == null ? Collections.emptyList() : visitedCountries;
+    this.visitedCountries = visitedCountries == null ? new HashSet<>() : visitedCountries;
     this.reportType = reportType;
     // Workaround to avoid exception on loading old DiagnosisKeys after migration to EFGS
     this.daysSinceOnsetOfSymptoms = daysSinceOnsetOfSymptoms == null ? 0 : daysSinceOnsetOfSymptoms;
@@ -161,7 +160,7 @@ public class DiagnosisKey {
     return originCountry;
   }
 
-  public List<String> getVisitedCountries() {
+  public Set<String> getVisitedCountries() {
     return visitedCountries;
   }
 

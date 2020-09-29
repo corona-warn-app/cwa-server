@@ -14,6 +14,8 @@ services:
     maximum-number-of-keys-per-bundle: 600000
     include-incomplete-days: false
     include-incomplete-hours: false
+    eu-package-name: EUR
+    apply-policies-for-all-countries: false
     paths:
       output: out
       privatekey: classpath:keys/private.pem

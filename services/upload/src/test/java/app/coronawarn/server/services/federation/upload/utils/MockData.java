@@ -22,6 +22,7 @@ package app.coronawarn.server.services.federation.upload.utils;
 
 import java.util.List;
 import java.util.Random;
+import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import app.coronawarn.server.common.persistence.domain.DiagnosisKey;
@@ -57,7 +58,7 @@ public class MockData {
         .withCountryCode(TEST_ORIGIN_COUNTRY)
         .withDaysSinceOnsetOfSymptoms(1)
         .withSubmissionTimestamp(12)
-        .withVisitedCountries(List.of("FR", "DK"))
+        .withVisitedCountries(Set.of("FR", "DK"))
         .withReportType(ReportType.CONFIRMED_TEST)
         .build();
   }
