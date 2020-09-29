@@ -48,7 +48,7 @@ public class SubmissionPayloadGenerator {
   }
 
   public void writeSubmissionPayloadProtobufFile() throws IOException {
-    createValidSubmissionPayload().writeTo(new FileOutputStream("mobile-client-payload.pb"));
+    createValidSubmissionPayload().writeTo(new FileOutputStream("services/submission/src/test/resources/payload/mobile-client-payload.pb"));
   }
 
   public SubmissionPayload createValidSubmissionPayload() throws IOException {
