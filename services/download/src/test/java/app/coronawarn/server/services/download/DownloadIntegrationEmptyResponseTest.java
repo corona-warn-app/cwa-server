@@ -50,9 +50,10 @@ import org.springframework.test.annotation.DirtiesContext;
  * that can be processed successfully. Batch2 is returned by an explicit call to its batch tag, but the response is
  * empty (like it is the case on EFGS). Its successor batch3 fails with a 404 Not Found.
  * <p>
- * Hence, after the execution of both runners, the federation_batch_info table should be the following: * "batch1_tag"
- * has state "PROCESSED" * "batch2_tag" has state "ERROR" * "batch3_tag" has state "ERROR" * no batch has state
- * "UNPROCESSED"
+ * Hence, after the execution of both runners, the federation_batch_info table should be the following:
+ * <li>"batch1_tag" has state "PROCESSED"</li>
+ * <li>"batch2_tag" has state "ERROR"</li>
+ * <li>"batch3_tag" has state "ERROR" * no batch has state "UNPROCESSED"</li>
  * <p>
  * The diagnosis_key table should contain the data of batch1.
  */
