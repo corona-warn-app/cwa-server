@@ -58,33 +58,33 @@ class ExposureConfigurationValidatorTest {
 
   private static Stream<Arguments> createOkTests() {
     return Stream.of(
-        AllOk(),
-        PartlyFilled(),
-        WeightOk()
+        allOk(),
+        partlyFilled(),
+        weightOk()
     ).map(Arguments::of);
   }
 
   private static Stream<Arguments> createFailedTests() {
     return Stream.of(
-        ScoreTooHigh(),
-        WeightNegative(),
-        WeightTooHigh()
+        scoreTooHigh(),
+        weightNegative(),
+        weightTooHigh()
     ).map(Arguments::of);
   }
 
-  public static TestWithExpectedResult AllOk() {
+  private static TestWithExpectedResult allOk() {
     return new TestWithExpectedResult("all_ok.yaml");
   }
 
-  public static TestWithExpectedResult PartlyFilled() {
+  private static TestWithExpectedResult partlyFilled() {
     return new TestWithExpectedResult("partly_filled.yaml");
   }
 
-  public static TestWithExpectedResult WeightOk() {
+  private static TestWithExpectedResult weightOk() {
     return new TestWithExpectedResult("weight_ok.yaml");
   }
 
-  public static TestWithExpectedResult WeightNegative() {
+  private static TestWithExpectedResult weightNegative() {
     return new TestWithExpectedResult("weight_negative.yaml")
         .with(buildError(CONFIG_PREFIX + "transmission", -10d, VALUE_OUT_OF_BOUNDS))
         .with(buildError(CONFIG_PREFIX + "attenuation", 0.0001, TOO_MANY_DECIMAL_PLACES))
@@ -92,14 +92,14 @@ class ExposureConfigurationValidatorTest {
         .with(buildError(CONFIG_PREFIX + "duration", .0, VALUE_OUT_OF_BOUNDS));
   }
 
-  public static TestWithExpectedResult WeightTooHigh() {
+  private static TestWithExpectedResult weightTooHigh() {
     return new TestWithExpectedResult("weight_too_high.yaml")
         .with(buildError(CONFIG_PREFIX + "duration", 99999999d, VALUE_OUT_OF_BOUNDS))
         .with(buildError(CONFIG_PREFIX + "attenuation", 100.001d, VALUE_OUT_OF_BOUNDS))
         .with(buildError(CONFIG_PREFIX + "transmission", 101d, VALUE_OUT_OF_BOUNDS));
   }
 
-  public static TestWithExpectedResult ScoreTooHigh() {
+  private static TestWithExpectedResult scoreTooHigh() {
     return new TestWithExpectedResult("score_too_high.yaml")
         .with(buildError(CONFIG_PREFIX + "transmission.appDefined1", RiskLevel.UNRECOGNIZED, VALUE_OUT_OF_BOUNDS))
         .with(buildError(CONFIG_PREFIX + "transmission.appDefined2", RiskLevel.UNRECOGNIZED, VALUE_OUT_OF_BOUNDS));

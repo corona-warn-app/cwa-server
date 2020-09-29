@@ -65,26 +65,26 @@ class ApplicationConfigurationValidatorTest {
   }
 
   private static Stream<Arguments> createOkTests() {
-    return Stream.of(AllOk()).map(Arguments::of);
+    return Stream.of(allOk()).map(Arguments::of);
   }
 
   private static Stream<Arguments> createNegativeTests() {
     return Stream.of(
-        MinRiskThresholdOutOfBoundsNegative(),
-        MinRiskThresholdOutOfBoundsPositive()
+        minRiskThresholdOutOfBoundsNegative(),
+        minRiskThresholdOutOfBoundsPositive()
     ).map(Arguments::of);
   }
 
-  public static TestWithExpectedResult AllOk() {
+  private static TestWithExpectedResult allOk() {
     return TEST_BUILDER.build("app-config_ok.yaml");
   }
 
-  public static TestWithExpectedResult MinRiskThresholdOutOfBoundsNegative() {
+  private static TestWithExpectedResult minRiskThresholdOutOfBoundsNegative() {
     return TEST_BUILDER.build("app-config_mrs_negative.yaml")
         .with(buildError("min-risk-score", RISK_SCORE_MIN - 1, VALUE_OUT_OF_BOUNDS));
   }
 
-  public static TestWithExpectedResult MinRiskThresholdOutOfBoundsPositive() {
+  private static TestWithExpectedResult minRiskThresholdOutOfBoundsPositive() {
     return TEST_BUILDER.build("app-config_mrs_oob.yaml")
         .with(buildError("min-risk-score", RISK_SCORE_MAX + 1, VALUE_OUT_OF_BOUNDS));
   }
