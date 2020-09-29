@@ -46,6 +46,7 @@ public abstract class DiagnosisKeyBundler {
   protected final int minNumberOfKeysPerBundle;
   private final int maxNumberOfKeysPerBundle;
   protected final List<String> supportedCountries;
+  private final String euPackageName;
   /**
    * The hour at which the distribution runs. This field is needed to prevent the run from distributing any keys that
    * have already been submitted but may only be distributed in the future (e.g. because they are not expired yet).
@@ -66,6 +67,7 @@ public abstract class DiagnosisKeyBundler {
     this.expiryPolicyMinutes = distributionServiceConfig.getExpiryPolicyMinutes();
     this.minNumberOfKeysPerBundle = distributionServiceConfig.getShiftingPolicyThreshold();
     this.maxNumberOfKeysPerBundle = distributionServiceConfig.getMaximumNumberOfKeysPerBundle();
+    this.euPackageName = distributionServiceConfig.getEuPackageName();
   }
 
   /**
@@ -180,7 +182,7 @@ public abstract class DiagnosisKeyBundler {
   }
 
   private boolean isCountrySupported(String country) {
-    if (!supportedCountries.contains(country)) {
+    if (!supportedCountries.contains(country) && !country.equals(euPackageName)) {
       logger.warn(COUNTRY_ERROR_MESSAGE, country);
       return false;
     }

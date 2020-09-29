@@ -28,6 +28,7 @@ import app.coronawarn.server.services.submission.monitoring.SubmissionMonitor;
 import app.coronawarn.server.services.submission.verification.TanVerifier;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -186,6 +187,41 @@ class SubmissionControllerTest {
     assertDSOSCorrectlyComputedFromTRL(config, submittedKeys, values);
   }
 
+  /**
+   * The test verifies that even if the payload does not provide keys with TRL, the information
+   * is still derived from the DSOS field and correctly persisted.
+   *
+   * <li>DSOS - days since onset of symptoms
+   * <li>TRL  - transmission risk level
+   */
+  @Test
+  void checkTRLIsPersistedForKeysWithDSOSOnly() {
+    Collection<TemporaryExposureKey> submittedKeys = buildMultipleKeysWithoutTRL(config);
+    ArgumentCaptor<Collection<DiagnosisKey>> argument = ArgumentCaptor.forClass(Collection.class);
+
+    SubmissionPayload submissionPayload = buildPayload(submittedKeys);
+    executor.executePost(submissionPayload);
+
+    verify(diagnosisKeyService, times(1)).saveDiagnosisKeys(argument.capture());
+
+    Collection<DiagnosisKey> values = argument.getValue();
+    assertTRLCorrectlyComputedFromDSOS(config, submittedKeys, values);
+  }
+
+  /**
+   * The test verifies that a payload is rejected when both TRL and DSOS are missing from a single key.
+   *
+   * <li>DSOS - days since onset of symptoms
+   * <li>TRL  - transmission risk level
+   */
+  @Test
+  void checkErrorIsThrownWhenKeysAreMissingDSOSAndTRL() {
+    Collection<TemporaryExposureKey> submittedKeys = buildMultipleKeysWithoutDSOSAndTRL(config);
+    SubmissionPayload submissionPayload = buildPayload(submittedKeys);
+    ResponseEntity<Void> response = executor.executePost(submissionPayload);
+    assertThat(response.getStatusCode()).isEqualTo(BAD_REQUEST);
+  }
+
   @Test
   void checkSaveOperationCallAndFakeDelayUpdateForValidParameters() {
     Collection<TemporaryExposureKey> submittedKeys = buildMultipleKeys(config);
@@ -317,7 +353,7 @@ class SubmissionControllerTest {
             .builder()
             .fromTemporaryExposureKey(submittedDiagnosisKey)
             .withConsentToFederation(submissionPayload.getConsentToFederation())
-            .withVisitedCountries(submissionPayload.getVisitedCountriesList())
+            .withVisitedCountries(new HashSet<>(submissionPayload.getVisitedCountriesList()))
             .withCountryCode(defaultIfBlank(submissionPayload.getOrigin(), config.getDefaultOriginCountry()))
             .build())
         .collect(Collectors.toSet());
@@ -345,6 +381,16 @@ class SubmissionControllerTest {
               .getRollingStartIntervalNumber());
       assertThat(savedKeysForSingleSubmittedKey).allMatch(
           savedKey -> savedKey.getTransmissionRiskLevel() == submittedDiagnosisKey.getTransmissionRiskLevel());
+    });
+  }
+
+  private void assertTRLCorrectlyComputedFromDSOS(SubmissionServiceConfig config,
+      Collection<TemporaryExposureKey> submittedTEKs, Collection<DiagnosisKey> diagnosisKeys) {
+    submittedTEKs.stream().map(tek -> Pair.of(tek, findDiagnosisKeyMatch(tek, diagnosisKeys))).forEach(pair -> {
+      int tekDSOS = pair.getLeft().getDaysSinceOnsetOfSymptoms();
+      int dkTRL = pair.getRight().getTransmissionRiskLevel();
+      Integer expectedTRL = config.getTekFieldDerivations().deriveTrlFromDsos(tekDSOS);
+      Assertions.assertEquals(expectedTRL, dkTRL);
     });
   }
 

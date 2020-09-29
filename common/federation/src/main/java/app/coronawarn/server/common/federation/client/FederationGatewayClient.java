@@ -2,9 +2,8 @@
 
 package app.coronawarn.server.common.federation.client;
 
-import app.coronawarn.server.common.federation.client.download.BatchDownloadResponse;
 import app.coronawarn.server.common.federation.client.upload.BatchUploadResponse;
-import java.util.Optional;
+import app.coronawarn.server.common.protocols.external.exposurenotification.DiagnosisKeyBatch;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -30,19 +29,21 @@ public interface FederationGatewayClient {
       headers = {"Accept=application/protobuf; version=1.0",
           "X-SSL-Client-SHA256=${federation-gateway.ssl.certificate-sha}",
           "X-SSL-Client-DN=${federation-gateway.ssl.certificate-dn}"})
-  Optional<BatchDownloadResponse> getDiagnosisKeys(@PathVariable("date") String date);
+  ResponseEntity<DiagnosisKeyBatch> getDiagnosisKeys(@PathVariable("date") String date);
 
   @GetMapping(value = "/diagnosiskeys/download/{date}",
       headers = {"Accept=application/protobuf; version=1.0",
           "X-SSL-Client-SHA256=${federation-gateway.ssl.certificate-sha}",
           "X-SSL-Client-DN=${federation-gateway.ssl.certificate-dn}"})
-  Optional<BatchDownloadResponse> getDiagnosisKeys(@RequestHeader("batchTag") String batchTag,
+  ResponseEntity<DiagnosisKeyBatch> getDiagnosisKeys(@RequestHeader("batchTag") String batchTag,
       @PathVariable("date") String date);
 
   /**
    * HTTP POST request federation gateway endpoint /diagnosiskyes/upload.
-   * @param raw Payload body. This property contains a raw byte array with the encoded protobuf DiagnosisKeyBatch.
-   * @param batchTag Unique batchTag to be identified by EFGS.
+   *
+   * @param raw            Payload body. This property contains a raw byte array with the encoded protobuf
+   *                       DiagnosisKeyBatch.
+   * @param batchTag       Unique batchTag to be identified by EFGS.
    * @param batchSignature Batch Signature as per PKCS#7 spec using Authorized Signing Certificate.
    */
   @PostMapping(value = "/diagnosiskeys/upload",

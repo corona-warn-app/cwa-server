@@ -39,7 +39,7 @@ public class Helpers {
         .withTransmissionRiskLevel(2)
         .withSubmissionTimestamp(submissionTimeStamp)
         .withCountryCode("DE")
-        .withVisitedCountries(List.of("DE"))
+        .withVisitedCountries(Set.of("DE"))
         .withReportType(ReportType.CONFIRMED_CLINICAL_DIAGNOSIS)
         .withDaysSinceOnsetOfSymptoms(1)
         .build();
@@ -57,7 +57,7 @@ public class Helpers {
 
   public static List<DiagnosisKey> buildDiagnosisKeys(
       int startIntervalNumber, LocalDateTime submissionTimestamp, int number, String originCountry,
-      List<String> visitedCountries,
+      Set<String> visitedCountries,
       ReportType reportType,
       int daysSinceOnsetOfSymptoms) {
     long timestamp = submissionTimestamp.toEpochSecond(ZoneOffset.UTC) / 3600;
@@ -67,14 +67,14 @@ public class Helpers {
 
   public static List<DiagnosisKey> buildDiagnosisKeys(int startIntervalNumber, long submissionTimestamp, int number) {
     return buildDiagnosisKeys(startIntervalNumber, submissionTimestamp, number,
-        "DE", List.of("DE"), ReportType.CONFIRMED_CLINICAL_DIAGNOSIS, 1);
+        "DE", Set.of("DE"), ReportType.CONFIRMED_CLINICAL_DIAGNOSIS, 1);
   }
 
   public static List<DiagnosisKey> buildDiagnosisKeys(int startIntervalNumber,
       long submissionTimestamp,
       int number,
       String originCountry,
-      List<String> visitedCountries,
+      Set<String> visitedCountries,
       ReportType reportType,
       int daysSinceOnsetOfSymptoms) {
     return IntStream.range(0, number)
@@ -100,7 +100,7 @@ public class Helpers {
             .withTransmissionRiskLevel(2)
             .withSubmissionTimestamp(submissionTimestamp)
             .withRollingPeriod(rollingPeriod)
-            .withVisitedCountries(Collections.singletonList("DE"))
+            .withVisitedCountries(Set.of("DE"))
             .withCountryCode("DE").build())
         .collect(Collectors.toList());
   }

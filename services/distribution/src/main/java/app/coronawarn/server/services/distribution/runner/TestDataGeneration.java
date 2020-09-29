@@ -13,9 +13,8 @@ import app.coronawarn.server.services.distribution.assembly.structure.util.TimeU
 import app.coronawarn.server.services.distribution.config.DistributionServiceConfig;
 import app.coronawarn.server.services.distribution.config.DistributionServiceConfig.TestData;
 import java.time.temporal.ChronoUnit;
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
+import java.util.Set;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
@@ -32,11 +31,11 @@ import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
 /**
- * Generates random diagnosis keys for the time frame between the last diagnosis key in the database and now
- * and writes them to the database. If there are no diagnosis keys in the database yet, then random diagnosis keys
- * for the time frame between current hour and the beginning of the retention period (14 days ago) will be
- * generated. The average number of exposure keys to be generated per hour is configurable in the application properties
- * (profile = {@code testdata}).
+ * Generates random diagnosis keys for the time frame between the last diagnosis key in the database and now and writes
+ * them to the database. If there are no diagnosis keys in the database yet, then random diagnosis keys for the time
+ * frame between current hour and the beginning of the retention period (14 days ago) will be generated. The average
+ * number of exposure keys to be generated per hour is configurable in the application properties (profile = {@code
+ * testdata}).
  */
 @Component
 @Order(-1)
@@ -53,7 +52,7 @@ public class TestDataGeneration implements ApplicationRunner {
 
   private final RandomGenerator random = new JDKRandomGenerator();
 
-  private final List<String> supportedCountries;
+  private final Set<String> supportedCountries;
 
   private static final int POISSON_MAX_ITERATIONS = 10_000_000;
   private static final double POISSON_EPSILON = 1e-12;
@@ -66,7 +65,7 @@ public class TestDataGeneration implements ApplicationRunner {
     this.diagnosisKeyService = diagnosisKeyService;
     this.retentionDays = distributionServiceConfig.getRetentionDays();
     this.config = distributionServiceConfig.getTestData();
-    this.supportedCountries = Arrays.asList(distributionServiceConfig.getSupportedCountries());
+    this.supportedCountries = Set.of(distributionServiceConfig.getSupportedCountries());
   }
 
   /**
@@ -82,7 +81,7 @@ public class TestDataGeneration implements ApplicationRunner {
    */
   private void writeTestData() {
     supportedCountries.forEach(country -> {
-      logger.debug("Querying diagnosis keys from the database...");
+      logger.debug("Querying diagnosis keys [{}] from the database...", country);
       List<DiagnosisKey> existingDiagnosisKeys = diagnosisKeyService.getDiagnosisKeys().stream()
           .filter(diagnosisKey -> diagnosisKey.getOriginCountry().equals(country))
           .collect(Collectors.toList());
@@ -93,7 +92,7 @@ public class TestDataGeneration implements ApplicationRunner {
       long endTimestamp = getGeneratorEndTimestamp(); // Inclusive
 
       // Add the startTimestamp to the seed. Otherwise we would generate the same data every hour.
-      random.setSeed(this.config.getSeed() + startTimestamp);
+      random.setSeed(this.config.getSeed() + startTimestamp + country.hashCode());
       PoissonDistribution poisson =
           new PoissonDistribution(random, this.config.getExposuresPerHour(), POISSON_EPSILON, POISSON_MAX_ITERATIONS);
 
@@ -101,15 +100,15 @@ public class TestDataGeneration implements ApplicationRunner {
         logger.debug("Skipping test data generation, latest diagnosis keys are still up-to-date.");
         return;
       }
-      logger.debug("Generating diagnosis keys between {} and {}...", startTimestamp, endTimestamp);
+      logger.debug("Generating diagnosis keys  [{}] between {} and {}...", country, startTimestamp, endTimestamp);
       List<DiagnosisKey> newDiagnosisKeys = LongStream.rangeClosed(startTimestamp, endTimestamp)
           .mapToObj(submissionTimestamp -> IntStream.range(0, poisson.sample())
-              .mapToObj(ignoredValue -> generateDiagnosisKey(submissionTimestamp,country))
+              .mapToObj(ignoredValue -> generateDiagnosisKey(submissionTimestamp, country))
               .collect(Collectors.toList()))
           .flatMap(List::stream)
           .collect(Collectors.toList());
 
-      logger.debug("Writing {} new diagnosis keys to the database...", newDiagnosisKeys.size());
+      logger.debug("Writing {} new diagnosis keys [{}] to the database...", newDiagnosisKeys.size(), country);
       diagnosisKeyService.saveDiagnosisKeys(newDiagnosisKeys);
 
       logger.debug("Test data generation finished successfully.");
@@ -131,8 +130,8 @@ public class TestDataGeneration implements ApplicationRunner {
   }
 
   /**
-   * Returns the timestamp (in 1 hour intervals since epoch) of the current hour. Example: If called at 15:38 UTC,
-   * this function would return the timestamp for today 15:00 UTC.
+   * Returns the timestamp (in 1 hour intervals since epoch) of the current hour. Example: If called at 15:38 UTC, this
+   * function would return the timestamp for today 15:00 UTC.
    */
   private long getGeneratorEndTimestamp() {
     return (TimeUtils.getNow().getEpochSecond() / ONE_HOUR_INTERVAL_SECONDS);
@@ -149,15 +148,17 @@ public class TestDataGeneration implements ApplicationRunner {
   }
 
   /**
-   * Either returns the list of all possible visited countries or only current distribution
-   * This ensure that when test generation runs for a country (e.g. FR) all keys in the
-   * distribution will contain FR in the vistied_countries array.
+   * Either returns the list of all possible visited countries or only current distribution This ensure that when test
+   * generation runs for a country (e.g. FR) all keys in the distribution will contain FR in the vistied_countries
+   * array.
+   *
+   * @return
    */
-  private List<String> generateListOfVisitedCountries(String distributionCountry) {
+  private Set<String> generateSetOfVisitedCountries(String distributionCountry) {
     if (random.nextBoolean()) {
-      return List.of("DE", "DK", "FR");
+      return supportedCountries;
     } else {
-      return Collections.singletonList(distributionCountry);
+      return Set.of(distributionCountry);
     }
   }
 
@@ -171,7 +172,7 @@ public class TestDataGeneration implements ApplicationRunner {
         .withTransmissionRiskLevel(generateTransmissionRiskLevel())
         .withSubmissionTimestamp(submissionTimestamp)
         .withCountryCode(country)
-        .withVisitedCountries(generateListOfVisitedCountries(country))
+        .withVisitedCountries(generateSetOfVisitedCountries(country))
         .withReportType(ReportType.CONFIRMED_CLINICAL_DIAGNOSIS)
         .build();
   }

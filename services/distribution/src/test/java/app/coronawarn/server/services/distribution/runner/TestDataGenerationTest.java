@@ -19,9 +19,11 @@ import app.coronawarn.server.services.distribution.config.DistributionServiceCon
 import app.coronawarn.server.services.distribution.config.DistributionServiceConfig.TestData;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import java.util.Set;
 import org.junit.Assert;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -89,19 +91,22 @@ class TestDataGenerationTest {
     var now = LocalDateTime.of(2020, 7, 15, 12, 0, 0).toInstant(ZoneOffset.UTC);
     TimeUtils.setNow(now);
 
-    when(diagnosisKeyService.getDiagnosisKeys())
-        .thenReturn(buildDiagnosisKeys(6,
-            LocalDateTime.of(2020, 7, 15, 12, 0, 0), 10, "DE", List.of("DE", "FR"),
-            ReportType.CONFIRMED_CLINICAL_DIAGNOSIS, 1))
-        .thenReturn(buildDiagnosisKeys(6,
-            LocalDateTime.of(2020, 7, 15, 12, 0, 0), 10, "FR", List.of("DE", "FR"),
-            ReportType.CONFIRMED_CLINICAL_DIAGNOSIS, 1))
-        .thenReturn(buildDiagnosisKeys(6,
-            LocalDateTime.of(2020, 7, 15, 12, 0, 0), 10, "NL", List.of("DE", "FR", "NL", "IE"),
-            ReportType.CONFIRMED_CLINICAL_DIAGNOSIS, 1))
-        .thenReturn(buildDiagnosisKeys(6,
-            LocalDateTime.of(2020, 7, 15, 12, 0, 0), 10, "IE", List.of("DE", "FR", "NL", "IE"),
-            ReportType.CONFIRMED_CLINICAL_DIAGNOSIS, 1));
+    List<DiagnosisKey> keyList = new ArrayList<>();
+
+    keyList.addAll(buildDiagnosisKeys(6,
+        LocalDateTime.of(2020, 7, 15, 12, 0, 0), 10, "DE", Set.of("DE", "FR"),
+        ReportType.CONFIRMED_CLINICAL_DIAGNOSIS, 1));
+    keyList.addAll(buildDiagnosisKeys(6,
+        LocalDateTime.of(2020, 7, 15, 12, 0, 0), 10, "FR", Set.of("DE", "FR"),
+        ReportType.CONFIRMED_CLINICAL_DIAGNOSIS, 1));
+    keyList.addAll(buildDiagnosisKeys(6,
+        LocalDateTime.of(2020, 7, 15, 12, 0, 0), 10, "NL", Set.of("DE", "FR", "NL", "IE"),
+        ReportType.CONFIRMED_CLINICAL_DIAGNOSIS, 1));
+    keyList.addAll(buildDiagnosisKeys(6,
+        LocalDateTime.of(2020, 7, 15, 12, 0, 0), 10, "IE", Set.of("DE", "FR", "NL", "IE"),
+        ReportType.CONFIRMED_CLINICAL_DIAGNOSIS, 1));
+
+    when(diagnosisKeyService.getDiagnosisKeys()).thenReturn(keyList);
 
     testDataGeneration.run(null);
     verify(diagnosisKeyService, never()).saveDiagnosisKeys(captor.capture());
@@ -112,22 +117,21 @@ class TestDataGenerationTest {
     var now = LocalDateTime.of(2020, 7, 15, 12, 0, 0).toInstant(ZoneOffset.UTC);
     TimeUtils.setNow(now);
 
-    when(diagnosisKeyService.getDiagnosisKeys())
-        .thenReturn(
-            buildDiagnosisKeys(6,
-                LocalDateTime.of(2020, 7, 15, 11, 0, 0), 10))
-        .thenReturn(
-            buildDiagnosisKeys(6,
-                LocalDateTime.of(2020, 7, 15, 11, 0, 0), 10, "FR", List.of("DE", "FR"),
-                ReportType.CONFIRMED_CLINICAL_DIAGNOSIS, 1))
-        .thenReturn(
-            buildDiagnosisKeys(6,
-                LocalDateTime.of(2020, 7, 15, 11, 0, 0), 10, "NL", List.of("DE", "FR", "NL", "IE"),
-                ReportType.CONFIRMED_CLINICAL_DIAGNOSIS, 1))
-        .thenReturn(
-            buildDiagnosisKeys(6,
-                LocalDateTime.of(2020, 7, 15, 11, 0, 0), 10, "IE", List.of("DE", "FR", "NL", "IE"),
-                ReportType.CONFIRMED_CLINICAL_DIAGNOSIS, 1));
+    List<DiagnosisKey> keyList = new ArrayList<>();
+
+    keyList.addAll(buildDiagnosisKeys(6,
+        LocalDateTime.of(2020, 7, 15, 11, 0, 0), 10));
+    keyList.addAll(buildDiagnosisKeys(6,
+        LocalDateTime.of(2020, 7, 15, 11, 0, 0), 10, "FR", Set.of("DE", "FR"),
+        ReportType.CONFIRMED_CLINICAL_DIAGNOSIS, 1));
+    keyList.addAll(buildDiagnosisKeys(6,
+        LocalDateTime.of(2020, 7, 15, 11, 0, 0), 10, "NL", Set.of("DE", "FR", "NL", "IE"),
+        ReportType.CONFIRMED_CLINICAL_DIAGNOSIS, 1));
+    keyList.addAll(buildDiagnosisKeys(6,
+        LocalDateTime.of(2020, 7, 15, 11, 0, 0), 10, "IE", Set.of("DE", "FR", "NL", "IE"),
+        ReportType.CONFIRMED_CLINICAL_DIAGNOSIS, 1));
+
+    when(diagnosisKeyService.getDiagnosisKeys()).thenReturn(keyList);
 
     testDataGeneration.run(null);
     verify(diagnosisKeyService, times(distributionServiceConfig.getSupportedCountries().length))
@@ -158,17 +162,20 @@ class TestDataGenerationTest {
     var now = LocalDateTime.of(2020, 7, 15, 12, 0, 0).toInstant(ZoneOffset.UTC);
     TimeUtils.setNow(now);
 
-    when(diagnosisKeyService.getDiagnosisKeys())
-        .thenReturn(buildDiagnosisKeys(6, LocalDateTime.of(2020, 7, 15, 12, 0, 0), 10, "DE", List.of("DE", "FR"),
-            ReportType.CONFIRMED_CLINICAL_DIAGNOSIS, 1))
-        .thenReturn(buildDiagnosisKeys(6, LocalDateTime.of(2020, 7, 15, 12, 0, 0), 10, "FR", List.of("DE", "FR"),
-            ReportType.CONFIRMED_CLINICAL_DIAGNOSIS, 1))
-        .thenReturn(buildDiagnosisKeys(6,
-            LocalDateTime.of(2020, 7, 15, 12, 0, 0), 10, "NL", List.of("DE", "FR", "NL", "IE"),
-            ReportType.CONFIRMED_CLINICAL_DIAGNOSIS, 1))
-        .thenReturn(buildDiagnosisKeys(6,
-            LocalDateTime.of(2020, 7, 15, 12, 0, 0), 10, "IE", List.of("DE", "FR", "NL", "IE"),
-            ReportType.CONFIRMED_CLINICAL_DIAGNOSIS, 1));
+    List<DiagnosisKey> keyList = new ArrayList<>();
+
+    keyList.addAll(buildDiagnosisKeys(6, LocalDateTime.of(2020, 7, 15, 12, 0, 0), 10, "DE", Set.of("DE", "FR"),
+        ReportType.CONFIRMED_CLINICAL_DIAGNOSIS, 1));
+    keyList.addAll(buildDiagnosisKeys(6, LocalDateTime.of(2020, 7, 15, 12, 0, 0), 10, "FR", Set.of("DE", "FR"),
+        ReportType.CONFIRMED_CLINICAL_DIAGNOSIS, 1));
+    keyList.addAll(buildDiagnosisKeys(6,
+        LocalDateTime.of(2020, 7, 15, 12, 0, 0), 10, "NL", Set.of("DE", "FR", "NL", "IE"),
+        ReportType.CONFIRMED_CLINICAL_DIAGNOSIS, 1));
+    keyList.addAll(buildDiagnosisKeys(6,
+        LocalDateTime.of(2020, 7, 15, 12, 0, 0), 10, "IE", Set.of("DE", "FR", "NL", "IE"),
+        ReportType.CONFIRMED_CLINICAL_DIAGNOSIS, 1));
+
+    when(diagnosisKeyService.getDiagnosisKeys()).thenReturn(keyList);
 
     testDataGeneration.run(null);
     verify(diagnosisKeyService, never()).saveDiagnosisKeys(any());
@@ -179,14 +186,14 @@ class TestDataGenerationTest {
     testDataGeneration = new TestDataGeneration(diagnosisKeyService, distributionServiceConfig);
     var now = LocalDateTime.of(2020, 7, 15, 12, 0, 0).toInstant(ZoneOffset.UTC);
     TimeUtils.setNow(now);
+    List<DiagnosisKey> keyList = new ArrayList<>();
 
-    when(diagnosisKeyService.getDiagnosisKeys())
-        .thenReturn(
-            buildDiagnosisKeys(6, LocalDateTime.of(2020, 7, 14, 12, 0, 0), 10, "DE", List.of("DE", "FR"),
-                ReportType.CONFIRMED_CLINICAL_DIAGNOSIS, 1))
-        .thenReturn(
-            buildDiagnosisKeys(6, LocalDateTime.of(2020, 7, 14, 12, 0, 0), 10, "FR", List.of("DE", "FR"),
-                ReportType.CONFIRMED_CLINICAL_DIAGNOSIS, 1));
+   keyList.addAll(buildDiagnosisKeys(6, LocalDateTime.of(2020, 7, 14, 12, 0, 0), 10, "DE", Set.of("DE", "FR"),
+        ReportType.CONFIRMED_CLINICAL_DIAGNOSIS, 1));
+    keyList.addAll(buildDiagnosisKeys(6, LocalDateTime.of(2020, 7, 14, 12, 0, 0), 10, "FR", Set.of("DE", "FR"),
+        ReportType.CONFIRMED_CLINICAL_DIAGNOSIS, 1));
+
+    when(diagnosisKeyService.getDiagnosisKeys()).thenReturn(keyList);
 
     testDataGeneration.run(null);
     verify(diagnosisKeyService, times(distributionServiceConfig.getSupportedCountries().length))

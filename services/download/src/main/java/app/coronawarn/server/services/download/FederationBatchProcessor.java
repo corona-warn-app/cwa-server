@@ -6,21 +6,19 @@ import static app.coronawarn.server.common.persistence.domain.FederationBatchSta
 import static app.coronawarn.server.common.persistence.domain.FederationBatchStatus.ERROR_WONT_RETRY;
 import static app.coronawarn.server.common.persistence.domain.FederationBatchStatus.PROCESSED;
 import static app.coronawarn.server.common.persistence.domain.FederationBatchStatus.UNPROCESSED;
-import static java.time.format.DateTimeFormatter.ISO_LOCAL_DATE;
 import static java.util.stream.Collectors.toList;
 
-import app.coronawarn.server.common.federation.client.FederationGatewayClient;
-import app.coronawarn.server.common.federation.client.download.BatchDownloadResponse;
 import app.coronawarn.server.common.persistence.domain.DiagnosisKey;
 import app.coronawarn.server.common.persistence.domain.FederationBatchInfo;
 import app.coronawarn.server.common.persistence.domain.FederationBatchStatus;
 import app.coronawarn.server.common.persistence.service.DiagnosisKeyService;
 import app.coronawarn.server.common.persistence.service.FederationBatchInfoService;
+import app.coronawarn.server.common.protocols.external.exposurenotification.DiagnosisKeyBatch;
+import app.coronawarn.server.services.download.normalization.FederationKeyNormalizer;
 import java.time.LocalDate;
 import java.util.Deque;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.NoSuchElementException;
 import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -35,20 +33,26 @@ public class FederationBatchProcessor {
   private static final Logger logger = LoggerFactory.getLogger(FederationBatchProcessor.class);
   private final FederationBatchInfoService batchInfoService;
   private final DiagnosisKeyService diagnosisKeyService;
-  private final FederationGatewayClient federationGatewayClient;
+  private final FederationGatewayDownloadService federationGatewayDownloadService;
+  private final DownloadServiceConfig config;
 
   /**
    * Constructor.
    *
-   * @param batchInfoService        A {@link FederationBatchInfoService} for accessing diagnosis key batch information.
-   * @param diagnosisKeyService     A {@link DiagnosisKeyService} for storing retrieved diagnosis keys.
-   * @param federationGatewayClient A {@link FederationGatewayClient} for retrieving federation diagnosis key batches.
+   * @param batchInfoService                 A {@link FederationBatchInfoService} for accessing diagnosis key batch
+   *                                         information.
+   * @param diagnosisKeyService              A {@link DiagnosisKeyService} for storing retrieved diagnosis keys.
+   * @param federationGatewayDownloadService A {@link FederationGatewayDownloadService} for retrieving federation
+   *                                         diagnosis key batches.
+   * @param config                           A {@link DownloadServiceConfig} for retrieving federation configuration.
    */
   public FederationBatchProcessor(FederationBatchInfoService batchInfoService,
-      DiagnosisKeyService diagnosisKeyService, FederationGatewayClient federationGatewayClient) {
+      DiagnosisKeyService diagnosisKeyService, FederationGatewayDownloadService federationGatewayDownloadService,
+      DownloadServiceConfig config) {
     this.batchInfoService = batchInfoService;
     this.diagnosisKeyService = diagnosisKeyService;
-    this.federationGatewayClient = federationGatewayClient;
+    this.federationGatewayDownloadService = federationGatewayDownloadService;
+    this.config = config;
   }
 
   /**
@@ -58,14 +62,11 @@ public class FederationBatchProcessor {
    */
   public void saveFirstBatchInfoForDate(LocalDate date) {
     try {
-      logger.info("Downloading first batch for date {}", date);
-      BatchDownloadResponse response =
-          federationGatewayClient.getDiagnosisKeys(date.format(ISO_LOCAL_DATE)).orElseThrow();
+      logger.info("Triggering download of first batch for date {}.", date);
+      BatchDownloadResponse response = federationGatewayDownloadService.downloadBatch(date);
       batchInfoService.save(new FederationBatchInfo(response.getBatchTag(), date));
-    } catch (NoSuchElementException e) {
-      logger.error("Batch for date {} was empty.", date);
     } catch (Exception e) {
-      logger.error("Downloading batch for date {} failed.", date, e);
+      logger.error("Triggering download of first batch for date {} failed.", date, e);
     }
   }
 
@@ -108,16 +109,16 @@ public class FederationBatchProcessor {
 
   private Optional<String> processBatchAndReturnNextBatchId(
       FederationBatchInfo batchInfo, FederationBatchStatus errorStatus) {
-    String date = batchInfo.getDate().format(ISO_LOCAL_DATE);
+    LocalDate date = batchInfo.getDate();
     String batchTag = batchInfo.getBatchTag();
     logger.info("Processing batch for date {} and batchTag {}", date, batchTag);
     try {
-      BatchDownloadResponse response = federationGatewayClient.getDiagnosisKeys(batchTag, date).orElseThrow();
-      logger
-          .info("Downloaded {} keys for date {} and batchTag {}", response.getDiagnosisKeyBatch().getKeysCount(), date,
-              batchTag);
-      int insertedKeys = diagnosisKeyService.saveDiagnosisKeys(convertDiagnosisKeys(response));
-      logger.info("Successfully inserted {} keys for date {} and batchTag {}", insertedKeys, date, batchTag);
+      BatchDownloadResponse response = federationGatewayDownloadService.downloadBatch(batchTag, date);
+      response.getDiagnosisKeyBatch().ifPresent(diagnosisKeyBatch -> {
+        logger.info("Downloaded {} keys for date {} and batchTag {}", diagnosisKeyBatch.getKeysCount(), date, batchTag);
+        int insertedKeys = diagnosisKeyService.saveDiagnosisKeys(convertDiagnosisKeys(diagnosisKeyBatch));
+        logger.info("Successfully inserted {} keys for date {} and batchTag {}", insertedKeys, date, batchTag);
+      });
       batchInfoService.updateStatus(batchInfo, PROCESSED);
       return response.getNextBatchTag();
     } catch (Exception e) {
@@ -128,10 +129,12 @@ public class FederationBatchProcessor {
     }
   }
 
-  private List<DiagnosisKey> convertDiagnosisKeys(BatchDownloadResponse batchDownloadResponse) {
-    return batchDownloadResponse.getDiagnosisKeyBatch().getKeysList()
+  private List<DiagnosisKey> convertDiagnosisKeys(DiagnosisKeyBatch diagnosisKeyBatch) {
+    return diagnosisKeyBatch.getKeysList()
         .stream()
-        .map(diagnosisKey -> DiagnosisKey.builder().fromFederationDiagnosisKey(diagnosisKey).build())
+        .map(diagnosisKey -> DiagnosisKey.builder().fromFederationDiagnosisKey(diagnosisKey)
+            .withFieldNormalization(new FederationKeyNormalizer(config))
+            .build())
         .collect(toList());
   }
 }

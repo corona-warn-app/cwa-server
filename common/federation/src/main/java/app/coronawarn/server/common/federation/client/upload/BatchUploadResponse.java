@@ -33,6 +33,18 @@ public class BatchUploadResponse {
     this.status201 = status201;
   }
 
+  @Override
+  public String toString() {
+    return "BatchUploadResponse{"
+        + "status409="
+        + status409
+        + ", status500="
+        + status500
+        + ", status201="
+        + status201
+        + '}';
+  }
+
   /**
    * Create an empty BatchUploadResponse.
    */

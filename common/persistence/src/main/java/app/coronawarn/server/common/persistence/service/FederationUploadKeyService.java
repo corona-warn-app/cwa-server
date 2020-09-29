@@ -14,10 +14,12 @@ import app.coronawarn.server.common.persistence.service.common.ValidDiagnosisKey
 import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
-
 
 @Component
 public class FederationUploadKeyService {
@@ -25,6 +27,8 @@ public class FederationUploadKeyService {
   private final FederationUploadKeyRepository keyRepository;
   private final ValidDiagnosisKeyFilter validationFilter;
   private final KeySharingPoliciesChecker sharingPoliciesChecker;
+
+  private static final Logger logger = LoggerFactory.getLogger(FederationUploadKeyService.class);
 
   /**
    * Constructs the key upload service.
@@ -45,17 +49,33 @@ public class FederationUploadKeyService {
    * <li> Key is expired conforming to the given policy
    */
   public List<FederationUploadKey> getPendingUploadKeys(ExpirationPolicy policy) {
-    return createStreamFromIterator(
-           keyRepository.findAllUploadableKeys().iterator())
-           .filter(DiagnosisKey::isConsentToFederation)
-           .filter(validationFilter::isDiagnosisKeyValid)
-           .filter(key -> sharingPoliciesChecker.canShareKeyAtTime(key, policy, LocalDateTime.now(UTC)))
-           .collect(Collectors.toList());
+    AtomicInteger keysPicked = new AtomicInteger();
+    AtomicInteger keysPickedAfterConsent = new AtomicInteger();
+    AtomicInteger keysPickedAfterValidity = new AtomicInteger();
+    AtomicInteger keysPickedAfterSharePolicy = new AtomicInteger();
+
+    var listOfKeys = createStreamFromIterator(keyRepository.findAllUploadableKeys().iterator())
+        .peek(k -> keysPicked.addAndGet(1))
+        .filter(DiagnosisKey::isConsentToFederation)
+        .peek(k -> keysPickedAfterConsent.addAndGet(1))
+        .filter(validationFilter::isDiagnosisKeyValid)
+        .peek(k -> keysPickedAfterValidity.addAndGet(1))
+        .filter(key -> sharingPoliciesChecker.canShareKeyAtTime(key, policy, LocalDateTime.now(UTC)))
+        .peek(k -> keysPickedAfterSharePolicy.addAndGet(1))
+        .collect(Collectors.toList());
+    logger.info("Keys selected for upload: {}", listOfKeys.size());
+
+    logger.info("{} keys picked after read from upload table", keysPicked.get());
+    logger.info("{} keys remaining after filtering by consent", keysPickedAfterConsent.get());
+    logger.info("{} keys remaining after filtering by validity", keysPickedAfterValidity.get());
+    logger.info("{} keys remaining after filtering by share policy", keysPickedAfterSharePolicy.get());
+
+    return listOfKeys;
   }
 
   /**
-   * Updates only the batchTagId field of all given upload keys. The entities are not merged
-   * with the persisted ones, thus no other side effects are to be expected.
+   * Updates only the batchTagId field of all given upload keys. The entities are not merged with the persisted ones,
+   * thus no other side effects are to be expected.
    */
   @Transactional
   public void updateBatchTagForKeys(Collection<FederationUploadKey> originalKeys, String batchTagId) {

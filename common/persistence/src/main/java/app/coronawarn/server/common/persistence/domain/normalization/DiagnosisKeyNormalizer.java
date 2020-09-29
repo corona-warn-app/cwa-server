@@ -2,8 +2,6 @@
 
 package app.coronawarn.server.common.persistence.domain.normalization;
 
-import java.util.Map;
-
 /**
  *  Responsible for sanitizing the information within a diagnosis key to fit the national specification.
  *  This can mean, for example, that either this service will initialize missing values that were not provided

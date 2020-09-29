@@ -15,6 +15,7 @@ import java.time.temporal.ChronoUnit;
 import java.util.Collections;
 import java.util.List;
 import java.util.Random;
+import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 import app.coronawarn.server.common.persistence.domain.DiagnosisKey;
@@ -52,7 +53,7 @@ public class DiagnosisKeyServiceTestHelper {
   }
 
   public static DiagnosisKey buildDiagnosisKeyForSubmissionTimestamp(long submissionTimeStamp, int rollingStartInterval,
-      boolean consentToFederation, String countryCode, List<String> visitedCountries, ReportType reportType) {
+      boolean consentToFederation, String countryCode, Set<String> visitedCountries, ReportType reportType) {
     byte[] randomBytes = new byte[16];
     random.nextBytes(randomBytes);
     return DiagnosisKey.builder()
@@ -78,7 +79,7 @@ public class DiagnosisKeyServiceTestHelper {
   public static DiagnosisKey buildDiagnosisKeyForSubmissionTimestamp(long submissionTimeStamp,
       int rollingStartInterval, boolean consentToShare) {
     return buildDiagnosisKeyForSubmissionTimestamp(submissionTimeStamp, rollingStartInterval, consentToShare, "DE",
-        Collections.singletonList("DE"), ReportType.CONFIRMED_CLINICAL_DIAGNOSIS);
+        Set.of("DE"), ReportType.CONFIRMED_CLINICAL_DIAGNOSIS);
   }
 
   public static DiagnosisKey buildDiagnosisKeyForDateTime(OffsetDateTime dateTime) {
@@ -86,7 +87,7 @@ public class DiagnosisKeyServiceTestHelper {
   }
 
   public static DiagnosisKey buildDiagnosisKeyForDateTime(OffsetDateTime dateTime,
-      String countryCode, List<String> visitedCountries, ReportType reportType) {
+      String countryCode, Set<String> visitedCountries, ReportType reportType) {
     return buildDiagnosisKeyForSubmissionTimestamp(dateTime.toEpochSecond() / 3600, 600, false, countryCode, visitedCountries, reportType);
   }
 

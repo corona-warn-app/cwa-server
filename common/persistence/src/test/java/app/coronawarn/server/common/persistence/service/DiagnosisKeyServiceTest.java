@@ -16,6 +16,7 @@ import app.coronawarn.server.common.persistence.repository.DiagnosisKeyRepositor
 import app.coronawarn.server.common.protocols.external.exposurenotification.ReportType;
 import java.time.OffsetDateTime;
 import java.util.Collections;
+import java.util.Set;
 import org.assertj.core.util.Lists;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;
@@ -123,7 +124,7 @@ class DiagnosisKeyServiceTest {
             .withRollingStartIntervalNumber(600)
             .withTransmissionRiskLevel(2)
             .withCountryCode("DE")
-            .withVisitedCountries(Collections.singletonList("DE"))
+            .withVisitedCountries(Set.of("DE"))
             .withSubmissionTimestamp(0L)
             .withReportType(ReportType.CONFIRMED_CLINICAL_DIAGNOSIS)
             .build(),
@@ -132,7 +133,7 @@ class DiagnosisKeyServiceTest {
             .withRollingStartIntervalNumber(600)
             .withTransmissionRiskLevel(3)
             .withCountryCode("DE")
-            .withVisitedCountries(Collections.singletonList("DE"))
+            .withVisitedCountries(Set.of("DE"))
             .withSubmissionTimestamp(0L)
             .withReportType(ReportType.CONFIRMED_CLINICAL_DIAGNOSIS)
             .build());

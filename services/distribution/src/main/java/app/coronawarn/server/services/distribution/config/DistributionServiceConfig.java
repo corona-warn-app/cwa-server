@@ -47,6 +47,8 @@ public class DistributionServiceConfig {
   private String outputFileName;
   private Boolean includeIncompleteDays;
   private Boolean includeIncompleteHours;
+  private String euPackageName;
+  private Boolean applyPoliciesForAllCountries;
   private TekExport tekExport;
   private Signature signature;
   private Api api;
@@ -126,6 +128,22 @@ public class DistributionServiceConfig {
 
   public void setIncludeIncompleteHours(Boolean includeIncompleteHours) {
     this.includeIncompleteHours = includeIncompleteHours;
+  }
+
+  public String getEuPackageName() {
+    return euPackageName;
+  }
+
+  public void setEuPackageName(String euPackageName) {
+    this.euPackageName = euPackageName;
+  }
+
+  public Boolean getApplyPoliciesForAllCountries() {
+    return applyPoliciesForAllCountries;
+  }
+
+  public void setApplyPoliciesForAllCountries(Boolean applyPoliciesForAllCountries) {
+    this.applyPoliciesForAllCountries = applyPoliciesForAllCountries;
   }
 
   public TekExport getTekExport() {

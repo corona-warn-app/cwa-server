@@ -12,6 +12,7 @@ import app.coronawarn.server.common.persistence.service.DiagnosisKeyService;
 import app.coronawarn.server.common.protocols.external.exposurenotification.ReportType;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
+import java.util.Set;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.data.jdbc.DataJdbcTest;
@@ -26,7 +27,7 @@ class DiagnosisKeyServiceMockedRepositoryTest {
   static final int expRollingStartIntervalNumber = 73800;
   static final int expTransmissionRiskLevel = 1;
   static final String originCountry = "DE";
-  static final List<String> visitedCountries = list("DE");
+  static final Set<String> visitedCountries = Set.of("DE");
   static final ReportType reportType = ReportType.CONFIRMED_CLINICAL_DIAGNOSIS;
   static final int daysSinceOnsetOfSymptoms = 1;
 

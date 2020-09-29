@@ -18,7 +18,7 @@ import app.coronawarn.server.services.submission.config.SubmissionServiceConfig.
 class SubmissionKeyNormalizerTest {
 
   @ParameterizedTest
-  @MethodSource("dsosFromTrlParameters")
+  @MethodSource("dsosTrlDummyPairValues")
   void testDsosIsCorrectlyDerived(int inputTrlValue, int expectedDsosValue) {
     SubmissionServiceConfig mockedConfig = mock(SubmissionServiceConfig.class);
     TekFieldDerivations mockedDerivationRules = mock(TekFieldDerivations.class);
@@ -33,6 +33,22 @@ class SubmissionKeyNormalizerTest {
     Assertions.assertThat(result.getDaysSinceOnsetOfSymptoms()).isNotEqualTo(expectedDsosValue);
   }
 
+  @ParameterizedTest
+  @MethodSource("dsosTrlDummyPairValues")
+  void testTrlIsCorrectlyDerived(int inputDsosValue, int expectedTrlValue) {
+    SubmissionServiceConfig mockedConfig = mock(SubmissionServiceConfig.class);
+    TekFieldDerivations mockedDerivationRules = mock(TekFieldDerivations.class);
+    when(mockedConfig.getTekFieldDerivations()).thenReturn(mockedDerivationRules);
+    when(mockedDerivationRules.deriveTrlFromDsos(inputDsosValue)).thenReturn(expectedTrlValue);
+
+    SubmissionKeyNormalizer normalizer = new SubmissionKeyNormalizer(mockedConfig);
+    NormalizableFields result = normalizer.normalize(NormalizableFields.of(null, inputDsosValue));
+    Assertions.assertThat(result.getTransmissionRiskLevel()).isEqualTo(expectedTrlValue);
+
+    result = normalizer.normalize(NormalizableFields.of(inputDsosValue - 1, null));
+    Assertions.assertThat(result.getTransmissionRiskLevel()).isNotEqualTo(expectedTrlValue);
+  }
+
   @Test
   void testErrorIsThrownWhenAllRequiredFieldsForNormalizationAreMissing() {
     SubmissionServiceConfig mockedConfig = mock(SubmissionServiceConfig.class);
@@ -41,12 +57,16 @@ class SubmissionKeyNormalizerTest {
     when(mockedDerivationRules.deriveDsosFromTrl(1)).thenReturn(2);
 
     SubmissionKeyNormalizer normalizer = new SubmissionKeyNormalizer(mockedConfig);
+    NormalizableFields missingValues = NormalizableFields.of(null, null);
     Assertions.assertThatThrownBy(() -> {
-      normalizer.normalize(NormalizableFields.of(null, null));
+      normalizer.normalize(missingValues);
     }).isOfAnyClassIn(IllegalArgumentException.class);
   }
 
-  private static Stream<Arguments> dsosFromTrlParameters() {
+  /**
+   * A dummy mapping of TRL/DSOS values that can be used in tests.
+   */
+  private static Stream<Arguments> dsosTrlDummyPairValues() {
     return Stream.of(
         Arguments.of(1, 14),
         Arguments.of(3, 10),

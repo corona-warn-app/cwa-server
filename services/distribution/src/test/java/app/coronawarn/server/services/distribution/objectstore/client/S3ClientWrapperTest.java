@@ -140,7 +140,7 @@ class S3ClientWrapperTest {
     var continuationToken = "1ueGcxLPRx1Tr/XYExHnhbYLgveDs2J/wm36Hy4vbOwM=<";
 
     when(s3Client.listObjectsV2(any(ListObjectsV2Request.class)))
-        .thenReturn(ListObjectsV2Response.builder().isTruncated(true).continuationToken(continuationToken).build(),
+        .thenReturn(ListObjectsV2Response.builder().isTruncated(true).nextContinuationToken(continuationToken).build(),
             ListObjectsV2Response.builder().isTruncated(false).build());
 
     s3ClientWrapper.getObjects(VALID_BUCKET_NAME, VALID_PREFIX);

@@ -12,6 +12,7 @@ import java.time.Instant;
 import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
+import java.util.Set;
 import app.coronawarn.server.common.protocols.external.exposurenotification.ReportType;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -26,7 +27,7 @@ class DiagnosisKeyTest {
   final static int expTransmissionRiskLevel = 3;
   final static long expSubmissionTimestamp = 4L;
   static final String originCountry = "DE";
-  static final List<String> visitedCountries = Collections.singletonList("DE");
+  static final Set<String> visitedCountries = Set.of("DE");
   static final ReportType reportType = ReportType.CONFIRMED_CLINICAL_DIAGNOSIS;
   static final int daysSinceOnsetOfSymptoms = 1;
 

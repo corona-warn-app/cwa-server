@@ -21,6 +21,7 @@ import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.util.List;
 import java.util.Set;
+import app.coronawarn.server.services.distribution.config.DistributionServiceConfig.Api;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -33,7 +34,8 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 @EnableConfigurationProperties(value = DistributionServiceConfig.class)
 @ExtendWith(SpringExtension.class)
-@ContextConfiguration(classes = {CryptoProvider.class, DistributionServiceConfig.class, KeySharingPoliciesChecker.class},
+@ContextConfiguration(classes = {CryptoProvider.class, DistributionServiceConfig.class,
+    KeySharingPoliciesChecker.class},
     initializers = ConfigFileApplicationContextInitializer.class)
 class HourIndexingDecoratorTest {
 
@@ -64,10 +66,14 @@ class HourIndexingDecoratorTest {
 
     TimeUtils.setNow(LocalDateTime.of(1970, 1, 3, 0, 0).toInstant(ZoneOffset.UTC));
 
+    Api api = mock(Api.class);
+    when(api.getOriginCountry()).thenReturn("DE");
+
     DistributionServiceConfig svcConfig = mock(DistributionServiceConfig.class);
     when(svcConfig.getExpiryPolicyMinutes()).thenReturn(120);
     when(svcConfig.getShiftingPolicyThreshold()).thenReturn(1);
     when(svcConfig.getMaximumNumberOfKeysPerBundle()).thenReturn(1);
+    when(svcConfig.getApi()).thenReturn(api);
     when(svcConfig.getSupportedCountries()).thenReturn(new String[]{"DE"});
 
     DiagnosisKeyBundler diagnosisKeyBundler = new ProdDiagnosisKeyBundler(svcConfig, sharingPoliciesChecker);

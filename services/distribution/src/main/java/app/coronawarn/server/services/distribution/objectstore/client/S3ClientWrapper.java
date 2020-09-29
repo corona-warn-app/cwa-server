@@ -72,7 +72,7 @@ public class S3ClientWrapper implements ObjectStoreClient {
       response.contents().stream()
           .map(s3Object -> buildS3Object(s3Object, bucket))
           .forEach(allS3Objects::add);
-      continuationToken = TRUE.equals(response.isTruncated()) ? response.continuationToken() : null;
+      continuationToken = TRUE.equals(response.isTruncated()) ? response.nextContinuationToken() : null;
     } while (continuationToken != null);
 
     return allS3Objects;
