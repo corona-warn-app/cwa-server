@@ -37,6 +37,7 @@ import java.time.LocalDate;
 import java.time.ZoneOffset;
 import java.util.Arrays;
 import java.util.HashSet;
+import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 import org.junit.jupiter.api.Test;
@@ -308,6 +309,24 @@ class DiagnosisKeyBuilderTest {
     DiagnosisKey actDiagnosisKey = DiagnosisKey.builder().fromTemporaryExposureKey(protoBufObj).build();
 
     assertThat(actDiagnosisKey.getReportType()).isEqualTo(reportType);
+  }
+
+  @Test
+  void testKeyBuildsSuccessfullyFromFederationDiagnosisKey() {
+    app.coronawarn.server.common.protocols.external.exposurenotification.DiagnosisKey federationKey = app.coronawarn.server.common.protocols.external.exposurenotification.DiagnosisKey
+        .newBuilder()
+        .setKeyData(ByteString.copyFrom(expKeyData))
+        .addAllVisitedCountries(visitedCountries)
+        .setRollingStartIntervalNumber(expRollingStartIntervalNumber)
+        .setTransmissionRiskLevel(expTransmissionRiskLevel)
+        .setRollingPeriod(DiagnosisKey.MAX_ROLLING_PERIOD)
+        .setDaysSinceOnsetOfSymptoms(daysSinceOnsetOfSymptoms)
+        .setReportType(reportType)
+        .setOrigin(originCountry)
+        .build();
+    DiagnosisKey actDiagnosisKey = DiagnosisKey.builder()
+        .fromFederationDiagnosisKey(federationKey).build();
+    assertDiagnosisKeyEquals(actDiagnosisKey);
   }
 
   private DiagnosisKey keyWithKeyData(byte[] expKeyData) {
