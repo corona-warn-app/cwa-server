@@ -26,20 +26,26 @@ import static com.github.tomakehurst.wiremock.client.WireMock.equalTo;
 import static com.github.tomakehurst.wiremock.client.WireMock.get;
 import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.options;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.when;
 import static org.springframework.http.HttpHeaders.CONTENT_TYPE;
 
 import app.coronawarn.server.common.persistence.domain.DiagnosisKey;
 import app.coronawarn.server.common.persistence.repository.DiagnosisKeyRepository;
 import app.coronawarn.server.common.persistence.repository.FederationBatchInfoRepository;
 import app.coronawarn.server.common.protocols.external.exposurenotification.DiagnosisKeyBatch;
+import app.coronawarn.server.services.download.DownloadServiceConfig.TekFieldDerivations;
+import app.coronawarn.server.services.download.normalization.FederationKeyNormalizer;
 import com.github.tomakehurst.wiremock.WireMockServer;
 import com.github.tomakehurst.wiremock.http.HttpHeader;
 import com.github.tomakehurst.wiremock.http.HttpHeaders;
+import java.util.Map;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.HttpStatus;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
@@ -91,6 +97,9 @@ class DownloadIntegrationTest {
 
   @Autowired
   private DiagnosisKeyRepository diagnosisKeyRepository;
+
+  @Autowired
+  private DownloadServiceConfig downloadServiceConfig;
 
   @BeforeAll
   static void setupWireMock() {
@@ -170,13 +179,10 @@ class DownloadIntegrationTest {
     Iterable<DiagnosisKey> diagnosisKeys = diagnosisKeyRepository.findAll();
     assertThat(diagnosisKeys)
         .hasSize(3)
-        .contains(createDiagnosisKey(BATCH1_DATA))
-        .contains(createDiagnosisKey(BATCH2_DATA))
-        .contains(createDiagnosisKey(RETRY_BATCH_SUCCESSFUL_DATA));
+        .contains(FederationBatchTestHelper.createDiagnosisKey(BATCH1_DATA,downloadServiceConfig))
+        .contains(FederationBatchTestHelper.createDiagnosisKey(BATCH2_DATA,downloadServiceConfig))
+        .contains(FederationBatchTestHelper.createDiagnosisKey(RETRY_BATCH_SUCCESSFUL_DATA, downloadServiceConfig));
   }
 
-  private DiagnosisKey createDiagnosisKey(String keyData) {
-    return DiagnosisKey.builder()
-        .fromFederationDiagnosisKey(FederationBatchTestHelper.createDiagnosisKey(keyData)).build();
-  }
+
 }

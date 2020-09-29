@@ -26,7 +26,6 @@ import static com.github.tomakehurst.wiremock.client.WireMock.equalTo;
 import static com.github.tomakehurst.wiremock.client.WireMock.get;
 import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.options;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Mockito.reset;
 import static org.springframework.http.HttpHeaders.CONTENT_TYPE;
 
 import app.coronawarn.server.common.persistence.domain.DiagnosisKey;
@@ -38,7 +37,6 @@ import com.github.tomakehurst.wiremock.http.HttpHeader;
 import com.github.tomakehurst.wiremock.http.HttpHeaders;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -48,15 +46,13 @@ import org.springframework.test.annotation.DirtiesContext;
 /**
  * This integration test is responsible for testing the runners for download and retention policy.
  * <p>
- * The WireMockServer will return a series of three batches, where the first batch of the corresponding
- * date is batch1, that can be processed successfully. Batch2 is returned by an explicit call to its batch tag, but
- * the response is empty (like it is the case on EFGS). Its successor batch3 fails with a 404 Not Found.
+ * The WireMockServer will return a series of three batches, where the first batch of the corresponding date is batch1,
+ * that can be processed successfully. Batch2 is returned by an explicit call to its batch tag, but the response is
+ * empty (like it is the case on EFGS). Its successor batch3 fails with a 404 Not Found.
  * <p>
- * Hence, after the execution of both runners, the federation_batch_info table should be the following:
- * * "batch1_tag" has state "PROCESSED"
- * * "batch2_tag" has state "ERROR"
- * * "batch3_tag" has state "ERROR"
- * * no batch has state "UNPROCESSED"
+ * Hence, after the execution of both runners, the federation_batch_info table should be the following: * "batch1_tag"
+ * has state "PROCESSED" * "batch2_tag" has state "ERROR" * "batch3_tag" has state "ERROR" * no batch has state
+ * "UNPROCESSED"
  * <p>
  * The diagnosis_key table should contain the data of batch1.
  */
@@ -79,6 +75,9 @@ class DownloadIntegrationEmptyResponseTest {
 
   @Autowired
   private DiagnosisKeyRepository diagnosisKeyRepository;
+
+  @Autowired
+  private DownloadServiceConfig downloadServiceConfig;
 
   @BeforeAll
   static void setupWireMock() {
@@ -136,11 +135,6 @@ class DownloadIntegrationEmptyResponseTest {
     Iterable<DiagnosisKey> diagnosisKeys = diagnosisKeyRepository.findAll();
     assertThat(diagnosisKeys)
         .hasSize(1)
-        .contains(createDiagnosisKey(BATCH1_DATA));
-  }
-
-  private DiagnosisKey createDiagnosisKey(String keyData) {
-    return DiagnosisKey.builder()
-        .fromFederationDiagnosisKey(FederationBatchTestHelper.createDiagnosisKey(keyData)).build();
+        .contains(FederationBatchTestHelper.createDiagnosisKey(BATCH1_DATA, downloadServiceConfig));
   }
 }

@@ -32,6 +32,7 @@ import app.coronawarn.server.common.persistence.domain.FederationBatchStatus;
 import app.coronawarn.server.common.persistence.service.DiagnosisKeyService;
 import app.coronawarn.server.common.persistence.service.FederationBatchInfoService;
 import app.coronawarn.server.common.protocols.external.exposurenotification.DiagnosisKeyBatch;
+import app.coronawarn.server.services.download.normalization.FederationKeyNormalizer;
 import java.time.LocalDate;
 import java.util.Deque;
 import java.util.LinkedList;
@@ -51,6 +52,7 @@ public class FederationBatchProcessor {
   private final FederationBatchInfoService batchInfoService;
   private final DiagnosisKeyService diagnosisKeyService;
   private final FederationGatewayDownloadService federationGatewayDownloadService;
+  private final DownloadServiceConfig config;
 
   /**
    * Constructor.
@@ -60,12 +62,15 @@ public class FederationBatchProcessor {
    * @param diagnosisKeyService              A {@link DiagnosisKeyService} for storing retrieved diagnosis keys.
    * @param federationGatewayDownloadService A {@link FederationGatewayDownloadService} for retrieving federation
    *                                         diagnosis key batches.
+   * @param config                           A {@link DownloadServiceConfig} for retrieving federation configuration.
    */
   public FederationBatchProcessor(FederationBatchInfoService batchInfoService,
-      DiagnosisKeyService diagnosisKeyService, FederationGatewayDownloadService federationGatewayDownloadService) {
+      DiagnosisKeyService diagnosisKeyService, FederationGatewayDownloadService federationGatewayDownloadService,
+      DownloadServiceConfig config) {
     this.batchInfoService = batchInfoService;
     this.diagnosisKeyService = diagnosisKeyService;
     this.federationGatewayDownloadService = federationGatewayDownloadService;
+    this.config = config;
   }
 
   /**
@@ -145,7 +150,9 @@ public class FederationBatchProcessor {
   private List<DiagnosisKey> convertDiagnosisKeys(DiagnosisKeyBatch diagnosisKeyBatch) {
     return diagnosisKeyBatch.getKeysList()
         .stream()
-        .map(diagnosisKey -> DiagnosisKey.builder().fromFederationDiagnosisKey(diagnosisKey).build())
+        .map(diagnosisKey -> DiagnosisKey.builder().fromFederationDiagnosisKey(diagnosisKey)
+            .withFieldNormalization(new FederationKeyNormalizer(config))
+            .build())
         .collect(toList());
   }
 }

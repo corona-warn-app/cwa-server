@@ -41,10 +41,13 @@ import app.coronawarn.server.common.persistence.domain.FederationBatchInfo;
 import app.coronawarn.server.common.persistence.domain.FederationBatchStatus;
 import app.coronawarn.server.common.persistence.service.DiagnosisKeyService;
 import app.coronawarn.server.common.persistence.service.FederationBatchInfoService;
+import app.coronawarn.server.services.download.DownloadServiceConfig.TekFieldDerivations;
 import feign.FeignException;
 import java.time.LocalDate;
+import java.util.Map;
 import java.util.Optional;
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -53,7 +56,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 
 @SpringBootTest(classes = {FederationBatchProcessor.class, FederationBatchInfoService.class, DiagnosisKeyService.class,
-    FederationGatewayClient.class})
+    FederationGatewayClient.class, DownloadServiceConfig.class})
 class FederationBatchProcessorTest {
 
   private final LocalDate date = LocalDate.of(2020, 9, 1);
@@ -71,6 +74,16 @@ class FederationBatchProcessorTest {
 
   @Autowired
   private FederationBatchProcessor batchProcessor;
+
+  @MockBean
+  DownloadServiceConfig config;
+
+  @BeforeEach
+  void setUp() {
+    final TekFieldDerivations tekDerivations = new TekFieldDerivations();
+    tekDerivations.setTrlFromDsos(Map.of(1, 1, 2, 2, 3, 3));
+    when(config.getTekFieldDerivations()).thenReturn(tekDerivations);
+  }
 
   @AfterEach
   void resetMocks() {
