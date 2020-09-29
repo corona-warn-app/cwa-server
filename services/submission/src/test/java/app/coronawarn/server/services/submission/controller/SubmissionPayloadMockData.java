@@ -143,13 +143,13 @@ public final class SubmissionPayloadMockData {
 
   public static SubmissionPayload buildPayloadWithInvalidOriginCountry() {
     TemporaryExposureKey key =
-        buildTemporaryExposureKey(VALID_KEY_DATA_1, createRollingStartIntervalNumber(2), 2, ReportType.CONFIRMED_CLINICAL_DIAGNOSIS, 1);
+        buildTemporaryExposureKey(VALID_KEY_DATA_1, createRollingStartIntervalNumber(2), 3, ReportType.CONFIRMED_CLINICAL_DIAGNOSIS, 1);
     return buildInvalidPayload(key);
   }
 
   public static SubmissionPayload buildPayloadWithVisitedCountries(List<String> visitedCountries) {
     TemporaryExposureKey key =
-        buildTemporaryExposureKey(VALID_KEY_DATA_1, createRollingStartIntervalNumber(2), 2, ReportType.CONFIRMED_CLINICAL_DIAGNOSIS, 1);
+        buildTemporaryExposureKey(VALID_KEY_DATA_1, createRollingStartIntervalNumber(2), 3, ReportType.CONFIRMED_CLINICAL_DIAGNOSIS, 1);
     return SubmissionPayload.newBuilder()
         .addKeys(key)
         .addAllVisitedCountries(visitedCountries)

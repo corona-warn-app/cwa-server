@@ -100,15 +100,18 @@ class PayloadValidationTest {
     return List.of(buildTemporaryExposureKey(VALID_KEY_DATA_1, createRollingStartIntervalNumber(2), 3,
         ReportType.CONFIRMED_CLINICAL_DIAGNOSIS, dsos),
         // also add a key without DSOS since this can happen in production and should be supported
-        buildTemporaryExposureKey(VALID_KEY_DATA_1, createRollingStartIntervalNumber(2), 3,
+        buildTemporaryExposureKey(VALID_KEY_DATA_1,
+            createRollingStartIntervalNumber(2) + DiagnosisKey.MAX_ROLLING_PERIOD, 3,
             ReportType.CONFIRMED_CLINICAL_DIAGNOSIS, null));
   }
 
   private Collection<TemporaryExposureKey>  buildKeysWithoutDsosAndTrl() {
-    return List.of(buildTemporaryExposureKey(VALID_KEY_DATA_1, createRollingStartIntervalNumber(2), null,
-        ReportType.CONFIRMED_CLINICAL_DIAGNOSIS, null),
-        // also add a key without DSOS since this can happen in production and should be supported
+    return List.of(
         buildTemporaryExposureKey(VALID_KEY_DATA_1, createRollingStartIntervalNumber(2), null,
+            ReportType.CONFIRMED_CLINICAL_DIAGNOSIS, null),
+        // also add a key without DSOS since this can happen in production and should be supported
+        buildTemporaryExposureKey(VALID_KEY_DATA_1,
+            createRollingStartIntervalNumber(2) + +DiagnosisKey.MAX_ROLLING_PERIOD, null,
             ReportType.CONFIRMED_CLINICAL_DIAGNOSIS, null));
   }
 
@@ -130,7 +133,8 @@ class PayloadValidationTest {
     return List.of(buildTemporaryExposureKey(VALID_KEY_DATA_1, createRollingStartIntervalNumber(2), trl,
         ReportType.CONFIRMED_CLINICAL_DIAGNOSIS, 1),
         // also add a key without TRL since this can happen in production and should be supported
-        buildTemporaryExposureKey(VALID_KEY_DATA_1, createRollingStartIntervalNumber(2), null,
+        buildTemporaryExposureKey(VALID_KEY_DATA_1,
+            createRollingStartIntervalNumber(2) + +DiagnosisKey.MAX_ROLLING_PERIOD, null,
             ReportType.CONFIRMED_CLINICAL_DIAGNOSIS, 1));
   }
 
@@ -161,7 +165,7 @@ class PayloadValidationTest {
     var keysWithGapsInStartIntervalNumber = Lists.list(
         buildTemporaryExposureKey(VALID_KEY_DATA_1, rollingStartIntervalNumber1, 1, ReportType.CONFIRMED_CLINICAL_DIAGNOSIS,1),
         buildTemporaryExposureKey(VALID_KEY_DATA_3, rollingStartIntervalNumber3, 3, ReportType.CONFIRMED_CLINICAL_DIAGNOSIS,1),
-        buildTemporaryExposureKey(VALID_KEY_DATA_2, rollingStartIntervalNumber2, 2, ReportType.CONFIRMED_CLINICAL_DIAGNOSIS,1));
+        buildTemporaryExposureKey(VALID_KEY_DATA_2, rollingStartIntervalNumber2, 3, ReportType.CONFIRMED_CLINICAL_DIAGNOSIS,1));
 
     ResponseEntity<Void> actResponse = executor.executePost(keysWithGapsInStartIntervalNumber);
 
@@ -177,7 +181,7 @@ class PayloadValidationTest {
         buildTemporaryExposureKeyWithFlexibleRollingPeriod(VALID_KEY_DATA_1, rollingStartIntervalNumber1, 1, 54),
         buildTemporaryExposureKeyWithFlexibleRollingPeriod(VALID_KEY_DATA_1, rollingStartIntervalNumber1, 1, 90),
         buildTemporaryExposureKeyWithFlexibleRollingPeriod(VALID_KEY_DATA_3, rollingStartIntervalNumber3, 3, 133),
-        buildTemporaryExposureKeyWithFlexibleRollingPeriod(VALID_KEY_DATA_2, rollingStartIntervalNumber2, 2, 144));
+        buildTemporaryExposureKeyWithFlexibleRollingPeriod(VALID_KEY_DATA_2, rollingStartIntervalNumber2, 3, 144));
 
     ResponseEntity<Void> actResponse = executor.executePost(keysWithGapsInStartIntervalNumber);
 
