@@ -104,11 +104,10 @@ public class DiagnosisKeyBuilder implements
         .withRollingPeriod(federationDiagnosisKey.getRollingPeriod())
         .withCountryCode(federationDiagnosisKey.getOrigin())
         .withReportType(federationDiagnosisKey.getReportType())
-        .withVisitedCountries(federationDiagnosisKey.getVisitedCountriesList())
+        .withVisitedCountries(new HashSet<>(federationDiagnosisKey.getVisitedCountriesList()))
         .withDaysSinceOnsetOfSymptoms(
             federationDiagnosisKey.hasDaysSinceOnsetOfSymptoms() ? federationDiagnosisKey.getDaysSinceOnsetOfSymptoms()
                 : null);
-        .withVisitedCountries(new HashSet<>(federationDiagnosisKey.getVisitedCountriesList()));
   }
 
   @Override
@@ -193,11 +192,9 @@ public class DiagnosisKeyBuilder implements
   }
 
   /**
-   * If a {@link DiagnosisKeyNormalizer} object was configured in this builder,
-   * apply normalization where possibile, and return a container with the new
-   * values. Otherwise return a container with the original unchanged values.
-   * For boxed types, primitive zero like values will be chosen if they have not been
-   * provided by the client of the builder.
+   * If a {@link DiagnosisKeyNormalizer} object was configured in this builder, apply normalization where possibile, and
+   * return a container with the new values. Otherwise return a container with the original unchanged values. For boxed
+   * types, primitive zero like values will be chosen if they have not been provided by the client of the builder.
    */
   private NormalizableFields normalizeValues() {
     if (fieldNormalizer != null) {
