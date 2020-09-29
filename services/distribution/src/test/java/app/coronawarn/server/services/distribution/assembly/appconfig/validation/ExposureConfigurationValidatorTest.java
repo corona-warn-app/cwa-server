@@ -21,7 +21,7 @@
 package app.coronawarn.server.services.distribution.assembly.appconfig.validation;
 
 import static app.coronawarn.server.services.distribution.assembly.appconfig.validation.ExposureConfigurationValidator.CONFIG_PREFIX;
-import static app.coronawarn.server.services.distribution.assembly.appconfig.validation.RiskScoreClassificationValidatorTest.buildError;
+import static app.coronawarn.server.services.distribution.assembly.appconfig.validation.utils.ValidationUtils.buildError;
 import static app.coronawarn.server.services.distribution.assembly.appconfig.validation.ValidationError.ErrorType.*;
 import static org.assertj.core.api.Assertions.assertThat;
 

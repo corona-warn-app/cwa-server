@@ -26,6 +26,9 @@ import static app.coronawarn.server.services.distribution.assembly.appconfig.val
 import static app.coronawarn.server.services.distribution.assembly.appconfig.validation.ValidationError.ErrorType.INVALID_URL;
 import static app.coronawarn.server.services.distribution.assembly.appconfig.validation.ValidationError.ErrorType.MIN_GREATER_THAN_MAX;
 import static app.coronawarn.server.services.distribution.assembly.appconfig.validation.ValidationError.ErrorType.VALUE_OUT_OF_BOUNDS;
+import static app.coronawarn.server.services.distribution.assembly.appconfig.validation.utils.ValidationUtils.buildError;
+import static app.coronawarn.server.services.distribution.assembly.appconfig.validation.utils.ValidationUtils.buildExpectedResult;
+
 import static java.util.Arrays.asList;
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -157,10 +160,6 @@ class RiskScoreClassificationValidatorTest {
     ).map(Arguments::of);
   }
 
-  public static ValidationError buildError(String parameter, Object value, ErrorType reason) {
-    return new ValidationError(parameter, value, reason);
-  }
-
   private static RiskScoreClassificationValidator buildValidator(RiskScoreClass... riskScoreClasses) {
     return new RiskScoreClassificationValidator(buildClassification(riskScoreClasses));
   }
@@ -171,11 +170,5 @@ class RiskScoreClassificationValidatorTest {
 
   private static RiskScoreClass buildRiskClass(String label, int min, int max, String url) {
     return RiskScoreClass.newBuilder().setLabel(label).setMin(min).setMax(max).setUrl(url).build();
-  }
-
-  public static ValidationResult buildExpectedResult(ValidationError... errors) {
-    var validationResult = new ValidationResult();
-    Arrays.stream(errors).forEach(validationResult::add);
-    return validationResult;
   }
 }
