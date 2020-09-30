@@ -112,7 +112,7 @@ class SubmissionPersistenceIT {
     Integer result = jdbcTemplate.queryForObject(presenceVerificationSql, Integer.class);
 
     assertEquals(payload.getKeysList().size(), result);
-    assertElementsCorrespondToEachOther(payload.getKeysList(), diagnosisKeyService.getDiagnosisKeys(), config);
+    assertElementsCorrespondToEachOther(payload, diagnosisKeyService.getDiagnosisKeys(), config);
   }
 
   private String generateDebugSqlStatement(SubmissionPayload payload) {

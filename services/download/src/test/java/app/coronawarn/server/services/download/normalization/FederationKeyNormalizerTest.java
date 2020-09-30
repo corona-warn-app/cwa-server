@@ -21,15 +21,12 @@
 package app.coronawarn.server.services.download.normalization;
 
 import static app.coronawarn.server.common.persistence.domain.FederationBatchStatus.UNPROCESSED;
-import static app.coronawarn.server.services.download.FederationBatchTestHelper.createDiagnosisKey;
-import static java.time.format.DateTimeFormatter.ISO_LOCAL_DATE;
+import static app.coronawarn.server.services.download.FederationBatchTestHelper.createFederationDiagnosisKey;
 import static org.assertj.core.util.Lists.list;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.when;
 
-import app.coronawarn.server.common.federation.client.FederationGatewayClient;
-import app.coronawarn.server.common.federation.client.download.BatchDownloadResponse;
 import app.coronawarn.server.common.persistence.domain.FederationBatchInfo;
 import app.coronawarn.server.common.persistence.domain.normalization.DiagnosisKeyNormalizer;
 import app.coronawarn.server.common.persistence.domain.normalization.NormalizableFields;
@@ -38,8 +35,10 @@ import app.coronawarn.server.common.persistence.service.DiagnosisKeyService;
 import app.coronawarn.server.common.persistence.service.FederationBatchInfoService;
 import app.coronawarn.server.common.protocols.external.exposurenotification.DiagnosisKey;
 import app.coronawarn.server.common.protocols.external.exposurenotification.DiagnosisKeyBatch;
+import app.coronawarn.server.services.download.BatchDownloadResponse;
 import app.coronawarn.server.services.download.DownloadServiceConfig;
 import app.coronawarn.server.services.download.FederationBatchProcessor;
+import app.coronawarn.server.services.download.FederationGatewayDownloadService;
 import com.google.protobuf.ByteString;
 import java.time.LocalDate;
 import java.util.List;
@@ -53,8 +52,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.boot.test.mock.mockito.SpyBean;
+import org.springframework.test.annotation.DirtiesContext;
 
 @SpringBootTest
+@DirtiesContext
 class FederationKeyNormalizerTest {
 
   private static final String BATCH_TAG = "507f191e810c19729de860ea";
@@ -68,7 +69,7 @@ class FederationKeyNormalizerTest {
   @MockBean
   private FederationBatchInfoService batchInfoService;
   @MockBean
-  private FederationGatewayClient federationGatewayClient;
+  private FederationGatewayDownloadService federationGatewayDownloadService;
 
   private Map<String, Pair<Integer, Integer>> getKeysAndDsos() {
     return Map.of("0123456789ABCDEX", Pair.of(4, 1),
@@ -85,7 +86,8 @@ class FederationKeyNormalizerTest {
 
   @BeforeEach
   void setUp() {
-    processor = new FederationBatchProcessor(batchInfoService, diagnosisKeyService, federationGatewayClient, config);
+    processor = new FederationBatchProcessor(batchInfoService, diagnosisKeyService, federationGatewayDownloadService,
+        config);
     repository.deleteAll();
   }
 
@@ -94,8 +96,8 @@ class FederationKeyNormalizerTest {
     LocalDate date = LocalDate.of(2020, 9, 1);
     FederationBatchInfo federationBatchInfo = new FederationBatchInfo(BATCH_TAG, date, UNPROCESSED);
     when(batchInfoService.findByStatus(UNPROCESSED)).thenReturn(list(federationBatchInfo));
-    Optional<BatchDownloadResponse> serverResponse = getBatchDownloadResponse();
-    when(federationGatewayClient.getDiagnosisKeys(BATCH_TAG, date.format(ISO_LOCAL_DATE))).thenReturn(serverResponse);
+    BatchDownloadResponse serverResponse = getBatchDownloadResponse();
+    when(federationGatewayDownloadService.downloadBatch(BATCH_TAG, date)).thenReturn(serverResponse);
     processor.processUnprocessedFederationBatches();
     diagnosisKeyService.getDiagnosisKeys().forEach(dk -> {
       String keyData = ByteString.copyFrom(dk.getKeyData()).toStringUtf8();
@@ -111,15 +113,14 @@ class FederationKeyNormalizerTest {
     assertThrows(IllegalArgumentException.class, () -> normalizer.normalize(nf));
   }
 
-  private Optional<BatchDownloadResponse> getBatchDownloadResponse() {
+  private BatchDownloadResponse getBatchDownloadResponse() {
     List<DiagnosisKey> diagnosisKeys = getKeysAndDsos().entrySet()
         .stream()
-        .map(e -> createDiagnosisKey(e.getKey(), e.getValue().getLeft()))
+        .map(e -> createFederationDiagnosisKey(e.getKey(), e.getValue().getLeft()))
         .collect(Collectors.toList());
     DiagnosisKeyBatch diagnosisKeyBatch = DiagnosisKeyBatch.newBuilder()
         .addAllKeys(diagnosisKeys)
         .build();
-    return Optional
-        .of(new BatchDownloadResponse(diagnosisKeyBatch, BATCH_TAG, Optional.empty()));
+    return new BatchDownloadResponse(BATCH_TAG, Optional.of(diagnosisKeyBatch), Optional.empty());
   }
 }
