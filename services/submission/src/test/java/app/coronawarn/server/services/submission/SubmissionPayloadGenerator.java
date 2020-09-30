@@ -43,14 +43,14 @@ public class SubmissionPayloadGenerator {
     final List<String> visitedCountries = List.of("DE", "FR");
     String originCountry = "DE";
     boolean consentToFederation = true;
+    int daysSinceOnsetOfSymptoms = 0;
 
     LocalDateTime now = LocalDateTime.now();
     LocalDateTime todayMidnight = LocalDateTime
         .of(now.getYear(), now.getMonth(), now.getDayOfMonth() - numberOfKeys, 0, 0);
 
     List<TemporaryExposureKey> temporaryExposureKeys = buildTemporaryExposureKeys(numberOfKeys, todayMidnight,
-        transmissionRiskLevel, rollingPeriod,
-        reportType);
+        transmissionRiskLevel, rollingPeriod, reportType, daysSinceOnsetOfSymptoms);
     SubmissionPayload submissionPayload = buildSubmissionPayload(temporaryExposureKeys, requestPadding,
         visitedCountries, originCountry, consentToFederation);
 
@@ -77,7 +77,7 @@ public class SubmissionPayloadGenerator {
   }
 
   public static List<TemporaryExposureKey> buildTemporaryExposureKeys(int numberOfKeys, LocalDateTime todayMidnight,
-      int transmissionRiskLevel, int rollingPeriod, ReportType reportType) {
+      int transmissionRiskLevel, int rollingPeriod, ReportType reportType, int daysSinceOnsetOfSymptoms) {
     List<TemporaryExposureKey> temporaryExposureKeys = new ArrayList<>();
 
     for (int i = 0; i < numberOfKeys; i++) {
@@ -91,6 +91,7 @@ public class SubmissionPayloadGenerator {
           .setRollingStartIntervalNumber((int) todayMidnight.toEpochSecond(ZoneOffset.UTC) / 600 + rollingPeriod * i)
           .setRollingPeriod(rollingPeriod)
           .setReportType(reportType)
+          .setDaysSinceOnsetOfSymptoms(daysSinceOnsetOfSymptoms)
           .build();
       temporaryExposureKeys.add(temporaryExposureKey);
     }
