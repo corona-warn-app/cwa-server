@@ -20,7 +20,18 @@
 
 package app.coronawarn.server.services.submission.controller;
 
-import static app.coronawarn.server.services.submission.controller.SubmissionPayloadMockData.*;
+import static app.coronawarn.server.services.submission.controller.SubmissionPayloadMockData.VALID_KEY_DATA_2;
+import static app.coronawarn.server.services.submission.controller.SubmissionPayloadMockData.buildMultipleKeys;
+import static app.coronawarn.server.services.submission.controller.SubmissionPayloadMockData.buildMultipleKeysWithoutDSOS;
+import static app.coronawarn.server.services.submission.controller.SubmissionPayloadMockData.buildMultipleKeysWithoutDSOSAndTRL;
+import static app.coronawarn.server.services.submission.controller.SubmissionPayloadMockData.buildMultipleKeysWithoutTRL;
+import static app.coronawarn.server.services.submission.controller.SubmissionPayloadMockData.buildPayload;
+import static app.coronawarn.server.services.submission.controller.SubmissionPayloadMockData.buildPayloadWithInvalidOriginCountry;
+import static app.coronawarn.server.services.submission.controller.SubmissionPayloadMockData.buildPayloadWithOneKey;
+import static app.coronawarn.server.services.submission.controller.SubmissionPayloadMockData.buildPayloadWithPadding;
+import static app.coronawarn.server.services.submission.controller.SubmissionPayloadMockData.buildPayloadWithTooLargePadding;
+import static app.coronawarn.server.services.submission.controller.SubmissionPayloadMockData.buildPayloadWithVisitedCountries;
+import static app.coronawarn.server.services.submission.controller.SubmissionPayloadMockData.createRollingStartIntervalNumber;
 import static org.apache.commons.lang3.StringUtils.defaultIfBlank;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
@@ -36,7 +47,6 @@ import static org.springframework.http.HttpStatus.FORBIDDEN;
 import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
 import static org.springframework.http.HttpStatus.METHOD_NOT_ALLOWED;
 import static org.springframework.http.HttpStatus.OK;
-import static app.coronawarn.server.services.submission.assertions.SubmissionAssertions.*;
 
 import app.coronawarn.server.common.persistence.domain.DiagnosisKey;
 import app.coronawarn.server.common.persistence.service.DiagnosisKeyService;
@@ -46,14 +56,11 @@ import app.coronawarn.server.services.submission.config.SubmissionServiceConfig;
 import app.coronawarn.server.services.submission.monitoring.SubmissionMonitor;
 import app.coronawarn.server.services.submission.verification.TanVerifier;
 import com.google.protobuf.ByteString;
-
-import java.time.Instant;
-import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import org.apache.commons.lang3.tuple.Pair;
@@ -74,7 +81,6 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.ActiveProfiles;
-import com.google.protobuf.ByteString;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @ActiveProfiles({"disable-ssl-client-verification", "disable-ssl-client-verification-verify-hostname"})
@@ -119,7 +125,7 @@ class SubmissionControllerTest {
 
   @ParameterizedTest
   @MethodSource({"buildPayloadWithInvalidKeys"})
-  void check400ResponseStatusForInvalidKeys(SubmissionPayload invalidPayload ) {
+  void check400ResponseStatusForInvalidKeys(SubmissionPayload invalidPayload) {
     ResponseEntity<Void> actResponse = executor.executePost(invalidPayload);
     assertThat(actResponse.getStatusCode()).isEqualTo(BAD_REQUEST);
   }
@@ -175,9 +181,23 @@ class SubmissionControllerTest {
     assertSubmissionPayloadKeysCorrespondToEachOther(submittedKeys, argument.getValue(), submissionPayload);
   }
 
+  @Test
+  void submissionPayloadAddMissingOriginCountryAsVisitedCountry() {
+    ArgumentCaptor<Collection<DiagnosisKey>> argument = ArgumentCaptor.forClass(Collection.class);
+
+    SubmissionPayload submissionPayload = buildPayloadWithVisitedCountries(List.of("FR"));
+    executor.executePost(submissionPayload);
+
+    verify(diagnosisKeyService, times(1)).saveDiagnosisKeys(argument.capture());
+
+    assertThat(argument.getValue())
+        .allMatch(savedKey -> savedKey.getVisitedCountries().contains(config.getDefaultOriginCountry()))
+        .hasSize((submissionPayload.getKeysList()).size() * config.getRandomKeyPaddingMultiplier());
+  }
+
   /**
-   * The test verifies that even if the payload does not provide keys with DSOS, the information
-   * is still derived from the TRL field and correctly persisted.
+   * The test verifies that even if the payload does not provide keys with DSOS, the information is still derived from
+   * the TRL field and correctly persisted.
    *
    * <li>DSOS - days since onset of symptoms
    * <li>TRL  - transmission risk level
@@ -197,8 +217,8 @@ class SubmissionControllerTest {
   }
 
   /**
-   * The test verifies that even if the payload does not provide keys with TRL, the information
-   * is still derived from the DSOS field and correctly persisted.
+   * The test verifies that even if the payload does not provide keys with TRL, the information is still derived from
+   * the DSOS field and correctly persisted.
    *
    * <li>DSOS - days since onset of symptoms
    * <li>TRL  - transmission risk level
@@ -358,9 +378,12 @@ class SubmissionControllerTest {
       SubmissionPayload submissionPayload) {
 
     Set<DiagnosisKey> submittedDiagnosisKeys = submittedTemporaryExposureKeys.stream()
-        .map(submittedDiagnosisKey -> DiagnosisKey
+        .map(submittedTemporaryExposureKey -> DiagnosisKey
             .builder()
-            .fromTemporaryExposureKey(submittedDiagnosisKey)
+            .fromTemporaryExposureKeyAndMetadata(submittedTemporaryExposureKey,
+                submissionPayload.getVisitedCountriesList(),
+                submissionPayload.getOrigin(),
+                submissionPayload.getConsentToFederation())
             .withConsentToFederation(submissionPayload.getConsentToFederation())
             .withVisitedCountries(new HashSet<>(submissionPayload.getVisitedCountriesList()))
             .withCountryCode(defaultIfBlank(submissionPayload.getOrigin(), config.getDefaultOriginCountry()))
@@ -413,10 +436,12 @@ class SubmissionControllerTest {
     });
   }
 
-  private DiagnosisKey findDiagnosisKeyMatch(TemporaryExposureKey tek, Collection<DiagnosisKey> diagnosisKeys) {
+  private DiagnosisKey findDiagnosisKeyMatch(TemporaryExposureKey temporaryExposureKey,
+      Collection<DiagnosisKey> diagnosisKeys) {
     return diagnosisKeys
         .stream()
-        .filter( dk -> tek.getKeyData().equals(ByteString.copyFrom(dk.getKeyData())))
+        .filter(
+            diagnosisKey -> temporaryExposureKey.getKeyData().equals(ByteString.copyFrom(diagnosisKey.getKeyData())))
         .findFirst().orElseThrow();
   }
 }
