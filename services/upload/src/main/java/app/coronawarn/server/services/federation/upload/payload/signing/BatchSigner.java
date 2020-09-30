@@ -120,7 +120,7 @@ public class BatchSigner {
   }
 
   /**
-   * TODO: Create SignatureException Generate the signature bytes based on {@link DiagnosisKeyBatch}.
+   * Generate the signature bytes based on {@link DiagnosisKeyBatch}.
    *
    * @param batch {@link DiagnosisKeyBatch}.
    * @return signature bytes encoded to Base64.
@@ -135,7 +135,7 @@ public class BatchSigner {
     return this.sign(bytesToSign, getCertificateFromPublicKey());
   }
 
-  private X509Certificate getCertificateFromPublicKey() throws CertificateException {
+  private X509Certificate getCertificateFromPublicKey() {
     return this.cryptoProvider.getCertificate();
   }
 

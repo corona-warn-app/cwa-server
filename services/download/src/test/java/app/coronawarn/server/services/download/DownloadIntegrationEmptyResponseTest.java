@@ -42,52 +42,31 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpStatus;
 import org.springframework.test.annotation.DirtiesContext;
-import org.springframework.test.context.ActiveProfiles;
 
 /**
- * This integration test is responsible for testing the runners for download and retention policy. The Spring profile
- * "federation-download-integration" enables the test data generation in /db/testdata/V99__createTestDataForIntegrationTest.sql
- * via the application-federation-download-integration.yaml.
+ * This integration test is responsible for testing the runners for download and retention policy.
  * <p>
- * The sql script for the test data contains
- * <li>a batch info for an expired batch that should be deleted by the retention policy</li>
- * <li>and two batch info from the current date of status 'ERROR', which should be reprocessed.</li>
- * One of them will be successfully reprocessed and the other one will fail. The WireMockServer is configured
- * accordingly.
- * <p>
- * The WireMockServer will additionally return a series of three batches, where the first batch of the corresponding
- * date is batch1, that can be processed successfully. Batch2 is returned by an explicit call to its batch tag and can
- * be processed successfully as well. Its successor batch3 fails with a 404 Not Found.
+ * The WireMockServer will return a series of three batches, where the first batch of the corresponding date is batch1,
+ * that can be processed successfully. Batch2 is returned by an explicit call to its batch tag, but the response is
+ * empty (like it is the case on EFGS). Its successor batch3 fails with a 404 Not Found.
  * <p>
  * Hence, after the execution of both runners, the federation_batch_info table should be the following:
- * <li>"expired_batch_tag" is deleted</li>
- * <li>"retry_batch_tag_successful" has state "PROCESSED"</li>
- * <li>"retry_batch_tag_fail" has state "ERROR_WONT_RETRY"</li>
  * <li>"batch1_tag" has state "PROCESSED"</li>
- * <li>"batch2_tag" has state "PROCESSED"</li>
- * <li>"batch3_tag" has state "ERROR"</li>
- * <li>no batch has state "UNPROCESSED"</li>
+ * <li>"batch2_tag" has state "ERROR"</li>
+ * <li>"batch3_tag" has state "ERROR" * no batch has state "UNPROCESSED"</li>
  * <p>
- * The diagnosis_key table should contain the data that correspond to the three batches with state "PROCESSED":
- * BATCH1_DATA, BATCH2_DATA and RETRY_BATCH_SUCCESSFUL_DATA
+ * The diagnosis_key table should contain the data of batch1.
  */
 @SpringBootTest
-@ActiveProfiles("federation-download-integration")
 @DirtiesContext
-class DownloadIntegrationTest {
+class DownloadIntegrationEmptyResponseTest {
 
   public static final String BATCH1_DATA = "0123456789ABCDED";
-  public static final String BATCH2_DATA = "0123456789ABCDEE";
 
   private static final String BATCH1_TAG = "batch1_tag";
   private static final String BATCH2_TAG = "batch2_tag";
-
   private static final String BATCH3_TAG = "batch3_tag";
 
-  private static final String RETRY_BATCH_SUCCESSFUL_TAG = "retry_batch_tag_successful";
-  private static final String RETRY_BATCH_SUCCESSFUL_DATA = "0123456789ABCDEF";
-
-  private static final String RETRY_BATCH_FAILS_TAG = "retry_batch_tag_fail";
   private static final String EMPTY_BATCH_TAG = "null";
 
   private static WireMockServer server;
@@ -107,13 +86,8 @@ class DownloadIntegrationTest {
     DiagnosisKeyBatch batch1 = FederationBatchTestHelper.createDiagnosisKeyBatch(BATCH1_DATA);
 
     HttpHeaders batch2Headers = getHttpHeaders(BATCH2_TAG, BATCH3_TAG);
-    DiagnosisKeyBatch batch2 = FederationBatchTestHelper.createDiagnosisKeyBatch(BATCH2_DATA);
 
     HttpHeaders batch3Headers = getHttpHeaders(BATCH3_TAG, EMPTY_BATCH_TAG);
-
-    HttpHeaders retryBatchSuccessfulHeaders = getHttpHeaders(RETRY_BATCH_SUCCESSFUL_TAG, EMPTY_BATCH_TAG);
-    DiagnosisKeyBatch retryBatchSuccessful = FederationBatchTestHelper.createDiagnosisKeyBatch(
-        RETRY_BATCH_SUCCESSFUL_DATA);
 
     server = new WireMockServer(options().port(1234));
     server.start();
@@ -130,8 +104,7 @@ class DownloadIntegrationTest {
             .willReturn(
                 aResponse()
                     .withStatus(HttpStatus.OK.value())
-                    .withHeaders(batch2Headers)
-                    .withBody(batch2.toByteArray())));
+                    .withHeaders(batch2Headers)));
     server.stubFor(
         get(anyUrl())
             .withHeader("batchTag", equalTo(BATCH3_TAG))
@@ -139,21 +112,6 @@ class DownloadIntegrationTest {
                 aResponse()
                     .withStatus(HttpStatus.NOT_FOUND.value())
                     .withHeaders(batch3Headers)));
-    server.stubFor(
-        get(anyUrl())
-            .withHeader("batchTag", equalTo(RETRY_BATCH_FAILS_TAG))
-            .willReturn(
-                aResponse()
-                    .withStatus(HttpStatus.NOT_FOUND.value())
-                    .withHeaders(batch3Headers)));
-    server.stubFor(
-        get(anyUrl())
-            .withHeader("batchTag", equalTo(RETRY_BATCH_SUCCESSFUL_TAG))
-            .willReturn(
-                aResponse()
-                    .withStatus(HttpStatus.OK.value())
-                    .withHeaders(retryBatchSuccessfulHeaders)
-                    .withBody(retryBatchSuccessful.toByteArray())));
   }
 
   private static HttpHeaders getHttpHeaders(String batchTag, String nextBatchTag) {
@@ -170,19 +128,14 @@ class DownloadIntegrationTest {
 
   @Test
   void testDownloadRunSuccessfully() {
-    assertThat(federationBatchInfoRepository.findAll()).hasSize(5);
+    assertThat(federationBatchInfoRepository.findAll()).hasSize(3);
     assertThat(federationBatchInfoRepository.findByStatus("UNPROCESSED")).isEmpty();
-    assertThat(federationBatchInfoRepository.findByStatus("PROCESSED")).hasSize(3);
+    assertThat(federationBatchInfoRepository.findByStatus("PROCESSED")).hasSize(2);
     assertThat(federationBatchInfoRepository.findByStatus("ERROR")).hasSize(1);
-    assertThat(federationBatchInfoRepository.findByStatus("ERROR_WONT_RETRY")).hasSize(1);
 
     Iterable<DiagnosisKey> diagnosisKeys = diagnosisKeyRepository.findAll();
     assertThat(diagnosisKeys)
-        .hasSize(3)
-        .contains(FederationBatchTestHelper.createDiagnosisKey(BATCH1_DATA, downloadServiceConfig))
-        .contains(FederationBatchTestHelper.createDiagnosisKey(BATCH2_DATA, downloadServiceConfig))
-        .contains(FederationBatchTestHelper.createDiagnosisKey(RETRY_BATCH_SUCCESSFUL_DATA, downloadServiceConfig));
+        .hasSize(1)
+        .contains(FederationBatchTestHelper.createDiagnosisKey(BATCH1_DATA, downloadServiceConfig));
   }
-
-
 }

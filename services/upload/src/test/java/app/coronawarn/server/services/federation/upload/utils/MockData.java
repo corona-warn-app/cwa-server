@@ -20,14 +20,14 @@
 
 package app.coronawarn.server.services.federation.upload.utils;
 
-import java.util.List;
-import java.util.Random;
-import java.util.concurrent.ThreadLocalRandom;
-import java.util.stream.Collectors;
-import java.util.stream.IntStream;
 import app.coronawarn.server.common.persistence.domain.DiagnosisKey;
 import app.coronawarn.server.common.persistence.domain.FederationUploadKey;
 import app.coronawarn.server.common.protocols.external.exposurenotification.ReportType;
+import java.util.List;
+import java.util.Set;
+import java.util.concurrent.ThreadLocalRandom;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 public class MockData {
 
@@ -40,7 +40,7 @@ public class MockData {
   }
 
   public static FederationUploadKey generateRandomUploadKey(boolean consentToShare) {
-   return FederationUploadKey.from(generateRandomDiagnosisKey(consentToShare));
+    return FederationUploadKey.from(generateRandomDiagnosisKey(consentToShare));
   }
 
   public static List<DiagnosisKey> generateRandomDiagnosisKeys(boolean consentToShare, int numberOfKeys) {
@@ -58,7 +58,7 @@ public class MockData {
         .withCountryCode(TEST_ORIGIN_COUNTRY)
         .withDaysSinceOnsetOfSymptoms(randomDaysSinceOnsetOfSymptoms())
         .withSubmissionTimestamp(12)
-        .withVisitedCountries(List.of("FR", "DK"))
+        .withVisitedCountries(Set.of("FR", "DK"))
         .withReportType(ReportType.CONFIRMED_TEST)
         .build();
   }

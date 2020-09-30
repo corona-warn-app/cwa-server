@@ -74,7 +74,7 @@ public class DiagnosisKeyBatchAssembler {
       List<FederationUploadKey> keysToUpload) {
     return partitionListBySize(filterByConsent(keysToUpload), uploadConfig.getMaxBatchKeyCount()).stream()
         .map(partition -> Pair.of(this.makeBatchFromPartition(partition), partition))
-        .collect(Collectors.toMap(pair -> pair.getLeft(), pair -> pair.getRight()));
+        .collect(Collectors.toMap(Pair::getLeft, Pair::getRight));
   }
 
   private DiagnosisKeyBatch makeBatchFromPartition(List<FederationUploadKey> paritionOfKeys) {
