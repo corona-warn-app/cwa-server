@@ -35,8 +35,8 @@ import java.time.Duration;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.ZoneOffset;
-import java.util.Arrays;
 import java.util.List;
+import java.util.Set;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
@@ -49,7 +49,7 @@ class DiagnosisKeyBuilderTest {
   private final long expSubmissionTimestamp = 2L;
   private final boolean expConsentToFederation = false;
   private final String originCountry = "DE";
-  private final List<String> visitedCountries = Arrays.asList("DE");
+  private final Set<String> visitedCountries = Set.of("DE");
   private final ReportType reportType = ReportType.CONFIRMED_CLINICAL_DIAGNOSIS;
   private final int daysSinceOnsetOfSymptoms = 2;
 
@@ -67,7 +67,7 @@ class DiagnosisKeyBuilderTest {
         .build();
 
     DiagnosisKey actDiagnosisKey = DiagnosisKey.builder()
-        .fromTemporaryExposureKey(protoBufObj)
+        .fromTemporaryExposureKeyAndMetadata(protoBufObj, List.of("DE"), "DE", true)
         .withSubmissionTimestamp(expSubmissionTimestamp)
         .withReportType(reportType)
         .withDaysSinceOnsetOfSymptoms(daysSinceOnsetOfSymptoms)
@@ -92,7 +92,7 @@ class DiagnosisKeyBuilderTest {
         .build();
 
     DiagnosisKey actDiagnosisKey = DiagnosisKey.builder()
-        .fromTemporaryExposureKey(protoBufObj)
+        .fromTemporaryExposureKeyAndMetadata(protoBufObj, List.of("DE"), "DE", true)
         .withReportType(reportType)
         .withDaysSinceOnsetOfSymptoms(daysSinceOnsetOfSymptoms)
         .withConsentToFederation(expConsentToFederation)
@@ -206,14 +206,14 @@ class DiagnosisKeyBuilderTest {
   }
 
   @ParameterizedTest
-  @ValueSource(strings = {"DER","xx","De","dE","DE,FRE"})
+  @ValueSource(strings = {"DER", "xx", "De", "dE", "DE,FRE"})
   void failsForInvalidVisitedCountries(String visitedCountries) {
     assertThat(
         catchThrowable(() -> DiagnosisKey.builder()
             .withKeyData(expKeyData)
             .withRollingStartIntervalNumber(expRollingStartIntervalNumber)
             .withTransmissionRiskLevel(expTransmissionRiskLevel)
-            .withVisitedCountries(Arrays.asList(visitedCountries))
+            .withVisitedCountries(Set.of(visitedCountries))
             .build()
         )
     ).isInstanceOf(InvalidDiagnosisKeyException.class);
@@ -318,9 +318,29 @@ class DiagnosisKeyBuilderTest {
         .setTransmissionRiskLevel(expTransmissionRiskLevel)
         .build();
 
-    DiagnosisKey actDiagnosisKey = DiagnosisKey.builder().fromTemporaryExposureKey(protoBufObj).build();
+    DiagnosisKey actDiagnosisKey = DiagnosisKey.builder()
+        .fromTemporaryExposureKeyAndMetadata(protoBufObj, List.of("DE"), "DE", true)
+        .build();
 
     assertThat(actDiagnosisKey.getReportType()).isEqualTo(reportType);
+  }
+
+  @Test
+  void testKeyBuildsSuccessfullyFromFederationDiagnosisKey() {
+    app.coronawarn.server.common.protocols.external.exposurenotification.DiagnosisKey federationKey = app.coronawarn.server.common.protocols.external.exposurenotification.DiagnosisKey
+        .newBuilder()
+        .setKeyData(ByteString.copyFrom(expKeyData))
+        .addAllVisitedCountries(visitedCountries)
+        .setRollingStartIntervalNumber(expRollingStartIntervalNumber)
+        .setTransmissionRiskLevel(expTransmissionRiskLevel)
+        .setRollingPeriod(DiagnosisKey.MAX_ROLLING_PERIOD)
+        .setDaysSinceOnsetOfSymptoms(daysSinceOnsetOfSymptoms)
+        .setReportType(reportType)
+        .setOrigin(originCountry)
+        .build();
+    DiagnosisKey actDiagnosisKey = DiagnosisKey.builder()
+        .fromFederationDiagnosisKey(federationKey).build();
+    assertDiagnosisKeyEquals(actDiagnosisKey);
   }
 
   private DiagnosisKey keyWithKeyData(byte[] expKeyData) {

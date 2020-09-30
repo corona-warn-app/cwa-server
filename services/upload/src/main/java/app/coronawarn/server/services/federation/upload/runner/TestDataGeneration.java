@@ -22,7 +22,6 @@ package app.coronawarn.server.services.federation.upload.runner;
 
 import app.coronawarn.server.common.persistence.domain.DiagnosisKey;
 import app.coronawarn.server.common.persistence.domain.FederationUploadKey;
-import app.coronawarn.server.common.persistence.service.FederationUploadKeyService;
 import app.coronawarn.server.common.protocols.external.exposurenotification.ReportType;
 import app.coronawarn.server.common.protocols.internal.RiskLevel;
 import app.coronawarn.server.services.federation.upload.config.UploadServiceConfig;
@@ -35,6 +34,7 @@ import java.time.temporal.ChronoUnit;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import java.util.Set;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
@@ -80,7 +80,7 @@ public class TestDataGeneration implements ApplicationRunner {
         .withCountryCode("DE")
         .withDaysSinceOnsetOfSymptoms(1)
         .withSubmissionTimestamp(timestamp)
-        .withVisitedCountries(List.of("FR", "DK"))
+        .withVisitedCountries(Set.of("FR", "DK"))
         .withReportType(ReportType.CONFIRMED_TEST)
         .build());
   }

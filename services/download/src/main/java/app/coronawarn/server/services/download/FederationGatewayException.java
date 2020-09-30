@@ -18,20 +18,15 @@
  * ---license-end
  */
 
-package app.coronawarn.server.common.persistence.domain.validation;
+package app.coronawarn.server.services.download;
 
-import java.util.List;
-import java.util.Locale;
-import java.util.Set;
-import javax.validation.ConstraintValidator;
-import javax.validation.ConstraintValidatorContext;
+public class FederationGatewayException extends RuntimeException {
 
-public class ValidCountriesValidator implements ConstraintValidator<ValidCountries, Set<String>> {
+  public FederationGatewayException(String msg) {
+    super(msg);
+  }
 
-  private static final List<String> ISO_COUNTRIES = List.of(Locale.getISOCountries());
-
-  @Override
-  public boolean isValid(Set<String> countries, ConstraintValidatorContext constraintValidatorContext) {
-    return ISO_COUNTRIES.containsAll(countries);
+  public FederationGatewayException(String msg, Throwable cause) {
+    super(msg, cause);
   }
 }

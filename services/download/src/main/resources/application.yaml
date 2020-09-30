@@ -16,6 +16,17 @@ services:
     efgs-offset-days: ${EFGS_OFFSET_DAYS:1}
     # The number of days to retain batch information in the database.
     retention-days: 14
+    tek-field-derivations:
+      trl-from-dsos:
+        4: 1
+        3: 3
+        2: 5
+        1: 6
+        0: 8
+        -1: 6
+        -2: 5
+        -3: 3
+        -4: 1
 
 federation-gateway:
   base-url: ${FEDERATION_GATEWAY_BASE_URL:http://localhost:8005}
