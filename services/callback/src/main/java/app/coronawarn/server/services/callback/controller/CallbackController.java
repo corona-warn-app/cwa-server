@@ -26,8 +26,6 @@ import io.micrometer.core.annotation.Timed;
 import java.time.LocalDate;
 import javax.validation.Valid;
 import javax.validation.constraints.Pattern;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -66,5 +64,4 @@ public class CallbackController {
     federationBatchInfoService.save(federationBatchInfo);
     return ResponseEntity.ok().build();
   }
-
 }
