@@ -241,14 +241,12 @@ public @interface ValidSubmissionPayload {
 
     private boolean hasInvalidDsosValue(TemporaryExposureKey key) {
       int dsos = key.getDaysSinceOnsetOfSymptoms();
-      //range will be externalized to yaml
       return dsos < -14 || dsos > 14;
     }
 
     private boolean hasInvalidTrlValue(TemporaryExposureKey key) {
       int trl = key.getTransmissionRiskLevel();
-      // will be externalized to yaml
-      return !Arrays.asList(1,3,5,6,8).contains(trl);
+      return trl < 1 || trl > 8;
     }
 
     /**
