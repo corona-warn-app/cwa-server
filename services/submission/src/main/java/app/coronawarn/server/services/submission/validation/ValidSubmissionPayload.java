@@ -92,8 +92,7 @@ public @interface ValidSubmissionPayload {
         return checkStartIntervalNumberIsAtMidNight(exposureKeys, validatorContext);
       } else {
         return checkStartIntervalNumberIsAtMidNight(exposureKeys, validatorContext)
-            && checkKeyCollectionSize(exposureKeys, validatorContext)
-            && checkUniqueStartIntervalNumbers(exposureKeys, validatorContext);
+            && checkKeyCollectionSize(exposureKeys, validatorContext);
       }
     }
 
@@ -106,22 +105,6 @@ public @interface ValidSubmissionPayload {
       if (exposureKeys.isEmpty() || exposureKeys.size() > maxNumberOfKeys) {
         addViolation(validatorContext, String.format(
             "Number of keys must be between 1 and %s, but is %s.", maxNumberOfKeys, exposureKeys.size()));
-        return false;
-      }
-      return true;
-    }
-
-    private boolean checkUniqueStartIntervalNumbers(List<TemporaryExposureKey> exposureKeys,
-        ConstraintValidatorContext validatorContext) {
-      Integer[] startIntervalNumbers = exposureKeys.stream()
-          .mapToInt(TemporaryExposureKey::getRollingStartIntervalNumber).boxed().toArray(Integer[]::new);
-      long distinctSize = Arrays.stream(startIntervalNumbers)
-          .distinct()
-          .count();
-
-      if (distinctSize < exposureKeys.size()) {
-        addViolation(validatorContext, String.format(
-            "Duplicate StartIntervalNumber found. StartIntervalNumbers: %s", startIntervalNumbers));
         return false;
       }
       return true;
