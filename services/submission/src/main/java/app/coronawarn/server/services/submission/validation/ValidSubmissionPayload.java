@@ -20,8 +20,6 @@
 
 package app.coronawarn.server.services.submission.validation;
 
-import static app.coronawarn.server.common.persistence.domain.DiagnosisKey.EXPECTED_ROLLING_PERIOD;
-
 import app.coronawarn.server.common.protocols.external.exposurenotification.TemporaryExposureKey;
 import app.coronawarn.server.common.protocols.internal.SubmissionPayload;
 import app.coronawarn.server.services.submission.config.SubmissionServiceConfig;
@@ -30,7 +28,6 @@ import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
-import java.util.Arrays;
 import java.util.List;
 import javax.validation.Constraint;
 import javax.validation.ConstraintValidator;
@@ -86,12 +83,7 @@ public @interface ValidSubmissionPayload {
     public boolean isValid(SubmissionPayload submissionPayload, ConstraintValidatorContext validatorContext) {
       List<TemporaryExposureKey> exposureKeys = submissionPayload.getKeysList();
       validatorContext.disableDefaultConstraintViolation();
-
-      boolean isValid = checkKeyCollectionSize(exposureKeys, validatorContext);
-      isValid &= checkUniqueStartIntervalNumbers(exposureKeys, validatorContext);
-      isValid &= checkNoOverlapsInTimeWindow(exposureKeys, validatorContext);
-
-      return isValid;
+      return checkKeyCollectionSize(exposureKeys, validatorContext);
     }
 
     private void addViolation(ConstraintValidatorContext validatorContext, String message) {
@@ -104,42 +96,6 @@ public @interface ValidSubmissionPayload {
         addViolation(validatorContext, String.format(
             "Number of keys must be between 1 and %s, but is %s.", maxNumberOfKeys, exposureKeys.size()));
         return false;
-      }
-      return true;
-    }
-
-    private boolean checkUniqueStartIntervalNumbers(List<TemporaryExposureKey> exposureKeys,
-        ConstraintValidatorContext validatorContext) {
-      Integer[] startIntervalNumbers = exposureKeys.stream()
-          .mapToInt(TemporaryExposureKey::getRollingStartIntervalNumber).boxed().toArray(Integer[]::new);
-      long distinctSize = Arrays.stream(startIntervalNumbers)
-          .distinct()
-          .count();
-
-      if (distinctSize < exposureKeys.size()) {
-        addViolation(validatorContext, String.format(
-            "Duplicate StartIntervalNumber found. StartIntervalNumbers: %s", startIntervalNumbers));
-        return false;
-      }
-      return true;
-    }
-
-    private boolean checkNoOverlapsInTimeWindow(List<TemporaryExposureKey> exposureKeys,
-        ConstraintValidatorContext validatorContext) {
-      if (exposureKeys.size() < 2) {
-        return true;
-      }
-
-      Integer[] sortedStartIntervalNumbers = exposureKeys.stream()
-          .mapToInt(TemporaryExposureKey::getRollingStartIntervalNumber)
-          .sorted().boxed().toArray(Integer[]::new);
-
-      for (int i = 1; i < sortedStartIntervalNumbers.length; i++) {
-        if ((sortedStartIntervalNumbers[i - 1] + EXPECTED_ROLLING_PERIOD) > sortedStartIntervalNumbers[i]) {
-          addViolation(validatorContext, String.format(
-              "Subsequent intervals overlap. StartIntervalNumbers: %s", sortedStartIntervalNumbers));
-          return false;
-        }
       }
       return true;
     }

@@ -38,6 +38,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import org.assertj.core.util.Lists;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -82,6 +83,7 @@ class PayloadValidationTest {
   }
 
   @Test
+  @Disabled("Hotfix 1.3.4")
   void check400ResponseStatusForDuplicateStartIntervalNumber() {
     int rollingStartIntervalNumber = createRollingStartIntervalNumber(2);
     var keysWithDuplicateStartIntervalNumber = Lists.list(
@@ -109,6 +111,7 @@ class PayloadValidationTest {
   }
 
   @Test
+  @Disabled("Hotfix 1.3.4")
   void check400ResponseStatusForOverlappingTimeIntervals() {
     int rollingStartIntervalNumber1 = createRollingStartIntervalNumber(6);
     int rollingStartIntervalNumber2 = rollingStartIntervalNumber1 + (DiagnosisKey.EXPECTED_ROLLING_PERIOD / 2);
