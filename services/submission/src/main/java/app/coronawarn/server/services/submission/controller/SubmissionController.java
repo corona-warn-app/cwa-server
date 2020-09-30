@@ -22,7 +22,9 @@ import java.util.Arrays;
 import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.function.Predicate;
+import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -102,7 +104,8 @@ public class SubmissionController {
         submissionMonitor.incrementInvalidTanRequestCounter();
         deferredResult.setResult(ResponseEntity.status(HttpStatus.FORBIDDEN).build());
       } else {
-        List<DiagnosisKey> diagnosisKeys = extractValidDiagnosisKeysFromPayload(submissionPayload);
+        List<DiagnosisKey> diagnosisKeys = extractValidDiagnosisKeysFromPayload(
+            enhanceWithDefaultValuesIfMissing(submissionPayload));
         checkDiagnosisKeysStructure(diagnosisKeys);
         diagnosisKeyService.saveDiagnosisKeys(padDiagnosisKeys(diagnosisKeys));
 
@@ -114,33 +117,29 @@ public class SubmissionController {
       stopWatch.stop();
       fakeDelayManager.updateFakeRequestDelay(stopWatch.getTotalTimeMillis());
     }
-
     return deferredResult;
   }
 
   private List<DiagnosisKey> extractValidDiagnosisKeysFromPayload(SubmissionPayload submissionPayload) {
     List<TemporaryExposureKey> protoBufferKeys = submissionPayload.getKeysList();
-    List<DiagnosisKey> diagnosisKeys = new ArrayList<>();
 
-    for (TemporaryExposureKey protoBufferKey : protoBufferKeys) {
-      String originCountry = StringUtils.defaultIfBlank(submissionPayload.getOrigin(),
-          submissionServiceConfig.getDefaultOriginCountry());
+    List<DiagnosisKey> diagnosisKeys = protoBufferKeys.stream()
+        .map(protoBufferKey -> DiagnosisKey.builder()
+            .fromTemporaryExposureKeyAndMetadata(
+                protoBufferKey,
+                submissionPayload.getVisitedCountriesList(),
+                submissionPayload.getOrigin(),
+                submissionPayload.getConsentToFederation())
+            .withFieldNormalization(new SubmissionKeyNormalizer(submissionServiceConfig))
+            .build()
+        )
+        .filter(diagnosisKey -> diagnosisKey.isYoungerThanRetentionThreshold(retentionDays))
+        .collect(Collectors.toList());
 
-      DiagnosisKey diagnosisKey = DiagnosisKey.builder()
-          .fromTemporaryExposureKey(protoBufferKey)
-          .withVisitedCountries(new HashSet<>(submissionPayload.getVisitedCountriesList()))
-          .withCountryCode(originCountry)
-          .withConsentToFederation(submissionPayload.getConsentToFederation())
-          .withFieldNormalization(new SubmissionKeyNormalizer(submissionServiceConfig))
-          .build();
-
-      if (diagnosisKey.isYoungerThanRetentionThreshold(retentionDays)) {
-        diagnosisKeys.add(diagnosisKey);
-      } else {
-        logger.warn("Not persisting a diagnosis key, as it is outdated beyond retention threshold.");
-      }
+    if (protoBufferKeys.size() > diagnosisKeys.size()) {
+      logger.warn("Not persisting {} diagnosis key(s), as it is outdated beyond retention threshold.",
+          protoBufferKeys.size() - diagnosisKeys.size());
     }
-
     return diagnosisKeys;
   }
 
@@ -175,6 +174,30 @@ public class SubmissionController {
             + " and rolling start interval number of today midnight. {}", keysString);
       }
     });
+  }
+
+  private SubmissionPayload enhanceWithDefaultValuesIfMissing(SubmissionPayload submissionPayload) {
+    String originCountry = defaultIfEmptyOriginCountry(submissionPayload.getOrigin());
+    List<String> visitedCountries = extendVisitedCountriesWithOriginCountry(
+        submissionPayload.getVisitedCountriesList());
+
+    return SubmissionPayload.newBuilder()
+        .addAllKeys(submissionPayload.getKeysList())
+        .setRequestPadding(submissionPayload.getRequestPadding())
+        .addAllVisitedCountries(visitedCountries)
+        .setOrigin(originCountry)
+        .setConsentToFederation(submissionPayload.getConsentToFederation())
+        .build();
+  }
+
+  private String defaultIfEmptyOriginCountry(String originCountry) {
+    return StringUtils.defaultIfBlank(originCountry, submissionServiceConfig.getDefaultOriginCountry());
+  }
+
+  private List<String> extendVisitedCountriesWithOriginCountry(List<String> visitedCountries) {
+    Set<String> visitedCountriesSet = new HashSet<>(visitedCountries);
+    visitedCountriesSet.add(submissionServiceConfig.getDefaultOriginCountry());
+    return new ArrayList<>(visitedCountriesSet);
   }
 
   private List<DiagnosisKey> padDiagnosisKeys(List<DiagnosisKey> diagnosisKeys) {

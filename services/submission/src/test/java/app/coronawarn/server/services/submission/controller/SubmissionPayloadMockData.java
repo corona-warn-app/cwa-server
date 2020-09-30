@@ -8,6 +8,7 @@ import static java.time.ZoneOffset.UTC;
 import app.coronawarn.server.common.persistence.domain.DiagnosisKey;
 import app.coronawarn.server.common.protocols.external.exposurenotification.ReportType;
 import app.coronawarn.server.common.protocols.external.exposurenotification.TemporaryExposureKey;
+import app.coronawarn.server.common.protocols.external.exposurenotification.TemporaryExposureKey.Builder;
 import app.coronawarn.server.common.protocols.internal.SubmissionPayload;
 import app.coronawarn.server.services.submission.config.SubmissionServiceConfig;
 import com.google.protobuf.ByteString;
@@ -34,7 +35,7 @@ public final class SubmissionPayloadMockData {
   public static SubmissionPayload buildPayload(Collection<TemporaryExposureKey> keys) {
     return SubmissionPayload.newBuilder()
         .addAllKeys(keys)
-        .addAllVisitedCountries(List.of("FR"))
+        .addAllVisitedCountries(List.of("DE", "FR"))
         .setOrigin("DE")
         .build();
   }
@@ -42,7 +43,7 @@ public final class SubmissionPayloadMockData {
   public static SubmissionPayload buildPayload(Collection<TemporaryExposureKey> keys, boolean consentToFederation) {
     return SubmissionPayload.newBuilder()
         .addAllKeys(keys)
-        .addAllVisitedCountries(List.of("FR"))
+        .addAllVisitedCountries(List.of("DE", "FR"))
         .setOrigin("DE")
         .setConsentToFederation(consentToFederation)
         .build();
@@ -56,7 +57,7 @@ public final class SubmissionPayloadMockData {
   public static SubmissionPayload buildInvalidPayload(Collection<TemporaryExposureKey> keys) {
     return SubmissionPayload.newBuilder()
         .addAllKeys(keys)
-        .addAllVisitedCountries(List.of("FR"))
+        .addAllVisitedCountries(List.of("DE", "FR"))
         .setOrigin("DE3")
         .build();
   }
@@ -66,7 +67,7 @@ public final class SubmissionPayloadMockData {
   }
 
   public static SubmissionPayload buildPayloadWithTooLargePadding(SubmissionServiceConfig config,
-                                                                  Collection<TemporaryExposureKey> keys) {
+      Collection<TemporaryExposureKey> keys) {
     int exceedingSize = (int) (2 * config.getMaximumRequestSize().toBytes());
     byte[] bytes = new byte[exceedingSize];
     return buildPayloadWithPadding(keys, bytes);
@@ -88,9 +89,12 @@ public final class SubmissionPayloadMockData {
     int rollingStartIntervalNumber2 = rollingStartIntervalNumber1 + DiagnosisKey.MAX_ROLLING_PERIOD;
     int rollingStartIntervalNumber3 = rollingStartIntervalNumber2 + DiagnosisKey.MAX_ROLLING_PERIOD;
     return Stream.of(
-        buildTemporaryExposureKeyWithoutDSOS(VALID_KEY_DATA_1, rollingStartIntervalNumber1, 3, CONFIRMED_CLINICAL_DIAGNOSIS),
-        buildTemporaryExposureKeyWithoutDSOS(VALID_KEY_DATA_2, rollingStartIntervalNumber3, 6, CONFIRMED_CLINICAL_DIAGNOSIS),
-        buildTemporaryExposureKeyWithoutDSOS(VALID_KEY_DATA_3, rollingStartIntervalNumber2, 8, CONFIRMED_CLINICAL_DIAGNOSIS))
+        buildTemporaryExposureKeyWithoutDSOS(VALID_KEY_DATA_1, rollingStartIntervalNumber1, 3,
+            CONFIRMED_CLINICAL_DIAGNOSIS),
+        buildTemporaryExposureKeyWithoutDSOS(VALID_KEY_DATA_2, rollingStartIntervalNumber3, 6,
+            CONFIRMED_CLINICAL_DIAGNOSIS),
+        buildTemporaryExposureKeyWithoutDSOS(VALID_KEY_DATA_3, rollingStartIntervalNumber2, 8,
+            CONFIRMED_CLINICAL_DIAGNOSIS))
         .collect(Collectors.toCollection(ArrayList::new));
   }
 
@@ -118,19 +122,22 @@ public final class SubmissionPayloadMockData {
 
   public static SubmissionPayload buildPayloadWithInvalidKey() {
     TemporaryExposureKey invalidKey =
-        buildTemporaryExposureKey(VALID_KEY_DATA_1, createRollingStartIntervalNumber(2), 999, ReportType.CONFIRMED_CLINICAL_DIAGNOSIS, 1);
+        buildTemporaryExposureKey(VALID_KEY_DATA_1, createRollingStartIntervalNumber(2), 999,
+            ReportType.CONFIRMED_CLINICAL_DIAGNOSIS, 1);
     return buildPayload(invalidKey);
   }
 
   public static SubmissionPayload buildPayloadWithInvalidOriginCountry() {
     TemporaryExposureKey key =
-        buildTemporaryExposureKey(VALID_KEY_DATA_1, createRollingStartIntervalNumber(2), 2, ReportType.CONFIRMED_CLINICAL_DIAGNOSIS, 1);
+        buildTemporaryExposureKey(VALID_KEY_DATA_1, createRollingStartIntervalNumber(2), 3,
+            ReportType.CONFIRMED_CLINICAL_DIAGNOSIS, 1);
     return buildInvalidPayload(key);
   }
 
   public static SubmissionPayload buildPayloadWithVisitedCountries(List<String> visitedCountries) {
     TemporaryExposureKey key =
-        buildTemporaryExposureKey(VALID_KEY_DATA_1, createRollingStartIntervalNumber(2), 2, ReportType.CONFIRMED_CLINICAL_DIAGNOSIS, 1);
+        buildTemporaryExposureKey(VALID_KEY_DATA_1, createRollingStartIntervalNumber(2), 3,
+            ReportType.CONFIRMED_CLINICAL_DIAGNOSIS, 1);
     return SubmissionPayload.newBuilder()
         .addKeys(key)
         .addAllVisitedCountries(visitedCountries)
@@ -140,18 +147,23 @@ public final class SubmissionPayloadMockData {
   }
 
   public static TemporaryExposureKey buildTemporaryExposureKey(
-      String keyData, int rollingStartIntervalNumber, int transmissionRiskLevel, ReportType reportType, int daysSinceOnsetOfSymptoms){
-    return TemporaryExposureKey.newBuilder()
+      String keyData, int rollingStartIntervalNumber, Integer transmissionRiskLevel, ReportType reportType,
+      Integer daysSinceOnsetOfSymptoms){
+    Builder builder = TemporaryExposureKey.newBuilder()
         .setKeyData(ByteString.copyFromUtf8(keyData))
-        .setRollingStartIntervalNumber(rollingStartIntervalNumber)
-        .setTransmissionRiskLevel(transmissionRiskLevel)
-        .setReportType(reportType)
-        .setDaysSinceOnsetOfSymptoms(daysSinceOnsetOfSymptoms)
-        .build();
+        .setRollingStartIntervalNumber(rollingStartIntervalNumber);
+    if(transmissionRiskLevel != null) {
+      builder.setTransmissionRiskLevel(transmissionRiskLevel);
+    }
+    builder.setReportType(reportType);
+    if (daysSinceOnsetOfSymptoms != null) {
+      builder.setDaysSinceOnsetOfSymptoms(daysSinceOnsetOfSymptoms);
+    }
+    return builder.build();
   }
 
   public static TemporaryExposureKey buildTemporaryExposureKeyWithoutDSOS(
-      String keyData, int rollingStartIntervalNumber, int transmissionRiskLevel, ReportType reportType){
+      String keyData, int rollingStartIntervalNumber, int transmissionRiskLevel, ReportType reportType) {
     return TemporaryExposureKey.newBuilder()
         .setKeyData(ByteString.copyFromUtf8(keyData))
         .setRollingStartIntervalNumber(rollingStartIntervalNumber)
@@ -196,13 +208,14 @@ public final class SubmissionPayloadMockData {
   }
 
   public static Collection<TemporaryExposureKey> buildPayloadWithOneKey() {
-    return Collections.singleton(buildTemporaryExposureKey(VALID_KEY_DATA_1, createRollingStartIntervalNumber(1), 3,ReportType.CONFIRMED_CLINICAL_DIAGNOSIS,1));
+    return Collections.singleton(buildTemporaryExposureKey(VALID_KEY_DATA_1, createRollingStartIntervalNumber(1), 3,
+        ReportType.CONFIRMED_CLINICAL_DIAGNOSIS, 1));
   }
 
   private static SubmissionPayload buildPayloadWithPadding(Collection<TemporaryExposureKey> keys, byte[] bytes) {
     return SubmissionPayload.newBuilder()
         .addAllKeys(keys)
-        .addAllVisitedCountries(List.of("FR"))
+        .addAllVisitedCountries(List.of("DE", "FR"))
         .setOrigin("DE")
         .setRequestPadding(ByteString.copyFrom(bytes))
         .build();

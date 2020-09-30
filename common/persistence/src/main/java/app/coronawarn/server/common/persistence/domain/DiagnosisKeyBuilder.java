@@ -15,6 +15,7 @@ import app.coronawarn.server.common.protocols.external.exposurenotification.Repo
 import app.coronawarn.server.common.protocols.external.exposurenotification.TemporaryExposureKey;
 import java.time.Instant;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -65,7 +66,8 @@ public class DiagnosisKeyBuilder implements
   }
 
   @Override
-  public FinalBuilder fromTemporaryExposureKey(TemporaryExposureKey protoBufObject) {
+  public FinalBuilder fromTemporaryExposureKeyAndMetadata(TemporaryExposureKey protoBufObject,
+      List<String> visitedCountries, String originCountry, boolean consentToFederation) {
     return this
         .withKeyData(protoBufObject.getKeyData().toByteArray())
         .withRollingStartIntervalNumber(protoBufObject.getRollingStartIntervalNumber())
@@ -73,7 +75,10 @@ public class DiagnosisKeyBuilder implements
             protoBufObject.hasTransmissionRiskLevel() ? protoBufObject.getTransmissionRiskLevel() : null)
         .withRollingPeriod(protoBufObject.getRollingPeriod())
         .withReportType(protoBufObject.getReportType()).withDaysSinceOnsetOfSymptoms(
-            protoBufObject.hasDaysSinceOnsetOfSymptoms() ? protoBufObject.getDaysSinceOnsetOfSymptoms() : null);
+            protoBufObject.hasDaysSinceOnsetOfSymptoms() ? protoBufObject.getDaysSinceOnsetOfSymptoms() : null)
+        .withVisitedCountries(new HashSet<>(visitedCountries))
+        .withCountryCode(originCountry)
+        .withConsentToFederation(consentToFederation);
   }
 
   @Override

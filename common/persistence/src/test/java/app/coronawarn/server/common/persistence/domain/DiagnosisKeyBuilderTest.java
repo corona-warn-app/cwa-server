@@ -17,9 +17,6 @@ import java.time.Duration;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.ZoneOffset;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 import org.junit.jupiter.api.Test;
@@ -52,7 +49,7 @@ class DiagnosisKeyBuilderTest {
         .build();
 
     DiagnosisKey actDiagnosisKey = DiagnosisKey.builder()
-        .fromTemporaryExposureKey(protoBufObj)
+        .fromTemporaryExposureKeyAndMetadata(protoBufObj, List.of("DE"), "DE", true)
         .withSubmissionTimestamp(expSubmissionTimestamp)
         .withReportType(reportType)
         .withDaysSinceOnsetOfSymptoms(daysSinceOnsetOfSymptoms)
@@ -77,7 +74,7 @@ class DiagnosisKeyBuilderTest {
         .build();
 
     DiagnosisKey actDiagnosisKey = DiagnosisKey.builder()
-        .fromTemporaryExposureKey(protoBufObj)
+        .fromTemporaryExposureKeyAndMetadata(protoBufObj, List.of("DE"), "DE", true)
         .withReportType(reportType)
         .withDaysSinceOnsetOfSymptoms(daysSinceOnsetOfSymptoms)
         .withConsentToFederation(expConsentToFederation)
@@ -191,7 +188,7 @@ class DiagnosisKeyBuilderTest {
   }
 
   @ParameterizedTest
-  @ValueSource(strings = {"DER","xx","De","dE","DE,FRE"})
+  @ValueSource(strings = {"DER", "xx", "De", "dE", "DE,FRE"})
   void failsForInvalidVisitedCountries(String visitedCountries) {
     assertThat(
         catchThrowable(() -> DiagnosisKey.builder()
@@ -217,6 +214,21 @@ class DiagnosisKeyBuilderTest {
   @ValueSource(ints = {0, 8})
   void transmissionRiskLevelDoesNotThrowForValid(int validRiskLevel) {
     assertThatCode(() -> keyWithRiskLevel(validRiskLevel)).doesNotThrowAnyException();
+  }
+
+  @ParameterizedTest
+  @ValueSource(ints = {-15, -17, 4001})
+  void daysSinceOnsetSyptomsMustBeInRange(int invalidDsos) {
+    assertThat(catchThrowable(() -> keyWithDsos(invalidDsos)))
+        .isInstanceOf(InvalidDiagnosisKeyException.class)
+        .hasMessage(
+            "[Days since onset of symptoms value must be between -14 and 4000. Invalid Value: " + invalidDsos + "]");
+  }
+
+  @ParameterizedTest
+  @ValueSource(ints = {0, 8, -14, 3986})
+  void daysSinceOnsetSyptomsValidationDoesNotThrowForValid(int validDsos) {
+    assertThatCode(() -> keyWithDsos(validDsos)).doesNotThrowAnyException();
   }
 
   @ParameterizedTest
@@ -288,7 +300,9 @@ class DiagnosisKeyBuilderTest {
         .setTransmissionRiskLevel(expTransmissionRiskLevel)
         .build();
 
-    DiagnosisKey actDiagnosisKey = DiagnosisKey.builder().fromTemporaryExposureKey(protoBufObj).build();
+    DiagnosisKey actDiagnosisKey = DiagnosisKey.builder()
+        .fromTemporaryExposureKeyAndMetadata(protoBufObj, List.of("DE"), "DE", true)
+        .build();
 
     assertThat(actDiagnosisKey.getReportType()).isEqualTo(reportType);
   }
@@ -338,6 +352,14 @@ class DiagnosisKeyBuilderTest {
         .withKeyData(expKeyData)
         .withRollingStartIntervalNumber(expRollingStartIntervalNumber)
         .withTransmissionRiskLevel(expTransmissionRiskLevel).build();
+  }
+
+  private DiagnosisKey keyWithDsos(int dsos) {
+    return DiagnosisKey.builder()
+        .withKeyData(expKeyData)
+        .withRollingStartIntervalNumber(expRollingStartIntervalNumber)
+        .withTransmissionRiskLevel(expTransmissionRiskLevel)
+        .withDaysSinceOnsetOfSymptoms(dsos).build();
   }
 
   private void assertDiagnosisKeyEquals(DiagnosisKey actDiagnosisKey) {
