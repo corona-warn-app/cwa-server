@@ -236,7 +236,7 @@ public @interface ValidSubmissionPayload {
           tekStream -> tekStream.filter(key -> !key.hasTransmissionRiskLevel())
                                 .filter(key -> !key.hasDaysSinceOnsetOfSymptoms()),
           validatorContext,
-          invalidTek -> "A key was found which is missing both 'transmissionRiskLevel' and 'daysSinceOnsetOfSymptoms'");
+          invalidTek -> "A key was found which is missing both 'transmissionRiskLevel' and 'daysSinceOnsetOfSymptoms.'");
     }
 
     private boolean hasInvalidDsosValue(TemporaryExposureKey key) {
