@@ -44,8 +44,7 @@ public class CallbackController {
    * The route to the callback endpoint (version agnostic).
    */
   public static final String CALLBACK_ROUTE = "/callback";
-  private static final Logger logger = LoggerFactory.getLogger(CallbackController.class);
-  private static final String dateRegex = "^\\d{4}-(0[1-9]|1[012])-(0[1-9]|[12][0-9]|3[01])$";
+  private static final String DATE_REGEX = "^\\d{4}-(0[1-9]|1[012])-(0[1-9]|[12][0-9]|3[01])$";
   private final FederationBatchInfoService federationBatchInfoService;
 
   public CallbackController(FederationBatchInfoService federationBatchInfoService) {
@@ -62,7 +61,7 @@ public class CallbackController {
   @GetMapping(value = CALLBACK_ROUTE, params = {"batchTag!="})
   @Timed(description = "Time spent handling callback.")
   public ResponseEntity<Void> handleCallback(@RequestParam(required = true) String batchTag,
-      @Valid @Pattern(regexp = dateRegex) @RequestParam String date) {
+      @Valid @Pattern(regexp = DATE_REGEX) @RequestParam String date) {
     FederationBatchInfo federationBatchInfo = new FederationBatchInfo(batchTag, LocalDate.parse(date));
     federationBatchInfoService.save(federationBatchInfo);
     return ResponseEntity.ok().build();
