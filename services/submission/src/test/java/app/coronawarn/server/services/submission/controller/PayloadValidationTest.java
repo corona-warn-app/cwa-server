@@ -85,18 +85,18 @@ class PayloadValidationTest {
   @ParameterizedTest
   @ValueSource(ints = {-15, -100, 16, 20})
   void check400ResponseStatusForDsosNotInRange(int invalidDsosValue) {
-    ResponseEntity<Void> actResponse = executor.executePost(buildKeysWithDsos(invalidDsosValue));
+    ResponseEntity<Void> actResponse = executor.executePost(buildKeysWithDaysSinceSymptoms(invalidDsosValue));
     assertThat(actResponse.getStatusCode()).isEqualTo(BAD_REQUEST);
   }
 
   @ParameterizedTest
   @ValueSource(ints = {-14, -9, 0, 14})
   void check200ResponseStatusForDsosInRange(int validDsosValue) {
-    ResponseEntity<Void> actResponse = executor.executePost(buildKeysWithDsos(validDsosValue));
+    ResponseEntity<Void> actResponse = executor.executePost(buildKeysWithDaysSinceSymptoms(validDsosValue));
     assertThat(actResponse.getStatusCode()).isEqualTo(OK);
   }
 
-  private Collection<TemporaryExposureKey>  buildKeysWithDsos(int dsos) {
+  private Collection<TemporaryExposureKey>  buildKeysWithDaysSinceSymptoms(int dsos) {
     return List.of(buildTemporaryExposureKey(VALID_KEY_DATA_1, createRollingStartIntervalNumber(2), 3,
         ReportType.CONFIRMED_CLINICAL_DIAGNOSIS, dsos),
         // also add a key without DSOS since this can happen in production and should be supported
@@ -105,7 +105,7 @@ class PayloadValidationTest {
             ReportType.CONFIRMED_CLINICAL_DIAGNOSIS, null));
   }
 
-  private Collection<TemporaryExposureKey>  buildKeysWithoutDsosAndTrl() {
+  private Collection<TemporaryExposureKey>  buildKeysWithoutDaysSinceSymptomsAndTransmissionRiskLevel() {
     return List.of(
         buildTemporaryExposureKey(VALID_KEY_DATA_1, createRollingStartIntervalNumber(2), null,
             ReportType.CONFIRMED_CLINICAL_DIAGNOSIS, null),
@@ -116,20 +116,20 @@ class PayloadValidationTest {
   }
 
   @ParameterizedTest
-  @ValueSource(ints = {0, 2, 4, 7, 9})
+  @ValueSource(ints = {-1, 9, 12})
   void check400ResponseStatusForTrlNotAccepted(int invalidTrlValue) {
-    ResponseEntity<Void> actResponse = executor.executePost(buildKeysWithTrl(invalidTrlValue));
+    ResponseEntity<Void> actResponse = executor.executePost(buildKeysWithTransmissionRiskLevel(invalidTrlValue));
     assertThat(actResponse.getStatusCode()).isEqualTo(BAD_REQUEST);
   }
 
   @ParameterizedTest
   @ValueSource(ints = {1, 3, 5, 6, 8})
   void check200ResponseStatusForTrlAccepted(int validTrlValue) {
-    ResponseEntity<Void> actResponse = executor.executePost(buildKeysWithTrl(validTrlValue));
+    ResponseEntity<Void> actResponse = executor.executePost(buildKeysWithTransmissionRiskLevel(validTrlValue));
     assertThat(actResponse.getStatusCode()).isEqualTo(OK);
   }
 
-  private Collection<TemporaryExposureKey> buildKeysWithTrl(int trl) {
+  private Collection<TemporaryExposureKey> buildKeysWithTransmissionRiskLevel(int trl) {
     return List.of(buildTemporaryExposureKey(VALID_KEY_DATA_1, createRollingStartIntervalNumber(2), trl,
         ReportType.CONFIRMED_CLINICAL_DIAGNOSIS, 1),
         // also add a key without TRL since this can happen in production and should be supported
@@ -140,7 +140,7 @@ class PayloadValidationTest {
 
   @Test
   void check400ResponseStatusForMissingTrlAndDsos() {
-    ResponseEntity<Void> actResponse = executor.executePost(buildKeysWithoutDsosAndTrl());
+    ResponseEntity<Void> actResponse = executor.executePost(buildKeysWithoutDaysSinceSymptomsAndTransmissionRiskLevel());
     assertThat(actResponse.getStatusCode()).isEqualTo(BAD_REQUEST);
   }
 

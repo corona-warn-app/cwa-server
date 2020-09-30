@@ -214,7 +214,7 @@ public @interface ValidSubmissionPayload {
         ConstraintValidatorContext validatorContext) {
       return addViolationForInvalidTek(exposureKeys,
           tekStream -> tekStream.filter(TemporaryExposureKey::hasDaysSinceOnsetOfSymptoms)
-                                .filter(this::hasInvalidDsosValue),
+                                .filter(this::hasInvalidDaysSinceSymptoms),
           validatorContext,
           invalidTek -> "'" + invalidTek.getDaysSinceOnsetOfSymptoms()
               + "' is not a valid daysSinceOnsetOfSymptoms value.");
@@ -224,9 +224,10 @@ public @interface ValidSubmissionPayload {
         ConstraintValidatorContext validatorContext) {
       return addViolationForInvalidTek(exposureKeys,
           tekStream -> tekStream.filter(TemporaryExposureKey::hasTransmissionRiskLevel)
-                                .filter(this::hasInvalidTrlValue),
+                                .filter(this::hasInvalidTransmissionRiskLevel),
           validatorContext,
-          invalidTek -> "'" + invalidTek.getTransmissionRiskLevel() + "' is not a valid transmissionRiskLevel value.");
+          invalidTek -> "'" + invalidTek.getTransmissionRiskLevel()
+              + "' is not a valid transmissionRiskLevel value.");
     }
 
     private boolean checkRequiredFieldsNotMissing(List<TemporaryExposureKey> exposureKeys,
@@ -239,12 +240,12 @@ public @interface ValidSubmissionPayload {
           invalidTek -> "A key was found which is missing both 'transmissionRiskLevel' and 'daysSinceOnsetOfSymptoms.'");
     }
 
-    private boolean hasInvalidDsosValue(TemporaryExposureKey key) {
+    private boolean hasInvalidDaysSinceSymptoms(TemporaryExposureKey key) {
       int dsos = key.getDaysSinceOnsetOfSymptoms();
       return dsos < -14 || dsos > 14;
     }
 
-    private boolean hasInvalidTrlValue(TemporaryExposureKey key) {
+    private boolean hasInvalidTransmissionRiskLevel(TemporaryExposureKey key) {
       int trl = key.getTransmissionRiskLevel();
       return trl < 1 || trl > 8;
     }
