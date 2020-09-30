@@ -100,14 +100,14 @@ public class UploadServiceConfig {
   }
 
   public static class TestData {
-    private int keysPerHour;
+    private int maxPendingKeys;
 
-    public int getKeysPerHour() {
-      return keysPerHour;
+    public int getMaxPendingKeys() {
+      return maxPendingKeys;
     }
 
-    public void setKeysPerHour(int keysPerHour) {
-      this.keysPerHour = keysPerHour;
+    public void setMaxPendingKeys(int maxPendingKeys) {
+      this.maxPendingKeys = maxPendingKeys;
     }
   }
 

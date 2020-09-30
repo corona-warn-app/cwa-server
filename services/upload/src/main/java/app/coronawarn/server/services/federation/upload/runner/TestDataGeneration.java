@@ -67,9 +67,9 @@ public class TestDataGeneration implements ApplicationRunner {
   }
 
   private static byte[] randomByteData() {
-    byte[] keydata = new byte[16];
-    new SecureRandom().nextBytes(keydata);
-    return keydata;
+    byte[] keyData = new byte[16];
+    new SecureRandom().nextBytes(keyData);
+    return keyData;
   }
 
   private FederationUploadKey makeKeyFromTimestamp(long timestamp) {
@@ -103,12 +103,6 @@ public class TestDataGeneration implements ApplicationRunner {
     return minIncluding + (long) (ThreadLocalRandom.current().nextDouble() * (maxIncluding - minIncluding));
   }
 
-  private List<FederationUploadKey> makeKeysFromTimestamp(long timestamp, int quantity) {
-    return IntStream.range(0, quantity)
-        .mapToObj(ignoredValue -> makeKeyFromTimestamp(timestamp))
-        .collect(Collectors.toList());
-  }
-
   private LocalDateTime getCurrentTimestampTruncatedHour() {
     return LocalDateTime.ofInstant(Instant.now(), ZoneOffset.UTC).truncatedTo(ChronoUnit.HOURS);
   }
@@ -119,43 +113,37 @@ public class TestDataGeneration implements ApplicationRunner {
 
   /**
    * Creates a list of Fake Upload keys for the day before.
-   * If there are already upload keys in the table, generate keys only between latest submission timestamp and
-   * yesterday.
-   * -> No keys in the DB: Generates keys from Now-49h until Now-25h
-   * -> Keys in the DB: Generates keys from Last Timestamp until Now-25h
-   * Keys need to be created with 1 full day + 2 hour offset to make sure that they are expired.
-   * For each hour free N Diagnosis Keys will be created.
-   * Where N is defined by property services.upload.test-data.keys-per-hour
-   * @return List of Federation Upload Keys generated
+   * Number of keys generated is defined by the following formula:
+   *  <i>upload.test-data.max-pending-keys</i> - <i>number pending keys in DB</i>
+   * Where <i>pending key in DB</i> is any key where <i>batch_tag</i> is NULL.
+   * @return List of Federation Upload Keys generated.
    */
-  private List<FederationUploadKey> generateFakeKeysForYesterday() {
-    long latestStartTimestamp = keyRepository.getMaxSubmissionTimestamp().orElse(0L) + 1;
-    int keysToGeneratePerHour = this.uploadServiceConfig.getTestData().getKeysPerHour();
+  private List<FederationUploadKey> generateFakeKeysForPreviousDay() {
+    int pendingKeys = keyRepository.countPendingKeys();
+    int maxPendingKeys = this.uploadServiceConfig.getTestData().getMaxPendingKeys();
+    logger.info("Found {} pending upload keys on DB", pendingKeys);
+    int numberOfKeysToGenerate = maxPendingKeys - pendingKeys;
 
-    LocalDateTime upperHour = getCurrentTimestampTruncatedHour()
-        .minusDays(1L)
-        .minusHours(2L);
-    LocalDateTime lowerHour = upperHour
-        .minusDays(1L);
+    if (numberOfKeysToGenerate > 0) {
+      LocalDateTime upperHour = getCurrentTimestampTruncatedHour()
+          .minusDays(1L)
+          .minusHours(2L);
+      LocalDateTime lowerHour = upperHour
+          .minusDays(1L);
 
-    long hourStart = secondsToHours(lowerHour.toEpochSecond(ZoneOffset.UTC));
-    if (hourStart < latestStartTimestamp) {
-      hourStart = latestStartTimestamp;
-    }
-    long hourEnd = secondsToHours(upperHour.toEpochSecond(ZoneOffset.UTC));
+      long hourStart = secondsToHours(lowerHour.toEpochSecond(ZoneOffset.UTC));
+      long hourEnd = secondsToHours(upperHour.toEpochSecond(ZoneOffset.UTC));
 
-    long keysToGenerate = keysToGeneratePerHour * (hourEnd - hourStart);
-    if (keysToGenerate > 0) {
-      logger.info("Generating {} upload keys between hours {} and {}",
-          keysToGenerate,
+      logger.info("Generating {} fake upload keys between times {} and {}",
+          numberOfKeysToGenerate,
           hourStart,
           hourEnd);
-      return LongStream.range(hourStart, hourEnd)
-          .mapToObj(i -> this.makeKeysFromTimestamp(i, keysToGeneratePerHour))
-          .flatMap(Collection::stream)
+      var random = ThreadLocalRandom.current();
+      return IntStream.range(0, numberOfKeysToGenerate)
+          .mapToObj(ignoredValue -> this.makeKeyFromTimestamp(random.nextLong(hourStart, hourEnd)))
           .collect(Collectors.toList());
     } else {
-      logger.info("Keys for earliest distributable hour already generated, skipping generation");
+      logger.info("Skipping generation");
       return Collections.emptyList();
     }
   }
@@ -179,7 +167,7 @@ public class TestDataGeneration implements ApplicationRunner {
 
   @Override
   public void run(ApplicationArguments args) {
-    var fakeKeys = generateFakeKeysForYesterday();
+    var fakeKeys = generateFakeKeysForPreviousDay();
     logger.info("Storing keys in the DB");
     this.storeUploadKeys(fakeKeys);
     logger.info("Finished Test Data Generation Step");

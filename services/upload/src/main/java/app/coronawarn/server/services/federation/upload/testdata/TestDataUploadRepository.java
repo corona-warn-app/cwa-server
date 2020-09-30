@@ -52,6 +52,6 @@ public interface TestDataUploadRepository
       @Param("days_since_onset_of_symptoms") int daysSinceOnsetOfSymptoms,
       @Param("consent_to_federation") boolean consentToFederation);
 
-  @Query("SELECT MAX(submission_timestamp) FROM federation_upload_key")
-  Optional<Long> getMaxSubmissionTimestamp();
+  @Query("SELECT COUNT(*) FROM federation_upload_key WHERE batch_tag IS NULL")
+  Integer countPendingKeys();
 }
