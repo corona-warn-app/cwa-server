@@ -35,9 +35,10 @@ import java.util.Random;
 public class SubmissionPayloadGenerator {
 
   private int numberOfKeys = 10;
-  private int transmissionRiskLevel = 4;
-  private int rollingStartIntervalNumber = 144;
+  private int transmissionRiskLevel = 6;
+  private int rollingPeriod = 144; // 24*60/10
   private ReportType reportType = ReportType.CONFIRMED_CLINICAL_DIAGNOSIS;
+  private ByteString requestPadding = ByteString.copyFrom(new byte[100]);
   private final List<String> visitedCountries = List.of("DE", "FR");
   private String originCountry = "DE";
   private boolean consentToFederation = true;
@@ -48,43 +49,44 @@ public class SubmissionPayloadGenerator {
   }
 
   public void writeSubmissionPayloadProtobufFile() throws IOException {
-    createValidSubmissionPayload().writeTo(new FileOutputStream("services/submission/src/test/resources/payload/mobile-client-payload.pb"));
+    buildSubmissionPayload()
+        .writeTo(new FileOutputStream("services/submission/src/test/resources/payload/mobile-client-payload.pb"));
   }
 
-  public SubmissionPayload createValidSubmissionPayload() throws IOException {
-    LocalDateTime startDate = LocalDateTime.now();
-    startDate.minusDays(11);
+  public SubmissionPayload buildSubmissionPayload() {
+    LocalDateTime now = LocalDateTime.now();
+    LocalDateTime todayMidnight = LocalDateTime.of(now.getYear(), now.getMonth(), now.getDayOfMonth() - numberOfKeys, 0, 0);
 
-    List<TemporaryExposureKey> temporaryExposureKeys = createTemporaryExposureKeys(numberOfKeys, startDate,
-        transmissionRiskLevel, rollingStartIntervalNumber,
+    List<TemporaryExposureKey> temporaryExposureKeys = buildTemporaryExposureKeys(numberOfKeys, todayMidnight,
+        transmissionRiskLevel, rollingPeriod,
         reportType);
 
-    SubmissionPayload.Builder submissionPayload = SubmissionPayload.newBuilder();
-    submissionPayload.addAllKeys(temporaryExposureKeys);
-    submissionPayload.setRequestPadding(ByteString.copyFrom(new byte[100]));
-    submissionPayload.addAllVisitedCountries(visitedCountries);
-    submissionPayload.setOrigin(originCountry);
-    submissionPayload.setConsentToFederation(consentToFederation);
-
-    return submissionPayload.build();
+    return SubmissionPayload.newBuilder()
+        .addAllKeys(temporaryExposureKeys)
+        .setRequestPadding(requestPadding)
+        .addAllVisitedCountries(visitedCountries)
+        .setOrigin(originCountry)
+        .setConsentToFederation(consentToFederation)
+        .build();
   }
 
-  private List<TemporaryExposureKey> createTemporaryExposureKeys(int numberOfKeys, LocalDateTime startDate,
-      int transmissionRiskLevel, int rollingStartIntervalNumber, ReportType reportType) {
+  private List<TemporaryExposureKey> buildTemporaryExposureKeys(int numberOfKeys, LocalDateTime todayMidnight,
+      int transmissionRiskLevel, int rollingPeriod, ReportType reportType) {
     List<TemporaryExposureKey> temporaryExposureKeys = new ArrayList<>();
+
     for (int i = 0; i < numberOfKeys; i++) {
       byte[] keyData = new byte[16];
       Random random = new Random();
       random.nextBytes(keyData);
 
-      TemporaryExposureKey.Builder key = TemporaryExposureKey.newBuilder();
-      key.setKeyData(ByteString.copyFrom(keyData));
-      key.setTransmissionRiskLevel(transmissionRiskLevel);
-      key.setRollingStartIntervalNumber((int) startDate.toEpochSecond(ZoneOffset.UTC) + rollingStartIntervalNumber * i);
-      key.setRollingPeriod(rollingStartIntervalNumber);
-      key.setReportType(reportType);
-
-      temporaryExposureKeys.add(key.build());
+      TemporaryExposureKey temporaryExposureKey = TemporaryExposureKey.newBuilder()
+          .setKeyData(ByteString.copyFrom(keyData))
+          .setTransmissionRiskLevel(transmissionRiskLevel)
+          .setRollingStartIntervalNumber((int) todayMidnight.toEpochSecond(ZoneOffset.UTC)/600 + rollingPeriod * i)
+          .setRollingPeriod(rollingPeriod)
+          .setReportType(reportType)
+          .build();
+      temporaryExposureKeys.add(temporaryExposureKey);
     }
     return temporaryExposureKeys;
   }
