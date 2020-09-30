@@ -37,7 +37,7 @@ import org.springframework.test.context.ActiveProfiles;
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @ActiveProfiles({"disable-ssl-client-verification", "disable-ssl-client-verification-verify-hostname"})
 
-public class CallbackControllerTest {
+class CallbackControllerTest {
 
   @Autowired
   private RequestExecutor executor;
