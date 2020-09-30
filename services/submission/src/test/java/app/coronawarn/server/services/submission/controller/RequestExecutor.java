@@ -78,4 +78,32 @@ public class RequestExecutor {
         .withoutCwaFake()
         .build();
   }
+
+  public static TemporaryExposureKey buildTemporaryExposureKey(
+      String keyData, int rollingStartIntervalNumber, int transmissionRiskLevel) {
+    return TemporaryExposureKey.newBuilder()
+        .setKeyData(ByteString.copyFromUtf8(keyData))
+        .setRollingStartIntervalNumber(rollingStartIntervalNumber)
+        .setTransmissionRiskLevel(transmissionRiskLevel).build();
+  }
+
+  public static TemporaryExposureKey buildTemporaryExposureKeyWithFlexibleRollingPeriod(
+      String keyData, int rollingStartIntervalNumber, int transmissionRiskLevel, int rollingPeriod) {
+    return TemporaryExposureKey.newBuilder()
+        .setKeyData(ByteString.copyFromUtf8(keyData))
+        .setRollingStartIntervalNumber(rollingStartIntervalNumber)
+        .setTransmissionRiskLevel(transmissionRiskLevel)
+        .setRollingPeriod(rollingPeriod).build();
+  }
+
+  public static int createRollingStartIntervalNumber(Integer daysAgo) {
+    return Math.toIntExact(LocalDate
+        .ofInstant(Instant.now(), UTC)
+        .minusDays(daysAgo).atStartOfDay()
+        .toEpochSecond(UTC) / (60 * 10));
+  }
+
+  public static Collection<TemporaryExposureKey> buildPayloadWithOneKey() {
+    return Collections.singleton(buildTemporaryExposureKey(VALID_KEY_DATA_1, createRollingStartIntervalNumber(1), 3));
+  }
 }

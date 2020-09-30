@@ -36,6 +36,7 @@ import static org.springframework.http.HttpStatus.FORBIDDEN;
 import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
 import static org.springframework.http.HttpStatus.METHOD_NOT_ALLOWED;
 import static org.springframework.http.HttpStatus.OK;
+import static app.coronawarn.server.services.submission.assertions.SubmissionAssertions.*;
 
 import app.coronawarn.server.common.persistence.domain.DiagnosisKey;
 import app.coronawarn.server.common.persistence.service.DiagnosisKeyService;
@@ -44,11 +45,15 @@ import app.coronawarn.server.common.protocols.internal.SubmissionPayload;
 import app.coronawarn.server.services.submission.config.SubmissionServiceConfig;
 import app.coronawarn.server.services.submission.monitoring.SubmissionMonitor;
 import app.coronawarn.server.services.submission.verification.TanVerifier;
+import com.google.protobuf.ByteString;
+
+import java.time.Instant;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import org.apache.commons.lang3.tuple.Pair;
@@ -94,21 +99,6 @@ class SubmissionControllerTest {
   @Autowired
   private SubmissionServiceConfig config;
 
-  private static Stream<Arguments> createIncompleteHeaders() {
-    return Stream.of(
-        Arguments.of(HttpHeaderBuilder.builder().build()),
-        Arguments.of(HttpHeaderBuilder.builder().contentTypeProtoBuf().build()),
-        Arguments.of(HttpHeaderBuilder.builder().contentTypeProtoBuf().withoutCwaFake().build()),
-        Arguments.of(HttpHeaderBuilder.builder().contentTypeProtoBuf().cwaAuth().build()));
-  }
-
-  private static Stream<Arguments> createDeniedHttpMethods() {
-    return Arrays.stream(HttpMethod.values())
-        .filter(method -> method != HttpMethod.POST)
-        .filter(method -> method != HttpMethod.PATCH) /* not supported by Rest Template */
-        .map(Arguments::of);
-  }
-
   @BeforeEach
   public void setUpMocks() {
     when(tanVerifier.verifyTan(anyString())).thenReturn(true);
@@ -127,9 +117,10 @@ class SubmissionControllerTest {
     assertThat(actResponse.getStatusCode()).isEqualTo(OK);
   }
 
-  @Test
-  void check400ResponseStatusForInvalidKeys() {
-    ResponseEntity<Void> actResponse = executor.executePost(buildPayloadWithInvalidKey());
+  @ParameterizedTest
+  @MethodSource({"buildPayloadWithInvalidKeys"})
+  void check400ResponseStatusForInvalidKeys(SubmissionPayload invalidPayload ) {
+    ResponseEntity<Void> actResponse = executor.executePost(invalidPayload);
     assertThat(actResponse.getStatusCode()).isEqualTo(BAD_REQUEST);
   }
 
