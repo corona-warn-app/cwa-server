@@ -30,7 +30,6 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 import java.util.Arrays;
 import java.util.List;
-import java.util.stream.Collectors;
 import javax.validation.Constraint;
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
@@ -89,8 +88,7 @@ public @interface ValidSubmissionPayload {
       validatorContext.disableDefaultConstraintViolation();
 
       if (keysHaveFlexibleRollingPeriod(exposureKeys)) {
-        return checkStartIntervalNumberIsAtMidNight(exposureKeys, validatorContext)
-            && checkKeysCumulateEqualOrLessThanMaxRollingPeriodPerDay(exposureKeys, validatorContext);
+        return checkStartIntervalNumberIsAtMidNight(exposureKeys, validatorContext);
       } else {
         return checkStartIntervalNumberIsAtMidNight(exposureKeys, validatorContext)
             && checkKeyCollectionSize(exposureKeys, validatorContext)
@@ -123,22 +121,6 @@ public @interface ValidSubmissionPayload {
       if (distinctSize < exposureKeys.size()) {
         addViolation(validatorContext, String.format(
             "Duplicate StartIntervalNumber found. StartIntervalNumbers: %s", startIntervalNumbers));
-        return false;
-      }
-      return true;
-    }
-
-    private boolean checkKeysCumulateEqualOrLessThanMaxRollingPeriodPerDay(List<TemporaryExposureKey> exposureKeys,
-        ConstraintValidatorContext validatorContext) {
-
-      boolean isValidRollingPeriod = exposureKeys.stream().collect(Collectors
-          .groupingBy(TemporaryExposureKey::getRollingStartIntervalNumber,
-              Collectors.summingInt(TemporaryExposureKey::getRollingPeriod)))
-          .values().stream()
-          .anyMatch(sum -> sum <= maxRollingPeriod);
-
-      if (!isValidRollingPeriod) {
-        addViolation(validatorContext, "The sum of the rolling periods exceeds 144 per day");
         return false;
       }
       return true;
