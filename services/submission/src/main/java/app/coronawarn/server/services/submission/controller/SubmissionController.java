@@ -196,7 +196,6 @@ public class SubmissionController {
 
   private SubmissionPayload enhanceWithDefaultValuesIfMissing(SubmissionPayload submissionPayload) {
     String originCountry = defaultIfEmptyOriginCountry(submissionPayload.getOrigin());
-
     List<String> visitedCountries = extendVisitedCountriesWithOriginCountry(
         submissionPayload.getVisitedCountriesList(), originCountry);
 

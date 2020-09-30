@@ -20,6 +20,8 @@
 
 package app.coronawarn.server.services.submission.integration;
 
+import static app.coronawarn.server.services.submission.SubmissionPayloadGenerator.buildSubmissionPayload;
+import static app.coronawarn.server.services.submission.SubmissionPayloadGenerator.buildTemporaryExposureKeys;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
@@ -30,12 +32,20 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
+import app.coronawarn.server.common.protocols.external.exposurenotification.ReportType;
+import app.coronawarn.server.services.submission.SubmissionPayloadGenerator;
+import com.google.protobuf.ByteString;
 import org.apache.tomcat.util.buf.StringUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -113,6 +123,90 @@ class SubmissionPersistenceIT {
 
     assertEquals(payload.getKeysList().size(), result);
     assertElementsCorrespondToEachOther(payload, diagnosisKeyService.getDiagnosisKeys(), config);
+  }
+
+  @ParameterizedTest
+  @MethodSource("validSubmissionPayload")
+  void testKeyInsertionWithMobileClientProtoBuf(List<String> visitedCountries, String originCountry,
+      boolean consentToFederation) throws IOException {
+    int numberOfKeys = 10;
+    int transmissionRiskLevel = 6;
+    int rollingPeriod = 144; // 24*60/10
+    ReportType reportType = ReportType.CONFIRMED_CLINICAL_DIAGNOSIS;
+    ByteString requestPadding = ByteString.copyFrom(new byte[100]);
+    int daysSinceOnsetOfSymptoms = 0;
+
+    LocalDateTime now = LocalDateTime.now();
+    LocalDateTime todayMidnight = LocalDateTime
+        .of(now.getYear(), now.getMonth(), now.getDayOfMonth() - numberOfKeys, 0, 0);
+
+    List<TemporaryExposureKey> temporaryExposureKeys = buildTemporaryExposureKeys(numberOfKeys, todayMidnight,
+        transmissionRiskLevel, rollingPeriod, reportType, daysSinceOnsetOfSymptoms);
+    SubmissionPayload submissionPayload = buildSubmissionPayload(temporaryExposureKeys, requestPadding,
+        visitedCountries, originCountry, consentToFederation);
+
+    SubmissionPayloadGenerator submissionPayloadGenerator = new SubmissionPayloadGenerator();
+    submissionPayloadGenerator.writeSubmissionPayloadProtobufFile(submissionPayload);
+
+    Path path = Paths.get("src/test/resources/payload/mobile-client-payload.pb");
+    InputStream input = new FileInputStream(path.toFile());
+    SubmissionPayload payload = SubmissionPayload.parseFrom(input);
+
+    logger.info("Submitting payload: " + System.lineSeparator()
+        + JsonFormat.printer().preservingProtoFieldNames().omittingInsignificantWhitespace().print(payload));
+
+    executor.executePost(payload);
+
+    String presenceVerificationSql = generateDebugSqlStatement(payload);
+    logger.info("SQL debugging statement: " + System.lineSeparator() + presenceVerificationSql);
+    Integer result = jdbcTemplate.queryForObject(presenceVerificationSql, Integer.class);
+
+    assertEquals(payload.getKeysList().size(), result);
+    assertElementsCorrespondToEachOther(payload, diagnosisKeyService.getDiagnosisKeys(), config);
+  }
+
+  private static Stream<Arguments> validSubmissionPayload() {
+    return Stream.of(
+        Arguments.of(List.of("DE"), "DE", true),
+        Arguments.of(List.of("DE"), "DE", false),
+        Arguments.of(List.of("DE", "IT"), "DE", true),
+        Arguments.of(List.of("DE", "IT"), "DE", false),
+        Arguments.of(List.of("DE"), "IT", true),
+        Arguments.of(List.of("DE"), "IT", false),
+        Arguments.of(List.of("IT"), "", true),
+        Arguments.of(List.of("IT"), "", false),
+        Arguments.of(List.of("IT"), "DE", true),
+        Arguments.of(List.of("IT"), "DE", false),
+        Arguments.of(List.of("IT"), "IT", true),
+        Arguments.of(List.of("IT", "DE"), "IT", false)
+    );
+  }
+
+  private static Stream<Arguments> invalidSubmissionPayload() {
+    return Stream.of(
+        Arguments.of(List.of(""), "", null),
+        Arguments.of(List.of(""), "", true),
+        Arguments.of(List.of(""), "", false),
+        Arguments.of(List.of(""), "DE", null),
+        Arguments.of(List.of(""), "DE", true),
+        Arguments.of(List.of(""), "DE", false),
+        Arguments.of(List.of(""), "IT", null),
+        Arguments.of(List.of(""), "IT", true),
+        Arguments.of(List.of(""), "IT", false),
+        Arguments.of(List.of("DE"), "", null),
+        Arguments.of(List.of("DE"), "", true),
+        Arguments.of(List.of("DE"), "", false),
+        Arguments.of(List.of("DE"), "DE", null),
+        Arguments.of(List.of("DE,IT"), "DE", null),
+        Arguments.of(List.of("DE"), "IT", null),
+        Arguments.of(List.of("DE"), "IT", true),
+        Arguments.of(List.of("DE"), "IT", false),
+        Arguments.of(List.of("IT"), "", null),
+        Arguments.of(List.of("IT"), "", true),
+        Arguments.of(List.of("IT"), "", false),
+        Arguments.of(List.of("IT"), "DE", null),
+        Arguments.of(List.of("IT"), "IT", null)
+    );
   }
 
   private String generateDebugSqlStatement(SubmissionPayload payload) {

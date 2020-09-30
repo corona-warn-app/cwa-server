@@ -60,7 +60,7 @@ public class SubmissionPayloadGenerator {
 
   public void writeSubmissionPayloadProtobufFile(SubmissionPayload submissionPayload) throws IOException {
     submissionPayload
-        .writeTo(new FileOutputStream("services/submission/src/test/resources/payload/mobile-client-payload.pb"));
+        .writeTo(new FileOutputStream("src/test/resources/payload/mobile-client-payload.pb"));
   }
 
   public static SubmissionPayload buildSubmissionPayload(List<TemporaryExposureKey> temporaryExposureKeys,
