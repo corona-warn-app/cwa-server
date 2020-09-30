@@ -125,8 +125,8 @@ public class DiagnosisKeyBatchAssembler {
         .setTransmissionRiskLevel(key.getTransmissionRiskLevel())
         .addAllVisitedCountries(key.getVisitedCountries())
         .setOrigin(key.getOriginCountry())
-        .setReportType(this.allowedPropertiesMap.getReportTypeIfAllowed(key.getReportType()))
-        .setDaysSinceOnsetOfSymptoms(this.allowedPropertiesMap.getDsosIfAllowed(key.getDaysSinceOnsetOfSymptoms()))
+        .setReportType(this.allowedPropertiesMap.getReportTypeOrDefault(key.getReportType()))
+        .setDaysSinceOnsetOfSymptoms(this.allowedPropertiesMap.getDsosOrDefault(key.getDaysSinceOnsetOfSymptoms()))
         .build();
   }
 }

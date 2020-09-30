@@ -173,8 +173,8 @@ class DiagnosisKeyBatchAssemblerTest {
 
     @Test
     void shouldNotSendDsosOrReportTypeIfNotAllowed() {
-      when(allowedPropertiesMapMock.getDsosIfAllowed(anyInt())).thenReturn(1);
-      when(allowedPropertiesMapMock.getReportTypeIfAllowed(any())).thenReturn(ReportType.UNKNOWN);
+      when(allowedPropertiesMapMock.getDsosOrDefault(anyInt())).thenReturn(1);
+      when(allowedPropertiesMapMock.getReportTypeOrDefault(any())).thenReturn(ReportType.UNKNOWN);
       var keys = generateRandomUploadKeys(true, 10);
       var result = diagnosisKeyBatchAssembler.assembleDiagnosisKeyBatch(keys);
       result.forEach((batch, diagnosisKeys) -> diagnosisKeys
