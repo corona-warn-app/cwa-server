@@ -34,12 +34,12 @@ import app.coronawarn.server.services.submission.verification.TanVerifier;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-
 import org.assertj.core.util.Lists;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -82,6 +82,68 @@ class PayloadValidationTest {
     return tooMany;
   }
 
+  @ParameterizedTest
+  @ValueSource(ints = {-15, -100, 4001})
+  void check400ResponseStatusForDsosNotInRange(int invalidDsosValue) {
+    ResponseEntity<Void> actResponse = executor.executePost(buildKeysWithDaysSinceSymptoms(invalidDsosValue));
+    assertThat(actResponse.getStatusCode()).isEqualTo(BAD_REQUEST);
+  }
+
+  @ParameterizedTest
+  @ValueSource(ints = {-14, -9, 0, 3896})
+  void check200ResponseStatusForDsosInRange(int validDsosValue) {
+    ResponseEntity<Void> actResponse = executor.executePost(buildKeysWithDaysSinceSymptoms(validDsosValue));
+    assertThat(actResponse.getStatusCode()).isEqualTo(OK);
+  }
+
+  private Collection<TemporaryExposureKey>  buildKeysWithDaysSinceSymptoms(int dsos) {
+    return List.of(buildTemporaryExposureKey(VALID_KEY_DATA_1, createRollingStartIntervalNumber(2), 3,
+        ReportType.CONFIRMED_CLINICAL_DIAGNOSIS, dsos),
+        // also add a key without DSOS since this can happen in production and should be supported
+        buildTemporaryExposureKey(VALID_KEY_DATA_1,
+            createRollingStartIntervalNumber(2) + DiagnosisKey.MAX_ROLLING_PERIOD, 3,
+            ReportType.CONFIRMED_CLINICAL_DIAGNOSIS, null));
+  }
+
+  private Collection<TemporaryExposureKey>  buildKeysWithoutDaysSinceSymptomsAndTransmissionRiskLevel() {
+    return List.of(
+        buildTemporaryExposureKey(VALID_KEY_DATA_1, createRollingStartIntervalNumber(2), null,
+            ReportType.CONFIRMED_CLINICAL_DIAGNOSIS, null),
+        // also add a key without DSOS since this can happen in production and should be supported
+        buildTemporaryExposureKey(VALID_KEY_DATA_1,
+            createRollingStartIntervalNumber(2) + +DiagnosisKey.MAX_ROLLING_PERIOD, null,
+            ReportType.CONFIRMED_CLINICAL_DIAGNOSIS, null));
+  }
+
+  @ParameterizedTest
+  @ValueSource(ints = {-1, 9, 12})
+  void check400ResponseStatusForTrlNotAccepted(int invalidTrlValue) {
+    ResponseEntity<Void> actResponse = executor.executePost(buildKeysWithTransmissionRiskLevel(invalidTrlValue));
+    assertThat(actResponse.getStatusCode()).isEqualTo(BAD_REQUEST);
+  }
+
+  @ParameterizedTest
+  @ValueSource(ints = {1, 3, 5, 6, 8})
+  void check200ResponseStatusForTrlAccepted(int validTrlValue) {
+    ResponseEntity<Void> actResponse = executor.executePost(buildKeysWithTransmissionRiskLevel(validTrlValue));
+    assertThat(actResponse.getStatusCode()).isEqualTo(OK);
+  }
+
+  private Collection<TemporaryExposureKey> buildKeysWithTransmissionRiskLevel(int trl) {
+    return List.of(buildTemporaryExposureKey(VALID_KEY_DATA_1, createRollingStartIntervalNumber(2), trl,
+        ReportType.CONFIRMED_CLINICAL_DIAGNOSIS, 1),
+        // also add a key without TRL since this can happen in production and should be supported
+        buildTemporaryExposureKey(VALID_KEY_DATA_1,
+            createRollingStartIntervalNumber(2) + +DiagnosisKey.MAX_ROLLING_PERIOD, null,
+            ReportType.CONFIRMED_CLINICAL_DIAGNOSIS, 1));
+  }
+
+  @Test
+  void check400ResponseStatusForMissingTrlAndDsos() {
+    ResponseEntity<Void> actResponse = executor.executePost(buildKeysWithoutDaysSinceSymptomsAndTransmissionRiskLevel());
+    assertThat(actResponse.getStatusCode()).isEqualTo(BAD_REQUEST);
+  }
+
   @Test
   void check400ResponseStatusForKeysWithFixedRollingPeriodAndDuplicateStartIntervals() {
     int rollingStartIntervalNumber = createRollingStartIntervalNumber(2);
@@ -103,7 +165,7 @@ class PayloadValidationTest {
     var keysWithGapsInStartIntervalNumber = Lists.list(
         buildTemporaryExposureKey(VALID_KEY_DATA_1, rollingStartIntervalNumber1, 1, ReportType.CONFIRMED_CLINICAL_DIAGNOSIS,1),
         buildTemporaryExposureKey(VALID_KEY_DATA_3, rollingStartIntervalNumber3, 3, ReportType.CONFIRMED_CLINICAL_DIAGNOSIS,1),
-        buildTemporaryExposureKey(VALID_KEY_DATA_2, rollingStartIntervalNumber2, 2, ReportType.CONFIRMED_CLINICAL_DIAGNOSIS,1));
+        buildTemporaryExposureKey(VALID_KEY_DATA_2, rollingStartIntervalNumber2, 3, ReportType.CONFIRMED_CLINICAL_DIAGNOSIS,1));
 
     ResponseEntity<Void> actResponse = executor.executePost(keysWithGapsInStartIntervalNumber);
 
@@ -119,7 +181,7 @@ class PayloadValidationTest {
         buildTemporaryExposureKeyWithFlexibleRollingPeriod(VALID_KEY_DATA_1, rollingStartIntervalNumber1, 1, 54),
         buildTemporaryExposureKeyWithFlexibleRollingPeriod(VALID_KEY_DATA_1, rollingStartIntervalNumber1, 1, 90),
         buildTemporaryExposureKeyWithFlexibleRollingPeriod(VALID_KEY_DATA_3, rollingStartIntervalNumber3, 3, 133),
-        buildTemporaryExposureKeyWithFlexibleRollingPeriod(VALID_KEY_DATA_2, rollingStartIntervalNumber2, 2, 144));
+        buildTemporaryExposureKeyWithFlexibleRollingPeriod(VALID_KEY_DATA_2, rollingStartIntervalNumber2, 3, 144));
 
     ResponseEntity<Void> actResponse = executor.executePost(keysWithGapsInStartIntervalNumber);
 

@@ -235,6 +235,21 @@ class DiagnosisKeyBuilderTest {
   }
 
   @ParameterizedTest
+  @ValueSource(ints = {-15, -17, 4001})
+  void daysSinceOnsetSyptomsMustBeInRange(int invalidDsos) {
+    assertThat(catchThrowable(() -> keyWithDsos(invalidDsos)))
+        .isInstanceOf(InvalidDiagnosisKeyException.class)
+        .hasMessage(
+            "[Days since onset of symptoms value must be between -14 and 4000. Invalid Value: " + invalidDsos + "]");
+  }
+
+  @ParameterizedTest
+  @ValueSource(ints = {0, 8, -14, 3986})
+  void daysSinceOnsetSyptomsValidationDoesNotThrowForValid(int validDsos) {
+    assertThatCode(() -> keyWithDsos(validDsos)).doesNotThrowAnyException();
+  }
+
+  @ParameterizedTest
   @ValueSource(ints = {-3, 145})
   void rollingPeriodMustBeExpectedValue(int invalidRollingPeriod) {
     assertThat(catchThrowable(() -> keyWithRollingPeriod(invalidRollingPeriod)))
@@ -355,6 +370,14 @@ class DiagnosisKeyBuilderTest {
         .withKeyData(expKeyData)
         .withRollingStartIntervalNumber(expRollingStartIntervalNumber)
         .withTransmissionRiskLevel(expTransmissionRiskLevel).build();
+  }
+
+  private DiagnosisKey keyWithDsos(int dsos) {
+    return DiagnosisKey.builder()
+        .withKeyData(expKeyData)
+        .withRollingStartIntervalNumber(expRollingStartIntervalNumber)
+        .withTransmissionRiskLevel(expTransmissionRiskLevel)
+        .withDaysSinceOnsetOfSymptoms(dsos).build();
   }
 
   private void assertDiagnosisKeyEquals(DiagnosisKey actDiagnosisKey) {
