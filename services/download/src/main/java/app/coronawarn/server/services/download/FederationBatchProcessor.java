@@ -65,7 +65,8 @@ public class FederationBatchProcessor {
    * @param federationGatewayDownloadService A {@link FederationGatewayDownloadService} for retrieving federation
    *                                         diagnosis key batches.
    * @param config                           A {@link DownloadServiceConfig} for retrieving federation configuration.
-   * @param federationKeyValidator           A {@link ValidFederationKeyFilter} for validating keys in the downloaded batches
+   * @param federationKeyValidator           A {@link ValidFederationKeyFilter} for validating keys in the downloaded
+   *                                         batches
    */
   public FederationBatchProcessor(FederationBatchInfoService batchInfoService,
       DiagnosisKeyService diagnosisKeyService, FederationGatewayDownloadService federationGatewayDownloadService,
