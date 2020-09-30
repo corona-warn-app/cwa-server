@@ -153,16 +153,6 @@ public class ProdDiagnosisKeyBundler extends DiagnosisKeyBundler {
   }
 
   /**
-   * Returns the end of the rolling time window that a {@link DiagnosisKey} was active for as a {@link LocalDateTime}.
-   * The ".plusDays(1L)" is used as there can be now diagnosis keys with rollingPeriod set to less than 1 day.
-   */
-  private LocalDateTime getExpiryDateTime(DiagnosisKey diagnosisKey) {
-    return LocalDateTime
-        .ofEpochSecond(diagnosisKey.getRollingStartIntervalNumber() * TEN_MINUTES_INTERVAL_SECONDS, 0, UTC)
-        .plusDays(1L);
-  }
-
-  /**
    * Calculates the earliest point in time at which the specified {@link DiagnosisKey} can be distributed, while
    * respecting the expiry policy and the submission timestamp. Before keys are allowed to be distributed, they must be
    * expired for a configured amount of time.
