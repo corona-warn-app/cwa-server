@@ -23,14 +23,21 @@ package app.coronawarn.server.services.submission.controller;
 import app.coronawarn.server.common.protocols.external.exposurenotification.TemporaryExposureKey;
 import app.coronawarn.server.common.protocols.internal.SubmissionPayload;
 import java.net.URI;
+import java.time.Instant;
+import java.time.LocalDate;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
+import com.google.protobuf.ByteString;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.RequestEntity;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
+
+import static app.coronawarn.server.services.submission.controller.SubmissionPayloadMockData.VALID_KEY_DATA_1;
+import static java.time.ZoneOffset.UTC;
 
 /**
  * RequestExecutor executes requests against the diagnosis key submission endpoint and holds a various methods for test

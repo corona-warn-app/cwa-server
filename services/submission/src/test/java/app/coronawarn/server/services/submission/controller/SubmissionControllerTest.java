@@ -20,18 +20,8 @@
 
 package app.coronawarn.server.services.submission.controller;
 
-import static app.coronawarn.server.services.submission.controller.SubmissionPayloadMockData.VALID_KEY_DATA_2;
-import static app.coronawarn.server.services.submission.controller.SubmissionPayloadMockData.buildMultipleKeys;
-import static app.coronawarn.server.services.submission.controller.SubmissionPayloadMockData.buildMultipleKeysWithoutDSOS;
-import static app.coronawarn.server.services.submission.controller.SubmissionPayloadMockData.buildMultipleKeysWithoutDSOSAndTRL;
-import static app.coronawarn.server.services.submission.controller.SubmissionPayloadMockData.buildMultipleKeysWithoutTRL;
-import static app.coronawarn.server.services.submission.controller.SubmissionPayloadMockData.buildPayload;
-import static app.coronawarn.server.services.submission.controller.SubmissionPayloadMockData.buildPayloadWithInvalidOriginCountry;
-import static app.coronawarn.server.services.submission.controller.SubmissionPayloadMockData.buildPayloadWithOneKey;
-import static app.coronawarn.server.services.submission.controller.SubmissionPayloadMockData.buildPayloadWithPadding;
-import static app.coronawarn.server.services.submission.controller.SubmissionPayloadMockData.buildPayloadWithTooLargePadding;
-import static app.coronawarn.server.services.submission.controller.SubmissionPayloadMockData.buildPayloadWithVisitedCountries;
-import static app.coronawarn.server.services.submission.controller.SubmissionPayloadMockData.createRollingStartIntervalNumber;
+import static app.coronawarn.server.services.submission.controller.SubmissionPayloadMockData.*;
+import static app.coronawarn.server.services.submission.controller.SubmissionPayloadMockData.buildPayloadWithInvalidKey;
 import static org.apache.commons.lang3.StringUtils.defaultIfBlank;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
@@ -50,6 +40,7 @@ import static org.springframework.http.HttpStatus.OK;
 
 import app.coronawarn.server.common.persistence.domain.DiagnosisKey;
 import app.coronawarn.server.common.persistence.service.DiagnosisKeyService;
+import app.coronawarn.server.common.protocols.external.exposurenotification.ReportType;
 import app.coronawarn.server.common.protocols.external.exposurenotification.TemporaryExposureKey;
 import app.coronawarn.server.common.protocols.internal.SubmissionPayload;
 import app.coronawarn.server.services.submission.config.SubmissionServiceConfig;
@@ -123,10 +114,9 @@ class SubmissionControllerTest {
     assertThat(actResponse.getStatusCode()).isEqualTo(OK);
   }
 
-  @ParameterizedTest
-  @MethodSource({"buildPayloadWithInvalidKeys"})
-  void check400ResponseStatusForInvalidKeys(SubmissionPayload invalidPayload) {
-    ResponseEntity<Void> actResponse = executor.executePost(invalidPayload);
+  @Test
+  void check400ResponseStatusForInvalidKeys() {
+    ResponseEntity<Void> actResponse = executor.executePost(buildPayloadWithInvalidKey());
     assertThat(actResponse.getStatusCode()).isEqualTo(BAD_REQUEST);
   }
 
@@ -443,5 +433,27 @@ class SubmissionControllerTest {
         .filter(
             diagnosisKey -> temporaryExposureKey.getKeyData().equals(ByteString.copyFrom(diagnosisKey.getKeyData())))
         .findFirst().orElseThrow();
+  }
+
+  public static SubmissionPayload buildPayloadWithInvalidKey() {
+    TemporaryExposureKey invalidKey =
+        buildTemporaryExposureKey(VALID_KEY_DATA_1, createRollingStartIntervalNumber(2), 999,
+            ReportType.CONFIRMED_CLINICAL_DIAGNOSIS, 1);
+    return buildPayload(invalidKey);
+  }
+
+  private static Stream<Arguments> createIncompleteHeaders() {
+    return Stream.of(
+        Arguments.of(HttpHeaderBuilder.builder().build()),
+        Arguments.of(HttpHeaderBuilder.builder().contentTypeProtoBuf().build()),
+        Arguments.of(HttpHeaderBuilder.builder().contentTypeProtoBuf().withoutCwaFake().build()),
+        Arguments.of(HttpHeaderBuilder.builder().contentTypeProtoBuf().cwaAuth().build()));
+  }
+
+  private static Stream<Arguments> createDeniedHttpMethods() {
+    return Arrays.stream(HttpMethod.values())
+        .filter(method -> method != HttpMethod.POST)
+        .filter(method -> method != HttpMethod.PATCH) /* not supported by Rest Template */
+        .map(Arguments::of);
   }
 }

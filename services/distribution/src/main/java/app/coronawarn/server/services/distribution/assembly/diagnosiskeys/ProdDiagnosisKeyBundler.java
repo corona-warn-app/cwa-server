@@ -20,6 +20,7 @@
 
 package app.coronawarn.server.services.distribution.assembly.diagnosiskeys;
 
+import static java.time.ZoneOffset.UTC;
 import static java.util.Collections.emptyList;
 import static java.util.stream.Collectors.groupingBy;
 
