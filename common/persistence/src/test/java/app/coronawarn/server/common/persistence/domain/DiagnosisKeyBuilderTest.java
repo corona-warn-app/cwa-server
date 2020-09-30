@@ -235,16 +235,16 @@ class DiagnosisKeyBuilderTest {
   }
 
   @ParameterizedTest
-  @ValueSource(ints = {-15, -17, 18, 25})
+  @ValueSource(ints = {-15, -17, 4001})
   void daysSinceOnsetSyptomsMustBeInRange(int invalidDsos) {
     assertThat(catchThrowable(() -> keyWithDsos(invalidDsos)))
         .isInstanceOf(InvalidDiagnosisKeyException.class)
         .hasMessage(
-            "[Days since onset of symptoms value must be between -14 and 14. Invalid Value: " + invalidDsos + "]");
+            "[Days since onset of symptoms value must be between -14 and 4000. Invalid Value: " + invalidDsos + "]");
   }
 
   @ParameterizedTest
-  @ValueSource(ints = {0, 8, -14, 14})
+  @ValueSource(ints = {0, 8, -14, 3986})
   void daysSinceOnsetSyptomsValidationDoesNotThrowForValid(int validDsos) {
     assertThatCode(() -> keyWithDsos(validDsos)).doesNotThrowAnyException();
   }

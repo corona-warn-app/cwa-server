@@ -83,14 +83,14 @@ class PayloadValidationTest {
   }
 
   @ParameterizedTest
-  @ValueSource(ints = {-15, -100, 16, 20})
+  @ValueSource(ints = {-15, -100, 4001})
   void check400ResponseStatusForDsosNotInRange(int invalidDsosValue) {
     ResponseEntity<Void> actResponse = executor.executePost(buildKeysWithDaysSinceSymptoms(invalidDsosValue));
     assertThat(actResponse.getStatusCode()).isEqualTo(BAD_REQUEST);
   }
 
   @ParameterizedTest
-  @ValueSource(ints = {-14, -9, 0, 14})
+  @ValueSource(ints = {-14, -9, 0, 3896})
   void check200ResponseStatusForDsosInRange(int validDsosValue) {
     ResponseEntity<Void> actResponse = executor.executePost(buildKeysWithDaysSinceSymptoms(validDsosValue));
     assertThat(actResponse.getStatusCode()).isEqualTo(OK);
