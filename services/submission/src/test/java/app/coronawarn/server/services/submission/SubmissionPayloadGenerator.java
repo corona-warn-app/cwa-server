@@ -34,32 +34,38 @@ import java.util.Random;
 
 public class SubmissionPayloadGenerator {
 
-  private int numberOfKeys = 10;
-  private int transmissionRiskLevel = 6;
-  private int rollingPeriod = 144; // 24*60/10
-  private ReportType reportType = ReportType.CONFIRMED_CLINICAL_DIAGNOSIS;
-  private ByteString requestPadding = ByteString.copyFrom(new byte[100]);
-  private final List<String> visitedCountries = List.of("DE", "FR");
-  private String originCountry = "DE";
-  private boolean consentToFederation = true;
-
   public static void main(String[] args) throws IOException {
-    SubmissionPayloadGenerator submissionPayloadGenerator = new SubmissionPayloadGenerator();
-    submissionPayloadGenerator.writeSubmissionPayloadProtobufFile();
-  }
+    int numberOfKeys = 10;
+    int transmissionRiskLevel = 6;
+    int rollingPeriod = 144; // 24*60/10
+    ReportType reportType = ReportType.CONFIRMED_CLINICAL_DIAGNOSIS;
+    ByteString requestPadding = ByteString.copyFrom(new byte[100]);
+    final List<String> visitedCountries = List.of("DE", "FR");
+    String originCountry = "DE";
+    boolean consentToFederation = true;
 
-  public void writeSubmissionPayloadProtobufFile() throws IOException {
-    buildSubmissionPayload()
-        .writeTo(new FileOutputStream("services/submission/src/test/resources/payload/mobile-client-payload.pb"));
-  }
-
-  public SubmissionPayload buildSubmissionPayload() {
     LocalDateTime now = LocalDateTime.now();
-    LocalDateTime todayMidnight = LocalDateTime.of(now.getYear(), now.getMonth(), now.getDayOfMonth() - numberOfKeys, 0, 0);
+    LocalDateTime todayMidnight = LocalDateTime
+        .of(now.getYear(), now.getMonth(), now.getDayOfMonth() - numberOfKeys, 0, 0);
 
     List<TemporaryExposureKey> temporaryExposureKeys = buildTemporaryExposureKeys(numberOfKeys, todayMidnight,
         transmissionRiskLevel, rollingPeriod,
         reportType);
+    SubmissionPayload submissionPayload = buildSubmissionPayload(temporaryExposureKeys, requestPadding,
+        visitedCountries, originCountry, consentToFederation);
+
+    SubmissionPayloadGenerator submissionPayloadGenerator = new SubmissionPayloadGenerator();
+    submissionPayloadGenerator.writeSubmissionPayloadProtobufFile(submissionPayload);
+  }
+
+  public void writeSubmissionPayloadProtobufFile(SubmissionPayload submissionPayload) throws IOException {
+    submissionPayload
+        .writeTo(new FileOutputStream("services/submission/src/test/resources/payload/mobile-client-payload.pb"));
+  }
+
+  public static SubmissionPayload buildSubmissionPayload(List<TemporaryExposureKey> temporaryExposureKeys,
+      ByteString requestPadding,
+      List<String> visitedCountries, String originCountry, boolean consentToFederation) {
 
     return SubmissionPayload.newBuilder()
         .addAllKeys(temporaryExposureKeys)
@@ -70,7 +76,7 @@ public class SubmissionPayloadGenerator {
         .build();
   }
 
-  private List<TemporaryExposureKey> buildTemporaryExposureKeys(int numberOfKeys, LocalDateTime todayMidnight,
+  public static List<TemporaryExposureKey> buildTemporaryExposureKeys(int numberOfKeys, LocalDateTime todayMidnight,
       int transmissionRiskLevel, int rollingPeriod, ReportType reportType) {
     List<TemporaryExposureKey> temporaryExposureKeys = new ArrayList<>();
 
@@ -82,7 +88,7 @@ public class SubmissionPayloadGenerator {
       TemporaryExposureKey temporaryExposureKey = TemporaryExposureKey.newBuilder()
           .setKeyData(ByteString.copyFrom(keyData))
           .setTransmissionRiskLevel(transmissionRiskLevel)
-          .setRollingStartIntervalNumber((int) todayMidnight.toEpochSecond(ZoneOffset.UTC)/600 + rollingPeriod * i)
+          .setRollingStartIntervalNumber((int) todayMidnight.toEpochSecond(ZoneOffset.UTC) / 600 + rollingPeriod * i)
           .setRollingPeriod(rollingPeriod)
           .setReportType(reportType)
           .build();

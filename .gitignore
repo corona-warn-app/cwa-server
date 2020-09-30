@@ -43,3 +43,4 @@ out/
 
 pom.xml.versionsBackup
 **/.flattened-pom.xml
+/services/submission/src/test/resources/payload/mobile-client-payload.pb
