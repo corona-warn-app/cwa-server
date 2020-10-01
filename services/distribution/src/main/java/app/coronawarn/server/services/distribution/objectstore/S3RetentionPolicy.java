@@ -43,7 +43,7 @@ public class S3RetentionPolicy {
   private final ObjectStoreAccess objectStoreAccess;
   private final Api api;
   private final FailedObjectStoreOperationsCounter failedObjectStoreOperationsCounter;
-  private final Set<String> supportedCountries;
+  private final String originCountry;
   private final String euPackageName;
 
   /**
@@ -54,7 +54,7 @@ public class S3RetentionPolicy {
     this.objectStoreAccess = objectStoreAccess;
     this.api = distributionServiceConfig.getApi();
     this.failedObjectStoreOperationsCounter = failedOperationsCounter;
-    this.supportedCountries = Set.of(distributionServiceConfig.getSupportedCountries());
+    this.originCountry = distributionServiceConfig.getApi().getOriginCountry();
     this.euPackageName = distributionServiceConfig.getEuPackageName();
   }
 
@@ -64,14 +64,13 @@ public class S3RetentionPolicy {
    * @param retentionDays the number of days, that files should be retained on S3.
    */
   public void applyRetentionPolicy(int retentionDays) {
-    Set<String> countries = new HashSet<>(supportedCountries);
-    countries.add(euPackageName);
-    countries.forEach(supportedCountry -> {
+    Set<String> countries = Set.of(originCountry, euPackageName);
+    countries.forEach(country -> {
       List<S3Object> diagnosisKeysObjects = objectStoreAccess.getObjectsWithPrefix(api.getVersionPath() + "/"
           + api.getVersionV1() + "/"
           + api.getDiagnosisKeysPath() + "/"
           + api.getCountryPath() + "/"
-          + supportedCountry + "/"
+          + country + "/"
           + api.getDatePath() + "/");
       final String regex = ".*([0-9]{4}-[0-9]{2}-[0-9]{2}).*";
       final Pattern pattern = Pattern.compile(regex);

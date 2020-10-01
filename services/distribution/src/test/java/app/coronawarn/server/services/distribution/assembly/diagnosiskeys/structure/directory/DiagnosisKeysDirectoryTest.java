@@ -113,7 +113,6 @@ class DiagnosisKeysDirectoryTest {
     Set<String> expectedFiles = Set.of(
         join(separator, "diagnosis-keys", "country", "index"),
         join(separator, "diagnosis-keys", "country", "DE", "date", "index"),
-        join(separator, "diagnosis-keys", "country", "FR", "date", "index"),
         join(separator, "diagnosis-keys", "country", distributionServiceConfig.getEuPackageName(), "date", "index")
     );
 
@@ -153,12 +152,10 @@ class DiagnosisKeysDirectoryTest {
 
     Set<String> expectedFiles = Sets.newLinkedHashSet(join(separator, "diagnosis-keys", "country", "index"),
         join(separator, "diagnosis-keys", "country", "DE", "date", "index"),
-        join(separator, "diagnosis-keys", "country", "FR", "date", "index"),
         join(separator, "diagnosis-keys", "country", distributionServiceConfig.getEuPackageName(), "date", "index"));
 
     expectedFiles.addAll(generateExpectedDirectoryStructure("DE", "1970-01-03"));
     expectedFiles.addAll(generateExpectedDirectoryStructure("DE", "1970-01-04"));
-    expectedFiles.addAll(generateExpectedDirectoryStructure("FR", "1970-01-03"));
 
     expectedFiles
         .addAll(generateExpectedDirectoryStructure(distributionServiceConfig.getEuPackageName(), "1970-01-03"));
@@ -181,13 +178,11 @@ class DiagnosisKeysDirectoryTest {
 
     Set<String> expectedFiles = Sets.newLinkedHashSet(join(separator, "diagnosis-keys", "country", "index"),
         join(separator, "diagnosis-keys", "country", "DE", "date", "index"),
-        join(separator, "diagnosis-keys", "country", "FR", "date", "index"),
         join(separator, "diagnosis-keys", "country", distributionServiceConfig.getEuPackageName(), "date", "index")
     );
 
     expectedFiles.addAll(generateExpectedDirectoryStructure("DE", "1970-01-03"));
     expectedFiles.addAll(generateExpectedDirectoryStructure("DE", "1970-01-04"));
-    expectedFiles.addAll(generateExpectedDirectoryStructure("FR", "1970-01-03"));
     expectedFiles
         .addAll(generateExpectedDirectoryStructure(distributionServiceConfig.getEuPackageName(), "1970-01-03"));
     expectedFiles
@@ -208,12 +203,9 @@ class DiagnosisKeysDirectoryTest {
 
     Set<String> expectedFiles = Sets.newLinkedHashSet(join(separator, "diagnosis-keys", "country", "index"),
         join(separator, "diagnosis-keys", "country", "DE", "date", "index"),
-        join(separator, "diagnosis-keys", "country", "FR", "date", "index"),
-        join(separator, "diagnosis-keys", "country", "DK", "date", "index"),
         join(separator, "diagnosis-keys", "country", distributionServiceConfig.getEuPackageName(), "date", "index"));
     expectedFiles.addAll(generateExpectedDirectoryStructure("DE", "1970-01-03"));
     expectedFiles.addAll(generateExpectedDirectoryStructure("DE", "1970-01-04"));
-    expectedFiles.addAll(generateExpectedDirectoryStructure("FR", "1970-01-03"));
     expectedFiles
         .addAll(generateExpectedDirectoryStructure(distributionServiceConfig.getEuPackageName(), "1970-01-03"));
     expectedFiles
