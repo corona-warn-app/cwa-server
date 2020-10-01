@@ -2,18 +2,20 @@
 
 package app.coronawarn.server.services.federation.upload.utils;
 
-import java.util.List;
-import java.util.Random;
-import java.util.Set;
-import java.util.stream.Collectors;
-import java.util.stream.IntStream;
 import app.coronawarn.server.common.persistence.domain.DiagnosisKey;
 import app.coronawarn.server.common.persistence.domain.FederationUploadKey;
 import app.coronawarn.server.common.protocols.external.exposurenotification.ReportType;
+import java.security.SecureRandom;
+import java.util.List;
+import java.util.Set;
+import java.util.concurrent.ThreadLocalRandom;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 public class MockData {
 
   public static final String TEST_ORIGIN_COUNTRY = "DE";
+  public static final SecureRandom random = new SecureRandom();
 
   public static List<FederationUploadKey> generateRandomUploadKeys(boolean consentToShare, int numberOfKeys) {
     return IntStream.range(0, numberOfKeys)
@@ -22,7 +24,7 @@ public class MockData {
   }
 
   public static FederationUploadKey generateRandomUploadKey(boolean consentToShare) {
-   return FederationUploadKey.from(generateRandomDiagnosisKey(consentToShare));
+    return FederationUploadKey.from(generateRandomDiagnosisKey(consentToShare));
   }
 
   public static List<DiagnosisKey> generateRandomDiagnosisKeys(boolean consentToShare, int numberOfKeys) {
@@ -38,16 +40,20 @@ public class MockData {
         .withTransmissionRiskLevel(2)
         .withConsentToFederation(consentToShare)
         .withCountryCode(TEST_ORIGIN_COUNTRY)
-        .withDaysSinceOnsetOfSymptoms(1)
+        .withDaysSinceOnsetOfSymptoms(randomDaysSinceOnsetOfSymptoms())
         .withSubmissionTimestamp(12)
         .withVisitedCountries(Set.of("FR", "DK"))
         .withReportType(ReportType.CONFIRMED_TEST)
         .build();
   }
 
+  private static Integer randomDaysSinceOnsetOfSymptoms() {
+    return random.nextInt(13);
+  }
+
   private static byte[] randomByteData() {
-    byte[] keydata = new byte[16];
-    new Random().nextBytes(keydata);
-    return keydata;
+    byte[] keyData = new byte[16];
+    random.nextBytes(keyData);
+    return keyData;
   }
 }

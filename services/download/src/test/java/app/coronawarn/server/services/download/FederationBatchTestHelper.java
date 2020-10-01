@@ -22,6 +22,16 @@ public class FederationBatchTestHelper {
     return createFederationDiagnosisKey(keyData, 0);
   }
 
+  public static DiagnosisKey createFederationDiagnosisKeyWithoutDaysSinceSymptoms(String keyData) {
+    return DiagnosisKey.newBuilder()
+        .setKeyData(ByteString.copyFromUtf8(keyData))
+        .addVisitedCountries("DE")
+        .setRollingStartIntervalNumber(1596153600 / 600)
+        .setRollingPeriod(144)
+        .setTransmissionRiskLevel(8)
+        .build();
+  }
+
   public static DiagnosisKey createFederationDiagnosisKey(String keyData, int daysSinceOnsetOfSymptoms) {
     return DiagnosisKey.newBuilder()
         .setKeyData(ByteString.copyFromUtf8(keyData))

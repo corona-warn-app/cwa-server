@@ -21,6 +21,7 @@ import app.coronawarn.server.services.download.BatchDownloadResponse;
 import app.coronawarn.server.services.download.DownloadServiceConfig;
 import app.coronawarn.server.services.download.FederationBatchProcessor;
 import app.coronawarn.server.services.download.FederationGatewayDownloadService;
+import app.coronawarn.server.services.download.validation.ValidFederationKeyFilter;
 import com.google.protobuf.ByteString;
 import java.time.LocalDate;
 import java.util.List;
@@ -41,11 +42,14 @@ import org.springframework.test.annotation.DirtiesContext;
 class FederationKeyNormalizerTest {
 
   private static final String BATCH_TAG = "507f191e810c19729de860ea";
-  FederationBatchProcessor processor;
+
+  private FederationBatchProcessor processor;
   @Autowired
-  DownloadServiceConfig config;
+  private DownloadServiceConfig config;
   @Autowired
-  DiagnosisKeyRepository repository;
+  private DiagnosisKeyRepository repository;
+  @Autowired
+  private ValidFederationKeyFilter validator;
   @SpyBean
   private DiagnosisKeyService diagnosisKeyService;
   @MockBean
@@ -69,7 +73,7 @@ class FederationKeyNormalizerTest {
   @BeforeEach
   void setUp() {
     processor = new FederationBatchProcessor(batchInfoService, diagnosisKeyService, federationGatewayDownloadService,
-        config);
+        config, validator);
     repository.deleteAll();
   }
 

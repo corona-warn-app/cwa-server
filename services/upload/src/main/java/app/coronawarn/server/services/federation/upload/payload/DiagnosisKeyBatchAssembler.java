@@ -2,8 +2,8 @@
 
 package app.coronawarn.server.services.federation.upload.payload;
 
-import app.coronawarn.server.common.persistence.domain.DiagnosisKey;
 import app.coronawarn.server.common.persistence.domain.FederationUploadKey;
+import app.coronawarn.server.common.protocols.external.exposurenotification.DiagnosisKey;
 import app.coronawarn.server.common.protocols.external.exposurenotification.DiagnosisKeyBatch;
 import app.coronawarn.server.services.federation.upload.config.UploadServiceConfig;
 import com.google.protobuf.ByteString;
@@ -23,10 +23,13 @@ public class DiagnosisKeyBatchAssembler {
 
   private static final Logger logger = LoggerFactory.getLogger(DiagnosisKeyBatchAssembler.class);
 
-  private UploadServiceConfig uploadConfig;
+  private final UploadServiceConfig uploadConfig;
+  private final AllowedPropertiesMap allowedPropertiesMap;
 
-  public DiagnosisKeyBatchAssembler(UploadServiceConfig uploadConfig) {
+  public DiagnosisKeyBatchAssembler(UploadServiceConfig uploadConfig,
+      AllowedPropertiesMap allowedPropertiesMap) {
     this.uploadConfig = uploadConfig;
+    this.allowedPropertiesMap = allowedPropertiesMap;
   }
 
   /**
@@ -46,12 +49,13 @@ public class DiagnosisKeyBatchAssembler {
           uploadConfig.getMinBatchKeyCount());
       return Collections.emptyMap();
     }
-    return partionIntoBatches(diagnosisKeys);
+    return partitionIntoBatches(diagnosisKeys);
   }
 
-  private Map<DiagnosisKeyBatch, List<FederationUploadKey>> partionIntoBatches(List<FederationUploadKey> keysToUpload) {
+  private Map<DiagnosisKeyBatch, List<FederationUploadKey>> partitionIntoBatches(
+      List<FederationUploadKey> keysToUpload) {
     return partitionListBySize(filterByConsent(keysToUpload), uploadConfig.getMaxBatchKeyCount()).stream()
-        .map(partition -> Pair.of(this.makeBatchFromPartition(partition), partition))
+        .map(partition -> Pair.of(makeBatchFromPartition(partition), partition))
         .collect(Collectors.toMap(Pair::getLeft, Pair::getRight));
   }
 
@@ -83,19 +87,19 @@ public class DiagnosisKeyBatchAssembler {
 
   private List<FederationUploadKey> filterByConsent(List<FederationUploadKey> diagnosisKeys) {
     return diagnosisKeys.stream()
-        .filter(DiagnosisKey::isConsentToFederation)
+        .filter(FederationUploadKey::isConsentToFederation)
         .collect(Collectors.toList());
   }
 
-  private static Iterable<? extends app.coronawarn.server.common.protocols.external.exposurenotification.DiagnosisKey>
+  private Iterable<? extends app.coronawarn.server.common.protocols.external.exposurenotification.DiagnosisKey>
       convertForUpload(List<FederationUploadKey> keys) {
     return keys.stream()
-        .map(DiagnosisKeyBatchAssembler::convertKey)
+        .map(this::convertKey)
         .collect(Collectors.toList());
   }
 
-  private static app.coronawarn.server.common.protocols.external.exposurenotification.DiagnosisKey convertKey(
-      DiagnosisKey key) {
+  private DiagnosisKey convertKey(
+      FederationUploadKey key) {
     return app.coronawarn.server.common.protocols.external.exposurenotification.DiagnosisKey.newBuilder()
         .setKeyData(ByteString.copyFrom(key.getKeyData()))
         .setRollingStartIntervalNumber(key.getRollingStartIntervalNumber())
@@ -103,8 +107,8 @@ public class DiagnosisKeyBatchAssembler {
         .setTransmissionRiskLevel(key.getTransmissionRiskLevel())
         .addAllVisitedCountries(key.getVisitedCountries())
         .setOrigin(key.getOriginCountry())
-        .setReportType(key.getReportType())
-        .setDaysSinceOnsetOfSymptoms(key.getDaysSinceOnsetOfSymptoms())
+        .setReportType(allowedPropertiesMap.getReportTypeOrDefault(key.getReportType()))
+        .setDaysSinceOnsetOfSymptoms(allowedPropertiesMap.getDsosOrDefault(key.getDaysSinceOnsetOfSymptoms()))
         .build();
   }
 }
