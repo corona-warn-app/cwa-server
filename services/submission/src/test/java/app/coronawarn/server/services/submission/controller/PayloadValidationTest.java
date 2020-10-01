@@ -145,7 +145,7 @@ class PayloadValidationTest {
   }
 
   @Test
-  void check400ResponseStatusForKeysWithFixedRollingPeriodAndDuplicateStartIntervals() {
+  void check200ResponseStatusForKeysWithFixedRollingPeriodAndDuplicateStartIntervals() {
     int rollingStartIntervalNumber = createRollingStartIntervalNumber(2);
     var keysWithDuplicateStartIntervalNumber = Lists.list(
         buildTemporaryExposureKey(VALID_KEY_DATA_1, rollingStartIntervalNumber, 1,
@@ -154,7 +154,7 @@ class PayloadValidationTest {
 
     ResponseEntity<Void> actResponse = executor.executePost(keysWithDuplicateStartIntervalNumber);
 
-    assertThat(actResponse.getStatusCode()).isEqualTo(BAD_REQUEST);
+    assertThat(actResponse.getStatusCode()).isEqualTo(OK);
   }
 
   @Test
