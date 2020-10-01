@@ -26,6 +26,7 @@ import static java.time.ZoneOffset.UTC;
 import app.coronawarn.server.common.persistence.domain.DiagnosisKey;
 import app.coronawarn.server.common.protocols.external.exposurenotification.ReportType;
 import app.coronawarn.server.common.protocols.external.exposurenotification.TemporaryExposureKey;
+import app.coronawarn.server.common.protocols.external.exposurenotification.TemporaryExposureKey.Builder;
 import app.coronawarn.server.common.protocols.internal.SubmissionPayload;
 import app.coronawarn.server.services.submission.config.SubmissionServiceConfig;
 import com.google.protobuf.ByteString;
@@ -146,14 +147,14 @@ public final class SubmissionPayloadMockData {
 
   public static SubmissionPayload buildPayloadWithInvalidOriginCountry() {
     TemporaryExposureKey key =
-        buildTemporaryExposureKey(VALID_KEY_DATA_1, createRollingStartIntervalNumber(2), 2,
+        buildTemporaryExposureKey(VALID_KEY_DATA_1, createRollingStartIntervalNumber(2), 3,
             ReportType.CONFIRMED_CLINICAL_DIAGNOSIS, 1);
     return buildInvalidPayload(key);
   }
 
   public static SubmissionPayload buildPayloadWithVisitedCountries(List<String> visitedCountries) {
     TemporaryExposureKey key =
-        buildTemporaryExposureKey(VALID_KEY_DATA_1, createRollingStartIntervalNumber(2), 2,
+        buildTemporaryExposureKey(VALID_KEY_DATA_1, createRollingStartIntervalNumber(2), 3,
             ReportType.CONFIRMED_CLINICAL_DIAGNOSIS, 1);
     return SubmissionPayload.newBuilder()
         .addKeys(key)
@@ -164,15 +165,19 @@ public final class SubmissionPayloadMockData {
   }
 
   public static TemporaryExposureKey buildTemporaryExposureKey(
-      String keyData, int rollingStartIntervalNumber, int transmissionRiskLevel, ReportType reportType,
-      int daysSinceOnsetOfSymptoms) {
-    return TemporaryExposureKey.newBuilder()
+      String keyData, int rollingStartIntervalNumber, Integer transmissionRiskLevel, ReportType reportType,
+      Integer daysSinceOnsetOfSymptoms){
+    Builder builder = TemporaryExposureKey.newBuilder()
         .setKeyData(ByteString.copyFromUtf8(keyData))
-        .setRollingStartIntervalNumber(rollingStartIntervalNumber)
-        .setTransmissionRiskLevel(transmissionRiskLevel)
-        .setReportType(reportType)
-        .setDaysSinceOnsetOfSymptoms(daysSinceOnsetOfSymptoms)
-        .build();
+        .setRollingStartIntervalNumber(rollingStartIntervalNumber);
+    if(transmissionRiskLevel != null) {
+      builder.setTransmissionRiskLevel(transmissionRiskLevel);
+    }
+    builder.setReportType(reportType);
+    if (daysSinceOnsetOfSymptoms != null) {
+      builder.setDaysSinceOnsetOfSymptoms(daysSinceOnsetOfSymptoms);
+    }
+    return builder.build();
   }
 
   public static TemporaryExposureKey buildTemporaryExposureKeyWithoutDSOS(

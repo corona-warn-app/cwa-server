@@ -44,7 +44,7 @@ public class TEKDatasetGeneration {
     int rollingStartIntervalNumber2 = rollingStartIntervalNumber1 + (DiagnosisKey.MAX_ROLLING_PERIOD / 2);
     return Lists.list(
         buildTemporaryExposureKey(VALID_KEY_DATA_1, rollingStartIntervalNumber1, 1, ReportType.CONFIRMED_CLINICAL_DIAGNOSIS,1),
-        buildTemporaryExposureKey(VALID_KEY_DATA_2, rollingStartIntervalNumber2, 2, ReportType.CONFIRMED_CLINICAL_DIAGNOSIS,1));
+        buildTemporaryExposureKey(VALID_KEY_DATA_2, rollingStartIntervalNumber2, 3, ReportType.CONFIRMED_CLINICAL_DIAGNOSIS,1));
 
   }
 
@@ -54,7 +54,7 @@ public class TEKDatasetGeneration {
     return Lists.list(
         buildTemporaryExposureKeyWithFlexibleRollingPeriod(VALID_KEY_DATA_1, rollingStartIntervalNumber1, 1, 54),
         buildTemporaryExposureKeyWithFlexibleRollingPeriod(VALID_KEY_DATA_1, rollingStartIntervalNumber1, 1, 90),
-        buildTemporaryExposureKeyWithFlexibleRollingPeriod(VALID_KEY_DATA_2, rollingStartIntervalNumber2, 2, 133));
+        buildTemporaryExposureKeyWithFlexibleRollingPeriod(VALID_KEY_DATA_2, rollingStartIntervalNumber2, 3, 133));
 
   }
 
@@ -83,7 +83,7 @@ public class TEKDatasetGeneration {
     return Lists.list(
         buildTemporaryExposureKey(VALID_KEY_DATA_3, rollingStartIntervalNumber1, 3, ReportType.CONFIRMED_CLINICAL_DIAGNOSIS,1),
         buildTemporaryExposureKey(VALID_KEY_DATA_3, rollingStartIntervalNumber3, 3, ReportType.CONFIRMED_CLINICAL_DIAGNOSIS,1),
-        buildTemporaryExposureKey(VALID_KEY_DATA_2, rollingStartIntervalNumber2, 2, ReportType.CONFIRMED_CLINICAL_DIAGNOSIS,1));
+        buildTemporaryExposureKey(VALID_KEY_DATA_2, rollingStartIntervalNumber2, 3, ReportType.CONFIRMED_CLINICAL_DIAGNOSIS,1));
   }
 
   private static List<TemporaryExposureKey> getFlexibleRollingPeriodDataset(){
@@ -94,8 +94,8 @@ public class TEKDatasetGeneration {
         buildTemporaryExposureKeyWithFlexibleRollingPeriod(VALID_KEY_DATA_1, rollingStartIntervalNumber1,3, 54),
         buildTemporaryExposureKeyWithFlexibleRollingPeriod(VALID_KEY_DATA_1, rollingStartIntervalNumber1,3, 90),
         buildTemporaryExposureKeyWithFlexibleRollingPeriod(VALID_KEY_DATA_3, rollingStartIntervalNumber3,3, 133),
-        buildTemporaryExposureKeyWithFlexibleRollingPeriod(VALID_KEY_DATA_3, rollingStartIntervalNumber3,2, 11),
-        buildTemporaryExposureKeyWithFlexibleRollingPeriod(VALID_KEY_DATA_2, rollingStartIntervalNumber2,2, 100));
+        buildTemporaryExposureKeyWithFlexibleRollingPeriod(VALID_KEY_DATA_3, rollingStartIntervalNumber3,1, 11),
+        buildTemporaryExposureKeyWithFlexibleRollingPeriod(VALID_KEY_DATA_2, rollingStartIntervalNumber2,1, 100));
   }
 
   private static List<TemporaryExposureKey> getMixedRollingPeriodDataset(){
@@ -106,7 +106,7 @@ public class TEKDatasetGeneration {
         buildTemporaryExposureKeyWithFlexibleRollingPeriod(VALID_KEY_DATA_1, rollingStartIntervalNumber1,3, 54),
         buildTemporaryExposureKeyWithFlexibleRollingPeriod(VALID_KEY_DATA_1, rollingStartIntervalNumber1,3, 90),
         buildTemporaryExposureKey(VALID_KEY_DATA_3, rollingStartIntervalNumber3, 3, ReportType.CONFIRMED_CLINICAL_DIAGNOSIS,1),
-        buildTemporaryExposureKey(VALID_KEY_DATA_2, rollingStartIntervalNumber2, 2, ReportType.CONFIRMED_CLINICAL_DIAGNOSIS,1));
+        buildTemporaryExposureKey(VALID_KEY_DATA_2, rollingStartIntervalNumber2, 3, ReportType.CONFIRMED_CLINICAL_DIAGNOSIS,1));
   }
 
 }
