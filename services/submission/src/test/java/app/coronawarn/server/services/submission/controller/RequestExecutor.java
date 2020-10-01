@@ -23,21 +23,14 @@ package app.coronawarn.server.services.submission.controller;
 import app.coronawarn.server.common.protocols.external.exposurenotification.TemporaryExposureKey;
 import app.coronawarn.server.common.protocols.internal.SubmissionPayload;
 import java.net.URI;
-import java.time.Instant;
-import java.time.LocalDate;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
-import com.google.protobuf.ByteString;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.RequestEntity;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
-
-import static app.coronawarn.server.services.submission.controller.SubmissionPayloadMockData.VALID_KEY_DATA_1;
-import static java.time.ZoneOffset.UTC;
 
 /**
  * RequestExecutor executes requests against the diagnosis key submission endpoint and holds a various methods for test
@@ -84,33 +77,5 @@ public class RequestExecutor {
         .cwaAuth()
         .withoutCwaFake()
         .build();
-  }
-
-  public static TemporaryExposureKey buildTemporaryExposureKey(
-      String keyData, int rollingStartIntervalNumber, int transmissionRiskLevel) {
-    return TemporaryExposureKey.newBuilder()
-        .setKeyData(ByteString.copyFromUtf8(keyData))
-        .setRollingStartIntervalNumber(rollingStartIntervalNumber)
-        .setTransmissionRiskLevel(transmissionRiskLevel).build();
-  }
-
-  public static TemporaryExposureKey buildTemporaryExposureKeyWithFlexibleRollingPeriod(
-      String keyData, int rollingStartIntervalNumber, int transmissionRiskLevel, int rollingPeriod) {
-    return TemporaryExposureKey.newBuilder()
-        .setKeyData(ByteString.copyFromUtf8(keyData))
-        .setRollingStartIntervalNumber(rollingStartIntervalNumber)
-        .setTransmissionRiskLevel(transmissionRiskLevel)
-        .setRollingPeriod(rollingPeriod).build();
-  }
-
-  public static int createRollingStartIntervalNumber(Integer daysAgo) {
-    return Math.toIntExact(LocalDate
-        .ofInstant(Instant.now(), UTC)
-        .minusDays(daysAgo).atStartOfDay()
-        .toEpochSecond(UTC) / (60 * 10));
-  }
-
-  public static Collection<TemporaryExposureKey> buildPayloadWithOneKey() {
-    return Collections.singleton(buildTemporaryExposureKey(VALID_KEY_DATA_1, createRollingStartIntervalNumber(1), 3));
   }
 }
