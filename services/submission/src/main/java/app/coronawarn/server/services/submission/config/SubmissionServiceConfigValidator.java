@@ -57,11 +57,11 @@ public class SubmissionServiceConfigValidator implements Validator {
 
     validateMaxRequestSize(errors, properties);
     validateSupportedCountries(errors, properties);
-    validateDsosFromTrl(errors, properties);
-    validateTrlFromDsos(errors, properties);
+    validateDaysSinceSymptomsDerivationMap(errors, properties);
+    validateTransmissionRiskLevelDerivationMap(errors, properties);
   }
 
-  private void validateTrlFromDsos(Errors errors, SubmissionServiceConfig properties) {
+  private void validateTransmissionRiskLevelDerivationMap(Errors errors, SubmissionServiceConfig properties) {
     Map<Integer, Integer> dsosFromTrl =  properties.getTekFieldDerivations().getTrlFromDsos();
     dsosFromTrl.forEach((daysSinceOnsetSymptoms, transmissionRiskLevel) -> {
       checkTrlInAllowedRange(transmissionRiskLevel, errors);
@@ -69,7 +69,7 @@ public class SubmissionServiceConfigValidator implements Validator {
     });
   }
 
-  private void validateDsosFromTrl(Errors errors, SubmissionServiceConfig properties) {
+  private void validateDaysSinceSymptomsDerivationMap(Errors errors, SubmissionServiceConfig properties) {
     properties.getTekFieldDerivations().getDsosFromTrl().forEach((trl, dsos) -> {
       checkTrlInAllowedRange(trl, errors);
       checkDsosInAllowedRange(dsos, errors);

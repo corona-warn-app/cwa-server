@@ -69,7 +69,7 @@ class SubmissionServiceConfigValidatorTest {
   }
 
   @ParameterizedTest
-  @MethodSource("setInvalidSupportedCountries")
+  @MethodSource("invalidSupportedCountries")
   void testWithInvalidSupportedCountries(String supportedCountries) {
     Errors errors = validateConfig(SubmissionServiceConfigValidator.MAX_MAXIMUM_REQUEST_SIZE, supportedCountries, getEmptyTekFieldDerivations());
     assertThat(errors.hasErrors()).isTrue();
@@ -83,7 +83,7 @@ class SubmissionServiceConfigValidatorTest {
   }
 
   @ParameterizedTest
-  @MethodSource("setValidTrlFromDsos")
+  @MethodSource("validTrlFromDsosDatasets")
   void testWithValidTrlFromDsos(Map<Integer, Integer> trlFromDsos) {
     TekFieldDerivations tekFieldDerivations = new TekFieldDerivations();
     tekFieldDerivations.setDsosFromTrl(Map.of());
@@ -93,7 +93,7 @@ class SubmissionServiceConfigValidatorTest {
   }
 
   @ParameterizedTest
-  @MethodSource("setInvalidTrlFromDsos")
+  @MethodSource("invalidTrlFromDsosDatasets")
   void testWithInvalidTrlFromDsos(Map<Integer, Integer> trlFromDsos) {
     TekFieldDerivations tekFieldDerivations = new TekFieldDerivations();
     tekFieldDerivations.setDsosFromTrl(Map.of());
@@ -103,7 +103,7 @@ class SubmissionServiceConfigValidatorTest {
   }
 
   @ParameterizedTest
-  @MethodSource("setValidDsosFromTrl")
+  @MethodSource("validDsosFromTrlDatasets")
   void testWithValidDsosFromTrl(Map<Integer, Integer> dsosFromTrl) {
     TekFieldDerivations tekFieldDerivations = new TekFieldDerivations();
     tekFieldDerivations.setDsosFromTrl(dsosFromTrl);
@@ -113,7 +113,7 @@ class SubmissionServiceConfigValidatorTest {
   }
 
   @ParameterizedTest
-  @MethodSource("setInvalidDsosFromTrl")
+  @MethodSource("invalidDsosFromTrlDatasets")
   void testWithInvalidDsosFromTrl(Map<Integer, Integer> dsosFromTrl) {
     TekFieldDerivations tekFieldDerivations = new TekFieldDerivations();
     tekFieldDerivations.setDsosFromTrl(dsosFromTrl);
@@ -159,7 +159,7 @@ class SubmissionServiceConfigValidatorTest {
     return tekFieldDerivations;
   }
 
-  private static Stream<Arguments> setInvalidSupportedCountries() {
+  private static Stream<Arguments> invalidSupportedCountries() {
     return Stream.of(
         Arguments.of("DE,FRE"),
         Arguments.of("DE, "),
@@ -172,7 +172,7 @@ class SubmissionServiceConfigValidatorTest {
     );
   }
 
-  private static Stream<Arguments> setValidTrlFromDsos() {
+  private static Stream<Arguments> validTrlFromDsosDatasets() {
     Map<Integer, Integer> validMapping1 = Stream.of(new Integer[][] {
         {14, 1},
         {13, 1},
@@ -200,7 +200,7 @@ class SubmissionServiceConfigValidatorTest {
     );
   }
 
-  private static Stream<Arguments> setInvalidTrlFromDsos() {
+  private static Stream<Arguments> invalidTrlFromDsosDatasets() {
     return Stream.of(
         Arguments.of(Map.of(4001, 1)),
         Arguments.of(Map.of(14, 9)),
@@ -209,7 +209,7 @@ class SubmissionServiceConfigValidatorTest {
     );
   }
 
-  private static Stream<Arguments> setValidDsosFromTrl() {
+  private static Stream<Arguments> validDsosFromTrlDatasets() {
     Map<Integer, Integer> map1 = Stream.of(new Integer[][] {
         {1, -4},
         {3, -3},
@@ -232,7 +232,7 @@ class SubmissionServiceConfigValidatorTest {
     );
   }
 
-  private static Stream<Arguments> setInvalidDsosFromTrl() {
+  private static Stream<Arguments> invalidDsosFromTrlDatasets() {
     return Stream.of(
         Arguments.of(Map.of(0, -4)),
         Arguments.of(Map.of(1, -15))
