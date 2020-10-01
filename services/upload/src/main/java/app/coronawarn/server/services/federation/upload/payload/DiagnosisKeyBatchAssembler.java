@@ -73,7 +73,7 @@ public class DiagnosisKeyBatchAssembler {
   private Map<DiagnosisKeyBatch, List<FederationUploadKey>> partitionIntoBatches(
       List<FederationUploadKey> keysToUpload) {
     return partitionListBySize(filterByConsent(keysToUpload), uploadConfig.getMaxBatchKeyCount()).stream()
-        .map(partition -> Pair.of(this.makeBatchFromPartition(partition), partition))
+        .map(partition -> Pair.of(makeBatchFromPartition(partition), partition))
         .collect(Collectors.toMap(Pair::getLeft, Pair::getRight));
   }
 
@@ -125,8 +125,8 @@ public class DiagnosisKeyBatchAssembler {
         .setTransmissionRiskLevel(key.getTransmissionRiskLevel())
         .addAllVisitedCountries(key.getVisitedCountries())
         .setOrigin(key.getOriginCountry())
-        .setReportType(this.allowedPropertiesMap.getReportTypeOrDefault(key.getReportType()))
-        .setDaysSinceOnsetOfSymptoms(this.allowedPropertiesMap.getDsosOrDefault(key.getDaysSinceOnsetOfSymptoms()))
+        .setReportType(allowedPropertiesMap.getReportTypeOrDefault(key.getReportType()))
+        .setDaysSinceOnsetOfSymptoms(allowedPropertiesMap.getDsosOrDefault(key.getDaysSinceOnsetOfSymptoms()))
         .build();
   }
 }

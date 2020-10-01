@@ -45,11 +45,11 @@ public class AllowedPropertiesMap {
   }
 
   public int getDsosOrDefault(int dsos) {
-    return this.canSendDsos ? dsos : this.defaultDsos;
+    return canSendDsos ? dsos : defaultDsos;
   }
 
   public ReportType getReportTypeOrDefault(ReportType type) {
-    return this.canSendReportType ? type : this.defaultReportType;
+    return canSendReportType ? type : defaultReportType;
   }
 
 }
