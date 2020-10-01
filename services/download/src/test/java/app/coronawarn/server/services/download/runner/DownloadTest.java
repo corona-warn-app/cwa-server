@@ -24,7 +24,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
-import app.coronawarn.server.services.download.DownloadServiceConfig;
+import app.coronawarn.server.services.download.config.DownloadServiceConfig;
 import app.coronawarn.server.services.download.FederationBatchProcessor;
 import java.time.LocalDate;
 import org.junit.jupiter.api.Test;

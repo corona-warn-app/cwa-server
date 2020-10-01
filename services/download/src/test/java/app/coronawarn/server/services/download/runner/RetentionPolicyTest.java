@@ -24,7 +24,7 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
 import app.coronawarn.server.common.persistence.service.FederationBatchInfoService;
-import app.coronawarn.server.services.download.DownloadServiceConfig;
+import app.coronawarn.server.services.download.config.DownloadServiceConfig;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;

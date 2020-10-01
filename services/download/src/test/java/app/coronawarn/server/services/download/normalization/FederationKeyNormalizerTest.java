@@ -36,7 +36,7 @@ import app.coronawarn.server.common.persistence.service.FederationBatchInfoServi
 import app.coronawarn.server.common.protocols.external.exposurenotification.DiagnosisKey;
 import app.coronawarn.server.common.protocols.external.exposurenotification.DiagnosisKeyBatch;
 import app.coronawarn.server.services.download.BatchDownloadResponse;
-import app.coronawarn.server.services.download.DownloadServiceConfig;
+import app.coronawarn.server.services.download.config.DownloadServiceConfig;
 import app.coronawarn.server.services.download.FederationBatchProcessor;
 import app.coronawarn.server.services.download.FederationGatewayDownloadService;
 import app.coronawarn.server.services.download.validation.ValidFederationKeyFilter;
