@@ -138,9 +138,10 @@ class SubmissionPersistenceIT {
 
     LocalDateTime now = LocalDateTime.now();
     LocalDateTime todayMidnight = LocalDateTime
-        .of(now.getYear(), now.getMonth(), now.getDayOfMonth() - numberOfKeys, 0, 0);
+        .of(now.getYear(), now.getMonth(), now.getDayOfMonth() , 0, 0);
+    LocalDateTime todayMidnightMinusNumberOfKeys = todayMidnight.minusDays(numberOfKeys);
 
-    List<TemporaryExposureKey> temporaryExposureKeys = buildTemporaryExposureKeys(numberOfKeys, todayMidnight,
+    List<TemporaryExposureKey> temporaryExposureKeys = buildTemporaryExposureKeys(numberOfKeys, todayMidnightMinusNumberOfKeys,
         transmissionRiskLevel, rollingPeriod, reportType, daysSinceOnsetOfSymptoms);
     SubmissionPayload submissionPayload = buildSubmissionPayload(temporaryExposureKeys, requestPadding,
         visitedCountries, originCountry, consentToFederation);
