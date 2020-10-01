@@ -42,6 +42,7 @@ import app.coronawarn.server.common.persistence.domain.FederationBatchStatus;
 import app.coronawarn.server.common.persistence.service.DiagnosisKeyService;
 import app.coronawarn.server.common.persistence.service.FederationBatchInfoService;
 import app.coronawarn.server.services.download.DownloadServiceConfig.TekFieldDerivations;
+import app.coronawarn.server.services.download.validation.ValidFederationKeyFilter;
 import feign.FeignException;
 import java.time.LocalDate;
 import java.util.Map;
@@ -57,7 +58,7 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.annotation.DirtiesContext;
 
 @SpringBootTest(classes = {FederationBatchProcessor.class, FederationBatchInfoService.class, DiagnosisKeyService.class,
-    FederationGatewayClient.class, DownloadServiceConfig.class})
+    FederationGatewayClient.class, DownloadServiceConfig.class, ValidFederationKeyFilter.class})
 @DirtiesContext
 class FederationBatchProcessorTest {
 
