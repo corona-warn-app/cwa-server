@@ -34,7 +34,7 @@ You are welcome to contribute code in order to fix a bug or to implement a new f
 
 The following rule governs code contributions:
 
-* Contributions must be licensed under the [Apache 2.0 License](LICENSE)
+* Contributions must be licensed under the [Apache 2.0 License](/LICENSES/Apache-2.0.txt)
 
 ## Contributing Documentation
 
@@ -42,7 +42,7 @@ You are welcome to contribute documentation to the project.
 
 The following rule governs documentation contributions:
 
-* Contributions must be licensed under the same license as code, the [Apache 2.0 License](LICENSE)
+* Contributions must be licensed under the same license as code, the [Apache 2.0 License](/LICENSES/Apache-2.0.txt)
 
 ## Pull Request Checklist
 
