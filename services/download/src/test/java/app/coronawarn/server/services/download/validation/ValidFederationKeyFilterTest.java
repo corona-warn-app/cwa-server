@@ -30,7 +30,7 @@ class ValidFederationKeyFilterTest {
   void checkFilterRejectsWhenDaysSinceOnsetOfSymptomsNotInRange(int invalidDsos) {
     ValidFederationKeyFilter validator = new ValidFederationKeyFilter();
     DiagnosisKey mockedFederationKey =
-        FederationBatchTestHelper.createFederationDiagnosisKey("test-keydata", invalidDsos);
+        FederationBatchTestHelper.createFederationDiagnosisKeyWithDSOS("test-keydata", invalidDsos);
 
     assertThat(validator.isValid(mockedFederationKey)).isFalse();
   }
@@ -39,7 +39,7 @@ class ValidFederationKeyFilterTest {
   void checkFilterRejectsWhenDaysSinceOnsetOfSymptomsIsMissing() {
     ValidFederationKeyFilter validator = new ValidFederationKeyFilter();
     DiagnosisKey mockedFederationKey = FederationBatchTestHelper
-        .createFederationDiagnosisKeyWithoutDaysSinceSymptoms("test-keydata");
+        .createFederationDiagnosisKeyWithoutDaysSinceSymptoms();
 
     assertThat(validator.isValid(mockedFederationKey)).isFalse();
   }
@@ -49,7 +49,7 @@ class ValidFederationKeyFilterTest {
   void checkFilterAcceptsWhenDaysSinceOnsetOfSymptomsInRange(int validDsos) {
     ValidFederationKeyFilter validator = new ValidFederationKeyFilter();
     DiagnosisKey mockedFederationKey =
-        FederationBatchTestHelper.createFederationDiagnosisKey("test-keydata", validDsos);
+        FederationBatchTestHelper.createFederationDiagnosisKeyWithDSOS("test-keydata", validDsos);
 
     assertThat(validator.isValid(mockedFederationKey)).isTrue();
   }
@@ -57,16 +57,17 @@ class ValidFederationKeyFilterTest {
   @Test
   void checkFilterRejectsReportTypeSelfReported() {
     ValidFederationKeyFilter validator = new ValidFederationKeyFilter();
-    DiagnosisKey mockedFederationKey = FederationBatchTestHelper.createSelfReportedFederationDiagnosisKey(
+    DiagnosisKey mockedFederationKey = FederationBatchTestHelper.createFederationDiagnosisKeyWithReportType(
         ReportType.SELF_REPORT);
     assertThat(validator.isValid(mockedFederationKey)).isFalse();
   }
 
   @ParameterizedTest
-  @EnumSource(value = ReportType.class, names = {"CONFIRMED_CLINICAL_DIAGNOSIS", "CONFIRMED_TEST", "RECURSIVE", "REVOKED", "UNKNOWN" })
+  @EnumSource(value = ReportType.class, names = {"CONFIRMED_CLINICAL_DIAGNOSIS", "CONFIRMED_TEST", "RECURSIVE",
+      "REVOKED", "UNKNOWN"})
   void checkFilterAcceptsReportTypes(ReportType reportType) {
     ValidFederationKeyFilter validator = new ValidFederationKeyFilter();
-    DiagnosisKey mockedFederationKey = FederationBatchTestHelper.createSelfReportedFederationDiagnosisKey(reportType);
+    DiagnosisKey mockedFederationKey = FederationBatchTestHelper.createFederationDiagnosisKeyWithReportType(reportType);
     assertThat(validator.isValid(mockedFederationKey)).isTrue();
   }
 }

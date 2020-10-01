@@ -21,7 +21,7 @@
 package app.coronawarn.server.services.download.normalization;
 
 import static app.coronawarn.server.common.persistence.domain.FederationBatchStatus.UNPROCESSED;
-import static app.coronawarn.server.services.download.FederationBatchTestHelper.createFederationDiagnosisKey;
+import static app.coronawarn.server.services.download.FederationBatchTestHelper.createFederationDiagnosisKeyWithDSOS;
 import static org.assertj.core.util.Lists.list;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -35,10 +35,7 @@ import app.coronawarn.server.common.persistence.service.DiagnosisKeyService;
 import app.coronawarn.server.common.persistence.service.FederationBatchInfoService;
 import app.coronawarn.server.common.protocols.external.exposurenotification.DiagnosisKey;
 import app.coronawarn.server.common.protocols.external.exposurenotification.DiagnosisKeyBatch;
-import app.coronawarn.server.services.download.BatchDownloadResponse;
-import app.coronawarn.server.services.download.DownloadServiceConfig;
-import app.coronawarn.server.services.download.FederationBatchProcessor;
-import app.coronawarn.server.services.download.FederationGatewayDownloadService;
+import app.coronawarn.server.services.download.*;
 import app.coronawarn.server.services.download.validation.ValidFederationKeyFilter;
 import com.google.protobuf.ByteString;
 import java.time.LocalDate;
@@ -120,7 +117,7 @@ class FederationKeyNormalizerTest {
   private BatchDownloadResponse getBatchDownloadResponse() {
     List<DiagnosisKey> diagnosisKeys = getKeysAndDsos().entrySet()
         .stream()
-        .map(e -> createFederationDiagnosisKey(e.getKey(), e.getValue().getLeft()))
+        .map(e -> FederationBatchTestHelper.createFederationDiagnosisKeyWithDSOS(e.getKey(), e.getValue().getLeft()))
         .collect(Collectors.toList());
     DiagnosisKeyBatch diagnosisKeyBatch = DiagnosisKeyBatch.newBuilder()
         .addAllKeys(diagnosisKeys)

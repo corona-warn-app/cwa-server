@@ -43,13 +43,13 @@ public class ValidFederationKeyFilter {
   public boolean isValid(
       app.coronawarn.server.common.protocols.external.exposurenotification.DiagnosisKey federationKey) {
     return hasValidDaysSinceOnsetOfSymptoms(federationKey)
-        && isNotSelfReported(federationKey);
+        && isNotSelfReported(federationKey)
+        && hasCorrectDataLength(federationKey);
   }
 
 
   private boolean hasValidDaysSinceOnsetOfSymptoms(DiagnosisKey federationKey) {
-    boolean hasValidDsos = federationKey.hasDaysSinceOnsetOfSymptoms()
-        && federationKey.getDaysSinceOnsetOfSymptoms() >= -14
+    boolean hasValidDsos = federationKey.getDaysSinceOnsetOfSymptoms() >= -14
         && federationKey.getDaysSinceOnsetOfSymptoms() <= 4000;
     if (!hasValidDsos) {
       logger.info("Federation DiagnosisKey found with invalid 'daysSinceOnsetOfSymptoms' value {}",
@@ -59,11 +59,20 @@ public class ValidFederationKeyFilter {
   }
 
   private boolean isNotSelfReported(DiagnosisKey federationKey) {
-    boolean notSelfReported = federationKey.getReportType().equals(ReportType.SELF_REPORT);
-    if (!notSelfReported) {
+    boolean selfReported = federationKey.getReportType().equals(ReportType.SELF_REPORT);
+    if (selfReported) {
       logger.info("Ignoring Federation DiagnosisKey with 'ReportType' {}",
           federationKey.getReportType());
     }
-    return notSelfReported;
+    return !selfReported;
+  }
+
+  private boolean hasCorrectDataLength(DiagnosisKey federationKey) {
+    boolean hasCorrectDataLength = federationKey.getKeyData().toByteArray().length == 16;
+    if (!hasCorrectDataLength) {
+      logger.info("Federation DiagnosisKey found with 'KeyData' length of {}",
+          federationKey.getKeyData().toByteArray().length);
+    }
+    return hasCorrectDataLength;
   }
 }
