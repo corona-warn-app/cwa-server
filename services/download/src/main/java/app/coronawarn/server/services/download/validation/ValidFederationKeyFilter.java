@@ -49,7 +49,8 @@ public class ValidFederationKeyFilter {
 
 
   private boolean hasValidDaysSinceOnsetOfSymptoms(DiagnosisKey federationKey) {
-    boolean hasValidDsos = federationKey.getDaysSinceOnsetOfSymptoms() >= -14
+    boolean hasValidDsos = federationKey.hasDaysSinceOnsetOfSymptoms()
+        && federationKey.getDaysSinceOnsetOfSymptoms() >= -14
         && federationKey.getDaysSinceOnsetOfSymptoms() <= 4000;
     if (!hasValidDsos) {
       logger.info("Federation DiagnosisKey found with invalid 'daysSinceOnsetOfSymptoms' value {}",
