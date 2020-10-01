@@ -23,6 +23,7 @@ package app.coronawarn.server.services.federation.upload.utils;
 import app.coronawarn.server.common.persistence.domain.DiagnosisKey;
 import app.coronawarn.server.common.persistence.domain.FederationUploadKey;
 import app.coronawarn.server.common.protocols.external.exposurenotification.ReportType;
+import java.security.SecureRandom;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.ThreadLocalRandom;
@@ -32,6 +33,7 @@ import java.util.stream.IntStream;
 public class MockData {
 
   public static final String TEST_ORIGIN_COUNTRY = "DE";
+  public static final SecureRandom random = new SecureRandom();
 
   public static List<FederationUploadKey> generateRandomUploadKeys(boolean consentToShare, int numberOfKeys) {
     return IntStream.range(0, numberOfKeys)
@@ -64,12 +66,12 @@ public class MockData {
   }
 
   private static Integer randomDaysSinceOnsetOfSymptoms() {
-    return ThreadLocalRandom.current().nextInt(0, 13);
+    return random.nextInt(13);
   }
 
   private static byte[] randomByteData() {
-    byte[] keydata = new byte[16];
-    ThreadLocalRandom.current().nextBytes(keydata);
-    return keydata;
+    byte[] keyData = new byte[16];
+    random.nextBytes(keyData);
+    return keyData;
   }
 }
