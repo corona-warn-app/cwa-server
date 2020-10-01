@@ -22,6 +22,7 @@ package app.coronawarn.server.services.submission.config;
 
 
 import app.coronawarn.server.services.submission.config.SubmissionServiceConfig.Payload;
+import app.coronawarn.server.services.submission.config.SubmissionServiceConfig.TekFieldDerivations;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
@@ -33,6 +34,8 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.util.unit.DataSize;
 import org.springframework.validation.BeanPropertyBindingResult;
 import org.springframework.validation.Errors;
+import java.util.Map;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -53,40 +56,86 @@ class SubmissionServiceConfigValidatorTest {
 
   @ParameterizedTest
   @MethodSource("validRequestDataSizes")
-  void ok(DataSize dataSize) {
-    Errors errors = validateConfig(dataSize, "DE");
+  void testWithValidResquestDataSizes(DataSize dataSize) {
+    Errors errors = validateConfig(dataSize, "DE", getEmptyTekFieldDerivations());
     assertThat(errors.hasErrors()).isFalse();
   }
 
   @ParameterizedTest
   @MethodSource("invalidRequestDataSizes")
-  void fail(DataSize dataSize) {
-    Errors errors = validateConfig(dataSize, "DE");
+  void testWithInvalidResquestDataSizes(DataSize dataSize) {
+    Errors errors = validateConfig(dataSize, "DE", getEmptyTekFieldDerivations());
     assertThat(errors.hasErrors()).isTrue();
   }
 
   @ParameterizedTest
   @MethodSource("setInvalidSupportedCountries")
-  void fail(String supportedCountries) {
-    Errors errors = validateConfig(SubmissionServiceConfigValidator.MAX_MAXIMUM_REQUEST_SIZE, supportedCountries);
+  void testWithInvalidSupportedCountries(String supportedCountries) {
+    Errors errors = validateConfig(SubmissionServiceConfigValidator.MAX_MAXIMUM_REQUEST_SIZE, supportedCountries, getEmptyTekFieldDerivations());
     assertThat(errors.hasErrors()).isTrue();
   }
 
   @ParameterizedTest
   @ValueSource(strings = {"DE", "DE,FR"})
-  void ok(String supportedCountries) {
-    Errors errors = validateConfig(SubmissionServiceConfigValidator.MAX_MAXIMUM_REQUEST_SIZE, supportedCountries);
+  void testWithValidSupportedCountries(String supportedCountries) {
+    Errors errors = validateConfig(SubmissionServiceConfigValidator.MAX_MAXIMUM_REQUEST_SIZE, supportedCountries, getEmptyTekFieldDerivations());
     assertThat(errors.hasErrors()).isFalse();
   }
 
-  private Errors validateConfig(DataSize dataSize, String supportedCountries) {
+  @ParameterizedTest
+  @MethodSource("setValidTrlFromDsos")
+  void testWithValidTrlFromDsos(Map<Integer, Integer> trlFromDsos) {
+    TekFieldDerivations tekFieldDerivations = new TekFieldDerivations();
+    tekFieldDerivations.setDsosFromTrl(Map.of());
+    tekFieldDerivations.setTrlFromDsos(trlFromDsos);
+    Errors errors = validateConfig(SubmissionServiceConfigValidator.MAX_MAXIMUM_REQUEST_SIZE, "DE", tekFieldDerivations);
+    assertThat(errors.hasErrors()).isFalse();
+  }
+
+  @ParameterizedTest
+  @MethodSource("setInvalidTrlFromDsos")
+  void testWithInvalidTrlFromDsos(Map<Integer, Integer> trlFromDsos) {
+    TekFieldDerivations tekFieldDerivations = new TekFieldDerivations();
+    tekFieldDerivations.setDsosFromTrl(Map.of());
+    tekFieldDerivations.setTrlFromDsos(trlFromDsos);
+    Errors errors = validateConfig(SubmissionServiceConfigValidator.MAX_MAXIMUM_REQUEST_SIZE, "DE", tekFieldDerivations);
+    assertThat(errors.hasErrors()).isTrue();
+  }
+
+  @ParameterizedTest
+  @MethodSource("setValidDsosFromTrl")
+  void testWithValidDsosFromTrl(Map<Integer, Integer> dsosFromTrl) {
+    TekFieldDerivations tekFieldDerivations = new TekFieldDerivations();
+    tekFieldDerivations.setDsosFromTrl(dsosFromTrl);
+    tekFieldDerivations.setTrlFromDsos(Map.of());
+    Errors errors = validateConfig(SubmissionServiceConfigValidator.MAX_MAXIMUM_REQUEST_SIZE, "DE", tekFieldDerivations);
+    assertThat(errors.hasErrors()).isFalse();
+  }
+
+  @ParameterizedTest
+  @MethodSource("setInvalidDsosFromTrl")
+  void testWithInvalidDsosFromTrl(Map<Integer, Integer> dsosFromTrl) {
+    TekFieldDerivations tekFieldDerivations = new TekFieldDerivations();
+    tekFieldDerivations.setDsosFromTrl(dsosFromTrl);
+    tekFieldDerivations.setTrlFromDsos(Map.of());
+    Errors errors = validateConfig(SubmissionServiceConfigValidator.MAX_MAXIMUM_REQUEST_SIZE, "DE", tekFieldDerivations);
+    assertThat(errors.hasErrors()).isTrue();
+  }
+
+  private Errors validateConfig(DataSize dataSize, String supportedCountries, TekFieldDerivations tekFieldDerivations) {
     String[] supportedCountriesList = supportedCountries.split(",");
     Errors errors = new BeanPropertyBindingResult(submissionServiceConfig, "submissionServiceConfig");
     submissionServiceConfig.setMaximumRequestSize(dataSize);
-    submissionServiceConfig.setPayload(new Payload());
+    submissionServiceConfig.setPayload(getPayloadWithTekFieldDerivations(tekFieldDerivations));
     submissionServiceConfig.setSupportedCountries(supportedCountriesList);
     submissionServiceConfigValidator.validate(submissionServiceConfig, errors);
     return errors;
+  }
+
+  private Payload getPayloadWithTekFieldDerivations(TekFieldDerivations tekFieldDerivations) {
+    Payload payload = new Payload();
+    payload.setTekFieldDerivations(tekFieldDerivations);
+    return payload;
   }
 
   private static Stream<Arguments> validRequestDataSizes() {
@@ -103,6 +152,13 @@ class SubmissionServiceConfigValidatorTest {
     ).map(Arguments::of);
   }
 
+  private TekFieldDerivations getEmptyTekFieldDerivations() {
+    TekFieldDerivations tekFieldDerivations = new TekFieldDerivations();
+    tekFieldDerivations.setDsosFromTrl(Map.of());
+    tekFieldDerivations.setTrlFromDsos(Map.of());
+    return tekFieldDerivations;
+  }
+
   private static Stream<Arguments> setInvalidSupportedCountries() {
     return Stream.of(
         Arguments.of("DE,FRE"),
@@ -113,6 +169,73 @@ class SubmissionServiceConfigValidatorTest {
         Arguments.of(" "),
         Arguments.of(""),
         Arguments.of("\\")
+    );
+  }
+
+  private static Stream<Arguments> setValidTrlFromDsos() {
+    Map<Integer, Integer> validMapping1 = Stream.of(new Integer[][] {
+        {14, 1},
+        {13, 1},
+        {3, 3},
+        {0, 8},
+        {-1, 6},
+        {-3, 3},
+        {-14, 1}
+    }).collect(Collectors.toMap(data -> data[0], data -> data[1]));
+
+    Map<Integer, Integer> validMapping2 = Stream.of(new Integer[][] {
+        {14, 1},
+        {13, 2},
+        {3, 3},
+        {0, 4},
+        {-1, 5},
+        {-3, 6},
+        {-14, 7},
+        {-2, 8}
+    }).collect(Collectors.toMap(data -> data[0], data -> data[1]));
+
+    return Stream.of(
+        Arguments.of(validMapping1),
+        Arguments.of(validMapping2)
+    );
+  }
+
+  private static Stream<Arguments> setInvalidTrlFromDsos() {
+    return Stream.of(
+        Arguments.of(Map.of(4001, 1)),
+        Arguments.of(Map.of(14, 9)),
+        Arguments.of(Map.of(14, 0)),
+        Arguments.of(Map.of(-15, 1))
+    );
+  }
+
+  private static Stream<Arguments> setValidDsosFromTrl() {
+    Map<Integer, Integer> map1 = Stream.of(new Integer[][] {
+        {1, -4},
+        {3, -3},
+        {5, -2},
+        {6, -1},
+        {8, 0}
+    }).collect(Collectors.toMap(data -> data[0], data -> data[1]));
+
+    Map<Integer, Integer> map2 = Stream.of(new Integer[][] {
+        {1, -14},
+        {2, -3},
+        {3, -2},
+        {4, 0},
+        {5, 12}
+    }).collect(Collectors.toMap(data -> data[0], data -> data[1]));
+
+    return Stream.of(
+        Arguments.of(map1),
+        Arguments.of(map2)
+    );
+  }
+
+  private static Stream<Arguments> setInvalidDsosFromTrl() {
+    return Stream.of(
+        Arguments.of(Map.of(0, -4)),
+        Arguments.of(Map.of(1, -15))
     );
   }
 }
