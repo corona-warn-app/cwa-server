@@ -70,4 +70,13 @@ class ValidFederationKeyFilterTest {
     DiagnosisKey mockedFederationKey = FederationBatchTestHelper.createFederationDiagnosisKeyWithReportType(reportType);
     assertThat(validator.isValid(mockedFederationKey)).isTrue();
   }
+
+  @Test
+  void checkFilterAcceptsCorrectDataLength() {
+    ValidFederationKeyFilter validator = new ValidFederationKeyFilter();
+    DiagnosisKey mockedFederationKey = FederationBatchTestHelper
+        .createDiagnosisKeyWithKeyDataLength(16);
+
+    assertThat(validator.isValid(mockedFederationKey)).isTrue();
+  }
 }

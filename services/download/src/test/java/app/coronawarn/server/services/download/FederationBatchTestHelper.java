@@ -47,6 +47,11 @@ public class FederationBatchTestHelper {
         .addKeys(createFederationDiagnosisKeyWithDSOS(keyData, 0)).build();
   }
 
+  public static DiagnosisKeyBatch createDiagnosisKeyBatch(List<DiagnosisKey> diagnosisKeys) {
+    return DiagnosisKeyBatch.newBuilder()
+        .addAllKeys(diagnosisKeys).build();
+  }
+
   public static Builder createBuilderForValidFederationDiagnosisKey() {
     return DiagnosisKey.newBuilder()
         .setKeyData(ByteString.copyFromUtf8(VALID_KEY_DATA))
@@ -88,6 +93,7 @@ public class FederationBatchTestHelper {
         .build();
   }
 
+
   public static app.coronawarn.server.common.persistence.domain.DiagnosisKey createDiagnosisKey(String keyData,
       DownloadServiceConfig downloadServiceConfig) {
     return app.coronawarn.server.common.persistence.domain.DiagnosisKey.builder()
@@ -98,10 +104,16 @@ public class FederationBatchTestHelper {
 
   public static BatchDownloadResponse createBatchDownloadResponse(String batchTag,
       Optional<String> nextBatchTag) {
+    return createBatchDownloadResponse(batchTag, nextBatchTag, createDiagnosisKeyBatch("0123456789ABCDEF"));
+  }
+
+  public static BatchDownloadResponse createBatchDownloadResponse(String batchTag,
+      Optional<String> nextBatchTag, DiagnosisKeyBatch diagnosisKeyBatch) {
     BatchDownloadResponse gatewayResponse = mock(BatchDownloadResponse.class);
     when(gatewayResponse.getBatchTag()).thenReturn(batchTag);
     when(gatewayResponse.getNextBatchTag()).thenReturn(nextBatchTag);
-    when(gatewayResponse.getDiagnosisKeyBatch()).thenReturn(Optional.of(createDiagnosisKeyBatch("0123456789ABCDEF")));
+    when(gatewayResponse.getDiagnosisKeyBatch()).thenReturn(Optional.of(diagnosisKeyBatch));
     return gatewayResponse;
   }
+
 }
