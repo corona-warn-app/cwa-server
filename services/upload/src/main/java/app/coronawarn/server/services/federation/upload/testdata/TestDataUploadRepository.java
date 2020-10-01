@@ -21,7 +21,6 @@
 package app.coronawarn.server.services.federation.upload.testdata;
 
 import app.coronawarn.server.common.persistence.domain.FederationUploadKey;
-import java.util.Optional;
 import org.springframework.context.annotation.Profile;
 import org.springframework.data.jdbc.repository.query.Modifying;
 import org.springframework.data.jdbc.repository.query.Query;
@@ -52,6 +51,6 @@ public interface TestDataUploadRepository
       @Param("days_since_onset_of_symptoms") int daysSinceOnsetOfSymptoms,
       @Param("consent_to_federation") boolean consentToFederation);
 
-  @Query("SELECT MAX(submission_timestamp) FROM federation_upload_key")
-  Optional<Long> getMaxSubmissionTimestamp();
+  @Query("SELECT COUNT(*) FROM federation_upload_key WHERE batch_tag IS NULL")
+  Integer countPendingKeys();
 }
