@@ -20,7 +20,11 @@
 
 package app.coronawarn.server.services.download;
 
-import static app.coronawarn.server.common.persistence.domain.FederationBatchStatus.*;
+import static app.coronawarn.server.common.persistence.domain.FederationBatchStatus.ERROR;
+import static app.coronawarn.server.common.persistence.domain.FederationBatchStatus.ERROR_WONT_RETRY;
+import static app.coronawarn.server.common.persistence.domain.FederationBatchStatus.PROCESSED;
+import static app.coronawarn.server.common.persistence.domain.FederationBatchStatus.PROCESSED_WITH_FAILURES;
+import static app.coronawarn.server.common.persistence.domain.FederationBatchStatus.UNPROCESSED;
 import static java.util.stream.Collectors.toList;
 
 import app.coronawarn.server.common.persistence.domain.DiagnosisKey;
