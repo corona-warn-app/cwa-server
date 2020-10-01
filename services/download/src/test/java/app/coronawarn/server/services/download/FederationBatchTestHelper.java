@@ -25,6 +25,7 @@ import static org.mockito.Mockito.when;
 
 import app.coronawarn.server.common.protocols.external.exposurenotification.DiagnosisKey;
 import app.coronawarn.server.common.protocols.external.exposurenotification.DiagnosisKeyBatch;
+import app.coronawarn.server.common.protocols.external.exposurenotification.ReportType;
 import app.coronawarn.server.services.download.normalization.FederationKeyNormalizer;
 import com.google.protobuf.ByteString;
 import java.util.Optional;
@@ -38,6 +39,13 @@ public class FederationBatchTestHelper {
 
   public static DiagnosisKey createFederationDiagnosisKey(String keyData) {
     return createFederationDiagnosisKey(keyData, 0);
+  }
+
+  public static DiagnosisKey createSelfReportedFederationDiagnosisKey(ReportType reportType) {
+    return DiagnosisKey.newBuilder()
+        .setKeyData(ByteString.copyFromUtf8("test-keyData"))
+        .setReportType(reportType)
+        .build();
   }
 
   public static DiagnosisKey createFederationDiagnosisKeyWithoutDaysSinceSymptoms(String keyData) {

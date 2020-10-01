@@ -14,8 +14,11 @@
 package app.coronawarn.server.services.download.validation;
 
 import static org.assertj.core.api.Assertions.assertThat;
+
+import app.coronawarn.server.common.protocols.external.exposurenotification.ReportType;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.EnumSource;
 import org.junit.jupiter.params.provider.ValueSource;
 import app.coronawarn.server.common.protocols.external.exposurenotification.DiagnosisKey;
 import app.coronawarn.server.services.download.FederationBatchTestHelper;
@@ -48,6 +51,22 @@ class ValidFederationKeyFilterTest {
     DiagnosisKey mockedFederationKey =
         FederationBatchTestHelper.createFederationDiagnosisKey("test-keydata", validDsos);
 
+    assertThat(validator.isValid(mockedFederationKey)).isTrue();
+  }
+
+  @Test
+  void checkFilterRejectsReportTypeSelfReported() {
+    ValidFederationKeyFilter validator = new ValidFederationKeyFilter();
+    DiagnosisKey mockedFederationKey = FederationBatchTestHelper.createSelfReportedFederationDiagnosisKey(
+        ReportType.SELF_REPORT);
+    assertThat(validator.isValid(mockedFederationKey)).isFalse();
+  }
+
+  @ParameterizedTest
+  @EnumSource(value = ReportType.class, names = {"CONFIRMED_CLINICAL_DIAGNOSIS", "CONFIRMED_TEST", "RECURSIVE", "REVOKED", "UNKNOWN" })
+  void checkFilterAcceptsReportTypes(ReportType reportType) {
+    ValidFederationKeyFilter validator = new ValidFederationKeyFilter();
+    DiagnosisKey mockedFederationKey = FederationBatchTestHelper.createSelfReportedFederationDiagnosisKey(reportType);
     assertThat(validator.isValid(mockedFederationKey)).isTrue();
   }
 }

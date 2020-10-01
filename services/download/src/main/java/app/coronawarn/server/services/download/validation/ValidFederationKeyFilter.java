@@ -21,15 +21,16 @@
 package app.coronawarn.server.services.download.validation;
 
 import app.coronawarn.server.common.protocols.external.exposurenotification.DiagnosisKey;
+import app.coronawarn.server.common.protocols.external.exposurenotification.ReportType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 /**
- * Responsible for checking fields of the {@link DiagnosisKey} objects contained within batches
- * downloaded from the EFGS. This check is prior to the one executed when building the domain
- * {@link app.coronawarn.server.common.persistence.domain.DiagnosisKey} entity which ensures our
- * data model constraints are not violated for any incoming data channel.
+ * Responsible for checking fields of the {@link DiagnosisKey} objects contained within batches downloaded from the
+ * EFGS. This check is prior to the one executed when building the domain
+ * {@link app.coronawarn.server.common.persistence.domain.DiagnosisKey}
+ * entity which ensures our data model constraints are not violated for any incoming data channel.
  */
 @Component
 public class ValidFederationKeyFilter {
@@ -41,8 +42,10 @@ public class ValidFederationKeyFilter {
    */
   public boolean isValid(
       app.coronawarn.server.common.protocols.external.exposurenotification.DiagnosisKey federationKey) {
-    return hasValidDaysSinceOnsetOfSymptoms(federationKey);
+    return hasValidDaysSinceOnsetOfSymptoms(federationKey)
+        && isNotSelfReported(federationKey);
   }
+
 
   private boolean hasValidDaysSinceOnsetOfSymptoms(DiagnosisKey federationKey) {
     boolean hasValidDsos = federationKey.hasDaysSinceOnsetOfSymptoms()
@@ -53,5 +56,14 @@ public class ValidFederationKeyFilter {
           federationKey.getDaysSinceOnsetOfSymptoms());
     }
     return hasValidDsos;
+  }
+
+  private boolean isNotSelfReported(DiagnosisKey federationKey) {
+    boolean notSelfReported = federationKey.getReportType().equals(ReportType.SELF_REPORT);
+    if (!notSelfReported) {
+      logger.info("Ignoring Federation DiagnosisKey with 'ReportType' {}",
+          federationKey.getReportType());
+    }
+    return notSelfReported;
   }
 }
