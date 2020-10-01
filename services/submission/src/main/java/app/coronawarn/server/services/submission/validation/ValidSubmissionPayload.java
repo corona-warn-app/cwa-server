@@ -3,8 +3,6 @@
 package app.coronawarn.server.services.submission.validation;
 
 import static java.util.function.Predicate.not;
-import static java.util.stream.Collectors.groupingBy;
-import static java.util.stream.Collectors.summingInt;
 import static java.util.stream.Collectors.toList;
 
 import app.coronawarn.server.common.protocols.external.exposurenotification.TemporaryExposureKey;
@@ -15,7 +13,6 @@ import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -80,7 +77,6 @@ public @interface ValidSubmissionPayload {
 
       if (keysHaveFlexibleRollingPeriod(exposureKeys)) {
         return checkStartIntervalNumberIsAtMidNight(exposureKeys, validatorContext)
-            && checkKeysCumulateEqualOrLessThanMaxRollingPeriodPerDay(exposureKeys, validatorContext)
             && checkOriginCountryIsValid(submissionPayload, validatorContext)
             && checkVisitedCountriesAreValid(submissionPayload, validatorContext)
             && checkRequiredFieldsNotMissing(exposureKeys, validatorContext)
@@ -89,7 +85,6 @@ public @interface ValidSubmissionPayload {
       } else {
         return checkStartIntervalNumberIsAtMidNight(exposureKeys, validatorContext)
             && checkKeyCollectionSize(exposureKeys, validatorContext)
-            && checkUniqueStartIntervalNumbers(exposureKeys, validatorContext)
             && checkOriginCountryIsValid(submissionPayload, validatorContext)
             && checkVisitedCountriesAreValid(submissionPayload, validatorContext)
             && checkRequiredFieldsNotMissing(exposureKeys, validatorContext)
@@ -107,38 +102,6 @@ public @interface ValidSubmissionPayload {
       if (exposureKeys.isEmpty() || exposureKeys.size() > maxNumberOfKeys) {
         addViolation(validatorContext, String.format(
             "Number of keys must be between 1 and %s, but is %s.", maxNumberOfKeys, exposureKeys.size()));
-        return false;
-      }
-      return true;
-    }
-
-    private boolean checkUniqueStartIntervalNumbers(List<TemporaryExposureKey> exposureKeys,
-        ConstraintValidatorContext validatorContext) {
-      Integer[] startIntervalNumbers = exposureKeys.stream()
-          .mapToInt(TemporaryExposureKey::getRollingStartIntervalNumber).boxed().toArray(Integer[]::new);
-      long distinctSize = Arrays.stream(startIntervalNumbers)
-          .distinct()
-          .count();
-
-      if (distinctSize < exposureKeys.size()) {
-        addViolation(validatorContext, String.format(
-            "Duplicate StartIntervalNumber found. StartIntervalNumbers: %s", startIntervalNumbers));
-        return false;
-      }
-      return true;
-    }
-
-    private boolean checkKeysCumulateEqualOrLessThanMaxRollingPeriodPerDay(List<TemporaryExposureKey> exposureKeys,
-        ConstraintValidatorContext validatorContext) {
-
-      boolean isValidRollingPeriod = exposureKeys.stream()
-          .collect(groupingBy(TemporaryExposureKey::getRollingStartIntervalNumber,
-              summingInt(TemporaryExposureKey::getRollingPeriod)))
-          .values().stream()
-          .anyMatch(sum -> sum <= maxRollingPeriod);
-
-      if (!isValidRollingPeriod) {
-        addViolation(validatorContext, "The sum of the rolling periods exceeds 144 per day");
         return false;
       }
       return true;

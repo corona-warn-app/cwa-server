@@ -37,7 +37,7 @@ class PayloadValidationTest {
 
   @BeforeEach
   public void setUpMocks() {
-    when(this.tanVerifier.verifyTan(anyString())).thenReturn(true);
+    when(tanVerifier.verifyTan(anyString())).thenReturn(true);
   }
 
   @Autowired
@@ -127,7 +127,7 @@ class PayloadValidationTest {
   }
 
   @Test
-  void check400ResponseStatusForKeysWithFixedRollingPeriodAndDuplicateStartIntervals() {
+  void check200ResponseStatusForKeysWithFixedRollingPeriodAndDuplicateStartIntervals() {
     int rollingStartIntervalNumber = createRollingStartIntervalNumber(2);
     var keysWithDuplicateStartIntervalNumber = Lists.list(
         buildTemporaryExposureKey(VALID_KEY_DATA_1, rollingStartIntervalNumber, 1,
@@ -136,7 +136,7 @@ class PayloadValidationTest {
 
     ResponseEntity<Void> actResponse = executor.executePost(keysWithDuplicateStartIntervalNumber);
 
-    assertThat(actResponse.getStatusCode()).isEqualTo(BAD_REQUEST);
+    assertThat(actResponse.getStatusCode()).isEqualTo(OK);
   }
 
   @Test
@@ -211,22 +211,6 @@ class PayloadValidationTest {
   }
 
   @Test
-  void check400ResponseStatusWhenTwoKeysCumulateMoreThanMaxRollingPeriodInSameDay() {
-    ResponseEntity<Void> actResponse = executor.executePost(buildPayloadWithKeysThatCumulateMoreThanMaxRollingPeriodPerDay());
-    assertThat(actResponse.getStatusCode()).isEqualTo(BAD_REQUEST);
-  }
-
-  private Collection<TemporaryExposureKey> buildPayloadWithKeysThatCumulateMoreThanMaxRollingPeriodPerDay() {
-    ArrayList<TemporaryExposureKey> temporaryExposureKeys = new ArrayList<>();
-    temporaryExposureKeys.add(buildTemporaryExposureKeyWithFlexibleRollingPeriod(VALID_KEY_DATA_1,
-        createRollingStartIntervalNumber(2), 3, 100));
-    temporaryExposureKeys.add(buildTemporaryExposureKeyWithFlexibleRollingPeriod(VALID_KEY_DATA_1,
-        createRollingStartIntervalNumber(2), 3, 144));
-
-    return temporaryExposureKeys;
-  }
-
-  @Test
   void check200ResponseStatusWithTwoKeysOneFlexibleAndOneDefaultOnDifferentDays() {
     ResponseEntity<Void> actResponse = executor.executePost(buildPayloadWithTwoKeysOneFlexibleAndOneDefaultOnDifferentDays());
 
@@ -243,13 +227,6 @@ class PayloadValidationTest {
 
 
     return flexibleRollingPeriodKeys;
-  }
-
-  @Test
-  void check200ResponseStatusWhenKeysCumulateToMaxRollingPeriodInSameDay() {
-    ResponseEntity<Void> actResponse = executor.executePost(buildPayloadWithTwoKeysWithFlexibleRollingPeriod());
-
-    assertThat(actResponse.getStatusCode()).isEqualTo(OK);
   }
 
   private Collection<TemporaryExposureKey> buildPayloadWithTwoKeysWithFlexibleRollingPeriod() {

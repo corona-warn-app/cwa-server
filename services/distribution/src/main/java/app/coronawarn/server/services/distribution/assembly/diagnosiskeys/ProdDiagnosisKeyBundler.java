@@ -133,6 +133,13 @@ public class ProdDiagnosisKeyBundler extends DiagnosisKeyBundler {
     return distributableDiagnosisKeys.keySet().stream().min(LocalDateTime::compareTo);
   }
 
+  /**
+   * Calculates the earliest point in time at which the specified {@link DiagnosisKey} can be distributed, while
+   * respecting the expiry policy and the submission timestamp. Before keys are allowed to be distributed, they must be
+   * expired for a configured amount of time.
+   *
+   * @return {@link LocalDateTime} at which the specified {@link DiagnosisKey} can be distributed.
+   */
   private LocalDateTime getDistributionDateTimeByExpiryPolicy(DiagnosisKey diagnosisKey) {
     return sharingPoliciesChecker.getEarliestTimeForSharingKey(diagnosisKey,
         ExpirationPolicy.of(expiryPolicyMinutes, ChronoUnit.MINUTES));
