@@ -33,7 +33,15 @@ public class UploadServiceConfig {
   private String certificate;
   private Signature signature;
   private TestData testData;
+  private EfgsTransmission efgsTransmission;
 
+  public EfgsTransmission getEfgsTransmission() {
+    return efgsTransmission;
+  }
+
+  public void setEfgsTransmission(EfgsTransmission efgsTransmission) {
+    this.efgsTransmission = efgsTransmission;
+  }
 
   public Integer getExpiryPolicyMinutes() {
     return expiryPolicyMinutes;
@@ -97,6 +105,36 @@ public class UploadServiceConfig {
 
   public void setSignature(Signature signature) {
     this.signature = signature;
+  }
+
+  public static class EfgsTransmission {
+    private boolean enableDsos;
+    private boolean enableReportType;
+    private Integer defaultDsos;
+
+    public boolean isEnableDsos() {
+      return enableDsos;
+    }
+
+    public void setEnableDsos(boolean enableDsos) {
+      this.enableDsos = enableDsos;
+    }
+
+    public boolean isEnableReportType() {
+      return enableReportType;
+    }
+
+    public void setEnableReportType(boolean enableReportType) {
+      this.enableReportType = enableReportType;
+    }
+
+    public Integer getDefaultDsos() {
+      return defaultDsos;
+    }
+
+    public void setDefaultDsos(Integer defaultDsos) {
+      this.defaultDsos = defaultDsos;
+    }
   }
 
   public static class TestData {
