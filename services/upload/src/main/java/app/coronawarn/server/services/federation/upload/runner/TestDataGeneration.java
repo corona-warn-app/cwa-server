@@ -31,15 +31,12 @@ import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.time.temporal.ChronoUnit;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
-import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
-import java.util.stream.LongStream;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.ApplicationArguments;
@@ -56,6 +53,7 @@ public class TestDataGeneration implements ApplicationRunner {
   private final UploadServiceConfig uploadServiceConfig;
   private final Logger logger = LoggerFactory.getLogger(TestDataGeneration.class);
   private final TestDataUploadRepository keyRepository;
+  private final SecureRandom random = new SecureRandom();
 
   public static final long ONE_HOUR_INTERVAL_SECONDS = TimeUnit.HOURS.toSeconds(1);
   public static final long TEN_MINUTES_INTERVAL_SECONDS = TimeUnit.MINUTES.toSeconds(10);
@@ -100,7 +98,7 @@ public class TestDataGeneration implements ApplicationRunner {
   }
 
   private long getRandomBetween(long minIncluding, long maxIncluding) {
-    return minIncluding + (long) (ThreadLocalRandom.current().nextDouble() * (maxIncluding - minIncluding));
+    return minIncluding + (long) (random.nextDouble() * (maxIncluding - minIncluding));
   }
 
   private LocalDateTime getCurrentTimestampTruncatedHour() {
@@ -112,10 +110,11 @@ public class TestDataGeneration implements ApplicationRunner {
   }
 
   /**
-   * Creates a list of Fake Upload keys for the day before.
-   * Number of keys generated is defined by the following formula:
-   *  <i>upload.test-data.max-pending-keys</i> - <i>number pending keys in DB</i>
+   * Creates a list of Fake Upload keys for the day before. Number of keys generated is defined by the following
+   * formula:
+   * <i>upload.test-data.max-pending-keys</i> - <i>number pending keys in DB</i>
    * Where <i>pending key in DB</i> is any key where <i>batch_tag</i> is NULL.
+   *
    * @return List of Federation Upload Keys generated.
    */
   private List<FederationUploadKey> generateFakeKeysForPreviousDay() {
@@ -138,9 +137,8 @@ public class TestDataGeneration implements ApplicationRunner {
           numberOfKeysToGenerate,
           hourStart,
           hourEnd);
-      var random = ThreadLocalRandom.current();
       return IntStream.range(0, numberOfKeysToGenerate)
-          .mapToObj(ignoredValue -> this.makeKeyFromTimestamp(random.nextLong(hourStart, hourEnd)))
+          .mapToObj(ignoredValue -> this.makeKeyFromTimestamp(this.getRandomBetween(hourStart, hourEnd)))
           .collect(Collectors.toList());
     } else {
       logger.info("Skipping generation");
