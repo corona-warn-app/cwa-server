@@ -48,7 +48,8 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 @EnableConfigurationProperties(value = UploadServiceConfig.class)
 @ExtendWith(SpringExtension.class)
-@ContextConfiguration(classes = {PayloadFactory.class}, initializers = ConfigFileApplicationContextInitializer.class)
+@ContextConfiguration(classes = {PayloadFactory.class, AllowedPropertiesMap.class},
+    initializers = ConfigFileApplicationContextInitializer.class)
 class PayloadFactoryTest {
 
   @MockBean
