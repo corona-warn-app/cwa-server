@@ -41,7 +41,7 @@ public class AllowedPropertiesMap {
     this.canSendDsos = configuration.getEfgsTransmission().isEnableDsos();
     this.canSendReportType = configuration.getEfgsTransmission().isEnableReportType();
     this.defaultDsos = configuration.getEfgsTransmission().getDefaultDsos();
-    this.defaultReportType = ReportType.UNKNOWN;
+    this.defaultReportType = configuration.getEfgsTransmission().getDefaultReportType();
   }
 
   public int getDsosOrDefault(int dsos) {

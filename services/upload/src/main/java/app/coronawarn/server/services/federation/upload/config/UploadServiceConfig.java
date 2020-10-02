@@ -2,6 +2,7 @@
 
 package app.coronawarn.server.services.federation.upload.config;
 
+import app.coronawarn.server.common.protocols.external.exposurenotification.ReportType;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
 @ConfigurationProperties(prefix = "services.upload")
@@ -93,6 +94,15 @@ public class UploadServiceConfig {
     private boolean enableDsos;
     private boolean enableReportType;
     private Integer defaultDsos;
+    private ReportType defaultReportType;
+
+    public ReportType getDefaultReportType() {
+      return defaultReportType;
+    }
+
+    public void setDefaultReportType(ReportType defaultReportType) {
+      this.defaultReportType = defaultReportType;
+    }
 
     public boolean isEnableDsos() {
       return enableDsos;
