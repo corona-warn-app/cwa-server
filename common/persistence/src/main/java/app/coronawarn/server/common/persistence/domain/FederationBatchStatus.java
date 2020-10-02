@@ -33,7 +33,7 @@ public enum FederationBatchStatus {
    * The corresponding batch has been processed.
    * Some keys did not pass validation.
    */
-  PROCESSED_WITH_FAILURES,
+  PROCESSED_WITH_ERROR,
   /**
    * An error occurred while processing the batch.
    */

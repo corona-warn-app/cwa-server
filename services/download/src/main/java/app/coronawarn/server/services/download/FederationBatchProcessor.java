@@ -23,7 +23,7 @@ package app.coronawarn.server.services.download;
 import static app.coronawarn.server.common.persistence.domain.FederationBatchStatus.ERROR;
 import static app.coronawarn.server.common.persistence.domain.FederationBatchStatus.ERROR_WONT_RETRY;
 import static app.coronawarn.server.common.persistence.domain.FederationBatchStatus.PROCESSED;
-import static app.coronawarn.server.common.persistence.domain.FederationBatchStatus.PROCESSED_WITH_FAILURES;
+import static app.coronawarn.server.common.persistence.domain.FederationBatchStatus.PROCESSED_WITH_ERROR;
 import static app.coronawarn.server.common.persistence.domain.FederationBatchStatus.UNPROCESSED;
 import static java.util.stream.Collectors.toList;
 
@@ -152,7 +152,7 @@ public class FederationBatchProcessor {
         int insertedKeys = diagnosisKeyService.saveDiagnosisKeys(validDiagnosisKeys);
         logger.info("Successfully inserted {} keys for date {} and batchTag {}", insertedKeys, date, batchTag);
       });
-      batchInfoService.updateStatus(batchInfo, batchContainsInvalidKeys.get() ? PROCESSED_WITH_FAILURES : PROCESSED);
+      batchInfoService.updateStatus(batchInfo, batchContainsInvalidKeys.get() ? PROCESSED_WITH_ERROR : PROCESSED);
       return response.getNextBatchTag();
     } catch (Exception e) {
       logger.error("Federation batch processing for date {} and batchTag {} failed. Status set to {}",

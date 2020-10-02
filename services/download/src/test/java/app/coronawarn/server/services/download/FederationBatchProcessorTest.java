@@ -23,7 +23,7 @@ package app.coronawarn.server.services.download;
 import static app.coronawarn.server.common.persistence.domain.FederationBatchStatus.ERROR;
 import static app.coronawarn.server.common.persistence.domain.FederationBatchStatus.ERROR_WONT_RETRY;
 import static app.coronawarn.server.common.persistence.domain.FederationBatchStatus.PROCESSED;
-import static app.coronawarn.server.common.persistence.domain.FederationBatchStatus.PROCESSED_WITH_FAILURES;
+import static app.coronawarn.server.common.persistence.domain.FederationBatchStatus.PROCESSED_WITH_ERROR;
 import static app.coronawarn.server.common.persistence.domain.FederationBatchStatus.UNPROCESSED;
 import static java.util.Collections.emptyList;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -309,7 +309,7 @@ class FederationBatchProcessorTest {
 
       verify(batchInfoService, times(1)).findByStatus(UNPROCESSED);
       verify(federationGatewayDownloadService, times(1)).downloadBatch(batchTag1, date);
-      verify(batchInfoService, times(1)).updateStatus(batchInfo, PROCESSED_WITH_FAILURES);
+      verify(batchInfoService, times(1)).updateStatus(batchInfo, PROCESSED_WITH_ERROR);
       verify(diagnosisKeyService, times(1)).saveDiagnosisKeys(any());
     }
 
@@ -332,7 +332,7 @@ class FederationBatchProcessorTest {
       ArgumentCaptor<List> captor = ArgumentCaptor.forClass(List.class);
       verify(batchInfoService, times(1)).findByStatus(UNPROCESSED);
       verify(federationGatewayDownloadService, times(1)).downloadBatch(batchTag1, date);
-      verify(batchInfoService, times(1)).updateStatus(batchInfo, PROCESSED_WITH_FAILURES);
+      verify(batchInfoService, times(1)).updateStatus(batchInfo, PROCESSED_WITH_ERROR);
       verify(diagnosisKeyService, times(1)).saveDiagnosisKeys(captor.capture());
       assertThat(captor.getValue()).isEmpty();
     }
