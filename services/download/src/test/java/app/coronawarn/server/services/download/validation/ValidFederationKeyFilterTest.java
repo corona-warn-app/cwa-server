@@ -14,21 +14,34 @@
 package app.coronawarn.server.services.download.validation;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
+import app.coronawarn.server.common.protocols.external.exposurenotification.DiagnosisKey;
 import app.coronawarn.server.common.protocols.external.exposurenotification.ReportType;
+import app.coronawarn.server.services.download.DownloadServiceConfig;
+import app.coronawarn.server.services.download.FederationBatchTestHelper;
+import java.util.List;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.EnumSource;
 import org.junit.jupiter.params.provider.ValueSource;
-import app.coronawarn.server.common.protocols.external.exposurenotification.DiagnosisKey;
-import app.coronawarn.server.services.download.FederationBatchTestHelper;
 
 class ValidFederationKeyFilterTest {
+
+  private final ValidFederationKeyFilter validator;
+
+  private final DownloadServiceConfig downloadServiceConfig;
+
+  public ValidFederationKeyFilterTest() {
+    this.downloadServiceConfig = mock(DownloadServiceConfig.class);
+    when(downloadServiceConfig.getAllowedReportTypesToDownload()).thenReturn(List.of(ReportType.CONFIRMED_TEST));
+    this.validator = new ValidFederationKeyFilter(downloadServiceConfig);
+  }
 
   @ParameterizedTest
   @ValueSource(ints = {-15, -17, 4001})
   void checkFilterRejectsWhenDaysSinceOnsetOfSymptomsNotInRange(int invalidDsos) {
-    ValidFederationKeyFilter validator = new ValidFederationKeyFilter();
     DiagnosisKey mockedFederationKey =
         FederationBatchTestHelper.createFederationDiagnosisKeyWithDSOS("test-keydata", invalidDsos);
 
@@ -37,7 +50,6 @@ class ValidFederationKeyFilterTest {
 
   @Test
   void checkFilterRejectsWhenDaysSinceOnsetOfSymptomsIsMissing() {
-    ValidFederationKeyFilter validator = new ValidFederationKeyFilter();
     DiagnosisKey mockedFederationKey = FederationBatchTestHelper
         .createFederationDiagnosisKeyWithoutDaysSinceSymptoms();
 
@@ -47,36 +59,39 @@ class ValidFederationKeyFilterTest {
   @ParameterizedTest
   @ValueSource(ints = {0, 8, -14, 3986})
   void checkFilterAcceptsWhenDaysSinceOnsetOfSymptomsInRange(int validDsos) {
-    ValidFederationKeyFilter validator = new ValidFederationKeyFilter();
     DiagnosisKey mockedFederationKey =
         FederationBatchTestHelper.createFederationDiagnosisKeyWithDSOS("test-keydata", validDsos);
 
     assertThat(validator.isValid(mockedFederationKey)).isTrue();
   }
 
-  @Test
-  void checkFilterRejectsReportTypeSelfReported() {
-    ValidFederationKeyFilter validator = new ValidFederationKeyFilter();
-    DiagnosisKey mockedFederationKey = FederationBatchTestHelper.createFederationDiagnosisKeyWithReportType(
-        ReportType.SELF_REPORT);
-    assertThat(validator.isValid(mockedFederationKey)).isFalse();
-  }
-
   @ParameterizedTest
-  @EnumSource(value = ReportType.class, names = {"CONFIRMED_CLINICAL_DIAGNOSIS", "CONFIRMED_TEST", "RECURSIVE",
-      "REVOKED", "UNKNOWN"})
+  @EnumSource(value = ReportType.class, names = {"CONFIRMED_TEST"})
   void checkFilterAcceptsReportTypes(ReportType reportType) {
-    ValidFederationKeyFilter validator = new ValidFederationKeyFilter();
     DiagnosisKey mockedFederationKey = FederationBatchTestHelper.createFederationDiagnosisKeyWithReportType(reportType);
     assertThat(validator.isValid(mockedFederationKey)).isTrue();
   }
 
+  @ParameterizedTest
+  @EnumSource(value = ReportType.class, names = {"UNKNOWN", "CONFIRMED_CLINICAL_DIAGNOSIS", "SELF_REPORT", "RECURSIVE",
+      "REVOKED"})
+  void checkFilterRejectsReportTypes(ReportType reportType) {
+    DiagnosisKey mockedFederationKey = FederationBatchTestHelper.createFederationDiagnosisKeyWithReportType(reportType);
+    assertThat(validator.isValid(mockedFederationKey)).isFalse();
+  }
+
   @Test
-  void checkFilterAcceptsCorrectDataLength() {
-    ValidFederationKeyFilter validator = new ValidFederationKeyFilter();
+  void checkFilterAcceptsCorrectKeyLength() {
     DiagnosisKey mockedFederationKey = FederationBatchTestHelper
         .createDiagnosisKeyWithKeyDataLength(16);
-
     assertThat(validator.isValid(mockedFederationKey)).isTrue();
+  }
+
+  @ParameterizedTest
+  @ValueSource(ints = {0, 15, 17, 20})
+  void checkFilterRejectsIncorrectKeyLength(int invalidKeyLength) {
+    DiagnosisKey mockedFederationKey = FederationBatchTestHelper
+        .createDiagnosisKeyWithKeyDataLength(invalidKeyLength);
+    assertThat(validator.isValid(mockedFederationKey)).isFalse();
   }
 }

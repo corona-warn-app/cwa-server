@@ -40,7 +40,7 @@ public class FederationBatchTestHelper {
   private static final int VALID_ROLLING_PERIOD = 144;
   private static final int VALID_DSOS = 2;
   private static final int VALID_TRANSMISSION_RISK_LEVEL = 8;
-  private static final ReportType VALID_REPORT_TYPE = ReportType.CONFIRMED_CLINICAL_DIAGNOSIS;
+  private static final ReportType VALID_REPORT_TYPE = ReportType.CONFIRMED_TEST;
 
   public static DiagnosisKeyBatch createDiagnosisKeyBatch(String keyData) {
     return DiagnosisKeyBatch.newBuilder()

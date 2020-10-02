@@ -55,13 +55,15 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.annotation.DirtiesContext;
 
 @SpringBootTest(classes = {FederationBatchProcessor.class, FederationBatchInfoService.class, DiagnosisKeyService.class,
-    FederationGatewayClient.class, DownloadServiceConfig.class, ValidFederationKeyFilter.class})
+    FederationGatewayClient.class, ValidFederationKeyFilter.class})
 @DirtiesContext
+@EnableConfigurationProperties(value = DownloadServiceConfig.class)
 class FederationBatchProcessorTest {
 
   private final LocalDate date = LocalDate.of(2020, 9, 1);
@@ -80,15 +82,18 @@ class FederationBatchProcessorTest {
   @Autowired
   private FederationBatchProcessor batchProcessor;
 
-  @MockBean
+  @Autowired
   DownloadServiceConfig config;
 
+  /*
   @BeforeEach
   void setUp() {
     final TekFieldDerivations tekDerivations = new TekFieldDerivations();
     tekDerivations.setTrlFromDsos(Map.of(1, 1, 2, 2, 3, 3));
     when(config.getTekFieldDerivations()).thenReturn(tekDerivations);
+
   }
+   */
 
   @AfterEach
   void resetMocks() {
