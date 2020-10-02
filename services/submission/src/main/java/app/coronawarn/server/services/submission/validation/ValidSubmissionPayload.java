@@ -1,28 +1,8 @@
-/*-
- * ---license-start
- * Corona-Warn-App
- * ---
- * Copyright (C) 2020 SAP SE and all other contributors
- * ---
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- * ---license-end
- */
+
 
 package app.coronawarn.server.services.submission.validation;
 
 import static java.util.function.Predicate.not;
-import static java.util.stream.Collectors.groupingBy;
-import static java.util.stream.Collectors.summingInt;
 import static java.util.stream.Collectors.toList;
 
 import app.coronawarn.server.common.protocols.external.exposurenotification.TemporaryExposureKey;
@@ -33,7 +13,6 @@ import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -98,7 +77,6 @@ public @interface ValidSubmissionPayload {
 
       if (keysHaveFlexibleRollingPeriod(exposureKeys)) {
         return checkStartIntervalNumberIsAtMidNight(exposureKeys, validatorContext)
-            && checkKeysCumulateEqualOrLessThanMaxRollingPeriodPerDay(exposureKeys, validatorContext)
             && checkOriginCountryIsValid(submissionPayload, validatorContext)
             && checkVisitedCountriesAreValid(submissionPayload, validatorContext)
             && checkRequiredFieldsNotMissing(exposureKeys, validatorContext)
@@ -107,7 +85,6 @@ public @interface ValidSubmissionPayload {
       } else {
         return checkStartIntervalNumberIsAtMidNight(exposureKeys, validatorContext)
             && checkKeyCollectionSize(exposureKeys, validatorContext)
-            && checkUniqueStartIntervalNumbers(exposureKeys, validatorContext)
             && checkOriginCountryIsValid(submissionPayload, validatorContext)
             && checkVisitedCountriesAreValid(submissionPayload, validatorContext)
             && checkRequiredFieldsNotMissing(exposureKeys, validatorContext)
@@ -125,38 +102,6 @@ public @interface ValidSubmissionPayload {
       if (exposureKeys.isEmpty() || exposureKeys.size() > maxNumberOfKeys) {
         addViolation(validatorContext, String.format(
             "Number of keys must be between 1 and %s, but is %s.", maxNumberOfKeys, exposureKeys.size()));
-        return false;
-      }
-      return true;
-    }
-
-    private boolean checkUniqueStartIntervalNumbers(List<TemporaryExposureKey> exposureKeys,
-        ConstraintValidatorContext validatorContext) {
-      Integer[] startIntervalNumbers = exposureKeys.stream()
-          .mapToInt(TemporaryExposureKey::getRollingStartIntervalNumber).boxed().toArray(Integer[]::new);
-      long distinctSize = Arrays.stream(startIntervalNumbers)
-          .distinct()
-          .count();
-
-      if (distinctSize < exposureKeys.size()) {
-        addViolation(validatorContext, String.format(
-            "Duplicate StartIntervalNumber found. StartIntervalNumbers: %s", startIntervalNumbers));
-        return false;
-      }
-      return true;
-    }
-
-    private boolean checkKeysCumulateEqualOrLessThanMaxRollingPeriodPerDay(List<TemporaryExposureKey> exposureKeys,
-        ConstraintValidatorContext validatorContext) {
-
-      boolean isValidRollingPeriod = exposureKeys.stream()
-          .collect(groupingBy(TemporaryExposureKey::getRollingStartIntervalNumber,
-              summingInt(TemporaryExposureKey::getRollingPeriod)))
-          .values().stream()
-          .anyMatch(sum -> sum <= maxRollingPeriod);
-
-      if (!isValidRollingPeriod) {
-        addViolation(validatorContext, "The sum of the rolling periods exceeds 144 per day");
         return false;
       }
       return true;

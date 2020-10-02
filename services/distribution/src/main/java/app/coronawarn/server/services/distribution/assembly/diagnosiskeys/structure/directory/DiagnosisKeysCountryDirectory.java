@@ -1,22 +1,4 @@
-/*-
- * ---license-start
- * Corona-Warn-App
- * ---
- * Copyright (C) 2020 SAP SE and all other contributors
- * ---
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- * ---license-end
- */
+
 
 package app.coronawarn.server.services.distribution.assembly.diagnosiskeys.structure.directory;
 
@@ -30,7 +12,6 @@ import app.coronawarn.server.services.distribution.assembly.structure.directory.
 import app.coronawarn.server.services.distribution.assembly.structure.util.ImmutableStack;
 import app.coronawarn.server.services.distribution.config.DistributionServiceConfig;
 import java.time.LocalDate;
-import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
 
@@ -49,11 +30,9 @@ public class DiagnosisKeysCountryDirectory extends IndexDirectoryOnDisk<String> 
    */
   public DiagnosisKeysCountryDirectory(DiagnosisKeyBundler diagnosisKeyBundler,
       CryptoProvider cryptoProvider, DistributionServiceConfig distributionServiceConfig) {
-    super(distributionServiceConfig.getApi().getCountryPath(), ignoredValue -> {
-      Set<String> countries = new HashSet<>(Set.of(distributionServiceConfig.getSupportedCountries()));
-      countries.add(distributionServiceConfig.getEuPackageName());
-      return countries;
-    }, Object::toString);
+    super(distributionServiceConfig.getApi().getCountryPath(), ignoredValue -> Set
+            .of(distributionServiceConfig.getApi().getOriginCountry(), distributionServiceConfig.getEuPackageName()),
+        Object::toString);
     this.diagnosisKeyBundler = diagnosisKeyBundler;
     this.cryptoProvider = cryptoProvider;
     this.distributionServiceConfig = distributionServiceConfig;

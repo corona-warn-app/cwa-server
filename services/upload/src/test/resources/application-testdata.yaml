@@ -2,4 +2,4 @@
 services:
   upload:
     test-data:
-      keys-per-hour: 200
+      max-pending-keys: 8000

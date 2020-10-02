@@ -1,22 +1,4 @@
-/*-
- * ---license-start
- * Corona-Warn-App
- * ---
- * Copyright (C) 2020 SAP SE and all other contributors
- * ---
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- * ---license-end
- */
+
 
 package app.coronawarn.server.services.submission.controller;
 
@@ -55,7 +37,7 @@ class PayloadValidationTest {
 
   @BeforeEach
   public void setUpMocks() {
-    when(this.tanVerifier.verifyTan(anyString())).thenReturn(true);
+    when(tanVerifier.verifyTan(anyString())).thenReturn(true);
   }
 
   @Autowired
@@ -145,7 +127,7 @@ class PayloadValidationTest {
   }
 
   @Test
-  void check400ResponseStatusForKeysWithFixedRollingPeriodAndDuplicateStartIntervals() {
+  void check200ResponseStatusForKeysWithFixedRollingPeriodAndDuplicateStartIntervals() {
     int rollingStartIntervalNumber = createRollingStartIntervalNumber(2);
     var keysWithDuplicateStartIntervalNumber = Lists.list(
         buildTemporaryExposureKey(VALID_KEY_DATA_1, rollingStartIntervalNumber, 1,
@@ -154,7 +136,7 @@ class PayloadValidationTest {
 
     ResponseEntity<Void> actResponse = executor.executePost(keysWithDuplicateStartIntervalNumber);
 
-    assertThat(actResponse.getStatusCode()).isEqualTo(BAD_REQUEST);
+    assertThat(actResponse.getStatusCode()).isEqualTo(OK);
   }
 
   @Test
@@ -229,22 +211,6 @@ class PayloadValidationTest {
   }
 
   @Test
-  void check400ResponseStatusWhenTwoKeysCumulateMoreThanMaxRollingPeriodInSameDay() {
-    ResponseEntity<Void> actResponse = executor.executePost(buildPayloadWithKeysThatCumulateMoreThanMaxRollingPeriodPerDay());
-    assertThat(actResponse.getStatusCode()).isEqualTo(BAD_REQUEST);
-  }
-
-  private Collection<TemporaryExposureKey> buildPayloadWithKeysThatCumulateMoreThanMaxRollingPeriodPerDay() {
-    ArrayList<TemporaryExposureKey> temporaryExposureKeys = new ArrayList<>();
-    temporaryExposureKeys.add(buildTemporaryExposureKeyWithFlexibleRollingPeriod(VALID_KEY_DATA_1,
-        createRollingStartIntervalNumber(2), 3, 100));
-    temporaryExposureKeys.add(buildTemporaryExposureKeyWithFlexibleRollingPeriod(VALID_KEY_DATA_1,
-        createRollingStartIntervalNumber(2), 3, 144));
-
-    return temporaryExposureKeys;
-  }
-
-  @Test
   void check200ResponseStatusWithTwoKeysOneFlexibleAndOneDefaultOnDifferentDays() {
     ResponseEntity<Void> actResponse = executor.executePost(buildPayloadWithTwoKeysOneFlexibleAndOneDefaultOnDifferentDays());
 
@@ -261,13 +227,6 @@ class PayloadValidationTest {
 
 
     return flexibleRollingPeriodKeys;
-  }
-
-  @Test
-  void check200ResponseStatusWhenKeysCumulateToMaxRollingPeriodInSameDay() {
-    ResponseEntity<Void> actResponse = executor.executePost(buildPayloadWithTwoKeysWithFlexibleRollingPeriod());
-
-    assertThat(actResponse.getStatusCode()).isEqualTo(OK);
   }
 
   private Collection<TemporaryExposureKey> buildPayloadWithTwoKeysWithFlexibleRollingPeriod() {
