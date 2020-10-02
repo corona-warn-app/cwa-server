@@ -12,7 +12,6 @@ import app.coronawarn.server.services.distribution.assembly.structure.directory.
 import app.coronawarn.server.services.distribution.assembly.structure.util.ImmutableStack;
 import app.coronawarn.server.services.distribution.config.DistributionServiceConfig;
 import java.time.LocalDate;
-import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
 

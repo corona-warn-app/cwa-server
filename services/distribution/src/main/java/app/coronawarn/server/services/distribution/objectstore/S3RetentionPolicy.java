@@ -9,7 +9,6 @@ import app.coronawarn.server.services.distribution.objectstore.client.ObjectStor
 import app.coronawarn.server.services.distribution.objectstore.client.S3Object;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.regex.Matcher;
