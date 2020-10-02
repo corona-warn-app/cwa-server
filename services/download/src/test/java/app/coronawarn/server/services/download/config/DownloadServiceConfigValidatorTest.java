@@ -51,19 +51,19 @@ public class DownloadServiceConfigValidatorTest {
   }
 
   @ParameterizedTest
-  @MethodSource("setValidTrlFromDsos")
-  void testWithValidTrlFromDsos(Map<Integer, Integer> trlFromDsos) {
+  @MethodSource("validTransmissionRiskLevelFromDaysSinceOnsetOfSymptoms")
+  void testWithValidTrlFromDsos(Map<Integer, Integer> transmissionRiskLevelFromDaysSinceOnsetOfSymptoms) {
     TekFieldDerivations tekFieldDerivations = new TekFieldDerivations();
-    tekFieldDerivations.setTrlFromDsos(trlFromDsos);
+    tekFieldDerivations.setTrlFromDsos(transmissionRiskLevelFromDaysSinceOnsetOfSymptoms);
     Errors errors = validateConfig(tekFieldDerivations);
     assertThat(errors.hasErrors()).isFalse();
   }
 
   @ParameterizedTest
-  @MethodSource("setInvalidTrlFromDsos")
-  void testWithInvalidTrlFromDsos(Map<Integer, Integer> trlFromDsos) {
+  @MethodSource("invalidTransmissionRiskLevelFromDaysSinceOnsetOfSymptoms")
+  void testWithInvalidTrlFromDsos(Map<Integer, Integer> transmissionRiskLevelFromDaysSinceOnsetOfSymptoms) {
     TekFieldDerivations tekFieldDerivations = new TekFieldDerivations();
-    tekFieldDerivations.setTrlFromDsos(trlFromDsos);
+    tekFieldDerivations.setTrlFromDsos(transmissionRiskLevelFromDaysSinceOnsetOfSymptoms);
     Errors errors = validateConfig(tekFieldDerivations);
     assertThat(errors.hasErrors()).isTrue();
   }
@@ -75,7 +75,7 @@ public class DownloadServiceConfigValidatorTest {
     return errors;
   }
 
-  private static Stream<Arguments> setValidTrlFromDsos() {
+  private static Stream<Arguments> validTransmissionRiskLevelFromDaysSinceOnsetOfSymptoms() {
     Map<Integer, Integer> validMapping1 = Stream.of(new Integer[][] {
         {14, 1},
         {13, 1},
@@ -103,7 +103,7 @@ public class DownloadServiceConfigValidatorTest {
     );
   }
 
-  private static Stream<Arguments> setInvalidTrlFromDsos() {
+  private static Stream<Arguments> invalidTransmissionRiskLevelFromDaysSinceOnsetOfSymptoms() {
     return Stream.of(
         Arguments.of(Map.of(4001, 1)),
         Arguments.of(Map.of(14, 9)),
