@@ -11,8 +11,8 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.OffsetDateTime;
+import java.time.ZoneId;
 import java.time.temporal.ChronoUnit;
-import java.util.Collections;
 import java.util.List;
 import java.util.Random;
 import java.util.Set;
@@ -98,7 +98,7 @@ public class DiagnosisKeyServiceTestHelper {
    * computed relative to the top of the hours.
    */
   public static DiagnosisKey getKeySubmittedHoursAfterMidnightExpiration(int hours) {
-    LocalDateTime yesterday = LocalDateTime.of(LocalDate.now(), LocalTime.MIDNIGHT).minusDays(1);
+    LocalDateTime yesterday = LocalDateTime.of(LocalDate.now(ZoneId.of("UTC")), LocalTime.MIDNIGHT).minusDays(1);
 
     // key rolled out yesterday (relative to the test run) at 00:00
     int rollingStart = Math.toIntExact(yesterday.toEpochSecond(UTC) / 600L);
