@@ -75,22 +75,13 @@ public @interface ValidSubmissionPayload {
       List<TemporaryExposureKey> exposureKeys = submissionPayload.getKeysList();
       validatorContext.disableDefaultConstraintViolation();
 
-      if (keysHaveFlexibleRollingPeriod(exposureKeys)) {
-        return checkStartIntervalNumberIsAtMidNight(exposureKeys, validatorContext)
-            && checkOriginCountryIsValid(submissionPayload, validatorContext)
-            && checkVisitedCountriesAreValid(submissionPayload, validatorContext)
-            && checkRequiredFieldsNotMissing(exposureKeys, validatorContext)
-            && checkTransmissionRiskLevelIsAcceptable(exposureKeys, validatorContext)
-            && checkDaysSinceOnsetOfSymptomsIsInRange(exposureKeys, validatorContext);
-      } else {
-        return checkStartIntervalNumberIsAtMidNight(exposureKeys, validatorContext)
-            && checkKeyCollectionSize(exposureKeys, validatorContext)
-            && checkOriginCountryIsValid(submissionPayload, validatorContext)
-            && checkVisitedCountriesAreValid(submissionPayload, validatorContext)
-            && checkRequiredFieldsNotMissing(exposureKeys, validatorContext)
-            && checkTransmissionRiskLevelIsAcceptable(exposureKeys, validatorContext)
-            && checkDaysSinceOnsetOfSymptomsIsInRange(exposureKeys, validatorContext);
-      }
+      return checkStartIntervalNumberIsAtMidNight(exposureKeys, validatorContext)
+          && checkKeyCollectionSize(exposureKeys, validatorContext)
+          && checkOriginCountryIsValid(submissionPayload, validatorContext)
+          && checkVisitedCountriesAreValid(submissionPayload, validatorContext)
+          && checkRequiredFieldsNotMissing(exposureKeys, validatorContext)
+          && checkTransmissionRiskLevelIsAcceptable(exposureKeys, validatorContext)
+          && checkDaysSinceOnsetOfSymptomsIsInRange(exposureKeys, validatorContext);
     }
 
     private void addViolation(ConstraintValidatorContext validatorContext, String message) {
@@ -105,11 +96,6 @@ public @interface ValidSubmissionPayload {
         return false;
       }
       return true;
-    }
-
-    private boolean keysHaveFlexibleRollingPeriod(List<TemporaryExposureKey> exposureKeys) {
-      return exposureKeys.stream()
-          .anyMatch(temporaryExposureKey -> temporaryExposureKey.getRollingPeriod() < maxRollingPeriod);
     }
 
     private boolean checkStartIntervalNumberIsAtMidNight(List<TemporaryExposureKey> exposureKeys,
@@ -157,6 +143,7 @@ public @interface ValidSubmissionPayload {
 
     private boolean checkDaysSinceOnsetOfSymptomsIsInRange(List<TemporaryExposureKey> exposureKeys,
         ConstraintValidatorContext validatorContext) {
+      // we check that transmission risk level is in the acceptable range
       return addViolationForInvalidTek(exposureKeys,
           tekStream -> tekStream.filter(TemporaryExposureKey::hasDaysSinceOnsetOfSymptoms)
                                 .filter(this::hasInvalidDaysSinceSymptoms),
@@ -167,6 +154,7 @@ public @interface ValidSubmissionPayload {
 
     private boolean checkTransmissionRiskLevelIsAcceptable(List<TemporaryExposureKey> exposureKeys,
         ConstraintValidatorContext validatorContext) {
+      // we check that transmission risk level is in the acceptable range
       return addViolationForInvalidTek(exposureKeys,
           tekStream -> tekStream.filter(TemporaryExposureKey::hasTransmissionRiskLevel)
                                 .filter(this::hasInvalidTransmissionRiskLevel),
