@@ -45,12 +45,16 @@ import app.coronawarn.server.common.persistence.service.DiagnosisKeyService;
 import app.coronawarn.server.common.persistence.service.FederationBatchInfoService;
 import app.coronawarn.server.common.protocols.external.exposurenotification.DiagnosisKey;
 import app.coronawarn.server.common.protocols.external.exposurenotification.DiagnosisKeyBatch;
+import app.coronawarn.server.common.protocols.external.exposurenotification.ReportType;
+import app.coronawarn.server.services.download.DownloadServiceConfig.TekFieldDerivations;
 import app.coronawarn.server.services.download.validation.ValidFederationKeyFilter;
 import feign.FeignException;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -83,18 +87,16 @@ class FederationBatchProcessorTest {
   @Autowired
   private FederationBatchProcessor batchProcessor;
 
-  @Autowired
+  @MockBean
   DownloadServiceConfig config;
 
-  /*
   @BeforeEach
   void setUp() {
     final TekFieldDerivations tekDerivations = new TekFieldDerivations();
     tekDerivations.setTrlFromDsos(Map.of(1, 1, 2, 2, 3, 3));
     when(config.getTekFieldDerivations()).thenReturn(tekDerivations);
-
+    when(config.getAllowedReportTypesToDownload()).thenReturn(List.of(ReportType.CONFIRMED_TEST));
   }
-   */
 
   @AfterEach
   void resetMocks() {
