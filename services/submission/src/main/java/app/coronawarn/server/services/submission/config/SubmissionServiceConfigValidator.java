@@ -44,17 +44,16 @@ public class SubmissionServiceConfigValidator implements Validator {
   }
 
   private void validateTransmissionRiskLevelDerivationMap(Errors errors, SubmissionServiceConfig properties) {
-    Map<Integer, Integer> dsosFromTrl =  properties.getTekFieldDerivations().getTrlFromDsos();
-    dsosFromTrl.forEach((daysSinceOnsetSymptoms, transmissionRiskLevel) -> {
+    properties.getTekFieldDerivations().getTrlFromDsos().forEach((daysSinceOnsetOfSymptoms, transmissionRiskLevel) -> {
       checkTrlInAllowedRange(transmissionRiskLevel, errors);
-      checkDsosInAllowedRange(daysSinceOnsetSymptoms, errors);
+      checkDsosInAllowedRange(daysSinceOnsetOfSymptoms, errors);
     });
   }
 
   private void validateDaysSinceSymptomsDerivationMap(Errors errors, SubmissionServiceConfig properties) {
-    properties.getTekFieldDerivations().getDsosFromTrl().forEach((trl, dsos) -> {
-      checkTrlInAllowedRange(trl, errors);
-      checkDsosInAllowedRange(dsos, errors);
+    properties.getTekFieldDerivations().getDsosFromTrl().forEach((transmissionRiskLevel, daysSinceOnsetOfSymptoms) -> {
+      checkTrlInAllowedRange(transmissionRiskLevel, errors);
+      checkDsosInAllowedRange(daysSinceOnsetOfSymptoms, errors);
     });
   }
 
