@@ -44,7 +44,7 @@ public class FederationBatchTestHelper {
 
   public static DiagnosisKeyBatch createDiagnosisKeyBatch(String keyData) {
     return DiagnosisKeyBatch.newBuilder()
-        .addKeys(createFederationDiagnosisKeyWithDSOS(keyData, 0)).build();
+        .addKeys(createFederationDiagnosisKeyWithKeyData(keyData)).build();
   }
 
   public static DiagnosisKeyBatch createDiagnosisKeyBatch(List<DiagnosisKey> diagnosisKeys) {
@@ -64,8 +64,28 @@ public class FederationBatchTestHelper {
         .setReportType(VALID_REPORT_TYPE);
   }
 
-  public static DiagnosisKey createFederationDiagnosisKeyWithDSOS(String keyData) {
-    return createFederationDiagnosisKeyWithDSOS(keyData, 0);
+  public static DiagnosisKey createFederationDiagnosisKeyWithKeyData(String keyData) {
+    return createBuilderForValidFederationDiagnosisKey()
+        .setKeyData(ByteString.copyFromUtf8(keyData))
+        .build();
+  }
+
+  public static DiagnosisKey createFederationDiagnosisKeyWithKeyData(ByteString keyData) {
+    return createBuilderForValidFederationDiagnosisKey()
+        .setKeyData(keyData)
+        .build();
+  }
+
+  public static DiagnosisKey createFederationDiagnosisKeyWithDsos(int daysSinceOnsetOfSymptoms) {
+    return createBuilderForValidFederationDiagnosisKey()
+        .setDaysSinceOnsetOfSymptoms(daysSinceOnsetOfSymptoms)
+        .build();
+  }
+
+  public static DiagnosisKey createFederationDiagnosisKeyWithoutDsos() {
+    return createBuilderForValidFederationDiagnosisKey()
+        .clearDaysSinceOnsetOfSymptoms()
+        .build();
   }
 
   public static DiagnosisKey createFederationDiagnosisKeyWithReportType(ReportType reportType) {
@@ -74,30 +94,15 @@ public class FederationBatchTestHelper {
         .build();
   }
 
-  public static DiagnosisKey createDiagnosisKeyWithKeyDataLength(int length) {
+  public static ByteString createByteStringOfLength(int length) {
     List<String> bytes = List.of("0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "A", "B", "C", "D", "E", "F");
-    return createBuilderForValidFederationDiagnosisKey()
-        .setKeyData(ByteString.copyFromUtf8(String.valueOf(bytes.get(length % 16)).repeat(Math.max(0, length))))
-        .build();
+    return ByteString.copyFromUtf8(String.valueOf(bytes.get(length % 16)).repeat(Math.max(0, length)));
   }
-
-  public static DiagnosisKey createFederationDiagnosisKeyWithoutDaysSinceSymptoms() {
-    return createBuilderForValidFederationDiagnosisKey()
-        .clearDaysSinceOnsetOfSymptoms()
-        .build();
-  }
-
-  public static DiagnosisKey createFederationDiagnosisKeyWithDSOS(String keyData, int daysSinceOnsetOfSymptoms) {
-    return createBuilderForValidFederationDiagnosisKey()
-        .setDaysSinceOnsetOfSymptoms(daysSinceOnsetOfSymptoms)
-        .build();
-  }
-
 
   public static app.coronawarn.server.common.persistence.domain.DiagnosisKey createDiagnosisKey(String keyData,
       DownloadServiceConfig downloadServiceConfig) {
     return app.coronawarn.server.common.persistence.domain.DiagnosisKey.builder()
-        .fromFederationDiagnosisKey(FederationBatchTestHelper.createFederationDiagnosisKeyWithDSOS(keyData))
+        .fromFederationDiagnosisKey(FederationBatchTestHelper.createFederationDiagnosisKeyWithKeyData(keyData))
         .withFieldNormalization(new FederationKeyNormalizer(downloadServiceConfig))
         .build();
   }
@@ -115,5 +120,4 @@ public class FederationBatchTestHelper {
     when(gatewayResponse.getDiagnosisKeyBatch()).thenReturn(Optional.of(diagnosisKeyBatch));
     return gatewayResponse;
   }
-
 }

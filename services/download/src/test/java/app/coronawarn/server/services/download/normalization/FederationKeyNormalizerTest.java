@@ -21,7 +21,6 @@
 package app.coronawarn.server.services.download.normalization;
 
 import static app.coronawarn.server.common.persistence.domain.FederationBatchStatus.UNPROCESSED;
-import static app.coronawarn.server.services.download.FederationBatchTestHelper.createFederationDiagnosisKeyWithDSOS;
 import static org.assertj.core.util.Lists.list;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -117,7 +116,7 @@ class FederationKeyNormalizerTest {
   private BatchDownloadResponse getBatchDownloadResponse() {
     List<DiagnosisKey> diagnosisKeys = getKeysAndDsos().entrySet()
         .stream()
-        .map(e -> FederationBatchTestHelper.createFederationDiagnosisKeyWithDSOS(e.getKey(), e.getValue().getLeft()))
+        .map(e -> FederationBatchTestHelper.createFederationDiagnosisKeyWithDsos(e.getValue().getLeft()))
         .collect(Collectors.toList());
     DiagnosisKeyBatch diagnosisKeyBatch = DiagnosisKeyBatch.newBuilder()
         .addAllKeys(diagnosisKeys)

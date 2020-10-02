@@ -53,7 +53,6 @@ public class ValidFederationKeyFilter {
         && hasCorrectKeyLength(federationKey);
   }
 
-
   private boolean hasValidDaysSinceOnsetOfSymptoms(DiagnosisKey federationKey) {
     boolean hasValidDsos = federationKey.hasDaysSinceOnsetOfSymptoms()
         && federationKey.getDaysSinceOnsetOfSymptoms() >= -14
@@ -66,7 +65,8 @@ public class ValidFederationKeyFilter {
   }
 
   private boolean hasAllowedReportType(DiagnosisKey federationKey) {
-    boolean hasAllowedReportType = downloadServiceConfig.getAllowedReportTypesToDownload().contains(federationKey.getReportType());
+    boolean hasAllowedReportType = downloadServiceConfig.getAllowedReportTypesToDownload()
+        .contains(federationKey.getReportType());
     if (!hasAllowedReportType) {
       logger.info("Ignoring Federation DiagnosisKey with 'ReportType' {}",
           federationKey.getReportType());

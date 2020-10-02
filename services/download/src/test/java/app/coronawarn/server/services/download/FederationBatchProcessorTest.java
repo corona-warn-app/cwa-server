@@ -20,7 +20,11 @@
 
 package app.coronawarn.server.services.download;
 
-import static app.coronawarn.server.common.persistence.domain.FederationBatchStatus.*;
+import static app.coronawarn.server.common.persistence.domain.FederationBatchStatus.ERROR;
+import static app.coronawarn.server.common.persistence.domain.FederationBatchStatus.ERROR_WONT_RETRY;
+import static app.coronawarn.server.common.persistence.domain.FederationBatchStatus.PROCESSED;
+import static app.coronawarn.server.common.persistence.domain.FederationBatchStatus.PROCESSED_WITH_FAILURES;
+import static app.coronawarn.server.common.persistence.domain.FederationBatchStatus.UNPROCESSED;
 import static java.util.Collections.emptyList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.util.Lists.list;
@@ -41,15 +45,12 @@ import app.coronawarn.server.common.persistence.service.DiagnosisKeyService;
 import app.coronawarn.server.common.persistence.service.FederationBatchInfoService;
 import app.coronawarn.server.common.protocols.external.exposurenotification.DiagnosisKey;
 import app.coronawarn.server.common.protocols.external.exposurenotification.DiagnosisKeyBatch;
-import app.coronawarn.server.services.download.DownloadServiceConfig.TekFieldDerivations;
 import app.coronawarn.server.services.download.validation.ValidFederationKeyFilter;
 import feign.FeignException;
 import java.time.LocalDate;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -293,9 +294,9 @@ class FederationBatchProcessorTest {
       FederationBatchInfo batchInfo = new FederationBatchInfo(batchTag1, date, UNPROCESSED);
       when(batchInfoService.findByStatus(UNPROCESSED)).thenReturn(list(batchInfo));
 
-      DiagnosisKey validKey = FederationBatchTestHelper.createBuilderForValidFederationDiagnosisKey()
-          .build();
-      DiagnosisKey invalidKey = FederationBatchTestHelper.createDiagnosisKeyWithKeyDataLength(32);
+      DiagnosisKey validKey = FederationBatchTestHelper.createBuilderForValidFederationDiagnosisKey().build();
+      DiagnosisKey invalidKey = FederationBatchTestHelper
+          .createFederationDiagnosisKeyWithKeyData(FederationBatchTestHelper.createByteStringOfLength(32));
 
       DiagnosisKeyBatch batch = FederationBatchTestHelper.createDiagnosisKeyBatch(List.of(validKey, invalidKey));
       BatchDownloadResponse downloadResponse = FederationBatchTestHelper
