@@ -1,30 +1,14 @@
-/*-
- * ---license-start
- * Corona-Warn-App
- * ---
- * Copyright (C) 2020 SAP SE and all other contributors
- * ---
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- * ---license-end
- */
+
 
 package app.coronawarn.server.services.distribution.assembly.diagnosiskeys;
 
 import static app.coronawarn.server.services.distribution.common.Helpers.buildDiagnosisKeys;
 import static java.util.Collections.emptySet;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.*;
 
 import app.coronawarn.server.common.persistence.domain.DiagnosisKey;
+import app.coronawarn.server.common.persistence.service.common.KeySharingPoliciesChecker;
 import app.coronawarn.server.services.distribution.config.DistributionServiceConfig;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -32,7 +16,9 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 import java.util.stream.Stream;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -46,15 +32,24 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 @EnableConfigurationProperties(value = DistributionServiceConfig.class)
 @ExtendWith(SpringExtension.class)
-@ContextConfiguration(classes = {DistributionServiceConfig.class, ProdDiagnosisKeyBundler.class},
+@ContextConfiguration(classes = {DistributionServiceConfig.class, KeySharingPoliciesChecker.class, ProdDiagnosisKeyBundler.class},
     initializers = ConfigFileApplicationContextInitializer.class)
 class ProdDiagnosisKeyBundlerKeyRetrievalTest {
+
+  private static final String INVALID_COUNTRY = "TR";
 
   @Autowired
   DistributionServiceConfig distributionServiceConfig;
 
   @Autowired
+  KeySharingPoliciesChecker sharingPolicyChecker;
+
   DiagnosisKeyBundler bundler;
+
+  @BeforeEach
+  void setupAll() {
+    bundler = new ProdDiagnosisKeyBundler(distributionServiceConfig, sharingPolicyChecker);
+  }
 
   @Test
   void testGetsAllDiagnosisKeys() {
@@ -63,15 +58,32 @@ class ProdDiagnosisKeyBundlerKeyRetrievalTest {
         .flatMap(List::stream)
         .collect(Collectors.toList());
     bundler.setDiagnosisKeys(diagnosisKeys, LocalDateTime.of(1970, 1, 5, 0, 0));
-    assertThat(bundler.getAllDiagnosisKeys()).hasSize(15);
+    assertThat(bundler.getAllDiagnosisKeys("DE")).hasSize(15);
+  }
+
+  @Test
+  void testGetsAllDiagnosisKeysWithWrongCountry() {
+    List<DiagnosisKey> diagnosisKeys = Stream
+        .of(buildDiagnosisKeys(6, 50L, 5),
+            buildDiagnosisKeys(6, 51L, 5),
+            buildDiagnosisKeys(6, 52L, 5))
+        .flatMap(List::stream)
+        .collect(Collectors.toList());
+    bundler.setDiagnosisKeys(diagnosisKeys, LocalDateTime.of(1970, 1, 5, 0, 0));
+    assertThat(bundler.getAllDiagnosisKeys("TR")).isEmpty();
+  }
+
+  @Test
+  void testGetDatesForEmptyListWithWrongCountry() {
+    bundler.setDiagnosisKeys(emptySet(), LocalDateTime.of(1970, 1, 5, 0, 0));
+    assertThat(bundler.getDiagnosisKeysForHour(LocalDateTime.of(1970, 1, 1, 0, 0, 0), INVALID_COUNTRY)).isEmpty();
   }
 
   @Test
   void testGetDatesForEmptyList() {
     bundler.setDiagnosisKeys(emptySet(), LocalDateTime.of(1970, 1, 5, 0, 0));
-    assertThat(bundler.getDatesWithDistributableDiagnosisKeys()).isEmpty();
+    assertThat(bundler.getDatesWithDistributableDiagnosisKeys("DE")).isEmpty();
   }
-
   @Test
   void testGetsDatesWithDistributableDiagnosisKeys() {
     List<DiagnosisKey> diagnosisKeys = Stream
@@ -79,7 +91,7 @@ class ProdDiagnosisKeyBundlerKeyRetrievalTest {
         .flatMap(List::stream)
         .collect(Collectors.toList());
     bundler.setDiagnosisKeys(diagnosisKeys, LocalDateTime.of(1970, 1, 5, 0, 0));
-    assertThat(bundler.getDatesWithDistributableDiagnosisKeys()).containsAll(List.of(
+    assertThat(bundler.getDatesWithDistributableDiagnosisKeys("DE")).containsAll(List.of(
         LocalDate.of(1970, 1, 2),
         LocalDate.of(1970, 1, 4)
     ));
@@ -90,7 +102,7 @@ class ProdDiagnosisKeyBundlerKeyRetrievalTest {
   void testGetDatesForEpochDay0(Collection<DiagnosisKey> diagnosisKeys) {
     bundler.setDiagnosisKeys(diagnosisKeys, LocalDateTime.of(1970, 1, 5, 0, 0));
     var expDates = Set.of(LocalDate.ofEpochDay(2L), LocalDate.ofEpochDay(3L));
-    var actDates = bundler.getDatesWithDistributableDiagnosisKeys();
+    var actDates = bundler.getDatesWithDistributableDiagnosisKeys("DE");
     assertThat(actDates).isEqualTo(expDates);
   }
 
@@ -111,13 +123,19 @@ class ProdDiagnosisKeyBundlerKeyRetrievalTest {
         .collect(Collectors.toList());
     bundler.setDiagnosisKeys(diagnosisKeys, LocalDateTime.of(1970, 1, 5, 0, 0));
     var expDates = Set.of(LocalDate.ofEpochDay(2L), LocalDate.ofEpochDay(3L));
-    assertThat(bundler.getDatesWithDistributableDiagnosisKeys()).isEqualTo(expDates);
+    assertThat(bundler.getDatesWithDistributableDiagnosisKeys("DE")).isEqualTo(expDates);
+  }
+
+  @Test
+  void testGetDatesForInvalidCountry() {
+    bundler.setDiagnosisKeys(emptySet(), LocalDateTime.of(1970, 1, 5, 0, 0));
+    assertThat(bundler.getDatesWithDistributableDiagnosisKeys("TR")).isEmpty();
   }
 
   @Test
   void testGetHoursForEmptyList() {
     bundler.setDiagnosisKeys(emptySet(), LocalDateTime.of(1970, 1, 5, 0, 0));
-    assertThat(bundler.getHoursWithDistributableDiagnosisKeys(LocalDate.of(1970, 1, 3))).isEmpty();
+    assertThat(bundler.getHoursWithDistributableDiagnosisKeys(LocalDate.of(1970, 1, 3), "DE")).isEmpty();
   }
 
   @Test
@@ -129,7 +147,7 @@ class ProdDiagnosisKeyBundlerKeyRetrievalTest {
         .flatMap(List::stream)
         .collect(Collectors.toList());
     bundler.setDiagnosisKeys(diagnosisKeys, LocalDateTime.of(1970, 1, 5, 0, 0));
-    assertThat(bundler.getHoursWithDistributableDiagnosisKeys(LocalDate.of(1970, 1, 2))).containsAll(List.of(
+    assertThat(bundler.getHoursWithDistributableDiagnosisKeys(LocalDate.of(1970, 1, 2),  "DE")).containsAll(List.of(
         LocalDateTime.of(1970, 1, 2, 4, 0, 0),
         LocalDateTime.of(1970, 1, 2, 6, 0, 0)
     ));
@@ -144,18 +162,25 @@ class ProdDiagnosisKeyBundlerKeyRetrievalTest {
         .flatMap(List::stream)
         .collect(Collectors.toList());
     bundler.setDiagnosisKeys(diagnosisKeys, LocalDateTime.of(1970, 1, 5, 20, 0));
-    assertThat(bundler.getDiagnosisKeysForDate(LocalDate.of(1970, 1, 1))).isEmpty();
-    assertThat(bundler.getDiagnosisKeysForDate(LocalDate.of(1970, 1, 2))).hasSize(5);
-    assertThat(bundler.getDiagnosisKeysForDate(LocalDate.of(1970, 1, 3))).isEmpty();
-    assertThat(bundler.getDiagnosisKeysForDate(LocalDate.of(1970, 1, 4))).hasSize(6);
-    assertThat(bundler.getDiagnosisKeysForDate(LocalDate.of(1970, 1, 5))).isEmpty();
+    assertThat(bundler.getDiagnosisKeysForDate(LocalDate.of(1970, 1, 1), "DE")).isEmpty();
+    assertThat(bundler.getDiagnosisKeysForDate(LocalDate.of(1970, 1, 2), "DE")).hasSize(5);
+    assertThat(bundler.getDiagnosisKeysForDate(LocalDate.of(1970, 1, 3), "DE")).isEmpty();
+    assertThat(bundler.getDiagnosisKeysForDate(LocalDate.of(1970, 1, 4), "DE")).hasSize(6);
+    assertThat(bundler.getDiagnosisKeysForDate(LocalDate.of(1970, 1, 5), "DE")).isEmpty();
   }
 
   @Test
   void testEmptyListWhenGettingDiagnosisKeysForDateBeforeEarliestDiagnosisKey() {
     List<DiagnosisKey> diagnosisKeys = buildDiagnosisKeys(6, LocalDateTime.of(1970, 1, 2, 4, 0), 5);
     bundler.setDiagnosisKeys(diagnosisKeys, LocalDateTime.of(1970, 1, 5, 0, 0));
-    assertThat(bundler.getDiagnosisKeysForDate(LocalDate.of(1970, 1, 1))).isEmpty();
+    assertThat(bundler.getDiagnosisKeysForDate(LocalDate.of(1970, 1, 1), "DE")).isEmpty();
+  }
+
+  @Test
+  void testEmptyListWhenInvalidCountry() {
+    List<DiagnosisKey> diagnosisKeys = buildDiagnosisKeys(6, LocalDateTime.of(1970, 1, 2, 4, 0), 5);
+    bundler.setDiagnosisKeys(diagnosisKeys, LocalDateTime.of(1970, 1, 4, 0, 0));
+    assertThat(bundler.getDiagnosisKeysForDate(LocalDate.of(1970, 1, 5), "TR")).isEmpty();
   }
 
   @Test
@@ -167,18 +192,18 @@ class ProdDiagnosisKeyBundlerKeyRetrievalTest {
         .flatMap(List::stream)
         .collect(Collectors.toList());
     bundler.setDiagnosisKeys(diagnosisKeys, LocalDateTime.of(1970, 1, 5, 0, 0));
-    assertThat(bundler.getDiagnosisKeysForHour(LocalDateTime.of(1970, 1, 2, 3, 0))).isEmpty();
-    assertThat(bundler.getDiagnosisKeysForHour(LocalDateTime.of(1970, 1, 2, 4, 0))).hasSize(5);
-    assertThat(bundler.getDiagnosisKeysForHour(LocalDateTime.of(1970, 1, 2, 5, 0))).isEmpty();
-    assertThat(bundler.getDiagnosisKeysForHour(LocalDateTime.of(1970, 1, 2, 6, 0))).hasSize(6);
-    assertThat(bundler.getDiagnosisKeysForHour(LocalDateTime.of(1970, 1, 2, 7, 0))).isEmpty();
+    assertThat(bundler.getDiagnosisKeysForHour(LocalDateTime.of(1970, 1, 2, 3, 0), "DE")).isEmpty();
+    assertThat(bundler.getDiagnosisKeysForHour(LocalDateTime.of(1970, 1, 2, 4, 0), "DE")).hasSize(5);
+    assertThat(bundler.getDiagnosisKeysForHour(LocalDateTime.of(1970, 1, 2, 5, 0), "DE")).isEmpty();
+    assertThat(bundler.getDiagnosisKeysForHour(LocalDateTime.of(1970, 1, 2, 6, 0), "DE")).hasSize(6);
+    assertThat(bundler.getDiagnosisKeysForHour(LocalDateTime.of(1970, 1, 2, 7, 0), "DE")).isEmpty();
   }
 
   @Test
   void testEmptyListWhenGettingDiagnosisKeysForHourBeforeEarliestDiagnosisKey() {
     List<DiagnosisKey> diagnosisKeys = buildDiagnosisKeys(6, LocalDateTime.of(1970, 1, 2, 4, 0), 5);
     bundler.setDiagnosisKeys(diagnosisKeys, LocalDateTime.of(1970, 1, 5, 0, 0));
-    assertThat(bundler.getDiagnosisKeysForHour(LocalDateTime.of(1970, 1, 1, 0, 0, 0))).isEmpty();
+    assertThat(bundler.getDiagnosisKeysForHour(LocalDateTime.of(1970, 1, 1, 0, 0, 0), "DE")).isEmpty();
   }
 
   @Test
@@ -187,5 +212,36 @@ class ProdDiagnosisKeyBundlerKeyRetrievalTest {
     List<DiagnosisKey> diagnosisKeys = buildDiagnosisKeys(6, LocalDateTime.of(1970, 1, 2, 4, 0), 5);
     bundler.setDiagnosisKeys(diagnosisKeys, expected);
     assertThat(bundler.getDistributionTime()).isEqualTo(expected);
+  }
+
+  @Test
+  void testGetDiagnosisKeysForDateWithInvalidCountry() {
+    List<DiagnosisKey> diagnosisKeys = buildDiagnosisKeys(6, LocalDateTime.of(1970, 1, 2, 4, 0), 5);
+    bundler.setDiagnosisKeys(diagnosisKeys, LocalDateTime.of(1970, 1, 5, 0, 0));
+    assertThat(bundler.getDiagnosisKeysForHour(LocalDateTime.of(1970, 1, 1, 0, 0, 0), INVALID_COUNTRY)).isEmpty();
+  }
+
+  @Test
+  void testGetDiagnosisKeysForHourWithInvalidCountry() {
+    List<DiagnosisKey> diagnosisKeys = buildDiagnosisKeys(6, LocalDateTime.of(1970, 1, 2, 4, 0), 5);
+    bundler.setDiagnosisKeys(diagnosisKeys, LocalDateTime.of(1970, 1, 5, 0, 0));
+    assertThat(bundler.getDiagnosisKeysForHour(LocalDateTime.of(1970, 1, 1, 0, 0, 0), INVALID_COUNTRY)).isEmpty();
+  }
+
+  @Test
+  void testGetsHoursWithDistributableDiagnosisKeysExceedingMaximumNumberOfKeys() {
+    DistributionServiceConfig spyConfig = spy(distributionServiceConfig);
+    when(spyConfig.getMaximumNumberOfKeysPerBundle()).thenReturn(3);
+    when(spyConfig.getShiftingPolicyThreshold()).thenReturn(1);
+    DiagnosisKeyBundler keyBundler = new ProdDiagnosisKeyBundler(spyConfig, sharingPolicyChecker);
+
+    List<DiagnosisKey> diagnosisKeys = IntStream.range(0,24).mapToObj(hour ->
+        buildDiagnosisKeys(6, LocalDateTime.of(1970, 1, 4, hour, 0), 4))
+        .flatMap(List::stream)
+        .collect(Collectors.toList());
+    keyBundler.setDiagnosisKeys(diagnosisKeys, LocalDateTime.of(1970, 1, 5, 0, 0));
+
+    Set<LocalDateTime> expectedKeys = keyBundler.getHoursWithDistributableDiagnosisKeys(LocalDate.of(1970, 1, 4), "DE");
+    assertThat(expectedKeys).isEmpty();
   }
 }

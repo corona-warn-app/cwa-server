@@ -1,0 +1,9 @@
+---
+spring:
+  flyway:
+    password: ${POSTGRESQL_PASSWORD_FLYWAY}
+    user: ${POSTGRESQL_USER_FLYWAY}
+  datasource:
+    driver-class-name: org.postgresql.Driver
+    username: ${POSTGRESQL_USER_UPLOAD}
+    password: ${POSTGRESQL_PASSWORD_UPLOAD}

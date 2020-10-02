@@ -1,28 +1,13 @@
-/*-
- * ---license-start
- * Corona-Warn-App
- * ---
- * Copyright (C) 2020 SAP SE and all other contributors
- * ---
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- * ---license-end
- */
+
 
 package app.coronawarn.server.services.submission.config;
 
 import java.io.File;
+import java.util.Map;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Component;
@@ -124,15 +109,35 @@ public class SubmissionServiceConfig {
     return payload.getMaxNumberOfKeys();
   }
 
+  public String getDefaultOriginCountry() {
+    return payload.defaultOriginCountry;
+  }
+
+  public String[] getSupportedCountries() {
+    return payload.getSupportedCountries();
+  }
+
+  public void setSupportedCountries(String[] supportedCountries) {
+    payload.setSupportedCountries(supportedCountries);
+  }
+
   public void setPayload(Payload payload) {
     this.payload = payload;
   }
 
-  private static class Payload {
+  public TekFieldDerivations getTekFieldDerivations() {
+    return payload.getTekFieldDerivations();
+  }
+
+  public static class Payload {
 
     @Min(7)
     @Max(100)
     private Integer maxNumberOfKeys;
+    @NotEmpty
+    private String[] supportedCountries;
+    private String defaultOriginCountry;
+    private TekFieldDerivations tekFieldDerivations;
 
     public Integer getMaxNumberOfKeys() {
       return maxNumberOfKeys;
@@ -140,6 +145,30 @@ public class SubmissionServiceConfig {
 
     public void setMaxNumberOfKeys(Integer maxNumberOfKeys) {
       this.maxNumberOfKeys = maxNumberOfKeys;
+    }
+
+    public String[] getSupportedCountries() {
+      return supportedCountries;
+    }
+
+    public void setSupportedCountries(String[] supportedCountries) {
+      this.supportedCountries = supportedCountries;
+    }
+
+    public String getDefaultOriginCountry() {
+      return defaultOriginCountry;
+    }
+
+    public void setDefaultOriginCountry(String defaultOriginCountry) {
+      this.defaultOriginCountry = defaultOriginCountry;
+    }
+
+    public TekFieldDerivations getTekFieldDerivations() {
+      return tekFieldDerivations;
+    }
+
+    public void setTekFieldDerivations(TekFieldDerivations tekFieldDerivations) {
+      this.tekFieldDerivations = tekFieldDerivations;
     }
   }
 
@@ -278,6 +307,46 @@ public class SubmissionServiceConfig {
       public void setTrustStorePassword(String trustStorePassword) {
         this.trustStorePassword = trustStorePassword;
       }
+    }
+  }
+
+  /**
+   * Wrapper over properties defined in the application.yaml which map DSOS to TRL
+   * and vice-versa. These maps are used to derive each property from the other.
+   */
+  public static class TekFieldDerivations {
+    @NotNull
+    @NotEmpty
+    private Map<Integer, Integer> dsosFromTrl;
+
+    @NotNull
+    @NotEmpty
+    private Map<Integer, Integer> trlFromDsos;
+
+    public Map<Integer, Integer> getDsosFromTrl() {
+      return dsosFromTrl;
+    }
+
+    public void setDsosFromTrl(Map<Integer, Integer> dsosFromTrl) {
+      this.dsosFromTrl = dsosFromTrl;
+    }
+
+    public Map<Integer, Integer> getTrlFromDsos() {
+      return trlFromDsos;
+    }
+
+    public void setTrlFromDsos(Map<Integer, Integer> trlFromDsos) {
+      this.trlFromDsos = trlFromDsos;
+    }
+
+    public Integer deriveDsosFromTrl(Integer trlValue) {
+      // the derivation logic is subject to refinement
+      return dsosFromTrl.getOrDefault(trlValue, 0);
+    }
+
+    public Integer deriveTrlFromDsos(Integer dsosValue) {
+      // the derivation logic is subject to refinement
+      return trlFromDsos.getOrDefault(dsosValue, 1);
     }
   }
 }

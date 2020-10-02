@@ -1,0 +1,5 @@
+---
+services:
+  upload:
+    test-data:
+      max-pending-keys: 8000

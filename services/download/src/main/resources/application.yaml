@@ -1,0 +1,62 @@
+---
+logging:
+  level:
+    org:
+      springframework:
+        web: INFO
+    app:
+      coronawarn: INFO
+
+services:
+  download:
+    # The offset in days for which the keys from the federation gateway shall be downloaded from.
+    # Example: If the 'efgs-offset-days' is set to 0, the download service will start downloading
+    # the keys for today. If it is set to 1, the keys from yesterday will be downloaded.
+    # The value must be between 0 and 14.
+    efgs-offset-days: ${EFGS_OFFSET_DAYS:1}
+    # The number of days to retain batch information in the database.
+    retention-days: 14
+    tek-field-derivations:
+      trl-from-dsos:
+        4: 1
+        3: 3
+        2: 5
+        1: 6
+        0: 8
+        -1: 6
+        -2: 5
+        -3: 3
+        -4: 1
+
+federation-gateway:
+  base-url: ${FEDERATION_GATEWAY_BASE_URL:http://localhost:8005}
+  connection-pool-size: 200
+  ssl:
+    key-store: ${FEDERATION_GATEWAY_KEYSTORE_PATH}
+    key-store-pass: ${FEDERATION_GATEWAY_KEYSTORE_PASS}
+    certificate-type: PKCS12
+    certificate-dn: ${FEDERATION_CERTIFICATE_DN}
+    certificate-sha: ${FEDERATION_CERTIFICATE_SHA}
+
+spring:
+  main:
+    web-application-type: NONE
+  # Postgres configuration
+  flyway:
+    enabled: true
+    locations: classpath:/db/migration, classpath:/db/specific/{vendor}
+    password: ${POSTGRESQL_PASSWORD_FLYWAY:local_setup_flyway}
+    user: ${POSTGRESQL_USER_FLYWAY:local_setup_flyway}
+
+  datasource:
+    driver-class-name: org.postgresql.Driver
+    url: jdbc:postgresql://${POSTGRESQL_SERVICE_HOST}:${POSTGRESQL_SERVICE_PORT}/${POSTGRESQL_DATABASE}?ssl=true&sslmode=verify-full&sslrootcert=${SSL_POSTGRES_CERTIFICATE_PATH}&sslcert=${SSL_DISTRIBUTION_CERTIFICATE_PATH}&sslkey=${SSL_DISTRIBUTION_PRIVATE_KEY_PATH}
+    username: ${POSTGRESQL_USER_DOWNLOAD:local_setup_download}
+    password: ${POSTGRESQL_PASSWORD_DOWNLOAD:local_setup_download}
+
+feign:
+  client:
+    config:
+      default:
+        connect-timeout: 5000
+        read-timeout: 5000

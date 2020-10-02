@@ -1,26 +1,9 @@
-/*-
- * ---license-start
- * Corona-Warn-App
- * ---
- * Copyright (C) 2020 SAP SE and all other contributors
- * ---
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- * ---license-end
- */
+
 
 package app.coronawarn.server.services.distribution;
 
 import app.coronawarn.server.services.distribution.config.DistributionServiceConfig;
+import app.coronawarn.server.services.distribution.config.DistributionServiceConfigValidator;
 import java.util.Arrays;
 import java.util.List;
 import org.apache.logging.log4j.LogManager;
@@ -33,9 +16,11 @@ import org.springframework.boot.autoconfigure.domain.EntityScan;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.EnvironmentAware;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.core.env.Environment;
 import org.springframework.data.jdbc.repository.config.EnableJdbcRepositories;
+import org.springframework.validation.Validator;
 
 /**
  * The retrieval, assembly and distribution of configuration and diagnosis key data is handled by a chain of {@link
@@ -62,6 +47,11 @@ public class Application implements EnvironmentAware, DisposableBean {
   public void destroy() {
     logger.info("Shutting down log4j2.");
     LogManager.shutdown();
+  }
+
+  @Bean
+  public static Validator configurationPropertiesValidator() {
+    return new DistributionServiceConfigValidator();
   }
 
   /**

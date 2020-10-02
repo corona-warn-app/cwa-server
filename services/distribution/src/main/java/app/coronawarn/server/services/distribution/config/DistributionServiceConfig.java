@@ -1,22 +1,4 @@
-/*-
- * ---license-start
- * Corona-Warn-App
- * ---
- * Copyright (C) 2020 SAP SE and all other contributors
- * ---
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- * ---license-end
- */
+
 
 package app.coronawarn.server.services.distribution.config;
 
@@ -25,12 +7,11 @@ import java.util.List;
 import java.util.stream.Collectors;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
+import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.Pattern;
 import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.stereotype.Component;
 import org.springframework.validation.annotation.Validated;
 
-@Component
 @ConfigurationProperties(prefix = "services.distribution")
 @Validated
 public class DistributionServiceConfig {
@@ -47,7 +28,6 @@ public class DistributionServiceConfig {
   private static final String ALGORITHM_OID_REGEX = "^[0-9]+[\\.[0-9]+]*$";
   private static final String BUNDLE_REGEX = "^[a-z-]+[\\.[a-z-]+]*$";
   private static final String PRIVATE_KEY_REGEX = "^(classpath:|file:[/]+)[a-zA-Z0-9_-]+[/[a-zA-Z0-9_-]+]*(.pem)?$";
-  private static final String SUPPORTED_COUNTRY_CODES_REGEX = "^([a-zA-Z]{2}(\\,*[a-zA-Z]{2})*)$";
 
   private Paths paths;
   private TestData testData;
@@ -67,13 +47,15 @@ public class DistributionServiceConfig {
   private String outputFileName;
   private Boolean includeIncompleteDays;
   private Boolean includeIncompleteHours;
+  private String euPackageName;
+  private Boolean applyPoliciesForAllCountries;
   private TekExport tekExport;
   private Signature signature;
   private Api api;
   private ObjectStore objectStore;
   private List<AppFeature> appFeatures;
-  @Pattern(regexp = SUPPORTED_COUNTRY_CODES_REGEX)
-  private String supportedCountries;
+  @NotEmpty
+  private String[] supportedCountries;
   private AppVersions appVersions;
 
   public Paths getPaths() {
@@ -148,6 +130,22 @@ public class DistributionServiceConfig {
     this.includeIncompleteHours = includeIncompleteHours;
   }
 
+  public String getEuPackageName() {
+    return euPackageName;
+  }
+
+  public void setEuPackageName(String euPackageName) {
+    this.euPackageName = euPackageName;
+  }
+
+  public Boolean getApplyPoliciesForAllCountries() {
+    return applyPoliciesForAllCountries;
+  }
+
+  public void setApplyPoliciesForAllCountries(Boolean applyPoliciesForAllCountries) {
+    this.applyPoliciesForAllCountries = applyPoliciesForAllCountries;
+  }
+
   public TekExport getTekExport() {
     return tekExport;
   }
@@ -190,10 +188,10 @@ public class DistributionServiceConfig {
   }
 
   public String[] getSupportedCountries() {
-    return supportedCountries.split(",");
+    return supportedCountries;
   }
 
-  public void setSupportedCountries(String supportedCountries) {
+  public void setSupportedCountries(String[] supportedCountries) {
     this.supportedCountries = supportedCountries;
   }
 
@@ -309,7 +307,7 @@ public class DistributionServiceConfig {
     @Pattern(regexp = CHAR_AND_NUMBER_REGEX)
     private String countryPath;
     @Pattern(regexp = CHAR_AND_NUMBER_REGEX)
-    private String countryGermany;
+    private String originCountry;
     @Pattern(regexp = CHAR_AND_NUMBER_REGEX)
     private String datePath;
     @Pattern(regexp = CHAR_AND_NUMBER_REGEX)
@@ -343,14 +341,6 @@ public class DistributionServiceConfig {
 
     public void setCountryPath(String countryPath) {
       this.countryPath = countryPath;
-    }
-
-    public String getCountryGermany() {
-      return countryGermany;
-    }
-
-    public void setCountryGermany(String countryGermany) {
-      this.countryGermany = countryGermany;
     }
 
     public String getDatePath() {
@@ -391,6 +381,14 @@ public class DistributionServiceConfig {
 
     public void setAppConfigFileName(String appConfigFileName) {
       this.appConfigFileName = appConfigFileName;
+    }
+
+    public String getOriginCountry() {
+      return originCountry;
+    }
+
+    public void setOriginCountry(String originCountry) {
+      this.originCountry = originCountry;
     }
   }
 
