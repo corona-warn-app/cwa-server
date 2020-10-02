@@ -22,12 +22,26 @@ package app.coronawarn.server.services.submission.integration;
 
 import static app.coronawarn.server.services.submission.SubmissionPayloadGenerator.buildSubmissionPayload;
 import static app.coronawarn.server.services.submission.SubmissionPayloadGenerator.buildTemporaryExposureKeys;
+import static app.coronawarn.server.services.submission.assertions.SubmissionAssertions.assertElementsCorrespondToEachOther;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
-import static app.coronawarn.server.services.submission.assertions.SubmissionAssertions.*;
 
+import app.coronawarn.server.common.persistence.service.DiagnosisKeyService;
+import app.coronawarn.server.common.protocols.external.exposurenotification.ReportType;
+import app.coronawarn.server.common.protocols.external.exposurenotification.TemporaryExposureKey;
+import app.coronawarn.server.common.protocols.internal.SubmissionPayload;
+import app.coronawarn.server.services.submission.config.SubmissionServiceConfig;
+import app.coronawarn.server.services.submission.controller.FakeDelayManager;
+import app.coronawarn.server.services.submission.controller.RequestExecutor;
+import app.coronawarn.server.services.submission.controller.SubmissionController;
+import app.coronawarn.server.services.submission.verification.TanVerifier;
+import com.google.common.io.BaseEncoding;
+import com.google.protobuf.ByteString;
+import com.google.protobuf.util.JsonFormat;
+import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Path;
@@ -37,10 +51,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-import app.coronawarn.server.common.protocols.external.exposurenotification.ReportType;
-import app.coronawarn.server.services.submission.SubmissionPayloadGenerator;
-import com.google.protobuf.ByteString;
-import org.apache.tomcat.util.buf.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -56,15 +67,6 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.jdbc.Sql.ExecutionPhase;
-import com.google.common.io.BaseEncoding;
-import com.google.protobuf.util.JsonFormat;
-import app.coronawarn.server.common.persistence.service.DiagnosisKeyService;
-import app.coronawarn.server.common.protocols.external.exposurenotification.TemporaryExposureKey;
-import app.coronawarn.server.common.protocols.internal.SubmissionPayload;
-import app.coronawarn.server.services.submission.config.SubmissionServiceConfig;
-import app.coronawarn.server.services.submission.controller.FakeDelayManager;
-import app.coronawarn.server.services.submission.controller.RequestExecutor;
-import app.coronawarn.server.services.submission.verification.TanVerifier;
 
 /**
  * This test serves more like a dev tool which helps with debugging production issues. It inserts keys parsed from a
@@ -84,6 +86,9 @@ class SubmissionPersistenceIT {
 
   @Autowired
   private RequestExecutor executor;
+
+  @Autowired
+  private SubmissionController submissionController;
 
   @Autowired
   private SubmissionServiceConfig config;
@@ -138,16 +143,16 @@ class SubmissionPersistenceIT {
 
     LocalDateTime now = LocalDateTime.now();
     LocalDateTime todayMidnight = LocalDateTime
-        .of(now.getYear(), now.getMonth(), now.getDayOfMonth() , 0, 0);
+        .of(now.getYear(), now.getMonth(), now.getDayOfMonth(), 0, 0);
     LocalDateTime todayMidnightMinusNumberOfKeys = todayMidnight.minusDays(numberOfKeys);
 
-    List<TemporaryExposureKey> temporaryExposureKeys = buildTemporaryExposureKeys(numberOfKeys, todayMidnightMinusNumberOfKeys,
+    List<TemporaryExposureKey> temporaryExposureKeys = buildTemporaryExposureKeys(numberOfKeys,
+        todayMidnightMinusNumberOfKeys,
         transmissionRiskLevel, rollingPeriod, reportType, daysSinceOnsetOfSymptoms);
     SubmissionPayload submissionPayload = buildSubmissionPayload(temporaryExposureKeys, requestPadding,
         visitedCountries, originCountry, consentToFederation);
 
-    SubmissionPayloadGenerator submissionPayloadGenerator = new SubmissionPayloadGenerator();
-    submissionPayloadGenerator.writeSubmissionPayloadProtobufFile(submissionPayload);
+    writeSubmissionPayloadProtobufFile(submissionPayload);
 
     Path path = Paths.get("src/test/resources/payload/mobile-client-payload.pb");
     InputStream input = new FileInputStream(path.toFile());
@@ -162,8 +167,21 @@ class SubmissionPersistenceIT {
     logger.info("SQL debugging statement: " + System.lineSeparator() + presenceVerificationSql);
     Integer result = jdbcTemplate.queryForObject(presenceVerificationSql, Integer.class);
 
+    List<String> expectedVisitedCountries = new ArrayList<>(payload.getVisitedCountriesList());
+    expectedVisitedCountries.add(StringUtils
+        .defaultIfBlank(payload.getOrigin(), config.getDefaultOriginCountry()));
+
+    SubmissionPayload expectedPayload = SubmissionPayload.newBuilder()
+        .addAllKeys(payload.getKeysList())
+        .setRequestPadding(payload.getRequestPadding())
+        .addAllVisitedCountries(expectedVisitedCountries)
+        .setOrigin(StringUtils.defaultIfBlank(payload.getOrigin(), config.getDefaultOriginCountry()))
+        .setConsentToFederation(payload.getConsentToFederation())
+        .build();
+
     assertEquals(payload.getKeysList().size(), result);
-    assertElementsCorrespondToEachOther(payload, diagnosisKeyService.getDiagnosisKeys(), config);
+
+    assertElementsCorrespondToEachOther(expectedPayload, diagnosisKeyService.getDiagnosisKeys(), config);
   }
 
   private static Stream<Arguments> validSubmissionPayload() {
@@ -221,5 +239,12 @@ class SubmissionPersistenceIT {
 
   private String toBase64(TemporaryExposureKey key) {
     return BaseEncoding.base64().encode((key.getKeyData()).toByteArray());
+  }
+
+  private void writeSubmissionPayloadProtobufFile(SubmissionPayload submissionPayload) throws IOException {
+    File file = new File("src/test/resources/payload/mobile-client-payload.pb");
+    file.createNewFile();
+    submissionPayload
+        .writeTo(new FileOutputStream("src/test/resources/payload/mobile-client-payload.pb"));
   }
 }

@@ -24,6 +24,7 @@ import app.coronawarn.server.common.protocols.external.exposurenotification.Temp
 import app.coronawarn.server.common.protocols.internal.SubmissionPayload;
 
 import com.google.protobuf.ByteString;
+import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.time.LocalDateTime;
@@ -33,6 +34,9 @@ import java.util.List;
 import java.util.Random;
 
 public class SubmissionPayloadGenerator {
+
+  public static final String MOBILE_CLIENT_PAYLOAD_PB_PATH =
+      "services/submission/src/test/resources/payload/mobile-client-payload.pb";
 
   public static void main(String[] args) throws IOException {
     int numberOfKeys = 10;
@@ -60,8 +64,10 @@ public class SubmissionPayloadGenerator {
   }
 
   public void writeSubmissionPayloadProtobufFile(SubmissionPayload submissionPayload) throws IOException {
+    File file = new File(MOBILE_CLIENT_PAYLOAD_PB_PATH);
+    file.createNewFile();
     submissionPayload
-        .writeTo(new FileOutputStream("src/test/resources/payload/mobile-client-payload.pb"));
+        .writeTo(new FileOutputStream(MOBILE_CLIENT_PAYLOAD_PB_PATH));
   }
 
   public static SubmissionPayload buildSubmissionPayload(List<TemporaryExposureKey> temporaryExposureKeys,
