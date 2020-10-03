@@ -31,6 +31,7 @@ import app.coronawarn.server.common.persistence.service.DiagnosisKeyService;
 import app.coronawarn.server.common.protocols.external.exposurenotification.ReportType;
 import app.coronawarn.server.common.protocols.external.exposurenotification.TemporaryExposureKey;
 import app.coronawarn.server.common.protocols.internal.SubmissionPayload;
+import app.coronawarn.server.common.protocols.internal.SubmissionPayload.Builder;
 import app.coronawarn.server.services.submission.config.SubmissionServiceConfig;
 import app.coronawarn.server.services.submission.controller.FakeDelayManager;
 import app.coronawarn.server.services.submission.controller.RequestExecutor;
@@ -133,24 +134,25 @@ class SubmissionPersistenceIT {
   @ParameterizedTest
   @MethodSource("validSubmissionPayload")
   void testKeyInsertionWithMobileClientProtoBuf(List<String> visitedCountries, String originCountry,
-      boolean consentToFederation) throws IOException {
-    int numberOfKeys = 10;
-    int transmissionRiskLevel = 6;
-    int rollingPeriod = 144; // 24*60/10
-    ReportType reportType = ReportType.CONFIRMED_CLINICAL_DIAGNOSIS;
-    ByteString requestPadding = ByteString.copyFrom(new byte[100]);
-    int daysSinceOnsetOfSymptoms = 0;
+      String consentToFederation) throws IOException {
 
-    LocalDateTime now = LocalDateTime.now();
-    LocalDateTime todayMidnight = LocalDateTime
-        .of(now.getYear(), now.getMonth(), now.getDayOfMonth(), 0, 0);
-    LocalDateTime todayMidnightMinusNumberOfKeys = todayMidnight.minusDays(numberOfKeys);
+    List<TemporaryExposureKey> temporaryExposureKeys = createValidTemporaryExposureKeys();
 
-    List<TemporaryExposureKey> temporaryExposureKeys = buildTemporaryExposureKeys(numberOfKeys,
-        todayMidnightMinusNumberOfKeys,
-        transmissionRiskLevel, rollingPeriod, reportType, daysSinceOnsetOfSymptoms);
-    SubmissionPayload submissionPayload = buildSubmissionPayload(temporaryExposureKeys, requestPadding,
-        visitedCountries, originCountry, consentToFederation);
+    Builder submissionPayloadBuilder = SubmissionPayload
+        .newBuilder()
+        .addAllKeys(temporaryExposureKeys);
+
+    if (!visitedCountries.isEmpty()) {
+      submissionPayloadWithVisitedCountries(submissionPayloadBuilder, visitedCountries);
+    }
+    if (!originCountry.isEmpty()) {
+      submissionPayloadWithOriginCountry(submissionPayloadBuilder, originCountry);
+    }
+    if (!consentToFederation.isEmpty()) {
+      submissionPayloadWithConsentToFederation(submissionPayloadBuilder, consentToFederation.contains("true"));
+    }
+
+    SubmissionPayload submissionPayload = submissionPayloadBuilder.build();
 
     writeSubmissionPayloadProtobufFile(submissionPayload);
 
@@ -186,43 +188,43 @@ class SubmissionPersistenceIT {
 
   private static Stream<Arguments> validSubmissionPayload() {
     return Stream.of(
-        Arguments.of(List.of("DE"), "DE", true),
-        Arguments.of(List.of("DE"), "DE", false),
-        Arguments.of(List.of("DE", "IT"), "DE", true),
-        Arguments.of(List.of("DE", "IT"), "DE", false),
-        Arguments.of(List.of("DE"), "IT", true),
-        Arguments.of(List.of("DE"), "IT", false),
-        Arguments.of(List.of("IT"), "", true),
-        Arguments.of(List.of("IT"), "", false),
-        Arguments.of(List.of("IT"), "DE", true),
-        Arguments.of(List.of("IT"), "DE", false),
-        Arguments.of(List.of("IT"), "IT", true),
-        Arguments.of(List.of("IT", "DE"), "IT", false)
+        Arguments.of(List.of("DE"), "DE", "true"),
+        Arguments.of(List.of("DE"), "DE", "false"),
+        Arguments.of(List.of("DE", "IT"), "DE", "true"),
+        Arguments.of(List.of("DE", "IT"), "DE", "false"),
+        Arguments.of(List.of("DE"), "IT", "true"),
+        Arguments.of(List.of("DE"), "IT", "false"),
+        Arguments.of(List.of("IT"), "", "true"),
+        Arguments.of(List.of("IT"), "", "false"),
+        Arguments.of(List.of("IT"), "DE", "true"),
+        Arguments.of(List.of("IT"), "DE", "false"),
+        Arguments.of(List.of("IT"), "IT", "true"),
+        Arguments.of(List.of("IT", "DE"), "IT", "false")
     );
   }
 
   private static Stream<Arguments> invalidSubmissionPayload() {
     return Stream.of(
         Arguments.of(List.of(""), "", null),
-        Arguments.of(List.of(""), "", true),
-        Arguments.of(List.of(""), "", false),
+        Arguments.of(List.of(""), "", "true"),
+        Arguments.of(List.of(""), "", "false"),
         Arguments.of(List.of(""), "DE", null),
-        Arguments.of(List.of(""), "DE", true),
-        Arguments.of(List.of(""), "DE", false),
+        Arguments.of(List.of(""), "DE", "true"),
+        Arguments.of(List.of(""), "DE", "false"),
         Arguments.of(List.of(""), "IT", null),
-        Arguments.of(List.of(""), "IT", true),
-        Arguments.of(List.of(""), "IT", false),
+        Arguments.of(List.of(""), "IT", "true"),
+        Arguments.of(List.of(""), "IT", "false"),
         Arguments.of(List.of("DE"), "", null),
-        Arguments.of(List.of("DE"), "", true),
-        Arguments.of(List.of("DE"), "", false),
+        Arguments.of(List.of("DE"), "", "true"),
+        Arguments.of(List.of("DE"), "", "false"),
         Arguments.of(List.of("DE"), "DE", null),
         Arguments.of(List.of("DE,IT"), "DE", null),
         Arguments.of(List.of("DE"), "IT", null),
-        Arguments.of(List.of("DE"), "IT", true),
-        Arguments.of(List.of("DE"), "IT", false),
+        Arguments.of(List.of("DE"), "IT", "true"),
+        Arguments.of(List.of("DE"), "IT", "false"),
         Arguments.of(List.of("IT"), "", null),
-        Arguments.of(List.of("IT"), "", true),
-        Arguments.of(List.of("IT"), "", false),
+        Arguments.of(List.of("IT"), "", "true"),
+        Arguments.of(List.of("IT"), "", "false"),
         Arguments.of(List.of("IT"), "DE", null),
         Arguments.of(List.of("IT"), "IT", null)
     );
@@ -246,5 +248,38 @@ class SubmissionPersistenceIT {
     file.createNewFile();
     submissionPayload
         .writeTo(new FileOutputStream("src/test/resources/payload/mobile-client-payload.pb"));
+  }
+
+  private List<TemporaryExposureKey> createValidTemporaryExposureKeys() {
+    int numberOfKeys = 10;
+    int transmissionRiskLevel = 6;
+    int rollingPeriod = 144; // 24*60/10
+    ReportType reportType = ReportType.CONFIRMED_CLINICAL_DIAGNOSIS;
+    ByteString requestPadding = ByteString.copyFrom(new byte[100]);
+    int daysSinceOnsetOfSymptoms = 0;
+
+    LocalDateTime now = LocalDateTime.now();
+    LocalDateTime todayMidnight = LocalDateTime
+        .of(now.getYear(), now.getMonth(), now.getDayOfMonth(), 0, 0);
+    LocalDateTime todayMidnightMinusNumberOfKeys = todayMidnight.minusDays(numberOfKeys);
+
+    return buildTemporaryExposureKeys(numberOfKeys,
+        todayMidnightMinusNumberOfKeys,
+        transmissionRiskLevel, rollingPeriod, reportType, daysSinceOnsetOfSymptoms);
+  }
+
+  private Builder submissionPayloadWithOriginCountry(Builder submissionPayload, String originCountry) {
+    return submissionPayload
+        .setOrigin(originCountry);
+  }
+
+  private Builder submissionPayloadWithVisitedCountries(Builder submissionPayload, List<String> visitedCountries) {
+    return submissionPayload
+        .addAllVisitedCountries(visitedCountries);
+  }
+
+  private Builder submissionPayloadWithConsentToFederation(Builder submissionPayload, boolean consentToFederation) {
+    return submissionPayload
+        .setConsentToFederation(consentToFederation);
   }
 }
