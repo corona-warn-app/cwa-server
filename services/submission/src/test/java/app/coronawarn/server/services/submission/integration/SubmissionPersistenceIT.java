@@ -206,7 +206,7 @@ class SubmissionPersistenceIT {
 
     executor.executePost(payload);
 
-    assertEquals(diagnosisKeyService.getDiagnosisKeys().size(), 0);
+    assertEquals(0, diagnosisKeyService.getDiagnosisKeys().size());
   }
 
   private static Stream<Arguments> invalidSubmissionPayload() {
