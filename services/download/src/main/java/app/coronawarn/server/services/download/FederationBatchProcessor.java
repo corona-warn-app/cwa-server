@@ -147,7 +147,7 @@ public class FederationBatchProcessor {
     return diagnosisKeyBatch.getKeysList()
         .stream()
         .filter(validFederationKeyFilter::isValid)
-        .map(diagnosisKey -> convertFederationDiagnosisKeyToDiagnosisKey(diagnosisKey))
+        .map(this::convertFederationDiagnosisKeyToDiagnosisKey)
         .filter(Optional::isPresent)
         .map(Optional::get)
         .collect(toList());
