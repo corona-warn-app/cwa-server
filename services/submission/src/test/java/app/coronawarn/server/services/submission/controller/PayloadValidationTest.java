@@ -2,7 +2,10 @@
 
 package app.coronawarn.server.services.submission.controller;
 
-import static app.coronawarn.server.services.submission.controller.SubmissionPayloadMockData.*;
+import static app.coronawarn.server.services.submission.controller.SubmissionPayloadMockData.VALID_KEY_DATA_1;
+import static app.coronawarn.server.services.submission.controller.SubmissionPayloadMockData.buildTemporaryExposureKey;
+import static app.coronawarn.server.services.submission.controller.SubmissionPayloadMockData.buildTemporaryExposureKeyWithFlexibleRollingPeriod;
+import static app.coronawarn.server.services.submission.controller.SubmissionPayloadMockData.createRollingStartIntervalNumber;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
@@ -16,6 +19,7 @@ import app.coronawarn.server.services.submission.verification.TanVerifier;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.stream.IntStream;
 import org.assertj.core.util.Lists;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -57,10 +61,7 @@ class PayloadValidationTest {
 
   private Collection<TemporaryExposureKey> buildPayloadWithTooManyKeys() {
     ArrayList<TemporaryExposureKey> tooMany = new ArrayList<>();
-    for (int i = 0; i <= 20; i++) {
-      tooMany.add(buildTemporaryExposureKey(VALID_KEY_DATA_1, createRollingStartIntervalNumber(2) + i * DiagnosisKey.MAX_ROLLING_PERIOD , 3,
-          ReportType.CONFIRMED_CLINICAL_DIAGNOSIS,1));
-    }
+    generatePayloadKeys(tooMany,100,4);
     return tooMany;
   }
 
@@ -78,7 +79,7 @@ class PayloadValidationTest {
     assertThat(actResponse.getStatusCode()).isEqualTo(OK);
   }
 
-  private Collection<TemporaryExposureKey>  buildKeysWithDaysSinceSymptoms(int dsos) {
+  private Collection<TemporaryExposureKey> buildKeysWithDaysSinceSymptoms(int dsos) {
     return List.of(buildTemporaryExposureKey(VALID_KEY_DATA_1, createRollingStartIntervalNumber(2), 3,
         ReportType.CONFIRMED_CLINICAL_DIAGNOSIS, dsos),
         // also add a key without DSOS since this can happen in production and should be supported
@@ -87,7 +88,7 @@ class PayloadValidationTest {
             ReportType.CONFIRMED_CLINICAL_DIAGNOSIS, null));
   }
 
-  private Collection<TemporaryExposureKey>  buildKeysWithoutDaysSinceSymptomsAndTransmissionRiskLevel() {
+  private Collection<TemporaryExposureKey> buildKeysWithoutDaysSinceSymptomsAndTransmissionRiskLevel() {
     return List.of(
         buildTemporaryExposureKey(VALID_KEY_DATA_1, createRollingStartIntervalNumber(2), null,
             ReportType.CONFIRMED_CLINICAL_DIAGNOSIS, null),
@@ -122,7 +123,8 @@ class PayloadValidationTest {
 
   @Test
   void check400ResponseStatusForMissingTransmissionRiskLevelAndDaysSinceSymptoms() {
-    ResponseEntity<Void> actResponse = executor.executePost(buildKeysWithoutDaysSinceSymptomsAndTransmissionRiskLevel());
+    ResponseEntity<Void> actResponse = executor
+        .executePost(buildKeysWithoutDaysSinceSymptomsAndTransmissionRiskLevel());
     assertThat(actResponse.getStatusCode()).isEqualTo(BAD_REQUEST);
   }
 
@@ -141,13 +143,13 @@ class PayloadValidationTest {
   }
 
   @Test
-  void check200ResponseStatusWithTwoKeysOneFlexibleAndOneDefaultOnDifferentDays() {
-    ResponseEntity<Void> actResponse = executor.executePost(buildPayloadWithTwoKeysOneFlexibleAndOneDefaultOnDifferentDays());
+  void check200ResponseStatusWithTwoKeysOnDifferentDays() {
+    ResponseEntity<Void> actResponse = executor.executePost(buildPayloadWithTwoKeysOnDifferentDays());
 
     assertThat(actResponse.getStatusCode()).isEqualTo(OK);
   }
 
-  private Collection<TemporaryExposureKey> buildPayloadWithTwoKeysOneFlexibleAndOneDefaultOnDifferentDays() {
+  private Collection<TemporaryExposureKey> buildPayloadWithTwoKeysOnDifferentDays() {
     ArrayList<TemporaryExposureKey> flexibleRollingPeriodKeys = new ArrayList<>();
 
     flexibleRollingPeriodKeys.add(buildTemporaryExposureKeyWithFlexibleRollingPeriod(VALID_KEY_DATA_1,
@@ -155,7 +157,120 @@ class PayloadValidationTest {
     flexibleRollingPeriodKeys.add(buildTemporaryExposureKeyWithFlexibleRollingPeriod(VALID_KEY_DATA_1,
         createRollingStartIntervalNumber(3), 3, 144));
 
+    return flexibleRollingPeriodKeys;
+  }
+
+  @Test
+  void check200ResponseStatusWithOneValidKey() {
+    ResponseEntity<Void> actResponse = executor.executePost(buildPayloadWithOneValidKey());
+
+    assertThat(actResponse.getStatusCode()).isEqualTo(OK);
+  }
+
+  private Collection<TemporaryExposureKey> buildPayloadWithOneValidKey() {
+    ArrayList<TemporaryExposureKey> flexibleRollingPeriodKeys = new ArrayList<>();
+
+    flexibleRollingPeriodKeys.add(buildTemporaryExposureKeyWithFlexibleRollingPeriod(VALID_KEY_DATA_1,
+        createRollingStartIntervalNumber(1), 3, 100));
 
     return flexibleRollingPeriodKeys;
+  }
+
+
+  @Test
+  void check200ResponseStatusWithTwoKeyFromToday() {
+    ResponseEntity<Void> actResponse = executor.executePost(buildPayloadWithTwoKeysFromToday());
+
+    assertThat(actResponse.getStatusCode()).isEqualTo(OK);
+  }
+
+  private Collection<TemporaryExposureKey> buildPayloadWithTwoKeysFromToday() {
+    ArrayList<TemporaryExposureKey> flexibleRollingPeriodKeys = new ArrayList<>();
+
+    flexibleRollingPeriodKeys.add(buildTemporaryExposureKeyWithFlexibleRollingPeriod(VALID_KEY_DATA_1,
+        createRollingStartIntervalNumber(0), 3, 100));
+    flexibleRollingPeriodKeys.add(buildTemporaryExposureKeyWithFlexibleRollingPeriod(VALID_KEY_DATA_1,
+        createRollingStartIntervalNumber(0), 3, 144));
+
+    return flexibleRollingPeriodKeys;
+  }
+
+  @Test
+  void check400ResponseStatusWithKeysInFuture() {
+    ResponseEntity<Void> actResponse = executor.executePost(buildPayloadWithTwoKeysInFuture());
+
+    assertThat(actResponse.getStatusCode()).isEqualTo(BAD_REQUEST);
+  }
+
+  private Collection<TemporaryExposureKey> buildPayloadWithTwoKeysInFuture() {
+    ArrayList<TemporaryExposureKey> flexibleRollingPeriodKeys = new ArrayList<>();
+
+    flexibleRollingPeriodKeys.add(buildTemporaryExposureKeyWithFlexibleRollingPeriod(VALID_KEY_DATA_1,
+        createRollingStartIntervalNumber(-1), 3, 100));
+    flexibleRollingPeriodKeys.add(buildTemporaryExposureKeyWithFlexibleRollingPeriod(VALID_KEY_DATA_1,
+        createRollingStartIntervalNumber(-2), 3, 144));
+
+    return flexibleRollingPeriodKeys;
+  }
+
+  @Test
+  void check200ResponseStatusWithTwoKeysOneTodayOneYesterday() {
+    ResponseEntity<Void> actResponse = executor.executePost(buildPayloadWithTwoKeysOneTodayOneYesterday());
+
+    assertThat(actResponse.getStatusCode()).isEqualTo(OK);
+  }
+
+  private Collection<TemporaryExposureKey> buildPayloadWithTwoKeysOneTodayOneYesterday() {
+    ArrayList<TemporaryExposureKey> flexibleRollingPeriodKeys = new ArrayList<>();
+
+    flexibleRollingPeriodKeys.add(buildTemporaryExposureKeyWithFlexibleRollingPeriod(VALID_KEY_DATA_1,
+        createRollingStartIntervalNumber(0), 3, 100));
+    flexibleRollingPeriodKeys.add(buildTemporaryExposureKeyWithFlexibleRollingPeriod(VALID_KEY_DATA_1,
+        createRollingStartIntervalNumber(1), 3, 144));
+
+    return flexibleRollingPeriodKeys;
+  }
+
+  @Test
+  void check200ResponseStatusWithOutdatedKeys() {
+    ResponseEntity<Void> actResponse = executor.executePost(buildPayloadWithOutdatedKeys());
+
+    assertThat(actResponse.getStatusCode()).isEqualTo(OK);
+  }
+
+  private Collection<TemporaryExposureKey> buildPayloadWithOutdatedKeys() {
+    ArrayList<TemporaryExposureKey> flexibleRollingPeriodKeys = new ArrayList<>();
+
+    flexibleRollingPeriodKeys.add(buildTemporaryExposureKeyWithFlexibleRollingPeriod(VALID_KEY_DATA_1,
+        createRollingStartIntervalNumber(15), 3, 100));
+    flexibleRollingPeriodKeys.add(buildTemporaryExposureKeyWithFlexibleRollingPeriod(VALID_KEY_DATA_1,
+        createRollingStartIntervalNumber(30), 3, 144));
+
+    return flexibleRollingPeriodKeys;
+  }
+
+  @Test
+  void check400ResponseStatusFor99KeysPayloadWithDifferentDays() {
+    ResponseEntity<Void> actResponse = executor.executePost(build99KeysPayload());
+
+    assertThat(actResponse.getStatusCode()).isEqualTo(BAD_REQUEST);
+  }
+
+  private Collection<TemporaryExposureKey> build99KeysPayload() {
+    ArrayList<TemporaryExposureKey> flexibleRollingPeriodKeys = new ArrayList<>();
+    // 30 Keys for today
+    generatePayloadKeys(flexibleRollingPeriodKeys, 30, 0);
+    // 20 Keys for tomorrow
+    generatePayloadKeys(flexibleRollingPeriodKeys, 20, -1);
+    //50 Keys past days
+    generatePayloadKeys(flexibleRollingPeriodKeys, 49, 4);
+    return flexibleRollingPeriodKeys;
+  }
+
+  private void generatePayloadKeys(ArrayList<TemporaryExposureKey> flexibleRollingPeriodKeys, Integer numberOfKeys,
+      Integer dayAgo) {
+    IntStream.range(0, numberOfKeys).forEach(numberKey ->
+        flexibleRollingPeriodKeys.add(buildTemporaryExposureKeyWithFlexibleRollingPeriod(VALID_KEY_DATA_1,
+            createRollingStartIntervalNumber(dayAgo), 3, 100)));
   }
 }
