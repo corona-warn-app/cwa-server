@@ -48,7 +48,9 @@ public class ValidFederationKeyFilter {
       app.coronawarn.server.common.protocols.external.exposurenotification.DiagnosisKey federationKey) {
     return hasValidDaysSinceOnsetOfSymptoms(federationKey)
         && hasAllowedReportType(federationKey)
-        && hasExpectedKeyLength(federationKey);
+        && hasExpectedKeyLength(federationKey)
+        && hasStartIntervalNumberAtMidNight(federationKey)
+        && hasValidTransmissionRiskLevel(federationKey);
   }
 
   private boolean hasValidDaysSinceOnsetOfSymptoms(DiagnosisKey federationKey) {

@@ -1,5 +1,6 @@
 package app.coronawarn.server.services.download.validation;
 
+import static java.time.ZoneOffset.UTC;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -9,6 +10,9 @@ import app.coronawarn.server.common.protocols.external.exposurenotification.Repo
 import app.coronawarn.server.services.download.DownloadServiceConfig;
 import app.coronawarn.server.services.download.FederationBatchTestHelper;
 import com.google.protobuf.ByteString;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.List;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -32,7 +36,7 @@ class ValidFederationKeyFilterTest {
   }
 
   @Test
-  void checkFilterAcceptsValidDiagnosisKey() {
+  void filterAcceptsValidDiagnosisKey() {
     DiagnosisKey mockedFederationKey = FederationBatchTestHelper
         .createBuilderForValidFederationDiagnosisKey().build();
 
@@ -41,7 +45,7 @@ class ValidFederationKeyFilterTest {
 
   @ParameterizedTest
   @ValueSource(ints = {-15, -17, 4001})
-  void checkFilterRejectsWhenDaysSinceOnsetOfSymptomsNotInRange(int invalidDsos) {
+  void filterRejectsWhenDaysSinceOnsetOfSymptomsNotInRange(int invalidDsos) {
     DiagnosisKey mockedFederationKey =
         FederationBatchTestHelper.createFederationDiagnosisKeyWithDsos(invalidDsos);
 
@@ -49,7 +53,7 @@ class ValidFederationKeyFilterTest {
   }
 
   @Test
-  void checkFilterRejectsWhenDaysSinceOnsetOfSymptomsIsMissing() {
+  void filterRejectsWhenDaysSinceOnsetOfSymptomsIsMissing() {
     DiagnosisKey mockedFederationKey = FederationBatchTestHelper
         .createFederationDiagnosisKeyWithoutDsos();
 
@@ -58,7 +62,7 @@ class ValidFederationKeyFilterTest {
 
   @ParameterizedTest
   @ValueSource(ints = {0, 8, -14, 3986})
-  void checkFilterAcceptsWhenDaysSinceOnsetOfSymptomsInRange(int validDsos) {
+  void filterAcceptsWhenDaysSinceOnsetOfSymptomsInRange(int validDsos) {
     DiagnosisKey mockedFederationKey =
         FederationBatchTestHelper.createFederationDiagnosisKeyWithDsos(validDsos);
 
@@ -67,7 +71,7 @@ class ValidFederationKeyFilterTest {
 
   @ParameterizedTest
   @EnumSource(value = ReportType.class, names = {"CONFIRMED_TEST"})
-  void checkFilterAcceptsReportTypes(ReportType reportType) {
+  void filterAcceptsReportTypes(ReportType reportType) {
     DiagnosisKey mockedFederationKey = FederationBatchTestHelper.createFederationDiagnosisKeyWithReportType(reportType);
     assertThat(validator.isValid(mockedFederationKey)).isTrue();
   }
@@ -75,13 +79,15 @@ class ValidFederationKeyFilterTest {
   @ParameterizedTest
   @EnumSource(value = ReportType.class, names = {"UNKNOWN", "CONFIRMED_CLINICAL_DIAGNOSIS", "SELF_REPORT", "RECURSIVE",
       "REVOKED"})
-  void checkFilterRejectsReportTypes(ReportType reportType) {
+  void filterRejectsReportTypes(ReportType reportType) {
     DiagnosisKey mockedFederationKey = FederationBatchTestHelper.createFederationDiagnosisKeyWithReportType(reportType);
     assertThat(validator.isValid(mockedFederationKey)).isFalse();
   }
 
+  // TODO what if no report type is provided?
+
   @Test
-  void checkFilterAcceptsCorrectKeyLength() {
+  void filterAcceptsCorrectKeyLength() {
     ByteString keyData = FederationBatchTestHelper.createByteStringOfLength(16);
     DiagnosisKey mockedFederationKey = FederationBatchTestHelper.createFederationDiagnosisKeyWithKeyData(keyData);
     assertThat(validator.isValid(mockedFederationKey)).isTrue();
@@ -89,9 +95,29 @@ class ValidFederationKeyFilterTest {
 
   @ParameterizedTest
   @ValueSource(ints = {0, 15, 17, 20})
-  void checkFilterRejectsIncorrectKeyLength(int invalidKeyLength) {
+  void filterRejectsIncorrectKeyLength(int invalidKeyLength) {
     ByteString keyData = FederationBatchTestHelper.createByteStringOfLength(invalidKeyLength);
     DiagnosisKey mockedFederationKey = FederationBatchTestHelper.createFederationDiagnosisKeyWithKeyData(keyData);
+    assertThat(validator.isValid(mockedFederationKey)).isFalse();
+  }
+
+  @Test
+  void filterRejectsStartIntervalNumberNotAdMidnight() {
+    int rollingStart = Math.toIntExact(LocalDateTime.of(LocalDate.now(), LocalTime.NOON).toEpochSecond(UTC) / 600L);
+    DiagnosisKey mockedFederationKey = FederationBatchTestHelper
+        .createBuilderForValidFederationDiagnosisKey()
+        .setRollingStartIntervalNumber(rollingStart).build();
+
+    assertThat(validator.isValid(mockedFederationKey)).isFalse();
+  }
+
+  @ParameterizedTest
+  @ValueSource(ints = {-1, 0, 9})
+  void filterRejectsInvalidTransmissionRiskLevels(int invalidTrl) {
+    DiagnosisKey mockedFederationKey = FederationBatchTestHelper
+        .createBuilderForValidFederationDiagnosisKey()
+        .setTransmissionRiskLevel(invalidTrl).build();
+
     assertThat(validator.isValid(mockedFederationKey)).isFalse();
   }
 }
