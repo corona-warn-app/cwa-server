@@ -253,6 +253,9 @@ class SubmissionPersistenceIT {
         Arguments.of(List.of("RU"), "RU", true),
         Arguments.of(List.of("RU"), "RU", false),
         Arguments.of(List.of("RU"), "RU", null),
+        Arguments.of(List.of("IT"), "RU", true),
+        Arguments.of(List.of("IT"), "RU", false),
+        Arguments.of(List.of("IT"), "RU", null),
         Arguments.of(List.of("RU"), "IT", true),
         Arguments.of(List.of("RU"), "IT", false),
         Arguments.of(List.of("RU"), "IT", null)
