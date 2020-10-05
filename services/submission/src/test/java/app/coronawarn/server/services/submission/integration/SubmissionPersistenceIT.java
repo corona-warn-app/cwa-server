@@ -63,6 +63,7 @@ import org.springframework.test.context.jdbc.Sql.ExecutionPhase;
 class SubmissionPersistenceIT {
 
   private static final Logger logger = LoggerFactory.getLogger(SubmissionPersistenceIT.class);
+  public static final String PATH_MOBILE_CLIENT_PAYLOAD_PB = "src/test/resources/payload/mobile-client-payload.pb";
 
   @Autowired
   private DiagnosisKeyService diagnosisKeyService;
@@ -94,7 +95,7 @@ class SubmissionPersistenceIT {
   @Disabled("Because the content of the .pb file becomes old and retention time passes, this test will fail. "
       + "Enable when debugging of a new payload is required.")
   @ParameterizedTest
-  @ValueSource(strings = {"src/test/resources/payload/mobile-client-payload.pb"})
+  @ValueSource(strings = {PATH_MOBILE_CLIENT_PAYLOAD_PB})
   void testKeyInsertionWithMobileClientProtoBuf(String testFile) throws IOException {
     Path path = Paths.get(testFile);
     InputStream input = new FileInputStream(path.toFile());
@@ -130,7 +131,7 @@ class SubmissionPersistenceIT {
     if (originCountry != null) {
       submissionPayloadWithOriginCountry(submissionPayloadBuilder, originCountry);
     }
-    if (consentToFederation  != null) {
+    if (consentToFederation != null) {
       submissionPayloadWithConsentToFederation(submissionPayloadBuilder, consentToFederation);
     }
 
@@ -138,7 +139,7 @@ class SubmissionPersistenceIT {
 
     writeSubmissionPayloadProtobufFile(submissionPayload);
 
-    Path path = Paths.get("src/test/resources/payload/mobile-client-payload.pb");
+    Path path = Paths.get(PATH_MOBILE_CLIENT_PAYLOAD_PB);
     InputStream input = new FileInputStream(path.toFile());
     SubmissionPayload payload = SubmissionPayload.parseFrom(input);
 
@@ -171,20 +172,33 @@ class SubmissionPersistenceIT {
   private static Stream<Arguments> validSubmissionPayload() {
     return Stream.of(
         Arguments.of(null, null, null),
-        Arguments.of(List.of("IT"), "", true),
-
+        Arguments.of(List.of("DE"), null, true),
+        Arguments.of(List.of("DE"), null, false),
+        Arguments.of(List.of("DE"), null, null),
+        Arguments.of(null, "DE", true),
+        Arguments.of(null, "DE", false),
+        Arguments.of(null, "DE", null),
         Arguments.of(List.of("DE"), "DE", true),
         Arguments.of(List.of("DE"), "DE", false),
+        Arguments.of(List.of("DE"), "DE", null),
         Arguments.of(List.of("DE", "IT"), "DE", true),
         Arguments.of(List.of("DE", "IT"), "DE", false),
+        Arguments.of(List.of("DE", "IT"), "DE", null),
         Arguments.of(List.of("DE"), "IT", true),
         Arguments.of(List.of("DE"), "IT", false),
-
-        Arguments.of(List.of("IT"), "", false),
+        Arguments.of(List.of("DE"), "IT", null),
         Arguments.of(List.of("IT"), "DE", true),
         Arguments.of(List.of("IT"), "DE", false),
+        Arguments.of(List.of("IT"), "DE", null),
         Arguments.of(List.of("IT"), "IT", true),
-        Arguments.of(List.of("IT", "DE"), "IT", false)
+        Arguments.of(List.of("IT"), "IT", false),
+        Arguments.of(List.of("IT"), "IT", null),
+        Arguments.of(List.of("IT", "DE"), "IT", false),
+        Arguments.of(List.of("DE"), "DE", null),
+        Arguments.of(List.of("DE"), "IT", null),
+        Arguments.of(List.of("DE"), "IT", true),
+        Arguments.of(List.of("DE"), "IT", false),
+        Arguments.of(List.of("IT"), "DE", null)
     );
   }
 
@@ -202,16 +216,9 @@ class SubmissionPersistenceIT {
         Arguments.of(List.of("DE"), "", null),
         Arguments.of(List.of("DE"), "", true),
         Arguments.of(List.of("DE"), "", false),
-        Arguments.of(List.of("DE"), "DE", null),
-        Arguments.of(List.of("DE,IT"), "DE", null),
-        Arguments.of(List.of("DE"), "IT", null),
-        Arguments.of(List.of("DE"), "IT", true),
-        Arguments.of(List.of("DE"), "IT", false),
         Arguments.of(List.of("IT"), "", null),
         Arguments.of(List.of("IT"), "", true),
-        Arguments.of(List.of("IT"), "", false),
-        Arguments.of(List.of("IT"), "DE", null),
-        Arguments.of(List.of("IT"), "IT", null)
+        Arguments.of(List.of("IT"), "", false)
     );
   }
 
@@ -229,10 +236,10 @@ class SubmissionPersistenceIT {
   }
 
   private void writeSubmissionPayloadProtobufFile(SubmissionPayload submissionPayload) throws IOException {
-    File file = new File("src/test/resources/payload/mobile-client-payload.pb");
+    File file = new File(PATH_MOBILE_CLIENT_PAYLOAD_PB);
     file.createNewFile();
     submissionPayload
-        .writeTo(new FileOutputStream("src/test/resources/payload/mobile-client-payload.pb"));
+        .writeTo(new FileOutputStream(PATH_MOBILE_CLIENT_PAYLOAD_PB));
   }
 
   private List<TemporaryExposureKey> createValidTemporaryExposureKeys() {
@@ -240,7 +247,6 @@ class SubmissionPersistenceIT {
     int transmissionRiskLevel = 6;
     int rollingPeriod = 144; // 24*60/10
     ReportType reportType = ReportType.CONFIRMED_CLINICAL_DIAGNOSIS;
-    ByteString requestPadding = ByteString.copyFrom(new byte[100]);
     int daysSinceOnsetOfSymptoms = 0;
 
     LocalDateTime now = LocalDateTime.now();
