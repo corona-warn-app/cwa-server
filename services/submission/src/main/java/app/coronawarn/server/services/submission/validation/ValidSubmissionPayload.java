@@ -4,7 +4,7 @@ package app.coronawarn.server.services.submission.validation;
 
 import static java.util.function.Predicate.not;
 import static java.util.stream.Collectors.toList;
-
+import app.coronawarn.server.common.persistence.domain.normalization.DiagnosisKeyNormalizer;
 import app.coronawarn.server.common.protocols.external.exposurenotification.TemporaryExposureKey;
 import app.coronawarn.server.common.protocols.internal.SubmissionPayload;
 import app.coronawarn.server.services.submission.config.SubmissionServiceConfig;
@@ -63,11 +63,13 @@ public @interface ValidSubmissionPayload {
      * Validates the following constraints.
      * <ul>
      *   <li>StartIntervalNumber values from the same {@link SubmissionPayload} shall be unique.</li>
-     *   <li>There must be no gaps for StartIntervalNumber values for a user.</li>
-     *   <li>There must not be any keys in the {@link SubmissionPayload} have overlapping time windows.</li>
-     *   <li>The period of time covered by the data file must not exceed the configured maximum number of days.</li>
-     *   <li>The origin country must be part of the supported countries.</li>
-     *   <li>The visited countries must be part of the supported countries.</li>
+     *   <li>There must not be more than allowed maximum number of keys in a payload
+     *       (see application.yaml/max-number-of-keys)
+     *   <li>The origin country can be missing or the provided value must be of the supported countries
+     *       (see application.yaml).</li>
+     *   <li>The visited countries can be missing or the provided values must be part of the supported countries.</li>
+     *   <li>Either a value of accepted Transmission Risk Level or an accepted Days Since Onset Of Symptoms
+     *       must be present. If one value is missing, the other one can be derived (see {@link DiagnosisKeyNormalizer}</li>
      * </ul>
      */
     @Override
