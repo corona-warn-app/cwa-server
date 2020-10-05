@@ -10,6 +10,7 @@
         <a href="https://sonarcloud.io/dashboard?id=corona-warn-app_cwa-server" title="Quality Gate"><img src="https://sonarcloud.io/api/project_badges/measure?project=corona-warn-app_cwa-server&metric=alert_status"></a>
         <a href="https://sonarcloud.io/component_measures?id=corona-warn-app_cwa-server&metric=Coverage&view=list" title="Coverage"><img src="https://sonarcloud.io/api/project_badges/measure?project=corona-warn-app_cwa-server&metric=coverage"></a>
     <a href="https://github.com/corona-warn-app/cwa-server/blob/master/LICENSE" title="License"><img src="https://img.shields.io/badge/License-Apache%202.0-green.svg?style=flat"></a>
+    <a href="https://api.reuse.software/badge/github.com/corona-warn-app/cwa-server" title="REUSE Status"><img src="https://api.reuse.software/badge/github.com/corona-warn-app/cwa-server"></a>
 </p>
 
 <p align="center">
@@ -219,13 +220,3 @@ The following public repositories are currently available for the Corona-Warn-Ap
 [Postgres]: https://www.postgresql.org/
 [HSQLDB]: http://hsqldb.org/
 [Zenko CloudServer]: https://github.com/scality/cloudserver
-
-## Licensing
-
-Copyright (c) 2020 SAP SE or an SAP affiliate company.
-
-Licensed under the **Apache License, Version 2.0** (the "License"); you may not use this file except in compliance with the License.
-
-You may obtain a copy of the License at <https://www.apache.org/licenses/LICENSE-2.0>.
-
-Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the [LICENSE](./LICENSE) for the specific language governing permissions and limitations under the License.

@@ -1,25 +1,8 @@
-/*-
- * ---license-start
- * Corona-Warn-App
- * ---
- * Copyright (C) 2020 SAP SE and all other contributors
- * ---
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- * ---license-end
- */
+
 
 package app.coronawarn.server.services.federation.upload.config;
 
+import app.coronawarn.server.common.protocols.external.exposurenotification.ReportType;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
 @ConfigurationProperties(prefix = "services.upload")
@@ -33,7 +16,15 @@ public class UploadServiceConfig {
   private String certificate;
   private Signature signature;
   private TestData testData;
+  private EfgsTransmission efgsTransmission;
 
+  public EfgsTransmission getEfgsTransmission() {
+    return efgsTransmission;
+  }
+
+  public void setEfgsTransmission(EfgsTransmission efgsTransmission) {
+    this.efgsTransmission = efgsTransmission;
+  }
 
   public Integer getExpiryPolicyMinutes() {
     return expiryPolicyMinutes;
@@ -99,15 +90,54 @@ public class UploadServiceConfig {
     this.signature = signature;
   }
 
-  public static class TestData {
-    private int keysPerHour;
+  public static class EfgsTransmission {
+    private boolean enableDsos;
+    private boolean enableReportType;
+    private Integer defaultDsos;
+    private ReportType defaultReportType;
 
-    public int getKeysPerHour() {
-      return keysPerHour;
+    public ReportType getDefaultReportType() {
+      return defaultReportType;
     }
 
-    public void setKeysPerHour(int keysPerHour) {
-      this.keysPerHour = keysPerHour;
+    public void setDefaultReportType(ReportType defaultReportType) {
+      this.defaultReportType = defaultReportType;
+    }
+
+    public boolean isEnableDsos() {
+      return enableDsos;
+    }
+
+    public void setEnableDsos(boolean enableDsos) {
+      this.enableDsos = enableDsos;
+    }
+
+    public boolean isEnableReportType() {
+      return enableReportType;
+    }
+
+    public void setEnableReportType(boolean enableReportType) {
+      this.enableReportType = enableReportType;
+    }
+
+    public Integer getDefaultDsos() {
+      return defaultDsos;
+    }
+
+    public void setDefaultDsos(Integer defaultDsos) {
+      this.defaultDsos = defaultDsos;
+    }
+  }
+
+  public static class TestData {
+    private int maxPendingKeys;
+
+    public int getMaxPendingKeys() {
+      return maxPendingKeys;
+    }
+
+    public void setMaxPendingKeys(int maxPendingKeys) {
+      this.maxPendingKeys = maxPendingKeys;
     }
   }
 

@@ -28,6 +28,12 @@ services:
     privatekey: ${VAULT_EFGS_BATCHIGNING_SECRET}
     certificate: ${VAULT_EFGS_BATCHIGNING_CERTIFICATE}
     privatekey-password: ${VAULT_EFGS_BATCHSIGNING_PASSWORD}
+    # Allow toggling transmission of data to EFGS
+    efgs-transmission:
+      enable-dsos: ${ENABLE_DSOS_TRANSMISSION_TO_EFGS:true}
+      enable-report-type: ${ENABLE_REPORT_TYPE_TRANSMISSION_TO_EFGS:true}
+      default-dsos: ${DEFAULT_DSOS:1}
+      default-report-type: ${DEFAULT_REPORT_TYPE:0}
     signature:
       # The ASN.1 OID for algorithm identifier.
       algorithm-oid: 1.2.840.10045.4.3.2

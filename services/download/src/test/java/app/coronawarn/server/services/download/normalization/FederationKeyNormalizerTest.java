@@ -1,22 +1,4 @@
-/*-
- * ---license-start
- * Corona-Warn-App
- * ---
- * Copyright (C) 2020 SAP SE and all other contributors
- * ---
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- * ---license-end
- */
+
 
 package app.coronawarn.server.services.download.normalization;
 
@@ -39,6 +21,7 @@ import app.coronawarn.server.services.download.BatchDownloadResponse;
 import app.coronawarn.server.services.download.DownloadServiceConfig;
 import app.coronawarn.server.services.download.FederationBatchProcessor;
 import app.coronawarn.server.services.download.FederationGatewayDownloadService;
+import app.coronawarn.server.services.download.validation.ValidFederationKeyFilter;
 import com.google.protobuf.ByteString;
 import java.time.LocalDate;
 import java.util.List;
@@ -59,11 +42,14 @@ import org.springframework.test.annotation.DirtiesContext;
 class FederationKeyNormalizerTest {
 
   private static final String BATCH_TAG = "507f191e810c19729de860ea";
-  FederationBatchProcessor processor;
+
+  private FederationBatchProcessor processor;
   @Autowired
-  DownloadServiceConfig config;
+  private DownloadServiceConfig config;
   @Autowired
-  DiagnosisKeyRepository repository;
+  private DiagnosisKeyRepository repository;
+  @Autowired
+  private ValidFederationKeyFilter validator;
   @SpyBean
   private DiagnosisKeyService diagnosisKeyService;
   @MockBean
@@ -87,7 +73,7 @@ class FederationKeyNormalizerTest {
   @BeforeEach
   void setUp() {
     processor = new FederationBatchProcessor(batchInfoService, diagnosisKeyService, federationGatewayDownloadService,
-        config);
+        config, validator);
     repository.deleteAll();
   }
 

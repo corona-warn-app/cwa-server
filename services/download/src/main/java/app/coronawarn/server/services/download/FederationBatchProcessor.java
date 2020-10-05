@@ -1,22 +1,4 @@
-/*-
- * ---license-start
- * Corona-Warn-App
- * ---
- * Copyright (C) 2020 SAP SE and all other contributors
- * ---
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- * ---license-end
- */
+
 
 package app.coronawarn.server.services.download;
 
@@ -33,6 +15,7 @@ import app.coronawarn.server.common.persistence.service.DiagnosisKeyService;
 import app.coronawarn.server.common.persistence.service.FederationBatchInfoService;
 import app.coronawarn.server.common.protocols.external.exposurenotification.DiagnosisKeyBatch;
 import app.coronawarn.server.services.download.normalization.FederationKeyNormalizer;
+import app.coronawarn.server.services.download.validation.ValidFederationKeyFilter;
 import java.time.LocalDate;
 import java.util.Deque;
 import java.util.LinkedList;
@@ -53,6 +36,7 @@ public class FederationBatchProcessor {
   private final DiagnosisKeyService diagnosisKeyService;
   private final FederationGatewayDownloadService federationGatewayDownloadService;
   private final DownloadServiceConfig config;
+  private final ValidFederationKeyFilter validFederationKeyFilter;
 
   /**
    * Constructor.
@@ -63,14 +47,17 @@ public class FederationBatchProcessor {
    * @param federationGatewayDownloadService A {@link FederationGatewayDownloadService} for retrieving federation
    *                                         diagnosis key batches.
    * @param config                           A {@link DownloadServiceConfig} for retrieving federation configuration.
+   * @param federationKeyValidator           A {@link ValidFederationKeyFilter} for validating keys in the downloaded
+   *                                         batches
    */
   public FederationBatchProcessor(FederationBatchInfoService batchInfoService,
       DiagnosisKeyService diagnosisKeyService, FederationGatewayDownloadService federationGatewayDownloadService,
-      DownloadServiceConfig config) {
+      DownloadServiceConfig config, ValidFederationKeyFilter federationKeyValidator) {
     this.batchInfoService = batchInfoService;
     this.diagnosisKeyService = diagnosisKeyService;
     this.federationGatewayDownloadService = federationGatewayDownloadService;
     this.config = config;
+    this.validFederationKeyFilter = federationKeyValidator;
   }
 
   /**
@@ -134,7 +121,7 @@ public class FederationBatchProcessor {
       BatchDownloadResponse response = federationGatewayDownloadService.downloadBatch(batchTag, date);
       response.getDiagnosisKeyBatch().ifPresent(diagnosisKeyBatch -> {
         logger.info("Downloaded {} keys for date {} and batchTag {}", diagnosisKeyBatch.getKeysCount(), date, batchTag);
-        int insertedKeys = diagnosisKeyService.saveDiagnosisKeys(convertDiagnosisKeys(diagnosisKeyBatch));
+        int insertedKeys = diagnosisKeyService.saveDiagnosisKeys(extractValidDiagnosisKeys(diagnosisKeyBatch));
         logger.info("Successfully inserted {} keys for date {} and batchTag {}", insertedKeys, date, batchTag);
       });
       batchInfoService.updateStatus(batchInfo, PROCESSED);
@@ -147,9 +134,10 @@ public class FederationBatchProcessor {
     }
   }
 
-  private List<DiagnosisKey> convertDiagnosisKeys(DiagnosisKeyBatch diagnosisKeyBatch) {
+  private List<DiagnosisKey> extractValidDiagnosisKeys(DiagnosisKeyBatch diagnosisKeyBatch) {
     return diagnosisKeyBatch.getKeysList()
         .stream()
+        .filter(validFederationKeyFilter::isValid)
         .map(diagnosisKey -> DiagnosisKey.builder().fromFederationDiagnosisKey(diagnosisKey)
             .withFieldNormalization(new FederationKeyNormalizer(config))
             .build())
