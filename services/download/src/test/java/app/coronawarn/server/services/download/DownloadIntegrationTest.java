@@ -41,10 +41,9 @@ import org.springframework.test.context.ActiveProfiles;
  * accordingly.
  * <p>
  * The WireMockServer will additionally return a series of three batches:
- * <li>Batch1 of the first batch of the corresponding date. One diagnosis key can be processed successfully, but the second key is rejected
- * due to its unsupported ReportType "Self Reported".</li>
- * <li>Batch2 is returned by an explicit call to its batch tag and can
- * be processed successfully as well.</li>
+ * <li>Batch1 is the first batch of the corresponding date. The first diagnosis key can be processed successfully, but the
+ * second diagnosis key is rejected due to its unsupported ReportType "Self Reported".</li>
+ * <li>Batch2 is returned by an explicit call to its batch tag and can be processed successfully as well.</li>
  * <li>Batch3 fails with a 404 Not Found.</li>
  * <p>
  * Hence, after the execution of both runners, the federation_batch_info table should be the following:
@@ -77,6 +76,7 @@ class DownloadIntegrationTest {
   private static final String RETRY_BATCH_SUCCESSFUL_KEY_DATA = "0123456789ABCDED";
 
   private static final String RETRY_BATCH_FAILS_TAG = "retry_batch_tag_fail";
+
   private static final String EMPTY_BATCH_TAG = "null";
 
   private static WireMockServer server;

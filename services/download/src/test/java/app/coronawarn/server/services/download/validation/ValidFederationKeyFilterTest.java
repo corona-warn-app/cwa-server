@@ -88,8 +88,6 @@ class ValidFederationKeyFilterTest {
     assertThat(validator.isValid(mockedFederationKey)).isFalse();
   }
 
-  // TODO what if no report type is provided?
-
   @Test
   void filterAcceptsCorrectKeyLength() {
     ByteString keyData = FederationBatchTestHelper.createByteStringOfLength(16);
