@@ -116,7 +116,7 @@ class SubmissionPersistenceIT {
   @ParameterizedTest
   @MethodSource("validSubmissionPayload")
   void testKeyInsertionWithMobileClientProtoBuf(List<String> visitedCountries, String originCountry,
-      String consentToFederation) throws IOException {
+      Boolean consentToFederation) throws IOException {
 
     List<TemporaryExposureKey> temporaryExposureKeys = createValidTemporaryExposureKeys();
 
@@ -124,14 +124,14 @@ class SubmissionPersistenceIT {
         .newBuilder()
         .addAllKeys(temporaryExposureKeys);
 
-    if (!visitedCountries.isEmpty()) {
+    if (visitedCountries != null) {
       submissionPayloadWithVisitedCountries(submissionPayloadBuilder, visitedCountries);
     }
-    if (!originCountry.isEmpty()) {
+    if (originCountry != null) {
       submissionPayloadWithOriginCountry(submissionPayloadBuilder, originCountry);
     }
-    if (!consentToFederation.isEmpty()) {
-      submissionPayloadWithConsentToFederation(submissionPayloadBuilder, consentToFederation.contains("true"));
+    if (consentToFederation  != null) {
+      submissionPayloadWithConsentToFederation(submissionPayloadBuilder, consentToFederation);
     }
 
     SubmissionPayload submissionPayload = submissionPayloadBuilder.build();
@@ -170,43 +170,46 @@ class SubmissionPersistenceIT {
 
   private static Stream<Arguments> validSubmissionPayload() {
     return Stream.of(
-        Arguments.of(List.of("DE"), "DE", "true"),
-        Arguments.of(List.of("DE"), "DE", "false"),
-        Arguments.of(List.of("DE", "IT"), "DE", "true"),
-        Arguments.of(List.of("DE", "IT"), "DE", "false"),
-        Arguments.of(List.of("DE"), "IT", "true"),
-        Arguments.of(List.of("DE"), "IT", "false"),
-        Arguments.of(List.of("IT"), "", "true"),
-        Arguments.of(List.of("IT"), "", "false"),
-        Arguments.of(List.of("IT"), "DE", "true"),
-        Arguments.of(List.of("IT"), "DE", "false"),
-        Arguments.of(List.of("IT"), "IT", "true"),
-        Arguments.of(List.of("IT", "DE"), "IT", "false")
+        Arguments.of(null, null, null),
+        Arguments.of(List.of("IT"), "", true),
+
+        Arguments.of(List.of("DE"), "DE", true),
+        Arguments.of(List.of("DE"), "DE", false),
+        Arguments.of(List.of("DE", "IT"), "DE", true),
+        Arguments.of(List.of("DE", "IT"), "DE", false),
+        Arguments.of(List.of("DE"), "IT", true),
+        Arguments.of(List.of("DE"), "IT", false),
+
+        Arguments.of(List.of("IT"), "", false),
+        Arguments.of(List.of("IT"), "DE", true),
+        Arguments.of(List.of("IT"), "DE", false),
+        Arguments.of(List.of("IT"), "IT", true),
+        Arguments.of(List.of("IT", "DE"), "IT", false)
     );
   }
 
   private static Stream<Arguments> invalidSubmissionPayload() {
     return Stream.of(
         Arguments.of(List.of(""), "", null),
-        Arguments.of(List.of(""), "", "true"),
-        Arguments.of(List.of(""), "", "false"),
+        Arguments.of(List.of(""), "", true),
+        Arguments.of(List.of(""), "", false),
         Arguments.of(List.of(""), "DE", null),
-        Arguments.of(List.of(""), "DE", "true"),
-        Arguments.of(List.of(""), "DE", "false"),
+        Arguments.of(List.of(""), "DE", true),
+        Arguments.of(List.of(""), "DE", false),
         Arguments.of(List.of(""), "IT", null),
-        Arguments.of(List.of(""), "IT", "true"),
-        Arguments.of(List.of(""), "IT", "false"),
+        Arguments.of(List.of(""), "IT", true),
+        Arguments.of(List.of(""), "IT", false),
         Arguments.of(List.of("DE"), "", null),
-        Arguments.of(List.of("DE"), "", "true"),
-        Arguments.of(List.of("DE"), "", "false"),
+        Arguments.of(List.of("DE"), "", true),
+        Arguments.of(List.of("DE"), "", false),
         Arguments.of(List.of("DE"), "DE", null),
         Arguments.of(List.of("DE,IT"), "DE", null),
         Arguments.of(List.of("DE"), "IT", null),
-        Arguments.of(List.of("DE"), "IT", "true"),
-        Arguments.of(List.of("DE"), "IT", "false"),
+        Arguments.of(List.of("DE"), "IT", true),
+        Arguments.of(List.of("DE"), "IT", false),
         Arguments.of(List.of("IT"), "", null),
-        Arguments.of(List.of("IT"), "", "true"),
-        Arguments.of(List.of("IT"), "", "false"),
+        Arguments.of(List.of("IT"), "", true),
+        Arguments.of(List.of("IT"), "", false),
         Arguments.of(List.of("IT"), "DE", null),
         Arguments.of(List.of("IT"), "IT", null)
     );
