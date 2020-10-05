@@ -122,14 +122,13 @@ public class FederationBatchProcessor {
     try {
       BatchDownloadResponse response = federationGatewayDownloadService.downloadBatch(batchTag, date);
       AtomicBoolean batchContainsInvalidKeys = new AtomicBoolean(false);
-      response.getDiagnosisKeyBatch().ifPresent(diagnosisKeyBatch -> {
-        logger
-            .info("Downloaded {} keys for date {} and batchTag {}.", diagnosisKeyBatch.getKeysCount(), date, batchTag);
-        List<DiagnosisKey> validDiagnosisKeys = extractValidDiagnosisKeys(diagnosisKeyBatch);
-        int invalidKeys = diagnosisKeyBatch.getKeysCount() - validDiagnosisKeys.size();
-        if (invalidKeys > 0) {
+      response.getDiagnosisKeyBatch().ifPresent(batch -> {
+        logger.info("Downloaded {} keys for date {} and batchTag {}.", batch.getKeysCount(), date, batchTag);
+        List<DiagnosisKey> validDiagnosisKeys = extractValidDiagnosisKeysFromBatch(batch);
+        int numOfInvalidKeys = batch.getKeysCount() - validDiagnosisKeys.size();
+        if (numOfInvalidKeys > 0) {
           batchContainsInvalidKeys.set(true);
-          logger.info("{} keys failed validation and were skipped.", invalidKeys);
+          logger.info("{} keys failed validation and were skipped.", numOfInvalidKeys);
         }
         int insertedKeys = diagnosisKeyService.saveDiagnosisKeys(validDiagnosisKeys);
         logger.info("Successfully inserted {} keys for date {} and batchTag {}.", insertedKeys, date, batchTag);
@@ -144,22 +143,25 @@ public class FederationBatchProcessor {
     }
   }
 
-  private List<DiagnosisKey> extractValidDiagnosisKeys(DiagnosisKeyBatch diagnosisKeyBatch) {
+  private List<DiagnosisKey> extractValidDiagnosisKeysFromBatch(DiagnosisKeyBatch diagnosisKeyBatch) {
     return diagnosisKeyBatch.getKeysList()
         .stream()
         .filter(validFederationKeyFilter::isValid)
-        .map(diagnosisKey -> {
-          try {
-            return Optional.of(DiagnosisKey.builder().fromFederationDiagnosisKey(diagnosisKey)
-                .withFieldNormalization(new FederationKeyNormalizer(config))
-                .build());
-          } catch (Exception ex) {
-            logger.info("Building key failed.");
-            return Optional.<DiagnosisKey>empty();
-          }
-        })
+        .map(diagnosisKey -> convertFederationDiagnosisKeyToDiagnosisKey(diagnosisKey))
         .filter(Optional::isPresent)
         .map(Optional::get)
         .collect(toList());
+  }
+
+  private Optional<DiagnosisKey> convertFederationDiagnosisKeyToDiagnosisKey(
+      app.coronawarn.server.common.protocols.external.exposurenotification.DiagnosisKey diagnosisKey) {
+    try {
+      return Optional.of(DiagnosisKey.builder().fromFederationDiagnosisKey(diagnosisKey)
+          .withFieldNormalization(new FederationKeyNormalizer(config))
+          .build());
+    } catch (Exception ex) {
+      logger.info("Building key failed.");
+      return Optional.empty();
+    }
   }
 }
