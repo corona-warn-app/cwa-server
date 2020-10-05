@@ -4,6 +4,7 @@ package app.coronawarn.server.services.submission.validation;
 
 import static java.util.function.Predicate.not;
 import static java.util.stream.Collectors.toList;
+
 import app.coronawarn.server.common.persistence.domain.normalization.DiagnosisKeyNormalizer;
 import app.coronawarn.server.common.protocols.external.exposurenotification.TemporaryExposureKey;
 import app.coronawarn.server.common.protocols.internal.SubmissionPayload;
@@ -69,7 +70,8 @@ public @interface ValidSubmissionPayload {
      *       (see application.yaml).</li>
      *   <li>The visited countries can be missing or the provided values must be part of the supported countries.</li>
      *   <li>Either a value of accepted Transmission Risk Level or an accepted Days Since Onset Of Symptoms
-     *       must be present. If one value is missing, the other one can be derived (see {@link DiagnosisKeyNormalizer}</li>
+     *       must be present. If one value is missing, the other one can be derived
+     *       (see {@link DiagnosisKeyNormalizer}</li>
      * </ul>
      */
     @Override
