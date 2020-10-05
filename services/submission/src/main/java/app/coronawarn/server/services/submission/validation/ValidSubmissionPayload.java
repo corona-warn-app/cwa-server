@@ -160,7 +160,7 @@ public @interface ValidSubmissionPayload {
 
     private boolean checkTransmissionRiskLevelIsAcceptable(List<TemporaryExposureKey> exposureKeys,
         ConstraintValidatorContext validatorContext) {
-      // we check that transmission risk level is in the acceptable range
+      // check if transmission risk level is in the acceptable range
       return addViolationForInvalidTek(exposureKeys,
           tekStream -> tekStream.filter(TemporaryExposureKey::hasTransmissionRiskLevel)
               .filter(this::hasInvalidTransmissionRiskLevel),
