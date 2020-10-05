@@ -20,7 +20,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest(classes = {DownloadServiceConfigValidator.class})
 @DirtiesContext
-public class DownloadServiceConfigValidatorTest {
+class DownloadServiceConfigValidatorTest {
 
   @Autowired
   private DownloadServiceConfigValidator downloadServiceConfigValidator;
