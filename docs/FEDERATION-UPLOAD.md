@@ -19,6 +19,9 @@ You will find `.yaml` and `.xml` based profile-specific configuration files at [
 Profile                                           | Effect
 --------------------------------------------------|-------------
 `disable-ssl-client-postgres`                     | Disables SSL with a pinned certificate for the connection to the postgres.
+`dev`                                             | Sets the log level to `DEBUG` and changes the `CONSOLE_LOG_PATTERN` used by Log4j 2.
+`cloud`                                           | Removes the default values set in `spring.flyway` and `datasource`
+`testdata`                                        | Generates test fake keys for upload. Will only generate keys if number of pending keys in DB is less than `services.upload.test-data.max.pending-keys`.
 
 Please refer to the inline comments in the base `application.yaml` configuration file for further details on the configuration properties impacted by the above profiles.
 
@@ -73,3 +76,9 @@ The means to authenticate with the Federation Gateway is set by the Federation G
 - POST API calls to the /upload service are secured via mTLS over HTTPs
 - Batches which are uploaded are signed by the CWA Server to ensure data integrity per the requirements of the Federation Gateway
 - Certificates are managed by an external vault service and consumed from the application at runtime.
+
+### Signing Certificate
+
+Apart from the TLS authentication certificate, the Upload service requires another X.509 certificate for signing Upload batches. The certificate and private key must be provided via environment variables `VAULT_EFGS_BATCHIGNING_CERTIFICATE` and `VAULT_EFGS_BATCHIGNING_SECRET` respectively. The private key encoding type can be specified with environment variable `SIGNATURE_ALGORITHM_NAME` and it's defaulted to `sha256WithRSAEncryption`.
+
+Batch Signature is sent to EFGS on the Request Header `batchSignature`. The signature is a Base64 encoded list of keys (note it's not a `DiagnosisKeyBatch` protobuf encoded object). Keys must be ordered by KeyData and the properties per key must be ordered and separated according to [EFGS signature verification calculation](https://github.com/eu-federation-gateway-service/efgs-federation-gateway/blob/master/docs/software-design-federation-gateway-service.md#32-signature-verification).
