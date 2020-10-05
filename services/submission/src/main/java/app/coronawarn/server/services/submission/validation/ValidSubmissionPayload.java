@@ -149,7 +149,7 @@ public @interface ValidSubmissionPayload {
 
     private boolean checkDaysSinceOnsetOfSymptomsIsInRange(List<TemporaryExposureKey> exposureKeys,
         ConstraintValidatorContext validatorContext) {
-      // we check that days since onset of symptoms is in the acceptable range
+      // check if days since onset of symptoms is in the acceptable range
       return addViolationForInvalidTek(exposureKeys,
           tekStream -> tekStream.filter(TemporaryExposureKey::hasDaysSinceOnsetOfSymptoms)
               .filter(this::hasInvalidDaysSinceSymptoms),
