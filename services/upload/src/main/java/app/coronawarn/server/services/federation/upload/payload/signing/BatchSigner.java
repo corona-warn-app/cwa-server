@@ -15,7 +15,9 @@ import java.security.cert.X509Certificate;
 import java.util.Base64;
 import java.util.Comparator;
 import java.util.List;
+import java.util.stream.Collector;
 import java.util.stream.Collectors;
+import app.coronawarn.server.services.federation.upload.payload.PayloadFactory;
 import org.bouncycastle.cert.X509CertificateHolder;
 import org.bouncycastle.cms.CMSException;
 import org.bouncycastle.cms.CMSProcessableByteArray;
@@ -28,10 +30,15 @@ import org.bouncycastle.operator.DigestCalculatorProvider;
 import org.bouncycastle.operator.OperatorCreationException;
 import org.bouncycastle.operator.jcajce.JcaContentSignerBuilder;
 import org.bouncycastle.operator.jcajce.JcaDigestCalculatorProviderBuilder;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 @Component
 public class BatchSigner {
+
+  private static final Logger logger = LoggerFactory
+      .getLogger(BatchSigner.class);
 
   private final CryptoProvider cryptoProvider;
 
@@ -43,21 +50,44 @@ public class BatchSigner {
     this.uploadServiceConfig = uploadServiceConfig;
   }
 
+  private byte[] bytesToBase64(byte[] bytes) {
+    try {
+      return Base64.getEncoder()
+          .encodeToString(bytes)
+          .getBytes(StandardCharsets.US_ASCII);
+    } catch (IllegalArgumentException e) {
+      logger.error("Failed to convert byte array to Base64");
+      return null;
+    }
+  }
+
   private byte[] createBytesToSign(final DiagnosisKeyBatch batch) {
     final ByteArrayOutputStream batchBytes = new ByteArrayOutputStream();
     for (DiagnosisKey diagnosisKey : sortBatchByKeyData(batch)) {
-      batchBytes.writeBytes(diagnosisKey.getKeyData().toStringUtf8().getBytes(StandardCharsets.UTF_8));
-      batchBytes.writeBytes(ByteBuffer.allocate(4).putInt(diagnosisKey.getRollingStartIntervalNumber()).array());
-      batchBytes.writeBytes(ByteBuffer.allocate(4).putInt(diagnosisKey.getRollingPeriod()).array());
-      batchBytes.writeBytes(ByteBuffer.allocate(4).putInt(diagnosisKey.getTransmissionRiskLevel()).array());
+      batchBytes.writeBytes(bytesToBase64(diagnosisKey.getKeyData().toStringUtf8().getBytes(StandardCharsets.UTF_8)));
+      batchBytes.writeBytes(".".getBytes(StandardCharsets.US_ASCII));
+      batchBytes.writeBytes(bytesToBase64(ByteBuffer.allocate(4)
+          .putInt(diagnosisKey.getRollingStartIntervalNumber()).array()));
+      batchBytes.writeBytes(".".getBytes(StandardCharsets.US_ASCII));
+      batchBytes.writeBytes(bytesToBase64(ByteBuffer.allocate(4)
+          .putInt(diagnosisKey.getRollingPeriod()).array()));
+      batchBytes.writeBytes(".".getBytes(StandardCharsets.US_ASCII));
+      batchBytes.writeBytes(bytesToBase64(ByteBuffer.allocate(4)
+          .putInt(diagnosisKey.getTransmissionRiskLevel()).array()));
+      batchBytes.writeBytes(".".getBytes(StandardCharsets.US_ASCII));
 
-      diagnosisKey.getVisitedCountriesList()
-          .stream().sorted(String::compareTo)
-          .forEach(country -> batchBytes.writeBytes(country.getBytes(StandardCharsets.UTF_8)));
+      String countries = diagnosisKey.getVisitedCountriesList()
+          .stream().sorted(String::compareTo).collect(Collectors.joining(","));
+      batchBytes.writeBytes(bytesToBase64(countries.getBytes()));
 
-      batchBytes.writeBytes(diagnosisKey.getOrigin().getBytes(StandardCharsets.UTF_8));
-      batchBytes.writeBytes(ByteBuffer.allocate(4).putInt(diagnosisKey.getReportType().getNumber()).array());
-      batchBytes.writeBytes(ByteBuffer.allocate(4).putInt(diagnosisKey.getDaysSinceOnsetOfSymptoms()).array());
+      batchBytes.writeBytes(bytesToBase64(diagnosisKey.getOrigin().getBytes(StandardCharsets.UTF_8)));
+      batchBytes.writeBytes(".".getBytes(StandardCharsets.US_ASCII));
+      batchBytes.writeBytes(bytesToBase64(ByteBuffer.allocate(4)
+          .putInt(diagnosisKey.getReportType().getNumber()).array()));
+      batchBytes.writeBytes(".".getBytes(StandardCharsets.US_ASCII));
+      batchBytes.writeBytes(bytesToBase64(ByteBuffer.allocate(4)
+          .putInt(diagnosisKey.getDaysSinceOnsetOfSymptoms()).array()));
+      batchBytes.writeBytes(".".getBytes(StandardCharsets.US_ASCII));
     }
     return batchBytes.toByteArray();
   }
