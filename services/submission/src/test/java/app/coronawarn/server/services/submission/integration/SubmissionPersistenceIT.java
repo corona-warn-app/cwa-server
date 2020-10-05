@@ -1,8 +1,5 @@
-
-
 package app.coronawarn.server.services.submission.integration;
 
-import static app.coronawarn.server.services.submission.SubmissionPayloadGenerator.buildSubmissionPayload;
 import static app.coronawarn.server.services.submission.SubmissionPayloadGenerator.buildTemporaryExposureKeys;
 import static app.coronawarn.server.services.submission.assertions.SubmissionAssertions.assertElementsCorrespondToEachOther;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -20,7 +17,6 @@ import app.coronawarn.server.services.submission.controller.RequestExecutor;
 import app.coronawarn.server.services.submission.controller.SubmissionController;
 import app.coronawarn.server.services.submission.verification.TanVerifier;
 import com.google.common.io.BaseEncoding;
-import com.google.protobuf.ByteString;
 import com.google.protobuf.util.JsonFormat;
 import java.io.File;
 import java.io.FileInputStream;
@@ -35,6 +31,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import org.apache.commons.lang3.StringUtils;
+import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -51,11 +48,6 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.jdbc.Sql.ExecutionPhase;
 
-/**
- * This test serves more like a dev tool which helps with debugging production issues. It inserts keys parsed from a
- * proto buf file whos content was captured by the mobile client during requests to the server. The content of the
- * current test resource file can be quickly replaced during the investigation of an issue.
- */
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @ActiveProfiles({"disable-ssl-client-verification", "disable-ssl-client-verification-verify-hostname"})
 @Sql(scripts = {"classpath:db/clean_db_state.sql"},
@@ -116,26 +108,13 @@ class SubmissionPersistenceIT {
 
   @ParameterizedTest
   @MethodSource("validSubmissionPayload")
-  void testKeyInsertionWithMobileClientProtoBuf(List<String> visitedCountries, String originCountry,
+  void okKeyInsertionWithMobileClientProtoBuf(List<String> visitedCountries, String originCountry,
       Boolean consentToFederation) throws IOException {
 
     List<TemporaryExposureKey> temporaryExposureKeys = createValidTemporaryExposureKeys();
 
-    Builder submissionPayloadBuilder = SubmissionPayload
-        .newBuilder()
-        .addAllKeys(temporaryExposureKeys);
-
-    if (visitedCountries != null) {
-      submissionPayloadWithVisitedCountries(submissionPayloadBuilder, visitedCountries);
-    }
-    if (originCountry != null) {
-      submissionPayloadWithOriginCountry(submissionPayloadBuilder, originCountry);
-    }
-    if (consentToFederation != null) {
-      submissionPayloadWithConsentToFederation(submissionPayloadBuilder, consentToFederation);
-    }
-
-    SubmissionPayload submissionPayload = submissionPayloadBuilder.build();
+    SubmissionPayload submissionPayload = buildSubmissionPayload(visitedCountries, originCountry, consentToFederation,
+        temporaryExposureKeys);
 
     writeSubmissionPayloadProtobufFile(submissionPayload);
 
@@ -165,45 +144,91 @@ class SubmissionPersistenceIT {
         .build();
 
     assertEquals(payload.getKeysList().size(), result);
-
     assertElementsCorrespondToEachOther(expectedPayload, diagnosisKeyService.getDiagnosisKeys(), config);
   }
 
   private static Stream<Arguments> validSubmissionPayload() {
     return Stream.of(
         Arguments.of(null, null, null),
-        Arguments.of(List.of("DE"), null, true),
-        Arguments.of(List.of("DE"), null, false),
-        Arguments.of(List.of("DE"), null, null),
+        Arguments.of(null, null, true),
+        Arguments.of(null, null, false),
         Arguments.of(null, "DE", true),
         Arguments.of(null, "DE", false),
         Arguments.of(null, "DE", null),
+        Arguments.of(null, "IT", true),
+        Arguments.of(null, "IT", false),
+        Arguments.of(null, "IT", null),
+        Arguments.of(List.of("DE"), null, null),
+        Arguments.of(List.of("DE"), null, true),
+        Arguments.of(List.of("DE"), null, false),
         Arguments.of(List.of("DE"), "DE", true),
         Arguments.of(List.of("DE"), "DE", false),
         Arguments.of(List.of("DE"), "DE", null),
-        Arguments.of(List.of("DE", "IT"), "DE", true),
-        Arguments.of(List.of("DE", "IT"), "DE", false),
-        Arguments.of(List.of("DE", "IT"), "DE", null),
         Arguments.of(List.of("DE"), "IT", true),
         Arguments.of(List.of("DE"), "IT", false),
         Arguments.of(List.of("DE"), "IT", null),
+        Arguments.of(List.of("IT"), null, null),
+        Arguments.of(List.of("IT"), null, true),
+        Arguments.of(List.of("IT"), null, false),
         Arguments.of(List.of("IT"), "DE", true),
         Arguments.of(List.of("IT"), "DE", false),
         Arguments.of(List.of("IT"), "DE", null),
         Arguments.of(List.of("IT"), "IT", true),
         Arguments.of(List.of("IT"), "IT", false),
         Arguments.of(List.of("IT"), "IT", null),
-        Arguments.of(List.of("IT", "DE"), "IT", false),
-        Arguments.of(List.of("DE"), "DE", null),
-        Arguments.of(List.of("DE"), "IT", null),
-        Arguments.of(List.of("DE"), "IT", true),
-        Arguments.of(List.of("DE"), "IT", false),
-        Arguments.of(List.of("IT"), "DE", null)
+        Arguments.of(List.of("DE", "IT"), null, null),
+        Arguments.of(List.of("DE", "IT"), null, true),
+        Arguments.of(List.of("DE", "IT"), null, false),
+        Arguments.of(List.of("DE", "IT"), "DE", true),
+        Arguments.of(List.of("DE", "IT"), "DE", false),
+        Arguments.of(List.of("DE", "IT"), "DE", null),
+        Arguments.of(List.of("DE", "IT"), "IT", true),
+        Arguments.of(List.of("DE", "IT"), "IT", false),
+        Arguments.of(List.of("DE", "IT"), "IT", null)
     );
+  }
+
+  @ParameterizedTest
+  @MethodSource("invalidSubmissionPayload")
+  void failKeyInsertionWithMobileClientProtoBuf(List<String> visitedCountries, String originCountry,
+      Boolean consentToFederation) throws IOException {
+
+    List<TemporaryExposureKey> temporaryExposureKeys = createValidTemporaryExposureKeys();
+
+    SubmissionPayload submissionPayload = buildSubmissionPayload(visitedCountries, originCountry, consentToFederation,
+        temporaryExposureKeys);
+
+    writeSubmissionPayloadProtobufFile(submissionPayload);
+
+    Path path = Paths.get(PATH_MOBILE_CLIENT_PAYLOAD_PB);
+    InputStream input = new FileInputStream(path.toFile());
+    SubmissionPayload payload = SubmissionPayload.parseFrom(input);
+
+    executor.executePost(payload);
+
+    assertEquals(diagnosisKeyService.getDiagnosisKeys().size(), 0);
   }
 
   private static Stream<Arguments> invalidSubmissionPayload() {
     return Stream.of(
+        Arguments.of(List.of("XX"), null, null),
+        Arguments.of(List.of("XX"), null, true),
+        Arguments.of(List.of("XX"), null, false),
+        Arguments.of(List.of("XX"), "DE", true),
+        Arguments.of(List.of("XX"), "DE", false),
+        Arguments.of(List.of("XX"), "DE", null),
+        Arguments.of(List.of("XX"), "IT", true),
+        Arguments.of(List.of("XX"), "IT", false),
+        Arguments.of(List.of("XX"), "IT", null),
+        Arguments.of(List.of("DE", "XX"), null, null),
+        Arguments.of(List.of("DE", "XX"), null, true),
+        Arguments.of(List.of("DE", "XX"), null, false),
+        Arguments.of(List.of("DE", "XX"), "DE", true),
+        Arguments.of(List.of("DE", "XX"), "DE", false),
+        Arguments.of(List.of("DE", "XX"), "DE", null),
+        Arguments.of(List.of("DE", "XX"), "IT", true),
+        Arguments.of(List.of("DE", "XX"), "IT", false),
+        Arguments.of(List.of("DE", "XX"), "IT", null),
         Arguments.of(List.of(""), "", null),
         Arguments.of(List.of(""), "", true),
         Arguments.of(List.of(""), "", false),
@@ -220,6 +245,27 @@ class SubmissionPersistenceIT {
         Arguments.of(List.of("IT"), "", true),
         Arguments.of(List.of("IT"), "", false)
     );
+  }
+
+  @NotNull
+  private SubmissionPayload buildSubmissionPayload(List<String> visitedCountries, String originCountry,
+      Boolean consentToFederation, List<TemporaryExposureKey> temporaryExposureKeys) {
+    Builder submissionPayloadBuilder = SubmissionPayload
+        .newBuilder()
+        .addAllKeys(temporaryExposureKeys);
+
+    if (visitedCountries != null) {
+      submissionPayloadWithVisitedCountries(submissionPayloadBuilder, visitedCountries);
+    }
+    if (originCountry != null) {
+      submissionPayloadWithOriginCountry(submissionPayloadBuilder, originCountry);
+    }
+    if (consentToFederation != null) {
+      submissionPayloadWithConsentToFederation(submissionPayloadBuilder, consentToFederation);
+    }
+
+    SubmissionPayload submissionPayload = submissionPayloadBuilder.build();
+    return submissionPayload;
   }
 
   private String generateDebugSqlStatement(SubmissionPayload payload) {
