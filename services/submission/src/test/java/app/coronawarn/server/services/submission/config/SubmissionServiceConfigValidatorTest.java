@@ -12,6 +12,7 @@ import org.junit.jupiter.params.provider.MethodSource;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.util.unit.DataSize;
 import org.springframework.validation.BeanPropertyBindingResult;
@@ -23,6 +24,7 @@ import java.util.stream.Stream;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+@DirtiesContext
 @ActiveProfiles({"disable-ssl-client-verification", "disable-ssl-client-verification-verify-hostname"})
 class SubmissionServiceConfigValidatorTest {
 
