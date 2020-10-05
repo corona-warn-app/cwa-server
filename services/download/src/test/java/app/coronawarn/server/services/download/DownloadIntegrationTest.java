@@ -95,10 +95,7 @@ class DownloadIntegrationTest {
     HttpHeaders batch1Headers = getHttpHeaders(BATCH1_TAG, BATCH2_TAG);
     DiagnosisKeyBatch batch1 = FederationBatchTestHelper.createDiagnosisKeyBatch(
         List.of(
-            FederationBatchTestHelper
-                .createBuilderForValidFederationDiagnosisKey()
-                .setKeyData(ByteString.copyFromUtf8(BATCH1_KEY1_DATA))
-                .build(),
+            FederationBatchTestHelper.createFederationDiagnosisKeyWithKeyData(BATCH1_KEY1_DATA),
             FederationBatchTestHelper
                 .createBuilderForValidFederationDiagnosisKey()
                 .setKeyData(ByteString.copyFromUtf8(BATCH1_KEY2_DATA))
@@ -181,7 +178,7 @@ class DownloadIntegrationTest {
     Iterable<DiagnosisKey> diagnosisKeys = diagnosisKeyRepository.findAll();
     assertThat(diagnosisKeys)
         .hasSize(3)
-        .contains(FederationBatchTestHelper.createDiagnosisKey(BATCH1_KEY2_DATA, downloadServiceConfig))
+        .contains(FederationBatchTestHelper.createDiagnosisKey(BATCH1_KEY1_DATA, downloadServiceConfig))
         .contains(FederationBatchTestHelper.createDiagnosisKey(BATCH2_KEY_DATA, downloadServiceConfig))
         .contains(FederationBatchTestHelper.createDiagnosisKey(RETRY_BATCH_SUCCESSFUL_KEY_DATA, downloadServiceConfig));
   }
