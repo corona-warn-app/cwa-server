@@ -63,8 +63,8 @@ See [`random-key-padding-multiplier`](https://github.com/corona-warn-app/cwa-ser
     # identical to the real key.
 
 From a distribution service perspective, generated keys are indistinguishable from the real submitted Diagnosis Keys as these are:
-- based on the real Diagnosis Key data
-- together cover valid submission key chains (according to the Transmission Risk vector values).
+* Based on the real Diagnosis Key data.
+* Together cover valid submission key chains (according to the Transmission Risk vector values).
 
 Key padding is implemented in [`SubmissionController`](https://github.com/corona-warn-app/cwa-server/blob/d6edd528e0ea3eafcda26fc7ae6d026fee5b4f0c/services/submission/src/main/java/app/coronawarn/server/services/submission/controller/SubmissionController.java#L203)
 and happens after TAN verification, but before we persist sumitted keys on the CWA server.
