@@ -49,8 +49,9 @@ public class ValidFederationKeyFilter {
     return hasValidDaysSinceOnsetOfSymptoms(federationKey)
         && hasAllowedReportType(federationKey)
         && hasExpectedKeyLength(federationKey)
-        && hasStartIntervalNumberAtMidNight(federationKey)
-        && hasValidTransmissionRiskLevel(federationKey);
+        && hasValidStartIntervalNumber(federationKey)
+        && hasValidTransmissionRiskLevel(federationKey)
+        && hasRollingPeriod(federationKey);
   }
 
   private boolean hasValidDaysSinceOnsetOfSymptoms(DiagnosisKey federationKey) {
@@ -82,19 +83,33 @@ public class ValidFederationKeyFilter {
     return hasCorrectKeyLength;
   }
 
-  private boolean hasStartIntervalNumberAtMidNight(DiagnosisKey federationKey) {
-    boolean isMidNight00Utc = federationKey.getRollingStartIntervalNumber() % maxRollingPeriod == 0;
+  private boolean hasValidStartIntervalNumber(DiagnosisKey federationKey) {
+    boolean hasValidStartIntervalNumber = federationKey.hasRollingStartIntervalNumber()
+        // rolling start interval number is midnight UTC
+        && federationKey.getRollingStartIntervalNumber() % maxRollingPeriod == 0;
 
-    if (!isMidNight00Utc) {
+    if (!hasValidStartIntervalNumber) {
       logger.info("Filter skipped Federation DiagnosisKey with rolling start interval number {} not at midnight.",
           federationKey.getRollingStartIntervalNumber());
     }
-    return isMidNight00Utc;
+    return hasValidStartIntervalNumber;
   }
 
   private boolean hasValidTransmissionRiskLevel(DiagnosisKey federationKey) {
     int trl = federationKey.getTransmissionRiskLevel();
-    return trl >= minTrl && trl <= maxTrl;
+    boolean hasValidTrl = trl >= minTrl && trl <= maxTrl;
+    if (!hasValidTrl) {
+      logger.info("Filter skipped Federation DiagnosisKey with invalid transmission risk level {}.", trl);
+    }
+    return hasValidTrl;
+  }
+
+  private boolean hasRollingPeriod(DiagnosisKey federationKey) {
+    boolean hasRollingPeriod = federationKey.hasRollingPeriod();
+    if (!hasRollingPeriod) {
+      logger.info("Filter skipped Federation DiagnosisKey with missing rolling period.");
+    }
+    return hasRollingPeriod;
   }
 
 }

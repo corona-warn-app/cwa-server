@@ -120,4 +120,14 @@ class ValidFederationKeyFilterTest {
 
     assertThat(validator.isValid(mockedFederationKey)).isFalse();
   }
+
+  @Test
+  void filterRejectsMissingRollingPeriod() {
+    DiagnosisKey mockedFederationKey = FederationBatchTestHelper
+        .createBuilderForValidFederationDiagnosisKey()
+        .clearRollingPeriod()
+        .build();
+
+    assertThat(validator.isValid(mockedFederationKey)).isFalse();
+  }
 }
