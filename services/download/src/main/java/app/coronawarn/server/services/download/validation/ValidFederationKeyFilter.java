@@ -3,6 +3,7 @@ package app.coronawarn.server.services.download.validation;
 import app.coronawarn.server.common.protocols.external.exposurenotification.DiagnosisKey;
 import app.coronawarn.server.common.protocols.external.exposurenotification.ReportType;
 import app.coronawarn.server.services.download.DownloadServiceConfig;
+import app.coronawarn.server.services.download.DownloadServiceConfig.Validation;
 import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -32,13 +33,14 @@ public class ValidFederationKeyFilter {
    * @param downloadServiceConfig A {@link DownloadServiceConfig} object.
    */
   public ValidFederationKeyFilter(DownloadServiceConfig downloadServiceConfig) {
-    this.keyLength = downloadServiceConfig.getKeyLength();
-    this.allowedReportTypes = downloadServiceConfig.getAllowedReportTypesToDownload();
-    this.minDsos = downloadServiceConfig.getMinDsos();
-    this.maxDsos = downloadServiceConfig.getMaxDsos();
-    this.maxRollingPeriod = downloadServiceConfig.getMaxRollingPeriod();
-    this.minTrl = downloadServiceConfig.getMinTrl();
-    this.maxTrl = downloadServiceConfig.getMaxTrl();
+    Validation validation = downloadServiceConfig.getValidation();
+    this.keyLength = validation.getKeyLength();
+    this.allowedReportTypes = validation.getAllowedReportTypesToDownload();
+    this.minDsos = validation.getMinDsos();
+    this.maxDsos = validation.getMaxDsos();
+    this.maxRollingPeriod = validation.getMaxRollingPeriod();
+    this.minTrl = validation.getMinTrl();
+    this.maxTrl = validation.getMaxTrl();
   }
 
   /**

@@ -28,13 +28,14 @@ services:
         1: 1
         2: 2
         3: 3
-    key-length: 16
-    allowed-report-types-to-download: CONFIRMED_TEST
-    min-dsos: -14
-    max-dsos: 4000
-    max-rolling-period: 144
-    min-trl: 1
-    max-trl: 8
+    validation:
+      key-length: 16
+      allowed-report-types-to-download: CONFIRMED_TEST
+      min-dsos: -14
+      max-dsos: 4000
+      max-rolling-period: 144
+      min-trl: 1
+      max-trl: 8
 
 federation-gateway:
   base-url: http://localhost:1234

@@ -8,6 +8,7 @@ import static org.mockito.Mockito.when;
 import app.coronawarn.server.common.protocols.external.exposurenotification.DiagnosisKey;
 import app.coronawarn.server.common.protocols.external.exposurenotification.ReportType;
 import app.coronawarn.server.services.download.DownloadServiceConfig;
+import app.coronawarn.server.services.download.DownloadServiceConfig.Validation;
 import app.coronawarn.server.services.download.FederationBatchTestHelper;
 import com.google.protobuf.ByteString;
 import java.time.LocalDate;
@@ -25,13 +26,16 @@ class ValidFederationKeyFilterTest {
 
   public ValidFederationKeyFilterTest() {
     DownloadServiceConfig config = mock(DownloadServiceConfig.class);
-    when(config.getKeyLength()).thenReturn(16);
-    when(config.getAllowedReportTypesToDownload()).thenReturn(List.of(ReportType.CONFIRMED_TEST));
-    when(config.getMinDsos()).thenReturn(-14);
-    when(config.getMaxDsos()).thenReturn(4000);
-    when(config.getMaxRollingPeriod()).thenReturn(144);
-    when(config.getMinTrl()).thenReturn(1);
-    when(config.getMaxTrl()).thenReturn(8);
+    Validation validation = mock(Validation.class);
+
+    when(validation.getKeyLength()).thenReturn(16);
+    when(validation.getAllowedReportTypesToDownload()).thenReturn(List.of(ReportType.CONFIRMED_TEST));
+    when(validation.getMinDsos()).thenReturn(-14);
+    when(validation.getMaxDsos()).thenReturn(4000);
+    when(validation.getMaxRollingPeriod()).thenReturn(144);
+    when(validation.getMinTrl()).thenReturn(1);
+    when(validation.getMaxTrl()).thenReturn(8);
+    when(config.getValidation()).thenReturn(validation);
     this.validator = new ValidFederationKeyFilter(config);
   }
 
