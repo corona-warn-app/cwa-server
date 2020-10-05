@@ -25,7 +25,62 @@ public class DownloadServiceConfig {
   @Max(28)
   private Integer retentionDays;
   private TekFieldDerivations tekFieldDerivations;
+  @Min(0)
+  private int keyLength;
   private List<ReportType> allowedReportTypesToDownload;
+  private int minDsos;
+  private int maxDsos;
+  private int maxRollingPeriod;
+  private int minTrl;
+  private int maxTrl;
+
+  public int getKeyLength() {
+    return keyLength;
+  }
+
+  public void setKeyLength(int keyLength) {
+    this.keyLength = keyLength;
+  }
+
+  public int getMinTrl() {
+    return minTrl;
+  }
+
+  public void setMinTrl(int minTrl) {
+    this.minTrl = minTrl;
+  }
+
+  public int getMaxTrl() {
+    return maxTrl;
+  }
+
+  public void setMaxTrl(int maxTrl) {
+    this.maxTrl = maxTrl;
+  }
+
+  public int getMaxRollingPeriod() {
+    return maxRollingPeriod;
+  }
+
+  public void setMaxRollingPeriod(int maxRollingPeriod) {
+    this.maxRollingPeriod = maxRollingPeriod;
+  }
+
+  public int getMinDsos() {
+    return minDsos;
+  }
+
+  public void setMinDsos(int minDsos) {
+    this.minDsos = minDsos;
+  }
+
+  public int getMaxDsos() {
+    return maxDsos;
+  }
+
+  public void setMaxDsos(int maxDsos) {
+    this.maxDsos = maxDsos;
+  }
 
   public List<ReportType> getAllowedReportTypesToDownload() {
     return allowedReportTypesToDownload;

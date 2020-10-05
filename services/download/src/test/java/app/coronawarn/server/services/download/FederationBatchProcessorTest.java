@@ -69,17 +69,6 @@ class FederationBatchProcessorTest {
   @Autowired
   private FederationBatchProcessor batchProcessor;
 
-  @MockBean
-  DownloadServiceConfig config;
-
-  @BeforeEach
-  void setUp() {
-    final TekFieldDerivations tekDerivations = new TekFieldDerivations();
-    tekDerivations.setTrlFromDsos(Map.of(1, 1, 2, 2, 3, 3));
-    when(config.getTekFieldDerivations()).thenReturn(tekDerivations);
-    when(config.getAllowedReportTypesToDownload()).thenReturn(List.of(ReportType.CONFIRMED_TEST));
-  }
-
   @AfterEach
   void resetMocks() {
     reset(federationGatewayDownloadService);

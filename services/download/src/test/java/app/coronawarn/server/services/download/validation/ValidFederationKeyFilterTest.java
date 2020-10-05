@@ -19,12 +19,24 @@ class ValidFederationKeyFilterTest {
 
   private final ValidFederationKeyFilter validator;
 
-  private final DownloadServiceConfig downloadServiceConfig;
-
   public ValidFederationKeyFilterTest() {
-    this.downloadServiceConfig = mock(DownloadServiceConfig.class);
-    when(downloadServiceConfig.getAllowedReportTypesToDownload()).thenReturn(List.of(ReportType.CONFIRMED_TEST));
-    this.validator = new ValidFederationKeyFilter(downloadServiceConfig);
+    DownloadServiceConfig config = mock(DownloadServiceConfig.class);
+    when(config.getKeyLength()).thenReturn(16);
+    when(config.getAllowedReportTypesToDownload()).thenReturn(List.of(ReportType.CONFIRMED_TEST));
+    when(config.getMinDsos()).thenReturn(-14);
+    when(config.getMaxDsos()).thenReturn(4000);
+    when(config.getMaxRollingPeriod()).thenReturn(144);
+    when(config.getMinTrl()).thenReturn(1);
+    when(config.getMaxTrl()).thenReturn(8);
+    this.validator = new ValidFederationKeyFilter(config);
+  }
+
+  @Test
+  void checkFilterAcceptsValidDiagnosisKey() {
+    DiagnosisKey mockedFederationKey = FederationBatchTestHelper
+        .createBuilderForValidFederationDiagnosisKey().build();
+
+    assertThat(validator.isValid(mockedFederationKey)).isTrue();
   }
 
   @ParameterizedTest

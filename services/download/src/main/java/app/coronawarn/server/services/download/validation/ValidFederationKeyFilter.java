@@ -1,7 +1,9 @@
 package app.coronawarn.server.services.download.validation;
 
 import app.coronawarn.server.common.protocols.external.exposurenotification.DiagnosisKey;
+import app.coronawarn.server.common.protocols.external.exposurenotification.ReportType;
 import app.coronawarn.server.services.download.DownloadServiceConfig;
+import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
@@ -16,11 +18,27 @@ import org.springframework.stereotype.Component;
 public class ValidFederationKeyFilter {
 
   private static final Logger logger = LoggerFactory.getLogger(ValidFederationKeyFilter.class);
+  private final int keyLength;
+  private final List<ReportType> allowedReportTypes;
+  private final int minDsos;
+  private final int maxDsos;
+  private final int maxRollingPeriod;
+  private final int minTrl;
+  private final int maxTrl;
 
-  private DownloadServiceConfig downloadServiceConfig;
-
+  /**
+   * Constructor for this class.
+   *
+   * @param downloadServiceConfig A {@link DownloadServiceConfig} object.
+   */
   public ValidFederationKeyFilter(DownloadServiceConfig downloadServiceConfig) {
-    this.downloadServiceConfig = downloadServiceConfig;
+    this.keyLength = downloadServiceConfig.getKeyLength();
+    this.allowedReportTypes = downloadServiceConfig.getAllowedReportTypesToDownload();
+    this.minDsos = downloadServiceConfig.getMinDsos();
+    this.maxDsos = downloadServiceConfig.getMaxDsos();
+    this.maxRollingPeriod = downloadServiceConfig.getMaxRollingPeriod();
+    this.minTrl = downloadServiceConfig.getMinTrl();
+    this.maxTrl = downloadServiceConfig.getMaxTrl();
   }
 
   /**
@@ -30,36 +48,51 @@ public class ValidFederationKeyFilter {
       app.coronawarn.server.common.protocols.external.exposurenotification.DiagnosisKey federationKey) {
     return hasValidDaysSinceOnsetOfSymptoms(federationKey)
         && hasAllowedReportType(federationKey)
-        && hasCorrectKeyLength(federationKey);
+        && hasExpectedKeyLength(federationKey);
   }
 
   private boolean hasValidDaysSinceOnsetOfSymptoms(DiagnosisKey federationKey) {
     boolean hasValidDsos = federationKey.hasDaysSinceOnsetOfSymptoms()
-        && federationKey.getDaysSinceOnsetOfSymptoms() >= -14
-        && federationKey.getDaysSinceOnsetOfSymptoms() <= 4000;
+        && federationKey.getDaysSinceOnsetOfSymptoms() >= minDsos
+        && federationKey.getDaysSinceOnsetOfSymptoms() <= maxDsos;
     if (!hasValidDsos) {
-      logger.info("Federation DiagnosisKey found with invalid 'daysSinceOnsetOfSymptoms' value {}",
+      logger.info("Filter skipped Federation DiagnosisKey with invalid 'daysSinceOnsetOfSymptoms' value {}.",
           federationKey.getDaysSinceOnsetOfSymptoms());
     }
     return hasValidDsos;
   }
 
   private boolean hasAllowedReportType(DiagnosisKey federationKey) {
-    boolean hasAllowedReportType = downloadServiceConfig.getAllowedReportTypesToDownload()
-        .contains(federationKey.getReportType());
+    boolean hasAllowedReportType = allowedReportTypes.contains(federationKey.getReportType());
     if (!hasAllowedReportType) {
-      logger.info("Ignoring Federation DiagnosisKey with 'ReportType' {}",
+      logger.info("Filter skipped Federation DiagnosisKey with invalid 'ReportType' {}.",
           federationKey.getReportType());
     }
     return hasAllowedReportType;
   }
 
-  private boolean hasCorrectKeyLength(DiagnosisKey federationKey) {
-    boolean hasCorrectKeyLength = federationKey.getKeyData().toByteArray().length == 16;
+  private boolean hasExpectedKeyLength(DiagnosisKey federationKey) {
+    boolean hasCorrectKeyLength = federationKey.getKeyData().toByteArray().length == keyLength;
     if (!hasCorrectKeyLength) {
-      logger.info("Federation DiagnosisKey found with 'KeyData' length of {}",
+      logger.info("Filter skipped Federation DiagnosisKey with invalid 'KeyData' length {}.",
           federationKey.getKeyData().toByteArray().length);
     }
     return hasCorrectKeyLength;
   }
+
+  private boolean hasStartIntervalNumberAtMidNight(DiagnosisKey federationKey) {
+    boolean isMidNight00Utc = federationKey.getRollingStartIntervalNumber() % maxRollingPeriod == 0;
+
+    if (!isMidNight00Utc) {
+      logger.info("Filter skipped Federation DiagnosisKey with rolling start interval number {} not at midnight.",
+          federationKey.getRollingStartIntervalNumber());
+    }
+    return isMidNight00Utc;
+  }
+
+  private boolean hasValidTransmissionRiskLevel(DiagnosisKey federationKey) {
+    int trl = federationKey.getTransmissionRiskLevel();
+    return trl >= minTrl && trl <= maxTrl;
+  }
+
 }
