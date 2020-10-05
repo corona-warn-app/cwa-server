@@ -15,18 +15,24 @@ import java.util.stream.Stream;
  */
 public class PublishFileSet {
 
-  /** how deep the folder structure will be scanned for files.  */
+  /**
+   * how deep the folder structure will be scanned for files.
+   */
   private static final int FILE_WALK_MAX_DEPTH = 20;
 
-  /** the root folder from which to read all files. */
+  /**
+   * the root folder from which to read all files.
+   */
   private final Path root;
 
-  /** the list of identified files in the root folder. */
+  /**
+   * the list of identified files in the root folder.
+   */
   private final List<LocalFile> files;
 
   /**
-   * Creates a new PublishFileSet, based on the given root folder. This root folder will be used to
-   * scan recursively for available files.
+   * Creates a new PublishFileSet, based on the given root folder. This root folder will be used to scan recursively for
+   * available files.
    *
    * @param root the root folder, e.g. ./out/
    * @throws IOException in case there were problems reading the files

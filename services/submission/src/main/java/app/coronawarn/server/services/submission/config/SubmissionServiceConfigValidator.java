@@ -5,6 +5,7 @@ package app.coronawarn.server.services.submission.config;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import org.springframework.util.unit.DataSize;
 import org.springframework.validation.Errors;
 import org.springframework.validation.Validator;
@@ -24,7 +25,13 @@ public class SubmissionServiceConfigValidator implements Validator {
   }
 
   /**
-   * Validate if the MaximumRequestSize of the {@link SubmissionServiceConfig} is in the defined range.
+   * Validates the following constraints.
+   * <ul>
+   *   <li>MaximumRequestSize is in the defined range.</li>
+   *   <li>List of SupportedCountries contains only valid ISO Codes</li>
+   *   <li>Mapping of trl (Transmission Risk Level) to dsos contains only values in allowed range</li>
+   *   <li>Mapping of dsos (Days Since Onset of Symptoms) to trl contains only values in allowed range</li>
+   * </ul>
    */
   @Override
   public void validate(Object o, Errors errors) {
@@ -32,6 +39,36 @@ public class SubmissionServiceConfigValidator implements Validator {
 
     validateMaxRequestSize(errors, properties);
     validateSupportedCountries(errors, properties);
+    validateDaysSinceSymptomsDerivationMap(errors, properties);
+    validateTransmissionRiskLevelDerivationMap(errors, properties);
+  }
+
+  private void validateTransmissionRiskLevelDerivationMap(Errors errors, SubmissionServiceConfig properties) {
+    properties.getTekFieldDerivations().getTrlFromDsos().forEach((daysSinceOnsetOfSymptoms, transmissionRiskLevel) -> {
+      checkTrlInAllowedRange(transmissionRiskLevel, errors);
+      checkDsosInAllowedRange(daysSinceOnsetOfSymptoms, errors);
+    });
+  }
+
+  private void validateDaysSinceSymptomsDerivationMap(Errors errors, SubmissionServiceConfig properties) {
+    properties.getTekFieldDerivations().getDsosFromTrl().forEach((transmissionRiskLevel, daysSinceOnsetOfSymptoms) -> {
+      checkTrlInAllowedRange(transmissionRiskLevel, errors);
+      checkDsosInAllowedRange(daysSinceOnsetOfSymptoms, errors);
+    });
+  }
+
+  private void checkTrlInAllowedRange(Integer transmissionRiskLevel, Errors errors) {
+    if (transmissionRiskLevel > 8 || transmissionRiskLevel < 1) {
+      errors.rejectValue("tekFieldDerivations",
+          "[" + transmissionRiskLevel + "]: transmissionRiskLevel value is not in the allowed range (1 to 8)");
+    }
+  }
+
+  private void checkDsosInAllowedRange(Integer daysSinceOnsetSymptoms, Errors errors) {
+    if (daysSinceOnsetSymptoms > 4000 || daysSinceOnsetSymptoms < -14) {
+      errors.rejectValue("tekFieldDerivations",
+          "[" + daysSinceOnsetSymptoms + "]: daysSinceOnsetSymptoms value is not in the allowed range (-14 to 4000)");
+    }
   }
 
   private void validateSupportedCountries(Errors errors, SubmissionServiceConfig properties) {
@@ -50,5 +87,4 @@ public class SubmissionServiceConfigValidator implements Validator {
           "Must be at least " + MIN_MAXIMUM_REQUEST_SIZE + " and not more than " + MAX_MAXIMUM_REQUEST_SIZE + ".");
     }
   }
-
 }

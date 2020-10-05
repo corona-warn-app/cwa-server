@@ -122,8 +122,7 @@ public @interface ValidSubmissionPayload {
     private boolean checkOriginCountryIsValid(SubmissionPayload submissionPayload,
         ConstraintValidatorContext validatorContext) {
       String originCountry = submissionPayload.getOrigin();
-
-      if (!supportedCountries.contains(originCountry)) {
+      if (submissionPayload.hasOrigin() && !supportedCountries.contains(originCountry)) {
         addViolation(validatorContext, String.format(
             "Origin country %s is not part of the supported countries list", originCountry));
         return false;
@@ -133,6 +132,9 @@ public @interface ValidSubmissionPayload {
 
     private boolean checkVisitedCountriesAreValid(SubmissionPayload submissionPayload,
         ConstraintValidatorContext validatorContext) {
+      if (submissionPayload.getVisitedCountriesList().isEmpty()) {
+        return true;
+      }
       Collection<String> invalidVisitedCountries = submissionPayload.getVisitedCountriesList().stream()
           .filter(not(supportedCountries::contains)).collect(toList());
 
@@ -148,7 +150,7 @@ public @interface ValidSubmissionPayload {
       // we check that transmission risk level is in the acceptable range
       return addViolationForInvalidTek(exposureKeys,
           tekStream -> tekStream.filter(TemporaryExposureKey::hasDaysSinceOnsetOfSymptoms)
-                                .filter(this::hasInvalidDaysSinceSymptoms),
+              .filter(this::hasInvalidDaysSinceSymptoms),
           validatorContext,
           invalidTek -> "'" + invalidTek.getDaysSinceOnsetOfSymptoms()
               + "' is not a valid daysSinceOnsetOfSymptoms value.");
@@ -159,7 +161,7 @@ public @interface ValidSubmissionPayload {
       // we check that transmission risk level is in the acceptable range
       return addViolationForInvalidTek(exposureKeys,
           tekStream -> tekStream.filter(TemporaryExposureKey::hasTransmissionRiskLevel)
-                                .filter(this::hasInvalidTransmissionRiskLevel),
+              .filter(this::hasInvalidTransmissionRiskLevel),
           validatorContext,
           invalidTek -> "'" + invalidTek.getTransmissionRiskLevel()
               + "' is not a valid transmissionRiskLevel value.");
@@ -170,7 +172,7 @@ public @interface ValidSubmissionPayload {
       // we check for DSOS and TRL. They are optional fields, but it is expected to receive either one of them.
       return addViolationForInvalidTek(exposureKeys,
           tekStream -> tekStream.filter(key -> !key.hasTransmissionRiskLevel())
-                                .filter(key -> !key.hasDaysSinceOnsetOfSymptoms()),
+              .filter(key -> !key.hasDaysSinceOnsetOfSymptoms()),
           validatorContext,
           invalidTek -> "A key was found which is missing both 'transmissionRiskLevel' "
               + "and 'daysSinceOnsetOfSymptoms.'");
@@ -188,6 +190,7 @@ public @interface ValidSubmissionPayload {
 
     /**
      * Add a violation to the validation context, in case a key is found that matches the filtering function.
+     *
      * @return True if an invalid key was found.
      */
     private boolean addViolationForInvalidTek(List<TemporaryExposureKey> exposureKeys,
