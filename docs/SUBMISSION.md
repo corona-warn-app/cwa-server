@@ -63,6 +63,7 @@ See [`random-key-padding-multiplier`](https://github.com/corona-warn-app/cwa-ser
     # identical to the real key.
 
 From a distribution service perspective, generated keys are indistinguishable from the real submitted Diagnosis Keys as these are:
+
 * Based on the real Diagnosis Key data.
 * Together cover valid submission key chains (according to the Transmission Risk vector values).
 
