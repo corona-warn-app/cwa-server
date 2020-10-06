@@ -28,12 +28,14 @@ import org.springframework.cloud.openfeign.EnableFeignClients;
 import org.springframework.cloud.openfeign.FeignAutoConfiguration;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
 
 @SpringBootTest(classes = {TanVerifier.class, DevelopmentFeignClientProvider.class, NoopHostnameVerifierProvider.class})
 @ImportAutoConfiguration({FeignAutoConfiguration.class, FeignTestConfiguration.class})
 @EnableConfigurationProperties(value = SubmissionServiceConfig.class)
 @EnableFeignClients
+@DirtiesContext
 @ActiveProfiles({ "feign", "disable-ssl-client-verification", "disable-ssl-client-verification-verify-hostname" })
 class TanVerifierTest {
 
