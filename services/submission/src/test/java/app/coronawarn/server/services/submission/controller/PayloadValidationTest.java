@@ -61,7 +61,7 @@ class PayloadValidationTest {
 
   private Collection<TemporaryExposureKey> buildPayloadWithTooManyKeys() {
     ArrayList<TemporaryExposureKey> tooMany = new ArrayList<>();
-    generatePayloadKeys(tooMany,100,4);
+    generatePayloadKeys(tooMany,101,4);
     return tooMany;
   }
 
