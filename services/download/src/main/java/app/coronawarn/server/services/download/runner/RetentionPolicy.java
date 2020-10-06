@@ -3,7 +3,7 @@
 package app.coronawarn.server.services.download.runner;
 
 import app.coronawarn.server.common.persistence.service.FederationBatchInfoService;
-import app.coronawarn.server.services.download.DownloadServiceConfig;
+import app.coronawarn.server.services.download.config.DownloadServiceConfig;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.ApplicationArguments;
