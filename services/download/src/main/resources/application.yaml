@@ -29,6 +29,15 @@ services:
         -2: 5
         -3: 3
         -4: 1
+    validation:
+      key-length: 16
+      allowed-report-types: ${ALLOWED_REPORT_TYPES_TO_DOWNLOAD:CONFIRMED_TEST}
+      min-dsos: -14
+      max-dsos: 4000
+      min-rolling-period: 0
+      max-rolling-period: 144
+      min-trl: 1
+      max-trl: 8
 
 federation-gateway:
   base-url: ${FEDERATION_GATEWAY_BASE_URL:http://localhost:8005}

@@ -54,11 +54,24 @@ public final class SubmissionPayloadMockData {
     return buildInvalidPayload(keys);
   }
 
+  public static SubmissionPayload buildEmptyOriginCountryPayload(TemporaryExposureKey key) {
+    Collection<TemporaryExposureKey> keys = Stream.of(key).collect(Collectors.toCollection(ArrayList::new));
+    return buildEmptyOriginCountryPayload(keys);
+  }
+
   public static SubmissionPayload buildInvalidPayload(Collection<TemporaryExposureKey> keys) {
     return SubmissionPayload.newBuilder()
         .addAllKeys(keys)
         .addAllVisitedCountries(List.of("DE", "FR"))
         .setOrigin("DE3")
+        .build();
+  }
+
+  public static SubmissionPayload buildEmptyOriginCountryPayload(Collection<TemporaryExposureKey> keys) {
+    return SubmissionPayload.newBuilder()
+        .addAllKeys(keys)
+        .addAllVisitedCountries(List.of("DE", "FR"))
+        .setOrigin("")
         .build();
   }
 
@@ -132,6 +145,13 @@ public final class SubmissionPayloadMockData {
         buildTemporaryExposureKey(VALID_KEY_DATA_1, createRollingStartIntervalNumber(2), 3,
             ReportType.CONFIRMED_CLINICAL_DIAGNOSIS, 1);
     return buildInvalidPayload(key);
+  }
+
+  public static SubmissionPayload buildPayloadWithEmptyOriginCountry() {
+    TemporaryExposureKey key =
+        buildTemporaryExposureKey(VALID_KEY_DATA_1, createRollingStartIntervalNumber(2), 3,
+            ReportType.CONFIRMED_CLINICAL_DIAGNOSIS, 1);
+    return buildEmptyOriginCountryPayload(key);
   }
 
   public static SubmissionPayload buildPayloadWithVisitedCountries(List<String> visitedCountries) {
