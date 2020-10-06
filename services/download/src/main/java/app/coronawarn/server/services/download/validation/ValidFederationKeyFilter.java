@@ -11,8 +11,7 @@ import org.springframework.stereotype.Component;
 
 /**
  * Responsible for checking fields of the {@link DiagnosisKey} objects contained within batches downloaded from the
- * EFGS. This check is prior to the one executed when building the domain
- * {@link app.coronawarn.server.common.persistence.domain.DiagnosisKey}
+ * EFGS. This check is prior to the one executed when building the domain {@link app.coronawarn.server.common.persistence.domain.DiagnosisKey}
  * entity which ensures our data model constraints are not violated for any incoming data channel.
  */
 @Component
@@ -23,6 +22,7 @@ public class ValidFederationKeyFilter {
   private final List<ReportType> allowedReportTypes;
   private final int minDsos;
   private final int maxDsos;
+  private final int minRollingPeriod;
   private final int maxRollingPeriod;
   private final int minTrl;
   private final int maxTrl;
@@ -38,6 +38,7 @@ public class ValidFederationKeyFilter {
     this.allowedReportTypes = validation.getAllowedReportTypes();
     this.minDsos = validation.getMinDsos();
     this.maxDsos = validation.getMaxDsos();
+    this.minRollingPeriod = validation.getMinRollingPeriod();
     this.maxRollingPeriod = validation.getMaxRollingPeriod();
     this.minTrl = validation.getMinTrl();
     this.maxTrl = validation.getMaxTrl();
@@ -53,7 +54,7 @@ public class ValidFederationKeyFilter {
         && hasExpectedKeyLength(federationKey)
         && hasValidStartIntervalNumber(federationKey)
         && hasValidTransmissionRiskLevel(federationKey)
-        && hasRollingPeriod(federationKey);
+        && hasValidRollingPeriod(federationKey);
   }
 
   private boolean hasValidDaysSinceOnsetOfSymptoms(DiagnosisKey federationKey) {
@@ -106,12 +107,16 @@ public class ValidFederationKeyFilter {
     return hasValidTrl;
   }
 
-  private boolean hasRollingPeriod(DiagnosisKey federationKey) {
-    boolean hasRollingPeriod = federationKey.hasRollingPeriod();
-    if (!hasRollingPeriod) {
-      logger.info("Filter skipped Federation DiagnosisKey with missing rolling period.");
+  private boolean hasValidRollingPeriod(DiagnosisKey federationKey) {
+    int rollingPeriod = federationKey.getRollingPeriod();
+    boolean hasValidRollingPeriod = federationKey.hasRollingPeriod()
+        && rollingPeriod >= minRollingPeriod
+        && rollingPeriod <= maxRollingPeriod;
+    if (!hasValidRollingPeriod) {
+      logger.info("Filter skipped Federation DiagnosisKey with missing or invalid rolling period {}.",
+          rollingPeriod);
     }
-    return hasRollingPeriod;
+    return hasValidRollingPeriod;
   }
 
 }

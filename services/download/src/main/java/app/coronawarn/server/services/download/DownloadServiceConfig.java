@@ -84,6 +84,7 @@ public class DownloadServiceConfig {
     private List<ReportType> allowedReportTypes;
     private int minDsos;
     private int maxDsos;
+    private int minRollingPeriod;
     private int maxRollingPeriod;
     private int minTrl;
     private int maxTrl;
@@ -119,6 +120,14 @@ public class DownloadServiceConfig {
 
     public void setMaxDsos(int maxDsos) {
       this.maxDsos = maxDsos;
+    }
+
+    public int getMinRollingPeriod() {
+      return minRollingPeriod;
+    }
+
+    public void setMinRollingPeriod(int minRollingPeriod) {
+      this.minRollingPeriod = minRollingPeriod;
     }
 
     public int getMaxRollingPeriod() {

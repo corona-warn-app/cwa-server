@@ -17,7 +17,7 @@ logging:
   level:
     org:
       springframework: off
-    root: off
+    root: INFO
 
 services:
   download:
@@ -30,9 +30,10 @@ services:
         3: 3
     validation:
       key-length: 16
-      allowed-report-types-to-download: CONFIRMED_TEST
+      allowed-report-types: CONFIRMED_TEST
       min-dsos: -14
       max-dsos: 4000
+      min-rolling-period: 0
       max-rolling-period: 144
       min-trl: 1
       max-trl: 8

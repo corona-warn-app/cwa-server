@@ -32,6 +32,7 @@ class ValidFederationKeyFilterTest {
     when(validation.getAllowedReportTypes()).thenReturn(List.of(ReportType.CONFIRMED_TEST));
     when(validation.getMinDsos()).thenReturn(-14);
     when(validation.getMaxDsos()).thenReturn(4000);
+    when(validation.getMinRollingPeriod()).thenReturn(0);
     when(validation.getMaxRollingPeriod()).thenReturn(144);
     when(validation.getMinTrl()).thenReturn(1);
     when(validation.getMaxTrl()).thenReturn(8);
@@ -129,6 +130,16 @@ class ValidFederationKeyFilterTest {
         .createBuilderForValidFederationDiagnosisKey()
         .clearRollingPeriod()
         .build();
+
+    assertThat(validator.isValid(mockedFederationKey)).isFalse();
+  }
+
+  @ParameterizedTest
+  @ValueSource(ints = {-1, 145})
+  void filterRejectsInvalidRollingPeriod(int invalidRollingPeriod) {
+    DiagnosisKey mockedFederationKey = FederationBatchTestHelper
+        .createBuilderForValidFederationDiagnosisKey()
+        .setRollingPeriod(invalidRollingPeriod).build();
 
     assertThat(validator.isValid(mockedFederationKey)).isFalse();
   }
