@@ -35,7 +35,7 @@ public class ValidFederationKeyFilter {
   public ValidFederationKeyFilter(DownloadServiceConfig downloadServiceConfig) {
     Validation validation = downloadServiceConfig.getValidation();
     this.keyLength = validation.getKeyLength();
-    this.allowedReportTypes = validation.getAllowedReportTypesToDownload();
+    this.allowedReportTypes = validation.getAllowedReportTypes();
     this.minDsos = validation.getMinDsos();
     this.maxDsos = validation.getMaxDsos();
     this.maxRollingPeriod = validation.getMaxRollingPeriod();

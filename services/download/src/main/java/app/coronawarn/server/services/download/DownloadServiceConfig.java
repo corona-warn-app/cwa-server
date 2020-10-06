@@ -81,7 +81,7 @@ public class DownloadServiceConfig {
 
     @Min(0)
     private int keyLength;
-    private List<ReportType> allowedReportTypesToDownload;
+    private List<ReportType> allowedReportTypes;
     private int minDsos;
     private int maxDsos;
     private int maxRollingPeriod;
@@ -96,13 +96,13 @@ public class DownloadServiceConfig {
       this.keyLength = keyLength;
     }
 
-    public List<ReportType> getAllowedReportTypesToDownload() {
-      return allowedReportTypesToDownload;
+    public List<ReportType> getAllowedReportTypes() {
+      return allowedReportTypes;
     }
 
-    public void setAllowedReportTypesToDownload(
-        List<ReportType> allowedReportTypesToDownload) {
-      this.allowedReportTypesToDownload = allowedReportTypesToDownload;
+    public void setAllowedReportTypes(
+        List<ReportType> allowedReportTypes) {
+      this.allowedReportTypes = allowedReportTypes;
     }
 
     public int getMinDsos() {

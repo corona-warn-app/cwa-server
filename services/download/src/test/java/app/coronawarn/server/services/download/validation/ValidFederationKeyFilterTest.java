@@ -29,7 +29,7 @@ class ValidFederationKeyFilterTest {
     Validation validation = mock(Validation.class);
 
     when(validation.getKeyLength()).thenReturn(16);
-    when(validation.getAllowedReportTypesToDownload()).thenReturn(List.of(ReportType.CONFIRMED_TEST));
+    when(validation.getAllowedReportTypes()).thenReturn(List.of(ReportType.CONFIRMED_TEST));
     when(validation.getMinDsos()).thenReturn(-14);
     when(validation.getMaxDsos()).thenReturn(4000);
     when(validation.getMaxRollingPeriod()).thenReturn(144);
