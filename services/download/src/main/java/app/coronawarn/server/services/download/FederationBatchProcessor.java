@@ -161,7 +161,7 @@ public class FederationBatchProcessor {
           .withFieldNormalization(new FederationKeyNormalizer(config))
           .build());
     } catch (Exception ex) {
-      logger.info("Building key failed.");
+      logger.info("Building diagnosis key from federation diagnosis key failed.", ex);
       return Optional.empty();
     }
   }
