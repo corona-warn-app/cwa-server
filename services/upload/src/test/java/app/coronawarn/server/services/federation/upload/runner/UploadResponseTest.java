@@ -3,8 +3,7 @@ package app.coronawarn.server.services.federation.upload.runner;
 
 import static org.assertj.core.util.Lists.emptyList;
 import static org.assertj.core.util.Lists.list;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -73,13 +72,17 @@ class UploadResponseTest {
     when(mockUploadClient.postBatchUpload(any())).thenReturn(Optional.of(response));
   }
 
+  private void returnEmptyFromUpload() {
+    when(mockUploadClient.postBatchUpload(any())).thenReturn(Optional.empty());
+  }
+
   @Test
   void check201UploadResponseStatus() throws Exception {
     var testKey1 = MockData.generateRandomUploadKey(true);
     var testKey2 = MockData.generateRandomUploadKey(true);
 
     when(mockDiagnosisKeyLoader.loadDiagnosisKeys()).thenReturn(List.of(testKey1, testKey2));
-    returnFromUpload(createFake201Response());
+    returnEmptyFromUpload();
     upload.run(null);
     verify(mockUploadKeyRepository, times(1))
         .updateBatchTag(eq(testKey1.getKeyData()), any());
@@ -174,10 +177,6 @@ class UploadResponseTest {
 
   private BatchUploadResponse createFake409And201Response() {
     return new BatchUploadResponse(list("0"), emptyList(), list("1"));
-  }
-
-  private BatchUploadResponse createFake201Response() {
-    return new BatchUploadResponse(emptyList(), emptyList(), list("0", "1"));
   }
 
   private BatchUploadResponse createFake409Response() {
