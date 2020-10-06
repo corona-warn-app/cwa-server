@@ -63,7 +63,7 @@ The constraints put on submitted TEK's are as follows:
 * The visited countries list from the submission payload must either contain ISO country codes which are part of the supported countries or it must be an empty list, in which case it will be prefilled with the default origin country (e.g. DE)
 
 There are other validations performed prior to persisting keys, which check whether specific fields are in acceptable ranges as defined by the 
-system as well as GAEN specification. For this purpose the Java Bean Validation 2.0 framework is used at the entity level. Please see [DiagnosisKey][`/common/persistence/src/main/java/app/coronawarn/server/common/persistence/domain/DiagnosisKey.java) for the complete list.
+system as well as GAEN specification. For this purpose the Java Bean Validation 2.0 framework is used at the entity level. Please see [DiagnosisKey][/common/persistence/src/main/java/app/coronawarn/server/common/persistence/domain/DiagnosisKey.java) for the complete list.
 
 ## Field Derivations
 
