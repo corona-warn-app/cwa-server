@@ -45,7 +45,7 @@ The checks performed on downloaded DKs are as follows:
 * Key Data has correct length.
 * Days Since Onset of Symptoms is set and between upper and lower bound.
 * ReportType is allowed.
-* Starting Intervall Number is set and federationKey.getRollingStartIntervalNumber() % maxRollingPeriod == 0;
+* Starting Intervall Number is set and valid.
 * Transmission Risk Level is set and between upper and lower bound.
 * Rolling Period is set and between upper and lower bound.
 
