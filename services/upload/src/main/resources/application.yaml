@@ -33,7 +33,7 @@ services:
       enable-dsos: ${ENABLE_DSOS_TRANSMISSION_TO_EFGS:true}
       enable-report-type: ${ENABLE_REPORT_TYPE_TRANSMISSION_TO_EFGS:true}
       default-dsos: ${DEFAULT_DSOS:1}
-      default-report-type: ${DEFAULT_REPORT_TYPE:0}
+      default-report-type: ${DEFAULT_REPORT_TYPE:UNKNOWN}
     signature:
       # The ASN.1 OID for algorithm identifier.
       algorithm-oid: 1.2.840.10045.4.3.2

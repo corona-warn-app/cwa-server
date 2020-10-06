@@ -52,7 +52,7 @@ class PayloadValidationTest {
   }
 
   @Test
-  void check400ResponseStatusForTooManyKeysWithFixedRollingPeriod() {
+  void check400ResponseStatusForTooManyKeys() {
     ResponseEntity<Void> actResponse = executor.executePost(buildPayloadWithTooManyKeys());
     assertThat(actResponse.getStatusCode()).isEqualTo(BAD_REQUEST);
   }
@@ -68,14 +68,14 @@ class PayloadValidationTest {
 
   @ParameterizedTest
   @ValueSource(ints = {-15, -100, 4001})
-  void check400ResponseStatusForDsosNotInRange(int invalidDsosValue) {
+  void check400ResponseStatusForDaysSinceSymptomsFieldNotInRange(int invalidDsosValue) {
     ResponseEntity<Void> actResponse = executor.executePost(buildKeysWithDaysSinceSymptoms(invalidDsosValue));
     assertThat(actResponse.getStatusCode()).isEqualTo(BAD_REQUEST);
   }
 
   @ParameterizedTest
   @ValueSource(ints = {-14, -9, 0, 3896})
-  void check200ResponseStatusForDsosInRange(int validDsosValue) {
+  void check200ResponseStatusForDaysSinceSymptomsFieldInRange(int validDsosValue) {
     ResponseEntity<Void> actResponse = executor.executePost(buildKeysWithDaysSinceSymptoms(validDsosValue));
     assertThat(actResponse.getStatusCode()).isEqualTo(OK);
   }
@@ -101,14 +101,14 @@ class PayloadValidationTest {
 
   @ParameterizedTest
   @ValueSource(ints = {-1, 9, 12})
-  void check400ResponseStatusForTrlNotAccepted(int invalidTrlValue) {
+  void check400ResponseStatusForTransmissionRiskLevelNotAccepted(int invalidTrlValue) {
     ResponseEntity<Void> actResponse = executor.executePost(buildKeysWithTransmissionRiskLevel(invalidTrlValue));
     assertThat(actResponse.getStatusCode()).isEqualTo(BAD_REQUEST);
   }
 
   @ParameterizedTest
   @ValueSource(ints = {1, 3, 5, 6, 8})
-  void check200ResponseStatusForTrlAccepted(int validTrlValue) {
+  void check200ResponseStatusForTransmissionRiskLevelAccepted(int validTrlValue) {
     ResponseEntity<Void> actResponse = executor.executePost(buildKeysWithTransmissionRiskLevel(validTrlValue));
     assertThat(actResponse.getStatusCode()).isEqualTo(OK);
   }
@@ -123,58 +123,14 @@ class PayloadValidationTest {
   }
 
   @Test
-  void check400ResponseStatusForMissingTrlAndDsos() {
+  void check400ResponseStatusForMissingTransmissionRiskLevelAndDaysSinceSymptoms() {
     ResponseEntity<Void> actResponse = executor.executePost(buildKeysWithoutDaysSinceSymptomsAndTransmissionRiskLevel());
     assertThat(actResponse.getStatusCode()).isEqualTo(BAD_REQUEST);
   }
 
-  @Test
-  void check200ResponseStatusForKeysWithFixedRollingPeriodAndDuplicateStartIntervals() {
-    int rollingStartIntervalNumber = createRollingStartIntervalNumber(2);
-    var keysWithDuplicateStartIntervalNumber = Lists.list(
-        buildTemporaryExposureKey(VALID_KEY_DATA_1, rollingStartIntervalNumber, 1,
-            ReportType.CONFIRMED_CLINICAL_DIAGNOSIS,1),
-        buildTemporaryExposureKey(VALID_KEY_DATA_2, rollingStartIntervalNumber, 2, ReportType.CONFIRMED_CLINICAL_DIAGNOSIS,1));
-
-    ResponseEntity<Void> actResponse = executor.executePost(keysWithDuplicateStartIntervalNumber);
-
-    assertThat(actResponse.getStatusCode()).isEqualTo(OK);
-  }
-
-  @Test
-  void check200ResponseStatusForGapsInTimeIntervalsOfKeysWithFixedRollingPeriod() {
-    int rollingStartIntervalNumber1 = createRollingStartIntervalNumber(6);
-    int rollingStartIntervalNumber2 = rollingStartIntervalNumber1 + DiagnosisKey.MAX_ROLLING_PERIOD;
-    int rollingStartIntervalNumber3 = rollingStartIntervalNumber2 + 3 * DiagnosisKey.MAX_ROLLING_PERIOD;
-    var keysWithGapsInStartIntervalNumber = Lists.list(
-        buildTemporaryExposureKey(VALID_KEY_DATA_1, rollingStartIntervalNumber1, 1, ReportType.CONFIRMED_CLINICAL_DIAGNOSIS,1),
-        buildTemporaryExposureKey(VALID_KEY_DATA_3, rollingStartIntervalNumber3, 3, ReportType.CONFIRMED_CLINICAL_DIAGNOSIS,1),
-        buildTemporaryExposureKey(VALID_KEY_DATA_2, rollingStartIntervalNumber2, 3, ReportType.CONFIRMED_CLINICAL_DIAGNOSIS,1));
-
-    ResponseEntity<Void> actResponse = executor.executePost(keysWithGapsInStartIntervalNumber);
-
-    assertThat(actResponse.getStatusCode()).isEqualTo(OK);
-  }
-
-  @Test
-  void check200ResponseStatusForGapsInTimeIntervalsOfKeysWithFlexibleRollingPeriod() {
-    int rollingStartIntervalNumber1 = createRollingStartIntervalNumber(6);
-    int rollingStartIntervalNumber2 = rollingStartIntervalNumber1 + DiagnosisKey.MAX_ROLLING_PERIOD;
-    int rollingStartIntervalNumber3 = rollingStartIntervalNumber2 + 3 * DiagnosisKey.MAX_ROLLING_PERIOD;
-    var keysWithGapsInStartIntervalNumber = Lists.list(
-        buildTemporaryExposureKeyWithFlexibleRollingPeriod(VALID_KEY_DATA_1, rollingStartIntervalNumber1, 1, 54),
-        buildTemporaryExposureKeyWithFlexibleRollingPeriod(VALID_KEY_DATA_1, rollingStartIntervalNumber1, 1, 90),
-        buildTemporaryExposureKeyWithFlexibleRollingPeriod(VALID_KEY_DATA_3, rollingStartIntervalNumber3, 3, 133),
-        buildTemporaryExposureKeyWithFlexibleRollingPeriod(VALID_KEY_DATA_2, rollingStartIntervalNumber2, 3, 144));
-
-    ResponseEntity<Void> actResponse = executor.executePost(keysWithGapsInStartIntervalNumber);
-
-    assertThat(actResponse.getStatusCode()).isEqualTo(OK);
-  }
-
   @ParameterizedTest
   @MethodSource("app.coronawarn.server.services.submission.controller.TEKDatasetGeneration#getOverlappingTestDatasets")
-  void check400ResponseStatusForOverlappingTimeIntervalsI(List<TemporaryExposureKey> dataset) {
+  void check400ResponseStatusForOverlappingTimeIntervals(List<TemporaryExposureKey> dataset) {
     ResponseEntity<Void> actResponse = executor.executePost(dataset);
     assertThat(actResponse.getStatusCode()).isEqualTo(BAD_REQUEST);
   }
@@ -184,32 +140,6 @@ class PayloadValidationTest {
   void check200ResponseStatusForValidSubmissionPayload(List<TemporaryExposureKey> dataset) {
     ResponseEntity<Void> actResponse = executor.executePost(dataset);
     assertThat(actResponse.getStatusCode()).isEqualTo(OK);
-  }
-
-  /**
-   *  This test generates a payload with keys for the past 30 days. It verifies that validation passes even
-   *  though keys older than <code>application.yml/retention-period</code> would not be stored.
-   */
-  @Test
-  void check200ResponseStatusForMoreThan14KeysWithValidFlexibleRollingPeriod() {
-    ResponseEntity<Void> actResponse = executor.executePost(buildPayloadWithMoreThan14KeysAndFlexibleRollingPeriod());
-    assertThat(actResponse.getStatusCode()).isEqualTo(OK);
-  }
-
-  private Collection<TemporaryExposureKey> buildPayloadWithMoreThan14KeysAndFlexibleRollingPeriod() {
-    ArrayList<TemporaryExposureKey> flexibleRollingPeriodKeys = new ArrayList<>();
-    /* Generate keys with fixed rolling period (144) for the past 20 days */
-    for (int i = 0 ; i < 20; i++) {
-      flexibleRollingPeriodKeys.add(buildTemporaryExposureKey(VALID_KEY_DATA_1,
-          createRollingStartIntervalNumber(2) - i * DiagnosisKey.MAX_ROLLING_PERIOD, 3, ReportType.CONFIRMED_CLINICAL_DIAGNOSIS,1));
-    }
-    /* Generate another 10 keys with flexible rolling period (<144) */
-    for (int i = 20 ; i < 30; i++) {
-      flexibleRollingPeriodKeys.add(buildTemporaryExposureKeyWithFlexibleRollingPeriod(VALID_KEY_DATA_1,
-          createRollingStartIntervalNumber(2) - i * DiagnosisKey.MAX_ROLLING_PERIOD, 3, 133));
-
-    }
-    return flexibleRollingPeriodKeys;
   }
 
   @Test
@@ -226,18 +156,6 @@ class PayloadValidationTest {
         createRollingStartIntervalNumber(2), 3, 100));
     flexibleRollingPeriodKeys.add(buildTemporaryExposureKeyWithFlexibleRollingPeriod(VALID_KEY_DATA_1,
         createRollingStartIntervalNumber(3), 3, 144));
-
-
-    return flexibleRollingPeriodKeys;
-  }
-
-  private Collection<TemporaryExposureKey> buildPayloadWithTwoKeysWithFlexibleRollingPeriod() {
-    ArrayList<TemporaryExposureKey> flexibleRollingPeriodKeys = new ArrayList<>();
-
-    flexibleRollingPeriodKeys.add(buildTemporaryExposureKeyWithFlexibleRollingPeriod(VALID_KEY_DATA_1,
-        createRollingStartIntervalNumber(2), 3, 100));
-    flexibleRollingPeriodKeys.add(buildTemporaryExposureKeyWithFlexibleRollingPeriod(VALID_KEY_DATA_1,
-        createRollingStartIntervalNumber(2), 3, 44));
 
 
     return flexibleRollingPeriodKeys;
