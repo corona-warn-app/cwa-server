@@ -30,7 +30,7 @@ The Download Runner triggers the download of Diagnosis Keys (DK) from the EFGS. 
 
 ## Batch Processing
 
-The FederationBatchProcessor processes batches in sequence and persists all DKs that pass validation. 
+The FederationBatchProcessor processes batches in sequence and persists all DKs that pass validation.
 
 ## Diagnosis Key Validation
 
@@ -65,7 +65,7 @@ Implementation details on validation can be found in: [`ValidFederationKeyFilter
 
 ### Validation Results and Batch Status
 
-Keys that fail validation will cause a corresponding log entry, but will not hinder batch processing. The FederationBatchStatus indicates if the the validation and batch processing was successful. 
+Keys that fail validation will cause a corresponding log entry, but will not hinder batch processing. The FederationBatchStatus indicates if the the validation and batch processing was successful.
 
 Processing Status    | Description
 ---------------------|---------------
@@ -80,7 +80,7 @@ Handles the actual downloading and parsing of batches.
 
 ## BatchDownloadResponse
 
-Java object representing one downloaded and parsed batch. 
+Java object representing one downloaded and parsed batch.
 
 ## FederationKeyNormalizer
 
