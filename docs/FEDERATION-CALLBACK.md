@@ -31,10 +31,10 @@ Please refer to the inline comments in the base `application.yaml` configuration
 The callback service will insert new entries (batch tag and date information) specified within the HTTP request into the table mentioned below. This information will then be further processed by the federation key download job.
 
 ```sql
-CREATE TABLE federation_batch (
-    batch_tag   varchar(20) PRIMARY KEY,
-    date        date NOT NULL,
-    status      varchar(20)
+    CREATE TABLE federation_batch (
+        batch_tag   varchar(20) PRIMARY KEY,
+        date        date NOT NULL,
+        status      varchar(20)
 );
 ```
 
@@ -44,5 +44,5 @@ The federation gateway expects callback API's to have a specific API and specifi
 
 - The Federation Gateway Service performs mutual authentication with the national backends. This means the API validates the provided server certificate of the national backend and provides its identity as a client certificate to them. Each national backend has to explicitly whitelist this identity and has to provide a server certificate public key to the Federation Gateway Service for whitelisting. 
 - The Federation Gateway will send a **GET** request to the callback service and provide the following attributes as query paraeers:
-    * `batchTag: type string`: Represents the ID of the batch
-    * `date` type date: The day from which the batch is available IE: `04-03-2020` 
+    - `batchTag: type string`: Represents the ID of the batch
+    - `date` type date: The day from which the batch is available IE: `04-03-2020`

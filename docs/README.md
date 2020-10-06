@@ -14,7 +14,7 @@
     - [Distribution Service](./DISTRIBUTION.md)
       - [Key Export](./DISTRIBUTION.md#key-export)
       - [Configuration](./DISTRIBUTION.md#configuration)
-      - [Discovery](./DISTRIBUTION.md#discovery) 
+      - [Discovery](./DISTRIBUTION.md#discovery)
       - [Data Retention](./DISTRIBUTION.md#data-retention)
     - [Federation Key Upload Service](./FEDERATION-UPLOAD.md)
     - [Federation Key Download Service](./FEDERATION-DOWNLOAD.md)

@@ -45,21 +45,22 @@ Please refer to the inline comments in the base `application.yaml` configuration
 This service doesn't specifically introduce any new data model concepts. It will reuse the existing diagnosis key table where it will store the keys that it downloads.
 
 ```sql
-CREATE TABLE diagnosis_key (
-    key_data bytea PRIMARY KEY,
-    rolling_period integer NOT NULL,
-    rolling_start_interval_number integer NOT NULL,
-    submission_timestamp bigint NOT NULL,
-    transmission_risk_level integer NOT NULL,
-    consent_to_federation boolean NOT NULL DEFAULT FALSE,
-    origin_country varchar (2),
-    visited_countries varchar (2) [],
-    verification_type varchar(20)
-    efgs_batch_tag text -> TODO: Check with team on adding this attribute
+    CREATE TABLE diagnosis_key (
+        key_data bytea PRIMARY KEY,
+        rolling_period integer NOT NULL,
+        rolling_start_interval_number integer NOT NULL,
+        submission_timestamp bigint NOT NULL,
+        transmission_risk_level integer NOT NULL,
+        consent_to_federation boolean NOT NULL DEFAULT FALSE,
+        origin_country varchar (2),
+        visited_countries varchar (2) [],
+        verification_type varchar(20)
+        efgs_batch_tag text -> TODO: Check with team on adding this attribute
 );
 ```
 
 ## Resilience
+
 As this service is a cronjob it will be ensured by the infrastructure that it is running per the schedule defined. Beyond this the following considerations were made to ensure the keys are sent to the federation gateway:
 
 - Batches which need to be processed are known on the DB. If a failure occurs the next run will pickup from where it left off ensuring we do not miss any batch requests.
@@ -78,12 +79,12 @@ The means to authenticate with the Federation Gateway is set by the Federation G
 To be implemented/aligned: 
 
 The Federation Gateway provides an API to request audit information in relation to a batch. This audit operation provides the possibility to verify data integrity and authenticity within a batch. The operation returns information about the batch, for instance:
-* Countries contained in the batch
-* Amount of keys
-* Batch signatures by country
-* Uploading Information
-* Signature Information
-* Operator Signatures
+- Countries contained in the batch
+- Amount of keys
+- Batch signatures by country
+- Uploading Information
+- Signature Information
+- Operator Signatures
 
 All this information can be cross-checked over the certificate authorities or over the transmitted certificate information. (in the case of a self-signed certificate).
 

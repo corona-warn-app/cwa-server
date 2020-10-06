@@ -8,25 +8,25 @@ and to the Federation Gateway for keys that are applicable.
 The payload to be sent by the mobile applications is defined in the [submission_payload.proto](../common/protocols/src/main/proto/app/coronawarn/server/common/protocols/internal/submission_payload.proto)
 
 ```protobuf
-message SubmissionPayload {
-  repeated app.coronawarn.server.common.protocols.external.exposurenotification.TemporaryExposureKey keys = 1;
-  optional bytes padding = 2;
-  repeated string visitedCountries = 3;
-  optional string origin = 4;
-  optional app.coronawarn.server.common.protocols.external.exposurenotification.ReportType reportType = 5 [default = CONFIRMED_CLINICAL_DIAGNOSIS];
-  optional bool consentToFederation = 6;
-}
+  message SubmissionPayload {
+    repeated app.coronawarn.server.common.protocols.external.exposurenotification.TemporaryExposureKey keys = 1;
+    optional bytes padding = 2;
+    repeated string visitedCountries = 3;
+    optional string origin = 4;
+    optional app.coronawarn.server.common.protocols.external.exposurenotification.ReportType reportType = 5 [default = CONFIRMED_CLINICAL_DIAGNOSIS];
+    optional bool consentToFederation = 6;
+  }
 
-message TemporaryExposureKey {
-  // Key of infected user
-  optional bytes key_data = 1;
-  // Varying risk associated with a key depending on diagnosis method
-  optional int32 transmission_risk_level = 2;
-  // The interval number since epoch for which a key starts
-  optional int32 rolling_start_interval_number = 3;
-  // Increments of 10 minutes describing how long a key is valid
-  optional int32 rolling_period = 4
-      [default = 144]; // defaults to 24 hours
+  message TemporaryExposureKey {
+    // Key of infected user
+    optional bytes key_data = 1;
+    // Varying risk associated with a key depending on diagnosis method
+    optional int32 transmission_risk_level = 2;
+    // The interval number since epoch for which a key starts
+    optional int32 rolling_start_interval_number = 3;
+    // Increments of 10 minutes describing how long a key is valid
+    optional int32 rolling_period = 4
+        [default = 144]; // defaults to 24 hours
 }
 ```
 
@@ -108,10 +108,10 @@ Constraints maintained as enviroment variables which are present as secrets in t
 
 The constraints put on submitted TEK's are as follows:
 
-* Each TEK contains a `StartIntervalNumber` (a date e.g. 2nd July 2020)
-* The period covered by the data file must not exceed the configured maximum number of days, represented by the `MAX_NUMBER_OF_KEYS` property which is in the vault.
-* The total combined rolling period for a single TEK cannot exceed maximum rolling period, represented by the `MAX_ROLLING_PERIOD` property which is in the vault.
-* More than one TEK with the same `StartIntervalNumber` may be submitted, these will have their rolling period's combined.
+- Each TEK contains a `StartIntervalNumber` (a date e.g. 2nd July 2020)
+- The period covered by the data file must not exceed the configured maximum number of days, represented by the `MAX_NUMBER_OF_KEYS` property which is in the vault.
+- The total combined rolling period for a single TEK cannot exceed maximum rolling period, represented by the `MAX_ROLLING_PERIOD` property which is in the vault.
+- More than one TEK with the same `StartIntervalNumber` may be submitted, these will have their rolling period's combined.
 
 ### Diagnosis keys padding
 
@@ -129,8 +129,8 @@ See [`random-key-padding-multiplier`](https://github.com/corona-warn-app/cwa-ser
 
 From a distribution service perspective, generated keys are indistinguishable from the real submitted Diagnosis Keys as these are:
 
-* Based on the real Diagnosis Key data.
-* Together cover valid submission key chains (according to the Transmission Risk vector values).
+- Based on the real Diagnosis Key data.
+- Together cover valid submission key chains (according to the Transmission Risk vector values).
 
 Key padding is implemented in [`SubmissionController`](https://github.com/corona-warn-app/cwa-server/blob/d6edd528e0ea3eafcda26fc7ae6d026fee5b4f0c/services/submission/src/main/java/app/coronawarn/server/services/submission/controller/SubmissionController.java#L203)
 and happens after TAN verification, but before we persist sumitted keys on the CWA server.

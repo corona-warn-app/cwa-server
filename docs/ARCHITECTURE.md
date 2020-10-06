@@ -87,6 +87,7 @@ From a CWA-SERVER perspective, the Federation Gateway provides a set of API's wi
 - Callback notification process for Federation Gateway to notify CWA-SERVER that new download batches are available. Note: This is not implemented in the initial release of the federation gateway integration and would potentially come at a later point in time.
 
 Details of the Federation Gateway itself can be found in the following locations:
+
 - [efgs-federation-gateway github repository](https://github.com/eu-federation-gateway-service/efgs-federation-gateway)
 - [eHealth Network Guidelines](https://ec.europa.eu/health/sites/health/files/ehealth/docs/mobileapps_interoperabilitydetailedelements_en.pdf)
 
@@ -128,11 +129,7 @@ The CWA server does not persist the entry on the database and ensures that dummy
 
 ## Services
 
-* [Submission Service](./SUBMISSION.md)
-* [Distribution Service](./DISTRIBUTION.md)
-* [Federation Upload Service](./FEDERATION-UPLOAD.md)
-* [Federation Download Service](./FEDERATION-DOWNLOAD.md)
-
-
-
-
+- [Submission Service](./SUBMISSION.md)
+- [Distribution Service](./DISTRIBUTION.md)
+- [Federation Upload Service](./FEDERATION-UPLOAD.md)
+- [Federation Download Service](./FEDERATION-DOWNLOAD.md)

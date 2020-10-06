@@ -3,7 +3,7 @@
 The distribution service's objective is to publish all CWA-related files to the object store, from which
 the clients will fetch their data. There are three types of files.
 
-#### Key Export
+## Key Export
 
 Key Export files are files, which hold published diagnosis keys from users that have tested positive for SARS-CoV-2.
 These files are based on the specification of Google/Apple and are generated in regular intervals.
@@ -23,7 +23,7 @@ de-obfuscate individuals.
 Another alternative is to put fake diagnosis keys into the payload, which would serve the same purpose.
 In that case, it needs to be guaranteed, that those fake diagnosis keys are indistinguishable from real ones.
 
-#### Configuration
+## Configuration
 
 Configuration files are needed for two use cases:
 
@@ -34,7 +34,7 @@ The function and impact of those parameters is described on the [Apple Exposure 
 not part of the exposure notification framework. These values are required for controlling the
 application behavior.
 
-#### Discovery
+## Discovery
 
 Files on CWA may be discovered with the help of index files. There is one central index file,
 containing all available key export files on the server, separated by new-line.
@@ -122,7 +122,7 @@ hash differs, or the file is not available on the S3 compatible storage the file
 This header is needed, since it is not possible to create byte-identical archives when using ECDSA due to its
 non-deterministic nature.
 
-### Threading
+## Threading
 
 The upload operations are being run in multiple threads in order to increase performance. The number of threads is
 defined in the application configuration. Each upload operation is passed to Spring Boot's `ThreadPoolTaskExecutor`,
@@ -130,7 +130,7 @@ which then distributes them across the available threads. Once all tasks are sub
 threads have terminated before shutting down the thread pool. If errors are thrown, they are handled as explained in the
 following section.
 
-### Error Handling
+## Error Handling
 
 In order to increase resilience of the distribution service two error handling measures were introduced.
 
@@ -147,7 +147,7 @@ The error handling is designed to handle intermediate errors, like short connect
 fail it is safe to assume, that a bigger problem is occurring and that subsequent operations will also fail. In this
 case the program is terminated to prevent unnecessary load.
 
-### Retention
+## Retention
 
 The same 14 days retention period (like the database) is also enforced on the S3 compatible storage. Each distribution
 run will execute the retention policy.
