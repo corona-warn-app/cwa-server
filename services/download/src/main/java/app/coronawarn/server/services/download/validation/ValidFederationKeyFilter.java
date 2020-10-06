@@ -11,7 +11,8 @@ import org.springframework.stereotype.Component;
 
 /**
  * Responsible for checking fields of the {@link DiagnosisKey} objects contained within batches downloaded from the
- * EFGS. This check is prior to the one executed when building the domain {@link app.coronawarn.server.common.persistence.domain.DiagnosisKey}
+ * EFGS. This check is prior to the one executed when building the domain
+ * {@link app.coronawarn.server.common.persistence.domain.DiagnosisKey}
  * entity which ensures our data model constraints are not violated for any incoming data channel.
  */
 @Component
