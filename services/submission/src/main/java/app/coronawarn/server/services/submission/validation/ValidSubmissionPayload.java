@@ -124,7 +124,7 @@ public @interface ValidSubmissionPayload {
     private boolean checkOriginCountryIsValid(SubmissionPayload submissionPayload,
         ConstraintValidatorContext validatorContext) {
       String originCountry = submissionPayload.getOrigin();
-      if (submissionPayload.hasOrigin() && !submissionPayload.getOrigin().isEmpty()
+      if (submissionPayload.hasOrigin() && !originCountry.isEmpty()
           && !supportedCountries.contains(originCountry)) {
         addViolation(validatorContext, String.format(
             "Origin country %s is not part of the supported countries list", originCountry));
