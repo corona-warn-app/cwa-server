@@ -14,9 +14,12 @@ import app.coronawarn.server.common.persistence.domain.DiagnosisKey;
 import app.coronawarn.server.common.persistence.repository.DiagnosisKeyRepository;
 import app.coronawarn.server.common.persistence.repository.FederationBatchInfoRepository;
 import app.coronawarn.server.common.protocols.external.exposurenotification.DiagnosisKeyBatch;
+import app.coronawarn.server.common.protocols.external.exposurenotification.ReportType;
 import com.github.tomakehurst.wiremock.WireMockServer;
 import com.github.tomakehurst.wiremock.http.HttpHeader;
 import com.github.tomakehurst.wiremock.http.HttpHeaders;
+import com.google.protobuf.ByteString;
+import java.util.List;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -37,15 +40,17 @@ import org.springframework.test.context.ActiveProfiles;
  * One of them will be successfully reprocessed and the other one will fail. The WireMockServer is configured
  * accordingly.
  * <p>
- * The WireMockServer will additionally return a series of three batches, where the first batch of the corresponding
- * date is batch1, that can be processed successfully. Batch2 is returned by an explicit call to its batch tag and can
- * be processed successfully as well. Its successor batch3 fails with a 404 Not Found.
+ * The WireMockServer will additionally return a series of three batches:
+ * <li>Batch1 is the first batch of the corresponding date. The first diagnosis key can be processed successfully, but the
+ * second diagnosis key is rejected due to its unsupported ReportType "Self Reported".</li>
+ * <li>Batch2 is returned by an explicit call to its batch tag and can be processed successfully as well.</li>
+ * <li>Batch3 fails with a 404 Not Found.</li>
  * <p>
  * Hence, after the execution of both runners, the federation_batch_info table should be the following:
  * <li>"expired_batch_tag" is deleted</li>
  * <li>"retry_batch_tag_successful" has state "PROCESSED"</li>
  * <li>"retry_batch_tag_fail" has state "ERROR_WONT_RETRY"</li>
- * <li>"batch1_tag" has state "PROCESSED"</li>
+ * <li>"batch1_tag" has state "PROCESSED_WITH_ERROR"</li>
  * <li>"batch2_tag" has state "PROCESSED"</li>
  * <li>"batch3_tag" has state "ERROR"</li>
  * <li>no batch has state "UNPROCESSED"</li>
@@ -58,18 +63,20 @@ import org.springframework.test.context.ActiveProfiles;
 @DirtiesContext
 class DownloadIntegrationTest {
 
-  public static final String BATCH1_DATA = "0123456789ABCDED";
-  public static final String BATCH2_DATA = "0123456789ABCDEE";
-
   private static final String BATCH1_TAG = "batch1_tag";
+  private static final String BATCH1_KEY1_DATA = "0123456789ABCDEA";
+  private static final String BATCH1_KEY2_DATA = "0123456789ABCDEB";
+
   private static final String BATCH2_TAG = "batch2_tag";
+  private static final String BATCH2_KEY_DATA = "0123456789ABCDEC";
 
   private static final String BATCH3_TAG = "batch3_tag";
 
   private static final String RETRY_BATCH_SUCCESSFUL_TAG = "retry_batch_tag_successful";
-  private static final String RETRY_BATCH_SUCCESSFUL_DATA = "0123456789ABCDEF";
+  private static final String RETRY_BATCH_SUCCESSFUL_KEY_DATA = "0123456789ABCDED";
 
   private static final String RETRY_BATCH_FAILS_TAG = "retry_batch_tag_fail";
+
   private static final String EMPTY_BATCH_TAG = "null";
 
   private static WireMockServer server;
@@ -86,16 +93,25 @@ class DownloadIntegrationTest {
   @BeforeAll
   static void setupWireMock() {
     HttpHeaders batch1Headers = getHttpHeaders(BATCH1_TAG, BATCH2_TAG);
-    DiagnosisKeyBatch batch1 = FederationBatchTestHelper.createDiagnosisKeyBatch(BATCH1_DATA);
+    DiagnosisKeyBatch batch1 = FederationBatchTestHelper.createDiagnosisKeyBatch(
+        List.of(
+            FederationBatchTestHelper.createFederationDiagnosisKeyWithKeyData(BATCH1_KEY1_DATA),
+            FederationBatchTestHelper
+                .createBuilderForValidFederationDiagnosisKey()
+                .setKeyData(ByteString.copyFromUtf8(BATCH1_KEY2_DATA))
+                .setReportType(ReportType.SELF_REPORT)
+                .build()
+        )
+    );
 
     HttpHeaders batch2Headers = getHttpHeaders(BATCH2_TAG, BATCH3_TAG);
-    DiagnosisKeyBatch batch2 = FederationBatchTestHelper.createDiagnosisKeyBatch(BATCH2_DATA);
+    DiagnosisKeyBatch batch2 = FederationBatchTestHelper.createDiagnosisKeyBatch(BATCH2_KEY_DATA);
 
     HttpHeaders batch3Headers = getHttpHeaders(BATCH3_TAG, EMPTY_BATCH_TAG);
 
     HttpHeaders retryBatchSuccessfulHeaders = getHttpHeaders(RETRY_BATCH_SUCCESSFUL_TAG, EMPTY_BATCH_TAG);
     DiagnosisKeyBatch retryBatchSuccessful = FederationBatchTestHelper.createDiagnosisKeyBatch(
-        RETRY_BATCH_SUCCESSFUL_DATA);
+        RETRY_BATCH_SUCCESSFUL_KEY_DATA);
 
     server = new WireMockServer(options().port(1234));
     server.start();
@@ -154,17 +170,16 @@ class DownloadIntegrationTest {
   void testDownloadRunSuccessfully() {
     assertThat(federationBatchInfoRepository.findAll()).hasSize(5);
     assertThat(federationBatchInfoRepository.findByStatus("UNPROCESSED")).isEmpty();
-    assertThat(federationBatchInfoRepository.findByStatus("PROCESSED")).hasSize(3);
+    assertThat(federationBatchInfoRepository.findByStatus("PROCESSED")).hasSize(2);
+    assertThat(federationBatchInfoRepository.findByStatus("PROCESSED_WITH_ERROR")).hasSize(1);
     assertThat(federationBatchInfoRepository.findByStatus("ERROR")).hasSize(1);
     assertThat(federationBatchInfoRepository.findByStatus("ERROR_WONT_RETRY")).hasSize(1);
 
     Iterable<DiagnosisKey> diagnosisKeys = diagnosisKeyRepository.findAll();
     assertThat(diagnosisKeys)
         .hasSize(3)
-        .contains(FederationBatchTestHelper.createDiagnosisKey(BATCH1_DATA, downloadServiceConfig))
-        .contains(FederationBatchTestHelper.createDiagnosisKey(BATCH2_DATA, downloadServiceConfig))
-        .contains(FederationBatchTestHelper.createDiagnosisKey(RETRY_BATCH_SUCCESSFUL_DATA, downloadServiceConfig));
+        .contains(FederationBatchTestHelper.createDiagnosisKey(BATCH1_KEY1_DATA, downloadServiceConfig))
+        .contains(FederationBatchTestHelper.createDiagnosisKey(BATCH2_KEY_DATA, downloadServiceConfig))
+        .contains(FederationBatchTestHelper.createDiagnosisKey(RETRY_BATCH_SUCCESSFUL_KEY_DATA, downloadServiceConfig));
   }
-
-
 }
