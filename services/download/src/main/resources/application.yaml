@@ -34,7 +34,7 @@ services:
       max-dsos: 4000
       min-rolling-period: 0
       max-rolling-period: 144
-      min-trl: 1
+      min-trl: 0
       max-trl: 8
 
 federation-gateway:
