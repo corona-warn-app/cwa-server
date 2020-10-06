@@ -19,3 +19,20 @@ The relevant profiles are:
 |`disable-ssl-client-verification-verify-hostname`|Disables the verification of the SSL hostname for the connection to the verification server.|
 
 Apart from those configuration options, the `dev` profile will never be used in production to prevent leakage of data for security and privacy concerns reasons.
+
+## Plausible Deniability
+
+### Fake Requests
+
+Fake (or "dummy") requests are sent by the mobile devices in randomized intervals. These requests do not trigger any server-side processing or storage and simply result in an HTTP response after an dynamically calculated delay.
+The fake requests are intended to prevent an attacker from using network and traffic analysis to find out whether a user was actually tested positive and is now submitting his keys.
+
+### Header Padding
+
+Coming soon
+
+### Body Padding
+
+The mobile apps are collecting keys based on their install date. When a user uploads his keys (after being tested positive), the payload will normally contain 1-13 keys. Although the traffic between mobile & server is secured, an attacker may still sniff the packages in the network and predict, based on the request size, how many keys are probably part of the submission request. This could lead to additional information for the attacker in an attempt to deanonymize a user.
+
+In order to mitigate this kind of information leakage, the submission payload contains padding. The padding hides the true size of the request - making it difficult for an adversary to extract knowledge.
