@@ -5,8 +5,8 @@ package app.coronawarn.server.services.download.normalization;
 
 import app.coronawarn.server.common.persistence.domain.normalization.DiagnosisKeyNormalizer;
 import app.coronawarn.server.common.persistence.domain.normalization.NormalizableFields;
-import app.coronawarn.server.services.download.DownloadServiceConfig;
-import app.coronawarn.server.services.download.DownloadServiceConfig.TekFieldDerivations;
+import app.coronawarn.server.services.download.config.DownloadServiceConfig;
+import app.coronawarn.server.services.download.config.DownloadServiceConfig.TekFieldDerivations;
 
 /**
  * This class is used to derive transmission risk level using the days since onset of symptoms.

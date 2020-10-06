@@ -1,4 +1,6 @@
-package app.coronawarn.server.services.download;
+
+
+package app.coronawarn.server.services.download.config;
 
 import app.coronawarn.server.common.protocols.external.exposurenotification.ReportType;
 import java.util.List;

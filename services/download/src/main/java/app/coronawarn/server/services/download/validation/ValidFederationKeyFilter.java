@@ -2,8 +2,8 @@ package app.coronawarn.server.services.download.validation;
 
 import app.coronawarn.server.common.protocols.external.exposurenotification.DiagnosisKey;
 import app.coronawarn.server.common.protocols.external.exposurenotification.ReportType;
-import app.coronawarn.server.services.download.DownloadServiceConfig;
-import app.coronawarn.server.services.download.DownloadServiceConfig.Validation;
+import app.coronawarn.server.services.download.config.DownloadServiceConfig;
+import app.coronawarn.server.services.download.config.DownloadServiceConfig.Validation;
 import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
