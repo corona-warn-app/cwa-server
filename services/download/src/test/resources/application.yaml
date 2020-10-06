@@ -17,7 +17,7 @@ logging:
   level:
     org:
       springframework: off
-    root: INFO
+    root: off
 
 services:
   download:
