@@ -16,23 +16,22 @@ import java.util.Random;
 
 public class SubmissionPayloadGenerator {
 
-  public static final String MOBILE_CLIENT_PAYLOAD_PB_PATH =
+  private static final int numberOfKeys = 10;
+  private static final int transmissionRiskLevel = 6;
+  private static final int rollingPeriod = 144; // 24*60/10
+  private static final ReportType reportType = ReportType.CONFIRMED_CLINICAL_DIAGNOSIS;
+  private static final ByteString requestPadding = ByteString.copyFrom(new byte[100]);
+  private static final List<String> visitedCountries = List.of("DE", "FR");
+  private static final String originCountry = "DE";
+  private static final boolean consentToFederation = true;
+  private static final int daysSinceOnsetOfSymptoms = 0;
+
+  private static final String MOBILE_CLIENT_PAYLOAD_PB_PATH =
       "services/submission/src/test/resources/payload/mobile-client-payload.pb";
 
   public static void main(String[] args) throws IOException {
-    int numberOfKeys = 10;
-    int transmissionRiskLevel = 6;
-    int rollingPeriod = 144; // 24*60/10
-    ReportType reportType = ReportType.CONFIRMED_CLINICAL_DIAGNOSIS;
-    ByteString requestPadding = ByteString.copyFrom(new byte[100]);
-    final List<String> visitedCountries = List.of("DE", "FR");
-    String originCountry = "DE";
-    boolean consentToFederation = true;
-    int daysSinceOnsetOfSymptoms = 0;
 
-    LocalDateTime now = LocalDateTime.now();
-    LocalDateTime todayMidnight = LocalDateTime
-        .of(now.getYear(), now.getMonth(), now.getDayOfMonth(), 0, 0);
+    LocalDateTime todayMidnight = LocalDateTime.now().toLocalDate().atStartOfDay();
     LocalDateTime todayMidnightMinusNumberOfKeys = todayMidnight.minusDays(numberOfKeys);
 
     List<TemporaryExposureKey> temporaryExposureKeys = buildTemporaryExposureKeys(numberOfKeys,
