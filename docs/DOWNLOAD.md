@@ -17,7 +17,7 @@ Profile                                           | Effect
 Please refer to the inline comments in the base `application.yaml` configuration file for further details on the configuration properties impacted by the above profiles.
 
 ## Download Runner
-The Download Runner triggers the download of Diagnosis Keys (DK) from the EFGS. It then triggers the processing of unprocessed batches and of those which caused errors of previous processing attempts.
+The Download Runner triggers the download of Diagnosis Keys (DK) from the EFGS. It then triggers the processing of unprocessed batches and of those which caused errors in previous processing attempts.
 
 ## Batch Processing
 The FederationBatchProcessor processes batches in sequence and persists all DKs that pass validation. 
@@ -73,3 +73,5 @@ Java object representing one downloaded and parsed batch.
 ## FederationKeyNormalizer
 Helps to derive Transmission Risk Level from Days Since Onset of Symptoms (for backwards compatability).
 
+## RetentionPolicy Runner
+See [`PERSISTENCE.md`](/docs/PERSISTENCE.md).
