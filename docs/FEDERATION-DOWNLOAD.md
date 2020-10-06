@@ -76,9 +76,10 @@ The means to authenticate with the Federation Gateway is set by the Federation G
 
 ## Batch Auditing
 
-To be implemented/aligned: 
+To be implemented/aligned:
 
 The Federation Gateway provides an API to request audit information in relation to a batch. This audit operation provides the possibility to verify data integrity and authenticity within a batch. The operation returns information about the batch, for instance:
+
 - Countries contained in the batch
 - Amount of keys
 - Batch signatures by country

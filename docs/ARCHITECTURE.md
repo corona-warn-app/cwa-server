@@ -82,7 +82,7 @@ Many countries are developing proximity tracing apps to reduce the spreading of 
 From a CWA-SERVER perspective, the Federation Gateway provides a set of API's with which we need to integrate in order to enable the following:
 
 - Upload of applicable DE keys
-- Download of connected (non-DE) country keys 
+- Download of connected (non-DE) country keys
 - Auditing of download keys for signature verification
 - Callback notification process for Federation Gateway to notify CWA-SERVER that new download batches are available. Note: This is not implemented in the initial release of the federation gateway integration and would potentially come at a later point in time.
 

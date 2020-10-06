@@ -122,10 +122,12 @@ For each real key in the payload, submission service will generate additional ke
 The number of additionally generated keys is a configurable parameter
 See [`random-key-padding-multiplier`](https://github.com/corona-warn-app/cwa-server/blob/d6edd528e0ea3eafcda26fc7ae6d026fee5b4f0c/services/submission/src/main/resources/application.yaml#L23).
 
-    # Example: If the 'random-key-padding-multiplier' parameter is set to 10, and 5 keys are being submitted,
-    # then the 5 real submitted keys will be saved to the DB, plus an additional 45 keys with
-    # random 'key_data'. All properties, besides the 'key_data', of the additional keys will be
-    # identical to the real key.
+```yaml
+  # Example: If the 'random-key-padding-multiplier' parameter is set to 10, and 5 keys are being submitted,
+  # then the 5 real submitted keys will be saved to the DB, plus an additional 45 keys with
+  # random 'key_data'. All properties, besides the 'key_data', of the additional keys will be
+  # identical to the real key.
+```
 
 From a distribution service perspective, generated keys are indistinguishable from the real submitted Diagnosis Keys as these are:
 
