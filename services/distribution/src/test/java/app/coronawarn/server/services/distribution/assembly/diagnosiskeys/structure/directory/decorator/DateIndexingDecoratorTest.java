@@ -1,22 +1,4 @@
-/*
- * ---license-start
- * Corona-Warn-App
- * ---
- * Copyright (C) 2020 SAP SE and all other contributors
- * ---
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- * ---license-end
- */
+
 
 package app.coronawarn.server.services.distribution.assembly.diagnosiskeys.structure.directory.decorator;
 
@@ -26,6 +8,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import app.coronawarn.server.common.persistence.domain.DiagnosisKey;
+import app.coronawarn.server.common.persistence.service.common.KeySharingPoliciesChecker;
 import app.coronawarn.server.services.distribution.assembly.component.CryptoProvider;
 import app.coronawarn.server.services.distribution.assembly.diagnosiskeys.DiagnosisKeyBundler;
 import app.coronawarn.server.services.distribution.assembly.diagnosiskeys.ProdDiagnosisKeyBundler;
@@ -38,6 +21,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+import app.coronawarn.server.services.distribution.config.DistributionServiceConfig.Api;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -49,12 +33,16 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 @EnableConfigurationProperties(value = DistributionServiceConfig.class)
 @ExtendWith(SpringExtension.class)
-@ContextConfiguration(classes = {CryptoProvider.class, DistributionServiceConfig.class},
+@ContextConfiguration(classes = {CryptoProvider.class, DistributionServiceConfig.class,
+    KeySharingPoliciesChecker.class},
     initializers = ConfigFileApplicationContextInitializer.class)
 class DateIndexingDecoratorTest {
 
   @Autowired
   DistributionServiceConfig distributionServiceConfig;
+
+  @Autowired
+  KeySharingPoliciesChecker sharingPoliciesChecker;
 
   @Autowired
   CryptoProvider cryptoProvider;
@@ -63,7 +51,7 @@ class DateIndexingDecoratorTest {
 
   @BeforeEach
   void setup() {
-    diagnosisKeyBundler = new ProdDiagnosisKeyBundler(distributionServiceConfig);
+    diagnosisKeyBundler = new ProdDiagnosisKeyBundler(distributionServiceConfig, sharingPoliciesChecker);
   }
 
 
@@ -74,7 +62,7 @@ class DateIndexingDecoratorTest {
     DateIndexingDecorator decorator = makeDecoratedDateDirectory(diagnosisKeyBundler);
     decorator.prepare(new ImmutableStack<>().push("DE"));
 
-    Set<LocalDate> index = decorator.getIndex(new ImmutableStack<>());
+    Set<LocalDate> index = decorator.getIndex(new ImmutableStack<>().push("DE"));
 
     assertThat(index).contains(LocalDate.of(1970, 1, 4))
         .doesNotContain(LocalDate.of(1970, 1, 5));
@@ -88,19 +76,24 @@ class DateIndexingDecoratorTest {
         .flatMap(List::stream)
         .collect(Collectors.toList());
 
+    Api api = mock(Api.class);
+    when(api.getOriginCountry()).thenReturn("DE");
+
     DistributionServiceConfig svcConfig = mock(DistributionServiceConfig.class);
     when(svcConfig.getExpiryPolicyMinutes()).thenReturn(120);
     when(svcConfig.getShiftingPolicyThreshold()).thenReturn(1);
     when(svcConfig.getMaximumNumberOfKeysPerBundle()).thenReturn(1);
+    when(svcConfig.getApi()).thenReturn(api);
+    when(svcConfig.getSupportedCountries()).thenReturn(new String[]{"DE"});
 
-    DiagnosisKeyBundler diagnosisKeyBundler = new ProdDiagnosisKeyBundler(svcConfig);
+    DiagnosisKeyBundler diagnosisKeyBundler = new ProdDiagnosisKeyBundler(svcConfig, sharingPoliciesChecker);
     diagnosisKeyBundler.setDiagnosisKeys(diagnosisKeys, LocalDateTime.of(1970, 1, 4, 0, 0));
 
     DateIndexingDecorator decorator = makeDecoratedDateDirectory(diagnosisKeyBundler);
 
     decorator.prepare(new ImmutableStack<>().push("DE"));
 
-    Set<LocalDate> index = decorator.getIndex(new ImmutableStack<>());
+    Set<LocalDate> index = decorator.getIndex(new ImmutableStack<>().push("DE"));
     assertThat(index).isEmpty();
   }
 

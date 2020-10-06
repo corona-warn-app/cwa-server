@@ -102,17 +102,35 @@ You will find the implementation file at [`/services/submission/src/main/java/ap
 
 ### Validation Constraints
 
-* `StartIntervalNumber` values from the same [`SubmissionPayload`](https://corona-warn-app.github.io/cwa-server/1.0.0/app/coronawarn/server/common/protocols/internal/SubmissionPayload.html) shall be unique.
-* There must not be any keys in the [`SubmissionPayload`](https://corona-warn-app.github.io/cwa-server/1.0.0/app/coronawarn/server/common/protocols/internal/SubmissionPayload.html) that have overlapping time windows.
-* The period covered by the data file must not exceed the configured maximum number of days, which is defined by `max-number-of-keys` property in [`application.yaml`](/services/submission/src/main/resources/application.yaml). Currently no submissions with more than 14 keys are accepted
-* Visited Counties: TODO: Align with team as current implementation might not be sufficient. 
+Temporary Exposure Keys (TEK's) are submitted by the client device (iOS/Android phone) via the Submission Service.
 
-## Data Derivations & Defaults
+Constraints maintained as enviroment variables which are present as secrets in the Vault /cwa-server/submission
 
-To support integration with the Federation Gateway some attributes are placed into the Submission Proto as this information is required to be passed along. The attributes are optional and if no provided may have information derived and defaulted per the blow:
+The constraints put on submitted TEK's are as follows:
 
-- **Visited Countries**: This is used for the user to indicate what countries they had visited prior to a positive test result. TODO: Validate the Other Countries scenario as in this case we would default essentially all country codes.
-- **Consent To Federation**: This is used in order to later determine if the associated keys (and generated padded keys) should be uploaded to the federation gateway. If consent is not provided by the user this is be default set to false.
-- **Origin Country**: This is used by the federation gateway to know the source country for the key data. As CWA is intended for use within DE this value is defaulted to DE
-- **Report Type**: Indicates how the test/verification of COVID-19 was confirmed. For the CWA app `CONFIRMED_CLINICAL_DIAGNOSIS` is defaulted as this is the only way submissions can be made at this time.
-- **Days Since onset of Symptoms**: 
+* Each TEK contains a `StartIntervalNumber` (a date e.g. 2nd July 2020)
+* The period covered by the data file must not exceed the configured maximum number of days, represented by the `MAX_NUMBER_OF_KEYS` property which is in the vault.
+* The total combined rolling period for a single TEK cannot exceed maximum rolling period, represented by the `MAX_ROLLING_PERIOD` property which is in the vault.
+* More than one TEK with the same `StartIntervalNumber` may be submitted, these will have their rolling period's combined.
+
+### Diagnosis keys padding
+
+To ensure we reach 140 key limit for daily archives and timely distribute the keys, server-side diagnosis keys padding was introduced on CWA server.
+
+For each real key in the payload, submission service will generate additional keys with the same Diagnosis Key data, except the actual byte array that represents the key identifier (KeyData). KeyData for the "fake keys" generated with SecureRandom().nextBytes() as an array of 16 bytes. See [`generateRandomKeyData()`](https://github.com/corona-warn-app/cwa-server/blob/d6edd528e0ea3eafcda26fc7ae6d026fee5b4f0c/services/submission/src/main/java/app/coronawarn/server/services/submission/controller/SubmissionController.java#L73) method.
+
+The number of additionally generated keys is a configurable parameter
+See [`random-key-padding-multiplier`](https://github.com/corona-warn-app/cwa-server/blob/d6edd528e0ea3eafcda26fc7ae6d026fee5b4f0c/services/submission/src/main/resources/application.yaml#L23).
+
+    # Example: If the 'random-key-padding-multiplier' parameter is set to 10, and 5 keys are being submitted,
+    # then the 5 real submitted keys will be saved to the DB, plus an additional 45 keys with
+    # random 'key_data'. All properties, besides the 'key_data', of the additional keys will be
+    # identical to the real key.
+
+From a distribution service perspective, generated keys are indistinguishable from the real submitted Diagnosis Keys as these are:
+
+* Based on the real Diagnosis Key data.
+* Together cover valid submission key chains (according to the Transmission Risk vector values).
+
+Key padding is implemented in [`SubmissionController`](https://github.com/corona-warn-app/cwa-server/blob/d6edd528e0ea3eafcda26fc7ae6d026fee5b4f0c/services/submission/src/main/java/app/coronawarn/server/services/submission/controller/SubmissionController.java#L203)
+and happens after TAN verification, but before we persist sumitted keys on the CWA server.

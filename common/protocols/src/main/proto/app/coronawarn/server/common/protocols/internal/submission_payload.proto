@@ -3,13 +3,11 @@ package app.coronawarn.server.common.protocols.internal;
 option java_package = "app.coronawarn.server.common.protocols.internal";
 option java_multiple_files = true;
 import "app/coronawarn/server/common/protocols/external/exposurenotification/temporary_exposure_key_export.proto";
-import "app/coronawarn/server/common/protocols/external/exposurenotification/diagnosis_key_batch.proto";
 
 message SubmissionPayload {
   repeated app.coronawarn.server.common.protocols.external.exposurenotification.TemporaryExposureKey keys = 1;
-  optional bytes padding = 2;
+  optional bytes requestPadding = 2;
   repeated string visitedCountries = 3;
   optional string origin = 4;
-  optional app.coronawarn.server.common.protocols.external.exposurenotification.ReportType reportType = 5 [default = CONFIRMED_CLINICAL_DIAGNOSIS];
-  optional bool consentToFederation = 6;
+  optional bool consentToFederation = 5;
 }

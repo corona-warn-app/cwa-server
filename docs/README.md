@@ -36,6 +36,7 @@
   - [Spring Profiles](./SUBMISSION.md#spring-profiles)
   - [TAN Verification](./SUBMISSION.md#tan-verification)
   - [Submission Validations](./SUBMISSION.md#submission-validations)
+  - [Diagnosis Keys Padding](./SUBMISSION.md#diagnosis-keys-padding)
 - [Persistence](./PERSISTENCE.md)
   - [Data Migration / Flyway](./PERSISTENCE.md#data-migration---flyway)
   - [Data Retention Policy](./PERSISTENCE.md#data-retention-policy)

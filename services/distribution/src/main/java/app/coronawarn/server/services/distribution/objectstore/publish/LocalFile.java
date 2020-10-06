@@ -1,22 +1,4 @@
-/*-
- * ---license-start
- * Corona-Warn-App
- * ---
- * Copyright (C) 2020 SAP SE and all other contributors
- * ---
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- * ---license-end
- */
+
 
 package app.coronawarn.server.services.distribution.objectstore.publish;
 
@@ -84,12 +66,12 @@ public abstract class LocalFile {
 
   protected String createS3Key(Path file, Path rootFolder) {
     Path relativePath = rootFolder.relativize(file);
-    return relativePath.toString().replaceAll("\\\\", "/");
+    return relativePath.toString().replace("\\\\", "/");
   }
 
   /**
    * Value for the <code>content-type</code> header.
-   * 
+   *
    * @return Either <a href="https://www.iana.org/assignments/media-types/application/zip">zip</a> or
    *         <a href="https://www.iana.org/assignments/media-types/application/json">json</a>.
    */
@@ -108,7 +90,7 @@ public abstract class LocalFile {
   /**
    * Indicates if a local file is a Key-file or not. Only the Key files are stored in the Date / Hour tree structure.
    * One file per sub-folder (days: 1-31 / hours: 0-23). The index files are not stored in folders ending with a digit.
-   * 
+   *
    * @return <code>true</code> if and only if the {@link #s3Key} ends with a digit, false otherwise.
    */
   public boolean isKeyFile() {

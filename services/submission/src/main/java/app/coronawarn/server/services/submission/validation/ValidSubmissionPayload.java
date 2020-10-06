@@ -1,27 +1,11 @@
-/*-
- * ---license-start
- * Corona-Warn-App
- * ---
- * Copyright (C) 2020 SAP SE and all other contributors
- * ---
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- * ---license-end
- */
+
 
 package app.coronawarn.server.services.submission.validation;
 
-import static app.coronawarn.server.common.persistence.domain.DiagnosisKey.EXPECTED_ROLLING_PERIOD;
+import static java.util.function.Predicate.not;
+import static java.util.stream.Collectors.toList;
 
+import app.coronawarn.server.common.persistence.domain.normalization.DiagnosisKeyNormalizer;
 import app.coronawarn.server.common.protocols.external.exposurenotification.TemporaryExposureKey;
 import app.coronawarn.server.common.protocols.internal.SubmissionPayload;
 import app.coronawarn.server.services.submission.config.SubmissionServiceConfig;
@@ -30,18 +14,15 @@ import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
-import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
-import java.util.stream.Collectors;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.function.Function;
+import java.util.stream.Stream;
 import javax.validation.Constraint;
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
 import javax.validation.Payload;
-import org.apache.tomcat.util.buf.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-
 
 @Constraint(validatedBy = ValidSubmissionPayload.SubmissionPayloadValidator.class)
 @Target({ElementType.PARAMETER})
@@ -58,37 +39,39 @@ public @interface ValidSubmissionPayload {
 
   /**
    * Groups.
-   *
-   * @return
    */
   Class<?>[] groups() default {};
 
   /**
    * Payload.
-   *
-   * @return
    */
   Class<? extends Payload>[] payload() default {};
 
   class SubmissionPayloadValidator implements
       ConstraintValidator<ValidSubmissionPayload, SubmissionPayload> {
 
-    private static final Logger logger = LoggerFactory.getLogger(SubmissionPayloadValidator.class);
-
-    private SubmissionServiceConfig config;
+    private final int maxNumberOfKeys;
+    private final int maxRollingPeriod;
+    private final Collection<String> supportedCountries;
 
     public SubmissionPayloadValidator(SubmissionServiceConfig submissionServiceConfig) {
-      this.config = submissionServiceConfig;
+      maxNumberOfKeys = submissionServiceConfig.getMaxNumberOfKeys();
+      maxRollingPeriod = submissionServiceConfig.getMaxRollingPeriod();
+      supportedCountries = List.of(submissionServiceConfig.getSupportedCountries());
     }
 
     /**
      * Validates the following constraints.
      * <ul>
      *   <li>StartIntervalNumber values from the same {@link SubmissionPayload} shall be unique.</li>
-     *   <li>There must not be any keys in the {@link SubmissionPayload} have overlapping time windows.</li>
-     *   <li>Number of keys submitted must not exceed the configured maximum (see <code>application.yml
-     *       services.submission.payload.max-number-of-keys</code></li>
-     *   <li>Visited countries field must be a value from within the accepted country codes.</li>
+     *   <li>There must not be more than allowed maximum number of keys in a payload
+     *       (see application.yaml/max-number-of-keys)
+     *   <li>The origin country can be missing or the provided value must be of the supported countries
+     *       (see application.yaml).</li>
+     *   <li>The visited countries can be missing or the provided values must be part of the supported countries.</li>
+     *   <li>Either a value of accepted Transmission Risk Level or an accepted Days Since Onset Of Symptoms
+     *       must be present. If one value is missing, the other one can be derived
+     *       (see {@link DiagnosisKeyNormalizer}</li>
      * </ul>
      */
     @Override
@@ -96,47 +79,13 @@ public @interface ValidSubmissionPayload {
       List<TemporaryExposureKey> exposureKeys = submissionPayload.getKeysList();
       validatorContext.disableDefaultConstraintViolation();
 
-      boolean isValid = checkKeyCollectionSize(exposureKeys, validatorContext);
-      isValid &= checkUniqueStartIntervalNumbers(exposureKeys, validatorContext);
-      isValid &= checkNoOverlapsInTimeWindow(exposureKeys, validatorContext);
-      isValid &= checkOriginCountryIsAccepted(submissionPayload, validatorContext);
-      logIfVisitedCountriesNotAllowed(submissionPayload, validatorContext);
-
-      return isValid;
-    }
-
-    /**
-     * Verify if payload contains invalid or unaccepted countries.
-     * @return false if the originCountry field of the given payload does not contain
-     *         a country code from the configured <code>application.yml/allowed-countries</code>
-     */
-    private boolean checkOriginCountryIsAccepted(SubmissionPayload submissionPayload,
-        ConstraintValidatorContext validatorContext) {
-
-      // TODO: Uncomment below when the proto definition is changed
-      // String originCountry = submissionPayload.getOriginCountry();
-      String originCountry = "DE";
-      if (!config.isCountryAllowed(originCountry)) {
-        addViolation(validatorContext, String.format(
-            "Origin country %s is not part of the allowed countries list", originCountry));
-        return false;
-      }
-      return true;
-    }
-
-    /**
-     * Log a warning if the payload contains a visited country which is not
-     * part of the <code>allowed-countries</code> list.
-     */
-    private void logIfVisitedCountriesNotAllowed(SubmissionPayload submissionPayload,
-        ConstraintValidatorContext validatorContext) {
-      // TODO: Uncomment below when the proto definition is changed
-      // List<String> visitedCountries = submissionPayload.getVisitedCountries();
-      List<String> visitedCountries = List.of("DE", "FR");
-      if (!config.areAllCountriesAllowed(visitedCountries)) {
-        logger.warn("Submission Payload contains some" + " visited countries which are not allowed: {}",
-            StringUtils.join(visitedCountries, ','));
-      }
+      return checkStartIntervalNumberIsAtMidNight(exposureKeys, validatorContext)
+          && checkKeyCollectionSize(exposureKeys, validatorContext)
+          && checkOriginCountryIsValid(submissionPayload, validatorContext)
+          && checkVisitedCountriesAreValid(submissionPayload, validatorContext)
+          && checkRequiredFieldsNotMissing(exposureKeys, validatorContext)
+          && checkTransmissionRiskLevelIsAcceptable(exposureKeys, validatorContext)
+          && checkDaysSinceOnsetOfSymptomsIsInRange(exposureKeys, validatorContext);
     }
 
     private void addViolation(ConstraintValidatorContext validatorContext, String message) {
@@ -145,54 +94,118 @@ public @interface ValidSubmissionPayload {
 
     private boolean checkKeyCollectionSize(List<TemporaryExposureKey> exposureKeys,
         ConstraintValidatorContext validatorContext) {
-      if (exposureKeys.isEmpty() || exceedsMaxNumberOfKeysPerSubmission(exposureKeys)) {
+      if (exposureKeys.isEmpty() || exposureKeys.size() > maxNumberOfKeys) {
         addViolation(validatorContext, String.format(
-            "Number of keys must be between 1 and %s, but is %s.", config.getMaxNumberOfKeys(), exposureKeys.size()));
+            "Number of keys must be between 1 and %s, but is %s.", maxNumberOfKeys, exposureKeys.size()));
         return false;
       }
       return true;
     }
 
-    private boolean exceedsMaxNumberOfKeysPerSubmission(List<TemporaryExposureKey> exposureKeys) {
-      return exposureKeys.size() > config.getMaxNumberOfKeys();
+    private boolean checkStartIntervalNumberIsAtMidNight(List<TemporaryExposureKey> exposureKeys,
+        ConstraintValidatorContext validatorContext) {
+      boolean isNotMidNight00Utc = exposureKeys.stream()
+          .anyMatch(exposureKey -> exposureKey.getRollingStartIntervalNumber() % maxRollingPeriod > 0);
+
+      if (isNotMidNight00Utc) {
+        addViolation(validatorContext, "Start Interval Number must be at midnight ( 00:00 UTC )");
+        return false;
+      }
+
+      return true;
     }
 
-    private boolean checkUniqueStartIntervalNumbers(List<TemporaryExposureKey> exposureKeys,
+    /**
+     * Verify if payload contains invalid or unaccepted origin country.
+     *
+     * @return false if the originCountry field of the given payload does not contain a country code from the configured
+     * <code>application.yml/supported-countries</code>
+     */
+    private boolean checkOriginCountryIsValid(SubmissionPayload submissionPayload,
         ConstraintValidatorContext validatorContext) {
-      Integer[] startIntervalNumbers = exposureKeys.stream()
-          .mapToInt(TemporaryExposureKey::getRollingStartIntervalNumber).boxed().toArray(Integer[]::new);
-      long distinctSize = Arrays.stream(startIntervalNumbers)
-          .distinct()
-          .count();
-
-      if (distinctSize < exposureKeys.size()) {
+      String originCountry = submissionPayload.getOrigin();
+      if (submissionPayload.hasOrigin() && !originCountry.isEmpty()
+          && !supportedCountries.contains(originCountry)) {
         addViolation(validatorContext, String.format(
-            "Duplicate StartIntervalNumber found. StartIntervalNumbers: %s",
-            Arrays.stream(startIntervalNumbers).map(String::valueOf).collect(Collectors.joining(","))));
+            "Origin country %s is not part of the supported countries list", originCountry));
         return false;
       }
       return true;
     }
 
-    private boolean checkNoOverlapsInTimeWindow(List<TemporaryExposureKey> exposureKeys,
+    private boolean checkVisitedCountriesAreValid(SubmissionPayload submissionPayload,
         ConstraintValidatorContext validatorContext) {
-      if (exposureKeys.size() < 2) {
+      if (submissionPayload.getVisitedCountriesList().isEmpty()) {
         return true;
       }
+      Collection<String> invalidVisitedCountries = submissionPayload.getVisitedCountriesList().stream()
+          .filter(not(supportedCountries::contains)).collect(toList());
 
-      Integer[] sortedStartIntervalNumbers = exposureKeys.stream()
-          .mapToInt(TemporaryExposureKey::getRollingStartIntervalNumber)
-          .sorted().boxed().toArray(Integer[]::new);
-
-      for (int i = 1; i < sortedStartIntervalNumbers.length; i++) {
-        if ((sortedStartIntervalNumbers[i - 1] + EXPECTED_ROLLING_PERIOD) > sortedStartIntervalNumbers[i]) {
-          addViolation(validatorContext, String.format(
-              "Subsequent intervals overlap. StartIntervalNumbers: %s",
-              Arrays.stream(sortedStartIntervalNumbers).map(String::valueOf).collect(Collectors.joining(","))));
-          return false;
-        }
+      if (!invalidVisitedCountries.isEmpty()) {
+        invalidVisitedCountries.forEach(country -> addViolation(validatorContext,
+            "[" + country + "]: Visited country is not part of the supported countries list"));
       }
-      return true;
+      return invalidVisitedCountries.isEmpty();
+    }
+
+    private boolean checkDaysSinceOnsetOfSymptomsIsInRange(List<TemporaryExposureKey> exposureKeys,
+        ConstraintValidatorContext validatorContext) {
+      // check if days since onset of symptoms is in the acceptable range
+      return addViolationForInvalidTek(exposureKeys,
+          tekStream -> tekStream.filter(TemporaryExposureKey::hasDaysSinceOnsetOfSymptoms)
+              .filter(this::hasInvalidDaysSinceSymptoms),
+          validatorContext,
+          invalidTek -> "'" + invalidTek.getDaysSinceOnsetOfSymptoms()
+              + "' is not a valid daysSinceOnsetOfSymptoms value.");
+    }
+
+    private boolean checkTransmissionRiskLevelIsAcceptable(List<TemporaryExposureKey> exposureKeys,
+        ConstraintValidatorContext validatorContext) {
+      // check if transmission risk level is in the acceptable range
+      return addViolationForInvalidTek(exposureKeys,
+          tekStream -> tekStream.filter(TemporaryExposureKey::hasTransmissionRiskLevel)
+              .filter(this::hasInvalidTransmissionRiskLevel),
+          validatorContext,
+          invalidTek -> "'" + invalidTek.getTransmissionRiskLevel()
+              + "' is not a valid transmissionRiskLevel value.");
+    }
+
+    private boolean checkRequiredFieldsNotMissing(List<TemporaryExposureKey> exposureKeys,
+        ConstraintValidatorContext validatorContext) {
+      // we check for DSOS and TRL. They are optional fields, but it is expected to receive either one of them.
+      return addViolationForInvalidTek(exposureKeys,
+          tekStream -> tekStream.filter(key -> !key.hasTransmissionRiskLevel())
+              .filter(key -> !key.hasDaysSinceOnsetOfSymptoms()),
+          validatorContext,
+          invalidTek -> "A key was found which is missing both 'transmissionRiskLevel' "
+              + "and 'daysSinceOnsetOfSymptoms.'");
+    }
+
+    private boolean hasInvalidDaysSinceSymptoms(TemporaryExposureKey key) {
+      int dsos = key.getDaysSinceOnsetOfSymptoms();
+      return dsos < -14 || dsos > 4000;
+    }
+
+    private boolean hasInvalidTransmissionRiskLevel(TemporaryExposureKey key) {
+      int trl = key.getTransmissionRiskLevel();
+      return trl < 1 || trl > 8;
+    }
+
+    /**
+     * Add a violation to the validation context, in case a key is found that matches the filtering function.
+     *
+     * @return True if an invalid key was found.
+     */
+    private boolean addViolationForInvalidTek(List<TemporaryExposureKey> exposureKeys,
+        Function<Stream<TemporaryExposureKey>, Stream<TemporaryExposureKey>> filterFunction,
+        ConstraintValidatorContext validatorContext,
+        Function<TemporaryExposureKey, String> messageConstructor) {
+      AtomicBoolean foundInvalid = new AtomicBoolean(true);
+      filterFunction.apply(exposureKeys.stream()).findFirst().ifPresent(invalidTek -> {
+        foundInvalid.set(false);
+        addViolation(validatorContext, messageConstructor.apply(invalidTek));
+      });
+      return foundInvalid.get();
     }
   }
 }

@@ -1,22 +1,4 @@
-/*-
- * ---license-start
- * Corona-Warn-App
- * ---
- * Copyright (C) 2020 SAP SE and all other contributors
- * ---
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- * ---license-end
- */
+
 
 package app.coronawarn.server.services.distribution.objectstore;
 
@@ -28,6 +10,7 @@ import app.coronawarn.server.services.distribution.objectstore.client.S3Object;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
+import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import org.springframework.stereotype.Component;
@@ -41,6 +24,8 @@ public class S3RetentionPolicy {
   private final ObjectStoreAccess objectStoreAccess;
   private final Api api;
   private final FailedObjectStoreOperationsCounter failedObjectStoreOperationsCounter;
+  private final String originCountry;
+  private final String euPackageName;
 
   /**
    * Creates an {@link S3RetentionPolicy} instance with the specified parameters.
@@ -50,6 +35,8 @@ public class S3RetentionPolicy {
     this.objectStoreAccess = objectStoreAccess;
     this.api = distributionServiceConfig.getApi();
     this.failedObjectStoreOperationsCounter = failedOperationsCounter;
+    this.originCountry = distributionServiceConfig.getApi().getOriginCountry();
+    this.euPackageName = distributionServiceConfig.getEuPackageName();
   }
 
   /**
@@ -58,24 +45,26 @@ public class S3RetentionPolicy {
    * @param retentionDays the number of days, that files should be retained on S3.
    */
   public void applyRetentionPolicy(int retentionDays) {
-    List<S3Object> diagnosisKeysObjects = objectStoreAccess.getObjectsWithPrefix(api.getVersionPath() + "/"
-        + api.getVersionV1() + "/"
-        + api.getDiagnosisKeysPath() + "/"
-        + api.getCountryPath() + "/"
-        + api.getCountryGermany() + "/"
-        + api.getDatePath() + "/");
-    final String regex = ".*([0-9]{4}-[0-9]{2}-[0-9]{2}).*";
-    final Pattern pattern = Pattern.compile(regex);
+    Set<String> countries = Set.of(originCountry, euPackageName);
+    countries.forEach(country -> {
+      List<S3Object> diagnosisKeysObjects = objectStoreAccess.getObjectsWithPrefix(api.getVersionPath() + "/"
+          + api.getVersionV1() + "/"
+          + api.getDiagnosisKeysPath() + "/"
+          + api.getCountryPath() + "/"
+          + country + "/"
+          + api.getDatePath() + "/");
+      final String regex = ".*([0-9]{4}-[0-9]{2}-[0-9]{2}).*";
+      final Pattern pattern = Pattern.compile(regex);
+      final LocalDate cutOffDate = TimeUtils.getUtcDate().minusDays(retentionDays);
 
-    final LocalDate cutOffDate = TimeUtils.getUtcDate().minusDays(retentionDays);
-
-    diagnosisKeysObjects.stream()
-        .filter(diagnosisKeysObject -> {
-          Matcher matcher = pattern.matcher(diagnosisKeysObject.getObjectName());
-          return matcher.matches() && LocalDate.parse(matcher.group(1), DateTimeFormatter.ISO_LOCAL_DATE)
-              .isBefore(cutOffDate);
-        })
-        .forEach(this::deleteDiagnosisKey);
+      diagnosisKeysObjects.stream()
+          .filter(diagnosisKeysObject -> {
+            Matcher matcher = pattern.matcher(diagnosisKeysObject.getObjectName());
+            return matcher.matches() && LocalDate.parse(matcher.group(1), DateTimeFormatter.ISO_LOCAL_DATE)
+                .isBefore(cutOffDate);
+          })
+          .forEach(this::deleteDiagnosisKey);
+    });
   }
 
   /**

@@ -1,36 +1,18 @@
-/*-
- * ---license-start
- * Corona-Warn-App
- * ---
- * Copyright (C) 2020 SAP SE and all other contributors
- * ---
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- * ---license-end
- */
+
 
 package app.coronawarn.server.common.persistence.domain;
 
 import static app.coronawarn.server.common.persistence.service.DiagnosisKeyServiceTestHelper.assertDiagnosisKeysEqual;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.util.Lists.list;
 import static org.mockito.Mockito.when;
 
 import app.coronawarn.server.common.persistence.repository.DiagnosisKeyRepository;
 import app.coronawarn.server.common.persistence.service.DiagnosisKeyService;
-import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
 import app.coronawarn.server.common.protocols.external.exposurenotification.ReportType;
+import java.nio.charset.StandardCharsets;
+import java.util.List;
+import java.util.Set;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.data.jdbc.DataJdbcTest;
@@ -45,7 +27,7 @@ class DiagnosisKeyServiceMockedRepositoryTest {
   static final int expRollingStartIntervalNumber = 73800;
   static final int expTransmissionRiskLevel = 1;
   static final String originCountry = "DE";
-  static final List<String> visitedCountries = Collections.singletonList("DE");
+  static final Set<String> visitedCountries = Set.of("DE");
   static final ReportType reportType = ReportType.CONFIRMED_CLINICAL_DIAGNOSIS;
   static final int daysSinceOnsetOfSymptoms = 1;
 
@@ -59,23 +41,22 @@ class DiagnosisKeyServiceMockedRepositoryTest {
   void testKeyRetrievalWithInvalidDbEntries() {
     DiagnosisKey invalidKey1 = invalidKey(1L);
     DiagnosisKey invalidKey2 = invalidKey(3L);
-    var expKeys = List.of(invalidKey1, invalidKey2);
 
-    mockInvalidKeyInDb(expKeys);
+    mockInvalidKeyInDb(list(invalidKey1, invalidKey2));
 
     List<DiagnosisKey> actualKeys = diagnosisKeyService.getDiagnosisKeys();
-    assertThat(actualKeys.isEmpty()).isTrue();
+    assertThat(actualKeys).isEmpty();
   }
 
   @Test
   void testKeyRetrievalWithInvalidAndValidDbEntries() {
     DiagnosisKey invalidKey1 = invalidKey(1L);
     DiagnosisKey invalidKey2 = invalidKey(3L);
-    var expKeys = new ArrayList<>(List.of(
+    var expKeys = list(
         validKey(2L),
         invalidKey1,
         validKey(0L),
-        invalidKey2));
+        invalidKey2);
 
     mockInvalidKeyInDb(expKeys);
 
@@ -91,14 +72,14 @@ class DiagnosisKeyServiceMockedRepositoryTest {
 
   private DiagnosisKey validKey(long expSubmissionTimestamp) {
     return new DiagnosisKey(expKeyData, expRollingStartIntervalNumber,
-        DiagnosisKey.EXPECTED_ROLLING_PERIOD, expTransmissionRiskLevel, expSubmissionTimestamp, false,
+        DiagnosisKey.MAX_ROLLING_PERIOD, expTransmissionRiskLevel, expSubmissionTimestamp, false,
         originCountry, visitedCountries, reportType, daysSinceOnsetOfSymptoms);
   }
 
   private DiagnosisKey invalidKey(long expSubmissionTimestamp) {
     byte[] expKeyData = "17--bytelongarray".getBytes(StandardCharsets.US_ASCII);
     return new DiagnosisKey(expKeyData, expRollingStartIntervalNumber,
-        DiagnosisKey.EXPECTED_ROLLING_PERIOD, expTransmissionRiskLevel, expSubmissionTimestamp, false,
+        DiagnosisKey.MAX_ROLLING_PERIOD, expTransmissionRiskLevel, expSubmissionTimestamp, false,
         originCountry, visitedCountries, reportType, daysSinceOnsetOfSymptoms);
   }
 }

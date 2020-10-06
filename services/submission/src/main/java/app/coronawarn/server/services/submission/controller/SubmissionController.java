@@ -1,38 +1,30 @@
-/*-
- * ---license-start
- * Corona-Warn-App
- * ---
- * Copyright (C) 2020 SAP SE and all other contributors
- * ---
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- * ---license-end
- */
+
 
 package app.coronawarn.server.services.submission.controller;
 
+import static java.time.ZoneOffset.UTC;
+
 import app.coronawarn.server.common.persistence.domain.DiagnosisKey;
 import app.coronawarn.server.common.persistence.service.DiagnosisKeyService;
-import app.coronawarn.server.common.protocols.external.exposurenotification.ReportType;
 import app.coronawarn.server.common.protocols.external.exposurenotification.TemporaryExposureKey;
 import app.coronawarn.server.common.protocols.internal.SubmissionPayload;
 import app.coronawarn.server.services.submission.config.SubmissionServiceConfig;
 import app.coronawarn.server.services.submission.monitoring.SubmissionMonitor;
+import app.coronawarn.server.services.submission.normalization.SubmissionKeyNormalizer;
 import app.coronawarn.server.services.submission.validation.ValidSubmissionPayload;
 import app.coronawarn.server.services.submission.verification.TanVerifier;
 import io.micrometer.core.annotation.Timed;
 import java.security.SecureRandom;
+import java.time.Instant;
+import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Comparator;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -66,16 +58,22 @@ public class SubmissionController {
   private final FakeDelayManager fakeDelayManager;
   private final SubmissionServiceConfig submissionServiceConfig;
 
-  SubmissionController(
-      DiagnosisKeyService diagnosisKeyService, TanVerifier tanVerifier, FakeDelayManager fakeDelayManager,
-      SubmissionServiceConfig submissionServiceConfig, SubmissionMonitor submissionMonitor) {
+  SubmissionController(DiagnosisKeyService diagnosisKeyService, TanVerifier tanVerifier,
+      FakeDelayManager fakeDelayManager, SubmissionServiceConfig submissionServiceConfig,
+      SubmissionMonitor submissionMonitor) {
     this.diagnosisKeyService = diagnosisKeyService;
     this.tanVerifier = tanVerifier;
     this.submissionMonitor = submissionMonitor;
     this.fakeDelayManager = fakeDelayManager;
     this.submissionServiceConfig = submissionServiceConfig;
-    retentionDays = submissionServiceConfig.getRetentionDays();
-    randomKeyPaddingMultiplier = submissionServiceConfig.getRandomKeyPaddingMultiplier();
+    this.retentionDays = submissionServiceConfig.getRetentionDays();
+    this.randomKeyPaddingMultiplier = submissionServiceConfig.getRandomKeyPaddingMultiplier();
+  }
+
+  private static byte[] generateRandomKeyData() {
+    byte[] randomKeyData = new byte[16];
+    new SecureRandom().nextBytes(randomKeyData);
+    return randomKeyData;
   }
 
   /**
@@ -96,7 +94,7 @@ public class SubmissionController {
   }
 
   private DeferredResult<ResponseEntity<Void>> buildRealDeferredResult(SubmissionPayload submissionPayload,
-                                                                       String tan) {
+      String tan) {
     DeferredResult<ResponseEntity<Void>> deferredResult = new DeferredResult<>();
 
     StopWatch stopWatch = new StopWatch();
@@ -106,7 +104,9 @@ public class SubmissionController {
         submissionMonitor.incrementInvalidTanRequestCounter();
         deferredResult.setResult(ResponseEntity.status(HttpStatus.FORBIDDEN).build());
       } else {
-        List<DiagnosisKey> diagnosisKeys = extractValidDiagnosisKeysFromPayload(submissionPayload);
+        List<DiagnosisKey> diagnosisKeys = extractValidDiagnosisKeysFromPayload(
+            enhanceWithDefaultValuesIfMissing(submissionPayload));
+        checkDiagnosisKeysStructure(diagnosisKeys);
         diagnosisKeyService.saveDiagnosisKeys(padDiagnosisKeys(diagnosisKeys));
 
         deferredResult.setResult(ResponseEntity.ok().build());
@@ -117,35 +117,87 @@ public class SubmissionController {
       stopWatch.stop();
       fakeDelayManager.updateFakeRequestDelay(stopWatch.getTotalTimeMillis());
     }
-
     return deferredResult;
   }
 
   private List<DiagnosisKey> extractValidDiagnosisKeysFromPayload(SubmissionPayload submissionPayload) {
     List<TemporaryExposureKey> protoBufferKeys = submissionPayload.getKeysList();
-    List<DiagnosisKey> diagnosisKeys = new ArrayList<>();
 
-    for (TemporaryExposureKey protoBufferKey : protoBufferKeys) {
-      String originCountry = StringUtils.defaultIfBlank(submissionPayload.getOrigin(),
-          submissionServiceConfig.getDefaultOriginCountry());
-      // The protobuf will default the enum to LAB_VERIFIED, since its index is 0
+    List<DiagnosisKey> diagnosisKeys = protoBufferKeys.stream()
+        .map(protoBufferKey -> DiagnosisKey.builder()
+            .fromTemporaryExposureKeyAndMetadata(
+                protoBufferKey,
+                submissionPayload.getVisitedCountriesList(),
+                submissionPayload.getOrigin(),
+                submissionPayload.getConsentToFederation())
+            .withFieldNormalization(new SubmissionKeyNormalizer(submissionServiceConfig))
+            .build()
+        )
+        .filter(diagnosisKey -> diagnosisKey.isYoungerThanRetentionThreshold(retentionDays))
+        .collect(Collectors.toList());
 
-      DiagnosisKey diagnosisKey = DiagnosisKey.builder()
-          .fromTemporaryExposureKey(protoBufferKey)
-          .withVisitedCountries(submissionPayload.getVisitedCountriesList())
-          .withCountryCode(originCountry)
-          .withReportType(submissionPayload.getReportType())
-          .withConsentToFederation(submissionPayload.getConsentToFederation())
-          .build();
+    if (protoBufferKeys.size() > diagnosisKeys.size()) {
+      logger.warn("Not persisting {} diagnosis key(s), as it is outdated beyond retention threshold.",
+          protoBufferKeys.size() - diagnosisKeys.size());
+    }
+    return diagnosisKeys;
+  }
 
-      if (diagnosisKey.isYoungerThanRetentionThreshold(retentionDays)) {
-        diagnosisKeys.add(diagnosisKey);
-      } else {
-        logger.info("Not persisting a diagnosis key, as it is outdated beyond retention threshold.");
-      }
+  /**
+   * Checks if a key with transmission risk level 6 is missing in the submitted diagnosis keys. If there is one, it
+   * should not have a rolling start interval number of today midnight. In case of violations, these are logged.
+   *
+   * <p>The check is only done for the key with transmission risk level 6, since the number of keys to be submitted
+   * depends on the time how long the app is installed on the phone. The key with transmission risk level 6 is the one
+   * from the day before the submission and should always be present.
+   *
+   * @param diagnosisKeys The diagnosis keys to check.
+   */
+  private void checkDiagnosisKeysStructure(List<DiagnosisKey> diagnosisKeys) {
+    diagnosisKeys.sort(Comparator.comparing(DiagnosisKey::getRollingStartIntervalNumber));
+    String keysString = Arrays.toString(diagnosisKeys.toArray());
+    Predicate<DiagnosisKey> hasRiskLevel6 = diagnosisKey -> diagnosisKey.getTransmissionRiskLevel() == 6;
+
+    if (diagnosisKeys.stream().noneMatch(hasRiskLevel6)) {
+      logger.warn("Submission payload was sent with missing key having transmission risk level 6. {}", keysString);
+    } else {
+      logger.debug("Submission payload was sent with key having transmission risk level 6. {}", keysString);
     }
 
-    return diagnosisKeys;
+    diagnosisKeys.stream().filter(hasRiskLevel6).findFirst().ifPresent(diagnosisKey -> {
+      long todayMidnightUtc = LocalDate
+          .ofInstant(Instant.now(), UTC)
+          .atStartOfDay()
+          .toEpochSecond(UTC) / (60 * 10);
+      if (diagnosisKey.getRollingStartIntervalNumber() == todayMidnightUtc) {
+        logger.warn("Submission payload was sent with a key having transmission risk level 6"
+            + " and rolling start interval number of today midnight. {}", keysString);
+      }
+    });
+  }
+
+  private SubmissionPayload enhanceWithDefaultValuesIfMissing(SubmissionPayload submissionPayload) {
+    String originCountry = defaultIfEmptyOriginCountry(submissionPayload.getOrigin());
+    List<String> visitedCountries = extendVisitedCountriesWithOriginCountry(
+        submissionPayload.getVisitedCountriesList());
+
+    return SubmissionPayload.newBuilder()
+        .addAllKeys(submissionPayload.getKeysList())
+        .setRequestPadding(submissionPayload.getRequestPadding())
+        .addAllVisitedCountries(visitedCountries)
+        .setOrigin(originCountry)
+        .setConsentToFederation(submissionPayload.getConsentToFederation())
+        .build();
+  }
+
+  private String defaultIfEmptyOriginCountry(String originCountry) {
+    return StringUtils.defaultIfBlank(originCountry, submissionServiceConfig.getDefaultOriginCountry());
+  }
+
+  private List<String> extendVisitedCountriesWithOriginCountry(List<String> visitedCountries) {
+    Set<String> visitedCountriesSet = new HashSet<>(visitedCountries);
+    visitedCountriesSet.add(submissionServiceConfig.getDefaultOriginCountry());
+    return new ArrayList<>(visitedCountriesSet);
   }
 
   private List<DiagnosisKey> padDiagnosisKeys(List<DiagnosisKey> diagnosisKeys) {
@@ -162,15 +214,10 @@ public class SubmissionController {
               .withCountryCode(diagnosisKey.getOriginCountry())
               .withReportType(diagnosisKey.getReportType())
               .withConsentToFederation(diagnosisKey.isConsentToFederation())
+              .withDaysSinceOnsetOfSymptoms(diagnosisKey.getDaysSinceOnsetOfSymptoms())
               .build())
           .forEach(paddedDiagnosisKeys::add);
     });
     return paddedDiagnosisKeys;
-  }
-
-  private static byte[] generateRandomKeyData() {
-    byte[] randomKeyData = new byte[16];
-    new SecureRandom().nextBytes(randomKeyData);
-    return randomKeyData;
   }
 }

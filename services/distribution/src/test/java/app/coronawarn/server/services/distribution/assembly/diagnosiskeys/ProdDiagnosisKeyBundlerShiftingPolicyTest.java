@@ -1,22 +1,4 @@
-/*-
- * ---license-start
- * Corona-Warn-App
- * ---
- * Copyright (C) 2020 SAP SE and all other contributors
- * ---
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- * ---license-end
- */
+
 
 package app.coronawarn.server.services.distribution.assembly.diagnosiskeys;
 
@@ -24,6 +6,7 @@ import static app.coronawarn.server.services.distribution.common.Helpers.buildDi
 import static org.assertj.core.api.Assertions.assertThat;
 
 import app.coronawarn.server.common.persistence.domain.DiagnosisKey;
+import app.coronawarn.server.common.persistence.service.common.KeySharingPoliciesChecker;
 import app.coronawarn.server.services.distribution.config.DistributionServiceConfig;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -39,7 +22,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 @EnableConfigurationProperties(value = DistributionServiceConfig.class)
 @ExtendWith(SpringExtension.class)
-@ContextConfiguration(classes = {DistributionServiceConfig.class, ProdDiagnosisKeyBundler.class},
+@ContextConfiguration(classes = {DistributionServiceConfig.class, KeySharingPoliciesChecker.class, ProdDiagnosisKeyBundler.class},
     initializers = ConfigFileApplicationContextInitializer.class)
 class ProdDiagnosisKeyBundlerShiftingPolicyTest {
 
@@ -53,14 +36,14 @@ class ProdDiagnosisKeyBundlerShiftingPolicyTest {
   void testDoesNotShiftIfPackageSizeGreaterThanThreshold() {
     List<DiagnosisKey> diagnosisKeys = buildDiagnosisKeys(6, 50L, 6);
     bundler.setDiagnosisKeys(diagnosisKeys, LocalDateTime.of(1970, 1, 5, 0, 0));
-    assertThat(bundler.getDiagnosisKeysForHour(LocalDateTime.of(1970, 1, 3, 2, 0, 0))).hasSize(6);
+    assertThat(bundler.getDiagnosisKeysForHour(LocalDateTime.of(1970, 1, 3, 2, 0, 0), "DE")).hasSize(6);
   }
 
   @Test
   void testDoesNotShiftIfPackageSizeEqualsThreshold() {
     List<DiagnosisKey> diagnosisKeys = buildDiagnosisKeys(6, 50L, 5);
     bundler.setDiagnosisKeys(diagnosisKeys, LocalDateTime.of(1970, 1, 5, 0, 0));
-    assertThat(bundler.getDiagnosisKeysForHour(LocalDateTime.of(1970, 1, 3, 2, 0, 0))).hasSize(5);
+    assertThat(bundler.getDiagnosisKeysForHour(LocalDateTime.of(1970, 1, 3, 2, 0, 0), "DE")).hasSize(5);
   }
 
   @Test
@@ -69,8 +52,8 @@ class ProdDiagnosisKeyBundlerShiftingPolicyTest {
         .concat(buildDiagnosisKeys(6, 50L, 4).stream(), buildDiagnosisKeys(6, 51L, 1).stream())
         .collect(Collectors.toList());
     bundler.setDiagnosisKeys(diagnosisKeys, LocalDateTime.of(1970, 1, 5, 0, 0));
-    assertThat(bundler.getDiagnosisKeysForHour(LocalDateTime.of(1970, 1, 3, 2, 0, 0))).isEmpty();
-    assertThat(bundler.getDiagnosisKeysForHour(LocalDateTime.of(1970, 1, 3, 3, 0, 0))).hasSize(5);
+    assertThat(bundler.getDiagnosisKeysForHour(LocalDateTime.of(1970, 1, 3, 2, 0, 0), "DE")).isEmpty();
+    assertThat(bundler.getDiagnosisKeysForHour(LocalDateTime.of(1970, 1, 3, 3, 0, 0), "DE")).hasSize(5);
   }
 
   @Test
@@ -80,10 +63,10 @@ class ProdDiagnosisKeyBundlerShiftingPolicyTest {
         .flatMap(List::stream)
         .collect(Collectors.toList());
     bundler.setDiagnosisKeys(diagnosisKeys, LocalDateTime.of(1970, 1, 5, 0, 0));
-    assertThat(bundler.getDiagnosisKeysForHour(LocalDateTime.of(1970, 1, 3, 2, 0, 0))).hasSize(5);
-    assertThat(bundler.getDiagnosisKeysForHour(LocalDateTime.of(1970, 1, 3, 3, 0, 0))).isEmpty();
-    assertThat(bundler.getDiagnosisKeysForHour(LocalDateTime.of(1970, 1, 3, 4, 0, 0))).hasSize(6);
-    assertThat(bundler.getDiagnosisKeysForHour(LocalDateTime.of(1970, 1, 3, 5, 0, 0))).isEmpty();
+    assertThat(bundler.getDiagnosisKeysForHour(LocalDateTime.of(1970, 1, 3, 2, 0, 0), "DE")).hasSize(5);
+    assertThat(bundler.getDiagnosisKeysForHour(LocalDateTime.of(1970, 1, 3, 3, 0, 0), "DE")).isEmpty();
+    assertThat(bundler.getDiagnosisKeysForHour(LocalDateTime.of(1970, 1, 3, 4, 0, 0), "DE")).hasSize(6);
+    assertThat(bundler.getDiagnosisKeysForHour(LocalDateTime.of(1970, 1, 3, 5, 0, 0), "DE")).isEmpty();
   }
 
   @Test
@@ -92,8 +75,8 @@ class ProdDiagnosisKeyBundlerShiftingPolicyTest {
         .concat(buildDiagnosisKeys(6, 50L, 1).stream(), buildDiagnosisKeys(6, 51L, 5).stream())
         .collect(Collectors.toList());
     bundler.setDiagnosisKeys(diagnosisKeys, LocalDateTime.of(1970, 1, 5, 0, 0));
-    assertThat(bundler.getDiagnosisKeysForHour(LocalDateTime.of(1970, 1, 3, 2, 0, 0))).isEmpty();
-    assertThat(bundler.getDiagnosisKeysForHour(LocalDateTime.of(1970, 1, 3, 3, 0, 0))).hasSize(6);
+    assertThat(bundler.getDiagnosisKeysForHour(LocalDateTime.of(1970, 1, 3, 2, 0, 0), "DE")).isEmpty();
+    assertThat(bundler.getDiagnosisKeysForHour(LocalDateTime.of(1970, 1, 3, 3, 0, 0), "DE")).hasSize(6);
   }
 
   @Test
@@ -105,12 +88,12 @@ class ProdDiagnosisKeyBundlerShiftingPolicyTest {
         .flatMap(List::stream)
         .collect(Collectors.toList());
     bundler.setDiagnosisKeys(diagnosisKeys, LocalDateTime.of(1970, 1, 5, 0, 0));
-    assertThat(bundler.getDiagnosisKeysForHour(LocalDateTime.of(1970, 1, 3, 2, 0, 0))).isEmpty();
-    assertThat(bundler.getDiagnosisKeysForHour(LocalDateTime.of(1970, 1, 3, 3, 0, 0))).isEmpty();
-    assertThat(bundler.getDiagnosisKeysForHour(LocalDateTime.of(1970, 1, 3, 4, 0, 0))).isEmpty();
-    assertThat(bundler.getDiagnosisKeysForHour(LocalDateTime.of(1970, 1, 3, 5, 0, 0))).isEmpty();
-    assertThat(bundler.getDiagnosisKeysForHour(LocalDateTime.of(1970, 1, 3, 6, 0, 0))).isEmpty();
-    assertThat(bundler.getDiagnosisKeysForHour(LocalDateTime.of(1970, 1, 3, 7, 0, 0))).isEmpty();
-    assertThat(bundler.getDiagnosisKeysForHour(LocalDateTime.of(1970, 1, 3, 8, 0, 0))).hasSize(5);
+    assertThat(bundler.getDiagnosisKeysForHour(LocalDateTime.of(1970, 1, 3, 2, 0, 0), "DE")).isEmpty();
+    assertThat(bundler.getDiagnosisKeysForHour(LocalDateTime.of(1970, 1, 3, 3, 0, 0), "DE")).isEmpty();
+    assertThat(bundler.getDiagnosisKeysForHour(LocalDateTime.of(1970, 1, 3, 4, 0, 0), "DE")).isEmpty();
+    assertThat(bundler.getDiagnosisKeysForHour(LocalDateTime.of(1970, 1, 3, 5, 0, 0), "DE")).isEmpty();
+    assertThat(bundler.getDiagnosisKeysForHour(LocalDateTime.of(1970, 1, 3, 6, 0, 0), "DE")).isEmpty();
+    assertThat(bundler.getDiagnosisKeysForHour(LocalDateTime.of(1970, 1, 3, 7, 0, 0), "DE")).isEmpty();
+    assertThat(bundler.getDiagnosisKeysForHour(LocalDateTime.of(1970, 1, 3, 8, 0, 0), "DE")).hasSize(5);
   }
 }

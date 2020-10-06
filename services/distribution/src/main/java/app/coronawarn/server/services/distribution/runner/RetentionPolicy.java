@@ -1,22 +1,4 @@
-/*-
- * ---license-start
- * Corona-Warn-App
- * ---
- * Copyright (C) 2020 SAP SE and all other contributors
- * ---
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- * ---license-end
- */
+
 
 package app.coronawarn.server.services.distribution.runner;
 
@@ -48,8 +30,6 @@ public class RetentionPolicy implements ApplicationRunner {
 
   private final Integer retentionDays;
 
-  private final String distributionCountry;
-
   private final S3RetentionPolicy s3RetentionPolicy;
 
 
@@ -64,13 +44,12 @@ public class RetentionPolicy implements ApplicationRunner {
     this.applicationContext = applicationContext;
     this.retentionDays = distributionServiceConfig.getRetentionDays();
     this.s3RetentionPolicy = s3RetentionPolicy;
-    this.distributionCountry = distributionServiceConfig.getApi().getDistributionCountry();
   }
 
   @Override
   public void run(ApplicationArguments args) {
     try {
-      diagnosisKeyService.applyRetentionPolicy(retentionDays, distributionCountry);
+      diagnosisKeyService.applyRetentionPolicy(retentionDays);
       s3RetentionPolicy.applyRetentionPolicy(retentionDays);
     } catch (Exception e) {
       logger.error("Application of retention policy failed.", e);

@@ -1,30 +1,13 @@
-/*-
- * ---license-start
- * Corona-Warn-App
- * ---
- * Copyright (C) 2020 SAP SE and all other contributors
- * ---
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- * ---license-end
- */
+
 
 package app.coronawarn.server.services.submission.config;
 
 import java.io.File;
-import java.util.Arrays;
-import java.util.List;
+import java.util.Map;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Component;
@@ -38,7 +21,6 @@ public class SubmissionServiceConfig {
 
   private static final String PATH_REGEX = "^[/]?[a-zA-Z0-9_]+[/[a-zA-Z0-9_]+]*$";
   private static final String URL_WITH_PORT_REGEX = "^http[s]?://[a-z0-9-]+(\\.[a-z0-9-]+)*(:[0-9]{2,6})?$";
-  private static final String ALLOWED_COUNTRY_CODES_REGEX = "^([a-zA-Z]{2}(\\,*[a-zA-Z]{2})*)$";
 
   // Exponential moving average of the last N real request durations (in ms), where
   // N = fakeDelayMovingAverageSamples.
@@ -62,6 +44,10 @@ public class SubmissionServiceConfig {
   private Verification verification;
   private Monitoring monitoring;
   private Client client;
+  @Min(0)
+  @Max(144)
+  private Integer maxRollingPeriod;
+
 
   public Long getInitialFakeDelayMilliseconds() {
     return initialFakeDelayMilliseconds;
@@ -111,6 +97,14 @@ public class SubmissionServiceConfig {
     this.maximumRequestSize = maximumRequestSize;
   }
 
+  public Integer getMaxRollingPeriod() {
+    return maxRollingPeriod;
+  }
+
+  public void setMaxRollingPeriod(Integer maxRollingPeriod) {
+    this.maxRollingPeriod = maxRollingPeriod;
+  }
+
   public Integer getMaxNumberOfKeys() {
     return payload.getMaxNumberOfKeys();
   }
@@ -119,71 +113,46 @@ public class SubmissionServiceConfig {
     return payload.defaultOriginCountry;
   }
 
-  /**
-   * Check if country is whitelisted.
-   *
-   * @return False if the given string is null, empty or is not part
-   *         of the allowed list defined in the <code>application.yml</code>.
-   */
-  public boolean isCountryAllowed(String country) {
-    return payload.isCountryCodeAllowed(country);
+  public String[] getSupportedCountries() {
+    return payload.getSupportedCountries();
   }
 
-  /**
-   * See also <code>isCountryAllowed</code>.
-   */
-  public boolean areAllCountriesAllowed(List<String> countries) {
-    for (String country : countries) {
-      if (!isCountryAllowed(country)) {
-        return false;
-      }
-    }
-    return true;
+  public void setSupportedCountries(String[] supportedCountries) {
+    payload.setSupportedCountries(supportedCountries);
   }
 
   public void setPayload(Payload payload) {
     this.payload = payload;
   }
 
-  private static class Payload {
+  public TekFieldDerivations getTekFieldDerivations() {
+    return payload.getTekFieldDerivations();
+  }
+
+  public static class Payload {
 
     @Min(7)
-    @Max(28)
+    @Max(100)
     private Integer maxNumberOfKeys;
-
-    @Pattern(regexp = ALLOWED_COUNTRY_CODES_REGEX)
-    private String allowedCountries;
-
+    @NotEmpty
+    private String[] supportedCountries;
     private String defaultOriginCountry;
+    private TekFieldDerivations tekFieldDerivations;
 
     public Integer getMaxNumberOfKeys() {
       return maxNumberOfKeys;
-    }
-
-    public boolean isCountryCodeAllowed(String country) {
-      return country != null && !country.isEmpty()
-                             && containsInLowerCase(Arrays.asList(getAllowedCountries()), country);
     }
 
     public void setMaxNumberOfKeys(Integer maxNumberOfKeys) {
       this.maxNumberOfKeys = maxNumberOfKeys;
     }
 
-    public String[] getAllowedCountries() {
-      return allowedCountries.split(",");
+    public String[] getSupportedCountries() {
+      return supportedCountries;
     }
 
-    public void setAllowedCountries(String allowedCountries) {
-      this.allowedCountries = allowedCountries;
-    }
-
-    private boolean containsInLowerCase(List<String> countryList, String country) {
-      for (String acceptedCountry : countryList) {
-        if (acceptedCountry.equalsIgnoreCase(country)) {
-          return true;
-        }
-      }
-      return false;
+    public void setSupportedCountries(String[] supportedCountries) {
+      this.supportedCountries = supportedCountries;
     }
 
     public String getDefaultOriginCountry() {
@@ -192,6 +161,14 @@ public class SubmissionServiceConfig {
 
     public void setDefaultOriginCountry(String defaultOriginCountry) {
       this.defaultOriginCountry = defaultOriginCountry;
+    }
+
+    public TekFieldDerivations getTekFieldDerivations() {
+      return tekFieldDerivations;
+    }
+
+    public void setTekFieldDerivations(TekFieldDerivations tekFieldDerivations) {
+      this.tekFieldDerivations = tekFieldDerivations;
     }
   }
 
@@ -330,6 +307,46 @@ public class SubmissionServiceConfig {
       public void setTrustStorePassword(String trustStorePassword) {
         this.trustStorePassword = trustStorePassword;
       }
+    }
+  }
+
+  /**
+   * Wrapper over properties defined in the application.yaml which map DSOS to TRL
+   * and vice-versa. These maps are used to derive each property from the other.
+   */
+  public static class TekFieldDerivations {
+    @NotNull
+    @NotEmpty
+    private Map<Integer, Integer> dsosFromTrl;
+
+    @NotNull
+    @NotEmpty
+    private Map<Integer, Integer> trlFromDsos;
+
+    public Map<Integer, Integer> getDsosFromTrl() {
+      return dsosFromTrl;
+    }
+
+    public void setDsosFromTrl(Map<Integer, Integer> dsosFromTrl) {
+      this.dsosFromTrl = dsosFromTrl;
+    }
+
+    public Map<Integer, Integer> getTrlFromDsos() {
+      return trlFromDsos;
+    }
+
+    public void setTrlFromDsos(Map<Integer, Integer> trlFromDsos) {
+      this.trlFromDsos = trlFromDsos;
+    }
+
+    public Integer deriveDsosFromTrl(Integer trlValue) {
+      // the derivation logic is subject to refinement
+      return dsosFromTrl.getOrDefault(trlValue, 0);
+    }
+
+    public Integer deriveTrlFromDsos(Integer dsosValue) {
+      // the derivation logic is subject to refinement
+      return trlFromDsos.getOrDefault(dsosValue, 1);
     }
   }
 }

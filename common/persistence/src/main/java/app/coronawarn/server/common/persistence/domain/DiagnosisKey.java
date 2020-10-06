@@ -1,36 +1,18 @@
-/*-
- * ---license-start
- * Corona-Warn-App
- * ---
- * Copyright (C) 2020 SAP SE and all other contributors
- * ---
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- * ---license-end
- */
+
 
 package app.coronawarn.server.common.persistence.domain;
 
 import static java.time.ZoneOffset.UTC;
 
 import app.coronawarn.server.common.persistence.domain.DiagnosisKeyBuilders.Builder;
+import app.coronawarn.server.common.persistence.domain.validation.ValidCountries;
 import app.coronawarn.server.common.persistence.domain.validation.ValidRollingStartIntervalNumber;
 import app.coronawarn.server.common.persistence.domain.validation.ValidSubmissionTimestamp;
 import app.coronawarn.server.common.protocols.external.exposurenotification.ReportType;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
+import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
 import javax.validation.ConstraintViolation;
@@ -45,12 +27,15 @@ import org.springframework.data.annotation.Id;
  */
 public class DiagnosisKey {
 
+  public static final long ROLLING_PERIOD_MINUTES_INTERVAL = 10;
+
   /**
    * According to "Setting Up an Exposure Notification Server" by Apple, exposure notification servers are expected to
    * reject any diagnosis keys that do not have a rolling period of a certain fixed value. See
    * https://developer.apple.com/documentation/exposurenotification/setting_up_an_exposure_notification_server
    */
-  public static final int EXPECTED_ROLLING_PERIOD = 144;
+  public static final int MIN_ROLLING_PERIOD = 0;
+  public static final int MAX_ROLLING_PERIOD = 144;
 
   private static final Validator VALIDATOR = Validation.buildDefaultValidatorFactory().getValidator();
 
@@ -61,8 +46,8 @@ public class DiagnosisKey {
   @ValidRollingStartIntervalNumber
   private final int rollingStartIntervalNumber;
 
-  @Range(min = EXPECTED_ROLLING_PERIOD, max = EXPECTED_ROLLING_PERIOD,
-      message = "Rolling period must be " + EXPECTED_ROLLING_PERIOD + ".")
+  @Range(min = MIN_ROLLING_PERIOD, max = MAX_ROLLING_PERIOD,
+      message = "Rolling period must be between " + MIN_ROLLING_PERIOD + " and " + MAX_ROLLING_PERIOD + ".")
   private final int rollingPeriod;
 
   @Range(min = 0, max = 8, message = "Risk level must be between 0 and 8.")
@@ -73,13 +58,15 @@ public class DiagnosisKey {
 
   private final boolean consentToFederation;
 
-  @Size(max = 2)
+  @Size(max = 2, message = "Origin country code must have length of 2.")
   private final String originCountry;
 
-  private final List<String> visitedCountries;
+  @ValidCountries
+  private final Set<String> visitedCountries;
 
   private final ReportType reportType;
 
+  @Range(min = -14, max = 4000, message = "Days since onset of symptoms value must be between -14 and 4000.")
   private final int daysSinceOnsetOfSymptoms;
 
   /**
@@ -87,8 +74,8 @@ public class DiagnosisKey {
    */
   DiagnosisKey(byte[] keyData, int rollingStartIntervalNumber, int rollingPeriod,
       int transmissionRiskLevel, long submissionTimestamp,
-      boolean consentToFederation, @Size String originCountry, List<String> visitedCountries,
-      ReportType reportType, int daysSinceOnsetOfSymptoms) {
+      boolean consentToFederation, @Size String originCountry, Set<String> visitedCountries,
+      ReportType reportType, Integer daysSinceOnsetOfSymptoms) {
     this.keyData = keyData;
     this.rollingStartIntervalNumber = rollingStartIntervalNumber;
     this.rollingPeriod = rollingPeriod;
@@ -96,9 +83,10 @@ public class DiagnosisKey {
     this.submissionTimestamp = submissionTimestamp;
     this.consentToFederation = consentToFederation;
     this.originCountry = originCountry;
-    this.visitedCountries = visitedCountries == null ? Collections.emptyList() : visitedCountries;
+    this.visitedCountries = visitedCountries == null ? new HashSet<>() : visitedCountries;
     this.reportType = reportType;
-    this.daysSinceOnsetOfSymptoms = daysSinceOnsetOfSymptoms;
+    // Workaround to avoid exception on loading old DiagnosisKeys after migration to EFGS
+    this.daysSinceOnsetOfSymptoms = daysSinceOnsetOfSymptoms == null ? 0 : daysSinceOnsetOfSymptoms;
   }
 
   /**
@@ -155,7 +143,7 @@ public class DiagnosisKey {
     return originCountry;
   }
 
-  public List<String> getVisitedCountries() {
+  public Set<String> getVisitedCountries() {
     return visitedCountries;
   }
 
@@ -230,5 +218,21 @@ public class DiagnosisKey {
             visitedCountries, reportType, daysSinceOnsetOfSymptoms);
     result = 31 * result + Arrays.hashCode(keyData);
     return result;
+  }
+
+  @Override
+  public String toString() {
+    return "DiagnosisKey{"
+        + "keyData=HIDDEN"
+        + ", rollingStartIntervalNumber=" + rollingStartIntervalNumber
+        + ", rollingPeriod=" + rollingPeriod
+        + ", transmissionRiskLevel=" + transmissionRiskLevel
+        + ", submissionTimestamp=" + submissionTimestamp
+        + ", consentToFederation=" + consentToFederation
+        + ", originCountry=" + originCountry
+        + ", visitedCountries=" + visitedCountries
+        + ", reportType=" + reportType
+        + ", daysSinceOnsetOfSymptoms=" + daysSinceOnsetOfSymptoms
+        + '}';
   }
 }
