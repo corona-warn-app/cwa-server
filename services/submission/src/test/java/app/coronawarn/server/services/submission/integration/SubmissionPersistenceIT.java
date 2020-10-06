@@ -2,6 +2,7 @@ package app.coronawarn.server.services.submission.integration;
 
 import static app.coronawarn.server.services.submission.SubmissionPayloadGenerator.buildTemporaryExposureKeys;
 import static app.coronawarn.server.services.submission.assertions.SubmissionAssertions.assertElementsCorrespondToEachOther;
+import static java.util.Collections.emptyList;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
@@ -160,8 +161,23 @@ class SubmissionPersistenceIT {
         Arguments.of(null, "IT", true),
         Arguments.of(null, "IT", false),
         Arguments.of(null, "IT", null),
-        Arguments.of(List.of("DE"), null, null),
-        Arguments.of(List.of("DE"), null, true),
+        Arguments.of(emptyList(), "IT", null),
+        Arguments.of(emptyList(), "", null),
+        Arguments.of(emptyList(), "", null),
+        Arguments.of(emptyList(), "", true),
+        Arguments.of(emptyList(), "", false),
+        Arguments.of(emptyList(), "DE", null),
+        Arguments.of(emptyList(), "DE", true),
+        Arguments.of(emptyList(), "DE", false),
+        Arguments.of(emptyList(), "IT", null),
+        Arguments.of(emptyList(), "IT", true),
+        Arguments.of(emptyList(), "IT", false),
+        Arguments.of(List.of("DE"), "", null),
+        Arguments.of(List.of("DE"), "", true),
+        Arguments.of(List.of("DE"), "", false),
+        Arguments.of(List.of("IT"), "", null),
+        Arguments.of(List.of("IT"), "", true),
+        Arguments.of(List.of("IT"), "", false),
         Arguments.of(List.of("DE"), null, false),
         Arguments.of(List.of("DE"), "DE", true),
         Arguments.of(List.of("DE"), "DE", false),
@@ -240,12 +256,6 @@ class SubmissionPersistenceIT {
         Arguments.of(List.of(""), "IT", null),
         Arguments.of(List.of(""), "IT", true),
         Arguments.of(List.of(""), "IT", false),
-        Arguments.of(List.of("DE"), "", null),
-        Arguments.of(List.of("DE"), "", true),
-        Arguments.of(List.of("DE"), "", false),
-        Arguments.of(List.of("IT"), "", null),
-        Arguments.of(List.of("IT"), "", true),
-        Arguments.of(List.of("IT"), "", false),
         Arguments.of(null, "RU", null),
         Arguments.of(null, "RU", true),
         Arguments.of(null, "RU", false),
