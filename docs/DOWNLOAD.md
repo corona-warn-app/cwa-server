@@ -43,7 +43,7 @@ allowed-report-types | CONFIRMED_TEST | Accepted ReportTypes.
 max-dsos             | 4000           | Accepted upper bound for Days Since Onset of Symptoms.
 min-rolling-period   | 0              | Accepted lower bound for Rolling Period.
 max-rolling-period   | 144            | Accepted upper bound for Rolling Period.
-min-trl              | 1              | Accepted lower bound for Transmission Risk Level.
+min-trl              | 0              | Accepted lower bound for Transmission Risk Level.
 max-trl              | 8              | Accepted lower bound for Transmission Risk Level.
 
 ### Validation Checks
@@ -51,7 +51,7 @@ The checks performed on downloaded DKs are as follows:
 * Key Data has correct length.
 * Days Since Onset of Symptoms is set and between upper and lower bound.
 * ReportType is allowed.
-* Starting Intervall Number is set and valid.
+* Starting Interval Number is set and valid.
 * Transmission Risk Level is set and between upper and lower bound.
 * Rolling Period is set and between upper and lower bound.
 
