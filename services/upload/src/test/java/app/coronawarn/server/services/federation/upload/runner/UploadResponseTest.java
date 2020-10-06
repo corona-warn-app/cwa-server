@@ -28,6 +28,7 @@ import app.coronawarn.server.services.federation.upload.utils.MockData;
 import com.google.protobuf.ByteString;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -68,13 +69,17 @@ class UploadResponseTest {
     when(uploadServiceConfig.getMinBatchKeyCount()).thenReturn(2);
   }
 
+  private void returnFromUpload(BatchUploadResponse response) {
+    when(mockUploadClient.postBatchUpload(any())).thenReturn(Optional.of(response));
+  }
+
   @Test
   void check201UploadResponseStatus() throws Exception {
     var testKey1 = MockData.generateRandomUploadKey(true);
     var testKey2 = MockData.generateRandomUploadKey(true);
 
     when(mockDiagnosisKeyLoader.loadDiagnosisKeys()).thenReturn(List.of(testKey1, testKey2));
-    when(mockUploadClient.postBatchUpload(any())).thenReturn(createFake201Response());
+    returnFromUpload(createFake201Response());
     upload.run(null);
     verify(mockUploadKeyRepository, times(1))
         .updateBatchTag(eq(testKey1.getKeyData()), any());
@@ -88,7 +93,7 @@ class UploadResponseTest {
     var testKey2 = MockData.generateRandomUploadKey(true);
 
     when(mockDiagnosisKeyLoader.loadDiagnosisKeys()).thenReturn(List.of(testKey1, testKey2));
-    when(mockUploadClient.postBatchUpload(any())).thenReturn(createFake409Response());
+    returnFromUpload(createFake409Response());
     upload.run(null);
     verify(mockUploadKeyRepository, times(1))
         .updateBatchTag(eq(testKey1.getKeyData()), any());
@@ -103,7 +108,7 @@ class UploadResponseTest {
 
     when(uploadServiceConfig.getMinBatchKeyCount()).thenReturn(2);
     when(mockDiagnosisKeyLoader.loadDiagnosisKeys()).thenReturn(List.of(testKey1, testKey2));
-    when(mockUploadClient.postBatchUpload(any())).thenReturn(createFake500Response());
+    returnFromUpload(createFake500Response());
     upload.run(null);
     verify(mockUploadKeyRepository, never())
         .updateBatchTag(eq(testKey1.getKeyData()), any());
@@ -118,7 +123,7 @@ class UploadResponseTest {
 
     when(uploadServiceConfig.getMinBatchKeyCount()).thenReturn(2);
     when(mockDiagnosisKeyLoader.loadDiagnosisKeys()).thenReturn(List.of(testKey1, testKey2));
-    when(mockUploadClient.postBatchUpload(any())).thenReturn(createFake409And201Response());
+    returnFromUpload(createFake409And201Response());
     upload.run(null);
     verify(mockUploadKeyRepository, times(1))
         .updateBatchTag(eq(testKey1.getKeyData()), any());
@@ -134,7 +139,7 @@ class UploadResponseTest {
             ByteString.copyFrom(diagnosisKey.getKeyData()).toStringUtf8())).collect(Collectors.toList());
     when(uploadServiceConfig.getMinBatchKeyCount()).thenReturn(2);
     when(mockDiagnosisKeyLoader.loadDiagnosisKeys()).thenReturn(orderedKeys);
-    when(mockUploadClient.postBatchUpload(any())).thenReturn(createFake500And201Response());
+    returnFromUpload(createFake500And201Response());
     upload.run(null);
     verify(mockUploadKeyRepository, never())
         .updateBatchTag(eq(orderedKeys.get(0).getKeyData()), any());
@@ -151,7 +156,7 @@ class UploadResponseTest {
 
     when(uploadServiceConfig.getMinBatchKeyCount()).thenReturn(2);
     when(mockDiagnosisKeyLoader.loadDiagnosisKeys()).thenReturn(orderedKeys);
-    when(mockUploadClient.postBatchUpload(any())).thenReturn(createFake409And500Response());
+    returnFromUpload(createFake409And500Response());
     upload.run(null);
     verify(mockUploadKeyRepository, times(1))
         .updateBatchTag(eq(orderedKeys.get(0).getKeyData()), any());
