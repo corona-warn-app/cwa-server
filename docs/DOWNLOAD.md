@@ -28,15 +28,15 @@ Validation constraints enforce that each Key is compliant to the specifications.
 ### Enumeratable Validation Constraints
 Enumeratable validation constraints are stored as environmental variables and can be consulted in the Download Services `application.yaml` (under `services`.`download`.`validation`).
 
-Name | Default Value | Description
------|---------------|--------
-key-length | 16 | Exact length of accepted DK Data.
+Name                 | Default Value  | Description
+---------------------|----------------|-------------
+key-length           | 16             | Exact length of accepted DK Data.
 allowed-report-types | CONFIRMED_TEST | Accepted ReportTypes.
-max-dsos | 4000 | Accepted upper bound for Days Since Onset of Symptoms.
-min-rolling-period | 0 | Accepted lower bound for Rolling Period.
-max-rolling-period | 144 | Accepted upper bound for Rolling Period.
-min-trl | 1 | Accepted lower bound for Transmission Risk Level.
-max-trl | 8 | Accepted lower bound for Transmission Risk Level.
+max-dsos             | 4000           | Accepted upper bound for Days Since Onset of Symptoms.
+min-rolling-period   | 0              | Accepted lower bound for Rolling Period.
+max-rolling-period   | 144            | Accepted upper bound for Rolling Period.
+min-trl              | 1              | Accepted lower bound for Transmission Risk Level.
+max-trl              | 8              | Accepted lower bound for Transmission Risk Level.
 
 
 
@@ -55,12 +55,12 @@ Implementation details on validation can be found in: [`ValidFederationKeyFilter
 ### Validation Results and Batch Status
 Keys that fail validation will cause a corresponding log entry, but will not hinder batch processing. The FederationBatchStatus indicates if the the validation and batch processing was successful. 
 
-Processing Status | Description
------|---------------|--------
-PROCESSED | All DKs passed validation.
-PROCESSED_WITH_ERROR| At least one DK failed validation.
-ERROR | Error non-related to DK validation occured.
-ERROR_WONT_RETRY | Error non-related to DK validation occured. Retry of batch processing failed aswell.
+Processing Status    | Description
+---------------------|---------------
+PROCESSED            | All DKs passed validation.
+PROCESSED_WITH_ERROR | At least one DK failed validation.
+ERROR                | Error non-related to DK validation occured.
+ERROR_WONT_RETRY     | Error non-related to DK validation occured. Retry of batch processing failed aswell.
 
 
 
