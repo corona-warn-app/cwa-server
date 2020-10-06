@@ -36,7 +36,7 @@ Implementation details can be found in [`TanVerifier.java`](/services/submission
 The contract of the submission service is defined, in part by the [payload protobuf specification](/common/protocols/src/main/proto/app/coronawarn/server/common/protocols/internal/submission_payload.proto). Here you can find all the information (except http headers) that is 
 being sent by the mobile client.
 
-Some fields from the specification are not being sent by the client and will be defaulted/altered on the server when the http request is handled.
+Some fields from the specification are not being sent by the client and will be defaulted/altered on the server when the http request is handled:
 * origin (referring to origin country) is defaulted to a value which is externalized in the `application.yaml/services.submission.payload.default-origin-country`
 * visitedCountries list is enhanced to contain the origin country as well in order to have consistency in the distribution logic
 
@@ -63,12 +63,12 @@ The constraints put on submitted TEK's are as follows:
 * The visited countries list from the submission payload must either contain ISO country codes which are part of the supported countries or it must be an empty list, in which case it will be prefilled with the default origin country (e.g. DE)
 
 There are other validations performed prior to persisting keys, which check whether specific fields are in acceptable ranges as defined by the 
-system as well as GAEN specification. For this purpose the Java Bean Validation 2.0 framework is used at the entity level. Please see [`DiagnosisKey`][`/common/persistence/src/main/java/app/coronawarn/server/common/persistence/domain/DiagnosisKey.java) for the complete list.
+system as well as GAEN specification. For this purpose the Java Bean Validation 2.0 framework is used at the entity level. Please see [DiagnosisKey][`/common/persistence/src/main/java/app/coronawarn/server/common/persistence/domain/DiagnosisKey.java) for the complete list.
 
 ## Field Derivations
 
 Starting with version 1.5 the mobile clients stops sending transmission risk level (TRL) values but includes a new field that is used to describe the infectiousness of a person called 'days since onset of symptoms' (DSOS). To ensure backward compatibility with older clients when distriuting keys submitted by newer clients, the server has to derive the missing TRL field from the DSOS value using a mapping maintained in the application configuration. Similarily, to ensure forward compatibility when distributing keys submitted by older clients ( version 1.4 or less), the server
-will derive the DSOS from TRL using a reverse internal mapping.
+will derive the DSOS from TRL using a reversed internal mapping.
 
 ## Diagnosis keys padding
 
