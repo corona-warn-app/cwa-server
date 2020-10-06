@@ -48,7 +48,7 @@ max-dsos             | 4000           | Accepted upper bound for Days Since Onse
 min-rolling-period   | 0              | Accepted lower bound for Rolling Period.
 max-rolling-period   | 144            | Accepted upper bound for Rolling Period.
 min-trl              | 0              | Accepted lower bound for Transmission Risk Level.
-max-trl              | 8              | Accepted lower bound for Transmission Risk Level.
+max-trl              | 8              | Accepted upper bound for Transmission Risk Level.
 
 ### Validation Checks
 
@@ -65,7 +65,7 @@ Implementation details on validation can be found in: [`ValidFederationKeyFilter
 
 ### Validation Results and Batch Status
 
-Keys that fail validation will cause a corresponding log entry, but will not hinder batch processing. The FederationBatchStatus indicates if the the validation and batch processing was successful.
+Keys that fail validation will cause a corresponding log entry, but will not hinder batch processing. The FederationBatchStatus indicates if the validation and batch processing was successful.
 
 Processing Status    | Description
 ---------------------|---------------
