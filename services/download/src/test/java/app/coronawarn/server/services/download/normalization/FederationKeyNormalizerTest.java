@@ -3,7 +3,6 @@
 package app.coronawarn.server.services.download.normalization;
 
 import static app.coronawarn.server.common.persistence.domain.FederationBatchStatus.UNPROCESSED;
-import static app.coronawarn.server.services.download.FederationBatchTestHelper.createFederationDiagnosisKey;
 import static org.assertj.core.util.Lists.list;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -17,8 +16,10 @@ import app.coronawarn.server.common.persistence.service.DiagnosisKeyService;
 import app.coronawarn.server.common.persistence.service.FederationBatchInfoService;
 import app.coronawarn.server.common.protocols.external.exposurenotification.DiagnosisKey;
 import app.coronawarn.server.common.protocols.external.exposurenotification.DiagnosisKeyBatch;
+import app.coronawarn.server.services.download.*;
+import app.coronawarn.server.services.download.config.DownloadServiceConfig;
+import app.coronawarn.server.services.download.config.DownloadServiceConfig.TekFieldDerivations;
 import app.coronawarn.server.services.download.BatchDownloadResponse;
-import app.coronawarn.server.services.download.DownloadServiceConfig;
 import app.coronawarn.server.services.download.FederationBatchProcessor;
 import app.coronawarn.server.services.download.FederationGatewayDownloadService;
 import app.coronawarn.server.services.download.validation.ValidFederationKeyFilter;
@@ -28,7 +29,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
-import org.apache.commons.lang3.tuple.Pair;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -57,16 +57,16 @@ class FederationKeyNormalizerTest {
   @MockBean
   private FederationGatewayDownloadService federationGatewayDownloadService;
 
-  private Map<String, Pair<Integer, Integer>> getKeysAndDsos() {
-    return Map.of("0123456789ABCDEX", Pair.of(4, 1),
-        "0123456789ABCDEY", Pair.of(3, 3),
-        "0123456789ABCDEZ", Pair.of(2, 5),
-        "0123456789ABCDED", Pair.of(1, 6),
-        "0123456789ABCDEE", Pair.of(0, 8),
-        "0123456789ABCDEF", Pair.of(-1, 6),
-        "0123456789ABCDEG", Pair.of(-2, 5),
-        "0123456789ABCDEH", Pair.of(-3, 3),
-        "0123456789ABCDEI", Pair.of(-4, 1)
+  private Map<String, Integer> getKeysWithDaysSinceSymptoms() {
+    return Map.of("0123456789ABCDEX", 1,
+        "0123456789ABCDEY", 3,
+        "0123456789ABCDEZ", 2,
+        "0123456789ABCDED", 1,
+        "0123456789ABCDEE", 0,
+        "0123456789ABCDEF", -1,
+        "0123456789ABCDEG", -2,
+        "0123456789ABCDEH", -3,
+        "0123456789ABCDEI", -4
     );
   }
 
@@ -86,10 +86,10 @@ class FederationKeyNormalizerTest {
     when(federationGatewayDownloadService.downloadBatch(BATCH_TAG, date)).thenReturn(serverResponse);
     processor.processUnprocessedFederationBatches();
     diagnosisKeyService.getDiagnosisKeys().forEach(dk -> {
+      TekFieldDerivations tekDerivationMap = config.getTekFieldDerivations();
       String keyData = ByteString.copyFrom(dk.getKeyData()).toStringUtf8();
-      assertEquals(getKeysAndDsos().get(keyData).getRight(), dk.getTransmissionRiskLevel());
+      assertEquals(tekDerivationMap.deriveTrlFromDsos(getKeysWithDaysSinceSymptoms().get(keyData)), dk.getTransmissionRiskLevel());
     });
-
   }
 
   @Test
@@ -100,13 +100,13 @@ class FederationKeyNormalizerTest {
   }
 
   private BatchDownloadResponse getBatchDownloadResponse() {
-    List<DiagnosisKey> diagnosisKeys = getKeysAndDsos().entrySet()
-        .stream()
-        .map(e -> createFederationDiagnosisKey(e.getKey(), e.getValue().getLeft()))
+    List<DiagnosisKey> diagnosisKeys = getKeysWithDaysSinceSymptoms().entrySet().stream()
+        .map(
+            e -> FederationBatchTestHelper.createFederationDiagnosisKeyWithoutTransmissionRiskLevel(
+                ByteString.copyFromUtf8(e.getKey()), e.getValue()))
         .collect(Collectors.toList());
-    DiagnosisKeyBatch diagnosisKeyBatch = DiagnosisKeyBatch.newBuilder()
-        .addAllKeys(diagnosisKeys)
-        .build();
+    DiagnosisKeyBatch diagnosisKeyBatch =
+        DiagnosisKeyBatch.newBuilder().addAllKeys(diagnosisKeys).build();
     return new BatchDownloadResponse(BATCH_TAG, Optional.of(diagnosisKeyBatch), Optional.empty());
   }
 }

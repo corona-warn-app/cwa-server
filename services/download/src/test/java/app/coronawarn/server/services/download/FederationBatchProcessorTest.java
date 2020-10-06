@@ -5,8 +5,10 @@ package app.coronawarn.server.services.download;
 import static app.coronawarn.server.common.persistence.domain.FederationBatchStatus.ERROR;
 import static app.coronawarn.server.common.persistence.domain.FederationBatchStatus.ERROR_WONT_RETRY;
 import static app.coronawarn.server.common.persistence.domain.FederationBatchStatus.PROCESSED;
+import static app.coronawarn.server.common.persistence.domain.FederationBatchStatus.PROCESSED_WITH_ERROR;
 import static app.coronawarn.server.common.persistence.domain.FederationBatchStatus.UNPROCESSED;
 import static java.util.Collections.emptyList;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.util.Lists.list;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
@@ -23,25 +25,29 @@ import app.coronawarn.server.common.persistence.domain.FederationBatchInfo;
 import app.coronawarn.server.common.persistence.domain.FederationBatchStatus;
 import app.coronawarn.server.common.persistence.service.DiagnosisKeyService;
 import app.coronawarn.server.common.persistence.service.FederationBatchInfoService;
-import app.coronawarn.server.services.download.DownloadServiceConfig.TekFieldDerivations;
+import app.coronawarn.server.services.download.config.DownloadServiceConfig;
+import app.coronawarn.server.common.protocols.external.exposurenotification.DiagnosisKey;
+import app.coronawarn.server.common.protocols.external.exposurenotification.DiagnosisKeyBatch;
 import app.coronawarn.server.services.download.validation.ValidFederationKeyFilter;
 import feign.FeignException;
 import java.time.LocalDate;
-import java.util.Map;
+import java.util.List;
 import java.util.Optional;
 import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
+import org.mockito.ArgumentCaptor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.annotation.DirtiesContext;
 
 @SpringBootTest(classes = {FederationBatchProcessor.class, FederationBatchInfoService.class, DiagnosisKeyService.class,
-    FederationGatewayClient.class, DownloadServiceConfig.class, ValidFederationKeyFilter.class})
+    FederationGatewayClient.class, ValidFederationKeyFilter.class})
 @DirtiesContext
+@EnableConfigurationProperties(value = DownloadServiceConfig.class)
 class FederationBatchProcessorTest {
 
   private final LocalDate date = LocalDate.of(2020, 9, 1);
@@ -59,16 +65,6 @@ class FederationBatchProcessorTest {
 
   @Autowired
   private FederationBatchProcessor batchProcessor;
-
-  @MockBean
-  DownloadServiceConfig config;
-
-  @BeforeEach
-  void setUp() {
-    final TekFieldDerivations tekDerivations = new TekFieldDerivations();
-    tekDerivations.setTrlFromDsos(Map.of(1, 1, 2, 2, 3, 3));
-    when(config.getTekFieldDerivations()).thenReturn(tekDerivations);
-  }
 
   @AfterEach
   void resetMocks() {
@@ -256,6 +252,57 @@ class FederationBatchProcessorTest {
       verify(federationGatewayDownloadService, times(1)).downloadBatch(batchTag1, date);
       verify(batchInfoService, times(1)).updateStatus(any(FederationBatchInfo.class), eq(ERROR_WONT_RETRY));
       verify(diagnosisKeyService, times(1)).saveDiagnosisKeys(any());
+    }
+  }
+
+  @Nested
+  @DisplayName("testKeyValidationInOneBatch")
+  class TestKeyValidationInOneBatch {
+
+    @Test
+    void testFailureKeysAreSkipped() {
+      FederationBatchInfo batchInfo = new FederationBatchInfo(batchTag1, date, UNPROCESSED);
+      when(batchInfoService.findByStatus(UNPROCESSED)).thenReturn(list(batchInfo));
+
+      DiagnosisKey validKey = FederationBatchTestHelper.createBuilderForValidFederationDiagnosisKey().build();
+      DiagnosisKey invalidKey = FederationBatchTestHelper
+          .createFederationDiagnosisKeyWithKeyData(FederationBatchTestHelper.createByteStringOfLength(32));
+
+      DiagnosisKeyBatch batch = FederationBatchTestHelper.createDiagnosisKeyBatch(List.of(validKey, invalidKey));
+      BatchDownloadResponse downloadResponse = FederationBatchTestHelper
+          .createBatchDownloadResponse(batchTag1, Optional.empty(), batch);
+
+      when(federationGatewayDownloadService.downloadBatch(batchTag1, date)).thenReturn(downloadResponse);
+      batchProcessor.processUnprocessedFederationBatches();
+
+      verify(batchInfoService, times(1)).findByStatus(UNPROCESSED);
+      verify(federationGatewayDownloadService, times(1)).downloadBatch(batchTag1, date);
+      verify(batchInfoService, times(1)).updateStatus(batchInfo, PROCESSED_WITH_ERROR);
+      verify(diagnosisKeyService, times(1)).saveDiagnosisKeys(any());
+    }
+
+    @Test
+    void testDiagnosisKeyPassesDownloadValidationButBuildingFails() {
+      FederationBatchInfo batchInfo = new FederationBatchInfo(batchTag1, date, UNPROCESSED);
+
+      when(batchInfoService.findByStatus(UNPROCESSED)).thenReturn(list(batchInfo));
+
+      DiagnosisKey invalidKey = FederationBatchTestHelper.createBuilderForValidFederationDiagnosisKey()
+          .setRollingPeriod(-5)
+          .build();
+      DiagnosisKeyBatch batch = FederationBatchTestHelper.createDiagnosisKeyBatch(List.of(invalidKey));
+      BatchDownloadResponse downloadResponse = FederationBatchTestHelper
+          .createBatchDownloadResponse(batchTag1, Optional.empty(), batch);
+
+      when(federationGatewayDownloadService.downloadBatch(batchTag1, date)).thenReturn(downloadResponse);
+      batchProcessor.processUnprocessedFederationBatches();
+
+      ArgumentCaptor<List> captor = ArgumentCaptor.forClass(List.class);
+      verify(batchInfoService, times(1)).findByStatus(UNPROCESSED);
+      verify(federationGatewayDownloadService, times(1)).downloadBatch(batchTag1, date);
+      verify(batchInfoService, times(1)).updateStatus(batchInfo, PROCESSED_WITH_ERROR);
+      verify(diagnosisKeyService, times(1)).saveDiagnosisKeys(captor.capture());
+      assertThat(captor.getValue()).isEmpty();
     }
   }
 }
