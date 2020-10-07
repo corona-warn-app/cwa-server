@@ -48,7 +48,6 @@ public class TekFieldDerivations {
    * Returns a mapped TRL value for the given DSOS or the configured system default.
    */
   public Integer deriveTransmissionRiskLevelFromDaysSinceSymptoms(Integer daysSinceSymptoms) {
-    // todo .. return the system default
     return trlFromDsos.getOrDefault(daysSinceSymptoms, defaultTrl);
   }
 
