@@ -2,7 +2,7 @@
 
 ## Data Migration / Flyway
 
-Corona Warn App Server uses [Flyway](https://flywaydb.org) for database version control. Flyway is an open-source
+Corona Warn App Server uses [Flyway](https://flywaydb.org) for database version control. Flyway is an open source
 database migration tool. It updates the database from one version to the next using migrations.
 The migration scripts are written in plain SQL with database specific syntax which in this case is PostgreSQL and are located in the [db](/common/persistence/src/main/resources/db)
 directory under `common/persistence/src/main/resources`.
