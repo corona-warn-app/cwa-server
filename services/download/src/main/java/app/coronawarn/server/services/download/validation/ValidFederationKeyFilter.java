@@ -19,14 +19,7 @@ import org.springframework.stereotype.Component;
 public class ValidFederationKeyFilter {
 
   private static final Logger logger = LoggerFactory.getLogger(ValidFederationKeyFilter.class);
-  private final int keyLength;
   private final List<ReportType> allowedReportTypes;
-  private final int minDsos;
-  private final int maxDsos;
-  private final int minRollingPeriod;
-  private final int maxRollingPeriod;
-  private final int minTrl;
-  private final int maxTrl;
 
   /**
    * Constructor for this class.
@@ -35,37 +28,15 @@ public class ValidFederationKeyFilter {
    */
   public ValidFederationKeyFilter(DownloadServiceConfig downloadServiceConfig) {
     Validation validation = downloadServiceConfig.getValidation();
-    this.keyLength = validation.getKeyLength();
     this.allowedReportTypes = validation.getAllowedReportTypes();
-    this.minDsos = validation.getMinDsos();
-    this.maxDsos = validation.getMaxDsos();
-    this.minRollingPeriod = validation.getMinRollingPeriod();
-    this.maxRollingPeriod = validation.getMaxRollingPeriod();
-    this.minTrl = validation.getMinTrl();
-    this.maxTrl = validation.getMaxTrl();
   }
 
   /**
    * Accepts or rejects a key based on the evaluation of the fields against permitted values.
    */
   public boolean isValid(DiagnosisKey federationKey) {
-    return hasValidDaysSinceOnsetOfSymptoms(federationKey)
-        && hasAllowedReportType(federationKey)
-        && hasExpectedKeyLength(federationKey)
-        && hasValidStartIntervalNumber(federationKey)
-        && hasValidTransmissionRiskLevel(federationKey)
-        && hasValidRollingPeriod(federationKey);
-  }
-
-  private boolean hasValidDaysSinceOnsetOfSymptoms(DiagnosisKey federationKey) {
-    boolean hasValidDsos = federationKey.hasDaysSinceOnsetOfSymptoms()
-        && federationKey.getDaysSinceOnsetOfSymptoms() >= minDsos
-        && federationKey.getDaysSinceOnsetOfSymptoms() <= maxDsos;
-    if (!hasValidDsos) {
-      logger.info("Filter skipped Federation DiagnosisKey with invalid 'daysSinceOnsetOfSymptoms' value {}.",
-          federationKey.getDaysSinceOnsetOfSymptoms());
-    }
-    return hasValidDsos;
+    return hasAllowedReportType(federationKey)
+        && hasRollingPeriod(federationKey);
   }
 
   private boolean hasAllowedReportType(DiagnosisKey federationKey) {
@@ -77,49 +48,11 @@ public class ValidFederationKeyFilter {
     return hasAllowedReportType;
   }
 
-  private boolean hasExpectedKeyLength(DiagnosisKey federationKey) {
-    boolean hasCorrectKeyLength = federationKey.getKeyData().toByteArray().length == keyLength;
-    if (!hasCorrectKeyLength) {
-      logger.info("Filter skipped Federation DiagnosisKey with invalid 'KeyData' length {}.",
-          federationKey.getKeyData().toByteArray().length);
+  private boolean hasRollingPeriod(DiagnosisKey federationKey) {
+    boolean hasRollingPeriod = federationKey.hasRollingPeriod();
+    if (!hasRollingPeriod) {
+      logger.info("Filter skipped Federation DiagnosisKey has no 'RollingPeriod'");
     }
-    return hasCorrectKeyLength;
+    return hasRollingPeriod;
   }
-
-  private boolean hasValidStartIntervalNumber(DiagnosisKey federationKey) {
-    boolean hasValidStartIntervalNumber = federationKey.hasRollingStartIntervalNumber()
-        && rollingStartIntervalNumberIsMidnight(federationKey);
-
-    if (!hasValidStartIntervalNumber) {
-      logger.info("Filter skipped Federation DiagnosisKey with rolling start interval number {} not at midnight.",
-          federationKey.getRollingStartIntervalNumber());
-    }
-    return hasValidStartIntervalNumber;
-  }
-
-  private boolean rollingStartIntervalNumberIsMidnight(DiagnosisKey federationKey) {
-    return federationKey.getRollingStartIntervalNumber() % maxRollingPeriod == 0;
-  }
-
-  private boolean hasValidTransmissionRiskLevel(DiagnosisKey federationKey) {
-    int trl = federationKey.getTransmissionRiskLevel();
-    boolean hasValidTrl = trl >= minTrl && trl <= maxTrl;
-    if (!hasValidTrl) {
-      logger.info("Filter skipped Federation DiagnosisKey with invalid transmission risk level {}.", trl);
-    }
-    return hasValidTrl;
-  }
-
-  private boolean hasValidRollingPeriod(DiagnosisKey federationKey) {
-    int rollingPeriod = federationKey.getRollingPeriod();
-    boolean hasValidRollingPeriod = federationKey.hasRollingPeriod()
-        && rollingPeriod >= minRollingPeriod
-        && rollingPeriod <= maxRollingPeriod;
-    if (!hasValidRollingPeriod) {
-      logger.info("Filter skipped Federation DiagnosisKey with missing or invalid rolling period {}.",
-          rollingPeriod);
-    }
-    return hasValidRollingPeriod;
-  }
-
 }
