@@ -88,7 +88,7 @@ class FederationKeyNormalizerTest {
     diagnosisKeyService.getDiagnosisKeys().forEach(dk -> {
       TekFieldDerivations tekDerivationMap = config.getTekFieldDerivations();
       String keyData = ByteString.copyFrom(dk.getKeyData()).toStringUtf8();
-      assertEquals(tekDerivationMap.deriveTrlFromDsos(getKeysWithDaysSinceSymptoms().get(keyData)), dk.getTransmissionRiskLevel());
+      assertEquals(tekDerivationMap.deriveTransmissionRiskLevelFromDaysSinceSymptoms(getKeysWithDaysSinceSymptoms().get(keyData)), dk.getTransmissionRiskLevel());
     });
   }
 

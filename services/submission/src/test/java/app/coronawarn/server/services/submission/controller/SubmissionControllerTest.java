@@ -414,7 +414,7 @@ class SubmissionControllerTest {
     submittedTEKs.stream().map(tek -> Pair.of(tek, findDiagnosisKeyMatch(tek, diagnosisKeys))).forEach(pair -> {
       int tekDSOS = pair.getLeft().getDaysSinceOnsetOfSymptoms();
       int dkTRL = pair.getRight().getTransmissionRiskLevel();
-      Integer expectedTRL = config.getTekFieldDerivations().deriveTrlFromDsos(tekDSOS);
+      Integer expectedTRL = config.getTekFieldDerivations().deriveTransmissionRiskLevelFromDaysSinceSymptoms(tekDSOS);
       Assertions.assertEquals(expectedTRL, dkTRL);
     });
   }
@@ -424,7 +424,7 @@ class SubmissionControllerTest {
     submittedTEKs.stream().map(tek -> Pair.of(tek, findDiagnosisKeyMatch(tek, diagnosisKeys))).forEach(pair -> {
       int tekTRL = pair.getLeft().getTransmissionRiskLevel();
       int dkDSOS = pair.getRight().getDaysSinceOnsetOfSymptoms();
-      Integer expectedDsos = config.getTekFieldDerivations().deriveDsosFromTrl(tekTRL);
+      Integer expectedDsos = config.getTekFieldDerivations().deriveDaysSinceSymptomsFromTransmissionRiskLevel(tekTRL);
       Assertions.assertEquals(expectedDsos, dkDSOS);
     });
   }

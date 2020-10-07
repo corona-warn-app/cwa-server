@@ -24,9 +24,9 @@ public final class SubmissionKeyNormalizer implements DiagnosisKeyNormalizer {
     throwIfAllRequiredFieldsMissing(trlValue, dsosValue);
 
     if (isMissing(dsosValue)) {
-      dsosValue = tekFieldMappings.deriveDsosFromTrl(trlValue);
+      dsosValue = tekFieldMappings.deriveDaysSinceSymptomsFromTransmissionRiskLevel(trlValue);
     } else if (isMissing(trlValue)) {
-      trlValue = tekFieldMappings.deriveTrlFromDsos(dsosValue);
+      trlValue = tekFieldMappings.deriveTransmissionRiskLevelFromDaysSinceSymptoms(dsosValue);
     }
 
     return NormalizableFields.of(trlValue, dsosValue);

@@ -27,7 +27,8 @@ public class FederationKeyNormalizer implements DiagnosisKeyNormalizer {
   @Override
   public NormalizableFields normalize(NormalizableFields fieldsAndValues) {
     validateNormalizableFields(fieldsAndValues);
-    int trl = tekFieldDerivations.deriveTrlFromDsos(fieldsAndValues.getDaysSinceOnsetOfSymptoms());
+    int trl = tekFieldDerivations.deriveTransmissionRiskLevelFromDaysSinceSymptoms(
+        fieldsAndValues.getDaysSinceOnsetOfSymptoms());
     return NormalizableFields.of(trl, fieldsAndValues.getDaysSinceOnsetOfSymptoms());
   }
 

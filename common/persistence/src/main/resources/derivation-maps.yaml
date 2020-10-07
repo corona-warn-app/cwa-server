@@ -1,6 +1,5 @@
-# This externalised configuration is used for deriving missing values of Temporary Exposure Key fields 
+# This externalised configuration is used for deriving missing values of Temporary Exposure Key fields
 # in modules that represent diagnosis key input channels.
-
 tek-field-derivations:
    # Map containing the derived values of DSOS (days since onset of symptoms) from TRL (transmission risk level)
    dsos-from-trl:
@@ -40,3 +39,18 @@ tek-field-derivations:
       -12: 1
       -13: 1
       -14: 1
+      3986: 1
+      3987: 1
+      3988: 1
+      3989: 1
+      3990: 1
+      3991: 1
+      3992: 2
+      3993: 3
+      3994: 4
+      3995: 6
+      3996: 7
+      3997: 7
+      3998: 7
+      3999: 6
+      4000: 5

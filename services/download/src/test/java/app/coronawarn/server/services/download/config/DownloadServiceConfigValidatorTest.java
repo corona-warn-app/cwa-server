@@ -35,8 +35,7 @@ class DownloadServiceConfigValidatorTest {
   @ParameterizedTest
   @MethodSource("validTransmissionRiskLevelFromDaysSinceOnsetOfSymptoms")
   void testWithValidTrlFromDsos(Map<Integer, Integer> transmissionRiskLevelFromDaysSinceOnsetOfSymptoms) {
-    TekFieldDerivations tekFieldDerivations = new TekFieldDerivations();
-    tekFieldDerivations.setTrlFromDsos(transmissionRiskLevelFromDaysSinceOnsetOfSymptoms);
+    TekFieldDerivations tekFieldDerivations = new TekFieldDerivations(Map.of(), transmissionRiskLevelFromDaysSinceOnsetOfSymptoms);
     Errors errors = validateConfig(tekFieldDerivations);
     assertThat(errors.hasErrors()).isFalse();
   }
@@ -44,8 +43,7 @@ class DownloadServiceConfigValidatorTest {
   @ParameterizedTest
   @MethodSource("invalidTransmissionRiskLevelFromDaysSinceOnsetOfSymptoms")
   void testWithInvalidTrlFromDsos(Map<Integer, Integer> transmissionRiskLevelFromDaysSinceOnsetOfSymptoms) {
-    TekFieldDerivations tekFieldDerivations = new TekFieldDerivations();
-    tekFieldDerivations.setTrlFromDsos(transmissionRiskLevelFromDaysSinceOnsetOfSymptoms);
+    TekFieldDerivations tekFieldDerivations = new TekFieldDerivations(Map.of(), transmissionRiskLevelFromDaysSinceOnsetOfSymptoms);
     Errors errors = validateConfig(tekFieldDerivations);
     assertThat(errors.hasErrors()).isTrue();
   }

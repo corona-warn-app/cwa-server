@@ -69,9 +69,7 @@ class SubmissionServiceConfigValidatorTest {
   @ParameterizedTest
   @MethodSource("validTrlFromDsosDatasets")
   void testWithValidTrlFromDsos(Map<Integer, Integer> trlFromDsos) {
-    TekFieldDerivations tekFieldDerivations = new TekFieldDerivations();
-    tekFieldDerivations.setDsosFromTrl(Map.of());
-    tekFieldDerivations.setTrlFromDsos(trlFromDsos);
+    TekFieldDerivations tekFieldDerivations = new TekFieldDerivations(Map.of(),trlFromDsos);
     Errors errors = validateConfig(SubmissionServiceConfigValidator.MAX_MAXIMUM_REQUEST_SIZE, "DE", tekFieldDerivations);
     assertThat(errors.hasErrors()).isFalse();
   }
@@ -79,9 +77,7 @@ class SubmissionServiceConfigValidatorTest {
   @ParameterizedTest
   @MethodSource("invalidTrlFromDsosDatasets")
   void testWithInvalidTrlFromDsos(Map<Integer, Integer> trlFromDsos) {
-    TekFieldDerivations tekFieldDerivations = new TekFieldDerivations();
-    tekFieldDerivations.setDsosFromTrl(Map.of());
-    tekFieldDerivations.setTrlFromDsos(trlFromDsos);
+    TekFieldDerivations tekFieldDerivations = new TekFieldDerivations(Map.of(),trlFromDsos);
     Errors errors = validateConfig(SubmissionServiceConfigValidator.MAX_MAXIMUM_REQUEST_SIZE, "DE", tekFieldDerivations);
     assertThat(errors.hasErrors()).isTrue();
   }
@@ -89,9 +85,7 @@ class SubmissionServiceConfigValidatorTest {
   @ParameterizedTest
   @MethodSource("validDsosFromTrlDatasets")
   void testWithValidDsosFromTrl(Map<Integer, Integer> dsosFromTrl) {
-    TekFieldDerivations tekFieldDerivations = new TekFieldDerivations();
-    tekFieldDerivations.setDsosFromTrl(dsosFromTrl);
-    tekFieldDerivations.setTrlFromDsos(Map.of());
+    TekFieldDerivations tekFieldDerivations = new TekFieldDerivations(dsosFromTrl, Map.of());
     Errors errors = validateConfig(SubmissionServiceConfigValidator.MAX_MAXIMUM_REQUEST_SIZE, "DE", tekFieldDerivations);
     assertThat(errors.hasErrors()).isFalse();
   }
@@ -99,9 +93,7 @@ class SubmissionServiceConfigValidatorTest {
   @ParameterizedTest
   @MethodSource("invalidDsosFromTrlDatasets")
   void testWithInvalidDsosFromTrl(Map<Integer, Integer> dsosFromTrl) {
-    TekFieldDerivations tekFieldDerivations = new TekFieldDerivations();
-    tekFieldDerivations.setDsosFromTrl(dsosFromTrl);
-    tekFieldDerivations.setTrlFromDsos(Map.of());
+    TekFieldDerivations tekFieldDerivations = new TekFieldDerivations(dsosFromTrl, Map.of());
     Errors errors = validateConfig(SubmissionServiceConfigValidator.MAX_MAXIMUM_REQUEST_SIZE, "DE", tekFieldDerivations);
     assertThat(errors.hasErrors()).isTrue();
   }
@@ -132,9 +124,7 @@ class SubmissionServiceConfigValidatorTest {
   }
 
   private TekFieldDerivations getEmptyTekFieldDerivations() {
-    TekFieldDerivations tekFieldDerivations = new TekFieldDerivations();
-    tekFieldDerivations.setDsosFromTrl(Map.of());
-    tekFieldDerivations.setTrlFromDsos(Map.of());
+    TekFieldDerivations tekFieldDerivations = new TekFieldDerivations(Map.of(), Map.of());
     return tekFieldDerivations;
   }
 
