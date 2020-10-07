@@ -29,7 +29,7 @@ services:
     max-rolling-period: 144
     payload:
       max-number-of-keys: 100
-      supported-countries: DE,FR
+      supported-countries: DE,FR,IT
       default-origin-country: DE
       tek-field-derivations:
         dsos-from-trl:
