@@ -3,11 +3,12 @@ package app.coronawarn.server.services.submission;
 import app.coronawarn.server.common.protocols.external.exposurenotification.ReportType;
 import app.coronawarn.server.common.protocols.external.exposurenotification.TemporaryExposureKey;
 import app.coronawarn.server.common.protocols.internal.SubmissionPayload;
-
 import com.google.protobuf.ByteString;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.util.ArrayList;
@@ -16,39 +17,39 @@ import java.util.Random;
 
 public class SubmissionPayloadGenerator {
 
-  private static final int numberOfKeys = 10;
-  private static final int transmissionRiskLevel = 6;
-  private static final int rollingPeriod = 144; // 24*60/10
-  private static final ReportType reportType = ReportType.CONFIRMED_CLINICAL_DIAGNOSIS;
-  private static final ByteString requestPadding = ByteString.copyFrom(new byte[100]);
-  private static final List<String> visitedCountries = List.of("DE", "FR");
-  private static final String originCountry = "DE";
-  private static final boolean consentToFederation = true;
-  private static final int daysSinceOnsetOfSymptoms = 0;
-
-  private static final String MOBILE_CLIENT_PAYLOAD_PB_PATH =
-      "services/submission/src/test/resources/payload/mobile-client-payload.pb";
+  private static final int NUMBER_OF_KEYS = 10;
+  private static final int TRANSMISSION_RISK_LEVEL = 6;
+  private static final int ROLLING_PERIOD = 144; // 24*60/10
+  private static final ReportType REPORT_TYPE = ReportType.CONFIRMED_CLINICAL_DIAGNOSIS;
+  private static final ByteString REQUEST_PADDING = ByteString.copyFrom(new byte[100]);
+  private static final List<String> VISITED_COUNTRIES = List.of("DE", "FR");
+  private static final String ORIGIN_COUNTRY = "DE";
+  private static final boolean CONSENT_TO_FEDERATION = true;
+  private static final int DAYS_SINCE_ONSET_OF_SYMPTOMS = 0;
+  private static final String MOBILE_CLIENT_PAYLOAD_PB_PATH = "services/submission/src/test/resources/payload/";
+  private static final String MOBILE_CLIENT_PAYLOAD_PB_FILENAME = "mobile-client-payload.pb";
 
   public static void main(String[] args) throws IOException {
 
     LocalDateTime todayMidnight = LocalDateTime.now().toLocalDate().atStartOfDay();
-    LocalDateTime todayMidnightMinusNumberOfKeys = todayMidnight.minusDays(numberOfKeys);
+    LocalDateTime todayMidnightMinusNumberOfKeys = todayMidnight.minusDays(NUMBER_OF_KEYS);
 
-    List<TemporaryExposureKey> temporaryExposureKeys = buildTemporaryExposureKeys(numberOfKeys,
+    List<TemporaryExposureKey> temporaryExposureKeys = buildTemporaryExposureKeys(NUMBER_OF_KEYS,
         todayMidnightMinusNumberOfKeys,
-        transmissionRiskLevel, rollingPeriod, reportType, daysSinceOnsetOfSymptoms);
-    SubmissionPayload submissionPayload = buildSubmissionPayload(temporaryExposureKeys, requestPadding,
-        visitedCountries, originCountry, consentToFederation);
+        TRANSMISSION_RISK_LEVEL, ROLLING_PERIOD, REPORT_TYPE, DAYS_SINCE_ONSET_OF_SYMPTOMS);
+    SubmissionPayload submissionPayload = buildSubmissionPayload(temporaryExposureKeys, REQUEST_PADDING,
+        VISITED_COUNTRIES, ORIGIN_COUNTRY, CONSENT_TO_FEDERATION);
 
     SubmissionPayloadGenerator submissionPayloadGenerator = new SubmissionPayloadGenerator();
     submissionPayloadGenerator.writeSubmissionPayloadProtobufFile(submissionPayload);
   }
 
   public void writeSubmissionPayloadProtobufFile(SubmissionPayload submissionPayload) throws IOException {
-    File file = new File(MOBILE_CLIENT_PAYLOAD_PB_PATH);
+    Files.createDirectories(Paths.get(MOBILE_CLIENT_PAYLOAD_PB_PATH));
+    File file = new File(MOBILE_CLIENT_PAYLOAD_PB_PATH + "/" + MOBILE_CLIENT_PAYLOAD_PB_FILENAME);
     file.createNewFile();
     submissionPayload
-        .writeTo(new FileOutputStream(MOBILE_CLIENT_PAYLOAD_PB_PATH));
+        .writeTo(new FileOutputStream(MOBILE_CLIENT_PAYLOAD_PB_PATH + "/" + MOBILE_CLIENT_PAYLOAD_PB_FILENAME));
   }
 
   public static SubmissionPayload buildSubmissionPayload(List<TemporaryExposureKey> temporaryExposureKeys,

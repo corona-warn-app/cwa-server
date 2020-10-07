@@ -24,6 +24,7 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.LocalDateTime;
@@ -34,7 +35,6 @@ import java.util.stream.Stream;
 import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
@@ -58,8 +58,8 @@ import org.springframework.test.context.jdbc.Sql.ExecutionPhase;
 class SubmissionPersistenceIT {
 
   private static final Logger logger = LoggerFactory.getLogger(SubmissionPersistenceIT.class);
-  public static final String PATH_MOBILE_CLIENT_PAYLOAD_PB = "src/test/resources/payload/mobile-client-payload.pb";
-
+  public static final String PATH_MOBILE_CLIENT_PAYLOAD_PB = "src/test/resources/payload";
+  public static final String FILENAME_MOBILE_CLIENT_PAYLOAD_PB = "mobile-client-payload.pb";
   @Autowired
   private DiagnosisKeyService diagnosisKeyService;
 
@@ -87,11 +87,15 @@ class SubmissionPersistenceIT {
     when(fakeDelayManager.getJitteredFakeDelay()).thenReturn(1000L);
   }
 
-  @Disabled("Because the content of the .pb file becomes old and retention time passes, this test will fail. "
-      + "Enable when debugging of a new payload is required.")
   @ParameterizedTest
-  @ValueSource(strings = {PATH_MOBILE_CLIENT_PAYLOAD_PB})
+  @ValueSource(strings = {PATH_MOBILE_CLIENT_PAYLOAD_PB + "/" + FILENAME_MOBILE_CLIENT_PAYLOAD_PB})
   void testKeyInsertionWithMobileClientProtoBuf(String testFile) throws IOException {
+    List<TemporaryExposureKey> temporaryExposureKeys = createValidTemporaryExposureKeys();
+    SubmissionPayload submissionPayload = buildSubmissionPayload(List.of("DE"), "DE", true,
+        temporaryExposureKeys);
+
+    writeSubmissionPayloadProtobufFile(submissionPayload);
+
     Path path = Paths.get(testFile);
     InputStream input = new FileInputStream(path.toFile());
     SubmissionPayload payload = SubmissionPayload.parseFrom(input);
@@ -121,7 +125,7 @@ class SubmissionPersistenceIT {
 
     writeSubmissionPayloadProtobufFile(submissionPayload);
 
-    Path path = Paths.get(PATH_MOBILE_CLIENT_PAYLOAD_PB);
+    Path path = Paths.get(PATH_MOBILE_CLIENT_PAYLOAD_PB + "/" + FILENAME_MOBILE_CLIENT_PAYLOAD_PB);
     InputStream input = new FileInputStream(path.toFile());
     SubmissionPayload payload = SubmissionPayload.parseFrom(input);
 
@@ -218,7 +222,7 @@ class SubmissionPersistenceIT {
 
     writeSubmissionPayloadProtobufFile(submissionPayload);
 
-    Path path = Paths.get(PATH_MOBILE_CLIENT_PAYLOAD_PB);
+    Path path = Paths.get(PATH_MOBILE_CLIENT_PAYLOAD_PB + "/" + FILENAME_MOBILE_CLIENT_PAYLOAD_PB);
     InputStream input = new FileInputStream(path.toFile());
     SubmissionPayload payload = SubmissionPayload.parseFrom(input);
 
@@ -309,10 +313,11 @@ class SubmissionPersistenceIT {
   }
 
   private void writeSubmissionPayloadProtobufFile(SubmissionPayload submissionPayload) throws IOException {
-    File file = new File(PATH_MOBILE_CLIENT_PAYLOAD_PB);
+    Files.createDirectories(Paths.get(PATH_MOBILE_CLIENT_PAYLOAD_PB));
+    File file = new File(PATH_MOBILE_CLIENT_PAYLOAD_PB + "/" + FILENAME_MOBILE_CLIENT_PAYLOAD_PB);
     file.createNewFile();
     submissionPayload
-        .writeTo(new FileOutputStream(PATH_MOBILE_CLIENT_PAYLOAD_PB));
+        .writeTo(new FileOutputStream(PATH_MOBILE_CLIENT_PAYLOAD_PB + "/" + FILENAME_MOBILE_CLIENT_PAYLOAD_PB));
   }
 
   private List<TemporaryExposureKey> createValidTemporaryExposureKeys() {
