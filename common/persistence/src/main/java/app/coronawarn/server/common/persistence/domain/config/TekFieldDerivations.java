@@ -5,7 +5,6 @@ import java.util.Map;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.boot.context.properties.ConstructorBinding;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
 
@@ -22,13 +21,9 @@ public class TekFieldDerivations {
 
   private Map<Integer, Integer> trlFromDsos;
 
-  /**
-   * Constructs the configuration class after loading the yaml.
-   */
-  public TekFieldDerivations(@NotNull @NotEmpty Map<Integer, Integer> dsosFromTrl,
-      @NotNull @NotEmpty Map<Integer, Integer> trlFromDsos) {
-    this.dsosFromTrl = dsosFromTrl;
-    this.trlFromDsos = trlFromDsos;
+  private Integer defaultTrl;
+
+  TekFieldDerivations() {
   }
 
   public Map<Integer, Integer> getDaysSinceSymptomsFromTransmissionRiskLevel() {
@@ -56,7 +51,19 @@ public class TekFieldDerivations {
    */
   public Integer deriveTransmissionRiskLevelFromDaysSinceSymptoms(Integer daysSinceSymptoms) {
     // todo .. return the system default
-    return trlFromDsos.getOrDefault(daysSinceSymptoms, 1);
+    return trlFromDsos.getOrDefault(daysSinceSymptoms, defaultTrl);
+  }
+
+  /**
+   * Constructs the configuration class from the given mappings.
+   */
+  public static TekFieldDerivations from(Map<Integer, Integer> dsosFromTrl,
+      Map<Integer, Integer> trlFromDsos, Integer defaultTrl) {
+    TekFieldDerivations tekFieldDerivations = new TekFieldDerivations();
+    tekFieldDerivations.setDefaultTrl(defaultTrl);
+    tekFieldDerivations.setDsosFromTrl(dsosFromTrl);
+    tekFieldDerivations.setTrlFromDsos(trlFromDsos);
+    return tekFieldDerivations;
   }
 
   /* Setters below are used by Spring to inject the maps loaded from the yaml.
@@ -67,5 +74,9 @@ public class TekFieldDerivations {
 
   void setTrlFromDsos(Map<Integer, Integer> trlFromDsos) {
     this.trlFromDsos = trlFromDsos;
+  }
+
+  public void setDefaultTrl(Integer defaultTrl) {
+    this.defaultTrl = defaultTrl;
   }
 }

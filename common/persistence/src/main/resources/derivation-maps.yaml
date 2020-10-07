@@ -1,6 +1,9 @@
 # This externalised configuration is used for deriving missing values of Temporary Exposure Key fields
 # in modules that represent diagnosis key input channels.
 tek-field-derivations:
+  # As of version 1.5, EFGS can send DSOS values for which there is no TRL mapped, thus 
+  # we need a system configurable TRL value
+  default-trl: ${DEFAULT_TRL:1}
   # Map containing the derived values of DSOS (days since onset of symptoms) from TRL (transmission risk level)
   dsos-from-trl:
     1: 3986
