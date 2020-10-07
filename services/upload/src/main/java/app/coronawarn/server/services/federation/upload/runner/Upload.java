@@ -2,6 +2,7 @@
 
 package app.coronawarn.server.services.federation.upload.runner;
 
+import app.coronawarn.server.common.federation.client.upload.BatchUploadResponse;
 import app.coronawarn.server.common.persistence.domain.FederationUploadKey;
 import app.coronawarn.server.common.persistence.service.FederationUploadKeyService;
 import app.coronawarn.server.services.federation.upload.Application;
@@ -11,6 +12,7 @@ import app.coronawarn.server.services.federation.upload.payload.PayloadFactory;
 import app.coronawarn.server.services.federation.upload.payload.UploadPayload;
 import com.google.protobuf.ByteString;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -55,10 +57,8 @@ public class Upload implements ApplicationRunner {
     this.uploadKeyService = uploadKeyService;
   }
 
-  private List<FederationUploadKey> executeUploadAndCollectErrors(UploadPayload payload) {
-    logger.info("Executing batch request(s): {}", payload.getBatchTag());
-    var result = this.federationUploadClient.postBatchUpload(payload);
-    var retryKeys = result.getStatus500()
+  private List<FederationUploadKey> getRetryKeysFromResponseBody(BatchUploadResponse body, UploadPayload payload) {
+    return body.getStatus500()
         .stream()
         .map(Integer::parseInt)
         .map(index -> payload.getOriginalKeys().stream()
@@ -66,15 +66,23 @@ public class Upload implements ApplicationRunner {
                 ByteString.copyFrom(diagnosisKey.getKeyData()).toStringUtf8()))
             .collect(Collectors.toList()).get(index))
         .collect(Collectors.toList());
+  }
 
-    if (!result.getStatus409().isEmpty() || !result.getStatus500().isEmpty()) {
+  private List<FederationUploadKey> executeUploadAndCollectErrors(UploadPayload payload) {
+    logger.info("Executing batch request(s): {}", payload.getBatchTag());
+    var result = this.federationUploadClient.postBatchUpload(payload);
+    List<FederationUploadKey> retryKeys = Collections.emptyList();
+    if (result.isPresent()) {
+      var body = result.get();
+      retryKeys = this.getRetryKeysFromResponseBody(body, payload);
       logger.info("Some keys were not processed correctly");
-      logger.info("{} keys marked with status 201 (Successful)", result.getStatus201().size());
-      logger.info("{} keys marked with status 409 (Conflict)", result.getStatus409().size());
-      logger.info("{} keys marked with status 500 (Retry)", result.getStatus500().size());
-    } else {
+      logger.info("{} keys marked with status 201 (Successful)", body.getStatus201().size());
+      logger.info("{} keys marked with status 409 (Conflict)", body.getStatus409().size());
+      logger.info("{} keys marked with status 500 (Retry)", body.getStatus500().size());
+    }  else {
       logger.info("All keys processed successfully");
     }
+
     return retryKeys;
   }
 

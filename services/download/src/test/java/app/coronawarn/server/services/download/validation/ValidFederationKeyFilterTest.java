@@ -7,8 +7,8 @@ import static org.mockito.Mockito.when;
 
 import app.coronawarn.server.common.protocols.external.exposurenotification.DiagnosisKey;
 import app.coronawarn.server.common.protocols.external.exposurenotification.ReportType;
-import app.coronawarn.server.services.download.DownloadServiceConfig;
-import app.coronawarn.server.services.download.DownloadServiceConfig.Validation;
+import app.coronawarn.server.services.download.config.DownloadServiceConfig;
+import app.coronawarn.server.services.download.config.DownloadServiceConfig.Validation;
 import app.coronawarn.server.services.download.FederationBatchTestHelper;
 import com.google.protobuf.ByteString;
 import java.time.LocalDate;
