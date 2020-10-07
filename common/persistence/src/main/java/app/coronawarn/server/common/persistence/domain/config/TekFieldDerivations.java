@@ -25,11 +25,11 @@ public class TekFieldDerivations {
   }
 
   public Map<Integer, Integer> getDaysSinceSymptomsFromTransmissionRiskLevel() {
-    return new HashMap<Integer, Integer>(dsosFromTrl);
+    return new HashMap<>(dsosFromTrl);
   }
 
   public Map<Integer, Integer> getTransmissionRiskLevelFromDaysSinceSymptoms() {
-    return new HashMap<Integer, Integer>(trlFromDsos);
+    return new HashMap<>(trlFromDsos);
   }
 
   /**
