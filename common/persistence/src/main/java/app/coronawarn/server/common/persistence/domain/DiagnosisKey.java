@@ -34,13 +34,19 @@ public class DiagnosisKey {
    * reject any diagnosis keys that do not have a rolling period of a certain fixed value. See
    * https://developer.apple.com/documentation/exposurenotification/setting_up_an_exposure_notification_server
    */
+  public static final int KEY_DATA_LENGTH = 16;
   public static final int MIN_ROLLING_PERIOD = 0;
   public static final int MAX_ROLLING_PERIOD = 144;
+  public static final int MIN_DAYS_SINCE_ONSET_OF_SYMPTOMS = -14;
+  public static final int MAX_DAYS_SINCE_ONSET_OF_SYMPTOMS = 4000;
+  public static final int MIN_TRANSMISSION_RISK_LEVEL = 0;
+  public static final int MAX_TRANSMISSION_RISK_LEVEL = 8;
+  public static final int ISO_COUNTRY_CODE_LENGTH = 2;
 
   private static final Validator VALIDATOR = Validation.buildDefaultValidatorFactory().getValidator();
 
   @Id
-  @Size(min = 16, max = 16, message = "Key data must be a byte array of length 16.")
+  @Size(min = KEY_DATA_LENGTH, max = KEY_DATA_LENGTH, message = "Key data must be a byte array of length 16.")
   private final byte[] keyData;
 
   @ValidRollingStartIntervalNumber
@@ -50,7 +56,8 @@ public class DiagnosisKey {
       message = "Rolling period must be between " + MIN_ROLLING_PERIOD + " and " + MAX_ROLLING_PERIOD + ".")
   private final int rollingPeriod;
 
-  @Range(min = 0, max = 8, message = "Risk level must be between 0 and 8.")
+  @Range(min = MIN_TRANSMISSION_RISK_LEVEL, max = MAX_TRANSMISSION_RISK_LEVEL,
+      message = "Risk level must be between 0 and 8.")
   private final int transmissionRiskLevel;
 
   @ValidSubmissionTimestamp
@@ -58,7 +65,7 @@ public class DiagnosisKey {
 
   private final boolean consentToFederation;
 
-  @Size(max = 2, message = "Origin country code must have length of 2.")
+  @Size(max = ISO_COUNTRY_CODE_LENGTH, message = "Origin country code must have length of 2.")
   private final String originCountry;
 
   @ValidCountries
@@ -66,7 +73,8 @@ public class DiagnosisKey {
 
   private final ReportType reportType;
 
-  @Range(min = -14, max = 4000, message = "Days since onset of symptoms value must be between -14 and 4000.")
+  @Range(min = MIN_DAYS_SINCE_ONSET_OF_SYMPTOMS, max = MAX_DAYS_SINCE_ONSET_OF_SYMPTOMS,
+      message = "Days since onset of symptoms value must be between -14 and 4000.")
   private final int daysSinceOnsetOfSymptoms;
 
   /**
