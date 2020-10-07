@@ -20,7 +20,6 @@ The external Flyway configuration is located in the `application.yaml` file of e
 prefixed with `spring.flyway`. See [data migration properties](https://docs.spring.io/spring-boot/docs/current/reference/html/appendix-application-properties.html#data-migration-properties)
 for detailed information.
 
-
 ## Data Retention Policy
 
 In a first step, the diagnosis key distribution application ensures that the database does not store diagnosis keys for
