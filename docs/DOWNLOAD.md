@@ -16,7 +16,7 @@ Profile                                           | Effect
 
 Please refer to the inline comments in the base `application.yaml` configuration file for further details on the configuration properties impacted by the above profiles.
 
-## Environmental Veriables
+## Environmental Variables
 
 Download specific environmentals:
 Variable Name                    | Default Value  | Description
