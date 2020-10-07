@@ -2,8 +2,8 @@ package app.coronawarn.server.services.download.validation;
 
 import app.coronawarn.server.common.protocols.external.exposurenotification.DiagnosisKey;
 import app.coronawarn.server.common.protocols.external.exposurenotification.ReportType;
-import app.coronawarn.server.services.download.DownloadServiceConfig;
-import app.coronawarn.server.services.download.DownloadServiceConfig.Validation;
+import app.coronawarn.server.services.download.config.DownloadServiceConfig;
+import app.coronawarn.server.services.download.config.DownloadServiceConfig.Validation;
 import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -48,8 +48,7 @@ public class ValidFederationKeyFilter {
   /**
    * Accepts or rejects a key based on the evaluation of the fields against permitted values.
    */
-  public boolean isValid(
-      app.coronawarn.server.common.protocols.external.exposurenotification.DiagnosisKey federationKey) {
+  public boolean isValid(DiagnosisKey federationKey) {
     return hasValidDaysSinceOnsetOfSymptoms(federationKey)
         && hasAllowedReportType(federationKey)
         && hasExpectedKeyLength(federationKey)
@@ -89,14 +88,17 @@ public class ValidFederationKeyFilter {
 
   private boolean hasValidStartIntervalNumber(DiagnosisKey federationKey) {
     boolean hasValidStartIntervalNumber = federationKey.hasRollingStartIntervalNumber()
-        // rolling start interval number is midnight UTC
-        && federationKey.getRollingStartIntervalNumber() % maxRollingPeriod == 0;
+        && rollingStartIntervalNumberIsMidnight(federationKey);
 
     if (!hasValidStartIntervalNumber) {
       logger.info("Filter skipped Federation DiagnosisKey with rolling start interval number {} not at midnight.",
           federationKey.getRollingStartIntervalNumber());
     }
     return hasValidStartIntervalNumber;
+  }
+
+  private boolean rollingStartIntervalNumberIsMidnight(DiagnosisKey federationKey) {
+    return federationKey.getRollingStartIntervalNumber() % maxRollingPeriod == 0;
   }
 
   private boolean hasValidTransmissionRiskLevel(DiagnosisKey federationKey) {

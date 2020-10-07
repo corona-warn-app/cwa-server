@@ -2,6 +2,7 @@
 
 package app.coronawarn.server.services.download;
 
+import app.coronawarn.server.services.download.config.DownloadServiceConfigValidator;
 import org.apache.logging.log4j.LogManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -10,8 +11,10 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.domain.EntityScan;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.data.jdbc.repository.config.EnableJdbcRepositories;
+import org.springframework.validation.Validator;
 
 
 @SpringBootApplication
@@ -36,4 +39,10 @@ public class Application implements DisposableBean {
     logger.info("Shutting down log4j2.");
     LogManager.shutdown();
   }
+
+  @Bean
+  public static Validator configurationPropertiesValidator() {
+    return new DownloadServiceConfigValidator();
+  }
+
 }
