@@ -2,7 +2,6 @@
 
 package app.coronawarn.server.services.download.config;
 
-import app.coronawarn.server.services.download.config.DownloadServiceConfig.TekFieldDerivations;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
@@ -12,6 +11,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.validation.BeanPropertyBindingResult;
 import org.springframework.validation.Errors;
+import app.coronawarn.server.common.persistence.domain.config.TekFieldDerivations;
 import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
