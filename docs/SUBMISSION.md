@@ -51,12 +51,12 @@ You will find the implementation file at [`/services/submission/src/main/java/ap
 
 Temporary Exposure Keys (TEK's) are submitted by the client device (iOS/Android phone) via the Submission Service.
 
-Some constraints are maintained as enviroment variables which are kept as secrets in the Vault /cwa-server/submission
+Some constraints are maintained as enviroment variables and kept in Vault under the key path: /cwa-server/submission
 
 The constraints put on submitted TEK's are as follows:
 
 * Each TEK contains a `StartIntervalNumber` with the value set at midnight (a datetime e.g. 2nd July 2020 00:00)
-* The nuber of TEK's must not exceed the configured maximum number of keys, represented by the `MAX_NUMBER_OF_KEYS` property which is in the vault
+* The number of TEK's must not exceed the configured maximum number of keys, represented by the `MAX_NUMBER_OF_KEYS` property which is in the vault
 * More than one TEK with the same `StartIntervalNumber` may be submitted, these will have their rolling period's combined
 * Each TEK must carry either the information of transmission risk level or days since onset of symptoms. If one is missing, the other can be derived. If a TEK is missing both values or contains values which are not in the allowed ranges for each field the payload shall be rejected
 * The origin country from the submission payload must be a valid ISO country code and must either be one of the supported countries (maintained in Vault) or it must be empty, in which case it will be defaulted to DE
@@ -68,7 +68,7 @@ system as well as GAEN specification. For this purpose the Java Bean Validation 
 
 ## Field Derivations
 
-Starting with version 1.5 the mobile clients stops sending transmission risk level (TRL) values but includes a new field that is used to describe the infectiousness of a person called 'days since onset of symptoms' (DSOS). To ensure backward compatibility with older clients when distriuting keys submitted by newer clients, the server has to derive the missing TRL field from the DSOS value using a mapping maintained in the application configuration. Similarily, to ensure forward compatibility when distributing keys submitted by older clients ( version 1.4 or less), the server
+Starting with version 1.5 the mobile client stops sending transmission risk level (TRL) values but includes a new field that is used to describe the infectiousness of a person called 'days since onset of symptoms' (DSOS). To ensure backward compatibility with older clients when distributing keys submitted by newer clients, the server has to derive the missing TRL field from the DSOS value using a mapping maintained in the application configuration. Similarly, to ensure forward compatibility when distributing keys submitted by older clients ( version 1.4 or less), the server
 will derive the DSOS from TRL using a reversed internal mapping.
 
 ## Diagnosis keys padding
