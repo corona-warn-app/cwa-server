@@ -14,6 +14,7 @@ import java.time.temporal.Temporal;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -189,17 +190,38 @@ public abstract class DiagnosisKeyBundler {
     return true;
   }
 
-  protected Map<String, List<DiagnosisKey>> groupDiagnosisKeysByCountry(Collection<DiagnosisKey> diagnosisKeys) {
-    Map<String, List<DiagnosisKey>> diagnosisKeysMapped = new HashMap<>();
+  protected void groupDiagnosisKeysByCountry(Map<String, List<DiagnosisKey>> diagnosisKeysMapped) {
 
     supportedCountries.forEach(supportedCountry -> {
       diagnosisKeysMapped.put(supportedCountry, new ArrayList<>());
       this.distributableDiagnosisKeys.put(supportedCountry, new HashMap<>());
     });
+  }
 
+  protected Map<String, List<DiagnosisKey>> mapDiagnosisKeysPerVisitedCountries(Collection<DiagnosisKey> diagnosisKeys,
+      Map<String, List<DiagnosisKey>> diagnosisKeysMapped) {
     diagnosisKeys.forEach(diagnosisKey -> diagnosisKey.getVisitedCountries().stream()
         .filter(supportedCountries::contains)
         .forEach(visitedCountry -> diagnosisKeysMapped.get(visitedCountry).add(diagnosisKey)));
     return diagnosisKeysMapped;
   }
+
+  protected void populateEuPackageWithDistributableDiagnosisKeys() {
+    Map<LocalDateTime, Set<DiagnosisKey>> euPackage = new HashMap<>();
+
+    distributableDiagnosisKeys
+        .forEach((country, diagnosisKeyMap) -> diagnosisKeyMap.forEach((distributionDateTime, diagnosisKeys) -> {
+          Set<DiagnosisKey> currentHourDiagnosisKeys = Optional
+              .ofNullable(euPackage.get(distributionDateTime))
+              .orElse(new HashSet<>());
+          currentHourDiagnosisKeys.addAll(diagnosisKeys);
+          euPackage.put(distributionDateTime, currentHourDiagnosisKeys);
+        }));
+
+    Map<LocalDateTime, List<DiagnosisKey>> euPackageList = new HashMap<>();
+    euPackage.forEach((distributionDateTime, diagnosisKeys) ->
+        euPackageList.put(distributionDateTime, new ArrayList<>(diagnosisKeys)));
+    distributableDiagnosisKeys.put(euPackageName, euPackageList);
+  }
+
 }
