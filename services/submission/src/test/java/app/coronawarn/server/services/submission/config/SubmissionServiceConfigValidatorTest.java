@@ -3,8 +3,8 @@
 package app.coronawarn.server.services.submission.config;
 
 
+import app.coronawarn.server.common.persistence.domain.config.TekFieldDerivations;
 import app.coronawarn.server.services.submission.config.SubmissionServiceConfig.Payload;
-import app.coronawarn.server.services.submission.config.SubmissionServiceConfig.TekFieldDerivations;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
@@ -110,16 +110,11 @@ class SubmissionServiceConfigValidatorTest {
     String[] supportedCountriesList = supportedCountries.split(",");
     Errors errors = new BeanPropertyBindingResult(submissionServiceConfig, "submissionServiceConfig");
     submissionServiceConfig.setMaximumRequestSize(dataSize);
-    submissionServiceConfig.setPayload(getPayloadWithTekFieldDerivations(tekFieldDerivations));
+    submissionServiceConfig.setPayload(new Payload());
+    submissionServiceConfig.setTekFieldDerivations(tekFieldDerivations);
     submissionServiceConfig.setSupportedCountries(supportedCountriesList);
     submissionServiceConfigValidator.validate(submissionServiceConfig, errors);
     return errors;
-  }
-
-  private Payload getPayloadWithTekFieldDerivations(TekFieldDerivations tekFieldDerivations) {
-    Payload payload = new Payload();
-    payload.setTekFieldDerivations(tekFieldDerivations);
-    return payload;
   }
 
   private static Stream<Arguments> validRequestDataSizes() {
