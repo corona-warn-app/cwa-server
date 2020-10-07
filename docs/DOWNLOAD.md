@@ -72,7 +72,7 @@ Processing Status    | Description
 PROCESSED            | All DKs passed validation.
 PROCESSED_WITH_ERROR | At least one DK failed validation.
 ERROR                | Error non-related to DK validation occurred.
-ERROR_WONT_RETRY     | Error non-related to DK validation occured. Retry of batch processing failed aswell.
+ERROR_WONT_RETRY     | Error non-related to DK validation occurred. Retry of batch processing failed as well.
 
 ## FederationGatewayDownloadService
 
