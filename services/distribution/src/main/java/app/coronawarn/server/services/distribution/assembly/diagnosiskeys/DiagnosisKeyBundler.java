@@ -61,6 +61,11 @@ public abstract class DiagnosisKeyBundler {
   protected final Map<String, Map<LocalDateTime, List<DiagnosisKey>>> distributableDiagnosisKeys = new HashMap<>();
 
   /**
+   * A map containing diagnosis keys, grouped by country code.
+   */
+  protected Map<String, List<DiagnosisKey>> groupedDiagnosisKeys = new HashMap<>();
+
+  /**
    * Constructs a DiagnosisKeyBundler based on the specified service configuration.
    */
   public DiagnosisKeyBundler(DistributionServiceConfig distributionServiceConfig) {
@@ -190,20 +195,24 @@ public abstract class DiagnosisKeyBundler {
     return true;
   }
 
-  protected void groupDiagnosisKeysByCountry(Map<String, List<DiagnosisKey>> diagnosisKeysMapped) {
+  private void initializeMappings() {
+    groupedDiagnosisKeys.clear();
+    distributableDiagnosisKeys.clear();
 
     supportedCountries.forEach(supportedCountry -> {
-      diagnosisKeysMapped.put(supportedCountry, new ArrayList<>());
+      groupedDiagnosisKeys.put(supportedCountry, new ArrayList<>());
       this.distributableDiagnosisKeys.put(supportedCountry, new HashMap<>());
     });
   }
 
-  protected Map<String, List<DiagnosisKey>> mapDiagnosisKeysPerVisitedCountries(Collection<DiagnosisKey> diagnosisKeys,
-      Map<String, List<DiagnosisKey>> diagnosisKeysMapped) {
+  protected Map<String, List<DiagnosisKey>> mapDiagnosisKeysPerVisitedCountries(
+      Collection<DiagnosisKey> diagnosisKeys) {
+    initializeMappings();
+
     diagnosisKeys.forEach(diagnosisKey -> diagnosisKey.getVisitedCountries().stream()
         .filter(supportedCountries::contains)
-        .forEach(visitedCountry -> diagnosisKeysMapped.get(visitedCountry).add(diagnosisKey)));
-    return diagnosisKeysMapped;
+        .forEach(visitedCountry -> groupedDiagnosisKeys.get(visitedCountry).add(diagnosisKey)));
+    return groupedDiagnosisKeys;
   }
 
   protected void populateEuPackageWithDistributableDiagnosisKeys() {

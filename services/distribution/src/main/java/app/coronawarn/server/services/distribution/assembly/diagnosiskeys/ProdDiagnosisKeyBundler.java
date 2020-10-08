@@ -53,25 +53,20 @@ public class ProdDiagnosisKeyBundler extends DiagnosisKeyBundler {
    */
   @Override
   protected void createDiagnosisKeyDistributionMap(Collection<DiagnosisKey> diagnosisKeys) {
-    this.distributableDiagnosisKeys.clear();
-    Map<String, List<DiagnosisKey>> diagnosisKeysMapped = new HashMap<>();
-
-    groupDiagnosisKeysByCountry(diagnosisKeysMapped);
-    mapDiagnosisKeysPerVisitedCountries(diagnosisKeys,diagnosisKeysMapped).keySet().forEach(country -> {
+    mapDiagnosisKeysPerVisitedCountries(diagnosisKeys).keySet().forEach(country -> {
       if (!country.equals(originCountry) && !applyPoliciesForAllCountries) {
-        populateDistributableDiagnosisKeysWithoutPolicies(diagnosisKeysMapped, country);
+        populateDistributableDiagnosisKeysWithoutPolicies(country);
       } else {
-        populateDistributableDiagnosisKeysWithPolicies(diagnosisKeysMapped, country);
+        populateDistributableDiagnosisKeysWithPolicies(country);
       }
     });
     populateEuPackageWithDistributableDiagnosisKeys();
   }
 
-  private void populateDistributableDiagnosisKeysWithPolicies(Map<String, List<DiagnosisKey>> diagnosisKeysMapped,
-      String country) {
+  private void populateDistributableDiagnosisKeysWithPolicies(String country) {
 
     Map<LocalDateTime, List<DiagnosisKey>> distributableDiagnosisKeysGroupedByExpiryPolicy = new HashMap<>(
-        diagnosisKeysMapped.get(country).stream().collect(groupingBy(this::getDistributionDateTimeByExpiryPolicy)));
+        groupedDiagnosisKeys.get(country).stream().collect(groupingBy(this::getDistributionDateTimeByExpiryPolicy)));
 
     if (distributableDiagnosisKeysGroupedByExpiryPolicy.isEmpty()) {
       return;
@@ -99,10 +94,9 @@ public class ProdDiagnosisKeyBundler extends DiagnosisKeyBundler {
         });
   }
 
-  private void populateDistributableDiagnosisKeysWithoutPolicies(Map<String, List<DiagnosisKey>> diagnosisKeysMapped,
-      String country) {
+  private void populateDistributableDiagnosisKeysWithoutPolicies(String country) {
 
-    this.distributableDiagnosisKeys.get(country).putAll(diagnosisKeysMapped.get(country).stream()
+    this.distributableDiagnosisKeys.get(country).putAll(groupedDiagnosisKeys.get(country).stream()
         .filter(diagnosisKey -> this.getSubmissionDateTime(diagnosisKey).isBefore(this.distributionTime))
         .collect(groupingBy(this::getSubmissionDateTime)));
   }
