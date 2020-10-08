@@ -67,7 +67,7 @@ During the upload process it must be ensured that the DPP restrictions which are
 As this service is a cronjob it will be ensured by the infrastructure that it is running per the schedule defined. Beyond this the following considerations were made to ensure the keys are sent to the federation gateway:
 
 - Duplicated persistent storage for the keys which are required to be sent to the federation gateway. This makes it clear which keys are needing to be sent and as they are persisted if they fail to post in a run they will be re-processed in a future iteration.
-- Retry processing around the Federation Gateway API endpoint invocations will be in place incase an initial request fails
+- Retry processing around the Federation Gateway API endpoint invocations will be in place in case an initial request fails
 
 ## Security
 
