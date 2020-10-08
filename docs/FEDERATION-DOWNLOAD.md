@@ -64,7 +64,7 @@ This service doesn't specifically introduce any new data model concepts. It will
 As this service is a cronjob it will be ensured by the infrastructure that it is running per the schedule defined. Beyond this the following considerations were made to ensure the keys are sent to the federation gateway:
 
 - Batches which need to be processed are known on the DB. If a failure occurs the next run will pickup from where it left off ensuring we do not miss any batch requests.
-- Retry processing around the Federation Gateway API endpoint invocations will be in place incase an initial request fails
+- Retry processing around the Federation Gateway API endpoint invocations will be in place in case an initial request fails
 
 ## Security
 
