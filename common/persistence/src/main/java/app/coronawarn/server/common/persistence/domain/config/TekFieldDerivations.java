@@ -39,7 +39,7 @@ public class TekFieldDerivations {
   public Integer deriveDaysSinceSymptomsFromTransmissionRiskLevel(Integer transmissionRiskLevel) {
     if (!dsosFromTrl.containsKey(transmissionRiskLevel)) {
       throw new IllegalArgumentException("Transmission Risk Level value " + transmissionRiskLevel
-          + " is unkown and a " + "DSOS value is not mapped to it.");
+          + " is unknown and a " + "DSOS value is not mapped to it.");
     }
     return dsosFromTrl.get(transmissionRiskLevel);
   }
