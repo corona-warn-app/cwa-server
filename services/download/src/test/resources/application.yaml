@@ -23,11 +23,6 @@ services:
   download:
     efgs-offset-days: 1
     retention-days: 14
-    tek-field-derivations:
-      trl-from-dsos:
-        1: 1
-        2: 2
-        3: 3
     validation:
       allowed-report-types: CONFIRMED_TEST
 

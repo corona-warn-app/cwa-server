@@ -43,18 +43,22 @@ public class SubmissionServiceConfigValidator implements Validator {
     validateTransmissionRiskLevelDerivationMap(errors, properties);
   }
 
-  private void validateTransmissionRiskLevelDerivationMap(Errors errors, SubmissionServiceConfig properties) {
-    properties.getTekFieldDerivations().getTrlFromDsos().forEach((daysSinceOnsetOfSymptoms, transmissionRiskLevel) -> {
-      checkTrlInAllowedRange(transmissionRiskLevel, errors);
-      checkDsosInAllowedRange(daysSinceOnsetOfSymptoms, errors);
-    });
+  private void validateTransmissionRiskLevelDerivationMap(Errors errors,
+      SubmissionServiceConfig properties) {
+    properties.getTekFieldDerivations().getTransmissionRiskLevelFromDaysSinceSymptoms()
+        .forEach((daysSinceOnsetOfSymptoms, transmissionRiskLevel) -> {
+          checkTrlInAllowedRange(transmissionRiskLevel, errors);
+          checkDsosInAllowedRange(daysSinceOnsetOfSymptoms, errors);
+        });
   }
 
-  private void validateDaysSinceSymptomsDerivationMap(Errors errors, SubmissionServiceConfig properties) {
-    properties.getTekFieldDerivations().getDsosFromTrl().forEach((transmissionRiskLevel, daysSinceOnsetOfSymptoms) -> {
-      checkTrlInAllowedRange(transmissionRiskLevel, errors);
-      checkDsosInAllowedRange(daysSinceOnsetOfSymptoms, errors);
-    });
+  private void validateDaysSinceSymptomsDerivationMap(Errors errors,
+      SubmissionServiceConfig properties) {
+    properties.getTekFieldDerivations().getDaysSinceSymptomsFromTransmissionRiskLevel()
+        .forEach((transmissionRiskLevel, daysSinceOnsetOfSymptoms) -> {
+          checkTrlInAllowedRange(transmissionRiskLevel, errors);
+          checkDsosInAllowedRange(daysSinceOnsetOfSymptoms, errors);
+        });
   }
 
   private void checkTrlInAllowedRange(Integer transmissionRiskLevel, Errors errors) {
