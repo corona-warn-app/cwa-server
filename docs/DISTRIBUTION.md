@@ -42,7 +42,7 @@ The index will be regenerated whenever new export files are distributed to the o
 
 ## Data Retention
 
-The retention period is set to 14 days. Therefore, all keys whose _submission date_ is older than 14 days are removed from the system. This includes the database persistency layer, as well as files stored on the object store.
+The retention period is set to 14 days. Therefore, all keys whose _submission date_ is older than 14 days are removed from the system. This includes the database persistence layer, as well as files stored on the object store.
 The retention mechanism is enforced automatically by the Distribution Service upon each distribution run (multiple runs per day). The retention trigger by distribution will also be reflected within the keys pending upload to the
 federation gateway. This is especially important scenarios where the upload service may not of run for some time or there are some failures to ensure invalid keys are not accidentally propagated.
 No manual trigger or action is required.
