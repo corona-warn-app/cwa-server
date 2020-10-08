@@ -2,11 +2,10 @@
 
 This is a spring boot [ApplicationRunner](https://docs.spring.io/spring-boot/docs/current/api/org/springframework/boot/ApplicationRunner.html) service (running as a cronjob). The app will deal with the download, sematic validation, extraction, and storage of the keys from the federation gateway. The download service leverages the download API of the federation gateway and will trigger downloads of available batches since the last time it executed. For the initial release the download service will use the polling mechanism provided by the federation gateway based on `batchTag` and `date` combinations and it will keep track of its last processed state within the database. When and if the callback service integration is fully realized, the polling mechanism would mainly be used for mass loading scenarios, and this service will then only download the persisted individual batches where notifications have been received.
 
-On the download of keys from the federation gateway a process of normalization needs to take place. This is done to enable the keys to be consumable by the DE CWA app as not all countries support the same approach which is required for the CWA app. The means the following:
+On the download of keys from the federation gateway a process of to derive a TRL from the DSOS needs to take place. This is done to enable the keys to be consumable by the DE CWA app as not all countries support the same approach which is required for the CWA app. The means the following:
 
-- For keys from countries which support the daysSinceOnset scenario will need to be converted into an appropriate transmission risk level
-- For keys from countries which support the transmission risk level we might need to translate the value to something which is reasonable for the RKI
-- For keys from countries which support neither, or a key doesn't happen to have either value then there will be a need to provide a reasonable default
+- For keys from countries which support the daysSinceOnset scenario will need to be converted into an appropriate transmission risk level based on values defined in configuration
+- For keys where we have no DSOS mapping configuration there will be a need to provide a reasonable global default otherwise we would need to reject the key download.
 
 The rules above would be defined at 2 levels:
 
