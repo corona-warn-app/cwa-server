@@ -4,7 +4,7 @@ package app.coronawarn.server.services.download.runner;
 
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
-
+import app.coronawarn.server.common.persistence.domain.config.TekFieldDerivations;
 import app.coronawarn.server.common.persistence.service.FederationBatchInfoService;
 import app.coronawarn.server.services.download.config.DownloadServiceConfig;
 import org.junit.jupiter.api.Test;
@@ -17,7 +17,7 @@ import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
-@EnableConfigurationProperties(value = DownloadServiceConfig.class)
+@EnableConfigurationProperties(value = {DownloadServiceConfig.class, TekFieldDerivations.class})
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration(classes = {RetentionPolicy.class}, initializers = ConfigFileApplicationContextInitializer.class)
 @DirtiesContext

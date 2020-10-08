@@ -2,15 +2,11 @@
 
 package app.coronawarn.server.services.submission.config;
 
-
 import static org.assertj.core.api.Assertions.assertThat;
 
 import app.coronawarn.server.common.persistence.domain.DiagnosisKey;
+import app.coronawarn.server.common.persistence.domain.config.TekFieldDerivations;
 import app.coronawarn.server.services.submission.config.SubmissionServiceConfig.Payload;
-import app.coronawarn.server.services.submission.config.SubmissionServiceConfig.TekFieldDerivations;
-import java.util.Map;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
@@ -23,6 +19,10 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.util.unit.DataSize;
 import org.springframework.validation.BeanPropertyBindingResult;
 import org.springframework.validation.Errors;
+import java.util.Map;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @DirtiesContext
@@ -72,9 +72,7 @@ class SubmissionServiceConfigValidatorTest {
   @ParameterizedTest
   @MethodSource("validTrlFromDsosDatasets")
   void testWithValidTrlFromDsos(Map<Integer, Integer> trlFromDsos) {
-    TekFieldDerivations tekFieldDerivations = new TekFieldDerivations();
-    tekFieldDerivations.setDsosFromTrl(Map.of());
-    tekFieldDerivations.setTrlFromDsos(trlFromDsos);
+    TekFieldDerivations tekFieldDerivations = TekFieldDerivations.from(Map.of(),trlFromDsos, 1);
     Errors errors = validateConfig(SubmissionServiceConfigValidator.MAX_MAXIMUM_REQUEST_SIZE, "DE",
         tekFieldDerivations);
     assertThat(errors.hasErrors()).isFalse();
@@ -83,9 +81,7 @@ class SubmissionServiceConfigValidatorTest {
   @ParameterizedTest
   @MethodSource("invalidTrlFromDsosDatasets")
   void testWithInvalidTrlFromDsos(Map<Integer, Integer> trlFromDsos) {
-    TekFieldDerivations tekFieldDerivations = new TekFieldDerivations();
-    tekFieldDerivations.setDsosFromTrl(Map.of());
-    tekFieldDerivations.setTrlFromDsos(trlFromDsos);
+    TekFieldDerivations tekFieldDerivations = TekFieldDerivations.from(Map.of(),trlFromDsos, 1);
     Errors errors = validateConfig(SubmissionServiceConfigValidator.MAX_MAXIMUM_REQUEST_SIZE, "DE",
         tekFieldDerivations);
     assertThat(errors.hasErrors()).isTrue();
@@ -94,9 +90,7 @@ class SubmissionServiceConfigValidatorTest {
   @ParameterizedTest
   @MethodSource("validDsosFromTrlDatasets")
   void testWithValidDsosFromTrl(Map<Integer, Integer> dsosFromTrl) {
-    TekFieldDerivations tekFieldDerivations = new TekFieldDerivations();
-    tekFieldDerivations.setDsosFromTrl(dsosFromTrl);
-    tekFieldDerivations.setTrlFromDsos(Map.of());
+    TekFieldDerivations tekFieldDerivations = TekFieldDerivations.from(dsosFromTrl, Map.of(), 1);
     Errors errors = validateConfig(SubmissionServiceConfigValidator.MAX_MAXIMUM_REQUEST_SIZE, "DE",
         tekFieldDerivations);
     assertThat(errors.hasErrors()).isFalse();
@@ -105,9 +99,7 @@ class SubmissionServiceConfigValidatorTest {
   @ParameterizedTest
   @MethodSource("invalidDsosFromTrlDatasets")
   void testWithInvalidDsosFromTrl(Map<Integer, Integer> dsosFromTrl) {
-    TekFieldDerivations tekFieldDerivations = new TekFieldDerivations();
-    tekFieldDerivations.setDsosFromTrl(dsosFromTrl);
-    tekFieldDerivations.setTrlFromDsos(Map.of());
+    TekFieldDerivations tekFieldDerivations = TekFieldDerivations.from(dsosFromTrl, Map.of(), 1);
     Errors errors = validateConfig(SubmissionServiceConfigValidator.MAX_MAXIMUM_REQUEST_SIZE, "DE",
         tekFieldDerivations);
     assertThat(errors.hasErrors()).isTrue();
@@ -117,16 +109,11 @@ class SubmissionServiceConfigValidatorTest {
     String[] supportedCountriesList = supportedCountries.split(",");
     Errors errors = new BeanPropertyBindingResult(submissionServiceConfig, "submissionServiceConfig");
     submissionServiceConfig.setMaximumRequestSize(dataSize);
-    submissionServiceConfig.setPayload(getPayloadWithTekFieldDerivations(tekFieldDerivations));
+    submissionServiceConfig.setPayload(new Payload());
+    submissionServiceConfig.setTekFieldDerivations(tekFieldDerivations);
     submissionServiceConfig.setSupportedCountries(supportedCountriesList);
     submissionServiceConfigValidator.validate(submissionServiceConfig, errors);
     return errors;
-  }
-
-  private Payload getPayloadWithTekFieldDerivations(TekFieldDerivations tekFieldDerivations) {
-    Payload payload = new Payload();
-    payload.setTekFieldDerivations(tekFieldDerivations);
-    return payload;
   }
 
   private static Stream<Arguments> validRequestDataSizes() {
@@ -144,9 +131,7 @@ class SubmissionServiceConfigValidatorTest {
   }
 
   private TekFieldDerivations getEmptyTekFieldDerivations() {
-    TekFieldDerivations tekFieldDerivations = new TekFieldDerivations();
-    tekFieldDerivations.setDsosFromTrl(Map.of());
-    tekFieldDerivations.setTrlFromDsos(Map.of());
+    TekFieldDerivations tekFieldDerivations = TekFieldDerivations.from(Map.of(), Map.of(), 1);
     return tekFieldDerivations;
   }
 

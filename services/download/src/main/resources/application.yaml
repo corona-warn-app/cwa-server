@@ -16,19 +16,6 @@ services:
     efgs-offset-days: ${EFGS_OFFSET_DAYS:1}
     # The number of days to retain batch information in the database.
     retention-days: 14
-    tek-field-derivations:
-      # Map containing the derived values of TRL (transmission risk level) from DSOS (days since onset of symptoms)
-      # The values below are subject to change
-      trl-from-dsos:
-        4: 1
-        3: 3
-        2: 5
-        1: 6
-        0: 8
-        -1: 6
-        -2: 5
-        -3: 3
-        -4: 1
     validation:
       allowed-report-types: ${ALLOWED_REPORT_TYPES:CONFIRMED_TEST}
 
