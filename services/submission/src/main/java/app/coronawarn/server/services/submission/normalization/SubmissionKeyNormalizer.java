@@ -2,10 +2,10 @@
 
 package app.coronawarn.server.services.submission.normalization;
 
+import app.coronawarn.server.common.persistence.domain.config.TekFieldDerivations;
 import app.coronawarn.server.common.persistence.domain.normalization.DiagnosisKeyNormalizer;
 import app.coronawarn.server.common.persistence.domain.normalization.NormalizableFields;
 import app.coronawarn.server.services.submission.config.SubmissionServiceConfig;
-import app.coronawarn.server.services.submission.config.SubmissionServiceConfig.TekFieldDerivations;
 import java.util.Objects;
 
 public final class SubmissionKeyNormalizer implements DiagnosisKeyNormalizer {
@@ -24,9 +24,9 @@ public final class SubmissionKeyNormalizer implements DiagnosisKeyNormalizer {
     throwIfAllRequiredFieldsMissing(trlValue, dsosValue);
 
     if (isMissing(dsosValue)) {
-      dsosValue = tekFieldMappings.deriveDsosFromTrl(trlValue);
+      dsosValue = tekFieldMappings.deriveDaysSinceSymptomsFromTransmissionRiskLevel(trlValue);
     } else if (isMissing(trlValue)) {
-      trlValue = tekFieldMappings.deriveTrlFromDsos(dsosValue);
+      trlValue = tekFieldMappings.deriveTransmissionRiskLevelFromDaysSinceSymptoms(dsosValue);
     }
 
     return NormalizableFields.of(trlValue, dsosValue);

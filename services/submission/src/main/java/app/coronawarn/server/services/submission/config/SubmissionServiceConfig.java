@@ -2,13 +2,13 @@
 
 package app.coronawarn.server.services.submission.config;
 
+import app.coronawarn.server.common.persistence.domain.config.TekFieldDerivations;
 import java.io.File;
-import java.util.Map;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotEmpty;
-import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Component;
 import org.springframework.util.unit.DataSize;
@@ -47,6 +47,9 @@ public class SubmissionServiceConfig {
   @Min(0)
   @Max(144)
   private Integer maxRollingPeriod;
+
+  @Autowired
+  private TekFieldDerivations tekFieldDerivations;
 
 
   public Long getInitialFakeDelayMilliseconds() {
@@ -126,7 +129,11 @@ public class SubmissionServiceConfig {
   }
 
   public TekFieldDerivations getTekFieldDerivations() {
-    return payload.getTekFieldDerivations();
+    return tekFieldDerivations;
+  }
+
+  public void setTekFieldDerivations(TekFieldDerivations tekFieldDerivations) {
+    this.tekFieldDerivations = tekFieldDerivations;
   }
 
   public static class Payload {
@@ -137,7 +144,6 @@ public class SubmissionServiceConfig {
     @NotEmpty
     private String[] supportedCountries;
     private String defaultOriginCountry;
-    private TekFieldDerivations tekFieldDerivations;
 
     public Integer getMaxNumberOfKeys() {
       return maxNumberOfKeys;
@@ -161,14 +167,6 @@ public class SubmissionServiceConfig {
 
     public void setDefaultOriginCountry(String defaultOriginCountry) {
       this.defaultOriginCountry = defaultOriginCountry;
-    }
-
-    public TekFieldDerivations getTekFieldDerivations() {
-      return tekFieldDerivations;
-    }
-
-    public void setTekFieldDerivations(TekFieldDerivations tekFieldDerivations) {
-      this.tekFieldDerivations = tekFieldDerivations;
     }
   }
 
@@ -307,46 +305,6 @@ public class SubmissionServiceConfig {
       public void setTrustStorePassword(String trustStorePassword) {
         this.trustStorePassword = trustStorePassword;
       }
-    }
-  }
-
-  /**
-   * Wrapper over properties defined in the application.yaml which map DSOS to TRL
-   * and vice-versa. These maps are used to derive each property from the other.
-   */
-  public static class TekFieldDerivations {
-    @NotNull
-    @NotEmpty
-    private Map<Integer, Integer> dsosFromTrl;
-
-    @NotNull
-    @NotEmpty
-    private Map<Integer, Integer> trlFromDsos;
-
-    public Map<Integer, Integer> getDsosFromTrl() {
-      return dsosFromTrl;
-    }
-
-    public void setDsosFromTrl(Map<Integer, Integer> dsosFromTrl) {
-      this.dsosFromTrl = dsosFromTrl;
-    }
-
-    public Map<Integer, Integer> getTrlFromDsos() {
-      return trlFromDsos;
-    }
-
-    public void setTrlFromDsos(Map<Integer, Integer> trlFromDsos) {
-      this.trlFromDsos = trlFromDsos;
-    }
-
-    public Integer deriveDsosFromTrl(Integer trlValue) {
-      // the derivation logic is subject to refinement
-      return dsosFromTrl.getOrDefault(trlValue, 0);
-    }
-
-    public Integer deriveTrlFromDsos(Integer dsosValue) {
-      // the derivation logic is subject to refinement
-      return trlFromDsos.getOrDefault(dsosValue, 1);
     }
   }
 }

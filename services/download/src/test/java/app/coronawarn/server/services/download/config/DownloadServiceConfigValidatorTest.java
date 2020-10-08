@@ -2,7 +2,7 @@
 
 package app.coronawarn.server.services.download.config;
 
-import app.coronawarn.server.services.download.config.DownloadServiceConfig.TekFieldDerivations;
+import app.coronawarn.server.common.persistence.domain.DiagnosisKey;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
@@ -12,6 +12,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.validation.BeanPropertyBindingResult;
 import org.springframework.validation.Errors;
+import app.coronawarn.server.common.persistence.domain.config.TekFieldDerivations;
 import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -35,8 +36,7 @@ class DownloadServiceConfigValidatorTest {
   @ParameterizedTest
   @MethodSource("validTransmissionRiskLevelFromDaysSinceOnsetOfSymptoms")
   void testWithValidTrlFromDsos(Map<Integer, Integer> transmissionRiskLevelFromDaysSinceOnsetOfSymptoms) {
-    TekFieldDerivations tekFieldDerivations = new TekFieldDerivations();
-    tekFieldDerivations.setTrlFromDsos(transmissionRiskLevelFromDaysSinceOnsetOfSymptoms);
+    TekFieldDerivations tekFieldDerivations = TekFieldDerivations.from(Map.of(), transmissionRiskLevelFromDaysSinceOnsetOfSymptoms, 1);
     Errors errors = validateConfig(tekFieldDerivations);
     assertThat(errors.hasErrors()).isFalse();
   }
@@ -44,8 +44,7 @@ class DownloadServiceConfigValidatorTest {
   @ParameterizedTest
   @MethodSource("invalidTransmissionRiskLevelFromDaysSinceOnsetOfSymptoms")
   void testWithInvalidTrlFromDsos(Map<Integer, Integer> transmissionRiskLevelFromDaysSinceOnsetOfSymptoms) {
-    TekFieldDerivations tekFieldDerivations = new TekFieldDerivations();
-    tekFieldDerivations.setTrlFromDsos(transmissionRiskLevelFromDaysSinceOnsetOfSymptoms);
+    TekFieldDerivations tekFieldDerivations = TekFieldDerivations.from(Map.of(), transmissionRiskLevelFromDaysSinceOnsetOfSymptoms, 1);
     Errors errors = validateConfig(tekFieldDerivations);
     assertThat(errors.hasErrors()).isTrue();
   }
@@ -89,7 +88,7 @@ class DownloadServiceConfigValidatorTest {
     return Stream.of(
         Arguments.of(Map.of(4001, 1)),
         Arguments.of(Map.of(14, 9)),
-        Arguments.of(Map.of(14, 0)),
+        Arguments.of(Map.of(14, DiagnosisKey.MIN_TRANSMISSION_RISK_LEVEL - 1)),
         Arguments.of(Map.of(-15, 1))
     );
   }
