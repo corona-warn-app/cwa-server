@@ -9,6 +9,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.when;
 
 import app.coronawarn.server.common.persistence.domain.FederationBatchInfo;
+import app.coronawarn.server.common.persistence.domain.config.TekFieldDerivations;
 import app.coronawarn.server.common.persistence.domain.normalization.DiagnosisKeyNormalizer;
 import app.coronawarn.server.common.persistence.domain.normalization.NormalizableFields;
 import app.coronawarn.server.common.persistence.repository.DiagnosisKeyRepository;
@@ -18,7 +19,6 @@ import app.coronawarn.server.common.protocols.external.exposurenotification.Diag
 import app.coronawarn.server.common.protocols.external.exposurenotification.DiagnosisKeyBatch;
 import app.coronawarn.server.services.download.*;
 import app.coronawarn.server.services.download.config.DownloadServiceConfig;
-import app.coronawarn.server.services.download.config.DownloadServiceConfig.TekFieldDerivations;
 import app.coronawarn.server.services.download.BatchDownloadResponse;
 import app.coronawarn.server.services.download.FederationBatchProcessor;
 import app.coronawarn.server.services.download.FederationGatewayDownloadService;
@@ -88,7 +88,7 @@ class FederationKeyNormalizerTest {
     diagnosisKeyService.getDiagnosisKeys().forEach(dk -> {
       TekFieldDerivations tekDerivationMap = config.getTekFieldDerivations();
       String keyData = ByteString.copyFrom(dk.getKeyData()).toStringUtf8();
-      assertEquals(tekDerivationMap.deriveTrlFromDsos(getKeysWithDaysSinceSymptoms().get(keyData)), dk.getTransmissionRiskLevel());
+      assertEquals(tekDerivationMap.deriveTransmissionRiskLevelFromDaysSinceSymptoms(getKeysWithDaysSinceSymptoms().get(keyData)), dk.getTransmissionRiskLevel());
     });
   }
 

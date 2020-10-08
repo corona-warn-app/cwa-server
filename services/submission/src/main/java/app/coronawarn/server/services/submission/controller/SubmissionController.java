@@ -179,7 +179,7 @@ public class SubmissionController {
   private SubmissionPayload enhanceWithDefaultValuesIfMissing(SubmissionPayload submissionPayload) {
     String originCountry = defaultIfEmptyOriginCountry(submissionPayload.getOrigin());
     List<String> visitedCountries = extendVisitedCountriesWithOriginCountry(
-        submissionPayload.getVisitedCountriesList());
+        submissionPayload.getVisitedCountriesList(), originCountry);
 
     return SubmissionPayload.newBuilder()
         .addAllKeys(submissionPayload.getKeysList())
@@ -194,9 +194,9 @@ public class SubmissionController {
     return StringUtils.defaultIfBlank(originCountry, submissionServiceConfig.getDefaultOriginCountry());
   }
 
-  private List<String> extendVisitedCountriesWithOriginCountry(List<String> visitedCountries) {
+  private List<String> extendVisitedCountriesWithOriginCountry(List<String> visitedCountries, String originCountry) {
     Set<String> visitedCountriesSet = new HashSet<>(visitedCountries);
-    visitedCountriesSet.add(submissionServiceConfig.getDefaultOriginCountry());
+    visitedCountriesSet.add(originCountry);
     return new ArrayList<>(visitedCountriesSet);
   }
 
