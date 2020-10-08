@@ -35,7 +35,6 @@ Profile                                           | Effect
 --------------------------------------------------|-------------
 `dev`                                             | Sets the log level to `DEBUG` and changes the `CONSOLE_LOG_PATTERN` used by Log4j 2.
 `cloud`                                           | Removes default values for the `spring.flyway`, `spring.datasource` and sets federation gateway contexts
-`disable-ssl-server`                              | Disables SSL for the submission endpoint.
 `disable-ssl-client-postgres`                     | Disables SSL with a pinned certificate for the connection to the postgres.
 
 Please refer to the inline comments in the base `application.yaml` configuration file for further details on the configuration properties impacted by the above profiles.
