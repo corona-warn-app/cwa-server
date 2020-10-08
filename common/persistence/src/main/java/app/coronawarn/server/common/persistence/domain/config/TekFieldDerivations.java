@@ -33,7 +33,7 @@ public class TekFieldDerivations {
   }
 
   /**
-   * Returns a mapped DSOS value for the given TRL or throw an exception if the TRL is not part of
+   * Returns a mapped DSOS value for the given TRL or throws an exception if the TRL is not part of the mapping.
    * the accepted range.
    */
   public Integer deriveDaysSinceSymptomsFromTransmissionRiskLevel(Integer transmissionRiskLevel) {
