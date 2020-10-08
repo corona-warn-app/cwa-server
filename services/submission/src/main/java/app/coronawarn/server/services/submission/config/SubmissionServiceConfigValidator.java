@@ -2,10 +2,10 @@
 
 package app.coronawarn.server.services.submission.config;
 
+import app.coronawarn.server.common.persistence.domain.DiagnosisKey;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
-import java.util.Map;
 import org.springframework.util.unit.DataSize;
 import org.springframework.validation.Errors;
 import org.springframework.validation.Validator;
@@ -58,16 +58,22 @@ public class SubmissionServiceConfigValidator implements Validator {
   }
 
   private void checkTrlInAllowedRange(Integer transmissionRiskLevel, Errors errors) {
-    if (transmissionRiskLevel > 8 || transmissionRiskLevel < 1) {
+    if (transmissionRiskLevel > DiagnosisKey.MAX_TRANSMISSION_RISK_LEVEL
+        || transmissionRiskLevel < DiagnosisKey.MIN_TRANSMISSION_RISK_LEVEL) {
       errors.rejectValue("tekFieldDerivations",
-          "[" + transmissionRiskLevel + "]: transmissionRiskLevel value is not in the allowed range (1 to 8)");
+          "[" + transmissionRiskLevel + "]: transmissionRiskLevel value is not in the allowed range "
+              + "(" + DiagnosisKey.MIN_TRANSMISSION_RISK_LEVEL + " to "
+              + DiagnosisKey.MAX_TRANSMISSION_RISK_LEVEL + ")");
     }
   }
 
   private void checkDsosInAllowedRange(Integer daysSinceOnsetSymptoms, Errors errors) {
-    if (daysSinceOnsetSymptoms > 4000 || daysSinceOnsetSymptoms < -14) {
+    if (daysSinceOnsetSymptoms > DiagnosisKey.MAX_DAYS_SINCE_ONSET_OF_SYMPTOMS
+        || daysSinceOnsetSymptoms < DiagnosisKey.MIN_DAYS_SINCE_ONSET_OF_SYMPTOMS) {
       errors.rejectValue("tekFieldDerivations",
-          "[" + daysSinceOnsetSymptoms + "]: daysSinceOnsetSymptoms value is not in the allowed range (-14 to 4000)");
+          "[" + daysSinceOnsetSymptoms + "]: daysSinceOnsetSymptoms value is not in the allowed range "
+              + "( " + DiagnosisKey.MIN_DAYS_SINCE_ONSET_OF_SYMPTOMS + " to "
+              + DiagnosisKey.MAX_DAYS_SINCE_ONSET_OF_SYMPTOMS + ")");
     }
   }
 

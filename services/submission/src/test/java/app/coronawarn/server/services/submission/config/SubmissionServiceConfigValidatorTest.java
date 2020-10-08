@@ -3,8 +3,14 @@
 package app.coronawarn.server.services.submission.config;
 
 
+import static org.assertj.core.api.Assertions.assertThat;
+
+import app.coronawarn.server.common.persistence.domain.DiagnosisKey;
 import app.coronawarn.server.services.submission.config.SubmissionServiceConfig.Payload;
 import app.coronawarn.server.services.submission.config.SubmissionServiceConfig.TekFieldDerivations;
+import java.util.Map;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
@@ -17,11 +23,6 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.util.unit.DataSize;
 import org.springframework.validation.BeanPropertyBindingResult;
 import org.springframework.validation.Errors;
-import java.util.Map;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
-
-import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @DirtiesContext
@@ -55,14 +56,16 @@ class SubmissionServiceConfigValidatorTest {
   @ParameterizedTest
   @MethodSource("invalidSupportedCountries")
   void testWithInvalidSupportedCountries(String supportedCountries) {
-    Errors errors = validateConfig(SubmissionServiceConfigValidator.MAX_MAXIMUM_REQUEST_SIZE, supportedCountries, getEmptyTekFieldDerivations());
+    Errors errors = validateConfig(SubmissionServiceConfigValidator.MAX_MAXIMUM_REQUEST_SIZE, supportedCountries,
+        getEmptyTekFieldDerivations());
     assertThat(errors.hasErrors()).isTrue();
   }
 
   @ParameterizedTest
   @ValueSource(strings = {"DE", "DE,FR"})
   void testWithValidSupportedCountries(String supportedCountries) {
-    Errors errors = validateConfig(SubmissionServiceConfigValidator.MAX_MAXIMUM_REQUEST_SIZE, supportedCountries, getEmptyTekFieldDerivations());
+    Errors errors = validateConfig(SubmissionServiceConfigValidator.MAX_MAXIMUM_REQUEST_SIZE, supportedCountries,
+        getEmptyTekFieldDerivations());
     assertThat(errors.hasErrors()).isFalse();
   }
 
@@ -72,7 +75,8 @@ class SubmissionServiceConfigValidatorTest {
     TekFieldDerivations tekFieldDerivations = new TekFieldDerivations();
     tekFieldDerivations.setDsosFromTrl(Map.of());
     tekFieldDerivations.setTrlFromDsos(trlFromDsos);
-    Errors errors = validateConfig(SubmissionServiceConfigValidator.MAX_MAXIMUM_REQUEST_SIZE, "DE", tekFieldDerivations);
+    Errors errors = validateConfig(SubmissionServiceConfigValidator.MAX_MAXIMUM_REQUEST_SIZE, "DE",
+        tekFieldDerivations);
     assertThat(errors.hasErrors()).isFalse();
   }
 
@@ -82,7 +86,8 @@ class SubmissionServiceConfigValidatorTest {
     TekFieldDerivations tekFieldDerivations = new TekFieldDerivations();
     tekFieldDerivations.setDsosFromTrl(Map.of());
     tekFieldDerivations.setTrlFromDsos(trlFromDsos);
-    Errors errors = validateConfig(SubmissionServiceConfigValidator.MAX_MAXIMUM_REQUEST_SIZE, "DE", tekFieldDerivations);
+    Errors errors = validateConfig(SubmissionServiceConfigValidator.MAX_MAXIMUM_REQUEST_SIZE, "DE",
+        tekFieldDerivations);
     assertThat(errors.hasErrors()).isTrue();
   }
 
@@ -92,7 +97,8 @@ class SubmissionServiceConfigValidatorTest {
     TekFieldDerivations tekFieldDerivations = new TekFieldDerivations();
     tekFieldDerivations.setDsosFromTrl(dsosFromTrl);
     tekFieldDerivations.setTrlFromDsos(Map.of());
-    Errors errors = validateConfig(SubmissionServiceConfigValidator.MAX_MAXIMUM_REQUEST_SIZE, "DE", tekFieldDerivations);
+    Errors errors = validateConfig(SubmissionServiceConfigValidator.MAX_MAXIMUM_REQUEST_SIZE, "DE",
+        tekFieldDerivations);
     assertThat(errors.hasErrors()).isFalse();
   }
 
@@ -102,7 +108,8 @@ class SubmissionServiceConfigValidatorTest {
     TekFieldDerivations tekFieldDerivations = new TekFieldDerivations();
     tekFieldDerivations.setDsosFromTrl(dsosFromTrl);
     tekFieldDerivations.setTrlFromDsos(Map.of());
-    Errors errors = validateConfig(SubmissionServiceConfigValidator.MAX_MAXIMUM_REQUEST_SIZE, "DE", tekFieldDerivations);
+    Errors errors = validateConfig(SubmissionServiceConfigValidator.MAX_MAXIMUM_REQUEST_SIZE, "DE",
+        tekFieldDerivations);
     assertThat(errors.hasErrors()).isTrue();
   }
 
@@ -157,7 +164,7 @@ class SubmissionServiceConfigValidatorTest {
   }
 
   private static Stream<Arguments> validTrlFromDsosDatasets() {
-    Map<Integer, Integer> validMapping1 = Stream.of(new Integer[][] {
+    Map<Integer, Integer> validMapping1 = Stream.of(new Integer[][]{
         {14, 1},
         {13, 1},
         {3, 3},
@@ -167,7 +174,7 @@ class SubmissionServiceConfigValidatorTest {
         {-14, 1}
     }).collect(Collectors.toMap(data -> data[0], data -> data[1]));
 
-    Map<Integer, Integer> validMapping2 = Stream.of(new Integer[][] {
+    Map<Integer, Integer> validMapping2 = Stream.of(new Integer[][]{
         {14, 1},
         {13, 2},
         {3, 3},
@@ -188,13 +195,13 @@ class SubmissionServiceConfigValidatorTest {
     return Stream.of(
         Arguments.of(Map.of(4001, 1)),
         Arguments.of(Map.of(14, 9)),
-        Arguments.of(Map.of(14, 0)),
+        Arguments.of(Map.of(14, DiagnosisKey.MIN_TRANSMISSION_RISK_LEVEL - 1)),
         Arguments.of(Map.of(-15, 1))
     );
   }
 
   private static Stream<Arguments> validDsosFromTrlDatasets() {
-    Map<Integer, Integer> map1 = Stream.of(new Integer[][] {
+    Map<Integer, Integer> map1 = Stream.of(new Integer[][]{
         {1, -4},
         {3, -3},
         {5, -2},
@@ -202,7 +209,7 @@ class SubmissionServiceConfigValidatorTest {
         {8, 0}
     }).collect(Collectors.toMap(data -> data[0], data -> data[1]));
 
-    Map<Integer, Integer> map2 = Stream.of(new Integer[][] {
+    Map<Integer, Integer> map2 = Stream.of(new Integer[][]{
         {1, -14},
         {2, -3},
         {3, -2},
@@ -218,7 +225,7 @@ class SubmissionServiceConfigValidatorTest {
 
   private static Stream<Arguments> invalidDsosFromTrlDatasets() {
     return Stream.of(
-        Arguments.of(Map.of(0, -4)),
+        Arguments.of(Map.of(DiagnosisKey.MIN_TRANSMISSION_RISK_LEVEL - 1, -4)),
         Arguments.of(Map.of(1, -15))
     );
   }
