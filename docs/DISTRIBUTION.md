@@ -129,6 +129,7 @@ Each run creates all hourly and daily archives for the last 14 days. To prevent 
 ## Diagnosis Key Export Files
 
 At the end of the process the diagnosis keys are exported into ZIP archives that contains two entries:
+
 - export.bin - the binary containing the exposure keys
 - export.sig - the signature to verify the export binary
 
