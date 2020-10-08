@@ -232,5 +232,4 @@ public abstract class DiagnosisKeyBundler {
         euPackageList.put(distributionDateTime, new ArrayList<>(diagnosisKeys)));
     distributableDiagnosisKeys.put(euPackageName, euPackageList);
   }
-
 }

@@ -74,7 +74,7 @@ public class ProdDiagnosisKeyBundler extends DiagnosisKeyBundler {
 
     LocalDateTime earliestDistributableTimestamp =
         getEarliestDistributableTimestamp(distributableDiagnosisKeysGroupedByExpiryPolicy).orElseThrow();
-    LocalDateTime latestDistributableTimestamp = this.distributionTime;
+    LocalDateTime latestDistributableTimestamp = distributionTime;
 
     List<DiagnosisKey> diagnosisKeyAccumulator = new ArrayList<>();
     LongStream.range(0, earliestDistributableTimestamp.until(latestDistributableTimestamp, ChronoUnit.HOURS))
@@ -85,19 +85,18 @@ public class ProdDiagnosisKeyBundler extends DiagnosisKeyBundler {
               .orElse(emptyList());
           diagnosisKeyAccumulator.addAll(currentHourDiagnosisKeys);
           if (diagnosisKeyAccumulator.size() >= minNumberOfKeysPerBundle) {
-            this.distributableDiagnosisKeys.get(country).put(currentHour, new ArrayList<>(diagnosisKeyAccumulator));
+            distributableDiagnosisKeys.get(country).put(currentHour, new ArrayList<>(diagnosisKeyAccumulator));
             diagnosisKeyAccumulator.clear();
           } else {
             // placeholder list is needed to be able to generate empty file - see issue #650
-            this.distributableDiagnosisKeys.get(country).put(currentHour, Collections.emptyList());
+            distributableDiagnosisKeys.get(country).put(currentHour, Collections.emptyList());
           }
         });
   }
 
   private void populateDistributableDiagnosisKeysWithoutPolicies(String country) {
-
-    this.distributableDiagnosisKeys.get(country).putAll(groupedDiagnosisKeys.get(country).stream()
-        .filter(diagnosisKey -> this.getSubmissionDateTime(diagnosisKey).isBefore(this.distributionTime))
+    distributableDiagnosisKeys.get(country).putAll(groupedDiagnosisKeys.get(country).stream()
+        .filter(diagnosisKey -> getSubmissionDateTime(diagnosisKey).isBefore(distributionTime))
         .collect(groupingBy(this::getSubmissionDateTime)));
   }
 

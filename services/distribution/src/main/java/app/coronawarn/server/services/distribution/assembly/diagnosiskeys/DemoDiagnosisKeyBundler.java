@@ -21,7 +21,6 @@ import org.springframework.stereotype.Component;
 @Component
 public class DemoDiagnosisKeyBundler extends DiagnosisKeyBundler {
 
-
   public DemoDiagnosisKeyBundler(DistributionServiceConfig distributionServiceConfig) {
     super(distributionServiceConfig);
   }
