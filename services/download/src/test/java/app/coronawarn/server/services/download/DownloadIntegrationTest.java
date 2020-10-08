@@ -42,8 +42,10 @@ import org.springframework.test.context.ActiveProfiles;
  * accordingly.
  * <p>
  * The WireMockServer will additionally return a series of three batches:
- * <li>Batch1 is the first batch of the corresponding date. The first diagnosis key can be processed successfully, but the
- * second diagnosis key is rejected due to its unsupported ReportType "Self Reported".</li>
+ * <li>Batch1 is the first batch of the corresponding date. The first and fourth diagnosis keys can be processed
+ * successfully.
+ * The second diagnosis key is rejected due to its unsupported ReportType "Self Reported". The third diagnosis key is
+ * rejected due to its invalid RollingPeriod.</li>
  * <li>Batch2 is returned by an explicit call to its batch tag and can be processed successfully as well.</li>
  * <li>Batch3 fails with a 404 Not Found.</li>
  * <p>
@@ -67,14 +69,16 @@ class DownloadIntegrationTest {
   private static final String BATCH1_TAG = "batch1_tag";
   private static final String BATCH1_KEY1_DATA = "0123456789ABCDEA";
   private static final String BATCH1_KEY2_DATA = "0123456789ABCDEB";
+  private static final String BATCH1_KEY3_DATA = "0123456789ABCDEC";
+  private static final String BATCH1_KEY4_DATA = "0123456789ABCDED";
 
   private static final String BATCH2_TAG = "batch2_tag";
-  private static final String BATCH2_KEY_DATA = "0123456789ABCDEC";
+  private static final String BATCH2_KEY_DATA = "0123456789ABCDEE";
 
   private static final String BATCH3_TAG = "batch3_tag";
 
   private static final String RETRY_BATCH_SUCCESSFUL_TAG = "retry_batch_tag_successful";
-  private static final String RETRY_BATCH_SUCCESSFUL_KEY_DATA = "0123456789ABCDED";
+  private static final String RETRY_BATCH_SUCCESSFUL_KEY_DATA = "0123456789ABCDEF";
 
   private static final String RETRY_BATCH_FAILS_TAG = "retry_batch_tag_fail";
 
@@ -97,10 +101,19 @@ class DownloadIntegrationTest {
     DiagnosisKeyBatch batch1 = FederationBatchTestHelper.createDiagnosisKeyBatch(
         List.of(
             FederationBatchTestHelper.createFederationDiagnosisKeyWithKeyData(BATCH1_KEY1_DATA),
+            FederationBatchTestHelper.createBuilderForValidFederationDiagnosisKey()
+                .setKeyData(ByteString.copyFromUtf8(BATCH1_KEY4_DATA))
+                .setTransmissionRiskLevel(Integer.MAX_VALUE)
+                .build(),
             FederationBatchTestHelper
                 .createBuilderForValidFederationDiagnosisKey()
                 .setKeyData(ByteString.copyFromUtf8(BATCH1_KEY2_DATA))
                 .setReportType(ReportType.SELF_REPORT)
+                .build(),
+            FederationBatchTestHelper
+                .createBuilderForValidFederationDiagnosisKey()
+                .setKeyData(ByteString.copyFromUtf8(BATCH1_KEY3_DATA))
+                .setRollingPeriod(-5)
                 .build()
         )
     );
@@ -178,8 +191,9 @@ class DownloadIntegrationTest {
 
     Iterable<DiagnosisKey> diagnosisKeys = diagnosisKeyRepository.findAll();
     assertThat(diagnosisKeys)
-        .hasSize(3)
+        .hasSize(4)
         .contains(FederationBatchTestHelper.createDiagnosisKey(BATCH1_KEY1_DATA, downloadServiceConfig))
+        .contains(FederationBatchTestHelper.createDiagnosisKey(BATCH1_KEY4_DATA, downloadServiceConfig))
         .contains(FederationBatchTestHelper.createDiagnosisKey(BATCH2_KEY_DATA, downloadServiceConfig))
         .contains(FederationBatchTestHelper.createDiagnosisKey(RETRY_BATCH_SUCCESSFUL_KEY_DATA, downloadServiceConfig));
   }

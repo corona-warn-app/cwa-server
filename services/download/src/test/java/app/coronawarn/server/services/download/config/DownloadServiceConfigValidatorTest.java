@@ -2,6 +2,7 @@
 
 package app.coronawarn.server.services.download.config;
 
+import app.coronawarn.server.common.persistence.domain.DiagnosisKey;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
@@ -87,7 +88,7 @@ class DownloadServiceConfigValidatorTest {
     return Stream.of(
         Arguments.of(Map.of(4001, 1)),
         Arguments.of(Map.of(14, 9)),
-        Arguments.of(Map.of(14, 0)),
+        Arguments.of(Map.of(14, DiagnosisKey.MIN_TRANSMISSION_RISK_LEVEL - 1)),
         Arguments.of(Map.of(-15, 1))
     );
   }

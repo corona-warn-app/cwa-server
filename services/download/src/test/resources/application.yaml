@@ -24,14 +24,7 @@ services:
     efgs-offset-days: 1
     retention-days: 14
     validation:
-      key-length: 16
       allowed-report-types: CONFIRMED_TEST
-      min-dsos: -14
-      max-dsos: 4000
-      min-rolling-period: 0
-      max-rolling-period: 144
-      min-trl: 1
-      max-trl: 8
 
 federation-gateway:
   base-url: http://localhost:1234

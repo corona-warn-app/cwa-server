@@ -62,23 +62,7 @@ public class DownloadServiceConfig {
 
   public static class Validation {
 
-    @Min(0)
-    private int keyLength;
     private List<ReportType> allowedReportTypes;
-    private int minDsos;
-    private int maxDsos;
-    private int minRollingPeriod;
-    private int maxRollingPeriod;
-    private int minTrl;
-    private int maxTrl;
-
-    public int getKeyLength() {
-      return keyLength;
-    }
-
-    public void setKeyLength(int keyLength) {
-      this.keyLength = keyLength;
-    }
 
     public List<ReportType> getAllowedReportTypes() {
       return allowedReportTypes;
@@ -87,54 +71,6 @@ public class DownloadServiceConfig {
     public void setAllowedReportTypes(
         List<ReportType> allowedReportTypes) {
       this.allowedReportTypes = allowedReportTypes;
-    }
-
-    public int getMinDsos() {
-      return minDsos;
-    }
-
-    public void setMinDsos(int minDsos) {
-      this.minDsos = minDsos;
-    }
-
-    public int getMaxDsos() {
-      return maxDsos;
-    }
-
-    public void setMaxDsos(int maxDsos) {
-      this.maxDsos = maxDsos;
-    }
-
-    public int getMinRollingPeriod() {
-      return minRollingPeriod;
-    }
-
-    public void setMinRollingPeriod(int minRollingPeriod) {
-      this.minRollingPeriod = minRollingPeriod;
-    }
-
-    public int getMaxRollingPeriod() {
-      return maxRollingPeriod;
-    }
-
-    public void setMaxRollingPeriod(int maxRollingPeriod) {
-      this.maxRollingPeriod = maxRollingPeriod;
-    }
-
-    public int getMinTrl() {
-      return minTrl;
-    }
-
-    public void setMinTrl(int minTrl) {
-      this.minTrl = minTrl;
-    }
-
-    public int getMaxTrl() {
-      return maxTrl;
-    }
-
-    public void setMaxTrl(int maxTrl) {
-      this.maxTrl = maxTrl;
     }
   }
 }
