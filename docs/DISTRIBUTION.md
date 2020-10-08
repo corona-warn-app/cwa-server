@@ -128,27 +128,50 @@ Each run creates all hourly and daily archives for the last 14 days. To prevent 
 
 ## Diagnosis Key Export Files
 
-Coming soon
+At the end of the process the diagnosis keys are exported into ZIP archives that contains two entries:
+* export.bin - the binary containing the exposure keys
+* export.sig - the signature to verify the export binary
+
+The `export.bin` file of the archive contains the Temporary Exposure Keys that are broadcast by the defices of the
+people who are diagnosed with COVID-19.
+The `export.sig` file is used by the server to sign each `export.bin` with a private key. The `export.sig` file
+contains the raw signature as well as additional information needed for verification.
 
 ## Signing
 
 The signing of the files is basically creating an archive and that archive contains the `export.bin` file
 (the file name is configurable in `application.yaml` under `tek-export.file-name` property).
-Both the application configuration as well as the temporary exposure keys are signed so that the mobile devices
+Both the application configuration as well as the Temporary Exposure Keys are signed so that the mobile devices
 can trust that this is coming from the right backend. There is no man in the middle attacks happening or
 request forgery or any other attacks, so the server signs all of this. The way it is done is implemented in the
-[`AppConfigurationSigningDecorator`](services/distribution/src/main/java/app/coronawarn/server/services/distribution/assembly/appconfig/structure/archive/decorator/signing/AppConfigurationSigningDecorator.java).
+[`AppConfigurationSigningDecorator`](/services/distribution/src/main/java/app/coronawarn/server/services/distribution/assembly/appconfig/structure/archive/decorator/signing/AppConfigurationSigningDecorator.java).
 
 The signing of the archives is described by looking for an `export.bin` file. Within that archive, it will sign it or
 create a signature of that thing and basically just write it into an `export.sig` which is happening in the
-`getSignatureFile` method located in [`SigningDecoratorOnDisk`](services/distribution/src/main/java/app/coronawarn/server/services/distribution/assembly/structure/archive/decorator/signing/SigningDecoratorOnDisk.java).
+`getSignatureFile` method located in [`SigningDecoratorOnDisk`](/services/distribution/src/main/java/app/coronawarn/server/services/distribution/assembly/structure/archive/decorator/signing/SigningDecoratorOnDisk.java).
 There are different implementations for that, i.e. how to sign an app configuration which is the
 AppConfigurationSigningDecorator - the specific code to determine how an application configuration file is supposed to be signed.
 For the Temporary Exposure Key files, they are signed in the similar way using the
-[`DiagnosisKeySigningDecorator`](services/distribution/src/main/java/app/coronawarn/server/services/distribution/assembly/diagnosiskeys/structure/archive/decorator/signing/DiagnosisKeySigningDecorator.java).
+[`DiagnosisKeySigningDecorator`](/services/distribution/src/main/java/app/coronawarn/server/services/distribution/assembly/diagnosiskeys/structure/archive/decorator/signing/DiagnosisKeySigningDecorator.java).
 
-The algorithm used for signing the archives as well as other relevant information is present in the [`application.yaml`](services/distribution/src/main/resources/application.yaml).
+The algorithm used for signing the archives as well as other relevant information is present in the [`application.yaml`](/services/distribution/src/main/resources/application.yaml).
 
 ## Bundling and Shifting
+The [`DiagnosisKeyBundler`](/services/distribution/src/main/java/app/coronawarn/server/services/distribution/assembly/diagnosiskeys/DiagnosisKeyBundler.java)
+is responsible fo most of the distribution magic like which diagnosis keys go into which date and which hour
+and any other transformations there must be applied.
 
-Coming soon
+In the preparation step of the distribution it queries all diagnosis keys that are available in the database and put into
+this `DiagnosisKeyBundler`. The purpose of this class is to distribute keys into different hours and dates and tell
+the rest of the application for which hours and dates there are keys available.
+There are two of those diagnosis key bundlers, which can basically be triggered by a specific profile being set.
+What is noteworthy for these bundlers is that there's a series of policies being applied here. The first policy,
+which is something that Apple demands (more details [here](https://developer.apple.com/documentation/exposurenotification/setting_up_a_key_server)),
+expiry policy that states that mwe must not distribute a diagnosis key or a Temporary Exposure Key until at least
+two hours after the end of the key's expiration window. In other words, Apple wants us to wait an additional two hours
+before we distribute the key to further preserve the privacy of the users. Then, there's the second policy, and that is
+being applied, which we call the shifting policy. We must make sure that for every distribution or for every export
+file that we put into the public, there must be at least 140 Temporary Exposure Keys in such an export
+(the number is configurable by changing the `shifting-policy-threshold` property). If we cannot assemble enough or
+we do not have enough Temporary Exposure Keys for an export then we wait with the distribution of those keys until we
+have gathered enough to fulfill this threshold.
