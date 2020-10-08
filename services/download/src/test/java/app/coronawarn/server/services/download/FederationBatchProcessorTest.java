@@ -23,6 +23,7 @@ import static org.mockito.Mockito.when;
 import app.coronawarn.server.common.federation.client.FederationGatewayClient;
 import app.coronawarn.server.common.persistence.domain.FederationBatchInfo;
 import app.coronawarn.server.common.persistence.domain.FederationBatchStatus;
+import app.coronawarn.server.common.persistence.domain.config.TekFieldDerivations;
 import app.coronawarn.server.common.persistence.service.DiagnosisKeyService;
 import app.coronawarn.server.common.persistence.service.FederationBatchInfoService;
 import app.coronawarn.server.services.download.config.DownloadServiceConfig;
@@ -49,7 +50,7 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.annotation.DirtiesContext;
 
 @SpringBootTest(classes = {FederationBatchProcessor.class, FederationBatchInfoService.class, DiagnosisKeyService.class,
-    FederationGatewayClient.class, ValidFederationKeyFilter.class})
+    FederationGatewayClient.class, ValidFederationKeyFilter.class, TekFieldDerivations.class})
 @DirtiesContext
 @EnableConfigurationProperties(value = DownloadServiceConfig.class)
 class FederationBatchProcessorTest {

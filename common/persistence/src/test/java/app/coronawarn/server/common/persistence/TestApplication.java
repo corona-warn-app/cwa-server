@@ -2,6 +2,8 @@
 
 package app.coronawarn.server.common.persistence;
 
+import app.coronawarn.server.common.persistence.domain.config.TekFieldDerivations;
+import app.coronawarn.server.common.persistence.domain.config.YamlPropertySourceFactory;
 import app.coronawarn.server.common.persistence.repository.DiagnosisKeyRepository;
 import app.coronawarn.server.common.persistence.repository.FederationBatchInfoRepository;
 import app.coronawarn.server.common.persistence.repository.FederationUploadKeyRepository;
@@ -10,7 +12,7 @@ import app.coronawarn.server.common.persistence.service.FederationBatchInfoServi
 import app.coronawarn.server.common.persistence.service.FederationUploadKeyService;
 import app.coronawarn.server.common.persistence.service.common.KeySharingPoliciesChecker;
 import app.coronawarn.server.common.persistence.service.common.ValidDiagnosisKeyFilter;
-
+import java.util.Map;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -42,5 +44,15 @@ public class TestApplication {
   @Bean
   FederationBatchInfoService createFederationBatchInfoService(FederationBatchInfoRepository federationBatchInfoRepository) {
     return new FederationBatchInfoService(federationBatchInfoRepository);
+  }
+
+  @Bean
+  TekFieldDerivations tekFieldDerivations() {
+    return TekFieldDerivations.from(Map.of(3997, 8), Map.of(8, 3997), 3);
+  }
+
+  @Bean
+  YamlPropertySourceFactory propertySourceFactory() {
+    return new YamlPropertySourceFactory();
   }
 }

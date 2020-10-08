@@ -11,9 +11,9 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
+import app.coronawarn.server.common.persistence.domain.config.TekFieldDerivations;
 import app.coronawarn.server.common.persistence.domain.normalization.NormalizableFields;
 import app.coronawarn.server.services.submission.config.SubmissionServiceConfig;
-import app.coronawarn.server.services.submission.config.SubmissionServiceConfig.TekFieldDerivations;
 
 class SubmissionKeyNormalizerTest {
 
@@ -23,7 +23,7 @@ class SubmissionKeyNormalizerTest {
     SubmissionServiceConfig mockedConfig = mock(SubmissionServiceConfig.class);
     TekFieldDerivations mockedDerivationRules = mock(TekFieldDerivations.class);
     when(mockedConfig.getTekFieldDerivations()).thenReturn(mockedDerivationRules);
-    when(mockedDerivationRules.deriveDsosFromTrl(inputTrlValue)).thenReturn(expectedDsosValue);
+    when(mockedDerivationRules.deriveDaysSinceSymptomsFromTransmissionRiskLevel(inputTrlValue)).thenReturn(expectedDsosValue);
 
     SubmissionKeyNormalizer normalizer = new SubmissionKeyNormalizer(mockedConfig);
     NormalizableFields result = normalizer.normalize(NormalizableFields.of(inputTrlValue, null));
@@ -39,7 +39,7 @@ class SubmissionKeyNormalizerTest {
     SubmissionServiceConfig mockedConfig = mock(SubmissionServiceConfig.class);
     TekFieldDerivations mockedDerivationRules = mock(TekFieldDerivations.class);
     when(mockedConfig.getTekFieldDerivations()).thenReturn(mockedDerivationRules);
-    when(mockedDerivationRules.deriveTrlFromDsos(inputDsosValue)).thenReturn(expectedTrlValue);
+    when(mockedDerivationRules.deriveTransmissionRiskLevelFromDaysSinceSymptoms(inputDsosValue)).thenReturn(expectedTrlValue);
 
     SubmissionKeyNormalizer normalizer = new SubmissionKeyNormalizer(mockedConfig);
     NormalizableFields result = normalizer.normalize(NormalizableFields.of(null, inputDsosValue));
@@ -54,7 +54,7 @@ class SubmissionKeyNormalizerTest {
     SubmissionServiceConfig mockedConfig = mock(SubmissionServiceConfig.class);
     TekFieldDerivations mockedDerivationRules = mock(TekFieldDerivations.class);
     when(mockedConfig.getTekFieldDerivations()).thenReturn(mockedDerivationRules);
-    when(mockedDerivationRules.deriveDsosFromTrl(1)).thenReturn(2);
+    when(mockedDerivationRules.deriveDaysSinceSymptomsFromTransmissionRiskLevel(1)).thenReturn(2);
 
     SubmissionKeyNormalizer normalizer = new SubmissionKeyNormalizer(mockedConfig);
     NormalizableFields missingValues = NormalizableFields.of(null, null);

@@ -1,6 +1,7 @@
 
 
 package app.coronawarn.server.services.submission.controller;
+
 import static app.coronawarn.server.services.submission.controller.SubmissionPayloadMockData.VALID_KEY_DATA_1;
 import static app.coronawarn.server.services.submission.controller.SubmissionPayloadMockData.VALID_KEY_DATA_2;
 import static app.coronawarn.server.services.submission.controller.SubmissionPayloadMockData.buildPayload;
@@ -16,7 +17,6 @@ import static app.coronawarn.server.services.submission.controller.SubmissionPay
 import static app.coronawarn.server.services.submission.controller.SubmissionPayloadMockData.createRollingStartIntervalNumber;
 import static app.coronawarn.server.services.submission.controller.SubmissionPayloadMockData.buildPayloadWithInvalidOriginCountry;
 import static app.coronawarn.server.services.submission.controller.SubmissionPayloadMockData.buildTemporaryExposureKey;
-
 import static org.apache.commons.lang3.StringUtils.defaultIfBlank;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
@@ -414,7 +414,7 @@ class SubmissionControllerTest {
     submittedTEKs.stream().map(tek -> Pair.of(tek, findDiagnosisKeyMatch(tek, diagnosisKeys))).forEach(pair -> {
       int tekDSOS = pair.getLeft().getDaysSinceOnsetOfSymptoms();
       int dkTRL = pair.getRight().getTransmissionRiskLevel();
-      Integer expectedTRL = config.getTekFieldDerivations().deriveTrlFromDsos(tekDSOS);
+      Integer expectedTRL = config.getTekFieldDerivations().deriveTransmissionRiskLevelFromDaysSinceSymptoms(tekDSOS);
       Assertions.assertEquals(expectedTRL, dkTRL);
     });
   }
@@ -424,7 +424,7 @@ class SubmissionControllerTest {
     submittedTEKs.stream().map(tek -> Pair.of(tek, findDiagnosisKeyMatch(tek, diagnosisKeys))).forEach(pair -> {
       int tekTRL = pair.getLeft().getTransmissionRiskLevel();
       int dkDSOS = pair.getRight().getDaysSinceOnsetOfSymptoms();
-      Integer expectedDsos = config.getTekFieldDerivations().deriveDsosFromTrl(tekTRL);
+      Integer expectedDsos = config.getTekFieldDerivations().deriveDaysSinceSymptomsFromTransmissionRiskLevel(tekTRL);
       Assertions.assertEquals(expectedDsos, dkDSOS);
     });
   }

@@ -25,7 +25,7 @@ public class DownloadServiceConfigValidator implements Validator {
 
   private void validateTransmissionRiskLevelDerivationMap(Errors errors, DownloadServiceConfig properties) {
     Map<Integer, Integer> transmissionRiskLevelFromDaysSinceOnsetOfSymptoms =
-        properties.getTekFieldDerivations().getTransmissionRiskLevelFromDaysSinceOnsetOfSymptoms();
+        properties.getTekFieldDerivations().getTransmissionRiskLevelFromDaysSinceSymptoms();
 
     transmissionRiskLevelFromDaysSinceOnsetOfSymptoms.forEach((daysSinceOnsetOfSymptoms, transmissionRiskLevel) -> {
       checkTransmissionRiskLevelInAllowedRange(transmissionRiskLevel, errors);
