@@ -129,8 +129,8 @@ Each run creates all hourly and daily archives for the last 14 days. To prevent 
 ## Diagnosis Key Export Files
 
 At the end of the process the diagnosis keys are exported into ZIP archives that contains two entries:
-* export.bin - the binary containing the exposure keys
-* export.sig - the signature to verify the export binary
+- export.bin - the binary containing the exposure keys
+- export.sig - the signature to verify the export binary
 
 The `export.bin` file of the archive contains the Temporary Exposure Keys that are broadcast by the defices of the
 people who are diagnosed with COVID-19.
@@ -157,6 +157,7 @@ For the Temporary Exposure Key files, they are signed in the similar way using t
 The algorithm used for signing the archives as well as other relevant information is present in the [`application.yaml`](/services/distribution/src/main/resources/application.yaml).
 
 ## Bundling and Shifting
+
 The [`DiagnosisKeyBundler`](/services/distribution/src/main/java/app/coronawarn/server/services/distribution/assembly/diagnosiskeys/DiagnosisKeyBundler.java)
 is responsible fo most of the distribution magic like which diagnosis keys go into which date and which hour
 and any other transformations there must be applied.
