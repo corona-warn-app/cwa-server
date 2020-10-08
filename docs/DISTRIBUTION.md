@@ -132,7 +132,22 @@ Coming soon
 
 ## Signing
 
-Coming soon
+The signing of the files is basically creating an archive and that archive contains the `export.bin` file
+(the file name is configurable in `application.yaml` under `tek-export.file-name` property).
+Both the application configuration as well as the temporary exposure keys are signed so that the mobile devices
+can trust that this is coming from the right backend. There is no man in the middle attacks happening or
+request forgery or any other attacks, so the server signs all of this. The way it is done is implemented in the
+[`AppConfigurationSigningDecorator`](services/distribution/src/main/java/app/coronawarn/server/services/distribution/assembly/appconfig/structure/archive/decorator/signing/AppConfigurationSigningDecorator.java).
+
+The signing of the archives is described by looking for an `export.bin` file. Within that archive, it will sign it or
+create a signature of that thing and basically just write it into an `export.sig` which is happening in the
+`getSignatureFile` method located in [`SigningDecoratorOnDisk`](services/distribution/src/main/java/app/coronawarn/server/services/distribution/assembly/structure/archive/decorator/signing/SigningDecoratorOnDisk.java).
+There are different implementations for that, i.e. how to sign an app configuration which is the
+AppConfigurationSigningDecorator - the specific code to determine how an application configuration file is supposed to be signed.
+For the Temporary Exposure Key files, they are signed in the similar way using the
+[`DiagnosisKeySigningDecorator`](services/distribution/src/main/java/app/coronawarn/server/services/distribution/assembly/diagnosiskeys/structure/archive/decorator/signing/DiagnosisKeySigningDecorator.java).
+
+The algorithm used for signing the archives as well as other relevant information is present in the [`application.yaml`](services/distribution/src/main/resources/application.yaml).
 
 ## Bundling and Shifting
 
