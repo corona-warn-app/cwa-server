@@ -155,7 +155,7 @@ There are different implementations for that, i.e. how to sign an app configurat
 For the Temporary Exposure Key files, they are signed in the similar way using the
 [`DiagnosisKeySigningDecorator`](/services/distribution/src/main/java/app/coronawarn/server/services/distribution/assembly/diagnosiskeys/structure/archive/decorator/signing/DiagnosisKeySigningDecorator.java).
 
-The algorithm used for signing the archives as well as other relevant information is present in the [`application.yaml`](/services/distribution/src/main/resources/application.yaml).
+The algorithm used for signing the archives as well as other relevant information is defined in the [`application.yaml`](/services/distribution/src/main/resources/application.yaml).
 
 ## Bundling and Shifting
 
