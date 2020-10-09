@@ -4,7 +4,7 @@ package app.coronawarn.server.services.submission.validation;
 
 import static java.util.function.Predicate.not;
 import static java.util.stream.Collectors.toList;
-
+import app.coronawarn.server.common.persistence.domain.DiagnosisKey;
 import app.coronawarn.server.common.persistence.domain.normalization.DiagnosisKeyNormalizer;
 import app.coronawarn.server.common.protocols.external.exposurenotification.TemporaryExposureKey;
 import app.coronawarn.server.common.protocols.internal.SubmissionPayload;
@@ -183,12 +183,12 @@ public @interface ValidSubmissionPayload {
 
     private boolean hasInvalidDaysSinceSymptoms(TemporaryExposureKey key) {
       int dsos = key.getDaysSinceOnsetOfSymptoms();
-      return dsos < -14 || dsos > 4000;
+      return dsos < DiagnosisKey.MIN_DAYS_SINCE_ONSET_OF_SYMPTOMS || dsos > DiagnosisKey.MAX_DAYS_SINCE_ONSET_OF_SYMPTOMS;
     }
 
     private boolean hasInvalidTransmissionRiskLevel(TemporaryExposureKey key) {
       int trl = key.getTransmissionRiskLevel();
-      return trl < 1 || trl > 8;
+      return trl < DiagnosisKey.MIN_TRANSMISSION_RISK_LEVEL || trl > DiagnosisKey.MAX_TRANSMISSION_RISK_LEVEL;
     }
 
     /**
