@@ -15,11 +15,9 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.Set;
 import java.util.stream.LongStream;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
@@ -36,7 +34,6 @@ public class ProdDiagnosisKeyBundler extends DiagnosisKeyBundler {
 
   private KeySharingPoliciesChecker sharingPoliciesChecker;
   private String originCountry;
-  private String euPackageName;
   private boolean applyPoliciesForAllCountries;
 
   /**
@@ -47,7 +44,6 @@ public class ProdDiagnosisKeyBundler extends DiagnosisKeyBundler {
     super(distributionServiceConfig);
     this.sharingPoliciesChecker = sharingPoliciesChecker;
     this.originCountry = distributionServiceConfig.getApi().getOriginCountry();
-    this.euPackageName = distributionServiceConfig.getEuPackageName();
     this.applyPoliciesForAllCountries = distributionServiceConfig.getApplyPoliciesForAllCountries();
   }
 
@@ -57,42 +53,20 @@ public class ProdDiagnosisKeyBundler extends DiagnosisKeyBundler {
    */
   @Override
   protected void createDiagnosisKeyDistributionMap(Collection<DiagnosisKey> diagnosisKeys) {
-    this.distributableDiagnosisKeys.clear();
-    Map<String, List<DiagnosisKey>> diagnosisKeysMapped = groupDiagnosisKeysByCountry(diagnosisKeys);
-
-    diagnosisKeysMapped.keySet().forEach(country -> {
+    mapDiagnosisKeysPerVisitedCountries(diagnosisKeys).keySet().forEach(country -> {
       if (!country.equals(originCountry) && !applyPoliciesForAllCountries) {
-        populateDistributableDiagnosisKeysWithoutPolicies(diagnosisKeysMapped, country);
+        populateDistributableDiagnosisKeysWithoutPolicies(country);
       } else {
-        populateDistributableDiagnosisKeysWithPolicies(diagnosisKeysMapped, country);
+        populateDistributableDiagnosisKeysWithPolicies(country);
       }
     });
     populateEuPackageWithDistributableDiagnosisKeys();
   }
 
-  private void populateEuPackageWithDistributableDiagnosisKeys() {
-    Map<LocalDateTime, Set<DiagnosisKey>> euPackage = new HashMap<>();
-
-    distributableDiagnosisKeys
-        .forEach((country, diagnosisKeyMap) -> diagnosisKeyMap.forEach((distributionDateTime, diagnosisKeys) -> {
-          Set<DiagnosisKey> currentHourDiagnosisKeys = Optional
-              .ofNullable(euPackage.get(distributionDateTime))
-              .orElse(new HashSet<>());
-          currentHourDiagnosisKeys.addAll(diagnosisKeys);
-          euPackage.put(distributionDateTime, currentHourDiagnosisKeys);
-        }));
-
-    Map<LocalDateTime, List<DiagnosisKey>> euPackageList = new HashMap<>();
-    euPackage.forEach((distributionDateTime, diagnosisKeys) ->
-        euPackageList.put(distributionDateTime, new ArrayList<>(diagnosisKeys)));
-    distributableDiagnosisKeys.put(euPackageName, euPackageList);
-  }
-
-  private void populateDistributableDiagnosisKeysWithPolicies(Map<String, List<DiagnosisKey>> diagnosisKeysMapped,
-      String country) {
+  private void populateDistributableDiagnosisKeysWithPolicies(String country) {
 
     Map<LocalDateTime, List<DiagnosisKey>> distributableDiagnosisKeysGroupedByExpiryPolicy = new HashMap<>(
-        diagnosisKeysMapped.get(country).stream().collect(groupingBy(this::getDistributionDateTimeByExpiryPolicy)));
+        groupedDiagnosisKeys.get(country).stream().collect(groupingBy(this::getDistributionDateTimeByExpiryPolicy)));
 
     if (distributableDiagnosisKeysGroupedByExpiryPolicy.isEmpty()) {
       return;
@@ -100,7 +74,7 @@ public class ProdDiagnosisKeyBundler extends DiagnosisKeyBundler {
 
     LocalDateTime earliestDistributableTimestamp =
         getEarliestDistributableTimestamp(distributableDiagnosisKeysGroupedByExpiryPolicy).orElseThrow();
-    LocalDateTime latestDistributableTimestamp = this.distributionTime;
+    LocalDateTime latestDistributableTimestamp = distributionTime;
 
     List<DiagnosisKey> diagnosisKeyAccumulator = new ArrayList<>();
     LongStream.range(0, earliestDistributableTimestamp.until(latestDistributableTimestamp, ChronoUnit.HOURS))
@@ -111,20 +85,18 @@ public class ProdDiagnosisKeyBundler extends DiagnosisKeyBundler {
               .orElse(emptyList());
           diagnosisKeyAccumulator.addAll(currentHourDiagnosisKeys);
           if (diagnosisKeyAccumulator.size() >= minNumberOfKeysPerBundle) {
-            this.distributableDiagnosisKeys.get(country).put(currentHour, new ArrayList<>(diagnosisKeyAccumulator));
+            distributableDiagnosisKeys.get(country).put(currentHour, new ArrayList<>(diagnosisKeyAccumulator));
             diagnosisKeyAccumulator.clear();
           } else {
             // placeholder list is needed to be able to generate empty file - see issue #650
-            this.distributableDiagnosisKeys.get(country).put(currentHour, Collections.emptyList());
+            distributableDiagnosisKeys.get(country).put(currentHour, Collections.emptyList());
           }
         });
   }
 
-  private void populateDistributableDiagnosisKeysWithoutPolicies(Map<String, List<DiagnosisKey>> diagnosisKeysMapped,
-      String country) {
-
-    this.distributableDiagnosisKeys.get(country).putAll(diagnosisKeysMapped.get(country).stream()
-        .filter(diagnosisKey -> this.getSubmissionDateTime(diagnosisKey).isBefore(this.distributionTime))
+  private void populateDistributableDiagnosisKeysWithoutPolicies(String country) {
+    distributableDiagnosisKeys.get(country).putAll(groupedDiagnosisKeys.get(country).stream()
+        .filter(diagnosisKey -> getSubmissionDateTime(diagnosisKey).isBefore(distributionTime))
         .collect(groupingBy(this::getSubmissionDateTime)));
   }
 
