@@ -183,12 +183,14 @@ public @interface ValidSubmissionPayload {
 
     private boolean hasInvalidDaysSinceSymptoms(TemporaryExposureKey key) {
       int dsos = key.getDaysSinceOnsetOfSymptoms();
-      return dsos < DiagnosisKey.MIN_DAYS_SINCE_ONSET_OF_SYMPTOMS || dsos > DiagnosisKey.MAX_DAYS_SINCE_ONSET_OF_SYMPTOMS;
+      return dsos < DiagnosisKey.MIN_DAYS_SINCE_ONSET_OF_SYMPTOMS
+          || dsos > DiagnosisKey.MAX_DAYS_SINCE_ONSET_OF_SYMPTOMS;
     }
 
     private boolean hasInvalidTransmissionRiskLevel(TemporaryExposureKey key) {
       int trl = key.getTransmissionRiskLevel();
-      return trl < DiagnosisKey.MIN_TRANSMISSION_RISK_LEVEL || trl > DiagnosisKey.MAX_TRANSMISSION_RISK_LEVEL;
+      return trl < DiagnosisKey.MIN_TRANSMISSION_RISK_LEVEL
+          || trl > DiagnosisKey.MAX_TRANSMISSION_RISK_LEVEL;
     }
 
     /**
