@@ -32,9 +32,8 @@ class DiagnosisKeyBuilderTest {
   private final boolean expConsentToFederation = false;
   private final String originCountry = "DE";
   private final Set<String> visitedCountries = Set.of("DE");
-  private final ReportType reportType = ReportType.CONFIRMED_CLINICAL_DIAGNOSIS;
+  private final ReportType reportType = ReportType.CONFIRMED_TEST;
   private final int daysSinceOnsetOfSymptoms = 2;
-
 
   @Test
   void buildFromProtoBufObjWithSubmissionTimestamp() {
