@@ -33,13 +33,11 @@ Implementation details can be found in [`TanVerifier.java`](/services/submission
 
 ## Defaulting values if missing
 
-The contract of the submission service is defined, in part by the [payload protobuf specification](/common/protocols/src/main/proto/app/coronawarn/server/common/protocols/internal/submission_payload.proto). Here you can find all the information (except http headers) that is 
-being sent by the mobile client.
+The contract of the submission service is defined, in part by the [payload protobuf specification](/common/protocols/src/main/proto/app/coronawarn/server/common/protocols/internal/submission_payload.proto). Here you can find all the information (except http headers) that is being sent by the mobile client.
 
 The following fields are either defaulted, if not sent by the client, or updated if certain values are missing:
 * origin (referring to origin country) is defaulted to a value which is externalized in the `application.yaml/services.submission.payload.default-origin-country`
 * visitedCountries list is enhanced to contain the origin country as well in order to have consistency in the distribution logic
-
 
 ## Submission Validations
 
