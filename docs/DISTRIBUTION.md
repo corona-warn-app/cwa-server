@@ -140,16 +140,15 @@ contains the raw signature as well as additional information needed for verifica
 
 ## Signing
 
-The signing of the files basically means creating and signing an archive that contains the `export.bin` file
+The signing of the files basically means creating and signing an archive that contain the `export.bin` file
 (the file name is configurable in `application.yaml` under `tek-export.file-name` property).
 Both the application configuration as well as the Temporary Exposure Keys are signed so that the mobile devices
-can verify if the files are originating from the right backend. Using the signature, attack vectors like a 
+can verify if the files are originating from the right backend. Using the signature, attack vectors like a
 man in the middle attack, request forgery etc. can be mitigated successfully. The implementation is done in
 [`AppConfigurationSigningDecorator`](/services/distribution/src/main/java/app/coronawarn/server/services/distribution/assembly/appconfig/structure/archive/decorator/signing/AppConfigurationSigningDecorator.java).
 
-The signing of the archives is described by looking for an `export.bin` file. Within that archive, it will sign it or
-create a signature of that data structure and basically just write it into an `export.sig` which is happening in the
-`getSignatureFile` method located in [`SigningDecoratorOnDisk`](/services/distribution/src/main/java/app/coronawarn/server/services/distribution/assembly/structure/archive/decorator/signing/SigningDecoratorOnDisk.java).
+The signing process takes the `export.bin` archive and creates a signature of the data structure which is then written into the `export.sig`.
+Please see`getSignatureFile` method located in [`SigningDecoratorOnDisk`](/services/distribution/src/main/java/app/coronawarn/server/services/distribution/assembly/structure/archive/decorator/signing/SigningDecoratorOnDisk.java).
 There are different implementations for that, i.e. how to sign an app configuration which is the
 `AppConfigurationSigningDecorator` - the specific code to determine how an application configuration file is supposed to be signed.
 For the Temporary Exposure Key files, they are signed in the similar way using the
@@ -163,14 +162,14 @@ The [`DiagnosisKeyBundler`](/services/distribution/src/main/java/app/coronawarn/
 is responsible for the core logic of the distribution service, e.g. how the diagnosis keys are grouped into which date and which hour folder
 and necessary transformations.
 
-In the preparation step of the distribution it queries all diagnosis keys that are available in the database and put into
-this `DiagnosisKeyBundler`. The purpose of this class is to distribute keys into different hours and dates and tell
+In the preparation step, the distribution job queries all diagnosis keys that are available in the database and
+cache them into the `DiagnosisKeyBundler`. The purpose of this class is to distribute keys into different hours and dates and tell
 the rest of the application for which hours and dates there are keys available.
-There are two of those diagnosis key bundlers, which can basically be triggered by a specific profile being set.
+There are two of the key bundler, loaded based on the active profile.
 It is noteworthy to mention that the productive diagnosis key bundler applies a series of policies on the keys originating from the country specified by the parameter`origin-country`, which is defined in the [`application.yaml`](/services/distribution/src/main/resources/application.yaml).  Furthermore, with the parameter `apply-policies-for-all-countries` it is possible to apply the policies to all keys. The first policy,
 which is described in the Apple framework (more details [here](https://developer.apple.com/documentation/exposurenotification/setting_up_a_key_server)),
 is the expiry policy that states that diagnosis keys must not be distributed before
-two hours after the end of the key's expiration window. 
+two hours after the end of the key's expiration window.
 Then, there's the second policy, which is called the shifting policy.
 It ensures that each distribution / export file that is published to the CDN, contains at least 140 Temporary Exposure Keys
 (the number is configurable by changing the `shifting-policy-threshold` property). When there are less keys available
