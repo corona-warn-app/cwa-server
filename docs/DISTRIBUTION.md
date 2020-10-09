@@ -167,7 +167,7 @@ cache them into the `DiagnosisKeyBundler`. The purpose of this class is to distr
 the rest of the application for which hours and dates there are keys available.
 There are two of the key bundler, loaded based on the active profile.
 It is noteworthy to mention that the productive diagnosis key bundler applies a series of policies on the keys originating from the country specified by the parameter`origin-country`, which is defined in the [`application.yaml`](/services/distribution/src/main/resources/application.yaml).  Furthermore, with the parameter `apply-policies-for-all-countries` it is possible to apply the policies to all keys. The first policy,
-which is described in the Apple framework (more details [here](https://developer.apple.com/documentation/exposurenotification/setting_up_a_key_server)),
+which is described in the GAEN framework (more details [here](https://developer.apple.com/documentation/exposurenotification/setting_up_a_key_server)),
 is the expiry policy that states that diagnosis keys must not be distributed before
 two hours after the end of the key's expiration window.
 Then, there's the second policy, which is called the shifting policy.
