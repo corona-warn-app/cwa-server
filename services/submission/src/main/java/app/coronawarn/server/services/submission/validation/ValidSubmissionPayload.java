@@ -4,6 +4,7 @@ package app.coronawarn.server.services.submission.validation;
 
 import static java.util.function.Predicate.not;
 import static java.util.stream.Collectors.toList;
+
 import app.coronawarn.server.common.persistence.domain.DiagnosisKey;
 import app.coronawarn.server.common.persistence.domain.normalization.DiagnosisKeyNormalizer;
 import app.coronawarn.server.common.protocols.external.exposurenotification.TemporaryExposureKey;
