@@ -172,8 +172,7 @@ which is described in the Apple framework (more details [here](https://developer
 is the expiry policy that states that diagnosis keys must not be distributed before
 two hours after the end of the key's expiration window. 
 Then, there's the second policy, which is called the shifting policy.
-being applied, which we call the shifting policy. We must make sure that for every distribution or for every export
-file that we put into the public, there must be at least 140 Temporary Exposure Keys in such an export
+It ensures that each distribution / export file that is published to the CDN, contains at least 140 Temporary Exposure Keys
 (the number is configurable by changing the `shifting-policy-threshold` property). If we cannot assemble enough or
 we do not have enough Temporary Exposure Keys for an export then we wait with the distribution of those keys until we
 have gathered enough to fulfill this threshold.
