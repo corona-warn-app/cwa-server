@@ -32,9 +32,8 @@ class DiagnosisKeyBuilderTest {
   private final boolean expConsentToFederation = false;
   private final String originCountry = "DE";
   private final Set<String> visitedCountries = Set.of("DE");
-  private final ReportType reportType = ReportType.CONFIRMED_CLINICAL_DIAGNOSIS;
+  private final ReportType reportType = ReportType.CONFIRMED_TEST;
   private final int daysSinceOnsetOfSymptoms = 2;
-
 
   @Test
   void buildFromProtoBufObjWithSubmissionTimestamp() {
@@ -202,16 +201,17 @@ class DiagnosisKeyBuilderTest {
   }
 
   @ParameterizedTest
-  @ValueSource(ints = {9, -1})
+  @ValueSource(ints = {DiagnosisKey.MIN_TRANSMISSION_RISK_LEVEL - 1, DiagnosisKey.MAX_TRANSMISSION_RISK_LEVEL + 1})
   void transmissionRiskLevelMustBeInRange(int invalidRiskLevel) {
     assertThat(catchThrowable(() -> keyWithRiskLevel(invalidRiskLevel)))
         .isInstanceOf(InvalidDiagnosisKeyException.class)
         .hasMessage(
-            "[Risk level must be between 0 and 8. Invalid Value: " + invalidRiskLevel + "]");
+            "[Risk level must be between " + DiagnosisKey.MIN_TRANSMISSION_RISK_LEVEL + " and "
+                + DiagnosisKey.MAX_TRANSMISSION_RISK_LEVEL + ". Invalid Value: " + invalidRiskLevel + "]");
   }
 
   @ParameterizedTest
-  @ValueSource(ints = {0, 8})
+  @ValueSource(ints = {DiagnosisKey.MIN_TRANSMISSION_RISK_LEVEL, DiagnosisKey.MAX_TRANSMISSION_RISK_LEVEL})
   void transmissionRiskLevelDoesNotThrowForValid(int validRiskLevel) {
     assertThatCode(() -> keyWithRiskLevel(validRiskLevel)).doesNotThrowAnyException();
   }

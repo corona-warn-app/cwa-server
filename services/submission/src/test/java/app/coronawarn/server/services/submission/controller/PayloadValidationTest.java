@@ -75,7 +75,7 @@ class PayloadValidationTest {
   }
 
   @ParameterizedTest
-  @ValueSource(ints = {-14, -9, 0, 3896})
+  @ValueSource(ints = {-14, -9, 0, 3986})
   void check200ResponseStatusForDaysSinceSymptomsFieldInRange(int validDsosValue) {
     ResponseEntity<Void> actResponse = executor.executePost(buildKeysWithDaysSinceSymptoms(validDsosValue));
     assertThat(actResponse.getStatusCode()).isEqualTo(OK);
