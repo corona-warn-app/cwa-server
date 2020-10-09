@@ -140,7 +140,7 @@ contains the raw signature as well as additional information needed for verifica
 
 ## Signing
 
-The signing of the files is basically creating an archive and that archive contains the `export.bin` file
+The signing of the files basically means creating and signing an archive that contains the `export.bin` file
 (the file name is configurable in `application.yaml` under `tek-export.file-name` property).
 Both the application configuration as well as the Temporary Exposure Keys are signed so that the mobile devices
 can trust that this is coming from the right backend. There is no man in the middle attacks happening or
