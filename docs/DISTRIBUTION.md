@@ -173,6 +173,6 @@ is the expiry policy that states that diagnosis keys must not be distributed bef
 two hours after the end of the key's expiration window. 
 Then, there's the second policy, which is called the shifting policy.
 It ensures that each distribution / export file that is published to the CDN, contains at least 140 Temporary Exposure Keys
-(the number is configurable by changing the `shifting-policy-threshold` property). If we cannot assemble enough or
-we do not have enough Temporary Exposure Keys for an export then we wait with the distribution of those keys until we
-have gathered enough to fulfill this threshold.
+(the number is configurable by changing the `shifting-policy-threshold` property). When there are less keys available
+to distribute in a specific distribution run, these keys are shifted to a succeeding export, until the threshold of minimum
+number of keys is fulfilled.
