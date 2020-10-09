@@ -143,8 +143,8 @@ contains the raw signature as well as additional information needed for verifica
 The signing of the files basically means creating and signing an archive that contains the `export.bin` file
 (the file name is configurable in `application.yaml` under `tek-export.file-name` property).
 Both the application configuration as well as the Temporary Exposure Keys are signed so that the mobile devices
-can trust that this is coming from the right backend. There is no man in the middle attacks happening or
-request forgery or any other attacks, so the server signs all of this. The way it is done is implemented in the
+can verify if the files are originating from the right backend. Using the signature, attack vectors like a 
+man in the middle attack, request forgery etc. can be mitigated successfully. The implementation is done in
 [`AppConfigurationSigningDecorator`](/services/distribution/src/main/java/app/coronawarn/server/services/distribution/assembly/appconfig/structure/archive/decorator/signing/AppConfigurationSigningDecorator.java).
 
 The signing of the archives is described by looking for an `export.bin` file. Within that archive, it will sign it or
