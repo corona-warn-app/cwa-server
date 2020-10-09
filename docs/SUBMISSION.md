@@ -66,7 +66,7 @@ system as well as GAEN specification. For this purpose the Java Bean Validation 
 
 ## Field Derivations
 
-Starting with version 1.5 the mobile client stops sending transmission risk level (TRL) values but includes a new field that is used to describe the infectiousness of a person called 'days since onset of symptoms' (DSOS). To ensure backward compatibility with older clients when distributing keys submitted by newer clients, the server has to derive the missing TRL field from the DSOS value using a mapping maintained in the application configuration. Similarly, to ensure forward compatibility when distributing keys submitted by older clients ( version 1.4 or less), the server
+Starting with version 1.5 the mobile client stops sending transmission risk level (TRL) values but includes a new field that is used to describe the infectiousness of a person called 'days since onset of symptoms' (DSOS). To ensure backward compatibility with older clients when distributing keys submitted by newer clients, the server has to derive the missing TRL field from the DSOS value using a mapping maintained in the application configuration. Similarly, to ensure forward compatibility when distributing keys submitted by older clients (version 1.4 or less), the server
 will derive the DSOS from TRL using a reversed internal mapping.
 
 ## Diagnosis keys padding
