@@ -133,7 +133,7 @@ At the end of the process the diagnosis keys are exported into ZIP archives that
 - export.bin - the binary containing the exposure keys
 - export.sig - the signature to verify the export binary
 
-The `export.bin` file of the archive contains the Temporary Exposure Keys that are broadcast by the defices of the
+The `export.bin` file of the archive contains the Temporary Exposure Keys that are broadcasted by the devices of the
 people who are diagnosed with COVID-19.
 The `export.sig` file is used by the server to sign each `export.bin` with a private key. The `export.sig` file
 contains the raw signature as well as additional information needed for verification.
