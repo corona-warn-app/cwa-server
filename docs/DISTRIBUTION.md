@@ -170,8 +170,8 @@ There are two of those diagnosis key bundlers, which can basically be triggered 
 It is noteworthy to mention that the productive diagnosis key bundler applies a series of policies on the keys originating from the country specified by the parameter`origin-country`, which is defined in the [`application.yaml`](/services/distribution/src/main/resources/application.yaml).  Furthermore, with the parameter `apply-policies-for-all-countries` it is possible to apply the policies to all keys. The first policy,
 which is described in the Apple framework (more details [here](https://developer.apple.com/documentation/exposurenotification/setting_up_a_key_server)),
 is the expiry policy that states that diagnosis keys must not be distributed before
-two hours after the end of the key's expiration window. In other words, Apple wants us to wait an additional two hours
-before we distribute the key to further preserve the privacy of the users. Then, there's the second policy, and that is
+two hours after the end of the key's expiration window. 
+Then, there's the second policy, which is called the shifting policy.
 being applied, which we call the shifting policy. We must make sure that for every distribution or for every export
 file that we put into the public, there must be at least 140 Temporary Exposure Keys in such an export
 (the number is configurable by changing the `shifting-policy-threshold` property). If we cannot assemble enough or
