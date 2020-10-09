@@ -148,7 +148,7 @@ man in the middle attack, request forgery etc. can be mitigated successfully. Th
 [`AppConfigurationSigningDecorator`](/services/distribution/src/main/java/app/coronawarn/server/services/distribution/assembly/appconfig/structure/archive/decorator/signing/AppConfigurationSigningDecorator.java).
 
 The signing of the archives is described by looking for an `export.bin` file. Within that archive, it will sign it or
-create a signature of that thing and basically just write it into an `export.sig` which is happening in the
+create a signature of that data structure and basically just write it into an `export.sig` which is happening in the
 `getSignatureFile` method located in [`SigningDecoratorOnDisk`](/services/distribution/src/main/java/app/coronawarn/server/services/distribution/assembly/structure/archive/decorator/signing/SigningDecoratorOnDisk.java).
 There are different implementations for that, i.e. how to sign an app configuration which is the
 AppConfigurationSigningDecorator - the specific code to determine how an application configuration file is supposed to be signed.
