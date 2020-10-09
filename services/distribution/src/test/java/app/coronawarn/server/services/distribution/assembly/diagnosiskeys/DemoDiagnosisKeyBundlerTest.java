@@ -11,6 +11,8 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+import org.junit.Ignore;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,5 +42,17 @@ class DemoDiagnosisKeyBundlerTest {
         .collect(Collectors.toList());
     bundler.setDiagnosisKeys(diagnosisKeys, LocalDateTime.of(1970, 1, 5, 0, 0));
     assertThat(bundler.getAllDiagnosisKeys("DE")).hasSize(15);
+  }
+
+  @Test
+  @Disabled
+  void testIfOriginCountryKeyIsPartOfEuPackage(){
+    List<DiagnosisKey> diagnosisKeys = Stream
+        .of(buildDiagnosisKeys(6, 50L, 1))
+        .flatMap(List::stream)
+        .collect(Collectors.toList());
+    bundler.setDiagnosisKeys(diagnosisKeys, LocalDateTime.of(1970, 1, 5, 0, 0));
+    assertThat(bundler.getAllDiagnosisKeys("DE")).hasSize(1);
+    assertThat(bundler.getAllDiagnosisKeys("EUR")).hasSize(1);
   }
 }

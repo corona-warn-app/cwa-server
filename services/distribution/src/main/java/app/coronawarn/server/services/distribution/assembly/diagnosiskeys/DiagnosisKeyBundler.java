@@ -199,18 +199,21 @@ public abstract class DiagnosisKeyBundler {
     } else {
       key.getVisitedCountries().stream()
           .filter(supportedCountries::contains)
-          .forEach(visitedCountry -> keysByCountry.get(visitedCountry).add(key));
+          .forEach(visitedCountry -> {
+            if (key.getOriginCountry().equals(originCountry) && !visitedCountry.equals(originCountry)) {
+              return;
+            }
+            keysByCountry.get(visitedCountry).add(key);
+          });
     }
   }
 
   protected Map<String, List<DiagnosisKey>> groupDiagnosisKeysByCountry(Collection<DiagnosisKey> diagnosisKeys) {
     Map<String, List<DiagnosisKey>> diagnosisKeysMapped = new HashMap<>();
-
     supportedCountries.forEach(supportedCountry -> {
       diagnosisKeysMapped.put(supportedCountry, new ArrayList<>());
       this.distributableDiagnosisKeys.put(supportedCountry, new HashMap<>());
     });
-
     diagnosisKeys
         .forEach(diagnosisKey -> this.addKeyToMap(diagnosisKey, diagnosisKeysMapped));
     return diagnosisKeysMapped;
