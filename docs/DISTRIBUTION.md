@@ -167,7 +167,7 @@ In the preparation step of the distribution it queries all diagnosis keys that a
 this `DiagnosisKeyBundler`. The purpose of this class is to distribute keys into different hours and dates and tell
 the rest of the application for which hours and dates there are keys available.
 There are two of those diagnosis key bundlers, which can basically be triggered by a specific profile being set.
-What is noteworthy for these bundlers is that there's a series of policies being applied here. The first policy,
+It is noteworthy to mention that the productive diagnosis key bundler applies a series of policies on the keys originating from the country specified by the parameter`origin-country`, which is defined in the [`application.yaml`](/services/distribution/src/main/resources/application.yaml).  Furthermore, with the parameter `apply-policies-for-all-countries` it is possible to apply the policies to all keys. The first policy,
 which is something that Apple demands (more details [here](https://developer.apple.com/documentation/exposurenotification/setting_up_a_key_server)),
 expiry policy that states that mwe must not distribute a diagnosis key or a Temporary Exposure Key until at least
 two hours after the end of the key's expiration window. In other words, Apple wants us to wait an additional two hours
