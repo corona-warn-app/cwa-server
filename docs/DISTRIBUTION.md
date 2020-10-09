@@ -160,7 +160,7 @@ The algorithm used for signing the archives as well as other relevant informatio
 ## Bundling and Shifting
 
 The [`DiagnosisKeyBundler`](/services/distribution/src/main/java/app/coronawarn/server/services/distribution/assembly/diagnosiskeys/DiagnosisKeyBundler.java)
-is responsible fo most of the distribution magic like which diagnosis keys go into which date and which hour
+is responsible for the core logic of the distribution service, e.g. how the diagnosis keys are grouped into which date and which hour folder
 and any other transformations there must be applied.
 
 In the preparation step of the distribution it queries all diagnosis keys that are available in the database and put into
