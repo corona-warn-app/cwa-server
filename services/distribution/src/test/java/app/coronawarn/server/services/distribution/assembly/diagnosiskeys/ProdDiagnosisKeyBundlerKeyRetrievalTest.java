@@ -13,6 +13,7 @@ import app.coronawarn.server.services.distribution.config.DistributionServiceCon
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -74,6 +75,17 @@ class ProdDiagnosisKeyBundlerKeyRetrievalTest {
   }
 
   @Test
+  void testGetAllDiagnosisKeysWhenEmptyVisitedCountries() {
+    List<DiagnosisKey> diagnosisKeys = Stream
+        .of(buildDiagnosisKeys(6, 50L, 5, Collections.emptySet()),
+            buildDiagnosisKeys(6, 51L, 5))
+        .flatMap(List::stream)
+        .collect(Collectors.toList());
+    bundler.setDiagnosisKeys(diagnosisKeys, LocalDateTime.of(1970, 1, 5, 0, 0));
+    assertThat(bundler.getAllDiagnosisKeys("DE")).hasSize(10);
+  }
+
+  @Test
   void testGetDatesForEmptyListWithWrongCountry() {
     bundler.setDiagnosisKeys(emptySet(), LocalDateTime.of(1970, 1, 5, 0, 0));
     assertThat(bundler.getDiagnosisKeysForHour(LocalDateTime.of(1970, 1, 1, 0, 0, 0), INVALID_COUNTRY)).isEmpty();
@@ -84,6 +96,7 @@ class ProdDiagnosisKeyBundlerKeyRetrievalTest {
     bundler.setDiagnosisKeys(emptySet(), LocalDateTime.of(1970, 1, 5, 0, 0));
     assertThat(bundler.getDatesWithDistributableDiagnosisKeys("DE")).isEmpty();
   }
+
   @Test
   void testGetsDatesWithDistributableDiagnosisKeys() {
     List<DiagnosisKey> diagnosisKeys = Stream
