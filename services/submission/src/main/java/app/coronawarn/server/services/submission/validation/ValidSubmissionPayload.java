@@ -64,7 +64,7 @@ public @interface ValidSubmissionPayload {
     /**
      * Validates the following constraints.
      * <ul>
-     *   <li>StartIntervalNumber values from the same {@link SubmissionPayload} shall be unique.</li>
+     *   <li>StartIntervalNumber values are always at midnight</li>
      *   <li>There must not be more than allowed maximum number of keys in a payload
      *       (see application.yaml/max-number-of-keys)
      *   <li>The origin country can be missing or the provided value must be of the supported countries
