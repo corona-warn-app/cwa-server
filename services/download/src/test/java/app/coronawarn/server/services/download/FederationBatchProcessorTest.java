@@ -36,6 +36,7 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -324,6 +325,7 @@ class FederationBatchProcessorTest {
       verifyProcessedWithStatus(batchInfo, PROCESSED_WITH_ERROR);
     }
 
+    @Disabled
     @Test
     void testFailureMissingDSOS() {
       FederationBatchInfo batchInfo = new FederationBatchInfo(batchTag1, date, UNPROCESSED);
