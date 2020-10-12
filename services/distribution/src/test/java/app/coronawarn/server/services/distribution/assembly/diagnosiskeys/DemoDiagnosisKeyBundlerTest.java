@@ -45,7 +45,6 @@ class DemoDiagnosisKeyBundlerTest {
   }
 
   @Test
-  @Disabled
   void testIfOriginCountryKeyIsPartOfEuPackage(){
     List<DiagnosisKey> diagnosisKeys = Stream
         .of(buildDiagnosisKeys(6, 50L, 1))
