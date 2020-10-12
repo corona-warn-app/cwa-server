@@ -56,10 +56,9 @@ The checks performed on downloaded DKs are as follows:
 
 * Key Data has correct length.
 * ReportType is allowed.
-* Starting Interval Number is set and valid.
-* Rolling Period is set and between upper and lower bound.
-* Days Since Onset of Symptoms (DSOS) is set and between upper and lower bound.
-* Transmission Risk Level (TRL) is set and between upper and lower bound.
+* Rolling Period is between upper and lower bound.
+* Days Since Onset of Symptoms (DSOS) is between upper and lower bound.
+* Transmission Risk Level (TRL) is between upper and lower bound.
 If the validation of DSOS or TRL fails, the corresponding value is derived from the other.
 
 Diagnosis Keys are only rejected if both values are missing or invalid.
