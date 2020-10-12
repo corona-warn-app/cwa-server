@@ -15,6 +15,7 @@ import app.coronawarn.server.common.persistence.domain.FederationBatchStatus;
 import app.coronawarn.server.common.persistence.service.DiagnosisKeyService;
 import app.coronawarn.server.common.persistence.service.FederationBatchInfoService;
 import app.coronawarn.server.common.protocols.external.exposurenotification.DiagnosisKeyBatch;
+import app.coronawarn.server.services.download.config.DownloadServiceConfig;
 import app.coronawarn.server.services.download.normalization.FederationKeyNormalizer;
 import app.coronawarn.server.services.download.validation.ValidFederationKeyFilter;
 import java.time.LocalDate;
@@ -160,7 +161,7 @@ public class FederationBatchProcessor {
           .withFieldNormalization(new FederationKeyNormalizer(config))
           .build());
     } catch (Exception ex) {
-      logger.info("Building key failed.");
+      logger.info("Building diagnosis key from federation diagnosis key failed.", ex);
       return Optional.empty();
     }
   }

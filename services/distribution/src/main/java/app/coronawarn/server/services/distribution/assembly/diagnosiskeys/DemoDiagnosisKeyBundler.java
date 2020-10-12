@@ -28,9 +28,10 @@ public class DemoDiagnosisKeyBundler extends DiagnosisKeyBundler {
    */
   @Override
   protected void createDiagnosisKeyDistributionMap(Collection<DiagnosisKey> diagnosisKeys) {
-    this.distributableDiagnosisKeys.clear();
-    groupDiagnosisKeysByCountry(diagnosisKeys).forEach((country, diagnosisKeysPerCountry) ->
-        this.distributableDiagnosisKeys.get(country).putAll(diagnosisKeysPerCountry.stream()
-            .collect(groupingBy(this::getSubmissionDateTime))));
+    mapDiagnosisKeysPerVisitedCountries(diagnosisKeys)
+        .forEach((country, diagnosisKeysPerCountry) ->
+            this.distributableDiagnosisKeys.get(country).putAll(diagnosisKeysPerCountry.stream()
+                .collect(groupingBy(this::getSubmissionDateTime))));
+    populateEuPackageWithDistributableDiagnosisKeys();
   }
 }
