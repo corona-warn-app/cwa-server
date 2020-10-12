@@ -29,7 +29,7 @@ The fake requests are intended to prevent an attacker from using network and tra
 
 The implementation details on fake request handling can be found here [FakeRequestController](../services/submission/src/main/java/app/coronawarn/server/services/submission/controller/FakeRequestController.java).
 
-### Body Padding
+### Payload Padding
 
 The mobile apps are collecting keys based on their install date. When a user uploads his keys (after being tested positive), the payload will normally contain 1-13 keys. Although the traffic between mobile & server is secured, an attacker may still sniff the packages in the network and predict, based on the request size, how many keys are probably part of the submission request. This could lead to additional information for the attacker in an attempt to deanonymize a user.
 

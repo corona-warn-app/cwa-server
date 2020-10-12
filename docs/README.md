@@ -42,4 +42,4 @@
   - [Security-Related Spring Profiles](./SECURITY.md#security-related-spring-profiles)
   - [Plausible Deniability](./SECURITY.md#plausible-deniability)
     - [Fake Requests](./SECURITY.md#fake-requests)
-    - [Body Padding](./SECURITY.md#body-padding)
+    - [Payload Padding](./SECURITY.md#payload-padding)
