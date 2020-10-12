@@ -38,3 +38,5 @@ Coming soon
 The mobile apps are collecting keys based on their install date. When a user uploads his keys (after being tested positive), the payload will normally contain 1-13 keys. Although the traffic between mobile & server is secured, an attacker may still sniff the packages in the network and predict, based on the request size, how many keys are probably part of the submission request. This could lead to additional information for the attacker in an attempt to deanonymize a user.
 
 In order to mitigate this kind of information leakage, the submission payload contains padding. The padding hides the true size of the request - making it difficult for an adversary to extract knowledge.
+
+The Padding is specified [here](../common/protocols/src/main/proto/app/coronawarn/server/common/protocols/internal/submission_payload.proto).
