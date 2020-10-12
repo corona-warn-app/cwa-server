@@ -92,9 +92,7 @@ public class DiagnosisKeyBuilder implements
         .withCountryCode(federationDiagnosisKey.getOrigin())
         .withReportType(federationDiagnosisKey.getReportType())
         .withVisitedCountries(new HashSet<>(federationDiagnosisKey.getVisitedCountriesList()))
-        .withDaysSinceOnsetOfSymptoms(
-            federationDiagnosisKey.hasDaysSinceOnsetOfSymptoms() ? federationDiagnosisKey.getDaysSinceOnsetOfSymptoms()
-                : null);
+        .withDaysSinceOnsetOfSymptoms(federationDiagnosisKey.getDaysSinceOnsetOfSymptoms());
   }
 
   @Override
