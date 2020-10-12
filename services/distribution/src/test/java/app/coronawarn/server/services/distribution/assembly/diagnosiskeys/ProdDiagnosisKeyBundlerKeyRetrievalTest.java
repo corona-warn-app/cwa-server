@@ -336,7 +336,7 @@ class ProdDiagnosisKeyBundlerKeyRetrievalTest {
   }
 
   @Test
-  void todo() {
+  void testOriginCountryKeysPlusVisitedCountryKeysAmountHigherThanThreshold() {
     List<DiagnosisKey> diagnosisKeys = Stream
         .of(buildDiagnosisKeys(6, 50L, 4, "DE", Set.of("DE","FR"), ReportType.CONFIRMED_CLINICAL_DIAGNOSIS, 0),
             buildDiagnosisKeys(6, 50L, 10, "FR", Set.of("FR","DE"), ReportType.CONFIRMED_CLINICAL_DIAGNOSIS, 0))
