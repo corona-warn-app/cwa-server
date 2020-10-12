@@ -319,7 +319,7 @@ class ProdDiagnosisKeyBundlerKeyRetrievalTest {
         .flatMap(List::stream)
         .collect(Collectors.toList());
     bundler.setDiagnosisKeys(diagnosisKeys, LocalDateTime.of(1970, 1, 3, 3, 0));
-    assertThat(bundler.getAllDiagnosisKeys("DE")).hasSize(0);
+    assertThat(bundler.getAllDiagnosisKeys("DE")).isEmpty();
     assertThat(bundler.getAllDiagnosisKeys("EUR")).hasSize(10);
   }
 
@@ -331,7 +331,7 @@ class ProdDiagnosisKeyBundlerKeyRetrievalTest {
         .flatMap(List::stream)
         .collect(Collectors.toList());
     bundler.setDiagnosisKeys(diagnosisKeys, LocalDateTime.of(1970, 1, 3, 3, 0));
-    assertThat(bundler.getAllDiagnosisKeys("DE")).hasSize(0);
+    assertThat(bundler.getAllDiagnosisKeys("DE")).isEmpty();
     assertThat(bundler.getAllDiagnosisKeys("EUR")).hasSize(10);
   }
 
