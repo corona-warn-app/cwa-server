@@ -1,22 +1,4 @@
-/*-
- * ---license-start
- * Corona-Warn-App
- * ---
- * Copyright (C) 2020 SAP SE and all other contributors
- * ---
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- * ---license-end
- */
+
 
 package app.coronawarn.server.services.distribution.assembly.diagnosiskeys.structure.directory;
 
@@ -61,7 +43,10 @@ public class DiagnosisKeysDateDirectory extends IndexDirectoryOnDisk<LocalDate> 
   public DiagnosisKeysDateDirectory(DiagnosisKeyBundler diagnosisKeyBundler,
       CryptoProvider cryptoProvider, DistributionServiceConfig distributionServiceConfig) {
     super(distributionServiceConfig.getApi().getDatePath(),
-        ignoredValue -> diagnosisKeyBundler.getDatesWithDistributableDiagnosisKeys(), ISO8601::format);
+        indices -> {
+          String country = (String) indices.peek();
+          return diagnosisKeyBundler.getDatesWithDistributableDiagnosisKeys(country);
+        }, ISO8601::format);
     this.cryptoProvider = cryptoProvider;
     this.diagnosisKeyBundler = diagnosisKeyBundler;
     this.distributionServiceConfig = distributionServiceConfig;
@@ -83,16 +68,16 @@ public class DiagnosisKeysDateDirectory extends IndexDirectoryOnDisk<LocalDate> 
     if (shouldNotInclude(currentDate)) {
       return Optional.empty();
     }
-    String region = (String) currentIndices.pop().peek();
+    String country = (String) currentIndices.pop().peek();
 
     List<DiagnosisKey> diagnosisKeysForCurrentHour =
-        this.diagnosisKeyBundler.getDiagnosisKeysForDate(currentDate);
+        this.diagnosisKeyBundler.getDiagnosisKeysForDate(currentDate, country);
 
     long startTimestamp = currentDate.atStartOfDay().toEpochSecond(ZoneOffset.UTC);
     long endTimestamp = currentDate.plusDays(1).atStartOfDay().toEpochSecond(ZoneOffset.UTC);
 
     File<WritableOnDisk> temporaryExposureKeyExportFile = TemporaryExposureKeyExportFile.fromDiagnosisKeys(
-        diagnosisKeysForCurrentHour, region, startTimestamp, endTimestamp, distributionServiceConfig);
+        diagnosisKeysForCurrentHour, country, startTimestamp, endTimestamp, distributionServiceConfig);
 
     Archive<WritableOnDisk> dateArchive = new ArchiveOnDisk(distributionServiceConfig.getOutputFileName());
     dateArchive.addWritable(temporaryExposureKeyExportFile);

@@ -1,22 +1,4 @@
-/*-
- * ---license-start
- * Corona-Warn-App
- * ---
- * Copyright (C) 2020 SAP SE and all other contributors
- * ---
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- * ---license-end
- */
+
 
 package app.coronawarn.server.services.distribution.common;
 
@@ -24,6 +6,7 @@ import static app.coronawarn.server.services.distribution.assembly.appconfig.Yam
 import static java.io.File.separator;
 
 import app.coronawarn.server.common.persistence.domain.DiagnosisKey;
+import app.coronawarn.server.common.protocols.external.exposurenotification.ReportType;
 import app.coronawarn.server.common.protocols.internal.ApplicationConfiguration;
 import app.coronawarn.server.services.distribution.assembly.appconfig.UnableToLoadFileException;
 import app.coronawarn.server.services.distribution.assembly.structure.directory.Directory;
@@ -33,6 +16,7 @@ import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -53,7 +37,12 @@ public class Helpers {
         .withKeyData(new byte[16])
         .withRollingStartIntervalNumber(1)
         .withTransmissionRiskLevel(2)
-        .withSubmissionTimestamp(submissionTimeStamp).build();
+        .withSubmissionTimestamp(submissionTimeStamp)
+        .withCountryCode("DE")
+        .withVisitedCountries(Set.of("DE"))
+        .withReportType(ReportType.CONFIRMED_CLINICAL_DIAGNOSIS)
+        .withDaysSinceOnsetOfSymptoms(1)
+        .build();
   }
 
   public static DiagnosisKey buildDiagnosisKeyForDateTime(LocalDateTime dateTime) {
@@ -66,13 +55,39 @@ public class Helpers {
     return buildDiagnosisKeys(startIntervalNumber, timestamp, number);
   }
 
+  public static List<DiagnosisKey> buildDiagnosisKeys(
+      int startIntervalNumber, LocalDateTime submissionTimestamp, int number, String originCountry,
+      Set<String> visitedCountries,
+      ReportType reportType,
+      int daysSinceOnsetOfSymptoms) {
+    long timestamp = submissionTimestamp.toEpochSecond(ZoneOffset.UTC) / 3600;
+    return buildDiagnosisKeys(startIntervalNumber, timestamp, number, originCountry, visitedCountries, reportType,
+        daysSinceOnsetOfSymptoms);
+  }
+
   public static List<DiagnosisKey> buildDiagnosisKeys(int startIntervalNumber, long submissionTimestamp, int number) {
+    return buildDiagnosisKeys(startIntervalNumber, submissionTimestamp, number,
+        "DE", Set.of("DE"), ReportType.CONFIRMED_CLINICAL_DIAGNOSIS, 1);
+  }
+
+  public static List<DiagnosisKey> buildDiagnosisKeys(int startIntervalNumber,
+      long submissionTimestamp,
+      int number,
+      String originCountry,
+      Set<String> visitedCountries,
+      ReportType reportType,
+      int daysSinceOnsetOfSymptoms) {
     return IntStream.range(0, number)
         .mapToObj(ignoredValue -> DiagnosisKey.builder()
             .withKeyData(new byte[16])
             .withRollingStartIntervalNumber(startIntervalNumber)
             .withTransmissionRiskLevel(2)
-            .withSubmissionTimestamp(submissionTimestamp).build())
+            .withSubmissionTimestamp(submissionTimestamp)
+            .withCountryCode(originCountry)
+            .withVisitedCountries(visitedCountries)
+            .withReportType(reportType)
+            .withDaysSinceOnsetOfSymptoms(daysSinceOnsetOfSymptoms)
+            .build())
         .collect(Collectors.toList());
   }
 
@@ -84,7 +99,9 @@ public class Helpers {
             .withRollingStartIntervalNumber(startIntervalNumber)
             .withTransmissionRiskLevel(2)
             .withSubmissionTimestamp(submissionTimestamp)
-            .withRollingPeriod(rollingPeriod).build())
+            .withRollingPeriod(rollingPeriod)
+            .withVisitedCountries(Set.of("DE"))
+            .withCountryCode("DE").build())
         .collect(Collectors.toList());
   }
 

@@ -1,0 +1,138 @@
+# This externalised configuration is used for deriving missing values of Temporary Exposure Key fields
+# in modules that represent diagnosis key input channels.
+tek-field-derivations:
+  # As of version 1.5, EFGS can send DSOS values for which there is no TRL mapped, thus 
+  # we need a system configurable TRL value
+  default-trl: ${DEFAULT_TRL:1}
+  # Map containing the derived values of DSOS (days since onset of symptoms) from TRL (transmission risk level)
+  dsos-from-trl:
+    1: 3986
+    2: 3992
+    3: 3993
+    4: 3994
+    5: 4000
+    6: 3995
+    7: 3996
+    8: 3997
+  # Map containing the derived values of TRL (transmission risk level) from DSOS (days since onset of symptoms)
+  # These maps are based on value ranges which reflect additional information about the symptom status of a person
+  trl-from-dsos:
+    # Specific date known for symptoms
+    -14: 1
+    -13: 1
+    -12: 1
+    -11: 1
+    -10: 1
+    -9:  1
+    -8:  1
+    -7:  1
+    -6:  1
+    -5:  2
+    -4:  4
+    -3:  6
+    -2:  7
+    -1:  8
+    0:  8
+    1:  8
+    2:  6
+    3:  5
+    4:  3
+    5:  2
+    6:  2
+    7:  1
+    8:  1
+    9:  1
+    10: 1
+    11: 1
+    12: 1
+    13: 1
+    14: 1
+    15: 1
+    16: 1
+    17: 1
+    18: 1
+    19: 1
+    20: 1
+    21: 1
+      
+    # Symptoms are present but there is a 7 day range for the onset day
+    687: 1
+    688: 1
+    689: 1
+    690: 1
+    691: 1
+    692: 2
+    693: 3
+    694: 4
+    695: 6
+    696: 6
+    697: 7
+    698: 7
+    699: 6
+    700: 6
+    701: 5
+    702: 4
+    703: 3
+    704: 2
+    705: 1
+    706: 1
+    707: 1
+    708: 1
+    709: 1
+    710: 1
+    711: 1
+    712: 1
+    713: 1
+    714: 1
+    715: 1
+
+    # Symptoms are present but date is unknown
+    1986: 1
+    1987: 1
+    1988: 1
+    1989: 1
+    1990: 1
+    1991: 1
+    1992: 2
+    1993: 3
+    1994: 5
+    1995: 7
+    1996: 8
+    1997: 8
+    1998: 8
+    1999: 6
+    2000: 5
+
+    # No symptoms are present
+    2986: 1
+    2987: 1
+    2988: 1
+    2989: 1
+    2990: 1
+    2991: 1
+    2992: 1
+    2993: 1
+    2994: 1
+    2995: 1
+    2996: 1
+    2997: 2
+    2998: 3
+    2999: 4
+    3000: 4
+      
+    # Unknown status of symptoms
+    3986: 1
+    3987: 1
+    3988: 1
+    3989: 1
+    3990: 1
+    3991: 1
+    3992: 2
+    3993: 3
+    3994: 4
+    3995: 6
+    3996: 7
+    3997: 7
+    3998: 7
+    3999: 6
+    4000: 5

@@ -23,6 +23,10 @@ services:
     include-incomplete-days: false
     # Indicates whether the current incomplete hour will be included in the distribution (used for testing purposes).
     include-incomplete-hours: false
+    # The naming of the eu package that provides all keys in a single package.
+    eu-package-name: EUR
+    # Indicates whether the shifting and expiry policies are applied to all supported countries during distribution.
+    apply-policies-for-all-countries: false
     # Local paths, that are used during the export creation.
     paths:
       # The output path.
@@ -42,7 +46,7 @@ services:
       version-path: version
       version-v1: v1
       country-path: country
-      country-germany: DE
+      origin-country: ${ORIGIN_COUNTRY:DE}
       date-path: date
       hour-path: hour
       diagnosis-keys-path: diagnosis-keys
@@ -85,7 +89,7 @@ services:
     app-features:
       - label: reserved
         value: ${reserved:1}
-    supported-countries: ${SUPPORTED_COUNTRIES:DE}
+    supported-countries: ${SUPPORTED_COUNTRIES}
     app-versions:
       latest-ios: ${LATEST_IOS_VERSION:0.8.2}
       min-ios: ${MIN_IOS_VERSION:0.5.0}

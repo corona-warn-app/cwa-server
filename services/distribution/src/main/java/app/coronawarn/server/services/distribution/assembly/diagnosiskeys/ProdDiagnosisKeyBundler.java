@@ -1,32 +1,14 @@
-/*-
- * ---license-start
- * Corona-Warn-App
- * ---
- * Copyright (C) 2020 SAP SE and all other contributors
- * ---
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- * ---license-end
- */
+
 
 package app.coronawarn.server.services.distribution.assembly.diagnosiskeys;
 
-import static java.time.ZoneOffset.UTC;
 import static java.util.Collections.emptyList;
 import static java.util.stream.Collectors.groupingBy;
 
 import app.coronawarn.server.common.persistence.domain.DiagnosisKey;
+import app.coronawarn.server.common.persistence.service.common.ExpirationPolicy;
+import app.coronawarn.server.common.persistence.service.common.KeySharingPoliciesChecker;
 import app.coronawarn.server.services.distribution.config.DistributionServiceConfig;
-import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
@@ -50,28 +32,49 @@ import org.springframework.stereotype.Component;
 @Component
 public class ProdDiagnosisKeyBundler extends DiagnosisKeyBundler {
 
+  private KeySharingPoliciesChecker sharingPoliciesChecker;
+  private String originCountry;
+  private boolean applyPoliciesForAllCountries;
+
   /**
    * Creates a new {@link ProdDiagnosisKeyBundler}.
    */
-  public ProdDiagnosisKeyBundler(DistributionServiceConfig distributionServiceConfig) {
+  public ProdDiagnosisKeyBundler(DistributionServiceConfig distributionServiceConfig,
+      KeySharingPoliciesChecker sharingPoliciesChecker) {
     super(distributionServiceConfig);
+    this.sharingPoliciesChecker = sharingPoliciesChecker;
+    this.originCountry = distributionServiceConfig.getApi().getOriginCountry();
+    this.applyPoliciesForAllCountries = distributionServiceConfig.getApplyPoliciesForAllCountries();
   }
 
   /**
-   * Initializes the internal {@code distributableDiagnosisKeys} map, grouping the diagnosis keys by the date on which
-   * they may be distributed, while respecting the expiry and shifting policies.
+   * Initializes the internal {@code distributableDiagnosisKeys} map, grouping the diagnosis keys based on the country
+   * and by the date on which they may be distributed, while respecting the expiry and shifting policies.
    */
   @Override
   protected void createDiagnosisKeyDistributionMap(Collection<DiagnosisKey> diagnosisKeys) {
-    this.distributableDiagnosisKeys.clear();
-    if (diagnosisKeys.isEmpty()) {
+    mapDiagnosisKeysPerVisitedCountries(diagnosisKeys).keySet().forEach(country -> {
+      if (!country.equals(originCountry) && !applyPoliciesForAllCountries) {
+        populateDistributableDiagnosisKeysWithoutPolicies(country);
+      } else {
+        populateDistributableDiagnosisKeysWithPolicies(country);
+      }
+    });
+    populateEuPackageWithDistributableDiagnosisKeys();
+  }
+
+  private void populateDistributableDiagnosisKeysWithPolicies(String country) {
+
+    Map<LocalDateTime, List<DiagnosisKey>> distributableDiagnosisKeysGroupedByExpiryPolicy = new HashMap<>(
+        groupedDiagnosisKeys.get(country).stream().collect(groupingBy(this::getDistributionDateTimeByExpiryPolicy)));
+
+    if (distributableDiagnosisKeysGroupedByExpiryPolicy.isEmpty()) {
       return;
     }
-    Map<LocalDateTime, List<DiagnosisKey>> distributableDiagnosisKeysGroupedByExpiryPolicy = new HashMap<>(
-        diagnosisKeys.stream().collect(groupingBy(this::getDistributionDateTimeByExpiryPolicy)));
+
     LocalDateTime earliestDistributableTimestamp =
         getEarliestDistributableTimestamp(distributableDiagnosisKeysGroupedByExpiryPolicy).orElseThrow();
-    LocalDateTime latestDistributableTimestamp = this.distributionTime;
+    LocalDateTime latestDistributableTimestamp = distributionTime;
 
     List<DiagnosisKey> diagnosisKeyAccumulator = new ArrayList<>();
     LongStream.range(0, earliestDistributableTimestamp.until(latestDistributableTimestamp, ChronoUnit.HOURS))
@@ -82,28 +85,24 @@ public class ProdDiagnosisKeyBundler extends DiagnosisKeyBundler {
               .orElse(emptyList());
           diagnosisKeyAccumulator.addAll(currentHourDiagnosisKeys);
           if (diagnosisKeyAccumulator.size() >= minNumberOfKeysPerBundle) {
-            this.distributableDiagnosisKeys.put(currentHour, new ArrayList<>(diagnosisKeyAccumulator));
+            distributableDiagnosisKeys.get(country).put(currentHour, new ArrayList<>(diagnosisKeyAccumulator));
             diagnosisKeyAccumulator.clear();
           } else {
             // placeholder list is needed to be able to generate empty file - see issue #650
-            this.distributableDiagnosisKeys.put(currentHour, Collections.emptyList());
+            distributableDiagnosisKeys.get(country).put(currentHour, Collections.emptyList());
           }
         });
+  }
+
+  private void populateDistributableDiagnosisKeysWithoutPolicies(String country) {
+    distributableDiagnosisKeys.get(country).putAll(groupedDiagnosisKeys.get(country).stream()
+        .filter(diagnosisKey -> getSubmissionDateTime(diagnosisKey).isBefore(distributionTime))
+        .collect(groupingBy(this::getSubmissionDateTime)));
   }
 
   private static Optional<LocalDateTime> getEarliestDistributableTimestamp(
       Map<LocalDateTime, List<DiagnosisKey>> distributableDiagnosisKeys) {
     return distributableDiagnosisKeys.keySet().stream().min(LocalDateTime::compareTo);
-  }
-
-  /**
-   * Returns the end of the rolling time window that a {@link DiagnosisKey} was active for as a {@link LocalDateTime}.
-   * The ".plusDays(1L)" is used as there can be now diagnosis keys with rollingPeriod set to less than 1 day.
-   */
-  private LocalDateTime getExpiryDateTime(DiagnosisKey diagnosisKey) {
-    return LocalDateTime
-        .ofEpochSecond(diagnosisKey.getRollingStartIntervalNumber() * TEN_MINUTES_INTERVAL_SECONDS, 0, UTC)
-        .plusDays(1L);
   }
 
   /**
@@ -114,14 +113,7 @@ public class ProdDiagnosisKeyBundler extends DiagnosisKeyBundler {
    * @return {@link LocalDateTime} at which the specified {@link DiagnosisKey} can be distributed.
    */
   private LocalDateTime getDistributionDateTimeByExpiryPolicy(DiagnosisKey diagnosisKey) {
-    LocalDateTime submissionDateTime = getSubmissionDateTime(diagnosisKey);
-    LocalDateTime expiryDateTime = getExpiryDateTime(diagnosisKey);
-    long minutesBetweenExpiryAndSubmission = Duration.between(expiryDateTime, submissionDateTime).toMinutes();
-    if (minutesBetweenExpiryAndSubmission <= expiryPolicyMinutes) {
-      // truncatedTo floors the value, so we need to add an hour to the DISTRIBUTION_PADDING to compensate that.
-      return expiryDateTime.plusMinutes(expiryPolicyMinutes + 60).truncatedTo(ChronoUnit.HOURS);
-    } else {
-      return submissionDateTime;
-    }
+    return sharingPoliciesChecker.getEarliestTimeForSharingKey(diagnosisKey,
+        ExpirationPolicy.of(expiryPolicyMinutes, ChronoUnit.MINUTES));
   }
 }
