@@ -47,7 +47,7 @@ allowed-report-types | CONFIRMED_TEST | Accepted ReportTypes.
 max-dsos             | 4000           | Accepted upper bound for Days Since Onset of Symptoms.
 min-rolling-period   | 0              | Accepted lower bound for Rolling Period.
 max-rolling-period   | 144            | Accepted upper bound for Rolling Period.
-min-trl              | 0              | Accepted lower bound for Transmission Risk Level.
+min-trl              | 1              | Accepted lower bound for Transmission Risk Level.
 max-trl              | 8              | Accepted upper bound for Transmission Risk Level.
 
 ### Validation Checks
@@ -55,11 +55,14 @@ max-trl              | 8              | Accepted upper bound for Transmission Ri
 The checks performed on downloaded DKs are as follows:
 
 * Key Data has correct length.
-* Days Since Onset of Symptoms is set and between upper and lower bound.
 * ReportType is allowed.
 * Starting Interval Number is set and valid.
-* Transmission Risk Level is set and between upper and lower bound.
 * Rolling Period is set and between upper and lower bound.
+* Days Since Onset of Symptoms (DSOS) is set and between upper and lower bound.
+* Transmission Risk Level (TRL) is set and between upper and lower bound.
+
+If the validation of DSOS or TRL fails, the corresponding value is derived from the other. 
+Diagnosis Keys are only rejected if both values are missing or invalid.
 
 Implementation details on validation can be found in: [`ValidFederationKeyFilter.java`](/services/download/src/main/java/app/coronawarn/server/services/download/validation/ValidFederationKeyFilter.java).
 
