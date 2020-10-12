@@ -27,6 +27,8 @@ Apart from those configuration options, the `dev` profile will never be used in 
 Fake (or "dummy") requests are sent by the mobile devices in randomized intervals. These requests do not trigger any server-side processing or storage and simply result in an HTTP response after an dynamically calculated delay.
 The fake requests are intended to prevent an attacker from using network and traffic analysis to find out whether a user was actually tested positive and is now submitting his keys.
 
+The implementation details on fake request handling can be found here [FakeRequestController](../services/submission/src/main/java/app/coronawarn/server/services/submission/controller/FakeRequestController.java).
+
 ### Header Padding
 
 Coming soon
