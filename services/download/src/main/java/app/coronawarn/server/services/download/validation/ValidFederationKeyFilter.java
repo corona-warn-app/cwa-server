@@ -36,7 +36,7 @@ public class ValidFederationKeyFilter {
    */
   public boolean isValid(DiagnosisKey federationKey) {
     return hasAllowedReportType(federationKey)
-        && hasRollingPeriod(federationKey);
+        && hasStartIntervalNumberAtMidnight(federationKey);
   }
 
   private boolean hasAllowedReportType(DiagnosisKey federationKey) {
@@ -48,11 +48,9 @@ public class ValidFederationKeyFilter {
     return hasAllowedReportType;
   }
 
-  private boolean hasRollingPeriod(DiagnosisKey federationKey) {
-    boolean hasRollingPeriod = federationKey.hasRollingPeriod();
-    if (!hasRollingPeriod) {
-      logger.info("Filter skipped Federation DiagnosisKey has no 'RollingPeriod'");
-    }
-    return hasRollingPeriod;
+  private boolean hasStartIntervalNumberAtMidnight(DiagnosisKey federationKey) {
+    return federationKey.getRollingStartIntervalNumber()
+        % app.coronawarn.server.common.persistence.domain.DiagnosisKey.MAX_ROLLING_PERIOD
+        == 0;
   }
 }
