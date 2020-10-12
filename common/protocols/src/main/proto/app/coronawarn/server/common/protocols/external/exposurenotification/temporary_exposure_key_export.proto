@@ -3,6 +3,7 @@ syntax = "proto2";
 package app.coronawarn.server.common.protocols.external.exposurenotification;
 option java_package = "app.coronawarn.server.common.protocols.external.exposurenotification";
 option java_multiple_files = true;
+import "app/coronawarn/server/common/protocols/external/exposurenotification/diagnosis_key_batch.proto";
 
 message TemporaryExposureKeyExport {
   // Time window of keys in the file, based on arrival
@@ -52,13 +53,3 @@ message TemporaryExposureKey {
   // E.g. 2 means TEK is 2 days after onset of symptoms.
   optional sint32 days_since_onset_of_symptoms = 6;
 }
-// Data type representing why this key was published.
-enum ReportType {
-  UNKNOWN = 0;  // Never returned by the client API.
-  CONFIRMED_TEST = 1;
-  CONFIRMED_CLINICAL_DIAGNOSIS = 2;
-  SELF_REPORT = 3;
-  RECURSIVE = 4;  // Reserved for future use.
-  REVOKED = 5;  // Used to revoke a key, never returned by client API.
-}
-
