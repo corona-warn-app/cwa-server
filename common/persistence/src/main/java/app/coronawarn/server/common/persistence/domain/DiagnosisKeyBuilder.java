@@ -94,7 +94,7 @@ public class DiagnosisKeyBuilder implements
         .withVisitedCountries(new HashSet<>(federationDiagnosisKey.getVisitedCountriesList()))
         .withDaysSinceOnsetOfSymptoms(
             federationDiagnosisKey.hasDaysSinceOnsetOfSymptoms() ? federationDiagnosisKey.getDaysSinceOnsetOfSymptoms()
-                : null);
+                : 0);
   }
 
   @Override
