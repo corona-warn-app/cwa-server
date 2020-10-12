@@ -7,9 +7,9 @@ import static org.mockito.Mockito.when;
 
 import app.coronawarn.server.common.protocols.external.exposurenotification.DiagnosisKey;
 import app.coronawarn.server.common.protocols.external.exposurenotification.ReportType;
+import app.coronawarn.server.services.download.FederationBatchTestHelper;
 import app.coronawarn.server.services.download.config.DownloadServiceConfig;
 import app.coronawarn.server.services.download.config.DownloadServiceConfig.Validation;
-import app.coronawarn.server.services.download.FederationBatchTestHelper;
 import com.google.protobuf.ByteString;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -66,22 +66,12 @@ class ValidFederationKeyFilterTest {
   }
 
   @Test
-  void filterRejectsMissingRollingPeriod() {
-    DiagnosisKey mockedFederationKey = FederationBatchTestHelper
-        .createBuilderForValidFederationDiagnosisKey()
-        .clearRollingPeriod()
-        .build();
-    assertThat(validator.isValid(mockedFederationKey)).isFalse();
-  }
-
-  @Test
   void filterAcceptsCorrectKeyLength() {
     ByteString keyData = FederationBatchTestHelper.createByteStringOfLength(16);
     DiagnosisKey mockedFederationKey = FederationBatchTestHelper.createFederationDiagnosisKeyWithKeyData(keyData);
     assertThat(validator.isValid(mockedFederationKey)).isTrue();
   }
 
-  /*
   @Test
   void filterRejectsStartIntervalNumberNotAdMidnight() {
     int rollingStart = Math.toIntExact(LocalDateTime.of(LocalDate.now(), LocalTime.NOON).toEpochSecond(UTC) / 600L);
@@ -91,6 +81,4 @@ class ValidFederationKeyFilterTest {
 
     assertThat(validator.isValid(mockedFederationKey)).isFalse();
   }
-
-   */
 }
