@@ -65,21 +65,6 @@ public class FederationBatchTestHelper {
         .build();
   }
 
-  public static DiagnosisKey createFederationDiagnosisKeyWithoutTransmissionRiskLevel(ByteString keyData,
-      int daysSinceOnsetOfSymptoms) {
-    return createBuilderForValidFederationDiagnosisKey()
-        .setKeyData(keyData)
-        .clearTransmissionRiskLevel()
-        .setDaysSinceOnsetOfSymptoms(daysSinceOnsetOfSymptoms)
-        .build();
-  }
-
-  public static DiagnosisKey createFederationDiagnosisKeyWithoutDsos() {
-    return createBuilderForValidFederationDiagnosisKey()
-        .clearDaysSinceOnsetOfSymptoms()
-        .build();
-  }
-
   public static DiagnosisKey createFederationDiagnosisKeyWithReportType(ReportType reportType) {
     return createBuilderForValidFederationDiagnosisKey()
         .setReportType(reportType)

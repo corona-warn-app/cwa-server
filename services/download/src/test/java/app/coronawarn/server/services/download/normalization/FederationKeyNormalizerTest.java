@@ -102,8 +102,11 @@ class FederationKeyNormalizerTest {
   private BatchDownloadResponse getBatchDownloadResponse() {
     List<DiagnosisKey> diagnosisKeys = getKeysWithDaysSinceSymptoms().entrySet().stream()
         .map(
-            e -> FederationBatchTestHelper.createFederationDiagnosisKeyWithoutTransmissionRiskLevel(
-                ByteString.copyFromUtf8(e.getKey()), e.getValue()))
+            e -> FederationBatchTestHelper.createBuilderForValidFederationDiagnosisKey()
+                .setKeyData(ByteString.copyFromUtf8(e.getKey()))
+                .clearTransmissionRiskLevel()
+                .setDaysSinceOnsetOfSymptoms(e.getValue())
+                .build())
         .collect(Collectors.toList());
     DiagnosisKeyBatch diagnosisKeyBatch =
         DiagnosisKeyBatch.newBuilder().addAllKeys(diagnosisKeys).build();
