@@ -52,3 +52,6 @@
 - [Security](./SECURITY.md)
   - [TLS Configuration](./SECURITY.md#tls-configuration)
   - [Security-Related Spring Profiles](./SECURITY.md#security-related-spring-profiles)
+  - [Plausible Deniability](./SECURITY.md#plausible-deniability)
+    - [Fake Requests](./SECURITY.md#fake-requests)
+    - [Payload Padding](./SECURITY.md#payload-padding)
