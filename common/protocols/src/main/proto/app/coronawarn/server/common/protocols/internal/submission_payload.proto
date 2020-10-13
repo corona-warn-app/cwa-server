@@ -1,4 +1,4 @@
-syntax = "proto3";
+syntax = "proto2";
 package app.coronawarn.server.common.protocols.internal;
 option java_package = "app.coronawarn.server.common.protocols.internal";
 option java_multiple_files = true;
@@ -6,5 +6,8 @@ import "app/coronawarn/server/common/protocols/external/exposurenotification/tem
 
 message SubmissionPayload {
   repeated app.coronawarn.server.common.protocols.external.exposurenotification.TemporaryExposureKey keys = 1;
-  bytes padding = 2;
+  optional bytes requestPadding = 2;
+  repeated string visitedCountries = 3;
+  optional string origin = 4;
+  optional bool consentToFederation = 5;
 }

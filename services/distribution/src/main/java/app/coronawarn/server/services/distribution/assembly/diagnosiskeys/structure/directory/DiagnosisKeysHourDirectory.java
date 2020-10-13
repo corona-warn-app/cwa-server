@@ -1,22 +1,4 @@
-/*-
- * ---license-start
- * Corona-Warn-App
- * ---
- * Copyright (C) 2020 SAP SE and all other contributors
- * ---
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- * ---license-end
- */
+
 
 package app.coronawarn.server.services.distribution.assembly.diagnosiskeys.structure.directory;
 
@@ -54,8 +36,12 @@ public class DiagnosisKeysHourDirectory extends IndexDirectoryOnDisk<LocalDateTi
   public DiagnosisKeysHourDirectory(DiagnosisKeyBundler diagnosisKeyBundler, CryptoProvider cryptoProvider,
       DistributionServiceConfig distributionServiceConfig) {
     super(distributionServiceConfig.getApi().getHourPath(),
-        indices -> diagnosisKeyBundler.getHoursWithDistributableDiagnosisKeys(((LocalDate) indices.peek())),
+        indices -> {
+          String country = (String) indices.pop().peek();
+          return diagnosisKeyBundler.getHoursWithDistributableDiagnosisKeys(((LocalDate) indices.peek()), country);
+        },
         LocalDateTime::getHour);
+
     this.diagnosisKeyBundler = diagnosisKeyBundler;
     this.cryptoProvider = cryptoProvider;
     this.distributionServiceConfig = distributionServiceConfig;
@@ -68,15 +54,15 @@ public class DiagnosisKeysHourDirectory extends IndexDirectoryOnDisk<LocalDateTi
       // The LocalDateTime currentHour already contains both the date and the hour information, so
       // we can throw away the LocalDate that's the second item on the stack from the "/date"
       // IndexDirectory.
-      String region = (String) currentIndices.pop().pop().peek();
+      String country = (String) currentIndices.pop().pop().peek();
 
       List<DiagnosisKey> diagnosisKeysForCurrentHour =
-          this.diagnosisKeyBundler.getDiagnosisKeysForHour(currentHour);
+          this.diagnosisKeyBundler.getDiagnosisKeysForHour(currentHour, country);
 
       long startTimestamp = currentHour.toEpochSecond(ZoneOffset.UTC);
       long endTimestamp = currentHour.plusHours(1).toEpochSecond(ZoneOffset.UTC);
       File<WritableOnDisk> temporaryExposureKeyExportFile = TemporaryExposureKeyExportFile.fromDiagnosisKeys(
-          diagnosisKeysForCurrentHour, region, startTimestamp, endTimestamp, distributionServiceConfig);
+          diagnosisKeysForCurrentHour, country, startTimestamp, endTimestamp, distributionServiceConfig);
 
       Archive<WritableOnDisk> hourArchive = new ArchiveOnDisk(distributionServiceConfig.getOutputFileName());
       hourArchive.addWritable(temporaryExposureKeyExportFile);

@@ -30,6 +30,12 @@ services:
     payload:
       # The maximum number of keys accepted for any submission.
       max-number-of-keys: ${MAX_NUMBER_OF_KEYS:14}
+      # Country codes representing the list of countries which are allowed to be specified in the
+      # visitedCountries and originCountry field of a submission payload
+      # Comma separated country code values must be provided. The value must not end with ','
+      supported-countries: ${SUPPORTED_COUNTRIES}
+      # The default 'origin country' when not provided in submission payload
+      default-origin-country: ${ORIGIN_COUNTRY:DE}
     verification:
       base-url: ${VERIFICATION_BASE_URL:http://localhost:8004}
       path: /version/v1/tan/verify

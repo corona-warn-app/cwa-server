@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
 
   <parent>
     <artifactId>server</artifactId>
@@ -10,18 +10,13 @@
     <relativePath>../pom.xml</relativePath>
   </parent>
 
-  <properties>
-    <sonar.projectKey>corona-warn-app_cwa-server_common</sonar.projectKey>
-  </properties>
-
-  <modelVersion>4.0.0</modelVersion>
-
   <artifactId>common</artifactId>
-
   <packaging>pom</packaging>
+
   <modules>
     <module>protocols</module>
     <module>persistence</module>
+    <module>federation</module>
   </modules>
 
 </project>

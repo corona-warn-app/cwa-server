@@ -1,22 +1,4 @@
-/*-
- * ---license-start
- * Corona-Warn-App
- * ---
- * Copyright (C) 2020 SAP SE and all other contributors
- * ---
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- * ---license-end
- */
+
 
 package app.coronawarn.server.services.distribution.objectstore.publish;
 
@@ -33,18 +15,24 @@ import java.util.stream.Stream;
  */
 public class PublishFileSet {
 
-  /** how deep the folder structure will be scanned for files.  */
+  /**
+   * how deep the folder structure will be scanned for files.
+   */
   private static final int FILE_WALK_MAX_DEPTH = 20;
 
-  /** the root folder from which to read all files. */
+  /**
+   * the root folder from which to read all files.
+   */
   private final Path root;
 
-  /** the list of identified files in the root folder. */
+  /**
+   * the list of identified files in the root folder.
+   */
   private final List<LocalFile> files;
 
   /**
-   * Creates a new PublishFileSet, based on the given root folder. This root folder will be used to
-   * scan recursively for available files.
+   * Creates a new PublishFileSet, based on the given root folder. This root folder will be used to scan recursively for
+   * available files.
    *
    * @param root the root folder, e.g. ./out/
    * @throws IOException in case there were problems reading the files
