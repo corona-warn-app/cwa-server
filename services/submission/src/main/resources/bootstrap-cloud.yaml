@@ -4,6 +4,8 @@ spring:
     name: cwa-server
   cloud:
     vault:
+      ssl:
+        trust-store: ${VAULT_SSL_TRUSTSTORE}
       enabled: true
       generic:
         enabled: false
