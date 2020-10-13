@@ -113,6 +113,11 @@ date and hour directory also contain an index file each, listing all the subdire
 concept, but writing this structure to the local disk is not supported. Therefore, this country file will be assembled as
 `version/v1/diagnosis-keys/country/index`. The `/index` part will then be removed upon S3 upload.
 
+In the current implementation the `<ISO-3166-country>` placeholder is expected to have only `DE` and `EUR` values. The `DE`
+folder is containing the distributed keys for the German country and the `EUR` folder is containing the distributed keys for the whole
+Europe countries.
+
+
 For each assembly run the diagnosis keys for the last 14 days are queried. Based on the result, hour and their parent
 directories are created and the keys are added to their respective archives. To which archive the key should be added is
 determined by the distribution timestamp.
