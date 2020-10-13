@@ -5,7 +5,7 @@ spring:
   cloud:
     vault:
       ssl:
-        trust-store: ${VAULT_SSL_TRUSTSTORE}
+        trust-store: ${SSL_VERIFICATION_TRUSTSTORE_PATH}
       enabled: true
       generic:
         enabled: false
