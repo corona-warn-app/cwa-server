@@ -48,6 +48,7 @@ public abstract class DiagnosisKeyBundler {
   private final int maxNumberOfKeysPerBundle;
   protected final List<String> supportedCountries;
   private final String euPackageName;
+  private final String originCountry;
   /**
    * The hour at which the distribution runs. This field is needed to prevent the run from distributing any keys that
    * have already been submitted but may only be distributed in the future (e.g. because they are not expired yet).
@@ -74,6 +75,7 @@ public abstract class DiagnosisKeyBundler {
     this.minNumberOfKeysPerBundle = distributionServiceConfig.getShiftingPolicyThreshold();
     this.maxNumberOfKeysPerBundle = distributionServiceConfig.getMaximumNumberOfKeysPerBundle();
     this.euPackageName = distributionServiceConfig.getEuPackageName();
+    this.originCountry = distributionServiceConfig.getApi().getOriginCountry();
   }
 
   /**
@@ -195,23 +197,29 @@ public abstract class DiagnosisKeyBundler {
     return true;
   }
 
-  private void initializeMappings() {
-    groupedDiagnosisKeys.clear();
-    distributableDiagnosisKeys.clear();
-
-    supportedCountries.forEach(supportedCountry -> {
-      groupedDiagnosisKeys.put(supportedCountry, new ArrayList<>());
-      this.distributableDiagnosisKeys.put(supportedCountry, new HashMap<>());
-    });
+  private void addKeyToMap(DiagnosisKey key, Map<String, List<DiagnosisKey>> keysByCountry) {
+    // Prior to 1.5 version the already stored keys have no visited countries, thus we default the target bucket
+    // to origin country, as these keys were originated in CWA and should still be distributed.
+    if (key.getVisitedCountries().isEmpty()) {
+      keysByCountry.get(this.originCountry).add(key);
+    } else {
+      key.getVisitedCountries().stream()
+          .filter(supportedCountries::contains)
+          .forEach(visitedCountry -> {
+            if (key.getOriginCountry().equals(originCountry) && !visitedCountry.equals(originCountry)) {
+              return;
+            }
+            keysByCountry.get(visitedCountry).add(key);
+          });
+    }
   }
 
   protected Map<String, List<DiagnosisKey>> mapDiagnosisKeysPerVisitedCountries(
       Collection<DiagnosisKey> diagnosisKeys) {
     initializeMappings();
 
-    diagnosisKeys.forEach(diagnosisKey -> diagnosisKey.getVisitedCountries().stream()
-        .filter(supportedCountries::contains)
-        .forEach(visitedCountry -> groupedDiagnosisKeys.get(visitedCountry).add(diagnosisKey)));
+    diagnosisKeys
+        .forEach(diagnosisKey -> this.addKeyToMap(diagnosisKey, groupedDiagnosisKeys));
     return groupedDiagnosisKeys;
   }
 
@@ -231,5 +239,15 @@ public abstract class DiagnosisKeyBundler {
     euPackage.forEach((distributionDateTime, diagnosisKeys) ->
         euPackageList.put(distributionDateTime, new ArrayList<>(diagnosisKeys)));
     distributableDiagnosisKeys.put(euPackageName, euPackageList);
+  }
+
+  private void initializeMappings() {
+    groupedDiagnosisKeys.clear();
+    distributableDiagnosisKeys.clear();
+
+    supportedCountries.forEach(supportedCountry -> {
+      groupedDiagnosisKeys.put(supportedCountry, new ArrayList<>());
+      this.distributableDiagnosisKeys.put(supportedCountry, new HashMap<>());
+    });
   }
 }
