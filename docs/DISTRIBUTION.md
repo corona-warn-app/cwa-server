@@ -117,7 +117,6 @@ In the current implementation the `<ISO-3166-country>` placeholder is expected t
 folder is containing the distributed keys for the German country and the `EUR` folder is containing the distributed keys for the whole
 Europe countries.
 
-
 For each assembly run the diagnosis keys for the last 14 days are queried. Based on the result, hour and their parent
 directories are created and the keys are added to their respective archives. To which archive the key should be added is
 determined by the distribution timestamp.
