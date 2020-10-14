@@ -1,16 +1,14 @@
 
-
 package app.coronawarn.server.common.persistence.service;
+
+import static app.coronawarn.server.common.persistence.service.common.LogMessages.DELETING_BATCH_INFOS_WITH_DATE_OLDER;
+import static app.coronawarn.server.common.persistence.service.common.LogMessages.MARKET_BATCH_WITH_STATUS;
 
 import app.coronawarn.server.common.Logger;
 import app.coronawarn.server.common.LoggerFactory;
 import app.coronawarn.server.common.persistence.domain.FederationBatchInfo;
 import app.coronawarn.server.common.persistence.domain.FederationBatchStatus;
 import app.coronawarn.server.common.persistence.repository.FederationBatchInfoRepository;
-
-import static app.coronawarn.server.common.persistence.service.common.LogMessages.DELETING_BATCH_INFOS_WITH_DATE_OLDER;
-import static app.coronawarn.server.common.persistence.service.common.LogMessages.MARKET_BATCH_WITH_STATUS;
-
 import java.time.LocalDate;
 import java.time.Period;
 import java.time.ZoneOffset;

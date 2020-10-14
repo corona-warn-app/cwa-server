@@ -12,7 +12,6 @@ import app.coronawarn.server.common.Logger;
 import app.coronawarn.server.common.LoggerFactory;
 import app.coronawarn.server.common.persistence.domain.DiagnosisKey;
 import app.coronawarn.server.common.persistence.repository.DiagnosisKeyRepository;
-import app.coronawarn.server.common.persistence.service.common.LogMessages;
 import app.coronawarn.server.common.persistence.service.common.ValidDiagnosisKeyFilter;
 import io.micrometer.core.annotation.Timed;
 import java.time.Instant;
