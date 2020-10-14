@@ -19,7 +19,7 @@ public class ValidDiagnosisKeyFilter {
   private static final Logger logger = LoggerFactory.getLogger(ValidDiagnosisKeyFilter.class);
 
   /**
-   * Rerturns a subset of diagnosis keys from the given list which have
+   * Returns a subset of diagnosis keys from the given list which have
    * passed the default entity validation.
    */
   public List<DiagnosisKey> filter(List<DiagnosisKey> diagnosisKeys) {
