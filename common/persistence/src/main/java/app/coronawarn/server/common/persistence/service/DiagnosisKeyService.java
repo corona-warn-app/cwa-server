@@ -3,8 +3,8 @@
 package app.coronawarn.server.common.persistence.service;
 
 import static app.coronawarn.server.common.persistence.domain.validation.ValidSubmissionTimestampValidator.SECONDS_PER_HOUR;
-import static app.coronawarn.server.common.persistence.service.common.LogMessages.DELETING_DIAGNOSIS_KEYS_WITH_SUBMISSION_TIMESTAMP_OLDER;
-import static app.coronawarn.server.common.persistence.service.common.LogMessages.DIAGNOSIS_KEYS_CONFLICTED_WITH_DB_ENTRIES;
+import static app.coronawarn.server.common.persistence.service.common.PersistenceLogMessages.DELETING_DIAGNOSIS_KEYS_WITH_SUBMISSION_TIMESTAMP_OLDER;
+import static app.coronawarn.server.common.persistence.service.common.PersistenceLogMessages.DIAGNOSIS_KEYS_CONFLICTED_WITH_DB_ENTRIES;
 import static java.time.ZoneOffset.UTC;
 import static org.springframework.data.util.StreamUtils.createStreamFromIterator;
 

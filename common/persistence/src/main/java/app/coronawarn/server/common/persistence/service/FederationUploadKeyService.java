@@ -2,11 +2,11 @@
 
 package app.coronawarn.server.common.persistence.service;
 
-import static app.coronawarn.server.common.persistence.service.common.LogMessages.KEYS_PICKED_FROM_UPLOAD_TABLE;
-import static app.coronawarn.server.common.persistence.service.common.LogMessages.KEYS_REMAINING_AFTER_FILTERING_BY_CONSENT;
-import static app.coronawarn.server.common.persistence.service.common.LogMessages.KEYS_REMAINING_AFTER_FILTERING_BY_SHARE_POLICY;
-import static app.coronawarn.server.common.persistence.service.common.LogMessages.KEYS_REMAINING_AFTER_FILTERING_BY_VALIDITY;
-import static app.coronawarn.server.common.persistence.service.common.LogMessages.KEYS_SELECTED_FOR_UPLOAD;
+import static app.coronawarn.server.common.persistence.service.common.PersistenceLogMessages.KEYS_PICKED_FROM_UPLOAD_TABLE;
+import static app.coronawarn.server.common.persistence.service.common.PersistenceLogMessages.KEYS_REMAINING_AFTER_FILTERING_BY_CONSENT;
+import static app.coronawarn.server.common.persistence.service.common.PersistenceLogMessages.KEYS_REMAINING_AFTER_FILTERING_BY_SHARE_POLICY;
+import static app.coronawarn.server.common.persistence.service.common.PersistenceLogMessages.KEYS_REMAINING_AFTER_FILTERING_BY_VALIDITY;
+import static app.coronawarn.server.common.persistence.service.common.PersistenceLogMessages.KEYS_SELECTED_FOR_UPLOAD;
 import static java.time.ZoneOffset.UTC;
 import static org.springframework.data.util.StreamUtils.createStreamFromIterator;
 

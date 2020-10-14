@@ -1,6 +1,8 @@
 package app.coronawarn.server.common.persistence.service.common;
 
-public enum LogMessages {
+import app.coronawarn.server.common.LogMessages;
+
+public enum PersistenceLogMessages implements LogMessages {
 
   KEYS_SELECTED_FOR_UPLOAD("Keys selected for upload: {}"), //
   KEYS_PICKED_FROM_UPLOAD_TABLE("{} keys picked after read from upload table"), //
@@ -30,7 +32,8 @@ public enum LogMessages {
     return message;
   }
 
-  private LogMessages(String message) {
+  private PersistenceLogMessages(String message) {
     this.message = message;
   }
+
 }

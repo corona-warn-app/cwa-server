@@ -1,8 +1,8 @@
 
 package app.coronawarn.server.common.persistence.service;
 
-import static app.coronawarn.server.common.persistence.service.common.LogMessages.DELETING_BATCH_INFOS_WITH_DATE_OLDER;
-import static app.coronawarn.server.common.persistence.service.common.LogMessages.MARKET_BATCH_WITH_STATUS;
+import static app.coronawarn.server.common.persistence.service.common.PersistenceLogMessages.DELETING_BATCH_INFOS_WITH_DATE_OLDER;
+import static app.coronawarn.server.common.persistence.service.common.PersistenceLogMessages.MARKET_BATCH_WITH_STATUS;
 
 import app.coronawarn.server.common.Logger;
 import app.coronawarn.server.common.LoggerFactory;

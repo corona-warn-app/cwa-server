@@ -1,8 +1,8 @@
 
 package app.coronawarn.server.common.persistence.service.common;
 
-import static app.coronawarn.server.common.persistence.service.common.LogMessages.NR_RETRIEVED_DISCARDED_DIAGNOSIS_KEYS;
-import static app.coronawarn.server.common.persistence.service.common.LogMessages.VALIDATION_FAILED_WITH_VIOLATIONS;
+import static app.coronawarn.server.common.persistence.service.common.PersistenceLogMessages.NR_RETRIEVED_DISCARDED_DIAGNOSIS_KEYS;
+import static app.coronawarn.server.common.persistence.service.common.PersistenceLogMessages.VALIDATION_FAILED_WITH_VIOLATIONS;
 
 import app.coronawarn.server.common.Logger;
 import app.coronawarn.server.common.LoggerFactory;
