@@ -5,7 +5,7 @@ spring:
   cloud:
     vault:
       ssl:
-        trust-store: ${SSL_VERIFICATION_TRUSTSTORE_PATH}
+        trust-store: classpath:ts.jks
       enabled: true
       generic:
         enabled: false
@@ -17,7 +17,7 @@ spring:
         default-context: ''
         profiles: cloud
       fail-fast: true
-      authentication: KUBERNETES
+      authentication: CERT
       kubernetes:
         role: ${VAULT_ROLE}
         kubernetes-path: kubernetes
