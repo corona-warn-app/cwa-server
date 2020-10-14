@@ -3,6 +3,9 @@
 package app.coronawarn.server.common.persistence.service;
 
 import static app.coronawarn.server.common.persistence.service.common.LogMessages.KEYS_PICKED_FROM_UPLOAD_TABLE;
+import static app.coronawarn.server.common.persistence.service.common.LogMessages.KEYS_REMAINING_AFTER_FILTERING_BY_CONSENT;
+import static app.coronawarn.server.common.persistence.service.common.LogMessages.KEYS_REMAINING_AFTER_FILTERING_BY_SHARE_POLICY;
+import static app.coronawarn.server.common.persistence.service.common.LogMessages.KEYS_REMAINING_AFTER_FILTERING_BY_VALIDITY;
 import static app.coronawarn.server.common.persistence.service.common.LogMessages.KEYS_SELECTED_FOR_UPLOAD;
 import static java.time.ZoneOffset.UTC;
 import static org.springframework.data.util.StreamUtils.createStreamFromIterator;
@@ -68,9 +71,9 @@ public class FederationUploadKeyService {
     logger.info(KEYS_SELECTED_FOR_UPLOAD, listOfKeys.size());
 
     logger.info(KEYS_PICKED_FROM_UPLOAD_TABLE, keysPicked.get());
-    logger.info("{} keys remaining after filtering by consent", keysPickedAfterConsent.get());
-    logger.info("{} keys remaining after filtering by validity", keysPickedAfterValidity.get());
-    logger.info("{} keys remaining after filtering by share policy", keysPickedAfterSharePolicy.get());
+    logger.info(KEYS_REMAINING_AFTER_FILTERING_BY_CONSENT, keysPickedAfterConsent.get());
+    logger.info(KEYS_REMAINING_AFTER_FILTERING_BY_VALIDITY, keysPickedAfterValidity.get());
+    logger.info(KEYS_REMAINING_AFTER_FILTERING_BY_SHARE_POLICY, keysPickedAfterSharePolicy.get());
 
     return listOfKeys;
   }

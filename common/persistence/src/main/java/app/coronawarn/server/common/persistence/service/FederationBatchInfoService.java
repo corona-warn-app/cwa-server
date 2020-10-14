@@ -2,15 +2,19 @@
 
 package app.coronawarn.server.common.persistence.service;
 
+import app.coronawarn.server.common.Logger;
+import app.coronawarn.server.common.LoggerFactory;
 import app.coronawarn.server.common.persistence.domain.FederationBatchInfo;
 import app.coronawarn.server.common.persistence.domain.FederationBatchStatus;
 import app.coronawarn.server.common.persistence.repository.FederationBatchInfoRepository;
+
+import static app.coronawarn.server.common.persistence.service.common.LogMessages.DELETING_BATCH_INFOS_WITH_DATE_OLDER;
+import static app.coronawarn.server.common.persistence.service.common.LogMessages.MARKET_BATCH_WITH_STATUS;
+
 import java.time.LocalDate;
 import java.time.Period;
 import java.time.ZoneOffset;
 import java.util.List;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -44,7 +48,7 @@ public class FederationBatchInfoService {
     String statusValue = status.name();
     federationBatchInfoRepository
         .saveDoUpdateStatusOnConflict(federationBatchInfo.getBatchTag(), federationBatchInfo.getDate(), statusValue);
-    logger.info("Marked batch {} with status {}.", federationBatchInfo.getBatchTag(), statusValue);
+    logger.info(MARKET_BATCH_WITH_STATUS, federationBatchInfo.getBatchTag(), statusValue);
   }
 
   /**
@@ -72,8 +76,7 @@ public class FederationBatchInfoService {
 
     LocalDate threshold = LocalDate.now(ZoneOffset.UTC).minus(Period.ofDays(daysToRetain));
     int numberOfDeletions = federationBatchInfoRepository.countOlderThan(threshold);
-    logger.info("Deleting {} batch info(s) with a date older than {} day(s) ago.",
-        numberOfDeletions, daysToRetain);
+    logger.info(DELETING_BATCH_INFOS_WITH_DATE_OLDER, numberOfDeletions, daysToRetain);
     federationBatchInfoRepository.deleteOlderThan(threshold);
   }
 

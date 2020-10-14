@@ -3,13 +3,17 @@
 package app.coronawarn.server.common.persistence.service.common;
 
 
+import app.coronawarn.server.common.Logger;
+import app.coronawarn.server.common.LoggerFactory;
 import app.coronawarn.server.common.persistence.domain.DiagnosisKey;
+
+import static app.coronawarn.server.common.persistence.service.common.LogMessages.NR_RETRIEVED_DISCARDED_DIAGNOSIS_KEYS;
+import static app.coronawarn.server.common.persistence.service.common.LogMessages.VALIDATION_FAILED_WITH_VIOLATIONS;
+
 import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
 import javax.validation.ConstraintViolation;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -26,8 +30,7 @@ public class ValidDiagnosisKeyFilter {
         diagnosisKeys.stream().filter(this::isDiagnosisKeyValid).collect(Collectors.toList());
 
     int numberOfDiscardedKeys = diagnosisKeys.size() - validDiagnosisKeys.size();
-    logger.info("Retrieved {} diagnosis key(s). Discarded {} diagnosis key(s) from the result as invalid.",
-        diagnosisKeys.size(), numberOfDiscardedKeys);
+    logger.info(NR_RETRIEVED_DISCARDED_DIAGNOSIS_KEYS, diagnosisKeys.size(), numberOfDiscardedKeys);
 
     return validDiagnosisKeys;
   }
@@ -42,7 +45,7 @@ public class ValidDiagnosisKeyFilter {
     if (!isValid) {
       List<String> violationMessages =
           violations.stream().map(ConstraintViolation::getMessage).collect(Collectors.toList());
-      logger.warn("Validation failed for diagnosis key from database. Violations: {}", violationMessages);
+      logger.warn(VALIDATION_FAILED_WITH_VIOLATIONS, violationMessages);
     }
 
     return isValid;
