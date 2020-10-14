@@ -138,7 +138,7 @@ public class SubmissionController {
         .collect(Collectors.toList());
 
     if (protoBufferKeys.size() > diagnosisKeys.size()) {
-      logger.warn(LogMessages.RETENTION_TRESHOLD_EXCEEDED_MESSAGE.toString(),
+      logger.warn(LogMessages.RETENTION_THRESHOLD_EXCEEDED_MESSAGE.toString(),
           protoBufferKeys.size() - diagnosisKeys.size());
     }
     return diagnosisKeys;

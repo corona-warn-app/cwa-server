@@ -2,6 +2,7 @@
 
 package app.coronawarn.server.services.submission.verification;
 
+import app.coronawarn.server.services.submission.logging.LogMessages;
 import feign.FeignException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -39,7 +40,7 @@ public class TanVerifier {
 
       return verifyWithVerificationService(tan);
     } catch (IllegalArgumentException e) {
-      logger.error("TAN Syntax check failed for TAN: {}, length: {}",
+      logger.error(LogMessages.TAN_VERIFICATION_FAILED_MESSAGE.toString(),
           tanString.substring(0, Math.min(36, tanString.length())), tanString.length());
       return false;
     }
