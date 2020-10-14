@@ -17,7 +17,7 @@ spring:
         default-context: ''
         profiles: cloud
       fail-fast: true
-      authentication: CERT
+      authentication: KUBERNETES
       kubernetes:
         role: ${VAULT_ROLE}
         kubernetes-path: kubernetes
