@@ -2,6 +2,8 @@
 
 package app.coronawarn.server.common.persistence.service;
 
+import static app.coronawarn.server.common.persistence.service.common.LogMessages.KEYS_PICKED_FROM_UPLOAD_TABLE;
+import static app.coronawarn.server.common.persistence.service.common.LogMessages.KEYS_SELECTED_FOR_UPLOAD;
 import static java.time.ZoneOffset.UTC;
 import static org.springframework.data.util.StreamUtils.createStreamFromIterator;
 
@@ -63,9 +65,9 @@ public class FederationUploadKeyService {
         .filter(key -> sharingPoliciesChecker.canShareKeyAtTime(key, policy, LocalDateTime.now(UTC)))
         .peek(k -> keysPickedAfterSharePolicy.addAndGet(1))
         .collect(Collectors.toList());
-    logger.info("Keys selected for upload: {}", listOfKeys.size());
+    logger.info(KEYS_SELECTED_FOR_UPLOAD.toString(), listOfKeys.size());
 
-    logger.info("{} keys picked after read from upload table", keysPicked.get());
+    logger.info(KEYS_PICKED_FROM_UPLOAD_TABLE.toString(), keysPicked.get());
     logger.info("{} keys remaining after filtering by consent", keysPickedAfterConsent.get());
     logger.info("{} keys remaining after filtering by validity", keysPickedAfterValidity.get());
     logger.info("{} keys remaining after filtering by share policy", keysPickedAfterSharePolicy.get());
