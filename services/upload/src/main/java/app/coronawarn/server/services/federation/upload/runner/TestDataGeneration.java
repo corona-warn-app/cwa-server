@@ -2,6 +2,14 @@
 
 package app.coronawarn.server.services.federation.upload.runner;
 
+import static app.coronawarn.server.services.federation.upload.UploadLogMessages.FINISHED_TEST_DATA_GENERATION;
+import static app.coronawarn.server.services.federation.upload.UploadLogMessages.FOUND_PENDING_UPLOAD_KEYS;
+import static app.coronawarn.server.services.federation.upload.UploadLogMessages.GENERATING_FAKE_UPLOAD_KEYS;
+import static app.coronawarn.server.services.federation.upload.UploadLogMessages.SKIPPING_GENERATION;
+import static app.coronawarn.server.services.federation.upload.UploadLogMessages.STORING_KEYS_IN_DB;
+
+import app.coronawarn.server.common.Logger;
+import app.coronawarn.server.common.LoggerFactory;
 import app.coronawarn.server.common.persistence.domain.DiagnosisKey;
 import app.coronawarn.server.common.persistence.domain.FederationUploadKey;
 import app.coronawarn.server.common.protocols.external.exposurenotification.ReportType;
@@ -19,8 +27,6 @@ import java.util.Set;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.context.annotation.Profile;
@@ -102,7 +108,7 @@ public class TestDataGeneration implements ApplicationRunner {
   private List<FederationUploadKey> generateFakeKeysForPreviousDay() {
     int pendingKeys = keyRepository.countPendingKeys();
     int maxPendingKeys = this.uploadServiceConfig.getTestData().getMaxPendingKeys();
-    logger.info("Found {} pending upload keys on DB", pendingKeys);
+    logger.info(FOUND_PENDING_UPLOAD_KEYS, pendingKeys);
     int numberOfKeysToGenerate = maxPendingKeys - pendingKeys;
 
     if (numberOfKeysToGenerate > 0) {
@@ -115,7 +121,7 @@ public class TestDataGeneration implements ApplicationRunner {
       long hourStart = secondsToHours(lowerHour.toEpochSecond(ZoneOffset.UTC));
       long hourEnd = secondsToHours(upperHour.toEpochSecond(ZoneOffset.UTC));
 
-      logger.info("Generating {} fake upload keys between times {} and {}",
+      logger.info(GENERATING_FAKE_UPLOAD_KEYS,
           numberOfKeysToGenerate,
           hourStart,
           hourEnd);
@@ -123,7 +129,7 @@ public class TestDataGeneration implements ApplicationRunner {
           .mapToObj(ignoredValue -> this.makeKeyFromTimestamp(this.getRandomBetween(hourStart, hourEnd)))
           .collect(Collectors.toList());
     } else {
-      logger.info("Skipping generation");
+      logger.info(SKIPPING_GENERATION);
       return Collections.emptyList();
     }
   }
@@ -148,8 +154,8 @@ public class TestDataGeneration implements ApplicationRunner {
   @Override
   public void run(ApplicationArguments args) {
     var fakeKeys = generateFakeKeysForPreviousDay();
-    logger.info("Storing keys in the DB");
+    logger.info(STORING_KEYS_IN_DB);
     this.storeUploadKeys(fakeKeys);
-    logger.info("Finished Test Data Generation Step");
+    logger.info(FINISHED_TEST_DATA_GENERATION);
   }
 }

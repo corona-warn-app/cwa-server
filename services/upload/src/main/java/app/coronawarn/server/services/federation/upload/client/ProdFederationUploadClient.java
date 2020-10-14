@@ -1,13 +1,14 @@
 
-
 package app.coronawarn.server.services.federation.upload.client;
 
+import static app.coronawarn.server.services.federation.upload.UploadLogMessages.RESPONSE_STATUS_FROM_EFGS;
+
+import app.coronawarn.server.common.Logger;
+import app.coronawarn.server.common.LoggerFactory;
 import app.coronawarn.server.common.federation.client.FederationGatewayClient;
 import app.coronawarn.server.common.federation.client.upload.BatchUploadResponse;
 import app.coronawarn.server.services.federation.upload.payload.UploadPayload;
 import java.util.Optional;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 
@@ -15,8 +16,7 @@ import org.springframework.stereotype.Component;
 @Profile("!fake-client")
 public class ProdFederationUploadClient implements FederationUploadClient {
 
-  private static final Logger logger = LoggerFactory
-      .getLogger(ProdFederationUploadClient.class);
+  private static final Logger logger = LoggerFactory.getLogger(ProdFederationUploadClient.class);
 
   private final FederationGatewayClient federationGatewayClient;
 
@@ -30,7 +30,7 @@ public class ProdFederationUploadClient implements FederationUploadClient {
         uploadPayload.getBatch().toByteArray(),
         uploadPayload.getBatchTag(),
         uploadPayload.getBatchSignature());
-    logger.info("Response Status from EFGS: {}", result.getStatusCode());
+    logger.info(RESPONSE_STATUS_FROM_EFGS, result.getStatusCode());
     return Optional.ofNullable(result.getBody());
   }
 }

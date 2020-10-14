@@ -2,6 +2,11 @@
 
 package app.coronawarn.server.services.federation.upload.payload;
 
+import static app.coronawarn.server.services.federation.upload.UploadLogMessages.BATCHES_NOT_GENERATED_NOT_MINIMUM_PENDING_UPLOAD_DIAGNOSIS_KEYS;
+import static app.coronawarn.server.services.federation.upload.UploadLogMessages.BATCHES_NOT_GENERATED_NO_PENDING_UPLOAD_DIAGNOSIS_KEYS;
+
+import app.coronawarn.server.common.Logger;
+import app.coronawarn.server.common.LoggerFactory;
 import app.coronawarn.server.common.persistence.domain.FederationUploadKey;
 import app.coronawarn.server.common.protocols.external.exposurenotification.DiagnosisKey;
 import app.coronawarn.server.common.protocols.external.exposurenotification.DiagnosisKeyBatch;
@@ -14,8 +19,6 @@ import java.util.ListIterator;
 import java.util.Map;
 import java.util.stream.Collectors;
 import org.apache.commons.lang3.tuple.Pair;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -41,11 +44,11 @@ public class DiagnosisKeyBatchAssembler {
   public Map<DiagnosisKeyBatch, List<FederationUploadKey>> assembleDiagnosisKeyBatch(
       List<FederationUploadKey> diagnosisKeys) {
     if (diagnosisKeys.isEmpty()) {
-      logger.info("Batches not generated: no pending upload diagnosis keys found.");
+      logger.info(BATCHES_NOT_GENERATED_NO_PENDING_UPLOAD_DIAGNOSIS_KEYS);
       return Collections.emptyMap();
     }
     if (diagnosisKeys.size() < uploadConfig.getMinBatchKeyCount()) {
-      logger.info("Batches not generated: less then minimum {} pending upload diagnosis keys.",
+      logger.info(BATCHES_NOT_GENERATED_NOT_MINIMUM_PENDING_UPLOAD_DIAGNOSIS_KEYS,
           uploadConfig.getMinBatchKeyCount());
       return Collections.emptyMap();
     }

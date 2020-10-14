@@ -2,6 +2,10 @@
 
 package app.coronawarn.server.services.federation.upload.payload;
 
+import static app.coronawarn.server.services.federation.upload.UploadLogMessages.FAILED_TO_GENERATE_UPLOAD_PAYLOAD_SIGNATURE;
+
+import app.coronawarn.server.common.Logger;
+import app.coronawarn.server.common.LoggerFactory;
 import app.coronawarn.server.common.persistence.domain.FederationUploadKey;
 import app.coronawarn.server.common.protocols.external.exposurenotification.DiagnosisKeyBatch;
 import app.coronawarn.server.services.federation.upload.payload.signing.BatchSigner;
@@ -17,15 +21,12 @@ import java.util.stream.Collectors;
 import org.apache.commons.codec.binary.Base64;
 import org.bouncycastle.cms.CMSException;
 import org.bouncycastle.operator.OperatorCreationException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 @Component
 public class PayloadFactory {
 
-  private static final Logger logger = LoggerFactory
-      .getLogger(PayloadFactory.class);
+  private static final Logger logger = LoggerFactory.getLogger(PayloadFactory.class);
 
   private final DiagnosisKeyBatchAssembler assembler;
   private final BatchSigner signer;
@@ -44,7 +45,7 @@ public class PayloadFactory {
     try {
       payload.setBatchSignature(signer.createSignatureBytes(batch));
     } catch (GeneralSecurityException | OperatorCreationException | IOException | CMSException e) {
-      logger.error("Failed to generate upload payload signature", e);
+      logger.error(FAILED_TO_GENERATE_UPLOAD_PAYLOAD_SIGNATURE, e);
     }
     return payload;
   }

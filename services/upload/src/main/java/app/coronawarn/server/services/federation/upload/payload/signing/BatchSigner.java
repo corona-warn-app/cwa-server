@@ -2,6 +2,10 @@
 
 package app.coronawarn.server.services.federation.upload.payload.signing;
 
+import static app.coronawarn.server.services.federation.upload.UploadLogMessages.FAILED_BYTE_ARRAY_TO_STRING_CONVERSION;
+
+import app.coronawarn.server.common.Logger;
+import app.coronawarn.server.common.LoggerFactory;
 import app.coronawarn.server.common.protocols.external.exposurenotification.DiagnosisKey;
 import app.coronawarn.server.common.protocols.external.exposurenotification.DiagnosisKeyBatch;
 import app.coronawarn.server.services.federation.upload.config.UploadServiceConfig;
@@ -30,15 +34,12 @@ import org.bouncycastle.operator.DigestCalculatorProvider;
 import org.bouncycastle.operator.OperatorCreationException;
 import org.bouncycastle.operator.jcajce.JcaContentSignerBuilder;
 import org.bouncycastle.operator.jcajce.JcaDigestCalculatorProviderBuilder;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 @Component
 public class BatchSigner {
 
-  private static final Logger logger = LoggerFactory
-      .getLogger(BatchSigner.class);
+  private static final Logger logger = LoggerFactory.getLogger(BatchSigner.class);
 
   private final CryptoProvider cryptoProvider;
 
@@ -54,7 +55,7 @@ public class BatchSigner {
     try {
       return Base64.getEncoder().encodeToString(bytes);
     } catch (IllegalArgumentException e) {
-      logger.error("Failed to convert byte array to string");
+      logger.error(FAILED_BYTE_ARRAY_TO_STRING_CONVERSION);
       return null;
     }
   }

@@ -1,7 +1,20 @@
 
-
 package app.coronawarn.server.services.federation.upload.runner;
 
+import static app.coronawarn.server.services.federation.upload.UploadLogMessages.ALL_KEYS_PROCESSED_SUCCESSFULLY;
+import static app.coronawarn.server.services.federation.upload.UploadLogMessages.EXECUTING_BATCH_REQUEST;
+import static app.coronawarn.server.services.federation.upload.UploadLogMessages.EXECUTING_BATCH_REQUESTS;
+import static app.coronawarn.server.services.federation.upload.UploadLogMessages.GENERATING_UPLOAD_PAYLOAD;
+import static app.coronawarn.server.services.federation.upload.UploadLogMessages.KEYS_NOT_PROCESSED_CORRECTLY;
+import static app.coronawarn.server.services.federation.upload.UploadLogMessages.MARKING_OF_DIAGNOSIS_KEYS_WITH_BATCH_TAG_ID_FAILED;
+import static app.coronawarn.server.services.federation.upload.UploadLogMessages.NR_KEYS_CONFLICT;
+import static app.coronawarn.server.services.federation.upload.UploadLogMessages.NR_KEYS_RETRY;
+import static app.coronawarn.server.services.federation.upload.UploadLogMessages.NR_KEYS_SUCCESSFUL;
+import static app.coronawarn.server.services.federation.upload.UploadLogMessages.RUNNING_UPLOAD_JOB;
+import static app.coronawarn.server.services.federation.upload.UploadLogMessages.UPLOAD_DIAGNOSIS_KEY_DATA_FAILED;
+
+import app.coronawarn.server.common.Logger;
+import app.coronawarn.server.common.LoggerFactory;
 import app.coronawarn.server.common.federation.client.upload.BatchUploadResponse;
 import app.coronawarn.server.common.persistence.domain.FederationUploadKey;
 import app.coronawarn.server.common.persistence.service.FederationUploadKeyService;
@@ -16,8 +29,6 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.context.ApplicationContext;
@@ -69,18 +80,18 @@ public class Upload implements ApplicationRunner {
   }
 
   private List<FederationUploadKey> executeUploadAndCollectErrors(UploadPayload payload) {
-    logger.info("Executing batch request(s): {}", payload.getBatchTag());
+    logger.info(EXECUTING_BATCH_REQUESTS, payload.getBatchTag());
     var result = this.federationUploadClient.postBatchUpload(payload);
     List<FederationUploadKey> retryKeys = Collections.emptyList();
     if (result.isPresent()) {
       var body = result.get();
       retryKeys = this.getRetryKeysFromResponseBody(body, payload);
-      logger.info("Some keys were not processed correctly");
-      logger.info("{} keys marked with status 201 (Successful)", body.getStatus201().size());
-      logger.info("{} keys marked with status 409 (Conflict)", body.getStatus409().size());
-      logger.info("{} keys marked with status 500 (Retry)", body.getStatus500().size());
-    }  else {
-      logger.info("All keys processed successfully");
+      logger.info(KEYS_NOT_PROCESSED_CORRECTLY);
+      logger.info(NR_KEYS_SUCCESSFUL, body.getStatus201().size());
+      logger.info(NR_KEYS_CONFLICT, body.getStatus409().size());
+      logger.info(NR_KEYS_RETRY, body.getStatus500().size());
+    } else {
+      logger.info(ALL_KEYS_PROCESSED_SUCCESSFULLY);
     }
 
     return retryKeys;
@@ -88,18 +99,18 @@ public class Upload implements ApplicationRunner {
 
   @Override
   public void run(ApplicationArguments args) throws Exception {
-    logger.info("Running Upload Job");
+    logger.info(RUNNING_UPLOAD_JOB);
     try {
       List<FederationUploadKey> diagnosisKeys = this.diagnosisKeyLoader.loadDiagnosisKeys();
-      logger.info("Generating Upload Payload for {} keys", diagnosisKeys.size());
+      logger.info(GENERATING_UPLOAD_PAYLOAD, diagnosisKeys.size());
       List<UploadPayload> requests = this.payloadFactory.makePayloadList(diagnosisKeys);
-      logger.info("Executing {} batch request", requests.size());
+      logger.info(EXECUTING_BATCH_REQUEST, requests.size());
       requests.forEach(payload -> {
         List<FederationUploadKey> retryKeys = this.executeUploadAndCollectErrors(payload);
         this.markSuccessfullyUploadedKeys(payload, retryKeys);
       });
     } catch (Exception e) {
-      logger.error("Upload diagnosis key data failed.", e);
+      logger.error(UPLOAD_DIAGNOSIS_KEY_DATA_FAILED, e);
       Application.killApplication(applicationContext);
     }
   }
@@ -115,7 +126,7 @@ public class Upload implements ApplicationRunner {
       uploadKeyService.updateBatchTagForKeys(payload.getOriginalKeys(), payload.getBatchTag());
     } catch (Exception ex) {
       // in case of an error with marking, try to move forward to the next upload batch if any unprocessed
-      logger.error("Post-upload marking of diagnosis keys with batch tag id failed", ex);
+      logger.error(MARKING_OF_DIAGNOSIS_KEYS_WITH_BATCH_TAG_ID_FAILED, ex);
     }
   }
 }

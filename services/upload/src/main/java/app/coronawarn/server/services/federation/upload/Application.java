@@ -1,13 +1,17 @@
 
-
 package app.coronawarn.server.services.federation.upload;
 
+import static app.coronawarn.server.services.federation.upload.UploadLogMessages.ENABLED_NAMED_GROUPS;
+import static app.coronawarn.server.services.federation.upload.UploadLogMessages.SHUTTING_DOWN_LOG4J2;
+import static app.coronawarn.server.services.federation.upload.UploadLogMessages.UPLOAD_SERVICE_STARTED_WITH_POSTGRES_TLS_DISABLED;
+import static app.coronawarn.server.services.federation.upload.UploadLogMessages.UPLOAD_SERVICE_TERMINATED_ABNORMALLY;
+
+import app.coronawarn.server.common.Logger;
+import app.coronawarn.server.common.LoggerFactory;
 import app.coronawarn.server.services.federation.upload.config.UploadServiceConfig;
 import java.util.Arrays;
 import java.util.List;
 import org.apache.logging.log4j.LogManager;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -45,24 +49,22 @@ public class Application implements EnvironmentAware, DisposableBean {
    */
   public static void killApplication(ApplicationContext appContext) {
     SpringApplication.exit(appContext);
-    logger.error("Federation Upload Service terminated abnormally.");
+    logger.error(UPLOAD_SERVICE_TERMINATED_ABNORMALLY);
     System.exit(1);
   }
 
   @Override
   public void destroy() {
-    logger.info("Shutting down log4j2.");
+    logger.info(SHUTTING_DOWN_LOG4J2);
     LogManager.shutdown();
   }
 
   @Override
   public void setEnvironment(Environment environment) {
     List<String> profiles = Arrays.asList(environment.getActiveProfiles());
-    logger.info("Enabled named groups: {}", System.getProperty("jdk.tls.namedGroups"));
+    logger.info(ENABLED_NAMED_GROUPS, System.getProperty("jdk.tls.namedGroups"));
     if (profiles.contains("disable-ssl-client-postgres")) {
-      logger.warn(
-          "The upload service is started with postgres connection TLS disabled. "
-              + "This should never be used in PRODUCTION!");
+      logger.warn(UPLOAD_SERVICE_STARTED_WITH_POSTGRES_TLS_DISABLED);
     }
   }
 }
