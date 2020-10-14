@@ -174,6 +174,7 @@ public class TestDataGeneration implements ApplicationRunner {
         .withCountryCode(country)
         .withVisitedCountries(generateSetOfVisitedCountries(country))
         .withReportType(ReportType.CONFIRMED_CLINICAL_DIAGNOSIS)
+        .withConsentToFederation(true)
         .build();
   }
 
