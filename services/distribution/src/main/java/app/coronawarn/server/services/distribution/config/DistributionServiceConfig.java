@@ -257,6 +257,8 @@ public class DistributionServiceConfig {
     private Integer seed;
     private Integer exposuresPerHour;
 
+    private boolean consentToFederation;
+
     public Integer getSeed() {
       return seed;
     }
@@ -271,6 +273,14 @@ public class DistributionServiceConfig {
 
     public void setExposuresPerHour(Integer exposuresPerHour) {
       this.exposuresPerHour = exposuresPerHour;
+    }
+
+    public boolean getConsentToFederation() {
+      return consentToFederation;
+    }
+
+    public void setConsentToFederation(boolean consentToFederation) {
+      this.consentToFederation = consentToFederation;
     }
   }
 
