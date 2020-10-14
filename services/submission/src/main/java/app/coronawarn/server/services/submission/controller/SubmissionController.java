@@ -9,6 +9,7 @@ import app.coronawarn.server.common.persistence.service.DiagnosisKeyService;
 import app.coronawarn.server.common.protocols.external.exposurenotification.TemporaryExposureKey;
 import app.coronawarn.server.common.protocols.internal.SubmissionPayload;
 import app.coronawarn.server.services.submission.config.SubmissionServiceConfig;
+import app.coronawarn.server.services.submission.logging.LogMessages;
 import app.coronawarn.server.services.submission.monitoring.SubmissionMonitor;
 import app.coronawarn.server.services.submission.normalization.SubmissionKeyNormalizer;
 import app.coronawarn.server.services.submission.validation.ValidSubmissionPayload;
@@ -137,7 +138,7 @@ public class SubmissionController {
         .collect(Collectors.toList());
 
     if (protoBufferKeys.size() > diagnosisKeys.size()) {
-      logger.warn("Not persisting {} diagnosis key(s), as it is outdated beyond retention threshold.",
+      logger.warn(LogMessages.RETENTION_TRESHOLD_EXCEEDED_MESSAGE.toString(),
           protoBufferKeys.size() - diagnosisKeys.size());
     }
     return diagnosisKeys;
@@ -159,9 +160,9 @@ public class SubmissionController {
     Predicate<DiagnosisKey> hasRiskLevel6 = diagnosisKey -> diagnosisKey.getTransmissionRiskLevel() == 6;
 
     if (diagnosisKeys.stream().noneMatch(hasRiskLevel6)) {
-      logger.warn("Submission payload was sent with missing key having transmission risk level 6. {}", keysString);
+      logger.warn(LogMessages.SUBMISSION_MISSING_KEY_LEVEL6_RISK_MESSAGE.toString(), keysString);
     } else {
-      logger.debug("Submission payload was sent with key having transmission risk level 6. {}", keysString);
+      logger.debug(LogMessages.SUBMISSION_KEY_LEVEL6_RISK_MESSAGE.toString(), keysString);
     }
 
     diagnosisKeys.stream().filter(hasRiskLevel6).findFirst().ifPresent(diagnosisKey -> {
@@ -170,8 +171,7 @@ public class SubmissionController {
           .atStartOfDay()
           .toEpochSecond(UTC) / (60 * 10);
       if (diagnosisKey.getRollingStartIntervalNumber() == todayMidnightUtc) {
-        logger.warn("Submission payload was sent with a key having transmission risk level 6"
-            + " and rolling start interval number of today midnight. {}", keysString);
+        logger.warn(LogMessages.SUBMISSION_KEY_LEVEL6_RISK_START_INTERVAL_TODAY_MESSAGE.toString(), keysString);
       }
     });
   }
