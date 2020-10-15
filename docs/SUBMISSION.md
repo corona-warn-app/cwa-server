@@ -102,8 +102,8 @@ The contract of the submission service is defined, in part, by the [payload prot
 
 The following fields are either defaulted, if not sent by the client, or updated if certain values are missing:
 
-* origin (referring to origin country) is defaulted to a value which is externalized in the `application.yaml/services.submission.payload.default-origin-country`
-* visitedCountries list is enhanced to contain the origin country as well in order to have consistency in the distribution logic
+- origin (referring to origin country) is defaulted to a value which is externalized in the `application.yaml/services.submission.payload.default-origin-country`
+- visitedCountries list is enhanced to contain the origin country as well in order to have consistency in the distribution logic
 
 ## Submission Validations
 
@@ -119,12 +119,12 @@ Some constraints are maintained as enviroment variables and kept in Vault under 
 
 The constraints put on submitted TEK's are as follows:
 
-* Each TEK contains a `StartIntervalNumber` with the value set at midnight (a datetime e.g. 2nd July 2020 00:00)
-* The number of TEK's must not exceed the configured maximum number of keys, represented by the `MAX_NUMBER_OF_KEYS` property which is in the vault
-* More than one TEK with the same `StartIntervalNumber` may be submitted, these will have their rolling period's combined
-* Each TEK must carry either the information of transmission risk level or days since onset of symptoms. If one is missing, the other can be derived. If a TEK is missing both values or contains values which are not in the allowed ranges for each field the payload shall be rejected
-* The origin country from the submission payload must be a valid ISO country code and must either be one of the supported countries (maintained in Vault) or it must be empty, in which case it will be defaulted to DE
-* The visited countries list from the submission payload must either contain ISO country codes which are part of the supported countries or it must be an empty list, in which case it will be prefilled with the default origin country (e.g. DE)
+- Each TEK contains a `StartIntervalNumber` with the value set at midnight (a datetime e.g. 2nd July 2020 00:00)
+- The number of TEK's must not exceed the configured maximum number of keys, represented by the `MAX_NUMBER_OF_KEYS` property which is in the vault
+- More than one TEK with the same `StartIntervalNumber` may be submitted, these will have their rolling period's combined
+- Each TEK must carry either the information of transmission risk level or days since onset of symptoms. If one is missing, the other can be derived. If a TEK is missing both values or contains values which are not in the allowed ranges for each field the payload shall be rejected
+- The origin country from the submission payload must be a valid ISO country code and must either be one of the supported countries (maintained in Vault) or it must be empty, in which case it will be defaulted to DE
+- The visited countries list from the submission payload must either contain ISO country codes which are part of the supported countries or it must be an empty list, in which case it will be prefilled with the default origin country (e.g. DE)
 
 There are other validations performed prior to persisting keys, which check whether specific fields are in acceptable ranges as defined by the system as well as GAEN specification. For this purpose the Java Bean Validation 2.0 framework is used at the entity level. Please see [DiagnosisKey](/common/persistence/src/main/java/app/coronawarn/server/common/persistence/domain/DiagnosisKey.java) for the complete list.
 
