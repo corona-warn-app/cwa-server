@@ -29,10 +29,10 @@ RUN ${WORK_DIR}/mvnw --batch-mode -DskipTests=true --file ${WORK_DIR}/pom.xml ${
 RUN cp ${WORK_DIR}/services/submission/target/submission-*.jar /usr/sap/submission-service/submission.jar
 RUN cp ${WORK_DIR}/scripts/DpkgHelper.java /DpkgHelper.java
 
-FROM gcr.io/distroless/java:11
+FROM sapmachine:11.0.8
 COPY --from=build /DpkgHelper.java .
 COPY --from=build /usr/sap/submission-service/submission.jar .
-RUN ["java", "DpkgHelper.java"]
+# RUN ["java", "DpkgHelper.java"]
 USER 65534:65534
-ENTRYPOINT ["/usr/bin/java", "-Djdk.tls.namedGroups=\"secp256r1,secp384r1,brainpoolP256r1,brainpoolP384r1,brainpoolP512r1,ffdhe2048,ffdhe3072,ffdhe4096\"", "-Djdk.tls.client.protocols=TLSv1.2", "-jar"]
+ENTRYPOINT ["/usr/bin/java", "-Djdk.tls.namedGroups=\"secp256r1,secp384r1,brainpoolP256r1,brainpoolP384r1,brainpoolP512r1,ffdhe2048,ffdhe3072,ffdhe4096\"", "-jar"]
 CMD ["submission.jar"]
