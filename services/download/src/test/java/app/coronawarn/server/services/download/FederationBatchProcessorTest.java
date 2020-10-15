@@ -36,6 +36,7 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -324,24 +325,6 @@ class FederationBatchProcessorTest {
       verifyProcessedWithStatus(batchInfo, PROCESSED_WITH_ERROR);
     }
 
-    @Test
-    void testFailureMissingDSOS() {
-      FederationBatchInfo batchInfo = new FederationBatchInfo(batchTag1, date, UNPROCESSED);
-      when(batchInfoService.findByStatus(UNPROCESSED)).thenReturn(list(batchInfo));
-
-      DiagnosisKey invalidKey = FederationBatchTestHelper
-          .createFederationDiagnosisKeyWithoutDsos();
-
-      DiagnosisKeyBatch batch = FederationBatchTestHelper.createDiagnosisKeyBatch(List.of(invalidKey));
-      BatchDownloadResponse downloadResponse = FederationBatchTestHelper
-          .createBatchDownloadResponse(batchTag1, Optional.empty(), batch);
-
-      when(federationGatewayDownloadService.downloadBatch(batchTag1, date)).thenReturn(downloadResponse);
-      batchProcessor.processUnprocessedFederationBatches();
-
-      verifyProcessedWithStatus(batchInfo, PROCESSED_WITH_ERROR);
-    }
-
     @ParameterizedTest
     @ValueSource(ints = {0, 15, 17, 20})
     void testFailureInvalidKeyDataLength(int invalidKeyDataLength) {
@@ -383,26 +366,6 @@ class FederationBatchProcessorTest {
       Mockito.verify(batchInfoService, times(1)).updateStatus(batchInfo, PROCESSED);
       Mockito.verify(diagnosisKeyService, times(1)).saveDiagnosisKeys(captor.capture());
       assertThat(captor.getValue()).isNotEmpty();
-    }
-
-    @Test
-    void testFailureMissingRollingPeriod() {
-      FederationBatchInfo batchInfo = new FederationBatchInfo(batchTag1, date, UNPROCESSED);
-      when(batchInfoService.findByStatus(UNPROCESSED)).thenReturn(list(batchInfo));
-
-      DiagnosisKey invalidKey = FederationBatchTestHelper
-          .createBuilderForValidFederationDiagnosisKey()
-          .clearRollingPeriod()
-          .build();
-
-      DiagnosisKeyBatch batch = FederationBatchTestHelper.createDiagnosisKeyBatch(List.of(invalidKey));
-      BatchDownloadResponse downloadResponse = FederationBatchTestHelper
-          .createBatchDownloadResponse(batchTag1, Optional.empty(), batch);
-
-      when(federationGatewayDownloadService.downloadBatch(batchTag1, date)).thenReturn(downloadResponse);
-      batchProcessor.processUnprocessedFederationBatches();
-
-      verifyProcessedWithStatus(batchInfo, PROCESSED_WITH_ERROR);
     }
 
     @ParameterizedTest

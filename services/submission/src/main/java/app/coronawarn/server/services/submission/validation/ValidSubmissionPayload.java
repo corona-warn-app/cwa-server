@@ -5,6 +5,7 @@ package app.coronawarn.server.services.submission.validation;
 import static java.util.function.Predicate.not;
 import static java.util.stream.Collectors.toList;
 
+import app.coronawarn.server.common.persistence.domain.DiagnosisKey;
 import app.coronawarn.server.common.persistence.domain.normalization.DiagnosisKeyNormalizer;
 import app.coronawarn.server.common.protocols.external.exposurenotification.TemporaryExposureKey;
 import app.coronawarn.server.common.protocols.internal.SubmissionPayload;
@@ -63,7 +64,7 @@ public @interface ValidSubmissionPayload {
     /**
      * Validates the following constraints.
      * <ul>
-     *   <li>StartIntervalNumber values from the same {@link SubmissionPayload} shall be unique.</li>
+     *   <li>StartIntervalNumber values are always at midnight</li>
      *   <li>There must not be more than allowed maximum number of keys in a payload
      *       (see application.yaml/max-number-of-keys)
      *   <li>The origin country can be missing or the provided value must be of the supported countries
@@ -183,12 +184,14 @@ public @interface ValidSubmissionPayload {
 
     private boolean hasInvalidDaysSinceSymptoms(TemporaryExposureKey key) {
       int dsos = key.getDaysSinceOnsetOfSymptoms();
-      return dsos < -14 || dsos > 4000;
+      return dsos < DiagnosisKey.MIN_DAYS_SINCE_ONSET_OF_SYMPTOMS
+          || dsos > DiagnosisKey.MAX_DAYS_SINCE_ONSET_OF_SYMPTOMS;
     }
 
     private boolean hasInvalidTransmissionRiskLevel(TemporaryExposureKey key) {
       int trl = key.getTransmissionRiskLevel();
-      return trl < 1 || trl > 8;
+      return trl < DiagnosisKey.MIN_TRANSMISSION_RISK_LEVEL
+          || trl > DiagnosisKey.MAX_TRANSMISSION_RISK_LEVEL;
     }
 
     /**

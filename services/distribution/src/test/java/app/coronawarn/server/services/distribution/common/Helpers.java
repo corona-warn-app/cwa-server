@@ -21,6 +21,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Random;
 import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
@@ -70,6 +71,12 @@ public class Helpers {
         "DE", Set.of("DE"), ReportType.CONFIRMED_CLINICAL_DIAGNOSIS, 1);
   }
 
+  public static List<DiagnosisKey> buildDiagnosisKeys(int startIntervalNumber, long submissionTimestamp,
+      int number, Set<String> visitedCountries) {
+    return buildDiagnosisKeys(startIntervalNumber, submissionTimestamp, number,
+        "DE", visitedCountries, ReportType.CONFIRMED_CLINICAL_DIAGNOSIS, 1);
+  }
+
   public static List<DiagnosisKey> buildDiagnosisKeys(int startIntervalNumber,
       long submissionTimestamp,
       int number,
@@ -77,32 +84,50 @@ public class Helpers {
       Set<String> visitedCountries,
       ReportType reportType,
       int daysSinceOnsetOfSymptoms) {
+
     return IntStream.range(0, number)
-        .mapToObj(ignoredValue -> DiagnosisKey.builder()
-            .withKeyData(new byte[16])
-            .withRollingStartIntervalNumber(startIntervalNumber)
-            .withTransmissionRiskLevel(2)
-            .withSubmissionTimestamp(submissionTimestamp)
-            .withCountryCode(originCountry)
-            .withVisitedCountries(visitedCountries)
-            .withReportType(reportType)
-            .withDaysSinceOnsetOfSymptoms(daysSinceOnsetOfSymptoms)
-            .build())
-        .collect(Collectors.toList());
+        .mapToObj(ignoredValue ->
+        {
+          byte[] keyData = new byte[16];
+          Random random = new Random();
+          random.nextBytes(keyData);
+
+          return DiagnosisKey.builder()
+              .withKeyData(keyData)
+              .withRollingStartIntervalNumber(startIntervalNumber)
+              .withTransmissionRiskLevel(2)
+              .withSubmissionTimestamp(submissionTimestamp)
+              .withCountryCode(originCountry)
+              .withVisitedCountries(visitedCountries)
+              .withReportType(reportType)
+              .withDaysSinceOnsetOfSymptoms(daysSinceOnsetOfSymptoms)
+              .build();
+        })
+        .collect(Collectors.toList()
+        );
   }
 
   public static List<DiagnosisKey> buildDiagnosisKeysWithFlexibleRollingPeriod(
       int startIntervalNumber, long submissionTimestamp, int number, int rollingPeriod) {
     return IntStream.range(0, number)
-        .mapToObj(ignoredValue -> DiagnosisKey.builder()
-            .withKeyData(new byte[16])
-            .withRollingStartIntervalNumber(startIntervalNumber)
-            .withTransmissionRiskLevel(2)
-            .withSubmissionTimestamp(submissionTimestamp)
-            .withRollingPeriod(rollingPeriod)
-            .withVisitedCountries(Set.of("DE"))
-            .withCountryCode("DE").build())
-        .collect(Collectors.toList());
+        .mapToObj(ignoredValue ->
+        {
+          byte[] keyData = new byte[16];
+          Random random = new Random();
+          random.nextBytes(keyData);
+
+          return DiagnosisKey.builder()
+              .withKeyData(keyData)
+              .withRollingStartIntervalNumber(startIntervalNumber)
+              .withTransmissionRiskLevel(2)
+              .withSubmissionTimestamp(submissionTimestamp)
+              .withRollingPeriod(rollingPeriod)
+              .withVisitedCountries(Set.of("DE"))
+              .withCountryCode("DE")
+              .build();
+        })
+        .collect(Collectors.toList()
+        );
   }
 
   public static Set<String> getFilePaths(java.io.File root, String basePath) {

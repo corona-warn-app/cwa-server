@@ -75,7 +75,7 @@ public class TestDataGeneration implements ApplicationRunner {
         submissionTimestamp * ONE_HOUR_INTERVAL_SECONDS / TEN_MINUTES_INTERVAL_SECONDS;
     long minRollingStartIntervalNumber =
         maxRollingStartIntervalNumber
-            - TimeUnit.DAYS.toSeconds(14) / TEN_MINUTES_INTERVAL_SECONDS;
+            - TimeUnit.DAYS.toSeconds(13) / TEN_MINUTES_INTERVAL_SECONDS;
     return Math.toIntExact(getRandomBetween(minRollingStartIntervalNumber, maxRollingStartIntervalNumber));
   }
 
