@@ -4,12 +4,14 @@ package app.coronawarn.server.services.submission.controller;
 
 import static java.time.ZoneOffset.UTC;
 
+import app.coronawarn.server.common.Logger;
+import app.coronawarn.server.common.LoggerFactory;
 import app.coronawarn.server.common.persistence.domain.DiagnosisKey;
 import app.coronawarn.server.common.persistence.service.DiagnosisKeyService;
 import app.coronawarn.server.common.protocols.external.exposurenotification.TemporaryExposureKey;
 import app.coronawarn.server.common.protocols.internal.SubmissionPayload;
 import app.coronawarn.server.services.submission.config.SubmissionServiceConfig;
-import app.coronawarn.server.services.submission.logging.LogMessages;
+import app.coronawarn.server.services.submission.logging.SubmissionLogMessages;
 import app.coronawarn.server.services.submission.monitoring.SubmissionMonitor;
 import app.coronawarn.server.services.submission.normalization.SubmissionKeyNormalizer;
 import app.coronawarn.server.services.submission.validation.ValidSubmissionPayload;
@@ -28,8 +30,6 @@ import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import org.apache.commons.lang3.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.StopWatch;
@@ -138,7 +138,7 @@ public class SubmissionController {
         .collect(Collectors.toList());
 
     if (protoBufferKeys.size() > diagnosisKeys.size()) {
-      logger.warn(LogMessages.RETENTION_THRESHOLD_EXCEEDED_MESSAGE.toString(),
+      logger.warn(SubmissionLogMessages.RETENTION_THRESHOLD_EXCEEDED_MESSAGE,
           protoBufferKeys.size() - diagnosisKeys.size());
     }
     return diagnosisKeys;
@@ -160,9 +160,9 @@ public class SubmissionController {
     Predicate<DiagnosisKey> hasRiskLevel6 = diagnosisKey -> diagnosisKey.getTransmissionRiskLevel() == 6;
 
     if (diagnosisKeys.stream().noneMatch(hasRiskLevel6)) {
-      logger.warn(LogMessages.SUBMISSION_MISSING_KEY_LEVEL6_RISK_MESSAGE.toString(), keysString);
+      logger.warn(SubmissionLogMessages.SUBMISSION_MISSING_KEY_LEVEL6_RISK_MESSAGE, keysString);
     } else {
-      logger.debug(LogMessages.SUBMISSION_KEY_LEVEL6_RISK_MESSAGE.toString(), keysString);
+      logger.debug(SubmissionLogMessages.SUBMISSION_KEY_LEVEL6_RISK_MESSAGE, keysString);
     }
 
     diagnosisKeys.stream().filter(hasRiskLevel6).findFirst().ifPresent(diagnosisKey -> {
@@ -171,7 +171,8 @@ public class SubmissionController {
           .atStartOfDay()
           .toEpochSecond(UTC) / (60 * 10);
       if (diagnosisKey.getRollingStartIntervalNumber() == todayMidnightUtc) {
-        logger.warn(LogMessages.SUBMISSION_KEY_LEVEL6_RISK_START_INTERVAL_TODAY_MESSAGE.toString(), keysString);
+        logger
+            .warn(SubmissionLogMessages.SUBMISSION_KEY_LEVEL6_RISK_START_INTERVAL_TODAY_MESSAGE, keysString);
       }
     });
   }

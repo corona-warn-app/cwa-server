@@ -2,10 +2,10 @@
 
 package app.coronawarn.server.services.submission.verification;
 
-import app.coronawarn.server.services.submission.logging.LogMessages;
+import app.coronawarn.server.common.Logger;
+import app.coronawarn.server.common.LoggerFactory;
+import app.coronawarn.server.services.submission.logging.SubmissionLogMessages;
 import feign.FeignException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestClientException;
 
@@ -40,7 +40,7 @@ public class TanVerifier {
 
       return verifyWithVerificationService(tan);
     } catch (IllegalArgumentException e) {
-      logger.error(LogMessages.TAN_VERIFICATION_FAILED_MESSAGE.toString(),
+      logger.error(SubmissionLogMessages.TAN_VERIFICATION_FAILED_MESSAGE,
           tanString.substring(0, Math.min(36, tanString.length())), tanString.length());
       return false;
     }
@@ -55,12 +55,12 @@ public class TanVerifier {
    */
   private boolean verifyWithVerificationService(Tan tan) {
     try {
-      logger.info("Calling Verification Service for TAN verification ...");
+      logger.info(SubmissionLogMessages.TAN_VERIFICATION_SERVICE_CALLED_MESSAGE);
       verificationServerClient.verifyTan(tan);
-      logger.info("Received response from Verification Service");
+      logger.info(SubmissionLogMessages.TAN_VERIFICATION_RESPONSE_RECEIVED);
       return true;
     } catch (FeignException.NotFound e) {
-      logger.info("Verification Service reported unverified TAN");
+      logger.info(SubmissionLogMessages.UNVERIFIED_TAN_MESSAGE);
       return false;
     }
   }

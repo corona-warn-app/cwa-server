@@ -1,6 +1,8 @@
 package app.coronawarn.server.services.submission.logging;
 
-public enum LogMessages {
+import app.coronawarn.server.common.LogMessages;
+
+public enum SubmissionLogMessages implements LogMessages {
   //Exception Handling ---------------------------------
   UNKNOWN_EXCEPTION_MESSAGE("Unable to handle {}"),
   BINDING_EXCEPTION_MESSAGE("Binding failed {}"),
@@ -18,14 +20,22 @@ public enum LogMessages {
           + " and rolling start interval number of today midnight. {}"),
 
   // TAN Verification ---------------------------------
-  TAN_VERIFICATION_FAILED_MESSAGE("TAN Syntax check failed for TAN: {}, length: {}");
+  TAN_VERIFICATION_FAILED_MESSAGE("TAN Syntax check failed for TAN: {}, length: {}"),
+  TAN_VERIFICATION_RESPONSE_RECEIVED("Received response from Verification Service"),
+  TAN_VERIFICATION_SERVICE_CALLED_MESSAGE("Calling Verification Service for TAN verification ..."),
+  UNVERIFIED_TAN_MESSAGE("Verification Service reported unverified TAN");
 
   private String message;
 
-  LogMessages(String message) {
+  SubmissionLogMessages(String message) {
     this.message = message;
   }
 
+  /**
+   * Returns the message that should be logged.
+   *
+   * @return the log message (default English).
+   */
   @Override
   public String toString() {
     return this.message;
