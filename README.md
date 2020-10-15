@@ -150,10 +150,10 @@ If you want to start the submission service, for example, you start it as follow
 
 #### Debugging
 
-To enable the `DEBUG` log level, you can run the application using the Spring `dev` profile.
+To enable the `DEBUG` log level, you can run the application using the Spring `debug` profile.
 
 ```bash
-mvn spring-boot:run -Dspring.profiles.active=dev
+mvn spring-boot:run -Dspring.profiles.active=debug
 ```
 
 To be able to set breakpoints (e.g. in IntelliJ), it may be necessary to use the ```-Dspring-boot.run.fork=false``` parameter.
