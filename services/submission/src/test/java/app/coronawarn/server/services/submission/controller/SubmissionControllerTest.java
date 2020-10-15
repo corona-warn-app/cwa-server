@@ -441,7 +441,7 @@ class SubmissionControllerTest {
   public static SubmissionPayload buildPayloadWithInvalidKey() {
     TemporaryExposureKey invalidKey =
         buildTemporaryExposureKey(VALID_KEY_DATA_1, createRollingStartIntervalNumber(2), 999,
-            ReportType.CONFIRMED_CLINICAL_DIAGNOSIS, 1);
+            ReportType.CONFIRMED_TEST, 1);
     return buildPayload(invalidKey);
   }
 

@@ -278,8 +278,8 @@ class ProdDiagnosisKeyBundlerKeyRetrievalTest {
   @Test
   void testOriginKeysAndEfgsKeysAreIncludedInEuPackage() {
     List<DiagnosisKey> diagnosisKeys = Stream
-        .of(buildDiagnosisKeys(6, 50L, 10, "DE", Set.of("DE"), ReportType.CONFIRMED_CLINICAL_DIAGNOSIS, 0),
-            buildDiagnosisKeys(6, 50L, 10, "FR", Set.of("FR"), ReportType.CONFIRMED_CLINICAL_DIAGNOSIS, 0))
+        .of(buildDiagnosisKeys(6, 50L, 10, "DE", Set.of("DE"), ReportType.CONFIRMED_TEST, 0),
+            buildDiagnosisKeys(6, 50L, 10, "FR", Set.of("FR"), ReportType.CONFIRMED_TEST, 0))
         .flatMap(List::stream)
         .collect(Collectors.toList());
     bundler.setDiagnosisKeys(diagnosisKeys, LocalDateTime.of(1970, 1, 3, 3, 0));
@@ -290,8 +290,8 @@ class ProdDiagnosisKeyBundlerKeyRetrievalTest {
   @Test
   void testEfgsKeysAreAddedToOriginPackageBasedOnVisitedCountries() {
     List<DiagnosisKey> diagnosisKeys = Stream
-        .of(buildDiagnosisKeys(6, 50L, 10, "DE", Set.of("DE"), ReportType.CONFIRMED_CLINICAL_DIAGNOSIS, 0),
-            buildDiagnosisKeys(6, 50L, 10, "FR", Set.of("FR","DE"), ReportType.CONFIRMED_CLINICAL_DIAGNOSIS, 0))
+        .of(buildDiagnosisKeys(6, 50L, 10, "DE", Set.of("DE"), ReportType.CONFIRMED_TEST, 0),
+            buildDiagnosisKeys(6, 50L, 10, "FR", Set.of("FR","DE"), ReportType.CONFIRMED_TEST, 0))
         .flatMap(List::stream)
         .collect(Collectors.toList());
     bundler.setDiagnosisKeys(diagnosisKeys, LocalDateTime.of(1970, 1, 3, 3, 0));
@@ -302,8 +302,8 @@ class ProdDiagnosisKeyBundlerKeyRetrievalTest {
   @Test
   void testOriginCountryKeysAndEfgsKeysWithValidDistribution() {
     List<DiagnosisKey> diagnosisKeys = Stream
-        .of(buildDiagnosisKeys(6, 50L, 10, "DE", Set.of("DE","FR"), ReportType.CONFIRMED_CLINICAL_DIAGNOSIS, 0),
-            buildDiagnosisKeys(6, 50L, 10, "FR", Set.of("FR"), ReportType.CONFIRMED_CLINICAL_DIAGNOSIS, 0))
+        .of(buildDiagnosisKeys(6, 50L, 10, "DE", Set.of("DE","FR"), ReportType.CONFIRMED_TEST, 0),
+            buildDiagnosisKeys(6, 50L, 10, "FR", Set.of("FR"), ReportType.CONFIRMED_TEST, 0))
         .flatMap(List::stream)
         .collect(Collectors.toList());
     bundler.setDiagnosisKeys(diagnosisKeys, LocalDateTime.of(1970, 1, 3, 3, 0));
@@ -314,8 +314,8 @@ class ProdDiagnosisKeyBundlerKeyRetrievalTest {
   @Test
   void testOriginCountryKeysNotExpiredPlusVisitedCountryKeys() {
     List<DiagnosisKey> diagnosisKeys = Stream
-        .of(buildDiagnosisKeys(6, 52L, 10, "DE", Set.of("DE","FR"), ReportType.CONFIRMED_CLINICAL_DIAGNOSIS, 0),
-            buildDiagnosisKeys(6, 50L, 10, "FR", Set.of("FR"), ReportType.CONFIRMED_CLINICAL_DIAGNOSIS, 0))
+        .of(buildDiagnosisKeys(6, 52L, 10, "DE", Set.of("DE","FR"), ReportType.CONFIRMED_TEST, 0),
+            buildDiagnosisKeys(6, 50L, 10, "FR", Set.of("FR"), ReportType.CONFIRMED_TEST, 0))
         .flatMap(List::stream)
         .collect(Collectors.toList());
     bundler.setDiagnosisKeys(diagnosisKeys, LocalDateTime.of(1970, 1, 3, 3, 0));
@@ -326,8 +326,8 @@ class ProdDiagnosisKeyBundlerKeyRetrievalTest {
   @Test
   void testOriginCountryKeysPlusVisitedCountryKeysAmountNotHigherThanThreshold() {
     List<DiagnosisKey> diagnosisKeys = Stream
-        .of(buildDiagnosisKeys(6, 50L, 4, "DE", Set.of("DE","FR"), ReportType.CONFIRMED_CLINICAL_DIAGNOSIS, 0),
-            buildDiagnosisKeys(6, 50L, 10, "FR", Set.of("FR"), ReportType.CONFIRMED_CLINICAL_DIAGNOSIS, 0))
+        .of(buildDiagnosisKeys(6, 50L, 4, "DE", Set.of("DE","FR"), ReportType.CONFIRMED_TEST, 0),
+            buildDiagnosisKeys(6, 50L, 10, "FR", Set.of("FR"), ReportType.CONFIRMED_TEST, 0))
         .flatMap(List::stream)
         .collect(Collectors.toList());
     bundler.setDiagnosisKeys(diagnosisKeys, LocalDateTime.of(1970, 1, 3, 3, 0));
@@ -338,8 +338,8 @@ class ProdDiagnosisKeyBundlerKeyRetrievalTest {
   @Test
   void testOriginCountryKeysPlusVisitedCountryKeysAmountHigherThanThreshold() {
     List<DiagnosisKey> diagnosisKeys = Stream
-        .of(buildDiagnosisKeys(6, 50L, 4, "DE", Set.of("DE","FR"), ReportType.CONFIRMED_CLINICAL_DIAGNOSIS, 0),
-            buildDiagnosisKeys(6, 50L, 10, "FR", Set.of("FR","DE"), ReportType.CONFIRMED_CLINICAL_DIAGNOSIS, 0))
+        .of(buildDiagnosisKeys(6, 50L, 4, "DE", Set.of("DE","FR"), ReportType.CONFIRMED_TEST, 0),
+            buildDiagnosisKeys(6, 50L, 10, "FR", Set.of("FR","DE"), ReportType.CONFIRMED_TEST, 0))
         .flatMap(List::stream)
         .collect(Collectors.toList());
     bundler.setDiagnosisKeys(diagnosisKeys, LocalDateTime.of(1970, 1, 3, 3, 0));
