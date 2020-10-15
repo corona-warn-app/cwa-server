@@ -4,7 +4,6 @@ package app.coronawarn.server.services.submission.verification;
 
 import app.coronawarn.server.common.Logger;
 import app.coronawarn.server.common.LoggerFactory;
-import app.coronawarn.server.services.submission.logging.SubmissionLogMessages;
 import feign.FeignException;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestClientException;
@@ -35,15 +34,8 @@ public class TanVerifier {
    * @throws RestClientException if status code is neither 2xx nor 4xx
    */
   public boolean verifyTan(String tanString) {
-    try {
-      Tan tan = Tan.of(tanString);
-
-      return verifyWithVerificationService(tan);
-    } catch (IllegalArgumentException e) {
-      logger.error(SubmissionLogMessages.TAN_VERIFICATION_FAILED_MESSAGE,
-          tanString.substring(0, Math.min(36, tanString.length())), tanString.length());
-      return false;
-    }
+    Tan tan = Tan.of(tanString);
+    return verifyWithVerificationService(tan);
   }
 
   /**
@@ -55,12 +47,9 @@ public class TanVerifier {
    */
   private boolean verifyWithVerificationService(Tan tan) {
     try {
-      logger.info(SubmissionLogMessages.TAN_VERIFICATION_SERVICE_CALLED_MESSAGE);
       verificationServerClient.verifyTan(tan);
-      logger.info(SubmissionLogMessages.TAN_VERIFICATION_RESPONSE_RECEIVED);
       return true;
     } catch (FeignException.NotFound e) {
-      logger.info(SubmissionLogMessages.UNVERIFIED_TAN_MESSAGE);
       return false;
     }
   }

@@ -11,8 +11,10 @@ import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.options
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 import static org.springframework.http.HttpHeaders.CONTENT_TYPE;
+
 import app.coronawarn.server.common.persistence.domain.config.TekFieldDerivations;
 import app.coronawarn.server.services.submission.config.SubmissionServiceConfig;
+import app.coronawarn.server.services.submission.logging.LoggingAspect;
 import com.github.tomakehurst.wiremock.WireMockServer;
 import feign.FeignException;
 import java.util.UUID;
@@ -20,24 +22,27 @@ import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.springframework.aop.aspectj.annotation.AnnotationAwareAspectJAutoProxyCreator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.openfeign.EnableFeignClients;
 import org.springframework.cloud.openfeign.FeignAutoConfiguration;
+import org.springframework.context.annotation.Import;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
 
 @SpringBootTest(classes = {TanVerifier.class, DevelopmentFeignClientProvider.class, NoopHostnameVerifierProvider.class,
-    TekFieldDerivations.class})
+    TekFieldDerivations.class, LoggingAspect.class})
 @ImportAutoConfiguration({FeignAutoConfiguration.class, FeignTestConfiguration.class})
 @EnableConfigurationProperties(value = SubmissionServiceConfig.class)
 @EnableFeignClients
 @DirtiesContext
-@ActiveProfiles({ "feign", "disable-ssl-client-verification", "disable-ssl-client-verification-verify-hostname" })
+@Import(AnnotationAwareAspectJAutoProxyCreator.class)
+@ActiveProfiles({"feign", "disable-ssl-client-verification", "disable-ssl-client-verification-verify-hostname"})
 class TanVerifierTest {
 
   @Autowired
@@ -45,6 +50,7 @@ class TanVerifierTest {
 
   @Autowired
   private SubmissionServiceConfig submissionServiceConfig;
+
 
   private String verificationPath;
   private String randomUUID;
