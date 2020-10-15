@@ -7,7 +7,7 @@ public class Logger {
 
   private final org.slf4j.Logger delegate;
 
-  public Logger(org.slf4j.Logger logger) {
+  Logger(org.slf4j.Logger logger) {
     this.delegate = logger;
   }
 
