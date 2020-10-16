@@ -39,7 +39,6 @@ public class OutputDirectoryProvider {
    * @throws IOException if file operation fails
    */
   public void clear() throws IOException {
-    logger.debug("Clearing output directory...");
     java.io.File outputDirectory = getFileOnDisk();
     FileUtils.deleteDirectory(outputDirectory);
     if (!outputDirectory.mkdirs()) {

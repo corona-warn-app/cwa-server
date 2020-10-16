@@ -31,7 +31,6 @@ public class FailedObjectStoreOperationsCounter {
    * @param cause The {@link ObjectStoreOperationFailedException} that is associated with the failed operation.
    */
   public void incrementAndCheckThreshold(ObjectStoreOperationFailedException cause) {
-    logger.error("Object store operation failed.", cause);
     if (failedOperationsCounter.incrementAndGet() > maxNumberOfFailedOperations) {
       logger.error("Number of failed object store operations exceeded threshold of {}.", maxNumberOfFailedOperations);
       throw cause;

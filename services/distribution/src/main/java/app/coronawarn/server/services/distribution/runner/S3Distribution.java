@@ -2,10 +2,8 @@
 
 package app.coronawarn.server.services.distribution.runner;
 
-import app.coronawarn.server.services.distribution.Application;
 import app.coronawarn.server.services.distribution.assembly.component.OutputDirectoryProvider;
 import app.coronawarn.server.services.distribution.objectstore.S3Publisher;
-import app.coronawarn.server.services.distribution.objectstore.client.ObjectStoreOperationFailedException;
 import java.io.IOException;
 import java.nio.file.Path;
 import org.slf4j.Logger;
@@ -27,25 +25,16 @@ public class S3Distribution implements ApplicationRunner {
 
   private final OutputDirectoryProvider outputDirectoryProvider;
   private final S3Publisher s3Publisher;
-  private final ApplicationContext applicationContext;
 
   S3Distribution(OutputDirectoryProvider outputDirectoryProvider, S3Publisher s3Publisher,
       ApplicationContext applicationContext) {
     this.outputDirectoryProvider = outputDirectoryProvider;
     this.s3Publisher = s3Publisher;
-    this.applicationContext = applicationContext;
   }
 
   @Override
-  public void run(ApplicationArguments args) {
-    try {
-      Path pathToDistribute = outputDirectoryProvider.getFileOnDisk().toPath().toAbsolutePath();
-
-      s3Publisher.publish(pathToDistribute);
-      logger.info("Data pushed to Object Store successfully.");
-    } catch (UnsupportedOperationException | ObjectStoreOperationFailedException | IOException e) {
-      logger.error("Distribution failed.", e);
-      Application.killApplication(applicationContext);
-    }
+  public void run(ApplicationArguments args) throws IOException {
+    Path pathToDistribute = outputDirectoryProvider.getFileOnDisk().toPath().toAbsolutePath();
+    s3Publisher.publish(pathToDistribute);
   }
 }

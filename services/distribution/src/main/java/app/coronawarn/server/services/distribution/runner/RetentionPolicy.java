@@ -3,7 +3,6 @@
 package app.coronawarn.server.services.distribution.runner;
 
 import app.coronawarn.server.common.persistence.service.DiagnosisKeyService;
-import app.coronawarn.server.services.distribution.Application;
 import app.coronawarn.server.services.distribution.config.DistributionServiceConfig;
 import app.coronawarn.server.services.distribution.objectstore.S3RetentionPolicy;
 import org.slf4j.Logger;
@@ -26,8 +25,6 @@ public class RetentionPolicy implements ApplicationRunner {
 
   private final DiagnosisKeyService diagnosisKeyService;
 
-  private final ApplicationContext applicationContext;
-
   private final Integer retentionDays;
 
   private final S3RetentionPolicy s3RetentionPolicy;
@@ -41,21 +38,13 @@ public class RetentionPolicy implements ApplicationRunner {
       DistributionServiceConfig distributionServiceConfig,
       S3RetentionPolicy s3RetentionPolicy) {
     this.diagnosisKeyService = diagnosisKeyService;
-    this.applicationContext = applicationContext;
     this.retentionDays = distributionServiceConfig.getRetentionDays();
     this.s3RetentionPolicy = s3RetentionPolicy;
   }
 
   @Override
   public void run(ApplicationArguments args) {
-    try {
-      diagnosisKeyService.applyRetentionPolicy(retentionDays);
-      s3RetentionPolicy.applyRetentionPolicy(retentionDays);
-    } catch (Exception e) {
-      logger.error("Application of retention policy failed.", e);
-      Application.killApplication(applicationContext);
-    }
-
-    logger.debug("Retention policy applied successfully.");
+    diagnosisKeyService.applyRetentionPolicy(retentionDays);
+    s3RetentionPolicy.applyRetentionPolicy(retentionDays);
   }
 }

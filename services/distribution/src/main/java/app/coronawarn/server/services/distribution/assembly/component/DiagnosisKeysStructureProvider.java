@@ -49,9 +49,7 @@ public class DiagnosisKeysStructureProvider {
    * @return the directory
    */
   public Directory<WritableOnDisk> getDiagnosisKeys() {
-    logger.debug("Querying diagnosis keys from the database...");
     Collection<DiagnosisKey> diagnosisKeys = diagnosisKeyService.getDiagnosisKeys();
-
     diagnosisKeyBundler.setDiagnosisKeys(resetDaysSinceOnsetOfSymptoms(diagnosisKeys), TimeUtils.getCurrentUtcHour());
     return new DiagnosisKeysDirectory(diagnosisKeyBundler, cryptoProvider, distributionServiceConfig);
   }
