@@ -4,3 +4,4 @@ services:
     testdata:
       seed: 123456
       exposures-per-hour: 100
+      distribution-testdata-consent-to-federation: ${DISTRIBUTION_TESTDATA_CONSENT_TO_FEDERATION:false}
