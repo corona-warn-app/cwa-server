@@ -15,6 +15,7 @@ import app.coronawarn.server.common.persistence.domain.FederationBatchStatus;
 import app.coronawarn.server.common.persistence.service.DiagnosisKeyService;
 import app.coronawarn.server.common.persistence.service.FederationBatchInfoService;
 import app.coronawarn.server.common.protocols.external.exposurenotification.DiagnosisKeyBatch;
+import app.coronawarn.server.common.protocols.external.exposurenotification.ReportType;
 import app.coronawarn.server.services.download.config.DownloadServiceConfig;
 import app.coronawarn.server.services.download.normalization.FederationKeyNormalizer;
 import app.coronawarn.server.services.download.validation.ValidFederationKeyFilter;
@@ -158,6 +159,7 @@ public class FederationBatchProcessor {
       app.coronawarn.server.common.protocols.external.exposurenotification.DiagnosisKey diagnosisKey) {
     try {
       return Optional.of(DiagnosisKey.builder().fromFederationDiagnosisKey(diagnosisKey)
+          .withReportType(ReportType.CONFIRMED_TEST)
           .withFieldNormalization(new FederationKeyNormalizer(config))
           .build());
     } catch (Exception ex) {
