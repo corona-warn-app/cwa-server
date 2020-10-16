@@ -16,7 +16,6 @@ import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -75,12 +74,6 @@ public class Helpers {
       int number, Set<String> visitedCountries) {
     return buildDiagnosisKeys(startIntervalNumber, submissionTimestamp, number,
         "DE", visitedCountries, ReportType.CONFIRMED_TEST, 1);
-  }
-
-  public static List<DiagnosisKey> buildDiagnosisKeys(int startIntervalNumber, long submissionTimestamp,
-      int number, Set<String> visitedCountries) {
-    return buildDiagnosisKeys(startIntervalNumber, submissionTimestamp, number,
-        "DE", visitedCountries, ReportType.CONFIRMED_CLINICAL_DIAGNOSIS, 1);
   }
 
   public static List<DiagnosisKey> buildDiagnosisKeys(int startIntervalNumber,
