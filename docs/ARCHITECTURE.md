@@ -78,6 +78,7 @@ Many countries are developing proximity tracing apps to reduce the spreading of 
 
 - Newly submitted keys must be shared with a listing of countries which the user may have visited prior (visitedCountries)
 - An approach to download keys to the device based on a selection of countries which are applicable for the user. Meaning the distribution will generate country specific archives allowing the mobile application to download targeted sets of keys per country that is relevant for the user.
+- Additionally, the CWA Server will provide a full EUR archive which contains all of the keys from all involved countries
 
 From a CWA-SERVER perspective, the Federation Gateway provides a set of API's with which we need to integrate in order to enable the following:
 

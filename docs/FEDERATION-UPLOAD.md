@@ -33,27 +33,12 @@ As the upload service will work from a table containing the keys submitted to th
 - Keys will be removed from this table when the distribution run expires keys. This would be relevant in the case that the upload job has not successfully run in some time and we still contain old keys which should be expired.
 - Keys will be removed from this table after they have been uploaded successfully to the federation gateway.
 
-```sql
-
-CREATE TABLE federation_upload_key (
-    key_data bytea PRIMARY KEY,
-    rolling_period integer NOT NULL,
-    rolling_start_interval_number integer NOT NULL,
-    submission_timestamp bigint NOT NULL,
-    transmission_risk_level integer NOT NULL,
-    consent_to_federation boolean NOT NULL DEFAULT FALSE,
-    origin_country varchar (2),
-    visited_countries varchar (2) [],
-    verification_type varchar(20)
-);
-```
-
 ## Identification of Keys Applicable for Upload
 
 In order to determine which keys are applicable for upload the following use cases are considered:
 
 - Existing Keys on the CWA Backend Prior to Federation Integration: In this case **NO** existing keys will be shared with the federation gateway. This is due to the fact that these keys are from users which did not have the capability to provide a consent for sharing.
-- New Submissions post Federation Integration: This will be determined based on new attributes of the submission payload and these keys replicated for use by the upload service. See details under the [Submission Service](./SUBMISSION.md)
+- New Submissions post Federation Integration: This will be determined based on new attributes of the submission payload and these keys are then replicated for use by the upload service. See details under the [Submission Service](./SUBMISSION.md)
 
 ## DPP Validations for Publishing
 
@@ -68,6 +53,7 @@ As this service is a cronjob it will be ensured by the infrastructure that it is
 
 - Duplicated persistent storage for the keys which are required to be sent to the federation gateway. This makes it clear which keys are needing to be sent and as they are persisted if they fail to post in a run they will be re-processed in a future iteration.
 - Retry processing around the Federation Gateway API endpoint invocations will be in place in case an initial request fails
+- Reprocessing of keys which may have been rejected by the Federation Gateway if applicable
 
 ## Security
 

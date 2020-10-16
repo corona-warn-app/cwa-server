@@ -58,7 +58,7 @@ type Publish struct {
 
 Due to concerns regarding data privacy and protection, device attestation is currently not being used by CWA.
 
-In order to support federation of keys, when new keys are submitted to the CWA Server they will be evaluated to determine if they are applicable for federation. This will be decided based on an attribute provided in the submission payload `optional bool consentToFederation = 6;`. If this is set it means that the user on the mobile device has agreed to have the keys they are submitting sent to the other nations connected to the federation gateway. When processed via submission the keys provided will be duplicated (for a short period) to a table which will be specifically monitored by the Federation Key Upload service. Only keys which are found within this table will be considered for the upload.
+In order to support federation of keys, when new keys are submitted to the CWA Server they will be evaluated to determine if they are applicable for federation. This will be decided based on an attribute provided in the submission payload `optional bool consentToFederation = 6;`. If this is set it means that the user on the mobile device has agreed to have the keys they are submitting sent to the other nations connected to the federation gateway. When processed via submission the keys provided will be duplicated (for a short period) to a table which will be specifically monitored by the Federation Key Upload service. Only keys which are found within this table will be considered for the upload. This is managed via triggers within the PostgreSQL database.
 
 ## External Dependencies
 

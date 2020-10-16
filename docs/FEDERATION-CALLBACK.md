@@ -1,5 +1,7 @@
 # CWA Federation Callback Service
 
+Note: This service is currently not implemented and will be planned if necessary within a future release.
+
 This service will expose an API which is registered with the federation gateways callback service API to accept the callback notifications. The role of this service is to validate the certificates (mTLS handshake) and then store the notification info (batchTag and date) into the postgres database for future processing by the federation key download job.
 
 ![Callback Flow Diagram](./images/callback-flow.png)

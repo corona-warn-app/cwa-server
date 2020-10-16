@@ -2,17 +2,12 @@
 
 This is a spring boot [ApplicationRunner](https://docs.spring.io/spring-boot/docs/current/api/org/springframework/boot/ApplicationRunner.html) service (running as a cronjob). The app will deal with the download, sematic validation, extraction, and storage of the keys from the federation gateway. The download service leverages the download API of the federation gateway and will trigger downloads of available batches since the last time it executed. For the initial release the download service will use the polling mechanism provided by the federation gateway based on `batchTag` and `date` combinations and it will keep track of its last processed state within the database. When and if the callback service integration is fully realized, the polling mechanism would mainly be used for mass loading scenarios, and this service will then only download the persisted individual batches where notifications have been received.
 
-On the download of keys from the federation gateway a process of to derive a TRL from the DSOS needs to take place. This is done to enable the keys to be consumable by the DE CWA app as not all countries support the same approach which is required for the CWA app. The means the following:
+On the download of keys from the federation gateway a process to derive a TRL from the DSOS needs to take place. This is done to enable the keys to be consumable by the DE CWA app as not all countries support the same approach which is required for the CWA app. The means the following:
 
 - For keys from countries which support the daysSinceOnset scenario will need to be converted into an appropriate transmission risk level based on values defined in configuration
 - For keys where we have no DSOS mapping configuration there will be a need to provide a reasonable global default otherwise we would need to reject the key download.
 
-The rules above would be defined at 2 levels:
-
-- On a per country basis such that the rules can be specified and values derived based on the origin country
-- At a global level for situations where we do not have country specific rules
-
-They would also take into consideration other attributes provided within the key data for example report type. The full set of attributes to be evaluated and how is still TBD.
+Refer to the configuration settings defined in [derivation-maps.yaml](../common/persistence/src/main/resources/derivation-maps.yaml)
 
 These rules will allow the keys sourced from the federation gateway to be processed within the CWA App and be considered with the risk detection algorithms.
 
@@ -33,29 +28,88 @@ You will find `.yaml` and `.xml` based profile-specific configuration files at [
 Profile                                           | Effect
 --------------------------------------------------|-------------
 `dev`                                             | Sets the log level to `DEBUG` and changes the `CONSOLE_LOG_PATTERN` used by Log4j 2.
-`cloud`                                           | Removes default values for the `spring.flyway`, `spring.datasource` and sets federation gateway contexts
+`cloud`                                           | Removes default values for the `spring.flyway`, `spring.datasource` and `services.submission.verification.base-url` configurations.
 `disable-ssl-client-postgres`                     | Disables SSL with a pinned certificate for the connection to the postgres.
 
 Please refer to the inline comments in the base `application.yaml` configuration file for further details on the configuration properties impacted by the above profiles.
 
-## Data Model
+## Environmental Variables
 
-This service doesn't specifically introduce any new data model concepts. It will reuse the existing diagnosis key table where it will store the keys that it downloads.
+Download specific environmentals:
+Variable Name                    | Default Value  | Description
+---------------------------------|----------------|-------------
+EFGS_OFFSET_DAYS                 | 1              | The offset in days for which the keys shall be downloaded (must be in range 0 - 14).
+ALLOWED_REPORT_TYPES_TO_DOWNLOAD | CONFIRMED_TEST | Accepted ReportTypes for download.
 
-```sql
-    CREATE TABLE diagnosis_key (
-        key_data bytea PRIMARY KEY,
-        rolling_period integer NOT NULL,
-        rolling_start_interval_number integer NOT NULL,
-        submission_timestamp bigint NOT NULL,
-        transmission_risk_level integer NOT NULL,
-        consent_to_federation boolean NOT NULL DEFAULT FALSE,
-        origin_country varchar (2),
-        visited_countries varchar (2) [],
-        verification_type varchar(20)
-        efgs_batch_tag text -> TODO: Check with team on adding this attribute
-);
-```
+## Download Runner
+
+The Download Runner triggers the download of Diagnosis Keys (DK) from the EFGS. It then triggers the processing of unprocessed batches and of those which caused errors in previous processing attempts.
+
+## Batch Processing
+
+The FederationBatchProcessor processes batches in sequence and persists all DKs that pass validation.
+
+## Diagnosis Key Validation
+
+Validation constraints enforce that each Key is compliant to the specifications.
+
+### Enumerative Validation Constraints
+
+Enumerative validation constraints are stored as environmental variables and can be consulted in the Download Services `application.yaml` (under `services`.`download`.`validation`).
+
+Name                 | Default Value  | Description
+---------------------|----------------|-------------
+key-length           | 16             | Exact length of accepted DK Data.
+allowed-report-types | CONFIRMED_TEST | Accepted ReportTypes (comma separated list).
+max-dsos             | 4000           | Accepted upper bound for Days Since Onset of Symptoms.
+min-rolling-period   | 0              | Accepted lower bound for Rolling Period.
+max-rolling-period   | 144            | Accepted upper bound for Rolling Period.
+min-trl              | 1              | Accepted lower bound for Transmission Risk Level.
+max-trl              | 8              | Accepted upper bound for Transmission Risk Level.
+
+### Validation Checks
+
+The checks performed on downloaded DKs are as follows:
+
+* Key Data has correct length.
+* ReportType is allowed.
+* Rolling Period is between upper and lower bound.
+* Starting Interval Number is valid.
+* Days Since Onset of Symptoms (DSOS) is between upper and lower bound.
+* Transmission Risk Level (TRL) is between upper and lower bound.
+If the validation of DSOS or TRL fails, the corresponding value is derived from the other.
+
+Diagnosis Keys are only rejected if both values are missing or invalid.
+
+Implementation details on validation can be found in: [`ValidFederationKeyFilter.java`](/services/download/src/main/java/app/coronawarn/server/services/download/validation/ValidFederationKeyFilter.java).
+
+### Validation Results and Batch Status
+
+Keys that fail validation will cause a corresponding log entry, but will not hinder batch processing. The FederationBatchStatus indicates if the validation and batch processing was successful.
+
+Processing Status    | Description
+---------------------|---------------
+PROCESSED            | All DKs passed validation.
+PROCESSED_WITH_ERROR | At least one DK failed validation.
+ERROR                | Error non-related to DK validation occurred.
+ERROR_WONT_RETRY     | Error non-related to DK validation occurred. Retry of batch processing failed as well.
+
+## FederationGatewayDownloadService
+
+Handles the actual downloading and parsing of batches.
+
+## BatchDownloadResponse
+
+Java object representing one downloaded and parsed batch.
+
+## FederationKeyNormalizer
+
+Helps to derive Transmission Risk Level from Days Since Onset of Symptoms (for backwards compatability).
+Derivation mapping is set in `application.yaml` (under `services`.`download`.`tek-field-derivations`.`trl-from-dsos`).
+
+## RetentionPolicy Runner
+
+See [`PERSISTENCE.md`](/docs/PERSISTENCE.md).
 
 ## Resilience
 
@@ -66,15 +120,15 @@ As this service is a cronjob it will be ensured by the infrastructure that it is
 
 ## Security
 
-The means to authenticate with the Federation Gateway is set by the Federation Gateway Service and is described in the associated documentation. To briefly summarize what the upload service will need to ensure:
+The means to authenticate with the Federation Gateway is set by the Federation Gateway Service and is described in the associated documentation. To briefly summarize:
 
 - GET API calls to the /download service are secured via mTLS over HTTPs
-- Batches which are download are signed by the National Backend Servers to ensure data integrity per the requirements of the Federation Gateway. The download service will make use of the audit API of the federation gateway and the provided public keys to verify that the keys we are receiving are genuine. Logs will also be in place to denote that a batch with tag X was received from gateway and when the audit validations are in place logs will be generated for each batch/country combination.
-- Certificates are managed by an external vault service and consumed from the application at runtime.
+- Batches which are downloaded are signed by the National Backend Servers to ensure data integrity per the requirements of the Federation Gateway. The download service will make use of the audit API of the federation gateway and the provided public keys to verify that the keys we are receiving are genuine. Logs will also be in place to denote that a batch with tag X was received from gateway and when the audit validations are in place logs will be generated for each batch/country combination. Note: Use of the Audit API is still in planning stages
+- Certificates are managed by an external service and consumed from the application at runtime.
 
 ## Batch Auditing
 
-To be implemented/aligned:
+Note: Use of the Audit API is still in planning stages
 
 The Federation Gateway provides an API to request audit information in relation to a batch. This audit operation provides the possibility to verify data integrity and authenticity within a batch. The operation returns information about the batch, for instance:
 
