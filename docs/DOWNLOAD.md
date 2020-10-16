@@ -43,7 +43,7 @@ Enumerative validation constraints are stored as environmental variables and can
 Name                 | Default Value  | Description
 ---------------------|----------------|-------------
 key-length           | 16             | Exact length of accepted DK Data.
-allowed-report-types | CONFIRMED_TEST | Accepted ReportTypes.
+allowed-report-types | CONFIRMED_TEST | Accepted ReportTypes (comma separated list).
 max-dsos             | 4000           | Accepted upper bound for Days Since Onset of Symptoms.
 min-rolling-period   | 0              | Accepted lower bound for Rolling Period.
 max-rolling-period   | 144            | Accepted upper bound for Rolling Period.
