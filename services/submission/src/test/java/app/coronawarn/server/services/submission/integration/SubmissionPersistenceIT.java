@@ -324,7 +324,7 @@ class SubmissionPersistenceIT {
     int numberOfKeys = 10;
     int transmissionRiskLevel = 6;
     int rollingPeriod = 144; // 24*60/10
-    ReportType reportType = ReportType.CONFIRMED_CLINICAL_DIAGNOSIS;
+    ReportType reportType = ReportType.CONFIRMED_TEST;
     int daysSinceOnsetOfSymptoms = 0;
 
     LocalDateTime now = LocalDateTime.now();

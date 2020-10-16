@@ -20,7 +20,7 @@ public class SubmissionPayloadGenerator {
   private static final int NUMBER_OF_KEYS = 10;
   private static final int TRANSMISSION_RISK_LEVEL = 6;
   private static final int ROLLING_PERIOD = 144; // 24*60/10
-  private static final ReportType REPORT_TYPE = ReportType.CONFIRMED_CLINICAL_DIAGNOSIS;
+  private static final ReportType REPORT_TYPE = ReportType.CONFIRMED_TEST;
   private static final ByteString REQUEST_PADDING = ByteString.copyFrom(new byte[100]);
   private static final List<String> VISITED_COUNTRIES = List.of("DE", "FR");
   private static final String ORIGIN_COUNTRY = "DE";
