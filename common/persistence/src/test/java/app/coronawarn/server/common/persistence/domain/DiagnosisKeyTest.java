@@ -28,7 +28,7 @@ class DiagnosisKeyTest {
   final static long expSubmissionTimestamp = 4L;
   static final String originCountry = "DE";
   static final Set<String> visitedCountries = Set.of("DE");
-  static final ReportType reportType = ReportType.CONFIRMED_CLINICAL_DIAGNOSIS;
+  static final ReportType reportType = ReportType.CONFIRMED_TEST;
   static final int daysSinceOnsetOfSymptoms = 1;
 
   final static DiagnosisKey diagnosisKey = new DiagnosisKey(expKeyData, expRollingStartIntervalNumber,
