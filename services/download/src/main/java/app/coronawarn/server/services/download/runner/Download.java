@@ -29,8 +29,8 @@ public class Download implements ApplicationRunner {
 
   @Override
   public void run(ApplicationArguments args) {
-    LocalDate yesterday = LocalDate.now(ZoneOffset.UTC).minus(Period.ofDays(serviceConfig.getEfgsOffsetDays()));
-    batchProcessor.saveFirstBatchInfoForDate(yesterday);
+    LocalDate downloadDate = LocalDate.now(ZoneOffset.UTC).minus(Period.ofDays(serviceConfig.getEfgsOffsetDays()));
+    batchProcessor.saveFirstBatchInfoForDate(downloadDate);
     batchProcessor.processErrorFederationBatches();
     batchProcessor.processUnprocessedFederationBatches();
   }
