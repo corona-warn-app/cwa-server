@@ -2,6 +2,9 @@
 
 package app.coronawarn.server.services.distribution;
 
+import static app.coronawarn.server.services.distribution.logging.LogMessages.APPLICATION_TERMINATED_ABNORMALLY;
+import static app.coronawarn.server.services.distribution.logging.LogMessages.POSTGRESS_TSL_DISABLED_MESSAGE;
+
 import app.coronawarn.server.services.distribution.config.DistributionServiceConfig;
 import app.coronawarn.server.services.distribution.config.DistributionServiceConfigValidator;
 import java.util.Arrays;
@@ -45,7 +48,6 @@ public class Application implements EnvironmentAware, DisposableBean {
    */
   @Override
   public void destroy() {
-    logger.info("Shutting down log4j2.");
     LogManager.shutdown();
   }
 
@@ -59,7 +61,7 @@ public class Application implements EnvironmentAware, DisposableBean {
    */
   public static void killApplication(ApplicationContext appContext) {
     SpringApplication.exit(appContext);
-    logger.error("Application terminated abnormally.");
+    logger.error(APPLICATION_TERMINATED_ABNORMALLY);
     System.exit(1);
   }
 
@@ -67,8 +69,7 @@ public class Application implements EnvironmentAware, DisposableBean {
   public void setEnvironment(Environment environment) {
     List<String> profiles = Arrays.asList(environment.getActiveProfiles());
     if (profiles.contains("disable-ssl-client-postgres")) {
-      logger.warn("The distribution runner is started with postgres connection TLS disabled. "
-          + "This should never be used in PRODUCTION!");
+      logger.warn(POSTGRESS_TSL_DISABLED_MESSAGE);
     }
   }
 }

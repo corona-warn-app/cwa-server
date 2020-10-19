@@ -80,6 +80,16 @@ public class DiagnosisKeyService {
   }
 
   /**
+   * Returns all valid persisted diagnosis keys filtered by origin country and sorted by their submission timestamp.
+   */
+  public List<DiagnosisKey> getDiagnosisKeysByCountry(String country) {
+    List<DiagnosisKey> diagnosisKeys = createStreamFromIterator(
+        keyRepository.findAllByOriginCountry(country, Sort.by(Direction.ASC, "submissionTimestamp")).iterator())
+        .collect(Collectors.toList());
+    return validationFilter.filter(diagnosisKeys);
+  }
+
+  /**
    * Deletes all diagnosis key entries which have a submission timestamp that is older than the specified number of
    * days.
    *

@@ -81,10 +81,7 @@ public class TestDataGeneration implements ApplicationRunner {
    */
   private void writeTestData() {
     supportedCountries.forEach(country -> {
-      logger.debug("Querying diagnosis keys [{}] from the database...", country);
-      List<DiagnosisKey> existingDiagnosisKeys = diagnosisKeyService.getDiagnosisKeys().stream()
-          .filter(diagnosisKey -> diagnosisKey.getOriginCountry().equals(country))
-          .collect(Collectors.toList());
+      List<DiagnosisKey> existingDiagnosisKeys = diagnosisKeyService.getDiagnosisKeysByCountry(country);
 
       // Timestamps in hours since epoch. Test data generation starts one hour after the latest diagnosis key in the
       // database and ends one hour before the current one.

@@ -3,6 +3,8 @@
 package app.coronawarn.server.common.persistence.repository;
 
 import app.coronawarn.server.common.persistence.domain.DiagnosisKey;
+import java.util.List;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.jdbc.repository.query.Modifying;
 import org.springframework.data.jdbc.repository.query.Query;
 import org.springframework.data.repository.PagingAndSortingRepository;
@@ -62,4 +64,13 @@ public interface DiagnosisKeyRepository extends PagingAndSortingRepository<Diagn
       @Param("report_type") String reportType,
       @Param("days_since_onset_of_symptoms") int daysSinceOnsetOfSymptoms,
       @Param("consent_to_federation") boolean consentToFederation);
+
+  /**
+   * Selects all entries that have the origin country same as the specified one in the parameter.
+   *
+   * @param originCountry The origin country of the key.
+   * @return The diagnosis keys filtered by origin country.
+   */
+  List<DiagnosisKey> findAllByOriginCountry(String originCountry, Sort sort);
+
 }
