@@ -80,7 +80,7 @@ public class DiagnosisKeyServiceTestHelper {
   public static DiagnosisKey buildDiagnosisKeyForSubmissionTimestamp(long submissionTimeStamp,
       int rollingStartInterval, boolean consentToShare) {
     return buildDiagnosisKeyForSubmissionTimestamp(submissionTimeStamp, rollingStartInterval, consentToShare, "DE",
-        Set.of("DE"), ReportType.CONFIRMED_CLINICAL_DIAGNOSIS);
+        Set.of("DE"), ReportType.CONFIRMED_TEST);
   }
 
   public static DiagnosisKey buildDiagnosisKeyForDateTime(OffsetDateTime dateTime) {

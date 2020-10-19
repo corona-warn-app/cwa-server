@@ -2,7 +2,7 @@
 
 package app.coronawarn.server.services.submission.controller;
 
-import static app.coronawarn.server.common.protocols.external.exposurenotification.ReportType.CONFIRMED_CLINICAL_DIAGNOSIS;
+import static app.coronawarn.server.common.protocols.external.exposurenotification.ReportType.CONFIRMED_TEST;
 import static java.time.ZoneOffset.UTC;
 
 import app.coronawarn.server.common.persistence.domain.DiagnosisKey;
@@ -91,9 +91,9 @@ public final class SubmissionPayloadMockData {
     int rollingStartIntervalNumber2 = rollingStartIntervalNumber1 + DiagnosisKey.MAX_ROLLING_PERIOD;
     int rollingStartIntervalNumber3 = rollingStartIntervalNumber2 + DiagnosisKey.MAX_ROLLING_PERIOD;
     return Stream.of(
-        buildTemporaryExposureKey(VALID_KEY_DATA_1, rollingStartIntervalNumber1, 3, CONFIRMED_CLINICAL_DIAGNOSIS, 1),
-        buildTemporaryExposureKey(VALID_KEY_DATA_2, rollingStartIntervalNumber3, 6, CONFIRMED_CLINICAL_DIAGNOSIS, 1),
-        buildTemporaryExposureKey(VALID_KEY_DATA_3, rollingStartIntervalNumber2, 8, CONFIRMED_CLINICAL_DIAGNOSIS, 1))
+        buildTemporaryExposureKey(VALID_KEY_DATA_1, rollingStartIntervalNumber1, 3, CONFIRMED_TEST, 1),
+        buildTemporaryExposureKey(VALID_KEY_DATA_2, rollingStartIntervalNumber3, 6, CONFIRMED_TEST, 1),
+        buildTemporaryExposureKey(VALID_KEY_DATA_3, rollingStartIntervalNumber2, 8, CONFIRMED_TEST, 1))
         .collect(Collectors.toCollection(ArrayList::new));
   }
 
@@ -103,11 +103,11 @@ public final class SubmissionPayloadMockData {
     int rollingStartIntervalNumber3 = rollingStartIntervalNumber2 + DiagnosisKey.MAX_ROLLING_PERIOD;
     return Stream.of(
         buildTemporaryExposureKeyWithoutDSOS(VALID_KEY_DATA_1, rollingStartIntervalNumber1, 3,
-            CONFIRMED_CLINICAL_DIAGNOSIS),
+            CONFIRMED_TEST),
         buildTemporaryExposureKeyWithoutDSOS(VALID_KEY_DATA_2, rollingStartIntervalNumber3, 6,
-            CONFIRMED_CLINICAL_DIAGNOSIS),
+            CONFIRMED_TEST),
         buildTemporaryExposureKeyWithoutDSOS(VALID_KEY_DATA_3, rollingStartIntervalNumber2, 8,
-            CONFIRMED_CLINICAL_DIAGNOSIS))
+            CONFIRMED_TEST))
         .collect(Collectors.toCollection(ArrayList::new));
   }
 
@@ -116,9 +116,9 @@ public final class SubmissionPayloadMockData {
     int rollingStartIntervalNumber2 = rollingStartIntervalNumber1 + DiagnosisKey.MAX_ROLLING_PERIOD;
     int rollingStartIntervalNumber3 = rollingStartIntervalNumber2 + DiagnosisKey.MAX_ROLLING_PERIOD;
     return Stream.of(
-        buildTemporaryExposureKeyWithoutTRL(VALID_KEY_DATA_1, rollingStartIntervalNumber1, CONFIRMED_CLINICAL_DIAGNOSIS, 8),
-        buildTemporaryExposureKeyWithoutTRL(VALID_KEY_DATA_2, rollingStartIntervalNumber3, CONFIRMED_CLINICAL_DIAGNOSIS, 10),
-        buildTemporaryExposureKeyWithoutTRL(VALID_KEY_DATA_3, rollingStartIntervalNumber2, CONFIRMED_CLINICAL_DIAGNOSIS, 14))
+        buildTemporaryExposureKeyWithoutTRL(VALID_KEY_DATA_1, rollingStartIntervalNumber1, CONFIRMED_TEST, 8),
+        buildTemporaryExposureKeyWithoutTRL(VALID_KEY_DATA_2, rollingStartIntervalNumber3, CONFIRMED_TEST, 10),
+        buildTemporaryExposureKeyWithoutTRL(VALID_KEY_DATA_3, rollingStartIntervalNumber2, CONFIRMED_TEST, 14))
         .collect(Collectors.toCollection(ArrayList::new));
   }
 
@@ -127,37 +127,37 @@ public final class SubmissionPayloadMockData {
     int rollingStartIntervalNumber2 = rollingStartIntervalNumber1 + DiagnosisKey.MAX_ROLLING_PERIOD;
     int rollingStartIntervalNumber3 = rollingStartIntervalNumber2 + DiagnosisKey.MAX_ROLLING_PERIOD;
     return Stream.of(
-        buildTemporaryExposureKeyWithoutDSOSAndTRL(VALID_KEY_DATA_1, rollingStartIntervalNumber1, CONFIRMED_CLINICAL_DIAGNOSIS),
-        buildTemporaryExposureKeyWithoutDSOSAndTRL(VALID_KEY_DATA_2, rollingStartIntervalNumber3, CONFIRMED_CLINICAL_DIAGNOSIS),
-        buildTemporaryExposureKeyWithoutDSOSAndTRL(VALID_KEY_DATA_3, rollingStartIntervalNumber2, CONFIRMED_CLINICAL_DIAGNOSIS))
+        buildTemporaryExposureKeyWithoutDSOSAndTRL(VALID_KEY_DATA_1, rollingStartIntervalNumber1, CONFIRMED_TEST),
+        buildTemporaryExposureKeyWithoutDSOSAndTRL(VALID_KEY_DATA_2, rollingStartIntervalNumber3, CONFIRMED_TEST),
+        buildTemporaryExposureKeyWithoutDSOSAndTRL(VALID_KEY_DATA_3, rollingStartIntervalNumber2, CONFIRMED_TEST))
         .collect(Collectors.toCollection(ArrayList::new));
   }
 
   public static SubmissionPayload buildPayloadWithInvalidKey() {
     TemporaryExposureKey invalidKey =
         buildTemporaryExposureKey(VALID_KEY_DATA_1, createRollingStartIntervalNumber(2), 999,
-            ReportType.CONFIRMED_CLINICAL_DIAGNOSIS, 1);
+            ReportType.CONFIRMED_TEST, 1);
     return buildPayload(invalidKey);
   }
 
   public static SubmissionPayload buildPayloadWithInvalidOriginCountry() {
     TemporaryExposureKey key =
         buildTemporaryExposureKey(VALID_KEY_DATA_1, createRollingStartIntervalNumber(2), 3,
-            ReportType.CONFIRMED_CLINICAL_DIAGNOSIS, 1);
+            ReportType.CONFIRMED_TEST, 1);
     return buildInvalidPayload(key);
   }
 
   public static SubmissionPayload buildPayloadWithEmptyOriginCountry() {
     TemporaryExposureKey key =
         buildTemporaryExposureKey(VALID_KEY_DATA_1, createRollingStartIntervalNumber(2), 3,
-            ReportType.CONFIRMED_CLINICAL_DIAGNOSIS, 1);
+            ReportType.CONFIRMED_TEST, 1);
     return buildEmptyOriginCountryPayload(key);
   }
 
   public static SubmissionPayload buildPayloadWithVisitedCountries(List<String> visitedCountries) {
     TemporaryExposureKey key =
         buildTemporaryExposureKey(VALID_KEY_DATA_1, createRollingStartIntervalNumber(2), 3,
-            ReportType.CONFIRMED_CLINICAL_DIAGNOSIS, 1);
+            ReportType.CONFIRMED_TEST, 1);
     return SubmissionPayload.newBuilder()
         .addKeys(key)
         .addAllVisitedCountries(visitedCountries)
@@ -229,7 +229,7 @@ public final class SubmissionPayloadMockData {
 
   public static Collection<TemporaryExposureKey> buildPayloadWithOneKey() {
     return Collections.singleton(buildTemporaryExposureKey(VALID_KEY_DATA_1, createRollingStartIntervalNumber(1), 3,
-        ReportType.CONFIRMED_CLINICAL_DIAGNOSIS, 1));
+        ReportType.CONFIRMED_TEST, 1));
   }
 
   private static SubmissionPayload buildPayloadWithPadding(Collection<TemporaryExposureKey> keys, byte[] bytes) {

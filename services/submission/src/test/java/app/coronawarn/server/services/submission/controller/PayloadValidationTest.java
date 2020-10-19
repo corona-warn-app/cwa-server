@@ -83,21 +83,21 @@ class PayloadValidationTest {
 
   private Collection<TemporaryExposureKey> buildKeysWithDaysSinceSymptoms(int dsos) {
     return List.of(buildTemporaryExposureKey(VALID_KEY_DATA_1, createRollingStartIntervalNumber(2), 3,
-        ReportType.CONFIRMED_CLINICAL_DIAGNOSIS, dsos),
+        ReportType.CONFIRMED_TEST, dsos),
         // also add a key without DSOS since this can happen in production and should be supported
         buildTemporaryExposureKey(VALID_KEY_DATA_1,
             createRollingStartIntervalNumber(2) + DiagnosisKey.MAX_ROLLING_PERIOD, 3,
-            ReportType.CONFIRMED_CLINICAL_DIAGNOSIS, null));
+            ReportType.CONFIRMED_TEST, null));
   }
 
   private Collection<TemporaryExposureKey> buildKeysWithoutDaysSinceSymptomsAndTransmissionRiskLevel() {
     return List.of(
         buildTemporaryExposureKey(VALID_KEY_DATA_1, createRollingStartIntervalNumber(2), null,
-            ReportType.CONFIRMED_CLINICAL_DIAGNOSIS, null),
+            ReportType.CONFIRMED_TEST, null),
         // also add a key without DSOS since this can happen in production and should be supported
         buildTemporaryExposureKey(VALID_KEY_DATA_1,
             createRollingStartIntervalNumber(2) + +DiagnosisKey.MAX_ROLLING_PERIOD, null,
-            ReportType.CONFIRMED_CLINICAL_DIAGNOSIS, null));
+            ReportType.CONFIRMED_TEST, null));
   }
 
   @ParameterizedTest
@@ -116,11 +116,11 @@ class PayloadValidationTest {
 
   private Collection<TemporaryExposureKey> buildKeysWithTransmissionRiskLevel(int trl) {
     return List.of(buildTemporaryExposureKey(VALID_KEY_DATA_1, createRollingStartIntervalNumber(2), trl,
-        ReportType.CONFIRMED_CLINICAL_DIAGNOSIS, 1),
+        ReportType.CONFIRMED_TEST, 1),
         // also add a key without TRL since this can happen in production and should be supported
         buildTemporaryExposureKey(VALID_KEY_DATA_1,
             createRollingStartIntervalNumber(2) + +DiagnosisKey.MAX_ROLLING_PERIOD, null,
-            ReportType.CONFIRMED_CLINICAL_DIAGNOSIS, 1));
+            ReportType.CONFIRMED_TEST, 1));
   }
 
   @Test
