@@ -3,13 +3,15 @@
 package app.coronawarn.server.services.download.normalization;
 
 
+
 import app.coronawarn.server.common.persistence.domain.config.TekFieldDerivations;
 import app.coronawarn.server.common.persistence.domain.normalization.DiagnosisKeyNormalizer;
 import app.coronawarn.server.common.persistence.domain.normalization.NormalizableFields;
 import app.coronawarn.server.services.download.config.DownloadServiceConfig;
 
 /**
- * This class is used to derive transmission risk level using the days since onset of symptoms.
+ * This class is used for derivation/transformation/sanitization of information carried by
+ * keys downloaded via EFGS (from other national backends).
  */
 public class FederationKeyNormalizer implements DiagnosisKeyNormalizer {
 
@@ -29,7 +31,8 @@ public class FederationKeyNormalizer implements DiagnosisKeyNormalizer {
     validateNormalizableFields(fieldsAndValues);
     int trl = tekFieldDerivations.deriveTransmissionRiskLevelFromDaysSinceSymptoms(
         fieldsAndValues.getDaysSinceOnsetOfSymptoms());
-    return NormalizableFields.of(trl, fieldsAndValues.getDaysSinceOnsetOfSymptoms());
+    int dsos = new EfgsDaysSinceSymptomsDecoder().decode(fieldsAndValues.getDaysSinceOnsetOfSymptoms());
+    return NormalizableFields.of(trl, dsos);
   }
 
   private void validateNormalizableFields(NormalizableFields fieldsAndValues) {
