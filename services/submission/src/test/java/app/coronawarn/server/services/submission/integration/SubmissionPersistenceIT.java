@@ -33,7 +33,6 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import org.apache.commons.lang3.StringUtils;
-import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
@@ -278,7 +277,6 @@ class SubmissionPersistenceIT {
     );
   }
 
-  @NotNull
   private SubmissionPayload buildSubmissionPayload(List<String> visitedCountries, String originCountry,
       Boolean consentToFederation, List<TemporaryExposureKey> temporaryExposureKeys) {
     Builder submissionPayloadBuilder = SubmissionPayload
