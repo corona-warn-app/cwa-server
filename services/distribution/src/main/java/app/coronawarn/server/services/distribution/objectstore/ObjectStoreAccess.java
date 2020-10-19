@@ -1,5 +1,3 @@
-
-
 package app.coronawarn.server.services.distribution.objectstore;
 
 import static app.coronawarn.server.services.distribution.logging.LogMessages.DELETING_ENTRIES_WITH_PREFIX;
@@ -34,14 +32,12 @@ import org.springframework.util.StringUtils;
 @Component
 public class ObjectStoreAccess {
 
-  private static final Logger logger = LoggerFactory.getLogger(ObjectStoreAccess.class);
-
   /**
    * Specifies the default maximum amount of time in seconds that a published resource can be considered "fresh" when
    * held in a cache.
    */
   public static final int DEFAULT_MAX_CACHE_AGE = 300;
-
+  private static final Logger logger = LoggerFactory.getLogger(ObjectStoreAccess.class);
   private final boolean isSetPublicReadAclOnPutObject;
 
   private final String bucket;

@@ -1,6 +1,17 @@
 package app.coronawarn.server.services.distribution.logging;
 
-import static app.coronawarn.server.services.distribution.logging.LogMessages.*;
+import static app.coronawarn.server.services.distribution.logging.LogMessages.APPLICATION_OF_RETENTION_POLICY_FAILED;
+import static app.coronawarn.server.services.distribution.logging.LogMessages.CLEARING_OUTPUT_DIRECTORY;
+import static app.coronawarn.server.services.distribution.logging.LogMessages.DATA_PUSHED_TO_OBJECT_STORE_SUCCESSFULLY;
+import static app.coronawarn.server.services.distribution.logging.LogMessages.DISTRIBUTION_DATA_ASSEMBLED_SUCCESSFULLY;
+import static app.coronawarn.server.services.distribution.logging.LogMessages.DISTRIBUTION_DATA_ASSEMBLY_FAILED;
+import static app.coronawarn.server.services.distribution.logging.LogMessages.DISTRIBUTION_FAILED;
+import static app.coronawarn.server.services.distribution.logging.LogMessages.NUMBER_OF_FAILED_OBJECT_STORE_OPERATIONS_EXCEEDED_THRESHOLD;
+import static app.coronawarn.server.services.distribution.logging.LogMessages.OBJECT_STORE_OPERATION_FAILED;
+import static app.coronawarn.server.services.distribution.logging.LogMessages.QUERYING_DIAGNOSIS_KEYS_FROM_THE_DATABASE;
+import static app.coronawarn.server.services.distribution.logging.LogMessages.RETENTION_POLICY_APPLIED_SUCCESSFULLY;
+import static app.coronawarn.server.services.distribution.logging.LogMessages.SHUTTING_DOWN_LOG4J2_MESSAGE;
+import static app.coronawarn.server.services.distribution.logging.LogMessages.UPLOADING_MESSAGE;
 
 import app.coronawarn.server.services.distribution.Application;
 import app.coronawarn.server.services.distribution.config.DistributionServiceConfig;
