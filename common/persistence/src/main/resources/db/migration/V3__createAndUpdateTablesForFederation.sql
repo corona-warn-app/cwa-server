@@ -11,7 +11,7 @@ ALTER TABLE diagnosis_key
 ALTER TABLE diagnosis_key
     ADD visited_countries VARCHAR(2)[];
 ALTER TABLE diagnosis_key
-    ADD report_type VARCHAR(30) DEFAULT 'CONFIRMED_TEST';
+    ADD report_type VARCHAR(30) DEFAULT 'CONFIRMED_CLINICAL_DIAGNOSIS';
 ALTER TABLE diagnosis_key
     ADD days_since_onset_of_symptoms INTEGER;
 
