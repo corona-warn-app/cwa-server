@@ -3,7 +3,9 @@ package app.coronawarn.server.services.distribution.logging;
 import static app.coronawarn.server.services.distribution.logging.LogMessages.*;
 
 import app.coronawarn.server.services.distribution.Application;
+import app.coronawarn.server.services.distribution.config.DistributionServiceConfig;
 import app.coronawarn.server.services.distribution.objectstore.client.ObjectStoreOperationFailedException;
+import app.coronawarn.server.services.distribution.objectstore.publish.LocalFile;
 import org.aspectj.lang.annotation.AfterReturning;
 import org.aspectj.lang.annotation.AfterThrowing;
 import org.aspectj.lang.annotation.Aspect;
@@ -18,12 +20,14 @@ import org.springframework.stereotype.Component;
 public class DistributionLoggingAspect {
 
   private final ApplicationContext applicationContext;
+  private final DistributionServiceConfig config;
 
 
   private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
-  public DistributionLoggingAspect(ApplicationContext applicationContext) {
+  public DistributionLoggingAspect(ApplicationContext applicationContext, DistributionServiceConfig config) {
     this.applicationContext = applicationContext;
+    this.config = config;
   }
 
   @Before(value =
@@ -36,7 +40,7 @@ public class DistributionLoggingAspect {
   @Before(value = "execution(* app.coronawarn.server.services.distribution.assembly.component.OutputDirectoryProvider"
       + ".clear())")
   public void beforeClearOutputDirectoryProvider() {
-    logger.debug("Clearing output directory...");
+    logger.debug(CLEARING_OUTPUT_DIRECTORY);
   }
 
   @AfterReturning(value = "execution(* app.coronawarn.server.services.distribution.runner.Assembly.run(..))")
@@ -84,8 +88,22 @@ public class DistributionLoggingAspect {
     logger.error(OBJECT_STORE_OPERATION_FAILED, cause);
   }
 
+  @AfterThrowing(pointcut =
+      "execution(* app.coronawarn.server.services.distribution.objectstore.FailedObjectStoreOperationsCounter"
+          + ".incrementAndCheckThreshold(..))")
+  public void afterThrowingIncrementAndCheckThreshold() {
+    logger.error(NUMBER_OF_FAILED_OBJECT_STORE_OPERATIONS_EXCEEDED_THRESHOLD,
+        config.getObjectStore().getMaxNumberOfFailedOperations());
+  }
+
   @Before("execution(* app.coronawarn.server.services.distribution.Application.destroy())")
   public void beforeLog4j2Shutdown() {
     logger.info(SHUTTING_DOWN_LOG4J2_MESSAGE);
+  }
+
+  @Before("execution(* app.coronawarn.server.services.distribution.objectstore.ObjectStoreAccess.putObject(..))"
+      + "&& args(localFile)")
+  public void beforeObjectStorePutObject(LocalFile localFile) {
+    logger.info(UPLOADING_MESSAGE, localFile.getS3Key());
   }
 }

@@ -32,7 +32,6 @@ public class FailedObjectStoreOperationsCounter {
    */
   public void incrementAndCheckThreshold(ObjectStoreOperationFailedException cause) {
     if (failedOperationsCounter.incrementAndGet() > maxNumberOfFailedOperations) {
-      logger.error("Number of failed object store operations exceeded threshold of {}.", maxNumberOfFailedOperations);
       throw cause;
     }
   }

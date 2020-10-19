@@ -2,6 +2,8 @@
 
 package app.coronawarn.server.services.distribution.objectstore;
 
+import static app.coronawarn.server.services.distribution.logging.LogMessages.DELETING_ENTRIES_WITH_PREFIX;
+
 import app.coronawarn.server.services.distribution.config.DistributionServiceConfig;
 import app.coronawarn.server.services.distribution.objectstore.client.ObjectStoreClient;
 import app.coronawarn.server.services.distribution.objectstore.client.ObjectStoreClient.HeaderKey;
@@ -82,8 +84,6 @@ public class ObjectStoreAccess {
   public void putObject(LocalFile localFile, int maxAge) {
     String s3Key = localFile.getS3Key();
     Map<HeaderKey, String> headers = createHeaders(maxAge, localFile);
-
-    logger.info("... uploading {}", s3Key);
     this.client.putObject(bucket, s3Key, localFile.getFile(), headers);
   }
 
@@ -98,7 +98,7 @@ public class ObjectStoreAccess {
         .map(S3Object::getObjectName)
         .collect(Collectors.toList());
 
-    logger.info("Deleting {} entries with prefix {}", toDelete.size(), prefix);
+    logger.info(DELETING_ENTRIES_WITH_PREFIX, toDelete.size(), prefix);
     this.client.removeObjects(bucket, toDelete);
   }
 
