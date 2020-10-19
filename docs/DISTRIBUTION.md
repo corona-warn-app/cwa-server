@@ -1,5 +1,62 @@
 # CWA-Server Distribution Service
 
+The distribution service's objective is to publish all CWA-related files to the object store, from which
+the clients will fetch their data. There are three types of files.
+
+## Key Export
+
+Key Export files are files, which hold published diagnosis keys from users that have tested positive for SARS-CoV-2.
+These files are based on the specification of Google/Apple and are generated in regular intervals.
+Each interval generates a `.zip` file for each applicable country where keys are known. Each `.zip file` contains two files:
+
+1. export.bin: Contains the list of diagnosis keys.
+2. export.sig: Contains signature information needed for validating the export.bin file.
+The file structure definition can be found [here](https://github.com/google/exposure-notifications-server/blob/master/internal/pb/export/export.proto).
+
+The distribution service is triggered by a CRON scheduler, currently set to 1 hour. However, this
+will change, since the Exposure Notification APIs have a rate-limiting in place (Apple: 15 files/day, Google 20 API calls/day).
+
+In case there is an insufficient number of diagnosis keys for the target interval available, the
+creation of the file will be skipped in order to prevent attackers from being potentially able to
+de-obfuscate individuals.
+
+Another alternative is to put fake diagnosis keys into the payload, which would serve the same purpose.
+In that case, it needs to be guaranteed, that those fake diagnosis keys are indistinguishable from real ones.
+
+## Configuration
+
+Configuration files are needed for two use cases:
+
+1. Exposure Configuration: In order to calculate a risk score for each exposure incident, the mobile
+API requires a list of the following parameters, requiring weights and levels: duration, days, attenuation and transmission.
+The function and impact of those parameters is described on the [Apple Exposure Configuration Page](https://developer.apple.com/documentation/exposurenotification/enexposureconfiguration) and in the chapter [*Risk score calculation*](https://github.com/corona-warn-app/cwa-documentation/blob/master/solution_architecture.md#risk-score-calculation) of the solution architecture document.
+2. Mobile App Configuration: Provides configuration values needed for the CWA mobile app, which are
+not part of the exposure notification framework. These values are required for controlling the
+application behavior.
+
+## Discovery
+
+Files on CWA may be discovered with the help of index files. There is one central index file,
+containing all available key export files on the server, separated by new-line.
+The index will be regenerated whenever new export files are distributed to the object store.
+
+## Data Retention
+
+The retention period is set to 14 days. Therefore, all keys whose _submission date_ is older than 14 days are removed from the system. This includes the database persistence layer, as well as files stored on the object store.
+The retention mechanism is enforced automatically by the Distribution Service upon each distribution run (multiple runs per day). The retention trigger by distribution will also be reflected within the keys pending upload to the
+federation gateway. This is especially important in scenarios where the upload service may not of run for some time or there are some failures to ensure invalid keys are not accidentally propagated.
+No manual trigger or action is required.
+
+Data is deleted by normal means. For PostgreSQL, the identified rows will be deleted by normal __DELETE__ calls to the database, and
+cleaned up when auto vacuuming is executed.
+
+When data deletion is executed on the object store, the object store is instructed to delete all
+files with the following prefix:
+
+`version/v1/diagnosis-keys/country/<country_code>/<date>`
+
+In which `<date>` stands for the ISO formatted date (e.g. `2012-06-05`), and is before the retention cutoff date (today - 14 days).
+
 ## Spring Profiles
 
 Spring profiles are used to apply distribution service configuration based on the running environment, determined by the active profile.
@@ -65,7 +122,7 @@ hash differs, or the file is not available on the S3 compatible storage the file
 This header is needed, since it is not possible to create byte-identical archives when using ECDSA due to its
 non-deterministic nature.
 
-### Threading
+## Threading
 
 The upload operations are being run in multiple threads in order to increase performance. The number of threads is
 defined in the application configuration. Each upload operation is passed to Spring Boot's `ThreadPoolTaskExecutor`,
@@ -73,7 +130,7 @@ which then distributes them across the available threads. Once all tasks are sub
 threads have terminated before shutting down the thread pool. If errors are thrown, they are handled as explained in the
 following section.
 
-### Error Handling
+## Error Handling
 
 In order to increase resilience of the distribution service two error handling measures were introduced.
 
@@ -90,7 +147,7 @@ The error handling is designed to handle intermediate errors, like short connect
 fail it is safe to assume, that a bigger problem is occurring and that subsequent operations will also fail. In this
 case the program is terminated to prevent unnecessary load.
 
-### Retention
+## Retention
 
 The same 14 days retention period (like the database) is also enforced on the S3 compatible storage. Each distribution
 run will execute the retention policy.
