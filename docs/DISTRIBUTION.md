@@ -170,10 +170,12 @@ date and hour directory also contain an index file each, listing all the subdire
 concept, but writing this structure to the local disk is not supported. Therefore, this country file will be assembled as
 `version/v1/diagnosis-keys/country/index`. The `/index` part will then be removed upon S3 upload.
 
-The `origin_country` (ISO-3166 country code) parameter defines which country folder is being created.
-The origin country folder contains only the distributable keys for the origin country. Furthermore,
-based on the parameter`eu-package-name` an additional folder will be created which provides all keys from the supported
-countries in a single package.
+The `origin_country` (ISO-3166 country code) parameter refers to the country in which the CWA clients and backend operate.
+It is used to create a folder on the CDN distribution paths, where so called "national key packages" are distributed.
+In essence, these packages contain keys submitted by CWA clients as well as keys from visitors of the country, that
+have been downloaded from the Federation Gateway Service.
+Furthermore,based on the parameter`eu-package-name` an additional folder will be created which provides all keys from
+the supported countries in a single package.
 
 For each assembly run the diagnosis keys for the last 14 days are queried. Based on the result, hour and their parent
 directories are created and the keys are added to their respective archives. To which archive the key should be added is
