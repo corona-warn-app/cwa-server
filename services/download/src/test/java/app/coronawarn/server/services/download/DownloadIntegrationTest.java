@@ -1,5 +1,3 @@
-
-
 package app.coronawarn.server.services.download;
 
 import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
@@ -42,10 +40,11 @@ import org.springframework.test.context.ActiveProfiles;
  * accordingly.
  * <p>
  * The WireMockServer will additionally return a series of three batches:
- * <li>Batch1 is the first batch of the corresponding date. The first and fourth diagnosis keys can be processed
- * successfully.
- * The second diagnosis key is rejected due to its unsupported ReportType "Self Reported". The third diagnosis key is
- * rejected due to its invalid RollingPeriod.</li>
+ * <li>Batch1 is the first batch of the corresponding date. The first diagnosis key can be processed
+ * successfully. The second diagnosis key is rejected due to its unsupported ReportType "Self Reported". The third
+ * diagnosis key is rejected due to its invalid RollingPeriod. The fourth diagnosis key can be processed successfully,
+ * but its ReportType is CONFIRMED_CLINICAL_DIAGNOSIS which should be changed to CONFIRMED_TEST during the
+ * download.</li>
  * <li>Batch2 is returned by an explicit call to its batch tag and can be processed successfully as well.</li>
  * <li>Batch3 fails with a 404 Not Found.</li>
  * <p>
@@ -104,6 +103,7 @@ class DownloadIntegrationTest {
             FederationBatchTestHelper.createBuilderForValidFederationDiagnosisKey()
                 .setKeyData(ByteString.copyFromUtf8(BATCH1_KEY4_DATA))
                 .setTransmissionRiskLevel(Integer.MAX_VALUE)
+                .setReportType(ReportType.CONFIRMED_CLINICAL_DIAGNOSIS)
                 .build(),
             FederationBatchTestHelper
                 .createBuilderForValidFederationDiagnosisKey()
