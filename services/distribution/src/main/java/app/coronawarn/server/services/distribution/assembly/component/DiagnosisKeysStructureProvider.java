@@ -51,7 +51,6 @@ public class DiagnosisKeysStructureProvider {
   public Directory<WritableOnDisk> getDiagnosisKeys() {
     logger.debug("Querying diagnosis keys from the database...");
     Collection<DiagnosisKey> diagnosisKeys = diagnosisKeyService.getDiagnosisKeys();
-
     diagnosisKeyBundler.setDiagnosisKeys(resetDaysSinceOnsetOfSymptoms(diagnosisKeys), TimeUtils.getCurrentUtcHour());
     return new DiagnosisKeysDirectory(diagnosisKeyBundler, cryptoProvider, distributionServiceConfig);
   }
@@ -91,6 +90,7 @@ public class DiagnosisKeysStructureProvider {
         .withVisitedCountries(new HashSet<>(diagnosisKey.getVisitedCountries()))
         .withConsentToFederation(diagnosisKey.isConsentToFederation())
         .withDaysSinceOnsetOfSymptoms(0)
+        .withSubmissionTimestamp(diagnosisKey.getSubmissionTimestamp())
         .build();
   }
 }
