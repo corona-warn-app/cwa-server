@@ -218,7 +218,7 @@ The algorithm used for signing the archives as well as other relevant informatio
 
 The [`DiagnosisKeyBundler`](/services/distribution/src/main/java/app/coronawarn/server/services/distribution/assembly/diagnosiskeys/DiagnosisKeyBundler.java)
 is responsible for the core logic of the distribution service, e.g. how the diagnosis keys are grouped into date and
-hour filders on the CDN.
+hour folders on the CDN.
 
 In the preparation step, the distribution job queries all diagnosis keys that are available in the database and
 caches them into the `DiagnosisKeyBundler`. The purpose of this class is to arrange keys based on their earliest time
