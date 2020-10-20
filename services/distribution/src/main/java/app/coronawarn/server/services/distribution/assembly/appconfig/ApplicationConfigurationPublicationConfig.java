@@ -25,8 +25,8 @@ import org.springframework.context.annotation.Configuration;
  *   <li>Min/Max application version configuration</li>
  * </ul>
  *
- * <p>The application config is fetched from the master-config folder. Furthermore it's extended with the list of supported countries and
- * the min/max application versions for android/ios. </p>
+ * <p>The application config is fetched from the master-config folder. Furthermore it's extended with the
+ * list of supported countries and the min/max application versions for android/ios. </p>
  */
 @Configuration
 public class ApplicationConfigurationPublicationConfig {
