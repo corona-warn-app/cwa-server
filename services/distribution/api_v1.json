@@ -88,7 +88,7 @@
         },
         "/version/{version}/diagnosis-keys/country": {
             "get": {
-                "summary": "Get the country and the common package for which diagnosis keys are available.",
+                "summary": "Get the origin country and the common package for which diagnosis keys are available. The common package contains all diagnosis keys from the origin country as well as the keys from the European Federation Gateway Service (EFGS).",
                 "tags": [
                     "Diagnosis keys"
                 ],
@@ -347,8 +347,8 @@
         },
         "/version/{version}/configuration/country/{country}/app_config": {
             "get": {
-                "summary": "Get application configuration for a country.",
-                "description": "Gives application configuration for a specific country, which includes:\n- Minimum risk score\n- Risk score classification\n- Risk score parameters\n- Attenuation duration\n- Application version configuration",
+                "summary": "Get application configuration for the origin country.",
+                "description": "Gives application configuration for a specific country, which includes:\n- Minimum risk score\n- Risk score classification\n- Risk score parameters\n- Attenuation duration\n- Application version configuration\n- Supported countries",
                 "tags": [
                     "Application configuration"
                 ],
@@ -374,7 +374,7 @@
                 ],
                 "responses": {
                     "200": {
-                        "description": "Application configuration for a country.",
+                        "description": "Application configuration for a the origin country.",
                         "content": {
                             "application/zip": {
                                 "schema": {
