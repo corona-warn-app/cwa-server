@@ -1,6 +1,7 @@
 
 package app.coronawarn.server.common.persistence.service;
 
+import static app.coronawarn.server.common.persistence.service.common.PersistenceLogMessages.DELETING_BATCH_INFOS_FOR_DATE;
 import static app.coronawarn.server.common.persistence.service.common.PersistenceLogMessages.DELETING_BATCH_INFOS_WITH_DATE_OLDER;
 import static app.coronawarn.server.common.persistence.service.common.PersistenceLogMessages.MARKET_BATCH_WITH_STATUS;
 
@@ -86,8 +87,7 @@ public class FederationBatchInfoService {
   @Transactional
   public void deleteForDate(LocalDate date) {
     int numberOfDeletions = federationBatchInfoRepository.countForDate(date);
-    logger.info("Deleting {} batch info(s) for date {}.",
-        numberOfDeletions, date);
+    logger.info(DELETING_BATCH_INFOS_FOR_DATE, numberOfDeletions, date);
     federationBatchInfoRepository.deleteForDate(date);
   }
 }
