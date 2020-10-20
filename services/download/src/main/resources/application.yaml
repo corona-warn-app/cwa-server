@@ -14,8 +14,9 @@ services:
     # the keys for today. If it is set to 1, the keys from yesterday will be downloaded.
     # The value must be between 0 and 14.
     efgs-offset-days: ${EFGS_OFFSET_DAYS:1}
-    # The offset in days for which the keys from the federation gateway shall be downloaded from,
-    # ignoring if a batch of this day has already been downloaded.
+    # This is the offset in past days for which keys should be downloaded again, regardless if a
+    # previous download had occurred. I.e. Value '3' means re-download all batches/keys from 3 days ago.
+    # Note that the re-download happens only if this value matches the efgs-offset-days.
     efgs-enforce-download-offset-days: ${EFGS_ENFORCE_DOWNLOAD_OFFSET_DAYS:0}
     # The number of days to retain batch information in the database.
     retention-days: 14
