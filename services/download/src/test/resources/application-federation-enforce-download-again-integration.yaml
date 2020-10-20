@@ -1,0 +1,10 @@
+---
+spring:
+  flyway:
+    locations: classpath:/db/migration,classpath:/db/testdata-enforce-download-again
+
+services:
+  download:
+    efgs-offset-days: 0
+    efgs-enforce-download-offset-days: 0
+
