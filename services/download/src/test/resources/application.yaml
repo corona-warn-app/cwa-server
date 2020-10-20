@@ -24,7 +24,7 @@ services:
     efgs-offset-days: 1
     retention-days: 14
     validation:
-      allowed-report-types: CONFIRMED_TEST
+      allowed-report-types: CONFIRMED_TEST,CONFIRMED_CLINICAL_DIAGNOSIS
 
 federation-gateway:
   base-url: http://localhost:1234
