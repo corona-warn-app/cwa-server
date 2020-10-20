@@ -33,6 +33,7 @@ import app.coronawarn.server.services.download.validation.ValidFederationKeyFilt
 import com.google.protobuf.ByteString;
 import feign.FeignException;
 import java.time.LocalDate;
+import java.time.ZoneOffset;
 import java.util.List;
 import java.util.Optional;
 import org.junit.jupiter.api.AfterEach;
@@ -108,6 +109,16 @@ class FederationBatchProcessorTest {
       batchProcessor.saveFirstBatchInfoForDate(date);
 
       Mockito.verify(batchInfoService, never()).save(any());
+    }
+
+    @Test
+    void testBatchInfoForTodayIsDeleted() {
+      LocalDate date = LocalDate.now(ZoneOffset.UTC);
+      when(federationGatewayDownloadService.downloadBatch(date)).thenReturn(null);
+
+      batchProcessor.saveFirstBatchInfoForDate(date);
+
+      Mockito.verify(batchInfoService, times(1)).deleteForDate(date);
     }
   }
 
