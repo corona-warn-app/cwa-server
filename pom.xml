@@ -169,6 +169,11 @@
         <version>${guava.version}</version>
         <scope>runtime</scope>
       </dependency>
+      <dependency>
+        <groupId>org.apache.httpcomponents</groupId>
+        <artifactId>httpclient</artifactId>
+        <version>4.5.13</version>
+      </dependency>
       <!-- test scope only -->
       <dependency>
         <groupId>com.github.tomakehurst</groupId>
@@ -186,6 +191,13 @@
         <groupId>com.google.protobuf</groupId>
         <artifactId>protobuf-java-util</artifactId>
         <version>${protobuf.version}</version>
+        <scope>test</scope>
+      </dependency>
+     <!-- https://nvd.nist.gov/vuln/detail/CVE-2020-15250-->
+      <dependency>
+        <groupId>junit</groupId>
+        <artifactId>junit</artifactId>
+        <version>4.13.1</version>
         <scope>test</scope>
       </dependency>
     </dependencies>
