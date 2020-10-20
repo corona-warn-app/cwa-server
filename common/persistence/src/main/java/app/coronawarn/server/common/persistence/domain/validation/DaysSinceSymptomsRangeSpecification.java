@@ -19,13 +19,16 @@ public enum DaysSinceSymptomsRangeSpecification {
    * Describes a scenario where the date when symptoms appeared was known on submission. "Days since
    * onset of Symptoms"
    */
-  SymptomaticPreciseDate(-14, 21, (dsos) -> 0),
+  SymptomaticWithPreciseDate(-14, 21, (dsos) -> 0),
 
   /**
    * Describes a scenario where an aproximate range of days when symptoms appeared was known on
    * submission. "Days since last day of interval"
    */
-  SymptomaticWithDateRange(22, 1950, (dsos) -> Math.round(dsos / 100) * 100),
+  SymptomaticWithDateRange(22, 1950, (dsos) -> {
+    int intervalDuration = (int) Math.round((double)dsos / 100d);
+    return intervalDuration * 100;
+  }),
 
   /**
    * Describes a scenario where a user had symptoms but not sure about the dates/ranges. "Days since
