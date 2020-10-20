@@ -1,5 +1,3 @@
-
-
 package app.coronawarn.server.services.download;
 
 import static app.coronawarn.server.common.persistence.domain.FederationBatchStatus.ERROR;
@@ -15,10 +13,13 @@ import app.coronawarn.server.common.persistence.domain.FederationBatchStatus;
 import app.coronawarn.server.common.persistence.service.DiagnosisKeyService;
 import app.coronawarn.server.common.persistence.service.FederationBatchInfoService;
 import app.coronawarn.server.common.protocols.external.exposurenotification.DiagnosisKeyBatch;
+import app.coronawarn.server.common.protocols.external.exposurenotification.ReportType;
 import app.coronawarn.server.services.download.config.DownloadServiceConfig;
 import app.coronawarn.server.services.download.normalization.FederationKeyNormalizer;
 import app.coronawarn.server.services.download.validation.ValidFederationKeyFilter;
 import java.time.LocalDate;
+import java.time.Period;
+import java.time.ZoneOffset;
 import java.util.Deque;
 import java.util.LinkedList;
 import java.util.List;
@@ -69,12 +70,31 @@ public class FederationBatchProcessor {
    * @param date The date for which the first batch info is stored.
    */
   public void saveFirstBatchInfoForDate(LocalDate date) {
+    checkIfDownloadShouldBeForced(date);
     try {
       logger.info("Triggering download of first batch for date {}.", date);
       BatchDownloadResponse response = federationGatewayDownloadService.downloadBatch(date);
       batchInfoService.save(new FederationBatchInfo(response.getBatchTag(), date));
     } catch (Exception e) {
       logger.error("Triggering download of first batch for date {} failed.", date, e);
+    }
+  }
+
+  /**
+   * The Federation Batch Info stores information about which batches have already been processed to not download them
+   * again. The batches for the current day might change constantly when national backends upload keys, hence there is
+   * the need to download the batches for today again. Hence, the entries in federation batch info with the current day
+   * need to be removed. There is a parameter 'efgs-repeat-download-offset-days' with default 0 for
+   * that.
+   *
+   * @param date The date the download was triggered for
+   */
+  public void checkIfDownloadShouldBeForced(LocalDate date) {
+    LocalDate downloadAgainDate = LocalDate.now(ZoneOffset.UTC)
+        .minus(Period.ofDays(config.getEfgsEnforceDownloadOffsetDays()));
+    if (downloadAgainDate.equals(date)) {
+      logger.info("Preparing database to enforce download of batches for day {} again.", date);
+      batchInfoService.deleteForDate(downloadAgainDate);
     }
   }
 
@@ -158,6 +178,7 @@ public class FederationBatchProcessor {
       app.coronawarn.server.common.protocols.external.exposurenotification.DiagnosisKey diagnosisKey) {
     try {
       return Optional.of(DiagnosisKey.builder().fromFederationDiagnosisKey(diagnosisKey)
+          .withReportType(ReportType.CONFIRMED_TEST)
           .withFieldNormalization(new FederationKeyNormalizer(config))
           .build());
     } catch (Exception ex) {

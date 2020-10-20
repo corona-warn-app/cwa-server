@@ -42,4 +42,11 @@ public interface FederationBatchInfoRepository extends PagingAndSortingRepositor
   @Modifying
   @Query("DELETE FROM federation_batch_info WHERE date<:threshold")
   void deleteOlderThan(@Param("threshold") LocalDate date);
+
+  @Query("SELECT COUNT(*) FROM federation_batch_info WHERE date=:date")
+  int countForDate(@Param("date") LocalDate date);
+
+  @Modifying
+  @Query("DELETE FROM federation_batch_info WHERE date=:date")
+  void deleteForDate(@Param("date") LocalDate date);
 }

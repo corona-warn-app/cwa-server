@@ -89,6 +89,7 @@ public class DiagnosisKeysStructureProvider {
         .withVisitedCountries(new HashSet<>(diagnosisKey.getVisitedCountries()))
         .withConsentToFederation(diagnosisKey.isConsentToFederation())
         .withDaysSinceOnsetOfSymptoms(0)
+        .withSubmissionTimestamp(diagnosisKey.getSubmissionTimestamp())
         .build();
   }
 }
