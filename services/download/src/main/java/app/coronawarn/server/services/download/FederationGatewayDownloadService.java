@@ -63,7 +63,7 @@ public class FederationGatewayDownloadService {
   public BatchDownloadResponse downloadBatch(String batchTag, LocalDate date) {
     String dateString = date.format(ISO_LOCAL_DATE);
     try {
-      logger.info("Downloading batch for date {} and batchTag {}.", batchTag, dateString);
+      logger.info("Downloading batch for date {} and batchTag {}.", dateString, batchTag);
       ResponseEntity<DiagnosisKeyBatch> response = federationGatewayClient
           .getDiagnosisKeys(batchTag, dateString);
       return parseResponseEntity(response);
