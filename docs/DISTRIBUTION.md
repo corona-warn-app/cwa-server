@@ -208,7 +208,8 @@ The signing process takes the `export.bin` archive and creates a signature of th
 Please see`getSignatureFile` method located in [`SigningDecoratorOnDisk`](/services/distribution/src/main/java/app/coronawarn/server/services/distribution/assembly/structure/archive/decorator/signing/SigningDecoratorOnDisk.java).
 Because the `export.bin` archive contains different information (i.e keys, app configuration), there are also different
 implementations for signing each type of data structure:
-- [`AppConfigurationSigningDecorator`](/services/distribution/src/main/java/app/coronawarn/server/services/distribution/assembly/appconfig/structure/archive/decorator/signing/AppConfigurationSigningDecorator.java)- the specific code to determine how an application configuration file is supposed to be signed.
+
+- [`AppConfigurationSigningDecorator`](/services/distribution/src/main/java/app/coronawarn/server/services/distribution/assembly/appconfig/structure/archive/decorator/signing/AppConfigurationSigningDecorator.java) - the specific code to determine how an application configuration file is supposed to be signed.
 - [`DiagnosisKeySigningDecorator`](/services/distribution/src/main/java/app/coronawarn/server/services/distribution/assembly/diagnosiskeys/structure/archive/decorator/signing/DiagnosisKeySigningDecorator.java) - used to sign Temporary Exposure Key files
 
 The algorithm used for signing the archives as well as other relevant information is defined in the [`application.yaml`](/services/distribution/src/main/resources/application.yaml).
@@ -228,6 +229,7 @@ from the country specified by the parameter`origin-country`, which is defined in
 Furthermore, with the parameter `apply-policies-for-all-countries` it is possible to apply the policies to all keys.
 
 Policies are as follows:
+
 - As described in the GAEN framework (more details [here](https://developer.apple.com/documentation/exposurenotification/setting_up_a_key_server)),
 diagnosis keys must not be distributed before two hours after the end of the key's expeiration window.
 - The shifting policy. Which ensures that each distribution/export file published to the CDN. contains at least
