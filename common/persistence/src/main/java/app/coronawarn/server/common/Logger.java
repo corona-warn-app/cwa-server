@@ -12,6 +12,18 @@ public class Logger {
   }
 
   /**
+   * Log a message at DEBUG level according to the specified format and arguments.
+   *
+   * @param logMessage the messages to log {@link LogMessages}
+   * @param args       a list of arguments
+   */
+  public void debug(LogMessages logMessage, Object... args) {
+    if (delegate.isDebugEnabled()) {
+      delegate.debug(logMessage.toString(), args);
+    }
+  }
+
+  /**
    * Log a message at the INFO level according to the specified format and argument.
    * <p/>
    * <p>
@@ -22,7 +34,9 @@ public class Logger {
    * @param arg        the argument
    */
   public void info(LogMessages logMessage, Object arg) {
-    delegate.info(logMessage.toString(), arg);
+    if (delegate.isInfoEnabled()) {
+      delegate.info(logMessage.toString(), arg);
+    }
   }
 
   /**
@@ -37,7 +51,9 @@ public class Logger {
    * @param arg2       the second argument
    */
   public void info(LogMessages logMessage, Object arg1, Object arg2) {
-    delegate.info(logMessage.toString(), arg1, arg2);
+    if (delegate.isInfoEnabled()) {
+      delegate.info(logMessage.toString(), arg1, arg2);
+    }
   }
 
   /**
@@ -54,7 +70,9 @@ public class Logger {
    * @param arguments  a list of 3 or more arguments
    */
   public void info(LogMessages logMessage, Object... arguments) {
-    delegate.info(logMessage.toString(), arguments);
+    if (delegate.isInfoEnabled()) {
+      delegate.info(logMessage.toString(), arguments);
+    }
   }
 
   /**
@@ -68,7 +86,9 @@ public class Logger {
    * @param arg        the argument
    */
   public void warn(LogMessages logMessage, Object arg) {
-    delegate.warn(logMessage.toString(), arg);
+    if (delegate.isWarnEnabled()) {
+      delegate.warn(logMessage.toString(), arg);
+    }
   }
 
   /**
@@ -83,7 +103,9 @@ public class Logger {
    * @param arg2       the second argument
    */
   public void warn(LogMessages logMessage, Object arg1, Object arg2) {
-    delegate.warn(logMessage.toString(), arg1, arg2);
+    if (delegate.isWarnEnabled()) {
+      delegate.warn(logMessage.toString(), arg1, arg2);
+    }
   }
 
   /**
@@ -100,7 +122,9 @@ public class Logger {
    * @param arguments  a list of 3 or more arguments
    */
   public void warn(LogMessages logMessage, Object... arguments) {
-    delegate.warn(logMessage.toString(), arguments);
+    if (delegate.isWarnEnabled()) {
+      delegate.warn(logMessage.toString(), arguments);
+    }
   }
 
   /**
@@ -114,7 +138,9 @@ public class Logger {
    * @param arg        the argument
    */
   public void error(LogMessages logMessage, Object arg) {
-    delegate.error(logMessage.toString(), arg);
+    if (delegate.isErrorEnabled()) {
+      delegate.error(logMessage.toString(), arg);
+    }
   }
 
   /**
@@ -129,7 +155,9 @@ public class Logger {
    * @param arg2       the second argument
    */
   public void error(LogMessages logMessage, Object arg1, Object arg2) {
-    delegate.error(logMessage.toString(), arg1, arg2);
+    if (delegate.isErrorEnabled()) {
+      delegate.error(logMessage.toString(), arg1, arg2);
+    }
   }
 
   /**
@@ -146,7 +174,9 @@ public class Logger {
    * @param arguments  a list of 3 or more arguments
    */
   public void error(LogMessages logMessage, Object... arguments) {
-    delegate.error(logMessage.toString(), arguments);
+    if (delegate.isErrorEnabled()) {
+      delegate.error(logMessage.toString(), arguments);
+    }
   }
 
   /**
@@ -156,16 +186,8 @@ public class Logger {
    * @param t          the exception (throwable) to log
    */
   public void error(LogMessages logMessage, Throwable t) {
-    delegate.error(logMessage.toString(), t);
-  }
-
-  /**
-   * Log a message at DEBUG level according to the specified format and arguments.
-   *
-   * @param logMessage the messages to log {@link LogMessages}
-   * @param args       a list of arguments
-   */
-  public void debug(LogMessages logMessage, Object... args) {
-    delegate.debug(logMessage.toString(), args);
+    if (delegate.isErrorEnabled()) {
+      delegate.error(logMessage.toString(), t);
+    }
   }
 }
