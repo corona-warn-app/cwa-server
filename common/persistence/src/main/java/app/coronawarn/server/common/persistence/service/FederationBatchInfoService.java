@@ -44,7 +44,7 @@ public class FederationBatchInfoService {
     String statusValue = status.name();
     federationBatchInfoRepository
         .saveDoUpdateStatusOnConflict(federationBatchInfo.getBatchTag(), federationBatchInfo.getDate(), statusValue);
-    logger.info("Marked batch with status {}.", statusValue);
+    logger.info("Marked batch {} with status {}.", federationBatchInfo.getBatchTag(), statusValue);
   }
 
   /**
