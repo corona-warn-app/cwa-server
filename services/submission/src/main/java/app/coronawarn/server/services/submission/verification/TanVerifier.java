@@ -14,7 +14,6 @@ import org.springframework.web.client.RestClientException;
 @Service
 public class TanVerifier {
 
-  private static final Logger logger = LoggerFactory.getLogger(TanVerifier.class);
   private final VerificationServerClient verificationServerClient;
 
   /**
