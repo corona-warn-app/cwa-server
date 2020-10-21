@@ -49,8 +49,12 @@ public class ValidFederationKeyFilter {
   }
 
   private boolean hasStartIntervalNumberAtMidnight(DiagnosisKey federationKey) {
-    return federationKey.getRollingStartIntervalNumber()
+    boolean hasStartIntervalNumberAtMidnight = federationKey.getRollingStartIntervalNumber()
         % app.coronawarn.server.common.persistence.domain.DiagnosisKey.MAX_ROLLING_PERIOD
         == 0;
+    if (!hasStartIntervalNumberAtMidnight) {
+      logger.info("Filter skipped Federation DiagnosisKey with start interval number {} not being at midnight.");
+    }
+    return hasStartIntervalNumberAtMidnight;
   }
 }
