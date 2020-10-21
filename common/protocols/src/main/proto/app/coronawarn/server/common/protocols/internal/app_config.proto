@@ -1,6 +1,6 @@
+// This file is auto-generated, DO NOT make any changes here
 syntax = "proto3";
 package app.coronawarn.server.common.protocols.internal;
-option java_package = "app.coronawarn.server.common.protocols.internal";
 option java_multiple_files = true;
 import "app/coronawarn/server/common/protocols/internal/risk_score_classification.proto";
 import "app/coronawarn/server/common/protocols/internal/risk_score_parameters.proto";
@@ -12,15 +12,15 @@ message ApplicationConfiguration {
 
   int32 minRiskScore = 1;
 
-  app.coronawarn.server.common.protocols.internal.RiskScoreClassification riskScoreClasses = 2;
+  RiskScoreClassification riskScoreClasses = 2;
 
-  app.coronawarn.server.common.protocols.internal.RiskScoreParameters exposureConfig = 3;
+  RiskScoreParameters exposureConfig = 3;
 
-  app.coronawarn.server.common.protocols.internal.AttenuationDuration attenuationDuration = 4;
+  AttenuationDuration attenuationDuration = 4;
 
-  app.coronawarn.server.common.protocols.internal.ApplicationVersionConfiguration appVersion = 5;
+  ApplicationVersionConfiguration appVersion = 5;
 
-  app.coronawarn.server.common.protocols.internal.AppFeatures appFeatures = 6;
+  AppFeatures appFeatures = 6;
 
   repeated string supportedCountries = 7;
 }
