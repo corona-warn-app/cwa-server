@@ -93,8 +93,8 @@ public class Logger {
    * <p>
    * This form avoids superfluous string concatenation when the logger is disabled for the INFO level. However, this
    * variant incurs the hidden (and relatively small) cost of creating an <code>Object[]</code> before invoking the
-   * method, even if this logger is disabled for INFO. The variants taking {@link #info(LogMessages, Object) one} and {@link
-   * #info(LogMessages, Object, Object) two} arguments exist solely in order to avoid this hidden cost.
+   * method, even if this logger is disabled for INFO. The variants taking {@link #info(LogMessages, Object) one} and
+   * {@link #info(LogMessages, Object, Object) two} arguments exist solely in order to avoid this hidden cost.
    * </p>
    *
    * @param logMessage the {@link LogMessages} to log
@@ -145,8 +145,8 @@ public class Logger {
    * <p>
    * This form avoids superfluous string concatenation when the logger is disabled for the WARN level. However, this
    * variant incurs the hidden (and relatively small) cost of creating an <code>Object[]</code> before invoking the
-   * method, even if this logger is disabled for WARN. The variants taking {@link #warn(LogMessages, Object) one} and {@link
-   * #warn(LogMessages, Object, Object) two} arguments exist solely in order to avoid this hidden cost.
+   * method, even if this logger is disabled for WARN. The variants taking {@link #warn(LogMessages, Object) one} and
+   * {@link #warn(LogMessages, Object, Object) two} arguments exist solely in order to avoid this hidden cost.
    * </p>
    *
    * @param logMessage the {@link LogMessages} to log
