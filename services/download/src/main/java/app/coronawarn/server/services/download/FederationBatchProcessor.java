@@ -143,7 +143,7 @@ public class FederationBatchProcessor {
     try {
       BatchDownloadResponse response = federationGatewayDownloadService.downloadBatch(batchTag, date);
       AtomicBoolean batchContainsInvalidKeys = new AtomicBoolean(false);
-      response.getDiagnosisKeyBatch().ifPresent(batch -> {
+      response.getDiagnosisKeyBatch().ifPresentOrElse(batch -> {
         logger.info("Downloaded {} keys for date {} and batchTag {}.", batch.getKeysCount(), date, batchTag);
         List<DiagnosisKey> validDiagnosisKeys = extractValidDiagnosisKeysFromBatch(batch);
         int numOfInvalidKeys = batch.getKeysCount() - validDiagnosisKeys.size();
@@ -153,7 +153,7 @@ public class FederationBatchProcessor {
         }
         int insertedKeys = diagnosisKeyService.saveDiagnosisKeys(validDiagnosisKeys);
         logger.info("Successfully inserted {} keys for date {} and batchTag {}.", insertedKeys, date, batchTag);
-      });
+      }, () -> logger.info("Batch for date {} and batchTag {} did not contain any keys.", date, batchTag));
       batchInfoService.updateStatus(batchInfo, batchContainsInvalidKeys.get() ? PROCESSED_WITH_ERROR : PROCESSED);
       return response.getNextBatchTag();
     } catch (Exception e) {
