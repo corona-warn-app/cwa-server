@@ -22,10 +22,24 @@ class LoggerTest {
 
   List<String> messages = new ArrayList<>();
 
-  LogMessages message = new LogMessages() {
+  LogMessages msg1Arg = new LogMessages() {
     @Override
     public String toString() {
       return "This is a {}.";
+    }
+  };
+
+  LogMessages msg2Args = new LogMessages() {
+    @Override
+    public String toString() {
+      return "This is a {} with a {}.";
+    }
+  };
+
+  LogMessages msg3Args = new LogMessages() {
+    @Override
+    public String toString() {
+      return "This is a {} with a {} and a {}.";
     }
   };
 
@@ -61,10 +75,10 @@ class LoggerTest {
     @Override
     public void append(LogEvent event) {
       String loggedMsg = event.getLevel() + " " + event.getMessage().getFormattedMessage();
-      if (event.getThrown() != null){
+      if (event.getThrown() != null) {
         loggedMsg += " " + event.getThrown();
       }
-      messages.add( loggedMsg );
+      messages.add(loggedMsg);
     }
 
     @Override
@@ -110,30 +124,100 @@ class LoggerTest {
   }
 
   @Test
-  void testLoggingInfoLogsInfo() {
+  void testLoggingDebugWith1ArgLogsDebug() {
     Logger logger = LoggerFactory.getLogger(getClass());
-    logger.info(message, "test");
+    logger.debug(msg1Arg, "test");
+    assertThat(messages.get(0)).isEqualTo("DEBUG This is a test.");
+  }
+
+  @Test
+  void testLoggingDebugWith2ArgsLogsDebug() {
+    Logger logger = LoggerFactory.getLogger(getClass());
+    logger.debug(msg2Args, "test", "info");
+    assertThat(messages.get(0)).isEqualTo("DEBUG This is a test with a info.");
+  }
+
+  @Test
+  void testLoggingDebugWith3ArgsLogsDebug() {
+    Logger logger = LoggerFactory.getLogger(getClass());
+    logger.debug(msg3Args, "test", "info", "now you know");
+    assertThat(messages.get(0)).isEqualTo("DEBUG This is a test with a info and a now you know.");
+  }
+
+  @Test
+  void testLoggingInfoWith1ArgLogsInfo() {
+    Logger logger = LoggerFactory.getLogger(getClass());
+    logger.info(msg1Arg, "test");
     assertThat(messages.get(0)).isEqualTo("INFO This is a test.");
   }
 
   @Test
-  void testLoggingWarnLogsWarning() {
+  void testLoggingInfoWith2ArgsLogsInfo() {
     Logger logger = LoggerFactory.getLogger(getClass());
-    logger.warn(message, "warning");
+    logger.info(msg2Args, "test", "info");
+    assertThat(messages.get(0)).isEqualTo("INFO This is a test with a info.");
+  }
+
+  @Test
+  void testLoggingInfoWith3ArgsLogsInfo() {
+    Logger logger = LoggerFactory.getLogger(getClass());
+    logger.info(msg3Args, "test", "info", "now you know");
+    assertThat(messages.get(0)).isEqualTo("INFO This is a test with a info and a now you know.");
+  }
+
+  @Test
+  void testLoggingWarnWith1ArgLogsWarning() {
+    Logger logger = LoggerFactory.getLogger(getClass());
+    logger.warn(msg1Arg, "warning");
     assertThat(messages.get(0)).isEqualTo("WARN This is a warning.");
   }
 
   @Test
-  void testLoggingErrorLogsError() {
+  void testLoggingWarnWith2ArgLogsWarning() {
     Logger logger = LoggerFactory.getLogger(getClass());
-    logger.error(message, "failure");
+    logger.warn(msg2Args, "warning", "problem");
+    assertThat(messages.get(0)).isEqualTo("WARN This is a warning with a problem.");
+  }
+
+  @Test
+  void testLoggingWarnWith3ArgLogsWarning() {
+    Logger logger = LoggerFactory.getLogger(getClass());
+    logger.warn(msg3Args, "warning", "problem", "you should be more careful");
+    assertThat(messages.get(0)).isEqualTo("WARN This is a warning with a problem and a you should be more careful.");
+  }
+
+  @Test
+  void testLoggingErrorWith1ArgLogsError() {
+    Logger logger = LoggerFactory.getLogger(getClass());
+    logger.error(msg1Arg, "failure");
     assertThat(messages.get(0)).isEqualTo("ERROR This is a failure.");
+  }
+
+  @Test
+  void testLoggingErrorWith2ArgsLogsError() {
+    Logger logger = LoggerFactory.getLogger(getClass());
+    logger.error(msg2Args, "mistake", "failure");
+    assertThat(messages.get(0)).isEqualTo("ERROR This is a mistake with a failure.");
+  }
+
+  @Test
+  void testLoggingErrorWith3ArgsLogsError() {
+    Logger logger = LoggerFactory.getLogger(getClass());
+    logger.error(msg3Args, "mistake", "failure", "you are dumb");
+    assertThat(messages.get(0)).isEqualTo("ERROR This is a mistake with a failure and a you are dumb.");
+  }
+
+  @Test
+  void testExceptionIsLoggedWithArg() {
+    Logger logger = LoggerFactory.getLogger(getClass());
+    logger.error(msg1Arg, "failure", new IllegalStateException());
+    assertThat(messages.get(0)).isEqualTo("ERROR This is a failure. java.lang.IllegalStateException");
   }
 
   @Test
   void testExceptionIsLogged() {
     Logger logger = LoggerFactory.getLogger(getClass());
-    logger.error(message, "failure", new IllegalStateException());
-    assertThat(messages.get(0)).isEqualTo("ERROR This is a failure. java.lang.IllegalStateException");
+    logger.error(msg1Arg, new IllegalStateException());
+    assertThat(messages.get(0)).isEqualTo("ERROR This is a {}. java.lang.IllegalStateException");
   }
 }

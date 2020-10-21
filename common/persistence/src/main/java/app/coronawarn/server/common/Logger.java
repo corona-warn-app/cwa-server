@@ -12,6 +12,37 @@ public class Logger {
   }
 
   /**
+   * Log a message at the DEBUG level according to the specified format and argument.
+   * <p/>
+   * <p>This form avoids superfluous object creation when the logger
+   * is disabled for the DEBUG level. </p>
+   *
+   * @param logMessage the {@link LogMessages}
+   * @param arg    the argument
+   */
+  public void debug(LogMessages logMessage, Object arg) {
+    if (delegate.isDebugEnabled()) {
+      delegate.debug(logMessage.toString(), arg);
+    }
+  }
+
+  /**
+   * Log a message at the DEBUG level according to the specified format and arguments.
+   * <p/>
+   * <p>This form avoids superfluous object creation when the logger
+   * is disabled for the DEBUG level. </p>
+   *
+   * @param logMessage the {@link LogMessages}
+   * @param arg1   the first argument
+   * @param arg2   the second argument
+   */
+  public void debug(LogMessages logMessage, Object arg1, Object arg2) {
+    if (delegate.isDebugEnabled()) {
+      delegate.debug(logMessage.toString(), arg1, arg2);
+    }
+  }
+
+  /**
    * Log a message at DEBUG level according to the specified format and arguments.
    *
    * @param logMessage the messages to log {@link LogMessages}
@@ -62,8 +93,8 @@ public class Logger {
    * <p>
    * This form avoids superfluous string concatenation when the logger is disabled for the INFO level. However, this
    * variant incurs the hidden (and relatively small) cost of creating an <code>Object[]</code> before invoking the
-   * method, even if this logger is disabled for INFO. The variants taking {@link #info(String, Object) one} and {@link
-   * #info(String, Object, Object) two} arguments exist solely in order to avoid this hidden cost.
+   * method, even if this logger is disabled for INFO. The variants taking {@link #info(LogMessages, Object) one} and {@link
+   * #info(LogMessages, Object, Object) two} arguments exist solely in order to avoid this hidden cost.
    * </p>
    *
    * @param logMessage the {@link LogMessages} to log
@@ -114,8 +145,8 @@ public class Logger {
    * <p>
    * This form avoids superfluous string concatenation when the logger is disabled for the WARN level. However, this
    * variant incurs the hidden (and relatively small) cost of creating an <code>Object[]</code> before invoking the
-   * method, even if this logger is disabled for WARN. The variants taking {@link #warn(String, Object) one} and {@link
-   * #warn(String, Object, Object) two} arguments exist solely in order to avoid this hidden cost.
+   * method, even if this logger is disabled for WARN. The variants taking {@link #warn(LogMessages, Object) one} and {@link
+   * #warn(LogMessages, Object, Object) two} arguments exist solely in order to avoid this hidden cost.
    * </p>
    *
    * @param logMessage the {@link LogMessages} to log
@@ -166,8 +197,8 @@ public class Logger {
    * <p>
    * This form avoids superfluous string concatenation when the logger is disabled for the ERROR level. However, this
    * variant incurs the hidden (and relatively small) cost of creating an <code>Object[]</code> before invoking the
-   * method, even if this logger is disabled for ERROR. The variants taking {@link #error(String, Object) one} and
-   * {@link #error(String, Object, Object) two} arguments exist solely in order to avoid this hidden cost.
+   * method, even if this logger is disabled for ERROR. The variants taking {@link #error(LogMessages, Object) one} and
+   * {@link #error(LogMessages, Object, Object) two} arguments exist solely in order to avoid this hidden cost.
    * </p>
    *
    * @param logMessage the {@link LogMessages} to log
