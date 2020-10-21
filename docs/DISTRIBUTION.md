@@ -238,7 +238,8 @@ Furthermore, with the parameter `apply-policies-for-all-countries` it is possibl
 Policies are as follows:
 
 - As described in the GAEN framework (more details [here](https://developer.apple.com/documentation/exposurenotification/setting_up_a_key_server)),
-diagnosis keys must not be distributed before two hours after the end of the key's expeiration window.
+diagnosis keys must not be distributed before two hours after the end of the key's expiration window(calculated by
+adding the rolling period of the key to its start interval number).
 - The shifting policy. Which ensures that each distribution/export file published to the CDN. contains at least
 140 Temporary Exposure Keys (configurable by the `shifting-policy-threshold` property). Where there are less
 keys available to distribute in a specific distribution run, these keys are shifted to a succeeding export,
