@@ -16,6 +16,7 @@
   <modules>
     <module>distribution</module>
     <module>submission</module>
+    <module>callback</module>
     <module>download</module>
     <module>upload</module>
   </modules>
