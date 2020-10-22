@@ -6,11 +6,8 @@ import app.coronawarn.server.services.distribution.assembly.component.OutputDire
 import app.coronawarn.server.services.distribution.objectstore.S3Publisher;
 import java.io.IOException;
 import java.nio.file.Path;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
-import org.springframework.context.ApplicationContext;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
@@ -21,13 +18,10 @@ import org.springframework.stereotype.Component;
 @Order(3)
 public class S3Distribution implements ApplicationRunner {
 
-  private static final Logger logger = LoggerFactory.getLogger(S3Distribution.class);
-
   private final OutputDirectoryProvider outputDirectoryProvider;
   private final S3Publisher s3Publisher;
 
-  S3Distribution(OutputDirectoryProvider outputDirectoryProvider, S3Publisher s3Publisher,
-      ApplicationContext applicationContext) {
+  S3Distribution(OutputDirectoryProvider outputDirectoryProvider, S3Publisher s3Publisher) {
     this.outputDirectoryProvider = outputDirectoryProvider;
     this.s3Publisher = s3Publisher;
   }

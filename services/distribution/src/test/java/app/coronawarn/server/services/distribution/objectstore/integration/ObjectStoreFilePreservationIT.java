@@ -157,7 +157,7 @@ class ObjectStoreFilePreservationIT {
   private void triggerRetentionPolicy(LocalDate fromDate) {
     DistributionServiceConfig mockDistributionConfig = new DistributionServiceConfig();
     mockDistributionConfig.setRetentionDays(numberOfDaysSince(fromDate));
-    new RetentionPolicy(diagnosisKeyService, applicationContext, mockDistributionConfig,
+    new RetentionPolicy(diagnosisKeyService, mockDistributionConfig,
         s3RetentionPolicy).run(null);
   }
 

@@ -5,8 +5,6 @@ package app.coronawarn.server.services.distribution.objectstore;
 import app.coronawarn.server.services.distribution.config.DistributionServiceConfig;
 import app.coronawarn.server.services.distribution.objectstore.client.ObjectStoreOperationFailedException;
 import java.util.concurrent.atomic.AtomicInteger;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 /**
@@ -14,8 +12,6 @@ import org.springframework.stereotype.Component;
  */
 @Component
 public class FailedObjectStoreOperationsCounter {
-
-  private static final Logger logger = LoggerFactory.getLogger(FailedObjectStoreOperationsCounter.class);
 
   private final int maxNumberOfFailedOperations;
   private final AtomicInteger failedOperationsCounter = new AtomicInteger(0);

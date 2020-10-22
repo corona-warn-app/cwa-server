@@ -34,7 +34,7 @@ public class Assembly implements ApplicationRunner {
    * {@link ApplicationContext}.
    */
   Assembly(OutputDirectoryProvider outputDirectoryProvider,
-      CwaApiStructureProvider cwaApiStructureProvider, ApplicationContext applicationContext) {
+      CwaApiStructureProvider cwaApiStructureProvider) {
     this.outputDirectoryProvider = outputDirectoryProvider;
     this.cwaApiStructureProvider = cwaApiStructureProvider;
   }

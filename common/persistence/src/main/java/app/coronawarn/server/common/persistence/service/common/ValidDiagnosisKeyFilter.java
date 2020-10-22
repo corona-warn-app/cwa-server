@@ -8,14 +8,10 @@ import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
 import javax.validation.ConstraintViolation;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 @Component
 public class ValidDiagnosisKeyFilter {
-
-  private static final Logger logger = LoggerFactory.getLogger(ValidDiagnosisKeyFilter.class);
 
   /**
    * Rerturns a subset of diagnosis keys from the given list which have

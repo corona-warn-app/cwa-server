@@ -8,8 +8,6 @@ import app.coronawarn.server.services.distribution.assembly.structure.directory.
 import app.coronawarn.server.services.distribution.config.DistributionServiceConfig;
 import java.io.IOException;
 import org.apache.commons.io.FileUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 /**
@@ -18,7 +16,6 @@ import org.springframework.stereotype.Component;
 @Component
 public class OutputDirectoryProvider {
 
-  private static final Logger logger = LoggerFactory.getLogger(OutputDirectoryProvider.class);
   private final String outputPath;
 
   OutputDirectoryProvider(DistributionServiceConfig distributionServiceConfig) {
