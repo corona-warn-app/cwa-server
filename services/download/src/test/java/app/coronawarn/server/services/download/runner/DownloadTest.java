@@ -24,12 +24,11 @@ class DownloadTest {
   @Test
   void testRun() {
     DownloadServiceConfig serviceConfig = new DownloadServiceConfig();
-    //serviceConfig.setEfgsOffsetDays(1);
     Download download = new Download(federationBatchProcessor, serviceConfig);
 
     download.run(null);
 
-    verify(federationBatchProcessor, times(1)).saveFirstBatchInfoForDate(any(LocalDate.class));
+    verify(federationBatchProcessor, times(1)).prepareDownload();;
     verify(federationBatchProcessor, times(1)).processErrorFederationBatches();
     verify(federationBatchProcessor, times(1)).processUnprocessedFederationBatches();
   }
