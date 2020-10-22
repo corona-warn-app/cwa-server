@@ -114,9 +114,7 @@ class FederationBatchProcessorTest {
     @Test
     void testBatchInfoForTodayIsDeleted() {
       LocalDate date = LocalDate.now(ZoneOffset.UTC);
-      when(federationGatewayDownloadService.downloadBatch(date)).thenReturn(null);
-
-      batchProcessor.saveFirstBatchInfoForDate(date);
+      batchProcessor.prepareDownload();
 
       Mockito.verify(batchInfoService, times(1)).deleteForDate(date);
     }

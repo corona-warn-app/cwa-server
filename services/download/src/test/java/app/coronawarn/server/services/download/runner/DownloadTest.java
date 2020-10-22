@@ -24,7 +24,7 @@ class DownloadTest {
   @Test
   void testRun() {
     DownloadServiceConfig serviceConfig = new DownloadServiceConfig();
-    serviceConfig.setEfgsOffsetDays(1);
+    //serviceConfig.setEfgsOffsetDays(1);
     Download download = new Download(federationBatchProcessor, serviceConfig);
 
     download.run(null);

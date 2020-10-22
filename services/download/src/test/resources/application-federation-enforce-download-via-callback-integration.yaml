@@ -1,0 +1,5 @@
+---
+spring:
+  flyway:
+    locations: classpath:/db/migration,classpath:/db/testdata-download-via-callback
+
