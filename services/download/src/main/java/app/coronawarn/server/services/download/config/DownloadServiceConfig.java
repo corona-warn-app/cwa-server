@@ -21,6 +21,9 @@ public class DownloadServiceConfig {
   @Max(14)
   private Integer efgsOffsetDays;
   @Min(0)
+  @Max(14)
+  private Integer efgsEnforceDownloadOffsetDays;
+  @Min(0)
   @Max(28)
   private Integer retentionDays;
   private Validation validation;
@@ -50,6 +53,14 @@ public class DownloadServiceConfig {
 
   public void setEfgsOffsetDays(Integer efgsOffsetDays) {
     this.efgsOffsetDays = efgsOffsetDays;
+  }
+
+  public Integer getEfgsEnforceDownloadOffsetDays() {
+    return efgsEnforceDownloadOffsetDays;
+  }
+
+  public void setEfgsEnforceDownloadOffsetDays(Integer efgsEnforceDownloadOffsetDays) {
+    this.efgsEnforceDownloadOffsetDays = efgsEnforceDownloadOffsetDays;
   }
 
   public Integer getRetentionDays() {

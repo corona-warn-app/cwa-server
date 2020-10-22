@@ -173,7 +173,8 @@ public class TestDataGeneration implements ApplicationRunner {
         .withSubmissionTimestamp(submissionTimestamp)
         .withCountryCode(country)
         .withVisitedCountries(generateSetOfVisitedCountries(country))
-        .withReportType(ReportType.CONFIRMED_CLINICAL_DIAGNOSIS)
+        .withReportType(ReportType.CONFIRMED_TEST)
+        .withConsentToFederation(this.config.getDistributionTestdataConsentToFederation())
         .build();
   }
 

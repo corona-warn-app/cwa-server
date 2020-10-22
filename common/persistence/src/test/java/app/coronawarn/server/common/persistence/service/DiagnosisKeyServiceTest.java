@@ -126,7 +126,7 @@ class DiagnosisKeyServiceTest {
             .withCountryCode("DE")
             .withVisitedCountries(Set.of("DE"))
             .withSubmissionTimestamp(0L)
-            .withReportType(ReportType.CONFIRMED_CLINICAL_DIAGNOSIS)
+            .withReportType(ReportType.CONFIRMED_TEST)
             .build(),
         DiagnosisKey.builder()
             .withKeyData(keyData.getBytes())
@@ -135,7 +135,7 @@ class DiagnosisKeyServiceTest {
             .withCountryCode("DE")
             .withVisitedCountries(Set.of("DE"))
             .withSubmissionTimestamp(0L)
-            .withReportType(ReportType.CONFIRMED_CLINICAL_DIAGNOSIS)
+            .withReportType(ReportType.CONFIRMED_TEST)
             .build());
 
     int actNumberOfInsertedRows = diagnosisKeyService.saveDiagnosisKeys(keys);

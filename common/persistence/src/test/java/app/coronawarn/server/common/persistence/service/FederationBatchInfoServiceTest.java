@@ -132,4 +132,15 @@ class FederationBatchInfoServiceTest {
 
     assertThat(actualBatchInfos).isEmpty();
   }
+
+  @Test
+  void testDeleteForDay() {
+    LocalDate date = LocalDate.now(ZoneOffset.UTC);
+    FederationBatchInfo expectedBatchInfo = new FederationBatchInfo(batchTag, date);
+    federationBatchInfoService.save(expectedBatchInfo);
+
+    assertThat(federationBatchInfoService.findByStatus(FederationBatchStatus.UNPROCESSED)).hasSize(1);
+    federationBatchInfoService.deleteForDate(date);
+    assertThat(federationBatchInfoService.findByStatus(FederationBatchStatus.UNPROCESSED)).isEmpty();
+  }
 }

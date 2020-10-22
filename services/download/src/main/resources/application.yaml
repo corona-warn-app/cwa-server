@@ -14,10 +14,14 @@ services:
     # the keys for today. If it is set to 1, the keys from yesterday will be downloaded.
     # The value must be between 0 and 14.
     efgs-offset-days: ${EFGS_OFFSET_DAYS:1}
+    # This is the offset in past days for which keys should be downloaded again, regardless if a
+    # previous download had occurred. I.e. Value '3' means re-download all batches/keys from 3 days ago.
+    # Note that the re-download happens only if this value matches the efgs-offset-days.
+    efgs-enforce-download-offset-days: ${EFGS_ENFORCE_DOWNLOAD_OFFSET_DAYS:0}
     # The number of days to retain batch information in the database.
     retention-days: 14
     validation:
-      allowed-report-types: ${ALLOWED_REPORT_TYPES:CONFIRMED_TEST}
+      allowed-report-types: ${ALLOWED_REPORT_TYPES:CONFIRMED_TEST,CONFIRMED_CLINICAL_DIAGNOSIS}
 
 federation-gateway:
   base-url: ${FEDERATION_GATEWAY_BASE_URL:http://localhost:8005}

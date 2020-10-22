@@ -95,16 +95,16 @@ class TestDataGenerationTest {
 
     keyList.addAll(buildDiagnosisKeys(6,
         LocalDateTime.of(2020, 7, 15, 12, 0, 0), 10, "DE", Set.of("DE", "FR"),
-        ReportType.CONFIRMED_CLINICAL_DIAGNOSIS, 1));
+        ReportType.CONFIRMED_TEST, 1));
     keyList.addAll(buildDiagnosisKeys(6,
         LocalDateTime.of(2020, 7, 15, 12, 0, 0), 10, "FR", Set.of("DE", "FR"),
-        ReportType.CONFIRMED_CLINICAL_DIAGNOSIS, 1));
+        ReportType.CONFIRMED_TEST, 1));
     keyList.addAll(buildDiagnosisKeys(6,
         LocalDateTime.of(2020, 7, 15, 12, 0, 0), 10, "NL", Set.of("DE", "FR", "NL", "IE"),
-        ReportType.CONFIRMED_CLINICAL_DIAGNOSIS, 1));
+        ReportType.CONFIRMED_TEST, 1));
     keyList.addAll(buildDiagnosisKeys(6,
         LocalDateTime.of(2020, 7, 15, 12, 0, 0), 10, "IE", Set.of("DE", "FR", "NL", "IE"),
-        ReportType.CONFIRMED_CLINICAL_DIAGNOSIS, 1));
+        ReportType.CONFIRMED_TEST, 1));
 
     when(diagnosisKeyService.getDiagnosisKeys()).thenReturn(keyList);
 
@@ -123,13 +123,13 @@ class TestDataGenerationTest {
         LocalDateTime.of(2020, 7, 15, 11, 0, 0), 10));
     keyList.addAll(buildDiagnosisKeys(6,
         LocalDateTime.of(2020, 7, 15, 11, 0, 0), 10, "FR", Set.of("DE", "FR"),
-        ReportType.CONFIRMED_CLINICAL_DIAGNOSIS, 1));
+        ReportType.CONFIRMED_TEST, 1));
     keyList.addAll(buildDiagnosisKeys(6,
         LocalDateTime.of(2020, 7, 15, 11, 0, 0), 10, "NL", Set.of("DE", "FR", "NL", "IE"),
-        ReportType.CONFIRMED_CLINICAL_DIAGNOSIS, 1));
+        ReportType.CONFIRMED_TEST, 1));
     keyList.addAll(buildDiagnosisKeys(6,
         LocalDateTime.of(2020, 7, 15, 11, 0, 0), 10, "IE", Set.of("DE", "FR", "NL", "IE"),
-        ReportType.CONFIRMED_CLINICAL_DIAGNOSIS, 1));
+        ReportType.CONFIRMED_TEST, 1));
 
     when(diagnosisKeyService.getDiagnosisKeys()).thenReturn(keyList);
 
@@ -165,15 +165,15 @@ class TestDataGenerationTest {
     List<DiagnosisKey> keyList = new ArrayList<>();
 
     keyList.addAll(buildDiagnosisKeys(6, LocalDateTime.of(2020, 7, 15, 12, 0, 0), 10, "DE", Set.of("DE", "FR"),
-        ReportType.CONFIRMED_CLINICAL_DIAGNOSIS, 1));
+        ReportType.CONFIRMED_TEST, 1));
     keyList.addAll(buildDiagnosisKeys(6, LocalDateTime.of(2020, 7, 15, 12, 0, 0), 10, "FR", Set.of("DE", "FR"),
-        ReportType.CONFIRMED_CLINICAL_DIAGNOSIS, 1));
+        ReportType.CONFIRMED_TEST, 1));
     keyList.addAll(buildDiagnosisKeys(6,
         LocalDateTime.of(2020, 7, 15, 12, 0, 0), 10, "NL", Set.of("DE", "FR", "NL", "IE"),
-        ReportType.CONFIRMED_CLINICAL_DIAGNOSIS, 1));
+        ReportType.CONFIRMED_TEST, 1));
     keyList.addAll(buildDiagnosisKeys(6,
         LocalDateTime.of(2020, 7, 15, 12, 0, 0), 10, "IE", Set.of("DE", "FR", "NL", "IE"),
-        ReportType.CONFIRMED_CLINICAL_DIAGNOSIS, 1));
+        ReportType.CONFIRMED_TEST, 1));
 
     when(diagnosisKeyService.getDiagnosisKeys()).thenReturn(keyList);
 
@@ -189,9 +189,9 @@ class TestDataGenerationTest {
     List<DiagnosisKey> keyList = new ArrayList<>();
 
    keyList.addAll(buildDiagnosisKeys(6, LocalDateTime.of(2020, 7, 14, 12, 0, 0), 10, "DE", Set.of("DE", "FR"),
-        ReportType.CONFIRMED_CLINICAL_DIAGNOSIS, 1));
+        ReportType.CONFIRMED_TEST, 1));
     keyList.addAll(buildDiagnosisKeys(6, LocalDateTime.of(2020, 7, 14, 12, 0, 0), 10, "FR", Set.of("DE", "FR"),
-        ReportType.CONFIRMED_CLINICAL_DIAGNOSIS, 1));
+        ReportType.CONFIRMED_TEST, 1));
 
     when(diagnosisKeyService.getDiagnosisKeys()).thenReturn(keyList);
 
