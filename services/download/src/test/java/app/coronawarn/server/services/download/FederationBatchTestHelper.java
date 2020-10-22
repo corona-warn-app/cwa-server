@@ -1,5 +1,3 @@
-
-
 package app.coronawarn.server.services.download;
 
 import static org.mockito.Mockito.mock;
@@ -8,12 +6,13 @@ import static org.mockito.Mockito.when;
 import app.coronawarn.server.common.protocols.external.exposurenotification.DiagnosisKey;
 import app.coronawarn.server.common.protocols.external.exposurenotification.DiagnosisKey.Builder;
 import app.coronawarn.server.common.protocols.external.exposurenotification.DiagnosisKeyBatch;
-import app.coronawarn.server.services.download.config.DownloadServiceConfig;
 import app.coronawarn.server.common.protocols.external.exposurenotification.ReportType;
+import app.coronawarn.server.services.download.config.DownloadServiceConfig;
 import app.coronawarn.server.services.download.normalization.FederationKeyNormalizer;
 import com.google.protobuf.ByteString;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 public class FederationBatchTestHelper {
 
@@ -74,6 +73,16 @@ public class FederationBatchTestHelper {
   public static ByteString createByteStringOfLength(int length) {
     List<String> bytes = List.of("0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "A", "B", "C", "D", "E", "F");
     return ByteString.copyFromUtf8(String.valueOf(bytes.get(length % 16)).repeat(Math.max(0, length)));
+  }
+
+  public static app.coronawarn.server.common.persistence.domain.DiagnosisKey createDiagnosisKeyForSpecificOriginCountry(
+      String keyData, String originCountry, DownloadServiceConfig downloadServiceConfig) {
+    return app.coronawarn.server.common.persistence.domain.DiagnosisKey.builder()
+        .fromFederationDiagnosisKey(FederationBatchTestHelper.createFederationDiagnosisKeyWithKeyData(keyData))
+        .withCountryCode(originCountry)
+        .withVisitedCountries(Set.of(originCountry))
+        .withFieldNormalization(new FederationKeyNormalizer(downloadServiceConfig))
+        .build();
   }
 
   public static app.coronawarn.server.common.persistence.domain.DiagnosisKey createDiagnosisKey(String keyData,

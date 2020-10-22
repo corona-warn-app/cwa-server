@@ -150,6 +150,11 @@ public class DiagnosisKeyBuilder implements
       submissionTimestamp = Instant.now().getEpochSecond() / SECONDS_PER_HOUR;
     }
 
+    if (visitedCountries == null || visitedCountries.isEmpty()) {
+      visitedCountries = new HashSet<String>();
+      visitedCountries.add(countryCode);
+    }
+
     NormalizableFields normalizedValues = normalizeValues();
 
     var diagnosisKey = new DiagnosisKey(
