@@ -281,7 +281,7 @@ class DiagnosisKeyBuilderTest {
 
   @Test
   void submissionTimestampDoesNotThrowOnValid() {
-    assertThatCode(() -> buildDiagnosisKeyForSubmissionTimestamp(0L)).doesNotThrowAnyException();
+    assertThatCode(() -> buildDiagnosisKeyForSubmissionTimestamp(1L)).doesNotThrowAnyException();
     assertThatCode(() -> buildDiagnosisKeyForSubmissionTimestamp(getCurrentHoursSinceEpoch()))
         .doesNotThrowAnyException();
     assertThatCode(

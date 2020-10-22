@@ -70,7 +70,7 @@ public class DiagnosisKeyServiceTestHelper {
   }
 
   public static int makeRollingStartIntervalFromSubmission(long submissionTimestamp) {
-    return (int)((submissionTimestamp - 24) * 6);
+    return (int)((submissionTimestamp) * 6);
   }
 
   public static DiagnosisKey buildDiagnosisKeyForSubmissionTimestamp(long submissionTimeStamp) {
