@@ -18,6 +18,7 @@ services:
     expiry-policy-minutes: 120
     min-batch-key-count: 140
     max-batch-key-count: 4000
+    retention-days: 14
     privatekey: classpath:testprivatekey.pem
     certificate: classpath:testpublickey.pem
     privatekey-password: testpass

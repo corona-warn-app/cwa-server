@@ -14,9 +14,18 @@ public class UploadServiceConfig {
   private String privateKey;
   private String privateKeyPassword;
   private String certificate;
+  private Integer retentionDays;
   private Signature signature;
   private TestData testData;
   private EfgsTransmission efgsTransmission;
+
+  public Integer getRetentionDays() {
+    return retentionDays;
+  }
+
+  public void setRetentionDays(Integer retentionDays) {
+    this.retentionDays = retentionDays;
+  }
 
   public EfgsTransmission getEfgsTransmission() {
     return efgsTransmission;

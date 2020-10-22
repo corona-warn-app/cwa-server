@@ -69,12 +69,17 @@ public class DiagnosisKeyServiceTestHelper {
         .build();
   }
 
+  public static int makeRollingStartIntervalFromSubmission(long submissionTimestamp) {
+    return (int)((submissionTimestamp - 24) * 6);
+  }
+
   public static DiagnosisKey buildDiagnosisKeyForSubmissionTimestamp(long submissionTimeStamp) {
     return buildDiagnosisKeyForSubmissionTimestamp(submissionTimeStamp, false);
   }
 
   public static DiagnosisKey buildDiagnosisKeyForSubmissionTimestamp(long submissionTimeStamp, boolean consentToShare) {
-    return buildDiagnosisKeyForSubmissionTimestamp(submissionTimeStamp, 600, consentToShare);
+    return buildDiagnosisKeyForSubmissionTimestamp(submissionTimeStamp,
+        makeRollingStartIntervalFromSubmission(submissionTimeStamp), consentToShare);
   }
 
   public static DiagnosisKey buildDiagnosisKeyForSubmissionTimestamp(long submissionTimeStamp,
@@ -89,7 +94,9 @@ public class DiagnosisKeyServiceTestHelper {
 
   public static DiagnosisKey buildDiagnosisKeyForDateTime(OffsetDateTime dateTime,
       String countryCode, Set<String> visitedCountries, ReportType reportType) {
-    return buildDiagnosisKeyForSubmissionTimestamp(dateTime.toEpochSecond() / 3600, 600, false, countryCode, visitedCountries, reportType);
+    var submissionTimeStamp = dateTime.toEpochSecond() / 3600;
+    return buildDiagnosisKeyForSubmissionTimestamp(submissionTimeStamp, makeRollingStartIntervalFromSubmission(submissionTimeStamp),
+        false, countryCode, visitedCountries, reportType);
   }
 
   /**
