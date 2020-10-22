@@ -79,7 +79,7 @@ public enum DaysSinceSymptomsRangeSpecification {
 
   public static Optional<DaysSinceSymptomsRangeSpecification> findRangeSpecification(
       Integer originalDaysSinceSymptoms) {
-    return Arrays.asList(values()).stream().filter(spec -> spec.accept(originalDaysSinceSymptoms))
+    return Arrays.stream(values()).filter(spec -> spec.accept(originalDaysSinceSymptoms))
         .findFirst();
   }
 }

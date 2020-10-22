@@ -22,7 +22,7 @@ class EfgsDaysSinceSymptomsDecoderTest {
   @ParameterizedTest
   @ValueSource(ints = {22, 50, 77, 133, 140, 240, 340, 440, 540, 640, 750, 850, 925, 1170})
   void errorShouldBeThrownWhenDecodedValueIsNonCompliantExposureNotifications(Integer value) {
-    assertThrows(DecodedDsosNotInExposureNotificationFrameworkRange.class, () -> {
+    assertThrows(NotAnEnfValueException.class, () -> {
       EfgsDaysSinceSymptomsDecoder decoder = new EfgsDaysSinceSymptomsDecoder();
       decoder.decode(value);
     });

@@ -52,7 +52,7 @@ public class EfgsDaysSinceSymptomsDecoder {
   private void validate(int decodedDsos) {
     if (!DaysSinceSymptomsRangeSpecification.ExposureNotificationAcceptedRange
         .accept(decodedDsos)) {
-      throw new DecodedDsosNotInExposureNotificationFrameworkRange(decodedDsos);
+      throw new NotAnEnfValueException(decodedDsos, "daysSinceOnsetOfSynptoms");
     }
   }
 }
