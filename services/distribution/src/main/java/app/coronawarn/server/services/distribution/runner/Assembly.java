@@ -2,6 +2,10 @@
 
 package app.coronawarn.server.services.distribution.runner;
 
+import static app.coronawarn.server.services.distribution.logging.LogMessages.PREPARING_FILES;
+import static app.coronawarn.server.services.distribution.logging.LogMessages.START_SIGNING;
+import static app.coronawarn.server.services.distribution.logging.LogMessages.WRITING_FILES;
+
 import app.coronawarn.server.services.distribution.assembly.component.CwaApiStructureProvider;
 import app.coronawarn.server.services.distribution.assembly.component.OutputDirectoryProvider;
 import app.coronawarn.server.services.distribution.assembly.structure.WritableOnDisk;
@@ -44,10 +48,10 @@ public class Assembly implements ApplicationRunner {
     Directory<WritableOnDisk> outputDirectory = this.outputDirectoryProvider.getDirectory();
     outputDirectory.addWritable(cwaApiStructureProvider.getDirectory());
     this.outputDirectoryProvider.clear();
-    logger.debug("Preparing files...");
-    logger.info("Start signing...");
+    logger.debug(PREPARING_FILES);
+    logger.info(START_SIGNING);
     outputDirectory.prepare(new ImmutableStack<>());
-    logger.debug("Writing files...");
+    logger.debug(WRITING_FILES);
     outputDirectory.write();
   }
 }

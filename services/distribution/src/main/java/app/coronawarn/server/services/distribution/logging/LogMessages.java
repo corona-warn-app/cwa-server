@@ -20,6 +20,9 @@ public class LogMessages {
   static final String RETENTION_POLICY_APPLIED_SUCCESSFULLY = "Retention policy applied successfully.";
   static final String APPLICATION_OF_RETENTION_POLICY_FAILED = "Application of retention policy failed.";
   static final String OBJECT_STORE_OPERATION_FAILED = "Object store operation failed.";
+  public static final String PREPARING_FILES = "Preparing files...";
+  public static final String START_SIGNING = "Start signing...";
+  public static final String WRITING_FILES = "Writing files...";
 
   private LogMessages() {
   }
