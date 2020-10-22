@@ -188,6 +188,13 @@
         <version>${protobuf.version}</version>
         <scope>test</scope>
       </dependency>
+     <!-- https://nvd.nist.gov/vuln/detail/CVE-2020-15250-->
+      <dependency>
+        <groupId>junit</groupId>
+        <artifactId>junit</artifactId>
+        <version>4.13.1</version>
+        <scope>test</scope>
+      </dependency>
     </dependencies>
   </dependencyManagement>
 
