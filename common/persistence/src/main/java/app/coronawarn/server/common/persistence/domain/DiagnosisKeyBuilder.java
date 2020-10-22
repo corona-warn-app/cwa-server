@@ -151,7 +151,7 @@ public class DiagnosisKeyBuilder implements
     }
 
     if (visitedCountries == null || visitedCountries.isEmpty()) {
-      visitedCountries = new HashSet<String>();
+      visitedCountries = new HashSet<>();
       visitedCountries.add(countryCode);
     }
 
