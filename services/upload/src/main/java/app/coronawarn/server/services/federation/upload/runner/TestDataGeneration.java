@@ -100,6 +100,11 @@ public class TestDataGeneration implements ApplicationRunner {
    * @return List of Federation Upload Keys generated.
    */
   private List<FederationUploadKey> generateFakeKeysForPreviousDay() {
+    long timestamp = getCurrentTimestampTruncatedHour()
+        .minusDays(this.uploadServiceConfig.getRetentionDays())
+        .toEpochSecond(ZoneOffset.UTC) / 600L;
+    logger.info("Deleting test keys with rolling_start_interval_number less than {}", timestamp);
+    keyRepository.applyRetentionToTestKeys((int)timestamp);
     int pendingKeys = keyRepository.countPendingKeys();
     int maxPendingKeys = this.uploadServiceConfig.getTestData().getMaxPendingKeys();
     logger.info("Found {} pending upload keys on DB", pendingKeys);
