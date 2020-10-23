@@ -6,8 +6,11 @@ import static app.coronawarn.server.common.persistence.service.DiagnosisKeyServi
 import static app.coronawarn.server.common.persistence.service.DiagnosisKeyServiceTestHelper.buildDiagnosisKeyForSubmissionTimestamp;
 import static org.mockito.Mockito.*;
 
+import java.time.LocalDateTime;
+import java.time.ZoneOffset;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -33,6 +36,17 @@ class FederationUploadKeyServiceTest {
   @MockBean
   private KeySharingPoliciesChecker keySharingPoliciesChecker;
 
+  public static int DAYS_TO_RETAIN = 14;
+
+  /**
+   * The submission timestamp is counted in 1 hour intervals since epoch.
+   */
+  public static final long ONE_HOUR_INTERVAL_SECONDS = TimeUnit.HOURS.toSeconds(1);
+
+  /**
+   * The rolling start interval number is counted in 10 minute intervals since epoch.
+   */
+  public static final long TEN_MINUTES_INTERVAL_SECONDS = TimeUnit.MINUTES.toSeconds(10);
 
   @Test
   void shouldRetrieveKeysWithConsentOnly() {
@@ -43,7 +57,7 @@ class FederationUploadKeyServiceTest {
     when(uploadKeyRepository.findAllUploadableKeys()).thenReturn(testKeys);
     when(keySharingPoliciesChecker.canShareKeyAtTime(any(), any(), any())).thenReturn(true);
 
-    var actKeys = uploadKeyService.getPendingUploadKeys(ExpirationPolicy.of(0, ChronoUnit.MINUTES));
+    var actKeys = uploadKeyService.getPendingUploadKeys(ExpirationPolicy.of(0, ChronoUnit.MINUTES), Integer.MAX_VALUE);
     Assertions.assertThat(actKeys).hasSize(1);
     assertDiagnosisKeysEqual(testKeys.get(0), actKeys.get(0));
   }
@@ -58,9 +72,35 @@ class FederationUploadKeyServiceTest {
     when(keySharingPoliciesChecker.canShareKeyAtTime(eq(key1), any(), any())).thenReturn(true);
     when(keySharingPoliciesChecker.canShareKeyAtTime(eq(key2), any(), any())).thenReturn(false);
 
-    var actKeys = uploadKeyService.getPendingUploadKeys(ExpirationPolicy.of(120, ChronoUnit.MINUTES));
+    var actKeys = uploadKeyService.getPendingUploadKeys(ExpirationPolicy.of(120, ChronoUnit.MINUTES), Integer.MAX_VALUE);
     Assertions.assertThat(actKeys).hasSize(1);
     assertDiagnosisKeysEqual(testKeys.get(0), actKeys.get(0));
+  }
+
+  long toSubmissionTimestamp(LocalDateTime t) {
+    return t.toEpochSecond(ZoneOffset.UTC) / ONE_HOUR_INTERVAL_SECONDS;
+  }
+
+  int toRollingInterval(LocalDateTime t) {
+    return (int)(t.toEpochSecond(ZoneOffset.UTC) / TEN_MINUTES_INTERVAL_SECONDS);
+  }
+
+
+  @Test
+  void shouldRetrieveKeysUnderRetentionOnly() {
+    var today = LocalDateTime.now(ZoneOffset.UTC).truncatedTo(ChronoUnit.DAYS);
+
+    FederationUploadKey recentKey = FederationUploadKey.from(buildDiagnosisKeyForSubmissionTimestamp(
+        toSubmissionTimestamp(today.minusDays(1)), toRollingInterval(today.minusDays(1)), true));
+    FederationUploadKey oldKey = FederationUploadKey.from(buildDiagnosisKeyForSubmissionTimestamp(
+        toSubmissionTimestamp(today.minusDays(1)), toRollingInterval(today.minusDays(15)), true));
+    var testKeys = List.of(recentKey, oldKey);
+    when(uploadKeyRepository.findAllUploadableKeys()).thenReturn(testKeys);
+    when(keySharingPoliciesChecker.canShareKeyAtTime(any(), any(), any())).thenReturn(true);
+
+    var actKeys = uploadKeyService.getPendingUploadKeys(ExpirationPolicy.of(0, ChronoUnit.MINUTES), DAYS_TO_RETAIN);
+    Assertions.assertThat(actKeys).hasSize(1);
+    Assertions.assertThat(actKeys).doesNotContain(oldKey);
   }
 
   @Test
