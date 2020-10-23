@@ -84,7 +84,7 @@ public class FederationBatchProcessor {
    *
    * @param date The date for which the first batch info is stored.
    */
-  public void saveFirstBatchInfoForDate(LocalDate date) {
+  protected void saveFirstBatchInfoForDate(LocalDate date) {
     try {
       logger.info("Triggering download of first batch for date {}.", date);
       BatchDownloadResponse response = federationGatewayDownloadService.downloadBatch(date);
