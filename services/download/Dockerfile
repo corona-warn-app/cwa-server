@@ -29,7 +29,7 @@ RUN ${WORK_DIR}/mvnw --batch-mode -DskipTests=true --file ${WORK_DIR}/pom.xml ${
 RUN cp ${WORK_DIR}/services/download/target/download-*.jar /usr/sap/download-service/download.jar
 RUN cp ${WORK_DIR}/scripts/DpkgHelper.java /DpkgHelper.java
 
-FROM gcr.io/distroless/java-debian10:11
+FROM gcr.io/distroless/java:11
 COPY --from=build /DpkgHelper.java .
 COPY --from=build /usr/sap/download-service/download.jar .
 RUN ["java", "DpkgHelper.java"]
