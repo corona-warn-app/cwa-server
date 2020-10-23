@@ -44,8 +44,8 @@ import org.springframework.test.context.ActiveProfiles;
  * <li>Batch1 is the first batch of the corresponding date. The first diagnosis key can be processed
  * successfully. The second diagnosis key is rejected due to its unsupported ReportType "Self Reported". The third
  * diagnosis key is rejected due to its invalid RollingPeriod. The fourth diagnosis key can be processed successfully,
- * but its ReportType is CONFIRMED_CLINICAL_DIAGNOSIS which should be changed to CONFIRMED_TEST during the
- * download.</li>
+ * but its ReportType is CONFIRMED_CLINICAL_DIAGNOSIS which should be changed to CONFIRMED_TEST during the download. The
+ * fifth diagnosis key without having supported countries should be defaulted to the origin country of the key.</li>
  * <li>Batch2 is returned by an explicit call to its batch tag and can be processed successfully as well.</li>
  * <li>Batch3 fails with a 404 Not Found.</li>
  * <p>
@@ -71,6 +71,7 @@ class DownloadDateBasedIntegrationTest {
   private static final String BATCH1_KEY2_DATA = "0123456789ABCDEB";
   private static final String BATCH1_KEY3_DATA = "0123456789ABCDEC";
   private static final String BATCH1_KEY4_DATA = "0123456789ABCDED";
+  private static final String BATCH1_KEY5_DATA = "0123456789ABCDEG";
 
   private static final String BATCH2_TAG = "batch2_tag";
   private static final String BATCH2_KEY_DATA = "0123456789ABCDEE";
@@ -115,6 +116,11 @@ class DownloadDateBasedIntegrationTest {
                 .createBuilderForValidFederationDiagnosisKey()
                 .setKeyData(ByteString.copyFromUtf8(BATCH1_KEY3_DATA))
                 .setRollingPeriod(-5)
+                .build(),
+            FederationBatchTestHelper.createBuilderForValidFederationDiagnosisKey()
+                .setKeyData(ByteString.copyFromUtf8(BATCH1_KEY5_DATA))
+                .clearVisitedCountries()
+                .setOrigin("IT")
                 .build()
         )
     );
@@ -192,10 +198,12 @@ class DownloadDateBasedIntegrationTest {
 
     Iterable<DiagnosisKey> diagnosisKeys = diagnosisKeyRepository.findAll();
     assertThat(diagnosisKeys)
-        .hasSize(4)
+        .hasSize(5)
         .contains(FederationBatchTestHelper.createDiagnosisKey(BATCH1_KEY1_DATA, downloadServiceConfig))
         .contains(FederationBatchTestHelper.createDiagnosisKey(BATCH1_KEY4_DATA, downloadServiceConfig))
         .contains(FederationBatchTestHelper.createDiagnosisKey(BATCH2_KEY_DATA, downloadServiceConfig))
-        .contains(FederationBatchTestHelper.createDiagnosisKey(RETRY_BATCH_SUCCESSFUL_KEY_DATA, downloadServiceConfig));
+        .contains(FederationBatchTestHelper.createDiagnosisKey(RETRY_BATCH_SUCCESSFUL_KEY_DATA, downloadServiceConfig))
+        .contains(FederationBatchTestHelper
+            .createDiagnosisKeyForSpecificOriginCountry(BATCH1_KEY5_DATA, "IT", downloadServiceConfig));
   }
 }
