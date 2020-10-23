@@ -1,7 +1,7 @@
 ---
 spring:
   flyway:
-    locations: classpath:/db/migration,classpath:/db/testdata
+    locations: classpath:/db/migration,classpath:/db/testdata-download-date-based
 
 services:
   download:
