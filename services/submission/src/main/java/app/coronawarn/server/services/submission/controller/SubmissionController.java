@@ -178,13 +178,11 @@ public class SubmissionController {
 
   private SubmissionPayload enhanceWithDefaultValuesIfMissing(SubmissionPayload submissionPayload) {
     String originCountry = defaultIfEmptyOriginCountry(submissionPayload.getOrigin());
-    List<String> visitedCountries = extendVisitedCountriesWithOriginCountry(
-        submissionPayload.getVisitedCountriesList(), originCountry);
 
     return SubmissionPayload.newBuilder()
         .addAllKeys(submissionPayload.getKeysList())
         .setRequestPadding(submissionPayload.getRequestPadding())
-        .addAllVisitedCountries(visitedCountries)
+        .addAllVisitedCountries(submissionPayload.getVisitedCountriesList())
         .setOrigin(originCountry)
         .setConsentToFederation(submissionPayload.getConsentToFederation())
         .build();
@@ -192,12 +190,6 @@ public class SubmissionController {
 
   private String defaultIfEmptyOriginCountry(String originCountry) {
     return StringUtils.defaultIfBlank(originCountry, submissionServiceConfig.getDefaultOriginCountry());
-  }
-
-  private List<String> extendVisitedCountriesWithOriginCountry(List<String> visitedCountries, String originCountry) {
-    Set<String> visitedCountriesSet = new HashSet<>(visitedCountries);
-    visitedCountriesSet.add(originCountry);
-    return new ArrayList<>(visitedCountriesSet);
   }
 
   private List<DiagnosisKey> padDiagnosisKeys(List<DiagnosisKey> diagnosisKeys) {
