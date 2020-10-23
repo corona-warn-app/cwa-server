@@ -37,6 +37,7 @@ import java.time.ZoneOffset;
 import java.util.List;
 import java.util.Optional;
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -80,6 +81,11 @@ class FederationBatchProcessorTest {
     reset(federationGatewayDownloadService);
     reset(diagnosisKeyService);
     reset(batchInfoService);
+  }
+
+  @BeforeEach
+  void resetConfigToDefault() {
+    config.setEfgsEnforceDateBasedDownload(false);
   }
 
   @Nested
@@ -145,6 +151,7 @@ class FederationBatchProcessorTest {
     @Test
     void testBatchInfoForTodayIsDeleted() {
       LocalDate date = LocalDate.now(ZoneOffset.UTC);
+      config.setEfgsEnforceDateBasedDownload(true);
       batchProcessor.prepareDownload();
 
       Mockito.verify(batchInfoService, times(1)).deleteForDate(date);
@@ -179,6 +186,7 @@ class FederationBatchProcessorTest {
 
     @Test
     void testOneUnprocessedBatchOneNextBatch() {
+      config.setEfgsEnforceDateBasedDownload(true);
       FederationBatchInfo batchInfo1 = new FederationBatchInfo(batchTag1, date, UNPROCESSED);
       FederationBatchInfo batchInfo2 = new FederationBatchInfo(batchTag2, date, UNPROCESSED);
       when(batchInfoService.findByStatus(UNPROCESSED)).thenReturn(list(batchInfo1));

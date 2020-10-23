@@ -22,7 +22,7 @@ logging:
 services:
   download:
     efgs-enforce-download-offset-days: 0
-    efgs-enforce-date-based-download: true
+    efgs-enforce-date-based-download: false
     retention-days: 14
     validation:
       allowed-report-types: CONFIRMED_TEST,CONFIRMED_CLINICAL_DIAGNOSIS
