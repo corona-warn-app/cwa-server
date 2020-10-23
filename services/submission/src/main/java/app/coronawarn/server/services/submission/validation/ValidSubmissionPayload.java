@@ -128,7 +128,7 @@ public @interface ValidSubmissionPayload {
       if (submissionPayload.hasOrigin() && !originCountry.isEmpty()
           && !supportedCountries.contains(originCountry)) {
         addViolation(validatorContext,
-            "Key contains origin country is not part of the supported countries list");
+            "Key contains origin country which is not part of the supported countries list");
         return false;
       }
       return true;
