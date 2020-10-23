@@ -3,3 +3,7 @@ spring:
   flyway:
     locations: classpath:/db/migration,classpath:/db/testdata
 
+services:
+  download:
+    efgs-enforce-download-offset-days: 0
+    efgs-enforce-date-based-download: true

@@ -124,7 +124,7 @@ class DownloadIntegrationTest {
 
     HttpHeaders batch3Headers = getHttpHeaders(BATCH3_TAG, EMPTY_BATCH_TAG);
 
-    HttpHeaders retryBatchSuccessfulHeaders = getHttpHeaders(RETRY_BATCH_SUCCESSFUL_TAG, EMPTY_BATCH_TAG);
+    HttpHeaders retryBatchSuccessfulHeaders = getHttpHeaders(RETRY_BATCH_SUCCESSFUL_TAG, RETRY_BATCH_FAILS_TAG);
     DiagnosisKeyBatch retryBatchSuccessful = FederationBatchTestHelper.createDiagnosisKeyBatch(
         RETRY_BATCH_SUCCESSFUL_KEY_DATA);
 
@@ -158,7 +158,7 @@ class DownloadIntegrationTest {
             .willReturn(
                 aResponse()
                     .withStatus(HttpStatus.NOT_FOUND.value())
-                    .withHeaders(batch3Headers)));
+                    .withHeaders(getHttpHeaders(RETRY_BATCH_FAILS_TAG, EMPTY_BATCH_TAG))));
     server.stubFor(
         get(anyUrl())
             .withHeader("batchTag", equalTo(RETRY_BATCH_SUCCESSFUL_TAG))
@@ -182,21 +182,18 @@ class DownloadIntegrationTest {
   }
 
   @Test
-  @Disabled
   void testDownloadRunSuccessfully() {
-    assertThat(federationBatchInfoRepository.findAll()).hasSize(5);
+    assertThat(federationBatchInfoRepository.findAll()).hasSize(3);
     assertThat(federationBatchInfoRepository.findByStatus("UNPROCESSED")).isEmpty();
-    assertThat(federationBatchInfoRepository.findByStatus("PROCESSED")).hasSize(2);
+    assertThat(federationBatchInfoRepository.findByStatus("PROCESSED")).hasSize(1);
     assertThat(federationBatchInfoRepository.findByStatus("PROCESSED_WITH_ERROR")).hasSize(1);
     assertThat(federationBatchInfoRepository.findByStatus("ERROR")).hasSize(1);
-    assertThat(federationBatchInfoRepository.findByStatus("ERROR_WONT_RETRY")).hasSize(1);
 
     Iterable<DiagnosisKey> diagnosisKeys = diagnosisKeyRepository.findAll();
     assertThat(diagnosisKeys)
-        .hasSize(4)
+        .hasSize(3)
         .contains(FederationBatchTestHelper.createDiagnosisKey(BATCH1_KEY1_DATA, downloadServiceConfig))
         .contains(FederationBatchTestHelper.createDiagnosisKey(BATCH1_KEY4_DATA, downloadServiceConfig))
-        .contains(FederationBatchTestHelper.createDiagnosisKey(BATCH2_KEY_DATA, downloadServiceConfig))
-        .contains(FederationBatchTestHelper.createDiagnosisKey(RETRY_BATCH_SUCCESSFUL_KEY_DATA, downloadServiceConfig));
+        .contains(FederationBatchTestHelper.createDiagnosisKey(BATCH2_KEY_DATA, downloadServiceConfig));
   }
 }
