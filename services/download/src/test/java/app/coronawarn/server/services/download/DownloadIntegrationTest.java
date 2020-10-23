@@ -183,17 +183,19 @@ class DownloadIntegrationTest {
 
   @Test
   void testDownloadRunSuccessfully() {
-    assertThat(federationBatchInfoRepository.findAll()).hasSize(3);
+    assertThat(federationBatchInfoRepository.findAll()).hasSize(5);
     assertThat(federationBatchInfoRepository.findByStatus("UNPROCESSED")).isEmpty();
-    assertThat(federationBatchInfoRepository.findByStatus("PROCESSED")).hasSize(1);
+    assertThat(federationBatchInfoRepository.findByStatus("PROCESSED")).hasSize(2);
     assertThat(federationBatchInfoRepository.findByStatus("PROCESSED_WITH_ERROR")).hasSize(1);
     assertThat(federationBatchInfoRepository.findByStatus("ERROR")).hasSize(1);
+    assertThat(federationBatchInfoRepository.findByStatus("ERROR_WONT_RETRY")).hasSize(1);
 
     Iterable<DiagnosisKey> diagnosisKeys = diagnosisKeyRepository.findAll();
     assertThat(diagnosisKeys)
-        .hasSize(3)
+        .hasSize(4)
         .contains(FederationBatchTestHelper.createDiagnosisKey(BATCH1_KEY1_DATA, downloadServiceConfig))
         .contains(FederationBatchTestHelper.createDiagnosisKey(BATCH1_KEY4_DATA, downloadServiceConfig))
-        .contains(FederationBatchTestHelper.createDiagnosisKey(BATCH2_KEY_DATA, downloadServiceConfig));
+        .contains(FederationBatchTestHelper.createDiagnosisKey(BATCH2_KEY_DATA, downloadServiceConfig))
+        .contains(FederationBatchTestHelper.createDiagnosisKey(RETRY_BATCH_SUCCESSFUL_KEY_DATA, downloadServiceConfig));
   }
 }
