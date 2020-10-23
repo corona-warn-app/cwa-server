@@ -317,12 +317,12 @@ class DiagnosisKeyBuilderTest {
 
   @Test
   void submissionTimestampDoesNotThrowOnValid() {
-    assertThatCode(() -> buildDiagnosisKeyForSubmissionTimestamp(0L)).doesNotThrowAnyException();
-    assertThatCode(() -> buildDiagnosisKeyForSubmissionTimestamp(getCurrentHoursSinceEpoch()))
+    assertThatCode(() -> buildDiagnosisKeyForSubmissionTimestamp(1L, 144, false)).doesNotThrowAnyException();
+    assertThatCode(() -> buildDiagnosisKeyForSubmissionTimestamp(getCurrentHoursSinceEpoch(), 144, false))
         .doesNotThrowAnyException();
     assertThatCode(
         () -> buildDiagnosisKeyForSubmissionTimestamp(
-            Instant.now().minus(Duration.ofHours(2)).getEpochSecond() / SECONDS_PER_HOUR))
+            Instant.now().minus(Duration.ofHours(2)).getEpochSecond() / SECONDS_PER_HOUR, 144, false))
         .doesNotThrowAnyException();
   }
 

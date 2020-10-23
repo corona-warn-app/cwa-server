@@ -25,6 +25,8 @@ public class DiagnosisKeyPersistenceLoader implements DiagnosisKeyLoader {
   @Override
   public List<FederationUploadKey> loadDiagnosisKeys() {
     return this.uploadKeyService
-        .getPendingUploadKeys(ExpirationPolicy.of(uploadConfig.getExpiryPolicyMinutes(), ChronoUnit.MINUTES));
+        .getPendingUploadKeys(
+            ExpirationPolicy.of(uploadConfig.getExpiryPolicyMinutes(), ChronoUnit.MINUTES),
+            this.uploadConfig.getRetentionDays());
   }
 }
