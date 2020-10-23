@@ -40,8 +40,10 @@ import org.springframework.test.context.ActiveProfiles;
  * <li>a batch info (valid_tag) for a fully valid batch that should be processed</li>
  * <li>a batch info (processing_fails_partially) for a valid batch that should be processed with errors</li>
  * <li>a batch info (processing_fails) for an invalid batch for which the processing should fail with an error</li>
- * <li>a batch info (batch_with_next_batch_tag) for a valid batch that has a nextBatchTag that should not be processed afterwards</li>
- * <li>and two batch info (retry_batch_tag_successful, retry_batch_tag_fails) from the current date of status 'ERROR', which should be reprocessed.</li>
+ * <li>a batch info (batch_with_next_batch_tag) for a valid batch that has a nextBatchTag that should not be processed
+ * afterwards</li>
+ * <li>and two batch info (retry_batch_tag_successful, retry_batch_tag_fails) from the current date of status 'ERROR',
+ * which should be reprocessed.</li>
  * One of them will be successfully reprocessed and the other one will fail. The WireMockServer is configured
  * accordingly.
  * <p>
