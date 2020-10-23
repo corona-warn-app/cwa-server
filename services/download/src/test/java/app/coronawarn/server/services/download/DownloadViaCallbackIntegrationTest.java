@@ -1,8 +1,15 @@
 package app.coronawarn.server.services.download;
 
 
+import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
+import static com.github.tomakehurst.wiremock.client.WireMock.anyUrl;
+import static com.github.tomakehurst.wiremock.client.WireMock.equalTo;
+import static com.github.tomakehurst.wiremock.client.WireMock.get;
+import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.options;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.springframework.http.HttpHeaders.CONTENT_TYPE;
+
 import app.coronawarn.server.common.persistence.domain.DiagnosisKey;
-import app.coronawarn.server.common.persistence.domain.FederationBatchInfo;
 import app.coronawarn.server.common.persistence.repository.DiagnosisKeyRepository;
 import app.coronawarn.server.common.persistence.repository.FederationBatchInfoRepository;
 import app.coronawarn.server.common.protocols.external.exposurenotification.DiagnosisKeyBatch;
@@ -12,56 +19,47 @@ import com.github.tomakehurst.wiremock.WireMockServer;
 import com.github.tomakehurst.wiremock.http.HttpHeader;
 import com.github.tomakehurst.wiremock.http.HttpHeaders;
 import com.google.protobuf.ByteString;
+import java.util.List;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.HttpStatus;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
-import java.time.LocalDate;
-import java.time.ZoneOffset;
-import java.util.List;
-
-import static com.github.tomakehurst.wiremock.client.WireMock.*;
-import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.options;
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.springframework.http.HttpHeaders.CONTENT_TYPE;
 
 /**
- * This integration test is responsible for testing the runners for download and retention policy. The Spring profile
- * "federation-download-integration" enables the test data generation in /db/testdata/V99__createTestDataForIntegrationTest.sql
- * via the application-federation-download-integration.yaml.
+ * This integration test is responsible for testing the runners for download and retention policy and it is using the download-via-callback logic.
+ * The Spring profile "federation-download-integration" enables the test data generation
+ * in /db/testdata/V99__createTestDataForIntegrationTest.sql via the application-federation-download-integration.yaml.
  * <p>
  * The sql script for the test data contains
  * <li>a batch info for an expired batch that should be deleted by the retention policy</li>
+ * <li>a batch info for a fully valid batch that should be processed</li>
+ * <li>a batch info for a valid batch that should be processed with errors</li>
+ * <li>a batch info for an invalid batch for which the processing should fail with an error</li>
  * <li>and two batch info from the current date of status 'ERROR', which should be reprocessed.</li>
  * One of them will be successfully reprocessed and the other one will fail. The WireMockServer is configured
  * accordingly.
  * <p>
- * The WireMockServer will additionally return a series of three batches:
- * <li>Batch1 is the first batch of the corresponding date. The first diagnosis key can be processed
- * successfully. The second diagnosis key is rejected due to its unsupported ReportType "Self Reported". The third
- * diagnosis key is rejected due to its invalid RollingPeriod. The fourth diagnosis key can be processed successfully,
- * but its ReportType is CONFIRMED_CLINICAL_DIAGNOSIS which should be changed to CONFIRMED_TEST during the
- * download.</li>
- * <li>Batch2 is returned by an explicit call to its batch tag and can be processed successfully as well.</li>
+ * The WireMockServer will return a series of five batches, which correspond to the batches specified in the sql script:
+ * <li>Batch1 is the fully valid batch. All diagnosis key can be processed
+ * successfully.</li>
+ * <li>Batch2 is a valid batch that contains one key with invalid DSOS. It can be processed with errors.</li>
  * <li>Batch3 fails with a 404 Not Found.</li>
+ * <li>RETRY_BATCH_SUCCESSFUL can be processed successfully.</li>
+ * <li>RETRY_BATCH_FAILS cannot be proccessed.</li>
  * <p>
  * Hence, after the execution of both runners, the federation_batch_info table should be the following:
  * <li>"expired_batch_tag" is deleted</li>
  * <li>"retry_batch_tag_successful" has state "PROCESSED"</li>
  * <li>"retry_batch_tag_fail" has state "ERROR_WONT_RETRY"</li>
- * <li>"batch1_tag" has state "PROCESSED_WITH_ERROR"</li>
- * <li>"batch2_tag" has state "PROCESSED"</li>
+ * <li>"batch1_tag" has state "PROCESSED"</li>
+ * <li>"batch2_tag" has state "PROCESSED_WITH_ERROR"</li>
  * <li>"batch3_tag" has state "ERROR"</li>
  * <li>no batch has state "UNPROCESSED"</li>
  * <p>
- * The diagnosis_key table should contain the data that correspond to the three batches with state "PROCESSED":
- * BATCH1_DATA, BATCH2_DATA and RETRY_BATCH_SUCCESSFUL_DATA
  */
 @SpringBootTest
 @ActiveProfiles("federation-download-via-callback-integration")
