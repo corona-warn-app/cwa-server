@@ -18,7 +18,7 @@ The relevant profiles are:
 |`disable-ssl-client-verification`|Disables SSL with a trusted certificate for the connection to the verification server.|
 |`disable-ssl-client-verification-verify-hostname`|Disables the verification of the SSL hostname for the connection to the verification server.|
 
-Apart from those configuration options, the `debug` profile will never be used in production to prevent leakage of data for security and privacy concerns reasons.
+Apart from those configuration options, the `dev` profile will never be used in production to prevent leakage of data for security and privacy concerns reasons.
 
 ## Plausible Deniability
 

@@ -19,7 +19,7 @@ You will find `.yaml` and `.xml` based profile-specific configuration files at [
 Profile                                           | Effect
 --------------------------------------------------|-------------
 `disable-ssl-client-postgres`                     | Disables SSL with a pinned certificate for the connection to the postgres.
-`debug`                                           | Sets the log level to `DEBUG` and changes the `CONSOLE_LOG_PATTERN` used by Log4j 2.
+`dev`                                           | Sets the log level to `DEBUG` and changes the `CONSOLE_LOG_PATTERN` used by Log4j 2.
 `cloud`                                           | Removes the default values set in `spring.flyway` and `datasource`
 `testdata`                                        | Generates test fake keys for upload. Will only generate keys if number of pending keys in DB is less than `services.upload.test-data.max.pending-keys`.
 
