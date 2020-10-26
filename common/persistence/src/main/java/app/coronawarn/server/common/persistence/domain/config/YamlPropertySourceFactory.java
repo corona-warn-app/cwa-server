@@ -1,6 +1,6 @@
 package app.coronawarn.server.common.persistence.domain.config;
 
-import java.io.IOException;
+import java.util.Objects;
 import java.util.Properties;
 import org.springframework.beans.factory.config.YamlPropertiesFactoryBean;
 import org.springframework.core.env.PropertiesPropertySource;
@@ -16,13 +16,13 @@ import org.springframework.core.io.support.PropertySourceFactory;
 public class YamlPropertySourceFactory implements PropertySourceFactory {
 
   @Override
-  public PropertySource<?> createPropertySource(String name, EncodedResource encodedResource)
-      throws IOException {
+  public PropertySource<?> createPropertySource(String name, EncodedResource encodedResource) {
     YamlPropertiesFactoryBean factory = new YamlPropertiesFactoryBean();
     factory.setResources(encodedResource.getResource());
 
-    Properties properties = factory.getObject();
+    Properties properties = Objects.requireNonNull(factory.getObject());
 
-    return new PropertiesPropertySource(encodedResource.getResource().getFilename(), properties);
+    String filename = Objects.requireNonNull(encodedResource.getResource().getFilename());
+    return new PropertiesPropertySource(filename, properties);
   }
 }

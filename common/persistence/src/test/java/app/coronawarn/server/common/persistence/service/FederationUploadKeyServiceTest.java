@@ -4,8 +4,16 @@ package app.coronawarn.server.common.persistence.service;
 
 import static app.coronawarn.server.common.persistence.service.DiagnosisKeyServiceTestHelper.assertDiagnosisKeysEqual;
 import static app.coronawarn.server.common.persistence.service.DiagnosisKeyServiceTestHelper.buildDiagnosisKeyForSubmissionTimestamp;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.any;
+import static org.mockito.Mockito.eq;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
+import app.coronawarn.server.common.persistence.domain.FederationUploadKey;
+import app.coronawarn.server.common.persistence.repository.FederationUploadKeyRepository;
+import app.coronawarn.server.common.persistence.service.common.ExpirationPolicy;
+import app.coronawarn.server.common.persistence.service.common.KeySharingPoliciesChecker;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.time.temporal.ChronoUnit;
@@ -13,14 +21,9 @@ import java.util.List;
 import java.util.concurrent.TimeUnit;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.data.jdbc.DataJdbcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import app.coronawarn.server.common.persistence.domain.FederationUploadKey;
-import app.coronawarn.server.common.persistence.repository.FederationUploadKeyRepository;
-import app.coronawarn.server.common.persistence.service.common.KeySharingPoliciesChecker;
-import app.coronawarn.server.common.persistence.service.common.ExpirationPolicy;
 
 @DataJdbcTest
 class FederationUploadKeyServiceTest {
@@ -99,8 +102,9 @@ class FederationUploadKeyServiceTest {
     when(keySharingPoliciesChecker.canShareKeyAtTime(any(), any(), any())).thenReturn(true);
 
     var actKeys = uploadKeyService.getPendingUploadKeys(ExpirationPolicy.of(0, ChronoUnit.MINUTES), DAYS_TO_RETAIN);
-    Assertions.assertThat(actKeys).hasSize(1);
-    Assertions.assertThat(actKeys).doesNotContain(oldKey);
+    Assertions.assertThat(actKeys)
+        .hasSize(1)
+        .doesNotContain(oldKey);
   }
 
   @Test
