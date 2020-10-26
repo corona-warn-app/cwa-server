@@ -48,11 +48,12 @@ public class FederationUploadKeyService {
    * but a safety check is performed anyway
    * <li> Key is expired conforming to the given policy
    */
-  public List<FederationUploadKey> getPendingUploadKeys(ExpirationPolicy policy) {
+  public List<FederationUploadKey> getPendingUploadKeys(ExpirationPolicy policy, int daysToRetain) {
     AtomicInteger keysPicked = new AtomicInteger();
     AtomicInteger keysPickedAfterConsent = new AtomicInteger();
     AtomicInteger keysPickedAfterValidity = new AtomicInteger();
     AtomicInteger keysPickedAfterSharePolicy = new AtomicInteger();
+    AtomicInteger keysPickedAfterRetentionPolicy = new AtomicInteger();
 
     var listOfKeys = createStreamFromIterator(keyRepository.findAllUploadableKeys().iterator())
         .peek(k -> keysPicked.addAndGet(1))
@@ -62,6 +63,8 @@ public class FederationUploadKeyService {
         .peek(k -> keysPickedAfterValidity.addAndGet(1))
         .filter(key -> sharingPoliciesChecker.canShareKeyAtTime(key, policy, LocalDateTime.now(UTC)))
         .peek(k -> keysPickedAfterSharePolicy.addAndGet(1))
+        .filter(key -> key.isYoungerThanRetentionThreshold(daysToRetain))
+        .peek(k -> keysPickedAfterRetentionPolicy.addAndGet(1))
         .collect(Collectors.toList());
     logger.info("Keys selected for upload: {}", listOfKeys.size());
 
@@ -69,6 +72,9 @@ public class FederationUploadKeyService {
     logger.info("{} keys remaining after filtering by consent", keysPickedAfterConsent.get());
     logger.info("{} keys remaining after filtering by validity", keysPickedAfterValidity.get());
     logger.info("{} keys remaining after filtering by share policy", keysPickedAfterSharePolicy.get());
+    logger.info("{} keys remaining after filtering by retention policy ({} days)",
+        keysPickedAfterRetentionPolicy.get(),
+        daysToRetain);
 
     return listOfKeys;
   }
