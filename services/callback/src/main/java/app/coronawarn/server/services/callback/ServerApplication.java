@@ -29,6 +29,12 @@ import org.springframework.data.jdbc.repository.config.EnableJdbcRepositories;
 @EnableConfigurationProperties
 public class ServerApplication implements EnvironmentAware, DisposableBean {
 
+  private static final String DISABLE_SSL_SERVER = "disable-ssl-server";
+  private static final String DISABLE_SSL_CLIENT_POSTGRES = "disable-ssl-client-postgres";
+  private static final String DISABLE_SSL_CLIENT_VERIFICATION_VERIFY_HOSTNAME = 
+      "disable-ssl-client-verification-verify-hostname";
+  private static final String DISABLE_SSL_CLIENT_VERIFICATION = "disable-ssl-client-verification";
+  
   private static final Logger logger = LoggerFactory.getLogger(ServerApplication.class);
 
   public static void main(String[] args) {
@@ -53,21 +59,21 @@ public class ServerApplication implements EnvironmentAware, DisposableBean {
     List<String> profiles = Arrays.asList(environment.getActiveProfiles());
 
     logger.info("Enabled named groups: {}", System.getProperty("jdk.tls.namedGroups"));
-    if (profiles.contains("disable-ssl-server")) {
+    if (profiles.contains(DISABLE_SSL_SERVER)) {
       logger.warn(
           "The callback service is started with endpoint TLS disabled. This should never be used in PRODUCTION!");
     }
-    if (profiles.contains("disable-ssl-client-postgres")) {
+    if (profiles.contains(DISABLE_SSL_CLIENT_POSTGRES)) {
       logger.warn(
           "The callback service is started with postgres connection TLS disabled. "
               + "This should never be used in PRODUCTION!");
     }
-    if (profiles.contains("disable-ssl-client-verification")) {
+    if (profiles.contains(DISABLE_SSL_CLIENT_VERIFICATION)) {
       logger.warn(
           "The callback service is started with verification service connection TLS disabled. "
               + "This should never be used in PRODUCTION!");
     }
-    if (profiles.contains("disable-ssl-client-verification-verify-hostname")) {
+    if (profiles.contains(DISABLE_SSL_CLIENT_VERIFICATION_VERIFY_HOSTNAME)) {
       logger.warn(
           "The callback service is started with verification service TLS hostname validation disabled. "
               + "This should never be used in PRODUCTION!");
