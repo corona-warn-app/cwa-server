@@ -48,7 +48,7 @@ class DiagnosisKeyServiceTest {
 
   @Test
   void testSaveAndRetrieve() {
-    var expKeys = list(buildDiagnosisKeyForSubmissionTimestamp(0L));
+    var expKeys = list(buildDiagnosisKeyForSubmissionTimestamp(1L));
 
     diagnosisKeyService.saveDiagnosisKeys(expKeys);
     var actKeys = diagnosisKeyService.getDiagnosisKeys();
@@ -59,8 +59,8 @@ class DiagnosisKeyServiceTest {
   @Test
   void testSortedRetrievalResult() {
     var expKeys = list(
-        buildDiagnosisKeyForSubmissionTimestamp(1L),
-        buildDiagnosisKeyForSubmissionTimestamp(0L));
+        buildDiagnosisKeyForSubmissionTimestamp(2L),
+        buildDiagnosisKeyForSubmissionTimestamp(1L));
 
     diagnosisKeyService.saveDiagnosisKeys(expKeys);
 
@@ -150,7 +150,7 @@ class DiagnosisKeyServiceTest {
   void testReturnedNumberOfInsertedKeysForNoConflict() {
     var keys = list(
         buildDiagnosisKeyForSubmissionTimestamp(1L),
-        buildDiagnosisKeyForSubmissionTimestamp(0L));
+        buildDiagnosisKeyForSubmissionTimestamp(2L));
 
     int actNumberOfInsertedRows = diagnosisKeyService.saveDiagnosisKeys(keys);
 
