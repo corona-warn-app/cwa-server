@@ -209,6 +209,10 @@ public abstract class DiagnosisKeyBundler {
             if (key.getOriginCountry().equals(originCountry) && !visitedCountry.equals(originCountry)) {
               return;
             }
+            if (!key.getOriginCountry().equals(originCountry) && !visitedCountry.equals(originCountry)
+                && key.getVisitedCountries().contains(originCountry)) {
+              return;
+            }
             keysByCountry.get(visitedCountry).add(key);
           });
     }
