@@ -6,6 +6,7 @@ import static java.time.ZoneOffset.UTC;
 
 import app.coronawarn.server.common.persistence.domain.DiagnosisKeyBuilders.Builder;
 import app.coronawarn.server.common.persistence.domain.validation.ValidCountries;
+import app.coronawarn.server.common.persistence.domain.validation.ValidCountry;
 import app.coronawarn.server.common.persistence.domain.validation.ValidRollingStartIntervalNumber;
 import app.coronawarn.server.common.persistence.domain.validation.ValidSubmissionTimestamp;
 import app.coronawarn.server.common.protocols.external.exposurenotification.ReportType;
@@ -41,7 +42,6 @@ public class DiagnosisKey {
   public static final int MAX_DAYS_SINCE_ONSET_OF_SYMPTOMS = 4000;
   public static final int MIN_TRANSMISSION_RISK_LEVEL = 1;
   public static final int MAX_TRANSMISSION_RISK_LEVEL = 8;
-  public static final int ISO_COUNTRY_CODE_LENGTH = 2;
 
   private static final Validator VALIDATOR = Validation.buildDefaultValidatorFactory().getValidator();
 
@@ -67,8 +67,7 @@ public class DiagnosisKey {
 
   private final boolean consentToFederation;
 
-  @Size(max = ISO_COUNTRY_CODE_LENGTH, message = "Origin country code must have length of " + ISO_COUNTRY_CODE_LENGTH
-      + ".")
+  @ValidCountry
   private final String originCountry;
 
   @ValidCountries
@@ -86,7 +85,7 @@ public class DiagnosisKey {
    */
   DiagnosisKey(byte[] keyData, int rollingStartIntervalNumber, int rollingPeriod,
       int transmissionRiskLevel, long submissionTimestamp,
-      boolean consentToFederation, @Size String originCountry, Set<String> visitedCountries,
+      boolean consentToFederation, String originCountry, Set<String> visitedCountries,
       ReportType reportType, Integer daysSinceOnsetOfSymptoms) {
     this.keyData = keyData;
     this.rollingStartIntervalNumber = rollingStartIntervalNumber;
