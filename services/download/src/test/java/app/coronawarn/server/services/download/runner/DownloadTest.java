@@ -23,8 +23,7 @@ class DownloadTest {
 
   @Test
   void testRun() {
-    DownloadServiceConfig serviceConfig = new DownloadServiceConfig();
-    Download download = new Download(federationBatchProcessor, serviceConfig);
+    Download download = new Download(federationBatchProcessor);
 
     download.run(null);
 
