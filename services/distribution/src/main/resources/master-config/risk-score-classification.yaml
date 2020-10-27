@@ -5,7 +5,7 @@
 #
 # Currently, the implementation assumes the following with regards to
 # inclusiveness/exclusiveness of bounds:
-# - "LOW" class: [min, max[
+# - "LOW" class: [min, max]
 # - "HIGH" class: [min, max]
 #
 # The risk classes must not overlap and
