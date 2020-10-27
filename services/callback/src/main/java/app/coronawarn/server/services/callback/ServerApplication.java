@@ -29,11 +29,11 @@ import org.springframework.data.jdbc.repository.config.EnableJdbcRepositories;
 @EnableConfigurationProperties
 public class ServerApplication implements EnvironmentAware, DisposableBean {
 
-  private static final String DISABLE_SSL_SERVER = "disable-ssl-server";
-  private static final String DISABLE_SSL_CLIENT_POSTGRES = "disable-ssl-client-postgres";
-  private static final String DISABLE_SSL_CLIENT_VERIFICATION_VERIFY_HOSTNAME = 
+  static final String DISABLE_SSL_SERVER = "disable-ssl-server";
+  static final String DISABLE_SSL_CLIENT_POSTGRES = "disable-ssl-client-postgres";
+  static final String DISABLE_SSL_CLIENT_VERIFICATION_VERIFY_HOSTNAME = 
       "disable-ssl-client-verification-verify-hostname";
-  private static final String DISABLE_SSL_CLIENT_VERIFICATION = "disable-ssl-client-verification";
+  static final String DISABLE_SSL_CLIENT_VERIFICATION = "disable-ssl-client-verification";
   
   private static final Logger logger = LoggerFactory.getLogger(ServerApplication.class);
 
