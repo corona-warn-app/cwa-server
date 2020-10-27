@@ -4,6 +4,7 @@ package app.coronawarn.server.services.callback.controller;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.http.HttpStatus.BAD_REQUEST;
+import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
 import static org.springframework.http.HttpStatus.OK;
 
 import java.util.stream.Stream;
@@ -27,6 +28,7 @@ class CallbackControllerTest {
 
   private final static String batchTag = "batchTag";
   private final static String validDateString = "2020-05-05";
+  private final static String invalidDateString = "2020-20-20";
 
   @Test
   void ok() {
@@ -38,7 +40,7 @@ class CallbackControllerTest {
   @MethodSource("createTestString")
   void failsWithBadRequest(String batchTag, String dateString) {
     ResponseEntity<Void> actResponse = executor.executeGet(batchTag, dateString);
-    assertThat(actResponse.getStatusCode()).isEqualTo(BAD_REQUEST);
+    assertThat(actResponse.getStatusCode()).isIn(BAD_REQUEST, INTERNAL_SERVER_ERROR);
   }
 
   private static Stream<Arguments> createTestString() {
@@ -49,7 +51,7 @@ class CallbackControllerTest {
         Arguments.of(null, null),
         Arguments.of(null, validDateString),
         Arguments.of("", validDateString),
-        Arguments.of(batchTag, "2020-20-20")
+        Arguments.of("", invalidDateString)
     );
   }
 }

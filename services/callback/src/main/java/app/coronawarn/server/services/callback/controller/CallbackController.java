@@ -6,8 +6,10 @@ import app.coronawarn.server.common.persistence.domain.FederationBatchInfo;
 import app.coronawarn.server.common.persistence.service.FederationBatchInfoService;
 import io.micrometer.core.annotation.Timed;
 import java.time.LocalDate;
-import javax.validation.Valid;
-import javax.validation.constraints.Pattern;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
+import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.format.annotation.DateTimeFormat.ISO;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -38,11 +40,11 @@ public class CallbackController {
    * @param date     The date of the batch.
    * @return An empty response body.
    */
-  @GetMapping(value = CALLBACK_ROUTE, params = {"batchTag!="})
+  @GetMapping(value = CALLBACK_ROUTE)
   @Timed(description = "Time spent handling callback.")
-  public ResponseEntity<Void> handleCallback(@RequestParam(required = true) String batchTag,
-      @Valid @Pattern(regexp = DATE_REGEX) @RequestParam String date) {
-    FederationBatchInfo federationBatchInfo = new FederationBatchInfo(batchTag, LocalDate.parse(date));
+  public ResponseEntity<Void> handleCallback(@NotBlank @RequestParam(required = true) String batchTag,
+      @NotNull @DateTimeFormat(iso = ISO.DATE) @RequestParam LocalDate date) {
+    FederationBatchInfo federationBatchInfo = new FederationBatchInfo(batchTag, date);
     federationBatchInfoService.save(federationBatchInfo);
     return ResponseEntity.ok().build();
   }
