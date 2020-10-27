@@ -127,8 +127,8 @@ public @interface ValidSubmissionPayload {
       String originCountry = submissionPayload.getOrigin();
       if (submissionPayload.hasOrigin() && !originCountry.isEmpty()
           && !supportedCountries.contains(originCountry)) {
-        addViolation(validatorContext,
-            "Key contains origin country which is not part of the supported countries list");
+        addViolation(validatorContext, String.format(
+            "Origin country %s is not part of the supported countries list", originCountry));
         return false;
       }
       return true;
@@ -144,7 +144,7 @@ public @interface ValidSubmissionPayload {
 
       if (!invalidVisitedCountries.isEmpty()) {
         invalidVisitedCountries.forEach(country -> addViolation(validatorContext,
-            "Key contains visited country which is not part of the supported countries list"));
+            "[" + country + "]: Visited country is not part of the supported countries list"));
       }
       return invalidVisitedCountries.isEmpty();
     }
