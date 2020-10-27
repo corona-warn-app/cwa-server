@@ -36,13 +36,13 @@ import org.springframework.test.context.ActiveProfiles;
  * application-download-date-based-integration-test.yaml.
  * <p>
  * The sql script for the test data contains
- * <li>a batch info (expired_batch_tag) for an expired batch that should be deleted by the retention policy</li>
- * <li>a batch info (valid_tag) for a fully valid batch that should be processed</li>
- * <li>a batch info (processing_fails_partially) for a valid batch that should be processed with errors</li>
- * <li>a batch info (processing_fails) for an invalid batch for which the processing should fail with an error</li>
- * <li>a batch info (batch_with_next_batch_tag) for a valid batch that has a nextBatchTag that should not be processed
+ * <li>a batch info ("expired_batch") for an expired batch that should be deleted by the retention policy</li>
+ * <li>a batch info ("valid_batch") for a fully valid batch that should be processed</li>
+ * <li>a batch info ("partially_failing_batch") for a valid batch that should be processed with errors</li>
+ * <li>a batch info ("failing_batch") for an invalid batch for which the processing should fail with an error</li>
+ * <li>a batch info ("batch_with_next_batch") for a valid batch that has a nextBatchTag that should not be processed
  * afterwards</li>
- * <li>and two batch info (retry_batch_tag_successful, retry_batch_tag_fails) from the current date of status 'ERROR',
+ * <li>and two batch info ("retry_batch_successful", "retry_batch_fails") from the current date of status 'ERROR',
  * which should be reprocessed.</li>
  * One of them will be successfully reprocessed and the other one will fail. The WireMockServer is configured
  * accordingly.
@@ -58,13 +58,13 @@ import org.springframework.test.context.ActiveProfiles;
  * <li>RETRY_BATCH_FAILS cannot be proccessed.</li>
  * <p>
  * Hence, after the execution of both runners, the federation_batch_info table should be the following:
- * <li>"expired_batch_tag" is deleted</li>
- * <li>"retry_batch_tag_successful" has state "PROCESSED"</li>
- * <li>"retry_batch_tag_fail" has state "ERROR_WONT_RETRY"</li>
- * <li>"batch_with_next_batch_tag" has state "PROCESSED", the batch referenced via nextBatchTag is not stored</li>
- * <li>"valid_tag" has state "PROCESSED"</li>
- * <li>"processing_fails_partially" has state "PROCESSED_WITH_ERROR"</li>
- * <li>"processing_fails" has state "ERROR"</li>
+ * <li>"expired_batch" is deleted</li>
+ * <li>"retry_batch_successful" has state "PROCESSED"</li>
+ * <li>"retry_batch_fail" has state "ERROR_WONT_RETRY"</li>
+ * <li>"batch_with_next_batch" has state "PROCESSED", the batch referenced via nextBatchTag is not stored</li>
+ * <li>"valid_batch" has state "PROCESSED"</li>
+ * <li>"partially_failing_batch" has state "PROCESSED_WITH_ERROR"</li>
+ * <li>"failing_batch" has state "ERROR"</li>
  * <li>no batch has state "UNPROCESSED"</li>
  * <p>
  */
@@ -73,23 +73,25 @@ import org.springframework.test.context.ActiveProfiles;
 @DirtiesContext
 public class DownloadViaCallbackIntegrationTest {
 
-  public static final String BATCH1_TAG = "valid_tag";
-  private static final String BATCH1_KEY1_DATA = "0123456789ABCDEA";
-  private static final String BATCH1_KEY2_DATA = "0123456789ABCDEB";
-  private static final String BATCH1_KEY3_DATA = "0123456789ABCDEC";
-  private static final String BATCH1_KEY4_DATA = "0123456789ABCDED";
+  private static final String VALID_BATCH_TAG = "valid_batch";
+  private static final String VALID_BATCH_KEY1_DATA = "0123456789ABCDEA";
+  private static final String VALID_BATCH_KEY2_DATA = "0123456789ABCDEB";
+  private static final String VALID_BATCH_KEY3_DATA = "0123456789ABCDEC";
+  private static final String VALID_BATCH_KEY4_DATA = "0123456789ABCDED";
 
-  public static final String BATCH2_TAG = "processing_fails_partially";
-  public static final String BATCH3_TAG = "processing_fails";
-  private static final String RETRY_BATCH_SUCCESSFUL_TAG = "retry_batch_tag_successful";
-  private static final String RETRY_BATCH_SUCCESSFUL_KEY_DATA = "0123456789ABCDEF";
+  private static final String PARTIALLY_FAILING_BATCH_TAG = "partially_failing_batch";
 
-  private static final String RETRY_BATCH_FAILS_TAG = "retry_batch_tag_fail";
-  private static final String EMPTY_BATCH_TAG = "null";
+  private static final String FAILING_BATCH_TAG = "failing_batch";
 
-  private static final String BATCH_WITH_NEXT_BATCH_TAG = "batch_with_next_batch_tag";
-  private static final String BATCH_WITH_NEXT_BATCH_DATA = "0123456789ABCDF0";
+  private static final String BATCH_WITH_NEXT_BATCH_TAG = "batch_with_next_batch";
+  private static final String BATCH_WITH_NEXT_BATCH_DATA = "0123456789ABCDEF";
   private static final String ARBITRARY_NEXT_BATCH_TAG = "next";
+
+  private static final String RETRY_BATCH_SUCCESSFUL_TAG = "retry_batch_successful";
+  private static final String RETRY_BATCH_SUCCESSFUL_KEY_DATA = "0123456789ABCDEE";
+
+  private static final String RETRY_BATCH_FAILS_TAG = "retry_batch_fail";
+  private static final String EMPTY_BATCH_TAG = "null";
 
   private static WireMockServer server;
 
@@ -104,86 +106,68 @@ public class DownloadViaCallbackIntegrationTest {
 
   @BeforeAll
   static void setupWireMock() {
-    HttpHeaders batch1Headers = getHttpHeaders(BATCH1_TAG, EMPTY_BATCH_TAG);
-    DiagnosisKeyBatch batch1 = FederationBatchTestHelper.createDiagnosisKeyBatch(
+    HttpHeaders validBatchHeaders = getHttpHeaders(VALID_BATCH_TAG, EMPTY_BATCH_TAG);
+    DiagnosisKeyBatch validBatch = FederationBatchTestHelper.createDiagnosisKeyBatch(
         List.of(
-            FederationBatchTestHelper.createFederationDiagnosisKeyWithKeyData(BATCH1_KEY1_DATA),
+            FederationBatchTestHelper.createFederationDiagnosisKeyWithKeyData(VALID_BATCH_KEY1_DATA),
+            FederationBatchTestHelper
+                .createBuilderForValidFederationDiagnosisKey()
+                .setKeyData(ByteString.copyFromUtf8(VALID_BATCH_KEY2_DATA))
+                .setReportType(ReportType.CONFIRMED_CLINICAL_DIAGNOSIS)
+                .build(),
+            FederationBatchTestHelper
+                .createBuilderForValidFederationDiagnosisKey()
+                .setKeyData(ByteString.copyFromUtf8(VALID_BATCH_KEY3_DATA))
+                .build(),
             FederationBatchTestHelper.createBuilderForValidFederationDiagnosisKey()
-                .setKeyData(ByteString.copyFromUtf8(BATCH1_KEY4_DATA))
+                .setKeyData(ByteString.copyFromUtf8(VALID_BATCH_KEY4_DATA))
                 .setTransmissionRiskLevel(1)
                 .setReportType(ReportType.CONFIRMED_CLINICAL_DIAGNOSIS)
-                .build(),
-            FederationBatchTestHelper
-                .createBuilderForValidFederationDiagnosisKey()
-                .setKeyData(ByteString.copyFromUtf8(BATCH1_KEY2_DATA))
-                .setReportType(ReportType.CONFIRMED_CLINICAL_DIAGNOSIS)
-                .build(),
-            FederationBatchTestHelper
-                .createBuilderForValidFederationDiagnosisKey()
-                .setKeyData(ByteString.copyFromUtf8(BATCH1_KEY3_DATA))
                 .build()
         )
     );
 
-    HttpHeaders batch2Headers = getHttpHeaders(BATCH2_TAG, EMPTY_BATCH_TAG);
-    DiagnosisKeyBatch batch2 = FederationBatchTestHelper.createDiagnosisKeyBatch(
+    HttpHeaders partiallyFailingBatchHeaders = getHttpHeaders(PARTIALLY_FAILING_BATCH_TAG, EMPTY_BATCH_TAG);
+    DiagnosisKeyBatch partiallyFailingBatch = FederationBatchTestHelper.createDiagnosisKeyBatch(
         List.of(
             FederationBatchTestHelper.createFederationDiagnosisKeyWithDsos(9999)
         )
     );
 
-    HttpHeaders batchWithNextBatchTagHeaders = getHttpHeaders(BATCH_WITH_NEXT_BATCH_TAG, ARBITRARY_NEXT_BATCH_TAG);
-    DiagnosisKeyBatch batchWithNextBatchTag = FederationBatchTestHelper
-        .createDiagnosisKeyBatch(BATCH_WITH_NEXT_BATCH_DATA);
-
     HttpHeaders retryBatchSuccessfulHeaders = getHttpHeaders(RETRY_BATCH_SUCCESSFUL_TAG, EMPTY_BATCH_TAG);
     DiagnosisKeyBatch retryBatchSuccessful = FederationBatchTestHelper.createDiagnosisKeyBatch(
         RETRY_BATCH_SUCCESSFUL_KEY_DATA);
+
+
+    HttpHeaders batchWithNextBatchTagHeaders = getHttpHeaders(BATCH_WITH_NEXT_BATCH_TAG, ARBITRARY_NEXT_BATCH_TAG);
+    DiagnosisKeyBatch batchWithNextBatchTag = FederationBatchTestHelper
+        .createDiagnosisKeyBatch(BATCH_WITH_NEXT_BATCH_DATA);
 
     server = new WireMockServer(options().port(1234));
     server.start();
 
     server.stubFor(
         get(anyUrl())
-            .withHeader("batchTag", equalTo(BATCH1_TAG))
+            .withHeader("batchTag", equalTo(VALID_BATCH_TAG))
             .willReturn(
                 aResponse()
                     .withStatus(HttpStatus.OK.value())
-                    .withHeaders(batch1Headers)
-                    .withBody(batch1.toByteArray())));
-
+                    .withHeaders(validBatchHeaders)
+                    .withBody(validBatch.toByteArray())));
     server.stubFor(
         get(anyUrl())
-            .withHeader("batchTag", equalTo(BATCH2_TAG))
+            .withHeader("batchTag", equalTo(PARTIALLY_FAILING_BATCH_TAG))
             .willReturn(
                 aResponse()
                     .withStatus(HttpStatus.OK.value())
-                    .withHeaders(batch2Headers)
-                    .withBody(batch2.toByteArray())));
-
+                    .withHeaders(partiallyFailingBatchHeaders)
+                    .withBody(partiallyFailingBatch.toByteArray())));
     server.stubFor(
         get(anyUrl())
-            .withHeader("batchTag", equalTo(BATCH3_TAG))
+            .withHeader("batchTag", equalTo(FAILING_BATCH_TAG))
             .willReturn(
                 aResponse()
                     .withStatus(HttpStatus.NOT_FOUND.value())));
-
-    server.stubFor(
-        get(anyUrl())
-            .withHeader("batchTag", equalTo(RETRY_BATCH_FAILS_TAG))
-            .willReturn(
-                aResponse()
-                    .withStatus(HttpStatus.NOT_FOUND.value())));
-
-    server.stubFor(
-        get(anyUrl())
-            .withHeader("batchTag", equalTo(RETRY_BATCH_SUCCESSFUL_TAG))
-            .willReturn(
-                aResponse()
-                    .withStatus(HttpStatus.OK.value())
-                    .withHeaders(retryBatchSuccessfulHeaders)
-                    .withBody(retryBatchSuccessful.toByteArray())));
-
     server.stubFor(
         get(anyUrl())
             .withHeader("batchTag", equalTo(BATCH_WITH_NEXT_BATCH_TAG))
@@ -192,6 +176,20 @@ public class DownloadViaCallbackIntegrationTest {
                     .withStatus(HttpStatus.OK.value())
                     .withHeaders(batchWithNextBatchTagHeaders)
                     .withBody(batchWithNextBatchTag.toByteArray())));
+    server.stubFor(
+        get(anyUrl())
+            .withHeader("batchTag", equalTo(RETRY_BATCH_SUCCESSFUL_TAG))
+            .willReturn(
+                aResponse()
+                    .withStatus(HttpStatus.OK.value())
+                    .withHeaders(retryBatchSuccessfulHeaders)
+                    .withBody(retryBatchSuccessful.toByteArray())));
+    server.stubFor(
+        get(anyUrl())
+            .withHeader("batchTag", equalTo(RETRY_BATCH_FAILS_TAG))
+            .willReturn(
+                aResponse()
+                    .withStatus(HttpStatus.NOT_FOUND.value())));
   }
 
   private static HttpHeaders getHttpHeaders(String batchTag, String nextBatchTag) {
@@ -218,10 +216,10 @@ public class DownloadViaCallbackIntegrationTest {
     Iterable<DiagnosisKey> diagnosisKeys = diagnosisKeyRepository.findAll();
     assertThat(diagnosisKeys)
         .hasSize(6)
-        .contains(FederationBatchTestHelper.createDiagnosisKey(BATCH1_KEY1_DATA, downloadServiceConfig))
-        .contains(FederationBatchTestHelper.createDiagnosisKey(BATCH1_KEY2_DATA, downloadServiceConfig))
-        .contains(FederationBatchTestHelper.createDiagnosisKey(BATCH1_KEY3_DATA, downloadServiceConfig))
-        .contains(FederationBatchTestHelper.createDiagnosisKey(BATCH1_KEY4_DATA, downloadServiceConfig))
+        .contains(FederationBatchTestHelper.createDiagnosisKey(VALID_BATCH_KEY1_DATA, downloadServiceConfig))
+        .contains(FederationBatchTestHelper.createDiagnosisKey(VALID_BATCH_KEY2_DATA, downloadServiceConfig))
+        .contains(FederationBatchTestHelper.createDiagnosisKey(VALID_BATCH_KEY3_DATA, downloadServiceConfig))
+        .contains(FederationBatchTestHelper.createDiagnosisKey(VALID_BATCH_KEY4_DATA, downloadServiceConfig))
         .contains(FederationBatchTestHelper.createDiagnosisKey(RETRY_BATCH_SUCCESSFUL_KEY_DATA, downloadServiceConfig))
         .contains(FederationBatchTestHelper.createDiagnosisKey(BATCH_WITH_NEXT_BATCH_DATA, downloadServiceConfig));
   }
