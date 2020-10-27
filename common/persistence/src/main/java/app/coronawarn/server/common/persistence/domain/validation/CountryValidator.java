@@ -8,6 +8,9 @@ public class CountryValidator {
 
   private static final List<String> ISO_COUNTRIES = List.of(Locale.getISOCountries());
 
+  private CountryValidator() {
+  }
+
   /**
    * Checks if the provided country code is a valid ISO country code.
    *
