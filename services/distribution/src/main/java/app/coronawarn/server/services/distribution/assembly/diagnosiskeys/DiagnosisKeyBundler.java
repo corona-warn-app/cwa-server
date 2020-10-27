@@ -69,7 +69,7 @@ public abstract class DiagnosisKeyBundler {
   /**
    * Constructs a DiagnosisKeyBundler based on the specified service configuration.
    */
-  public DiagnosisKeyBundler(DistributionServiceConfig distributionServiceConfig) {
+  protected DiagnosisKeyBundler(DistributionServiceConfig distributionServiceConfig) {
     this.supportedCountries = List.of(distributionServiceConfig.getSupportedCountries());
     this.expiryPolicyMinutes = distributionServiceConfig.getExpiryPolicyMinutes();
     this.minNumberOfKeysPerBundle = distributionServiceConfig.getShiftingPolicyThreshold();
