@@ -113,10 +113,10 @@ AllUsers. This setting should only be used when running with the application wit
 
 #### `cwa-hash`
 
-Custom header, which adds a complex MD5 hash of the archive contents (export.bin). If the file isn't an archive, the 
-contents of the file will be used to build the hash (index files). This header is used to determine whether a file 
-should be uploaded or not. If the hash for the file is the same as the hash available on the S3 compatible storage it 
-will not be uploaded, since the contents of that specific file did not change, so there is no need to re-upload the 
+Custom header, which adds a complex MD5 hash of the archive contents (export.bin). If the file isn't an archive, the
+contents of the file will be used to build the hash (index files). This header is used to determine whether a file
+should be uploaded or not. If the hash for the file is the same as the hash available on the S3 compatible storage it
+will not be uploaded, since the contents of that specific file did not change, so there is no need to re-upload the
 file. If the hash differs, or the file is not available on the S3 compatible storage, the file will be uploaded.
 
 This header is needed, since it is not possible to create byte-identical archives when using ECDSA due to its
@@ -124,17 +124,15 @@ non-deterministic nature.
 
 To calculate the CWA-hash locally, e.g. on a Mac you can use the following code in a terminal on the archive contents:
 
-```
-md5 -q export.bin | tr a-z A-Z | xxd -p -r | md5 -q 
+```sh
+md5 -q export.bin | tr a-z A-Z | xxd -p -r | md5 -q
 ```
 
 #### `ETag`
 
-[Standard HTTP header](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/ETag), used to determine whether the 
+[Standard HTTP header](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/ETag), used to determine whether the
 archive has changed and needs to be re-uploaded or re-downloaded by clients (i.e. mobile apps). Usually an MD5 of the
-complete archive file, but can be complex to calculate for multi-part uploads (i.e. see [this answer on StackOverflow]
-(https://stackoverflow.com/questions/12186993/what-is-the-algorithm-to-compute-the-amazon-s3-etag-for-a-file-larger-than-5gb#answer-19896823).
-
+complete archive file, but can be complex to calculate for multi-part uploads (i.e. see [this answer on StackOverflow](https://stackoverflow.com/questions/12186993/what-is-the-algorithm-to-compute-the-amazon-s3-etag-for-a-file-larger-than-5gb#answer-19896823).
 
 ## Threading
 
