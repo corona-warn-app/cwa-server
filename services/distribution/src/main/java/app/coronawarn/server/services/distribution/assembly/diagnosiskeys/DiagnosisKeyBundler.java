@@ -206,12 +206,45 @@ public abstract class DiagnosisKeyBundler {
       key.getVisitedCountries().stream()
           .filter(supportedCountries::contains)
           .forEach(visitedCountry -> {
-            if (key.getOriginCountry().equals(originCountry) && !visitedCountry.equals(originCountry)) {
+            if (isKeyOriginAndVisitedCountryNotEqualToOriginCountry(key, visitedCountry)) {
+              return;
+            }
+            if (isEfgsKeyWithOriginInVisitedCountriesAndNotVisitedCountry(key, visitedCountry)) {
               return;
             }
             keysByCountry.get(visitedCountry).add(key);
           });
     }
+  }
+
+  /**
+   *  Check if the origin country of the key equals the distribution configuration originCountry
+   *  and the current visited country is not equal to the configuration originCountry. This ensures that origin country
+   *  keys are only being mapped to their respective origin country bucket. Therefore, we ensure that the policies
+   *  for the origin country keys are applied and they don't get distributed in the EUR package.
+   * @param key Diagnosis key
+   * @param visitedCountry Single entry of visitedCountries list.
+   * @return
+   */
+  private boolean isKeyOriginAndVisitedCountryNotEqualToOriginCountry(DiagnosisKey key, String visitedCountry) {
+    return key.getOriginCountry().equals(originCountry) && !visitedCountry.equals(originCountry);
+  }
+
+  /**
+   *  Check if the origin country of the key does not equal the distribution configuration originCountry,
+   *  the current visited country is not equal to the configuration originCountry and the list of visited countries
+   *  contain the configuration originCountry. This ensures that the EFGS keys of other supported countries which
+   *  contain the configuration originCountry in their visited country list will only be distributed if the
+   *  respective originCountry bucket meets all policies and is able to be distributed. Therefore,
+   *  we ensure that the keys are not distributed twice and that the packages are in sync for the configuration
+   *  originCountry package and the EUR package.
+   * @param key Diagnosis key
+   * @param visitedCountry Single entry of visitedCountries list.
+   * @return
+   */
+  private boolean isEfgsKeyWithOriginInVisitedCountriesAndNotVisitedCountry(DiagnosisKey key, String visitedCountry) {
+    return !key.getOriginCountry().equals(originCountry) && !visitedCountry.equals(originCountry)
+        && key.getVisitedCountries().contains(originCountry);
   }
 
   protected Map<String, List<DiagnosisKey>> mapDiagnosisKeysPerVisitedCountries(
