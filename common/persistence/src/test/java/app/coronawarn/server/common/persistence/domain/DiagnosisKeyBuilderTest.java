@@ -176,7 +176,7 @@ class DiagnosisKeyBuilderTest {
   }
 
   @ParameterizedTest
-  @ValueSource(strings = {"DER", "xx", "De", "dE", "DE,FRE"})
+  @ValueSource(strings = {"DER", "xx", "De", "dE", "DE,FRE",""})
   void failsForInvalidOriginCountry(String countryCode) {
     assertThat(
         catchThrowable(() -> DiagnosisKey.builder()
@@ -190,7 +190,7 @@ class DiagnosisKeyBuilderTest {
   }
 
   @ParameterizedTest
-  @ValueSource(strings = {"DER", "xx", "De", "dE", "DE,FRE"})
+  @ValueSource(strings = {"DER", "xx", "De", "dE", "DE,FRE",""})
   void failsForInvalidVisitedCountries(String visitedCountries) {
     assertThat(
         catchThrowable(() -> DiagnosisKey.builder()
