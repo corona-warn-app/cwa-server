@@ -168,7 +168,9 @@ class DiagnosisKeyBuilderTest {
         catchThrowable(() -> DiagnosisKey.builder()
             .withKeyData(expKeyData)
             .withRollingStartIntervalNumber(0)
-            .withTransmissionRiskLevel(expTransmissionRiskLevel).build()
+            .withTransmissionRiskLevel(expTransmissionRiskLevel)
+            .withCountryCode(originCountry)
+            .build()
         )
     ).isInstanceOf(InvalidDiagnosisKeyException.class);
   }
@@ -281,12 +283,12 @@ class DiagnosisKeyBuilderTest {
 
   @Test
   void submissionTimestampDoesNotThrowOnValid() {
-    assertThatCode(() -> buildDiagnosisKeyForSubmissionTimestamp(0L)).doesNotThrowAnyException();
-    assertThatCode(() -> buildDiagnosisKeyForSubmissionTimestamp(getCurrentHoursSinceEpoch()))
+    assertThatCode(() -> buildDiagnosisKeyForSubmissionTimestamp(1L, 144, false)).doesNotThrowAnyException();
+    assertThatCode(() -> buildDiagnosisKeyForSubmissionTimestamp(getCurrentHoursSinceEpoch(), 144, false))
         .doesNotThrowAnyException();
     assertThatCode(
         () -> buildDiagnosisKeyForSubmissionTimestamp(
-            Instant.now().minus(Duration.ofHours(2)).getEpochSecond() / SECONDS_PER_HOUR))
+            Instant.now().minus(Duration.ofHours(2)).getEpochSecond() / SECONDS_PER_HOUR, 144, false))
         .doesNotThrowAnyException();
   }
 
@@ -329,14 +331,18 @@ class DiagnosisKeyBuilderTest {
     return DiagnosisKey.builder()
         .withKeyData(expKeyData)
         .withRollingStartIntervalNumber(expRollingStartIntervalNumber)
-        .withTransmissionRiskLevel(expTransmissionRiskLevel).build();
+        .withTransmissionRiskLevel(expTransmissionRiskLevel)
+        .withCountryCode(originCountry)
+        .build();
   }
 
   private DiagnosisKey keyWithRollingStartIntervalNumber(int expRollingStartIntervalNumber) {
     return DiagnosisKey.builder()
         .withKeyData(expKeyData)
         .withRollingStartIntervalNumber(expRollingStartIntervalNumber)
-        .withTransmissionRiskLevel(expTransmissionRiskLevel).build();
+        .withTransmissionRiskLevel(expTransmissionRiskLevel)
+        .withCountryCode(originCountry)
+        .build();
   }
 
   private DiagnosisKey keyWithRollingPeriod(int expRollingPeriod) {
@@ -344,14 +350,18 @@ class DiagnosisKeyBuilderTest {
         .withKeyData(expKeyData)
         .withRollingStartIntervalNumber(expRollingStartIntervalNumber)
         .withTransmissionRiskLevel(expTransmissionRiskLevel)
-        .withRollingPeriod(expRollingPeriod).build();
+        .withCountryCode(originCountry)
+        .withRollingPeriod(expRollingPeriod)
+        .build();
   }
 
   private DiagnosisKey keyWithRiskLevel(int expTransmissionRiskLevel) {
     return DiagnosisKey.builder()
         .withKeyData(expKeyData)
         .withRollingStartIntervalNumber(expRollingStartIntervalNumber)
-        .withTransmissionRiskLevel(expTransmissionRiskLevel).build();
+        .withTransmissionRiskLevel(expTransmissionRiskLevel)
+        .withCountryCode(originCountry)
+        .build();
   }
 
   private DiagnosisKey keyWithDsos(int dsos) {
@@ -359,7 +369,9 @@ class DiagnosisKeyBuilderTest {
         .withKeyData(expKeyData)
         .withRollingStartIntervalNumber(expRollingStartIntervalNumber)
         .withTransmissionRiskLevel(expTransmissionRiskLevel)
-        .withDaysSinceOnsetOfSymptoms(dsos).build();
+        .withCountryCode(originCountry)
+        .withDaysSinceOnsetOfSymptoms(dsos)
+        .build();
   }
 
   private void assertDiagnosisKeyEquals(DiagnosisKey actDiagnosisKey) {
