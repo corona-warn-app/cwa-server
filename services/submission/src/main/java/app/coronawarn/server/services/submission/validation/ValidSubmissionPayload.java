@@ -19,6 +19,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Function;
+import java.util.function.UnaryOperator;
 import java.util.stream.Stream;
 import javax.validation.Constraint;
 import javax.validation.ConstraintValidator;
@@ -203,7 +204,7 @@ public @interface ValidSubmissionPayload {
      * @return True if an invalid key was found.
      */
     private boolean addViolationForInvalidTek(List<TemporaryExposureKey> exposureKeys,
-        Function<Stream<TemporaryExposureKey>, Stream<TemporaryExposureKey>> filterFunction,
+        UnaryOperator<Stream<TemporaryExposureKey>> filterFunction,
         ConstraintValidatorContext validatorContext,
         Function<TemporaryExposureKey, String> messageConstructor) {
       AtomicBoolean foundInvalid = new AtomicBoolean(true);
