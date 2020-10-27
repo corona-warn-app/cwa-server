@@ -4,17 +4,17 @@ import static app.coronawarn.server.services.callback.ServerApplication.DISABLE_
 import static app.coronawarn.server.services.callback.ServerApplication.DISABLE_SSL_CLIENT_VERIFICATION;
 import static app.coronawarn.server.services.callback.ServerApplication.DISABLE_SSL_CLIENT_VERIFICATION_VERIFY_HOSTNAME;
 import static app.coronawarn.server.services.callback.ServerApplication.DISABLE_SSL_SERVER;
+import static org.apache.logging.log4j.core.LoggerContext.getContext;
+import static org.apache.logging.log4j.Level.DEBUG;
 import static org.assertj.core.api.Assertions.assertThat;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.core.Appender;
 import org.apache.logging.log4j.core.ErrorHandler;
 import org.apache.logging.log4j.core.Layout;
 import org.apache.logging.log4j.core.LogEvent;
-import org.apache.logging.log4j.core.LoggerContext;
 import org.apache.logging.log4j.core.config.Configuration;
 import org.apache.logging.log4j.core.config.LoggerConfig;
 import org.junit.jupiter.api.AfterAll;
@@ -26,6 +26,9 @@ import org.springframework.mock.env.MockEnvironment;
 class ServerApplicationTest {
 
   static List<String> messages = new ArrayList<>();
+
+  private static final String LOGGER_NAME = ServerApplication.class.getName();
+  private static final String APPENDER_NAME = TestAppender.class.getSimpleName();
 
   static class TestAppender implements Appender {
 
@@ -67,7 +70,7 @@ class ServerApplicationTest {
 
     @Override
     public String getName() {
-      return TestAppender.class.getSimpleName();
+      return APPENDER_NAME;
     }
 
     @Override
@@ -92,12 +95,9 @@ class ServerApplicationTest {
 
   @BeforeAll
   protected static void beforeAll() {
-    final LoggerContext context = LoggerContext.getContext(false);
-    final Configuration config = context.getConfiguration();
-    TestAppender appender = new TestAppender();
-    config.addLogger(ServerApplication.class.getName(),
-        new LoggerConfig(ServerApplication.class.getName(), Level.ALL, true));
-    config.getRootLogger().addAppender(appender, Level.ALL, null);
+    final Configuration config = getContext(false).getConfiguration();
+    config.addLogger(LOGGER_NAME, new LoggerConfig(LOGGER_NAME, DEBUG, true));
+    config.getRootLogger().addAppender(new TestAppender(), DEBUG, null);
   }
 
   @BeforeEach
@@ -107,9 +107,9 @@ class ServerApplicationTest {
 
   @AfterAll
   protected static void afterAll() {
-    final LoggerContext context = LoggerContext.getContext(false);
-    final Configuration config = context.getConfiguration();
-    config.getRootLogger().removeAppender(ServerApplication.class.getName());
+    final Configuration config = getContext(false).getConfiguration();
+    config.removeLogger(LOGGER_NAME);
+    config.getRootLogger().removeAppender(APPENDER_NAME);
   }
 
   @Test
