@@ -1,5 +1,3 @@
-
-
 package app.coronawarn.server.services.submission.controller;
 
 import static app.coronawarn.server.common.protocols.external.exposurenotification.ReportType.CONFIRMED_TEST;
@@ -49,29 +47,20 @@ public final class SubmissionPayloadMockData {
         .build();
   }
 
-  public static SubmissionPayload buildInvalidPayload(TemporaryExposureKey key) {
-    Collection<TemporaryExposureKey> keys = Stream.of(key).collect(Collectors.toCollection(ArrayList::new));
-    return buildInvalidPayload(keys);
-  }
-
-  public static SubmissionPayload buildEmptyOriginCountryPayload(TemporaryExposureKey key) {
-    Collection<TemporaryExposureKey> keys = Stream.of(key).collect(Collectors.toCollection(ArrayList::new));
-    return buildEmptyOriginCountryPayload(keys);
-  }
-
-  public static SubmissionPayload buildInvalidPayload(Collection<TemporaryExposureKey> keys) {
+  public static SubmissionPayload buildPayloadForOriginCountry(Collection<TemporaryExposureKey> keys,
+      String originCountry) {
     return SubmissionPayload.newBuilder()
         .addAllKeys(keys)
         .addAllVisitedCountries(List.of("DE", "FR"))
-        .setOrigin("DE3")
+        .setOrigin(originCountry)
         .build();
   }
 
-  public static SubmissionPayload buildEmptyOriginCountryPayload(Collection<TemporaryExposureKey> keys) {
+  public static SubmissionPayload buildPayloadWithoutOriginCountry(Collection<TemporaryExposureKey> keys) {
     return SubmissionPayload.newBuilder()
         .addAllKeys(keys)
         .addAllVisitedCountries(List.of("DE", "FR"))
-        .setOrigin("")
+        .clearOrigin()
         .build();
   }
 
@@ -84,6 +73,20 @@ public final class SubmissionPayloadMockData {
     int exceedingSize = (int) (2 * config.getMaximumRequestSize().toBytes());
     byte[] bytes = new byte[exceedingSize];
     return buildPayloadWithPadding(keys, bytes);
+  }
+
+  public static Collection<TemporaryExposureKey> buildPayloadWithOneKey() {
+    return Collections.singleton(buildTemporaryExposureKey(VALID_KEY_DATA_1, createRollingStartIntervalNumber(1), 3,
+        ReportType.CONFIRMED_TEST, 1));
+  }
+
+  private static SubmissionPayload buildPayloadWithPadding(Collection<TemporaryExposureKey> keys, byte[] bytes) {
+    return SubmissionPayload.newBuilder()
+        .addAllKeys(keys)
+        .addAllVisitedCountries(List.of("DE", "FR"))
+        .setOrigin("DE")
+        .setRequestPadding(ByteString.copyFrom(bytes))
+        .build();
   }
 
   public static Collection<TemporaryExposureKey> buildMultipleKeys(SubmissionServiceConfig config) {
@@ -133,27 +136,6 @@ public final class SubmissionPayloadMockData {
         .collect(Collectors.toCollection(ArrayList::new));
   }
 
-  public static SubmissionPayload buildPayloadWithInvalidKey() {
-    TemporaryExposureKey invalidKey =
-        buildTemporaryExposureKey(VALID_KEY_DATA_1, createRollingStartIntervalNumber(2), 999,
-            ReportType.CONFIRMED_TEST, 1);
-    return buildPayload(invalidKey);
-  }
-
-  public static SubmissionPayload buildPayloadWithInvalidOriginCountry() {
-    TemporaryExposureKey key =
-        buildTemporaryExposureKey(VALID_KEY_DATA_1, createRollingStartIntervalNumber(2), 3,
-            ReportType.CONFIRMED_TEST, 1);
-    return buildInvalidPayload(key);
-  }
-
-  public static SubmissionPayload buildPayloadWithEmptyOriginCountry() {
-    TemporaryExposureKey key =
-        buildTemporaryExposureKey(VALID_KEY_DATA_1, createRollingStartIntervalNumber(2), 3,
-            ReportType.CONFIRMED_TEST, 1);
-    return buildEmptyOriginCountryPayload(key);
-  }
-
   public static SubmissionPayload buildPayloadWithVisitedCountries(List<String> visitedCountries) {
     TemporaryExposureKey key =
         buildTemporaryExposureKey(VALID_KEY_DATA_1, createRollingStartIntervalNumber(2), 3,
@@ -168,11 +150,11 @@ public final class SubmissionPayloadMockData {
 
   public static TemporaryExposureKey buildTemporaryExposureKey(
       String keyData, int rollingStartIntervalNumber, Integer transmissionRiskLevel, ReportType reportType,
-      Integer daysSinceOnsetOfSymptoms){
+      Integer daysSinceOnsetOfSymptoms) {
     Builder builder = TemporaryExposureKey.newBuilder()
         .setKeyData(ByteString.copyFromUtf8(keyData))
         .setRollingStartIntervalNumber(rollingStartIntervalNumber);
-    if(transmissionRiskLevel != null) {
+    if (transmissionRiskLevel != null) {
       builder.setTransmissionRiskLevel(transmissionRiskLevel);
     }
     builder.setReportType(reportType);
@@ -193,7 +175,7 @@ public final class SubmissionPayloadMockData {
   }
 
   public static TemporaryExposureKey buildTemporaryExposureKeyWithoutTRL(
-      String keyData, int rollingStartIntervalNumber, ReportType reportType, int daysSinceOnsetOfSymptoms){
+      String keyData, int rollingStartIntervalNumber, ReportType reportType, int daysSinceOnsetOfSymptoms) {
     return TemporaryExposureKey.newBuilder()
         .setKeyData(ByteString.copyFromUtf8(keyData))
         .setRollingStartIntervalNumber(rollingStartIntervalNumber)
@@ -203,7 +185,7 @@ public final class SubmissionPayloadMockData {
   }
 
   public static TemporaryExposureKey buildTemporaryExposureKeyWithoutDSOSAndTRL(
-      String keyData, int rollingStartIntervalNumber, ReportType reportType){
+      String keyData, int rollingStartIntervalNumber, ReportType reportType) {
     return TemporaryExposureKey.newBuilder()
         .setKeyData(ByteString.copyFromUtf8(keyData))
         .setRollingStartIntervalNumber(rollingStartIntervalNumber)
@@ -225,19 +207,5 @@ public final class SubmissionPayloadMockData {
         .ofInstant(Instant.now(), UTC)
         .minusDays(daysAgo).atStartOfDay()
         .toEpochSecond(UTC) / (60 * 10));
-  }
-
-  public static Collection<TemporaryExposureKey> buildPayloadWithOneKey() {
-    return Collections.singleton(buildTemporaryExposureKey(VALID_KEY_DATA_1, createRollingStartIntervalNumber(1), 3,
-        ReportType.CONFIRMED_TEST, 1));
-  }
-
-  private static SubmissionPayload buildPayloadWithPadding(Collection<TemporaryExposureKey> keys, byte[] bytes) {
-    return SubmissionPayload.newBuilder()
-        .addAllKeys(keys)
-        .addAllVisitedCountries(List.of("DE", "FR"))
-        .setOrigin("DE")
-        .setRequestPadding(ByteString.copyFrom(bytes))
-        .build();
   }
 }
