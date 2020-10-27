@@ -17,6 +17,7 @@ import java.time.Duration;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.ZoneOffset;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import org.junit.jupiter.api.Test;
@@ -31,7 +32,7 @@ class DiagnosisKeyBuilderTest {
   private final long expSubmissionTimestamp = 2L;
   private final boolean expConsentToFederation = false;
   private final String originCountry = "DE";
-  private final Set<String> visitedCountries = Set.of("DE");
+  private final Set<String> visitedCountries = new HashSet<>(Set.of("DE"));
   private final ReportType reportType = ReportType.CONFIRMED_TEST;
   private final int daysSinceOnsetOfSymptoms = 2;
 
@@ -135,6 +136,38 @@ class DiagnosisKeyBuilderTest {
     assertDiagnosisKeyEquals(actDiagnosisKey, expSubmissionTimestamp);
   }
 
+  @Test
+  void buildSuccessivelyWithoutVisitedCountries() {
+    DiagnosisKey actDiagnosisKey = DiagnosisKey.builder()
+        .withKeyData(expKeyData)
+        .withRollingStartIntervalNumber(expRollingStartIntervalNumber)
+        .withTransmissionRiskLevel(expTransmissionRiskLevel)
+        .withReportType(reportType)
+        .withDaysSinceOnsetOfSymptoms(daysSinceOnsetOfSymptoms)
+        .withConsentToFederation(expConsentToFederation)
+        .withCountryCode(originCountry)
+        .build();
+
+    assertDiagnosisKeyEquals(actDiagnosisKey);
+  }
+
+  @Test
+  void buildSuccessivelyWithOriginMissingFromVisitedCountries() {
+    DiagnosisKey actDiagnosisKey = DiagnosisKey.builder()
+        .withKeyData(expKeyData)
+        .withRollingStartIntervalNumber(expRollingStartIntervalNumber)
+        .withTransmissionRiskLevel(expTransmissionRiskLevel)
+        .withReportType(reportType)
+        .withDaysSinceOnsetOfSymptoms(daysSinceOnsetOfSymptoms)
+        .withConsentToFederation(expConsentToFederation)
+        .withCountryCode(originCountry)
+        .withVisitedCountries(Set.of("IT"))
+        .build();
+
+    visitedCountries.add("IT");
+    assertDiagnosisKeyEquals(actDiagnosisKey);
+  }
+
   @ParameterizedTest
   @ValueSource(ints = {4200, 441552})
   void rollingStartIntervalNumberDoesNotThrowForValid(int validRollingStartIntervalNumber) {
@@ -175,28 +208,31 @@ class DiagnosisKeyBuilderTest {
     ).isInstanceOf(InvalidDiagnosisKeyException.class);
   }
 
-  @Test
-  void failsForInvalidOriginCountry() {
+  @ParameterizedTest
+  @ValueSource(strings = {"DER", "xx", "De", "dE", "DE,FRE",""})
+  void failsForInvalidOriginCountry(String countryCode) {
     assertThat(
         catchThrowable(() -> DiagnosisKey.builder()
             .withKeyData(expKeyData)
             .withRollingStartIntervalNumber(expRollingStartIntervalNumber)
             .withTransmissionRiskLevel(expTransmissionRiskLevel)
-            .withCountryCode("DER")
+            .withCountryCode(countryCode)
             .build()
         )
     ).isInstanceOf(InvalidDiagnosisKeyException.class);
   }
 
   @ParameterizedTest
-  @ValueSource(strings = {"DER", "xx", "De", "dE", "DE,FRE"})
+  @ValueSource(strings = {"DER", "xx", "De", "dE", "DE,FRE",""})
   void failsForInvalidVisitedCountries(String visitedCountries) {
     assertThat(
         catchThrowable(() -> DiagnosisKey.builder()
             .withKeyData(expKeyData)
             .withRollingStartIntervalNumber(expRollingStartIntervalNumber)
             .withTransmissionRiskLevel(expTransmissionRiskLevel)
+            .withCountryCode("DE")
             .withVisitedCountries(Set.of(visitedCountries))
+            .withCountryCode("DE")
             .build()
         )
     ).isInstanceOf(InvalidDiagnosisKeyException.class);
@@ -283,12 +319,12 @@ class DiagnosisKeyBuilderTest {
 
   @Test
   void submissionTimestampDoesNotThrowOnValid() {
-    assertThatCode(() -> buildDiagnosisKeyForSubmissionTimestamp(0L)).doesNotThrowAnyException();
-    assertThatCode(() -> buildDiagnosisKeyForSubmissionTimestamp(getCurrentHoursSinceEpoch()))
+    assertThatCode(() -> buildDiagnosisKeyForSubmissionTimestamp(1L, 144, false)).doesNotThrowAnyException();
+    assertThatCode(() -> buildDiagnosisKeyForSubmissionTimestamp(getCurrentHoursSinceEpoch(), 144, false))
         .doesNotThrowAnyException();
     assertThatCode(
         () -> buildDiagnosisKeyForSubmissionTimestamp(
-            Instant.now().minus(Duration.ofHours(2)).getEpochSecond() / SECONDS_PER_HOUR))
+            Instant.now().minus(Duration.ofHours(2)).getEpochSecond() / SECONDS_PER_HOUR, 144, false))
         .doesNotThrowAnyException();
   }
 
