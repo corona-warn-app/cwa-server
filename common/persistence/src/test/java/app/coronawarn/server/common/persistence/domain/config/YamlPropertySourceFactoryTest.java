@@ -7,6 +7,7 @@ import static org.mockito.Mockito.when;
 
 import java.util.Properties;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
@@ -34,6 +35,13 @@ class YamlPropertySourceFactoryTest {
   @Mock
   private Resource resource;
 
+  private EncodedResource encodedResource;
+
+  @BeforeEach
+  void setUp() {
+    encodedResource = new EncodedResource(resource);
+  }
+
   @Test
   void test() {
     assertNotNull(tekDerivations);
@@ -47,7 +55,7 @@ class YamlPropertySourceFactoryTest {
     YamlPropertySourceFactory factory = new YamlPropertySourceFactory(factoryBean);
     NullPointerException exception = Assertions
         .assertThrows(NullPointerException.class,
-            () -> factory.createPropertySource("test", new EncodedResource(resource)));
+            () -> factory.createPropertySource("test", encodedResource));
     assertEquals("Properties must not be null", exception.getMessage());
   }
 
@@ -57,7 +65,7 @@ class YamlPropertySourceFactoryTest {
     YamlPropertySourceFactory factory = new YamlPropertySourceFactory(factoryBean);
     NullPointerException exception = Assertions
         .assertThrows(NullPointerException.class,
-            () -> factory.createPropertySource("test", new EncodedResource(resource)));
+            () -> factory.createPropertySource("test", encodedResource));
     assertEquals("File name must not be null", exception.getMessage());
   }
 
@@ -66,7 +74,7 @@ class YamlPropertySourceFactoryTest {
     when(factoryBean.getObject()).thenReturn(new Properties());
     when(resource.getFilename()).thenReturn("filename");
     YamlPropertySourceFactory factory = new YamlPropertySourceFactory(factoryBean);
-    PropertySource<?> propertySource = factory.createPropertySource("test", new EncodedResource(resource));
+    PropertySource<?> propertySource = factory.createPropertySource("test", encodedResource);
     Assertions.assertEquals("filename", propertySource.getName());
   }
 }
