@@ -128,6 +128,14 @@ To calculate the CWA-hash locally, e.g. on a Mac you can use the following code 
 md5 -q export.bin | tr a-z A-Z | xxd -p -r | md5 -q 
 ```
 
+#### `ETag`
+
+[Standard HTTP header](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/ETag), used to determine whether the 
+archive has changed and needs to be re-uploaded or re-downloaded by clients (i.e. mobile apps). Usually an MD5 of the
+complete archive file, but can be complex to calculate for multi-part uploads (i.e. see [this answer on StackOverflow]
+(https://stackoverflow.com/questions/12186993/what-is-the-algorithm-to-compute-the-amazon-s3-etag-for-a-file-larger-than-5gb#answer-19896823).
+
+
 ## Threading
 
 The upload operations are being run in multiple threads in order to increase performance. The number of threads is
