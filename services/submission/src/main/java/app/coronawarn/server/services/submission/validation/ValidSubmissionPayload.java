@@ -24,6 +24,7 @@ import javax.validation.Constraint;
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
 import javax.validation.Payload;
+import org.apache.commons.lang3.StringUtils;
 
 @Constraint(validatedBy = ValidSubmissionPayload.SubmissionPayloadValidator.class)
 @Target({ElementType.PARAMETER})
@@ -54,11 +55,13 @@ public @interface ValidSubmissionPayload {
     private final int maxNumberOfKeys;
     private final int maxRollingPeriod;
     private final Collection<String> supportedCountries;
+    private final String defaultOriginCountry;
 
     public SubmissionPayloadValidator(SubmissionServiceConfig submissionServiceConfig) {
       maxNumberOfKeys = submissionServiceConfig.getMaxNumberOfKeys();
       maxRollingPeriod = submissionServiceConfig.getMaxRollingPeriod();
       supportedCountries = List.of(submissionServiceConfig.getSupportedCountries());
+      defaultOriginCountry = submissionServiceConfig.getDefaultOriginCountry();
     }
 
     /**
@@ -125,10 +128,10 @@ public @interface ValidSubmissionPayload {
     private boolean checkOriginCountryIsValid(SubmissionPayload submissionPayload,
         ConstraintValidatorContext validatorContext) {
       String originCountry = submissionPayload.getOrigin();
-      if (submissionPayload.hasOrigin() && !originCountry.isEmpty()
-          && !supportedCountries.contains(originCountry)) {
+      if (submissionPayload.hasOrigin() && !StringUtils.isEmpty(originCountry)
+          && !originCountry.equals(defaultOriginCountry)) {
         addViolation(validatorContext,
-            "Key contains origin country which is not part of the supported countries list");
+            "Submission payload contains an origin country which does not match the backend configuration.");
         return false;
       }
       return true;
