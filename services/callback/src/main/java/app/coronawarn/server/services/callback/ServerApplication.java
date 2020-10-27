@@ -35,6 +35,7 @@ public class ServerApplication implements EnvironmentAware, DisposableBean {
       "disable-ssl-client-verification-verify-hostname";
   static final String DISABLE_SSL_CLIENT_VERIFICATION = "disable-ssl-client-verification";
   
+  private static final String NEVER_USE_IN_PROD = "This should never be used in PRODUCTION!";
   private static final Logger logger = LoggerFactory.getLogger(ServerApplication.class);
 
   public static void main(String[] args) {
@@ -61,22 +62,20 @@ public class ServerApplication implements EnvironmentAware, DisposableBean {
     logger.info("Enabled named groups: {}", System.getProperty("jdk.tls.namedGroups"));
     if (profiles.contains(DISABLE_SSL_SERVER)) {
       logger.warn(
-          "The callback service is started with endpoint TLS disabled. This should never be used in PRODUCTION!");
+          "The callback service is started with endpoint TLS disabled. " + NEVER_USE_IN_PROD);
     }
     if (profiles.contains(DISABLE_SSL_CLIENT_POSTGRES)) {
       logger.warn(
-          "The callback service is started with postgres connection TLS disabled. "
-              + "This should never be used in PRODUCTION!");
+          "The callback service is started with postgres connection TLS disabled. " + NEVER_USE_IN_PROD);
     }
     if (profiles.contains(DISABLE_SSL_CLIENT_VERIFICATION)) {
       logger.warn(
-          "The callback service is started with verification service connection TLS disabled. "
-              + "This should never be used in PRODUCTION!");
+          "The callback service is started with verification service connection TLS disabled. " + NEVER_USE_IN_PROD);
     }
     if (profiles.contains(DISABLE_SSL_CLIENT_VERIFICATION_VERIFY_HOSTNAME)) {
       logger.warn(
-          "The callback service is started with verification service TLS hostname validation disabled. "
-              + "This should never be used in PRODUCTION!");
+          "The callback service is started with verification service TLS hostname validation disabled. " 
+              + NEVER_USE_IN_PROD);
     }
   }
 }
