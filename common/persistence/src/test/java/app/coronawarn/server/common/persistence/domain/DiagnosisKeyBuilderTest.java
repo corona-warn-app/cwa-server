@@ -208,21 +208,22 @@ class DiagnosisKeyBuilderTest {
     ).isInstanceOf(InvalidDiagnosisKeyException.class);
   }
 
-  @Test
-  void failsForInvalidOriginCountry() {
+  @ParameterizedTest
+  @ValueSource(strings = {"DER", "xx", "De", "dE", "DE,FRE",""})
+  void failsForInvalidOriginCountry(String countryCode) {
     assertThat(
         catchThrowable(() -> DiagnosisKey.builder()
             .withKeyData(expKeyData)
             .withRollingStartIntervalNumber(expRollingStartIntervalNumber)
             .withTransmissionRiskLevel(expTransmissionRiskLevel)
-            .withCountryCode("DER")
+            .withCountryCode(countryCode)
             .build()
         )
     ).isInstanceOf(InvalidDiagnosisKeyException.class);
   }
 
   @ParameterizedTest
-  @ValueSource(strings = {"DER", "xx", "De", "dE", "DE,FRE"})
+  @ValueSource(strings = {"DER", "xx", "De", "dE", "DE,FRE",""})
   void failsForInvalidVisitedCountries(String visitedCountries) {
     assertThat(
         catchThrowable(() -> DiagnosisKey.builder()
@@ -231,6 +232,7 @@ class DiagnosisKeyBuilderTest {
             .withTransmissionRiskLevel(expTransmissionRiskLevel)
             .withCountryCode("DE")
             .withVisitedCountries(Set.of(visitedCountries))
+            .withCountryCode("DE")
             .build()
         )
     ).isInstanceOf(InvalidDiagnosisKeyException.class);
