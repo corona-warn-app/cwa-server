@@ -4,14 +4,21 @@ package app.coronawarn.server.services.submission.config;
 
 import app.coronawarn.server.services.submission.controller.SubmissionController;
 import java.util.Arrays;
+import javax.validation.Validator;
+import org.hibernate.validator.messageinterpolation.ParameterMessageInterpolator;
+import org.springframework.beans.factory.config.BeanDefinition;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
+import org.springframework.boot.validation.MessageInterpolatorFactory;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Role;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.web.firewall.HttpFirewall;
 import org.springframework.security.web.firewall.StrictHttpFirewall;
+import org.springframework.validation.beanvalidation.LocalValidatorFactoryBean;
 
 @Configuration
 @EnableWebSecurity
@@ -44,4 +51,14 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     http.headers().contentSecurityPolicy("default-src 'self'");
   }
 
+  /**
+   * Validation factory bean is configured here because its message interpolation mechanism
+   * is considered a potential threat if enabled.
+   */
+  @Bean
+  public static LocalValidatorFactoryBean defaultValidator() {
+    LocalValidatorFactoryBean factoryBean = new LocalValidatorFactoryBean();
+    factoryBean.setMessageInterpolator(new ParameterMessageInterpolator());
+    return factoryBean;
+  }
 }
