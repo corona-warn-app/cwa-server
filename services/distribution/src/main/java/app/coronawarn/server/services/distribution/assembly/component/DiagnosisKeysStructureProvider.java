@@ -76,7 +76,7 @@ public class DiagnosisKeysStructureProvider {
    * normalized to the Exposure Notification spec.
    */
   private List<DiagnosisKey> resetDaysSinceOnsetOfSymptoms(Collection<DiagnosisKey> diagnosisKeys) {
-    return diagnosisKeys.stream().map(key -> keyWithZeroDaysSinceSymptoms(key)).collect(Collectors.toList());
+    return diagnosisKeys.stream().map(this::keyWithZeroDaysSinceSymptoms).collect(Collectors.toList());
   }
 
   private DiagnosisKey keyWithZeroDaysSinceSymptoms(DiagnosisKey diagnosisKey) {
