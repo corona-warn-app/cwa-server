@@ -13,6 +13,7 @@ import app.coronawarn.server.services.distribution.objectstore.client.S3Object;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.List;
+import io.findify.s3mock.S3Mock;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
@@ -31,9 +32,10 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 @EnableConfigurationProperties(value = DistributionServiceConfig.class)
 @DirtiesContext
 @Tag("s3-integration")
-class S3PublisherIT {
+class S3PublisherTestIT {
 
   private final String rootTestFolder = "objectstore/publisher/";
+  private S3Mock mockS3api;
 
   @Autowired
   private ObjectStoreAccess objectStoreAccess;
@@ -61,6 +63,8 @@ class S3PublisherIT {
 
   @BeforeEach
   public void setup() {
+    S3Mock mockS3api = new S3Mock.Builder().withPort(8003).withInMemoryBackend().build();
+    mockS3api.start();
     objectStoreAccess.deleteObjectsWithPrefix("");
   }
 

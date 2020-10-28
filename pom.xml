@@ -333,6 +333,15 @@
           <version>3.0.0-M4</version>
           <executions>
             <execution>
+              <configuration>
+                <includes>
+                  <include>**/*IT.java</include>
+                </includes>
+                <additionalClasspathElements>
+                  <additionalClasspathElement>${basedir}/target/classes</additionalClasspathElement>
+                </additionalClasspathElements>
+                <parallel>none</parallel>
+              </configuration>
               <goals>
                 <goal>integration-test</goal>
                 <goal>verify</goal>
@@ -369,7 +378,7 @@
           <artifactId>maven-surefire-plugin</artifactId>
           <version>3.0.0-M5</version>
           <configuration>
-            <excludedGroups>s3-integration</excludedGroups>
+<!--            <excludedGroups>s3-integration</excludedGroups>-->
             <trimStackTrace>false</trimStackTrace>
           </configuration>
         </plugin>
@@ -444,6 +453,7 @@
           </executions>
           <configuration>
             <mainClass>${start-class}</mainClass>
+            <classifier>exec</classifier>
           </configuration>
         </plugin>
         <plugin>
@@ -502,6 +512,9 @@
       </plugin>
       <plugin>
         <artifactId>maven-surefire-plugin</artifactId>
+      </plugin>
+      <plugin>
+        <artifactId>maven-failsafe-plugin</artifactId>
       </plugin>
       <plugin>
         <groupId>org.codehaus.mojo</groupId>
