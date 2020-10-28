@@ -35,4 +35,8 @@ public interface TestDataUploadRepository
 
   @Query("SELECT COUNT(*) FROM federation_upload_key WHERE batch_tag IS NULL")
   Integer countPendingKeys();
+
+  @Modifying
+  @Query("DELETE FROM federation_upload_key WHERE rolling_start_interval_number<=:retention")
+  void applyRetentionToTestKeys(@Param("retention") int retention);
 }

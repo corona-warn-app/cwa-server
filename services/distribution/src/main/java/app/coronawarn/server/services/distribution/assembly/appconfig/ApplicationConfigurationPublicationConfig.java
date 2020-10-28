@@ -15,16 +15,18 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 
-
 /**
  * Provides the application configuration needed for the mobile client. Contains all necessary sub-configs, including:
  * <ul>
  *   <li>Exposure Configuration</li>
  *   <li>Risk Score Classification</li>
  *   <li>App Config, e.g. minimum risk threshold</li>
+ *   <li>Supported countries</li>
+ *   <li>Min/Max application version configuration</li>
  * </ul>
  *
- * <p>The application config is fetched from the master-config folder.</p>
+ * <p>The application config is fetched from the master-config folder. Furthermore it's extended with the
+ * list of supported countries and the min/max application versions for android/ios. </p>
  */
 @Configuration
 public class ApplicationConfigurationPublicationConfig {
