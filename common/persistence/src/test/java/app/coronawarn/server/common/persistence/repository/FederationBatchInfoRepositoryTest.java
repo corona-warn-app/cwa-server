@@ -76,7 +76,7 @@ class FederationBatchInfoRepositoryTest {
     assertThat(federationBatchInfoRepository.countForDate(date1)).isEqualTo(1);
     assertThat(federationBatchInfoRepository.countForDate(date2)).isEqualTo(1);
     federationBatchInfoRepository.deleteForDate(date1);
-    assertThat(federationBatchInfoRepository.countForDate(date1)).isEqualTo(0);
+    assertThat(federationBatchInfoRepository.countForDate(date1)).isZero();
     assertThat(federationBatchInfoRepository.countForDate(date2)).isEqualTo(1);
   }
 }
