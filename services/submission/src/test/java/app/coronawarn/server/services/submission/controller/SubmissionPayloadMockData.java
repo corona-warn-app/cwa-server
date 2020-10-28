@@ -154,6 +154,18 @@ public final class SubmissionPayloadMockData {
     return buildEmptyOriginCountryPayload(key);
   }
 
+  public static SubmissionPayload buildPayloadWithOriginCountry(String originCountry) {
+    TemporaryExposureKey key =
+        buildTemporaryExposureKey(VALID_KEY_DATA_1, createRollingStartIntervalNumber(2), 3,
+            ReportType.CONFIRMED_TEST, 1);
+    return SubmissionPayload.newBuilder()
+        .addKeys(key)
+        .addAllVisitedCountries(List.of("DE", "FR"))
+        .setOrigin(originCountry)
+        .setRequestPadding(ByteString.copyFrom("PaddingString".getBytes()))
+        .build();
+  }
+
   public static SubmissionPayload buildPayloadWithVisitedCountries(List<String> visitedCountries) {
     TemporaryExposureKey key =
         buildTemporaryExposureKey(VALID_KEY_DATA_1, createRollingStartIntervalNumber(2), 3,
