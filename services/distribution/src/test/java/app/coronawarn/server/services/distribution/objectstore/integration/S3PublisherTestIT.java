@@ -63,8 +63,8 @@ class S3PublisherTestIT {
 
   @BeforeEach
   public void setup() {
-    S3Mock mockS3api = new S3Mock.Builder().withPort(8003).withInMemoryBackend().build();
-    mockS3api.start();
+//    S3Mock mockS3api = new S3Mock.Builder().withPort(8003).withInMemoryBackend().build();
+//    mockS3api.start();
     objectStoreAccess.deleteObjectsWithPrefix("");
   }
 
