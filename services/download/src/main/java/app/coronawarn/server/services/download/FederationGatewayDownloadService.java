@@ -27,17 +27,16 @@ public class FederationGatewayDownloadService {
   public static final String EMPTY_HEADER = "null";
   private static final Logger logger = LoggerFactory.getLogger(FederationGatewayDownloadService.class);
   private final FederationGatewayClient federationGatewayClient;
-  private ApplicationContext applicationContext;
+
 
   /**
    * Constructor.
    *
    * @param federationGatewayClient A {@link FederationGatewayClient} for retrieving federation diagnosis key batches.
    */
-  public FederationGatewayDownloadService(FederationGatewayClient federationGatewayClient,
-      ApplicationContext applicationContext) {
+  public FederationGatewayDownloadService(FederationGatewayClient federationGatewayClient) {
     this.federationGatewayClient = federationGatewayClient;
-    this.applicationContext = applicationContext;
+
   }
 
   /**

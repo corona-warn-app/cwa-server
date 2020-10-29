@@ -5,10 +5,10 @@ package app.coronawarn.server.services.download;
 import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
 import static com.github.tomakehurst.wiremock.client.WireMock.anyUrl;
 import static com.github.tomakehurst.wiremock.client.WireMock.get;
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
+import static org.assertj.core.api.Assertions.*;
 import static org.mockito.Mockito.mock;
 
+import app.coronawarn.server.common.federation.client.FederationGatewayClient;
 import app.coronawarn.server.common.protocols.external.exposurenotification.DiagnosisKeyBatch;
 import com.github.tomakehurst.wiremock.WireMockServer;
 import java.time.LocalDate;
@@ -19,6 +19,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.HttpStatus;
 import org.springframework.test.annotation.DirtiesContext;
 
@@ -124,6 +125,21 @@ class FederationGatewayDownloadServiceTest {
 
     BatchDownloadResponse expResponse = new BatchDownloadResponse(BATCH_TAG, Optional.of(batch), Optional.empty());
     assertDownloadResponseMatches(expResponse);
+  }
+
+
+  @Test
+  void testDownloadBatchNotAuthenticated() {
+    SERVER.stubFor(
+        get(anyUrl())
+            .willReturn(
+                aResponse()
+                    .withStatus(HttpStatus.FORBIDDEN.value())));
+
+    assertThatThrownBy(() -> downloadService.downloadBatch(BATCH_TAG, DATE))
+        .isExactlyInstanceOf(NotAuthenticatedException.class);
+    assertThatThrownBy(() -> downloadService.downloadBatch(DATE))
+        .isExactlyInstanceOf(NotAuthenticatedException.class);
   }
 
   void assertDownloadResponseMatches(BatchDownloadResponse expResponse) {

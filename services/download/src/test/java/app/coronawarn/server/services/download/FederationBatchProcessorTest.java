@@ -9,6 +9,7 @@ import static app.coronawarn.server.common.persistence.domain.FederationBatchSta
 import static app.coronawarn.server.common.persistence.domain.FederationBatchStatus.UNPROCESSED;
 import static java.util.Collections.emptyList;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.assertj.core.util.Lists.list;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
@@ -398,6 +399,17 @@ class FederationBatchProcessorTest {
 
       verifyProcessedWithStatus(batchInfo, PROCESSED_WITH_ERROR);
     }
+  }
+
+
+  @Test
+  void testProcessBachAndReturnNextBatchIdNotAuthenticated() {
+    FederationBatchInfo batchInfo = new FederationBatchInfo(batchTag1, date, UNPROCESSED);
+    when(batchInfoService.findByStatus(UNPROCESSED)).thenReturn(list(batchInfo));
+    when(federationGatewayDownloadService.downloadBatch(batchTag1, date)).thenThrow(NotAuthenticatedException.class);
+
+    assertThatThrownBy(() -> batchProcessor.processUnprocessedFederationBatches())
+        .isExactlyInstanceOf(NotAuthenticatedException.class);
   }
 
   public void verifyProcessedWithStatus(FederationBatchInfo federationBatchInfo,
