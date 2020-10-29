@@ -65,6 +65,7 @@
     <postgresql.version>42.2.13</postgresql.version>
     <wiremock.version>2.27.2</wiremock.version>
     <flyway.version>6.4.3</flyway.version>
+    <tomcat-embed-core.version>9.0.39</tomcat-embed-core.version>
   </properties>
 
   <dependencyManagement>
@@ -207,6 +208,11 @@
         <artifactId>junit</artifactId>
         <version>4.13.1</version>
         <scope>test</scope>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.tomcat.embed</groupId>
+        <artifactId>tomcat-embed-core</artifactId>
+        <version>${tomcat-embed-core.version}</version>
       </dependency>
     </dependencies>
   </dependencyManagement>
