@@ -3,17 +3,19 @@
 package app.coronawarn.server.services.distribution.common;
 
 import app.coronawarn.server.common.persistence.domain.DiagnosisKey;
+import app.coronawarn.server.common.protocols.external.exposurenotification.ReportType;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.Random;
+import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 /**
- * A simple container class able to create diagnosis keys test data, given a set of days or day intervals expresed in
+ * A simple container class able to create diagnosis keys test data, given a set of days or day intervals expressed in
  * <code>java.time.*</code> structures.
  */
 public final class DiagnosisTestData {
@@ -56,6 +58,10 @@ public final class DiagnosisTestData {
             DiagnosisKey.builder().withKeyData(randomKeyData())
                 .withRollingStartIntervalNumber(600)
                 .withTransmissionRiskLevel(5).withSubmissionTimestamp(timestamp)
+                .withCountryCode("DE")
+                .withVisitedCountries(Set.of("DE"))
+                .withConsentToFederation(true)
+                .withReportType(ReportType.CONFIRMED_TEST)
                 .build())
         .collect(Collectors.toList());
   }
