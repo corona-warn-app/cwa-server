@@ -16,7 +16,7 @@ public abstract class AbstractIndexingDecorator<T, W extends Writable<W>> extend
   /**
    * Creates a new AbstractIndexingDecorator.
    */
-  public AbstractIndexingDecorator(IndexDirectory<T, W> directory, String indexFileName) {
+  protected AbstractIndexingDecorator(IndexDirectory<T, W> directory, String indexFileName) {
     super(directory);
     this.directory = directory;
     this.indexFileName = indexFileName;

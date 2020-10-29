@@ -36,7 +36,7 @@ public class ValidFederationKeyFilter {
    */
   public boolean isValid(DiagnosisKey federationKey) {
     return hasAllowedReportType(federationKey)
-        && hasStartIntervalNumberAtMidnight(federationKey);
+        && hasRollingStartIntervalNumberAtMidnight(federationKey);
   }
 
   private boolean hasAllowedReportType(DiagnosisKey federationKey) {
@@ -48,13 +48,15 @@ public class ValidFederationKeyFilter {
     return hasAllowedReportType;
   }
 
-  private boolean hasStartIntervalNumberAtMidnight(DiagnosisKey federationKey) {
-    boolean hasStartIntervalNumberAtMidnight = federationKey.getRollingStartIntervalNumber()
+  private boolean hasRollingStartIntervalNumberAtMidnight(DiagnosisKey federationKey) {
+    int rollingStartIntervalNumber = federationKey.getRollingStartIntervalNumber();
+    boolean hasRollingStartIntervalNumberAtMidnight = rollingStartIntervalNumber
         % app.coronawarn.server.common.persistence.domain.DiagnosisKey.MAX_ROLLING_PERIOD
         == 0;
-    if (!hasStartIntervalNumberAtMidnight) {
-      logger.info("Filter skipped Federation DiagnosisKey with start interval number {} not being at midnight.");
+    if (!hasRollingStartIntervalNumberAtMidnight) {
+      logger.info("Filter skipped Federation DiagnosisKey with rolling start interval number {} not being at midnight.",
+          rollingStartIntervalNumber);
     }
-    return hasStartIntervalNumberAtMidnight;
+    return hasRollingStartIntervalNumberAtMidnight;
   }
 }
