@@ -86,7 +86,8 @@ class FederationBatchProcessorTest {
 
     @Test
     void testBatchInfoForDateDoesNotExist() {
-      doThrow(FederationGatewayException.class).when(federationGatewayDownloadService).downloadBatch(any());
+      FederationGatewayException federationGatewayException = new FederationGatewayException("Test Exception Message");
+      doThrow(federationGatewayException).when(federationGatewayDownloadService).downloadBatch(any());
       batchProcessor.saveFirstBatchInfoForDate(date);
       Mockito.verify(batchInfoService, never()).save(any(FederationBatchInfo.class));
     }

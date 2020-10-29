@@ -76,7 +76,10 @@ public class FederationBatchProcessor {
       BatchDownloadResponse response = federationGatewayDownloadService.downloadBatch(date);
       batchInfoService.save(new FederationBatchInfo(response.getBatchTag(), date));
     } catch (Exception e) {
-      logger.error("Triggering download of first batch for date {} failed.", date, e);
+      logger.error("Triggering download of first batch for date {} failed. Reason: {}", date, e.getMessage());
+      if (e.getMessage() == null) {
+        logger.info("test");
+      }
     }
   }
 
@@ -182,7 +185,7 @@ public class FederationBatchProcessor {
           .withFieldNormalization(new FederationKeyNormalizer(config))
           .build());
     } catch (Exception ex) {
-      logger.info("Building diagnosis key from federation diagnosis key failed.", ex);
+      logger.info("Building diagnosis key from federation diagnosis key failed. Reason: " + ex.getMessage());
       return Optional.empty();
     }
   }
