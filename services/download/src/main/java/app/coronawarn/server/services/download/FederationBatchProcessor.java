@@ -84,8 +84,7 @@ public class FederationBatchProcessor {
    * The Federation Batch Info stores information about which batches have already been processed to not download them
    * again. The batches for the current day might change constantly when national backends upload keys, hence there is
    * the need to download the batches for today again. Hence, the entries in federation batch info with the current day
-   * need to be removed. There is a parameter 'efgs-repeat-download-offset-days' with default 0 for
-   * that.
+   * need to be removed. There is a parameter 'efgs-repeat-download-offset-days' with default 0 for that.
    *
    * @param date The date the download was triggered for
    */
@@ -156,12 +155,15 @@ public class FederationBatchProcessor {
       }, () -> logger.info("Batch for date {} and batchTag {} did not contain any keys.", date, batchTag));
       batchInfoService.updateStatus(batchInfo, batchContainsInvalidKeys.get() ? PROCESSED_WITH_ERROR : PROCESSED);
       return response.getNextBatchTag();
+    } catch (NotAuthenticatedException e) {
+      throw e;
     } catch (Exception e) {
       logger.error("Federation batch processing for date {} and batchTag {} failed. Status set to {}.",
           date, batchTag, errorStatus.name(), e);
       batchInfoService.updateStatus(batchInfo, errorStatus);
       return Optional.empty();
     }
+
   }
 
   private List<DiagnosisKey> extractValidDiagnosisKeysFromBatch(DiagnosisKeyBatch diagnosisKeyBatch) {

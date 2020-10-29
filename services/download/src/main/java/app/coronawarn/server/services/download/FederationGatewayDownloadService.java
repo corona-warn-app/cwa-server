@@ -11,6 +11,8 @@ import java.time.LocalDate;
 import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.context.ApplicationContext;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 
@@ -25,14 +27,17 @@ public class FederationGatewayDownloadService {
   public static final String EMPTY_HEADER = "null";
   private static final Logger logger = LoggerFactory.getLogger(FederationGatewayDownloadService.class);
   private final FederationGatewayClient federationGatewayClient;
+  private ApplicationContext applicationContext;
 
   /**
    * Constructor.
    *
    * @param federationGatewayClient A {@link FederationGatewayClient} for retrieving federation diagnosis key batches.
    */
-  public FederationGatewayDownloadService(FederationGatewayClient federationGatewayClient) {
+  public FederationGatewayDownloadService(FederationGatewayClient federationGatewayClient,
+      ApplicationContext applicationContext) {
     this.federationGatewayClient = federationGatewayClient;
+    this.applicationContext = applicationContext;
   }
 
   /**
@@ -47,9 +52,11 @@ public class FederationGatewayDownloadService {
       ResponseEntity<DiagnosisKeyBatch> response = federationGatewayClient
           .getDiagnosisKeys(date.format(ISO_LOCAL_DATE));
       return parseResponseEntity(response);
-    } catch (FeignException e) {
+    } catch (FeignException feignException) {
+      exitAfterAuthenticationError(date, feignException);
       logger.error("Downloading first batch for date {} failed.", date);
-      throw new FederationGatewayException("Downloading batch for date " + date.format(ISO_LOCAL_DATE) + " failed.", e);
+      throw new FederationGatewayException("Downloading batch for date " + date.format(ISO_LOCAL_DATE) + " failed.",
+          feignException);
     }
   }
 
@@ -67,11 +74,21 @@ public class FederationGatewayDownloadService {
       ResponseEntity<DiagnosisKeyBatch> response = federationGatewayClient
           .getDiagnosisKeys(batchTag, dateString);
       return parseResponseEntity(response);
-    } catch (FeignException e) {
+    } catch (FeignException feignException) {
+      exitAfterAuthenticationError(date, feignException);
       logger.error("Downloading batch for date {} and batchTag {} failed.", batchTag, dateString);
-      throw new FederationGatewayException("Downloading batch " + batchTag + " for date " + date + " failed.", e);
+      throw new FederationGatewayException("Downloading batch " + batchTag + " for date " + date + " failed.",
+          feignException);
     }
   }
+
+  private void exitAfterAuthenticationError(LocalDate date, FeignException feignException) {
+    if (feignException.status() == HttpStatus.FORBIDDEN.value()) {
+      throw new NotAuthenticatedException(
+          "Downloading batch for date " + date.format(ISO_LOCAL_DATE) + " failed due to invalid client certificate.");
+    }
+  }
+
 
   private BatchDownloadResponse parseResponseEntity(ResponseEntity<DiagnosisKeyBatch> response) {
     String batchTag = getHeader(response, HEADER_BATCH_TAG)
