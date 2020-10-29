@@ -1,6 +1,9 @@
 # CWA Federation Key Download Service
 
-This is a spring boot [ApplicationRunner](https://docs.spring.io/spring-boot/docs/current/api/org/springframework/boot/ApplicationRunner.html) service (running as a cronjob). The app will deal with the download, sematic validation, extraction, and storage of the keys from the federation gateway. The download service leverages the download API of the federation gateway and will trigger downloads of available batches since the last time it executed. For the initial release the download service will use the polling mechanism provided by the federation gateway based on `batchTag` and `date` combinations and it will keep track of its last processed state within the database. When and if the callback service integration is fully realized, the polling mechanism would mainly be used for mass loading scenarios, and this service will then only download the persisted individual batches where notifications have been received.
+This is a spring boot [ApplicationRunner](https://docs.spring.io/spring-boot/docs/current/api/org/springframework/boot/ApplicationRunner.html) service (running as a cronjob). The app will deal with the download, sematic validation, extraction, and storage of the keys from the federation gateway. The download service leverages the download API of the federation gateway and will trigger downloads of available batches provided by the Callback Service.
+
+In addition to callback-based downloads, the Download Service supports date-based downloads.
+For that, the download service will use the polling mechanism provided by the federation gateway based on `batchTag` and `date` combinations and it will keep track of its last processed state within the database. The polling mechanism would mainly be used for mass loading scenarios, and this service will then only download the persisted individual batches where notifications have been received.
 
 On the download of keys from the federation gateway a process to derive a TRL from the DSOS needs to take place. This is done to enable the keys to be consumable by the DE CWA app as not all countries support the same approach which is required for the CWA app. The means the following:
 
@@ -35,11 +38,13 @@ Please refer to the inline comments in the base `application.yaml` configuration
 
 ## Environmental Variables
 
-Download specific environmentals:
-Variable Name                    | Default Value  | Description
----------------------------------|----------------|-------------
-EFGS_OFFSET_DAYS                 | 1              | The offset in days for which the keys shall be downloaded (must be in range 0 - 14).
-ALLOWED_REPORT_TYPES_TO_DOWNLOAD | CONFIRMED_TEST | Accepted ReportTypes for download.
+Download specific environmental variables:
+
+Variable Name                      | Default Value  | Description
+-----------------------------------|----------------|-------------
+EFGS_ENFORCE_DATE_BASED_DOWNLOAD   | false          | Enable date-based download
+EFGS_ENFORCE_DOWNLOAD_OFFSET_DAYS  | 0              | The offset in days for which the keys shall be downloaded (must be in range 0 - 14).
+ALLOWED_REPORT_TYPES_TO_DOWNLOAD   | CONFIRMED_TEST | Accepted ReportTypes for download.
 
 ## Download Runner
 
@@ -48,6 +53,7 @@ The Download Runner triggers the download of Diagnosis Keys (DK) from the EFGS. 
 ## Batch Processing
 
 The FederationBatchProcessor processes batches in sequence and persists all DKs that pass validation.
+It
 
 ## Diagnosis Key Validation
 
@@ -61,6 +67,7 @@ Name                 | Default Value  | Description
 ---------------------|----------------|-------------
 key-length           | 16             | Exact length of accepted DK Data.
 allowed-report-types | CONFIRMED_TEST | Accepted ReportTypes (comma separated list).
+min-dsos             | -14            | Accepted lower bound for Days Since Onset of Symptoms.
 max-dsos             | 4000           | Accepted upper bound for Days Since Onset of Symptoms.
 min-rolling-period   | 0              | Accepted lower bound for Rolling Period.
 max-rolling-period   | 144            | Accepted upper bound for Rolling Period.
