@@ -2,7 +2,7 @@
     "openapi": "3.0.0",
     "info": {
         "version": "v1",
-        "title": "CWA-Server Submission API",
+        "title": "CWA-Server Callback API",
         "license": {
             "name": "Apache 2.0"
         }
