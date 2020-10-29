@@ -54,7 +54,6 @@ The Download Runner triggers the download of Diagnosis Keys (DK) from the EFGS. 
 
 The FederationBatchProcessor processes batches in sequence and persists all DKs that pass validation.
 
-
 ## Diagnosis Key Validation
 
 Validation constraints enforce that each Key is compliant to the specifications.
