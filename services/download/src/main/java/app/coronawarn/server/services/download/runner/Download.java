@@ -46,8 +46,7 @@ public class Download implements ApplicationRunner {
       batchProcessor.processErrorFederationBatches();
       batchProcessor.processUnprocessedFederationBatches();
     } catch (NotAuthenticatedException e) {
-      logger.error(
-          e.getMessage());
+      logger.error(e.getMessage());
       Application.killApplication(applicationContext);
     }
   }
