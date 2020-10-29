@@ -77,9 +77,6 @@ public class FederationBatchProcessor {
       batchInfoService.save(new FederationBatchInfo(response.getBatchTag(), date));
     } catch (Exception e) {
       logger.error("Triggering download of first batch for date {} failed. Reason: {}", date, e.getMessage());
-      if (e.getMessage() == null) {
-        logger.info("test");
-      }
     }
   }
 
