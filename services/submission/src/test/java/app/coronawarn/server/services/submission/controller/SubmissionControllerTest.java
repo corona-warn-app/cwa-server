@@ -1,22 +1,20 @@
-
-
 package app.coronawarn.server.services.submission.controller;
 
 import static app.coronawarn.server.services.submission.controller.SubmissionPayloadMockData.VALID_KEY_DATA_1;
 import static app.coronawarn.server.services.submission.controller.SubmissionPayloadMockData.VALID_KEY_DATA_2;
-import static app.coronawarn.server.services.submission.controller.SubmissionPayloadMockData.buildPayload;
 import static app.coronawarn.server.services.submission.controller.SubmissionPayloadMockData.buildMultipleKeys;
 import static app.coronawarn.server.services.submission.controller.SubmissionPayloadMockData.buildMultipleKeysWithoutDSOS;
 import static app.coronawarn.server.services.submission.controller.SubmissionPayloadMockData.buildMultipleKeysWithoutDSOSAndTRL;
 import static app.coronawarn.server.services.submission.controller.SubmissionPayloadMockData.buildMultipleKeysWithoutTRL;
-import static app.coronawarn.server.services.submission.controller.SubmissionPayloadMockData.buildPayloadWithEmptyOriginCountry;
+import static app.coronawarn.server.services.submission.controller.SubmissionPayloadMockData.buildPayload;
+import static app.coronawarn.server.services.submission.controller.SubmissionPayloadMockData.buildPayloadForOriginCountry;
 import static app.coronawarn.server.services.submission.controller.SubmissionPayloadMockData.buildPayloadWithOneKey;
 import static app.coronawarn.server.services.submission.controller.SubmissionPayloadMockData.buildPayloadWithPadding;
-import static app.coronawarn.server.services.submission.controller.SubmissionPayloadMockData.buildPayloadWithVisitedCountries;
 import static app.coronawarn.server.services.submission.controller.SubmissionPayloadMockData.buildPayloadWithTooLargePadding;
-import static app.coronawarn.server.services.submission.controller.SubmissionPayloadMockData.createRollingStartIntervalNumber;
-import static app.coronawarn.server.services.submission.controller.SubmissionPayloadMockData.buildPayloadWithInvalidOriginCountry;
+import static app.coronawarn.server.services.submission.controller.SubmissionPayloadMockData.buildPayloadWithVisitedCountries;
+import static app.coronawarn.server.services.submission.controller.SubmissionPayloadMockData.buildPayloadWithoutOriginCountry;
 import static app.coronawarn.server.services.submission.controller.SubmissionPayloadMockData.buildTemporaryExposureKey;
+import static app.coronawarn.server.services.submission.controller.SubmissionPayloadMockData.createRollingStartIntervalNumber;
 import static org.apache.commons.lang3.StringUtils.defaultIfBlank;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
@@ -92,6 +90,44 @@ class SubmissionControllerTest {
 
   @Autowired
   private SubmissionServiceConfig config;
+
+  private static Stream<Arguments> invalidVisitedCountries() {
+    return Stream.of(
+        Arguments.of(List.of("")),
+        Arguments.of(List.of("D")),
+        Arguments.of(List.of("FRE")),
+        Arguments.of(List.of("DE", "XX")),
+        Arguments.of(List.of("DE", "FRE"))
+    );
+  }
+
+  private static Stream<Arguments> validVisitedCountries() {
+    return Stream.of(
+        Arguments.of(List.of("DE")),
+        Arguments.of(List.of("DE", "FR")));
+  }
+
+  public static SubmissionPayload buildPayloadWithInvalidKey() {
+    TemporaryExposureKey invalidKey =
+        buildTemporaryExposureKey(VALID_KEY_DATA_1, createRollingStartIntervalNumber(2), 999,
+            ReportType.CONFIRMED_TEST, 1);
+    return buildPayload(invalidKey);
+  }
+
+  private static Stream<Arguments> createIncompleteHeaders() {
+    return Stream.of(
+        Arguments.of(HttpHeaderBuilder.builder().build()),
+        Arguments.of(HttpHeaderBuilder.builder().contentTypeProtoBuf().build()),
+        Arguments.of(HttpHeaderBuilder.builder().contentTypeProtoBuf().withoutCwaFake().build()),
+        Arguments.of(HttpHeaderBuilder.builder().contentTypeProtoBuf().cwaAuth().build()));
+  }
+
+  private static Stream<Arguments> createDeniedHttpMethods() {
+    return Arrays.stream(HttpMethod.values())
+        .filter(method -> method != HttpMethod.POST)
+        .filter(method -> method != HttpMethod.PATCH) /* not supported by Rest Template */
+        .map(Arguments::of);
+  }
 
   @BeforeEach
   public void setUpMocks() {
@@ -295,13 +331,22 @@ class SubmissionControllerTest {
 
   @Test
   void testInvalidOriginCountrySubmissionPayload() {
-    ResponseEntity<Void> actResponse = executor.executePost(buildPayloadWithInvalidOriginCountry());
+    ResponseEntity<Void> actResponse = executor
+        .executePost(buildPayloadForOriginCountry(buildMultipleKeys(config), "IT"));
     assertThat(actResponse.getStatusCode()).isEqualTo(BAD_REQUEST);
   }
 
   @Test
   void testEmptyOriginCountrySubmissionPayload() {
-    ResponseEntity<Void> actResponse = executor.executePost(buildPayloadWithEmptyOriginCountry());
+    ResponseEntity<Void> actResponse = executor
+        .executePost(buildPayloadForOriginCountry(buildMultipleKeys(config), ""));
+    assertThat(actResponse.getStatusCode()).isEqualTo(OK);
+  }
+
+  @Test
+  void testMissingOriginCountrySubmissionPayload() {
+    ResponseEntity<Void> actResponse = executor
+        .executePost(buildPayloadWithoutOriginCountry(buildMultipleKeys(config)));
     assertThat(actResponse.getStatusCode()).isEqualTo(OK);
   }
 
@@ -312,27 +357,11 @@ class SubmissionControllerTest {
     assertThat(actResponse.getStatusCode()).isEqualTo(BAD_REQUEST);
   }
 
-  private static Stream<Arguments> invalidVisitedCountries() {
-    return Stream.of(
-        Arguments.of(List.of("")),
-        Arguments.of(List.of("D")),
-        Arguments.of(List.of("FRE")),
-        Arguments.of(List.of("DE", "XX")),
-        Arguments.of(List.of("DE", "FRE"))
-    );
-  }
-
   @ParameterizedTest
   @MethodSource("validVisitedCountries")
   void testValidVisitedCountriesSubmissionPayload(List<String> visitedCountries) {
     ResponseEntity<Void> actResponse = executor.executePost(buildPayloadWithVisitedCountries(visitedCountries));
     assertThat(actResponse.getStatusCode()).isEqualTo(OK);
-  }
-
-  private static Stream<Arguments> validVisitedCountries() {
-    return Stream.of(
-        Arguments.of(List.of("DE")),
-        Arguments.of(List.of("DE", "FR")));
   }
 
   @Test
@@ -436,27 +465,5 @@ class SubmissionControllerTest {
         .filter(
             diagnosisKey -> temporaryExposureKey.getKeyData().equals(ByteString.copyFrom(diagnosisKey.getKeyData())))
         .findFirst().orElseThrow();
-  }
-
-  public static SubmissionPayload buildPayloadWithInvalidKey() {
-    TemporaryExposureKey invalidKey =
-        buildTemporaryExposureKey(VALID_KEY_DATA_1, createRollingStartIntervalNumber(2), 999,
-            ReportType.CONFIRMED_TEST, 1);
-    return buildPayload(invalidKey);
-  }
-
-  private static Stream<Arguments> createIncompleteHeaders() {
-    return Stream.of(
-        Arguments.of(HttpHeaderBuilder.builder().build()),
-        Arguments.of(HttpHeaderBuilder.builder().contentTypeProtoBuf().build()),
-        Arguments.of(HttpHeaderBuilder.builder().contentTypeProtoBuf().withoutCwaFake().build()),
-        Arguments.of(HttpHeaderBuilder.builder().contentTypeProtoBuf().cwaAuth().build()));
-  }
-
-  private static Stream<Arguments> createDeniedHttpMethods() {
-    return Arrays.stream(HttpMethod.values())
-        .filter(method -> method != HttpMethod.POST)
-        .filter(method -> method != HttpMethod.PATCH) /* not supported by Rest Template */
-        .map(Arguments::of);
   }
 }

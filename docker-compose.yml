@@ -20,6 +20,7 @@ services:
       POSTGRESQL_PASSWORD_FLYWAY: ${POSTGRES_FLYWAY_PASSWORD}
       POSTGRESQL_USER_FLYWAY: ${POSTGRES_FLYWAY_USER}
       VERIFICATION_BASE_URL: http://verification-fake:8004
+      SUPPORTED_COUNTRIES: DE,FR
   distribution:
     build:
       context: ./

@@ -12,7 +12,7 @@ import app.coronawarn.server.services.distribution.config.DistributionServiceCon
 public abstract class SigningDecoratorOnDisk extends AbstractSigningDecorator<WritableOnDisk> implements
     SigningDecorator<WritableOnDisk> {
 
-  public SigningDecoratorOnDisk(Archive<WritableOnDisk> archive, CryptoProvider cryptoProvider,
+  protected SigningDecoratorOnDisk(Archive<WritableOnDisk> archive, CryptoProvider cryptoProvider,
       DistributionServiceConfig distributionServiceConfig) {
     super(archive, cryptoProvider, distributionServiceConfig);
   }
