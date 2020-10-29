@@ -71,7 +71,7 @@ import org.springframework.test.context.ActiveProfiles;
 @SpringBootTest
 @ActiveProfiles("download-via-callback-integration-test")
 @DirtiesContext
-public class DownloadViaCallbackIntegrationTest {
+class DownloadViaCallbackIntegrationTest {
 
   private static final String VALID_BATCH_TAG = "valid_batch";
   private static final String VALID_BATCH_KEY1_DATA = "0123456789ABCDEA";
