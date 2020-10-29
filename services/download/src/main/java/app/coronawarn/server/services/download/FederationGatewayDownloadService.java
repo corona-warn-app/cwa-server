@@ -53,7 +53,7 @@ public class FederationGatewayDownloadService {
           .getDiagnosisKeys(date.format(ISO_LOCAL_DATE));
       return parseResponseEntity(response);
     } catch (FeignException feignException) {
-      exitAfterAuthenticationError(date, feignException);
+      handleAuthenticationError(date, feignException);
       logger.error("Downloading first batch for date {} failed.", date);
       throw new FederationGatewayException("Downloading batch for date " + date.format(ISO_LOCAL_DATE) + " failed.",
           feignException);
@@ -75,14 +75,14 @@ public class FederationGatewayDownloadService {
           .getDiagnosisKeys(batchTag, dateString);
       return parseResponseEntity(response);
     } catch (FeignException feignException) {
-      exitAfterAuthenticationError(date, feignException);
+      handleAuthenticationError(date, feignException);
       logger.error("Downloading batch for date {} and batchTag {} failed.", batchTag, dateString);
       throw new FederationGatewayException("Downloading batch " + batchTag + " for date " + date + " failed.",
           feignException);
     }
   }
 
-  private void exitAfterAuthenticationError(LocalDate date, FeignException feignException) {
+  private void handleAuthenticationError(LocalDate date, FeignException feignException) {
     if (feignException.status() == HttpStatus.FORBIDDEN.value()) {
       throw new NotAuthenticatedException(
           "Downloading batch for date " + date.format(ISO_LOCAL_DATE) + " failed due to invalid client certificate.");
