@@ -7,7 +7,6 @@ import app.coronawarn.server.common.persistence.service.FederationBatchInfoServi
 import io.micrometer.core.annotation.Timed;
 import java.time.LocalDate;
 import javax.validation.Valid;
-import javax.validation.constraints.Pattern;
 import javax.validation.constraints.NotNull;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.format.annotation.DateTimeFormat.ISO;
