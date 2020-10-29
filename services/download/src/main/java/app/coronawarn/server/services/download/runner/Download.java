@@ -3,8 +3,8 @@
 package app.coronawarn.server.services.download.runner;
 
 import app.coronawarn.server.services.download.Application;
+import app.coronawarn.server.services.download.FatalFederationGatewayException;
 import app.coronawarn.server.services.download.FederationBatchProcessor;
-import app.coronawarn.server.services.download.NotAuthenticatedException;
 import app.coronawarn.server.services.download.config.DownloadServiceConfig;
 import java.time.LocalDate;
 import java.time.Period;
@@ -28,8 +28,7 @@ public class Download implements ApplicationRunner {
 
   private final FederationBatchProcessor batchProcessor;
   private final DownloadServiceConfig serviceConfig;
-
-  private ApplicationContext applicationContext;
+  private final ApplicationContext applicationContext;
 
   Download(FederationBatchProcessor batchProcessor, DownloadServiceConfig serviceConfig,
       ApplicationContext applicationContext) {
@@ -45,7 +44,7 @@ public class Download implements ApplicationRunner {
       batchProcessor.saveFirstBatchInfoForDate(downloadDate);
       batchProcessor.processErrorFederationBatches();
       batchProcessor.processUnprocessedFederationBatches();
-    } catch (NotAuthenticatedException e) {
+    } catch (FatalFederationGatewayException e) {
       logger.error(e.getMessage());
       Application.killApplication(applicationContext);
     }

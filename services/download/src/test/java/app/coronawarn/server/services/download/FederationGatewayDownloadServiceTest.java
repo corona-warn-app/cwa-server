@@ -75,7 +75,7 @@ class FederationGatewayDownloadServiceTest {
   }
 
   @Test
-  void testNextBatchTagIsParsedWithEmptyResponseBody() {
+  void testNextBatchTagIsParsedWithEmptyResponseBody() throws Exception {
 
     SERVER.stubFor(
         get(anyUrl())
@@ -92,7 +92,7 @@ class FederationGatewayDownloadServiceTest {
   }
 
   @Test
-  void testDownloadSuccessful() {
+  void testDownloadSuccessful() throws Exception {
     DiagnosisKeyBatch batch = FederationBatchTestHelper.createDiagnosisKeyBatch("batch-data");
 
     SERVER.stubFor(
@@ -111,7 +111,7 @@ class FederationGatewayDownloadServiceTest {
   }
 
   @Test
-  void testDownloadSuccessfulWithoutNextBatchTag() {
+  void testDownloadSuccessfulWithoutNextBatchTag() throws Exception {
     DiagnosisKeyBatch batch = FederationBatchTestHelper.createDiagnosisKeyBatch("batch-data");
 
     SERVER.stubFor(
@@ -137,20 +137,20 @@ class FederationGatewayDownloadServiceTest {
                     .withStatus(HttpStatus.FORBIDDEN.value())));
 
     assertThatThrownBy(() -> downloadService.downloadBatch(BATCH_TAG, DATE))
-        .isExactlyInstanceOf(NotAuthenticatedException.class);
+        .isExactlyInstanceOf(FatalFederationGatewayException.class);
     assertThatThrownBy(() -> downloadService.downloadBatch(DATE))
-        .isExactlyInstanceOf(NotAuthenticatedException.class);
+        .isExactlyInstanceOf(FatalFederationGatewayException.class);
   }
 
-  void assertDownloadResponseMatches(BatchDownloadResponse expResponse) {
+  void assertDownloadResponseMatches(BatchDownloadResponse expResponse) throws Exception {
     assertThat(downloadService.downloadBatch(DATE)).isEqualTo(expResponse);
     assertThat(downloadService.downloadBatch(BATCH_TAG, DATE)).isEqualTo(expResponse);
   }
 
   void assertExceptionIsThrown() {
-    assertThatExceptionOfType(FederationGatewayException.class)
+    assertThatExceptionOfType(BatchDownloadException.class)
         .isThrownBy(() -> downloadService.downloadBatch(DATE));
-    assertThatExceptionOfType(FederationGatewayException.class)
+    assertThatExceptionOfType(BatchDownloadException.class)
         .isThrownBy(() -> downloadService.downloadBatch(BATCH_TAG, DATE));
   }
 }

@@ -78,7 +78,7 @@ class FederationKeyNormalizerTest {
   }
 
   @Test
-  void testBatchKeysWithDsosAndWithoutTrlAreNormalized() {
+  void testBatchKeysWithDsosAndWithoutTrlAreNormalized()  throws Exception{
     LocalDate date = LocalDate.of(2020, 9, 1);
     FederationBatchInfo federationBatchInfo = new FederationBatchInfo(BATCH_TAG, date, UNPROCESSED);
     when(batchInfoService.findByStatus(UNPROCESSED)).thenReturn(list(federationBatchInfo));

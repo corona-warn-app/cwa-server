@@ -122,7 +122,7 @@ public class FederationBatchProcessor {
    * Downloads and processes all batches from the federation gateway that have previously been marked with status value
    * {@link FederationBatchStatus#UNPROCESSED}.
    */
-  public void processUnprocessedFederationBatches() {
+  public void processUnprocessedFederationBatches() throws FatalFederationGatewayException {
     Deque<FederationBatchInfo> unprocessedBatches = new LinkedList<>(batchInfoService.findByStatus(UNPROCESSED));
     logger.info("{} unprocessed federation batches found.", unprocessedBatches.size());
 
@@ -135,7 +135,7 @@ public class FederationBatchProcessor {
   }
 
   private Optional<String> processBatchAndReturnNextBatchId(
-      FederationBatchInfo batchInfo, FederationBatchStatus errorStatus) {
+      FederationBatchInfo batchInfo, FederationBatchStatus errorStatus) throws FatalFederationGatewayException {
     LocalDate date = batchInfo.getDate();
     String batchTag = batchInfo.getBatchTag();
     logger.info("Processing batch for date {} and batchTag {}.", date, batchTag);
@@ -155,7 +155,7 @@ public class FederationBatchProcessor {
       }, () -> logger.info("Batch for date {} and batchTag {} did not contain any keys.", date, batchTag));
       batchInfoService.updateStatus(batchInfo, batchContainsInvalidKeys.get() ? PROCESSED_WITH_ERROR : PROCESSED);
       return response.getNextBatchTag();
-    } catch (NotAuthenticatedException e) {
+    } catch (FatalFederationGatewayException e) {
       throw e;
     } catch (Exception e) {
       logger.error("Federation batch processing for date {} and batchTag {} failed. Status set to {}.",
@@ -163,7 +163,6 @@ public class FederationBatchProcessor {
       batchInfoService.updateStatus(batchInfo, errorStatus);
       return Optional.empty();
     }
-
   }
 
   private List<DiagnosisKey> extractValidDiagnosisKeysFromBatch(DiagnosisKeyBatch diagnosisKeyBatch) {

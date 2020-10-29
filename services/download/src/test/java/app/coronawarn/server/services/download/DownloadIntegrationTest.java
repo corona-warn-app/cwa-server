@@ -150,6 +150,7 @@ class DownloadIntegrationTest {
                     .withStatus(HttpStatus.OK.value())
                     .withHeaders(batch2Headers)
                     .withBody(batch2.toByteArray())));
+
     server.stubFor(
         get(anyUrl())
             .withHeader("batchTag", equalTo(BATCH3_TAG))

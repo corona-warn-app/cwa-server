@@ -28,7 +28,7 @@ class DownloadTest {
   ApplicationContext applicationContext;
 
   @Test
-  void testRun() {
+  void testRun() throws Exception {
     DownloadServiceConfig serviceConfig = new DownloadServiceConfig();
     serviceConfig.setEfgsOffsetDays(1);
     Download download = new Download(federationBatchProcessor, serviceConfig, applicationContext);
