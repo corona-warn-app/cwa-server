@@ -65,6 +65,8 @@
     <postgresql.version>42.2.13</postgresql.version>
     <wiremock.version>2.27.2</wiremock.version>
     <flyway.version>6.4.3</flyway.version>
+    <httpclient.version>4.5.13</httpclient.version>
+    <junit.version>4.13.1</junit.version>
     <tomcat-embed-core.version>9.0.39</tomcat-embed-core.version>
   </properties>
 
@@ -175,7 +177,7 @@
       <dependency>
         <groupId>org.apache.httpcomponents</groupId>
         <artifactId>httpclient</artifactId>
-        <version>4.5.13</version>
+        <version>${httpclient.version}</version>
       </dependency>
       <dependency>
         <groupId>org.postgresql</groupId>
@@ -202,11 +204,10 @@
         <version>${protobuf.version}</version>
         <scope>test</scope>
       </dependency>
-     <!-- https://nvd.nist.gov/vuln/detail/CVE-2020-15250-->
       <dependency>
         <groupId>junit</groupId>
         <artifactId>junit</artifactId>
-        <version>4.13.1</version>
+        <version>${junit.version}</version>
         <scope>test</scope>
       </dependency>
       <dependency>
