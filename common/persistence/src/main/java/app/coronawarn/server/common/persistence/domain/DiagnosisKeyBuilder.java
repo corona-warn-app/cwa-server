@@ -161,10 +161,22 @@ public class DiagnosisKeyBuilder implements
         keyData, rollingStartIntervalNumber, rollingPeriod,
         normalizedValues.getTransmissionRiskLevel(),
         submissionTimestamp,
-        consentToFederation, countryCode, visitedCountries, reportType,
+        consentToFederation, countryCode, enhanceVisitedCountriesWithOriginCountry(), reportType,
         normalizedValues.getDaysSinceOnsetOfSymptoms());
 
     return throwIfValidationFails(diagnosisKey);
+  }
+
+  private Set<String> enhanceVisitedCountriesWithOriginCountry() {
+    Set<String> enhancedVisitedCountries = new HashSet<>();
+
+    if (visitedCountries == null) {
+      visitedCountries = new HashSet<>();
+    }
+
+    enhancedVisitedCountries.addAll(visitedCountries);
+    enhancedVisitedCountries.add(countryCode);
+    return enhancedVisitedCountries;
   }
 
   private DiagnosisKey throwIfValidationFails(DiagnosisKey diagnosisKey) {

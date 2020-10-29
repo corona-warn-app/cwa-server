@@ -19,11 +19,13 @@ import java.util.Collection;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Function;
+import java.util.function.UnaryOperator;
 import java.util.stream.Stream;
 import javax.validation.Constraint;
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
 import javax.validation.Payload;
+import org.apache.commons.lang3.StringUtils;
 
 @Constraint(validatedBy = ValidSubmissionPayload.SubmissionPayloadValidator.class)
 @Target({ElementType.PARAMETER})
@@ -54,11 +56,13 @@ public @interface ValidSubmissionPayload {
     private final int maxNumberOfKeys;
     private final int maxRollingPeriod;
     private final Collection<String> supportedCountries;
+    private final String defaultOriginCountry;
 
     public SubmissionPayloadValidator(SubmissionServiceConfig submissionServiceConfig) {
       maxNumberOfKeys = submissionServiceConfig.getMaxNumberOfKeys();
       maxRollingPeriod = submissionServiceConfig.getMaxRollingPeriod();
       supportedCountries = List.of(submissionServiceConfig.getSupportedCountries());
+      defaultOriginCountry = submissionServiceConfig.getDefaultOriginCountry();
     }
 
     /**
@@ -125,8 +129,8 @@ public @interface ValidSubmissionPayload {
     private boolean checkOriginCountryIsValid(SubmissionPayload submissionPayload,
         ConstraintValidatorContext validatorContext) {
       String originCountry = submissionPayload.getOrigin();
-      if (submissionPayload.hasOrigin() && !originCountry.isEmpty()
-          && !supportedCountries.contains(originCountry)) {
+      if (submissionPayload.hasOrigin() && !StringUtils.isEmpty(originCountry)
+          && !originCountry.equals(defaultOriginCountry)) {
         addViolation(validatorContext, String.format(
             "Origin country %s is not part of the supported countries list", originCountry));
         return false;
@@ -200,7 +204,7 @@ public @interface ValidSubmissionPayload {
      * @return True if an invalid key was found.
      */
     private boolean addViolationForInvalidTek(List<TemporaryExposureKey> exposureKeys,
-        Function<Stream<TemporaryExposureKey>, Stream<TemporaryExposureKey>> filterFunction,
+        UnaryOperator<Stream<TemporaryExposureKey>> filterFunction,
         ConstraintValidatorContext validatorContext,
         Function<TemporaryExposureKey, String> messageConstructor) {
       AtomicBoolean foundInvalid = new AtomicBoolean(true);
