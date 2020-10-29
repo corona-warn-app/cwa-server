@@ -1,0 +1,80 @@
+---
+logging:
+  level:
+    org:
+      springframework:
+        web: INFO
+    app:
+      coronawarn: INFO
+
+services:
+
+spring:
+  lifecycle:
+    # keep in sync or lower than the kubernetes setting 'terminationGracePeriodSeconds'
+    # 5s +5s Feign client + 20s DB timeout
+    timeout-per-shutdown-phase: 30s
+  transaction:
+    default-timeout: 20
+  flyway:
+    enabled: true
+    locations: classpath:/db/migration, classpath:/db/specific/{vendor}
+    password: ${POSTGRESQL_PASSWORD_FLYWAY:local_setup_flyway}
+    user: ${POSTGRESQL_USER_FLYWAY:local_setup_flyway}
+  # Postgres configuration
+  datasource:
+    driver-class-name: org.postgresql.Driver
+    url: jdbc:postgresql://${POSTGRESQL_SERVICE_HOST}:${POSTGRESQL_SERVICE_PORT}/${POSTGRESQL_DATABASE}?ssl=true&sslmode=verify-full&sslrootcert=${SSL_POSTGRES_CERTIFICATE_PATH}&sslcert=${SSL_DISTRIBUTION_CERTIFICATE_PATH}&sslkey=${SSL_DISTRIBUTION_PRIVATE_KEY_PATH}
+    username: ${POSTGRESQL_USER_CALLBACK:local_setup_callback}
+    password: ${POSTGRESQL_PASSWORD_CALLBACK:local_setup_callback}
+
+# Actuator configuration
+management:
+  server:
+    port: 8081
+  endpoint:
+    metrics:
+      enabled: true
+    prometheus:
+      enabled: true
+    health:
+      group:
+        readiness:
+          include: db, verificationService
+          show-details: always
+  endpoints:
+    web:
+      exposure:
+        include: 'health, prometheus'
+  metrics:
+    export:
+      prometheus:
+        enabled: true
+  health:
+    probes:
+      enabled: true
+
+server:
+  shutdown: graceful
+  ssl:
+    enabled: true
+    enabled-protocols: TLSv1.2,TLSv1.3
+    protocol: TLS
+    ciphers: >-
+      TLS_ECDHE_ECDSA_WITH_AES_128_GCM_SHA256
+      TLS_ECDHE_ECDSA_WITH_AES_256_GCM_SHA384
+      TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
+      TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+      TLS_DHE_DSS_WITH_AES_128_GCM_SHA256
+      TLS_DHE_DSS_WITH_AES_256_GCM_SHA384
+      TLS_DHE_RSA_WITH_AES_128_GCM_SHA256
+      TLS_DHE_RSA_WITH_AES_256_GCM_SHA384
+      TLS_AES_128_GCM_SHA256
+      TLS_AES_256_GCM_SHA384
+      TLS_AES_128_CCM_SHA256
+    key-password: ${SSL_CALLBACK_KEYSTORE_PASSWORD}
+    key-store: ${SSL_CALLBACK_KEYSTORE_PATH}
+    key-store-password: ${SSL_CALLBACK_KEYSTORE_PASSWORD}
+    key-store-provider: SUN
+    key-store-type: JKS
+
