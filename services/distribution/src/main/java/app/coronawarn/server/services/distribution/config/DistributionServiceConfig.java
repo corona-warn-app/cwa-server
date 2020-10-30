@@ -703,27 +703,26 @@ public class DistributionServiceConfig {
 
     public static class AndroidKeyDownloadParameters extends CommonKeyDownloadParameters {
 
-      private Integer downloadTimeoutInSeconds;
-      public static final String MIN_VALUE_ERROR_MESSAGE_NUMBER_OF_RETRIES =
-          "Number of retries per file must be greater than or equal to 0";
-      public static final String MAX_VALUE_ERROR_MESSAGE_NUMBER_OF_RETRIES =
-          "Number of retries per file must be lower than or equal to 10";
-      public static final String MAX_VALUE_ERROR_MESSAGE_HTTP_TIMEOUT =
-          "HTTP timeout in seconds must be lower than or equal to 120";
-      public static final String MIN_VALUE_ERROR_MESSAGE_HTTP_TIMEOUT =
-          "HTTP timeout in seconds must be greater than or equal to 0";
+      private static final int LOWER_BOUNDARY_DOWNLOAD_TIMEOUT = 0;
+      public static final String MIN_VALUE_ERROR_MESSAGE_DOWNLOAD_TIMEOUT =
+          "Download timeout in seconds must be greater than or equal to " + LOWER_BOUNDARY_DOWNLOAD_TIMEOUT;
+      private static final int UPPER_BOUNDARY_DOWNLOAD_TIMEOUT = 120;
+      public static final String MAX_VALUE_ERROR_MESSAGE_DOWNLOAD_TIMEOUT =
+          "Download timeout in seconds must be lower than or equal to " + UPPER_BOUNDARY_DOWNLOAD_TIMEOUT;
+      private static final int LOWER_BOUNDARY_OVERALL_TIMEOUT = 0;
       public static final String MIN_VALUE_ERROR_MESSAGE_OVERALL_TIMEOUT =
-          "Key Download: overall timeout in seconds must be greater than or equal to 0";
+          "Android Key Download: overall timeout in seconds must be greater than or equal to "
+              + LOWER_BOUNDARY_OVERALL_TIMEOUT;
+      private static final int UPPER_BOUNDARY_OVERALL_TIMEOUT = 1800;
       public static final String MAX_VALUE_ERROR_MESSAGE_OVERALL_TIMEOUT =
-          "Key Download: overall timeout in seconds must be lower than or equal to 1800";
-      @Min(value = 0, message = MIN_VALUE_ERROR_MESSAGE_NUMBER_OF_RETRIES)
-      @Max(value = 10, message = MAX_VALUE_ERROR_MESSAGE_NUMBER_OF_RETRIES)
-      private Integer numberOfRetriesPerFile;
-      @Min(value = 0, message = MIN_VALUE_ERROR_MESSAGE_HTTP_TIMEOUT)
-      @Max(value = 120, message = MAX_VALUE_ERROR_MESSAGE_HTTP_TIMEOUT)
-      private Integer httpTimeoutInSeconds;
-      @Min(value = 0, message = MIN_VALUE_ERROR_MESSAGE_OVERALL_TIMEOUT)
-      @Max(value = 1800, message = MAX_VALUE_ERROR_MESSAGE_OVERALL_TIMEOUT)
+          "Android Key Download: overall timeout in seconds must be lower than or equal to "
+              + UPPER_BOUNDARY_OVERALL_TIMEOUT;
+
+      @Min(value = LOWER_BOUNDARY_DOWNLOAD_TIMEOUT, message = MIN_VALUE_ERROR_MESSAGE_DOWNLOAD_TIMEOUT)
+      @Max(value = UPPER_BOUNDARY_DOWNLOAD_TIMEOUT, message = MAX_VALUE_ERROR_MESSAGE_DOWNLOAD_TIMEOUT)
+      private Integer downloadTimeoutInSeconds;
+      @Min(value = LOWER_BOUNDARY_OVERALL_TIMEOUT, message = MIN_VALUE_ERROR_MESSAGE_OVERALL_TIMEOUT)
+      @Max(value = UPPER_BOUNDARY_OVERALL_TIMEOUT, message = MAX_VALUE_ERROR_MESSAGE_OVERALL_TIMEOUT)
       private Integer overallTimeoutInSeconds;
 
       public Integer getDownloadTimeoutInSeconds() {
@@ -745,7 +744,9 @@ public class DistributionServiceConfig {
 
     private abstract static class CommonKeyDownloadParameters {
 
+      //TODO:: validate if the string is json
       private String cachedDayPackagesToUpdateOnETagMismatch;
+      //TODO:: validate if the string is json
       private String cachedHourPackagesToUpdateOnETagMismatch;
 
       public String getCachedDayPackagesToUpdateOnETagMismatch() {
@@ -771,17 +772,17 @@ public class DistributionServiceConfig {
 
     public static class IosExposureDetectionParameters {
 
+      private static final int MIN_VALUE_MAX_EXPOSURE_DETECTIONS = 0;
       public static final String MIN_VALUE_ERROR_MESSAGE_MAX_EXPOSURE_DETECTIONS =
-          "IOS Exposure Detection: max exposure detections per interval must be greater than or equal to 0";
+          "IOS Exposure Detection: max exposure detections per interval must be greater than or equal to "
+              + MIN_VALUE_MAX_EXPOSURE_DETECTIONS;
+      private static final int MAX_VALUE_MAX_EXPOSURE_DETECTIONS = 6;
       public static final String MAX_VALUE_ERROR_MESSAGE_MAX_EXPOSURE_DETECTIONS =
-          "IOS Exposure Detection: max exposure detections per interval must be lower than or equal to 6";
-      public static final String MIN_VALUE_ERROR_MESSAGE_OVERALL_TIMEOUT =
-          "IOS Exposure Detection: overall timeout in seconds must be greater than or equal to 0";
-      public static final String MAX_VALUE_ERROR_MESSAGE_OVERALL_TIMEOUT =
-          "IOS Exposure Detection: overall timeout in seconds must be lower than or equal to 3600";
+          "IOS Exposure Detection: max exposure detections per interval must be lower than or equal to "
+              + MAX_VALUE_MAX_EXPOSURE_DETECTIONS;
 
-      @Min(value = 0, message = MIN_VALUE_ERROR_MESSAGE_MAX_EXPOSURE_DETECTIONS)
-      @Max(value = 6, message = MAX_VALUE_ERROR_MESSAGE_MAX_EXPOSURE_DETECTIONS)
+      @Min(value = MIN_VALUE_MAX_EXPOSURE_DETECTIONS, message = MIN_VALUE_ERROR_MESSAGE_MAX_EXPOSURE_DETECTIONS)
+      @Max(value = MAX_VALUE_MAX_EXPOSURE_DETECTIONS, message = MAX_VALUE_ERROR_MESSAGE_MAX_EXPOSURE_DETECTIONS)
       private Integer maxExposureDetectionsPerInterval;
 
       public Integer getMaxExposureDetectionsPerInterval() {
@@ -796,17 +797,27 @@ public class DistributionServiceConfig {
 
     public static class AndroidExposureDetectionParameters {
 
-      public static final String MIN_VALUE_ERROR_MESSAGE_MAX_EXPOSURE_DETECTIONS =
-          "Android Exposure Detection: max exposure detections per interval must be greater than or equal to 0";
-      public static final String MAX_VALUE_ERROR_MESSAGE_MAX_EXPOSURE_DETECTIONS =
-          "Android Exposure Detection: max exposure detections per interval must be lower than or equal to 6";
+      private static final int LOWER_BOUNDARY_OVERALL_TIMEOUT = 0;
       public static final String MIN_VALUE_ERROR_MESSAGE_OVERALL_TIMEOUT =
-          "Android Exposure Detection: overall timeout in seconds must be greater than or equal to 0";
+          "Android Exposure Detection: overall timeout in seconds must be greater than or equal to "
+              + LOWER_BOUNDARY_OVERALL_TIMEOUT;
+      private static final int UPPER_BOUNDARY_OVERALL_TIMEOUT = 3600;
       public static final String MAX_VALUE_ERROR_MESSAGE_OVERALL_TIMEOUT =
-          "Android Exposure Detection: overall timeout in seconds must be lower than or equal to 3600";
-      @Min(value = 0, message = MIN_VALUE_ERROR_MESSAGE_MAX_EXPOSURE_DETECTIONS)
-      @Max(value = 6, message = MAX_VALUE_ERROR_MESSAGE_MAX_EXPOSURE_DETECTIONS)
+          "Android Exposure Detection: overall timeout in seconds must be lower than or equal to "
+              + UPPER_BOUNDARY_OVERALL_TIMEOUT;
+      private static final int LOWER_BOUNDARY_MAX_EXPOSURE_DETECTIONS = 0;
+      public static final String MIN_VALUE_ERROR_MESSAGE_MAX_EXPOSURE_DETECTIONS =
+          "Android Exposure Detection: max exposure detections per interval must be greater than or equal to "
+              + LOWER_BOUNDARY_MAX_EXPOSURE_DETECTIONS;
+      private static final int UPPER_BOUNDARY_MAX_EXPOSURE_DETECTIONS = 6;
+      public static final String MAX_VALUE_ERROR_MESSAGE_MAX_EXPOSURE_DETECTIONS =
+          "Android Exposure Detection: max exposure detections per interval must be lower than or equal to "
+              + UPPER_BOUNDARY_MAX_EXPOSURE_DETECTIONS;
+      @Min(value = LOWER_BOUNDARY_MAX_EXPOSURE_DETECTIONS, message = MIN_VALUE_ERROR_MESSAGE_MAX_EXPOSURE_DETECTIONS)
+      @Max(value = UPPER_BOUNDARY_MAX_EXPOSURE_DETECTIONS, message = MAX_VALUE_ERROR_MESSAGE_MAX_EXPOSURE_DETECTIONS)
       private Integer maxExposureDetectionsPerInterval;
+      @Min(value = LOWER_BOUNDARY_OVERALL_TIMEOUT, message = MIN_VALUE_ERROR_MESSAGE_OVERALL_TIMEOUT)
+      @Max(value = UPPER_BOUNDARY_OVERALL_TIMEOUT, message = MAX_VALUE_ERROR_MESSAGE_OVERALL_TIMEOUT)
       private Integer overallTimeoutInSeconds;
 
       public Integer getMaxExposureDetectionsPerInterval() {
