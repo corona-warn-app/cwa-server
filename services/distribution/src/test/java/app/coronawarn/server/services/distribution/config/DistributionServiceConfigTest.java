@@ -1,5 +1,3 @@
-
-
 package app.coronawarn.server.services.distribution.config;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -11,7 +9,14 @@ import app.coronawarn.server.services.distribution.assembly.appconfig.UnableToLo
 import app.coronawarn.server.services.distribution.assembly.appconfig.validation.TestWithExpectedResult;
 import app.coronawarn.server.services.distribution.assembly.appconfig.validation.ValidationError;
 import app.coronawarn.server.services.distribution.assembly.appconfig.validation.ValidationResult;
+import app.coronawarn.server.services.distribution.config.DistributionServiceConfig.AppConfigParameters.AndroidExposureDetectionParameters;
+import app.coronawarn.server.services.distribution.config.DistributionServiceConfig.AppConfigParameters.IosExposureDetectionParameters;
+import app.coronawarn.server.services.distribution.config.DistributionServiceConfig.AppConfigParameters.KeyDownloadParameters;
 import java.util.Arrays;
+import javax.validation.Validation;
+import javax.validation.Validator;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -40,6 +45,26 @@ class DistributionServiceConfigTest {
   DistributionServiceConfig distributionServiceConfig;
 
   DistributionServiceConfigValidator distributionServiceConfigValidator = new DistributionServiceConfigValidator();
+  private KeyDownloadParameters keyDownloadParameters;
+  private IosExposureDetectionParameters iosExposureDetectionParameters;
+  private AndroidExposureDetectionParameters androidExposureDetectionParameters;
+  private Validator validator;
+
+  public static ValidationResult buildExpectedResult(ValidationError... errors) {
+    var validationResult = new ValidationResult();
+    Arrays.stream(errors).forEach(validationResult::add);
+    return validationResult;
+  }
+
+  private
+
+  @BeforeEach
+  void setup() {
+    keyDownloadParameters = new KeyDownloadParameters();
+    iosExposureDetectionParameters = new IosExposureDetectionParameters();
+    androidExposureDetectionParameters = new AndroidExposureDetectionParameters();
+    validator = Validation.buildDefaultValidatorFactory().getValidator();
+  }
 
   @Test
   void testDefaultValuesKeyDownloadParameters() {
@@ -67,6 +92,175 @@ class DistributionServiceConfigTest {
         .getOverallTimeoutInSeconds());
   }
 
+  @Test
+  void testLowerBoundaryMaxNumberOfRetriesPerFile() {
+    keyDownloadParameters.setNumberOfRetriesPerFile(-3);
+    validator.validate(keyDownloadParameters).stream().findFirst()
+        .ifPresentOrElse(violation -> assertEquals(KeyDownloadParameters.MIN_VALUE_ERROR_MESSAGE_NUMBER_OF_RETRIES,
+            violation.getMessage()),
+            Assertions::fail);
+
+
+  }
+
+  @Test
+  void testUpperBoundaryMaxNumberOfRetriesPerFile() {
+    keyDownloadParameters.setNumberOfRetriesPerFile(500);
+    validator.validate(keyDownloadParameters).stream().findFirst()
+        .ifPresentOrElse(violation -> assertEquals(KeyDownloadParameters.MAX_VALUE_ERROR_MESSAGE_NUMBER_OF_RETRIES,
+            violation.getMessage()),
+            Assertions::fail);
+
+
+  }
+
+  @Test
+  void testLowerBoundaryHttpTimeout() {
+    keyDownloadParameters.setHttpTimeoutInSeconds(-200);
+    validator.validate(keyDownloadParameters).stream().findFirst()
+        .ifPresentOrElse(violation -> assertEquals(KeyDownloadParameters.MIN_VALUE_ERROR_MESSAGE_HTTP_TIMEOUT,
+            violation.getMessage()),
+            Assertions::fail);
+
+
+  }
+
+  @Test
+  void testUpperBoundaryHttpTimeout() {
+    keyDownloadParameters.setHttpTimeoutInSeconds(121);
+    validator.validate(keyDownloadParameters).stream().findFirst()
+        .ifPresentOrElse(
+            violation -> assertEquals(KeyDownloadParameters.MAX_VALUE_ERROR_MESSAGE_HTTP_TIMEOUT,
+                violation.getMessage()),
+            Assertions::fail);
+
+
+  }
+
+  @Test
+  void testLowerBoundaryKeyDownloadOverallTimeout() {
+    keyDownloadParameters.setOverallTimeoutInSeconds(-1);
+    validator.validate(keyDownloadParameters).stream().findFirst()
+        .ifPresentOrElse(
+            violation -> assertEquals(KeyDownloadParameters.MIN_VALUE_ERROR_MESSAGE_OVERALL_TIMEOUT,
+                violation.getMessage()),
+            Assertions::fail);
+
+
+  }
+
+  @Test
+  void testUpperBoundaryKeyDownloadOverallTimeout() {
+    keyDownloadParameters.setOverallTimeoutInSeconds(2000);
+    validator.validate(keyDownloadParameters).stream().findFirst()
+        .ifPresentOrElse(
+            violation -> assertEquals(KeyDownloadParameters.MAX_VALUE_ERROR_MESSAGE_OVERALL_TIMEOUT,
+                violation.getMessage()),
+            Assertions::fail);
+
+
+  }
+
+  @Test
+  void testLowerBoundaryIosMaxExposureDetectionsPerInterval() {
+    iosExposureDetectionParameters.setMaxExposureDetectionsPerInterval(-1);
+    validator.validate(iosExposureDetectionParameters).stream().findFirst()
+        .ifPresentOrElse(violation -> assertEquals(
+            IosExposureDetectionParameters.MIN_VALUE_ERROR_MESSAGE_MAX_EXPOSURE_DETECTIONS,
+            violation.getMessage()),
+            Assertions::fail);
+
+
+  }
+
+  @Test
+  void testUpperBoundaryIosMaxExposureDetectionsPerInterval() {
+    iosExposureDetectionParameters.setMaxExposureDetectionsPerInterval(7);
+    validator.validate(iosExposureDetectionParameters).stream().findFirst()
+        .ifPresentOrElse(
+            violation -> assertEquals(
+                IosExposureDetectionParameters.MAX_VALUE_ERROR_MESSAGE_MAX_EXPOSURE_DETECTIONS,
+                violation.getMessage()),
+            Assertions::fail);
+
+
+  }
+
+  @Test
+  void testLowerBoundaryIosOverallTimeout() {
+    iosExposureDetectionParameters.setOverallTimeoutInSeconds(-1);
+    validator.validate(iosExposureDetectionParameters).stream().findFirst()
+        .ifPresentOrElse(violation -> assertEquals(
+            IosExposureDetectionParameters.MIN_VALUE_ERROR_MESSAGE_OVERALL_TIMEOUT,
+            violation.getMessage()),
+            Assertions::fail);
+
+
+  }
+
+  @Test
+  void testUpperBoundaryIosOverallTimeout() {
+    iosExposureDetectionParameters.setOverallTimeoutInSeconds(3601);
+    validator.validate(iosExposureDetectionParameters).stream().findFirst()
+        .ifPresentOrElse(
+            violation -> assertEquals(
+                IosExposureDetectionParameters.MAX_VALUE_ERROR_MESSAGE_OVERALL_TIMEOUT,
+                violation.getMessage()),
+            Assertions::fail);
+
+
+  }
+
+  @Test
+  void testLowerBoundaryAndroidMaxExposureDetectionsPerInterval() {
+    androidExposureDetectionParameters.setMaxExposureDetectionsPerInterval(-1);
+    validator.validate(androidExposureDetectionParameters).stream().findFirst()
+        .ifPresentOrElse(violation -> assertEquals(
+            AndroidExposureDetectionParameters.MIN_VALUE_ERROR_MESSAGE_MAX_EXPOSURE_DETECTIONS,
+            violation.getMessage()),
+            Assertions::fail);
+
+
+  }
+
+  @Test
+  void testUpperBoundaryAndroidMaxExposureDetectionsPerInterval() {
+    androidExposureDetectionParameters.setMaxExposureDetectionsPerInterval(7);
+    validator.validate(androidExposureDetectionParameters).stream().findFirst()
+        .ifPresentOrElse(
+            violation -> assertEquals(
+                AndroidExposureDetectionParameters.MAX_VALUE_ERROR_MESSAGE_MAX_EXPOSURE_DETECTIONS,
+                violation.getMessage()),
+            Assertions::fail);
+
+
+  }
+
+  @Test
+  void testLowerBoundaryAndroidOverallTimeout() {
+    androidExposureDetectionParameters.setOverallTimeoutInSeconds(-1);
+    validator.validate(androidExposureDetectionParameters).stream().findFirst()
+        .ifPresentOrElse(violation -> assertEquals(
+            AndroidExposureDetectionParameters.MIN_VALUE_ERROR_MESSAGE_OVERALL_TIMEOUT,
+            violation.getMessage()),
+            Assertions::fail);
+
+
+  }
+
+  @Test
+  void testUpperBoundaryAndroidOverallTimeout() {
+    androidExposureDetectionParameters.setOverallTimeoutInSeconds(3601);
+    validator.validate(androidExposureDetectionParameters).stream().findFirst()
+        .ifPresentOrElse(
+            violation -> assertEquals(
+                AndroidExposureDetectionParameters.MAX_VALUE_ERROR_MESSAGE_OVERALL_TIMEOUT,
+                violation.getMessage()),
+            Assertions::fail);
+
+
+  }
+
   @ParameterizedTest
   @ValueSource(strings = {"DE,FRE", "DE, ", " "})
   void failsOnInvalidSupportedCountries(String supportedCountries) {
@@ -90,11 +284,5 @@ class DistributionServiceConfigTest {
 
     assertThat(errors.getAllErrors()).isEmpty();
 
-  }
-
-  public static ValidationResult buildExpectedResult(ValidationError... errors) {
-    var validationResult = new ValidationResult();
-    Arrays.stream(errors).forEach(validationResult::add);
-    return validationResult;
   }
 }
