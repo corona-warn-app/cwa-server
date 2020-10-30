@@ -667,15 +667,6 @@ public class DistributionServiceConfig {
     private IosExposureDetectionParameters iosExposureDetectionParameters;
     private AndroidExposureDetectionParameters androidExposureDetectionParameters;
 
-    @Override
-    public String toString() {
-      return "AppConfigParameters{" +
-          "keyDownloadParameters=" + keyDownloadParameters +
-          ", iosExposureDetectionParameters=" + iosExposureDetectionParameters +
-          ", androidExposureDetectionParameters=" + androidExposureDetectionParameters +
-          '}';
-    }
-
     public KeyDownloadParameters getKeyDownloadParameters() {
       return keyDownloadParameters;
     }
@@ -707,15 +698,6 @@ public class DistributionServiceConfig {
       private Integer httpTimeoutInSeconds;
       private Integer overallTimeoutInSeconds;
 
-      @Override
-      public String toString() {
-        return "KeyDownloadParameters{" +
-            "numberOfRetriesPerFile=" + numberOfRetriesPerFile +
-            ", httpTimeoutInSeconds=" + httpTimeoutInSeconds +
-            ", overallTimeoutInSeconds=" + overallTimeoutInSeconds +
-            '}';
-      }
-
       public Integer getNumberOfRetriesPerFile() {
         return numberOfRetriesPerFile;
       }
@@ -746,14 +728,6 @@ public class DistributionServiceConfig {
       private Integer maxExposureDetectionsPerInterval;
       private Integer overallTimeoutInSeconds;
 
-      @Override
-      public String toString() {
-        return "IosExposureDetectionParameters{" +
-            "maxExposureDetectionsPerInterval=" + maxExposureDetectionsPerInterval +
-            ", overallTimeoutInSeconds=" + overallTimeoutInSeconds +
-            '}';
-      }
-
       public Integer getMaxExposureDetectionsPerInterval() {
         return maxExposureDetectionsPerInterval;
       }
@@ -775,14 +749,6 @@ public class DistributionServiceConfig {
 
       private Integer maxExposureDetectionsPerInterval;
       private Integer overallTimeoutInSeconds;
-
-      @Override
-      public String toString() {
-        return "AndroidExposureDetectionParameters{" +
-            "maxExposureDetectionsPerInterval=" + maxExposureDetectionsPerInterval +
-            ", overallTimeoutInSeconds=" + overallTimeoutInSeconds +
-            '}';
-      }
 
       public Integer getMaxExposureDetectionsPerInterval() {
         return maxExposureDetectionsPerInterval;
