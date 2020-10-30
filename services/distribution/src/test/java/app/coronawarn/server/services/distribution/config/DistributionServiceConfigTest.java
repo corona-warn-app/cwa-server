@@ -2,32 +2,23 @@
 
 package app.coronawarn.server.services.distribution.config;
 
-import static app.coronawarn.server.services.distribution.assembly.appconfig.validation.ParameterSpec.RISK_SCORE_MAX;
-import static app.coronawarn.server.services.distribution.assembly.appconfig.validation.ParameterSpec.RISK_SCORE_MIN;
-import static app.coronawarn.server.services.distribution.assembly.appconfig.validation.ValidationError.ErrorType.INVALID_VALUES;
-import static app.coronawarn.server.services.distribution.assembly.appconfig.validation.ValidationError.ErrorType.VALUE_OUT_OF_BOUNDS;
-import static app.coronawarn.server.services.distribution.common.Helpers.loadApplicationConfiguration;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.when;
 
-import app.coronawarn.server.common.protocols.internal.ApplicationConfiguration;
 import app.coronawarn.server.services.distribution.assembly.appconfig.ApplicationConfigurationPublicationConfig;
 import app.coronawarn.server.services.distribution.assembly.appconfig.UnableToLoadFileException;
+import app.coronawarn.server.services.distribution.assembly.appconfig.validation.TestWithExpectedResult;
+import app.coronawarn.server.services.distribution.assembly.appconfig.validation.ValidationError;
+import app.coronawarn.server.services.distribution.assembly.appconfig.validation.ValidationResult;
 import java.util.Arrays;
-import java.util.stream.Stream;
-
-import app.coronawarn.server.services.distribution.assembly.appconfig.validation.*;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.Arguments;
-import org.junit.jupiter.params.provider.MethodSource;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.ConfigFileApplicationContextInitializer;
-import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
@@ -50,6 +41,31 @@ class DistributionServiceConfigTest {
 
   DistributionServiceConfigValidator distributionServiceConfigValidator = new DistributionServiceConfigValidator();
 
+  @Test
+  void testDefaultValuesKeyDownloadParameters() {
+    assertEquals(3,
+        distributionServiceConfig.getAppConfigParameters().getKeyDownloadParameters().getNumberOfRetriesPerFile());
+    assertEquals(30,
+        distributionServiceConfig.getAppConfigParameters().getKeyDownloadParameters().getHttpTimeoutInSeconds());
+    assertEquals(480,
+        distributionServiceConfig.getAppConfigParameters().getKeyDownloadParameters().getOverallTimeoutInSeconds());
+  }
+
+  @Test
+  void testDefaultIosExposureDetectionParameters() {
+    assertEquals(6, distributionServiceConfig.getAppConfigParameters().getIosExposureDetectionParameters()
+        .getMaxExposureDetectionsPerInterval());
+    assertEquals(900, distributionServiceConfig.getAppConfigParameters().getIosExposureDetectionParameters()
+        .getOverallTimeoutInSeconds());
+  }
+
+  @Test
+  void testDefaultAndroidExposureDetectionParameters() {
+    assertEquals(6, distributionServiceConfig.getAppConfigParameters().getAndroidExposureDetectionParameters()
+        .getMaxExposureDetectionsPerInterval());
+    assertEquals(900, distributionServiceConfig.getAppConfigParameters().getAndroidExposureDetectionParameters()
+        .getOverallTimeoutInSeconds());
+  }
 
   @ParameterizedTest
   @ValueSource(strings = {"DE,FRE", "DE, ", " "})
