@@ -3,7 +3,12 @@ syntax = "proto3";
 package app.coronawarn.server.common.protocols.internal;
 option java_multiple_files = true;
 
-message ExpsureDetectionParameters {
+message ExpsureDetectionParametersIOS {
+
+  int32 maxExposureDetectionsPerInterval = 1;
+}
+
+message ExpsureDetectionParametersAndroid {
 
   int32 maxExposureDetectionsPerInterval = 1;
 
