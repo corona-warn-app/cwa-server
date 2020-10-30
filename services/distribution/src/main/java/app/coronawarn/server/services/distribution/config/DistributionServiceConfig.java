@@ -701,28 +701,10 @@ public class DistributionServiceConfig {
       this.androidExposureDetectionParameters = androidExposureDetectionParameters;
     }
 
-    public static class AndroidKeyDownloadParameters {
+    public static class AndroidKeyDownloadParameters extends CommonKeyDownloadParameters {
 
       private Integer downloadTimeoutInSeconds;
       private Integer overallTimeoutInSeconds;
-      private String cachedDayPackagesToUpdateOnETagMismatch;
-      private String cachedHourPackagesToUpdateOnETagMismatch;
-
-      public String getCachedDayPackagesToUpdateOnETagMismatch() {
-        return cachedDayPackagesToUpdateOnETagMismatch;
-      }
-
-      public void setCachedDayPackagesToUpdateOnETagMismatch(String cachedDayPackagesToUpdateOnETagMismatch) {
-        this.cachedDayPackagesToUpdateOnETagMismatch = cachedDayPackagesToUpdateOnETagMismatch;
-      }
-
-      public String getCachedHourPackagesToUpdateOnETagMismatch() {
-        return cachedHourPackagesToUpdateOnETagMismatch;
-      }
-
-      public void setCachedHourPackagesToUpdateOnETagMismatch(String cachedHourPackagesToUpdateOnETagMismatch) {
-        this.cachedHourPackagesToUpdateOnETagMismatch = cachedHourPackagesToUpdateOnETagMismatch;
-      }
 
       public Integer getDownloadTimeoutInSeconds() {
         return downloadTimeoutInSeconds;
@@ -741,7 +723,7 @@ public class DistributionServiceConfig {
       }
     }
 
-    public static class IosKeyDownloadParameters {
+    private abstract static class CommonKeyDownloadParameters {
 
       private String cachedDayPackagesToUpdateOnETagMismatch;
       private String cachedHourPackagesToUpdateOnETagMismatch;
@@ -761,6 +743,10 @@ public class DistributionServiceConfig {
       public void setCachedHourPackagesToUpdateOnETagMismatch(String cachedHourPackagesToUpdateOnETagMismatch) {
         this.cachedHourPackagesToUpdateOnETagMismatch = cachedHourPackagesToUpdateOnETagMismatch;
       }
+    }
+
+    public static class IosKeyDownloadParameters extends CommonKeyDownloadParameters {
+
     }
 
     public static class IosExposureDetectionParameters {
