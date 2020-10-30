@@ -1,5 +1,3 @@
-
-
 package app.coronawarn.server.services.distribution.config;
 
 import app.coronawarn.server.common.protocols.external.exposurenotification.SignatureInfo;
@@ -57,6 +55,7 @@ public class DistributionServiceConfig {
   @NotEmpty
   private String[] supportedCountries;
   private AppVersions appVersions;
+  private AppConfigParameters appConfigParameters;
 
   public Paths getPaths() {
     return paths;
@@ -203,6 +202,13 @@ public class DistributionServiceConfig {
     this.appVersions = appVersions;
   }
 
+  public AppConfigParameters getAppConfigParameters() {
+    return appConfigParameters;
+  }
+
+  public void setAppConfigParameters(AppConfigParameters appConfigParameters) {
+    this.appConfigParameters = appConfigParameters;
+  }
 
   /**
    * Get app features as list of protobuf objects.
@@ -653,5 +659,146 @@ public class DistributionServiceConfig {
       this.minAndroid = minAndroid;
     }
 
+  }
+
+  public static class AppConfigParameters {
+
+    private KeyDownloadParameters keyDownloadParameters;
+    private IosExposureDetectionParameters iosExposureDetectionParameters;
+    private AndroidExposureDetectionParameters androidExposureDetectionParameters;
+
+    @Override
+    public String toString() {
+      return "AppConfigParameters{" +
+          "keyDownloadParameters=" + keyDownloadParameters +
+          ", iosExposureDetectionParameters=" + iosExposureDetectionParameters +
+          ", androidExposureDetectionParameters=" + androidExposureDetectionParameters +
+          '}';
+    }
+
+    public KeyDownloadParameters getKeyDownloadParameters() {
+      return keyDownloadParameters;
+    }
+
+    public void setKeyDownloadParameters(KeyDownloadParameters keyDownloadParameters) {
+      this.keyDownloadParameters = keyDownloadParameters;
+    }
+
+    public IosExposureDetectionParameters getIosExposureDetectionParameters() {
+      return iosExposureDetectionParameters;
+    }
+
+    public void setIosExposureDetectionParameters(IosExposureDetectionParameters iosExposureDetectionParameters) {
+      this.iosExposureDetectionParameters = iosExposureDetectionParameters;
+    }
+
+    public AndroidExposureDetectionParameters getAndroidExposureDetectionParameters() {
+      return androidExposureDetectionParameters;
+    }
+
+    public void setAndroidExposureDetectionParameters(
+        AndroidExposureDetectionParameters androidExposureDetectionParameters) {
+      this.androidExposureDetectionParameters = androidExposureDetectionParameters;
+    }
+
+    public static class KeyDownloadParameters {
+
+      private Integer numberOfRetriesPerFile;
+      private Integer httpTimeoutInSeconds;
+      private Integer overallTimeoutInSeconds;
+
+      @Override
+      public String toString() {
+        return "KeyDownloadParameters{" +
+            "numberOfRetriesPerFile=" + numberOfRetriesPerFile +
+            ", httpTimeoutInSeconds=" + httpTimeoutInSeconds +
+            ", overallTimeoutInSeconds=" + overallTimeoutInSeconds +
+            '}';
+      }
+
+      public Integer getNumberOfRetriesPerFile() {
+        return numberOfRetriesPerFile;
+      }
+
+      public void setNumberOfRetriesPerFile(Integer numberOfRetriesPerFile) {
+        this.numberOfRetriesPerFile = numberOfRetriesPerFile;
+      }
+
+      public Integer getHttpTimeoutInSeconds() {
+        return httpTimeoutInSeconds;
+      }
+
+      public void setHttpTimeoutInSeconds(Integer httpTimeoutInSeconds) {
+        this.httpTimeoutInSeconds = httpTimeoutInSeconds;
+      }
+
+      public Integer getOverallTimeoutInSeconds() {
+        return overallTimeoutInSeconds;
+      }
+
+      public void setOverallTimeoutInSeconds(Integer overallTimeoutInSeconds) {
+        this.overallTimeoutInSeconds = overallTimeoutInSeconds;
+      }
+    }
+
+    public static class IosExposureDetectionParameters {
+
+      private Integer maxExposureDetectionsPerInterval;
+      private Integer overallTimeoutInSeconds;
+
+      @Override
+      public String toString() {
+        return "IosExposureDetectionParameters{" +
+            "maxExposureDetectionsPerInterval=" + maxExposureDetectionsPerInterval +
+            ", overallTimeoutInSeconds=" + overallTimeoutInSeconds +
+            '}';
+      }
+
+      public Integer getMaxExposureDetectionsPerInterval() {
+        return maxExposureDetectionsPerInterval;
+      }
+
+      public void setMaxExposureDetectionsPerInterval(Integer maxExposureDetectionsPerInterval) {
+        this.maxExposureDetectionsPerInterval = maxExposureDetectionsPerInterval;
+      }
+
+      public Integer getOverallTimeoutInSeconds() {
+        return overallTimeoutInSeconds;
+      }
+
+      public void setOverallTimeoutInSeconds(Integer overallTimeoutInSeconds) {
+        this.overallTimeoutInSeconds = overallTimeoutInSeconds;
+      }
+    }
+
+    public static class AndroidExposureDetectionParameters {
+
+      private Integer maxExposureDetectionsPerInterval;
+      private Integer overallTimeoutInSeconds;
+
+      @Override
+      public String toString() {
+        return "AndroidExposureDetectionParameters{" +
+            "maxExposureDetectionsPerInterval=" + maxExposureDetectionsPerInterval +
+            ", overallTimeoutInSeconds=" + overallTimeoutInSeconds +
+            '}';
+      }
+
+      public Integer getMaxExposureDetectionsPerInterval() {
+        return maxExposureDetectionsPerInterval;
+      }
+
+      public void setMaxExposureDetectionsPerInterval(Integer maxExposureDetectionsPerInterval) {
+        this.maxExposureDetectionsPerInterval = maxExposureDetectionsPerInterval;
+      }
+
+      public Integer getOverallTimeoutInSeconds() {
+        return overallTimeoutInSeconds;
+      }
+
+      public void setOverallTimeoutInSeconds(Integer overallTimeoutInSeconds) {
+        this.overallTimeoutInSeconds = overallTimeoutInSeconds;
+      }
+    }
   }
 }
