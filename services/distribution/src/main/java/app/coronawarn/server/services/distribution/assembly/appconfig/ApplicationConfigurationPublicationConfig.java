@@ -7,11 +7,14 @@ import app.coronawarn.server.common.protocols.internal.ApplicationConfiguration;
 import app.coronawarn.server.common.protocols.internal.ApplicationConfiguration.Builder;
 import app.coronawarn.server.common.protocols.internal.ApplicationVersionConfiguration;
 import app.coronawarn.server.common.protocols.internal.ApplicationVersionInfo;
+import app.coronawarn.server.common.protocols.internal.ExposureDetectionParametersAndroid;
+import app.coronawarn.server.common.protocols.internal.ExposureDetectionParametersIOS;
 import app.coronawarn.server.common.protocols.internal.KeyDownloadParametersAndroid;
 import app.coronawarn.server.common.protocols.internal.KeyDownloadParametersIOS;
 import app.coronawarn.server.common.protocols.internal.SemanticVersion;
 import app.coronawarn.server.services.distribution.config.DistributionServiceConfig;
 import app.coronawarn.server.services.distribution.config.DistributionServiceConfig.AppConfigParameters.AndroidExposureDetectionParameters;
+import app.coronawarn.server.services.distribution.config.DistributionServiceConfig.AppConfigParameters.IosExposureDetectionParameters;
 import app.coronawarn.server.services.distribution.config.DistributionServiceConfig.AppVersions;
 import java.util.List;
 import org.springframework.context.annotation.Bean;
@@ -55,6 +58,10 @@ public class ApplicationConfigurationPublicationConfig {
         )
         .addAllSupportedCountries(List.of(distributionServiceConfig.getSupportedCountries()))
         .setAppVersion(buildApplicationVersionConfiguration(distributionServiceConfig))
+        .setAndroidKeyDownloadParameters(buildKeyDownloadParametersAndroid(distributionServiceConfig))
+        .setIosKeyDownloadParameters(buildKeyDownloadParametersIos(distributionServiceConfig))
+        .setAndroidExposureDetectionParameters(buildExposureDetectionParametersAndroid(distributionServiceConfig))
+        .setIosExposureDetectionParameters(buildExposureDetectionParametersIos(distributionServiceConfig))
         .build();
   }
 
@@ -73,16 +80,62 @@ public class ApplicationConfigurationPublicationConfig {
   }
 
   /**
-   * Fetches the master configuration as a ApplicationConfiguration instance.
+   * Fetches the master configuration as a KeyDownloadParametersAndroid instance.
    *
    * @return test.
    */
   public KeyDownloadParametersAndroid buildKeyDownloadParametersAndroid(
       DistributionServiceConfig distributionServiceConfig) {
+    // Replace with android key downloadparameters
     AndroidExposureDetectionParameters androidExposureDetectionParameters =
         distributionServiceConfig.getAppConfigParameters().getAndroidExposureDetectionParameters();
     return KeyDownloadParametersAndroid.newBuilder()
         .setOverallTimeoutInSeconds(androidExposureDetectionParameters.getOverallTimeoutInSeconds())
+        // TODO: 30/10/2020
+        // .setDownloadTimeoutInSeconds(androidExposureDetectionParameters.g) + cache
+        .build();
+  }
+
+  /**
+   * Fetches the master configuration as a KeyDownloadParametersIOS instance.
+   *
+   * @return test.
+   */
+  public KeyDownloadParametersIOS buildKeyDownloadParametersIos(
+      DistributionServiceConfig distributionServiceConfig) {
+    IosExposureDetectionParameters iosExposureDetectionParameters =
+        distributionServiceConfig.getAppConfigParameters().getIosExposureDetectionParameters();
+    return KeyDownloadParametersIOS.newBuilder()
+        // TODO: 30/10/2020 cache
+        .build();
+  }
+
+  /**
+   * Fetches the master configuration as a ExposureDetectionParametersAndroid instance.
+   *
+   * @return test.
+   */
+  public ExposureDetectionParametersAndroid buildExposureDetectionParametersAndroid(
+      DistributionServiceConfig distributionServiceConfig) {
+    AndroidExposureDetectionParameters androidExposureDetectionParameters =
+        distributionServiceConfig.getAppConfigParameters().getAndroidExposureDetectionParameters();
+    return ExposureDetectionParametersAndroid.newBuilder()
+        .setMaxExposureDetectionsPerInterval(androidExposureDetectionParameters.getMaxExposureDetectionsPerInterval())
+        .setOverallTimeoutInSeconds(androidExposureDetectionParameters.getOverallTimeoutInSeconds())
+        .build();
+  }
+
+  /**
+   * Fetches the master configuration as a ExpsureDetectionParametersIOS instance.
+   *
+   * @return test.
+   */
+  public ExposureDetectionParametersIOS buildExposureDetectionParametersIos(
+      DistributionServiceConfig distributionServiceConfig) {
+    IosExposureDetectionParameters iosExposureDetectionParameters =
+        distributionServiceConfig.getAppConfigParameters().getIosExposureDetectionParameters();
+    return ExposureDetectionParametersIOS.newBuilder()
+        .setMaxExposureDetectionsPerInterval(iosExposureDetectionParameters.getMaxExposureDetectionsPerInterval())
         .build();
   }
 
