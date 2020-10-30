@@ -7,8 +7,11 @@ import app.coronawarn.server.common.protocols.internal.ApplicationConfiguration;
 import app.coronawarn.server.common.protocols.internal.ApplicationConfiguration.Builder;
 import app.coronawarn.server.common.protocols.internal.ApplicationVersionConfiguration;
 import app.coronawarn.server.common.protocols.internal.ApplicationVersionInfo;
+import app.coronawarn.server.common.protocols.internal.KeyDownloadParametersAndroid;
+import app.coronawarn.server.common.protocols.internal.KeyDownloadParametersIOS;
 import app.coronawarn.server.common.protocols.internal.SemanticVersion;
 import app.coronawarn.server.services.distribution.config.DistributionServiceConfig;
+import app.coronawarn.server.services.distribution.config.DistributionServiceConfig.AppConfigParameters.AndroidExposureDetectionParameters;
 import app.coronawarn.server.services.distribution.config.DistributionServiceConfig.AppVersions;
 import java.util.List;
 import org.springframework.context.annotation.Bean;
@@ -66,6 +69,20 @@ public class ApplicationConfigurationPublicationConfig {
     return ApplicationVersionConfiguration.newBuilder()
         .setAndroid(buildApplicationVersionInfo(appVersions.getLatestAndroid(), appVersions.getMinAndroid()))
         .setIos(buildApplicationVersionInfo(appVersions.getLatestIos(), appVersions.getMinIos()))
+        .build();
+  }
+
+  /**
+   * Fetches the master configuration as a ApplicationConfiguration instance.
+   *
+   * @return test.
+   */
+  public KeyDownloadParametersAndroid buildKeyDownloadParametersAndroid(
+      DistributionServiceConfig distributionServiceConfig) {
+    AndroidExposureDetectionParameters androidExposureDetectionParameters =
+        distributionServiceConfig.getAppConfigParameters().getAndroidExposureDetectionParameters();
+    return KeyDownloadParametersAndroid.newBuilder()
+        .setOverallTimeoutInSeconds(androidExposureDetectionParameters.getOverallTimeoutInSeconds())
         .build();
   }
 
