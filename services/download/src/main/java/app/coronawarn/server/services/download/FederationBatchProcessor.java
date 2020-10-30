@@ -115,10 +115,6 @@ public class FederationBatchProcessor {
       processBatchAndReturnNextBatchId(federationBatchInfo, ERROR_WONT_RETRY)
           .ifPresent(nextBatchTag ->
               batchInfoService.save(new FederationBatchInfo(nextBatchTag, federationBatchInfo.getDate())));
-    } catch (FederationGatewayException e) {
-      logger.error("Failed to save next federation batch info for processing. Will not try again. Reason: {}.",
-          e.getMessage());
-      batchInfoService.updateStatus(federationBatchInfo, ERROR_WONT_RETRY);
     } catch (Exception e) {
       logger.error("Failed to save next federation batch info for processing. Will not try again.", e);
       batchInfoService.updateStatus(federationBatchInfo, ERROR_WONT_RETRY);
