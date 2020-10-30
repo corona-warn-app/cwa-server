@@ -44,11 +44,11 @@ class DistributionServiceConfigTest {
   @Test
   void testDefaultValuesKeyDownloadParameters() {
     assertEquals(3,
-        distributionServiceConfig.getAppConfigParameters().getKeyDownloadParameters().getNumberOfRetriesPerFile());
+        distributionServiceConfig.getAppConfigParameters().getKeyDownloadParametersIos().getNumberOfRetriesPerFile());
     assertEquals(30,
-        distributionServiceConfig.getAppConfigParameters().getKeyDownloadParameters().getHttpTimeoutInSeconds());
+        distributionServiceConfig.getAppConfigParameters().getKeyDownloadParametersIos().getHttpTimeoutInSeconds());
     assertEquals(480,
-        distributionServiceConfig.getAppConfigParameters().getKeyDownloadParameters().getOverallTimeoutInSeconds());
+        distributionServiceConfig.getAppConfigParameters().getKeyDownloadParametersIos().getOverallTimeoutInSeconds());
   }
 
   @Test

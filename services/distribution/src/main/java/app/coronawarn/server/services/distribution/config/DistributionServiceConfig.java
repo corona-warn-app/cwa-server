@@ -7,6 +7,8 @@ import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.Pattern;
+import app.coronawarn.server.common.protocols.internal.KeyDownloadParametersAndroid;
+import app.coronawarn.server.common.protocols.internal.KeyDownloadParametersIOS;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.validation.annotation.Validated;
 
@@ -663,16 +665,25 @@ public class DistributionServiceConfig {
 
   public static class AppConfigParameters {
 
-    private KeyDownloadParameters keyDownloadParameters;
+    private KeyDownloadParametersIOS keyDownloadParametersIos;
+    private KeyDownloadParametersAndroid keyDownloadParametersAndroid;
     private IosExposureDetectionParameters iosExposureDetectionParameters;
     private AndroidExposureDetectionParameters androidExposureDetectionParameters;
 
-    public KeyDownloadParameters getKeyDownloadParameters() {
-      return keyDownloadParameters;
+    public KeyDownloadParametersIOS getKeyDownloadParametersIos() {
+      return keyDownloadParametersIos;
     }
 
-    public void setKeyDownloadParameters(KeyDownloadParameters keyDownloadParameters) {
-      this.keyDownloadParameters = keyDownloadParameters;
+    public void setKeyDownloadParametersIos(KeyDownloadParametersIOS keyDownloadParametersIos) {
+      this.keyDownloadParametersIos = keyDownloadParametersIos;
+    }
+
+    public KeyDownloadParametersAndroid getKeyDownloadParametersAndroid() {
+      return keyDownloadParametersAndroid;
+    }
+
+    public void setKeyDownloadParametersAndroid(KeyDownloadParametersAndroid keyDownloadParametersAndroid) {
+      this.keyDownloadParametersAndroid = keyDownloadParametersAndroid;
     }
 
     public IosExposureDetectionParameters getIosExposureDetectionParameters() {
@@ -692,26 +703,17 @@ public class DistributionServiceConfig {
       this.androidExposureDetectionParameters = androidExposureDetectionParameters;
     }
 
-    public static class KeyDownloadParameters {
+    public static class KeyDownloadParametersAndroid {
 
-      private Integer numberOfRetriesPerFile;
-      private Integer httpTimeoutInSeconds;
+      private Integer downloadTimeoutInSeconds;
       private Integer overallTimeoutInSeconds;
 
-      public Integer getNumberOfRetriesPerFile() {
-        return numberOfRetriesPerFile;
+      public Integer getDownloadTimeoutInSeconds() {
+        return downloadTimeoutInSeconds;
       }
 
-      public void setNumberOfRetriesPerFile(Integer numberOfRetriesPerFile) {
-        this.numberOfRetriesPerFile = numberOfRetriesPerFile;
-      }
-
-      public Integer getHttpTimeoutInSeconds() {
-        return httpTimeoutInSeconds;
-      }
-
-      public void setHttpTimeoutInSeconds(Integer httpTimeoutInSeconds) {
-        this.httpTimeoutInSeconds = httpTimeoutInSeconds;
+      public void setDownloadTimeoutInSeconds(Integer downloadTimeoutInSeconds) {
+        this.downloadTimeoutInSeconds = downloadTimeoutInSeconds;
       }
 
       public Integer getOverallTimeoutInSeconds() {
@@ -721,6 +723,10 @@ public class DistributionServiceConfig {
       public void setOverallTimeoutInSeconds(Integer overallTimeoutInSeconds) {
         this.overallTimeoutInSeconds = overallTimeoutInSeconds;
       }
+    }
+
+    public static class KeyDownloadParametersIOS {
+
     }
 
     public static class IosExposureDetectionParameters {
