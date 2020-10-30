@@ -10,6 +10,7 @@ import static java.util.stream.Collectors.toList;
 import app.coronawarn.server.common.persistence.domain.DiagnosisKey;
 import app.coronawarn.server.common.persistence.domain.FederationBatchInfo;
 import app.coronawarn.server.common.persistence.domain.FederationBatchStatus;
+import app.coronawarn.server.common.persistence.exception.InvalidDiagnosisKeyException;
 import app.coronawarn.server.common.persistence.service.DiagnosisKeyService;
 import app.coronawarn.server.common.persistence.service.FederationBatchInfoService;
 import app.coronawarn.server.common.protocols.external.exposurenotification.DiagnosisKeyBatch;
@@ -75,8 +76,10 @@ public class FederationBatchProcessor {
       logger.info("Triggering download of first batch for date {}.", date);
       BatchDownloadResponse response = federationGatewayDownloadService.downloadBatch(date);
       batchInfoService.save(new FederationBatchInfo(response.getBatchTag(), date));
+    } catch (FederationGatewayException e) {
+      logger.error("Triggering download of first batch for date {} failed. Reason: {}.", date, e.getMessage());
     } catch (Exception e) {
-      logger.error("Triggering download of first batch for date {} failed. Reason: {}", date, e.getMessage());
+      logger.error("Triggering download of first batch for date {} failed.", date, e);
     }
   }
 
@@ -84,8 +87,7 @@ public class FederationBatchProcessor {
    * The Federation Batch Info stores information about which batches have already been processed to not download them
    * again. The batches for the current day might change constantly when national backends upload keys, hence there is
    * the need to download the batches for today again. Hence, the entries in federation batch info with the current day
-   * need to be removed. There is a parameter 'efgs-repeat-download-offset-days' with default 0 for
-   * that.
+   * need to be removed. There is a parameter 'efgs-repeat-download-offset-days' with default 0 for that.
    *
    * @param date The date the download was triggered for
    */
@@ -113,8 +115,12 @@ public class FederationBatchProcessor {
       processBatchAndReturnNextBatchId(federationBatchInfo, ERROR_WONT_RETRY)
           .ifPresent(nextBatchTag ->
               batchInfoService.save(new FederationBatchInfo(nextBatchTag, federationBatchInfo.getDate())));
+    } catch (FederationGatewayException e) {
+      logger.error("Failed to save next federation batch info for processing. Will not try again. Reason: {}.",
+          e.getMessage());
+      batchInfoService.updateStatus(federationBatchInfo, ERROR_WONT_RETRY);
     } catch (Exception e) {
-      logger.error("Failed to save next federation batch info for processing. Will not try again. Reason: {}", e.getMessage());
+      logger.error("Failed to save next federation batch info for processing. Will not try again.", e);
       batchInfoService.updateStatus(federationBatchInfo, ERROR_WONT_RETRY);
     }
   }
@@ -156,9 +162,14 @@ public class FederationBatchProcessor {
       }, () -> logger.info("Batch for date {} and batchTag {} did not contain any keys.", date, batchTag));
       batchInfoService.updateStatus(batchInfo, batchContainsInvalidKeys.get() ? PROCESSED_WITH_ERROR : PROCESSED);
       return response.getNextBatchTag();
-    } catch (Exception e) {
-      logger.error("Federation batch processing for date {} and batchTag {} failed. Status set to {}. Reason: {}",
+    } catch (FederationGatewayException e) {
+      logger.error("Federation batch processing for date {} and batchTag {} failed. Status set to {}. Reason: {}.",
           date, batchTag, errorStatus.name(), e.getMessage());
+      batchInfoService.updateStatus(batchInfo, errorStatus);
+      return Optional.empty();
+    } catch (Exception e) {
+      logger.error("Federation batch processing for date {} and batchTag {} failed. Status set to {}.",
+          date, batchTag, errorStatus.name(), e);
       batchInfoService.updateStatus(batchInfo, errorStatus);
       return Optional.empty();
     }
@@ -181,8 +192,11 @@ public class FederationBatchProcessor {
           .withReportType(ReportType.CONFIRMED_TEST)
           .withFieldNormalization(new FederationKeyNormalizer(config))
           .build());
+    } catch (InvalidDiagnosisKeyException e) {
+      logger.info("Building diagnosis key from federation diagnosis key failed. Reason: {}.", e.getMessage());
+      return Optional.empty();
     } catch (Exception e) {
-      logger.info("Building diagnosis key from federation diagnosis key failed. Reason: {}", e.getMessage());
+      logger.info("Building diagnosis key from federation diagnosis key failed.", e);
       return Optional.empty();
     }
   }
