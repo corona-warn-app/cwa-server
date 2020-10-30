@@ -663,16 +663,25 @@ public class DistributionServiceConfig {
 
   public static class AppConfigParameters {
 
-    private KeyDownloadParameters keyDownloadParameters;
+    private IosKeyDownloadParameters iosKeyDownloadParameters;
+    private AndroidKeyDownloadParameters androidKeyDownloadParameters;
     private IosExposureDetectionParameters iosExposureDetectionParameters;
     private AndroidExposureDetectionParameters androidExposureDetectionParameters;
 
-    public KeyDownloadParameters getKeyDownloadParameters() {
-      return keyDownloadParameters;
+    public IosKeyDownloadParameters getIosKeyDownloadParameters() {
+      return iosKeyDownloadParameters;
     }
 
-    public void setKeyDownloadParameters(KeyDownloadParameters keyDownloadParameters) {
-      this.keyDownloadParameters = keyDownloadParameters;
+    public void setIosKeyDownloadParameters(IosKeyDownloadParameters iosKeyDownloadParameters) {
+      this.iosKeyDownloadParameters = iosKeyDownloadParameters;
+    }
+
+    public AndroidKeyDownloadParameters getAndroidKeyDownloadParameters() {
+      return androidKeyDownloadParameters;
+    }
+
+    public void setAndroidKeyDownloadParameters(AndroidKeyDownloadParameters androidKeyDownloadParameters) {
+      this.androidKeyDownloadParameters = androidKeyDownloadParameters;
     }
 
     public IosExposureDetectionParameters getIosExposureDetectionParameters() {
@@ -692,8 +701,9 @@ public class DistributionServiceConfig {
       this.androidExposureDetectionParameters = androidExposureDetectionParameters;
     }
 
-    public static class KeyDownloadParameters {
+    public static class AndroidKeyDownloadParameters extends CommonKeyDownloadParameters {
 
+      private Integer downloadTimeoutInSeconds;
       public static final String MIN_VALUE_ERROR_MESSAGE_NUMBER_OF_RETRIES =
           "Number of retries per file must be greater than or equal to 0";
       public static final String MAX_VALUE_ERROR_MESSAGE_NUMBER_OF_RETRIES =
@@ -716,20 +726,12 @@ public class DistributionServiceConfig {
       @Max(value = 1800, message = MAX_VALUE_ERROR_MESSAGE_OVERALL_TIMEOUT)
       private Integer overallTimeoutInSeconds;
 
-      public Integer getNumberOfRetriesPerFile() {
-        return numberOfRetriesPerFile;
+      public Integer getDownloadTimeoutInSeconds() {
+        return downloadTimeoutInSeconds;
       }
 
-      public void setNumberOfRetriesPerFile(Integer numberOfRetriesPerFile) {
-        this.numberOfRetriesPerFile = numberOfRetriesPerFile;
-      }
-
-      public Integer getHttpTimeoutInSeconds() {
-        return httpTimeoutInSeconds;
-      }
-
-      public void setHttpTimeoutInSeconds(Integer httpTimeoutInSeconds) {
-        this.httpTimeoutInSeconds = httpTimeoutInSeconds;
+      public void setDownloadTimeoutInSeconds(Integer downloadTimeoutInSeconds) {
+        this.downloadTimeoutInSeconds = downloadTimeoutInSeconds;
       }
 
       public Integer getOverallTimeoutInSeconds() {
@@ -739,6 +741,32 @@ public class DistributionServiceConfig {
       public void setOverallTimeoutInSeconds(Integer overallTimeoutInSeconds) {
         this.overallTimeoutInSeconds = overallTimeoutInSeconds;
       }
+    }
+
+    private abstract static class CommonKeyDownloadParameters {
+
+      private String cachedDayPackagesToUpdateOnETagMismatch;
+      private String cachedHourPackagesToUpdateOnETagMismatch;
+
+      public String getCachedDayPackagesToUpdateOnETagMismatch() {
+        return cachedDayPackagesToUpdateOnETagMismatch;
+      }
+
+      public void setCachedDayPackagesToUpdateOnETagMismatch(String cachedDayPackagesToUpdateOnETagMismatch) {
+        this.cachedDayPackagesToUpdateOnETagMismatch = cachedDayPackagesToUpdateOnETagMismatch;
+      }
+
+      public String getCachedHourPackagesToUpdateOnETagMismatch() {
+        return cachedHourPackagesToUpdateOnETagMismatch;
+      }
+
+      public void setCachedHourPackagesToUpdateOnETagMismatch(String cachedHourPackagesToUpdateOnETagMismatch) {
+        this.cachedHourPackagesToUpdateOnETagMismatch = cachedHourPackagesToUpdateOnETagMismatch;
+      }
+    }
+
+    public static class IosKeyDownloadParameters extends CommonKeyDownloadParameters {
+
     }
 
     public static class IosExposureDetectionParameters {
@@ -755,9 +783,6 @@ public class DistributionServiceConfig {
       @Min(value = 0, message = MIN_VALUE_ERROR_MESSAGE_MAX_EXPOSURE_DETECTIONS)
       @Max(value = 6, message = MAX_VALUE_ERROR_MESSAGE_MAX_EXPOSURE_DETECTIONS)
       private Integer maxExposureDetectionsPerInterval;
-      @Min(value = 0, message = MIN_VALUE_ERROR_MESSAGE_OVERALL_TIMEOUT)
-      @Max(value = 3600, message = MAX_VALUE_ERROR_MESSAGE_OVERALL_TIMEOUT)
-      private Integer overallTimeoutInSeconds;
 
       public Integer getMaxExposureDetectionsPerInterval() {
         return maxExposureDetectionsPerInterval;
@@ -767,13 +792,6 @@ public class DistributionServiceConfig {
         this.maxExposureDetectionsPerInterval = maxExposureDetectionsPerInterval;
       }
 
-      public Integer getOverallTimeoutInSeconds() {
-        return overallTimeoutInSeconds;
-      }
-
-      public void setOverallTimeoutInSeconds(Integer overallTimeoutInSeconds) {
-        this.overallTimeoutInSeconds = overallTimeoutInSeconds;
-      }
     }
 
     public static class AndroidExposureDetectionParameters {
@@ -789,8 +807,6 @@ public class DistributionServiceConfig {
       @Min(value = 0, message = MIN_VALUE_ERROR_MESSAGE_MAX_EXPOSURE_DETECTIONS)
       @Max(value = 6, message = MAX_VALUE_ERROR_MESSAGE_MAX_EXPOSURE_DETECTIONS)
       private Integer maxExposureDetectionsPerInterval;
-      @Min(value = 0, message = MIN_VALUE_ERROR_MESSAGE_OVERALL_TIMEOUT)
-      @Max(value = 3600, message = MAX_VALUE_ERROR_MESSAGE_OVERALL_TIMEOUT)
       private Integer overallTimeoutInSeconds;
 
       public Integer getMaxExposureDetectionsPerInterval() {

@@ -67,29 +67,46 @@ class DistributionServiceConfigTest {
   }
 
   @Test
-  void testDefaultValuesKeyDownloadParameters() {
-    assertEquals(3,
-        distributionServiceConfig.getAppConfigParameters().getKeyDownloadParameters().getNumberOfRetriesPerFile());
+  void testDefaultIosKeyDownloadParameters() {
+    assertEquals("[]",
+        distributionServiceConfig.getAppConfigParameters().getIosKeyDownloadParameters()
+            .getCachedDayPackagesToUpdateOnETagMismatch());
+    assertEquals("[]",
+        distributionServiceConfig.getAppConfigParameters().getIosKeyDownloadParameters()
+            .getCachedHourPackagesToUpdateOnETagMismatch());
+  }
+
+  @Test
+  void testDefaultAndroidKeyDownloadParameters() {
+    assertEquals("[]",
+        distributionServiceConfig.getAppConfigParameters().getAndroidKeyDownloadParameters()
+            .getCachedDayPackagesToUpdateOnETagMismatch());
+    assertEquals("[]",
+        distributionServiceConfig.getAppConfigParameters().getAndroidKeyDownloadParameters()
+            .getCachedHourPackagesToUpdateOnETagMismatch());
     assertEquals(30,
-        distributionServiceConfig.getAppConfigParameters().getKeyDownloadParameters().getHttpTimeoutInSeconds());
+        distributionServiceConfig.getAppConfigParameters().getAndroidKeyDownloadParameters()
+            .getDownloadTimeoutInSeconds());
     assertEquals(480,
-        distributionServiceConfig.getAppConfigParameters().getKeyDownloadParameters().getOverallTimeoutInSeconds());
+        distributionServiceConfig.getAppConfigParameters().getAndroidKeyDownloadParameters()
+            .getOverallTimeoutInSeconds());
   }
 
   @Test
   void testDefaultIosExposureDetectionParameters() {
-    assertEquals(6, distributionServiceConfig.getAppConfigParameters().getIosExposureDetectionParameters()
-        .getMaxExposureDetectionsPerInterval());
-    assertEquals(900, distributionServiceConfig.getAppConfigParameters().getIosExposureDetectionParameters()
-        .getOverallTimeoutInSeconds());
+    assertEquals(6,
+        distributionServiceConfig.getAppConfigParameters().getIosExposureDetectionParameters()
+            .getMaxExposureDetectionsPerInterval());
   }
 
   @Test
   void testDefaultAndroidExposureDetectionParameters() {
-    assertEquals(6, distributionServiceConfig.getAppConfigParameters().getAndroidExposureDetectionParameters()
-        .getMaxExposureDetectionsPerInterval());
-    assertEquals(900, distributionServiceConfig.getAppConfigParameters().getAndroidExposureDetectionParameters()
-        .getOverallTimeoutInSeconds());
+    assertEquals(6,
+        distributionServiceConfig.getAppConfigParameters().getAndroidExposureDetectionParameters()
+            .getMaxExposureDetectionsPerInterval());
+    assertEquals(900,
+        distributionServiceConfig.getAppConfigParameters().getAndroidExposureDetectionParameters()
+            .getOverallTimeoutInSeconds());
   }
 
   @Test
