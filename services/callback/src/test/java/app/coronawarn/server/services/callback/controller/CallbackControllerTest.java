@@ -50,7 +50,7 @@ class CallbackControllerTest {
         Arguments.of(null, null),
         Arguments.of(null, validDateString),
         Arguments.of("", validDateString),
-        Arguments.of("", invalidDateString)
+        Arguments.of(batchTag, invalidDateString)
     );
   }
 }
