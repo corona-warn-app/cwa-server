@@ -114,7 +114,7 @@ public class FederationBatchProcessor {
           .ifPresent(nextBatchTag ->
               batchInfoService.save(new FederationBatchInfo(nextBatchTag, federationBatchInfo.getDate())));
     } catch (Exception e) {
-      logger.error("Failed to save next federation batch info for processing. Will not try again.", e);
+      logger.error("Failed to save next federation batch info for processing. Will not try again. Reason: {}", e.getMessage());
       batchInfoService.updateStatus(federationBatchInfo, ERROR_WONT_RETRY);
     }
   }
@@ -157,8 +157,8 @@ public class FederationBatchProcessor {
       batchInfoService.updateStatus(batchInfo, batchContainsInvalidKeys.get() ? PROCESSED_WITH_ERROR : PROCESSED);
       return response.getNextBatchTag();
     } catch (Exception e) {
-      logger.error("Federation batch processing for date {} and batchTag {} failed. Status set to {}.",
-          date, batchTag, errorStatus.name(), e);
+      logger.error("Federation batch processing for date {} and batchTag {} failed. Status set to {}. Reason: {}",
+          date, batchTag, errorStatus.name(), e.getMessage());
       batchInfoService.updateStatus(batchInfo, errorStatus);
       return Optional.empty();
     }
@@ -181,8 +181,8 @@ public class FederationBatchProcessor {
           .withReportType(ReportType.CONFIRMED_TEST)
           .withFieldNormalization(new FederationKeyNormalizer(config))
           .build());
-    } catch (Exception ex) {
-      logger.info("Building diagnosis key from federation diagnosis key failed. Reason: " + ex.getMessage());
+    } catch (Exception e) {
+      logger.info("Building diagnosis key from federation diagnosis key failed. Reason: {}", e.getMessage());
       return Optional.empty();
     }
   }
