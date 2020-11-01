@@ -1,19 +1,19 @@
 package app.coronawarn.server.services.callback.controller;
 
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-import static org.springframework.test.web.servlet.setup.MockMvcBuilders.standaloneSetup;
 import static org.mockito.Mockito.any;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.MockitoAnnotations.initMocks;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.setup.MockMvcBuilders.standaloneSetup;
 
+import app.coronawarn.server.common.persistence.service.FederationBatchInfoService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.test.web.servlet.MockMvc;
-import app.coronawarn.server.common.persistence.service.FederationBatchInfoService;
 
 @RunWith(MockitoJUnitRunner.class)
 class ApiExceptionHandlerTest {
@@ -35,9 +35,9 @@ class ApiExceptionHandlerTest {
 
   @Test
   public void testUnexpectedExceptionsTriggersStatusCode500() throws Exception {
-    doThrow(new RuntimeException("Unexpected Exception")).when(serviceMock).save(any());
+    doThrow(RuntimeException.class).when(serviceMock).save(any());
 
-    mockMvc.perform(get(ENDPOINT).param("batchTag", "SOMEBATCHTAG").param("date", "2020-11-31"))
+    mockMvc.perform(get(ENDPOINT).param("batchTag", "batchTag").param("date", "2020-05-05"))
         .andExpect(status().isInternalServerError());
   }
 
