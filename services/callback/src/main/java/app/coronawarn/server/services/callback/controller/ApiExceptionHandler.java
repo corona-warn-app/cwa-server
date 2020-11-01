@@ -6,6 +6,7 @@ import java.text.ParseException;
 import javax.validation.ConstraintViolationException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.TypeMismatchException;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -25,7 +26,7 @@ public class ApiExceptionHandler {
   }
 
   @ExceptionHandler({ConstraintViolationException.class, ParseException.class,
-      MissingServletRequestParameterException.class})
+      MissingServletRequestParameterException.class, TypeMismatchException.class})
   @ResponseStatus(HttpStatus.BAD_REQUEST)
   public void handleConstraintViolationException(Exception ex, WebRequest wr) {
     logger.error("Erroneous callback url call {}", wr.getDescription(false), ex);
