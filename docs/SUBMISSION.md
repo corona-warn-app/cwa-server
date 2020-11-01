@@ -75,7 +75,7 @@ You will find `.yaml` and `.xml` based profile-specific configuration files at [
 
 Profile                                           | Effect
 --------------------------------------------------|-------------
-`dev`                                             | Sets the log level to `DEBUG` and changes the `CONSOLE_LOG_PATTERN` used by Log4j 2.
+`debug`                                           | Sets the log level to `DEBUG` and changes the `CONSOLE_LOG_PATTERN` used by Log4j 2.
 `cloud`                                           | Removes default values for the `spring.flyway`, `spring.datasource` and `services.submission.verification.base-url` configurations.
 `disable-ssl-server`                              | Disables SSL for the submission endpoint.
 `disable-ssl-client-postgres`                     | Disables SSL with a pinned certificate for the connection to the postgres.

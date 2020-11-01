@@ -1,8 +1,8 @@
+// This file is auto-generated, DO NOT make any changes here
 // See page 15:
 // https://covid19-static.cdn-apple.com/applications/covid19/current/static/contact-tracing/pdf/ExposureNotification-FrameworkDocumentationv1.2.pdf
 syntax = "proto3";
 package app.coronawarn.server.common.protocols.internal;
-option java_package = "app.coronawarn.server.common.protocols.internal";
 option java_multiple_files = true;
 import "app/coronawarn/server/common/protocols/internal/risk_level.proto";
 
