@@ -33,10 +33,12 @@ import app.coronawarn.server.services.download.validation.ValidFederationKeyFilt
 import com.google.protobuf.ByteString;
 import feign.FeignException;
 import java.time.LocalDate;
+import java.time.Period;
 import java.time.ZoneOffset;
 import java.util.List;
 import java.util.Optional;
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -60,6 +62,9 @@ class FederationBatchProcessorTest {
   private final String batchTag1 = "507f191e810c19729de860ea";
   private final String batchTag2 = "507f191e810c19729de860eb";
 
+  @Autowired
+  private DownloadServiceConfig config;
+
   @MockBean
   private FederationBatchInfoService batchInfoService;
 
@@ -78,6 +83,40 @@ class FederationBatchProcessorTest {
     reset(diagnosisKeyService);
     reset(batchInfoService);
   }
+
+  @BeforeEach
+  void resetConfigToDefault() {
+    config.setEfgsEnforceDateBasedDownload(false);
+  }
+
+  @Nested
+  @DisplayName("prepareDownload")
+  class PrepareDownload {
+
+    @Test
+    void testWithDateBasedDownload() {
+      FederationBatchProcessor batchProcessorSpy = Mockito.spy(batchProcessor);
+      config.setEfgsEnforceDateBasedDownload(true);
+      batchProcessorSpy.prepareDownload();
+
+      LocalDate date = LocalDate.now(ZoneOffset.UTC)
+          .minus(Period.ofDays(config.getEfgsEnforceDownloadOffsetDays()));
+
+      Mockito.verify(batchInfoService, times(1)).deleteForDate(date);
+      Mockito.verify(batchProcessorSpy, times(1)).saveFirstBatchInfoForDate(date);
+    }
+
+    @Test
+    void testWithCallbackBasedDownload() {
+      FederationBatchProcessor batchProcessorSpy = Mockito.spy(batchProcessor);
+      config.setEfgsEnforceDateBasedDownload(false);
+      batchProcessorSpy.prepareDownload();
+
+      Mockito.verify(batchInfoService, never()).deleteForDate(any());
+      Mockito.verify(batchProcessorSpy, never()).saveFirstBatchInfoForDate(any());
+    }
+  }
+
 
   @Nested
   @DisplayName("saveFirstBatchInfoForDateTest")
@@ -113,9 +152,8 @@ class FederationBatchProcessorTest {
     @Test
     void testBatchInfoForTodayIsDeleted() throws Exception {
       LocalDate date = LocalDate.now(ZoneOffset.UTC);
-      when(federationGatewayDownloadService.downloadBatch(date)).thenReturn(null);
-
-      batchProcessor.saveFirstBatchInfoForDate(date);
+      config.setEfgsEnforceDateBasedDownload(true);
+      batchProcessor.prepareDownload();
 
       Mockito.verify(batchInfoService, times(1)).deleteForDate(date);
     }
@@ -149,6 +187,7 @@ class FederationBatchProcessorTest {
 
     @Test
     void testOneUnprocessedBatchOneNextBatch() throws Exception {
+      config.setEfgsEnforceDateBasedDownload(true);
       FederationBatchInfo batchInfo1 = new FederationBatchInfo(batchTag1, date, UNPROCESSED);
       FederationBatchInfo batchInfo2 = new FederationBatchInfo(batchTag2, date, UNPROCESSED);
       when(batchInfoService.findByStatus(UNPROCESSED)).thenReturn(list(batchInfo1));

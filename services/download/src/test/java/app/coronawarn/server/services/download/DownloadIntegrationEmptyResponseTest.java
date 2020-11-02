@@ -25,6 +25,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpStatus;
 import org.springframework.test.annotation.DirtiesContext;
+import org.springframework.test.context.ActiveProfiles;
 
 /**
  * This integration test is responsible for testing the runners for download and retention policy.
@@ -42,6 +43,7 @@ import org.springframework.test.annotation.DirtiesContext;
  */
 @SpringBootTest
 @DirtiesContext
+@ActiveProfiles("download-empty-response-integration-test")
 class DownloadIntegrationEmptyResponseTest {
 
   public static final String BATCH1_DATA = "0123456789ABCDED";

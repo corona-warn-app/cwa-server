@@ -2,14 +2,14 @@
 
 package app.coronawarn.server.services.download.runner;
 
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 
 import app.coronawarn.server.services.download.FatalFederationGatewayException;
+import app.coronawarn.server.services.download.FederationBatchProcessor;
 import app.coronawarn.server.services.download.ShutdownService;
 import app.coronawarn.server.services.download.config.DownloadServiceConfig;
-import app.coronawarn.server.services.download.FederationBatchProcessor;
-import java.time.LocalDate;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -33,13 +33,10 @@ class DownloadTest {
 
   @Test
   void testRun() throws Exception {
-    DownloadServiceConfig serviceConfig = new DownloadServiceConfig();
-    serviceConfig.setEfgsOffsetDays(1);
-    Download download = new Download(federationBatchProcessor, serviceConfig, applicationContext, shutdownService);
-
+    Download download = new Download(federationBatchProcessor, applicationContext, shutdownService);
     download.run(null);
 
-    verify(federationBatchProcessor, times(1)).saveFirstBatchInfoForDate(any(LocalDate.class));
+    verify(federationBatchProcessor, times(1)).prepareDownload();
     verify(federationBatchProcessor, times(1)).processErrorFederationBatches();
     verify(federationBatchProcessor, times(1)).processUnprocessedFederationBatches();
   }
@@ -51,9 +48,7 @@ class DownloadTest {
         .when(federationBatchProcessor)
         .processUnprocessedFederationBatches();
 
-    DownloadServiceConfig serviceConfig = new DownloadServiceConfig();
-    serviceConfig.setEfgsOffsetDays(1);
-    Download download = new Download(federationBatchProcessor, serviceConfig, applicationContext, shutdownService);
+    Download download = new Download(federationBatchProcessor, applicationContext, shutdownService);
 
     download.run(null);
 
