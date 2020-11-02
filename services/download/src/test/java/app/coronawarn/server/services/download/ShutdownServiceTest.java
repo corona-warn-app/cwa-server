@@ -1,5 +1,6 @@
 package app.coronawarn.server.services.download;
 
+import java.security.Permission;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
@@ -8,10 +9,9 @@ import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.ApplicationContext;
-import java.security.Permission;
 
 @SpringBootTest
-public class ShutdownServiceTest {
+class ShutdownServiceTest {
 
   @Autowired
   private ShutdownService underTest;
@@ -42,7 +42,7 @@ public class ShutdownServiceTest {
 
 
   @Test
-  public void testShutdownApplication() {
+  void testShutdownApplication() {
     try {
       underTest.shutdownApplication(Mockito.mock(ApplicationContext.class));
     } catch (SecurityException e) {
