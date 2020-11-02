@@ -4,6 +4,7 @@ package app.coronawarn.server.services.download;
 
 import app.coronawarn.server.services.download.config.DownloadServiceConfigValidator;
 import org.apache.logging.log4j.LogManager;
+import org.hibernate.validator.messageinterpolation.ParameterMessageInterpolator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.DisposableBean;
@@ -16,6 +17,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.data.jdbc.repository.config.EnableJdbcRepositories;
 import org.springframework.validation.Validator;
+import org.springframework.validation.beanvalidation.LocalValidatorFactoryBean;
 
 
 @SpringBootApplication
@@ -55,4 +57,14 @@ public class Application implements DisposableBean {
     return new DownloadServiceConfigValidator();
   }
 
+  /**
+   * Validation factory bean is configured here because its message interpolation mechanism
+   * is considered a potential threat if enabled.
+   */
+  @Bean
+  public static LocalValidatorFactoryBean defaultValidator() {
+    LocalValidatorFactoryBean factoryBean = new LocalValidatorFactoryBean();
+    factoryBean.setMessageInterpolator(new ParameterMessageInterpolator());
+    return factoryBean;
+  }
 }
