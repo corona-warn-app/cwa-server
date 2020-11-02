@@ -7,6 +7,7 @@ import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.Pattern;
+import app.coronawarn.server.services.distribution.utils.SerializationUtils;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.validation.annotation.Validated;
 
@@ -723,21 +724,66 @@ public class DistributionServiceConfig {
       }
     }
 
+    public static class DeserializedDayPackageMetadata {
+      private String region;
+      private String date;
+      private String etag;
+
+      public String getRegion() {
+        return region;
+      }
+
+      public String getDate() {
+        return date;
+      }
+
+      public String getEtag() {
+        return etag;
+      }
+    }
+
+    public static class DeserializedHourPackageMetadata {
+      private String region;
+      private String date;
+      private Integer hour;
+      private String etag;
+
+      public String getRegion() {
+        return region;
+      }
+
+      public String getDate() {
+        return date;
+      }
+
+      public Integer getHour() {
+        return hour;
+      }
+
+      public String getEtag() {
+        return etag;
+      }
+    }
+
     private abstract static class CommonKeyDownloadParameters {
 
       private String cachedDayPackagesToUpdateOnETagMismatch;
       private String cachedHourPackagesToUpdateOnETagMismatch;
 
-      public String getCachedDayPackagesToUpdateOnETagMismatch() {
-        return cachedDayPackagesToUpdateOnETagMismatch;
+      public List<DeserializedDayPackageMetadata> getCachedDayPackagesToUpdateOnETagMismatch() {
+        return (List<DeserializedDayPackageMetadata>)
+            SerializationUtils.deserializeJson(cachedDayPackagesToUpdateOnETagMismatch,
+            (typeFactory) -> typeFactory.constructCollectionType(List.class, DeserializedDayPackageMetadata.class));
       }
 
       public void setCachedDayPackagesToUpdateOnETagMismatch(String cachedDayPackagesToUpdateOnETagMismatch) {
         this.cachedDayPackagesToUpdateOnETagMismatch = cachedDayPackagesToUpdateOnETagMismatch;
       }
 
-      public String getCachedHourPackagesToUpdateOnETagMismatch() {
-        return cachedHourPackagesToUpdateOnETagMismatch;
+      public List<DeserializedHourPackageMetadata> getCachedHourPackagesToUpdateOnETagMismatch() {
+        return (List<DeserializedHourPackageMetadata>)
+            SerializationUtils.deserializeJson(cachedHourPackagesToUpdateOnETagMismatch,
+                (typeFactory) -> typeFactory.constructCollectionType(List.class, DeserializedHourPackageMetadata.class));
       }
 
       public void setCachedHourPackagesToUpdateOnETagMismatch(String cachedHourPackagesToUpdateOnETagMismatch) {
