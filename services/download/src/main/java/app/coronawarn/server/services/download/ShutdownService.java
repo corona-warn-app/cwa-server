@@ -11,8 +11,6 @@ public class ShutdownService {
 
   /**
    * Shutdown the application.
-   *
-   * @param applicationContext the current application context.
    */
   public void shutdownApplication(ApplicationContext applicationContext) {
     Application.killApplication(applicationContext);

@@ -94,7 +94,7 @@ class FederationBatchProcessorTest {
   class PrepareDownload {
 
     @Test
-    void testWithDateBasedDownload() {
+    void testWithDateBasedDownload() throws Exception {
       FederationBatchProcessor batchProcessorSpy = Mockito.spy(batchProcessor);
       config.setEfgsEnforceDateBasedDownload(true);
       batchProcessorSpy.prepareDownload();
@@ -107,7 +107,7 @@ class FederationBatchProcessorTest {
     }
 
     @Test
-    void testWithCallbackBasedDownload() {
+    void testWithCallbackBasedDownload() throws Exception {
       FederationBatchProcessor batchProcessorSpy = Mockito.spy(batchProcessor);
       config.setEfgsEnforceDateBasedDownload(false);
       batchProcessorSpy.prepareDownload();

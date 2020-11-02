@@ -9,7 +9,6 @@ import static org.mockito.Mockito.verify;
 import app.coronawarn.server.services.download.FatalFederationGatewayException;
 import app.coronawarn.server.services.download.FederationBatchProcessor;
 import app.coronawarn.server.services.download.ShutdownService;
-import app.coronawarn.server.services.download.config.DownloadServiceConfig;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -27,13 +26,12 @@ class DownloadTest {
   @MockBean
   private ShutdownService shutdownService;
 
-
   @Autowired
   ApplicationContext applicationContext;
 
   @Test
   void testRun() throws Exception {
-    Download download = new Download(federationBatchProcessor, applicationContext, shutdownService);
+    Download download = new Download(federationBatchProcessor, shutdownService, applicationContext);
     download.run(null);
 
     verify(federationBatchProcessor, times(1)).prepareDownload();
@@ -48,7 +46,7 @@ class DownloadTest {
         .when(federationBatchProcessor)
         .processUnprocessedFederationBatches();
 
-    Download download = new Download(federationBatchProcessor, applicationContext, shutdownService);
+    Download download = new Download(federationBatchProcessor, shutdownService, applicationContext);
 
     download.run(null);
 

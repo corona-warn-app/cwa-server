@@ -24,17 +24,16 @@ public class Download implements ApplicationRunner {
   private final ShutdownService shutdownService;
   private final ApplicationContext applicationContext;
 
-  Download(FederationBatchProcessor batchProcessor, ApplicationContext applicationContext,
-      ShutdownService shutdownService) {
-    this.batchProcessor = batchProcessor;
-    this.applicationContext = applicationContext;
-    this.shutdownService = shutdownService;
 
+  Download(FederationBatchProcessor batchProcessor, ShutdownService shutdownService,
+      ApplicationContext applicationContext) {
+    this.batchProcessor = batchProcessor;
+    this.shutdownService = shutdownService;
+    this.applicationContext = applicationContext;
   }
 
   @Override
   public void run(ApplicationArguments args) {
-
     try {
       batchProcessor.prepareDownload();
       batchProcessor.processErrorFederationBatches();

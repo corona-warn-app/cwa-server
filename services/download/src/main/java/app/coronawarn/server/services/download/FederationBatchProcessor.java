@@ -70,7 +70,7 @@ public class FederationBatchProcessor {
    * again. If the date-based download is enabled, the entries for the specified date need to be removed. Stores the
    * first FederationBatchTag for the specified date as a starting point for further processing.
    */
-  public void prepareDownload() {
+  public void prepareDownload() throws FatalFederationGatewayException {
     if (config.getEfgsEnforceDateBasedDownload()) {
       LocalDate downloadDate = LocalDate.now(ZoneOffset.UTC)
           .minus(Period.ofDays(config.getEfgsEnforceDownloadOffsetDays()));
