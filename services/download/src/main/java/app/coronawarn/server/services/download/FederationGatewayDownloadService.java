@@ -74,7 +74,8 @@ public class FederationGatewayDownloadService {
       return parseResponseEntity(response);
     } catch (FeignException.Forbidden feignException) {
       throw new FatalFederationGatewayException(
-          "Downloading batch for date " + date.format(ISO_LOCAL_DATE) + " failed due to invalid client certificate.");
+          "Downloading batch " + batchTag + " for date " + date.format(ISO_LOCAL_DATE)
+              + " failed due to invalid client certificate.");
     } catch (FeignException exception) {
       logger.error("Downloading batch for date {} and batchTag {} failed.", batchTag, dateString);
       throw new BatchDownloadException("Downloading batch " + batchTag + " for date " + date + " failed.",

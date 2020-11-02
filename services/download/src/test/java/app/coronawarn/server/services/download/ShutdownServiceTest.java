@@ -1,0 +1,53 @@
+package app.coronawarn.server.services.download;
+
+import org.assertj.core.api.Assertions;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.context.ApplicationContext;
+import java.security.Permission;
+
+@SpringBootTest
+public class ShutdownServiceTest {
+
+  @Autowired
+  private ShutdownService underTest;
+
+  @BeforeAll
+  public static void setup() {
+    System.setSecurityManager(new SecurityManager() {
+      @Override
+      public void checkPermission(Permission perm) {
+      }
+
+      @Override
+      public void checkPermission(Permission perm, Object context) {
+      }
+
+      @Override
+      public void checkExit(int status) {
+        super.checkExit(status);
+        throw new SecurityException("Prevented System Exit");
+      }
+    });
+  }
+
+  @AfterAll
+  public static void tearDown() {
+    System.setSecurityManager(null);
+  }
+
+
+  @Test
+  public void testShutdownApplication() {
+    try {
+      underTest.shutdownApplication(Mockito.mock(ApplicationContext.class));
+    } catch (SecurityException e) {
+      Assertions.assertThat(e).hasMessage("Prevented System Exit");
+    }
+  }
+
+}
