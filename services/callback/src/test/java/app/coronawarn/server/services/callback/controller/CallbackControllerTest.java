@@ -27,6 +27,7 @@ class CallbackControllerTest {
 
   private final static String batchTag = "batchTag";
   private final static String validDateString = "2020-05-05";
+  private final static String invalidDateString = "2020-20-20";
 
   @Test
   void ok() {
@@ -49,7 +50,7 @@ class CallbackControllerTest {
         Arguments.of(null, null),
         Arguments.of(null, validDateString),
         Arguments.of("", validDateString),
-        Arguments.of(batchTag, "2020-20-20")
+        Arguments.of(batchTag, invalidDateString)
     );
   }
 }

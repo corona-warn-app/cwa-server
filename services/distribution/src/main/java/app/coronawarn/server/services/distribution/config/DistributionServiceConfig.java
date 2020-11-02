@@ -663,16 +663,25 @@ public class DistributionServiceConfig {
 
   public static class AppConfigParameters {
 
-    private KeyDownloadParameters keyDownloadParameters;
+    private IosKeyDownloadParameters iosKeyDownloadParameters;
+    private AndroidKeyDownloadParameters androidKeyDownloadParameters;
     private IosExposureDetectionParameters iosExposureDetectionParameters;
     private AndroidExposureDetectionParameters androidExposureDetectionParameters;
 
-    public KeyDownloadParameters getKeyDownloadParameters() {
-      return keyDownloadParameters;
+    public IosKeyDownloadParameters getIosKeyDownloadParameters() {
+      return iosKeyDownloadParameters;
     }
 
-    public void setKeyDownloadParameters(KeyDownloadParameters keyDownloadParameters) {
-      this.keyDownloadParameters = keyDownloadParameters;
+    public void setIosKeyDownloadParameters(IosKeyDownloadParameters iosKeyDownloadParameters) {
+      this.iosKeyDownloadParameters = iosKeyDownloadParameters;
+    }
+
+    public AndroidKeyDownloadParameters getAndroidKeyDownloadParameters() {
+      return androidKeyDownloadParameters;
+    }
+
+    public void setAndroidKeyDownloadParameters(AndroidKeyDownloadParameters androidKeyDownloadParameters) {
+      this.androidKeyDownloadParameters = androidKeyDownloadParameters;
     }
 
     public IosExposureDetectionParameters getIosExposureDetectionParameters() {
@@ -692,26 +701,17 @@ public class DistributionServiceConfig {
       this.androidExposureDetectionParameters = androidExposureDetectionParameters;
     }
 
-    public static class KeyDownloadParameters {
+    public static class AndroidKeyDownloadParameters extends CommonKeyDownloadParameters {
 
-      private Integer numberOfRetriesPerFile;
-      private Integer httpTimeoutInSeconds;
+      private Integer downloadTimeoutInSeconds;
       private Integer overallTimeoutInSeconds;
 
-      public Integer getNumberOfRetriesPerFile() {
-        return numberOfRetriesPerFile;
+      public Integer getDownloadTimeoutInSeconds() {
+        return downloadTimeoutInSeconds;
       }
 
-      public void setNumberOfRetriesPerFile(Integer numberOfRetriesPerFile) {
-        this.numberOfRetriesPerFile = numberOfRetriesPerFile;
-      }
-
-      public Integer getHttpTimeoutInSeconds() {
-        return httpTimeoutInSeconds;
-      }
-
-      public void setHttpTimeoutInSeconds(Integer httpTimeoutInSeconds) {
-        this.httpTimeoutInSeconds = httpTimeoutInSeconds;
+      public void setDownloadTimeoutInSeconds(Integer downloadTimeoutInSeconds) {
+        this.downloadTimeoutInSeconds = downloadTimeoutInSeconds;
       }
 
       public Integer getOverallTimeoutInSeconds() {
@@ -723,10 +723,35 @@ public class DistributionServiceConfig {
       }
     }
 
+    private abstract static class CommonKeyDownloadParameters {
+
+      private String cachedDayPackagesToUpdateOnETagMismatch;
+      private String cachedHourPackagesToUpdateOnETagMismatch;
+
+      public String getCachedDayPackagesToUpdateOnETagMismatch() {
+        return cachedDayPackagesToUpdateOnETagMismatch;
+      }
+
+      public void setCachedDayPackagesToUpdateOnETagMismatch(String cachedDayPackagesToUpdateOnETagMismatch) {
+        this.cachedDayPackagesToUpdateOnETagMismatch = cachedDayPackagesToUpdateOnETagMismatch;
+      }
+
+      public String getCachedHourPackagesToUpdateOnETagMismatch() {
+        return cachedHourPackagesToUpdateOnETagMismatch;
+      }
+
+      public void setCachedHourPackagesToUpdateOnETagMismatch(String cachedHourPackagesToUpdateOnETagMismatch) {
+        this.cachedHourPackagesToUpdateOnETagMismatch = cachedHourPackagesToUpdateOnETagMismatch;
+      }
+    }
+
+    public static class IosKeyDownloadParameters extends CommonKeyDownloadParameters {
+
+    }
+
     public static class IosExposureDetectionParameters {
 
       private Integer maxExposureDetectionsPerInterval;
-      private Integer overallTimeoutInSeconds;
 
       public Integer getMaxExposureDetectionsPerInterval() {
         return maxExposureDetectionsPerInterval;
@@ -736,13 +761,6 @@ public class DistributionServiceConfig {
         this.maxExposureDetectionsPerInterval = maxExposureDetectionsPerInterval;
       }
 
-      public Integer getOverallTimeoutInSeconds() {
-        return overallTimeoutInSeconds;
-      }
-
-      public void setOverallTimeoutInSeconds(Integer overallTimeoutInSeconds) {
-        this.overallTimeoutInSeconds = overallTimeoutInSeconds;
-      }
     }
 
     public static class AndroidExposureDetectionParameters {
