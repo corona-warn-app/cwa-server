@@ -44,11 +44,7 @@ class DistributionServiceConfigTest {
   private AndroidExposureDetectionParameters androidExposureDetectionParameters;
   @Autowired
   DistributionServiceConfig distributionServiceConfig;
-
   DistributionServiceConfigValidator distributionServiceConfigValidator = new DistributionServiceConfigValidator();
-  private IosExposureDetectionParameters iosExposureDetectionParameters;
-  private AndroidKeyDownloadParameters androidKeyDownloadParameters;
-  private AndroidExposureDetectionParameters androidExposureDetectionParameters;
   private Validator validator;
 
   @BeforeEach
