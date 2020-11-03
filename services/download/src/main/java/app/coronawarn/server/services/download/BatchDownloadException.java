@@ -1,5 +1,3 @@
-
-
 package app.coronawarn.server.services.download;
 
 public class BatchDownloadException extends RuntimeException {
