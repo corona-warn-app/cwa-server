@@ -26,7 +26,7 @@ import app.coronawarn.server.services.submission.controller.SubmissionPayloadMoc
 @ActiveProfiles({"disable-ssl-client-verification",
     "disable-ssl-client-verification-verify-hostname"})
 /* This test must have the public modifier to be callable by the interpolation logic */
-public class ValidSubmissionPayloadTest {
+class ValidSubmissionPayloadTest {
 
   private static String interpolationSideEffect;
 

@@ -34,7 +34,7 @@ class ApiExceptionHandlerTest {
   }
 
   @Test
-  public void testUnexpectedExceptionsTriggersStatusCode500() throws Exception {
+  void testUnexpectedExceptionsTriggersStatusCode500() throws Exception {
     doThrow(RuntimeException.class).when(serviceMock).save(any());
 
     mockMvc.perform(get(ENDPOINT).param("batchTag", "batchTag").param("date", "2020-05-05"))
@@ -42,7 +42,7 @@ class ApiExceptionHandlerTest {
   }
 
   @Test
-  public void testMissingBatchTagTriggersStatusCode400() throws Exception {
+  void testMissingBatchTagTriggersStatusCode400() throws Exception {
     mockMvc.perform(get(ENDPOINT)).andExpect(status().isBadRequest());
     mockMvc.perform(get(ENDPOINT).param("date", "2020-11-31")).andExpect(status().isBadRequest());
   }
