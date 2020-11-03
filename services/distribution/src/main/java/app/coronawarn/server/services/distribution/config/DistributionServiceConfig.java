@@ -1,13 +1,13 @@
 package app.coronawarn.server.services.distribution.config;
 
 import app.coronawarn.server.common.protocols.external.exposurenotification.SignatureInfo;
+import app.coronawarn.server.services.distribution.utils.SerializationUtils;
 import java.util.List;
 import java.util.stream.Collectors;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.Pattern;
-import app.coronawarn.server.services.distribution.utils.SerializationUtils;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.validation.annotation.Validated;
 
@@ -725,6 +725,7 @@ public class DistributionServiceConfig {
     }
 
     public static class DeserializedDayPackageMetadata {
+
       private String region;
       private String date;
       private String etag;
@@ -743,6 +744,7 @@ public class DistributionServiceConfig {
     }
 
     public static class DeserializedHourPackageMetadata {
+
       private String region;
       private String date;
       private Integer hour;
@@ -771,8 +773,7 @@ public class DistributionServiceConfig {
       private String cachedHourPackagesToUpdateOnETagMismatch;
 
       public List<DeserializedDayPackageMetadata> getCachedDayPackagesToUpdateOnETagMismatch() {
-        return (List<DeserializedDayPackageMetadata>)
-            SerializationUtils.deserializeJson(cachedDayPackagesToUpdateOnETagMismatch,
+        return SerializationUtils.deserializeJson(cachedDayPackagesToUpdateOnETagMismatch,
             (typeFactory) -> typeFactory.constructCollectionType(List.class, DeserializedDayPackageMetadata.class));
       }
 
@@ -781,9 +782,9 @@ public class DistributionServiceConfig {
       }
 
       public List<DeserializedHourPackageMetadata> getCachedHourPackagesToUpdateOnETagMismatch() {
-        return (List<DeserializedHourPackageMetadata>)
-            SerializationUtils.deserializeJson(cachedHourPackagesToUpdateOnETagMismatch,
-                (typeFactory) -> typeFactory.constructCollectionType(List.class, DeserializedHourPackageMetadata.class));
+        return SerializationUtils.deserializeJson(cachedHourPackagesToUpdateOnETagMismatch,
+            (typeFactory) -> typeFactory
+                .constructCollectionType(List.class, DeserializedHourPackageMetadata.class));
       }
 
       public void setCachedHourPackagesToUpdateOnETagMismatch(String cachedHourPackagesToUpdateOnETagMismatch) {

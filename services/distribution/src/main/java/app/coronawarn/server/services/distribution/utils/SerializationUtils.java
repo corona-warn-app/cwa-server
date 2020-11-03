@@ -4,9 +4,10 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.type.TypeFactory;
+import java.util.Optional;
+import java.util.function.Function;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import java.util.function.Function;
 
 public final class SerializationUtils {
   private static final Logger logger = LoggerFactory.getLogger(SerializationUtils.class);
@@ -14,7 +15,13 @@ public final class SerializationUtils {
   private SerializationUtils() {
   }
 
-  public static Object deserializeJson(String jsonString, Function<TypeFactory, JavaType> typeProviderFunction) {
+  /**
+   * Deserialize Json string into provided function type object.
+   * @param jsonString value from configuration file
+   * @param typeProviderFunction type deserialization function provider
+   * @return deserialized json string
+   */
+  public static  <T> T deserializeJson(String jsonString, Function<TypeFactory, JavaType> typeProviderFunction) {
     ObjectMapper mapper = new ObjectMapper();
     try {
       return mapper.readValue(jsonString, typeProviderFunction.apply(mapper.getTypeFactory()));

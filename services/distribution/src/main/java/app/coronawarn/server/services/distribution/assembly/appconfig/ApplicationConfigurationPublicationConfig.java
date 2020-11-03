@@ -22,13 +22,8 @@ import app.coronawarn.server.services.distribution.config.DistributionServiceCon
 import app.coronawarn.server.services.distribution.config.DistributionServiceConfig.AppConfigParameters.IosExposureDetectionParameters;
 import app.coronawarn.server.services.distribution.config.DistributionServiceConfig.AppConfigParameters.IosKeyDownloadParameters;
 import app.coronawarn.server.services.distribution.config.DistributionServiceConfig.AppVersions;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.type.CollectionType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Bean;
@@ -59,6 +54,7 @@ public class ApplicationConfigurationPublicationConfig {
    * The location of the exposure configuration master file.
    */
   public static final String MASTER_FILE = "master-config/app-config.yaml";
+  private static final Logger logger = LoggerFactory.getLogger(ApplicationConfigurationPublicationConfig.class);
 
   /**
    * Fetches the master configuration as a ApplicationConfiguration instance.
@@ -66,8 +62,6 @@ public class ApplicationConfigurationPublicationConfig {
    * @return the exposure configuration as ApplicationConfiguration
    * @throws UnableToLoadFileException when the file/transformation did not succeed
    */
-
-  private static final Logger logger = LoggerFactory.getLogger(ApplicationConfigurationPublicationConfig.class);
 
   @Bean
   public ApplicationConfiguration createMasterConfiguration(DistributionServiceConfig distributionServiceConfig)
@@ -111,7 +105,7 @@ public class ApplicationConfigurationPublicationConfig {
         distributionServiceConfig.getAppConfigParameters().getAndroidKeyDownloadParameters();
     return KeyDownloadParametersAndroid.newBuilder()
         .setOverallTimeoutInSeconds(androidKeyDownloadParameters.getOverallTimeoutInSeconds())
-        .setDownloadTimeoutInSeconds(androidKeyDownloadParameters.getOverallTimeoutInSeconds())
+        .setDownloadTimeoutInSeconds(androidKeyDownloadParameters.getDownloadTimeoutInSeconds())
         .addAllCachedDayPackagesToUpdateOnETagMismatch(buildCachedDayPackagesToUpdateOnETagMismatch(
             androidKeyDownloadParameters.getCachedDayPackagesToUpdateOnETagMismatch()))
         .addAllCachedHourPackagesToUpdateOnETagMismatch(buildCachedHourPackagesToUpdateOnETagMismatch(
@@ -152,7 +146,7 @@ public class ApplicationConfigurationPublicationConfig {
   }
 
   /**
-   * Fetches the master configuration as a ExpsureDetectionParametersIOS instance.
+   * Fetches the master configuration as a ExposureDetectionParametersIOS instance.
    *
    * @return test.
    */
