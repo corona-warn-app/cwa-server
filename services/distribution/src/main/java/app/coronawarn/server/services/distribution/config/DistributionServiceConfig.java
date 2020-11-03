@@ -1,5 +1,3 @@
-
-
 package app.coronawarn.server.services.distribution.config;
 
 import app.coronawarn.server.common.protocols.external.exposurenotification.SignatureInfo;
@@ -57,6 +55,7 @@ public class DistributionServiceConfig {
   @NotEmpty
   private String[] supportedCountries;
   private AppVersions appVersions;
+  private AppConfigParameters appConfigParameters;
 
   public Paths getPaths() {
     return paths;
@@ -203,6 +202,13 @@ public class DistributionServiceConfig {
     this.appVersions = appVersions;
   }
 
+  public AppConfigParameters getAppConfigParameters() {
+    return appConfigParameters;
+  }
+
+  public void setAppConfigParameters(AppConfigParameters appConfigParameters) {
+    this.appConfigParameters = appConfigParameters;
+  }
 
   /**
    * Get app features as list of protobuf objects.
@@ -653,5 +659,130 @@ public class DistributionServiceConfig {
       this.minAndroid = minAndroid;
     }
 
+  }
+
+  public static class AppConfigParameters {
+
+    private IosKeyDownloadParameters iosKeyDownloadParameters;
+    private AndroidKeyDownloadParameters androidKeyDownloadParameters;
+    private IosExposureDetectionParameters iosExposureDetectionParameters;
+    private AndroidExposureDetectionParameters androidExposureDetectionParameters;
+
+    public IosKeyDownloadParameters getIosKeyDownloadParameters() {
+      return iosKeyDownloadParameters;
+    }
+
+    public void setIosKeyDownloadParameters(IosKeyDownloadParameters iosKeyDownloadParameters) {
+      this.iosKeyDownloadParameters = iosKeyDownloadParameters;
+    }
+
+    public AndroidKeyDownloadParameters getAndroidKeyDownloadParameters() {
+      return androidKeyDownloadParameters;
+    }
+
+    public void setAndroidKeyDownloadParameters(AndroidKeyDownloadParameters androidKeyDownloadParameters) {
+      this.androidKeyDownloadParameters = androidKeyDownloadParameters;
+    }
+
+    public IosExposureDetectionParameters getIosExposureDetectionParameters() {
+      return iosExposureDetectionParameters;
+    }
+
+    public void setIosExposureDetectionParameters(IosExposureDetectionParameters iosExposureDetectionParameters) {
+      this.iosExposureDetectionParameters = iosExposureDetectionParameters;
+    }
+
+    public AndroidExposureDetectionParameters getAndroidExposureDetectionParameters() {
+      return androidExposureDetectionParameters;
+    }
+
+    public void setAndroidExposureDetectionParameters(
+        AndroidExposureDetectionParameters androidExposureDetectionParameters) {
+      this.androidExposureDetectionParameters = androidExposureDetectionParameters;
+    }
+
+    public static class AndroidKeyDownloadParameters extends CommonKeyDownloadParameters {
+
+      private Integer downloadTimeoutInSeconds;
+      private Integer overallTimeoutInSeconds;
+
+      public Integer getDownloadTimeoutInSeconds() {
+        return downloadTimeoutInSeconds;
+      }
+
+      public void setDownloadTimeoutInSeconds(Integer downloadTimeoutInSeconds) {
+        this.downloadTimeoutInSeconds = downloadTimeoutInSeconds;
+      }
+
+      public Integer getOverallTimeoutInSeconds() {
+        return overallTimeoutInSeconds;
+      }
+
+      public void setOverallTimeoutInSeconds(Integer overallTimeoutInSeconds) {
+        this.overallTimeoutInSeconds = overallTimeoutInSeconds;
+      }
+    }
+
+    private abstract static class CommonKeyDownloadParameters {
+
+      private String cachedDayPackagesToUpdateOnETagMismatch;
+      private String cachedHourPackagesToUpdateOnETagMismatch;
+
+      public String getCachedDayPackagesToUpdateOnETagMismatch() {
+        return cachedDayPackagesToUpdateOnETagMismatch;
+      }
+
+      public void setCachedDayPackagesToUpdateOnETagMismatch(String cachedDayPackagesToUpdateOnETagMismatch) {
+        this.cachedDayPackagesToUpdateOnETagMismatch = cachedDayPackagesToUpdateOnETagMismatch;
+      }
+
+      public String getCachedHourPackagesToUpdateOnETagMismatch() {
+        return cachedHourPackagesToUpdateOnETagMismatch;
+      }
+
+      public void setCachedHourPackagesToUpdateOnETagMismatch(String cachedHourPackagesToUpdateOnETagMismatch) {
+        this.cachedHourPackagesToUpdateOnETagMismatch = cachedHourPackagesToUpdateOnETagMismatch;
+      }
+    }
+
+    public static class IosKeyDownloadParameters extends CommonKeyDownloadParameters {
+
+    }
+
+    public static class IosExposureDetectionParameters {
+
+      private Integer maxExposureDetectionsPerInterval;
+
+      public Integer getMaxExposureDetectionsPerInterval() {
+        return maxExposureDetectionsPerInterval;
+      }
+
+      public void setMaxExposureDetectionsPerInterval(Integer maxExposureDetectionsPerInterval) {
+        this.maxExposureDetectionsPerInterval = maxExposureDetectionsPerInterval;
+      }
+
+    }
+
+    public static class AndroidExposureDetectionParameters {
+
+      private Integer maxExposureDetectionsPerInterval;
+      private Integer overallTimeoutInSeconds;
+
+      public Integer getMaxExposureDetectionsPerInterval() {
+        return maxExposureDetectionsPerInterval;
+      }
+
+      public void setMaxExposureDetectionsPerInterval(Integer maxExposureDetectionsPerInterval) {
+        this.maxExposureDetectionsPerInterval = maxExposureDetectionsPerInterval;
+      }
+
+      public Integer getOverallTimeoutInSeconds() {
+        return overallTimeoutInSeconds;
+      }
+
+      public void setOverallTimeoutInSeconds(Integer overallTimeoutInSeconds) {
+        this.overallTimeoutInSeconds = overallTimeoutInSeconds;
+      }
+    }
   }
 }
