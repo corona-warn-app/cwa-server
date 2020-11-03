@@ -64,6 +64,9 @@
     <test-containers.version>1.14.3</test-containers.version>
     <postgresql.version>42.2.18</postgresql.version>
     <wiremock.version>2.27.2</wiremock.version>
+    <httpclient.version>4.5.13</httpclient.version>
+    <junit.version>4.13.1</junit.version>
+    <tomcat-embed-core.version>9.0.39</tomcat-embed-core.version>
   </properties>
 
   <dependencyManagement>
@@ -171,6 +174,11 @@
         <scope>runtime</scope>
       </dependency>
       <dependency>
+        <groupId>org.apache.httpcomponents</groupId>
+        <artifactId>httpclient</artifactId>
+        <version>${httpclient.version}</version>
+      </dependency>
+      <dependency>
         <groupId>org.postgresql</groupId>
         <artifactId>postgresql</artifactId>
         <version>${postgresql.version}</version>
@@ -194,6 +202,17 @@
         <artifactId>protobuf-java-util</artifactId>
         <version>${protobuf.version}</version>
         <scope>test</scope>
+      </dependency>
+      <dependency>
+        <groupId>junit</groupId>
+        <artifactId>junit</artifactId>
+        <version>${junit.version}</version>
+        <scope>test</scope>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.tomcat.embed</groupId>
+        <artifactId>tomcat-embed-core</artifactId>
+        <version>${tomcat-embed-core.version}</version>
       </dependency>
     </dependencies>
   </dependencyManagement>
