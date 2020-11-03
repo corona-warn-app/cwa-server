@@ -29,13 +29,14 @@ import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
 
 /**
- * This integration test is responsible for testing the runners for download and retention policy. The Spring profile
- * "federation-download-integration" enables the test data generation in /db/testdata/V99__createTestDataForIntegrationTest.sql
- * via the application-federation-download-integration.yaml.
+ * This integration test is responsible for testing the runners for download and retention policy while using the
+ * date-based download logic. The Spring profile "federation-download-integration" enables the test data generation in
+ * /db/testdata/V99__createTestDataForDownloadDateBasedIntegrationTest.sql via the
+ * application-download-date-based-integration-test.yaml.
  * <p>
  * The sql script for the test data contains
  * <li>a batch info for an expired batch that should be deleted by the retention policy</li>
- * <li>and two batch info from the current date of status 'ERROR', which should be reprocessed.</li>
+ * <li>and two batch info from the previous day of status 'ERROR', which should be reprocessed.</li>
  * One of them will be successfully reprocessed and the other one will fail. The WireMockServer is configured
  * accordingly.
  * <p>
@@ -61,9 +62,9 @@ import org.springframework.test.context.ActiveProfiles;
  * BATCH1_DATA, BATCH2_DATA and RETRY_BATCH_SUCCESSFUL_DATA
  */
 @SpringBootTest
-@ActiveProfiles("federation-download-integration")
+@ActiveProfiles("download-date-based-integration-test")
 @DirtiesContext
-class DownloadIntegrationTest {
+class DownloadDateBasedIntegrationTest {
 
   private static final String BATCH1_TAG = "batch1_tag";
   private static final String BATCH1_KEY1_DATA = "0123456789ABCDEA";
@@ -129,7 +130,7 @@ class DownloadIntegrationTest {
 
     HttpHeaders batch3Headers = getHttpHeaders(BATCH3_TAG, EMPTY_BATCH_TAG);
 
-    HttpHeaders retryBatchSuccessfulHeaders = getHttpHeaders(RETRY_BATCH_SUCCESSFUL_TAG, EMPTY_BATCH_TAG);
+    HttpHeaders retryBatchSuccessfulHeaders = getHttpHeaders(RETRY_BATCH_SUCCESSFUL_TAG, RETRY_BATCH_FAILS_TAG);
     DiagnosisKeyBatch retryBatchSuccessful = FederationBatchTestHelper.createDiagnosisKeyBatch(
         RETRY_BATCH_SUCCESSFUL_KEY_DATA);
 
@@ -163,7 +164,7 @@ class DownloadIntegrationTest {
             .willReturn(
                 aResponse()
                     .withStatus(HttpStatus.NOT_FOUND.value())
-                    .withHeaders(batch3Headers)));
+                    .withHeaders(getHttpHeaders(RETRY_BATCH_FAILS_TAG, EMPTY_BATCH_TAG))));
     server.stubFor(
         get(anyUrl())
             .withHeader("batchTag", equalTo(RETRY_BATCH_SUCCESSFUL_TAG))

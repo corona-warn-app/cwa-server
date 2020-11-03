@@ -1,0 +1,8 @@
+---
+spring:
+  flyway:
+    locations: classpath:/db/migration,classpath:/db/testdata-download-via-callback
+
+services:
+  download:
+    efgs-enforce-date-based-download: false
