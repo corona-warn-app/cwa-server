@@ -386,7 +386,41 @@
                     }
                 }
             }
+        },
+        "/version/{version}/configuration/app_config": {
+        "get": {
+          "summary": "Get application configuration.",
+          "description": "Gives application configuration, which includes:\n- Minimum risk score\n- Risk score classification\n- Risk score parameters\n- Attenuation duration\n- Application version configuration\n- Supported countries",
+          "tags": [
+            "Application configuration"
+          ],
+          "parameters": [
+            {
+              "name": "version",
+              "in": "path",
+              "description": "API version",
+              "required": true,
+              "schema": {
+                "$ref": "#/components/schemas/Version"
+              }
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "Application configuration.",
+              "content": {
+                "application/zip": {
+                  "schema": {
+                    "$ref": "#/components/schemas/app.coronawarn.server.common.protocols.external.TemporaryExposureKeyExport"
+                  },
+                  "example": "<BINARY DATA>"
+                }
+              }
+            }
+          }
         }
+      }
+
     },
     "components": {
         "schemas": {

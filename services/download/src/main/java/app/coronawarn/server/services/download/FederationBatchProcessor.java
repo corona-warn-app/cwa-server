@@ -70,7 +70,7 @@ public class FederationBatchProcessor {
    * again. If the date-based download is enabled, the entries for the specified date need to be removed. Stores the
    * first FederationBatchTag for the specified date as a starting point for further processing.
    */
-  public void prepareDownload() {
+  public void prepareDownload() throws FatalFederationGatewayException {
     if (config.getEfgsEnforceDateBasedDownload()) {
       LocalDate downloadDate = LocalDate.now(ZoneOffset.UTC)
           .minus(Period.ofDays(config.getEfgsEnforceDownloadOffsetDays()));
@@ -84,11 +84,13 @@ public class FederationBatchProcessor {
    *
    * @param date The date for which the first batch info is stored.
    */
-  protected void saveFirstBatchInfoForDate(LocalDate date) {
+  protected void saveFirstBatchInfoForDate(LocalDate date) throws FatalFederationGatewayException {
     try {
       logger.info("Triggering download of first batch for date {}.", date);
       BatchDownloadResponse response = federationGatewayDownloadService.downloadBatch(date);
       batchInfoService.save(new FederationBatchInfo(response.getBatchTag(), date));
+    } catch (FatalFederationGatewayException e) {
+      throw e;
     } catch (Exception e) {
       logger.error("Triggering download of first batch for date {} failed.", date, e);
     }
@@ -119,7 +121,7 @@ public class FederationBatchProcessor {
    * Downloads and processes all batches from the federation gateway that have previously been marked with status value
    * {@link FederationBatchStatus#UNPROCESSED}.
    */
-  public void processUnprocessedFederationBatches() {
+  public void processUnprocessedFederationBatches() throws FatalFederationGatewayException {
     Deque<FederationBatchInfo> unprocessedBatches = new LinkedList<>(batchInfoService.findByStatus(UNPROCESSED));
     logger.info("{} unprocessed federation batches found.", unprocessedBatches.size());
 
@@ -135,7 +137,7 @@ public class FederationBatchProcessor {
   }
 
   private Optional<String> processBatchAndReturnNextBatchId(
-      FederationBatchInfo batchInfo, FederationBatchStatus errorStatus) {
+      FederationBatchInfo batchInfo, FederationBatchStatus errorStatus) throws FatalFederationGatewayException {
     LocalDate date = batchInfo.getDate();
     String batchTag = batchInfo.getBatchTag();
     logger.info("Processing batch for date {} and batchTag {}.", date, batchTag);
@@ -155,6 +157,8 @@ public class FederationBatchProcessor {
       }, () -> logger.info("Batch for date {} and batchTag {} did not contain any keys.", date, batchTag));
       batchInfoService.updateStatus(batchInfo, batchContainsInvalidKeys.get() ? PROCESSED_WITH_ERROR : PROCESSED);
       return response.getNextBatchTag();
+    } catch (FatalFederationGatewayException e) {
+      throw e;
     } catch (Exception e) {
       logger.error("Federation batch processing for date {} and batchTag {} failed. Status set to {}.",
           date, batchTag, errorStatus.name(), e);
