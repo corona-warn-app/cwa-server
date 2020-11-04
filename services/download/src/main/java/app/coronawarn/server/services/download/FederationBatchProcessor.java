@@ -65,36 +65,34 @@ public class FederationBatchProcessor {
   }
 
   /**
-   * Stores the batch info for the specified date. Its status is set to {@link FederationBatchStatus#UNPROCESSED}.
-   *
-   * @param date The date for which the first batch info is stored.
+   * Checks if the date-based download logic is enabled and prepares the FederationBatchInfo Repository accordingly. The
+   * Federation Batch Info stores information about which batches have already been processed to not download them
+   * again. If the date-based download is enabled, the entries for the specified date need to be removed. Stores the
+   * first FederationBatchTag for the specified date as a starting point for further processing.
    */
-  public void saveFirstBatchInfoForDate(LocalDate date) {
-    checkIfDownloadShouldBeForced(date);
-    try {
-      logger.info("Triggering download of first batch for date {}.", date);
-      BatchDownloadResponse response = federationGatewayDownloadService.downloadBatch(date);
-      batchInfoService.save(new FederationBatchInfo(response.getBatchTag(), date));
-    } catch (Exception e) {
-      logger.error("Triggering download of first batch for date {} failed.", date, e);
+  public void prepareDownload() throws FatalFederationGatewayException {
+    if (config.getEfgsEnforceDateBasedDownload()) {
+      LocalDate downloadDate = LocalDate.now(ZoneOffset.UTC)
+          .minus(Period.ofDays(config.getEfgsEnforceDownloadOffsetDays()));
+      batchInfoService.deleteForDate(downloadDate);
+      saveFirstBatchInfoForDate(downloadDate);
     }
   }
 
   /**
-   * The Federation Batch Info stores information about which batches have already been processed to not download them
-   * again. The batches for the current day might change constantly when national backends upload keys, hence there is
-   * the need to download the batches for today again. Hence, the entries in federation batch info with the current day
-   * need to be removed. There is a parameter 'efgs-repeat-download-offset-days' with default 0 for
-   * that.
+   * Stores the batch info for the specified date. Its status is set to {@link FederationBatchStatus#UNPROCESSED}.
    *
-   * @param date The date the download was triggered for
+   * @param date The date for which the first batch info is stored.
    */
-  public void checkIfDownloadShouldBeForced(LocalDate date) {
-    LocalDate downloadAgainDate = LocalDate.now(ZoneOffset.UTC)
-        .minus(Period.ofDays(config.getEfgsEnforceDownloadOffsetDays()));
-    if (downloadAgainDate.equals(date)) {
-      logger.info("Preparing database to enforce download of batches for day {} again.", date);
-      batchInfoService.deleteForDate(downloadAgainDate);
+  protected void saveFirstBatchInfoForDate(LocalDate date) throws FatalFederationGatewayException {
+    try {
+      logger.info("Triggering download of first batch for date {}.", date);
+      BatchDownloadResponse response = federationGatewayDownloadService.downloadBatch(date);
+      batchInfoService.save(new FederationBatchInfo(response.getBatchTag(), date));
+    } catch (FatalFederationGatewayException e) {
+      throw e;
+    } catch (Exception e) {
+      logger.error("Triggering download of first batch for date {} failed.", date, e);
     }
   }
 
@@ -103,9 +101,9 @@ public class FederationBatchProcessor {
    * value {@link FederationBatchStatus#ERROR}.
    */
   public void processErrorFederationBatches() {
-    List<FederationBatchInfo> federationBatchInfosWithError = batchInfoService.findByStatus(ERROR);
-    logger.info("{} error federation batches for reprocessing found.", federationBatchInfosWithError.size());
-    federationBatchInfosWithError.forEach(this::retryProcessingBatch);
+    List<FederationBatchInfo> federationBatchInfoWithError = batchInfoService.findByStatus(ERROR);
+    logger.info("{} error federation batches for reprocessing found.", federationBatchInfoWithError.size());
+    federationBatchInfoWithError.forEach(this::retryProcessingBatch);
   }
 
   private void retryProcessingBatch(FederationBatchInfo federationBatchInfo) {
@@ -123,20 +121,23 @@ public class FederationBatchProcessor {
    * Downloads and processes all batches from the federation gateway that have previously been marked with status value
    * {@link FederationBatchStatus#UNPROCESSED}.
    */
-  public void processUnprocessedFederationBatches() {
+  public void processUnprocessedFederationBatches() throws FatalFederationGatewayException {
     Deque<FederationBatchInfo> unprocessedBatches = new LinkedList<>(batchInfoService.findByStatus(UNPROCESSED));
     logger.info("{} unprocessed federation batches found.", unprocessedBatches.size());
 
     while (!unprocessedBatches.isEmpty()) {
       FederationBatchInfo currentBatch = unprocessedBatches.remove();
       processBatchAndReturnNextBatchId(currentBatch, ERROR)
-          .ifPresent(nextBatchTag ->
-              unprocessedBatches.add(new FederationBatchInfo(nextBatchTag, currentBatch.getDate())));
+          .ifPresent(nextBatchTag -> {
+            if (config.getEfgsEnforceDateBasedDownload()) {
+              unprocessedBatches.add(new FederationBatchInfo(nextBatchTag, currentBatch.getDate()));
+            }
+          });
     }
   }
 
   private Optional<String> processBatchAndReturnNextBatchId(
-      FederationBatchInfo batchInfo, FederationBatchStatus errorStatus) {
+      FederationBatchInfo batchInfo, FederationBatchStatus errorStatus) throws FatalFederationGatewayException {
     LocalDate date = batchInfo.getDate();
     String batchTag = batchInfo.getBatchTag();
     logger.info("Processing batch for date {} and batchTag {}.", date, batchTag);
@@ -156,6 +157,8 @@ public class FederationBatchProcessor {
       }, () -> logger.info("Batch for date {} and batchTag {} did not contain any keys.", date, batchTag));
       batchInfoService.updateStatus(batchInfo, batchContainsInvalidKeys.get() ? PROCESSED_WITH_ERROR : PROCESSED);
       return response.getNextBatchTag();
+    } catch (FatalFederationGatewayException e) {
+      throw e;
     } catch (Exception e) {
       logger.error("Federation batch processing for date {} and batchTag {} failed. Status set to {}.",
           date, batchTag, errorStatus.name(), e);
