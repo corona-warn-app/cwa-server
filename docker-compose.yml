@@ -156,6 +156,11 @@ services:
     restart: always
     ports:
       - "8004:8004"
+  efgs-fake:
+    image: roesslerj/efgs-fake:latest
+    restart: always
+    ports:
+      - "8014:8014"
 volumes:
   postgres_volume:
   pgadmin_volume:
