@@ -68,8 +68,11 @@ public class AppConfigurationDirectory extends DirectoryOnDisk {
 
     ArchiveOnDisk appConfigurationFile = new ArchiveOnDisk(archiveName);
     appConfigurationFile.addWritable(new FileOnDisk("export.bin", applicationConfiguration.toByteArray()));
-    countryDirectory.addWritableToAll(ignoredValue ->
-        Optional
-            .of(new AppConfigurationSigningDecorator(appConfigurationFile, cryptoProvider, distributionServiceConfig)));
+    ArchiveOnDisk countryAppConfigurationFile = new ArchiveOnDisk(archiveName);
+    countryAppConfigurationFile.addWritable(new FileOnDisk("export.bin", applicationConfiguration.toByteArray()));
+    this.addWritable(
+        new AppConfigurationSigningDecorator(appConfigurationFile, cryptoProvider, distributionServiceConfig));
+    countryDirectory.addWritableToAll(ignoredValue -> Optional.of(
+        new AppConfigurationSigningDecorator(countryAppConfigurationFile, cryptoProvider, distributionServiceConfig)));
   }
 }
