@@ -6,7 +6,6 @@ import static app.coronawarn.server.services.distribution.assembly.appconfig.val
 import static app.coronawarn.server.services.distribution.assembly.appconfig.validation.RiskScoreClassificationValidatorTest.buildError;
 import static app.coronawarn.server.services.distribution.assembly.appconfig.validation.RiskScoreClassificationValidatorTest.buildExpectedResult;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Mockito.spy;
 
 import app.coronawarn.server.common.protocols.internal.ApplicationVersionConfiguration;
 import app.coronawarn.server.common.protocols.internal.ExposureDetectionParametersAndroid;
@@ -131,6 +130,7 @@ class ApplicationVersionConfigurationValidatorTest {
   @Nested
   @DisplayName("AppConfigParameters Tests")
   class AppConfigParameterTest {
+
     @Test
     void testBuildKeyDownloadParametersAndroid() {
       KeyDownloadParametersAndroid parametersAndroid =
@@ -173,16 +173,16 @@ class ApplicationVersionConfigurationValidatorTest {
           applicationConfigurationPublicationConfig.buildKeyDownloadParametersAndroid(distributionServiceConfig);
 
       assertThat(keyDownloadParametersAndroid.getCachedDayPackagesToUpdateOnETagMismatch(0).toString())
-          .isEqualTo("region: \"EUR\"\ndate: \"2020-10-28\"\netag:"
+          .hasToString("region: \"EUR\"\ndate: \"2020-10-28\"\netag:"
               + " \"\\\"7d595060d664c4040ff3f65b532f6a57\\\"\"\n");
       assertThat(keyDownloadParametersAndroid.getCachedDayPackagesToUpdateOnETagMismatch(1).toString())
-          .isEqualTo("region: \"DE\"\ndate: \"2020-10-29\"\netag:"
+          .hasToString("region: \"DE\"\ndate: \"2020-10-29\"\netag:"
               + " \"\\\"7d595060d664c4040ff3f65b532f6a58\\\"\"\n");
       assertThat(keyDownloadParametersAndroid.getCachedHourPackagesToUpdateOnETagMismatch(0).toString())
-          .isEqualTo("region: \"EUR\"\ndate: \"2020-10-28\"\nhour: 3\netag:"
+          .hasToString("region: \"EUR\"\ndate: \"2020-10-28\"\nhour: 3\netag:"
               + " \"\\\"7d595060d664c4040ff3f65b532f6a57\\\"\"\n");
       assertThat(keyDownloadParametersAndroid.getCachedHourPackagesToUpdateOnETagMismatch(1).toString())
-          .isEqualTo("region: \"EUR\"\ndate: \"2020-10-29\"\nhour: 5\netag:"
+          .hasToString("region: \"EUR\"\ndate: \"2020-10-29\"\nhour: 5\netag:"
               + " \"\\\"7d595060d664c4040ff3f65b532f6a57\\\"\"\n");
     }
   }

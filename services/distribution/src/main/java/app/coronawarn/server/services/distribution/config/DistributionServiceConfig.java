@@ -774,7 +774,7 @@ public class DistributionServiceConfig {
 
       public List<DeserializedDayPackageMetadata> getCachedDayPackagesToUpdateOnETagMismatch() {
         return SerializationUtils.deserializeJson(cachedDayPackagesToUpdateOnETagMismatch,
-            (typeFactory) -> typeFactory.constructCollectionType(List.class, DeserializedDayPackageMetadata.class));
+            typeFactory -> typeFactory.constructCollectionType(List.class, DeserializedDayPackageMetadata.class));
       }
 
       public void setCachedDayPackagesToUpdateOnETagMismatch(String cachedDayPackagesToUpdateOnETagMismatch) {
@@ -783,7 +783,7 @@ public class DistributionServiceConfig {
 
       public List<DeserializedHourPackageMetadata> getCachedHourPackagesToUpdateOnETagMismatch() {
         return SerializationUtils.deserializeJson(cachedHourPackagesToUpdateOnETagMismatch,
-            (typeFactory) -> typeFactory
+            typeFactory -> typeFactory
                 .constructCollectionType(List.class, DeserializedHourPackageMetadata.class));
       }
 

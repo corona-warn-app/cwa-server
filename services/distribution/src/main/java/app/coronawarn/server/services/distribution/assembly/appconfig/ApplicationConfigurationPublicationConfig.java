@@ -54,7 +54,6 @@ public class ApplicationConfigurationPublicationConfig {
    * The location of the exposure configuration master file.
    */
   public static final String MASTER_FILE = "master-config/app-config.yaml";
-  private static final Logger logger = LoggerFactory.getLogger(ApplicationConfigurationPublicationConfig.class);
 
   /**
    * Fetches the master configuration as a ApplicationConfiguration instance.
