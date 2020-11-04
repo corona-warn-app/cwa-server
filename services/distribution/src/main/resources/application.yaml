@@ -95,6 +95,23 @@ services:
       min-ios: ${MIN_IOS_VERSION:0.5.0}
       latest-android: ${LATEST_IOS_VERSION:1.0.4}
       min-android: ${MIN_ANDROID_VERSION:1.0.4}
+    app-config-parameters:
+      ios-key-download-parameters:
+        cached-day-packages-to-update-on-etag-mismatch: ${KEY_DOWNLOAD_INVALIDATED_DAY_PACKAGES:[]}
+        cached-hour-packages-to-update-on-etag-mismatch: ${KEY_DOWNLOAD_INVALIDATED_HOUR_PACKAGES:[]}
+      android-key-download-parameters:
+        cached-day-packages-to-update-on-etag-mismatch: ${KEY_DOWNLOAD_INVALIDATED_DAY_PACKAGES:[]}
+        cached-hour-packages-to-update-on-etag-mismatch: ${KEY_DOWNLOAD_INVALIDATED_HOUR_PACKAGES:[]}
+        download-timeout-in-seconds: ${KEY_DOWNLOAD_ANDROID_DOWNLOAD_TIMEOUT_IN_SECONDS:30}
+        overall-timeout-in-seconds: ${KEY_DOWNLOAD_ANDROID_OVERALL_TIMEOUT_IN_SECONDS:480}
+      ios-exposure-detection-parameters:
+       max-exposure-detections-per-interval: ${EXPOSURE_DETECTION_IOS_MAX_ED_PER_INTERVAL:6}
+      android-exposure-detection-parameters:
+        max-exposure-detections-per-interval: ${EXPOSURE_DETECTION_ANDROID_MAX_ED_PER_INTERVAL:6}
+        overall-timeout-in-seconds: ${EXPOSURE_DETECTION_ANDROID_OVERALL_TIMEOUT_IN_SECONDS:900}
+
+
+
 
 spring:
   main:

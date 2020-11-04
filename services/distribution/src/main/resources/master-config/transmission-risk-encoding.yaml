@@ -9,7 +9,7 @@ transmission-risk-encoding:
 # and the time it gets published to CDN. First the TRL must be determined/derived from DSOS with the mappings defined above in the yaml,
 # then we proceed to re-encode DSOS (with a different range of values) and RT from the derived TRL and those values are 
 # published to CDNs for client consumption.
-  trl-to-dsos:
+  transmissionRisk-to-daysSinceSymptoms:
     1: 1
     2: 1
     3: 1
@@ -18,7 +18,7 @@ transmission-risk-encoding:
     6: 2
     7: 2
     8: 2
-  trl-to-report-type:
+  transmissionRisk-to-reportType:
     1: 1
     2: 2
     3: 3

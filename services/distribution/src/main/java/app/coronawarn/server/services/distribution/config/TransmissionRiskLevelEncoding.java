@@ -8,7 +8,6 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
-import javax.validation.constraints.NotNull;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
@@ -18,6 +17,7 @@ import org.springframework.validation.Errors;
 import org.springframework.validation.ObjectError;
 import org.springframework.validation.ValidationUtils;
 import org.springframework.validation.Validator;
+import org.springframework.validation.annotation.Validated;
 
 /**
  * Wrapper over properties defined in <code>master-config/tranmission-risk-encoding.yaml</code>. It
@@ -26,19 +26,16 @@ import org.springframework.validation.Validator;
  * internal state at construction time as per Spring configuration class validation mechanisms.
  */
 @Configuration
+@Validated
 @ConfigurationProperties(prefix = "transmission-risk-encoding")
 @PropertySource(value = "classpath:master-config/transmission-risk-encoding.yaml",
     factory = YamlPropertySourceFactory.class)
 public class TransmissionRiskLevelEncoding implements Validator {
 
 
-  /* 'transmissionRiskLevel' to 'daysSinceOnsetOfSymptoms' */
-  @NotNull
-  private Map<Integer, Integer> trlToDsos;
+  private Map<Integer, Integer> transmissionRiskToDaysSinceSymptoms;
 
-  /* 'transmissionRiskLevel' to 'reportType' */
-  @NotNull
-  private Map<Integer, Integer> trlToReportType;
+  private Map<Integer, Integer> transmissionRiskToReportType;
 
 
   TransmissionRiskLevelEncoding() {
@@ -50,7 +47,7 @@ public class TransmissionRiskLevelEncoding implements Validator {
    * throws an exception if the TRL is not part of the mapping.
    */
   public Integer getDaysSinceSymptomsForTransmissionRiskLevel(Integer transmissionRiskLevel) {
-    return getMappedValue(transmissionRiskLevel, trlToDsos, "daysSinceOnsetSymptoms");
+    return getMappedValue(transmissionRiskLevel, transmissionRiskToDaysSinceSymptoms, "daysSinceOnsetSymptoms");
   }
 
   /**
@@ -58,7 +55,7 @@ public class TransmissionRiskLevelEncoding implements Validator {
    * exception if the TRL is not part of the mapping.
    */
   public ReportType getReportTypeForTransmissionRiskLevel(Integer transmissionRiskLevel) {
-    return ReportType.forNumber(getMappedValue(transmissionRiskLevel, trlToReportType, "reportType"));
+    return ReportType.forNumber(getMappedValue(transmissionRiskLevel, transmissionRiskToReportType, "reportType"));
   }
 
   private Integer getMappedValue(Integer transmissionRiskLevel, Map<Integer, Integer> encodingMap,
@@ -73,24 +70,24 @@ public class TransmissionRiskLevelEncoding implements Validator {
 
   @Override
   public boolean supports(Class<?> clazz) {
-    return clazz == TransmissionRiskLevelEncoding.class;
+    return TransmissionRiskLevelEncoding.class.isAssignableFrom(clazz);
   }
 
   @Override
   public void validate(Object target, Errors errors) {
-    ValidationUtils.rejectIfEmpty(errors, "trlToDsos", "trlToDsos.empty",
+    ValidationUtils.rejectIfEmpty(errors, "transmissionRiskToDaysSinceSymptoms", "trlToDsos.empty",
         "TRL to DSOS encoding map is null or empty");
-    ValidationUtils.rejectIfEmpty(errors, "trlToReportType", "trlToReportType.empty",
+    ValidationUtils.rejectIfEmpty(errors, "transmissionRiskToReportType", "trlToReportType.empty",
         "TRL to RT encoding map is null or empty");
 
     TransmissionRiskLevelEncoding encodingMappings = (TransmissionRiskLevelEncoding) target;
 
-    if (trlKeysNotInRange(encodingMappings.getTrlToDsos())) {
-      errors.rejectValue("trlToDsos",
+    if (trlKeysNotInRange(encodingMappings.getTransmissionRiskToDaysSinceSymptoms())) {
+      errors.rejectValue("transmissionRiskToDaysSinceSymptoms",
           "transmissionRisk to daysSinceOnsetSymptoms map contains invalid TRL");
     }
-    if (trlKeysNotInRange(encodingMappings.getTrlToReportType())) {
-      errors.rejectValue("trlToReportType", "transmissionRisk to reportType map contains invalid TRL");
+    if (trlKeysNotInRange(encodingMappings.getTransmissionRiskToReportType())) {
+      errors.rejectValue("transmissionRiskToReportType", "transmissionRisk to reportType map contains invalid TRL");
     }
   }
 
@@ -121,8 +118,8 @@ public class TransmissionRiskLevelEncoding implements Validator {
       Map<Integer, Integer> transmissionRiskLevelToDaysSinceSymptoms,
       Map<Integer, Integer> transmissionRiskLevelToReportType) {
     TransmissionRiskLevelEncoding transmissionRiskEncoding = new TransmissionRiskLevelEncoding();
-    transmissionRiskEncoding.setTrlToDsos(transmissionRiskLevelToDaysSinceSymptoms);
-    transmissionRiskEncoding.setTrlToReportType(transmissionRiskLevelToReportType);
+    transmissionRiskEncoding.setTransmissionRiskToDaysSinceSymptoms(transmissionRiskLevelToDaysSinceSymptoms);
+    transmissionRiskEncoding.setTransmissionRiskToReportType(transmissionRiskLevelToReportType);
     transmissionRiskEncoding.internalValidate();
     return transmissionRiskEncoding;
   }
@@ -134,19 +131,19 @@ public class TransmissionRiskLevelEncoding implements Validator {
    * Getters are needed for spring validation, but they return copies of the internal state.
    */
 
-  void setTrlToDsos(Map<Integer, Integer> trlToDsos) {
-    this.trlToDsos = trlToDsos;
+  void setTransmissionRiskToDaysSinceSymptoms(Map<Integer, Integer> transmissionRiskToDaysSinceSymptoms) {
+    this.transmissionRiskToDaysSinceSymptoms = transmissionRiskToDaysSinceSymptoms;
   }
 
-  void setTrlToReportType(Map<Integer, Integer> trlToRt) {
-    this.trlToReportType = trlToRt;
+  void setTransmissionRiskToReportType(Map<Integer, Integer> transmissionRiskToReportType) {
+    this.transmissionRiskToReportType = transmissionRiskToReportType;
   }
 
-  public Map<Integer, Integer> getTrlToDsos() {
-    return new HashMap<Integer, Integer>(trlToDsos);
+  public Map<Integer, Integer> getTransmissionRiskToDaysSinceSymptoms() {
+    return new HashMap<Integer, Integer>(transmissionRiskToDaysSinceSymptoms);
   }
 
-  public Map<Integer, Integer> getTrlToReportType() {
-    return new HashMap<Integer, Integer>(trlToReportType);
+  public Map<Integer, Integer> getTransmissionRiskToReportType() {
+    return new HashMap<Integer, Integer>(transmissionRiskToReportType);
   }
 }

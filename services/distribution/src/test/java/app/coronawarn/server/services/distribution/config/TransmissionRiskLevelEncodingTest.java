@@ -51,8 +51,8 @@ class TransmissionRiskLevelEncodingTest {
 
     /* Test method that is invoked by Spring validation */
     TransmissionRiskLevelEncoding invalidEncoding = new TransmissionRiskLevelEncoding();
-    invalidEncoding.setTrlToDsos(Map.of(12,1,0,3));
-    invalidEncoding.setTrlToReportType(Map.of(13, 3));
+    invalidEncoding.setTransmissionRiskToDaysSinceSymptoms(Map.of(12,1,0,3));
+    invalidEncoding.setTransmissionRiskToReportType(Map.of(13, 3));
 
     validEncodings.validate(invalidEncoding, errorsMock);
     verify(errorsMock, times(2)).rejectValue(any(), any());

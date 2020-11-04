@@ -30,11 +30,11 @@ import org.springframework.boot.test.context.ConfigFileApplicationContextInitial
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
-@EnableConfigurationProperties(value = DistributionServiceConfig.class)
+@EnableConfigurationProperties(value = {DistributionServiceConfig.class, TransmissionRiskLevelEncoding.class})
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration(
     classes = {CryptoProvider.class, DistributionServiceConfig.class,
-        KeySharingPoliciesChecker.class, EnfParameterAdapter.class, TransmissionRiskLevelEncoding.class},
+        KeySharingPoliciesChecker.class, EnfParameterAdapter.class,},
     initializers = ConfigFileApplicationContextInitializer.class)
 class DiagnosisKeysStructureProviderTest {
 
