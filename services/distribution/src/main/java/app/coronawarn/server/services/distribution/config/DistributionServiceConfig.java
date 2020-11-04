@@ -744,9 +744,7 @@ public class DistributionServiceConfig {
 
     private abstract static class CommonKeyDownloadParameters {
 
-      //TODO:: validate if the string is json
       private String cachedDayPackagesToUpdateOnETagMismatch;
-      //TODO:: validate if the string is json
       private String cachedHourPackagesToUpdateOnETagMismatch;
 
       public String getCachedDayPackagesToUpdateOnETagMismatch() {

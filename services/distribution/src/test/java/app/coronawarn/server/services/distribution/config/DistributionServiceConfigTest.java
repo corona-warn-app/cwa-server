@@ -116,7 +116,7 @@ class DistributionServiceConfigTest {
   }
 
   @Nested
-  class AppConfigParametersDefaultValuesTest {
+  class AppConfigParametersValuesTest {
 
     @Test
     void testIosKeyDownloadParameters() {
