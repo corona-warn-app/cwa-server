@@ -4,7 +4,6 @@ import app.coronawarn.server.common.persistence.domain.DiagnosisKey;
 import app.coronawarn.server.common.persistence.domain.config.YamlPropertySourceFactory;
 import app.coronawarn.server.common.protocols.external.exposurenotification.ReportType;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
