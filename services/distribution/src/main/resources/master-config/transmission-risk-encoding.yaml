@@ -18,7 +18,7 @@ transmission-risk-encoding:
     6: 2
     7: 2
     8: 2
-  trl-to-rt:
+  trl-to-report-type:
     1: 1
     2: 2
     3: 3
