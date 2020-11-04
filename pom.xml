@@ -378,7 +378,7 @@
           <artifactId>maven-surefire-plugin</artifactId>
           <version>3.0.0-M5</version>
           <configuration>
-<!--            <excludedGroups>s3-integration</excludedGroups>-->
+            <excludedGroups>s3-integration</excludedGroups>
             <trimStackTrace>false</trimStackTrace>
           </configuration>
         </plugin>
@@ -471,11 +471,49 @@
             <protocArtifact>com.google.protobuf:protoc:${protobuf.version}:exe:${os.detected.classifier}</protocArtifact>
           </configuration>
         </plugin>
+        <plugin>
+          <groupId>io.fabric8</groupId>
+          <artifactId>docker-maven-plugin</artifactId>
+          <version>0.20.1</version>
+        </plugin>
       </plugins>
+
     </pluginManagement>
 
     <!-- plugin executions for ALL sub modules -->
     <plugins>
+      <plugin>
+        <groupId>io.fabric8</groupId>
+        <artifactId>docker-maven-plugin</artifactId>
+        <configuration>
+          <images>
+            <image>
+              <name>findify/s3mock:latest</name>
+              <alias>it-s3</alias>
+              <run>
+                <ports>
+                  <port>8003:8001</port>
+                </ports>
+              </run>
+            </image>
+          </images>
+        </configuration>
+
+        <executions>
+          <execution>
+            <id>start</id>
+            <goals>
+              <goal>start</goal>
+            </goals>
+          </execution>
+          <execution>
+            <id>stop</id>
+            <goals>
+              <goal>stop</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
       <plugin>
         <artifactId>maven-checkstyle-plugin</artifactId>
         <configuration>

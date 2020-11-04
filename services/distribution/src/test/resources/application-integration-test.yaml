@@ -2,3 +2,9 @@
 services:
   distribution:
     shifting-policy-threshold: 140
+
+logging:
+  level:
+    org:
+      springframework: info
+    root: info
