@@ -7,6 +7,7 @@ import static com.github.tomakehurst.wiremock.client.WireMock.anyUrl;
 import static com.github.tomakehurst.wiremock.client.WireMock.get;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.mock;
 
 import app.coronawarn.server.common.protocols.external.exposurenotification.DiagnosisKeyBatch;
@@ -74,7 +75,7 @@ class FederationGatewayDownloadServiceTest {
   }
 
   @Test
-  void testNextBatchTagIsParsedWithEmptyResponseBody() {
+  void testNextBatchTagIsParsedWithEmptyResponseBody() throws Exception {
 
     SERVER.stubFor(
         get(anyUrl())
@@ -91,7 +92,7 @@ class FederationGatewayDownloadServiceTest {
   }
 
   @Test
-  void testDownloadSuccessful() {
+  void testDownloadSuccessful() throws Exception {
     DiagnosisKeyBatch batch = FederationBatchTestHelper.createDiagnosisKeyBatch("batch-data");
 
     SERVER.stubFor(
@@ -110,7 +111,7 @@ class FederationGatewayDownloadServiceTest {
   }
 
   @Test
-  void testDownloadSuccessfulWithoutNextBatchTag() {
+  void testDownloadSuccessfulWithoutNextBatchTag() throws Exception {
     DiagnosisKeyBatch batch = FederationBatchTestHelper.createDiagnosisKeyBatch("batch-data");
 
     SERVER.stubFor(
@@ -126,15 +127,30 @@ class FederationGatewayDownloadServiceTest {
     assertDownloadResponseMatches(expResponse);
   }
 
-  void assertDownloadResponseMatches(BatchDownloadResponse expResponse) {
+
+  @Test
+  void testDownloadBatchNotAuthenticated() {
+    SERVER.stubFor(
+        get(anyUrl())
+            .willReturn(
+                aResponse()
+                    .withStatus(HttpStatus.FORBIDDEN.value())));
+
+    assertThatThrownBy(() -> downloadService.downloadBatch(BATCH_TAG, DATE))
+        .isExactlyInstanceOf(FatalFederationGatewayException.class);
+    assertThatThrownBy(() -> downloadService.downloadBatch(DATE))
+        .isExactlyInstanceOf(FatalFederationGatewayException.class);
+  }
+
+  void assertDownloadResponseMatches(BatchDownloadResponse expResponse) throws Exception {
     assertThat(downloadService.downloadBatch(DATE)).isEqualTo(expResponse);
     assertThat(downloadService.downloadBatch(BATCH_TAG, DATE)).isEqualTo(expResponse);
   }
 
   void assertExceptionIsThrown() {
-    assertThatExceptionOfType(FederationGatewayException.class)
+    assertThatExceptionOfType(BatchDownloadException.class)
         .isThrownBy(() -> downloadService.downloadBatch(DATE));
-    assertThatExceptionOfType(FederationGatewayException.class)
+    assertThatExceptionOfType(BatchDownloadException.class)
         .isThrownBy(() -> downloadService.downloadBatch(BATCH_TAG, DATE));
   }
 }
