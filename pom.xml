@@ -476,6 +476,11 @@
           <artifactId>docker-maven-plugin</artifactId>
           <version>0.20.1</version>
         </plugin>
+        <plugin>
+          <groupId>org.codehaus.mojo</groupId>
+          <artifactId>exec-maven-plugin</artifactId>
+          <version>1.6.0</version>
+        </plugin>
       </plugins>
 
     </pluginManagement>
@@ -483,22 +488,73 @@
     <!-- plugin executions for ALL sub modules -->
     <plugins>
       <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>exec-maven-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>my-exec</id>
+            <phase>pre-integration-test</phase>
+            <goals>
+              <goal>exec</goal>
+            </goals>
+          </execution>
+        </executions>
+        <configuration>
+          <executable>${basedir}/scripts/create-bucket.sh</executable>
+        </configuration>
+      </plugin>
+      <plugin>
         <groupId>io.fabric8</groupId>
         <artifactId>docker-maven-plugin</artifactId>
         <configuration>
           <images>
             <image>
-              <name>findify/s3mock:latest</name>
+              <name>zenko/cloudserver</name>
               <alias>it-s3</alias>
               <run>
                 <ports>
-                  <port>8003:8001</port>
+                  <port>8003:8000</port>
                 </ports>
+                <env>
+                  <ENDPOINT>objectstore</ENDPOINT>
+                  <REMOTE_MANAGEMENT_DISABLE>1</REMOTE_MANAGEMENT_DISABLE>
+                  <SCALITY_ACCESS_KEY_ID>accessKey1</SCALITY_ACCESS_KEY_ID>
+                  <SCALITY_SECRET_ACCESS_KEY>verySecretKey1</SCALITY_SECRET_ACCESS_KEY>
+                  <S3BACKEND>mem</S3BACKEND>
+                </env>
               </run>
             </image>
+<!--            <image>-->
+<!--              <name>amazon/aws-cli</name>-->
+<!--              <alias>createbucket</alias>-->
+<!--              <run>-->
+<!--                <env>-->
+<!--                  <AWS_ACCESS_KEY_ID>accessKey1</AWS_ACCESS_KEY_ID>-->
+<!--                  <AWS_SECRET_ACCESS_KEY>verySecretKey1</AWS_SECRET_ACCESS_KEY>-->
+<!--                </env>-->
+<!--                <entrypoint>-->
+<!--                  <exec>-->
+<!--                    <arg>/root/scripts/wait-for-it/wait-for-it.sh</arg>-->
+<!--                    <arg>objectstore:8000</arg>-->
+<!--                    <arg>-t</arg>-->
+<!--                    <arg>30</arg>-->
+<!--                    <arg>&#45;&#45;</arg>-->
+<!--                  </exec>-->
+<!--                </entrypoint>-->
+<!--                <cmd>-->
+<!--                  <shell>-->
+<!--                    aws s3api create-bucket &#45;&#45;bucket cwa &#45;&#45;endpoint-url http://objectstore:8000 &#45;&#45;acl public-read-->
+<!--                  </shell>-->
+<!--                </cmd>-->
+<!--                <volumes>-->
+<!--                  <bind>-->
+<!--                    <volume>${basedir}/scripts/wait-for-it:/root/scripts/wait-for-it</volume>-->
+<!--                  </bind>-->
+<!--                </volumes>-->
+<!--              </run>-->
+<!--            </image>-->
           </images>
         </configuration>
-
         <executions>
           <execution>
             <id>start</id>
