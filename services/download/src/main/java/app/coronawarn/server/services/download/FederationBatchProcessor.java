@@ -100,25 +100,7 @@ public class FederationBatchProcessor {
   }
 
   /**
-   * <<<<<<< HEAD The Federation Batch Info stores information about which batches have already been processed to not
-   * download them again. The batches for the current day might change constantly when national backends upload keys,
-   * hence there is the need to download the batches for today again. Hence, the entries in federation batch info with
-   * the current day need to be removed. There is a parameter 'efgs-repeat-download-offset-days' with default 0 for
-   * that.
-   *
-   * @param date The date the download was triggered for
-   */
-  public void checkIfDownloadShouldBeForced(LocalDate date) {
-    LocalDate downloadAgainDate = LocalDate.now(ZoneOffset.UTC)
-        .minus(Period.ofDays(config.getEfgsEnforceDownloadOffsetDays()));
-    if (downloadAgainDate.equals(date)) {
-      logger.info("Preparing database to enforce download of batches for day {} again.", date);
-      batchInfoService.deleteForDate(downloadAgainDate);
-    }
-  }
-
-  /**
-   * ======= >>>>>>> master Downloads and processes all batches from the federation gateway that have previously been
+   * Downloads and processes all batches from the federation gateway that have previously been
    * marked with the status value {@link FederationBatchStatus#ERROR}.
    */
   public void processErrorFederationBatches() {
