@@ -3,7 +3,9 @@ package app.coronawarn.server.services.distribution.config;
 import app.coronawarn.server.common.persistence.domain.DiagnosisKey;
 import app.coronawarn.server.common.persistence.domain.config.YamlPropertySourceFactory;
 import app.coronawarn.server.common.protocols.external.exposurenotification.ReportType;
+import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -32,9 +34,9 @@ import org.springframework.validation.annotation.Validated;
     factory = YamlPropertySourceFactory.class)
 public class TransmissionRiskLevelEncoding implements Validator {
 
+  private static final List<Integer> ENF_V2_DSOS_VALUES = List.of(1,2);
 
   private Map<Integer, Integer> transmissionRiskToDaysSinceSymptoms;
-
   private Map<Integer, Integer> transmissionRiskToReportType;
 
 
@@ -82,13 +84,44 @@ public class TransmissionRiskLevelEncoding implements Validator {
 
     TransmissionRiskLevelEncoding encodingMappings = (TransmissionRiskLevelEncoding) target;
 
-    if (trlKeysNotInRange(encodingMappings.getTransmissionRiskToDaysSinceSymptoms())) {
-      errors.rejectValue("transmissionRiskToDaysSinceSymptoms",
-          "transmissionRisk to daysSinceOnsetSymptoms map contains invalid TRL");
-    }
+    checkTransmissionRiskToDaysSinceSymptomsMap(errors, encodingMappings);
+    checkTransmissionRiskToReportTypeMap(errors, encodingMappings);
+  }
+
+
+  private void checkTransmissionRiskToReportTypeMap(Errors errors,
+      TransmissionRiskLevelEncoding encodingMappings) {
     if (trlKeysNotInRange(encodingMappings.getTransmissionRiskToReportType())) {
-      errors.rejectValue("transmissionRiskToReportType", "transmissionRisk to reportType map contains invalid TRL");
+      errors.rejectValue("transmissionRiskToReportType", "", "Invalid TRL values");
     }
+    if (reportTypeValueNotAllowed(encodingMappings.getTransmissionRiskToReportType())) {
+      errors.rejectValue("transmissionRiskToReportType", "",
+          "Invalid Report type values");
+    }
+  }
+
+
+  private void checkTransmissionRiskToDaysSinceSymptomsMap(Errors errors,
+      TransmissionRiskLevelEncoding encodingMappings) {
+    if (trlKeysNotInRange(encodingMappings.getTransmissionRiskToDaysSinceSymptoms())) {
+      errors.rejectValue("transmissionRiskToDaysSinceSymptoms", "",
+          "Invalid TRL values");
+    }
+    if (daysSinceSymptomsNotInEnfv2Range(encodingMappings.getTransmissionRiskToDaysSinceSymptoms())) {
+      errors.rejectValue("transmissionRiskToDaysSinceSymptoms", "",
+          "Invalid DSOS values");
+    }
+  }
+
+  private boolean reportTypeValueNotAllowed(Map<Integer, Integer> transmissionRiskToReportType) {
+    Collection<Integer> reportTypeValues = transmissionRiskToReportType.values();
+    return !reportTypeValues.stream().allMatch(value -> ReportType.forNumber(value) != null);
+  }
+
+  private boolean daysSinceSymptomsNotInEnfv2Range(
+      Map<Integer, Integer> transmissionRiskToDaysSinceSymptoms) {
+    Collection<Integer> dsosValues = transmissionRiskToDaysSinceSymptoms.values();
+    return !dsosValues.stream().allMatch(ENF_V2_DSOS_VALUES::contains);
   }
 
   private boolean trlKeysNotInRange(
@@ -104,9 +137,9 @@ public class TransmissionRiskLevelEncoding implements Validator {
         new BeanPropertyBindingResult(this, "transmissionRiskEncoding");
     this.validate(this, errorsContainer);
     if (errorsContainer.hasErrors()) {
-      throw new IllegalStateException(
+      throw new IllegalArgumentException(
           "Errors while loading transmission risk level encoding configuration. Reason: "
-              + StringUtils.join(errorsContainer.getAllErrors().stream().map(ObjectError::toString)
+              + StringUtils.join(errorsContainer.getAllErrors().stream().map(ObjectError::getDefaultMessage)
                   .collect(Collectors.toList()), ","));
     }
   }
