@@ -16,7 +16,8 @@ public final class SerializationUtils {
   }
 
   /**
-   * Deserialize Json string into provided function type object.
+   * Deserialize json string into an object of type T. The type must also be provided to the underlying Jackson
+   * library in the form of a JavaType supplied by the function parameter.
    *
    * @param jsonString           value from configuration file
    * @param typeProviderFunction type deserialization function provider

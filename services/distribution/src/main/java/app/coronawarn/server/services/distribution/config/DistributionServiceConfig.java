@@ -743,27 +743,12 @@ public class DistributionServiceConfig {
       }
     }
 
-    public static class DeserializedHourPackageMetadata {
+    public static class DeserializedHourPackageMetadata extends DeserializedDayPackageMetadata {
 
-      private String region;
-      private String date;
       private Integer hour;
-      private String etag;
-
-      public String getRegion() {
-        return region;
-      }
-
-      public String getDate() {
-        return date;
-      }
 
       public Integer getHour() {
         return hour;
-      }
-
-      public String getEtag() {
-        return etag;
       }
     }
 
