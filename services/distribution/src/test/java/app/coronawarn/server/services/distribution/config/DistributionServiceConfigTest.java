@@ -43,7 +43,7 @@ class DistributionServiceConfigTest {
   DistributionServiceConfigValidator distributionServiceConfigValidator = new DistributionServiceConfigValidator();
 
   @Test
-  void testDefaultIosKeyDownloadParameters() {
+  void testIosKeyDownloadParameters() {
     assertEquals(emptyList(),
         distributionServiceConfig.getAppConfigParameters().getIosKeyDownloadParameters()
             .getCachedDayPackagesToUpdateOnETagMismatch());
@@ -53,7 +53,7 @@ class DistributionServiceConfigTest {
   }
 
   @Test
-  void testDefaultAndroidKeyDownloadParameters() {
+  void testAndroidKeyDownloadParameters() {
     assertEquals(emptyList(),
         distributionServiceConfig.getAppConfigParameters().getAndroidKeyDownloadParameters()
             .getCachedDayPackagesToUpdateOnETagMismatch());
@@ -69,14 +69,14 @@ class DistributionServiceConfigTest {
   }
 
   @Test
-  void testDefaultIosExposureDetectionParameters() {
+  void testIosExposureDetectionParameters() {
     assertEquals(6,
         distributionServiceConfig.getAppConfigParameters().getIosExposureDetectionParameters()
             .getMaxExposureDetectionsPerInterval());
   }
 
   @Test
-  void testDefaultAndroidExposureDetectionParameters() {
+  void testAndroidExposureDetectionParameters() {
     assertEquals(6,
         distributionServiceConfig.getAppConfigParameters().getAndroidExposureDetectionParameters()
             .getMaxExposureDetectionsPerInterval());
