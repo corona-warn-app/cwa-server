@@ -136,7 +136,7 @@ class DistributionServiceConfigTest {
       assertEquals("[]",
           distributionServiceConfig.getAppConfigParameters().getAndroidKeyDownloadParameters()
               .getCachedHourPackagesToUpdateOnETagMismatch());
-      assertEquals(30,
+      assertEquals(450,
           distributionServiceConfig.getAppConfigParameters().getAndroidKeyDownloadParameters()
               .getDownloadTimeoutInSeconds());
       assertEquals(480,
@@ -190,7 +190,7 @@ class DistributionServiceConfigTest {
   private static Stream<Arguments> androidKeyDownloadParametersDownloadTimeoutArguments() {
     return Stream.of(
         Arguments.of(-1, AndroidKeyDownloadParameters.MIN_VALUE_ERROR_MESSAGE_DOWNLOAD_TIMEOUT),
-        Arguments.of(121, AndroidKeyDownloadParameters.MAX_VALUE_ERROR_MESSAGE_DOWNLOAD_TIMEOUT)
+        Arguments.of(1801, AndroidKeyDownloadParameters.MAX_VALUE_ERROR_MESSAGE_DOWNLOAD_TIMEOUT)
     );
   }
 
