@@ -26,6 +26,7 @@ public class FederationGatewayDownloadService {
   private static final Logger logger = LoggerFactory.getLogger(FederationGatewayDownloadService.class);
   private final FederationGatewayClient federationGatewayClient;
 
+
   /**
    * Constructor.
    *
@@ -41,15 +42,19 @@ public class FederationGatewayDownloadService {
    * @param date The date for which the batch should be downloaded.
    * @return The {@link BatchDownloadResponse} containing the downloaded batch, batchTag and nextBatchTag.
    */
-  public BatchDownloadResponse downloadBatch(LocalDate date) {
+  public BatchDownloadResponse downloadBatch(LocalDate date) throws FatalFederationGatewayException {
     try {
       logger.info("Downloading first batch for date {}", date);
       ResponseEntity<DiagnosisKeyBatch> response = federationGatewayClient
           .getDiagnosisKeys(date.format(ISO_LOCAL_DATE));
       return parseResponseEntity(response);
-    } catch (FeignException e) {
+    } catch (FeignException.Forbidden feignException) {
+      throw new FatalFederationGatewayException(
+          "Downloading batch for date " + date.format(ISO_LOCAL_DATE) + " failed due to invalid client certificate.");
+    } catch (FeignException feignException) {
       logger.error("Downloading first batch for date {} failed.", date);
-      throw new FederationGatewayException("Downloading batch for date " + date.format(ISO_LOCAL_DATE) + " failed.", e);
+      throw new BatchDownloadException("Downloading batch for date " + date.format(ISO_LOCAL_DATE) + " failed.",
+          feignException);
     }
   }
 
@@ -60,22 +65,27 @@ public class FederationGatewayDownloadService {
    * @param date     The date for which the batch should be downloaded.
    * @return The {@link BatchDownloadResponse} containing the downloaded batch, batchTag and nextBatchTag.
    */
-  public BatchDownloadResponse downloadBatch(String batchTag, LocalDate date) {
+  public BatchDownloadResponse downloadBatch(String batchTag, LocalDate date) throws FatalFederationGatewayException {
     String dateString = date.format(ISO_LOCAL_DATE);
     try {
       logger.info("Downloading batch for date {} and batchTag {}.", dateString, batchTag);
       ResponseEntity<DiagnosisKeyBatch> response = federationGatewayClient
           .getDiagnosisKeys(batchTag, dateString);
       return parseResponseEntity(response);
-    } catch (FeignException e) {
+    } catch (FeignException.Forbidden feignException) {
+      throw new FatalFederationGatewayException(
+          "Downloading batch " + batchTag + " for date " + date.format(ISO_LOCAL_DATE)
+              + " failed due to invalid client certificate.");
+    } catch (FeignException exception) {
       logger.error("Downloading batch for date {} and batchTag {} failed.", batchTag, dateString);
-      throw new FederationGatewayException("Downloading batch " + batchTag + " for date " + date + " failed.", e);
+      throw new BatchDownloadException("Downloading batch " + batchTag + " for date " + date + " failed.",
+          exception);
     }
   }
 
   private BatchDownloadResponse parseResponseEntity(ResponseEntity<DiagnosisKeyBatch> response) {
     String batchTag = getHeader(response, HEADER_BATCH_TAG)
-        .orElseThrow(() -> new FederationGatewayException("Missing " + HEADER_BATCH_TAG + " header."));
+        .orElseThrow(() -> new BatchDownloadException("Missing " + HEADER_BATCH_TAG + " header."));
     Optional<String> nextBatchTag = getHeader(response, HEADER_NEXT_BATCH_TAG);
     return new BatchDownloadResponse(batchTag, Optional.ofNullable(response.getBody()), nextBatchTag);
   }

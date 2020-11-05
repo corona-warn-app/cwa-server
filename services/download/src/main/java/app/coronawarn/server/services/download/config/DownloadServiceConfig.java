@@ -17,9 +17,7 @@ import org.springframework.validation.annotation.Validated;
 @Validated
 public class DownloadServiceConfig {
 
-  @Min(0)
-  @Max(14)
-  private Integer efgsOffsetDays;
+  private boolean efgsEnforceDateBasedDownload;
   @Min(0)
   @Max(14)
   private Integer efgsEnforceDownloadOffsetDays;
@@ -47,20 +45,20 @@ public class DownloadServiceConfig {
     this.tekFieldDerivations = tekFieldDerivations;
   }
 
-  public Integer getEfgsOffsetDays() {
-    return efgsOffsetDays;
-  }
-
-  public void setEfgsOffsetDays(Integer efgsOffsetDays) {
-    this.efgsOffsetDays = efgsOffsetDays;
-  }
-
   public Integer getEfgsEnforceDownloadOffsetDays() {
     return efgsEnforceDownloadOffsetDays;
   }
 
   public void setEfgsEnforceDownloadOffsetDays(Integer efgsEnforceDownloadOffsetDays) {
     this.efgsEnforceDownloadOffsetDays = efgsEnforceDownloadOffsetDays;
+  }
+
+  public boolean getEfgsEnforceDateBasedDownload() {
+    return efgsEnforceDateBasedDownload;
+  }
+
+  public void setEfgsEnforceDateBasedDownload(boolean efgsEnforceDateBasedDownload) {
+    this.efgsEnforceDateBasedDownload = efgsEnforceDateBasedDownload;
   }
 
   public Integer getRetentionDays() {

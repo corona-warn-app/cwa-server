@@ -37,7 +37,7 @@ public abstract class LocalFile {
    * @param file     the path to the file to be represented
    * @param basePath the base path
    */
-  public LocalFile(Path file, Path basePath) {
+  protected LocalFile(Path file, Path basePath) {
     this.file = file;
     this.s3Key = createS3Key(file, basePath);
     this.checksum = loadChecksum();

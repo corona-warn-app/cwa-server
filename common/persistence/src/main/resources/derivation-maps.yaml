@@ -2,7 +2,7 @@
 # in modules that represent diagnosis key input channels.
 tek-field-derivations:
   # As of version 1.5, EFGS can send DSOS values for which there is no TRL mapped, thus 
-  # we need a system configurable TRL value
+  # we need a system-wide configurable default for TRL
   default-trl: ${DEFAULT_TRL:1}
   # Map containing the derived values of DSOS (days since onset of symptoms) from TRL (transmission risk level)
   dsos-from-trl:
@@ -287,7 +287,7 @@ tek-field-derivations:
     2099: 4
     3000: 4
     3992: 2
-    3993: 3
+    3993: 3   
     3994: 4
     3995: 6
     3996: 7
