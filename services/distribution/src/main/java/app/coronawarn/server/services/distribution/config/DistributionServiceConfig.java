@@ -706,7 +706,7 @@ public class DistributionServiceConfig {
       private static final int LOWER_BOUNDARY_DOWNLOAD_TIMEOUT = 0;
       public static final String MIN_VALUE_ERROR_MESSAGE_DOWNLOAD_TIMEOUT =
           "Download timeout in seconds must be greater than or equal to " + LOWER_BOUNDARY_DOWNLOAD_TIMEOUT;
-      private static final int UPPER_BOUNDARY_DOWNLOAD_TIMEOUT = 120;
+      private static final int UPPER_BOUNDARY_DOWNLOAD_TIMEOUT = 1800;
       public static final String MAX_VALUE_ERROR_MESSAGE_DOWNLOAD_TIMEOUT =
           "Download timeout in seconds must be lower than or equal to " + UPPER_BOUNDARY_DOWNLOAD_TIMEOUT;
       private static final int LOWER_BOUNDARY_OVERALL_TIMEOUT = 0;
