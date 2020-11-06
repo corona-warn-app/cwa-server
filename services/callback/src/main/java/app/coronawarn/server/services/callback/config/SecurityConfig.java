@@ -32,8 +32,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
   protected void configure(HttpSecurity http) throws Exception {
     http.authorizeRequests()
         .mvcMatchers(HttpMethod.GET, CALLBACK_ROUTE).permitAll()
-        .anyRequest().denyAll()
-        .and().csrf().disable();
+        .anyRequest().denyAll();
     http.headers().contentSecurityPolicy("default-src 'self'");
   }
 
