@@ -3,7 +3,6 @@ package app.coronawarn.server.common.persistence.domain.config;
 import java.util.Map;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-import org.springframework.boot.test.autoconfigure.data.jdbc.DataJdbcTest;
 
 class TekFieldDerivationsTest {
 
