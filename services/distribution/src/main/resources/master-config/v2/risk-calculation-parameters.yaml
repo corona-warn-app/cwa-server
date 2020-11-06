@@ -1,0 +1,74 @@
+#----------------------------------------------------------------------
+# This is the Corona Warn App master configuration file.
+# ----------------------------------------------------------------------
+#
+# This configuration file will be fetched by the mobile app in order to function.
+#
+# min-risk-score: exposure incidents with scores lower than the value of this property will be excluded by the ExposureNotification framework.
+#
+# For details regarding other properties - please see their respective configuration files.
+#
+# Change this file with caution!
+
+
+minutesAtAttenuationFilters:
+  -
+    attenuationRange:
+      min: 0
+      max: 73
+      maxExclusive: true
+  -
+    dropIfMinutesInRange:
+      min: 0
+      max: 10
+      maxExclusive: true
+
+trlFilters:
+  -
+    dropIfTrlInRange:
+      min: 1
+      max: 2
+
+minutesAtAttenuationWeights:
+  -
+    attenuationRange:
+      min: 0
+      max: 55
+      maxExclusive: true
+  weight: 1.0
+  -
+    attenuationRange:
+      min: 55
+      max: 63
+      maxExclusive: true
+  weight: 0.5
+
+normalizedTimePerEWToRiskLevelMapping:
+  -
+    normalizedTimeRange:
+      min: 0
+      max: 15
+      maxExclusive: true
+  riskLevel: 1
+  -
+    normalizedTimeRange:
+      min: 15
+      max: 9999
+  riskLevel: 2
+
+normalizedTimePerDayToRiskLevelMapping:
+  -
+    normalizedTimeRange:
+      min: 0
+      max: 15
+      maxExclusive: true
+  riskLevel: 1
+  -
+    normalizedTimeRange:
+      min: 15
+      max: 9999
+  riskLevel: 2
+transmissionRiskLevelMultiplier: 0.2
+
+
+
