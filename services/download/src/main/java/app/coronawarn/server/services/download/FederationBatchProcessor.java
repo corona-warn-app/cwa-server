@@ -10,6 +10,7 @@ import static java.util.stream.Collectors.toList;
 import app.coronawarn.server.common.persistence.domain.DiagnosisKey;
 import app.coronawarn.server.common.persistence.domain.FederationBatchInfo;
 import app.coronawarn.server.common.persistence.domain.FederationBatchStatus;
+import app.coronawarn.server.common.persistence.exception.InvalidDiagnosisKeyException;
 import app.coronawarn.server.common.persistence.service.DiagnosisKeyService;
 import app.coronawarn.server.common.persistence.service.FederationBatchInfoService;
 import app.coronawarn.server.common.protocols.external.exposurenotification.DiagnosisKeyBatch;
@@ -89,6 +90,8 @@ public class FederationBatchProcessor {
       logger.info("Triggering download of first batch for date {}.", date);
       BatchDownloadResponse response = federationGatewayDownloadService.downloadBatch(date);
       batchInfoService.save(new FederationBatchInfo(response.getBatchTag(), date));
+    } catch (BatchDownloadException e) {
+      logger.error("Triggering download of first batch for date {} failed. Reason: {}.", date, e.getMessage());
     } catch (FatalFederationGatewayException e) {
       throw e;
     } catch (Exception e) {
@@ -97,8 +100,8 @@ public class FederationBatchProcessor {
   }
 
   /**
-   * Downloads and processes all batches from the federation gateway that have previously been marked with the status
-   * value {@link FederationBatchStatus#ERROR}.
+   * Downloads and processes all batches from the federation gateway that have previously been
+   * marked with the status value {@link FederationBatchStatus#ERROR}.
    */
   public void processErrorFederationBatches() {
     List<FederationBatchInfo> federationBatchInfoWithError = batchInfoService.findByStatus(ERROR);
@@ -157,6 +160,11 @@ public class FederationBatchProcessor {
       }, () -> logger.info("Batch for date {} and batchTag {} did not contain any keys.", date, batchTag));
       batchInfoService.updateStatus(batchInfo, batchContainsInvalidKeys.get() ? PROCESSED_WITH_ERROR : PROCESSED);
       return response.getNextBatchTag();
+    } catch (BatchDownloadException e) {
+      logger.error("Federation batch processing for date {} and batchTag {} failed. Status set to {}. Reason: {}.",
+          date, batchTag, errorStatus.name(), e.getMessage());
+      batchInfoService.updateStatus(batchInfo, errorStatus);
+      return Optional.empty();
     } catch (FatalFederationGatewayException e) {
       throw e;
     } catch (Exception e) {
@@ -184,8 +192,11 @@ public class FederationBatchProcessor {
           .withReportType(ReportType.CONFIRMED_TEST)
           .withFieldNormalization(new FederationKeyNormalizer(config))
           .build());
-    } catch (Exception ex) {
-      logger.info("Building diagnosis key from federation diagnosis key failed.", ex);
+    } catch (InvalidDiagnosisKeyException e) {
+      logger.info("Building diagnosis key from federation diagnosis key failed. Reason: {}.", e.getMessage());
+      return Optional.empty();
+    } catch (Exception e) {
+      logger.info("Building diagnosis key from federation diagnosis key failed.", e);
       return Optional.empty();
     }
   }
