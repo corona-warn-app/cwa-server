@@ -11,7 +11,9 @@ import app.coronawarn.server.services.distribution.assembly.diagnosiskeys.Diagno
 import app.coronawarn.server.services.distribution.assembly.diagnosiskeys.ProdDiagnosisKeyBundler;
 import app.coronawarn.server.services.distribution.assembly.structure.WritableOnDisk;
 import app.coronawarn.server.services.distribution.assembly.structure.directory.Directory;
+import app.coronawarn.server.services.distribution.assembly.transformation.EnfParameterAdapter;
 import app.coronawarn.server.services.distribution.config.DistributionServiceConfig;
+import app.coronawarn.server.services.distribution.config.TransmissionRiskLevelEncoding;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -28,9 +30,11 @@ import org.springframework.boot.test.context.ConfigFileApplicationContextInitial
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
-@EnableConfigurationProperties(value = DistributionServiceConfig.class)
+@EnableConfigurationProperties(value = {DistributionServiceConfig.class, TransmissionRiskLevelEncoding.class})
 @ExtendWith(SpringExtension.class)
-@ContextConfiguration(classes = {CryptoProvider.class, DistributionServiceConfig.class, KeySharingPoliciesChecker.class},
+@ContextConfiguration(
+    classes = {CryptoProvider.class, DistributionServiceConfig.class,
+        KeySharingPoliciesChecker.class, EnfParameterAdapter.class,},
     initializers = ConfigFileApplicationContextInitializer.class)
 class DiagnosisKeysStructureProviderTest {
 
@@ -39,6 +43,9 @@ class DiagnosisKeysStructureProviderTest {
 
   @Autowired
   KeySharingPoliciesChecker sharingPoliciesChecker;
+
+  @Autowired
+  EnfParameterAdapter enfParameterAdapter;
 
   @Autowired
   DistributionServiceConfig distributionServiceConfig;
@@ -60,7 +67,7 @@ class DiagnosisKeysStructureProviderTest {
   void testGetDiagnosisKeysReturnsCorrectDirectoryName() {
     DiagnosisKeyBundler bundler = new ProdDiagnosisKeyBundler(distributionServiceConfig, sharingPoliciesChecker);
     DiagnosisKeysStructureProvider diagnosisKeysStructureProvider = new DiagnosisKeysStructureProvider(
-        diagnosisKeyService, cryptoProvider, distributionServiceConfig, bundler);
+        diagnosisKeyService, cryptoProvider, distributionServiceConfig, bundler, enfParameterAdapter);
     Directory<WritableOnDisk> diagnosisKeys = diagnosisKeysStructureProvider.getDiagnosisKeys();
     Assertions.assertEquals("diagnosis-keys", diagnosisKeys.getName());
   }
