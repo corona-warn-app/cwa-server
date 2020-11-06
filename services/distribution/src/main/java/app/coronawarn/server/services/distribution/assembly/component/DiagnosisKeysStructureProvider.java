@@ -12,9 +12,6 @@ import app.coronawarn.server.services.distribution.assembly.structure.util.TimeU
 import app.coronawarn.server.services.distribution.assembly.transformation.EnfParameterAdapter;
 import app.coronawarn.server.services.distribution.config.DistributionServiceConfig;
 import java.util.Collection;
-import java.util.HashSet;
-import java.util.List;
-import java.util.stream.Collectors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;

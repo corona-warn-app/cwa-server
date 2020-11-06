@@ -22,7 +22,7 @@ import app.coronawarn.server.services.distribution.config.TransmissionRiskLevelE
 @EnableConfigurationProperties(value = TransmissionRiskLevelEncoding.class)
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration(classes = {EnfParameterAdapter.class}, initializers = ConfigFileApplicationContextInitializer.class)
-public class EnfParameterAdapterComponentTest {
+class EnfParameterAdapterComponentTest {
 
   @Autowired
   private EnfParameterAdapter parameterAdapter;

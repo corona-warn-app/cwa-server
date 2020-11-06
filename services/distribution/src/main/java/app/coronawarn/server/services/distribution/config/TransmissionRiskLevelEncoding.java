@@ -34,6 +34,10 @@ import org.springframework.validation.annotation.Validated;
     factory = YamlPropertySourceFactory.class)
 public class TransmissionRiskLevelEncoding implements Validator {
 
+  private static final String TRL_TO_RT_FIELDNAME = "transmissionRiskToReportType";
+
+  private static final String TRL_TO_DSOS_MAP_FIELDNAME = "transmissionRiskToDaysSinceSymptoms";
+
   private static final List<Integer> ENF_V2_DSOS_VALUES = List.of(1,2);
 
   private Map<Integer, Integer> transmissionRiskToDaysSinceSymptoms;
@@ -77,9 +81,9 @@ public class TransmissionRiskLevelEncoding implements Validator {
 
   @Override
   public void validate(Object target, Errors errors) {
-    ValidationUtils.rejectIfEmpty(errors, "transmissionRiskToDaysSinceSymptoms", "trlToDsos.empty",
+    ValidationUtils.rejectIfEmpty(errors, TRL_TO_DSOS_MAP_FIELDNAME, "trlToDsos.empty",
         "TRL to DSOS encoding map is null or empty");
-    ValidationUtils.rejectIfEmpty(errors, "transmissionRiskToReportType", "trlToReportType.empty",
+    ValidationUtils.rejectIfEmpty(errors, TRL_TO_RT_FIELDNAME, "trlToReportType.empty",
         "TRL to RT encoding map is null or empty");
 
     TransmissionRiskLevelEncoding encodingMappings = (TransmissionRiskLevelEncoding) target;
@@ -92,10 +96,10 @@ public class TransmissionRiskLevelEncoding implements Validator {
   private void checkTransmissionRiskToReportTypeMap(Errors errors,
       TransmissionRiskLevelEncoding encodingMappings) {
     if (trlKeysNotInRange(encodingMappings.getTransmissionRiskToReportType())) {
-      errors.rejectValue("transmissionRiskToReportType", "", "Invalid TRL values");
+      errors.rejectValue(TRL_TO_RT_FIELDNAME, "", "Invalid TRL values");
     }
     if (reportTypeValueNotAllowed(encodingMappings.getTransmissionRiskToReportType())) {
-      errors.rejectValue("transmissionRiskToReportType", "",
+      errors.rejectValue(TRL_TO_RT_FIELDNAME, "",
           "Invalid Report type values");
     }
   }
@@ -104,11 +108,11 @@ public class TransmissionRiskLevelEncoding implements Validator {
   private void checkTransmissionRiskToDaysSinceSymptomsMap(Errors errors,
       TransmissionRiskLevelEncoding encodingMappings) {
     if (trlKeysNotInRange(encodingMappings.getTransmissionRiskToDaysSinceSymptoms())) {
-      errors.rejectValue("transmissionRiskToDaysSinceSymptoms", "",
+      errors.rejectValue(TRL_TO_DSOS_MAP_FIELDNAME, "",
           "Invalid TRL values");
     }
     if (daysSinceSymptomsNotInEnfv2Range(encodingMappings.getTransmissionRiskToDaysSinceSymptoms())) {
-      errors.rejectValue("transmissionRiskToDaysSinceSymptoms", "",
+      errors.rejectValue(TRL_TO_DSOS_MAP_FIELDNAME, "",
           "Invalid DSOS values");
     }
   }
