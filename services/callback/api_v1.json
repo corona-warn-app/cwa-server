@@ -40,7 +40,7 @@
             "description": "Response with empty body."
           },
           "400": {
-            "description": "Response with empty body. Occurs, e.g., when provided date is invalid"
+            "description": "Response with empty body. Occurs, e.g., when provided date is invalid."
           }
         }
       }
