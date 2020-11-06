@@ -101,6 +101,10 @@ services:
       POSTGRESQL_USER_CALLBACK: ${POSTGRES_CALLBACK_USER}
       POSTGRESQL_PASSWORD_FLYWAY: ${POSTGRES_FLYWAY_PASSWORD}
       POSTGRESQL_USER_FLYWAY: ${POSTGRES_FLYWAY_USER}
+      VAULT_EFGS_BATCHIGNING_SECRET: ${SECRET_PRIVATE}
+      VAULT_EFGS_BATCHIGNING_CERTIFICATE: file:/secrets/efgs_signing_cert.pem
+    volumes:
+      - ./docker-compose-test-secrets:/secrets
   postgres:
     image: postgres:11.8
     restart: always
