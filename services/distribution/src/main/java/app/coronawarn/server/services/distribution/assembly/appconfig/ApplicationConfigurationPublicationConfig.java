@@ -7,10 +7,23 @@ import app.coronawarn.server.common.protocols.internal.ApplicationConfiguration;
 import app.coronawarn.server.common.protocols.internal.ApplicationConfiguration.Builder;
 import app.coronawarn.server.common.protocols.internal.ApplicationVersionConfiguration;
 import app.coronawarn.server.common.protocols.internal.ApplicationVersionInfo;
+import app.coronawarn.server.common.protocols.internal.DayPackageMetadata;
+import app.coronawarn.server.common.protocols.internal.ExposureDetectionParametersAndroid;
+import app.coronawarn.server.common.protocols.internal.ExposureDetectionParametersIOS;
+import app.coronawarn.server.common.protocols.internal.HourPackageMetadata;
+import app.coronawarn.server.common.protocols.internal.KeyDownloadParametersAndroid;
+import app.coronawarn.server.common.protocols.internal.KeyDownloadParametersIOS;
 import app.coronawarn.server.common.protocols.internal.SemanticVersion;
 import app.coronawarn.server.services.distribution.config.DistributionServiceConfig;
+import app.coronawarn.server.services.distribution.config.DistributionServiceConfig.AppConfigParameters.AndroidExposureDetectionParameters;
+import app.coronawarn.server.services.distribution.config.DistributionServiceConfig.AppConfigParameters.AndroidKeyDownloadParameters;
+import app.coronawarn.server.services.distribution.config.DistributionServiceConfig.AppConfigParameters.DeserializedDayPackageMetadata;
+import app.coronawarn.server.services.distribution.config.DistributionServiceConfig.AppConfigParameters.DeserializedHourPackageMetadata;
+import app.coronawarn.server.services.distribution.config.DistributionServiceConfig.AppConfigParameters.IosExposureDetectionParameters;
+import app.coronawarn.server.services.distribution.config.DistributionServiceConfig.AppConfigParameters.IosKeyDownloadParameters;
 import app.coronawarn.server.services.distribution.config.DistributionServiceConfig.AppVersions;
 import java.util.List;
+import java.util.stream.Collectors;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -23,6 +36,10 @@ import org.springframework.context.annotation.Configuration;
  *   <li>App Config, e.g. minimum risk threshold</li>
  *   <li>Supported countries</li>
  *   <li>Min/Max application version configuration</li>
+ *   <li>AndroidKeyDownloadParameters configuration</li>
+ *   <li>IosKeyDownloadParameters configuration</li>
+ *   <li>AndroidExposureDetectionParameters configuration</li>
+ *   <li>IosExposureDetectionParameters configuration</li>
  * </ul>
  *
  * <p>The application config is fetched from the master-config folder. Furthermore it's extended with the
@@ -42,6 +59,7 @@ public class ApplicationConfigurationPublicationConfig {
    * @return the exposure configuration as ApplicationConfiguration
    * @throws UnableToLoadFileException when the file/transformation did not succeed
    */
+
   @Bean
   public ApplicationConfiguration createMasterConfiguration(DistributionServiceConfig distributionServiceConfig)
       throws UnableToLoadFileException {
@@ -52,6 +70,10 @@ public class ApplicationConfigurationPublicationConfig {
         )
         .addAllSupportedCountries(List.of(distributionServiceConfig.getSupportedCountries()))
         .setAppVersion(buildApplicationVersionConfiguration(distributionServiceConfig))
+        .setAndroidKeyDownloadParameters(buildKeyDownloadParametersAndroid(distributionServiceConfig))
+        .setIosKeyDownloadParameters(buildKeyDownloadParametersIos(distributionServiceConfig))
+        .setAndroidExposureDetectionParameters(buildExposureDetectionParametersAndroid(distributionServiceConfig))
+        .setIosExposureDetectionParameters(buildExposureDetectionParametersIos(distributionServiceConfig))
         .build();
   }
 
@@ -66,6 +88,71 @@ public class ApplicationConfigurationPublicationConfig {
     return ApplicationVersionConfiguration.newBuilder()
         .setAndroid(buildApplicationVersionInfo(appVersions.getLatestAndroid(), appVersions.getMinAndroid()))
         .setIos(buildApplicationVersionInfo(appVersions.getLatestIos(), appVersions.getMinIos()))
+        .build();
+  }
+
+  /**
+   * Fetches the master configuration as a KeyDownloadParametersAndroid instance.
+   *
+   * @return test.
+   */
+  public KeyDownloadParametersAndroid buildKeyDownloadParametersAndroid(
+      DistributionServiceConfig distributionServiceConfig) {
+    AndroidKeyDownloadParameters androidKeyDownloadParameters =
+        distributionServiceConfig.getAppConfigParameters().getAndroidKeyDownloadParameters();
+    return KeyDownloadParametersAndroid.newBuilder()
+        .setOverallTimeoutInSeconds(androidKeyDownloadParameters.getOverallTimeoutInSeconds())
+        .setDownloadTimeoutInSeconds(androidKeyDownloadParameters.getDownloadTimeoutInSeconds())
+        .addAllCachedDayPackagesToUpdateOnETagMismatch(buildCachedDayPackagesToUpdateOnETagMismatch(
+            androidKeyDownloadParameters.getCachedDayPackagesToUpdateOnETagMismatch()))
+        .addAllCachedHourPackagesToUpdateOnETagMismatch(buildCachedHourPackagesToUpdateOnETagMismatch(
+            androidKeyDownloadParameters.getCachedHourPackagesToUpdateOnETagMismatch()))
+        .build();
+  }
+
+  /**
+   * Fetches the master configuration as a KeyDownloadParametersIOS instance.
+   *
+   * @return test.
+   */
+  public KeyDownloadParametersIOS buildKeyDownloadParametersIos(
+      DistributionServiceConfig distributionServiceConfig) {
+    IosKeyDownloadParameters iosKeyDownloadParameters =
+        distributionServiceConfig.getAppConfigParameters().getIosKeyDownloadParameters();
+    return KeyDownloadParametersIOS.newBuilder()
+        .addAllCachedDayPackagesToUpdateOnETagMismatch(buildCachedDayPackagesToUpdateOnETagMismatch(
+            iosKeyDownloadParameters.getCachedDayPackagesToUpdateOnETagMismatch()))
+        .addAllCachedHourPackagesToUpdateOnETagMismatch(buildCachedHourPackagesToUpdateOnETagMismatch(
+            iosKeyDownloadParameters.getCachedHourPackagesToUpdateOnETagMismatch()))
+        .build();
+  }
+
+  /**
+   * Fetches the master configuration as a ExposureDetectionParametersAndroid instance.
+   *
+   * @return test.
+   */
+  public ExposureDetectionParametersAndroid buildExposureDetectionParametersAndroid(
+      DistributionServiceConfig distributionServiceConfig) {
+    AndroidExposureDetectionParameters androidExposureDetectionParameters =
+        distributionServiceConfig.getAppConfigParameters().getAndroidExposureDetectionParameters();
+    return ExposureDetectionParametersAndroid.newBuilder()
+        .setMaxExposureDetectionsPerInterval(androidExposureDetectionParameters.getMaxExposureDetectionsPerInterval())
+        .setOverallTimeoutInSeconds(androidExposureDetectionParameters.getOverallTimeoutInSeconds())
+        .build();
+  }
+
+  /**
+   * Fetches the master configuration as a ExposureDetectionParametersIOS instance.
+   *
+   * @return test.
+   */
+  public ExposureDetectionParametersIOS buildExposureDetectionParametersIos(
+      DistributionServiceConfig distributionServiceConfig) {
+    IosExposureDetectionParameters iosExposureDetectionParameters =
+        distributionServiceConfig.getAppConfigParameters().getIosExposureDetectionParameters();
+    return ExposureDetectionParametersIOS.newBuilder()
+        .setMaxExposureDetectionsPerInterval(iosExposureDetectionParameters.getMaxExposureDetectionsPerInterval())
         .build();
   }
 
@@ -87,5 +174,27 @@ public class ApplicationConfigurationPublicationConfig {
   private int getSemanticVersionNumber(String version, int position) {
     String[] items = version.split("\\.");
     return Integer.valueOf(items[position]);
+  }
+
+  private List<DayPackageMetadata> buildCachedDayPackagesToUpdateOnETagMismatch(
+      List<DeserializedDayPackageMetadata> deserializedDayPackage) {
+    return deserializedDayPackage.stream().map(deserializedConfig ->
+        DayPackageMetadata.newBuilder()
+            .setRegion(deserializedConfig.getRegion())
+            .setDate(deserializedConfig.getDate())
+            .setEtag(deserializedConfig.getEtag())
+            .build()
+    ).collect(Collectors.toList());
+  }
+
+  private List<HourPackageMetadata> buildCachedHourPackagesToUpdateOnETagMismatch(
+      List<DeserializedHourPackageMetadata> deserializedHourPackage) {
+    return deserializedHourPackage.stream().map(deserializedHourConfig ->
+        HourPackageMetadata.newBuilder()
+            .setRegion(deserializedHourConfig.getRegion())
+            .setDate(deserializedHourConfig.getDate())
+            .setHour(deserializedHourConfig.getHour())
+            .setEtag(deserializedHourConfig.getEtag())
+            .build()).collect(Collectors.toList());
   }
 }
