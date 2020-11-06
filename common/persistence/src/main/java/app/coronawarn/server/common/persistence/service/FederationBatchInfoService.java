@@ -34,11 +34,9 @@ public class FederationBatchInfoService {
   @Transactional
   public boolean save(FederationBatchInfo federationBatchInfo) {
     String batchTag = federationBatchInfo.getBatchTag();
-    boolean noConflicts = !federationBatchInfoRepository.existsById(batchTag);
-    federationBatchInfoRepository
+    return federationBatchInfoRepository
         .saveDoNothingOnConflict(batchTag, federationBatchInfo.getDate(),
             federationBatchInfo.getStatus().name());
-    return noConflicts;
   }
 
   /**
