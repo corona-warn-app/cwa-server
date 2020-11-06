@@ -29,12 +29,16 @@ public class FederationBatchInfoService {
    * the database, this federation batch is not persisted.
    *
    * @param federationBatchInfo must not contain {@literal null}.
+   * @return boolean to determine whether the batch was already existing.
    */
   @Transactional
-  public void save(FederationBatchInfo federationBatchInfo) {
+  public boolean save(FederationBatchInfo federationBatchInfo) {
+    String batchTag = federationBatchInfo.getBatchTag();
+    boolean noConflicts = !federationBatchInfoRepository.existsById(batchTag);
     federationBatchInfoRepository
-        .saveDoNothingOnConflict(federationBatchInfo.getBatchTag(), federationBatchInfo.getDate(),
+        .saveDoNothingOnConflict(batchTag, federationBatchInfo.getDate(),
             federationBatchInfo.getStatus().name());
+    return noConflicts;
   }
 
   /**
