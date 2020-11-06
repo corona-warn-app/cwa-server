@@ -84,6 +84,19 @@ public class Helpers {
       ReportType reportType,
       int daysSinceOnsetOfSymptoms) {
 
+    return buildDiagnosisKeys(startIntervalNumber, submissionTimestamp, number, originCountry,
+        visitedCountries, reportType, daysSinceOnsetOfSymptoms, 2);
+  }
+
+  public static List<DiagnosisKey> buildDiagnosisKeys(int startIntervalNumber,
+      long submissionTimestamp,
+      int number,
+      String originCountry,
+      Set<String> visitedCountries,
+      ReportType reportType,
+      int daysSinceOnsetOfSymptoms,
+      int transmissionRiskLevel) {
+
     return IntStream.range(0, number)
         .mapToObj(ignoredValue ->
         {
@@ -94,7 +107,7 @@ public class Helpers {
           return DiagnosisKey.builder()
               .withKeyData(keyData)
               .withRollingStartIntervalNumber(startIntervalNumber)
-              .withTransmissionRiskLevel(2)
+              .withTransmissionRiskLevel(transmissionRiskLevel)
               .withSubmissionTimestamp(submissionTimestamp)
               .withCountryCode(originCountry)
               .withVisitedCountries(visitedCountries)
