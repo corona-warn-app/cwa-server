@@ -8,7 +8,7 @@
     }
   },
   "paths": {
-    "/version/{}/callback": {
+    "/version/{version}/callback": {
       "get": {
         "summary": "API to receive the BatchTag for the latest batch from Federation Gateway.",
         "description": "API to allow the Federation Gateway to send the tags/date combinations of batches that are ready to be downloaded. A response with an empty body will be returned.",
