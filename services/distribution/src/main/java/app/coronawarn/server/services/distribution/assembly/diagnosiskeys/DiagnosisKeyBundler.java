@@ -29,8 +29,6 @@ import org.slf4j.LoggerFactory;
  */
 public abstract class DiagnosisKeyBundler {
 
-  public static final String COUNTRY_ERROR_MESSAGE =
-      "The country {} received is not included in the list of supported countries";
   private static final Logger logger = LoggerFactory.getLogger(DiagnosisKeyBundler.class);
 
   /**
@@ -191,7 +189,7 @@ public abstract class DiagnosisKeyBundler {
 
   private boolean isCountrySupported(String country) {
     if (!supportedCountries.contains(country) && !country.equals(euPackageName)) {
-      logger.warn(COUNTRY_ERROR_MESSAGE, country);
+      logger.warn("The country {} received is not included in the list of supported countries", country);
       return false;
     }
     return true;
