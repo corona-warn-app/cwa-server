@@ -1,6 +1,7 @@
 package app.coronawarn.server.services.distribution.config;
 
 import app.coronawarn.server.common.protocols.external.exposurenotification.SignatureInfo;
+import app.coronawarn.server.services.distribution.utils.SerializationUtils;
 import java.util.List;
 import java.util.stream.Collectors;
 import javax.validation.constraints.Max;
@@ -742,21 +743,52 @@ public class DistributionServiceConfig {
       }
     }
 
+    public static class DeserializedDayPackageMetadata {
+
+      private String region;
+      private String date;
+      private String etag;
+
+      public String getRegion() {
+        return region;
+      }
+
+      public String getDate() {
+        return date;
+      }
+
+      public String getEtag() {
+        return etag;
+      }
+    }
+
+    public static class DeserializedHourPackageMetadata extends DeserializedDayPackageMetadata {
+
+      private Integer hour;
+
+      public Integer getHour() {
+        return hour;
+      }
+    }
+
     private abstract static class CommonKeyDownloadParameters {
 
       private String cachedDayPackagesToUpdateOnETagMismatch;
       private String cachedHourPackagesToUpdateOnETagMismatch;
 
-      public String getCachedDayPackagesToUpdateOnETagMismatch() {
-        return cachedDayPackagesToUpdateOnETagMismatch;
+      public List<DeserializedDayPackageMetadata> getCachedDayPackagesToUpdateOnETagMismatch() {
+        return SerializationUtils.deserializeJson(cachedDayPackagesToUpdateOnETagMismatch,
+            typeFactory -> typeFactory.constructCollectionType(List.class, DeserializedDayPackageMetadata.class));
       }
 
       public void setCachedDayPackagesToUpdateOnETagMismatch(String cachedDayPackagesToUpdateOnETagMismatch) {
         this.cachedDayPackagesToUpdateOnETagMismatch = cachedDayPackagesToUpdateOnETagMismatch;
       }
 
-      public String getCachedHourPackagesToUpdateOnETagMismatch() {
-        return cachedHourPackagesToUpdateOnETagMismatch;
+      public List<DeserializedHourPackageMetadata> getCachedHourPackagesToUpdateOnETagMismatch() {
+        return SerializationUtils.deserializeJson(cachedHourPackagesToUpdateOnETagMismatch,
+            typeFactory -> typeFactory
+                .constructCollectionType(List.class, DeserializedHourPackageMetadata.class));
       }
 
       public void setCachedHourPackagesToUpdateOnETagMismatch(String cachedHourPackagesToUpdateOnETagMismatch) {
