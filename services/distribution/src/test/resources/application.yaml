@@ -72,7 +72,7 @@ services:
       android-key-download-parameters:
         cached-day-packages-to-update-on-etag-mismatch: "[]"
         cached-hour-packages-to-update-on-etag-mismatch: "[]"
-        download-timeout-in-seconds: 450
+        download-timeout-in-seconds: 30
         overall-timeout-in-seconds: 480
       ios-exposure-detection-parameters:
         max-exposure-detections-per-interval: 6

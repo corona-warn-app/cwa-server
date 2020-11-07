@@ -1,5 +1,6 @@
 package app.coronawarn.server.services.distribution.config;
 
+import static java.util.Collections.emptyList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.when;
@@ -120,23 +121,23 @@ class DistributionServiceConfigTest {
 
     @Test
     void testIosKeyDownloadParameters() {
-      assertEquals("[]",
+      assertEquals(emptyList(),
           distributionServiceConfig.getAppConfigParameters().getIosKeyDownloadParameters()
               .getCachedDayPackagesToUpdateOnETagMismatch());
-      assertEquals("[]",
+      assertEquals(emptyList(),
           distributionServiceConfig.getAppConfigParameters().getIosKeyDownloadParameters()
               .getCachedHourPackagesToUpdateOnETagMismatch());
     }
 
     @Test
     void testAndroidKeyDownloadParameters() {
-      assertEquals("[]",
+      assertEquals(emptyList(),
           distributionServiceConfig.getAppConfigParameters().getAndroidKeyDownloadParameters()
               .getCachedDayPackagesToUpdateOnETagMismatch());
-      assertEquals("[]",
+      assertEquals(emptyList(),
           distributionServiceConfig.getAppConfigParameters().getAndroidKeyDownloadParameters()
               .getCachedHourPackagesToUpdateOnETagMismatch());
-      assertEquals(450,
+      assertEquals(30,
           distributionServiceConfig.getAppConfigParameters().getAndroidKeyDownloadParameters()
               .getDownloadTimeoutInSeconds());
       assertEquals(480,
