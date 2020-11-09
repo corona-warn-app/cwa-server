@@ -46,4 +46,25 @@ public class YamlLoader {
       throw new UnableToLoadFileException("Failed to load file " + path, e);
     }
   }
+
+  public static <T> T loadYamlIntoClass(String path, Class<T> classType)
+      throws UnableToLoadFileException {
+    Yaml yaml = new Yaml(new YamlConstructorForProtoBuf(path));
+    // no setters for generated message classes available
+    yaml.setBeanAccess(BeanAccess.FIELD);
+
+    Resource configurationResource = new ClassPathResource(path);
+    try (InputStream inputStream = configurationResource.getInputStream()) {
+      T loaded = yaml.loadAs(inputStream, classType);
+      if (loaded == null) {
+        throw new UnableToLoadFileException(path);
+      }
+
+      return loaded;
+    } catch (YAMLException e) {
+      throw new UnableToLoadFileException("Parsing failed", e);
+    } catch (IOException e) {
+      throw new UnableToLoadFileException("Failed to load file " + path, e);
+    }
+  }
 }

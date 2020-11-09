@@ -8,7 +8,10 @@ import app.coronawarn.server.common.protocols.internal.v2.DayPackageMetadata;
 import app.coronawarn.server.common.protocols.internal.v2.ExposureDetectionParametersAndroid;
 import app.coronawarn.server.common.protocols.internal.v2.HourPackageMetadata;
 import app.coronawarn.server.common.protocols.internal.v2.KeyDownloadParametersAndroid;
+import app.coronawarn.server.common.protocols.internal.v2.RiskCalculationParameters;
+import app.coronawarn.server.common.protocols.internal.v2.RiskCalculationParameters.Builder;
 import app.coronawarn.server.common.protocols.internal.v2.SemanticVersion;
+import app.coronawarn.server.services.distribution.assembly.appconfig.parsing.v2.DeserializedDiagnosisKeysDataMapping;
 import app.coronawarn.server.services.distribution.config.DistributionServiceConfig;
 import app.coronawarn.server.services.distribution.config.DistributionServiceConfig.AppConfigParameters.AndroidExposureDetectionParameters;
 import app.coronawarn.server.services.distribution.config.DistributionServiceConfig.AppConfigParameters.AndroidKeyDownloadParameters;
@@ -34,7 +37,8 @@ public class ApplicationConfigurationV2PublicationConfig {
    * The location of the exposure configuration master files for Android and Ios.
    */
   public static final String IOS_V2_MASTER_FILE = "master-config/v2/app-config-ios.yaml";
-  public static final String ANDROID_V2_MASTER_FILE = "master-config/v2/app-config-android.yaml";
+  public static final String ANDROID_V2_RISK_PARAMETERS_FILE = "master-config/v2/risk-calculation-parameters.yaml";
+  private static final String ANDROID_V2_DATA_MAPPING_FILE = "master-config/v2/diagnosis-keys-data-mapping.yaml";
 
   /**
    * Fetches the master configuration as a ApplicationConfigurationAndroid instance.
@@ -42,7 +46,15 @@ public class ApplicationConfigurationV2PublicationConfig {
   @Bean
   public ApplicationConfigurationAndroid createAndroidV2Configuration(DistributionServiceConfig distributionServiceConfig)
       throws UnableToLoadFileException {
-    return YamlLoader.loadYamlIntoProtobufBuilder(ANDROID_V2_MASTER_FILE, ApplicationConfigurationAndroid.Builder.class)
+    Builder riskCalculationParameterBuilder = YamlLoader.loadYamlIntoProtobufBuilder(
+        ANDROID_V2_RISK_PARAMETERS_FILE, RiskCalculationParameters.Builder.class);
+
+    DeserializedDiagnosisKeysDataMapping dataMapping = YamlLoader.loadYamlIntoClass(
+        ANDROID_V2_DATA_MAPPING_FILE, DeserializedDiagnosisKeysDataMapping.class);
+
+
+    return ApplicationConfigurationAndroid.newBuilder()
+        .setRiskCalculationParameters(riskCalculationParameterBuilder)
         .setMinVersionCode(distributionServiceConfig.getAppVersions().getMinAndroidVersionCode())
         .setLatestVersionCode(distributionServiceConfig.getAppVersions().getLatestAndroidVersionCode())
         .setAppFeatures(buildAppFeatures(distributionServiceConfig))
