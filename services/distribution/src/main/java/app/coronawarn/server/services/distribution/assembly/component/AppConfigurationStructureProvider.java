@@ -3,7 +3,9 @@
 package app.coronawarn.server.services.distribution.assembly.component;
 
 import app.coronawarn.server.common.protocols.internal.ApplicationConfiguration;
+import app.coronawarn.server.common.protocols.internal.v2.ApplicationConfigurationIOS;
 import app.coronawarn.server.services.distribution.assembly.appconfig.structure.directory.AppConfigurationDirectory;
+import app.coronawarn.server.services.distribution.assembly.appconfig.structure.directory.v2.AppConfigurationIosDirectory;
 import app.coronawarn.server.services.distribution.assembly.structure.WritableOnDisk;
 import app.coronawarn.server.services.distribution.assembly.structure.directory.Directory;
 import app.coronawarn.server.services.distribution.config.DistributionServiceConfig;
@@ -19,12 +21,14 @@ public class AppConfigurationStructureProvider {
   private final CryptoProvider cryptoProvider;
   private final DistributionServiceConfig distributionServiceConfig;
   private final ApplicationConfiguration applicationConfiguration;
+  private final ApplicationConfigurationIOS applicationConfigurationIos;
 
   AppConfigurationStructureProvider(CryptoProvider cryptoProvider, DistributionServiceConfig distributionServiceConfig,
-      ApplicationConfiguration applicationConfiguration) {
+      ApplicationConfiguration applicationConfiguration, ApplicationConfigurationIOS applicationConfigurationIos) {
     this.cryptoProvider = cryptoProvider;
     this.distributionServiceConfig = distributionServiceConfig;
     this.applicationConfiguration = applicationConfiguration;
+    this.applicationConfigurationIos = applicationConfigurationIos;
   }
 
   public Directory<WritableOnDisk> getAppConfiguration() {
@@ -37,7 +41,6 @@ public class AppConfigurationStructureProvider {
   }
 
   public Directory<WritableOnDisk> getAppConfigurationV2ForIos() {
-    //todo
-    return null;
+    return new AppConfigurationIosDirectory(applicationConfigurationIos, cryptoProvider, distributionServiceConfig);
   }
 }

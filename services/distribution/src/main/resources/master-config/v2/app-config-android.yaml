@@ -7,6 +7,7 @@
 # For details regarding other properties - please see their respective .proto configuration files.
 #
 # Change this file with caution!
+
 risk-calculation-parameters: !include risk-calculation-parameters.yaml
 diagnosis-keys-data-mapping: !include diagnosis-keys-data-mapping.yaml
 daily-summaries-config: !include daily-summaries-config.yaml

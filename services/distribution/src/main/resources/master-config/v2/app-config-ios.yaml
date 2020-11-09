@@ -5,6 +5,7 @@
 # This configuration file will be fetched by the mobile app in order to function.
 #
 # Change this file with caution!
+
 risk-calculation-parameters: !include risk-calculation-parameters.yaml
 exposure-configuration: !include exposure-configuration.yaml
 exposure-config: !include exposure-config.yaml

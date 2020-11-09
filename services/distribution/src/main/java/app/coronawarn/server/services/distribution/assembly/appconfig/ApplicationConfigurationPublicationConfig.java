@@ -77,13 +77,6 @@ public class ApplicationConfigurationPublicationConfig {
         .build();
   }
 
-  @Bean
-  public ApplicationConfigurationIOS createIosV2Configuration(DistributionServiceConfig distributionServiceConfig)
-      throws UnableToLoadFileException {
-    //todo
-    return null;
-  }
-
   /**
    * Fetches the master configuration as a ApplicationConfiguration instance.
    *

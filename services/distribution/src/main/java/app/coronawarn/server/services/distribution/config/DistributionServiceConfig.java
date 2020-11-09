@@ -335,6 +335,16 @@ public class DistributionServiceConfig {
     private String parametersPath;
     @Pattern(regexp = CHAR_AND_NUMBER_REGEX)
     private String appConfigFileName;
+    @Pattern(regexp = CHAR_AND_NUMBER_REGEX)
+    private String appConfigIosFileName;
+
+    public String getAppConfigIosFileName() {
+      return appConfigIosFileName;
+    }
+
+    public void setAppConfigIosFileName(String appConfigIosFileName) {
+      this.appConfigIosFileName = appConfigIosFileName;
+    }
 
     public String getVersionPath() {
       return versionPath;
