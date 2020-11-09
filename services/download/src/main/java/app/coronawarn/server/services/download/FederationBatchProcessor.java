@@ -25,7 +25,9 @@ import java.util.Deque;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
+import java.util.Queue;
 import java.util.concurrent.atomic.AtomicBoolean;
+import org.apache.commons.collections4.queue.CircularFifoQueue;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
@@ -42,6 +44,7 @@ public class FederationBatchProcessor {
   private final FederationGatewayDownloadService federationGatewayDownloadService;
   private final DownloadServiceConfig config;
   private final ValidFederationKeyFilter validFederationKeyFilter;
+  private final Queue<FederationBatchInfo> cachedBatches;
 
   /**
    * Constructor.
@@ -63,6 +66,7 @@ public class FederationBatchProcessor {
     this.federationGatewayDownloadService = federationGatewayDownloadService;
     this.config = config;
     this.validFederationKeyFilter = federationKeyValidator;
+    this.cachedBatches = new CircularFifoQueue<>(config.getCachedBatchesSize());
   }
 
   /**
@@ -130,10 +134,14 @@ public class FederationBatchProcessor {
 
     while (!unprocessedBatches.isEmpty()) {
       FederationBatchInfo currentBatch = unprocessedBatches.remove();
+      cachedBatches.add(currentBatch);
       processBatchAndReturnNextBatchId(currentBatch, ERROR)
           .ifPresent(nextBatchTag -> {
+            FederationBatchInfo batch = new FederationBatchInfo(nextBatchTag, currentBatch.getDate());
             if (config.getEfgsEnforceDateBasedDownload()) {
-              unprocessedBatches.add(new FederationBatchInfo(nextBatchTag, currentBatch.getDate()));
+              if (!cachedBatches.contains(batch)) {
+                unprocessedBatches.add(batch);
+              }
             }
           });
     }

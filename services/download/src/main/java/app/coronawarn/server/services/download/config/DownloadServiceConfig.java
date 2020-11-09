@@ -28,6 +28,17 @@ public class DownloadServiceConfig {
   @Autowired
   private TekFieldDerivations tekFieldDerivations;
 
+  public Integer getCachedBatchesSize() {
+    return cachedBatchesSize;
+  }
+
+  public void setCachedBatchesSize(Integer cachedBatchesSize) {
+    this.cachedBatchesSize = cachedBatchesSize;
+  }
+
+  @Min(1)
+  private Integer cachedBatchesSize;
+
   public Validation getValidation() {
     return validation;
   }

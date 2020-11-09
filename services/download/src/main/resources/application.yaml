@@ -19,6 +19,8 @@ services:
     retention-days: 14
     validation:
       allowed-report-types: ${ALLOWED_REPORT_TYPES:CONFIRMED_TEST,CONFIRMED_CLINICAL_DIAGNOSIS}
+    # The number of batch tags that will be cached in memory
+    cached-batches-size: ${CACHED_BATCHES_SIZE:1000}
 
 federation-gateway:
   base-url: ${FEDERATION_GATEWAY_BASE_URL:http://localhost:8005}
