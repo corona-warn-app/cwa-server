@@ -49,6 +49,16 @@ class S3PublisherTestIT {
   @Autowired
   private S3Publisher s3Publisher;
 
+  @BeforeEach
+  public void setup() {
+    objectStoreAccess.deleteObjectsWithPrefix("");
+  }
+
+  @AfterEach
+  public void teardown() {
+    objectStoreAccess.deleteObjectsWithPrefix("");
+  }
+
   @Test
   void publishTestFolderOk() throws IOException {
     s3Publisher.publish(getFolderAsPath(rootTestFolder));
@@ -61,15 +71,5 @@ class S3PublisherTestIT {
     return resourceLoader.getResource(path).getFile().toPath();
   }
 
-  @BeforeEach
-  public void setup() {
-//    S3Mock mockS3api = new S3Mock.Builder().withPort(8003).withInMemoryBackend().build();
-//    mockS3api.start();
-    objectStoreAccess.deleteObjectsWithPrefix("");
-  }
 
-  @AfterEach
-  public void teardown() {
-    objectStoreAccess.deleteObjectsWithPrefix("");
-  }
 }

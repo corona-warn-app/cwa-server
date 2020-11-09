@@ -12,11 +12,17 @@ import app.coronawarn.server.services.distribution.objectstore.client.ObjectStor
 import app.coronawarn.server.services.distribution.objectstore.client.S3Object;
 import app.coronawarn.server.services.distribution.objectstore.publish.LocalFile;
 import app.coronawarn.server.services.distribution.objectstore.publish.LocalGenericFile;
+import com.amazonaws.auth.AWSCredentials;
+import com.amazonaws.auth.BasicAWSCredentials;
+import com.amazonaws.services.s3.AmazonS3;
+import com.amazonaws.services.s3.AmazonS3Client;
+import com.amazonaws.services.s3.S3ClientOptions;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.List;
 import java.util.UUID;
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -47,6 +53,23 @@ class ObjectStoreAccessIT {
   @Autowired
   private ResourceLoader resourceLoader;
 
+  @BeforeAll
+  public static void setupBucket() {
+    AWSCredentials credentials = new BasicAWSCredentials("accessKey1",
+        "verySecretKey1");
+
+    // Create a client connection based on credentials
+    AmazonS3 s3client = new AmazonS3Client(credentials);
+    s3client.setEndpoint("http://localhost:8003");
+    // Using path-style requests
+    // (deprecated) s3client.setS3ClientOptions(new S3ClientOptions().withPathStyleAccess(true));
+    s3client.setS3ClientOptions(S3ClientOptions.builder().setPathStyleAccess(true).build());
+
+    // Create bucket
+    String bucketName = "cwa";
+    s3client.createBucket(bucketName);
+  }
+
   @BeforeEach
   public void setup() {
     objectStoreAccess.deleteObjectsWithPrefix(testRunId);
@@ -55,6 +78,11 @@ class ObjectStoreAccessIT {
   @AfterEach
   public void teardown() {
     objectStoreAccess.deleteObjectsWithPrefix(testRunId);
+  }
+
+  @Test
+  public void contextLoads() throws Exception {
+    assertThat(objectStoreAccess).isNotNull();
   }
 
   @Test
