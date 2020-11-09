@@ -27,7 +27,6 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Queue;
 import java.util.concurrent.atomic.AtomicBoolean;
-import org.apache.commons.collections4.queue.CircularFifoQueue;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
@@ -44,7 +43,7 @@ public class FederationBatchProcessor {
   private final FederationGatewayDownloadService federationGatewayDownloadService;
   private final DownloadServiceConfig config;
   private final ValidFederationKeyFilter validFederationKeyFilter;
-  private final Queue<FederationBatchInfo> cachedBatches;
+  private final FifoMaxEntriesSet<FederationBatchInfo> cachedBatches;
 
   /**
    * Constructor.
@@ -66,7 +65,7 @@ public class FederationBatchProcessor {
     this.federationGatewayDownloadService = federationGatewayDownloadService;
     this.config = config;
     this.validFederationKeyFilter = federationKeyValidator;
-    this.cachedBatches = new CircularFifoQueue<>(config.getCachedBatchesSize());
+    this.cachedBatches = new FifoMaxEntriesSet<>(config.getCachedBatchesSize());
   }
 
   /**
