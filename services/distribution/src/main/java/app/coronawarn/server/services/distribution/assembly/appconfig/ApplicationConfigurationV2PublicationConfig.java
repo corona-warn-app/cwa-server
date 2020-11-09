@@ -1,10 +1,13 @@
 package app.coronawarn.server.services.distribution.assembly.appconfig;
 
+import app.coronawarn.server.common.protocols.internal.v2.ExposureDetectionParametersIOS;
+import app.coronawarn.server.common.protocols.internal.v2.KeyDownloadParametersIOS;
 import app.coronawarn.server.common.protocols.internal.v2.AppFeature;
 import app.coronawarn.server.common.protocols.internal.v2.AppFeatures;
 import app.coronawarn.server.common.protocols.internal.v2.ApplicationConfigurationAndroid;
 import app.coronawarn.server.common.protocols.internal.v2.ApplicationConfigurationIOS;
 import app.coronawarn.server.common.protocols.internal.v2.DayPackageMetadata;
+import app.coronawarn.server.common.protocols.internal.v2.ExposureConfiguration;
 import app.coronawarn.server.common.protocols.internal.v2.ExposureDetectionParametersAndroid;
 import app.coronawarn.server.common.protocols.internal.v2.HourPackageMetadata;
 import app.coronawarn.server.common.protocols.internal.v2.KeyDownloadParametersAndroid;
@@ -12,6 +15,7 @@ import app.coronawarn.server.common.protocols.internal.v2.RiskCalculationParamet
 import app.coronawarn.server.common.protocols.internal.v2.RiskCalculationParameters.Builder;
 import app.coronawarn.server.common.protocols.internal.v2.SemanticVersion;
 import app.coronawarn.server.services.distribution.assembly.appconfig.parsing.v2.DeserializedDiagnosisKeysDataMapping;
+import app.coronawarn.server.services.distribution.assembly.appconfig.parsing.v2.DeserializedExposureConfiguration;
 import app.coronawarn.server.services.distribution.config.DistributionServiceConfig;
 import app.coronawarn.server.services.distribution.config.DistributionServiceConfig.AppConfigParameters.AndroidExposureDetectionParameters;
 import app.coronawarn.server.services.distribution.config.DistributionServiceConfig.AppConfigParameters.AndroidKeyDownloadParameters;
@@ -19,16 +23,17 @@ import app.coronawarn.server.services.distribution.config.DistributionServiceCon
 import app.coronawarn.server.services.distribution.config.DistributionServiceConfig.AppConfigParameters.DeserializedHourPackageMetadata;
 import java.util.List;
 import java.util.stream.Collectors;
+import app.coronawarn.server.services.distribution.config.DistributionServiceConfig.AppConfigParameters.IosExposureDetectionParameters;
+import app.coronawarn.server.services.distribution.config.DistributionServiceConfig.AppConfigParameters.IosKeyDownloadParameters;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 /**
- * Provides the application configuration needed for mobile clients which use Exposure Notification
- * Framework V2. As of CWA version 1.7, Android and IOS configurations have been separated and
- * distributed in CDNs at different URLs. This Spring bean loads the default values defined in the
- * YAML configurations of each device type found under <code> /master-config/ </code> folder,
- * extends it with some Distribution Service global parameters and registers them for usage during
- * file archiving & bundling.
+ * Provides the application configuration needed for mobile clients which use Exposure Notification Framework V2. As of
+ * CWA version 1.7, Android and IOS configurations have been separated and distributed in CDNs at different URLs. This
+ * Spring bean loads the default values defined in the YAML configurations of each device type found under <code>
+ * /master-config/ </code> folder, extends it with some Distribution Service global parameters and registers them for
+ * usage during file archiving & bundling.
  */
 @Configuration
 public class ApplicationConfigurationV2PublicationConfig {
@@ -37,21 +42,23 @@ public class ApplicationConfigurationV2PublicationConfig {
    * The location of the exposure configuration master files for Android and Ios.
    */
   public static final String IOS_V2_MASTER_FILE = "master-config/v2/app-config-ios.yaml";
-  public static final String ANDROID_V2_RISK_PARAMETERS_FILE = "master-config/v2/risk-calculation-parameters.yaml";
+  public static final String V2_RISK_PARAMETERS_FILE = "master-config/v2/risk-calculation-parameters.yaml";
   private static final String ANDROID_V2_DATA_MAPPING_FILE = "master-config/v2/diagnosis-keys-data-mapping.yaml";
+  private static final String IOS_V2_EXPOSURE_CONFIGURATION_FILE = "master-config/v2/exposure-configuration.yaml";
+  private static final String IOS_V2_EXPOSURE_CONFIG_FILE = "master-config/v2/exposure-config.yaml";
 
   /**
    * Fetches the master configuration as a ApplicationConfigurationAndroid instance.
    */
   @Bean
-  public ApplicationConfigurationAndroid createAndroidV2Configuration(DistributionServiceConfig distributionServiceConfig)
+  public ApplicationConfigurationAndroid createAndroidV2Configuration(
+      DistributionServiceConfig distributionServiceConfig)
       throws UnableToLoadFileException {
     Builder riskCalculationParameterBuilder = YamlLoader.loadYamlIntoProtobufBuilder(
-        ANDROID_V2_RISK_PARAMETERS_FILE, RiskCalculationParameters.Builder.class);
+        V2_RISK_PARAMETERS_FILE, RiskCalculationParameters.Builder.class);
 
     DeserializedDiagnosisKeysDataMapping dataMapping = YamlLoader.loadYamlIntoClass(
         ANDROID_V2_DATA_MAPPING_FILE, DeserializedDiagnosisKeysDataMapping.class);
-
 
     return ApplicationConfigurationAndroid.newBuilder()
         .setRiskCalculationParameters(riskCalculationParameterBuilder)
@@ -86,16 +93,61 @@ public class ApplicationConfigurationV2PublicationConfig {
         .build();
   }
 
+  private KeyDownloadParametersIOS buildKeyDownloadParametersIos(
+      DistributionServiceConfig distributionServiceConfig) {
+    IosKeyDownloadParameters iosKeyDownloadParameters =
+        distributionServiceConfig.getAppConfigParameters().getIosKeyDownloadParameters();
+    return KeyDownloadParametersIOS.newBuilder()
+        .addAllCachedDayPackagesToUpdateOnETagMismatch(buildCachedDayPackagesToUpdateOnETagMismatch(
+            iosKeyDownloadParameters.getCachedDayPackagesToUpdateOnETagMismatch()))
+        .addAllCachedHourPackagesToUpdateOnETagMismatch(buildCachedHourPackagesToUpdateOnETagMismatch(
+            iosKeyDownloadParameters.getCachedHourPackagesToUpdateOnETagMismatch()))
+        .build();
+  }
+
   /**
    * Fetches the master configuration as a ApplicationConfigurationAndroid instance.
    */
   @Bean
   public ApplicationConfigurationIOS createIosV2Configuration(DistributionServiceConfig distributionServiceConfig)
       throws UnableToLoadFileException {
-    return YamlLoader.loadYamlIntoProtobufBuilder(IOS_V2_MASTER_FILE, ApplicationConfigurationIOS.Builder.class)
+    Builder riskCalculationParameterBuilder = YamlLoader.loadYamlIntoProtobufBuilder(
+        V2_RISK_PARAMETERS_FILE, RiskCalculationParameters.Builder.class);
+
+    DeserializedExposureConfiguration exposureConfiguration = YamlLoader.
+        loadYamlIntoClass(IOS_V2_EXPOSURE_CONFIGURATION_FILE, DeserializedExposureConfiguration.class);
+
+    return ApplicationConfigurationIOS.newBuilder()
         .addAllSupportedCountries(List.of(distributionServiceConfig.getSupportedCountries()))
         .setMinVersion(buildSemanticVersion(distributionServiceConfig.getAppVersions().getMinIos()))
         .setLatestVersion(buildSemanticVersion(distributionServiceConfig.getAppVersions().getLatestIos()))
+        .setRiskCalculationParameters(riskCalculationParameterBuilder)
+        .setExposureConfiguration(
+            buildExposureConfigurationFromDeserializedExposureConfiguration(exposureConfiguration))
+        .setKeyDownloadParameters(buildKeyDownloadParametersIos(distributionServiceConfig))
+        .setExposureDetectionParameters(buildExposureDetectionParametersIos(distributionServiceConfig))
+        .build();
+  }
+
+  private ExposureConfiguration buildExposureConfigurationFromDeserializedExposureConfiguration(
+      DeserializedExposureConfiguration deserializedExposureConfiguration) {
+    return ExposureConfiguration.newBuilder()
+        .addAllAttenuationDurationThresholds(deserializedExposureConfiguration.getAttenuationDurationThresholds())
+        .putAllInfectiousnessForDaysSinceOnsetOfSymptoms(deserializedExposureConfiguration
+            .getInfectiousnessForDaysSinceOnsetOfSymptoms())
+        .setReportTypeNoneMap(deserializedExposureConfiguration.getReportTypeNoneMap())
+        .setImmediateDurationWeight(deserializedExposureConfiguration.getImmediateDurationWeight())
+        .setMediumDurationWeight(deserializedExposureConfiguration.getMediumDurationWeight())
+        .setNearDurationWeight(deserializedExposureConfiguration.getNearDurationWeight())
+        .setOtherDurationWeight(deserializedExposureConfiguration.getOtherDurationWeight())
+        .setDaysSinceLastExposureThreshold(deserializedExposureConfiguration.getDaysSinceLastExposureThreshold())
+        .setInfectiousnessStandardWeight(deserializedExposureConfiguration.getInfectiousnessStandardWeight())
+        .setInfectiousnessHighWeight(deserializedExposureConfiguration.getInfectiousnessHighWeight())
+        .setReportTypeConfirmedTestWeight(deserializedExposureConfiguration.getReportTypeConfirmedTestWeight())
+        .setReportTypeConfirmedClinicalDiagnosisWeight(deserializedExposureConfiguration
+            .getReportTypeConfirmedClinicalDiagnosisWeight())
+        .setReportTypeSelfReportedWeight(deserializedExposureConfiguration.getReportTypeSelfReportedWeight())
+        .setReportTypeRecursiveWeight(deserializedExposureConfiguration.getReportTypeRecursiveWeight())
         .build();
   }
 
@@ -121,6 +173,15 @@ public class ApplicationConfigurationV2PublicationConfig {
         .setOverallTimeoutInSeconds(androidExposureDetectionParameters.getOverallTimeoutInSeconds())
         .build();
   }
+  private ExposureDetectionParametersIOS buildExposureDetectionParametersIos(
+      DistributionServiceConfig distributionServiceConfig) {
+    IosExposureDetectionParameters iosExposureDetectionParameters =
+        distributionServiceConfig.getAppConfigParameters().getIosExposureDetectionParameters();
+    return ExposureDetectionParametersIOS.newBuilder()
+        .setMaxExposureDetectionsPerInterval(iosExposureDetectionParameters.getMaxExposureDetectionsPerInterval())
+        .build();
+  }
+
 
   private List<DayPackageMetadata> buildCachedDayPackagesToUpdateOnETagMismatch(
       List<DeserializedDayPackageMetadata> deserializedDayPackage) {

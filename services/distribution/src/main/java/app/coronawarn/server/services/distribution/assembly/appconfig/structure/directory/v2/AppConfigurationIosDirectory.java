@@ -10,10 +10,8 @@ import app.coronawarn.server.services.distribution.assembly.component.CryptoProv
 import app.coronawarn.server.services.distribution.assembly.structure.archive.ArchiveOnDisk;
 import app.coronawarn.server.services.distribution.assembly.structure.directory.DirectoryOnDisk;
 import app.coronawarn.server.services.distribution.assembly.structure.directory.IndexDirectoryOnDisk;
-import app.coronawarn.server.services.distribution.assembly.structure.directory.decorator.indexing.IndexingDecoratorOnDisk;
 import app.coronawarn.server.services.distribution.assembly.structure.file.FileOnDisk;
 import app.coronawarn.server.services.distribution.config.DistributionServiceConfig;
-import java.util.Optional;
 import java.util.Set;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -32,8 +30,7 @@ public class AppConfigurationIosDirectory extends DirectoryOnDisk {
   private final DistributionServiceConfig distributionServiceConfig;
 
   /**
-   * Creates an {@link AppConfigurationIosDirectory}
-   * for the exposure configuration and risk score classification.
+   * Creates an {@link AppConfigurationIosDirectory} for the exposure configuration and risk score classification.
    *
    * @param cryptoProvider The {@link CryptoProvider} whose artifacts to use for creating the signature.
    */
@@ -69,6 +66,8 @@ public class AppConfigurationIosDirectory extends DirectoryOnDisk {
     appConfigurationFile.addWritable(new FileOnDisk("export.bin", applicationConfiguration.toByteArray()));
     ArchiveOnDisk countryAppConfigurationFile = new ArchiveOnDisk(archiveName);
     countryAppConfigurationFile.addWritable(new FileOnDisk("export.bin", applicationConfiguration.toByteArray()));
+    this.addWritable(
+        new AppConfigurationSigningDecorator(countryAppConfigurationFile, cryptoProvider, distributionServiceConfig));
     this.addWritable(
         new AppConfigurationSigningDecorator(appConfigurationFile, cryptoProvider, distributionServiceConfig));
   }
