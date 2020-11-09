@@ -3,9 +3,10 @@
 package app.coronawarn.server.services.distribution.assembly.component;
 
 import app.coronawarn.server.common.protocols.internal.ApplicationConfiguration;
+import app.coronawarn.server.common.protocols.internal.v2.ApplicationConfigurationAndroid;
 import app.coronawarn.server.common.protocols.internal.v2.ApplicationConfigurationIOS;
 import app.coronawarn.server.services.distribution.assembly.appconfig.structure.directory.AppConfigurationDirectory;
-import app.coronawarn.server.services.distribution.assembly.appconfig.structure.directory.v2.AppConfigurationIosDirectory;
+import app.coronawarn.server.services.distribution.assembly.appconfig.structure.directory.v2.AppConfigurationV2Directory;
 import app.coronawarn.server.services.distribution.assembly.structure.WritableOnDisk;
 import app.coronawarn.server.services.distribution.assembly.structure.directory.Directory;
 import app.coronawarn.server.services.distribution.config.DistributionServiceConfig;
@@ -21,14 +22,17 @@ public class AppConfigurationStructureProvider {
   private final CryptoProvider cryptoProvider;
   private final DistributionServiceConfig distributionServiceConfig;
   private final ApplicationConfiguration applicationConfiguration;
-  private final ApplicationConfigurationIOS applicationConfigurationIos;
+  private final ApplicationConfigurationIOS applicationConfigurationV2Ios;
+  private final ApplicationConfigurationAndroid applicationConfigurationV2Android;
 
   AppConfigurationStructureProvider(CryptoProvider cryptoProvider, DistributionServiceConfig distributionServiceConfig,
-      ApplicationConfiguration applicationConfiguration, ApplicationConfigurationIOS applicationConfigurationIos) {
+      ApplicationConfiguration applicationConfiguration, ApplicationConfigurationIOS applicationConfigurationV2Ios,
+      ApplicationConfigurationAndroid applicationConfigurationV2Android) {
     this.cryptoProvider = cryptoProvider;
     this.distributionServiceConfig = distributionServiceConfig;
     this.applicationConfiguration = applicationConfiguration;
-    this.applicationConfigurationIos = applicationConfigurationIos;
+    this.applicationConfigurationV2Ios = applicationConfigurationV2Ios;
+    this.applicationConfigurationV2Android = applicationConfigurationV2Android;
   }
 
   public Directory<WritableOnDisk> getAppConfiguration() {
@@ -36,11 +40,14 @@ public class AppConfigurationStructureProvider {
   }
 
   public Directory<WritableOnDisk> getAppConfigurationV2ForAndroid() {
-    //todo
-    return null;
+    return new AppConfigurationV2Directory<ApplicationConfigurationAndroid>(
+        applicationConfigurationV2Android, cryptoProvider, distributionServiceConfig,
+        distributionServiceConfig.getApi().getAppConfigV2AndroidFileName());
   }
 
   public Directory<WritableOnDisk> getAppConfigurationV2ForIos() {
-    return new AppConfigurationIosDirectory(applicationConfigurationIos, cryptoProvider, distributionServiceConfig);
+    return new AppConfigurationV2Directory<ApplicationConfigurationIOS>(
+        applicationConfigurationV2Ios, cryptoProvider, distributionServiceConfig,
+        distributionServiceConfig.getApi().getAppConfigV2IosFileName());
   }
 }

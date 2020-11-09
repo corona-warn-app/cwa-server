@@ -336,14 +336,25 @@ public class DistributionServiceConfig {
     @Pattern(regexp = CHAR_AND_NUMBER_REGEX)
     private String appConfigFileName;
     @Pattern(regexp = CHAR_AND_NUMBER_REGEX)
-    private String appConfigIosFileName;
+    private String appConfigV2IosFileName;
+    @Pattern(regexp = CHAR_AND_NUMBER_REGEX)
+    private String appConfigV2AndroidFileName;
 
-    public String getAppConfigIosFileName() {
-      return appConfigIosFileName;
+
+    public String getAppConfigV2IosFileName() {
+      return appConfigV2IosFileName;
     }
 
-    public void setAppConfigIosFileName(String appConfigIosFileName) {
-      this.appConfigIosFileName = appConfigIosFileName;
+    public void setAppConfigV2IosFileName(String appConfigV2IosFileName) {
+      this.appConfigV2IosFileName = appConfigV2IosFileName;
+    }
+
+    public String getAppConfigV2AndroidFileName() {
+      return appConfigV2AndroidFileName;
+    }
+
+    public void setAppConfigV2AndroidFileName(String appConfigV2AndroidFileName) {
+      this.appConfigV2AndroidFileName = appConfigV2AndroidFileName;
     }
 
     public String getVersionPath() {
