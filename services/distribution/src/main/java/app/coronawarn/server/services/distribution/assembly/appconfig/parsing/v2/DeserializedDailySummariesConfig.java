@@ -16,36 +16,47 @@ public class DeserializedDailySummariesConfig {
   public List<Integer> getAttenuationBucketThresholdDb() {
     return attenuationBucketThresholdDb;
   }
+
   public void setAttenuationBucketThresholdDb(List<Integer> attenuationBucketThresholdDb) {
     this.attenuationBucketThresholdDb = attenuationBucketThresholdDb;
   }
+
   public List<Double> getAttenuationBucketWeights() {
     return attenuationBucketWeights;
   }
+
   public void setAttenuationBucketWeights(List<Double> attenuationBucketWeights) {
     this.attenuationBucketWeights = attenuationBucketWeights;
   }
+
   public Integer getDaysSinceExposureThreshold() {
     return daysSinceExposureThreshold;
   }
+
   public void setDaysSinceExposureThreshold(Integer daysSinceExposureThreshold) {
     this.daysSinceExposureThreshold = daysSinceExposureThreshold;
   }
+
   public Map<Integer, Double> getInfectiousnessWeights() {
     return infectiousnessWeights;
   }
+
   public void setInfectiousnessWeights(Map<Integer, Double> infectiousnessWeights) {
     this.infectiousnessWeights = infectiousnessWeights;
   }
+
   public Integer getMinimumWindowScore() {
     return minimumWindowScore;
   }
+
   public void setMinimumWindowScore(Integer minimumWindowScore) {
     this.minimumWindowScore = minimumWindowScore;
   }
+
   public Map<Integer, Double> getReportTypeWeights() {
     return reportTypeWeights;
   }
+
   public void setReportTypeWeights(Map<Integer, Double> reportTypeWeights) {
     this.reportTypeWeights = reportTypeWeights;
   }

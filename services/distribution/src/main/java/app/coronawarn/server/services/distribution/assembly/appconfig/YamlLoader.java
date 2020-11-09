@@ -49,6 +49,11 @@ public class YamlLoader {
     }
   }
 
+  /**
+   * Reads the class path resource yaml at given path and deserializes into an instance of the
+   * given object. The yaml naming convention is expected to be dash based ("an-example-property"), but
+   * the method will translate this to a camelCase class property.
+   */
   public static <T> T loadYamlIntoClass(String path, Class<T> classType)
       throws UnableToLoadFileException {
     Yaml yaml = new Yaml(new DashToCamelCaseConstructor(path));

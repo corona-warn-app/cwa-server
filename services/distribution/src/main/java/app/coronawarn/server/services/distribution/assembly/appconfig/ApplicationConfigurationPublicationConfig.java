@@ -5,7 +5,6 @@ package app.coronawarn.server.services.distribution.assembly.appconfig;
 import app.coronawarn.server.common.protocols.internal.AppFeatures;
 import app.coronawarn.server.common.protocols.internal.ApplicationConfiguration;
 import app.coronawarn.server.common.protocols.internal.ApplicationConfiguration.Builder;
-import app.coronawarn.server.common.protocols.internal.v2.ApplicationConfigurationIOS;
 import app.coronawarn.server.common.protocols.internal.ApplicationVersionConfiguration;
 import app.coronawarn.server.common.protocols.internal.ApplicationVersionInfo;
 import app.coronawarn.server.common.protocols.internal.DayPackageMetadata;

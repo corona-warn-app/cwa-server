@@ -54,29 +54,31 @@ public class ApplicationConfigurationV2PublicationConfig {
    * Fetches the master configuration as a ApplicationConfigurationAndroid instance.
    */
   @Bean
-  public ApplicationConfigurationAndroid createAndroidV2Configuration(DistributionServiceConfig distributionServiceConfig)
-      throws UnableToLoadFileException {
+  public ApplicationConfigurationAndroid createAndroidV2Configuration(
+      DistributionServiceConfig distributionServiceConfig) throws UnableToLoadFileException {
 
-    RiskCalculationParameters.Builder riskCalculationParameterBuilder = YamlLoader.loadYamlIntoProtobufBuilder(
-        V2_RISK_PARAMETERS_FILE, RiskCalculationParameters.Builder.class);
+    RiskCalculationParameters.Builder riskCalculationParameterBuilder =
+        YamlLoader.loadYamlIntoProtobufBuilder(V2_RISK_PARAMETERS_FILE,
+            RiskCalculationParameters.Builder.class);
 
     DeserializedDiagnosisKeysDataMapping dataMapping = YamlLoader.loadYamlIntoClass(
         ANDROID_V2_DATA_MAPPING_FILE, DeserializedDiagnosisKeysDataMapping.class);
 
-    DeserializedDailySummariesConfig dailySummaries = YamlLoader.loadYamlIntoClass(
-        ANDROID_V2_DAILY_SUMMARIES_FILE, DeserializedDailySummariesConfig.class);
+    DeserializedDailySummariesConfig dailySummaries = YamlLoader
+        .loadYamlIntoClass(ANDROID_V2_DAILY_SUMMARIES_FILE, DeserializedDailySummariesConfig.class);
 
     return ApplicationConfigurationAndroid.newBuilder()
         .setRiskCalculationParameters(riskCalculationParameterBuilder)
         .setMinVersionCode(distributionServiceConfig.getAppVersions().getMinAndroidVersionCode())
-        .setLatestVersionCode(distributionServiceConfig.getAppVersions().getLatestAndroidVersionCode())
+        .setLatestVersionCode(
+            distributionServiceConfig.getAppVersions().getLatestAndroidVersionCode())
         .setAppFeatures(buildAppFeatures(distributionServiceConfig))
         .addAllSupportedCountries(List.of(distributionServiceConfig.getSupportedCountries()))
         .setKeyDownloadParameters(buildKeyDownloadParametersAndroid(distributionServiceConfig))
-        .setExposureDetectionParameters(buildExposureDetectionParametersAndroid(distributionServiceConfig))
+        .setExposureDetectionParameters(
+            buildExposureDetectionParametersAndroid(distributionServiceConfig))
         .setDailySummariesConfig(buildDailySummaries(dailySummaries))
-        .setDiagnosisKeysDataMapping(buildDataMapping(dataMapping))
-        .build();
+        .setDiagnosisKeysDataMapping(buildDataMapping(dataMapping)).build();
   }
 
   private DiagnosisKeysDataMapping buildDataMapping(
@@ -140,11 +142,13 @@ public class ApplicationConfigurationV2PublicationConfig {
   @Bean
   public ApplicationConfigurationIOS createIosV2Configuration(DistributionServiceConfig distributionServiceConfig)
       throws UnableToLoadFileException {
-    RiskCalculationParameters.Builder riskCalculationParameterBuilder = YamlLoader.loadYamlIntoProtobufBuilder(
-        V2_RISK_PARAMETERS_FILE, RiskCalculationParameters.Builder.class);
 
-    DeserializedExposureConfiguration exposureConfiguration = YamlLoader.
-        loadYamlIntoClass(IOS_V2_EXPOSURE_CONFIGURATION_FILE, DeserializedExposureConfiguration.class);
+    RiskCalculationParameters.Builder riskCalculationParameterBuilder =
+        YamlLoader.loadYamlIntoProtobufBuilder(V2_RISK_PARAMETERS_FILE,
+            RiskCalculationParameters.Builder.class);
+
+    DeserializedExposureConfiguration exposureConfiguration = YamlLoader.loadYamlIntoClass(
+        IOS_V2_EXPOSURE_CONFIGURATION_FILE, DeserializedExposureConfiguration.class);
 
     return ApplicationConfigurationIOS.newBuilder()
         .addAllSupportedCountries(List.of(distributionServiceConfig.getSupportedCountries()))
@@ -202,6 +206,7 @@ public class ApplicationConfigurationV2PublicationConfig {
         .setOverallTimeoutInSeconds(androidExposureDetectionParameters.getOverallTimeoutInSeconds())
         .build();
   }
+
   private ExposureDetectionParametersIOS buildExposureDetectionParametersIos(
       DistributionServiceConfig distributionServiceConfig) {
     IosExposureDetectionParameters iosExposureDetectionParameters =
