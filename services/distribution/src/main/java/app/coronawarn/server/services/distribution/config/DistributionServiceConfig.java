@@ -599,7 +599,7 @@ public class DistributionServiceConfig {
     }
   }
 
-  private static class AppFeature {
+  public static class AppFeature {
 
     private String label;
     private Integer value;
