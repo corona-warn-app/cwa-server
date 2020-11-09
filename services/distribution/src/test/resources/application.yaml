@@ -34,6 +34,8 @@ services:
       diagnosis-keys-path: diagnosis-keys
       parameters-path: configuration
       app-config-file-name: app_config
+      app-config-v2-android-file-name: app_config_android
+      app-config-v2-ios-file-name: app_config_ios
     signature:
       app-bundle-id: de.rki.coronawarnapp
       verification-key-id: 262
