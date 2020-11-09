@@ -49,7 +49,7 @@ public class YamlLoader {
 
   public static <T> T loadYamlIntoClass(String path, Class<T> classType)
       throws UnableToLoadFileException {
-    Yaml yaml = new Yaml(new YamlConstructorForProtoBuf(path));
+    Yaml yaml = new Yaml();
     // no setters for generated message classes available
     yaml.setBeanAccess(BeanAccess.FIELD);
 
