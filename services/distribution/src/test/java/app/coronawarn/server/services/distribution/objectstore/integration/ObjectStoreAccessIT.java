@@ -53,6 +53,9 @@ class ObjectStoreAccessIT {
   @Autowired
   private ResourceLoader resourceLoader;
 
+  @Autowired
+  private ObjectStorePublishingConfig objectStorePublishingConfig;
+
   @BeforeAll
   public static void setupBucket() {
     AWSCredentials credentials = new BasicAWSCredentials("accessKey1",
@@ -67,7 +70,9 @@ class ObjectStoreAccessIT {
 
     // Create bucket
     String bucketName = "cwa";
-    s3client.createBucket(bucketName);
+    if (!s3client.doesBucketExistV2(bucketName)) {
+      s3client.createBucket(bucketName);
+    }
   }
 
   @BeforeEach

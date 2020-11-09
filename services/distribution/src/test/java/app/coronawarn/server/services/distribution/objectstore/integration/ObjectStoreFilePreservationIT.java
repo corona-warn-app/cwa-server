@@ -15,6 +15,11 @@ import app.coronawarn.server.services.distribution.objectstore.S3RetentionPolicy
 import app.coronawarn.server.services.distribution.objectstore.client.S3Object;
 import app.coronawarn.server.services.distribution.runner.Assembly;
 import app.coronawarn.server.services.distribution.runner.RetentionPolicy;
+import com.amazonaws.auth.AWSCredentials;
+import com.amazonaws.auth.BasicAWSCredentials;
+import com.amazonaws.services.s3.AmazonS3;
+import com.amazonaws.services.s3.AmazonS3Client;
+import com.amazonaws.services.s3.S3ClientOptions;
 import java.io.File;
 import java.io.IOException;
 import java.time.LocalDate;
@@ -23,6 +28,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 import org.junit.Rule;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -66,6 +72,26 @@ class ObjectStoreFilePreservationIT {
   private TemporaryFolder testOutputFolder = new TemporaryFolder();
 
 
+  @BeforeAll
+  public static void setupBucket() {
+    AWSCredentials credentials = new BasicAWSCredentials("accessKey1",
+        "verySecretKey1");
+
+    // Create a client connection based on credentials
+    AmazonS3 s3client = new AmazonS3Client(credentials);
+    s3client.setEndpoint("http://localhost:8003");
+    // Using path-style requests
+    // (deprecated) s3client.setS3ClientOptions(new S3ClientOptions().withPathStyleAccess(true));
+    s3client.setS3ClientOptions(S3ClientOptions.builder().setPathStyleAccess(true).build());
+
+    // Create bucket
+    String bucketName = "cwa";
+    if (!s3client.doesBucketExistV2(bucketName)) {
+      s3client.createBucket(bucketName);
+    }
+  }
+
+
   @BeforeEach
   public void setup() throws IOException {
     testOutputFolder.create();
@@ -80,20 +106,19 @@ class ObjectStoreFilePreservationIT {
    * The test presumes there are 4 consecutive days with 80 keys submitted daily. Running a distribution in Day 4 would
    * result in:
    * <p>
-   *     Day 1   -> submission of 80 keys   -> 1 empty file distributed<br>
-   *     Day 2   -> submission of 80 keys   -> 1 distributed containing 160 keys<br>
-   *     Day 3   -> submission of 80 keys   -> 1 empty file distributed<br>
-   *     Day 4   -> submission of 80 keys   -> 1 distributed containing 160 keys<br>
+   * Day 1   -> submission of 80 keys   -> 1 empty file distributed<br> Day 2   -> submission of 80 keys   -> 1
+   * distributed containing 160 keys<br> Day 3   -> submission of 80 keys   -> 1 empty file distributed<br> Day 4   ->
+   * submission of 80 keys   -> 1 distributed containing 160 keys<br>
    * <p>
    * All day & hour files already generated should not be changed/removed from S3 even after retention policies have
    * been applied and a second distribution is triggered.
    * <p>
    * If for example, data in Day 1 gets removed completely, then a second distribution run causes a shifting of keys in
    * different files compared to the previous run, the result being:
-   *  <p>
-   *     Day 2   -> submission of 80 keys   -> 1 empty file generated (different than what is currently on S3)<br>
-   *     Day 3   -> submission of 80 keys   -> 1 distributed containing 160 keys (different than 1 empty file on S3)<br>
-   *     Day 4   -> submission of 80 keys   -> 1 empty file (different than 1 empty file on S3)<br>
+   * <p>
+   * Day 2   -> submission of 80 keys   -> 1 empty file generated (different than what is currently on S3)<br> Day 3
+   * -> submission of 80 keys   -> 1 distributed containing 160 keys (different than 1 empty file on S3)<br> Day 4   ->
+   * submission of 80 keys   -> 1 empty file (different than 1 empty file on S3)<br>
    */
   @Test
   void files_once_published_to_objectstore_should_not_be_overriden_because_of_retention_or_shifting_policies()
