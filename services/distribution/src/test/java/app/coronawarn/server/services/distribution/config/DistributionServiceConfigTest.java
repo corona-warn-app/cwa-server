@@ -1,5 +1,3 @@
-
-
 package app.coronawarn.server.services.distribution.config;
 
 import static java.util.Collections.emptyList;
@@ -8,14 +6,22 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.when;
 
 import app.coronawarn.server.services.distribution.assembly.appconfig.ApplicationConfigurationPublicationConfig;
-import app.coronawarn.server.services.distribution.assembly.appconfig.UnableToLoadFileException;
-import app.coronawarn.server.services.distribution.assembly.appconfig.validation.TestWithExpectedResult;
-import app.coronawarn.server.services.distribution.assembly.appconfig.validation.ValidationError;
-import app.coronawarn.server.services.distribution.assembly.appconfig.validation.ValidationResult;
-import java.util.Arrays;
+import app.coronawarn.server.services.distribution.config.DistributionServiceConfig.AppConfigParameters.AndroidExposureDetectionParameters;
+import app.coronawarn.server.services.distribution.config.DistributionServiceConfig.AppConfigParameters.AndroidKeyDownloadParameters;
+import app.coronawarn.server.services.distribution.config.DistributionServiceConfig.AppConfigParameters.IosExposureDetectionParameters;
+import java.util.function.Consumer;
+import java.util.stream.Stream;
+import javax.validation.ConstraintViolation;
+import javax.validation.Validation;
+import javax.validation.Validator;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -34,85 +40,191 @@ import org.springframework.validation.Errors;
 @ActiveProfiles("applicationConfigurationValidatorTest")
 class DistributionServiceConfigTest {
 
-  private static final ValidationResult SUCCESS = new ValidationResult();
-  private static final TestWithExpectedResult.Builder TEST_BUILDER = new TestWithExpectedResult.Builder("configtests/");
-
+  private IosExposureDetectionParameters iosExposureDetectionParameters;
+  private AndroidKeyDownloadParameters androidKeyDownloadParameters;
+  private AndroidExposureDetectionParameters androidExposureDetectionParameters;
   @Autowired
   DistributionServiceConfig distributionServiceConfig;
-
   DistributionServiceConfigValidator distributionServiceConfigValidator = new DistributionServiceConfigValidator();
+  private Validator validator;
 
-  @Test
-  void testIosKeyDownloadParameters() {
-    assertEquals(emptyList(),
-        distributionServiceConfig.getAppConfigParameters().getIosKeyDownloadParameters()
-            .getCachedDayPackagesToUpdateOnETagMismatch());
-    assertEquals(emptyList(),
-        distributionServiceConfig.getAppConfigParameters().getIosKeyDownloadParameters()
-            .getCachedHourPackagesToUpdateOnETagMismatch());
+  @BeforeEach
+  void setup() {
+    iosExposureDetectionParameters = new IosExposureDetectionParameters();
+    androidKeyDownloadParameters = new AndroidKeyDownloadParameters();
+    androidExposureDetectionParameters = new AndroidExposureDetectionParameters();
+    validator = Validation.buildDefaultValidatorFactory().getValidator();
   }
 
-  @Test
-  void testAndroidKeyDownloadParameters() {
-    assertEquals(emptyList(),
-        distributionServiceConfig.getAppConfigParameters().getAndroidKeyDownloadParameters()
-            .getCachedDayPackagesToUpdateOnETagMismatch());
-    assertEquals(emptyList(),
-        distributionServiceConfig.getAppConfigParameters().getAndroidKeyDownloadParameters()
-            .getCachedHourPackagesToUpdateOnETagMismatch());
-    assertEquals(30,
-        distributionServiceConfig.getAppConfigParameters().getAndroidKeyDownloadParameters()
-            .getDownloadTimeoutInSeconds());
-    assertEquals(480,
-        distributionServiceConfig.getAppConfigParameters().getAndroidKeyDownloadParameters()
-            .getOverallTimeoutInSeconds());
+  @Nested
+  class SupportedCountriesTest {
+
+    @ParameterizedTest
+    @ValueSource(strings = {"DE,FRE", "DE, ", " "})
+    void failsOnInvalidSupportedCountries(String supportedCountries) {
+      String[] supportedCountriesList = supportedCountries.split(",");
+      when(distributionServiceConfig.getSupportedCountries()).thenReturn(supportedCountriesList);
+
+      Errors errors = new BindException(distributionServiceConfig, "distributionServiceConfig");
+      distributionServiceConfigValidator.validate(distributionServiceConfig, errors);
+
+      assertThat(errors.getAllErrors()).hasSize(1);
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {"DE,FR", "DE"})
+    void successOnValidSupportedCountries(String supportedCountries) {
+      String[] supportedCountriesList = supportedCountries.split(",");
+      when(distributionServiceConfig.getSupportedCountries()).thenReturn(supportedCountriesList);
+
+      Errors errors = new BindException(distributionServiceConfig, "distributionServiceConfig");
+      distributionServiceConfigValidator.validate(distributionServiceConfig, errors);
+
+      assertThat(errors.getAllErrors()).isEmpty();
+
+    }
   }
 
-  @Test
-  void testIosExposureDetectionParameters() {
-    assertEquals(6,
-        distributionServiceConfig.getAppConfigParameters().getIosExposureDetectionParameters()
-            .getMaxExposureDetectionsPerInterval());
+  @Nested
+  class IosExposureDetectionParametersTest {
+
+    @ParameterizedTest
+    @MethodSource("app.coronawarn.server.services.distribution.config.DistributionServiceConfigTest#iosDetectionParametersMaxExposureDetectionsPerIntervalArguments")
+    void testIosDetectionParametersMaxExposureDetectionsPerIntervalBoundaries(Integer maxDetectionsPerInterval,
+        String errorMessage) {
+      iosExposureDetectionParameters.setMaxExposureDetectionsPerInterval(maxDetectionsPerInterval);
+      validate(iosExposureDetectionParameters, errorMessage);
+    }
   }
 
-  @Test
-  void testAndroidExposureDetectionParameters() {
-    assertEquals(6,
-        distributionServiceConfig.getAppConfigParameters().getAndroidExposureDetectionParameters()
-            .getMaxExposureDetectionsPerInterval());
-    assertEquals(900,
-        distributionServiceConfig.getAppConfigParameters().getAndroidExposureDetectionParameters()
-            .getOverallTimeoutInSeconds());
+  @Nested
+  class AndroidExposureDetectionParametersTest {
+
+    @ParameterizedTest
+    @MethodSource("app.coronawarn.server.services.distribution.config.DistributionServiceConfigTest#androidDetectionParametersOverAllTimeoutBoundariesArguments")
+    void testOverAllTimeoutBoundaries(Integer overallTimeout, String errorMessage) {
+      androidExposureDetectionParameters.setOverallTimeoutInSeconds(overallTimeout);
+      validate(androidExposureDetectionParameters, errorMessage);
+    }
+
+    @ParameterizedTest
+    @MethodSource("app.coronawarn.server.services.distribution.config.DistributionServiceConfigTest#androidDetectionParametersMaxExposureDetectionsPerIntervalArguments")
+    void testMaxExposureDetectionsPerIntervalBoundaries(Integer overallTimeout,
+        String errorMessage) {
+      androidExposureDetectionParameters.setMaxExposureDetectionsPerInterval(overallTimeout);
+      validate(androidExposureDetectionParameters, errorMessage);
+    }
   }
 
-  @ParameterizedTest
-  @ValueSource(strings = {"DE,FRE", "DE, ", " "})
-  void failsOnInvalidSupportedCountries(String supportedCountries) {
-    String[] supportedCountriesList = supportedCountries.split(",");
-    when(distributionServiceConfig.getSupportedCountries()).thenReturn(supportedCountriesList);
+  @Nested
+  class AppConfigParametersValuesTest {
 
-    Errors errors = new BindException(distributionServiceConfig, "distributionServiceConfig");
-    distributionServiceConfigValidator.validate(distributionServiceConfig, errors);
+    @Test
+    void testIosKeyDownloadParameters() {
+      assertEquals(emptyList(),
+          distributionServiceConfig.getAppConfigParameters().getIosKeyDownloadParameters()
+              .getCachedDayPackagesToUpdateOnETagMismatch());
+      assertEquals(emptyList(),
+          distributionServiceConfig.getAppConfigParameters().getIosKeyDownloadParameters()
+              .getCachedHourPackagesToUpdateOnETagMismatch());
+    }
 
-    assertThat(errors.getAllErrors()).hasSize(1);
+    @Test
+    void testAndroidKeyDownloadParameters() {
+      assertEquals(emptyList(),
+          distributionServiceConfig.getAppConfigParameters().getAndroidKeyDownloadParameters()
+              .getCachedDayPackagesToUpdateOnETagMismatch());
+      assertEquals(emptyList(),
+          distributionServiceConfig.getAppConfigParameters().getAndroidKeyDownloadParameters()
+              .getCachedHourPackagesToUpdateOnETagMismatch());
+      assertEquals(30,
+          distributionServiceConfig.getAppConfigParameters().getAndroidKeyDownloadParameters()
+              .getDownloadTimeoutInSeconds());
+      assertEquals(480,
+          distributionServiceConfig.getAppConfigParameters().getAndroidKeyDownloadParameters()
+              .getOverallTimeoutInSeconds());
+    }
+
+    @Test
+    void testIosExposureDetectionParameters() {
+      assertEquals(6,
+          distributionServiceConfig.getAppConfigParameters().getIosExposureDetectionParameters()
+              .getMaxExposureDetectionsPerInterval());
+    }
+
+    @Test
+    void testAndroidExposureDetectionParameters() {
+      assertEquals(6,
+          distributionServiceConfig.getAppConfigParameters().getAndroidExposureDetectionParameters()
+              .getMaxExposureDetectionsPerInterval());
+      assertEquals(900,
+          distributionServiceConfig.getAppConfigParameters().getAndroidExposureDetectionParameters()
+              .getOverallTimeoutInSeconds());
+    }
   }
 
-  @ParameterizedTest
-  @ValueSource(strings = {"DE,FR", "DE"})
-  void successOnValidSupportedCountries(String supportedCountries) throws UnableToLoadFileException {
-    String[] supportedCountriesList = supportedCountries.split(",");
-    when(distributionServiceConfig.getSupportedCountries()).thenReturn(supportedCountriesList);
+  @Nested
+  class AndroidKeyDownloadParametersTest {
 
-    Errors errors = new BindException(distributionServiceConfig, "distributionServiceConfig");
-    distributionServiceConfigValidator.validate(distributionServiceConfig, errors);
+    @ParameterizedTest
+    @MethodSource("app.coronawarn.server.services.distribution.config.DistributionServiceConfigTest#androidKeyDownloadParametersDownloadTimeoutArguments")
+    void testDownloadTimeoutBoundaries(Integer downloadTimeout, String errorMessage) {
+      androidKeyDownloadParameters.setDownloadTimeoutInSeconds(downloadTimeout);
+      validate(androidKeyDownloadParameters, errorMessage);
+    }
 
-    assertThat(errors.getAllErrors()).isEmpty();
-
+    @ParameterizedTest
+    @MethodSource("app.coronawarn.server.services.distribution.config.DistributionServiceConfigTest#androidKeyDownloadParametersOverallTimeoutArguments")
+    void testOverallTimeoutBoundaries(Integer overallTimeout, String errorMessage) {
+      androidKeyDownloadParameters.setOverallTimeoutInSeconds(overallTimeout);
+      validate(androidKeyDownloadParameters, errorMessage);
+    }
   }
 
-  public static ValidationResult buildExpectedResult(ValidationError... errors) {
-    var validationResult = new ValidationResult();
-    Arrays.stream(errors).forEach(validationResult::add);
-    return validationResult;
+  private static Stream<Arguments> iosDetectionParametersMaxExposureDetectionsPerIntervalArguments() {
+    return Stream.of(
+        Arguments.of(-1, IosExposureDetectionParameters.MIN_VALUE_ERROR_MESSAGE_MAX_EXPOSURE_DETECTIONS),
+        Arguments.of(7, IosExposureDetectionParameters.MAX_VALUE_ERROR_MESSAGE_MAX_EXPOSURE_DETECTIONS)
+    );
   }
+
+  private static Stream<Arguments> androidKeyDownloadParametersDownloadTimeoutArguments() {
+    return Stream.of(
+        Arguments.of(-1, AndroidKeyDownloadParameters.MIN_VALUE_ERROR_MESSAGE_DOWNLOAD_TIMEOUT),
+        Arguments.of(1801, AndroidKeyDownloadParameters.MAX_VALUE_ERROR_MESSAGE_DOWNLOAD_TIMEOUT)
+    );
+  }
+
+  private static Stream<Arguments> androidKeyDownloadParametersOverallTimeoutArguments() {
+    return Stream.of(
+        Arguments.of(-1, AndroidKeyDownloadParameters.MIN_VALUE_ERROR_MESSAGE_OVERALL_TIMEOUT),
+        Arguments.of(1801, AndroidKeyDownloadParameters.MAX_VALUE_ERROR_MESSAGE_OVERALL_TIMEOUT)
+    );
+  }
+
+  private static Stream<Arguments> androidDetectionParametersMaxExposureDetectionsPerIntervalArguments() {
+    return Stream.of(
+        Arguments.of(-1, AndroidExposureDetectionParameters.MIN_VALUE_ERROR_MESSAGE_MAX_EXPOSURE_DETECTIONS),
+        Arguments.of(7, AndroidExposureDetectionParameters.MAX_VALUE_ERROR_MESSAGE_MAX_EXPOSURE_DETECTIONS)
+    );
+  }
+
+  private static Stream<Arguments> androidDetectionParametersOverAllTimeoutBoundariesArguments() {
+    return Stream.of(
+        Arguments.of(-1, AndroidExposureDetectionParameters.MIN_VALUE_ERROR_MESSAGE_OVERALL_TIMEOUT),
+        Arguments.of(3601, AndroidExposureDetectionParameters.MAX_VALUE_ERROR_MESSAGE_OVERALL_TIMEOUT)
+    );
+  }
+
+  private <T> void validate(T property, String errorMessage) {
+    validator.validate(property)
+        .stream()
+        .findAny()
+        .ifPresentOrElse(assertViolationIsEqualTo(errorMessage), Assertions::fail);
+  }
+
+  private <T> Consumer<ConstraintViolation<T>> assertViolationIsEqualTo(String errorMessage) {
+    return violation -> assertEquals(errorMessage, violation.getMessage());
+  }
+
 }
