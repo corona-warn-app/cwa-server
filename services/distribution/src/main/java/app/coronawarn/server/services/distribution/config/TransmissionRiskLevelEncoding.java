@@ -177,10 +177,10 @@ public class TransmissionRiskLevelEncoding implements Validator {
   }
 
   public Map<Integer, Integer> getTransmissionRiskToDaysSinceSymptoms() {
-    return new HashMap<Integer, Integer>(transmissionRiskToDaysSinceSymptoms);
+    return new HashMap<>(transmissionRiskToDaysSinceSymptoms);
   }
 
   public Map<Integer, Integer> getTransmissionRiskToReportType() {
-    return new HashMap<Integer, Integer>(transmissionRiskToReportType);
+    return new HashMap<>(transmissionRiskToReportType);
   }
 }
