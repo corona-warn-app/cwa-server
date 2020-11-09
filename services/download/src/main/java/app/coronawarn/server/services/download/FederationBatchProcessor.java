@@ -65,7 +65,7 @@ public class FederationBatchProcessor {
     this.federationGatewayDownloadService = federationGatewayDownloadService;
     this.config = config;
     this.validFederationKeyFilter = federationKeyValidator;
-    this.cachedBatches = new FifoMaxEntriesSet<>(config.getCachedBatchesSize());
+    this.cachedBatches = new FifoMaxEntriesSet<>(config.getMaxBatchLoopGuard());
   }
 
   /**

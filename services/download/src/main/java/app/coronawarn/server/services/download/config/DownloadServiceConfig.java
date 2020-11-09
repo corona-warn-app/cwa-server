@@ -28,16 +28,16 @@ public class DownloadServiceConfig {
   @Autowired
   private TekFieldDerivations tekFieldDerivations;
 
-  public Integer getCachedBatchesSize() {
-    return cachedBatchesSize;
+  public Integer getMaxBatchLoopGuard() {
+    return maxBatchLoopGuard;
   }
 
-  public void setCachedBatchesSize(Integer cachedBatchesSize) {
-    this.cachedBatchesSize = cachedBatchesSize;
+  public void setMaxBatchLoopGuard(Integer maxBatchLoopGuard) {
+    this.maxBatchLoopGuard = maxBatchLoopGuard;
   }
 
   @Min(1)
-  private Integer cachedBatchesSize;
+  private Integer maxBatchLoopGuard;
 
   public Validation getValidation() {
     return validation;
