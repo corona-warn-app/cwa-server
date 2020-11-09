@@ -42,10 +42,14 @@ public class CwaApiStructureProvider {
         ignoredValue -> Set.of(distributionServiceConfig.getApi().getVersionV1()),
         Object::toString);
 
-    versionDirectory.addWritableToAll(ignoredValue ->
-        Optional.of(appConfigurationStructureProvider.getAppConfiguration()));
-    versionDirectory.addWritableToAll(ignoredValue ->
-        Optional.of(diagnosisKeysStructureProvider.getDiagnosisKeys()));
+    versionDirectory.addWritableToAll(
+        ignoredValue -> Optional.of(appConfigurationStructureProvider.getAppConfiguration()));
+    versionDirectory.addWritableToAll(
+        ignoredValue -> Optional.of(appConfigurationStructureProvider.getAppConfigurationV2ForAndroid()));
+    versionDirectory.addWritableToAll(
+        ignoredValue -> Optional.of(appConfigurationStructureProvider.getAppConfigurationV2ForIos()));
+    versionDirectory.addWritableToAll(
+        ignoredValue -> Optional.of(diagnosisKeysStructureProvider.getDiagnosisKeys()));
 
     return new IndexingDecoratorOnDisk<>(versionDirectory, distributionServiceConfig.getOutputFileName());
   }

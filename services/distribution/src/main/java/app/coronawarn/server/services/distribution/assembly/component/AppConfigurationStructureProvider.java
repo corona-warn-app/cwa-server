@@ -30,4 +30,14 @@ public class AppConfigurationStructureProvider {
   public Directory<WritableOnDisk> getAppConfiguration() {
     return new AppConfigurationDirectory(applicationConfiguration, cryptoProvider, distributionServiceConfig);
   }
+
+  public Directory<WritableOnDisk> getAppConfigurationV2ForAndroid() {
+    //todo
+    return null;
+  }
+
+  public Directory<WritableOnDisk> getAppConfigurationV2ForIos() {
+    //todo
+    return null;
+  }
 }
