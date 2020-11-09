@@ -4,13 +4,15 @@ import app.coronawarn.server.common.protocols.internal.v2.AppFeature;
 import app.coronawarn.server.common.protocols.internal.v2.AppFeatures;
 import app.coronawarn.server.common.protocols.internal.v2.ApplicationConfigurationAndroid;
 import app.coronawarn.server.common.protocols.internal.v2.ApplicationConfigurationIOS;
+import app.coronawarn.server.common.protocols.internal.v2.DailySummariesConfig;
 import app.coronawarn.server.common.protocols.internal.v2.DayPackageMetadata;
+import app.coronawarn.server.common.protocols.internal.v2.DiagnosisKeysDataMapping;
 import app.coronawarn.server.common.protocols.internal.v2.ExposureDetectionParametersAndroid;
 import app.coronawarn.server.common.protocols.internal.v2.HourPackageMetadata;
 import app.coronawarn.server.common.protocols.internal.v2.KeyDownloadParametersAndroid;
 import app.coronawarn.server.common.protocols.internal.v2.RiskCalculationParameters;
-import app.coronawarn.server.common.protocols.internal.v2.RiskCalculationParameters.Builder;
 import app.coronawarn.server.common.protocols.internal.v2.SemanticVersion;
+import app.coronawarn.server.services.distribution.assembly.appconfig.parsing.v2.DeserializedDailySummariesConfig;
 import app.coronawarn.server.services.distribution.assembly.appconfig.parsing.v2.DeserializedDiagnosisKeysDataMapping;
 import app.coronawarn.server.services.distribution.config.DistributionServiceConfig;
 import app.coronawarn.server.services.distribution.config.DistributionServiceConfig.AppConfigParameters.AndroidExposureDetectionParameters;
@@ -37,8 +39,9 @@ public class ApplicationConfigurationV2PublicationConfig {
    * The location of the exposure configuration master files for Android and Ios.
    */
   public static final String IOS_V2_MASTER_FILE = "master-config/v2/app-config-ios.yaml";
-  public static final String ANDROID_V2_RISK_PARAMETERS_FILE = "master-config/v2/risk-calculation-parameters.yaml";
+  private static final String ANDROID_V2_RISK_PARAMETERS_FILE = "master-config/v2/risk-calculation-parameters.yaml";
   private static final String ANDROID_V2_DATA_MAPPING_FILE = "master-config/v2/diagnosis-keys-data-mapping.yaml";
+  private static final String ANDROID_V2_DAILY_SUMMARIES_FILE = "master-config/v2/daily-summaries-config.yaml";
 
   /**
    * Fetches the master configuration as a ApplicationConfigurationAndroid instance.
@@ -46,12 +49,15 @@ public class ApplicationConfigurationV2PublicationConfig {
   @Bean
   public ApplicationConfigurationAndroid createAndroidV2Configuration(DistributionServiceConfig distributionServiceConfig)
       throws UnableToLoadFileException {
-    Builder riskCalculationParameterBuilder = YamlLoader.loadYamlIntoProtobufBuilder(
+
+    RiskCalculationParameters.Builder riskCalculationParameterBuilder = YamlLoader.loadYamlIntoProtobufBuilder(
         ANDROID_V2_RISK_PARAMETERS_FILE, RiskCalculationParameters.Builder.class);
 
     DeserializedDiagnosisKeysDataMapping dataMapping = YamlLoader.loadYamlIntoClass(
         ANDROID_V2_DATA_MAPPING_FILE, DeserializedDiagnosisKeysDataMapping.class);
 
+    DeserializedDailySummariesConfig dailySummaries = YamlLoader.loadYamlIntoClass(
+        ANDROID_V2_DAILY_SUMMARIES_FILE, DeserializedDailySummariesConfig.class);
 
     return ApplicationConfigurationAndroid.newBuilder()
         .setRiskCalculationParameters(riskCalculationParameterBuilder)
@@ -61,7 +67,30 @@ public class ApplicationConfigurationV2PublicationConfig {
         .addAllSupportedCountries(List.of(distributionServiceConfig.getSupportedCountries()))
         .setKeyDownloadParameters(buildKeyDownloadParametersAndroid(distributionServiceConfig))
         .setExposureDetectionParameters(buildExposureDetectionParametersAndroid(distributionServiceConfig))
+        .setDailySummariesConfig(buildDailySummaries(dailySummaries))
+        .setDiagnosisKeysDataMapping(buildDataMapping(dataMapping))
         .build();
+  }
+
+  private DiagnosisKeysDataMapping buildDataMapping(
+      DeserializedDiagnosisKeysDataMapping dataMapping) {
+    return DiagnosisKeysDataMapping.newBuilder()
+        .setInfectiousnessWhenDaysSinceOnsetMissing(
+            dataMapping.getInfectiousnessWhenDaysSinceOnsetMissing())
+        .setReportTypeWhenMissing(dataMapping.getReportTypeWhenMissing())
+        .putAllDaysSinceOnsetToInfectiousness(dataMapping.getDaysSinceOnsetToInfectiousness())
+        .build();
+  }
+
+  private DailySummariesConfig buildDailySummaries(
+      DeserializedDailySummariesConfig dailySummaries) {
+    return DailySummariesConfig.newBuilder()
+        .addAllAttenuationBucketThresholdDb(dailySummaries.getAttenuationBucketThresholdDb())
+        .addAllAttenuationBucketWeights(dailySummaries.getAttenuationBucketWeights())
+        .setDaysSinceExposureThreshold(dailySummaries.getDaysSinceExposureThreshold())
+        .setMinimumWindowScore(dailySummaries.getMinimumWindowScore())
+        .putAllReportTypeWeights(dailySummaries.getReportTypeWeights())
+        .putAllInfectiousnessWeights(dailySummaries.getInfectiousnessWeights()).build();
   }
 
   private AppFeatures buildAppFeatures(DistributionServiceConfig distributionServiceConfig) {
@@ -92,11 +121,7 @@ public class ApplicationConfigurationV2PublicationConfig {
   @Bean
   public ApplicationConfigurationIOS createIosV2Configuration(DistributionServiceConfig distributionServiceConfig)
       throws UnableToLoadFileException {
-    return YamlLoader.loadYamlIntoProtobufBuilder(IOS_V2_MASTER_FILE, ApplicationConfigurationIOS.Builder.class)
-        .addAllSupportedCountries(List.of(distributionServiceConfig.getSupportedCountries()))
-        .setMinVersion(buildSemanticVersion(distributionServiceConfig.getAppVersions().getMinIos()))
-        .setLatestVersion(buildSemanticVersion(distributionServiceConfig.getAppVersions().getLatestIos()))
-        .build();
+    return ApplicationConfigurationIOS.newBuilder().build();
   }
 
   private app.coronawarn.server.common.protocols.internal.v2.SemanticVersion buildSemanticVersion(String version) {
