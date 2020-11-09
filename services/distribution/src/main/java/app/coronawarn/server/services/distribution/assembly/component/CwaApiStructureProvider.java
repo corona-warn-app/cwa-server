@@ -44,8 +44,8 @@ public class CwaApiStructureProvider {
 
     versionDirectory.addWritableToAll(
         ignoredValue -> Optional.of(appConfigurationStructureProvider.getAppConfiguration()));
-    versionDirectory.addWritableToAll(
-        ignoredValue -> Optional.of(appConfigurationStructureProvider.getAppConfigurationV2ForAndroid()));
+//    versionDirectory.addWritableToAll(
+//        ignoredValue -> Optional.of(appConfigurationStructureProvider.getAppConfigurationV2ForAndroid()));
     versionDirectory.addWritableToAll(
         ignoredValue -> Optional.of(appConfigurationStructureProvider.getAppConfigurationV2ForIos()));
     versionDirectory.addWritableToAll(
