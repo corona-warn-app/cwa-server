@@ -138,13 +138,15 @@ public class FederationBatchProcessor {
       processBatchAndReturnNextBatchId(currentBatch, ERROR)
           .ifPresent(nextBatchTag -> {
             FederationBatchInfo batch = new FederationBatchInfo(nextBatchTag, currentBatch.getDate());
-            if (config.getEfgsEnforceDateBasedDownload()) {
-              if (!cachedBatches.contains(batch)) {
-                unprocessedBatches.add(batch);
-              }
+            if (isEfgsEnforceDateBasedDownloadOrNotProcessed(batch)) {
+              unprocessedBatches.add(batch);
             }
           });
     }
+  }
+
+  private boolean isEfgsEnforceDateBasedDownloadOrNotProcessed(FederationBatchInfo batch) {
+    return config.getEfgsEnforceDateBasedDownload() && !cachedBatches.contains(batch);
   }
 
   private Optional<String> processBatchAndReturnNextBatchId(
