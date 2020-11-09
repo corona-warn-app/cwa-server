@@ -97,6 +97,9 @@ services:
       min-ios: ${MIN_IOS_VERSION:0.5.0}
       latest-android: ${LATEST_IOS_VERSION:1.0.4}
       min-android: ${MIN_ANDROID_VERSION:1.0.4}
+      # With ENF v2 Android apps are versioned by Version Code and not by Semantic Versioning
+      min-android-version-code: ${ANDROID_MIN_VERSION_CODE:31}
+      latest-android-version-code: ${ANDROID_LATEST_VERSION_CODE:31}
     app-config-parameters:
       ios-key-download-parameters:
         cached-day-packages-to-update-on-etag-mismatch: ${KEY_DOWNLOAD_INVALIDATED_DAY_PACKAGES:[]}

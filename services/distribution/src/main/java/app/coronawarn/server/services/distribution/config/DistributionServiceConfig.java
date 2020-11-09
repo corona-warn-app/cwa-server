@@ -8,6 +8,7 @@ import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.Pattern;
+import javax.validation.constraints.PositiveOrZero;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.validation.annotation.Validated;
 
@@ -626,7 +627,10 @@ public class DistributionServiceConfig {
     private String minIos;
     private String latestAndroid;
     private String minAndroid;
-
+    @PositiveOrZero
+    private Integer latestAndroidVersionCode;
+    @PositiveOrZero
+    private Integer minAndroidVersionCode;
 
     public String getLatestIos() {
       return latestIos;
@@ -660,6 +664,21 @@ public class DistributionServiceConfig {
       this.minAndroid = minAndroid;
     }
 
+    public Integer getLatestAndroidVersionCode() {
+      return latestAndroidVersionCode;
+    }
+
+    public void setLatestAndroidVersionCode(Integer latestAndroidVersionCode) {
+      this.latestAndroidVersionCode = latestAndroidVersionCode;
+    }
+
+    public Integer getMinAndroidVersionCode() {
+      return minAndroidVersionCode;
+    }
+
+    public void setMinAndroidVersionCode(Integer minAndroidVersionCode) {
+      this.minAndroidVersionCode = minAndroidVersionCode;
+    }
   }
 
   public static class AppConfigParameters {

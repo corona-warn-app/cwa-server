@@ -9,6 +9,7 @@ import app.coronawarn.server.services.distribution.assembly.appconfig.Applicatio
 import app.coronawarn.server.services.distribution.config.DistributionServiceConfig.AppConfigParameters.AndroidExposureDetectionParameters;
 import app.coronawarn.server.services.distribution.config.DistributionServiceConfig.AppConfigParameters.AndroidKeyDownloadParameters;
 import app.coronawarn.server.services.distribution.config.DistributionServiceConfig.AppConfigParameters.IosExposureDetectionParameters;
+import app.coronawarn.server.services.distribution.config.DistributionServiceConfig.AppVersions;
 import java.util.function.Consumer;
 import java.util.stream.Stream;
 import javax.validation.ConstraintViolation;
@@ -76,6 +77,39 @@ class DistributionServiceConfigTest {
     void successOnValidSupportedCountries(String supportedCountries) {
       String[] supportedCountriesList = supportedCountries.split(",");
       when(distributionServiceConfig.getSupportedCountries()).thenReturn(supportedCountriesList);
+
+      Errors errors = new BindException(distributionServiceConfig, "distributionServiceConfig");
+      distributionServiceConfigValidator.validate(distributionServiceConfig, errors);
+
+      assertThat(errors.getAllErrors()).isEmpty();
+
+    }
+  }
+
+  @Nested
+  class AndroidVersioningParametersTest {
+
+    @ParameterizedTest
+    @ValueSource(ints = {-14,-1})
+    void failsOnInvalidAndroidAppVersionCodes(Integer invalidVersionCode) {
+      AppVersions appVersions = new AppVersions();
+      appVersions.setMinAndroidVersionCode(invalidVersionCode);
+      appVersions.setLatestAndroidVersionCode(invalidVersionCode);
+      when(distributionServiceConfig.getAppVersions()).thenReturn(appVersions);
+
+      Errors errors = new BindException(distributionServiceConfig, "distributionServiceConfig");
+      distributionServiceConfigValidator.validate(distributionServiceConfig, errors);
+
+      assertThat(errors.getAllErrors()).hasSize(2);
+    }
+
+    @ParameterizedTest
+    @ValueSource(ints = {0,31})
+    void successOnValidAndroidAppVersionCodes(Integer validVersionCode) {
+      AppVersions appVersions = new AppVersions();
+      appVersions.setMinAndroidVersionCode(validVersionCode);
+      appVersions.setLatestAndroidVersionCode(validVersionCode);
+      when(distributionServiceConfig.getAppVersions()).thenReturn(appVersions);
 
       Errors errors = new BindException(distributionServiceConfig, "distributionServiceConfig");
       distributionServiceConfigValidator.validate(distributionServiceConfig, errors);
