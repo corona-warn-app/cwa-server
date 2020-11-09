@@ -52,6 +52,8 @@ services:
       diagnosis-keys-path: diagnosis-keys
       parameters-path: configuration
       app-config-file-name: app_config
+      app-config-v2-android-file-name: app_config_android
+      app-config-v2-ios-file-name: app_config_ios
     # Signature configuration, used for signing the exports.
     signature:
       # The alias with which to identify public key to be used for verification.
