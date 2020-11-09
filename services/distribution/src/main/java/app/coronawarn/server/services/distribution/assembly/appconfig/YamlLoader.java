@@ -2,6 +2,7 @@
 
 package app.coronawarn.server.services.distribution.assembly.appconfig;
 
+import app.coronawarn.server.services.distribution.assembly.appconfig.parsing.DashToCamelCaseConstructor;
 import app.coronawarn.server.services.distribution.assembly.appconfig.parsing.YamlConstructorForProtoBuf;
 import com.google.protobuf.Message;
 import java.io.IOException;
@@ -9,6 +10,7 @@ import java.io.InputStream;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 import org.yaml.snakeyaml.Yaml;
+import org.yaml.snakeyaml.constructor.Constructor;
 import org.yaml.snakeyaml.error.YAMLException;
 import org.yaml.snakeyaml.introspector.BeanAccess;
 
@@ -49,7 +51,7 @@ public class YamlLoader {
 
   public static <T> T loadYamlIntoClass(String path, Class<T> classType)
       throws UnableToLoadFileException {
-    Yaml yaml = new Yaml();
+    Yaml yaml = new Yaml(new DashToCamelCaseConstructor(path));
     // no setters for generated message classes available
     yaml.setBeanAccess(BeanAccess.FIELD);
 
