@@ -3,12 +3,14 @@
 package app.coronawarn.server.services.distribution.common;
 
 import app.coronawarn.server.common.persistence.domain.DiagnosisKey;
+import app.coronawarn.server.common.protocols.external.exposurenotification.ReportType;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.Random;
+import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
@@ -56,6 +58,9 @@ public final class DiagnosisTestData {
             DiagnosisKey.builder().withKeyData(randomKeyData())
                 .withRollingStartIntervalNumber(600)
                 .withTransmissionRiskLevel(5).withSubmissionTimestamp(timestamp)
+                .withCountryCode("DE")
+                .withVisitedCountries(Set.of("DE","FR"))
+                .withReportType(ReportType.CONFIRMED_CLINICAL_DIAGNOSIS)
                 .build())
         .collect(Collectors.toList());
   }
