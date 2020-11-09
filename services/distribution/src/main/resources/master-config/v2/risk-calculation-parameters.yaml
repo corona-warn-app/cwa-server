@@ -31,13 +31,13 @@ minutes-at-attenuation-weights:
       min: 0
       max: 55
       max-exclusive: true
-  weight: 1.0
+    weight: 1.0
   -
     attenuation-range:
       min: 55
       max: 63
       max-exclusive: true
-  weight: 0.5
+    weight: 0.5
 
 normalized-time-per-ew-to-risk-level-mapping:
   -
@@ -45,12 +45,12 @@ normalized-time-per-ew-to-risk-level-mapping:
       min: 0
       max: 15
       max-exclusive: true
-  risk-level: 1
+    risk-level: 1
   -
     normalized-time-range:
       min: 15
       max: 9999
-  risk-level: 2
+    risk-level: 2
 
 normalized-time-per-day-to-risk-level-mapping:
   -
@@ -58,12 +58,13 @@ normalized-time-per-day-to-risk-level-mapping:
       min: 0
       max: 15
       max-exclusive: true
-  risk-level: 1
+    risk-level: 1
   -
     normalized-time-range:
       min: 15
       max: 9999
-  risk-level: 2
+    risk-level: 2
+    
 transmission-risk-level-multiplier: 0.2
 
 
