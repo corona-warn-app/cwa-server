@@ -6,10 +6,14 @@ import app.coronawarn.server.common.protocols.internal.ApplicationConfiguration;
 import app.coronawarn.server.common.protocols.internal.v2.ApplicationConfigurationAndroid;
 import app.coronawarn.server.common.protocols.internal.v2.ApplicationConfigurationIOS;
 import app.coronawarn.server.services.distribution.assembly.appconfig.structure.directory.AppConfigurationDirectory;
-import app.coronawarn.server.services.distribution.assembly.appconfig.structure.directory.v2.AppConfigurationV2Directory;
+import app.coronawarn.server.services.distribution.assembly.appconfig.structure.directory.v2.AppConfigurationV2StructureProvider;
+import app.coronawarn.server.services.distribution.assembly.appconfig.validation.v2.ApplicationConfigurationAndroidValidator;
+import app.coronawarn.server.services.distribution.assembly.appconfig.validation.v2.ApplicationConfigurationIosValidator;
+import app.coronawarn.server.services.distribution.assembly.structure.Writable;
 import app.coronawarn.server.services.distribution.assembly.structure.WritableOnDisk;
 import app.coronawarn.server.services.distribution.assembly.structure.directory.Directory;
 import app.coronawarn.server.services.distribution.config.DistributionServiceConfig;
+import java.util.List;
 import org.springframework.stereotype.Component;
 
 /**
@@ -40,22 +44,25 @@ public class AppConfigurationStructureProvider {
   }
 
   /**
-   * Returns a writable {@link Directory} containing the archive with Application Configuration for
-   * Android clients using ENF v2.
+   * Returns a list containing the archives with Application Configuration for
+   * Android clients using ENF v2 as well as signature file.
    */
-  public Directory<WritableOnDisk> getAppConfigurationV2ForAndroid() {
-    return new AppConfigurationV2Directory<ApplicationConfigurationAndroid>(
+  public Writable<WritableOnDisk> getAppConfigurationV2ForAndroid() {
+    return new AppConfigurationV2StructureProvider<ApplicationConfigurationAndroid>(
         applicationConfigurationV2Android, cryptoProvider, distributionServiceConfig,
-        distributionServiceConfig.getApi().getAppConfigV2AndroidFileName());
+        distributionServiceConfig.getApi().getAppConfigV2AndroidFileName(),
+        new ApplicationConfigurationAndroidValidator(applicationConfigurationV2Android))
+            .getConfigurationArchive();
   }
 
   /**
-   * Returns a writable {@link Directory} containing the archive with Application Configuration for
-   * IOS clients using ENF v2.
+   * Returns a list containing the archives with Application Configuration for
+   * IOS clients using ENF v2 as well as signature file.
    */
-  public Directory<WritableOnDisk> getAppConfigurationV2ForIos() {
-    return new AppConfigurationV2Directory<ApplicationConfigurationIOS>(
+  public Writable<WritableOnDisk>  getAppConfigurationV2ForIos() {
+    return new AppConfigurationV2StructureProvider<ApplicationConfigurationIOS>(
         applicationConfigurationV2Ios, cryptoProvider, distributionServiceConfig,
-        distributionServiceConfig.getApi().getAppConfigV2IosFileName());
+        distributionServiceConfig.getApi().getAppConfigV2IosFileName(),
+        new ApplicationConfigurationIosValidator(applicationConfigurationV2Ios)).getConfigurationArchive();
   }
 }

@@ -1,15 +1,13 @@
 package app.coronawarn.server.services.distribution.assembly.appconfig.validation.v2;
 
 import app.coronawarn.server.common.protocols.internal.ApplicationConfiguration;
-import app.coronawarn.server.common.protocols.internal.RiskScoreClassification;
-import app.coronawarn.server.common.protocols.internal.RiskScoreParameters;
 import app.coronawarn.server.common.protocols.internal.v2.ApplicationConfigurationIOS;
 import app.coronawarn.server.services.distribution.assembly.appconfig.validation.ConfigurationValidator;
 import app.coronawarn.server.services.distribution.assembly.appconfig.validation.ValidationResult;
 
 /**
- * This validator validates a {@link ApplicationConfiguration}. It will re-use the {@link ConfigurationValidator} from
- * the sub-configurations of {@link RiskScoreParameters} and {@link RiskScoreClassification}.
+ * This validator validates a {@link ApplicationConfigurationIOS}. It will cascade validation to
+ * other {@link ConfigurationValidator} instances for the different parts of the configuration.
  */
 public class ApplicationConfigurationIosValidator extends ConfigurationValidator {
 
