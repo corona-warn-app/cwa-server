@@ -57,10 +57,6 @@ public class AppConfigurationV2Directory<T extends com.google.protobuf.Generated
 
     ArchiveOnDisk appConfigurationFile = new ArchiveOnDisk(archiveName);
     appConfigurationFile.addWritable(new FileOnDisk("export.bin", applicationConfiguration.toByteArray()));
-    ArchiveOnDisk countryAppConfigurationFile = new ArchiveOnDisk(archiveName);
-    countryAppConfigurationFile.addWritable(new FileOnDisk("export.bin", applicationConfiguration.toByteArray()));
-    this.addWritable(
-        new AppConfigurationSigningDecorator(countryAppConfigurationFile, cryptoProvider, distributionServiceConfig));
     this.addWritable(
         new AppConfigurationSigningDecorator(appConfigurationFile, cryptoProvider, distributionServiceConfig));
   }
