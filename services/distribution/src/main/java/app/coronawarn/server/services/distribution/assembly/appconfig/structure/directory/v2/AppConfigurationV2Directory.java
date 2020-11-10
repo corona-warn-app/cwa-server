@@ -22,9 +22,11 @@ public class AppConfigurationV2Directory<T extends com.google.protobuf.Generated
   private final DistributionServiceConfig distributionServiceConfig;
 
   /**
-   * Creates an {@link AppConfigurationV2Directory} for the exposure configuration and risk score classification.
+   * Creates an {@link AppConfigurationV2Directory} for the exposure configuration and risk score
+   * classification.
    *
-   * @param cryptoProvider The {@link CryptoProvider} whose artifacts to use for creating the signature.
+   * @param cryptoProvider The {@link CryptoProvider} whose artifacts to use for creating the
+   *        signature.
    */
   public AppConfigurationV2Directory(T applicationConfiguration,
       CryptoProvider cryptoProvider,
@@ -39,8 +41,8 @@ public class AppConfigurationV2Directory<T extends com.google.protobuf.Generated
   }
 
   /**
-   * If validation of the given V2 app config (IOS or Android) succeeds, it is written into a file, put into an archive with
-   * the specified name and added to the specified parent directory.
+   * If validation of the given V2 app config (IOS or Android) succeeds, it is written into a file,
+   * put into an archive with the specified name and added to the specified parent directory.
    */
   private void addConfigurationArchiveIfValid(String archiveName) {
     //TODO : Validation

@@ -39,12 +39,20 @@ public class AppConfigurationStructureProvider {
     return new AppConfigurationDirectory(applicationConfiguration, cryptoProvider, distributionServiceConfig);
   }
 
+  /**
+   * Returns a writable {@link Directory} containing the archive with Application Configuration for
+   * Android clients using ENF v2.
+   */
   public Directory<WritableOnDisk> getAppConfigurationV2ForAndroid() {
     return new AppConfigurationV2Directory<ApplicationConfigurationAndroid>(
         applicationConfigurationV2Android, cryptoProvider, distributionServiceConfig,
         distributionServiceConfig.getApi().getAppConfigV2AndroidFileName());
   }
 
+  /**
+   * Returns a writable {@link Directory} containing the archive with Application Configuration for
+   * IOS clients using ENF v2.
+   */
   public Directory<WritableOnDisk> getAppConfigurationV2ForIos() {
     return new AppConfigurationV2Directory<ApplicationConfigurationIOS>(
         applicationConfigurationV2Ios, cryptoProvider, distributionServiceConfig,
