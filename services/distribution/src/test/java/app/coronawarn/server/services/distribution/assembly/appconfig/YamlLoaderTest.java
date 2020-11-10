@@ -47,6 +47,9 @@ class YamlLoaderTest {
     assertThatExceptionOfType(UnableToLoadFileException.class).isThrownBy(() -> {
       YamlLoader.loadYamlIntoClass("configtests/daily-summaries-config-fail.yaml", DeserializedDailySummariesConfig.class);
     });
+    assertThatExceptionOfType(UnableToLoadFileException.class).isThrownBy(() -> {
+      YamlLoader.loadYamlIntoClass("configtests/not-existing.yaml", DeserializedDailySummariesConfig.class);
+    });
   }
 
   private static Stream<Arguments> getYamlDeserializationExpectations() {
