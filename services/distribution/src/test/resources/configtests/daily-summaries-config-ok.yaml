@@ -5,7 +5,19 @@
 # This configuration file will be fetched by the mobile app in order to function.
 #
 # Change this file with caution!
-#
-#risk-calculation-parameters: !include risk-calculation-parameters.yaml
-#exposure-configuration: !include exposure-configuration.yaml
-#exposure-config: !include exposure-config.yaml
+
+
+attenuation-bucket-threshold-db: [30, 50, 70]
+attenuation-bucket-weights: [1.0, 1.0, 1.0]
+days-since-exposure-threshold: 0
+
+infectiousness-weights:
+  1: 1.0 
+  2: 1.0
+
+minimum-window-score: 0
+report-type-weights:
+  1: 1.0
+  2: 1.0
+  3: 1.0
+  4: 1.0

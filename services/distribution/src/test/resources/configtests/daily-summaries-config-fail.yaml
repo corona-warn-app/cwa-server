@@ -8,16 +8,11 @@
 
 
 attenuation-bucket-threshold-db: [30, 50, 70]
-attenuation-bucket-weights: [1.0, 1.0, 1.0, 1.0]
-days-since-exposure-threshold: 0
-
+attenuation-bucket-weights:
+  days-since-exposure-threshold: 0
+  
 infectiousness-weights:
   1: 1.0 
   2: 1.0
 
-minimum-window-score: 0
-report-type-weights:
-  1: 1.0
-  2: 1.0
-  3: 1.0
-  4: 1.0
+wrong: A
