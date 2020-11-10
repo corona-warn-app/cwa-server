@@ -5,6 +5,8 @@ import static java.io.File.separator;
 import static java.lang.String.join;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
+
 import java.io.File;
 import java.io.IOException;
 import java.util.Set;
@@ -12,18 +14,18 @@ import org.junit.Rule;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.rules.TemporaryFolder;
+import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.ConfigFileApplicationContextInitializer;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
-import com.google.protobuf.GeneratedMessageV3;
-import app.coronawarn.server.common.protocols.internal.ApplicationConfiguration;
 import app.coronawarn.server.common.protocols.internal.v2.ApplicationConfigurationAndroid;
 import app.coronawarn.server.common.protocols.internal.v2.ApplicationConfigurationIOS;
 import app.coronawarn.server.services.distribution.assembly.appconfig.ApplicationConfigurationV2PublicationConfig;
-import app.coronawarn.server.services.distribution.assembly.appconfig.UnableToLoadFileException;
-import app.coronawarn.server.services.distribution.assembly.appconfig.structure.directory.AppConfigurationDirectory;
+import app.coronawarn.server.services.distribution.assembly.appconfig.validation.ValidationError;
+import app.coronawarn.server.services.distribution.assembly.appconfig.validation.ValidationError.ErrorType;
+import app.coronawarn.server.services.distribution.assembly.appconfig.validation.ValidationResult;
 import app.coronawarn.server.services.distribution.assembly.appconfig.validation.v2.ApplicationConfigurationAndroidValidator;
 import app.coronawarn.server.services.distribution.assembly.appconfig.validation.v2.ApplicationConfigurationIosValidator;
 import app.coronawarn.server.services.distribution.assembly.component.CryptoProvider;
@@ -82,6 +84,40 @@ class AppConfigurationV2StructureProviderTest {
                 .getConfigurationArchive();
 
     assertThat(writeDirectoryAndGetFiles(appConfigs)).isEqualTo(expFiles);
+  }
+
+  @Test
+  void shouldReturnNoFilesIfAndroidConfigValidationFails() throws IOException {
+    ApplicationConfigurationAndroidValidator validatorMock = mock(ApplicationConfigurationAndroidValidator.class);
+    ValidationResult result = new ValidationResult();
+    result.add(new ValidationError("test", null, ErrorType.BLANK_LABEL));
+    when(validatorMock.validate()).thenReturn(result);
+
+    Writable<WritableOnDisk> appConfigs =
+        new AppConfigurationV2StructureProvider<ApplicationConfigurationAndroid>(
+            applicationConfigurationAndroid, cryptoProvider, distributionServiceConfig,
+            distributionServiceConfig.getApi().getAppConfigV2AndroidFileName(),
+            validatorMock)
+                .getConfigurationArchive();
+
+    assertThat(appConfigs).isNull();
+  }
+
+  @Test
+  void shouldReturnNoFilesIfIosConfigValidationFails() throws IOException {
+    ApplicationConfigurationIosValidator validatorMock = mock(ApplicationConfigurationIosValidator.class);
+    ValidationResult result = new ValidationResult();
+    result.add(new ValidationError("test", null, ErrorType.BLANK_LABEL));
+    when(validatorMock.validate()).thenReturn(result);
+
+    Writable<WritableOnDisk> appConfigs =
+        new AppConfigurationV2StructureProvider<ApplicationConfigurationIOS>(
+            applicationConfigurationIos, cryptoProvider, distributionServiceConfig,
+            distributionServiceConfig.getApi().getAppConfigV2IosFileName(),
+            validatorMock)
+                .getConfigurationArchive();
+
+    assertThat(appConfigs).isNull();
   }
 
   private Set<String> writeDirectoryAndGetFiles(Writable<WritableOnDisk> configFile) throws IOException {
