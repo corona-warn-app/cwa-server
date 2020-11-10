@@ -10,10 +10,6 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import app.coronawarn.server.common.protocols.internal.v2.ApplicationConfigurationAndroid;
 import app.coronawarn.server.common.protocols.internal.v2.ApplicationConfigurationIOS;
-import app.coronawarn.server.services.distribution.assembly.appconfig.validation.ConfigurationValidator;
-import app.coronawarn.server.services.distribution.assembly.appconfig.validation.ValidationResult;
-import app.coronawarn.server.services.distribution.assembly.appconfig.validation.v2.ApplicationConfigurationAndroidValidator;
-import app.coronawarn.server.services.distribution.assembly.appconfig.validation.v2.ApplicationConfigurationIosValidator;
 import app.coronawarn.server.services.distribution.config.DistributionServiceConfig;
 
 @EnableConfigurationProperties(value = DistributionServiceConfig.class)
@@ -22,8 +18,6 @@ import app.coronawarn.server.services.distribution.config.DistributionServiceCon
     initializers = ConfigFileApplicationContextInitializer.class)
 class ApplicationConfigurationV2MasterFileTest {
 
-  private static final ValidationResult SUCCESS = new ValidationResult();
-
   @Autowired
   private ApplicationConfigurationAndroid applicationConfigurationAndroid;
 
@@ -31,13 +25,8 @@ class ApplicationConfigurationV2MasterFileTest {
   private ApplicationConfigurationIOS applicationConfigurationIos;
 
   @Test
-  void testMasterFile() {
-    assertMasterConfigIsValid(new ApplicationConfigurationAndroidValidator(applicationConfigurationAndroid));
-    assertMasterConfigIsValid(new ApplicationConfigurationIosValidator(applicationConfigurationIos));
-  }
-
-  private void assertMasterConfigIsValid(ConfigurationValidator configValidator) {
-    ValidationResult result = configValidator.validate();
-    assertThat(result).isEqualTo(SUCCESS);
+  void testMasterFileSAreLoadedViaAutowiring() {
+    assertThat(applicationConfigurationAndroid).isNotNull();
+    assertThat(applicationConfigurationIos).isNotNull();
   }
 }
