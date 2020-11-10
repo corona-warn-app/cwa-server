@@ -12,25 +12,12 @@ public class DeserializedDiagnosisKeysDataMapping {
     return daysSinceOnsetToInfectiousness;
   }
 
-  public void setDaysSinceOnsetToInfectiousness(
-      Map<Integer, Integer> daysSinceOnsetToInfectiousness) {
-    this.daysSinceOnsetToInfectiousness = daysSinceOnsetToInfectiousness;
-  }
-
   public Integer getInfectiousnessWhenDaysSinceOnsetMissing() {
     return infectiousnessWhenDaysSinceOnsetMissing;
-  }
-
-  public void setInfectiousnessWhenDaysSinceOnsetMissing(
-      Integer infectiousnessWhenDaysSinceOnsetMissing) {
-    this.infectiousnessWhenDaysSinceOnsetMissing = infectiousnessWhenDaysSinceOnsetMissing;
   }
 
   public Integer getReportTypeWhenMissing() {
     return reportTypeWhenMissing;
   }
 
-  public void setReportTypeWhenMissing(Integer reportTypeWhenMissing) {
-    this.reportTypeWhenMissing = reportTypeWhenMissing;
-  }
 }
