@@ -26,7 +26,6 @@ services:
     retention-days: 14
     validation:
       allowed-report-types: CONFIRMED_TEST,CONFIRMED_CLINICAL_DIAGNOSIS
-    max-batch-loop-guard: 1000
 
 federation-gateway:
   base-url: http://localhost:1234

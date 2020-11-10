@@ -28,17 +28,6 @@ public class DownloadServiceConfig {
   @Autowired
   private TekFieldDerivations tekFieldDerivations;
 
-  public Integer getMaxBatchLoopGuard() {
-    return maxBatchLoopGuard;
-  }
-
-  public void setMaxBatchLoopGuard(Integer maxBatchLoopGuard) {
-    this.maxBatchLoopGuard = maxBatchLoopGuard;
-  }
-
-  @Min(1)
-  private Integer maxBatchLoopGuard;
-
   public Validation getValidation() {
     return validation;
   }
