@@ -6,9 +6,9 @@ import java.util.Queue;
 import java.util.Set;
 
 /**
- * Implements a size-limited {@link Set}-like {@link Queue}: Elements are only
- * added if they are not already contained and if the number of elements exceeds
- * the given limit, oldest elements are removed (FIFO).
+ * Implements a size-limited {@link Queue} with a {@link Set}-like fast lookup.
+ * When elements are added and the number of elements exceeds the given limit,
+ * oldest elements are removed (FIFO).
  *
  * @param <E> the type of elements held in this collection.
  * 
@@ -29,25 +29,23 @@ public class FifoMaxEntriesSet<E> {
    * Adds the element to this set and removes elements until size <= maxSize.
    * 
    * @param e The element to add
-   * @return {@code true} if this set did not already contain the specified
-   *         element
    */
-  public boolean add(E e) {
-    fast.add(e);
-    order.add(e);
+  public void add(E e) {
+    if (fast.add(e)) {
+      order.add(e);
+    }
     while (fast.size() > maxSize) {
       fast.remove(order.remove());
     }
-    return true;
   }
 
   /**
-   * Returns {@code true} if this set contains the specified element. More
+   * Returns {@code true} if this set still contains the specified element. More
    * formally, returns {@code true} if and only if this set contains an element
    * {@code e} such that {@code Objects.equals(o, e)}.
    *
    * @param e element whose presence in this set is to be tested
-   * @return {@code true} if this set contains the specified element
+   * @return {@code true} if this set still contains the specified element
    */
   public boolean contains(E e) {
     return fast.contains(e);
