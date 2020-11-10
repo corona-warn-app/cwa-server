@@ -15,7 +15,7 @@ import org.slf4j.LoggerFactory;
 /**
  * Validates and provides all configuration files for a specific device which is running the ENF V2.
  */
-public class AppConfigurationV2StructureProvider<T extends com.google.protobuf.GeneratedMessageV3>{
+public class AppConfigurationV2StructureProvider<T extends com.google.protobuf.GeneratedMessageV3> {
 
   private static final Logger logger = LoggerFactory.getLogger(AppConfigurationV2StructureProvider.class);
 
@@ -46,8 +46,8 @@ public class AppConfigurationV2StructureProvider<T extends com.google.protobuf.G
 
   /**
    * If validation of the given V2 app config (IOS or Android) succeeds, it is written into a file,
-   * put into an archive with the specified name and added to the specified parent directory.
-   * @param writables
+   * put into an archive with the specified name and returned to be included in the CWA file
+   * structure.
    */
   public Writable<WritableOnDisk> getConfigurationArchive() {
     ValidationResult validationResult = appConfigV2Validator.validate();

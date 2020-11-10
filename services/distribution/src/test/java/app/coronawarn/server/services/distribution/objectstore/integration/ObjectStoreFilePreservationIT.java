@@ -99,7 +99,6 @@ class ObjectStoreFilePreservationIT {
   void files_once_published_to_objectstore_should_not_be_overriden_because_of_retention_or_shifting_policies()
       throws IOException {
 
-    try {
     // keep data in the past for this test
     LocalDate testStartDate = LocalDate.now().minusDays(10);
     LocalDate testEndDate = LocalDate.now().minusDays(6);
@@ -117,9 +116,6 @@ class ObjectStoreFilePreservationIT {
     List<S3Object> filesAfterRetention = getPublishedFiles();
 
     assertPreviouslyPublishedKeyFilesAreTheSame(filesBeforeRetention, filesAfterRetention);
-    } catch (Exception ex) {
-      System.out.println(ex);
-    }
   }
 
   private List<S3Object> getPublishedFiles() {
