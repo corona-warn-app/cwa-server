@@ -7,8 +7,6 @@ import app.coronawarn.server.common.protocols.internal.v2.ApplicationConfigurati
 import app.coronawarn.server.common.protocols.internal.v2.ApplicationConfigurationIOS;
 import app.coronawarn.server.services.distribution.assembly.appconfig.structure.directory.AppConfigurationDirectory;
 import app.coronawarn.server.services.distribution.assembly.appconfig.structure.directory.v2.AppConfigurationV2StructureProvider;
-import app.coronawarn.server.services.distribution.assembly.appconfig.validation.v2.ApplicationConfigurationAndroidValidator;
-import app.coronawarn.server.services.distribution.assembly.appconfig.validation.v2.ApplicationConfigurationIosValidator;
 import app.coronawarn.server.services.distribution.assembly.structure.Writable;
 import app.coronawarn.server.services.distribution.assembly.structure.WritableOnDisk;
 import app.coronawarn.server.services.distribution.assembly.structure.directory.Directory;
@@ -49,8 +47,7 @@ public class AppConfigurationStructureProvider {
   public Writable<WritableOnDisk> getAppConfigurationV2ForAndroid() {
     return new AppConfigurationV2StructureProvider<ApplicationConfigurationAndroid>(
         applicationConfigurationV2Android, cryptoProvider, distributionServiceConfig,
-        distributionServiceConfig.getApi().getAppConfigV2AndroidFileName(),
-        new ApplicationConfigurationAndroidValidator(applicationConfigurationV2Android))
+        distributionServiceConfig.getApi().getAppConfigV2AndroidFileName())
             .getConfigurationArchive();
   }
 
@@ -61,7 +58,6 @@ public class AppConfigurationStructureProvider {
   public Writable<WritableOnDisk>  getAppConfigurationV2ForIos() {
     return new AppConfigurationV2StructureProvider<ApplicationConfigurationIOS>(
         applicationConfigurationV2Ios, cryptoProvider, distributionServiceConfig,
-        distributionServiceConfig.getApi().getAppConfigV2IosFileName(),
-        new ApplicationConfigurationIosValidator(applicationConfigurationV2Ios)).getConfigurationArchive();
+        distributionServiceConfig.getApi().getAppConfigV2IosFileName()).getConfigurationArchive();
   }
 }

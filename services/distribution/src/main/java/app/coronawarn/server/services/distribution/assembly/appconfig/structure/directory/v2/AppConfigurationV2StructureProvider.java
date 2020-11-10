@@ -2,7 +2,6 @@ package app.coronawarn.server.services.distribution.assembly.appconfig.structure
 
 import app.coronawarn.server.services.distribution.assembly.appconfig.structure.archive.decorator.signing.AppConfigurationSigningDecorator;
 import app.coronawarn.server.services.distribution.assembly.appconfig.validation.ConfigurationValidator;
-import app.coronawarn.server.services.distribution.assembly.appconfig.validation.ValidationResult;
 import app.coronawarn.server.services.distribution.assembly.component.CryptoProvider;
 import app.coronawarn.server.services.distribution.assembly.structure.Writable;
 import app.coronawarn.server.services.distribution.assembly.structure.WritableOnDisk;
@@ -17,12 +16,9 @@ import org.slf4j.LoggerFactory;
  */
 public class AppConfigurationV2StructureProvider<T extends com.google.protobuf.GeneratedMessageV3> {
 
-  private static final Logger logger = LoggerFactory.getLogger(AppConfigurationV2StructureProvider.class);
-
   private final T applicationConfiguration;
   private final CryptoProvider cryptoProvider;
   private final DistributionServiceConfig distributionServiceConfig;
-  private final ConfigurationValidator appConfigV2Validator;
   private final String appConfigFileName;
 
   /**
@@ -35,12 +31,10 @@ public class AppConfigurationV2StructureProvider<T extends com.google.protobuf.G
   public AppConfigurationV2StructureProvider(T applicationConfiguration,
       CryptoProvider cryptoProvider,
       DistributionServiceConfig distributionServiceConfig,
-      String appConfigFileName,
-      ConfigurationValidator appConfigV2Validator) {
+      String appConfigFileName) {
     this.applicationConfiguration = applicationConfiguration;
     this.cryptoProvider = cryptoProvider;
     this.distributionServiceConfig = distributionServiceConfig;
-    this.appConfigV2Validator = appConfigV2Validator;
     this.appConfigFileName = appConfigFileName;
   }
 
@@ -50,14 +44,6 @@ public class AppConfigurationV2StructureProvider<T extends com.google.protobuf.G
    * structure.
    */
   public Writable<WritableOnDisk> getConfigurationArchive() {
-    ValidationResult validationResult = appConfigV2Validator.validate();
-
-    if (validationResult.hasErrors()) {
-      logger.error("App configuration file creation failed. Validation failed for {}, {}",
-          appConfigFileName, validationResult);
-      return null;
-    }
-
     ArchiveOnDisk appConfigurationFile = new ArchiveOnDisk(appConfigFileName);
     appConfigurationFile
         .addWritable(new FileOnDisk("export.bin", applicationConfiguration.toByteArray()));
