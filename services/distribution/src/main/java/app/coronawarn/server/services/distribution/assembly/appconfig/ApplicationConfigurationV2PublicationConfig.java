@@ -154,6 +154,7 @@ public class ApplicationConfigurationV2PublicationConfig {
         .setMinVersion(buildSemanticVersion(distributionServiceConfig.getAppVersions().getMinIos()))
         .setLatestVersion(buildSemanticVersion(distributionServiceConfig.getAppVersions().getLatestIos()))
         .setRiskCalculationParameters(riskCalculationParameterBuilder)
+        .setAppFeatures(buildAppFeatures(distributionServiceConfig))
         .setExposureConfiguration(
             buildExposureConfigurationFromDeserializedExposureConfiguration(exposureConfiguration))
         .setKeyDownloadParameters(buildKeyDownloadParametersIos(distributionServiceConfig))
