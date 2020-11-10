@@ -33,20 +33,20 @@ class TransmissionRiskLevelEncodingTest {
   }
 
   @Test
-  void shouldValidateTranmissionRiskLevelKeys() {
+  void shouldValidateTransmissionRiskLevelKeys() {
     /* Test construction time validation passes for valid values */
     BindingResult errorsMock = spy(BindingResult.class);
     VALID_ENCODINGS.validate(VALID_ENCODINGS, errorsMock);
     verify(errorsMock, times(0)).rejectValue(any(), any());
 
     /* Test construction time validation with invalid TRLs */
-    assertThrows(IllegalArgumentException.class, () -> {
-      TransmissionRiskLevelEncoding.from(Map.of(12,1,0,3), Map.of(13, 3));
-    });
+    Map<Integer, Integer> m1 = Map.of(12, 1, 0, 3);
+    Map<Integer, Integer> m2 = Map.of(13, 3);
+    assertThrows(IllegalArgumentException.class, () -> TransmissionRiskLevelEncoding.from(m1, m2));
 
     /* Test method that is invoked by Spring validation */
     TransmissionRiskLevelEncoding invalidEncoding = new TransmissionRiskLevelEncoding();
-    invalidEncoding.setTransmissionRiskToDaysSinceSymptoms(Map.of(12,1,0,2));
+    invalidEncoding.setTransmissionRiskToDaysSinceSymptoms(Map.of(12, 1, 0, 2));
     invalidEncoding.setTransmissionRiskToReportType(Map.of(13, 3));
 
     VALID_ENCODINGS.validate(invalidEncoding, errorsMock);
@@ -56,19 +56,18 @@ class TransmissionRiskLevelEncodingTest {
   @Test
   void shouldValidateDaysSinceSymptomsValues() {
 
-    Map<Integer, Integer> invalidDsosMap = Map.of(1,3,2,4,3,2,4,2,5,2,6,1,7,2,8,1);
+    Map<Integer, Integer> invalidDsosMap = Map.of(1, 3, 2, 4, 3, 2, 4, 2, 5, 2, 6, 1, 7, 2, 8, 1);
 
     /* Test construction time validation */
-    assertThrows(IllegalArgumentException.class, () -> {
-      TransmissionRiskLevelEncoding.from(
-          invalidDsosMap,
-          VALID_ENCODINGS.getTransmissionRiskToReportType());
-    });
+    Map<Integer, Integer> validTransmissionRiskToReportType = VALID_ENCODINGS.getTransmissionRiskToReportType();
+    assertThrows(IllegalArgumentException.class, () -> TransmissionRiskLevelEncoding.from(
+        invalidDsosMap,
+        validTransmissionRiskToReportType));
 
     /* Test method that is invoked by Spring validation */
     TransmissionRiskLevelEncoding invalidEncoding = new TransmissionRiskLevelEncoding();
     invalidEncoding.setTransmissionRiskToDaysSinceSymptoms(invalidDsosMap);
-    invalidEncoding.setTransmissionRiskToReportType( VALID_ENCODINGS.getTransmissionRiskToReportType());
+    invalidEncoding.setTransmissionRiskToReportType(validTransmissionRiskToReportType);
 
     BindingResult errorsMock = spy(BindingResult.class);
     VALID_ENCODINGS.validate(invalidEncoding, errorsMock);
@@ -78,18 +77,20 @@ class TransmissionRiskLevelEncodingTest {
   @Test
   void shouldValidateReportTypeValues() {
 
-    Map<Integer, Integer> invalidReportTypeMap = Map.of(1,-2,2,6,3,2,4,2,5,2,6,1,7,2,8,1);
+    Map<Integer, Integer> invalidReportTypeMap = Map.of(1, -2, 2, 6, 3, 2, 4, 2, 5, 2, 6, 1, 7, 2, 8, 1);
 
     /* Test construction time validation */
+    Map<Integer, Integer> transmissionRiskToDaysSinceSymptoms = VALID_ENCODINGS
+        .getTransmissionRiskToDaysSinceSymptoms();
     assertThrows(IllegalArgumentException.class, () -> {
       TransmissionRiskLevelEncoding.from(
-          VALID_ENCODINGS.getTransmissionRiskToDaysSinceSymptoms(),
+          transmissionRiskToDaysSinceSymptoms,
           invalidReportTypeMap);
     });
 
     /* Test method that is invoked by Spring validation */
     TransmissionRiskLevelEncoding invalidEncoding = new TransmissionRiskLevelEncoding();
-    invalidEncoding.setTransmissionRiskToDaysSinceSymptoms(VALID_ENCODINGS.getTransmissionRiskToDaysSinceSymptoms());
+    invalidEncoding.setTransmissionRiskToDaysSinceSymptoms(transmissionRiskToDaysSinceSymptoms);
     invalidEncoding.setTransmissionRiskToReportType(invalidReportTypeMap);
 
     BindingResult errorsMock = spy(BindingResult.class);
