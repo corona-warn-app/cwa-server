@@ -22,10 +22,11 @@ import java.time.LocalDate;
 import java.time.Period;
 import java.time.ZoneOffset;
 import java.util.Deque;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
-import java.util.Queue;
+import java.util.Set;
 import java.util.concurrent.atomic.AtomicBoolean;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -43,7 +44,12 @@ public class FederationBatchProcessor {
   private final FederationGatewayDownloadService federationGatewayDownloadService;
   private final DownloadServiceConfig config;
   private final ValidFederationKeyFilter validFederationKeyFilter;
-  private final FifoMaxEntriesSet<FederationBatchInfo> cachedBatches;
+  
+  // This is a potential memory-leak if there are very many batches
+  // This is a intentional decision: We'd rather run into a memory-leak
+  // if there are too many batches than run into an endless loop 
+  // if a batch-tag repeats
+  private final Set<String> seenBatches;
 
   /**
    * Constructor.
@@ -65,7 +71,7 @@ public class FederationBatchProcessor {
     this.federationGatewayDownloadService = federationGatewayDownloadService;
     this.config = config;
     this.validFederationKeyFilter = federationKeyValidator;
-    this.cachedBatches = new FifoMaxEntriesSet<>(config.getMaxBatchLoopGuard());
+    this.seenBatches = new HashSet<>(config.getMaxBatchLoopGuard());
   }
 
   /**
@@ -132,20 +138,19 @@ public class FederationBatchProcessor {
     logger.info("{} unprocessed federation batches found.", unprocessedBatches.size());
 
     while (!unprocessedBatches.isEmpty()) {
-      FederationBatchInfo currentBatch = unprocessedBatches.remove();
-      cachedBatches.add(currentBatch);
-      processBatchAndReturnNextBatchId(currentBatch, ERROR)
+      FederationBatchInfo currentBatchInfo = unprocessedBatches.remove();
+      seenBatches.add(currentBatchInfo.getBatchTag());
+      processBatchAndReturnNextBatchId(currentBatchInfo, ERROR)
           .ifPresent(nextBatchTag -> {
-            FederationBatchInfo batch = new FederationBatchInfo(nextBatchTag, currentBatch.getDate());
-            if (isEfgsEnforceDateBasedDownloadAndNotCached(batch)) {
-              unprocessedBatches.add(batch);
+            if (isEfgsEnforceDateBasedDownloadAndNotSeen(nextBatchTag)) {
+              unprocessedBatches.add(new FederationBatchInfo(nextBatchTag, currentBatchInfo.getDate()));
             }
           });
     }
   }
 
-  private boolean isEfgsEnforceDateBasedDownloadAndNotCached(FederationBatchInfo batch) {
-    return config.getEfgsEnforceDateBasedDownload() && !cachedBatches.contains(batch);
+  private boolean isEfgsEnforceDateBasedDownloadAndNotSeen(String batchTag) {
+    return config.getEfgsEnforceDateBasedDownload() && !seenBatches.contains(batchTag);
   }
 
   private Optional<String> processBatchAndReturnNextBatchId(
