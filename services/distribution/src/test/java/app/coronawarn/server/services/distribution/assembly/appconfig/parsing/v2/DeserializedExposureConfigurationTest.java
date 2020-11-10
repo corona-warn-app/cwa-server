@@ -22,12 +22,12 @@ class DeserializedExposureConfigurationTest {
     assertThat(exposureConfiguration.getAttenuationDurationThresholds()).containsAll(List.of(30,50,70));
     assertThat(exposureConfiguration.getInfectiousnessForDaysSinceOnsetOfSymptoms()).containsAllEntriesOf(
         Map.of(1, 1, 2, 2));
-    assertThat(exposureConfiguration.getReportTypeNoneMap()).isEqualTo(0);
+    assertThat(exposureConfiguration.getReportTypeNoneMap()).isZero();
     assertThat(exposureConfiguration.getImmediateDurationWeight()).isEqualTo(1.0);
     assertThat(exposureConfiguration.getMediumDurationWeight()).isEqualTo(1.0);
     assertThat(exposureConfiguration.getNearDurationWeight()).isEqualTo(1.0);
     assertThat(exposureConfiguration.getOtherDurationWeight()).isEqualTo(1.0);
-    assertThat(exposureConfiguration.getDaysSinceLastExposureThreshold()).isEqualTo(0);
+    assertThat(exposureConfiguration.getDaysSinceLastExposureThreshold()).isZero();
     assertThat(exposureConfiguration.getInfectiousnessStandardWeight()).isEqualTo(1.0);
     assertThat(exposureConfiguration.getInfectiousnessHighWeight()).isEqualTo(1.0);
     assertThat(exposureConfiguration.getReportTypeConfirmedTestWeight()).isEqualTo(1.0);

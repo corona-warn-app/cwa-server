@@ -4,6 +4,17 @@ import static java.io.File.separator;
 import static java.lang.String.join;
 import static org.assertj.core.api.Assertions.assertThat;
 
+import app.coronawarn.server.common.protocols.internal.v2.ApplicationConfigurationAndroid;
+import app.coronawarn.server.common.protocols.internal.v2.ApplicationConfigurationIOS;
+import app.coronawarn.server.services.distribution.assembly.appconfig.ApplicationConfigurationV2PublicationConfig;
+import app.coronawarn.server.services.distribution.assembly.component.CryptoProvider;
+import app.coronawarn.server.services.distribution.assembly.structure.Writable;
+import app.coronawarn.server.services.distribution.assembly.structure.WritableOnDisk;
+import app.coronawarn.server.services.distribution.assembly.structure.directory.Directory;
+import app.coronawarn.server.services.distribution.assembly.structure.directory.DirectoryOnDisk;
+import app.coronawarn.server.services.distribution.assembly.structure.util.ImmutableStack;
+import app.coronawarn.server.services.distribution.common.Helpers;
+import app.coronawarn.server.services.distribution.config.DistributionServiceConfig;
 import java.io.File;
 import java.io.IOException;
 import java.util.Set;
@@ -16,17 +27,6 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.boot.test.context.ConfigFileApplicationContextInitializer;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
-import app.coronawarn.server.common.protocols.internal.v2.ApplicationConfigurationAndroid;
-import app.coronawarn.server.common.protocols.internal.v2.ApplicationConfigurationIOS;
-import app.coronawarn.server.services.distribution.assembly.appconfig.ApplicationConfigurationV2PublicationConfig;
-import app.coronawarn.server.services.distribution.assembly.component.CryptoProvider;
-import app.coronawarn.server.services.distribution.assembly.structure.Writable;
-import app.coronawarn.server.services.distribution.assembly.structure.WritableOnDisk;
-import app.coronawarn.server.services.distribution.assembly.structure.directory.Directory;
-import app.coronawarn.server.services.distribution.assembly.structure.directory.DirectoryOnDisk;
-import app.coronawarn.server.services.distribution.assembly.structure.util.ImmutableStack;
-import app.coronawarn.server.services.distribution.common.Helpers;
-import app.coronawarn.server.services.distribution.config.DistributionServiceConfig;
 
 @EnableConfigurationProperties(value = DistributionServiceConfig.class)
 @ExtendWith(SpringExtension.class)
@@ -57,7 +57,7 @@ class AppConfigurationV2StructureProviderTest {
         new AppConfigurationV2StructureProvider<ApplicationConfigurationIOS>(
             applicationConfigurationIos, cryptoProvider, distributionServiceConfig,
             distributionServiceConfig.getApi().getAppConfigV2IosFileName())
-                .getConfigurationArchive();
+            .getConfigurationArchive();
 
     assertThat(writeDirectoryAndGetFiles(appConfigs)).isEqualTo(expFiles);
   }
@@ -70,7 +70,7 @@ class AppConfigurationV2StructureProviderTest {
         new AppConfigurationV2StructureProvider<ApplicationConfigurationAndroid>(
             applicationConfigurationAndroid, cryptoProvider, distributionServiceConfig,
             distributionServiceConfig.getApi().getAppConfigV2AndroidFileName())
-                .getConfigurationArchive();
+            .getConfigurationArchive();
 
     assertThat(writeDirectoryAndGetFiles(appConfigs)).isEqualTo(expFiles);
   }
