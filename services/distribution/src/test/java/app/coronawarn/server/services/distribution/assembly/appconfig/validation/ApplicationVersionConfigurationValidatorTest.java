@@ -172,16 +172,16 @@ class ApplicationVersionConfigurationValidatorTest {
       KeyDownloadParametersAndroid keyDownloadParametersAndroid =
           applicationConfigurationPublicationConfig.buildKeyDownloadParametersAndroid(distributionServiceConfig);
 
-      assertThat(keyDownloadParametersAndroid.getCachedDayPackagesToUpdateOnETagMismatch(0).toString())
+      assertThat(keyDownloadParametersAndroid.getRevokedDayPackages(0).toString())
           .hasToString("region: \"EUR\"\ndate: \"2020-10-28\"\netag:"
               + " \"\\\"7d595060d664c4040ff3f65b532f6a57\\\"\"\n");
-      assertThat(keyDownloadParametersAndroid.getCachedDayPackagesToUpdateOnETagMismatch(1).toString())
+      assertThat(keyDownloadParametersAndroid.getRevokedDayPackages(1).toString())
           .hasToString("region: \"DE\"\ndate: \"2020-10-29\"\netag:"
               + " \"\\\"7d595060d664c4040ff3f65b532f6a58\\\"\"\n");
-      assertThat(keyDownloadParametersAndroid.getCachedHourPackagesToUpdateOnETagMismatch(0).toString())
+      assertThat(keyDownloadParametersAndroid.getRevokedHourPackages(0).toString())
           .hasToString("region: \"EUR\"\ndate: \"2020-10-28\"\nhour: 3\netag:"
               + " \"\\\"7d595060d664c4040ff3f65b532f6a57\\\"\"\n");
-      assertThat(keyDownloadParametersAndroid.getCachedHourPackagesToUpdateOnETagMismatch(1).toString())
+      assertThat(keyDownloadParametersAndroid.getRevokedHourPackages(1).toString())
           .hasToString("region: \"EUR\"\ndate: \"2020-10-29\"\nhour: 5\netag:"
               + " \"\\\"7d595060d664c4040ff3f65b532f6a57\\\"\"\n");
     }
