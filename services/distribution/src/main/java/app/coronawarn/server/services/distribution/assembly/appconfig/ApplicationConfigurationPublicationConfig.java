@@ -103,9 +103,9 @@ public class ApplicationConfigurationPublicationConfig {
         .setOverallTimeoutInSeconds(androidKeyDownloadParameters.getOverallTimeoutInSeconds())
         .setDownloadTimeoutInSeconds(androidKeyDownloadParameters.getDownloadTimeoutInSeconds())
         .addAllCachedDayPackagesToUpdateOnETagMismatch(buildCachedDayPackagesToUpdateOnETagMismatch(
-            androidKeyDownloadParameters.getCachedDayPackagesToUpdateOnETagMismatch()))
+            androidKeyDownloadParameters.getRevokedDayPackages()))
         .addAllCachedHourPackagesToUpdateOnETagMismatch(buildCachedHourPackagesToUpdateOnETagMismatch(
-            androidKeyDownloadParameters.getCachedHourPackagesToUpdateOnETagMismatch()))
+            androidKeyDownloadParameters.getRevokedHourPackages()))
         .build();
   }
 
@@ -120,9 +120,9 @@ public class ApplicationConfigurationPublicationConfig {
         distributionServiceConfig.getAppConfigParameters().getIosKeyDownloadParameters();
     return KeyDownloadParametersIOS.newBuilder()
         .addAllCachedDayPackagesToUpdateOnETagMismatch(buildCachedDayPackagesToUpdateOnETagMismatch(
-            iosKeyDownloadParameters.getCachedDayPackagesToUpdateOnETagMismatch()))
+            iosKeyDownloadParameters.getRevokedDayPackages()))
         .addAllCachedHourPackagesToUpdateOnETagMismatch(buildCachedHourPackagesToUpdateOnETagMismatch(
-            iosKeyDownloadParameters.getCachedHourPackagesToUpdateOnETagMismatch()))
+            iosKeyDownloadParameters.getRevokedHourPackages()))
         .build();
   }
 

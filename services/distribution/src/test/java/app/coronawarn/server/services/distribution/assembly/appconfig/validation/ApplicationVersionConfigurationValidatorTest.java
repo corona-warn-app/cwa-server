@@ -160,12 +160,12 @@ class ApplicationVersionConfigurationValidatorTest {
     @Test
     void testCachedDayAndHourPackagesForKeyDownloadParameters() {
       distributionServiceConfig.getAppConfigParameters().getAndroidKeyDownloadParameters().
-          setCachedDayPackagesToUpdateOnETagMismatch("[\n{ \"region\":\"EUR\", \"date\":\"2020-10-28\", \"etag\":"
+          setRevokedDayPackages("[\n{ \"region\":\"EUR\", \"date\":\"2020-10-28\", \"etag\":"
               + "\"\\\"7d595060d664c4040ff3f65b532f6a57\\\"\" },\n"
               + "{ \"region\":\"DE\", \"date\":\"2020-10-29\", \"etag\":"
               + "\"\\\"7d595060d664c4040ff3f65b532f6a58\\\"\" }]");
       distributionServiceConfig.getAppConfigParameters().getAndroidKeyDownloadParameters()
-          .setCachedHourPackagesToUpdateOnETagMismatch("[\n{ \"region\":\"EUR\", \"date\":\"2020-10-28\", \"hour\":3, "
+          .setRevokedHourPackages("[\n{ \"region\":\"EUR\", \"date\":\"2020-10-28\", \"hour\":3, "
               + "\"etag\":\"\\\"7d595060d664c4040ff3f65b532f6a57\\\"\" },\n"
               + "{ \"region\":\"EUR\", \"date\":\"2020-10-29\", \"hour\":5, "
               + "\"etag\":\"\\\"7d595060d664c4040ff3f65b532f6a57\\\"\" }]");

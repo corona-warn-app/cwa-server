@@ -71,11 +71,11 @@ services:
       latest-android-version-code: ${ANDROID_LATEST_VERSION_CODE:31}
     app-config-parameters:
       ios-key-download-parameters:
-        cached-day-packages-to-update-on-etag-mismatch: "[]"
-        cached-hour-packages-to-update-on-etag-mismatch: "[]"
+        revoked-day-packages: "[]"
+        revoked-hour-packages: "[]"
       android-key-download-parameters:
-        cached-day-packages-to-update-on-etag-mismatch: "[]"
-        cached-hour-packages-to-update-on-etag-mismatch: "[]"
+        revoked-day-packages: "[]"
+        revoked-hour-packages: "[]"
         download-timeout-in-seconds: 30
         overall-timeout-in-seconds: 480
       ios-exposure-detection-parameters:
