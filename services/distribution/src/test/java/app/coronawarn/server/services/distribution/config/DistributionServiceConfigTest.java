@@ -157,20 +157,20 @@ class DistributionServiceConfigTest {
     void testIosKeyDownloadParameters() {
       assertEquals(emptyList(),
           distributionServiceConfig.getAppConfigParameters().getIosKeyDownloadParameters()
-              .getCachedDayPackagesToUpdateOnETagMismatch());
+              .getRevokedDayPackages());
       assertEquals(emptyList(),
           distributionServiceConfig.getAppConfigParameters().getIosKeyDownloadParameters()
-              .getCachedHourPackagesToUpdateOnETagMismatch());
+              .getRevokedHourPackages());
     }
 
     @Test
     void testAndroidKeyDownloadParameters() {
       assertEquals(emptyList(),
           distributionServiceConfig.getAppConfigParameters().getAndroidKeyDownloadParameters()
-              .getCachedDayPackagesToUpdateOnETagMismatch());
+              .getRevokedDayPackages());
       assertEquals(emptyList(),
           distributionServiceConfig.getAppConfigParameters().getAndroidKeyDownloadParameters()
-              .getCachedHourPackagesToUpdateOnETagMismatch());
+              .getRevokedHourPackages());
       assertEquals(30,
           distributionServiceConfig.getAppConfigParameters().getAndroidKeyDownloadParameters()
               .getDownloadTimeoutInSeconds());
