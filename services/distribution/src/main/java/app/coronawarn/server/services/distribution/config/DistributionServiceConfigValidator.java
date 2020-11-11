@@ -26,6 +26,23 @@ public class DistributionServiceConfigValidator implements Validator {
   @Override
   public void validate(Object o, Errors errors) {
     DistributionServiceConfig properties = (DistributionServiceConfig) o;
+    checkSupportedCountries(errors, properties);
+    checkAndroidVersionCodes(errors, properties);
+  }
+
+  private void checkAndroidVersionCodes(Errors errors, DistributionServiceConfig properties) {
+    if (properties.getAppVersions().getLatestAndroidVersionCode() < 0) {
+      errors.rejectValue("appVersions.latestAndroidVersionCode", "",
+          "Android Version Code should be positive or zero");
+    }
+
+    if (properties.getAppVersions().getMinAndroidVersionCode() < 0) {
+      errors.rejectValue("appVersions.minAndroidVersionCode", "",
+          "Android Version Code should be positive or zero");
+    }
+  }
+
+  private void checkSupportedCountries(Errors errors, DistributionServiceConfig properties) {
     Arrays.stream(properties.getSupportedCountries()).forEach(country -> {
       if (!ISO_COUNTRIES.contains(country)) {
         errors.rejectValue("supportedCountries",

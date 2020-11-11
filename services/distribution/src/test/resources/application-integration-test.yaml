@@ -2,3 +2,12 @@
 services:
   distribution:
     shifting-policy-threshold: 140
+
+spring:
+  flyway:
+    locations: classpath:/db/migration
+  datasource:
+    url: jdbc:tc:postgresql:11.8:///databasename?TC_TMPFS=/testtmpfs:rw
+  test:
+    database:
+      replace: none

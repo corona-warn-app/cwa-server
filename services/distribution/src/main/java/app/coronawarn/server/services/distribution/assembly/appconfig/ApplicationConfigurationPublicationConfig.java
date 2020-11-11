@@ -59,7 +59,6 @@ public class ApplicationConfigurationPublicationConfig {
    * @return the exposure configuration as ApplicationConfiguration
    * @throws UnableToLoadFileException when the file/transformation did not succeed
    */
-
   @Bean
   public ApplicationConfiguration createMasterConfiguration(DistributionServiceConfig distributionServiceConfig)
       throws UnableToLoadFileException {

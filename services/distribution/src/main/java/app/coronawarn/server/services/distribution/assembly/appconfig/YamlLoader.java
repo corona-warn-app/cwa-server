@@ -2,6 +2,7 @@
 
 package app.coronawarn.server.services.distribution.assembly.appconfig;
 
+import app.coronawarn.server.services.distribution.assembly.appconfig.parsing.DashToCamelCaseConstructor;
 import app.coronawarn.server.services.distribution.assembly.appconfig.parsing.YamlConstructorForProtoBuf;
 import com.google.protobuf.Message;
 import java.io.IOException;
@@ -35,6 +36,32 @@ public class YamlLoader {
     Resource configurationResource = new ClassPathResource(path);
     try (InputStream inputStream = configurationResource.getInputStream()) {
       T loaded = yaml.loadAs(inputStream, builderType);
+      if (loaded == null) {
+        throw new UnableToLoadFileException(path);
+      }
+
+      return loaded;
+    } catch (YAMLException e) {
+      throw new UnableToLoadFileException("Parsing failed", e);
+    } catch (IOException e) {
+      throw new UnableToLoadFileException("Failed to load file " + path, e);
+    }
+  }
+
+  /**
+   * Reads the class path resource yaml at given path and deserializes into an instance of the
+   * given object. The yaml naming convention is expected to be dash based ("an-example-property"), but
+   * the method will translate this to a camelCase class property.
+   */
+  public static <T> T loadYamlIntoClass(String path, Class<T> classType)
+      throws UnableToLoadFileException {
+    Yaml yaml = new Yaml(new DashToCamelCaseConstructor(path));
+    // no setters for generated message classes available
+    yaml.setBeanAccess(BeanAccess.FIELD);
+
+    Resource configurationResource = new ClassPathResource(path);
+    try (InputStream inputStream = configurationResource.getInputStream()) {
+      T loaded = yaml.loadAs(inputStream, classType);
       if (loaded == null) {
         throw new UnableToLoadFileException(path);
       }

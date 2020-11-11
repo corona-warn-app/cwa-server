@@ -1,0 +1,14 @@
+#----------------------------------------------------------------------
+# This is the Corona Warn App master configuration file.
+# ----------------------------------------------------------------------
+#
+# This configuration file will be fetched by the mobile app in order to function.
+#
+# Change this file with caution!
+
+days-since-onset-to-infectiousness:
+  1: 1
+  2: 2
+  
+infectiousness-when-days-since-onset-missing: 0
+report-type-when-missing: 0
