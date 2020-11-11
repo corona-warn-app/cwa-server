@@ -1,0 +1,23 @@
+#----------------------------------------------------------------------
+# This is the Corona Warn App master configuration file.
+# ----------------------------------------------------------------------
+#
+# This configuration file will be fetched by the mobile app in order to function.
+#
+# Change this file with caution!
+
+
+attenuation-bucket-threshold-db: [30, 50, 70]
+attenuation-bucket-weights: [1.0, 1.0, 1.0]
+days-since-exposure-threshold: 0
+
+infectiousness-weights:
+  1: 1.0 
+  2: 1.0
+
+minimum-window-score: 0
+report-type-weights:
+  1: 1.0
+  2: 1.0
+  3: 1.0
+  4: 1.0

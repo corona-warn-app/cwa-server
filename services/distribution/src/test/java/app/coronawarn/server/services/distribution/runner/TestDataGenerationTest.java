@@ -4,6 +4,7 @@ package app.coronawarn.server.services.distribution.runner;
 
 import static app.coronawarn.server.services.distribution.common.Helpers.buildDiagnosisKeys;
 import static org.mockito.Mockito.any;
+import static org.mockito.Mockito.atLeast;
 import static org.mockito.Mockito.atMostOnce;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.spy;
@@ -24,6 +25,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
+import org.assertj.core.api.Assertions;
 import org.junit.Assert;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -188,7 +190,7 @@ class TestDataGenerationTest {
     TimeUtils.setNow(now);
     List<DiagnosisKey> keyList = new ArrayList<>();
 
-   keyList.addAll(buildDiagnosisKeys(6, LocalDateTime.of(2020, 7, 14, 12, 0, 0), 10, "DE", Set.of("DE", "FR"),
+    keyList.addAll(buildDiagnosisKeys(6, LocalDateTime.of(2020, 7, 14, 12, 0, 0), 10, "DE", Set.of("DE", "FR"),
         ReportType.CONFIRMED_TEST, 1));
     keyList.addAll(buildDiagnosisKeys(6, LocalDateTime.of(2020, 7, 14, 12, 0, 0), 10, "FR", Set.of("DE", "FR"),
         ReportType.CONFIRMED_TEST, 1));
@@ -198,5 +200,21 @@ class TestDataGenerationTest {
     testDataGeneration.run(null);
     verify(diagnosisKeyService, times(distributionServiceConfig.getSupportedCountries().length))
         .saveDiagnosisKeys(any());
+  }
+
+
+  @Test
+  void ensureRollingStartIntervalNumberAtMidnight() {
+    var now = LocalDateTime.of(2020, 7, 15, 12, 0, 0).toInstant(ZoneOffset.UTC);
+    TimeUtils.setNow(now);
+
+    when(diagnosisKeyService.getDiagnosisKeys()).thenReturn(Collections.emptyList());
+    testDataGeneration.run(null);
+
+    verify(diagnosisKeyService, atLeast(4)).saveDiagnosisKeys(captor.capture());
+    Collection<DiagnosisKey> diagnosisKeys = captor.getValue();
+    diagnosisKeys.forEach(diagnosisKey -> {
+      Assertions.assertThat(diagnosisKey.getRollingStartIntervalNumber() % 144).isEqualTo(0);
+    });
   }
 }

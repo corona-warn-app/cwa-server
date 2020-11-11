@@ -12,6 +12,8 @@ import app.coronawarn.server.common.protocols.internal.RiskLevel;
 import app.coronawarn.server.services.distribution.assembly.structure.util.TimeUtils;
 import app.coronawarn.server.services.distribution.config.DistributionServiceConfig;
 import app.coronawarn.server.services.distribution.config.DistributionServiceConfig.TestData;
+import java.time.LocalDateTime;
+import java.time.ZoneOffset;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.Set;
@@ -192,12 +194,13 @@ public class TestDataGeneration implements ApplicationRunner {
    * interval counter) between a specific submission timestamp and the beginning of the retention period.
    */
   private int generateRollingStartIntervalNumber(long submissionTimestamp) {
-    long maxRollingStartIntervalNumber =
-        submissionTimestamp * ONE_HOUR_INTERVAL_SECONDS / TEN_MINUTES_INTERVAL_SECONDS;
-    long minRollingStartIntervalNumber =
-        maxRollingStartIntervalNumber
-            - TimeUnit.DAYS.toSeconds(retentionDays) / TEN_MINUTES_INTERVAL_SECONDS;
-    return Math.toIntExact(getRandomBetween(minRollingStartIntervalNumber, maxRollingStartIntervalNumber));
+    LocalDateTime time = LocalDateTime
+        .ofEpochSecond(submissionTimestamp * ONE_HOUR_INTERVAL_SECONDS, 0, ZoneOffset.UTC)
+        .truncatedTo(ChronoUnit.DAYS);
+
+    long maxRollingStartIntervalNumber = time.toEpochSecond(ZoneOffset.UTC) / TEN_MINUTES_INTERVAL_SECONDS;
+    return Math.toIntExact(maxRollingStartIntervalNumber - TimeUnit.DAYS
+        .toSeconds(getRandomBetween(0, retentionDays) / TEN_MINUTES_INTERVAL_SECONDS));
   }
 
   /**
@@ -213,6 +216,6 @@ public class TestDataGeneration implements ApplicationRunner {
    * Returns a random number between {@code minIncluding} and {@code maxIncluding}.
    */
   private long getRandomBetween(long minIncluding, long maxIncluding) {
-    return minIncluding + (long) (random.nextDouble() * (maxIncluding - minIncluding));
+    return minIncluding + Math.round(random.nextDouble() * (maxIncluding - minIncluding));
   }
 }

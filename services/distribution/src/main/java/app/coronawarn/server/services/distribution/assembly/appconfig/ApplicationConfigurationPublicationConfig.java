@@ -59,7 +59,6 @@ public class ApplicationConfigurationPublicationConfig {
    * @return the exposure configuration as ApplicationConfiguration
    * @throws UnableToLoadFileException when the file/transformation did not succeed
    */
-
   @Bean
   public ApplicationConfiguration createMasterConfiguration(DistributionServiceConfig distributionServiceConfig)
       throws UnableToLoadFileException {
@@ -103,10 +102,10 @@ public class ApplicationConfigurationPublicationConfig {
     return KeyDownloadParametersAndroid.newBuilder()
         .setOverallTimeoutInSeconds(androidKeyDownloadParameters.getOverallTimeoutInSeconds())
         .setDownloadTimeoutInSeconds(androidKeyDownloadParameters.getDownloadTimeoutInSeconds())
-        .addAllCachedDayPackagesToUpdateOnETagMismatch(buildCachedDayPackagesToUpdateOnETagMismatch(
-            androidKeyDownloadParameters.getCachedDayPackagesToUpdateOnETagMismatch()))
-        .addAllCachedHourPackagesToUpdateOnETagMismatch(buildCachedHourPackagesToUpdateOnETagMismatch(
-            androidKeyDownloadParameters.getCachedHourPackagesToUpdateOnETagMismatch()))
+        .addAllRevokedDayPackages(buildRevokedDayPackages(
+            androidKeyDownloadParameters.getRevokedDayPackages()))
+        .addAllRevokedHourPackages(buildRevokedHourPackages(
+            androidKeyDownloadParameters.getRevokedHourPackages()))
         .build();
   }
 
@@ -120,10 +119,10 @@ public class ApplicationConfigurationPublicationConfig {
     IosKeyDownloadParameters iosKeyDownloadParameters =
         distributionServiceConfig.getAppConfigParameters().getIosKeyDownloadParameters();
     return KeyDownloadParametersIOS.newBuilder()
-        .addAllCachedDayPackagesToUpdateOnETagMismatch(buildCachedDayPackagesToUpdateOnETagMismatch(
-            iosKeyDownloadParameters.getCachedDayPackagesToUpdateOnETagMismatch()))
-        .addAllCachedHourPackagesToUpdateOnETagMismatch(buildCachedHourPackagesToUpdateOnETagMismatch(
-            iosKeyDownloadParameters.getCachedHourPackagesToUpdateOnETagMismatch()))
+        .addAllRevokedDayPackages(buildRevokedDayPackages(
+            iosKeyDownloadParameters.getRevokedDayPackages()))
+        .addAllRevokedHourPackages(buildRevokedHourPackages(
+            iosKeyDownloadParameters.getRevokedHourPackages()))
         .build();
   }
 
@@ -176,7 +175,7 @@ public class ApplicationConfigurationPublicationConfig {
     return Integer.valueOf(items[position]);
   }
 
-  private List<DayPackageMetadata> buildCachedDayPackagesToUpdateOnETagMismatch(
+  private List<DayPackageMetadata> buildRevokedDayPackages(
       List<DeserializedDayPackageMetadata> deserializedDayPackage) {
     return deserializedDayPackage.stream().map(deserializedConfig ->
         DayPackageMetadata.newBuilder()
@@ -187,7 +186,7 @@ public class ApplicationConfigurationPublicationConfig {
     ).collect(Collectors.toList());
   }
 
-  private List<HourPackageMetadata> buildCachedHourPackagesToUpdateOnETagMismatch(
+  private List<HourPackageMetadata> buildRevokedHourPackages(
       List<DeserializedHourPackageMetadata> deserializedHourPackage) {
     return deserializedHourPackage.stream().map(deserializedHourConfig ->
         HourPackageMetadata.newBuilder()
