@@ -65,4 +65,43 @@
     </dependency>
   </dependencies>
 
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>io.fabric8</groupId>
+        <artifactId>docker-maven-plugin</artifactId>
+        <configuration>
+          <images>
+            <image>
+              <name>roesslerj/efgs-fake:latest</name>
+              <alias>efgs-fake</alias>
+              <run>
+                <ports>
+                  <port>8014:8014</port>
+                </ports>
+            </run>
+          </image>
+        </images>
+      </configuration>
+      <executions>
+        <execution>
+          <id>start</id>
+          <phase>pre-integration-test</phase>
+          <goals>
+            <goal>build</goal>
+            <goal>start</goal>
+          </goals>
+        </execution>
+        <execution>
+          <id>stop</id>
+          <phase>post-integration-test</phase>
+          <goals>
+            <goal>stop</goal>
+          </goals>
+        </execution>
+      </executions>
+    </plugin>
+    </plugins>
+  </build>
+
 </project>
