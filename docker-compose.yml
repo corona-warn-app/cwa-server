@@ -156,12 +156,12 @@ services:
     depends_on:
       - objectstore
   verification-fake:
-    image: lilienthal/cwa-verification-fake:0.0.3
+    image: roesslerj/cwa-verification-fake:0.0.4
     restart: always
     ports:
       - "8004:8004"
   efgs-fake:
-    image: roesslerj/efgs-fake:latest
+    image: roesslerj/cwa-efgs-fake:0.0.2
     restart: always
     ports:
       - "8014:8014"
