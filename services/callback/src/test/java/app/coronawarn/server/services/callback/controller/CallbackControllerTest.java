@@ -18,7 +18,7 @@ import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-@ActiveProfiles({"disable-ssl-client-verification", "disable-ssl-client-verification-verify-hostname"})
+@ActiveProfiles({"disable-certificate-authentication", "disable-ssl-client-verification-verify-hostname"})
 @DirtiesContext
 class CallbackControllerTest {
 

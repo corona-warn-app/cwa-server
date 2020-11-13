@@ -35,9 +35,13 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
   @Override
   protected void configure(HttpSecurity http) throws Exception {
-    http.authorizeRequests()
+
+    ExpressionUrlAuthorizationConfigurer<HttpSecurity>.ExpressionInterceptUrlRegistry expressionInterceptUrlRegistry
+        = http.authorizeRequests();
+    expressionInterceptUrlRegistry
         .mvcMatchers(HttpMethod.GET, CALLBACK_ROUTE).authenticated().and().x509();
-    // TODO urlRegistry.anyRequest().denyAll();
+    expressionInterceptUrlRegistry
+        .anyRequest().denyAll();
     http.headers().contentSecurityPolicy("default-src 'self'");
   }
 }
