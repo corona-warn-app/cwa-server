@@ -1,0 +1,61 @@
+{
+  "openapi": "3.0.1",
+  "info": {
+    "title": "CWA-Server Callback API",
+    "version": "v1",
+    "license": {
+      "name": "Apache 2.0"
+    }
+  },
+  "paths": {
+    "/version/{version}/callback": {
+      "get": {
+        "summary": "API to receive the BatchTag for the latest batch from Federation Gateway.",
+        "description": "API to allow the Federation Gateway to send the tags/date combinations of batches that are ready to be downloaded. A response with an empty body will be returned.",
+        "tags": [
+          "callback-controller",
+          "federation batch"
+        ],
+        "operationId": "handleCallback",
+        "parameters": [
+          {
+            "name": "batchTag",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/BatchTag"
+            }
+          },
+          {
+            "name": "date",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/Date"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Response with empty body."
+          },
+          "400": {
+            "description": "Response with empty body. Occurs, e.g., when provided date is invalid."
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "BatchTag": {
+      "type": "string",
+      "description": "Identifier for a Diagnosis Key Batch",
+      "example": "507f191e810c19729de860ea"
+    },
+    "Date": {
+      "type": "string",
+      "description": "An ISO-8601 date descriptor. Server time zone is UTC.",
+      "example": "2020-05-01"
+    }
+  }
+}

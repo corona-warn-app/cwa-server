@@ -54,6 +54,19 @@ public class FileOnDiskWithChecksum extends FileOnDisk {
     return super.getBytes();
   }
 
+  /**
+   * Calculates the CWA-hash value. If this code changes, please adapt the
+   * <a href=
+   * "https://github.com/corona-warn-app/cwa-server/blob/master/docs/DISTRIBUTION.md#cwa-hash">CWA-hash</a>
+   * documentation. This code is intended to mimic the AWS ETag hash code for multi-part uploads.
+   * 
+   * @see <a href=
+   *      "https://stackoverflow.com/questions/12186993/what-is-the-algorithm-to-compute-the-amazon-s3-etag-for-a-file-larger-than-5gb#answer-19896823">answer
+   *      on StackOverflow</a>
+   * 
+   * @param fileContent the binary file content
+   * @return the calculated hash value
+   */
   private static String computeChecksum(byte[] fileContent) {
     String md5 = DigestUtils.md5DigestAsHex(fileContent);
     byte[] raw = Hex.decode(md5.toUpperCase());

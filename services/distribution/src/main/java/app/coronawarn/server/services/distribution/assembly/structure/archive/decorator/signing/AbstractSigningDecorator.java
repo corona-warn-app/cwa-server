@@ -23,7 +23,7 @@ public abstract class AbstractSigningDecorator<W extends Writable<W>> extends Ar
   /**
    * Creates an AbstractSigningDecorator.
    */
-  public AbstractSigningDecorator(Archive<W> archive, CryptoProvider cryptoProvider,
+  protected AbstractSigningDecorator(Archive<W> archive, CryptoProvider cryptoProvider,
       DistributionServiceConfig distributionServiceConfig) {
     super(archive);
     this.cryptoProvider = cryptoProvider;

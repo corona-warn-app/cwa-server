@@ -67,7 +67,7 @@ You will find `.yaml` and `.xml` based profile-specific configuration files at [
 
 Profile                       | Effect
 ------------------------------|-------------
-`dev`                         | Sets the log level to `DEBUG` and changes the `CONSOLE_LOG_PATTERN` used by Log4j 2.
+`debug`                         | Sets the log level to `DEBUG` and changes the `CONSOLE_LOG_PATTERN` used by Log4j 2.
 `cloud`                       | Removes default values for the `spring.flyway`, `spring.datasource` and `services.distribution.objectstore` configurations. <br>Changes the distribution output path and turns off `set-public-read-acl-on-put-object`.
 `demo`                        | Includes incomplete days and hours into the distribution run, thus creating aggregates for the current day and the current hour (and including both in the respective indices). When running multiple distributions in one hour with this profile, the date aggregate for today and the hours aggregate for the current hour will be updated and overwritten. This profile also turns off the expiry policy (Keys must be expired for at least 2 hours before distribution) and the shifting policy (there must be at least 140 keys in a distribution).
 `testdata`                    | Causes test data to be inserted into the database before each distribution run. By default, around 1000 random diagnosis keys will be generated per hour. If there are no diagnosis keys in the database yet, random keys will be generated for every hour from the beginning of the retention period (14 days ago at 00:00 UTC) until one hour before the present hour. If there are already keys in the database, the random keys will be generated for every hour from the latest diagnosis key in the database (by submission timestamp) until one hour before the present hour (or none at all, if the latest diagnosis key in the database was submitted one hour ago or later).
@@ -113,14 +113,26 @@ AllUsers. This setting should only be used when running with the application wit
 
 #### `cwa-hash`
 
-Custom header, which adds the MD5 hash of the archive contents (export.bin). If the file isn't an archive, the contents
-of the file will be used to build the hash (index files). This header is used to determine, whether a file should be
-uploaded or not. If the hash for the file is the same as the hash available on the S3 compatible storage it will not be
-uploaded, since the contents of that specific file did not change, so there is no need to re-upload the file. If the
-hash differs, or the file is not available on the S3 compatible storage the file will be uploaded.
+Custom header, which adds a complex MD5 hash of the archive contents (export.bin). If the file isn't an archive, the
+contents of the file will be used to build the hash (index files). This header is used to determine whether a file
+should be uploaded or not. If the hash for the file is the same as the hash available on the S3 compatible storage it
+will not be uploaded, since the contents of that specific file did not change, so there is no need to re-upload the
+file. If the hash differs, or the file is not available on the S3 compatible storage, the file will be uploaded.
 
 This header is needed, since it is not possible to create byte-identical archives when using ECDSA due to its
 non-deterministic nature.
+
+To calculate the CWA-hash locally, e.g. on a Mac you can use the following code in a terminal on the archive contents:
+
+```sh
+md5 -q export.bin | tr a-z A-Z | xxd -p -r | md5 -q
+```
+
+#### `ETag`
+
+[Standard HTTP header](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/ETag), used to determine whether the
+archive has changed and needs to be re-uploaded or re-downloaded by clients (i.e. mobile apps). Usually an MD5 of the
+complete archive file, but can be complex to calculate for multi-part uploads (i.e. see [this answer on StackOverflow](https://stackoverflow.com/questions/12186993/what-is-the-algorithm-to-compute-the-amazon-s3-etag-for-a-file-larger-than-5gb#answer-19896823).
 
 ## Threading
 

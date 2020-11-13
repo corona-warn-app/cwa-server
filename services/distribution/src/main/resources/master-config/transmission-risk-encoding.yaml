@@ -1,0 +1,29 @@
+# Mappings below are intended to be used for encoding certain information in the DiagnosisKeys prior to 
+# publishing on CDNs. These derivations/transformations have a different nature then the ones performed on incmoing TEKs
+# because they are not persistent (stored keys are not affected).
+transmission-risk-encoding:
+# The following two mappings are intended for computations regarding the risk of infection done on the mobile client with
+# Exposure Notification Framework v2 (enfv2). Transmission information will be encoded in the DSOS and RT (Report Type) 
+# fields of the keys before distributing them.
+# In essence transission risk involves a 2-step derivation logic between the time when a key entered the system (EFGS/submission) 
+# and the time it gets published to CDN. First the TRL must be determined/derived from DSOS with the mappings defined above in the yaml,
+# then we proceed to re-encode DSOS (with a different range of values) and RT from the derived TRL and those values are 
+# published to CDNs for client consumption.
+  transmissionRisk-to-daysSinceSymptoms:
+    1: 1
+    2: 1
+    3: 1
+    4: 1
+    5: 2
+    6: 2
+    7: 2
+    8: 2
+  transmissionRisk-to-reportType:
+    1: 1
+    2: 2
+    3: 3
+    4: 4
+    5: 1
+    6: 2
+    7: 3
+    8: 4

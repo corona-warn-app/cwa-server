@@ -59,9 +59,8 @@ public final class DiagnosisTestData {
                 .withRollingStartIntervalNumber(600)
                 .withTransmissionRiskLevel(5).withSubmissionTimestamp(timestamp)
                 .withCountryCode("DE")
-                .withVisitedCountries(Set.of("DE"))
-                .withConsentToFederation(true)
-                .withReportType(ReportType.CONFIRMED_TEST)
+                .withVisitedCountries(Set.of("DE","FR"))
+                .withReportType(ReportType.CONFIRMED_CLINICAL_DIAGNOSIS)
                 .build())
         .collect(Collectors.toList());
   }
