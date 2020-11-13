@@ -7,6 +7,8 @@ import app.coronawarn.server.common.persistence.service.FederationBatchInfoServi
 import io.micrometer.core.annotation.Timed;
 import java.time.LocalDate;
 import javax.validation.constraints.NotNull;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.format.annotation.DateTimeFormat.ISO;
 import org.springframework.http.ResponseEntity;
@@ -26,6 +28,7 @@ public class CallbackController {
    */
   public static final String CALLBACK_ROUTE = "/callback";
   private final FederationBatchInfoService federationBatchInfoService;
+  private static final Logger logger = LoggerFactory.getLogger(CallbackController.class);
 
   public CallbackController(FederationBatchInfoService federationBatchInfoService) {
     this.federationBatchInfoService = federationBatchInfoService;
@@ -40,10 +43,17 @@ public class CallbackController {
    */
   @GetMapping(value = CALLBACK_ROUTE, params = {"batchTag!="})
   @Timed(description = "Time spent handling callback.")
-  public ResponseEntity<Void> handleCallback(@RequestParam(required = true) String batchTag,
+  public ResponseEntity<Void> handleCallback(@RequestParam String batchTag,
       @NotNull @DateTimeFormat(iso = ISO.DATE) @RequestParam LocalDate date) {
+    logger.info("BatchInfo with tag {} and date {} received from federation gateway.", batchTag, date);
     FederationBatchInfo federationBatchInfo = new FederationBatchInfo(batchTag, date);
-    federationBatchInfoService.save(federationBatchInfo);
+    boolean savedSuccessfully = federationBatchInfoService.save(federationBatchInfo);
+    if (savedSuccessfully) {
+      logger.info("BatchInfo with tag {} and date {} was persisted successfully with status {}.",
+          federationBatchInfo.getBatchTag(), federationBatchInfo.getDate(), federationBatchInfo.getStatus());
+    } else {
+      logger.warn("BatchInfo with tag {} already existed and was not persisted.", federationBatchInfo.getBatchTag());
+    }
     return ResponseEntity.ok().build();
   }
 }

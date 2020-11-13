@@ -813,26 +813,26 @@ public class DistributionServiceConfig {
 
     private abstract static class CommonKeyDownloadParameters {
 
-      private String cachedDayPackagesToUpdateOnETagMismatch;
-      private String cachedHourPackagesToUpdateOnETagMismatch;
+      private String revokedDayPackages;
+      private String revokedHourPackages;
 
-      public List<DeserializedDayPackageMetadata> getCachedDayPackagesToUpdateOnETagMismatch() {
-        return SerializationUtils.deserializeJson(cachedDayPackagesToUpdateOnETagMismatch,
+      public List<DeserializedDayPackageMetadata> getRevokedDayPackages() {
+        return SerializationUtils.deserializeJson(revokedDayPackages,
             typeFactory -> typeFactory.constructCollectionType(List.class, DeserializedDayPackageMetadata.class));
       }
 
-      public void setCachedDayPackagesToUpdateOnETagMismatch(String cachedDayPackagesToUpdateOnETagMismatch) {
-        this.cachedDayPackagesToUpdateOnETagMismatch = cachedDayPackagesToUpdateOnETagMismatch;
+      public void setRevokedDayPackages(String revokedDayPackages) {
+        this.revokedDayPackages = revokedDayPackages;
       }
 
-      public List<DeserializedHourPackageMetadata> getCachedHourPackagesToUpdateOnETagMismatch() {
-        return SerializationUtils.deserializeJson(cachedHourPackagesToUpdateOnETagMismatch,
+      public List<DeserializedHourPackageMetadata> getRevokedHourPackages() {
+        return SerializationUtils.deserializeJson(revokedHourPackages,
             typeFactory -> typeFactory
                 .constructCollectionType(List.class, DeserializedHourPackageMetadata.class));
       }
 
-      public void setCachedHourPackagesToUpdateOnETagMismatch(String cachedHourPackagesToUpdateOnETagMismatch) {
-        this.cachedHourPackagesToUpdateOnETagMismatch = cachedHourPackagesToUpdateOnETagMismatch;
+      public void setRevokedHourPackages(String revokedHourPackages) {
+        this.revokedHourPackages = revokedHourPackages;
       }
     }
 
