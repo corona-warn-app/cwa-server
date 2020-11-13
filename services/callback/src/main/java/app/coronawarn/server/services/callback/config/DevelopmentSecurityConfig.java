@@ -12,15 +12,13 @@ import org.springframework.security.config.annotation.method.configuration.Enabl
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
-import org.springframework.security.config.annotation.web.configurers.ExpressionUrlAuthorizationConfigurer;
 import org.springframework.security.web.firewall.HttpFirewall;
 import org.springframework.security.web.firewall.StrictHttpFirewall;
 
 @Configuration
 @EnableWebSecurity
-@EnableGlobalMethodSecurity(prePostEnabled = true)
-@Profile("!disable-certificate-authentication")
-public class SecurityConfig extends WebSecurityConfigurerAdapter {
+@Profile("disable-certificate-authentication")
+public class DevelopmentSecurityConfig extends WebSecurityConfigurerAdapter {
 
   private static final String CALLBACK_ROUTE =
       "/version/v1" + CallbackController.CALLBACK_ROUTE;
@@ -36,8 +34,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
   @Override
   protected void configure(HttpSecurity http) throws Exception {
     http.authorizeRequests()
-        .mvcMatchers(HttpMethod.GET, CALLBACK_ROUTE).authenticated().and().x509();
-    // TODO urlRegistry.anyRequest().denyAll();
+        .mvcMatchers(HttpMethod.GET, CALLBACK_ROUTE).permitAll()
+        .anyRequest().denyAll();
     http.headers().contentSecurityPolicy("default-src 'self'");
   }
 }
