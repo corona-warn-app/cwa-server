@@ -1,0 +1,76 @@
+#----------------------------------------------------------------------
+# This is the Corona Warn App master configuration file.
+# ----------------------------------------------------------------------
+#
+# This configuration file will be fetched by the mobile app in order to function.
+#
+# Change this file with caution!
+
+
+minutes-at-attenuation-filters:
+  -
+    attenuation-range:
+      min: 0
+      max: 73
+      max-exclusive: true
+  -
+    drop-if-minutes-in-range:
+      min: 0
+      max: 10
+      max-exclusive: true
+
+trl-filters:
+  -
+    drop-if-trl-in-range:
+      min: 1
+      max: 2
+
+minutes-at-attenuation-weights:
+  -
+    attenuation-range:
+      min: 0
+      max: 55
+      max-exclusive: true
+    weight: 1.0
+  -
+    attenuation-range:
+      min: 55
+      max: 63
+      max-exclusive: true
+    weight: 0.5
+
+normalized-time-per-e-w-to-risk-level-mapping:
+  -
+    normalized-time-range:
+      min: 0
+      max: 15
+      max-exclusive: true
+    risk-level: 1
+  -
+    normalized-time-range:
+      min: 15
+      max: 9999
+    risk-level: 2
+
+normalized-time-per-day-to-risk-level-mapping:
+  -
+    normalized-time-range:
+      min: 0
+      max: 15
+      max-exclusive: true
+    risk-level: 1
+  -
+    normalized-time-range:
+      min: 15
+      max: 9999
+    risk-level: 2
+
+transmission-risk-level-multiplier: 0.2
+
+trlEncoding:
+  infectiousnessOffsetStandard: 0
+  infectiousnessOffsetHigh: 4
+  reportTypeOffsetRecursive: 4
+  reportTypeOffsetSelfReport: 3
+  reportTypeOffsetConfirmedClinicalDiagnosis: 2
+  reportTypeOffsetConfirmedTest: 1

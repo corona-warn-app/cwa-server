@@ -160,28 +160,28 @@ class ApplicationVersionConfigurationValidatorTest {
     @Test
     void testCachedDayAndHourPackagesForKeyDownloadParameters() {
       distributionServiceConfig.getAppConfigParameters().getAndroidKeyDownloadParameters().
-          setCachedDayPackagesToUpdateOnETagMismatch("[\n{ \"region\":\"EUR\", \"date\":\"2020-10-28\", \"etag\":"
+          setRevokedDayPackages("[\n{ \"region\":\"EUR\", \"date\":\"2020-10-28\", \"etag\":"
               + "\"\\\"7d595060d664c4040ff3f65b532f6a57\\\"\" },\n"
               + "{ \"region\":\"DE\", \"date\":\"2020-10-29\", \"etag\":"
               + "\"\\\"7d595060d664c4040ff3f65b532f6a58\\\"\" }]");
       distributionServiceConfig.getAppConfigParameters().getAndroidKeyDownloadParameters()
-          .setCachedHourPackagesToUpdateOnETagMismatch("[\n{ \"region\":\"EUR\", \"date\":\"2020-10-28\", \"hour\":3, "
+          .setRevokedHourPackages("[\n{ \"region\":\"EUR\", \"date\":\"2020-10-28\", \"hour\":3, "
               + "\"etag\":\"\\\"7d595060d664c4040ff3f65b532f6a57\\\"\" },\n"
               + "{ \"region\":\"EUR\", \"date\":\"2020-10-29\", \"hour\":5, "
               + "\"etag\":\"\\\"7d595060d664c4040ff3f65b532f6a57\\\"\" }]");
       KeyDownloadParametersAndroid keyDownloadParametersAndroid =
           applicationConfigurationPublicationConfig.buildKeyDownloadParametersAndroid(distributionServiceConfig);
 
-      assertThat(keyDownloadParametersAndroid.getCachedDayPackagesToUpdateOnETagMismatch(0).toString())
+      assertThat(keyDownloadParametersAndroid.getRevokedDayPackages(0).toString())
           .hasToString("region: \"EUR\"\ndate: \"2020-10-28\"\netag:"
               + " \"\\\"7d595060d664c4040ff3f65b532f6a57\\\"\"\n");
-      assertThat(keyDownloadParametersAndroid.getCachedDayPackagesToUpdateOnETagMismatch(1).toString())
+      assertThat(keyDownloadParametersAndroid.getRevokedDayPackages(1).toString())
           .hasToString("region: \"DE\"\ndate: \"2020-10-29\"\netag:"
               + " \"\\\"7d595060d664c4040ff3f65b532f6a58\\\"\"\n");
-      assertThat(keyDownloadParametersAndroid.getCachedHourPackagesToUpdateOnETagMismatch(0).toString())
+      assertThat(keyDownloadParametersAndroid.getRevokedHourPackages(0).toString())
           .hasToString("region: \"EUR\"\ndate: \"2020-10-28\"\nhour: 3\netag:"
               + " \"\\\"7d595060d664c4040ff3f65b532f6a57\\\"\"\n");
-      assertThat(keyDownloadParametersAndroid.getCachedHourPackagesToUpdateOnETagMismatch(1).toString())
+      assertThat(keyDownloadParametersAndroid.getRevokedHourPackages(1).toString())
           .hasToString("region: \"EUR\"\ndate: \"2020-10-29\"\nhour: 5\netag:"
               + " \"\\\"7d595060d664c4040ff3f65b532f6a57\\\"\"\n");
     }

@@ -62,6 +62,13 @@ class FederationBatchInfoServiceTest {
   }
 
   @Test
+  void testDoesNotPersistOnConflict() {
+    FederationBatchInfo federationBatchInfo = new FederationBatchInfo(batchTag, date);
+    assertThat(federationBatchInfoService.save(federationBatchInfo)).isTrue();
+    assertThat(federationBatchInfoService.save(federationBatchInfo)).isFalse();
+  }
+
+  @Test
   void testUpdateStatus() {
     FederationBatchInfo federationBatchInfo = new FederationBatchInfo(batchTag, date,
         FederationBatchStatus.UNPROCESSED);
