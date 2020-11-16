@@ -83,6 +83,7 @@ class S3RetentionPolicyTest {
             new S3Object(generateFileName(getUtcDate(), country)))).flatMap(List::stream)
             .collect(toList()));
 
+    when(objectStoreAccess.getObjectsWithPrefix(any())).thenReturn(mockResponse);
     s3RetentionPolicy.applyRetentionPolicy(1);
 
     verify(objectStoreAccess, never()).deleteObjectsWithPrefix(any());
