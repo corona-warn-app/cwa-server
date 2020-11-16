@@ -1,12 +1,14 @@
 package app.coronawarn.server.services.distribution.config;
 
 import app.coronawarn.server.common.protocols.external.exposurenotification.SignatureInfo;
+import app.coronawarn.server.services.distribution.utils.SerializationUtils;
 import java.util.List;
 import java.util.stream.Collectors;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.Pattern;
+import javax.validation.constraints.PositiveOrZero;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.validation.annotation.Validated;
 
@@ -333,6 +335,27 @@ public class DistributionServiceConfig {
     private String parametersPath;
     @Pattern(regexp = CHAR_AND_NUMBER_REGEX)
     private String appConfigFileName;
+    @Pattern(regexp = CHAR_AND_NUMBER_REGEX)
+    private String appConfigV2IosFileName;
+    @Pattern(regexp = CHAR_AND_NUMBER_REGEX)
+    private String appConfigV2AndroidFileName;
+
+
+    public String getAppConfigV2IosFileName() {
+      return appConfigV2IosFileName;
+    }
+
+    public void setAppConfigV2IosFileName(String appConfigV2IosFileName) {
+      this.appConfigV2IosFileName = appConfigV2IosFileName;
+    }
+
+    public String getAppConfigV2AndroidFileName() {
+      return appConfigV2AndroidFileName;
+    }
+
+    public void setAppConfigV2AndroidFileName(String appConfigV2AndroidFileName) {
+      this.appConfigV2AndroidFileName = appConfigV2AndroidFileName;
+    }
 
     public String getVersionPath() {
       return versionPath;
@@ -597,7 +620,7 @@ public class DistributionServiceConfig {
     }
   }
 
-  private static class AppFeature {
+  public static class AppFeature {
 
     private String label;
     private Integer value;
@@ -625,7 +648,10 @@ public class DistributionServiceConfig {
     private String minIos;
     private String latestAndroid;
     private String minAndroid;
-
+    @PositiveOrZero
+    private Integer latestAndroidVersionCode;
+    @PositiveOrZero
+    private Integer minAndroidVersionCode;
 
     public String getLatestIos() {
       return latestIos;
@@ -659,6 +685,21 @@ public class DistributionServiceConfig {
       this.minAndroid = minAndroid;
     }
 
+    public Integer getLatestAndroidVersionCode() {
+      return latestAndroidVersionCode;
+    }
+
+    public void setLatestAndroidVersionCode(Integer latestAndroidVersionCode) {
+      this.latestAndroidVersionCode = latestAndroidVersionCode;
+    }
+
+    public Integer getMinAndroidVersionCode() {
+      return minAndroidVersionCode;
+    }
+
+    public void setMinAndroidVersionCode(Integer minAndroidVersionCode) {
+      this.minAndroidVersionCode = minAndroidVersionCode;
+    }
   }
 
   public static class AppConfigParameters {
@@ -703,7 +744,26 @@ public class DistributionServiceConfig {
 
     public static class AndroidKeyDownloadParameters extends CommonKeyDownloadParameters {
 
+      private static final int LOWER_BOUNDARY_DOWNLOAD_TIMEOUT = 0;
+      public static final String MIN_VALUE_ERROR_MESSAGE_DOWNLOAD_TIMEOUT =
+          "Download timeout in seconds must be greater than or equal to " + LOWER_BOUNDARY_DOWNLOAD_TIMEOUT;
+      private static final int UPPER_BOUNDARY_DOWNLOAD_TIMEOUT = 1800;
+      public static final String MAX_VALUE_ERROR_MESSAGE_DOWNLOAD_TIMEOUT =
+          "Download timeout in seconds must be lower than or equal to " + UPPER_BOUNDARY_DOWNLOAD_TIMEOUT;
+      private static final int LOWER_BOUNDARY_OVERALL_TIMEOUT = 0;
+      public static final String MIN_VALUE_ERROR_MESSAGE_OVERALL_TIMEOUT =
+          "Android Key Download: overall timeout in seconds must be greater than or equal to "
+              + LOWER_BOUNDARY_OVERALL_TIMEOUT;
+      private static final int UPPER_BOUNDARY_OVERALL_TIMEOUT = 1800;
+      public static final String MAX_VALUE_ERROR_MESSAGE_OVERALL_TIMEOUT =
+          "Android Key Download: overall timeout in seconds must be lower than or equal to "
+              + UPPER_BOUNDARY_OVERALL_TIMEOUT;
+
+      @Min(value = LOWER_BOUNDARY_DOWNLOAD_TIMEOUT, message = MIN_VALUE_ERROR_MESSAGE_DOWNLOAD_TIMEOUT)
+      @Max(value = UPPER_BOUNDARY_DOWNLOAD_TIMEOUT, message = MAX_VALUE_ERROR_MESSAGE_DOWNLOAD_TIMEOUT)
       private Integer downloadTimeoutInSeconds;
+      @Min(value = LOWER_BOUNDARY_OVERALL_TIMEOUT, message = MIN_VALUE_ERROR_MESSAGE_OVERALL_TIMEOUT)
+      @Max(value = UPPER_BOUNDARY_OVERALL_TIMEOUT, message = MAX_VALUE_ERROR_MESSAGE_OVERALL_TIMEOUT)
       private Integer overallTimeoutInSeconds;
 
       public Integer getDownloadTimeoutInSeconds() {
@@ -723,25 +783,56 @@ public class DistributionServiceConfig {
       }
     }
 
+    public static class DeserializedDayPackageMetadata {
+
+      private String region;
+      private String date;
+      private String etag;
+
+      public String getRegion() {
+        return region;
+      }
+
+      public String getDate() {
+        return date;
+      }
+
+      public String getEtag() {
+        return etag;
+      }
+    }
+
+    public static class DeserializedHourPackageMetadata extends DeserializedDayPackageMetadata {
+
+      private Integer hour;
+
+      public Integer getHour() {
+        return hour;
+      }
+    }
+
     private abstract static class CommonKeyDownloadParameters {
 
-      private String cachedDayPackagesToUpdateOnETagMismatch;
-      private String cachedHourPackagesToUpdateOnETagMismatch;
+      private String revokedDayPackages;
+      private String revokedHourPackages;
 
-      public String getCachedDayPackagesToUpdateOnETagMismatch() {
-        return cachedDayPackagesToUpdateOnETagMismatch;
+      public List<DeserializedDayPackageMetadata> getRevokedDayPackages() {
+        return SerializationUtils.deserializeJson(revokedDayPackages,
+            typeFactory -> typeFactory.constructCollectionType(List.class, DeserializedDayPackageMetadata.class));
       }
 
-      public void setCachedDayPackagesToUpdateOnETagMismatch(String cachedDayPackagesToUpdateOnETagMismatch) {
-        this.cachedDayPackagesToUpdateOnETagMismatch = cachedDayPackagesToUpdateOnETagMismatch;
+      public void setRevokedDayPackages(String revokedDayPackages) {
+        this.revokedDayPackages = revokedDayPackages;
       }
 
-      public String getCachedHourPackagesToUpdateOnETagMismatch() {
-        return cachedHourPackagesToUpdateOnETagMismatch;
+      public List<DeserializedHourPackageMetadata> getRevokedHourPackages() {
+        return SerializationUtils.deserializeJson(revokedHourPackages,
+            typeFactory -> typeFactory
+                .constructCollectionType(List.class, DeserializedHourPackageMetadata.class));
       }
 
-      public void setCachedHourPackagesToUpdateOnETagMismatch(String cachedHourPackagesToUpdateOnETagMismatch) {
-        this.cachedHourPackagesToUpdateOnETagMismatch = cachedHourPackagesToUpdateOnETagMismatch;
+      public void setRevokedHourPackages(String revokedHourPackages) {
+        this.revokedHourPackages = revokedHourPackages;
       }
     }
 
@@ -751,6 +842,17 @@ public class DistributionServiceConfig {
 
     public static class IosExposureDetectionParameters {
 
+      private static final int MIN_VALUE_MAX_EXPOSURE_DETECTIONS = 0;
+      public static final String MIN_VALUE_ERROR_MESSAGE_MAX_EXPOSURE_DETECTIONS =
+          "IOS Exposure Detection: max exposure detections per interval must be greater than or equal to "
+              + MIN_VALUE_MAX_EXPOSURE_DETECTIONS;
+      private static final int MAX_VALUE_MAX_EXPOSURE_DETECTIONS = 6;
+      public static final String MAX_VALUE_ERROR_MESSAGE_MAX_EXPOSURE_DETECTIONS =
+          "IOS Exposure Detection: max exposure detections per interval must be lower than or equal to "
+              + MAX_VALUE_MAX_EXPOSURE_DETECTIONS;
+
+      @Min(value = MIN_VALUE_MAX_EXPOSURE_DETECTIONS, message = MIN_VALUE_ERROR_MESSAGE_MAX_EXPOSURE_DETECTIONS)
+      @Max(value = MAX_VALUE_MAX_EXPOSURE_DETECTIONS, message = MAX_VALUE_ERROR_MESSAGE_MAX_EXPOSURE_DETECTIONS)
       private Integer maxExposureDetectionsPerInterval;
 
       public Integer getMaxExposureDetectionsPerInterval() {
@@ -765,7 +867,27 @@ public class DistributionServiceConfig {
 
     public static class AndroidExposureDetectionParameters {
 
+      private static final int LOWER_BOUNDARY_OVERALL_TIMEOUT = 0;
+      public static final String MIN_VALUE_ERROR_MESSAGE_OVERALL_TIMEOUT =
+          "Android Exposure Detection: overall timeout in seconds must be greater than or equal to "
+              + LOWER_BOUNDARY_OVERALL_TIMEOUT;
+      private static final int UPPER_BOUNDARY_OVERALL_TIMEOUT = 3600;
+      public static final String MAX_VALUE_ERROR_MESSAGE_OVERALL_TIMEOUT =
+          "Android Exposure Detection: overall timeout in seconds must be lower than or equal to "
+              + UPPER_BOUNDARY_OVERALL_TIMEOUT;
+      private static final int LOWER_BOUNDARY_MAX_EXPOSURE_DETECTIONS = 0;
+      public static final String MIN_VALUE_ERROR_MESSAGE_MAX_EXPOSURE_DETECTIONS =
+          "Android Exposure Detection: max exposure detections per interval must be greater than or equal to "
+              + LOWER_BOUNDARY_MAX_EXPOSURE_DETECTIONS;
+      private static final int UPPER_BOUNDARY_MAX_EXPOSURE_DETECTIONS = 6;
+      public static final String MAX_VALUE_ERROR_MESSAGE_MAX_EXPOSURE_DETECTIONS =
+          "Android Exposure Detection: max exposure detections per interval must be lower than or equal to "
+              + UPPER_BOUNDARY_MAX_EXPOSURE_DETECTIONS;
+      @Min(value = LOWER_BOUNDARY_MAX_EXPOSURE_DETECTIONS, message = MIN_VALUE_ERROR_MESSAGE_MAX_EXPOSURE_DETECTIONS)
+      @Max(value = UPPER_BOUNDARY_MAX_EXPOSURE_DETECTIONS, message = MAX_VALUE_ERROR_MESSAGE_MAX_EXPOSURE_DETECTIONS)
       private Integer maxExposureDetectionsPerInterval;
+      @Min(value = LOWER_BOUNDARY_OVERALL_TIMEOUT, message = MIN_VALUE_ERROR_MESSAGE_OVERALL_TIMEOUT)
+      @Max(value = UPPER_BOUNDARY_OVERALL_TIMEOUT, message = MAX_VALUE_ERROR_MESSAGE_OVERALL_TIMEOUT)
       private Integer overallTimeoutInSeconds;
 
       public Integer getMaxExposureDetectionsPerInterval() {

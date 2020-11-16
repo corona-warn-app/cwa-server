@@ -1,0 +1,39 @@
+#----------------------------------------------------------------------
+# This is the Corona Warn App master configuration file.
+# ----------------------------------------------------------------------
+#
+# This configuration file will be fetched by the mobile app in order to function.
+#
+# Change this file with caution!
+
+infectiousness-for-days-since-onset-of-symptoms:
+  1: 1
+  2: 2
+report-type-none-map: 0
+
+attenuation-duration-thresholds:
+  - 30
+  - 50
+  - 70
+
+immediate-duration-weight: 1.0
+
+medium-duration-weight: 1.0
+
+near-duration-weight: 1.0
+
+other-duration-weight: 1.0
+
+days-since-last-exposure-threshold: 0
+
+infectiousness-standard-weight: 1.0
+
+infectiousness-high-weight: 1.0
+
+report-type-confirmed-test-weight: 1.0
+
+report-type-confirmed-clinical-diagnosis-weight: 1.0
+
+report-type-self-reported-weight: 1.0
+
+report-type-recursive-weight: 1.0
