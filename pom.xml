@@ -67,6 +67,10 @@
     <httpclient.version>4.5.13</httpclient.version>
     <junit.version>4.13.1</junit.version>
     <tomcat-embed-core.version>9.0.39</tomcat-embed-core.version>
+
+
+    <skip.unit.tests>false</skip.unit.tests>
+    <skip.integration.tests>true</skip.integration.tests>
   </properties>
 
   <dependencyManagement>
@@ -343,6 +347,7 @@
                 <includes>
                   <include>**/*IT.java</include>
                 </includes>
+                <skipTests>${skip.integration.tests}</skipTests>
                 <additionalClasspathElements>
                   <additionalClasspathElement>${basedir}/target/classes</additionalClasspathElement>
                 </additionalClasspathElements>
@@ -386,6 +391,7 @@
           <configuration>
             <excludedGroups>s3-integration</excludedGroups>
             <trimStackTrace>false</trimStackTrace>
+            <skipTests>${skip.unit.tests}</skipTests>
           </configuration>
         </plugin>
         <plugin>
@@ -580,4 +586,14 @@
     </plugins>
   </build>
 
+
+  <profiles>
+    <profile>
+      <id>integration-tests</id>
+      <properties>
+        <skip.integration.tests>false</skip.integration.tests>
+        <skip.unit.tests>true</skip.unit.tests>
+      </properties>
+    </profile>
+  </profiles>
 </project>
