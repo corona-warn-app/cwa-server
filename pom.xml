@@ -478,9 +478,16 @@
             </protocArtifact>
           </configuration>
         </plugin>
+
+        <plugin>
+          <groupId>org.codehaus.mojo</groupId>
+          <artifactId>exec-maven-plugin</artifactId>
+          <version>1.6.0</version>
+        </plugin>
         <plugin>
           <groupId>io.fabric8</groupId>
           <artifactId>docker-maven-plugin</artifactId>
+          <version>0.34.1</version>
           <configuration>
             <images>
               <image>
@@ -506,7 +513,6 @@
               <id>start</id>
               <phase>pre-integration-test</phase>
               <goals>
-                <goal>build</goal>
                 <goal>start</goal>
               </goals>
             </execution>
@@ -519,17 +525,13 @@
             </execution>
           </executions>
         </plugin>
-        <plugin>
-          <groupId>org.codehaus.mojo</groupId>
-          <artifactId>exec-maven-plugin</artifactId>
-          <version>1.6.0</version>
-        </plugin>
       </plugins>
 
     </pluginManagement>
 
     <!-- plugin executions for ALL sub modules -->
     <plugins>
+
       <plugin>
         <artifactId>maven-checkstyle-plugin</artifactId>
         <configuration>

@@ -73,15 +73,4 @@
       <artifactId>protobuf-java-util</artifactId>
     </dependency>
   </dependencies>
-  <build>
-    <plugins>
-      <plugin>
-        <groupId>io.fabric8</groupId>
-        <artifactId>docker-maven-plugin</artifactId>
-        <version>0.20.1</version>
-      </plugin>
-    </plugins>
-  </build>
-
-
 </project>
