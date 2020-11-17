@@ -10,16 +10,10 @@ import app.coronawarn.server.services.distribution.objectstore.ObjectStoreAccess
 import app.coronawarn.server.services.distribution.objectstore.S3Publisher;
 import app.coronawarn.server.services.distribution.objectstore.client.ObjectStorePublishingConfig;
 import app.coronawarn.server.services.distribution.objectstore.client.S3Object;
-import com.amazonaws.auth.AWSCredentials;
-import com.amazonaws.auth.BasicAWSCredentials;
-import com.amazonaws.services.s3.AmazonS3;
-import com.amazonaws.services.s3.AmazonS3Client;
-import com.amazonaws.services.s3.S3ClientOptions;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.List;
 import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -37,7 +31,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 @EnableConfigurationProperties(value = DistributionServiceConfig.class)
 @DirtiesContext
 @Tag("s3-integration")
-class S3PublisherTestIT {
+class S3PublisherTestIT extends BaseS3IntegrationTest {
 
   private final String rootTestFolder = "objectstore/publisher/";
 
@@ -53,23 +47,6 @@ class S3PublisherTestIT {
   @Autowired
   private S3Publisher s3Publisher;
 
-
-  @BeforeAll
-  public static void setupBucket() {
-    AWSCredentials credentials = new BasicAWSCredentials("accessKey1",
-        "verySecretKey1");
-
-    // Create a client connection based on credentials
-    AmazonS3 s3client = new AmazonS3Client(credentials);
-    s3client.setEndpoint("http://localhost:8003");
-    s3client.setS3ClientOptions(S3ClientOptions.builder().setPathStyleAccess(true).build());
-
-    // Create bucket
-    String bucketName = "cwa";
-    if (!s3client.doesBucketExistV2(bucketName)) {
-      s3client.createBucket(bucketName);
-    }
-  }
 
   @BeforeEach
   public void setup() {

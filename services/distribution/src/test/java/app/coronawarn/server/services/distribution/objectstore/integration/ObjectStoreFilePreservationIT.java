@@ -15,11 +15,6 @@ import app.coronawarn.server.services.distribution.objectstore.S3RetentionPolicy
 import app.coronawarn.server.services.distribution.objectstore.client.S3Object;
 import app.coronawarn.server.services.distribution.runner.Assembly;
 import app.coronawarn.server.services.distribution.runner.RetentionPolicy;
-import com.amazonaws.auth.AWSCredentials;
-import com.amazonaws.auth.BasicAWSCredentials;
-import com.amazonaws.services.s3.AmazonS3;
-import com.amazonaws.services.s3.AmazonS3Client;
-import com.amazonaws.services.s3.S3ClientOptions;
 import java.io.File;
 import java.io.IOException;
 import java.time.LocalDate;
@@ -28,7 +23,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 import org.junit.Rule;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -50,7 +44,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 @DirtiesContext
 @ActiveProfiles("integration-test")
 @Tag("s3-integration")
-class ObjectStoreFilePreservationIT {
+class ObjectStoreFilePreservationIT  extends BaseS3IntegrationTest{
 
   @Autowired
   private DiagnosisKeyService diagnosisKeyService;
@@ -70,25 +64,6 @@ class ObjectStoreFilePreservationIT {
 
   @Rule
   private TemporaryFolder testOutputFolder = new TemporaryFolder();
-
-
-  @BeforeAll
-  public static void setupBucket() {
-    AWSCredentials credentials = new BasicAWSCredentials("accessKey1",
-        "verySecretKey1");
-
-    // Create a client connection based on credentials
-    AmazonS3 s3client = new AmazonS3Client(credentials);
-    s3client.setEndpoint("http://localhost:8003");
-    s3client.setS3ClientOptions(S3ClientOptions.builder().setPathStyleAccess(true).build());
-
-    // Create bucket
-    String bucketName = "cwa";
-    if (!s3client.doesBucketExistV2(bucketName)) {
-      s3client.createBucket(bucketName);
-    }
-  }
-
 
   @BeforeEach
   public void setup() throws IOException {
