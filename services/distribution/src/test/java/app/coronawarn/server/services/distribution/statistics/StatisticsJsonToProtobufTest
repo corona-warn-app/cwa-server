@@ -1,0 +1,70 @@
+package app.coronawarn.server.services.distribution.statistics;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+import org.json.simple.parser.JSONParser;
+import org.json.simple.parser.ParseException;
+import org.junit.jupiter.api.Test;
+
+import java.io.FileReader;
+import java.io.IOException;
+
+class StatisticsJsonToProtobufTest{
+
+  @Test
+  void conversionTest() throws JSONException, IOException, ParseException {
+
+    JSONParser parser = new JSONParser();
+
+    try {
+      JSONArray jsonArray = (JSONArray) parser.parse(new FileReader("services/distribution/src/test/data (2).json"));
+
+      for (int i = 0; i < jsonArray.length(); i++) {
+        JSONObject entry = (JSONObject) jsonArray.get(i);
+
+        String date = (String) entry.get("date");
+        System.out.println(date);
+
+        String app_downloads_cum = (String) entry.get("app_downloads_cum");
+        System.out.println(app_downloads_cum);
+
+        String key_uploads = (String) entry.get("key_uploads");
+        System.out.println(key_uploads);
+
+        String test_total = (String) entry.get("test_total");
+        System.out.println(test_total);
+
+        String total_redeemed = (String) entry.get("total_redeemed");
+        System.out.println(total_redeemed);
+
+        String total_not_redeemed = (String) entry.get("total_not_redeemed");
+        System.out.println(total_not_redeemed);
+
+        String labs_total = (String) entry.get("labs_total");
+        System.out.println(labs_total);
+
+        String labs_done = (String) entry.get("labs_done");
+        System.out.println(labs_done);
+
+        String infections = (String) entry.get("infections");
+        System.out.println(infections);
+
+        String day_of_week = (String) entry.get("day_of_week");
+        System.out.println(day_of_week);
+
+        String week_of_year = (String) entry.get("week_of_year");
+        System.out.println(week_of_year);
+
+      }
+
+    }catch (Exception e) {
+      e.printStackTrace();
+    }
+
+
+  }
+
+
+}
+
