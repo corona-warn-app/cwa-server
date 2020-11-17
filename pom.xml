@@ -478,7 +478,6 @@
             </protocArtifact>
           </configuration>
         </plugin>
-
         <plugin>
           <groupId>org.codehaus.mojo</groupId>
           <artifactId>exec-maven-plugin</artifactId>
@@ -526,12 +525,10 @@
           </executions>
         </plugin>
       </plugins>
-
     </pluginManagement>
 
     <!-- plugin executions for ALL sub modules -->
     <plugins>
-
       <plugin>
         <artifactId>maven-checkstyle-plugin</artifactId>
         <configuration>

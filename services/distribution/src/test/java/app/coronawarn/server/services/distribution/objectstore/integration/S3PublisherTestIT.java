@@ -64,8 +64,6 @@ class S3PublisherTestIT {
     // Create a client connection based on credentials
     AmazonS3 s3client = new AmazonS3Client(credentials);
     s3client.setEndpoint("http://localhost:8003");
-    // Using path-style requests
-    // (deprecated) s3client.setS3ClientOptions(new S3ClientOptions().withPathStyleAccess(true));
     s3client.setS3ClientOptions(S3ClientOptions.builder().setPathStyleAccess(true).build());
 
     // Create bucket
