@@ -346,6 +346,7 @@
               <configuration>
                 <includes>
                   <include>**/*IT.java</include>
+                  <include>**/*IntegrationTest.java</include>
                 </includes>
                 <skipTests>${skip.integration.tests}</skipTests>
                 <additionalClasspathElements>
@@ -392,6 +393,9 @@
             <excludedGroups>s3-integration</excludedGroups>
             <trimStackTrace>false</trimStackTrace>
             <skipTests>${skip.unit.tests}</skipTests>
+            <excludes>
+              <exclude>**/*IntegrationTest.java</exclude>
+            </excludes>
           </configuration>
         </plugin>
         <plugin>

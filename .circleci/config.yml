@@ -34,7 +34,7 @@ jobs:
       - run:
           name: Run all Integration Tests
           command: |
-            ./mvnw  verify -P integration-tests
+            ./mvnw verify -P integration-tests
       - run:
           name: Save test results
           command: |
