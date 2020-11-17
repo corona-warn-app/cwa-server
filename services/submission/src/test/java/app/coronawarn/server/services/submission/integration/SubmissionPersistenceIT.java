@@ -15,7 +15,6 @@ import app.coronawarn.server.common.protocols.internal.SubmissionPayload.Builder
 import app.coronawarn.server.services.submission.config.SubmissionServiceConfig;
 import app.coronawarn.server.services.submission.controller.FakeDelayManager;
 import app.coronawarn.server.services.submission.controller.RequestExecutor;
-import app.coronawarn.server.services.submission.controller.SubmissionController;
 import app.coronawarn.server.services.submission.verification.TanVerifier;
 import com.google.common.io.BaseEncoding;
 import com.google.protobuf.util.JsonFormat;
@@ -64,9 +63,6 @@ class SubmissionPersistenceIT {
 
   @Autowired
   private RequestExecutor executor;
-
-  @Autowired
-  private SubmissionController submissionController;
 
   @Autowired
   private SubmissionServiceConfig config;
@@ -161,10 +157,6 @@ class SubmissionPersistenceIT {
         Arguments.of(null, "DE", true),
         Arguments.of(null, "DE", false),
         Arguments.of(null, "DE", null),
-        Arguments.of(null, "IT", true),
-        Arguments.of(null, "IT", false),
-        Arguments.of(null, "IT", null),
-        Arguments.of(emptyList(), "IT", null),
         Arguments.of(emptyList(), "", null),
         Arguments.of(emptyList(), "", null),
         Arguments.of(emptyList(), "", true),
@@ -172,9 +164,6 @@ class SubmissionPersistenceIT {
         Arguments.of(emptyList(), "DE", null),
         Arguments.of(emptyList(), "DE", true),
         Arguments.of(emptyList(), "DE", false),
-        Arguments.of(emptyList(), "IT", null),
-        Arguments.of(emptyList(), "IT", true),
-        Arguments.of(emptyList(), "IT", false),
         Arguments.of(List.of("DE"), "", null),
         Arguments.of(List.of("DE"), "", true),
         Arguments.of(List.of("DE"), "", false),
@@ -185,27 +174,18 @@ class SubmissionPersistenceIT {
         Arguments.of(List.of("DE"), "DE", true),
         Arguments.of(List.of("DE"), "DE", false),
         Arguments.of(List.of("DE"), "DE", null),
-        Arguments.of(List.of("DE"), "IT", true),
-        Arguments.of(List.of("DE"), "IT", false),
-        Arguments.of(List.of("DE"), "IT", null),
         Arguments.of(List.of("IT"), null, null),
         Arguments.of(List.of("IT"), null, true),
         Arguments.of(List.of("IT"), null, false),
         Arguments.of(List.of("IT"), "DE", true),
         Arguments.of(List.of("IT"), "DE", false),
         Arguments.of(List.of("IT"), "DE", null),
-        Arguments.of(List.of("IT"), "IT", true),
-        Arguments.of(List.of("IT"), "IT", false),
-        Arguments.of(List.of("IT"), "IT", null),
         Arguments.of(List.of("DE", "IT"), null, null),
         Arguments.of(List.of("DE", "IT"), null, true),
         Arguments.of(List.of("DE", "IT"), null, false),
         Arguments.of(List.of("DE", "IT"), "DE", true),
         Arguments.of(List.of("DE", "IT"), "DE", false),
-        Arguments.of(List.of("DE", "IT"), "DE", null),
-        Arguments.of(List.of("DE", "IT"), "IT", true),
-        Arguments.of(List.of("DE", "IT"), "IT", false),
-        Arguments.of(List.of("DE", "IT"), "IT", null)
+        Arguments.of(List.of("DE", "IT"), "DE", null)
     );
   }
 
