@@ -2,7 +2,7 @@ package app.coronawarn.server.services.distribution.statistics;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-public class StatisticsJson {
+public class StatisticsJsonStringObject {
 
   private String date;
   @JsonProperty("app_downloads_cum")
@@ -24,7 +24,6 @@ public class StatisticsJson {
   private String dayOfWeek;
   @JsonProperty("week_of_year")
   private Integer weekOfYear;
-
 
 
   public String getDate() {

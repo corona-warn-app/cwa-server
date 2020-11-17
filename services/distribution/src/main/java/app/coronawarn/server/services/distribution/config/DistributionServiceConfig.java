@@ -49,6 +49,7 @@ public class DistributionServiceConfig {
   private Boolean includeIncompleteHours;
   private String euPackageName;
   private Boolean applyPoliciesForAllCountries;
+  private String cardIdSequence;
   private TekExport tekExport;
   private Signature signature;
   private Api api;
@@ -145,6 +146,14 @@ public class DistributionServiceConfig {
 
   public void setApplyPoliciesForAllCountries(Boolean applyPoliciesForAllCountries) {
     this.applyPoliciesForAllCountries = applyPoliciesForAllCountries;
+  }
+
+  public String getCardIdSequence() {
+    return cardIdSequence;
+  }
+
+  public void setCardIdSequence(String cardIdSequence) {
+    this.cardIdSequence = cardIdSequence;
   }
 
   public TekExport getTekExport() {

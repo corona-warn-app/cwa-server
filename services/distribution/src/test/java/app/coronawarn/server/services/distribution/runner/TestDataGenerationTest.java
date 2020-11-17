@@ -18,9 +18,6 @@ import app.coronawarn.server.common.protocols.external.exposurenotification.Repo
 import app.coronawarn.server.services.distribution.assembly.structure.util.TimeUtils;
 import app.coronawarn.server.services.distribution.config.DistributionServiceConfig;
 import app.coronawarn.server.services.distribution.config.DistributionServiceConfig.TestData;
-import java.io.File;
-import java.io.IOException;
-import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.util.ArrayList;
@@ -28,10 +25,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
-import app.coronawarn.server.services.distribution.statistics.StatisticsJson;
-import app.coronawarn.server.services.distribution.utils.SerializationUtils;
 import org.assertj.core.api.Assertions;
-import org.json.simple.parser.ParseException;
 import org.junit.Assert;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -43,11 +37,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.ConfigFileApplicationContextInitializer;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.core.env.Environment;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
-import org.testcontainers.shaded.org.apache.commons.io.FileUtils;
 
 @EnableConfigurationProperties(value = DistributionServiceConfig.class)
 @ExtendWith(SpringExtension.class)
@@ -223,13 +215,5 @@ class TestDataGenerationTest {
     diagnosisKeys.forEach(diagnosisKey -> {
       Assertions.assertThat(diagnosisKey.getRollingStartIntervalNumber() % 144).isZero();
     });
-  }
-
-
-  @Test
-  void conversionTest() throws IOException, ParseException {
-    String content = FileUtils.readFileToString(new File(".\\src\\test\\statistic_data.json"), StandardCharsets.UTF_8);
-    List<StatisticsJson> statsDTO = SerializationUtils.deserializeJson(content, typeFactory -> typeFactory
-        .constructCollectionType(List.class, StatisticsJson.class));
   }
 }
