@@ -15,7 +15,6 @@ import com.amazonaws.auth.BasicAWSCredentials;
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.AmazonS3Client;
 import com.amazonaws.services.s3.S3ClientOptions;
-import io.findify.s3mock.S3Mock;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.List;
@@ -41,7 +40,6 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 class S3PublisherTestIT {
 
   private final String rootTestFolder = "objectstore/publisher/";
-  private S3Mock mockS3api;
 
   @Autowired
   private ObjectStoreAccess objectStoreAccess;
