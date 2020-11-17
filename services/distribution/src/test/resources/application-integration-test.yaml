@@ -11,3 +11,8 @@ spring:
   test:
     database:
       replace: none
+logging:
+  level:
+    org:
+      springframework: info
+    root: info
