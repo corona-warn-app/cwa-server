@@ -202,7 +202,6 @@ class TestDataGenerationTest {
         .saveDiagnosisKeys(any());
   }
 
-
   @Test
   void ensureRollingStartIntervalNumberAtMidnight() {
     var now = LocalDateTime.of(2020, 7, 15, 12, 0, 0).toInstant(ZoneOffset.UTC);
@@ -214,7 +213,7 @@ class TestDataGenerationTest {
     verify(diagnosisKeyService, atLeast(4)).saveDiagnosisKeys(captor.capture());
     Collection<DiagnosisKey> diagnosisKeys = captor.getValue();
     diagnosisKeys.forEach(diagnosisKey -> {
-      Assertions.assertThat(diagnosisKey.getRollingStartIntervalNumber() % 144).isEqualTo(0);
+      Assertions.assertThat(diagnosisKey.getRollingStartIntervalNumber() % 144).isZero();
     });
   }
 }
