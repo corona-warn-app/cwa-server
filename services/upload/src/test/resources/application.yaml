@@ -49,6 +49,3 @@ spring:
     database:
       # Use datasource as defined above.
       replace: none
-  jpa:
-    hibernate:
-      ddl-auto: validate

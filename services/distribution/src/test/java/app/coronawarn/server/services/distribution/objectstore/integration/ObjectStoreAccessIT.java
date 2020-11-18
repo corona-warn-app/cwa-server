@@ -16,7 +16,6 @@ import java.io.IOException;
 import java.nio.file.Path;
 import java.util.List;
 import java.util.UUID;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -52,10 +51,6 @@ class ObjectStoreAccessIT extends BaseS3IntegrationTest {
     objectStoreAccess.deleteObjectsWithPrefix(testRunId);
   }
 
-  @AfterEach
-  void teardown() {
-    objectStoreAccess.deleteObjectsWithPrefix(testRunId);
-  }
 
   @Test
   void contextLoads() {

@@ -13,7 +13,6 @@ import app.coronawarn.server.services.distribution.objectstore.client.S3Object;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.List;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -47,16 +46,11 @@ class S3PublisherTestIT extends BaseS3IntegrationTest {
   @Autowired
   private S3Publisher s3Publisher;
 
-
   @BeforeEach
   public void setup() {
     objectStoreAccess.deleteObjectsWithPrefix("");
   }
 
-  @AfterEach
-  public void teardown() {
-    objectStoreAccess.deleteObjectsWithPrefix("");
-  }
 
   @Test
   void publishTestFolderOk() throws IOException {
