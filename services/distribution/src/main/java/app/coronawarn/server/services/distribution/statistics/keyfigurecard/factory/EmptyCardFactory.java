@@ -1,21 +1,19 @@
-package app.coronawarn.server.services.distribution.statistics.keyfigurecard;
+package app.coronawarn.server.services.distribution.statistics.keyfigurecard.factory;
 
-import app.coronawarn.server.common.protocols.internal.stats.KeyFigure;
 import app.coronawarn.server.common.protocols.internal.stats.KeyFigureCard;
 import app.coronawarn.server.common.protocols.internal.stats.KeyFigureCard.Builder;
 import app.coronawarn.server.services.distribution.statistics.StatisticsJsonStringObject;
-import java.util.List;
+import app.coronawarn.server.services.distribution.statistics.keyfigurecard.KeyFigureCardSequenceConstants;
 
-public class KeySubmissionCardFactory extends HeaderCardFactory {
+public class EmptyCardFactory extends HeaderCardFactory {
 
   @Override
   protected Integer getCardId() {
-    return 3;
+    return KeyFigureCardSequenceConstants.FOURTH_CARD_ID;
   }
 
   @Override
   protected KeyFigureCard buildKeyFigureCard(StatisticsJsonStringObject stats, Builder keyFigureBuilder) {
-    return keyFigureBuilder.addAllKeyFigures(List.of(KeyFigure.newBuilder().build(),
-        KeyFigure.newBuilder().build(), KeyFigure.newBuilder().build())).build();
+    return keyFigureBuilder.build();
   }
 }

@@ -19,7 +19,7 @@
     "labs_connected_absolut": 152,
     "seven_day_incidence": 168.5,
     "seven_day_incidence_growthrate": 1.12,
-    "seven_day_incidence_trend_5percent": 1,
+    "seven_day_incidence_trend_5percent":   1,
     "infections_reported_daily": 19990,
     "infections_reported_7days_avg": 123456,
     "infections_reported_7days_growthrate": 1.15,

@@ -3,6 +3,7 @@ package app.coronawarn.server.services.distribution.statistics;
 import app.coronawarn.server.common.protocols.internal.stats.KeyFigureCard;
 import app.coronawarn.server.common.protocols.internal.stats.Statistics;
 import app.coronawarn.server.services.distribution.config.DistributionServiceConfig;
+import app.coronawarn.server.services.distribution.statistics.keyfigurecard.KeyFigureCardFactory;
 import app.coronawarn.server.services.distribution.utils.SerializationUtils;
 import java.io.File;
 import java.io.IOException;
@@ -29,6 +30,12 @@ public class StatisticsToProtobufMapping {
   }
 
 
+  /**
+   * Create protobuf statistic object from raw JSON statistics.
+   *
+   * @return Statistics protobuf statistics object.
+   * @throws IOException .
+   */
   public Statistics constructProtobufStatistics() throws IOException {
     String content = FileUtils
         .readFileToString(new File("./src/test/resources/stats/statistic_data.json"), StandardCharsets.UTF_8);
@@ -44,8 +51,8 @@ public class StatisticsToProtobufMapping {
 
   private List<Integer> getAllCardIdSequence() {
     List<Integer> idSequence = new ArrayList<>();
-    String[] idSequenceArray = distributionServiceConfig.getCardIdSequence().
-        replace("[", "").replace("]", "")
+    String[] idSequenceArray = distributionServiceConfig.getCardIdSequence()
+        .replace("[", "").replace("]", "")
         .split(",");
     List<Integer> idIntegerSequence = new ArrayList<>();
     for (String id : idSequenceArray) {

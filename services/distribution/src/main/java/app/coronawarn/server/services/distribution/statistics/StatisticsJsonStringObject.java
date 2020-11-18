@@ -25,7 +25,7 @@ public class StatisticsJsonStringObject {
   @JsonProperty("persons_who_shared_keys_7days_sum")
   private Integer personsWhoSharedKeys7daysSum;
   @JsonProperty("persons_who_shared_keys_7days_growthrate")
-  private Integer personsWhoSharedKeys7daysGrowthrate;
+  private Double personsWhoSharedKeys7daysGrowthrate;
   @JsonProperty("persons_who_shared_keys_7days_trend_5percent")
   private Integer personsWhoSharedKeys7daysTrend5percent;
   @JsonProperty("tests_total_daily")
@@ -39,7 +39,7 @@ public class StatisticsJsonStringObject {
   @JsonProperty("labs_connected_absolut")
   private Integer labsConnectedAbsolut;
   @JsonProperty("seven_day_incidence")
-  private Integer sevenDayIncidence;
+  private Double sevenDayIncidence;
   @JsonProperty("seven_day_incidence_growthrate")
   private Double sevenDayIncidenceGrowthrate;
   @JsonProperty("seven_day_incidence_trend_5percent")
@@ -95,7 +95,7 @@ public class StatisticsJsonStringObject {
     return personsWhoSharedKeys7daysSum;
   }
 
-  public Integer getPersonsWhoSharedKeys7daysGrowthrate() {
+  public Double getPersonsWhoSharedKeys7daysGrowthrate() {
     return personsWhoSharedKeys7daysGrowthrate;
   }
 
@@ -123,7 +123,7 @@ public class StatisticsJsonStringObject {
     return labsConnectedAbsolut;
   }
 
-  public Integer getSevenDayIncidence() {
+  public Double getSevenDayIncidence() {
     return sevenDayIncidence;
   }
 
@@ -204,7 +204,7 @@ public class StatisticsJsonStringObject {
     this.personsWhoSharedKeys7daysSum = personsWhoSharedKeys7daysSum;
   }
 
-  public void setPersonsWhoSharedKeys7daysGrowthrate(Integer personsWhoSharedKeys7daysGrowthrate) {
+  public void setPersonsWhoSharedKeys7daysGrowthrate(Double personsWhoSharedKeys7daysGrowthrate) {
     this.personsWhoSharedKeys7daysGrowthrate = personsWhoSharedKeys7daysGrowthrate;
   }
 
@@ -232,7 +232,7 @@ public class StatisticsJsonStringObject {
     this.labsConnectedAbsolut = labsConnectedAbsolut;
   }
 
-  public void setSevenDayIncidence(Integer sevenDayIncidence) {
+  public void setSevenDayIncidence(Double sevenDayIncidence) {
     this.sevenDayIncidence = sevenDayIncidence;
   }
 

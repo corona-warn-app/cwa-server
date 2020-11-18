@@ -1,4 +1,6 @@
-package app.coronawarn.server.services.distribution.statistics.keyfigurecard;
+package app.coronawarn.server.services.distribution.statistics.keyfigurecard.factory;
+
+import static java.time.ZoneOffset.UTC;
 
 import app.coronawarn.server.common.protocols.internal.stats.CardHeader;
 import app.coronawarn.server.common.protocols.internal.stats.KeyFigureCard;
@@ -6,10 +8,15 @@ import app.coronawarn.server.services.distribution.statistics.StatisticsJsonStri
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 
-import static java.time.ZoneOffset.UTC;
-
 public abstract class HeaderCardFactory {
 
+  /**
+   * Create KeyFigureCard object. Calls the children method `buildKeyFigureCard` for card specific
+   * properties. This method adds the generic CardHeader that all KeyFigureCards must have.
+   *
+   * @param stats JSON Object statistics
+   * @return KeyFigureCard .
+   */
   public KeyFigureCard makeKeyFigureCard(StatisticsJsonStringObject stats) {
     DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
     LocalDate dateTime = LocalDate.parse(stats.getEffectiveDate(), formatter);
