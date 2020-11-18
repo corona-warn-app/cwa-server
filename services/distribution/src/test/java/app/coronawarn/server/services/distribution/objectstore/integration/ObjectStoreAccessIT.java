@@ -47,22 +47,18 @@ class ObjectStoreAccessIT extends BaseS3IntegrationTest {
   @Autowired
   private ResourceLoader resourceLoader;
 
-  @Autowired
-  private ObjectStorePublishingConfig objectStorePublishingConfig;
-
-
   @BeforeEach
-  public void setup() {
+  void setup() {
     objectStoreAccess.deleteObjectsWithPrefix(testRunId);
   }
 
   @AfterEach
-  public void teardown() {
+  void teardown() {
     objectStoreAccess.deleteObjectsWithPrefix(testRunId);
   }
 
   @Test
-  public void contextLoads() throws Exception {
+  void contextLoads() {
     assertThat(objectStoreAccess).isNotNull();
   }
 
