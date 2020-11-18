@@ -87,6 +87,8 @@ services:
       max-number-of-s3-threads: 4
       # Allows distribution to overwrite files which are published on the object store
       force-update-keyfiles: ${FORCE_UPDATE_KEYFILES:false}
+      # The number of days to retain hourly diagnosis keys file in S3. Database entries are still managed by the standard retention policy.
+      hour-file-retention-days: 2
 
     app-features:
       - label: reserved

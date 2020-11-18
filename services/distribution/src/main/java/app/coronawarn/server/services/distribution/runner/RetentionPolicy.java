@@ -32,6 +32,8 @@ public class RetentionPolicy implements ApplicationRunner {
 
   private final S3RetentionPolicy s3RetentionPolicy;
 
+  private final Integer hourFileRetentionDays;
+
 
   /**
    * Creates a new RetentionPolicy.
@@ -43,6 +45,7 @@ public class RetentionPolicy implements ApplicationRunner {
     this.diagnosisKeyService = diagnosisKeyService;
     this.applicationContext = applicationContext;
     this.retentionDays = distributionServiceConfig.getRetentionDays();
+    this.hourFileRetentionDays = distributionServiceConfig.getObjectStore().getHourFileRetentionDays();
     this.s3RetentionPolicy = s3RetentionPolicy;
   }
 
@@ -51,6 +54,7 @@ public class RetentionPolicy implements ApplicationRunner {
     try {
       diagnosisKeyService.applyRetentionPolicy(retentionDays);
       s3RetentionPolicy.applyRetentionPolicy(retentionDays);
+      s3RetentionPolicy.applyHourFileRetentionPolicy(hourFileRetentionDays);
     } catch (Exception e) {
       logger.error("Application of retention policy failed.", e);
       Application.killApplication(applicationContext);

@@ -13,6 +13,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 import org.springframework.stereotype.Component;
 
 /**
@@ -20,12 +21,16 @@ import org.springframework.stereotype.Component;
  */
 @Component
 public class S3RetentionPolicy {
-
   private final ObjectStoreAccess objectStoreAccess;
   private final Api api;
   private final FailedObjectStoreOperationsCounter failedObjectStoreOperationsCounter;
   private final String originCountry;
   private final String euPackageName;
+
+  public static final String DATE_REGEX = ".*([0-9]{4}-[0-9]{2}-[0-9]{2}).*";
+  public static final String HOUR_REGEX = ".*(hour).*";
+  private final Pattern datePattern = Pattern.compile(DATE_REGEX);
+  private final Pattern hourPattern = Pattern.compile(HOUR_REGEX);
 
   /**
    * Creates an {@link S3RetentionPolicy} instance with the specified parameters.
@@ -47,19 +52,11 @@ public class S3RetentionPolicy {
   public void applyRetentionPolicy(int retentionDays) {
     Set<String> countries = Set.of(originCountry, euPackageName);
     countries.forEach(country -> {
-      List<S3Object> diagnosisKeysObjects = objectStoreAccess.getObjectsWithPrefix(api.getVersionPath() + "/"
-          + api.getVersionV1() + "/"
-          + api.getDiagnosisKeysPath() + "/"
-          + api.getCountryPath() + "/"
-          + country + "/"
-          + api.getDatePath() + "/");
-      final String regex = ".*([0-9]{4}-[0-9]{2}-[0-9]{2}).*";
-      final Pattern pattern = Pattern.compile(regex);
+      List<S3Object> diagnosisKeysObjects = objectStoreAccess.getObjectsWithPrefix(getPrefix(country));
       final LocalDate cutOffDate = TimeUtils.getUtcDate().minusDays(retentionDays);
-
       diagnosisKeysObjects.stream()
           .filter(diagnosisKeysObject -> {
-            Matcher matcher = pattern.matcher(diagnosisKeysObject.getObjectName());
+            Matcher matcher = datePattern.matcher(diagnosisKeysObject.getObjectName());
             return matcher.matches() && LocalDate.parse(matcher.group(1), DateTimeFormatter.ISO_LOCAL_DATE)
                 .isBefore(cutOffDate);
           })
@@ -79,5 +76,38 @@ public class S3RetentionPolicy {
     } catch (ObjectStoreOperationFailedException e) {
       failedObjectStoreOperationsCounter.incrementAndCheckThreshold(e);
     }
+  }
+
+  /**
+   * Delete old hourly files based on retention policy.
+   *
+   * @param retentionDays number of days back where hourly files should be deleted
+   */
+  public void applyHourFileRetentionPolicy(int retentionDays) {
+    Set<String> countries = Set.of(originCountry, euPackageName);
+    countries.forEach(country -> {
+      List<S3Object> diagnosisKeysObjects = objectStoreAccess.getObjectsWithPrefix(getPrefix(country));
+
+      final LocalDate cutOffDate = TimeUtils.getUtcDate().minusDays(retentionDays);
+      var deletableKeys = diagnosisKeysObjects.stream()
+          .filter(diagnosisKeysObject -> {
+            Matcher matcher = datePattern.matcher(diagnosisKeysObject.getObjectName());
+            return matcher.matches() && LocalDate.parse(matcher.group(1), DateTimeFormatter.ISO_LOCAL_DATE)
+                .isEqual(cutOffDate);
+          })
+          .filter(diagnosisKeysObject -> {
+            Matcher matcher = hourPattern.matcher(diagnosisKeysObject.getObjectName());
+            return matcher.matches();
+          })
+          .collect(Collectors.toList());
+
+      // TODO: Log
+      deletableKeys.forEach(this::deleteDiagnosisKey);
+    });
+  }
+
+  private String getPrefix(String country) {
+    return api.getVersionPath() + "/" + api.getVersionV1() + "/" + api.getDiagnosisKeysPath() + "/"
+        + api.getCountryPath() + "/" + country + "/" + api.getDatePath() + "/";
   }
 }
