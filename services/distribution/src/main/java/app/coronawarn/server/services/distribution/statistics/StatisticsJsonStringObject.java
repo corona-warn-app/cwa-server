@@ -41,7 +41,7 @@ public class StatisticsJsonStringObject {
   @JsonProperty("seven_day_incidence")
   private Integer sevenDayIncidence;
   @JsonProperty("seven_day_incidence_growthrate")
-  private Integer sevenDayIncidenceGrowthrate;
+  private Double sevenDayIncidenceGrowthrate;
   @JsonProperty("seven_day_incidence_trend_5percent")
   private Integer sevenDayIncidenceTrend5percent;
   @JsonProperty("infections_reported_daily")
@@ -49,7 +49,7 @@ public class StatisticsJsonStringObject {
   @JsonProperty("infections_reported_7days_avg")
   private Integer infectionsReported7daysAvg;
   @JsonProperty("infections_reported_7days_growthrate")
-  private Integer infectionsReported7daysGrowthrate;
+  private Double infectionsReported7daysGrowthrate;
   @JsonProperty("infections_reported_7days_trend_5percent")
   private Integer infectionsReported7daysTrend5percent;
   @JsonProperty("infections_reported_cumulated")
@@ -127,10 +127,6 @@ public class StatisticsJsonStringObject {
     return sevenDayIncidence;
   }
 
-  public Integer getSevenDayIncidenceGrowthrate() {
-    return sevenDayIncidenceGrowthrate;
-  }
-
   public Integer getSevenDayIncidenceTrend5percent() {
     return sevenDayIncidenceTrend5percent;
   }
@@ -143,9 +139,6 @@ public class StatisticsJsonStringObject {
     return infectionsReported7daysAvg;
   }
 
-  public Integer getInfectionsReported7daysGrowthrate() {
-    return infectionsReported7daysGrowthrate;
-  }
 
   public Integer getInfectionsReported7daysTrend5percent() {
     return infectionsReported7daysTrend5percent;
@@ -153,5 +146,114 @@ public class StatisticsJsonStringObject {
 
   public Integer getInfectionsReportedCumulated() {
     return infectionsReportedCumulated;
+  }
+
+  public void setUpdateTimestamp(String updateTimestamp) {
+    this.updateTimestamp = updateTimestamp;
+  }
+
+  public Double getSevenDayIncidenceGrowthrate() {
+    return sevenDayIncidenceGrowthrate;
+  }
+
+  public void setSevenDayIncidenceGrowthrate(Double sevenDayIncidenceGrowthrate) {
+    this.sevenDayIncidenceGrowthrate = sevenDayIncidenceGrowthrate;
+  }
+
+  public Double getInfectionsReported7daysGrowthrate() {
+    return infectionsReported7daysGrowthrate;
+  }
+
+  public void setInfectionsReported7daysGrowthrate(Double infectionsReported7daysGrowthrate) {
+    this.infectionsReported7daysGrowthrate = infectionsReported7daysGrowthrate;
+  }
+
+  public void setEffectiveDate(String effectiveDate) {
+    this.effectiveDate = effectiveDate;
+  }
+
+  public void setAppDownloadsDaily(Integer appDownloadsDaily) {
+    this.appDownloadsDaily = appDownloadsDaily;
+  }
+
+  public void setAppDownloadsCumulated(Integer appDownloadsCumulated) {
+    this.appDownloadsCumulated = appDownloadsCumulated;
+  }
+
+  public void setAppDownloads7daysSum(Integer appDownloads7daysSum) {
+    this.appDownloads7daysSum = appDownloads7daysSum;
+  }
+
+  public void setAppDownloads7daysGrowthrate(Integer appDownloads7daysGrowthrate) {
+    this.appDownloads7daysGrowthrate = appDownloads7daysGrowthrate;
+  }
+
+  public void setAppDownloads7daysTrend5percent(Integer appDownloads7daysTrend5percent) {
+    this.appDownloads7daysTrend5percent = appDownloads7daysTrend5percent;
+  }
+
+  public void setPersonsWhoSharedKeysDaily(Integer personsWhoSharedKeysDaily) {
+    this.personsWhoSharedKeysDaily = personsWhoSharedKeysDaily;
+  }
+
+  public void setPersonsWhoSharedKeysCumulated(Integer personsWhoSharedKeysCumulated) {
+    this.personsWhoSharedKeysCumulated = personsWhoSharedKeysCumulated;
+  }
+
+  public void setPersonsWhoSharedKeys7daysSum(Integer personsWhoSharedKeys7daysSum) {
+    this.personsWhoSharedKeys7daysSum = personsWhoSharedKeys7daysSum;
+  }
+
+  public void setPersonsWhoSharedKeys7daysGrowthrate(Integer personsWhoSharedKeys7daysGrowthrate) {
+    this.personsWhoSharedKeys7daysGrowthrate = personsWhoSharedKeys7daysGrowthrate;
+  }
+
+  public void setPersonsWhoSharedKeys7daysTrend5percent(Integer personsWhoSharedKeys7daysTrend5percent) {
+    this.personsWhoSharedKeys7daysTrend5percent = personsWhoSharedKeys7daysTrend5percent;
+  }
+
+  public void setTestsTotalDaily(Integer testsTotalDaily) {
+    this.testsTotalDaily = testsTotalDaily;
+  }
+
+  public void setPositiveTestsUsedToShareKeysDaily(Integer positiveTestsUsedToShareKeysDaily) {
+    this.positiveTestsUsedToShareKeysDaily = positiveTestsUsedToShareKeysDaily;
+  }
+
+  public void setPositiveTestsNotUsedToShareKeysDaily(Integer positiveTestsNotUsedToShareKeysDaily) {
+    this.positiveTestsNotUsedToShareKeysDaily = positiveTestsNotUsedToShareKeysDaily;
+  }
+
+  public void setLabsRegisteredAbsolut(Integer labsRegisteredAbsolut) {
+    this.labsRegisteredAbsolut = labsRegisteredAbsolut;
+  }
+
+  public void setLabsConnectedAbsolut(Integer labsConnectedAbsolut) {
+    this.labsConnectedAbsolut = labsConnectedAbsolut;
+  }
+
+  public void setSevenDayIncidence(Integer sevenDayIncidence) {
+    this.sevenDayIncidence = sevenDayIncidence;
+  }
+
+  public void setSevenDayIncidenceTrend5percent(Integer sevenDayIncidenceTrend5percent) {
+    this.sevenDayIncidenceTrend5percent = sevenDayIncidenceTrend5percent;
+  }
+
+  public void setInfectionsReportedDaily(Integer infectionsReportedDaily) {
+    this.infectionsReportedDaily = infectionsReportedDaily;
+  }
+
+  public void setInfectionsReported7daysAvg(Integer infectionsReported7daysAvg) {
+    this.infectionsReported7daysAvg = infectionsReported7daysAvg;
+  }
+
+
+  public void setInfectionsReported7daysTrend5percent(Integer infectionsReported7daysTrend5percent) {
+    this.infectionsReported7daysTrend5percent = infectionsReported7daysTrend5percent;
+  }
+
+  public void setInfectionsReportedCumulated(Integer infectionsReportedCumulated) {
+    this.infectionsReportedCumulated = infectionsReportedCumulated;
   }
 }

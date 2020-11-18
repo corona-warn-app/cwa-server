@@ -1,6 +1,5 @@
 package app.coronawarn.server.services.distribution.statistics;
 
-import app.coronawarn.server.common.protocols.internal.stats.CardHeader;
 import app.coronawarn.server.common.protocols.internal.stats.KeyFigureCard;
 import app.coronawarn.server.common.protocols.internal.stats.Statistics;
 import app.coronawarn.server.services.distribution.config.DistributionServiceConfig;
@@ -8,10 +7,12 @@ import app.coronawarn.server.services.distribution.utils.SerializationUtils;
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import org.apache.commons.io.FileUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -37,7 +38,7 @@ public class StatisticsToProtobufMapping {
 
     return Statistics.newBuilder()
         .addAllCardIdSequence(getAllCardIdSequence())
-        //.addAllKeyFigureCards(buildAllKeyFigureCards(jsonStringObject))
+        .addAllKeyFigureCards(buildAllKeyFigureCards(jsonStringObjects))
         .build();
   }
 
@@ -54,17 +55,19 @@ public class StatisticsToProtobufMapping {
   }
 
   private List<KeyFigureCard> buildAllKeyFigureCards(List<StatisticsJsonStringObject> jsonStringObjects) {
-    List<KeyFigureCard> figureCards = new ArrayList<>();
+    Map<LocalDate, List<KeyFigureCard>> figureCardsMap = new HashMap<>();
+    KeyFigureCardFactory keyFigureCardFactory = new KeyFigureCardFactory(new ValueProcessor());
     jsonStringObjects.forEach(jsonObject -> {
+      List<KeyFigureCard> keyFigureCards = new ArrayList<>();
+      DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+      LocalDate dateTime = LocalDate.parse(jsonObject.getEffectiveDate(), formatter);
+
       getAllCardIdSequence().forEach(id -> {
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
-        LocalDateTime dateTime = LocalDateTime.parse(jsonObject.getUpdateTimestamp(), formatter);
-        CardHeader cardHeader = CardHeader.newBuilder()
-            .setCardId(id)
-            .build();
+        keyFigureCards.add(keyFigureCardFactory.createKeyFigureCard(jsonObject, id));
       });
+      figureCardsMap.put(dateTime, keyFigureCards);
     });
 
-    return null;
+    return figureCardsMap.values().stream().findFirst().get();
   }
 }

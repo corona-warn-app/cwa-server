@@ -1,5 +1,6 @@
 package app.coronawarn.server.services.distribution.statistics;
 
+import app.coronawarn.server.common.protocols.internal.stats.KeyFigureCard;
 import app.coronawarn.server.common.protocols.internal.stats.Statistics;
 import app.coronawarn.server.services.distribution.config.DistributionServiceConfig;
 import app.coronawarn.server.services.distribution.runner.TestDataGeneration;
@@ -25,11 +26,12 @@ import static org.assertj.core.api.Assertions.assertThat;
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration(classes = {DistributionServiceConfig.class, StatisticsJsonToProtobufTest.class},
     initializers = ConfigFileApplicationContextInitializer.class)
-class StatisticsJsonToProtobufTest{
+class StatisticsJsonToProtobufTest {
+
   @Autowired
   DistributionServiceConfig distributionServiceConfig;
 
- @Test
+  @Test
   void conversionTest() throws IOException, ParseException {
     String content = FileUtils.readFileToString(
         new File("./src/test/resources/stats/statistic_data.json"), StandardCharsets.UTF_8);
@@ -39,11 +41,53 @@ class StatisticsJsonToProtobufTest{
 
   @Test
   void testGetCardIdSequenceFromConfig() throws IOException {
-    StatisticsToProtobufMapping statisticsToProtobufMapping = new StatisticsToProtobufMapping(distributionServiceConfig);
+    StatisticsToProtobufMapping statisticsToProtobufMapping = new StatisticsToProtobufMapping(
+        distributionServiceConfig);
 
     Statistics stats = statisticsToProtobufMapping.constructProtobufStatistics();
 
     assertThat(stats.getCardIdSequenceList().size()).isEqualTo(4);
+  }
+
+
+  @Test
+  void testKeyFigureCardContainsHeader() throws IOException {
+    StatisticsToProtobufMapping statisticsToProtobufMapping = new StatisticsToProtobufMapping(
+        distributionServiceConfig);
+
+    Statistics stats = statisticsToProtobufMapping.constructProtobufStatistics();
+
+    assertThat(stats.getKeyFigureCardsCount()).isEqualTo(4);
+    stats.getKeyFigureCardsList().forEach(keyFigureCard -> {
+          assertThat(keyFigureCard.getHeader()).isNotNull();
+          assertThat(keyFigureCard.getHeader().getUpdatedAt()).isPositive();
+        }
+    );
+  }
+
+  @Test
+  void testKeyFigureCardBasedOnHeaderCardId() throws IOException {
+    StatisticsToProtobufMapping statisticsToProtobufMapping = new StatisticsToProtobufMapping(
+        distributionServiceConfig);
+
+    Statistics stats = statisticsToProtobufMapping.constructProtobufStatistics();
+
+    KeyFigureCard infectionsCard = getKeyFigureCardForId(stats, 1);
+    KeyFigureCard incidenceCard = getKeyFigureCardForId(stats, 2);
+    KeyFigureCard keySubmissionsCard = getKeyFigureCardForId(stats, 3);
+
+    assertThat(infectionsCard.getKeyFiguresCount()).isEqualTo(3);
+    assertThat(incidenceCard.getKeyFiguresCount()).isEqualTo(1);
+    assertThat(keySubmissionsCard.getKeyFiguresCount()).isEqualTo(3);
+
+
+  }
+
+  private KeyFigureCard getKeyFigureCardForId(Statistics stats, Integer id) {
+    return stats.getKeyFigureCardsList()
+        .stream()
+        .filter(keyFigureCard -> keyFigureCard.getHeader().getCardId() == id)
+        .findFirst().get();
   }
 }
 
