@@ -17,7 +17,10 @@ import java.util.Map;
 import org.apache.commons.io.FileUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
+@Component
 public class StatisticsToProtobufMapping {
 
   private static final Logger logger = LoggerFactory.getLogger(StatisticsToProtobufMapping.class);
@@ -25,8 +28,12 @@ public class StatisticsToProtobufMapping {
 
   private final DistributionServiceConfig distributionServiceConfig;
 
-  public StatisticsToProtobufMapping(DistributionServiceConfig distributionServiceConfig) {
+  private final KeyFigureCardFactory keyFigureCardFactory;
+
+  public StatisticsToProtobufMapping(DistributionServiceConfig distributionServiceConfig,
+      KeyFigureCardFactory keyFigureCardFactory) {
     this.distributionServiceConfig = distributionServiceConfig;
+    this.keyFigureCardFactory = keyFigureCardFactory;
   }
 
 
@@ -63,7 +70,7 @@ public class StatisticsToProtobufMapping {
 
   private List<KeyFigureCard> buildAllKeyFigureCards(List<StatisticsJsonStringObject> jsonStringObjects) {
     Map<LocalDate, List<KeyFigureCard>> figureCardsMap = new HashMap<>();
-    KeyFigureCardFactory keyFigureCardFactory = new KeyFigureCardFactory(new ValueProcessor());
+
     jsonStringObjects.forEach(jsonObject -> {
       List<KeyFigureCard> keyFigureCards = new ArrayList<>();
       DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");

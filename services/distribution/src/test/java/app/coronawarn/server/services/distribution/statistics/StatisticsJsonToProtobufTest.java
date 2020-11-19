@@ -4,6 +4,7 @@ import app.coronawarn.server.common.protocols.internal.stats.KeyFigureCard;
 import app.coronawarn.server.common.protocols.internal.stats.Statistics;
 import app.coronawarn.server.services.distribution.config.DistributionServiceConfig;
 import app.coronawarn.server.services.distribution.runner.TestDataGeneration;
+import app.coronawarn.server.services.distribution.statistics.keyfigurecard.KeyFigureCardFactory;
 import app.coronawarn.server.services.distribution.utils.SerializationUtils;
 import org.json.simple.parser.ParseException;
 import org.junit.jupiter.api.Test;
@@ -24,12 +25,13 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 @EnableConfigurationProperties(value = DistributionServiceConfig.class)
 @ExtendWith(SpringExtension.class)
-@ContextConfiguration(classes = {DistributionServiceConfig.class, StatisticsJsonToProtobufTest.class},
+@ContextConfiguration(classes = {StatisticsJsonToProtobufTest.class,
+    StatisticsToProtobufMapping.class, KeyFigureCardFactory.class},
     initializers = ConfigFileApplicationContextInitializer.class)
 class StatisticsJsonToProtobufTest {
 
   @Autowired
-  DistributionServiceConfig distributionServiceConfig;
+  StatisticsToProtobufMapping statisticsToProtobufMapping;
 
   @Test
   void conversionTest() throws IOException, ParseException {
@@ -41,9 +43,6 @@ class StatisticsJsonToProtobufTest {
 
   @Test
   void testGetCardIdSequenceFromConfig() throws IOException {
-    StatisticsToProtobufMapping statisticsToProtobufMapping = new StatisticsToProtobufMapping(
-        distributionServiceConfig);
-
     Statistics stats = statisticsToProtobufMapping.constructProtobufStatistics();
 
     assertThat(stats.getCardIdSequenceList().size()).isEqualTo(4);
@@ -52,9 +51,6 @@ class StatisticsJsonToProtobufTest {
 
   @Test
   void testKeyFigureCardContainsHeader() throws IOException {
-    StatisticsToProtobufMapping statisticsToProtobufMapping = new StatisticsToProtobufMapping(
-        distributionServiceConfig);
-
     Statistics stats = statisticsToProtobufMapping.constructProtobufStatistics();
 
     assertThat(stats.getKeyFigureCardsCount()).isEqualTo(4);
@@ -67,9 +63,6 @@ class StatisticsJsonToProtobufTest {
 
   @Test
   void testKeyFigureCardBasedOnHeaderCardId() throws IOException {
-    StatisticsToProtobufMapping statisticsToProtobufMapping = new StatisticsToProtobufMapping(
-        distributionServiceConfig);
-
     Statistics stats = statisticsToProtobufMapping.constructProtobufStatistics();
 
     KeyFigureCard infectionsCard = getKeyFigureCardForId(stats, 1);

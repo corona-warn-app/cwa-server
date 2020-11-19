@@ -1,6 +1,7 @@
 package app.coronawarn.server.services.distribution.config;
 
 import app.coronawarn.server.common.protocols.external.exposurenotification.SignatureInfo;
+import app.coronawarn.server.common.protocols.internal.stats.Statistics;
 import app.coronawarn.server.services.distribution.utils.SerializationUtils;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -59,6 +60,7 @@ public class DistributionServiceConfig {
   private String[] supportedCountries;
   private AppVersions appVersions;
   private AppConfigParameters appConfigParameters;
+  private StatisticsConfig statistics;
 
   public Paths getPaths() {
     return paths;
@@ -221,6 +223,14 @@ public class DistributionServiceConfig {
     this.appConfigParameters = appConfigParameters;
   }
 
+  public StatisticsConfig getStatistics() {
+    return statistics;
+  }
+
+  public void setStatistics(StatisticsConfig statistics) {
+    this.statistics = statistics;
+  }
+
   /**
    * Get app features as list of protobuf objects.
    *
@@ -232,6 +242,18 @@ public class DistributionServiceConfig {
             .setLabel(appFeature.getLabel())
             .setValue(appFeature.getValue()).build())
         .collect(Collectors.toList());
+  }
+
+  public static class StatisticsConfig {
+    private Double trendCalculationThreshold;
+
+    public Double getTrendCalculationThreshold() {
+      return trendCalculationThreshold;
+    }
+
+    public void setTrendCalculationThreshold(Double trendCalculationThreshold) {
+      this.trendCalculationThreshold = trendCalculationThreshold;
+    }
   }
 
   public static class TekExport {

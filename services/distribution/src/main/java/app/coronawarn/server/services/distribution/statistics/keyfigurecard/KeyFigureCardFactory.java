@@ -6,33 +6,35 @@ import static app.coronawarn.server.services.distribution.statistics.keyfigureca
 import static app.coronawarn.server.services.distribution.statistics.keyfigurecard.KeyFigureCardSequenceConstants.KEY_SUBMISSION_CARD_ID;
 
 import app.coronawarn.server.common.protocols.internal.stats.KeyFigureCard;
+import app.coronawarn.server.services.distribution.config.DistributionServiceConfig;
 import app.coronawarn.server.services.distribution.statistics.StatisticsJsonStringObject;
-import app.coronawarn.server.services.distribution.statistics.ValueProcessor;
 import app.coronawarn.server.services.distribution.statistics.keyfigurecard.factory.EmptyCardFactory;
 import app.coronawarn.server.services.distribution.statistics.keyfigurecard.factory.HeaderCardFactory;
 import app.coronawarn.server.services.distribution.statistics.keyfigurecard.factory.IncidenceCardFactory;
 import app.coronawarn.server.services.distribution.statistics.keyfigurecard.factory.InfectionsCardFactory;
 import app.coronawarn.server.services.distribution.statistics.keyfigurecard.factory.KeySubmissionCardFactory;
+import org.springframework.stereotype.Component;
 
+@Component
 public class KeyFigureCardFactory {
 
-  private final ValueProcessor valueProcessor;
+  private final ValueTrendCalculator valueTrendCalculator;
 
-  public KeyFigureCardFactory(ValueProcessor valueProcessor) {
-    this.valueProcessor = valueProcessor;
+  public KeyFigureCardFactory(DistributionServiceConfig config) {
+    this.valueTrendCalculator = new ValueTrendCalculator(config.getStatistics().getTrendCalculationThreshold());
   }
 
   private HeaderCardFactory getFactoryPerCardId(int cardId) {
     switch (cardId) {
       case INFECTIONS_CARD_ID:
-        return new InfectionsCardFactory();
+        return new InfectionsCardFactory(this.valueTrendCalculator);
       case INCIDENCE_CARD_ID:
-        return new IncidenceCardFactory();
+        return new IncidenceCardFactory(this.valueTrendCalculator);
       case KEY_SUBMISSION_CARD_ID:
-        return new KeySubmissionCardFactory();
+        return new KeySubmissionCardFactory(this.valueTrendCalculator);
       case FOURTH_CARD_ID:
       default:
-        return new EmptyCardFactory();
+        return new EmptyCardFactory(this.valueTrendCalculator);
     }
   }
 

@@ -5,10 +5,17 @@ import static java.time.ZoneOffset.UTC;
 import app.coronawarn.server.common.protocols.internal.stats.CardHeader;
 import app.coronawarn.server.common.protocols.internal.stats.KeyFigureCard;
 import app.coronawarn.server.services.distribution.statistics.StatisticsJsonStringObject;
+import app.coronawarn.server.services.distribution.statistics.keyfigurecard.ValueTrendCalculator;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 
 public abstract class HeaderCardFactory {
+
+  protected final ValueTrendCalculator valueTrendCalculator;
+
+  protected HeaderCardFactory(ValueTrendCalculator valueTrendCalculator) {
+    this.valueTrendCalculator = valueTrendCalculator;
+  }
 
   /**
    * Create KeyFigureCard object. Calls the children method `buildKeyFigureCard` for card specific
