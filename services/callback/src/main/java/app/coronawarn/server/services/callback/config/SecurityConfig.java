@@ -56,12 +56,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
    * @return UserDetailsService stub
    */
   @Bean
+  @Override
   public UserDetailsService userDetailsService() {
-    return new UserDetailsService() {
-      @Override
-      public UserDetails loadUserByUsername(String username) {
-        return new User(username, "", emptyList());
-      }
-    };
+    return username -> new User(username, "", emptyList());
   }
 }
