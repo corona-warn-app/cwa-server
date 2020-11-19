@@ -37,7 +37,7 @@ public class S3ClientWrapper implements ObjectStoreClient {
 
   private static final Logger logger = LoggerFactory.getLogger(S3ClientWrapper.class);
 
-  private static final int chunkSize = 1000;
+  private static final int CHUNK_SIZE = 1000;
 
   private final S3Client s3Client;
 
@@ -143,7 +143,7 @@ public class S3ClientWrapper implements ObjectStoreClient {
     return objectNames.stream().map(key -> ObjectIdentifier.builder().key(key).build())
         .collect(toList())
         .stream()
-        .collect(Collectors.groupingBy(it -> counter.getAndIncrement() / chunkSize))
+        .collect(Collectors.groupingBy(it -> counter.getAndIncrement() / CHUNK_SIZE))
         .values();
   }
 
