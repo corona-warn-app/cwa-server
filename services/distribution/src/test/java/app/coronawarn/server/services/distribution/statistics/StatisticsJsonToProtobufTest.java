@@ -4,6 +4,7 @@ import app.coronawarn.server.common.protocols.internal.stats.KeyFigureCard;
 import app.coronawarn.server.common.protocols.internal.stats.Statistics;
 import app.coronawarn.server.services.distribution.config.DistributionServiceConfig;
 import app.coronawarn.server.services.distribution.runner.TestDataGeneration;
+import app.coronawarn.server.services.distribution.statistics.file.StatisticJsonFileLoader;
 import app.coronawarn.server.services.distribution.statistics.keyfigurecard.KeyFigureCardFactory;
 import app.coronawarn.server.services.distribution.utils.SerializationUtils;
 import org.json.simple.parser.ParseException;
@@ -26,8 +27,9 @@ import static org.assertj.core.api.Assertions.assertThat;
 @EnableConfigurationProperties(value = DistributionServiceConfig.class)
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration(classes = {StatisticsJsonToProtobufTest.class,
-    StatisticsToProtobufMapping.class, KeyFigureCardFactory.class},
-    initializers = ConfigFileApplicationContextInitializer.class)
+    StatisticsToProtobufMapping.class, KeyFigureCardFactory.class,
+    StatisticJsonFileLoader.class
+}, initializers = ConfigFileApplicationContextInitializer.class)
 class StatisticsJsonToProtobufTest {
 
   @Autowired

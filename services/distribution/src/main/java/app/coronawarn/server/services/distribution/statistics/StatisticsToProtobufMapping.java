@@ -3,6 +3,7 @@ package app.coronawarn.server.services.distribution.statistics;
 import app.coronawarn.server.common.protocols.internal.stats.KeyFigureCard;
 import app.coronawarn.server.common.protocols.internal.stats.Statistics;
 import app.coronawarn.server.services.distribution.config.DistributionServiceConfig;
+import app.coronawarn.server.services.distribution.statistics.file.StatisticJsonFileLoader;
 import app.coronawarn.server.services.distribution.statistics.keyfigurecard.KeyFigureCardFactory;
 import app.coronawarn.server.services.distribution.utils.SerializationUtils;
 import java.io.File;
@@ -22,20 +23,21 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.stereotype.Component;
 
 @Configuration
-@Component
 public class StatisticsToProtobufMapping {
 
   private static final Logger logger = LoggerFactory.getLogger(StatisticsToProtobufMapping.class);
 
 
   private final DistributionServiceConfig distributionServiceConfig;
-
   private final KeyFigureCardFactory keyFigureCardFactory;
+  private final StatisticJsonFileLoader jsonFileLoader;
 
   public StatisticsToProtobufMapping(DistributionServiceConfig distributionServiceConfig,
-      KeyFigureCardFactory keyFigureCardFactory) {
+      KeyFigureCardFactory keyFigureCardFactory,
+      StatisticJsonFileLoader jsonFileLoader) {
     this.distributionServiceConfig = distributionServiceConfig;
     this.keyFigureCardFactory = keyFigureCardFactory;
+    this.jsonFileLoader = jsonFileLoader;
   }
 
 
@@ -47,10 +49,7 @@ public class StatisticsToProtobufMapping {
    */
   @Bean
   public Statistics constructProtobufStatistics() throws IOException {
-    String content = FileUtils
-        .readFileToString(new File(
-                "/Users/i353910/Work/cwa/cwa-server/services/distribution/src/main/resources/stats/statistic_data.json"),
-            StandardCharsets.UTF_8);
+    String content = this.jsonFileLoader.getContent();
     List<StatisticsJsonStringObject> jsonStringObjects = SerializationUtils
         .deserializeJson(content, typeFactory -> typeFactory
             .constructCollectionType(List.class, StatisticsJsonStringObject.class));
