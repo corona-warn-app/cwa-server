@@ -1,0 +1,29 @@
+[
+  {
+    "update_timestamp": "2020-11-05T12:34:45,123",
+    "effective_date": "2020-11-05",
+    "app_downloads_daily": 1,
+    "app_downloads_cumulated": 21938895,
+    "app_downloads_7days_sum": 1234,
+    "app_downloads_7days_growthrate": 0.946,
+    "app_downloads_7days_trend_5percent": -1,
+    "persons_who_shared_keys_daily": 2717,
+    "persons_who_shared_keys_cumulated": 123456,
+    "persons_who_shared_keys_7days_sum": 123,
+    "persons_who_shared_keys_7days_growthrate": 1.05,
+    "persons_who_shared_keys_7days_trend_5percent": 0,
+    "tests_total_daily": 115888,
+    "positive_tests_used_to_share_keys_daily": 1331,
+    "positive_tests_not_used_to_share_keys_daily": 867,
+    "labs_registered_absolut": 169,
+    "labs_connected_absolut": 152,
+    "seven_day_incidence": 168.5,
+    "seven_day_incidence_growthrate": 1.12,
+    "seven_day_incidence_trend_5percent":   1,
+    "infections_reported_daily": 19990,
+    "infections_reported_7days_avg": 123456,
+    "infections_reported_7days_growthrate": 1.15,
+    "infections_reported_7days_trend_5percent": 1,
+    "infections_reported_cumulated": 123456
+  }
+]

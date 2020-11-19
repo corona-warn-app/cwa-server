@@ -370,7 +370,16 @@ public class DistributionServiceConfig {
     private String appConfigV2IosFileName;
     @Pattern(regexp = CHAR_AND_NUMBER_REGEX)
     private String appConfigV2AndroidFileName;
+    @Pattern(regexp = CHAR_AND_NUMBER_REGEX)
+    private String statisticsFileName;
 
+    public String getStatisticsFileName() {
+      return statisticsFileName;
+    }
+
+    public void setStatisticsFileName(String statisticsFileName) {
+      this.statisticsFileName = statisticsFileName;
+    }
 
     public String getAppConfigV2IosFileName() {
       return appConfigV2IosFileName;

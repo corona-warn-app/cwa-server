@@ -17,9 +17,11 @@ import java.util.Map;
 import org.apache.commons.io.FileUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.stereotype.Component;
 
+@Configuration
 @Component
 public class StatisticsToProtobufMapping {
 
@@ -43,9 +45,12 @@ public class StatisticsToProtobufMapping {
    * @return Statistics protobuf statistics object.
    * @throws IOException .
    */
+  @Bean
   public Statistics constructProtobufStatistics() throws IOException {
     String content = FileUtils
-        .readFileToString(new File("./src/test/resources/stats/statistic_data.json"), StandardCharsets.UTF_8);
+        .readFileToString(new File(
+                "/Users/i353910/Work/cwa/cwa-server/services/distribution/src/main/resources/stats/statistic_data.json"),
+            StandardCharsets.UTF_8);
     List<StatisticsJsonStringObject> jsonStringObjects = SerializationUtils
         .deserializeJson(content, typeFactory -> typeFactory
             .constructCollectionType(List.class, StatisticsJsonStringObject.class));
