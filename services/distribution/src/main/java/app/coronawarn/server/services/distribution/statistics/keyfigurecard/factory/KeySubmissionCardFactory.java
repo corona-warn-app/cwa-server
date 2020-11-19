@@ -9,7 +9,9 @@ import app.coronawarn.server.common.protocols.internal.stats.KeyFigureCard.Build
 import app.coronawarn.server.services.distribution.statistics.StatisticsJsonStringObject;
 import app.coronawarn.server.services.distribution.statistics.keyfigurecard.KeyFigureCardSequenceConstants;
 import app.coronawarn.server.services.distribution.statistics.keyfigurecard.ValueTrendCalculator;
+import org.springframework.data.util.Pair;
 import java.util.List;
+import java.util.Optional;
 
 public class KeySubmissionCardFactory extends HeaderCardFactory {
 
@@ -62,6 +64,20 @@ public class KeySubmissionCardFactory extends HeaderCardFactory {
             getPersonWhoSharedKeysSum(stats),
             getPersonWhoSharedKeysCumulated(stats)))
         .build();
+  }
+
+  @Override
+  protected List<Pair<String, Optional<Object>>> getNonNullFields(StatisticsJsonStringObject stats) {
+    return List.of(
+        Pair.of("persons_who_shared_keys_daily",
+            Optional.ofNullable(stats.getPersonsWhoSharedKeysDaily())),
+        Pair.of("persons_who_shared_keys_7days_sum",
+            Optional.ofNullable(stats.getPersonsWhoSharedKeys7daysSum())),
+        Pair.of("persons_who_shared_keys_7days_growthrate",
+            Optional.ofNullable(stats.getPersonsWhoSharedKeys7daysGrowthrate())),
+        Pair.of("persons_who_shared_keys_cumulated",
+            Optional.ofNullable(stats.getPersonsWhoSharedKeysCumulated()))
+    );
   }
 
 

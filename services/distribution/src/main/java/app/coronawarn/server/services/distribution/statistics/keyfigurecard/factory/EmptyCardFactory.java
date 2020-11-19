@@ -5,6 +5,10 @@ import app.coronawarn.server.common.protocols.internal.stats.KeyFigureCard.Build
 import app.coronawarn.server.services.distribution.statistics.StatisticsJsonStringObject;
 import app.coronawarn.server.services.distribution.statistics.keyfigurecard.KeyFigureCardSequenceConstants;
 import app.coronawarn.server.services.distribution.statistics.keyfigurecard.ValueTrendCalculator;
+import org.springframework.data.util.Pair;
+import java.util.Collections;
+import java.util.List;
+import java.util.Optional;
 
 public class EmptyCardFactory extends HeaderCardFactory {
 
@@ -20,5 +24,10 @@ public class EmptyCardFactory extends HeaderCardFactory {
   @Override
   protected KeyFigureCard buildKeyFigureCard(StatisticsJsonStringObject stats, Builder keyFigureBuilder) {
     return keyFigureBuilder.build();
+  }
+
+  @Override
+  protected List<Pair<String, Optional<Object>>> getNonNullFields(StatisticsJsonStringObject stats) {
+    return Collections.emptyList();
   }
 }

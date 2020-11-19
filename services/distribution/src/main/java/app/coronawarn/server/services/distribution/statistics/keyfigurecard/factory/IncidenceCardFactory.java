@@ -7,7 +7,9 @@ import app.coronawarn.server.common.protocols.internal.stats.KeyFigureCard.Build
 import app.coronawarn.server.services.distribution.statistics.StatisticsJsonStringObject;
 import app.coronawarn.server.services.distribution.statistics.keyfigurecard.KeyFigureCardSequenceConstants;
 import app.coronawarn.server.services.distribution.statistics.keyfigurecard.ValueTrendCalculator;
+import org.springframework.data.util.Pair;
 import java.util.List;
+import java.util.Optional;
 
 public class IncidenceCardFactory extends HeaderCardFactory {
 
@@ -37,5 +39,13 @@ public class IncidenceCardFactory extends HeaderCardFactory {
     return keyFigureBuilder.addAllKeyFigures(
         List.of(this.getIncidence(stats)))
         .build();
+  }
+
+  @Override
+  protected List<Pair<String, Optional<Object>>> getNonNullFields(StatisticsJsonStringObject stats) {
+    return List.of(
+        Pair.of("seven_day_incidence", Optional.ofNullable(stats.getSevenDayIncidence())),
+        Pair.of("seven_day_incidence_growthrate", Optional.ofNullable(stats.getSevenDayIncidenceGrowthrate()))
+    );
   }
 }

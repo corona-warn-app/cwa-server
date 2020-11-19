@@ -10,6 +10,8 @@ import app.coronawarn.server.services.distribution.statistics.StatisticsJsonStri
 import app.coronawarn.server.services.distribution.statistics.keyfigurecard.KeyFigureCardSequenceConstants;
 import app.coronawarn.server.services.distribution.statistics.keyfigurecard.ValueTrendCalculator;
 import java.util.List;
+import java.util.Optional;
+import org.springframework.data.util.Pair;
 
 public class InfectionsCardFactory extends HeaderCardFactory {
 
@@ -60,5 +62,16 @@ public class InfectionsCardFactory extends HeaderCardFactory {
         getInfectionsReported(stats),
         getInfectionsAverage(stats),
         getReportsCumulated(stats))).build();
+  }
+
+  @Override
+  protected List<Pair<String, Optional<Object>>> getNonNullFields(StatisticsJsonStringObject stats) {
+    return List.of(
+        Pair.of("infections_reported_daily", Optional.ofNullable(stats.getInfectionsReportedDaily())),
+        Pair.of("infections_reported_7days_avg", Optional.ofNullable(stats.getInfectionsReported7daysAvg())),
+        Pair.of("infections_reported_7days_growthrate",
+            Optional.ofNullable(stats.getInfectionsReported7daysGrowthrate())),
+        Pair.of("infections_reported_cumulated", Optional.ofNullable(stats.getInfectionsReportedCumulated()))
+    );
   }
 }

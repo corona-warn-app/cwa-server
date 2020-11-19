@@ -8,6 +8,10 @@ import app.coronawarn.server.services.distribution.statistics.StatisticsJsonStri
 import app.coronawarn.server.services.distribution.statistics.keyfigurecard.ValueTrendCalculator;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
+import org.springframework.data.util.Pair;
 
 public abstract class HeaderCardFactory {
 
@@ -18,8 +22,8 @@ public abstract class HeaderCardFactory {
   }
 
   /**
-   * Create KeyFigureCard object. Calls the children method `buildKeyFigureCard` for card specific
-   * properties. This method adds the generic CardHeader that all KeyFigureCards must have.
+   * Create KeyFigureCard object. Calls the children method `buildKeyFigureCard` for card specific properties. This
+   * method adds the generic CardHeader that all KeyFigureCards must have.
    *
    * @param stats JSON Object statistics
    * @return KeyFigureCard .
@@ -27,14 +31,30 @@ public abstract class HeaderCardFactory {
   public KeyFigureCard makeKeyFigureCard(StatisticsJsonStringObject stats) {
     DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
     LocalDate dateTime = LocalDate.parse(stats.getEffectiveDate(), formatter);
-    KeyFigureCard.Builder keyFigureBuilder = KeyFigureCard.newBuilder()
+    KeyFigureCard.Builder keyFigureBuilder = makeBuilderWithDefaultHeader(dateTime);
+    throwIfNullFieldsFound(stats);
+    return this.buildKeyFigureCard(stats, keyFigureBuilder);
+  }
+
+  private KeyFigureCard.Builder makeBuilderWithDefaultHeader(LocalDate dateTime) {
+    return KeyFigureCard.newBuilder()
         .setHeader(CardHeader.newBuilder()
             .setCardId(this.getCardId())
             .setUpdatedAt(dateTime.atStartOfDay(UTC).toEpochSecond())
             .build()
         );
+  }
 
-    return this.buildKeyFigureCard(stats, keyFigureBuilder);
+  private void throwIfNullFieldsFound(StatisticsJsonStringObject stats) {
+    var nullFields = getNonNullFields(stats).stream()
+        .filter(f -> f.getSecond().isEmpty())
+        .collect(Collectors.toList());
+    if (!nullFields.isEmpty()) {
+      var missingFields = nullFields.stream()
+          .map(Pair::getFirst)
+          .collect(Collectors.toList());
+      throw new MissingPropertyException(missingFields);
+    }
   }
 
   protected abstract Integer getCardId();
@@ -42,4 +62,5 @@ public abstract class HeaderCardFactory {
   protected abstract KeyFigureCard buildKeyFigureCard(StatisticsJsonStringObject stats,
       KeyFigureCard.Builder keyFigureBuilder);
 
+  protected abstract List<Pair<String, Optional<Object>>> getNonNullFields(StatisticsJsonStringObject stats);
 }
