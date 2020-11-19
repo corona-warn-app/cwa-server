@@ -1,5 +1,3 @@
-
-
 package app.coronawarn.server.services.distribution.objectstore.client;
 
 import static java.lang.Boolean.TRUE;
@@ -10,6 +8,9 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.retry.annotation.Backoff;
@@ -35,6 +36,8 @@ import software.amazon.awssdk.services.s3.model.PutObjectRequest;
 public class S3ClientWrapper implements ObjectStoreClient {
 
   private static final Logger logger = LoggerFactory.getLogger(S3ClientWrapper.class);
+
+  private static final int chunkSize = 1000;
 
   private final S3Client s3Client;
 
@@ -117,18 +120,31 @@ public class S3ClientWrapper implements ObjectStoreClient {
       return;
     }
     logRetryStatus("object deletion");
+    Collection<DeleteObjectsResponse> response = split(objectNames).stream().map(deleteObjects(bucket))
+        .collect(Collectors.toList());
+    throwExceptionIfAny(response);
+  }
 
-    Collection<ObjectIdentifier> identifiers = objectNames.stream()
-        .map(key -> ObjectIdentifier.builder().key(key).build()).collect(toList());
+  private void throwExceptionIfAny(Collection<DeleteObjectsResponse> response) {
+    response.stream().filter(DeleteObjectsResponse::hasErrors)
+        .findFirst()
+        .ifPresent(errorResponse -> {
+          throw new ObjectStoreOperationFailedException("Failed to remove objects from object store.");
+        });
+  }
 
-    DeleteObjectsResponse response = s3Client.deleteObjects(
-        DeleteObjectsRequest.builder()
-            .bucket(bucket)
-            .delete(Delete.builder().objects(identifiers).build()).build());
+  private Function<List<ObjectIdentifier>, DeleteObjectsResponse> deleteObjects(String bucket) {
+    return identifiers -> s3Client.deleteObjects(
+        DeleteObjectsRequest.builder().bucket(bucket).delete(Delete.builder().objects(identifiers).build()).build());
+  }
 
-    if (response.hasErrors()) {
-      throw new ObjectStoreOperationFailedException("Failed to remove objects from object store.");
-    }
+  private Collection<List<ObjectIdentifier>> split(List<String> objectNames) {
+    AtomicInteger counter = new AtomicInteger();
+    return objectNames.stream().map(key -> ObjectIdentifier.builder().key(key).build())
+        .collect(toList())
+        .stream()
+        .collect(Collectors.groupingBy(it -> counter.getAndIncrement() / chunkSize))
+        .values();
   }
 
   @Recover
