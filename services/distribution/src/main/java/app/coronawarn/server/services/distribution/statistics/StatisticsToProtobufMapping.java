@@ -6,32 +6,34 @@ import app.coronawarn.server.services.distribution.config.DistributionServiceCon
 import app.coronawarn.server.services.distribution.statistics.file.StatisticJsonFileLoader;
 import app.coronawarn.server.services.distribution.statistics.keyfigurecard.KeyFigureCardFactory;
 import app.coronawarn.server.services.distribution.utils.SerializationUtils;
-import java.io.File;
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import org.apache.commons.io.FileUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.stereotype.Component;
 
 @Configuration
 public class StatisticsToProtobufMapping {
 
   private static final Logger logger = LoggerFactory.getLogger(StatisticsToProtobufMapping.class);
 
-
   private final DistributionServiceConfig distributionServiceConfig;
   private final KeyFigureCardFactory keyFigureCardFactory;
   private final StatisticJsonFileLoader jsonFileLoader;
 
+  /**
+   * Process the JSON file provided by TSI and map the it to Statistics probobuf object.
+   *
+   * @param distributionServiceConfig The config properties
+   * @param keyFigureCardFactory      KeyFigureCard structure provider
+   * @param jsonFileLoader            Loader of the file from the system
+   */
   public StatisticsToProtobufMapping(DistributionServiceConfig distributionServiceConfig,
       KeyFigureCardFactory keyFigureCardFactory,
       StatisticJsonFileLoader jsonFileLoader) {

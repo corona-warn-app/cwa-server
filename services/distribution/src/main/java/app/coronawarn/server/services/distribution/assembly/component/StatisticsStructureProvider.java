@@ -19,6 +19,9 @@ public class StatisticsStructureProvider {
   private final DistributionServiceConfig distributionServiceConfig;
   private final Statistics statistics;
 
+  /**
+   * Creates a new StatisticsStructureProvider.
+   */
   public StatisticsStructureProvider(
       CryptoProvider cryptoProvider,
       DistributionServiceConfig distributionServiceConfig,
