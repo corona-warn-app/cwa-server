@@ -12,6 +12,7 @@ import app.coronawarn.server.services.distribution.statistics.file.JsonFileLoade
 import app.coronawarn.server.services.distribution.statistics.file.LocalStatisticJsonFileLoader;
 import app.coronawarn.server.services.distribution.statistics.keyfigurecard.KeyFigureCardFactory;
 import app.coronawarn.server.services.distribution.statistics.keyfigurecard.factory.MissingPropertyException;
+import app.coronawarn.server.services.distribution.statistics.validation.StatisticsJsonValidator;
 import app.coronawarn.server.services.distribution.utils.SerializationUtils;
 import java.io.IOException;
 import java.time.LocalDate;
@@ -39,7 +40,7 @@ public class StatisticsToProtobufMapping {
   private final JsonFileLoader jsonFileLoader;
 
   /**
-   * Process the JSON file provided by TSI and map the it to Statistics probobuf object.
+   * Process the JSON file provided by TSI and map the it to Statistics protobuf object.
    *
    * @param distributionServiceConfig The config properties
    * @param keyFigureCardFactory      KeyFigureCard structure provider
@@ -58,7 +59,6 @@ public class StatisticsToProtobufMapping {
    * Create protobuf statistic object from raw JSON statistics.
    *
    * @return Statistics protobuf statistics object.
-   * @throws IOException .
    */
   @Bean
   public Statistics constructProtobufStatistics() throws IOException {
@@ -66,6 +66,9 @@ public class StatisticsToProtobufMapping {
     List<StatisticsJsonStringObject> jsonStringObjects = SerializationUtils
         .deserializeJson(content, typeFactory -> typeFactory
             .constructCollectionType(List.class, StatisticsJsonStringObject.class));
+
+    StatisticsJsonValidator validator = new StatisticsJsonValidator();
+    jsonStringObjects = new ArrayList<>(validator.validate(jsonStringObjects));
 
     return Statistics.newBuilder()
         .addAllCardIdSequence(getAllCardIdSequence())

@@ -1,5 +1,10 @@
 package app.coronawarn.server.services.distribution.statistics;
 
+import static app.coronawarn.server.services.distribution.statistics.keyfigurecard.KeyFigureCardSequenceConstants.INCIDENCE_CARD_ID;
+import static app.coronawarn.server.services.distribution.statistics.keyfigurecard.KeyFigureCardSequenceConstants.INFECTIONS_CARD_ID;
+import static app.coronawarn.server.services.distribution.statistics.keyfigurecard.KeyFigureCardSequenceConstants.KEY_SUBMISSION_CARD_ID;
+import static org.assertj.core.api.Assertions.assertThat;
+
 import app.coronawarn.server.common.protocols.internal.stats.CardHeader;
 import app.coronawarn.server.common.protocols.internal.stats.KeyFigure;
 import app.coronawarn.server.common.protocols.internal.stats.KeyFigure.Trend;
@@ -9,9 +14,15 @@ import app.coronawarn.server.common.protocols.internal.stats.Statistics;
 import app.coronawarn.server.services.distribution.config.DistributionServiceConfig;
 import app.coronawarn.server.services.distribution.statistics.file.LocalStatisticJsonFileLoader;
 import app.coronawarn.server.services.distribution.statistics.keyfigurecard.KeyFigureCardFactory;
+import app.coronawarn.server.services.distribution.statistics.validation.StatisticsJsonValidator;
 import app.coronawarn.server.services.distribution.utils.SerializationUtils;
-import org.assertj.core.api.ObjectAssert;
-import org.json.simple.parser.ParseException;
+import java.io.File;
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.time.LocalDate;
+import java.time.ZoneOffset;
+import java.util.ArrayList;
+import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -24,16 +35,6 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.testcontainers.shaded.org.apache.commons.io.FileUtils;
-
-import java.io.File;
-import java.io.IOException;
-import java.nio.charset.StandardCharsets;
-import java.time.LocalDate;
-import java.time.ZoneOffset;
-import java.util.List;
-
-import static app.coronawarn.server.services.distribution.statistics.keyfigurecard.KeyFigureCardSequenceConstants.*;
-import static org.assertj.core.api.Assertions.assertThat;
 
 @EnableConfigurationProperties(value = DistributionServiceConfig.class)
 @ExtendWith(SpringExtension.class)
@@ -48,11 +49,19 @@ class StatisticsJsonToProtobufTest {
   StatisticsToProtobufMapping statisticsToProtobufMapping;
 
   @Test
-  void conversionTest() throws IOException, ParseException {
+  void convertFromJsonToObjectTest() throws IOException {
     String content = FileUtils.readFileToString(
         new File("./src/test/resources/stats/statistic_data.json"), StandardCharsets.UTF_8);
     List<StatisticsJsonStringObject> statsDTO = SerializationUtils.deserializeJson(content, typeFactory -> typeFactory
         .constructCollectionType(List.class, StatisticsJsonStringObject.class));
+
+    assertThat(statisticsObjectContainsFields(statsDTO, "2020-11-05T12:34:45,123")).isTrue();
+    assertThat(statisticsObjectContainsFields(statsDTO, "2020-11-05T00:00:00,000")).isTrue();
+
+  }
+
+  private boolean statisticsObjectContainsFields(List<StatisticsJsonStringObject> statsDTO, String timestamp) {
+    return statsDTO.stream().anyMatch(stat -> stat.getUpdateTimestamp().compareTo(timestamp) == 0);
   }
 
   @Test
@@ -86,8 +95,23 @@ class StatisticsJsonToProtobufTest {
     assertThat(infectionsCard.getKeyFiguresCount()).isEqualTo(3);
     assertThat(incidenceCard.getKeyFiguresCount()).isEqualTo(1);
     assertThat(keySubmissionsCard.getKeyFiguresCount()).isEqualTo(3);
+  }
 
+  @Test
+  void testEffectiveDateValidation() throws IOException {
+    StatisticsJsonValidator statisticsJsonValidator = new StatisticsJsonValidator();
 
+    String content = FileUtils.readFileToString(
+        new File("./src/test/resources/stats/statistic_data.json"), StandardCharsets.UTF_8);
+    List<StatisticsJsonStringObject> statsDTO = SerializationUtils.deserializeJson(content, typeFactory -> typeFactory
+        .constructCollectionType(List.class, StatisticsJsonStringObject.class));
+    statsDTO = new ArrayList<>(statisticsJsonValidator.validate(statsDTO));
+
+    assertThat(statisticsObjectContainsFields(statsDTO, "2020-11-05T12:34:45,123")).isTrue();
+    //The json object that has the effective_date set on null should not be anymore present after the validation
+    assertThat(statisticsObjectContainsFields(statsDTO, "2020-11-05T00:00:00,000")).isFalse();
+    //The json object that has the effective_date set on invalid format date should not be anymore present after the validation
+    assertThat(statisticsObjectContainsFields(statsDTO, "2020-11-05T00:01:00,000")).isFalse();
   }
 
   private KeyFigureCard getKeyFigureCardForId(Statistics stats, Integer id) {
