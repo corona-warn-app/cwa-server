@@ -39,7 +39,7 @@ class StatisticsJsonToProtobufTest {
     List<StatisticsJsonStringObject> statsDTO = SerializationUtils.deserializeJson(content, typeFactory -> typeFactory
         .constructCollectionType(List.class, StatisticsJsonStringObject.class));
 
-    assertThat(statsDTO.size()).isEqualTo(3);
+    assertThat(statsDTO.size()).isEqualTo(2);
 
   }
 
