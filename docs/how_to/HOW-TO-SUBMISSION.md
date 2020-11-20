@@ -4,7 +4,7 @@
 
 * Ensure that the following docker container are running:
   1. `cwa-server_postgres`
-  2.  `cwa-server_verification-fake`
+  2. `cwa-server_verification-fake`
 * Start the submission service via your IDE (alternatively, start the corresponding docker container).
 * Prepare a new POST-request to URL: `http://localhost:8080/version/v1/diagnosis-keys`.
 * Set headers as shown below.
