@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
   <groupId>org.opencwa</groupId>
@@ -67,7 +67,7 @@
     <httpclient.version>4.5.13</httpclient.version>
     <junit.version>4.13.1</junit.version>
     <tomcat-embed-core.version>9.0.39</tomcat-embed-core.version>
-
+    <findify-s3mock.version>0.2.6</findify-s3mock.version>
 
     <skip.unit.tests>false</skip.unit.tests>
     <skip.integration.tests>true</skip.integration.tests>
@@ -218,6 +218,12 @@
         <artifactId>tomcat-embed-core</artifactId>
         <version>${tomcat-embed-core.version}</version>
       </dependency>
+      <dependency>
+        <groupId>io.findify</groupId>
+        <artifactId>s3mock_2.13</artifactId>
+        <version>${findify-s3mock.version}</version>
+        <scope>test</scope>
+      </dependency>
     </dependencies>
   </dependencyManagement>
 
@@ -331,7 +337,7 @@
                   <requireJavaVersion>
                     <version>${java.version}</version>
                   </requireJavaVersion>
-                  <reactorModuleConvergence/>
+                  <reactorModuleConvergence />
                 </rules>
                 <fail>true</fail>
               </configuration>
