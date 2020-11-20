@@ -1,8 +1,6 @@
 package app.coronawarn.server.services.distribution.statistics;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import javax.validation.constraints.NotNull;
 
 public class StatisticsJsonStringObject {
 
