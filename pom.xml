@@ -42,6 +42,8 @@
     <maven.compiler.debuglevel>lines,vars,source</maven.compiler.debuglevel>
     <project.build.sourceEncoding>${encoding}</project.build.sourceEncoding>
     <project.reporting.outputEncoding>${encoding}</project.reporting.outputEncoding>
+    <skip.unit.tests>false</skip.unit.tests>
+    <skip.integration.tests>true</skip.integration.tests>
 
     <sonar.host.url>https://sonarcloud.io</sonar.host.url>
     <sonar.organization>corona-warn-app</sonar.organization>
@@ -68,9 +70,6 @@
     <junit.version>4.13.1</junit.version>
     <tomcat-embed-core.version>9.0.39</tomcat-embed-core.version>
     <findify-s3mock.version>0.2.6</findify-s3mock.version>
-
-    <skip.unit.tests>false</skip.unit.tests>
-    <skip.integration.tests>true</skip.integration.tests>
   </properties>
 
   <dependencyManagement>
