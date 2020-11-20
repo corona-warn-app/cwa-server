@@ -6,6 +6,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.http.HttpStatus.BAD_REQUEST;
 import static org.springframework.http.HttpStatus.OK;
 
+import java.time.LocalDate;
+import java.util.UUID;
 import java.util.stream.Stream;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -13,9 +15,14 @@ import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.SpyBean;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
+
+import app.coronawarn.server.common.persistence.domain.FederationBatchInfo;
+import app.coronawarn.server.common.persistence.domain.FederationBatchStatus;
+import app.coronawarn.server.common.persistence.service.FederationBatchInfoService;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @ActiveProfiles({"disable-certificate-authentication", "disable-ssl-client-verification-verify-hostname"})
@@ -29,10 +36,25 @@ class CallbackControllerTest {
   private final static String validDateString = "2020-05-05";
   private final static String invalidDateString = "2020-20-20";
 
+  @SpyBean
+  FederationBatchInfoService spyFederationClient;
+
   @Test
   void ok() {
     ResponseEntity<Void> actResponse = executor.executeGet(batchTag, validDateString);
     assertThat(actResponse.getStatusCode()).isEqualTo(OK);
+  }
+
+  @Test
+  void shouldInsertBatchInfo() throws Exception {
+    String batchTag = UUID.randomUUID().toString().substring(0, 11);
+    LocalDate date = LocalDate.now();
+
+    ResponseEntity<Void> actResponse = executor.executeGet(batchTag, date.toString());
+    assertThat(actResponse.getStatusCode()).isEqualTo(OK);
+
+    assertThat(spyFederationClient.findByStatus(FederationBatchStatus.UNPROCESSED))
+        .contains(new FederationBatchInfo(batchTag, date));
   }
 
   @ParameterizedTest
