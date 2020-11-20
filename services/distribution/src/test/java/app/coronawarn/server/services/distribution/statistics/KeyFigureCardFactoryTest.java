@@ -3,6 +3,7 @@ package app.coronawarn.server.services.distribution.statistics;
 import static app.coronawarn.server.services.distribution.statistics.keyfigurecard.KeyFigureCardSequenceConstants.INCIDENCE_CARD_ID;
 import static app.coronawarn.server.services.distribution.statistics.keyfigurecard.KeyFigureCardSequenceConstants.KEY_SUBMISSION_CARD_ID;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import app.coronawarn.server.common.protocols.internal.stats.KeyFigure;
 import app.coronawarn.server.common.protocols.internal.stats.KeyFigure.Rank;
@@ -10,6 +11,7 @@ import app.coronawarn.server.common.protocols.internal.stats.KeyFigure.Trend;
 import app.coronawarn.server.common.protocols.internal.stats.KeyFigure.TrendSemantic;
 import app.coronawarn.server.services.distribution.config.DistributionServiceConfig;
 import app.coronawarn.server.services.distribution.statistics.keyfigurecard.KeyFigureCardFactory;
+import app.coronawarn.server.services.distribution.statistics.keyfigurecard.factory.MissingPropertyException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -89,6 +91,27 @@ class KeyFigureCardFactoryTest {
       assertThat(result.getKeyFigures(1))
           .extracting(KeyFigure::getTrend, KeyFigure::getTrendSemantic)
           .containsExactly(Trend.STABLE, TrendSemantic.NEUTRAL);
+    }
+
+    @Test
+    void shouldThrowAnExceptionIfAnyPropertyIsMissing() {
+      var missingPropertyObject = new StatisticsJsonStringObject();
+      missingPropertyObject.setEffectiveDate("2020-01-01");
+      assertThatThrownBy(() -> figureCardFactory.createKeyFigureCard(missingPropertyObject, 1))
+          .isInstanceOf(MissingPropertyException.class);
+    }
+
+    @Test
+    void shouldNamePropertyMissingInException() {
+      var missingPropertyObject = new StatisticsJsonStringObject();
+      missingPropertyObject.setEffectiveDate("2020-01-01");
+      missingPropertyObject.setInfectionsReportedDaily(1234);
+      assertThatThrownBy(() -> figureCardFactory.createKeyFigureCard(missingPropertyObject, 1))
+          .isInstanceOf(MissingPropertyException.class)
+          .hasMessageContaining("infections_reported_7days_avg")
+          .hasMessageContaining("infections_reported_7days_growthrate")
+          .hasMessageContaining("infections_reported_cumulated")
+          .hasMessageNotContaining("infections_reported_daily");
     }
 
   }
