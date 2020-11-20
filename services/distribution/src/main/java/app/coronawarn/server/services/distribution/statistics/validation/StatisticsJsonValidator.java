@@ -13,6 +13,11 @@ public class StatisticsJsonValidator {
 
   private static final Logger logger = LoggerFactory.getLogger(StatisticsJsonValidator.class);
 
+  /**
+   * TODO: Add javadoc.
+   * @param statisticsObjects .
+   * @return .
+   */
   public List<StatisticsJsonStringObject> validate(List<StatisticsJsonStringObject> statisticsObjects) {
     List<StatisticsJsonStringObject> statisticsJsonStringObjects = new ArrayList<>();
     statisticsObjects.forEach(statisticsObject -> {
