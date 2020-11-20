@@ -5,30 +5,27 @@ import app.coronawarn.server.common.protocols.internal.stats.Statistics;
 import app.coronawarn.server.services.distribution.config.DistributionServiceConfig;
 import app.coronawarn.server.services.distribution.statistics.file.StatisticJsonFileLoader;
 import app.coronawarn.server.services.distribution.statistics.keyfigurecard.KeyFigureCardFactory;
+import app.coronawarn.server.services.distribution.statistics.validation.StatisticsJsonValidator;
 import app.coronawarn.server.services.distribution.utils.SerializationUtils;
-import java.io.IOException;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration
 public class StatisticsToProtobufMapping {
 
-  private static final Logger logger = LoggerFactory.getLogger(StatisticsToProtobufMapping.class);
-
   private final DistributionServiceConfig distributionServiceConfig;
   private final KeyFigureCardFactory keyFigureCardFactory;
   private final StatisticJsonFileLoader jsonFileLoader;
 
   /**
-   * Process the JSON file provided by TSI and map the it to Statistics probobuf object.
+   * Process the JSON file provided by TSI and map the it to Statistics protobuf object.
    *
    * @param distributionServiceConfig The config properties
    * @param keyFigureCardFactory      KeyFigureCard structure provider
@@ -47,14 +44,16 @@ public class StatisticsToProtobufMapping {
    * Create protobuf statistic object from raw JSON statistics.
    *
    * @return Statistics protobuf statistics object.
-   * @throws IOException .
    */
   @Bean
-  public Statistics constructProtobufStatistics() throws IOException {
+  public Statistics constructProtobufStatistics() {
     String content = this.jsonFileLoader.getContent();
     List<StatisticsJsonStringObject> jsonStringObjects = SerializationUtils
         .deserializeJson(content, typeFactory -> typeFactory
             .constructCollectionType(List.class, StatisticsJsonStringObject.class));
+
+    StatisticsJsonValidator validator = new StatisticsJsonValidator();
+    jsonStringObjects = new ArrayList<>(validator.validate(jsonStringObjects));
 
     return Statistics.newBuilder()
         .addAllCardIdSequence(getAllCardIdSequence())
@@ -63,7 +62,6 @@ public class StatisticsToProtobufMapping {
   }
 
   private List<Integer> getAllCardIdSequence() {
-    List<Integer> idSequence = new ArrayList<>();
     String[] idSequenceArray = distributionServiceConfig.getCardIdSequence()
         .replace("[", "").replace("]", "")
         .split(",");
@@ -82,12 +80,12 @@ public class StatisticsToProtobufMapping {
       DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
       LocalDate dateTime = LocalDate.parse(jsonObject.getEffectiveDate(), formatter);
 
-      getAllCardIdSequence().forEach(id -> {
-        keyFigureCards.add(keyFigureCardFactory.createKeyFigureCard(jsonObject, id));
-      });
+      getAllCardIdSequence().forEach(id ->
+          keyFigureCards.add(keyFigureCardFactory.createKeyFigureCard(jsonObject, id)));
       figureCardsMap.put(dateTime, keyFigureCards);
     });
 
-    return figureCardsMap.values().stream().findFirst().get();
+    return figureCardsMap.values().stream().findFirst().isPresent() ?
+        figureCardsMap.values().stream().findFirst().get() : Collections.emptyList();
   }
 }
