@@ -11,6 +11,7 @@ import app.coronawarn.server.services.distribution.config.DistributionServiceCon
 import app.coronawarn.server.services.distribution.statistics.file.StatisticJsonFileLoader;
 import app.coronawarn.server.services.distribution.statistics.keyfigurecard.KeyFigureCardFactory;
 import app.coronawarn.server.services.distribution.statistics.keyfigurecard.factory.MissingPropertyException;
+import app.coronawarn.server.services.distribution.statistics.validation.StatisticsJsonValidator;
 import app.coronawarn.server.services.distribution.utils.SerializationUtils;
 import java.io.IOException;
 import java.time.LocalDate;
