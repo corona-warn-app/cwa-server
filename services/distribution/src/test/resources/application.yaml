@@ -61,6 +61,7 @@ services:
       force-update-keyfiles: ${FORCE_UPDATE_KEYFILES:false}
     statistics:
       trend-calculation-threshold: 0.05
+      statistic-local-path: stats/statistic_data.json
 
     app-features:
       - label: isPlausibleDeniabilityActive

@@ -247,6 +247,16 @@ public class DistributionServiceConfig {
   public static class StatisticsConfig {
     private Double trendCalculationThreshold;
 
+    private String statisticLocalPath;
+
+    public String getStatisticLocalPath() {
+      return statisticLocalPath;
+    }
+
+    public void setStatisticLocalPath(String statisticLocalPath) {
+      this.statisticLocalPath = statisticLocalPath;
+    }
+
     public Double getTrendCalculationThreshold() {
       return trendCalculationThreshold;
     }

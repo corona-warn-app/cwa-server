@@ -8,7 +8,8 @@ import static app.coronawarn.server.services.distribution.statistics.keyfigureca
 import app.coronawarn.server.common.protocols.internal.stats.KeyFigureCard;
 import app.coronawarn.server.common.protocols.internal.stats.Statistics;
 import app.coronawarn.server.services.distribution.config.DistributionServiceConfig;
-import app.coronawarn.server.services.distribution.statistics.file.StatisticJsonFileLoader;
+import app.coronawarn.server.services.distribution.statistics.file.JsonFileLoader;
+import app.coronawarn.server.services.distribution.statistics.file.LocalStatisticJsonFileLoader;
 import app.coronawarn.server.services.distribution.statistics.keyfigurecard.KeyFigureCardFactory;
 import app.coronawarn.server.services.distribution.statistics.keyfigurecard.factory.MissingPropertyException;
 import app.coronawarn.server.services.distribution.utils.SerializationUtils;
@@ -35,7 +36,7 @@ public class StatisticsToProtobufMapping {
 
   private final DistributionServiceConfig distributionServiceConfig;
   private final KeyFigureCardFactory keyFigureCardFactory;
-  private final StatisticJsonFileLoader jsonFileLoader;
+  private final JsonFileLoader jsonFileLoader;
 
   /**
    * Process the JSON file provided by TSI and map the it to Statistics probobuf object.
@@ -46,7 +47,7 @@ public class StatisticsToProtobufMapping {
    */
   public StatisticsToProtobufMapping(DistributionServiceConfig distributionServiceConfig,
       KeyFigureCardFactory keyFigureCardFactory,
-      StatisticJsonFileLoader jsonFileLoader) {
+      JsonFileLoader jsonFileLoader) {
     this.distributionServiceConfig = distributionServiceConfig;
     this.keyFigureCardFactory = keyFigureCardFactory;
     this.jsonFileLoader = jsonFileLoader;
