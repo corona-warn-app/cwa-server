@@ -62,8 +62,8 @@ public class ValidSubmissionPayloadTest {
   @Test
   void testOriginCountryConstraintViolationInterpolationIsTurnedOff() {
     SubmissionPayload payload = SubmissionPayloadMockData
-        .buildPayloadWithOriginCountry("java.lang.Runtime.getRuntime().exec(\'%s\');//${" + "\'\'.getClass().forName(\'"
-            + ValidSubmissionPayloadTest.class.getName() + "\')" + ".newInstance().showInterpolationEffect()}");
+        .buildPayloadWithOriginCountry("java.lang.Runtime.getRuntime().exec(\'%s\');//${\'\'.getClass().forName(\'"
+            + ValidSubmissionPayloadTest.class.getName() + "\').newInstance().showInterpolationEffect()}");
 
     ResponseEntity<Void> response = requestExecutor.executePost(payload);
     assertThat(response.getStatusCode()).isEqualTo(BAD_REQUEST);
@@ -87,8 +87,8 @@ public class ValidSubmissionPayloadTest {
   @Test
   void testVisitedCountryConstraintViolationInterpolationIsTurnedOff() {
     SubmissionPayload payload = SubmissionPayloadMockData.buildPayloadWithVisitedCountries(
-        List.of("java.lang.Runtime.getRuntime().exec(\'%s\');//${" + "\'\'.getClass().forName(\'"
-            + ValidSubmissionPayloadTest.class.getName() + "\')" + ".newInstance().showInterpolationEffect()}"));
+        List.of("java.lang.Runtime.getRuntime().exec(\'%s\');//${\'\'.getClass().forName(\'"
+            + ValidSubmissionPayloadTest.class.getName() + "\').newInstance().showInterpolationEffect()}"));
 
     ResponseEntity<Void> response = requestExecutor.executePost(payload);
     assertThat(response.getStatusCode()).isEqualTo(BAD_REQUEST);
