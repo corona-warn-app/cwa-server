@@ -44,7 +44,7 @@ class StatisticsJsonToProtobufTest {
   }
 
   @Test
-  void testGetCardIdSequenceFromConfig() {
+  void testGetCardIdSequenceFromConfig() throws IOException {
     Statistics stats = statisticsToProtobufMapping.constructProtobufStatistics();
 
     assertThat(stats.getCardIdSequenceList().size()).isEqualTo(4);
@@ -52,7 +52,7 @@ class StatisticsJsonToProtobufTest {
 
 
   @Test
-  void testKeyFigureCardContainsHeader() {
+  void testKeyFigureCardContainsHeader() throws IOException {
     Statistics stats = statisticsToProtobufMapping.constructProtobufStatistics();
 
     assertThat(stats.getKeyFigureCardsCount()).isEqualTo(4);
@@ -64,7 +64,7 @@ class StatisticsJsonToProtobufTest {
   }
 
   @Test
-  void testKeyFigureCardBasedOnHeaderCardId() {
+  void testKeyFigureCardBasedOnHeaderCardId() throws IOException{
     Statistics stats = statisticsToProtobufMapping.constructProtobufStatistics();
 
     KeyFigureCard infectionsCard = getKeyFigureCardForId(stats, 1);
