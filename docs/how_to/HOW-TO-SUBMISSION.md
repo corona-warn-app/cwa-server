@@ -27,7 +27,7 @@ Content-Type              | `application/x-protobuf`
 * Start the submission service via your IDE (alternatively, start the corresponding docker container).
 * Send the following request via Curl (replace `<path/to/payload.bin>`with the actual path to the payload on your machine):
 
-```
+```bash
 curl --location --request POST 'http://localhost:8080/version/v1/diagnosis-keys' \
 --header 'CWA-Authorization: edc07f08-a1aa-11ea-bb37-0242ac130002' \
 --header 'CWA-Fake: 0' \
