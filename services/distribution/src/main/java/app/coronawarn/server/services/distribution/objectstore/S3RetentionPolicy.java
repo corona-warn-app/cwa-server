@@ -88,12 +88,12 @@ public class S3RetentionPolicy {
     countries.forEach(country -> {
       List<S3Object> diagnosisKeysObjects = objectStoreAccess.getObjectsWithPrefix(getPrefix(country));
 
-      final LocalDate cutOffDate = TimeUtils.getUtcDate().minusDays(retentionDays);
+      final LocalDate cutOffDate = TimeUtils.getUtcDate().minusDays(retentionDays - 1);
       var deletableKeys = diagnosisKeysObjects.stream()
           .filter(diagnosisKeysObject -> {
             Matcher matcher = datePattern.matcher(diagnosisKeysObject.getObjectName());
             return matcher.matches() && LocalDate.parse(matcher.group(1), DateTimeFormatter.ISO_LOCAL_DATE)
-                .isEqual(cutOffDate);
+                .isBefore(cutOffDate);
           })
           .filter(diagnosisKeysObject -> {
             Matcher matcher = hourPattern.matcher(diagnosisKeysObject.getObjectName());

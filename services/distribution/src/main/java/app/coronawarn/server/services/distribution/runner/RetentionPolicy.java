@@ -1,5 +1,3 @@
-
-
 package app.coronawarn.server.services.distribution.runner;
 
 import app.coronawarn.server.common.persistence.service.DiagnosisKeyService;

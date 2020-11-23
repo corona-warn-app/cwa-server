@@ -106,6 +106,38 @@ class S3RetentionPolicyTest {
   }
 
   @Test
+  void shouldRemoveIndexFileFromDEBucket() {
+    var validHourFile = generateHourIndex(getUtcDate().minusDays(1), "DE");
+    var invalidHourFile = generateHourIndex(getUtcDate().minusDays(2), "DE");
+
+    List<S3Object> mockResponse = this.s3ObjectsFromFilenames(list(validHourFile, invalidHourFile));
+
+    when(objectStoreAccess.getObjectsWithPrefix(eq(this.getPrefix("DE")))).thenReturn(mockResponse);
+
+    s3RetentionPolicy.applyHourFileRetentionPolicy(2);
+
+    verify(objectStoreAccess, times(1)).deleteObjectsWithPrefix(eq(invalidHourFile));
+    verify(objectStoreAccess, never()).deleteObjectsWithPrefix(eq(validHourFile));
+  }
+
+  @Test
+  void shouldRemoveFilesOlderThanCutoffDate() {
+    var validHourFile = generateHourIndex(getUtcDate().minusDays(1), "DE");
+    var invalidHourFile1 = generateHourIndex(getUtcDate().minusDays(2), "DE");
+    var invalidHourFile2 = generateHourIndex(getUtcDate().minusDays(3), "DE");
+
+    List<S3Object> mockResponse = this.s3ObjectsFromFilenames(list(validHourFile, invalidHourFile1, invalidHourFile2));
+
+    when(objectStoreAccess.getObjectsWithPrefix(eq(this.getPrefix("DE")))).thenReturn(mockResponse);
+
+    s3RetentionPolicy.applyHourFileRetentionPolicy(2);
+
+    verify(objectStoreAccess, times(1)).deleteObjectsWithPrefix(eq(invalidHourFile1));
+    verify(objectStoreAccess, times(1)).deleteObjectsWithPrefix(eq(invalidHourFile2));
+    verify(objectStoreAccess, never()).deleteObjectsWithPrefix(eq(validHourFile));
+  }
+
+  @Test
   void shouldDeleteOldFiles() {
     Collection<String> supportedCounties = asList(distributionServiceConfig.getSupportedCountries());
 
@@ -159,6 +191,14 @@ class S3RetentionPolicyTest {
     var api = distributionServiceConfig.getApi();
     return api.getVersionPath() + "/" + api.getVersionV1() + "/" + api.getDiagnosisKeysPath() + "/"
         + api.getCountryPath() + "/" + country + "/" + api.getDatePath() + "/";
+  }
+
+  private String generateHourIndex(LocalDate date, String country) {
+    var api = distributionServiceConfig.getApi();
+
+    return api.getVersionPath() + "/" + api.getVersionV1() + "/" + api.getDiagnosisKeysPath() + "/"
+        + api.getCountryPath() + "/" + country + "/" + api.getDatePath() + "/" + date.toString() + "/"
+        + api.getHourPath();
   }
 
   private String generateDateFilename(LocalDate date, String country) {
