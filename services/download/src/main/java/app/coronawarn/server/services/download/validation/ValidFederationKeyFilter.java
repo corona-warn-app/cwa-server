@@ -54,8 +54,9 @@ public class ValidFederationKeyFilter {
         % app.coronawarn.server.common.persistence.domain.DiagnosisKey.MAX_ROLLING_PERIOD
         == 0;
     if (!hasRollingStartIntervalNumberAtMidnight) {
-      logger.info("Filter skipped Federation DiagnosisKey with rolling start interval number {} not being at midnight.",
-          rollingStartIntervalNumber);
+      logger.info("Filter skipped Federation DiagnosisKey with rolling start interval number {} not being at midnight."
+              + " The key's origin country is {}.",
+          rollingStartIntervalNumber, federationKey.getOrigin());
     }
     return hasRollingStartIntervalNumberAtMidnight;
   }
