@@ -18,7 +18,7 @@ class DeserializedDiagnosisKeysDataMappingTest {
         ANDROID_V2_DATA_MAPPING_FILE, DeserializedDiagnosisKeysDataMapping.class);
 
     assertThat(dataMapping.getDaysSinceOnsetToInfectiousness()).containsAllEntriesOf(Map.of(1,1,2,2));
-    assertThat(dataMapping.getInfectiousnessWhenDaysSinceOnsetMissing()).isEqualTo(0);
-    assertThat(dataMapping.getReportTypeWhenMissing()).isEqualTo(0);
+    assertThat(dataMapping.getInfectiousnessWhenDaysSinceOnsetMissing()).isZero();
+    assertThat(dataMapping.getReportTypeWhenMissing()).isEqualTo(1);
   }
 }
