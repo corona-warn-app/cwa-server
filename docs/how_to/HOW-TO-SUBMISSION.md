@@ -1,6 +1,6 @@
 # Submission Tutorial
 
-## Sending a Submission with Postman
+## Sending a Submission Payload with Postman
 
 * Ensure that the following docker container are running:
   1. `cwa-server_postgres`
