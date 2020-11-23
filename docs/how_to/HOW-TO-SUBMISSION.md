@@ -27,8 +27,6 @@ Content-Type              | `application/x-protobuf`
 
 ## Using the external SubmissionPayloadGenerator
 
-This section is in progress
-
 * Checkout the cwa-server-tools repository
-* Run `?` as an application.
-* The payload can be found here: `path/to/payload.bin`
+* Run `app.coronawarn.server.tools.SubmissionPayloadGenerator` as an application.
+* The payload `5keys.bin` can be found in the projects root directory.
