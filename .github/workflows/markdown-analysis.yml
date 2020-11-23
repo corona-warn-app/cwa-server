@@ -1,20 +1,21 @@
-name: "ci"
+name: markdown-analysis-workflow
 
 on:
-  pull_request:
-    branches:
-    - master
-    paths:
-      - '**/*.md'
+    pull_request:
+        branches:
+        - master
+        - release/**
+        paths:
+        - '**/*.md'
 
 jobs:
-  markdownlint:
-    runs-on: ubuntu-latest
-    name: 'github actions: markdownlint'
-    steps:
-    - uses: actions/checkout@v2
-    - name: markdownlint
-      uses: nosborn/github-action-markdown-cli@v1.1.1
-      with:
-        files: .
-        config_file: ./codestyle/.markdownlint.yml
+    markdown-analysis-job:
+        runs-on: ubuntu-latest
+        name: 'github actions: markdownlint'
+        steps:
+        -   uses: actions/checkout@v2
+        -   name: markdownlint
+            uses: nosborn/github-action-markdown-cli@v1.1.1
+            with:
+                files: .
+                config_file: ./codestyle/.markdownlint.yml
