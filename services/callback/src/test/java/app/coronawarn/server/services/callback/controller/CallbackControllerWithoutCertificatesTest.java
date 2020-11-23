@@ -1,8 +1,9 @@
 
 package app.coronawarn.server.services.callback.controller;
 
-import static org.apache.http.HttpStatus.SC_FORBIDDEN;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.springframework.http.HttpStatus.FORBIDDEN;
+
 import java.time.LocalDate;
 import java.util.UUID;
 
@@ -34,7 +35,7 @@ class CallbackControllerWithoutCertificatesTest {
     LocalDate date = LocalDate.now();
 
     ResponseEntity<Void> actResponse = executor.executeGet(batchTag, date.toString());
-    assertThat(actResponse.getStatusCode()).isEqualTo(SC_FORBIDDEN);
+    assertThat(actResponse.getStatusCode()).isEqualTo(FORBIDDEN);
 
     assertThat(spyFederationClient.findByStatus(FederationBatchStatus.UNPROCESSED))
         .doesNotContain(new FederationBatchInfo(batchTag, date));
