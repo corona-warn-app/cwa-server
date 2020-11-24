@@ -121,6 +121,21 @@ class S3RetentionPolicyTest {
   }
 
   @Test
+  void shouldRemoveIndexFileFromEURBucket() {
+    var validHourFile = generateHourIndex(getUtcDate().minusDays(1), "EUR");
+    var invalidHourFile = generateHourIndex(getUtcDate().minusDays(2), "EUR");
+
+    List<S3Object> mockResponse = this.s3ObjectsFromFilenames(list(validHourFile, invalidHourFile));
+
+    when(objectStoreAccess.getObjectsWithPrefix(eq(this.getPrefix("EUR")))).thenReturn(mockResponse);
+
+    s3RetentionPolicy.applyHourFileRetentionPolicy(2);
+
+    verify(objectStoreAccess, times(1)).deleteObjectsWithPrefix(eq(invalidHourFile));
+    verify(objectStoreAccess, never()).deleteObjectsWithPrefix(eq(validHourFile));
+  }
+
+  @Test
   void shouldRemoveFilesOlderThanCutoffDate() {
     var validHourFile = generateHourIndex(getUtcDate().minusDays(1), "DE");
     var invalidHourFile1 = generateHourIndex(getUtcDate().minusDays(2), "DE");
@@ -195,17 +210,7 @@ class S3RetentionPolicyTest {
 
   private String generateHourIndex(LocalDate date, String country) {
     var api = distributionServiceConfig.getApi();
-
-    return api.getVersionPath() + "/" + api.getVersionV1() + "/" + api.getDiagnosisKeysPath() + "/"
-        + api.getCountryPath() + "/" + country + "/" + api.getDatePath() + "/" + date.toString() + "/"
-        + api.getHourPath();
-  }
-
-  private String generateDateFilename(LocalDate date, String country) {
-    var api = distributionServiceConfig.getApi();
-
-    return api.getVersionPath() + "/" + api.getVersionV1() + "/" + api.getDiagnosisKeysPath() + "/"
-        + api.getCountryPath() + "/" + country + "/" + api.getDatePath() + "/" + date.toString();
+    return this.getPrefix(country) + date.toString() + "/" + api.getHourPath();
   }
 
   private String generateHourFilename(LocalDate date, String country) {
@@ -214,9 +219,6 @@ class S3RetentionPolicyTest {
 
   private String generateHourFilename(LocalDate date, String country, String hour) {
     var api = distributionServiceConfig.getApi();
-
-    return api.getVersionPath() + "/" + api.getVersionV1() + "/" + api.getDiagnosisKeysPath() + "/"
-        + api.getCountryPath() + "/" + country + "/" + api.getDatePath() + "/" + date.toString() + "/"
-        + api.getHourPath() + "/" + hour;
+    return this.getPrefix(country) + date.toString() + "/" + api.getHourPath() + "/" + hour;
   }
 }
