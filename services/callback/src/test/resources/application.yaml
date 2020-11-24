@@ -41,3 +41,11 @@ feign:
       default:
         connect-timeout: 500
         read-timeout: 500
+        
+server:
+  ssl:
+    key-password: 123456
+    key-store: src/test/resources/keystore.jks
+    key-store-password: 123456
+    trust-store: src/test/resources/truststore.jks
+    trust-store-password: 123456

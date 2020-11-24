@@ -16,6 +16,9 @@ import java.io.IOException;
 import java.nio.file.Path;
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
+import org.apache.commons.lang3.tuple.Pair;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
@@ -26,6 +29,7 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.core.io.ResourceLoader;
 import org.springframework.test.annotation.DirtiesContext;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 @ExtendWith(SpringExtension.class)
@@ -33,11 +37,14 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 @EnableConfigurationProperties(value = DistributionServiceConfig.class)
 @DirtiesContext
 @Tag("s3-integration")
-class ObjectStoreAccessIT {
+@ActiveProfiles("integration-test")
+class ObjectStoreAccessIT extends BaseS3IntegrationTest {
 
-  private static final String testRunId = "testing/cwa/" + UUID.randomUUID().toString() + "/";
+  public static final String testCwaPrefix = "testing/cwa/";
+  private static final String testRunId = testCwaPrefix + UUID.randomUUID().toString() + "/";
   private static final String rootTestFolder = "objectstore/";
   private static final String textFile = rootTestFolder + "store-test-file";
+  private static final String testRunBatchesPrefix = testCwaPrefix + "batches/";
 
   @Autowired
   private ObjectStoreAccess objectStoreAccess;
@@ -46,13 +53,14 @@ class ObjectStoreAccessIT {
   private ResourceLoader resourceLoader;
 
   @BeforeEach
-  public void setup() {
-    objectStoreAccess.deleteObjectsWithPrefix(testRunId);
+  void setup() {
+    objectStoreAccess.deleteObjectsWithPrefix(testCwaPrefix);
   }
 
-  @AfterEach
-  public void teardown() {
-    objectStoreAccess.deleteObjectsWithPrefix(testRunId);
+
+  @Test
+  void contextLoads() {
+    assertThat(objectStoreAccess).isNotNull();
   }
 
   @Test
@@ -70,7 +78,7 @@ class ObjectStoreAccessIT {
   }
 
   @Test
-  void pushTestFileAndDelete() throws IOException {
+  void pushTestFileAndDelete() {
     LocalFile localFile = new LocalGenericFile(getExampleFile(), getRootTestFolder());
     String testFileTargetKey = testRunId + localFile.getS3Key();
 
@@ -89,11 +97,43 @@ class ObjectStoreAccessIT {
     assertThat(filesAfterDeletion).isEmpty();
   }
 
-  private Path getExampleFile() throws IOException {
-    return resourceLoader.getResource(textFile).getFile().toPath();
+  @Test
+  void push1001TestFilesAndDelete() {
+    int numberOfFiles = 1001;
+    List<Pair<LocalFile, String>> localFilesSpyAndIds = IntStream.range(0, numberOfFiles)
+        .mapToObj(i -> Pair.of(new LocalGenericFile(
+            getExampleFile(),
+            getRootTestFolder()), testRunBatchesPrefix + UUID.randomUUID().toString() + "/"))
+        .map(pair -> {
+          LocalFile spy = spy(pair.getLeft());
+          when(spy.getS3Key()).thenReturn(pair.getRight() + pair.getLeft().getS3Key());
+          return Pair.of(spy, pair.getRight());
+        }).collect(Collectors.toList());
+    localFilesSpyAndIds.forEach(p -> objectStoreAccess.putObject(p.getLeft()));
+    final List<S3Object> s3Objects = localFilesSpyAndIds.stream()
+        .map(p -> objectStoreAccess.getObjectsWithPrefix(p.getRight()))
+        .flatMap(List::stream)
+        .collect(Collectors.toList());
+    assertThat(s3Objects).hasSize(numberOfFiles);
+    objectStoreAccess.deleteObjectsWithPrefix(testRunBatchesPrefix);
+    List<S3Object> filesAfterDeletion = objectStoreAccess.getObjectsWithPrefix(testRunBatchesPrefix);
+    assertThat(filesAfterDeletion).isEmpty();
+
   }
 
-  private Path getRootTestFolder() throws IOException {
-    return resourceLoader.getResource(rootTestFolder).getFile().toPath();
+  private Path getExampleFile() {
+    try {
+      return resourceLoader.getResource(textFile).getFile().toPath();
+    } catch (IOException e) {
+      throw new RuntimeException(e);
+    }
+  }
+
+  private Path getRootTestFolder() {
+    try {
+      return resourceLoader.getResource(rootTestFolder).getFile().toPath();
+    } catch (IOException e) {
+      throw new RuntimeException(e);
+    }
   }
 }

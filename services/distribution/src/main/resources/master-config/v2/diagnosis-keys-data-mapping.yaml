@@ -11,4 +11,4 @@ days-since-onset-to-infectiousness:
   2: 2
   
 infectiousness-when-days-since-onset-missing: 0
-report-type-when-missing: 0
+report-type-when-missing: 1

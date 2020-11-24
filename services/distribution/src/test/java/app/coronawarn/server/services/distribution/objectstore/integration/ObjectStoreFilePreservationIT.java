@@ -44,7 +44,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 @DirtiesContext
 @ActiveProfiles("integration-test")
 @Tag("s3-integration")
-class ObjectStoreFilePreservationIT {
+class ObjectStoreFilePreservationIT  extends BaseS3IntegrationTest{
 
   @Autowired
   private DiagnosisKeyService diagnosisKeyService;
@@ -64,7 +64,6 @@ class ObjectStoreFilePreservationIT {
 
   @Rule
   private TemporaryFolder testOutputFolder = new TemporaryFolder();
-
 
   @BeforeEach
   public void setup() throws IOException {

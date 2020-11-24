@@ -13,7 +13,6 @@ import app.coronawarn.server.services.distribution.objectstore.client.S3Object;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.List;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -24,6 +23,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.core.io.ResourceLoader;
 import org.springframework.test.annotation.DirtiesContext;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 @ExtendWith(SpringExtension.class)
@@ -31,7 +31,8 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 @EnableConfigurationProperties(value = DistributionServiceConfig.class)
 @DirtiesContext
 @Tag("s3-integration")
-class S3PublisherIT {
+@ActiveProfiles("integration-test")
+class S3PublisherTestIT extends BaseS3IntegrationTest {
 
   private final String rootTestFolder = "objectstore/publisher/";
 
@@ -47,6 +48,12 @@ class S3PublisherIT {
   @Autowired
   private S3Publisher s3Publisher;
 
+  @BeforeEach
+  public void setup() {
+    objectStoreAccess.deleteObjectsWithPrefix("");
+  }
+
+
   @Test
   void publishTestFolderOk() throws IOException {
     s3Publisher.publish(getFolderAsPath(rootTestFolder));
@@ -59,13 +66,5 @@ class S3PublisherIT {
     return resourceLoader.getResource(path).getFile().toPath();
   }
 
-  @BeforeEach
-  public void setup() {
-    objectStoreAccess.deleteObjectsWithPrefix("");
-  }
 
-  @AfterEach
-  public void teardown() {
-    objectStoreAccess.deleteObjectsWithPrefix("");
-  }
 }

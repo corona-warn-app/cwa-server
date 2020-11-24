@@ -42,7 +42,7 @@ Download specific environment variables:
 
 Variable Name                      | Default Value                                | Description
 -----------------------------------|----------------------------------------------|-------------
-EFGS_ENFORCE_DATE_BASED_DOWNLOAD   | false                                        | Enable date-based download
+EFGS_ENABLE_DATE_BASED_DOWNLOAD    | false                                        | Enable date-based download
 EFGS_ENFORCE_DOWNLOAD_OFFSET_DAYS  | 0                                            | The offset in days for which the keys shall be downloaded (must be in range 0 - 14).
 ALLOWED_REPORT_TYPES_TO_DOWNLOAD   | CONFIRMED_TEST, CONFIRMED_CLINICAL_DIAGNOSIS | Accepted ReportTypes for download.
 
