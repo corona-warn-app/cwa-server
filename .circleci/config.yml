@@ -49,7 +49,7 @@ jobs:
           path: ~/test-results/junit
 
 workflows:
-  main:
+  circleci:
     jobs:
       - build:
           context: SonarCloud
