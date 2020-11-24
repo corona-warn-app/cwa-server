@@ -12,6 +12,8 @@ federation-gateway:
     key-store: test.p12
     key-store-pass: test1234
     certificate-type: PKCS12
+    trust-store: ${SSL_FEDERATION_TRUSTSTORE_PATH}
+    trust-store-password: ${SSL_FEDERATION_TRUSTSTORE_PASSWORD}
 
 services:
   upload:
@@ -41,7 +43,7 @@ spring:
     locations: classpath:/db/migration
   datasource:
     driver-class-name: org.testcontainers.jdbc.ContainerDatabaseDriver
-    url:  jdbc:tc:postgresql:11.8:///databasename?TC_TMPFS=/testtmpfs:rw
+    url: jdbc:tc:postgresql:11.8:///databasename?TC_TMPFS=/testtmpfs:rw
   test:
     database:
       # Use datasource as defined above.

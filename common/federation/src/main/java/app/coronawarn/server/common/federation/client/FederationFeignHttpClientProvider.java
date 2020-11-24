@@ -16,14 +16,17 @@ import org.springframework.cloud.commons.httpclient.ApacheHttpClientFactory;
 import org.springframework.cloud.commons.httpclient.DefaultApacheHttpClientConnectionManagerFactory;
 import org.springframework.cloud.commons.httpclient.DefaultApacheHttpClientFactory;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 
 /**
  * Creates a dedicated http client used by Feign when performing http calls to the Federation Gateway Service.
  */
 @Component
+@Profile("disable-ssl-client-federation")
 public class FederationFeignHttpClientProvider {
 
+  private final HostnameVerifierProvider hostnameVerifierProvider;
   private final Integer connectionPoolSize;
   private final File keyStore;
   private final String keyStorePassword;
@@ -33,11 +36,12 @@ public class FederationFeignHttpClientProvider {
    *
    * @param config .
    */
-  public FederationFeignHttpClientProvider(FederationGatewayConfig config) {
+  public FederationFeignHttpClientProvider(FederationGatewayConfig config, HostnameVerifierProvider hostnameVerifierProvider) {
     var ssl = config.getSsl();
     this.connectionPoolSize = config.getConnectionPoolSize();
     this.keyStore = ssl.getKeyStore();
     this.keyStorePassword = ssl.getKeyStorePass();
+    this.hostnameVerifierProvider = hostnameVerifierProvider;
   }
 
   /**
@@ -59,7 +63,7 @@ public class FederationFeignHttpClientProvider {
         .setMaxConnPerRoute(connectionPoolSize)
         .setMaxConnTotal(connectionPoolSize)
         .setSSLContext(getSslContext(keyStorePath, keyStorePass))
-        .setSSLHostnameVerifier(NoopHostnameVerifier.INSTANCE));
+        .setSSLHostnameVerifier(this.hostnameVerifierProvider.createHostnameVerifier()));
   }
 
   private SSLContext getSslContext(File keyStorePath, String keyStorePass) {
