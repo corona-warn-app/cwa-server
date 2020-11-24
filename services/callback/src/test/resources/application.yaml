@@ -2,8 +2,8 @@
 logging:
   level:
     org:
-      springframework: off
-    root: off
+      springframework: debug
+    root: debug
 spring:
   main:
     banner-mode: off
@@ -45,7 +45,8 @@ feign:
 server:
   ssl:
     key-password: 123456
-    key-store: src/test/resources/keystore.jks
+    key-store: src/test/resources/ssl.p12
     key-store-password: 123456
-    trust-store: src/test/resources/truststore.jks
+    trust-store: src/test/resources/contains_efgs_truststore.jks
     trust-store-password: 123456
+    client-auth: need

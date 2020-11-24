@@ -19,8 +19,10 @@ import org.springframework.test.annotation.DirtiesContext;
 import app.coronawarn.server.common.persistence.domain.FederationBatchInfo;
 import app.coronawarn.server.common.persistence.domain.FederationBatchStatus;
 import app.coronawarn.server.common.persistence.service.FederationBatchInfoService;
+import app.coronawarn.server.services.callback.ServerApplication;
 
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT, //
+    classes = { ServerApplication.class, ClientCertificateTestConfig.class })
 @DirtiesContext
 class CallbackControllerTest {
 
