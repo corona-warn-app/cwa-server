@@ -30,7 +30,7 @@ RUN ${WORK_DIR}/mvnw --batch-mode -DskipTests=true --file ${WORK_DIR}/pom.xml ${
 RUN cp ${WORK_DIR}/services/callback/target/callback-*.jar /usr/sap/callback-service/callback.jar
 RUN cp ${WORK_DIR}/scripts/DpkgHelper.java /DpkgHelper.java
 
-FROM gcr.io/distroless/java:11
+FROM gcr.io/distroless/java-debian10:11
 COPY --from=build /DpkgHelper.java .
 COPY --from=build /usr/sap/callback-service/callback.jar .
 RUN ["java", "DpkgHelper.java"]
