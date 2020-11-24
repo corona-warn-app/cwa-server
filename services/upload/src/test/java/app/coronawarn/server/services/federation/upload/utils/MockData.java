@@ -6,6 +6,9 @@ import app.coronawarn.server.common.persistence.domain.DiagnosisKey;
 import app.coronawarn.server.common.persistence.domain.FederationUploadKey;
 import app.coronawarn.server.common.protocols.external.exposurenotification.ReportType;
 import java.security.SecureRandom;
+import java.time.LocalDateTime;
+import java.time.ZoneOffset;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.ThreadLocalRandom;
@@ -33,15 +36,27 @@ public class MockData {
         .collect(Collectors.toList());
   }
 
+  public static int makeRollingStartIntervalFromSubmission(long submissionTimestamp) {
+    return (int)((submissionTimestamp) * 6);
+  }
+
   public static DiagnosisKey generateRandomDiagnosisKey(boolean consentToShare) {
+    var timestamp = LocalDateTime.now(ZoneOffset.UTC)
+        .minusDays(2L)
+        .truncatedTo(ChronoUnit.HOURS)
+        .toEpochSecond(ZoneOffset.UTC) / 3600;
+    return generateRandomDiagnosisKey(consentToShare, timestamp);
+  }
+
+  public static DiagnosisKey generateRandomDiagnosisKey(boolean consentToShare, long submissionTimestamp) {
     return DiagnosisKey.builder()
         .withKeyData(randomByteData())
-        .withRollingStartIntervalNumber(1)
+        .withRollingStartIntervalNumber(makeRollingStartIntervalFromSubmission(submissionTimestamp))
         .withTransmissionRiskLevel(2)
         .withConsentToFederation(consentToShare)
         .withCountryCode(TEST_ORIGIN_COUNTRY)
         .withDaysSinceOnsetOfSymptoms(randomDaysSinceOnsetOfSymptoms())
-        .withSubmissionTimestamp(12)
+        .withSubmissionTimestamp(submissionTimestamp)
         .withVisitedCountries(Set.of("FR", "DK"))
         .withReportType(ReportType.CONFIRMED_TEST)
         .build();
