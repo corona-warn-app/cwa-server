@@ -32,12 +32,14 @@ import app.coronawarn.server.services.download.config.DownloadServiceConfig;
 import app.coronawarn.server.services.download.validation.ValidFederationKeyFilter;
 import com.google.protobuf.ByteString;
 import feign.FeignException;
+import java.time.Duration;
 import java.time.LocalDate;
 import java.time.Period;
 import java.time.ZoneOffset;
 import java.util.List;
 import java.util.Optional;
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -123,8 +125,9 @@ class FederationBatchProcessorTest {
   class SaveFirstBatchInfoForDate {
 
     @Test
-    void testBatchInfoForDateDoesNotExist() throws Exception {
-      doThrow(BatchDownloadException.class).when(federationGatewayDownloadService).downloadBatch(any());
+    void testBatchInfoForDateDoesNotExist() throws FatalFederationGatewayException {
+      BatchDownloadException batchDownloadException = new BatchDownloadException("Test Exception Message");
+      doThrow(batchDownloadException).when(federationGatewayDownloadService).downloadBatch(any());
       batchProcessor.saveFirstBatchInfoForDate(date);
       Mockito.verify(batchInfoService, never()).save(any(FederationBatchInfo.class));
     }
@@ -224,6 +227,23 @@ class FederationBatchProcessorTest {
       Mockito.verify(federationGatewayDownloadService, times(1)).downloadBatch(batchTag1, date);
       Mockito.verify(batchInfoService, times(1)).updateStatus(any(FederationBatchInfo.class), eq(ERROR));
       Mockito.verify(diagnosisKeyService, never()).saveDiagnosisKeys(any());
+    }
+
+    @Test
+    void testNoInfiniteLoopSameBatchTag() throws FatalFederationGatewayException {
+      config.setEfgsEnforceDateBasedDownload(true);
+      FederationBatchInfo batchInfo = new FederationBatchInfo(batchTag1, date, UNPROCESSED);
+      BatchDownloadResponse serverResponse = FederationBatchTestHelper
+          .createBatchDownloadResponse(batchTag1, Optional.of(batchTag1));
+
+      when(batchInfoService.findByStatus(UNPROCESSED)).thenReturn(list(batchInfo));
+      when(federationGatewayDownloadService.downloadBatch(batchTag1, date)).thenReturn(serverResponse);
+
+      Assertions
+          .assertTimeoutPreemptively(Duration.ofSeconds(1), () -> batchProcessor.processUnprocessedFederationBatches());
+      Mockito.verify(batchInfoService, times(1)).findByStatus(UNPROCESSED);
+      Mockito.verify(federationGatewayDownloadService, times(1)).downloadBatch(batchTag1, date);
+      Mockito.verify(batchInfoService, times(1)).updateStatus(batchInfo, PROCESSED);
     }
   }
 
