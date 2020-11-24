@@ -32,11 +32,10 @@ jobs:
             - ~/.m2
           key: cwa-server-{{ checksum "~/pom-checksum" }}
       - run:
-          name: Run all tests on Docker
+          name: Run all Integration Tests
           command: |
-            docker-compose -f docker-compose-it.yaml up -d objectstore
-            docker-compose -f docker-compose-it.yaml up -d create-bucket
-            docker-compose -f docker-compose-it.yaml run run-tests
+            export JAVA_HOME=/usr/lib/jvm/java-11-openjdk-amd64
+            ./mvnw verify -P integration-tests
       - run:
           name: Save test results
           command: |
