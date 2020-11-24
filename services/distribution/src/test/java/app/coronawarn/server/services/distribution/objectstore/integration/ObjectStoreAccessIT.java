@@ -29,6 +29,7 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.core.io.ResourceLoader;
 import org.springframework.test.annotation.DirtiesContext;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 @ExtendWith(SpringExtension.class)
@@ -36,7 +37,8 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 @EnableConfigurationProperties(value = DistributionServiceConfig.class)
 @DirtiesContext
 @Tag("s3-integration")
-class ObjectStoreAccessIT {
+@ActiveProfiles("integration-test")
+class ObjectStoreAccessIT extends BaseS3IntegrationTest {
 
   public static final String testCwaPrefix = "testing/cwa/";
   private static final String testRunId = testCwaPrefix + UUID.randomUUID().toString() + "/";
@@ -51,14 +53,14 @@ class ObjectStoreAccessIT {
   private ResourceLoader resourceLoader;
 
   @BeforeEach
-  public void setup() {
+  void setup() {
     objectStoreAccess.deleteObjectsWithPrefix(testCwaPrefix);
   }
 
-  @AfterEach
-  public void teardown() {
-    objectStoreAccess.deleteObjectsWithPrefix(testCwaPrefix);
 
+  @Test
+  void contextLoads() {
+    assertThat(objectStoreAccess).isNotNull();
   }
 
   @Test
