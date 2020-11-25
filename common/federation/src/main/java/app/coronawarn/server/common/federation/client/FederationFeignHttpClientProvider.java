@@ -7,7 +7,6 @@ import feign.Client;
 import feign.httpclient.ApacheHttpClient;
 import java.io.File;
 import javax.net.ssl.SSLContext;
-import org.apache.http.conn.ssl.NoopHostnameVerifier;
 import org.apache.http.conn.ssl.TrustSelfSignedStrategy;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.ssl.SSLContextBuilder;
@@ -24,7 +23,7 @@ import org.springframework.stereotype.Component;
  */
 @Component
 @Profile("disable-ssl-client-federation")
-public class FederationFeignHttpClientProvider {
+public class FederationFeignHttpClientProvider implements FeignClientProvider {
 
   private final HostnameVerifierProvider hostnameVerifierProvider;
   private final Integer connectionPoolSize;
@@ -36,7 +35,8 @@ public class FederationFeignHttpClientProvider {
    *
    * @param config .
    */
-  public FederationFeignHttpClientProvider(FederationGatewayConfig config, HostnameVerifierProvider hostnameVerifierProvider) {
+  public FederationFeignHttpClientProvider(FederationGatewayConfig config,
+      HostnameVerifierProvider hostnameVerifierProvider) {
     var ssl = config.getSsl();
     this.connectionPoolSize = config.getConnectionPoolSize();
     this.keyStore = ssl.getKeyStore();

@@ -22,9 +22,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpStatus;
 import org.springframework.test.annotation.DirtiesContext;
+import org.springframework.test.context.ActiveProfiles;
 
 @SpringBootTest
 @DirtiesContext
+@ActiveProfiles("disable-ssl-client-federation")
 class FederationGatewayDownloadServiceTest {
 
   private static final WireMockServer SERVER = new WireMockServer(1234);
