@@ -1,8 +1,0 @@
-Format: https://www.debian.org/doc/packaging-manuals/copyright-format/1.0/
-Upstream-Name: cwa-server
-Upstream-Contact: The Corona Warn App Server Team <corona-warn-app.opensource@sap.com>
-Source: https://github.com/corona-warn-app/cwa-server
-
-Files: **
-Copyright:  2020 SAP SE or an SAP affiliate company and cwa-server contributors
-License: Apache-2.0
