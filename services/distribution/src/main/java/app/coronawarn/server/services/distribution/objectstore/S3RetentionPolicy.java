@@ -12,7 +12,6 @@ import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
-import app.coronawarn.server.services.distribution.runner.RetentionPolicy;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
@@ -22,6 +21,7 @@ import org.springframework.stereotype.Component;
  */
 @Component
 public class S3RetentionPolicy {
+
   private final ObjectStoreAccess objectStoreAccess;
   private final Api api;
   private final FailedObjectStoreOperationsCounter failedObjectStoreOperationsCounter;
