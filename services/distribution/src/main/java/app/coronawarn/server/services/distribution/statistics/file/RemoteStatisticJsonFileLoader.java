@@ -1,5 +1,6 @@
 package app.coronawarn.server.services.distribution.statistics.file;
 
+import app.coronawarn.server.services.distribution.config.DistributionServiceConfig;
 import app.coronawarn.server.services.distribution.objectstore.client.ObjectStoreClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -14,15 +15,17 @@ public class RemoteStatisticJsonFileLoader implements JsonFileLoader {
   @Qualifier("stats-s3")
   ObjectStoreClient s3Stats;
 
+  @Autowired
+  DistributionServiceConfig config;
+
   /**
    * Connects to remote storage to load file.
    *
    * @return String content of file
    */
   public String getContent() {
-    // @TODO: load variables from config
-    return s3Stats.getSingleObjectContent("obs-cwa-public-dev",
-        "json/v1/cwa_reporting_public_data.json");
+    return s3Stats.getSingleObjectContent(config.getStatistics().getBucket(),
+        config.getStatistics().getStatisticRemotePath());
   }
 
 }
