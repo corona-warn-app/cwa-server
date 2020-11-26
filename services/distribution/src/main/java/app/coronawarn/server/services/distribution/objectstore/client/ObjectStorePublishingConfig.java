@@ -24,7 +24,7 @@ public class ObjectStorePublishingConfig {
 
   private static final Region DEFAULT_REGION = Region.EU_CENTRAL_1;
 
-  @Bean
+  @Bean(name = "publish-s3")
   public ObjectStoreClient createObjectStoreClient(DistributionServiceConfig distributionServiceConfig) {
     return createClient(distributionServiceConfig.getObjectStore());
   }

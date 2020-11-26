@@ -10,6 +10,7 @@ import org.springframework.core.io.ResourceLoader;
 import org.springframework.stereotype.Component;
 
 @Component
+@Profile("local-json-stats")
 public class LocalStatisticJsonFileLoader implements JsonFileLoader {
 
   @Autowired

@@ -93,6 +93,11 @@ services:
     statistics:
       trend-calculation-threshold: 0.05
       statistic-local-path: stats/statistic_data.json
+      statistic-remote-path: json/v1/cwa_reporting_public_data.json
+      access-key: ${STATS_S3_ACCESSKEY}
+      secret-key: ${STATS_S3_SECRETKEY}
+      endpoint: ${STATS_S3_ENDPOINT}
+      bucket: ${STATS_S3_BUCKET:obs-cwa-public-dev}
 
     app-features:
       - label: reserved
@@ -121,7 +126,8 @@ services:
         max-exposure-detections-per-interval: ${ANDROID_EXPOSURE_DETECTION_MAX_ED_PER_INTERVAL:6}
         overall-timeout-in-seconds: ${ANDROID_EXPOSURE_DETECTION_OVERALL_TIMEOUT_IN_SECONDS:900}
 
-
+remote-file-client:
+  base-url: 'https://obs.eu-de.otc.t-systems.com/obs-cwa-public-dev'
 
 
 spring:

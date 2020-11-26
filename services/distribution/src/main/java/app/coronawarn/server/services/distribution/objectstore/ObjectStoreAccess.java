@@ -13,6 +13,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
@@ -53,7 +54,8 @@ public class ObjectStoreAccess {
    * @param distributionServiceConfig The config properties
    * @param objectStoreClient         The client used for interaction with the object store
    */
-  ObjectStoreAccess(DistributionServiceConfig distributionServiceConfig, ObjectStoreClient objectStoreClient) {
+  ObjectStoreAccess(DistributionServiceConfig distributionServiceConfig,
+      @Qualifier("publish-s3") ObjectStoreClient objectStoreClient) {
     this.client = objectStoreClient;
     this.bucket = distributionServiceConfig.getObjectStore().getBucket();
     this.isSetPublicReadAclOnPutObject = distributionServiceConfig.getObjectStore().isSetPublicReadAclOnPutObject();
