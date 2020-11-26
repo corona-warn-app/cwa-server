@@ -27,7 +27,7 @@ COPY . ${WORK_DIR}/
 
 RUN mkdir -p /usr/sap/distribution-service
 # hadolint ignore=SC2086
-RUN ${WORK_DIR}/mvnw --batch-mode -Dskip.unit.tests=true -Dskip.integration.tests=true --file ${WORK_DIR}/pom.xml ${MAVEN_ARGS} clean install
+RUN ${WORK_DIR}/mvnw --batch-mode -DskipTests=true --file ${WORK_DIR}/pom.xml ${MAVEN_ARGS} clean install
 RUN cp ${WORK_DIR}/services/distribution/target/distribution-*.jar /usr/sap/distribution-service/distribution.jar
 RUN cp ${WORK_DIR}/scripts/DpkgHelper.java /DpkgHelper.java
 
