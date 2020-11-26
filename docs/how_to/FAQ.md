@@ -2,24 +2,24 @@
 
 This document gathers common problems and pitfalls, as well as possible solutions.
 
-##### <u>The debugger does not attach to services / The debugger does not stop at breakpoints.</u>
+<u>The debugger does not attach to services / The debugger does not stop at breakpoints.</u>
 
-Try adding `-Dspring-boot.run.fork=false` to the services run config. E.g.: `spring-boot:run -Dspring-boot.run.fork=false`.
+* Try adding `-Dspring-boot.run.fork=false` to the services run config. E.g.: `spring-boot:run -Dspring-boot.run.fork=false`.
 
-##### <u>Some Classes, Fields or Methods are (suddenly) undefined.</u>
+<u>Some Classes, Fields or Methods are (suddenly) undefined.</u>
 
-Try rebuilding the maven persistence package either by using ``$ mvn clean install`` in the root folder or in `<root>/common/persistence`.
+* Try rebuilding the maven persistence package either by using ``$ mvn clean install`` in the root folder or in `<root>/common/persistence`.
 
-##### <u>Migration-related Flyway errors occur, e.g.: org.flywaydb.core.api.FlywayException: Validate failed: </u>
+<u>Migration-related Flyway errors occur, e.g.: org.flywaydb.core.api.FlywayException: Validate failed: </u>
 
-Stop the postgres docker container and delete it, as well as the corresponding docker volume (`$ docker volumes prune`).
+* Stop the postgres docker container and delete it, as well as the corresponding docker volume (`$ docker volumes prune`).
 Then rebuild and restart the container.
 
-##### <u>After updating Docker, the container do not start properly or cant be interacted with</u>
+<u>After updating Docker, the container do not start properly or cant be interacted with</u>
 
-Delete all containers and volumes (`$ docker-compose down && docker system prune`). Rebuild all containers. If the problem persists, downgrade to the previous version of Docker.
+* Delete all containers and volumes (`$ docker-compose down && docker system prune`). Rebuild all containers. If the problem persists, downgrade to the previous version of Docker.
 
-##### <u>Eclipse-related errors:</u>
+<u>Eclipse-related errors:</u>
 
 ```text
 [ERROR] /build/common/protocols/src/main/proto/app/coronawarn/server/common/protocols/internal/risk_score_classification.proto `
