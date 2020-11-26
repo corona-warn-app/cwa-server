@@ -15,7 +15,7 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 /**
- * A simple container class able to create diagnosis keys test data, given a set of days or day intervals expresed in
+ * A simple container class able to create diagnosis keys test data, given a set of days or day intervals expressed in
  * <code>java.time.*</code> structures.
  */
 public final class DiagnosisTestData {

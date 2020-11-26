@@ -42,6 +42,8 @@
     <maven.compiler.debuglevel>lines,vars,source</maven.compiler.debuglevel>
     <project.build.sourceEncoding>${encoding}</project.build.sourceEncoding>
     <project.reporting.outputEncoding>${encoding}</project.reporting.outputEncoding>
+    <skip.unit.tests>false</skip.unit.tests>
+    <skip.integration.tests>true</skip.integration.tests>
 
     <sonar.host.url>https://sonarcloud.io</sonar.host.url>
     <sonar.organization>corona-warn-app</sonar.organization>
@@ -67,6 +69,7 @@
     <httpclient.version>4.5.13</httpclient.version>
     <junit.version>4.13.1</junit.version>
     <tomcat-embed-core.version>9.0.39</tomcat-embed-core.version>
+    <findify-s3mock.version>0.2.6</findify-s3mock.version>
   </properties>
 
   <dependencyManagement>
@@ -214,6 +217,12 @@
         <artifactId>tomcat-embed-core</artifactId>
         <version>${tomcat-embed-core.version}</version>
       </dependency>
+      <dependency>
+        <groupId>io.findify</groupId>
+        <artifactId>s3mock_2.13</artifactId>
+        <version>${findify-s3mock.version}</version>
+        <scope>test</scope>
+      </dependency>
     </dependencies>
   </dependencyManagement>
 
@@ -339,6 +348,17 @@
           <version>3.0.0-M4</version>
           <executions>
             <execution>
+              <configuration>
+                <includes>
+                  <include>**/*IT.java</include>
+                  <include>**/*IntegrationTest.java</include>
+                </includes>
+                <skipTests>${skip.integration.tests}</skipTests>
+                <additionalClasspathElements>
+                  <additionalClasspathElement>${basedir}/target/classes</additionalClasspathElement>
+                </additionalClasspathElements>
+                <parallel>none</parallel>
+              </configuration>
               <goals>
                 <goal>integration-test</goal>
                 <goal>verify</goal>
@@ -351,7 +371,7 @@
           <version>3.2.0</version>
           <configuration>
             <bottom>
-            <![CDATA[
+              <![CDATA[
                     <script>
                     if (typeof useModuleDirectories !== 'undefined') {
                       useModuleDirectories = false;
@@ -377,6 +397,10 @@
           <configuration>
             <excludedGroups>s3-integration</excludedGroups>
             <trimStackTrace>false</trimStackTrace>
+            <skipTests>${skip.unit.tests}</skipTests>
+            <excludes>
+              <exclude>**/*IntegrationTest.java</exclude>
+            </excludes>
           </configuration>
         </plugin>
         <plugin>
@@ -450,6 +474,7 @@
           </executions>
           <configuration>
             <mainClass>${start-class}</mainClass>
+            <classifier>exec</classifier>
           </configuration>
         </plugin>
         <plugin>
@@ -464,8 +489,55 @@
             </execution>
           </executions>
           <configuration>
-            <protocArtifact>com.google.protobuf:protoc:${protobuf.version}:exe:${os.detected.classifier}</protocArtifact>
+            <protocArtifact>com.google.protobuf:protoc:${protobuf.version}:exe:${os.detected.classifier}
+            </protocArtifact>
           </configuration>
+        </plugin>
+        <plugin>
+          <groupId>org.codehaus.mojo</groupId>
+          <artifactId>exec-maven-plugin</artifactId>
+          <version>1.6.0</version>
+        </plugin>
+        <plugin>
+          <groupId>io.fabric8</groupId>
+          <artifactId>docker-maven-plugin</artifactId>
+          <version>0.34.1</version>
+          <configuration>
+            <images>
+              <image>
+                <name>zenko/cloudserver</name>
+                <alias>it-s3</alias>
+                <run>
+                  <ports>
+                    <port>8003:8000</port>
+                  </ports>
+                  <env>
+                    <ENDPOINT>objectstore</ENDPOINT>
+                    <REMOTE_MANAGEMENT_DISABLE>1</REMOTE_MANAGEMENT_DISABLE>
+                    <SCALITY_ACCESS_KEY_ID>accessKey1</SCALITY_ACCESS_KEY_ID>
+                    <SCALITY_SECRET_ACCESS_KEY>verySecretKey1</SCALITY_SECRET_ACCESS_KEY>
+                    <S3BACKEND>mem</S3BACKEND>
+                  </env>
+                </run>
+              </image>
+            </images>
+          </configuration>
+          <executions>
+            <execution>
+              <id>start</id>
+              <phase>pre-integration-test</phase>
+              <goals>
+                <goal>start</goal>
+              </goals>
+            </execution>
+            <execution>
+              <id>stop</id>
+              <phase>post-integration-test</phase>
+              <goals>
+                <goal>stop</goal>
+              </goals>
+            </execution>
+          </executions>
         </plugin>
       </plugins>
     </pluginManagement>
@@ -510,6 +582,9 @@
         <artifactId>maven-surefire-plugin</artifactId>
       </plugin>
       <plugin>
+        <artifactId>maven-failsafe-plugin</artifactId>
+      </plugin>
+      <plugin>
         <groupId>org.codehaus.mojo</groupId>
         <artifactId>flatten-maven-plugin</artifactId>
       </plugin>
@@ -520,4 +595,14 @@
     </plugins>
   </build>
 
+
+  <profiles>
+    <profile>
+      <id>integration-tests</id>
+      <properties>
+        <skip.integration.tests>false</skip.integration.tests>
+        <skip.unit.tests>true</skip.unit.tests>
+      </properties>
+    </profile>
+  </profiles>
 </project>
