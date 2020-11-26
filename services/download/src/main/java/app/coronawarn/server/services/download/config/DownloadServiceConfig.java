@@ -5,10 +5,14 @@ package app.coronawarn.server.services.download.config;
 import app.coronawarn.server.common.persistence.domain.config.TekFieldDerivations;
 import app.coronawarn.server.common.protocols.external.exposurenotification.ReportType;
 import java.util.List;
+import javax.annotation.PostConstruct;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
+import org.apache.logging.log4j.util.Strings;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.annotation.Validated;
 
@@ -89,6 +93,24 @@ public class DownloadServiceConfig {
     public void setAllowedReportTypes(
         List<ReportType> allowedReportTypes) {
       this.allowedReportTypes = allowedReportTypes;
+    }
+  }
+
+  @Configuration
+  public static class SslConfig {
+
+    @Autowired
+    private Environment env;
+
+    @PostConstruct
+    private void configureSsl() {
+      // load the 'javax.net.ssl.trustStore' and
+      // 'javax.net.ssl.trustStorePassword' from application.properties
+      String trustStore = env.getProperty("server.ssl.trust-store");
+      if (!Strings.isBlank(trustStore) && !trustStore.startsWith("${")) {
+        System.setProperty("javax.net.ssl.trustStore", env.getProperty("server.ssl.trust-store"));
+        System.setProperty("javax.net.ssl.trustStorePassword", env.getProperty("server.ssl.trust-store-password"));
+      }
     }
   }
 }
