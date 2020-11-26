@@ -76,5 +76,5 @@ server:
     key-store: ${SSL_CALLBACK_KEYSTORE_PATH}
     key-store-password: ${SSL_CALLBACK_KEYSTORE_PASSWORD}
     client-auth: need
-    trust-store: ${SSL_EFGS_TRUSTSTORE:}
-    trust-store-password: ${SSL_EFGS_TRUSTSTORE_PASSWORD:}
+    trust-store: ${SSL_FEDERATION_TRUSTSTORE_PATH:}
+    trust-store-password: ${SSL_FEDERATION_TRUSTSTORE_PASSWORD:}
