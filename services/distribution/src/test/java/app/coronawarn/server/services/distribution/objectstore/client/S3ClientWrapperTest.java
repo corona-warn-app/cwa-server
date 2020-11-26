@@ -75,7 +75,6 @@ class S3ClientWrapperTest {
   private S3Client s3Client;
 
   @Autowired
-  @Qualifier("publish-s3")
   private ObjectStoreClient s3ClientWrapper;
 
   @Configuration

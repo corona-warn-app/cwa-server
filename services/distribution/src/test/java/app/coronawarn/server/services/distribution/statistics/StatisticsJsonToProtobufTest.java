@@ -56,8 +56,6 @@ class StatisticsJsonToProtobufTest {
         .constructCollectionType(List.class, StatisticsJsonStringObject.class));
 
     assertThat(statisticsObjectContainsFields(statsDTO, "2020-11-05T12:34:45,123")).isTrue();
-    assertThat(statisticsObjectContainsFields(statsDTO, "2020-11-05T00:00:00,000")).isTrue();
-
   }
 
   private boolean statisticsObjectContainsFields(List<StatisticsJsonStringObject> statsDTO, String timestamp) {
