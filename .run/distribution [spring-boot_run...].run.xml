@@ -9,7 +9,7 @@
             <map>
               <entry key="POSTGRESQL_SERVICE_PORT" value="8001" />
               <entry key="SPRING_PROFILES_ACTIVE" value="testdata,disable-ssl-client-postgres" />
-              <entry key="SUPPORTED_COUNTRIES" value="DE, IT, DK" />
+              <entry key="SUPPORTED_COUNTRIES" value="DE,IT,DK,FR" />
               <entry key="VAULT_FILESIGNING_SECRET" value="file:$PROJECT_DIR$/docker-compose-test-secrets/private.pem" />
             </map>
           </option>
