@@ -12,7 +12,7 @@ Try rebuilding the maven persistence package either by using ``$ mvn clean insta
 
 #####<u>Migration-related Flyway errors occur, e.g.: org.flywaydb.core.api.FlywayException: Validate failed: </u>
 
-Shut the postgres docker container down and delete it, as well as the corresponding docker volume (`$ docker volumes prune`).
+Stop the postgres docker container and delete it, as well as the corresponding docker volume (`$ docker volumes prune`).
 Then rebuild and restart the container.
 
 #####<u>After updating Docker, the container do not start properly or cant be interacted with</u>
