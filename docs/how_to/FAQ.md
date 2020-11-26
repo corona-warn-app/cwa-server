@@ -71,5 +71,3 @@ workspace/.metadata/.plugins/org.eclipse.m2e.core/lifecycle-mapping-metadata.xml
 * or, in Eclipse Luna 4.4.0, you can choose to ignore this error in preferences.
       Window > Preferences > Maven > Errors/Warnings > Plugin execution not covered by lifecycle configuration.
       Select Ignore / Warning / Error as you wish.
-
-#####<u>Template</u>
