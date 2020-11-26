@@ -20,11 +20,9 @@ public class RemoteStatisticJsonFileLoader implements JsonFileLoader {
    * @return String content of file
    */
   public String getContent() {
-    // TODO: Implement
-
-    var object = s3Stats.getObjects("obs-cwa-public-dev",
+    // @TODO: load variables from config
+    return s3Stats.getSingleObjectContent("obs-cwa-public-dev",
         "json/v1/cwa_reporting_public_data.json");
-    return "";
   }
 
 }

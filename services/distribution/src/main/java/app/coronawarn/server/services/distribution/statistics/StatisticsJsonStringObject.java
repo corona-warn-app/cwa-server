@@ -18,7 +18,7 @@ public class StatisticsJsonStringObject {
   private Integer appDownloads7daysGrowthrate;
   @JsonProperty("app_downloads_7days_trend_5percent")
   private Integer appDownloads7daysTrend5percent;
-  @JsonProperty("persons_who_shared_keys_daily")
+  @JsonProperty("persons_who_shared_keys_daily ")
   private Integer personsWhoSharedKeysDaily;
   @JsonProperty("persons_who_shared_keys_cumulated")
   private Integer personsWhoSharedKeysCumulated;
@@ -34,17 +34,17 @@ public class StatisticsJsonStringObject {
   private Integer positiveTestsUsedToShareKeysDaily;
   @JsonProperty("positive_tests_not_used_to_share_keys_daily")
   private Integer positiveTestsNotUsedToShareKeysDaily;
-  @JsonProperty("labs_registered_absolut")
+  @JsonProperty("labs_registered_cumulated")
   private Integer labsRegisteredAbsolut;
-  @JsonProperty("labs_connected_absolut")
+  @JsonProperty("labs_connected_cumulated")
   private Integer labsConnectedAbsolut;
-  @JsonProperty("seven_day_incidence")
+  @JsonProperty("seven_day_incidence_1st_reported")
   private Double sevenDayIncidence;
-  @JsonProperty("seven_day_incidence_growthrate")
+  @JsonProperty("seven_day_incidence_1st_reported_growthrate")
   private Double sevenDayIncidenceGrowthrate;
-  @JsonProperty("seven_day_incidence_trend_5percent")
+  @JsonProperty("seven_day_incidence_1st_reported_trend_5percent")
   private Integer sevenDayIncidenceTrend5percent;
-  @JsonProperty("infections_reported_daily")
+  @JsonProperty("infections_published_daily")
   private Integer infectionsReportedDaily;
   @JsonProperty("infections_reported_7days_avg")
   private Integer infectionsReported7daysAvg;
@@ -52,7 +52,7 @@ public class StatisticsJsonStringObject {
   private Double infectionsReported7daysGrowthrate;
   @JsonProperty("infections_reported_7days_trend_5percent")
   private Integer infectionsReported7daysTrend5percent;
-  @JsonProperty("infections_reported_cumulated")
+  @JsonProperty("infections_published_cumulated")
   private Integer infectionsReportedCumulated;
 
   public String getUpdateTimestamp() {

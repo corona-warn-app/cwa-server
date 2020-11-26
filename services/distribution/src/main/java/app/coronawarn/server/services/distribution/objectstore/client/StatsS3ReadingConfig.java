@@ -29,7 +29,7 @@ public class StatsS3ReadingConfig {
     String endpoint = removeTrailingSlash(s3stats.getEndpoint());
 
     return new S3ClientWrapper(S3Client.builder()
-        .region(Region.EU_CENTRAL_1)
+        .region(Region.of("region-1"))
         .endpointOverride(URI.create(endpoint))
         .credentialsProvider(credentialsProvider)
         .build());
