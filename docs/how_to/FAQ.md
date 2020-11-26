@@ -27,6 +27,7 @@ Delete all containers and volumes (`$ docker-compose down && docker system prune
 5: /build/common/protocols/target/protoc-plugins/protoc-3.13.0-osx-x86_64.exe:
 Syntax error: Unterminated quoted string
 ```
+
 * Remove `<os.detected.classifier>osx-x86_64</os.detected.classifier>` in pom.xml.
 
  ```text
@@ -34,11 +35,13 @@ Syntax error: Unterminated quoted string
 [ERROR] 'dependencies.dependency.version' for org.opencwa:protocols:jar must be a valid version but is '${revision}'. @
  (org.codehaus.mojo:flatten-maven-plugin:1.2.5:flatten:flatten:process-resources)
 ```
+
 * Add "<revision>1.6.0-SNAPSHOT</revision>" to pom.xml
 
 ```text
 <Many Different Java Classes> cannot be resolved, DiagnosisKeyBatch cannot be resolved
 ```
+
 * Remove "<revision>1.6.0-SNAPSHOT</revision>" to pom.xml
 
 ```text
@@ -47,27 +50,28 @@ workspace/.metadata/.plugins/org.eclipse.m2e.core/lifecycle-mapping-metadata.xml
 
 <?xml version="1.0" encoding="UTF-8"?>
 <lifecycleMappingMetadata>
-	<pluginExecutions>
-		<pluginExecution>
-			<pluginExecutionFilter>
-				<groupId>org.codehaus.mojo</groupId>
-				<artifactId>flatten-maven-plugin</artifactId>
-				<goals>
-					<goal>flatten</goal>
-				</goals>
-				<versionRange>[0.0,)</versionRange>
-			</pluginExecutionFilter>
-			<action>
-				<execute>
-					<runOnIncremental>true</runOnIncremental>
-					<runOnConfiguration>true</runOnConfiguration>
-				</execute>
-			</action>
-		</pluginExecution>
-	</pluginExecutions>
+    <pluginExecutions>
+        <pluginExecution>
+            <pluginExecutionFilter>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>flatten-maven-plugin</artifactId>
+                <goals>
+                    <goal>flatten</goal>
+                </goals>
+                <versionRange>[0.0,)</versionRange>
+            </pluginExecutionFilter>
+            <action>
+                <execute>
+                    <runOnIncremental>true</runOnIncremental>
+                    <runOnConfiguration>true</runOnConfiguration>
+                </execute>
+            </action>
+        </pluginExecution>
+    </pluginExecutions>
 </lifecycleMappingMetadata>
 ```
-* Either, consult: https://www.eclipse.org/m2e/documentation/m2e-execution-not-covered.html
+
+* Either, consult: [Eclipse documentation](https://www.eclipse.org/m2e/documentation/m2e-execution-not-covered.html)
 * or, in Eclipse Luna 4.4.0, you can choose to ignore this error in preferences.
       Window > Preferences > Maven > Errors/Warnings > Plugin execution not covered by lifecycle configuration.
       Select Ignore / Warning / Error as you wish.
