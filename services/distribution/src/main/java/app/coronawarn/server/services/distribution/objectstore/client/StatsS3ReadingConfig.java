@@ -16,8 +16,6 @@ import software.amazon.awssdk.services.s3.S3Client;
 @EnableRetry
 public class StatsS3ReadingConfig {
 
-  private static final Region DEFAULT_REGION = Region.EU_CENTRAL_1;
-
   @Bean(name = "stats-s3")
   public ObjectStoreClient createObjectStoreClient(DistributionServiceConfig distributionServiceConfig) {
     return createClient(distributionServiceConfig.getStatistics());

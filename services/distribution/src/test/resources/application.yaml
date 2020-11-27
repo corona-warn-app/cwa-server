@@ -62,6 +62,11 @@ services:
     statistics:
       trend-calculation-threshold: 0.05
       statistic-local-path: stats/statistic_data.json
+      statistic-remote-path: json/v1/cwa_reporting_public_data.json
+      access-key: fakeAccessKey
+      secret-key: secretKey
+      endpoint: https://localhost
+      bucket: ${STATS_S3_BUCKET:obs-cwa-public-dev}
 
     app-features:
       - label: isPlausibleDeniabilityActive

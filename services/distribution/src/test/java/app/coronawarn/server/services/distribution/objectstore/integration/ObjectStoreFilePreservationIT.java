@@ -42,9 +42,9 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration(classes = Application.class, initializers = ConfigFileApplicationContextInitializer.class)
 @DirtiesContext
-@ActiveProfiles("integration-test")
+@ActiveProfiles({"integration-test", "local-json-stats"})
 @Tag("s3-integration")
-class ObjectStoreFilePreservationIT  extends BaseS3IntegrationTest{
+class ObjectStoreFilePreservationIT extends BaseS3IntegrationTest {
 
   @Autowired
   private DiagnosisKeyService diagnosisKeyService;
@@ -79,20 +79,19 @@ class ObjectStoreFilePreservationIT  extends BaseS3IntegrationTest{
    * The test presumes there are 4 consecutive days with 80 keys submitted daily. Running a distribution in Day 4 would
    * result in:
    * <p>
-   *     Day 1   -> submission of 80 keys   -> 1 empty file distributed<br>
-   *     Day 2   -> submission of 80 keys   -> 1 distributed containing 160 keys<br>
-   *     Day 3   -> submission of 80 keys   -> 1 empty file distributed<br>
-   *     Day 4   -> submission of 80 keys   -> 1 distributed containing 160 keys<br>
+   * Day 1   -> submission of 80 keys   -> 1 empty file distributed<br> Day 2   -> submission of 80 keys   -> 1
+   * distributed containing 160 keys<br> Day 3   -> submission of 80 keys   -> 1 empty file distributed<br> Day 4   ->
+   * submission of 80 keys   -> 1 distributed containing 160 keys<br>
    * <p>
    * All day & hour files already generated should not be changed/removed from S3 even after retention policies have
    * been applied and a second distribution is triggered.
    * <p>
    * If for example, data in Day 1 gets removed completely, then a second distribution run causes a shifting of keys in
    * different files compared to the previous run, the result being:
-   *  <p>
-   *     Day 2   -> submission of 80 keys   -> 1 empty file generated (different than what is currently on S3)<br>
-   *     Day 3   -> submission of 80 keys   -> 1 distributed containing 160 keys (different than 1 empty file on S3)<br>
-   *     Day 4   -> submission of 80 keys   -> 1 empty file (different than 1 empty file on S3)<br>
+   * <p>
+   * Day 2   -> submission of 80 keys   -> 1 empty file generated (different than what is currently on S3)<br> Day 3 ->
+   * submission of 80 keys   -> 1 distributed containing 160 keys (different than 1 empty file on S3)<br> Day 4   ->
+   * submission of 80 keys   -> 1 empty file (different than 1 empty file on S3)<br>
    */
   @Test
   void files_once_published_to_objectstore_should_not_be_overriden_because_of_retention_or_shifting_policies()

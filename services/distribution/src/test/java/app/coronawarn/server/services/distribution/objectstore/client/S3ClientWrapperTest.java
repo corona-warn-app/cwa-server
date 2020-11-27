@@ -81,7 +81,7 @@ class S3ClientWrapperTest {
   @EnableRetry
   public static class RetryS3ClientConfig {
 
-    @Bean
+    @Bean(name = "publish-s3")
     @ConditionalOnMissingBean
     public ObjectStoreClient createObjectStoreClient(S3Client s3Client) {
       return new S3ClientWrapper(s3Client);

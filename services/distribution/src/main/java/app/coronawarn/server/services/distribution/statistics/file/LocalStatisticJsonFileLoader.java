@@ -30,8 +30,8 @@ public class LocalStatisticJsonFileLoader implements JsonFileLoader {
     try {
       return FileUtils.readFileToString(resource.getFile(), StandardCharsets.UTF_8);
     } catch (IOException e) {
-      e.printStackTrace();
-      return "";
+      throw new RuntimeException(String.format("Failed to load Local JSON from path %s",
+          serviceConfig.getStatistics().getStatisticLocalPath()));
     }
   }
 
