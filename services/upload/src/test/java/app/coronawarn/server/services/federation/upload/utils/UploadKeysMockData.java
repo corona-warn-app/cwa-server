@@ -29,6 +29,11 @@ public class UploadKeysMockData {
     return FederationUploadKey.from(generateRandomDiagnosisKey(consentToShare));
   }
 
+  public static FederationUploadKey generateRandomUploadKey(String originCountry,
+      Set<String> visitedCountries) {
+    return FederationUploadKey.from(generateRandomDiagnosisKey(originCountry, visitedCountries));
+  }
+
   public static List<DiagnosisKey> generateRandomDiagnosisKeys(boolean consentToShare, int numberOfKeys) {
     return IntStream.range(0, numberOfKeys)
         .mapToObj(ignore -> generateRandomDiagnosisKey(consentToShare))
@@ -47,16 +52,30 @@ public class UploadKeysMockData {
     return generateRandomDiagnosisKey(consentToShare, timestamp);
   }
 
+  public static DiagnosisKey generateRandomDiagnosisKey(String originCountry,
+      Set<String> visitedCountries) {
+    var timestamp = LocalDateTime.now(ZoneOffset.UTC)
+        .minusDays(2L)
+        .truncatedTo(ChronoUnit.HOURS)
+        .toEpochSecond(ZoneOffset.UTC) / 3600;
+    return generateRandomDiagnosisKey(true, timestamp, originCountry, visitedCountries);
+  }
+
   public static DiagnosisKey generateRandomDiagnosisKey(boolean consentToShare, long submissionTimestamp) {
+    return generateRandomDiagnosisKey(consentToShare, submissionTimestamp, TEST_ORIGIN_COUNTRY, Set.of("FR", "DK"));
+  }
+
+  public static DiagnosisKey generateRandomDiagnosisKey(boolean consentToShare,
+      long submissionTimestamp, String originCountry, Set<String> visitedCountries) {
     return DiagnosisKey.builder()
         .withKeyData(randomByteData())
         .withRollingStartIntervalNumber(makeRollingStartIntervalFromSubmission(submissionTimestamp))
         .withTransmissionRiskLevel(2)
         .withConsentToFederation(consentToShare)
-        .withCountryCode(TEST_ORIGIN_COUNTRY)
+        .withCountryCode(originCountry)
         .withDaysSinceOnsetOfSymptoms(randomDaysSinceOnsetOfSymptoms())
         .withSubmissionTimestamp(submissionTimestamp)
-        .withVisitedCountries(Set.of("FR", "DK"))
+        .withVisitedCountries(visitedCountries)
         .withReportType(ReportType.CONFIRMED_TEST)
         .build();
   }
