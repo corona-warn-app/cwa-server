@@ -28,7 +28,7 @@ COPY . ${WORK_DIR}/
 
 RUN mkdir -p /usr/sap/${SERVICE}-service
 # hadolint ignore=SC2086
-RUN ${WORK_DIR}/mvnw --batch-mode -P docker-image --file ${WORK_DIR}/pom.xml ${MAVEN_ARGS} verify
+RUN ${WORK_DIR}/mvnw --batch-mode -P docker-image --file ${WORK_DIR}/pom.xml ${MAVEN_ARGS} clean verify
 RUN cp ${WORK_DIR}/services/${SERVICE}/target/*.jar /usr/sap/${SERVICE}-service/service.jar
 RUN cp ${WORK_DIR}/scripts/DpkgHelper.java /DpkgHelper.java
 
