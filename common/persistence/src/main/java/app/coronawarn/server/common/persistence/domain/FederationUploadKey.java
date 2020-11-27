@@ -41,6 +41,18 @@ public class FederationUploadKey extends DiagnosisKey {
         diagnosisKeySource.getReportType(), diagnosisKeySource.getDaysSinceOnsetOfSymptoms());
   }
 
+  /**
+   * Create a new instance of an upload key by copying the properties of the given source diagnosis key and
+   * merging them with the given parameters.
+   */
+  public static FederationUploadKey from(DiagnosisKey diagnosisKeySource, Set<String> visitedCountries) {
+    return new FederationUploadKey(diagnosisKeySource.getKeyData(), diagnosisKeySource.getRollingStartIntervalNumber(),
+        diagnosisKeySource.getRollingPeriod(), diagnosisKeySource.getTransmissionRiskLevel(),
+        diagnosisKeySource.getSubmissionTimestamp(), diagnosisKeySource.isConsentToFederation(),
+        diagnosisKeySource.getOriginCountry(), visitedCountries,
+        diagnosisKeySource.getReportType(), diagnosisKeySource.getDaysSinceOnsetOfSymptoms());
+  }
+
   @Override
   public boolean equals(Object o) {
     if (this == o) {
