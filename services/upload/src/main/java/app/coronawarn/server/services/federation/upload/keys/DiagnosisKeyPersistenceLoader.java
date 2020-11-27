@@ -15,18 +15,20 @@ public class DiagnosisKeyPersistenceLoader implements DiagnosisKeyLoader {
 
   private final FederationUploadKeyService uploadKeyService;
   private final UploadServiceConfig uploadConfig;
+  private final EfgsKeyParameterAdapter efgsKeyAdapter;
 
   public DiagnosisKeyPersistenceLoader(FederationUploadKeyService uploadKeyService,
-      UploadServiceConfig uploadConfig) {
+      UploadServiceConfig uploadConfig, EfgsKeyParameterAdapter efgsKeysFilter) {
     this.uploadKeyService = uploadKeyService;
     this.uploadConfig = uploadConfig;
+    this.efgsKeyAdapter = efgsKeysFilter;
   }
 
   @Override
   public List<FederationUploadKey> loadDiagnosisKeys() {
-    return this.uploadKeyService
+    return efgsKeyAdapter.adaptToEfgsRequirements(this.uploadKeyService
         .getPendingUploadKeys(
             ExpirationPolicy.of(uploadConfig.getExpiryPolicyMinutes(), ChronoUnit.MINUTES),
-            this.uploadConfig.getRetentionDays());
+            this.uploadConfig.getRetentionDays()));
   }
 }
