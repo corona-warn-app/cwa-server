@@ -1,7 +1,6 @@
 package app.coronawarn.server.services.distribution.config;
 
 import app.coronawarn.server.common.protocols.external.exposurenotification.SignatureInfo;
-import app.coronawarn.server.common.protocols.internal.stats.Statistics;
 import app.coronawarn.server.services.distribution.utils.SerializationUtils;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -245,6 +244,7 @@ public class DistributionServiceConfig {
   }
 
   public static class StatisticsConfig {
+
     private Double trendCalculationThreshold;
 
     private String statisticLocalPath;

@@ -31,7 +31,7 @@ import static org.assertj.core.api.Assertions.assertThat;
     StatisticsToProtobufMapping.class, KeyFigureCardFactory.class,
     LocalStatisticJsonFileLoader.class
 }, initializers = ConfigFileApplicationContextInitializer.class)
-public class StatisticsJsonProcessingTest {
+class StatisticsJsonProcessingTest {
 
   @Autowired
   StatisticsToProtobufMapping mapping;

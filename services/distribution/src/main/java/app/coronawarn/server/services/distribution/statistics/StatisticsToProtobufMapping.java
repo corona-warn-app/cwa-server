@@ -9,7 +9,6 @@ import app.coronawarn.server.common.protocols.internal.stats.KeyFigureCard;
 import app.coronawarn.server.common.protocols.internal.stats.Statistics;
 import app.coronawarn.server.services.distribution.config.DistributionServiceConfig;
 import app.coronawarn.server.services.distribution.statistics.file.JsonFileLoader;
-import app.coronawarn.server.services.distribution.statistics.file.LocalStatisticJsonFileLoader;
 import app.coronawarn.server.services.distribution.statistics.keyfigurecard.KeyFigureCardFactory;
 import app.coronawarn.server.services.distribution.statistics.keyfigurecard.factory.MissingPropertyException;
 import app.coronawarn.server.services.distribution.statistics.validation.StatisticsJsonValidator;
@@ -61,7 +60,7 @@ public class StatisticsToProtobufMapping {
    * @return Statistics protobuf statistics object.
    */
   @Bean
-  public Statistics constructProtobufStatistics() throws IOException {
+  public Statistics constructProtobufStatistics() {
     String content = this.jsonFileLoader.getContent();
     List<StatisticsJsonStringObject> jsonStringObjects = SerializationUtils
         .deserializeJson(content, typeFactory -> typeFactory
@@ -77,7 +76,6 @@ public class StatisticsToProtobufMapping {
   }
 
   private List<Integer> getAllCardIdSequence() {
-    List<Integer> idSequence = new ArrayList<>();
     String[] idSequenceArray = distributionServiceConfig.getCardIdSequence()
         .replace("[", "").replace("]", "")
         .split(",");

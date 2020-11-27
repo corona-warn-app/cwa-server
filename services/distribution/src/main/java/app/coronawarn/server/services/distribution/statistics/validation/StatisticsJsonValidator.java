@@ -14,9 +14,9 @@ public class StatisticsJsonValidator {
   private static final Logger logger = LoggerFactory.getLogger(StatisticsJsonValidator.class);
 
   /**
-   * TODO: Add javadoc.
-   * @param statisticsObjects .
-   * @return .
+   * Validates mandatory fields on {@link StatisticsJsonStringObject}.
+   * @param statisticsObjects the parsed JSON Object.
+   * @return A list with only valid objects.
    */
   public List<StatisticsJsonStringObject> validate(List<StatisticsJsonStringObject> statisticsObjects) {
     List<StatisticsJsonStringObject> statisticsJsonStringObjects = new ArrayList<>();
