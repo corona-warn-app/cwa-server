@@ -2,7 +2,7 @@
 
 package app.coronawarn.server.services.federation.upload.payload;
 
-import static app.coronawarn.server.services.federation.upload.utils.MockData.*;
+import static app.coronawarn.server.services.federation.upload.utils.UploadKeysMockData.*;
 import static java.util.Collections.emptyList;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;

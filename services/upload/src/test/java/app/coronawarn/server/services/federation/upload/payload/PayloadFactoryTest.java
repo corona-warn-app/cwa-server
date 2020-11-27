@@ -9,7 +9,7 @@ import static org.mockito.Mockito.when;
 import app.coronawarn.server.services.federation.upload.config.UploadServiceConfig;
 import app.coronawarn.server.services.federation.upload.payload.signing.BatchSigner;
 import app.coronawarn.server.services.federation.upload.utils.BatchMockData;
-import app.coronawarn.server.services.federation.upload.utils.MockData;
+import app.coronawarn.server.services.federation.upload.utils.UploadKeysMockData;
 import java.io.IOException;
 import java.security.GeneralSecurityException;
 import java.util.List;
@@ -54,7 +54,7 @@ class PayloadFactoryTest {
 
   @Test
   void shouldMakePayloadFromListOfDiagnosisKeys() {
-    var diagnosisKeys = List.of(MockData.generateRandomUploadKey(true));
+    var diagnosisKeys = List.of(UploadKeysMockData.generateRandomUploadKey(true));
 
     when(mockAssembler.assembleDiagnosisKeyBatch(anyList()))
         .thenReturn(Map.of(BatchMockData.makeSingleKeyBatch(), diagnosisKeys));
@@ -68,7 +68,7 @@ class PayloadFactoryTest {
 
   @Test
   void payloadsShouldNotHaveSameBatchTag() {
-    var diagnosisKeys = List.of(MockData.generateRandomUploadKey(true));
+    var diagnosisKeys = List.of(UploadKeysMockData.generateRandomUploadKey(true));
 
     when(mockAssembler.assembleDiagnosisKeyBatch(anyList()))
         .thenReturn(Map.of(

@@ -4,7 +4,7 @@ package app.coronawarn.server.services.federation.upload.integration;
 
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static app.coronawarn.server.services.federation.upload.utils.MockData.*;
+import static app.coronawarn.server.services.federation.upload.utils.UploadKeysMockData.*;
 import static org.junit.Assert.assertTrue;
 
 import app.coronawarn.server.common.persistence.domain.DiagnosisKey;

@@ -11,11 +11,10 @@ import java.time.ZoneOffset;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.Set;
-import java.util.concurrent.ThreadLocalRandom;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
-public class MockData {
+public class UploadKeysMockData {
 
   public static final String TEST_ORIGIN_COUNTRY = "DE";
   public static final SecureRandom random = new SecureRandom();

@@ -23,7 +23,7 @@ import app.coronawarn.server.services.federation.upload.payload.DiagnosisKeyBatc
 import app.coronawarn.server.services.federation.upload.payload.PayloadFactory;
 import app.coronawarn.server.services.federation.upload.payload.signing.BatchSigner;
 import app.coronawarn.server.services.federation.upload.payload.signing.CryptoProvider;
-import app.coronawarn.server.services.federation.upload.utils.MockData;
+import app.coronawarn.server.services.federation.upload.utils.UploadKeysMockData;
 import com.google.protobuf.ByteString;
 import java.util.Comparator;
 import java.util.List;
@@ -78,8 +78,8 @@ class UploadResponseTest {
 
   @Test
   void check201UploadResponseStatus() throws Exception {
-    var testKey1 = MockData.generateRandomUploadKey(true);
-    var testKey2 = MockData.generateRandomUploadKey(true);
+    var testKey1 = UploadKeysMockData.generateRandomUploadKey(true);
+    var testKey2 = UploadKeysMockData.generateRandomUploadKey(true);
 
     when(mockDiagnosisKeyLoader.loadDiagnosisKeys()).thenReturn(List.of(testKey1, testKey2));
     returnEmptyFromUpload();
@@ -92,8 +92,8 @@ class UploadResponseTest {
 
   @Test
   void check409UploadResponseStatus() throws Exception {
-    var testKey1 = MockData.generateRandomUploadKey(true);
-    var testKey2 = MockData.generateRandomUploadKey(true);
+    var testKey1 = UploadKeysMockData.generateRandomUploadKey(true);
+    var testKey2 = UploadKeysMockData.generateRandomUploadKey(true);
 
     when(mockDiagnosisKeyLoader.loadDiagnosisKeys()).thenReturn(List.of(testKey1, testKey2));
     returnFromUpload(createFake409Response());
@@ -106,8 +106,8 @@ class UploadResponseTest {
 
   @Test
   void check500UploadResponseStatus() throws Exception {
-    var testKey1 = MockData.generateRandomUploadKey(true);
-    var testKey2 = MockData.generateRandomUploadKey(true);
+    var testKey1 = UploadKeysMockData.generateRandomUploadKey(true);
+    var testKey2 = UploadKeysMockData.generateRandomUploadKey(true);
 
     when(uploadServiceConfig.getMinBatchKeyCount()).thenReturn(2);
     when(mockDiagnosisKeyLoader.loadDiagnosisKeys()).thenReturn(List.of(testKey1, testKey2));
@@ -121,8 +121,8 @@ class UploadResponseTest {
 
   @Test
   void check201And409UploadResponseStatus() throws Exception {
-    var testKey1 = MockData.generateRandomUploadKey(true);
-    var testKey2 = MockData.generateRandomUploadKey(true);
+    var testKey1 = UploadKeysMockData.generateRandomUploadKey(true);
+    var testKey2 = UploadKeysMockData.generateRandomUploadKey(true);
 
     when(uploadServiceConfig.getMinBatchKeyCount()).thenReturn(2);
     when(mockDiagnosisKeyLoader.loadDiagnosisKeys()).thenReturn(List.of(testKey1, testKey2));
@@ -136,8 +136,8 @@ class UploadResponseTest {
 
   @Test
   void check201And500UploadResponseStatus() throws Exception {
-    List<FederationUploadKey> orderedKeys = list(MockData.generateRandomUploadKey(true),
-        MockData.generateRandomUploadKey(true)).stream()
+    List<FederationUploadKey> orderedKeys = list(UploadKeysMockData.generateRandomUploadKey(true),
+        UploadKeysMockData.generateRandomUploadKey(true)).stream()
         .sorted(Comparator.comparing(diagnosisKey ->
             ByteString.copyFrom(diagnosisKey.getKeyData()).toStringUtf8())).collect(Collectors.toList());
     when(uploadServiceConfig.getMinBatchKeyCount()).thenReturn(2);
@@ -152,8 +152,8 @@ class UploadResponseTest {
 
   @Test
   void check409And500UploadResponseStatus() throws Exception {
-    List<FederationUploadKey> orderedKeys = list(MockData.generateRandomUploadKey(true),
-        MockData.generateRandomUploadKey(true)).stream()
+    List<FederationUploadKey> orderedKeys = list(UploadKeysMockData.generateRandomUploadKey(true),
+        UploadKeysMockData.generateRandomUploadKey(true)).stream()
         .sorted(Comparator.comparing(diagnosisKey ->
             ByteString.copyFrom(diagnosisKey.getKeyData()).toStringUtf8())).collect(Collectors.toList());
 
