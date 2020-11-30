@@ -13,7 +13,6 @@ minutes-at-attenuation-filters:
       min: 0
       max: 73
       max-exclusive: true
-  -
     drop-if-minutes-in-range:
       min: 0
       max: 10
