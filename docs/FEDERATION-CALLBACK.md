@@ -31,7 +31,6 @@ Profile                                           | Effect
 `disable-ssl-client-postgres`                     | Disables SSL with a pinned certificate for the connection to the postgres.
 `disable-ssl-server`                              | Disables SSL for the Callback endpoint.
 
-
 Please refer to the inline comments in the base `application.yaml` configuration file for further details on the configuration properties impacted by the above profiles.
 
 ## CallbackController
