@@ -52,14 +52,4 @@ public class DevelopmentFeignFederationHttpClientProvider implements FeignFedera
         .setMaxConnTotal(connectionPoolSize)
         .setSSLHostnameVerifier(NoopHostnameVerifier.INSTANCE));
   }
-
-  /**
-   * Creates connection manager.
-   *
-   * @return ApacheHttpClientConnectionManagerFactory.
-   */
-  @Bean
-  public ApacheHttpClientConnectionManagerFactory createConnectionManager() {
-    return new DefaultApacheHttpClientConnectionManagerFactory();
-  }
 }
