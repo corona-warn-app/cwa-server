@@ -64,3 +64,4 @@
     - [Payload Padding](./SECURITY.md#payload-padding)
 - Tutorials and Guides
   - [Submission](./how_to/HOW-TO-SUBMISSION.md)
+  - [Information on Secure Logging and Input Validation](./how_to/HOW-TO-SECURE-LOGGING.md)
