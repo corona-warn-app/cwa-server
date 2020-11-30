@@ -94,10 +94,10 @@ services:
       trend-calculation-threshold: 0.05
       statistic-local-path: stats/statistic_data.json
       statistic-remote-path: json/v1/cwa_reporting_public_data.json
-      access-key: ${STATS_S3_ACCESSKEY}
-      secret-key: ${STATS_S3_SECRETKEY}
-      endpoint: ${STATS_S3_ENDPOINT}
-      bucket: ${STATS_S3_BUCKET:obs-cwa-public-dev}
+      access-key: ${STATISTICS_FILE_ACCESS_KEY_ID}
+      secret-key: ${STATISTICS_FILE_SECRET_ACCESS_KEY}
+      endpoint: ${STATISTICS_FILE_S3_ENDPOINT}
+      bucket: ${STATISTICS_FILE_S3_BUCKET:obs-cwa-public-dev}
 
     app-features:
       - label: reserved
