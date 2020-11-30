@@ -1,8 +1,8 @@
 # CWA Federation Callback Service
 
-Note: This service is currently not implemented and will be planned if necessary within a future release.
-
-This service will expose an API which is registered with the federation gateways callback service API to accept the callback notifications. The role of this service is to validate the certificates (mTLS handshake) and then store the notification info (batchTag and date) into the postgres database for future processing by the federation key download job.
+This service will expose an API which is registered with the federation gateways callback service API to accept the callback notifications.
+The role of this service is to validate the certificates (mTLS handshake) and then store the notification info (batchTag and date) into the postgres database for future processing by the federation key download job.
+For further information on the processing of those notifications (FederationBatchInfo) refer to the documentation of the [Download service](FEDERATION-DOWNLOAD.md).
 
 ![Callback Flow Diagram](./images/callback-flow.png)
 
@@ -10,6 +10,10 @@ This service will expose an API which is registered with the federation gateways
 
 - **Vault**: Used for secrets and certificate storage
 - **RDBMS**: PostgreSQL as the persistent storage for notifications
+
+## Environment Variables
+
+Callback has no service-specific environment variables.
 
 ## Spring Profiles
 
@@ -21,10 +25,12 @@ You will find `.yaml` and `.xml` based profile-specific configuration files at [
 
 Profile                                           | Effect
 --------------------------------------------------|-------------
-`debug`                                             | Sets the log level to `DEBUG` and changes the `CONSOLE_LOG_PATTERN` used by Log4j 2.
+`debug`                                           | Sets the log level to `DEBUG` and changes the `CONSOLE_LOG_PATTERN` used by Log4j 2.
 `cloud`                                           | Removes default values for the `spring.flyway`, `spring.datasource` and sets federation gateway contexts
-`disable-ssl-server`                              | Disables SSL for the submission endpoint.
+`disable-certificate-authentication`              | Disables SSL for the Callback endpoint.
 `disable-ssl-client-postgres`                     | Disables SSL with a pinned certificate for the connection to the postgres.
+`disable-ssl-server`                              | Disables SSL for the Callback endpoint.
+
 
 Please refer to the inline comments in the base `application.yaml` configuration file for further details on the configuration properties impacted by the above profiles.
 
