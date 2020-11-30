@@ -13,6 +13,7 @@ minutes-at-attenuation-filters:
       min: 0
       max: 73
       max-exclusive: true
+  -
     drop-if-minutes-in-range:
       min: 0
       max: 10
@@ -67,9 +68,9 @@ normalized-time-per-day-to-risk-level-mapping:
 transmission-risk-level-multiplier: 0.2
 
 trlEncoding:
-  infectiousnessOffsetStandard: 0
-  infectiousnessOffsetHigh: 4
-  reportTypeOffsetRecursive: 4
-  reportTypeOffsetSelfReport: 3
-  reportTypeOffsetConfirmedClinicalDiagnosis: 2
-  reportTypeOffsetConfirmedTest: 1
+  infectiousnessOffsetStandard: 1
+  infectiousnessOffsetHigh: 2
+  reportTypeOffsetRecursive: 0
+  reportTypeOffsetSelfReport: 2
+  reportTypeOffsetConfirmedClinicalDiagnosis: 4
+  reportTypeOffsetConfirmedTest: 6
