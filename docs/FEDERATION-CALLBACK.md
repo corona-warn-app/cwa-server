@@ -34,6 +34,15 @@ Profile                                           | Effect
 
 Please refer to the inline comments in the base `application.yaml` configuration file for further details on the configuration properties impacted by the above profiles.
 
+## CallbackController
+
+REST-controller that handles incoming GET-requests. Constructs new FederationBatchInfos from received parameters and triggers persistence of those.
+All other requests are being denied (configured in [SecurityConfig.java](SecurityConfig.java).
+
+## ApiExceptionHandler
+
+Responsible for general error handling within the callback service.
+
 ## Data Model
 
 The callback service will insert new entries (batch tag and date information) specified within the HTTP request into the table mentioned below. This information will then be further processed by the federation key download job.
