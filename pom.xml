@@ -42,8 +42,6 @@
     <maven.compiler.debuglevel>lines,vars,source</maven.compiler.debuglevel>
     <project.build.sourceEncoding>${encoding}</project.build.sourceEncoding>
     <project.reporting.outputEncoding>${encoding}</project.reporting.outputEncoding>
-    <skip.unit.tests>false</skip.unit.tests>
-    <skip.integration.tests>true</skip.integration.tests>
 
     <sonar.host.url>https://sonarcloud.io</sonar.host.url>
     <sonar.organization>corona-warn-app</sonar.organization>
@@ -353,7 +351,6 @@
                   <include>**/*IT.java</include>
                   <include>**/*IntegrationTest.java</include>
                 </includes>
-                <skipTests>${skip.integration.tests}</skipTests>
                 <additionalClasspathElements>
                   <additionalClasspathElement>${basedir}/target/classes</additionalClasspathElement>
                 </additionalClasspathElements>
@@ -397,9 +394,9 @@
           <configuration>
             <excludedGroups>s3-integration</excludedGroups>
             <trimStackTrace>false</trimStackTrace>
-            <skipTests>${skip.unit.tests}</skipTests>
             <excludes>
               <exclude>**/*IntegrationTest.java</exclude>
+              <exclude>**/*IT.java</exclude>
             </excludes>
           </configuration>
         </plugin>
@@ -474,7 +471,6 @@
           </executions>
           <configuration>
             <mainClass>${start-class}</mainClass>
-            <classifier>exec</classifier>
           </configuration>
         </plugin>
         <plugin>
@@ -489,8 +485,7 @@
             </execution>
           </executions>
           <configuration>
-            <protocArtifact>com.google.protobuf:protoc:${protobuf.version}:exe:${os.detected.classifier}
-            </protocArtifact>
+            <protocArtifact>com.google.protobuf:protoc:${protobuf.version}:exe:${os.detected.classifier}</protocArtifact>
           </configuration>
         </plugin>
         <plugin>
@@ -595,13 +590,37 @@
     </plugins>
   </build>
 
-
   <profiles>
     <profile>
-      <id>integration-tests</id>
+      <id>local-build</id>
+      <activation>
+        <activeByDefault>true</activeByDefault>
+      </activation>
       <properties>
-        <skip.integration.tests>false</skip.integration.tests>
-        <skip.unit.tests>true</skip.unit.tests>
+        <docker.skip>true</docker.skip>
+        <skipITs>true</skipITs>
+      </properties>
+    </profile>
+    <profile>
+      <id>integration-tests</id>
+      <activation>
+        <activeByDefault>false</activeByDefault>
+      </activation>
+      <properties>
+        <skipITs>false</skipITs>
+      </properties>
+    </profile>
+    <profile>
+      <id>docker-image</id>
+      <activation>
+        <activeByDefault>false</activeByDefault>
+      </activation>
+      <properties>
+        <skipITs>true</skipITs>
+        <skipTests>true</skipTests>
+        <checkstyle.skip>true</checkstyle.skip>
+        <jacoco.skip>true</jacoco.skip>
+        <docker.skip>true</docker.skip>
       </properties>
     </profile>
   </profiles>
