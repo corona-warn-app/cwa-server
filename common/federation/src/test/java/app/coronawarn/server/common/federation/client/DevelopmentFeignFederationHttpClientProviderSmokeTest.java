@@ -7,15 +7,17 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
+import org.springframework.test.annotation.DirtiesContext;
 
 @SpringBootTest(properties = "spring.main.lazy-initialization=true", webEnvironment = WebEnvironment.RANDOM_PORT)
+@DirtiesContext
 class DevelopmentFeignFederationHttpClientProviderSmokeTest {
 
   @Autowired
   private FederationGatewayConfig config;
 
   @Test
-  void test() {
+  void testCanCreateHttpClient() {
     DevelopmentFeignFederationHttpClientProvider cut = new DevelopmentFeignFederationHttpClientProvider(config);
     assertThat(cut.createFeignClient()).isNotNull();
   }
