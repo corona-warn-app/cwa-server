@@ -13,7 +13,6 @@ As an example:
 `log4j.error("Federation batch processing for date {} and batchTag {} failed. Status set to {}.",
 date, batchTag, errorStatus.name(), exception.getMessage());`.
 
-
 ## Processing and Validation
 
 Similarly, strings originating from the user may not be evaluated or processed without further action.
