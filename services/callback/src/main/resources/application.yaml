@@ -78,4 +78,3 @@ server:
     trust-store: ${SSL_CALLBACK_TRUSTSTORE_PATH}
     trust-store-password: ${SSL_CALLBACK_TRUSTSTORE_PASSWORD}
     client-auth: need
-    key-alias: ${SSL_CALLBACK_KEY_ALIAS}
