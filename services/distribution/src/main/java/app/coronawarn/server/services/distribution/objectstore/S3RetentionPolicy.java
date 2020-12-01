@@ -69,11 +69,11 @@ public class S3RetentionPolicy {
    *
    * @param retentionDays number of days back where hourly files should be deleted
    */
-  public void applyHourFileRetentionPolicy(int retentionDays) {
+  public void applyHourFileRetentionPolicy(long retentionDays) {
     Set<String> countries = Set.of(originCountry, euPackageName);
     countries.forEach(country -> {
       List<S3Object> diagnosisKeysObjects = objectStoreAccess.getObjectsWithPrefix(getPrefix(country));
-      final LocalDate cutOffDate = TimeUtils.getUtcDate().minusDays(retentionDays - 1);
+      final LocalDate cutOffDate = TimeUtils.getUtcDate().minusDays(retentionDays - 1L);
       var deletableKeys = diagnosisKeysObjects.stream()
           .filter(diagnosisKeysObject -> isFilePathOlderThan(diagnosisKeysObject, cutOffDate))
           .filter(this::isFilePathOnHourFolder)
