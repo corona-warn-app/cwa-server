@@ -1,10 +1,16 @@
 version: '3'
 services:
+  preparation:
+    image: preparation
+    build:
+      context: .
+      dockerfile: ./services/Dockerfile
   callback:
     build:
       context: ./
       dockerfile: ./services/callback/Dockerfile
     depends_on:
+      - preparation
       - postgres
     ports:
       - "8010:8080"
@@ -22,6 +28,7 @@ services:
       context: ./
       dockerfile: ./services/submission/Dockerfile
     depends_on:
+      - preparation
       - postgres
       - verification-fake
     ports:
@@ -43,6 +50,7 @@ services:
       context: ./
       dockerfile: ./services/distribution/Dockerfile
     depends_on:
+     - preparation
      - postgres
      - objectstore
      - create-bucket
@@ -72,6 +80,7 @@ services:
       context: ./
       dockerfile: ./services/download/Dockerfile
     depends_on:
+      - preparation
       - postgres
     ports:
       - "8011:8080"
@@ -89,6 +98,7 @@ services:
       context: ./
       dockerfile: ./services/upload/Dockerfile
     depends_on:
+      - preparation
       - postgres
     ports:
       - "8012:8080"
