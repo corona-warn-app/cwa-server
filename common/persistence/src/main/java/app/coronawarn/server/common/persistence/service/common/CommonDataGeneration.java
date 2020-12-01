@@ -25,7 +25,7 @@ public abstract class CommonDataGeneration implements ApplicationRunner {
   /**
    * Returns 16 random bytes.
    */
-  protected byte[] randomByteData() {
+  protected byte[] generateDiagnosisKeyBytes() {
     byte[] keyData = new byte[16];
     random.nextBytes(keyData);
     return keyData;

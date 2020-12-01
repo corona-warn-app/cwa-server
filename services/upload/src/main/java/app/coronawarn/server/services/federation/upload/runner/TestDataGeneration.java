@@ -113,7 +113,7 @@ public class TestDataGeneration extends CommonDataGeneration {
   }
 
   protected DiagnosisKey generateDiagnosisKey(long timestamp, String country) {
-    return FederationUploadKey.from(DiagnosisKey.builder().withKeyData(randomByteData())
+    return FederationUploadKey.from(DiagnosisKey.builder().withKeyData(generateDiagnosisKeyBytes())
         .withRollingStartIntervalNumber(generateRollingStartIntervalNumber(timestamp))
         .withTransmissionRiskLevel(generateTransmissionRiskLevel())
         .withConsentToFederation(true)

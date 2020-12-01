@@ -153,7 +153,7 @@ public class TestDataGeneration extends CommonDataGeneration {
 
   protected DiagnosisKey generateDiagnosisKey(long submissionTimestamp, String country) {
     return DiagnosisKey.builder()
-        .withKeyData(randomByteData())
+        .withKeyData(generateDiagnosisKeyBytes())
         .withRollingStartIntervalNumber(generateRollingStartIntervalNumber(submissionTimestamp))
         .withTransmissionRiskLevel(generateTransmissionRiskLevel())
         .withSubmissionTimestamp(submissionTimestamp)

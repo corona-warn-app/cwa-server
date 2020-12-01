@@ -14,8 +14,8 @@ class CommonDataGenerationTest {
   static UnitTestCommonDataGeneration t = new UnitTestCommonDataGeneration(1);
 
   @Test
-  void testRandomByteDataNotNull() {
-    assertNotNull(t.randomByteData());
+  void testGenerateDiagnosisKeyBytesNotNull() {
+    assertNotNull(t.generateDiagnosisKeyBytes());
   }
 
   @Test
@@ -52,7 +52,7 @@ class CommonDataGenerationTest {
               .addVisitedCountries("DE")
               .setRollingStartIntervalNumber(123123)
               .setOrigin("DE")
-              .setKeyData(ByteString.copyFrom(t.randomByteData()))
+              .setKeyData(ByteString.copyFrom(t.generateDiagnosisKeyBytes()))
               .setTransmissionRiskLevel(1)
               .build()
       )
