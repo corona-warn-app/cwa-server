@@ -27,7 +27,6 @@ public class DiagnosisKeysHourDirectory extends IndexDirectoryOnDisk<LocalDateTi
   private final DiagnosisKeyBundler diagnosisKeyBundler;
   private final CryptoProvider cryptoProvider;
   private final DistributionServiceConfig distributionServiceConfig;
-  private final LocalDate cutOffDate;
 
   /**
    * Constructs a {@link DiagnosisKeysHourDirectory} instance for the specified date.
@@ -47,37 +46,29 @@ public class DiagnosisKeysHourDirectory extends IndexDirectoryOnDisk<LocalDateTi
     this.diagnosisKeyBundler = diagnosisKeyBundler;
     this.cryptoProvider = cryptoProvider;
     this.distributionServiceConfig = distributionServiceConfig;
-
-    int hourRetentionDays = distributionServiceConfig.getObjectStore().getHourFileRetentionDays();
-    this.cutOffDate = TimeUtils.getUtcDate().minusDays(hourRetentionDays);
   }
 
   @Override
   public void prepare(ImmutableStack<Object> indices) {
     this.addWritableToAll(currentIndices -> {
       LocalDateTime currentHour = (LocalDateTime) currentIndices.peek();
-      // Should only generate hour structure for the most recent two days
-      if (currentHour.isAfter(cutOffDate.atStartOfDay())) {
-        // The LocalDateTime currentHour already contains both the date and the hour information, so
-        // we can throw away the LocalDate that's the second item on the stack from the "/date"
-        // IndexDirectory.
-        String country = (String) currentIndices.pop().pop().peek();
+      // The LocalDateTime currentHour already contains both the date and the hour information, so
+      // we can throw away the LocalDate that's the second item on the stack from the "/date"
+      // IndexDirectory.
+      String country = (String) currentIndices.pop().pop().peek();
 
-        List<DiagnosisKey> diagnosisKeysForCurrentHour =
-            this.diagnosisKeyBundler.getDiagnosisKeysForHour(currentHour, country);
+      List<DiagnosisKey> diagnosisKeysForCurrentHour =
+          this.diagnosisKeyBundler.getDiagnosisKeysForHour(currentHour, country);
 
-        long startTimestamp = currentHour.toEpochSecond(ZoneOffset.UTC);
-        long endTimestamp = currentHour.plusHours(1).toEpochSecond(ZoneOffset.UTC);
-        File<WritableOnDisk> temporaryExposureKeyExportFile = TemporaryExposureKeyExportFile.fromDiagnosisKeys(
-            diagnosisKeysForCurrentHour, country, startTimestamp, endTimestamp, distributionServiceConfig);
+      long startTimestamp = currentHour.toEpochSecond(ZoneOffset.UTC);
+      long endTimestamp = currentHour.plusHours(1).toEpochSecond(ZoneOffset.UTC);
+      File<WritableOnDisk> temporaryExposureKeyExportFile = TemporaryExposureKeyExportFile.fromDiagnosisKeys(
+          diagnosisKeysForCurrentHour, country, startTimestamp, endTimestamp, distributionServiceConfig);
 
-        Archive<WritableOnDisk> hourArchive = new ArchiveOnDisk(distributionServiceConfig.getOutputFileName());
-        hourArchive.addWritable(temporaryExposureKeyExportFile);
+      Archive<WritableOnDisk> hourArchive = new ArchiveOnDisk(distributionServiceConfig.getOutputFileName());
+      hourArchive.addWritable(temporaryExposureKeyExportFile);
 
-        return Optional.of(decorateDiagnosisKeyArchive(hourArchive));
-      } else {
-        return Optional.empty();
-      }
+      return Optional.of(decorateDiagnosisKeyArchive(hourArchive));
     });
     super.prepare(indices);
   }

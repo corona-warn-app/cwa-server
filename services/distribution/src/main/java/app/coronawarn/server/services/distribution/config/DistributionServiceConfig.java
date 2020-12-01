@@ -546,7 +546,7 @@ public class DistributionServiceConfig {
     @Max(64)
     private Integer maxNumberOfS3Threads;
     private Boolean forceUpdateKeyfiles;
-    @Max(28)
+    @Max(Integer.MAX_VALUE)
     private Integer hourFileRetentionDays;
 
     public String getAccessKey() {
