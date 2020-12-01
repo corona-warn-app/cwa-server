@@ -1,4 +1,4 @@
-FROM preparation as build
+FROM preparation:1 as build
 
 ARG WORK_DIR=/build
 ARG SERVICE=callback

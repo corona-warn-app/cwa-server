@@ -1,7 +1,7 @@
 version: '3'
 services:
   preparation:
-    image: preparation
+    image: preparation:1
     build:
       context: .
       dockerfile: ./services/Dockerfile
