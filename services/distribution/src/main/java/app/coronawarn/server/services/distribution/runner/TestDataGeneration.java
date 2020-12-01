@@ -16,8 +16,6 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.stream.LongStream;
 import org.apache.commons.math3.distribution.PoissonDistribution;
-import org.apache.commons.math3.random.JDKRandomGenerator;
-import org.apache.commons.math3.random.RandomGenerator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.ApplicationArguments;
@@ -42,8 +40,6 @@ public class TestDataGeneration extends CommonDataGeneration {
   private final TestData config;
 
   private final DiagnosisKeyService diagnosisKeyService;
-
-  private final RandomGenerator random = new JDKRandomGenerator();
 
   private final Set<String> supportedCountries;
 

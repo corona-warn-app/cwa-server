@@ -2,23 +2,24 @@ package app.coronawarn.server.common.persistence.service.common;
 
 import app.coronawarn.server.common.persistence.domain.DiagnosisKey;
 import app.coronawarn.server.common.protocols.internal.RiskLevel;
-import java.security.SecureRandom;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.time.temporal.ChronoUnit;
 import java.util.concurrent.TimeUnit;
+import org.apache.commons.math3.random.JDKRandomGenerator;
+import org.apache.commons.math3.random.RandomGenerator;
 import org.springframework.boot.ApplicationRunner;
 
 public abstract class CommonDataGeneration implements ApplicationRunner {
 
   protected static final long ONE_HOUR_INTERVAL_SECONDS = TimeUnit.HOURS.toSeconds(1);
   protected static final long TEN_MINUTES_INTERVAL_SECONDS = TimeUnit.MINUTES.toSeconds(10);
-  protected final SecureRandom random;
   protected final Integer retentionDays;
+  protected final RandomGenerator random;
 
   protected CommonDataGeneration(Integer retentionDays) {
     this.retentionDays = retentionDays;
-    this.random = new SecureRandom();
+    this.random = new JDKRandomGenerator();
   }
 
   /**
