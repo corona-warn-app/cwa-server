@@ -62,3 +62,5 @@
   - [Plausible Deniability](./SECURITY.md#plausible-deniability)
     - [Fake Requests](./SECURITY.md#fake-requests)
     - [Payload Padding](./SECURITY.md#payload-padding)
+- Tutorials and Guides
+  - [Submission](./how_to/HOW-TO-SUBMISSION.md)
