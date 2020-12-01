@@ -12,6 +12,7 @@ RUN cp ${WORK_DIR}/scripts/DpkgHelper.java /DpkgHelper.java
 FROM gcr.io/distroless/java-debian10:11
 
 #copy and run jars
+ARG SERVICE=callback
 COPY --from=build /DpkgHelper.java .
 COPY --from=build /usr/sap/${SERVICE}-service/service.jar .
 RUN ["java", "DpkgHelper.java"]
