@@ -33,7 +33,7 @@ import org.springframework.stereotype.Component;
 @Component
 @Order(-1)
 @Profile("testdata")
-public class TestDataGeneration extends CommonDataGeneration {
+public class TestDataGeneration extends CommonDataGeneration<DiagnosisKey> {
 
   private final Logger logger = LoggerFactory.getLogger(TestDataGeneration.class);
 
@@ -151,6 +151,7 @@ public class TestDataGeneration extends CommonDataGeneration {
     }
   }
 
+  @Override
   protected DiagnosisKey generateDiagnosisKey(long submissionTimestamp, String country) {
     return DiagnosisKey.builder()
         .withKeyData(generateDiagnosisKeyBytes())

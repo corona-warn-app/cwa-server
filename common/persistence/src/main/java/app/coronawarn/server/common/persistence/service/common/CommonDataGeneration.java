@@ -10,7 +10,7 @@ import org.apache.commons.math3.random.JDKRandomGenerator;
 import org.apache.commons.math3.random.RandomGenerator;
 import org.springframework.boot.ApplicationRunner;
 
-public abstract class CommonDataGeneration implements ApplicationRunner {
+public abstract class CommonDataGeneration<T extends DiagnosisKey> implements ApplicationRunner {
 
   protected static final long ONE_HOUR_INTERVAL_SECONDS = TimeUnit.HOURS.toSeconds(1);
   protected static final long TEN_MINUTES_INTERVAL_SECONDS = TimeUnit.MINUTES.toSeconds(10);
@@ -32,9 +32,9 @@ public abstract class CommonDataGeneration implements ApplicationRunner {
   }
 
   /**
-   * Returns a random diagnosis key with a specific submission timestamp and country.
+   * Returns a random diagnosis key or any of it's subtypes with a specific submission timestamp and country.
    */
-  protected abstract DiagnosisKey generateDiagnosisKey(long submissionTimestamp, String country);
+  protected abstract T generateDiagnosisKey(long submissionTimestamp, String country);
 
   /**
    * Returns a random number between {@link RiskLevel#RISK_LEVEL_LOWEST_VALUE} and {@link

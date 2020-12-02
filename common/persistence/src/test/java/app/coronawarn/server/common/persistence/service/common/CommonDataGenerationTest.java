@@ -39,7 +39,7 @@ class CommonDataGenerationTest {
     assertEquals(576, t.generateRollingStartIntervalNumber(100));
   }
 
-  private static class UnitTestCommonDataGeneration extends CommonDataGeneration {
+  private static class UnitTestCommonDataGeneration extends CommonDataGeneration<DiagnosisKey> {
 
     protected UnitTestCommonDataGeneration(Integer retentionDays) {
       super(retentionDays);

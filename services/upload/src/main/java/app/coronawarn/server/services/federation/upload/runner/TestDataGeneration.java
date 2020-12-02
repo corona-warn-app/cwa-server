@@ -25,7 +25,7 @@ import org.springframework.stereotype.Component;
 @Component
 @Order(-1)
 @Profile("testdata")
-public class TestDataGeneration extends CommonDataGeneration {
+public class TestDataGeneration extends CommonDataGeneration<FederationUploadKey> {
 
   private final Logger logger = LoggerFactory.getLogger(TestDataGeneration.class);
   private final TestDataUploadRepository keyRepository;
@@ -46,11 +46,11 @@ public class TestDataGeneration extends CommonDataGeneration {
     logger.info("Finished Test Data Generation Step");
   }
 
-  private void storeUploadKeys(List<DiagnosisKey> diagnosisKeys) {
+  private void storeUploadKeys(List<FederationUploadKey> diagnosisKeys) {
     diagnosisKeys.forEach(this::storeUploadKey);
   }
 
-  private void storeUploadKey(DiagnosisKey key) {
+  private void storeUploadKey(FederationUploadKey key) {
     keyRepository.storeUploadKey(key.getKeyData(),
         key.getRollingStartIntervalNumber(),
         key.getRollingPeriod(),
@@ -75,7 +75,7 @@ public class TestDataGeneration extends CommonDataGeneration {
    *
    * @return List of Federation Upload Keys generated.
    */
-  private List<DiagnosisKey> generateFakeKeysForPreviousDay() {
+  private List<FederationUploadKey> generateFakeKeysForPreviousDay() {
     long timestamp = getCurrentTimestampTruncatedHour()
         .minusDays(retentionDays)
         .toEpochSecond(ZoneOffset.UTC) / 600L;
@@ -112,14 +112,15 @@ public class TestDataGeneration extends CommonDataGeneration {
     return LocalDateTime.ofInstant(Instant.now(), ZoneOffset.UTC).truncatedTo(ChronoUnit.HOURS);
   }
 
-  protected DiagnosisKey generateDiagnosisKey(long timestamp, String country) {
+  @Override
+  protected FederationUploadKey generateDiagnosisKey(long submissionTimestamp, String country) {
     return FederationUploadKey.from(DiagnosisKey.builder().withKeyData(generateDiagnosisKeyBytes())
-        .withRollingStartIntervalNumber(generateRollingStartIntervalNumber(timestamp))
+        .withRollingStartIntervalNumber(generateRollingStartIntervalNumber(submissionTimestamp))
         .withTransmissionRiskLevel(generateTransmissionRiskLevel())
         .withConsentToFederation(true)
         .withCountryCode(country)
         .withDaysSinceOnsetOfSymptoms(1)
-        .withSubmissionTimestamp(timestamp)
+        .withSubmissionTimestamp(submissionTimestamp)
         .withVisitedCountries(Set.of("FR", "DK"))
         .withReportType(ReportType.CONFIRMED_TEST)
         .build());
