@@ -57,7 +57,7 @@ public class CryptoProvider {
     try (InputStream publicKeyStream = publicKeyResource.getInputStream()) {
       return (X509Certificate) cf.generateCertificate(publicKeyStream);
     } catch (IOException e) {
-      throw new UncheckedIOException("Failed to load private key from " + path, e);
+      throw new UncheckedIOException("Failed to load public key from " + path, e);
     }
   }
 
