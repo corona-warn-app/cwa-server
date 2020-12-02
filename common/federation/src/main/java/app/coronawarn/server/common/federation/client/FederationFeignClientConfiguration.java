@@ -7,16 +7,16 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class FederationFeignClientConfiguration {
 
-  private final FeignClientProvider feignClientProvider;
+  private final FederationFeignHttpClientProvider federationFeignHttpClientProvider;
 
   public FederationFeignClientConfiguration(
-      FeignClientProvider feignClientProvider) {
-    this.feignClientProvider = feignClientProvider;
+      FederationFeignHttpClientProvider federationFeignHttpClientProvider) {
+    this.federationFeignHttpClientProvider = federationFeignHttpClientProvider;
   }
 
   @Bean
   public Client feignClient() {
-    return feignClientProvider.createFeignClient();
+    return federationFeignHttpClientProvider.createFeignClient();
   }
 
 }

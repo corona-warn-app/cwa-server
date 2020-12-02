@@ -40,7 +40,7 @@ import org.springframework.test.context.ActiveProfiles;
 
 @SpringBootTest
 @DirtiesContext
-@ActiveProfiles("disable-ssl-client-federation")
+@ActiveProfiles("disable-ssl-efgs-verification")
 class FederationKeyNormalizerTest {
 
   private static final String BATCH_TAG = "507f191e810c19729de860ea";

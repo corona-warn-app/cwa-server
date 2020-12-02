@@ -31,7 +31,7 @@ import org.springframework.test.context.ActiveProfiles;
 @SpringBootTest
 @DirtiesContext
 @EnableFeignClients(defaultConfiguration = FederationFeignClientConfiguration.class)
-@ActiveProfiles("disable-ssl-client-federation")
+@ActiveProfiles("disable-ssl-efgs-verification")
 class FederationGatewayDownloadServiceTest {
 
   private static final WireMockServer SERVER = new WireMockServer(1234);

@@ -69,7 +69,7 @@ import org.springframework.test.context.ActiveProfiles;
  * <p>
  */
 @SpringBootTest
-@ActiveProfiles({"download-via-callback-integration-test","disable-ssl-client-federation"})
+@ActiveProfiles({"download-via-callback-integration-test","disable-ssl-efgs-verification"})
 @DirtiesContext
 class DownloadViaCallbackIntegrationTest {
 

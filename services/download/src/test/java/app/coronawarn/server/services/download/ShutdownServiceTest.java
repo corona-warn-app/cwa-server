@@ -15,7 +15,7 @@ import org.springframework.test.context.ActiveProfiles;
 
 @SpringBootTest
 @DirtiesContext
-@ActiveProfiles("disable-ssl-client-federation")
+@ActiveProfiles("disable-ssl-efgs-verification")
 class ShutdownServiceTest {
 
   @Autowired
