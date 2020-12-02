@@ -12,7 +12,7 @@ class DeserializedDailySummariesConfigTest {
 
   @Test
   void testCreateDeserializedDailySummariesConfigObjectFromYaml() throws UnableToLoadFileException {
-    final String ANDROID_V2_DAILY_SUMMARIES_FILE = "master-config/v2/daily-summaries-config.yaml";
+    final String ANDROID_V2_DAILY_SUMMARIES_FILE = "main-config/v2/daily-summaries-config.yaml";
 
     DeserializedDailySummariesConfig dailySummaries = YamlLoader
         .loadYamlIntoClass(ANDROID_V2_DAILY_SUMMARIES_FILE, DeserializedDailySummariesConfig.class);

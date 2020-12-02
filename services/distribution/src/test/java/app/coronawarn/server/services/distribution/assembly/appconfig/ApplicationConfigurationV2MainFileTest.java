@@ -16,7 +16,7 @@ import app.coronawarn.server.services.distribution.config.DistributionServiceCon
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration(classes = ApplicationConfigurationV2PublicationConfig.class,
     initializers = ConfigFileApplicationContextInitializer.class)
-class ApplicationConfigurationV2MasterFileTest {
+class ApplicationConfigurationV2MainFileTest {
 
   @Autowired
   private ApplicationConfigurationAndroid applicationConfigurationAndroid;
@@ -25,7 +25,7 @@ class ApplicationConfigurationV2MasterFileTest {
   private ApplicationConfigurationIOS applicationConfigurationIos;
 
   @Test
-  void testMasterFileSAreLoadedViaAutowiring() {
+  void testMainFileSAreLoadedViaAutowiring() {
     assertThat(applicationConfigurationAndroid).isNotNull();
     assertThat(applicationConfigurationIos).isNotNull();
   }

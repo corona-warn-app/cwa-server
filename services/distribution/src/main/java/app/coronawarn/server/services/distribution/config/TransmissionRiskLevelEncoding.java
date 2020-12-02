@@ -30,7 +30,7 @@ import org.springframework.validation.annotation.Validated;
 @Configuration
 @Validated
 @ConfigurationProperties(prefix = "transmission-risk-encoding")
-@PropertySource(value = "classpath:master-config/transmission-risk-encoding.yaml",
+@PropertySource(value = "classpath:main-config/transmission-risk-encoding.yaml",
     factory = YamlPropertySourceFactory.class)
 public class TransmissionRiskLevelEncoding implements Validator {
 
