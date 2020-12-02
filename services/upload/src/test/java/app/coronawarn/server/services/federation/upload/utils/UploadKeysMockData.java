@@ -29,6 +29,14 @@ public class UploadKeysMockData {
     return FederationUploadKey.from(generateRandomDiagnosisKey(consentToShare));
   }
 
+  public static FederationUploadKey generateRandomUploadKey(ReportType reportType) {
+    return FederationUploadKey.from(generateRandomDiagnosisKey(reportType));
+  }
+
+  public static FederationUploadKey generateRandomUploadKey(int daysSinceOnsetSymptoms) {
+    return FederationUploadKey.from(generateRandomDiagnosisKey(daysSinceOnsetSymptoms));
+  }
+
   public static FederationUploadKey generateRandomUploadKey(String originCountry,
       Set<String> visitedCountries) {
     return FederationUploadKey.from(generateRandomDiagnosisKey(originCountry, visitedCountries));
@@ -61,12 +69,44 @@ public class UploadKeysMockData {
     return generateRandomDiagnosisKey(true, timestamp, originCountry, visitedCountries);
   }
 
+  public static DiagnosisKey generateRandomDiagnosisKey(ReportType reportType) {
+    var timestamp = LocalDateTime.now(ZoneOffset.UTC)
+        .minusDays(2L)
+        .truncatedTo(ChronoUnit.HOURS)
+        .toEpochSecond(ZoneOffset.UTC) / 3600;
+    return generateRandomDiagnosisKey(true, timestamp, TEST_ORIGIN_COUNTRY, Set.of("FR", "DK"), reportType);
+  }
+
   public static DiagnosisKey generateRandomDiagnosisKey(boolean consentToShare, long submissionTimestamp) {
     return generateRandomDiagnosisKey(consentToShare, submissionTimestamp, TEST_ORIGIN_COUNTRY, Set.of("FR", "DK"));
   }
 
   public static DiagnosisKey generateRandomDiagnosisKey(boolean consentToShare,
       long submissionTimestamp, String originCountry, Set<String> visitedCountries) {
+    return generateRandomDiagnosisKey(consentToShare, submissionTimestamp, originCountry,
+        visitedCountries, ReportType.CONFIRMED_TEST);
+  }
+
+  public static DiagnosisKey generateRandomDiagnosisKey(int daysSinceOnsetOfSymptoms) {
+    var timestamp = LocalDateTime.now(ZoneOffset.UTC)
+        .minusDays(2L)
+        .truncatedTo(ChronoUnit.HOURS)
+        .toEpochSecond(ZoneOffset.UTC) / 3600;
+    return DiagnosisKey.builder()
+        .withKeyData(randomByteData())
+        .withRollingStartIntervalNumber(makeRollingStartIntervalFromSubmission(timestamp))
+        .withTransmissionRiskLevel(2)
+        .withConsentToFederation(true)
+        .withCountryCode("DE")
+        .withDaysSinceOnsetOfSymptoms(daysSinceOnsetOfSymptoms)
+        .withSubmissionTimestamp(timestamp)
+        .withVisitedCountries(Set.of("FR", "DK"))
+        .withReportType(ReportType.CONFIRMED_TEST)
+        .build();
+  }
+
+  public static DiagnosisKey generateRandomDiagnosisKey(boolean consentToShare,
+      long submissionTimestamp, String originCountry, Set<String> visitedCountries, ReportType reportType) {
     return DiagnosisKey.builder()
         .withKeyData(randomByteData())
         .withRollingStartIntervalNumber(makeRollingStartIntervalFromSubmission(submissionTimestamp))
@@ -76,7 +116,7 @@ public class UploadKeysMockData {
         .withDaysSinceOnsetOfSymptoms(randomDaysSinceOnsetOfSymptoms())
         .withSubmissionTimestamp(submissionTimestamp)
         .withVisitedCountries(visitedCountries)
-        .withReportType(ReportType.CONFIRMED_TEST)
+        .withReportType(reportType)
         .build();
   }
 
