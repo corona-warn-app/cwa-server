@@ -18,7 +18,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ActiveProfiles;
 
-@ActiveProfiles("disable-ssl-client-federation")
+@ActiveProfiles("disable-ssl-efgs-verification")
 class DiagnosisKeyReplicationIT extends UploadKeyIT {
 
   @Autowired
