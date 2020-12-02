@@ -74,6 +74,18 @@ self_sign_efgs_signing_certificate()
     -out "$3"
 }
 
+# Generate a SSL keystore
+# $1 = IN  Private key
+# $2 = IN  Certificate
+# $3 = OUT New pkcs12 keystore containing the certificate and signed with the private key
+generate_SSL_keystore()
+{
+  openssl pkcs12 -export \
+    -in "$2" \
+    -inkey "$1" \
+    -out "$3"
+}
+
 # Generate Certificate SHA256 thumbprint
 # $1 = IN  X509 Certificate File
 # $2 = OUT Thumbprint File
@@ -92,6 +104,7 @@ self_sign_certificate_request request.csr private.pem certificate.crt
 generate_private_key efgs_signing_key.pem
 self_sign_efgs_signing_certificate efgs_signing_key.pem '/CN=CWA Test Certificate/OU=CWA-Team/C=DE' efgs_signing_cert.pem
 generate_certificate_thumbprint efgs_signing_cert.pem efgs_x509_thumbprint.txt
+generate_SSL_keystore private.pem certificate.crt ssl.p12
 
 popd > /dev/null || exit
 popd > /dev/null || exit
