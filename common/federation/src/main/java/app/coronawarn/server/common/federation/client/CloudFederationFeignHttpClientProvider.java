@@ -24,7 +24,7 @@ import org.springframework.stereotype.Component;
  */
 @Component
 @Profile("!disable-ssl-efgs-verification")
-public class CloudFeignFederationHttpClientProvider implements FeignFederationHttpClientProvider {
+public class CloudFederationFeignHttpClientProvider implements FederationFeignHttpClientProvider {
 
   private final Integer connectionPoolSize;
   private final File keyStore;
@@ -35,7 +35,7 @@ public class CloudFeignFederationHttpClientProvider implements FeignFederationHt
    *
    * @param config .
    */
-  public CloudFeignFederationHttpClientProvider(FederationGatewayConfig config) {
+  public CloudFederationFeignHttpClientProvider(FederationGatewayConfig config) {
     var ssl = config.getSsl();
     this.connectionPoolSize = config.getConnectionPoolSize();
     this.keyStore = ssl.getKeyStore();

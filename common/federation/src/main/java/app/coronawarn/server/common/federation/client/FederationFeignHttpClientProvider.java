@@ -2,6 +2,6 @@ package app.coronawarn.server.common.federation.client;
 
 import feign.Client;
 
-public interface FeignFederationHttpClientProvider {
+public interface FederationFeignHttpClientProvider {
   Client createFeignClient();
 }

@@ -17,9 +17,9 @@ import org.springframework.stereotype.Component;
 
 @Component
 @Profile("disable-ssl-efgs-verification")
-public class DevelopmentFeignFederationHttpClientProvider implements FeignFederationHttpClientProvider {
+public class DevelopmentFederationFeignHttpClientProvider implements FederationFeignHttpClientProvider {
 
-  private static final Logger logger = LoggerFactory.getLogger(DevelopmentFeignFederationHttpClientProvider.class);
+  private static final Logger logger = LoggerFactory.getLogger(DevelopmentFederationFeignHttpClientProvider.class);
 
   private final Integer connectionPoolSize;
 
@@ -28,7 +28,7 @@ public class DevelopmentFeignFederationHttpClientProvider implements FeignFedera
    *
    * @param config .
    */
-  public DevelopmentFeignFederationHttpClientProvider(FederationGatewayConfig config) {
+  public DevelopmentFederationFeignHttpClientProvider(FederationGatewayConfig config) {
     logger.warn("The Federation Http Client is started with SSL disabled. This should never be used in PRODUCTION!");
     this.connectionPoolSize = config.getConnectionPoolSize();
   }
