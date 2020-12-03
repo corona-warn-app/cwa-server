@@ -59,6 +59,7 @@ services:
       max-number-of-failed-operations: 5
       max-number-of-s3-threads: 2
       force-update-keyfiles: ${FORCE_UPDATE_KEYFILES:false}
+      hour-file-retention-days: 2
     statistics:
       trend-calculation-threshold: 0.05
       statistic-local-path: stats/statistic_data.json
