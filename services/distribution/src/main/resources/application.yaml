@@ -126,10 +126,6 @@ services:
         max-exposure-detections-per-interval: ${ANDROID_EXPOSURE_DETECTION_MAX_ED_PER_INTERVAL:6}
         overall-timeout-in-seconds: ${ANDROID_EXPOSURE_DETECTION_OVERALL_TIMEOUT_IN_SECONDS:900}
 
-remote-file-client:
-  base-url: 'https://obs.eu-de.otc.t-systems.com/obs-cwa-public-dev'
-
-
 spring:
   main:
     web-application-type: NONE
