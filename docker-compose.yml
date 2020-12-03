@@ -15,7 +15,7 @@ services:
     ports:
       - "8010:8080"
     environment:
-      SPRING_PROFILES_ACTIVE: debug,disable-ssl-server,disable-certificate-authentication,disable-ssl-client-postgres,disable-ssl-client-verification,disable-ssl-client-verification-verify-hostname
+      SPRING_PROFILES_ACTIVE: debug,disable-ssl-server,disable-ssl-client-postgres,disable-ssl-client-verification,disable-ssl-client-verification-verify-hostname,disable-ssl-efgs-verification,disable-certificate-authentication
       POSTGRESQL_SERVICE_PORT: '5432'
       POSTGRESQL_SERVICE_HOST: postgres
       POSTGRESQL_DATABASE: ${POSTGRES_DB}
@@ -35,7 +35,7 @@ services:
       - "8000:8080"
       - "8006:8081"
     environment:
-      SPRING_PROFILES_ACTIVE: debug,disable-ssl-server,disable-ssl-client-postgres,disable-ssl-client-verification,disable-ssl-client-verification-verify-hostname
+      SPRING_PROFILES_ACTIVE: debug,disable-ssl-server,disable-ssl-client-postgres,disable-ssl-client-verification,disable-ssl-client-verification-verify-hostname,disable-ssl-efgs-verification
       POSTGRESQL_SERVICE_PORT: '5432'
       POSTGRESQL_SERVICE_HOST: postgres
       POSTGRESQL_DATABASE: ${POSTGRES_DB}
@@ -85,7 +85,7 @@ services:
     ports:
       - "8011:8080"
     environment:
-      SPRING_PROFILES_ACTIVE: debug,disable-ssl-server,disable-ssl-client-postgres,disable-ssl-client-verification,disable-ssl-client-verification-verify-hostname
+      SPRING_PROFILES_ACTIVE: debug,disable-ssl-server,disable-ssl-client-postgres,disable-ssl-client-verification,disable-ssl-client-verification-verify-hostname,disable-ssl-efgs-verification
       POSTGRESQL_SERVICE_PORT: '5432'
       POSTGRESQL_SERVICE_HOST: postgres
       POSTGRESQL_DATABASE: ${POSTGRES_DB}
@@ -103,7 +103,7 @@ services:
     ports:
       - "8012:8080"
     environment:
-      SPRING_PROFILES_ACTIVE: disable-ssl-client-postgres
+      SPRING_PROFILES_ACTIVE: disable-ssl-client-postgres,disable-ssl-efgs-verification
       POSTGRESQL_SERVICE_PORT: '5432'
       POSTGRESQL_SERVICE_HOST: postgres
       POSTGRESQL_DATABASE: ${POSTGRES_DB}
@@ -111,6 +111,10 @@ services:
       POSTGRESQL_USER_CALLBACK: ${POSTGRES_CALLBACK_USER}
       POSTGRESQL_PASSWORD_FLYWAY: ${POSTGRES_FLYWAY_PASSWORD}
       POSTGRESQL_USER_FLYWAY: ${POSTGRES_FLYWAY_USER}
+      VAULT_EFGS_BATCHIGNING_SECRET: ${SECRET_PRIVATE}
+      VAULT_EFGS_BATCHIGNING_CERTIFICATE: file:/secrets/efgs_signing_cert.pem
+    volumes:
+      - ./docker-compose-test-secrets:/secrets
   postgres:
     image: postgres:11.8
     restart: always
@@ -162,10 +166,15 @@ services:
     depends_on:
       - objectstore
   verification-fake:
-    image: lilienthal/cwa-verification-fake:0.0.3
+    image: roesslerj/cwa-verification-fake:0.0.4
     restart: always
     ports:
       - "8004:8004"
+  efgs-fake:
+    image: roesslerj/cwa-efgs-fake:0.0.2
+    restart: always
+    ports:
+      - "8014:8014"
 volumes:
   postgres_volume:
   pgadmin_volume:
