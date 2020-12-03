@@ -87,7 +87,7 @@ management:
     web:
       exposure:
         include: 'health, prometheus'
-  metrics:\
+  metrics:
     export:
       prometheus:
         enabled: true

@@ -16,6 +16,8 @@ import software.amazon.awssdk.services.s3.S3Client;
 @EnableRetry
 public class StatsS3ReadingConfig {
 
+  public static final String REGION_1 = "region-1";
+
   @Bean(name = "stats-s3")
   public ObjectStoreClient createObjectStoreClient(DistributionServiceConfig distributionServiceConfig) {
     return createClient(distributionServiceConfig.getStatistics());
@@ -27,7 +29,7 @@ public class StatsS3ReadingConfig {
     String endpoint = removeTrailingSlash(s3stats.getEndpoint());
 
     return new S3ClientWrapper(S3Client.builder()
-        .region(Region.of("region-1"))
+        .region(Region.of(REGION_1))
         .endpointOverride(URI.create(endpoint))
         .credentialsProvider(credentialsProvider)
         .build());

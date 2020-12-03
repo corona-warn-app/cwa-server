@@ -9,7 +9,7 @@ import org.springframework.stereotype.Component;
 
 
 /**
- * Reads configuration parameters from the respective files in the class path and builds a {@link
+ * Reads configuration parameters from the respective files in the class path and build a {@link
  * StatisticsStructureProvider} with them.
  */
 @Component

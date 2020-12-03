@@ -11,12 +11,15 @@ import org.springframework.stereotype.Component;
 @Profile("!local-json-stats")
 public class RemoteStatisticJsonFileLoader implements JsonFileLoader {
 
-  @Autowired
-  @Qualifier("stats-s3")
   ObjectStoreClient s3Stats;
 
-  @Autowired
   DistributionServiceConfig config;
+
+
+  RemoteStatisticJsonFileLoader(@Qualifier("stats-s3") ObjectStoreClient s3Stats, DistributionServiceConfig config) {
+    this.s3Stats = s3Stats;
+    this.config = config;
+  }
 
   /**
    * Connects to remote storage to load file.
