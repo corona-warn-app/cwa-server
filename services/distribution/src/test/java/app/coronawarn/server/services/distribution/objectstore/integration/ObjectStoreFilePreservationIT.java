@@ -42,7 +42,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration(classes = Application.class, initializers = ConfigFileApplicationContextInitializer.class)
 @DirtiesContext
-@ActiveProfiles("integration-test")
+@ActiveProfiles({"integration-test", "no-hour-retention"})
 @Tag("s3-integration")
 class ObjectStoreFilePreservationIT  extends BaseS3IntegrationTest{
 
@@ -156,6 +156,7 @@ class ObjectStoreFilePreservationIT  extends BaseS3IntegrationTest{
   private void triggerRetentionPolicy(LocalDate fromDate) {
     DistributionServiceConfig mockDistributionConfig = new DistributionServiceConfig();
     mockDistributionConfig.setRetentionDays(numberOfDaysSince(fromDate));
+    mockDistributionConfig.setObjectStore(distributionServiceConfig.getObjectStore());
     new RetentionPolicy(diagnosisKeyService, applicationContext, mockDistributionConfig,
         s3RetentionPolicy).run(null);
   }

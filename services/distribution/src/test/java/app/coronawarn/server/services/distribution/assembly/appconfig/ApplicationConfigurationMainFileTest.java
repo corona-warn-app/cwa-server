@@ -20,7 +20,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration(classes = ApplicationConfigurationPublicationConfig.class,
     initializers = ConfigFileApplicationContextInitializer.class)
-class ApplicationConfigurationMasterFileTest {
+class ApplicationConfigurationMainFileTest {
 
   private static final ValidationResult SUCCESS = new ValidationResult();
 
@@ -28,7 +28,7 @@ class ApplicationConfigurationMasterFileTest {
   private ApplicationConfiguration applicationConfiguration;
 
   @Test
-  void testMasterFile() {
+  void testMainFile() {
     var validator = new ApplicationConfigurationValidator(applicationConfiguration);
     ValidationResult result = validator.validate();
 
