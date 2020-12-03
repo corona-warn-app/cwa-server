@@ -18,6 +18,7 @@ import app.coronawarn.server.services.distribution.assembly.structure.directory.
 import app.coronawarn.server.services.distribution.assembly.structure.directory.IndexDirectoryOnDisk;
 import app.coronawarn.server.services.distribution.assembly.structure.file.File;
 import app.coronawarn.server.services.distribution.assembly.structure.util.ImmutableStack;
+import app.coronawarn.server.services.distribution.assembly.structure.util.TimeUtils;
 import app.coronawarn.server.services.distribution.config.DistributionServiceConfig;
 import java.time.LocalDate;
 import java.time.ZoneOffset;
@@ -32,6 +33,7 @@ public class DiagnosisKeysDateDirectory extends IndexDirectoryOnDisk<LocalDate> 
   private final DiagnosisKeyBundler diagnosisKeyBundler;
   private final CryptoProvider cryptoProvider;
   private final DistributionServiceConfig distributionServiceConfig;
+  private final LocalDate cutOffDate;
 
   /**
    * Constructs a {@link DiagnosisKeysDateDirectory} instance associated with the specified {@link DiagnosisKey}
@@ -50,15 +52,25 @@ public class DiagnosisKeysDateDirectory extends IndexDirectoryOnDisk<LocalDate> 
     this.cryptoProvider = cryptoProvider;
     this.diagnosisKeyBundler = diagnosisKeyBundler;
     this.distributionServiceConfig = distributionServiceConfig;
+
+    int hourRetentionDays = distributionServiceConfig.getObjectStore().getHourFileRetentionDays();
+    this.cutOffDate = TimeUtils.getUtcDate().minusDays(hourRetentionDays);
+  }
+
+  private Optional<Writable<WritableOnDisk>> addHourDirectoryWritable(ImmutableStack<Object> indices) {
+    LocalDate currentDate = (LocalDate) indices.peek();
+    if (currentDate.isAfter(cutOffDate)) {
+      DiagnosisKeysHourDirectory hourDirectory =
+          new DiagnosisKeysHourDirectory(diagnosisKeyBundler, cryptoProvider, distributionServiceConfig);
+      return Optional.of(decorateHourDirectory(hourDirectory));
+    } else {
+      return Optional.empty();
+    }
   }
 
   @Override
   public void prepare(ImmutableStack<Object> indices) {
-    this.addWritableToAll(ignoredValue -> {
-      DiagnosisKeysHourDirectory hourDirectory =
-          new DiagnosisKeysHourDirectory(diagnosisKeyBundler, cryptoProvider, distributionServiceConfig);
-      return Optional.of(decorateHourDirectory(hourDirectory));
-    });
+    this.addWritableToAll(this::addHourDirectoryWritable);
     this.addWritableToAll(this::indicesToDateDirectoryArchive);
     super.prepare(indices);
   }
