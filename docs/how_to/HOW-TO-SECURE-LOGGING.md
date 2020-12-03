@@ -7,8 +7,8 @@ Common cases where user-provided input is used is for logging and for data proce
 
 The cwa-server uses log4j as its standard logger. In its current configuration, it encodes user-provided input by default.
 Therefore, using this logger is strongly recommended.
-Furthermore, proper exception handling is important. It has to be made sure, that unvalidated user-provided input is never part of an exception message.
-This can be achieved by logging all occurring exceptions with log4j.
+Furthermore, the proper handling of exceptions and exception messages is important. Exception messages should only be logged with log4j.
+
 As an example:
 `log4j.error("Federation batch processing for date {} and batchTag {} failed. Status set to {}.",
 date, batchTag, errorStatus.name(), exception.getMessage());`.
