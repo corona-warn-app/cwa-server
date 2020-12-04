@@ -18,10 +18,9 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 @EnableConfigurationProperties(value = {DistributionServiceConfig.class, TransmissionRiskLevelEncoding.class})
 @ExtendWith(SpringExtension.class)
-@ContextConfiguration(
-    classes = {CryptoProvider.class, DistributionServiceConfig.class},
+@ContextConfiguration(classes = {CryptoProvider.class, DistributionServiceConfig.class},
     initializers = ConfigFileApplicationContextInitializer.class)
-public class StatisticsStructureProviderTest {
+class StatisticsStructureProviderTest {
 
   @Autowired
   CryptoProvider cryptoProvider;
