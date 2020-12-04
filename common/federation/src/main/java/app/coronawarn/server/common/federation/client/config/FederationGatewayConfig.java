@@ -47,6 +47,24 @@ public class FederationGatewayConfig {
     private String certificateType;
     private String certificateDn;
     private String certificateSha;
+    private File trustStore;
+    private String trustStorePassword;
+
+    public File getTrustStore() {
+      return trustStore;
+    }
+
+    public void setTrustStore(File trustStore) {
+      this.trustStore = trustStore;
+    }
+
+    public String getTrustStorePassword() {
+      return trustStorePassword;
+    }
+
+    public void setTrustStorePassword(String trustStorePassword) {
+      this.trustStorePassword = trustStorePassword;
+    }
 
     public String getCertificateDn() {
       return certificateDn;

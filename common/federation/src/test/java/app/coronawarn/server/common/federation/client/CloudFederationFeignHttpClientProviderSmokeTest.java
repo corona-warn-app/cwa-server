@@ -17,12 +17,15 @@ class CloudFederationFeignHttpClientProviderSmokeTest {
   @Test
   void testCanLoadKeystore() {
     Ssl ssl = new Ssl();
+    HostnameVerifierProvider hostnameVerifierProvider = new DefaultHostnameVerifierProvider();
     ssl.setKeyStore(new File("../../docker-compose-test-secrets/ssl.p12"));
     ssl.setKeyStorePass("");
+    ssl.setTrustStore(new File("../../docker-compose-test-secrets/ssl.p12"));
+    ssl.setTrustStorePassword("");
     FederationGatewayConfig config = new FederationGatewayConfig();
     config.setConnectionPoolSize(1);
     config.setSsl(ssl);
-    CloudFederationFeignHttpClientProvider cut = new CloudFederationFeignHttpClientProvider(config);
+    CloudFederationFeignHttpClientProvider cut = new CloudFederationFeignHttpClientProvider(config, hostnameVerifierProvider);
     assertThat(cut.createFeignClient()).isNotNull();
   }
 
