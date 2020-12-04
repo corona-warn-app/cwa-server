@@ -1,0 +1,6 @@
+federation-gateway:
+  base-url: ${FEDERATION_GATEWAY_BASE_URL:http://localhost:8014}
+services:
+  upload:
+    # The minimum number of keys that must be present to create an upload batch
+    min-batch-key-count: ${MIN_BATCH_KEYS:10}

@@ -31,6 +31,7 @@
             <list>
               <option value="spring-boot:run" />
               <option value="-Dspring-boot.run.fork=false" />
+              <option value="-Dserver.port=8000" />
             </list>
           </option>
           <option name="pomFileName" />

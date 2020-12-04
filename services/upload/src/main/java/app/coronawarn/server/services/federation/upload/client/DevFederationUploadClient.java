@@ -1,5 +1,3 @@
-
-
 package app.coronawarn.server.services.federation.upload.client;
 
 import app.coronawarn.server.common.federation.client.FederationGatewayClient;
@@ -12,15 +10,16 @@ import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 
 @Component
-@Profile("!fake-client && !e2e")
-public class ProdFederationUploadClient implements FederationUploadClient {
+@Profile("e2e")
+public class DevFederationUploadClient implements FederationUploadClient {
+
 
   private static final Logger logger = LoggerFactory
       .getLogger(ProdFederationUploadClient.class);
 
   private final FederationGatewayClient federationGatewayClient;
 
-  public ProdFederationUploadClient(FederationGatewayClient federationGatewayClient) {
+  public DevFederationUploadClient(FederationGatewayClient federationGatewayClient) {
     this.federationGatewayClient = federationGatewayClient;
   }
 
