@@ -1,9 +1,6 @@
 package app.coronawarn.server.services.distribution.statistics;
 
-import static app.coronawarn.server.services.distribution.statistics.keyfigurecard.KeyFigureCardSequenceConstants.FOURTH_CARD_ID;
-import static app.coronawarn.server.services.distribution.statistics.keyfigurecard.KeyFigureCardSequenceConstants.INCIDENCE_CARD_ID;
-import static app.coronawarn.server.services.distribution.statistics.keyfigurecard.KeyFigureCardSequenceConstants.INFECTIONS_CARD_ID;
-import static app.coronawarn.server.services.distribution.statistics.keyfigurecard.KeyFigureCardSequenceConstants.KEY_SUBMISSION_CARD_ID;
+import static app.coronawarn.server.services.distribution.statistics.keyfigurecard.KeyFigureCardSequenceConstants.*;
 
 import app.coronawarn.server.common.protocols.internal.stats.KeyFigureCard;
 import app.coronawarn.server.common.protocols.internal.stats.Statistics;
@@ -21,7 +18,7 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
+import java.util.Optional;
 import java.util.stream.Collectors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -92,12 +89,12 @@ public class StatisticsToProtobufMapping {
 
   @SuppressWarnings("checkstyle:Indentation")
   private List<KeyFigureCard> buildAllKeyFigureCards(List<StatisticsJsonStringObject> jsonStringObjects) {
-    Map<Integer, KeyFigureCard> figureCardMap = new HashMap<>();
+    Map<Integer, Optional<KeyFigureCard>> figureCardMap = new HashMap<>();
 
-    figureCardMap.put(INFECTIONS_CARD_ID, null);
-    figureCardMap.put(INCIDENCE_CARD_ID, null);
-    figureCardMap.put(KEY_SUBMISSION_CARD_ID, null);
-    figureCardMap.put(FOURTH_CARD_ID, null);
+    figureCardMap.put(INFECTIONS_CARD_ID, Optional.empty());
+    figureCardMap.put(INCIDENCE_CARD_ID, Optional.empty());
+    figureCardMap.put(KEY_SUBMISSION_CARD_ID, Optional.empty());
+    figureCardMap.put(FOURTH_CARD_ID, Optional.empty());
 
     List<StatisticsJsonStringObject> orderedList = jsonStringObjects.stream()
         .sorted(Comparator.comparing(a -> effectiveDateStringToLocalDate(a.getEffectiveDate())))
@@ -106,27 +103,28 @@ public class StatisticsToProtobufMapping {
 
     for (var stat : orderedList) {
       getAllCardIdSequence().forEach(id -> {
-        if (figureCardMap.get(id) == null) {
+        if (figureCardMap.get(id).isEmpty()) {
           KeyFigureCard card;
           try {
             card = keyFigureCardFactory.createKeyFigureCard(stat, id);
-            figureCardMap.put(id, card);
+            figureCardMap.put(id, Optional.of(card));
           } catch (MissingPropertyException ex) {
             logger.warn(ex.getMessage());
           }
         }
       });
 
-      if (figureCardMap.values().stream().allMatch(Objects::nonNull)) {
+      if (figureCardMap.values().stream().allMatch(Optional::isPresent)) {
         break;
       }
     }
 
+    var emptyCard = keyFigureCardFactory.createKeyFigureCard(jsonStringObjects.get(0), EMPTY_CARD);
     return List.of(
-        figureCardMap.get(INFECTIONS_CARD_ID),
-        figureCardMap.get(INCIDENCE_CARD_ID),
-        figureCardMap.get(KEY_SUBMISSION_CARD_ID),
-        figureCardMap.get(FOURTH_CARD_ID)
+        figureCardMap.get(INFECTIONS_CARD_ID).orElse(emptyCard),
+        figureCardMap.get(INCIDENCE_CARD_ID).orElse(emptyCard),
+        figureCardMap.get(KEY_SUBMISSION_CARD_ID).orElse(emptyCard),
+        figureCardMap.get(FOURTH_CARD_ID).orElse(emptyCard)
     );
   }
 }

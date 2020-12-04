@@ -55,7 +55,7 @@ class StatisticsJsonToProtobufTest {
     List<StatisticsJsonStringObject> statsDTO = SerializationUtils.deserializeJson(content, typeFactory -> typeFactory
         .constructCollectionType(List.class, StatisticsJsonStringObject.class));
 
-    assertThat(statisticsObjectContainsFields(statsDTO, "2020-11-05T12:34:45,123")).isTrue();
+    assertThat(statisticsObjectContainsFields(statsDTO, "2020-12-04T11:13:22,588")).isTrue();
   }
 
   private boolean statisticsObjectContainsFields(List<StatisticsJsonStringObject> statsDTO, String timestamp) {
@@ -105,11 +105,11 @@ class StatisticsJsonToProtobufTest {
         .constructCollectionType(List.class, StatisticsJsonStringObject.class));
     statsDTO = new ArrayList<>(statisticsJsonValidator.validate(statsDTO));
 
-    assertThat(statisticsObjectContainsFields(statsDTO, "2020-11-05T12:34:45,123")).isTrue();
+    assertThat(statisticsObjectContainsFields(statsDTO, "2020-12-04T11:13:22,588")).isTrue();
     //The json object that has the effective_date set on null should not be anymore present after the validation
-    assertThat(statisticsObjectContainsFields(statsDTO, "2020-11-05T00:00:00,000")).isFalse();
+    assertThat(statisticsObjectContainsFields(statsDTO, "2020-12-04T00:00:00,000")).isFalse();
     //The json object that has the effective_date set on invalid format date should not be anymore present after the validation
-    assertThat(statisticsObjectContainsFields(statsDTO, "2020-11-05T00:01:00,000")).isFalse();
+    assertThat(statisticsObjectContainsFields(statsDTO, "2020-12-05T00:01:00,000")).isFalse();
   }
 
   private KeyFigureCard getKeyFigureCardForId(Statistics stats, Integer id) {

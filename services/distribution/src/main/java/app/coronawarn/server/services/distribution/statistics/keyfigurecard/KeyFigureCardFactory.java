@@ -1,5 +1,6 @@
 package app.coronawarn.server.services.distribution.statistics.keyfigurecard;
 
+import static app.coronawarn.server.services.distribution.statistics.keyfigurecard.KeyFigureCardSequenceConstants.EMPTY_CARD;
 import static app.coronawarn.server.services.distribution.statistics.keyfigurecard.KeyFigureCardSequenceConstants.FOURTH_CARD_ID;
 import static app.coronawarn.server.services.distribution.statistics.keyfigurecard.KeyFigureCardSequenceConstants.INCIDENCE_CARD_ID;
 import static app.coronawarn.server.services.distribution.statistics.keyfigurecard.KeyFigureCardSequenceConstants.INFECTIONS_CARD_ID;
@@ -33,6 +34,7 @@ public class KeyFigureCardFactory {
       case KEY_SUBMISSION_CARD_ID:
         return new KeySubmissionCardFactory(this.valueTrendCalculator);
       case FOURTH_CARD_ID:
+      case EMPTY_CARD:
       default:
         return new EmptyCardFactory(this.valueTrendCalculator);
     }

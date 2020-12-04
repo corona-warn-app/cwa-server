@@ -13,4 +13,6 @@ public class KeyFigureCardSequenceConstants {
 
   public static final int FOURTH_CARD_ID = 4;
 
+  public static final int EMPTY_CARD = -1;
+
 }
