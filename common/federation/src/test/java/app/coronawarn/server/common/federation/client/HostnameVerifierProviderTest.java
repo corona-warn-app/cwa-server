@@ -10,7 +10,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 class HostnameVerifierProviderTest {
 
-  @ActiveProfiles("!disable-ssl-client-federation-verify-hostname")
+  @ActiveProfiles("!disable-ssl-efgs-verification")
   @Nested
   class DefaultHostnameVerifierProviderTest {
 
@@ -22,7 +22,7 @@ class HostnameVerifierProviderTest {
     }
   }
 
-  @ActiveProfiles("disable-ssl-client-federation-verify-hostname")
+  @ActiveProfiles("disable-ssl-efgs-verification")
   @Nested
   class NoopHostnameVerifierProviderTest {
 
