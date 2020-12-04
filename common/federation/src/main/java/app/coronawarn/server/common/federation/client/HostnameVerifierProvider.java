@@ -1,5 +1,3 @@
-
-
 package app.coronawarn.server.common.federation.client;
 
 import javax.net.ssl.HostnameVerifier;
