@@ -1,7 +1,10 @@
 package app.coronawarn.server.services.distribution.statistics;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+@JsonInclude(Include.NON_NULL)
 public class StatisticsJsonStringObject {
 
   @JsonProperty("update_timestamp")
@@ -14,19 +17,19 @@ public class StatisticsJsonStringObject {
   private Integer appDownloadsCumulated;
   @JsonProperty("app_downloads_7days_sum")
   private Integer appDownloads7daysSum;
-  @JsonProperty("app_downloads_7days_growthrate")
+  @JsonProperty("app_downloads_7days_avg_growthrate")
   private Integer appDownloads7daysGrowthrate;
-  @JsonProperty("app_downloads_7days_trend_5percent")
+  @JsonProperty("app_downloads_7days_avg_trend_5percent")
   private Integer appDownloads7daysTrend5percent;
-  @JsonProperty("persons_who_shared_keys_daily ")
+  @JsonProperty("persons_who_shared_keys_daily")
   private Integer personsWhoSharedKeysDaily;
   @JsonProperty("persons_who_shared_keys_cumulated")
   private Integer personsWhoSharedKeysCumulated;
   @JsonProperty("persons_who_shared_keys_7days_sum")
   private Integer personsWhoSharedKeys7daysSum;
-  @JsonProperty("persons_who_shared_keys_7days_growthrate")
+  @JsonProperty("persons_who_shared_keys_7days_avg_growthrate")
   private Double personsWhoSharedKeys7daysGrowthrate;
-  @JsonProperty("persons_who_shared_keys_7days_trend_5percent")
+  @JsonProperty("persons_who_shared_keys_7days_avg_trend_5percent")
   private Integer personsWhoSharedKeys7daysTrend5percent;
   @JsonProperty("tests_total_daily")
   private Integer testsTotalDaily;
@@ -38,22 +41,34 @@ public class StatisticsJsonStringObject {
   private Integer labsRegisteredAbsolut;
   @JsonProperty("labs_connected_cumulated")
   private Integer labsConnectedAbsolut;
-  @JsonProperty("seven_day_incidence_1st_reported")
+  @JsonProperty("seven_day_incidence_1st_reported_daily")
   private Double sevenDayIncidence;
-  @JsonProperty("seven_day_incidence_1st_reported_growthrate")
+  @JsonProperty("seven_day_incidence_1st_reported_avg_growthrate")
   private Double sevenDayIncidenceGrowthrate;
-  @JsonProperty("seven_day_incidence_1st_reported_trend_5percent")
+  @JsonProperty("seven_day_incidence_1st_reported_avg_trend_5percent")
   private Integer sevenDayIncidenceTrend5percent;
-  @JsonProperty("infections_published_daily")
+  @JsonProperty("infections_effective_daily")
   private Integer infectionsReportedDaily;
-  @JsonProperty("infections_reported_7days_avg")
+  @JsonProperty("infections_effective_7days_avg")
   private Integer infectionsReported7daysAvg;
-  @JsonProperty("infections_reported_7days_growthrate")
+  @JsonProperty("infections_effective_7days_avg_growthrate")
   private Double infectionsReported7daysGrowthrate;
-  @JsonProperty("infections_reported_7days_trend_5percent")
+  @JsonProperty("infections_effective_7days_avg_trend_5percent")
   private Integer infectionsReported7daysTrend5percent;
-  @JsonProperty("infections_published_cumulated")
+  @JsonProperty("infections_effective_cumulated")
   private Integer infectionsReportedCumulated;
+  @JsonProperty("seven_day_r_value_published_daily")
+  private Double sevenDayRvaluepublishedDaily;
+  @JsonProperty("seven_day_r_value_published_growthrate")
+  private Double sevenDayRvaluepublishedGrowthrate;
+  @JsonProperty("seven_day_r_value_published_trend_5percent")
+  private Integer sevenDayRvaluePublishedTrend5percent;
+  @JsonProperty("seven_day_r_value_1st_reported_daily")
+  private Double sevenDayRvalue1stReportedDaily;
+  @JsonProperty("seven_day_r_value_1st_reported_growthrate")
+  private Double sevenDayRvalue1stReportedGrowthrate;
+  @JsonProperty("seven_day_r_value_1st_reported_trend_5percent")
+  private Integer sevenDayRvalue1stReportedTrend5percent;
 
   public String getUpdateTimestamp() {
     return updateTimestamp;
@@ -255,5 +270,53 @@ public class StatisticsJsonStringObject {
 
   public void setInfectionsReportedCumulated(Integer infectionsReportedCumulated) {
     this.infectionsReportedCumulated = infectionsReportedCumulated;
+  }
+
+  public Double getSevenDayRvaluepublishedDaily() {
+    return sevenDayRvaluepublishedDaily;
+  }
+
+  public void setSevenDayRvaluepublishedDaily(Double sevenDayRvaluepublishedDaily) {
+    this.sevenDayRvaluepublishedDaily = sevenDayRvaluepublishedDaily;
+  }
+
+  public Double getSevenDayRvaluepublishedGrowthrate() {
+    return sevenDayRvaluepublishedGrowthrate;
+  }
+
+  public void setSevenDayRvaluepublishedGrowthrate(Double sevenDayRvaluepublishedGrowthrate) {
+    this.sevenDayRvaluepublishedGrowthrate = sevenDayRvaluepublishedGrowthrate;
+  }
+
+  public Integer getSevenDayRvaluePublishedTrend5percent() {
+    return sevenDayRvaluePublishedTrend5percent;
+  }
+
+  public void setSevenDayRvaluePublishedTrend5percent(Integer sevenDayRvaluePublishedTrend5percent) {
+    this.sevenDayRvaluePublishedTrend5percent = sevenDayRvaluePublishedTrend5percent;
+  }
+
+  public Double getSevenDayRvalue1stReportedDaily() {
+    return sevenDayRvalue1stReportedDaily;
+  }
+
+  public void setSevenDayRvalue1stReportedDaily(Double sevenDayRvalue1stReportedDaily) {
+    this.sevenDayRvalue1stReportedDaily = sevenDayRvalue1stReportedDaily;
+  }
+
+  public Double getSevenDayRvalue1stReportedGrowthrate() {
+    return sevenDayRvalue1stReportedGrowthrate;
+  }
+
+  public void setSevenDayRvalue1stReportedGrowthrate(Double sevenDayRvalue1stReportedGrowthrate) {
+    this.sevenDayRvalue1stReportedGrowthrate = sevenDayRvalue1stReportedGrowthrate;
+  }
+
+  public Integer getSevenDayRvalue1stReportedTrend5percent() {
+    return sevenDayRvalue1stReportedTrend5percent;
+  }
+
+  public void setSevenDayRvalue1stReportedTrend5percent(Integer sevenDayRvalue1stReportedTrend5percent) {
+    this.sevenDayRvalue1stReportedTrend5percent = sevenDayRvalue1stReportedTrend5percent;
   }
 }
