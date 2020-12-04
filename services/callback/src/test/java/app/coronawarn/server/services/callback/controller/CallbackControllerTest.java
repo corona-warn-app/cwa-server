@@ -1,5 +1,3 @@
-
-
 package app.coronawarn.server.services.callback.controller;
 
 import static org.assertj.core.api.Assertions.assertThat;

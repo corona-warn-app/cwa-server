@@ -1,5 +1,3 @@
-
-
 package app.coronawarn.server.services.callback.config;
 
 import static java.util.Collections.emptyList;
