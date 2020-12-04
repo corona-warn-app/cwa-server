@@ -16,7 +16,7 @@ import org.springframework.security.web.firewall.StrictHttpFirewall;
 
 @Configuration
 @EnableWebSecurity
-@Profile("disable-certificate-authentication")
+@Profile("disable-callback-cert-auth")
 public class DevelopmentSecurityConfig extends WebSecurityConfigurerAdapter {
 
   private static final String CALLBACK_ROUTE =

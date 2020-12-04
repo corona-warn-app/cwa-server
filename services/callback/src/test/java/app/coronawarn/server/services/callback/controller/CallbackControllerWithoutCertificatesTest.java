@@ -30,7 +30,7 @@ class CallbackControllerWithoutCertificatesTest {
   FederationBatchInfoService spyFederationClient;
 
   @Test
-  void noCertificateShouldBeForbidden() throws Exception {
+  void noCertificateShouldBeForbidden() {
     String batchTag = UUID.randomUUID().toString().substring(0, 11);
     LocalDate date = LocalDate.now();
 
