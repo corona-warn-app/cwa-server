@@ -45,7 +45,6 @@ public class CloudFederationFeignHttpClientProvider implements FederationFeignHt
     this.hostnameVerifierProvider = hostnameVerifierProvider;
     this.trustStore = ssl.getTrustStore();
     this.trustStorePassword = ssl.getTrustStorePassword();
-
   }
 
   /**
