@@ -28,8 +28,8 @@ public class CloudFederationFeignHttpClientProvider implements FederationFeignHt
   private final File keyStore;
   private final String keyStorePassword;
   private final HostnameVerifierProvider hostnameVerifierProvider;
-  private final File keyTruststore;
-  private final String keyTruststorePassword;
+  private final File trustStore;
+  private final String trustStorePassword;
 
   /**
    * Construct Provider.
@@ -43,8 +43,8 @@ public class CloudFederationFeignHttpClientProvider implements FederationFeignHt
     this.keyStore = ssl.getKeyStore();
     this.keyStorePassword = ssl.getKeyStorePass();
     this.hostnameVerifierProvider = hostnameVerifierProvider;
-    this.keyTruststore = ssl.getTrustStore();
-    this.keyTruststorePassword = ssl.getTrustStorePassword();
+    this.trustStore = ssl.getTrustStore();
+    this.trustStorePassword = ssl.getTrustStorePassword();
 
   }
 
@@ -75,7 +75,7 @@ public class CloudFederationFeignHttpClientProvider implements FederationFeignHt
       return SSLContextBuilder
           .create()
           .loadKeyMaterial(keyStorePath, keyStorePass.toCharArray(), keyStorePass.toCharArray())
-          .loadTrustMaterial(this.keyTruststore, this.keyTruststorePassword.toCharArray())
+          .loadTrustMaterial(this.trustStore, this.trustStorePassword.toCharArray())
           .build();
     } catch (Exception e) {
       throw new RuntimeException(e);

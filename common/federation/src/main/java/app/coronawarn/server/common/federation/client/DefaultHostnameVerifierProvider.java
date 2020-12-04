@@ -8,7 +8,7 @@ import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 
 @Component
-@Profile("!disable-ssl-client-federation-verify-hostname")
+@Profile("!disable-ssl-efgs-verification")
 public class DefaultHostnameVerifierProvider implements HostnameVerifierProvider {
 
   @Override
