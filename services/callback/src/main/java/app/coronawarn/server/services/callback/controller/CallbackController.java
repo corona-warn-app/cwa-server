@@ -1,5 +1,3 @@
-
-
 package app.coronawarn.server.services.callback.controller;
 
 import app.coronawarn.server.common.persistence.domain.FederationBatchInfo;

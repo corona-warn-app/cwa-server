@@ -1,5 +1,3 @@
-
-
 package app.coronawarn.server.services.callback.config;
 
 import static java.util.Collections.emptyList;
@@ -24,7 +22,7 @@ import org.springframework.security.web.firewall.StrictHttpFirewall;
 @Configuration
 @EnableWebSecurity
 @EnableGlobalMethodSecurity(prePostEnabled = true)
-@Profile("!disable-certificate-authentication")
+@Profile("!disable-callback-cert-auth")
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
   private static final String CALLBACK_ROUTE =

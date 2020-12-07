@@ -41,7 +41,7 @@ feign:
       default:
         connect-timeout: 500
         read-timeout: 500
-        
+
 server:
   ssl:
     key-password: 123456
