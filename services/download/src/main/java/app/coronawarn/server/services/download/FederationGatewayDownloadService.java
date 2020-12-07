@@ -7,6 +7,7 @@ import static java.time.format.DateTimeFormatter.ISO_LOCAL_DATE;
 import app.coronawarn.server.common.federation.client.FederationGatewayClient;
 import app.coronawarn.server.common.protocols.external.exposurenotification.DiagnosisKeyBatch;
 import feign.FeignException;
+import java.io.IOException;
 import java.time.LocalDate;
 import java.util.Optional;
 import org.slf4j.Logger;
@@ -53,8 +54,10 @@ public class FederationGatewayDownloadService {
           "Downloading batch for date " + date.format(ISO_LOCAL_DATE) + " failed due to invalid client certificate.");
     } catch (FeignException feignException) {
       logger.error("Downloading first batch for date {} failed.", date);
-      throw new BatchDownloadException("Downloading batch for date " + date.format(ISO_LOCAL_DATE) + " failed.",
-          feignException);
+      throw new BatchDownloadException(null, date, feignException);
+    } catch (IllegalResponseException exception) {
+      logger.error("Downloading batch for date {} failed.", date);
+      throw new BatchDownloadException(date, exception);
     }
   }
 
@@ -78,14 +81,17 @@ public class FederationGatewayDownloadService {
               + " failed due to invalid client certificate.");
     } catch (FeignException exception) {
       logger.error("Downloading batch for date {} and batchTag {} failed.", batchTag, dateString);
-      throw new BatchDownloadException("Downloading batch " + batchTag + " for date " + date + " failed.",
-          exception);
+      throw new BatchDownloadException(batchTag, date, exception);
+    } catch (IllegalResponseException exception) {
+      logger.error("Downloading batch for date {} and batchTag {} failed.", batchTag, dateString);
+      throw new BatchDownloadException(batchTag, date, exception);
     }
   }
 
-  private BatchDownloadResponse parseResponseEntity(ResponseEntity<DiagnosisKeyBatch> response) {
-    String batchTag = getHeader(response, HEADER_BATCH_TAG)
-        .orElseThrow(() -> new BatchDownloadException("Missing " + HEADER_BATCH_TAG + " header."));
+  private BatchDownloadResponse parseResponseEntity(ResponseEntity<DiagnosisKeyBatch> response) 
+      throws IllegalResponseException {
+    String batchTag = getHeader(response, HEADER_BATCH_TAG).orElseThrow(() -> 
+          new IllegalResponseException("Missing " + HEADER_BATCH_TAG + " header."));
     Optional<String> nextBatchTag = getHeader(response, HEADER_NEXT_BATCH_TAG);
     return new BatchDownloadResponse(batchTag, Optional.ofNullable(response.getBody()), nextBatchTag);
   }
@@ -95,5 +101,13 @@ public class FederationGatewayDownloadService {
     return (!EMPTY_HEADER.equals(headerString))
         ? Optional.ofNullable(headerString)
         : Optional.empty();
+  }
+  
+  static class IllegalResponseException extends IOException {
+    private static final long serialVersionUID = 3175572275651367015L;
+
+    IllegalResponseException(String message) {
+      super(message);
+    }
   }
 }
