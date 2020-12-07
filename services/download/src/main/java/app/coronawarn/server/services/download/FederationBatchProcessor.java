@@ -175,15 +175,18 @@ public class FederationBatchProcessor {
       batchInfoService.updateStatus(batchInfo, batchContainsInvalidKeys.get() ? PROCESSED_WITH_ERROR : PROCESSED);
       return response.getNextBatchTag();
     } catch (BatchDownloadException e) {
-      logger.error("Federation batch processing for date {} and batchTag {} failed. Status set to {}. Reason: {}.",
-          date, batchTag, errorStatus.name(), e.getMessage());
+      logger.error(
+          "Federation batch processing for date " + date + " and batchTag " + batchTag + " failed. Status set to "
+              + errorStatus.name() + ".",
+          e);
       batchInfoService.updateStatus(batchInfo, errorStatus);
       return Optional.empty();
     } catch (FatalFederationGatewayException e) {
       throw e;
     } catch (Exception e) {
-      logger.error("Federation batch processing for date {} and batchTag {} failed. Status set to {}.",
-          date, batchTag, errorStatus.name(), e);
+      logger.error(
+          "Federation batch processing for date " + date + " and batchTag " + batchTag + " failed. Status set to "
+              + errorStatus.name() + ".", e);
       batchInfoService.updateStatus(batchInfo, errorStatus);
       return Optional.empty();
     }
