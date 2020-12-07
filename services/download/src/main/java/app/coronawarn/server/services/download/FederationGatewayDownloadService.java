@@ -77,7 +77,8 @@ public class FederationGatewayDownloadService {
           "Downloading batch " + batchTag + " for date " + getDateAsString(date)
               + " failed due to invalid client certificate.");
     } catch (FeignException | IllegalResponseException exception) {
-      logger.error("Downloading batch for date {} and batchTag {} failed.", batchTag, dateString);
+      logger.error("Downloading batch for date {} and batchTag {} failed. Reason: {}", batchTag, dateString,
+          exception.getMessage());
       throw new BatchDownloadException(batchTag, date, exception);
     }
   }
