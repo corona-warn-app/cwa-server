@@ -6,12 +6,14 @@ import java.time.LocalDate;
 
 public class BatchDownloadException extends RuntimeException {
 
+  private static final long serialVersionUID = 1L;
+
   public BatchDownloadException(LocalDate date, Throwable cause) {
     this(null, date, cause);
   }
 
   public BatchDownloadException(String batchTag, LocalDate date, Throwable cause) {
     super("Downloading batch " + (batchTag != null ? batchTag : "") + " for date " + date.format(ISO_LOCAL_DATE)
-        + " failed. Reason: " + cause != null ? cause.getMessage() : "none given", cause);
+        + " failed. Reason: " + (cause != null ? cause.getMessage() : "none given"), cause);
   }
 }
