@@ -52,12 +52,9 @@ public class FederationGatewayDownloadService {
     } catch (FeignException.Forbidden feignException) {
       throw new FatalFederationGatewayException(
           "Downloading batch for date " + date.format(ISO_LOCAL_DATE) + " failed due to invalid client certificate.");
-    } catch (FeignException feignException) {
+    } catch (FeignException | IllegalResponseException feignException) {
       logger.error("Downloading first batch for date {} failed.", date);
-      throw new BatchDownloadException(null, date, feignException);
-    } catch (IllegalResponseException exception) {
-      logger.error("Downloading batch for date {} failed.", date);
-      throw new BatchDownloadException(date, exception);
+      throw new BatchDownloadException(date, feignException);
     }
   }
 
@@ -79,10 +76,7 @@ public class FederationGatewayDownloadService {
       throw new FatalFederationGatewayException(
           "Downloading batch " + batchTag + " for date " + date.format(ISO_LOCAL_DATE)
               + " failed due to invalid client certificate.");
-    } catch (FeignException exception) {
-      logger.error("Downloading batch for date {} and batchTag {} failed.", batchTag, dateString);
-      throw new BatchDownloadException(batchTag, date, exception);
-    } catch (IllegalResponseException exception) {
+    } catch (FeignException | IllegalResponseException exception) {
       logger.error("Downloading batch for date {} and batchTag {} failed.", batchTag, dateString);
       throw new BatchDownloadException(batchTag, date, exception);
     }
@@ -90,8 +84,8 @@ public class FederationGatewayDownloadService {
 
   private BatchDownloadResponse parseResponseEntity(ResponseEntity<DiagnosisKeyBatch> response) 
       throws IllegalResponseException {
-    String batchTag = getHeader(response, HEADER_BATCH_TAG).orElseThrow(() -> 
-          new IllegalResponseException("Missing " + HEADER_BATCH_TAG + " header."));
+    String batchTag = getHeader(response, HEADER_BATCH_TAG)
+        .orElseThrow(() -> new IllegalResponseException("Missing " + HEADER_BATCH_TAG + " header."));
     Optional<String> nextBatchTag = getHeader(response, HEADER_NEXT_BATCH_TAG);
     return new BatchDownloadResponse(batchTag, Optional.ofNullable(response.getBody()), nextBatchTag);
   }
