@@ -6,3 +6,9 @@ logging:
         web: DEBUG
     app:
       coronawarn: DEBUG
+
+feign:
+  client:
+    config:
+      default:
+        loggerLevel: FULL
