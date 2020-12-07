@@ -27,7 +27,7 @@ Profile                                           | Effect
 --------------------------------------------------|-------------
 `debug`                                           | Sets the log level to `DEBUG` and changes the `CONSOLE_LOG_PATTERN` used by Log4j 2.
 `cloud`                                           | Removes default values for the `spring.flyway`, `spring.datasource` and sets federation gateway contexts
-`disable-certificate-authentication`              | Disables SSL for the Callback endpoint.
+`disable-callback-cert-auth`                      | Disables certificate authentication for the Callback endpoint.
 `disable-ssl-client-postgres`                     | Disables SSL with a pinned certificate for the connection to the postgres.
 `disable-ssl-server`                              | Disables SSL for the Callback endpoint.
 
