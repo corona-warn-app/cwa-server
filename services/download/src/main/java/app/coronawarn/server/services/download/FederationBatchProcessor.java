@@ -178,7 +178,7 @@ public class FederationBatchProcessor {
       logger.error(
           "Federation batch processing for date " + date + " and batchTag " + batchTag + " failed. Status set to "
               + errorStatus.name() + ".",
-          date, batchTag, errorStatus.name(), e);
+          e);
       batchInfoService.updateStatus(batchInfo, errorStatus);
       return Optional.empty();
     } catch (FatalFederationGatewayException e) {
