@@ -2,10 +2,7 @@
 
 package app.coronawarn.server.services.federation.upload.integration;
 
-import static org.junit.Assert.assertArrayEquals;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static app.coronawarn.server.services.federation.upload.utils.MockData.*;
-import static org.junit.Assert.assertTrue;
+import static app.coronawarn.server.services.federation.upload.utils.MockData.generateRandomDiagnosisKeys;
 
 import app.coronawarn.server.common.persistence.domain.DiagnosisKey;
 import app.coronawarn.server.common.persistence.domain.FederationUploadKey;
@@ -15,12 +12,13 @@ import app.coronawarn.server.services.federation.upload.client.FederationUploadC
 import app.coronawarn.server.services.federation.upload.config.UploadServiceConfig;
 import app.coronawarn.server.services.federation.upload.runner.Upload;
 import java.util.List;
-
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.test.context.ActiveProfiles;
 
+@ActiveProfiles("disable-ssl-efgs-verification")
 class DiagnosisKeyUploadIT extends UploadKeyIT {
 
   @Autowired
