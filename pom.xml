@@ -216,6 +216,11 @@
         <version>${tomcat-embed-core.version}</version>
       </dependency>
       <dependency>
+        <groupId>org.apache.tomcat.embed</groupId>
+        <artifactId>tomcat-embed-websocket</artifactId>
+        <version>${tomcat-embed-core.version}</version>
+      </dependency>
+      <dependency>
         <groupId>io.findify</groupId>
         <artifactId>s3mock_2.13</artifactId>
         <version>${findify-s3mock.version}</version>
