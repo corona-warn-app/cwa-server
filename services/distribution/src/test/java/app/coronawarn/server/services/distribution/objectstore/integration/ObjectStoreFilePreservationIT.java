@@ -42,9 +42,9 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration(classes = Application.class, initializers = ConfigFileApplicationContextInitializer.class)
 @DirtiesContext
-@ActiveProfiles({"integration-test", "no-hour-retention"})
+@ActiveProfiles({"integration-test", "no-hour-retention", "local-json-stats"})
 @Tag("s3-integration")
-class ObjectStoreFilePreservationIT  extends BaseS3IntegrationTest{
+class ObjectStoreFilePreservationIT extends BaseS3IntegrationTest {
 
   @Autowired
   private DiagnosisKeyService diagnosisKeyService;
