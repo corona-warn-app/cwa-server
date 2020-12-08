@@ -68,6 +68,7 @@
     <junit.version>4.13.1</junit.version>
     <tomcat-embed-core.version>9.0.40</tomcat-embed-core.version>
     <findify-s3mock.version>0.2.6</findify-s3mock.version>
+    <websocket.version>1.4.1</websocket.version>
   </properties>
 
   <dependencyManagement>
@@ -167,6 +168,11 @@
         <artifactId>spring-retry</artifactId>
         <groupId>org.springframework.retry</groupId>
         <version>${spring-retry.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.kevoree.mwg.plugins</groupId>
+        <artifactId>websocket</artifactId>
+        <version>${websocket.version}</version>
       </dependency>
       <dependency>
         <groupId>com.google.guava</groupId>
