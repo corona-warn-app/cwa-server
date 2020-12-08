@@ -29,6 +29,7 @@ import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -80,7 +81,7 @@ class S3ClientWrapperTest {
   @EnableRetry
   public static class RetryS3ClientConfig {
 
-    @Bean
+    @Bean(name = "publish-s3")
     @ConditionalOnMissingBean
     public ObjectStoreClient createObjectStoreClient(S3Client s3Client) {
       return new S3ClientWrapper(s3Client);

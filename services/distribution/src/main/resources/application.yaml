@@ -27,6 +27,7 @@ services:
     eu-package-name: EUR
     # Indicates whether the shifting and expiry policies are applied to all supported countries during distribution.
     apply-policies-for-all-countries: false
+    card-id-sequence: ${STATS_CARD_ID_SEQUENCE:[1,2,3,4]}
     # Local paths, that are used during the export creation.
     paths:
       # The output path.
@@ -54,6 +55,7 @@ services:
       app-config-file-name: app_config
       app-config-v2-android-file-name: app_config_android
       app-config-v2-ios-file-name: app_config_ios
+      statistics-file-name: stats
     # Signature configuration, used for signing the exports.
     signature:
       # The alias with which to identify public key to be used for verification.
@@ -89,6 +91,14 @@ services:
       force-update-keyfiles: ${FORCE_UPDATE_KEYFILES:false}
       # The number of days to retain hourly diagnosis keys file in S3. Database entries are still managed by the standard retention policy.
       hour-file-retention-days: 2
+    # Configuration for the publishing of app statistics
+    statistics:
+      trend-calculation-threshold: 0.05
+      statistic-path: json/v1/cwa_reporting_public_data.json
+      access-key: ${STATISTICS_FILE_ACCESS_KEY_I  D}
+      secret-key: ${STATISTICS_FILE_SECRET_ACCESS_KEY}
+      endpoint: ${STATISTICS_FILE_S3_ENDPOINT}
+      bucket: ${STATISTICS_FILE_S3_BUCKET:obs-cwa-public-dev}
 
     app-features:
       - label: reserved

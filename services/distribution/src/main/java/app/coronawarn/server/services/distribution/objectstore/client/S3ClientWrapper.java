@@ -3,6 +3,8 @@ package app.coronawarn.server.services.distribution.objectstore.client;
 import static java.lang.Boolean.TRUE;
 import static java.util.stream.Collectors.toList;
 
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -23,6 +25,7 @@ import software.amazon.awssdk.services.s3.S3Client;
 import software.amazon.awssdk.services.s3.model.Delete;
 import software.amazon.awssdk.services.s3.model.DeleteObjectsRequest;
 import software.amazon.awssdk.services.s3.model.DeleteObjectsResponse;
+import software.amazon.awssdk.services.s3.model.GetObjectRequest;
 import software.amazon.awssdk.services.s3.model.HeadObjectRequest;
 import software.amazon.awssdk.services.s3.model.ListObjectsV2Request;
 import software.amazon.awssdk.services.s3.model.ListObjectsV2Response;
@@ -56,6 +59,22 @@ public class S3ClientWrapper implements ObjectStoreClient {
     } catch (SdkException e) {
       throw new ObjectStoreOperationFailedException("Failed to determine if bucket exists.", e);
     }
+  }
+
+  @Override
+  public String getSingleObjectContent(String bucket, String key) {
+    GetObjectRequest request = GetObjectRequest.builder()
+        .bucket(bucket)
+        .key(key)
+        .build();
+
+    var object = s3Client.getObject(request);
+    StringBuilder builder = new StringBuilder();
+    BufferedReader reader = new BufferedReader(new InputStreamReader(object));
+    reader.lines()
+        .map(String::strip)
+        .forEach(builder::append);
+    return builder.toString();
   }
 
   @Override
