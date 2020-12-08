@@ -8,7 +8,7 @@
           <option name="environmentProperties">
             <map>
               <entry key="POSTGRESQL_SERVICE_PORT" value="8001" />
-              <entry key="SPRING_PROFILES_ACTIVE" value="disable-ssl-server,disable-ssl-client-postgres,disable-certificate-authentication" />
+              <entry key="SPRING_PROFILES_ACTIVE" value="disable-ssl-server,disable-ssl-client-postgres,disable-callback-cert-auth" />
             </map>
           </option>
           <option name="jreName" value="#USE_PROJECT_JDK" />
