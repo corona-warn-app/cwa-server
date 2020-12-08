@@ -1,0 +1,3 @@
+server:
+  ssl:
+    client-auth: none
