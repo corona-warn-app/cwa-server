@@ -27,7 +27,7 @@ public class RemoteStatisticJsonFileLoader implements JsonFileLoader {
    */
   public String getContent() {
     return s3Stats.getSingleObjectContent(config.getStatistics().getBucket(),
-        config.getStatistics().getStatisticRemotePath());
+        config.getStatistics().getStatisticPath());
   }
 
 }

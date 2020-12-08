@@ -94,9 +94,8 @@ services:
     # Configuration for the publishing of app statistics
     statistics:
       trend-calculation-threshold: 0.05
-      statistic-local-path: stats/statistic_data.json
-      statistic-remote-path: json/v1/cwa_reporting_public_data.json
-      access-key: ${STATISTICS_FILE_ACCESS_KEY_ID}
+      statistic-path: json/v1/cwa_reporting_public_data.json
+      access-key: ${STATISTICS_FILE_ACCESS_KEY_I  D}
       secret-key: ${STATISTICS_FILE_SECRET_ACCESS_KEY}
       endpoint: ${STATISTICS_FILE_S3_ENDPOINT}
       bucket: ${STATISTICS_FILE_S3_BUCKET:obs-cwa-public-dev}

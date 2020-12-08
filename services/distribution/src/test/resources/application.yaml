@@ -62,8 +62,7 @@ services:
       hour-file-retention-days: 2
     statistics:
       trend-calculation-threshold: 0.05
-      statistic-local-path: stats/statistic_data.json
-      statistic-remote-path: json/v1/cwa_reporting_public_data.json
+      statistic-path: stats/statistic_data.json
       access-key: fakeAccessKey
       secret-key: secretKey
       endpoint: https://localhost

@@ -2,4 +2,4 @@
 services:
   distribution:
     statistics:
-      statistic-local-path: stats/statistic_data_processing_test.json
+      statistic-path: stats/statistic_data_processing_test.json

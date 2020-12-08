@@ -247,9 +247,7 @@ public class DistributionServiceConfig {
 
     private Double trendCalculationThreshold;
 
-    private String statisticLocalPath;
-
-    private String statisticRemotePath;
+    private String statisticPath;
 
     private String accessKey;
 
@@ -259,12 +257,12 @@ public class DistributionServiceConfig {
 
     private String bucket;
 
-    public String getStatisticLocalPath() {
-      return statisticLocalPath;
+    public String getStatisticPath() {
+      return statisticPath;
     }
 
-    public void setStatisticLocalPath(String statisticLocalPath) {
-      this.statisticLocalPath = statisticLocalPath;
+    public void setStatisticPath(String statisticPath) {
+      this.statisticPath = statisticPath;
     }
 
     public Double getTrendCalculationThreshold() {
@@ -273,14 +271,6 @@ public class DistributionServiceConfig {
 
     public void setTrendCalculationThreshold(Double trendCalculationThreshold) {
       this.trendCalculationThreshold = trendCalculationThreshold;
-    }
-
-    public String getStatisticRemotePath() {
-      return statisticRemotePath;
-    }
-
-    public void setStatisticRemotePath(String statisticRemotePath) {
-      this.statisticRemotePath = statisticRemotePath;
     }
 
     public String getAccessKey() {

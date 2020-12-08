@@ -26,12 +26,12 @@ public class LocalStatisticJsonFileLoader implements JsonFileLoader {
    */
   public String getContent() {
     var resource = resourceLoader.getResource(
-        String.format("classpath:%s", serviceConfig.getStatistics().getStatisticLocalPath()));
+        String.format("classpath:%s", serviceConfig.getStatistics().getStatisticPath()));
     try {
       return FileUtils.readFileToString(resource.getFile(), StandardCharsets.UTF_8);
     } catch (IOException e) {
       throw new RuntimeException(String.format("Failed to load Local JSON from path %s",
-          serviceConfig.getStatistics().getStatisticLocalPath()));
+          serviceConfig.getStatistics().getStatisticPath()));
     }
   }
 
