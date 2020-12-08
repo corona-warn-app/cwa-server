@@ -76,7 +76,7 @@ public abstract class LocalFile {
    *         <a href="https://www.iana.org/assignments/media-types/application/json">json</a>.
    */
   public String getContentType() {
-    if (s3Key.endsWith("app_config")) {
+    if (s3Key.endsWith("app_config") || s3Key.endsWith("app_config_ios") || s3Key.endsWith("app_config_android")) {
       return "application/zip";
     }
     if (isKeyFile()) {
