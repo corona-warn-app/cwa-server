@@ -24,6 +24,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.retry.ExhaustedRetryException;
 
 @Configuration
 public class StatisticsToProtobufMapping {
@@ -57,18 +58,24 @@ public class StatisticsToProtobufMapping {
    */
   @Bean
   public Statistics constructProtobufStatistics() {
-    String content = this.jsonFileLoader.getContent();
-    List<StatisticsJsonStringObject> jsonStringObjects = SerializationUtils
-        .deserializeJson(content, typeFactory -> typeFactory
-            .constructCollectionType(List.class, StatisticsJsonStringObject.class));
+    try {
+      String content = this.jsonFileLoader.getContent();
+      List<StatisticsJsonStringObject> jsonStringObjects = SerializationUtils
+          .deserializeJson(content, typeFactory -> typeFactory
+              .constructCollectionType(List.class, StatisticsJsonStringObject.class));
 
-    StatisticsJsonValidator validator = new StatisticsJsonValidator();
-    jsonStringObjects = new ArrayList<>(validator.validate(jsonStringObjects));
+      StatisticsJsonValidator validator = new StatisticsJsonValidator();
+      jsonStringObjects = new ArrayList<>(validator.validate(jsonStringObjects));
 
-    return Statistics.newBuilder()
-        .addAllCardIdSequence(getAllCardIdSequence())
-        .addAllKeyFigureCards(buildAllKeyFigureCards(jsonStringObjects))
-        .build();
+      return Statistics.newBuilder()
+          .addAllCardIdSequence(getAllCardIdSequence())
+          .addAllKeyFigureCards(buildAllKeyFigureCards(jsonStringObjects))
+          .build();
+    } catch (ExhaustedRetryException ex) {
+      // Return empty statistics file if connection to S3 was not successful
+      logger.warn("Failed to retrieve statistics file from Object Store: generating empty protobuf");
+      return Statistics.newBuilder().build();
+    }
   }
 
   private List<Integer> getAllCardIdSequence() {
