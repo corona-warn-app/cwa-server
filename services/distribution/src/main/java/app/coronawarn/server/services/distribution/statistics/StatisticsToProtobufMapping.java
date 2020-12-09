@@ -5,6 +5,9 @@ import static app.coronawarn.server.services.distribution.statistics.keyfigureca
 import app.coronawarn.server.common.protocols.internal.stats.KeyFigureCard;
 import app.coronawarn.server.common.protocols.internal.stats.Statistics;
 import app.coronawarn.server.services.distribution.config.DistributionServiceConfig;
+import app.coronawarn.server.services.distribution.statistics.exceptions.BucketNotFoundException;
+import app.coronawarn.server.services.distribution.statistics.exceptions.ConnectionException;
+import app.coronawarn.server.services.distribution.statistics.exceptions.FilePathNotFoundException;
 import app.coronawarn.server.services.distribution.statistics.file.JsonFileLoader;
 import app.coronawarn.server.services.distribution.statistics.keyfigurecard.KeyFigureCardFactory;
 import app.coronawarn.server.services.distribution.statistics.keyfigurecard.factory.MissingPropertyException;
@@ -24,7 +27,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.retry.ExhaustedRetryException;
 
 @Configuration
 public class StatisticsToProtobufMapping {
@@ -71,9 +73,9 @@ public class StatisticsToProtobufMapping {
           .addAllCardIdSequence(getAllCardIdSequence())
           .addAllKeyFigureCards(buildAllKeyFigureCards(jsonStringObjects))
           .build();
-    } catch (ExhaustedRetryException ex) {
-      // Return empty statistics file if connection to S3 was not successful
-      logger.warn("Failed to retrieve statistics file from Object Store: generating empty protobuf");
+    } catch (BucketNotFoundException | ConnectionException | FilePathNotFoundException ex) {
+      logger.warn(ex.getMessage());
+      logger.warn("Statistics file will not be generated due to previous errors!");
       return Statistics.newBuilder().build();
     }
   }
