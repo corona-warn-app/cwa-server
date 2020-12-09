@@ -76,11 +76,7 @@ public abstract class LocalFile {
    *         <a href="https://www.iana.org/assignments/media-types/application/json">json</a>.
    */
   public String getContentType() {
-    if (s3Key.endsWith("app_config") || s3Key.endsWith("app_config_ios") || s3Key.endsWith("app_config_android")) {
-      return "application/zip";
-    }
-    if (isKeyFile()) {
-      // date and hourly diagnosis key files
+    if (isConfigFile() || isStatisticFile() || isKeyFile()) {
       return "application/zip";
     }
     // list of versions, dates, hours
@@ -95,5 +91,13 @@ public abstract class LocalFile {
    */
   public boolean isKeyFile() {
     return s3Key.matches(".*\\d");
+  }
+
+  private boolean isConfigFile() {
+    return s3Key.endsWith("app_config") || s3Key.endsWith("app_config_ios") || s3Key.endsWith("app_config_android");
+  }
+
+  private boolean isStatisticFile() {
+    return s3Key.endsWith("stats");
   }
 }
