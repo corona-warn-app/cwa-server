@@ -83,6 +83,20 @@ public class FederationGatewayDownloadService {
     }
   }
 
+  public void auditBatch(String batchTag, LocalDate date) {
+    try {
+      federationGatewayClient.getAuditInformation(date.format(ISO_LOCAL_DATE), batchTag);
+    } catch (FeignException.BadRequest | FeignException.Forbidden | FeignException.NotAcceptable | FeignException.Gone clientError) {
+      logger.error("Auditing batch " + batchTag + " for date " + date.format(ISO_LOCAL_DATE) +
+          " failed due to: " + clientError.getMessage());
+      throw new BatchAuditException("Downloading batch " + batchTag + " for date " + date + " failed.", clientError);
+    } catch (FeignException.NotFound notFound) {
+      logger.error("Auditing batch " + batchTag + " for date " + date.format(ISO_LOCAL_DATE) +
+          " failed due to not found.");
+      throw new BatchAuditException("Downloading batch " + batchTag + " for date " + date + " failed.", notFound);
+    }
+  }
+
   private BatchDownloadResponse parseResponseEntity(ResponseEntity<DiagnosisKeyBatch> response) {
     String batchTag = getHeader(response, HEADER_BATCH_TAG)
         .orElseThrow(() -> new BatchDownloadException("Missing " + HEADER_BATCH_TAG + " header."));

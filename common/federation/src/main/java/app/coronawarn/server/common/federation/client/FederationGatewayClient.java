@@ -55,4 +55,11 @@ public interface FederationGatewayClient {
       byte[] raw,
       @RequestHeader("batchTag") String batchTag,
       @RequestHeader("batchSignature") String batchSignature);
+
+  @GetMapping(value = "/diagnosiskeys/audit/download/{date}/{batchTag}",
+      headers = {"Accept=application/json; version=1.0",
+          "X-SSL-Client-SHA256=${federation-gateway.ssl.certificate-sha}",
+          "X-SSL-Client-DN=${federation-gateway.ssl.certificate-dn}"})
+  ResponseEntity<String> getAuditInformation(@PathVariable("date") String date,
+      @PathVariable("batchTag") String batchTag);
 }
