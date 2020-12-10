@@ -89,7 +89,9 @@ public class FederationGatewayDownloadService {
    */
   public void auditBatch(String batchTag, LocalDate date) {
     try {
-      federationGatewayClient.getAuditInformation(date.format(ISO_LOCAL_DATE), batchTag);
+      ResponseEntity<String> auditInformation = federationGatewayClient
+          .getAuditInformation(date.format(ISO_LOCAL_DATE), batchTag);
+      logger.info("Retrieved response from EFGS:{}", auditInformation);
     } catch (FeignException.BadRequest | FeignException.Forbidden | FeignException.NotAcceptable
         | FeignException.Gone | FeignException.NotFound clientError) {
       logger.error("Auditing batch " + batchTag + " for date " + date.format(ISO_LOCAL_DATE)
