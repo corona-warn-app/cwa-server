@@ -1,4 +1,4 @@
-# This is the Exposure Config master file which defines the risk parameters for the mobile clients
+# This is the Exposure Config source file which defines the risk parameters for the mobile clients
 # Change this file with caution.
 #
 # Weights must be in range of 0.001 to 100
