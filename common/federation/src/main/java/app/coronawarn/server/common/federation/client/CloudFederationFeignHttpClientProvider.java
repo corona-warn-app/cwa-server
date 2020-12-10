@@ -1,5 +1,3 @@
-
-
 package app.coronawarn.server.common.federation.client;
 
 import app.coronawarn.server.common.federation.client.config.FederationGatewayConfig;
@@ -7,8 +5,6 @@ import feign.Client;
 import feign.httpclient.ApacheHttpClient;
 import java.io.File;
 import javax.net.ssl.SSLContext;
-import org.apache.http.conn.ssl.NoopHostnameVerifier;
-import org.apache.http.conn.ssl.TrustSelfSignedStrategy;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.ssl.SSLContextBuilder;
 import org.springframework.cloud.commons.httpclient.ApacheHttpClientConnectionManagerFactory;
@@ -29,17 +25,24 @@ public class CloudFederationFeignHttpClientProvider implements FederationFeignHt
   private final Integer connectionPoolSize;
   private final File keyStore;
   private final String keyStorePassword;
+  private final HostnameVerifierProvider hostnameVerifierProvider;
+  private final File trustStore;
+  private final String trustStorePassword;
 
   /**
    * Construct Provider.
    *
    * @param config .
    */
-  public CloudFederationFeignHttpClientProvider(FederationGatewayConfig config) {
+  public CloudFederationFeignHttpClientProvider(FederationGatewayConfig config,
+      HostnameVerifierProvider hostnameVerifierProvider) {
     var ssl = config.getSsl();
     this.connectionPoolSize = config.getConnectionPoolSize();
     this.keyStore = ssl.getKeyStore();
     this.keyStorePassword = ssl.getKeyStorePass();
+    this.hostnameVerifierProvider = hostnameVerifierProvider;
+    this.trustStore = ssl.getTrustStore();
+    this.trustStorePassword = ssl.getTrustStorePassword();
   }
 
   /**
@@ -61,7 +64,7 @@ public class CloudFederationFeignHttpClientProvider implements FederationFeignHt
         .setMaxConnPerRoute(connectionPoolSize)
         .setMaxConnTotal(connectionPoolSize)
         .setSSLContext(getSslContext(keyStorePath, keyStorePass))
-        .setSSLHostnameVerifier(NoopHostnameVerifier.INSTANCE));
+        .setSSLHostnameVerifier(this.hostnameVerifierProvider.createHostnameVerifier()));
   }
 
   private SSLContext getSslContext(File keyStorePath, String keyStorePass) {
@@ -69,7 +72,7 @@ public class CloudFederationFeignHttpClientProvider implements FederationFeignHt
       return SSLContextBuilder
           .create()
           .loadKeyMaterial(keyStorePath, keyStorePass.toCharArray(), keyStorePass.toCharArray())
-          .loadTrustMaterial(TrustSelfSignedStrategy.INSTANCE)
+          .loadTrustMaterial(this.trustStore, this.trustStorePassword.toCharArray())
           .build();
     } catch (Exception e) {
       throw new RuntimeException(e);

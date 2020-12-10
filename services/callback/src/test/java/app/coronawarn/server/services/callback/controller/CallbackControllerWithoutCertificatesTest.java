@@ -1,4 +1,3 @@
-
 package app.coronawarn.server.services.callback.controller;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -19,7 +18,7 @@ import app.coronawarn.server.common.persistence.domain.FederationBatchStatus;
 import app.coronawarn.server.common.persistence.service.FederationBatchInfoService;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-@ActiveProfiles({ "disable-ssl-client-verification-verify-hostname" })
+@ActiveProfiles({"disable-ssl-client-verification-verify-hostname"})
 @DirtiesContext
 class CallbackControllerWithoutCertificatesTest {
 
@@ -30,7 +29,7 @@ class CallbackControllerWithoutCertificatesTest {
   FederationBatchInfoService spyFederationClient;
 
   @Test
-  void noCertificateShouldBeForbidden() throws Exception {
+  void noCertificateShouldBeForbidden() {
     String batchTag = UUID.randomUUID().toString().substring(0, 11);
     LocalDate date = LocalDate.now();
 

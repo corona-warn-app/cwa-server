@@ -10,21 +10,28 @@ import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.mock;
 
+import app.coronawarn.server.common.federation.client.FederationFeignClientConfiguration;
+import app.coronawarn.server.common.federation.client.FederationFeignHttpClientProvider;
 import app.coronawarn.server.common.protocols.external.exposurenotification.DiagnosisKeyBatch;
 import com.github.tomakehurst.wiremock.WireMockServer;
 import java.time.LocalDate;
 import java.util.Optional;
+import feign.httpclient.ApacheHttpClient;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.cloud.openfeign.EnableFeignClients;
 import org.springframework.http.HttpStatus;
 import org.springframework.test.annotation.DirtiesContext;
+import org.springframework.test.context.ActiveProfiles;
 
 @SpringBootTest
 @DirtiesContext
+@EnableFeignClients(defaultConfiguration = FederationFeignClientConfiguration.class)
+@ActiveProfiles("disable-ssl-efgs-verification")
 class FederationGatewayDownloadServiceTest {
 
   private static final WireMockServer SERVER = new WireMockServer(1234);
@@ -34,6 +41,9 @@ class FederationGatewayDownloadServiceTest {
 
   @Autowired
   private FederationGatewayDownloadService downloadService;
+
+  @Autowired
+  private FederationFeignClientConfiguration federationFeignClientConfiguration;
 
   @BeforeEach
   void ensureRunningServer() {
@@ -140,6 +150,11 @@ class FederationGatewayDownloadServiceTest {
         .isExactlyInstanceOf(FatalFederationGatewayException.class);
     assertThatThrownBy(() -> downloadService.downloadBatch(DATE))
         .isExactlyInstanceOf(FatalFederationGatewayException.class);
+  }
+
+  @Test
+  void testFederationFeignClientConfigurationCreated() {
+    assertThat(federationFeignClientConfiguration.feignClient()).isInstanceOf(ApacheHttpClient.class);
   }
 
   void assertDownloadResponseMatches(BatchDownloadResponse expResponse) throws Exception {
