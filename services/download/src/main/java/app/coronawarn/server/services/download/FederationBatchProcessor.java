@@ -109,8 +109,8 @@ public class FederationBatchProcessor {
   }
 
   /**
-   * Downloads and processes all batches from the federation gateway that have previously been
-   * marked with the status value {@link FederationBatchStatus#ERROR}.
+   * Downloads and processes all batches from the federation gateway that have previously been marked with the status
+   * value {@link FederationBatchStatus#ERROR}.
    */
   public void processErrorFederationBatches() {
     List<FederationBatchInfo> federationBatchInfoWithError = batchInfoService.findByStatus(ERROR);
@@ -160,7 +160,7 @@ public class FederationBatchProcessor {
     logger.info("Processing batch for date {} and batchTag {}.", date, batchTag);
     try {
       BatchDownloadResponse response = federationGatewayDownloadService.downloadBatch(batchTag, date);
-      if(config.isBatchAuditEnabled()){
+      if (config.isBatchAuditEnabled()) {
         federationGatewayDownloadService.auditBatch(batchTag, date);
       }
       AtomicBoolean batchContainsInvalidKeys = new AtomicBoolean(false);

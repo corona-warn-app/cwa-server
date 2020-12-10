@@ -1,5 +1,3 @@
-
-
 package app.coronawarn.server.services.download;
 
 import static java.time.format.DateTimeFormatter.ISO_LOCAL_DATE;
@@ -83,17 +81,26 @@ public class FederationGatewayDownloadService {
     }
   }
 
+  /**
+   * Audit the batch from the EFGS for the given date.
+   *
+   * @param batchTag The batchTag of the batch that should be audited.
+   * @param date     The date for which the batch should be audited.
+   */
   public void auditBatch(String batchTag, LocalDate date) {
     try {
       federationGatewayClient.getAuditInformation(date.format(ISO_LOCAL_DATE), batchTag);
-    } catch (FeignException.BadRequest | FeignException.Forbidden | FeignException.NotAcceptable | FeignException.Gone clientError) {
-      logger.error("Auditing batch " + batchTag + " for date " + date.format(ISO_LOCAL_DATE) +
-          " failed due to: " + clientError.getMessage());
-      throw new BatchAuditException("Downloading batch " + batchTag + " for date " + date + " failed.", clientError);
-    } catch (FeignException.NotFound notFound) {
-      logger.error("Auditing batch " + batchTag + " for date " + date.format(ISO_LOCAL_DATE) +
-          " failed due to not found.");
-      throw new BatchAuditException("Downloading batch " + batchTag + " for date " + date + " failed.", notFound);
+    } catch (FeignException.BadRequest | FeignException.Forbidden | FeignException.NotAcceptable
+        | FeignException.Gone | FeignException.NotFound clientError) {
+      logger.error("Auditing batch " + batchTag + " for date " + date.format(ISO_LOCAL_DATE)
+          + " failed due to: " + clientError.getMessage());
+      throw new BatchAuditException("Downloading batch " + batchTag + " for date " + date + " failed due to: "
+          + clientError.getMessage());
+    } catch (FeignException e) {
+      logger.error("Auditing batch " + batchTag + " for date " + date.format(ISO_LOCAL_DATE)
+          + " failed due to uncommon reason: " + e.getMessage());
+      throw new BatchAuditException("Downloading batch " + batchTag + " for date " + date
+          + " failed due to uncommon reason: " + e.getMessage());
     }
   }
 

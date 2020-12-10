@@ -14,10 +14,14 @@ import app.coronawarn.server.common.protocols.external.exposurenotification.Diag
 import com.github.tomakehurst.wiremock.WireMockServer;
 import java.time.LocalDate;
 import java.util.Optional;
+import java.util.stream.Stream;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpStatus;
@@ -140,6 +144,29 @@ class FederationGatewayDownloadServiceTest {
         .isExactlyInstanceOf(FatalFederationGatewayException.class);
     assertThatThrownBy(() -> downloadService.downloadBatch(DATE))
         .isExactlyInstanceOf(FatalFederationGatewayException.class);
+  }
+
+  private static Stream<Arguments> provideHttpStatuses() {
+    return Stream.of(Arguments.of(HttpStatus.BAD_REQUEST),
+        Arguments.of(HttpStatus.NOT_ACCEPTABLE),
+        Arguments.of(HttpStatus.GONE),
+        Arguments.of(HttpStatus.FORBIDDEN),
+        Arguments.of(HttpStatus.NOT_FOUND),
+        Arguments.of(HttpStatus.SERVICE_UNAVAILABLE));
+  }
+
+  @ParameterizedTest
+  @MethodSource("provideHttpStatuses")
+  void testAuditBatchExceptions(HttpStatus status) {
+    SERVER.stubFor(
+        get(anyUrl())
+            .willReturn(
+                aResponse()
+                    .withStatus(status.value())));
+
+    assertThatThrownBy(() -> downloadService.auditBatch(BATCH_TAG, DATE))
+        .isExactlyInstanceOf(BatchAuditException.class)
+        .hasMessageContaining(status.getReasonPhrase());
   }
 
   void assertDownloadResponseMatches(BatchDownloadResponse expResponse) throws Exception {
