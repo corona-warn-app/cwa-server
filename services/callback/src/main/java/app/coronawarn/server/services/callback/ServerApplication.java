@@ -1,5 +1,3 @@
-
-
 package app.coronawarn.server.services.callback;
 
 import io.micrometer.core.aop.TimedAspect;
@@ -31,10 +29,10 @@ public class ServerApplication implements EnvironmentAware, DisposableBean {
 
   static final String DISABLE_SSL_SERVER = "disable-ssl-server";
   static final String DISABLE_SSL_CLIENT_POSTGRES = "disable-ssl-client-postgres";
-  static final String DISABLE_SSL_CLIENT_VERIFICATION_VERIFY_HOSTNAME = 
+  static final String DISABLE_SSL_CLIENT_VERIFICATION_VERIFY_HOSTNAME =
       "disable-ssl-client-verification-verify-hostname";
   static final String DISABLE_SSL_CLIENT_VERIFICATION = "disable-ssl-client-verification";
-  
+
   private static final String NEVER_USE_IN_PROD = "This should never be used in PRODUCTION!";
   private static final Logger logger = LoggerFactory.getLogger(ServerApplication.class);
 
@@ -74,7 +72,7 @@ public class ServerApplication implements EnvironmentAware, DisposableBean {
     }
     if (profiles.contains(DISABLE_SSL_CLIENT_VERIFICATION_VERIFY_HOSTNAME)) {
       logger.warn(
-          "The callback service is started with verification service TLS hostname validation disabled. " 
+          "The callback service is started with verification service TLS hostname validation disabled. "
               + NEVER_USE_IN_PROD);
     }
   }

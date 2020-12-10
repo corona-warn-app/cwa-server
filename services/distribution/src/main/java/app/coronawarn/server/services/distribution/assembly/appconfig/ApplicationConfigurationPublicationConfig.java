@@ -49,7 +49,7 @@ import org.springframework.context.annotation.Configuration;
 public class ApplicationConfigurationPublicationConfig {
 
   /**
-   * The location of the exposure configuration master file.
+   * The location of the exposure configuration source file.
    */
   public static final String MAIN_FILE = "main-config/app-config.yaml";
 
@@ -77,7 +77,7 @@ public class ApplicationConfigurationPublicationConfig {
   }
 
   /**
-   * Fetches the master configuration as a ApplicationConfiguration instance.
+   * Fetches the source configuration as a ApplicationConfiguration instance.
    *
    * @return test.
    */
@@ -91,7 +91,7 @@ public class ApplicationConfigurationPublicationConfig {
   }
 
   /**
-   * Fetches the master configuration as a KeyDownloadParametersAndroid instance.
+   * Fetches the source configuration as a KeyDownloadParametersAndroid instance.
    *
    * @return test.
    */
@@ -110,7 +110,7 @@ public class ApplicationConfigurationPublicationConfig {
   }
 
   /**
-   * Fetches the master configuration as a KeyDownloadParametersIOS instance.
+   * Fetches the source configuration as a KeyDownloadParametersIOS instance.
    *
    * @return test.
    */
@@ -127,7 +127,7 @@ public class ApplicationConfigurationPublicationConfig {
   }
 
   /**
-   * Fetches the master configuration as a ExposureDetectionParametersAndroid instance.
+   * Fetches the source configuration as a ExposureDetectionParametersAndroid instance.
    *
    * @return test.
    */
@@ -142,7 +142,7 @@ public class ApplicationConfigurationPublicationConfig {
   }
 
   /**
-   * Fetches the master configuration as a ExposureDetectionParametersIOS instance.
+   * Fetches the source configuration as a ExposureDetectionParametersIOS instance.
    *
    * @return test.
    */

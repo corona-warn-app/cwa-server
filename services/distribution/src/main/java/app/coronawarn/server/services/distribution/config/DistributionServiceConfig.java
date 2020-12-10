@@ -49,6 +49,7 @@ public class DistributionServiceConfig {
   private Boolean includeIncompleteHours;
   private String euPackageName;
   private Boolean applyPoliciesForAllCountries;
+  private String cardIdSequence;
   private TekExport tekExport;
   private Signature signature;
   private Api api;
@@ -58,6 +59,7 @@ public class DistributionServiceConfig {
   private String[] supportedCountries;
   private AppVersions appVersions;
   private AppConfigParameters appConfigParameters;
+  private StatisticsConfig statistics;
 
   public Paths getPaths() {
     return paths;
@@ -147,6 +149,14 @@ public class DistributionServiceConfig {
     this.applyPoliciesForAllCountries = applyPoliciesForAllCountries;
   }
 
+  public String getCardIdSequence() {
+    return cardIdSequence;
+  }
+
+  public void setCardIdSequence(String cardIdSequence) {
+    this.cardIdSequence = cardIdSequence;
+  }
+
   public TekExport getTekExport() {
     return tekExport;
   }
@@ -212,6 +222,14 @@ public class DistributionServiceConfig {
     this.appConfigParameters = appConfigParameters;
   }
 
+  public StatisticsConfig getStatistics() {
+    return statistics;
+  }
+
+  public void setStatistics(StatisticsConfig statistics) {
+    this.statistics = statistics;
+  }
+
   /**
    * Get app features as list of protobuf objects.
    *
@@ -223,6 +241,69 @@ public class DistributionServiceConfig {
             .setLabel(appFeature.getLabel())
             .setValue(appFeature.getValue()).build())
         .collect(Collectors.toList());
+  }
+
+  public static class StatisticsConfig {
+
+    private Double trendCalculationThreshold;
+
+    private String statisticPath;
+
+    private String accessKey;
+
+    private String secretKey;
+
+    private String endpoint;
+
+    private String bucket;
+
+    public String getStatisticPath() {
+      return statisticPath;
+    }
+
+    public void setStatisticPath(String statisticPath) {
+      this.statisticPath = statisticPath;
+    }
+
+    public Double getTrendCalculationThreshold() {
+      return trendCalculationThreshold;
+    }
+
+    public void setTrendCalculationThreshold(Double trendCalculationThreshold) {
+      this.trendCalculationThreshold = trendCalculationThreshold;
+    }
+
+    public String getAccessKey() {
+      return accessKey;
+    }
+
+    public void setAccessKey(String accessKey) {
+      this.accessKey = accessKey;
+    }
+
+    public String getSecretKey() {
+      return secretKey;
+    }
+
+    public void setSecretKey(String secretKey) {
+      this.secretKey = secretKey;
+    }
+
+    public String getEndpoint() {
+      return endpoint;
+    }
+
+    public void setEndpoint(String endpoint) {
+      this.endpoint = endpoint;
+    }
+
+    public String getBucket() {
+      return bucket;
+    }
+
+    public void setBucket(String bucket) {
+      this.bucket = bucket;
+    }
   }
 
   public static class TekExport {
@@ -339,7 +420,16 @@ public class DistributionServiceConfig {
     private String appConfigV2IosFileName;
     @Pattern(regexp = CHAR_AND_NUMBER_REGEX)
     private String appConfigV2AndroidFileName;
+    @Pattern(regexp = CHAR_AND_NUMBER_REGEX)
+    private String statisticsFileName;
 
+    public String getStatisticsFileName() {
+      return statisticsFileName;
+    }
+
+    public void setStatisticsFileName(String statisticsFileName) {
+      this.statisticsFileName = statisticsFileName;
+    }
 
     public String getAppConfigV2IosFileName() {
       return appConfigV2IosFileName;

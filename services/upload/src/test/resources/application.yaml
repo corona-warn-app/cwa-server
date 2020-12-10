@@ -12,6 +12,8 @@ federation-gateway:
     key-store: test.p12
     key-store-pass: test1234
     certificate-type: PKCS12
+    trust-store: ${SSL_FEDERATION_TRUSTSTORE_PATH}
+    trust-store-password: ${SSL_FEDERATION_TRUSTSTORE_PASSWORD}
 
 services:
   upload:

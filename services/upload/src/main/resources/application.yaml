@@ -16,6 +16,8 @@ federation-gateway:
     certificate-type: PKCS12
     certificate-dn: ${FEDERATION_CERTIFICATE_DN}
     certificate-sha: ${FEDERATION_CERTIFICATE_SHA}
+    trust-store: ${SSL_FEDERATION_TRUSTSTORE_PATH}
+    trust-store-password: ${SSL_FEDERATION_TRUSTSTORE_PASSWORD}
 
 services:
   upload:
