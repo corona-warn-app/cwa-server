@@ -1,0 +1,14 @@
+---
+logging:
+  level:
+    org:
+      springframework:
+        web: debug
+    app:
+      coronawarn: debug
+
+feign:
+  client:
+    config:
+      default:
+        loggerLevel: FULL
