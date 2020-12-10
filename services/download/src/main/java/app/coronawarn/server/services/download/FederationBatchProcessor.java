@@ -21,7 +21,6 @@ import app.coronawarn.server.services.download.validation.ValidFederationKeyFilt
 import java.time.LocalDate;
 import java.time.Period;
 import java.time.ZoneOffset;
-import java.util.Arrays;
 import java.util.Deque;
 import java.util.HashSet;
 import java.util.LinkedList;
@@ -31,15 +30,13 @@ import java.util.Set;
 import java.util.concurrent.atomic.AtomicBoolean;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.context.EnvironmentAware;
-import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
 
 /**
  * Responsible for downloading and storing batch information from the federation gateway.
  */
 @Component
-public class FederationBatchProcessor implements EnvironmentAware {
+public class FederationBatchProcessor {
 
   private static final Logger logger = LoggerFactory.getLogger(FederationBatchProcessor.class);
   private final FederationBatchInfoService batchInfoService;
@@ -47,8 +44,6 @@ public class FederationBatchProcessor implements EnvironmentAware {
   private final FederationGatewayDownloadService federationGatewayDownloadService;
   private final DownloadServiceConfig config;
   private final ValidFederationKeyFilter validFederationKeyFilter;
-  private static final String DEBUG_PROFILE_NAME = "debug";
-  private boolean debugProfileEnabled = false;
 
   // This is a potential memory-leak if there are very many batches
   // This is an intentional decision:
@@ -104,21 +99,12 @@ public class FederationBatchProcessor implements EnvironmentAware {
       logger.info("Triggering download of first batch for date {}.", date);
       BatchDownloadResponse response = federationGatewayDownloadService.downloadBatch(date);
       batchInfoService.save(new FederationBatchInfo(response.getBatchTag(), date));
-    } catch (BatchDownloadException e) {
-      logger.error(
-          "Triggering download of first batch for date {} failed. Reason: {}.",
-          date, e.getMessage());
-      if (debugProfileEnabled) {
-        logger.error("Cause: ", e);
-      }
     } catch (FatalFederationGatewayException e) {
       throw e;
     } catch (Exception e) {
-      logger.error("Triggering download of first batch for date {} failed.", date,
-          e);
-      if (debugProfileEnabled) {
-        logger.error("Cause: ", e);
-      }
+      logger.error(
+          "Triggering download of first batch for date {} failed.",
+          date, e);
     }
   }
 
@@ -189,22 +175,11 @@ public class FederationBatchProcessor implements EnvironmentAware {
       }, () -> logger.info("Batch for date {} and batchTag {} did not contain any keys.", date, batchTag));
       batchInfoService.updateStatus(batchInfo, batchContainsInvalidKeys.get() ? PROCESSED_WITH_ERROR : PROCESSED);
       return response.getNextBatchTag();
-    } catch (BatchDownloadException e) {
-      logger.error("Federation batch processing for date {} and batchTag {} failed. Status set to {}. Reason: {}.",
-          date, batchTag, errorStatus.name(), e.getMessage());
-      if (debugProfileEnabled) {
-        logger.error("Cause: ", e);
-      }
-      batchInfoService.updateStatus(batchInfo, errorStatus);
-      return Optional.empty();
     } catch (FatalFederationGatewayException e) {
       throw e;
-    } catch (Exception e) { // todo logging hier?
+    } catch (Exception e) {
       logger.error("Federation batch processing for date {} and batchTag {} failed. Status set to {}.",
           date, batchTag, errorStatus.name(), e);
-      if (debugProfileEnabled) {
-        logger.error("Cause: ", e);
-      }
       batchInfoService.updateStatus(batchInfo, errorStatus);
       return Optional.empty();
     }
@@ -228,19 +203,11 @@ public class FederationBatchProcessor implements EnvironmentAware {
           .withFieldNormalization(new FederationKeyNormalizer(config))
           .build());
     } catch (InvalidDiagnosisKeyException e) {
-      logger.info("Building diagnosis key from federation diagnosis key failed. Reason: {}.", e.getMessage());
+      logger.info("Building diagnosis key from federation diagnosis key failed.", e);
       return Optional.empty();
     } catch (Exception e) {
       logger.info("Building diagnosis key from federation diagnosis key failed.", e);
       return Optional.empty();
-    }
-  }
-
-  @Override
-  public void setEnvironment(Environment environment) {
-    List<String> profiles = Arrays.asList(environment.getActiveProfiles());
-    if (profiles.contains(DEBUG_PROFILE_NAME)) {
-      debugProfileEnabled = true;
     }
   }
 }
