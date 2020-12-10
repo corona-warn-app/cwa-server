@@ -1,0 +1,15 @@
+name: license-analysis-workflow
+
+on:
+    pull_request:
+        branches:
+        - main
+        - release/**
+
+jobs:
+    license-analysis-job:
+        runs-on: ubuntu-latest
+        steps:
+        -   uses: actions/checkout@v2
+        -   name: REUSE Compliance Check
+            uses: fsfe/reuse-action@v1.1
