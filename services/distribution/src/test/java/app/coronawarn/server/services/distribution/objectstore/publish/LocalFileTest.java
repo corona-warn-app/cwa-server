@@ -25,6 +25,7 @@ class LocalFileTest {
 
   @ParameterizedTest
   @ValueSource(strings = {
+      "version/v1/stats",
       "version/v1/app_config_ios",
       "version/v1/app_config_android",
       "version/v1/configuration/country/DE/app_config",

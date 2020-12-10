@@ -36,6 +36,10 @@ public class StatisticsStructureProvider {
    * mobile clients using signature file.
    */
   public Writable<WritableOnDisk> getStatistics() {
-    return new StatisticsDirectory(cryptoProvider, distributionServiceConfig, statistics).getStatisticsArchive();
+    if (statistics.getKeyFigureCardsCount() == 0) {
+      return null;
+    } else {
+      return new StatisticsDirectory(cryptoProvider, distributionServiceConfig, statistics).getStatisticsArchive();
+    }
   }
 }
