@@ -62,6 +62,10 @@ public class S3ClientWrapper implements ObjectStoreClient {
   }
 
   @Override
+  @Retryable(
+      value = SdkException.class,
+      maxAttemptsExpression = "${services.distribution.objectstore.retry-attempts}",
+      backoff = @Backoff(delayExpression = "${services.distribution.objectstore.retry-backoff}"))
   public String getSingleObjectContent(String bucket, String key) {
     GetObjectRequest request = GetObjectRequest.builder()
         .bucket(bucket)
