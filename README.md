@@ -9,7 +9,7 @@
     <a href="https://circleci.com/gh/corona-warn-app/cwa-server" title="Build Status"><img src="https://circleci.com/gh/corona-warn-app/cwa-server.svg?style=shield&circle-token=4ab059989d10709df19eb4b98ab7c121a25e981a"></a>
         <a href="https://sonarcloud.io/dashboard?id=corona-warn-app_cwa-server" title="Quality Gate"><img src="https://sonarcloud.io/api/project_badges/measure?project=corona-warn-app_cwa-server&metric=alert_status"></a>
         <a href="https://sonarcloud.io/component_measures?id=corona-warn-app_cwa-server&metric=Coverage&view=list" title="Coverage"><img src="https://sonarcloud.io/api/project_badges/measure?project=corona-warn-app_cwa-server&metric=coverage"></a>
-    <a href="https://github.com/corona-warn-app/cwa-server/blob/master/LICENSE" title="License"><img src="https://img.shields.io/badge/License-Apache%202.0-green.svg?style=flat"></a>
+    <a href="https://github.com/corona-warn-app/cwa-server/blob/HEAD/LICENSE" title="License"><img src="https://img.shields.io/badge/License-Apache%202.0-green.svg?style=flat"></a>
     <a href="https://api.reuse.software/badge/github.com/corona-warn-app/cwa-server" title="REUSE Status"><img src="https://api.reuse.software/badge/github.com/corona-warn-app/cwa-server"></a>
 </p>
 
@@ -164,8 +164,8 @@ The API that is being exposed by the backend services is documented in an [OpenA
 
 Service                   | OpenAPI Specification
 --------------------------|-------------
-Submission Service        | [services/submission/api_v1.json](https://github.com/corona-warn-app/cwa-server/raw/master/services/submission/api_v1.json)
-Distribution Service      | [services/distribution/api_v1.json](https://github.com/corona-warn-app/cwa-server/raw/master/services/distribution/api_v1.json)
+Submission Service        | [services/submission/api_v1.json](https://github.com/corona-warn-app/cwa-server/raw/HEAD/services/submission/api_v1.json)
+Distribution Service      | [services/distribution/api_v1.json](https://github.com/corona-warn-app/cwa-server/raw/HEAD/services/distribution/api_v1.json)
 
 ## Spring Profiles
 

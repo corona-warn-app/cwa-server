@@ -3,7 +3,7 @@ name: codeql-analysis-workflow
 on:
     pull_request:
         branches:
-        - master
+        - main
         - release/**
 
 jobs:

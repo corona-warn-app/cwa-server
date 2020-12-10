@@ -6,9 +6,9 @@ is still ongoing. Also, details of the exposure notification API by Google/Apple
 in the future.
 
 The high level overview of CWA can be found in the [cwa-documentation](https://github.com/corona-warn-app/cwa-documentation)
-repository. The [solution architecture](https://github.com/corona-warn-app/cwa-documentation/blob/master/solution_architecture.md)
+repository. The [solution architecture](https://github.com/corona-warn-app/cwa-documentation/blob/HEAD/solution_architecture.md)
 is outlined in detail.
-![Solution Architecture](https://raw.githubusercontent.com/corona-warn-app/cwa-documentation/master/images/solution_architecture/figure_1.svg)
+![Solution Architecture](https://raw.githubusercontent.com/corona-warn-app/cwa-documentation/HEAD/images/solution_architecture/figure_1.svg)
 
 The above illustration shows all components of the CWA project. This repository reflects the `Corona-Warn-App Server`
 component, which can be found in the left bottom corner. This document explains in more detail how this component
@@ -40,7 +40,7 @@ The components regarding the verification are managed and deployed separately.
 3. Federation Gateway: Enables the sharing of keys across integrated app backends of nations within the European Union
 
 This document outlines the CWA Server components, which are part of this repository. For the full architectural
-overview, check out the [solution architecture](https://github.com/corona-warn-app/cwa-documentation/blob/master/solution_architecture.md).
+overview, check out the [solution architecture](https://github.com/corona-warn-app/cwa-documentation/blob/HEAD/solution_architecture.md).
 
 ## Integration with Other Systems
 
@@ -70,7 +70,7 @@ the user uploads the diagnosis keys of the past 14 days.
 
 Therefore, from a CWA Server perspective, the Verification Server provides an endpoint for TAN verification.
 
-A detailed description of the process can be found in the chapter ["Retrieval of lab results and verification process"](https://github.com/corona-warn-app/cwa-documentation/blob/master/solution_architecture.md#retrieval-of-lab-results-and-verification-process) of the solution architecture document.
+A detailed description of the process can be found in the chapter ["Retrieval of lab results and verification process"](https://github.com/corona-warn-app/cwa-documentation/blob/HEAD/solution_architecture.md#retrieval-of-lab-results-and-verification-process) of the solution architecture document.
 
 ### Federation Gateway
 
