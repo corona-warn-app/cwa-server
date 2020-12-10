@@ -5,7 +5,7 @@ Common cases where user-provided input is used is for logging and for data proce
 
 ## Logging and Exception Handling
 
-The cwa-server uses log4j as its standard logger. In its current configuration, it encodes user-provided input by default.
+The cwa-server uses log4j as its standard logger. In its current [configuration](services/submission/src/main/resources/log4j2.xml), it encodes user-provided input by default.
 Therefore, using this logger is strongly recommended.
 Furthermore, the proper handling of exceptions and exception messages is important. Exception messages should only be logged with log4j.
 
