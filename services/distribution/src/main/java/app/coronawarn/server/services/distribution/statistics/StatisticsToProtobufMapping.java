@@ -5,6 +5,9 @@ import static app.coronawarn.server.services.distribution.statistics.keyfigureca
 import app.coronawarn.server.common.protocols.internal.stats.KeyFigureCard;
 import app.coronawarn.server.common.protocols.internal.stats.Statistics;
 import app.coronawarn.server.services.distribution.config.DistributionServiceConfig;
+import app.coronawarn.server.services.distribution.statistics.exceptions.BucketNotFoundException;
+import app.coronawarn.server.services.distribution.statistics.exceptions.ConnectionException;
+import app.coronawarn.server.services.distribution.statistics.exceptions.FilePathNotFoundException;
 import app.coronawarn.server.services.distribution.statistics.file.JsonFileLoader;
 import app.coronawarn.server.services.distribution.statistics.keyfigurecard.KeyFigureCardFactory;
 import app.coronawarn.server.services.distribution.statistics.keyfigurecard.factory.MissingPropertyException;
@@ -57,18 +60,24 @@ public class StatisticsToProtobufMapping {
    */
   @Bean
   public Statistics constructProtobufStatistics() {
-    String content = this.jsonFileLoader.getContent();
-    List<StatisticsJsonStringObject> jsonStringObjects = SerializationUtils
-        .deserializeJson(content, typeFactory -> typeFactory
-            .constructCollectionType(List.class, StatisticsJsonStringObject.class));
+    try {
+      String content = this.jsonFileLoader.getContent();
+      List<StatisticsJsonStringObject> jsonStringObjects = SerializationUtils
+          .deserializeJson(content, typeFactory -> typeFactory
+              .constructCollectionType(List.class, StatisticsJsonStringObject.class));
 
-    StatisticsJsonValidator validator = new StatisticsJsonValidator();
-    jsonStringObjects = new ArrayList<>(validator.validate(jsonStringObjects));
+      StatisticsJsonValidator validator = new StatisticsJsonValidator();
+      jsonStringObjects = new ArrayList<>(validator.validate(jsonStringObjects));
 
-    return Statistics.newBuilder()
-        .addAllCardIdSequence(getAllCardIdSequence())
-        .addAllKeyFigureCards(buildAllKeyFigureCards(jsonStringObjects))
-        .build();
+      return Statistics.newBuilder()
+          .addAllCardIdSequence(getAllCardIdSequence())
+          .addAllKeyFigureCards(buildAllKeyFigureCards(jsonStringObjects))
+          .build();
+    } catch (BucketNotFoundException | ConnectionException | FilePathNotFoundException ex) {
+      logger.warn(ex.getMessage());
+      logger.warn("Statistics file will not be generated due to previous errors!");
+      return Statistics.newBuilder().build();
+    }
   }
 
   private List<Integer> getAllCardIdSequence() {
