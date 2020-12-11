@@ -60,9 +60,13 @@ public interface FederationGatewayClient {
   /**
    * HTTP GET request to federation gateway endpoint /diagnosiskeys/audit/download to get audit information about the
    * requested {@code batchtag} on the specific {@code date}. The EFGS audit interface can return the following
-   * statuses: 200 - Returns the audit information for the {@code batch tag}. 400 - Invalid or missing request header.
-   * 403 - Invalid or missing client certificate. 404 - The batch tag is not found or no data exists. 406 - Data format
-   * or content is not valid. 410 - The date is expired or no more exists.
+   * statuses:
+   * <li>200 - Returns the audit information for the {@code batch tag}.</li>
+   * <li>400 - Invalid or missing request header.</li>
+   * <li>403 - Invalid or missing client certificate.</li>
+   * <li>404 - The batch tag is not found or no data exists.</li>
+   * <li>406 - Data format or content is not valid.</li>
+   * <li>410 - The date is expired or no more exists.</li>
    *
    * @param date     The date for which the batch should be audited.
    * @param batchTag The batchTag of the batch that should be audited.

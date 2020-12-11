@@ -90,6 +90,7 @@ public class FederationGatewayDownloadService {
    */
   public void auditBatch(String batchTag, LocalDate date) {
     try {
+      logger.info("Auditing batch for date {} and batchTag {}.", date.format(ISO_LOCAL_DATE), batchTag);
       ResponseEntity<String> auditInformation = federationGatewayClient
           .getAuditInformation(date.format(ISO_LOCAL_DATE), batchTag);
       logger.info("Retrieved response from EFGS:{}", auditInformation);
