@@ -47,6 +47,7 @@ services:
      - objectstore
      - create-bucket
     environment:
+      SUPPORTED_COUNTRIES: DE,FR
       SPRING_PROFILES_ACTIVE: debug,signature-dev,testdata,disable-ssl-client-postgres
       POSTGRESQL_SERVICE_PORT: '5432'
       POSTGRESQL_SERVICE_HOST: postgres
