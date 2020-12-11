@@ -63,4 +63,6 @@
     - [Fake Requests](./SECURITY.md#fake-requests)
     - [Payload Padding](./SECURITY.md#payload-padding)
 - Tutorials and Guides
+  - [FAQ](./how_to/FAQ.md)
   - [Submission](./how_to/HOW-TO-SUBMISSION.md)
+  - [Information on Secure Logging and Input Validation](./how_to/HOW-TO-SECURE-LOGGING.md)
