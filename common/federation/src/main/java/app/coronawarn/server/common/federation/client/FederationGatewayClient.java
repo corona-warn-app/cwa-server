@@ -66,7 +66,7 @@ public interface FederationGatewayClient {
    *
    * @param date     The date for which the batch should be audited.
    * @param batchTag The batchTag of the batch that should be audited.
-   * @return Response of the EFGS audit interface as string¬.
+   * @return Response of the EFGS audit interface as string.
    */
   @GetMapping(value = "/diagnosiskeys/audit/download/{date}/{batchTag}",
       headers = {"Accept=application/json; version=1.0",
