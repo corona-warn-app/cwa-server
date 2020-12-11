@@ -19,7 +19,7 @@ services:
     retention-days: 14
     validation:
       allowed-report-types: ${ALLOWED_REPORT_TYPES:CONFIRMED_TEST,CONFIRMED_CLINICAL_DIAGNOSIS}
-    batch-audit-enabled: ${EFGS_ENABLE_BATCH_AUDIT:false}
+    batch-audit-enabled: ${BATCH_AUDIT_ENABLED:false}
 
 federation-gateway:
   base-url: ${FEDERATION_GATEWAY_BASE_URL:http://localhost:8005}
