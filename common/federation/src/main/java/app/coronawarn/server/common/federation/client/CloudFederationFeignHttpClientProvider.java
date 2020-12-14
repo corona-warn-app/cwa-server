@@ -48,11 +48,11 @@ public class CloudFederationFeignHttpClientProvider implements FederationFeignHt
   /**
    * Creates a FeignClient.
    */
+  @Override
   @Bean
   public Client createFeignClient() {
     return new ApacheHttpClient(
-        federationHttpClientFactory(connectionPoolSize, keyStore, keyStorePassword)
-            .createBuilder().build());
+        federationHttpClientFactory(connectionPoolSize, keyStore, keyStorePassword).createBuilder().build());
   }
 
   /**
@@ -60,9 +60,9 @@ public class CloudFederationFeignHttpClientProvider implements FederationFeignHt
    */
   private ApacheHttpClientFactory federationHttpClientFactory(int connectionPoolSize, File keyStorePath,
       String keyStorePass) {
-    return new DefaultApacheHttpClientFactory(HttpClientBuilder.create()
-        .setMaxConnPerRoute(connectionPoolSize)
-        .setMaxConnTotal(connectionPoolSize)
+    return new DefaultApacheHttpClientFactory(HttpClientBuilder.create() //
+        .setMaxConnPerRoute(connectionPoolSize) //
+        .setMaxConnTotal(connectionPoolSize) //
         .setSSLContext(getSslContext(keyStorePath, keyStorePass))
         .setSSLHostnameVerifier(this.hostnameVerifierProvider.createHostnameVerifier()));
   }
