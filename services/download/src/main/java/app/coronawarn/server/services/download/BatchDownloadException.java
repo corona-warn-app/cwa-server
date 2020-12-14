@@ -4,7 +4,7 @@ import static java.time.format.DateTimeFormatter.ISO_LOCAL_DATE;
 
 import java.time.LocalDate;
 
-public class BatchDownloadException extends RuntimeException {
+public class BatchDownloadException extends Exception {
 
   private static final long serialVersionUID = 1L;
 

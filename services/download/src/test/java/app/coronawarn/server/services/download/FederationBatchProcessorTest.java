@@ -125,7 +125,7 @@ class FederationBatchProcessorTest {
   class SaveFirstBatchInfoForDate {
 
     @Test
-    void testBatchInfoForDateDoesNotExist() throws FatalFederationGatewayException {
+    void testBatchInfoForDateDoesNotExist() throws FatalFederationGatewayException, BatchDownloadException {
       BatchDownloadException batchDownloadException = new BatchDownloadException(null, LocalDate.now(), null);
       doThrow(batchDownloadException).when(federationGatewayDownloadService).downloadBatch(any());
       batchProcessor.saveFirstBatchInfoForDate(date);
@@ -230,7 +230,7 @@ class FederationBatchProcessorTest {
     }
 
     @Test
-    void testNoInfiniteLoopSameBatchTag() throws FatalFederationGatewayException {
+    void testNoInfiniteLoopSameBatchTag() throws FatalFederationGatewayException, BatchDownloadException {
       config.setEfgsEnforceDateBasedDownload(true);
       FederationBatchInfo batchInfo = new FederationBatchInfo(batchTag1, date, UNPROCESSED);
       BatchDownloadResponse serverResponse = FederationBatchTestHelper

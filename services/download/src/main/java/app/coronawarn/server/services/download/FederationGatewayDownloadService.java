@@ -41,7 +41,8 @@ public class FederationGatewayDownloadService {
    * @param date The date for which the batch should be downloaded.
    * @return The {@link BatchDownloadResponse} containing the downloaded batch, batchTag and nextBatchTag.
    */
-  public BatchDownloadResponse downloadBatch(LocalDate date) throws FatalFederationGatewayException {
+  public BatchDownloadResponse downloadBatch(LocalDate date)
+      throws FatalFederationGatewayException, BatchDownloadException {
     try {
       logger.info("Downloading first batch for date {}", date);
       ResponseEntity<DiagnosisKeyBatch> response = federationGatewayClient
@@ -63,7 +64,8 @@ public class FederationGatewayDownloadService {
    * @param date     The date for which the batch should be downloaded.
    * @return The {@link BatchDownloadResponse} containing the downloaded batch, batchTag and nextBatchTag.
    */
-  public BatchDownloadResponse downloadBatch(String batchTag, LocalDate date) throws FatalFederationGatewayException {
+  public BatchDownloadResponse downloadBatch(String batchTag, LocalDate date)
+      throws FatalFederationGatewayException, BatchDownloadException {
     String dateString = date.format(ISO_LOCAL_DATE);
     try {
       logger.info("Downloading batch for date {} and batchTag {}.", dateString, batchTag);
@@ -96,6 +98,7 @@ public class FederationGatewayDownloadService {
   }
 
   static class IllegalResponseException extends IOException {
+
     private static final long serialVersionUID = 3175572275651367015L;
 
     IllegalResponseException(String message) {
