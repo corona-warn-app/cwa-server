@@ -103,8 +103,7 @@ public class FederationBatchProcessor {
       throw e;
     } catch (Exception e) {
       logger.error(
-          "Triggering download of first batch for date {} failed.",
-          date, e);
+          "Triggering download of first batch for date {} failed.", date, e);
     }
   }
 
@@ -124,8 +123,7 @@ public class FederationBatchProcessor {
           .ifPresent(nextBatchTag ->
               batchInfoService.save(new FederationBatchInfo(nextBatchTag, federationBatchInfo.getDate())));
     } catch (Exception e) {
-      logger.error("Failed to save next federation batch info for processing. Will not try again.",
-          e);
+      logger.error("Failed to save next federation batch info for processing. Will not try again.", e);
       batchInfoService.updateStatus(federationBatchInfo, ERROR_WONT_RETRY);
     }
   }
