@@ -1,5 +1,3 @@
-
-
 package app.coronawarn.server.services.download;
 
 import static java.time.format.DateTimeFormatter.ISO_LOCAL_DATE;
@@ -82,7 +80,7 @@ public class FederationGatewayDownloadService {
     }
   }
 
-  private BatchDownloadResponse parseResponseEntity(ResponseEntity<DiagnosisKeyBatch> response) 
+  private BatchDownloadResponse parseResponseEntity(ResponseEntity<DiagnosisKeyBatch> response)
       throws IllegalResponseException {
     String batchTag = getHeader(response, HEADER_BATCH_TAG)
         .orElseThrow(() -> new IllegalResponseException("Missing " + HEADER_BATCH_TAG + " header."));
@@ -96,7 +94,7 @@ public class FederationGatewayDownloadService {
         ? Optional.ofNullable(headerString)
         : Optional.empty();
   }
-  
+
   static class IllegalResponseException extends IOException {
     private static final long serialVersionUID = 3175572275651367015L;
 

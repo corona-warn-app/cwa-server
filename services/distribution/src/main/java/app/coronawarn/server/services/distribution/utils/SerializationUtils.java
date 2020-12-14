@@ -1,6 +1,8 @@
 package app.coronawarn.server.services.distribution.utils;
 
+import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.json.JsonReadFeature;
 import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.type.TypeFactory;
@@ -26,7 +28,9 @@ public final class SerializationUtils {
   public static <T> T deserializeJson(String jsonString, Function<TypeFactory, JavaType> typeProviderFunction) {
     ObjectMapper mapper = new ObjectMapper();
     try {
-      return mapper.readValue(jsonString, typeProviderFunction.apply(mapper.getTypeFactory()));
+      return mapper
+          .enable(JsonParser.Feature.ALLOW_NON_NUMERIC_NUMBERS)
+          .readValue(jsonString, typeProviderFunction.apply(mapper.getTypeFactory()));
     } catch (JsonProcessingException e) {
       logger.error(e.getMessage());
       throw new IllegalStateException("Json configuration could not be deserialized");

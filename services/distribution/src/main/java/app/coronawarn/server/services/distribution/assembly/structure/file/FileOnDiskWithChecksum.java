@@ -57,7 +57,7 @@ public class FileOnDiskWithChecksum extends FileOnDisk {
   /**
    * Calculates the CWA-hash value. If this code changes, please adapt the
    * <a href=
-   * "https://github.com/corona-warn-app/cwa-server/blob/master/docs/DISTRIBUTION.md#cwa-hash">CWA-hash</a>
+   * "https://github.com/corona-warn-app/cwa-server/blob/HEAD/docs/DISTRIBUTION.md#cwa-hash">CWA-hash</a>
    * documentation. This code is intended to mimic the AWS ETag hash code for multi-part uploads.
    * 
    * @see <a href=
