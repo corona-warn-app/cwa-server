@@ -238,6 +238,7 @@ class FederationBatchProcessorTest {
       batchProcessor.processUnprocessedFederationBatches();
       Mockito.verify(batchInfoService, times(1)).findByStatus(UNPROCESSED);
       Mockito.verify(federationGatewayDownloadService, times(1)).downloadBatch(batchTag1, date);
+      Mockito.verify(federationGatewayDownloadService, times(1)).auditBatch(batchTag1, date);
       Mockito.verify(batchInfoService, times(1)).updateStatus(any(FederationBatchInfo.class), eq(ERROR));
       Mockito.verify(diagnosisKeyService, never()).saveDiagnosisKeys(any());
       config.setBatchAuditEnabled(false);
