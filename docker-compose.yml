@@ -9,7 +9,7 @@ services:
     ports:
       - "8010:8080"
     environment:
-      SPRING_PROFILES_ACTIVE: debug,disable-ssl-server,disable-ssl-client-postgres,disable-ssl-client-verification,disable-ssl-client-verification-verify-hostname
+      SPRING_PROFILES_ACTIVE: debug,disable-ssl-client-postgres
       POSTGRESQL_SERVICE_PORT: '5432'
       POSTGRESQL_SERVICE_HOST: postgres
       POSTGRESQL_DATABASE: ${POSTGRES_DB}
@@ -32,7 +32,7 @@ services:
       - "8000:8080"
       - "8006:8081"
     environment:
-      SPRING_PROFILES_ACTIVE: debug,disable-ssl-server,disable-ssl-client-postgres,disable-ssl-client-verification,disable-ssl-client-verification-verify-hostname,disable-ssl-efgs-verification
+      SPRING_PROFILES_ACTIVE: debug,disable-ssl-client-postgres
       POSTGRESQL_SERVICE_PORT: '5432'
       POSTGRESQL_SERVICE_HOST: postgres
       POSTGRESQL_DATABASE: ${POSTGRES_DB}
@@ -81,7 +81,7 @@ services:
     ports:
       - "8011:8080"
     environment:
-      SPRING_PROFILES_ACTIVE: debug,disable-ssl-server,disable-ssl-client-postgres,disable-ssl-client-verification,disable-ssl-client-verification-verify-hostname,disable-ssl-efgs-verification
+      SPRING_PROFILES_ACTIVE: debug,disable-ssl-client-postgres
       POSTGRESQL_SERVICE_PORT: '5432'
       POSTGRESQL_SERVICE_HOST: postgres
       POSTGRESQL_DATABASE: ${POSTGRES_DB}
@@ -111,7 +111,7 @@ services:
       SSL_FEDERATION_TRUSTSTORE_PATH: file:/secrets/contains_efgs_truststore.jks
       SSL_FEDERATION_TRUSTSTORE_PASSWORD: 123456
       FEDERATION_GATEWAY_KEYSTORE_PATH: file:/secrets/ssl.p12
-      FEDERATION_GATEWAY_KEYSTORE_PASS:
+      FEDERATION_GATEWAY_KEYSTORE_PASS: 123456
     volumes:
       - ./docker-compose-test-secrets:/secrets
   postgres:

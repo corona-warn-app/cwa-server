@@ -8,24 +8,23 @@ import java.io.File;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
-import org.springframework.test.annotation.DirtiesContext;
 
 @SpringBootTest(properties = "spring.main.lazy-initialization=true", webEnvironment = WebEnvironment.RANDOM_PORT)
-@DirtiesContext
 class CloudFederationFeignHttpClientProviderSmokeTest {
 
   @Test
   void testCanLoadKeystore() {
     Ssl ssl = new Ssl();
-    HostnameVerifierProvider hostnameVerifierProvider = new DefaultHostnameVerifierProvider();
     ssl.setKeyStore(new File("../../docker-compose-test-secrets/ssl.p12"));
-    ssl.setKeyStorePass("");
-    ssl.setTrustStore(new File("../../docker-compose-test-secrets/ssl.p12"));
-    ssl.setTrustStorePassword("");
+    ssl.setKeyStorePass("123456");
+    ssl.setCertificateType("PKCS12");
+    ssl.setTrustStore(new File("../../docker-compose-test-secrets/contains_efgs_truststore.jks"));
+    ssl.setTrustStorePassword("123456");
     FederationGatewayConfig config = new FederationGatewayConfig();
     config.setConnectionPoolSize(1);
     config.setSsl(ssl);
-    CloudFederationFeignHttpClientProvider cut = new CloudFederationFeignHttpClientProvider(config, hostnameVerifierProvider);
+    CloudFederationFeignHttpClientProvider cut = new CloudFederationFeignHttpClientProvider(config,
+        new DefaultHostnameVerifierProvider());
     assertThat(cut.createFeignClient()).isNotNull();
   }
 

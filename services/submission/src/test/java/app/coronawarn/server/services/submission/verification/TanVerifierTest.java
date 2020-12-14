@@ -1,5 +1,4 @@
 
-
 package app.coronawarn.server.services.submission.verification;
 
 import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
@@ -11,6 +10,7 @@ import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.options
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 import static org.springframework.http.HttpHeaders.CONTENT_TYPE;
+
 import app.coronawarn.server.common.persistence.domain.config.TekFieldDerivations;
 import app.coronawarn.server.services.submission.config.SubmissionServiceConfig;
 import com.github.tomakehurst.wiremock.WireMockServer;
@@ -31,9 +31,8 @@ import org.springframework.http.MediaType;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
 
-@SpringBootTest(classes = {TanVerifier.class, DevelopmentFeignClientProvider.class, NoopHostnameVerifierProvider.class,
-    TekFieldDerivations.class})
-@ImportAutoConfiguration({FeignAutoConfiguration.class, FeignTestConfiguration.class})
+@SpringBootTest(classes = { TanVerifier.class, CloudFeignClientProvider.class, TekFieldDerivations.class })
+@ImportAutoConfiguration({ FeignAutoConfiguration.class, FeignTestConfiguration.class })
 @EnableConfigurationProperties(value = SubmissionServiceConfig.class)
 @EnableFeignClients
 @DirtiesContext
