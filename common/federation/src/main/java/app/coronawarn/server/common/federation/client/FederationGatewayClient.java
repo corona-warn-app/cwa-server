@@ -55,7 +55,6 @@ public interface FederationGatewayClient {
       byte[] raw,
       @RequestHeader("batchTag") String batchTag,
       @RequestHeader("batchSignature") String batchSignature);
-
   /**
    * HTTP GET request to federation gateway endpoint /diagnosiskeys/audit/download to get audit information about the
    * requested {@code batchtag} on the specific {@code date}. The EFGS audit interface can return the following
