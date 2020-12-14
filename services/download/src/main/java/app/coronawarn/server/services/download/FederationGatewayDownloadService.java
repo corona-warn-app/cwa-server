@@ -44,14 +44,14 @@ public class FederationGatewayDownloadService {
     try {
       logger.info("Downloading first batch for date {}", date);
       ResponseEntity<DiagnosisKeyBatch> response = federationGatewayClient
-          .getDiagnosisKeys(date.format(ISO_LOCAL_DATE));
+          .getDiagnosisKeys(getDateAsString(date));
       return parseResponseEntity(response);
     } catch (FeignException.Forbidden feignException) {
       throw new FatalFederationGatewayException(
-          "Downloading batch for date " + date.format(ISO_LOCAL_DATE) + " failed due to invalid client certificate.");
+          "Downloading batch for date " + getDateAsString(date) + " failed due to invalid client certificate.");
     } catch (FeignException feignException) {
       logger.error("Downloading first batch for date {} failed.", date);
-      throw new BatchDownloadException("Downloading batch for date " + date.format(ISO_LOCAL_DATE) + " failed.",
+      throw new BatchDownloadException("Downloading batch for date " + getDateAsString(date) + " failed.",
           feignException);
     }
   }
@@ -64,7 +64,7 @@ public class FederationGatewayDownloadService {
    * @return The {@link BatchDownloadResponse} containing the downloaded batch, batchTag and nextBatchTag.
    */
   public BatchDownloadResponse downloadBatch(String batchTag, LocalDate date) throws FatalFederationGatewayException {
-    String dateString = date.format(ISO_LOCAL_DATE);
+    String dateString = getDateAsString(date);
     try {
       logger.info("Downloading batch for date {} and batchTag {}.", dateString, batchTag);
       ResponseEntity<DiagnosisKeyBatch> response = federationGatewayClient
@@ -72,7 +72,7 @@ public class FederationGatewayDownloadService {
       return parseResponseEntity(response);
     } catch (FeignException.Forbidden feignException) {
       throw new FatalFederationGatewayException(
-          "Downloading batch " + batchTag + " for date " + date.format(ISO_LOCAL_DATE)
+          "Downloading batch " + batchTag + " for date " + getDateAsString(date)
               + " failed due to invalid client certificate.");
     } catch (FeignException exception) {
       logger.error("Downloading batch for date {} and batchTag {} failed. Reason: {}", batchTag, dateString,
@@ -90,22 +90,28 @@ public class FederationGatewayDownloadService {
    */
   public void auditBatch(String batchTag, LocalDate date) {
     try {
-      logger.info("Auditing batch for date {} and batchTag {}.", date.format(ISO_LOCAL_DATE), batchTag);
+      logger.info("Auditing batch for date {} and batchTag {}.", getDateAsString(date), batchTag);
       ResponseEntity<String> auditInformation = federationGatewayClient
-          .getAuditInformation(date.format(ISO_LOCAL_DATE), batchTag);
-      logger.debug("Retrieved audit response from EFGS:{}", auditInformation);
+          .getAuditInformation(getDateAsString(date), batchTag);
+      logger.debug("Retrieved audit response from EFGS: {}", auditInformation);
     } catch (FeignException.BadRequest | FeignException.Forbidden | FeignException.NotAcceptable
         | FeignException.Gone | FeignException.NotFound clientError) {
-      logger.error("Auditing batch " + batchTag + " for date " + date.format(ISO_LOCAL_DATE)
-          + " failed due to: " + clientError.getMessage());
-      throw new BatchAuditException("Auditing batch " + batchTag + " for date " + date + " failed due to: "
-          + clientError.getMessage(), clientError);
+      logger.error("Auditing batch {} for date {} failed due to: {}", batchTag, getDateAsString(date),
+          clientError.getMessage());
+      throw new BatchAuditException(
+          String.format("Auditing batch %s for date %s failed due to: %s", batchTag, date, clientError.getMessage()),
+          clientError);
     } catch (FeignException e) {
-      logger.error("Auditing batch " + batchTag + " for date " + date.format(ISO_LOCAL_DATE)
-          + " failed due to uncommon reason: " + e.getMessage());
-      throw new BatchAuditException("Auditing batch " + batchTag + " for date " + date
-          + " failed due to uncommon reason: " + e.getMessage(), e);
+      logger.error("Auditing batch {} for date {} failed due to uncommon reason: {}", batchTag,
+          getDateAsString(date), e.getMessage());
+      throw new BatchAuditException(String
+          .format("Auditing batch %s  for date %s failed due to uncommon reason: %s", batchTag, date, e.getMessage()),
+          e);
     }
+  }
+
+  private String getDateAsString(LocalDate date) {
+    return date.format(ISO_LOCAL_DATE);
   }
 
   private BatchDownloadResponse parseResponseEntity(ResponseEntity<DiagnosisKeyBatch> response) {

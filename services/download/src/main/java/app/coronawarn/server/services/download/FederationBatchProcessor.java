@@ -180,9 +180,6 @@ public class FederationBatchProcessor {
       return response.getNextBatchTag();
     } catch (FatalFederationGatewayException e) {
       throw e;
-    } catch (BatchAuditException e) {
-      logger.error("Federation batch auditing for date " + date + " and batchTag " + batchTag + " failed.");
-      throw e;
     } catch (Exception e) {
       logger.error(
           "Federation batch processing for date " + date + " and batchTag " + batchTag + " failed. Status set to "
