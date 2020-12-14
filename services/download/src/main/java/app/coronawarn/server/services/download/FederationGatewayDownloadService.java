@@ -93,18 +93,18 @@ public class FederationGatewayDownloadService {
       logger.info("Auditing batch for date {} and batchTag {}.", date.format(ISO_LOCAL_DATE), batchTag);
       ResponseEntity<String> auditInformation = federationGatewayClient
           .getAuditInformation(date.format(ISO_LOCAL_DATE), batchTag);
-      logger.info("Retrieved response from EFGS:{}", auditInformation);
+      logger.debug("Retrieved audit response from EFGS:{}", auditInformation);
     } catch (FeignException.BadRequest | FeignException.Forbidden | FeignException.NotAcceptable
         | FeignException.Gone | FeignException.NotFound clientError) {
       logger.error("Auditing batch " + batchTag + " for date " + date.format(ISO_LOCAL_DATE)
           + " failed due to: " + clientError.getMessage());
-      throw new BatchAuditException("Downloading batch " + batchTag + " for date " + date + " failed due to: "
-          + clientError.getMessage());
+      throw new BatchAuditException("Auditing batch " + batchTag + " for date " + date + " failed due to: "
+          + clientError.getMessage(), clientError);
     } catch (FeignException e) {
       logger.error("Auditing batch " + batchTag + " for date " + date.format(ISO_LOCAL_DATE)
           + " failed due to uncommon reason: " + e.getMessage());
-      throw new BatchAuditException("Downloading batch " + batchTag + " for date " + date
-          + " failed due to uncommon reason: " + e.getMessage());
+      throw new BatchAuditException("Auditing batch " + batchTag + " for date " + date
+          + " failed due to uncommon reason: " + e.getMessage(), e);
     }
   }
 

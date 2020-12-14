@@ -45,10 +45,11 @@ public class FederationBatchProcessor {
   private final DownloadServiceConfig config;
   private final ValidFederationKeyFilter validFederationKeyFilter;
 
-  // This is a potential memory-leak if there are very many batches
-  // This is an intentional decision:
-  // We'd rather run into a memory-leak if there are too many batches
-  // than run into an endless loop if a batch-tag repeats
+
+  /**
+   * This is a potential memory-leak if there are very many batches. This is an intentional decision: We'd rather run
+   * into a memory-leak if there are too many batches than run into an endless loop if a batch-tag repeats
+   */
   private final Set<String> seenBatches;
 
   /**
@@ -177,14 +178,10 @@ public class FederationBatchProcessor {
       }, () -> logger.info("Batch for date {} and batchTag {} did not contain any keys.", date, batchTag));
       batchInfoService.updateStatus(batchInfo, batchContainsInvalidKeys.get() ? PROCESSED_WITH_ERROR : PROCESSED);
       return response.getNextBatchTag();
-    } catch (BatchDownloadException e) {
-      logger.error(
-          "Federation batch processing for date " + date + " and batchTag " + batchTag + " failed. Status set to "
-              + errorStatus.name() + ".",
-          e);
-      batchInfoService.updateStatus(batchInfo, errorStatus);
-      return Optional.empty();
     } catch (FatalFederationGatewayException e) {
+      throw e;
+    } catch (BatchAuditException e) {
+      logger.error("Federation batch auditing for date " + date + " and batchTag " + batchTag + " failed.");
       throw e;
     } catch (Exception e) {
       logger.error(
