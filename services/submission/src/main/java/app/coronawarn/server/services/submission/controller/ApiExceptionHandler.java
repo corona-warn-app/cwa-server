@@ -30,14 +30,14 @@ public class ApiExceptionHandler {
       InvalidProtocolBufferException.class})
   @ResponseStatus(HttpStatus.BAD_REQUEST)
   public void bindingExceptions(Exception ex, WebRequest wr) {
-    logger.error("Binding failed {}", getFormattedDescription(wr), ex);
+    logger.error("Binding failed {} {}", getFormattedDescription(wr), ex.getMessage());
   }
 
   @ExceptionHandler({
       InvalidDiagnosisKeyException.class, ConstraintViolationException.class, IllegalArgumentException.class})
   @ResponseStatus(HttpStatus.BAD_REQUEST)
   public void diagnosisKeyExceptions(Exception ex, WebRequest wr) {
-    logger.error("Erroneous Submission Payload {}", getFormattedDescription(wr), ex);
+    logger.error("Erroneous Submission Payload {} {}", getFormattedDescription(wr), ex.getMessage());
   }
 
   private String getFormattedDescription(WebRequest wr) {
