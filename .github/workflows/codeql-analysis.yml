@@ -1,9 +1,11 @@
 name: codeql-analysis-workflow
 
 on:
+    push:
+        branches: [ main, release/* ]
     pull_request:
         branches:
-        - master
+        - main
         - release/**
 
 jobs:

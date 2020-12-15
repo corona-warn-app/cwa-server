@@ -32,7 +32,7 @@ class FileOnDiskWithChecksumTest {
     String checksum = readString(buildChecksumPathForFile(file.getFileOnDisk().toPath())).trim();
 
     // NOTE: If this value changes, please adapt
-    // https://github.com/corona-warn-app/cwa-server/blob/master/docs/DISTRIBUTION.md#cwa-hash
+    // https://github.com/corona-warn-app/cwa-server/blob/HEAD/docs/DISTRIBUTION.md#cwa-hash
     assertThat(checksum).isEqualTo("65584eac1cb9fd270adb3a733be69c3e");
   }
 

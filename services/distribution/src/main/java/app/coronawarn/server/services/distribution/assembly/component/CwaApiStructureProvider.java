@@ -54,7 +54,7 @@ public class CwaApiStructureProvider {
     versionDirectory.addWritableToAll(
         ignoredValue -> Optional.of(diagnosisKeysStructureProvider.getDiagnosisKeys()));
     versionDirectory.addWritableToAll(
-        ignoredValue -> Optional.of(statisticsStructureProvider.getStatistics()));
+        ignoredValue -> Optional.ofNullable(statisticsStructureProvider.getStatistics()));
 
     return new IndexingDecoratorOnDisk<>(versionDirectory, distributionServiceConfig.getOutputFileName());
   }
