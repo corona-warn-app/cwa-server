@@ -12,7 +12,7 @@ import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 
 @Component
-@Profile("!fake-client && !e2e")
+@Profile("!fake-client")
 public class ProdFederationUploadClient implements FederationUploadClient {
 
   private static final Logger logger = LoggerFactory
