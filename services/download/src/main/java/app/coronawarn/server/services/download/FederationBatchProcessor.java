@@ -201,9 +201,6 @@ public class FederationBatchProcessor {
           .withReportType(ReportType.CONFIRMED_TEST)
           .withFieldNormalization(new FederationKeyNormalizer(config))
           .build());
-    } catch (InvalidDiagnosisKeyException e) {
-      logger.info("Building diagnosis key from federation diagnosis key failed.", e);
-      return Optional.empty();
     } catch (Exception e) {
       logger.info("Building diagnosis key from federation diagnosis key failed.", e);
       return Optional.empty();
