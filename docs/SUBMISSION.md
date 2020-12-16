@@ -40,7 +40,7 @@ CWA-Fake: <0 or 1>
 There is currently no official specification for publishing diagnosis keys to the server.
 Google currently uses the following in their reference implementation.
 
-[exposure_types.go](https://github.com/google/exposure-notifications-server/blob/master/pkg/api/v1alpha1/exposure_types.go)
+[exposure_types.go](https://github.com/google/exposure-notifications-server/blob/HEAD/pkg/api/v1alpha1/exposure_types.go)
 
 ```golang
 type Publish struct {
@@ -90,7 +90,7 @@ Below we describe the main steps involved in processing a payload of temporary e
 
 When submitting diagnosis keys, a Transaction Authorization Number (TAN) token must be present in the request header section (`cwa-authorization`).
 Before delegating the TAN validation to the Verification Server, the TAN is verified to be a UUID on the Submission Service side.
-Then the TAN token is sent to the [Verification Server](https://github.com/corona-warn-app/cwa-verification-server/blob/master/docs/architecture-overview.md)
+Then the TAN token is sent to the [Verification Server](https://github.com/corona-warn-app/cwa-verification-server/blob/HEAD/docs/architecture-overview.md)
 to check its validity. If the TAN is valid, then it means it is linked to a valid test.
 In case the TAN is not valid, then the verification server will respond with `HTTP 404 Not Found` and the Submission Service will respond with `HTTP 403 Forbidden`.
 

@@ -2,8 +2,8 @@
 logging:
   level:
     org:
-      springframework: off
-    root: off
+      springframework: info
+    root: info
 
 services:
   distribution:
@@ -16,6 +16,7 @@ services:
     include-incomplete-hours: false
     eu-package-name: EUR
     apply-policies-for-all-countries: false
+    card-id-sequence: ${STATS_CARD_ID_SEQUENCE:[1,2,3,4]}
     paths:
       output: out
       privatekey: classpath:keys/private.pem
@@ -36,6 +37,7 @@ services:
       app-config-file-name: app_config
       app-config-v2-android-file-name: app_config_android
       app-config-v2-ios-file-name: app_config_ios
+      statistics-file-name: stats
     signature:
       app-bundle-id: de.rki.coronawarnapp
       verification-key-id: 262
@@ -58,6 +60,13 @@ services:
       max-number-of-s3-threads: 2
       force-update-keyfiles: ${FORCE_UPDATE_KEYFILES:false}
       hour-file-retention-days: 2
+    statistics:
+      trend-calculation-threshold: 0.05
+      statistic-path: stats/statistic_data.json
+      access-key: fakeAccessKey
+      secret-key: secretKey
+      endpoint: https://localhost
+      bucket: ${STATS_S3_BUCKET:obs-cwa-public-dev}
 
     app-features:
       - label: isPlausibleDeniabilityActive

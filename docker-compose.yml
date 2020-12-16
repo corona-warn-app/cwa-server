@@ -9,7 +9,7 @@ services:
     ports:
       - "8010:8080"
     environment:
-      SPRING_PROFILES_ACTIVE: debug,disable-ssl-server,disable-ssl-client-postgres,disable-ssl-client-verification,disable-ssl-client-verification-verify-hostname,disable-ssl-efgs-verification,disable-certificate-authentication
+      SPRING_PROFILES_ACTIVE: debug,disable-ssl-server,disable-ssl-client-postgres,disable-ssl-client-verification,disable-ssl-client-verification-verify-hostname,disable-ssl-efgs-verification,disable-callback-cert-auth
       POSTGRESQL_SERVICE_PORT: '5432'
       POSTGRESQL_SERVICE_HOST: postgres
       POSTGRESQL_DATABASE: ${POSTGRES_DB}
@@ -47,6 +47,7 @@ services:
      - objectstore
      - create-bucket
     environment:
+      SUPPORTED_COUNTRIES: DE,FR
       SPRING_PROFILES_ACTIVE: debug,signature-dev,testdata,disable-ssl-client-postgres
       POSTGRESQL_SERVICE_PORT: '5432'
       POSTGRESQL_SERVICE_HOST: postgres

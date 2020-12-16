@@ -11,7 +11,7 @@ Each interval generates a `.zip` file for each applicable country where keys are
 
 1. export.bin: Contains the list of diagnosis keys.
 2. export.sig: Contains signature information needed for validating the export.bin file.
-The file structure definition can be found [here](https://github.com/google/exposure-notifications-server/blob/master/internal/pb/export/export.proto).
+The file structure definition can be found [here](https://github.com/google/exposure-notifications-server/blob/HEAD/internal/pb/export/export.proto).
 
 The distribution service is triggered by a CRON scheduler, currently set to 1 hour. However, this
 will change, since the Exposure Notification APIs have a rate-limiting in place (Apple: 15 files/day, Google 20 API calls/day).
@@ -29,7 +29,7 @@ Configuration files are needed for two use cases:
 
 1. Exposure Configuration: In order to calculate a risk score for each exposure incident, the mobile
 API requires a list of the following parameters, requiring weights and levels: duration, days, attenuation and transmission.
-The function and impact of those parameters is described on the [Apple Exposure Configuration Page](https://developer.apple.com/documentation/exposurenotification/enexposureconfiguration) and in the chapter [*Risk score calculation*](https://github.com/corona-warn-app/cwa-documentation/blob/master/solution_architecture.md#risk-score-calculation) of the solution architecture document.
+The function and impact of those parameters is described on the [Apple Exposure Configuration Page](https://developer.apple.com/documentation/exposurenotification/enexposureconfiguration) and in the chapter [*Risk score calculation*](https://github.com/corona-warn-app/cwa-documentation/blob/HEAD/solution_architecture.md#risk-score-calculation) of the solution architecture document.
 2. Mobile App Configuration: Provides configuration values needed for the CWA mobile app, which are
 not part of the exposure notification framework. These values are required for controlling the
 application behavior.

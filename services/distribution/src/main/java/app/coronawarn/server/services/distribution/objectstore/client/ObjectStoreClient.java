@@ -21,6 +21,8 @@ public interface ObjectStoreClient {
    */
   List<S3Object> getObjects(String bucket, String prefix);
 
+  String getSingleObjectContent(String bucket, String key);
+
   /**
    * Uploads data from the specified file to an object with the specified name.
    *
