@@ -19,7 +19,7 @@ import org.springframework.http.client.SimpleClientHttpRequestFactory;
 
 public class ClientCertificateTestConfig {
 
-  private static final String CLIENT_CERTIFICATE = "src/test/resources/efgs.p12";
+  private static final String CLIENT_CERTIFICATE = "../../docker-compose-test-secrets/efgs.p12";
   private static final String CERTIFICATE_PWD = "123456";
   private static final String TLS = "TLS";
   private static final String SUN_X509 = "SunX509";
