@@ -45,8 +45,8 @@ feign:
 server:
   ssl:
     key-password: 123456
-    key-store: src/test/resources/ssl.p12
+    key-store: ../../docker-compose-test-secrets/ssl.p12
     key-store-password: 123456
-    trust-store: src/test/resources/contains_efgs_truststore.jks
+    trust-store: ../../docker-compose-test-secrets/contains_efgs_truststore.jks
     trust-store-password: 123456
     client-auth: need
