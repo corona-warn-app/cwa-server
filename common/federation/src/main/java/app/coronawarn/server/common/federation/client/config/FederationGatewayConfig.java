@@ -1,5 +1,4 @@
 
-
 package app.coronawarn.server.common.federation.client.config;
 
 import java.io.File;
@@ -43,7 +42,7 @@ public class FederationGatewayConfig {
   public static class Ssl {
 
     private File keyStore;
-    private String keyStorePass;
+    private String keyStorePassword;
     private String certificateType;
     private String certificateDn;
     private String certificateSha;
@@ -90,12 +89,12 @@ public class FederationGatewayConfig {
       this.keyStore = keyStore;
     }
 
-    public String getKeyStorePass() {
-      return keyStorePass;
+    public String getKeyStorePassword() {
+      return keyStorePassword;
     }
 
-    public void setKeyStorePass(String keyStorePass) {
-      this.keyStorePass = keyStorePass;
+    public void setKeyStorePassword(String keyStorePassword) {
+      this.keyStorePassword = keyStorePassword;
     }
 
     public String getCertificateType() {

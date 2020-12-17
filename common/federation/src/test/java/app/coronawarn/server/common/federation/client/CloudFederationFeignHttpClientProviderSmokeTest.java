@@ -16,7 +16,7 @@ class CloudFederationFeignHttpClientProviderSmokeTest {
   void testCanLoadKeystore() {
     Ssl ssl = new Ssl();
     ssl.setKeyStore(new File("../../docker-compose-test-secrets/ssl.p12"));
-    ssl.setKeyStorePass("123456");
+    ssl.setKeyStorePassword("123456");
     ssl.setCertificateType("PKCS12");
     ssl.setTrustStore(new File("../../docker-compose-test-secrets/contains_efgs_truststore.jks"));
     ssl.setTrustStorePassword("123456");

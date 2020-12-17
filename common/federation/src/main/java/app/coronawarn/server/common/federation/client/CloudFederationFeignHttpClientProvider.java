@@ -36,7 +36,7 @@ public class CloudFederationFeignHttpClientProvider implements FederationFeignHt
     var ssl = config.getSsl();
     this.connectionPoolSize = config.getConnectionPoolSize();
     this.keyStore = ssl.getKeyStore();
-    this.keyStorePassword = ssl.getKeyStorePass();
+    this.keyStorePassword = ssl.getKeyStorePassword();
     this.trustStore = ssl.getTrustStore();
     this.trustStorePassword = ssl.getTrustStorePassword();
   }
