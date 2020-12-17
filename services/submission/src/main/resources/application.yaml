@@ -47,8 +47,8 @@ services:
         key-password: ${SSL_SUBMISSION_KEYSTORE_PASSWORD}
         key-store: ${SSL_SUBMISSION_KEYSTORE_PATH}
         key-store-password: ${SSL_SUBMISSION_KEYSTORE_PASSWORD}
-        trust-store: ${SSL_VERIFICATION_TRUSTSTORE_PATH}
-        trust-store-password: ${SSL_VERIFICATION_TRUSTSTORE_PASSWORD}
+        trust-store: ${SSL_FEDERATION_TRUSTSTORE_PATH}
+        trust-store-password: ${SSL_FEDERATION_TRUSTSTORE_PASSWORD}
 
 spring:
   lifecycle:

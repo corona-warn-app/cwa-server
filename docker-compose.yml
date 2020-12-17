@@ -17,6 +17,8 @@ services:
       POSTGRESQL_USER_CALLBACK: ${POSTGRES_CALLBACK_USER}
       POSTGRESQL_PASSWORD_FLYWAY: ${POSTGRES_FLYWAY_PASSWORD}
       POSTGRESQL_USER_FLYWAY: ${POSTGRES_FLYWAY_USER}
+      SSL_CALLBACK_KEYSTORE_PATH: file:/secrets/ssl.p12
+      SSL_CALLBACK_KEYSTORE_PASSWORD: 123456
       SSL_FEDERATION_TRUSTSTORE_PATH: file:/secrets/contains_efgs_truststore.jks
       SSL_FEDERATION_TRUSTSTORE_PASSWORD: 123456
     volumes:
@@ -42,6 +44,12 @@ services:
       POSTGRESQL_USER_FLYWAY: ${POSTGRES_FLYWAY_USER}
       VERIFICATION_BASE_URL: http://verification-fake:8004
       SUPPORTED_COUNTRIES: DE,FR
+      SSL_SUBMISSION_KEYSTORE_PATH: file:/secrets/ssl.p12
+      SSL_SUBMISSION_KEYSTORE_PASSWORD: 123456
+      SSL_FEDERATION_TRUSTSTORE_PATH: file:/secrets/contains_efgs_truststore.jks
+      SSL_FEDERATION_TRUSTSTORE_PASSWORD: 123456
+    volumes:
+      - ./docker-compose-test-secrets:/secrets
   distribution:
     build:
       context: ./
@@ -89,6 +97,12 @@ services:
       POSTGRESQL_USER_CALLBACK: ${POSTGRES_CALLBACK_USER}
       POSTGRESQL_PASSWORD_FLYWAY: ${POSTGRES_FLYWAY_PASSWORD}
       POSTGRESQL_USER_FLYWAY: ${POSTGRES_FLYWAY_USER}
+      FEDERATION_GATEWAY_KEYSTORE_PATH: file:/secrets/ssl.p12
+      FEDERATION_GATEWAY_KEYSTORE_PASS: 123456
+      SSL_FEDERATION_TRUSTSTORE_PATH: file:/secrets/contains_efgs_truststore.jks
+      SSL_FEDERATION_TRUSTSTORE_PASSWORD: 123456
+    volumes:
+      - ./docker-compose-test-secrets:/secrets
   upload:
     build:
       context: ./
