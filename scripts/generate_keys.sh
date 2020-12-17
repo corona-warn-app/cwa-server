@@ -91,6 +91,7 @@ generate_SSL_keystore()
   openssl pkcs12 -export \
     -in "$2" \
     -inkey "$1" \
+    -passout pass:123456 \
     -out "$3"
 }
 
@@ -111,6 +112,8 @@ generate_truststore_containing_efgs()
 	  -file "$1" \
 	  -alias "$2" \
 	  -storetype JKS \
+	  -storepass 123456 \
+	  -noprompt \
 	  -ext "SAN:c=DNS:localhost,IP:127.0.0.1" \
 	  -keystore "$3"
 }

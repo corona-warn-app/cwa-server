@@ -9,11 +9,11 @@ federation-gateway:
   base-url: fake-url
   connection-pool-size: 200
   ssl:
-    key-store: test.p12
-    key-store-pass: test1234
-    certificate-type: PKCS12
-    trust-store: ${SSL_FEDERATION_TRUSTSTORE_PATH}
-    trust-store-password: ${SSL_FEDERATION_TRUSTSTORE_PASSWORD}
+    key-password: 123456
+    key-store: src/test/resources/ssl.p12
+    key-store-password: 123456
+    trust-store: src/test/resources/contains_efgs_truststore.jks
+    trust-store-password: 123456
 
 services:
   upload:
