@@ -10,17 +10,18 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 /**
- * Provides db operations for diagnosis keys which are uploadable to the Swiss Gateway.
+ * Provides db operations for diagnosis keys which are uploadable to the European Federation
+ * Gateway.
  */
 @Repository
-@Profile("connect-sgs")
-public interface SgsUploadKeyRepository
+@Profile("connect-efgs")
+public interface EfgsUploadKeyRepository
     extends PagingAndSortingRepository<FederationUploadKey, Long>, FederationUploadKeyRepository {
 
-  @Query("SELECT * FROM sgs_upload_key WHERE (batch_tag is null or batch_tag = '')")
+  @Query("SELECT * FROM federation_upload_key WHERE (batch_tag is null or batch_tag = '')")
   List<FederationUploadKey> findAllUploadableKeys();
 
   @Modifying
-  @Query("update sgs_upload_key set batch_tag = :batchTag where key_data = :keyData")
+  @Query("update federation_upload_key set batch_tag = :batchTag where key_data = :keyData")
   void updateBatchTag(@Param("keyData") byte[] keyData, @Param("batchTag") String batchTag);
 }

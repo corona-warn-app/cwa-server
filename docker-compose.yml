@@ -94,7 +94,7 @@ services:
     ports:
       - "8012:8080"
     environment:
-      SPRING_PROFILES_ACTIVE: disable-ssl-client-postgres,disable-ssl-efgs-verification
+      SPRING_PROFILES_ACTIVE: disable-ssl-client-postgres,disable-ssl-efgs-verification,testdata,connect-sgs,fake-client
       POSTGRESQL_SERVICE_PORT: '5432'
       POSTGRESQL_SERVICE_HOST: postgres
       POSTGRESQL_DATABASE: ${POSTGRES_DB}

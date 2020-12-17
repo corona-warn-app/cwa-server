@@ -13,6 +13,7 @@ import app.coronawarn.server.common.persistence.service.FederationUploadKeyServi
 import app.coronawarn.server.common.persistence.service.common.KeySharingPoliciesChecker;
 import app.coronawarn.server.common.persistence.service.common.ValidDiagnosisKeyFilter;
 import java.util.Map;
+import org.mockito.Mockito;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -37,8 +38,14 @@ public class TestApplication {
   }
 
   @Bean
-  FederationUploadKeyService createFederationUploadKeyService(FederationUploadKeyRepository keyRepository) {
-    return new FederationUploadKeyService(keyRepository, validKeysFilter(), keySharingPoliciesChecker());
+  FederationUploadKeyRepository createFederationUploadKeyRepository() {
+    return Mockito.mock(FederationUploadKeyRepository.class);
+  }
+
+  @Bean
+  FederationUploadKeyService createFederationUploadKeyService() {
+    return new FederationUploadKeyService(createFederationUploadKeyRepository(), validKeysFilter(),
+        keySharingPoliciesChecker());
   }
 
   @Bean
