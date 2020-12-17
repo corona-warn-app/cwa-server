@@ -12,4 +12,6 @@ CWA-Backend (in prod maintained by TSI):
 
 EFGS (in prod maintained by EFGS, TSI receives only public keys):
 - `efgs_signing_key.pem`: The secret used to generate all key material on EFGS side.
-- `efgs_signing_cert.pem`: EFGS signing certificate for EFGS batch signing
+- `efgs_signing_cert.pem`: EFGS signing certificate for EFGS batch signing.
+- `efgs.p12`: The EFGS PFX file that e.g. can also be used in a Postman request to fake being EFGS.
+- `contains_efgs_truststore.jks`: The Java truststore that is used on the server side, containing the `efgs.p12` file to verify that we are communicating with a trusted client. Therefore the `efgs.p12` needs to be used when sending a request.

@@ -65,10 +65,11 @@ public class CloudFederationFeignHttpClientProvider implements FederationFeignHt
 
   private SSLContext getSslContext(File keyStorePath, String keyStorePass) {
     try {
-      return SSLContextBuilder
-          .create()
-          .loadKeyMaterial(keyStorePath, keyStorePass.toCharArray(), keyStorePass.toCharArray())
-          .loadTrustMaterial(this.trustStore, this.trustStorePassword.toCharArray())
+      return SSLContextBuilder.create().loadKeyMaterial(keyStorePath,
+              (keyStorePass != null ? keyStorePass.toCharArray() : new char[] {}),
+              (keyStorePass != null ? keyStorePass.toCharArray() : new char[] {}))
+          .loadTrustMaterial(this.trustStore,
+              (this.trustStorePassword != null ? this.trustStorePassword.toCharArray() : new char[] {}))
           .build();
     } catch (Exception e) {
       throw new RuntimeException(e);
