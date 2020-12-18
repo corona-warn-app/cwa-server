@@ -48,7 +48,7 @@ services:
      - create-bucket
     environment:
       SUPPORTED_COUNTRIES: DE,FR
-      SPRING_PROFILES_ACTIVE: debug,signature-dev,testdata,disable-ssl-client-postgres
+      SPRING_PROFILES_ACTIVE: debug,signature-dev,testdata,disable-ssl-client-postgres,local-json-stats
       POSTGRESQL_SERVICE_PORT: '5432'
       POSTGRESQL_SERVICE_HOST: postgres
       POSTGRESQL_DATABASE: ${POSTGRES_DB}
