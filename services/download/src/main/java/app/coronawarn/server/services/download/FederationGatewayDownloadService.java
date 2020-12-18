@@ -5,6 +5,7 @@ import static java.time.format.DateTimeFormatter.ISO_LOCAL_DATE;
 import app.coronawarn.server.common.federation.client.FederationGatewayClient;
 import app.coronawarn.server.common.protocols.external.exposurenotification.DiagnosisKeyBatch;
 import feign.FeignException;
+import java.io.IOException;
 import java.time.LocalDate;
 import java.util.Optional;
 import org.slf4j.Logger;
@@ -40,7 +41,8 @@ public class FederationGatewayDownloadService {
    * @param date The date for which the batch should be downloaded.
    * @return The {@link BatchDownloadResponse} containing the downloaded batch, batchTag and nextBatchTag.
    */
-  public BatchDownloadResponse downloadBatch(LocalDate date) throws FatalFederationGatewayException {
+  public BatchDownloadResponse downloadBatch(LocalDate date)
+      throws FatalFederationGatewayException, BatchDownloadException {
     try {
       logger.info("Downloading first batch for date {}", date);
       ResponseEntity<DiagnosisKeyBatch> response = federationGatewayClient
@@ -49,10 +51,9 @@ public class FederationGatewayDownloadService {
     } catch (FeignException.Forbidden feignException) {
       throw new FatalFederationGatewayException(
           "Downloading batch for date " + getDateAsString(date) + " failed due to invalid client certificate.");
-    } catch (FeignException feignException) {
+    } catch (FeignException | IllegalResponseException feignException) {
       logger.error("Downloading first batch for date {} failed.", date);
-      throw new BatchDownloadException("Downloading batch for date " + getDateAsString(date) + " failed.",
-          feignException);
+      throw new BatchDownloadException(date, feignException);
     }
   }
 
@@ -63,7 +64,8 @@ public class FederationGatewayDownloadService {
    * @param date     The date for which the batch should be downloaded.
    * @return The {@link BatchDownloadResponse} containing the downloaded batch, batchTag and nextBatchTag.
    */
-  public BatchDownloadResponse downloadBatch(String batchTag, LocalDate date) throws FatalFederationGatewayException {
+  public BatchDownloadResponse downloadBatch(String batchTag, LocalDate date)
+      throws FatalFederationGatewayException, BatchDownloadException {
     String dateString = getDateAsString(date);
     try {
       logger.info("Downloading batch for date {} and batchTag {}.", dateString, batchTag);
@@ -74,11 +76,9 @@ public class FederationGatewayDownloadService {
       throw new FatalFederationGatewayException(
           "Downloading batch " + batchTag + " for date " + getDateAsString(date)
               + " failed due to invalid client certificate.");
-    } catch (FeignException exception) {
-      logger.error("Downloading batch for date {} and batchTag {} failed. Reason: {}", batchTag, dateString,
-          exception.getMessage());
-      throw new BatchDownloadException("Downloading batch " + batchTag + " for date " + date + " failed.",
-          exception);
+    } catch (FeignException | IllegalResponseException exception) {
+      logger.error("Downloading batch for date {} and batchTag {} failed.", batchTag, dateString);
+      throw new BatchDownloadException(batchTag, date, exception);
     }
   }
 
@@ -114,9 +114,10 @@ public class FederationGatewayDownloadService {
     return date.format(ISO_LOCAL_DATE);
   }
 
-  private BatchDownloadResponse parseResponseEntity(ResponseEntity<DiagnosisKeyBatch> response) {
+  private BatchDownloadResponse parseResponseEntity(ResponseEntity<DiagnosisKeyBatch> response)
+      throws IllegalResponseException {
     String batchTag = getHeader(response, HEADER_BATCH_TAG)
-        .orElseThrow(() -> new BatchDownloadException("Missing " + HEADER_BATCH_TAG + " header."));
+        .orElseThrow(() -> new IllegalResponseException("Missing " + HEADER_BATCH_TAG + " header."));
     Optional<String> nextBatchTag = getHeader(response, HEADER_NEXT_BATCH_TAG);
     return new BatchDownloadResponse(batchTag, Optional.ofNullable(response.getBody()), nextBatchTag);
   }
@@ -126,5 +127,14 @@ public class FederationGatewayDownloadService {
     return (!EMPTY_HEADER.equals(headerString))
         ? Optional.ofNullable(headerString)
         : Optional.empty();
+  }
+
+  static class IllegalResponseException extends IOException {
+
+    private static final long serialVersionUID = 3175572275651367015L;
+
+    IllegalResponseException(String message) {
+      super(message);
+    }
   }
 }

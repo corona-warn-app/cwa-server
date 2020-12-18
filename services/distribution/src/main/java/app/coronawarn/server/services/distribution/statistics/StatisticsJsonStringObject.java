@@ -11,6 +11,8 @@ public class StatisticsJsonStringObject {
   private String updateTimestamp;
   @JsonProperty("effective_date")
   private String effectiveDate;
+  @JsonProperty("app_downloads_7days_avg")
+  private String appDownloads7DaysAvg;
   @JsonProperty("app_downloads_daily")
   private Integer appDownloadsDaily;
   @JsonProperty("app_downloads_cumulated")
@@ -27,6 +29,8 @@ public class StatisticsJsonStringObject {
   private Integer personsWhoSharedKeysCumulated;
   @JsonProperty("persons_who_shared_keys_7days_sum")
   private Integer personsWhoSharedKeys7daysSum;
+  @JsonProperty("persons_who_shared_keys_7days_avg")
+  private Integer personWhoSharedKeys7daysAvg;
   @JsonProperty("persons_who_shared_keys_7days_avg_growthrate")
   private Double personsWhoSharedKeys7daysGrowthrate;
   @JsonProperty("persons_who_shared_keys_7days_avg_trend_5percent")
@@ -43,9 +47,9 @@ public class StatisticsJsonStringObject {
   private Integer labsConnectedAbsolut;
   @JsonProperty("seven_day_incidence_1st_reported_daily")
   private Double sevenDayIncidence;
-  @JsonProperty("seven_day_incidence_1st_reported_avg_growthrate")
+  @JsonProperty("seven_day_incidence_1st_reported_growthrate")
   private Double sevenDayIncidenceGrowthrate;
-  @JsonProperty("seven_day_incidence_1st_reported_avg_trend_5percent")
+  @JsonProperty("seven_day_incidence_1st_reported_trend_1percent")
   private Integer sevenDayIncidenceTrend5percent;
   @JsonProperty("infections_effective_daily")
   private Integer infectionsReportedDaily;
@@ -61,14 +65,22 @@ public class StatisticsJsonStringObject {
   private Double sevenDayRvaluepublishedDaily;
   @JsonProperty("seven_day_r_value_published_growthrate")
   private Double sevenDayRvaluepublishedGrowthrate;
-  @JsonProperty("seven_day_r_value_published_trend_5percent")
+  @JsonProperty("seven_day_r_value_published_trend_1percent")
   private Integer sevenDayRvaluePublishedTrend5percent;
   @JsonProperty("seven_day_r_value_1st_reported_daily")
   private Double sevenDayRvalue1stReportedDaily;
   @JsonProperty("seven_day_r_value_1st_reported_growthrate")
   private Double sevenDayRvalue1stReportedGrowthrate;
-  @JsonProperty("seven_day_r_value_1st_reported_trend_5percent")
+  @JsonProperty("seven_day_r_value_1st_reported_trend_1percent")
   private Integer sevenDayRvalue1stReportedTrend5percent;
+
+  public String getAppDownloads7DaysAvg() {
+    return appDownloads7DaysAvg;
+  }
+
+  public void setAppDownloads7DaysAvg(String appDownloads7DaysAvg) {
+    this.appDownloads7DaysAvg = appDownloads7DaysAvg;
+  }
 
   public String getUpdateTimestamp() {
     return updateTimestamp;

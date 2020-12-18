@@ -10,7 +10,6 @@ import static java.util.stream.Collectors.toList;
 import app.coronawarn.server.common.persistence.domain.DiagnosisKey;
 import app.coronawarn.server.common.persistence.domain.FederationBatchInfo;
 import app.coronawarn.server.common.persistence.domain.FederationBatchStatus;
-import app.coronawarn.server.common.persistence.exception.InvalidDiagnosisKeyException;
 import app.coronawarn.server.common.persistence.service.DiagnosisKeyService;
 import app.coronawarn.server.common.persistence.service.FederationBatchInfoService;
 import app.coronawarn.server.common.protocols.external.exposurenotification.DiagnosisKeyBatch;
@@ -44,6 +43,7 @@ public class FederationBatchProcessor {
   private final FederationGatewayDownloadService federationGatewayDownloadService;
   private final DownloadServiceConfig config;
   private final ValidFederationKeyFilter validFederationKeyFilter;
+
 
   /**
    * This is a potential memory-leak if there are very many batches. This is an intentional decision: We'd rather run
@@ -99,12 +99,11 @@ public class FederationBatchProcessor {
       logger.info("Triggering download of first batch for date {}.", date);
       BatchDownloadResponse response = federationGatewayDownloadService.downloadBatch(date);
       batchInfoService.save(new FederationBatchInfo(response.getBatchTag(), date));
-    } catch (BatchDownloadException e) {
-      logger.error("Triggering download of first batch for date {} failed. Reason: {}.", date, e.getMessage());
     } catch (FatalFederationGatewayException e) {
       throw e;
     } catch (Exception e) {
-      logger.error("Triggering download of first batch for date {} failed.", date, e);
+      logger.error(
+          "Triggering download of first batch for date {} failed.", date, e);
     }
   }
 
@@ -205,9 +204,6 @@ public class FederationBatchProcessor {
           .withReportType(ReportType.CONFIRMED_TEST)
           .withFieldNormalization(new FederationKeyNormalizer(config))
           .build());
-    } catch (InvalidDiagnosisKeyException e) {
-      logger.info("Building diagnosis key from federation diagnosis key failed. Reason: {}.", e.getMessage());
-      return Optional.empty();
     } catch (Exception e) {
       logger.info("Building diagnosis key from federation diagnosis key failed.", e);
       return Optional.empty();
