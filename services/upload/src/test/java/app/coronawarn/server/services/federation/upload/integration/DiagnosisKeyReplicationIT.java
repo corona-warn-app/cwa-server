@@ -9,7 +9,6 @@ import app.coronawarn.server.common.persistence.domain.DiagnosisKey;
 import app.coronawarn.server.common.persistence.domain.FederationUploadKey;
 import app.coronawarn.server.common.persistence.repository.DiagnosisKeyRepository;
 import app.coronawarn.server.common.persistence.repository.FederationUploadKeyRepository;
-import app.coronawarn.server.common.persistence.repository.SgsUploadKeyRepository;
 import app.coronawarn.server.common.persistence.service.DiagnosisKeyService;
 import java.util.Collection;
 import java.util.List;
@@ -17,8 +16,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ActiveProfiles;
 
-@ActiveProfiles("disable-ssl-efgs-verification")
-class DiagnosisKeyReplicationIT extends UploadKeyIT {
+abstract class DiagnosisKeyReplicationIT extends UploadKeyIT{
 
   @Autowired
   private DiagnosisKeyService keyService;
@@ -27,50 +25,69 @@ class DiagnosisKeyReplicationIT extends UploadKeyIT {
   private DiagnosisKeyRepository keyRepository;
 
   @Autowired
-  private FederationUploadKeyRepository uploadKeyRepository;
+  private FederationUploadKeyRepository uploadkeyRepository;
 
-  @Autowired
-  private SgsUploadKeyRepository sgsKeyRepository;
+  @ActiveProfiles({"disable-ssl-efgs-verification", "connect-efgs"})
+  public static class ReplicationForEfgsTest extends DiagnosisKeyReplicationIT {
 
+    @Test
+    void diagnosisKeysWithConsentShouldBeReplicatedOnInsert() {
+      persistNewKeyAndCheckReplication();
+    }
 
-  @Test
-  void diagnosisKeysWithConsentShouldBeReplicatedOnInsert() {
-    persistNewKeyAndCheckReplication();
+    @Test
+    void diagnosisKeysWithoutConsentShouldNotBeReplicatedOnInsert() {
+      persistNewKeysAndCheckReplicationWhenConsentIsFalse();
+    }
+
+    @Test
+    void deletionOfDiagnosisKeysSHouldBeReplicatedToUploadTable() {
+      deleteDiagnosisKeysAndVerifyItPropagatedToUploadTables();
+    }
   }
 
-  @Test
-  void diagnosisKeysWithoutConsentShouldNotBeReplicatedOnInsert() {
+  @ActiveProfiles({"disable-ssl-efgs-verification", "connect-sgs"})
+  public static class ReplicationForSgsTest extends DiagnosisKeyReplicationIT {
+
+    @Test
+    void diagnosisKeysWithConsentShouldBeReplicatedOnInsert() {
+      persistNewKeyAndCheckReplication();
+    }
+
+    @Test
+    void diagnosisKeysWithoutConsentShouldNotBeReplicatedOnInsert() {
+      persistNewKeysAndCheckReplicationWhenConsentIsFalse();
+    }
+
+    @Test
+    void deletionOfDiagnosisKeysSHouldBeReplicatedToUploadTable() {
+      deleteDiagnosisKeysAndVerifyItPropagatedToUploadTables();
+    }
+  }
+
+  protected void persistNewKeysAndCheckReplicationWhenConsentIsFalse() {
     DiagnosisKey dummyKey = generateRandomUploadKey(false);
     keyService.saveDiagnosisKeys(List.of(dummyKey));
 
-    Collection<FederationUploadKey> uploadableKeys = uploadKeyRepository.findAllUploadableKeys();
-    Collection<FederationUploadKey> uploadableSwissKeys = sgsKeyRepository.findAllUploadableKeys();
-
+    Collection<FederationUploadKey> uploadableKeys = uploadkeyRepository.findAllUploadableKeys();
     assertTrue(uploadableKeys.isEmpty());
-    assertTrue(uploadableSwissKeys.isEmpty());
   }
 
-  @Test
-  void deletionOfDiagnosisKeysSHouldBeReplicatedToUploadTable() {
+  protected void deleteDiagnosisKeysAndVerifyItPropagatedToUploadTables() {
     DiagnosisKey dummyKey = persistNewKeyAndCheckReplication();
     keyRepository.delete(dummyKey);
-    Collection<FederationUploadKey> uploadableKeys = uploadKeyRepository.findAllUploadableKeys();
-    Collection<FederationUploadKey> uploadableSwissKeys = sgsKeyRepository.findAllUploadableKeys();
+    Collection<FederationUploadKey> uploadableKeys = uploadkeyRepository.findAllUploadableKeys();
     assertTrue(uploadableKeys.isEmpty());
-    assertTrue(uploadableSwissKeys.isEmpty());
   }
 
-  private DiagnosisKey persistNewKeyAndCheckReplication() {
+  protected DiagnosisKey persistNewKeyAndCheckReplication() {
     DiagnosisKey dummyKey = generateRandomUploadKey(true);
     keyService.saveDiagnosisKeys(List.of(dummyKey));
 
-    Collection<FederationUploadKey> uploadableKeys = uploadKeyRepository.findAllUploadableKeys();
-    Collection<FederationUploadKey> uploadableSwissKeys = sgsKeyRepository.findAllUploadableKeys();
+    Collection<FederationUploadKey> uploadableKeys = uploadkeyRepository.findAllUploadableKeys();
 
     assertEquals(1, uploadableKeys.size());
-    assertEquals(1, uploadableSwissKeys.size());
     assertArrayEquals(dummyKey.getKeyData(), uploadableKeys.iterator().next().getKeyData());
-    assertArrayEquals(dummyKey.getKeyData(), uploadableSwissKeys.iterator().next().getKeyData());
     return dummyKey;
   }
 }
