@@ -56,9 +56,9 @@ public class CloudFederationFeignHttpClientProvider implements FederationFeignHt
    */
   private ApacheHttpClientFactory federationHttpClientFactory(int connectionPoolSize, File keyStorePath,
       String keyStorePass) {
-    return new DefaultApacheHttpClientFactory(HttpClientBuilder.create() //
-        .setMaxConnPerRoute(connectionPoolSize) //
-        .setMaxConnTotal(connectionPoolSize) //
+    return new DefaultApacheHttpClientFactory(HttpClientBuilder.create()
+        .setMaxConnPerRoute(connectionPoolSize)
+        .setMaxConnTotal(connectionPoolSize)
         .setSSLContext(getSslContext(keyStorePath, keyStorePass))
         .setSSLHostnameVerifier(new DefaultHostnameVerifier()));
   }
