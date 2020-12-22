@@ -60,7 +60,7 @@ services:
      - create-bucket
     environment:
       SUPPORTED_COUNTRIES: DE,FR
-      SPRING_PROFILES_ACTIVE: debug,signature-dev,testdata,disable-ssl-client-postgres
+      SPRING_PROFILES_ACTIVE: debug,signature-dev,testdata,disable-ssl-client-postgres,local-json-stats
       POSTGRESQL_SERVICE_PORT: '5432'
       POSTGRESQL_SERVICE_HOST: postgres
       POSTGRESQL_DATABASE: ${POSTGRES_DB}
@@ -78,6 +78,9 @@ services:
       # Settings for cryptographic artifacts
       VAULT_FILESIGNING_SECRET: ${SECRET_PRIVATE}
       FORCE_UPDATE_KEYFILES: 'false'
+      STATISTICS_FILE_ACCESS_KEY_ID: fakeAccessKey
+      STATISTICS_FILE_SECRET_ACCESS_KEY: secretKey
+      STATISTICS_FILE_S3_ENDPOINT: https://localhost
     volumes:
       - ./docker-compose-test-secrets:/secrets
   download:
