@@ -46,8 +46,8 @@ services:
       SUPPORTED_COUNTRIES: DE,FR
       SSL_SUBMISSION_KEYSTORE_PATH: file:/secrets/ssl.p12
       SSL_SUBMISSION_KEYSTORE_PASSWORD: 123456
-      SSL_FEDERATION_TRUSTSTORE_PATH: file:/secrets/contains_efgs_truststore.jks
-      SSL_FEDERATION_TRUSTSTORE_PASSWORD: 123456
+      SSL_VERIFICATION_TRUSTSTORE_PATH: file:/secrets/contains_efgs_truststore.jks
+      SSL_VERIFICATION_TRUSTSTORE_PASSWORD: 123456
     volumes:
       - ./docker-compose-test-secrets:/secrets
   distribution:
