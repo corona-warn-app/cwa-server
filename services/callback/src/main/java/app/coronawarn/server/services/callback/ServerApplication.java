@@ -19,10 +19,11 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.core.env.Environment;
 import org.springframework.data.jdbc.repository.config.EnableJdbcRepositories;
 
-@SpringBootApplication(exclude = { UserDetailsServiceAutoConfiguration.class })
+@SpringBootApplication(exclude = {UserDetailsServiceAutoConfiguration.class})
 @EnableJdbcRepositories(basePackages = "app.coronawarn.server.common.persistence")
 @EntityScan(basePackages = "app.coronawarn.server.common.persistence")
-@ComponentScan({ "app.coronawarn.server.common.persistence", "app.coronawarn.server.services.callback" })
+@ComponentScan({ "app.coronawarn.server.common.persistence", 
+  "app.coronawarn.server.services.callback" })
 @EnableConfigurationProperties
 public class ServerApplication implements EnvironmentAware, DisposableBean {
 
@@ -41,8 +42,7 @@ public class ServerApplication implements EnvironmentAware, DisposableBean {
   }
 
   /**
-   * Manual shutdown hook needed to avoid Log4j shutdown issues (see
-   * cwa-server/#589).
+   * Manual shutdown hook needed to avoid Log4j shutdown issues (see cwa-server/#589).
    */
   @Override
   public void destroy() {
