@@ -15,7 +15,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
 @EnableConfigurationProperties(value = UploadServiceConfig.class)
-@ActiveProfiles({"testdata", "fake-client", "disable-ssl-efgs-verification"})
+@ActiveProfiles({"testdata", "fake-client"})
 @DirtiesContext
 @SpringBootTest
 class UploadTest {

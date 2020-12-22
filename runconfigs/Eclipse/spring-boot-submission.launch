@@ -32,7 +32,7 @@
         <mapEntry key="POSTGRES_SUBMISSION_USER" value="local_setup_submission"/>
         <mapEntry key="POSTGRES_USER" value="postgres"/>
         <mapEntry key="SECRET_PRIVATE" value="file:/secrets/private.pem"/>
-        <mapEntry key="SPRING_PROFILES_ACTIVE" value="disable-ssl-server,disable-ssl-client-postgres,disable-ssl-client-verification,disable-ssl-client-verification-verify-hostname"/>
+        <mapEntry key="SPRING_PROFILES_ACTIVE" value="disable-ssl-client-postgres"/>
         <mapEntry key="SUPPORTED_COUNTRIES" value="DE,IT,FR,DK"/>
     </mapAttribute>
     <booleanAttribute key="org.eclipse.jdt.launching.ATTR_USE_CLASSPATH_ONLY_JAR" value="false"/>
