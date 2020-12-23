@@ -31,6 +31,8 @@ federation-gateway:
   base-url: http://localhost:1234
   connection-pool-size: 200
   ssl:
-    key-store: test.p12
-    key-store-pass: test1234
-    certificate-type: PKCS12
+    key-password: 123456
+    key-store: ../../docker-compose-test-secrets/ssl.p12
+    key-store-password: 123456
+    trust-store: ../../docker-compose-test-secrets/contains_efgs_truststore.jks
+    trust-store-password: 123456

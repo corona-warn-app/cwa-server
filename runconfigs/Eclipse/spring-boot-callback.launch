@@ -32,7 +32,7 @@
         <mapEntry key="POSTGRES_SUBMISSION_USER" value="local_setup_submission"/>
         <mapEntry key="POSTGRES_USER" value="postgres"/>
         <mapEntry key="SECRET_PRIVATE" value="file:/secrets/private.pem"/>
-        <mapEntry key="SPRING_PROFILES_ACTIVE" value="debug, disable-ssl-client-postgres, disable-callback-cert-auth"/>
+        <mapEntry key="SPRING_PROFILES_ACTIVE" value="debug, disable-ssl-client-postgres"/>
         <mapEntry key="SSL_CALLBACK_KEYSTORE_PASSWORD" value="123456"/>
         <mapEntry key="SSL_CALLBACK_KEYSTORE_PATH" value="src/test/resources/keystore.jks"/>
         <mapEntry key="SSL_CALLBACK_TRUSTSTORE_PASSWORD" value="123456"/>

@@ -10,28 +10,29 @@ import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.mock;
 
-import app.coronawarn.server.common.federation.client.FederationFeignClientConfiguration;
-import app.coronawarn.server.common.federation.client.FederationFeignHttpClientProvider;
+import app.coronawarn.server.common.federation.client.CloudFederationFeignHttpClientProvider;
 import app.coronawarn.server.common.protocols.external.exposurenotification.DiagnosisKeyBatch;
 import com.github.tomakehurst.wiremock.WireMockServer;
+import feign.httpclient.ApacheHttpClient;
 import java.time.LocalDate;
 import java.util.Optional;
-import feign.httpclient.ApacheHttpClient;
+import java.util.stream.Stream;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.openfeign.EnableFeignClients;
 import org.springframework.http.HttpStatus;
 import org.springframework.test.annotation.DirtiesContext;
-import org.springframework.test.context.ActiveProfiles;
 
 @SpringBootTest
 @DirtiesContext
-@EnableFeignClients(defaultConfiguration = FederationFeignClientConfiguration.class)
-@ActiveProfiles("disable-ssl-efgs-verification")
+@EnableFeignClients(defaultConfiguration = CloudFederationFeignHttpClientProvider.class)
 class FederationGatewayDownloadServiceTest {
 
   private static final WireMockServer SERVER = new WireMockServer(1234);
@@ -43,7 +44,7 @@ class FederationGatewayDownloadServiceTest {
   private FederationGatewayDownloadService downloadService;
 
   @Autowired
-  private FederationFeignClientConfiguration federationFeignClientConfiguration;
+  private CloudFederationFeignHttpClientProvider feignClientProvider;
 
   @BeforeEach
   void ensureRunningServer() {
@@ -152,9 +153,32 @@ class FederationGatewayDownloadServiceTest {
         .isExactlyInstanceOf(FatalFederationGatewayException.class);
   }
 
+  private static Stream<Arguments> provideHttpStatuses() {
+    return Stream.of(Arguments.of(HttpStatus.BAD_REQUEST),
+        Arguments.of(HttpStatus.NOT_ACCEPTABLE),
+        Arguments.of(HttpStatus.GONE),
+        Arguments.of(HttpStatus.FORBIDDEN),
+        Arguments.of(HttpStatus.NOT_FOUND),
+        Arguments.of(HttpStatus.SERVICE_UNAVAILABLE));
+  }
+
+  @ParameterizedTest
+  @MethodSource("provideHttpStatuses")
+  void testAuditBatchExceptions(HttpStatus status) {
+    SERVER.stubFor(
+        get(anyUrl())
+            .willReturn(
+                aResponse()
+                    .withStatus(status.value())));
+
+    assertThatThrownBy(() -> downloadService.auditBatch(BATCH_TAG, DATE))
+        .isExactlyInstanceOf(BatchAuditException.class)
+        .hasMessageContaining(status.getReasonPhrase());
+  }
+
   @Test
   void testFederationFeignClientConfigurationCreated() {
-    assertThat(federationFeignClientConfiguration.feignClient()).isInstanceOf(ApacheHttpClient.class);
+    assertThat(feignClientProvider.createFeignClient()).isInstanceOf(ApacheHttpClient.class);
   }
 
   void assertDownloadResponseMatches(BatchDownloadResponse expResponse) throws Exception {
