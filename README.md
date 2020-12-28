@@ -219,7 +219,6 @@ The German government has asked SAP and Deutsche Telekom to develop the Corona-W
 | [cwa-verification-iam]    | The identy and access management to interact with the verification server |
 | [cwa-testresult-server]   | Receives the test results from connected laboratories           |
 
-
 [cwa-documentation]: https://github.com/corona-warn-app/cwa-documentation
 [cwa-app-ios]: https://github.com/corona-warn-app/cwa-app-ios
 [cwa-app-android]: https://github.com/corona-warn-app/cwa-app-android
