@@ -27,6 +27,7 @@ public class DownloadServiceConfig {
   private Validation validation;
   @Autowired
   private TekFieldDerivations tekFieldDerivations;
+  private boolean batchAuditEnabled;
 
   public Validation getValidation() {
     return validation;
@@ -67,6 +68,14 @@ public class DownloadServiceConfig {
 
   public void setRetentionDays(Integer retentionDays) {
     this.retentionDays = retentionDays;
+  }
+
+  public boolean isBatchAuditEnabled() {
+    return batchAuditEnabled;
+  }
+
+  public void setBatchAuditEnabled(boolean batchAuditEnabled) {
+    this.batchAuditEnabled = batchAuditEnabled;
   }
 
   public static class Validation {

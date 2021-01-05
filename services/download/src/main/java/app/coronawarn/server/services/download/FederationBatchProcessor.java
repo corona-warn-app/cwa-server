@@ -10,7 +10,6 @@ import static java.util.stream.Collectors.toList;
 import app.coronawarn.server.common.persistence.domain.DiagnosisKey;
 import app.coronawarn.server.common.persistence.domain.FederationBatchInfo;
 import app.coronawarn.server.common.persistence.domain.FederationBatchStatus;
-import app.coronawarn.server.common.persistence.exception.InvalidDiagnosisKeyException;
 import app.coronawarn.server.common.persistence.service.DiagnosisKeyService;
 import app.coronawarn.server.common.persistence.service.FederationBatchInfoService;
 import app.coronawarn.server.common.protocols.external.exposurenotification.DiagnosisKeyBatch;
@@ -44,11 +43,12 @@ public class FederationBatchProcessor {
   private final FederationGatewayDownloadService federationGatewayDownloadService;
   private final DownloadServiceConfig config;
   private final ValidFederationKeyFilter validFederationKeyFilter;
-  
-  // This is a potential memory-leak if there are very many batches
-  // This is an intentional decision: 
-  // We'd rather run into a memory-leak if there are too many batches 
-  // than run into an endless loop if a batch-tag repeats
+
+
+  /**
+   * This is a potential memory-leak if there are very many batches. This is an intentional decision: We'd rather run
+   * into a memory-leak if there are too many batches than run into an endless loop if a batch-tag repeats
+   */
   private final Set<String> seenBatches;
 
   /**
@@ -99,18 +99,17 @@ public class FederationBatchProcessor {
       logger.info("Triggering download of first batch for date {}.", date);
       BatchDownloadResponse response = federationGatewayDownloadService.downloadBatch(date);
       batchInfoService.save(new FederationBatchInfo(response.getBatchTag(), date));
-    } catch (BatchDownloadException e) {
-      logger.error("Triggering download of first batch for date {} failed. Reason: {}.", date, e.getMessage());
     } catch (FatalFederationGatewayException e) {
       throw e;
     } catch (Exception e) {
-      logger.error("Triggering download of first batch for date {} failed.", date, e);
+      logger.error(
+          "Triggering download of first batch for date {} failed.", date, e);
     }
   }
 
   /**
-   * Downloads and processes all batches from the federation gateway that have previously been
-   * marked with the status value {@link FederationBatchStatus#ERROR}.
+   * Downloads and processes all batches from the federation gateway that have previously been marked with the status
+   * value {@link FederationBatchStatus#ERROR}.
    */
   public void processErrorFederationBatches() {
     List<FederationBatchInfo> federationBatchInfoWithError = batchInfoService.findByStatus(ERROR);
@@ -160,6 +159,9 @@ public class FederationBatchProcessor {
     logger.info("Processing batch for date {} and batchTag {}.", date, batchTag);
     try {
       BatchDownloadResponse response = federationGatewayDownloadService.downloadBatch(batchTag, date);
+      if (config.isBatchAuditEnabled()) {
+        federationGatewayDownloadService.auditBatch(batchTag, date);
+      }
       AtomicBoolean batchContainsInvalidKeys = new AtomicBoolean(false);
       response.getDiagnosisKeyBatch().ifPresentOrElse(batch -> {
         logger.info("Downloaded {} keys for date {} and batchTag {}.", batch.getKeysCount(), date, batchTag);
@@ -174,13 +176,6 @@ public class FederationBatchProcessor {
       }, () -> logger.info("Batch for date {} and batchTag {} did not contain any keys.", date, batchTag));
       batchInfoService.updateStatus(batchInfo, batchContainsInvalidKeys.get() ? PROCESSED_WITH_ERROR : PROCESSED);
       return response.getNextBatchTag();
-    } catch (BatchDownloadException e) {
-      logger.error(
-          "Federation batch processing for date " + date + " and batchTag " + batchTag + " failed. Status set to "
-              + errorStatus.name() + ".",
-          e);
-      batchInfoService.updateStatus(batchInfo, errorStatus);
-      return Optional.empty();
     } catch (FatalFederationGatewayException e) {
       throw e;
     } catch (Exception e) {
@@ -209,9 +204,6 @@ public class FederationBatchProcessor {
           .withReportType(ReportType.CONFIRMED_TEST)
           .withFieldNormalization(new FederationKeyNormalizer(config))
           .build());
-    } catch (InvalidDiagnosisKeyException e) {
-      logger.info("Building diagnosis key from federation diagnosis key failed. Reason: {}.", e.getMessage());
-      return Optional.empty();
     } catch (Exception e) {
       logger.info("Building diagnosis key from federation diagnosis key failed.", e);
       return Optional.empty();
