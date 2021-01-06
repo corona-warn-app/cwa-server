@@ -121,7 +121,7 @@ For the submission module:
 
 ```bash
 POSTGRESQL_SERVICE_PORT=8001
-SPRING_PROFILES_ACTIVE=disable-ssl-server,disable-ssl-client-postgres,disable-ssl-client-verification,disable-ssl-client-verification-verify-hostname
+SPRING_PROFILES_ACTIVE=disable-ssl-client-postgres
 ```
 
 #### Configure
