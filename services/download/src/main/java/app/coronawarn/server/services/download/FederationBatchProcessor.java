@@ -5,6 +5,7 @@ import static app.coronawarn.server.common.persistence.domain.FederationBatchSta
 import static app.coronawarn.server.common.persistence.domain.FederationBatchStatus.PROCESSED;
 import static app.coronawarn.server.common.persistence.domain.FederationBatchStatus.PROCESSED_WITH_ERROR;
 import static app.coronawarn.server.common.persistence.domain.FederationBatchStatus.UNPROCESSED;
+import static app.coronawarn.server.common.persistence.domain.validation.CountryValidator.isValidCountryCode;
 import static java.util.stream.Collectors.toList;
 
 import app.coronawarn.server.common.persistence.domain.DiagnosisKey;
@@ -205,7 +206,9 @@ public class FederationBatchProcessor {
           .withFieldNormalization(new FederationKeyNormalizer(config))
           .build());
     } catch (Exception e) {
-      logger.info("Building diagnosis key from federation diagnosis key failed.", e);
+      logger.warn(
+          "Building diagnosis key from federation diagnosis key failed. The key's origin country is: " + diagnosisKey
+              .getOrigin(), e);
       return Optional.empty();
     }
   }
