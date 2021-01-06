@@ -64,6 +64,7 @@
     <test-containers.version>1.15.1</test-containers.version>
     <postgresql.version>42.2.18</postgresql.version>
     <wiremock.version>2.27.2</wiremock.version>
+    <jetty.version>9.4.35.v20201120</jetty.version>
     <httpclient.version>4.5.13</httpclient.version>
     <junit.version>4.13.1</junit.version>
     <tomcat-embed-core.version>9.0.41</tomcat-embed-core.version>
@@ -88,7 +89,7 @@
         <artifactId>federation</artifactId>
         <version>${project.version}</version>
       </dependency>
-      <!-- other third party libraries - THIRD-PARTY-NOTICES -->
+      <!-- other third party libraries -->
       <dependency>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-dependencies</artifactId>
@@ -194,6 +195,12 @@
         <scope>runtime</scope>
       </dependency>
       <!-- test scope only -->
+      <dependency>
+        <groupId>org.eclipse.jetty</groupId>
+        <artifactId>jetty-server</artifactId>
+        <version>${jetty.version}</version>
+        <scope>test</scope>
+      </dependency>
       <dependency>
         <groupId>com.github.tomakehurst</groupId>
         <artifactId>wiremock-jre8</artifactId>
