@@ -8,7 +8,7 @@
           <option name="environmentProperties">
             <map>
               <entry key="POSTGRESQL_SERVICE_PORT" value="8001" />
-              <entry key="SPRING_PROFILES_ACTIVE" value="disable-ssl-server,disable-ssl-client-postgres,disable-ssl-client-verification,disable-ssl-client-verification-verify-hostname" />
+              <entry key="SPRING_PROFILES_ACTIVE" value="disable-ssl-client-postgres" />
               <entry key="SUPPORTED_COUNTRIES" value="DE,IT,FR,DK" />
             </map>
           </option>

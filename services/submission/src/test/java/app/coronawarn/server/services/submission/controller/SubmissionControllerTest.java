@@ -65,11 +65,9 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.annotation.DirtiesContext;
-import org.springframework.test.context.ActiveProfiles;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @DirtiesContext
-@ActiveProfiles({"disable-ssl-client-verification", "disable-ssl-client-verification-verify-hostname"})
 @TestInstance(Lifecycle.PER_CLASS)
 class SubmissionControllerTest {
 
@@ -389,7 +387,7 @@ class SubmissionControllerTest {
   private TemporaryExposureKey createOutdatedKey() {
     return TemporaryExposureKey.newBuilder()
         .setKeyData(ByteString.copyFromUtf8(VALID_KEY_DATA_2))
-        .setRollingStartIntervalNumber(createRollingStartIntervalNumber(config.getRetentionDays()))
+        .setRollingStartIntervalNumber(createRollingStartIntervalNumber(config.getRetentionDays() + 1))
         .setRollingPeriod(DiagnosisKey.MAX_ROLLING_PERIOD)
         .setTransmissionRiskLevel(5).build();
   }

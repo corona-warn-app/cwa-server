@@ -12,7 +12,7 @@ federation-gateway:
   connection-pool-size: 200
   ssl:
     key-store: ${FEDERATION_GATEWAY_KEYSTORE_PATH}
-    key-store-pass: ${FEDERATION_GATEWAY_KEYSTORE_PASS}
+    key-store-password: ${FEDERATION_GATEWAY_KEYSTORE_PASS}
     certificate-type: PKCS12
     certificate-dn: ${FEDERATION_CERTIFICATE_DN}
     certificate-sha: ${FEDERATION_CERTIFICATE_SHA}

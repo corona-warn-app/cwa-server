@@ -100,7 +100,7 @@ To prepare your machine to run the CWA project locally, we recommend that you fi
 
 If you are already running a local Postgres, you need to create a database `cwa` and run the following setup scripts:
 
-* Create the different CWA roles first by executing [create-roles.sql](setup/create-roles.sql).
+* Create the different CWA roles first by executing [create-roles.sql](./setup/setup-roles.sql).
 * Create local database users for the specific roles by running [create-users.sql](./local-setup/create-users.sql).
 * It is recommended to also run [enable-test-data-docker-compose.sql](./local-setup/enable-test-data-docker-compose.sql)
 , which enables the test data generation profile. If you already had CWA running before and an existing `diagnosis-key`
@@ -121,7 +121,7 @@ For the submission module:
 
 ```bash
 POSTGRESQL_SERVICE_PORT=8001
-SPRING_PROFILES_ACTIVE=disable-ssl-server,disable-ssl-client-postgres,disable-ssl-client-verification,disable-ssl-client-verification-verify-hostname
+SPRING_PROFILES_ACTIVE=disable-ssl-client-postgres
 ```
 
 #### Configure
