@@ -1,5 +1,3 @@
-
-
 package app.coronawarn.server.common.persistence.domain;
 
 import static java.time.ZoneOffset.UTC;
@@ -10,8 +8,9 @@ import app.coronawarn.server.common.persistence.domain.validation.ValidCountry;
 import app.coronawarn.server.common.persistence.domain.validation.ValidRollingStartIntervalNumber;
 import app.coronawarn.server.common.persistence.domain.validation.ValidSubmissionTimestamp;
 import app.coronawarn.server.common.protocols.external.exposurenotification.ReportType;
-import java.time.Instant;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Objects;
@@ -178,7 +177,7 @@ public class DiagnosisKey {
       throw new IllegalArgumentException("Retention threshold must be greater or equal to 0.");
     }
     long threshold = LocalDateTime
-        .ofInstant(Instant.now(), UTC)
+        .of(LocalDate.now(UTC), LocalTime.MIDNIGHT)
         .minusDays(daysToRetain)
         .toEpochSecond(UTC) / (60 * 10);
 
