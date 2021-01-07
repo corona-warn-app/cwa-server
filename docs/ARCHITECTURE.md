@@ -23,10 +23,10 @@ does not mean automatically that all features will be implemented. Main driver f
 
 Find the latest specifications of Google/Apple here:
 
-- [Exposure Key Export File Format and Verification](https://static.googleusercontent.com/media/www.google.com/en//covid19/exposurenotifications/pdfs/Exposure-Key-File-Format-and-Verification.pdf)
+- [Exposure Key Export File Format and Verification](https://developers.google.com/android/exposure-notifications/exposure-key-file-format)
 - [Setting Up an Exposure Notification Server (Apple)](https://developer.apple.com/documentation/exposurenotification/setting_up_an_exposure_notification_server?changes=latest_beta)
 - [Apple Framework Specifications](https://developer.apple.com/documentation/exposurenotification?changes=latest)
-- [Google Framework Specifications (1.3.2)](https://static.googleusercontent.com/media/www.google.com/en//covid19/exposurenotifications/pdfs/Android-Exposure-Notification-API-documentation-v1.3.2.pdf)
+- [Google Framework Specifications (1.3.2)](https://developers.google.com/android/exposure-notifications/exposure-notifications-api)
 On a high level, the application consists of two main parts, as shown below.
 
 ![Overview Diagram](./images/v5.png)
