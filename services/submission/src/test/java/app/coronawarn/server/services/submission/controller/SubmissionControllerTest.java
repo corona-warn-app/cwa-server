@@ -387,7 +387,7 @@ class SubmissionControllerTest {
   private TemporaryExposureKey createOutdatedKey() {
     return TemporaryExposureKey.newBuilder()
         .setKeyData(ByteString.copyFromUtf8(VALID_KEY_DATA_2))
-        .setRollingStartIntervalNumber(createRollingStartIntervalNumber(config.getRetentionDays()))
+        .setRollingStartIntervalNumber(createRollingStartIntervalNumber(config.getRetentionDays() + 1))
         .setRollingPeriod(DiagnosisKey.MAX_ROLLING_PERIOD)
         .setTransmissionRiskLevel(5).build();
   }
