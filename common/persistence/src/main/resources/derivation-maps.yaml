@@ -18,6 +18,18 @@ tek-field-derivations:
   # These maps are based on value ranges which reflect additional information about the symptom status of a person
   # For details on the significance of the value ranges please see DaysSinceSymptomsRangeSpecification.java
   trl-from-dsos:
+    -5: 2
+    -4: 4
+    -3: 6
+    -2: 7
+    -1: 8
+    0: 8
+    1: 8
+    2: 6
+    3: 5
+    4: 3
+    5: 2
+    6: 2
     194: 2
     195: 3
     196: 5
@@ -230,6 +242,7 @@ tek-field-derivations:
     1597: 3
     1598: 2
     1599: 2
+    1600: 1
     1686: 4
     1687: 4
     1688: 5
@@ -244,6 +257,7 @@ tek-field-derivations:
     1697: 2
     1698: 2
     1699: 2
+    1700: 1
     1786: 4
     1787: 4
     1788: 4
@@ -258,3 +272,26 @@ tek-field-derivations:
     1797: 2
     1798: 2
     1799: 2
+    1800: 1
+    1992: 2
+    1993: 3
+    1994: 5
+    1995: 7
+    1996: 8
+    1997: 8
+    1998: 8
+    1999: 6
+    2000: 5
+    2997: 2
+    2998: 3
+    2999: 4
+    3000: 4
+    3992: 2
+    3993: 3
+    3994: 4
+    3995: 6
+    3996: 7
+    3997: 7
+    3998: 7
+    3999: 6
+    4000: 5
