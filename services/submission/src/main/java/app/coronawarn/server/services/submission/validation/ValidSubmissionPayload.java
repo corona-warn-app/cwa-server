@@ -110,7 +110,7 @@ public @interface ValidSubmissionPayload {
           .append(" visited_countries: ").append(submissionPayload.getVisitedCountriesList())
           .append(" consent_to_federation: ").append(submissionPayload.getConsentToFederation())
           .append(" with padding_size: ").append(submissionPayload.getRequestPadding().size());
-      stringBuilder.append("\nkeys: ");
+      stringBuilder.append(" keys: ");
       for (TemporaryExposureKey key : submissionPayload.getKeysList()) {
         stringBuilder
             .append(" {")
