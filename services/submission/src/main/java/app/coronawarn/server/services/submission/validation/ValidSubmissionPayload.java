@@ -26,6 +26,8 @@ import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
 import javax.validation.Payload;
 import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @Constraint(validatedBy = ValidSubmissionPayload.SubmissionPayloadValidator.class)
 @Target({ElementType.PARAMETER})
@@ -57,6 +59,7 @@ public @interface ValidSubmissionPayload {
     private final int maxRollingPeriod;
     private final Collection<String> supportedCountries;
     private final String defaultOriginCountry;
+    private static final Logger logger = LoggerFactory.getLogger(SubmissionPayloadValidator.class);
 
     public SubmissionPayloadValidator(SubmissionServiceConfig submissionServiceConfig) {
       maxNumberOfKeys = submissionServiceConfig.getMaxNumberOfKeys();
@@ -84,13 +87,36 @@ public @interface ValidSubmissionPayload {
       List<TemporaryExposureKey> exposureKeys = submissionPayload.getKeysList();
       validatorContext.disableDefaultConstraintViolation();
 
-      return checkStartIntervalNumberIsAtMidNight(exposureKeys, validatorContext)
+      boolean isValidPayload = checkStartIntervalNumberIsAtMidNight(exposureKeys, validatorContext)
           && checkKeyCollectionSize(exposureKeys, validatorContext)
           && checkOriginCountryIsValid(submissionPayload, validatorContext)
           && checkVisitedCountriesAreValid(submissionPayload, validatorContext)
           && checkRequiredFieldsNotMissing(exposureKeys, validatorContext)
           && checkTransmissionRiskLevelIsAcceptable(exposureKeys, validatorContext)
           && checkDaysSinceOnsetOfSymptomsIsInRange(exposureKeys, validatorContext);
+
+      if (!isValidPayload) {
+        String payloadString = getPayloadStringFromKeys(submissionPayload.getKeysList());
+        logger.error("Errors caused by invalid payload \n {}", payloadString);
+      }
+      return isValidPayload;
+    }
+
+    private String getPayloadStringFromKeys(List<TemporaryExposureKey> tekList) {
+      StringBuilder stringBuilder = new StringBuilder();
+      stringBuilder.append("keys: ");
+      for (TemporaryExposureKey key : tekList) {
+        stringBuilder
+            .append("\n{")
+            .append("\n key_data: HIDDEN")
+            .append("\n transmission_risk_level: ").append(key.getTransmissionRiskLevel())
+            .append("\n rolling_start_interval_number: ").append(key.getRollingStartIntervalNumber())
+            .append("\n report_type: ").append(key.getReportType())
+            .append("\n days_since_onset_of_symptoms: ").append(key.getDaysSinceOnsetOfSymptoms())
+            .append("\n}");
+
+      }
+      return stringBuilder.toString();
     }
 
     private void addViolation(ConstraintValidatorContext validatorContext, String message) {
