@@ -96,16 +96,22 @@ public @interface ValidSubmissionPayload {
           && checkDaysSinceOnsetOfSymptomsIsInRange(exposureKeys, validatorContext);
 
       if (!isValidPayload) {
-        String payloadString = getPayloadStringFromKeys(submissionPayload.getKeysList());
+        String payloadString = generatePrintablePayload(submissionPayload);
         logger.error("Errors caused by invalid payload \n {}", payloadString);
       }
       return isValidPayload;
     }
 
-    private String getPayloadStringFromKeys(List<TemporaryExposureKey> tekList) {
+    private String generatePrintablePayload(SubmissionPayload submissionPayload) {
       StringBuilder stringBuilder = new StringBuilder();
-      stringBuilder.append("keys: ");
-      for (TemporaryExposureKey key : tekList) {
+
+      stringBuilder
+          .append("payload origin: ").append(submissionPayload.getOrigin())
+          .append("\nvisited_countries: ").append(submissionPayload.getVisitedCountriesList())
+          .append("\nconsent_to_federation: ").append(submissionPayload.getConsentToFederation())
+          .append("\nwith padding_size: ").append(submissionPayload.getRequestPadding().size());
+      stringBuilder.append("\nkeys: ");
+      for (TemporaryExposureKey key : submissionPayload.getKeysList()) {
         stringBuilder
             .append("\n{")
             .append("\n key_data: HIDDEN")
