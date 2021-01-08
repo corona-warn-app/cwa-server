@@ -97,7 +97,7 @@ public @interface ValidSubmissionPayload {
 
       if (!isValidPayload) {
         String payloadString = generatePrintablePayload(submissionPayload);
-        logger.error("Errors caused by invalid payload \n {}", payloadString);
+        logger.error("Errors caused by invalid payload {}", payloadString);
       }
       return isValidPayload;
     }
@@ -106,20 +106,20 @@ public @interface ValidSubmissionPayload {
       StringBuilder stringBuilder = new StringBuilder();
 
       stringBuilder
-          .append("payload origin: ").append(submissionPayload.getOrigin())
-          .append("\nvisited_countries: ").append(submissionPayload.getVisitedCountriesList())
-          .append("\nconsent_to_federation: ").append(submissionPayload.getConsentToFederation())
-          .append("\nwith padding_size: ").append(submissionPayload.getRequestPadding().size());
+          .append(" payload origin: ").append(submissionPayload.getOrigin())
+          .append(" visited_countries: ").append(submissionPayload.getVisitedCountriesList())
+          .append(" consent_to_federation: ").append(submissionPayload.getConsentToFederation())
+          .append(" with padding_size: ").append(submissionPayload.getRequestPadding().size());
       stringBuilder.append("\nkeys: ");
       for (TemporaryExposureKey key : submissionPayload.getKeysList()) {
         stringBuilder
-            .append("\n{")
-            .append("\n key_data: HIDDEN")
-            .append("\n transmission_risk_level: ").append(key.getTransmissionRiskLevel())
-            .append("\n rolling_start_interval_number: ").append(key.getRollingStartIntervalNumber())
-            .append("\n report_type: ").append(key.getReportType())
-            .append("\n days_since_onset_of_symptoms: ").append(key.getDaysSinceOnsetOfSymptoms())
-            .append("\n}");
+            .append(" {")
+            .append(" key_data: HIDDEN")
+            .append(" transmission_risk_level: ").append(key.getTransmissionRiskLevel())
+            .append(" rolling_start_interval_number: ").append(key.getRollingStartIntervalNumber())
+            .append(" report_type: ").append(key.getReportType())
+            .append(" days_since_onset_of_symptoms: ").append(key.getDaysSinceOnsetOfSymptoms())
+            .append(" }");
 
       }
       return stringBuilder.toString();
