@@ -6,6 +6,11 @@ logging:
         web: INFO
     app:
       coronawarn: INFO
+    com:
+      netflix:
+        config:
+          sources:
+            URLConfigurationSource: ERROR
 
 federation-gateway:
   base-url: ${FEDERATION_GATEWAY_BASE_URL:http://localhost:8005}
