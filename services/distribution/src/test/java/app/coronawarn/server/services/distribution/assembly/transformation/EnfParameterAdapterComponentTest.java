@@ -45,13 +45,13 @@ class EnfParameterAdapterComponentTest {
   private static Stream<Arguments> createTestExpectations() {
     return Stream.of(
         /* First argument is TRL, followed by expected DSOS, expected Report Type */
-        Arguments.of(1, 1, ReportType.CONFIRMED_TEST),
-        Arguments.of(2, 1, ReportType.CONFIRMED_CLINICAL_DIAGNOSIS),
+        Arguments.of(1, 1, ReportType.RECURSIVE),
+        Arguments.of(2, 2, ReportType.RECURSIVE),
         Arguments.of(3, 1, ReportType.SELF_REPORT),
-        Arguments.of(4, 1, ReportType.RECURSIVE),
-        Arguments.of(5, 2, ReportType.CONFIRMED_TEST),
+        Arguments.of(4, 2, ReportType.SELF_REPORT),
+        Arguments.of(5, 1, ReportType.CONFIRMED_CLINICAL_DIAGNOSIS),
         Arguments.of(6, 2, ReportType.CONFIRMED_CLINICAL_DIAGNOSIS),
-        Arguments.of(7, 2, ReportType.SELF_REPORT),
-        Arguments.of(8, 2, ReportType.RECURSIVE));
+        Arguments.of(7, 1, ReportType.CONFIRMED_TEST),
+        Arguments.of(8, 2, ReportType.CONFIRMED_TEST));
   }
 }

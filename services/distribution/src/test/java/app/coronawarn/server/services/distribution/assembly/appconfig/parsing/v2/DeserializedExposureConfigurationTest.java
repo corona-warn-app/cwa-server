@@ -1,20 +1,19 @@
 package app.coronawarn.server.services.distribution.assembly.appconfig.parsing.v2;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
 import app.coronawarn.server.services.distribution.assembly.appconfig.UnableToLoadFileException;
 import app.coronawarn.server.services.distribution.assembly.appconfig.YamlLoader;
-import org.junit.jupiter.api.Test;
-
 import java.util.List;
 import java.util.Map;
-
-import static org.assertj.core.api.Assertions.assertThat;
+import org.junit.jupiter.api.Test;
 
 class DeserializedExposureConfigurationTest {
 
   @Test
   void testCreateDeserializedExposureConfigurationObjectFromYaml() throws UnableToLoadFileException {
 
-    final String IOS_V2_EXPOSURE_CONFIGURATION_FILE = "master-config/v2/exposure-configuration.yaml";
+    final String IOS_V2_EXPOSURE_CONFIGURATION_FILE = "main-config/v2/exposure-configuration.yaml";
 
     DeserializedExposureConfiguration exposureConfiguration = YamlLoader.loadYamlIntoClass(
         IOS_V2_EXPOSURE_CONFIGURATION_FILE, DeserializedExposureConfiguration.class);

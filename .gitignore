@@ -4,6 +4,8 @@
 *.iml
 *.ipr
 .idea_modules/
+.runconfigs/
+.run/
 
 ### NetBeans ###
 /nbproject/private/

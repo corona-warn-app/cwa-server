@@ -24,7 +24,7 @@ import org.springframework.stereotype.Component;
  * <ul>
  *   <li>Publishes index files on a different route, removing the trailing "/index" part.</li>
  *   <li>Adds meta information to the uploaded files, e.g. the 
- *      <a href="https://github.com/corona-warn-app/cwa-server/blob/master/docs/DISTRIBUTION.md#cwa-hash">CWA-hash</a>
+ *      <a href="https://github.com/corona-warn-app/cwa-server/blob/HEAD/docs/DISTRIBUTION.md#cwa-hash">CWA-hash</a>
  *      value.</li>
  *   <li>Only performs the upload for files, which do not yet exist on the object store, and
  *   checks whether the existing files hash differ from the to-be-uploaded files hash. Only if the

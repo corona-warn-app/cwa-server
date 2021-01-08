@@ -104,7 +104,6 @@ public class SubmissionController {
       } else {
         List<DiagnosisKey> diagnosisKeys = extractValidDiagnosisKeysFromPayload(
             enhanceWithDefaultValuesIfMissing(submissionPayload));
-        checkDiagnosisKeysStructure(diagnosisKeys);
         diagnosisKeyService.saveDiagnosisKeys(padDiagnosisKeys(diagnosisKeys));
 
         deferredResult.setResult(ResponseEntity.ok().build());
@@ -139,39 +138,6 @@ public class SubmissionController {
           protoBufferKeys.size() - diagnosisKeys.size());
     }
     return diagnosisKeys;
-  }
-
-  /**
-   * Checks if a key with transmission risk level 6 is missing in the submitted diagnosis keys. If there is one, it
-   * should not have a rolling start interval number of today midnight. In case of violations, these are logged.
-   *
-   * <p>The check is only done for the key with transmission risk level 6, since the number of keys to be submitted
-   * depends on the time how long the app is installed on the phone. The key with transmission risk level 6 is the one
-   * from the day before the submission and should always be present.
-   *
-   * @param diagnosisKeys The diagnosis keys to check.
-   */
-  private void checkDiagnosisKeysStructure(List<DiagnosisKey> diagnosisKeys) {
-    diagnosisKeys.sort(Comparator.comparing(DiagnosisKey::getRollingStartIntervalNumber));
-    String keysString = Arrays.toString(diagnosisKeys.toArray());
-    Predicate<DiagnosisKey> hasRiskLevel6 = diagnosisKey -> diagnosisKey.getTransmissionRiskLevel() == 6;
-
-    if (diagnosisKeys.stream().noneMatch(hasRiskLevel6)) {
-      logger.warn("Submission payload was sent with missing key having transmission risk level 6. {}", keysString);
-    } else {
-      logger.debug("Submission payload was sent with key having transmission risk level 6. {}", keysString);
-    }
-
-    diagnosisKeys.stream().filter(hasRiskLevel6).findFirst().ifPresent(diagnosisKey -> {
-      long todayMidnightUtc = LocalDate
-          .ofInstant(Instant.now(), UTC)
-          .atStartOfDay()
-          .toEpochSecond(UTC) / (60 * 10);
-      if (diagnosisKey.getRollingStartIntervalNumber() == todayMidnightUtc) {
-        logger.warn("Submission payload was sent with a key having transmission risk level 6"
-            + " and rolling start interval number of today midnight. {}", keysString);
-      }
-    });
   }
 
   private SubmissionPayload enhanceWithDefaultValuesIfMissing(SubmissionPayload submissionPayload) {

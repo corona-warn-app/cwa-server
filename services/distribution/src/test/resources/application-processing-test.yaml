@@ -1,0 +1,5 @@
+---
+services:
+  distribution:
+    statistics:
+      statistic-path: stats/statistic_data_processing_test.json

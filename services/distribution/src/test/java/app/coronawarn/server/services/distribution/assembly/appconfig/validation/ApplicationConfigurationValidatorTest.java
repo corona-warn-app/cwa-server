@@ -89,7 +89,7 @@ class ApplicationConfigurationValidatorTest {
       throws UnableToLoadFileException {
     ApplicationConfigurationPublicationConfig applicationConfigurationPublicationConfig = new ApplicationConfigurationPublicationConfig();
     ApplicationConfiguration appConfig = applicationConfigurationPublicationConfig
-        .createMasterConfiguration(distributionServiceConfig);
+        .createMainConfiguration(distributionServiceConfig);
 
     return new ApplicationConfigurationValidator(appConfig);
   }

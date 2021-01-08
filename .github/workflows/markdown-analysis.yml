@@ -3,7 +3,7 @@ name: markdown-analysis-workflow
 on:
     pull_request:
         branches:
-        - master
+        - main
         - release/**
         paths:
         - '**/*.md'
@@ -19,3 +19,7 @@ jobs:
             with:
                 files: .
                 config_file: ./codestyle/.markdownlint.yml
+        -   name: markdown link check
+            uses: gaurav-nelson/github-action-markdown-link-check@v1
+            with:
+                config-file: ./codestyle/.markdown-link-check.json

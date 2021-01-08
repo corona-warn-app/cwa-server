@@ -9,7 +9,7 @@
     <a href="https://circleci.com/gh/corona-warn-app/cwa-server" title="Build Status"><img src="https://circleci.com/gh/corona-warn-app/cwa-server.svg?style=shield&circle-token=4ab059989d10709df19eb4b98ab7c121a25e981a"></a>
         <a href="https://sonarcloud.io/dashboard?id=corona-warn-app_cwa-server" title="Quality Gate"><img src="https://sonarcloud.io/api/project_badges/measure?project=corona-warn-app_cwa-server&metric=alert_status"></a>
         <a href="https://sonarcloud.io/component_measures?id=corona-warn-app_cwa-server&metric=Coverage&view=list" title="Coverage"><img src="https://sonarcloud.io/api/project_badges/measure?project=corona-warn-app_cwa-server&metric=coverage"></a>
-    <a href="https://github.com/corona-warn-app/cwa-server/blob/master/LICENSE" title="License"><img src="https://img.shields.io/badge/License-Apache%202.0-green.svg?style=flat"></a>
+    <a href="https://github.com/corona-warn-app/cwa-server/blob/HEAD/LICENSE" title="License"><img src="https://img.shields.io/badge/License-Apache%202.0-green.svg?style=flat"></a>
     <a href="https://api.reuse.software/badge/github.com/corona-warn-app/cwa-server" title="REUSE Status"><img src="https://api.reuse.software/badge/github.com/corona-warn-app/cwa-server"></a>
 </p>
 
@@ -100,7 +100,7 @@ To prepare your machine to run the CWA project locally, we recommend that you fi
 
 If you are already running a local Postgres, you need to create a database `cwa` and run the following setup scripts:
 
-* Create the different CWA roles first by executing [create-roles.sql](setup/create-roles.sql).
+* Create the different CWA roles first by executing [create-roles.sql](./setup/setup-roles.sql).
 * Create local database users for the specific roles by running [create-users.sql](./local-setup/create-users.sql).
 * It is recommended to also run [enable-test-data-docker-compose.sql](./local-setup/enable-test-data-docker-compose.sql)
 , which enables the test data generation profile. If you already had CWA running before and an existing `diagnosis-key`
@@ -121,7 +121,7 @@ For the submission module:
 
 ```bash
 POSTGRESQL_SERVICE_PORT=8001
-SPRING_PROFILES_ACTIVE=disable-ssl-server,disable-ssl-client-postgres,disable-ssl-client-verification,disable-ssl-client-verification-verify-hostname
+SPRING_PROFILES_ACTIVE=disable-ssl-client-postgres
 ```
 
 #### Configure
@@ -164,8 +164,8 @@ The API that is being exposed by the backend services is documented in an [OpenA
 
 Service                   | OpenAPI Specification
 --------------------------|-------------
-Submission Service        | [services/submission/api_v1.json](https://github.com/corona-warn-app/cwa-server/raw/master/services/submission/api_v1.json)
-Distribution Service      | [services/distribution/api_v1.json](https://github.com/corona-warn-app/cwa-server/raw/master/services/distribution/api_v1.json)
+Submission Service        | [services/submission/api_v1.json](https://github.com/corona-warn-app/cwa-server/raw/HEAD/services/submission/api_v1.json)
+Distribution Service      | [services/distribution/api_v1.json](https://github.com/corona-warn-app/cwa-server/raw/HEAD/services/distribution/api_v1.json)
 
 ## Spring Profiles
 
@@ -206,17 +206,29 @@ The German government has asked SAP and Deutsche Telekom to develop the Corona-W
 
 ## Repositories
 
-The following public repositories are currently available for the Corona-Warn-App:
-
 | Repository          | Description                                                           |
 | ------------------- | --------------------------------------------------------------------- |
-| [cwa-documentation] | Project overview, general documentation, and white papers            |
-| [cwa-server]        | Backend implementation for the Apple/Google exposure notification API|
-| [cwa-verification-server] | Backend implementation of the verification process|
+| [cwa-documentation] | Project overview, general documentation, and white papers.            |
+| [cwa-app-ios]       | Native iOS app using the Apple/Google exposure notification API.      |
+| [cwa-app-android]   | Native Android app using the Apple/Google exposure notification API.  |
+| [cwa-wishlist]      | Community feature requests.                                           |
+| [cwa-website]       | The official website for the Corona-Warn-App.                         |
+| [cwa-server]        | Backend implementation for the Apple/Google exposure notification API.|
+| [cwa-verification-server] | Backend implementation of the verification process.             |
+| [cwa-verification-portal] | The portal to interact with the verification server.            |
+| [cwa-verification-iam]    | The identity and access management to interact with the verification server. |
+| [cwa-testresult-server]   | Receives the test results from connected laboratories.          |
 
 [cwa-documentation]: https://github.com/corona-warn-app/cwa-documentation
+[cwa-app-ios]: https://github.com/corona-warn-app/cwa-app-ios
+[cwa-app-android]: https://github.com/corona-warn-app/cwa-app-android
+[cwa-wishlist]: https://github.com/corona-warn-app/cwa-wishlist
+[cwa-website]: https://github.com/corona-warn-app/cwa-website
 [cwa-server]: https://github.com/corona-warn-app/cwa-server
 [cwa-verification-server]: https://github.com/corona-warn-app/cwa-verification-server
+[cwa-verification-portal]: https://github.com/corona-warn-app/cwa-verification-portal
+[cwa-verification-iam]: https://github.com/corona-warn-app/cwa-verification-iam
+[cwa-testresult-server]: https://github.com/corona-warn-app/cwa-testresult-server
 [Postgres]: https://www.postgresql.org/
 [HSQLDB]: http://hsqldb.org/
 [Zenko CloudServer]: https://github.com/scality/cloudserver

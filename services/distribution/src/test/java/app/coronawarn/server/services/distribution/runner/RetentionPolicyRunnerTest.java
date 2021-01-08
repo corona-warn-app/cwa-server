@@ -40,5 +40,7 @@ class RetentionPolicyRunnerTest {
 
     verify(diagnosisKeyService, times(1)).applyRetentionPolicy(distributionServiceConfig.getRetentionDays());
     verify(s3RetentionPolicy, times(1)).applyRetentionPolicy(distributionServiceConfig.getRetentionDays());
+    verify(s3RetentionPolicy, times(1))
+        .applyHourFileRetentionPolicy(distributionServiceConfig.getObjectStore().getHourFileRetentionDays());
   }
 }

@@ -41,11 +41,12 @@ feign:
       default:
         connect-timeout: 500
         read-timeout: 500
-        
+
 server:
   ssl:
     key-password: 123456
-    key-store: src/test/resources/keystore.jks
+    key-store: ../../docker-compose-test-secrets/ssl.p12
     key-store-password: 123456
-    trust-store: src/test/resources/truststore.jks
+    trust-store: ../../docker-compose-test-secrets/contains_efgs_truststore.jks
     trust-store-password: 123456
+    client-auth: need

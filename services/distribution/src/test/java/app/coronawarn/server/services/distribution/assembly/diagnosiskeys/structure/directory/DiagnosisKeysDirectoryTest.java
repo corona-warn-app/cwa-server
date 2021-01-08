@@ -22,10 +22,13 @@ import app.coronawarn.server.services.distribution.assembly.structure.directory.
 import app.coronawarn.server.services.distribution.assembly.structure.directory.DirectoryOnDisk;
 import app.coronawarn.server.services.distribution.assembly.structure.file.FileOnDiskWithChecksum;
 import app.coronawarn.server.services.distribution.assembly.structure.util.ImmutableStack;
+import app.coronawarn.server.services.distribution.assembly.structure.util.TimeUtils;
 import app.coronawarn.server.services.distribution.config.DistributionServiceConfig;
 import java.io.File;
 import java.io.IOException;
+import java.time.Instant;
 import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
@@ -34,6 +37,7 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import org.assertj.core.util.Sets;
 import org.junit.Rule;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -41,11 +45,13 @@ import org.junit.rules.TemporaryFolder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.ConfigFileApplicationContextInitializer;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 @EnableConfigurationProperties(value = DistributionServiceConfig.class)
 @ExtendWith(SpringExtension.class)
+@ActiveProfiles({"no-hour-retention"})
 @ContextConfiguration(classes = {CryptoProvider.class, DistributionServiceConfig.class,
     KeySharingPoliciesChecker.class},
     initializers = ConfigFileApplicationContextInitializer.class)
@@ -71,6 +77,12 @@ class DiagnosisKeysDirectoryTest {
     outputFolder.create();
     outputFile = outputFolder.newFolder();
     parentDirectory = new DirectoryOnDisk(outputFile);
+    TimeUtils.setNow(Instant.EPOCH.plus(10, ChronoUnit.DAYS));
+  }
+
+  @AfterEach
+  void tearDown() {
+    TimeUtils.setNow(null);
   }
 
   @Test

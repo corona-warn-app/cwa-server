@@ -24,7 +24,6 @@
     <maven.test.skip>true</maven.test.skip>
     <checkstyle.skip>true</checkstyle.skip>
     <jacoco.skip>true</jacoco.skip>
-    <license.skipCheckLicense>true</license.skipCheckLicense>
   </properties>
 
   <build>
