@@ -34,7 +34,7 @@ Please refer to the inline comments in the base `application.yaml` configuration
 ## CallbackController
 
 REST-controller that handles incoming GET-requests. Constructs new FederationBatchInfos from received parameters and triggers persistence of those.
-All other requests are being denied (configured in [SecurityConfig.java](SecurityConfig.java).
+All other requests are being denied - configured in `SecurityConfig.java`.
 
 ## ApiExceptionHandler
 
