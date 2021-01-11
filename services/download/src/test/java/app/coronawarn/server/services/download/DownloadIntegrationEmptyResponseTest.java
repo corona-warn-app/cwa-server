@@ -1,5 +1,3 @@
-
-
 package app.coronawarn.server.services.download;
 
 import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
@@ -9,15 +7,9 @@ import static com.github.tomakehurst.wiremock.client.WireMock.get;
 import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.options;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.http.HttpHeaders.CONTENT_TYPE;
+import static org.springframework.http.HttpStatus.NOT_FOUND;
+import static org.springframework.http.HttpStatus.OK;
 
-import app.coronawarn.server.common.persistence.domain.DiagnosisKey;
-import app.coronawarn.server.common.persistence.repository.DiagnosisKeyRepository;
-import app.coronawarn.server.common.persistence.repository.FederationBatchInfoRepository;
-import app.coronawarn.server.common.protocols.external.exposurenotification.DiagnosisKeyBatch;
-import app.coronawarn.server.services.download.config.DownloadServiceConfig;
-import com.github.tomakehurst.wiremock.WireMockServer;
-import com.github.tomakehurst.wiremock.http.HttpHeader;
-import com.github.tomakehurst.wiremock.http.HttpHeaders;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -26,6 +18,15 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpStatus;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
+
+import com.github.tomakehurst.wiremock.WireMockServer;
+import com.github.tomakehurst.wiremock.client.ResponseDefinitionBuilder;
+
+import app.coronawarn.server.common.persistence.domain.DiagnosisKey;
+import app.coronawarn.server.common.persistence.repository.DiagnosisKeyRepository;
+import app.coronawarn.server.common.persistence.repository.FederationBatchInfoRepository;
+import app.coronawarn.server.common.protocols.external.exposurenotification.DiagnosisKeyBatch;
+import app.coronawarn.server.services.download.config.DownloadServiceConfig;
 
 /**
  * This integration test is responsible for testing the runners for download and retention policy.
@@ -43,7 +44,7 @@ import org.springframework.test.context.ActiveProfiles;
  */
 @SpringBootTest
 @DirtiesContext
-@ActiveProfiles({"download-empty-response-integration-test"})
+@ActiveProfiles({ "download-empty-response-integration-test" })
 class DownloadIntegrationEmptyResponseTest {
 
   public static final String BATCH1_DATA = "0123456789ABCDED";
@@ -67,43 +68,32 @@ class DownloadIntegrationEmptyResponseTest {
 
   @BeforeAll
   static void setupWireMock() {
-    HttpHeaders batch1Headers = getHttpHeaders(BATCH1_TAG, BATCH2_TAG);
     DiagnosisKeyBatch batch1 = FederationBatchTestHelper.createDiagnosisKeyBatch(BATCH1_DATA);
-
-    HttpHeaders batch2Headers = getHttpHeaders(BATCH2_TAG, BATCH3_TAG);
-
-    HttpHeaders batch3Headers = getHttpHeaders(BATCH3_TAG, EMPTY_BATCH_TAG);
 
     server = new WireMockServer(options().port(1234));
     server.start();
+    // default
+    server.stubFor(get(anyUrl()).willReturn(response(OK, BATCH1_TAG, BATCH2_TAG, batch1)));
+    // BATCH2_TAG
     server.stubFor(
-        get(anyUrl())
-            .willReturn(
-                aResponse()
-                    .withStatus(HttpStatus.OK.value())
-                    .withHeaders(batch1Headers)
-                    .withBody(batch1.toByteArray())));
-    server.stubFor(
-        get(anyUrl())
-            .withHeader("batchTag", equalTo(BATCH2_TAG))
-            .willReturn(
-                aResponse()
-                    .withStatus(HttpStatus.OK.value())
-                    .withHeaders(batch2Headers)));
-    server.stubFor(
-        get(anyUrl())
-            .withHeader("batchTag", equalTo(BATCH3_TAG))
-            .willReturn(
-                aResponse()
-                    .withStatus(HttpStatus.NOT_FOUND.value())
-                    .withHeaders(batch3Headers)));
+        get(anyUrl()).withHeader("batchTag", equalTo(BATCH2_TAG)).willReturn(response(OK, BATCH2_TAG, BATCH3_TAG)));
+    // BATCH3_TAG
+    server.stubFor(get(anyUrl()).withHeader("batchTag", equalTo(BATCH3_TAG))
+        .willReturn(response(NOT_FOUND, BATCH3_TAG, EMPTY_BATCH_TAG)));
   }
 
-  private static HttpHeaders getHttpHeaders(String batchTag, String nextBatchTag) {
-    return new HttpHeaders()
-        .plus(new HttpHeader(CONTENT_TYPE, "application/protobuf; version=1.0"))
-        .plus(new HttpHeader("batchTag", batchTag))
-        .plus(new HttpHeader("nextBatchTag", nextBatchTag));
+  private static ResponseDefinitionBuilder response(HttpStatus status, String batchTag, String nextBatchTag,
+      DiagnosisKeyBatch... body) {
+    ResponseDefinitionBuilder response = aResponse().withStatus(status.value()).withHeader(CONTENT_TYPE,
+        "application/protobuf; version=1.0");
+
+    if (body != null && body.length > 0)
+      response = response.withBody(body[0].toByteArray());
+
+    response = response.withHeader("batchTag", batchTag);
+    response = response.withHeader("nextBatchTag", nextBatchTag);
+
+    return response;
   }
 
   @AfterAll
