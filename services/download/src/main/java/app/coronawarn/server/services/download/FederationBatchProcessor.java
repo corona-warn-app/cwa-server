@@ -205,7 +205,9 @@ public class FederationBatchProcessor {
           .withFieldNormalization(new FederationKeyNormalizer(config))
           .build());
     } catch (Exception e) {
-      logger.info("Building diagnosis key from federation diagnosis key failed.", e);
+      logger.warn(
+          "Building diagnosis key from federation diagnosis key failed. The key's origin country is: " + diagnosisKey
+              .getOrigin(), e);
       return Optional.empty();
     }
   }
