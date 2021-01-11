@@ -10,6 +10,10 @@
               <entry key="POSTGRESQL_SERVICE_PORT" value="8001" />
               <entry key="SPRING_PROFILES_ACTIVE" value="disable-ssl-client-postgres" />
               <entry key="SUPPORTED_COUNTRIES" value="DE,IT,FR,DK" />
+              <entry key="SSL_SUBMISSION_KEYSTORE_PATH" value="file:$PROJECT_DIR$/docker-compose-test-secrets/ssl.p12" />
+              <entry key="SSL_SUBMISSION_KEYSTORE_PASSWORD" value="123456" />
+              <entry key="SSL_VERIFICATION_TRUSTSTORE_PATH" value="file:$PROJECT_DIR$/docker-compose-test-secrets/contains_efgs_truststore.jks" />
+              <entry key="SSL_VERIFICATION_TRUSTSTORE_PASSWORD" value="123456" />
             </map>
           </option>
           <option name="jreName" value="#USE_PROJECT_JDK" />

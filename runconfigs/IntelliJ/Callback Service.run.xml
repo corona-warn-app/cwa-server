@@ -5,7 +5,7 @@
     <option name="ALTERNATIVE_JRE_PATH" />
     <envs>
       <env name="POSTGRESQL_SERVICE_PORT" value="8001" />
-      <env name="SPRING_PROFILES_ACTIVE" value="disable-certificate-authentication,disable-ssl-server,disable-ssl-client-postgres " />
+      <env name="SPRING_PROFILES_ACTIVE" value="disable-certificate-authentication,disable-ssl-server,disable-ssl-client-postgres" />
     </envs>
     <method v="2">
       <option name="Make" enabled="true" />
