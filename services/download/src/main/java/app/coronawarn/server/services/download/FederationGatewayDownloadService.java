@@ -10,6 +10,7 @@ import java.time.LocalDate;
 import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 
@@ -123,10 +124,18 @@ public class FederationGatewayDownloadService {
   }
 
   private Optional<String> getHeader(ResponseEntity<DiagnosisKeyBatch> response, String header) {
-    String headerString = response.getHeaders().getFirst(header);
+    HttpHeaders headers = extractCaseInsensitiveHeaders(response);
+    String headerString = headers.getFirst(header);
     return (!EMPTY_HEADER.equals(headerString))
         ? Optional.ofNullable(headerString)
         : Optional.empty();
+  }
+
+  private HttpHeaders extractCaseInsensitiveHeaders(ResponseEntity<DiagnosisKeyBatch> response) {
+    // required because response.getHeaders() is case-sensitive in our case
+    HttpHeaders headers = new HttpHeaders();
+    headers.addAll(response.getHeaders());
+    return headers;
   }
 
   static class IllegalResponseException extends IOException {
