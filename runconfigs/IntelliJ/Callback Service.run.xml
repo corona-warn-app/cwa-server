@@ -1,0 +1,14 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="Callback Service" type="SpringBootApplicationConfigurationType" factoryName="Spring Boot">
+    <module name="callback" />
+    <option name="SPRING_BOOT_MAIN_CLASS" value="app.coronawarn.server.services.callback.ServerApplication" />
+    <option name="ALTERNATIVE_JRE_PATH" />
+    <envs>
+      <env name="POSTGRESQL_SERVICE_PORT" value="8001" />
+      <env name="SPRING_PROFILES_ACTIVE" value="disable-certificate-authentication,disable-ssl-client-postgres " />
+    </envs>
+    <method v="2">
+      <option name="Make" enabled="true" />
+    </method>
+  </configuration>
+</component>
