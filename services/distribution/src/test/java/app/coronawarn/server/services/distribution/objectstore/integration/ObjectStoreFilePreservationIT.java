@@ -1,5 +1,3 @@
-
-
 package app.coronawarn.server.services.distribution.objectstore.integration;
 
 import app.coronawarn.server.common.persistence.service.DiagnosisKeyService;
@@ -22,12 +20,11 @@ import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
-import org.junit.Rule;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.junit.rules.TemporaryFolder;
+import org.junit.jupiter.api.io.TempDir;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.ConfigFileApplicationContextInitializer;
@@ -62,17 +59,13 @@ class ObjectStoreFilePreservationIT extends BaseS3IntegrationTest {
   @MockBean
   private OutputDirectoryProvider distributionDirectoryProvider;
 
-  @Rule
-  private TemporaryFolder testOutputFolder = new TemporaryFolder();
-
   @BeforeEach
   public void setup() throws IOException {
-    testOutputFolder.create();
     objectStoreAccess.deleteObjectsWithPrefix(distributionServiceConfig.getApi().getVersionPath());
   }
 
   /**
-   * The test covers a behaviour that manifests itself when data retention and shifting policies cause the file
+   * The test covers a behavior that manifests itself when data retention and shifting policies cause the file
    * distribution logic to generate, in subsequent runs, different content for the same timeframes. Below the
    * distribution problem is described with a concerete daily scenario.
    * <p>
@@ -105,13 +98,13 @@ class ObjectStoreFilePreservationIT extends BaseS3IntegrationTest {
     // setup the 80 keys per day scenario
     createDiagnosisKeyTestData(testStartDate, testEndDate, 80);
 
-    assembleAndDistribute(testOutputFolder.newFolder("output-before-retention"));
+    assembleAndDistribute(null);
     List<S3Object> filesBeforeRetention = getPublishedFiles();
 
     triggerRetentionPolicy(testStartDate);
 
     // Trigger second distribution after data retention policies were applied
-    assembleAndDistribute(testOutputFolder.newFolder("output-after-retention"));
+    assembleAndDistribute(null);
     List<S3Object> filesAfterRetention = getPublishedFiles();
 
     assertPreviouslyPublishedKeyFilesAreTheSame(filesBeforeRetention, filesAfterRetention);
@@ -146,8 +139,7 @@ class ObjectStoreFilePreservationIT extends BaseS3IntegrationTest {
   }
 
   private boolean filesAreDifferent(S3Object previouslyPublished, S3Object newVerion) {
-    return previouslyPublished == null ||
-        !newVerion.getCwaHash().equals(previouslyPublished.getCwaHash());
+    return previouslyPublished == null || !newVerion.getCwaHash().equals(previouslyPublished.getCwaHash());
   }
 
   /**
@@ -170,7 +162,7 @@ class ObjectStoreFilePreservationIT extends BaseS3IntegrationTest {
     diagnosisKeyService.saveDiagnosisKeys(testData.getDiagnosisKeys());
   }
 
-  private void assembleAndDistribute(File output) throws IOException {
+  private void assembleAndDistribute(@TempDir File output) throws IOException {
     Mockito.when(distributionDirectoryProvider.getDirectory()).thenReturn(new DirectoryOnDisk(output));
     Mockito.when(distributionDirectoryProvider.getFileOnDisk()).thenReturn(output);
 

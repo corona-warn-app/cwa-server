@@ -1,5 +1,3 @@
-
-
 package app.coronawarn.server.services.distribution.assembly.diagnosiskeys.structure.directory;
 
 import static app.coronawarn.server.services.distribution.common.Helpers.buildDiagnosisKeys;
@@ -30,13 +28,12 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
-import org.junit.Rule;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.junit.rules.TemporaryFolder;
+import org.junit.jupiter.api.io.TempDir;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.ConfigFileApplicationContextInitializer;
@@ -52,8 +49,8 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
     initializers = ConfigFileApplicationContextInitializer.class)
 class DiagnosisKeysDateDirectoryTest {
 
-  @Rule
-  private final TemporaryFolder outputFolder = new TemporaryFolder();
+  @TempDir
+  File outputFile;
 
   @Autowired
   CryptoProvider cryptoProvider;
@@ -64,12 +61,8 @@ class DiagnosisKeysDateDirectoryTest {
   @Autowired
   DistributionServiceConfig distributionServiceConfig;
 
-  private File outputFile;
-
   @BeforeEach
   void setupAll() throws IOException {
-    outputFolder.create();
-    outputFile = outputFolder.newFolder();
     TimeUtils.setNow(Instant.EPOCH.plus(10, ChronoUnit.DAYS));
   }
 

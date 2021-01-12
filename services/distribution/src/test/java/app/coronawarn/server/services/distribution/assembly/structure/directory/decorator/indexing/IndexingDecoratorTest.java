@@ -1,5 +1,3 @@
-
-
 package app.coronawarn.server.services.distribution.assembly.structure.directory.decorator.indexing;
 
 import static app.coronawarn.server.services.distribution.common.Helpers.prepareAndWrite;
@@ -21,29 +19,22 @@ import java.util.stream.Stream;
 import org.json.simple.JSONArray;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
-import org.junit.Rule;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.rules.TemporaryFolder;
+import org.junit.jupiter.api.io.TempDir;
 
 class IndexingDecoratorTest {
 
-  @Rule
-  private TemporaryFolder outputFolder = new TemporaryFolder();
-
   private static final Set<Integer> INDEX = Set.of(1, 2, 3);
-  private java.io.File outputFile;
-  private Directory<WritableOnDisk> parent;
-  private IndexDirectory<Integer, WritableOnDisk> decoratee;
-  private IndexDirectory<Integer, WritableOnDisk> decorator;
+  @TempDir
+  java.io.File outputFile;
 
   @BeforeEach
   public void setup() throws IOException {
-    outputFolder.create();
-    outputFile = outputFolder.newFolder();
-    parent = new DirectoryOnDisk(outputFile);
-    decoratee = new IndexDirectoryOnDisk<>("foo", ignoredValue -> INDEX, value -> value);
-    decorator = new IndexingDecoratorOnDisk<>(decoratee, "foo");
+    Directory<WritableOnDisk> parent = new DirectoryOnDisk(outputFile);
+    IndexDirectory<Integer, WritableOnDisk> decoratee = new IndexDirectoryOnDisk<>("foo", ignoredValue -> INDEX,
+        value -> value);
+    IndexDirectory<Integer, WritableOnDisk> decorator = new IndexingDecoratorOnDisk<>(decoratee, "bar");
 
     parent.addWritable(decorator);
 
@@ -53,23 +44,16 @@ class IndexingDecoratorTest {
   @Test
   void checkWritesIndexFile() throws IOException, ParseException {
     java.io.File actualIndexDirectoryFile = Objects.requireNonNull(outputFile.listFiles())[0];
-    java.io.File actualPhysicalFile = Stream.of(actualIndexDirectoryFile)
-        .filter(File::isDirectory)
-        .map(File::listFiles)
-        .flatMap(Arrays::stream)
-        .filter(File::isFile)
-        .filter(file -> !FileOnDiskWithChecksum.isChecksumFile(file.toPath()))
-        .findFirst()
-        .get();
+    java.io.File actualPhysicalFile = Stream.of(actualIndexDirectoryFile).filter(File::isDirectory).map(File::listFiles)
+        .flatMap(Arrays::stream).filter(File::isFile)
+        .filter(file -> !FileOnDiskWithChecksum.isChecksumFile(file.toPath())).findFirst().get();
 
     JSONParser jsonParser = new JSONParser();
-    FileReader reader = new FileReader(actualPhysicalFile);
-    Object obj = jsonParser.parse(reader);
-    JSONArray indexJson = (JSONArray) obj;
-
-    INDEX.forEach(expected ->
-        assertThat(indexJson.contains(expected.longValue()))
-            .withFailMessage(expected.toString())
-            .isTrue());
+    try (FileReader reader = new FileReader(actualPhysicalFile)) {
+      JSONArray indexJson = (JSONArray) jsonParser.parse(reader);
+      INDEX.forEach(expected -> assertThat(indexJson.contains(expected.longValue()))
+          .withFailMessage(expected.toString()).isTrue());
+    }
   }
+
 }

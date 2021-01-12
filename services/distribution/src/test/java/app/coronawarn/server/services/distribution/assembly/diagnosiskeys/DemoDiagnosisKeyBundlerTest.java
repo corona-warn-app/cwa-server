@@ -1,5 +1,3 @@
-
-
 package app.coronawarn.server.services.distribution.assembly.diagnosiskeys;
 
 import static app.coronawarn.server.services.distribution.common.Helpers.buildDiagnosisKeys;
@@ -11,8 +9,6 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-import org.junit.Ignore;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;

@@ -1,7 +1,4 @@
-
-
 package app.coronawarn.server.services.distribution.assembly.structure.file;
-
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.catchThrowable;
@@ -11,22 +8,20 @@ import app.coronawarn.server.services.distribution.assembly.structure.directory.
 import app.coronawarn.server.services.distribution.assembly.structure.directory.DirectoryOnDisk;
 import java.io.IOException;
 import java.nio.file.Files;
-import org.junit.Rule;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.rules.TemporaryFolder;
+import org.junit.jupiter.api.io.TempDir;
 
 class FileTest {
 
   private final byte[] bytes = "World".getBytes();
   private FileOnDisk file;
 
-  @Rule
-  private TemporaryFolder outputFolder = new TemporaryFolder();
-
+  @TempDir
+  java.io.File outputFile;
+  
   @BeforeEach
   public void setup() throws IOException {
-    outputFolder.create();
     file = new FileOnDisk("Hello", bytes);
   }
 
@@ -49,7 +44,7 @@ class FileTest {
 
   @Test
   void checkWrite() throws IOException {
-    java.io.File outputFile = outputFolder.newFolder();
+    
     Directory<WritableOnDisk> directory = new DirectoryOnDisk(outputFile);
 
     directory.addWritable(file);

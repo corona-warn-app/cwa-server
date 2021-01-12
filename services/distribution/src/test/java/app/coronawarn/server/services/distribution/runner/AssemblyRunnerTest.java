@@ -1,5 +1,3 @@
-
-
 package app.coronawarn.server.services.distribution.runner;
 
 import static org.mockito.ArgumentMatchers.any;
@@ -14,12 +12,12 @@ import app.coronawarn.server.services.distribution.assembly.structure.WritableOn
 import app.coronawarn.server.services.distribution.assembly.structure.directory.Directory;
 import app.coronawarn.server.services.distribution.assembly.structure.directory.DirectoryOnDisk;
 import app.coronawarn.server.services.distribution.config.DistributionServiceConfig;
+import java.io.File;
 import java.io.IOException;
-import org.junit.Rule;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.junit.rules.TemporaryFolder;
+import org.junit.jupiter.api.io.TempDir;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.ConfigFileApplicationContextInitializer;
@@ -44,14 +42,12 @@ class AssemblyRunnerTest {
   private Directory<WritableOnDisk> parentDirectory;
   private Directory<WritableOnDisk> childDirectory;
 
-  @Rule
-  private TemporaryFolder outputFolder = new TemporaryFolder();
+  @TempDir
+  File outputDirectory;
 
   @BeforeEach
   void setup() throws IOException {
-    outputFolder.create();
-    var outputDirectory = outputFolder.newFolder("parent");
-    var outputSubDirectory = outputFolder.newFolder("parent/child");
+    var outputSubDirectory = new File(outputDirectory,"child");
     parentDirectory = new DirectoryOnDisk(outputDirectory);
     childDirectory = new DirectoryOnDisk(outputSubDirectory);
   }

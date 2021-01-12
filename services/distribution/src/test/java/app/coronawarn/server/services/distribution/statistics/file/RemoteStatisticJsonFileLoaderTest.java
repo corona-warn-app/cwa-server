@@ -1,5 +1,10 @@
 package app.coronawarn.server.services.distribution.statistics.file;
 
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+
 import app.coronawarn.server.services.distribution.config.DistributionServiceConfig;
 import app.coronawarn.server.services.distribution.objectstore.client.ObjectStoreClient;
 import app.coronawarn.server.services.distribution.statistics.exceptions.BucketNotFoundException;
@@ -18,15 +23,10 @@ import software.amazon.awssdk.core.exception.SdkClientException;
 import software.amazon.awssdk.services.s3.model.NoSuchBucketException;
 import software.amazon.awssdk.services.s3.model.S3Exception;
 
-import static org.junit.Assert.assertThrows;
-import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
-
-@EnableConfigurationProperties(value = {DistributionServiceConfig.class})
+@EnableConfigurationProperties(value = { DistributionServiceConfig.class })
 @ExtendWith(SpringExtension.class)
-@ContextConfiguration(classes = {RemoteStatisticJsonFileLoaderTest.class},
-    initializers = ConfigFileApplicationContextInitializer.class)
+@ContextConfiguration(classes = {
+    RemoteStatisticJsonFileLoaderTest.class }, initializers = ConfigFileApplicationContextInitializer.class)
 public class RemoteStatisticJsonFileLoaderTest {
 
   @Autowired
@@ -61,5 +61,4 @@ public class RemoteStatisticJsonFileLoaderTest {
     var loader = new RemoteStatisticJsonFileLoader(mockS3client, serviceConfig);
     assertThrows(FilePathNotFoundException.class, loader::getContent);
   }
-
 }

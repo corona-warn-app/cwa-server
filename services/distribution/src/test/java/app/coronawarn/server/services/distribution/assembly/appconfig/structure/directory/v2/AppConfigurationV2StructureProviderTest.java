@@ -18,10 +18,9 @@ import app.coronawarn.server.services.distribution.config.DistributionServiceCon
 import java.io.File;
 import java.io.IOException;
 import java.util.Set;
-import org.junit.Rule;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.junit.rules.TemporaryFolder;
+import org.junit.jupiter.api.io.TempDir;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.ConfigFileApplicationContextInitializer;
@@ -30,12 +29,12 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 @EnableConfigurationProperties(value = DistributionServiceConfig.class)
 @ExtendWith(SpringExtension.class)
-@ContextConfiguration(classes = {CryptoProvider.class, ApplicationConfigurationV2PublicationConfig.class},
-    initializers = ConfigFileApplicationContextInitializer.class)
+@ContextConfiguration(classes = { CryptoProvider.class,
+    ApplicationConfigurationV2PublicationConfig.class }, initializers = ConfigFileApplicationContextInitializer.class)
 class AppConfigurationV2StructureProviderTest {
 
-  @Rule
-  private TemporaryFolder outputFolder = new TemporaryFolder();
+  @TempDir
+  File outputFile;
 
   @Autowired
   private CryptoProvider cryptoProvider;
@@ -51,13 +50,10 @@ class AppConfigurationV2StructureProviderTest {
 
   @Test
   void createsCorrectIosFiles() throws IOException {
-    Set<String> expFiles =
-        Set.of(join(separator, "app_config_ios"), join(separator, "app_config_ios.checksum"));
-    Writable<WritableOnDisk> appConfigs =
-        new AppConfigurationV2StructureProvider<ApplicationConfigurationIOS>(
-            applicationConfigurationIos, cryptoProvider, distributionServiceConfig,
-            distributionServiceConfig.getApi().getAppConfigV2IosFileName())
-            .getConfigurationArchive();
+    Set<String> expFiles = Set.of(join(separator, "app_config_ios"), join(separator, "app_config_ios.checksum"));
+    Writable<WritableOnDisk> appConfigs = new AppConfigurationV2StructureProvider<ApplicationConfigurationIOS>(
+        applicationConfigurationIos, cryptoProvider, distributionServiceConfig,
+        distributionServiceConfig.getApi().getAppConfigV2IosFileName()).getConfigurationArchive();
 
     assertThat(writeDirectoryAndGetFiles(appConfigs)).isEqualTo(expFiles);
   }
@@ -66,18 +62,14 @@ class AppConfigurationV2StructureProviderTest {
   void createsCorrectAndroidFiles() throws IOException {
     Set<String> expFiles = Set.of(join(separator, "app_config_android"),
         join(separator, "app_config_android.checksum"));
-    Writable<WritableOnDisk> appConfigs =
-        new AppConfigurationV2StructureProvider<ApplicationConfigurationAndroid>(
-            applicationConfigurationAndroid, cryptoProvider, distributionServiceConfig,
-            distributionServiceConfig.getApi().getAppConfigV2AndroidFileName())
-            .getConfigurationArchive();
+    Writable<WritableOnDisk> appConfigs = new AppConfigurationV2StructureProvider<ApplicationConfigurationAndroid>(
+        applicationConfigurationAndroid, cryptoProvider, distributionServiceConfig,
+        distributionServiceConfig.getApi().getAppConfigV2AndroidFileName()).getConfigurationArchive();
 
     assertThat(writeDirectoryAndGetFiles(appConfigs)).isEqualTo(expFiles);
   }
 
   private Set<String> writeDirectoryAndGetFiles(Writable<WritableOnDisk> configFile) throws IOException {
-    outputFolder.create();
-    File outputFile = outputFolder.newFolder();
     Directory<WritableOnDisk> parentDirectory = new DirectoryOnDisk(outputFile);
     parentDirectory.addWritable(configFile);
     parentDirectory.prepare(new ImmutableStack<>());

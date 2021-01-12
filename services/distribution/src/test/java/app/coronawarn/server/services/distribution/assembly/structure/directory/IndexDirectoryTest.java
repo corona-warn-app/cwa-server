@@ -1,5 +1,3 @@
-
-
 package app.coronawarn.server.services.distribution.assembly.structure.directory;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -18,10 +16,9 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-import org.junit.Rule;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.rules.TemporaryFolder;
+import org.junit.jupiter.api.io.TempDir;
 
 class IndexDirectoryTest {
 
@@ -32,15 +29,11 @@ class IndexDirectoryTest {
   private IndexDirectory<Integer, WritableOnDisk> indexDirectory;
   private Directory<WritableOnDisk> outputDirectory;
 
-  @Rule
-  private TemporaryFolder temporaryFolder = new TemporaryFolder();
-  private java.io.File outputFile;
+  @TempDir
+  java.io.File outputFile;
 
   @BeforeEach
   public void setup() throws IOException {
-    temporaryFolder.create();
-    outputFile = temporaryFolder.newFolder();
-
     indexDirectory = new IndexDirectoryOnDisk<>(name, indexFunction, indexFormatter);
     outputDirectory = new DirectoryOnDisk(outputFile);
     outputDirectory.addWritable(indexDirectory);
@@ -69,13 +62,9 @@ class IndexDirectoryTest {
 
     java.io.File actualIndexDirectoryFile = Objects.requireNonNull(outputFile.listFiles())[0];
     List<java.io.File> actualPhysicalFiles = Stream.of(actualIndexDirectoryFile)
-        .flatMap(IndexDirectoryTest::getContainedElements)
-        .flatMap(IndexDirectoryTest::getContainedElements)
-        .sorted()
+        .flatMap(IndexDirectoryTest::getContainedElements).flatMap(IndexDirectoryTest::getContainedElements).sorted()
         .collect(Collectors.toList());
-    List<java.io.File> expectedPhysicalFiles = expectedFileList.stream()
-        .map(WritableOnDisk::getFileOnDisk)
-        .sorted()
+    List<java.io.File> expectedPhysicalFiles = expectedFileList.stream().map(WritableOnDisk::getFileOnDisk).sorted()
         .collect(Collectors.toList());
 
     assertThat(actualPhysicalFiles).isEqualTo(expectedPhysicalFiles);
@@ -94,11 +83,9 @@ class IndexDirectoryTest {
 
     java.io.File actualIndexDirectoryFile = Objects.requireNonNull(outputFile.listFiles())[0];
     Set<java.io.File> actualPhysicalFiles = Stream.of(actualIndexDirectoryFile)
-        .flatMap(IndexDirectoryTest::getContainedElements)
-        .flatMap(IndexDirectoryTest::getContainedElements)
+        .flatMap(IndexDirectoryTest::getContainedElements).flatMap(IndexDirectoryTest::getContainedElements)
         .collect(Collectors.toSet());
-    Set<java.io.File> expectedPhysicalFiles = expectedFileList.stream()
-        .map(WritableOnDisk::getFileOnDisk)
+    Set<java.io.File> expectedPhysicalFiles = expectedFileList.stream().map(WritableOnDisk::getFileOnDisk)
         .collect(Collectors.toSet());
 
     assertThat(actualPhysicalFiles).isEqualTo(expectedPhysicalFiles);

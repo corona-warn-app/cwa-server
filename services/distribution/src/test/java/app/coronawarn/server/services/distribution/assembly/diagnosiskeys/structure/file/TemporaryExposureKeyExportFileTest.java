@@ -1,5 +1,3 @@
-
-
 package app.coronawarn.server.services.distribution.assembly.diagnosiskeys.structure.file;
 
 import static app.coronawarn.server.services.distribution.common.Helpers.buildDiagnosisKeyForSubmissionTimestamp;
@@ -15,11 +13,9 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.util.Set;
-import org.junit.Rule;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.junit.rules.TemporaryFolder;
+import org.junit.jupiter.api.io.TempDir;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.ConfigFileApplicationContextInitializer;
@@ -27,7 +23,6 @@ import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.annotation.DirtiesContext.ClassMode;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
-
 
 @EnableConfigurationProperties(value = DistributionServiceConfig.class)
 @ExtendWith(SpringExtension.class)
@@ -38,36 +33,28 @@ class TemporaryExposureKeyExportFileTest {
 
   public static final String TEK_EXPORT_CHECKSUM_FILE_NAME = "export.bin.checksum";
 
-  @Rule
-  TemporaryFolder outputFolder = new TemporaryFolder();
-
   @Autowired
   DistributionServiceConfig distributionServiceConfig;
 
-  @BeforeEach
-  void setup() throws IOException {
-    outputFolder.create();
-  }
-
   @Test
-  void testChecksumIsDeterministic() throws IOException {
-    File outputFile1 = createFile();
+  void testChecksumIsDeterministic(@TempDir File outputFile) throws IOException {
+    File outputFile1 = createFile(new File(outputFile,"f1"));
     byte[] checksum1 = readChecksumFile(outputFile1);
 
-    File outputFile2 = createFile();
+    File outputFile2 = createFile(new File(outputFile,"f2"));
     byte[] checksum2 = readChecksumFile(outputFile2);
 
     assertThat(checksum1).isEqualTo(checksum2);
   }
 
   @Test
-  void testChecksumChangesWhenPrivateKeyIsModified() throws IOException {
-    File outputFile1 = createFile();
+  void testChecksumChangesWhenPrivateKeyIsModified(@TempDir File outputFile) throws IOException {
+    File outputFile1 = createFile(new File(outputFile,"f1"));
     byte[] checksum1 = readChecksumFile(outputFile1);
 
     modifySignaturePrivateKeyVersion();
 
-    File outputFile2 = createFile();
+    File outputFile2 = createFile(new File(outputFile,"f2"));
     byte[] checksum2 = readChecksumFile(outputFile2);
 
     assertThat(checksum1).isNotEqualTo(checksum2);
@@ -82,9 +69,8 @@ class TemporaryExposureKeyExportFileTest {
     );
   }
 
-  private File createFile() throws IOException {
+  private File createFile(File outputFile) throws IOException {
     TemporaryExposureKeyExportFile tekExportFile = createTemporaryExposureKeyExportFile();
-    File outputFile = outputFolder.newFolder();
     Directory<WritableOnDisk> directory = new DirectoryOnDisk(outputFile);
     directory.addWritable(tekExportFile);
     directory.prepare(new ImmutableStack<>());

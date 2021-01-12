@@ -1,9 +1,10 @@
-
-
 package app.coronawarn.server.services.distribution.runner;
 
 import static app.coronawarn.server.services.distribution.common.Helpers.buildDiagnosisKeys;
-import static org.mockito.Mockito.any;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.atLeast;
 import static org.mockito.Mockito.atMostOnce;
 import static org.mockito.Mockito.never;
@@ -25,8 +26,6 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
-import org.assertj.core.api.Assertions;
-import org.junit.Assert;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -85,7 +84,7 @@ class TestDataGenerationTest {
 
     verify(diagnosisKeyService, times(distributionServiceConfig.getSupportedCountries().length))
         .saveDiagnosisKeys(captor.capture());
-    Assert.assertFalse(captor.getValue().isEmpty());
+    assertFalse(captor.getValue().isEmpty());
   }
 
   @Test
@@ -138,7 +137,7 @@ class TestDataGenerationTest {
     testDataGeneration.run(null);
     verify(diagnosisKeyService, times(distributionServiceConfig.getSupportedCountries().length))
         .saveDiagnosisKeys(captor.capture());
-    Assert.assertTrue(captor.getValue().stream()
+    assertTrue(captor.getValue().stream()
         .allMatch(k -> k.getSubmissionTimestamp() != 443003));
   }
 
@@ -154,7 +153,7 @@ class TestDataGenerationTest {
 
     testDataGeneration.run(null);
     verify(diagnosisKeyService, atMostOnce()).saveDiagnosisKeys(captor.capture());
-    Assert.assertTrue(captor.getValue().stream()
+    assertTrue(captor.getValue().stream()
         .allMatch(k -> k.getOriginCountry().equals("FR")));
   }
 
@@ -213,7 +212,7 @@ class TestDataGenerationTest {
     verify(diagnosisKeyService, atLeast(4)).saveDiagnosisKeys(captor.capture());
     Collection<DiagnosisKey> diagnosisKeys = captor.getValue();
     diagnosisKeys.forEach(diagnosisKey -> {
-      Assertions.assertThat(diagnosisKey.getRollingStartIntervalNumber() % 144).isZero();
+      assertThat(diagnosisKey.getRollingStartIntervalNumber() % 144).isZero();
     });
   }
 }

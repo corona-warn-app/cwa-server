@@ -1,5 +1,3 @@
-
-
 package app.coronawarn.server.services.distribution.assembly.diagnosiskeys.structure.directory;
 
 import static app.coronawarn.server.services.distribution.common.Helpers.buildDiagnosisKeys;
@@ -19,26 +17,19 @@ import app.coronawarn.server.services.distribution.assembly.structure.util.Immut
 import app.coronawarn.server.services.distribution.assembly.structure.util.TimeUtils;
 import app.coronawarn.server.services.distribution.config.DistributionServiceConfig;
 import java.io.File;
-import java.io.IOException;
-import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.temporal.ChronoUnit;
 import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
-import org.junit.Rule;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.junit.rules.TemporaryFolder;
+import org.junit.jupiter.api.io.TempDir;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.ConfigFileApplicationContextInitializer;
-import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 @EnableConfigurationProperties(value = DistributionServiceConfig.class)
@@ -46,9 +37,6 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 @ContextConfiguration(classes = {CryptoProvider.class, DistributionServiceConfig.class, KeySharingPoliciesChecker.class},
     initializers = ConfigFileApplicationContextInitializer.class)
 class DiagnosisKeysHourDirectoryTest {
-
-  @Rule
-  private final TemporaryFolder outputFolder = new TemporaryFolder();
 
   @Autowired
   CryptoProvider cryptoProvider;
@@ -59,13 +47,8 @@ class DiagnosisKeysHourDirectoryTest {
   @Autowired
   DistributionServiceConfig distributionServiceConfig;
 
-  private File outputFile;
-
-  @BeforeEach
-  void setupAll() throws IOException {
-    outputFolder.create();
-    outputFile = outputFolder.newFolder();
-  }
+  @TempDir
+  File outputFile;
 
   private void runHourDistribution(Collection<DiagnosisKey> diagnosisKeys, LocalDateTime distributionTime,
       LocalDate keysSubmissionDate) {

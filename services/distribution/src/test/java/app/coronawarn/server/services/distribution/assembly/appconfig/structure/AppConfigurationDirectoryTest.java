@@ -1,5 +1,3 @@
-
-
 package app.coronawarn.server.services.distribution.assembly.appconfig.structure;
 
 import static app.coronawarn.server.services.distribution.common.Helpers.loadApplicationConfiguration;
@@ -21,10 +19,9 @@ import app.coronawarn.server.services.distribution.config.DistributionServiceCon
 import java.io.File;
 import java.io.IOException;
 import java.util.Set;
-import org.junit.Rule;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.junit.rules.TemporaryFolder;
+import org.junit.jupiter.api.io.TempDir;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.ConfigFileApplicationContextInitializer;
@@ -37,8 +34,8 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
     initializers = ConfigFileApplicationContextInitializer.class)
 class AppConfigurationDirectoryTest {
 
-  @Rule
-  private TemporaryFolder outputFolder = new TemporaryFolder();
+  @TempDir
+  File outputFile;
 
   @Autowired
   private CryptoProvider cryptoProvider;
@@ -74,8 +71,6 @@ class AppConfigurationDirectoryTest {
   }
 
   private Set<String> writeDirectoryAndGetFiles(ApplicationConfiguration applicationConfiguration) throws IOException {
-    outputFolder.create();
-    File outputFile = outputFolder.newFolder();
     Directory<WritableOnDisk> parentDirectory = new DirectoryOnDisk(outputFile);
     AppConfigurationDirectory configurationDirectory =
         new AppConfigurationDirectory(applicationConfiguration, cryptoProvider, distributionServiceConfigSpy);

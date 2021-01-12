@@ -6,28 +6,21 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import app.coronawarn.server.services.distribution.assembly.structure.directory.DirectoryOnDisk;
 import java.io.IOException;
-import org.junit.Rule;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.rules.TemporaryFolder;
+import org.junit.jupiter.api.io.TempDir;
 
 class FileOnDiskWithChecksumTest {
 
   private final byte[] bytes = "World".getBytes();
   private FileOnDiskWithChecksum file;
 
-  @Rule
-  private final TemporaryFolder outputFolder = new TemporaryFolder();
-
-  @BeforeEach
-  public void setup() throws IOException {
-    outputFolder.create();
-  }
+  @TempDir
+  java.io.File outputFolder;
 
   @Test
   void checkChecksum() throws IOException {
     file = new FileOnDiskWithChecksum("Hello", bytes);
-    file.setParent(new DirectoryOnDisk(outputFolder.newFolder()));
+    file.setParent(new DirectoryOnDisk(outputFolder));
     file.write();
     String checksum = readString(buildChecksumPathForFile(file.getFileOnDisk().toPath())).trim();
 

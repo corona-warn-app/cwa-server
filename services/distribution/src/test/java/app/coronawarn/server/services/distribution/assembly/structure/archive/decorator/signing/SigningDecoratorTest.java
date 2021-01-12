@@ -1,5 +1,3 @@
-
-
 package app.coronawarn.server.services.distribution.assembly.structure.archive.decorator.signing;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -29,11 +27,10 @@ import java.security.cert.Certificate;
 import java.security.cert.CertificateException;
 import java.security.cert.CertificateFactory;
 import java.util.List;
-import org.junit.Rule;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.junit.rules.TemporaryFolder;
+import org.junit.jupiter.api.io.TempDir;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.ConfigFileApplicationContextInitializer;
@@ -44,8 +41,8 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 @EnableConfigurationProperties(value = DistributionServiceConfig.class)
 @ExtendWith(SpringExtension.class)
-@ContextConfiguration(classes = {CryptoProvider.class, DistributionServiceConfig.class},
-    initializers = ConfigFileApplicationContextInitializer.class)
+@ContextConfiguration(classes = { CryptoProvider.class,
+    DistributionServiceConfig.class }, initializers = ConfigFileApplicationContextInitializer.class)
 class SigningDecoratorTest {
 
   @Autowired
@@ -60,8 +57,8 @@ class SigningDecoratorTest {
   private File<WritableOnDisk> fileToSign;
   private TEKSignatureList signatureList;
 
-  @Rule
-  private TemporaryFolder outputFolder = new TemporaryFolder();
+  @TempDir
+  java.io.File outputDir;
 
   @BeforeEach
   void setup() throws IOException {
@@ -72,17 +69,13 @@ class SigningDecoratorTest {
     SigningDecorator<WritableOnDisk> signingDecorator = new TestSigningDecorator(archive, cryptoProvider,
         distributionServiceConfig);
 
-    outputFolder.create();
-    java.io.File outputDir = outputFolder.newFolder();
     Directory<WritableOnDisk> directory = new DirectoryOnDisk(outputDir);
     directory.addWritable(signingDecorator);
     directory.prepare(new ImmutableStack<>());
 
     File<WritableOnDisk> signatureFile = archive.getWritables().stream()
-        .filter(writable -> writable.getName().equals("export.sig"))
-        .map(writable -> (File<WritableOnDisk>) writable)
-        .findFirst()
-        .orElseThrow();
+        .filter(writable -> writable.getName().equals("export.sig")).map(writable -> (File<WritableOnDisk>) writable)
+        .findFirst().orElseThrow();
 
     signatureList = TEKSignatureList.parseFrom(signatureFile.getBytes());
   }
@@ -114,8 +107,8 @@ class SigningDecoratorTest {
   }
 
   @Test
-  void checkSignature()
-      throws NoSuchProviderException, NoSuchAlgorithmException, SignatureException, IOException, InvalidKeyException, CertificateException {
+  void checkSignature() throws NoSuchProviderException, NoSuchAlgorithmException, SignatureException, IOException,
+      InvalidKeyException, CertificateException {
     byte[] fileBytes = fileToSign.getBytes();
     byte[] signatureBytes = signatureList.getSignaturesList().get(0).getSignature().toByteArray();
 
@@ -142,12 +135,8 @@ class SigningDecoratorTest {
 
     @Override
     public byte[] getBytesToSign() {
-      return this.getWritables().stream()
-          .filter(writable -> writable.getName().equals("export.bin"))
-          .map(writable -> (File<WritableOnDisk>) writable)
-          .map(File::getBytes)
-          .findFirst()
-          .orElseThrow();
+      return this.getWritables().stream().filter(writable -> writable.getName().equals("export.bin"))
+          .map(writable -> (File<WritableOnDisk>) writable).map(File::getBytes).findFirst().orElseThrow();
     }
 
     @Override

@@ -1,9 +1,7 @@
-
-
 package app.coronawarn.server.services.distribution.objectstore.publish;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import app.coronawarn.server.services.distribution.objectstore.client.S3Object;
 import java.io.File;

@@ -1,5 +1,3 @@
-
-
 package app.coronawarn.server.services.distribution.assembly.structure.directory;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -13,24 +11,19 @@ import app.coronawarn.server.services.distribution.assembly.structure.file.FileO
 import app.coronawarn.server.services.distribution.assembly.structure.util.ImmutableStack;
 import java.io.IOException;
 import java.util.Set;
-import org.junit.Rule;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.rules.TemporaryFolder;
+import org.junit.jupiter.api.io.TempDir;
 
 class DirectoryTest {
 
-  private java.io.File outputDir = new java.io.File("test");
+  @TempDir
+  java.io.File outputDir = new java.io.File("test");
   private Directory<WritableOnDisk> parentDirectory;
   private File<WritableOnDisk> childFile;
 
-  @Rule
-  private TemporaryFolder outputFolder = new TemporaryFolder();
-
   @BeforeEach
   public void setup() throws IOException {
-    outputFolder.create();
-    outputDir = outputFolder.newFolder();
     parentDirectory = new DirectoryOnDisk(outputDir);
     childFile = new FileOnDisk("Child", new byte[0]);
   }
@@ -67,6 +60,7 @@ class DirectoryTest {
   @Test
   void checkWriteWritesOwnDirectory() {
     class MockFile extends java.io.File {
+      private static final long serialVersionUID = 2416208157399566292L;
 
       public MockFile() {
         super(outputDir.getPath());
