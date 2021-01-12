@@ -34,6 +34,10 @@
         <mapEntry key="SECRET_PRIVATE" value="file:/secrets/private.pem"/>
         <mapEntry key="SPRING_PROFILES_ACTIVE" value="disable-ssl-client-postgres"/>
         <mapEntry key="SUPPORTED_COUNTRIES" value="DE,IT,FR,DK"/>
+        <mapEntry key="SSL_SUBMISSION_KEYSTORE_PATH" value="file:$PROJECT_DIR$/docker-compose-test-secrets/ssl.p12"/>
+        <mapEntry key="SSL_SUBMISSION_KEYSTORE_PASSWORD" value="123456"/>
+        <mapEntry key="SSL_VERIFICATION_TRUSTSTORE_PATH" value="file:$PROJECT_DIR$/docker-compose-test-secrets/contains_efgs_truststore.jks"/>
+        <mapEntry key="SSL_VERIFICATION_TRUSTSTORE_PASSWORD" value="123456"/>
     </mapAttribute>
     <booleanAttribute key="org.eclipse.jdt.launching.ATTR_USE_CLASSPATH_ONLY_JAR" value="false"/>
     <booleanAttribute key="org.eclipse.jdt.launching.ATTR_USE_START_ON_FIRST_THREAD" value="true"/>

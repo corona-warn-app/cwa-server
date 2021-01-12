@@ -32,11 +32,7 @@
         <mapEntry key="POSTGRES_SUBMISSION_USER" value="local_setup_submission"/>
         <mapEntry key="POSTGRES_USER" value="postgres"/>
         <mapEntry key="SECRET_PRIVATE" value="file:/secrets/private.pem"/>
-        <mapEntry key="SPRING_PROFILES_ACTIVE" value="debug, disable-ssl-client-postgres"/>
-        <mapEntry key="SSL_CALLBACK_KEYSTORE_PASSWORD" value="123456"/>
-        <mapEntry key="SSL_CALLBACK_KEYSTORE_PATH" value="src/test/resources/keystore.jks"/>
-        <mapEntry key="SSL_CALLBACK_TRUSTSTORE_PASSWORD" value="123456"/>
-        <mapEntry key="SSL_CALLBACK_TRUSTSTORE_PATH" value="src/test/resources/truststore.jks"/>
+        <mapEntry key="SPRING_PROFILES_ACTIVE" value="disable-certificate-authentication,disable-ssl-server,disable-ssl-client-postgres"/>
     </mapAttribute>
     <booleanAttribute key="org.eclipse.jdt.launching.ATTR_USE_CLASSPATH_ONLY_JAR" value="false"/>
     <booleanAttribute key="org.eclipse.jdt.launching.ATTR_USE_START_ON_FIRST_THREAD" value="true"/>
