@@ -2,8 +2,10 @@ package app.coronawarn.server.services.callback.config;
 
 import static java.util.Collections.emptyList;
 
+import app.coronawarn.server.services.callback.EfgsCertificateCnException;
 import app.coronawarn.server.services.callback.controller.CallbackController;
 import java.util.Arrays;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
@@ -16,7 +18,6 @@ import org.springframework.security.config.annotation.web.configurers.Expression
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.web.firewall.HttpFirewall;
 import org.springframework.security.web.firewall.StrictHttpFirewall;
 
@@ -25,6 +26,11 @@ import org.springframework.security.web.firewall.StrictHttpFirewall;
 @EnableGlobalMethodSecurity(prePostEnabled = true)
 @Profile("!disable-certificate-authentication")
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
+
+
+  @Autowired
+  private CallbackServiceConfig callbackServiceConfig;
+
 
   private static final String CALLBACK_ROUTE =
       "/version/v1" + CallbackController.CALLBACK_ROUTE;
@@ -59,10 +65,11 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     return new UserDetailsService() {
       @Override
       public UserDetails loadUserByUsername(String username) {
-        if (username.equals("Bob")) {
+        if (username.equals(callbackServiceConfig.getEfgsCertCn())) {
           return new User(username, "", emptyList());
         }
-        throw new UsernameNotFoundException("User not found!");
+        throw new EfgsCertificateCnException("EFGS Certificate CN mismatch found: "
+            + callbackServiceConfig.getEfgsCertCn() + "!");
       }
     };
   }
