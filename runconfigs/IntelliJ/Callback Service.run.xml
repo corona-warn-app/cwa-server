@@ -5,7 +5,11 @@
     <option name="ALTERNATIVE_JRE_PATH" />
     <envs>
       <env name="POSTGRESQL_SERVICE_PORT" value="8001" />
-      <env name="SPRING_PROFILES_ACTIVE" value="disable-certificate-authentication,disable-ssl-server,disable-ssl-client-postgres" />
+      <env name="SPRING_PROFILES_ACTIVE" value="disable-ssl-client-postgres" />
+      <env name="SSL_CALLBACK_KEYSTORE_PATH" value="file:$PROJECT_DIR$/docker-compose-test-secrets/ssl.p12" />
+      <env name="SSL_CALLBACK_KEYSTORE_PASSWORD" value="123456" />
+      <env name="SSL_FEDERATION_TRUSTSTORE_PATH" value="file:$PROJECT_DIR$/docker-compose-test-secrets/contains_efgs_truststore.jks" />
+      <env name="SSL_FEDERATION_TRUSTSTORE_PASSWORD" value="123456" />
     </envs>
     <method v="2">
       <option name="Make" enabled="true" />
