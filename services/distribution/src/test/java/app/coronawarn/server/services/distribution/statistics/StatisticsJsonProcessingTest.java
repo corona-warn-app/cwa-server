@@ -10,6 +10,7 @@ import app.coronawarn.server.services.distribution.statistics.file.LocalStatisti
 import app.coronawarn.server.services.distribution.statistics.keyfigurecard.KeyFigureCardFactory;
 import java.io.IOException;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import app.coronawarn.server.services.distribution.statistics.keyfigurecard.KeyFigureCardSequenceConstants;
 import org.junit.jupiter.api.Test;
@@ -23,6 +24,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import static app.coronawarn.server.services.distribution.statistics.keyfigurecard.KeyFigureCardSequenceConstants.*;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 @EnableConfigurationProperties(value = DistributionServiceConfig.class)
 @ExtendWith(SpringExtension.class)
@@ -66,7 +68,15 @@ class StatisticsJsonProcessingTest {
         .containsExactly(KEY_SUBMISSION_CARD_ID, dateToTimestamp(LocalDate.of(2020, 11, 6)));
     assertThat(result.getKeyFigureCards(2).getKeyFigures(1))
         .extracting(KeyFigure::getValue, KeyFigure::getTrend, KeyFigure::getTrendSemantic)
-        .containsExactly(123.0, Trend.INCREASING, TrendSemantic.POSITIVE);
+        .containsExactly(11.0, Trend.STABLE, TrendSemantic.NEUTRAL);
+
+    // Assert Reproduction Number Card
+    assertThat(result.getKeyFigureCards(3).getHeader())
+        .extracting(CardHeader::getCardId, CardHeader::getUpdatedAt)
+        .containsExactly(REPRODUCTION_NUMBER_CARD, dateToTimestamp(LocalDate.of(2020, 11, 5)));
+    assertThat(result.getKeyFigureCards(3).getKeyFigures(0))
+        .extracting(KeyFigure::getValue, KeyFigure::getTrend, KeyFigure::getTrendSemantic)
+        .containsExactly(0.63, Trend.DECREASING, TrendSemantic.POSITIVE);
   }
 
 }
