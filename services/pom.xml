@@ -22,8 +22,15 @@
   </modules>
 
   <dependencies>
-	 <!-- The cloud bootstrap starter is needed due to a breaking change implemented in Spring Cloud 2020.0.0 which turns off
-	  the Bootstrap context (used throughout the services for vault config) by default -->
+    <!-- our own -->
+    <dependency>
+      <groupId>org.opencwa</groupId>
+      <artifactId>persistence</artifactId>
+    </dependency>
+
+    <!-- other compile dependencies -->
+    <!-- The cloud bootstrap starter is needed due to a breaking change implemented in Spring Cloud 2020.0.0 which turns off the Bootstrap context 
+      (used throughout the services for vault config) by default -->
     <dependency>
       <groupId>org.springframework.cloud</groupId>
       <artifactId>spring-cloud-starter-bootstrap</artifactId>
@@ -31,18 +38,6 @@
     <dependency>
       <groupId>org.springframework.cloud</groupId>
       <artifactId>spring-cloud-starter-vault-config</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.opencwa</groupId>
-      <artifactId>persistence</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.opencwa</groupId>
-      <artifactId>protocols</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.opencwa</groupId>
-      <artifactId>federation</artifactId>
     </dependency>
     <dependency>
       <groupId>org.springframework.boot</groupId>
@@ -59,20 +54,8 @@
       </exclusions>
     </dependency>
     <dependency>
-      <groupId>org.springframework.boot</groupId>
-      <artifactId>spring-boot-starter-log4j2</artifactId>
-    </dependency>
-    <dependency>
       <groupId>org.apache.logging.log4j</groupId>
       <artifactId>log4j-core</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.logging.log4j</groupId>
-      <artifactId>log4j-api</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.yaml</groupId>
-      <artifactId>snakeyaml</artifactId>
     </dependency>
     <dependency>
       <groupId>org.postgresql</groupId>

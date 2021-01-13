@@ -11,6 +11,15 @@
   </parent>
 
   <dependencies>
+    <!-- our own -->
+    <dependency>
+      <groupId>org.opencwa</groupId>
+      <artifactId>federation</artifactId>
+    </dependency>
+    <!-- other compile dependencies -->
+    <!-- are managed centrally at 'services' parent -->
+
+    <!-- test scope only -->
     <dependency>
       <groupId>com.github.tomakehurst</groupId>
       <artifactId>wiremock-jre8</artifactId>
