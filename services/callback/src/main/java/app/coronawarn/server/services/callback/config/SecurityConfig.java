@@ -16,6 +16,7 @@ import org.springframework.security.config.annotation.web.configurers.Expression
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.web.firewall.HttpFirewall;
 import org.springframework.security.web.firewall.StrictHttpFirewall;
 
@@ -54,8 +55,15 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
    * @return UserDetailsService stub
    */
   @Bean
-  @Override
   public UserDetailsService userDetailsService() {
-    return username -> new User(username, "", emptyList());
+    return new UserDetailsService() {
+      @Override
+      public UserDetails loadUserByUsername(String username) {
+        if (username.equals("Bob")) {
+          return new User(username, "", emptyList());
+        }
+        throw new UsernameNotFoundException("User not found!");
+      }
+    };
   }
 }
