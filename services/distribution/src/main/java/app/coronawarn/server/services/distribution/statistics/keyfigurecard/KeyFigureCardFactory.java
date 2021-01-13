@@ -13,7 +13,6 @@ import app.coronawarn.server.services.distribution.statistics.keyfigurecard.fact
 import app.coronawarn.server.services.distribution.statistics.keyfigurecard.factory.InfectionsCardFactory;
 import app.coronawarn.server.services.distribution.statistics.keyfigurecard.factory.KeySubmissionCardFactory;
 import app.coronawarn.server.services.distribution.statistics.keyfigurecard.factory.ReproductionNumberCardFactory;
-import java.util.HashMap;
 import java.util.Map;
 import org.springframework.stereotype.Component;
 
@@ -27,11 +26,10 @@ public class KeyFigureCardFactory {
    * CARD_ID -> HeaderCardFactory.
    */
   public KeyFigureCardFactory() {
-    this.factoryMap = new HashMap<>();
-    this.factoryMap.put(INFECTIONS_CARD_ID, new InfectionsCardFactory());
-    this.factoryMap.put(INCIDENCE_CARD_ID, new IncidenceCardFactory());
-    this.factoryMap.put(KEY_SUBMISSION_CARD_ID, new KeySubmissionCardFactory());
-    this.factoryMap.put(REPRODUCTION_NUMBER_CARD, new ReproductionNumberCardFactory());
+    this.factoryMap = Map
+        .of(INFECTIONS_CARD_ID, new InfectionsCardFactory(), INCIDENCE_CARD_ID, new IncidenceCardFactory(),
+            KEY_SUBMISSION_CARD_ID, new KeySubmissionCardFactory(), REPRODUCTION_NUMBER_CARD,
+            new ReproductionNumberCardFactory());
   }
 
   private HeaderCardFactory getFactoryPerCardId(int cardId) {
