@@ -175,7 +175,7 @@ class StatisticsJsonToProtobufTest {
           .containsExactly(KEY_SUBMISSION_CARD_ID, dateToTimestamp(LocalDate.of(2020, 11, 6)));
       assertThat(keySubmission.getKeyFigures(1))
           .extracting(KeyFigure::getValue, KeyFigure::getTrend, KeyFigure::getTrendSemantic)
-          .containsExactly(123.0, Trend.INCREASING, TrendSemantic.POSITIVE);
+          .containsExactly(11.0, Trend.STABLE, TrendSemantic.NEUTRAL);
     }
 
   }

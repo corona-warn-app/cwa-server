@@ -18,7 +18,7 @@ public class EmptyCardFactory extends HeaderCardFactory {
 
   @Override
   protected Integer getCardId() {
-    return KeyFigureCardSequenceConstants.FOURTH_CARD_ID;
+    return KeyFigureCardSequenceConstants.REPRODUCTION_NUMBER_CARD;
   }
 
   @Override

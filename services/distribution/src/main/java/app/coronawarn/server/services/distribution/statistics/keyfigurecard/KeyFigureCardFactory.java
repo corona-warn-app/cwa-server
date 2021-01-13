@@ -1,10 +1,10 @@
 package app.coronawarn.server.services.distribution.statistics.keyfigurecard;
 
 import static app.coronawarn.server.services.distribution.statistics.keyfigurecard.KeyFigureCardSequenceConstants.EMPTY_CARD;
-import static app.coronawarn.server.services.distribution.statistics.keyfigurecard.KeyFigureCardSequenceConstants.FOURTH_CARD_ID;
 import static app.coronawarn.server.services.distribution.statistics.keyfigurecard.KeyFigureCardSequenceConstants.INCIDENCE_CARD_ID;
 import static app.coronawarn.server.services.distribution.statistics.keyfigurecard.KeyFigureCardSequenceConstants.INFECTIONS_CARD_ID;
 import static app.coronawarn.server.services.distribution.statistics.keyfigurecard.KeyFigureCardSequenceConstants.KEY_SUBMISSION_CARD_ID;
+import static app.coronawarn.server.services.distribution.statistics.keyfigurecard.KeyFigureCardSequenceConstants.REPRODUCTION_NUMBER_CARD;
 
 import app.coronawarn.server.common.protocols.internal.stats.KeyFigureCard;
 import app.coronawarn.server.services.distribution.config.DistributionServiceConfig;
@@ -14,6 +14,7 @@ import app.coronawarn.server.services.distribution.statistics.keyfigurecard.fact
 import app.coronawarn.server.services.distribution.statistics.keyfigurecard.factory.IncidenceCardFactory;
 import app.coronawarn.server.services.distribution.statistics.keyfigurecard.factory.InfectionsCardFactory;
 import app.coronawarn.server.services.distribution.statistics.keyfigurecard.factory.KeySubmissionCardFactory;
+import app.coronawarn.server.services.distribution.statistics.keyfigurecard.factory.ReproductionNumberCardFactory;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -33,7 +34,8 @@ public class KeyFigureCardFactory {
         return new IncidenceCardFactory(this.valueTrendCalculator);
       case KEY_SUBMISSION_CARD_ID:
         return new KeySubmissionCardFactory(this.valueTrendCalculator);
-      case FOURTH_CARD_ID:
+      case REPRODUCTION_NUMBER_CARD:
+        return new ReproductionNumberCardFactory(this.valueTrendCalculator);
       case EMPTY_CARD:
       default:
         return new EmptyCardFactory(this.valueTrendCalculator);

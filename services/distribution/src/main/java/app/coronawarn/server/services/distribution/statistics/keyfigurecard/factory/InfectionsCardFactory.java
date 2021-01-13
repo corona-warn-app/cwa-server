@@ -35,8 +35,8 @@ public class InfectionsCardFactory extends HeaderCardFactory {
   }
 
   private KeyFigure getInfectionsAverage(StatisticsJsonStringObject stats) {
-    var trend = valueTrendCalculator.getTrend(stats.getInfectionsReported7daysGrowthrate());
-    var semantic = valueTrendCalculator.getNegativeTrendGrowth(trend);
+    var trend = ValueTrendCalculator.from(stats.getInfectionsReported7daysTrend5percent());
+    var semantic = ValueTrendCalculator.getNegativeTrendGrowth(trend);
     return KeyFigure.newBuilder()
         .setValue(stats.getInfectionsReported7daysAvg())
         .setRank(Rank.SECONDARY)
@@ -67,11 +67,11 @@ public class InfectionsCardFactory extends HeaderCardFactory {
   @Override
   protected List<Pair<String, Optional<Object>>> getNonNullFields(StatisticsJsonStringObject stats) {
     return List.of(
-        Pair.of("infections_reported_daily", Optional.ofNullable(stats.getInfectionsReportedDaily())),
-        Pair.of("infections_reported_7days_avg", Optional.ofNullable(stats.getInfectionsReported7daysAvg())),
-        Pair.of("infections_reported_7days_growthrate",
-            Optional.ofNullable(stats.getInfectionsReported7daysGrowthrate())),
-        Pair.of("infections_reported_cumulated", Optional.ofNullable(stats.getInfectionsReportedCumulated()))
+        Pair.of("infections_effective_daily", Optional.ofNullable(stats.getInfectionsReportedDaily())),
+        Pair.of("infections_effective_7days_avg", Optional.ofNullable(stats.getInfectionsReported7daysAvg())),
+        Pair.of("infections_effective _7days_avg_trend_5percent",
+            Optional.ofNullable(stats.getInfectionsReported7daysTrend5percent())),
+        Pair.of("infections_effective_cumulated", Optional.ofNullable(stats.getInfectionsReportedCumulated()))
     );
   }
 }

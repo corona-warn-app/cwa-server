@@ -45,14 +45,13 @@ public class KeySubmissionCardFactory extends HeaderCardFactory {
   }
 
   private KeyFigure getPersonWhoSharedKeysSum(StatisticsJsonStringObject stats) {
-    var trend = valueTrendCalculator.getTrend(stats.getPersonsWhoSharedKeys7daysGrowthrate());
-    var semantic = valueTrendCalculator.getPositiveTrendGrowth(trend);
+    var trend = ValueTrendCalculator.from(stats.getPersonsWhoSharedKeys7daysTrend5percent());
     return KeyFigure.newBuilder()
-        .setValue(stats.getPersonsWhoSharedKeys7daysSum())
+        .setValue(stats.getPersonWhoSharedKeys7daysAvg())
         .setRank(Rank.SECONDARY)
         .setDecimals(0)
         .setTrend(trend)
-        .setTrendSemantic(semantic)
+        .setTrendSemantic(TrendSemantic.NEUTRAL)
         .build();
   }
 
@@ -71,8 +70,8 @@ public class KeySubmissionCardFactory extends HeaderCardFactory {
     return List.of(
         Pair.of("persons_who_shared_keys_daily",
             Optional.ofNullable(stats.getPersonsWhoSharedKeysDaily())),
-        Pair.of("persons_who_shared_keys_7days_sum",
-            Optional.ofNullable(stats.getPersonsWhoSharedKeys7daysSum())),
+        Pair.of("persons_who_shared_keys_7days_avg",
+            Optional.ofNullable(stats.getPersonWhoSharedKeys7daysAvg())),
         Pair.of("persons_who_shared_keys_7days_growthrate",
             Optional.ofNullable(stats.getPersonsWhoSharedKeys7daysGrowthrate())),
         Pair.of("persons_who_shared_keys_cumulated",

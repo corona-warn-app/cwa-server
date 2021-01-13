@@ -52,7 +52,7 @@ public class StatisticsJsonStringObject {
   @JsonProperty("seven_day_incidence_1st_reported_growthrate")
   private Double sevenDayIncidenceGrowthrate;
   @JsonProperty("seven_day_incidence_1st_reported_trend_1percent")
-  private Integer sevenDayIncidenceTrend5percent;
+  private Integer sevenDayIncidenceTrend1percent;
   @JsonProperty("infections_effective_daily")
   private Integer infectionsReportedDaily;
   @JsonProperty("infections_effective_7days_avg")
@@ -74,7 +74,7 @@ public class StatisticsJsonStringObject {
   @JsonProperty("seven_day_r_value_1st_reported_growthrate")
   private Double sevenDayRvalue1stReportedGrowthrate;
   @JsonProperty("seven_day_r_value_1st_reported_trend_1percent")
-  private Integer sevenDayRvalue1stReportedTrend5percent;
+  private Integer sevenDayRvalue1stReportedTrend1percent;
 
   public String getAppDownloads7DaysAvg() {
     return appDownloads7DaysAvg;
@@ -156,8 +156,8 @@ public class StatisticsJsonStringObject {
     return sevenDayIncidence;
   }
 
-  public Integer getSevenDayIncidenceTrend5percent() {
-    return sevenDayIncidenceTrend5percent;
+  public Integer getSevenDayIncidenceTrend1percent() {
+    return sevenDayIncidenceTrend1percent;
   }
 
   public Integer getInfectionsReportedDaily() {
@@ -237,6 +237,14 @@ public class StatisticsJsonStringObject {
     this.personsWhoSharedKeys7daysGrowthrate = personsWhoSharedKeys7daysGrowthrate;
   }
 
+  public Integer getPersonWhoSharedKeys7daysAvg() {
+    return personWhoSharedKeys7daysAvg;
+  }
+
+  public void setPersonWhoSharedKeys7daysAvg(Integer personWhoSharedKeys7daysAvg) {
+    this.personWhoSharedKeys7daysAvg = personWhoSharedKeys7daysAvg;
+  }
+
   public void setPersonsWhoSharedKeys7daysTrend5percent(Integer personsWhoSharedKeys7daysTrend5percent) {
     this.personsWhoSharedKeys7daysTrend5percent = personsWhoSharedKeys7daysTrend5percent;
   }
@@ -265,8 +273,8 @@ public class StatisticsJsonStringObject {
     this.sevenDayIncidence = sevenDayIncidence;
   }
 
-  public void setSevenDayIncidenceTrend5percent(Integer sevenDayIncidenceTrend5percent) {
-    this.sevenDayIncidenceTrend5percent = sevenDayIncidenceTrend5percent;
+  public void setSevenDayIncidenceTrend1percent(Integer sevenDayIncidenceTrend5percent) {
+    this.sevenDayIncidenceTrend1percent = sevenDayIncidenceTrend5percent;
   }
 
   public void setInfectionsReportedDaily(Integer infectionsReportedDaily) {
@@ -326,11 +334,11 @@ public class StatisticsJsonStringObject {
     this.sevenDayRvalue1stReportedGrowthrate = sevenDayRvalue1stReportedGrowthrate;
   }
 
-  public Integer getSevenDayRvalue1stReportedTrend5percent() {
-    return sevenDayRvalue1stReportedTrend5percent;
+  public Integer getSevenDayRvalue1stReportedTrend1percent() {
+    return sevenDayRvalue1stReportedTrend1percent;
   }
 
-  public void setSevenDayRvalue1stReportedTrend5percent(Integer sevenDayRvalue1stReportedTrend5percent) {
-    this.sevenDayRvalue1stReportedTrend5percent = sevenDayRvalue1stReportedTrend5percent;
+  public void setSevenDayRvalue1stReportedTrend1percent(Integer sevenDayRvalue1stReportedTrend1percent) {
+    this.sevenDayRvalue1stReportedTrend1percent = sevenDayRvalue1stReportedTrend1percent;
   }
 }

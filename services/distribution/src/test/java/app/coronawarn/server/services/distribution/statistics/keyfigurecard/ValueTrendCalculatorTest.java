@@ -46,16 +46,16 @@ class ValueTrendCalculatorTest {
 
   @Test
   void testPositiveGrowthSemantic() {
-    isPositive(NO_THRESHOLD.getPositiveTrendGrowth(Trend.INCREASING));
-    isNegative(NO_THRESHOLD.getPositiveTrendGrowth(Trend.DECREASING));
-    isNeutral(NO_THRESHOLD.getPositiveTrendGrowth(Trend.STABLE));
+    isPositive(ValueTrendCalculator.getPositiveTrendGrowth(Trend.INCREASING));
+    isNegative(ValueTrendCalculator.getPositiveTrendGrowth(Trend.DECREASING));
+    isNeutral(ValueTrendCalculator.getPositiveTrendGrowth(Trend.STABLE));
   }
 
   @Test
   void testNEGATIVEGrowthSemantic() {
-    isPositive(NO_THRESHOLD.getNegativeTrendGrowth(Trend.DECREASING));
-    isNegative(NO_THRESHOLD.getNegativeTrendGrowth(Trend.INCREASING));
-    isNeutral(NO_THRESHOLD.getNegativeTrendGrowth(Trend.STABLE));
+    isPositive(ValueTrendCalculator.getNegativeTrendGrowth(Trend.DECREASING));
+    isNegative(ValueTrendCalculator.getNegativeTrendGrowth(Trend.INCREASING));
+    isNeutral(ValueTrendCalculator.getNegativeTrendGrowth(Trend.STABLE));
   }
 
   private static void isStable(Trend trend) {
