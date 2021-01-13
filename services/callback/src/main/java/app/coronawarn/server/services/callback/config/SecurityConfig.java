@@ -26,12 +26,9 @@ import org.springframework.security.web.firewall.StrictHttpFirewall;
 @EnableGlobalMethodSecurity(prePostEnabled = true)
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
-  public static final String EFGS_CERTIFICATE_CN = "EFGS Certificate CN mismatch found! Received Certificate CN: ";
-  private Logger logger = LoggerFactory.getLogger(SecurityConfig.class);
-
   private static final String CALLBACK_ROUTE =
       "/version/v1" + CallbackController.CALLBACK_ROUTE;
-
+  private Logger logger = LoggerFactory.getLogger(SecurityConfig.class);
   private CallbackServiceConfig callbackServiceConfig;
 
   @Autowired
@@ -67,13 +64,17 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
    * @return UserDetailsService
    */
   @Bean
+  @Override
   public UserDetailsService userDetailsService() {
     return username -> {
       if (username.equals(callbackServiceConfig.getEfgsCertCn())) {
         return new User(username, "", emptyList());
       }
-      String exceptionMsg = "EFGS Certificate CN mismatch found! Received Certificate CN: "
-          + callbackServiceConfig.getEfgsCertCn();
+      String exceptionMsg =
+          "The client certificate CN does not match the expected one. The CN is '"
+              + callbackServiceConfig.getEfgsCertCn()
+              + "' but should be:'"
+              + username + "'.";
       logger.warn(exceptionMsg);
       throw new EfgsCertificateCnException(exceptionMsg);
 
