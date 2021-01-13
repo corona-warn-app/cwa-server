@@ -5,14 +5,11 @@ import static java.time.ZoneOffset.UTC;
 import app.coronawarn.server.common.protocols.internal.stats.CardHeader;
 import app.coronawarn.server.common.protocols.internal.stats.KeyFigureCard;
 import app.coronawarn.server.services.distribution.statistics.StatisticsJsonStringObject;
-import app.coronawarn.server.services.distribution.statistics.keyfigurecard.ValueTrendCalculator;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
-import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
-import org.springframework.data.util.Pair;
 
 public abstract class HeaderCardFactory {
 
@@ -55,9 +52,9 @@ public abstract class HeaderCardFactory {
       KeyFigureCard.Builder keyFigureBuilder);
 
   /**
-   * Return the list of required fields to create this card.
-   * Implemented by factories. If any of the fields returned by this method is Null, a MissingPropertyException will
-   * be thrown and the card will be skipped for given day.
+   * Return the list of required fields to create this card. Implemented by factories. If any of the fields returned by
+   * this method is Null, a MissingPropertyException will be thrown and the card will be skipped for given day.
+   *
    * @param stats JSON string object.
    * @return List of objects to be checked if are null.
    */

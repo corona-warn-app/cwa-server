@@ -1,7 +1,5 @@
 package app.coronawarn.server.services.distribution.statistics.keyfigurecard.factory;
 
-import java.util.List;
-
 public class MissingPropertyException extends RuntimeException {
 
   public MissingPropertyException(Integer cardId) {

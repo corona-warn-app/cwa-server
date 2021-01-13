@@ -9,7 +9,6 @@ import app.coronawarn.server.services.distribution.statistics.keyfigurecard.KeyF
 import app.coronawarn.server.services.distribution.statistics.keyfigurecard.ValueTrendCalculator;
 import java.util.List;
 import java.util.Optional;
-import org.springframework.data.util.Pair;
 
 public class IncidenceCardFactory extends HeaderCardFactory {
 

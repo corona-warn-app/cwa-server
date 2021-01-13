@@ -27,14 +27,11 @@ public class KeyFigureCardFactory {
    * CARD_ID -> HeaderCardFactory.
    */
   public KeyFigureCardFactory() {
-    this.factoryMap = new HashMap<>() {
-      {
-        put(INFECTIONS_CARD_ID, new InfectionsCardFactory());
-        put(INCIDENCE_CARD_ID, new IncidenceCardFactory());
-        put(KEY_SUBMISSION_CARD_ID, new KeySubmissionCardFactory());
-        put(REPRODUCTION_NUMBER_CARD, new ReproductionNumberCardFactory());
-      }
-    };
+    this.factoryMap = new HashMap<>();
+    this.factoryMap.put(INFECTIONS_CARD_ID, new InfectionsCardFactory());
+    this.factoryMap.put(INCIDENCE_CARD_ID, new IncidenceCardFactory());
+    this.factoryMap.put(KEY_SUBMISSION_CARD_ID, new KeySubmissionCardFactory());
+    this.factoryMap.put(REPRODUCTION_NUMBER_CARD, new ReproductionNumberCardFactory());
   }
 
   private HeaderCardFactory getFactoryPerCardId(int cardId) {

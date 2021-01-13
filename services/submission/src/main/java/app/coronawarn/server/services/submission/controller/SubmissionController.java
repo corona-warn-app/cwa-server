@@ -2,8 +2,6 @@
 
 package app.coronawarn.server.services.submission.controller;
 
-import static java.time.ZoneOffset.UTC;
-
 import app.coronawarn.server.common.persistence.domain.DiagnosisKey;
 import app.coronawarn.server.common.persistence.service.DiagnosisKeyService;
 import app.coronawarn.server.common.protocols.external.exposurenotification.TemporaryExposureKey;
@@ -15,13 +13,8 @@ import app.coronawarn.server.services.submission.validation.ValidSubmissionPaylo
 import app.coronawarn.server.services.submission.verification.TanVerifier;
 import io.micrometer.core.annotation.Timed;
 import java.security.SecureRandom;
-import java.time.Instant;
-import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Comparator;
 import java.util.List;
-import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import org.apache.commons.lang3.StringUtils;
