@@ -1,11 +1,10 @@
-
-
 package app.coronawarn.server.common.persistence.service.common;
 
 import static app.coronawarn.server.common.persistence.service.DiagnosisKeyServiceTestHelper.getKeySubmittedHoursAfterMidnightExpiration;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import app.coronawarn.server.common.persistence.domain.DiagnosisKey;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -16,12 +15,9 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 
-import app.coronawarn.server.common.persistence.domain.DiagnosisKey;
-
 class DiagnosisKeyExpirationCheckerTest {
 
   private final KeySharingPoliciesChecker sharingPoliciesChecker = new KeySharingPoliciesChecker();
-
 
   @ParameterizedTest
   @MethodSource("notExpiredKeysDataset")

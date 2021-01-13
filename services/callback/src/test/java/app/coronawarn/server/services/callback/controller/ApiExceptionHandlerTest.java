@@ -1,8 +1,8 @@
 package app.coronawarn.server.services.callback.controller;
 
-import static org.mockito.Mockito.any;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doThrow;
-import static org.mockito.MockitoAnnotations.initMocks;
+import static org.mockito.MockitoAnnotations.openMocks;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.test.web.servlet.setup.MockMvcBuilders.standaloneSetup;
@@ -10,12 +10,12 @@ import static org.springframework.test.web.servlet.setup.MockMvcBuilders.standal
 import app.coronawarn.server.common.persistence.service.FederationBatchInfoService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.test.web.servlet.MockMvc;
 
-@RunWith(MockitoJUnitRunner.class)
+@ExtendWith(MockitoExtension.class)
 class ApiExceptionHandlerTest {
 
   private static final String ENDPOINT = "/version/v1/callback";
@@ -28,7 +28,7 @@ class ApiExceptionHandlerTest {
 
   @BeforeEach
   public void setup() {
-    initMocks(this);
+    openMocks(this);
     callbackController = new CallbackController(serviceMock);
     this.mockMvc = standaloneSetup(callbackController).setControllerAdvice(new ApiExceptionHandler()).build();
   }
