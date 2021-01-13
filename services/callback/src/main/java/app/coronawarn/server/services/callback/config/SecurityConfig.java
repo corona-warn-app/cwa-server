@@ -5,6 +5,8 @@ import static java.util.Collections.emptyList;
 import app.coronawarn.server.services.callback.EfgsCertificateCnException;
 import app.coronawarn.server.services.callback.controller.CallbackController;
 import java.util.Arrays;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -16,7 +18,6 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.config.annotation.web.configurers.ExpressionUrlAuthorizationConfigurer;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.firewall.HttpFirewall;
 import org.springframework.security.web.firewall.StrictHttpFirewall;
 
@@ -24,6 +25,9 @@ import org.springframework.security.web.firewall.StrictHttpFirewall;
 @EnableWebSecurity
 @EnableGlobalMethodSecurity(prePostEnabled = true)
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
+
+  public static final String EFGS_CERTIFICATE_CN = "EFGS Certificate CN mismatch found! Received Certificate CN: ";
+  private Logger logger = LoggerFactory.getLogger(SecurityConfig.class);
 
   private static final String CALLBACK_ROUTE =
       "/version/v1" + CallbackController.CALLBACK_ROUTE;
@@ -49,7 +53,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         = http.authorizeRequests();
     expressionInterceptUrlRegistry
         .mvcMatchers(HttpMethod.GET, CALLBACK_ROUTE).authenticated().and().exceptionHandling()
-        .authenticationEntryPoint(authenticationEntryPoint()).and().x509()
+        .and().x509()
         .userDetailsService(userDetailsService());
     expressionInterceptUrlRegistry
         .anyRequest().denyAll();
@@ -68,13 +72,11 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
       if (username.equals(callbackServiceConfig.getEfgsCertCn())) {
         return new User(username, "", emptyList());
       }
-      throw new EfgsCertificateCnException("EFGS Certificate CN mismatch found: "
-          + callbackServiceConfig.getEfgsCertCn() + "!");
-    };
-  }
+      String exceptionMsg = "EFGS Certificate CN mismatch found! Received Certificate CN: "
+          + callbackServiceConfig.getEfgsCertCn();
+      logger.warn(exceptionMsg);
+      throw new EfgsCertificateCnException(exceptionMsg);
 
-  @Bean
-  public AuthenticationEntryPoint authenticationEntryPoint() {
-    return new RestAuthenticationEntryPoint();
+    };
   }
 }
