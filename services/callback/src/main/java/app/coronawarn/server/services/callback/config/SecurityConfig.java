@@ -2,7 +2,7 @@ package app.coronawarn.server.services.callback.config;
 
 import static java.util.Collections.emptyList;
 
-import app.coronawarn.server.services.callback.EfgsCertificateCnException;
+import app.coronawarn.server.services.callback.CertificateCnMismatchException;
 import app.coronawarn.server.services.callback.controller.CallbackController;
 import java.util.Arrays;
 import org.slf4j.Logger;
@@ -71,13 +71,12 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         return new User(username, "", emptyList());
       }
       String exceptionMsg =
-          "The client certificate CN does not match the expected one. The CN is '"
-              + callbackServiceConfig.getEfgsCertCn()
-              + "' but should be:'"
-              + username + "'.";
+          "The client certificate CN'"
+              + username
+              + "'does not match the expected CN:'"
+              + callbackServiceConfig.getEfgsCertCn() + "'.";
       logger.warn(exceptionMsg);
-      throw new EfgsCertificateCnException(exceptionMsg);
-
+      throw new CertificateCnMismatchException(exceptionMsg);
     };
   }
 }
