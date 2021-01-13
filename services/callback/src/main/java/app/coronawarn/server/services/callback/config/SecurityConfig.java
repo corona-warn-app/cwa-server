@@ -23,7 +23,6 @@ import org.springframework.security.web.firewall.StrictHttpFirewall;
 @Configuration
 @EnableWebSecurity
 @EnableGlobalMethodSecurity(prePostEnabled = true)
-@Profile("!disable-certificate-authentication")
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
   private static final String CALLBACK_ROUTE =
