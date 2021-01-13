@@ -5,21 +5,13 @@ import static java.time.ZoneOffset.UTC;
 import app.coronawarn.server.common.protocols.internal.stats.CardHeader;
 import app.coronawarn.server.common.protocols.internal.stats.KeyFigureCard;
 import app.coronawarn.server.services.distribution.statistics.StatisticsJsonStringObject;
-import app.coronawarn.server.services.distribution.statistics.keyfigurecard.ValueTrendCalculator;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
-import org.springframework.data.util.Pair;
 
 public abstract class HeaderCardFactory {
-
-  protected final ValueTrendCalculator valueTrendCalculator;
-
-  protected HeaderCardFactory(ValueTrendCalculator valueTrendCalculator) {
-    this.valueTrendCalculator = valueTrendCalculator;
-  }
 
   /**
    * Create KeyFigureCard object. Calls the children method `buildKeyFigureCard` for card specific properties. This
@@ -46,14 +38,11 @@ public abstract class HeaderCardFactory {
   }
 
   private void throwIfNullFieldsFound(StatisticsJsonStringObject stats) {
-    var nullFields = getNonNullFields(stats).stream()
-        .filter(f -> f.getSecond().isEmpty())
+    var nullFields = getRequiredFieldValues(stats).stream()
+        .filter(Optional::isEmpty)
         .collect(Collectors.toList());
     if (!nullFields.isEmpty()) {
-      var missingFields = nullFields.stream()
-          .map(Pair::getFirst)
-          .collect(Collectors.toList());
-      throw new MissingPropertyException(missingFields);
+      throw new MissingPropertyException(this.getCardId());
     }
   }
 
@@ -62,5 +51,12 @@ public abstract class HeaderCardFactory {
   protected abstract KeyFigureCard buildKeyFigureCard(StatisticsJsonStringObject stats,
       KeyFigureCard.Builder keyFigureBuilder);
 
-  protected abstract List<Pair<String, Optional<Object>>> getNonNullFields(StatisticsJsonStringObject stats);
+  /**
+   * Return the list of required fields to create this card. Implemented by factories. If any of the fields returned by
+   * this method is Null, a MissingPropertyException will be thrown and the card will be skipped for given day.
+   *
+   * @param stats JSON string object.
+   * @return List of objects to be checked if are null.
+   */
+  protected abstract List<Optional<Object>> getRequiredFieldValues(StatisticsJsonStringObject stats);
 }
