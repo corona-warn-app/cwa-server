@@ -12,10 +12,6 @@ import org.springframework.data.util.Pair;
 
 public class EmptyCardFactory extends HeaderCardFactory {
 
-  public EmptyCardFactory(ValueTrendCalculator valueTrendCalculator) {
-    super(valueTrendCalculator);
-  }
-
   @Override
   protected Integer getCardId() {
     return KeyFigureCardSequenceConstants.REPRODUCTION_NUMBER_CARD;
@@ -27,7 +23,7 @@ public class EmptyCardFactory extends HeaderCardFactory {
   }
 
   @Override
-  protected List<Pair<String, Optional<Object>>> getNonNullFields(StatisticsJsonStringObject stats) {
+  protected List<Optional<Object>> getRequiredFieldValues(StatisticsJsonStringObject stats) {
     return Collections.emptyList();
   }
 }

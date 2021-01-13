@@ -15,33 +15,16 @@ public class ValueTrendCalculator {
     }
   };
 
-  public static Trend from(Integer trendNumber) {
-    return TREND_MAP.getOrDefault(trendNumber, Trend.UNRECOGNIZED);
-  }
-
-  private final double threshold;
-
-  public ValueTrendCalculator(double threshold) {
-    this.threshold = threshold;
-  }
-
   /**
-   * Based on the {@param value} and {@param threshold} determine the {@link Trend} of the data point. Trend follows
-   * these rules:
-   * <li>`INCREASING` if `trend >= (1 + threshold)`</li>
-   * <li>`DECREASING` if `trend <= (1 - threshold)`</li>
-   * <li>`STABLE` if `(1 - threshold) < trend < (1 + threshold)`</li>
-   *
+   * Return {@link Trend} based on static map.
+   * <li>1: `INCREASING`</li>
+   * <li>-1: `DECREASING`</li>
+   * <li>0: `STABLE`</li>
+   * @param trendNumber the number to be used in the map.
    * @return Trend.
    */
-  public Trend getTrend(double value) {
-    if (value > (1 + threshold)) {
-      return Trend.INCREASING;
-    } else if (value < (1 - threshold)) {
-      return Trend.DECREASING;
-    } else {
-      return Trend.STABLE;
-    }
+  public static Trend from(Integer trendNumber) {
+    return TREND_MAP.getOrDefault(trendNumber, Trend.UNRECOGNIZED);
   }
 
   /**

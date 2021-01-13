@@ -13,10 +13,6 @@ import org.springframework.data.util.Pair;
 
 public class IncidenceCardFactory extends HeaderCardFactory {
 
-  public IncidenceCardFactory(ValueTrendCalculator valueTrendCalculator) {
-    super(valueTrendCalculator);
-  }
-
   @Override
   protected Integer getCardId() {
     return KeyFigureCardSequenceConstants.INCIDENCE_CARD_ID;
@@ -42,11 +38,10 @@ public class IncidenceCardFactory extends HeaderCardFactory {
   }
 
   @Override
-  protected List<Pair<String, Optional<Object>>> getNonNullFields(StatisticsJsonStringObject stats) {
+  protected List<Optional<Object>> getRequiredFieldValues(StatisticsJsonStringObject stats) {
     return List.of(
-        Pair.of("seven_day_incidence_1st_reported_daily", Optional.ofNullable(stats.getSevenDayIncidence())),
-        Pair.of("seven_day_incidence_1st_reported_trend_1percent",
-            Optional.ofNullable(stats.getSevenDayIncidenceTrend1percent()))
+        Optional.ofNullable(stats.getSevenDayIncidenceTrend1percent()),
+        Optional.ofNullable(stats.getSevenDayIncidence())
     );
   }
 }

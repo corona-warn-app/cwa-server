@@ -15,10 +15,6 @@ import org.springframework.data.util.Pair;
 
 public class InfectionsCardFactory extends HeaderCardFactory {
 
-  public InfectionsCardFactory(ValueTrendCalculator valueTrendCalculator) {
-    super(valueTrendCalculator);
-  }
-
   @Override
   protected Integer getCardId() {
     return KeyFigureCardSequenceConstants.INFECTIONS_CARD_ID;
@@ -65,13 +61,12 @@ public class InfectionsCardFactory extends HeaderCardFactory {
   }
 
   @Override
-  protected List<Pair<String, Optional<Object>>> getNonNullFields(StatisticsJsonStringObject stats) {
+  protected List<Optional<Object>> getRequiredFieldValues(StatisticsJsonStringObject stats) {
     return List.of(
-        Pair.of("infections_effective_daily", Optional.ofNullable(stats.getInfectionsReportedDaily())),
-        Pair.of("infections_effective_7days_avg", Optional.ofNullable(stats.getInfectionsReported7daysAvg())),
-        Pair.of("infections_effective _7days_avg_trend_5percent",
-            Optional.ofNullable(stats.getInfectionsReported7daysTrend5percent())),
-        Pair.of("infections_effective_cumulated", Optional.ofNullable(stats.getInfectionsReportedCumulated()))
+        Optional.ofNullable(stats.getInfectionsReportedCumulated()),
+        Optional.ofNullable(stats.getInfectionsReported7daysTrend5percent()),
+        Optional.ofNullable(stats.getInfectionsReported7daysAvg()),
+        Optional.ofNullable(stats.getInfectionsReportedDaily())
     );
   }
 }

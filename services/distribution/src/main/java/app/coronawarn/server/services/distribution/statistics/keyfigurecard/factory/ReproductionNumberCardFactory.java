@@ -9,13 +9,8 @@ import app.coronawarn.server.services.distribution.statistics.keyfigurecard.KeyF
 import app.coronawarn.server.services.distribution.statistics.keyfigurecard.ValueTrendCalculator;
 import java.util.List;
 import java.util.Optional;
-import org.springframework.data.util.Pair;
 
 public class ReproductionNumberCardFactory extends HeaderCardFactory {
-
-  public ReproductionNumberCardFactory(ValueTrendCalculator valueTrendCalculator) {
-    super(valueTrendCalculator);
-  }
 
   @Override
   protected Integer getCardId() {
@@ -41,10 +36,10 @@ public class ReproductionNumberCardFactory extends HeaderCardFactory {
   }
 
   @Override
-  protected List<Pair<String, Optional<Object>>> getNonNullFields(StatisticsJsonStringObject stats) {
+  protected List<Optional<Object>> getRequiredFieldValues(StatisticsJsonStringObject stats) {
     return List.of(
-        Pair.of("seven_day_r_value_1st_reported_trend_1percent", Optional.ofNullable(stats.getSevenDayRvalue1stReportedDaily())),
-        Pair.of("seven_day_r_value_1st_reported_daily", Optional.ofNullable(stats.getSevenDayRvalue1stReportedDaily()))
+        Optional.ofNullable(stats.getSevenDayRvalue1stReportedTrend1percent()),
+        Optional.ofNullable(stats.getSevenDayRvalue1stReportedDaily())
     );
   }
 }

@@ -7,43 +7,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 class ValueTrendCalculatorTest {
 
-  private final ValueTrendCalculator NO_THRESHOLD = new ValueTrendCalculator(0.0);
-  private final ValueTrendCalculator SMALL_THRESHOLD = new ValueTrendCalculator(0.05);
-
-  @Test
-  void shouldHaveIncreasingTrend() {
-    isIncreasing(NO_THRESHOLD.getTrend(1.1));
-  }
-
-  @Test
-  void shouldHaveDecreasingTrend() {
-    isDecreasing(NO_THRESHOLD.getTrend(0.9));
-  }
-
-  @Test
-  void shouldHaveStableTrend() {
-    isStable(NO_THRESHOLD.getTrend(1.0));
-  }
-
-  @Test
-  void shouldHaveStableTrendWithThreshold() {
-    isStable(SMALL_THRESHOLD.getTrend(1.01));
-    isStable(SMALL_THRESHOLD.getTrend(1.02));
-    isStable(SMALL_THRESHOLD.getTrend(1.05));
-    isStable(SMALL_THRESHOLD.getTrend(0.99));
-    isStable(SMALL_THRESHOLD.getTrend(0.95));
-  }
-
-  @Test
-  void shouldHaveIncreasingTrendWithThreshold() {
-    isIncreasing(SMALL_THRESHOLD.getTrend(1.06));
-  }
-
-  @Test
-  void shouldHaveDecreasingTrendWithThreshold() {
-    isDecreasing(SMALL_THRESHOLD.getTrend(0.94));
-  }
-
   @Test
   void testPositiveGrowthSemantic() {
     isPositive(ValueTrendCalculator.getPositiveTrendGrowth(Trend.INCREASING));
@@ -52,10 +15,17 @@ class ValueTrendCalculatorTest {
   }
 
   @Test
-  void testNEGATIVEGrowthSemantic() {
+  void testNegativeGrowthSemantic() {
     isPositive(ValueTrendCalculator.getNegativeTrendGrowth(Trend.DECREASING));
     isNegative(ValueTrendCalculator.getNegativeTrendGrowth(Trend.INCREASING));
     isNeutral(ValueTrendCalculator.getNegativeTrendGrowth(Trend.STABLE));
+  }
+
+  @Test
+  void testTrendCalculationMap() {
+    isStable(ValueTrendCalculator.from(0));
+    isIncreasing(ValueTrendCalculator.from(1));
+    isDecreasing(ValueTrendCalculator.from(-1));
   }
 
   private static void isStable(Trend trend) {

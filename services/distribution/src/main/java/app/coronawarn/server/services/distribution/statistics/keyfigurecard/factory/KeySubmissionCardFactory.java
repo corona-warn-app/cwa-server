@@ -15,10 +15,6 @@ import org.springframework.data.util.Pair;
 
 public class KeySubmissionCardFactory extends HeaderCardFactory {
 
-  public KeySubmissionCardFactory(ValueTrendCalculator valueTrendCalculator) {
-    super(valueTrendCalculator);
-  }
-
   @Override
   protected Integer getCardId() {
     return KeyFigureCardSequenceConstants.KEY_SUBMISSION_CARD_ID;
@@ -66,16 +62,12 @@ public class KeySubmissionCardFactory extends HeaderCardFactory {
   }
 
   @Override
-  protected List<Pair<String, Optional<Object>>> getNonNullFields(StatisticsJsonStringObject stats) {
+  protected List<Optional<Object>> getRequiredFieldValues(StatisticsJsonStringObject stats) {
     return List.of(
-        Pair.of("persons_who_shared_keys_daily",
-            Optional.ofNullable(stats.getPersonsWhoSharedKeysDaily())),
-        Pair.of("persons_who_shared_keys_7days_avg",
-            Optional.ofNullable(stats.getPersonWhoSharedKeys7daysAvg())),
-        Pair.of("persons_who_shared_keys_7days_growthrate",
-            Optional.ofNullable(stats.getPersonsWhoSharedKeys7daysGrowthrate())),
-        Pair.of("persons_who_shared_keys_cumulated",
-            Optional.ofNullable(stats.getPersonsWhoSharedKeysCumulated()))
+        Optional.ofNullable(stats.getPersonsWhoSharedKeys7daysTrend5percent()),
+        Optional.ofNullable(stats.getPersonWhoSharedKeys7daysAvg()),
+        Optional.ofNullable(stats.getPersonsWhoSharedKeysCumulated()),
+        Optional.ofNullable(stats.getPersonsWhoSharedKeysDaily())
     );
   }
 

@@ -4,7 +4,7 @@ import java.util.List;
 
 public class MissingPropertyException extends RuntimeException {
 
-  public MissingPropertyException(List<String> properties) {
-    super(String.format("Properties [%s] missing in JSON file", String.join(", ", properties)));
+  public MissingPropertyException(Integer cardId) {
+    super(String.format("Some required properties are missing in JSON file for card with ID %s", cardId));
   }
 }
