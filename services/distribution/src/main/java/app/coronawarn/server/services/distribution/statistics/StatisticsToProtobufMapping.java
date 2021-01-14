@@ -103,7 +103,7 @@ public class StatisticsToProtobufMapping {
     figureCardMap.put(INFECTIONS_CARD_ID, Optional.empty());
     figureCardMap.put(INCIDENCE_CARD_ID, Optional.empty());
     figureCardMap.put(KEY_SUBMISSION_CARD_ID, Optional.empty());
-    figureCardMap.put(FOURTH_CARD_ID, Optional.empty());
+    figureCardMap.put(REPRODUCTION_NUMBER_CARD, Optional.empty());
 
     List<StatisticsJsonStringObject> orderedList = jsonStringObjects.stream()
         .sorted(Comparator.comparing(a -> effectiveDateStringToLocalDate(a.getEffectiveDate())))
@@ -133,7 +133,7 @@ public class StatisticsToProtobufMapping {
         figureCardMap.get(INFECTIONS_CARD_ID).orElse(emptyCard),
         figureCardMap.get(INCIDENCE_CARD_ID).orElse(emptyCard),
         figureCardMap.get(KEY_SUBMISSION_CARD_ID).orElse(emptyCard),
-        figureCardMap.get(FOURTH_CARD_ID).orElse(emptyCard)
+        figureCardMap.get(REPRODUCTION_NUMBER_CARD).orElse(emptyCard)
     );
   }
 }

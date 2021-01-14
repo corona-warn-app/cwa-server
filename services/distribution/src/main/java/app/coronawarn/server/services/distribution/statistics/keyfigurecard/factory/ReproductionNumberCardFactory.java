@@ -10,37 +10,36 @@ import app.coronawarn.server.services.distribution.statistics.keyfigurecard.Valu
 import java.util.List;
 import java.util.Optional;
 
-public class IncidenceCardFactory extends HeaderCardFactory {
+public class ReproductionNumberCardFactory extends HeaderCardFactory {
 
   @Override
   protected Integer getCardId() {
-    return KeyFigureCardSequenceConstants.INCIDENCE_CARD_ID;
-  }
-
-  private KeyFigure getIncidence(StatisticsJsonStringObject stats) {
-    var trend = ValueTrendCalculator.from(stats.getSevenDayIncidenceTrend1percent());
-    var semantic = ValueTrendCalculator.getNegativeTrendGrowth(trend);
-    return KeyFigure.newBuilder()
-        .setValue(stats.getSevenDayIncidence())
-        .setRank(Rank.PRIMARY)
-        .setTrend(trend)
-        .setTrendSemantic(semantic)
-        .setDecimals(1)
-        .build();
+    return KeyFigureCardSequenceConstants.REPRODUCTION_NUMBER_CARD;
   }
 
   @Override
   protected KeyFigureCard buildKeyFigureCard(StatisticsJsonStringObject stats, Builder keyFigureBuilder) {
-    return keyFigureBuilder.addAllKeyFigures(
-        List.of(this.getIncidence(stats)))
+    return keyFigureBuilder.addAllKeyFigures(List.of(
+        getSevenDayRValueKeyFigure(stats))).build();
+  }
+
+  private KeyFigure getSevenDayRValueKeyFigure(StatisticsJsonStringObject stats) {
+    var trend = ValueTrendCalculator.from(stats.getSevenDayRvalue1stReportedTrend1percent());
+    var semantic = ValueTrendCalculator.getNegativeTrendGrowth(trend);
+    return KeyFigure.newBuilder()
+        .setValue(stats.getSevenDayRvalue1stReportedDaily())
+        .setRank(Rank.PRIMARY)
+        .setDecimals(2)
+        .setTrend(trend)
+        .setTrendSemantic(semantic)
         .build();
   }
 
   @Override
   protected List<Optional<Object>> getRequiredFieldValues(StatisticsJsonStringObject stats) {
     return List.of(
-        Optional.ofNullable(stats.getSevenDayIncidenceTrend1percent()),
-        Optional.ofNullable(stats.getSevenDayIncidence())
+        Optional.ofNullable(stats.getSevenDayRvalue1stReportedTrend1percent()),
+        Optional.ofNullable(stats.getSevenDayRvalue1stReportedDaily())
     );
   }
 }
