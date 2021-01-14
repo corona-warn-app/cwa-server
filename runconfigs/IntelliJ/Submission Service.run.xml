@@ -1,0 +1,20 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="Submission Service" type="SpringBootApplicationConfigurationType" factoryName="Spring Boot">
+    <module name="submission" />
+    <option name="SPRING_BOOT_MAIN_CLASS" value="app.coronawarn.server.services.submission.ServerApplication" />
+    <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="true" />
+    <option name="ALTERNATIVE_JRE_PATH" value="11" />
+    <envs>
+      <env name="POSTGRESQL_SERVICE_PORT" value="8001" />
+      <env name="SPRING_PROFILES_ACTIVE" value="disable-ssl-client-postgres" />
+      <env name="SUPPORTED_COUNTRIES" value="DE,FR" />
+      <env name="SSL_SUBMISSION_KEYSTORE_PATH" value="file:$PROJECT_DIR$/docker-compose-test-secrets/ssl.p12" />
+      <env name="SSL_SUBMISSION_KEYSTORE_PASSWORD" value="123456" />
+      <env name="SSL_VERIFICATION_TRUSTSTORE_PATH" value="file:$PROJECT_DIR$/docker-compose-test-secrets/contains_efgs_truststore.jks" />
+      <env name="SSL_VERIFICATION_TRUSTSTORE_PASSWORD" value="123456" />
+    </envs>
+    <method v="2">
+      <option name="Make" enabled="true" />
+    </method>
+  </configuration>
+</component>
