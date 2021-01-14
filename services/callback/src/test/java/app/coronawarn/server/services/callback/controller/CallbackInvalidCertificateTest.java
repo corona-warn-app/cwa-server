@@ -31,7 +31,7 @@ class CallbackInvalidCertificateTest {
   private RequestExecutor executor;
 
   @Test
-  void forbidden() {
+  void responseSouldBeForbiddenWhenCertificateCnDoesNotMatchExpectedCn() {
     ResponseEntity<Void> actResponse = executor.executeGet(batchTag, dateString);
     assertThat(actResponse.getStatusCode()).isEqualTo(FORBIDDEN);
   }
