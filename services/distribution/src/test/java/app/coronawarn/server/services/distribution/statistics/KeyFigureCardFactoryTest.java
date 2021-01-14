@@ -36,20 +36,25 @@ class KeyFigureCardFactoryTest {
   @BeforeEach
   public void setup() {
     this.statisticsJsonStringObject = new StatisticsJsonStringObject();
+    statisticsJsonStringObject.setEffectiveDate("2020-11-05");
 
     statisticsJsonStringObject.setInfectionsReportedDaily(70200);
-    statisticsJsonStringObject.setEffectiveDate("2020-11-05");
     statisticsJsonStringObject.setInfectionsReported7daysAvg(1234);
     statisticsJsonStringObject.setInfectionsReported7daysGrowthrate(1.15);
     statisticsJsonStringObject.setInfectionsReportedCumulated(123456);
+    statisticsJsonStringObject.setInfectionsReported7daysTrend5percent(1);
 
     statisticsJsonStringObject.setSevenDayIncidence(168.5);
-    statisticsJsonStringObject.setSevenDayIncidenceGrowthrate(1.12);
+    statisticsJsonStringObject.setSevenDayIncidenceTrend1percent(1);
 
     statisticsJsonStringObject.setPersonsWhoSharedKeysDaily(2717);
-    statisticsJsonStringObject.setPersonsWhoSharedKeys7daysSum(123);
+    statisticsJsonStringObject.setPersonWhoSharedKeys7daysAvg(123);
     statisticsJsonStringObject.setPersonsWhoSharedKeys7daysGrowthrate(1.05);
     statisticsJsonStringObject.setPersonsWhoSharedKeysCumulated(4321);
+    statisticsJsonStringObject.setPersonsWhoSharedKeys7daysTrend5percent(1);
+
+    statisticsJsonStringObject.setSevenDayRvalue1stReportedDaily(100.63);
+    statisticsJsonStringObject.setSevenDayRvalue1stReportedTrend1percent(1);
   }
 
   @Nested
@@ -68,7 +73,7 @@ class KeyFigureCardFactoryTest {
 
     @Test
     void testInfectionsReportedTrendDecreasing() {
-      statisticsJsonStringObject.setInfectionsReported7daysGrowthrate(0.0);
+      statisticsJsonStringObject.setInfectionsReported7daysTrend5percent(-1);
       var result = figureCardFactory.createKeyFigureCard(statisticsJsonStringObject, 1);
       assertThat(result.getKeyFigures(1))
           .extracting(KeyFigure::getTrend, KeyFigure::getTrendSemantic)
@@ -77,7 +82,7 @@ class KeyFigureCardFactoryTest {
 
     @Test
     void testInfectionsReportedTrendIncreasing() {
-      statisticsJsonStringObject.setInfectionsReported7daysGrowthrate(1.06);
+      statisticsJsonStringObject.setInfectionsReported7daysTrend5percent(1);
       var result = figureCardFactory.createKeyFigureCard(statisticsJsonStringObject, 1);
       assertThat(result.getKeyFigures(1))
           .extracting(KeyFigure::getTrend, KeyFigure::getTrendSemantic)
@@ -86,7 +91,7 @@ class KeyFigureCardFactoryTest {
 
     @Test
     void testInfectionsReportedTrendStable() {
-      statisticsJsonStringObject.setInfectionsReported7daysGrowthrate(0.96);
+      statisticsJsonStringObject.setInfectionsReported7daysTrend5percent(0);
       var result = figureCardFactory.createKeyFigureCard(statisticsJsonStringObject, 1);
       assertThat(result.getKeyFigures(1))
           .extracting(KeyFigure::getTrend, KeyFigure::getTrendSemantic)
@@ -100,20 +105,6 @@ class KeyFigureCardFactoryTest {
       assertThatThrownBy(() -> figureCardFactory.createKeyFigureCard(missingPropertyObject, 1))
           .isInstanceOf(MissingPropertyException.class);
     }
-
-    @Test
-    void shouldNamePropertyMissingInException() {
-      var missingPropertyObject = new StatisticsJsonStringObject();
-      missingPropertyObject.setEffectiveDate("2020-01-01");
-      missingPropertyObject.setInfectionsReportedDaily(1234);
-      assertThatThrownBy(() -> figureCardFactory.createKeyFigureCard(missingPropertyObject, 1))
-          .isInstanceOf(MissingPropertyException.class)
-          .hasMessageContaining("infections_reported_7days_avg")
-          .hasMessageContaining("infections_reported_7days_growthrate")
-          .hasMessageContaining("infections_reported_cumulated")
-          .hasMessageNotContaining("infections_reported_daily");
-    }
-
   }
 
   @Nested
@@ -132,7 +123,7 @@ class KeyFigureCardFactoryTest {
 
     @Test
     void testIncidenceTrendDecreasing() {
-      statisticsJsonStringObject.setSevenDayIncidenceGrowthrate(0.0);
+      statisticsJsonStringObject.setSevenDayIncidenceTrend1percent(-1);
       var result = figureCardFactory.createKeyFigureCard(statisticsJsonStringObject, INCIDENCE_CARD_ID);
       assertThat(result.getKeyFigures(0))
           .extracting(KeyFigure::getTrend, KeyFigure::getTrendSemantic)
@@ -141,7 +132,7 @@ class KeyFigureCardFactoryTest {
 
     @Test
     void testIncidenceTrendIncreasing() {
-      statisticsJsonStringObject.setSevenDayIncidenceGrowthrate(1.5);
+      statisticsJsonStringObject.setSevenDayIncidenceTrend1percent(1);
       var result = figureCardFactory.createKeyFigureCard(statisticsJsonStringObject, INCIDENCE_CARD_ID);
       assertThat(result.getKeyFigures(0))
           .extracting(KeyFigure::getTrend, KeyFigure::getTrendSemantic)
@@ -150,7 +141,7 @@ class KeyFigureCardFactoryTest {
 
     @Test
     void testIncidenceTrendStable() {
-      statisticsJsonStringObject.setSevenDayIncidenceGrowthrate(0.96);
+      statisticsJsonStringObject.setSevenDayIncidenceTrend1percent(0);
       var result = figureCardFactory.createKeyFigureCard(statisticsJsonStringObject, INCIDENCE_CARD_ID);
       assertThat(result.getKeyFigures(0))
           .extracting(KeyFigure::getTrend, KeyFigure::getTrendSemantic)
@@ -170,39 +161,37 @@ class KeyFigureCardFactoryTest {
       var result = figureCardFactory.createKeyFigureCard(statisticsJsonStringObject, 3);
       assertKeyFigure(result.getKeyFigures(0), 2717, Rank.PRIMARY, Trend.UNSPECIFIED_TREND,
           TrendSemantic.UNSPECIFIED_TREND_SEMANTIC, 0);
-      assertKeyFigure(result.getKeyFigures(1), 123, Rank.SECONDARY, Trend.STABLE,
+      assertKeyFigure(result.getKeyFigures(1), 123, Rank.SECONDARY, Trend.INCREASING,
           TrendSemantic.NEUTRAL, 0);
       assertKeyFigure(result.getKeyFigures(2), 4321, Rank.TERTIARY, Trend.UNSPECIFIED_TREND,
           TrendSemantic.UNSPECIFIED_TREND_SEMANTIC, 0);
     }
 
     @Test
-    void testPersonsWhoSharedKeysTrendDecreasing() {
-      statisticsJsonStringObject.setPersonsWhoSharedKeys7daysGrowthrate(0.0);
+    void testIncidenceTrendSemanticShouldAlwaysBeStable() {
+      statisticsJsonStringObject.setPersonsWhoSharedKeys7daysTrend5percent(-1);
       var result = figureCardFactory.createKeyFigureCard(statisticsJsonStringObject, KEY_SUBMISSION_CARD_ID);
       assertThat(result.getKeyFigures(1))
           .extracting(KeyFigure::getTrend, KeyFigure::getTrendSemantic)
-          .containsExactly(Trend.DECREASING, TrendSemantic.NEGATIVE);
-    }
-
-    @Test
-    void testIncidenceTrendIncreasing() {
-      statisticsJsonStringObject.setPersonsWhoSharedKeys7daysGrowthrate(1.5);
-      var result = figureCardFactory.createKeyFigureCard(statisticsJsonStringObject, KEY_SUBMISSION_CARD_ID);
-      assertThat(result.getKeyFigures(1))
-          .extracting(KeyFigure::getTrend, KeyFigure::getTrendSemantic)
-          .containsExactly(Trend.INCREASING, TrendSemantic.POSITIVE);
-    }
-
-    @Test
-    void testIncidenceTrendStable() {
-      statisticsJsonStringObject.setPersonsWhoSharedKeys7daysGrowthrate(1.0);
-      var result = figureCardFactory.createKeyFigureCard(statisticsJsonStringObject, KEY_SUBMISSION_CARD_ID);
-      assertThat(result.getKeyFigures(1))
-          .extracting(KeyFigure::getTrend, KeyFigure::getTrendSemantic)
-          .containsExactly(Trend.STABLE, TrendSemantic.NEUTRAL);
+          .containsExactly(Trend.DECREASING, TrendSemantic.NEUTRAL);
     }
   }
+
+  @Nested
+  @ExtendWith(SpringExtension.class)
+  @EnableConfigurationProperties(value = DistributionServiceConfig.class)
+  @ContextConfiguration(classes = {KeyFigureCardFactory.class},
+      initializers = ConfigFileApplicationContextInitializer.class)
+  class ReproductionNumberCardTest {
+
+    @Test
+    void testCardHasCorrectKeyFigures() {
+      var result = figureCardFactory.createKeyFigureCard(statisticsJsonStringObject, 4);
+      assertKeyFigure(result.getKeyFigures(0), 100.63, Rank.PRIMARY, Trend.INCREASING,
+          TrendSemantic.NEGATIVE, 2);
+    }
+  }
+
 
   private void assertKeyFigure(KeyFigure result, double value, Rank rank, Trend trend, TrendSemantic trendSemantic,
       Integer decimals) {
