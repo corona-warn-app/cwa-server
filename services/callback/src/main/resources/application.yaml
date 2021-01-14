@@ -8,6 +8,8 @@ logging:
       coronawarn: INFO
 
 services:
+  callback:
+    efgs-cert-cn: ${EFGS-CERT-CN:localhost}
 
 spring:
   lifecycle:
