@@ -1,4 +1,3 @@
-
 package app.coronawarn.server.services.callback.config;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
