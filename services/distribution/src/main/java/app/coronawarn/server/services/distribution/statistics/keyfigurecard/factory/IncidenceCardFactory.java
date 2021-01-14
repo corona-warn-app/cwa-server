@@ -9,13 +9,8 @@ import app.coronawarn.server.services.distribution.statistics.keyfigurecard.KeyF
 import app.coronawarn.server.services.distribution.statistics.keyfigurecard.ValueTrendCalculator;
 import java.util.List;
 import java.util.Optional;
-import org.springframework.data.util.Pair;
 
 public class IncidenceCardFactory extends HeaderCardFactory {
-
-  public IncidenceCardFactory(ValueTrendCalculator valueTrendCalculator) {
-    super(valueTrendCalculator);
-  }
 
   @Override
   protected Integer getCardId() {
@@ -23,8 +18,8 @@ public class IncidenceCardFactory extends HeaderCardFactory {
   }
 
   private KeyFigure getIncidence(StatisticsJsonStringObject stats) {
-    var trend = valueTrendCalculator.getTrend(stats.getSevenDayIncidenceGrowthrate());
-    var semantic = valueTrendCalculator.getNegativeTrendGrowth(trend);
+    var trend = ValueTrendCalculator.from(stats.getSevenDayIncidenceTrend1percent());
+    var semantic = ValueTrendCalculator.getNegativeTrendGrowth(trend);
     return KeyFigure.newBuilder()
         .setValue(stats.getSevenDayIncidence())
         .setRank(Rank.PRIMARY)
@@ -42,10 +37,10 @@ public class IncidenceCardFactory extends HeaderCardFactory {
   }
 
   @Override
-  protected List<Pair<String, Optional<Object>>> getNonNullFields(StatisticsJsonStringObject stats) {
+  protected List<Optional<Object>> getRequiredFieldValues(StatisticsJsonStringObject stats) {
     return List.of(
-        Pair.of("seven_day_incidence", Optional.ofNullable(stats.getSevenDayIncidence())),
-        Pair.of("seven_day_incidence_growthrate", Optional.ofNullable(stats.getSevenDayIncidenceGrowthrate()))
+        Optional.ofNullable(stats.getSevenDayIncidenceTrend1percent()),
+        Optional.ofNullable(stats.getSevenDayIncidence())
     );
   }
 }

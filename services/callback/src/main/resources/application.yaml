@@ -8,6 +8,8 @@ logging:
       coronawarn: INFO
 
 services:
+  callback:
+    efgs-cert-cn: ${EFGS-CERT-CN:localhost}
 
 spring:
   lifecycle:
@@ -75,6 +77,6 @@ server:
     key-password: ${SSL_CALLBACK_KEYSTORE_PASSWORD}
     key-store: ${SSL_CALLBACK_KEYSTORE_PATH}
     key-store-password: ${SSL_CALLBACK_KEYSTORE_PASSWORD}
-    trust-store: ${SSL_CALLBACK_TRUSTSTORE_PATH}
-    trust-store-password: ${SSL_CALLBACK_TRUSTSTORE_PASSWORD}
     client-auth: need
+    trust-store: ${SSL_FEDERATION_TRUSTSTORE_PATH:}
+    trust-store-password: ${SSL_FEDERATION_TRUSTSTORE_PASSWORD:}

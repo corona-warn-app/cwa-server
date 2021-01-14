@@ -6,6 +6,11 @@ logging:
         web: INFO
     app:
       coronawarn: INFO
+    com:
+      netflix:
+        config:
+          sources:
+            URLConfigurationSource: ERROR
 
 services:
   submission:

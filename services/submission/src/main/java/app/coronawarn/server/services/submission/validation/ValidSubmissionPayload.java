@@ -26,6 +26,8 @@ import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
 import javax.validation.Payload;
 import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @Constraint(validatedBy = ValidSubmissionPayload.SubmissionPayloadValidator.class)
 @Target({ElementType.PARAMETER})
@@ -57,6 +59,7 @@ public @interface ValidSubmissionPayload {
     private final int maxRollingPeriod;
     private final Collection<String> supportedCountries;
     private final String defaultOriginCountry;
+    private static final Logger logger = LoggerFactory.getLogger(SubmissionPayloadValidator.class);
 
     public SubmissionPayloadValidator(SubmissionServiceConfig submissionServiceConfig) {
       maxNumberOfKeys = submissionServiceConfig.getMaxNumberOfKeys();
@@ -84,13 +87,19 @@ public @interface ValidSubmissionPayload {
       List<TemporaryExposureKey> exposureKeys = submissionPayload.getKeysList();
       validatorContext.disableDefaultConstraintViolation();
 
-      return checkStartIntervalNumberIsAtMidNight(exposureKeys, validatorContext)
+      boolean isValidPayload = checkStartIntervalNumberIsAtMidNight(exposureKeys, validatorContext)
           && checkKeyCollectionSize(exposureKeys, validatorContext)
           && checkOriginCountryIsValid(submissionPayload, validatorContext)
           && checkVisitedCountriesAreValid(submissionPayload, validatorContext)
           && checkRequiredFieldsNotMissing(exposureKeys, validatorContext)
           && checkTransmissionRiskLevelIsAcceptable(exposureKeys, validatorContext)
           && checkDaysSinceOnsetOfSymptomsIsInRange(exposureKeys, validatorContext);
+
+      if (!isValidPayload) {
+        PrintableSubmissionPayload printableSubmissionPayload = new PrintableSubmissionPayload(submissionPayload);
+        logger.error("Errors caused by invalid payload {}", printableSubmissionPayload);
+      }
+      return isValidPayload;
     }
 
     private void addViolation(ConstraintValidatorContext validatorContext, String message) {

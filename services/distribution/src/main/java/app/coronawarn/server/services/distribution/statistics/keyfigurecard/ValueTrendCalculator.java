@@ -2,42 +2,35 @@ package app.coronawarn.server.services.distribution.statistics.keyfigurecard;
 
 import app.coronawarn.server.common.protocols.internal.stats.KeyFigure.Trend;
 import app.coronawarn.server.common.protocols.internal.stats.KeyFigure.TrendSemantic;
+import java.util.Map;
 
 public class ValueTrendCalculator {
 
-  private final double threshold;
-
-  public ValueTrendCalculator(double threshold) {
-    this.threshold = threshold;
-  }
+  static Map<Integer, Trend> trend_map = Map.of(-1, Trend.DECREASING, 0, Trend.STABLE, 1, Trend.INCREASING);
 
   /**
-   * Based on the {@param value} and {@param threshold} determine the {@link Trend} of the data point.
-   * Trend follows these rules:
-   * <li>`INCREASING` if `trend >= (1 + threshold)`</li>
-   * <li>`DECREASING` if `trend <= (1 - threshold)`</li>
-   * <li>`STABLE` if `(1 - threshold) < trend < (1 + threshold)`</li>
+   * Return {@link Trend} based on static map.
+   * <li>1: `INCREASING`</li>
+   * <li>-1: `DECREASING`</li>
+   * <li>0: `STABLE`</li>
+   * @param trendNumber the number to be used in the map.
    * @return Trend.
    */
-  public Trend getTrend(double value) {
-    if (value > (1 + threshold)) {
-      return Trend.INCREASING;
-    } else if (value < (1 - threshold)) {
-      return Trend.DECREASING;
-    } else {
-      return Trend.STABLE;
-    }
+  public static Trend from(Integer trendNumber) {
+    return trend_map.getOrDefault(trendNumber, Trend.UNRECOGNIZED);
   }
 
   /**
-   * Returns the Trend Semantic based on a negative semantic growth, maps {@link Trend} values to {@link TrendSemantic}.
+   * Returns the Trend Semantic based on a negative semantic growth, maps {@link Trend} values to {@link
+   * TrendSemantic}.
    * <li>`INCREASING -> NEGATIVE`</li>
    * <li>`STABLE -> NEUTRAL`</li>
    * <li>`DECREASING -> POSITIVE`</li>
+   *
    * @param trend value.
    * @return TrendSemantic.
    */
-  public TrendSemantic getNegativeTrendGrowth(Trend trend) {
+  public static TrendSemantic getNegativeTrendGrowth(Trend trend) {
     if (trend.equals(Trend.INCREASING)) {
       return TrendSemantic.NEGATIVE;
     } else if (trend.equals(Trend.DECREASING)) {
@@ -48,14 +41,16 @@ public class ValueTrendCalculator {
   }
 
   /**
-   * Returns the Trend Semantic based on a POSITIVE semantic growth, maps {@link Trend} values to {@link TrendSemantic}.
+   * Returns the Trend Semantic based on a POSITIVE semantic growth, maps {@link Trend} values to {@link
+   * TrendSemantic}.
    * <li>`DECREASING -> NEGATIVE`</li>
    * <li>`STABLE -> NEUTRAL`</li>
    * <li>`INCREASING -> POSITIVE`</li>
+   *
    * @param trend value.
    * @return TrendSemantic.
    */
-  public TrendSemantic getPositiveTrendGrowth(Trend trend) {
+  public static TrendSemantic getPositiveTrendGrowth(Trend trend) {
     if (trend.equals(Trend.DECREASING)) {
       return TrendSemantic.NEGATIVE;
     } else if (trend.equals(Trend.INCREASING)) {

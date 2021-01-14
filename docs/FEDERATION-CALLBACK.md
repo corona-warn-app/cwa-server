@@ -27,16 +27,14 @@ Profile                                           | Effect
 --------------------------------------------------|-------------
 `debug`                                           | Sets the log level to `DEBUG` and changes the `CONSOLE_LOG_PATTERN` used by Log4j 2.
 `cloud`                                           | Removes default values for the `spring.flyway`, `spring.datasource` and sets federation gateway contexts
-`disable-callback-cert-auth`                      | Disables certificate authentication for the Callback endpoint.
 `disable-ssl-client-postgres`                     | Disables SSL with a pinned certificate for the connection to the postgres.
-`disable-ssl-server`                              | Disables SSL for the Callback endpoint.
 
 Please refer to the inline comments in the base `application.yaml` configuration file for further details on the configuration properties impacted by the above profiles.
 
 ## CallbackController
 
 REST-controller that handles incoming GET-requests. Constructs new FederationBatchInfos from received parameters and triggers persistence of those.
-All other requests are being denied (configured in [SecurityConfig.java](SecurityConfig.java).
+All other requests are being denied - configured in `SecurityConfig.java`.
 
 ## ApiExceptionHandler
 
