@@ -96,33 +96,10 @@ public @interface ValidSubmissionPayload {
           && checkDaysSinceOnsetOfSymptomsIsInRange(exposureKeys, validatorContext);
 
       if (!isValidPayload) {
-        String payloadString = generatePrintablePayload(submissionPayload);
-        logger.error("Errors caused by invalid payload {}", payloadString);
+        PrintableSubmissionPayload printableSubmissionPayload = new PrintableSubmissionPayload(submissionPayload);
+        logger.error("Errors caused by invalid payload {}", printableSubmissionPayload);
       }
       return isValidPayload;
-    }
-
-    private String generatePrintablePayload(SubmissionPayload submissionPayload) {
-      StringBuilder stringBuilder = new StringBuilder();
-
-      stringBuilder
-          .append(" payload origin: ").append(submissionPayload.getOrigin())
-          .append(" visited_countries: ").append(submissionPayload.getVisitedCountriesList())
-          .append(" consent_to_federation: ").append(submissionPayload.getConsentToFederation())
-          .append(" with padding_size: ").append(submissionPayload.getRequestPadding().size());
-      stringBuilder.append(" keys: ");
-      for (TemporaryExposureKey key : submissionPayload.getKeysList()) {
-        stringBuilder
-            .append(" {")
-            .append(" key_data: HIDDEN")
-            .append(" transmission_risk_level: ").append(key.getTransmissionRiskLevel())
-            .append(" rolling_start_interval_number: ").append(key.getRollingStartIntervalNumber())
-            .append(" report_type: ").append(key.getReportType())
-            .append(" days_since_onset_of_symptoms: ").append(key.getDaysSinceOnsetOfSymptoms())
-            .append(" }");
-
-      }
-      return stringBuilder.toString();
     }
 
     private void addViolation(ConstraintValidatorContext validatorContext, String message) {
