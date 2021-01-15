@@ -9,7 +9,7 @@ logging:
 
 services:
   callback:
-    efgs-cert-cn: ${EFGS-CERT-CN:localhost}
+    efgs-cert-cn: ${EFGS_CERT_CN:}
 
 spring:
   lifecycle:
