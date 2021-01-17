@@ -74,7 +74,7 @@ public class ArchiveOnDisk extends FileOnDiskWithChecksum implements Archive<Wri
     try (ZipOutputStream zipOutputStream = new ZipOutputStream(byteArrayOutputStream)) {
       this.getWritables().stream()
           .filter(writable -> writable instanceof File)
-          .map(file -> (FileOnDisk) file)
+          .map(FileOnDisk.class::cast)
           .forEach(uncheckedConsumer(file -> {
             String pathInZip = file.getName();
             zipOutputStream.putNextEntry(new ZipEntry(pathInZip));
@@ -95,7 +95,7 @@ public class ArchiveOnDisk extends FileOnDiskWithChecksum implements Archive<Wri
   private void updateBytesForChecksum() {
     var targetFile = this.getWritables().stream()
         .filter(Writable::isFile)
-        .map(file -> (FileOnDisk) file)
+        .map(FileOnDisk.class::cast)
         .findFirst()
         .orElseThrow();
 
