@@ -27,7 +27,7 @@ import static org.mockito.Mockito.when;
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration(classes = {RemoteStatisticJsonFileLoaderTest.class},
     initializers = ConfigFileApplicationContextInitializer.class)
-public class RemoteStatisticJsonFileLoaderTest {
+class RemoteStatisticJsonFileLoaderTest {
 
   @Autowired
   DistributionServiceConfig serviceConfig;

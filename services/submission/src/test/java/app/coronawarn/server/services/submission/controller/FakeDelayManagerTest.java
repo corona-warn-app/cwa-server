@@ -26,7 +26,7 @@ class FakeDelayManagerTest {
   void jitteredFakeDelayGreaterThanOrEqualZero() {
     FakeDelayManager fakeDelayManager = buildFakeDelayManager(1L, 1L);
     long actFakeDelay = fakeDelayManager.getJitteredFakeDelay();
-    assertThat(actFakeDelay).isGreaterThanOrEqualTo(0L);
+    assertThat(actFakeDelay).isNotNegative();
   }
 
   @Test
