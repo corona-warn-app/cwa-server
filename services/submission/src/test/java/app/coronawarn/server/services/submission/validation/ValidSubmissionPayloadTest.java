@@ -32,7 +32,6 @@ import org.springframework.test.context.ActiveProfiles;
  */
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @DirtiesContext
-@ActiveProfiles({ "disable-ssl-client-verification-verify-hostname" })
 public class ValidSubmissionPayloadTest {
 
   private static String interpolationSideEffect;
