@@ -25,12 +25,14 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.annotation.DirtiesContext;
+import org.springframework.test.context.ActiveProfiles;
 
 /**
  * This test must have the public modifier to be callable by the interpolation logic.
  */
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @DirtiesContext
+@ActiveProfiles({ "disable-ssl-client-verification-verify-hostname" })
 public class ValidSubmissionPayloadTest {
 
   private static String interpolationSideEffect;
