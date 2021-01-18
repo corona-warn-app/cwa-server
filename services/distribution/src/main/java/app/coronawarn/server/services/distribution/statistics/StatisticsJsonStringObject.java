@@ -70,7 +70,7 @@ public class StatisticsJsonStringObject {
   @JsonProperty("seven_day_r_value_published_growthrate")
   private Double sevenDayRvaluepublishedGrowthrate;
   @JsonProperty("seven_day_r_value_published_trend_1percent")
-  private Integer sevenDayRvaluePublishedTrend5percent;
+  private Integer sevenDayRvaluePublishedTrend1percent;
   @JsonProperty("tests_total_daily")
   private Integer testsTotalDaily;
   @JsonProperty("update_timestamp")
@@ -188,7 +188,7 @@ public class StatisticsJsonStringObject {
     return sevenDayRvalue1stReportedTrend1percent;
   }
 
-  public Double getSevenDayRvaluepublishedDaily() {
+  public Double getSevenDayRvaluePublishedDaily() {
     return sevenDayRvaluepublishedDaily;
   }
 
@@ -196,8 +196,8 @@ public class StatisticsJsonStringObject {
     return sevenDayRvaluepublishedGrowthrate;
   }
 
-  public Integer getSevenDayRvaluePublishedTrend5percent() {
-    return sevenDayRvaluePublishedTrend5percent;
+  public Integer getSevenDayRvaluePublishedTrend1percent() {
+    return sevenDayRvaluePublishedTrend1percent;
   }
 
   public Integer getTestsTotalDaily() {
@@ -328,8 +328,8 @@ public class StatisticsJsonStringObject {
     this.sevenDayRvaluepublishedGrowthrate = sevenDayRvaluepublishedGrowthrate;
   }
 
-  public void setSevenDayRvaluePublishedTrend5percent(Integer sevenDayRvaluePublishedTrend5percent) {
-    this.sevenDayRvaluePublishedTrend5percent = sevenDayRvaluePublishedTrend5percent;
+  public void setSevenDayRvaluePublishedTrend1percent(Integer sevenDayRvaluePublishedTrend1percent) {
+    this.sevenDayRvaluePublishedTrend1percent = sevenDayRvaluePublishedTrend1percent;
   }
 
   public void setTestsTotalDaily(Integer testsTotalDaily) {
