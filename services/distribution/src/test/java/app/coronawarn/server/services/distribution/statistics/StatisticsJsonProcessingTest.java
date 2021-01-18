@@ -76,7 +76,7 @@ class StatisticsJsonProcessingTest {
         .containsExactly(REPRODUCTION_NUMBER_CARD, dateToTimestamp(LocalDate.of(2020, 11, 5)));
     assertThat(result.getKeyFigureCards(3).getKeyFigures(0))
         .extracting(KeyFigure::getValue, KeyFigure::getTrend, KeyFigure::getTrendSemantic)
-        .containsExactly(0.63, Trend.DECREASING, TrendSemantic.POSITIVE);
+        .containsExactly(1.67, Trend.INCREASING, TrendSemantic.NEGATIVE);
   }
 
 }
