@@ -74,7 +74,7 @@ public class ServerApplication implements EnvironmentAware, DisposableBean {
               + "This should never be used in PRODUCTION!");
     }
     if (profiles.contains("disable-ssl-client-verification-verify-hostname")) { 
-      logger.warn(  
+      logger.warn(
           "The submission service is started with verification service TLS hostname validation disabled. "  
               + "This should never be used in PRODUCTION!");  
     }
