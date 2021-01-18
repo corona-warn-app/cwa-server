@@ -30,10 +30,12 @@ public class CloudFeignClientProvider {
   private final File trustStore;
   private final String trustStorePassword;
 
+  private final HostnameVerifierProvider hostnameVerifierProvider;
+
   /**
    * Creates a {@link CloudFeignClientProvider} that provides feign clients with fixed key and trust material.
    */
-  public CloudFeignClientProvider(SubmissionServiceConfig config) {
+  public CloudFeignClientProvider(SubmissionServiceConfig config, HostnameVerifierProvider hostnameVerifierProvider) {
     Ssl sslConfig = config.getClient().getSsl();
     this.keyStore = sslConfig.getKeyStore();
     this.keyStorePassword = sslConfig.getKeyStorePassword();
@@ -41,6 +43,7 @@ public class CloudFeignClientProvider {
     this.trustStore = sslConfig.getTrustStore();
     this.trustStorePassword = sslConfig.getTrustStorePassword();
     this.connectionPoolSize = config.getConnectionPoolSize();
+    this.hostnameVerifierProvider = hostnameVerifierProvider;
   }
 
   public Client createFeignClient() {
@@ -68,7 +71,7 @@ public class CloudFeignClientProvider {
         .setMaxConnPerRoute(this.connectionPoolSize)
         .setMaxConnTotal(this.connectionPoolSize)
         .setSSLContext(getSslContext())
-        .setSSLHostnameVerifier(new DefaultHostnameVerifier()));
+        .setSSLHostnameVerifier(hostnameVerifierProvider.createHostnameVerifier()));
   }
 
   @Bean
