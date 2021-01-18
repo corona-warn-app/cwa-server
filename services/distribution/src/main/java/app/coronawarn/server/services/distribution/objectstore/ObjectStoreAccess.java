@@ -15,6 +15,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
+import org.springframework.util.ObjectUtils;
 import org.springframework.util.StringUtils;
 
 /**
@@ -120,7 +121,7 @@ public class ObjectStoreAccess {
       headers.put(HeaderKey.AMZ_ACL, "public-read");
     }
 
-    if (!StringUtils.isEmpty(file.getChecksum())) {
+    if (!ObjectUtils.isEmpty(file.getChecksum())) {
       headers.put(HeaderKey.CWA_HASH, file.getChecksum());
     }
 

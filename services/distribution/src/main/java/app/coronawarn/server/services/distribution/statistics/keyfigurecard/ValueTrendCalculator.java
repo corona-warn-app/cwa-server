@@ -6,7 +6,7 @@ import java.util.Map;
 
 public class ValueTrendCalculator {
 
-  static Map<Integer, Trend> trend_map = Map.of(-1, Trend.DECREASING, 0, Trend.STABLE, 1, Trend.INCREASING);
+  static Map<Integer, Trend> trendMap = Map.of(-1, Trend.DECREASING, 0, Trend.STABLE, 1, Trend.INCREASING);
 
   /**
    * Return {@link Trend} based on static map.
@@ -17,7 +17,7 @@ public class ValueTrendCalculator {
    * @return Trend.
    */
   public static Trend from(Integer trendNumber) {
-    return trend_map.getOrDefault(trendNumber, Trend.UNRECOGNIZED);
+    return trendMap.getOrDefault(trendNumber, Trend.UNRECOGNIZED);
   }
 
   /**

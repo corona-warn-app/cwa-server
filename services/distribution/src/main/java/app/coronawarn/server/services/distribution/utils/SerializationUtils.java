@@ -1,6 +1,5 @@
 package app.coronawarn.server.services.distribution.utils;
 
-import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.json.JsonReadFeature;
 import com.fasterxml.jackson.databind.JavaType;
@@ -18,8 +17,8 @@ public final class SerializationUtils {
   }
 
   /**
-   * Deserialize json string into an object of type T. The type must also be provided to the underlying Jackson
-   * library in the form of a JavaType supplied by the function parameter.
+   * Deserialize json string into an object of type T. The type must also be provided to the underlying Jackson library
+   * in the form of a JavaType supplied by the function parameter.
    *
    * @param jsonString           value from configuration file
    * @param typeProviderFunction type deserialization function provider
@@ -29,7 +28,7 @@ public final class SerializationUtils {
     ObjectMapper mapper = new ObjectMapper();
     try {
       return mapper
-          .enable(JsonParser.Feature.ALLOW_NON_NUMERIC_NUMBERS)
+          .enable(JsonReadFeature.ALLOW_NON_NUMERIC_NUMBERS.mappedFeature())
           .readValue(jsonString, typeProviderFunction.apply(mapper.getTypeFactory()));
     } catch (JsonProcessingException e) {
       logger.error(e.getMessage());

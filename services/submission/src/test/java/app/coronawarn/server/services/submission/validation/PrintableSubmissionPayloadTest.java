@@ -5,8 +5,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 import app.coronawarn.server.common.protocols.external.exposurenotification.TemporaryExposureKey;
 import app.coronawarn.server.common.protocols.internal.SubmissionPayload;
 import app.coronawarn.server.services.submission.controller.SubmissionPayloadMockData;
-import org.junit.jupiter.api.Test;
 import java.util.List;
+import org.junit.jupiter.api.Test;
 
 public class PrintableSubmissionPayloadTest {
 
@@ -15,36 +15,32 @@ public class PrintableSubmissionPayloadTest {
   void keyDataIsHidden() {
     SubmissionPayload submissionPayload = SubmissionPayloadMockData.buildPayloadWithOriginCountry("DE");
     PrintableSubmissionPayload printableSubmissionPayload = new PrintableSubmissionPayload(submissionPayload);
-    assertThat(printableSubmissionPayload.toString().contains(
-        submissionPayload.getKeysList().get(0).getKeyData().toStringUtf8()))
-        .isFalse();
+    assertThat(printableSubmissionPayload.toString()).doesNotContain(
+        submissionPayload.getKeysList().get(0).getKeyData().toStringUtf8());
   }
 
   @Test
   void containsVisitedCountries() {
     SubmissionPayload submissionPayload = SubmissionPayloadMockData.buildPayloadWithVisitedCountries(List.of("DE, FR"));
     PrintableSubmissionPayload printableSubmissionPayload = new PrintableSubmissionPayload(submissionPayload);
-    assertThat(printableSubmissionPayload.toString().contains(
-        printableSubmissionPayload.VISITED_COUNTRIES_MESSAGE + "[DE, FR]"))
-        .isTrue();
+    assertThat(printableSubmissionPayload.toString()).contains(
+        PrintableSubmissionPayload.VISITED_COUNTRIES_MESSAGE + "[DE, FR]");
   }
 
   @Test
   void containsOrigin() {
     SubmissionPayload submissionPayload = SubmissionPayloadMockData.buildPayloadWithOriginCountry("FR");
     PrintableSubmissionPayload printableSubmissionPayload = new PrintableSubmissionPayload(submissionPayload);
-    assertThat(printableSubmissionPayload.toString().contains(
-        printableSubmissionPayload.ORIGIN_MESSAGE + "FR"))
-        .isTrue();
+    assertThat(printableSubmissionPayload.toString()).contains(
+        PrintableSubmissionPayload.ORIGIN_MESSAGE + "FR");
   }
 
   @Test
   void containsConsentToFederation() {
     SubmissionPayload submissionPayload = SubmissionPayloadMockData.buildPayloadWithOriginCountry("FR");
     PrintableSubmissionPayload printableSubmissionPayload = new PrintableSubmissionPayload(submissionPayload);
-    assertThat(printableSubmissionPayload.toString().contains(
-        printableSubmissionPayload.CONSENT_MESSAGE + submissionPayload.getConsentToFederation()))
-        .isTrue();
+    assertThat(printableSubmissionPayload.toString()).contains(
+        PrintableSubmissionPayload.CONSENT_MESSAGE + submissionPayload.getConsentToFederation());
   }
 
   @Test
@@ -54,9 +50,9 @@ public class PrintableSubmissionPayloadTest {
     TemporaryExposureKey key = submissionPayload.getKeys(0);
     String payloadString = printableSubmissionPayload.toString();
 
-    assertThat(payloadString.contains(" " + key.getTransmissionRiskLevel() + " ")).isTrue();
-    assertThat(payloadString.contains(" " + key.getRollingStartIntervalNumber() + " ")).isTrue();
-    assertThat(payloadString.contains(" " + key.getReportType() +  " ")).isTrue();
-    assertThat(payloadString.contains(" " + key.getDaysSinceOnsetOfSymptoms() + " ")).isTrue();
+    assertThat(payloadString).contains(" " + key.getTransmissionRiskLevel() + " ");
+    assertThat(payloadString).contains(" " + key.getRollingStartIntervalNumber() + " ");
+    assertThat(payloadString).contains(" " + key.getReportType() +  " ");
+    assertThat(payloadString).contains(" " + key.getDaysSinceOnsetOfSymptoms() + " ");
   }
 }
