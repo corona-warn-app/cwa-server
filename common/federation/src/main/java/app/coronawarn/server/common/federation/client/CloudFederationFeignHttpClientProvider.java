@@ -1,6 +1,7 @@
 package app.coronawarn.server.common.federation.client;
 
 import app.coronawarn.server.common.federation.client.config.FederationGatewayConfig;
+import app.coronawarn.server.common.federation.client.hostname.HostnameVerifierProvider;
 import feign.Client;
 import feign.httpclient.ApacheHttpClient;
 import java.io.File;
@@ -68,7 +69,7 @@ public class CloudFederationFeignHttpClientProvider implements FederationFeignHt
 
   private SSLContext getSslContext(File keyStorePath, String keyStorePass) {
     try {
-      return SSLContextBuilder.create().loadKeyMaterial(keyStorePath, 
+      return SSLContextBuilder.create().loadKeyMaterial(keyStorePath,
               emptyCharrArrayIfNull(keyStorePass),
               emptyCharrArrayIfNull(keyStorePass))
           .loadTrustMaterial(this.trustStore,
