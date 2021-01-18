@@ -15,7 +15,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 @ExtendWith({SpringExtension.class})
 @SpringBootTest(classes = {StatsS3ReadingConfig.class})
 @EnableConfigurationProperties(value = DistributionServiceConfig.class)
-public class StatsS3ReadingConfigTest {
+class StatsS3ReadingConfigTest {
 
   @Autowired
   private DistributionServiceConfig distributionServiceConfig;
