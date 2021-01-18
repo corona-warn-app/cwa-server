@@ -2,7 +2,7 @@
 
 package app.coronawarn.server.services.submission.verification;
 
-import app.coronawarn.server.common.federation.client.HostnameVerifierProvider;
+import app.coronawarn.server.common.federation.client.hostname.HostnameVerifierProvider;
 import app.coronawarn.server.services.submission.config.SubmissionServiceConfig;
 import app.coronawarn.server.services.submission.config.SubmissionServiceConfig.Client.Ssl;
 import feign.Client;
@@ -11,7 +11,6 @@ import java.io.File;
 import java.io.IOException;
 import java.security.GeneralSecurityException;
 import javax.net.ssl.SSLContext;
-import org.apache.http.conn.ssl.DefaultHostnameVerifier;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.ssl.SSLContextBuilder;
 import org.springframework.cloud.commons.httpclient.ApacheHttpClientConnectionManagerFactory;

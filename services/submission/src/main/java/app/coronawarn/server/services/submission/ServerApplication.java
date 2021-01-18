@@ -29,11 +29,11 @@ import org.springframework.validation.Validator;
 @EnableJdbcRepositories(basePackages = "app.coronawarn.server.common.persistence")
 @EntityScan(basePackages = "app.coronawarn.server.common.persistence")
 @ComponentScan({"app.coronawarn.server.common.persistence",
-    "app.coronawarn.server.services.submission"})
+    "app.coronawarn.server.services.submission", "app.coronawarn.server.common.federation.client.hostname"})
 @EnableConfigurationProperties
 @EnableFeignClients
 public class ServerApplication implements EnvironmentAware, DisposableBean {
-  
+
   static final String DISABLE_SSL_CLIENT_POSTGRES = "disable-ssl-client-postgres";
 
   private static final Logger logger = LoggerFactory.getLogger(ServerApplication.class);
@@ -73,7 +73,7 @@ public class ServerApplication implements EnvironmentAware, DisposableBean {
     if (profiles.contains(DISABLE_SSL_CLIENT_POSTGRES)) {
       logger.warn(
           "The submission service is started with postgres connection TLS disabled. "
-              + "This should never be used in PRODUCTION!");  
+              + "This should never be used in PRODUCTION!");
     }
   }
 }
