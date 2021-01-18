@@ -30,7 +30,7 @@ import org.springframework.data.jdbc.repository.config.EnableJdbcRepositories;
 @EntityScan(basePackages = "app.coronawarn.server.common.persistence")
 @ComponentScan({"app.coronawarn.server.common.persistence",
     "app.coronawarn.server.services.federation.upload",
-    "app.coronawarn.server.common.federation.client"})
+    "app.coronawarn.server.common.federation.client.hostname"})
 @EnableConfigurationProperties({UploadServiceConfig.class})
 public class Application implements EnvironmentAware, DisposableBean {
 
