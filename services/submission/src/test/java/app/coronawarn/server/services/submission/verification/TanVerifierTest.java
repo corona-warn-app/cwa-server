@@ -37,7 +37,7 @@ import org.springframework.test.context.ActiveProfiles;
 @EnableConfigurationProperties(value = SubmissionServiceConfig.class)
 @EnableFeignClients
 @DirtiesContext
-@ActiveProfiles({ "feign" })
+@ActiveProfiles({ "feign", "disable-ssl-client-verification-verify-hostname" })
 class TanVerifierTest {
 
   @Autowired
