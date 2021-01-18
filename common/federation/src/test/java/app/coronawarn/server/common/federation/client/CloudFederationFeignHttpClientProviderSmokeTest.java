@@ -23,7 +23,8 @@ class CloudFederationFeignHttpClientProviderSmokeTest {
     FederationGatewayConfig config = new FederationGatewayConfig();
     config.setConnectionPoolSize(1);
     config.setSsl(ssl);
-    CloudFederationFeignHttpClientProvider cut = new CloudFederationFeignHttpClientProvider(config);
+    CloudFederationFeignHttpClientProvider cut = new CloudFederationFeignHttpClientProvider(config,
+        new DefaultHostnameVerifierProvider());
     assertThat(cut.createFeignClient()).isNotNull();
   }
 
