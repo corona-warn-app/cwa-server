@@ -53,8 +53,8 @@ class KeyFigureCardFactoryTest {
     statisticsJsonStringObject.setPersonsWhoSharedKeysCumulated(4321);
     statisticsJsonStringObject.setPersonsWhoSharedKeys7daysTrend5percent(1);
 
-    statisticsJsonStringObject.setSevenDayRvalue1stReportedDaily(100.63);
-    statisticsJsonStringObject.setSevenDayRvalue1stReportedTrend1percent(1);
+    statisticsJsonStringObject.setSevenDayRvaluepublishedDaily(100.63);
+    statisticsJsonStringObject.setSevenDayRvaluePublishedTrend1percent(1);
   }
 
   @Nested
