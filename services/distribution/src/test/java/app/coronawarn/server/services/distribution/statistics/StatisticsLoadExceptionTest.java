@@ -28,7 +28,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
     StatisticsToProtobufMapping.class, KeyFigureCardFactory.class,
     LocalStatisticJsonFileLoader.class
 }, initializers = ConfigFileApplicationContextInitializer.class)
-public class StatisticsLoadExceptionTest {
+class StatisticsLoadExceptionTest {
 
   @SpyBean
   JsonFileLoader loader;
@@ -49,6 +49,6 @@ public class StatisticsLoadExceptionTest {
     when(loader.getContent()).thenThrow(exception);
     var statisticsToProtobufMapping = new StatisticsToProtobufMapping(serviceConfig, keyFigureCardFactory, loader);
     assertThat(statisticsToProtobufMapping.constructProtobufStatistics().getKeyFigureCardsCount())
-        .isEqualTo(0);
+        .isZero();
   }
 }
