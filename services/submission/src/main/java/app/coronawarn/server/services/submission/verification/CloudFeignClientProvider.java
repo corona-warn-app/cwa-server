@@ -2,6 +2,7 @@
 
 package app.coronawarn.server.services.submission.verification;
 
+import app.coronawarn.server.common.federation.client.HostnameVerifierProvider;
 import app.coronawarn.server.services.submission.config.SubmissionServiceConfig;
 import app.coronawarn.server.services.submission.config.SubmissionServiceConfig.Client.Ssl;
 import feign.Client;

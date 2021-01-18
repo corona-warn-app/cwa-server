@@ -5,7 +5,6 @@ import feign.Client;
 import feign.httpclient.ApacheHttpClient;
 import java.io.File;
 import javax.net.ssl.SSLContext;
-import org.apache.http.conn.ssl.DefaultHostnameVerifier;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.ssl.SSLContextBuilder;
 import org.springframework.cloud.commons.httpclient.ApacheHttpClientConnectionManagerFactory;
@@ -27,18 +26,22 @@ public class CloudFederationFeignHttpClientProvider implements FederationFeignHt
   private final File trustStore;
   private final String trustStorePassword;
 
+  private final HostnameVerifierProvider hostnameVerifierProvider;
+
   /**
    * Construct Provider.
    *
    * @param config .
    */
-  public CloudFederationFeignHttpClientProvider(FederationGatewayConfig config) {
+  public CloudFederationFeignHttpClientProvider(FederationGatewayConfig config,
+      HostnameVerifierProvider hostnameVerifierProvider) {
     var ssl = config.getSsl();
     this.connectionPoolSize = config.getConnectionPoolSize();
     this.keyStore = ssl.getKeyStore();
     this.keyStorePassword = ssl.getKeyStorePassword();
     this.trustStore = ssl.getTrustStore();
     this.trustStorePassword = ssl.getTrustStorePassword();
+    this.hostnameVerifierProvider = hostnameVerifierProvider;
   }
 
   /**
@@ -60,7 +63,7 @@ public class CloudFederationFeignHttpClientProvider implements FederationFeignHt
         .setMaxConnPerRoute(connectionPoolSize)
         .setMaxConnTotal(connectionPoolSize)
         .setSSLContext(getSslContext(keyStorePath, keyStorePass))
-        .setSSLHostnameVerifier(new DefaultHostnameVerifier()));
+        .setSSLHostnameVerifier(hostnameVerifierProvider.createHostnameVerifier()));
   }
 
   private SSLContext getSslContext(File keyStorePath, String keyStorePass) {
