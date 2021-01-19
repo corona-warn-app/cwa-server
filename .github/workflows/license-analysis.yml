@@ -3,7 +3,6 @@ name: license-analysis-workflow
 on:
     pull_request:
         branches: [ main, release/** ]
-        branches-ignore: gh-pages
 
 jobs:
     license-analysis-job:

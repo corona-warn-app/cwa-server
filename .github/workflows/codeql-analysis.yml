@@ -3,7 +3,6 @@ name: codeql-analysis-workflow
 on:
     push:
         branches: [ main, release/** ]
-        branches-ignore: gh-pages
         paths-ignore:
           - '.circleci/**'
           - '.github/**'
@@ -17,7 +16,6 @@ on:
           - 'docs/**'
     pull_request:
         branches: [ main, release/** ]
-        branches-ignore: gh-pages
         paths-ignore:
           - '.circleci/**'
           - '.github/**'
