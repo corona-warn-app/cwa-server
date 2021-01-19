@@ -2,11 +2,11 @@ name: codeql-analysis-workflow
 
 on:
     push:
-        branches: [ main, release/* ]
+        branches: [ main, release/** ]
+        branches-ignore: gh-pages
     pull_request:
-        branches:
-        - main
-        - release/**
+        branches: [ main, release/** ]
+        branches-ignore: gh-pages
 
 jobs:
     codeql-analysis-job:
