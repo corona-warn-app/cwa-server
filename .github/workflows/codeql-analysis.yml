@@ -4,9 +4,31 @@ on:
     push:
         branches: [ main, release/** ]
         branches-ignore: gh-pages
+        paths-ignore:
+          - '.circleci/**'
+          - '.github/**'
+          - '.reuse/**'
+          - 'docker-compose-test-secrets/**'
+          - 'docs/**'
+          - 'LICENSES/**'
+          - 'local-setup/**'
+          - 'runconfigs/**'
+          - 'scripts/**'
+          - 'docs/**'
     pull_request:
         branches: [ main, release/** ]
         branches-ignore: gh-pages
+        paths-ignore:
+          - '.circleci/**'
+          - '.github/**'
+          - '.reuse/**'
+          - 'docker-compose-test-secrets/**'
+          - 'docs/**'
+          - 'LICENSES/**'
+          - 'local-setup/**'
+          - 'runconfigs/**'
+          - 'scripts/**'
+          - 'docs/**'
 
 jobs:
     codeql-analysis-job:
