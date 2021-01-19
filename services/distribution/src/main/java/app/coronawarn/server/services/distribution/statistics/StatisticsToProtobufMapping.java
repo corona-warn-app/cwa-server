@@ -118,7 +118,7 @@ public class StatisticsToProtobufMapping {
             card = keyFigureCardFactory.createKeyFigureCard(stat, id);
             figureCardMap.put(id, Optional.of(card));
           } catch (MissingPropertyException ex) {
-            logger.warn(ex.getMessage());
+            logger.warn("[{}] {}", stat.getEffectiveDate(), ex.getMessage());
           }
         }
       });
