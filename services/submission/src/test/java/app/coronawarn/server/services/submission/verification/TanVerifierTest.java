@@ -11,6 +11,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 import static org.springframework.http.HttpHeaders.CONTENT_TYPE;
 
+import app.coronawarn.server.common.federation.client.hostname.NoopHostnameVerifierProvider;
 import app.coronawarn.server.common.persistence.domain.config.TekFieldDerivations;
 import app.coronawarn.server.services.submission.config.SubmissionServiceConfig;
 import com.github.tomakehurst.wiremock.WireMockServer;

@@ -1,4 +1,4 @@
-package app.coronawarn.server.services.submission.verification;
+package app.coronawarn.server.common.federation.client.hostname;
 
 import javax.net.ssl.HostnameVerifier;
 import org.apache.http.conn.ssl.DefaultHostnameVerifier;
