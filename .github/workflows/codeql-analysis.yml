@@ -13,7 +13,6 @@ on:
           - 'local-setup/**'
           - 'runconfigs/**'
           - 'scripts/**'
-          - 'docs/**'
     pull_request:
         branches: [ main, release/** ]
         paths-ignore:
@@ -26,7 +25,6 @@ on:
           - 'local-setup/**'
           - 'runconfigs/**'
           - 'scripts/**'
-          - 'docs/**'
 
 jobs:
     codeql-analysis-job:
