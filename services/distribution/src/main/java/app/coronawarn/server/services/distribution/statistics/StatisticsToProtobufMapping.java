@@ -140,7 +140,6 @@ public class StatisticsToProtobufMapping {
       }
     }
 
-
     var emptyCard = keyFigureCardFactory.createKeyFigureCard(jsonStringObjects.get(0), EMPTY_CARD);
     return List.of(
         figureCardMap.get(INFECTIONS_CARD_ID).orElse(emptyCard),
