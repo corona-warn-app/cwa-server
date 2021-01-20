@@ -132,11 +132,14 @@ public class StatisticsToProtobufMapping {
       }
     }
 
-    logger.debug("The following statistics JSON entries were used to create the cards. Null values are omitted.");
-    for (var stat: collectedJsonObjects) {
-      var jsonString = SerializationUtils.stringifyObject(stat);
-      logger.debug("[{}] {}", stat.getEffectiveDate(), jsonString);
+    if (logger.isDebugEnabled()) {
+      logger.debug("The following statistics JSON entries were used to create the cards. Null values are omitted.");
+      for (var stat: collectedJsonObjects) {
+        var jsonString = SerializationUtils.stringifyObject(stat);
+        logger.debug("[{}] {}", stat.getEffectiveDate(), jsonString);
+      }
     }
+
 
     var emptyCard = keyFigureCardFactory.createKeyFigureCard(jsonStringObjects.get(0), EMPTY_CARD);
     return List.of(
