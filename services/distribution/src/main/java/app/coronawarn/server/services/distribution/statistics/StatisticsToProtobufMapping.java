@@ -74,8 +74,8 @@ public class StatisticsToProtobufMapping {
           .addAllKeyFigureCards(buildAllKeyFigureCards(jsonStringObjects))
           .build();
     } catch (BucketNotFoundException | ConnectionException | FilePathNotFoundException ex) {
-      logger.warn(ex.getMessage());
-      logger.warn("Statistics file will not be generated due to previous errors!");
+      logger.error(ex.getMessage());
+      logger.error("Statistics file will not be generated due to previous errors!");
       return Statistics.newBuilder().build();
     }
   }
