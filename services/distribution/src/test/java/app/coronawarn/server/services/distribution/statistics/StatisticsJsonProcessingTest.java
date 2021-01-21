@@ -28,7 +28,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 @EnableConfigurationProperties(value = DistributionServiceConfig.class)
 @ExtendWith(SpringExtension.class)
-@ActiveProfiles({"local-json-stats", "processing-test"})
+@ActiveProfiles({"local-json-stats", "processing-test", "debug"})
 @ContextConfiguration(classes = {StatisticsJsonToProtobufTest.class,
     StatisticsToProtobufMapping.class, KeyFigureCardFactory.class,
     LocalStatisticJsonFileLoader.class
