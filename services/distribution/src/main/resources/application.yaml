@@ -110,13 +110,13 @@ services:
         value: ${reserved:1}
     supported-countries: ${SUPPORTED_COUNTRIES}
     app-versions:
-      latest-ios: ${IOS_LATEST_VERSION:0.8.2}
-      min-ios: ${IOS_MIN_VERSION:0.5.0}
-      latest-android: ${ANDROID_LATEST_VERSION:1.0.4}
-      min-android: ${ANDROID_MIN_VERSION:1.0.4}
+      latest-ios: ${IOS_LATEST_VERSION:1.5.3}
+      min-ios: ${IOS_MIN_VERSION:1.5.3}
+      latest-android: ${ANDROID_LATEST_VERSION:1.5.1}
+      min-android: ${ANDROID_MIN_VERSION:1.5.1}
       # With ENF v2 Android apps are versioned by Version Code and not by Semantic Versioning
-      min-android-version-code: ${ANDROID_MIN_VERSION_CODE:31}
-      latest-android-version-code: ${ANDROID_LATEST_VERSION_CODE:31}
+      min-android-version-code: ${ANDROID_MIN_VERSION_CODE:48}
+      latest-android-version-code: ${ANDROID_LATEST_VERSION_CODE:48}
     app-config-parameters:
       ios-key-download-parameters:
         revoked-day-packages: ${KEY_DOWNLOAD_REVOKED_DAY_PACKAGES:[]}
