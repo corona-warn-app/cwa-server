@@ -14,6 +14,7 @@ import app.coronawarn.server.common.protocols.internal.stats.Statistics;
 import app.coronawarn.server.services.distribution.config.DistributionServiceConfig;
 import app.coronawarn.server.services.distribution.statistics.file.LocalStatisticJsonFileLoader;
 import app.coronawarn.server.services.distribution.statistics.keyfigurecard.KeyFigureCardFactory;
+import app.coronawarn.server.services.distribution.statistics.keyfigurecard.KeyFigureCardSequenceConstants;
 import app.coronawarn.server.services.distribution.statistics.validation.StatisticsJsonValidator;
 import app.coronawarn.server.services.distribution.utils.SerializationUtils;
 import java.io.File;
@@ -23,6 +24,7 @@ import java.time.LocalDate;
 import java.time.ZoneOffset;
 import java.util.ArrayList;
 import java.util.List;
+import org.junit.Assert;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -117,6 +119,30 @@ class StatisticsJsonToProtobufTest {
         .stream()
         .filter(keyFigureCard -> keyFigureCard.getHeader().getCardId() == id)
         .findFirst().get();
+  }
+
+  @EnableConfigurationProperties(value = DistributionServiceConfig.class)
+  @ExtendWith(SpringExtension.class)
+  @ActiveProfiles({"local-json-stats", "wrong-json"})
+  @Nested
+  @DisplayName("Wrong JSON Properties Test")
+  @ContextConfiguration(classes = {StatisticsJsonToProtobufTest.class,
+      StatisticsToProtobufMapping.class, KeyFigureCardFactory.class,
+      LocalStatisticJsonFileLoader.class
+  }, initializers = ConfigFileApplicationContextInitializer.class)
+  class StatisticsWrongJsonTest {
+
+    @Autowired
+    StatisticsToProtobufMapping mapping;
+
+    @Test
+    void testGenerateStatsWithWrongJSON() throws IOException {
+      var statsObject = mapping.constructProtobufStatistics();
+      var allEmpty = statsObject.getKeyFigureCardsList().stream()
+          .allMatch(c -> c.getHeader().getCardId() == KeyFigureCardSequenceConstants.EMPTY_CARD);
+      Assert.assertTrue("All key figure cards are empty: no properties in JSON to create cards", allEmpty);
+    }
+
   }
 
   @EnableConfigurationProperties(value = DistributionServiceConfig.class)
