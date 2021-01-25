@@ -74,8 +74,7 @@ public class StatisticsToProtobufMapping {
           .addAllKeyFigureCards(buildAllKeyFigureCards(jsonStringObjects))
           .build();
     } catch (BucketNotFoundException | ConnectionException | FilePathNotFoundException ex) {
-      logger.warn(ex.getMessage());
-      logger.warn("Statistics file will not be generated due to previous errors!");
+      logger.error("Statistics file not generated!", ex);
       return Statistics.newBuilder().build();
     }
   }
@@ -110,12 +109,16 @@ public class StatisticsToProtobufMapping {
         .collect(Collectors.toList());
     Collections.reverse(orderedList);
 
+    List<StatisticsJsonStringObject> collectedJsonObjects = new ArrayList<>();
+
     for (var stat : orderedList) {
+      collectedJsonObjects.add(stat);
       getAllCardIdSequence().forEach(id -> {
         if (figureCardMap.get(id).isEmpty()) {
           KeyFigureCard card;
           try {
             card = keyFigureCardFactory.createKeyFigureCard(stat, id);
+            logger.info("[{}] {} successfully created", stat.getEffectiveDate(), toCardName(id));
             figureCardMap.put(id, Optional.of(card));
           } catch (MissingPropertyException ex) {
             logger.warn("[{}] {}", stat.getEffectiveDate(), ex.getMessage());
@@ -125,6 +128,14 @@ public class StatisticsToProtobufMapping {
 
       if (figureCardMap.values().stream().allMatch(Optional::isPresent)) {
         break;
+      }
+    }
+
+    if (logger.isDebugEnabled()) {
+      logger.debug("The following statistics JSON entries were used to create the cards. Null values are omitted.");
+      for (var stat: collectedJsonObjects) {
+        var jsonString = SerializationUtils.stringifyObject(stat);
+        logger.debug("[{}] {}", stat.getEffectiveDate(), jsonString);
       }
     }
 

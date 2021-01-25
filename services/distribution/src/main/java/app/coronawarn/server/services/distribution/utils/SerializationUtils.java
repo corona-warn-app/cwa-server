@@ -35,4 +35,21 @@ public final class SerializationUtils {
       throw new IllegalStateException("Json configuration could not be deserialized");
     }
   }
+
+  /**
+   * Stringify json object T. T must be a valid Jackson object in order for properties to be correctly parsed into the
+   * string. Null values will be omitted.
+   * @param object Jackson object.
+   * @param <T> valid object with JsonProperty notations.
+   * @return String encoded JSON.
+   */
+  public static <T> String stringifyObject(T object) {
+    ObjectMapper mapper = new ObjectMapper();
+    try {
+      return mapper.writeValueAsString(object);
+    } catch (JsonProcessingException e) {
+      logger.error(e.getMessage());
+      throw new IllegalStateException("Object could not be converted into JSON");
+    }
+  }
 }
