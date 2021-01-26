@@ -24,7 +24,7 @@ public class StatisticsJsonStringObject {
   @JsonProperty("effective_date")
   private String effectiveDate;
   @JsonProperty("infections_effective_7days_avg")
-  private Integer infectionsReported7daysAvg;
+  private Double infectionsReported7daysAvg;
   @JsonProperty("infections_effective_7days_avg_growthrate")
   private Double infectionsReported7daysGrowthrate;
   @JsonProperty("infections_effective_7days_avg_trend_5percent")
@@ -48,7 +48,7 @@ public class StatisticsJsonStringObject {
   @JsonProperty("persons_who_shared_keys_daily")
   private Integer personsWhoSharedKeysDaily;
   @JsonProperty("persons_who_shared_keys_7days_avg")
-  private Integer personWhoSharedKeys7daysAvg;
+  private Double personWhoSharedKeys7daysAvg;
   @JsonProperty("positive_tests_not_used_to_share_keys_daily")
   private Integer positiveTestsNotUsedToShareKeysDaily;
   @JsonProperty("positive_tests_used_to_share_keys_daily")
@@ -104,7 +104,7 @@ public class StatisticsJsonStringObject {
     return effectiveDate;
   }
 
-  public Integer getInfectionsReported7daysAvg() {
+  public Double getInfectionsReported7daysAvg() {
     return infectionsReported7daysAvg;
   }
 
@@ -152,7 +152,7 @@ public class StatisticsJsonStringObject {
     return personsWhoSharedKeysDaily;
   }
 
-  public Integer getPersonWhoSharedKeys7daysAvg() {
+  public Double getPersonWhoSharedKeys7daysAvg() {
     return personWhoSharedKeys7daysAvg;
   }
 
@@ -236,7 +236,7 @@ public class StatisticsJsonStringObject {
     this.effectiveDate = effectiveDate;
   }
 
-  public void setInfectionsReported7daysAvg(Integer infectionsReported7daysAvg) {
+  public void setInfectionsReported7daysAvg(Double infectionsReported7daysAvg) {
     this.infectionsReported7daysAvg = infectionsReported7daysAvg;
   }
 
@@ -284,7 +284,7 @@ public class StatisticsJsonStringObject {
     this.personsWhoSharedKeysDaily = personsWhoSharedKeysDaily;
   }
 
-  public void setPersonWhoSharedKeys7daysAvg(Integer personWhoSharedKeys7daysAvg) {
+  public void setPersonWhoSharedKeys7daysAvg(Double personWhoSharedKeys7daysAvg) {
     this.personWhoSharedKeys7daysAvg = personWhoSharedKeys7daysAvg;
   }
 

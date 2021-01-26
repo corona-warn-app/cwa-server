@@ -39,7 +39,7 @@ class KeyFigureCardFactoryTest {
     statisticsJsonStringObject.setEffectiveDate("2020-11-05");
 
     statisticsJsonStringObject.setInfectionsReportedDaily(70200);
-    statisticsJsonStringObject.setInfectionsReported7daysAvg(1234);
+    statisticsJsonStringObject.setInfectionsReported7daysAvg(1234.0);
     statisticsJsonStringObject.setInfectionsReported7daysGrowthrate(1.15);
     statisticsJsonStringObject.setInfectionsReportedCumulated(123456);
     statisticsJsonStringObject.setInfectionsReported7daysTrend5percent(1);
@@ -48,7 +48,7 @@ class KeyFigureCardFactoryTest {
     statisticsJsonStringObject.setSevenDayIncidenceTrend1percent(1);
 
     statisticsJsonStringObject.setPersonsWhoSharedKeysDaily(2717);
-    statisticsJsonStringObject.setPersonWhoSharedKeys7daysAvg(123);
+    statisticsJsonStringObject.setPersonWhoSharedKeys7daysAvg(123.0);
     statisticsJsonStringObject.setPersonsWhoSharedKeys7daysGrowthrate(1.05);
     statisticsJsonStringObject.setPersonsWhoSharedKeysCumulated(4321);
     statisticsJsonStringObject.setPersonsWhoSharedKeys7daysTrend5percent(1);
