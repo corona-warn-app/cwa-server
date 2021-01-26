@@ -12,6 +12,7 @@ import app.coronawarn.server.common.protocols.internal.stats.KeyFigure.TrendSema
 import app.coronawarn.server.common.protocols.internal.stats.KeyFigureCard;
 import app.coronawarn.server.common.protocols.internal.stats.Statistics;
 import app.coronawarn.server.services.distribution.config.DistributionServiceConfig;
+import app.coronawarn.server.services.distribution.statistics.file.JsonFile;
 import app.coronawarn.server.services.distribution.statistics.file.LocalStatisticJsonFileLoader;
 import app.coronawarn.server.services.distribution.statistics.keyfigurecard.KeyFigureCardFactory;
 import app.coronawarn.server.services.distribution.statistics.keyfigurecard.KeyFigureCardSequenceConstants;
