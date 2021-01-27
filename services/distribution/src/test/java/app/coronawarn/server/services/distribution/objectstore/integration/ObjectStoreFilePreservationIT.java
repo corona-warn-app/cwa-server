@@ -3,6 +3,7 @@
 package app.coronawarn.server.services.distribution.objectstore.integration;
 
 import app.coronawarn.server.common.persistence.service.DiagnosisKeyService;
+import app.coronawarn.server.common.persistence.service.StatisticsDownloadService;
 import app.coronawarn.server.services.distribution.Application;
 import app.coronawarn.server.services.distribution.assembly.component.OutputDirectoryProvider;
 import app.coronawarn.server.services.distribution.assembly.structure.directory.DirectoryOnDisk;
@@ -58,6 +59,8 @@ class ObjectStoreFilePreservationIT extends BaseS3IntegrationTest {
   private ObjectStoreAccess objectStoreAccess;
   @Autowired
   private DistributionServiceConfig distributionServiceConfig;
+  @Autowired
+  private StatisticsDownloadService statisticsDownloadService;
 
   @MockBean
   private OutputDirectoryProvider distributionDirectoryProvider;

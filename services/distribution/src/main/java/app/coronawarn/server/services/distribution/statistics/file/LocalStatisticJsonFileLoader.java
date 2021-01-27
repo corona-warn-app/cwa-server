@@ -38,7 +38,7 @@ public class LocalStatisticJsonFileLoader implements JsonFileLoader {
   }
 
   @Override
-  public Optional<JsonFile> getFileIfUpdated(String eTag) {
+  public Optional<JsonFile> getFileIfUpdated(String etag) {
     return Optional.of(this.getFile());
   }
 

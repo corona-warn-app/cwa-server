@@ -6,6 +6,7 @@ import app.coronawarn.server.services.distribution.statistics.exceptions.BucketN
 import app.coronawarn.server.services.distribution.statistics.exceptions.ConnectionException;
 import app.coronawarn.server.services.distribution.statistics.exceptions.FilePathNotFoundException;
 import app.coronawarn.server.services.distribution.statistics.exceptions.NotModifiedException;
+import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -14,7 +15,6 @@ import org.springframework.retry.ExhaustedRetryException;
 import org.springframework.stereotype.Component;
 import software.amazon.awssdk.services.s3.model.NoSuchBucketException;
 import software.amazon.awssdk.services.s3.model.S3Exception;
-import java.util.Optional;
 
 @Component
 @Profile("!local-json-stats")
@@ -31,8 +31,8 @@ public class RemoteStatisticJsonFileLoader implements JsonFileLoader {
   }
 
   /**
-   * Map parent retryable exception {@link ExhaustedRetryException} to cwa owned exceptions.
-   * The inner exception will be an S3 AwsException.
+   * Map parent retryable exception {@link ExhaustedRetryException} to cwa owned exceptions. The inner exception will be
+   * an S3 AwsException.
    *
    * @param ex {@link software.amazon.awssdk.core.exception.SdkException} wrapped in a {@link ExhaustedRetryException}.
    * @return cwa owned RuntimeException.
@@ -66,15 +66,15 @@ public class RemoteStatisticJsonFileLoader implements JsonFileLoader {
   /**
    * Connects to remote storage to load file if not modified compared to {@param eTag}.
    *
-   * @param eTag only loads file if remote eTag is different from {@param eTag}.
+   * @param etag only loads file if remote eTag is different from {@param eTag}.
    * @return String content of file.
    * @throws RuntimeException if errors found using AWS SDK.
    */
   @Override
-  public Optional<JsonFile> getFileIfUpdated(String eTag) {
+  public Optional<JsonFile> getFileIfUpdated(String etag) {
     try {
       var result = s3Stats.getSingleObjectContent(config.getStatistics().getBucket(),
-          config.getStatistics().getStatisticPath(), eTag);
+          config.getStatistics().getStatisticPath(), etag);
       return Optional.of(result);
     } catch (ExhaustedRetryException | NotModifiedException ex) {
       if (ex.getCause() instanceof NotModifiedException || ex instanceof NotModifiedException) {

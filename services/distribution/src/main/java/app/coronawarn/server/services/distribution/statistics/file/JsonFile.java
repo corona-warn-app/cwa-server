@@ -2,11 +2,11 @@ package app.coronawarn.server.services.distribution.statistics.file;
 
 public class JsonFile {
   private String content;
-  private String eTag;
+  private String etag;
 
-  public JsonFile(String content, String eTag) {
+  public JsonFile(String content, String etag) {
     this.content = content;
-    this.eTag = eTag;
+    this.etag = etag;
   }
 
   public String getContent() {
@@ -18,10 +18,10 @@ public class JsonFile {
   }
 
   public String getETag() {
-    return eTag;
+    return etag;
   }
 
-  public void setETag(String eTag) {
-    this.eTag = eTag;
+  public void setETag(String etag) {
+    this.etag = etag;
   }
 }

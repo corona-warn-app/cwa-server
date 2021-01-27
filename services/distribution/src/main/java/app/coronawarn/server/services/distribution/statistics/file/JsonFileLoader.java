@@ -11,9 +11,9 @@ public interface JsonFileLoader {
   JsonFile getFile();
 
   /**
-   * Returns the content of the file only if eTag was updated.
+   * Returns the content of the file only if etag was updated. Otherwise returns Optional.empty.
    * @return String encoded JSON content
    */
-  Optional<JsonFile> getFileIfUpdated(String eTag);
+  Optional<JsonFile> getFileIfUpdated(String etag);
 
 }

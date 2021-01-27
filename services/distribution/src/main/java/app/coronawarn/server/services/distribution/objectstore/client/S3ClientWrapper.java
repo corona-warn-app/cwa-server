@@ -3,6 +3,8 @@ package app.coronawarn.server.services.distribution.objectstore.client;
 import static java.lang.Boolean.TRUE;
 import static java.util.stream.Collectors.toList;
 
+import app.coronawarn.server.services.distribution.statistics.exceptions.NotModifiedException;
+import app.coronawarn.server.services.distribution.statistics.file.JsonFile;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.nio.file.Path;
@@ -13,8 +15,6 @@ import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Function;
 import java.util.stream.Collectors;
-import app.coronawarn.server.services.distribution.statistics.exceptions.NotModifiedException;
-import app.coronawarn.server.services.distribution.statistics.file.JsonFile;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.retry.annotation.Backoff;
