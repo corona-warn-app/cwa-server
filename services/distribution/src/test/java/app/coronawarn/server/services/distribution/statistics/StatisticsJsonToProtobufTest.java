@@ -212,6 +212,7 @@ class StatisticsJsonToProtobufTest {
       StatisticsToProtobufMapping.class, KeyFigureCardFactory.class,
       LocalStatisticJsonFileLoader.class
   }, initializers = ConfigFileApplicationContextInitializer.class)
+
   class StatisticsJsonProcessingTest {
 
     @MockBean
@@ -262,7 +263,7 @@ class StatisticsJsonToProtobufTest {
           .containsExactly(KEY_SUBMISSION_CARD_ID, dateToTimestamp(LocalDate.of(2020, 11, 6)));
       assertThat(keySubmission.getKeyFigures(1))
           .extracting(KeyFigure::getValue, KeyFigure::getTrend, KeyFigure::getTrendSemantic)
-          .containsExactly(11.0, Trend.STABLE, TrendSemantic.NEUTRAL);
+          .containsExactly(11.428571428571429, Trend.STABLE, TrendSemantic.NEUTRAL);
     }
 
   }
