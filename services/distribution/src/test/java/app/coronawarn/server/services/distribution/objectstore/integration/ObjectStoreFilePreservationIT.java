@@ -161,7 +161,7 @@ class ObjectStoreFilePreservationIT extends BaseS3IntegrationTest {
     mockDistributionConfig.setRetentionDays(numberOfDaysSince(fromDate));
     mockDistributionConfig.setObjectStore(distributionServiceConfig.getObjectStore());
     new RetentionPolicy(diagnosisKeyService, applicationContext, mockDistributionConfig,
-        s3RetentionPolicy).run(null);
+        s3RetentionPolicy, statisticsDownloadService).run(null);
   }
 
   private Integer numberOfDaysSince(LocalDate testStartDate) {

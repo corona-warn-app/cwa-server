@@ -4,4 +4,5 @@ CREATE TABLE statistics_downloaded (
     etag varchar(256) NOT NULL
 );
 
-GRANT ALL ON TABLE statistics_downloaded TO "cwa_distribution"
+GRANT ALL ON TABLE statistics_downloaded TO "cwa_distribution";
+GRANT USAGE, SELECT ON SEQUENCE statistics_downloaded_counter_seq TO "cwa_distribution";
