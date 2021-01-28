@@ -44,7 +44,7 @@ public class StatisticsToProtobufMapping {
 
   /**
    * Process the JSON file provided by TSI and map the it to Statistics protobuf object.
-   *  @param distributionServiceConfig The config properties
+   * @param distributionServiceConfig The config properties
    * @param keyFigureCardFactory      KeyFigureCard structure provider
    * @param jsonFileLoader            Loader of the file from the system
    * @param statisticsDownloadService Statistics Download Service for keeping track of ETags
