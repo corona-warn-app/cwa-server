@@ -2,9 +2,7 @@ name: hadolint-analysis-workflow
 
 on:
     pull_request:
-        branches:
-        - main
-        - release/**
+        branches: [ main, release/** ]
         paths:
         - '**/Dockerfile'
 
