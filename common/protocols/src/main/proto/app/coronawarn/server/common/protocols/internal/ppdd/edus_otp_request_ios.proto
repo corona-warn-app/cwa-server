@@ -1,0 +1,13 @@
+// This file is auto-generated, DO NOT make any changes here
+syntax = "proto3";
+package app.coronawarn.server.common.protocols.internal.ppdd;
+option java_multiple_files = true;
+import "app/coronawarn/server/common/protocols/internal/ppdd/ppac_ios.proto";
+import "app/coronawarn/server/common/protocols/internal/ppdd/edus_otp.proto";
+
+message EDUSOneTimePasswordRequestIOS {
+
+  PPACIOS authentication = 1;
+
+  EDUSOneTimePassword payload = 2;
+}
