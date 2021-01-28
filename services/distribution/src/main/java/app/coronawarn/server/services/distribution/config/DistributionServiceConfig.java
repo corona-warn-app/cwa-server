@@ -16,19 +16,20 @@ import org.springframework.validation.annotation.Validated;
 @Validated
 public class DistributionServiceConfig {
 
-  private static final String PATH_REGEX = "^[/]?[a-zA-Z0-9_]+(/[a-zA-Z0-9_]+)*[/]?$";
-  private static final String FILE_NAME_REGEX = "^[a-zA-Z0-9_-]+$";
-  private static final String FILE_NAME_WITH_TYPE_REGEX = "^[a-zA-Z0-9_-]+\\.[a-z]+$";
-  private static final String CHAR_AND_NUMBER_REGEX = "^[a-zA-Z0-9_-]+$";
-  private static final String CHAR_NUMBER_AND_SPACE_REGEX = "^[a-zA-Z0-9_\\s]+$";
+  private static final String PATH_REGEX = "^[/]?[a-zA-Z0-9_]{1,1024}(/[a-zA-Z0-9_]{1,1024}){0,256}[/]?$";
+  private static final String FILE_NAME_REGEX = "^[a-zA-Z0-9_-]{1,1024}$";
+  private static final String FILE_NAME_WITH_TYPE_REGEX = "^[a-zA-Z0-9_-]{1,1024}\\.[a-z]{1,64}$";
+  private static final String CHAR_AND_NUMBER_REGEX = "^[a-zA-Z0-9_-]{1,1024}$";
+  private static final String CHAR_NUMBER_AND_SPACE_REGEX = "^[a-zA-Z0-9_\\s]{1,32}$";
   private static final String NO_WHITESPACE_REGEX = "^[\\S]+$";
-  private static final String URL_REGEX = "^http[s]?://[a-z0-9-]+([\\./][a-z0-9-]+)*[/]?$";
-  private static final String NUMBER_REGEX = "^[0-9]+$";
-  private static final String VERSION_REGEX = "^v[0-9]+$";
-  private static final String ALGORITHM_OID_REGEX = "^[0-9]+[\\.[0-9]+]*$";
-  private static final String BUNDLE_REGEX = "^[a-z-]+[\\.[a-z-]+]*$";
-  private static final String PRIVATE_KEY_REGEX = "^(classpath:|file:[/]+)[a-zA-Z0-9_-]+[/[a-zA-Z0-9_-]+]*(.pem)?$";
-
+  private static final String URL_REGEX = "^http[s]?://[a-z0-9-]{1,1024}([\\./][a-z0-9-]{1,1024}){0,256}[/]?$";
+  private static final String NUMBER_REGEX = "^[0-9]{1,256}$";
+  private static final String VERSION_REGEX = "^v[0-9]{1,256}$";
+  private static final String ALGORITHM_OID_REGEX = "^[0-9]{1,256}[\\.[0-9]{1,256}]{0,256}$";
+  private static final String BUNDLE_REGEX = "^[a-z-]{1,256}[\\.[a-z-]{1,256}]{0,256}$";
+  private static final String PRIVATE_KEY_REGEX = 
+      "^(classpath:|file:[/]{1,8})[a-zA-Z0-9_-]{1,256}[/[a-zA-Z0-9_-]{1,256}]{0,256}(.pem)?$";
+  
   private Paths paths;
   private TestData testData;
   @Min(0)
