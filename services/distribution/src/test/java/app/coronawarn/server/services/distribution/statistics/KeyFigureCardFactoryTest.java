@@ -238,7 +238,7 @@ class KeyFigureCardFactoryTest {
       assertThatThrownBy(() -> figureCardFactory.createKeyFigureCard(statisticsJsonStringObject, REPRODUCTION_NUMBER_CARD))
           .isInstanceOf(MissingPropertyException.class);
     }
-
+    
     @Test
     void shouldThrowAnExceptionIfMandatoryPropertyLessThanZero() {
       statisticsJsonStringObject.setSevenDayRvaluepublishedDaily(-1.0);
