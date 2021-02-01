@@ -7,6 +7,8 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import org.apache.commons.lang3.StringUtils;
 import org.bouncycastle.util.encoders.Hex;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.core.annotation.Order;
@@ -19,6 +21,7 @@ import org.springframework.stereotype.Component;
 @Order(1)
 public class RegistrationRunner implements ApplicationRunner {
 
+  private static final Logger logger = LoggerFactory.getLogger(RegistrationRunner.class);
   private CallbackServiceConfig serviceConfig;
   private FederationGatewayClient federationGatewayClient;
 
@@ -30,19 +33,22 @@ public class RegistrationRunner implements ApplicationRunner {
   @Override
   public void run(ApplicationArguments args) {
     if (!serviceConfig.isRegisterOnStartup()) {
+      logger.info("Callback registration on startup was disabled.");
       return;
     }
 
     String endpointUrl = serviceConfig.getEndpointUrl();
-    String id = computeSha256Hash(endpointUrl);
+    String registrationId = computeSha256Hash(endpointUrl);
 
-    boolean callbackUrlIsRegistered = federationGatewayClient.getCallbackRegistrations().getBody().stream()
-        .anyMatch(registrationResponse -> StringUtils.equals(id, registrationResponse.getId()));
-    if (callbackUrlIsRegistered) {
+    boolean callbackUrlIsAlreadyRegistered = federationGatewayClient.getCallbackRegistrations().getBody().stream()
+        .anyMatch(registrationResponse -> StringUtils.equals(registrationId, registrationResponse.getId()));
+    if (callbackUrlIsAlreadyRegistered) {
+      logger.info("Callback for id '" + registrationId + "' and URL '" + endpointUrl + "' was already registered.");
       return;
     }
 
-    federationGatewayClient.putCallbackRegistration(id, endpointUrl);
+    federationGatewayClient.putCallbackRegistration(registrationId, endpointUrl);
+    logger.info("Callback for id '" + registrationId + "' and URL '" + endpointUrl + "' registered successfully.");
   }
 
   private String computeSha256Hash(String subject) {
