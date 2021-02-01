@@ -36,7 +36,7 @@ import org.springframework.context.annotation.Configuration;
  * distributed in CDNs at different URLs. This Spring bean loads the default values defined in the
  * YAML configurations of each device type found under <code> /master-config/ </code> folder,
  * extends it with some Distribution Service global parameters and registers them for usage during
- * file archiving & bundling.
+ * file archiving and bundling.
  */
 @Configuration
 public class ApplicationConfigurationV2PublicationConfig {
@@ -51,6 +51,9 @@ public class ApplicationConfigurationV2PublicationConfig {
 
   /**
    * Fetches the master configuration as a ApplicationConfigurationAndroid instance.
+   * @param distributionServiceConfig type DistributionServiceConfig
+   * @return android configuration
+   * @throws UnableToLoadFileException if either the file access or subsequent yaml parsing fails.
    */
   @Bean
   public ApplicationConfigurationAndroid createAndroidV2Configuration(
@@ -137,6 +140,10 @@ public class ApplicationConfigurationV2PublicationConfig {
 
   /**
    * Fetches the master configuration as a ApplicationConfigurationAndroid instance.
+   *
+   * @param distributionServiceConfig config attributes to retrieve
+   * @return iOS configuration
+   * @throws UnableToLoadFileException if either the file access or subsequent yaml parsing fails.
    */
   @Bean
   public ApplicationConfigurationIOS createIosV2Configuration(DistributionServiceConfig distributionServiceConfig)

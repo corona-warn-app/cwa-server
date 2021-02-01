@@ -35,6 +35,11 @@ public class RetentionPolicy implements ApplicationRunner {
 
   /**
    * Creates a new RetentionPolicy.
+   *
+   * @param diagnosisKeyService DiagnosisKeyService
+   * @param applicationContext ApplicationContext
+   * @param distributionServiceConfig retention days
+   * @param s3RetentionPolicy S3RetentionPolicy
    */
   public RetentionPolicy(DiagnosisKeyService diagnosisKeyService,
       ApplicationContext applicationContext,

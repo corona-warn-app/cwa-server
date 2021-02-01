@@ -17,10 +17,10 @@ import org.springframework.web.bind.annotation.RequestHeader;
  * <p>Any application that wants to uses it must make sure the required configuration
  * beans in this module are registered (scan root package of the module). There is also a constraint imposed on
  * application properties, such that values for the following structure must be declared:
- * <li> federation-gateway.base-url
- * <li> federation-gateway.ssl.key-store-path
- * <li> federation-gateway.ssl.key-store-pass
- * <li> federation-gateway.ssl.certificate-type
+ * federation-gateway.base-url
+ * federation-gateway.ssl.key-store-path
+ * federation-gateway.ssl.key-store-pass
+ * federation-gateway.ssl.certificate-type
  */
 @FeignClient(name = "federation-server", url = "${federation-gateway.base-url}")
 public interface FederationGatewayClient {
@@ -45,6 +45,7 @@ public interface FederationGatewayClient {
    *                       DiagnosisKeyBatch.
    * @param batchTag       Unique batchTag to be identified by EFGS.
    * @param batchSignature Batch Signature as per PKCS#7 spec using Authorized Signing Certificate.
+   * @return {BatchUploadResponse} the BatchUploadResponse.
    */
   @PostMapping(value = "/diagnosiskeys/upload",
       consumes = "application/protobuf; version=1.0",

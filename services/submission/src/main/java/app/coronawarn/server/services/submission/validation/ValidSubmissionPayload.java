@@ -26,6 +26,7 @@ import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
 import javax.validation.Payload;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.cloud.commons.httpclient.ApacheHttpClientFactory;
 
 @Constraint(validatedBy = ValidSubmissionPayload.SubmissionPayloadValidator.class)
 @Target({ElementType.PARAMETER})
@@ -42,11 +43,15 @@ public @interface ValidSubmissionPayload {
 
   /**
    * Groups.
+   *
+   * @return generic array
    */
   Class<?>[] groups() default {};
 
   /**
    * Payload.
+   *
+   * @return generic array that extends {@link Payload}
    */
   Class<? extends Payload>[] payload() default {};
 

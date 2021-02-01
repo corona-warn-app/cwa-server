@@ -23,7 +23,7 @@ import org.springframework.stereotype.Component;
  * <br>
  * <ul>
  *   <li>Publishes index files on a different route, removing the trailing "/index" part.</li>
- *   <li>Adds meta information to the uploaded files, e.g. the 
+ *   <li>Adds meta information to the uploaded files, e.g. the
  *      <a href="https://github.com/corona-warn-app/cwa-server/blob/master/docs/DISTRIBUTION.md#cwa-hash">CWA-hash</a>
  *      value.</li>
  *   <li>Only performs the upload for files, which do not yet exist on the object store, and
@@ -69,7 +69,6 @@ public class S3Publisher {
    * be controlled through the configuration parameter <code>DistributionServiceConfig.forceUpdateKeyFiles</code>
    *
    * @param root The path of the directory that shall be published.
-   * @see Github issue #650
    * @throws IOException in case there were problems reading files from the disk.
    */
   public void publish(Path root) throws IOException {

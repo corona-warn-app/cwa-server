@@ -9,9 +9,9 @@ import java.util.List;
 /**
  * Multi-Status response from Upload. The payload returns three properties (201, 409 and 500) each property contains
  * a list of indexes. The index refers to the key position on the ordered Diagnosis Keys from UploadPayload.
- *  201 -> Successfully added               DO NOTHING
- *  409 -> Conflict: Key was already added  DO NOTHING
- *  500 -> Server Error: Key not processed  RETRY
+ *  201 - Successfully added               DO NOTHING
+ *  409 - Conflict: Key was already added  DO NOTHING
+ *  500 - Server Error: Key not processed  RETRY
  */
 public class BatchUploadResponse {
 
@@ -26,6 +26,9 @@ public class BatchUploadResponse {
 
   /**
    * Create the BatchUploadResponse.
+   * @param status409 Conflict: Key was already added
+   * @param status500 Server Error: Key not processed
+   * @param status201 Successfully added
    */
   public BatchUploadResponse(List<String> status409, List<String> status500, List<String> status201) {
     this.status409 = status409;

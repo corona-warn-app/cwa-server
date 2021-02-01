@@ -34,6 +34,8 @@ public class ArchiveOnDisk extends FileOnDiskWithChecksum implements Archive<Wri
 
   /**
    * Constructs an {@link Archive} with an internal, temporary directory to store writables in.
+   *
+   * @param name name of directory
    */
   public ArchiveOnDisk(String name) {
     super(name, new byte[0]);

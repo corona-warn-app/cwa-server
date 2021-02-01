@@ -34,6 +34,9 @@ public class CloudFeignClientProvider implements FeignClientProvider {
 
   /**
    * Creates a {@link CloudFeignClientProvider} that provides feign clients with fixed key and trust material.
+   *
+   * @param config config attributes of {@link SubmissionServiceConfig}
+   * @param hostnameVerifierProvider provider {@link SubmissionServiceConfig}
    */
   public CloudFeignClientProvider(SubmissionServiceConfig config, HostnameVerifierProvider hostnameVerifierProvider) {
     Ssl sslConfig = config.getClient().getSsl();
@@ -65,6 +68,8 @@ public class CloudFeignClientProvider implements FeignClientProvider {
 
   /**
    * Creates an {@link ApacheHttpClientFactory} that validates SSL certificates and host names.
+   *
+   * @return new ApacheHttpClientFactory
    */
   @Bean
   public ApacheHttpClientFactory createHttpClientFactory() {

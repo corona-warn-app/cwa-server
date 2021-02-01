@@ -26,6 +26,9 @@ public class RetentionPolicy implements ApplicationRunner {
 
   /**
    * Creates a new RetentionPolicy.
+   *
+   * @param federationBatchInfoService batch info service {@link FederationBatchInfoService}
+   * @param downloadServiceConfig download service configuration {@link DownloadServiceConfig}
    */
   public RetentionPolicy(FederationBatchInfoService federationBatchInfoService,
       DownloadServiceConfig downloadServiceConfig) {

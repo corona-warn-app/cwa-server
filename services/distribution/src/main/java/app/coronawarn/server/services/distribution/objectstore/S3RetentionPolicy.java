@@ -29,6 +29,10 @@ public class S3RetentionPolicy {
 
   /**
    * Creates an {@link S3RetentionPolicy} instance with the specified parameters.
+   *
+   * @param objectStoreAccess ObjectStoreAccess
+   * @param distributionServiceConfig config containing the API, origin Country and origin country
+   * @param failedOperationsCounter FailedObjectStoreOperationsCounter
    */
   public S3RetentionPolicy(ObjectStoreAccess objectStoreAccess, DistributionServiceConfig distributionServiceConfig,
       FailedObjectStoreOperationsCounter failedOperationsCounter) {

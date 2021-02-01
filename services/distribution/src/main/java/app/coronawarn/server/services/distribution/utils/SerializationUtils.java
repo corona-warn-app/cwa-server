@@ -21,6 +21,7 @@ public final class SerializationUtils {
    *
    * @param jsonString           value from configuration file
    * @param typeProviderFunction type deserialization function provider
+   * @param <T> generic type
    * @return deserialized json string
    */
   public static <T> T deserializeJson(String jsonString, Function<TypeFactory, JavaType> typeProviderFunction) {

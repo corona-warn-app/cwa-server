@@ -34,6 +34,8 @@ public class DevelopmentFeignClientProvider implements FeignClientProvider {
 
   /**
    * Creates an {@link ApacheHttpClientFactory} that neither validates SSL certificates nor host names.
+   *
+   * @return ApacheHttpClientFactory
    */
   @Bean
   public ApacheHttpClientFactory createHttpClientFactory() {

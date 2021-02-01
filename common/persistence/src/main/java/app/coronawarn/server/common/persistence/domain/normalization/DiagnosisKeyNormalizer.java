@@ -2,6 +2,8 @@
 
 package app.coronawarn.server.common.persistence.domain.normalization;
 
+import app.coronawarn.server.common.persistence.domain.DiagnosisKey;
+
 /**
  *  Responsible for sanitizing the information within a diagnosis key to fit the national specification.
  *  This can mean, for example, that either this service will initialize missing values that were not provided
@@ -22,6 +24,9 @@ public interface DiagnosisKeyNormalizer {
   /**
    * Given a container of fields from the {@link DiagnosisKey} with their respective values,
    * return a new container with the normalized values.
+   *
+   * @param fieldsAndValues the NormalizableFields to be normalized
+   * @return NormalizableFields after being normalized
    */
   NormalizableFields normalize(NormalizableFields fieldsAndValues);
 }

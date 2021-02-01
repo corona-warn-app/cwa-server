@@ -514,6 +514,8 @@ public class DistributionServiceConfig {
 
     /**
      * Returns the static {@link SignatureInfo} configured in the application properties.
+     *
+     * @return SignatureInfo
      */
     public SignatureInfo getSignatureInfo() {
       return SignatureInfo.newBuilder()

@@ -42,6 +42,7 @@ public class FederationFeignHttpClientProvider {
 
   /**
    * Creates a FeignClient.
+   * @return {Client} the client.
    */
   @Bean
   public Client createFeignClient() {
