@@ -1,4 +1,4 @@
 services:
   callback:
-    register-on-startup: false
+    register-on-startup: true
     endpoint-url: url

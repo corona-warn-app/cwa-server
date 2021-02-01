@@ -1,16 +1,19 @@
 package app.coronawarn.server.services.callback.controller;
 
+import static app.coronawarn.server.services.callback.CallbackUtils.computeSha256Hash;
 import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
-import static com.github.tomakehurst.wiremock.client.WireMock.anyUrl;
 import static com.github.tomakehurst.wiremock.client.WireMock.get;
+import static com.github.tomakehurst.wiremock.client.WireMock.getRequestedFor;
 import static com.github.tomakehurst.wiremock.client.WireMock.put;
+import static com.github.tomakehurst.wiremock.client.WireMock.putRequestedFor;
+import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo;
 import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.options;
-import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.verify;
+import static org.mockito.internal.verification.VerificationModeFactory.times;
 import static org.springframework.http.HttpHeaders.CONTENT_TYPE;
 
 import app.coronawarn.server.common.federation.client.callback.RegistrationResponse;
 import app.coronawarn.server.services.callback.config.CallbackServiceConfig;
-import app.coronawarn.server.services.callback.registration.RegistrationRunner;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.tomakehurst.wiremock.WireMockServer;
 import com.github.tomakehurst.wiremock.http.HttpHeader;
@@ -19,9 +22,9 @@ import java.util.List;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
+import org.springframework.boot.test.mock.mockito.SpyBean;
 import org.springframework.http.HttpStatus;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
@@ -33,22 +36,18 @@ class CallbackRegistrationRunnerIntegrationTest {
 
   private static WireMockServer server;
 
-  @Autowired
-  private RegistrationRunner registrationRunner;
-
-  @Autowired
+  @SpyBean
   private CallbackServiceConfig callbackServiceConfig;
 
   @BeforeAll
   static void setupWireMock() {
-    RegistrationResponse registrationResponse1 = new RegistrationResponse("id1", "url1");
-    RegistrationResponse registrationResponse2 = new RegistrationResponse("id2", "url2");
-    List<RegistrationResponse> responses = List.of(registrationResponse1, registrationResponse2);
+    RegistrationResponse registrationResponse1 = new RegistrationResponse(computeSha256Hash("url1"), "url1");
+    List<RegistrationResponse> responses = List.of(registrationResponse1);
 
     server = new WireMockServer(options().port(1234));
     server.start();
     server.stubFor(
-        get(anyUrl())
+        get(urlEqualTo("/diagnosiskeys/callback"))
             .willReturn(
                 aResponse()
                     .withStatus(HttpStatus.OK.value())
@@ -56,7 +55,7 @@ class CallbackRegistrationRunnerIntegrationTest {
                     .withBody(asJsonString(responses))));
 
     server.stubFor(
-        put(anyUrl())
+        put(urlEqualTo("/diagnosiskeys/callback/" + computeSha256Hash("url") + "?url=url"))
             .willReturn(
                 aResponse()
                     .withStatus(HttpStatus.OK.value())
@@ -84,6 +83,14 @@ class CallbackRegistrationRunnerIntegrationTest {
 
   @Test
   void testDownloadRunSuccessfully() {
-    assertThat(true).isTrue();
+    String expectedGetUrl = "/diagnosiskeys/callback";
+    server.verify(1, getRequestedFor(urlEqualTo(expectedGetUrl)));
+
+    String expectedPutUrl = "/diagnosiskeys/callback/"
+        + computeSha256Hash("url") + "?url=url";
+    server.verify(1, putRequestedFor(urlEqualTo(expectedPutUrl)));
+
+    verify(callbackServiceConfig, times(1)).isRegisterOnStartup();
+    verify(callbackServiceConfig, times(1)).getEndpointUrl();
   }
 }

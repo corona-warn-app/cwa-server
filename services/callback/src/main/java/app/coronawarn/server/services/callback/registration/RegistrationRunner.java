@@ -37,15 +37,16 @@ public class RegistrationRunner implements ApplicationRunner {
 
     String endpointUrl = serviceConfig.getEndpointUrl();
     String registrationId = computeSha256Hash(endpointUrl);
+    logger.info("Starting callback registration for URL '" + endpointUrl + "'.");
 
     boolean callbackUrlIsAlreadyRegistered = federationGatewayClient.getCallbackRegistrations().getBody().stream()
         .anyMatch(registrationResponse -> StringUtils.equals(registrationId, registrationResponse.getId()));
     if (callbackUrlIsAlreadyRegistered) {
-      logger.info("Callback for id '" + registrationId + "' (URL: '" + endpointUrl + "') was already registered.");
+      logger.info("Callback with id '" + registrationId + "' (URL: '" + endpointUrl + "') was already registered.");
       return;
     }
 
     federationGatewayClient.putCallbackRegistration(registrationId, endpointUrl);
-    logger.info("Callback for id '" + registrationId + "' and URL '" + endpointUrl + "' registered successfully.");
+    logger.info("Callback with id '" + registrationId + "' and URL '" + endpointUrl + "' registered successfully.");
   }
 }
