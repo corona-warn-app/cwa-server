@@ -27,7 +27,7 @@ import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
 
 @SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
-@ActiveProfiles({"download-date-based-integration-test"})
+@ActiveProfiles({"callback-registration"})
 @DirtiesContext
 class CallbackRegistrationRunnerIntegrationTest {
 

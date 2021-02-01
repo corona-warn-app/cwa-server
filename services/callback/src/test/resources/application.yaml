@@ -21,7 +21,7 @@ services:
     monitoring:
       batch-size: 5
     efgs-cert-cn: localhost
-    register-on-startup: true
+    register-on-startup: false
     endpoint-url: url
 
 federation-gateway:
