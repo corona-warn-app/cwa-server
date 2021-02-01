@@ -41,8 +41,6 @@ class CallbackRegistrationRunnerIntegrationTest {
 
   @BeforeAll
   static void setupWireMock() {
-    //HttpHeaders batch1Headers = getHttpHeaders(BATCH1_TAG, BATCH2_TAG);
-
     RegistrationResponse registrationResponse1 = new RegistrationResponse("id1", "url1");
     RegistrationResponse registrationResponse2 = new RegistrationResponse("id2", "url2");
     List<RegistrationResponse> responses = List.of(registrationResponse1, registrationResponse2);
