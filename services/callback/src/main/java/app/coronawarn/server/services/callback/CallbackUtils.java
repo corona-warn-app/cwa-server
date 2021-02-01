@@ -7,6 +7,12 @@ import org.bouncycastle.util.encoders.Hex;
 
 public class CallbackUtils {
 
+  /**
+   * Computes the SHA-256 hash of the provided string.
+   *
+   * @param subject the string to compute the hash
+   * @return the SHA-256 hash of the string.
+   */
   public static String computeSha256Hash(String subject) {
     MessageDigest digest = null;
     try {
