@@ -7,6 +7,7 @@ import app.coronawarn.server.common.protocols.internal.stats.KeyFigureCard.Build
 import app.coronawarn.server.services.distribution.statistics.StatisticsJsonStringObject;
 import app.coronawarn.server.services.distribution.statistics.keyfigurecard.KeyFigureCardSequenceConstants;
 import app.coronawarn.server.services.distribution.statistics.keyfigurecard.ValueTrendCalculator;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -44,7 +45,7 @@ public class IncidenceCardFactory extends HeaderCardFactory {
     );
 
     if (requiredFields.contains(Optional.empty()) || stats.getSevenDayIncidence() <= 0) {
-      return List.of(Optional.empty());
+      return Collections.emptyList();
     }
 
     return requiredFields;

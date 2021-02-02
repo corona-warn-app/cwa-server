@@ -9,6 +9,7 @@ import app.coronawarn.server.common.protocols.internal.stats.KeyFigureCard.Build
 import app.coronawarn.server.services.distribution.statistics.StatisticsJsonStringObject;
 import app.coronawarn.server.services.distribution.statistics.keyfigurecard.KeyFigureCardSequenceConstants;
 import app.coronawarn.server.services.distribution.statistics.keyfigurecard.ValueTrendCalculator;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -73,7 +74,7 @@ public class InfectionsCardFactory extends HeaderCardFactory {
         || stats.getInfectionsReportedCumulated() <= 0
         || stats.getInfectionsReported7daysAvg() <= 0
         || stats.getInfectionsReportedDaily() <= 0) {
-      return List.of(Optional.empty());
+      return Collections.emptyList();
     }
 
     return requiredFields;
