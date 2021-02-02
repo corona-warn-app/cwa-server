@@ -1,14 +1,15 @@
-
-
 package app.coronawarn.server.common.federation.client;
 
+import app.coronawarn.server.common.federation.client.callback.RegistrationResponse;
 import app.coronawarn.server.common.federation.client.upload.BatchUploadResponse;
 import app.coronawarn.server.common.protocols.external.exposurenotification.DiagnosisKeyBatch;
+import java.util.List;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestHeader;
 
 /**
@@ -24,6 +25,19 @@ import org.springframework.web.bind.annotation.RequestHeader;
  */
 @FeignClient(name = "federation-server", url = "${federation-gateway.base-url}")
 public interface FederationGatewayClient {
+
+  @GetMapping(value = "/diagnosiskeys/callback",
+      headers = {"Accept=application/json; version=1.0",
+          "X-SSL-Client-SHA256=${federation-gateway.ssl.certificate-sha}",
+          "X-SSL-Client-DN=${federation-gateway.ssl.certificate-dn}"})
+  ResponseEntity<List<RegistrationResponse>> getCallbackRegistrations();
+
+  @PutMapping(value = "/diagnosiskeys/callback/{id}?url={url}",
+      headers = {"Accept=application/json; version=1.0",
+          "X-SSL-Client-SHA256=${federation-gateway.ssl.certificate-sha}",
+          "X-SSL-Client-DN=${federation-gateway.ssl.certificate-dn}"})
+  ResponseEntity<RegistrationResponse> putCallbackRegistration(@PathVariable("id") String id,
+      @PathVariable("url") String url);
 
   @GetMapping(value = "/diagnosiskeys/download/{date}",
       headers = {"Accept=application/protobuf; version=1.0",
