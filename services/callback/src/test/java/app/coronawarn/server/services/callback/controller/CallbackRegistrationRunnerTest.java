@@ -2,7 +2,6 @@ package app.coronawarn.server.services.callback.controller;
 
 import static app.coronawarn.server.services.callback.CallbackUtils.computeSha256Hash;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -79,7 +78,7 @@ class CallbackRegistrationRunnerTest {
     verify(callbackServiceConfig, times(1)).getEndpointUrl();
     verify(federationGatewayClient, times(1)).getCallbackRegistrations();
     verify(federationGatewayClient, times(1))
-        .putCallbackRegistration(eq(computeSha256Hash(endpointUrl)), eq(endpointUrl));
+        .putCallbackRegistration(computeSha256Hash(endpointUrl), endpointUrl);
   }
 
 }

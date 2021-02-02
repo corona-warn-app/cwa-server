@@ -7,6 +7,12 @@ import org.bouncycastle.util.encoders.Hex;
 
 public class CallbackUtils {
 
+  public static final String HASHING_ALGORITHM = "SHA-256";
+
+  private CallbackUtils() {
+    throw new IllegalStateException("Utility class");
+  }
+
   /**
    * Computes the SHA-256 hash of the provided string.
    *
@@ -16,9 +22,9 @@ public class CallbackUtils {
   public static String computeSha256Hash(String subject) {
     MessageDigest digest = null;
     try {
-      digest = MessageDigest.getInstance("SHA-256");
+      digest = MessageDigest.getInstance(HASHING_ALGORITHM);
     } catch (NoSuchAlgorithmException e) {
-      throw new RuntimeException("Hash algorithm not found.");
+      throw new HashAlgorithmNotFoundException("Hashing algorithm '" + HASHING_ALGORITHM + "' not found.");
     }
     byte[] hash = digest.digest(
         subject.getBytes(StandardCharsets.UTF_8));
