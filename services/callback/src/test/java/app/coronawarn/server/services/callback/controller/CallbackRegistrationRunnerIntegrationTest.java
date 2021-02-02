@@ -1,6 +1,6 @@
 package app.coronawarn.server.services.callback.controller;
 
-import static app.coronawarn.server.services.callback.CallbackUtils.computeSha256Hash;
+import static app.coronawarn.server.services.callback.HashingUtils.computeSha256Hash;
 import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
 import static com.github.tomakehurst.wiremock.client.WireMock.get;
 import static com.github.tomakehurst.wiremock.client.WireMock.getRequestedFor;

@@ -1,6 +1,6 @@
 package app.coronawarn.server.services.callback.registration;
 
-import static app.coronawarn.server.services.callback.CallbackUtils.computeSha256Hash;
+import static app.coronawarn.server.services.callback.HashingUtils.computeSha256Hash;
 
 import app.coronawarn.server.common.federation.client.FederationGatewayClient;
 import app.coronawarn.server.services.callback.config.CallbackServiceConfig;

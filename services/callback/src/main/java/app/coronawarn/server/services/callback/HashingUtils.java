@@ -5,11 +5,11 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import org.bouncycastle.util.encoders.Hex;
 
-public class CallbackUtils {
+public class HashingUtils {
 
   public static final String HASHING_ALGORITHM = "SHA-256";
 
-  private CallbackUtils() {
+  private HashingUtils() {
     throw new IllegalStateException("Utility class");
   }
 

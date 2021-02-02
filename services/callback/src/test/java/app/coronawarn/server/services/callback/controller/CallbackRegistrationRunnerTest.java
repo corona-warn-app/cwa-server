@@ -1,6 +1,6 @@
 package app.coronawarn.server.services.callback.controller;
 
-import static app.coronawarn.server.services.callback.CallbackUtils.computeSha256Hash;
+import static app.coronawarn.server.services.callback.HashingUtils.computeSha256Hash;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
