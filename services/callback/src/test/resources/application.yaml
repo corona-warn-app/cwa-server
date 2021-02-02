@@ -21,6 +21,18 @@ services:
     monitoring:
       batch-size: 5
     efgs-cert-cn: localhost
+    register-on-startup: false
+    endpoint-url: url
+
+federation-gateway:
+  base-url: http://localhost:1234
+  connection-pool-size: 200
+  ssl:
+    key-password: 123456
+    key-store: ../../docker-compose-test-secrets/ssl.p12
+    key-store-password: 123456
+    trust-store: ../../docker-compose-test-secrets/contains_efgs_truststore.jks
+    trust-store-password: 123456
 
 management:
   endpoint:
