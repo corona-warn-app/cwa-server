@@ -31,7 +31,7 @@ public class RegistrationRunner implements ApplicationRunner {
   @Override
   public void run(ApplicationArguments args) {
     if (!serviceConfig.isRegisterOnStartup()) {
-      logger.info("Callback registration on startup was disabled.");
+      logger.info("Callback registration on startup is disabled. See 'CALLBACK_REGISTER_ON_STARTUP'");
       return;
     }
 

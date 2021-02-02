@@ -24,7 +24,7 @@ public class HashingUtils {
     try {
       digest = MessageDigest.getInstance(HASHING_ALGORITHM);
     } catch (NoSuchAlgorithmException e) {
-      throw new HashAlgorithmNotFoundException("Hashing algorithm '" + HASHING_ALGORITHM + "' not found.");
+      throw new HashAlgorithmNotFoundException("Hashing algorithm '" + HASHING_ALGORITHM + "' not found.", e);
     }
     byte[] hash = digest.digest(
         subject.getBytes(StandardCharsets.UTF_8));
