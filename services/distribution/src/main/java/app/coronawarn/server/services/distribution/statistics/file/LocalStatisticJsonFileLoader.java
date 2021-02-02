@@ -33,7 +33,7 @@ public class LocalStatisticJsonFileLoader implements JsonFileLoader {
       return new JsonFile(content, "local");
     } catch (IOException e) {
       throw new RuntimeException(String.format("Failed to load Local JSON from path %s",
-          serviceConfig.getStatistics().getStatisticPath()));
+          serviceConfig.getStatistics().getStatisticPath()), e);
     }
   }
 

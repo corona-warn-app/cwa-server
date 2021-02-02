@@ -7,8 +7,6 @@ import app.coronawarn.server.services.distribution.statistics.exceptions.Connect
 import app.coronawarn.server.services.distribution.statistics.exceptions.FilePathNotFoundException;
 import app.coronawarn.server.services.distribution.statistics.exceptions.NotModifiedException;
 import java.util.Optional;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Profile;
 import org.springframework.retry.ExhaustedRetryException;
@@ -20,10 +18,8 @@ import software.amazon.awssdk.services.s3.model.S3Exception;
 @Profile("!local-json-stats")
 public class RemoteStatisticJsonFileLoader implements JsonFileLoader {
 
-  private static final Logger logger = LoggerFactory.getLogger(RemoteStatisticJsonFileLoader.class);
   ObjectStoreClient s3Stats;
   DistributionServiceConfig config;
-
 
   RemoteStatisticJsonFileLoader(@Qualifier("stats-s3") ObjectStoreClient s3Stats, DistributionServiceConfig config) {
     this.s3Stats = s3Stats;
@@ -39,11 +35,11 @@ public class RemoteStatisticJsonFileLoader implements JsonFileLoader {
    */
   private RuntimeException mapException(ExhaustedRetryException ex) {
     if (ex.getCause() instanceof NoSuchBucketException) {
-      return new BucketNotFoundException(config.getStatistics().getBucket());
+      return new BucketNotFoundException(config.getStatistics().getBucket(), ex);
     } else if (ex.getCause() instanceof S3Exception) {
-      return new FilePathNotFoundException(config.getStatistics().getStatisticPath());
+      return new FilePathNotFoundException(config.getStatistics().getStatisticPath(), ex);
     } else {
-      return new ConnectionException();
+      return new ConnectionException(ex);
     }
   }
 
