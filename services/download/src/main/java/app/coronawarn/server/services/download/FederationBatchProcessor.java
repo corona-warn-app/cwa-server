@@ -45,10 +45,12 @@ public class FederationBatchProcessor {
   private final DownloadServiceConfig config;
   private final ValidFederationKeyFilter validFederationKeyFilter;
 
-  // This is a potential memory-leak if there are very many batches
-  // This is an intentional decision:
-  // We'd rather run into a memory-leak if there are too many batches
-  // than run into an endless loop if a batch-tag repeats
+  /**
+   * This is a potential memory-leak if there are very many batches.
+   * This is an intentional decision:
+   * We'd rather run into a memory-leak if there are too many batches
+   * than run into an endless loop if a batch-tag repeats
+   */
   private final Set<String> seenBatches;
 
   /**
