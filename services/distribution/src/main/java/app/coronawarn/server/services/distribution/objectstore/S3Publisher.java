@@ -67,6 +67,7 @@ public class S3Publisher {
    * published on S3, even if the retention and shifting policies cause a diff between subsequent distribution runs.
    * Thus, by default distribution will only add new key files, but still modify indexes. This behaviour can however
    * be controlled through the configuration parameter <code>DistributionServiceConfig.forceUpdateKeyFiles</code>
+   * Related to GitHub issue 650
    *
    * @param root The path of the directory that shall be published.
    * @throws IOException in case there were problems reading files from the disk.
