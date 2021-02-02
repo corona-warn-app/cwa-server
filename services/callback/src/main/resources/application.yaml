@@ -33,6 +33,8 @@ spring:
 # Actuator configuration
 management:
   server:
+    ssl:
+      enabled: false
     port: 8081
   endpoint:
     metrics:
@@ -42,7 +44,7 @@ management:
     health:
       group:
         readiness:
-          include: db, verificationService
+          include: db, callbackController
           show-details: always
   endpoints:
     web:
