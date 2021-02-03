@@ -5,6 +5,7 @@ import app.coronawarn.server.services.distribution.objectstore.client.ObjectStor
 import app.coronawarn.server.services.distribution.statistics.exceptions.BucketNotFoundException;
 import app.coronawarn.server.services.distribution.statistics.exceptions.ConnectionException;
 import app.coronawarn.server.services.distribution.statistics.exceptions.FilePathNotFoundException;
+import app.coronawarn.server.services.distribution.statistics.exceptions.NotModifiedException;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,7 +19,9 @@ import software.amazon.awssdk.core.exception.SdkClientException;
 import software.amazon.awssdk.services.s3.model.NoSuchBucketException;
 import software.amazon.awssdk.services.s3.model.S3Exception;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.assertThrows;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -41,7 +44,7 @@ class RemoteStatisticJsonFileLoaderTest {
     when(mockS3client.getSingleObjectContent(anyString(), anyString()))
         .thenThrow(new ExhaustedRetryException("", mockException));
     var loader = new RemoteStatisticJsonFileLoader(mockS3client, serviceConfig);
-    assertThrows(BucketNotFoundException.class, loader::getContent);
+    assertThrows(BucketNotFoundException.class, loader::getFile);
   }
 
   @Test
@@ -50,7 +53,7 @@ class RemoteStatisticJsonFileLoaderTest {
     when(mockS3client.getSingleObjectContent(anyString(), anyString()))
         .thenThrow(new ExhaustedRetryException("", mockException));
     var loader = new RemoteStatisticJsonFileLoader(mockS3client, serviceConfig);
-    assertThrows(ConnectionException.class, loader::getContent);
+    assertThrows(ConnectionException.class, loader::getFile);
   }
 
   @Test
@@ -59,7 +62,38 @@ class RemoteStatisticJsonFileLoaderTest {
     when(mockS3client.getSingleObjectContent(anyString(), anyString()))
         .thenThrow(new ExhaustedRetryException("", mockException));
     var loader = new RemoteStatisticJsonFileLoader(mockS3client, serviceConfig);
-    assertThrows(FilePathNotFoundException.class, loader::getContent);
+    assertThrows(FilePathNotFoundException.class, loader::getFile);
+  }
+
+  @Test
+  void shouldReturnFileIfEtagDoesntMatch() throws NotModifiedException {
+    when(mockS3client.getSingleObjectContent(anyString(), anyString(), anyString()))
+        .thenReturn(new JsonFile("some-content", "new-etag"));
+    var loader = new RemoteStatisticJsonFileLoader(mockS3client, serviceConfig);
+    var result = loader.getFileIfUpdated("old-etag");
+    assertTrue(result.isPresent());
+    assertThat(result.get().getContent()).isNotEmpty();
+    assertThat(result.get().getETag()).isNotEmpty();
+  }
+
+  @Test
+  void shouldReturnEmptyOptionalIfNotModifiedExceptionIsThrown() throws NotModifiedException {
+    when(mockS3client.getSingleObjectContent(anyString(), anyString(), anyString()))
+        .thenThrow(new NotModifiedException("some-content", "same-etag"));
+    var loader = new RemoteStatisticJsonFileLoader(mockS3client, serviceConfig);
+    var result = loader.getFileIfUpdated("same-etag");
+    assertTrue(result.isEmpty());
+  }
+
+  @Test
+  void shouldThrowRegularExceptionsWhenETagIsPassed() throws NotModifiedException {
+    var mockException = mock(S3Exception.class);
+    when(mockS3client.getSingleObjectContent(anyString(), anyString(), anyString()))
+        .thenThrow(new ExhaustedRetryException("", mockException));
+    var loader = new RemoteStatisticJsonFileLoader(mockS3client, serviceConfig);
+    assertThrows(FilePathNotFoundException.class, () -> {
+      loader.getFileIfUpdated("some-etag");
+    });
   }
 
 }

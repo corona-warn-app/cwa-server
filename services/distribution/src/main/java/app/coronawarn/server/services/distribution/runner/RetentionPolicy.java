@@ -1,6 +1,7 @@
 package app.coronawarn.server.services.distribution.runner;
 
 import app.coronawarn.server.common.persistence.service.DiagnosisKeyService;
+import app.coronawarn.server.common.persistence.service.StatisticsDownloadService;
 import app.coronawarn.server.services.distribution.Application;
 import app.coronawarn.server.services.distribution.config.DistributionServiceConfig;
 import app.coronawarn.server.services.distribution.objectstore.S3RetentionPolicy;
@@ -32,6 +33,8 @@ public class RetentionPolicy implements ApplicationRunner {
 
   private final Integer hourFileRetentionDays;
 
+  private final StatisticsDownloadService statisticsDownloadService;
+
 
   /**
    * Creates a new RetentionPolicy.
@@ -39,12 +42,14 @@ public class RetentionPolicy implements ApplicationRunner {
   public RetentionPolicy(DiagnosisKeyService diagnosisKeyService,
       ApplicationContext applicationContext,
       DistributionServiceConfig distributionServiceConfig,
-      S3RetentionPolicy s3RetentionPolicy) {
+      S3RetentionPolicy s3RetentionPolicy,
+      StatisticsDownloadService statisticsDownloadService) {
     this.diagnosisKeyService = diagnosisKeyService;
     this.applicationContext = applicationContext;
     this.retentionDays = distributionServiceConfig.getRetentionDays();
     this.hourFileRetentionDays = distributionServiceConfig.getObjectStore().getHourFileRetentionDays();
     this.s3RetentionPolicy = s3RetentionPolicy;
+    this.statisticsDownloadService = statisticsDownloadService;
   }
 
   @Override
@@ -53,6 +58,7 @@ public class RetentionPolicy implements ApplicationRunner {
       diagnosisKeyService.applyRetentionPolicy(retentionDays);
       s3RetentionPolicy.applyRetentionPolicy(retentionDays);
       s3RetentionPolicy.applyHourFileRetentionPolicy(hourFileRetentionDays);
+      statisticsDownloadService.applyRetentionPolicy(retentionDays);
     } catch (Exception e) {
       logger.error("Application of retention policy failed.", e);
       Application.killApplication(applicationContext);
