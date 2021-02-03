@@ -1,6 +1,6 @@
 package app.coronawarn.server.services.callback.registration;
 
-import static app.coronawarn.server.services.callback.HashingUtils.computeSha256Hash;
+import static app.coronawarn.server.services.callback.HashingUtils.computeHash;
 
 import app.coronawarn.server.common.federation.client.FederationGatewayClient;
 import app.coronawarn.server.services.callback.config.CallbackServiceConfig;
@@ -36,7 +36,7 @@ public class RegistrationRunner implements ApplicationRunner {
     }
 
     String endpointUrl = serviceConfig.getEndpointUrl();
-    String registrationId = computeSha256Hash(endpointUrl);
+    String registrationId = computeHash(endpointUrl);
     logger.info("Starting callback registration for ID '{}' URL '{}'.", registrationId, endpointUrl);
 
     boolean callbackUrlIsAlreadyRegistered = federationGatewayClient.getCallbackRegistrations().getBody().stream()

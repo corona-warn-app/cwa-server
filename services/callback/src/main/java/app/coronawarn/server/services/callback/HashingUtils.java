@@ -7,19 +7,19 @@ import org.bouncycastle.util.encoders.Hex;
 
 public class HashingUtils {
 
-  public static final String HASHING_ALGORITHM = "SHA-256";
+  public static final String HASHING_ALGORITHM = "MD5";
 
   private HashingUtils() {
     throw new IllegalStateException("Utility class");
   }
 
   /**
-   * Computes the SHA-256 hash of the provided string.
+   * Computes the hash of the provided string.
    *
    * @param subject the string to compute the hash
-   * @return the SHA-256 hash of the string.
+   * @return the hash of the string.
    */
-  public static String computeSha256Hash(String subject) {
+  public static String computeHash(String subject) {
     MessageDigest digest = null;
     try {
       digest = MessageDigest.getInstance(HASHING_ALGORITHM);
