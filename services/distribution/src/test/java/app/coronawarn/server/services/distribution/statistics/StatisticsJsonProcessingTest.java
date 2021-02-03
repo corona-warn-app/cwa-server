@@ -1,5 +1,6 @@
 package app.coronawarn.server.services.distribution.statistics;
 
+import app.coronawarn.server.common.persistence.service.StatisticsDownloadService;
 import app.coronawarn.server.common.protocols.internal.stats.CardHeader;
 import app.coronawarn.server.common.protocols.internal.stats.KeyFigure;
 import app.coronawarn.server.common.protocols.internal.stats.KeyFigure.Trend;
@@ -12,12 +13,14 @@ import java.io.IOException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
+import java.util.Optional;
 import app.coronawarn.server.services.distribution.statistics.keyfigurecard.KeyFigureCardSequenceConstants;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.ConfigFileApplicationContextInitializer;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
@@ -25,6 +28,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 import static app.coronawarn.server.services.distribution.statistics.keyfigurecard.KeyFigureCardSequenceConstants.*;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.mockito.Mockito.when;
 
 @EnableConfigurationProperties(value = DistributionServiceConfig.class)
 @ExtendWith(SpringExtension.class)
@@ -38,6 +42,9 @@ class StatisticsJsonProcessingTest {
   @Autowired
   StatisticsToProtobufMapping mapping;
 
+  @MockBean
+  StatisticsDownloadService service;
+
   private long dateToTimestamp(LocalDate date) {
     return date.atStartOfDay(ZoneOffset.UTC).toEpochSecond();
   }
@@ -45,6 +52,7 @@ class StatisticsJsonProcessingTest {
   @Test
   void shouldRunParsing() throws IOException {
     var result = mapping.constructProtobufStatistics();
+    when(service.getMostRecentDownload()).thenReturn(Optional.empty());
 
     // Assert Infections card
     assertThat(result.getKeyFigureCards(0).getHeader())

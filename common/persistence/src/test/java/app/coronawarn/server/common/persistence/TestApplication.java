@@ -7,9 +7,11 @@ import app.coronawarn.server.common.persistence.domain.config.YamlPropertySource
 import app.coronawarn.server.common.persistence.repository.DiagnosisKeyRepository;
 import app.coronawarn.server.common.persistence.repository.FederationBatchInfoRepository;
 import app.coronawarn.server.common.persistence.repository.FederationUploadKeyRepository;
+import app.coronawarn.server.common.persistence.repository.StatisticsDownloadRepository;
 import app.coronawarn.server.common.persistence.service.DiagnosisKeyService;
 import app.coronawarn.server.common.persistence.service.FederationBatchInfoService;
 import app.coronawarn.server.common.persistence.service.FederationUploadKeyService;
+import app.coronawarn.server.common.persistence.service.StatisticsDownloadService;
 import app.coronawarn.server.common.persistence.service.common.KeySharingPoliciesChecker;
 import app.coronawarn.server.common.persistence.service.common.ValidDiagnosisKeyFilter;
 import java.util.Map;
@@ -44,6 +46,11 @@ public class TestApplication {
   @Bean
   FederationBatchInfoService createFederationBatchInfoService(FederationBatchInfoRepository federationBatchInfoRepository) {
     return new FederationBatchInfoService(federationBatchInfoRepository);
+  }
+
+  @Bean
+  StatisticsDownloadService createStatisticsDownloadService(StatisticsDownloadRepository repository) {
+    return new StatisticsDownloadService(repository);
   }
 
   @Bean
