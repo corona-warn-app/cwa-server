@@ -1,6 +1,6 @@
-package app.coronawarn.server.services.callback.controller;
+package app.coronawarn.server.services.callback.registration;
 
-import static app.coronawarn.server.services.callback.HashingUtils.computeSha256Hash;
+import static app.coronawarn.server.services.callback.HashingUtils.computeHash;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
@@ -45,7 +45,7 @@ class CallbackRegistrationRunnerTest {
     FederationGatewayClient federationGatewayClient = mock(FederationGatewayClient.class);
     when(federationGatewayClient.getCallbackRegistrations())
         .thenReturn(
-            new ResponseEntity<>(List.of(new RegistrationResponse(computeSha256Hash(endpointUrl), endpointUrl)),
+            new ResponseEntity<>(List.of(new RegistrationResponse(computeHash(endpointUrl), endpointUrl)),
                 HttpStatus.OK));
 
     RegistrationRunner registrationRunner = new RegistrationRunner(callbackServiceConfig, federationGatewayClient);
@@ -68,7 +68,7 @@ class CallbackRegistrationRunnerTest {
     FederationGatewayClient federationGatewayClient = mock(FederationGatewayClient.class);
     when(federationGatewayClient.getCallbackRegistrations())
         .thenReturn(
-            new ResponseEntity<>(List.of(new RegistrationResponse(computeSha256Hash("id"), "other-url")),
+            new ResponseEntity<>(List.of(new RegistrationResponse(computeHash("id"), "other-url")),
                 HttpStatus.OK));
 
     RegistrationRunner registrationRunner = new RegistrationRunner(callbackServiceConfig, federationGatewayClient);
@@ -78,7 +78,7 @@ class CallbackRegistrationRunnerTest {
     verify(callbackServiceConfig, times(1)).getEndpointUrl();
     verify(federationGatewayClient, times(1)).getCallbackRegistrations();
     verify(federationGatewayClient, times(1))
-        .putCallbackRegistration(computeSha256Hash(endpointUrl), endpointUrl);
+        .putCallbackRegistration(computeHash(endpointUrl), endpointUrl);
   }
 
 }
