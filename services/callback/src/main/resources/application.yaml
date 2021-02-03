@@ -55,7 +55,7 @@ management:
     health:
       group:
         readiness:
-          include: db, callbackController
+          include: db
           show-details: always
   endpoints:
     web:

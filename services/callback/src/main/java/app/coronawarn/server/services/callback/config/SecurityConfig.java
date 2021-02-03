@@ -28,11 +28,11 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
   private static final String CALLBACK_ROUTE =
       "/version/v1" + CallbackController.CALLBACK_ROUTE;
-  private static final String ACTUATOR_ROUTE = "/actuator/";
-  private static final String HEALTH_ROUTE = ACTUATOR_ROUTE + "health";
-  private static final String PROMETHEUS_ROUTE = ACTUATOR_ROUTE + "prometheus";
-  private static final String READINESS_ROUTE = ACTUATOR_ROUTE + "readiness";
-  private static final String LIVENESS_ROUTE = ACTUATOR_ROUTE + "liveness";
+  private static final String ACTUATOR_ROUTE = "/actuator";
+  private static final String HEALTH_ROUTE = ACTUATOR_ROUTE + "/health";
+  private static final String PROMETHEUS_ROUTE = ACTUATOR_ROUTE + "/prometheus";
+  private static final String READINESS_ROUTE = HEALTH_ROUTE + "/readiness";
+  private static final String LIVENESS_ROUTE = HEALTH_ROUTE + "/liveness";
   private final Logger logger = LoggerFactory.getLogger(SecurityConfig.class);
   private final CallbackServiceConfig callbackServiceConfig;
 
