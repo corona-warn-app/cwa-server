@@ -165,8 +165,8 @@ public class FederationBatchProcessor {
       if (config.isBatchAuditEnabled()) {
         federationGatewayDownloadService.auditBatch(batchTag, date);
       }
+      nextBatchTag.set(response.getNextBatchTag());
       response.getDiagnosisKeyBatch().ifPresentOrElse(batch -> {
-        nextBatchTag.set(response.getNextBatchTag());
         logger.info("Downloaded {} keys for date {} and batchTag {}.", batch.getKeysCount(), date, batchTag);
         List<DiagnosisKey> validDiagnosisKeys = extractValidDiagnosisKeysFromBatch(batch);
         int numOfInvalidKeys = batch.getKeysCount() - validDiagnosisKeys.size();
