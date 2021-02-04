@@ -1,6 +1,6 @@
-package app.coronawarn.server.services.callback.controller;
+package app.coronawarn.server.services.callback.registration;
 
-import static app.coronawarn.server.services.callback.HashingUtils.computeSha256Hash;
+import static app.coronawarn.server.services.callback.HashingUtils.computeHash;
 import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
 import static com.github.tomakehurst.wiremock.client.WireMock.get;
 import static com.github.tomakehurst.wiremock.client.WireMock.getRequestedFor;
@@ -41,7 +41,7 @@ class CallbackRegistrationRunnerIntegrationTest {
 
   @BeforeAll
   static void setupWireMock() {
-    RegistrationResponse registrationResponse1 = new RegistrationResponse(computeSha256Hash("url1"), "url1");
+    RegistrationResponse registrationResponse1 = new RegistrationResponse(computeHash("url1"), "url1");
     List<RegistrationResponse> responses = List.of(registrationResponse1);
 
     server = new WireMockServer(options().port(1234));
@@ -55,7 +55,7 @@ class CallbackRegistrationRunnerIntegrationTest {
                     .withBody(asJsonString(responses))));
 
     server.stubFor(
-        put(urlEqualTo("/diagnosiskeys/callback/" + computeSha256Hash("url") + "?url=url"))
+        put(urlEqualTo("/diagnosiskeys/callback/" + computeHash("url") + "?url=url"))
             .willReturn(
                 aResponse()
                     .withStatus(HttpStatus.OK.value())
@@ -82,12 +82,12 @@ class CallbackRegistrationRunnerIntegrationTest {
   }
 
   @Test
-  void testDownloadRunSuccessfully() {
+  void testRegistration() {
     String expectedGetUrl = "/diagnosiskeys/callback";
     server.verify(1, getRequestedFor(urlEqualTo(expectedGetUrl)));
 
     String expectedPutUrl = "/diagnosiskeys/callback/"
-        + computeSha256Hash("url") + "?url=url";
+        + computeHash("url") + "?url=url";
     server.verify(1, putRequestedFor(urlEqualTo(expectedPutUrl)));
 
     verify(callbackServiceConfig, times(1)).isRegisterOnStartup();
