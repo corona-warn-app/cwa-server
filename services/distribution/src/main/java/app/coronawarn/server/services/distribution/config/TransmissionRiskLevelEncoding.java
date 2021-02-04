@@ -51,6 +51,9 @@ public class TransmissionRiskLevelEncoding implements Validator {
   /**
    * Returns a mapped ENF v2 Days Since Symptoms value for the given Transmission Risk Level or
    * throws an exception if the TRL is not part of the mapping.
+   *
+   * @param transmissionRiskLevel transmission risk level to search
+   * @return number of days since
    */
   public Integer getDaysSinceSymptomsForTransmissionRiskLevel(Integer transmissionRiskLevel) {
     return getMappedValue(transmissionRiskLevel, transmissionRiskToDaysSinceSymptoms, "daysSinceOnsetSymptoms");
@@ -59,6 +62,9 @@ public class TransmissionRiskLevelEncoding implements Validator {
   /**
    * Returns a mapped ENF v2 Report Type value for the given Transmission Risk Level or throws an
    * exception if the TRL is not part of the mapping.
+   *
+   * @param transmissionRiskLevel transmission risk level to search for
+   * @return ReportType for supplied transmission risk level
    */
   public ReportType getReportTypeForTransmissionRiskLevel(Integer transmissionRiskLevel) {
     return ReportType.forNumber(getMappedValue(transmissionRiskLevel, transmissionRiskToReportType, "reportType"));
@@ -150,6 +156,10 @@ public class TransmissionRiskLevelEncoding implements Validator {
 
   /**
    * Constructs the configuration class from the given mappings.
+   *
+   * @param transmissionRiskLevelToDaysSinceSymptoms days since symptoms began
+   * @param transmissionRiskLevelToReportType report type
+   * @return new TransmissionRiskLevelEncoding
    */
   public static TransmissionRiskLevelEncoding from(
       Map<Integer, Integer> transmissionRiskLevelToDaysSinceSymptoms,

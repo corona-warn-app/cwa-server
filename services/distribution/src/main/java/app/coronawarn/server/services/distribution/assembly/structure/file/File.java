@@ -13,11 +13,15 @@ public interface File<W extends Writable<W>> extends Writable<W> {
 
   /**
    * Returns the bytes contained by this {@link File}.
+   *
+   * @return byte array
    */
   byte[] getBytes();
 
   /**
    * Sets the bytes to be contained by this {@link File}.
+   *
+   * @param bytes byte array
    */
   void setBytes(byte[] bytes);
 }

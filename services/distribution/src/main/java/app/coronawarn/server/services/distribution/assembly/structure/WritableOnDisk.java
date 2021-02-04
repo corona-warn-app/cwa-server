@@ -41,6 +41,8 @@ public abstract class WritableOnDisk implements Writable<WritableOnDisk> {
 
   /**
    * Returns the {@link java.io.File} that this {@link Writable} represents on disk.
+   *
+   * @return file
    */
   public java.io.File getFileOnDisk() {
     return Objects.requireNonNullElseGet(this.fileOnDisk,

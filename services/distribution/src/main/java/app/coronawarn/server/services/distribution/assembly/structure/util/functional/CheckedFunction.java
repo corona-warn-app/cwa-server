@@ -14,6 +14,11 @@ public interface CheckedFunction<T, R, E extends Exception> {
 
   /**
    * Convert checked exceptions to unchecked exceptions in Functions.
+   *
+   * @param <T> T
+   * @param <R> R
+   * @param function inline function
+   * @return generic type
    */
   static <T, R> Function<T, R> uncheckedFunction(
       CheckedFunction<T, R, ? extends Exception> function) {

@@ -43,6 +43,8 @@ public class AppConfigurationStructureProvider {
   /**
    * Returns a list containing the archives with Application Configuration for
    * Android clients using ENF v2 as well as signature file.
+   *
+   * @return an archive of app config archives for Android
    */
   public Writable<WritableOnDisk> getAppConfigurationV2ForAndroid() {
     return new AppConfigurationV2StructureProvider<ApplicationConfigurationAndroid>(
@@ -54,6 +56,8 @@ public class AppConfigurationStructureProvider {
   /**
    * Returns a list containing the archives with Application Configuration for
    * IOS clients using ENF v2 as well as signature file.
+   *
+   * @return an archive of app config archives for iOS
    */
   public Writable<WritableOnDisk>  getAppConfigurationV2ForIos() {
     return new AppConfigurationV2StructureProvider<ApplicationConfigurationIOS>(

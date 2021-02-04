@@ -22,6 +22,10 @@ public abstract class AbstractSigningDecorator<W extends Writable<W>> extends Ar
 
   /**
    * Creates an AbstractSigningDecorator.
+   *
+   * @param archive needed to call the parent constructor of the archive
+   * @param cryptoProvider The {@link CryptoProvider} whose artifacts to use for creating the signature.
+   * @param distributionServiceConfig used to get origin country
    */
   protected AbstractSigningDecorator(Archive<W> archive, CryptoProvider cryptoProvider,
       DistributionServiceConfig distributionServiceConfig) {

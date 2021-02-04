@@ -22,7 +22,10 @@ public class AppConfigurationV2StructureProvider<T extends com.google.protobuf.G
    * Creates an {@link AppConfigurationV2StructureProvider} for the exposure configuration and risk score
    * classification.
    *
+   * @param applicationConfiguration generic type
    * @param cryptoProvider The {@link CryptoProvider} whose artifacts to use for creating the signature.
+   * @param distributionServiceConfig config attribute
+   * @param appConfigFileName file name
    */
   public AppConfigurationV2StructureProvider(T applicationConfiguration,
       CryptoProvider cryptoProvider,
@@ -37,6 +40,8 @@ public class AppConfigurationV2StructureProvider<T extends com.google.protobuf.G
   /**
    * If validation of the given V2 app config (IOS or Android) succeeds, it is written into a file, put into an archive
    * with the specified name and returned to be included in the CWA file structure.
+   *
+   * @return archive containing app success info
    */
   public Writable<WritableOnDisk> getConfigurationArchive() {
     ArchiveOnDisk appConfigurationFile = new ArchiveOnDisk(appConfigFileName);

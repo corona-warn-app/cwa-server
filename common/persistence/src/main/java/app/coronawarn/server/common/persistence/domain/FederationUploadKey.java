@@ -32,6 +32,8 @@ public class FederationUploadKey extends DiagnosisKey {
 
   /**
    * Create a new instance of an upload key by copying the properties of the given source diagnosis key.
+   * @param diagnosisKeySource the {@link DiagnosisKey}
+   * @return FederationUploadKey new {@link FederationUploadKey} created from DiagnosisKey
    */
   public static FederationUploadKey from(DiagnosisKey diagnosisKeySource) {
     return new FederationUploadKey(diagnosisKeySource.getKeyData(), diagnosisKeySource.getRollingStartIntervalNumber(),

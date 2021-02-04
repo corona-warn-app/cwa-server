@@ -35,7 +35,9 @@ public class AppConfigurationDirectory extends DirectoryOnDisk {
   /**
    * Creates an {@link AppConfigurationDirectory} for the exposure configuration and risk score classification.
    *
+   * @param applicationConfiguration app config attribute to set locally
    * @param cryptoProvider The {@link CryptoProvider} whose artifacts to use for creating the signature.
+   * @param distributionServiceConfig used to get origin country
    */
   public AppConfigurationDirectory(ApplicationConfiguration applicationConfiguration, CryptoProvider cryptoProvider,
       DistributionServiceConfig distributionServiceConfig) {

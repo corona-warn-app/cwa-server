@@ -31,6 +31,10 @@ public final class ExpirationPolicy {
 
   /**
    * Get an instance of an expiration policy.
+   *
+   * @param timeValue duration
+   * @param timeUnit the time unit
+   * @return holds attributes for expirationTime and time unit {@link ExpirationPolicy}
    */
   public static ExpirationPolicy of(long timeValue, ChronoUnit timeUnit) {
     if (Objects.isNull(timeUnit)) {

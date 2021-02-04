@@ -111,6 +111,7 @@ public class DiagnosisKey {
 
   /**
    * Returns the diagnosis key.
+   * @return keyData
    */
   public byte[] getKeyData() {
     return keyData;
@@ -118,6 +119,7 @@ public class DiagnosisKey {
 
   /**
    * Returns a number describing when a key starts. It is equal to startTimeOfKeySinceEpochInSecs / (60 * 10).
+   * @return rollingStartIntervalNumber
    */
   public int getRollingStartIntervalNumber() {
     return rollingStartIntervalNumber;
@@ -126,6 +128,7 @@ public class DiagnosisKey {
   /**
    * Returns a number describing how long a key is valid. It is expressed in increments of 10 minutes (e.g. 144 for 24
    * hours).
+   * @return rollingPeriod
    */
   public int getRollingPeriod() {
     return rollingPeriod;
@@ -133,6 +136,7 @@ public class DiagnosisKey {
 
   /**
    * Returns the risk of transmission associated with the person this key came from.
+   * @return transmissionRiskLevel
    */
   public int getTransmissionRiskLevel() {
     return transmissionRiskLevel;
@@ -140,6 +144,7 @@ public class DiagnosisKey {
 
   /**
    * Returns the timestamp associated with the submission of this {@link DiagnosisKey} as hours since epoch.
+   * @return submissionTimestamp
    */
   public long getSubmissionTimestamp() {
     return submissionTimestamp;
@@ -187,7 +192,7 @@ public class DiagnosisKey {
   /**
    * Gets any constraint violations that this key might incorporate.
    *
-   * <p><ul>
+   * <ul>
    * <li>Risk level must be between 0 and 8
    * <li>Rolling start interval number must be greater than 0
    * <li>Rolling start number cannot be in the future

@@ -103,12 +103,17 @@ interface DiagnosisKeyBuilders {
     /**
      * Field normalization is applied after all values have been provided, but prior to construction of the {@link
      * DiagnosisKey}. For flexibility purpose, providing a normalizer object is optional.
+     *
+     * @param fieldNormalizer (optional) takes {@link DiagnosisKeyNormalizer}
+     * @return FinalBuilder with normalized field
      */
     FinalBuilder withFieldNormalization(DiagnosisKeyNormalizer fieldNormalizer);
 
     /**
      * Builds a {@link DiagnosisKey} instance. If no submission timestamp has been specified it will be set to "now" as
      * hours since epoch.
+     *
+     * @return the DiagnosisKey instance
      */
     DiagnosisKey build();
   }
