@@ -23,19 +23,19 @@ jobs:
           key: cwa-server-{{ checksum "~/pom-checksum" }}
       - run: ./mvnw --batch-mode dependency:go-offline
       - run:
+          name: JUnit Tests, Integration Tests
+          command: |
+            export JAVA_HOME=/usr/lib/jvm/java-11-openjdk-amd64
+            ./mvnw --batch-mode -P integration-tests verify --fail-fast
+      - run:
           name: Analyze on SonarCloud
           command: |
             export JAVA_HOME=/usr/lib/jvm/java-11-openjdk-amd64
-            ./mvnw --batch-mode verify sonar:sonar --fail-never
+            ./mvnw --batch-mode sonar:sonar --fail-never
       - save_cache:
           paths:
             - ~/.m2
           key: cwa-server-{{ checksum "~/pom-checksum" }}
-      - run:
-          name: Run all Integration Tests
-          command: |
-            export JAVA_HOME=/usr/lib/jvm/java-11-openjdk-amd64
-            ./mvnw verify -P integration-tests
       - run:
           name: Save test results
           command: |
@@ -46,6 +46,9 @@ jobs:
           path: ~/test-results
       - store_artifacts:
           path: ~/test-results/junit
+      - run:
+          command: cat /sys/fs/cgroup/memory/memory.max_usage_in_bytes
+          when: always
 
 workflows:
   circleci:

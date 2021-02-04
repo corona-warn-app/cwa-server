@@ -1,5 +1,4 @@
 
-
 package app.coronawarn.server.services.submission.verification;
 
 import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
@@ -11,6 +10,8 @@ import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.options
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 import static org.springframework.http.HttpHeaders.CONTENT_TYPE;
+
+import app.coronawarn.server.common.federation.client.hostname.NoopHostnameVerifierProvider;
 import app.coronawarn.server.common.persistence.domain.config.TekFieldDerivations;
 import app.coronawarn.server.services.submission.config.SubmissionServiceConfig;
 import com.github.tomakehurst.wiremock.WireMockServer;
@@ -31,13 +32,12 @@ import org.springframework.http.MediaType;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
 
-@SpringBootTest(classes = {TanVerifier.class, DevelopmentFeignClientProvider.class, NoopHostnameVerifierProvider.class,
-    TekFieldDerivations.class})
-@ImportAutoConfiguration({FeignAutoConfiguration.class, FeignTestConfiguration.class})
+@SpringBootTest(classes = { TanVerifier.class, CloudFeignClientProvider.class, TekFieldDerivations.class, NoopHostnameVerifierProvider.class })
+@ImportAutoConfiguration({ FeignAutoConfiguration.class, FeignTestConfiguration.class })
 @EnableConfigurationProperties(value = SubmissionServiceConfig.class)
 @EnableFeignClients
 @DirtiesContext
-@ActiveProfiles({ "feign", "disable-ssl-client-verification", "disable-ssl-client-verification-verify-hostname" })
+@ActiveProfiles({ "feign", "disable-ssl-client-verification-verify-hostname" })
 class TanVerifierTest {
 
   @Autowired
@@ -84,8 +84,7 @@ class TanVerifierTest {
   @Test
   void checkInvalidTan() {
     server.stubFor(
-        post(urlEqualTo(verificationPath))
-            .withHeader(CONTENT_TYPE, equalTo(MediaType.APPLICATION_JSON.toString()))
+        post(urlEqualTo(verificationPath)).withHeader(CONTENT_TYPE, equalTo(MediaType.APPLICATION_JSON.toString()))
             .willReturn(aResponse().withStatus(HttpStatus.NOT_FOUND.value())));
 
     boolean tanVerificationResponse = tanVerifier.verifyTan(randomUUID);
@@ -96,8 +95,7 @@ class TanVerifierTest {
   @Test
   void checkTooLongTan() {
     server.stubFor(
-        post(urlEqualTo(verificationPath))
-            .withHeader(CONTENT_TYPE, equalTo(MediaType.APPLICATION_JSON.toString()))
+        post(urlEqualTo(verificationPath)).withHeader(CONTENT_TYPE, equalTo(MediaType.APPLICATION_JSON.toString()))
             .willReturn(aResponse().withStatus(HttpStatus.NOT_FOUND.value())));
 
     boolean tanVerificationResponse = tanVerifier.verifyTan(randomUUID + randomUUID);
@@ -108,8 +106,7 @@ class TanVerifierTest {
   @Test
   void checkInternalServerError() {
     server.stubFor(
-        post(urlEqualTo(verificationPath))
-            .withHeader(CONTENT_TYPE, equalTo(MediaType.APPLICATION_JSON.toString()))
+        post(urlEqualTo(verificationPath)).withHeader(CONTENT_TYPE, equalTo(MediaType.APPLICATION_JSON.toString()))
             .willReturn(aResponse().withStatus(HttpStatus.INTERNAL_SERVER_ERROR.value())));
 
     assertThatExceptionOfType(FeignException.class).isThrownBy(() -> tanVerifier.verifyTan(randomUUID));

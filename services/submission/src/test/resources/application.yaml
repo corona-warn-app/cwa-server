@@ -36,6 +36,13 @@ services:
       path: /version/v1/tan/verify
     monitoring:
       batch-size: 5
+    client:
+      ssl:
+        key-password: 123456
+        key-store: ../../docker-compose-test-secrets/ssl.p12
+        key-store-password: 123456
+        trust-store: ../../docker-compose-test-secrets/contains_efgs_truststore.jks
+        trust-store-password: 123456
 
 management:
   endpoint:

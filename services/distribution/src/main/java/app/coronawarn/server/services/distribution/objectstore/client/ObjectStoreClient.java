@@ -2,6 +2,8 @@
 
 package app.coronawarn.server.services.distribution.objectstore.client;
 
+import app.coronawarn.server.services.distribution.statistics.exceptions.NotModifiedException;
+import app.coronawarn.server.services.distribution.statistics.file.JsonFile;
 import java.nio.file.Path;
 import java.util.List;
 import java.util.Map;
@@ -20,6 +22,10 @@ public interface ObjectStoreClient {
    * @throws ObjectStoreOperationFailedException if the operation could not be performed.
    */
   List<S3Object> getObjects(String bucket, String prefix);
+
+  JsonFile getSingleObjectContent(String bucket, String key);
+
+  JsonFile getSingleObjectContent(String bucket, String key, String ifNotETag) throws NotModifiedException;
 
   /**
    * Uploads data from the specified file to an object with the specified name.

@@ -9,7 +9,9 @@ import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException
 
 import java.nio.charset.StandardCharsets;
 import java.time.Instant;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
@@ -58,7 +60,7 @@ class DiagnosisKeyTest {
   @Test
   void testIsYoungerThanRetentionThreshold() {
     int fiveDaysAgo = (int) (LocalDateTime
-        .ofInstant(Instant.now(), UTC)
+        .of(LocalDate.now(UTC), LocalTime.MIDNIGHT)
         .minusDays(5).minusMinutes(10)
         .toEpochSecond(UTC) / (60 * 10));
     DiagnosisKey diagnosisKeyFiveDays = new DiagnosisKey(expKeyData, fiveDaysAgo,

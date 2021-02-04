@@ -42,33 +42,31 @@
     <maven.compiler.debuglevel>lines,vars,source</maven.compiler.debuglevel>
     <project.build.sourceEncoding>${encoding}</project.build.sourceEncoding>
     <project.reporting.outputEncoding>${encoding}</project.reporting.outputEncoding>
-    <skip.unit.tests>false</skip.unit.tests>
-    <skip.integration.tests>true</skip.integration.tests>
 
     <sonar.host.url>https://sonarcloud.io</sonar.host.url>
     <sonar.organization>corona-warn-app</sonar.organization>
     <sonar.projectKey>${sonar.organization}_cwa-${project.artifactId}</sonar.projectKey>
 
     <!-- https://spring.io/projects/spring-boot -->
-    <spring-boot.version>2.3.5.RELEASE</spring-boot.version>
+    <spring-boot.version>2.4.2</spring-boot.version>
     <!-- https://spring.io/projects/spring-cloud#release-trains -->
-    <spring-cloud.version>2.2.6.RELEASE</spring-cloud.version>
-    <spring-retry.version>1.3.0</spring-retry.version>
-    <protobuf.version>3.13.0</protobuf.version>
+    <spring-cloud.version>2020.0.0</spring-cloud.version>
+    <spring-retry.version>1.3.1</spring-retry.version>
+    <protobuf.version>3.14.0</protobuf.version>
     <json-simple.version>1.1.1</json-simple.version>
     <commons-io.version>2.8.0</commons-io.version>
     <feign.version>11.0</feign.version>
     <commons-math3.version>3.6.1</commons-math3.version>
-    <bouncycastle.version>1.67</bouncycastle.version>
+    <bouncycastle.version>1.68</bouncycastle.version>
     <dom4j.version>2.1.3</dom4j.version>
-    <awssdk-s3.version>2.15.27</awssdk-s3.version>
-    <guava.version>30.0-jre</guava.version>
-    <test-containers.version>1.15.0</test-containers.version>
+    <awssdk-s3.version>2.15.70</awssdk-s3.version>
+    <guava.version>30.1-jre</guava.version>
+    <test-containers.version>1.15.1</test-containers.version>
     <postgresql.version>42.2.18</postgresql.version>
     <wiremock.version>2.27.2</wiremock.version>
     <httpclient.version>4.5.13</httpclient.version>
     <junit.version>4.13.1</junit.version>
-    <tomcat-embed-core.version>9.0.39</tomcat-embed-core.version>
+    <tomcat-embed-core.version>9.0.43</tomcat-embed-core.version>
     <findify-s3mock.version>0.2.6</findify-s3mock.version>
   </properties>
 
@@ -90,7 +88,7 @@
         <artifactId>federation</artifactId>
         <version>${project.version}</version>
       </dependency>
-      <!-- other third party libraries - THIRD-PARTY-NOTICES -->
+      <!-- other third party libraries -->
       <dependency>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-dependencies</artifactId>
@@ -100,13 +98,21 @@
       </dependency>
       <dependency>
         <groupId>org.springframework.cloud</groupId>
-        <artifactId>spring-cloud-starter-vault-config</artifactId>
+        <artifactId>spring-cloud-dependencies</artifactId>
         <version>${spring-cloud.version}</version>
+        <type>pom</type>
+        <scope>import</scope>
       </dependency>
       <dependency>
-        <groupId>org.springframework.cloud</groupId>
-        <artifactId>spring-cloud-starter-openfeign</artifactId>
-        <version>${spring-cloud.version}</version>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-web</artifactId>
+        <version>${spring-boot.version}</version>
+        <exclusions>
+          <exclusion>
+            <groupId>org.apache.tomcat.embed</groupId>
+            <artifactId>tomcat-embed-websocket</artifactId>
+          </exclusion>
+        </exclusions>
       </dependency>
       <dependency>
         <groupId>org.springframework.boot</groupId>
@@ -274,7 +280,7 @@
       <plugins>
         <plugin>
           <artifactId>maven-checkstyle-plugin</artifactId>
-          <version>3.1.1</version>
+          <version>3.1.2</version>
           <executions>
             <execution>
               <id>validate</id>
@@ -353,7 +359,7 @@
                   <include>**/*IT.java</include>
                   <include>**/*IntegrationTest.java</include>
                 </includes>
-                <skipTests>${skip.integration.tests}</skipTests>
+                <classesdirectory>${project.build.outputDirectory}</classesdirectory>
                 <additionalClasspathElements>
                   <additionalClasspathElement>${basedir}/target/classes</additionalClasspathElement>
                 </additionalClasspathElements>
@@ -397,9 +403,9 @@
           <configuration>
             <excludedGroups>s3-integration</excludedGroups>
             <trimStackTrace>false</trimStackTrace>
-            <skipTests>${skip.unit.tests}</skipTests>
             <excludes>
               <exclude>**/*IntegrationTest.java</exclude>
+              <exclude>**/*IT.java</exclude>
             </excludes>
           </configuration>
         </plugin>
@@ -474,7 +480,6 @@
           </executions>
           <configuration>
             <mainClass>${start-class}</mainClass>
-            <classifier>exec</classifier>
           </configuration>
         </plugin>
         <plugin>
@@ -489,14 +494,13 @@
             </execution>
           </executions>
           <configuration>
-            <protocArtifact>com.google.protobuf:protoc:${protobuf.version}:exe:${os.detected.classifier}
-            </protocArtifact>
+            <protocArtifact>com.google.protobuf:protoc:${protobuf.version}:exe:${os.detected.classifier}</protocArtifact>
           </configuration>
         </plugin>
         <plugin>
           <groupId>org.codehaus.mojo</groupId>
           <artifactId>exec-maven-plugin</artifactId>
-          <version>1.6.0</version>
+          <version>3.0.0</version>
         </plugin>
         <plugin>
           <groupId>io.fabric8</groupId>
@@ -595,13 +599,37 @@
     </plugins>
   </build>
 
-
   <profiles>
     <profile>
-      <id>integration-tests</id>
+      <id>local-build</id>
+      <activation>
+        <activeByDefault>true</activeByDefault>
+      </activation>
       <properties>
-        <skip.integration.tests>false</skip.integration.tests>
-        <skip.unit.tests>true</skip.unit.tests>
+        <docker.skip>true</docker.skip>
+        <skipITs>true</skipITs>
+      </properties>
+    </profile>
+    <profile>
+      <id>integration-tests</id>
+      <activation>
+        <activeByDefault>false</activeByDefault>
+      </activation>
+      <properties>
+        <skipITs>false</skipITs>
+      </properties>
+    </profile>
+    <profile>
+      <id>docker-image</id>
+      <activation>
+        <activeByDefault>false</activeByDefault>
+      </activation>
+      <properties>
+        <skipITs>true</skipITs>
+        <skipTests>true</skipTests>
+        <checkstyle.skip>true</checkstyle.skip>
+        <jacoco.skip>true</jacoco.skip>
+        <docker.skip>true</docker.skip>
       </properties>
     </profile>
   </profiles>

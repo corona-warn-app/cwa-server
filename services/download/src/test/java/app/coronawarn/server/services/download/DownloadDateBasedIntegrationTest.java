@@ -62,7 +62,7 @@ import org.springframework.test.context.ActiveProfiles;
  * BATCH1_DATA, BATCH2_DATA and RETRY_BATCH_SUCCESSFUL_DATA
  */
 @SpringBootTest
-@ActiveProfiles("download-date-based-integration-test")
+@ActiveProfiles({"download-date-based-integration-test"})
 @DirtiesContext
 class DownloadDateBasedIntegrationTest {
 

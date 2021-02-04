@@ -1,5 +1,5 @@
-<!-- 
-Thank you for supporting us with your Pull Request! 🙌 ❤️ 
+<!--
+Thank you for supporting us with your Pull Request! 🙌 ❤️
 
 Before submitting, please take the time to check the points below and provide some descriptive information.
 * [ ] If this PR comes from a fork, please [Allow edits from maintainers](https://help.github.com/en/github/collaborating-with-issues-and-pull-requests/allowing-changes-to-a-pull-request-branch-created-from-a-fork)
@@ -13,7 +13,7 @@ Before submitting, please take the time to check the points below and provide so
 ## Checklist
 
 * [ ] Test your changes as thoroughly as possible before you commit them. Preferably, automate your test by unit/integration tests.
-* [ ] Make sure `mvn install` runs for the whole project and, if you touched any code in the respective service, submission and distribution service can be run with `spring-boot:run`
+* [ ] Make sure `mvn -P integration-tests clean verify` runs for the whole project and, if you touched any code for a service in the `services` folder, ensure it can be run with `spring-boot:run`
 
 ## Description
 

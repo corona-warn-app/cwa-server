@@ -3,6 +3,7 @@
 package app.coronawarn.server.services.distribution.objectstore.integration;
 
 import app.coronawarn.server.common.persistence.service.DiagnosisKeyService;
+import app.coronawarn.server.common.persistence.service.StatisticsDownloadService;
 import app.coronawarn.server.services.distribution.Application;
 import app.coronawarn.server.services.distribution.assembly.component.OutputDirectoryProvider;
 import app.coronawarn.server.services.distribution.assembly.structure.directory.DirectoryOnDisk;
@@ -42,9 +43,9 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration(classes = Application.class, initializers = ConfigFileApplicationContextInitializer.class)
 @DirtiesContext
-@ActiveProfiles("integration-test")
+@ActiveProfiles({"integration-test", "no-hour-retention", "local-json-stats"})
 @Tag("s3-integration")
-class ObjectStoreFilePreservationIT  extends BaseS3IntegrationTest{
+class ObjectStoreFilePreservationIT extends BaseS3IntegrationTest {
 
   @Autowired
   private DiagnosisKeyService diagnosisKeyService;
@@ -58,6 +59,8 @@ class ObjectStoreFilePreservationIT  extends BaseS3IntegrationTest{
   private ObjectStoreAccess objectStoreAccess;
   @Autowired
   private DistributionServiceConfig distributionServiceConfig;
+  @Autowired
+  private StatisticsDownloadService statisticsDownloadService;
 
   @MockBean
   private OutputDirectoryProvider distributionDirectoryProvider;
@@ -156,8 +159,9 @@ class ObjectStoreFilePreservationIT  extends BaseS3IntegrationTest{
   private void triggerRetentionPolicy(LocalDate fromDate) {
     DistributionServiceConfig mockDistributionConfig = new DistributionServiceConfig();
     mockDistributionConfig.setRetentionDays(numberOfDaysSince(fromDate));
+    mockDistributionConfig.setObjectStore(distributionServiceConfig.getObjectStore());
     new RetentionPolicy(diagnosisKeyService, applicationContext, mockDistributionConfig,
-        s3RetentionPolicy).run(null);
+        s3RetentionPolicy, statisticsDownloadService).run(null);
   }
 
   private Integer numberOfDaysSince(LocalDate testStartDate) {

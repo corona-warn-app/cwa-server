@@ -6,6 +6,7 @@ import static java.util.Collections.EMPTY_MAP;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 import static org.assertj.core.util.Maps.newHashMap;
+import static org.junit.Assert.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.atLeastOnce;
@@ -16,10 +17,12 @@ import static org.mockito.Mockito.when;
 
 import app.coronawarn.server.services.distribution.config.DistributionServiceConfig;
 import app.coronawarn.server.services.distribution.objectstore.client.ObjectStoreClient.HeaderKey;
+import java.io.ByteArrayInputStream;
 import java.nio.file.Path;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+import app.coronawarn.server.services.distribution.statistics.exceptions.NotModifiedException;
 import org.assertj.core.util.Lists;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -36,16 +39,21 @@ import org.springframework.boot.test.context.ConfigFileApplicationContextInitial
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.retry.ExhaustedRetryException;
 import org.springframework.retry.annotation.EnableRetry;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
+import software.amazon.awssdk.core.ResponseInputStream;
 import software.amazon.awssdk.core.exception.SdkClientException;
 import software.amazon.awssdk.core.exception.SdkException;
 import software.amazon.awssdk.core.sync.RequestBody;
+import software.amazon.awssdk.http.AbortableInputStream;
 import software.amazon.awssdk.services.s3.S3Client;
 import software.amazon.awssdk.services.s3.model.Delete;
 import software.amazon.awssdk.services.s3.model.DeleteObjectsRequest;
 import software.amazon.awssdk.services.s3.model.DeleteObjectsResponse;
+import software.amazon.awssdk.services.s3.model.GetObjectRequest;
+import software.amazon.awssdk.services.s3.model.GetObjectResponse;
 import software.amazon.awssdk.services.s3.model.HeadObjectRequest;
 import software.amazon.awssdk.services.s3.model.HeadObjectResponse;
 import software.amazon.awssdk.services.s3.model.ListObjectsV2Request;
@@ -80,7 +88,7 @@ class S3ClientWrapperTest {
   @EnableRetry
   public static class RetryS3ClientConfig {
 
-    @Bean
+    @Bean(name = "publish-s3")
     @ConditionalOnMissingBean
     public ObjectStoreClient createObjectStoreClient(S3Client s3Client) {
       return new S3ClientWrapper(s3Client);
@@ -293,5 +301,72 @@ class S3ClientWrapperTest {
         .isThrownBy(() -> s3ClientWrapper.removeObjects(VALID_BUCKET_NAME, targetObjects));
 
     verify(s3Client, times(configuredNumberOfRetries)).deleteObjects(any(DeleteObjectsRequest.class));
+  }
+
+  private <T> ResponseInputStream<T> makeGetObjectStreamedResponse(T response, String body) {
+    var stream = new ByteArrayInputStream(body.getBytes());
+    return new ResponseInputStream<T>(response, AbortableInputStream.create(stream));
+  }
+
+  @Test
+  void getSingleObjectContent() {
+    GetObjectResponse response = GetObjectResponse.builder()
+        .eTag("abc")
+        .build();
+    var httpResponse = makeGetObjectStreamedResponse(response, "[]");
+    when(s3Client.getObject(any(GetObjectRequest.class))).thenReturn(httpResponse);
+    var jsonFile = s3ClientWrapper.getSingleObjectContent("example", "key1");
+    assertThat(jsonFile.getETag()).isEqualTo("abc");
+    assertThat(jsonFile.getContent()).isEqualTo("[]");
+  }
+
+  @Test
+  void jsonFileEtagIsNullWhenNotReceived() {
+    GetObjectResponse response = GetObjectResponse.builder()
+        .build();
+    var httpResponse = makeGetObjectStreamedResponse(response, "[]");
+    when(s3Client.getObject(any(GetObjectRequest.class))).thenReturn(httpResponse);
+    var jsonFile = s3ClientWrapper.getSingleObjectContent("example", "key1");
+    assertThat(jsonFile.getETag()).isNull();
+    assertThat(jsonFile.getContent()).isEqualTo("[]");
+  }
+
+  @ParameterizedTest
+  @ValueSource(classes = {NoSuchBucketException.class, S3Exception.class, SdkClientException.class, SdkException.class})
+  void shouldThrowSameExceptionAsAwsClient(Class<Exception> cause) {
+    when(s3Client.getObject(any(GetObjectRequest.class))).thenThrow(cause);
+    assertThatExceptionOfType(ExhaustedRetryException.class)
+        .isThrownBy(() -> s3ClientWrapper.getSingleObjectContent("", ""))
+        .withCauseExactlyInstanceOf(cause);
+  }
+
+  @Test
+  void shouldReturnNewObjectIfEtagDoesntMatch() throws NotModifiedException {
+    GetObjectResponse response = GetObjectResponse.builder()
+        .eTag("abc")
+        .build();
+    var httpResponse = makeGetObjectStreamedResponse(response, "[]");
+    when(s3Client.getObject(any(GetObjectRequest.class))).thenReturn(httpResponse);
+    var jsonFile = s3ClientWrapper.getSingleObjectContent("example", "key1", "cba");
+    assertThat(jsonFile.getETag()).isEqualTo("abc");
+    assertThat(jsonFile.getContent()).isEqualTo("[]");
+  }
+
+  @Test
+  void shouldThrowNotModifiedExceptionWhenStatusCodeIs304() {
+    when(s3Client.getObject(any(GetObjectRequest.class)))
+        .thenThrow(S3Exception.builder().statusCode(304).build());
+    assertThatExceptionOfType(ExhaustedRetryException.class)
+        .isThrownBy(() -> s3ClientWrapper.getSingleObjectContent("abc", "key1", "abc"))
+        .withCauseExactlyInstanceOf(NotModifiedException.class);
+  }
+
+  @ParameterizedTest
+  @ValueSource(classes = {NoSuchBucketException.class, S3Exception.class, SdkClientException.class, SdkException.class})
+  void shouldThrowSameExceptionAsAwsClientIfNot304(Class<Exception> cause) {
+    when(s3Client.getObject(any(GetObjectRequest.class))).thenThrow(cause);
+    assertThatExceptionOfType(ExhaustedRetryException.class)
+        .isThrownBy(() -> s3ClientWrapper.getSingleObjectContent("", "", "etag"))
+        .withCauseExactlyInstanceOf(cause);
   }
 }

@@ -1,14 +1,11 @@
-
-
 package app.coronawarn.server.services.federation.upload.runner;
 
 import app.coronawarn.server.common.persistence.domain.DiagnosisKey;
 import app.coronawarn.server.common.persistence.domain.FederationUploadKey;
+import app.coronawarn.server.common.persistence.service.common.CommonDataGeneration;
 import app.coronawarn.server.common.protocols.external.exposurenotification.ReportType;
-import app.coronawarn.server.common.protocols.internal.RiskLevel;
 import app.coronawarn.server.services.federation.upload.config.UploadServiceConfig;
 import app.coronawarn.server.services.federation.upload.testdata.TestDataUploadRepository;
-import java.security.SecureRandom;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
@@ -16,13 +13,11 @@ import java.time.temporal.ChronoUnit;
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
-import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.ApplicationArguments;
-import org.springframework.boot.ApplicationRunner;
 import org.springframework.context.annotation.Profile;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
@@ -30,61 +25,42 @@ import org.springframework.stereotype.Component;
 @Component
 @Order(-1)
 @Profile("testdata")
-public class TestDataGeneration implements ApplicationRunner {
+public class TestDataGeneration extends CommonDataGeneration<FederationUploadKey> {
 
-  private final UploadServiceConfig uploadServiceConfig;
   private final Logger logger = LoggerFactory.getLogger(TestDataGeneration.class);
   private final TestDataUploadRepository keyRepository;
-  private final SecureRandom random = new SecureRandom();
+  private final Integer maxPendingKeys;
 
-  public static final long ONE_HOUR_INTERVAL_SECONDS = TimeUnit.HOURS.toSeconds(1);
-  public static final long TEN_MINUTES_INTERVAL_SECONDS = TimeUnit.MINUTES.toSeconds(10);
-
-  public TestDataGeneration(UploadServiceConfig uploadServiceConfig,
+  TestDataGeneration(UploadServiceConfig uploadServiceConfig,
       TestDataUploadRepository keyRepository) {
-    this.uploadServiceConfig = uploadServiceConfig;
+    super(uploadServiceConfig.getRetentionDays());
     this.keyRepository = keyRepository;
+    this.maxPendingKeys = uploadServiceConfig.getTestData().getMaxPendingKeys();
   }
 
-  private static byte[] randomByteData() {
-    byte[] keyData = new byte[16];
-    new SecureRandom().nextBytes(keyData);
-    return keyData;
+  @Override
+  public void run(ApplicationArguments args) {
+    var fakeKeys = generateFakeKeysForPreviousDay();
+    logger.info("Storing keys in the DB");
+    this.storeUploadKeys(fakeKeys);
+    logger.info("Finished Test Data Generation Step");
   }
 
-  private FederationUploadKey makeKeyFromTimestamp(long timestamp) {
-    return FederationUploadKey.from(DiagnosisKey.builder().withKeyData(randomByteData())
-        .withRollingStartIntervalNumber(generateRollingStartIntervalNumber(timestamp))
-        .withTransmissionRiskLevel(generateTransmissionRiskLevel())
-        .withConsentToFederation(true)
-        .withCountryCode("DE")
-        .withDaysSinceOnsetOfSymptoms(1)
-        .withSubmissionTimestamp(timestamp)
-        .withVisitedCountries(Set.of("FR", "DK"))
-        .withReportType(ReportType.CONFIRMED_TEST)
-        .build());
+  private void storeUploadKeys(List<FederationUploadKey> diagnosisKeys) {
+    diagnosisKeys.forEach(this::storeUploadKey);
   }
 
-  private int generateTransmissionRiskLevel() {
-    return Math.toIntExact(
-        getRandomBetween(RiskLevel.RISK_LEVEL_LOWEST_VALUE, RiskLevel.RISK_LEVEL_HIGHEST_VALUE));
-  }
-
-  private int generateRollingStartIntervalNumber(long submissionTimestamp) {
-    long maxRollingStartIntervalNumber =
-        submissionTimestamp * ONE_HOUR_INTERVAL_SECONDS / TEN_MINUTES_INTERVAL_SECONDS;
-    long minRollingStartIntervalNumber =
-        maxRollingStartIntervalNumber
-            - TimeUnit.DAYS.toSeconds(11) / TEN_MINUTES_INTERVAL_SECONDS;
-    return Math.toIntExact(getRandomBetween(minRollingStartIntervalNumber, maxRollingStartIntervalNumber));
-  }
-
-  private long getRandomBetween(long minIncluding, long maxIncluding) {
-    return minIncluding + (long) (random.nextDouble() * (maxIncluding - minIncluding));
-  }
-
-  private LocalDateTime getCurrentTimestampTruncatedHour() {
-    return LocalDateTime.ofInstant(Instant.now(), ZoneOffset.UTC).truncatedTo(ChronoUnit.HOURS);
+  private void storeUploadKey(FederationUploadKey key) {
+    keyRepository.storeUploadKey(key.getKeyData(),
+        key.getRollingStartIntervalNumber(),
+        key.getRollingPeriod(),
+        key.getSubmissionTimestamp(),
+        key.getTransmissionRiskLevel(),
+        key.getOriginCountry(),
+        key.getVisitedCountries().toArray(new String[0]),
+        key.getReportType().name(),
+        key.getDaysSinceOnsetOfSymptoms(),
+        key.isConsentToFederation());
   }
 
   private long secondsToHours(long timestampInSeconds) {
@@ -101,12 +77,11 @@ public class TestDataGeneration implements ApplicationRunner {
    */
   private List<FederationUploadKey> generateFakeKeysForPreviousDay() {
     long timestamp = getCurrentTimestampTruncatedHour()
-        .minusDays(this.uploadServiceConfig.getRetentionDays())
+        .minusDays(retentionDays)
         .toEpochSecond(ZoneOffset.UTC) / 600L;
     logger.info("Deleting test keys with rolling_start_interval_number less than {}", timestamp);
-    keyRepository.applyRetentionToTestKeys((int)timestamp);
+    keyRepository.applyRetentionToTestKeys((int) timestamp);
     int pendingKeys = keyRepository.countPendingKeys();
-    int maxPendingKeys = this.uploadServiceConfig.getTestData().getMaxPendingKeys();
     logger.info("Found {} pending upload keys on DB", pendingKeys);
     int numberOfKeysToGenerate = maxPendingKeys - pendingKeys;
 
@@ -125,7 +100,7 @@ public class TestDataGeneration implements ApplicationRunner {
           hourStart,
           hourEnd);
       return IntStream.range(0, numberOfKeysToGenerate)
-          .mapToObj(ignoredValue -> this.makeKeyFromTimestamp(this.getRandomBetween(hourStart, hourEnd)))
+          .mapToObj(ignoredValue -> generateDiagnosisKey(getRandomBetween(hourStart, hourEnd), "DE"))
           .collect(Collectors.toList());
     } else {
       logger.info("Skipping generation");
@@ -133,28 +108,21 @@ public class TestDataGeneration implements ApplicationRunner {
     }
   }
 
-  private void storeUploadKey(FederationUploadKey key) {
-    keyRepository.storeUploadKey(key.getKeyData(),
-        key.getRollingStartIntervalNumber(),
-        key.getRollingPeriod(),
-        key.getSubmissionTimestamp(),
-        key.getTransmissionRiskLevel(),
-        key.getOriginCountry(),
-        key.getVisitedCountries().toArray(new String[0]),
-        key.getReportType().name(),
-        key.getDaysSinceOnsetOfSymptoms(),
-        key.isConsentToFederation());
-  }
-
-  public void storeUploadKeys(List<FederationUploadKey> diagnosisKeys) {
-    diagnosisKeys.forEach(this::storeUploadKey);
+  private LocalDateTime getCurrentTimestampTruncatedHour() {
+    return LocalDateTime.ofInstant(Instant.now(), ZoneOffset.UTC).truncatedTo(ChronoUnit.HOURS);
   }
 
   @Override
-  public void run(ApplicationArguments args) {
-    var fakeKeys = generateFakeKeysForPreviousDay();
-    logger.info("Storing keys in the DB");
-    this.storeUploadKeys(fakeKeys);
-    logger.info("Finished Test Data Generation Step");
+  protected FederationUploadKey generateDiagnosisKey(long submissionTimestamp, String country) {
+    return FederationUploadKey.from(DiagnosisKey.builder().withKeyData(generateDiagnosisKeyBytes())
+        .withRollingStartIntervalNumber(generateRollingStartIntervalNumber(submissionTimestamp))
+        .withTransmissionRiskLevel(generateTransmissionRiskLevel())
+        .withConsentToFederation(true)
+        .withCountryCode(country)
+        .withDaysSinceOnsetOfSymptoms(1)
+        .withSubmissionTimestamp(submissionTimestamp)
+        .withVisitedCountries(Set.of("FR", "DK"))
+        .withReportType(ReportType.CONFIRMED_TEST)
+        .build());
   }
 }

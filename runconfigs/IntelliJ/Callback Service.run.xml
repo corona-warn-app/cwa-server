@@ -1,0 +1,18 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="Callback Service" type="SpringBootApplicationConfigurationType" factoryName="Spring Boot">
+    <module name="callback" />
+    <option name="SPRING_BOOT_MAIN_CLASS" value="app.coronawarn.server.services.callback.ServerApplication" />
+    <option name="ALTERNATIVE_JRE_PATH" />
+    <envs>
+      <env name="POSTGRESQL_SERVICE_PORT" value="8001" />
+      <env name="SPRING_PROFILES_ACTIVE" value="disable-ssl-client-postgres" />
+      <env name="SSL_CALLBACK_KEYSTORE_PATH" value="file:$PROJECT_DIR$/docker-compose-test-secrets/ssl.p12" />
+      <env name="SSL_CALLBACK_KEYSTORE_PASSWORD" value="123456" />
+      <env name="SSL_FEDERATION_TRUSTSTORE_PATH" value="file:$PROJECT_DIR$/docker-compose-test-secrets/contains_efgs_truststore.jks" />
+      <env name="SSL_FEDERATION_TRUSTSTORE_PASSWORD" value="123456" />
+    </envs>
+    <method v="2">
+      <option name="Make" enabled="true" />
+    </method>
+  </configuration>
+</component>

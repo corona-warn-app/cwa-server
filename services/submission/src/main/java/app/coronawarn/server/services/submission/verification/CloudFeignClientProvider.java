@@ -2,6 +2,7 @@
 
 package app.coronawarn.server.services.submission.verification;
 
+import app.coronawarn.server.common.federation.client.hostname.HostnameVerifierProvider;
 import app.coronawarn.server.services.submission.config.SubmissionServiceConfig;
 import app.coronawarn.server.services.submission.config.SubmissionServiceConfig.Client.Ssl;
 import feign.Client;
@@ -17,20 +18,19 @@ import org.springframework.cloud.commons.httpclient.ApacheHttpClientFactory;
 import org.springframework.cloud.commons.httpclient.DefaultApacheHttpClientConnectionManagerFactory;
 import org.springframework.cloud.commons.httpclient.DefaultApacheHttpClientFactory;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 
 @Component
-@Profile("!disable-ssl-client-verification")
-public class CloudFeignClientProvider implements FeignClientProvider {
+public class CloudFeignClientProvider {
 
-  private final HostnameVerifierProvider hostnameVerifierProvider;
   private final Integer connectionPoolSize;
   private final File keyStore;
   private final String keyStorePassword;
   private final String keyPassword;
   private final File trustStore;
   private final String trustStorePassword;
+
+  private final HostnameVerifierProvider hostnameVerifierProvider;
 
   /**
    * Creates a {@link CloudFeignClientProvider} that provides feign clients with fixed key and trust material.
@@ -49,7 +49,6 @@ public class CloudFeignClientProvider implements FeignClientProvider {
     this.hostnameVerifierProvider = hostnameVerifierProvider;
   }
 
-  @Override
   public Client createFeignClient() {
     return new ApacheHttpClient(createHttpClientFactory().createBuilder().build());
   }
@@ -77,7 +76,7 @@ public class CloudFeignClientProvider implements FeignClientProvider {
         .setMaxConnPerRoute(this.connectionPoolSize)
         .setMaxConnTotal(this.connectionPoolSize)
         .setSSLContext(getSslContext())
-        .setSSLHostnameVerifier(this.hostnameVerifierProvider.createHostnameVerifier()));
+        .setSSLHostnameVerifier(hostnameVerifierProvider.createHostnameVerifier()));
   }
 
   @Bean

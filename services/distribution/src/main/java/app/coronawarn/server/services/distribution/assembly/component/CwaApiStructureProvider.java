@@ -18,6 +18,7 @@ import org.springframework.stereotype.Component;
 public class CwaApiStructureProvider {
 
   private final AppConfigurationStructureProvider appConfigurationStructureProvider;
+  private final StatisticsStructureProvider statisticsStructureProvider;
   private final DiagnosisKeysStructureProvider diagnosisKeysStructureProvider;
   private final DistributionServiceConfig distributionServiceConfig;
 
@@ -26,9 +27,11 @@ public class CwaApiStructureProvider {
    */
   CwaApiStructureProvider(
       AppConfigurationStructureProvider appConfigurationStructureProvider,
+      StatisticsStructureProvider statisticsStructureProvider,
       DiagnosisKeysStructureProvider diagnosisKeysStructureProvider,
       DistributionServiceConfig distributionServiceConfig) {
     this.appConfigurationStructureProvider = appConfigurationStructureProvider;
+    this.statisticsStructureProvider = statisticsStructureProvider;
     this.diagnosisKeysStructureProvider = diagnosisKeysStructureProvider;
     this.distributionServiceConfig = distributionServiceConfig;
   }
@@ -52,6 +55,8 @@ public class CwaApiStructureProvider {
         ignoredValue -> Optional.ofNullable(appConfigurationStructureProvider.getAppConfigurationV2ForIos()));
     versionDirectory.addWritableToAll(
         ignoredValue -> Optional.of(diagnosisKeysStructureProvider.getDiagnosisKeys()));
+    versionDirectory.addWritableToAll(
+        ignoredValue -> Optional.ofNullable(statisticsStructureProvider.getStatistics()));
 
     return new IndexingDecoratorOnDisk<>(versionDirectory, distributionServiceConfig.getOutputFileName());
   }

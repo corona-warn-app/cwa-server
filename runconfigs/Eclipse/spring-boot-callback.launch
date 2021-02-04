@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<launchConfiguration type="org.eclipse.m2e.Maven2LaunchConfigurationType">
+    <booleanAttribute key="M2_DEBUG_OUTPUT" value="false"/>
+    <stringAttribute key="M2_GOALS" value="spring-boot:run -Dspring-boot.run.fork=false"/>
+    <booleanAttribute key="M2_NON_RECURSIVE" value="false"/>
+    <booleanAttribute key="M2_OFFLINE" value="false"/>
+    <stringAttribute key="M2_PROFILES" value=""/>
+    <listAttribute key="M2_PROPERTIES"/>
+    <stringAttribute key="M2_RUNTIME" value="EMBEDDED"/>
+    <booleanAttribute key="M2_SKIP_TESTS" value="false"/>
+    <intAttribute key="M2_THREADS" value="1"/>
+    <booleanAttribute key="M2_UPDATE_SNAPSHOTS" value="false"/>
+    <stringAttribute key="M2_USER_SETTINGS" value=""/>
+    <booleanAttribute key="M2_WORKSPACE_RESOLUTION" value="false"/>
+    <stringAttribute key="bad_container_name" value="/callback/spring-boot"/>
+    <mapAttribute key="org.eclipse.debug.core.environmentVariables">
+        <mapEntry key="OBJECTSTORE_ACCESSKEY" value="accessKey1"/>
+        <mapEntry key="OBJECTSTORE_SECRETKEY" value="verySecretKey1"/>
+        <mapEntry key="PGADMIN_DEFAULT_EMAIL" value="user@domain.com"/>
+        <mapEntry key="PGADMIN_DEFAULT_PASSWORD" value="password"/>
+        <mapEntry key="POSTGRESQL_SERVICE_HOST" value="localhost"/>
+        <mapEntry key="POSTGRESQL_SERVICE_PORT" value="8001"/>
+        <mapEntry key="POSTGRES_CALLBACK_PASSWORD" value="local_setup_callback"/>
+        <mapEntry key="POSTGRES_CALLBACK_USER" value="local_setup_callback"/>
+        <mapEntry key="POSTGRES_DB" value="cwa"/>
+        <mapEntry key="POSTGRES_DISTRIBUTION_PASSWORD" value="local_setup_distribution"/>
+        <mapEntry key="POSTGRES_DISTRIBUTION_USER" value="local_setup_distribution"/>
+        <mapEntry key="POSTGRES_FLYWAY_PASSWORD" value="local_setup_flyway"/>
+        <mapEntry key="POSTGRES_FLYWAY_USER" value="local_setup_flyway"/>
+        <mapEntry key="POSTGRES_PASSWORD" value="postgres"/>
+        <mapEntry key="POSTGRES_SUBMISSION_PASSWORD" value="local_setup_submission"/>
+        <mapEntry key="POSTGRES_SUBMISSION_USER" value="local_setup_submission"/>
+        <mapEntry key="POSTGRES_USER" value="postgres"/>
+        <mapEntry key="SECRET_PRIVATE" value="file:/secrets/private.pem"/>
+        <mapEntry key="SPRING_PROFILES_ACTIVE" value="disable-ssl-client-postgres"/>
+        <mapEntry key="SSL_CALLBACK_KEYSTORE_PATH" value="file:$PROJECT_DIR$/docker-compose-test-secrets/ssl.p12"/>
+        <mapEntry key="SSL_CALLBACK_KEYSTORE_PASSWORD" value="123456"/>
+        <mapEntry key="SSL_FEDERATION_TRUSTSTORE_PATH" value="file:$PROJECT_DIR$/docker-compose-test-secrets/contains_efgs_truststore.jks"/>
+        <mapEntry key="SSL_FEDERATION_TRUSTSTORE_PASSWORD" value="123456"/>
+    </mapAttribute>
+    <booleanAttribute key="org.eclipse.jdt.launching.ATTR_USE_CLASSPATH_ONLY_JAR" value="false"/>
+    <booleanAttribute key="org.eclipse.jdt.launching.ATTR_USE_START_ON_FIRST_THREAD" value="true"/>
+    <stringAttribute key="org.eclipse.jdt.launching.JRE_CONTAINER" value="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.launching.macosx.MacOSXType/SapMachine 11.0.7 [11.0.7]"/>
+    <stringAttribute key="org.eclipse.jdt.launching.WORKING_DIRECTORY" value="${workspace_loc:/cwa-server/services/callback}"/>
+</launchConfiguration>

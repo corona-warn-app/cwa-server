@@ -27,7 +27,9 @@ import com.google.protobuf.ByteString;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Optional;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -82,9 +84,29 @@ class FederationKeyNormalizerTest {
     LocalDate date = LocalDate.of(2020, 9, 1);
     FederationBatchInfo federationBatchInfo = new FederationBatchInfo(BATCH_TAG, date, UNPROCESSED);
     when(batchInfoService.findByStatus(UNPROCESSED)).thenReturn(list(federationBatchInfo));
-    BatchDownloadResponse serverResponse = getBatchDownloadResponse();
+
+    BatchDownloadResponse serverResponse = createBatchDownloadResponseWithKeys(this::createDiagnosisKeyWithNoTrl);
     when(federationGatewayDownloadService.downloadBatch(BATCH_TAG, date)).thenReturn(serverResponse);
+
     processor.processUnprocessedFederationBatches();
+    diagnosisKeyService.getDiagnosisKeys().forEach(dk -> {
+      TekFieldDerivations tekDerivationMap = config.getTekFieldDerivations();
+      String keyData = ByteString.copyFrom(dk.getKeyData()).toStringUtf8();
+      assertEquals(tekDerivationMap.deriveTransmissionRiskLevelFromDaysSinceSymptoms(getKeysWithDaysSinceSymptoms().get(keyData)), dk.getTransmissionRiskLevel());
+    });
+  }
+
+  @Test
+  void testTrlIsNormalizedWhenValueProvidedIsMaxInt() throws Exception{
+    LocalDate date = LocalDate.of(2020, 9, 1);
+    FederationBatchInfo federationBatchInfo = new FederationBatchInfo(BATCH_TAG, date, UNPROCESSED);
+    when(batchInfoService.findByStatus(UNPROCESSED)).thenReturn(list(federationBatchInfo));
+
+    BatchDownloadResponse serverResponse = createBatchDownloadResponseWithKeys(this::createDiagnosisKeyWithMaxIntTrl);
+    when(federationGatewayDownloadService.downloadBatch(BATCH_TAG, date)).thenReturn(serverResponse);
+
+    processor.processUnprocessedFederationBatches();
+
     diagnosisKeyService.getDiagnosisKeys().forEach(dk -> {
       TekFieldDerivations tekDerivationMap = config.getTekFieldDerivations();
       String keyData = ByteString.copyFrom(dk.getKeyData()).toStringUtf8();
@@ -99,17 +121,29 @@ class FederationKeyNormalizerTest {
     assertThrows(IllegalArgumentException.class, () -> normalizer.normalize(nf));
   }
 
-  private BatchDownloadResponse getBatchDownloadResponse() {
+  private BatchDownloadResponse createBatchDownloadResponseWithKeys(
+      Function<Entry<String, Integer>, DiagnosisKey> diagnosisKeyFactory) {
     List<DiagnosisKey> diagnosisKeys = getKeysWithDaysSinceSymptoms().entrySet().stream()
-        .map(
-            e -> FederationBatchTestHelper.createBuilderForValidFederationDiagnosisKey()
-                .setKeyData(ByteString.copyFromUtf8(e.getKey()))
-                .clearTransmissionRiskLevel()
-                .setDaysSinceOnsetOfSymptoms(e.getValue())
-                .build())
-        .collect(Collectors.toList());
-    DiagnosisKeyBatch diagnosisKeyBatch =
-        DiagnosisKeyBatch.newBuilder().addAllKeys(diagnosisKeys).build();
+        .map(e -> diagnosisKeyFactory.apply(e)).collect(Collectors.toList());
+    DiagnosisKeyBatch diagnosisKeyBatch = DiagnosisKeyBatch.newBuilder().addAllKeys(diagnosisKeys).build();
     return new BatchDownloadResponse(BATCH_TAG, Optional.of(diagnosisKeyBatch), Optional.empty());
+  }
+
+  private DiagnosisKey createDiagnosisKeyWithNoTrl(Entry<String, Integer> entry) {
+    return FederationBatchTestHelper.createBuilderForValidFederationDiagnosisKey()
+        .setKeyData(ByteString.copyFromUtf8(entry.getKey()))
+        .clearTransmissionRiskLevel()
+        .setDaysSinceOnsetOfSymptoms(entry.getValue()).build();
+  }
+
+  /**
+   * @return A Diagnosis Key which contains TRL set to MAX INT (as per one of EFGS specification).
+   * @see https://github.com/eu-federation-gateway-service/efgs-onboarding/blob/master/KeySharingDSOSGuide.md
+   */
+  private DiagnosisKey createDiagnosisKeyWithMaxIntTrl(Entry<String, Integer> entry) {
+    return FederationBatchTestHelper.createBuilderForValidFederationDiagnosisKey()
+        .setKeyData(ByteString.copyFromUtf8(entry.getKey()))
+        .setTransmissionRiskLevel(Integer.MAX_VALUE)
+        .setDaysSinceOnsetOfSymptoms(entry.getValue()).build();
   }
 }

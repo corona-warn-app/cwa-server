@@ -16,19 +16,20 @@ import org.springframework.validation.annotation.Validated;
 @Validated
 public class DistributionServiceConfig {
 
-  private static final String PATH_REGEX = "^[/]?[a-zA-Z0-9_]+(/[a-zA-Z0-9_]+)*[/]?$";
-  private static final String FILE_NAME_REGEX = "^[a-zA-Z0-9_-]+$";
-  private static final String FILE_NAME_WITH_TYPE_REGEX = "^[a-zA-Z0-9_-]+\\.[a-z]+$";
-  private static final String CHAR_AND_NUMBER_REGEX = "^[a-zA-Z0-9_-]+$";
-  private static final String CHAR_NUMBER_AND_SPACE_REGEX = "^[a-zA-Z0-9_\\s]+$";
+  private static final String PATH_REGEX = "^[/]?[a-zA-Z0-9_]{1,1024}(/[a-zA-Z0-9_]{1,1024}){0,256}[/]?$";
+  private static final String FILE_NAME_REGEX = "^[a-zA-Z0-9_-]{1,1024}$";
+  private static final String FILE_NAME_WITH_TYPE_REGEX = "^[a-zA-Z0-9_-]{1,1024}\\.[a-z]{1,64}$";
+  private static final String CHAR_AND_NUMBER_REGEX = "^[a-zA-Z0-9_-]{1,1024}$";
+  private static final String CHAR_NUMBER_AND_SPACE_REGEX = "^[a-zA-Z0-9_\\s]{1,32}$";
   private static final String NO_WHITESPACE_REGEX = "^[\\S]+$";
-  private static final String URL_REGEX = "^http[s]?://[a-z0-9-]+([\\./][a-z0-9-]+)*[/]?$";
-  private static final String NUMBER_REGEX = "^[0-9]+$";
-  private static final String VERSION_REGEX = "^v[0-9]+$";
-  private static final String ALGORITHM_OID_REGEX = "^[0-9]+[\\.[0-9]+]*$";
-  private static final String BUNDLE_REGEX = "^[a-z-]+[\\.[a-z-]+]*$";
-  private static final String PRIVATE_KEY_REGEX = "^(classpath:|file:[/]+)[a-zA-Z0-9_-]+[/[a-zA-Z0-9_-]+]*(.pem)?$";
-
+  private static final String URL_REGEX = "^http[s]?://[a-z0-9-]{1,1024}([\\./][a-z0-9-]{1,1024}){0,256}[/]?$";
+  private static final String NUMBER_REGEX = "^[0-9]{1,256}$";
+  private static final String VERSION_REGEX = "^v[0-9]{1,256}$";
+  private static final String ALGORITHM_OID_REGEX = "^[0-9]{1,256}[\\.[0-9]{1,256}]{0,256}$";
+  private static final String BUNDLE_REGEX = "^[a-z-]{1,256}[\\.[a-z-]{1,256}]{0,256}$";
+  private static final String PRIVATE_KEY_REGEX = 
+      "^(classpath:|file:[/]{1,8})[a-zA-Z0-9_-]{1,256}[/[a-zA-Z0-9_-]{1,256}]{0,256}(.pem)?$";
+  
   private Paths paths;
   private TestData testData;
   @Min(0)
@@ -49,6 +50,7 @@ public class DistributionServiceConfig {
   private Boolean includeIncompleteHours;
   private String euPackageName;
   private Boolean applyPoliciesForAllCountries;
+  private String cardIdSequence;
   private TekExport tekExport;
   private Signature signature;
   private Api api;
@@ -58,6 +60,7 @@ public class DistributionServiceConfig {
   private String[] supportedCountries;
   private AppVersions appVersions;
   private AppConfigParameters appConfigParameters;
+  private StatisticsConfig statistics;
 
   public Paths getPaths() {
     return paths;
@@ -147,6 +150,14 @@ public class DistributionServiceConfig {
     this.applyPoliciesForAllCountries = applyPoliciesForAllCountries;
   }
 
+  public String getCardIdSequence() {
+    return cardIdSequence;
+  }
+
+  public void setCardIdSequence(String cardIdSequence) {
+    this.cardIdSequence = cardIdSequence;
+  }
+
   public TekExport getTekExport() {
     return tekExport;
   }
@@ -212,6 +223,14 @@ public class DistributionServiceConfig {
     this.appConfigParameters = appConfigParameters;
   }
 
+  public StatisticsConfig getStatistics() {
+    return statistics;
+  }
+
+  public void setStatistics(StatisticsConfig statistics) {
+    this.statistics = statistics;
+  }
+
   /**
    * Get app features as list of protobuf objects.
    *
@@ -223,6 +242,69 @@ public class DistributionServiceConfig {
             .setLabel(appFeature.getLabel())
             .setValue(appFeature.getValue()).build())
         .collect(Collectors.toList());
+  }
+
+  public static class StatisticsConfig {
+
+    private Double trendCalculationThreshold;
+
+    private String statisticPath;
+
+    private String accessKey;
+
+    private String secretKey;
+
+    private String endpoint;
+
+    private String bucket;
+
+    public String getStatisticPath() {
+      return statisticPath;
+    }
+
+    public void setStatisticPath(String statisticPath) {
+      this.statisticPath = statisticPath;
+    }
+
+    public Double getTrendCalculationThreshold() {
+      return trendCalculationThreshold;
+    }
+
+    public void setTrendCalculationThreshold(Double trendCalculationThreshold) {
+      this.trendCalculationThreshold = trendCalculationThreshold;
+    }
+
+    public String getAccessKey() {
+      return accessKey;
+    }
+
+    public void setAccessKey(String accessKey) {
+      this.accessKey = accessKey;
+    }
+
+    public String getSecretKey() {
+      return secretKey;
+    }
+
+    public void setSecretKey(String secretKey) {
+      this.secretKey = secretKey;
+    }
+
+    public String getEndpoint() {
+      return endpoint;
+    }
+
+    public void setEndpoint(String endpoint) {
+      this.endpoint = endpoint;
+    }
+
+    public String getBucket() {
+      return bucket;
+    }
+
+    public void setBucket(String bucket) {
+      this.bucket = bucket;
+    }
   }
 
   public static class TekExport {
@@ -339,7 +421,16 @@ public class DistributionServiceConfig {
     private String appConfigV2IosFileName;
     @Pattern(regexp = CHAR_AND_NUMBER_REGEX)
     private String appConfigV2AndroidFileName;
+    @Pattern(regexp = CHAR_AND_NUMBER_REGEX)
+    private String statisticsFileName;
 
+    public String getStatisticsFileName() {
+      return statisticsFileName;
+    }
+
+    public void setStatisticsFileName(String statisticsFileName) {
+      this.statisticsFileName = statisticsFileName;
+    }
 
     public String getAppConfigV2IosFileName() {
       return appConfigV2IosFileName;
@@ -548,6 +639,8 @@ public class DistributionServiceConfig {
     @Max(64)
     private Integer maxNumberOfS3Threads;
     private Boolean forceUpdateKeyfiles;
+    @Max(Integer.MAX_VALUE)
+    private Integer hourFileRetentionDays;
 
     public String getAccessKey() {
       return accessKey;
@@ -619,6 +712,14 @@ public class DistributionServiceConfig {
 
     public void setForceUpdateKeyfiles(Boolean forceUpdateKeyfiles) {
       this.forceUpdateKeyfiles = forceUpdateKeyfiles;
+    }
+
+    public Integer getHourFileRetentionDays() {
+      return hourFileRetentionDays;
+    }
+
+    public void setHourFileRetentionDays(Integer hourFileRetentionDays) {
+      this.hourFileRetentionDays = hourFileRetentionDays;
     }
   }
 

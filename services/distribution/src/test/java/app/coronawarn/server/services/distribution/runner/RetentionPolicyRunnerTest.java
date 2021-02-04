@@ -6,6 +6,7 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
 import app.coronawarn.server.common.persistence.service.DiagnosisKeyService;
+import app.coronawarn.server.common.persistence.service.StatisticsDownloadService;
 import app.coronawarn.server.services.distribution.config.DistributionServiceConfig;
 import app.coronawarn.server.services.distribution.objectstore.S3RetentionPolicy;
 import org.junit.jupiter.api.Test;
@@ -28,6 +29,9 @@ class RetentionPolicyRunnerTest {
   @MockBean
   S3RetentionPolicy s3RetentionPolicy;
 
+  @MockBean
+  StatisticsDownloadService statisticsDownloadService;
+
   @Autowired
   DistributionServiceConfig distributionServiceConfig;
 
@@ -38,7 +42,10 @@ class RetentionPolicyRunnerTest {
   void shouldCallDatabaseAndS3RetentionRunner() {
     retentionPolicy.run(null);
 
+    verify(statisticsDownloadService, times(1)).applyRetentionPolicy(distributionServiceConfig.getRetentionDays());
     verify(diagnosisKeyService, times(1)).applyRetentionPolicy(distributionServiceConfig.getRetentionDays());
     verify(s3RetentionPolicy, times(1)).applyRetentionPolicy(distributionServiceConfig.getRetentionDays());
+    verify(s3RetentionPolicy, times(1))
+        .applyHourFileRetentionPolicy(distributionServiceConfig.getObjectStore().getHourFileRetentionDays());
   }
 }

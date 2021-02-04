@@ -22,7 +22,7 @@ import org.springframework.validation.Validator;
 import org.springframework.validation.annotation.Validated;
 
 /**
- * Wrapper over properties defined in <code>master-config/tranmission-risk-encoding.yaml</code>. It
+ * Wrapper over properties defined in <code>main-config/tranmission-risk-encoding.yaml</code>. It
  * provides convenience methods to derive properties from one another. Please see yaml file for more
  * details on the reasoning / intent of encoding this field. This class also validates its own
  * internal state at construction time as per Spring configuration class validation mechanisms.
@@ -30,7 +30,7 @@ import org.springframework.validation.annotation.Validated;
 @Configuration
 @Validated
 @ConfigurationProperties(prefix = "transmission-risk-encoding")
-@PropertySource(value = "classpath:master-config/transmission-risk-encoding.yaml",
+@PropertySource(value = "classpath:main-config/transmission-risk-encoding.yaml",
     factory = YamlPropertySourceFactory.class)
 public class TransmissionRiskLevelEncoding implements Validator {
 

@@ -42,28 +42,28 @@ import org.springframework.context.annotation.Configuration;
  *   <li>IosExposureDetectionParameters configuration</li>
  * </ul>
  *
- * <p>The application config is fetched from the master-config folder. Furthermore it's extended with the
+ * <p>The application config is fetched from the main-config folder. Furthermore it's extended with the
  * list of supported countries and the min/max application versions for android/ios. </p>
  */
 @Configuration
 public class ApplicationConfigurationPublicationConfig {
 
   /**
-   * The location of the exposure configuration master file.
+   * The location of the exposure configuration source file.
    */
-  public static final String MASTER_FILE = "master-config/app-config.yaml";
+  public static final String MAIN_FILE = "main-config/app-config.yaml";
 
   /**
-   * Fetches the master configuration as a ApplicationConfiguration instance.
+   * Fetches the main configuration as a ApplicationConfiguration instance.
    * @param distributionServiceConfig type DistributionServiceConfig
    * @return the exposure configuration as ApplicationConfiguration
    * @throws UnableToLoadFileException when the file/transformation did not succeed
    */
   @Bean
-  public ApplicationConfiguration createMasterConfiguration(DistributionServiceConfig distributionServiceConfig)
+  public ApplicationConfiguration createMainConfiguration(DistributionServiceConfig distributionServiceConfig)
       throws UnableToLoadFileException {
 
-    return YamlLoader.loadYamlIntoProtobufBuilder(MASTER_FILE, Builder.class)
+    return YamlLoader.loadYamlIntoProtobufBuilder(MAIN_FILE, Builder.class)
         .setAppFeatures(
             AppFeatures.newBuilder().addAllAppFeatures(distributionServiceConfig.getAppFeaturesProto()).build()
         )
@@ -77,7 +77,7 @@ public class ApplicationConfigurationPublicationConfig {
   }
 
   /**
-   * Fetches the master configuration as a ApplicationConfiguration instance.
+   * Fetches the source configuration as a ApplicationConfiguration instance.
    * @param distributionServiceConfig type ApplicationVersionConfiguration
    * @return test.
    */
@@ -91,7 +91,7 @@ public class ApplicationConfigurationPublicationConfig {
   }
 
   /**
-   * Fetches the master configuration as a KeyDownloadParametersAndroid instance.
+   * Fetches the source configuration as a KeyDownloadParametersAndroid instance.
    * @param distributionServiceConfig type DistributionServiceConfig
    * @return test.
    */
@@ -110,7 +110,7 @@ public class ApplicationConfigurationPublicationConfig {
   }
 
   /**
-   * Fetches the master configuration as a KeyDownloadParametersIOS instance.
+   * Fetches the source configuration as a KeyDownloadParametersIOS instance.
    * @param distributionServiceConfig type DistributionServiceConfig
    * @return test.
    */
@@ -127,7 +127,7 @@ public class ApplicationConfigurationPublicationConfig {
   }
 
   /**
-   * Fetches the master configuration as a ExposureDetectionParametersAndroid instance.
+   * Fetches the source configuration as a ExposureDetectionParametersAndroid instance.
    * @param distributionServiceConfig type DistributionServiceConfig
    * @return test.
    */
@@ -142,7 +142,7 @@ public class ApplicationConfigurationPublicationConfig {
   }
 
   /**
-   * Fetches the master configuration as a ExposureDetectionParametersIOS instance.
+   * Fetches the source configuration as a ExposureDetectionParametersIOS instance.
    * @param distributionServiceConfig type DistributionServiceConfig
    * @return test.
    */

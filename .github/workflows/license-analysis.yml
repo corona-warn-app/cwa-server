@@ -2,9 +2,7 @@ name: license-analysis-workflow
 
 on:
     pull_request:
-        branches:
-        - master
-        - release/**
+        branches: [ main, release/** ]
 
 jobs:
     license-analysis-job:

@@ -1,5 +1,3 @@
-
-
 package app.coronawarn.server.services.callback.controller;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -18,14 +16,13 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.SpyBean;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.annotation.DirtiesContext;
-import org.springframework.test.context.ActiveProfiles;
-
 import app.coronawarn.server.common.persistence.domain.FederationBatchInfo;
 import app.coronawarn.server.common.persistence.domain.FederationBatchStatus;
 import app.coronawarn.server.common.persistence.service.FederationBatchInfoService;
+import app.coronawarn.server.services.callback.ServerApplication;
 
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-@ActiveProfiles({"disable-certificate-authentication", "disable-ssl-client-verification-verify-hostname"})
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT, //
+    classes = { ServerApplication.class, ClientCertificateTestConfig.class })
 @DirtiesContext
 class CallbackControllerTest {
 
@@ -46,7 +43,7 @@ class CallbackControllerTest {
   }
 
   @Test
-  void shouldInsertBatchInfo() throws Exception {
+  void shouldInsertBatchInfo() {
     String batchTag = UUID.randomUUID().toString().substring(0, 11);
     LocalDate date = LocalDate.now();
 

@@ -1,0 +1,5 @@
+---
+services:
+  distribution:
+    objectstore:
+      hour-file-retention-days: 14

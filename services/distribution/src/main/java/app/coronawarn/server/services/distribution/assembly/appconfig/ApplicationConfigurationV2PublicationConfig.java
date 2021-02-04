@@ -34,7 +34,7 @@ import org.springframework.context.annotation.Configuration;
  * Provides the application configuration needed for mobile clients which use Exposure Notification
  * Framework V2. As of CWA version 1.7, Android and IOS configurations have been separated and
  * distributed in CDNs at different URLs. This Spring bean loads the default values defined in the
- * YAML configurations of each device type found under <code> /master-config/ </code> folder,
+ * YAML configurations of each device type found under <code> /main-config/ </code> folder,
  * extends it with some Distribution Service global parameters and registers them for usage during
  * file archiving and bundling.
  */
@@ -42,15 +42,15 @@ import org.springframework.context.annotation.Configuration;
 public class ApplicationConfigurationV2PublicationConfig {
 
   /**
-   * The location of the exposure configuration master files for Android and Ios.
+   * The location of the exposure configuration source files for Android and Ios.
    */
-  private static final String V2_RISK_PARAMETERS_FILE = "master-config/v2/risk-calculation-parameters.yaml";
-  private static final String ANDROID_V2_DATA_MAPPING_FILE = "master-config/v2/diagnosis-keys-data-mapping.yaml";
-  private static final String ANDROID_V2_DAILY_SUMMARIES_FILE = "master-config/v2/daily-summaries-config.yaml";
-  private static final String IOS_V2_EXPOSURE_CONFIGURATION_FILE = "master-config/v2/exposure-configuration.yaml";
+  private static final String V2_RISK_PARAMETERS_FILE = "main-config/v2/risk-calculation-parameters.yaml";
+  private static final String ANDROID_V2_DATA_MAPPING_FILE = "main-config/v2/diagnosis-keys-data-mapping.yaml";
+  private static final String ANDROID_V2_DAILY_SUMMARIES_FILE = "main-config/v2/daily-summaries-config.yaml";
+  private static final String IOS_V2_EXPOSURE_CONFIGURATION_FILE = "main-config/v2/exposure-configuration.yaml";
 
   /**
-   * Fetches the master configuration as a ApplicationConfigurationAndroid instance.
+   * Fetches the source configuration as a ApplicationConfigurationAndroid instance.
    * @param distributionServiceConfig type DistributionServiceConfig
    * @return android configuration
    * @throws UnableToLoadFileException if either the file access or subsequent yaml parsing fails.
@@ -139,7 +139,7 @@ public class ApplicationConfigurationV2PublicationConfig {
   }
 
   /**
-   * Fetches the master configuration as a ApplicationConfigurationAndroid instance.
+   * Fetches the source configuration as a ApplicationConfigurationAndroid instance.
    *
    * @param distributionServiceConfig config attributes to retrieve
    * @return iOS configuration
