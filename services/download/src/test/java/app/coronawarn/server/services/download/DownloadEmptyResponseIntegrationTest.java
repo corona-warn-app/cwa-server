@@ -1,5 +1,3 @@
-
-
 package app.coronawarn.server.services.download;
 
 import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
@@ -37,14 +35,15 @@ import org.springframework.test.context.ActiveProfiles;
  * Hence, after the execution of both runners, the federation_batch_info table should be the following:
  * <li>"batch1_tag" has state "PROCESSED"</li>
  * <li>"batch2_tag" has state "ERROR"</li>
- * <li>"batch3_tag" has state "ERROR" * no batch has state "UNPROCESSED"</li>
+ * <li>"batch3_tag" has state "ERROR"</li>
+ * <li>no batch has state "UNPROCESSED"</li>
  * <p>
  * The diagnosis_key table should contain the data of batch1.
  */
 @SpringBootTest
 @DirtiesContext
 @ActiveProfiles({"download-empty-response-integration-test"})
-class DownloadIntegrationEmptyResponseTest {
+class DownloadEmptyResponseIntegrationTest {
 
   public static final String BATCH1_DATA = "0123456789ABCDED";
 
