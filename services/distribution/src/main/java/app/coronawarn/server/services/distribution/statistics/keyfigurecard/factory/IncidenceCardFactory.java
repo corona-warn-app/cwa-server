@@ -38,9 +38,15 @@ public class IncidenceCardFactory extends HeaderCardFactory {
 
   @Override
   protected List<Optional<Object>> getRequiredFieldValues(StatisticsJsonStringObject stats) {
-    return List.of(
+    List<Optional<Object>> requiredFields = List.of(
         Optional.ofNullable(stats.getSevenDayIncidenceTrend1percent()),
         Optional.ofNullable(stats.getSevenDayIncidence())
     );
+
+    if (requiredFields.contains(Optional.empty()) || stats.getSevenDayIncidence() <= 0) {
+      return List.of(Optional.empty());
+    }
+
+    return requiredFields;
   }
 }

@@ -61,11 +61,21 @@ public class InfectionsCardFactory extends HeaderCardFactory {
 
   @Override
   protected List<Optional<Object>> getRequiredFieldValues(StatisticsJsonStringObject stats) {
-    return List.of(
+
+    List<Optional<Object>> requiredFields = List.of(
         Optional.ofNullable(stats.getInfectionsReportedCumulated()),
         Optional.ofNullable(stats.getInfectionsReported7daysTrend5percent()),
         Optional.ofNullable(stats.getInfectionsReported7daysAvg()),
         Optional.ofNullable(stats.getInfectionsReportedDaily())
     );
+
+    if (requiredFields.contains(Optional.empty())
+        || stats.getInfectionsReportedCumulated() <= 0
+        || stats.getInfectionsReported7daysAvg() <= 0
+        || stats.getInfectionsReportedDaily() <= 0) {
+      return List.of(Optional.empty());
+    }
+
+    return requiredFields;
   }
 }

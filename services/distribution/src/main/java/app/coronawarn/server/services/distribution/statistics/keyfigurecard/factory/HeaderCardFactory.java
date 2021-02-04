@@ -38,10 +38,10 @@ public abstract class HeaderCardFactory {
   }
 
   private void throwIfNullFieldsFound(StatisticsJsonStringObject stats) {
-    var nullFields = getRequiredFieldValues(stats).stream()
+    var nullFieldsOrZeroOrLessThanZero = getRequiredFieldValues(stats).stream()
         .filter(Optional::isEmpty)
         .collect(Collectors.toList());
-    if (!nullFields.isEmpty()) {
+    if (!nullFieldsOrZeroOrLessThanZero.isEmpty()) {
       throw new MissingPropertyException(this.getCardId());
     }
   }
@@ -53,7 +53,8 @@ public abstract class HeaderCardFactory {
 
   /**
    * Return the list of required fields to create this card. Implemented by factories. If any of the fields returned by
-   * this method is Null, a MissingPropertyException will be thrown and the card will be skipped for given day.
+   * this method is Null or <= 0, a MissingPropertyException will be thrown and the card
+   * will be skipped for given day.
    *
    * @param stats JSON string object.
    * @return List of objects to be checked if are null.
