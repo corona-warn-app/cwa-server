@@ -62,12 +62,21 @@ public class KeySubmissionCardFactory extends HeaderCardFactory {
 
   @Override
   protected List<Optional<Object>> getRequiredFieldValues(StatisticsJsonStringObject stats) {
-    return List.of(
+    List<Optional<Object>> requiredFields = List.of(
         Optional.ofNullable(stats.getPersonsWhoSharedKeys7daysTrend5percent()),
         Optional.ofNullable(stats.getPersonWhoSharedKeys7daysAvg()),
         Optional.ofNullable(stats.getPersonsWhoSharedKeysCumulated()),
         Optional.ofNullable(stats.getPersonsWhoSharedKeysDaily())
     );
+
+    if (requiredFields.contains(Optional.empty())
+        || stats.getPersonWhoSharedKeys7daysAvg() <= 0
+        || stats.getPersonsWhoSharedKeysCumulated() <= 0
+        || stats.getPersonsWhoSharedKeysDaily() <= 0) {
+      return List.of(Optional.empty());
+    }
+
+    return requiredFields;
   }
 
 
