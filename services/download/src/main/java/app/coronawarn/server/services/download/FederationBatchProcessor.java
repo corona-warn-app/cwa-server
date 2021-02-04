@@ -159,12 +159,12 @@ public class FederationBatchProcessor {
     logger.info("Processing batch for date {} and batchTag {}.", date, batchTag);
     try {
       BatchDownloadResponse response = federationGatewayDownloadService.downloadBatch(batchTag, date);
-      if (config.isBatchAuditEnabled()) {
-        federationGatewayDownloadService.auditBatch(batchTag, date);
-      }
       AtomicBoolean batchContainsInvalidKeys = new AtomicBoolean(false);
       response.getDiagnosisKeyBatch().ifPresentOrElse(batch -> {
         logger.info("Downloaded {} keys for date {} and batchTag {}.", batch.getKeysCount(), date, batchTag);
+        if (config.isBatchAuditEnabled()) {
+          federationGatewayDownloadService.auditBatch(batchTag, date);
+        }
         List<DiagnosisKey> validDiagnosisKeys = extractValidDiagnosisKeysFromBatch(batch);
         int numOfInvalidKeys = batch.getKeysCount() - validDiagnosisKeys.size();
         if (numOfInvalidKeys > 0) {
