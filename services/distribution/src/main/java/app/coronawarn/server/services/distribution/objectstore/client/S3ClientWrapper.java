@@ -3,6 +3,8 @@ package app.coronawarn.server.services.distribution.objectstore.client;
 import static java.lang.Boolean.TRUE;
 import static java.util.stream.Collectors.toList;
 
+import app.coronawarn.server.services.distribution.statistics.exceptions.NotModifiedException;
+import app.coronawarn.server.services.distribution.statistics.file.JsonFile;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.nio.file.Path;
@@ -19,6 +21,7 @@ import org.springframework.retry.annotation.Backoff;
 import org.springframework.retry.annotation.Recover;
 import org.springframework.retry.annotation.Retryable;
 import org.springframework.retry.support.RetrySynchronizationManager;
+import software.amazon.awssdk.core.ResponseInputStream;
 import software.amazon.awssdk.core.exception.SdkException;
 import software.amazon.awssdk.core.sync.RequestBody;
 import software.amazon.awssdk.services.s3.S3Client;
@@ -26,12 +29,14 @@ import software.amazon.awssdk.services.s3.model.Delete;
 import software.amazon.awssdk.services.s3.model.DeleteObjectsRequest;
 import software.amazon.awssdk.services.s3.model.DeleteObjectsResponse;
 import software.amazon.awssdk.services.s3.model.GetObjectRequest;
+import software.amazon.awssdk.services.s3.model.GetObjectResponse;
 import software.amazon.awssdk.services.s3.model.HeadObjectRequest;
 import software.amazon.awssdk.services.s3.model.ListObjectsV2Request;
 import software.amazon.awssdk.services.s3.model.ListObjectsV2Response;
 import software.amazon.awssdk.services.s3.model.NoSuchBucketException;
 import software.amazon.awssdk.services.s3.model.ObjectIdentifier;
 import software.amazon.awssdk.services.s3.model.PutObjectRequest;
+import software.amazon.awssdk.services.s3.model.S3Exception;
 
 /**
  * Implementation of {@link ObjectStoreClient} that encapsulates an {@link S3Client}.
@@ -61,24 +66,51 @@ public class S3ClientWrapper implements ObjectStoreClient {
     }
   }
 
+  private JsonFile fromResponse(ResponseInputStream<GetObjectResponse> response) {
+    StringBuilder builder = new StringBuilder();
+    BufferedReader reader = new BufferedReader(new InputStreamReader(response));
+    reader.lines()
+        .map(String::strip)
+        .forEach(builder::append);
+    return new JsonFile(builder.toString(), response.response().eTag());
+  }
+
   @Override
   @Retryable(
       value = SdkException.class,
       maxAttemptsExpression = "${services.distribution.objectstore.retry-attempts}",
       backoff = @Backoff(delayExpression = "${services.distribution.objectstore.retry-backoff}"))
-  public String getSingleObjectContent(String bucket, String key) {
+  public JsonFile getSingleObjectContent(String bucket, String key) {
     GetObjectRequest request = GetObjectRequest.builder()
         .bucket(bucket)
         .key(key)
         .build();
-
     var object = s3Client.getObject(request);
-    StringBuilder builder = new StringBuilder();
-    BufferedReader reader = new BufferedReader(new InputStreamReader(object));
-    reader.lines()
-        .map(String::strip)
-        .forEach(builder::append);
-    return builder.toString();
+    return fromResponse(object);
+  }
+
+  @Override
+  @Retryable(
+      value = SdkException.class,
+      exclude = NotModifiedException.class,
+      maxAttemptsExpression = "${services.distribution.objectstore.retry-attempts}",
+      backoff = @Backoff(delayExpression = "${services.distribution.objectstore.retry-backoff}"))
+  public JsonFile getSingleObjectContent(String bucket, String key, String ifNotETag) throws NotModifiedException {
+    try {
+      GetObjectRequest request = GetObjectRequest.builder()
+          .bucket(bucket)
+          .key(key)
+          .ifNoneMatch(ifNotETag)
+          .build();
+      var object = s3Client.getObject(request);
+      return fromResponse(object);
+    } catch (S3Exception ex) {
+      if (ex.statusCode() == 304) {
+        throw new NotModifiedException(key, ifNotETag);
+      } else {
+        throw ex;
+      }
+    }
   }
 
   @Override

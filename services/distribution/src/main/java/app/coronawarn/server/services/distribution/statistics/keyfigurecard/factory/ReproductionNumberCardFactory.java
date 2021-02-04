@@ -37,9 +37,15 @@ public class ReproductionNumberCardFactory extends HeaderCardFactory {
 
   @Override
   protected List<Optional<Object>> getRequiredFieldValues(StatisticsJsonStringObject stats) {
-    return List.of(
+    List<Optional<Object>> requiredFields = List.of(
         Optional.ofNullable(stats.getSevenDayRvaluePublishedTrend1percent()),
         Optional.ofNullable(stats.getSevenDayRvaluePublishedDaily())
     );
+
+    if (requiredFields.contains(Optional.empty()) || stats.getSevenDayRvaluePublishedDaily() <= 0) {
+      return List.of(Optional.empty());
+    }
+
+    return requiredFields;
   }
 }

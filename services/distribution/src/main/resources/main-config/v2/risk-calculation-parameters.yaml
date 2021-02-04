@@ -61,7 +61,7 @@ normalized-time-per-day-to-risk-level-mapping:
   -
     normalized-time-range:
       min: 15
-      max: 9999
+      max: 99999
     risk-level: 2
 
 transmission-risk-level-multiplier: 0.2
