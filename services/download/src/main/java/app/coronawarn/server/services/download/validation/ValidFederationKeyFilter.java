@@ -33,6 +33,9 @@ public class ValidFederationKeyFilter {
 
   /**
    * Accepts or rejects a key based on the evaluation of the fields against permitted values.
+   *
+   * @param federationKey key to check
+   * @return if key is permitted
    */
   public boolean isValid(DiagnosisKey federationKey) {
     return hasAllowedReportType(federationKey)

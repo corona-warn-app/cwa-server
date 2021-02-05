@@ -55,7 +55,7 @@ public class ApplicationConfigurationPublicationConfig {
 
   /**
    * Fetches the main configuration as a ApplicationConfiguration instance.
-   *
+   * @param distributionServiceConfig type DistributionServiceConfig
    * @return the exposure configuration as ApplicationConfiguration
    * @throws UnableToLoadFileException when the file/transformation did not succeed
    */
@@ -78,7 +78,7 @@ public class ApplicationConfigurationPublicationConfig {
 
   /**
    * Fetches the source configuration as a ApplicationConfiguration instance.
-   *
+   * @param distributionServiceConfig type ApplicationVersionConfiguration
    * @return test.
    */
   public ApplicationVersionConfiguration buildApplicationVersionConfiguration(
@@ -92,7 +92,7 @@ public class ApplicationConfigurationPublicationConfig {
 
   /**
    * Fetches the source configuration as a KeyDownloadParametersAndroid instance.
-   *
+   * @param distributionServiceConfig type DistributionServiceConfig
    * @return test.
    */
   public KeyDownloadParametersAndroid buildKeyDownloadParametersAndroid(
@@ -111,7 +111,7 @@ public class ApplicationConfigurationPublicationConfig {
 
   /**
    * Fetches the source configuration as a KeyDownloadParametersIOS instance.
-   *
+   * @param distributionServiceConfig type DistributionServiceConfig
    * @return test.
    */
   public KeyDownloadParametersIOS buildKeyDownloadParametersIos(
@@ -128,7 +128,7 @@ public class ApplicationConfigurationPublicationConfig {
 
   /**
    * Fetches the source configuration as a ExposureDetectionParametersAndroid instance.
-   *
+   * @param distributionServiceConfig type DistributionServiceConfig
    * @return test.
    */
   public ExposureDetectionParametersAndroid buildExposureDetectionParametersAndroid(
@@ -143,7 +143,7 @@ public class ApplicationConfigurationPublicationConfig {
 
   /**
    * Fetches the source configuration as a ExposureDetectionParametersIOS instance.
-   *
+   * @param distributionServiceConfig type DistributionServiceConfig
    * @return test.
    */
   public ExposureDetectionParametersIOS buildExposureDetectionParametersIos(

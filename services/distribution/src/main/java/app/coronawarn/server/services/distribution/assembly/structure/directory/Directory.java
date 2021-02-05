@@ -14,11 +14,15 @@ public interface Directory<W extends Writable<W>> extends Writable<W> {
 
   /**
    * Adds a {@link Writable} to this {@link Directory}.
+   *
+   * @param writable Writable to add
    */
   void addWritable(Writable<W> writable);
 
   /**
    * Returns all {@link Writable writables} contained in this {@link Directory}.
+   *
+   * @return set of all Writable entriesF
    */
   Set<Writable<W>> getWritables();
 }

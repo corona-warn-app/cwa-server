@@ -47,6 +47,9 @@ public class ObjectStorePublishingConfig {
 
   /**
    * Creates a {@link ThreadPoolTaskExecutor}, which is used to submit object store upload tasks.
+   *
+   * @param distributionServiceConfig DistributionServiceConfig containing object store attributes
+   * @return ThreadPoolTaskExecutor
    */
   @Bean
   public ThreadPoolTaskExecutor createExecutor(DistributionServiceConfig distributionServiceConfig) {
