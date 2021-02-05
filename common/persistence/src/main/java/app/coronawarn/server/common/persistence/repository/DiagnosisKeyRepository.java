@@ -42,6 +42,8 @@ public interface DiagnosisKeyRepository extends PagingAndSortingRepository<Diagn
    * @param originCountry              The origin country from the app.
    * @param visitedCountries           The list of countries this transmissions is relevant for.
    * @param reportType                 The report type of the diagnosis key.
+   * @param consentToFederation        The consent to federation.
+   * @param daysSinceOnsetOfSymptoms   The number of days since symptoms began.
    * @return {@literal true} if the diagnosis key was inserted successfully, {@literal false} otherwise.
    */
   @Modifying

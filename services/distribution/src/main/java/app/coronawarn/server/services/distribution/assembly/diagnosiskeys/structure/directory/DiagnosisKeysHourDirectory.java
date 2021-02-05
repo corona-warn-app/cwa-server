@@ -30,6 +30,7 @@ public class DiagnosisKeysHourDirectory extends IndexDirectoryOnDisk<LocalDateTi
    *
    * @param diagnosisKeyBundler A {@link DiagnosisKeyBundler} containing the {@link DiagnosisKey DiagnosisKeys}.
    * @param cryptoProvider      The {@link CryptoProvider} used for cryptographic signing.
+   * @param distributionServiceConfig The configuration to set {@link DistributionServiceConfig}
    */
   public DiagnosisKeysHourDirectory(DiagnosisKeyBundler diagnosisKeyBundler, CryptoProvider cryptoProvider,
       DistributionServiceConfig distributionServiceConfig) {

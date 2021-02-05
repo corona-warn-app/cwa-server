@@ -30,6 +30,9 @@ public class EnfParameterAdapter {
   /**
    * Given the collection of keys, create another one with all original elements but with ENF
    * related content transformations applied.
+   *
+   * @param diagnosisKeys collection of DiagnosisKey to adapt
+   * @return updated collection of DiagnosisKey
    */
   public Collection<DiagnosisKey> adaptKeys(Collection<DiagnosisKey> diagnosisKeys) {
     return diagnosisKeys.stream().map(this::adapt).collect(Collectors.toList());
