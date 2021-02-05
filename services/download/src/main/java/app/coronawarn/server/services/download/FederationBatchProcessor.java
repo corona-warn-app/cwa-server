@@ -168,6 +168,7 @@ public class FederationBatchProcessor {
     try {
       BatchDownloadResponse response = federationGatewayDownloadService.downloadBatch(batchTag, date);
       AtomicBoolean batchContainsInvalidKeys = new AtomicBoolean(false);
+      nextBatchTag.set(response.getNextBatchTag());
       response.getDiagnosisKeyBatch().ifPresentOrElse(batch -> {
         logger.info("Downloaded {} keys for date {} and batchTag {}.", batch.getKeysCount(), date, batchTag);
         if (config.isBatchAuditEnabled()) {
