@@ -51,6 +51,7 @@ public class TemporaryExposureKeyExportFile extends FileOnDiskWithChecksum {
    *                              seconds since epoch.
    * @param endTimestamp          The end of the time window covered by the {@link TemporaryExposureKeyExport}, in UTC *
    *                              seconds since epoch.
+   * @param distributionServiceConfig The distribution service configuration {@link DistributionServiceConfig}
    * @return A new {@link TemporaryExposureKeyExportFile}.
    */
   public static TemporaryExposureKeyExportFile fromTemporaryExposureKeys(
@@ -70,6 +71,7 @@ public class TemporaryExposureKeyExportFile extends FileOnDiskWithChecksum {
    *                       seconds since epoch.
    * @param endTimestamp   The end of the time window covered by the {@link TemporaryExposureKeyExport}, in UTC *
    *                       seconds since epoch.
+   * @param distributionServiceConfig The distribution service configuration {@link DistributionServiceConfig}
    * @return A new {@link TemporaryExposureKeyExportFile}.
    */
   public static TemporaryExposureKeyExportFile fromDiagnosisKeys(Collection<DiagnosisKey> diagnosisKeys, String region,
@@ -135,6 +137,8 @@ public class TemporaryExposureKeyExportFile extends FileOnDiskWithChecksum {
 
   /**
    * Returns the bytes of this TemporaryExposureKeyExportFile, but without the header.
+   *
+   * @return Array copy of TemporaryExposureKey data
    */
   public byte[] getBytesWithoutHeader() {
     byte[] headerBytes = this.getHeaderBytes();

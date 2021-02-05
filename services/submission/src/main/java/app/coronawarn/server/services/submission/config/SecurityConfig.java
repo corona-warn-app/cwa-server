@@ -49,6 +49,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
   /**
    * Validation factory bean is configured here because its message interpolation mechanism
    * is considered a potential threat if enabled.
+   *
+   * @return newly configured factory bean
    */
   @Bean
   public static LocalValidatorFactoryBean defaultValidator() {

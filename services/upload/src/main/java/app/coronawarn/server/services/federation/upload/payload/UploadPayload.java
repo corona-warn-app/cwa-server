@@ -11,11 +11,11 @@ import java.util.List;
  * This class represents an Upload call to the Federation Gateway. The payload for EFGS must contain the following
  * information:
  *
- * <p><ul>
+ * <ul>
  * <li> The bytes of the protobuf ({@link DiagnosisKeyBatch} batch). </li>
  * <li> The signature bytes (String batchSignature). </li>
  * <li> The unique batch tag (String batchTag). </li>
- * </p></ul>
+ * </ul>
  */
 public class UploadPayload {
 
@@ -53,6 +53,8 @@ public class UploadPayload {
 
   /**
    * Returns {@link DiagnosisKey} entities that are part of this upload payload.
+   *
+   * @return list of {@link FederationUploadKey} in upload payload
    */
   public List<FederationUploadKey> getOriginalKeys() {
     return originalKeys;

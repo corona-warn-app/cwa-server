@@ -45,10 +45,11 @@ public class FederationBatchProcessor {
   private final DownloadServiceConfig config;
   private final ValidFederationKeyFilter validFederationKeyFilter;
 
-
   /**
-   * This is a potential memory-leak if there are very many batches. This is an intentional decision: We'd rather run
-   * into a memory-leak if there are too many batches than run into an endless loop if a batch-tag repeats
+   * This is a potential memory-leak if there are very many batches.
+   * This is an intentional decision:
+   * We'd rather run into a memory-leak if there are too many batches
+   * than run into an endless loop if a batch-tag repeats
    */
   private final Set<String> seenBatches;
 
@@ -80,6 +81,8 @@ public class FederationBatchProcessor {
    * Federation Batch Info stores information about which batches have already been processed to not download them
    * again. If the date-based download is enabled, the entries for the specified date need to be removed. Stores the
    * first FederationBatchTag for the specified date as a starting point for further processing.
+   *
+   * @throws FatalFederationGatewayException triggers if error occurs in the federation gateway
    */
   public void prepareDownload() throws FatalFederationGatewayException {
     if (config.getEfgsEnforceDateBasedDownload()) {
@@ -94,6 +97,7 @@ public class FederationBatchProcessor {
    * Stores the batch info for the specified date. Its status is set to {@link FederationBatchStatus#UNPROCESSED}.
    *
    * @param date The date for which the first batch info is stored.
+   * @throws FatalFederationGatewayException triggers if error occurs in the federation gateway
    */
   protected void saveFirstBatchInfoForDate(LocalDate date) throws FatalFederationGatewayException {
     try {
@@ -132,6 +136,8 @@ public class FederationBatchProcessor {
   /**
    * Downloads and processes all batches from the federation gateway that have previously been marked with status value
    * {@link FederationBatchStatus#UNPROCESSED}.
+   *
+   * @throws FatalFederationGatewayException triggers if error occurs in the federation gateway
    */
   public void processUnprocessedFederationBatches() throws FatalFederationGatewayException {
     Deque<FederationBatchInfo> unprocessedBatches = new LinkedList<>(batchInfoService.findByStatus(UNPROCESSED));
@@ -162,12 +168,11 @@ public class FederationBatchProcessor {
     try {
       BatchDownloadResponse response = federationGatewayDownloadService.downloadBatch(batchTag, date);
       AtomicBoolean batchContainsInvalidKeys = new AtomicBoolean(false);
-      if (config.isBatchAuditEnabled()) {
-        federationGatewayDownloadService.auditBatch(batchTag, date);
-      }
-      nextBatchTag.set(response.getNextBatchTag());
       response.getDiagnosisKeyBatch().ifPresentOrElse(batch -> {
         logger.info("Downloaded {} keys for date {} and batchTag {}.", batch.getKeysCount(), date, batchTag);
+        if (config.isBatchAuditEnabled()) {
+          federationGatewayDownloadService.auditBatch(batchTag, date);
+        }
         List<DiagnosisKey> validDiagnosisKeys = extractValidDiagnosisKeysFromBatch(batch);
         int numOfInvalidKeys = batch.getKeysCount() - validDiagnosisKeys.size();
         if (numOfInvalidKeys > 0) {

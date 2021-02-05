@@ -25,14 +25,14 @@ public @interface ValidCountry {
   /**
    * Groups.
    *
-   * @return
+   * @return interface for groups
    */
   Class<?>[] groups() default {};
 
   /**
    * Payload.
    *
-   * @return
+   * @return interface for payload which inherits attributes of Payload
    */
   Class<? extends Payload>[] payload() default {};
 }

@@ -17,6 +17,8 @@ public class TimeUtils {
 
   /**
    * Returns the UTC date and time at the beginning of the current hour.
+   *
+   * @return LocalDateTime of current UTC hour
    */
   public static LocalDateTime getCurrentUtcHour() {
     return LocalDateTime.ofInstant(getNow().truncatedTo(ChronoUnit.HOURS), ZoneOffset.UTC);
@@ -24,6 +26,8 @@ public class TimeUtils {
 
   /**
    * Returns the UTC date.
+   *
+   * @return LocalDate of current UTC date
    */
   public static LocalDate getUtcDate() {
     return getCurrentUtcHour().toLocalDate();
@@ -31,6 +35,8 @@ public class TimeUtils {
 
   /**
    * Returns the UTC {@link Instant} time or creates a new instance if called the first time.
+   *
+   * @return current Instant
    */
   public static Instant getNow() {
     if (now == null) {
