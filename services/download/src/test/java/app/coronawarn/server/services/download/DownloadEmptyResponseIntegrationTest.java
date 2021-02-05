@@ -45,7 +45,7 @@ import org.springframework.test.context.ActiveProfiles;
 @ActiveProfiles({"download-empty-response-integration-test"})
 class DownloadEmptyResponseIntegrationTest {
 
-  public static final String BATCH1_DATA = "0123456789ABCDED";
+  public static final String BATCH1_DATA = "0123456789ABCDEF";
 
   private static final String BATCH1_TAG = "batch1_tag";
   private static final String BATCH2_TAG = "batch2_tag";
