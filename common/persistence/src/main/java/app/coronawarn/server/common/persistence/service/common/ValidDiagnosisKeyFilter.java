@@ -20,6 +20,9 @@ public class ValidDiagnosisKeyFilter {
   /**
    * Rerturns a subset of diagnosis keys from the given list which have
    * passed the default entity validation.
+   *
+   * @param diagnosisKeys list of DiagnosisKey
+   * @return list of valid DiagnosisKey
    */
   public List<DiagnosisKey> filter(List<DiagnosisKey> diagnosisKeys) {
     List<DiagnosisKey> validDiagnosisKeys =
@@ -34,6 +37,9 @@ public class ValidDiagnosisKeyFilter {
 
   /**
    * Returns true if the given diagnosis key has passed the default entity validation.
+   *
+   * @param diagnosisKey a DiagnosisKey
+   * @return boolean value to indicate if the DiagnosisKey is valid
    */
   public boolean isDiagnosisKeyValid(DiagnosisKey diagnosisKey) {
     Collection<ConstraintViolation<DiagnosisKey>> violations = diagnosisKey.validate();
