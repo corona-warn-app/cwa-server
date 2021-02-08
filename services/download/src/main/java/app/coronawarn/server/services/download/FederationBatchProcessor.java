@@ -27,6 +27,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicReference;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
@@ -163,9 +164,11 @@ public class FederationBatchProcessor {
     LocalDate date = batchInfo.getDate();
     String batchTag = batchInfo.getBatchTag();
     logger.info("Processing batch for date {} and batchTag {}.", date, batchTag);
+    AtomicReference<Optional<String>> nextBatchTag = new AtomicReference<>(Optional.empty());
     try {
       BatchDownloadResponse response = federationGatewayDownloadService.downloadBatch(batchTag, date);
       AtomicBoolean batchContainsInvalidKeys = new AtomicBoolean(false);
+      nextBatchTag.set(response.getNextBatchTag());
       response.getDiagnosisKeyBatch().ifPresentOrElse(batch -> {
         logger.info("Downloaded {} keys for date {} and batchTag {}.", batch.getKeysCount(), date, batchTag);
         if (config.isBatchAuditEnabled()) {
@@ -181,7 +184,7 @@ public class FederationBatchProcessor {
         logger.info("Successfully inserted {} keys for date {} and batchTag {}.", insertedKeys, date, batchTag);
       }, () -> logger.info("Batch for date {} and batchTag {} did not contain any keys.", date, batchTag));
       batchInfoService.updateStatus(batchInfo, batchContainsInvalidKeys.get() ? PROCESSED_WITH_ERROR : PROCESSED);
-      return response.getNextBatchTag();
+      return nextBatchTag.get();
     } catch (FatalFederationGatewayException e) {
       throw e;
     } catch (Exception e) {
@@ -189,7 +192,7 @@ public class FederationBatchProcessor {
           "Federation batch processing for date " + date + " and batchTag " + batchTag + " failed. Status set to "
               + errorStatus.name() + ".", e);
       batchInfoService.updateStatus(batchInfo, errorStatus);
-      return Optional.empty();
+      return nextBatchTag.get();
     }
   }
 
