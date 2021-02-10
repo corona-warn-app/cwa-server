@@ -1164,9 +1164,9 @@ public class DistributionServiceConfig {
 
       private Double probabilityToSubmit;
       private Double probabilityToSubmitExposureWindows;
-      @Min(0)
+      @PositiveOrZero
       private Integer hoursSinceTestRegistrationToSubmitTestResultMetadata;
-      @Min(0)
+      @PositiveOrZero
       private Integer hoursSinceTestToSubmitKeySubmissionMetadata;
 
       public Double getProbabilityToSubmit() {
@@ -1207,9 +1207,9 @@ public class DistributionServiceConfig {
 
       private Double probabilityToSubmit;
       private Double probabilityToSubmitExposureWindows;
-      @Min(0)
+      @PositiveOrZero
       private Integer hoursSinceTestRegistrationToSubmitTestResultMetadata;
-      @Min(0)
+      @PositiveOrZero
       private Integer hoursSinceTestToSubmitKeySubmissionMetadata;
       @NotNull
       private Boolean requireBasicIntegrity;
