@@ -7,8 +7,10 @@ import java.util.stream.Collectors;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.PositiveOrZero;
+import javax.validation.constraints.Size;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.validation.annotation.Validated;
 
@@ -27,9 +29,9 @@ public class DistributionServiceConfig {
   private static final String VERSION_REGEX = "^v[0-9]{1,256}$";
   private static final String ALGORITHM_OID_REGEX = "^[0-9]{1,256}[\\.[0-9]{1,256}]{0,256}$";
   private static final String BUNDLE_REGEX = "^[a-z-]{1,256}[\\.[a-z-]{1,256}]{0,256}$";
-  private static final String PRIVATE_KEY_REGEX = 
+  private static final String PRIVATE_KEY_REGEX =
       "^(classpath:|file:[/]{1,8})[a-zA-Z0-9_-]{1,256}[/[a-zA-Z0-9_-]{1,256}]{0,256}(.pem)?$";
-  
+
   private Paths paths;
   private TestData testData;
   @Min(0)
@@ -811,6 +813,46 @@ public class DistributionServiceConfig {
     private AndroidKeyDownloadParameters androidKeyDownloadParameters;
     private IosExposureDetectionParameters iosExposureDetectionParameters;
     private AndroidExposureDetectionParameters androidExposureDetectionParameters;
+    private IosEventDrivenUserSurveyParameters iosEventDrivenUserSurveyParameters;
+    private AndroidEventDrivenUserSurveyParameters androidEventDrivenUserSurveyParameters;
+    private IosPrivacyPreservingAnalyticsParameters iosPrivacyPreservingAnalyticsParameters;
+    private AndroidPrivacyPreservingAnalyticsParameters androidPrivacyPreservingAnalyticsParameters;
+
+    public IosEventDrivenUserSurveyParameters getIosEventDrivenUserSurveyParameters() {
+      return iosEventDrivenUserSurveyParameters;
+    }
+
+    public void setIosEventDrivenUserSurveyParameters(
+        IosEventDrivenUserSurveyParameters iosEventDrivenUserSurveyParameters) {
+      this.iosEventDrivenUserSurveyParameters = iosEventDrivenUserSurveyParameters;
+    }
+
+    public AndroidEventDrivenUserSurveyParameters getAndroidEventDrivenUserSurveyParameters() {
+      return androidEventDrivenUserSurveyParameters;
+    }
+
+    public void setAndroidEventDrivenUserSurveyParameters(
+        AndroidEventDrivenUserSurveyParameters androidEventDrivenUserSurveyParameters) {
+      this.androidEventDrivenUserSurveyParameters = androidEventDrivenUserSurveyParameters;
+    }
+
+    public IosPrivacyPreservingAnalyticsParameters getIosPrivacyPreservingAnalyticsParameters() {
+      return iosPrivacyPreservingAnalyticsParameters;
+    }
+
+    public void setIosPrivacyPreservingAnalyticsParameters(
+        IosPrivacyPreservingAnalyticsParameters iosPrivacyPreservingAnalyticsParameters) {
+      this.iosPrivacyPreservingAnalyticsParameters = iosPrivacyPreservingAnalyticsParameters;
+    }
+
+    public AndroidPrivacyPreservingAnalyticsParameters getAndroidPrivacyPreservingAnalyticsParameters() {
+      return androidPrivacyPreservingAnalyticsParameters;
+    }
+
+    public void setAndroidPrivacyPreservingAnalyticsParameters(
+        AndroidPrivacyPreservingAnalyticsParameters androidPrivacyPreservingAnalyticsParameters) {
+      this.androidPrivacyPreservingAnalyticsParameters = androidPrivacyPreservingAnalyticsParameters;
+    }
 
     public IosKeyDownloadParameters getIosKeyDownloadParameters() {
       return iosKeyDownloadParameters;
@@ -1009,5 +1051,240 @@ public class DistributionServiceConfig {
         this.overallTimeoutInSeconds = overallTimeoutInSeconds;
       }
     }
+
+    public static class IosEventDrivenUserSurveyParameters {
+
+      @Size(min = 1, max = 30)
+      private String otpQueryParameterName;
+      @NotNull
+      private Boolean surveyOnHighRiskEnabled;
+      @Pattern(regexp = URL_REGEX)
+      private String surveyOnHighRiskUrl;
+
+      public String getOtpQueryParameterName() {
+        return otpQueryParameterName;
+      }
+
+      public void setOtpQueryParameterName(String otpQueryParameterName) {
+        this.otpQueryParameterName = otpQueryParameterName;
+      }
+
+      public Boolean getSurveyOnHighRiskEnabled() {
+        return surveyOnHighRiskEnabled;
+      }
+
+      public void setSurveyOnHighRiskEnabled(Boolean surveyOnHighRiskEnabled) {
+        this.surveyOnHighRiskEnabled = surveyOnHighRiskEnabled;
+      }
+
+      public String getSurveyOnHighRiskUrl() {
+        return surveyOnHighRiskUrl;
+      }
+
+      public void setSurveyOnHighRiskUrl(String surveyOnHighRiskUrl) {
+        this.surveyOnHighRiskUrl = surveyOnHighRiskUrl;
+      }
+    }
+
+    public static class AndroidEventDrivenUserSurveyParameters {
+
+      @Size(min = 1, max = 30)
+      private String otpQueryParameterName;
+      @NotNull
+      private Boolean surveyOnHighRiskEnabled;
+      @Pattern(regexp = URL_REGEX)
+      private String surveyOnHighRiskUrl;
+      @NotNull
+      private Boolean requireBasicIntegrity;
+      @NotNull
+      private Boolean requireCtsProfileMatch;
+      @NotNull
+      private Boolean requireEvaluationTypeBasic;
+      @NotNull
+      private Boolean requireEvaluationTypeHardwareBacked;
+
+      public String getOtpQueryParameterName() {
+        return otpQueryParameterName;
+      }
+
+      public void setOtpQueryParameterName(String otpQueryParameterName) {
+        this.otpQueryParameterName = otpQueryParameterName;
+      }
+
+      public Boolean getSurveyOnHighRiskEnabled() {
+        return surveyOnHighRiskEnabled;
+      }
+
+      public void setSurveyOnHighRiskEnabled(Boolean surveyOnHighRiskEnabled) {
+        this.surveyOnHighRiskEnabled = surveyOnHighRiskEnabled;
+      }
+
+      public String getSurveyOnHighRiskUrl() {
+        return surveyOnHighRiskUrl;
+      }
+
+      public void setSurveyOnHighRiskUrl(String surveyOnHighRiskUrl) {
+        this.surveyOnHighRiskUrl = surveyOnHighRiskUrl;
+      }
+
+      public Boolean getRequireBasicIntegrity() {
+        return requireBasicIntegrity;
+      }
+
+      public void setRequireBasicIntegrity(Boolean requireBasicIntegrity) {
+        this.requireBasicIntegrity = requireBasicIntegrity;
+      }
+
+      public Boolean getRequireCtsProfileMatch() {
+        return requireCtsProfileMatch;
+      }
+
+      public void setRequireCtsProfileMatch(Boolean requireCtsProfileMatch) {
+        this.requireCtsProfileMatch = requireCtsProfileMatch;
+      }
+
+      public Boolean getRequireEvaluationTypeBasic() {
+        return requireEvaluationTypeBasic;
+      }
+
+      public void setRequireEvaluationTypeBasic(Boolean requireEvaluationTypeBasic) {
+        this.requireEvaluationTypeBasic = requireEvaluationTypeBasic;
+      }
+
+      public Boolean getRequireEvaluationTypeHardwareBacked() {
+        return requireEvaluationTypeHardwareBacked;
+      }
+
+      public void setRequireEvaluationTypeHardwareBacked(Boolean requireEvaluationTypeHardwareBacked) {
+        this.requireEvaluationTypeHardwareBacked = requireEvaluationTypeHardwareBacked;
+      }
+    }
+
+    public static class IosPrivacyPreservingAnalyticsParameters {
+
+      private Double probabilityToSubmit;
+      private Double probabilityToSubmitExposureWindows;
+      @Min(0)
+      private Integer hoursSinceTestRegistrationToSubmitTestResultMetadata;
+      @Min(0)
+      private Integer hoursSinceTestToSubmitKeySubmissionMetadata;
+
+      public Double getProbabilityToSubmit() {
+        return probabilityToSubmit;
+      }
+
+      public void setProbabilityToSubmit(Double probabilityToSubmit) {
+        this.probabilityToSubmit = probabilityToSubmit;
+      }
+
+      public Double getProbabilityToSubmitExposureWindows() {
+        return probabilityToSubmitExposureWindows;
+      }
+
+      public void setProbabilityToSubmitExposureWindows(Double probabilityToSubmitExposureWindows) {
+        this.probabilityToSubmitExposureWindows = probabilityToSubmitExposureWindows;
+      }
+
+      public Integer getHoursSinceTestRegistrationToSubmitTestResultMetadata() {
+        return hoursSinceTestRegistrationToSubmitTestResultMetadata;
+      }
+
+      public void setHoursSinceTestRegistrationToSubmitTestResultMetadata(
+          Integer hoursSinceTestRegistrationToSubmitTestResultMetadata) {
+        this.hoursSinceTestRegistrationToSubmitTestResultMetadata = hoursSinceTestRegistrationToSubmitTestResultMetadata;
+      }
+
+      public Integer getHoursSinceTestToSubmitKeySubmissionMetadata() {
+        return hoursSinceTestToSubmitKeySubmissionMetadata;
+      }
+
+      public void setHoursSinceTestToSubmitKeySubmissionMetadata(Integer hoursSinceTestToSubmitKeySubmissionMetadata) {
+        this.hoursSinceTestToSubmitKeySubmissionMetadata = hoursSinceTestToSubmitKeySubmissionMetadata;
+      }
+    }
+
+    public static class AndroidPrivacyPreservingAnalyticsParameters {
+
+      private Double probabilityToSubmit;
+      private Double probabilityToSubmitExposureWindows;
+      @Min(0)
+      private Integer hoursSinceTestRegistrationToSubmitTestResultMetadata;
+      @Min(0)
+      private Integer hoursSinceTestToSubmitKeySubmissionMetadata;
+      @NotNull
+      private Boolean requireBasicIntegrity;
+      @NotNull
+      private Boolean requireCtsProfileMatch;
+      @NotNull
+      private Boolean requireEvaluationTypeBasic;
+      @NotNull
+      private Boolean requireEvaluationTypeHardwareBacked;
+
+      public Double getProbabilityToSubmit() {
+        return probabilityToSubmit;
+      }
+
+      public void setProbabilityToSubmit(Double probabilityToSubmit) {
+        this.probabilityToSubmit = probabilityToSubmit;
+      }
+
+      public Double getProbabilityToSubmitExposureWindows() {
+        return probabilityToSubmitExposureWindows;
+      }
+
+      public void setProbabilityToSubmitExposureWindows(Double probabilityToSubmitExposureWindows) {
+        this.probabilityToSubmitExposureWindows = probabilityToSubmitExposureWindows;
+      }
+
+      public Integer getHoursSinceTestRegistrationToSubmitTestResultMetadata() {
+        return hoursSinceTestRegistrationToSubmitTestResultMetadata;
+      }
+
+      public void setHoursSinceTestRegistrationToSubmitTestResultMetadata(
+          Integer hoursSinceTestRegistrationToSubmitTestResultMetadata) {
+        this.hoursSinceTestRegistrationToSubmitTestResultMetadata = hoursSinceTestRegistrationToSubmitTestResultMetadata;
+      }
+
+      public Integer getHoursSinceTestToSubmitKeySubmissionMetadata() {
+        return hoursSinceTestToSubmitKeySubmissionMetadata;
+      }
+
+      public void setHoursSinceTestToSubmitKeySubmissionMetadata(Integer hoursSinceTestToSubmitKeySubmissionMetadata) {
+        this.hoursSinceTestToSubmitKeySubmissionMetadata = hoursSinceTestToSubmitKeySubmissionMetadata;
+      }
+
+      public Boolean getRequireBasicIntegrity() {
+        return requireBasicIntegrity;
+      }
+
+      public void setRequireBasicIntegrity(Boolean requireBasicIntegrity) {
+        this.requireBasicIntegrity = requireBasicIntegrity;
+      }
+
+      public Boolean getRequireCtsProfileMatch() {
+        return requireCtsProfileMatch;
+      }
+
+      public void setRequireCtsProfileMatch(Boolean requireCtsProfileMatch) {
+        this.requireCtsProfileMatch = requireCtsProfileMatch;
+      }
+
+      public Boolean getRequireEvaluationTypeBasic() {
+        return requireEvaluationTypeBasic;
+      }
+
+      public void setRequireEvaluationTypeBasic(Boolean requireEvaluationTypeBasic) {
+        this.requireEvaluationTypeBasic = requireEvaluationTypeBasic;
+      }
+
+      public Boolean getRequireEvaluationTypeHardwareBacked() {
+        return requireEvaluationTypeHardwareBacked;
+      }
+
+      public void setRequireEvaluationTypeHardwareBacked(Boolean requireEvaluationTypeHardwareBacked) {
+        this.requireEvaluationTypeHardwareBacked = requireEvaluationTypeHardwareBacked;
+      }
+    }
+
   }
 }
