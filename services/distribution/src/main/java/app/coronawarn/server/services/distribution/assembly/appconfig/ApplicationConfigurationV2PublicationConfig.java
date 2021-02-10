@@ -35,9 +35,9 @@ import app.coronawarn.server.services.distribution.config.DistributionServiceCon
 import app.coronawarn.server.services.distribution.config.DistributionServiceConfig.AppConfigParameters.IosEventDrivenUserSurveyParameters;
 import app.coronawarn.server.services.distribution.config.DistributionServiceConfig.AppConfigParameters.IosExposureDetectionParameters;
 import app.coronawarn.server.services.distribution.config.DistributionServiceConfig.AppConfigParameters.IosKeyDownloadParameters;
+import app.coronawarn.server.services.distribution.config.DistributionServiceConfig.AppConfigParameters.IosPrivacyPreservingAnalyticsParameters;
 import java.util.List;
 import java.util.stream.Collectors;
-import app.coronawarn.server.services.distribution.config.DistributionServiceConfig.AppConfigParameters.IosPrivacyPreservingAnalyticsParameters;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
