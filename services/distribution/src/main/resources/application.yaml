@@ -131,6 +131,32 @@ services:
       android-exposure-detection-parameters:
         max-exposure-detections-per-interval: ${ANDROID_EXPOSURE_DETECTION_MAX_ED_PER_INTERVAL:6}
         overall-timeout-in-seconds: ${ANDROID_EXPOSURE_DETECTION_OVERALL_TIMEOUT_IN_SECONDS:900}
+      ios-event-driven-user-survey-parameters:
+        otp-query-parameter-name: ${EDUS_OTP_QUERY_PARAMETER_NAME:otp}
+        survey-on-high-risk-enabled: ${EDUS_SURVEY_ON_HIGH_RISK_ENABLED:true}
+        survey-on-high-risk-url: ${EDUS_SURVEY_ON_HIGH_RISK_URL}
+      android-event-driven-user-survey-parameters:
+        otp-query-parameter-name: ${EDUS_OTP_QUERY_PARAMETER_NAME:otp}
+        survey-on-high-risk-enabled: ${EDUS_SURVEY_ON_HIGH_RISK_ENABLED:true}
+        survey-on-high-risk-url: ${EDUS_SURVEY_ON_HIGH_RISK_URL}
+        require-basic-integrity: ${EDUS_PPAC_REQUIRE_BASIC_INTEGRITY:false}
+        require-cts-profile-match: ${EDUS_PPAC_REQUIRE_CTS_PROFILE_MATCH:false}
+        require-evaluation-type-basic: ${EDUS_PPAC_REQUIRE_EVALUATION_TYPE_BASIC:false}
+        require-evaluation-type-hardware-backed: ${EDUS_PPAC_REQUIRE_EVALUATION_TYPE_HARDWARE_BACKED:false}
+      ios-privacy-preserving-analytics-parameters:
+        probability-to-submit: ${PPA_PROBABILITY_TO_SUBMT:1}
+        probability-to-submit-exposure-windows: ${PPA_PROBABILOITY_TO_SUBMIT_EXPOSURE_WINDOWS:1}
+        hours-since-test-registration-to-submit-test-result-metadata: ${PPA_HOURS_SINCE_TEST_RESULT_TO_SUBMIT_KEY_RESULT_METADATA:165}
+        hours-since-test-to-submit-key-submission-metadata: ${PPA_HOURS_SINCE_TEST_RESULT_TO_SUBMIT_KEY_SUBMISSION_METADATA:36}
+      android-privacy-preserving-analytics-parameeters:
+        probability-to-submit: ${PPA_PROBABILITY_TO_SUBMT:1}
+        probability-to-submit-exposure-windows: ${PPA_PROBABILOITY_TO_SUBMIT_EXPOSURE_WINDOWS:1}
+        hours-since-test-registration-to-submit-test-result-metadata: ${PPA_HOURS_SINCE_TEST_RESULT_TO_SUBMIT_KEY_RESULT_METADATA:165}
+        hours-since-test-to-submit-key-submission-metadata: ${PPA_HOURS_SINCE_TEST_RESULT_TO_SUBMIT_KEY_SUBMISSION_METADATA:36}
+        require-basic-integrity: ${PPA_PPAC_REQUIRE_BASIC_INTEGRITY:false}
+        require-cts-profile-match: ${PPA_PPAC_REQUIRE_CTS_PROFILE_MATCH:false}
+        require-evaluation-type-basic: ${PPA_PPAC_REQUIRE_EVALUATION_TYPE_BASIC:false}
+        require-evaluation-type-hardware-backed: ${PPA_PPAC_REQUIRE_EVALUATION_TYPE_HARDWARE_BACKED:false}
 
 
 
