@@ -5,6 +5,8 @@ import com.fasterxml.jackson.core.json.JsonReadFeature;
 import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.type.TypeFactory;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.function.Function;
 
 public final class SerializationUtils {
@@ -15,7 +17,7 @@ public final class SerializationUtils {
    *
    * @param jsonString           value from configuration file
    * @param typeProviderFunction type deserialization function provider
-   * @param <T> generic type
+   * @param <T>                  generic type
    * @return deserialized json string
    */
   public static <T> T deserializeJson(final String jsonString,
@@ -27,6 +29,21 @@ public final class SerializationUtils {
     } catch (final JsonProcessingException e) {
       throw new IllegalStateException("Json configuration could not be deserialized", e);
     }
+  }
+
+  /**
+   * Parse json from stream instead from string.
+   * 
+   * @param jsonStream stream to read json from
+   * @param typeProviderFunction type deserialization function provider
+   * @return deserialized json as pojo
+   * @throws IOException coming from {@link ObjectMapper#readValue(InputStream, JavaType)}.
+   */
+  public static <T> T deserializeJson(final InputStream jsonStream,
+      final Function<TypeFactory, JavaType> typeProviderFunction) throws IOException {
+    final ObjectMapper mapper = new ObjectMapper();
+    return mapper.enable(JsonReadFeature.ALLOW_NON_NUMERIC_NUMBERS.mappedFeature()).readValue(jsonStream,
+        typeProviderFunction.apply(mapper.getTypeFactory()));
   }
 
   /**
