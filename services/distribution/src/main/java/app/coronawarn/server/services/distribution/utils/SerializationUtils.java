@@ -34,10 +34,9 @@ public final class SerializationUtils {
   /**
    * Parse json from stream instead from string.
    * 
-   * @param <T>
-   * @param jsonStream
-   * @param typeProviderFunction
-   * @return
+   * @param jsonStream stream to read json from
+   * @param typeProviderFunction type deserialization function provider
+   * @return deserialized json as pojo
    * @throws IOException coming from {@link ObjectMapper#readValue(InputStream, JavaType)}.
    */
   public static <T> T deserializeJson(final InputStream jsonStream,

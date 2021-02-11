@@ -141,7 +141,7 @@ public class TestDataGeneration extends CommonDataGeneration<DiagnosisKey> {
    * generation runs for a country (e.g. FR) all keys in the distribution will contain FR in the vistied_countries
    * array.
    *
-   * @return
+   * @return {@link #supportedCountries}
    */
   private Set<String> generateSetOfVisitedCountries(String distributionCountry) {
     if (random.nextBoolean()) {
