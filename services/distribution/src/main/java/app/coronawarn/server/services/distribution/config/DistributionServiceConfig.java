@@ -1052,7 +1052,11 @@ public class DistributionServiceConfig {
       }
     }
 
-    public static class IosEventDrivenUserSurveyParameters {
+    public static class IosEventDrivenUserSurveyParameters extends CommonEdusParameters {
+
+    }
+
+    private static class CommonEdusParameters {
 
       @Size(min = 1, max = 30)
       private String otpQueryParameterName;
@@ -1086,14 +1090,8 @@ public class DistributionServiceConfig {
       }
     }
 
-    public static class AndroidEventDrivenUserSurveyParameters {
+    public static class AndroidEventDrivenUserSurveyParameters extends CommonEdusParameters {
 
-      @Size(min = 1, max = 30)
-      private String otpQueryParameterName;
-      @NotNull
-      private Boolean surveyOnHighRiskEnabled;
-      @Pattern(regexp = URL_REGEX)
-      private String surveyOnHighRiskUrl;
       @NotNull
       private Boolean requireBasicIntegrity;
       @NotNull
@@ -1102,30 +1100,6 @@ public class DistributionServiceConfig {
       private Boolean requireEvaluationTypeBasic;
       @NotNull
       private Boolean requireEvaluationTypeHardwareBacked;
-
-      public String getOtpQueryParameterName() {
-        return otpQueryParameterName;
-      }
-
-      public void setOtpQueryParameterName(String otpQueryParameterName) {
-        this.otpQueryParameterName = otpQueryParameterName;
-      }
-
-      public Boolean getSurveyOnHighRiskEnabled() {
-        return surveyOnHighRiskEnabled;
-      }
-
-      public void setSurveyOnHighRiskEnabled(Boolean surveyOnHighRiskEnabled) {
-        this.surveyOnHighRiskEnabled = surveyOnHighRiskEnabled;
-      }
-
-      public String getSurveyOnHighRiskUrl() {
-        return surveyOnHighRiskUrl;
-      }
-
-      public void setSurveyOnHighRiskUrl(String surveyOnHighRiskUrl) {
-        this.surveyOnHighRiskUrl = surveyOnHighRiskUrl;
-      }
 
       public Boolean getRequireBasicIntegrity() {
         return requireBasicIntegrity;
@@ -1160,7 +1134,11 @@ public class DistributionServiceConfig {
       }
     }
 
-    public static class IosPrivacyPreservingAnalyticsParameters {
+    public static class IosPrivacyPreservingAnalyticsParameters extends CommonPpaParameters {
+
+    }
+
+    private static class CommonPpaParameters {
 
       private Double probabilityToSubmit;
       private Double probabilityToSubmitExposureWindows;
@@ -1204,14 +1182,8 @@ public class DistributionServiceConfig {
       }
     }
 
-    public static class AndroidPrivacyPreservingAnalyticsParameters {
+    public static class AndroidPrivacyPreservingAnalyticsParameters extends CommonPpaParameters {
 
-      private Double probabilityToSubmit;
-      private Double probabilityToSubmitExposureWindows;
-      @PositiveOrZero
-      private Integer hoursSinceTestRegistrationToSubmitTestResultMetadata;
-      @PositiveOrZero
-      private Integer hoursSinceTestToSubmitKeySubmissionMetadata;
       @NotNull
       private Boolean requireBasicIntegrity;
       @NotNull
@@ -1220,40 +1192,6 @@ public class DistributionServiceConfig {
       private Boolean requireEvaluationTypeBasic;
       @NotNull
       private Boolean requireEvaluationTypeHardwareBacked;
-
-      public Double getProbabilityToSubmit() {
-        return probabilityToSubmit;
-      }
-
-      public void setProbabilityToSubmit(Double probabilityToSubmit) {
-        this.probabilityToSubmit = probabilityToSubmit;
-      }
-
-      public Double getProbabilityToSubmitExposureWindows() {
-        return probabilityToSubmitExposureWindows;
-      }
-
-      public void setProbabilityToSubmitExposureWindows(Double probabilityToSubmitExposureWindows) {
-        this.probabilityToSubmitExposureWindows = probabilityToSubmitExposureWindows;
-      }
-
-      public Integer getHoursSinceTestRegistrationToSubmitTestResultMetadata() {
-        return hoursSinceTestRegistrationToSubmitTestResultMetadata;
-      }
-
-      public void setHoursSinceTestRegistrationToSubmitTestResultMetadata(
-          Integer hoursSinceTestRegistrationToSubmitTestResultMetadata) {
-        this.hoursSinceTestRegistrationToSubmitTestResultMetadata
-            = hoursSinceTestRegistrationToSubmitTestResultMetadata;
-      }
-
-      public Integer getHoursSinceTestToSubmitKeySubmissionMetadata() {
-        return hoursSinceTestToSubmitKeySubmissionMetadata;
-      }
-
-      public void setHoursSinceTestToSubmitKeySubmissionMetadata(Integer hoursSinceTestToSubmitKeySubmissionMetadata) {
-        this.hoursSinceTestToSubmitKeySubmissionMetadata = hoursSinceTestToSubmitKeySubmissionMetadata;
-      }
 
       public Boolean getRequireBasicIntegrity() {
         return requireBasicIntegrity;
