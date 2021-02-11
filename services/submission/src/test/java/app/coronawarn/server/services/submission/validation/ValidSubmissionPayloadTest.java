@@ -17,21 +17,23 @@ import java.util.List;
 import javax.validation.ConstraintValidatorContext;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.mockito.Mockito;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.annotation.DirtiesContext;
-import org.springframework.test.context.ActiveProfiles;
 
 /**
  * This test must have the public modifier to be callable by the interpolation logic.
  */
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @DirtiesContext
+@ExtendWith(MockitoExtension.class)
 public class ValidSubmissionPayloadTest {
 
   private static String interpolationSideEffect;
@@ -54,7 +56,7 @@ public class ValidSubmissionPayloadTest {
   /**
    * Provide an EL expression in the protobuf message which modifies a member of this test class. This string member can
    * then be used to test whether interpolation was performed by the Java Validation Framework during submission.
-   * 
+   *
    * @see SecurityConfig#defaultValidator()
    * @see ValidSubmissionPayload#addViolation(ConstraintValidatorContext, String)
    */
@@ -76,10 +78,10 @@ public class ValidSubmissionPayloadTest {
   /**
    * <a href="https://securitylab.github.com/research/securing-the-fight-against-covid19-through-oss">Securing the fight
    * against COVID-19 through open source</a>.
-   * 
+   *
    * <a href="https://www.coronawarn.app/de/blog/2020-11-19-security-update>Sicherheitsupdate für
    * Corona-Warn-App-Server</a>
-   * 
+   *
    * @see SecurityConfig#defaultValidator()
    * @see ValidSubmissionPayload#addViolation(ConstraintValidatorContext, String)
    */
@@ -101,7 +103,7 @@ public class ValidSubmissionPayloadTest {
   /**
    * When this test fails, please verify that the two others do really want they should do: test if we can inject code
    * and execute via submission payload.
-   * 
+   *
    * @throws Exception - if method is not found
    * @see SecurityConfig#defaultValidator()
    * @see ValidSubmissionPayload#addViolation(ConstraintValidatorContext, String)
