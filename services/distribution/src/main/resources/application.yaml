@@ -134,11 +134,11 @@ services:
       ios-event-driven-user-survey-parameters:
         otp-query-parameter-name: ${EDUS_OTP_QUERY_PARAMETER_NAME:otp}
         survey-on-high-risk-enabled: ${EDUS_SURVEY_ON_HIGH_RISK_ENABLED:true}
-        survey-on-high-risk-url: ${EDUS_SURVEY_ON_HIGH_RISK_URL}
+        survey-on-high-risk-url: ${EDUS_SURVEY_ON_HIGH_RISK_URL:https://befragungen.rki.de/CWABasisbefragung}
       android-event-driven-user-survey-parameters:
         otp-query-parameter-name: ${EDUS_OTP_QUERY_PARAMETER_NAME:otp}
         survey-on-high-risk-enabled: ${EDUS_SURVEY_ON_HIGH_RISK_ENABLED:true}
-        survey-on-high-risk-url: ${EDUS_SURVEY_ON_HIGH_RISK_URL}
+        survey-on-high-risk-url: ${EDUS_SURVEY_ON_HIGH_RISK_URL:https://befragungen.rki.de/CWABasisbefragung}
         require-basic-integrity: ${EDUS_PPAC_REQUIRE_BASIC_INTEGRITY:false}
         require-cts-profile-match: ${EDUS_PPAC_REQUIRE_CTS_PROFILE_MATCH:false}
         require-evaluation-type-basic: ${EDUS_PPAC_REQUIRE_EVALUATION_TYPE_BASIC:false}
