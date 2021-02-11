@@ -133,7 +133,7 @@ services:
         overall-timeout-in-seconds: ${ANDROID_EXPOSURE_DETECTION_OVERALL_TIMEOUT_IN_SECONDS:900}
       ios-event-driven-user-survey-parameters:
         otp-query-parameter-name: ${EDUS_OTP_QUERY_PARAMETER_NAME:otp}
-        survey-on-high-risk-enabled: ${EDUS_SURVEY_ON_HIGH_RISK_ENABLED:true}
+        survey-on-high-risk-enabled: ${EDUS_SURVEY_ON_HIGH_RISK_ENABLED:false}
         survey-on-high-risk-url: ${EDUS_SURVEY_ON_HIGH_RISK_URL:https://befragungen.rki.de/CWABasisbefragung}
       android-event-driven-user-survey-parameters:
         otp-query-parameter-name: ${EDUS_OTP_QUERY_PARAMETER_NAME:otp}
