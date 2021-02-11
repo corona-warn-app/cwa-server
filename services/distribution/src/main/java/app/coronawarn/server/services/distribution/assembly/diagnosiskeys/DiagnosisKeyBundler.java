@@ -249,7 +249,8 @@ public abstract class DiagnosisKeyBundler {
    *  for the origin country keys are applied and they don't get distributed in the EUR package.
    * @param key Diagnosis key
    * @param visitedCountry Single entry of visitedCountries list.
-   * @return
+   * @return <code>true</code> if originCountry equals the originCountry of the given key and is not part of the visited
+   *        country list.
    */
   private boolean isKeyOriginAndVisitedCountryNotEqualToOriginCountry(DiagnosisKey key, String visitedCountry) {
     return key.getOriginCountry().equals(originCountry) && !visitedCountry.equals(originCountry);
@@ -265,7 +266,7 @@ public abstract class DiagnosisKeyBundler {
    *  originCountry package and the EUR package.
    * @param key Diagnosis key
    * @param visitedCountry Single entry of visitedCountries list.
-   * @return
+   * @return <code>true</code> or <code>false</code>
    */
   private boolean isEfgsKeyWithOriginInVisitedCountriesAndNotVisitedCountry(DiagnosisKey key, String visitedCountry) {
     return !key.getOriginCountry().equals(originCountry) && !visitedCountry.equals(originCountry)
