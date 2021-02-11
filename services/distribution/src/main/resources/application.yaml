@@ -148,7 +148,7 @@ services:
         probability-to-submit-exposure-windows: ${PPA_PROBABILOITY_TO_SUBMIT_EXPOSURE_WINDOWS:1}
         hours-since-test-registration-to-submit-test-result-metadata: ${PPA_HOURS_SINCE_TEST_RESULT_TO_SUBMIT_KEY_RESULT_METADATA:165}
         hours-since-test-to-submit-key-submission-metadata: ${PPA_HOURS_SINCE_TEST_RESULT_TO_SUBMIT_KEY_SUBMISSION_METADATA:36}
-      android-privacy-preserving-analytics-parameeters:
+      android-privacy-preserving-analytics-parameters:
         probability-to-submit: ${PPA_PROBABILITY_TO_SUBMT:1}
         probability-to-submit-exposure-windows: ${PPA_PROBABILOITY_TO_SUBMIT_EXPOSURE_WINDOWS:1}
         hours-since-test-registration-to-submit-test-result-metadata: ${PPA_HOURS_SINCE_TEST_RESULT_TO_SUBMIT_KEY_RESULT_METADATA:165}

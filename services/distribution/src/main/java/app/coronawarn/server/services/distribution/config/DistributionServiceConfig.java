@@ -1243,8 +1243,7 @@ public class DistributionServiceConfig {
 
       public void setHoursSinceTestRegistrationToSubmitTestResultMetadata(
           Integer hoursSinceTestRegistrationToSubmitTestResultMetadata) {
-        this.hoursSinceTestRegistrationToSubmitTestResultMetadata =
-            hoursSinceTestRegistrationToSubmitTestResultMetadata;
+        this.hoursSinceTestRegistrationToSubmitTestResultMetadata = hoursSinceTestRegistrationToSubmitTestResultMetadata;
       }
 
       public Integer getHoursSinceTestToSubmitKeySubmissionMetadata() {
