@@ -24,7 +24,7 @@ public class DistributionServiceConfig {
   private static final String CHAR_AND_NUMBER_REGEX = "^[a-zA-Z0-9_-]{1,1024}$";
   private static final String CHAR_NUMBER_AND_SPACE_REGEX = "^[a-zA-Z0-9_\\s]{1,32}$";
   private static final String NO_WHITESPACE_REGEX = "^[\\S]+$";
-  private static final String URL_REGEX = "^http[s]?://[a-z0-9-]{1,1024}([\\./][a-z0-9-]{1,1024}){0,256}[/]?$";
+  private static final String URL_REGEX = "^http[s]?://[a-zA-Z0-9-]{1,1024}([\\./][a-zA-Z0-9-]{1,1024}){0,256}[/]?$";
   private static final String NUMBER_REGEX = "^[0-9]{1,256}$";
   private static final String VERSION_REGEX = "^v[0-9]{1,256}$";
   private static final String ALGORITHM_OID_REGEX = "^[0-9]{1,256}[\\.[0-9]{1,256}]{0,256}$";
