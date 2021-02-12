@@ -50,7 +50,7 @@
     <!-- https://spring.io/projects/spring-boot -->
     <spring-boot.version>2.4.2</spring-boot.version>
     <!-- https://spring.io/projects/spring-cloud#release-trains -->
-    <spring-cloud.version>2020.0.0</spring-cloud.version>
+    <spring-cloud.version>2020.0.1</spring-cloud.version>
     <spring-retry.version>1.3.1</spring-retry.version>
     <protobuf.version>3.14.0</protobuf.version>
     <json-simple.version>1.1.1</json-simple.version>
@@ -59,15 +59,16 @@
     <commons-math3.version>3.6.1</commons-math3.version>
     <bouncycastle.version>1.68</bouncycastle.version>
     <dom4j.version>2.1.3</dom4j.version>
-    <awssdk-s3.version>2.15.70</awssdk-s3.version>
+    <awssdk-s3.version>2.15.77</awssdk-s3.version>
     <guava.version>30.1-jre</guava.version>
-    <test-containers.version>1.15.1</test-containers.version>
+    <test-containers.version>1.15.2</test-containers.version>
     <postgresql.version>42.2.18</postgresql.version>
     <wiremock.version>2.27.2</wiremock.version>
     <httpclient.version>4.5.13</httpclient.version>
     <junit.version>4.13.1</junit.version>
     <tomcat-embed-core.version>9.0.43</tomcat-embed-core.version>
     <findify-s3mock.version>0.2.6</findify-s3mock.version>
+    <checkstyle.version>8.40</checkstyle.version>
   </properties>
 
   <dependencyManagement>
@@ -272,7 +273,7 @@
       <extension>
         <groupId>kr.motd.maven</groupId>
         <artifactId>os-maven-plugin</artifactId>
-        <version>1.6.2</version>
+        <version>1.7.0</version>
       </extension>
     </extensions>
 
@@ -290,6 +291,13 @@
               </goals>
             </execution>
           </executions>
+          <dependencies>
+            <dependency>
+              <groupId>com.puppycrawl.tools</groupId>
+              <artifactId>checkstyle</artifactId>
+              <version>${checkstyle.version}</version>
+            </dependency>
+          </dependencies>
         </plugin>
         <plugin>
           <artifactId>maven-compiler-plugin</artifactId>
