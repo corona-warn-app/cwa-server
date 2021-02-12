@@ -133,16 +133,16 @@ services:
         overall-timeout-in-seconds: ${ANDROID_EXPOSURE_DETECTION_OVERALL_TIMEOUT_IN_SECONDS:900}
       ios-event-driven-user-survey-parameters:
         otp-query-parameter-name: ${EDUS_OTP_QUERY_PARAMETER_NAME:otp}
-        survey-on-high-risk-enabled: ${EDUS_SURVEY_ON_HIGH_RISK_ENABLED:false}
+        survey-on-high-risk-enabled: ${EDUS_SURVEY_ON_HIGH_RISK_ENABLED:true}
         survey-on-high-risk-url: ${EDUS_SURVEY_ON_HIGH_RISK_URL:https://befragungen.rki.de/CWABasisbefragung}
       android-event-driven-user-survey-parameters:
         otp-query-parameter-name: ${EDUS_OTP_QUERY_PARAMETER_NAME:otp}
         survey-on-high-risk-enabled: ${EDUS_SURVEY_ON_HIGH_RISK_ENABLED:false}
         survey-on-high-risk-url: ${EDUS_SURVEY_ON_HIGH_RISK_URL:https://befragungen.rki.de/CWABasisbefragung}
-        require-basic-integrity: ${EDUS_PPAC_REQUIRE_BASIC_INTEGRITY:false}
-        require-cts-profile-match: ${EDUS_PPAC_REQUIRE_CTS_PROFILE_MATCH:false}
+        require-basic-integrity: ${EDUS_PPAC_REQUIRE_BASIC_INTEGRITY:true}
+        require-cts-profile-match: ${EDUS_PPAC_REQUIRE_CTS_PROFILE_MATCH:true}
         require-evaluation-type-basic: ${EDUS_PPAC_REQUIRE_EVALUATION_TYPE_BASIC:false}
-        require-evaluation-type-hardware-backed: ${EDUS_PPAC_REQUIRE_EVALUATION_TYPE_HARDWARE_BACKED:false}
+        require-evaluation-type-hardware-backed: ${EDUS_PPAC_REQUIRE_EVALUATION_TYPE_HARDWARE_BACKED:true}
       ios-privacy-preserving-analytics-parameters:
         probability-to-submit: ${PPA_PROBABILITY_TO_SUBMT:1}
         probability-to-submit-exposure-windows: ${PPA_PROBABILOITY_TO_SUBMIT_EXPOSURE_WINDOWS:1}
