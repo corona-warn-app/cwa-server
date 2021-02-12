@@ -68,6 +68,7 @@
     <junit.version>4.13.1</junit.version>
     <tomcat-embed-core.version>9.0.43</tomcat-embed-core.version>
     <findify-s3mock.version>0.2.6</findify-s3mock.version>
+    <checkstyle.version>8.40</checkstyle.version>
   </properties>
 
   <dependencyManagement>
@@ -290,6 +291,13 @@
               </goals>
             </execution>
           </executions>
+          <dependencies>
+            <dependency>
+              <groupId>com.puppycrawl.tools</groupId>
+              <artifactId>checkstyle</artifactId>
+              <version>${checkstyle.version}</version>
+            </dependency>
+          </dependencies>
         </plugin>
         <plugin>
           <artifactId>maven-compiler-plugin</artifactId>
