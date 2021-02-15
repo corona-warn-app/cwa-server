@@ -65,7 +65,7 @@
     <postgresql.version>42.2.18</postgresql.version>
     <wiremock.version>2.27.2</wiremock.version>
     <httpclient.version>4.5.13</httpclient.version>
-    <junit.version>4.13.1</junit.version>
+    <junit.version>4.13.2</junit.version>
     <tomcat-embed-core.version>9.0.43</tomcat-embed-core.version>
     <findify-s3mock.version>0.2.6</findify-s3mock.version>
     <checkstyle.version>8.40</checkstyle.version>
