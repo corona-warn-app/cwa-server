@@ -53,21 +53,12 @@ management:
     prometheus:
       enabled: true
     health:
+      probes:
+        enabled: true
       group:
         readiness:
           include: db
           show-details: always
-  endpoints:
-    web:
-      exposure:
-        include: 'health, prometheus'
-  metrics:
-    export:
-      prometheus:
-        enabled: true
-  health:
-    probes:
-      enabled: true
 
 server:
   shutdown: graceful
