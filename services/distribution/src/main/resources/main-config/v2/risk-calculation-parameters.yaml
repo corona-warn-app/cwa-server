@@ -15,7 +15,7 @@ minutes-at-attenuation-filters:
       max-exclusive: true
     drop-if-minutes-in-range:
       min: 0
-      max: 10
+      max: 5
       max-exclusive: true
 
 trl-filters:
