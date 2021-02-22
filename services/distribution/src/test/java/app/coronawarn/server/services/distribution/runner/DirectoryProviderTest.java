@@ -25,10 +25,12 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
+import org.junit.jupiter.api.Assertions;
+
 @EnableConfigurationProperties(value = DistributionServiceConfig.class)
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration(classes = {Assembly.class}, initializers = ConfigFileApplicationContextInitializer.class)
-class AssemblyRunnerTest {
+class DirectoryProviderTest {
 
   @MockBean
   OutputDirectoryProvider outputDirectoryProvider;
@@ -55,7 +57,7 @@ class AssemblyRunnerTest {
   }
 
   @Test
-  void shouldCorrectlyCreatePrepareAndWriteDirectories() throws IOException {
+  void DirectoryproviderTest() throws IOException {
     Directory<WritableOnDisk> spyParentDirectory = spy(parentDirectory);
 
     when(outputDirectoryProvider.getDirectory()).thenReturn(spyParentDirectory);
@@ -65,8 +67,7 @@ class AssemblyRunnerTest {
 
     verify(outputDirectoryProvider, times(1)).getDirectory();
     verify(outputDirectoryProvider, times(1)).clear();
-    verify(cwaApiStructureProvider, times(1)).getDirectory();
-    verify(spyParentDirectory, times(1)).prepare(any());
-    verify(spyParentDirectory, times(1)).write();
+    outputDirectoryProvider.clear();
+    Assertions.assertNull(outputDirectoryProvider.getFileOnDisk());
   }
 }
