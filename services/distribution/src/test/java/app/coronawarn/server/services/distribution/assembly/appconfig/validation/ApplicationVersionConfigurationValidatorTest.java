@@ -27,6 +27,9 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.boot.test.context.ConfigFileApplicationContextInitializer;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
+import java.util.Arrays;
+import org.junit.jupiter.api.AfterAll;
+
 
 @EnableConfigurationProperties(value = DistributionServiceConfig.class)
 @ExtendWith(SpringExtension.class)
@@ -201,4 +204,20 @@ class ApplicationVersionConfigurationValidatorTest {
         .buildApplicationVersionConfiguration(distributionServiceConfig);
     return new ApplicationVersionConfigurationValidator(appConfig);
   }
+}
+
+@AfterAll
+static void checkCoverage() {
+  System.out.println(
+    System.lineSeparator() + System.lineSeparator() +
+    "===========================================" + System.lineSeparator() +
+    "| DD2480 COVERAGE TOOL                    |" + System.lineSeparator() +
+    "| ApplicationVersionConfigurationValidator|" + System.lineSeparator() +
+    "| compare()                               |" + System.lineSeparator() +
+    "===========================================" + System.lineSeparator());
+
+  System.out.println(Arrays.toString(ApplicationVersionConfigurationValidator.compareCov));
+
+  System.out.println(System.lineSeparator());
+}
 }

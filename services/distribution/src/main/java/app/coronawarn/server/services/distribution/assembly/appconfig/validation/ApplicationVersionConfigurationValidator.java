@@ -34,24 +34,38 @@ public class ApplicationVersionConfigurationValidator extends ConfigurationValid
           minVersion.getMajor() + "." + minVersion.getMinor() + "." + minVersion.getPatch(), MIN_GREATER_THAN_MAX));
     }
   }
+  public static int[] compareCov = new int[] {0, 0, 0, 0, 0, 0, 0};
+
+  private static boolean compareCovVisit(int branch) {
+    compareCov[branch] = 1;
+
+    return true;
+  }
 
   private ComparisonResult compare(SemanticVersion left, SemanticVersion right) {
+    compareCovVisit(0);
     if (left.getMajor() < right.getMajor()) {
+      compareCovVisit(1);
       return ComparisonResult.LOWER;
     }
     if (left.getMajor() > right.getMajor()) {
+      compareCovVisit(2);
       return ComparisonResult.HIGHER;
     }
     if (left.getMinor() < right.getMinor()) {
+      compareCovVisit(3);
       return ComparisonResult.LOWER;
     }
     if (left.getMinor() > right.getMinor()) {
+      compareCovVisit(4);
       return ComparisonResult.HIGHER;
     }
     if (left.getPatch() < right.getPatch()) {
+      compareCovVisit(5);
       return ComparisonResult.LOWER;
     }
     if (left.getPatch() > right.getPatch()) {
+      compareCovVisit(6);
       return ComparisonResult.HIGHER;
     }
     return ComparisonResult.EQUAL;
