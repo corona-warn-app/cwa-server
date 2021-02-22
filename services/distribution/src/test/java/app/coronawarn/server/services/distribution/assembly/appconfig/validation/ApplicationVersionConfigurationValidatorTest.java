@@ -204,7 +204,7 @@ class ApplicationVersionConfigurationValidatorTest {
         .buildApplicationVersionConfiguration(distributionServiceConfig);
     return new ApplicationVersionConfigurationValidator(appConfig);
   }
-}
+
 
 @AfterAll
 static void checkCoverage() {
