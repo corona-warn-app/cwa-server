@@ -35,7 +35,8 @@ public class CloudFederationFeignHttpClientProvider implements FederationFeignHt
    *
    * @param config .
    */
-  public CloudFederationFeignHttpClientProvider(FederationGatewayConfig config) {
+  public CloudFederationFeignHttpClientProvider(FederationGatewayConfig config,
+      HostnameVerifierProvider hostnameVerifierProvider) {
     var ssl = config.getSsl();
     this.connectionPoolSize = config.getConnectionPoolSize();
     this.keyStore = ssl.getKeyStore();

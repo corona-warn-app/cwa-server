@@ -209,14 +209,6 @@ class KeyFigureCardFactoryTest {
       assertThatThrownBy(() -> figureCardFactory.createKeyFigureCard(statisticsJsonStringObject, KEY_SUBMISSION_CARD_ID))
           .isInstanceOf(MissingPropertyException.class);
     }
-  }
-
-  @Nested
-  @ExtendWith(SpringExtension.class)
-  @EnableConfigurationProperties(value = DistributionServiceConfig.class)
-  @ContextConfiguration(classes = {KeyFigureCardFactory.class},
-      initializers = ConfigFileApplicationContextInitializer.class)
-  class ReproductionNumberCardTest {
 
     @Test
     void shouldThrowAnExceptionIfMandatoryPropertyIsLessThanZero() {

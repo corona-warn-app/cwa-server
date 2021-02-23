@@ -39,7 +39,7 @@ public class CloudFeignClientProvider {
    * @param config config attributes of {@link SubmissionServiceConfig}
    * @param hostnameVerifierProvider provider {@link SubmissionServiceConfig}
    */
-  public CloudFeignClientProvider(SubmissionServiceConfig config) {
+  public CloudFeignClientProvider(SubmissionServiceConfig config, HostnameVerifierProvider hostnameVerifierProvider) {
     Ssl sslConfig = config.getClient().getSsl();
     this.keyStore = sslConfig.getKeyStore();
     this.keyStorePassword = sslConfig.getKeyStorePassword();
@@ -47,6 +47,7 @@ public class CloudFeignClientProvider {
     this.trustStore = sslConfig.getTrustStore();
     this.trustStorePassword = sslConfig.getTrustStorePassword();
     this.connectionPoolSize = config.getConnectionPoolSize();
+    this.hostnameVerifierProvider = hostnameVerifierProvider;
   }
 
   public Client createFeignClient() {
