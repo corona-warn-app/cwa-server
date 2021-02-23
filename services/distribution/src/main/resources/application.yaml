@@ -51,6 +51,7 @@ services:
     api:
       version-path: version
       version-v1: v1
+      version-v2: v2
       country-path: country
       origin-country: ${ORIGIN_COUNTRY:DE}
       date-path: date

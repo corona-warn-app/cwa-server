@@ -60,4 +60,29 @@ public class CwaApiStructureProvider {
 
     return new IndexingDecoratorOnDisk<>(versionDirectory, distributionServiceConfig.getOutputFileName());
   }
+
+  /**
+   * Returns the base directory.
+   *
+   * @return new instance of IndexingDecoratorOnDisk base directory
+   */
+  public Directory<WritableOnDisk> getDirectoryV2() {
+    IndexDirectoryOnDisk<String> versionDirectory = new IndexDirectoryOnDisk<>(
+        distributionServiceConfig.getApi().getVersionPath(),
+        ignoredValue -> Set.of(distributionServiceConfig.getApi().getVersionV2()),
+        Object::toString);
+
+    versionDirectory.addWritableToAll(
+        ignoredValue -> Optional.of(appConfigurationStructureProvider.getAppConfiguration()));
+    versionDirectory.addWritableToAll(
+        ignoredValue -> Optional.ofNullable(appConfigurationStructureProvider.getAppConfigurationV2ForAndroid()));
+    versionDirectory.addWritableToAll(
+        ignoredValue -> Optional.ofNullable(appConfigurationStructureProvider.getAppConfigurationV2ForIos()));
+    versionDirectory.addWritableToAll(
+        ignoredValue -> Optional.of(diagnosisKeysStructureProvider.getDiagnosisKeys()));
+    versionDirectory.addWritableToAll(
+        ignoredValue -> Optional.ofNullable(statisticsStructureProvider.getStatistics()));
+
+    return new IndexingDecoratorOnDisk<>(versionDirectory, distributionServiceConfig.getOutputFileName());
+  }
 }

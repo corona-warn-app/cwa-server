@@ -405,6 +405,8 @@ public class DistributionServiceConfig {
     private String versionPath;
     @Pattern(regexp = VERSION_REGEX)
     private String versionV1;
+    @Pattern(regexp = VERSION_REGEX)
+    private String versionV2;
     @Pattern(regexp = CHAR_AND_NUMBER_REGEX)
     private String countryPath;
     @Pattern(regexp = CHAR_AND_NUMBER_REGEX)
@@ -464,6 +466,14 @@ public class DistributionServiceConfig {
 
     public void setVersionV1(String versionV1) {
       this.versionV1 = versionV1;
+    }
+
+    public String getVersionV2() {
+      return versionV2;
+    }
+
+    public void setVersionV2(String versionV2) {
+      this.versionV2 = versionV2;
     }
 
     public String getCountryPath() {
