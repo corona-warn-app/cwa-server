@@ -43,6 +43,8 @@ public class Upload implements ApplicationRunner {
    * @param payloadFactory         {@link PayloadFactory} to generate the Payload Objects with proper batching and
    *                               signing.
    * @param diagnosisKeyLoader     {@link DiagnosisKeyLoader} to load DiagnosisKeys from the Upload table.
+   * @param applicationContext {@link ApplicationContext} app context.
+   * @param uploadKeyService {@link FederationUploadKeyService} upload service.
    */
   public Upload(
       FederationUploadClient federationUploadClient,

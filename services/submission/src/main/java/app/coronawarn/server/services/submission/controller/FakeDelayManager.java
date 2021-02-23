@@ -22,6 +22,8 @@ public class FakeDelayManager {
 
   /**
    * Returns the current fake delay after applying random jitter.
+   *
+   * @return the fake delay
    */
   public long getJitteredFakeDelay() {
     return new PoissonDistribution(fakeDelay).sample();
@@ -29,6 +31,8 @@ public class FakeDelayManager {
 
   /**
    * Updates the moving average for the request duration with the specified value.
+   *
+   * @param realRequestDuration the request duration
    */
   public void updateFakeRequestDelay(long realRequestDuration) {
     final long currentDelay = fakeDelay;
@@ -37,6 +41,8 @@ public class FakeDelayManager {
 
   /**
    * Returns the current fake delay in seconds. Used for monitoring.
+   *
+   * @return fake delay in seconds
    */
   public Double getFakeDelayInSeconds() {
     return fakeDelay / 1000.;

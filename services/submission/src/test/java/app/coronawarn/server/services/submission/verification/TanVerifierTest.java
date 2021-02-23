@@ -11,6 +11,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 import static org.springframework.http.HttpHeaders.CONTENT_TYPE;
 
+import app.coronawarn.server.common.federation.client.hostname.NoopHostnameVerifierProvider;
 import app.coronawarn.server.common.persistence.domain.config.TekFieldDerivations;
 import app.coronawarn.server.services.submission.config.SubmissionServiceConfig;
 import com.github.tomakehurst.wiremock.WireMockServer;
@@ -31,12 +32,12 @@ import org.springframework.http.MediaType;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
 
-@SpringBootTest(classes = { TanVerifier.class, CloudFeignClientProvider.class, TekFieldDerivations.class })
+@SpringBootTest(classes = { TanVerifier.class, CloudFeignClientProvider.class, TekFieldDerivations.class , NoopHostnameVerifierProvider.class})
 @ImportAutoConfiguration({ FeignAutoConfiguration.class, FeignTestConfiguration.class })
 @EnableConfigurationProperties(value = SubmissionServiceConfig.class)
 @EnableFeignClients
 @DirtiesContext
-@ActiveProfiles({ "feign" })
+@ActiveProfiles({ "feign", "disable-ssl-client-verification-verify-hostname" })
 class TanVerifierTest {
 
   @Autowired

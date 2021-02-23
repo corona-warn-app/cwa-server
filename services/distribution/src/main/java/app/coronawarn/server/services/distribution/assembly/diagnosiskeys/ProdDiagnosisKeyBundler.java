@@ -38,6 +38,9 @@ public class ProdDiagnosisKeyBundler extends DiagnosisKeyBundler {
 
   /**
    * Creates a new {@link ProdDiagnosisKeyBundler}.
+   *
+   * @param distributionServiceConfig DistributionServiceConfig to set
+   * @param sharingPoliciesChecker KeySharingPoliciesChecker to set
    */
   public ProdDiagnosisKeyBundler(DistributionServiceConfig distributionServiceConfig,
       KeySharingPoliciesChecker sharingPoliciesChecker) {

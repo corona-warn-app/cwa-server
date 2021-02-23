@@ -11,11 +11,31 @@ public class CallbackServiceConfig {
 
   private String efgsCertCn;
 
+  private boolean registerOnStartup;
+
+  private String endpointUrl;
+
   public String getEfgsCertCn() {
     return efgsCertCn;
   }
 
   public void setEfgsCertCn(String efgsCertCn) {
     this.efgsCertCn = efgsCertCn;
+  }
+
+  public boolean isRegisterOnStartup() {
+    return registerOnStartup;
+  }
+
+  public void setRegisterOnStartup(boolean registerOnStartup) {
+    this.registerOnStartup = registerOnStartup;
+  }
+
+  public String getEndpointUrl() {
+    return endpointUrl;
+  }
+
+  public void setEndpointUrl(String endpointUrl) {
+    this.endpointUrl = endpointUrl;
   }
 }

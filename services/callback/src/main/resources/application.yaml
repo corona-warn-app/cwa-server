@@ -9,7 +9,21 @@ logging:
 
 services:
   callback:
-    efgs-cert-cn: ${EFGS-CERT-CN:localhost}
+    efgs-cert-cn: ${EFGS_CERT_CN}
+    register-on-startup: ${CALLBACK_REGISTER_ON_STARTUP:true}
+    endpoint-url: ${CALLBACK_ENDPOINT_URL}
+
+federation-gateway:
+  base-url: ${FEDERATION_GATEWAY_BASE_URL:http://localhost:8005}
+  connection-pool-size: 200
+  ssl:
+    key-store: ${FEDERATION_GATEWAY_KEYSTORE_PATH}
+    key-store-password: ${FEDERATION_GATEWAY_KEYSTORE_PASS}
+    certificate-type: PKCS12
+    certificate-dn: ${FEDERATION_CERTIFICATE_DN}
+    certificate-sha: ${FEDERATION_CERTIFICATE_SHA}
+    trust-store: ${SSL_FEDERATION_TRUSTSTORE_PATH}
+    trust-store-password: ${SSL_FEDERATION_TRUSTSTORE_PASSWORD}
 
 spring:
   lifecycle:
@@ -33,6 +47,8 @@ spring:
 # Actuator configuration
 management:
   server:
+    ssl:
+      enabled: false
     port: 8081
   endpoint:
     metrics:
@@ -42,7 +58,7 @@ management:
     health:
       group:
         readiness:
-          include: db, verificationService
+          include: db
           show-details: always
   endpoints:
     web:
@@ -60,7 +76,7 @@ server:
   shutdown: graceful
   ssl:
     enabled: true
-    enabled-protocols: TLSv1.2,TLSv1.3
+    enabled-protocols: TLSv1.2+TLSv1.3
     protocol: TLS
     ciphers: >-
       TLS_ECDHE_ECDSA_WITH_AES_128_GCM_SHA256

@@ -30,7 +30,8 @@ import org.springframework.validation.Validator;
 @SpringBootApplication
 @EnableJdbcRepositories(basePackages = "app.coronawarn.server.common.persistence")
 @EntityScan(basePackages = "app.coronawarn.server.common.persistence")
-@ComponentScan({"app.coronawarn.server.common.persistence", "app.coronawarn.server.services.distribution"})
+@ComponentScan({"app.coronawarn.server.common.persistence", "app.coronawarn.server.services.distribution", 
+    "app.coronawarn.server.common.federation.client.hostname"})
 @EnableConfigurationProperties({DistributionServiceConfig.class})
 public class Application implements EnvironmentAware, DisposableBean {
 
@@ -56,6 +57,7 @@ public class Application implements EnvironmentAware, DisposableBean {
 
   /**
    * Terminates this application with exit code 1 (general error).
+   * @param appContext type ApplicationContext
    */
   public static void killApplication(ApplicationContext appContext) {
     SpringApplication.exit(appContext);

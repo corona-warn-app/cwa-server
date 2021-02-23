@@ -27,6 +27,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicReference;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
@@ -44,10 +45,11 @@ public class FederationBatchProcessor {
   private final DownloadServiceConfig config;
   private final ValidFederationKeyFilter validFederationKeyFilter;
 
-
   /**
-   * This is a potential memory-leak if there are very many batches. This is an intentional decision: We'd rather run
-   * into a memory-leak if there are too many batches than run into an endless loop if a batch-tag repeats
+   * This is a potential memory-leak if there are very many batches.
+   * This is an intentional decision:
+   * We'd rather run into a memory-leak if there are too many batches
+   * than run into an endless loop if a batch-tag repeats
    */
   private final Set<String> seenBatches;
 
@@ -79,6 +81,8 @@ public class FederationBatchProcessor {
    * Federation Batch Info stores information about which batches have already been processed to not download them
    * again. If the date-based download is enabled, the entries for the specified date need to be removed. Stores the
    * first FederationBatchTag for the specified date as a starting point for further processing.
+   *
+   * @throws FatalFederationGatewayException triggers if error occurs in the federation gateway
    */
   public void prepareDownload() throws FatalFederationGatewayException {
     if (config.getEfgsEnforceDateBasedDownload()) {
@@ -93,6 +97,7 @@ public class FederationBatchProcessor {
    * Stores the batch info for the specified date. Its status is set to {@link FederationBatchStatus#UNPROCESSED}.
    *
    * @param date The date for which the first batch info is stored.
+   * @throws FatalFederationGatewayException triggers if error occurs in the federation gateway
    */
   protected void saveFirstBatchInfoForDate(LocalDate date) throws FatalFederationGatewayException {
     try {
@@ -131,6 +136,8 @@ public class FederationBatchProcessor {
   /**
    * Downloads and processes all batches from the federation gateway that have previously been marked with status value
    * {@link FederationBatchStatus#UNPROCESSED}.
+   *
+   * @throws FatalFederationGatewayException triggers if error occurs in the federation gateway
    */
   public void processUnprocessedFederationBatches() throws FatalFederationGatewayException {
     Deque<FederationBatchInfo> unprocessedBatches = new LinkedList<>(batchInfoService.findByStatus(UNPROCESSED));
@@ -157,14 +164,16 @@ public class FederationBatchProcessor {
     LocalDate date = batchInfo.getDate();
     String batchTag = batchInfo.getBatchTag();
     logger.info("Processing batch for date {} and batchTag {}.", date, batchTag);
+    AtomicReference<Optional<String>> nextBatchTag = new AtomicReference<>(Optional.empty());
     try {
       BatchDownloadResponse response = federationGatewayDownloadService.downloadBatch(batchTag, date);
-      if (config.isBatchAuditEnabled()) {
-        federationGatewayDownloadService.auditBatch(batchTag, date);
-      }
       AtomicBoolean batchContainsInvalidKeys = new AtomicBoolean(false);
+      nextBatchTag.set(response.getNextBatchTag());
       response.getDiagnosisKeyBatch().ifPresentOrElse(batch -> {
         logger.info("Downloaded {} keys for date {} and batchTag {}.", batch.getKeysCount(), date, batchTag);
+        if (config.isBatchAuditEnabled()) {
+          federationGatewayDownloadService.auditBatch(batchTag, date);
+        }
         List<DiagnosisKey> validDiagnosisKeys = extractValidDiagnosisKeysFromBatch(batch);
         int numOfInvalidKeys = batch.getKeysCount() - validDiagnosisKeys.size();
         if (numOfInvalidKeys > 0) {
@@ -175,7 +184,7 @@ public class FederationBatchProcessor {
         logger.info("Successfully inserted {} keys for date {} and batchTag {}.", insertedKeys, date, batchTag);
       }, () -> logger.info("Batch for date {} and batchTag {} did not contain any keys.", date, batchTag));
       batchInfoService.updateStatus(batchInfo, batchContainsInvalidKeys.get() ? PROCESSED_WITH_ERROR : PROCESSED);
-      return response.getNextBatchTag();
+      return nextBatchTag.get();
     } catch (FatalFederationGatewayException e) {
       throw e;
     } catch (Exception e) {
@@ -183,7 +192,7 @@ public class FederationBatchProcessor {
           "Federation batch processing for date " + date + " and batchTag " + batchTag + " failed. Status set to "
               + errorStatus.name() + ".", e);
       batchInfoService.updateStatus(batchInfo, errorStatus);
-      return Optional.empty();
+      return nextBatchTag.get();
     }
   }
 

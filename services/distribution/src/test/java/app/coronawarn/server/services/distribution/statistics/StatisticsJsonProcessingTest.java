@@ -1,5 +1,6 @@
 package app.coronawarn.server.services.distribution.statistics;
 
+import app.coronawarn.server.common.persistence.service.StatisticsDownloadService;
 import app.coronawarn.server.common.protocols.internal.stats.CardHeader;
 import app.coronawarn.server.common.protocols.internal.stats.KeyFigure;
 import app.coronawarn.server.common.protocols.internal.stats.KeyFigure.Trend;
@@ -12,12 +13,14 @@ import java.io.IOException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
+import java.util.Optional;
 import app.coronawarn.server.services.distribution.statistics.keyfigurecard.KeyFigureCardSequenceConstants;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.ConfigFileApplicationContextInitializer;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
@@ -25,10 +28,11 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 import static app.coronawarn.server.services.distribution.statistics.keyfigurecard.KeyFigureCardSequenceConstants.*;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.mockito.Mockito.when;
 
 @EnableConfigurationProperties(value = DistributionServiceConfig.class)
 @ExtendWith(SpringExtension.class)
-@ActiveProfiles({"local-json-stats", "processing-test"})
+@ActiveProfiles({"local-json-stats", "processing-test", "debug"})
 @ContextConfiguration(classes = {StatisticsJsonToProtobufTest.class,
     StatisticsToProtobufMapping.class, KeyFigureCardFactory.class,
     LocalStatisticJsonFileLoader.class
@@ -38,6 +42,9 @@ class StatisticsJsonProcessingTest {
   @Autowired
   StatisticsToProtobufMapping mapping;
 
+  @MockBean
+  StatisticsDownloadService service;
+
   private long dateToTimestamp(LocalDate date) {
     return date.atStartOfDay(ZoneOffset.UTC).toEpochSecond();
   }
@@ -45,6 +52,7 @@ class StatisticsJsonProcessingTest {
   @Test
   void shouldRunParsing() throws IOException {
     var result = mapping.constructProtobufStatistics();
+    when(service.getMostRecentDownload()).thenReturn(Optional.empty());
 
     // Assert Infections card
     assertThat(result.getKeyFigureCards(0).getHeader())
@@ -68,7 +76,7 @@ class StatisticsJsonProcessingTest {
         .containsExactly(KEY_SUBMISSION_CARD_ID, dateToTimestamp(LocalDate.of(2020, 11, 6)));
     assertThat(result.getKeyFigureCards(2).getKeyFigures(1))
         .extracting(KeyFigure::getValue, KeyFigure::getTrend, KeyFigure::getTrendSemantic)
-        .containsExactly(11.0, Trend.STABLE, TrendSemantic.NEUTRAL);
+        .containsExactly(11.428571428571429, Trend.STABLE, TrendSemantic.NEUTRAL);
 
     // Assert Reproduction Number Card
     assertThat(result.getKeyFigureCards(3).getHeader())
@@ -76,7 +84,7 @@ class StatisticsJsonProcessingTest {
         .containsExactly(REPRODUCTION_NUMBER_CARD, dateToTimestamp(LocalDate.of(2020, 11, 5)));
     assertThat(result.getKeyFigureCards(3).getKeyFigures(0))
         .extracting(KeyFigure::getValue, KeyFigure::getTrend, KeyFigure::getTrendSemantic)
-        .containsExactly(0.63, Trend.DECREASING, TrendSemantic.POSITIVE);
+        .containsExactly(1.67, Trend.INCREASING, TrendSemantic.NEGATIVE);
   }
 
 }

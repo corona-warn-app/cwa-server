@@ -2,6 +2,7 @@
 
 package app.coronawarn.server.services.submission.verification;
 
+import app.coronawarn.server.common.federation.client.hostname.HostnameVerifierProvider;
 import app.coronawarn.server.services.submission.config.SubmissionServiceConfig;
 import app.coronawarn.server.services.submission.config.SubmissionServiceConfig.Client.Ssl;
 import feign.Client;
@@ -30,10 +31,15 @@ public class CloudFeignClientProvider {
   private final File trustStore;
   private final String trustStorePassword;
 
+  private final HostnameVerifierProvider hostnameVerifierProvider;
+
   /**
    * Creates a {@link CloudFeignClientProvider} that provides feign clients with fixed key and trust material.
+   *
+   * @param config config attributes of {@link SubmissionServiceConfig}
+   * @param hostnameVerifierProvider provider {@link SubmissionServiceConfig}
    */
-  public CloudFeignClientProvider(SubmissionServiceConfig config) {
+  public CloudFeignClientProvider(SubmissionServiceConfig config, HostnameVerifierProvider hostnameVerifierProvider) {
     Ssl sslConfig = config.getClient().getSsl();
     this.keyStore = sslConfig.getKeyStore();
     this.keyStorePassword = sslConfig.getKeyStorePassword();
@@ -41,6 +47,7 @@ public class CloudFeignClientProvider {
     this.trustStore = sslConfig.getTrustStore();
     this.trustStorePassword = sslConfig.getTrustStorePassword();
     this.connectionPoolSize = config.getConnectionPoolSize();
+    this.hostnameVerifierProvider = hostnameVerifierProvider;
   }
 
   public Client createFeignClient() {
@@ -61,6 +68,8 @@ public class CloudFeignClientProvider {
 
   /**
    * Creates an {@link ApacheHttpClientFactory} that validates SSL certificates and host names.
+   *
+   * @return new ApacheHttpClientFactory
    */
   @Bean
   public ApacheHttpClientFactory createHttpClientFactory() {
@@ -68,7 +77,7 @@ public class CloudFeignClientProvider {
         .setMaxConnPerRoute(this.connectionPoolSize)
         .setMaxConnTotal(this.connectionPoolSize)
         .setSSLContext(getSslContext())
-        .setSSLHostnameVerifier(new DefaultHostnameVerifier()));
+        .setSSLHostnameVerifier(hostnameVerifierProvider.createHostnameVerifier()));
   }
 
   @Bean

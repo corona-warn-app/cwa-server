@@ -24,10 +24,10 @@ public class ReproductionNumberCardFactory extends HeaderCardFactory {
   }
 
   private KeyFigure getSevenDayRValueKeyFigure(StatisticsJsonStringObject stats) {
-    var trend = ValueTrendCalculator.from(stats.getSevenDayRvalue1stReportedTrend1percent());
+    var trend = ValueTrendCalculator.from(stats.getSevenDayRvaluePublishedTrend1percent());
     var semantic = ValueTrendCalculator.getNegativeTrendGrowth(trend);
     return KeyFigure.newBuilder()
-        .setValue(stats.getSevenDayRvalue1stReportedDaily())
+        .setValue(stats.getSevenDayRvaluePublishedDaily())
         .setRank(Rank.PRIMARY)
         .setDecimals(2)
         .setTrend(trend)
@@ -37,9 +37,15 @@ public class ReproductionNumberCardFactory extends HeaderCardFactory {
 
   @Override
   protected List<Optional<Object>> getRequiredFieldValues(StatisticsJsonStringObject stats) {
-    return List.of(
-        Optional.ofNullable(stats.getSevenDayRvalue1stReportedTrend1percent()),
-        Optional.ofNullable(stats.getSevenDayRvalue1stReportedDaily())
+    List<Optional<Object>> requiredFields = List.of(
+        Optional.ofNullable(stats.getSevenDayRvaluePublishedTrend1percent()),
+        Optional.ofNullable(stats.getSevenDayRvaluePublishedDaily())
     );
+
+    if (requiredFields.contains(Optional.empty()) || stats.getSevenDayRvaluePublishedDaily() <= 0) {
+      return List.of(Optional.empty());
+    }
+
+    return requiredFields;
   }
 }

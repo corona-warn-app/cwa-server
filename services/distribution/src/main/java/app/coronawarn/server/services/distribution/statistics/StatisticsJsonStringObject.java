@@ -24,7 +24,7 @@ public class StatisticsJsonStringObject {
   @JsonProperty("effective_date")
   private String effectiveDate;
   @JsonProperty("infections_effective_7days_avg")
-  private Integer infectionsReported7daysAvg;
+  private Double infectionsReported7daysAvg;
   @JsonProperty("infections_effective_7days_avg_growthrate")
   private Double infectionsReported7daysGrowthrate;
   @JsonProperty("infections_effective_7days_avg_trend_5percent")
@@ -48,7 +48,7 @@ public class StatisticsJsonStringObject {
   @JsonProperty("persons_who_shared_keys_daily")
   private Integer personsWhoSharedKeysDaily;
   @JsonProperty("persons_who_shared_keys_7days_avg")
-  private Integer personWhoSharedKeys7daysAvg;
+  private Double personWhoSharedKeys7daysAvg;
   @JsonProperty("positive_tests_not_used_to_share_keys_daily")
   private Integer positiveTestsNotUsedToShareKeysDaily;
   @JsonProperty("positive_tests_used_to_share_keys_daily")
@@ -70,7 +70,7 @@ public class StatisticsJsonStringObject {
   @JsonProperty("seven_day_r_value_published_growthrate")
   private Double sevenDayRvaluepublishedGrowthrate;
   @JsonProperty("seven_day_r_value_published_trend_1percent")
-  private Integer sevenDayRvaluePublishedTrend5percent;
+  private Integer sevenDayRvaluePublishedTrend1percent;
   @JsonProperty("tests_total_daily")
   private Integer testsTotalDaily;
   @JsonProperty("update_timestamp")
@@ -104,7 +104,7 @@ public class StatisticsJsonStringObject {
     return effectiveDate;
   }
 
-  public Integer getInfectionsReported7daysAvg() {
+  public Double getInfectionsReported7daysAvg() {
     return infectionsReported7daysAvg;
   }
 
@@ -152,7 +152,7 @@ public class StatisticsJsonStringObject {
     return personsWhoSharedKeysDaily;
   }
 
-  public Integer getPersonWhoSharedKeys7daysAvg() {
+  public Double getPersonWhoSharedKeys7daysAvg() {
     return personWhoSharedKeys7daysAvg;
   }
 
@@ -188,7 +188,7 @@ public class StatisticsJsonStringObject {
     return sevenDayRvalue1stReportedTrend1percent;
   }
 
-  public Double getSevenDayRvaluepublishedDaily() {
+  public Double getSevenDayRvaluePublishedDaily() {
     return sevenDayRvaluepublishedDaily;
   }
 
@@ -196,8 +196,8 @@ public class StatisticsJsonStringObject {
     return sevenDayRvaluepublishedGrowthrate;
   }
 
-  public Integer getSevenDayRvaluePublishedTrend5percent() {
-    return sevenDayRvaluePublishedTrend5percent;
+  public Integer getSevenDayRvaluePublishedTrend1percent() {
+    return sevenDayRvaluePublishedTrend1percent;
   }
 
   public Integer getTestsTotalDaily() {
@@ -236,7 +236,7 @@ public class StatisticsJsonStringObject {
     this.effectiveDate = effectiveDate;
   }
 
-  public void setInfectionsReported7daysAvg(Integer infectionsReported7daysAvg) {
+  public void setInfectionsReported7daysAvg(Double infectionsReported7daysAvg) {
     this.infectionsReported7daysAvg = infectionsReported7daysAvg;
   }
 
@@ -284,7 +284,7 @@ public class StatisticsJsonStringObject {
     this.personsWhoSharedKeysDaily = personsWhoSharedKeysDaily;
   }
 
-  public void setPersonWhoSharedKeys7daysAvg(Integer personWhoSharedKeys7daysAvg) {
+  public void setPersonWhoSharedKeys7daysAvg(Double personWhoSharedKeys7daysAvg) {
     this.personWhoSharedKeys7daysAvg = personWhoSharedKeys7daysAvg;
   }
 
@@ -328,8 +328,8 @@ public class StatisticsJsonStringObject {
     this.sevenDayRvaluepublishedGrowthrate = sevenDayRvaluepublishedGrowthrate;
   }
 
-  public void setSevenDayRvaluePublishedTrend5percent(Integer sevenDayRvaluePublishedTrend5percent) {
-    this.sevenDayRvaluePublishedTrend5percent = sevenDayRvaluePublishedTrend5percent;
+  public void setSevenDayRvaluePublishedTrend1percent(Integer sevenDayRvaluePublishedTrend1percent) {
+    this.sevenDayRvaluePublishedTrend1percent = sevenDayRvaluePublishedTrend1percent;
   }
 
   public void setTestsTotalDaily(Integer testsTotalDaily) {

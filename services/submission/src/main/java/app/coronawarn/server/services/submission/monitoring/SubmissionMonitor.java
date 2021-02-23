@@ -30,6 +30,7 @@ public class SubmissionMonitor {
    *
    * @param meterRegistry the meterRegistry
    * @param fakeDelayManager the fake delay manager whose fake delay will be monitored
+   * @param submissionServiceConfig config containing the monitoring batch size
    */
   protected SubmissionMonitor(
       MeterRegistry meterRegistry, SubmissionServiceConfig submissionServiceConfig, FakeDelayManager fakeDelayManager) {
