@@ -1,7 +1,6 @@
 package app.coronawarn.server.services.distribution.statistics;
 
-import static app.coronawarn.server.services.distribution.statistics.keyfigurecard.KeyFigureCardSequenceConstants.INCIDENCE_CARD_ID;
-import static app.coronawarn.server.services.distribution.statistics.keyfigurecard.KeyFigureCardSequenceConstants.KEY_SUBMISSION_CARD_ID;
+import static app.coronawarn.server.services.distribution.statistics.keyfigurecard.KeyFigureCardSequenceConstants.*;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
@@ -39,7 +38,7 @@ class KeyFigureCardFactoryTest {
     statisticsJsonStringObject.setEffectiveDate("2020-11-05");
 
     statisticsJsonStringObject.setInfectionsReportedDaily(70200);
-    statisticsJsonStringObject.setInfectionsReported7daysAvg(1234);
+    statisticsJsonStringObject.setInfectionsReported7daysAvg(1234.0);
     statisticsJsonStringObject.setInfectionsReported7daysGrowthrate(1.15);
     statisticsJsonStringObject.setInfectionsReportedCumulated(123456);
     statisticsJsonStringObject.setInfectionsReported7daysTrend5percent(1);
@@ -48,13 +47,13 @@ class KeyFigureCardFactoryTest {
     statisticsJsonStringObject.setSevenDayIncidenceTrend1percent(1);
 
     statisticsJsonStringObject.setPersonsWhoSharedKeysDaily(2717);
-    statisticsJsonStringObject.setPersonWhoSharedKeys7daysAvg(123);
+    statisticsJsonStringObject.setPersonWhoSharedKeys7daysAvg(123.0);
     statisticsJsonStringObject.setPersonsWhoSharedKeys7daysGrowthrate(1.05);
     statisticsJsonStringObject.setPersonsWhoSharedKeysCumulated(4321);
     statisticsJsonStringObject.setPersonsWhoSharedKeys7daysTrend5percent(1);
 
-    statisticsJsonStringObject.setSevenDayRvalue1stReportedDaily(100.63);
-    statisticsJsonStringObject.setSevenDayRvalue1stReportedTrend1percent(1);
+    statisticsJsonStringObject.setSevenDayRvaluepublishedDaily(100.63);
+    statisticsJsonStringObject.setSevenDayRvaluePublishedTrend1percent(1);
   }
 
   @Nested
@@ -105,6 +104,20 @@ class KeyFigureCardFactoryTest {
       assertThatThrownBy(() -> figureCardFactory.createKeyFigureCard(missingPropertyObject, 1))
           .isInstanceOf(MissingPropertyException.class);
     }
+
+    @Test
+    void shouldThrowAnExceptionIfMandatoryPropertyIsEqualToZero() {
+      statisticsJsonStringObject.setInfectionsReportedCumulated(0);
+      assertThatThrownBy(() -> figureCardFactory.createKeyFigureCard(statisticsJsonStringObject, 1))
+          .isInstanceOf(MissingPropertyException.class);
+    }
+
+    @Test
+    void shouldThrowAnExceptionIfMandatoryPropertyLessThanZero() {
+      statisticsJsonStringObject.setInfectionsReportedCumulated(-1);
+      assertThatThrownBy(() -> figureCardFactory.createKeyFigureCard(statisticsJsonStringObject, 1))
+          .isInstanceOf(MissingPropertyException.class);
+    }
   }
 
   @Nested
@@ -147,6 +160,20 @@ class KeyFigureCardFactoryTest {
           .extracting(KeyFigure::getTrend, KeyFigure::getTrendSemantic)
           .containsExactly(Trend.STABLE, TrendSemantic.NEUTRAL);
     }
+
+    @Test
+    void shouldThrowAnExceptionIfMandatoryPropertyIsEqualToZero() {
+      statisticsJsonStringObject.setSevenDayIncidence(-0.0);
+      assertThatThrownBy(() -> figureCardFactory.createKeyFigureCard(statisticsJsonStringObject, INCIDENCE_CARD_ID))
+          .isInstanceOf(MissingPropertyException.class);
+    }
+
+    @Test
+    void shouldThrowAnExceptionIfMandatoryPropertyIsLessThanZero() {
+      statisticsJsonStringObject.setSevenDayIncidence(-0.0);
+      assertThatThrownBy(() -> figureCardFactory.createKeyFigureCard(statisticsJsonStringObject, INCIDENCE_CARD_ID))
+          .isInstanceOf(MissingPropertyException.class);
+    }
   }
 
   @Nested
@@ -175,6 +202,28 @@ class KeyFigureCardFactoryTest {
           .extracting(KeyFigure::getTrend, KeyFigure::getTrendSemantic)
           .containsExactly(Trend.DECREASING, TrendSemantic.NEUTRAL);
     }
+
+    @Test
+    void shouldThrowAnExceptionIfMandatoryPropertyIsEqualToZero() {
+      statisticsJsonStringObject.setPersonWhoSharedKeys7daysAvg(0.0);
+      assertThatThrownBy(() -> figureCardFactory.createKeyFigureCard(statisticsJsonStringObject, KEY_SUBMISSION_CARD_ID))
+          .isInstanceOf(MissingPropertyException.class);
+    }
+  }
+
+  @Nested
+  @ExtendWith(SpringExtension.class)
+  @EnableConfigurationProperties(value = DistributionServiceConfig.class)
+  @ContextConfiguration(classes = {KeyFigureCardFactory.class},
+      initializers = ConfigFileApplicationContextInitializer.class)
+  class ReproductionNumberCardTest {
+
+    @Test
+    void shouldThrowAnExceptionIfMandatoryPropertyIsLessThanZero() {
+      statisticsJsonStringObject.setPersonWhoSharedKeys7daysAvg(-1.0);
+      assertThatThrownBy(() -> figureCardFactory.createKeyFigureCard(statisticsJsonStringObject, KEY_SUBMISSION_CARD_ID))
+          .isInstanceOf(MissingPropertyException.class);
+    }
   }
 
   @Nested
@@ -189,6 +238,20 @@ class KeyFigureCardFactoryTest {
       var result = figureCardFactory.createKeyFigureCard(statisticsJsonStringObject, 4);
       assertKeyFigure(result.getKeyFigures(0), 100.63, Rank.PRIMARY, Trend.INCREASING,
           TrendSemantic.NEGATIVE, 2);
+    }
+
+    @Test
+    void shouldThrowAnExceptionIfMandatoryPropertyIsEqualToZero() {
+      statisticsJsonStringObject.setSevenDayRvaluepublishedDaily(0.0);
+      assertThatThrownBy(() -> figureCardFactory.createKeyFigureCard(statisticsJsonStringObject, REPRODUCTION_NUMBER_CARD))
+          .isInstanceOf(MissingPropertyException.class);
+    }
+
+    @Test
+    void shouldThrowAnExceptionIfMandatoryPropertyLessThanZero() {
+      statisticsJsonStringObject.setSevenDayRvaluepublishedDaily(-1.0);
+      assertThatThrownBy(() -> figureCardFactory.createKeyFigureCard(statisticsJsonStringObject, REPRODUCTION_NUMBER_CARD))
+          .isInstanceOf(MissingPropertyException.class);
     }
   }
 

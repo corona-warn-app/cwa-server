@@ -13,18 +13,29 @@ import app.coronawarn.server.common.protocols.internal.v2.ExposureDetectionParam
 import app.coronawarn.server.common.protocols.internal.v2.HourPackageMetadata;
 import app.coronawarn.server.common.protocols.internal.v2.KeyDownloadParametersAndroid;
 import app.coronawarn.server.common.protocols.internal.v2.KeyDownloadParametersIOS;
+import app.coronawarn.server.common.protocols.internal.v2.PPDDEventDrivenUserSurveyParametersAndroid;
+import app.coronawarn.server.common.protocols.internal.v2.PPDDEventDrivenUserSurveyParametersCommon;
+import app.coronawarn.server.common.protocols.internal.v2.PPDDEventDrivenUserSurveyParametersIOS;
+import app.coronawarn.server.common.protocols.internal.v2.PPDDPrivacyPreservingAccessControlParametersAndroid;
+import app.coronawarn.server.common.protocols.internal.v2.PPDDPrivacyPreservingAnalyticsParametersAndroid;
+import app.coronawarn.server.common.protocols.internal.v2.PPDDPrivacyPreservingAnalyticsParametersCommon;
+import app.coronawarn.server.common.protocols.internal.v2.PPDDPrivacyPreservingAnalyticsParametersIOS;
 import app.coronawarn.server.common.protocols.internal.v2.RiskCalculationParameters;
 import app.coronawarn.server.common.protocols.internal.v2.SemanticVersion;
 import app.coronawarn.server.services.distribution.assembly.appconfig.parsing.v2.DeserializedDailySummariesConfig;
 import app.coronawarn.server.services.distribution.assembly.appconfig.parsing.v2.DeserializedDiagnosisKeysDataMapping;
 import app.coronawarn.server.services.distribution.assembly.appconfig.parsing.v2.DeserializedExposureConfiguration;
 import app.coronawarn.server.services.distribution.config.DistributionServiceConfig;
+import app.coronawarn.server.services.distribution.config.DistributionServiceConfig.AppConfigParameters.AndroidEventDrivenUserSurveyParameters;
 import app.coronawarn.server.services.distribution.config.DistributionServiceConfig.AppConfigParameters.AndroidExposureDetectionParameters;
 import app.coronawarn.server.services.distribution.config.DistributionServiceConfig.AppConfigParameters.AndroidKeyDownloadParameters;
+import app.coronawarn.server.services.distribution.config.DistributionServiceConfig.AppConfigParameters.AndroidPrivacyPreservingAnalyticsParameters;
 import app.coronawarn.server.services.distribution.config.DistributionServiceConfig.AppConfigParameters.DeserializedDayPackageMetadata;
 import app.coronawarn.server.services.distribution.config.DistributionServiceConfig.AppConfigParameters.DeserializedHourPackageMetadata;
+import app.coronawarn.server.services.distribution.config.DistributionServiceConfig.AppConfigParameters.IosEventDrivenUserSurveyParameters;
 import app.coronawarn.server.services.distribution.config.DistributionServiceConfig.AppConfigParameters.IosExposureDetectionParameters;
 import app.coronawarn.server.services.distribution.config.DistributionServiceConfig.AppConfigParameters.IosKeyDownloadParameters;
+import app.coronawarn.server.services.distribution.config.DistributionServiceConfig.AppConfigParameters.IosPrivacyPreservingAnalyticsParameters;
 import java.util.List;
 import java.util.stream.Collectors;
 import org.springframework.context.annotation.Bean;
@@ -36,7 +47,7 @@ import org.springframework.context.annotation.Configuration;
  * distributed in CDNs at different URLs. This Spring bean loads the default values defined in the
  * YAML configurations of each device type found under <code> /main-config/ </code> folder,
  * extends it with some Distribution Service global parameters and registers them for usage during
- * file archiving & bundling.
+ * file archiving and bundling.
  */
 @Configuration
 public class ApplicationConfigurationV2PublicationConfig {
@@ -51,6 +62,9 @@ public class ApplicationConfigurationV2PublicationConfig {
 
   /**
    * Fetches the source configuration as a ApplicationConfigurationAndroid instance.
+   * @param distributionServiceConfig type DistributionServiceConfig
+   * @return android configuration
+   * @throws UnableToLoadFileException if either the file access or subsequent yaml parsing fails.
    */
   @Bean
   public ApplicationConfigurationAndroid createAndroidV2Configuration(
@@ -77,7 +91,52 @@ public class ApplicationConfigurationV2PublicationConfig {
         .setExposureDetectionParameters(
             buildExposureDetectionParametersAndroid(distributionServiceConfig))
         .setDailySummariesConfig(buildDailySummaries(dailySummaries))
-        .setDiagnosisKeysDataMapping(buildDataMapping(dataMapping)).build();
+        .setDiagnosisKeysDataMapping(buildDataMapping(dataMapping))
+        .setEventDrivenUserSurveyParameters(buildAndroidEdusParameters(distributionServiceConfig))
+        .setPrivacyPreservingAnalyticsParameters(buildAndroidPpaParameters(distributionServiceConfig))
+        .build();
+  }
+
+
+  private PPDDEventDrivenUserSurveyParametersAndroid buildAndroidEdusParameters(
+      DistributionServiceConfig distributionServiceConfig) {
+    AndroidEventDrivenUserSurveyParameters androidEdusParams = distributionServiceConfig
+        .getAppConfigParameters().getAndroidEventDrivenUserSurveyParameters();
+    return PPDDEventDrivenUserSurveyParametersAndroid.newBuilder()
+        .setCommon(PPDDEventDrivenUserSurveyParametersCommon.newBuilder()
+            .setOtpQueryParameterName(androidEdusParams.getOtpQueryParameterName())
+            .setSurveyOnHighRiskEnabled(androidEdusParams.getSurveyOnHighRiskEnabled())
+            .setSurveyOnHighRiskUrl(androidEdusParams.getSurveyOnHighRiskUrl())
+            .build())
+        .setPpac(PPDDPrivacyPreservingAccessControlParametersAndroid.newBuilder()
+            .setRequireBasicIntegrity(androidEdusParams.getRequireBasicIntegrity())
+            .setRequireCTSProfileMatch(androidEdusParams.getRequireCtsProfileMatch())
+            .setRequireEvaluationTypeBasic(androidEdusParams.getRequireEvaluationTypeBasic())
+            .setRequireEvaluationTypeHardwareBacked(androidEdusParams.getRequireEvaluationTypeHardwareBacked())
+            .build())
+        .build();
+  }
+
+  private PPDDPrivacyPreservingAnalyticsParametersAndroid buildAndroidPpaParameters(
+      DistributionServiceConfig distributionServiceConfig) {
+    AndroidPrivacyPreservingAnalyticsParameters androidPpaParams = distributionServiceConfig
+        .getAppConfigParameters().getAndroidPrivacyPreservingAnalyticsParameters();
+    return PPDDPrivacyPreservingAnalyticsParametersAndroid.newBuilder()
+        .setCommon(PPDDPrivacyPreservingAnalyticsParametersCommon.newBuilder()
+            .setProbabilityToSubmit(androidPpaParams.getProbabilityToSubmit())
+            .setProbabilityToSubmitExposureWindows(androidPpaParams.getProbabilityToSubmitExposureWindows())
+            .setHoursSinceTestRegistrationToSubmitTestResultMetadata(
+                androidPpaParams.getHoursSinceTestRegistrationToSubmitTestResultMetadata())
+            .setHoursSinceTestResultToSubmitKeySubmissionMetadata(
+                androidPpaParams.getHoursSinceTestToSubmitKeySubmissionMetadata())
+            .build())
+        .setPpac(PPDDPrivacyPreservingAccessControlParametersAndroid.newBuilder()
+            .setRequireBasicIntegrity(androidPpaParams.getRequireBasicIntegrity())
+            .setRequireCTSProfileMatch(androidPpaParams.getRequireCtsProfileMatch())
+            .setRequireEvaluationTypeBasic(androidPpaParams.getRequireEvaluationTypeBasic())
+            .setRequireEvaluationTypeHardwareBacked(androidPpaParams.getRequireEvaluationTypeHardwareBacked())
+            .build())
+        .build();
   }
 
   private DiagnosisKeysDataMapping buildDataMapping(
@@ -137,6 +196,10 @@ public class ApplicationConfigurationV2PublicationConfig {
 
   /**
    * Fetches the source configuration as a ApplicationConfigurationAndroid instance.
+   *
+   * @param distributionServiceConfig config attributes to retrieve
+   * @return iOS configuration
+   * @throws UnableToLoadFileException if either the file access or subsequent yaml parsing fails.
    */
   @Bean
   public ApplicationConfigurationIOS createIosV2Configuration(DistributionServiceConfig distributionServiceConfig)
@@ -159,6 +222,38 @@ public class ApplicationConfigurationV2PublicationConfig {
             buildExposureConfigurationFromDeserializedExposureConfiguration(exposureConfiguration))
         .setKeyDownloadParameters(buildKeyDownloadParametersIos(distributionServiceConfig))
         .setExposureDetectionParameters(buildExposureDetectionParametersIos(distributionServiceConfig))
+        .setEventDrivenUserSurveyParameters(buildIosEdusParameters(distributionServiceConfig))
+        .setPrivacyPreservingAnalyticsParameters(buildIosPpaParameters(distributionServiceConfig))
+        .build();
+  }
+
+  private PPDDPrivacyPreservingAnalyticsParametersIOS buildIosPpaParameters(
+      DistributionServiceConfig distributionServiceConfig) {
+    IosPrivacyPreservingAnalyticsParameters iosPpaParams = distributionServiceConfig
+        .getAppConfigParameters().getIosPrivacyPreservingAnalyticsParameters();
+    return PPDDPrivacyPreservingAnalyticsParametersIOS.newBuilder()
+        .setCommon(PPDDPrivacyPreservingAnalyticsParametersCommon.newBuilder()
+            .setProbabilityToSubmit(iosPpaParams.getProbabilityToSubmit())
+            .setProbabilityToSubmitExposureWindows(iosPpaParams.getProbabilityToSubmitExposureWindows())
+            .setHoursSinceTestRegistrationToSubmitTestResultMetadata(
+                iosPpaParams.getHoursSinceTestRegistrationToSubmitTestResultMetadata())
+            .setHoursSinceTestResultToSubmitKeySubmissionMetadata(
+                iosPpaParams.getHoursSinceTestToSubmitKeySubmissionMetadata())
+
+            .build())
+        .build();
+  }
+
+  private PPDDEventDrivenUserSurveyParametersIOS buildIosEdusParameters(
+      DistributionServiceConfig distributionServiceConfig) {
+    IosEventDrivenUserSurveyParameters iosEdusParams = distributionServiceConfig
+        .getAppConfigParameters().getIosEventDrivenUserSurveyParameters();
+    return PPDDEventDrivenUserSurveyParametersIOS.newBuilder()
+        .setCommon(PPDDEventDrivenUserSurveyParametersCommon.newBuilder()
+            .setOtpQueryParameterName(iosEdusParams.getOtpQueryParameterName())
+            .setSurveyOnHighRiskEnabled(iosEdusParams.getSurveyOnHighRiskEnabled())
+            .setSurveyOnHighRiskUrl(iosEdusParams.getSurveyOnHighRiskUrl())
+            .build())
         .build();
   }
 

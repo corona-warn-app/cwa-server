@@ -33,6 +33,10 @@ public final class DiagnosisTestData {
    * @return An instance that contains diagnosis keys computed for the given interval of days. Each day will have a
    * number of keys equal to the given <code>casesPerDay</code> parameter, recorded, for simplicity, in the last hour of
    * the day.
+   *
+   * @param fromDay start date
+   * @param untilDay end date
+   * @param casesPerDay number of cases each day
    */
   public static DiagnosisTestData of(LocalDate fromDay, LocalDate untilDay, int casesPerDay) {
 

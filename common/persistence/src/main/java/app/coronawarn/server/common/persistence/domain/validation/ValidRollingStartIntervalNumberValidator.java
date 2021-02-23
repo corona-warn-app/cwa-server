@@ -12,6 +12,6 @@ public class ValidRollingStartIntervalNumberValidator
   @Override
   public boolean isValid(Integer rollingStartIntervalNumber, ConstraintValidatorContext constraintValidatorContext) {
     int currentInstant = Math.toIntExact(Instant.now().getEpochSecond() / 600L);
-    return rollingStartIntervalNumber > 0 && rollingStartIntervalNumber < currentInstant;
+    return rollingStartIntervalNumber > 0 && rollingStartIntervalNumber <= currentInstant;
   }
 }

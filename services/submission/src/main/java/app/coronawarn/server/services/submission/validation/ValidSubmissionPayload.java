@@ -44,11 +44,15 @@ public @interface ValidSubmissionPayload {
 
   /**
    * Groups.
+   *
+   * @return generic array
    */
   Class<?>[] groups() default {};
 
   /**
    * Payload.
+   *
+   * @return generic array that extends {@link Payload}
    */
   Class<? extends Payload>[] payload() default {};
 

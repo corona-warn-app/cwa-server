@@ -18,6 +18,10 @@ public class BatchDownloadResponse {
   /**
    * Creates a FederationGatewayResponse that holds a {@link DiagnosisKeyBatch} and batch tag metadata as served by the
    * federation gateway.
+   *
+   * @param batchTag batch tag id
+   * @param diagnosisKeyBatch (optional) diagnosis key batch
+   * @param nextBatchTag (optional) next batch tag id
    */
   public BatchDownloadResponse(String batchTag, Optional<DiagnosisKeyBatch> diagnosisKeyBatch,
       Optional<String> nextBatchTag) {

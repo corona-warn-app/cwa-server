@@ -21,37 +21,51 @@ public interface Writable<W extends Writable<W>> {
 
   /**
    * Returns the name of this {@link Writable}.
+   *
+   * @return name
    */
   String getName();
 
   /**
    * Returns the parent of this {@link Writable}, or {@code null} if it doesn't have a parent.
+   *
+   * @return Directory generic type
    */
   Directory<W> getParent();
 
   /**
    * Sets the parent of this {@link Writable}.
+   *
+   * @param parent Directory generic type
    */
   void setParent(Directory<W> parent);
 
   /**
    * Does preparation work for this {@link Writable} (e.g. calculate data, setup structures, etc.).
    * Must be called before writing.
+   *
+   * @param indices stack
    */
   void prepare(ImmutableStack<Object> indices);
 
   /**
    * Returns whether this {@link Writable} is a {@link File}.
+   *
+   * @return if file is writable
    */
   boolean isFile();
 
   /**
    * Returns whether this {@link Writable} is a {@link Directory}.
+   *
+   * @return if directory is writable
    */
   boolean isDirectory();
 
   /**
    * Returns whether this {@link Writable} is an {@link Archive}.
+   *
+   * @return if archive is writable
    */
   boolean isArchive();
 }

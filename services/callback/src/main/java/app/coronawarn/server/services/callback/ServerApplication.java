@@ -22,8 +22,8 @@ import org.springframework.data.jdbc.repository.config.EnableJdbcRepositories;
 @SpringBootApplication(exclude = {UserDetailsServiceAutoConfiguration.class})
 @EnableJdbcRepositories(basePackages = "app.coronawarn.server.common.persistence")
 @EntityScan(basePackages = "app.coronawarn.server.common.persistence")
-@ComponentScan({ "app.coronawarn.server.common.persistence", 
-    "app.coronawarn.server.services.callback" })
+@ComponentScan({ "app.coronawarn.server.common.persistence", "app.coronawarn.server.common.federation.client.hostname",
+    "app.coronawarn.server.services.callback" , "app.coronawarn.server.common.federation.client"})
 @EnableConfigurationProperties
 public class ServerApplication implements EnvironmentAware, DisposableBean {
 

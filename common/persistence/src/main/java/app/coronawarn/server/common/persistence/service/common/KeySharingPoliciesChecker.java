@@ -19,7 +19,7 @@ import org.springframework.stereotype.Component;
  * Responsible for verifying that all policies enforced by DPP regulations (or stakeholders) are
  * met prior to sharing diagnosis keys with other external systems. Examples of such rules:
  *
- * <p><li> {@link ExpirationPolicy}
+ * {@link ExpirationPolicy}
  */
 @Component
 public class KeySharingPoliciesChecker {
@@ -36,13 +36,18 @@ public class KeySharingPoliciesChecker {
       .toSeconds(DiagnosisKey.ROLLING_PERIOD_MINUTES_INTERVAL);
 
   private static final Map<ChronoUnit, Function<Duration, Long>> TIME_CONVERTERS
-       = Map.of(ChronoUnit.SECONDS, Duration::toSeconds,
-                ChronoUnit.MINUTES, Duration::toMinutes,
-                ChronoUnit.HOURS, Duration::toHours);
+      = Map.of(ChronoUnit.SECONDS, Duration::toSeconds,
+      ChronoUnit.MINUTES, Duration::toMinutes,
+      ChronoUnit.HOURS, Duration::toHours);
 
   /**
    * Returns true if the given diagnosis key can be shared at the given time taking into account
    * the expiration policy.
+   *
+   * @param key the {@link DiagnosisKey}
+   * @param policy when the key expires {@link ExpirationPolicy}
+   * @param timeToShare when the key is shared {@link LocalDateTime}
+   * @return boolean value which is true if the timeToShare is after or equal to the earliest time to share
    */
   public boolean canShareKeyAtTime(DiagnosisKey key, ExpirationPolicy policy, LocalDateTime timeToShare) {
     LocalDateTime earliestTimeToShare = getEarliestTimeForSharingKey(key, policy);
@@ -53,6 +58,8 @@ public class KeySharingPoliciesChecker {
    * Calculates the earliest point in time at which the specified {@link DiagnosisKey} can be shared with external
    * systems, while respecting the expiry policy and the submission timestamp.
    *
+   * @param diagnosisKey key {@link DiagnosisKey}
+   * @param policy when the key expires {@link ExpirationPolicy}
    * @return {@link LocalDateTime} at which the specified {@link DiagnosisKey} can be shared.
    */
   public LocalDateTime getEarliestTimeForSharingKey(DiagnosisKey diagnosisKey, ExpirationPolicy policy) {
@@ -71,6 +78,9 @@ public class KeySharingPoliciesChecker {
   /**
    * Returns the end of the rolling time window that a {@link DiagnosisKey} was active for as a {@link LocalDateTime}.
    * The ".plusDays(1L)" is used as there can be now diagnosis keys with rollingPeriod set to less than 1 day.
+   *
+   * @param diagnosisKey key {@link DiagnosisKey}
+   * @return when the period expires {@link LocalDateTime}
    */
   private LocalDateTime getRollingPeriodExpiryTime(DiagnosisKey diagnosisKey) {
     return LocalDateTime

@@ -67,6 +67,8 @@ public class CryptoProvider {
 
   /**
    * Returns the {@link PrivateKey} configured in the application properties.
+   *
+   * @return private key
    */
   public PrivateKey getPrivateKey() {
     return privateKey;

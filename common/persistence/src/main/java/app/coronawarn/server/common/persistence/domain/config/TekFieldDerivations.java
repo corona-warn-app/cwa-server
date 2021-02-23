@@ -35,6 +35,8 @@ public class TekFieldDerivations {
   /**
    * Returns a mapped DSOS value for the given TRL or throws an exception if the TRL is not part of
    * the mapping.
+   * @param transmissionRiskLevel value for transmission risk strength
+   * @return mapped days since symptoms started value for transmission risk
    */
   public Integer deriveDaysSinceSymptomsFromTransmissionRiskLevel(Integer transmissionRiskLevel) {
     if (!dsosFromTrl.containsKey(transmissionRiskLevel)) {
@@ -46,6 +48,8 @@ public class TekFieldDerivations {
 
   /**
    * Returns a mapped TRL value for the given DSOS or the configured system default.
+   * @param daysSinceSymptoms number of days since symptoms began
+   * @return mapped transmission risk level value for duration of days since symptoms began
    */
   public Integer deriveTransmissionRiskLevelFromDaysSinceSymptoms(Integer daysSinceSymptoms) {
     return trlFromDsos.getOrDefault(daysSinceSymptoms, defaultTrl);
@@ -53,6 +57,10 @@ public class TekFieldDerivations {
 
   /**
    * Constructs the configuration class from the given mappings.
+   * @param dsosFromTrl days since symptoms started from transmission risk level
+   * @param trlFromDsos transmission risk level from days since symptoms started
+   * @param defaultTrl a default transmission risk level
+   * @return configuration of provided attributes {@link TekFieldDerivations}
    */
   public static TekFieldDerivations from(Map<Integer, Integer> dsosFromTrl,
       Map<Integer, Integer> trlFromDsos, Integer defaultTrl) {

@@ -38,6 +38,8 @@ public class CwaApiStructureProvider {
 
   /**
    * Returns the base directory.
+   *
+   * @return new instance of IndexingDecoratorOnDisk base directory
    */
   public Directory<WritableOnDisk> getDirectory() {
     IndexDirectoryOnDisk<String> versionDirectory = new IndexDirectoryOnDisk<>(

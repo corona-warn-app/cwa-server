@@ -4,7 +4,10 @@ import static java.util.Collections.emptyList;
 
 import app.coronawarn.server.services.callback.CertificateCnMismatchException;
 import app.coronawarn.server.services.callback.controller.CallbackController;
-import java.util.Arrays;
+import java.util.Collections;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,8 +31,13 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
   private static final String CALLBACK_ROUTE =
       "/version/v1" + CallbackController.CALLBACK_ROUTE;
-  private Logger logger = LoggerFactory.getLogger(SecurityConfig.class);
-  private CallbackServiceConfig callbackServiceConfig;
+  private static final String ACTUATOR_ROUTE = "/actuator";
+  private static final String HEALTH_ROUTE = ACTUATOR_ROUTE + "/health";
+  private static final String PROMETHEUS_ROUTE = ACTUATOR_ROUTE + "/prometheus";
+  private static final String READINESS_ROUTE = HEALTH_ROUTE + "/readiness";
+  private static final String LIVENESS_ROUTE = HEALTH_ROUTE + "/liveness";
+  private final Logger logger = LoggerFactory.getLogger(SecurityConfig.class);
+  private final CallbackServiceConfig callbackServiceConfig;
 
   @Autowired
   public SecurityConfig(CallbackServiceConfig callbackServiceConfig) {
@@ -39,7 +47,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
   @Bean
   protected HttpFirewall strictFirewall() {
     StrictHttpFirewall firewall = new StrictHttpFirewall();
-    firewall.setAllowedHttpMethods(Arrays.asList(
+    firewall.setAllowedHttpMethods(Collections.singletonList(
         HttpMethod.GET.name()));
     return firewall;
   }
@@ -52,9 +60,12 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         .mvcMatchers(HttpMethod.GET, CALLBACK_ROUTE).authenticated().and().x509()
         .userDetailsService(userDetailsService());
     expressionInterceptUrlRegistry
+        .mvcMatchers(HttpMethod.GET, HEALTH_ROUTE, PROMETHEUS_ROUTE, READINESS_ROUTE, LIVENESS_ROUTE).permitAll();
+    expressionInterceptUrlRegistry
         .anyRequest().denyAll();
     http.headers().contentSecurityPolicy("default-src 'self'");
   }
+
 
   /**
    * The UserDetailsService will check if the CN of the client certificate matches the expected CN defined in the

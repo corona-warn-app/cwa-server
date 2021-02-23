@@ -73,12 +73,12 @@ services:
         value: ${PLAUSIBLE_DENIABILITY_ACTIVE:1}
     supported-countries: ${SUPPORTED_COUNTRIES:DE,FR,NL,IE}
     app-versions:
-      latest-ios: ${IOS_LATEST_VERSION:0.8.2}
-      min-ios: ${IOS_MIN_VERSION:0.5.0}
-      latest-android: ${ANDROID_LATEST_VERSION:1.0.4}
-      min-android: ${ANDROID_MIN_VERSION:1.0.4}
-      min-android-version-code: ${ANDROID_MIN_VERSION_CODE:31}
-      latest-android-version-code: ${ANDROID_LATEST_VERSION_CODE:31}
+      latest-ios: ${IOS_LATEST_VERSION:1.5.3}
+      min-ios: ${IOS_MIN_VERSION:1.5.3}
+      latest-android: ${ANDROID_LATEST_VERSION:1.5.1}
+      min-android: ${ANDROID_MIN_VERSION:1.5.1}
+      min-android-version-code: ${ANDROID_MIN_VERSION_CODE:48}
+      latest-android-version-code: ${ANDROID_LATEST_VERSION_CODE:48}
     app-config-parameters:
       ios-key-download-parameters:
         revoked-day-packages: "[]"
@@ -93,6 +93,32 @@ services:
       android-exposure-detection-parameters:
         max-exposure-detections-per-interval: 6
         overall-timeout-in-seconds: 900
+      ios-event-driven-user-survey-parameters:
+        otp-query-parameter-name: otp
+        survey-on-high-risk-enabled: true
+        survey-on-high-risk-url: "https://ios-survey-on-high-risk-url.com"
+      android-event-driven-user-survey-parameters:
+        otp-query-parameter-name: otp
+        survey-on-high-risk-enabled: true
+        survey-on-high-risk-url: "https://android-survey-on-high-risk-url.com"
+        require-basic-integrity: false
+        require-cts-profile-match: false
+        require-evaluation-type-basic: false
+        require-evaluation-type-hardware-backed: false
+      ios-privacy-preserving-analytics-parameters:
+        probability-to-submit: 1
+        probability-to-submit-exposure-windows: 1
+        hours-since-test-registration-to-submit-test-result-metadata: 165
+        hours-since-test-to-submit-key-submission-metadata: 36
+      android-privacy-preserving-analytics-parameters:
+        probability-to-submit: 1
+        probability-to-submit-exposure-windows: 1
+        hours-since-test-registration-to-submit-test-result-metadata: 65
+        hours-since-test-to-submit-key-submission-metadata: 36
+        require-basic-integrity: false
+        require-cts-profile-match: false
+        require-evaluation-type-basic: false
+        require-evaluation-type-hardware-backed: false
 
 spring:
   main:

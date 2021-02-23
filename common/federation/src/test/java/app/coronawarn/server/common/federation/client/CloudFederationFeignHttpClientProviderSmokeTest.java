@@ -4,6 +4,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import app.coronawarn.server.common.federation.client.config.FederationGatewayConfig;
 import app.coronawarn.server.common.federation.client.config.FederationGatewayConfig.Ssl;
+import app.coronawarn.server.common.federation.client.hostname.DefaultHostnameVerifierProvider;
 import java.io.File;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -23,7 +24,8 @@ class CloudFederationFeignHttpClientProviderSmokeTest {
     FederationGatewayConfig config = new FederationGatewayConfig();
     config.setConnectionPoolSize(1);
     config.setSsl(ssl);
-    CloudFederationFeignHttpClientProvider cut = new CloudFederationFeignHttpClientProvider(config);
+    CloudFederationFeignHttpClientProvider cut = new CloudFederationFeignHttpClientProvider(config,
+        new DefaultHostnameVerifierProvider());
     assertThat(cut.createFeignClient()).isNotNull();
   }
 

@@ -41,6 +41,7 @@ public class FederationGatewayDownloadService {
    *
    * @param date The date for which the batch should be downloaded.
    * @return The {@link BatchDownloadResponse} containing the downloaded batch, batchTag and nextBatchTag.
+   * @throws FatalFederationGatewayException triggers if error occurs in the federation gateway
    */
   public BatchDownloadResponse downloadBatch(LocalDate date)
       throws FatalFederationGatewayException, BatchDownloadException {
@@ -64,6 +65,7 @@ public class FederationGatewayDownloadService {
    * @param batchTag The batchTag of the batch that should be downloaded.
    * @param date     The date for which the batch should be downloaded.
    * @return The {@link BatchDownloadResponse} containing the downloaded batch, batchTag and nextBatchTag.
+   * @throws FatalFederationGatewayException triggers if error occurs in the federation gateway
    */
   public BatchDownloadResponse downloadBatch(String batchTag, LocalDate date)
       throws FatalFederationGatewayException, BatchDownloadException {
