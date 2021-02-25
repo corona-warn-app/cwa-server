@@ -34,20 +34,6 @@ federation-gateway:
     trust-store: ../../docker-compose-test-secrets/contains_efgs_truststore.jks
     trust-store-password: 123456
 
-management:
-  endpoint:
-    health:
-      group:
-        readiness:
-          include: db
-  endpoints:
-    web:
-      exposure:
-        include: 'health'
-  health:
-    probes:
-      enabled: true
-
 feign:
   client:
     config:

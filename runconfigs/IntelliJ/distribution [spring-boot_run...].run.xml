@@ -7,8 +7,17 @@
           <option name="delegateBuildToMaven" value="false" />
           <option name="environmentProperties">
             <map>
+              <entry key="CWA_OBJECTSTORE_ACCESSKEY" value="accessKey1" />
+              <entry key="CWA_OBJECTSTORE_BUCKET" value="cwa" />
+              <entry key="CWA_OBJECTSTORE_ENDPOINT" value="http://localhost" />
+              <entry key="CWA_OBJECTSTORE_PORT" value="8003" />
+              <entry key="CWA_OBJECTSTORE_SECRETKEY" value="verySecretKey1" />
               <entry key="POSTGRESQL_SERVICE_PORT" value="8001" />
-              <entry key="SPRING_PROFILES_ACTIVE" value="testdata,disable-ssl-client-postgres" />
+              <entry key="SPRING_PROFILES_ACTIVE" value="testdata,disable-ssl-client-postgres,signature-dev,local-json-stats" />
+              <entry key="STATISTICS_FILE_ACCESS_KEY_ID" value="fakeAccessKey" />
+              <entry key="STATISTICS_FILE_S3_BUCKET" value="obs-cwa-public-dev" />
+              <entry key="STATISTICS_FILE_S3_ENDPOINT" value="http://localhost:8013" />
+              <entry key="STATISTICS_FILE_SECRET_ACCESS_KEY" value="secretKey" />
               <entry key="SUPPORTED_COUNTRIES" value="DE,IT,DK,FR" />
               <entry key="VAULT_FILESIGNING_SECRET" value="file:$PROJECT_DIR$/docker-compose-test-secrets/private.pem" />
             </map>
