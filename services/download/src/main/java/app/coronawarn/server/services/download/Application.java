@@ -34,6 +34,8 @@ public class Application implements DisposableBean {
     SpringApplication.run(Application.class);
   }
 
+
+
   /**
    * Manual shutdown hook needed to avoid Log4j shutdown issues (see cwa-server/#589).
    */

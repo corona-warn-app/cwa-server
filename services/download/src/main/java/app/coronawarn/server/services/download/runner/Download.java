@@ -14,8 +14,6 @@ import org.springframework.stereotype.Component;
 /**
  * This runner retrieves diagnosis key batches.
  */
-@Component
-@Order(2)
 public class Download implements ApplicationRunner {
 
   private static final Logger logger = LoggerFactory.getLogger(Download.class);
@@ -25,7 +23,7 @@ public class Download implements ApplicationRunner {
   private final ApplicationContext applicationContext;
 
 
-  Download(FederationBatchProcessor batchProcessor, ShutdownService shutdownService,
+  public Download(FederationBatchProcessor batchProcessor, ShutdownService shutdownService,
       ApplicationContext applicationContext) {
     this.batchProcessor = batchProcessor;
     this.shutdownService = shutdownService;

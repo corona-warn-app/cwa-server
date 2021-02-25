@@ -16,27 +16,32 @@ public class FederationBatchInfo {
   private final String batchTag;
   private final LocalDate date;
   private FederationBatchStatus status;
+  private FederationBatchTarget targetSystem;
 
   /**
    * Creates a FederationBatchInfo and sets its status to {@link FederationBatchStatus#UNPROCESSED}.
+   *
    * @param batchTag id of the batch
-   * @param date date the batch was created
+   * @param date     date the batch was created
    */
-  public FederationBatchInfo(String batchTag, LocalDate date) {
-    this(batchTag, date, FederationBatchStatus.UNPROCESSED);
+  public FederationBatchInfo(String batchTag, LocalDate date, FederationBatchTarget targetSystem) {
+    this(batchTag, date, FederationBatchStatus.UNPROCESSED, targetSystem);
   }
 
   /**
    * Creates a FederationBatchInfo.
+   *
    * @param batchTag id of the batch
-   * @param date date the batch was created
-   * @param status status stored as {@link FederationBatchStatus}
+   * @param date     date the batch was created
+   * @param status   status stored as {@link FederationBatchStatus}
    */
   @PersistenceConstructor
-  public FederationBatchInfo(String batchTag, LocalDate date, FederationBatchStatus status) {
+  public FederationBatchInfo(String batchTag, LocalDate date, FederationBatchStatus status,
+      FederationBatchTarget targetSystem) {
     this.batchTag = batchTag;
     this.date = date;
     this.status = status;
+    this.targetSystem = targetSystem;
   }
 
   public String getBatchTag() {
@@ -49,6 +54,10 @@ public class FederationBatchInfo {
 
   public FederationBatchStatus getStatus() {
     return status;
+  }
+
+  public FederationBatchTarget getTargetSystem() {
+    return targetSystem;
   }
 
   @Override

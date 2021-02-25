@@ -1,0 +1,11 @@
+---
+spring:
+  cloud:
+    vault:
+      kv:
+        enabled: true
+        backend: ${VAULT_BACKEND}
+        profile-separator: '/'
+        application-name: 'chgs'
+        default-context: ''
+        profiles: chgs

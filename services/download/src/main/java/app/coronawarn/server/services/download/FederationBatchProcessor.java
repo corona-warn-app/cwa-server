@@ -46,10 +46,8 @@ public class FederationBatchProcessor {
   private final ValidFederationKeyFilter validFederationKeyFilter;
 
   /**
-   * This is a potential memory-leak if there are very many batches.
-   * This is an intentional decision:
-   * We'd rather run into a memory-leak if there are too many batches
-   * than run into an endless loop if a batch-tag repeats
+   * This is a potential memory-leak if there are very many batches. This is an intentional decision: We'd rather run
+   * into a memory-leak if there are too many batches than run into an endless loop if a batch-tag repeats
    */
   private final Set<String> seenBatches;
 
@@ -85,9 +83,9 @@ public class FederationBatchProcessor {
    * @throws FatalFederationGatewayException triggers if error occurs in the federation gateway
    */
   public void prepareDownload() throws FatalFederationGatewayException {
-    if (config.getEfgsEnforceDateBasedDownload()) {
+    if (config.getEnforceDateBasedDownload()) {
       LocalDate downloadDate = LocalDate.now(ZoneOffset.UTC)
-          .minus(Period.ofDays(config.getEfgsEnforceDownloadOffsetDays()));
+          .minus(Period.ofDays(config.getEnforceDownloadOffsetDays()));
       batchInfoService.deleteForDate(downloadDate);
       saveFirstBatchInfoForDate(downloadDate);
     }
@@ -103,7 +101,7 @@ public class FederationBatchProcessor {
     try {
       logger.info("Triggering download of first batch for date {}.", date);
       BatchDownloadResponse response = federationGatewayDownloadService.downloadBatch(date);
-      batchInfoService.save(new FederationBatchInfo(response.getBatchTag(), date));
+      batchInfoService.save(new FederationBatchInfo(response.getBatchTag(), date, this.config.getTargetSystem()));
     } catch (FatalFederationGatewayException e) {
       throw e;
     } catch (Exception e) {
@@ -126,7 +124,8 @@ public class FederationBatchProcessor {
     try {
       processBatchAndReturnNextBatchId(federationBatchInfo, ERROR_WONT_RETRY)
           .ifPresent(nextBatchTag ->
-              batchInfoService.save(new FederationBatchInfo(nextBatchTag, federationBatchInfo.getDate())));
+              batchInfoService.save(new FederationBatchInfo(nextBatchTag, federationBatchInfo.getDate(), this.config
+                  .getTargetSystem())));
     } catch (Exception e) {
       logger.error("Failed to save next federation batch info for processing. Will not try again.", e);
       batchInfoService.updateStatus(federationBatchInfo, ERROR_WONT_RETRY);
@@ -149,14 +148,15 @@ public class FederationBatchProcessor {
       processBatchAndReturnNextBatchId(currentBatchInfo, ERROR)
           .ifPresent(nextBatchTag -> {
             if (isEfgsEnforceDateBasedDownloadAndNotSeen(nextBatchTag)) {
-              unprocessedBatches.add(new FederationBatchInfo(nextBatchTag, currentBatchInfo.getDate()));
+              unprocessedBatches.add(new FederationBatchInfo(nextBatchTag, currentBatchInfo.getDate(), this.config
+                  .getTargetSystem()));
             }
           });
     }
   }
 
   private boolean isEfgsEnforceDateBasedDownloadAndNotSeen(String batchTag) {
-    return config.getEfgsEnforceDateBasedDownload() && !seenBatches.contains(batchTag);
+    return config.getEnforceDateBasedDownload() && !seenBatches.contains(batchTag);
   }
 
   private Optional<String> processBatchAndReturnNextBatchId(

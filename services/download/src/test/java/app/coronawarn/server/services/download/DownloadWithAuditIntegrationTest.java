@@ -25,6 +25,7 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.context.annotation.Import;
 import org.springframework.http.HttpStatus;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
@@ -48,7 +49,7 @@ import org.springframework.test.context.ActiveProfiles;
  * BATCH1_DATA.
  */
 @SpringBootTest
-@ActiveProfiles({"batch-audit-test", "disable-ssl-efgs-verification"})
+@ActiveProfiles({"batch-audit-test","disable-ssl-efgs-verification"})
 @DirtiesContext
 class DownloadWithAuditIntegrationTest {
 

@@ -7,6 +7,7 @@ import static org.springframework.http.HttpStatus.OK;
 import java.time.LocalDate;
 import java.util.UUID;
 import java.util.stream.Stream;
+import app.coronawarn.server.common.persistence.domain.FederationBatchTarget;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
@@ -51,7 +52,7 @@ class CallbackControllerTest {
     assertThat(actResponse.getStatusCode()).isEqualTo(OK);
 
     assertThat(spyFederationClient.findByStatus(FederationBatchStatus.UNPROCESSED))
-        .contains(new FederationBatchInfo(batchTag, date));
+        .contains(new FederationBatchInfo(batchTag, date, FederationBatchTarget.EFGS));
   }
 
   @ParameterizedTest
