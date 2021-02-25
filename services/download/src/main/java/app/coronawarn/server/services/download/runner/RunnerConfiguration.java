@@ -23,6 +23,7 @@ public class RunnerConfiguration {
 
   @Bean
   @Order(2)
+  @Profile("connect-efgs")
   Download createEfgsDownloadRunner() {
     return new Download(federationBatchProcessor, shutdownService, applicationContext);
   }
