@@ -48,6 +48,8 @@ public class DistributionServiceConfig {
   private Integer maximumNumberOfKeysPerBundle;
   @Pattern(regexp = FILE_NAME_REGEX)
   private String outputFileName;
+  @Pattern(regexp = FILE_NAME_REGEX)
+  private String outputFileNameV2;
   private Boolean includeIncompleteDays;
   private Boolean includeIncompleteHours;
   private String euPackageName;
@@ -118,6 +120,14 @@ public class DistributionServiceConfig {
 
   public void setOutputFileName(String outputFileName) {
     this.outputFileName = outputFileName;
+  }
+
+  public String getOutputFileNameV2() {
+    return outputFileNameV2;
+  }
+
+  public void setOutputFileNameV2(String outputFileNameV2) {
+    this.outputFileNameV2 = outputFileNameV2;
   }
 
   public Boolean getIncludeIncompleteDays() {

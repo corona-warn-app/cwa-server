@@ -16,6 +16,8 @@ services:
   distribution:
     # The name of the distribution output file.
     output-file-name: index
+    # The name of the distribution output file v2.
+    output-file-name-v2: index-v2
     # The number of days to retain diagnosis keys for both database persistency layer and files stored on the object store.
     retention-days: 14
     # The number of minutes that diagnosis keys must have been expired for (since the end of the rolling interval window) before they can be distributed.

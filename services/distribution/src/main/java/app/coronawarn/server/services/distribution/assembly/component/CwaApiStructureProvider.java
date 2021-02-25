@@ -73,16 +73,10 @@ public class CwaApiStructureProvider {
         Object::toString);
 
     versionDirectory.addWritableToAll(
-        ignoredValue -> Optional.of(appConfigurationStructureProvider.getAppConfiguration()));
-    versionDirectory.addWritableToAll(
         ignoredValue -> Optional.ofNullable(appConfigurationStructureProvider.getAppConfigurationV2ForAndroid()));
     versionDirectory.addWritableToAll(
         ignoredValue -> Optional.ofNullable(appConfigurationStructureProvider.getAppConfigurationV2ForIos()));
-    versionDirectory.addWritableToAll(
-        ignoredValue -> Optional.of(diagnosisKeysStructureProvider.getDiagnosisKeys()));
-    versionDirectory.addWritableToAll(
-        ignoredValue -> Optional.ofNullable(statisticsStructureProvider.getStatistics()));
 
-    return new IndexingDecoratorOnDisk<>(versionDirectory, distributionServiceConfig.getOutputFileName());
+    return new IndexingDecoratorOnDisk<>(versionDirectory, distributionServiceConfig.getOutputFileNameV2());
   }
 }
