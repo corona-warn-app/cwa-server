@@ -48,7 +48,7 @@ public class AppConfigurationStructureProvider {
    *
    * @return an archive of app config archives for Android
    */
-  public Writable<WritableOnDisk> getAppConfigurationV2ForAndroid() {
+  public Writable<WritableOnDisk> getAppConfigurationV1ForAndroid() {
     return new AppConfigurationV2StructureProvider<ApplicationConfigurationAndroid>(
         applicationConfigurationV1Android, cryptoProvider, distributionServiceConfig,
         distributionServiceConfig.getApi().getAppConfigV2AndroidFileName())
@@ -61,7 +61,7 @@ public class AppConfigurationStructureProvider {
    *
    * @return an archive of app config archives for iOS
    */
-  public Writable<WritableOnDisk> getAppConfigurationV2ForIos() {
+  public Writable<WritableOnDisk> getAppConfigurationV1ForIos() {
     return new AppConfigurationV2StructureProvider<ApplicationConfigurationIOS>(
         applicationConfigurationV1Ios, cryptoProvider, distributionServiceConfig,
         distributionServiceConfig.getApi().getAppConfigV2IosFileName()).getConfigurationArchive();
