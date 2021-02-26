@@ -61,7 +61,7 @@ public class ApplicationConfigurationV2PublicationConfig {
    * The location of the exposure configuration source files for Android and Ios.
    */
   private static final String V1_RISK_PARAMETERS_FILE = "main-config/v2/risk-calculation-parameters.yaml";
-  private static final String V2_RISK_PARAMETERS_FILE = "main-config/v2/risk-calculation-parameters-v2.yaml";
+  private static final String V2_RISK_PARAMETERS_FILE = "main-config/v2/risk-calculation-parameters-1.15.yaml";
   private static final String ANDROID_V2_DATA_MAPPING_FILE = "main-config/v2/diagnosis-keys-data-mapping.yaml";
   private static final String ANDROID_V2_DAILY_SUMMARIES_FILE = "main-config/v2/daily-summaries-config.yaml";
   private static final String IOS_V2_EXPOSURE_CONFIGURATION_FILE = "main-config/v2/exposure-configuration.yaml";
