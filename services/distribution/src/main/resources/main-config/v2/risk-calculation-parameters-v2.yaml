@@ -7,22 +7,9 @@
 # Change this file with caution!
 
 
-minutes-at-attenuation-filters:
-  -
-    attenuation-range:
-      min: 0
-      max: 73
-      max-exclusive: true
-    drop-if-minutes-in-range:
-      min: 0
-      max: 5
-      max-exclusive: true
+minutes-at-attenuation-filters: [] # no attenuation filters
 
-trl-filters:
-  -
-    drop-if-trl-in-range:
-      min: 1
-      max: 2
+trl-filters: [] # no TRL filters
 
 minutes-at-attenuation-weights:
   -
@@ -37,6 +24,12 @@ minutes-at-attenuation-weights:
       max: 63
       max-exclusive: true
     weight: 0.5
+  -
+    attenuation-range:
+      min: 63
+      max: 73
+      max-exclusive: true
+    weight: 0.3
 
 normalized-time-per-e-w-to-risk-level-mapping:
   -
@@ -54,7 +47,7 @@ normalized-time-per-e-w-to-risk-level-mapping:
 normalized-time-per-day-to-risk-level-mapping:
   -
     normalized-time-range:
-      min: 0
+      min: 5
       max: 15
       max-exclusive: true
     risk-level: 1
@@ -64,7 +57,7 @@ normalized-time-per-day-to-risk-level-mapping:
       max: 99999
     risk-level: 2
 
-transmission-risk-level-multiplier: 0
+transmission-risk-level-multiplier: 0 # deprecated
 transmission-risk-value-mapping:
   -
     transmission-risk-level: 1
