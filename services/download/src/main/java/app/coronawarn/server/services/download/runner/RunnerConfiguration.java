@@ -31,7 +31,7 @@ public class RunnerConfiguration {
   @Bean
   @Order(2)
   @Profile("connect-chgs")
-  Download createSgsDOwnloadRunner() {
+  Download createChgsDownloadRunner() {
     return new Download(federationBatchProcessor, shutdownService, applicationContext);
   }
 

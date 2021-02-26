@@ -21,7 +21,6 @@ logging:
 
 services:
   download:
-    target-system: efgs
     enforce-download-offset-days: 0
     enforce-date-based-download: false
     retention-days: 14

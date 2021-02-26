@@ -1,7 +1,7 @@
 ---
 services:
   download:
-    target-system: efgs
+    target-system: EFGS
     # This enables or disables the date-based downloading for keys in addition to callback-based download logic.
     # May be used to circumvent callback-related issues quickly.
     enforce-date-based-download: ${EFGS_ENABLE_DATE_BASED_DOWNLOAD:false}

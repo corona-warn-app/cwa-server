@@ -8,8 +8,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.context.ApplicationContext;
-import org.springframework.core.annotation.Order;
-import org.springframework.stereotype.Component;
 
 /**
  * This runner retrieves diagnosis key batches.
@@ -22,7 +20,13 @@ public class Download implements ApplicationRunner {
   private final ShutdownService shutdownService;
   private final ApplicationContext applicationContext;
 
-
+  /**
+   * Constructor for instantiation a download application runner.
+   *
+   * @param batchProcessor     bean for handling batch processing.
+   * @param shutdownService    handler for shutting down the service.
+   * @param applicationContext the application context.
+   */
   public Download(FederationBatchProcessor batchProcessor, ShutdownService shutdownService,
       ApplicationContext applicationContext) {
     this.batchProcessor = batchProcessor;
