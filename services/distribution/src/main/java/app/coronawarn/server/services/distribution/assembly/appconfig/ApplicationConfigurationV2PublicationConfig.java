@@ -7,16 +7,21 @@ import app.coronawarn.server.common.protocols.internal.v2.ApplicationConfigurati
 import app.coronawarn.server.common.protocols.internal.v2.DailySummariesConfig;
 import app.coronawarn.server.common.protocols.internal.v2.DayPackageMetadata;
 import app.coronawarn.server.common.protocols.internal.v2.DiagnosisKeysDataMapping;
+import app.coronawarn.server.common.protocols.internal.v2.EventRegistrationParameters;
 import app.coronawarn.server.common.protocols.internal.v2.ExposureConfiguration;
 import app.coronawarn.server.common.protocols.internal.v2.ExposureDetectionParametersAndroid;
 import app.coronawarn.server.common.protocols.internal.v2.ExposureDetectionParametersIOS;
 import app.coronawarn.server.common.protocols.internal.v2.HourPackageMetadata;
 import app.coronawarn.server.common.protocols.internal.v2.KeyDownloadParametersAndroid;
 import app.coronawarn.server.common.protocols.internal.v2.KeyDownloadParametersIOS;
+import app.coronawarn.server.common.protocols.internal.v2.PPDDErrorLogSharingParametersAndroid;
+import app.coronawarn.server.common.protocols.internal.v2.PPDDErrorLogSharingParametersCommon;
+import app.coronawarn.server.common.protocols.internal.v2.PPDDErrorLogSharingParametersIOS;
 import app.coronawarn.server.common.protocols.internal.v2.PPDDEventDrivenUserSurveyParametersAndroid;
 import app.coronawarn.server.common.protocols.internal.v2.PPDDEventDrivenUserSurveyParametersCommon;
 import app.coronawarn.server.common.protocols.internal.v2.PPDDEventDrivenUserSurveyParametersIOS;
 import app.coronawarn.server.common.protocols.internal.v2.PPDDPrivacyPreservingAccessControlParametersAndroid;
+import app.coronawarn.server.common.protocols.internal.v2.PPDDPrivacyPreservingAccessControlParametersIOS;
 import app.coronawarn.server.common.protocols.internal.v2.PPDDPrivacyPreservingAnalyticsParametersAndroid;
 import app.coronawarn.server.common.protocols.internal.v2.PPDDPrivacyPreservingAnalyticsParametersCommon;
 import app.coronawarn.server.common.protocols.internal.v2.PPDDPrivacyPreservingAnalyticsParametersIOS;
@@ -136,7 +141,28 @@ public class ApplicationConfigurationV2PublicationConfig {
         .setDiagnosisKeysDataMapping(buildDataMapping(dataMapping))
         .setEventDrivenUserSurveyParameters(buildAndroidEdusParameters(distributionServiceConfig))
         .setPrivacyPreservingAnalyticsParameters(buildAndroidPpaParameters(distributionServiceConfig))
+        .setEventRegistrationParameters(buildEventRegistrationParametersAndroid())
+        .setErrorLogSharingParameters(buildErrorLogSharingParametersAndroid(distributionServiceConfig))
         .build();
+  }
+
+  private PPDDErrorLogSharingParametersAndroid buildErrorLogSharingParametersAndroid(
+      DistributionServiceConfig distributionServiceConfig) {
+    AndroidEventDrivenUserSurveyParameters androidEdusParams = distributionServiceConfig
+        .getAppConfigParameters().getAndroidEventDrivenUserSurveyParameters();
+    return PPDDErrorLogSharingParametersAndroid.newBuilder()
+        .setCommon(PPDDErrorLogSharingParametersCommon.newBuilder().build())
+        .setPpac(PPDDPrivacyPreservingAccessControlParametersAndroid.newBuilder()
+            .setRequireBasicIntegrity(androidEdusParams.getRequireBasicIntegrity())
+            .setRequireCTSProfileMatch(androidEdusParams.getRequireCtsProfileMatch())
+            .setRequireEvaluationTypeBasic(androidEdusParams.getRequireEvaluationTypeBasic())
+            .setRequireEvaluationTypeHardwareBacked(androidEdusParams.getRequireEvaluationTypeHardwareBacked())
+            .build())
+        .build();
+  }
+
+  private EventRegistrationParameters buildEventRegistrationParametersAndroid() {
+    return EventRegistrationParameters.newBuilder().build();
   }
 
 
@@ -301,6 +327,19 @@ public class ApplicationConfigurationV2PublicationConfig {
         .setExposureDetectionParameters(buildExposureDetectionParametersIos(distributionServiceConfig))
         .setEventDrivenUserSurveyParameters(buildIosEdusParameters(distributionServiceConfig))
         .setPrivacyPreservingAnalyticsParameters(buildIosPpaParameters(distributionServiceConfig))
+        .setErrorLogSharingParameters(buildErrorLogSharingParametersIos())
+        .setEventRegistrationParameters(buildEventRegistrationParametersIos())
+        .build();
+  }
+
+  private EventRegistrationParameters buildEventRegistrationParametersIos() {
+    return EventRegistrationParameters.newBuilder().build();
+  }
+
+  private PPDDErrorLogSharingParametersIOS buildErrorLogSharingParametersIos() {
+    return PPDDErrorLogSharingParametersIOS.newBuilder()
+        .setCommon(PPDDErrorLogSharingParametersCommon.newBuilder().build())
+        .setPpac(PPDDPrivacyPreservingAccessControlParametersIOS.newBuilder().build())
         .build();
   }
 
