@@ -2,8 +2,7 @@ package app.coronawarn.server.services.distribution.statistics.file;
 
 import app.coronawarn.server.services.distribution.config.DistributionServiceConfig;
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
-import org.apache.commons.io.FileUtils;
+import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Profile;
 import org.springframework.core.io.ResourceLoader;
@@ -24,15 +23,20 @@ public class LocalStatisticJsonFileLoader implements JsonFileLoader {
    *
    * @return String content of file
    */
-  public String getContent() {
+  public JsonFile getFile() {
     var resource = resourceLoader.getResource(
         String.format("classpath:%s", serviceConfig.getStatistics().getStatisticPath()));
     try {
-      return FileUtils.readFileToString(resource.getFile(), StandardCharsets.UTF_8);
+      return new JsonFile(resource.getInputStream(), "local");
     } catch (IOException e) {
       throw new RuntimeException(String.format("Failed to load Local JSON from path %s",
-          serviceConfig.getStatistics().getStatisticPath()));
+          serviceConfig.getStatistics().getStatisticPath()), e);
     }
+  }
+
+  @Override
+  public Optional<JsonFile> getFileIfUpdated(String etag) {
+    return Optional.of(this.getFile());
   }
 
 }

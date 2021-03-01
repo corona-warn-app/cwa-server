@@ -15,7 +15,7 @@ minutes-at-attenuation-filters:
       max-exclusive: true
     drop-if-minutes-in-range:
       min: 0
-      max: 10
+      max: 5
       max-exclusive: true
 
 trl-filters:
@@ -61,7 +61,7 @@ normalized-time-per-day-to-risk-level-mapping:
   -
     normalized-time-range:
       min: 15
-      max: 9999
+      max: 99999
     risk-level: 2
 
 transmission-risk-level-multiplier: 0.2

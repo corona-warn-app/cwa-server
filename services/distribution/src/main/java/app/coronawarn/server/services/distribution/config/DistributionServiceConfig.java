@@ -7,8 +7,10 @@ import java.util.stream.Collectors;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.PositiveOrZero;
+import javax.validation.constraints.Size;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.validation.annotation.Validated;
 
@@ -16,18 +18,19 @@ import org.springframework.validation.annotation.Validated;
 @Validated
 public class DistributionServiceConfig {
 
-  private static final String PATH_REGEX = "^[/]?[a-zA-Z0-9_]+(/[a-zA-Z0-9_]+)*[/]?$";
-  private static final String FILE_NAME_REGEX = "^[a-zA-Z0-9_-]+$";
-  private static final String FILE_NAME_WITH_TYPE_REGEX = "^[a-zA-Z0-9_-]+\\.[a-z]+$";
-  private static final String CHAR_AND_NUMBER_REGEX = "^[a-zA-Z0-9_-]+$";
-  private static final String CHAR_NUMBER_AND_SPACE_REGEX = "^[a-zA-Z0-9_\\s]+$";
+  private static final String PATH_REGEX = "^[/]?[a-zA-Z0-9_]{1,1024}(/[a-zA-Z0-9_]{1,1024}){0,256}[/]?$";
+  private static final String FILE_NAME_REGEX = "^[a-zA-Z0-9_-]{1,1024}$";
+  private static final String FILE_NAME_WITH_TYPE_REGEX = "^[a-zA-Z0-9_-]{1,1024}\\.[a-z]{1,64}$";
+  private static final String CHAR_AND_NUMBER_REGEX = "^[a-zA-Z0-9_-]{1,1024}$";
+  private static final String CHAR_NUMBER_AND_SPACE_REGEX = "^[a-zA-Z0-9_\\s]{1,32}$";
   private static final String NO_WHITESPACE_REGEX = "^[\\S]+$";
-  private static final String URL_REGEX = "^http[s]?://[a-z0-9-]+([\\./][a-z0-9-]+)*[/]?$";
-  private static final String NUMBER_REGEX = "^[0-9]+$";
-  private static final String VERSION_REGEX = "^v[0-9]+$";
-  private static final String ALGORITHM_OID_REGEX = "^[0-9]+[\\.[0-9]+]*$";
-  private static final String BUNDLE_REGEX = "^[a-z-]+[\\.[a-z-]+]*$";
-  private static final String PRIVATE_KEY_REGEX = "^(classpath:|file:[/]+)[a-zA-Z0-9_-]+[/[a-zA-Z0-9_-]+]*(.pem)?$";
+  private static final String URL_REGEX = "^http[s]?://[a-zA-Z0-9-_]{1,1024}([\\./][a-zA-Z0-9-_]{1,1024}){0,256}[/]?$";
+  private static final String NUMBER_REGEX = "^[0-9]{1,256}$";
+  private static final String VERSION_REGEX = "^v[0-9]{1,256}$";
+  private static final String ALGORITHM_OID_REGEX = "^[0-9]{1,256}[\\.[0-9]{1,256}]{0,256}$";
+  private static final String BUNDLE_REGEX = "^[a-z-]{1,256}[\\.[a-z-]{1,256}]{0,256}$";
+  private static final String PRIVATE_KEY_REGEX =
+      "^(classpath:|file:[/]{1,8})[a-zA-Z0-9_-]{1,256}[/[a-zA-Z0-9_-]{1,256}]{0,256}(.pem)?$";
 
   private Paths paths;
   private TestData testData;
@@ -604,6 +607,8 @@ public class DistributionServiceConfig {
 
     /**
      * Returns the static {@link SignatureInfo} configured in the application properties.
+     *
+     * @return SignatureInfo
      */
     public SignatureInfo getSignatureInfo() {
       return SignatureInfo.newBuilder()
@@ -808,6 +813,46 @@ public class DistributionServiceConfig {
     private AndroidKeyDownloadParameters androidKeyDownloadParameters;
     private IosExposureDetectionParameters iosExposureDetectionParameters;
     private AndroidExposureDetectionParameters androidExposureDetectionParameters;
+    private IosEventDrivenUserSurveyParameters iosEventDrivenUserSurveyParameters;
+    private AndroidEventDrivenUserSurveyParameters androidEventDrivenUserSurveyParameters;
+    private IosPrivacyPreservingAnalyticsParameters iosPrivacyPreservingAnalyticsParameters;
+    private AndroidPrivacyPreservingAnalyticsParameters androidPrivacyPreservingAnalyticsParameters;
+
+    public IosEventDrivenUserSurveyParameters getIosEventDrivenUserSurveyParameters() {
+      return iosEventDrivenUserSurveyParameters;
+    }
+
+    public void setIosEventDrivenUserSurveyParameters(
+        IosEventDrivenUserSurveyParameters iosEventDrivenUserSurveyParameters) {
+      this.iosEventDrivenUserSurveyParameters = iosEventDrivenUserSurveyParameters;
+    }
+
+    public AndroidEventDrivenUserSurveyParameters getAndroidEventDrivenUserSurveyParameters() {
+      return androidEventDrivenUserSurveyParameters;
+    }
+
+    public void setAndroidEventDrivenUserSurveyParameters(
+        AndroidEventDrivenUserSurveyParameters androidEventDrivenUserSurveyParameters) {
+      this.androidEventDrivenUserSurveyParameters = androidEventDrivenUserSurveyParameters;
+    }
+
+    public IosPrivacyPreservingAnalyticsParameters getIosPrivacyPreservingAnalyticsParameters() {
+      return iosPrivacyPreservingAnalyticsParameters;
+    }
+
+    public void setIosPrivacyPreservingAnalyticsParameters(
+        IosPrivacyPreservingAnalyticsParameters iosPrivacyPreservingAnalyticsParameters) {
+      this.iosPrivacyPreservingAnalyticsParameters = iosPrivacyPreservingAnalyticsParameters;
+    }
+
+    public AndroidPrivacyPreservingAnalyticsParameters getAndroidPrivacyPreservingAnalyticsParameters() {
+      return androidPrivacyPreservingAnalyticsParameters;
+    }
+
+    public void setAndroidPrivacyPreservingAnalyticsParameters(
+        AndroidPrivacyPreservingAnalyticsParameters androidPrivacyPreservingAnalyticsParameters) {
+      this.androidPrivacyPreservingAnalyticsParameters = androidPrivacyPreservingAnalyticsParameters;
+    }
 
     public IosKeyDownloadParameters getIosKeyDownloadParameters() {
       return iosKeyDownloadParameters;
@@ -1006,5 +1051,180 @@ public class DistributionServiceConfig {
         this.overallTimeoutInSeconds = overallTimeoutInSeconds;
       }
     }
+
+    public static class IosEventDrivenUserSurveyParameters extends CommonEdusParameters {
+
+    }
+
+    private static class CommonEdusParameters {
+
+      @Size(min = 1, max = 30)
+      private String otpQueryParameterName;
+      @NotNull
+      private Boolean surveyOnHighRiskEnabled;
+      @Pattern(regexp = URL_REGEX)
+      private String surveyOnHighRiskUrl;
+
+      public String getOtpQueryParameterName() {
+        return otpQueryParameterName;
+      }
+
+      public void setOtpQueryParameterName(String otpQueryParameterName) {
+        this.otpQueryParameterName = otpQueryParameterName;
+      }
+
+      public Boolean getSurveyOnHighRiskEnabled() {
+        return surveyOnHighRiskEnabled;
+      }
+
+      public void setSurveyOnHighRiskEnabled(Boolean surveyOnHighRiskEnabled) {
+        this.surveyOnHighRiskEnabled = surveyOnHighRiskEnabled;
+      }
+
+      public String getSurveyOnHighRiskUrl() {
+        return surveyOnHighRiskUrl;
+      }
+
+      public void setSurveyOnHighRiskUrl(String surveyOnHighRiskUrl) {
+        this.surveyOnHighRiskUrl = surveyOnHighRiskUrl;
+      }
+    }
+
+    public static class AndroidEventDrivenUserSurveyParameters extends CommonEdusParameters {
+
+      @NotNull
+      private Boolean requireBasicIntegrity;
+      @NotNull
+      private Boolean requireCtsProfileMatch;
+      @NotNull
+      private Boolean requireEvaluationTypeBasic;
+      @NotNull
+      private Boolean requireEvaluationTypeHardwareBacked;
+
+      public Boolean getRequireBasicIntegrity() {
+        return requireBasicIntegrity;
+      }
+
+      public void setRequireBasicIntegrity(Boolean requireBasicIntegrity) {
+        this.requireBasicIntegrity = requireBasicIntegrity;
+      }
+
+      public Boolean getRequireCtsProfileMatch() {
+        return requireCtsProfileMatch;
+      }
+
+      public void setRequireCtsProfileMatch(Boolean requireCtsProfileMatch) {
+        this.requireCtsProfileMatch = requireCtsProfileMatch;
+      }
+
+      public Boolean getRequireEvaluationTypeBasic() {
+        return requireEvaluationTypeBasic;
+      }
+
+      public void setRequireEvaluationTypeBasic(Boolean requireEvaluationTypeBasic) {
+        this.requireEvaluationTypeBasic = requireEvaluationTypeBasic;
+      }
+
+      public Boolean getRequireEvaluationTypeHardwareBacked() {
+        return requireEvaluationTypeHardwareBacked;
+      }
+
+      public void setRequireEvaluationTypeHardwareBacked(Boolean requireEvaluationTypeHardwareBacked) {
+        this.requireEvaluationTypeHardwareBacked = requireEvaluationTypeHardwareBacked;
+      }
+    }
+
+    public static class IosPrivacyPreservingAnalyticsParameters extends CommonPpaParameters {
+
+    }
+
+    private static class CommonPpaParameters {
+
+      private Double probabilityToSubmit;
+      private Double probabilityToSubmitExposureWindows;
+      @PositiveOrZero
+      private Integer hoursSinceTestRegistrationToSubmitTestResultMetadata;
+      @PositiveOrZero
+      private Integer hoursSinceTestToSubmitKeySubmissionMetadata;
+
+      public Double getProbabilityToSubmit() {
+        return probabilityToSubmit;
+      }
+
+      public void setProbabilityToSubmit(Double probabilityToSubmit) {
+        this.probabilityToSubmit = probabilityToSubmit;
+      }
+
+      public Double getProbabilityToSubmitExposureWindows() {
+        return probabilityToSubmitExposureWindows;
+      }
+
+      public void setProbabilityToSubmitExposureWindows(Double probabilityToSubmitExposureWindows) {
+        this.probabilityToSubmitExposureWindows = probabilityToSubmitExposureWindows;
+      }
+
+      public Integer getHoursSinceTestRegistrationToSubmitTestResultMetadata() {
+        return hoursSinceTestRegistrationToSubmitTestResultMetadata;
+      }
+
+      public void setHoursSinceTestRegistrationToSubmitTestResultMetadata(
+          Integer hoursSinceTestRegistrationToSubmitTestResultMetadata) {
+        this.hoursSinceTestRegistrationToSubmitTestResultMetadata =
+            hoursSinceTestRegistrationToSubmitTestResultMetadata;
+      }
+
+      public Integer getHoursSinceTestToSubmitKeySubmissionMetadata() {
+        return hoursSinceTestToSubmitKeySubmissionMetadata;
+      }
+
+      public void setHoursSinceTestToSubmitKeySubmissionMetadata(Integer hoursSinceTestToSubmitKeySubmissionMetadata) {
+        this.hoursSinceTestToSubmitKeySubmissionMetadata = hoursSinceTestToSubmitKeySubmissionMetadata;
+      }
+    }
+
+    public static class AndroidPrivacyPreservingAnalyticsParameters extends CommonPpaParameters {
+
+      @NotNull
+      private Boolean requireBasicIntegrity;
+      @NotNull
+      private Boolean requireCtsProfileMatch;
+      @NotNull
+      private Boolean requireEvaluationTypeBasic;
+      @NotNull
+      private Boolean requireEvaluationTypeHardwareBacked;
+
+      public Boolean getRequireBasicIntegrity() {
+        return requireBasicIntegrity;
+      }
+
+      public void setRequireBasicIntegrity(Boolean requireBasicIntegrity) {
+        this.requireBasicIntegrity = requireBasicIntegrity;
+      }
+
+      public Boolean getRequireCtsProfileMatch() {
+        return requireCtsProfileMatch;
+      }
+
+      public void setRequireCtsProfileMatch(Boolean requireCtsProfileMatch) {
+        this.requireCtsProfileMatch = requireCtsProfileMatch;
+      }
+
+      public Boolean getRequireEvaluationTypeBasic() {
+        return requireEvaluationTypeBasic;
+      }
+
+      public void setRequireEvaluationTypeBasic(Boolean requireEvaluationTypeBasic) {
+        this.requireEvaluationTypeBasic = requireEvaluationTypeBasic;
+      }
+
+      public Boolean getRequireEvaluationTypeHardwareBacked() {
+        return requireEvaluationTypeHardwareBacked;
+      }
+
+      public void setRequireEvaluationTypeHardwareBacked(Boolean requireEvaluationTypeHardwareBacked) {
+        this.requireEvaluationTypeHardwareBacked = requireEvaluationTypeHardwareBacked;
+      }
+    }
+
   }
 }

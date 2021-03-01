@@ -42,6 +42,7 @@ public class Application implements EnvironmentAware, DisposableBean {
 
   /**
    * Terminates this application with exit code 1 (general error).
+   * @param appContext type ApplicationContext
    */
   public static void killApplication(ApplicationContext appContext) {
     SpringApplication.exit(appContext);

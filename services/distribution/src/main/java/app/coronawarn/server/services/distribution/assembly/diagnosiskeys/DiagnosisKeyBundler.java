@@ -66,6 +66,8 @@ public abstract class DiagnosisKeyBundler {
 
   /**
    * Constructs a DiagnosisKeyBundler based on the specified service configuration.
+   *
+   * @param distributionServiceConfig configuration containing relevant attributes
    */
   protected DiagnosisKeyBundler(DistributionServiceConfig distributionServiceConfig) {
     this.supportedCountries = List.of(distributionServiceConfig.getSupportedCountries());
@@ -90,6 +92,8 @@ public abstract class DiagnosisKeyBundler {
 
   /**
    * Returns the {@link LocalDateTime} at which the distribution runs.
+   *
+   * @return time the distribution runs in LocalDateTime
    */
   public LocalDateTime getDistributionTime() {
     return this.distributionTime;
@@ -97,6 +101,9 @@ public abstract class DiagnosisKeyBundler {
 
   /**
    * Returns all {@link DiagnosisKey DiagnosisKeys} contained by this {@link DiagnosisKeyBundler}.
+   *
+   * @param country to obtain keys for
+   * @return list of all DiagnosisKey entries for specified country
    */
   public List<DiagnosisKey> getAllDiagnosisKeys(String country) {
     if (isCountrySupported(country)) {
@@ -109,12 +116,17 @@ public abstract class DiagnosisKeyBundler {
   /**
    * Initializes the internal {@code distributableDiagnosisKeys} map, which should contain all diagnosis keys, grouped
    * by the LocalDateTime on which they may be distributed.
+   *
+   * @param diagnosisKeys collection of DiagnosisKey entries
    */
   protected abstract void createDiagnosisKeyDistributionMap(Collection<DiagnosisKey> diagnosisKeys);
 
   /**
    * Returns a set of all {@link LocalDate dates} on which {@link DiagnosisKey diagnosis keys} shall be distributed
    * based on country.
+   *
+   * @param country Country to collect data for
+   * @return set of LocalDate entries for the specified Country
    */
   public Set<LocalDate> getDatesWithDistributableDiagnosisKeys(String country) {
     if (isCountrySupported(country)) {
@@ -133,6 +145,10 @@ public abstract class DiagnosisKeyBundler {
   /**
    * Returns a map of all {@link LocalDateTime hours} of a specified {@link LocalDate date} and country during which
    * {@link DiagnosisKey diagnosis keys} shall be distributed.
+   *
+   * @param currentDate current time
+   * @param country Country to search for data relating to
+   * @return Set of LocalDateTime entries for specified Country at specified time
    */
   public Set<LocalDateTime> getHoursWithDistributableDiagnosisKeys(LocalDate currentDate, String country) {
     return this.distributableDiagnosisKeys.get(country).keySet().stream()
@@ -156,6 +172,9 @@ public abstract class DiagnosisKeyBundler {
 
   /**
    * Returns the submission timestamp of a {@link DiagnosisKey} as a {@link LocalDateTime}.
+   *
+   * @param diagnosisKey key to search
+   * @return time the specified key was submitted
    */
   protected LocalDateTime getSubmissionDateTime(DiagnosisKey diagnosisKey) {
     return LocalDateTime.ofEpochSecond(diagnosisKey.getSubmissionTimestamp() * ONE_HOUR_INTERVAL_SECONDS, 0, UTC);
@@ -163,6 +182,10 @@ public abstract class DiagnosisKeyBundler {
 
   /**
    * Returns all diagnosis keys that should be distributed on a specific date for a specific country.
+   *
+   * @param date date to search
+   * @param country country to search
+   * @return list of DiagnosisKey entires submitted from specified Country on the specified day
    */
   public List<DiagnosisKey> getDiagnosisKeysForDate(LocalDate date, String country) {
     if (isCountrySupported(country)) {
@@ -177,6 +200,10 @@ public abstract class DiagnosisKeyBundler {
 
   /**
    * Returns all diagnosis keys that should be distributed in a specific hour for a specific country.
+   *
+   * @param hour hour to search
+   * @param country Country to search
+   * @return list of DiagnosisKey entries matching the specified hour and specified Country
    */
   public List<DiagnosisKey> getDiagnosisKeysForHour(LocalDateTime hour, String country) {
     if (isCountrySupported(country)) {
@@ -222,7 +249,8 @@ public abstract class DiagnosisKeyBundler {
    *  for the origin country keys are applied and they don't get distributed in the EUR package.
    * @param key Diagnosis key
    * @param visitedCountry Single entry of visitedCountries list.
-   * @return
+   * @return <code>true</code> if originCountry equals the originCountry of the given key and is not part of the visited
+   *        country list.
    */
   private boolean isKeyOriginAndVisitedCountryNotEqualToOriginCountry(DiagnosisKey key, String visitedCountry) {
     return key.getOriginCountry().equals(originCountry) && !visitedCountry.equals(originCountry);
@@ -238,7 +266,7 @@ public abstract class DiagnosisKeyBundler {
    *  originCountry package and the EUR package.
    * @param key Diagnosis key
    * @param visitedCountry Single entry of visitedCountries list.
-   * @return
+   * @return <code>true</code> or <code>false</code>
    */
   private boolean isEfgsKeyWithOriginInVisitedCountriesAndNotVisitedCountry(DiagnosisKey key, String visitedCountry) {
     return !key.getOriginCountry().equals(originCountry) && !visitedCountry.equals(originCountry)

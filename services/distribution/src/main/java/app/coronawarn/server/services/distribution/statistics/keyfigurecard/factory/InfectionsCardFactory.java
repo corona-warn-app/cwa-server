@@ -11,13 +11,8 @@ import app.coronawarn.server.services.distribution.statistics.keyfigurecard.KeyF
 import app.coronawarn.server.services.distribution.statistics.keyfigurecard.ValueTrendCalculator;
 import java.util.List;
 import java.util.Optional;
-import org.springframework.data.util.Pair;
 
 public class InfectionsCardFactory extends HeaderCardFactory {
-
-  public InfectionsCardFactory(ValueTrendCalculator valueTrendCalculator) {
-    super(valueTrendCalculator);
-  }
 
   @Override
   protected Integer getCardId() {
@@ -35,8 +30,8 @@ public class InfectionsCardFactory extends HeaderCardFactory {
   }
 
   private KeyFigure getInfectionsAverage(StatisticsJsonStringObject stats) {
-    var trend = valueTrendCalculator.getTrend(stats.getInfectionsReported7daysGrowthrate());
-    var semantic = valueTrendCalculator.getNegativeTrendGrowth(trend);
+    var trend = ValueTrendCalculator.from(stats.getInfectionsReported7daysTrend5percent());
+    var semantic = ValueTrendCalculator.getNegativeTrendGrowth(trend);
     return KeyFigure.newBuilder()
         .setValue(stats.getInfectionsReported7daysAvg())
         .setRank(Rank.SECONDARY)
@@ -65,13 +60,22 @@ public class InfectionsCardFactory extends HeaderCardFactory {
   }
 
   @Override
-  protected List<Pair<String, Optional<Object>>> getNonNullFields(StatisticsJsonStringObject stats) {
-    return List.of(
-        Pair.of("infections_reported_daily", Optional.ofNullable(stats.getInfectionsReportedDaily())),
-        Pair.of("infections_reported_7days_avg", Optional.ofNullable(stats.getInfectionsReported7daysAvg())),
-        Pair.of("infections_reported_7days_growthrate",
-            Optional.ofNullable(stats.getInfectionsReported7daysGrowthrate())),
-        Pair.of("infections_reported_cumulated", Optional.ofNullable(stats.getInfectionsReportedCumulated()))
+  protected List<Optional<Object>> getRequiredFieldValues(StatisticsJsonStringObject stats) {
+
+    List<Optional<Object>> requiredFields = List.of(
+        Optional.ofNullable(stats.getInfectionsReportedCumulated()),
+        Optional.ofNullable(stats.getInfectionsReported7daysTrend5percent()),
+        Optional.ofNullable(stats.getInfectionsReported7daysAvg()),
+        Optional.ofNullable(stats.getInfectionsReportedDaily())
     );
+
+    if (requiredFields.contains(Optional.empty())
+        || stats.getInfectionsReportedCumulated() <= 0
+        || stats.getInfectionsReported7daysAvg() <= 0
+        || stats.getInfectionsReportedDaily() <= 0) {
+      return List.of(Optional.empty());
+    }
+
+    return requiredFields;
   }
 }

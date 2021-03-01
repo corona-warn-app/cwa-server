@@ -1,5 +1,3 @@
-
-
 package app.coronawarn.server.services.distribution.assembly.appconfig.structure.archive.decorator.signing;
 
 import app.coronawarn.server.services.distribution.assembly.component.CryptoProvider;

@@ -6,6 +6,11 @@ logging:
         web: INFO
     app:
       coronawarn: INFO
+    com:
+      netflix:
+        config:
+          sources:
+            URLConfigurationSource: ERROR
 
 services:
   distribution:
@@ -27,7 +32,7 @@ services:
     eu-package-name: EUR
     # Indicates whether the shifting and expiry policies are applied to all supported countries during distribution.
     apply-policies-for-all-countries: false
-    card-id-sequence: ${STATS_CARD_ID_SEQUENCE:[1,2,3,4]}
+    card-id-sequence: ${STATS_CARD_ID_SEQUENCE:[1,3,2,4]}
     # Local paths, that are used during the export creation.
     paths:
       # The output path.
@@ -95,9 +100,9 @@ services:
     statistics:
       trend-calculation-threshold: 0.05
       statistic-path: ${STATISTICS_FILE_NAME:json/v1/cwa_reporting_public_data.json}
-      access-key: ${STATISTICS_FILE_ACCESS_KEY_ID}
-      secret-key: ${STATISTICS_FILE_SECRET_ACCESS_KEY}
-      endpoint: ${STATISTICS_FILE_S3_ENDPOINT}
+      access-key: ${STATISTICS_FILE_ACCESS_KEY_ID:}
+      secret-key: ${STATISTICS_FILE_SECRET_ACCESS_KEY:}
+      endpoint: ${STATISTICS_FILE_S3_ENDPOINT:}
       bucket: ${STATISTICS_FILE_S3_BUCKET:obs-cwa-public-dev}
 
     app-features:
@@ -105,13 +110,13 @@ services:
         value: ${reserved:1}
     supported-countries: ${SUPPORTED_COUNTRIES}
     app-versions:
-      latest-ios: ${IOS_LATEST_VERSION:0.8.2}
-      min-ios: ${IOS_MIN_VERSION:0.5.0}
-      latest-android: ${ANDROID_LATEST_VERSION:1.0.4}
-      min-android: ${ANDROID_MIN_VERSION:1.0.4}
+      latest-ios: ${IOS_LATEST_VERSION:1.5.3}
+      min-ios: ${IOS_MIN_VERSION:1.5.3}
+      latest-android: ${ANDROID_LATEST_VERSION:1.5.1}
+      min-android: ${ANDROID_MIN_VERSION:1.5.1}
       # With ENF v2 Android apps are versioned by Version Code and not by Semantic Versioning
-      min-android-version-code: ${ANDROID_MIN_VERSION_CODE:31}
-      latest-android-version-code: ${ANDROID_LATEST_VERSION_CODE:31}
+      min-android-version-code: ${ANDROID_MIN_VERSION_CODE:48}
+      latest-android-version-code: ${ANDROID_LATEST_VERSION_CODE:48}
     app-config-parameters:
       ios-key-download-parameters:
         revoked-day-packages: ${KEY_DOWNLOAD_REVOKED_DAY_PACKAGES:[]}
@@ -126,6 +131,32 @@ services:
       android-exposure-detection-parameters:
         max-exposure-detections-per-interval: ${ANDROID_EXPOSURE_DETECTION_MAX_ED_PER_INTERVAL:6}
         overall-timeout-in-seconds: ${ANDROID_EXPOSURE_DETECTION_OVERALL_TIMEOUT_IN_SECONDS:900}
+      ios-event-driven-user-survey-parameters:
+        otp-query-parameter-name: ${EDUS_OTP_QUERY_PARAMETER_NAME:otp}
+        survey-on-high-risk-enabled: ${EDUS_SURVEY_ON_HIGH_RISK_ENABLED:true}
+        survey-on-high-risk-url: ${EDUS_SURVEY_ON_HIGH_RISK_URL:https://befragungen.rki.de/CWABasisbefragung}
+      android-event-driven-user-survey-parameters:
+        otp-query-parameter-name: ${EDUS_OTP_QUERY_PARAMETER_NAME:otp}
+        survey-on-high-risk-enabled: ${EDUS_SURVEY_ON_HIGH_RISK_ENABLED:false}
+        survey-on-high-risk-url: ${EDUS_SURVEY_ON_HIGH_RISK_URL:https://befragungen.rki.de/CWABasisbefragung}
+        require-basic-integrity: ${EDUS_PPAC_REQUIRE_BASIC_INTEGRITY:true}
+        require-cts-profile-match: ${EDUS_PPAC_REQUIRE_CTS_PROFILE_MATCH:true}
+        require-evaluation-type-basic: ${EDUS_PPAC_REQUIRE_EVALUATION_TYPE_BASIC:false}
+        require-evaluation-type-hardware-backed: ${EDUS_PPAC_REQUIRE_EVALUATION_TYPE_HARDWARE_BACKED:true}
+      ios-privacy-preserving-analytics-parameters:
+        probability-to-submit: ${PPA_PROBABILITY_TO_SUBMT:1}
+        probability-to-submit-exposure-windows: ${PPA_PROBABILOITY_TO_SUBMIT_EXPOSURE_WINDOWS:1}
+        hours-since-test-registration-to-submit-test-result-metadata: ${PPA_HOURS_SINCE_TEST_RESULT_TO_SUBMIT_KEY_RESULT_METADATA:165}
+        hours-since-test-to-submit-key-submission-metadata: ${PPA_HOURS_SINCE_TEST_RESULT_TO_SUBMIT_KEY_SUBMISSION_METADATA:36}
+      android-privacy-preserving-analytics-parameters:
+        probability-to-submit: ${PPA_PROBABILITY_TO_SUBMT:1}
+        probability-to-submit-exposure-windows: ${PPA_PROBABILOITY_TO_SUBMIT_EXPOSURE_WINDOWS:1}
+        hours-since-test-registration-to-submit-test-result-metadata: ${PPA_HOURS_SINCE_TEST_RESULT_TO_SUBMIT_KEY_RESULT_METADATA:165}
+        hours-since-test-to-submit-key-submission-metadata: ${PPA_HOURS_SINCE_TEST_RESULT_TO_SUBMIT_KEY_SUBMISSION_METADATA:36}
+        require-basic-integrity: ${PPA_PPAC_REQUIRE_BASIC_INTEGRITY:false}
+        require-cts-profile-match: ${PPA_PPAC_REQUIRE_CTS_PROFILE_MATCH:false}
+        require-evaluation-type-basic: ${PPA_PPAC_REQUIRE_EVALUATION_TYPE_BASIC:false}
+        require-evaluation-type-hardware-backed: ${PPA_PPAC_REQUIRE_EVALUATION_TYPE_HARDWARE_BACKED:false}
 
 
 

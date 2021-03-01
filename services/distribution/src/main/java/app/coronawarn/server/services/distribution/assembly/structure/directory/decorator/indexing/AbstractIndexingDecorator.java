@@ -15,6 +15,9 @@ public abstract class AbstractIndexingDecorator<T, W extends Writable<W>> extend
 
   /**
    * Creates a new AbstractIndexingDecorator.
+   *
+   * @param directory of generic type
+   * @param indexFileName file name
    */
   protected AbstractIndexingDecorator(IndexDirectory<T, W> directory, String indexFileName) {
     super(directory);
@@ -24,6 +27,8 @@ public abstract class AbstractIndexingDecorator<T, W extends Writable<W>> extend
 
   /**
    * See {@link AbstractIndexingDecorator} class documentation.
+   *
+   * @param indices stack of objects
    */
   @Override
   public void prepare(ImmutableStack<Object> indices) {

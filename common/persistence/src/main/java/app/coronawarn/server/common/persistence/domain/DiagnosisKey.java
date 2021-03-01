@@ -1,5 +1,3 @@
-
-
 package app.coronawarn.server.common.persistence.domain;
 
 import static java.time.ZoneOffset.UTC;
@@ -10,8 +8,9 @@ import app.coronawarn.server.common.persistence.domain.validation.ValidCountry;
 import app.coronawarn.server.common.persistence.domain.validation.ValidRollingStartIntervalNumber;
 import app.coronawarn.server.common.persistence.domain.validation.ValidSubmissionTimestamp;
 import app.coronawarn.server.common.protocols.external.exposurenotification.ReportType;
-import java.time.Instant;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Objects;
@@ -112,6 +111,7 @@ public class DiagnosisKey {
 
   /**
    * Returns the diagnosis key.
+   * @return keyData
    */
   public byte[] getKeyData() {
     return keyData;
@@ -119,6 +119,7 @@ public class DiagnosisKey {
 
   /**
    * Returns a number describing when a key starts. It is equal to startTimeOfKeySinceEpochInSecs / (60 * 10).
+   * @return rollingStartIntervalNumber
    */
   public int getRollingStartIntervalNumber() {
     return rollingStartIntervalNumber;
@@ -127,6 +128,7 @@ public class DiagnosisKey {
   /**
    * Returns a number describing how long a key is valid. It is expressed in increments of 10 minutes (e.g. 144 for 24
    * hours).
+   * @return rollingPeriod
    */
   public int getRollingPeriod() {
     return rollingPeriod;
@@ -134,6 +136,7 @@ public class DiagnosisKey {
 
   /**
    * Returns the risk of transmission associated with the person this key came from.
+   * @return transmissionRiskLevel
    */
   public int getTransmissionRiskLevel() {
     return transmissionRiskLevel;
@@ -141,6 +144,7 @@ public class DiagnosisKey {
 
   /**
    * Returns the timestamp associated with the submission of this {@link DiagnosisKey} as hours since epoch.
+   * @return submissionTimestamp
    */
   public long getSubmissionTimestamp() {
     return submissionTimestamp;
@@ -178,7 +182,7 @@ public class DiagnosisKey {
       throw new IllegalArgumentException("Retention threshold must be greater or equal to 0.");
     }
     long threshold = LocalDateTime
-        .ofInstant(Instant.now(), UTC)
+        .of(LocalDate.now(UTC), LocalTime.MIDNIGHT)
         .minusDays(daysToRetain)
         .toEpochSecond(UTC) / (60 * 10);
 
@@ -188,7 +192,7 @@ public class DiagnosisKey {
   /**
    * Gets any constraint violations that this key might incorporate.
    *
-   * <p><ul>
+   * <ul>
    * <li>Risk level must be between 0 and 8
    * <li>Rolling start interval number must be greater than 0
    * <li>Rolling start number cannot be in the future

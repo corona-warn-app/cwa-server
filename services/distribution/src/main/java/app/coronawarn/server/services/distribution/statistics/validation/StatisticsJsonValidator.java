@@ -3,6 +3,7 @@ package app.coronawarn.server.services.distribution.statistics.validation;
 import app.coronawarn.server.services.distribution.statistics.StatisticsJsonStringObject;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -15,6 +16,7 @@ public class StatisticsJsonValidator {
 
   /**
    * Validates mandatory fields on {@link StatisticsJsonStringObject}.
+   *
    * @param statisticsObjects the parsed JSON Object.
    * @return A list with only valid objects.
    */
@@ -42,8 +44,11 @@ public class StatisticsJsonValidator {
     try {
       DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
       LocalDate.parse(effectiveDate, formatter);
-    } catch (Exception e) {
+    } catch (DateTimeParseException e) {
       logger.warn("The value of the effective_date attribute is not correct.");
+      return false;
+    } catch (IllegalArgumentException e) {
+      logger.warn("Invalid pattern provided.");
       return false;
     }
     return true;

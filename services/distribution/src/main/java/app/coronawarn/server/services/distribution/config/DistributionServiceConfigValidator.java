@@ -28,6 +28,7 @@ public class DistributionServiceConfigValidator implements Validator {
     DistributionServiceConfig properties = (DistributionServiceConfig) o;
     checkSupportedCountries(errors, properties);
     checkAndroidVersionCodes(errors, properties);
+    checkAProbabilitiesToSubmit(errors, properties);
   }
 
   private void checkAndroidVersionCodes(Errors errors, DistributionServiceConfig properties) {
@@ -49,5 +50,30 @@ public class DistributionServiceConfigValidator implements Validator {
             "[" + country + "]: Country code isn't compliant to ISO 3166.");
       }
     });
+  }
+
+  private void checkAProbabilitiesToSubmit(Errors errors, DistributionServiceConfig properties) {
+    test(errors,
+        properties.getAppConfigParameters().getIosPrivacyPreservingAnalyticsParameters().getProbabilityToSubmit(),
+        "iosPrivacyPreservingAnalyticsParameters.probabilityToSubmit");
+    test(errors, properties.getAppConfigParameters().getIosPrivacyPreservingAnalyticsParameters()
+            .getProbabilityToSubmitExposureWindows(),
+        "iosPrivacyPreservingAnalyticsParameters.probabilityToSubmitExposureWindows");
+    test(errors,
+        properties.getAppConfigParameters().getAndroidPrivacyPreservingAnalyticsParameters().getProbabilityToSubmit(),
+        "androidPrivacyPreservingAnalyticsParameters.probabilityToSubmit");
+    test(errors, properties.getAppConfigParameters().getAndroidPrivacyPreservingAnalyticsParameters()
+            .getProbabilityToSubmitExposureWindows(),
+        "androidPrivacyPreservingAnalyticsParameters.probabilityToSubmitExposureWindows");
+  }
+
+  private void test(Errors errors, Double probability, String field) {
+    if (probability == null) {
+      errors.rejectValue(field, "Probability cannot be null");
+    } else if (probability.compareTo(0.0) < 0) {
+      errors.rejectValue(field, "Probability must be greater or equal to 0");
+    } else if (probability.compareTo(1.0) > 0) {
+      errors.rejectValue(field, "Probability must be lower or equal to 1");
+    }
   }
 }

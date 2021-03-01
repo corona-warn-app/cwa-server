@@ -104,6 +104,8 @@ public class DiagnosisKeyServiceTestHelper {
    * but was submitted X hours after that time.
    * Altough the application uses minutes for expiration policies, the submission times are
    * computed relative to the top of the hours.
+   *
+   * @param hours number of hours
    */
   public static DiagnosisKey getKeySubmittedHoursAfterMidnightExpiration(int hours) {
     LocalDateTime yesterday = LocalDateTime.of(LocalDate.now(ZoneOffset.UTC), LocalTime.MIDNIGHT).minusDays(1);

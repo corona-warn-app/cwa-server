@@ -29,10 +29,12 @@ import org.springframework.validation.Validator;
 @EnableJdbcRepositories(basePackages = "app.coronawarn.server.common.persistence")
 @EntityScan(basePackages = "app.coronawarn.server.common.persistence")
 @ComponentScan({"app.coronawarn.server.common.persistence",
-    "app.coronawarn.server.services.submission"})
+    "app.coronawarn.server.services.submission", "app.coronawarn.server.common.federation.client.hostname"})
 @EnableConfigurationProperties
 @EnableFeignClients
 public class ServerApplication implements EnvironmentAware, DisposableBean {
+
+  static final String DISABLE_SSL_CLIENT_POSTGRES = "disable-ssl-client-postgres";
 
   private static final Logger logger = LoggerFactory.getLogger(ServerApplication.class);
 
@@ -68,23 +70,9 @@ public class ServerApplication implements EnvironmentAware, DisposableBean {
     List<String> profiles = Arrays.asList(environment.getActiveProfiles());
 
     logger.info("Enabled named groups: {}", System.getProperty("jdk.tls.namedGroups"));
-    if (profiles.contains("disable-ssl-server")) {
-      logger.warn(
-          "The submission service is started with endpoint TLS disabled. This should never be used in PRODUCTION!");
-    }
-    if (profiles.contains("disable-ssl-client-postgres")) {
+    if (profiles.contains(DISABLE_SSL_CLIENT_POSTGRES)) {
       logger.warn(
           "The submission service is started with postgres connection TLS disabled. "
-              + "This should never be used in PRODUCTION!");
-    }
-    if (profiles.contains("disable-ssl-client-verification")) {
-      logger.warn(
-          "The submission service is started with verification service connection TLS disabled. "
-              + "This should never be used in PRODUCTION!");
-    }
-    if (profiles.contains("disable-ssl-client-verification-verify-hostname")) {
-      logger.warn(
-          "The submission service is started with verification service TLS hostname validation disabled. "
               + "This should never be used in PRODUCTION!");
     }
   }

@@ -9,7 +9,7 @@ services:
     ports:
       - "8010:8080"
     environment:
-      SPRING_PROFILES_ACTIVE: debug,disable-ssl-server,disable-ssl-client-postgres,disable-ssl-client-verification,disable-ssl-client-verification-verify-hostname,disable-ssl-efgs-verification,disable-callback-cert-auth
+      SPRING_PROFILES_ACTIVE: debug,disable-ssl-client-postgres
       POSTGRESQL_SERVICE_PORT: '5432'
       POSTGRESQL_SERVICE_HOST: postgres
       POSTGRESQL_DATABASE: ${POSTGRES_DB}
@@ -17,6 +17,12 @@ services:
       POSTGRESQL_USER_CALLBACK: ${POSTGRES_CALLBACK_USER}
       POSTGRESQL_PASSWORD_FLYWAY: ${POSTGRES_FLYWAY_PASSWORD}
       POSTGRESQL_USER_FLYWAY: ${POSTGRES_FLYWAY_USER}
+      SSL_CALLBACK_KEYSTORE_PATH: file:/secrets/ssl.p12
+      SSL_CALLBACK_KEYSTORE_PASSWORD: 123456
+      SSL_FEDERATION_TRUSTSTORE_PATH: file:/secrets/contains_efgs_truststore.jks
+      SSL_FEDERATION_TRUSTSTORE_PASSWORD: 123456
+    volumes:
+      - ./docker-compose-test-secrets:/secrets
   submission:
     build:
       context: ./
@@ -28,7 +34,7 @@ services:
       - "8000:8080"
       - "8006:8081"
     environment:
-      SPRING_PROFILES_ACTIVE: debug,disable-ssl-server,disable-ssl-client-postgres,disable-ssl-client-verification,disable-ssl-client-verification-verify-hostname,disable-ssl-efgs-verification
+      SPRING_PROFILES_ACTIVE: debug,disable-ssl-client-postgres
       POSTGRESQL_SERVICE_PORT: '5432'
       POSTGRESQL_SERVICE_HOST: postgres
       POSTGRESQL_DATABASE: ${POSTGRES_DB}
@@ -38,6 +44,12 @@ services:
       POSTGRESQL_USER_FLYWAY: ${POSTGRES_FLYWAY_USER}
       VERIFICATION_BASE_URL: http://verification-fake:8004
       SUPPORTED_COUNTRIES: DE,FR
+      SSL_SUBMISSION_KEYSTORE_PATH: file:/secrets/ssl.p12
+      SSL_SUBMISSION_KEYSTORE_PASSWORD: 123456
+      SSL_VERIFICATION_TRUSTSTORE_PATH: file:/secrets/contains_efgs_truststore.jks
+      SSL_VERIFICATION_TRUSTSTORE_PASSWORD: 123456
+    volumes:
+      - ./docker-compose-test-secrets:/secrets
   distribution:
     build:
       context: ./
@@ -48,7 +60,7 @@ services:
      - create-bucket
     environment:
       SUPPORTED_COUNTRIES: DE,FR
-      SPRING_PROFILES_ACTIVE: debug,signature-dev,testdata,disable-ssl-client-postgres
+      SPRING_PROFILES_ACTIVE: debug,signature-dev,testdata,disable-ssl-client-postgres,local-json-stats
       POSTGRESQL_SERVICE_PORT: '5432'
       POSTGRESQL_SERVICE_HOST: postgres
       POSTGRESQL_DATABASE: ${POSTGRES_DB}
@@ -66,6 +78,9 @@ services:
       # Settings for cryptographic artifacts
       VAULT_FILESIGNING_SECRET: ${SECRET_PRIVATE}
       FORCE_UPDATE_KEYFILES: 'false'
+      STATISTICS_FILE_ACCESS_KEY_ID: fakeAccessKey
+      STATISTICS_FILE_SECRET_ACCESS_KEY: secretKey
+      STATISTICS_FILE_S3_ENDPOINT: https://localhost
     volumes:
       - ./docker-compose-test-secrets:/secrets
   download:
@@ -85,6 +100,12 @@ services:
       POSTGRESQL_USER_CALLBACK: ${POSTGRES_CALLBACK_USER}
       POSTGRESQL_PASSWORD_FLYWAY: ${POSTGRES_FLYWAY_PASSWORD}
       POSTGRESQL_USER_FLYWAY: ${POSTGRES_FLYWAY_USER}
+      FEDERATION_GATEWAY_KEYSTORE_PATH: file:/secrets/ssl.p12
+      FEDERATION_GATEWAY_KEYSTORE_PASS: 123456
+      SSL_FEDERATION_TRUSTSTORE_PATH: file:/secrets/contains_efgs_truststore.jks
+      SSL_FEDERATION_TRUSTSTORE_PASSWORD: 123456
+    volumes:
+      - ./docker-compose-test-secrets:/secrets
   upload:
     build:
       context: ./
@@ -94,7 +115,7 @@ services:
     ports:
       - "8012:8080"
     environment:
-      SPRING_PROFILES_ACTIVE: disable-ssl-client-postgres,disable-ssl-efgs-verification,testdata,connect-sgs,fake-client
+      SPRING_PROFILES_ACTIVE: disable-ssl-client-postgres,connect-sgs
       POSTGRESQL_SERVICE_PORT: '5432'
       POSTGRESQL_SERVICE_HOST: postgres
       POSTGRESQL_DATABASE: ${POSTGRES_DB}
@@ -104,6 +125,10 @@ services:
       POSTGRESQL_USER_FLYWAY: ${POSTGRES_FLYWAY_USER}
       VAULT_EFGS_BATCHIGNING_SECRET: ${SECRET_PRIVATE}
       VAULT_EFGS_BATCHIGNING_CERTIFICATE: file:/secrets/efgs_signing_cert.pem
+      SSL_FEDERATION_TRUSTSTORE_PATH: file:/secrets/contains_efgs_truststore.jks
+      SSL_FEDERATION_TRUSTSTORE_PASSWORD: 123456
+      FEDERATION_GATEWAY_KEYSTORE_PATH: file:/secrets/ssl.p12
+      FEDERATION_GATEWAY_KEYSTORE_PASS: 123456
     volumes:
       - ./docker-compose-test-secrets:/secrets
   postgres:
@@ -162,7 +187,7 @@ services:
     ports:
       - "8004:8004"
   efgs-fake:
-    image: roesslerj/cwa-efgs-fake:0.0.2
+    image: roesslerj/cwa-efgs-fake:0.0.3
     restart: always
     ports:
       - "8014:8014"

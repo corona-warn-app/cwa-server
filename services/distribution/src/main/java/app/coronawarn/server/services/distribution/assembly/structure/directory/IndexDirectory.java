@@ -34,11 +34,14 @@ public interface IndexDirectory<T, W extends Writable<W>> extends Directory<W> {
    * @param indices A {@link ImmutableStack} of parameters from all {@link IndexDirectory IndexDirectories} further up
    *                in the hierarchy. The Stack may contain different types, depending on the types {@code T} of {@link
    *                IndexDirectory IndexDirectories} further up in the hierarchy.
+   * @return generic type Set generic type
    */
   Set<T> getIndex(ImmutableStack<Object> indices);
 
   /**
    * Returns the function used to format elements of the index (e.g. for writing to disk).
+   *
+   * @return generic type Formatter generic type
    */
   Formatter<T> getIndexFormatter();
 }
