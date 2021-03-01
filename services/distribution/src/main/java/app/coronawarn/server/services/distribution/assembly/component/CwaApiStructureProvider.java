@@ -18,6 +18,7 @@ import org.springframework.stereotype.Component;
 public class CwaApiStructureProvider {
 
   private final AppConfigurationStructureProvider appConfigurationStructureProvider;
+  private final AppConfigurationV2StructureProvider appConfigurationV2StructureProvider;
   private final StatisticsStructureProvider statisticsStructureProvider;
   private final DiagnosisKeysStructureProvider diagnosisKeysStructureProvider;
   private final DistributionServiceConfig distributionServiceConfig;
@@ -27,10 +28,12 @@ public class CwaApiStructureProvider {
    */
   CwaApiStructureProvider(
       AppConfigurationStructureProvider appConfigurationStructureProvider,
+      AppConfigurationV2StructureProvider appConfigurationV2StructureProvider,
       StatisticsStructureProvider statisticsStructureProvider,
       DiagnosisKeysStructureProvider diagnosisKeysStructureProvider,
       DistributionServiceConfig distributionServiceConfig) {
     this.appConfigurationStructureProvider = appConfigurationStructureProvider;
+    this.appConfigurationV2StructureProvider = appConfigurationV2StructureProvider;
     this.statisticsStructureProvider = statisticsStructureProvider;
     this.diagnosisKeysStructureProvider = diagnosisKeysStructureProvider;
     this.distributionServiceConfig = distributionServiceConfig;
@@ -50,14 +53,33 @@ public class CwaApiStructureProvider {
     versionDirectory.addWritableToAll(
         ignoredValue -> Optional.of(appConfigurationStructureProvider.getAppConfiguration()));
     versionDirectory.addWritableToAll(
-        ignoredValue -> Optional.ofNullable(appConfigurationStructureProvider.getAppConfigurationV2ForAndroid()));
+        ignoredValue -> Optional.ofNullable(appConfigurationStructureProvider.getAppConfigurationV1ForAndroid()));
     versionDirectory.addWritableToAll(
-        ignoredValue -> Optional.ofNullable(appConfigurationStructureProvider.getAppConfigurationV2ForIos()));
+        ignoredValue -> Optional.ofNullable(appConfigurationStructureProvider.getAppConfigurationV1ForIos()));
     versionDirectory.addWritableToAll(
         ignoredValue -> Optional.of(diagnosisKeysStructureProvider.getDiagnosisKeys()));
     versionDirectory.addWritableToAll(
         ignoredValue -> Optional.ofNullable(statisticsStructureProvider.getStatistics()));
 
     return new IndexingDecoratorOnDisk<>(versionDirectory, distributionServiceConfig.getOutputFileName());
+  }
+
+  /**
+   * Returns the base directory.
+   *
+   * @return new instance of IndexingDecoratorOnDisk base directory
+   */
+  public Directory<WritableOnDisk> getDirectoryV2() {
+    IndexDirectoryOnDisk<String> versionDirectory = new IndexDirectoryOnDisk<>(
+        distributionServiceConfig.getApi().getVersionPath(),
+        ignoredValue -> Set.of(distributionServiceConfig.getApi().getVersionV2()),
+        Object::toString);
+
+    versionDirectory.addWritableToAll(
+        ignoredValue -> Optional.ofNullable(appConfigurationV2StructureProvider.getAppConfigurationV2ForAndroid()));
+    versionDirectory.addWritableToAll(
+        ignoredValue -> Optional.ofNullable(appConfigurationV2StructureProvider.getAppConfigurationV2ForIos()));
+
+    return new IndexingDecoratorOnDisk<>(versionDirectory, distributionServiceConfig.getOutputFileNameV2());
   }
 }
