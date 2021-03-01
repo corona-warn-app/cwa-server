@@ -33,7 +33,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration(classes = {CryptoProvider.class, ApplicationConfigurationV2PublicationConfig.class},
     initializers = ConfigFileApplicationContextInitializer.class)
-class AppConfigurationV2StructureProviderTest {
+class AppConfigurationV1StructureProviderTest {
 
   @Rule
   private TemporaryFolder outputFolder = new TemporaryFolder();
@@ -45,11 +45,11 @@ class AppConfigurationV2StructureProviderTest {
   private DistributionServiceConfig distributionServiceConfig;
 
   @Autowired
-  @Qualifier("applicationConfigurationV2Android")
+  @Qualifier("applicationConfigurationV1Android")
   private ApplicationConfigurationAndroid applicationConfigurationAndroid;
 
   @Autowired
-  @Qualifier("applicationConfigurationV2Ios")
+  @Qualifier("applicationConfigurationV1Ios")
   private ApplicationConfigurationIOS applicationConfigurationIos;
 
   @Test

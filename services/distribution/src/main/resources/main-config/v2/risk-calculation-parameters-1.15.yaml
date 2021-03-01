@@ -1,0 +1,94 @@
+#----------------------------------------------------------------------
+# This is the Corona Warn App source configuration file.
+# ----------------------------------------------------------------------
+#
+# This configuration file will be fetched by the mobile app in order to function.
+#
+# Change this file with caution!
+
+
+minutes-at-attenuation-filters: [] # no attenuation filters
+
+trl-filters: [] # no TRL filters
+
+minutes-at-attenuation-weights:
+  -
+    attenuation-range:
+      min: 0
+      max: 55
+      max-exclusive: true
+    weight: 1.0
+  -
+    attenuation-range:
+      min: 55
+      max: 63
+      max-exclusive: true
+    weight: 0.5
+  -
+    attenuation-range:
+      min: 63
+      max: 73
+      max-exclusive: true
+    weight: 0.3
+
+normalized-time-per-e-w-to-risk-level-mapping:
+  -
+    normalized-time-range:
+      min: 0
+      max: 15
+      max-exclusive: true
+    risk-level: 1
+  -
+    normalized-time-range:
+      min: 15
+      max: 9999
+    risk-level: 2
+
+normalized-time-per-day-to-risk-level-mapping:
+  -
+    normalized-time-range:
+      min: 5
+      max: 15
+      max-exclusive: true
+    risk-level: 1
+  -
+    normalized-time-range:
+      min: 15
+      max: 99999
+    risk-level: 2
+
+transmission-risk-level-multiplier: 0 # deprecated
+transmission-risk-value-mapping:
+  -
+    transmission-risk-level: 1
+    transmission-risk-value: 0
+  -
+    transmission-risk-level: 2
+    transmission-risk-value: 0
+  -
+    transmission-risk-level: 3
+    transmission-risk-value: 0.6
+  -
+    transmission-risk-level: 4
+    transmission-risk-value: 0.8
+  -
+    transmission-risk-level: 5
+    transmission-risk-value: 1
+  -
+    transmission-risk-level: 6
+    transmission-risk-value: 1.2
+  -
+    transmission-risk-level: 7
+    transmission-risk-value: 1.4
+  -
+    transmission-risk-level: 8
+    transmission-risk-value: 1.6
+
+
+trlEncoding:
+  infectiousnessOffsetStandard: 1
+  infectiousnessOffsetHigh: 2
+  reportTypeOffsetRecursive: 0
+  reportTypeOffsetSelfReport: 2
+  reportTypeOffsetConfirmedClinicalDiagnosis: 4
+  reportTypeOffsetConfirmedTest: 6

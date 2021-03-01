@@ -57,6 +57,16 @@ class DistributionServiceConfigTest {
     validator = Validation.buildDefaultValidatorFactory().getValidator();
   }
 
+  @Test
+  void checkFilesStructureForV2AppConfig() {
+    final String VERSION_V2 = "v2";
+    final String INDEX_V2 = "index-v2";
+    distributionServiceConfig.getApi().setVersionV2(VERSION_V2);
+
+    assertThat(distributionServiceConfig.getApi().getVersionV2()).isEqualTo(VERSION_V2);
+    assertThat(distributionServiceConfig.getOutputFileNameV2()).isEqualTo(INDEX_V2);
+  }
+
   @Nested
   class SupportedCountriesTest {
 

@@ -7,16 +7,21 @@ import app.coronawarn.server.common.protocols.internal.v2.ApplicationConfigurati
 import app.coronawarn.server.common.protocols.internal.v2.DailySummariesConfig;
 import app.coronawarn.server.common.protocols.internal.v2.DayPackageMetadata;
 import app.coronawarn.server.common.protocols.internal.v2.DiagnosisKeysDataMapping;
+import app.coronawarn.server.common.protocols.internal.v2.EventRegistrationParameters;
 import app.coronawarn.server.common.protocols.internal.v2.ExposureConfiguration;
 import app.coronawarn.server.common.protocols.internal.v2.ExposureDetectionParametersAndroid;
 import app.coronawarn.server.common.protocols.internal.v2.ExposureDetectionParametersIOS;
 import app.coronawarn.server.common.protocols.internal.v2.HourPackageMetadata;
 import app.coronawarn.server.common.protocols.internal.v2.KeyDownloadParametersAndroid;
 import app.coronawarn.server.common.protocols.internal.v2.KeyDownloadParametersIOS;
+import app.coronawarn.server.common.protocols.internal.v2.PPDDErrorLogSharingParametersAndroid;
+import app.coronawarn.server.common.protocols.internal.v2.PPDDErrorLogSharingParametersCommon;
+import app.coronawarn.server.common.protocols.internal.v2.PPDDErrorLogSharingParametersIOS;
 import app.coronawarn.server.common.protocols.internal.v2.PPDDEventDrivenUserSurveyParametersAndroid;
 import app.coronawarn.server.common.protocols.internal.v2.PPDDEventDrivenUserSurveyParametersCommon;
 import app.coronawarn.server.common.protocols.internal.v2.PPDDEventDrivenUserSurveyParametersIOS;
 import app.coronawarn.server.common.protocols.internal.v2.PPDDPrivacyPreservingAccessControlParametersAndroid;
+import app.coronawarn.server.common.protocols.internal.v2.PPDDPrivacyPreservingAccessControlParametersIOS;
 import app.coronawarn.server.common.protocols.internal.v2.PPDDPrivacyPreservingAnalyticsParametersAndroid;
 import app.coronawarn.server.common.protocols.internal.v2.PPDDPrivacyPreservingAnalyticsParametersCommon;
 import app.coronawarn.server.common.protocols.internal.v2.PPDDPrivacyPreservingAnalyticsParametersIOS;
@@ -38,16 +43,16 @@ import app.coronawarn.server.services.distribution.config.DistributionServiceCon
 import app.coronawarn.server.services.distribution.config.DistributionServiceConfig.AppConfigParameters.IosPrivacyPreservingAnalyticsParameters;
 import java.util.List;
 import java.util.stream.Collectors;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 /**
- * Provides the application configuration needed for mobile clients which use Exposure Notification
- * Framework V2. As of CWA version 1.7, Android and IOS configurations have been separated and
- * distributed in CDNs at different URLs. This Spring bean loads the default values defined in the
- * YAML configurations of each device type found under <code> /main-config/ </code> folder,
- * extends it with some Distribution Service global parameters and registers them for usage during
- * file archiving and bundling.
+ * Provides the application configuration needed for mobile clients which use Exposure Notification Framework V2. As of
+ * CWA version 1.7, Android and IOS configurations have been separated and distributed in CDNs at different URLs. This
+ * Spring bean loads the default values defined in the YAML configurations of each device type found under <code>
+ * /main-config/ </code> folder, extends it with some Distribution Service global parameters and registers them for
+ * usage during file archiving and bundling.
  */
 @Configuration
 public class ApplicationConfigurationV2PublicationConfig {
@@ -55,18 +60,60 @@ public class ApplicationConfigurationV2PublicationConfig {
   /**
    * The location of the exposure configuration source files for Android and Ios.
    */
-  private static final String V2_RISK_PARAMETERS_FILE = "main-config/v2/risk-calculation-parameters.yaml";
+  private static final String V1_RISK_PARAMETERS_FILE = "main-config/v2/risk-calculation-parameters.yaml";
+  private static final String V2_RISK_PARAMETERS_FILE = "main-config/v2/risk-calculation-parameters-1.15.yaml";
   private static final String ANDROID_V2_DATA_MAPPING_FILE = "main-config/v2/diagnosis-keys-data-mapping.yaml";
   private static final String ANDROID_V2_DAILY_SUMMARIES_FILE = "main-config/v2/daily-summaries-config.yaml";
   private static final String IOS_V2_EXPOSURE_CONFIGURATION_FILE = "main-config/v2/exposure-configuration.yaml";
 
   /**
    * Fetches the source configuration as a ApplicationConfigurationAndroid instance.
+   *
    * @param distributionServiceConfig type DistributionServiceConfig
    * @return android configuration
    * @throws UnableToLoadFileException if either the file access or subsequent yaml parsing fails.
    */
   @Bean
+  @Qualifier("applicationConfigurationV1Android")
+  public ApplicationConfigurationAndroid createAndroidV1Configuration(
+      DistributionServiceConfig distributionServiceConfig) throws UnableToLoadFileException {
+
+    RiskCalculationParameters.Builder riskCalculationParameterBuilder =
+        YamlLoader.loadYamlIntoProtobufBuilder(V1_RISK_PARAMETERS_FILE,
+            RiskCalculationParameters.Builder.class);
+
+    DeserializedDiagnosisKeysDataMapping dataMapping = YamlLoader.loadYamlIntoClass(
+        ANDROID_V2_DATA_MAPPING_FILE, DeserializedDiagnosisKeysDataMapping.class);
+
+    DeserializedDailySummariesConfig dailySummaries = YamlLoader
+        .loadYamlIntoClass(ANDROID_V2_DAILY_SUMMARIES_FILE, DeserializedDailySummariesConfig.class);
+
+    return ApplicationConfigurationAndroid.newBuilder()
+        .setRiskCalculationParameters(riskCalculationParameterBuilder)
+        .setMinVersionCode(distributionServiceConfig.getAppVersions().getMinAndroidVersionCode())
+        .setLatestVersionCode(
+            distributionServiceConfig.getAppVersions().getLatestAndroidVersionCode())
+        .setAppFeatures(buildAppFeatures(distributionServiceConfig))
+        .addAllSupportedCountries(List.of(distributionServiceConfig.getSupportedCountries()))
+        .setKeyDownloadParameters(buildKeyDownloadParametersAndroid(distributionServiceConfig))
+        .setExposureDetectionParameters(
+            buildExposureDetectionParametersAndroid(distributionServiceConfig))
+        .setDailySummariesConfig(buildDailySummaries(dailySummaries))
+        .setDiagnosisKeysDataMapping(buildDataMapping(dataMapping))
+        .setEventDrivenUserSurveyParameters(buildAndroidEdusParameters(distributionServiceConfig))
+        .setPrivacyPreservingAnalyticsParameters(buildAndroidPpaParameters(distributionServiceConfig))
+        .build();
+  }
+
+  /**
+   * Fetches the source configuration as a ApplicationConfigurationAndroid instance.
+   *
+   * @param distributionServiceConfig type DistributionServiceConfig
+   * @return android configuration V@
+   * @throws UnableToLoadFileException if either the file access or subsequent yaml parsing fails.
+   */
+  @Bean
+  @Qualifier("applicationConfigurationV2Android")
   public ApplicationConfigurationAndroid createAndroidV2Configuration(
       DistributionServiceConfig distributionServiceConfig) throws UnableToLoadFileException {
 
@@ -94,7 +141,28 @@ public class ApplicationConfigurationV2PublicationConfig {
         .setDiagnosisKeysDataMapping(buildDataMapping(dataMapping))
         .setEventDrivenUserSurveyParameters(buildAndroidEdusParameters(distributionServiceConfig))
         .setPrivacyPreservingAnalyticsParameters(buildAndroidPpaParameters(distributionServiceConfig))
+        .setEventRegistrationParameters(buildEventRegistrationParametersAndroid())
+        .setErrorLogSharingParameters(buildErrorLogSharingParametersAndroid(distributionServiceConfig))
         .build();
+  }
+
+  private PPDDErrorLogSharingParametersAndroid buildErrorLogSharingParametersAndroid(
+      DistributionServiceConfig distributionServiceConfig) {
+    AndroidEventDrivenUserSurveyParameters androidEdusParams = distributionServiceConfig
+        .getAppConfigParameters().getAndroidEventDrivenUserSurveyParameters();
+    return PPDDErrorLogSharingParametersAndroid.newBuilder()
+        .setCommon(PPDDErrorLogSharingParametersCommon.newBuilder().build())
+        .setPpac(PPDDPrivacyPreservingAccessControlParametersAndroid.newBuilder()
+            .setRequireBasicIntegrity(androidEdusParams.getRequireBasicIntegrity())
+            .setRequireCTSProfileMatch(androidEdusParams.getRequireCtsProfileMatch())
+            .setRequireEvaluationTypeBasic(androidEdusParams.getRequireEvaluationTypeBasic())
+            .setRequireEvaluationTypeHardwareBacked(androidEdusParams.getRequireEvaluationTypeHardwareBacked())
+            .build())
+        .build();
+  }
+
+  private EventRegistrationParameters buildEventRegistrationParametersAndroid() {
+    return EventRegistrationParameters.newBuilder().build();
   }
 
 
@@ -202,6 +270,41 @@ public class ApplicationConfigurationV2PublicationConfig {
    * @throws UnableToLoadFileException if either the file access or subsequent yaml parsing fails.
    */
   @Bean
+  @Qualifier("applicationConfigurationV1Ios")
+  public ApplicationConfigurationIOS createIosV1Configuration(DistributionServiceConfig distributionServiceConfig)
+      throws UnableToLoadFileException {
+
+    RiskCalculationParameters.Builder riskCalculationParameterBuilder =
+        YamlLoader.loadYamlIntoProtobufBuilder(V1_RISK_PARAMETERS_FILE,
+            RiskCalculationParameters.Builder.class);
+
+    DeserializedExposureConfiguration exposureConfiguration = YamlLoader.loadYamlIntoClass(
+        IOS_V2_EXPOSURE_CONFIGURATION_FILE, DeserializedExposureConfiguration.class);
+
+    return ApplicationConfigurationIOS.newBuilder()
+        .addAllSupportedCountries(List.of(distributionServiceConfig.getSupportedCountries()))
+        .setMinVersion(buildSemanticVersion(distributionServiceConfig.getAppVersions().getMinIos()))
+        .setLatestVersion(buildSemanticVersion(distributionServiceConfig.getAppVersions().getLatestIos()))
+        .setRiskCalculationParameters(riskCalculationParameterBuilder)
+        .setAppFeatures(buildAppFeatures(distributionServiceConfig))
+        .setExposureConfiguration(
+            buildExposureConfigurationFromDeserializedExposureConfiguration(exposureConfiguration))
+        .setKeyDownloadParameters(buildKeyDownloadParametersIos(distributionServiceConfig))
+        .setExposureDetectionParameters(buildExposureDetectionParametersIos(distributionServiceConfig))
+        .setEventDrivenUserSurveyParameters(buildIosEdusParameters(distributionServiceConfig))
+        .setPrivacyPreservingAnalyticsParameters(buildIosPpaParameters(distributionServiceConfig))
+        .build();
+  }
+
+  /**
+   * Fetches the source configuration as a ApplicationConfigurationAndroid instance.
+   *
+   * @param distributionServiceConfig config attributes to retrieve
+   * @return iOS configuration V2
+   * @throws UnableToLoadFileException if either the file access or subsequent yaml parsing fails.
+   */
+  @Bean
+  @Qualifier("applicationConfigurationV2Ios")
   public ApplicationConfigurationIOS createIosV2Configuration(DistributionServiceConfig distributionServiceConfig)
       throws UnableToLoadFileException {
 
@@ -224,6 +327,19 @@ public class ApplicationConfigurationV2PublicationConfig {
         .setExposureDetectionParameters(buildExposureDetectionParametersIos(distributionServiceConfig))
         .setEventDrivenUserSurveyParameters(buildIosEdusParameters(distributionServiceConfig))
         .setPrivacyPreservingAnalyticsParameters(buildIosPpaParameters(distributionServiceConfig))
+        .setErrorLogSharingParameters(buildErrorLogSharingParametersIos())
+        .setEventRegistrationParameters(buildEventRegistrationParametersIos())
+        .build();
+  }
+
+  private EventRegistrationParameters buildEventRegistrationParametersIos() {
+    return EventRegistrationParameters.newBuilder().build();
+  }
+
+  private PPDDErrorLogSharingParametersIOS buildErrorLogSharingParametersIos() {
+    return PPDDErrorLogSharingParametersIOS.newBuilder()
+        .setCommon(PPDDErrorLogSharingParametersCommon.newBuilder().build())
+        .setPpac(PPDDPrivacyPreservingAccessControlParametersIOS.newBuilder().build())
         .build();
   }
 
