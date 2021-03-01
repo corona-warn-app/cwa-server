@@ -48,7 +48,7 @@ import org.springframework.test.context.ActiveProfiles;
  * BATCH1_DATA.
  */
 @SpringBootTest
-@ActiveProfiles({"connect-efgs", "batch-audit-test", "disable-ssl-efgs-verification"})
+@ActiveProfiles({"batch-audit-test", "disable-ssl-efgs-verification"})
 @DirtiesContext
 class DownloadWithAuditIntegrationTest {
 

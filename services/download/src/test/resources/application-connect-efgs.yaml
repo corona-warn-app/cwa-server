@@ -1,7 +1,0 @@
----
-services:
-  download:
-    target-system: EFGS
-    enforce-download-offset-days: 0
-    enforce-date-based-download: true
-

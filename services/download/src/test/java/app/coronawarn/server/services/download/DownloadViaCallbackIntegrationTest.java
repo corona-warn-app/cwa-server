@@ -33,7 +33,7 @@ import org.springframework.test.context.ActiveProfiles;
  * This integration test is responsible for testing the runners for download and retention policy and it is using the
  * download-via-callback logic. The Spring profile "federation-download-integration" enables the test data generation in
  * /db/testdata/V99__createTestDataForDownloadDateBasedIntegrationTest.sql via the
- * application-download-date-based-integration-test.yaml.
+ * application-enable-test-data.yaml.
  * <p>
  * The sql script for the test data contains
  * <li>a batch info ("expired_batch") for an expired batch that should be deleted by the retention policy</li>
@@ -68,7 +68,7 @@ import org.springframework.test.context.ActiveProfiles;
  * <p>
  */
 @SpringBootTest
-@ActiveProfiles({"connect-efgs", "download-via-callback-integration-test"})
+@ActiveProfiles({"download-via-callback-integration-test"})
 @DirtiesContext
 class DownloadViaCallbackIntegrationTest {
 

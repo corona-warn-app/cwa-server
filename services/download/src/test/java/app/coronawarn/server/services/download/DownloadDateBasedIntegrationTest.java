@@ -31,8 +31,7 @@ import org.springframework.test.context.ActiveProfiles;
 /**
  * This integration test is responsible for testing the runners for download and retention policy while using the
  * date-based download logic. The Spring profile "federation-download-integration" enables the test data generation in
- * /db/testdata/V99__createTestDataForDownloadDateBasedIntegrationTest.sql via the
- * application-download-date-based-integration-test.yaml.
+ * /db/testdata/V99__createTestDataForDownloadDateBasedIntegrationTest.sql via the application-enable-test-data.yaml.
  * <p>
  * The sql script for the test data contains
  * <li>a batch info for an expired batch that should be deleted by the retention policy</li>
@@ -62,7 +61,7 @@ import org.springframework.test.context.ActiveProfiles;
  * BATCH1_DATA, BATCH2_DATA and RETRY_BATCH_SUCCESSFUL_DATA
  */
 @SpringBootTest
-@ActiveProfiles({"connect-efgs", "download-date-based-integration-test"})
+@ActiveProfiles({"enable-date-based-download", "enable-test-data"})
 @DirtiesContext
 class DownloadDateBasedIntegrationTest {
 

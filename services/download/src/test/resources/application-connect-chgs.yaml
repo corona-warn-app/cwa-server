@@ -2,5 +2,3 @@
 services:
   download:
     target-system: CHGS
-    enforce-download-offset-days: 0
-    enforce-date-based-download: true

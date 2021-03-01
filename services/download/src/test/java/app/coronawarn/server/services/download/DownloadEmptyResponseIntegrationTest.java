@@ -21,7 +21,6 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.context.annotation.Import;
 import org.springframework.http.HttpStatus;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
@@ -43,7 +42,7 @@ import org.springframework.test.context.ActiveProfiles;
  */
 @SpringBootTest
 @DirtiesContext
-@ActiveProfiles({"connect-efgs","download-empty-response-integration-test"})
+@ActiveProfiles({"enable-date-based-download"})
 class DownloadEmptyResponseIntegrationTest {
 
   public static final String BATCH1_DATA = "0123456789ABCDEF";

@@ -6,6 +6,6 @@ spring:
         enabled: true
         backend: ${VAULT_BACKEND}
         profile-separator: '/'
-        application-name: 'chgs'
+        application-name: 'download-ch'
         default-context: ''
-        profiles: chgs
+        profiles: connect-chgs
