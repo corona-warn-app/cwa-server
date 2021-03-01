@@ -1,5 +1,3 @@
-
-
 package app.coronawarn.server.services.submission.validation;
 
 import static java.util.function.Predicate.not;
@@ -30,7 +28,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 @Constraint(validatedBy = ValidSubmissionPayload.SubmissionPayloadValidator.class)
-@Target({ElementType.PARAMETER})
+@Target({ ElementType.PARAMETER })
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
 public @interface ValidSubmissionPayload {
@@ -56,8 +54,7 @@ public @interface ValidSubmissionPayload {
    */
   Class<? extends Payload>[] payload() default {};
 
-  class SubmissionPayloadValidator implements
-      ConstraintValidator<ValidSubmissionPayload, SubmissionPayload> {
+  class SubmissionPayloadValidator implements ConstraintValidator<ValidSubmissionPayload, SubmissionPayload> {
 
     private final int maxNumberOfKeys;
     private final int maxRollingPeriod;
@@ -75,15 +72,14 @@ public @interface ValidSubmissionPayload {
     /**
      * Validates the following constraints.
      * <ul>
-     *   <li>StartIntervalNumber values are always at midnight</li>
-     *   <li>There must not be more than allowed maximum number of keys in a payload
-     *       (see application.yaml/max-number-of-keys)
-     *   <li>The origin country can be missing or the provided value must be of the supported countries
-     *       (see application.yaml).</li>
-     *   <li>The visited countries can be missing or the provided values must be part of the supported countries.</li>
-     *   <li>Either a value of accepted Transmission Risk Level or an accepted Days Since Onset Of Symptoms
-     *       must be present. If one value is missing, the other one can be derived
-     *       (see {@link DiagnosisKeyNormalizer}</li>
+     * <li>StartIntervalNumber values are always at midnight</li>
+     * <li>There must not be more than allowed maximum number of keys in a payload (see
+     * application.yaml/max-number-of-keys)
+     * <li>The origin country can be missing or the provided value must be of the supported countries (see
+     * application.yaml).</li>
+     * <li>The visited countries can be missing or the provided values must be part of the supported countries.</li>
+     * <li>Either a value of accepted Transmission Risk Level or an accepted Days Since Onset Of Symptoms must be
+     * present. If one value is missing, the other one can be derived (see {@link DiagnosisKeyNormalizer}</li>
      * </ul>
      */
     @Override
@@ -113,8 +109,8 @@ public @interface ValidSubmissionPayload {
     private boolean checkKeyCollectionSize(List<TemporaryExposureKey> exposureKeys,
         ConstraintValidatorContext validatorContext) {
       if (exposureKeys.isEmpty() || exposureKeys.size() > maxNumberOfKeys) {
-        addViolation(validatorContext, String.format(
-            "Number of keys must be between 1 and %s, but is %s.", maxNumberOfKeys, exposureKeys.size()));
+        addViolation(validatorContext,
+            String.format("Number of keys must be between 1 and %s, but is %s.", maxNumberOfKeys, exposureKeys.size()));
         return false;
       }
       return true;
@@ -137,15 +133,15 @@ public @interface ValidSubmissionPayload {
      * Verify if payload contains invalid or unaccepted origin country.
      *
      * @return false if the originCountry field of the given payload does not contain a country code from the configured
-     * <code>application.yml/supported-countries</code>
+     *         <code>application.yml/supported-countries</code>
      */
     private boolean checkOriginCountryIsValid(SubmissionPayload submissionPayload,
         ConstraintValidatorContext validatorContext) {
       String originCountry = submissionPayload.getOrigin();
       if (submissionPayload.hasOrigin() && !StringUtils.isEmpty(originCountry)
           && !originCountry.equals(defaultOriginCountry)) {
-        addViolation(validatorContext, String.format(
-            "Origin country %s is not part of the supported countries list", originCountry));
+        addViolation(validatorContext,
+            String.format("Origin country %s is not part of the supported countries list", originCountry));
         return false;
       }
       return true;
@@ -172,8 +168,7 @@ public @interface ValidSubmissionPayload {
       return addViolationForInvalidTek(exposureKeys,
           tekStream -> tekStream.filter(TemporaryExposureKey::hasDaysSinceOnsetOfSymptoms)
               .filter(this::hasInvalidDaysSinceSymptoms),
-          validatorContext,
-          invalidTek -> "'" + invalidTek.getDaysSinceOnsetOfSymptoms()
+          validatorContext, invalidTek -> "'" + invalidTek.getDaysSinceOnsetOfSymptoms()
               + "' is not a valid daysSinceOnsetOfSymptoms value.");
     }
 
@@ -184,8 +179,7 @@ public @interface ValidSubmissionPayload {
           tekStream -> tekStream.filter(TemporaryExposureKey::hasTransmissionRiskLevel)
               .filter(this::hasInvalidTransmissionRiskLevel),
           validatorContext,
-          invalidTek -> "'" + invalidTek.getTransmissionRiskLevel()
-              + "' is not a valid transmissionRiskLevel value.");
+          invalidTek -> "'" + invalidTek.getTransmissionRiskLevel() + "' is not a valid transmissionRiskLevel value.");
     }
 
     private boolean checkRequiredFieldsNotMissing(List<TemporaryExposureKey> exposureKeys,
@@ -194,8 +188,7 @@ public @interface ValidSubmissionPayload {
       return addViolationForInvalidTek(exposureKeys,
           tekStream -> tekStream.filter(key -> !key.hasTransmissionRiskLevel())
               .filter(key -> !key.hasDaysSinceOnsetOfSymptoms()),
-          validatorContext,
-          invalidTek -> "A key was found which is missing both 'transmissionRiskLevel' "
+          validatorContext, invalidTek -> "A key was found which is missing both 'transmissionRiskLevel' "
               + "and 'daysSinceOnsetOfSymptoms.'");
     }
 
@@ -207,8 +200,7 @@ public @interface ValidSubmissionPayload {
 
     private boolean hasInvalidTransmissionRiskLevel(TemporaryExposureKey key) {
       int trl = key.getTransmissionRiskLevel();
-      return trl < DiagnosisKey.MIN_TRANSMISSION_RISK_LEVEL
-          || trl > DiagnosisKey.MAX_TRANSMISSION_RISK_LEVEL;
+      return trl < DiagnosisKey.MIN_TRANSMISSION_RISK_LEVEL || trl > DiagnosisKey.MAX_TRANSMISSION_RISK_LEVEL;
     }
 
     /**
@@ -217,8 +209,7 @@ public @interface ValidSubmissionPayload {
      * @return True if an invalid key was found.
      */
     private boolean addViolationForInvalidTek(List<TemporaryExposureKey> exposureKeys,
-        UnaryOperator<Stream<TemporaryExposureKey>> filterFunction,
-        ConstraintValidatorContext validatorContext,
+        UnaryOperator<Stream<TemporaryExposureKey>> filterFunction, ConstraintValidatorContext validatorContext,
         Function<TemporaryExposureKey, String> messageConstructor) {
       AtomicBoolean foundInvalid = new AtomicBoolean(true);
       filterFunction.apply(exposureKeys.stream()).findFirst().ifPresent(invalidTek -> {
