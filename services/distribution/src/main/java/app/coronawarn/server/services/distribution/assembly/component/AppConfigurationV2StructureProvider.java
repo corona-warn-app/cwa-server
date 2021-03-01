@@ -1,5 +1,3 @@
-
-
 package app.coronawarn.server.services.distribution.assembly.component;
 
 import app.coronawarn.server.common.protocols.internal.v2.ApplicationConfigurationAndroid;

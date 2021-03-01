@@ -15,7 +15,7 @@ import org.springframework.stereotype.Component;
  * response code is 2xx or 404, else sets health to down, and marks
  * application as not ready for requests.
  */
-@Component
+@Component("verificationService")
 public class VerificationServiceHealthIndicator implements HealthIndicator {
 
   private final VerificationServerClient verificationServerClient;
