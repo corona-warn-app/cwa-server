@@ -3,14 +3,13 @@
 package app.coronawarn.server.services.download.normalization;
 
 import static app.coronawarn.server.common.persistence.domain.FederationBatchStatus.UNPROCESSED;
-import static app.coronawarn.server.common.persistence.domain.FederationBatchTarget.*;
+import static app.coronawarn.server.common.persistence.domain.FederationBatchSource.*;
 import static org.assertj.core.util.Lists.list;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.when;
 
 import app.coronawarn.server.common.persistence.domain.FederationBatchInfo;
-import app.coronawarn.server.common.persistence.domain.FederationBatchTarget;
 import app.coronawarn.server.common.persistence.domain.config.TekFieldDerivations;
 import app.coronawarn.server.common.persistence.domain.normalization.DiagnosisKeyNormalizer;
 import app.coronawarn.server.common.persistence.domain.normalization.NormalizableFields;

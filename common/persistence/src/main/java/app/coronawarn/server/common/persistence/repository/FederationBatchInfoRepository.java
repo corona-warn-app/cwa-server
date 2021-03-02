@@ -3,7 +3,7 @@
 package app.coronawarn.server.common.persistence.repository;
 
 import app.coronawarn.server.common.persistence.domain.FederationBatchInfo;
-import app.coronawarn.server.common.persistence.domain.FederationBatchTarget;
+import app.coronawarn.server.common.persistence.domain.FederationBatchSource;
 import java.time.LocalDate;
 import java.util.List;
 import org.springframework.data.jdbc.repository.query.Modifying;
@@ -17,25 +17,25 @@ public interface FederationBatchInfoRepository extends PagingAndSortingRepositor
 
   @Modifying
   @Query("INSERT INTO federation_batch_info "
-      + "(batch_tag, date, status, target_system) "
-      + "VALUES (:batchTag, :date, :status, :targetSystem) "
+      + "(batch_tag, date, status, source_system) "
+      + "VALUES (:batchTag, :date, :status, :sourceSystem) "
       + "ON CONFLICT DO NOTHING")
   boolean saveDoNothingOnConflict(
       @Param("batchTag") String batchTag,
       @Param("date") LocalDate date,
       @Param("status") String status,
-      @Param("targetSystem") FederationBatchTarget targetSystem);
+      @Param("sourceSystem") FederationBatchSource sourceSystem);
 
   @Modifying
   @Query("INSERT INTO federation_batch_info "
-      + "(batch_tag, date, status, target_system) "
-      + "VALUES (:batchTag, :date, :status, :targetSystem) "
+      + "(batch_tag, date, status, source_system) "
+      + "VALUES (:batchTag, :date, :status, :sourceSystem) "
       + "ON CONFLICT (batch_tag) DO UPDATE SET status=:status")
   void saveDoUpdateStatusOnConflict(
       @Param("batchTag") String batchTag,
       @Param("date") LocalDate date,
       @Param("status") String status,
-      @Param("targetSystem") FederationBatchTarget targetSystem);
+      @Param("sourceSystem") FederationBatchSource sourceSystem);
 
   List<FederationBatchInfo> findByStatus(@Param("status") String status);
 

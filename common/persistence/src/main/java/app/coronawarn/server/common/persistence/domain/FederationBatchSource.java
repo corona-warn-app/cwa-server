@@ -1,6 +1,6 @@
 package app.coronawarn.server.common.persistence.domain;
 
-public enum FederationBatchTarget {
+public enum FederationBatchSource {
   EFGS,
   CHGS;
 

@@ -2,7 +2,7 @@
 
 package app.coronawarn.server.services.download.config;
 
-import app.coronawarn.server.common.persistence.domain.FederationBatchTarget;
+import app.coronawarn.server.common.persistence.domain.FederationBatchSource;
 import app.coronawarn.server.common.persistence.domain.config.TekFieldDerivations;
 import app.coronawarn.server.common.protocols.external.exposurenotification.ReportType;
 import java.util.List;
@@ -29,7 +29,7 @@ public class DownloadServiceConfig {
   @Autowired
   private TekFieldDerivations tekFieldDerivations;
   private boolean batchAuditEnabled;
-  private FederationBatchTarget targetSystem;
+  private FederationBatchSource targetSystem;
 
   public Validation getValidation() {
     return validation;
@@ -80,11 +80,11 @@ public class DownloadServiceConfig {
     this.batchAuditEnabled = batchAuditEnabled;
   }
 
-  public FederationBatchTarget getTargetSystem() {
+  public FederationBatchSource getTargetSystem() {
     return targetSystem;
   }
 
-  public void setTargetSystem(FederationBatchTarget targetSystem) {
+  public void setTargetSystem(FederationBatchSource targetSystem) {
     this.targetSystem = targetSystem;
   }
 

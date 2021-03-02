@@ -1,4 +1,4 @@
 ---
 services:
   download:
-    target-system: CHGS
+    source-system: CHGS
