@@ -5,7 +5,7 @@ spring:
   cloud:
     vault:
       ssl:
-        trust-store: ${SSL_VAULT_TRUSTSTORE_PATH}
+        trust-store: file:${SSL_VAULT_TRUSTSTORE_PATH}
         trust-store-password: ${SSL_VAULT_TRUSTSTORE_PASSWORD}
       enabled: true
       generic:
