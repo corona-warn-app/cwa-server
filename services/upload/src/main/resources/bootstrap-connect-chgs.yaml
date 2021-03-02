@@ -1,0 +1,7 @@
+---
+spring:
+  cloud:
+    vault:
+      kv:
+        application-name: 'upload-ch'
+        profiles: cloud,connect-chgs
