@@ -17,7 +17,7 @@ import static org.assertj.core.api.Assertions.assertThat;
  * This profile enables data based download. Since the "connect-chgs" profile is not active it will trigger the download
  * for efgs, which is the default.
  */
-@ActiveProfiles("enable-date-based-download")
+@ActiveProfiles({"connect-efgs","enable-date-based-download"})
 public class DownloadForEfgsIntegrationTest extends GatewayServiceIntegrationSuite {
 
   @Autowired

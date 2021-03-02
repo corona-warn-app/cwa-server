@@ -42,7 +42,7 @@ import org.springframework.test.context.ActiveProfiles;
  */
 @SpringBootTest
 @DirtiesContext
-@ActiveProfiles({"enable-date-based-download"})
+@ActiveProfiles({"connect-efgs","enable-date-based-download"})
 class DownloadEmptyResponseIntegrationTest {
 
   public static final String BATCH1_DATA = "0123456789ABCDEF";

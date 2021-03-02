@@ -61,7 +61,7 @@ import org.springframework.test.context.ActiveProfiles;
  * BATCH1_DATA, BATCH2_DATA and RETRY_BATCH_SUCCESSFUL_DATA
  */
 @SpringBootTest
-@ActiveProfiles({"enable-date-based-download", "enable-test-data"})
+@ActiveProfiles({"connect-efgs","enable-date-based-download", "enable-test-data"})
 @DirtiesContext
 class DownloadDateBasedIntegrationTest {
 
