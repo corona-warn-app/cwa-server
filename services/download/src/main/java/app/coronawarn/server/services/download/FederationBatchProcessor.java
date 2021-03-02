@@ -103,7 +103,7 @@ public class FederationBatchProcessor {
     try {
       logger.info("Triggering download of first batch for date {}.", date);
       BatchDownloadResponse response = federationGatewayDownloadService.downloadBatch(date);
-      batchInfoService.save(new FederationBatchInfo(response.getBatchTag(), date, this.config.getTargetSystem()));
+      batchInfoService.save(new FederationBatchInfo(response.getBatchTag(), date, this.config.getSourceSystem()));
     } catch (FatalFederationGatewayException e) {
       throw e;
     } catch (Exception e) {
@@ -127,7 +127,7 @@ public class FederationBatchProcessor {
       processBatchAndReturnNextBatchId(federationBatchInfo, ERROR_WONT_RETRY)
           .ifPresent(nextBatchTag ->
               batchInfoService.save(new FederationBatchInfo(nextBatchTag, federationBatchInfo.getDate(), this.config
-                  .getTargetSystem())));
+                  .getSourceSystem())));
     } catch (Exception e) {
       logger.error("Failed to save next federation batch info for processing. Will not try again.", e);
       batchInfoService.updateStatus(federationBatchInfo, ERROR_WONT_RETRY);
@@ -151,7 +151,7 @@ public class FederationBatchProcessor {
           .ifPresent(nextBatchTag -> {
             if (isEfgsEnforceDateBasedDownloadAndNotSeen(nextBatchTag)) {
               unprocessedBatches.add(new FederationBatchInfo(nextBatchTag, currentBatchInfo.getDate(), this.config
-                  .getTargetSystem()));
+                  .getSourceSystem()));
             }
           });
     }

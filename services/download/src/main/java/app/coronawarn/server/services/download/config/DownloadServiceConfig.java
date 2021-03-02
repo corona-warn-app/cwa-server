@@ -29,7 +29,7 @@ public class DownloadServiceConfig {
   @Autowired
   private TekFieldDerivations tekFieldDerivations;
   private boolean batchAuditEnabled;
-  private FederationBatchSource targetSystem;
+  private FederationBatchSource sourceSystem;
 
   public Validation getValidation() {
     return validation;
@@ -80,12 +80,12 @@ public class DownloadServiceConfig {
     this.batchAuditEnabled = batchAuditEnabled;
   }
 
-  public FederationBatchSource getTargetSystem() {
-    return targetSystem;
+  public FederationBatchSource getSourceSystem() {
+    return sourceSystem;
   }
 
-  public void setTargetSystem(FederationBatchSource targetSystem) {
-    this.targetSystem = targetSystem;
+  public void setSourceSystem(FederationBatchSource sourceSystem) {
+    this.sourceSystem = sourceSystem;
   }
 
   public static class Validation {

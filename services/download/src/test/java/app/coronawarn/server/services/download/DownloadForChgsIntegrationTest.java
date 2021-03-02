@@ -22,12 +22,12 @@ public class DownloadForChgsIntegrationTest extends GatewayServiceIntegrationSui
 
   @ParameterizedTest
   @EnumSource(value = FederationBatchSource.class, names = {"CHGS"})
-  void downloadShouldRunSuccessfulFor(FederationBatchSource target) {
+  void downloadShouldRunSuccessfulFor(FederationBatchSource source) {
     final List<FederationBatchInfo> processedBatches = batchInfoRepository
         .findByStatus(FederationBatchStatus.PROCESSED.name());
     assertThat(batchInfoRepository.findAll()).hasSize(2);
     assertThat(processedBatches).extracting(FederationBatchInfo::getSourceSystem).containsExactly(
-        target);
+        source);
 
   }
 }
