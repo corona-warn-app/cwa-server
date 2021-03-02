@@ -8,3 +8,4 @@ spring:
         profile-separator: '/'
         application-name: 'download'
         default-context: ''
+        profiles: cloud
