@@ -217,6 +217,24 @@ class FederationBatchProcessorTest {
     void testOneUnprocessedBatchAuditFails() throws Exception {
       config.setBatchAuditEnabled(true);
       when(batchInfoService.findByStatus(UNPROCESSED))
+          .thenReturn(list(new FederationBatchInfo(batchTag1, date, UNPROCESSED)));
+      BatchDownloadResponse serverResponse = FederationBatchTestHelper
+          .createBatchDownloadResponse(batchTag1, Optional.empty());
+      when(federationGatewayDownloadService.downloadBatch(batchTag1, date)).thenReturn(serverResponse);
+      doThrow(BatchAuditException.class).when(federationGatewayDownloadService).auditBatch(batchTag1, date);
+      batchProcessor.processUnprocessedFederationBatches();
+      verify(batchInfoService, times(1)).findByStatus(UNPROCESSED);
+      verify(federationGatewayDownloadService, times(1)).downloadBatch(batchTag1, date);
+      verify(federationGatewayDownloadService, times(1)).auditBatch(batchTag1, date);
+      verify(batchInfoService, times(1)).updateStatus(any(FederationBatchInfo.class), eq(ERROR));
+      verify(diagnosisKeyService, never()).saveDiagnosisKeys(any());
+      config.setBatchAuditEnabled(false);
+    }
+
+    @Test
+    void testOneUnprocessedEmptyBatchNoAuditCall() throws Exception {
+      config.setBatchAuditEnabled(true);
+      when(batchInfoService.findByStatus(UNPROCESSED))
           .thenReturn(list(new FederationBatchInfo(batchTag1, date, UNPROCESSED, EFGS)));
       BatchDownloadResponse serverResponse = FederationBatchTestHelper
           .createBatchDownloadResponse(batchTag1, Optional.empty());

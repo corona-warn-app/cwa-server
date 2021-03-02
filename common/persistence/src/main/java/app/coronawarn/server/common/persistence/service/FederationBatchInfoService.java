@@ -43,7 +43,7 @@ public class FederationBatchInfoService {
    * Sets the status of the provided federation batch.
    *
    * @param federationBatchInfo batch information {@link FederationBatchInfo}
-   * @param status              batch status {@link FederationBatchStatus}
+   * @param status batch status {@link FederationBatchStatus}
    */
   public void updateStatus(FederationBatchInfo federationBatchInfo, FederationBatchStatus status) {
     String statusValue = status.name();
