@@ -35,7 +35,7 @@ abstract class DiagnosisKeyUploadIT extends UploadKeyIT {
   @MockBean
   private FederationUploadClient federationUploadClient;
 
-  @ActiveProfiles({"disable-ssl-efgs-verification", "connect-sgs"})
+  @ActiveProfiles({"disable-ssl-efgs-verification", "connect-chgs"})
   public static class UploadKeySgsIT extends DiagnosisKeyUploadIT {
 
     @Test

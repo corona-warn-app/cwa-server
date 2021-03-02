@@ -23,7 +23,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 @Component
-@Profile("connect-efgs | connect-sgs")
+@Profile("connect-efgs | connect-chgs")
 public class FederationUploadKeyService {
 
   private final FederationUploadKeyRepository keyRepository;

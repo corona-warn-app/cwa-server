@@ -1,4 +1,4 @@
-CREATE TABLE sgs_upload_key (
+CREATE TABLE chgs_upload_key (
     key_data bytea PRIMARY KEY,
     rolling_period integer NOT NULL,
     rolling_start_interval_number integer NOT NULL,

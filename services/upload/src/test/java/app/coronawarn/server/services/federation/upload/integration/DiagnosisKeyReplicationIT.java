@@ -46,7 +46,7 @@ abstract class DiagnosisKeyReplicationIT extends UploadKeyIT {
     }
   }
 
-  @ActiveProfiles({"disable-ssl-efgs-verification", "connect-sgs"})
+  @ActiveProfiles({"disable-ssl-efgs-verification", "connect-chgs"})
   public static class ReplicationForSgsTest extends DiagnosisKeyReplicationIT {
 
     @Test

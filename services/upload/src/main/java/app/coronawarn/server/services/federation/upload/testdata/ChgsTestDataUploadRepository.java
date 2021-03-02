@@ -8,12 +8,12 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 @Repository
-@Profile("testdata & connect-sgs")
-public interface SgsTestDataUploadRepository
+@Profile("testdata & connect-chgs")
+public interface ChgsTestDataUploadRepository
     extends org.springframework.data.repository.Repository<FederationUploadKey, Long>, TestDataUploadRepository {
 
   @Modifying
-  @Query("INSERT INTO sgs_upload_key "
+  @Query("INSERT INTO chgs_upload_key "
       + "(key_data, rolling_start_interval_number, rolling_period, submission_timestamp, transmission_risk_level, "
       + "origin_country, visited_countries, report_type, days_since_onset_of_symptoms, consent_to_federation) "
       + "VALUES (:keyData, :rollingStartIntervalNumber, :rollingPeriod, :submissionTimestamp, :transmissionRisk, "
@@ -30,10 +30,10 @@ public interface SgsTestDataUploadRepository
       @Param("days_since_onset_of_symptoms") int daysSinceOnsetOfSymptoms,
       @Param("consent_to_federation") boolean consentToFederation);
 
-  @Query("SELECT COUNT(*) FROM sgs_upload_key WHERE batch_tag IS NULL")
+  @Query("SELECT COUNT(*) FROM chgs_upload_key WHERE batch_tag IS NULL")
   Integer countPendingKeys();
 
   @Modifying
-  @Query("DELETE FROM sgs_upload_key WHERE rolling_start_interval_number<=:retention")
+  @Query("DELETE FROM chgs_upload_key WHERE rolling_start_interval_number<=:retention")
   void applyRetentionToTestKeys(@Param("retention") int retention);
 }

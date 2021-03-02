@@ -4,7 +4,7 @@ CREATE OR REPLACE FUNCTION mirror_uploadable_swiss_keys()
 RETURNS TRIGGER AS $$
 BEGIN
     IF ( NEW.CONSENT_TO_FEDERATION = TRUE ) THEN
-        INSERT INTO sgs_upload_key VALUES (NEW.*);
+        INSERT INTO chgs_upload_key VALUES (NEW.*);
     END IF;
     RETURN NEW;
 END;
@@ -18,7 +18,7 @@ CREATE TRIGGER mirror_uploadable_swiss_keys_trigger
 CREATE OR REPLACE FUNCTION remove_expired_swiss_uploadable_keys()
 RETURNS TRIGGER AS $$
 BEGIN
-    DELETE FROM sgs_upload_key WHERE key_data = OLD.key_data;
+    DELETE FROM chgs_upload_key WHERE key_data = OLD.key_data;
     RETURN OLD;
 END;
 $$
@@ -31,6 +31,6 @@ CREATE TRIGGER remove_expired_uploadable_swiss_keys_trigger
     
 -- Add the necessary permissions for the swiss federation gateway key table and replication triggers
 
-GRANT SELECT, DELETE ON TABLE sgs_upload_key TO "cwa_sgs_upload";
-GRANT SELECT, DELETE ON TABLE sgs_upload_key TO "cwa_distribution";
-GRANT INSERT ON TABLE sgs_upload_key TO "cwa_submission";
+GRANT SELECT, DELETE ON TABLE chgs_upload_key TO "cwa_sgs_upload";
+GRANT SELECT, DELETE ON TABLE chgs_upload_key TO "cwa_distribution";
+GRANT INSERT ON TABLE chgs_upload_key TO "cwa_submission";

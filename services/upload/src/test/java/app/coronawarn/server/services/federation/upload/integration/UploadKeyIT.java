@@ -26,6 +26,6 @@ abstract class UploadKeyIT {
   public void setUpMocks() {
     // cleanup upload key table before tests run
     jdbcTemplate.execute("truncate table federation_upload_key");
-    jdbcTemplate.execute("truncate table sgs_upload_key");
+    jdbcTemplate.execute("truncate table chgs_upload_key");
   }
 }
