@@ -1,5 +1,25 @@
 package app.coronawarn.server.services.download;
 
+import static app.coronawarn.server.common.persistence.domain.FederationBatchStatus.ERROR;
+import static app.coronawarn.server.common.persistence.domain.FederationBatchStatus.ERROR_WONT_RETRY;
+import static app.coronawarn.server.common.persistence.domain.FederationBatchStatus.PROCESSED;
+import static app.coronawarn.server.common.persistence.domain.FederationBatchStatus.PROCESSED_WITH_ERROR;
+import static app.coronawarn.server.common.persistence.domain.FederationBatchStatus.UNPROCESSED;
+import static app.coronawarn.server.common.persistence.domain.FederationBatchTarget.EFGS;
+import static java.util.Collections.emptyList;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.assertj.core.util.Lists.list;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.any;
+import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.reset;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
 import app.coronawarn.server.common.federation.client.FederationGatewayClient;
 import app.coronawarn.server.common.persistence.domain.FederationBatchInfo;
 import app.coronawarn.server.common.persistence.domain.FederationBatchStatus;
@@ -12,7 +32,18 @@ import app.coronawarn.server.services.download.config.DownloadServiceConfig;
 import app.coronawarn.server.services.download.validation.ValidFederationKeyFilter;
 import com.google.protobuf.ByteString;
 import feign.FeignException;
-import org.junit.jupiter.api.*;
+import java.time.Duration;
+import java.time.LocalDate;
+import java.time.Period;
+import java.time.ZoneOffset;
+import java.util.List;
+import java.util.Optional;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Nested;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.mockito.ArgumentCaptor;
@@ -22,22 +53,6 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.annotation.DirtiesContext;
-import java.time.Duration;
-import java.time.LocalDate;
-import java.time.Period;
-import java.time.ZoneOffset;
-import java.util.List;
-import java.util.Optional;
-
-import static app.coronawarn.server.common.persistence.domain.FederationBatchStatus.*;
-import static app.coronawarn.server.common.persistence.domain.FederationBatchTarget.EFGS;
-import static java.util.Collections.emptyList;
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.assertj.core.util.Lists.list;
-import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.*;
 
 @SpringBootTest(classes = {FederationBatchProcessor.class, FederationBatchInfoService.class, DiagnosisKeyService.class,
     FederationGatewayClient.class, ValidFederationKeyFilter.class, TekFieldDerivations.class})
@@ -217,7 +232,7 @@ class FederationBatchProcessorTest {
     void testOneUnprocessedBatchAuditFails() throws Exception {
       config.setBatchAuditEnabled(true);
       when(batchInfoService.findByStatus(UNPROCESSED))
-          .thenReturn(list(new FederationBatchInfo(batchTag1, date, UNPROCESSED)));
+          .thenReturn(list(new FederationBatchInfo(batchTag1, date, UNPROCESSED,EFGS)));
       BatchDownloadResponse serverResponse = FederationBatchTestHelper
           .createBatchDownloadResponse(batchTag1, Optional.empty());
       when(federationGatewayDownloadService.downloadBatch(batchTag1, date)).thenReturn(serverResponse);
@@ -244,21 +259,6 @@ class FederationBatchProcessorTest {
       verify(batchInfoService, times(1)).findByStatus(UNPROCESSED);
       verify(federationGatewayDownloadService, times(1)).downloadBatch(batchTag1, date);
       verify(federationGatewayDownloadService, times(1)).auditBatch(batchTag1, date);
-      verify(batchInfoService, times(1)).updateStatus(any(FederationBatchInfo.class), eq(ERROR));
-      verify(diagnosisKeyService, never()).saveDiagnosisKeys(any());
-      config.setBatchAuditEnabled(false);
-    }
-
-    @Test
-    void testOneUnprocessedEmptyBatchNoAuditCall() throws Exception {
-      config.setBatchAuditEnabled(true);
-      when(batchInfoService.findByStatus(UNPROCESSED))
-          .thenReturn(list(new FederationBatchInfo(batchTag1, date, UNPROCESSED, EFGS)));
-      doThrow(BatchAuditException.class).when(federationGatewayDownloadService).auditBatch(batchTag1, date);
-      batchProcessor.processUnprocessedFederationBatches();
-      verify(batchInfoService, times(1)).findByStatus(UNPROCESSED);
-      verify(federationGatewayDownloadService, times(1)).downloadBatch(batchTag1, date);
-      verify(federationGatewayDownloadService, times(0)).auditBatch(batchTag1, date);
       verify(batchInfoService, times(1)).updateStatus(any(FederationBatchInfo.class), eq(ERROR));
       verify(diagnosisKeyService, never()).saveDiagnosisKeys(any());
       config.setBatchAuditEnabled(false);

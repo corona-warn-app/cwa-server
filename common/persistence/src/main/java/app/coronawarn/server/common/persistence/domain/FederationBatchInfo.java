@@ -21,10 +21,9 @@ public class FederationBatchInfo {
   /**
    * Creates a FederationBatchInfo and sets its status to {@link FederationBatchStatus#UNPROCESSED}.
    *
-   * @param batchTag id of the batch
-   * @param date     date the batch was created
-   * @param batchTag id of the batch
-   * @param date date the batch was created
+   * @param batchTag     id of the batch.
+   * @param date         date the batch was created.
+   * @param targetSystem the target system to use for download.
    */
   public FederationBatchInfo(String batchTag, LocalDate date, FederationBatchTarget targetSystem) {
     this(batchTag, date, FederationBatchStatus.UNPROCESSED, targetSystem);
@@ -36,7 +35,7 @@ public class FederationBatchInfo {
    * @param batchTag id of the batch
    * @param date     date the batch was created
    * @param status   status stored as {@link FederationBatchStatus}
-    */
+   */
   @PersistenceConstructor
   public FederationBatchInfo(String batchTag, LocalDate date, FederationBatchStatus status,
       FederationBatchTarget targetSystem) {
