@@ -7,7 +7,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import app.coronawarn.server.common.persistence.domain.FederationBatchInfo;
 import app.coronawarn.server.common.persistence.domain.FederationBatchStatus;
-import app.coronawarn.server.common.persistence.domain.FederationBatchSource;
+import app.coronawarn.server.common.persistence.domain.FederationBatchSourceSystem;
 import java.time.LocalDate;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
@@ -25,7 +25,7 @@ class FederationBatchInfoRepositoryTest {
   private static final String statusError = FederationBatchStatus.ERROR.name();
   private static final String statusProcessed = FederationBatchStatus.PROCESSED.name();
   private static final String statusUnprocessed = FederationBatchStatus.UNPROCESSED.name();
-  private static final FederationBatchSource efgsTarget = FederationBatchSource.EFGS;
+  private static final FederationBatchSourceSystem efgsTarget = FederationBatchSourceSystem.EFGS;
   @Autowired
   private FederationBatchInfoRepository federationBatchInfoRepository;
 
@@ -39,7 +39,7 @@ class FederationBatchInfoRepositoryTest {
     federationBatchInfoRepository.saveDoNothingOnConflict(batchTag1, date1, statusProcessed, efgsTarget);
     assertThat(federationBatchInfoRepository.findByStatus(statusProcessed))
         .isEqualTo(singletonList(
-            new FederationBatchInfo(batchTag1, date1, FederationBatchStatus.PROCESSED, FederationBatchSource.EFGS)));
+            new FederationBatchInfo(batchTag1, date1, FederationBatchStatus.PROCESSED, FederationBatchSourceSystem.EFGS)));
   }
 
   @Test
@@ -55,7 +55,7 @@ class FederationBatchInfoRepositoryTest {
     federationBatchInfoRepository.saveDoNothingOnConflict(batchTag2, date2, statusError, efgsTarget);
     assertThat(federationBatchInfoRepository.findByStatus(statusUnprocessed))
         .isEqualTo(singletonList(
-            new FederationBatchInfo(batchTag1, date1, FederationBatchStatus.UNPROCESSED, FederationBatchSource.EFGS)));
+            new FederationBatchInfo(batchTag1, date1, FederationBatchStatus.UNPROCESSED, FederationBatchSourceSystem.EFGS)));
   }
 
   @Test

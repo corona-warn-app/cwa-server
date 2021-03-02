@@ -5,7 +5,7 @@ import static app.coronawarn.server.common.persistence.domain.FederationBatchSta
 import static app.coronawarn.server.common.persistence.domain.FederationBatchStatus.PROCESSED;
 import static app.coronawarn.server.common.persistence.domain.FederationBatchStatus.PROCESSED_WITH_ERROR;
 import static app.coronawarn.server.common.persistence.domain.FederationBatchStatus.UNPROCESSED;
-import static app.coronawarn.server.common.persistence.domain.FederationBatchSource.EFGS;
+import static app.coronawarn.server.common.persistence.domain.FederationBatchSourceSystem.EFGS;
 import static java.util.Collections.emptyList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;

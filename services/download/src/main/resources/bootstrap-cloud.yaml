@@ -10,13 +10,6 @@ spring:
       enabled: true
       generic:
         enabled: false
-      kv:
-        enabled: true
-        backend: ${VAULT_BACKEND}
-        profile-separator: '/'
-        application-name: 'download'
-        default-context: ''
-        profiles: cloud
       fail-fast: true
       authentication: KUBERNETES
       kubernetes:

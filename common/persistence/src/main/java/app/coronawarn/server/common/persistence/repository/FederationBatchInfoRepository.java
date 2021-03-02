@@ -3,7 +3,7 @@
 package app.coronawarn.server.common.persistence.repository;
 
 import app.coronawarn.server.common.persistence.domain.FederationBatchInfo;
-import app.coronawarn.server.common.persistence.domain.FederationBatchSource;
+import app.coronawarn.server.common.persistence.domain.FederationBatchSourceSystem;
 import java.time.LocalDate;
 import java.util.List;
 import org.springframework.data.jdbc.repository.query.Modifying;
@@ -24,7 +24,7 @@ public interface FederationBatchInfoRepository extends PagingAndSortingRepositor
       @Param("batchTag") String batchTag,
       @Param("date") LocalDate date,
       @Param("status") String status,
-      @Param("sourceSystem") FederationBatchSource sourceSystem);
+      @Param("sourceSystem") FederationBatchSourceSystem sourceSystem);
 
   @Modifying
   @Query("INSERT INTO federation_batch_info "
@@ -35,7 +35,7 @@ public interface FederationBatchInfoRepository extends PagingAndSortingRepositor
       @Param("batchTag") String batchTag,
       @Param("date") LocalDate date,
       @Param("status") String status,
-      @Param("sourceSystem") FederationBatchSource sourceSystem);
+      @Param("sourceSystem") FederationBatchSourceSystem sourceSystem);
 
   List<FederationBatchInfo> findByStatus(@Param("status") String status);
 

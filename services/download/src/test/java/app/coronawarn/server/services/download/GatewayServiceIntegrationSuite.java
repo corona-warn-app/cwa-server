@@ -6,7 +6,7 @@ import static com.github.tomakehurst.wiremock.client.WireMock.get;
 import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.options;
 import static org.springframework.http.HttpHeaders.CONTENT_TYPE;
 
-import app.coronawarn.server.common.persistence.domain.FederationBatchSource;
+import app.coronawarn.server.common.persistence.domain.FederationBatchSourceSystem;
 import app.coronawarn.server.common.protocols.external.exposurenotification.DiagnosisKeyBatch;
 import com.github.tomakehurst.wiremock.WireMockServer;
 import com.github.tomakehurst.wiremock.http.HttpHeader;
@@ -61,5 +61,5 @@ public abstract class GatewayServiceIntegrationSuite {
         .plus(new HttpHeader("nextBatchTag", nextBatchTag));
   }
 
-  abstract void downloadShouldRunSuccessfulFor(FederationBatchSource target);
+  abstract void downloadShouldRunSuccessfulFor(FederationBatchSourceSystem target);
 }

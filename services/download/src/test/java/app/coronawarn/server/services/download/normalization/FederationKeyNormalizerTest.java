@@ -3,7 +3,7 @@
 package app.coronawarn.server.services.download.normalization;
 
 import static app.coronawarn.server.common.persistence.domain.FederationBatchStatus.UNPROCESSED;
-import static app.coronawarn.server.common.persistence.domain.FederationBatchSource.*;
+import static app.coronawarn.server.common.persistence.domain.FederationBatchSourceSystem.*;
 import static org.assertj.core.util.Lists.list;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;

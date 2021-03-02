@@ -1,6 +1,6 @@
 package app.coronawarn.server.services.callback.controller;
 
-import static app.coronawarn.server.common.persistence.domain.FederationBatchSource.EFGS;
+import static app.coronawarn.server.common.persistence.domain.FederationBatchSourceSystem.EFGS;
 
 import app.coronawarn.server.common.persistence.domain.FederationBatchInfo;
 import app.coronawarn.server.common.persistence.service.FederationBatchInfoService;

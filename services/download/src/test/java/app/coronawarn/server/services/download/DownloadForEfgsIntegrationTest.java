@@ -2,7 +2,7 @@ package app.coronawarn.server.services.download;
 
 import app.coronawarn.server.common.persistence.domain.FederationBatchInfo;
 import app.coronawarn.server.common.persistence.domain.FederationBatchStatus;
-import app.coronawarn.server.common.persistence.domain.FederationBatchSource;
+import app.coronawarn.server.common.persistence.domain.FederationBatchSourceSystem;
 import app.coronawarn.server.common.persistence.repository.FederationBatchInfoRepository;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.EnumSource;
@@ -24,8 +24,8 @@ public class DownloadForEfgsIntegrationTest extends GatewayServiceIntegrationSui
   private FederationBatchInfoRepository batchInfoRepository;
 
   @ParameterizedTest
-  @EnumSource(value = FederationBatchSource.class, names = {"EFGS"})
-  void downloadShouldRunSuccessfulFor(FederationBatchSource target) {
+  @EnumSource(value = FederationBatchSourceSystem.class, names = {"EFGS"})
+  void downloadShouldRunSuccessfulFor(FederationBatchSourceSystem target) {
     final List<FederationBatchInfo> processedBatches = batchInfoRepository
         .findByStatus(FederationBatchStatus.PROCESSED.name());
     assertThat(batchInfoRepository.findAll()).hasSize(2);
