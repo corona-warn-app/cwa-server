@@ -72,7 +72,7 @@ CREATE ROLE cwa_federation_download
    NOREPLICATION
    IN ROLE cwa_user;
 
- CREATE ROLE cwa_sgs_upload
+ CREATE ROLE cwa_chgs_upload
    NOLOGIN
    NOSUPERUSER
    INHERIT
