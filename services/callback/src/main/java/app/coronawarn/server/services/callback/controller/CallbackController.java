@@ -46,7 +46,6 @@ public class CallbackController {
   public ResponseEntity<Void> handleCallback(@RequestParam String batchTag,
       @NotNull @DateTimeFormat(iso = ISO.DATE) @RequestParam LocalDate date) {
     logger.info("BatchInfo with tag {} and date {} received from federation gateway.", batchTag, date);
-    // TODO check how to integrate swiss?
     FederationBatchInfo federationBatchInfo = new FederationBatchInfo(batchTag, date, EFGS);
     boolean savedSuccessfully = federationBatchInfoService.save(federationBatchInfo);
     if (savedSuccessfully) {
