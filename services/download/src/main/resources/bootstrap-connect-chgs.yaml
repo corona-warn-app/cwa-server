@@ -1,7 +1,5 @@
 ---
 spring:
-  application:
-    name: cwa-server
   cloud:
     vault:
       kv:
@@ -10,21 +8,5 @@ spring:
         profile-separator: '/'
         application-name: 'download-ch'
         default-context: ''
-        profiles: connect-chgs
-      ssl:
-        trust-store: file:${SSL_VAULT_TRUSTSTORE_PATH}
-        trust-store-password: ${SSL_VAULT_TRUSTSTORE_PASSWORD}
-      enabled: true
-      generic:
-        enabled: false
-      fail-fast: true
-      authentication: KUBERNETES
-      kubernetes:
-        role: ${VAULT_ROLE}
-        kubernetes-path: kubernetes
-        service-account-token-file: /var/run/secrets/kubernetes.io/serviceaccount/token
-      uri: ${VAULT_URI}
-      connection-timeout: 5000
-      read-timeout: 15000
-      config:
-        order: -10
+        profiles: cloud, connect-chgs
+
