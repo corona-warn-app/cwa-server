@@ -11,4 +11,4 @@ CREATE USER "local_setup_download" WITH INHERIT IN ROLE cwa_federation_download 
 CREATE USER "local_setup_upload" WITH INHERIT IN ROLE cwa_federation_upload ENCRYPTED PASSWORD 'local_setup_upload';
 
 /* --------------- Swiss Federation Gateway --------------- */
-CREATE USER "local_setup_sgs_upload" WITH INHERIT IN ROLE cwa_sgs_upload ENCRYPTED PASSWORD 'local_setup_sgs_upload';
+CREATE USER "local_setup_sgs_upload" WITH INHERIT IN ROLE cwa_chgs_upload ENCRYPTED PASSWORD 'local_setup_sgs_upload';

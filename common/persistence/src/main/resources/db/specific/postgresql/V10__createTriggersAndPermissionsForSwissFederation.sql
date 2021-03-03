@@ -31,6 +31,6 @@ CREATE TRIGGER remove_expired_uploadable_swiss_keys_trigger
     
 -- Add the necessary permissions for the swiss federation gateway key table and replication triggers
 
-GRANT SELECT, DELETE ON TABLE chgs_upload_key TO "cwa_sgs_upload";
+GRANT SELECT, DELETE ON TABLE chgs_upload_key TO "cwa_chgs_upload";
 GRANT SELECT, DELETE ON TABLE chgs_upload_key TO "cwa_distribution";
 GRANT INSERT ON TABLE chgs_upload_key TO "cwa_submission";
