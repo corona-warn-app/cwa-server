@@ -4,6 +4,12 @@ spring:
     name: cwa-server
   cloud:
     vault:
+      kv:
+        enabled: true
+        backend: ${VAULT_BACKEND}
+        profile-separator: '/'
+        default-context: ''
+        profiles: cloud
       ssl:
         trust-store: file:${SSL_VAULT_TRUSTSTORE_PATH}
         trust-store-password: ${SSL_VAULT_TRUSTSTORE_PASSWORD}

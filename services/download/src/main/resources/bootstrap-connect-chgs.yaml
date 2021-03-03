@@ -3,10 +3,5 @@ spring:
   cloud:
     vault:
       kv:
-        enabled: true
-        backend: ${VAULT_BACKEND}
-        profile-separator: '/'
         application-name: 'download-ch'
-        default-context: ''
-        profiles: cloud, connect-chgs
 
