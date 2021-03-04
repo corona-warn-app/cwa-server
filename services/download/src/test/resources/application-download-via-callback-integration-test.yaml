@@ -5,4 +5,4 @@ spring:
 
 services:
   download:
-    efgs-enforce-date-based-download: false
+    enforce-date-based-download: false

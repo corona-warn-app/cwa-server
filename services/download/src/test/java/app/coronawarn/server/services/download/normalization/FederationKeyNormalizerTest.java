@@ -3,6 +3,7 @@
 package app.coronawarn.server.services.download.normalization;
 
 import static app.coronawarn.server.common.persistence.domain.FederationBatchStatus.UNPROCESSED;
+import static app.coronawarn.server.common.persistence.domain.FederationBatchSourceSystem.*;
 import static org.assertj.core.util.Lists.list;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -82,7 +83,7 @@ class FederationKeyNormalizerTest {
   @Test
   void testBatchKeysWithDsosAndWithoutTrlAreNormalized()  throws Exception{
     LocalDate date = LocalDate.of(2020, 9, 1);
-    FederationBatchInfo federationBatchInfo = new FederationBatchInfo(BATCH_TAG, date, UNPROCESSED);
+    FederationBatchInfo federationBatchInfo = new FederationBatchInfo(BATCH_TAG, date, UNPROCESSED, EFGS);
     when(batchInfoService.findByStatus(UNPROCESSED)).thenReturn(list(federationBatchInfo));
 
     BatchDownloadResponse serverResponse = createBatchDownloadResponseWithKeys(this::createDiagnosisKeyWithNoTrl);
@@ -99,7 +100,7 @@ class FederationKeyNormalizerTest {
   @Test
   void testTrlIsNormalizedWhenValueProvidedIsMaxInt() throws Exception{
     LocalDate date = LocalDate.of(2020, 9, 1);
-    FederationBatchInfo federationBatchInfo = new FederationBatchInfo(BATCH_TAG, date, UNPROCESSED);
+    FederationBatchInfo federationBatchInfo = new FederationBatchInfo(BATCH_TAG, date, UNPROCESSED,EFGS);
     when(batchInfoService.findByStatus(UNPROCESSED)).thenReturn(list(federationBatchInfo));
 
     BatchDownloadResponse serverResponse = createBatchDownloadResponseWithKeys(this::createDiagnosisKeyWithMaxIntTrl);

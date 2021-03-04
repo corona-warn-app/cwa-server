@@ -33,7 +33,7 @@ public class Application implements DisposableBean {
   public static void main(String[] args) {
     SpringApplication.run(Application.class);
   }
-
+  
   /**
    * Manual shutdown hook needed to avoid Log4j shutdown issues (see cwa-server/#589).
    */
@@ -45,6 +45,7 @@ public class Application implements DisposableBean {
 
   /**
    * Terminates this application with exit code 1 (general error).
+   *
    * @param appContext type ApplicationContext
    */
   public static void killApplication(ApplicationContext appContext) {
@@ -59,8 +60,8 @@ public class Application implements DisposableBean {
   }
 
   /**
-   * Validation factory bean is configured here because its message interpolation mechanism
-   * is considered a potential threat if enabled.
+   * Validation factory bean is configured here because its message interpolation mechanism is considered a potential
+   * threat if enabled.
    *
    * @return new factory bean {@link LocalValidatorFactoryBean}
    */
