@@ -1,8 +1,6 @@
 package app.coronawarn.server.common.persistence.eventregistration.domain;
 
 import org.springframework.data.annotation.Id;
-import org.springframework.data.annotation.Version;
-
 
 public class TraceLocation {
 
@@ -12,6 +10,13 @@ public class TraceLocation {
   private final Long createdAt;
   private final Integer version;
 
+  /**
+   * Constructor for Trace Location.
+   *
+   * @param traceLocationGuidHash the SHA-256 hashed guid of the trace location.
+   * @param createdAt             when the TraceLocation was created.
+   * @param version               the version provided by the client.
+   */
   public TraceLocation(byte[] traceLocationGuidHash, Long createdAt, Integer version) {
     this.traceLocationGuidHash = traceLocationGuidHash;
     this.createdAt = createdAt;
