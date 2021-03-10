@@ -85,9 +85,9 @@ public class FederationBatchProcessor {
    * @throws FatalFederationGatewayException triggers if error occurs in the federation gateway
    */
   public void prepareDownload() throws FatalFederationGatewayException {
-    if (config.getEfgsEnforceDateBasedDownload()) {
+    if (config.getEnforceDateBasedDownload()) {
       LocalDate downloadDate = LocalDate.now(ZoneOffset.UTC)
-          .minus(Period.ofDays(config.getEfgsEnforceDownloadOffsetDays()));
+          .minus(Period.ofDays(config.getEnforceDownloadOffsetDays()));
       batchInfoService.deleteForDate(downloadDate);
       saveFirstBatchInfoForDate(downloadDate);
     }
@@ -103,7 +103,7 @@ public class FederationBatchProcessor {
     try {
       logger.info("Triggering download of first batch for date {}.", date);
       BatchDownloadResponse response = federationGatewayDownloadService.downloadBatch(date);
-      batchInfoService.save(new FederationBatchInfo(response.getBatchTag(), date));
+      batchInfoService.save(new FederationBatchInfo(response.getBatchTag(), date, this.config.getSourceSystem()));
     } catch (FatalFederationGatewayException e) {
       throw e;
     } catch (Exception e) {
@@ -126,7 +126,8 @@ public class FederationBatchProcessor {
     try {
       processBatchAndReturnNextBatchId(federationBatchInfo, ERROR_WONT_RETRY)
           .ifPresent(nextBatchTag ->
-              batchInfoService.save(new FederationBatchInfo(nextBatchTag, federationBatchInfo.getDate())));
+              batchInfoService.save(new FederationBatchInfo(nextBatchTag, federationBatchInfo.getDate(), this.config
+                  .getSourceSystem())));
     } catch (Exception e) {
       logger.error("Failed to save next federation batch info for processing. Will not try again.", e);
       batchInfoService.updateStatus(federationBatchInfo, ERROR_WONT_RETRY);
@@ -149,14 +150,15 @@ public class FederationBatchProcessor {
       processBatchAndReturnNextBatchId(currentBatchInfo, ERROR)
           .ifPresent(nextBatchTag -> {
             if (isEfgsEnforceDateBasedDownloadAndNotSeen(nextBatchTag)) {
-              unprocessedBatches.add(new FederationBatchInfo(nextBatchTag, currentBatchInfo.getDate()));
+              unprocessedBatches.add(new FederationBatchInfo(nextBatchTag, currentBatchInfo.getDate(), this.config
+                  .getSourceSystem()));
             }
           });
     }
   }
 
   private boolean isEfgsEnforceDateBasedDownloadAndNotSeen(String batchTag) {
-    return config.getEfgsEnforceDateBasedDownload() && !seenBatches.contains(batchTag);
+    return config.getEnforceDateBasedDownload() && !seenBatches.contains(batchTag);
   }
 
   private Optional<String> processBatchAndReturnNextBatchId(

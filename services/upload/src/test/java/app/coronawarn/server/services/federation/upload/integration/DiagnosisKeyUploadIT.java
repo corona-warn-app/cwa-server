@@ -16,8 +16,9 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.test.context.ActiveProfiles;
 
-class DiagnosisKeyUploadIT extends UploadKeyIT {
+abstract class DiagnosisKeyUploadIT extends UploadKeyIT {
 
   @Autowired
   private DiagnosisKeyService keyService;
@@ -34,8 +35,25 @@ class DiagnosisKeyUploadIT extends UploadKeyIT {
   @MockBean
   private FederationUploadClient federationUploadClient;
 
-  @Test
-  void shouldUpdateBatchTagIdsForSuccesfullyUploadedKeys() throws Exception {
+  @ActiveProfiles({"disable-ssl-efgs-verification", "connect-chgs"})
+  public static class UploadKeySgsIT extends DiagnosisKeyUploadIT {
+
+    @Test
+    void shouldUpdateBatchTagIdsForSuccesfullyUploadedKeys() throws Exception {
+      uploadKeysAndTestBatchTagIdUpdate();
+    }
+  }
+
+  @ActiveProfiles({"disable-ssl-efgs-verification", "connect-efgs"})
+  public static class UploadKeyEfgsIT extends DiagnosisKeyUploadIT {
+
+    @Test
+    void shouldUpdateBatchTagIdsForSuccesfullyUploadedKeys() throws Exception {
+      uploadKeysAndTestBatchTagIdUpdate();
+    }
+  }
+
+  protected void uploadKeysAndTestBatchTagIdUpdate() throws Exception {
     List<DiagnosisKey> dummyKeys = generateRandomDiagnosisKeys(true, uploadConfig.getMaxBatchKeyCount() * 2);
     keyService.saveDiagnosisKeys(dummyKeys); //replicated to upload table
 

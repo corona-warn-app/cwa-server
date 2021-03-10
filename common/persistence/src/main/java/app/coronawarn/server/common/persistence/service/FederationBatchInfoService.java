@@ -36,7 +36,7 @@ public class FederationBatchInfoService {
     String batchTag = federationBatchInfo.getBatchTag();
     return federationBatchInfoRepository
         .saveDoNothingOnConflict(batchTag, federationBatchInfo.getDate(),
-            federationBatchInfo.getStatus().name());
+            federationBatchInfo.getStatus().name(), federationBatchInfo.getSourceSystem());
   }
 
   /**
@@ -48,7 +48,8 @@ public class FederationBatchInfoService {
   public void updateStatus(FederationBatchInfo federationBatchInfo, FederationBatchStatus status) {
     String statusValue = status.name();
     federationBatchInfoRepository
-        .saveDoUpdateStatusOnConflict(federationBatchInfo.getBatchTag(), federationBatchInfo.getDate(), statusValue);
+        .saveDoUpdateStatusOnConflict(federationBatchInfo.getBatchTag(), federationBatchInfo.getDate(), statusValue,
+            federationBatchInfo.getSourceSystem());
     logger.info("Marked batch {} with status {}.", federationBatchInfo.getBatchTag(), statusValue);
   }
 
