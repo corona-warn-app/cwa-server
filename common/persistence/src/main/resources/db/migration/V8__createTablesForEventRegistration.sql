@@ -1,5 +1,5 @@
 CREATE TABLE trace_location (
-  id SERIAl PRIMARY KEY,
+  id SERIAL PRIMARY KEY,
   trace_location_guid_hash BYTEA UNIQUE NOT NULL,
   version INTEGER NOT NULL,
   created_at BIGINT NOT NULL
