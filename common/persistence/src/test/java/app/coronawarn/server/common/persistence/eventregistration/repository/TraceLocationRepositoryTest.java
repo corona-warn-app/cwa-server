@@ -18,12 +18,12 @@ import org.springframework.boot.test.autoconfigure.data.jdbc.DataJdbcTest;
 public class TraceLocationRepositoryTest {
 
   @Autowired
-  private TraceLocationRepository traceLocationRepository;
+  private TraceLocationRepository underTest;
 
 
   @AfterEach
   void tearDown() {
-    traceLocationRepository.deleteAll();
+    underTest.deleteAll();
   }
 
   @Test
@@ -36,13 +36,14 @@ public class TraceLocationRepositoryTest {
                 Charset.defaultCharset()));
     Long createdAt = LocalDateTime.now().toEpochSecond(ZoneOffset.UTC);
     int version = 0;
-    traceLocationRepository.save(traceLocationGuidHash, version, createdAt);
+    underTest.save(traceLocationGuidHash, version, createdAt);
 
-    Optional<TraceLocation> traceLocationOptional = traceLocationRepository
+    Optional<TraceLocation> traceLocationOptional = underTest
         .findTraceLocationByGuidHash(traceLocationGuidHash);
     assertThat(traceLocationOptional).isPresent();
     assertThat(traceLocationOptional.get().getTraceLocationGuidHash()).isEqualTo(traceLocationGuidHash);
     assertThat(traceLocationOptional.get().getVersion()).isEqualTo(version);
     assertThat(traceLocationOptional.get().getCreatedAt()).isEqualTo(createdAt);
+    assertThat(traceLocationOptional.get().getId()).isNotNull();
   }
 }
