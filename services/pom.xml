@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
   <parent>
@@ -19,11 +19,12 @@
     <module>callback</module>
     <module>download</module>
     <module>upload</module>
+    <module>event-registration</module>
   </modules>
 
   <dependencies>
-	 <!-- The cloud bootstrap starter is needed due to a breaking change implemented in Spring Cloud 2020.0.0 which turns off
-	  the Bootstrap context (used throughout the services for vault config) by default -->
+    <!-- The cloud bootstrap starter is needed due to a breaking change implemented in Spring Cloud 2020.0.0 which turns off
+     the Bootstrap context (used throughout the services for vault config) by default -->
     <dependency>
       <groupId>org.springframework.cloud</groupId>
       <artifactId>spring-cloud-starter-bootstrap</artifactId>

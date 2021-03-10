@@ -1,0 +1,30 @@
+---
+logging:
+  level:
+    org:
+      springframework:
+        web: INFO
+    app:
+      coronawarn: INFO
+    com:
+      netflix:
+        config:
+          sources:
+            URLConfigurationSource: ERROR
+
+spring:
+  main:
+    web-application-type: NONE
+  transaction:
+    default-timeout: 20
+  flyway:
+    enabled: true
+    locations: classpath:/db/migration, classpath:/db/specific/{vendor}
+    password: ${POSTGRESQL_PASSWORD_FLYWAY:local_setup_flyway}
+    user: ${POSTGRESQL_USER_FLYWAY:local_setup_flyway}
+  # Postgres configuration
+  datasource:
+    driver-class-name: org.postgresql.Driver
+    url: jdbc:postgresql://${POSTGRESQL_SERVICE_HOST:localhost}:${POSTGRESQL_SERVICE_PORT:5432}/${POSTGRESQL_DATABASE:cwa}
+    username: ${POSTGRESQL_USER_UPLOAD:local_event_registration} # need a local user called local_event_registration
+    password: ${POSTGRESQL_PASSWORD_UPLOAD:local_event_registration} # also configure a password
