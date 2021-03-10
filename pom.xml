@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
   <groupId>org.opencwa</groupId>
@@ -350,7 +350,7 @@
                   <requireJavaVersion>
                     <version>${java.version}</version>
                   </requireJavaVersion>
-                  <reactorModuleConvergence />
+                  <reactorModuleConvergence/>
                 </rules>
                 <fail>true</fail>
               </configuration>
@@ -502,7 +502,8 @@
             </execution>
           </executions>
           <configuration>
-            <protocArtifact>com.google.protobuf:protoc:${protobuf.version}:exe:${os.detected.classifier}</protocArtifact>
+            <protocArtifact>com.google.protobuf:protoc:${protobuf.version}:exe:${os.detected.classifier}
+            </protocArtifact>
           </configuration>
         </plugin>
         <plugin>
