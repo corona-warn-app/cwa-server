@@ -13,5 +13,13 @@
 
   <artifactId>event-registration</artifactId>
 
+  <dependencies>
+    <!-- test scope only -->
+    <dependency>
+      <groupId>org.testcontainers</groupId>
+      <artifactId>postgresql</artifactId>
+    </dependency>
+  </dependencies>
+
 
 </project>
