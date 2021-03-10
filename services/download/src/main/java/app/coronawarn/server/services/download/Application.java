@@ -45,7 +45,6 @@ public class Application implements DisposableBean {
 
   /**
    * Terminates this application with exit code 1 (general error).
-   *
    * @param appContext type ApplicationContext
    */
   public static void killApplication(ApplicationContext appContext) {
@@ -60,8 +59,8 @@ public class Application implements DisposableBean {
   }
 
   /**
-   * Validation factory bean is configured here because its message interpolation mechanism is considered a potential
-   * threat if enabled.
+   * Validation factory bean is configured here because its message interpolation mechanism
+   * is considered a potential threat if enabled.
    *
    * @return new factory bean {@link LocalValidatorFactoryBean}
    */

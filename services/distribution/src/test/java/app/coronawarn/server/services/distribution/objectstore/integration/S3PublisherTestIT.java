@@ -59,7 +59,7 @@ class S3PublisherTestIT extends BaseS3IntegrationTest {
     s3Publisher.publish(getFolderAsPath(rootTestFolder));
     List<S3Object> s3Objects = objectStoreAccess.getObjectsWithPrefix("version");
 
-    assertThat(s3Objects).hasSize(5);
+    assertThat(s3Objects).hasSize(6);
   }
 
   private Path getFolderAsPath(String path) throws IOException {

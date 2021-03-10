@@ -78,9 +78,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         return new User(username, "", emptyList());
       }
       String exceptionMsg =
-          "The client certificate CN'"
+          "The client certificate CN '"
               + username
-              + "'does not match the expected CN:'"
+              + "' does not match the expected CN: '"
               + callbackServiceConfig.getEfgsCertCn() + "'.";
       logger.warn(exceptionMsg);
       throw new CertificateCnMismatchException(exceptionMsg);

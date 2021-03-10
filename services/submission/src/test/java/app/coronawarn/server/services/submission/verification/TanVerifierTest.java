@@ -32,7 +32,7 @@ import org.springframework.http.MediaType;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
 
-@SpringBootTest(classes = { TanVerifier.class, CloudFeignClientProvider.class, TekFieldDerivations.class , NoopHostnameVerifierProvider.class})
+@SpringBootTest(classes = { TanVerifier.class, CloudFeignClientProvider.class, TekFieldDerivations.class, NoopHostnameVerifierProvider.class })
 @ImportAutoConfiguration({ FeignAutoConfiguration.class, FeignTestConfiguration.class })
 @EnableConfigurationProperties(value = SubmissionServiceConfig.class)
 @EnableFeignClients
