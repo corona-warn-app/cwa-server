@@ -26,5 +26,5 @@ spring:
   datasource:
     driver-class-name: org.postgresql.Driver
     url: jdbc:postgresql://${POSTGRESQL_SERVICE_HOST:localhost}:${POSTGRESQL_SERVICE_PORT:5432}/${POSTGRESQL_DATABASE:cwa}
-    username: ${POSTGRESQL_USER_UPLOAD:local_event_registration} # need a local user called local_event_registration
-    password: ${POSTGRESQL_PASSWORD_UPLOAD:local_event_registration} # also configure a password
+    username: ${POSTGRESQL_USER_UPLOAD:local_event_registration}
+    password: ${POSTGRESQL_PASSWORD_UPLOAD:local_event_registration}
