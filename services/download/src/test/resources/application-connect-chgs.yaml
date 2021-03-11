@@ -1,0 +1,4 @@
+---
+services:
+  download:
+    source-system: CHGS

@@ -1,5 +1,5 @@
+---
 services:
   download:
     enforce-download-offset-days: 0
     enforce-date-based-download: true
-    batch-audit-enabled: true
