@@ -11,6 +11,8 @@ logging:
         config:
           sources:
             URLConfigurationSource: ERROR
+event-registration:
+  version: 0
 
 spring:
   main:

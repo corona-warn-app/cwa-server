@@ -1,4 +1,7 @@
 ---
+event-registration:
+  version: 5
+
 logging:
   level:
     org:
