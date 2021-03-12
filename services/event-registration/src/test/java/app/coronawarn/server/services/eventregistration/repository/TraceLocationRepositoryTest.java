@@ -1,20 +1,23 @@
-package app.coronawarn.server.common.persistence.eventregistration.repository;
+package app.coronawarn.server.services.eventregistration.repository;
 
-import static org.assertj.core.api.Assertions.assertThat;
+import app.coronawarn.server.services.eventregistration.domain.TraceLocation;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.data.jdbc.DataJdbcTest;
+import org.springframework.test.context.ActiveProfiles;
 
-import app.coronawarn.server.common.persistence.eventregistration.domain.TraceLocation;
 import java.nio.charset.Charset;
 import java.security.MessageDigest;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.util.Optional;
 import java.util.UUID;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.data.jdbc.DataJdbcTest;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 @DataJdbcTest
+@ActiveProfiles("event-registration")
 public class TraceLocationRepositoryTest {
 
   @Autowired

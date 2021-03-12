@@ -13,10 +13,13 @@ spring:
     banner-mode: off
   flyway:
     enabled: true
-    locations: classpath:/db/migration
+    locations: classpath:/eventregistration/db/migration
+    schemas: event_registration
   datasource:
     driver-class-name: org.testcontainers.jdbc.ContainerDatabaseDriver
     url: jdbc:tc:postgresql:11.8:///databasename?TC_TMPFS=/testtmpfs:rw
+    hikari:
+      schema: event_registration
   test:
     database:
       # Use datasource as defined above.

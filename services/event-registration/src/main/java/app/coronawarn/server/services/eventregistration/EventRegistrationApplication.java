@@ -1,8 +1,8 @@
 package app.coronawarn.server.services.eventregistration;
 
+import app.coronawarn.server.services.eventregistration.config.EventRegistrationConfiguration;
 import java.util.Arrays;
 import java.util.List;
-import app.coronawarn.server.services.eventregistration.config.EventRegistrationConfiguration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.SpringApplication;
@@ -18,10 +18,11 @@ import org.springframework.http.converter.protobuf.ProtobufHttpMessageConverter;
 
 @SpringBootApplication
 @EnableConfigurationProperties({EventRegistrationConfiguration.class})
-@EnableJdbcRepositories(basePackages = {"app.coronawarn.server.common.persistence"})
-@EntityScan(basePackages = "app.coronawarn.server.common.persistence")
-@ComponentScan({"app.coronawarn.server.common.persistence"})
+@EnableJdbcRepositories(basePackages = {"app.coronawarn.server.services.eventregistration.repository"})
+@EntityScan(basePackages = "app.coronawarn.server.services.eventregistration.domain")
+@ComponentScan({"app.coronawarn.server.services.eventregistration"})
 public class EventRegistrationApplication implements EnvironmentAware {
+
   static final String DISABLE_SSL_CLIENT_POSTGRES = "disable-ssl-client-postgres";
   private static final Logger logger = LoggerFactory.getLogger(EventRegistrationApplication.class);
 

@@ -1,12 +1,14 @@
-package app.coronawarn.server.common.persistence.eventregistration.repository;
+package app.coronawarn.server.services.eventregistration.repository;
 
-import app.coronawarn.server.common.persistence.eventregistration.domain.TraceLocation;
-import java.util.Optional;
+
+import app.coronawarn.server.services.eventregistration.domain.TraceLocation;
 import org.springframework.data.jdbc.repository.query.Modifying;
 import org.springframework.data.jdbc.repository.query.Query;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
+
+import java.util.Optional;
 
 @Repository
 public interface TraceLocationRepository extends CrudRepository<TraceLocation, Long> {
@@ -19,5 +21,6 @@ public interface TraceLocationRepository extends CrudRepository<TraceLocation, L
       @Param("createdAt") Long createdAt);
 
   @Query("SELECT * FROM trace_location AS tl WHERE tl.trace_location_guid_hash=:traceLocationGuidHash")
-  Optional<TraceLocation> findTraceLocationByGuidHash(@Param("traceLocationGuidHash") byte[] traceLocationGuidHash);
+  Optional<TraceLocation> findTraceLocationByGuidHash(
+      @Param("traceLocationGuidHash") byte[] traceLocationGuidHash);
 }

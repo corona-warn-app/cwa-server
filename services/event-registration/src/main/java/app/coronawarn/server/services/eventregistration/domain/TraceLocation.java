@@ -1,4 +1,4 @@
-package app.coronawarn.server.common.persistence.eventregistration.domain;
+package app.coronawarn.server.services.eventregistration.domain;
 
 import org.springframework.data.annotation.Id;
 
