@@ -60,13 +60,16 @@ public @interface ValidSubmissionPayload {
     private final int maxRollingPeriod;
     private final Collection<String> supportedCountries;
     private final String defaultOriginCountry;
+    private final EventCheckinDataValidator eventCheckinValidator;
     private static final Logger logger = LoggerFactory.getLogger(SubmissionPayloadValidator.class);
 
-    public SubmissionPayloadValidator(SubmissionServiceConfig submissionServiceConfig) {
+    public SubmissionPayloadValidator(SubmissionServiceConfig submissionServiceConfig,
+        EventCheckinDataValidator checkinDataValidator) {
       maxNumberOfKeys = submissionServiceConfig.getMaxNumberOfKeys();
       maxRollingPeriod = submissionServiceConfig.getMaxRollingPeriod();
       supportedCountries = List.of(submissionServiceConfig.getSupportedCountries());
       defaultOriginCountry = submissionServiceConfig.getDefaultOriginCountry();
+      eventCheckinValidator = checkinDataValidator;
     }
 
     /**
@@ -93,7 +96,8 @@ public @interface ValidSubmissionPayload {
           && checkVisitedCountriesAreValid(submissionPayload, validatorContext)
           && checkRequiredFieldsNotMissing(exposureKeys, validatorContext)
           && checkTransmissionRiskLevelIsAcceptable(exposureKeys, validatorContext)
-          && checkDaysSinceOnsetOfSymptomsIsInRange(exposureKeys, validatorContext);
+          && checkDaysSinceOnsetOfSymptomsIsInRange(exposureKeys, validatorContext)
+          && eventCheckinValidator.verify(submissionPayload, validatorContext);
 
       if (!isValidPayload) {
         PrintableSubmissionPayload printableSubmissionPayload = new PrintableSubmissionPayload(submissionPayload);
