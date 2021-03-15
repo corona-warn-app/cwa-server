@@ -214,7 +214,7 @@ The German government has asked SAP and Deutsche Telekom to develop the Corona-W
 | [cwa-wishlist]            | Community feature requests.                                                  |
 | [cwa-website]             | The official website for the Corona-Warn-App.                                |
 | [cwa-server]              | Backend implementation for the Apple/Google exposure notification API.       |
-| [cwa-ppa-server]          | Backend implementation for the privacy-preserving analytics server.          |
+| [cwa-ppa-server]          | Backend implementation for the data donation server.          |
 | [cwa-verification-server] | Backend implementation of the verification process.                          |
 | [cwa-verification-portal] | The portal to interact with the verification server.                         |
 | [cwa-verification-iam]    | The identity and access management to interact with the verification server. |
