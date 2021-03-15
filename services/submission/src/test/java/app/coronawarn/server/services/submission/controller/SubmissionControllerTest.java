@@ -339,54 +339,48 @@ class SubmissionControllerTest {
     assertThat(actResponse.getStatusCode()).isEqualTo(OK);
   }
 
-  @Nested
-  @DisplayName("Checkin Data Tests")
-  class CheckinDataTests{
+  @Test
+  void testInvalidTransmissionRiskLevelInCheckinData() {
+    List<CheckIn> invalidCheckinData =
+        List.of(CheckIn.newBuilder().setTrl(0).setCheckinTime(1).setCheckoutTime(2).build(),
+            CheckIn.newBuilder().setTrl(4).setCheckinTime(1).setCheckoutTime(1).build());
 
-    @Test
-    void testInvalidTransmissionRiskLevelInCheckinData() {
-      List<CheckIn> invalidCheckinData =
-          List.of(CheckIn.newBuilder().setTrl(0).setCheckinTime(1).setCheckoutTime(2).build(),
-              CheckIn.newBuilder().setTrl(4).setCheckinTime(1).setCheckoutTime(1).build());
+    ResponseEntity<Void> actResponse =
+        executor.executePost(buildPayloadWithCheckinData(invalidCheckinData));
+    assertThat(actResponse.getStatusCode()).isEqualTo(BAD_REQUEST);
+  }
 
-      ResponseEntity<Void> actResponse = executor
-          .executePost(buildPayloadWithCheckinData(invalidCheckinData));
-      assertThat(actResponse.getStatusCode()).isEqualTo(BAD_REQUEST);
-    }
+  @Test
+  void testInvalidCheckinTime() {
+    List<CheckIn> invalidCheckinData =
+        List.of(CheckIn.newBuilder().setTrl(2).setCheckinTime(0).setCheckoutTime(1).build(),
+            CheckIn.newBuilder().setTrl(2).setCheckinTime(0).setCheckoutTime(1).build());
 
-    @Test
-    void testInvalidCheckinTime() {
-      List<CheckIn> invalidCheckinData =
-          List.of(CheckIn.newBuilder().setTrl(2).setCheckinTime(0).setCheckoutTime(1).build(),
-              CheckIn.newBuilder().setTrl(2).setCheckinTime(0).setCheckoutTime(1).build());
+    ResponseEntity<Void> actResponse =
+        executor.executePost(buildPayloadWithCheckinData(invalidCheckinData));
+    assertThat(actResponse.getStatusCode()).isEqualTo(BAD_REQUEST);
+  }
 
-      ResponseEntity<Void> actResponse = executor
-          .executePost(buildPayloadWithCheckinData(invalidCheckinData));
-      assertThat(actResponse.getStatusCode()).isEqualTo(BAD_REQUEST);
-    }
+  @Test
+  void testInvalidCheckOutTime() {
+    List<CheckIn> invalidCheckinData =
+        List.of(CheckIn.newBuilder().setTrl(2).setCheckinTime(4).setCheckoutTime(3).build(),
+            CheckIn.newBuilder().setTrl(2).setCheckinTime(2).setCheckoutTime(2).build());
 
-    @Test
-    void testInvalidCheckOutTime() {
-      List<CheckIn> invalidCheckinData =
-          List.of(CheckIn.newBuilder().setTrl(2).setCheckinTime(4).setCheckoutTime(3).build(),
-              CheckIn.newBuilder().setTrl(2).setCheckinTime(2).setCheckoutTime(2).build());
+    ResponseEntity<Void> actResponse =
+        executor.executePost(buildPayloadWithCheckinData(invalidCheckinData));
+    assertThat(actResponse.getStatusCode()).isEqualTo(BAD_REQUEST);
+  }
 
-      ResponseEntity<Void> actResponse = executor
-          .executePost(buildPayloadWithCheckinData(invalidCheckinData));
-      assertThat(actResponse.getStatusCode()).isEqualTo(BAD_REQUEST);
-    }
+  @Test
+  void testValidCheckinData() {
+    List<CheckIn> invalidCheckinData =
+        List.of(CheckIn.newBuilder().setTrl(1).setCheckinTime(3).setCheckoutTime(4).build(),
+            CheckIn.newBuilder().setTrl(2).setCheckinTime(1).setCheckoutTime(2).build());
 
-    @Test
-    void testValidCheckinData() {
-      List<CheckIn> invalidCheckinData =
-          List.of(CheckIn.newBuilder().setTrl(1).setCheckinTime(3).setCheckoutTime(4).build(),
-              CheckIn.newBuilder().setTrl(2).setCheckinTime(1).setCheckoutTime(2).build());
-
-      ResponseEntity<Void> actResponse = executor
-          .executePost(buildPayloadWithCheckinData(invalidCheckinData));
-      assertThat(actResponse.getStatusCode()).isEqualTo(OK);
-    }
-
+    ResponseEntity<Void> actResponse =
+        executor.executePost(buildPayloadWithCheckinData(invalidCheckinData));
+    assertThat(actResponse.getStatusCode()).isEqualTo(OK);
   }
 
   @ParameterizedTest
