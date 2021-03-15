@@ -39,6 +39,7 @@ import java.util.stream.Stream;
 import org.apache.commons.lang3.tuple.Pair;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
@@ -339,7 +340,8 @@ class SubmissionControllerTest {
   }
 
   @Nested
-  public class CheckinDataTests{
+  @DisplayName("Checkin Data Tests")
+  class CheckinDataTests{
 
     @Test
     void testInvalidTransmissionRiskLevelInCheckinData() {
