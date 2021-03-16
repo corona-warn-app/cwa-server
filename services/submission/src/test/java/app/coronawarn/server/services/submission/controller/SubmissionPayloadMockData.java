@@ -8,6 +8,7 @@ import app.coronawarn.server.common.protocols.external.exposurenotification.Repo
 import app.coronawarn.server.common.protocols.external.exposurenotification.TemporaryExposureKey;
 import app.coronawarn.server.common.protocols.external.exposurenotification.TemporaryExposureKey.Builder;
 import app.coronawarn.server.common.protocols.internal.SubmissionPayload;
+import app.coronawarn.server.common.protocols.internal.evreg.CheckIn;
 import app.coronawarn.server.services.submission.config.SubmissionServiceConfig;
 import com.google.protobuf.ByteString;
 import java.time.Instant;
@@ -157,6 +158,19 @@ public final class SubmissionPayloadMockData {
         .addAllVisitedCountries(visitedCountries)
         .setOrigin("DE")
         .setRequestPadding(ByteString.copyFrom("PaddingString".getBytes()))
+        .build();
+  }
+
+  public static SubmissionPayload buildPayloadWithCheckinData(List<CheckIn> checkinData) {
+    TemporaryExposureKey key =
+        buildTemporaryExposureKey(VALID_KEY_DATA_1, createRollingStartIntervalNumber(2), 3,
+            ReportType.CONFIRMED_TEST, 1);
+    return SubmissionPayload.newBuilder()
+        .addKeys(key)
+        .addAllVisitedCountries(List.of("DE"))
+        .setOrigin("DE")
+        .setRequestPadding(ByteString.copyFrom("PaddingString".getBytes()))
+        .addAllCheckIns(checkinData)
         .build();
   }
 

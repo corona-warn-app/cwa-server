@@ -1,20 +1,6 @@
 package app.coronawarn.server.services.submission.controller;
 
-import static app.coronawarn.server.services.submission.controller.SubmissionPayloadMockData.VALID_KEY_DATA_1;
-import static app.coronawarn.server.services.submission.controller.SubmissionPayloadMockData.VALID_KEY_DATA_2;
-import static app.coronawarn.server.services.submission.controller.SubmissionPayloadMockData.buildMultipleKeys;
-import static app.coronawarn.server.services.submission.controller.SubmissionPayloadMockData.buildMultipleKeysWithoutDSOS;
-import static app.coronawarn.server.services.submission.controller.SubmissionPayloadMockData.buildMultipleKeysWithoutDSOSAndTRL;
-import static app.coronawarn.server.services.submission.controller.SubmissionPayloadMockData.buildMultipleKeysWithoutTRL;
-import static app.coronawarn.server.services.submission.controller.SubmissionPayloadMockData.buildPayload;
-import static app.coronawarn.server.services.submission.controller.SubmissionPayloadMockData.buildPayloadForOriginCountry;
-import static app.coronawarn.server.services.submission.controller.SubmissionPayloadMockData.buildPayloadWithOneKey;
-import static app.coronawarn.server.services.submission.controller.SubmissionPayloadMockData.buildPayloadWithPadding;
-import static app.coronawarn.server.services.submission.controller.SubmissionPayloadMockData.buildPayloadWithTooLargePadding;
-import static app.coronawarn.server.services.submission.controller.SubmissionPayloadMockData.buildPayloadWithVisitedCountries;
-import static app.coronawarn.server.services.submission.controller.SubmissionPayloadMockData.buildPayloadWithoutOriginCountry;
-import static app.coronawarn.server.services.submission.controller.SubmissionPayloadMockData.buildTemporaryExposureKey;
-import static app.coronawarn.server.services.submission.controller.SubmissionPayloadMockData.createRollingStartIntervalNumber;
+import static app.coronawarn.server.services.submission.controller.SubmissionPayloadMockData.*;
 import static org.apache.commons.lang3.StringUtils.defaultIfBlank;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
@@ -36,9 +22,12 @@ import app.coronawarn.server.common.persistence.service.DiagnosisKeyService;
 import app.coronawarn.server.common.protocols.external.exposurenotification.ReportType;
 import app.coronawarn.server.common.protocols.external.exposurenotification.TemporaryExposureKey;
 import app.coronawarn.server.common.protocols.internal.SubmissionPayload;
+import app.coronawarn.server.common.protocols.internal.evreg.CheckIn;
+import app.coronawarn.server.common.protocols.internal.evreg.CheckIn.Builder;
 import app.coronawarn.server.services.submission.config.SubmissionServiceConfig;
 import app.coronawarn.server.services.submission.monitoring.SubmissionMonitor;
 import app.coronawarn.server.services.submission.verification.TanVerifier;
+import feign.FeignException.BadRequest;
 import com.google.protobuf.ByteString;
 import java.util.Arrays;
 import java.util.Collection;
@@ -50,6 +39,8 @@ import java.util.stream.Stream;
 import org.apache.commons.lang3.tuple.Pair;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.api.TestInstance.Lifecycle;
@@ -345,6 +336,50 @@ class SubmissionControllerTest {
   void testMissingOriginCountrySubmissionPayload() {
     ResponseEntity<Void> actResponse = executor
         .executePost(buildPayloadWithoutOriginCountry(buildMultipleKeys(config)));
+    assertThat(actResponse.getStatusCode()).isEqualTo(OK);
+  }
+
+  @Test
+  void testInvalidTransmissionRiskLevelInCheckinData() {
+    List<CheckIn> invalidCheckinData =
+        List.of(CheckIn.newBuilder().setTrl(0).setCheckinTime(1).setCheckoutTime(2).build(),
+            CheckIn.newBuilder().setTrl(4).setCheckinTime(1).setCheckoutTime(1).build());
+
+    ResponseEntity<Void> actResponse =
+        executor.executePost(buildPayloadWithCheckinData(invalidCheckinData));
+    assertThat(actResponse.getStatusCode()).isEqualTo(BAD_REQUEST);
+  }
+
+  @Test
+  void testInvalidCheckinTime() {
+    List<CheckIn> invalidCheckinData =
+        List.of(CheckIn.newBuilder().setTrl(2).setCheckinTime(0).setCheckoutTime(1).build(),
+            CheckIn.newBuilder().setTrl(2).setCheckinTime(0).setCheckoutTime(1).build());
+
+    ResponseEntity<Void> actResponse =
+        executor.executePost(buildPayloadWithCheckinData(invalidCheckinData));
+    assertThat(actResponse.getStatusCode()).isEqualTo(BAD_REQUEST);
+  }
+
+  @Test
+  void testInvalidCheckOutTime() {
+    List<CheckIn> invalidCheckinData =
+        List.of(CheckIn.newBuilder().setTrl(2).setCheckinTime(4).setCheckoutTime(3).build(),
+            CheckIn.newBuilder().setTrl(2).setCheckinTime(2).setCheckoutTime(2).build());
+
+    ResponseEntity<Void> actResponse =
+        executor.executePost(buildPayloadWithCheckinData(invalidCheckinData));
+    assertThat(actResponse.getStatusCode()).isEqualTo(BAD_REQUEST);
+  }
+
+  @Test
+  void testValidCheckinData() {
+    List<CheckIn> invalidCheckinData =
+        List.of(CheckIn.newBuilder().setTrl(1).setCheckinTime(3).setCheckoutTime(4).build(),
+            CheckIn.newBuilder().setTrl(2).setCheckinTime(1).setCheckoutTime(2).build());
+
+    ResponseEntity<Void> actResponse =
+        executor.executePost(buildPayloadWithCheckinData(invalidCheckinData));
     assertThat(actResponse.getStatusCode()).isEqualTo(OK);
   }
 
