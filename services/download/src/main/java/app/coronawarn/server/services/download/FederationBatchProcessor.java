@@ -197,7 +197,8 @@ public class FederationBatchProcessor {
               .filter(k -> !k.getKey().equalsIgnoreCase(CH))
               .forEach(k -> logger
                   .warn(
-                      "There are keys {} with origin country {} which is different to CH and therefore they will be dropped.",
+                      "There are keys {} with origin country {} which is different to CH and therefore they will be "
+                          + "dropped.",
                       k.getValue(),
                       k.getKey()));
         }
@@ -228,14 +229,12 @@ public class FederationBatchProcessor {
   }
 
   private List<DiagnosisKey> extractValidDiagnosisKeysFromBatch(DiagnosisKeyBatch diagnosisKeyBatch) {
-    Stream<app.coronawarn.server.common.protocols.external.exposurenotification.DiagnosisKey> patialKeys = diagnosisKeyBatch
-        .getKeysList()
-        .stream()
-        .filter(validFederationKeyFilter::isValid);
+    Stream<app.coronawarn.server.common.protocols.external.exposurenotification.DiagnosisKey> partialKeys
+        = diagnosisKeyBatch.getKeysList().stream().filter(validFederationKeyFilter::isValid);
     if (isChgs()) {
-      patialKeys = patialKeys.filter(key -> key.getOrigin().equalsIgnoreCase(CH));
+      partialKeys = partialKeys.filter(key -> key.getOrigin().equalsIgnoreCase(CH));
     }
-    return patialKeys
+    return partialKeys
         .map(this::convertFederationDiagnosisKeyToDiagnosisKey)
         .filter(Optional::isPresent)
         .map(Optional::get)
