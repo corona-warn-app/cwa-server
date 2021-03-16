@@ -39,7 +39,7 @@ abstract class DiagnosisKeyUploadIT extends UploadKeyIT {
   public static class UploadKeySgsIT extends DiagnosisKeyUploadIT {
 
     @Test
-    void shouldUpdateBatchTagIdsForSuccesfullyUploadedKeys() throws Exception {
+    void shouldUpdateBatchTagIdsForSuccessfullyUploadedKeys() throws Exception {
       uploadKeysAndTestBatchTagIdUpdate();
     }
   }
