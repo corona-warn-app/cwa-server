@@ -161,8 +161,7 @@ public class FederationBatchProcessor {
             }
           });
     }
-    //todo:: log info number of batches received from eu
-    //todo:: log info number of batches received from CH
+    logger.info("Processed {} total batches from {} system.", seenBatches.size(), config.getSourceSystem());
   }
 
   private boolean isEfgsEnforceDateBasedDownloadAndNotSeen(String batchTag) {
