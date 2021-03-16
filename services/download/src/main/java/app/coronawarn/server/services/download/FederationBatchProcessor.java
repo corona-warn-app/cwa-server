@@ -193,7 +193,7 @@ public class FederationBatchProcessor {
         }
         if (isChgs()) {
           countedKeysByOriginCountry.entrySet().stream()
-              .filter(k -> !k.getKey().equalsIgnoreCase(CH))
+              .filter(k -> !CH.equalsIgnoreCase(k.getKey()))
               .forEach(k -> logger
                   .warn(
                       "There are keys {} with origin country {} which is different to CH and therefore they will be "
@@ -231,7 +231,7 @@ public class FederationBatchProcessor {
     Stream<app.coronawarn.server.common.protocols.external.exposurenotification.DiagnosisKey> partialKeys
         = diagnosisKeyBatch.getKeysList().stream().filter(validFederationKeyFilter::isValid);
     if (isChgs()) {
-      partialKeys = partialKeys.filter(key -> key.getOrigin().equalsIgnoreCase(CH));
+      partialKeys = partialKeys.filter(key -> CH.equalsIgnoreCase(key.getOrigin()));
     }
     return partialKeys
         .map(this::convertFederationDiagnosisKeyToDiagnosisKey)

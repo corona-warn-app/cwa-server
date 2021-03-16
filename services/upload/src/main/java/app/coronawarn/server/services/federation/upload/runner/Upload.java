@@ -22,6 +22,7 @@ import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.context.ApplicationContext;
 import org.springframework.core.annotation.Order;
+import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -29,12 +30,15 @@ import org.springframework.stereotype.Component;
 public class Upload implements ApplicationRunner {
 
   private static final Logger logger = LoggerFactory.getLogger(Upload.class);
+  private static final String CH = "CH";
+  private static final String EU = "EU";
 
   private final FederationUploadClient federationUploadClient;
   private final PayloadFactory payloadFactory;
   private final DiagnosisKeyLoader diagnosisKeyLoader;
   private final ApplicationContext applicationContext;
   private final FederationUploadKeyService uploadKeyService;
+  private final Environment env;
 
   /**
    * Creates an upload runner instance that reads Upload keys and send them to the Federation Gateway.
@@ -43,20 +47,22 @@ public class Upload implements ApplicationRunner {
    * @param payloadFactory         {@link PayloadFactory} to generate the Payload Objects with proper batching and
    *                               signing.
    * @param diagnosisKeyLoader     {@link DiagnosisKeyLoader} to load DiagnosisKeys from the Upload table.
-   * @param applicationContext {@link ApplicationContext} app context.
-   * @param uploadKeyService {@link FederationUploadKeyService} upload service.
+   * @param applicationContext     {@link ApplicationContext} app context.
+   * @param uploadKeyService       {@link FederationUploadKeyService} upload service.
+   * @param env                    Spring Application Context
    */
   public Upload(
       FederationUploadClient federationUploadClient,
       PayloadFactory payloadFactory,
       DiagnosisKeyLoader diagnosisKeyLoader,
       ApplicationContext applicationContext,
-      FederationUploadKeyService uploadKeyService) {
+      FederationUploadKeyService uploadKeyService, Environment env) {
     this.federationUploadClient = federationUploadClient;
     this.payloadFactory = payloadFactory;
     this.diagnosisKeyLoader = diagnosisKeyLoader;
     this.applicationContext = applicationContext;
     this.uploadKeyService = uploadKeyService;
+    this.env = env;
   }
 
   private List<FederationUploadKey> getRetryKeysFromResponseBody(BatchUploadResponse body, UploadPayload payload) {
@@ -93,7 +99,7 @@ public class Upload implements ApplicationRunner {
     logger.info("Running Upload Job");
     try {
       List<FederationUploadKey> diagnosisKeys = this.diagnosisKeyLoader.loadDiagnosisKeys();
-      logger.info("Generating Upload Payload for {} keys", diagnosisKeys.size());
+      logger.info("Generating Upload Payload for {} keys for {} system.", diagnosisKeys.size(), getSystem());
       List<UploadPayload> requests = this.payloadFactory.makePayloadList(diagnosisKeys);
       logger.info("Executing {} batch request", requests.size());
       requests.forEach(payload -> {
@@ -103,6 +109,14 @@ public class Upload implements ApplicationRunner {
     } catch (Exception e) {
       logger.error("Upload diagnosis key data failed.", e);
       Application.killApplication(applicationContext);
+    }
+  }
+
+  private String getSystem() {
+    if (Arrays.asList(env.getActiveProfiles()).contains("connect-chgs")) {
+      return CH;
+    } else {
+      return EU;
     }
   }
 
