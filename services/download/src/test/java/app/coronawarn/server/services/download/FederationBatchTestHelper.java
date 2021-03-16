@@ -31,6 +31,11 @@ public class FederationBatchTestHelper {
         .addKeys(createFederationDiagnosisKeyWithKeyData(keyData)).build();
   }
 
+  public static DiagnosisKeyBatch createDiagnosisKeyBatch(String keyData,String originCountry) {
+    return DiagnosisKeyBatch.newBuilder()
+        .addKeys(createFederationDiagnosisKeyWithKeyData(keyData,originCountry)).build();
+  }
+
   public static DiagnosisKeyBatch createDiagnosisKeyBatch(List<DiagnosisKey> diagnosisKeys) {
     return DiagnosisKeyBatch.newBuilder()
         .addAllKeys(diagnosisKeys).build();
@@ -51,6 +56,13 @@ public class FederationBatchTestHelper {
   public static DiagnosisKey createFederationDiagnosisKeyWithKeyData(String keyData) {
     return createBuilderForValidFederationDiagnosisKey()
         .setKeyData(ByteString.copyFromUtf8(keyData))
+        .build();
+  }
+
+  public static DiagnosisKey createFederationDiagnosisKeyWithKeyData(String keyData, String originCountry) {
+    return createBuilderForValidFederationDiagnosisKey()
+        .setKeyData(ByteString.copyFromUtf8(keyData))
+        .setOrigin(originCountry)
         .build();
   }
 

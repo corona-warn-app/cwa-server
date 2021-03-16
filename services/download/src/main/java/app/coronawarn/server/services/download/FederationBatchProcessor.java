@@ -9,6 +9,7 @@ import static java.util.stream.Collectors.toList;
 
 import app.coronawarn.server.common.persistence.domain.DiagnosisKey;
 import app.coronawarn.server.common.persistence.domain.FederationBatchInfo;
+import app.coronawarn.server.common.persistence.domain.FederationBatchSourceSystem;
 import app.coronawarn.server.common.persistence.domain.FederationBatchStatus;
 import app.coronawarn.server.common.persistence.service.DiagnosisKeyService;
 import app.coronawarn.server.common.persistence.service.FederationBatchInfoService;
@@ -24,10 +25,14 @@ import java.util.Deque;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
@@ -39,6 +44,7 @@ import org.springframework.stereotype.Component;
 public class FederationBatchProcessor {
 
   private static final Logger logger = LoggerFactory.getLogger(FederationBatchProcessor.class);
+  private static final String CH = "CH";
   private final FederationBatchInfoService batchInfoService;
   private final DiagnosisKeyService diagnosisKeyService;
   private final FederationGatewayDownloadService federationGatewayDownloadService;
@@ -101,14 +107,14 @@ public class FederationBatchProcessor {
    */
   protected void saveFirstBatchInfoForDate(LocalDate date) throws FatalFederationGatewayException {
     try {
-      logger.info("Triggering download of first batch for date {}.", date);
+      logger.info("Triggering download of first batch for date {}", date);
       BatchDownloadResponse response = federationGatewayDownloadService.downloadBatch(date);
       batchInfoService.save(new FederationBatchInfo(response.getBatchTag(), date, this.config.getSourceSystem()));
     } catch (FatalFederationGatewayException e) {
       throw e;
     } catch (Exception e) {
       logger.error(
-          "Triggering download of first batch for date {} failed.", date, e);
+          "Triggering download of first batch for date {} failed", date, e);
     }
   }
 
@@ -118,7 +124,7 @@ public class FederationBatchProcessor {
    */
   public void processErrorFederationBatches() {
     List<FederationBatchInfo> federationBatchInfoWithError = batchInfoService.findByStatus(ERROR);
-    logger.info("{} error federation batches for reprocessing found.", federationBatchInfoWithError.size());
+    logger.info("{} error federation batches for reprocessing found", federationBatchInfoWithError.size());
     federationBatchInfoWithError.forEach(this::retryProcessingBatch);
   }
 
@@ -129,7 +135,8 @@ public class FederationBatchProcessor {
               batchInfoService.save(new FederationBatchInfo(nextBatchTag, federationBatchInfo.getDate(), this.config
                   .getSourceSystem())));
     } catch (Exception e) {
-      logger.error("Failed to save next federation batch info for processing. Will not try again.", e);
+      logger.error("Failed to save next " + federationBatchInfo.getSourceSystem()
+          + " batch info for processing. Will not try again", e);
       batchInfoService.updateStatus(federationBatchInfo, ERROR_WONT_RETRY);
     }
   }
@@ -142,7 +149,7 @@ public class FederationBatchProcessor {
    */
   public void processUnprocessedFederationBatches() throws FatalFederationGatewayException {
     Deque<FederationBatchInfo> unprocessedBatches = new LinkedList<>(batchInfoService.findByStatus(UNPROCESSED));
-    logger.info("{} unprocessed federation batches found.", unprocessedBatches.size());
+    logger.info("{} unprocessed {} batches found", unprocessedBatches.size(), config.getSourceSystem());
 
     while (!unprocessedBatches.isEmpty()) {
       FederationBatchInfo currentBatchInfo = unprocessedBatches.remove();
@@ -155,6 +162,7 @@ public class FederationBatchProcessor {
             }
           });
     }
+    logger.info("Processed {} total {} batches", seenBatches.size(), config.getSourceSystem());
   }
 
   private boolean isEfgsEnforceDateBasedDownloadAndNotSeen(String batchTag) {
@@ -165,14 +173,32 @@ public class FederationBatchProcessor {
       FederationBatchInfo batchInfo, FederationBatchStatus errorStatus) throws FatalFederationGatewayException {
     LocalDate date = batchInfo.getDate();
     String batchTag = batchInfo.getBatchTag();
-    logger.info("Processing batch for date {} and batchTag {}.", date, batchTag);
+    logger.info("Processing {} batch for date {} and batchTag {}", batchInfo.getSourceSystem(), date, batchTag);
     AtomicReference<Optional<String>> nextBatchTag = new AtomicReference<>(Optional.empty());
     try {
       BatchDownloadResponse response = federationGatewayDownloadService.downloadBatch(batchTag, date);
       AtomicBoolean batchContainsInvalidKeys = new AtomicBoolean(false);
       nextBatchTag.set(response.getNextBatchTag());
       response.getDiagnosisKeyBatch().ifPresentOrElse(batch -> {
-        logger.info("Downloaded {} keys for date {} and batchTag {}.", batch.getKeysCount(), date, batchTag);
+        logger.info("Downloaded {} {} keys for date {} and batchTag {}", batchInfo.getSourceSystem(),
+            batch.getKeysCount(), date, batchTag);
+        Map<String, Integer> countedKeysByOriginCountry = batch
+            .getKeysList().stream().collect(Collectors.groupingBy(
+                app.coronawarn.server.common.protocols.external.exposurenotification.DiagnosisKey::getOrigin))
+            .entrySet().stream()
+            .collect(Collectors.toMap(Entry::getKey,
+                e -> e.getValue().size()));
+        if (config.getSourceSystem() == FederationBatchSourceSystem.EFGS) {
+          countedKeysByOriginCountry.forEach((key, value) -> logger.info("Downloaded {} {} keys with origin country {}",
+              batchInfo.getSourceSystem(), key, value));
+        }
+        if (isChgs()) {
+          countedKeysByOriginCountry.entrySet().stream().filter(k -> !CH.equalsIgnoreCase(k.getKey()))
+              .forEach(k -> logger
+                  .warn("There are keys {} with origin country {} which is different to CH and therefore they will be "
+                      + "dropped", k.getValue(), k.getKey()));
+        }
+
         if (config.isBatchAuditEnabled()) {
           federationGatewayDownloadService.auditBatch(batchTag, date);
         }
@@ -180,32 +206,40 @@ public class FederationBatchProcessor {
         int numOfInvalidKeys = batch.getKeysCount() - validDiagnosisKeys.size();
         if (numOfInvalidKeys > 0) {
           batchContainsInvalidKeys.set(true);
-          logger.info("{} keys failed validation and were skipped.", numOfInvalidKeys);
+          logger.info("{} {} keys failed validation and were skipped", batchInfo.getSourceSystem(), numOfInvalidKeys);
         }
         int insertedKeys = diagnosisKeyService.saveDiagnosisKeys(validDiagnosisKeys);
-        logger.info("Successfully inserted {} keys for date {} and batchTag {}.", insertedKeys, date, batchTag);
-      }, () -> logger.info("Batch for date {} and batchTag {} did not contain any keys.", date, batchTag));
+        logger.info("Successfully inserted {} {} keys for date {} and batchTag {}", batchInfo.getSourceSystem(),
+            insertedKeys, date);
+      }, () -> logger.info("{} batch for date {} and batchTag {} did not contain any keys",
+          batchInfo.getSourceSystem(), date, batchTag));
       batchInfoService.updateStatus(batchInfo, batchContainsInvalidKeys.get() ? PROCESSED_WITH_ERROR : PROCESSED);
       return nextBatchTag.get();
     } catch (FatalFederationGatewayException e) {
       throw e;
     } catch (Exception e) {
-      logger.error(
-          "Federation batch processing for date " + date + " and batchTag " + batchTag + " failed. Status set to "
-              + errorStatus.name() + ".", e);
+      logger.error(batchInfo.getSourceSystem() + " batch processing for date " + date + " and batchTag " + batchTag
+          + " failed. Status set to " + errorStatus.name(), e);
       batchInfoService.updateStatus(batchInfo, errorStatus);
       return nextBatchTag.get();
     }
   }
 
   private List<DiagnosisKey> extractValidDiagnosisKeysFromBatch(DiagnosisKeyBatch diagnosisKeyBatch) {
-    return diagnosisKeyBatch.getKeysList()
-        .stream()
-        .filter(validFederationKeyFilter::isValid)
+    Stream<app.coronawarn.server.common.protocols.external.exposurenotification.DiagnosisKey> partialKeys
+        = diagnosisKeyBatch.getKeysList().stream().filter(validFederationKeyFilter::isValid);
+    if (isChgs()) {
+      partialKeys = partialKeys.filter(key -> CH.equalsIgnoreCase(key.getOrigin()));
+    }
+    return partialKeys
         .map(this::convertFederationDiagnosisKeyToDiagnosisKey)
         .filter(Optional::isPresent)
         .map(Optional::get)
         .collect(toList());
+  }
+
+  private boolean isChgs() {
+    return config.getSourceSystem() == FederationBatchSourceSystem.CHGS;
   }
 
   private Optional<DiagnosisKey> convertFederationDiagnosisKeyToDiagnosisKey(
