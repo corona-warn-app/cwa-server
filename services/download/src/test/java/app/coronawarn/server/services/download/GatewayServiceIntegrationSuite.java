@@ -24,11 +24,11 @@ public abstract class GatewayServiceIntegrationSuite {
 
 
   public static final String BATCH1_DATA = "0123456789ABCDEF";
-  private static final String BATCH1_TAG = "batch1_tag";
-  private static final String BATCH2_TAG = "batch2_tag";
+  protected static final String BATCH1_TAG = "batch1_tag";
+  protected static final String BATCH2_TAG = "batch2_tag";
 
 
-  private static WireMockServer wiremock = new WireMockServer(options().port(1234));
+  protected static WireMockServer wiremock = new WireMockServer(options().port(1234));
 
   @BeforeAll
   static void setupStubs() {
@@ -54,7 +54,7 @@ public abstract class GatewayServiceIntegrationSuite {
     wiremock.stop();
   }
 
-  private static HttpHeaders getHttpHeaders(String batchTag, String nextBatchTag) {
+  protected static HttpHeaders getHttpHeaders(String batchTag, String nextBatchTag) {
     return new HttpHeaders()
         .plus(new HttpHeader(CONTENT_TYPE, "application/protobuf; version=1.0"))
         .plus(new HttpHeader("batchTag", batchTag))
