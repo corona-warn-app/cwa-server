@@ -212,7 +212,8 @@ public class FederationBatchProcessor {
           logger.info("{} keys failed validation and were skipped.", numOfInvalidKeys);
         }
         int insertedKeys = diagnosisKeyService.saveDiagnosisKeys(validDiagnosisKeys);
-        logger.info("Successfully inserted {} keys for date {} and batchTag {}.", insertedKeys, date, batchTag);
+        logger.info("Successfully inserted {} keys for date {} and batchTag {} for {} system.", insertedKeys, date,
+            batchTag, config.getSourceSystem());
       }, () -> logger.info("Batch for date {} and batchTag {} did not contain any keys.", date, batchTag));
       batchInfoService.updateStatus(batchInfo, batchContainsInvalidKeys.get() ? PROCESSED_WITH_ERROR : PROCESSED);
       return nextBatchTag.get();
