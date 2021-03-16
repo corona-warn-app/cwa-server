@@ -73,7 +73,7 @@ class EventCheckinDataValidatorTest {
 
   @ParameterizedTest
   @ValueSource(ints = {1, 15, 30, 100})
-  void should_return_false_if_checkin_data_has_correct_checkin_time_values(int startTime) {
+  void should_return_true_if_checkin_data_has_correct_checkin_time_values(int startTime) {
     SubmissionPayload newPayload = SubmissionPayload.newBuilder()
         .addAllCheckIns(List.of(
             CheckIn.newBuilder().setCheckinTime(startTime).setCheckoutTime(startTime + 1)
