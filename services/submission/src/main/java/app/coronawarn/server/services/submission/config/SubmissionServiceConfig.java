@@ -7,6 +7,7 @@ import java.io.File;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.ConfigurationProperties;
@@ -126,11 +127,27 @@ public class SubmissionServiceConfig {
   }
 
   public Integer getAcceptedEventDateThresholdDays() {
-    return payload.acceptedEventDateThresholdDays;
+    return payload.checkins.acceptedEventDateThresholdDays;
   }
 
   public void setAcceptedEventDateThresholdDays(Integer acceptedEventDateThresholdDays) {
-    this.payload.acceptedEventDateThresholdDays = acceptedEventDateThresholdDays;
+    this.payload.checkins.acceptedEventDateThresholdDays = acceptedEventDateThresholdDays;
+  }
+
+  public String getSignatureVerificationKey() {
+    return payload.checkins.signatureVerificationKey;
+  }
+
+  public void setSignatureVerificationKey(String signatureVerificationKey) {
+    this.payload.checkins.signatureVerificationKey = signatureVerificationKey;
+  }
+
+  public String getSignatureAlgorithm() {
+    return payload.checkins.signatureAlgorithm;
+  }
+
+  public void setSignatureAlgorithm(String signatureAlgorithm) {
+    this.payload.checkins.signatureAlgorithm = signatureAlgorithm;
   }
 
   public void setPayload(Payload payload) {
@@ -153,7 +170,7 @@ public class SubmissionServiceConfig {
     @NotEmpty
     private String[] supportedCountries;
     private String defaultOriginCountry;
-    private Integer acceptedEventDateThresholdDays;
+    private Checkins checkins;
 
     public Integer getMaxNumberOfKeys() {
       return maxNumberOfKeys;
@@ -178,6 +195,24 @@ public class SubmissionServiceConfig {
     public void setDefaultOriginCountry(String defaultOriginCountry) {
       this.defaultOriginCountry = defaultOriginCountry;
     }
+
+    public Checkins getCheckins() {
+      return checkins;
+    }
+
+    public void setCheckins(Checkins checkins) {
+      this.checkins = checkins;
+    }
+  }
+
+  public static class Checkins {
+
+    @NotNull
+    private Integer acceptedEventDateThresholdDays;
+    @NotEmpty
+    private String signatureVerificationKey;
+    @NotEmpty
+    private String signatureAlgorithm;
   }
 
   public String getVerificationBaseUrl() {

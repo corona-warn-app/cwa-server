@@ -1,6 +1,6 @@
 package app.coronawarn.server.services.submission.checkins;
 
-import static app.coronawarn.server.services.submission.checkins.CheckinsDateSpecification.*;
+import static app.coronawarn.server.services.submission.checkins.CheckinsDateSpecification.TEN_MINUTE_INTERVAL_DERIVATION;
 import static java.time.ZoneOffset.UTC;
 
 import java.time.Instant;
@@ -16,9 +16,12 @@ import app.coronawarn.server.services.submission.config.SubmissionServiceConfig;
 public class EventCheckinDataFilter {
 
   private final SubmissionServiceConfig submissionServiceConfig;
+  private final TraceLocationSignatureVerifier traceLocationSignatureVerifier;
 
-  public EventCheckinDataFilter(SubmissionServiceConfig submissionServiceConfig) {
+  public EventCheckinDataFilter(SubmissionServiceConfig submissionServiceConfig,
+      TraceLocationSignatureVerifier traceLocationSignatureVerifier) {
     this.submissionServiceConfig = submissionServiceConfig;
+    this.traceLocationSignatureVerifier = traceLocationSignatureVerifier;
   }
 
   public List<CheckIn> extractAndFilter(SubmissionPayload submissionPayload) {
@@ -32,23 +35,27 @@ public class EventCheckinDataFilter {
 
 
   private boolean filterByTransmissionRiskLevel(CheckIn checkin) {
+    // TODO: Clarify with Max
     return true;
   }
 
   private boolean filterOutOldCheckins(CheckIn checkin) {
     Integer acceptableTimeframeInDays = submissionServiceConfig.getAcceptedEventDateThresholdDays();
-    int threshold = TEN_MINUTE_INTERVAL_DERIVATION.apply(LocalDateTime
-        .ofInstant(Instant.now(), UTC).minusDays(acceptableTimeframeInDays).toEpochSecond(UTC));
+    int threshold = TEN_MINUTE_INTERVAL_DERIVATION.apply(LocalDateTime.ofInstant(Instant.now(), UTC)
+        .minusDays(acceptableTimeframeInDays).toEpochSecond(UTC));
     return threshold < checkin.getCheckoutTime();
   }
 
   private boolean filterOutFutureCheckins(CheckIn checkin) {
-    int threshold = TEN_MINUTE_INTERVAL_DERIVATION.apply(LocalDateTime
-        .ofInstant(Instant.now(), UTC).toEpochSecond(UTC));
+    int threshold = TEN_MINUTE_INTERVAL_DERIVATION
+        .apply(LocalDateTime.ofInstant(Instant.now(), UTC).toEpochSecond(UTC));
     return threshold > checkin.getCheckinTime();
   }
 
+  /**
+   * Pick the given checkin if the signature of the trace location is valid.
+   */
   private boolean filterByValidSignature(CheckIn checkin) {
-    return true;
+    return traceLocationSignatureVerifier.verify(checkin.getSignedEvent());
   }
 }
