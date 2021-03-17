@@ -72,6 +72,15 @@ CREATE ROLE cwa_federation_download
    NOREPLICATION
    IN ROLE cwa_user;
 
+ CREATE ROLE cwa_chgs_upload
+   NOLOGIN
+   NOSUPERUSER
+   INHERIT
+   NOCREATEDB
+   NOCREATEROLE
+   NOREPLICATION
+   IN ROLE cwa_user;
+
 CREATE ROLE cwa_event_registration
   NOLOGIN
   NOSUPERUSER
@@ -80,7 +89,6 @@ CREATE ROLE cwa_event_registration
   NOCREATEROLE
   NOREPLICATION
   IN ROLE cwa_user;
-
 
 CREATE USER "flyway" WITH INHERIT IN ROLE cwa_flyway ENCRYPTED PASSWORD '1234';
 CREATE USER "local_submission" WITH INHERIT IN ROLE cwa_submission ENCRYPTED PASSWORD '1234';
