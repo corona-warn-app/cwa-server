@@ -27,7 +27,7 @@ public class EventCheckinDataFilter {
         .filter(this::filterByValidSignature)
         .filter(this::filterByTransmissionRiskLevel)
         .filter(this::filterOutOldCheckins)
-        .filter(this::filterFutureCheckins).collect(Collectors.toList());
+        .filter(this::filterOutFutureCheckins).collect(Collectors.toList());
   }
 
 
@@ -42,8 +42,10 @@ public class EventCheckinDataFilter {
     return threshold < checkin.getCheckoutTime();
   }
 
-  private boolean filterFutureCheckins(CheckIn checkin) {
-    return true;
+  private boolean filterOutFutureCheckins(CheckIn checkin) {
+    int threshold = TEN_MINUTE_INTERVAL_DERIVATION.apply(LocalDateTime
+        .ofInstant(Instant.now(), UTC).toEpochSecond(UTC));
+    return threshold > checkin.getCheckinTime();
   }
 
   private boolean filterByValidSignature(CheckIn checkin) {

@@ -7,6 +7,7 @@ import java.time.Instant;
 import java.time.LocalDateTime;
 import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 import app.coronawarn.server.common.protocols.internal.SubmissionPayload;
@@ -17,7 +18,6 @@ import app.coronawarn.server.services.submission.config.SubmissionServiceConfig.
 class EventCheckinDataFilterTest {
 
   private static final int ACCEPTABLE_EVENT_DATE_THRESHOLD_IN_DAYS = 15;
-  private static final int CORRECT_TRL = 1;
 
   private EventCheckinDataFilter underTest;
 
@@ -44,7 +44,7 @@ class EventCheckinDataFilterTest {
             CheckIn.newBuilder()
              .setCheckinTime(TEN_MINUTE_INTERVAL_DERIVATION.apply(eventCheckoutInThePast - 10))
              .setCheckoutTime(TEN_MINUTE_INTERVAL_DERIVATION.apply(eventCheckoutInThePast))
-             .setTrl(CORRECT_TRL).build(),
+             .setTrl(1).build(),
             CheckIn.newBuilder()
              .setCheckinTime(TEN_MINUTE_INTERVAL_DERIVATION.apply(acceptableEventCheckoutDate - 10))
              .setCheckoutTime(TEN_MINUTE_INTERVAL_DERIVATION.apply(acceptableEventCheckoutDate))
@@ -74,7 +74,7 @@ class EventCheckinDataFilterTest {
             CheckIn.newBuilder()
              .setCheckinTime(TEN_MINUTE_INTERVAL_DERIVATION.apply(eventCheckoutInThePast - 10))
              .setCheckoutTime(TEN_MINUTE_INTERVAL_DERIVATION.apply(eventCheckoutInThePast))
-             .setTrl(CORRECT_TRL).build(),
+             .setTrl(1).build(),
             CheckIn.newBuilder()
              .setCheckinTime(TEN_MINUTE_INTERVAL_DERIVATION.apply(acceptableEventCheckoutDate - 10))
              .setCheckoutTime(TEN_MINUTE_INTERVAL_DERIVATION.apply(acceptableEventCheckoutDate))
@@ -83,5 +83,34 @@ class EventCheckinDataFilterTest {
 
     List<CheckIn> result = underTest.extractAndFilter(newPayload);
     assertEquals(result.size(), 2);
+  }
+
+  @Test
+  void should_filter_out_checkins_for_future_events() {
+    Instant thisTimeInstant = Instant.now();
+    long eventCheckinInTheFuture =
+        LocalDateTime.ofInstant(thisTimeInstant, UTC).plusMinutes(11).toEpochSecond(UTC);
+
+    long eventCheckinInTheNearPast =
+        LocalDateTime.ofInstant(thisTimeInstant, UTC).minusMinutes(10).toEpochSecond(UTC);
+
+    SubmissionPayload newPayload = SubmissionPayload.newBuilder()
+        .addAllCheckIns(List.of(
+            CheckIn.newBuilder()
+             .setCheckinTime(TEN_MINUTE_INTERVAL_DERIVATION.apply(eventCheckinInTheFuture))
+             .setCheckoutTime(TEN_MINUTE_INTERVAL_DERIVATION.apply(eventCheckinInTheFuture + 5))
+             .setTrl(1).build(),
+            CheckIn.newBuilder()
+             .setCheckinTime(TEN_MINUTE_INTERVAL_DERIVATION.apply(eventCheckinInTheNearPast))
+             .setCheckoutTime(TEN_MINUTE_INTERVAL_DERIVATION.apply(eventCheckinInTheNearPast + 10))
+             .setTrl(3).build()))
+        .build();
+
+    List<CheckIn> result = underTest.extractAndFilter(newPayload);
+    assertEquals(result.size(), 1);
+    CheckIn filteredCheckin = result.iterator().next();
+    assertEquals(filteredCheckin.getCheckinTime(), TEN_MINUTE_INTERVAL_DERIVATION.apply(eventCheckinInTheNearPast));
+    assertEquals(filteredCheckin.getCheckoutTime(), TEN_MINUTE_INTERVAL_DERIVATION.apply(eventCheckinInTheNearPast + 10));
+    assertEquals(filteredCheckin.getTrl(), 3);
   }
 }
