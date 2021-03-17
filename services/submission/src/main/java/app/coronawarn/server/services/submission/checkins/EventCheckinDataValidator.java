@@ -1,4 +1,4 @@
-package app.coronawarn.server.services.submission.validation;
+package app.coronawarn.server.services.submission.checkins;
 
 import app.coronawarn.server.common.persistence.domain.DiagnosisKey;
 import app.coronawarn.server.common.protocols.internal.SubmissionPayload;

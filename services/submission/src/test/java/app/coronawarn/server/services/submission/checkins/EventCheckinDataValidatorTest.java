@@ -1,4 +1,4 @@
-package app.coronawarn.server.services.submission.validation;
+package app.coronawarn.server.services.submission.checkins;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;

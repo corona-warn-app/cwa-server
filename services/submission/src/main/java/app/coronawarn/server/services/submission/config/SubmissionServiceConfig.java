@@ -125,6 +125,14 @@ public class SubmissionServiceConfig {
     payload.setSupportedCountries(supportedCountries);
   }
 
+  public Integer getCheckinRetentionDate() {
+    return payload.checkinRetentionDate;
+  }
+
+  public void setCheckinRetentionDate(Integer checkinRetentionDate) {
+    this.payload.checkinRetentionDate = checkinRetentionDate;
+  }
+
   public void setPayload(Payload payload) {
     this.payload = payload;
   }
@@ -145,6 +153,7 @@ public class SubmissionServiceConfig {
     @NotEmpty
     private String[] supportedCountries;
     private String defaultOriginCountry;
+    private Integer checkinRetentionDate;
 
     public Integer getMaxNumberOfKeys() {
       return maxNumberOfKeys;
