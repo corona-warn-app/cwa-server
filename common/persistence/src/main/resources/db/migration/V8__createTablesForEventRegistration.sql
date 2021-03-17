@@ -1,10 +1,3 @@
-CREATE TABLE trace_location (
-  id SERIAL PRIMARY KEY,
-  trace_location_guid_hash BYTEA UNIQUE NOT NULL,
-  version INTEGER NOT NULL,
-  created_at BIGINT NOT NULL
-);
-
 CREATE TABLE trace_time_interval_warning (
   id SERIAL PRIMARY KEY,
   trace_location_guid BYTEA NOT NULL,

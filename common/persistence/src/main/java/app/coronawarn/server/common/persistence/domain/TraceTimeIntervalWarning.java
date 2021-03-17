@@ -1,4 +1,4 @@
-package app.coronawarn.server.common.persistence.eventregistration.domain;
+package app.coronawarn.server.common.persistence.domain;
 
 import org.springframework.data.annotation.Id;
 
@@ -14,7 +14,7 @@ public class TraceTimeIntervalWarning {
   /**
    * Constructor for a TraceTimeIntervalWarning.
    *
-   * @param traceLocationGuid     the id/guid of the corresponding TraceLocation {@link TraceLocation}.
+   * @param traceLocationGuid     the id/guid of the corresponding TraceLocation.
    * @param startIntervalNumber   the starting interval.
    * @param endIntervalNumber     the ending inteval.
    * @param transmissionRiskLevel the transmission risk level.

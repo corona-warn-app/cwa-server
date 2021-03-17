@@ -1,9 +1,8 @@
-package app.coronawarn.server.common.persistence.eventregistration.repository;
+package app.coronawarn.server.common.persistence.repository;
 
-import static org.assertj.core.api.Assertions.assertThat;
-
-import app.coronawarn.server.common.persistence.eventregistration.domain.TraceTimeIntervalWarning;
+import app.coronawarn.server.common.persistence.domain.TraceTimeIntervalWarning;
 import java.util.UUID;
+import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,11 +32,11 @@ public class TraceTimeIntervalWarningRepositoryTest {
     final Iterable<TraceTimeIntervalWarning> all = underTest.findAll();
     final TraceTimeIntervalWarning next = all.iterator().next();
 
-    assertThat(next).isNotNull();
-    assertThat(next.getId()).isNotNull();
-    assertThat(next.getTraceLocationGuid()).isEqualTo(guid);
-    assertThat(next.getStartIntervalNumber()).isEqualTo(startIntervalNumber);
-    assertThat(next.getEndIntervalNumber()).isEqualTo(endIntervalNumber);
-    assertThat(next.getTransmissionRiskLevel()).isEqualTo(transmissionRiskLevel);
+    Assertions.assertThat(next).isNotNull();
+    Assertions.assertThat(next.getId()).isNotNull();
+    Assertions.assertThat(next.getTraceLocationGuid()).isEqualTo(guid);
+    Assertions.assertThat(next.getStartIntervalNumber()).isEqualTo(startIntervalNumber);
+    Assertions.assertThat(next.getEndIntervalNumber()).isEqualTo(endIntervalNumber);
+    Assertions.assertThat(next.getTransmissionRiskLevel()).isEqualTo(transmissionRiskLevel);
   }
 }

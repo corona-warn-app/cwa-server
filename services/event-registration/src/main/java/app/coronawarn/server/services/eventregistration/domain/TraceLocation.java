@@ -1,12 +1,11 @@
-package app.coronawarn.server.common.persistence.eventregistration.domain;
+package app.coronawarn.server.services.eventregistration.domain;
 
 import org.springframework.data.annotation.Id;
 
 public class TraceLocation {
 
   @Id
-  private Long id;
-  private final byte[] traceLocationGuidHash;
+  private final String traceLocationGuidHash;
   private final Long createdAt;
   private final Integer version;
 
@@ -17,17 +16,14 @@ public class TraceLocation {
    * @param createdAt             when the TraceLocation was created.
    * @param version               the version provided by the client.
    */
-  public TraceLocation(byte[] traceLocationGuidHash, Long createdAt, Integer version) {
+  public TraceLocation(String traceLocationGuidHash, Long createdAt, Integer version) {
     this.traceLocationGuidHash = traceLocationGuidHash;
     this.createdAt = createdAt;
     this.version = version;
   }
 
-  public Long getId() {
-    return id;
-  }
 
-  public byte[] getTraceLocationGuidHash() {
+  public String getTraceLocationGuidHash() {
     return traceLocationGuidHash;
   }
 

@@ -8,5 +8,4 @@ public class EventRegistrationApplicationTest {
   void applicationContextShouldLoad() {
     EventRegistrationApplication.main(new String[]{});
   }
-
 }
