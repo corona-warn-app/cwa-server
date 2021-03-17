@@ -18,8 +18,6 @@ class EventCheckinDataFilterTest {
 
   private static final int ACCEPTABLE_EVENT_DATE_THRESHOLD_IN_DAYS = 15;
   private static final int CORRECT_TRL = 1;
-  private static final int CORRECT_CHECKOUT_TIME = 12;
-  private static final int CORRECT_CHECKIN_TIME = 1;
 
   private EventCheckinDataFilter underTest;
 
@@ -27,7 +25,7 @@ class EventCheckinDataFilterTest {
   public void setup() {
     SubmissionServiceConfig mockConfig = new SubmissionServiceConfig();
     mockConfig.setPayload(new Payload());
-    mockConfig.setCheckinRetentionDate(ACCEPTABLE_EVENT_DATE_THRESHOLD_IN_DAYS);
+    mockConfig.setAcceptedEventDateThresholdDays(ACCEPTABLE_EVENT_DATE_THRESHOLD_IN_DAYS);
     underTest = new EventCheckinDataFilter(mockConfig);
   }
 

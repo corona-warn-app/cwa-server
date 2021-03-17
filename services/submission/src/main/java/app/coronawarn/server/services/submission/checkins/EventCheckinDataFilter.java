@@ -36,7 +36,7 @@ public class EventCheckinDataFilter {
   }
 
   private boolean filterOutOldCheckins(CheckIn checkin) {
-    Integer acceptableTimeframeInDays = submissionServiceConfig.getCheckinRetentionDate();
+    Integer acceptableTimeframeInDays = submissionServiceConfig.getAcceptedEventDateThresholdDays();
     int threshold = TEN_MINUTE_INTERVAL_DERIVATION.apply(LocalDateTime
         .ofInstant(Instant.now(), UTC).minusDays(acceptableTimeframeInDays).toEpochSecond(UTC));
     return threshold < checkin.getCheckoutTime();

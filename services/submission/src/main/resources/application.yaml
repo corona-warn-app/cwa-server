@@ -41,7 +41,8 @@ services:
       supported-countries: ${SUPPORTED_COUNTRIES}
       # The default 'origin country' when not provided in submission payload
       default-origin-country: ${ORIGIN_COUNTRY:DE}
-      checkin-retention-date: 15
+      # Checkin data for events older than the number below are ignored by the system
+      accepted-event-date-threshold-days: 15
     verification:
       base-url: ${VERIFICATION_BASE_URL:http://localhost:8004}
       path: /version/v1/tan/verify

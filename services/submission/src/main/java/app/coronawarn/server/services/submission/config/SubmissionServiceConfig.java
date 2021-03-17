@@ -125,12 +125,12 @@ public class SubmissionServiceConfig {
     payload.setSupportedCountries(supportedCountries);
   }
 
-  public Integer getCheckinRetentionDate() {
-    return payload.checkinRetentionDate;
+  public Integer getAcceptedEventDateThresholdDays() {
+    return payload.acceptedEventDateThresholdDays;
   }
 
-  public void setCheckinRetentionDate(Integer checkinRetentionDate) {
-    this.payload.checkinRetentionDate = checkinRetentionDate;
+  public void setAcceptedEventDateThresholdDays(Integer acceptedEventDateThresholdDays) {
+    this.payload.acceptedEventDateThresholdDays = acceptedEventDateThresholdDays;
   }
 
   public void setPayload(Payload payload) {
@@ -153,7 +153,7 @@ public class SubmissionServiceConfig {
     @NotEmpty
     private String[] supportedCountries;
     private String defaultOriginCountry;
-    private Integer checkinRetentionDate;
+    private Integer acceptedEventDateThresholdDays;
 
     public Integer getMaxNumberOfKeys() {
       return maxNumberOfKeys;
