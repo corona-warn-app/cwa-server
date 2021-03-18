@@ -1,7 +1,7 @@
 package app.coronawarn.server.services.eventregistration.boundary.validation;
 
 
-import app.coronawarn.server.common.protocols.internal.evreg.TraceLocation;
+import app.coronawarn.server.common.protocols.internal.pt.TraceLocation;
 import app.coronawarn.server.services.eventregistration.config.EventRegistrationConfiguration;
 import java.util.ArrayList;
 import java.util.List;

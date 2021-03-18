@@ -2,7 +2,7 @@ package app.coronawarn.server.services.submission.validation;
 
 import app.coronawarn.server.common.persistence.domain.DiagnosisKey;
 import app.coronawarn.server.common.protocols.internal.SubmissionPayload;
-import app.coronawarn.server.common.protocols.internal.evreg.CheckIn;
+import app.coronawarn.server.common.protocols.internal.pt.CheckIn;
 import java.util.List;
 import javax.validation.ConstraintValidatorContext;
 import org.springframework.stereotype.Component;
@@ -28,8 +28,8 @@ public class EventCheckinDataValidator {
   }
 
   private boolean verifyEndIntervalNumber(CheckIn checkin, ConstraintValidatorContext validatorContext) {
-    int startIntervalNumber = checkin.getCheckinTime();
-    int endIntervalNumber = checkin.getCheckoutTime();
+    int startIntervalNumber = checkin.getStartIntervalNumber();
+    int endIntervalNumber = checkin.getEndIntervalNumber();
     if (endIntervalNumber <= startIntervalNumber) {
       addViolation(validatorContext,
           "Checkin endIntervalNumber must be greater than startIntervalNumber");
@@ -40,7 +40,7 @@ public class EventCheckinDataValidator {
 
   private boolean verifyStartIntervalNumber(CheckIn checkin,
       ConstraintValidatorContext validatorContext) {
-    int startIntervalNumber = checkin.getCheckinTime();
+    int startIntervalNumber = checkin.getStartIntervalNumber();
     if (startIntervalNumber <= 0) {
       addViolation(validatorContext, "Checkin startIntervalNumber must be greater than 0");
       return false;
@@ -50,7 +50,7 @@ public class EventCheckinDataValidator {
 
   private boolean verifyTransmissionRiskLevel(CheckIn checkin,
       ConstraintValidatorContext validatorContext) {
-    int trl = checkin.getTrl();
+    int trl = checkin.getTransmissionRiskLevel();
     if (trl < DiagnosisKey.MIN_TRANSMISSION_RISK_LEVEL
         || trl > DiagnosisKey.MAX_TRANSMISSION_RISK_LEVEL) {
       addViolation(validatorContext,
