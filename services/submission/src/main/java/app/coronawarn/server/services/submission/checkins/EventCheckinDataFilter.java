@@ -3,7 +3,6 @@ package app.coronawarn.server.services.submission.checkins;
 import static app.coronawarn.server.services.submission.checkins.CheckinsDateSpecification.TEN_MINUTE_INTERVAL_DERIVATION;
 import static java.time.ZoneOffset.UTC;
 
-import app.coronawarn.server.common.protocols.internal.SubmissionPayload;
 import app.coronawarn.server.common.protocols.internal.evreg.CheckIn;
 import app.coronawarn.server.services.submission.config.SubmissionServiceConfig;
 import java.time.Instant;
@@ -25,15 +24,13 @@ public class EventCheckinDataFilter {
   }
 
   /**
-   * Given the payload extract the checkin data and return a filtered list based on the
-   * following criteria:
+   * Return a filtered list of checkin data based on the following criteria:
    * <li>Filter out checkins with TRL values that are mapped to 0 ( as per Risk calculation paramters app config) </li>
    * <li>Filter out checkins which have checkout time in the past further than 15 days (app config)</li>
    * <li>Filter out checkins which are in the future</li>
    * <li>Filter out checkins which have trace location signatures that can not be verified</li>.
    */
-  public List<CheckIn> extractAndFilter(SubmissionPayload submissionPayload) {
-    List<CheckIn> checkins = submissionPayload.getCheckInsList();
+  public List<CheckIn> filter(List<CheckIn> checkins) {
     return checkins.stream()
         .filter(this::filterByValidSignature)
         .filter(this::filterByTransmissionRiskLevel)
