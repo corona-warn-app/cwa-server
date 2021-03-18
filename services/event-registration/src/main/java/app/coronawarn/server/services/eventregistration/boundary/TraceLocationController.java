@@ -3,7 +3,7 @@ package app.coronawarn.server.services.eventregistration.boundary;
 import static app.coronawarn.server.services.eventregistration.config.UrlConstants.TRACE_LOCATION_ROUTE;
 import static app.coronawarn.server.services.eventregistration.config.UrlConstants.V1;
 
-import app.coronawarn.server.common.protocols.internal.evreg.TraceLocation;
+import app.coronawarn.server.common.protocols.internal.pt.TraceLocation;
 import app.coronawarn.server.services.eventregistration.boundary.validation.ValidTraceLocation;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
