@@ -141,7 +141,6 @@ public class ApplicationConfigurationV2PublicationConfig {
         .setDiagnosisKeysDataMapping(buildDataMapping(dataMapping))
         .setEventDrivenUserSurveyParameters(buildAndroidEdusParameters(distributionServiceConfig))
         .setPrivacyPreservingAnalyticsParameters(buildAndroidPpaParameters(distributionServiceConfig))
-        .setEventRegistrationParameters(buildEventRegistrationParametersAndroid())
         .setErrorLogSharingParameters(buildErrorLogSharingParametersAndroid(distributionServiceConfig))
         .build();
   }
@@ -160,11 +159,6 @@ public class ApplicationConfigurationV2PublicationConfig {
             .build())
         .build();
   }
-
-  private EventRegistrationParameters buildEventRegistrationParametersAndroid() {
-    return EventRegistrationParameters.newBuilder().build();
-  }
-
 
   private PPDDEventDrivenUserSurveyParametersAndroid buildAndroidEdusParameters(
       DistributionServiceConfig distributionServiceConfig) {
@@ -328,12 +322,7 @@ public class ApplicationConfigurationV2PublicationConfig {
         .setEventDrivenUserSurveyParameters(buildIosEdusParameters(distributionServiceConfig))
         .setPrivacyPreservingAnalyticsParameters(buildIosPpaParameters(distributionServiceConfig))
         .setErrorLogSharingParameters(buildErrorLogSharingParametersIos())
-        .setEventRegistrationParameters(buildEventRegistrationParametersIos())
         .build();
-  }
-
-  private EventRegistrationParameters buildEventRegistrationParametersIos() {
-    return EventRegistrationParameters.newBuilder().build();
   }
 
   private PPDDErrorLogSharingParametersIOS buildErrorLogSharingParametersIos() {
