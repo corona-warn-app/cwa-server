@@ -1,6 +1,7 @@
 package app.coronawarn.server.services.eventregistration.testdata;
 
 import app.coronawarn.server.common.protocols.internal.pt.TraceLocation;
+import com.google.protobuf.ByteString;
 import java.util.UUID;
 
 public final class TestData {

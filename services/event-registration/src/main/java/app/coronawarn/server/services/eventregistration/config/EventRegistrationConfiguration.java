@@ -4,9 +4,8 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 
 @ConfigurationProperties(prefix = "event-registration")
 public class EventRegistrationConfiguration {
-  private Integer version;
-  private Integer saveRetriesLimit;
 
+  private Integer version;
 
   public Integer getVersion() {
     return version;
@@ -15,13 +14,4 @@ public class EventRegistrationConfiguration {
   public void setVersion(Integer version) {
     this.version = version;
   }
-
-  public Integer getSaveRetriesLimit() {
-    return saveRetriesLimit;
-  }
-
-  public void setSaveRetriesLimit(Integer saveRetriesLimit) {
-    this.saveRetriesLimit = saveRetriesLimit;
-  }
-
 }
