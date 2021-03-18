@@ -8,7 +8,7 @@ import app.coronawarn.server.common.protocols.external.exposurenotification.Repo
 import app.coronawarn.server.common.protocols.external.exposurenotification.TemporaryExposureKey;
 import app.coronawarn.server.common.protocols.external.exposurenotification.TemporaryExposureKey.Builder;
 import app.coronawarn.server.common.protocols.internal.SubmissionPayload;
-import app.coronawarn.server.common.protocols.internal.evreg.CheckIn;
+import app.coronawarn.server.common.protocols.internal.pt.CheckIn;
 import app.coronawarn.server.services.submission.config.SubmissionServiceConfig;
 import com.google.protobuf.ByteString;
 import java.time.Instant;

@@ -22,8 +22,7 @@ import app.coronawarn.server.common.persistence.service.DiagnosisKeyService;
 import app.coronawarn.server.common.protocols.external.exposurenotification.ReportType;
 import app.coronawarn.server.common.protocols.external.exposurenotification.TemporaryExposureKey;
 import app.coronawarn.server.common.protocols.internal.SubmissionPayload;
-import app.coronawarn.server.common.protocols.internal.evreg.CheckIn;
-import app.coronawarn.server.common.protocols.internal.evreg.CheckIn.Builder;
+import app.coronawarn.server.common.protocols.internal.pt.CheckIn;
 import app.coronawarn.server.services.submission.config.SubmissionServiceConfig;
 import app.coronawarn.server.services.submission.monitoring.SubmissionMonitor;
 import app.coronawarn.server.services.submission.verification.TanVerifier;
@@ -342,8 +341,8 @@ class SubmissionControllerTest {
   @Test
   void testInvalidTransmissionRiskLevelInCheckinData() {
     List<CheckIn> invalidCheckinData =
-        List.of(CheckIn.newBuilder().setTrl(0).setCheckinTime(1).setCheckoutTime(2).build(),
-            CheckIn.newBuilder().setTrl(4).setCheckinTime(1).setCheckoutTime(1).build());
+        List.of(CheckIn.newBuilder().setTransmissionRiskLevel(0).setStartIntervalNumber(1).setEndIntervalNumber(2).build(),
+            CheckIn.newBuilder().setTransmissionRiskLevel(4).setStartIntervalNumber(1).setEndIntervalNumber(1).build());
 
     ResponseEntity<Void> actResponse =
         executor.executePost(buildPayloadWithCheckinData(invalidCheckinData));
@@ -353,8 +352,8 @@ class SubmissionControllerTest {
   @Test
   void testInvalidCheckinTime() {
     List<CheckIn> invalidCheckinData =
-        List.of(CheckIn.newBuilder().setTrl(2).setCheckinTime(0).setCheckoutTime(1).build(),
-            CheckIn.newBuilder().setTrl(2).setCheckinTime(0).setCheckoutTime(1).build());
+        List.of(CheckIn.newBuilder().setTransmissionRiskLevel(2).setStartIntervalNumber(0).setEndIntervalNumber(1).build(),
+            CheckIn.newBuilder().setTransmissionRiskLevel(2).setStartIntervalNumber(0).setEndIntervalNumber(1).build());
 
     ResponseEntity<Void> actResponse =
         executor.executePost(buildPayloadWithCheckinData(invalidCheckinData));
@@ -364,8 +363,8 @@ class SubmissionControllerTest {
   @Test
   void testInvalidCheckOutTime() {
     List<CheckIn> invalidCheckinData =
-        List.of(CheckIn.newBuilder().setTrl(2).setCheckinTime(4).setCheckoutTime(3).build(),
-            CheckIn.newBuilder().setTrl(2).setCheckinTime(2).setCheckoutTime(2).build());
+        List.of(CheckIn.newBuilder().setTransmissionRiskLevel(2).setStartIntervalNumber(4).setEndIntervalNumber(3).build(),
+            CheckIn.newBuilder().setTransmissionRiskLevel(2).setStartIntervalNumber(2).setEndIntervalNumber(2).build());
 
     ResponseEntity<Void> actResponse =
         executor.executePost(buildPayloadWithCheckinData(invalidCheckinData));
@@ -375,8 +374,8 @@ class SubmissionControllerTest {
   @Test
   void testValidCheckinData() {
     List<CheckIn> invalidCheckinData =
-        List.of(CheckIn.newBuilder().setTrl(1).setCheckinTime(3).setCheckoutTime(4).build(),
-            CheckIn.newBuilder().setTrl(2).setCheckinTime(1).setCheckoutTime(2).build());
+        List.of(CheckIn.newBuilder().setTransmissionRiskLevel(1).setStartIntervalNumber(3).setEndIntervalNumber(4).build(),
+            CheckIn.newBuilder().setTransmissionRiskLevel(2).setStartIntervalNumber(1).setEndIntervalNumber(2).build());
 
     ResponseEntity<Void> actResponse =
         executor.executePost(buildPayloadWithCheckinData(invalidCheckinData));
