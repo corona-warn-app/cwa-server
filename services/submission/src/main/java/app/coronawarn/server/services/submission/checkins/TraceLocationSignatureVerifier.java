@@ -1,5 +1,7 @@
 package app.coronawarn.server.services.submission.checkins;
 
+import app.coronawarn.server.common.protocols.internal.evreg.SignedEvent;
+import app.coronawarn.server.services.submission.config.CryptoProvider;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.security.Signature;
@@ -7,8 +9,6 @@ import java.security.SignatureException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
-import app.coronawarn.server.common.protocols.internal.evreg.SignedEvent;
-import app.coronawarn.server.services.submission.config.CryptoProvider;
 
 @Component
 public class TraceLocationSignatureVerifier {
@@ -21,6 +21,10 @@ public class TraceLocationSignatureVerifier {
     this.cryptoProvider = cryptoProvider;
   }
 
+  /**
+   * Verify the signature contained in the given event data structure by using the service
+   * configured public key.
+   */
   public boolean verify(SignedEvent signedEvent) {
     byte[] signatureBytes = signedEvent.getSignature().toByteArray();
     byte[] contentBytes = signedEvent.getEvent().toByteArray();

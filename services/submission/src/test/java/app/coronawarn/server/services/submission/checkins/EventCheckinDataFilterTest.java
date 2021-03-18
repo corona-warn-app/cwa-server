@@ -18,8 +18,8 @@ import app.coronawarn.server.common.protocols.internal.evreg.CheckIn;
 import app.coronawarn.server.common.protocols.internal.evreg.Event;
 import app.coronawarn.server.common.protocols.internal.evreg.SignedEvent;
 import app.coronawarn.server.services.submission.config.SubmissionServiceConfig;
-import app.coronawarn.server.services.submission.config.SubmissionServiceConfig.Checkins;
 import app.coronawarn.server.services.submission.config.SubmissionServiceConfig.Payload;
+import app.coronawarn.server.services.submission.config.SubmissionServiceConfig.Payload.Checkins;
 
 class EventCheckinDataFilterTest {
 

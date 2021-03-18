@@ -45,7 +45,7 @@ services:
         # Checkin data for events older than the number below are ignored by the system
         accepted-event-date-threshold-days: 15
         # Submission Service public key used for verifying the signed TraceLocation property of the checkins data
-        signature-verification-key: abcd
+        signature-verification-key: to-be-provided-as-env-var
         # Algorithm used to produce the signature of the TraceLocation objects within the submission payload
         signature-algorithm: SHA256withECDSA
     verification:
