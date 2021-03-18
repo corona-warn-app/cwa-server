@@ -210,7 +210,7 @@ public class FederationBatchProcessor {
         }
         int insertedKeys = diagnosisKeyService.saveDiagnosisKeys(validDiagnosisKeys);
         logger.info("Successfully inserted {} {} keys for date {} and batchTag {}", batchInfo.getSourceSystem(),
-            insertedKeys, date);
+            insertedKeys, date, batchTag);
       }, () -> logger.info("{} batch for date {} and batchTag {} did not contain any keys",
           batchInfo.getSourceSystem(), date, batchTag));
       batchInfoService.updateStatus(batchInfo, batchContainsInvalidKeys.get() ? PROCESSED_WITH_ERROR : PROCESSED);
