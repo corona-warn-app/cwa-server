@@ -1,5 +1,6 @@
 ---
 event-registration:
+  save-retries-limit: 10
   version: 0
 
 spring:

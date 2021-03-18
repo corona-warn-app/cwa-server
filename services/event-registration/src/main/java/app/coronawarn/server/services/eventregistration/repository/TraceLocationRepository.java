@@ -14,8 +14,8 @@ public interface TraceLocationRepository extends CrudRepository<TraceLocation, S
 
   @Modifying
   @Query("INSERT INTO trace_location (trace_location_guid_hash, version, created_at)"
-      + " VALUES (:traceLocationGuidHash,:version,:createdAt) ON CONFLICT DO NOTHING")
-  void saveOnConflictDoNothing(@Param("traceLocationGuidHash") String traceLocationGuidHash,
+      + " VALUES (:traceLocationGuidHash,:version,:createdAt)")
+  void save(@Param("traceLocationGuidHash") String traceLocationGuidHash,
       @Param("version") Integer version,
       @Param("createdAt") Long createdAt);
 
