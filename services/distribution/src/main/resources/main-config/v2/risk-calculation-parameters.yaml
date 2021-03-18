@@ -11,7 +11,7 @@ minutes-at-attenuation-filters:
   -
     attenuation-range:
       min: 0
-      max: 73
+      max: 79
       max-exclusive: true
     drop-if-minutes-in-range:
       min: 0
@@ -28,26 +28,32 @@ minutes-at-attenuation-weights:
   -
     attenuation-range:
       min: 0
-      max: 55
+      max: 63
+      max-exclusive: true
+    weight: 0.8
+  -
+    attenuation-range:
+      min: 63
+      max: 73
       max-exclusive: true
     weight: 1.0
   -
     attenuation-range:
-      min: 55
-      max: 63
+      min: 73
+      max: 79
       max-exclusive: true
-    weight: 0.5
+    weight: 0.1
 
 normalized-time-per-e-w-to-risk-level-mapping:
   -
     normalized-time-range:
       min: 0
-      max: 15
+      max: 13
       max-exclusive: true
     risk-level: 1
   -
     normalized-time-range:
-      min: 15
+      min: 13
       max: 9999
     risk-level: 2
 
@@ -55,12 +61,12 @@ normalized-time-per-day-to-risk-level-mapping:
   -
     normalized-time-range:
       min: 0
-      max: 15
+      max: 13
       max-exclusive: true
     risk-level: 1
   -
     normalized-time-range:
-      min: 15
+      min: 13
       max: 99999
     risk-level: 2
 
