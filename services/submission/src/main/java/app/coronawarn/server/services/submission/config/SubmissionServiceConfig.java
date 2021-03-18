@@ -216,18 +216,23 @@ public class SubmissionServiceConfig {
       public Integer getAcceptedEventDateThresholdDays() {
         return acceptedEventDateThresholdDays;
       }
+
       public void setAcceptedEventDateThresholdDays(Integer acceptedEventDateThresholdDays) {
         this.acceptedEventDateThresholdDays = acceptedEventDateThresholdDays;
       }
+
       public String getSignatureVerificationKey() {
         return signatureVerificationKey;
       }
+
       public void setSignatureVerificationKey(String signatureVerificationKey) {
         this.signatureVerificationKey = signatureVerificationKey;
       }
+
       public String getSignatureAlgorithm() {
         return signatureAlgorithm;
       }
+
       public void setSignatureAlgorithm(String signatureAlgorithm) {
         this.signatureAlgorithm = signatureAlgorithm;
       }

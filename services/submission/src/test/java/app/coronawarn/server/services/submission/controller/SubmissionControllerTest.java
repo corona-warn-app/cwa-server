@@ -1,8 +1,11 @@
 package app.coronawarn.server.services.submission.controller;
 
+import static app.coronawarn.server.services.submission.checkins.CheckinsDateSpecification.TEN_MINUTE_INTERVAL_DERIVATION;
 import static app.coronawarn.server.services.submission.controller.SubmissionPayloadMockData.*;
+import static java.time.ZoneOffset.UTC;
 import static org.apache.commons.lang3.StringUtils.defaultIfBlank;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.Assert.assertFalse;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.anyString;
@@ -18,17 +21,18 @@ import static org.springframework.http.HttpStatus.METHOD_NOT_ALLOWED;
 import static org.springframework.http.HttpStatus.OK;
 
 import app.coronawarn.server.common.persistence.domain.DiagnosisKey;
+import app.coronawarn.server.common.persistence.eventregistration.repository.TraceTimeIntervalWarningRepository;
 import app.coronawarn.server.common.persistence.service.DiagnosisKeyService;
 import app.coronawarn.server.common.protocols.external.exposurenotification.ReportType;
 import app.coronawarn.server.common.protocols.external.exposurenotification.TemporaryExposureKey;
 import app.coronawarn.server.common.protocols.internal.SubmissionPayload;
 import app.coronawarn.server.common.protocols.internal.evreg.CheckIn;
-import app.coronawarn.server.common.protocols.internal.evreg.CheckIn.Builder;
 import app.coronawarn.server.services.submission.config.SubmissionServiceConfig;
 import app.coronawarn.server.services.submission.monitoring.SubmissionMonitor;
 import app.coronawarn.server.services.submission.verification.TanVerifier;
-import feign.FeignException.BadRequest;
 import com.google.protobuf.ByteString;
+import java.time.Instant;
+import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashSet;
@@ -39,8 +43,7 @@ import java.util.stream.Stream;
 import org.apache.commons.lang3.tuple.Pair;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Nested;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.api.TestInstance.Lifecycle;
@@ -79,6 +82,9 @@ class SubmissionControllerTest {
 
   @Autowired
   private SubmissionServiceConfig config;
+
+  @Autowired
+  private TraceTimeIntervalWarningRepository traceTimeIntervalWarningRepository;
 
   private static Stream<Arguments> invalidVisitedCountries() {
     return Stream.of(
@@ -381,6 +387,50 @@ class SubmissionControllerTest {
     ResponseEntity<Void> actResponse =
         executor.executePost(buildPayloadWithCheckinData(invalidCheckinData));
     assertThat(actResponse.getStatusCode()).isEqualTo(OK);
+  }
+
+  @Test
+  @Disabled("To be implemented after risk paramters yaml refactoring")
+  void testCheckinDataIsFilteredForTransmissionRiskLevel() {
+    // TODO:
+  }
+
+  @Test
+  void testCheckinDataIsFilteredForOldEvents() {
+    Integer daysInThePast = config.getAcceptedEventDateThresholdDays() - 1;
+    Instant thisInstant = Instant.now();
+    long eventCheckoutInThePast =
+        LocalDateTime.ofInstant(thisInstant, UTC).minusDays(daysInThePast).toEpochSecond(UTC);
+    long eventCheckinInThePast =
+        LocalDateTime.ofInstant(thisInstant, UTC).minusDays(daysInThePast +1).toEpochSecond(UTC);
+    List<CheckIn> checkins = List.of(CheckIn.newBuilder()
+        .setCheckinTime(TEN_MINUTE_INTERVAL_DERIVATION.apply(eventCheckinInThePast))
+        .setCheckoutTime(TEN_MINUTE_INTERVAL_DERIVATION.apply(eventCheckoutInThePast)).setTrl(1)
+        .build());
+
+    ResponseEntity<Void> actResponse =
+        executor.executePost(buildPayloadWithCheckinData(checkins));
+    assertThat(actResponse.getStatusCode()).isEqualTo(OK);
+    assertFalse(traceTimeIntervalWarningRepository.findAll().iterator().hasNext());
+  }
+
+  @Test
+  void testCheckinDataIsFilteredForFutureEvents() {
+    Instant thisInstant = Instant.now();
+    long eventCheckinInTheFuture =
+        LocalDateTime.ofInstant(thisInstant, UTC).plusMinutes(11).toEpochSecond(UTC);
+    long eventCheckoutInTheFuture =
+        LocalDateTime.ofInstant(thisInstant, UTC).plusMinutes(20).toEpochSecond(UTC);
+
+    List<CheckIn> checkins = List.of(CheckIn.newBuilder()
+        .setCheckinTime(TEN_MINUTE_INTERVAL_DERIVATION.apply(eventCheckinInTheFuture))
+        .setCheckoutTime(TEN_MINUTE_INTERVAL_DERIVATION.apply(eventCheckoutInTheFuture)).setTrl(1)
+        .build());
+
+    ResponseEntity<Void> actResponse =
+        executor.executePost(buildPayloadWithCheckinData(checkins));
+    assertThat(actResponse.getStatusCode()).isEqualTo(OK);
+    assertFalse(traceTimeIntervalWarningRepository.findAll().iterator().hasNext());
   }
 
   @ParameterizedTest
