@@ -2,6 +2,7 @@
 
 package app.coronawarn.server.services.download.normalization;
 
+import static app.coronawarn.server.common.persistence.domain.FederationBatchSourceSystem.EFGS;
 import static app.coronawarn.server.common.persistence.domain.FederationBatchStatus.UNPROCESSED;
 import static org.assertj.core.util.Lists.list;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -17,11 +18,11 @@ import app.coronawarn.server.common.persistence.service.DiagnosisKeyService;
 import app.coronawarn.server.common.persistence.service.FederationBatchInfoService;
 import app.coronawarn.server.common.protocols.external.exposurenotification.DiagnosisKey;
 import app.coronawarn.server.common.protocols.external.exposurenotification.DiagnosisKeyBatch;
-import app.coronawarn.server.services.download.*;
-import app.coronawarn.server.services.download.config.DownloadServiceConfig;
 import app.coronawarn.server.services.download.BatchDownloadResponse;
 import app.coronawarn.server.services.download.FederationBatchProcessor;
+import app.coronawarn.server.services.download.FederationBatchTestHelper;
 import app.coronawarn.server.services.download.FederationGatewayDownloadService;
+import app.coronawarn.server.services.download.config.DownloadServiceConfig;
 import app.coronawarn.server.services.download.validation.ValidFederationKeyFilter;
 import com.google.protobuf.ByteString;
 import java.time.LocalDate;
@@ -80,9 +81,9 @@ class FederationKeyNormalizerTest {
   }
 
   @Test
-  void testBatchKeysWithDsosAndWithoutTrlAreNormalized()  throws Exception{
+  void testBatchKeysWithDsosAndWithoutTrlAreNormalized() throws Exception {
     LocalDate date = LocalDate.of(2020, 9, 1);
-    FederationBatchInfo federationBatchInfo = new FederationBatchInfo(BATCH_TAG, date, UNPROCESSED);
+    FederationBatchInfo federationBatchInfo = new FederationBatchInfo(BATCH_TAG, date, UNPROCESSED, EFGS);
     when(batchInfoService.findByStatus(UNPROCESSED)).thenReturn(list(federationBatchInfo));
 
     BatchDownloadResponse serverResponse = createBatchDownloadResponseWithKeys(this::createDiagnosisKeyWithNoTrl);
@@ -92,14 +93,16 @@ class FederationKeyNormalizerTest {
     diagnosisKeyService.getDiagnosisKeys().forEach(dk -> {
       TekFieldDerivations tekDerivationMap = config.getTekFieldDerivations();
       String keyData = ByteString.copyFrom(dk.getKeyData()).toStringUtf8();
-      assertEquals(tekDerivationMap.deriveTransmissionRiskLevelFromDaysSinceSymptoms(getKeysWithDaysSinceSymptoms().get(keyData)), dk.getTransmissionRiskLevel());
+      assertEquals(tekDerivationMap
+              .deriveTransmissionRiskLevelFromDaysSinceSymptoms(getKeysWithDaysSinceSymptoms().get(keyData)),
+          dk.getTransmissionRiskLevel());
     });
   }
 
   @Test
-  void testTrlIsNormalizedWhenValueProvidedIsMaxInt() throws Exception{
+  void testTrlIsNormalizedWhenValueProvidedIsMaxInt() throws Exception {
     LocalDate date = LocalDate.of(2020, 9, 1);
-    FederationBatchInfo federationBatchInfo = new FederationBatchInfo(BATCH_TAG, date, UNPROCESSED);
+    FederationBatchInfo federationBatchInfo = new FederationBatchInfo(BATCH_TAG, date, UNPROCESSED, EFGS);
     when(batchInfoService.findByStatus(UNPROCESSED)).thenReturn(list(federationBatchInfo));
 
     BatchDownloadResponse serverResponse = createBatchDownloadResponseWithKeys(this::createDiagnosisKeyWithMaxIntTrl);
@@ -110,7 +113,9 @@ class FederationKeyNormalizerTest {
     diagnosisKeyService.getDiagnosisKeys().forEach(dk -> {
       TekFieldDerivations tekDerivationMap = config.getTekFieldDerivations();
       String keyData = ByteString.copyFrom(dk.getKeyData()).toStringUtf8();
-      assertEquals(tekDerivationMap.deriveTransmissionRiskLevelFromDaysSinceSymptoms(getKeysWithDaysSinceSymptoms().get(keyData)), dk.getTransmissionRiskLevel());
+      assertEquals(tekDerivationMap
+              .deriveTransmissionRiskLevelFromDaysSinceSymptoms(getKeysWithDaysSinceSymptoms().get(keyData)),
+          dk.getTransmissionRiskLevel());
     });
   }
 

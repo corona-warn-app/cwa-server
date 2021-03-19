@@ -13,9 +13,9 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 import com.google.protobuf.ByteString;
-import app.coronawarn.server.common.protocols.internal.evreg.CheckIn;
-import app.coronawarn.server.common.protocols.internal.evreg.Event;
-import app.coronawarn.server.common.protocols.internal.evreg.SignedEvent;
+import app.coronawarn.server.common.protocols.internal.pt.CheckIn;
+import app.coronawarn.server.common.protocols.internal.pt.SignedTraceLocation;
+import app.coronawarn.server.common.protocols.internal.pt.TraceLocation;
 import app.coronawarn.server.services.submission.config.SubmissionServiceConfig;
 import app.coronawarn.server.services.submission.config.SubmissionServiceConfig.Payload;
 import app.coronawarn.server.services.submission.config.SubmissionServiceConfig.Payload.Checkins;
@@ -53,22 +53,23 @@ class EventCheckinDataFilterTest {
 
     List<CheckIn> checkins = List.of(
         CheckIn.newBuilder()
-            .setCheckinTime(TEN_MINUTE_INTERVAL_DERIVATION.apply(eventCheckoutInThePast - 10))
-            .setCheckoutTime(TEN_MINUTE_INTERVAL_DERIVATION.apply(eventCheckoutInThePast)).setTrl(1)
+            .setStartIntervalNumber(TEN_MINUTE_INTERVAL_DERIVATION.apply(eventCheckoutInThePast - 10))
+            .setEndIntervalNumber(TEN_MINUTE_INTERVAL_DERIVATION.apply(eventCheckoutInThePast))
+            .setTransmissionRiskLevel(1)
             .build(),
         CheckIn.newBuilder()
-            .setCheckinTime(TEN_MINUTE_INTERVAL_DERIVATION.apply(acceptableEventCheckoutDate - 10))
-            .setCheckoutTime(TEN_MINUTE_INTERVAL_DERIVATION.apply(acceptableEventCheckoutDate))
-            .setTrl(3).build());
+            .setStartIntervalNumber(TEN_MINUTE_INTERVAL_DERIVATION.apply(acceptableEventCheckoutDate - 10))
+            .setEndIntervalNumber(TEN_MINUTE_INTERVAL_DERIVATION.apply(acceptableEventCheckoutDate))
+            .setTransmissionRiskLevel(3).build());
 
     List<CheckIn> result = underTest.filter(checkins);
     assertEquals(result.size(), 1);
     CheckIn filteredCheckin = result.iterator().next();
-    assertEquals(filteredCheckin.getCheckinTime(),
+    assertEquals(filteredCheckin.getStartIntervalNumber(),
         TEN_MINUTE_INTERVAL_DERIVATION.apply(acceptableEventCheckoutDate - 10));
-    assertEquals(filteredCheckin.getCheckoutTime(),
+    assertEquals(filteredCheckin.getEndIntervalNumber(),
         TEN_MINUTE_INTERVAL_DERIVATION.apply(acceptableEventCheckoutDate));
-    assertEquals(filteredCheckin.getTrl(), 3);
+    assertEquals(filteredCheckin.getTransmissionRiskLevel(), 3);
   }
 
   @ParameterizedTest
@@ -84,13 +85,14 @@ class EventCheckinDataFilterTest {
 
     List<CheckIn> checkins = List.of(
         CheckIn.newBuilder()
-            .setCheckinTime(TEN_MINUTE_INTERVAL_DERIVATION.apply(eventCheckoutInThePast - 10))
-            .setCheckoutTime(TEN_MINUTE_INTERVAL_DERIVATION.apply(eventCheckoutInThePast)).setTrl(1)
+            .setStartIntervalNumber(TEN_MINUTE_INTERVAL_DERIVATION.apply(eventCheckoutInThePast - 10))
+            .setEndIntervalNumber(TEN_MINUTE_INTERVAL_DERIVATION.apply(eventCheckoutInThePast))
+            .setTransmissionRiskLevel(1)
             .build(),
         CheckIn.newBuilder()
-            .setCheckinTime(TEN_MINUTE_INTERVAL_DERIVATION.apply(acceptableEventCheckoutDate - 10))
-            .setCheckoutTime(TEN_MINUTE_INTERVAL_DERIVATION.apply(acceptableEventCheckoutDate))
-            .setTrl(3).build());
+            .setStartIntervalNumber(TEN_MINUTE_INTERVAL_DERIVATION.apply(acceptableEventCheckoutDate - 10))
+            .setEndIntervalNumber(TEN_MINUTE_INTERVAL_DERIVATION.apply(acceptableEventCheckoutDate))
+            .setTransmissionRiskLevel(3).build());
 
     List<CheckIn> result = underTest.filter(checkins);
     assertEquals(result.size(), 2);
@@ -107,22 +109,22 @@ class EventCheckinDataFilterTest {
 
     List<CheckIn> checkins = List.of(
         CheckIn.newBuilder()
-            .setCheckinTime(TEN_MINUTE_INTERVAL_DERIVATION.apply(eventCheckinInTheFuture))
-            .setCheckoutTime(TEN_MINUTE_INTERVAL_DERIVATION.apply(eventCheckinInTheFuture + 5))
-            .setTrl(1).build(),
+            .setStartIntervalNumber(TEN_MINUTE_INTERVAL_DERIVATION.apply(eventCheckinInTheFuture))
+            .setEndIntervalNumber(TEN_MINUTE_INTERVAL_DERIVATION.apply(eventCheckinInTheFuture + 5))
+            .setTransmissionRiskLevel(1).build(),
         CheckIn.newBuilder()
-            .setCheckinTime(TEN_MINUTE_INTERVAL_DERIVATION.apply(eventCheckinInTheNearPast))
-            .setCheckoutTime(TEN_MINUTE_INTERVAL_DERIVATION.apply(eventCheckinInTheNearPast + 10))
-            .setTrl(3).build());
+            .setStartIntervalNumber(TEN_MINUTE_INTERVAL_DERIVATION.apply(eventCheckinInTheNearPast))
+            .setEndIntervalNumber(TEN_MINUTE_INTERVAL_DERIVATION.apply(eventCheckinInTheNearPast + 10))
+            .setTransmissionRiskLevel(3).build());
 
     List<CheckIn> result = underTest.filter(checkins);
     assertEquals(result.size(), 1);
     CheckIn filteredCheckin = result.iterator().next();
-    assertEquals(filteredCheckin.getCheckinTime(),
+    assertEquals(filteredCheckin.getStartIntervalNumber(),
         TEN_MINUTE_INTERVAL_DERIVATION.apply(eventCheckinInTheNearPast));
-    assertEquals(filteredCheckin.getCheckoutTime(),
+    assertEquals(filteredCheckin.getEndIntervalNumber(),
         TEN_MINUTE_INTERVAL_DERIVATION.apply(eventCheckinInTheNearPast + 10));
-    assertEquals(filteredCheckin.getTrl(), 3);
+    assertEquals(filteredCheckin.getTransmissionRiskLevel(), 3);
   }
 
   @Test
@@ -133,9 +135,9 @@ class EventCheckinDataFilterTest {
     EventCheckinDataFilter filter = new EventCheckinDataFilter(mockConfig, mockSignatureVerifier);
 
 
-    SignedEvent validEvent = SignedEvent.newBuilder().setEvent(Event.newBuilder().build())
+    SignedTraceLocation validEvent = SignedTraceLocation.newBuilder().setLocation(TraceLocation.newBuilder().build().toByteString())
         .setSignature(ByteString.copyFrom("valid".getBytes())).build();
-    SignedEvent invalidEvent = SignedEvent.newBuilder().setEvent(Event.newBuilder().build())
+    SignedTraceLocation invalidEvent = SignedTraceLocation.newBuilder().setLocation(TraceLocation.newBuilder().build().toByteString())
         .setSignature(ByteString.copyFrom("invalid".getBytes())).build();
 
 
@@ -148,23 +150,23 @@ class EventCheckinDataFilterTest {
     List<CheckIn> checkins =
         List.of(
             CheckIn.newBuilder()
-                .setCheckinTime(TEN_MINUTE_INTERVAL_DERIVATION.apply(eventCheckinInTheNearPast))
-                .setCheckoutTime(
+                .setStartIntervalNumber(TEN_MINUTE_INTERVAL_DERIVATION.apply(eventCheckinInTheNearPast))
+                .setEndIntervalNumber(
                     TEN_MINUTE_INTERVAL_DERIVATION.apply(eventCheckinInTheNearPast + 2))
-                .setSignedEvent(validEvent).setTrl(1).build(),
+                .setSignedLocation(validEvent).setTransmissionRiskLevel(1).build(),
             CheckIn.newBuilder()
-                .setCheckinTime(TEN_MINUTE_INTERVAL_DERIVATION.apply(eventCheckinInTheNearPast))
-                .setCheckoutTime(
+                .setStartIntervalNumber(TEN_MINUTE_INTERVAL_DERIVATION.apply(eventCheckinInTheNearPast))
+                .setEndIntervalNumber(
                     TEN_MINUTE_INTERVAL_DERIVATION.apply(eventCheckinInTheNearPast + 3))
-                .setSignedEvent(invalidEvent).setTrl(3).build());
+                .setSignedLocation(invalidEvent).setTransmissionRiskLevel(3).build());
 
     List<CheckIn> result = filter.filter(checkins);
     assertEquals(result.size(), 1);
     CheckIn filteredCheckin = result.iterator().next();
-    assertEquals(filteredCheckin.getCheckinTime(),
+    assertEquals(filteredCheckin.getStartIntervalNumber(),
         TEN_MINUTE_INTERVAL_DERIVATION.apply(eventCheckinInTheNearPast));
-    assertEquals(filteredCheckin.getCheckoutTime(),
+    assertEquals(filteredCheckin.getEndIntervalNumber(),
         TEN_MINUTE_INTERVAL_DERIVATION.apply(eventCheckinInTheNearPast + 2));
-    assertEquals(filteredCheckin.getTrl(), 1);
+    assertEquals(filteredCheckin.getTransmissionRiskLevel(), 1);
   }
 }

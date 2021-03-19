@@ -1,5 +1,7 @@
 package app.coronawarn.server.services.callback.controller;
 
+import static app.coronawarn.server.common.persistence.domain.FederationBatchSourceSystem.EFGS;
+
 import app.coronawarn.server.common.persistence.domain.FederationBatchInfo;
 import app.coronawarn.server.common.persistence.service.FederationBatchInfoService;
 import io.micrometer.core.annotation.Timed;
@@ -44,7 +46,7 @@ public class CallbackController {
   public ResponseEntity<Void> handleCallback(@RequestParam String batchTag,
       @NotNull @DateTimeFormat(iso = ISO.DATE) @RequestParam LocalDate date) {
     logger.info("BatchInfo with tag {} and date {} received from federation gateway.", batchTag, date);
-    FederationBatchInfo federationBatchInfo = new FederationBatchInfo(batchTag, date);
+    FederationBatchInfo federationBatchInfo = new FederationBatchInfo(batchTag, date, EFGS);
     boolean savedSuccessfully = federationBatchInfoService.save(federationBatchInfo);
     if (savedSuccessfully) {
       logger.info("BatchInfo with tag {} and date {} was persisted successfully with status {}.",

@@ -12,7 +12,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 import app.coronawarn.server.common.protocols.internal.SubmissionPayload;
-import app.coronawarn.server.common.protocols.internal.evreg.CheckIn;
+import app.coronawarn.server.common.protocols.internal.pt.CheckIn;
 
 class EventCheckinDataValidatorTest {
 
@@ -38,8 +38,8 @@ class EventCheckinDataValidatorTest {
   @ValueSource(ints = {0, 9, 12})
   void should_return_false_if_checkin_data_has_wrong_trl_values(int wrongTrl) {
     SubmissionPayload newPayload = SubmissionPayload.newBuilder()
-        .addAllCheckIns(List.of(CheckIn.newBuilder().setCheckinTime(CORRECT_CHECKIN_TIME)
-            .setCheckoutTime(CORRECT_CHECKOUT_TIME).setTrl(wrongTrl).build()))
+        .addAllCheckIns(List.of(CheckIn.newBuilder().setStartIntervalNumber(CORRECT_CHECKIN_TIME)
+            .setEndIntervalNumber(CORRECT_CHECKOUT_TIME).setTransmissionRiskLevel(wrongTrl).build()))
         .build();
 
     boolean result = validator.verify(newPayload, mockValidatorContext);
@@ -50,8 +50,8 @@ class EventCheckinDataValidatorTest {
   @ValueSource(ints = {1, 3, 5, 8})
   void should_return_true_if_checkin_data_has_correct_trl_values(int correctTrl) {
     SubmissionPayload newPayload = SubmissionPayload.newBuilder()
-        .addAllCheckIns(List.of(CheckIn.newBuilder().setCheckinTime(CORRECT_CHECKIN_TIME)
-            .setCheckoutTime(CORRECT_CHECKOUT_TIME).setTrl(correctTrl).build()))
+        .addAllCheckIns(List.of(CheckIn.newBuilder().setStartIntervalNumber(CORRECT_CHECKIN_TIME)
+            .setEndIntervalNumber(CORRECT_CHECKOUT_TIME).setTransmissionRiskLevel(correctTrl).build()))
         .build();
 
     boolean result = validator.verify(newPayload, mockValidatorContext);
@@ -63,8 +63,8 @@ class EventCheckinDataValidatorTest {
   void should_return_false_if_checkin_data_has_wrong_checkin_time_values(int startTime) {
     SubmissionPayload newPayload = SubmissionPayload.newBuilder()
         .addAllCheckIns(List.of(
-            CheckIn.newBuilder().setCheckinTime(startTime).setCheckoutTime(CORRECT_CHECKOUT_TIME)
-                .setTrl(CORRECT_TRL).build()))
+            CheckIn.newBuilder().setStartIntervalNumber(startTime).setEndIntervalNumber(CORRECT_CHECKOUT_TIME)
+                .setTransmissionRiskLevel(CORRECT_TRL).build()))
         .build();
 
     boolean result = validator.verify(newPayload, mockValidatorContext);
@@ -76,8 +76,8 @@ class EventCheckinDataValidatorTest {
   void should_return_true_if_checkin_data_has_correct_checkin_time_values(int startTime) {
     SubmissionPayload newPayload = SubmissionPayload.newBuilder()
         .addAllCheckIns(List.of(
-            CheckIn.newBuilder().setCheckinTime(startTime).setCheckoutTime(startTime + 1)
-                .setTrl(CORRECT_TRL).build()))
+            CheckIn.newBuilder().setStartIntervalNumber(startTime).setEndIntervalNumber(startTime + 1)
+                .setTransmissionRiskLevel(CORRECT_TRL).build()))
         .build();
 
     boolean result = validator.verify(newPayload, mockValidatorContext);
@@ -87,16 +87,16 @@ class EventCheckinDataValidatorTest {
   @Test
   void should_return_false_if_checkout_time_is_equal_or_before_checkin_time() {
     SubmissionPayload newPayload = SubmissionPayload.newBuilder()
-        .addAllCheckIns(List.of(CheckIn.newBuilder().setCheckinTime(CORRECT_CHECKOUT_TIME)
-            .setCheckoutTime(CORRECT_CHECKOUT_TIME).setTrl(CORRECT_TRL).build()))
+        .addAllCheckIns(List.of(CheckIn.newBuilder().setStartIntervalNumber(CORRECT_CHECKOUT_TIME)
+            .setEndIntervalNumber(CORRECT_CHECKOUT_TIME).setTransmissionRiskLevel(CORRECT_TRL).build()))
         .build();
 
     boolean result = validator.verify(newPayload, mockValidatorContext);
     assertFalse(result);
 
     newPayload = SubmissionPayload.newBuilder()
-        .addAllCheckIns(List.of(CheckIn.newBuilder().setCheckinTime(CORRECT_CHECKOUT_TIME)
-            .setCheckoutTime(CORRECT_CHECKOUT_TIME - 1).setTrl(CORRECT_TRL).build()))
+        .addAllCheckIns(List.of(CheckIn.newBuilder().setStartIntervalNumber(CORRECT_CHECKOUT_TIME)
+            .setEndIntervalNumber(CORRECT_CHECKOUT_TIME - 1).setTransmissionRiskLevel(CORRECT_TRL).build()))
         .build();
 
     result = validator.verify(newPayload, mockValidatorContext);
@@ -106,8 +106,8 @@ class EventCheckinDataValidatorTest {
   @Test
   void should_return_true_if_checkout_time_is_after_checkin_time() {
     SubmissionPayload newPayload = SubmissionPayload.newBuilder()
-        .addAllCheckIns(List.of(CheckIn.newBuilder().setCheckinTime(CORRECT_CHECKOUT_TIME)
-            .setCheckoutTime(CORRECT_CHECKOUT_TIME + 1).setTrl(CORRECT_TRL).build()))
+        .addAllCheckIns(List.of(CheckIn.newBuilder().setStartIntervalNumber(CORRECT_CHECKOUT_TIME)
+            .setEndIntervalNumber(CORRECT_CHECKOUT_TIME + 1).setTransmissionRiskLevel(CORRECT_TRL).build()))
         .build();
 
     boolean result = validator.verify(newPayload, mockValidatorContext);

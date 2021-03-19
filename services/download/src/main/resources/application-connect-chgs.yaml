@@ -1,0 +1,27 @@
+---
+services:
+  download:
+    source-system: CHGS
+    # This enables or disables the date-based downloading for keys in addition to callback-based download logic.
+    # May be used to circumvent callback-related issues quickly.
+    enforce-date-based-download: ${CHGS_ENABLE_DATE_BASED_DOWNLOAD:false}
+    # This is the offset in past days for which keys should be downloaded again, regardless if a
+    # previous download had occurred. I.e. Value '3' means re-download all batches/keys from 3 days ago.
+    enforce-download-offset-days: ${CHGS_ENFORCE_DOWNLOAD_OFFSET_DAYS:0}
+    # The number of days to retain batch information in the database.
+    retention-days: 14
+    validation:
+      allowed-report-types: ${ALLOWED_REPORT_TYPES:CONFIRMED_TEST,CONFIRMED_CLINICAL_DIAGNOSIS}
+    batch-audit-enabled: ${BATCH_AUDIT_ENABLED:false}
+
+federation-gateway:
+  base-url: ${FEDERATION_GATEWAY_BASE_URL:http://localhost:8005}
+  connection-pool-size: 200
+  ssl:
+    key-store: ${FEDERATION_GATEWAY_KEYSTORE_PATH}
+    key-store-password: ${FEDERATION_GATEWAY_KEYSTORE_PASS}
+    certificate-type: PKCS12
+    certificate-dn: ${FEDERATION_CERTIFICATE_DN}
+    certificate-sha: ${FEDERATION_CERTIFICATE_SHA}
+    trust-store: ${SSL_FEDERATION_TRUSTSTORE_PATH}
+    trust-store-password: ${SSL_FEDERATION_TRUSTSTORE_PASSWORD}

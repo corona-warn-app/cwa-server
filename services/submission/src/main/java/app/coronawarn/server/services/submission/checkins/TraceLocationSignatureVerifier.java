@@ -1,6 +1,6 @@
 package app.coronawarn.server.services.submission.checkins;
 
-import app.coronawarn.server.common.protocols.internal.evreg.SignedEvent;
+import app.coronawarn.server.common.protocols.internal.pt.SignedTraceLocation;
 import app.coronawarn.server.services.submission.config.CryptoProvider;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
@@ -25,9 +25,9 @@ public class TraceLocationSignatureVerifier {
    * Verify the signature contained in the given event data structure by using the service
    * configured public key.
    */
-  public boolean verify(SignedEvent signedEvent) {
+  public boolean verify(SignedTraceLocation signedEvent) {
     byte[] signatureBytes = signedEvent.getSignature().toByteArray();
-    byte[] contentBytes = signedEvent.getEvent().toByteArray();
+    byte[] contentBytes = signedEvent.getLocation().toByteArray();
     try {
       Signature signatureAlgorithm = Signature.getInstance(cryptoProvider.getSignatureAlgorithm());
       signatureAlgorithm.initVerify(cryptoProvider.getCertificate());

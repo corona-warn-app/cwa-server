@@ -16,13 +16,13 @@ spring:
 logging:
   level:
     org:
-      springframework: off
-    root: off
+      springframework: INFO
+    root: INFO
 
 services:
   download:
-    efgs-enforce-download-offset-days: 0
-    efgs-enforce-date-based-download: false
+    enforce-download-offset-days: 0
+    enforce-date-based-download: false
     retention-days: 14
     validation:
       allowed-report-types: CONFIRMED_TEST,CONFIRMED_CLINICAL_DIAGNOSIS
