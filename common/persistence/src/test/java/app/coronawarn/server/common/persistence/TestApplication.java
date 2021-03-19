@@ -8,10 +8,12 @@ import app.coronawarn.server.common.persistence.repository.DiagnosisKeyRepositor
 import app.coronawarn.server.common.persistence.repository.FederationBatchInfoRepository;
 import app.coronawarn.server.common.persistence.repository.FederationUploadKeyRepository;
 import app.coronawarn.server.common.persistence.repository.StatisticsDownloadRepository;
+import app.coronawarn.server.common.persistence.repository.TraceTimeIntervalWarningRepository;
 import app.coronawarn.server.common.persistence.service.DiagnosisKeyService;
 import app.coronawarn.server.common.persistence.service.FederationBatchInfoService;
 import app.coronawarn.server.common.persistence.service.FederationUploadKeyService;
 import app.coronawarn.server.common.persistence.service.StatisticsDownloadService;
+import app.coronawarn.server.common.persistence.service.TraceTimeIntervalWarningService;
 import app.coronawarn.server.common.persistence.service.common.KeySharingPoliciesChecker;
 import app.coronawarn.server.common.persistence.service.common.ValidDiagnosisKeyFilter;
 import java.util.Map;
@@ -58,6 +60,11 @@ public class TestApplication {
   @Bean
   StatisticsDownloadService createStatisticsDownloadService(StatisticsDownloadRepository repository) {
     return new StatisticsDownloadService(repository);
+  }
+
+  @Bean
+  TraceTimeIntervalWarningService traceTimeWarningService(TraceTimeIntervalWarningRepository timeIntervalWarningRepository) {
+    return new TraceTimeIntervalWarningService(timeIntervalWarningRepository);
   }
 
   @Bean

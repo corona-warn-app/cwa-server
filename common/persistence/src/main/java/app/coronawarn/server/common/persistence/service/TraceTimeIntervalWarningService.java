@@ -1,15 +1,15 @@
 package app.coronawarn.server.common.persistence.service;
 
-import app.coronawarn.server.common.persistence.domain.DiagnosisKey;
-import app.coronawarn.server.common.persistence.eventregistration.repository.TraceTimeIntervalWarningRepository;
-import app.coronawarn.server.common.protocols.internal.evreg.CheckIn;
+import app.coronawarn.server.common.persistence.domain.TraceTimeIntervalWarning;
+import app.coronawarn.server.common.persistence.repository.TraceTimeIntervalWarningRepository;
+import app.coronawarn.server.common.protocols.internal.pt.CheckIn;
 import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-@Service
+@Component
 public class TraceTimeIntervalWarningService {
 
   private static final Logger logger =
@@ -22,27 +22,33 @@ public class TraceTimeIntervalWarningService {
     this.traceTimeIntervalWarningRepo = traceTimeIntervalWarningRepo;
   }
 
+  /**
+   * Store the given checkin data as {@link TraceTimeIntervalWarning} entities. Returns the number
+   * of inserted entities useful for the case where there might be conflicts with the table
+   * constraints during the db save operations.
+   */
   @Transactional
   public int saveCheckinData(List<CheckIn> checkins) {
-    int numberOfInsertedCheckins = 0;
+    int numberOfInsertedTraceWarnings = 0;
 
     for (CheckIn checkin : checkins) {
-      boolean keyInsertedSuccessfully = true;
-//      boolean keyInsertedSuccessfully = traceTimeIntervalWarningRepo.saveDoNothingOnConflict(
-//          );
+      boolean traceWarningInsertedSuccessfully = traceTimeIntervalWarningRepo.saveDoNothingOnConflict(
+          checkin.getSignedLocation().getLocation().toByteArray(),
+          checkin.getStartIntervalNumber(), checkin.getEndIntervalNumber(),
+          checkin.getTransmissionRiskLevel());
 
-      if (keyInsertedSuccessfully) {
-        numberOfInsertedCheckins++;
+      if (traceWarningInsertedSuccessfully) {
+        numberOfInsertedTraceWarnings++;
       }
     }
 
-    int conflictingKeys = checkins.size() - numberOfInsertedCheckins;
-    if (conflictingKeys > 0) {
+    int conflictingTraceWarnings = checkins.size() - numberOfInsertedTraceWarnings;
+    if (conflictingTraceWarnings > 0) {
       logger.warn(
           "{} out of {} TraceTimeIntervalWarnings conflicted with existing database entries and were ignored.",
-          conflictingKeys, checkins.size());
+          conflictingTraceWarnings, checkins.size());
     }
 
-    return numberOfInsertedCheckins;
+    return numberOfInsertedTraceWarnings;
   }
 }
