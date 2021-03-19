@@ -2,6 +2,7 @@
 
 package app.coronawarn.server.services.download.config;
 
+import app.coronawarn.server.common.persistence.domain.FederationBatchSourceSystem;
 import app.coronawarn.server.common.persistence.domain.config.TekFieldDerivations;
 import app.coronawarn.server.common.protocols.external.exposurenotification.ReportType;
 import java.util.List;
@@ -17,10 +18,10 @@ import org.springframework.validation.annotation.Validated;
 @Validated
 public class DownloadServiceConfig {
 
-  private boolean efgsEnforceDateBasedDownload;
+  private boolean enforceDateBasedDownload;
   @Min(0)
   @Max(14)
-  private Integer efgsEnforceDownloadOffsetDays;
+  private Integer enforceDownloadOffsetDays;
   @Min(0)
   @Max(28)
   private Integer retentionDays;
@@ -28,6 +29,7 @@ public class DownloadServiceConfig {
   @Autowired
   private TekFieldDerivations tekFieldDerivations;
   private boolean batchAuditEnabled;
+  private FederationBatchSourceSystem sourceSystem;
 
   public Validation getValidation() {
     return validation;
@@ -46,20 +48,20 @@ public class DownloadServiceConfig {
     this.tekFieldDerivations = tekFieldDerivations;
   }
 
-  public Integer getEfgsEnforceDownloadOffsetDays() {
-    return efgsEnforceDownloadOffsetDays;
+  public Integer getEnforceDownloadOffsetDays() {
+    return enforceDownloadOffsetDays;
   }
 
-  public void setEfgsEnforceDownloadOffsetDays(Integer efgsEnforceDownloadOffsetDays) {
-    this.efgsEnforceDownloadOffsetDays = efgsEnforceDownloadOffsetDays;
+  public void setEnforceDownloadOffsetDays(Integer enforceDownloadOffsetDays) {
+    this.enforceDownloadOffsetDays = enforceDownloadOffsetDays;
   }
 
-  public boolean getEfgsEnforceDateBasedDownload() {
-    return efgsEnforceDateBasedDownload;
+  public boolean getEnforceDateBasedDownload() {
+    return enforceDateBasedDownload;
   }
 
-  public void setEfgsEnforceDateBasedDownload(boolean efgsEnforceDateBasedDownload) {
-    this.efgsEnforceDateBasedDownload = efgsEnforceDateBasedDownload;
+  public void setEnforceDateBasedDownload(boolean enforceDateBasedDownload) {
+    this.enforceDateBasedDownload = enforceDateBasedDownload;
   }
 
   public Integer getRetentionDays() {
@@ -76,6 +78,14 @@ public class DownloadServiceConfig {
 
   public void setBatchAuditEnabled(boolean batchAuditEnabled) {
     this.batchAuditEnabled = batchAuditEnabled;
+  }
+
+  public FederationBatchSourceSystem getSourceSystem() {
+    return sourceSystem;
+  }
+
+  public void setSourceSystem(FederationBatchSourceSystem sourceSystem) {
+    this.sourceSystem = sourceSystem;
   }
 
   public static class Validation {

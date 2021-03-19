@@ -4,7 +4,7 @@ import static app.coronawarn.server.services.submission.checkins.CheckinsDateSpe
 import static java.time.ZoneOffset.UTC;
 
 import app.coronawarn.server.common.protocols.internal.SubmissionPayload;
-import app.coronawarn.server.common.protocols.internal.evreg.CheckIn;
+import app.coronawarn.server.common.protocols.internal.pt.CheckIn;
 import app.coronawarn.server.services.submission.config.SubmissionServiceConfig;
 import java.time.Instant;
 import java.time.LocalDateTime;
@@ -52,16 +52,16 @@ public class EventCheckinDataFilter {
     Integer acceptableTimeframeInDays = submissionServiceConfig.getAcceptedEventDateThresholdDays();
     int threshold = TEN_MINUTE_INTERVAL_DERIVATION.apply(LocalDateTime.ofInstant(Instant.now(), UTC)
         .minusDays(acceptableTimeframeInDays).toEpochSecond(UTC));
-    return threshold < checkin.getCheckoutTime();
+    return threshold < checkin.getEndIntervalNumber();
   }
 
   private boolean filterOutFutureCheckins(CheckIn checkin) {
     int threshold = TEN_MINUTE_INTERVAL_DERIVATION
         .apply(LocalDateTime.ofInstant(Instant.now(), UTC).toEpochSecond(UTC));
-    return threshold > checkin.getCheckinTime();
+    return threshold > checkin.getStartIntervalNumber();
   }
 
   private boolean filterByValidSignature(CheckIn checkin) {
-    return traceLocationSignatureVerifier.verify(checkin.getSignedEvent());
+    return traceLocationSignatureVerifier.verify(checkin.getSignedLocation());
   }
 }

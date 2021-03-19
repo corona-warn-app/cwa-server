@@ -77,6 +77,15 @@ CREATE ROLE cwa_federation_upload
   NOREPLICATION
   IN ROLE cwa_user;
 
+ CREATE ROLE cwa_chgs_upload
+   NOLOGIN
+   NOSUPERUSER
+   INHERIT
+   NOCREATEDB
+   NOCREATEROLE
+   NOREPLICATION
+   IN ROLE cwa_user;
+
  /* --------------- Event Registration --------------- */
 CREATE ROLE cwa_event_registration
   NOLOGIN

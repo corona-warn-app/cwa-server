@@ -9,5 +9,8 @@ CREATE USER "<change me>" WITH INHERIT IN ROLE cwa_federation_callback ENCRYPTED
 CREATE USER "<change me>" WITH INHERIT IN ROLE cwa_federation_download ENCRYPTED PASSWORD '<change me>';
 CREATE USER "<change me>" WITH INHERIT IN ROLE cwa_federation_upload ENCRYPTED PASSWORD '<change me>';
 
+/* --------------- Swiss Federation Gateway --------------- */
+CREATE USER "<change me>" WITH INHERIT IN ROLE cwa_chgs_upload ENCRYPTED PASSWORD '<change me>';
+
 /* --------------- Event Registration --------------- */
 CREATE USER "<change me>" WITH INHERIT IN ROLE cwa_event_registration ENCRYPTED PASSWORD '<change me>';
