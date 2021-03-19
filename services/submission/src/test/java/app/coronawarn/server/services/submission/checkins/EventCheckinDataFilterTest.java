@@ -13,7 +13,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 import com.google.protobuf.ByteString;
-import app.coronawarn.server.common.protocols.internal.SubmissionPayload;
 import app.coronawarn.server.common.protocols.internal.pt.CheckIn;
 import app.coronawarn.server.common.protocols.internal.pt.SignedTraceLocation;
 import app.coronawarn.server.common.protocols.internal.pt.TraceLocation;
@@ -52,23 +51,18 @@ class EventCheckinDataFilterTest {
     long acceptableEventCheckoutDate =
         LocalDateTime.ofInstant(thisTimeInstant, UTC).minusDays(1).toEpochSecond(UTC);
 
-    SubmissionPayload newPayload =
-        SubmissionPayload.newBuilder()
-            .addAllCheckIns(List.of(
-                CheckIn.newBuilder()
-                    .setStartIntervalNumber(
-                        TEN_MINUTE_INTERVAL_DERIVATION.apply(eventCheckoutInThePast - 10))
-                    .setEndIntervalNumber(TEN_MINUTE_INTERVAL_DERIVATION.apply(eventCheckoutInThePast))
-                    .setTransmissionRiskLevel(1).build(),
-                CheckIn.newBuilder()
-                    .setStartIntervalNumber(
-                        TEN_MINUTE_INTERVAL_DERIVATION.apply(acceptableEventCheckoutDate - 10))
-                    .setEndIntervalNumber(
-                        TEN_MINUTE_INTERVAL_DERIVATION.apply(acceptableEventCheckoutDate))
-                    .setTransmissionRiskLevel(3).build()))
-            .build();
+    List<CheckIn> checkins = List.of(
+        CheckIn.newBuilder()
+            .setStartIntervalNumber(TEN_MINUTE_INTERVAL_DERIVATION.apply(eventCheckoutInThePast - 10))
+            .setEndIntervalNumber(TEN_MINUTE_INTERVAL_DERIVATION.apply(eventCheckoutInThePast))
+            .setTransmissionRiskLevel(1)
+            .build(),
+        CheckIn.newBuilder()
+            .setStartIntervalNumber(TEN_MINUTE_INTERVAL_DERIVATION.apply(acceptableEventCheckoutDate - 10))
+            .setEndIntervalNumber(TEN_MINUTE_INTERVAL_DERIVATION.apply(acceptableEventCheckoutDate))
+            .setTransmissionRiskLevel(3).build());
 
-    List<CheckIn> result = underTest.extractAndFilter(newPayload);
+    List<CheckIn> result = underTest.filter(checkins);
     assertEquals(result.size(), 1);
     CheckIn filteredCheckin = result.iterator().next();
     assertEquals(filteredCheckin.getStartIntervalNumber(),
@@ -89,23 +83,18 @@ class EventCheckinDataFilterTest {
     long acceptableEventCheckoutDate =
         LocalDateTime.ofInstant(thisTimeInstant, UTC).minusDays(1).toEpochSecond(UTC);
 
-    SubmissionPayload newPayload =
-        SubmissionPayload.newBuilder()
-            .addAllCheckIns(List.of(
-                CheckIn.newBuilder()
-                    .setStartIntervalNumber(
-                        TEN_MINUTE_INTERVAL_DERIVATION.apply(eventCheckoutInThePast - 10))
-                    .setEndIntervalNumber(TEN_MINUTE_INTERVAL_DERIVATION.apply(eventCheckoutInThePast))
-                    .setTransmissionRiskLevel(1).build(),
-                CheckIn.newBuilder()
-                    .setStartIntervalNumber(
-                        TEN_MINUTE_INTERVAL_DERIVATION.apply(acceptableEventCheckoutDate - 10))
-                    .setEndIntervalNumber(
-                        TEN_MINUTE_INTERVAL_DERIVATION.apply(acceptableEventCheckoutDate))
-                    .setTransmissionRiskLevel(3).build()))
-            .build();
+    List<CheckIn> checkins = List.of(
+        CheckIn.newBuilder()
+            .setStartIntervalNumber(TEN_MINUTE_INTERVAL_DERIVATION.apply(eventCheckoutInThePast - 10))
+            .setEndIntervalNumber(TEN_MINUTE_INTERVAL_DERIVATION.apply(eventCheckoutInThePast))
+            .setTransmissionRiskLevel(1)
+            .build(),
+        CheckIn.newBuilder()
+            .setStartIntervalNumber(TEN_MINUTE_INTERVAL_DERIVATION.apply(acceptableEventCheckoutDate - 10))
+            .setEndIntervalNumber(TEN_MINUTE_INTERVAL_DERIVATION.apply(acceptableEventCheckoutDate))
+            .setTransmissionRiskLevel(3).build());
 
-    List<CheckIn> result = underTest.extractAndFilter(newPayload);
+    List<CheckIn> result = underTest.filter(checkins);
     assertEquals(result.size(), 2);
   }
 
@@ -118,22 +107,17 @@ class EventCheckinDataFilterTest {
     long eventCheckinInTheNearPast =
         LocalDateTime.ofInstant(thisTimeInstant, UTC).minusMinutes(10).toEpochSecond(UTC);
 
-    SubmissionPayload newPayload =
-        SubmissionPayload.newBuilder()
-            .addAllCheckIns(List.of(
-                CheckIn.newBuilder()
-                    .setStartIntervalNumber(TEN_MINUTE_INTERVAL_DERIVATION.apply(eventCheckinInTheFuture))
-                    .setEndIntervalNumber(
-                        TEN_MINUTE_INTERVAL_DERIVATION.apply(eventCheckinInTheFuture + 5))
-                    .setTransmissionRiskLevel(1).build(),
-                CheckIn.newBuilder()
-                    .setStartIntervalNumber(TEN_MINUTE_INTERVAL_DERIVATION.apply(eventCheckinInTheNearPast))
-                    .setEndIntervalNumber(
-                        TEN_MINUTE_INTERVAL_DERIVATION.apply(eventCheckinInTheNearPast + 10))
-                    .setTransmissionRiskLevel(3).build()))
-            .build();
+    List<CheckIn> checkins = List.of(
+        CheckIn.newBuilder()
+            .setStartIntervalNumber(TEN_MINUTE_INTERVAL_DERIVATION.apply(eventCheckinInTheFuture))
+            .setEndIntervalNumber(TEN_MINUTE_INTERVAL_DERIVATION.apply(eventCheckinInTheFuture + 5))
+            .setTransmissionRiskLevel(1).build(),
+        CheckIn.newBuilder()
+            .setStartIntervalNumber(TEN_MINUTE_INTERVAL_DERIVATION.apply(eventCheckinInTheNearPast))
+            .setEndIntervalNumber(TEN_MINUTE_INTERVAL_DERIVATION.apply(eventCheckinInTheNearPast + 10))
+            .setTransmissionRiskLevel(3).build());
 
-    List<CheckIn> result = underTest.extractAndFilter(newPayload);
+    List<CheckIn> result = underTest.filter(checkins);
     assertEquals(result.size(), 1);
     CheckIn filteredCheckin = result.iterator().next();
     assertEquals(filteredCheckin.getStartIntervalNumber(),
@@ -163,8 +147,8 @@ class EventCheckinDataFilterTest {
     long eventCheckinInTheNearPast =
         LocalDateTime.ofInstant(Instant.now(), UTC).minusMinutes(10).toEpochSecond(UTC);
 
-    SubmissionPayload newPayload = SubmissionPayload.newBuilder()
-        .addAllCheckIns(List.of(
+    List<CheckIn> checkins =
+        List.of(
             CheckIn.newBuilder()
                 .setStartIntervalNumber(TEN_MINUTE_INTERVAL_DERIVATION.apply(eventCheckinInTheNearPast))
                 .setEndIntervalNumber(
@@ -174,10 +158,9 @@ class EventCheckinDataFilterTest {
                 .setStartIntervalNumber(TEN_MINUTE_INTERVAL_DERIVATION.apply(eventCheckinInTheNearPast))
                 .setEndIntervalNumber(
                     TEN_MINUTE_INTERVAL_DERIVATION.apply(eventCheckinInTheNearPast + 3))
-                .setSignedLocation(invalidEvent).setTransmissionRiskLevel(3).build()))
-        .build();
+                .setSignedLocation(invalidEvent).setTransmissionRiskLevel(3).build());
 
-    List<CheckIn> result = filter.extractAndFilter(newPayload);
+    List<CheckIn> result = filter.filter(checkins);
     assertEquals(result.size(), 1);
     CheckIn filteredCheckin = result.iterator().next();
     assertEquals(filteredCheckin.getStartIntervalNumber(),

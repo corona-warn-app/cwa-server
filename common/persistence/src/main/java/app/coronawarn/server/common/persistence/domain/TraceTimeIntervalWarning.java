@@ -31,7 +31,6 @@ public class TraceTimeIntervalWarning {
     return id;
   }
 
-
   public byte[] getTraceLocationGuid() {
     return traceLocationGuid;
   }
