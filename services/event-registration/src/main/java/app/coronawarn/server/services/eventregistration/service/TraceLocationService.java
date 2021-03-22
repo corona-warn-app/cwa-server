@@ -25,19 +25,23 @@ public class TraceLocationService {
 
   private TraceLocationRepository traceLocationRepository;
 
-  public void saveTraceLocation(TraceLocation traceLocation, int index) throws
-      NoSuchAlgorithmException {
+  /**
+   * Insert a TraceLocation {@link TraceLocation}.
+   * <ul>
+   * <li>generates a UUID and calculates a SHA-256 Hash</li>
+   * </ul>
+   *
+   * @param traceLocation the trace location to create.
+   * @throws NoSuchAlgorithmException thrown if algorithm does not exist.
+   */
+  public void saveTraceLocation(TraceLocation traceLocation, final String uuidHash) {
 
     try {
-      String guid = UuidHashGenerator.buildUuidHash();
-      traceLocationRepository.save(guid, traceLocation.getVersion(),
+      traceLocationRepository.save(uuidHash, traceLocation.getVersion(),
           LocalDateTime.now().toEpochSecond(ZoneOffset.UTC));
     } catch (DuplicateKeyException e) {
-      if (index >= eventRegistrationConfiguration.getSaveRetriesLimit()) {
-        logger.error("Trying to save Trace Location object has failed. The limit has been exceeded!");
-      }
-      index++;
+      logger.error("Trying to save Trace Location object has failed. The limit has been exceeded!");
     }
-
   }
+
 }
