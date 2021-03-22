@@ -1,7 +1,7 @@
 ---
 spring:
   application:
-    name: cwa-server
+    name: event-registration
   cloud:
     vault:
       ssl:
