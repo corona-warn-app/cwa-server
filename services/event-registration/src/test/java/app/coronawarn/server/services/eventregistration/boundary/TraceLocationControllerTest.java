@@ -18,14 +18,14 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
 @SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
-public class TraceLocationControllerTest {
+class TraceLocationControllerTest {
 
   @Autowired
   private TestRestTemplate template;
 
 
   @Test
-  public void shouldReturnSignedTraceLocationAndStatusIsCreated() {
+  void shouldReturnSignedTraceLocationAndStatusIsCreated() {
     TraceLocation payload = traceLocation()
         .withDescription("description")
         .withStartTimestamp(10)

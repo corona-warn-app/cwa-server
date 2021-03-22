@@ -1,9 +1,7 @@
 package app.coronawarn.server.services.eventregistration.service;
 
 import app.coronawarn.server.common.protocols.internal.pt.TraceLocation;
-import app.coronawarn.server.services.eventregistration.config.EventRegistrationConfiguration;
 import app.coronawarn.server.services.eventregistration.repository.TraceLocationRepository;
-import java.security.NoSuchAlgorithmException;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import org.slf4j.Logger;
@@ -17,8 +15,7 @@ public class TraceLocationService {
   private static final Logger logger = LoggerFactory.getLogger(TraceLocationService.class);
   private TraceLocationRepository traceLocationRepository;
 
-  public TraceLocationService(EventRegistrationConfiguration eventRegistrationConfiguration,
-      TraceLocationRepository traceLocationRepository) {
+  public TraceLocationService(TraceLocationRepository traceLocationRepository) {
     this.traceLocationRepository = traceLocationRepository;
   }
 
