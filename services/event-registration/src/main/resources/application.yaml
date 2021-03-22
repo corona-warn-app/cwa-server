@@ -1,6 +1,12 @@
 ---
 event-registration:
   version: 0
+  privatekey: ${EVENT_REGISTRATION_SECRET}
+  signature:
+    # The algorithm name.
+    algorithm-name: ${EVENT_REGISTRATION_SIGNATURE_ALGORITHM_NAME:sha256WithRSAEncryption}
+    # The security provider.
+    security-provider: BC
 
 spring:
   main:
@@ -16,9 +22,9 @@ spring:
   # Postgres configuration
   datasource:
     driver-class-name: org.postgresql.Driver
-    url: jdbc:postgresql://${POSTGRESQL_SERVICE_HOST:localhost}:${POSTGRESQL_SERVICE_PORT:5432}/${POSTGRESQL_DATABASE:cwa}
-    username: ${POSTGRESQL_USER_EVENT_REGISTRATION:local_event_registration}
-    password: ${POSTGRESQL_PASSWORD_EVENT_REGISTRATION:local_event_registration}
+    url: jdbc:postgresql://${POSTGRESQL_SERVICE_HOST:localhost}:${POSTGRESQL_SERVICE_PORT:5432}/${POSTGRESQL_DATABASE:cwa_event_registration}
+    username: ${POSTGRESQL_USER_EVENT_REGISTRATION:local_setup_event_registration}
+    password: ${POSTGRESQL_PASSWORD_EVENT_REGISTRATION:local_setup_event_registration}
     hikari:
       schema: event_registration
 

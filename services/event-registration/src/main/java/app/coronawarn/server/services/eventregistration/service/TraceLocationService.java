@@ -14,16 +14,14 @@ import org.springframework.stereotype.Component;
 @Component
 public class TraceLocationService {
 
-  Logger logger = LoggerFactory.getLogger(TraceLocationService.class);
-  private EventRegistrationConfiguration eventRegistrationConfiguration;
+  private static final Logger logger = LoggerFactory.getLogger(TraceLocationService.class);
+  private TraceLocationRepository traceLocationRepository;
 
   public TraceLocationService(EventRegistrationConfiguration eventRegistrationConfiguration,
       TraceLocationRepository traceLocationRepository) {
-    this.eventRegistrationConfiguration = eventRegistrationConfiguration;
     this.traceLocationRepository = traceLocationRepository;
   }
 
-  private TraceLocationRepository traceLocationRepository;
 
   /**
    * Insert a TraceLocation {@link TraceLocation}.
@@ -32,10 +30,8 @@ public class TraceLocationService {
    * </ul>
    *
    * @param traceLocation the trace location to create.
-   * @throws NoSuchAlgorithmException thrown if algorithm does not exist.
    */
   public void saveTraceLocation(TraceLocation traceLocation, final String uuidHash) {
-
     try {
       traceLocationRepository.save(uuidHash, traceLocation.getVersion(),
           LocalDateTime.now().toEpochSecond(ZoneOffset.UTC));
@@ -43,5 +39,4 @@ public class TraceLocationService {
       logger.error("Trying to save Trace Location object has failed. The limit has been exceeded!");
     }
   }
-
 }

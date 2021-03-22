@@ -1,6 +1,13 @@
 ---
 event-registration:
   version: 5
+  privatekey: classpath:testprivatekey.pem
+  privatekey-password: testpass
+  signature:
+    # The algorithm name.
+    algorithm-name: SHA256withECDSA
+    # The security provider.
+    security-provider: BC
 
 logging:
   level:

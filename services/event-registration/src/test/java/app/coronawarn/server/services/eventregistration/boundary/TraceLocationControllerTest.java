@@ -4,6 +4,7 @@ import static app.coronawarn.server.services.eventregistration.config.UrlConstan
 import static app.coronawarn.server.services.eventregistration.config.UrlConstants.V1;
 import static app.coronawarn.server.services.eventregistration.testdata.TestData.traceLocation;
 
+import app.coronawarn.server.common.protocols.internal.pt.SignedTraceLocation;
 import app.coronawarn.server.common.protocols.internal.pt.TraceLocation;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -24,7 +25,7 @@ public class TraceLocationControllerTest {
 
 
   @Test
-  public void shouldReturnNoContent() throws Exception {
+  public void shouldReturnSignedTraceLocationAndStatusIsCreated() {
     TraceLocation payload = traceLocation()
         .withDescription("description")
         .withStartTimestamp(10)
@@ -37,10 +38,10 @@ public class TraceLocationControllerTest {
     headers.set("content-type", "application/x-protobuf");
 
     HttpEntity<TraceLocation> request = new HttpEntity<>(payload, headers);
-    final ResponseEntity<String> response = this.template
-        .postForEntity(V1 + TRACE_LOCATION_ROUTE, request, String.class);
+    final ResponseEntity<SignedTraceLocation> response = this.template
+        .postForEntity(V1 + TRACE_LOCATION_ROUTE, request, SignedTraceLocation.class);
 
-    Assertions.assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NO_CONTENT);
+    Assertions.assertThat(response.getStatusCode()).isEqualTo(HttpStatus.CREATED);
   }
 
 }

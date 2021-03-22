@@ -2,16 +2,13 @@
 
 package app.coronawarn.server.services.eventregistration.service;
 
+import app.coronawarn.server.services.eventregistration.config.EventRegistrationConfiguration;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.UncheckedIOException;
 import java.security.PrivateKey;
 import java.security.Security;
-import java.security.cert.CertificateException;
-import java.security.cert.CertificateFactory;
-import java.security.cert.X509Certificate;
-import app.coronawarn.server.services.eventregistration.config.EventRegistrationConfiguration;
 import org.bouncycastle.asn1.pkcs.PrivateKeyInfo;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.bouncycastle.openssl.PEMKeyPair;
@@ -25,15 +22,22 @@ import org.springframework.stereotype.Component;
 public class CryptoProvider {
 
   private final PrivateKey privateKey;
-  private final X509Certificate publicKey;
 
   /**
    * Creates a CryptoProvider, using {@link BouncyCastleProvider}.
    */
-  CryptoProvider(ResourceLoader resourceLoader, EventRegistrationConfiguration eventRegistrationConfiguration) throws CertificateException {
+  CryptoProvider(ResourceLoader resourceLoader, EventRegistrationConfiguration eventRegistrationConfiguration) {
     privateKey = loadPrivateKey(resourceLoader, eventRegistrationConfiguration);
-    publicKey = loadPublicKey(resourceLoader, eventRegistrationConfiguration);
     Security.addProvider(new BouncyCastleProvider());
+  }
+
+  /**
+   * Returns the {@link PrivateKey} configured in the application properties.
+   *
+   * @return private key
+   */
+  public PrivateKey getPrivateKey() {
+    return privateKey;
   }
 
   private static PrivateKey getPrivateKeyFromStream(InputStream privateKeyStream)
@@ -49,30 +53,6 @@ public class CryptoProvider {
     }
   }
 
-  private X509Certificate loadPublicKey(ResourceLoader resourceLoader,
-      EventRegistrationConfiguration eventRegistrationConfiguration) throws CertificateException {
-    CertificateFactory cf = CertificateFactory.getInstance("X.509");
-    String path = eventRegistrationConfiguration.getCertificate();
-    Resource publicKeyResource = resourceLoader.getResource(path);
-    try (InputStream publicKeyStream = publicKeyResource.getInputStream()) {
-      return (X509Certificate) cf.generateCertificate(publicKeyStream);
-    } catch (IOException e) {
-      throw new UncheckedIOException("Failed to load public key from " + path, e);
-    }
-  }
-
-  public X509Certificate getCertificate() {
-    return this.publicKey;
-  }
-
-  /**
-   * Returns the {@link PrivateKey} configured in the application properties.
-   *
-   * @return private key
-   */
-  public PrivateKey getPrivateKey() {
-    return privateKey;
-  }
 
   private PrivateKey loadPrivateKey(ResourceLoader resourceLoader,
       EventRegistrationConfiguration eventRegistrationConfiguration) {

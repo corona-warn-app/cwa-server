@@ -4,9 +4,35 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 
 @ConfigurationProperties(prefix = "event-registration")
 public class EventRegistrationConfiguration {
-  private Integer version;
-  private Integer saveRetriesLimit;
 
+  private Integer version;
+
+  private String privateKey;
+  private Signature signature;
+
+  public static class Signature {
+
+
+    private String algorithmName;
+    private String securityProvider;
+
+    public String getSecurityProvider() {
+      return securityProvider;
+    }
+
+    public void setSecurityProvider(String securityProvider) {
+      this.securityProvider = securityProvider;
+    }
+
+    public String getAlgorithmName() {
+      return algorithmName;
+    }
+
+    public void setAlgorithmName(String algorithmName) {
+      this.algorithmName = algorithmName;
+    }
+
+  }
 
   public Integer getVersion() {
     return version;
@@ -16,12 +42,19 @@ public class EventRegistrationConfiguration {
     this.version = version;
   }
 
-  public Integer getSaveRetriesLimit() {
-    return saveRetriesLimit;
+  public String getPrivateKey() {
+    return privateKey;
   }
 
-  public void setSaveRetriesLimit(Integer saveRetriesLimit) {
-    this.saveRetriesLimit = saveRetriesLimit;
+  public void setPrivateKey(String privateKey) {
+    this.privateKey = privateKey;
+  }
+  
+  public Signature getSignature() {
+    return signature;
   }
 
+  public void setSignature(Signature signature) {
+    this.signature = signature;
+  }
 }
