@@ -1,8 +1,12 @@
 package app.coronawarn.server.services.eventregistration.boundary;
 
+import static app.coronawarn.server.services.eventregistration.config.UrlConstants.TRACE_LOCATION_ROUTE;
+import static app.coronawarn.server.services.eventregistration.config.UrlConstants.V1;
+
 import app.coronawarn.server.common.protocols.internal.pt.SignedTraceLocation;
 import app.coronawarn.server.common.protocols.internal.pt.TraceLocation;
 import app.coronawarn.server.services.eventregistration.boundary.validation.ValidTraceLocation;
+import java.security.NoSuchAlgorithmException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
@@ -11,11 +15,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.context.request.async.DeferredResult;
-
-import java.security.NoSuchAlgorithmException;
-
-import static app.coronawarn.server.services.eventregistration.config.UrlConstants.TRACE_LOCATION_ROUTE;
-import static app.coronawarn.server.services.eventregistration.config.UrlConstants.V1;
 
 
 @RestController
