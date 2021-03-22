@@ -1,8 +1,11 @@
 package app.coronawarn.server.services.submission.controller;
 
+import static app.coronawarn.server.services.submission.checkins.CheckinsDateSpecification.TEN_MINUTE_INTERVAL_DERIVATION;
 import static app.coronawarn.server.services.submission.controller.SubmissionPayloadMockData.*;
+import static java.time.ZoneOffset.UTC;
 import static org.apache.commons.lang3.StringUtils.defaultIfBlank;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.Assert.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.anyString;
@@ -18,16 +21,22 @@ import static org.springframework.http.HttpStatus.METHOD_NOT_ALLOWED;
 import static org.springframework.http.HttpStatus.OK;
 
 import app.coronawarn.server.common.persistence.domain.DiagnosisKey;
+import app.coronawarn.server.common.persistence.domain.TraceTimeIntervalWarning;
+import app.coronawarn.server.common.persistence.repository.TraceTimeIntervalWarningRepository;
 import app.coronawarn.server.common.persistence.service.DiagnosisKeyService;
 import app.coronawarn.server.common.protocols.external.exposurenotification.ReportType;
 import app.coronawarn.server.common.protocols.external.exposurenotification.TemporaryExposureKey;
 import app.coronawarn.server.common.protocols.internal.SubmissionPayload;
 import app.coronawarn.server.common.protocols.internal.pt.CheckIn;
+import app.coronawarn.server.common.protocols.internal.pt.SignedTraceLocation;
+import app.coronawarn.server.services.submission.config.CryptoProvider;
 import app.coronawarn.server.services.submission.config.SubmissionServiceConfig;
+import app.coronawarn.server.services.submission.helpers.CryptoSignUtils;
 import app.coronawarn.server.services.submission.monitoring.SubmissionMonitor;
 import app.coronawarn.server.services.submission.verification.TanVerifier;
-import feign.FeignException.BadRequest;
 import com.google.protobuf.ByteString;
+import java.time.Instant;
+import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashSet;
@@ -35,11 +44,11 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+import java.util.stream.StreamSupport;
 import org.apache.commons.lang3.tuple.Pair;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Nested;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.api.TestInstance.Lifecycle;
@@ -78,6 +87,12 @@ class SubmissionControllerTest {
 
   @Autowired
   private SubmissionServiceConfig config;
+
+  @Autowired
+  private CryptoProvider cryptoProvider;
+
+  @Autowired
+  private TraceTimeIntervalWarningRepository traceTimeIntervalWarningRepository;
 
   private static Stream<Arguments> invalidVisitedCountries() {
     return Stream.of(
@@ -119,6 +134,7 @@ class SubmissionControllerTest {
 
   @BeforeEach
   public void setUpMocks() {
+    traceTimeIntervalWarningRepository.deleteAll();
     when(tanVerifier.verifyTan(anyString())).thenReturn(true);
     when(fakeDelayManager.getJitteredFakeDelay()).thenReturn(1000L);
   }
@@ -347,6 +363,7 @@ class SubmissionControllerTest {
     ResponseEntity<Void> actResponse =
         executor.executePost(buildPayloadWithCheckinData(invalidCheckinData));
     assertThat(actResponse.getStatusCode()).isEqualTo(BAD_REQUEST);
+    assertTraceWarningsHaveBeenSaved(0);
   }
 
   @Test
@@ -358,6 +375,7 @@ class SubmissionControllerTest {
     ResponseEntity<Void> actResponse =
         executor.executePost(buildPayloadWithCheckinData(invalidCheckinData));
     assertThat(actResponse.getStatusCode()).isEqualTo(BAD_REQUEST);
+    assertTraceWarningsHaveBeenSaved(0);
   }
 
   @Test
@@ -369,17 +387,102 @@ class SubmissionControllerTest {
     ResponseEntity<Void> actResponse =
         executor.executePost(buildPayloadWithCheckinData(invalidCheckinData));
     assertThat(actResponse.getStatusCode()).isEqualTo(BAD_REQUEST);
+    assertTraceWarningsHaveBeenSaved(0);
   }
 
   @Test
   void testValidCheckinData() {
-    List<CheckIn> invalidCheckinData =
-        List.of(CheckIn.newBuilder().setTransmissionRiskLevel(1).setStartIntervalNumber(3).setEndIntervalNumber(4).build(),
-            CheckIn.newBuilder().setTransmissionRiskLevel(2).setStartIntervalNumber(1).setEndIntervalNumber(2).build());
+
+    long eventCheckinInThePast =
+        LocalDateTime.ofInstant(Instant.now(), UTC).minusDays(10).toEpochSecond(UTC);
+
+    SignedTraceLocation traceLocation1 =
+        SignedTraceLocation.newBuilder()
+        .setSignature(ByteString.copyFrom(CryptoSignUtils.sign("hash1".getBytes(), cryptoProvider)))
+        .setLocation(ByteString.copyFromUtf8("hash1")).build();
+
+    SignedTraceLocation traceLocation2 =
+        SignedTraceLocation.newBuilder()
+        .setSignature(ByteString.copyFrom(CryptoSignUtils.sign("hash2".getBytes(), cryptoProvider)))
+        .setLocation(ByteString.copyFromUtf8("hash2")).build();
+
+    List<CheckIn> invalidCheckinData = List.of(
+        CheckIn.newBuilder().setTransmissionRiskLevel(1)
+            .setStartIntervalNumber(TEN_MINUTE_INTERVAL_DERIVATION.apply(eventCheckinInThePast))
+            .setEndIntervalNumber(TEN_MINUTE_INTERVAL_DERIVATION.apply(eventCheckinInThePast) + 10)
+            .setSignedLocation(traceLocation1)
+            .build(),
+        CheckIn.newBuilder().setTransmissionRiskLevel(2)
+            .setStartIntervalNumber(
+                TEN_MINUTE_INTERVAL_DERIVATION.apply(eventCheckinInThePast) + 11)
+            .setEndIntervalNumber(TEN_MINUTE_INTERVAL_DERIVATION.apply(eventCheckinInThePast) + 22)
+            .setSignedLocation(traceLocation2)
+            .build());
 
     ResponseEntity<Void> actResponse =
         executor.executePost(buildPayloadWithCheckinData(invalidCheckinData));
     assertThat(actResponse.getStatusCode()).isEqualTo(OK);
+    assertTraceWarningsHaveBeenSaved(2);
+  }
+
+  @Test
+  @Disabled("To be implemented after risk paramters yaml refactoring")
+  void testCheckinDataIsFilteredForTransmissionRiskLevel() {
+    // TODO:
+  }
+
+  @Test
+  void testCheckinDataIsFilteredForOldEvents() {
+    Integer daysInThePast = config.getAcceptedEventDateThresholdDays() + 1;
+    Instant thisInstant = Instant.now();
+    long eventCheckoutInThePast =
+        LocalDateTime.ofInstant(thisInstant, UTC).minusDays(daysInThePast).toEpochSecond(UTC);
+    long eventCheckinInThePast =
+        LocalDateTime.ofInstant(thisInstant, UTC).minusDays(daysInThePast +1).toEpochSecond(UTC);
+
+    SignedTraceLocation traceLocation1 =
+        SignedTraceLocation.newBuilder()
+        .setSignature(ByteString.copyFrom(CryptoSignUtils.sign("hash1".getBytes(), cryptoProvider)))
+        .setLocation(ByteString.copyFromUtf8("hash1")).build();
+
+
+    List<CheckIn> checkins = List.of(CheckIn.newBuilder()
+        .setStartIntervalNumber(TEN_MINUTE_INTERVAL_DERIVATION.apply(eventCheckinInThePast))
+        .setEndIntervalNumber(TEN_MINUTE_INTERVAL_DERIVATION.apply(eventCheckoutInThePast))
+        .setTransmissionRiskLevel(1)
+        .setSignedLocation(traceLocation1)
+        .build());
+
+    ResponseEntity<Void> actResponse =
+        executor.executePost(buildPayloadWithCheckinData(checkins));
+    assertThat(actResponse.getStatusCode()).isEqualTo(OK);
+    assertTraceWarningsHaveBeenSaved(0);
+  }
+
+  @Test
+  void testCheckinDataIsFilteredForFutureEvents() {
+    Instant thisInstant = Instant.now();
+    long eventCheckinInTheFuture =
+        LocalDateTime.ofInstant(thisInstant, UTC).plusMinutes(11).toEpochSecond(UTC);
+    long eventCheckoutInTheFuture =
+        LocalDateTime.ofInstant(thisInstant, UTC).plusMinutes(20).toEpochSecond(UTC);
+
+    SignedTraceLocation traceLocation1 =
+        SignedTraceLocation.newBuilder()
+        .setSignature(ByteString.copyFrom(CryptoSignUtils.sign("hash1".getBytes(), cryptoProvider)))
+        .setLocation(ByteString.copyFromUtf8("hash1")).build();
+
+    List<CheckIn> checkins = List.of(CheckIn.newBuilder()
+        .setStartIntervalNumber(TEN_MINUTE_INTERVAL_DERIVATION.apply(eventCheckinInTheFuture))
+        .setEndIntervalNumber(TEN_MINUTE_INTERVAL_DERIVATION.apply(eventCheckoutInTheFuture))
+        .setTransmissionRiskLevel(1)
+        .setSignedLocation(traceLocation1)
+        .build());
+
+    ResponseEntity<Void> actResponse =
+        executor.executePost(buildPayloadWithCheckinData(checkins));
+    assertThat(actResponse.getStatusCode()).isEqualTo(OK);
+    assertTraceWarningsHaveBeenSaved(0);
   }
 
   @ParameterizedTest
@@ -498,4 +601,12 @@ class SubmissionControllerTest {
             diagnosisKey -> temporaryExposureKey.getKeyData().equals(ByteString.copyFrom(diagnosisKey.getKeyData())))
         .findFirst().orElseThrow();
   }
+
+  private void assertTraceWarningsHaveBeenSaved(int numberOfExpectedWarningsSaved) {
+    List<TraceTimeIntervalWarning> storedTimeIntervalWarnings =
+        StreamSupport.stream(traceTimeIntervalWarningRepository.findAll().spliterator(), false)
+            .collect(Collectors.toList());
+    assertEquals(storedTimeIntervalWarnings.size(), numberOfExpectedWarningsSaved);
+  }
+
 }

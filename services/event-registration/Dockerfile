@@ -35,7 +35,7 @@ RUN cp ${WORK_DIR}/scripts/DpkgHelper.java /DpkgHelper.java
 
 FROM gcr.io/distroless/java-debian10:11
 
-ARG SERVICE=upload
+ARG SERVICE=event-registration
 
 COPY --from=build /DpkgHelper.java .
 COPY --from=build /usr/sap/${SERVICE}-service/service.jar .
