@@ -1,5 +1,6 @@
 package app.coronawarn.server.services.distribution.assembly.appconfig;
 
+import app.coronawarn.server.common.persistence.domain.config.PreDistributionTrlValueMappingProvider;
 import app.coronawarn.server.common.protocols.internal.v2.AppFeature;
 import app.coronawarn.server.common.protocols.internal.v2.AppFeatures;
 import app.coronawarn.server.common.protocols.internal.v2.ApplicationConfigurationAndroid;
@@ -7,7 +8,6 @@ import app.coronawarn.server.common.protocols.internal.v2.ApplicationConfigurati
 import app.coronawarn.server.common.protocols.internal.v2.DailySummariesConfig;
 import app.coronawarn.server.common.protocols.internal.v2.DayPackageMetadata;
 import app.coronawarn.server.common.protocols.internal.v2.DiagnosisKeysDataMapping;
-import app.coronawarn.server.common.protocols.internal.v2.EventRegistrationParameters;
 import app.coronawarn.server.common.protocols.internal.v2.ExposureConfiguration;
 import app.coronawarn.server.common.protocols.internal.v2.ExposureDetectionParametersAndroid;
 import app.coronawarn.server.common.protocols.internal.v2.ExposureDetectionParametersIOS;
@@ -76,11 +76,15 @@ public class ApplicationConfigurationV2PublicationConfig {
   @Bean
   @Qualifier("applicationConfigurationV1Android")
   public ApplicationConfigurationAndroid createAndroidV1Configuration(
-      DistributionServiceConfig distributionServiceConfig) throws UnableToLoadFileException {
+      DistributionServiceConfig distributionServiceConfig,
+      PreDistributionTrlValueMappingProvider trlValueMappingProvider) throws UnableToLoadFileException {
 
     RiskCalculationParameters.Builder riskCalculationParameterBuilder =
         YamlLoader.loadYamlIntoProtobufBuilder(V1_RISK_PARAMETERS_FILE,
             RiskCalculationParameters.Builder.class);
+
+    riskCalculationParameterBuilder.addAllTransmissionRiskValueMapping(
+        trlValueMappingProvider.getTransmissionRiskValueMappingAsProto());
 
     DeserializedDiagnosisKeysDataMapping dataMapping = YamlLoader.loadYamlIntoClass(
         ANDROID_V2_DATA_MAPPING_FILE, DeserializedDiagnosisKeysDataMapping.class);
