@@ -9,13 +9,15 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.boot.test.context.ConfigFileApplicationContextInitializer;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
+import app.coronawarn.server.common.persistence.domain.config.PreDistributionTrlValueMappingProvider;
 import app.coronawarn.server.common.protocols.internal.v2.ApplicationConfigurationAndroid;
 import app.coronawarn.server.common.protocols.internal.v2.ApplicationConfigurationIOS;
 import app.coronawarn.server.services.distribution.config.DistributionServiceConfig;
 
 @EnableConfigurationProperties(value = DistributionServiceConfig.class)
 @ExtendWith(SpringExtension.class)
-@ContextConfiguration(classes = ApplicationConfigurationV2PublicationConfig.class,
+@ContextConfiguration(classes = {ApplicationConfigurationV2PublicationConfig.class,
+    PreDistributionTrlValueMappingProvider.class},
     initializers = ConfigFileApplicationContextInitializer.class)
 class ApplicationConfigurationV1MainFileTest {
 

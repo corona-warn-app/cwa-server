@@ -1,7 +1,7 @@
 package app.coronawarn.server.services.distribution.assembly.appconfig;
 
 import static org.assertj.core.api.Assertions.assertThat;
-
+import app.coronawarn.server.common.persistence.domain.config.PreDistributionTrlValueMappingProvider;
 import app.coronawarn.server.common.protocols.internal.v2.ApplicationConfigurationAndroid;
 import app.coronawarn.server.common.protocols.internal.v2.ApplicationConfigurationIOS;
 import app.coronawarn.server.services.distribution.config.DistributionServiceConfig;
@@ -16,7 +16,8 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 @EnableConfigurationProperties(value = DistributionServiceConfig.class)
 @ExtendWith(SpringExtension.class)
-@ContextConfiguration(classes = ApplicationConfigurationV2PublicationConfig.class,
+@ContextConfiguration(classes = {ApplicationConfigurationV2PublicationConfig.class,
+    PreDistributionTrlValueMappingProvider.class},
     initializers = ConfigFileApplicationContextInitializer.class)
 class ApplicationConfigurationV2MainFileTest {
 

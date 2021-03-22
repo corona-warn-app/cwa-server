@@ -13,6 +13,8 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 import com.google.protobuf.ByteString;
+import app.coronawarn.server.common.persistence.domain.config.PreDistributionTrlValueMappingProvider;
+import app.coronawarn.server.common.persistence.domain.config.TransmissionRiskValueMapping;
 import app.coronawarn.server.common.protocols.internal.pt.CheckIn;
 import app.coronawarn.server.common.protocols.internal.pt.SignedTraceLocation;
 import app.coronawarn.server.common.protocols.internal.pt.TraceLocation;
@@ -38,7 +40,8 @@ class EventCheckinDataFilterTest {
     TraceLocationSignatureVerifier locationSignatureVerifier =
         mock(TraceLocationSignatureVerifier.class);
     when(locationSignatureVerifier.verify(any())).thenReturn(true);
-    underTest = new EventCheckinDataFilter(mockConfig, locationSignatureVerifier);
+    underTest = new EventCheckinDataFilter(mockConfig, locationSignatureVerifier,
+        createMockTranmissionRiskLevelMappingProvider());
   }
 
   @ParameterizedTest
@@ -72,6 +75,40 @@ class EventCheckinDataFilterTest {
     assertEquals(filteredCheckin.getTransmissionRiskLevel(), 3);
   }
 
+  @Test
+  void should_filter_out_checkins_which_map_to_zero_trl() {
+    Instant thisTimeInstant = Instant.now();
+    long eventCheckoutInThePast =
+        LocalDateTime.ofInstant(thisTimeInstant, UTC).minusDays(10).toEpochSecond(UTC);
+
+    List<CheckIn> checkins = List.of(
+        CheckIn.newBuilder()
+            .setStartIntervalNumber(
+                TEN_MINUTE_INTERVAL_DERIVATION.apply(eventCheckoutInThePast - 10))
+            .setEndIntervalNumber(TEN_MINUTE_INTERVAL_DERIVATION.apply(eventCheckoutInThePast))
+            .setTransmissionRiskLevel(1).build(),
+        CheckIn.newBuilder()
+            .setStartIntervalNumber(
+                TEN_MINUTE_INTERVAL_DERIVATION.apply(eventCheckoutInThePast - 10))
+            .setEndIntervalNumber(TEN_MINUTE_INTERVAL_DERIVATION.apply(eventCheckoutInThePast))
+            .setTransmissionRiskLevel(2).build(),
+        CheckIn.newBuilder()
+            .setStartIntervalNumber(
+                TEN_MINUTE_INTERVAL_DERIVATION.apply(eventCheckoutInThePast - 10))
+            .setEndIntervalNumber(TEN_MINUTE_INTERVAL_DERIVATION.apply(eventCheckoutInThePast))
+            .setTransmissionRiskLevel(3).build());
+
+    List<CheckIn> result = underTest.filter(checkins);
+    assertEquals(result.size(), 1);
+    CheckIn filteredCheckin = result.iterator().next();
+    assertEquals(filteredCheckin.getStartIntervalNumber(),
+        TEN_MINUTE_INTERVAL_DERIVATION.apply(eventCheckoutInThePast - 10));
+    assertEquals(filteredCheckin.getEndIntervalNumber(),
+        TEN_MINUTE_INTERVAL_DERIVATION.apply(eventCheckoutInThePast));
+    assertEquals(filteredCheckin.getTransmissionRiskLevel(), 3);
+  }
+
+
   @ParameterizedTest
   @ValueSource(ints = {ACCEPTABLE_EVENT_DATE_THRESHOLD_IN_DAYS - 1,
       ACCEPTABLE_EVENT_DATE_THRESHOLD_IN_DAYS - 2})
@@ -87,7 +124,7 @@ class EventCheckinDataFilterTest {
         CheckIn.newBuilder()
             .setStartIntervalNumber(TEN_MINUTE_INTERVAL_DERIVATION.apply(eventCheckoutInThePast - 10))
             .setEndIntervalNumber(TEN_MINUTE_INTERVAL_DERIVATION.apply(eventCheckoutInThePast))
-            .setTransmissionRiskLevel(1)
+            .setTransmissionRiskLevel(3)
             .build(),
         CheckIn.newBuilder()
             .setStartIntervalNumber(TEN_MINUTE_INTERVAL_DERIVATION.apply(acceptableEventCheckoutDate - 10))
@@ -95,7 +132,7 @@ class EventCheckinDataFilterTest {
             .setTransmissionRiskLevel(3).build());
 
     List<CheckIn> result = underTest.filter(checkins);
-    assertEquals(result.size(), 2);
+    assertEquals(2, result.size());
   }
 
   @Test
@@ -132,7 +169,8 @@ class EventCheckinDataFilterTest {
 
     TraceLocationSignatureVerifier mockSignatureVerifier =
         mock(TraceLocationSignatureVerifier.class);
-    EventCheckinDataFilter filter = new EventCheckinDataFilter(mockConfig, mockSignatureVerifier);
+    EventCheckinDataFilter filter = new EventCheckinDataFilter(mockConfig, mockSignatureVerifier,
+        createMockTranmissionRiskLevelMappingProvider());
 
 
     SignedTraceLocation validEvent = SignedTraceLocation.newBuilder().setLocation(TraceLocation.newBuilder().build().toByteString())
@@ -153,12 +191,12 @@ class EventCheckinDataFilterTest {
                 .setStartIntervalNumber(TEN_MINUTE_INTERVAL_DERIVATION.apply(eventCheckinInTheNearPast))
                 .setEndIntervalNumber(
                     TEN_MINUTE_INTERVAL_DERIVATION.apply(eventCheckinInTheNearPast + 2))
-                .setSignedLocation(validEvent).setTransmissionRiskLevel(1).build(),
+                .setSignedLocation(validEvent).setTransmissionRiskLevel(3).build(),
             CheckIn.newBuilder()
                 .setStartIntervalNumber(TEN_MINUTE_INTERVAL_DERIVATION.apply(eventCheckinInTheNearPast))
                 .setEndIntervalNumber(
                     TEN_MINUTE_INTERVAL_DERIVATION.apply(eventCheckinInTheNearPast + 3))
-                .setSignedLocation(invalidEvent).setTransmissionRiskLevel(3).build());
+                .setSignedLocation(invalidEvent).setTransmissionRiskLevel(1).build());
 
     List<CheckIn> result = filter.filter(checkins);
     assertEquals(result.size(), 1);
@@ -167,6 +205,22 @@ class EventCheckinDataFilterTest {
         TEN_MINUTE_INTERVAL_DERIVATION.apply(eventCheckinInTheNearPast));
     assertEquals(filteredCheckin.getEndIntervalNumber(),
         TEN_MINUTE_INTERVAL_DERIVATION.apply(eventCheckinInTheNearPast + 2));
-    assertEquals(filteredCheckin.getTransmissionRiskLevel(), 1);
+    assertEquals(filteredCheckin.getTransmissionRiskLevel(), 3);
+  }
+
+  private PreDistributionTrlValueMappingProvider createMockTranmissionRiskLevelMappingProvider() {
+    TransmissionRiskValueMapping mapsToZero = new TransmissionRiskValueMapping();
+    mapsToZero.setTransmissionRiskLevel(1);
+    mapsToZero.setTransmissionRiskValue(0.0d);
+    TransmissionRiskValueMapping mapsToZero2 = new TransmissionRiskValueMapping();
+    mapsToZero2.setTransmissionRiskLevel(2);
+    mapsToZero2.setTransmissionRiskValue(0.0d);
+    TransmissionRiskValueMapping mapsToOtherThanZero = new TransmissionRiskValueMapping();
+    mapsToOtherThanZero.setTransmissionRiskLevel(3);
+    mapsToOtherThanZero.setTransmissionRiskValue(1.5d);
+
+    PreDistributionTrlValueMappingProvider provider = new PreDistributionTrlValueMappingProvider();
+    provider.setTransmissionRiskValueMapping(List.of(mapsToZero, mapsToZero2, mapsToOtherThanZero));
+    return provider;
   }
 }

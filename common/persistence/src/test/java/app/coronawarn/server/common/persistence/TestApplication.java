@@ -3,7 +3,6 @@
 package app.coronawarn.server.common.persistence;
 
 import app.coronawarn.server.common.persistence.domain.config.TekFieldDerivations;
-import app.coronawarn.server.common.persistence.domain.config.YamlPropertySourceFactory;
 import app.coronawarn.server.common.persistence.repository.DiagnosisKeyRepository;
 import app.coronawarn.server.common.persistence.repository.FederationBatchInfoRepository;
 import app.coronawarn.server.common.persistence.repository.FederationUploadKeyRepository;
@@ -16,6 +15,7 @@ import app.coronawarn.server.common.persistence.service.StatisticsDownloadServic
 import app.coronawarn.server.common.persistence.service.TraceTimeIntervalWarningService;
 import app.coronawarn.server.common.persistence.service.common.KeySharingPoliciesChecker;
 import app.coronawarn.server.common.persistence.service.common.ValidDiagnosisKeyFilter;
+import app.coronawarn.server.common.persistence.utils.YamlPropertySourceFactory;
 import java.util.Map;
 import org.mockito.Mockito;
 import org.springframework.boot.autoconfigure.SpringBootApplication;

@@ -1,5 +1,6 @@
 package app.coronawarn.server.common.persistence.domain.config;
 
+import app.coronawarn.server.common.persistence.utils.YamlPropertySourceFactory;
 import java.util.HashMap;
 import java.util.Map;
 import org.springframework.boot.context.properties.ConfigurationProperties;
