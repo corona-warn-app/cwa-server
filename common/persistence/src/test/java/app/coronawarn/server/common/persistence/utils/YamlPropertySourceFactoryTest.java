@@ -1,4 +1,4 @@
-package app.coronawarn.server.common.persistence.domain.config;
+package app.coronawarn.server.common.persistence.utils;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -18,6 +18,8 @@ import org.springframework.boot.test.autoconfigure.data.jdbc.DataJdbcTest;
 import org.springframework.core.env.PropertySource;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.support.EncodedResource;
+import app.coronawarn.server.common.persistence.domain.config.TekFieldDerivations;
+import app.coronawarn.server.common.persistence.utils.YamlPropertySourceFactory;
 
 @DataJdbcTest
 @ExtendWith(MockitoExtension.class)

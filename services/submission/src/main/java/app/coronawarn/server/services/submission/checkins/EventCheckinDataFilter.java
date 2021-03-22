@@ -3,11 +3,14 @@ package app.coronawarn.server.services.submission.checkins;
 import static app.coronawarn.server.services.submission.checkins.CheckinsDateSpecification.TEN_MINUTE_INTERVAL_DERIVATION;
 import static java.time.ZoneOffset.UTC;
 
+import app.coronawarn.server.common.persistence.domain.config.PreDistributionTrlValueMappingProvider;
+import app.coronawarn.server.common.persistence.domain.config.TransmissionRiskValueMapping;
 import app.coronawarn.server.common.protocols.internal.pt.CheckIn;
 import app.coronawarn.server.services.submission.config.SubmissionServiceConfig;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 import org.springframework.stereotype.Component;
 
@@ -16,11 +19,14 @@ public class EventCheckinDataFilter {
 
   private final SubmissionServiceConfig submissionServiceConfig;
   private final TraceLocationSignatureVerifier traceLocationSignatureVerifier;
+  private final PreDistributionTrlValueMappingProvider trlValueMappingProvider;
 
   public EventCheckinDataFilter(SubmissionServiceConfig submissionServiceConfig,
-      TraceLocationSignatureVerifier traceLocationSignatureVerifier) {
+      TraceLocationSignatureVerifier traceLocationSignatureVerifier,
+      PreDistributionTrlValueMappingProvider trlValueMappingProvider) {
     this.submissionServiceConfig = submissionServiceConfig;
     this.traceLocationSignatureVerifier = traceLocationSignatureVerifier;
+    this.trlValueMappingProvider = trlValueMappingProvider;
   }
 
   /**
@@ -33,16 +39,14 @@ public class EventCheckinDataFilter {
   public List<CheckIn> filter(List<CheckIn> checkins) {
     return checkins.stream()
         .filter(this::filterByValidSignature)
-        .filter(this::filterByTransmissionRiskLevel)
+        .filter(this::filterOutZeroTransmissionRiskLevel)
         .filter(this::filterOutOldCheckins)
         .filter(this::filterOutFutureCheckins).collect(Collectors.toList());
   }
 
 
-  private boolean filterByTransmissionRiskLevel(CheckIn checkin) {
-    // TODO: This requires a refactoring work to extract Risk calculation parameters in a another yaml that is
-    // shareable across distribution and submission services
-    return true;
+  private boolean filterOutZeroTransmissionRiskLevel(CheckIn checkin) {
+    return !mapsTo(checkin.getTransmissionRiskLevel(), 0.0d);
   }
 
   private boolean filterOutOldCheckins(CheckIn checkin) {
@@ -60,5 +64,12 @@ public class EventCheckinDataFilter {
 
   private boolean filterByValidSignature(CheckIn checkin) {
     return traceLocationSignatureVerifier.verify(checkin.getSignedLocation());
+  }
+
+  public boolean mapsTo(Integer valueToCheck, Double target) {
+    Optional<TransmissionRiskValueMapping> foundTarget =
+        trlValueMappingProvider.getTransmissionRiskValueMapping().stream()
+            .filter(m -> m.getTransmissionRiskLevel().equals(valueToCheck)).findAny();
+    return foundTarget.isPresent() && foundTarget.get().getTransmissionRiskValue().equals(target);
   }
 }

@@ -1,4 +1,4 @@
-package app.coronawarn.server.common.persistence.domain.config;
+package app.coronawarn.server.common.persistence.utils;
 
 import java.util.Objects;
 import java.util.Properties;

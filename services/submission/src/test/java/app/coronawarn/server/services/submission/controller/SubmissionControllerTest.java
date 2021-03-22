@@ -48,7 +48,6 @@ import java.util.stream.StreamSupport;
 import org.apache.commons.lang3.tuple.Pair;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.api.TestInstance.Lifecycle;
@@ -426,9 +425,38 @@ class SubmissionControllerTest {
   }
 
   @Test
-  @Disabled("To be implemented after risk paramters yaml refactoring")
   void testCheckinDataIsFilteredForTransmissionRiskLevel() {
-    // TODO:
+    long eventCheckinInThePast =
+        LocalDateTime.ofInstant(Instant.now(), UTC).minusDays(10).toEpochSecond(UTC);
+
+    SignedTraceLocation traceLocation1 =
+        SignedTraceLocation.newBuilder()
+        .setSignature(ByteString.copyFrom(CryptoSignUtils.sign("hash1".getBytes(), cryptoProvider)))
+        .setLocation(ByteString.copyFromUtf8("hash1")).build();
+
+    SignedTraceLocation traceLocation2 =
+        SignedTraceLocation.newBuilder()
+        .setSignature(ByteString.copyFrom(CryptoSignUtils.sign("hash2".getBytes(), cryptoProvider)))
+        .setLocation(ByteString.copyFromUtf8("hash2")).build();
+
+    //both trls below are mapped to zero in the persistence/trl-value-mapping.yaml
+    List<CheckIn> invalidCheckinData = List.of(
+        CheckIn.newBuilder().setTransmissionRiskLevel(1)
+            .setStartIntervalNumber(TEN_MINUTE_INTERVAL_DERIVATION.apply(eventCheckinInThePast))
+            .setEndIntervalNumber(TEN_MINUTE_INTERVAL_DERIVATION.apply(eventCheckinInThePast) + 10)
+            .setSignedLocation(traceLocation1)
+            .build(),
+        CheckIn.newBuilder().setTransmissionRiskLevel(2)
+            .setStartIntervalNumber(
+                TEN_MINUTE_INTERVAL_DERIVATION.apply(eventCheckinInThePast) + 11)
+            .setEndIntervalNumber(TEN_MINUTE_INTERVAL_DERIVATION.apply(eventCheckinInThePast) + 22)
+            .setSignedLocation(traceLocation2)
+            .build());
+
+    ResponseEntity<Void> actResponse =
+        executor.executePost(buildPayloadWithCheckinData(invalidCheckinData));
+    assertThat(actResponse.getStatusCode()).isEqualTo(OK);
+    assertTraceWarningsHaveBeenSaved(0);
   }
 
   @Test
