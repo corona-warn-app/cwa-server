@@ -21,6 +21,9 @@ public class EventCheckinDataFilter {
   private final TraceLocationSignatureVerifier traceLocationSignatureVerifier;
   private final PreDistributionTrlValueMappingProvider trlValueMappingProvider;
 
+  /**
+   * Creates am instance.
+   */
   public EventCheckinDataFilter(SubmissionServiceConfig submissionServiceConfig,
       TraceLocationSignatureVerifier traceLocationSignatureVerifier,
       PreDistributionTrlValueMappingProvider trlValueMappingProvider) {
@@ -66,7 +69,7 @@ public class EventCheckinDataFilter {
     return traceLocationSignatureVerifier.verify(checkin.getSignedLocation());
   }
 
-  public boolean mapsTo(Integer valueToCheck, Double target) {
+  private boolean mapsTo(Integer valueToCheck, Double target) {
     Optional<TransmissionRiskValueMapping> foundTarget =
         trlValueMappingProvider.getTransmissionRiskValueMapping().stream()
             .filter(m -> m.getTransmissionRiskLevel().equals(valueToCheck)).findAny();

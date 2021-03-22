@@ -406,12 +406,12 @@ class SubmissionControllerTest {
         .setLocation(ByteString.copyFromUtf8("hash2")).build();
 
     List<CheckIn> invalidCheckinData = List.of(
-        CheckIn.newBuilder().setTransmissionRiskLevel(1)
+        CheckIn.newBuilder().setTransmissionRiskLevel(3)
             .setStartIntervalNumber(TEN_MINUTE_INTERVAL_DERIVATION.apply(eventCheckinInThePast))
             .setEndIntervalNumber(TEN_MINUTE_INTERVAL_DERIVATION.apply(eventCheckinInThePast) + 10)
             .setSignedLocation(traceLocation1)
             .build(),
-        CheckIn.newBuilder().setTransmissionRiskLevel(2)
+        CheckIn.newBuilder().setTransmissionRiskLevel(3)
             .setStartIntervalNumber(
                 TEN_MINUTE_INTERVAL_DERIVATION.apply(eventCheckinInThePast) + 11)
             .setEndIntervalNumber(TEN_MINUTE_INTERVAL_DERIVATION.apply(eventCheckinInThePast) + 22)
@@ -503,7 +503,7 @@ class SubmissionControllerTest {
     List<CheckIn> checkins = List.of(CheckIn.newBuilder()
         .setStartIntervalNumber(TEN_MINUTE_INTERVAL_DERIVATION.apply(eventCheckinInTheFuture))
         .setEndIntervalNumber(TEN_MINUTE_INTERVAL_DERIVATION.apply(eventCheckoutInTheFuture))
-        .setTransmissionRiskLevel(1)
+        .setTransmissionRiskLevel(3)
         .setSignedLocation(traceLocation1)
         .build());
 
