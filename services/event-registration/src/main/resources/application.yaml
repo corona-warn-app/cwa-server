@@ -9,10 +9,6 @@ event-registration:
     security-provider: BC
 
 spring:
-  main:
-    web-application-type: NONE
-  transaction:
-    default-timeout: 20
   flyway:
     enabled: true
     locations: classpath:/eventregistration/db/migration, classpath:/eventregistration/db/specific/{vendor}
