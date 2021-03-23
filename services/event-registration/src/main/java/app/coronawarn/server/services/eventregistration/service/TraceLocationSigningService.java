@@ -3,6 +3,7 @@ package app.coronawarn.server.services.eventregistration.service;
 import app.coronawarn.server.common.protocols.internal.pt.SignedTraceLocation;
 import app.coronawarn.server.common.protocols.internal.pt.TraceLocation;
 import app.coronawarn.server.services.eventregistration.config.EventRegistrationConfiguration;
+import app.coronawarn.server.services.eventregistration.domain.errors.SigningException;
 import com.google.protobuf.ByteString;
 import java.security.GeneralSecurityException;
 import java.security.Signature;
@@ -39,7 +40,7 @@ public class TraceLocationSigningService {
           .setLocation(filledTraceLocation.toByteString())
           .setSignature(ByteString.copyFrom(payloadSignature.sign())).build();
     } catch (GeneralSecurityException e) {
-      throw new RuntimeException("Failed to sign trace location.", e);
+      throw new SigningException("Failed to sign trace location.", e);
     }
   }
 

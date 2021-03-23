@@ -24,8 +24,6 @@ spring:
     hikari:
       schema: event_registration
 
-
-
 logging:
   level:
     org:
@@ -60,3 +58,4 @@ server:
     key-password: ${SSL_EVENT_REGISTRATION_KEYSTORE_PASSWORD}
     key-store: ${SSL_EVENT_REGISTRATION_KEYSTORE_PATH}
     key-store-password: ${SSL_EVENT_REGISTRATION_KEYSTORE_PASSWORD}
+

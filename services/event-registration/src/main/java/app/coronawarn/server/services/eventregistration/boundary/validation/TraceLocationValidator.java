@@ -7,11 +7,15 @@ import java.util.ArrayList;
 import java.util.List;
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 @Component
 public class TraceLocationValidator implements
     ConstraintValidator<ValidTraceLocation, TraceLocation> {
+
+  private static final Logger logger = LoggerFactory.getLogger(TraceLocationValidator.class);
 
   private Integer version;
   private final EventRegistrationConfiguration eventRegistrationConfiguration;
@@ -39,7 +43,9 @@ public class TraceLocationValidator implements
 
   private boolean validateDefaultCheckInLengthMustBePositive(TraceLocation value, ConstraintValidatorContext context) {
     if (!(value.getDefaultCheckInLengthInMinutes() > 0)) {
-      addViolation(context, "Trace Location default Check-in length must be greater than zero.");
+      final String msg = "Trace Location default Check-in length must be greater than zero.";
+      logger.info(msg);
+      addViolation(context, msg);
       return false;
     }
     return true;
@@ -47,11 +53,15 @@ public class TraceLocationValidator implements
 
   private boolean validateStartEndTimestamp(TraceLocation value, ConstraintValidatorContext context) {
     if (value.getStartTimestamp() < 0 || value.getEndTimestamp() < 0) {
-      addViolation(context, "Trace Location Start and End Timestamp must be not negative.");
+      final String msg = "Trace Location Start and End Timestamp must be not negative.";
+      logger.info(msg);
+      addViolation(context, msg);
       return false;
     }
     if (value.getStartTimestamp() > value.getEndTimestamp()) {
-      addViolation(context, "Trace Location Start Timestamp must not be greater or equal than End Timestamp.");
+      final String msg = "Trace Location Start Timestamp must not be greater or equal than End Timestamp.";
+      logger.info(msg);
+      addViolation(context, msg);
       return false;
     }
     return true;
@@ -60,7 +70,9 @@ public class TraceLocationValidator implements
   private boolean validateStringNotMoreThan(String value, String placeHolder, int amount,
       ConstraintValidatorContext context) {
     if (value.trim().length() > amount) {
-      addViolation(context, String.format("Trace Location %s may not be empty.", placeHolder));
+      final String msg = String.format("Trace Location %s may not be longer than %d characters.", placeHolder, amount);
+      logger.info(msg);
+      addViolation(context, msg);
       return false;
     }
     return true;
@@ -68,7 +80,9 @@ public class TraceLocationValidator implements
 
   private boolean validateStringIsNotEmpty(String value, String placeHolder, ConstraintValidatorContext context) {
     if (value.isEmpty()) {
-      addViolation(context, String.format("Trace Location %s may not be empty.", placeHolder));
+      final String msg = String.format("Trace Location %s may not be empty.", placeHolder);
+      logger.info(msg);
+      addViolation(context, msg);
       return false;
     }
     return true;
@@ -76,6 +90,8 @@ public class TraceLocationValidator implements
 
   private boolean validateVersionIsCorrect(TraceLocation value, ConstraintValidatorContext context) {
     if (value.getVersion() != this.version) {
+      final String msg = "Trace Location Version contains an invalid value.";
+      logger.info(msg);
       addViolation(context, "Trace Location Version contains an invalid value.");
       return false;
     }
@@ -84,7 +100,9 @@ public class TraceLocationValidator implements
 
   private boolean validateGuidIsEmpty(TraceLocation value, ConstraintValidatorContext context) {
     if (!value.getGuid().isEmpty()) {
-      addViolation(context, "Trace Location Guid must be empty or unset");
+      final String msg = "Trace Location Guid must be empty or unset";
+      logger.info(msg);
+      addViolation(context, msg);
       return false;
     }
     return true;

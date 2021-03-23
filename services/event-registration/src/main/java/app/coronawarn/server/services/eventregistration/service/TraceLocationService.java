@@ -1,6 +1,7 @@
 package app.coronawarn.server.services.eventregistration.service;
 
 import app.coronawarn.server.common.protocols.internal.pt.TraceLocation;
+import app.coronawarn.server.services.eventregistration.domain.errors.TraceLocationInsertionException;
 import app.coronawarn.server.services.eventregistration.repository.TraceLocationRepository;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
@@ -33,7 +34,7 @@ public class TraceLocationService {
       traceLocationRepository.save(uuidHash, traceLocation.getVersion(),
           LocalDateTime.now().toEpochSecond(ZoneOffset.UTC));
     } catch (DuplicateKeyException e) {
-      logger.error("Trying to save Trace Location object has failed. The limit has been exceeded!");
+      throw new TraceLocationInsertionException("Trying to save Trace Location object has failed.");
     }
   }
 }
