@@ -12,6 +12,10 @@
 
   <artifactId>upload</artifactId>
 
+  <properties>
+    <start-class>app.coronawarn.server.services.federation.upload.Application</start-class>
+  </properties>
+
   <dependencies>
     <dependency>
       <groupId>org.springframework.boot</groupId>
