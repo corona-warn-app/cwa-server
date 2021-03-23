@@ -1,7 +1,7 @@
 ---
 event-registration:
   version: 0
-  privatekey: ${EVENT_REGISTRATION_SECRET}
+  privatekey: ${EVENT_REGISTRATION_PRIVATE_KEY}
   signature:
     # The algorithm name.
     algorithm-name: ${EVENT_REGISTRATION_SIGNATURE_ALGORITHM_NAME:sha256WithRSAEncryption}
