@@ -22,14 +22,13 @@
   </modules>
 
   <dependencies>
-	<dependency>
-	    <groupId>org.springframework.vault</groupId>
-	    <artifactId>spring-vault-core</artifactId>
-	    <version>2.3.2</version>
-	</dependency>
     <dependency>
-      <!-- The cloud bootstrap starter is needed due to a breaking change implemented in Spring Cloud 2020.0.0 which turns off
-	  the Bootstrap context (used throughout the services for vault config) by default -->
+      <groupId>org.springframework.vault</groupId>
+      <artifactId>spring-vault-core</artifactId>
+    </dependency>
+    <dependency>
+      <!-- The cloud bootstrap starter is needed due to a breaking change implemented in Spring Cloud 2020.0.0 which turns off the Bootstrap 
+        context (used throughout the services for vault config) by default -->
       <groupId>org.springframework.cloud</groupId>
       <artifactId>spring-cloud-starter-bootstrap</artifactId>
     </dependency>
