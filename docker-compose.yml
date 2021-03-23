@@ -162,10 +162,11 @@ services:
       POSTGRES_USER: ${POSTGRES_USER}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
     volumes:
-       - postgres_volume:/data/postgres
-       - ./setup/setup-roles.sql:/docker-entrypoint-initdb.d/1-roles.sql
-       - ./local-setup/create-users.sql:/docker-entrypoint-initdb.d/2-users.sql
-       - ./local-setup/enable-test-data-docker-compose.sql:/docker-entrypoint-initdb.d/3-enable-testdata.sql
+      - postgres_volume:/data/postgres
+      - ./setup/setup-roles.sql:/docker-entrypoint-initdb.d/1-roles.sql
+      - ./local-setup/create-roles.sql:/docker-entrypoint-initdb.d/2-event-registration-roles.sql
+      - ./local-setup/create-users.sql:/docker-entrypoint-initdb.d/3-users.sql
+      - ./local-setup/enable-test-data-docker-compose.sql:/docker-entrypoint-initdb.d/4-enable-testdata.sql
   pgadmin:
     container_name: pgadmin_container
     image: dpage/pgadmin4
@@ -195,7 +196,7 @@ services:
     environment:
       - AWS_ACCESS_KEY_ID=${OBJECTSTORE_ACCESSKEY}
       - AWS_SECRET_ACCESS_KEY=${OBJECTSTORE_SECRETKEY}
-    entrypoint: ["/root/scripts/wait-for-it/wait-for-it.sh", "objectstore:8000", "-t", "30", "--"]
+    entrypoint: [ "/root/scripts/wait-for-it/wait-for-it.sh", "objectstore:8000", "-t", "30", "--" ]
     volumes:
       - ./scripts/wait-for-it:/root/scripts/wait-for-it
     command: aws s3api create-bucket --bucket cwa --endpoint-url http://objectstore:8000 --acl public-read

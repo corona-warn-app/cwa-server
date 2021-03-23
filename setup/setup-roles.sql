@@ -85,13 +85,3 @@ CREATE ROLE cwa_federation_upload
    NOCREATEROLE
    NOREPLICATION
    IN ROLE cwa_user;
-
- /* --------------- Event Registration --------------- */
-CREATE ROLE cwa_event_registration
-  NOLOGIN
-  NOSUPERUSER
-  INHERIT
-  NOCREATEDB
-  NOCREATEROLE
-  NOREPLICATION
-  IN ROLE cwa_user;

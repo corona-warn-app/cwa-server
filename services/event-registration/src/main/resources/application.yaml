@@ -22,11 +22,13 @@ spring:
   # Postgres configuration
   datasource:
     driver-class-name: org.postgresql.Driver
-    url: jdbc:postgresql://${POSTGRESQL_SERVICE_HOST:localhost}:${POSTGRESQL_SERVICE_PORT:5432}/${POSTGRESQL_DATABASE:cwa_event_registration}
+    url: jdbc:postgresql://${POSTGRESQL_SERVICE_HOST:localhost}:${POSTGRESQL_SERVICE_PORT:8001}/${POSTGRESQL_DATABASE:cwa}
     username: ${POSTGRESQL_USER_EVENT_REGISTRATION:local_setup_event_registration}
     password: ${POSTGRESQL_PASSWORD_EVENT_REGISTRATION:local_setup_event_registration}
     hikari:
       schema: event_registration
+
+
 
 logging:
   level:

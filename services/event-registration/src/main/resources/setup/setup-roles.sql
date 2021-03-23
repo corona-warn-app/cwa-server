@@ -12,7 +12,7 @@ GRANT CONNECT ON DATABASE cwa TO cwa_event_user;
 GRANT USAGE ON SCHEMA event_registration TO cwa_event_user;
 
 CREATE ROLE cwa_event_flyway
-  NOLOGIN
+  LOGIN
   NOSUPERUSER
   INHERIT
   NOCREATEDB
@@ -24,8 +24,8 @@ CREATE ROLE cwa_event_flyway
 GRANT CREATE ON SCHEMA event_registration TO cwa_event_flyway;
 
  /* --------------- Event Registration --------------- */
-CREATE ROLE cwa_event_creation
-  NOLOGIN
+CREATE ROLE cwa_event_registration
+  LOGIN
   NOSUPERUSER
   INHERIT
   NOCREATEDB
