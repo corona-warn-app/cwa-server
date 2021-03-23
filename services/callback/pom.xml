@@ -12,6 +12,10 @@
 
   <artifactId>callback</artifactId>
 
+  <properties>
+    <start-class>app.coronawarn.server.services.callback.ServerApplication</start-class>
+  </properties>
+
   <dependencies>
     <dependency>
       <groupId>org.springframework.boot</groupId>
