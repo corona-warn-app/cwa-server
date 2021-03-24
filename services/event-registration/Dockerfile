@@ -37,6 +37,7 @@ FROM gcr.io/distroless/java-debian10:11
 
 ARG SERVICE=event-registration
 
+WORKDIR /
 COPY --from=build /DpkgHelper.java .
 COPY --from=build /usr/sap/${SERVICE}-service/service.jar .
 RUN ["java", "DpkgHelper.java"]
