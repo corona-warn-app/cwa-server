@@ -62,14 +62,14 @@ class AssemblyRunnerTest {
 
 
     when(outputDirectoryProvider.getDirectory()).thenReturn(spyParentDirectory);
-    when(cwaApiStructureProvider.getDirectory()).thenReturn(childDirectory);
+    when(cwaApiStructureProvider.getDiagnosisKeysDirectory()).thenReturn(childDirectory);
     when(cwaApiStructureProvider.getDirectoryV2()).thenReturn(childDirectory);
 
     assembly.run(null);
 
     verify(outputDirectoryProvider, times(1)).getDirectory();
     verify(outputDirectoryProvider, times(1)).clear();
-    verify(cwaApiStructureProvider, times(1)).getDirectory();
+    verify(cwaApiStructureProvider, times(1)).getDiagnosisKeysDirectory();
     verify(cwaApiStructureProvider, times(1)).getDirectoryV2();
     verify(spyParentDirectory, times(1)).prepare(any());
     verify(spyParentDirectory, times(1)).write();

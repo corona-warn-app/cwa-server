@@ -44,7 +44,7 @@ public class CwaApiStructureProvider {
    *
    * @return new instance of IndexingDecoratorOnDisk base directory
    */
-  public Directory<WritableOnDisk> getDirectory() {
+  public Directory<WritableOnDisk> getDiagnosisKeysDirectory() {
     IndexDirectoryOnDisk<String> versionDirectory = new IndexDirectoryOnDisk<>(
         distributionServiceConfig.getApi().getVersionPath(),
         ignoredValue -> Set.of(distributionServiceConfig.getApi().getVersionV1()),

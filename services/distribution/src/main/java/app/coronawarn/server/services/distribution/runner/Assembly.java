@@ -46,7 +46,7 @@ public class Assembly implements ApplicationRunner {
   public void run(ApplicationArguments args) {
     try {
       Directory<WritableOnDisk> outputDirectory = this.outputDirectoryProvider.getDirectory();
-      outputDirectory.addWritable(cwaApiStructureProvider.getDirectory());
+      outputDirectory.addWritable(cwaApiStructureProvider.getDiagnosisKeysDirectory());
       outputDirectory.addWritable(cwaApiStructureProvider.getDirectoryV2());
       this.outputDirectoryProvider.clear();
       logger.debug("Preparing files...");
