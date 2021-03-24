@@ -36,7 +36,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
     classes = {CryptoProvider.class, DistributionServiceConfig.class,
         KeySharingPoliciesChecker.class, EnfParameterAdapter.class,},
     initializers = ConfigFileApplicationContextInitializer.class)
-class DiagnosisKeysStructureProviderTest {
+class DistributionStructureProviderTest {
 
   @Autowired
   CryptoProvider cryptoProvider;
@@ -66,7 +66,7 @@ class DiagnosisKeysStructureProviderTest {
   @Test
   void testGetDiagnosisKeysReturnsCorrectDirectoryName() {
     DiagnosisKeyBundler bundler = new ProdDiagnosisKeyBundler(distributionServiceConfig, sharingPoliciesChecker);
-    DiagnosisKeysStructureProvider diagnosisKeysStructureProvider = new DiagnosisKeysStructureProvider(
+    DistributionStructureProvider diagnosisKeysStructureProvider = new DistributionStructureProvider(
         diagnosisKeyService, cryptoProvider, distributionServiceConfig, bundler, enfParameterAdapter);
     Directory<WritableOnDisk> diagnosisKeys = diagnosisKeysStructureProvider.getDiagnosisKeys();
     Assertions.assertEquals("diagnosis-keys", diagnosisKeys.getName());

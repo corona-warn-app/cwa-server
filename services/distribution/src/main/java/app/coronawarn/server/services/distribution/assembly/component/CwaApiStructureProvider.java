@@ -20,7 +20,7 @@ public class CwaApiStructureProvider {
   private final AppConfigurationStructureProvider appConfigurationStructureProvider;
   private final AppConfigurationV2StructureProvider appConfigurationV2StructureProvider;
   private final StatisticsStructureProvider statisticsStructureProvider;
-  private final DiagnosisKeysStructureProvider diagnosisKeysStructureProvider;
+  private final DistributionStructureProvider distributionStructureProvider;
   private final DistributionServiceConfig distributionServiceConfig;
 
   /**
@@ -30,12 +30,12 @@ public class CwaApiStructureProvider {
       AppConfigurationStructureProvider appConfigurationStructureProvider,
       AppConfigurationV2StructureProvider appConfigurationV2StructureProvider,
       StatisticsStructureProvider statisticsStructureProvider,
-      DiagnosisKeysStructureProvider diagnosisKeysStructureProvider,
+      DistributionStructureProvider distributionStructureProvider,
       DistributionServiceConfig distributionServiceConfig) {
     this.appConfigurationStructureProvider = appConfigurationStructureProvider;
     this.appConfigurationV2StructureProvider = appConfigurationV2StructureProvider;
     this.statisticsStructureProvider = statisticsStructureProvider;
-    this.diagnosisKeysStructureProvider = diagnosisKeysStructureProvider;
+    this.distributionStructureProvider = distributionStructureProvider;
     this.distributionServiceConfig = distributionServiceConfig;
   }
 
@@ -57,7 +57,7 @@ public class CwaApiStructureProvider {
     versionDirectory.addWritableToAll(
         ignoredValue -> Optional.ofNullable(appConfigurationStructureProvider.getAppConfigurationV1ForIos()));
     versionDirectory.addWritableToAll(
-        ignoredValue -> Optional.of(diagnosisKeysStructureProvider.getDiagnosisKeys()));
+        ignoredValue -> Optional.of(distributionStructureProvider.getDiagnosisKeys()));
     versionDirectory.addWritableToAll(
         ignoredValue -> Optional.ofNullable(statisticsStructureProvider.getStatistics()));
 

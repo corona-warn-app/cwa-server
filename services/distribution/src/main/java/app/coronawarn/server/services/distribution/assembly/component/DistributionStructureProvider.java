@@ -20,10 +20,10 @@ import org.springframework.stereotype.Component;
  * Retrieves stored diagnosis keys and builds a {@link DiagnosisKeysDirectory} with them.
  */
 @Component
-public class DiagnosisKeysStructureProvider {
+public class DistributionStructureProvider {
 
   private static final Logger logger = LoggerFactory
-      .getLogger(DiagnosisKeysStructureProvider.class);
+      .getLogger(DistributionStructureProvider.class);
 
   private final DiagnosisKeyBundler diagnosisKeyBundler;
   private final DiagnosisKeyService diagnosisKeyService;
@@ -34,7 +34,7 @@ public class DiagnosisKeysStructureProvider {
   /**
    * Creates a new DiagnosisKeysStructureProvider.
    */
-  DiagnosisKeysStructureProvider(DiagnosisKeyService diagnosisKeyService, CryptoProvider cryptoProvider,
+  DistributionStructureProvider(DiagnosisKeyService diagnosisKeyService, CryptoProvider cryptoProvider,
       DistributionServiceConfig distributionServiceConfig, DiagnosisKeyBundler diagnosisKeyBundler,
       EnfParameterAdapter enfParameterEncoder) {
     this.diagnosisKeyService = diagnosisKeyService;
