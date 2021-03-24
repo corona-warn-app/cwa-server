@@ -132,7 +132,7 @@
       <dependency>
         <groupId>org.springframework.vault</groupId>
         <artifactId>spring-vault-core</artifactId>
-        <version>spring-vault-core.version</version>
+        <version>${spring-vault-core.version}</version>
       </dependency>
       <dependency>
         <groupId>com.google.protobuf</groupId>
