@@ -48,24 +48,24 @@ public class EventCheckinDataFilter {
   }
 
 
-  private boolean filterOutZeroTransmissionRiskLevel(CheckIn checkin) {
+  boolean filterOutZeroTransmissionRiskLevel(CheckIn checkin) {
     return !mapsTo(checkin.getTransmissionRiskLevel(), 0.0d);
   }
 
-  private boolean filterOutOldCheckins(CheckIn checkin) {
+  boolean filterOutOldCheckins(CheckIn checkin) {
     Integer acceptableTimeframeInDays = submissionServiceConfig.getAcceptedEventDateThresholdDays();
     int threshold = TEN_MINUTE_INTERVAL_DERIVATION.apply(LocalDateTime.ofInstant(Instant.now(), UTC)
         .minusDays(acceptableTimeframeInDays).toEpochSecond(UTC));
     return threshold < checkin.getEndIntervalNumber();
   }
 
-  private boolean filterOutFutureCheckins(CheckIn checkin) {
+  boolean filterOutFutureCheckins(CheckIn checkin) {
     int threshold = TEN_MINUTE_INTERVAL_DERIVATION
         .apply(LocalDateTime.ofInstant(Instant.now(), UTC).toEpochSecond(UTC));
     return threshold > checkin.getStartIntervalNumber();
   }
 
-  private boolean filterByValidSignature(CheckIn checkin) {
+  boolean filterByValidSignature(CheckIn checkin) {
     return traceLocationSignatureVerifier.verify(checkin.getSignedLocation());
   }
 
