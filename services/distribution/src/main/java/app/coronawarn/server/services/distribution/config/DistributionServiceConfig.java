@@ -428,6 +428,8 @@ public class DistributionServiceConfig {
     @Pattern(regexp = CHAR_AND_NUMBER_REGEX)
     private String diagnosisKeysPath;
     @Pattern(regexp = CHAR_AND_NUMBER_REGEX)
+    private String traceWarningPackagesPath;
+    @Pattern(regexp = CHAR_AND_NUMBER_REGEX)
     private String parametersPath;
     @Pattern(regexp = CHAR_AND_NUMBER_REGEX)
     private String appConfigFileName;
@@ -516,6 +518,14 @@ public class DistributionServiceConfig {
 
     public void setDiagnosisKeysPath(String diagnosisKeysPath) {
       this.diagnosisKeysPath = diagnosisKeysPath;
+    }
+
+    public String getTraceWarningPackagesPath() {
+      return traceWarningPackagesPath;
+    }
+
+    public void setTraceWarningPackagesPath(String traceWarningPackagesPath) {
+      this.traceWarningPackagesPath = traceWarningPackagesPath;
     }
 
     public String getParametersPath() {

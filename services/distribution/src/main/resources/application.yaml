@@ -59,6 +59,7 @@ services:
       date-path: date
       hour-path: hour
       diagnosis-keys-path: diagnosis-keys
+      trace-warning-packages-path: twp
       parameters-path: configuration
       app-config-file-name: app_config
       app-config-v2-android-file-name: app_config_android

@@ -60,9 +60,9 @@ class AssemblyRunnerTest {
   void shouldCorrectlyCreatePrepareAndWriteDirectories() throws IOException {
     Directory<WritableOnDisk> spyParentDirectory = spy(parentDirectory);
 
-
     when(outputDirectoryProvider.getDirectory()).thenReturn(spyParentDirectory);
     when(cwaApiStructureProvider.getDiagnosisKeysDirectory()).thenReturn(childDirectory);
+    when(cwaApiStructureProvider.getTraceWarningDirectory()).thenReturn(childDirectory);
     when(cwaApiStructureProvider.getDirectoryV2()).thenReturn(childDirectory);
 
     assembly.run(null);

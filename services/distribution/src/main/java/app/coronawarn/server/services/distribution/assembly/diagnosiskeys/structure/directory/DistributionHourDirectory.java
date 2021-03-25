@@ -32,8 +32,8 @@ public class DistributionHourDirectory extends IndexDirectoryOnDisk<LocalDateTim
    * @param cryptoProvider      The {@link CryptoProvider} used for cryptographic signing.
    * @param distributionServiceConfig The configuration to set {@link DistributionServiceConfig}
    */
-  public DistributionHourDirectory(DistributionPackagesBundler distributionPackagesBundler, CryptoProvider cryptoProvider,
-      DistributionServiceConfig distributionServiceConfig) {
+  public DistributionHourDirectory(DistributionPackagesBundler distributionPackagesBundler,
+      CryptoProvider cryptoProvider, DistributionServiceConfig distributionServiceConfig) {
     super(distributionServiceConfig.getApi().getHourPath(),
         indices -> {
           String country = (String) indices.pop().peek();

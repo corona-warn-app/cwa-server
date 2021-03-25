@@ -66,9 +66,9 @@ class DistributionStructureProviderTest {
   @Test
   void testGetDiagnosisKeysReturnsCorrectDirectoryName() {
     DiagnosisKeyBundler bundler = new ProdDiagnosisKeyBundler(distributionServiceConfig, sharingPoliciesChecker);
-    DistributionStructureProvider diagnosisKeysStructureProvider = new DistributionStructureProvider(
-        diagnosisKeyService, cryptoProvider, distributionServiceConfig, bundler, enfParameterAdapter);
-    Directory<WritableOnDisk> diagnosisKeys = diagnosisKeysStructureProvider.getDiagnosisKeys();
+    DistributionStructureProvider distributionStructureProvider = new DistributionStructureProvider(
+        diagnosisKeyService, null, cryptoProvider, distributionServiceConfig, bundler, null, enfParameterAdapter);
+    Directory<WritableOnDisk> diagnosisKeys = distributionStructureProvider.getDiagnosisKeys();
     Assertions.assertEquals("diagnosis-keys", diagnosisKeys.getName());
   }
 
