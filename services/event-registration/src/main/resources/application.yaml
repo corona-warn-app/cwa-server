@@ -59,3 +59,29 @@ server:
     key-store: ${SSL_EVENT_REGISTRATION_KEYSTORE_PATH}
     key-store-password: ${SSL_EVENT_REGISTRATION_KEYSTORE_PASSWORD}
 
+
+# Actuator configuration
+management:
+  server:
+    port: 8081
+  endpoint:
+    metrics:
+      enabled: true
+    prometheus:
+      enabled: true
+    health:
+      group:
+        readiness:
+          include: db
+          show-details: always
+  endpoints:
+    web:
+      exposure:
+        include: 'health, prometheus'
+  metrics:
+    export:
+      prometheus:
+        enabled: true
+  health:
+    probes:
+      enabled: true
