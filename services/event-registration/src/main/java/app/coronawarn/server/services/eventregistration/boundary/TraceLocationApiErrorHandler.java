@@ -22,6 +22,13 @@ public class TraceLocationApiErrorHandler {
     return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
   }
 
+  /**
+   * Handles {@link TraceLocationInsertionException}.
+   * 
+   * @param e {@link RuntimeException} to handle
+   * @param request {@link WebRequest} which caused the issue
+   * @return ResponseEntity
+   */
   @ExceptionHandler(value = { TraceLocationInsertionException.class })
   public ResponseEntity<Void> handleInsertionOfTraceLocationFailed(final RuntimeException e, final WebRequest request) {
     logger.debug(e.getMessage() + " - " + request.getDescription(true));
@@ -29,6 +36,13 @@ public class TraceLocationApiErrorHandler {
     return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
   }
 
+  /**
+   * Handles {@link SigningException}.
+   * 
+   * @param e {@link RuntimeException} to handle
+   * @param request {@link WebRequest} which caused the issue
+   * @return ResponseEntity
+   */
   @ExceptionHandler(value = { SigningException.class })
   public ResponseEntity<Void> handleSigningException(final RuntimeException e, final WebRequest request) {
     logger.debug(e.getMessage() + " - " + request.getDescription(true));
