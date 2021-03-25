@@ -1,0 +1,61 @@
+---
+event-registration:
+  version: 0
+  privatekey: ${EVENT_REGISTRATION_SIGNING_KEY}
+  signature:
+    # The algorithm name.
+    algorithm-name: ${EVENT_REGISTRATION_SIGNATURE_ALGORITHM_NAME:sha256WithRSAEncryption}
+    # The security provider.
+    security-provider: BC
+
+spring:
+  flyway:
+    enabled: true
+    locations: classpath:/eventregistration/db/migration, classpath:/eventregistration/db/specific/{vendor}
+    password: ${POSTGRESQL_PASSWORD_FLYWAY:local_setup_flyway}
+    user: ${POSTGRESQL_USER_FLYWAY:local_setup_flyway}
+    schemas: event_registration
+  # Postgres configuration
+  datasource:
+    driver-class-name: org.postgresql.Driver
+    url: jdbc:postgresql://${POSTGRESQL_SERVICE_HOST:localhost}:${POSTGRESQL_SERVICE_PORT:8001}/${POSTGRESQL_DATABASE:cwa}
+    username: ${POSTGRESQL_USER_EVENT_REGISTRATION:local_setup_event_registration}
+    password: ${POSTGRESQL_PASSWORD_EVENT_REGISTRATION:local_setup_event_registration}
+    hikari:
+      schema: event_registration
+
+logging:
+  level:
+    org:
+      springframework:
+        web: INFO
+    app:
+      coronawarn: INFO
+    com:
+      netflix:
+        config:
+          sources:
+            URLConfigurationSource: ERROR
+
+server:
+  shutdown: graceful
+  ssl:
+    enabled: true
+    enabled-protocols: TLSv1.2+TLSv1.3
+    protocol: TLS
+    ciphers: >-
+      TLS_ECDHE_ECDSA_WITH_AES_128_GCM_SHA256
+      TLS_ECDHE_ECDSA_WITH_AES_256_GCM_SHA384
+      TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
+      TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+      TLS_DHE_DSS_WITH_AES_128_GCM_SHA256
+      TLS_DHE_DSS_WITH_AES_256_GCM_SHA384
+      TLS_DHE_RSA_WITH_AES_128_GCM_SHA256
+      TLS_DHE_RSA_WITH_AES_256_GCM_SHA384
+      TLS_AES_128_GCM_SHA256
+      TLS_AES_256_GCM_SHA384
+      TLS_AES_128_CCM_SHA256
+    key-password: ${SSL_EVENT_REGISTRATION_KEYSTORE_PASSWORD}
+    key-store: ${SSL_EVENT_REGISTRATION_KEYSTORE_PATH}
+    key-store-password: ${SSL_EVENT_REGISTRATION_KEYSTORE_PASSWORD}
+

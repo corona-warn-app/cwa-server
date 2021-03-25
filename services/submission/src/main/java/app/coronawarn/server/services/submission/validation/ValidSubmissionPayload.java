@@ -7,6 +7,7 @@ import app.coronawarn.server.common.persistence.domain.DiagnosisKey;
 import app.coronawarn.server.common.persistence.domain.normalization.DiagnosisKeyNormalizer;
 import app.coronawarn.server.common.protocols.external.exposurenotification.TemporaryExposureKey;
 import app.coronawarn.server.common.protocols.internal.SubmissionPayload;
+import app.coronawarn.server.services.submission.checkins.EventCheckinDataValidator;
 import app.coronawarn.server.services.submission.config.SubmissionServiceConfig;
 import java.lang.annotation.Documented;
 import java.lang.annotation.ElementType;
@@ -60,13 +61,16 @@ public @interface ValidSubmissionPayload {
     private final int maxRollingPeriod;
     private final Collection<String> supportedCountries;
     private final String defaultOriginCountry;
+    private final EventCheckinDataValidator eventCheckinValidator;
     private static final Logger logger = LoggerFactory.getLogger(SubmissionPayloadValidator.class);
 
-    public SubmissionPayloadValidator(SubmissionServiceConfig submissionServiceConfig) {
+    public SubmissionPayloadValidator(SubmissionServiceConfig submissionServiceConfig,
+        EventCheckinDataValidator checkinDataValidator) {
       maxNumberOfKeys = submissionServiceConfig.getMaxNumberOfKeys();
       maxRollingPeriod = submissionServiceConfig.getMaxRollingPeriod();
       supportedCountries = List.of(submissionServiceConfig.getSupportedCountries());
       defaultOriginCountry = submissionServiceConfig.getDefaultOriginCountry();
+      eventCheckinValidator = checkinDataValidator;
     }
 
     /**
@@ -93,7 +97,8 @@ public @interface ValidSubmissionPayload {
           && checkVisitedCountriesAreValid(submissionPayload, validatorContext)
           && checkRequiredFieldsNotMissing(exposureKeys, validatorContext)
           && checkTransmissionRiskLevelIsAcceptable(exposureKeys, validatorContext)
-          && checkDaysSinceOnsetOfSymptomsIsInRange(exposureKeys, validatorContext);
+          && checkDaysSinceOnsetOfSymptomsIsInRange(exposureKeys, validatorContext)
+          && eventCheckinValidator.verify(submissionPayload, validatorContext);
 
       if (!isValidPayload) {
         PrintableSubmissionPayload printableSubmissionPayload = new PrintableSubmissionPayload(submissionPayload);

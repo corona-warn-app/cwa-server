@@ -1,7 +1,7 @@
 package app.coronawarn.server.services.distribution.config;
 
 import app.coronawarn.server.common.persistence.domain.DiagnosisKey;
-import app.coronawarn.server.common.persistence.domain.config.YamlPropertySourceFactory;
+import app.coronawarn.server.common.persistence.utils.YamlPropertySourceFactory;
 import app.coronawarn.server.common.protocols.external.exposurenotification.ReportType;
 import java.util.Collection;
 import java.util.HashMap;

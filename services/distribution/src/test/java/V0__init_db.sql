@@ -81,6 +81,14 @@ CREATE ROLE cwa_federation_download
    NOREPLICATION
    IN ROLE cwa_user;
 
+ CREATE ROLE cwa_event_registration
+   NOLOGIN
+   NOSUPERUSER
+   INHERIT
+   NOCREATEDB
+   NOCREATEROLE
+   NOREPLICATION
+   IN ROLE cwa_user;
 
 CREATE USER "flyway" WITH INHERIT IN ROLE cwa_flyway ENCRYPTED PASSWORD '1234';
 CREATE USER "local_submission" WITH INHERIT IN ROLE cwa_submission ENCRYPTED PASSWORD '1234';
@@ -90,3 +98,6 @@ CREATE USER "local_distribution" WITH INHERIT IN ROLE cwa_distribution ENCRYPTED
 CREATE USER "local_callback" WITH INHERIT IN ROLE cwa_federation_callback ENCRYPTED PASSWORD '1234';
 CREATE USER "local_download" WITH INHERIT IN ROLE cwa_federation_download ENCRYPTED PASSWORD '1234';
 CREATE USER "local_upload" WITH INHERIT IN ROLE cwa_federation_upload ENCRYPTED PASSWORD '1234';
+
+/* --------------- Event Registration --------------- */
+CREATE USER "local_event_registration" WITH INHERIT IN ROLE cwa_event_registration ENCRYPTED PASSWORD '1234';

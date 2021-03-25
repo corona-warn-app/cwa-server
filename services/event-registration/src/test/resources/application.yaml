@@ -1,0 +1,33 @@
+---
+event-registration:
+  version: 5
+  privatekey: classpath:testprivatekey.pem
+  privatekey-password: testpass
+  signature:
+    # The algorithm name.
+    algorithm-name: SHA256withECDSA
+    # The security provider.
+    security-provider: BC
+
+logging:
+  level:
+    org:
+      springframework: off
+    root: off
+
+spring:
+  main:
+    banner-mode: off
+  flyway:
+    enabled: true
+    locations: classpath:/eventregistration/db/migration
+    schemas: event_registration
+  datasource:
+    driver-class-name: org.testcontainers.jdbc.ContainerDatabaseDriver
+    url: jdbc:tc:postgresql:11.8:///databasename?TC_TMPFS=/testtmpfs:rw
+    hikari:
+      schema: event_registration
+  test:
+    database:
+      # Use datasource as defined above.
+      replace: none
