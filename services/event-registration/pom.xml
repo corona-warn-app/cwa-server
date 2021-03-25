@@ -13,6 +13,10 @@
 
   <artifactId>event-registration</artifactId>
 
+  <properties>
+    <start-class>app.coronawarn.server.services.eventregistration.EventRegistrationApplication</start-class>
+  </properties>
+
   <dependencies>
     <dependency>
       <groupId>org.springframework.boot</groupId>
