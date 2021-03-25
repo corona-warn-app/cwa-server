@@ -120,10 +120,10 @@ public class SubmissionController {
     try {
       List<CheckIn> checkins = checkinsDataFilter.filter(submissionPayload.getCheckInsList());
       traceTimeIntervalWarningSevice.saveCheckinData(checkins);
-    } catch (Throwable t) {
-      // Any checkin data processing related error must not interupt the submission flow or interfere
+    } catch (final Exception e) {
+      // Any check-in data processing related error must not interrupt the submission flow or interfere
       // with storing of the diagnosis keys
-      logger.warn("An error has occured while trying to store the event checkin data", t);
+      logger.error("An error has occured while trying to store the event checkin data", e);
     }
   }
 
