@@ -10,10 +10,13 @@ import java.util.Optional;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.data.jdbc.DataJdbcTest;
+import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.test.context.jdbc.Sql;
 
-@DataJdbcTest
+@SpringBootTest
+@AutoConfigureTestDatabase
 class TraceLocationRepositoryTest {
 
   @Autowired
@@ -33,7 +36,6 @@ class TraceLocationRepositoryTest {
     assertThat(traceLocationOptional.get().getTraceLocationGuidHash()).isEqualTo(traceLocationGuidHash);
     assertThat(traceLocationOptional.get().getVersion()).isEqualTo(version);
     assertThat(traceLocationOptional.get().getCreatedAt()).isEqualTo(createdAt);
-
   }
 
 
