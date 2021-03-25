@@ -7,6 +7,7 @@ import static java.util.Collections.emptyList;
 import static java.util.Collections.emptySet;
 
 import app.coronawarn.server.common.persistence.domain.DiagnosisKey;
+import app.coronawarn.server.services.distribution.assembly.common.DistributionPackagesBundler;
 import app.coronawarn.server.services.distribution.config.DistributionServiceConfig;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -19,7 +20,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
-import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -27,19 +27,9 @@ import org.slf4j.LoggerFactory;
 /**
  * An instance of this class contains a collection of {@link DiagnosisKey DiagnosisKeys}.
  */
-public abstract class DiagnosisKeyBundler {
+public abstract class DiagnosisKeyBundler implements DistributionPackagesBundler {
 
   private static final Logger logger = LoggerFactory.getLogger(DiagnosisKeyBundler.class);
-
-  /**
-   * The submission timestamp is counted in 1 hour intervals since epoch.
-   */
-  public static final long ONE_HOUR_INTERVAL_SECONDS = TimeUnit.HOURS.toSeconds(1);
-
-  /**
-   * The rolling start interval number is counted in 10 minute intervals since epoch.
-   */
-  public static final long TEN_MINUTES_INTERVAL_SECONDS = TimeUnit.MINUTES.toSeconds(10);
 
   protected final long expiryPolicyMinutes;
   protected final int minNumberOfKeysPerBundle;
