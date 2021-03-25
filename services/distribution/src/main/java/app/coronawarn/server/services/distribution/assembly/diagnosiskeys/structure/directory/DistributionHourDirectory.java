@@ -37,7 +37,7 @@ public class DistributionHourDirectory extends IndexDirectoryOnDisk<LocalDateTim
     super(distributionServiceConfig.getApi().getHourPath(),
         indices -> {
           String country = (String) indices.pop().peek();
-          return distributionPackagesBundler.getHoursWithDistributableDiagnosisKeys(((LocalDate) indices.peek()), country);
+          return distributionPackagesBundler.getHoursWithDistributablePackages(((LocalDate) indices.peek()), country);
         },
         LocalDateTime::getHour);
 
@@ -56,7 +56,7 @@ public class DistributionHourDirectory extends IndexDirectoryOnDisk<LocalDateTim
       String country = (String) currentIndices.pop().pop().peek();
 
       List<DiagnosisKey> diagnosisKeysForCurrentHour =
-          this.distributionPackagesBundler.getDiagnosisKeysForHour(currentHour, country);
+          this.distributionPackagesBundler.getDistributionDataForHour(currentHour, country);
 
       long startTimestamp = currentHour.toEpochSecond(ZoneOffset.UTC);
       long endTimestamp = currentHour.plusHours(1).toEpochSecond(ZoneOffset.UTC);

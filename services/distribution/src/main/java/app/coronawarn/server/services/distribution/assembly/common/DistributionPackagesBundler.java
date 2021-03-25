@@ -22,11 +22,11 @@ public interface DistributionPackagesBundler<T> {
 
   LocalDateTime getDistributionTime();
 
-  List<T> getDiagnosisKeysForDate(LocalDate currentDate, String country);
+  List<T> getDistributionDataForDate(LocalDate currentDate, String country);
 
-  Set<LocalDate> getDatesWithDistributableDiagnosisKeys(String country);
+  Set<LocalDate> getDatesWithDistributablePackages(String country);
 
-  Set<LocalDateTime> getHoursWithDistributableDiagnosisKeys(LocalDate peek, String country);
+  Set<LocalDateTime> getHoursWithDistributablePackages(LocalDate peek, String country);
 
-  List<T> getDiagnosisKeysForHour(LocalDateTime currentHour, String country);
+  List<T> getDistributionDataForHour(LocalDateTime currentHour, String country);
 }

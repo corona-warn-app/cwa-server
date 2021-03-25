@@ -48,7 +48,7 @@ public class DistributionDateDirectory extends IndexDirectoryOnDisk<LocalDate> {
     super(distributionServiceConfig.getApi().getDatePath(),
         indices -> {
           String country = (String) indices.peek();
-          return distributionPackagesBundler.getDatesWithDistributableDiagnosisKeys(country);
+          return distributionPackagesBundler.getDatesWithDistributablePackages(country);
         }, ISO8601::format);
     this.cryptoProvider = cryptoProvider;
     this.distributionPackagesBundler = distributionPackagesBundler;
@@ -84,7 +84,7 @@ public class DistributionDateDirectory extends IndexDirectoryOnDisk<LocalDate> {
     String country = (String) currentIndices.pop().peek();
 
     List<DiagnosisKey> diagnosisKeysForCurrentHour =
-        this.distributionPackagesBundler.getDiagnosisKeysForDate(currentDate, country);
+        this.distributionPackagesBundler.getDistributionDataForDate(currentDate, country);
 
     long startTimestamp = currentDate.atStartOfDay().toEpochSecond(ZoneOffset.UTC);
     long endTimestamp = currentDate.plusDays(1).atStartOfDay().toEpochSecond(ZoneOffset.UTC);

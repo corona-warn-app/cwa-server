@@ -118,7 +118,7 @@ public abstract class DiagnosisKeyBundler implements DistributionPackagesBundler
    * @param country Country to collect data for
    * @return set of LocalDate entries for the specified Country
    */
-  public Set<LocalDate> getDatesWithDistributableDiagnosisKeys(String country) {
+  public Set<LocalDate> getDatesWithDistributablePackages(String country) {
     if (isCountrySupported(country)) {
       return this.distributableDiagnosisKeys.get(country).keySet().stream()
           .map(LocalDateTime::toLocalDate)
@@ -129,7 +129,7 @@ public abstract class DiagnosisKeyBundler implements DistributionPackagesBundler
   }
 
   public boolean numberOfKeysForDateBelowMaximum(LocalDate date, String country) {
-    return numberOfKeysBelowMaximum(getDiagnosisKeysForDate(date, country).size(), date);
+    return numberOfKeysBelowMaximum(getDistributionDataForDate(date, country).size(), date);
   }
 
   /**
@@ -140,7 +140,7 @@ public abstract class DiagnosisKeyBundler implements DistributionPackagesBundler
    * @param country Country to search for data relating to
    * @return Set of LocalDateTime entries for specified Country at specified time
    */
-  public Set<LocalDateTime> getHoursWithDistributableDiagnosisKeys(LocalDate currentDate, String country) {
+  public Set<LocalDateTime> getHoursWithDistributablePackages(LocalDate currentDate, String country) {
     return this.distributableDiagnosisKeys.get(country).keySet().stream()
         .filter(dateTime -> dateTime.toLocalDate().equals(currentDate))
         .filter(dateTime -> numberOfKeysForHourBelowMaximum(dateTime, country))
@@ -148,7 +148,7 @@ public abstract class DiagnosisKeyBundler implements DistributionPackagesBundler
   }
 
   private boolean numberOfKeysForHourBelowMaximum(LocalDateTime hour, String country) {
-    return numberOfKeysBelowMaximum(getDiagnosisKeysForHour(hour, country).size(), hour);
+    return numberOfKeysBelowMaximum(getDistributionDataForHour(hour, country).size(), hour);
   }
 
   private boolean numberOfKeysBelowMaximum(int numberOfKeys, Temporal time) {
@@ -177,11 +177,11 @@ public abstract class DiagnosisKeyBundler implements DistributionPackagesBundler
    * @param country country to search
    * @return list of DiagnosisKey entires submitted from specified Country on the specified day
    */
-  public List<DiagnosisKey> getDiagnosisKeysForDate(LocalDate date, String country) {
+  public List<DiagnosisKey> getDistributionDataForDate(LocalDate date, String country) {
     if (isCountrySupported(country)) {
       return this.distributableDiagnosisKeys.get(country).keySet().stream()
           .filter(dateTime -> dateTime.toLocalDate().equals(date))
-          .map(dateTime -> getDiagnosisKeysForHour(dateTime, country))
+          .map(dateTime -> getDistributionDataForHour(dateTime, country))
           .flatMap(List::stream)
           .collect(Collectors.toList());
     }
@@ -195,7 +195,7 @@ public abstract class DiagnosisKeyBundler implements DistributionPackagesBundler
    * @param country Country to search
    * @return list of DiagnosisKey entries matching the specified hour and specified Country
    */
-  public List<DiagnosisKey> getDiagnosisKeysForHour(LocalDateTime hour, String country) {
+  public List<DiagnosisKey> getDistributionDataForHour(LocalDateTime hour, String country) {
     if (isCountrySupported(country)) {
       return Optional
           .ofNullable(this.distributableDiagnosisKeys.get(country).get(hour))

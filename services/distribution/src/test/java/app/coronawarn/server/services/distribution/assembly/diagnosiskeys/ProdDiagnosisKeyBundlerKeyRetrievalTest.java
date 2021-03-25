@@ -92,13 +92,13 @@ class ProdDiagnosisKeyBundlerKeyRetrievalTest {
   @Test
   void testGetDatesForEmptyListWithWrongCountry() {
     bundler.setDiagnosisKeys(emptySet(), LocalDateTime.of(1970, 1, 5, 0, 0));
-    assertThat(bundler.getDiagnosisKeysForHour(LocalDateTime.of(1970, 1, 1, 0, 0, 0), INVALID_COUNTRY)).isEmpty();
+    assertThat(bundler.getDistributionDataForHour(LocalDateTime.of(1970, 1, 1, 0, 0, 0), INVALID_COUNTRY)).isEmpty();
   }
 
   @Test
   void testGetDatesForEmptyList() {
     bundler.setDiagnosisKeys(emptySet(), LocalDateTime.of(1970, 1, 5, 0, 0));
-    assertThat(bundler.getDatesWithDistributableDiagnosisKeys("DE")).isEmpty();
+    assertThat(bundler.getDatesWithDistributablePackages("DE")).isEmpty();
   }
 
   @Test
@@ -110,7 +110,7 @@ class ProdDiagnosisKeyBundlerKeyRetrievalTest {
         .flatMap(List::stream)
         .collect(Collectors.toList());
     bundler.setDiagnosisKeys(diagnosisKeys, LocalDateTime.of(1970, 1, 5, 0, 0));
-    assertThat(bundler.getDatesWithDistributableDiagnosisKeys("DE")).containsAll(List.of(
+    assertThat(bundler.getDatesWithDistributablePackages("DE")).containsAll(List.of(
         LocalDate.of(1970, 1, 2),
         LocalDate.of(1970, 1, 4)
     ));
@@ -121,7 +121,7 @@ class ProdDiagnosisKeyBundlerKeyRetrievalTest {
   void testGetDatesForEpochDay0(Collection<DiagnosisKey> diagnosisKeys) {
     bundler.setDiagnosisKeys(diagnosisKeys, LocalDateTime.of(1970, 1, 5, 0, 0));
     var expDates = Set.of(LocalDate.ofEpochDay(2L), LocalDate.ofEpochDay(3L));
-    var actDates = bundler.getDatesWithDistributableDiagnosisKeys("DE");
+    var actDates = bundler.getDatesWithDistributablePackages("DE");
     assertThat(actDates).isEqualTo(expDates);
   }
 
@@ -142,19 +142,19 @@ class ProdDiagnosisKeyBundlerKeyRetrievalTest {
         .collect(Collectors.toList());
     bundler.setDiagnosisKeys(diagnosisKeys, LocalDateTime.of(1970, 1, 5, 0, 0));
     var expDates = Set.of(LocalDate.ofEpochDay(2L), LocalDate.ofEpochDay(3L));
-    assertThat(bundler.getDatesWithDistributableDiagnosisKeys("DE")).isEqualTo(expDates);
+    assertThat(bundler.getDatesWithDistributablePackages("DE")).isEqualTo(expDates);
   }
 
   @Test
   void testGetDatesForInvalidCountry() {
     bundler.setDiagnosisKeys(emptySet(), LocalDateTime.of(1970, 1, 5, 0, 0));
-    assertThat(bundler.getDatesWithDistributableDiagnosisKeys("TR")).isEmpty();
+    assertThat(bundler.getDatesWithDistributablePackages("TR")).isEmpty();
   }
 
   @Test
   void testGetHoursForEmptyList() {
     bundler.setDiagnosisKeys(emptySet(), LocalDateTime.of(1970, 1, 5, 0, 0));
-    assertThat(bundler.getHoursWithDistributableDiagnosisKeys(LocalDate.of(1970, 1, 3), "DE")).isEmpty();
+    assertThat(bundler.getHoursWithDistributablePackages(LocalDate.of(1970, 1, 3), "DE")).isEmpty();
   }
 
   @Test
@@ -166,7 +166,7 @@ class ProdDiagnosisKeyBundlerKeyRetrievalTest {
         .flatMap(List::stream)
         .collect(Collectors.toList());
     bundler.setDiagnosisKeys(diagnosisKeys, LocalDateTime.of(1970, 1, 5, 0, 0));
-    assertThat(bundler.getHoursWithDistributableDiagnosisKeys(LocalDate.of(1970, 1, 2), "DE")).containsAll(List.of(
+    assertThat(bundler.getHoursWithDistributablePackages(LocalDate.of(1970, 1, 2), "DE")).containsAll(List.of(
         LocalDateTime.of(1970, 1, 2, 4, 0, 0),
         LocalDateTime.of(1970, 1, 2, 6, 0, 0)
     ));
@@ -181,25 +181,25 @@ class ProdDiagnosisKeyBundlerKeyRetrievalTest {
         .flatMap(List::stream)
         .collect(Collectors.toList());
     bundler.setDiagnosisKeys(diagnosisKeys, LocalDateTime.of(1970, 1, 5, 20, 0));
-    assertThat(bundler.getDiagnosisKeysForDate(LocalDate.of(1970, 1, 1), "DE")).isEmpty();
-    assertThat(bundler.getDiagnosisKeysForDate(LocalDate.of(1970, 1, 2), "DE")).hasSize(5);
-    assertThat(bundler.getDiagnosisKeysForDate(LocalDate.of(1970, 1, 3), "DE")).isEmpty();
-    assertThat(bundler.getDiagnosisKeysForDate(LocalDate.of(1970, 1, 4), "DE")).hasSize(6);
-    assertThat(bundler.getDiagnosisKeysForDate(LocalDate.of(1970, 1, 5), "DE")).isEmpty();
+    assertThat(bundler.getDistributionDataForDate(LocalDate.of(1970, 1, 1), "DE")).isEmpty();
+    assertThat(bundler.getDistributionDataForDate(LocalDate.of(1970, 1, 2), "DE")).hasSize(5);
+    assertThat(bundler.getDistributionDataForDate(LocalDate.of(1970, 1, 3), "DE")).isEmpty();
+    assertThat(bundler.getDistributionDataForDate(LocalDate.of(1970, 1, 4), "DE")).hasSize(6);
+    assertThat(bundler.getDistributionDataForDate(LocalDate.of(1970, 1, 5), "DE")).isEmpty();
   }
 
   @Test
   void testEmptyListWhenGettingDiagnosisKeysForDateBeforeEarliestDiagnosisKey() {
     List<DiagnosisKey> diagnosisKeys = buildDiagnosisKeys(6, LocalDateTime.of(1970, 1, 2, 4, 0), 5);
     bundler.setDiagnosisKeys(diagnosisKeys, LocalDateTime.of(1970, 1, 5, 0, 0));
-    assertThat(bundler.getDiagnosisKeysForDate(LocalDate.of(1970, 1, 1), "DE")).isEmpty();
+    assertThat(bundler.getDistributionDataForDate(LocalDate.of(1970, 1, 1), "DE")).isEmpty();
   }
 
   @Test
   void testEmptyListWhenInvalidCountry() {
     List<DiagnosisKey> diagnosisKeys = buildDiagnosisKeys(6, LocalDateTime.of(1970, 1, 2, 4, 0), 5);
     bundler.setDiagnosisKeys(diagnosisKeys, LocalDateTime.of(1970, 1, 4, 0, 0));
-    assertThat(bundler.getDiagnosisKeysForDate(LocalDate.of(1970, 1, 5), "TR")).isEmpty();
+    assertThat(bundler.getDistributionDataForDate(LocalDate.of(1970, 1, 5), "TR")).isEmpty();
   }
 
   @Test
@@ -211,18 +211,18 @@ class ProdDiagnosisKeyBundlerKeyRetrievalTest {
         .flatMap(List::stream)
         .collect(Collectors.toList());
     bundler.setDiagnosisKeys(diagnosisKeys, LocalDateTime.of(1970, 1, 5, 0, 0));
-    assertThat(bundler.getDiagnosisKeysForHour(LocalDateTime.of(1970, 1, 2, 3, 0), "DE")).isEmpty();
-    assertThat(bundler.getDiagnosisKeysForHour(LocalDateTime.of(1970, 1, 2, 4, 0), "DE")).hasSize(5);
-    assertThat(bundler.getDiagnosisKeysForHour(LocalDateTime.of(1970, 1, 2, 5, 0), "DE")).isEmpty();
-    assertThat(bundler.getDiagnosisKeysForHour(LocalDateTime.of(1970, 1, 2, 6, 0), "DE")).hasSize(6);
-    assertThat(bundler.getDiagnosisKeysForHour(LocalDateTime.of(1970, 1, 2, 7, 0), "DE")).isEmpty();
+    assertThat(bundler.getDistributionDataForHour(LocalDateTime.of(1970, 1, 2, 3, 0), "DE")).isEmpty();
+    assertThat(bundler.getDistributionDataForHour(LocalDateTime.of(1970, 1, 2, 4, 0), "DE")).hasSize(5);
+    assertThat(bundler.getDistributionDataForHour(LocalDateTime.of(1970, 1, 2, 5, 0), "DE")).isEmpty();
+    assertThat(bundler.getDistributionDataForHour(LocalDateTime.of(1970, 1, 2, 6, 0), "DE")).hasSize(6);
+    assertThat(bundler.getDistributionDataForHour(LocalDateTime.of(1970, 1, 2, 7, 0), "DE")).isEmpty();
   }
 
   @Test
   void testEmptyListWhenGettingDiagnosisKeysForHourBeforeEarliestDiagnosisKey() {
     List<DiagnosisKey> diagnosisKeys = buildDiagnosisKeys(6, LocalDateTime.of(1970, 1, 2, 4, 0), 5);
     bundler.setDiagnosisKeys(diagnosisKeys, LocalDateTime.of(1970, 1, 5, 0, 0));
-    assertThat(bundler.getDiagnosisKeysForHour(LocalDateTime.of(1970, 1, 1, 0, 0, 0), "DE")).isEmpty();
+    assertThat(bundler.getDistributionDataForHour(LocalDateTime.of(1970, 1, 1, 0, 0, 0), "DE")).isEmpty();
   }
 
   @Test
@@ -237,14 +237,14 @@ class ProdDiagnosisKeyBundlerKeyRetrievalTest {
   void testGetDiagnosisKeysForDateWithInvalidCountry() {
     List<DiagnosisKey> diagnosisKeys = buildDiagnosisKeys(6, LocalDateTime.of(1970, 1, 2, 4, 0), 5);
     bundler.setDiagnosisKeys(diagnosisKeys, LocalDateTime.of(1970, 1, 5, 0, 0));
-    assertThat(bundler.getDiagnosisKeysForHour(LocalDateTime.of(1970, 1, 1, 0, 0, 0), INVALID_COUNTRY)).isEmpty();
+    assertThat(bundler.getDistributionDataForHour(LocalDateTime.of(1970, 1, 1, 0, 0, 0), INVALID_COUNTRY)).isEmpty();
   }
 
   @Test
   void testGetDiagnosisKeysForHourWithInvalidCountry() {
     List<DiagnosisKey> diagnosisKeys = buildDiagnosisKeys(6, LocalDateTime.of(1970, 1, 2, 4, 0), 5);
     bundler.setDiagnosisKeys(diagnosisKeys, LocalDateTime.of(1970, 1, 5, 0, 0));
-    assertThat(bundler.getDiagnosisKeysForHour(LocalDateTime.of(1970, 1, 1, 0, 0, 0), INVALID_COUNTRY)).isEmpty();
+    assertThat(bundler.getDistributionDataForHour(LocalDateTime.of(1970, 1, 1, 0, 0, 0), INVALID_COUNTRY)).isEmpty();
   }
 
   @Test
@@ -260,7 +260,7 @@ class ProdDiagnosisKeyBundlerKeyRetrievalTest {
         .collect(Collectors.toList());
     keyBundler.setDiagnosisKeys(diagnosisKeys, LocalDateTime.of(1970, 1, 5, 0, 0));
 
-    Set<LocalDateTime> expectedKeys = keyBundler.getHoursWithDistributableDiagnosisKeys(LocalDate.of(1970, 1, 4), "DE");
+    Set<LocalDateTime> expectedKeys = keyBundler.getHoursWithDistributablePackages(LocalDate.of(1970, 1, 4), "DE");
     assertThat(expectedKeys).isEmpty();
   }
 
