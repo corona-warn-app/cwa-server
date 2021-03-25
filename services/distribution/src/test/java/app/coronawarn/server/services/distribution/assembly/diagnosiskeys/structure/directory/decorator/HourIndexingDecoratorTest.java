@@ -12,7 +12,7 @@ import app.coronawarn.server.common.persistence.service.common.KeySharingPolicie
 import app.coronawarn.server.services.distribution.assembly.component.CryptoProvider;
 import app.coronawarn.server.services.distribution.assembly.diagnosiskeys.DiagnosisKeyBundler;
 import app.coronawarn.server.services.distribution.assembly.diagnosiskeys.ProdDiagnosisKeyBundler;
-import app.coronawarn.server.services.distribution.assembly.diagnosiskeys.structure.directory.DiagnosisKeysHourDirectory;
+import app.coronawarn.server.services.distribution.assembly.diagnosiskeys.structure.directory.DistributionHourDirectory;
 import app.coronawarn.server.services.distribution.assembly.structure.util.ImmutableStack;
 import app.coronawarn.server.services.distribution.assembly.structure.util.TimeUtils;
 import app.coronawarn.server.services.distribution.config.DistributionServiceConfig;
@@ -105,7 +105,7 @@ class HourIndexingDecoratorTest {
 
   private HourIndexingDecorator makeDecoratedHourDirectory(DiagnosisKeyBundler diagnosisKeyBundler) {
     return new HourIndexingDecorator(
-        new DiagnosisKeysHourDirectory(diagnosisKeyBundler, cryptoProvider, distributionServiceConfig),
+        new DistributionHourDirectory(diagnosisKeyBundler, cryptoProvider, distributionServiceConfig),
         distributionServiceConfig);
   }
 }

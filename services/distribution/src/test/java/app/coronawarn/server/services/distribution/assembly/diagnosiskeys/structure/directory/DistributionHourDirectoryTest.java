@@ -20,17 +20,14 @@ import app.coronawarn.server.services.distribution.assembly.structure.util.TimeU
 import app.coronawarn.server.services.distribution.config.DistributionServiceConfig;
 import java.io.File;
 import java.io.IOException;
-import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.temporal.ChronoUnit;
 import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import org.junit.Rule;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -38,14 +35,13 @@ import org.junit.rules.TemporaryFolder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.ConfigFileApplicationContextInitializer;
-import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 @EnableConfigurationProperties(value = DistributionServiceConfig.class)
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration(classes = {CryptoProvider.class, DistributionServiceConfig.class, KeySharingPoliciesChecker.class},
     initializers = ConfigFileApplicationContextInitializer.class)
-class DiagnosisKeysHourDirectoryTest {
+class DistributionHourDirectoryTest {
 
   @Rule
   private final TemporaryFolder outputFolder = new TemporaryFolder();
@@ -71,7 +67,7 @@ class DiagnosisKeysHourDirectoryTest {
       LocalDate keysSubmissionDate) {
     DiagnosisKeyBundler bundler = new ProdDiagnosisKeyBundler(distributionServiceConfig, sharingPoliciesChecker);
     bundler.setDiagnosisKeys(diagnosisKeys, distributionTime);
-    DiagnosisKeysHourDirectory hourDirectory = new DiagnosisKeysHourDirectory(bundler, cryptoProvider,
+    DistributionHourDirectory hourDirectory = new DistributionHourDirectory(bundler, cryptoProvider,
         distributionServiceConfig);
     Directory<WritableOnDisk> outputDirectory = new DirectoryOnDisk(outputFile);
     outputDirectory.addWritable(hourDirectory);

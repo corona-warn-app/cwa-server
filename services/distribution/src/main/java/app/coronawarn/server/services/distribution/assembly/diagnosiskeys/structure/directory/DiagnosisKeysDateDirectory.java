@@ -61,8 +61,8 @@ public class DiagnosisKeysDateDirectory extends IndexDirectoryOnDisk<LocalDate> 
   private Optional<Writable<WritableOnDisk>> addHourDirectoryWritable(ImmutableStack<Object> indices) {
     LocalDate currentDate = (LocalDate) indices.peek();
     if (currentDate.isAfter(cutOffDate)) {
-      DiagnosisKeysHourDirectory hourDirectory =
-          new DiagnosisKeysHourDirectory(distributionPackagesBundler, cryptoProvider, distributionServiceConfig);
+      DistributionHourDirectory hourDirectory =
+          new DistributionHourDirectory(distributionPackagesBundler, cryptoProvider, distributionServiceConfig);
       return Optional.of(decorateHourDirectory(hourDirectory));
     } else {
       return Optional.empty();
@@ -103,7 +103,7 @@ public class DiagnosisKeysDateDirectory extends IndexDirectoryOnDisk<LocalDate> 
         && currentDate.equals(distributionPackagesBundler.getDistributionTime().toLocalDate());
   }
 
-  private Directory<WritableOnDisk> decorateHourDirectory(DiagnosisKeysHourDirectory hourDirectory) {
+  private Directory<WritableOnDisk> decorateHourDirectory(DistributionHourDirectory hourDirectory) {
     return new HourIndexingDecorator(hourDirectory, distributionServiceConfig);
   }
 

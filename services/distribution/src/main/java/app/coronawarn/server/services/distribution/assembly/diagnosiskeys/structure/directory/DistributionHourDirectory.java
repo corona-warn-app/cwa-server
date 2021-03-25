@@ -19,20 +19,20 @@ import java.time.ZoneOffset;
 import java.util.List;
 import java.util.Optional;
 
-public class DiagnosisKeysHourDirectory extends IndexDirectoryOnDisk<LocalDateTime> {
+public class DistributionHourDirectory extends IndexDirectoryOnDisk<LocalDateTime> {
 
   private final DistributionPackagesBundler distributionPackagesBundler;
   private final CryptoProvider cryptoProvider;
   private final DistributionServiceConfig distributionServiceConfig;
 
   /**
-   * Constructs a {@link DiagnosisKeysHourDirectory} instance for the specified date.
+   * Constructs a {@link DistributionHourDirectory} instance for the specified date.
    *
    * @param distributionPackagesBundler A {@link DistributionPackagesBundler} containing the data.
    * @param cryptoProvider      The {@link CryptoProvider} used for cryptographic signing.
    * @param distributionServiceConfig The configuration to set {@link DistributionServiceConfig}
    */
-  public DiagnosisKeysHourDirectory(DistributionPackagesBundler distributionPackagesBundler, CryptoProvider cryptoProvider,
+  public DistributionHourDirectory(DistributionPackagesBundler distributionPackagesBundler, CryptoProvider cryptoProvider,
       DistributionServiceConfig distributionServiceConfig) {
     super(distributionServiceConfig.getApi().getHourPath(),
         indices -> {

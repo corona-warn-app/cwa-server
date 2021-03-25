@@ -4,7 +4,7 @@ package app.coronawarn.server.services.distribution.assembly.diagnosiskeys.struc
 
 import static java.util.function.Predicate.not;
 
-import app.coronawarn.server.services.distribution.assembly.diagnosiskeys.structure.directory.DiagnosisKeysHourDirectory;
+import app.coronawarn.server.services.distribution.assembly.diagnosiskeys.structure.directory.DistributionHourDirectory;
 import app.coronawarn.server.services.distribution.assembly.structure.directory.decorator.indexing.IndexingDecoratorOnDisk;
 import app.coronawarn.server.services.distribution.assembly.structure.util.ImmutableStack;
 import app.coronawarn.server.services.distribution.assembly.structure.util.TimeUtils;
@@ -18,14 +18,14 @@ public class HourIndexingDecorator extends IndexingDecoratorOnDisk<LocalDateTime
 
   private final DistributionServiceConfig distributionServiceConfig;
 
-  public HourIndexingDecorator(DiagnosisKeysHourDirectory directory,
-      DistributionServiceConfig distributionServiceConfig) {
+  public HourIndexingDecorator(DistributionHourDirectory directory,
+                               DistributionServiceConfig distributionServiceConfig) {
     super(directory, distributionServiceConfig.getOutputFileName());
     this.distributionServiceConfig = distributionServiceConfig;
   }
 
   /**
-   * Returns the index of the decorated {@link DiagnosisKeysHourDirectory}. If the decorated hour directory represents
+   * Returns the index of the decorated {@link DistributionHourDirectory}. If the decorated hour directory represents
    * the current date (today), then by default, the current hour will be excluded from the index. However, if the
    * profile `demo` is set, the current hour will be included.
    */
