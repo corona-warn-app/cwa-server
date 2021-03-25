@@ -27,7 +27,7 @@ public class EventCheckinDataValidator {
         .allMatch(checkinValidation -> Boolean.valueOf(checkinValidation).equals(Boolean.TRUE));
   }
 
-  private boolean verifyEndIntervalNumber(CheckIn checkin, ConstraintValidatorContext validatorContext) {
+  boolean verifyEndIntervalNumber(CheckIn checkin, ConstraintValidatorContext validatorContext) {
     int startIntervalNumber = checkin.getStartIntervalNumber();
     int endIntervalNumber = checkin.getEndIntervalNumber();
     if (endIntervalNumber <= startIntervalNumber) {
@@ -38,7 +38,7 @@ public class EventCheckinDataValidator {
     return true;
   }
 
-  private boolean verifyStartIntervalNumber(CheckIn checkin,
+  boolean verifyStartIntervalNumber(CheckIn checkin,
       ConstraintValidatorContext validatorContext) {
     int startIntervalNumber = checkin.getStartIntervalNumber();
     if (startIntervalNumber <= 0) {
@@ -48,7 +48,7 @@ public class EventCheckinDataValidator {
     return true;
   }
 
-  private boolean verifyTransmissionRiskLevel(CheckIn checkin,
+  boolean verifyTransmissionRiskLevel(CheckIn checkin,
       ConstraintValidatorContext validatorContext) {
     int trl = checkin.getTransmissionRiskLevel();
     if (trl < DiagnosisKey.MIN_TRANSMISSION_RISK_LEVEL
