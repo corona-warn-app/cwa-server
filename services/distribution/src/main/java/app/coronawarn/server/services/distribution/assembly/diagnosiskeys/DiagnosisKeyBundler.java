@@ -27,7 +27,7 @@ import org.slf4j.LoggerFactory;
 /**
  * An instance of this class contains a collection of {@link DiagnosisKey DiagnosisKeys}.
  */
-public abstract class DiagnosisKeyBundler implements DistributionPackagesBundler {
+public abstract class DiagnosisKeyBundler implements DistributionPackagesBundler<DiagnosisKey> {
 
   private static final Logger logger = LoggerFactory.getLogger(DiagnosisKeyBundler.class);
 

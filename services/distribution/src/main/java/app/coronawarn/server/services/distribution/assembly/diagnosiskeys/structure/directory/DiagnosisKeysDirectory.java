@@ -3,8 +3,8 @@
 package app.coronawarn.server.services.distribution.assembly.diagnosiskeys.structure.directory;
 
 import app.coronawarn.server.common.persistence.domain.DiagnosisKey;
+import app.coronawarn.server.services.distribution.assembly.common.DistributionPackagesBundler;
 import app.coronawarn.server.services.distribution.assembly.component.CryptoProvider;
-import app.coronawarn.server.services.distribution.assembly.diagnosiskeys.DiagnosisKeyBundler;
 import app.coronawarn.server.services.distribution.assembly.structure.WritableOnDisk;
 import app.coronawarn.server.services.distribution.assembly.structure.directory.Directory;
 import app.coronawarn.server.services.distribution.assembly.structure.directory.DirectoryOnDisk;
@@ -23,22 +23,22 @@ import app.coronawarn.server.services.distribution.config.DistributionServiceCon
  */
 public class DiagnosisKeysDirectory extends DirectoryOnDisk {
 
-  private final DiagnosisKeyBundler diagnosisKeyBundler;
+  private final DistributionPackagesBundler distributionPackagesBundler;
   private final CryptoProvider cryptoProvider;
   private final DistributionServiceConfig distributionServiceConfig;
 
   /**
-   * Constructs a {@link DiagnosisKeysDirectory} based on the specified {@link DiagnosisKey} collection. Cryptographic
+   * Constructs a {@link DistributionPackagesBundler} based on the specified data collection. Cryptographic
    * signing is performed using the specified {@link CryptoProvider}.
    *
-   * @param diagnosisKeyBundler A {@link DiagnosisKeyBundler} containing the {@link DiagnosisKey DiagnosisKeys}.
+   * @param distributionPackagesBundler A {@link DistributionPackagesBundler} containing the data.
    * @param cryptoProvider      The {@link CryptoProvider} used for payload signing.
    * @param distributionServiceConfig The {@link DistributionServiceConfig} config attributes
    */
-  public DiagnosisKeysDirectory(DiagnosisKeyBundler diagnosisKeyBundler, CryptoProvider cryptoProvider,
+  public DiagnosisKeysDirectory(DistributionPackagesBundler distributionPackagesBundler, CryptoProvider cryptoProvider,
       DistributionServiceConfig distributionServiceConfig) {
     super(distributionServiceConfig.getApi().getDiagnosisKeysPath());
-    this.diagnosisKeyBundler = diagnosisKeyBundler;
+    this.distributionPackagesBundler = distributionPackagesBundler;
     this.cryptoProvider = cryptoProvider;
     this.distributionServiceConfig = distributionServiceConfig;
   }
@@ -46,7 +46,7 @@ public class DiagnosisKeysDirectory extends DirectoryOnDisk {
   @Override
   public void prepare(ImmutableStack<Object> indices) {
     this.addWritable(decorateCountryDirectory(
-        new DistributionCountryDirectory(diagnosisKeyBundler, cryptoProvider, distributionServiceConfig)));
+        new DistributionCountryDirectory(distributionPackagesBundler, cryptoProvider, distributionServiceConfig)));
     super.prepare(indices);
   }
 

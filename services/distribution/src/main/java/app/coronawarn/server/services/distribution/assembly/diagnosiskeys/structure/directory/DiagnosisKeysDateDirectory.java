@@ -5,8 +5,8 @@ package app.coronawarn.server.services.distribution.assembly.diagnosiskeys.struc
 import static java.lang.Boolean.FALSE;
 
 import app.coronawarn.server.common.persistence.domain.DiagnosisKey;
+import app.coronawarn.server.services.distribution.assembly.common.DistributionPackagesBundler;
 import app.coronawarn.server.services.distribution.assembly.component.CryptoProvider;
-import app.coronawarn.server.services.distribution.assembly.diagnosiskeys.DiagnosisKeyBundler;
 import app.coronawarn.server.services.distribution.assembly.diagnosiskeys.structure.archive.decorator.signing.DiagnosisKeySigningDecorator;
 import app.coronawarn.server.services.distribution.assembly.diagnosiskeys.structure.directory.decorator.HourIndexingDecorator;
 import app.coronawarn.server.services.distribution.assembly.diagnosiskeys.structure.file.TemporaryExposureKeyExportFile;
@@ -30,28 +30,28 @@ public class DiagnosisKeysDateDirectory extends IndexDirectoryOnDisk<LocalDate> 
 
   private static final DateTimeFormatter ISO8601 = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 
-  private final DiagnosisKeyBundler diagnosisKeyBundler;
+  private final DistributionPackagesBundler distributionPackagesBundler;
   private final CryptoProvider cryptoProvider;
   private final DistributionServiceConfig distributionServiceConfig;
   private final LocalDate cutOffDate;
 
   /**
-   * Constructs a {@link DiagnosisKeysDateDirectory} instance associated with the specified {@link DiagnosisKey}
+   * Constructs a {@link DiagnosisKeysDateDirectory} instance associated with the specified data
    * collection. Payload signing is be performed according to the specified {@link CryptoProvider}.
    *
-   * @param diagnosisKeyBundler A {@link DiagnosisKeyBundler} containing the {@link DiagnosisKey DiagnosisKeys}.
+   * @param distributionPackagesBundler A {@link DistributionPackagesBundler} containing the data.
    * @param cryptoProvider      The {@link CryptoProvider} used for payload signing.
    * @param distributionServiceConfig The {@link DistributionServiceConfig} config attributes
    */
-  public DiagnosisKeysDateDirectory(DiagnosisKeyBundler diagnosisKeyBundler,
+  public DiagnosisKeysDateDirectory(DistributionPackagesBundler distributionPackagesBundler,
       CryptoProvider cryptoProvider, DistributionServiceConfig distributionServiceConfig) {
     super(distributionServiceConfig.getApi().getDatePath(),
         indices -> {
           String country = (String) indices.peek();
-          return diagnosisKeyBundler.getDatesWithDistributableDiagnosisKeys(country);
+          return distributionPackagesBundler.getDatesWithDistributableDiagnosisKeys(country);
         }, ISO8601::format);
     this.cryptoProvider = cryptoProvider;
-    this.diagnosisKeyBundler = diagnosisKeyBundler;
+    this.distributionPackagesBundler = distributionPackagesBundler;
     this.distributionServiceConfig = distributionServiceConfig;
 
     int hourRetentionDays = distributionServiceConfig.getObjectStore().getHourFileRetentionDays();
@@ -62,7 +62,7 @@ public class DiagnosisKeysDateDirectory extends IndexDirectoryOnDisk<LocalDate> 
     LocalDate currentDate = (LocalDate) indices.peek();
     if (currentDate.isAfter(cutOffDate)) {
       DiagnosisKeysHourDirectory hourDirectory =
-          new DiagnosisKeysHourDirectory(diagnosisKeyBundler, cryptoProvider, distributionServiceConfig);
+          new DiagnosisKeysHourDirectory(distributionPackagesBundler, cryptoProvider, distributionServiceConfig);
       return Optional.of(decorateHourDirectory(hourDirectory));
     } else {
       return Optional.empty();
@@ -84,7 +84,7 @@ public class DiagnosisKeysDateDirectory extends IndexDirectoryOnDisk<LocalDate> 
     String country = (String) currentIndices.pop().peek();
 
     List<DiagnosisKey> diagnosisKeysForCurrentHour =
-        this.diagnosisKeyBundler.getDiagnosisKeysForDate(currentDate, country);
+        this.distributionPackagesBundler.getDiagnosisKeysForDate(currentDate, country);
 
     long startTimestamp = currentDate.atStartOfDay().toEpochSecond(ZoneOffset.UTC);
     long endTimestamp = currentDate.plusDays(1).atStartOfDay().toEpochSecond(ZoneOffset.UTC);
@@ -100,7 +100,7 @@ public class DiagnosisKeysDateDirectory extends IndexDirectoryOnDisk<LocalDate> 
 
   private boolean shouldNotInclude(LocalDate currentDate) {
     return FALSE.equals(distributionServiceConfig.getIncludeIncompleteDays())
-        && currentDate.equals(diagnosisKeyBundler.getDistributionTime().toLocalDate());
+        && currentDate.equals(distributionPackagesBundler.getDistributionTime().toLocalDate());
   }
 
   private Directory<WritableOnDisk> decorateHourDirectory(DiagnosisKeysHourDirectory hourDirectory) {

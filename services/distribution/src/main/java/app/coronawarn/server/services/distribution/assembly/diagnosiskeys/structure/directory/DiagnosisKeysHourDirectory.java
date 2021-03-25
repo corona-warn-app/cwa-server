@@ -1,8 +1,8 @@
 package app.coronawarn.server.services.distribution.assembly.diagnosiskeys.structure.directory;
 
 import app.coronawarn.server.common.persistence.domain.DiagnosisKey;
+import app.coronawarn.server.services.distribution.assembly.common.DistributionPackagesBundler;
 import app.coronawarn.server.services.distribution.assembly.component.CryptoProvider;
-import app.coronawarn.server.services.distribution.assembly.diagnosiskeys.DiagnosisKeyBundler;
 import app.coronawarn.server.services.distribution.assembly.diagnosiskeys.structure.archive.decorator.signing.DiagnosisKeySigningDecorator;
 import app.coronawarn.server.services.distribution.assembly.diagnosiskeys.structure.file.TemporaryExposureKeyExportFile;
 import app.coronawarn.server.services.distribution.assembly.structure.WritableOnDisk;
@@ -21,27 +21,27 @@ import java.util.Optional;
 
 public class DiagnosisKeysHourDirectory extends IndexDirectoryOnDisk<LocalDateTime> {
 
-  private final DiagnosisKeyBundler diagnosisKeyBundler;
+  private final DistributionPackagesBundler distributionPackagesBundler;
   private final CryptoProvider cryptoProvider;
   private final DistributionServiceConfig distributionServiceConfig;
 
   /**
    * Constructs a {@link DiagnosisKeysHourDirectory} instance for the specified date.
    *
-   * @param diagnosisKeyBundler A {@link DiagnosisKeyBundler} containing the {@link DiagnosisKey DiagnosisKeys}.
+   * @param distributionPackagesBundler A {@link DistributionPackagesBundler} containing the data.
    * @param cryptoProvider      The {@link CryptoProvider} used for cryptographic signing.
    * @param distributionServiceConfig The configuration to set {@link DistributionServiceConfig}
    */
-  public DiagnosisKeysHourDirectory(DiagnosisKeyBundler diagnosisKeyBundler, CryptoProvider cryptoProvider,
+  public DiagnosisKeysHourDirectory(DistributionPackagesBundler distributionPackagesBundler, CryptoProvider cryptoProvider,
       DistributionServiceConfig distributionServiceConfig) {
     super(distributionServiceConfig.getApi().getHourPath(),
         indices -> {
           String country = (String) indices.pop().peek();
-          return diagnosisKeyBundler.getHoursWithDistributableDiagnosisKeys(((LocalDate) indices.peek()), country);
+          return distributionPackagesBundler.getHoursWithDistributableDiagnosisKeys(((LocalDate) indices.peek()), country);
         },
         LocalDateTime::getHour);
 
-    this.diagnosisKeyBundler = diagnosisKeyBundler;
+    this.distributionPackagesBundler = distributionPackagesBundler;
     this.cryptoProvider = cryptoProvider;
     this.distributionServiceConfig = distributionServiceConfig;
   }
@@ -56,7 +56,7 @@ public class DiagnosisKeysHourDirectory extends IndexDirectoryOnDisk<LocalDateTi
       String country = (String) currentIndices.pop().pop().peek();
 
       List<DiagnosisKey> diagnosisKeysForCurrentHour =
-          this.diagnosisKeyBundler.getDiagnosisKeysForHour(currentHour, country);
+          this.distributionPackagesBundler.getDiagnosisKeysForHour(currentHour, country);
 
       long startTimestamp = currentHour.toEpochSecond(ZoneOffset.UTC);
       long endTimestamp = currentHour.plusHours(1).toEpochSecond(ZoneOffset.UTC);
