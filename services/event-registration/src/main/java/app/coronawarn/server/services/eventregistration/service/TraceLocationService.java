@@ -5,21 +5,17 @@ import app.coronawarn.server.services.eventregistration.domain.errors.TraceLocat
 import app.coronawarn.server.services.eventregistration.repository.TraceLocationRepository;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.stereotype.Component;
 
 @Component
 public class TraceLocationService {
 
-  private static final Logger logger = LoggerFactory.getLogger(TraceLocationService.class);
-  private TraceLocationRepository traceLocationRepository;
+  private final TraceLocationRepository traceLocationRepository;
 
-  public TraceLocationService(TraceLocationRepository traceLocationRepository) {
+  public TraceLocationService(final TraceLocationRepository traceLocationRepository) {
     this.traceLocationRepository = traceLocationRepository;
   }
-
 
   /**
    * Insert a TraceLocation {@link TraceLocation}.
@@ -29,12 +25,12 @@ public class TraceLocationService {
    *
    * @param traceLocation the trace location to create.
    */
-  public void saveTraceLocation(TraceLocation traceLocation, final String uuidHash) {
+  public void saveTraceLocation(final TraceLocation traceLocation, final String uuidHash) {
     try {
       traceLocationRepository.save(uuidHash, traceLocation.getVersion(),
           LocalDateTime.now().toEpochSecond(ZoneOffset.UTC));
-    } catch (DuplicateKeyException e) {
-      throw new TraceLocationInsertionException("Trying to save Trace Location object has failed.");
+    } catch (final DuplicateKeyException e) {
+      throw new TraceLocationInsertionException("Trying to save Trace Location object has failed.", e);
     }
   }
 }
