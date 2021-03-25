@@ -5,7 +5,7 @@ package app.coronawarn.server.services.distribution.assembly.component;
 import app.coronawarn.server.common.persistence.domain.DiagnosisKey;
 import app.coronawarn.server.common.persistence.service.DiagnosisKeyService;
 import app.coronawarn.server.services.distribution.assembly.diagnosiskeys.DiagnosisKeyBundler;
-import app.coronawarn.server.services.distribution.assembly.diagnosiskeys.structure.directory.DiagnosisKeysDirectory;
+import app.coronawarn.server.services.distribution.assembly.diagnosiskeys.structure.directory.DistributionDirectory;
 import app.coronawarn.server.services.distribution.assembly.structure.WritableOnDisk;
 import app.coronawarn.server.services.distribution.assembly.structure.directory.Directory;
 import app.coronawarn.server.services.distribution.assembly.structure.util.TimeUtils;
@@ -17,7 +17,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 /**
- * Retrieves stored diagnosis keys and builds a {@link DiagnosisKeysDirectory} with them.
+ * Retrieves stored diagnosis keys and builds a {@link DistributionDirectory} with them.
  */
 @Component
 public class DistributionStructureProvider {
@@ -53,6 +53,6 @@ public class DistributionStructureProvider {
     logger.debug("Querying diagnosis keys from the database...");
     Collection<DiagnosisKey> diagnosisKeys = diagnosisKeyService.getDiagnosisKeys();
     diagnosisKeyBundler.setDiagnosisKeys(enfParameterEncoder.adaptKeys(diagnosisKeys), TimeUtils.getCurrentUtcHour());
-    return new DiagnosisKeysDirectory(diagnosisKeyBundler, cryptoProvider, distributionServiceConfig);
+    return new DistributionDirectory(diagnosisKeyBundler, cryptoProvider, distributionServiceConfig);
   }
 }

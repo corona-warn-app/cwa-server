@@ -19,9 +19,9 @@ import app.coronawarn.server.services.distribution.config.DistributionServiceCon
  * definition {@code /services/distribution/api_v1.json}. Available countries (endpoint {@code
  * /version/v1/diagnosis-keys/country}) are statically set to only {@code "DE"}. The dates and respective hours
  * (endpoint {@code /version/v1/diagnosis-keys/country/DE/date}) will be created based on the actual {@link DiagnosisKey
- * DiagnosisKeys} given to the {@link DiagnosisKeysDirectory#DiagnosisKeysDirectory constructor}.
+ * DiagnosisKeys} given to the {@link DistributionDirectory#DistributionDirectory constructor}.
  */
-public class DiagnosisKeysDirectory extends DirectoryOnDisk {
+public class DistributionDirectory extends DirectoryOnDisk {
 
   private final DistributionPackagesBundler distributionPackagesBundler;
   private final CryptoProvider cryptoProvider;
@@ -35,7 +35,7 @@ public class DiagnosisKeysDirectory extends DirectoryOnDisk {
    * @param cryptoProvider      The {@link CryptoProvider} used for payload signing.
    * @param distributionServiceConfig The {@link DistributionServiceConfig} config attributes
    */
-  public DiagnosisKeysDirectory(DistributionPackagesBundler distributionPackagesBundler, CryptoProvider cryptoProvider,
+  public DistributionDirectory(DistributionPackagesBundler distributionPackagesBundler, CryptoProvider cryptoProvider,
       DistributionServiceConfig distributionServiceConfig) {
     super(distributionServiceConfig.getApi().getDiagnosisKeysPath());
     this.distributionPackagesBundler = distributionPackagesBundler;

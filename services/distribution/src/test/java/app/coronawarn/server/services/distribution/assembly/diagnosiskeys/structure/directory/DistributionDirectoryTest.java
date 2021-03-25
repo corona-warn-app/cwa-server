@@ -55,7 +55,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 @ContextConfiguration(classes = {CryptoProvider.class, DistributionServiceConfig.class,
     KeySharingPoliciesChecker.class},
     initializers = ConfigFileApplicationContextInitializer.class)
-class DiagnosisKeysDirectoryTest {
+class DistributionDirectoryTest {
 
   @Autowired
   CryptoProvider cryptoProvider;
@@ -194,7 +194,7 @@ class DiagnosisKeysDirectoryTest {
     DiagnosisKeyBundler bundler = new ProdDiagnosisKeyBundler(serviceConfigSpy, sharingPolicyChecker);
     bundler.setDiagnosisKeys(keys, LocalDateTime.of(1970, 1, 5, 0, 0));
 
-    Directory<WritableOnDisk> directory = new DiagnosisKeysDirectory(bundler, cryptoProvider, serviceConfigSpy);
+    Directory<WritableOnDisk> directory = new DistributionDirectory(bundler, cryptoProvider, serviceConfigSpy);
     parentDirectory.addWritable(directory);
     directory.prepare(new ImmutableStack<>());
     directory.write();
