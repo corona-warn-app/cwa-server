@@ -15,21 +15,21 @@ import java.time.LocalDate;
 import java.util.Optional;
 import java.util.Set;
 
-public class DiagnosisKeysCountryDirectory extends IndexDirectoryOnDisk<String> {
+public class DistributionCountryDirectory extends IndexDirectoryOnDisk<String> {
 
   private final DiagnosisKeyBundler diagnosisKeyBundler;
   private final CryptoProvider cryptoProvider;
   private final DistributionServiceConfig distributionServiceConfig;
 
   /**
-   * Constructs a {@link DiagnosisKeysCountryDirectory} instance that represents the {@code .../country/:country/...}
+   * Constructs a {@link DistributionCountryDirectory} instance that represents the {@code .../country/:country/...}
    * portion of the diagnosis key directory structure.
    *
    * @param diagnosisKeyBundler A {@link DiagnosisKeyBundler} containing the {@link DiagnosisKey DiagnosisKeys}.
    * @param cryptoProvider      The {@link CryptoProvider} used for payload signing.
    * @param distributionServiceConfig The {@link DistributionServiceConfig} config attributes
    */
-  public DiagnosisKeysCountryDirectory(DiagnosisKeyBundler diagnosisKeyBundler,
+  public DistributionCountryDirectory(DiagnosisKeyBundler diagnosisKeyBundler,
       CryptoProvider cryptoProvider, DistributionServiceConfig distributionServiceConfig) {
     super(distributionServiceConfig.getApi().getCountryPath(), ignoredValue -> Set
             .of(distributionServiceConfig.getApi().getOriginCountry(), distributionServiceConfig.getEuPackageName()),

@@ -46,7 +46,7 @@ public class DiagnosisKeysDirectory extends DirectoryOnDisk {
   @Override
   public void prepare(ImmutableStack<Object> indices) {
     this.addWritable(decorateCountryDirectory(
-        new DiagnosisKeysCountryDirectory(diagnosisKeyBundler, cryptoProvider, distributionServiceConfig)));
+        new DistributionCountryDirectory(diagnosisKeyBundler, cryptoProvider, distributionServiceConfig)));
     super.prepare(indices);
   }
 
