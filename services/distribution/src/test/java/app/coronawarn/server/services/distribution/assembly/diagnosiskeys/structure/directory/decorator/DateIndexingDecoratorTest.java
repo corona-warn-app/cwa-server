@@ -12,7 +12,7 @@ import app.coronawarn.server.common.persistence.service.common.KeySharingPolicie
 import app.coronawarn.server.services.distribution.assembly.component.CryptoProvider;
 import app.coronawarn.server.services.distribution.assembly.diagnosiskeys.DiagnosisKeyBundler;
 import app.coronawarn.server.services.distribution.assembly.diagnosiskeys.ProdDiagnosisKeyBundler;
-import app.coronawarn.server.services.distribution.assembly.diagnosiskeys.structure.directory.DiagnosisKeysDateDirectory;
+import app.coronawarn.server.services.distribution.assembly.diagnosiskeys.structure.directory.DistributionDateDirectory;
 import app.coronawarn.server.services.distribution.assembly.structure.util.ImmutableStack;
 import app.coronawarn.server.services.distribution.config.DistributionServiceConfig;
 import java.time.LocalDate;
@@ -99,7 +99,7 @@ class DateIndexingDecoratorTest {
 
   private DateIndexingDecorator makeDecoratedDateDirectory(DiagnosisKeyBundler diagnosisKeyBundler) {
     return new DateIndexingDecorator(
-        new DiagnosisKeysDateDirectory(diagnosisKeyBundler, cryptoProvider, distributionServiceConfig),
+        new DistributionDateDirectory(diagnosisKeyBundler, cryptoProvider, distributionServiceConfig),
         distributionServiceConfig);
   }
 }

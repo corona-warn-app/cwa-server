@@ -50,7 +50,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 @ContextConfiguration(classes = {CryptoProvider.class, DistributionServiceConfig.class,
     KeySharingPoliciesChecker.class},
     initializers = ConfigFileApplicationContextInitializer.class)
-class DiagnosisKeysDateDirectoryTest {
+class DistributionDateDirectoryTest {
 
   @Rule
   private final TemporaryFolder outputFolder = new TemporaryFolder();
@@ -82,7 +82,7 @@ class DiagnosisKeysDateDirectoryTest {
     DiagnosisKeyBundler bundler = new ProdDiagnosisKeyBundler(distributionServiceConfig, sharingPoliciesChecker);
     bundler
         .setDiagnosisKeys(diagnosisKeys, distributionTime);
-    DiagnosisKeysDateDirectory dateDirectory = new DiagnosisKeysDateDirectory(bundler, cryptoProvider,
+    DistributionDateDirectory dateDirectory = new DistributionDateDirectory(bundler, cryptoProvider,
         distributionServiceConfig);
     Directory<WritableOnDisk> outputDirectory = new DirectoryOnDisk(outputFile);
     outputDirectory.addWritable(dateDirectory);

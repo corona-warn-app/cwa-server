@@ -26,7 +26,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Optional;
 
-public class DiagnosisKeysDateDirectory extends IndexDirectoryOnDisk<LocalDate> {
+public class DistributionDateDirectory extends IndexDirectoryOnDisk<LocalDate> {
 
   private static final DateTimeFormatter ISO8601 = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 
@@ -36,14 +36,14 @@ public class DiagnosisKeysDateDirectory extends IndexDirectoryOnDisk<LocalDate> 
   private final LocalDate cutOffDate;
 
   /**
-   * Constructs a {@link DiagnosisKeysDateDirectory} instance associated with the specified data
+   * Constructs a {@link DistributionDateDirectory} instance associated with the specified data
    * collection. Payload signing is be performed according to the specified {@link CryptoProvider}.
    *
    * @param distributionPackagesBundler A {@link DistributionPackagesBundler} containing the data.
    * @param cryptoProvider      The {@link CryptoProvider} used for payload signing.
    * @param distributionServiceConfig The {@link DistributionServiceConfig} config attributes
    */
-  public DiagnosisKeysDateDirectory(DistributionPackagesBundler distributionPackagesBundler,
+  public DistributionDateDirectory(DistributionPackagesBundler distributionPackagesBundler,
       CryptoProvider cryptoProvider, DistributionServiceConfig distributionServiceConfig) {
     super(distributionServiceConfig.getApi().getDatePath(),
         indices -> {

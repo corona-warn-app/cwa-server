@@ -41,11 +41,11 @@ public class DistributionCountryDirectory extends IndexDirectoryOnDisk<String> {
   @Override
   public void prepare(ImmutableStack<Object> indices) {
     this.addWritableToAll(ignoredValue -> Optional.of(decorateDateDirectory(
-        new DiagnosisKeysDateDirectory(distributionPackagesBundler, cryptoProvider, distributionServiceConfig))));
+        new DistributionDateDirectory(distributionPackagesBundler, cryptoProvider, distributionServiceConfig))));
     super.prepare(indices);
   }
 
-  private IndexDirectory<LocalDate, WritableOnDisk> decorateDateDirectory(DiagnosisKeysDateDirectory dateDirectory) {
+  private IndexDirectory<LocalDate, WritableOnDisk> decorateDateDirectory(DistributionDateDirectory dateDirectory) {
     return new DateIndexingDecorator(dateDirectory, distributionServiceConfig);
   }
 }
