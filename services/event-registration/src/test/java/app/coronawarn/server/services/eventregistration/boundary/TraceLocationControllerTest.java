@@ -2,6 +2,7 @@ package app.coronawarn.server.services.eventregistration.boundary;
 
 import static app.coronawarn.server.services.eventregistration.config.UrlConstants.TRACE_LOCATION_ROUTE;
 import static app.coronawarn.server.services.eventregistration.config.UrlConstants.V1;
+import static app.coronawarn.server.services.eventregistration.testdata.TestData.correctVersion;
 import static app.coronawarn.server.services.eventregistration.testdata.TestData.traceLocation;
 
 import app.coronawarn.server.common.protocols.internal.pt.SignedTraceLocation;
@@ -32,7 +33,7 @@ class TraceLocationControllerTest {
         .withEndTimestamp(100)
         .withEmptyGuid()
         .withAddress("address")
-        .withVersion(5)
+        .withVersion(correctVersion)
         .withDefaultCheckInLength(5).build();
     HttpHeaders headers = new HttpHeaders();
     headers.set("content-type", "application/x-protobuf");

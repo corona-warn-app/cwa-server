@@ -1,6 +1,6 @@
 ---
 event-registration:
-  version: 0
+  version: 1
   privatekey: ${EVENT_REGISTRATION_SIGNING_KEY}
   signature:
     # The algorithm name.

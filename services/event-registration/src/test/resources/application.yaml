@@ -1,6 +1,6 @@
 ---
 event-registration:
-  version: 5
+  version: 1
   privatekey: classpath:testprivatekey.pem
   privatekey-password: testpass
   signature:
