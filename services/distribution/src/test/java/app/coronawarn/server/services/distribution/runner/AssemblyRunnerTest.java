@@ -70,6 +70,7 @@ class AssemblyRunnerTest {
     verify(outputDirectoryProvider, times(1)).getDirectory();
     verify(outputDirectoryProvider, times(1)).clear();
     verify(cwaApiStructureProvider, times(1)).getDiagnosisKeysDirectory();
+    verify(cwaApiStructureProvider, times(1)).getTraceWarningDirectory();
     verify(cwaApiStructureProvider, times(1)).getDirectoryV2();
     verify(spyParentDirectory, times(1)).prepare(any());
     verify(spyParentDirectory, times(1)).write();
