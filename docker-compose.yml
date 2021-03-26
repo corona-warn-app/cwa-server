@@ -164,9 +164,8 @@ services:
     volumes:
       - postgres_volume:/data/postgres
       - ./setup/setup-roles.sql:/docker-entrypoint-initdb.d/1-roles.sql
-      - ./local-setup/create-roles.sql:/docker-entrypoint-initdb.d/2-event-registration-roles.sql
-      - ./local-setup/create-users.sql:/docker-entrypoint-initdb.d/3-users.sql
-      - ./local-setup/enable-test-data-docker-compose.sql:/docker-entrypoint-initdb.d/4-enable-testdata.sql
+      - ./local-setup/create-users.sql:/docker-entrypoint-initdb.d/2-users.sql
+      - ./local-setup/enable-test-data-docker-compose.sql:/docker-entrypoint-initdb.d/3-enable-testdata.sql
   pgadmin:
     container_name: pgadmin_container
     image: dpage/pgadmin4

@@ -6,6 +6,8 @@ import static app.coronawarn.server.services.eventregistration.config.UrlConstan
 import app.coronawarn.server.common.protocols.internal.pt.SignedTraceLocation;
 import app.coronawarn.server.common.protocols.internal.pt.TraceLocation;
 import app.coronawarn.server.services.eventregistration.boundary.validation.ValidTraceLocation;
+import app.coronawarn.server.services.eventregistration.service.TraceLocationSigningService;
+import app.coronawarn.server.services.eventregistration.service.UuidHashGenerator;
 import java.security.NoSuchAlgorithmException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -22,12 +24,10 @@ import org.springframework.web.context.request.async.DeferredResult;
 @Validated
 public class TraceLocationController {
 
-  private final TraceLocationFacade traceLocationFacade;
+  private final TraceLocationSigningService signingService;
 
-
-  public TraceLocationController(TraceLocationFacade traceLocationFacade) {
-    this.traceLocationFacade = traceLocationFacade;
-
+  public TraceLocationController(TraceLocationSigningService signingService) {
+    this.signingService = signingService;
   }
 
   /**
@@ -40,9 +40,10 @@ public class TraceLocationController {
   public DeferredResult<ResponseEntity<SignedTraceLocation>> createTraceLocation(
       @ValidTraceLocation @RequestBody TraceLocation traceLocation) throws NoSuchAlgorithmException {
     DeferredResult<ResponseEntity<SignedTraceLocation>> result = new DeferredResult<>();
-    traceLocationFacade.storeTraceLocation(traceLocation,
-        signedTraceLocation -> result
-            .setResult(ResponseEntity.status(HttpStatus.CREATED).body(signedTraceLocation)));
+    final String uuidHash = UuidHashGenerator.buildUuidHash();
+    SignedTraceLocation signedTraceLocation = signingService.signTraceLocation(traceLocation, uuidHash);
+
+    result.setResult(ResponseEntity.status(HttpStatus.CREATED).body(signedTraceLocation));
     return result;
   }
 
