@@ -2,7 +2,6 @@
 
 package app.coronawarn.server.services.distribution.assembly.diagnosiskeys.structure.directory;
 
-import app.coronawarn.server.common.persistence.domain.DiagnosisKey;
 import app.coronawarn.server.services.distribution.assembly.common.DistributionPackagesBundler;
 import app.coronawarn.server.services.distribution.assembly.component.CryptoProvider;
 import app.coronawarn.server.services.distribution.assembly.structure.WritableOnDisk;
@@ -18,8 +17,8 @@ import app.coronawarn.server.services.distribution.config.DistributionServiceCon
  * A {@link Directory} containing the file and directory structure that mirrors the API defined in the OpenAPI
  * definition {@code /services/distribution/api_v1.json}. Available countries (endpoint {@code
  * /version/v1/diagnosis-keys/country}) are statically set to only {@code "DE"}. The dates and respective hours
- * (endpoint {@code /version/v1/diagnosis-keys/country/DE/date}) will be created based on the actual {@link DiagnosisKey
- * DiagnosisKeys} given to the {@link DistributionDirectory#DistributionDirectory constructor}.
+ * (endpoint {@code /version/v1/diagnosis-keys/country/DE/date}) will be created based on the actual data
+ * given to the {@link DistributionDirectory#DistributionDirectory constructor}.
  */
 public class DistributionDirectory extends DirectoryOnDisk {
 
@@ -37,7 +36,7 @@ public class DistributionDirectory extends DirectoryOnDisk {
    */
   public DistributionDirectory(DistributionPackagesBundler distributionPackagesBundler, CryptoProvider cryptoProvider,
       DistributionServiceConfig distributionServiceConfig) {
-    super(distributionServiceConfig.getApi().getDiagnosisKeysPath());
+    super(distributionPackagesBundler.getPath());
     this.distributionPackagesBundler = distributionPackagesBundler;
     this.cryptoProvider = cryptoProvider;
     this.distributionServiceConfig = distributionServiceConfig;

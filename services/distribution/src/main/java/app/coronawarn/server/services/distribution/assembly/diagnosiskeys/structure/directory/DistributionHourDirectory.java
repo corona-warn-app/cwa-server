@@ -1,10 +1,8 @@
 package app.coronawarn.server.services.distribution.assembly.diagnosiskeys.structure.directory;
 
-import app.coronawarn.server.common.persistence.domain.DiagnosisKey;
 import app.coronawarn.server.services.distribution.assembly.common.DistributionPackagesBundler;
 import app.coronawarn.server.services.distribution.assembly.component.CryptoProvider;
 import app.coronawarn.server.services.distribution.assembly.diagnosiskeys.structure.archive.decorator.signing.DiagnosisKeySigningDecorator;
-import app.coronawarn.server.services.distribution.assembly.diagnosiskeys.structure.file.TemporaryExposureKeyExportFile;
 import app.coronawarn.server.services.distribution.assembly.structure.WritableOnDisk;
 import app.coronawarn.server.services.distribution.assembly.structure.archive.Archive;
 import app.coronawarn.server.services.distribution.assembly.structure.archive.ArchiveOnDisk;
@@ -55,16 +53,16 @@ public class DistributionHourDirectory extends IndexDirectoryOnDisk<LocalDateTim
       // IndexDirectory.
       String country = (String) currentIndices.pop().pop().peek();
 
-      List<DiagnosisKey> diagnosisKeysForCurrentHour =
+      List<?> diagnosisKeysForCurrentHour =
           this.distributionPackagesBundler.getDistributionDataForHour(currentHour, country);
 
       long startTimestamp = currentHour.toEpochSecond(ZoneOffset.UTC);
       long endTimestamp = currentHour.plusHours(1).toEpochSecond(ZoneOffset.UTC);
-      File<WritableOnDisk> temporaryExposureKeyExportFile = TemporaryExposureKeyExportFile.fromDiagnosisKeys(
+      File<WritableOnDisk> temporaryExportFile = distributionPackagesBundler.createTemporaryExportFile(
           diagnosisKeysForCurrentHour, country, startTimestamp, endTimestamp, distributionServiceConfig);
 
       Archive<WritableOnDisk> hourArchive = new ArchiveOnDisk(distributionServiceConfig.getOutputFileName());
-      hourArchive.addWritable(temporaryExposureKeyExportFile);
+      hourArchive.addWritable(temporaryExportFile);
 
       return Optional.of(decorateDiagnosisKeyArchive(hourArchive));
     });

@@ -5,6 +5,8 @@ import static java.util.Collections.emptySet;
 
 import app.coronawarn.server.common.persistence.domain.TraceTimeIntervalWarning;
 import app.coronawarn.server.services.distribution.assembly.common.DistributionPackagesBundler;
+import app.coronawarn.server.services.distribution.assembly.structure.WritableOnDisk;
+import app.coronawarn.server.services.distribution.assembly.structure.file.File;
 import app.coronawarn.server.services.distribution.config.DistributionServiceConfig;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -32,6 +34,7 @@ public class TraceWarningsPackageBundler implements DistributionPackagesBundler<
   protected final long expiryPolicyMinutes;
   protected final int minNumberOfKeysPerBundle;
   private final int maxNumberOfKeysPerBundle;
+  private final String traceWarningPackagesPath;
 
   /**
    * The hour at which the distribution runs. This field is needed to prevent the run from distributing any keys that
@@ -55,6 +58,7 @@ public class TraceWarningsPackageBundler implements DistributionPackagesBundler<
     this.expiryPolicyMinutes = distributionServiceConfig.getExpiryPolicyMinutes();
     this.minNumberOfKeysPerBundle = distributionServiceConfig.getShiftingPolicyThreshold();
     this.maxNumberOfKeysPerBundle = distributionServiceConfig.getMaximumNumberOfKeysPerBundle();
+    this.traceWarningPackagesPath = distributionServiceConfig.getApi().getTraceWarningPackagesPath();
   }
 
   /**
@@ -161,6 +165,17 @@ public class TraceWarningsPackageBundler implements DistributionPackagesBundler<
           .orElse(emptyList());
     }
     return emptyList();
+  }
+
+  @Override
+  public File<WritableOnDisk> createTemporaryExportFile(List<TraceTimeIntervalWarning> data, String country,
+      long startTimestamp, long endTimestamp, DistributionServiceConfig distributionServiceConfig) {
+    throw new RuntimeException("Not yet implemented for TraceTimeIntervalWarning");
+  }
+
+  @Override
+  public String getPath() {
+    return traceWarningPackagesPath;
   }
 
   private boolean isCountrySupported(String country) {

@@ -4,12 +4,10 @@ package app.coronawarn.server.services.distribution.assembly.diagnosiskeys.struc
 
 import static java.lang.Boolean.FALSE;
 
-import app.coronawarn.server.common.persistence.domain.DiagnosisKey;
 import app.coronawarn.server.services.distribution.assembly.common.DistributionPackagesBundler;
 import app.coronawarn.server.services.distribution.assembly.component.CryptoProvider;
 import app.coronawarn.server.services.distribution.assembly.diagnosiskeys.structure.archive.decorator.signing.DiagnosisKeySigningDecorator;
 import app.coronawarn.server.services.distribution.assembly.diagnosiskeys.structure.directory.decorator.HourIndexingDecorator;
-import app.coronawarn.server.services.distribution.assembly.diagnosiskeys.structure.file.TemporaryExposureKeyExportFile;
 import app.coronawarn.server.services.distribution.assembly.structure.Writable;
 import app.coronawarn.server.services.distribution.assembly.structure.WritableOnDisk;
 import app.coronawarn.server.services.distribution.assembly.structure.archive.Archive;
@@ -83,13 +81,13 @@ public class DistributionDateDirectory extends IndexDirectoryOnDisk<LocalDate> {
     }
     String country = (String) currentIndices.pop().peek();
 
-    List<DiagnosisKey> diagnosisKeysForCurrentHour =
+    List<?> diagnosisKeysForCurrentHour =
         this.distributionPackagesBundler.getDistributionDataForDate(currentDate, country);
 
     long startTimestamp = currentDate.atStartOfDay().toEpochSecond(ZoneOffset.UTC);
     long endTimestamp = currentDate.plusDays(1).atStartOfDay().toEpochSecond(ZoneOffset.UTC);
 
-    File<WritableOnDisk> temporaryExposureKeyExportFile = TemporaryExposureKeyExportFile.fromDiagnosisKeys(
+    File<WritableOnDisk> temporaryExposureKeyExportFile = distributionPackagesBundler.createTemporaryExportFile(
         diagnosisKeysForCurrentHour, country, startTimestamp, endTimestamp, distributionServiceConfig);
 
     Archive<WritableOnDisk> dateArchive = new ArchiveOnDisk(distributionServiceConfig.getOutputFileName());

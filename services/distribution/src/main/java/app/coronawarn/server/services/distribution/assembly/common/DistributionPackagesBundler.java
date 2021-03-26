@@ -1,6 +1,9 @@
 package app.coronawarn.server.services.distribution.assembly.common;
 
 import app.coronawarn.server.common.persistence.domain.DiagnosisKey;
+import app.coronawarn.server.services.distribution.assembly.structure.WritableOnDisk;
+import app.coronawarn.server.services.distribution.assembly.structure.file.File;
+import app.coronawarn.server.services.distribution.config.DistributionServiceConfig;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
@@ -29,4 +32,10 @@ public interface DistributionPackagesBundler<T> {
   Set<LocalDateTime> getHoursWithDistributablePackages(LocalDate peek, String country);
 
   List<T> getDistributionDataForHour(LocalDateTime currentHour, String country);
+
+  File<WritableOnDisk> createTemporaryExportFile(
+      List<T> data, String country, long startTimestamp, long endTimestamp,
+      DistributionServiceConfig distributionServiceConfig);
+
+  String getPath();
 }

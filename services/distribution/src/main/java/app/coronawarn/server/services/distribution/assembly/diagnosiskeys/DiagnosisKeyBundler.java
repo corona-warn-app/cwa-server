@@ -8,6 +8,9 @@ import static java.util.Collections.emptySet;
 
 import app.coronawarn.server.common.persistence.domain.DiagnosisKey;
 import app.coronawarn.server.services.distribution.assembly.common.DistributionPackagesBundler;
+import app.coronawarn.server.services.distribution.assembly.diagnosiskeys.structure.file.TemporaryExposureKeyExportFile;
+import app.coronawarn.server.services.distribution.assembly.structure.WritableOnDisk;
+import app.coronawarn.server.services.distribution.assembly.structure.file.File;
 import app.coronawarn.server.services.distribution.config.DistributionServiceConfig;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -37,6 +40,7 @@ public abstract class DiagnosisKeyBundler implements DistributionPackagesBundler
   protected final List<String> supportedCountries;
   private final String euPackageName;
   private final String originCountry;
+  private final String diagnosisKeysPath;
   /**
    * The hour at which the distribution runs. This field is needed to prevent the run from distributing any keys that
    * have already been submitted but may only be distributed in the future (e.g. because they are not expired yet).
@@ -66,6 +70,7 @@ public abstract class DiagnosisKeyBundler implements DistributionPackagesBundler
     this.maxNumberOfKeysPerBundle = distributionServiceConfig.getMaximumNumberOfKeysPerBundle();
     this.euPackageName = distributionServiceConfig.getEuPackageName();
     this.originCountry = distributionServiceConfig.getApi().getOriginCountry();
+    this.diagnosisKeysPath = distributionServiceConfig.getApi().getDiagnosisKeysPath();
   }
 
   /**
@@ -298,5 +303,16 @@ public abstract class DiagnosisKeyBundler implements DistributionPackagesBundler
       groupedDiagnosisKeys.put(supportedCountry, new ArrayList<>());
       this.distributableDiagnosisKeys.put(supportedCountry, new HashMap<>());
     });
+  }
+
+  public File<WritableOnDisk> createTemporaryExportFile(
+      List<DiagnosisKey> data, String country, long startTimestamp, long endTimestamp,
+      DistributionServiceConfig distributionServiceConfig) {
+    return TemporaryExposureKeyExportFile.fromDiagnosisKeys(data, country, startTimestamp, endTimestamp,
+      distributionServiceConfig);
+  }
+
+  public String getPath(){
+    return diagnosisKeysPath;
   }
 }
