@@ -3,13 +3,12 @@ package app.coronawarn.server.services.federation.upload.integration;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
-import java.util.ArrayList;
-import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
-import org.bouncycastle.util.Arrays;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,6 +17,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
+import com.google.protobuf.ByteString;
 import app.coronawarn.server.common.federation.client.upload.BatchUploadResponse;
 import app.coronawarn.server.common.persistence.domain.FederationUploadKey;
 import app.coronawarn.server.common.persistence.repository.EfgsUploadKeyRepository;
@@ -46,42 +46,73 @@ public class UploadRetryIntegrationTest {
   @Autowired
   Upload uploadRunner;
 
-  private List<FederationUploadKey> conflictKeys = new ArrayList<FederationUploadKey>();
-  private List<FederationUploadKey> errorKeys = new ArrayList<FederationUploadKey>();
+  private Set<String> conflictKeys = new HashSet<>();
+  private Set<String> errorKeys = new HashSet<>();
+  private Set<String> createdKeys = new HashSet<>();
 
   @BeforeEach
   public void setup() {
+    // The test uses the testdata profile which loads 8000 keys, hence the
+    // specific indexes below.
     when(mockClient.postBatchUpload(any())).thenAnswer(ans -> {
       UploadPayload payload = ans.getArgument(0);
       List<FederationUploadKey> originalKeys = payload.getOriginalKeys();
-      conflictKeys.addAll(originalKeys.subList(0, 1000));
-      errorKeys.addAll(originalKeys.subList(1000, 2000));
+      conflictKeys.addAll(originalKeys.subList(0, 1000)
+          .stream()
+          .map(k -> getKeyDataString(k))
+          .collect(Collectors.toList()));
+      errorKeys.addAll(originalKeys.subList(1000, 2000)
+          .stream()
+          .map(k -> getKeyDataString(k))
+          .collect(Collectors.toList()));
+      createdKeys.addAll(originalKeys.subList(2000, 4000)
+          .stream()
+          .map(k -> getKeyDataString(k))
+          .collect(Collectors.toList()));
       return Optional.of(new BatchUploadResponse(
-          IntStream.range(0, 10).boxed().map(String::valueOf).collect(Collectors.toList()),
-          IntStream.range(10, 20).boxed().map(String::valueOf).collect(Collectors.toList()),
-          Collections.emptyList()));
+          IntStream.range(0, 1000).boxed().map(String::valueOf).collect(Collectors.toList()),
+          IntStream.range(1000, 2000).boxed().map(String::valueOf).collect(Collectors.toList()),
+          IntStream.range(2000, 4000).boxed().map(String::valueOf).collect(Collectors.toList())));
     });
   }
 
+  private String getKeyDataString(FederationUploadKey k) {
+    return ByteString.copyFrom(k.getKeyData()).toStringUtf8();
+  }
+
+  /**
+   * Test ensures that keys which are part not part of an error 500 list in a
+   * Gateway multi-status response are correctly marked with the batch tag id.
+   * 201 and 409 keys are updated with the batch tag, while the 500 ones are left empty,
+   * which makes them candidates for a retry in a subsequent upload run.
+   */
   @Test
   void keysShouldBeMarkedCorrectlyInCaseTheyAreRejected() throws Exception {
+    // The test must remove any upload keys that were created when the container
+    // starts and calls the ApplicationRunners. Unfortunately there is no easy way
+    // to disable the Spring runners if we want to have a full app-context (@SpringBootTest)
+    // created for the integration testing.
     ((EfgsUploadKeyRepository) uploadKeyRepository).deleteAll();
     testDataGeneration.run(null);
     uploadRunner.run(null);
     Iterable<FederationUploadKey> allUploadKeys = uploadKeyRepository.findAll();
     for (FederationUploadKey key : allUploadKeys) {
-      boolean wasConflictKey = conflictKeys.stream()
-          .filter(k -> Arrays.areEqual(key.getKeyData(), k.getKeyData())).findFirst().isPresent();
+      String keyData = getKeyDataString(key);
+      boolean wasConflictKey = conflictKeys.contains(keyData);
       if (wasConflictKey) {
         assertTrue("EFGS multi status conflict key was not marked with batch tag",
             key.getBatchTag() != null && !key.getBatchTag().isEmpty());
       }
-      boolean wasErrorKey = errorKeys.stream()
-          .filter(k -> Arrays.areEqual(key.getKeyData(), k.getKeyData())).findFirst().isPresent();
-      // if (wasErrorKey) {
-      // assertTrue("EFGS multi status error key was marked incorrectly with batch tag",
-      // key.getBatchTag().isEmpty());
-      // }
+      boolean wasErrorKey = errorKeys.contains(keyData);
+      if (wasErrorKey) {
+        assertTrue("EFGS multi status error key was marked incorrectly with batch tag",
+            key.getBatchTag() == null || key.getBatchTag().isEmpty());
+      }
+      boolean wasOkKey = createdKeys.contains(keyData);
+      if (wasOkKey) {
+        assertTrue("EFGS multi status created key was not marked with batch tag",
+            key.getBatchTag() != null && !key.getBatchTag().isEmpty());
+      }
     }
   }
 }

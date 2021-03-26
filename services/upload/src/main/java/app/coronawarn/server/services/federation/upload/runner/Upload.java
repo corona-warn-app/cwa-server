@@ -5,6 +5,8 @@ package app.coronawarn.server.services.federation.upload.runner;
 import app.coronawarn.server.common.federation.client.upload.BatchUploadResponse;
 import app.coronawarn.server.common.persistence.domain.FederationUploadKey;
 import app.coronawarn.server.common.persistence.service.FederationUploadKeyService;
+import app.coronawarn.server.common.protocols.external.exposurenotification.DiagnosisKey;
+import app.coronawarn.server.common.protocols.external.exposurenotification.DiagnosisKeyBatch;
 import app.coronawarn.server.services.federation.upload.Application;
 import app.coronawarn.server.services.federation.upload.client.FederationUploadClient;
 import app.coronawarn.server.services.federation.upload.keys.DiagnosisKeyLoader;
@@ -60,13 +62,11 @@ public class Upload implements ApplicationRunner {
   }
 
   private List<FederationUploadKey> getRetryKeysFromResponseBody(BatchUploadResponse body, UploadPayload payload) {
+    List<FederationUploadKey> sortedOriginalList = sortByKeyData(payload.getOriginalKeys());
     return body.getStatus500()
         .stream()
         .map(Integer::parseInt)
-        .map(index -> payload.getOriginalKeys().stream()
-            .sorted(Comparator.comparing(diagnosisKey ->
-                ByteString.copyFrom(diagnosisKey.getKeyData()).toStringUtf8()))
-            .collect(Collectors.toList()).get(index))
+        .map(index -> sortedOriginalList.get(index))
         .collect(Collectors.toList());
   }
 
@@ -94,7 +94,8 @@ public class Upload implements ApplicationRunner {
     try {
       List<FederationUploadKey> diagnosisKeys = this.diagnosisKeyLoader.loadDiagnosisKeys();
       logger.info("Generating Upload Payload for {} keys", diagnosisKeys.size());
-      List<UploadPayload> requests = this.payloadFactory.makePayloadList(diagnosisKeys);
+
+      List<UploadPayload> requests = this.payloadFactory.makePayloadList(sortByKeyData(diagnosisKeys));
       logger.info("Executing {} batch request", requests.size());
       requests.forEach(payload -> {
         List<FederationUploadKey> retryKeys = this.executeUploadAndCollectErrors(payload);
@@ -119,5 +120,12 @@ public class Upload implements ApplicationRunner {
       // in case of an error with marking, try to move forward to the next upload batch if any unprocessed
       logger.error("Post-upload marking of diagnosis keys with batch tag id failed", ex);
     }
+  }
+
+  private List<FederationUploadKey> sortByKeyData(List<FederationUploadKey> diagnosisKeys) {
+    return diagnosisKeys
+        .stream()
+        .sorted(Comparator.comparing(key -> ByteString.copyFrom(key.getKeyData()).toStringUtf8()))
+        .collect(Collectors.toList());
   }
 }
