@@ -51,7 +51,7 @@ public class TraceWarningsPackageBundler implements DistributionPackagesBundler<
    *
    * @param distributionServiceConfig configuration containing relevant attributes
    */
-  protected TraceWarningsPackageBundler(DistributionServiceConfig distributionServiceConfig) {
+  public TraceWarningsPackageBundler(DistributionServiceConfig distributionServiceConfig) {
     this.expiryPolicyMinutes = distributionServiceConfig.getExpiryPolicyMinutes();
     this.minNumberOfKeysPerBundle = distributionServiceConfig.getShiftingPolicyThreshold();
     this.maxNumberOfKeysPerBundle = distributionServiceConfig.getMaximumNumberOfKeysPerBundle();

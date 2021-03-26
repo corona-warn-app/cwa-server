@@ -6,6 +6,7 @@ import static app.coronawarn.server.services.distribution.assembly.appconfig.Yam
 import static java.io.File.separator;
 
 import app.coronawarn.server.common.persistence.domain.DiagnosisKey;
+import app.coronawarn.server.common.persistence.domain.TraceTimeIntervalWarning;
 import app.coronawarn.server.common.protocols.external.exposurenotification.ReportType;
 import app.coronawarn.server.common.protocols.internal.ApplicationConfiguration;
 import app.coronawarn.server.services.distribution.assembly.appconfig.UnableToLoadFileException;
@@ -22,6 +23,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Random;
 import java.util.Set;
+import java.util.UUID;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
@@ -45,6 +47,18 @@ public class Helpers {
         .build();
   }
 
+  public static TraceTimeIntervalWarning buildTraceTimeIntervalWarning(int startIntervalNumber, int endIntervalNumber){
+    final byte[] guid = UUID.randomUUID().toString().getBytes();
+    final int transmissionRiskLevel = 5;
+    return new TraceTimeIntervalWarning(
+        guid, startIntervalNumber, endIntervalNumber, transmissionRiskLevel);
+  }
+
+  public static TraceTimeIntervalWarning buildTraceTimeIntervalWarning(LocalDateTime startTime, int endAddedIntervalNumbers){
+    int startIntervalNumber = (int) startTime.toEpochSecond(ZoneOffset.UTC) / 3600;
+    return buildTraceTimeIntervalWarning(startIntervalNumber, startIntervalNumber + endAddedIntervalNumbers);
+  }
+
   public static DiagnosisKey buildDiagnosisKeyForDateTime(LocalDateTime dateTime) {
     return buildDiagnosisKeyForSubmissionTimestamp(dateTime.toEpochSecond(ZoneOffset.UTC) / 3600);
   }
@@ -53,6 +67,13 @@ public class Helpers {
       int startIntervalNumber, LocalDateTime submissionTimestamp, int number) {
     long timestamp = submissionTimestamp.toEpochSecond(ZoneOffset.UTC) / 3600;
     return buildDiagnosisKeys(startIntervalNumber, timestamp, number);
+  }
+
+  public static List<TraceTimeIntervalWarning> buildTraceTimeIntervalWarning(
+      int startIntervalNumber, int endIntervalNumber, int number) {
+    return IntStream.range(0, number)
+        .mapToObj(v -> buildTraceTimeIntervalWarning(startIntervalNumber, endIntervalNumber))
+        .collect(Collectors.toList());
   }
 
   public static List<DiagnosisKey> buildDiagnosisKeys(
