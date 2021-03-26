@@ -8,22 +8,6 @@ event-registration:
     # The security provider.
     security-provider: BC
 
-spring:
-  flyway:
-    enabled: true
-    locations: classpath:/eventregistration/db/migration, classpath:/eventregistration/db/specific/{vendor}
-    password: ${POSTGRESQL_PASSWORD_FLYWAY:local_setup_flyway}
-    user: ${POSTGRESQL_USER_FLYWAY:local_setup_flyway}
-    schemas: event_registration
-  # Postgres configuration
-  datasource:
-    driver-class-name: org.postgresql.Driver
-    url: jdbc:postgresql://${POSTGRESQL_SERVICE_HOST:localhost}:${POSTGRESQL_SERVICE_PORT:8001}/${POSTGRESQL_DATABASE:cwa}
-    username: ${POSTGRESQL_USER_EVENT_REGISTRATION:local_setup_event_registration}
-    password: ${POSTGRESQL_PASSWORD_EVENT_REGISTRATION:local_setup_event_registration}
-    hikari:
-      schema: event_registration
-
 logging:
   level:
     org:

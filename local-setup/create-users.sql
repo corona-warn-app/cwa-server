@@ -12,6 +12,3 @@ CREATE USER "local_setup_upload" WITH INHERIT IN ROLE cwa_federation_upload ENCR
 
 /* --------------- Swiss Federation Gateway --------------- */
 CREATE USER "local_setup_sgs_upload" WITH INHERIT IN ROLE cwa_chgs_upload ENCRYPTED PASSWORD 'local_setup_sgs_upload';
-
-/* --------------- Event Registration --------------- */
-CREATE USER "local_setup_event_registration" WITH INHERIT IN ROLE cwa_event_registration ENCRYPTED PASSWORD 'local_setup_event_registration';
