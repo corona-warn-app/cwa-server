@@ -13,6 +13,7 @@ import javax.validation.ConstraintValidatorContext;
 import java.nio.charset.Charset;
 import java.util.Random;
 
+import static app.coronawarn.server.services.eventregistration.testdata.TestData.correctVersion;
 import static app.coronawarn.server.services.eventregistration.testdata.TestData.traceLocation;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
@@ -49,7 +50,7 @@ public class TraceLocationValidatorTest {
         .withEndTimestamp(100)
         .withEmptyGuid()
         .withAddress("address")
-        .withVersion(5)
+        .withVersion(correctVersion)
         .withDefaultCheckInLength(5).build();
 
     Assertions.assertThat(underTest.isValid(payload, context)).isTrue();
@@ -63,7 +64,7 @@ public class TraceLocationValidatorTest {
         .withEndTimestamp(100)
         .withEmptyGuid()
         .withAddress("address")
-        .withVersion(5)
+        .withVersion(correctVersion)
         .withDefaultCheckInLength(-5).build();
 
     Assertions.assertThat(underTest.isValid(payload, context)).isFalse();
@@ -77,7 +78,7 @@ public class TraceLocationValidatorTest {
         .withEndTimestamp(100)
         .withEmptyGuid()
         .withAddress("address")
-        .withVersion(5)
+        .withVersion(correctVersion)
         .withDefaultCheckInLength(5).build();
 
     Assertions.assertThat(underTest.isValid(payload, context)).isFalse();
@@ -91,7 +92,7 @@ public class TraceLocationValidatorTest {
         .withEndTimestamp(100)
         .withEmptyGuid()
         .withAddress("address")
-        .withVersion(5)
+        .withVersion(correctVersion)
         .withDefaultCheckInLength(5).build();
 
     Assertions.assertThat(underTest.isValid(payload, context)).isFalse();
@@ -106,7 +107,7 @@ public class TraceLocationValidatorTest {
         .withEndTimestamp(100)
         .withEmptyGuid()
         .withAddress("")
-        .withVersion(5)
+        .withVersion(correctVersion)
         .withDefaultCheckInLength(5).build();
 
     Assertions.assertThat(underTest.isValid(payload, context)).isFalse();
@@ -122,7 +123,7 @@ public class TraceLocationValidatorTest {
         .withEndTimestamp(100)
         .withEmptyGuid()
         .withAddress("address")
-        .withVersion(5)
+        .withVersion(correctVersion)
         .withDefaultCheckInLength(5).build();
 
     Assertions.assertThat(underTest.isValid(payload, context)).isFalse();
@@ -139,7 +140,7 @@ public class TraceLocationValidatorTest {
         .withEndTimestamp(100)
         .withEmptyGuid()
         .withAddress(new String(b, Charset.defaultCharset()))
-        .withVersion(5)
+        .withVersion(correctVersion)
         .withDefaultCheckInLength(5).build();
 
     Assertions.assertThat(underTest.isValid(payload, context)).isFalse();
@@ -167,7 +168,7 @@ public class TraceLocationValidatorTest {
         .withEndTimestamp(100)
         .withGuid(TestData.buildUuid())
         .withAddress("address")
-        .withVersion(5)
+        .withVersion(correctVersion)
         .withDefaultCheckInLength(5).build();
 
     Assertions.assertThat(underTest.isValid(payload, context)).isFalse();

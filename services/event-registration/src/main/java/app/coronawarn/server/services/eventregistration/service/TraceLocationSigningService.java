@@ -35,7 +35,7 @@ public class TraceLocationSigningService {
           .getInstance(eventRegistrationConfiguration.getSignature().getAlgorithmName(),
               eventRegistrationConfiguration.getSignature().getSecurityProvider());
       payloadSignature.initSign(cryptoProvider.getPrivateKey());
-      payloadSignature.update(filledTraceLocation.getGuidBytes().toByteArray());
+      payloadSignature.update(filledTraceLocation.toByteArray());
       return SignedTraceLocation.newBuilder()
           .setLocation(filledTraceLocation.toByteString())
           .setSignature(ByteString.copyFrom(payloadSignature.sign())).build();
@@ -43,5 +43,4 @@ public class TraceLocationSigningService {
       throw new SigningException("Failed to sign trace location.", e);
     }
   }
-
 }

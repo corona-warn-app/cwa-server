@@ -1,10 +1,10 @@
 ---
 event-registration:
-  version: 0
+  version: 1
   privatekey: ${EVENT_REGISTRATION_SIGNING_KEY}
   signature:
     # The algorithm name.
-    algorithm-name: ${EVENT_REGISTRATION_SIGNATURE_ALGORITHM_NAME:sha256WithRSAEncryption}
+    algorithm-name: ${EVENT_REGISTRATION_SIGNATURE_ALGORITHM_NAME:SHA256withECDSA}
     # The security provider.
     security-provider: BC
 

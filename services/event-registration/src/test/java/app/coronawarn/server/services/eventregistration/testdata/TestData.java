@@ -5,6 +5,8 @@ import java.util.UUID;
 
 public final class TestData {
 
+  public static final int correctVersion = 1;
+
   public static class TraceLocationBuilder {
 
     private String address;
