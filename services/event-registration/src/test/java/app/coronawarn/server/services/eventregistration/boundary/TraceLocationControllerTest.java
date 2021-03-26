@@ -1,0 +1,48 @@
+package app.coronawarn.server.services.eventregistration.boundary;
+
+import static app.coronawarn.server.services.eventregistration.config.UrlConstants.TRACE_LOCATION_ROUTE;
+import static app.coronawarn.server.services.eventregistration.config.UrlConstants.V1;
+import static app.coronawarn.server.services.eventregistration.testdata.TestData.correctVersion;
+import static app.coronawarn.server.services.eventregistration.testdata.TestData.traceLocation;
+
+import app.coronawarn.server.common.protocols.internal.pt.SignedTraceLocation;
+import app.coronawarn.server.common.protocols.internal.pt.TraceLocation;
+import org.assertj.core.api.Assertions;
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
+import org.springframework.boot.test.web.client.TestRestTemplate;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+
+@SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
+class TraceLocationControllerTest {
+
+  @Autowired
+  private TestRestTemplate template;
+
+
+  @Test
+  void shouldReturnSignedTraceLocationAndStatusIsCreated() {
+    TraceLocation payload = traceLocation()
+        .withDescription("description")
+        .withStartTimestamp(10)
+        .withEndTimestamp(100)
+        .withEmptyGuid()
+        .withAddress("address")
+        .withVersion(correctVersion)
+        .withDefaultCheckInLength(5).build();
+    HttpHeaders headers = new HttpHeaders();
+    headers.set("content-type", "application/x-protobuf");
+
+    HttpEntity<TraceLocation> request = new HttpEntity<>(payload, headers);
+    final ResponseEntity<SignedTraceLocation> response = this.template
+        .postForEntity(V1 + TRACE_LOCATION_ROUTE, request, SignedTraceLocation.class);
+
+    Assertions.assertThat(response.getStatusCode()).isEqualTo(HttpStatus.CREATED);
+  }
+
+}

@@ -31,6 +31,10 @@ services:
       max-number-of-keys: 100
       supported-countries: DE,FR,IT
       default-origin-country: DE
+      checkins:
+        accepted-event-date-threshold-days: 15
+        signature-verification-key: classpath:crypto/testpublickey.pem
+        signature-algorithm: SHA256withECDSA
     verification:
       base-url: http://localhost:1234
       path: /version/v1/tan/verify

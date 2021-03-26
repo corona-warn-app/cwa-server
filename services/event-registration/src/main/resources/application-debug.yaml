@@ -1,0 +1,8 @@
+---
+logging:
+  level:
+    org:
+      springframework:
+        web: DEBUG
+    app:
+      coronawarn: DEBUG

@@ -1,0 +1,20 @@
+---
+event-registration:
+  version: 1
+  privatekey: classpath:testprivatekey.pem
+  privatekey-password: testpass
+  signature:
+    # The algorithm name.
+    algorithm-name: SHA256withECDSA
+    # The security provider.
+    security-provider: BC
+
+logging:
+  level:
+    org:
+      springframework: off
+    root: off
+
+spring:
+  main:
+    banner-mode: off

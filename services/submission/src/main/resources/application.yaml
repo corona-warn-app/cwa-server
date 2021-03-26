@@ -41,6 +41,13 @@ services:
       supported-countries: ${SUPPORTED_COUNTRIES}
       # The default 'origin country' when not provided in submission payload
       default-origin-country: ${ORIGIN_COUNTRY:DE}
+      checkins:
+        # Checkin data for events older than the number below are ignored by the system
+        accepted-event-date-threshold-days: 15
+        # Submission Service public key used for verifying the signed TraceLocation property of the checkins data
+        signature-verification-key: ${TRACE_LOCATION_SIGNATURE_VERIFICATION_SECRET}
+        # Algorithm used to produce the signature of the TraceLocation objects within the submission payload
+        signature-algorithm: SHA256withECDSA
     verification:
       base-url: ${VERIFICATION_BASE_URL:http://localhost:8004}
       path: /version/v1/tan/verify

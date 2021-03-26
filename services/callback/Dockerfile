@@ -16,6 +16,7 @@ COPY ./services/submission/pom.xml ${WORK_DIR}/services/submission/pom.xml
 COPY ./services/callback/pom.xml ${WORK_DIR}/services/callback/pom.xml
 COPY ./services/download/pom.xml ${WORK_DIR}/services/download/pom.xml
 COPY ./services/upload/pom.xml ${WORK_DIR}/services/upload/pom.xml
+COPY ./services/event-registration/pom.xml ${WORK_DIR}/services/event-registration/pom.xml
 COPY ./pom.xml ${WORK_DIR}/pom.xml
 
 WORKDIR ${WORK_DIR}
@@ -36,6 +37,7 @@ FROM gcr.io/distroless/java-debian10:11
 
 ARG SERVICE=callback
 
+WORKDIR /
 COPY --from=build /DpkgHelper.java .
 COPY --from=build /usr/sap/${SERVICE}-service/service.jar .
 RUN ["java", "DpkgHelper.java"]

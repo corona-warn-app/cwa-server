@@ -1,0 +1,25 @@
+transmission-risk-value-mapping:
+  -
+    transmission-risk-level: 1
+    transmission-risk-value: 0
+  -
+    transmission-risk-level: 2
+    transmission-risk-value: 0
+  -
+    transmission-risk-level: 3
+    transmission-risk-value: 0.6
+  -
+    transmission-risk-level: 4
+    transmission-risk-value: 0.8
+  -
+    transmission-risk-level: 5
+    transmission-risk-value: 1
+  -
+    transmission-risk-level: 6
+    transmission-risk-value: 1.2
+  -
+    transmission-risk-level: 7
+    transmission-risk-value: 1.4
+  -
+    transmission-risk-level: 8
+    transmission-risk-value: 1.6

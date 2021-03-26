@@ -131,6 +131,26 @@ services:
       FEDERATION_GATEWAY_KEYSTORE_PASS: 123456
     volumes:
       - ./docker-compose-test-secrets:/secrets
+  event-registration:
+    build:
+      context: ./
+      dockerfile: ./services/event-registration/Dockerfile
+    depends_on:
+      - postgres
+    ports:
+      - "8013:8080"
+    environment:
+      SPRING_PROFILES_ACTIVE: disable-ssl-client-postgres
+      POSTGRESQL_SERVICE_PORT: '5432'
+      POSTGRESQL_SERVICE_HOST: postgres
+      POSTGRESQL_DATABASE: ${POSTGRES_DB}
+      POSTGRESQL_PASSWORD_EVENT_REGISTRATION: ${POSTGRES_EVENT_REGISTRATION_PASSWORD}
+      POSTGRESQL_USER_EVENT_REGISTRATION: ${POSTGRES_EVENT_REGISTRATION_USER}
+      POSTGRESQL_PASSWORD_FLYWAY: ${POSTGRES_FLYWAY_PASSWORD}
+      POSTGRESQL_USER_FLYWAY: ${POSTGRES_FLYWAY_USER}
+      EVENT_REGISTRATION_SECRET: ${SECRET_PRIVATE}
+    volumes:
+      - ./docker-compose-test-secrets:/secrets
   postgres:
     image: postgres:11.8
     restart: always
@@ -142,10 +162,10 @@ services:
       POSTGRES_USER: ${POSTGRES_USER}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
     volumes:
-       - postgres_volume:/data/postgres
-       - ./setup/setup-roles.sql:/docker-entrypoint-initdb.d/1-roles.sql
-       - ./local-setup/create-users.sql:/docker-entrypoint-initdb.d/2-users.sql
-       - ./local-setup/enable-test-data-docker-compose.sql:/docker-entrypoint-initdb.d/3-enable-testdata.sql
+      - postgres_volume:/data/postgres
+      - ./setup/setup-roles.sql:/docker-entrypoint-initdb.d/1-roles.sql
+      - ./local-setup/create-users.sql:/docker-entrypoint-initdb.d/2-users.sql
+      - ./local-setup/enable-test-data-docker-compose.sql:/docker-entrypoint-initdb.d/3-enable-testdata.sql
   pgadmin:
     container_name: pgadmin_container
     image: dpage/pgadmin4
@@ -175,7 +195,7 @@ services:
     environment:
       - AWS_ACCESS_KEY_ID=${OBJECTSTORE_ACCESSKEY}
       - AWS_SECRET_ACCESS_KEY=${OBJECTSTORE_SECRETKEY}
-    entrypoint: ["/root/scripts/wait-for-it/wait-for-it.sh", "objectstore:8000", "-t", "30", "--"]
+    entrypoint: [ "/root/scripts/wait-for-it/wait-for-it.sh", "objectstore:8000", "-t", "30", "--" ]
     volumes:
       - ./scripts/wait-for-it:/root/scripts/wait-for-it
     command: aws s3api create-bucket --bucket cwa --endpoint-url http://objectstore:8000 --acl public-read
