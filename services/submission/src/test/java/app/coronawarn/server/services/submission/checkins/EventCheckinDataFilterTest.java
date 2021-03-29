@@ -191,12 +191,12 @@ class EventCheckinDataFilterTest {
                 .setStartIntervalNumber(TEN_MINUTE_INTERVAL_DERIVATION.apply(eventCheckinInTheNearPast))
                 .setEndIntervalNumber(
                     TEN_MINUTE_INTERVAL_DERIVATION.apply(eventCheckinInTheNearPast + 2))
-                .setSignedLocation(validEvent).setTransmissionRiskLevel(3).build(),
+                .setLocationId(validEvent.toByteString()).setTransmissionRiskLevel(3).build(),
             CheckIn.newBuilder()
                 .setStartIntervalNumber(TEN_MINUTE_INTERVAL_DERIVATION.apply(eventCheckinInTheNearPast))
                 .setEndIntervalNumber(
                     TEN_MINUTE_INTERVAL_DERIVATION.apply(eventCheckinInTheNearPast + 3))
-                .setSignedLocation(invalidEvent).setTransmissionRiskLevel(1).build());
+                .setLocationId(invalidEvent.toByteString()).setTransmissionRiskLevel(1).build());
 
     List<CheckIn> result = filter.filter(checkins);
     assertEquals(result.size(), 1);
