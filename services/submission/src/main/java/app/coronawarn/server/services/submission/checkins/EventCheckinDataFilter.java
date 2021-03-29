@@ -66,7 +66,9 @@ public class EventCheckinDataFilter {
   }
 
   boolean filterByValidSignature(CheckIn checkin) {
-    return traceLocationSignatureVerifier.verify(checkin.getSignedLocation());
+    // TODO - @EugenM-SAP do we need still to verify the checkin location?
+    return true;
+    // return traceLocationSignatureVerifier.verify(checkin.getLocationId());
   }
 
   private boolean mapsTo(Integer valueToCheck, Double target) {

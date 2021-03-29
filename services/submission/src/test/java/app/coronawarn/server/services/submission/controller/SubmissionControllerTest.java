@@ -409,13 +409,13 @@ class SubmissionControllerTest {
         CheckIn.newBuilder().setTransmissionRiskLevel(3)
             .setStartIntervalNumber(TEN_MINUTE_INTERVAL_DERIVATION.apply(eventCheckinInThePast))
             .setEndIntervalNumber(TEN_MINUTE_INTERVAL_DERIVATION.apply(eventCheckinInThePast) + 10)
-            .setSignedLocation(traceLocation1)
+            .setLocationId(traceLocation1.toByteString())
             .build(),
         CheckIn.newBuilder().setTransmissionRiskLevel(3)
             .setStartIntervalNumber(
                 TEN_MINUTE_INTERVAL_DERIVATION.apply(eventCheckinInThePast) + 11)
             .setEndIntervalNumber(TEN_MINUTE_INTERVAL_DERIVATION.apply(eventCheckinInThePast) + 22)
-            .setSignedLocation(traceLocation2)
+            .setLocationId(traceLocation2.toByteString())
             .build());
 
     ResponseEntity<Void> actResponse =
@@ -444,13 +444,13 @@ class SubmissionControllerTest {
         CheckIn.newBuilder().setTransmissionRiskLevel(1)
             .setStartIntervalNumber(TEN_MINUTE_INTERVAL_DERIVATION.apply(eventCheckinInThePast))
             .setEndIntervalNumber(TEN_MINUTE_INTERVAL_DERIVATION.apply(eventCheckinInThePast) + 10)
-            .setSignedLocation(traceLocation1)
+            .setLocationId(traceLocation1.toByteString())
             .build(),
         CheckIn.newBuilder().setTransmissionRiskLevel(2)
             .setStartIntervalNumber(
                 TEN_MINUTE_INTERVAL_DERIVATION.apply(eventCheckinInThePast) + 11)
             .setEndIntervalNumber(TEN_MINUTE_INTERVAL_DERIVATION.apply(eventCheckinInThePast) + 22)
-            .setSignedLocation(traceLocation2)
+            .setLocationId(traceLocation2.toByteString())
             .build());
 
     ResponseEntity<Void> actResponse =
@@ -478,7 +478,7 @@ class SubmissionControllerTest {
         .setStartIntervalNumber(TEN_MINUTE_INTERVAL_DERIVATION.apply(eventCheckinInThePast))
         .setEndIntervalNumber(TEN_MINUTE_INTERVAL_DERIVATION.apply(eventCheckoutInThePast))
         .setTransmissionRiskLevel(1)
-        .setSignedLocation(traceLocation1)
+        .setLocationId(traceLocation1.toByteString())
         .build());
 
     ResponseEntity<Void> actResponse =
@@ -504,7 +504,7 @@ class SubmissionControllerTest {
         .setStartIntervalNumber(TEN_MINUTE_INTERVAL_DERIVATION.apply(eventCheckinInTheFuture))
         .setEndIntervalNumber(TEN_MINUTE_INTERVAL_DERIVATION.apply(eventCheckoutInTheFuture))
         .setTransmissionRiskLevel(3)
-        .setSignedLocation(traceLocation1)
+        .setLocationId(traceLocation1.toByteString())
         .build());
 
     ResponseEntity<Void> actResponse =
