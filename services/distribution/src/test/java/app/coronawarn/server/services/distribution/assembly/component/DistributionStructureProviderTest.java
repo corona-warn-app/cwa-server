@@ -23,6 +23,7 @@ import app.coronawarn.server.services.distribution.assembly.tracewarnings.TraceW
 import app.coronawarn.server.services.distribution.assembly.transformation.EnfParameterAdapter;
 import app.coronawarn.server.services.distribution.config.DistributionServiceConfig;
 import app.coronawarn.server.services.distribution.config.TransmissionRiskLevelEncoding;
+import java.io.File;
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -75,6 +76,7 @@ class DistributionStructureProviderTest {
 
   @Rule
   final TemporaryFolder outputFolder = new TemporaryFolder();
+  File outputDirectory;
 
   @BeforeEach
   void setup() throws IOException {
@@ -85,7 +87,7 @@ class DistributionStructureProviderTest {
     Mockito.when(diagnosisKeyService.getDiagnosisKeys()).thenReturn(diagnosisKeys);
 
     outputFolder.create();
-    var outputDirectory = outputFolder.newFolder("parent");
+    outputDirectory = outputFolder.newFolder("parent");
     Directory<WritableOnDisk> parentDirectory = new DirectoryOnDisk(outputDirectory);
     Directory<WritableOnDisk> spyParentDirectory = spy(parentDirectory);
     when(outputDirectoryProvider.getDirectory()).thenReturn(spyParentDirectory);
@@ -154,6 +156,8 @@ class DistributionStructureProviderTest {
     outputDirectory.write();
 
     // check resulting package
+    // check that it contains an empty file for the current interval
+    Assertions.assertEquals(outputDirectory, "TODO");
   }
 
 }
