@@ -19,7 +19,6 @@
     <module>callback</module>
     <module>download</module>
     <module>upload</module>
-    <module>event-registration</module>
   </modules>
 
   <dependencies>
