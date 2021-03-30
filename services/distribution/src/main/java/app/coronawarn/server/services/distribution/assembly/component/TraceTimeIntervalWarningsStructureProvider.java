@@ -3,6 +3,7 @@ package app.coronawarn.server.services.distribution.assembly.component;
 import java.util.Collection;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Component;
 import app.coronawarn.server.common.persistence.domain.TraceTimeIntervalWarning;
 import app.coronawarn.server.common.persistence.service.TraceTimeIntervalWarningService;
 import app.coronawarn.server.services.distribution.assembly.structure.WritableOnDisk;
@@ -12,6 +13,7 @@ import app.coronawarn.server.services.distribution.assembly.tracewarnings.TraceT
 import app.coronawarn.server.services.distribution.assembly.tracewarnings.structure.directory.TraceTimeWarningsDirectory;
 import app.coronawarn.server.services.distribution.config.DistributionServiceConfig;
 
+@Component
 public class TraceTimeIntervalWarningsStructureProvider {
 
   private static final Logger logger =
@@ -24,8 +26,7 @@ public class TraceTimeIntervalWarningsStructureProvider {
 
   public TraceTimeIntervalWarningsStructureProvider(
       TraceTimeIntervalWarningService traceWarningsService,
-      TraceTimeIntervalWarningsPackageBundler traceWarningsBundler,
-      CryptoProvider cryptoProvider,
+      TraceTimeIntervalWarningsPackageBundler traceWarningsBundler, CryptoProvider cryptoProvider,
       DistributionServiceConfig distributionServiceConfig) {
     this.traceWarningsService = traceWarningsService;
     this.traceWarningsBundler = traceWarningsBundler;

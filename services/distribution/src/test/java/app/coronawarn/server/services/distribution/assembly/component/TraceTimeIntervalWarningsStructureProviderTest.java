@@ -7,6 +7,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
+import java.util.Set;
 import org.junit.Rule;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -111,6 +112,8 @@ public class TraceTimeIntervalWarningsStructureProviderTest {
     outputDirectoryProvider.clear();
     outputDirectory.prepare(new ImmutableStack<>());
     outputDirectory.write();
+
+    Set<String> actualFiles = getFilePaths(outputFolder.getRoot(), outputFolder.getRoot().getAbsolutePath());
   }
 
   /**
