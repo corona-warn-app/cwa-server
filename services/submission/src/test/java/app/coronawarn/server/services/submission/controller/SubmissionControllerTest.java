@@ -83,34 +83,6 @@ import org.springframework.test.annotation.DirtiesContext;
 @SuppressWarnings("unchecked")
 class SubmissionControllerTest {
 
-  public static SubmissionPayload buildPayloadWithInvalidKey() {
-    final TemporaryExposureKey invalidKey = buildTemporaryExposureKey(VALID_KEY_DATA_1,
-        createRollingStartIntervalNumber(2), 999, ReportType.CONFIRMED_TEST, 1);
-    return buildPayload(invalidKey);
-  }
-
-  private static Stream<Arguments> createDeniedHttpMethods() {
-    return Arrays.stream(HttpMethod.values()).filter(method -> method != HttpMethod.POST)
-        .filter(method -> method != HttpMethod.PATCH) /* not supported by Rest Template */
-        .map(Arguments::of);
-  }
-
-  private static Stream<Arguments> createIncompleteHeaders() {
-    return Stream.of(Arguments.of(HttpHeaderBuilder.builder().build()),
-        Arguments.of(HttpHeaderBuilder.builder().contentTypeProtoBuf().build()),
-        Arguments.of(HttpHeaderBuilder.builder().contentTypeProtoBuf().withoutCwaFake().build()),
-        Arguments.of(HttpHeaderBuilder.builder().contentTypeProtoBuf().cwaAuth().build()));
-  }
-
-  private static Stream<Arguments> invalidVisitedCountries() {
-    return Stream.of(Arguments.of(List.of("")), Arguments.of(List.of("D")), Arguments.of(List.of("FRE")),
-        Arguments.of(List.of("DE", "XX")), Arguments.of(List.of("DE", "FRE")));
-  }
-
-  private static Stream<Arguments> validVisitedCountries() {
-    return Stream.of(Arguments.of(List.of("DE")), Arguments.of(List.of("DE", "FR")));
-  }
-
   @MockBean
   private DiagnosisKeyService diagnosisKeyService;
 
@@ -577,4 +549,31 @@ class SubmissionControllerTest {
     assertThat(actResponse.getStatusCode()).isEqualTo(OK);
   }
 
+  public static SubmissionPayload buildPayloadWithInvalidKey() {
+    final TemporaryExposureKey invalidKey = buildTemporaryExposureKey(VALID_KEY_DATA_1,
+        createRollingStartIntervalNumber(2), 999, ReportType.CONFIRMED_TEST, 1);
+    return buildPayload(invalidKey);
+  }
+
+  private static Stream<Arguments> createDeniedHttpMethods() {
+    return Arrays.stream(HttpMethod.values()).filter(method -> method != HttpMethod.POST)
+        .filter(method -> method != HttpMethod.PATCH) /* not supported by Rest Template */
+        .map(Arguments::of);
+  }
+
+  private static Stream<Arguments> createIncompleteHeaders() {
+    return Stream.of(Arguments.of(HttpHeaderBuilder.builder().build()),
+        Arguments.of(HttpHeaderBuilder.builder().contentTypeProtoBuf().build()),
+        Arguments.of(HttpHeaderBuilder.builder().contentTypeProtoBuf().withoutCwaFake().build()),
+        Arguments.of(HttpHeaderBuilder.builder().contentTypeProtoBuf().cwaAuth().build()));
+  }
+
+  private static Stream<Arguments> invalidVisitedCountries() {
+    return Stream.of(Arguments.of(List.of("")), Arguments.of(List.of("D")), Arguments.of(List.of("FRE")),
+        Arguments.of(List.of("DE", "XX")), Arguments.of(List.of("DE", "FRE")));
+  }
+
+  private static Stream<Arguments> validVisitedCountries() {
+    return Stream.of(Arguments.of(List.of("DE")), Arguments.of(List.of("DE", "FR")));
+  }
 }
