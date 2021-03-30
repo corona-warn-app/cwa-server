@@ -547,6 +547,10 @@ public class DistributionServiceConfig {
     public String getTraceWarningsPath() {
       return this.traceWarningsPath;
     }
+
+    public void setTraceWarningsPath(String traceWarningsPath) {
+      this.traceWarningsPath = traceWarningsPath;
+    }
   }
 
   public static class Signature {

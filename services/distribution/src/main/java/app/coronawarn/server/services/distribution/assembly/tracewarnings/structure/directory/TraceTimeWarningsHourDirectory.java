@@ -26,7 +26,7 @@ public class TraceTimeWarningsHourDirectory extends IndexDirectoryOnDisk<Integer
       CryptoProvider cryptoProvider, DistributionServiceConfig distributionServiceConfig) {
     super(distributionServiceConfig.getApi().getHourPath(), indices -> {
       String country = (String) indices.peek();
-      return traceWarningsBundler.getHoursSinceEpochWithDistributableWarnings(country);
+      return traceWarningsBundler.getHourIntervalForDistributableWarnings(country);
     }, Integer::valueOf);
 
     this.traceWarningsBundler = traceWarningsBundler;

@@ -64,11 +64,18 @@ public class TraceTimeIntervalWarningsPackageBundler {
     createTraceWarningsDistributionMap(traceTimeIntervalWarnings);
   }
 
-  public Set<Integer> getHoursSinceEpochWithDistributableWarnings(String country) {
+  public Set<Integer> getHourIntervalForDistributableWarnings(String country) {
     if (isCountrySupported(country)) {
-      return this.distributableTraceTimeIntervalWarnings.keySet();
+       Set<Integer> keyset = this.distributableTraceTimeIntervalWarnings.keySet();
+       if(keyset.size() == 1) {
+         return keyset;
+       }
+       if(!keyset.isEmpty()) {
+         List<Integer> sortedHours = keyset.stream().sorted().collect(Collectors.toList());
+         return Set.of(sortedHours.get(0), sortedHours.get(sortedHours.size() - 1));
+       }
     }
-    return emptySet();
+    return Collections.emptySet();
   }
 
   public List<TraceTimeIntervalWarning> getTraceTimeWarningsForHour(Integer currentHourSinceEpoch) {
