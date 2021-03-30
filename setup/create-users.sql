@@ -11,6 +11,3 @@ CREATE USER "<change me>" WITH INHERIT IN ROLE cwa_federation_upload ENCRYPTED P
 
 /* --------------- Swiss Federation Gateway --------------- */
 CREATE USER "<change me>" WITH INHERIT IN ROLE cwa_chgs_upload ENCRYPTED PASSWORD '<change me>';
-
-/* --------------- Event Registration --------------- */
-CREATE USER "<change me>" WITH INHERIT IN ROLE cwa_event_registration ENCRYPTED PASSWORD '<change me>';
