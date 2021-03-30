@@ -1,4 +1,4 @@
-package app.coronawarn.server.services.submission.checkins;
+package app.coronawarn.server.common.persistence.utils;
 
 import static org.junit.jupiter.api.Assertions.*;
 import java.util.stream.Stream;
@@ -23,9 +23,23 @@ class CheckinsDateSpecificationTest {
         () -> CheckinsDateSpecification.TEN_MINUTE_INTERVAL_DERIVATION.apply(-1L));
   }
 
+  @ParameterizedTest
+  @MethodSource("hourUnixTimestampsAndExpectations")
+  void should_derive_1_hour_minute_intervals_for_unix_timestamps_correctly(long timestamp,
+      int expectation) {
+    assertEquals(CheckinsDateSpecification.HOUR_SINCE_EPOCH_DERIVATION.apply(timestamp),
+        expectation);
+  }
+
   private static Stream<Arguments> unixTimestampsAndExpectations() {
     return Stream.of(
         Arguments.of(1614675431, 2691125),
         Arguments.of(1614675614, 2691126));
+  }
+
+  private static Stream<Arguments> hourUnixTimestampsAndExpectations() {
+    return Stream.of(
+        Arguments.of(1614675431, 448520),
+        Arguments.of(1614675614, 448521));
   }
 }

@@ -3,9 +3,12 @@ package app.coronawarn.server.common.persistence.service;
 import app.coronawarn.server.common.persistence.domain.TraceTimeIntervalWarning;
 import app.coronawarn.server.common.persistence.repository.TraceTimeIntervalWarningRepository;
 import app.coronawarn.server.common.protocols.internal.pt.CheckIn;
+import java.util.Collection;
 import java.util.List;
+import java.util.stream.Collectors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.data.util.StreamUtils;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -50,5 +53,10 @@ public class TraceTimeIntervalWarningService {
     }
 
     return numberOfInsertedTraceWarnings;
+  }
+
+  public Collection<TraceTimeIntervalWarning> getTraceTimeIntervalWarning() {
+    return StreamUtils.createStreamFromIterator(
+          traceTimeIntervalWarningRepo.findAll().iterator()).collect(Collectors.toList());
   }
 }

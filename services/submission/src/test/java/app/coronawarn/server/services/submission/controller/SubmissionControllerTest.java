@@ -1,6 +1,6 @@
 package app.coronawarn.server.services.submission.controller;
 
-import static app.coronawarn.server.services.submission.checkins.CheckinsDateSpecification.TEN_MINUTE_INTERVAL_DERIVATION;
+import static app.coronawarn.server.common.persistence.utils.CheckinsDateSpecification.TEN_MINUTE_INTERVAL_DERIVATION;
 import static app.coronawarn.server.services.submission.controller.SubmissionPayloadMockData.*;
 import static java.time.ZoneOffset.UTC;
 import static org.apache.commons.lang3.StringUtils.defaultIfBlank;
