@@ -28,10 +28,7 @@ import app.coronawarn.server.common.protocols.external.exposurenotification.Repo
 import app.coronawarn.server.common.protocols.external.exposurenotification.TemporaryExposureKey;
 import app.coronawarn.server.common.protocols.internal.SubmissionPayload;
 import app.coronawarn.server.common.protocols.internal.pt.CheckIn;
-import app.coronawarn.server.common.protocols.internal.pt.SignedTraceLocation;
-import app.coronawarn.server.services.submission.config.CryptoProvider;
 import app.coronawarn.server.services.submission.config.SubmissionServiceConfig;
-import app.coronawarn.server.services.submission.helpers.CryptoSignUtils;
 import app.coronawarn.server.services.submission.monitoring.SubmissionMonitor;
 import app.coronawarn.server.services.submission.verification.TanVerifier;
 import com.google.protobuf.ByteString;
@@ -86,9 +83,6 @@ class SubmissionControllerTest {
 
   @Autowired
   private SubmissionServiceConfig config;
-
-  @Autowired
-  private CryptoProvider cryptoProvider;
 
   @Autowired
   private TraceTimeIntervalWarningRepository traceTimeIntervalWarningRepository;
@@ -395,27 +389,17 @@ class SubmissionControllerTest {
     long eventCheckinInThePast =
         LocalDateTime.ofInstant(Instant.now(), UTC).minusDays(10).toEpochSecond(UTC);
 
-    SignedTraceLocation traceLocation1 =
-        SignedTraceLocation.newBuilder()
-        .setSignature(ByteString.copyFrom(CryptoSignUtils.sign("hash1".getBytes(), cryptoProvider)))
-        .setLocation(ByteString.copyFromUtf8("hash1")).build();
-
-    SignedTraceLocation traceLocation2 =
-        SignedTraceLocation.newBuilder()
-        .setSignature(ByteString.copyFrom(CryptoSignUtils.sign("hash2".getBytes(), cryptoProvider)))
-        .setLocation(ByteString.copyFromUtf8("hash2")).build();
-
     List<CheckIn> invalidCheckinData = List.of(
         CheckIn.newBuilder().setTransmissionRiskLevel(3)
             .setStartIntervalNumber(TEN_MINUTE_INTERVAL_DERIVATION.apply(eventCheckinInThePast))
             .setEndIntervalNumber(TEN_MINUTE_INTERVAL_DERIVATION.apply(eventCheckinInThePast) + 10)
-            .setLocationId(traceLocation1.toByteString())
+            .setLocationId(ByteString.copyFromUtf8("uuid1"))
             .build(),
         CheckIn.newBuilder().setTransmissionRiskLevel(3)
             .setStartIntervalNumber(
                 TEN_MINUTE_INTERVAL_DERIVATION.apply(eventCheckinInThePast) + 11)
             .setEndIntervalNumber(TEN_MINUTE_INTERVAL_DERIVATION.apply(eventCheckinInThePast) + 22)
-            .setLocationId(traceLocation2.toByteString())
+            .setLocationId(ByteString.copyFromUtf8("uuid2"))
             .build());
 
     ResponseEntity<Void> actResponse =
@@ -429,28 +413,18 @@ class SubmissionControllerTest {
     long eventCheckinInThePast =
         LocalDateTime.ofInstant(Instant.now(), UTC).minusDays(10).toEpochSecond(UTC);
 
-    SignedTraceLocation traceLocation1 =
-        SignedTraceLocation.newBuilder()
-        .setSignature(ByteString.copyFrom(CryptoSignUtils.sign("hash1".getBytes(), cryptoProvider)))
-        .setLocation(ByteString.copyFromUtf8("hash1")).build();
-
-    SignedTraceLocation traceLocation2 =
-        SignedTraceLocation.newBuilder()
-        .setSignature(ByteString.copyFrom(CryptoSignUtils.sign("hash2".getBytes(), cryptoProvider)))
-        .setLocation(ByteString.copyFromUtf8("hash2")).build();
-
     //both trls below are mapped to zero in the persistence/trl-value-mapping.yaml
     List<CheckIn> invalidCheckinData = List.of(
         CheckIn.newBuilder().setTransmissionRiskLevel(1)
             .setStartIntervalNumber(TEN_MINUTE_INTERVAL_DERIVATION.apply(eventCheckinInThePast))
             .setEndIntervalNumber(TEN_MINUTE_INTERVAL_DERIVATION.apply(eventCheckinInThePast) + 10)
-            .setLocationId(traceLocation1.toByteString())
+            .setLocationId(ByteString.copyFromUtf8("hash1"))
             .build(),
         CheckIn.newBuilder().setTransmissionRiskLevel(2)
             .setStartIntervalNumber(
                 TEN_MINUTE_INTERVAL_DERIVATION.apply(eventCheckinInThePast) + 11)
             .setEndIntervalNumber(TEN_MINUTE_INTERVAL_DERIVATION.apply(eventCheckinInThePast) + 22)
-            .setLocationId(traceLocation2.toByteString())
+            .setLocationId(ByteString.copyFromUtf8("hash2"))
             .build());
 
     ResponseEntity<Void> actResponse =
@@ -468,17 +442,11 @@ class SubmissionControllerTest {
     long eventCheckinInThePast =
         LocalDateTime.ofInstant(thisInstant, UTC).minusDays(daysInThePast +1).toEpochSecond(UTC);
 
-    SignedTraceLocation traceLocation1 =
-        SignedTraceLocation.newBuilder()
-        .setSignature(ByteString.copyFrom(CryptoSignUtils.sign("hash1".getBytes(), cryptoProvider)))
-        .setLocation(ByteString.copyFromUtf8("hash1")).build();
-
-
     List<CheckIn> checkins = List.of(CheckIn.newBuilder()
         .setStartIntervalNumber(TEN_MINUTE_INTERVAL_DERIVATION.apply(eventCheckinInThePast))
         .setEndIntervalNumber(TEN_MINUTE_INTERVAL_DERIVATION.apply(eventCheckoutInThePast))
         .setTransmissionRiskLevel(1)
-        .setLocationId(traceLocation1.toByteString())
+        .setLocationId(ByteString.copyFromUtf8("hash1"))
         .build());
 
     ResponseEntity<Void> actResponse =
@@ -495,16 +463,11 @@ class SubmissionControllerTest {
     long eventCheckoutInTheFuture =
         LocalDateTime.ofInstant(thisInstant, UTC).plusMinutes(20).toEpochSecond(UTC);
 
-    SignedTraceLocation traceLocation1 =
-        SignedTraceLocation.newBuilder()
-        .setSignature(ByteString.copyFrom(CryptoSignUtils.sign("hash1".getBytes(), cryptoProvider)))
-        .setLocation(ByteString.copyFromUtf8("hash1")).build();
-
     List<CheckIn> checkins = List.of(CheckIn.newBuilder()
         .setStartIntervalNumber(TEN_MINUTE_INTERVAL_DERIVATION.apply(eventCheckinInTheFuture))
         .setEndIntervalNumber(TEN_MINUTE_INTERVAL_DERIVATION.apply(eventCheckoutInTheFuture))
         .setTransmissionRiskLevel(3)
-        .setLocationId(traceLocation1.toByteString())
+        .setLocationId(ByteString.copyFromUtf8("hash1"))
         .build());
 
     ResponseEntity<Void> actResponse =
@@ -636,5 +599,4 @@ class SubmissionControllerTest {
             .collect(Collectors.toList());
     assertEquals(storedTimeIntervalWarnings.size(), numberOfExpectedWarningsSaved);
   }
-
 }

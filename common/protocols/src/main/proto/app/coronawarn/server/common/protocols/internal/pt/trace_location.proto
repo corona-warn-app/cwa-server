@@ -30,11 +30,6 @@ message CrowdNotifierData {
   bytes cryptographicSeed = 3;
 }
 
-message SignedTraceLocation {
-  bytes location = 1 [deprecated = true];
-  bytes signature = 2 [deprecated = true];
-}
-
 enum TraceLocationType {
   LOCATION_TYPE_UNSPECIFIED = 0;
   LOCATION_TYPE_PERMANENT_OTHER = 1;
