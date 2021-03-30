@@ -21,7 +21,7 @@ public class TraceTimeWarningsDirectory extends DirectoryOnDisk {
    */
   public TraceTimeWarningsDirectory(TraceTimeIntervalWarningsPackageBundler traceWarningsBundler,
       CryptoProvider cryptoProvider, DistributionServiceConfig distributionServiceConfig) {
-    super("twp");
+    super(distributionServiceConfig.getApi().getTraceWarningsPath());
     this.traceWarningsBundler = traceWarningsBundler;
     this.cryptoProvider = cryptoProvider;
     this.distributionServiceConfig = distributionServiceConfig;

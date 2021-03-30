@@ -1,7 +1,5 @@
 package app.coronawarn.server.services.distribution.assembly.tracewarnings.structure.directory;
 
-import java.util.List;
-import java.util.Optional;
 import app.coronawarn.server.common.persistence.domain.TraceTimeIntervalWarning;
 import app.coronawarn.server.services.distribution.assembly.component.CryptoProvider;
 import app.coronawarn.server.services.distribution.assembly.diagnosiskeys.structure.archive.decorator.signing.DiagnosisKeySigningDecorator;
@@ -15,6 +13,8 @@ import app.coronawarn.server.services.distribution.assembly.structure.util.Immut
 import app.coronawarn.server.services.distribution.assembly.tracewarnings.TraceTimeIntervalWarningsPackageBundler;
 import app.coronawarn.server.services.distribution.assembly.tracewarnings.structure.file.TraceTimeIntervalWarningExportFile;
 import app.coronawarn.server.services.distribution.config.DistributionServiceConfig;
+import java.util.List;
+import java.util.Optional;
 
 public class TraceTimeWarningsHourDirectory extends IndexDirectoryOnDisk<Integer> {
 
@@ -24,7 +24,7 @@ public class TraceTimeWarningsHourDirectory extends IndexDirectoryOnDisk<Integer
 
   public TraceTimeWarningsHourDirectory(TraceTimeIntervalWarningsPackageBundler traceWarningsBundler,
       CryptoProvider cryptoProvider, DistributionServiceConfig distributionServiceConfig) {
-    super("hour", indices -> {
+    super(distributionServiceConfig.getApi().getHourPath(), indices -> {
       String country = (String) indices.peek();
       return traceWarningsBundler.getHoursSinceEpochWithDistributableWarnings(country);
     }, Integer::valueOf);
@@ -51,7 +51,7 @@ public class TraceTimeWarningsHourDirectory extends IndexDirectoryOnDisk<Integer
           new ArchiveOnDisk(distributionServiceConfig.getOutputFileName());
       hourArchive.addWritable(temporaryExposureKeyExportFile);
 
-     return Optional.of(decorateDiagnosisKeyArchive(hourArchive));
+      return Optional.of(decorateDiagnosisKeyArchive(hourArchive));
     });
     super.prepare(indices);
   }
