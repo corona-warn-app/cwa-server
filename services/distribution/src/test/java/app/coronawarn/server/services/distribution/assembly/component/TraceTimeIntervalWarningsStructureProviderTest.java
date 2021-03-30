@@ -103,6 +103,7 @@ public class TraceTimeIntervalWarningsStructureProviderTest {
   void testPublishingNewHourPackages() throws IOException {
     List<TraceTimeIntervalWarning> traceWarnings = buildTraceTimeIntervalWarning(5, 10, 30);
     traceWarnings.addAll(buildTraceTimeIntervalWarning(70, 100, 30));
+    traceWarnings.addAll(buildTraceTimeIntervalWarning(90, 160, 30));
     when(traceTimeWarningService.getTraceTimeIntervalWarning()).thenReturn(traceWarnings);
     Directory<WritableOnDisk> outputDirectory = this.outputDirectoryProvider.getDirectory();
     TraceTimeIntervalWarningsStructureProvider distributionStructureProvider =
@@ -114,6 +115,7 @@ public class TraceTimeIntervalWarningsStructureProviderTest {
     outputDirectory.write();
 
     Set<String> actualFiles = getFilePaths(outputFolder.getRoot(), outputFolder.getRoot().getAbsolutePath());
+    //TODO : Write assertions
   }
 
   /**
