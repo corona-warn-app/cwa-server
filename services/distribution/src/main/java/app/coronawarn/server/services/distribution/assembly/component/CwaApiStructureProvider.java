@@ -7,9 +7,10 @@ import app.coronawarn.server.services.distribution.assembly.structure.directory.
 import app.coronawarn.server.services.distribution.assembly.structure.directory.IndexDirectoryOnDisk;
 import app.coronawarn.server.services.distribution.assembly.structure.directory.decorator.indexing.IndexingDecoratorOnDisk;
 import app.coronawarn.server.services.distribution.config.DistributionServiceConfig;
+import org.springframework.stereotype.Component;
+
 import java.util.Optional;
 import java.util.Set;
-import org.springframework.stereotype.Component;
 
 /**
  * Assembles the content underneath the {@code /version} path of the CWA API.
@@ -32,12 +33,14 @@ public class CwaApiStructureProvider {
       AppConfigurationV2StructureProvider appConfigurationV2StructureProvider,
       StatisticsStructureProvider statisticsStructureProvider,
       DiagnosisKeysStructureProvider diagnosisKeysStructureProvider,
-      DistributionServiceConfig distributionServiceConfig) {
+      DistributionServiceConfig distributionServiceConfig,
+      TraceTimeIntervalWarningsStructureProvider traceWarningsStructureProvider) {
     this.appConfigurationStructureProvider = appConfigurationStructureProvider;
     this.appConfigurationV2StructureProvider = appConfigurationV2StructureProvider;
     this.statisticsStructureProvider = statisticsStructureProvider;
     this.diagnosisKeysStructureProvider = diagnosisKeysStructureProvider;
     this.distributionServiceConfig = distributionServiceConfig;
+    this.traceWarningsStructureProvider = traceWarningsStructureProvider;
   }
 
   /**
