@@ -17,6 +17,9 @@ public class TraceTimeWarningsCountryDirectory extends IndexDirectoryOnDisk<Stri
   private CryptoProvider cryptoProvider;
   private DistributionServiceConfig distributionServiceConfig;
 
+  /**
+   * Creates an instance.
+   */
   public TraceTimeWarningsCountryDirectory(TraceTimeIntervalWarningsPackageBundler traceWarningsBundler,
       CryptoProvider cryptoProvider, DistributionServiceConfig distributionServiceConfig) {
     super(distributionServiceConfig.getApi().getCountryPath(),

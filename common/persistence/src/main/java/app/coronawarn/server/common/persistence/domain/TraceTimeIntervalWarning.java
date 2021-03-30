@@ -11,8 +11,10 @@ public class TraceTimeIntervalWarning {
   private final Integer startIntervalNumber;
   private final Integer period;
   private final Integer transmissionRiskLevel;
+
   @ValidSubmissionTimestamp
   private final long submissionTimestamp;
+
   /**
    * Constructor for a TraceTimeIntervalWarning.
    *
@@ -20,9 +22,11 @@ public class TraceTimeIntervalWarning {
    * @param startIntervalNumber   the starting interval.
    * @param period                the period interval between endIntervalNumber - startIntervalNumber.
    * @param transmissionRiskLevel the transmission risk level.
+   * @param submissionTimestamp   The time when the trace warning was stored on the server in the format of
+   *                              hours since epoch.
    */
-  public TraceTimeIntervalWarning(byte[] traceLocationGuid, Integer startIntervalNumber, Integer period,
-      Integer transmissionRiskLevel, long submissionTimestamp) {
+  public TraceTimeIntervalWarning(byte[] traceLocationGuid, Integer startIntervalNumber,
+      Integer period, Integer transmissionRiskLevel, long submissionTimestamp) {
     this.traceLocationGuid = traceLocationGuid;
     this.startIntervalNumber = startIntervalNumber;
     this.period = period;

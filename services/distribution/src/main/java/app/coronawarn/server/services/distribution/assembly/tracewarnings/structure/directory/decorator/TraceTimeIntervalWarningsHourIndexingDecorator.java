@@ -21,6 +21,9 @@ public class TraceTimeIntervalWarningsHourIndexingDecorator
   private final DistributionServiceConfig distributionServiceConfig;
   private final TraceTimeIntervalWarningsPackageBundler traceWarningsBundler;
 
+  /**
+   * Creates an instance.
+   */
   public TraceTimeIntervalWarningsHourIndexingDecorator(
       TraceTimeWarningsHourDirectory hourDirectory,
       DistributionServiceConfig distributionServiceConfig,

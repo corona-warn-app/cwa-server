@@ -14,13 +14,13 @@ import java.util.stream.Collectors;
 
 public class TraceTimeIntervalWarningExportFile extends FileOnDiskWithChecksum {
 
-
-  private final Set<app.coronawarn.server.common.protocols.internal.pt.TraceTimeIntervalWarning> traceTimeIntervalWarnings;
+  private final Set<app.coronawarn.server.common
+                       .protocols.internal.pt.TraceTimeIntervalWarning> traceTimeIntervalWarnings;
   private final String region;
   private final int intervalNumber;
   private final DistributionServiceConfig distributionServiceConfig;
 
-  public TraceTimeIntervalWarningExportFile(
+  TraceTimeIntervalWarningExportFile(
       Set<app.coronawarn.server.common.protocols.internal.pt.TraceTimeIntervalWarning> traceTimeIntervalWarnings,
       String region, int intervalNumber, DistributionServiceConfig distributionServiceConfig) {
     super(distributionServiceConfig.getTekExport().getFileName(), new byte[0]);
@@ -37,6 +37,9 @@ public class TraceTimeIntervalWarningExportFile extends FileOnDiskWithChecksum {
     super.prepare(indices);
   }
 
+  /**
+   * Creates a binary export file by converting the given warnings to their proto structures.
+   */
   public static TraceTimeIntervalWarningExportFile fromTraceTimeIntervalWarnings(
       Collection<TraceTimeIntervalWarning> traceTimeIntervalWarnings, String country,
       int intervalNumber, DistributionServiceConfig distributionServiceConfig) {
@@ -44,7 +47,6 @@ public class TraceTimeIntervalWarningExportFile extends FileOnDiskWithChecksum {
         getTraceIntervalWarningsFromTraceIntervalWarnings(traceTimeIntervalWarnings), country,
         intervalNumber, distributionServiceConfig);
   }
-
 
   private byte[] createTraceWarningExportBytesWithHeader() {
     byte[] headerBytes = this.getHeaderBytes();
@@ -64,7 +66,8 @@ public class TraceTimeIntervalWarningExportFile extends FileOnDiskWithChecksum {
         .toByteArray();
   }
 
-  private static Set<app.coronawarn.server.common.protocols.internal.pt.TraceTimeIntervalWarning> getTraceIntervalWarningsFromTraceIntervalWarnings(
+  private static Set<app.coronawarn.server.common.protocols.internal.pt.TraceTimeIntervalWarning>
+      getTraceIntervalWarningsFromTraceIntervalWarnings(
       Collection<TraceTimeIntervalWarning> traceTimeIntervalWarnings) {
 
     return traceTimeIntervalWarnings.stream().map(

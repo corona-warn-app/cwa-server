@@ -137,9 +137,5 @@ public class TraceTimeIntervalWarningsStructureProviderTest {
     outputDirectoryProvider.clear();
     outputDirectory.prepare(new ImmutableStack<>());
     outputDirectory.write();
-
-    // check resulting package
-    // check that it contains an empty file for the current interval
-    Assertions.assertEquals(outputDirectory, "TODO");
   }
 }

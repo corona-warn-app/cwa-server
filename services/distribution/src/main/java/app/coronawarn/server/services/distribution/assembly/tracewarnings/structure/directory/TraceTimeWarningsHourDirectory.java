@@ -22,6 +22,9 @@ public class TraceTimeWarningsHourDirectory extends IndexDirectoryOnDisk<Integer
   private CryptoProvider cryptoProvider;
   private DistributionServiceConfig distributionServiceConfig;
 
+  /**
+   * Creates an instance.
+   */
   public TraceTimeWarningsHourDirectory(TraceTimeIntervalWarningsPackageBundler traceWarningsBundler,
       CryptoProvider cryptoProvider, DistributionServiceConfig distributionServiceConfig) {
     super(distributionServiceConfig.getApi().getHourPath(), indices -> {

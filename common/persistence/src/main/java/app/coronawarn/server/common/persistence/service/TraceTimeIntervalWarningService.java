@@ -62,6 +62,9 @@ public class TraceTimeIntervalWarningService {
     return numberOfInsertedTraceWarnings;
   }
 
+  /**
+   * Returns all available {@link TraceTimeIntervalWarning}s sorted by their submissionTimestamp.
+   */
   public Collection<TraceTimeIntervalWarning> getTraceTimeIntervalWarning() {
     return StreamUtils
         .createStreamFromIterator(traceTimeIntervalWarningRepo

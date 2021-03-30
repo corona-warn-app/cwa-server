@@ -32,15 +32,14 @@ public class TraceTimeIntervalWarningsPackageBundler {
   private LocalDateTime distributionTime;
 
   /**
-   * Data will be distributed for X days back starting from distribution time, where X is
-   * the variable below.
+   * Data will be distributed for X days back starting from distribution time, where X is the
+   * variable below.
    */
   private Integer retentionDays;
 
-
   /**
-   * A map containing checkin warnings, mapped by the 10-minute interval since epoch. This is the basis on which they
-   * will be distributed to the CDN.
+   * A map containing checkin warnings, mapped by the 10-minute interval since epoch. This is the
+   * basis on which they will be distributed to the CDN.
    *
    * @see CheckinsDateSpecification#TEN_MINUTE_INTERVAL_DERIVATION
    */
@@ -60,12 +59,12 @@ public class TraceTimeIntervalWarningsPackageBundler {
   }
 
   /**
-   * Sets the {@link TraceTimeIntervalWarning TraceTimeIntervalWarnings} contained by this {@link
-   * TraceTimeIntervalWarningsPackageBundler} and the time at which the distribution runs.
+   * Sets the {@link TraceTimeIntervalWarning TraceTimeIntervalWarnings} contained by this
+   * {@link TraceTimeIntervalWarningsPackageBundler} and the time at which the distribution runs.
    *
-   * @param traceTimeIntervalWarnings The {@link TraceTimeIntervalWarning traceTimeIntervalWarnings} contained by this
-   *                                  {@link TraceTimeIntervalWarningsPackageBundler}.
-   * @param distributionTime          The {@link LocalDateTime} at which the distribution runs.
+   * @param traceTimeIntervalWarnings The {@link TraceTimeIntervalWarning traceTimeIntervalWarnings}
+   *        contained by this {@link TraceTimeIntervalWarningsPackageBundler}.
+   * @param distributionTime The {@link LocalDateTime} at which the distribution runs.
    */
   public void setTraceTimeIntervalWarnings(
       Collection<TraceTimeIntervalWarning> traceTimeIntervalWarnings,
@@ -74,16 +73,22 @@ public class TraceTimeIntervalWarningsPackageBundler {
     createTraceWarningsDistributionMap(traceTimeIntervalWarnings);
   }
 
+  /**
+   * Returns a set containing the possibile elements:
+   * <li>one element if there is only one hour of {@link TraceTimeIntervalWarning} data.
+   * <li>two elements representing the oldest and newest hours since epoch where there is
+   * {@link TraceTimeIntervalWarning} data.
+   */
   public Set<Integer> getHourIntervalForDistributableWarnings(String country) {
     if (isCountrySupported(country)) {
-       Set<Integer> keyset = this.distributableTraceTimeIntervalWarnings.keySet();
-       if(keyset.size() == 1) {
-         return keyset;
-       }
-       if(!keyset.isEmpty()) {
-         List<Integer> sortedHours = keyset.stream().sorted().collect(Collectors.toList());
-         return Set.of(sortedHours.get(0), sortedHours.get(sortedHours.size() - 1));
-       }
+      Set<Integer> keyset = this.distributableTraceTimeIntervalWarnings.keySet();
+      if (keyset.size() == 1) {
+        return keyset;
+      }
+      if (!keyset.isEmpty()) {
+        List<Integer> sortedHours = keyset.stream().sorted().collect(Collectors.toList());
+        return Set.of(sortedHours.get(0), sortedHours.get(sortedHours.size() - 1));
+      }
     }
     return Collections.emptySet();
   }
@@ -94,7 +99,8 @@ public class TraceTimeIntervalWarningsPackageBundler {
 
   private boolean isCountrySupported(String country) {
     if (!supportedCountries.contains(country)) {
-      logger.warn("The country {} received is not included in the list of supported countries", country);
+      logger.warn("The country {} received is not included in the list of supported countries",
+          country);
       return false;
     }
     return true;
@@ -103,16 +109,16 @@ public class TraceTimeIntervalWarningsPackageBundler {
   private void createTraceWarningsDistributionMap(
       Collection<TraceTimeIntervalWarning> traceTimeIntervalWarnings) {
     distributableTraceTimeIntervalWarnings.putAll(
-        traceTimeIntervalWarnings.stream()
-        .filter(this::filterByDistributionTime)
-        .collect(Collectors.groupingBy(warning -> (int)warning.getSubmissionTimestamp(), Collectors.toList())));
+        traceTimeIntervalWarnings.stream().filter(this::filterByDistributionTime).collect(Collectors
+            .groupingBy(warning -> (int) warning.getSubmissionTimestamp(), Collectors.toList())));
   }
 
   private boolean filterByDistributionTime(TraceTimeIntervalWarning warning) {
-     long oldestDateForCheckins = distributionTime.minusDays(retentionDays).toEpochSecond(ZoneOffset.UTC);
-     long latestDateForCheckins = distributionTime.toEpochSecond(ZoneOffset.UTC);
-     long warningSubmissionTime = warning.getSubmissionTimestamp();
-     return warningSubmissionTime > HOUR_SINCE_EPOCH_DERIVATION.apply(oldestDateForCheckins) &&
-         warningSubmissionTime <= HOUR_SINCE_EPOCH_DERIVATION.apply(latestDateForCheckins);
+    long oldestDateForCheckins =
+        distributionTime.minusDays(retentionDays).toEpochSecond(ZoneOffset.UTC);
+    long latestDateForCheckins = distributionTime.toEpochSecond(ZoneOffset.UTC);
+    long warningSubmissionTime = warning.getSubmissionTimestamp();
+    return warningSubmissionTime > HOUR_SINCE_EPOCH_DERIVATION.apply(oldestDateForCheckins)
+        && warningSubmissionTime <= HOUR_SINCE_EPOCH_DERIVATION.apply(latestDateForCheckins);
   }
 }
