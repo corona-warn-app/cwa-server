@@ -33,7 +33,7 @@ public class TraceTimeIntervalWarningService {
 
     for (CheckIn checkin : checkins) {
       boolean traceWarningInsertedSuccessfully = traceTimeIntervalWarningRepo.saveDoNothingOnConflict(
-          checkin.getSignedLocation().getLocation().toByteArray(),
+          checkin.getLocationId().toByteArray(),
           checkin.getStartIntervalNumber(), checkin.getEndIntervalNumber(),
           checkin.getTransmissionRiskLevel());
 

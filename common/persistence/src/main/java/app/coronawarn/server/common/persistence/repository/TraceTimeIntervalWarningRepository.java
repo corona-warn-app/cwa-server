@@ -13,11 +13,11 @@ public interface TraceTimeIntervalWarningRepository
     extends CrudRepository<TraceTimeIntervalWarning, Long> {
 
   @Modifying
-  @Query("INSERT INTO trace_time_interval_warning (trace_location_guid, start_interval_number,"
+  @Query("INSERT INTO trace_time_interval_warning (trace_location_id, start_interval_number,"
       + " end_interval_number, transmission_risk_level)"
-      + " VALUES (:trace_location_guid, :start_interval_number, :end_interval_number, "
+      + " VALUES (:trace_location_id, :start_interval_number, :end_interval_number, "
       + ":transmission_risk_level) ON CONFLICT DO NOTHING")
-  boolean saveDoNothingOnConflict(@Param("trace_location_guid") byte[] traceLocationGuid,
+  boolean saveDoNothingOnConflict(@Param("trace_location_id") byte[] traceLocationGuid,
       @Param("start_interval_number") Integer startIntervalNumber,
       @Param("end_interval_number") Integer endIntervalNumber,
       @Param("transmission_risk_level") Integer transmissionRiskLevel);

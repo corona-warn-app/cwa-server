@@ -18,17 +18,14 @@ import org.springframework.stereotype.Component;
 public class EventCheckinDataFilter {
 
   private final SubmissionServiceConfig submissionServiceConfig;
-  private final TraceLocationSignatureVerifier traceLocationSignatureVerifier;
   private final PreDistributionTrlValueMappingProvider trlValueMappingProvider;
 
   /**
    * Creates am instance.
    */
   public EventCheckinDataFilter(SubmissionServiceConfig submissionServiceConfig,
-      TraceLocationSignatureVerifier traceLocationSignatureVerifier,
       PreDistributionTrlValueMappingProvider trlValueMappingProvider) {
     this.submissionServiceConfig = submissionServiceConfig;
-    this.traceLocationSignatureVerifier = traceLocationSignatureVerifier;
     this.trlValueMappingProvider = trlValueMappingProvider;
   }
 
@@ -41,7 +38,6 @@ public class EventCheckinDataFilter {
    */
   public List<CheckIn> filter(List<CheckIn> checkins) {
     return checkins.stream()
-        .filter(this::filterByValidSignature)
         .filter(this::filterOutZeroTransmissionRiskLevel)
         .filter(this::filterOutOldCheckins)
         .filter(this::filterOutFutureCheckins).collect(Collectors.toList());
@@ -63,10 +59,6 @@ public class EventCheckinDataFilter {
     int threshold = TEN_MINUTE_INTERVAL_DERIVATION
         .apply(LocalDateTime.ofInstant(Instant.now(), UTC).toEpochSecond(UTC));
     return threshold > checkin.getStartIntervalNumber();
-  }
-
-  boolean filterByValidSignature(CheckIn checkin) {
-    return traceLocationSignatureVerifier.verify(checkin.getSignedLocation());
   }
 
   private boolean mapsTo(Integer valueToCheck, Double target) {
