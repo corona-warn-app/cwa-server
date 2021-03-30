@@ -1,13 +1,15 @@
 package app.coronawarn.server.services.distribution.assembly.tracewarnings;
 
 
-import static java.util.Collections.emptySet;
+import static app.coronawarn.server.common.persistence.utils.CheckinsDateSpecification.*;
 
 import app.coronawarn.server.common.persistence.domain.TraceTimeIntervalWarning;
 import app.coronawarn.server.common.persistence.utils.CheckinsDateSpecification;
 import app.coronawarn.server.services.distribution.config.DistributionServiceConfig;
 import java.time.LocalDateTime;
+import java.time.ZoneOffset;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -30,6 +32,13 @@ public class TraceTimeIntervalWarningsPackageBundler {
   private LocalDateTime distributionTime;
 
   /**
+   * Data will be distributed for X days back starting from distribution time, where X is
+   * the variable below.
+   */
+  private Integer retentionDays;
+
+
+  /**
    * A map containing checkin warnings, mapped by the 10-minute interval since epoch. This is the basis on which they
    * will be distributed to the CDN.
    *
@@ -47,6 +56,7 @@ public class TraceTimeIntervalWarningsPackageBundler {
   public TraceTimeIntervalWarningsPackageBundler(
       DistributionServiceConfig distributionServiceConfig) {
     this.supportedCountries = List.of(distributionServiceConfig.getSupportedCountries());
+    retentionDays = distributionServiceConfig.getRetentionDays();
   }
 
   /**
@@ -92,12 +102,17 @@ public class TraceTimeIntervalWarningsPackageBundler {
 
   private void createTraceWarningsDistributionMap(
       Collection<TraceTimeIntervalWarning> traceTimeIntervalWarnings) {
-    distributableTraceTimeIntervalWarnings.putAll(traceTimeIntervalWarnings.stream()
-        .collect(Collectors.groupingBy(this::extractHourInterval, Collectors.toList())));
+    distributableTraceTimeIntervalWarnings.putAll(
+        traceTimeIntervalWarnings.stream()
+        .filter(this::filterByDistributionTime)
+        .collect(Collectors.groupingBy(warning -> (int)warning.getSubmissionTimestamp(), Collectors.toList())));
   }
 
-  private Integer extractHourInterval(TraceTimeIntervalWarning warning) {
-    return CheckinsDateSpecification.HOUR_SINCE_EPOCH_DERIVATION
-        .apply(warning.getSubmissionTimestamp());
+  private boolean filterByDistributionTime(TraceTimeIntervalWarning warning) {
+     long oldestDateForCheckins = distributionTime.minusDays(retentionDays).toEpochSecond(ZoneOffset.UTC);
+     long latestDateForCheckins = distributionTime.toEpochSecond(ZoneOffset.UTC);
+     long warningSubmissionTime = warning.getSubmissionTimestamp();
+     return warningSubmissionTime > HOUR_SINCE_EPOCH_DERIVATION.apply(oldestDateForCheckins) &&
+         warningSubmissionTime <= HOUR_SINCE_EPOCH_DERIVATION.apply(latestDateForCheckins);
   }
 }
