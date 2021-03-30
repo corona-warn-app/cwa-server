@@ -6,7 +6,7 @@ public class TraceTimeIntervalWarning {
 
   @Id
   private Long id;
-  private final byte[] traceLocationGuid;
+  private final byte[] traceLocationId;
   private final Integer startIntervalNumber;
   private final Integer endIntervalNumber;
   private final Integer transmissionRiskLevel;
@@ -14,14 +14,14 @@ public class TraceTimeIntervalWarning {
   /**
    * Constructor for a TraceTimeIntervalWarning.
    *
-   * @param traceLocationGuid     the id/guid of the corresponding TraceLocation.
+   * @param traceLocationId     the id/guid of the corresponding TraceLocation.
    * @param startIntervalNumber   the starting interval.
    * @param endIntervalNumber     the ending inteval.
    * @param transmissionRiskLevel the transmission risk level.
    */
-  public TraceTimeIntervalWarning(byte[] traceLocationGuid, Integer startIntervalNumber, Integer endIntervalNumber,
+  public TraceTimeIntervalWarning(byte[] traceLocationId, Integer startIntervalNumber, Integer endIntervalNumber,
       Integer transmissionRiskLevel) {
-    this.traceLocationGuid = traceLocationGuid;
+    this.traceLocationId = traceLocationId;
     this.startIntervalNumber = startIntervalNumber;
     this.endIntervalNumber = endIntervalNumber;
     this.transmissionRiskLevel = transmissionRiskLevel;
@@ -31,8 +31,8 @@ public class TraceTimeIntervalWarning {
     return id;
   }
 
-  public byte[] getTraceLocationGuid() {
-    return traceLocationGuid;
+  public byte[] getTraceLocationId() {
+    return traceLocationId;
   }
 
   public Integer getStartIntervalNumber() {

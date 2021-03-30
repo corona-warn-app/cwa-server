@@ -134,22 +134,6 @@ public class SubmissionServiceConfig {
     this.payload.checkins.setAcceptedEventDateThresholdDays(acceptedEventDateThresholdDays);
   }
 
-  public String getSignatureVerificationKey() {
-    return payload.checkins.getSignatureVerificationKey();
-  }
-
-  public void setSignatureVerificationKey(String signatureVerificationKey) {
-    this.payload.checkins.setSignatureVerificationKey(signatureVerificationKey);
-  }
-
-  public String getSignatureAlgorithm() {
-    return payload.checkins.getSignatureAlgorithm();
-  }
-
-  public void setSignatureAlgorithm(String signatureAlgorithm) {
-    this.payload.checkins.setSignatureAlgorithm(signatureAlgorithm);
-  }
-
   public void setPayload(Payload payload) {
     this.payload = payload;
   }
@@ -208,10 +192,6 @@ public class SubmissionServiceConfig {
 
       @NotNull
       private Integer acceptedEventDateThresholdDays;
-      @NotEmpty
-      private String signatureVerificationKey;
-      @NotEmpty
-      private String signatureAlgorithm;
 
       public Integer getAcceptedEventDateThresholdDays() {
         return acceptedEventDateThresholdDays;
@@ -219,22 +199,6 @@ public class SubmissionServiceConfig {
 
       public void setAcceptedEventDateThresholdDays(Integer acceptedEventDateThresholdDays) {
         this.acceptedEventDateThresholdDays = acceptedEventDateThresholdDays;
-      }
-
-      public String getSignatureVerificationKey() {
-        return signatureVerificationKey;
-      }
-
-      public void setSignatureVerificationKey(String signatureVerificationKey) {
-        this.signatureVerificationKey = signatureVerificationKey;
-      }
-
-      public String getSignatureAlgorithm() {
-        return signatureAlgorithm;
-      }
-
-      public void setSignatureAlgorithm(String signatureAlgorithm) {
-        this.signatureAlgorithm = signatureAlgorithm;
       }
     }
   }
