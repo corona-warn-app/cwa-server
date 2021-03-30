@@ -14,7 +14,6 @@ import com.google.protobuf.ByteString;
 import app.coronawarn.server.common.persistence.domain.TraceTimeIntervalWarning;
 import app.coronawarn.server.common.persistence.repository.TraceTimeIntervalWarningRepository;
 import app.coronawarn.server.common.protocols.internal.pt.CheckIn;
-import app.coronawarn.server.common.protocols.internal.pt.SignedTraceLocation;
 
 @DataJdbcTest
 class TraceTimeIntervalWarningServiceTest {
@@ -69,7 +68,7 @@ class TraceTimeIntervalWarningServiceTest {
       assertEquals(checkin.getStartIntervalNumber(), warning.getStartIntervalNumber().intValue());
       assertEquals(checkin.getEndIntervalNumber(), warning.getEndIntervalNumber().intValue());
       assertArrayEquals(checkin.getLocationId().toByteArray(),
-          warning.getTraceLocationGuid());
+          warning.getTraceLocationId());
     }
   }
 }

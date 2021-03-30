@@ -34,7 +34,7 @@ public class TraceTimeIntervalWarningRepositoryTest {
 
     Assertions.assertThat(next).isNotNull();
     Assertions.assertThat(next.getId()).isNotNull();
-    Assertions.assertThat(next.getTraceLocationGuid()).isEqualTo(guid);
+    Assertions.assertThat(next.getTraceLocationId()).isEqualTo(guid);
     Assertions.assertThat(next.getStartIntervalNumber()).isEqualTo(startIntervalNumber);
     Assertions.assertThat(next.getEndIntervalNumber()).isEqualTo(endIntervalNumber);
     Assertions.assertThat(next.getTransmissionRiskLevel()).isEqualTo(transmissionRiskLevel);
