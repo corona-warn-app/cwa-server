@@ -23,6 +23,7 @@ public class DistributionHourDirectory extends IndexDirectoryOnDisk<LocalDateTim
   private final CryptoProvider cryptoProvider;
   private final DistributionServiceConfig distributionServiceConfig;
 
+
   /**
    * Constructs a {@link DistributionHourDirectory} instance for the specified date.
    *

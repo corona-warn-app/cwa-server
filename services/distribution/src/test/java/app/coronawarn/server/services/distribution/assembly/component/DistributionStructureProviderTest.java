@@ -142,7 +142,10 @@ class DistributionStructureProviderTest {
    */
   @Test
   void testPublishingEmptyNewHourPackages() throws IOException {
-    when(traceTimeIntervalWarningService.getTraceTimeIntervalWarning()).thenReturn(emptyList());
+    final List<TraceTimeIntervalWarning> intervalWarnings = IntStream.range(0, 100)
+        .mapToObj(i -> buildTraceTimeIntervalWarning(LocalDateTime.now(), i)).collect(Collectors.toList());
+
+    when(traceTimeIntervalWarningService.getTraceTimeIntervalWarning()).thenReturn(intervalWarnings);
     Directory<WritableOnDisk> outputDirectory = this.outputDirectoryProvider.getDirectory();
     TraceWarningsPackageBundler bundler = new TraceWarningsPackageBundler(distributionServiceConfig);
     DistributionStructureProvider distributionStructureProvider = new DistributionStructureProvider(
@@ -154,6 +157,8 @@ class DistributionStructureProviderTest {
     outputDirectoryProvider.clear();
     outputDirectory.prepare(new ImmutableStack<>());
     outputDirectory.write();
+
+
 
     // check resulting package
     // check that it contains an empty file for the current interval

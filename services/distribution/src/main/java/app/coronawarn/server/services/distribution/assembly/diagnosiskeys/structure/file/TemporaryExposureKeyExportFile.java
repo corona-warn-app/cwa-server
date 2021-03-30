@@ -3,6 +3,7 @@
 package app.coronawarn.server.services.distribution.assembly.diagnosiskeys.structure.file;
 
 import app.coronawarn.server.common.persistence.domain.DiagnosisKey;
+import app.coronawarn.server.common.persistence.domain.TraceTimeIntervalWarning;
 import app.coronawarn.server.common.protocols.external.exposurenotification.TemporaryExposureKey;
 import app.coronawarn.server.common.protocols.external.exposurenotification.TemporaryExposureKeyExport;
 import app.coronawarn.server.services.distribution.assembly.structure.file.FileOnDiskWithChecksum;
@@ -44,13 +45,13 @@ public class TemporaryExposureKeyExportFile extends FileOnDiskWithChecksum {
   /**
    * Constructs a {@link TemporaryExposureKeyExportFile} from {@link TemporaryExposureKey TemporaryExposureKeys}.
    *
-   * @param temporaryExposureKeys The {@link TemporaryExposureKey TemporaryExposureKeys} to bundle into the {@link
-   *                              TemporaryExposureKeyExport}.
-   * @param region                The region that the {@link TemporaryExposureKey TemporaryExposureKeys} are from.
-   * @param startTimestamp        The start of the time window covered by the {@link TemporaryExposureKeyExport}, in UTC
-   *                              seconds since epoch.
-   * @param endTimestamp          The end of the time window covered by the {@link TemporaryExposureKeyExport}, in UTC *
-   *                              seconds since epoch.
+   * @param temporaryExposureKeys     The {@link TemporaryExposureKey TemporaryExposureKeys} to bundle into the {@link
+   *                                  TemporaryExposureKeyExport}.
+   * @param region                    The region that the {@link TemporaryExposureKey TemporaryExposureKeys} are from.
+   * @param startTimestamp            The start of the time window covered by the {@link TemporaryExposureKeyExport}, in
+   *                                  UTC seconds since epoch.
+   * @param endTimestamp              The end of the time window covered by the {@link TemporaryExposureKeyExport}, in
+   *                                  UTC * seconds since epoch.
    * @param distributionServiceConfig The distribution service configuration {@link DistributionServiceConfig}
    * @return A new {@link TemporaryExposureKeyExportFile}.
    */
@@ -64,13 +65,13 @@ public class TemporaryExposureKeyExportFile extends FileOnDiskWithChecksum {
   /**
    * Constructs a {@link TemporaryExposureKeyExportFile} from {@link DiagnosisKey DiagnosisKeys}.
    *
-   * @param diagnosisKeys  The {@link DiagnosisKey DiagnosisKeys} to bundle into the {@link
-   *                       TemporaryExposureKeyExport}.
-   * @param region         The region that the {@link TemporaryExposureKey TemporaryExposureKeys} are from.
-   * @param startTimestamp The start of the time window covered by the {@link TemporaryExposureKeyExport}, in UTC
-   *                       seconds since epoch.
-   * @param endTimestamp   The end of the time window covered by the {@link TemporaryExposureKeyExport}, in UTC *
-   *                       seconds since epoch.
+   * @param diagnosisKeys             The {@link DiagnosisKey DiagnosisKeys} to bundle into the {@link
+   *                                  TemporaryExposureKeyExport}.
+   * @param region                    The region that the {@link TemporaryExposureKey TemporaryExposureKeys} are from.
+   * @param startTimestamp            The start of the time window covered by the {@link TemporaryExposureKeyExport}, in
+   *                                  UTC seconds since epoch.
+   * @param endTimestamp              The end of the time window covered by the {@link TemporaryExposureKeyExport}, in
+   *                                  UTC * seconds since epoch.
    * @param distributionServiceConfig The distribution service configuration {@link DistributionServiceConfig}
    * @return A new {@link TemporaryExposureKeyExportFile}.
    */
