@@ -2,7 +2,9 @@ package app.coronawarn.server.common.persistence.service;
 
 import app.coronawarn.server.common.persistence.domain.TraceTimeIntervalWarning;
 import app.coronawarn.server.common.persistence.repository.TraceTimeIntervalWarningRepository;
+import app.coronawarn.server.common.persistence.utils.CheckinsDateSpecification;
 import app.coronawarn.server.common.protocols.internal.pt.CheckIn;
+import java.time.Instant;
 import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -37,8 +39,11 @@ public class TraceTimeIntervalWarningService {
     for (CheckIn checkin : checkins) {
       boolean traceWarningInsertedSuccessfully = traceTimeIntervalWarningRepo.saveDoNothingOnConflict(
           checkin.getSignedLocation().getLocation().toByteArray(),
-          checkin.getStartIntervalNumber(), checkin.getEndIntervalNumber(),
-          checkin.getTransmissionRiskLevel());
+          checkin.getStartIntervalNumber(),
+          checkin.getEndIntervalNumber() - checkin.getStartIntervalNumber(),
+          checkin.getTransmissionRiskLevel(),
+          CheckinsDateSpecification.HOUR_SINCE_EPOCH_DERIVATION.apply(Instant.now().getEpochSecond())
+          );
 
       if (traceWarningInsertedSuccessfully) {
         numberOfInsertedTraceWarnings++;

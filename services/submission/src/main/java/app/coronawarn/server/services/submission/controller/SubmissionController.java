@@ -119,6 +119,7 @@ public class SubmissionController {
   private void extractAndStoreEventCheckins(SubmissionPayload submissionPayload) {
     try {
       List<CheckIn> checkins = checkinsDataFilter.filter(submissionPayload.getCheckInsList());
+
       traceTimeIntervalWarningSevice.saveCheckinData(checkins);
     } catch (final Exception e) {
       // Any check-in data processing related error must not interrupt the submission flow or interfere

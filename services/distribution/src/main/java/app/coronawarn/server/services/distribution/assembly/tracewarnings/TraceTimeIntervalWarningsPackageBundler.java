@@ -7,7 +7,11 @@ import app.coronawarn.server.common.persistence.domain.TraceTimeIntervalWarning;
 import app.coronawarn.server.common.persistence.utils.CheckinsDateSpecification;
 import app.coronawarn.server.services.distribution.config.DistributionServiceConfig;
 import java.time.LocalDateTime;
-import java.util.*;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -26,8 +30,8 @@ public class TraceTimeIntervalWarningsPackageBundler {
   private LocalDateTime distributionTime;
 
   /**
-   * A map containing checkin warnings, mapped by the 10-minute interval since epoch.
-   * This is the basis on which they will be distributed to the CDN.
+   * A map containing checkin warnings, mapped by the 10-minute interval since epoch. This is the basis on which they
+   * will be distributed to the CDN.
    *
    * @see CheckinsDateSpecification#TEN_MINUTE_INTERVAL_DERIVATION
    */
@@ -46,12 +50,12 @@ public class TraceTimeIntervalWarningsPackageBundler {
   }
 
   /**
-   * Sets the {@link TraceTimeIntervalWarning TraceTimeIntervalWarnings} contained by this
-   * {@link TraceTimeIntervalWarningsPackageBundler} and the time at which the distribution runs.
+   * Sets the {@link TraceTimeIntervalWarning TraceTimeIntervalWarnings} contained by this {@link
+   * TraceTimeIntervalWarningsPackageBundler} and the time at which the distribution runs.
    *
-   * @param traceTimeIntervalWarnings The {@link TraceTimeIntervalWarning traceTimeIntervalWarnings}
-   *        contained by this {@link TraceTimeIntervalWarningsPackageBundler}.
-   * @param distributionTime The {@link LocalDateTime} at which the distribution runs.
+   * @param traceTimeIntervalWarnings The {@link TraceTimeIntervalWarning traceTimeIntervalWarnings} contained by this
+   *                                  {@link TraceTimeIntervalWarningsPackageBundler}.
+   * @param distributionTime          The {@link LocalDateTime} at which the distribution runs.
    */
   public void setTraceTimeIntervalWarnings(
       Collection<TraceTimeIntervalWarning> traceTimeIntervalWarnings,
@@ -86,8 +90,7 @@ public class TraceTimeIntervalWarningsPackageBundler {
   }
 
   private Integer extractHourInterval(TraceTimeIntervalWarning warning) {
-    // TODO Check if this is the correct timestamp to use
     return CheckinsDateSpecification.HOUR_SINCE_EPOCH_DERIVATION
-        .apply(Long.valueOf(warning.getEndIntervalNumber() * 600));
+        .apply(warning.getSubmissionTimestamp());
   }
 }

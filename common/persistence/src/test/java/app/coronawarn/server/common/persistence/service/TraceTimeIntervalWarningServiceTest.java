@@ -70,7 +70,8 @@ class TraceTimeIntervalWarningServiceTest {
       assertEquals(checkin.getTransmissionRiskLevel(),
           warning.getTransmissionRiskLevel().intValue());
       assertEquals(checkin.getStartIntervalNumber(), warning.getStartIntervalNumber().intValue());
-      assertEquals(checkin.getEndIntervalNumber(), warning.getEndIntervalNumber().intValue());
+      assertEquals(checkin.getEndIntervalNumber() - warning.getStartIntervalNumber(),
+          warning.getPeriod().intValue());
       assertArrayEquals(checkin.getSignedLocation().getLocation().toByteArray(),
           warning.getTraceLocationGuid());
     }
