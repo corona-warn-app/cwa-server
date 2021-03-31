@@ -39,7 +39,7 @@ import org.junit.rules.TemporaryFolder;
 import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
-import org.springframework.boot.test.context.ConfigFileApplicationContextInitializer;
+import org.springframework.boot.test.context.ConfigDataApplicationContextInitializer;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
@@ -50,7 +50,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 @ContextConfiguration(
     classes = {CryptoProvider.class, DistributionServiceConfig.class,
         KeySharingPoliciesChecker.class, EnfParameterAdapter.class,},
-    initializers = ConfigFileApplicationContextInitializer.class)
+    initializers = ConfigDataApplicationContextInitializer.class)
 public class TraceTimeIntervalWarningsStructureProviderTest {
 
   private static final String PARENT_TEST_FOLDER = "parent";
