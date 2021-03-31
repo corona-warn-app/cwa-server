@@ -31,7 +31,6 @@ import java.util.stream.IntStream;
 import org.junit.Rule;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.rules.TemporaryFolder;
@@ -131,9 +130,6 @@ class DiagnosisKeysDateDirectoryTest {
   }
 
   @Test
-  @Disabled("Temporarily disabling this test as part of the fix for issue #650."
-      + "There seems to be a timing issue with this test because running it individually works, but running it"
-      + " in a suite will cause it to produce a different output then expected. Further investigation is required here ")
   void testIncludesEmptyDatesInDirectoryStructure() {
     Collection<DiagnosisKey> diagnosisKeys = IntStream.range(0, 3)
         .filter(currentDate -> currentDate != 1)
