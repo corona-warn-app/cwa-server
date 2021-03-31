@@ -5,9 +5,9 @@ import app.coronawarn.server.services.distribution.assembly.component.CryptoProv
 import app.coronawarn.server.services.distribution.assembly.structure.WritableOnDisk;
 import app.coronawarn.server.services.distribution.assembly.structure.directory.IndexDirectory;
 import app.coronawarn.server.services.distribution.assembly.structure.directory.IndexDirectoryOnDisk;
-import app.coronawarn.server.services.distribution.assembly.structure.directory.decorator.indexing.IndexingDecoratorOnDisk;
 import app.coronawarn.server.services.distribution.assembly.structure.util.ImmutableStack;
 import app.coronawarn.server.services.distribution.assembly.tracewarnings.TraceTimeIntervalWarningsPackageBundler;
+import app.coronawarn.server.services.distribution.assembly.tracewarnings.structure.directory.decorator.HourIntervalIndexingDecorator;
 import app.coronawarn.server.services.distribution.config.DistributionServiceConfig;
 import java.util.Optional;
 import java.util.Set;
@@ -42,7 +42,7 @@ public class TraceTimeIntervalWarningsCountryDirectory extends IndexDirectoryOnD
   }
 
   private IndexDirectory<Integer, WritableOnDisk> decorateHourDirectory(
-      IndexDirectoryOnDisk<Integer> hourDirectory) {
-    return new IndexingDecoratorOnDisk<>(hourDirectory, distributionServiceConfig.getOutputFileName());
+      TraceTimeIntervalWarningsHourDirectory hourDirectory) {
+    return new HourIntervalIndexingDecorator(hourDirectory, traceWarningsBundler, distributionServiceConfig);
   }
 }

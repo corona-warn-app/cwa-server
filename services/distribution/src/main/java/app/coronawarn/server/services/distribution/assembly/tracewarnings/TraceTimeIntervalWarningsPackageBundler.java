@@ -82,7 +82,7 @@ public class TraceTimeIntervalWarningsPackageBundler {
    */
   public Set<Integer> getHoursForDistributableWarnings(String country) {
     if (isCountrySupported(country)) {
-      return this.distributableTraceTimeIntervalWarnings.keySet().stream().sorted().collect(Collectors.toSet());
+      return this.distributableTraceTimeIntervalWarnings.keySet();
     }
     return Collections.emptySet();
   }

@@ -48,20 +48,20 @@ public class TraceTimeIntervalWarningsHourDirectory extends IndexDirectoryOnDisk
       List<TraceTimeIntervalWarning> traceWarningsForCurrentHour =
           this.traceWarningsBundler.getTraceTimeWarningsForHour(hourSinceEpoch);
 
-      File<WritableOnDisk> temporaryExposureKeyExportFile =
+      File<WritableOnDisk> traceTimeIntervalWarningExportFile =
           TraceTimeIntervalWarningExportFile.fromTraceTimeIntervalWarnings(
               traceWarningsForCurrentHour, country, hourSinceEpoch, distributionServiceConfig);
 
       Archive<WritableOnDisk> hourArchive =
           new ArchiveOnDisk(distributionServiceConfig.getOutputFileName());
-      hourArchive.addWritable(temporaryExposureKeyExportFile);
+      hourArchive.addWritable(traceTimeIntervalWarningExportFile);
 
-      return Optional.of(decorateDiagnosisKeyArchive(hourArchive));
+      return Optional.of(decorateTraceWarningArchives(hourArchive));
     });
     super.prepare(indices);
   }
 
-  private Directory<WritableOnDisk> decorateDiagnosisKeyArchive(Archive<WritableOnDisk> archive) {
+  private Directory<WritableOnDisk> decorateTraceWarningArchives(Archive<WritableOnDisk> archive) {
     return new DistributionArchiveSigningDecorator(archive, cryptoProvider, distributionServiceConfig);
   }
 }
