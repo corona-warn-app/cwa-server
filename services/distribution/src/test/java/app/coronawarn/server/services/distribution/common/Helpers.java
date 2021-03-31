@@ -4,14 +4,10 @@ package app.coronawarn.server.services.distribution.common;
 
 import static app.coronawarn.server.services.distribution.assembly.appconfig.YamlLoader.loadYamlIntoProtobufBuilder;
 import static java.io.File.separator;
-
-import app.coronawarn.server.common.persistence.domain.DiagnosisKey;
-import app.coronawarn.server.common.protocols.external.exposurenotification.ReportType;
-import app.coronawarn.server.common.protocols.internal.ApplicationConfiguration;
-import app.coronawarn.server.services.distribution.assembly.appconfig.UnableToLoadFileException;
-import app.coronawarn.server.services.distribution.assembly.structure.directory.Directory;
-import app.coronawarn.server.services.distribution.assembly.structure.util.ImmutableStack;
 import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.util.Arrays;
@@ -22,8 +18,16 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Random;
 import java.util.Set;
+import java.util.UUID;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
+import app.coronawarn.server.common.persistence.domain.DiagnosisKey;
+import app.coronawarn.server.common.persistence.domain.TraceTimeIntervalWarning;
+import app.coronawarn.server.common.protocols.external.exposurenotification.ReportType;
+import app.coronawarn.server.common.protocols.internal.ApplicationConfiguration;
+import app.coronawarn.server.services.distribution.assembly.appconfig.UnableToLoadFileException;
+import app.coronawarn.server.services.distribution.assembly.structure.directory.Directory;
+import app.coronawarn.server.services.distribution.assembly.structure.util.ImmutableStack;
 
 public class Helpers {
 
@@ -162,6 +166,15 @@ public class Helpers {
     return files;
   }
 
+  public static Set<String> getSubFoldersPaths(String basePath, String apiFolder) throws IOException {
+    return Files.walk(Paths.get(basePath))
+        .filter(Files::isDirectory)
+        .map(path -> path.toAbsolutePath().toString())
+        .filter(path -> path.contains(apiFolder))
+        .map(path -> path.substring(path.indexOf(apiFolder)))
+        .collect(Collectors.toSet());
+  }
+
   public static ApplicationConfiguration loadApplicationConfiguration(String path) throws UnableToLoadFileException {
     return loadYamlIntoProtobufBuilder(path, ApplicationConfiguration.Builder.class).build();
   }
@@ -194,5 +207,20 @@ public class Helpers {
     });
 
     return expectedFiles;
+  }
+
+  public static TraceTimeIntervalWarning buildTraceTimeIntervalWarning(int startIntervalNumber,
+      int endIntervalNumber, int submissionHourSinceEpoch) {
+    final byte[] guid = UUID.randomUUID().toString().getBytes();
+    final int transmissionRiskLevel = 5;
+    return new TraceTimeIntervalWarning(guid, startIntervalNumber, endIntervalNumber,
+        transmissionRiskLevel, submissionHourSinceEpoch);
+  }
+
+  public static List<TraceTimeIntervalWarning> buildTraceTimeIntervalWarning(
+      int startIntervalNumber, int endIntervalNumber, int submissionHourSinceEpoch, int numberOfWarnings) {
+    return IntStream.range(0, numberOfWarnings)
+        .mapToObj(ignoredValue -> buildTraceTimeIntervalWarning(startIntervalNumber, endIntervalNumber, submissionHourSinceEpoch))
+        .collect(Collectors.toList());
   }
 }
