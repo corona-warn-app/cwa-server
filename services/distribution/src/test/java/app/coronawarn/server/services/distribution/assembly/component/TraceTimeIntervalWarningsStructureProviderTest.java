@@ -1,11 +1,26 @@
 package app.coronawarn.server.services.distribution.assembly.component;
 
+import static app.coronawarn.server.services.distribution.common.Helpers.buildTraceTimeIntervalWarning;
+import static app.coronawarn.server.services.distribution.common.Helpers.getFilePaths;
+import static app.coronawarn.server.services.distribution.common.Helpers.getSubFoldersPaths;
 import static org.junit.Assert.assertTrue;
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.mockito.Mockito.*;
-import static app.coronawarn.server.services.distribution.common.Helpers.*;
+import static org.mockito.Mockito.when;
 
+import app.coronawarn.server.common.persistence.domain.TraceTimeIntervalWarning;
+import app.coronawarn.server.common.persistence.service.TraceTimeIntervalWarningService;
+import app.coronawarn.server.common.persistence.service.common.KeySharingPoliciesChecker;
+import app.coronawarn.server.common.persistence.utils.CheckinsDateSpecification;
+import app.coronawarn.server.services.distribution.assembly.structure.WritableOnDisk;
+import app.coronawarn.server.services.distribution.assembly.structure.directory.Directory;
+import app.coronawarn.server.services.distribution.assembly.structure.directory.DirectoryOnDisk;
+import app.coronawarn.server.services.distribution.assembly.structure.util.ImmutableStack;
+import app.coronawarn.server.services.distribution.assembly.structure.util.TimeUtils;
+import app.coronawarn.server.services.distribution.assembly.tracewarnings.TraceTimeIntervalWarningsPackageBundler;
+import app.coronawarn.server.services.distribution.assembly.transformation.EnfParameterAdapter;
+import app.coronawarn.server.services.distribution.config.DistributionServiceConfig;
+import app.coronawarn.server.services.distribution.config.TransmissionRiskLevelEncoding;
 import java.io.File;
 import java.io.IOException;
 import java.time.LocalDateTime;
@@ -28,20 +43,6 @@ import org.springframework.boot.test.context.ConfigFileApplicationContextInitial
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
-import app.coronawarn.server.common.persistence.domain.TraceTimeIntervalWarning;
-import app.coronawarn.server.common.persistence.service.TraceTimeIntervalWarningService;
-import app.coronawarn.server.common.persistence.service.common.KeySharingPoliciesChecker;
-import app.coronawarn.server.common.persistence.utils.CheckinsDateSpecification;
-import app.coronawarn.server.services.distribution.assembly.diagnosiskeys.structure.directory.decorator.HourIndexingDecorator;
-import app.coronawarn.server.services.distribution.assembly.structure.WritableOnDisk;
-import app.coronawarn.server.services.distribution.assembly.structure.directory.Directory;
-import app.coronawarn.server.services.distribution.assembly.structure.directory.DirectoryOnDisk;
-import app.coronawarn.server.services.distribution.assembly.structure.util.ImmutableStack;
-import app.coronawarn.server.services.distribution.assembly.structure.util.TimeUtils;
-import app.coronawarn.server.services.distribution.assembly.tracewarnings.TraceTimeIntervalWarningsPackageBundler;
-import app.coronawarn.server.services.distribution.assembly.transformation.EnfParameterAdapter;
-import app.coronawarn.server.services.distribution.config.DistributionServiceConfig;
-import app.coronawarn.server.services.distribution.config.TransmissionRiskLevelEncoding;
 
 @EnableConfigurationProperties(
     value = {DistributionServiceConfig.class, TransmissionRiskLevelEncoding.class})
@@ -221,9 +222,9 @@ public class TraceTimeIntervalWarningsStructureProviderTest {
   }
 
   /**
-   * If there are no TraceTimeIntervalWarnings to be published and the package would be empty,
-   * index files (not a zip file with signature!) shall be published on CDN instead with HTTP
-   * response header cwa-empty-pkg: 1 (to indicate that the package is empty).
+   * If there are no TraceTimeIntervalWarnings to be published and the package would be empty, index files (not a zip
+   * file with signature!) shall be published on CDN instead with HTTP response header cwa-empty-pkg: 1 (to indicate
+   * that the package is empty).
    */
   @Test
   void should_publish_only_index_files_when_no_available_checkins_data() throws IOException {
@@ -249,6 +250,45 @@ public class TraceTimeIntervalWarningsStructureProviderTest {
     Arrays.sort(expected);
     Arrays.sort(actual);
     assertArrayEquals(expected, actual);
+  }
+
+
+  @Test
+  void should_create_all_hourly_packages_for_new_checkins_data() throws IOException {
+    LocalDateTime utcHour = TimeUtils.getCurrentUtcHour();
+    Integer oldestHour = CheckinsDateSpecification.HOUR_SINCE_EPOCH_DERIVATION
+        .apply(utcHour.minusHours(10).toEpochSecond(ZoneOffset.UTC));
+    Integer newestHour = CheckinsDateSpecification.HOUR_SINCE_EPOCH_DERIVATION
+        .apply(utcHour.toEpochSecond(ZoneOffset.UTC));
+
+    List<TraceTimeIntervalWarning> traceWarnings =
+        buildTraceTimeIntervalWarning(5, 10, oldestHour, 30);
+    traceWarnings.addAll(buildTraceTimeIntervalWarning(90, 160, newestHour, 30));
+
+    writeDirectories(traceWarnings);
+
+    Set<String> expectedPaths = Set.of(
+        PARENT_TEST_FOLDER,
+        StringUtils.joinWith(SEPARATOR, PARENT_TEST_FOLDER, "twp"),
+        StringUtils.joinWith(SEPARATOR, PARENT_TEST_FOLDER, "twp", "country"),
+        StringUtils.joinWith(SEPARATOR, PARENT_TEST_FOLDER, "twp", "country", "DE"),
+        StringUtils.joinWith(SEPARATOR, PARENT_TEST_FOLDER, "twp", "country", "DE", "hour"),
+        StringUtils.joinWith(SEPARATOR, PARENT_TEST_FOLDER, "twp", "country", "DE", "hour",
+            oldestHour),
+        StringUtils.joinWith(SEPARATOR, PARENT_TEST_FOLDER, "twp", "country", "DE", "hour",
+            newestHour),
+        StringUtils.joinWith(SEPARATOR, PARENT_TEST_FOLDER, "twp", "country", "index"),
+        StringUtils.joinWith(SEPARATOR, PARENT_TEST_FOLDER, "twp", "country", "index.checksum"),
+        StringUtils.joinWith(SEPARATOR, PARENT_TEST_FOLDER, "twp", "country", "DE", "hour", "index"),
+        StringUtils.joinWith(SEPARATOR, PARENT_TEST_FOLDER, "twp", "country", "DE", "hour", "index.checksum"));
+
+    Set<String> actualFiles =
+        getSubFoldersPaths(testOutputFolder.getRoot().getAbsolutePath(), PARENT_TEST_FOLDER);
+    actualFiles.addAll(getFilePaths(testOutputFolder.getRoot(), testOutputFolder.getRoot().getAbsolutePath()));
+
+    expectedPaths.stream().forEach(expected -> {
+      assertTrue(actualFiles.contains(expected));
+    });
   }
 
   private void writeDirectories(List<TraceTimeIntervalWarning> traceWarnings) throws IOException {

@@ -16,6 +16,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -81,7 +82,13 @@ public class TraceTimeIntervalWarningsPackageBundler {
    */
   public Set<Integer> getHoursForDistributableWarnings(String country) {
     if (isCountrySupported(country)) {
-      return this.distributableTraceTimeIntervalWarnings.keySet();
+      final Optional<Integer> oldestOptional = getOldestHourWithDistributableWarnings(country);
+      final Optional<Integer> latestOptional = getLatestHourWithDistributableWarnings(country);
+      if (oldestOptional.isPresent() && latestOptional.isPresent()) {
+        return IntStream.range(oldestOptional.get(), latestOptional.get() + 1).boxed()
+            .collect(Collectors.toSet());
+      }
+      return Collections.emptySet();
     }
     return Collections.emptySet();
   }
@@ -116,7 +123,7 @@ public class TraceTimeIntervalWarningsPackageBundler {
    * Returns the trace time warnings ready to be distributed for the given hour since epoch.
    */
   public List<TraceTimeIntervalWarning> getTraceTimeWarningsForHour(Integer currentHourSinceEpoch) {
-    return distributableTraceTimeIntervalWarnings.get(currentHourSinceEpoch);
+    return distributableTraceTimeIntervalWarnings.getOrDefault(currentHourSinceEpoch, Collections.emptyList());
   }
 
   private boolean isCountrySupported(String country) {

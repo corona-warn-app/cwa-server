@@ -9,6 +9,7 @@ import app.coronawarn.server.services.distribution.assembly.structure.archive.de
 import app.coronawarn.server.services.distribution.assembly.structure.directory.Directory;
 import app.coronawarn.server.services.distribution.assembly.structure.directory.IndexDirectoryOnDisk;
 import app.coronawarn.server.services.distribution.assembly.structure.file.File;
+import app.coronawarn.server.services.distribution.assembly.structure.file.FileOnDisk;
 import app.coronawarn.server.services.distribution.assembly.structure.util.ImmutableStack;
 import app.coronawarn.server.services.distribution.assembly.tracewarnings.TraceTimeIntervalWarningsPackageBundler;
 import app.coronawarn.server.services.distribution.assembly.tracewarnings.structure.file.TraceTimeIntervalWarningExportFile;
@@ -23,8 +24,7 @@ public class TraceTimeIntervalWarningsHourDirectory extends IndexDirectoryOnDisk
   private DistributionServiceConfig distributionServiceConfig;
 
   /**
-   * Creates an instance of the directory that holds packages for an hour since epoch, as defined by
-   * the API spec.
+   * Creates an instance of the directory that holds packages for an hour since epoch, as defined by the API spec.
    */
   public TraceTimeIntervalWarningsHourDirectory(
       TraceTimeIntervalWarningsPackageBundler traceWarningsBundler, CryptoProvider cryptoProvider,
@@ -47,6 +47,9 @@ public class TraceTimeIntervalWarningsHourDirectory extends IndexDirectoryOnDisk
 
       List<TraceTimeIntervalWarning> traceWarningsForCurrentHour =
           this.traceWarningsBundler.getTraceTimeWarningsForHour(hourSinceEpoch);
+      if (traceWarningsForCurrentHour.isEmpty()) {
+        return Optional.of(new FileOnDisk("index", new byte[0]));
+      }
 
       File<WritableOnDisk> traceTimeIntervalWarningExportFile =
           TraceTimeIntervalWarningExportFile.fromTraceTimeIntervalWarnings(
