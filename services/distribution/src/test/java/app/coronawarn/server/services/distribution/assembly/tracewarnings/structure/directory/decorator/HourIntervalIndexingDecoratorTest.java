@@ -3,23 +3,26 @@
 package app.coronawarn.server.services.distribution.assembly.tracewarnings.structure.directory.decorator;
 
 import static app.coronawarn.server.services.distribution.common.Helpers.buildTraceTimeIntervalWarning;
-import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import app.coronawarn.server.common.persistence.domain.TraceTimeIntervalWarning;
 import app.coronawarn.server.common.persistence.utils.CheckinsDateSpecification;
 import app.coronawarn.server.services.distribution.assembly.component.CryptoProvider;
+import app.coronawarn.server.services.distribution.assembly.structure.file.FileOnDisk;
 import app.coronawarn.server.services.distribution.assembly.structure.util.ImmutableStack;
 import app.coronawarn.server.services.distribution.assembly.structure.util.TimeUtils;
 import app.coronawarn.server.services.distribution.assembly.tracewarnings.TraceTimeIntervalWarningsPackageBundler;
 import app.coronawarn.server.services.distribution.assembly.tracewarnings.structure.directory.TraceTimeIntervalWarningsHourDirectory;
 import app.coronawarn.server.services.distribution.config.DistributionServiceConfig;
 import app.coronawarn.server.services.distribution.config.DistributionServiceConfig.Api;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
+import java.util.Collections;
 import java.util.List;
-import java.util.Set;
+import org.assertj.core.api.Assertions;
+import org.json.simple.JSONObject;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -56,12 +59,11 @@ class HourIntervalIndexingDecoratorTest {
   }
 
   @Test
-  void testIndexContainsOnlyOneValue() {
+  void testEmptyFileIsCreated() throws Exception {
     LocalDateTime utcHour = TimeUtils.getCurrentUtcHour();
-    Integer submissionHour = CheckinsDateSpecification.HOUR_SINCE_EPOCH_DERIVATION
-        .apply(utcHour.toEpochSecond(ZoneOffset.UTC));
+
     List<TraceTimeIntervalWarning> traceWarnings =
-        buildTraceTimeIntervalWarning(5, 10, submissionHour, 30);
+        Collections.emptyList();
 
     Api api = mock(Api.class);
     when(api.getOriginCountry()).thenReturn("DE");
@@ -75,13 +77,16 @@ class HourIntervalIndexingDecoratorTest {
     HourIntervalIndexingDecorator decorator = makeDecoratedHourDirectory(traceTimeIntervalWarningsPackageBundler);
 
     decorator.prepare(new ImmutableStack<>().push("DE"));
-    Set<Integer> index = decorator.getIndex(new ImmutableStack<>().push("DE"));
-    assertThat(index.size()).isEqualTo(1);
-    assertThat(index.contains(submissionHour));
+    final FileOnDisk indexFile = decorator.getIndexFile("test.json", new ImmutableStack<>().push("DE"));
+    ObjectMapper objectMapper = new ObjectMapper();
+    final JSONObject jsonObject = objectMapper.readValue(indexFile.getBytes(), JSONObject.class);
+    Assertions.assertThat(jsonObject.size()).isEqualTo(2);
+    Assertions.assertThat(jsonObject.get("oldest")).isEqualTo(null);
+    Assertions.assertThat(jsonObject.get("latest")).isEqualTo(null);
   }
 
   @Test
-  void testIndicesAreOldestAndLatestForMultipleSubmissions() {
+  void testIndicesAreOldestAndLatestForMultipleSubmissions() throws Exception {
     LocalDateTime utcHour = TimeUtils.getCurrentUtcHour();
     Integer submissionHour = CheckinsDateSpecification.HOUR_SINCE_EPOCH_DERIVATION
         .apply(utcHour.toEpochSecond(ZoneOffset.UTC));
@@ -111,10 +116,12 @@ class HourIntervalIndexingDecoratorTest {
     HourIntervalIndexingDecorator decorator = makeDecoratedHourDirectory(traceTimeIntervalWarningsPackageBundler);
 
     decorator.prepare(new ImmutableStack<>().push("DE"));
-    Set<Integer> index = decorator.getIndex(new ImmutableStack<>().push("DE"));
-    assertThat(index.size()).isEqualTo(2);
-    assertThat(index.contains(submissionHour));
-    assertThat(index.contains(additionalSubmissionHour));
+    final FileOnDisk indexFile = decorator.getIndexFile("test.json", new ImmutableStack<>().push("DE"));
+    ObjectMapper objectMapper = new ObjectMapper();
+    final JSONObject jsonObject = objectMapper.readValue(indexFile.getBytes(), JSONObject.class);
+    Assertions.assertThat(jsonObject.size()).isEqualTo(2);
+    Assertions.assertThat(jsonObject.get("oldest")).isEqualTo(additionalSubmissionHour);
+    Assertions.assertThat(jsonObject.get("latest")).isEqualTo(submissionHour);
   }
 
   private HourIntervalIndexingDecorator makeDecoratedHourDirectory(

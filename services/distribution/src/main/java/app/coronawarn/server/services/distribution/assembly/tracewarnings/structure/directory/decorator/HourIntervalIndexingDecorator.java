@@ -8,10 +8,8 @@ import app.coronawarn.server.services.distribution.assembly.tracewarnings.TraceT
 import app.coronawarn.server.services.distribution.assembly.tracewarnings.structure.directory.TraceTimeIntervalWarningsHourDirectory;
 import app.coronawarn.server.services.distribution.config.DistributionServiceConfig;
 import java.nio.charset.StandardCharsets;
-import java.util.List;
-import java.util.Set;
-import java.util.stream.Collectors;
-import org.json.simple.JSONArray;
+import java.util.Optional;
+import org.json.simple.JSONObject;
 
 public class HourIntervalIndexingDecorator extends IndexingDecoratorOnDisk<Integer> {
 
@@ -27,13 +25,13 @@ public class HourIntervalIndexingDecorator extends IndexingDecoratorOnDisk<Integ
   @Override
   public FileOnDisk getIndexFile(String indexFileName, ImmutableStack<Object> indices) {
     String currentCountry = (String) indices.peek();
-    Set<Integer> index = packageBundler.getHourIntervalForDistributableWarnings(currentCountry);
-    JSONArray array = new JSONArray();
-    List<?> elements = index.stream()
-        .map(this.getIndexFormatter())
-        .sorted()
-        .collect(Collectors.toList());
-    array.addAll(elements);
-    return new FileOnDiskWithChecksum(indexFileName, array.toJSONString().getBytes(StandardCharsets.UTF_8));
+    final Optional<Integer> oldestHourWithDistributableWarnings = packageBundler
+        .getOldestHourWithDistributableWarnings(currentCountry);
+    final Optional<Integer> latestHourWithDistributableWarnings = packageBundler
+        .getLatestHourWithDistributableWarnings(currentCountry);
+    JSONObject object = new JSONObject();
+    object.put("oldest", oldestHourWithDistributableWarnings.orElse(null));
+    object.put("latest", latestHourWithDistributableWarnings.orElse(null));
+    return new FileOnDiskWithChecksum(indexFileName, object.toJSONString().getBytes(StandardCharsets.UTF_8));
   }
 }
