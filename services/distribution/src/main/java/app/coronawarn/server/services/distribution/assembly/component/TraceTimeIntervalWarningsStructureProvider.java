@@ -6,7 +6,7 @@ import app.coronawarn.server.services.distribution.assembly.structure.WritableOn
 import app.coronawarn.server.services.distribution.assembly.structure.directory.Directory;
 import app.coronawarn.server.services.distribution.assembly.structure.util.TimeUtils;
 import app.coronawarn.server.services.distribution.assembly.tracewarnings.TraceTimeIntervalWarningsPackageBundler;
-import app.coronawarn.server.services.distribution.assembly.tracewarnings.structure.directory.TraceTimeWarningsDirectory;
+import app.coronawarn.server.services.distribution.assembly.tracewarnings.structure.directory.TraceTimeIntervalWarningsDirectory;
 import app.coronawarn.server.services.distribution.config.DistributionServiceConfig;
 import java.util.Collection;
 import org.slf4j.Logger;
@@ -47,7 +47,7 @@ public class TraceTimeIntervalWarningsStructureProvider {
     Collection<TraceTimeIntervalWarning> traceWarnings =
         traceWarningsService.getTraceTimeIntervalWarning();
     traceWarningsBundler.setTraceTimeIntervalWarnings(traceWarnings, TimeUtils.getCurrentUtcHour());
-    return new TraceTimeWarningsDirectory(traceWarningsBundler, cryptoProvider,
+    return new TraceTimeIntervalWarningsDirectory(traceWarningsBundler, cryptoProvider,
         distributionServiceConfig);
   }
 }

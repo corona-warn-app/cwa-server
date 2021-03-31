@@ -1,5 +1,6 @@
 package app.coronawarn.server.services.distribution.assembly.tracewarnings.structure.directory;
 
+import app.coronawarn.server.common.persistence.domain.TraceTimeIntervalWarning;
 import app.coronawarn.server.services.distribution.assembly.component.CryptoProvider;
 import app.coronawarn.server.services.distribution.assembly.structure.WritableOnDisk;
 import app.coronawarn.server.services.distribution.assembly.structure.directory.IndexDirectory;
@@ -11,17 +12,19 @@ import app.coronawarn.server.services.distribution.config.DistributionServiceCon
 import java.util.Optional;
 import java.util.Set;
 
-public class TraceTimeWarningsCountryDirectory extends IndexDirectoryOnDisk<String> {
+public class TraceTimeIntervalWarningsCountryDirectory extends IndexDirectoryOnDisk<String> {
 
   private TraceTimeIntervalWarningsPackageBundler traceWarningsBundler;
   private CryptoProvider cryptoProvider;
   private DistributionServiceConfig distributionServiceConfig;
 
   /**
-   * Creates an instance.
+   * Creates an instance of the custom directory that includes the entire
+   * {@link TraceTimeIntervalWarning} package structure for a country as per the API specification.
    */
-  public TraceTimeWarningsCountryDirectory(TraceTimeIntervalWarningsPackageBundler traceWarningsBundler,
-      CryptoProvider cryptoProvider, DistributionServiceConfig distributionServiceConfig) {
+  public TraceTimeIntervalWarningsCountryDirectory(
+      TraceTimeIntervalWarningsPackageBundler traceWarningsBundler, CryptoProvider cryptoProvider,
+      DistributionServiceConfig distributionServiceConfig) {
     super(distributionServiceConfig.getApi().getCountryPath(),
         ignoredValue -> Set.of(distributionServiceConfig.getApi().getOriginCountry()),
         Object::toString);
@@ -33,15 +36,13 @@ public class TraceTimeWarningsCountryDirectory extends IndexDirectoryOnDisk<Stri
   @Override
   public void prepare(ImmutableStack<Object> indices) {
     this.addWritableToAll(ignoredValue -> Optional
-        .of(decorateHourDirectory(new TraceTimeWarningsHourDirectory(traceWarningsBundler,
+        .of(decorateHourDirectory(new TraceTimeIntervalWarningsHourDirectory(traceWarningsBundler,
             cryptoProvider, distributionServiceConfig))));
     super.prepare(indices);
   }
 
-
   private IndexDirectory<Integer, WritableOnDisk> decorateHourDirectory(
       IndexDirectoryOnDisk<Integer> hourDirectory) {
-    return new IndexingDecoratorOnDisk<>(hourDirectory,
-        distributionServiceConfig.getOutputFileName());
+    return new IndexingDecoratorOnDisk<>(hourDirectory, distributionServiceConfig.getOutputFileName());
   }
 }

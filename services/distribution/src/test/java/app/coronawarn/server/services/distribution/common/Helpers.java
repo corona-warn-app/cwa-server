@@ -5,7 +5,9 @@ package app.coronawarn.server.services.distribution.common;
 import static app.coronawarn.server.services.distribution.assembly.appconfig.YamlLoader.loadYamlIntoProtobufBuilder;
 import static java.io.File.separator;
 import java.io.File;
-import java.time.Instant;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.util.Arrays;
@@ -164,6 +166,15 @@ public class Helpers {
     return files;
   }
 
+  public static Set<String> getSubFoldersPaths(String basePath, String apiFolder) throws IOException {
+    return Files.walk(Paths.get(basePath))
+        .filter(Files::isDirectory)
+        .map(path -> path.toAbsolutePath().toString())
+        .filter(path -> path.contains(apiFolder))
+        .map(path -> path.substring(path.indexOf(apiFolder)))
+        .collect(Collectors.toSet());
+  }
+
   public static ApplicationConfiguration loadApplicationConfiguration(String path) throws UnableToLoadFileException {
     return loadYamlIntoProtobufBuilder(path, ApplicationConfiguration.Builder.class).build();
   }
@@ -199,24 +210,17 @@ public class Helpers {
   }
 
   public static TraceTimeIntervalWarning buildTraceTimeIntervalWarning(int startIntervalNumber,
-      int endIntervalNumber) {
+      int endIntervalNumber, int submissionHourSinceEpoch) {
     final byte[] guid = UUID.randomUUID().toString().getBytes();
     final int transmissionRiskLevel = 5;
     return new TraceTimeIntervalWarning(guid, startIntervalNumber, endIntervalNumber,
-        transmissionRiskLevel, Instant.now().getEpochSecond());
+        transmissionRiskLevel, submissionHourSinceEpoch);
   }
 
   public static List<TraceTimeIntervalWarning> buildTraceTimeIntervalWarning(
-      int startIntervalNumber, int endIntervalNumber, int number) {
-    return IntStream.range(0, number)
-        .mapToObj(v -> buildTraceTimeIntervalWarning(startIntervalNumber, endIntervalNumber))
+      int startIntervalNumber, int endIntervalNumber, int submissionHourSinceEpoch, int numberOfWarnings) {
+    return IntStream.range(0, numberOfWarnings)
+        .mapToObj(v -> buildTraceTimeIntervalWarning(startIntervalNumber, endIntervalNumber, submissionHourSinceEpoch))
         .collect(Collectors.toList());
-  }
-
-  public static TraceTimeIntervalWarning buildTraceTimeIntervalWarning(LocalDateTime startTime,
-      int endAddedIntervalNumbers) {
-    int startIntervalNumber = (int) startTime.toEpochSecond(ZoneOffset.UTC) / 3600;
-    return buildTraceTimeIntervalWarning(startIntervalNumber,
-        startIntervalNumber + endAddedIntervalNumbers);
   }
 }

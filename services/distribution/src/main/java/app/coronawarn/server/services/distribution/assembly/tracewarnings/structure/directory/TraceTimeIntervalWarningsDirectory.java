@@ -1,5 +1,6 @@
 package app.coronawarn.server.services.distribution.assembly.tracewarnings.structure.directory;
 
+import app.coronawarn.server.common.persistence.domain.TraceTimeIntervalWarning;
 import app.coronawarn.server.services.distribution.assembly.component.CryptoProvider;
 import app.coronawarn.server.services.distribution.assembly.structure.WritableOnDisk;
 import app.coronawarn.server.services.distribution.assembly.structure.directory.DirectoryOnDisk;
@@ -10,17 +11,19 @@ import app.coronawarn.server.services.distribution.assembly.structure.util.Immut
 import app.coronawarn.server.services.distribution.assembly.tracewarnings.TraceTimeIntervalWarningsPackageBundler;
 import app.coronawarn.server.services.distribution.config.DistributionServiceConfig;
 
-public class TraceTimeWarningsDirectory extends DirectoryOnDisk {
+public class TraceTimeIntervalWarningsDirectory extends DirectoryOnDisk {
 
   private final CryptoProvider cryptoProvider;
   private final DistributionServiceConfig distributionServiceConfig;
   private final TraceTimeIntervalWarningsPackageBundler traceWarningsBundler;
 
   /**
-   * Creates an instance.
+   * Creates an instance of the custom directory that includes the entire
+   * {@link TraceTimeIntervalWarning} package structure as per the API specification.
    */
-  public TraceTimeWarningsDirectory(TraceTimeIntervalWarningsPackageBundler traceWarningsBundler,
-      CryptoProvider cryptoProvider, DistributionServiceConfig distributionServiceConfig) {
+  public TraceTimeIntervalWarningsDirectory(
+      TraceTimeIntervalWarningsPackageBundler traceWarningsBundler, CryptoProvider cryptoProvider,
+      DistributionServiceConfig distributionServiceConfig) {
     super(distributionServiceConfig.getApi().getTraceWarningsPath());
     this.traceWarningsBundler = traceWarningsBundler;
     this.cryptoProvider = cryptoProvider;
@@ -29,7 +32,7 @@ public class TraceTimeWarningsDirectory extends DirectoryOnDisk {
 
   @Override
   public void prepare(ImmutableStack<Object> indices) {
-    this.addWritable(decorateCountryDirectory(new TraceTimeWarningsCountryDirectory(
+    this.addWritable(decorateCountryDirectory(new TraceTimeIntervalWarningsCountryDirectory(
         traceWarningsBundler, cryptoProvider, distributionServiceConfig)));
     super.prepare(indices);
   }

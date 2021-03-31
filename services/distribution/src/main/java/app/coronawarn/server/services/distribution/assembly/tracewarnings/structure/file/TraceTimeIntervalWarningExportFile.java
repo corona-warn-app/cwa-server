@@ -1,6 +1,7 @@
 package app.coronawarn.server.services.distribution.assembly.tracewarnings.structure.file;
 
 import app.coronawarn.server.common.persistence.domain.TraceTimeIntervalWarning;
+import app.coronawarn.server.common.protocols.external.exposurenotification.TemporaryExposureKeyExport;
 import app.coronawarn.server.common.protocols.internal.pt.TraceWarningPackage;
 import app.coronawarn.server.services.distribution.assembly.structure.file.FileOnDiskWithChecksum;
 import app.coronawarn.server.services.distribution.assembly.structure.util.ImmutableStack;
@@ -12,10 +13,14 @@ import java.util.Collection;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+/**
+ * A {@link app.coronawarn.server.services.distribution.assembly.structure.file.File} containing a
+ * list of {@link app.coronawarn.server.common.protocols.internal.pt.TraceTimeIntervalWarning}
+ * serliazed protos.
+ */
 public class TraceTimeIntervalWarningExportFile extends FileOnDiskWithChecksum {
 
-  private final Set<app.coronawarn.server.common
-                       .protocols.internal.pt.TraceTimeIntervalWarning> traceTimeIntervalWarnings;
+  private final Set<app.coronawarn.server.common.protocols.internal.pt.TraceTimeIntervalWarning> traceTimeIntervalWarnings;
   private final String region;
   private final int intervalNumber;
   private final DistributionServiceConfig distributionServiceConfig;
@@ -66,8 +71,7 @@ public class TraceTimeIntervalWarningExportFile extends FileOnDiskWithChecksum {
         .toByteArray();
   }
 
-  private static Set<app.coronawarn.server.common.protocols.internal.pt.TraceTimeIntervalWarning>
-      getTraceIntervalWarningsFromTraceIntervalWarnings(
+  private static Set<app.coronawarn.server.common.protocols.internal.pt.TraceTimeIntervalWarning> getTraceIntervalWarningsFromTraceIntervalWarnings(
       Collection<TraceTimeIntervalWarning> traceTimeIntervalWarnings) {
 
     return traceTimeIntervalWarnings.stream().map(
