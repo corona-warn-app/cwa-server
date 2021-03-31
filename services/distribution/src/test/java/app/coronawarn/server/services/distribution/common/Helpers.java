@@ -5,6 +5,7 @@ package app.coronawarn.server.services.distribution.common;
 import static app.coronawarn.server.services.distribution.assembly.appconfig.YamlLoader.loadYamlIntoProtobufBuilder;
 import static java.io.File.separator;
 import java.io.File;
+import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.util.Arrays;
@@ -202,7 +203,7 @@ public class Helpers {
     final byte[] guid = UUID.randomUUID().toString().getBytes();
     final int transmissionRiskLevel = 5;
     return new TraceTimeIntervalWarning(guid, startIntervalNumber, endIntervalNumber,
-        transmissionRiskLevel);
+        transmissionRiskLevel, Instant.now().getEpochSecond());
   }
 
   public static List<TraceTimeIntervalWarning> buildTraceTimeIntervalWarning(
