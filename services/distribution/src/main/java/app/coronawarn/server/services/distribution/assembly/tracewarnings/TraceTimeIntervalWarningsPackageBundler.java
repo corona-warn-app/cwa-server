@@ -1,7 +1,7 @@
 package app.coronawarn.server.services.distribution.assembly.tracewarnings;
 
 
-import static app.coronawarn.server.common.persistence.utils.CheckinsDateSpecification.*;
+import static app.coronawarn.server.common.persistence.utils.CheckinsDateSpecification.HOUR_SINCE_EPOCH_DERIVATION;
 
 import app.coronawarn.server.common.persistence.domain.TraceTimeIntervalWarning;
 import app.coronawarn.server.common.persistence.utils.CheckinsDateSpecification;
@@ -13,18 +13,18 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * New packages with trace warnings shall be assembled and published to CDN, similar to the
- * diagnosis keys. The packages will be hourly and include all TraceTimeIntervalWarnings that have
- * been submitted in the past X ammount of days (relative to distribution time), where X is the same
- * app configuration paramter used for diagnosis key (currently 14).
- * An hour Package shall be named after the hour since epoch derived from the submission timestamp
- * of the trace warnings. The resulting package name should be a 6-digit number such as 448188.
+ * New packages with trace warnings shall be assembled and published to CDN, similar to the diagnosis keys. The packages
+ * will be hourly and include all TraceTimeIntervalWarnings that have been submitted in the past X ammount of days
+ * (relative to distribution time), where X is the same app configuration paramter used for diagnosis key (currently
+ * 14). An hour Package shall be named after the hour since epoch derived from the submission timestamp of the trace
+ * warnings. The resulting package name should be a 6-digit number such as 448188.
  */
 public class TraceTimeIntervalWarningsPackageBundler {
 
@@ -38,13 +38,12 @@ public class TraceTimeIntervalWarningsPackageBundler {
    */
   private LocalDateTime distributionTime;
   /**
-   * Data will be distributed for X days back starting from distribution time, where X is the
-   * variable below.
+   * Data will be distributed for X days back starting from distribution time, where X is the variable below.
    */
   private Integer daysInThePast;
   /**
-   * A map containing trace warnings, mapped by hours since epoch computed from their submission
-   * timestamp. This is the basis on which they will be distributed to the CDN.
+   * A map containing trace warnings, mapped by hours since epoch computed from their submission timestamp. This is the
+   * basis on which they will be distributed to the CDN.
    *
    * @see CheckinsDateSpecification#HOUR_SINCE_EPOCH_DERIVATION
    */
@@ -66,9 +65,9 @@ public class TraceTimeIntervalWarningsPackageBundler {
   /**
    * Sets the {@link TraceTimeIntervalWarning}s to package.
    *
-   * @param traceTimeIntervalWarnings The {@link TraceTimeIntervalWarning traceTimeIntervalWarnings}
-   *        contained by this {@link TraceTimeIntervalWarningsPackageBundler}.
-   * @param distributionTime The {@link LocalDateTime} at which the distribution runs.
+   * @param traceTimeIntervalWarnings The {@link TraceTimeIntervalWarning traceTimeIntervalWarnings} contained by this
+   *                                  {@link TraceTimeIntervalWarningsPackageBundler}.
+   * @param distributionTime          The {@link LocalDateTime} at which the distribution runs.
    */
   public void setTraceTimeIntervalWarnings(
       Collection<TraceTimeIntervalWarning> traceTimeIntervalWarnings,
@@ -88,23 +87,29 @@ public class TraceTimeIntervalWarningsPackageBundler {
   }
 
   /**
-   * Returns a set containing the following possibile elements:
-   * <li>one element if there is only one hour of {@link TraceTimeIntervalWarning} data.
-   * <li>two elements representing the oldest and newest hours since epoch where there is
-   * {@link TraceTimeIntervalWarning} data.
+   * Fetch the oldest hour with distributable trace time interval warnings that ar present in the distribution map.
+   *
+   * @param country support country.
+   * @return optional containing the value of the min hour.
    */
-  public Set<Integer> getHourIntervalForDistributableWarnings(String country) {
+  public Optional<Integer> getOldestHourWithDistributableWarnings(String country) {
     if (isCountrySupported(country)) {
-      Set<Integer> keyset = this.distributableTraceTimeIntervalWarnings.keySet();
-      if (keyset.size() == 1) {
-        return keyset;
-      }
-      if (!keyset.isEmpty()) {
-        List<Integer> sortedHours = keyset.stream().sorted().collect(Collectors.toList());
-        return Set.of(sortedHours.get(0), sortedHours.get(sortedHours.size() - 1));
-      }
+      return this.distributableTraceTimeIntervalWarnings.keySet().stream().min(Integer::compareTo);
     }
-    return Collections.emptySet();
+    return Optional.empty();
+  }
+
+  /**
+   * Fetch the latest hour with distributable trace time interval warnings that ar present in the distribution map.
+   *
+   * @param country support country.
+   * @return optional containing the value of the max hour.
+   */
+  public Optional<Integer> getLatestHourWithDistributableWarnings(String country) {
+    if (isCountrySupported(country)) {
+      return this.distributableTraceTimeIntervalWarnings.keySet().stream().max(Integer::compareTo);
+    }
+    return Optional.empty();
   }
 
   /**
@@ -116,8 +121,7 @@ public class TraceTimeIntervalWarningsPackageBundler {
 
   private boolean isCountrySupported(String country) {
     if (!supportedCountries.contains(country)) {
-      logger.warn("The country {} received is not included in the list of supported countries",
-          country);
+      logger.warn("The country {} received is not included in the list of supported countries", country);
       return false;
     }
     return true;
