@@ -23,7 +23,6 @@ import org.slf4j.LoggerFactory;
  * diagnosis keys. The packages will be hourly and include all TraceTimeIntervalWarnings that have
  * been submitted in the past X ammount of days (relative to distribution time), where X is the same
  * app configuration paramter used for diagnosis key (currently 14).
- *
  * An hour Package shall be named after the hour since epoch derived from the submission timestamp
  * of the trace warnings. The resulting package name should be a 6-digit number such as 448188.
  */

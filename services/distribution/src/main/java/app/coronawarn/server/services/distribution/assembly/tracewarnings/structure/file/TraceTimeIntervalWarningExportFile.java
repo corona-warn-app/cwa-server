@@ -20,7 +20,8 @@ import java.util.stream.Collectors;
  */
 public class TraceTimeIntervalWarningExportFile extends FileOnDiskWithChecksum {
 
-  private final Set<app.coronawarn.server.common.protocols.internal.pt.TraceTimeIntervalWarning> traceTimeIntervalWarnings;
+  private final Set<app.coronawarn.server.common.protocols.internal.pt.TraceTimeIntervalWarning>
+                traceTimeIntervalWarnings;
   private final String region;
   private final int intervalNumber;
   private final DistributionServiceConfig distributionServiceConfig;
@@ -71,7 +72,8 @@ public class TraceTimeIntervalWarningExportFile extends FileOnDiskWithChecksum {
         .toByteArray();
   }
 
-  private static Set<app.coronawarn.server.common.protocols.internal.pt.TraceTimeIntervalWarning> getTraceIntervalWarningsFromTraceIntervalWarnings(
+  private static Set<app.coronawarn.server.common.protocols.internal.pt.TraceTimeIntervalWarning>
+      getTraceIntervalWarningsFromTraceIntervalWarnings(
       Collection<TraceTimeIntervalWarning> traceTimeIntervalWarnings) {
 
     return traceTimeIntervalWarnings.stream().map(
