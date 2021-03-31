@@ -1,8 +1,8 @@
 package app.coronawarn.server.services.callback.controller;
 
-import static org.mockito.Mockito.any;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doThrow;
-import static org.mockito.MockitoAnnotations.initMocks;
+import static org.mockito.MockitoAnnotations.openMocks;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.test.web.servlet.setup.MockMvcBuilders.standaloneSetup;
@@ -28,7 +28,7 @@ class ApiExceptionHandlerTest {
 
   @BeforeEach
   public void setup() {
-    initMocks(this);
+    openMocks(this);
     callbackController = new CallbackController(serviceMock);
     this.mockMvc = standaloneSetup(callbackController).setControllerAdvice(new ApiExceptionHandler()).build();
   }
