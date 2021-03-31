@@ -67,8 +67,6 @@ class HourIntervalIndexingDecoratorTest {
     when(api.getOriginCountry()).thenReturn("DE");
 
     DistributionServiceConfig svcConfig = mock(DistributionServiceConfig.class);
-    when(svcConfig.getExpiryPolicyMinutes()).thenReturn(120);
-    when(svcConfig.getShiftingPolicyThreshold()).thenReturn(1);
     when(svcConfig.getApi()).thenReturn(api);
     when(svcConfig.getSupportedCountries()).thenReturn(new String[]{"DE"});
 
@@ -100,12 +98,11 @@ class HourIntervalIndexingDecoratorTest {
 
     traceWarnings.addAll(additionalTraceWarnings);
     traceWarnings.addAll(anotherTraceWarnings);
+
     Api api = mock(Api.class);
     when(api.getOriginCountry()).thenReturn("DE");
 
     DistributionServiceConfig svcConfig = mock(DistributionServiceConfig.class);
-    when(svcConfig.getExpiryPolicyMinutes()).thenReturn(120);
-    when(svcConfig.getShiftingPolicyThreshold()).thenReturn(1);
     when(svcConfig.getApi()).thenReturn(api);
     when(svcConfig.getSupportedCountries()).thenReturn(new String[]{"DE"});
 
