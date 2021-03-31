@@ -23,6 +23,7 @@ public class CwaApiStructureProvider {
   private final DiagnosisKeysStructureProvider diagnosisKeysStructureProvider;
   private final DistributionServiceConfig distributionServiceConfig;
   private final TraceTimeIntervalWarningsStructureProvider traceWarningsStructureProvider;
+  private final QrCodePosterTemplateStructureProvider qrCodeTemplateStructureProvider;
 
   /**
    * Creates a new CwaApiStructureProvider.
@@ -33,6 +34,7 @@ public class CwaApiStructureProvider {
       StatisticsStructureProvider statisticsStructureProvider,
       DiagnosisKeysStructureProvider diagnosisKeysStructureProvider,
       TraceTimeIntervalWarningsStructureProvider traceWarningsStructureProvider,
+      QrCodePosterTemplateStructureProvider qrCodeTemplateStructureProvider,
       DistributionServiceConfig distributionServiceConfig) {
     this.appConfigurationStructureProvider = appConfigurationStructureProvider;
     this.appConfigurationV2StructureProvider = appConfigurationV2StructureProvider;
@@ -40,6 +42,7 @@ public class CwaApiStructureProvider {
     this.diagnosisKeysStructureProvider = diagnosisKeysStructureProvider;
     this.distributionServiceConfig = distributionServiceConfig;
     this.traceWarningsStructureProvider = traceWarningsStructureProvider;
+    this.qrCodeTemplateStructureProvider = qrCodeTemplateStructureProvider;
   }
 
   /**
@@ -59,6 +62,10 @@ public class CwaApiStructureProvider {
         ignoredValue -> Optional.ofNullable(appConfigurationStructureProvider.getAppConfigurationV1ForAndroid()));
     versionDirectory.addWritableToAll(
         ignoredValue -> Optional.ofNullable(appConfigurationStructureProvider.getAppConfigurationV1ForIos()));
+    versionDirectory.addWritableToAll(
+        ignoredValue -> Optional.ofNullable(qrCodeTemplateStructureProvider.getQrCodeTemplateForAndroid()));
+    versionDirectory.addWritableToAll(
+        ignoredValue -> Optional.ofNullable(qrCodeTemplateStructureProvider.getQrCodeTemplateForIos()));
     versionDirectory.addWritableToAll(
         ignoredValue -> Optional.of(diagnosisKeysStructureProvider.getDiagnosisKeys()));
     versionDirectory.addWritableToAll(
