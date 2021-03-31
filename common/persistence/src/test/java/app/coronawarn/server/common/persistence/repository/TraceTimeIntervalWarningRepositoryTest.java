@@ -3,6 +3,7 @@ package app.coronawarn.server.common.persistence.repository;
 import app.coronawarn.server.common.persistence.domain.TraceTimeIntervalWarning;
 import java.time.Instant;
 import java.util.UUID;
+import app.coronawarn.server.common.persistence.utils.CheckinsDateSpecification;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
@@ -26,7 +27,7 @@ public class TraceTimeIntervalWarningRepositoryTest {
     final int startIntervalNumber = 0;
     final int endIntervalNumber = 10;
     final int transmissionRiskLevel = 5;
-    final long submissionTimestamp = Instant.now().getEpochSecond();
+    final long submissionTimestamp = CheckinsDateSpecification.HOUR_SINCE_EPOCH_DERIVATION.apply(Instant.now().getEpochSecond());
     TraceTimeIntervalWarning traceTimeIntervalWarning = new TraceTimeIntervalWarning(
         guid, startIntervalNumber, endIntervalNumber-startIntervalNumber, transmissionRiskLevel, submissionTimestamp);
     underTest.save(traceTimeIntervalWarning);
