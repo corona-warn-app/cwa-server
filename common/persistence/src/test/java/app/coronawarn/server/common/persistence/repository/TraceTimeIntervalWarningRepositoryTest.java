@@ -25,12 +25,10 @@ public class TraceTimeIntervalWarningRepositoryTest {
     final byte[] guid = UUID.randomUUID().toString().getBytes();
     final int startIntervalNumber = 0;
     final int endIntervalNumber = 10;
-    final long submissionTimestamp = Instant.now().getEpochSecond();
-
     final int transmissionRiskLevel = 5;
+    final long submissionTimestamp = Instant.now().getEpochSecond();
     TraceTimeIntervalWarning traceTimeIntervalWarning = new TraceTimeIntervalWarning(
-        guid, startIntervalNumber, endIntervalNumber - startIntervalNumber,
-        transmissionRiskLevel, submissionTimestamp);
+        guid, startIntervalNumber, endIntervalNumber-startIntervalNumber, transmissionRiskLevel, submissionTimestamp);
     underTest.save(traceTimeIntervalWarning);
 
     final Iterable<TraceTimeIntervalWarning> all = underTest.findAll();
@@ -38,11 +36,10 @@ public class TraceTimeIntervalWarningRepositoryTest {
 
     Assertions.assertThat(next).isNotNull();
     Assertions.assertThat(next.getId()).isNotNull();
-    Assertions.assertThat(next.getTraceLocationGuid()).isEqualTo(guid);
+    Assertions.assertThat(next.getTraceLocationId()).isEqualTo(guid);
     Assertions.assertThat(next.getStartIntervalNumber()).isEqualTo(startIntervalNumber);
     Assertions.assertThat(next.getPeriod()).isEqualTo(endIntervalNumber-startIntervalNumber);
     Assertions.assertThat(next.getTransmissionRiskLevel()).isEqualTo(transmissionRiskLevel);
     Assertions.assertThat(next.getSubmissionTimestamp()).isEqualTo(submissionTimestamp);
-
   }
 }

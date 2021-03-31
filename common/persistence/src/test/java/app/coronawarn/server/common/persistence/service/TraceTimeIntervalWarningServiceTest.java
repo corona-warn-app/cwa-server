@@ -14,7 +14,6 @@ import com.google.protobuf.ByteString;
 import app.coronawarn.server.common.persistence.domain.TraceTimeIntervalWarning;
 import app.coronawarn.server.common.persistence.repository.TraceTimeIntervalWarningRepository;
 import app.coronawarn.server.common.protocols.internal.pt.CheckIn;
-import app.coronawarn.server.common.protocols.internal.pt.SignedTraceLocation;
 
 @DataJdbcTest
 class TraceTimeIntervalWarningServiceTest {
@@ -30,18 +29,15 @@ class TraceTimeIntervalWarningServiceTest {
     List<CheckIn> checkins = List.of(
         CheckIn.newBuilder().setStartIntervalNumber(0).setEndIntervalNumber(1)
             .setTransmissionRiskLevel(1)
-            .setSignedLocation(
-                SignedTraceLocation.newBuilder().setLocation(ByteString.copyFromUtf8("uuid1")))
+            .setLocationId(ByteString.copyFromUtf8("uuid1"))
             .build(),
         CheckIn.newBuilder().setStartIntervalNumber(23).setEndIntervalNumber(30)
             .setTransmissionRiskLevel(2)
-            .setSignedLocation(
-                SignedTraceLocation.newBuilder().setLocation(ByteString.copyFromUtf8("uuid2")))
+            .setLocationId(ByteString.copyFromUtf8("uuid1"))
             .build(),
         CheckIn.newBuilder().setStartIntervalNumber(40).setEndIntervalNumber(50)
             .setTransmissionRiskLevel(3)
-            .setSignedLocation(
-                SignedTraceLocation.newBuilder().setLocation(ByteString.copyFromUtf8("uuid3")))
+            .setLocationId(ByteString.copyFromUtf8("uuid1"))
             .build());
 
     traceWarningsService.saveCheckinData(checkins);
@@ -70,10 +66,8 @@ class TraceTimeIntervalWarningServiceTest {
       assertEquals(checkin.getTransmissionRiskLevel(),
           warning.getTransmissionRiskLevel().intValue());
       assertEquals(checkin.getStartIntervalNumber(), warning.getStartIntervalNumber().intValue());
-      assertEquals(checkin.getEndIntervalNumber() - warning.getStartIntervalNumber(),
-          warning.getPeriod().intValue());
-      assertArrayEquals(checkin.getSignedLocation().getLocation().toByteArray(),
-          warning.getTraceLocationGuid());
+      assertArrayEquals(checkin.getLocationId().toByteArray(),
+          warning.getTraceLocationId());
     }
   }
 }
