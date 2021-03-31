@@ -7,7 +7,7 @@ import static org.mockito.Mockito.when;
 import org.junit.jupiter.api.Test;
 import org.yaml.snakeyaml.nodes.Node;
 
-@SuppressWarnings("rawtypes")
+@SuppressWarnings({ "rawtypes", "unchecked" })
 class NoMessageBuilderOnClassExceptionTest {
 
   @Test
