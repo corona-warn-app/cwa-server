@@ -27,7 +27,8 @@ public class TraceTimeIntervalWarningRepositoryTest {
     final int startIntervalNumber = 0;
     final int endIntervalNumber = 10;
     final int transmissionRiskLevel = 5;
-    final long submissionTimestamp = CheckinsDateSpecification.HOUR_SINCE_EPOCH_DERIVATION.apply(Instant.now().getEpochSecond());
+    final long submissionTimestamp =
+        CheckinsDateSpecification.HOUR_SINCE_EPOCH_DERIVATION.apply(Instant.now().getEpochSecond());
     TraceTimeIntervalWarning traceTimeIntervalWarning = new TraceTimeIntervalWarning(
         guid, startIntervalNumber, endIntervalNumber-startIntervalNumber, transmissionRiskLevel, submissionTimestamp);
     underTest.save(traceTimeIntervalWarning);
