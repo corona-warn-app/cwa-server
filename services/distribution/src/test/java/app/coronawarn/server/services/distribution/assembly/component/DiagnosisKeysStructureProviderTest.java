@@ -1,5 +1,3 @@
-
-
 package app.coronawarn.server.services.distribution.assembly.component;
 
 import static app.coronawarn.server.services.distribution.common.Helpers.buildDiagnosisKeys;
@@ -26,7 +24,7 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
-import org.springframework.boot.test.context.ConfigFileApplicationContextInitializer;
+import org.springframework.boot.test.context.ConfigDataApplicationContextInitializer;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
@@ -35,7 +33,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 @ContextConfiguration(
     classes = {CryptoProvider.class, DistributionServiceConfig.class,
         KeySharingPoliciesChecker.class, EnfParameterAdapter.class,},
-    initializers = ConfigFileApplicationContextInitializer.class)
+    initializers = ConfigDataApplicationContextInitializer.class)
 class DiagnosisKeysStructureProviderTest {
 
   @Autowired

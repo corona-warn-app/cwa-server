@@ -1,5 +1,3 @@
-
-
 package app.coronawarn.server.services.distribution.assembly.appconfig.validation;
 
 import static app.coronawarn.server.services.distribution.assembly.appconfig.validation.ParameterSpec.RISK_SCORE_MAX;
@@ -13,23 +11,23 @@ import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 import app.coronawarn.server.common.protocols.internal.ApplicationConfiguration;
 import app.coronawarn.server.services.distribution.assembly.appconfig.ApplicationConfigurationPublicationConfig;
 import app.coronawarn.server.services.distribution.assembly.appconfig.UnableToLoadFileException;
+import app.coronawarn.server.services.distribution.config.DistributionServiceConfig;
 import java.util.Arrays;
 import java.util.stream.Stream;
-import app.coronawarn.server.services.distribution.config.DistributionServiceConfig;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
-import org.springframework.boot.test.context.ConfigFileApplicationContextInitializer;
+import org.springframework.boot.test.context.ConfigDataApplicationContextInitializer;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 @EnableConfigurationProperties(value = DistributionServiceConfig.class)
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration(classes = {DistributionServiceConfig.class, ApplicationConfigurationPublicationConfig.class},
-    initializers = ConfigFileApplicationContextInitializer.class)
+    initializers = ConfigDataApplicationContextInitializer.class)
 class ApplicationConfigurationValidatorTest {
 
   private static final ValidationResult SUCCESS = new ValidationResult();

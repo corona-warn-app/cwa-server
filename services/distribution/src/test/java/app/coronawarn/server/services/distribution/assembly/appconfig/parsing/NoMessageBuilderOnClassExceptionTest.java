@@ -1,5 +1,3 @@
-
-
 package app.coronawarn.server.services.distribution.assembly.appconfig.parsing;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -9,6 +7,7 @@ import static org.mockito.Mockito.when;
 import org.junit.jupiter.api.Test;
 import org.yaml.snakeyaml.nodes.Node;
 
+@SuppressWarnings("rawtypes")
 class NoMessageBuilderOnClassExceptionTest {
 
   @Test
