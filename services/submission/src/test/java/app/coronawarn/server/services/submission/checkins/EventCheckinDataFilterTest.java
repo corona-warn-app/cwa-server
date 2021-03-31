@@ -1,6 +1,6 @@
 package app.coronawarn.server.services.submission.checkins;
 
-import static app.coronawarn.server.services.submission.checkins.CheckinsDateSpecification.TEN_MINUTE_INTERVAL_DERIVATION;
+import static app.coronawarn.server.common.persistence.utils.CheckinsDateSpecification.TEN_MINUTE_INTERVAL_DERIVATION;
 import static java.time.ZoneOffset.UTC;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 

@@ -69,5 +69,4 @@ class DiagnosisKeysStructureProviderTest {
     Directory<WritableOnDisk> diagnosisKeys = diagnosisKeysStructureProvider.getDiagnosisKeys();
     Assertions.assertEquals("diagnosis-keys", diagnosisKeys.getName());
   }
-
 }

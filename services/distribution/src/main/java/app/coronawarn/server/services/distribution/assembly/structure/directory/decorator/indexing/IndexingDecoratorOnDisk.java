@@ -1,5 +1,3 @@
-
-
 package app.coronawarn.server.services.distribution.assembly.structure.directory.decorator.indexing;
 
 import app.coronawarn.server.services.distribution.assembly.structure.WritableOnDisk;
@@ -20,6 +18,7 @@ public class IndexingDecoratorOnDisk<T> extends AbstractIndexingDecorator<T, Wri
     super(directory, indexFileName);
   }
 
+  @SuppressWarnings("unchecked")
   @Override
   public FileOnDisk getIndexFile(String indexFileName, ImmutableStack<Object> indices) {
     Set<T> index = this.getIndex(indices);

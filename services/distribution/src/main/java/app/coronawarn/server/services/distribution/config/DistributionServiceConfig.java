@@ -437,6 +437,8 @@ public class DistributionServiceConfig {
     private String appConfigV2AndroidFileName;
     @Pattern(regexp = CHAR_AND_NUMBER_REGEX)
     private String statisticsFileName;
+    @Pattern(regexp = CHAR_AND_NUMBER_REGEX)
+    private String traceWarningsPath;
 
     public String getStatisticsFileName() {
       return statisticsFileName;
@@ -540,6 +542,14 @@ public class DistributionServiceConfig {
 
     public void setOriginCountry(String originCountry) {
       this.originCountry = originCountry;
+    }
+
+    public String getTraceWarningsPath() {
+      return this.traceWarningsPath;
+    }
+
+    public void setTraceWarningsPath(String traceWarningsPath) {
+      this.traceWarningsPath = traceWarningsPath;
     }
   }
 
