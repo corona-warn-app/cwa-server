@@ -220,7 +220,7 @@ public class Helpers {
   public static List<TraceTimeIntervalWarning> buildTraceTimeIntervalWarning(
       int startIntervalNumber, int endIntervalNumber, int submissionHourSinceEpoch, int numberOfWarnings) {
     return IntStream.range(0, numberOfWarnings)
-        .mapToObj(v -> buildTraceTimeIntervalWarning(startIntervalNumber, endIntervalNumber, submissionHourSinceEpoch))
+        .mapToObj(ignoredValue -> buildTraceTimeIntervalWarning(startIntervalNumber, endIntervalNumber, submissionHourSinceEpoch))
         .collect(Collectors.toList());
   }
 }
