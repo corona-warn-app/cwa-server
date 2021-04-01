@@ -307,7 +307,7 @@ public class TraceTimeIntervalWarningsStructureProviderTest {
     actualFiles.forEach(actual -> assertTrue(expectedPaths.contains(actual)));
   }
 
-  private boolean isDsStore(String it) {
+  private boolean isNotDsStore(String it) {
     return !it.endsWith(DS_STORE);
   }
 
