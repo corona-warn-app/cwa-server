@@ -12,7 +12,7 @@ public class QrCodeTemplateLoader {
   private static final Logger logger = LoggerFactory.getLogger(QrCodeTemplateLoader.class);
 
   public ByteString loadAndroidTemplateAsBytes() {
-    return loadPosterTemplate("pt-android-poster-1.0.0.xml");
+    return loadPosterTemplate("pt-android-poster-1.0.0.pdf");
   }
 
   public ByteString loadIosTemplateAsBytes() {
