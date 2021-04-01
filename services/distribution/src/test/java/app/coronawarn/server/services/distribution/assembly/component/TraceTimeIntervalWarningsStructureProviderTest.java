@@ -301,7 +301,7 @@ public class TraceTimeIntervalWarningsStructureProviderTest {
 
     Set<String> actualFiles =
         getSubFoldersPaths(testOutputFolder.getRoot().getAbsolutePath(), PARENT_TEST_FOLDER).stream()
-            .filter(this::isDsStore).collect(
+            .filter(this::isNotDsStore).collect(
             Collectors.toSet());
     actualFiles.addAll(getFilePaths(testOutputFolder.getRoot(), testOutputFolder.getRoot().getAbsolutePath()));
     actualFiles.forEach(actual -> assertTrue(expectedPaths.contains(actual)));
