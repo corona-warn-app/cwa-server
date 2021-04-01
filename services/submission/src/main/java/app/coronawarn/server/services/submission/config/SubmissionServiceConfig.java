@@ -39,6 +39,9 @@ public class SubmissionServiceConfig {
   @Max(25)
   private Integer randomKeyPaddingMultiplier;
   @Min(1)
+  @Max(25)
+  private Integer randomCheckinsPaddingMultiplier;
+  @Min(1)
   @Max(10000)
   private Integer connectionPoolSize;
   private DataSize maximumRequestSize;
@@ -84,6 +87,14 @@ public class SubmissionServiceConfig {
 
   public void setRandomKeyPaddingMultiplier(Integer randomKeyPaddingMultiplier) {
     this.randomKeyPaddingMultiplier = randomKeyPaddingMultiplier;
+  }
+
+  public Integer getRandomCheckinsPaddingMultiplier() {
+    return randomCheckinsPaddingMultiplier;
+  }
+
+  public void setRandomCheckinsPaddingMultiplier(Integer randomCheckinsPaddingMultiplier) {
+    this.randomCheckinsPaddingMultiplier = randomCheckinsPaddingMultiplier;
   }
 
   public Integer getConnectionPoolSize() {
