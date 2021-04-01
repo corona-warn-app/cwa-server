@@ -40,7 +40,7 @@ class TraceTimeIntervalWarningServiceTest {
             .setLocationId(ByteString.copyFromUtf8("uuid1"))
             .build());
 
-    traceWarningsService.saveCheckinData(checkins);
+    traceWarningsService.saveCheckins(checkins);
 
     List<TraceTimeIntervalWarning> actualTraceWarningsStored =
         StreamSupport.stream(traceWarningsRepository.findAll().spliterator(), false)

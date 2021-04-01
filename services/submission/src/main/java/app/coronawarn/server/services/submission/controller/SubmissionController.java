@@ -119,8 +119,8 @@ public class SubmissionController {
   private void extractAndStoreEventCheckins(SubmissionPayload submissionPayload) {
     try {
       List<CheckIn> checkins = checkinsDataFilter.filter(submissionPayload.getCheckInsList());
-
-      traceTimeIntervalWarningSevice.saveCheckinData(checkins);
+      traceTimeIntervalWarningSevice.saveCheckinsWithFakeData(checkins,
+          submissionServiceConfig.getRandomCheckinsPaddingMultiplier());
     } catch (final Exception e) {
       // Any check-in data processing related error must not interrupt the submission flow or interfere
       // with storing of the diagnosis keys
