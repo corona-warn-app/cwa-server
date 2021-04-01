@@ -65,6 +65,8 @@ public class DistributionServiceConfig {
   private AppVersions appVersions;
   private AppConfigParameters appConfigParameters;
   private StatisticsConfig statistics;
+  private QrCodePosterTemplate iosQrCodePosterTemplate;
+  private QrCodePosterTemplate androidQrCodePosterTemplate;
 
   public Paths getPaths() {
     return paths;
@@ -201,6 +203,22 @@ public class DistributionServiceConfig {
   public void setObjectStore(
       ObjectStore objectStore) {
     this.objectStore = objectStore;
+  }
+
+  public QrCodePosterTemplate getIosQrCodePosterTemplate() {
+    return iosQrCodePosterTemplate;
+  }
+
+  public void setIosQrCodePosterTemplate(QrCodePosterTemplate iosQrCodePosterTemplate) {
+    this.iosQrCodePosterTemplate = iosQrCodePosterTemplate;
+  }
+
+  public QrCodePosterTemplate getAndroidQrCodePosterTemplate() {
+    return androidQrCodePosterTemplate;
+  }
+
+  public void setAndroidQrCodePosterTemplate(QrCodePosterTemplate androidQrCodePosterTemplate) {
+    this.androidQrCodePosterTemplate = androidQrCodePosterTemplate;
   }
 
   public List<AppFeature> getAppFeatures() {
@@ -647,6 +665,132 @@ public class DistributionServiceConfig {
           .setVerificationKeyId(this.getVerificationKeyId())
           .setSignatureAlgorithm(this.getAlgorithmOid())
           .build();
+    }
+  }
+
+  public static class QrCodePosterTemplate {
+
+    private byte[] template;
+    @NotNull
+    private Integer offsetX;
+    @NotNull
+    private Integer offsetY;
+    @NotNull
+    private Integer qrCodeSideLength;
+    @NotEmpty
+    private String publishedArchiveName;
+    private DescriptionTextBox descriptionTextBox;
+
+    public static class DescriptionTextBox {
+
+      @NotNull
+      private Integer offsetX;
+      @NotNull
+      private Integer offsetY;
+      @NotNull
+      private Integer width;
+      @NotNull
+      private Integer height;
+      @NotNull
+      private Integer fontSize;
+      @NotNull
+      private String fontColor;
+
+      public Integer getOffsetX() {
+        return offsetX;
+      }
+
+      public void setOffsetX(Integer offsetX) {
+        this.offsetX = offsetX;
+      }
+
+      public Integer getOffsetY() {
+        return offsetY;
+      }
+
+      public void setOffsetY(Integer offsetY) {
+        this.offsetY = offsetY;
+      }
+
+      public Integer getWidth() {
+        return width;
+      }
+
+      public void setWidth(Integer width) {
+        this.width = width;
+      }
+
+      public Integer getHeight() {
+        return height;
+      }
+
+      public void setHeight(Integer height) {
+        this.height = height;
+      }
+
+      public Integer getFontSize() {
+        return fontSize;
+      }
+
+      public void setFontSize(Integer fontSize) {
+        this.fontSize = fontSize;
+      }
+
+      public String getFontColor() {
+        return fontColor;
+      }
+
+      public void setFontColor(String fontColor) {
+        this.fontColor = fontColor;
+      }
+    }
+
+    public String getPublishedArchiveName() {
+      return publishedArchiveName;
+    }
+
+    public void setPublishedArchiveName(String publishedArchiveName) {
+      this.publishedArchiveName = publishedArchiveName;
+    }
+
+    public byte[] getTemplate() {
+      return template;
+    }
+
+    public void setTemplate(byte[] template) {
+      this.template = template;
+    }
+
+    public Integer getOffsetX() {
+      return offsetX;
+    }
+
+    public void setOffsetX(Integer offsetX) {
+      this.offsetX = offsetX;
+    }
+
+    public Integer getOffsetY() {
+      return offsetY;
+    }
+
+    public void setOffsetY(Integer offsetY) {
+      this.offsetY = offsetY;
+    }
+
+    public Integer getQrCodeSideLength() {
+      return qrCodeSideLength;
+    }
+
+    public void setQrCodeSideLength(Integer qrCodeSideLength) {
+      this.qrCodeSideLength = qrCodeSideLength;
+    }
+
+    public DescriptionTextBox getDescriptionTextBox() {
+      return descriptionTextBox;
+    }
+
+    public void setDescriptionTextBox(DescriptionTextBox descriptionTextBox) {
+      this.descriptionTextBox = descriptionTextBox;
     }
   }
 
@@ -1255,6 +1399,5 @@ public class DistributionServiceConfig {
         this.requireEvaluationTypeHardwareBacked = requireEvaluationTypeHardwareBacked;
       }
     }
-
   }
 }

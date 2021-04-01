@@ -161,9 +161,32 @@ services:
         require-cts-profile-match: ${PPA_PPAC_REQUIRE_CTS_PROFILE_MATCH:false}
         require-evaluation-type-basic: ${PPA_PPAC_REQUIRE_EVALUATION_TYPE_BASIC:false}
         require-evaluation-type-hardware-backed: ${PPA_PPAC_REQUIRE_EVALUATION_TYPE_HARDWARE_BACKED:false}
-
-
-
+    ios-qr-code-poster-template:
+      published-archive-name: qr_code_poster_template_ios
+      template: 
+      offsetX: ${EVREG_QR_CODE_POSTER_TEMPLATE_IOS_OFFSET_X:97}
+      offsetY: ${EVREG_QR_CODE_POSTER_TEMPLATE_IOS_OFFSET_Y:82}
+      qr-code-side-length: ${EVREG_QR_CODE_POSTER_TEMPLATE_IOS_QR_CODE_SIDE_LENGTH:400}
+      description-text-box:
+        offsetX: ${EVREG_QR_CODE_POSTER_TEMPLATE_IOS_DESCRIPTION_OFFSET_X:80}
+        offsetY: ${EVREG_QR_CODE_POSTER_TEMPLATE_IOS_DESCRIPTION_OFFSET_Y:510}
+        width: ${EVREG_QR_CODE_POSTER_TEMPLATE_IOS_DESCRIPTION_WIDTH:420}
+        height: ${EVREG_QR_CODE_POSTER_TEMPLATE_IOS_DESCRIPTION_HEIGHT:20}
+        fontSize: ${EVREG_QR_CODE_POSTER_TEMPLATE_IOS_DESCRIPTION_FONT_SIZE:14}
+        fontColor: ${EVREG_QR_CODE_POSTER_TEMPLATE_IOS_DESCRIPTION_FONT_COLOR:black}
+    android-qr-code-poster-template:
+      published-archive-name: qr_code_poster_template_android
+      template: 
+      offsetX: ${EVREG_QR_CODE_POSTER_TEMPLATE_ANDROID_OFFSET_X:10}
+      offsetY: ${EVREG_QR_CODE_POSTER_TEMPLATE_ANDROID_OFFSET_Y:10}
+      qr-code-side-length: ${EVREG_QR_CODE_POSTER_TEMPLATE_ANDROID_QR_CODE_SIDE_LENGTH:100}
+      description-text-box:
+        offsetX: ${EVREG_QR_CODE_POSTER_TEMPLATE_ANDROID_DESCRIPTION_OFFSET_X:10}
+        offsetY: ${EVREG_QR_CODE_POSTER_TEMPLATE_ANDROID_DESCRIPTION_OFFSET_Y:50}
+        width: ${EVREG_QR_CODE_POSTER_TEMPLATE_ANDROID_DESCRIPTION_WIDTH:100}
+        height: ${EVREG_QR_CODE_POSTER_TEMPLATE_ANDROID_DESCRIPTION_HEIGHT:20}
+        font-size: ${EVREG_QR_CODE_POSTER_TEMPLATE_ANDROID_DESCRIPTION_FONT_SIZE:10}
+        font-color: ${EVREG_QR_CODE_POSTER_TEMPLATE_ANDROID_DESCRIPTION_FONT_COLOR:#000000}
 
 spring:
   main:

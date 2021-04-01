@@ -19,6 +19,7 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Component;
 
 /**
  * New packages with trace warnings shall be assembled and published to CDN, similar to the diagnosis keys. The packages
@@ -27,6 +28,7 @@ import org.slf4j.LoggerFactory;
  * 14). An hour Package shall be named after the hour since epoch derived from the submission timestamp of the trace
  * warnings. The resulting package name should be a 6-digit number such as 448188.
  */
+@Component
 public class TraceTimeIntervalWarningsPackageBundler {
 
   private static final Logger logger =
