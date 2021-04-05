@@ -2,6 +2,7 @@ package app.coronawarn.server.common.persistence.service;
 
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
@@ -34,6 +35,28 @@ class TraceTimeIntervalWarningServiceTest {
 
   @Test
   void testStorage() {
+    List<CheckIn> checkins = getRandomTestData();
+    traceWarningsService.saveCheckins(checkins);
+
+    List<TraceTimeIntervalWarning> actualTraceWarningsStored =
+        StreamSupport.stream(traceWarningsRepository.findAll().spliterator(), false)
+            .collect(Collectors.toList());
+
+    assertCheckinsAndWarningsAreEqual(new ArrayList<>(checkins), actualTraceWarningsStored);
+  }
+
+  @Test
+  void testStorageWithRandomPadding() {
+    List<CheckIn> checkins = getRandomTestData();
+    traceWarningsService.saveCheckinsWithFakeData(checkins, 2);
+
+    List<TraceTimeIntervalWarning> actualTraceWarningsStored =
+        StreamSupport.stream(traceWarningsRepository.findAll().spliterator(), false)
+            .collect(Collectors.toList());
+    assertTrue(actualTraceWarningsStored.size() == checkins.size() + checkins.size() * 2);
+  }
+
+  private List<CheckIn> getRandomTestData() {
     List<CheckIn> checkins = List.of(
         CheckIn.newBuilder().setStartIntervalNumber(0).setEndIntervalNumber(1)
             .setTransmissionRiskLevel(1)
@@ -47,14 +70,7 @@ class TraceTimeIntervalWarningServiceTest {
             .setTransmissionRiskLevel(3)
             .setLocationId(ByteString.copyFromUtf8("uuid1"))
             .build());
-
-    traceWarningsService.saveCheckins(checkins);
-
-    List<TraceTimeIntervalWarning> actualTraceWarningsStored =
-        StreamSupport.stream(traceWarningsRepository.findAll().spliterator(), false)
-            .collect(Collectors.toList());
-
-    assertCheckinsAndWarningsAreEqual(new ArrayList<>(checkins), actualTraceWarningsStored);
+    return checkins;
   }
 
   private void assertCheckinsAndWarningsAreEqual(List<CheckIn> checkins,
@@ -74,6 +90,7 @@ class TraceTimeIntervalWarningServiceTest {
       assertEquals(checkin.getTransmissionRiskLevel(),
           warning.getTransmissionRiskLevel().intValue());
       assertEquals(checkin.getStartIntervalNumber(), warning.getStartIntervalNumber().intValue());
+      assertEquals(checkin.getEndIntervalNumber() - checkin.getStartIntervalNumber(), warning.getPeriod().intValue());
       assertArrayEquals(hashLocationId(checkin.getLocationId()),
           warning.getTraceLocationId());
     }

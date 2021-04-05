@@ -18,7 +18,7 @@ public class FakeCheckinIntervalSpecification {
     if (period == 144) {
       return checkin.getEndIntervalNumber();
     } else {
-      int sign = Math.random() > 0.5 ? 1 : -1;
+      int sign = RANDOM.nextDouble() > 0.5 ? 1 : -1;
       int offset = RANDOM.nextInt(3);
       return checkin.getStartIntervalNumber() + Math.max(2, period + sign * offset);
     }
@@ -34,7 +34,7 @@ public class FakeCheckinIntervalSpecification {
     if (minStartIntervalNumber == startIntervalNumber) {
       return startIntervalNumber;
     } else {
-      int sign = Math.random() > 0.5d ? 1 : -1;
+      int sign = RANDOM.nextDouble() > 0.5d ? 1 : -1;
       int offset = RANDOM.nextInt(6);
       return Math.max(minStartIntervalNumber, startIntervalNumber + sign * offset);
     }
