@@ -1,9 +1,9 @@
 package app.coronawarn.server.common.persistence.repository;
 
 import app.coronawarn.server.common.persistence.domain.TraceTimeIntervalWarning;
+import app.coronawarn.server.common.persistence.service.utils.checkins.CheckinsDateSpecification;
 import java.time.Instant;
 import java.util.UUID;
-import app.coronawarn.server.common.persistence.utils.CheckinsDateSpecification;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;

@@ -2,11 +2,14 @@ package app.coronawarn.server.common.persistence.service;
 
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.data.jdbc.DataJdbcTest;
@@ -23,6 +26,11 @@ class TraceTimeIntervalWarningServiceTest {
 
   @Autowired
   TraceTimeIntervalWarningRepository traceWarningsRepository;
+
+  @BeforeEach
+  public void setup() {
+    traceWarningsRepository.deleteAll();
+  }
 
   @Test
   void testStorage() {
@@ -66,8 +74,16 @@ class TraceTimeIntervalWarningServiceTest {
       assertEquals(checkin.getTransmissionRiskLevel(),
           warning.getTransmissionRiskLevel().intValue());
       assertEquals(checkin.getStartIntervalNumber(), warning.getStartIntervalNumber().intValue());
-      assertArrayEquals(checkin.getLocationId().toByteArray(),
+      assertArrayEquals(hashLocationId(checkin.getLocationId()),
           warning.getTraceLocationId());
     }
+  }
+
+  private byte[] hashLocationId(ByteString locationId) {
+    try {
+      return MessageDigest.getInstance("SHA-256").digest(locationId.toByteArray());
+    } catch (NoSuchAlgorithmException e) {
+    }
+    return new byte[0];
   }
 }

@@ -1,6 +1,6 @@
 package app.coronawarn.server.services.submission.controller;
 
-import static app.coronawarn.server.common.persistence.utils.CheckinsDateSpecification.TEN_MINUTE_INTERVAL_DERIVATION;
+import static app.coronawarn.server.common.persistence.service.utils.checkins.CheckinsDateSpecification.TEN_MINUTE_INTERVAL_DERIVATION;
 import static app.coronawarn.server.services.submission.controller.SubmissionPayloadMockData.VALID_KEY_DATA_1;
 import static app.coronawarn.server.services.submission.controller.SubmissionPayloadMockData.VALID_KEY_DATA_2;
 import static app.coronawarn.server.services.submission.controller.SubmissionPayloadMockData.buildMultipleKeys;
@@ -156,7 +156,7 @@ class SubmissionControllerTest {
   private void assertTraceWarningsHaveBeenSaved(final int numberOfExpectedWarningsSaved) {
     final List<TraceTimeIntervalWarning> storedTimeIntervalWarnings = StreamSupport
         .stream(traceTimeIntervalWarningRepository.findAll().spliterator(), false).collect(Collectors.toList());
-    assertEquals(storedTimeIntervalWarnings.size(), numberOfExpectedWarningsSaved);
+    assertEquals(numberOfExpectedWarningsSaved, storedTimeIntervalWarnings.size());
   }
 
   private void assertTRLCorrectlyComputedFromDSOS(final SubmissionServiceConfig config,
@@ -539,7 +539,8 @@ class SubmissionControllerTest {
 
     final ResponseEntity<Void> actResponse = executor.executePost(buildPayloadWithCheckinData(invalidCheckinData));
     assertThat(actResponse.getStatusCode()).isEqualTo(OK);
-    assertTraceWarningsHaveBeenSaved(2);
+    assertTraceWarningsHaveBeenSaved(invalidCheckinData.size()
+        + invalidCheckinData.size() * config.getRandomCheckinsPaddingMultiplier());
   }
 
   @ParameterizedTest
