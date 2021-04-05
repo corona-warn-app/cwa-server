@@ -30,7 +30,7 @@ public class FakeCheckinIntervalSpecification {
    */
   public static final Function<CheckIn, Integer> END_INTERVAL_GENERATION = (checkin) -> {
     int startIntervalNumber = checkin.getStartIntervalNumber();
-    int minStartIntervalNumber = (int) (Math.floor(startIntervalNumber / 144) * 144);
+    int minStartIntervalNumber = (int) (Math.floor(startIntervalNumber / 144d) * 144);
     if (minStartIntervalNumber == startIntervalNumber) {
       return startIntervalNumber;
     } else {
