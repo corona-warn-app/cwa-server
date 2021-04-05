@@ -12,6 +12,7 @@ import app.coronawarn.server.services.distribution.assembly.component.CryptoProv
 import app.coronawarn.server.services.distribution.assembly.structure.file.FileOnDisk;
 import app.coronawarn.server.services.distribution.assembly.structure.util.ImmutableStack;
 import app.coronawarn.server.services.distribution.assembly.structure.util.TimeUtils;
+import app.coronawarn.server.services.distribution.assembly.tracewarnings.ProdTraceTimeIntervalWarningsPackageBundler;
 import app.coronawarn.server.services.distribution.assembly.tracewarnings.TraceTimeIntervalWarningsPackageBundler;
 import app.coronawarn.server.services.distribution.assembly.tracewarnings.structure.directory.TraceTimeIntervalWarningsHourDirectory;
 import app.coronawarn.server.services.distribution.config.DistributionServiceConfig;
@@ -37,7 +38,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration(classes = {CryptoProvider.class, DistributionServiceConfig.class},
     initializers = ConfigFileApplicationContextInitializer.class)
-class HourIntervalIndexingDecoratorTest {
+class ProdHourIntervalIndexingDecoratorTest {
 
   @Autowired
   DistributionServiceConfig distributionServiceConfig;
@@ -50,7 +51,8 @@ class HourIntervalIndexingDecoratorTest {
 
   @BeforeEach
   void setup() {
-    traceTimeIntervalWarningsPackageBundler = new TraceTimeIntervalWarningsPackageBundler(distributionServiceConfig);
+    traceTimeIntervalWarningsPackageBundler = new ProdTraceTimeIntervalWarningsPackageBundler(
+        distributionServiceConfig);
   }
 
   @AfterEach
