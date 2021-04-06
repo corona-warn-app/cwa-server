@@ -21,7 +21,6 @@ public class TraceTimeIntervalWarningExportFile extends FileOnDiskWithChecksum {
                 traceTimeIntervalWarnings;
   private final String region;
   private final int intervalNumber;
-  private final DistributionServiceConfig distributionServiceConfig;
 
   TraceTimeIntervalWarningExportFile(
       Set<app.coronawarn.server.common.protocols.internal.pt.TraceTimeIntervalWarning> traceTimeIntervalWarnings,
@@ -30,7 +29,6 @@ public class TraceTimeIntervalWarningExportFile extends FileOnDiskWithChecksum {
 
     this.region = region;
     this.intervalNumber = intervalNumber;
-    this.distributionServiceConfig = distributionServiceConfig;
     this.traceTimeIntervalWarnings = traceTimeIntervalWarnings;
   }
 
