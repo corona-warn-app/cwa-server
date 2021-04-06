@@ -46,7 +46,7 @@ class TraceTimeIntervalWarningServiceTest {
         StreamSupport.stream(traceWarningsRepository.findAll().spliterator(), false)
             .collect(Collectors.toList());
 
-    assertCheckinsAndWarningsAreEqual(new ArrayList<>(checkins), actualTraceWarningsStored);
+    assertCheckinsAndWarningsAreEqual(checkins, actualTraceWarningsStored);
   }
 
   private void assertCheckinsAndWarningsAreEqual(List<CheckIn> checkins,
