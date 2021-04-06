@@ -1,7 +1,6 @@
 package app.coronawarn.server.services.distribution.assembly.tracewarnings;
 
-
-import static app.coronawarn.server.common.persistence.utils.CheckinsDateSpecification.HOUR_SINCE_EPOCH_DERIVATION;
+import static app.coronawarn.server.common.persistence.service.utils.checkins.CheckinsDateSpecification.HOUR_SINCE_EPOCH_DERIVATION;
 
 import app.coronawarn.server.common.persistence.domain.TraceTimeIntervalWarning;
 import app.coronawarn.server.services.distribution.config.DistributionServiceConfig;

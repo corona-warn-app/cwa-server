@@ -1,8 +1,7 @@
 package app.coronawarn.server.services.distribution.assembly.tracewarnings;
 
-
 import app.coronawarn.server.common.persistence.domain.TraceTimeIntervalWarning;
-import app.coronawarn.server.common.persistence.utils.CheckinsDateSpecification;
+import app.coronawarn.server.common.persistence.service.utils.checkins.CheckinsDateSpecification;
 import app.coronawarn.server.services.distribution.config.DistributionServiceConfig;
 import java.time.LocalDateTime;
 import java.util.Collection;
