@@ -3,9 +3,10 @@ package app.coronawarn.server.services.distribution.assembly.component;
 import static app.coronawarn.server.services.distribution.common.Helpers.buildTraceTimeIntervalWarning;
 import static app.coronawarn.server.services.distribution.common.Helpers.getFilePaths;
 import static app.coronawarn.server.services.distribution.common.Helpers.getSubFoldersPaths;
-import static org.junit.Assert.assertTrue;
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.when;
 
 import app.coronawarn.server.common.persistence.domain.TraceTimeIntervalWarning;
@@ -36,7 +37,6 @@ import java.util.stream.IntStream;
 import java.util.stream.Stream;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.Rule;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -97,7 +97,7 @@ public class TraceTimeIntervalWarningsStructureProviderTest {
         new TraceTimeIntervalWarningsStructureProvider(traceTimeWarningService, bundler,
             cryptoProvider, distributionServiceConfig);
     Directory<WritableOnDisk> traceWarnings = distributionStructureProvider.getTraceWarningsDirectory();
-    Assertions.assertEquals("twp", traceWarnings.getName());
+    assertEquals("twp", traceWarnings.getName());
   }
 
   @Test
@@ -137,7 +137,7 @@ public class TraceTimeIntervalWarningsStructureProviderTest {
     actualFiles.addAll(getFilePaths(testOutputFolder.getRoot(), testOutputFolder.getRoot().getAbsolutePath()));
 
     expectedPaths.stream().forEach(expected -> {
-      assertTrue("Should contain " + expected, actualFiles.contains(expected));
+      assertTrue(actualFiles.contains(expected), "Should contain " + expected);
     });
 
     // Newest hour path should not be in the package structure since it is the current hour
