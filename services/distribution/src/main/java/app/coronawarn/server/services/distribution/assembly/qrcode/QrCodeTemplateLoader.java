@@ -2,6 +2,7 @@ package app.coronawarn.server.services.distribution.assembly.qrcode;
 
 import com.google.protobuf.ByteString;
 import java.io.IOException;
+import java.io.InputStream;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
@@ -20,8 +21,12 @@ public class QrCodeTemplateLoader {
   }
 
   private ByteString loadPosterTemplate(String filename) {
+    InputStream resourceAsStream = null;
     try {
-      return ByteString.readFrom(this.getClass().getClassLoader().getResourceAsStream(filename));
+      resourceAsStream = this.getClass().getClassLoader().getResourceAsStream(filename);
+      ByteString byteString = ByteString.readFrom(resourceAsStream);
+      resourceAsStream.close();
+      return byteString;
     } catch (IOException e) {
       logger.error(
           "Could not load '" + filename + "' QR poster template from the application package", e);
