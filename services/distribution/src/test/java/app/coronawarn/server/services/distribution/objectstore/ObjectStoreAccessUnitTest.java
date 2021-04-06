@@ -43,8 +43,10 @@ class ObjectStoreAccessUnitTest {
   private final DistributionServiceConfig distributionServiceConfig;
   private final String expBucketName;
   private LocalFile testLocalFile;
+  private LocalFile testLocalFileEmpty;
   private ObjectStoreAccess objectStoreAccess;
   private Path expPath;
+  private Path expPathEmpty;
 
   @MockBean
   private ObjectStoreClient objectStoreClient;
@@ -60,15 +62,31 @@ class ObjectStoreAccessUnitTest {
     when(objectStoreClient.bucketExists(any())).thenReturn(true);
     this.objectStoreAccess = new ObjectStoreAccess(distributionServiceConfig, objectStoreClient);
     this.testLocalFile = setUpLocalFileMock();
+    this.testLocalFileEmpty = setUpLocalFileMockEmpty();
   }
 
   private LocalFile setUpLocalFileMock() {
     var testLocalFile = mock(LocalFile.class);
     expPath = mock(Path.class);
+    var expFile = mock(File.class);
+    when(expPath.toFile()).thenReturn(expFile);
+    when(expFile.length()).thenReturn(1L);
 
     when(testLocalFile.getS3Key()).thenReturn(EXP_S3_KEY);
     when(testLocalFile.getFile()).thenReturn(expPath);
-    when(expPath.toFile()).thenReturn(mock(File.class));
+
+    return testLocalFile;
+  }
+
+  private LocalFile setUpLocalFileMockEmpty() {
+    var testLocalFile = mock(LocalFile.class);
+    expPathEmpty = mock(Path.class);
+    var expFile = mock(File.class);
+    when(expPathEmpty.toFile()).thenReturn(expFile);
+    when(expFile.length()).thenReturn(0L);
+
+    when(testLocalFile.getS3Key()).thenReturn(EXP_S3_KEY);
+    when(testLocalFile.getFile()).thenReturn(expPathEmpty);
 
     return testLocalFile;
   }
@@ -118,6 +136,32 @@ class ObjectStoreAccessUnitTest {
 
     verify(objectStoreClient, atLeastOnce())
         .putObject(eq(expBucketName), eq(EXP_S3_KEY), eq(expPath), headers.capture());
+    assertThat(headers.getValue()).contains(expHeader);
+  }
+
+  @Test
+  void putObjectSetsCwaEmptyPkgHeaderForNonEmptyFiles() {
+    ArgumentCaptor<Map<HeaderKey, String>> headers = ArgumentCaptor.forClass(Map.class);
+    var expMaxAge = 1337;
+    var expHeader = entry(HeaderKey.CWA_EMPTY_PKG, "0");
+
+    objectStoreAccess.putObject(testLocalFile, expMaxAge);
+
+    verify(objectStoreClient, atLeastOnce())
+        .putObject(eq(expBucketName), eq(EXP_S3_KEY), eq(expPath), headers.capture());
+    assertThat(headers.getValue()).contains(expHeader);
+  }
+
+  @Test
+  void putObjectSetsCwaEmptyPkgHeaderForEmptyFiles() {
+    ArgumentCaptor<Map<HeaderKey, String>> headers = ArgumentCaptor.forClass(Map.class);
+    var expMaxAge = 1337;
+    var expHeader = entry(HeaderKey.CWA_EMPTY_PKG, "1");
+
+    objectStoreAccess.putObject(testLocalFileEmpty, expMaxAge);
+
+    verify(objectStoreClient, atLeastOnce())
+        .putObject(eq(expBucketName), eq(EXP_S3_KEY), eq(expPathEmpty), headers.capture());
     assertThat(headers.getValue()).contains(expHeader);
   }
 
