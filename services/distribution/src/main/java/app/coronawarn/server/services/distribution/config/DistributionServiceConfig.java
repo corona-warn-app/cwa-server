@@ -673,9 +673,9 @@ public class DistributionServiceConfig {
 
     private byte[] template;
     @NotNull
-    private Integer offsetX;
+    private Double offsetX;
     @NotNull
-    private Integer offsetY;
+    private Double offsetY;
     @NotNull
     private Integer qrCodeSideLength;
     @NotEmpty
@@ -685,9 +685,9 @@ public class DistributionServiceConfig {
     public static class DescriptionTextBox {
 
       @NotNull
-      private Integer offsetX;
+      private Double offsetX;
       @NotNull
-      private Integer offsetY;
+      private Double offsetY;
       @NotNull
       private Integer width;
       @NotNull
@@ -697,19 +697,19 @@ public class DistributionServiceConfig {
       @NotNull
       private String fontColor;
 
-      public Integer getOffsetX() {
+      public Double getOffsetX() {
         return offsetX;
       }
 
-      public void setOffsetX(Integer offsetX) {
+      public void setOffsetX(Double offsetX) {
         this.offsetX = offsetX;
       }
 
-      public Integer getOffsetY() {
+      public Double getOffsetY() {
         return offsetY;
       }
 
-      public void setOffsetY(Integer offsetY) {
+      public void setOffsetY(Double offsetY) {
         this.offsetY = offsetY;
       }
 
@@ -762,19 +762,19 @@ public class DistributionServiceConfig {
       this.template = template;
     }
 
-    public Integer getOffsetX() {
+    public Double getOffsetX() {
       return offsetX;
     }
 
-    public void setOffsetX(Integer offsetX) {
+    public void setOffsetX(Double offsetX) {
       this.offsetX = offsetX;
     }
 
-    public Integer getOffsetY() {
+    public Double getOffsetY() {
       return offsetY;
     }
 
-    public void setOffsetY(Integer offsetY) {
+    public void setOffsetY(Double offsetY) {
       this.offsetY = offsetY;
     }
 
