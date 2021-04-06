@@ -54,12 +54,6 @@ class TraceTimeIntervalWarningServiceTest {
 
     assertEquals(checkins.size(), actualTraceWarningsStored.size());
 
-    Collections.sort(checkins, (c1, c2) -> Integer.valueOf(c1.getTransmissionRiskLevel())
-        .compareTo(Integer.valueOf(c2.getTransmissionRiskLevel())));
-    Collections.sort(actualTraceWarningsStored,
-        (c1, c2) -> Integer.valueOf(c1.getTransmissionRiskLevel())
-            .compareTo(Integer.valueOf(c2.getTransmissionRiskLevel())));
-
     for (int i = 0; i < checkins.size(); i++) {
       CheckIn checkin = checkins.get(i);
       TraceTimeIntervalWarning warning = actualTraceWarningsStored.get(i);
