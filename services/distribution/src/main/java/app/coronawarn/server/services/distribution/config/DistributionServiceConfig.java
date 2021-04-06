@@ -67,6 +67,7 @@ public class DistributionServiceConfig {
   private StatisticsConfig statistics;
   private QrCodePosterTemplate iosQrCodePosterTemplate;
   private QrCodePosterTemplate androidQrCodePosterTemplate;
+  private PresenceTracingParameters presenceTracingParameters;
 
   public Paths getPaths() {
     return paths;
@@ -793,6 +794,47 @@ public class DistributionServiceConfig {
       this.descriptionTextBox = descriptionTextBox;
     }
   }
+
+  public static class PresenceTracingParameters {
+
+    int qrCodeErrorCorrectionLevel;
+    double probabilityToFakeCheckInsIfNoCheckIns;
+    double probabilityToFakeCheckInsIfSomeCheckIns;
+
+    public int getQrCodeErrorCorrectionLevel() {
+      return qrCodeErrorCorrectionLevel;
+    }
+
+    public void setQrCodeErrorCorrectionLevel(int qrCodeErrorCorrectionLevel) {
+      this.qrCodeErrorCorrectionLevel = qrCodeErrorCorrectionLevel;
+    }
+
+    public double getProbabilityToFakeCheckInsIfNoCheckIns() {
+      return probabilityToFakeCheckInsIfNoCheckIns;
+    }
+
+    public void setProbabilityToFakeCheckInsIfNoCheckIns(double probabilityToFakeCheckInsIfNoCheckIns) {
+      this.probabilityToFakeCheckInsIfNoCheckIns = probabilityToFakeCheckInsIfNoCheckIns;
+    }
+
+    public double getProbabilityToFakeCheckInsIfSomeCheckIns() {
+      return probabilityToFakeCheckInsIfSomeCheckIns;
+    }
+
+    public void setProbabilityToFakeCheckInsIfSomeCheckIns(double probabilityToFakeCheckInsIfSomeCheckIns) {
+      this.probabilityToFakeCheckInsIfSomeCheckIns = probabilityToFakeCheckInsIfSomeCheckIns;
+    }
+  }
+
+  public PresenceTracingParameters getPresenceTracingParameters() {
+    return presenceTracingParameters;
+  }
+
+  public void setPresenceTracingParameters(
+      PresenceTracingParameters presenceTracingParameters) {
+    this.presenceTracingParameters = presenceTracingParameters;
+  }
+
 
   public static class ObjectStore {
 
