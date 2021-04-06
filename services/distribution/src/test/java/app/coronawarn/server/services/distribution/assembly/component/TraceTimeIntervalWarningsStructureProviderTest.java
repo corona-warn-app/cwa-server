@@ -3,9 +3,10 @@ package app.coronawarn.server.services.distribution.assembly.component;
 import static app.coronawarn.server.services.distribution.common.Helpers.buildTraceTimeIntervalWarning;
 import static app.coronawarn.server.services.distribution.common.Helpers.getFilePaths;
 import static app.coronawarn.server.services.distribution.common.Helpers.getSubFoldersPaths;
-import static org.junit.Assert.assertTrue;
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.when;
 
 import app.coronawarn.server.common.persistence.domain.TraceTimeIntervalWarning;
@@ -36,7 +37,6 @@ import java.util.stream.IntStream;
 import java.util.stream.Stream;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.Rule;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -97,7 +97,7 @@ public class TraceTimeIntervalWarningsStructureProviderTest {
         new TraceTimeIntervalWarningsStructureProvider(traceTimeWarningService, bundler,
             cryptoProvider, distributionServiceConfig);
     Directory<WritableOnDisk> traceWarnings = distributionStructureProvider.getTraceWarningsDirectory();
-    Assertions.assertEquals("twp", traceWarnings.getName());
+    assertEquals("twp", traceWarnings.getName());
   }
 
   @Test
@@ -105,15 +105,15 @@ public class TraceTimeIntervalWarningsStructureProviderTest {
     LocalDateTime utcHour = TimeUtils.getCurrentUtcHour();
     Integer oldestHour = CheckinsDateSpecification.HOUR_SINCE_EPOCH_DERIVATION
         .apply(utcHour.minusHours(10).toEpochSecond(ZoneOffset.UTC));
-    Integer middleHour = CheckinsDateSpecification.HOUR_SINCE_EPOCH_DERIVATION
-        .apply(utcHour.minusHours(5).toEpochSecond(ZoneOffset.UTC));
-    Integer newestHour = CheckinsDateSpecification.HOUR_SINCE_EPOCH_DERIVATION
+    Integer newestNotCurrentHour = CheckinsDateSpecification.HOUR_SINCE_EPOCH_DERIVATION
+        .apply(utcHour.minusHours(1).toEpochSecond(ZoneOffset.UTC));
+    Integer currentHour = CheckinsDateSpecification.HOUR_SINCE_EPOCH_DERIVATION
         .apply(utcHour.toEpochSecond(ZoneOffset.UTC));
 
     List<TraceTimeIntervalWarning> traceWarnings =
         buildTraceTimeIntervalWarning(5, 10, oldestHour, 30);
-    traceWarnings.addAll(buildTraceTimeIntervalWarning(70, 100, middleHour, 30));
-    traceWarnings.addAll(buildTraceTimeIntervalWarning(90, 160, newestHour, 30));
+    traceWarnings.addAll(buildTraceTimeIntervalWarning(70, 100, newestNotCurrentHour, 30));
+    traceWarnings.addAll(buildTraceTimeIntervalWarning(90, 160, currentHour, 30));
 
     writeDirectories(traceWarnings);
 
@@ -126,8 +126,7 @@ public class TraceTimeIntervalWarningsStructureProviderTest {
         StringUtils.joinWith(SEPARATOR, PARENT_TEST_FOLDER, "twp", "country", "DE", "hour",
             oldestHour),
         StringUtils.joinWith(SEPARATOR, PARENT_TEST_FOLDER, "twp", "country", "DE", "hour",
-            middleHour),
-        // Newest hour path should not be in the package structure since it is the current hour
+            newestNotCurrentHour),
         StringUtils.joinWith(SEPARATOR, PARENT_TEST_FOLDER, "twp", "country", "index"),
         StringUtils.joinWith(SEPARATOR, PARENT_TEST_FOLDER, "twp", "country", "index.checksum"),
         StringUtils.joinWith(SEPARATOR, PARENT_TEST_FOLDER, "twp", "country", "DE", "hour", "index"),
@@ -138,8 +137,12 @@ public class TraceTimeIntervalWarningsStructureProviderTest {
     actualFiles.addAll(getFilePaths(testOutputFolder.getRoot(), testOutputFolder.getRoot().getAbsolutePath()));
 
     expectedPaths.stream().forEach(expected -> {
-      assertTrue(actualFiles.contains(expected));
+      assertTrue(actualFiles.contains(expected), "Should contain " + expected);
     });
+
+    // Newest hour path should not be in the package structure since it is the current hour
+    assertFalse(actualFiles.contains(StringUtils.joinWith(SEPARATOR, PARENT_TEST_FOLDER, "twp", "country", "DE", "hour",
+            currentHour)), "Should NOT contain current hour");
   }
 
   @Test
