@@ -58,6 +58,6 @@ public class ProdTraceTimeIntervalWarningsPackageBundler extends TraceTimeInterv
     long latestDateForCheckins = distributionTime.toEpochSecond(ZoneOffset.UTC);
     long warningSubmissionTime = warning.getSubmissionTimestamp();
     return warningSubmissionTime > HOUR_SINCE_EPOCH_DERIVATION.apply(oldestDateForCheckins)
-        && warningSubmissionTime <= HOUR_SINCE_EPOCH_DERIVATION.apply(latestDateForCheckins);
+        && warningSubmissionTime < HOUR_SINCE_EPOCH_DERIVATION.apply(latestDateForCheckins);
   }
 }
