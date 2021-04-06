@@ -527,7 +527,7 @@ class SubmissionControllerTest {
 
     final long eventCheckinInThePast = LocalDateTime.ofInstant(Instant.now(), UTC).minusDays(10).toEpochSecond(UTC);
 
-    final List<CheckIn> invalidCheckinData = List.of(
+    final List<CheckIn> validCheckinData = List.of(
         CheckIn.newBuilder().setTransmissionRiskLevel(3)
             .setStartIntervalNumber(TEN_MINUTE_INTERVAL_DERIVATION.apply(eventCheckinInThePast))
             .setEndIntervalNumber(TEN_MINUTE_INTERVAL_DERIVATION.apply(eventCheckinInThePast) + 10)
@@ -537,10 +537,10 @@ class SubmissionControllerTest {
             .setEndIntervalNumber(TEN_MINUTE_INTERVAL_DERIVATION.apply(eventCheckinInThePast) + 22)
             .setLocationId(EventCheckinDataValidatorTest.CORRECT_LOCATION_ID).build());
 
-    final ResponseEntity<Void> actResponse = executor.executePost(buildPayloadWithCheckinData(invalidCheckinData));
+    final ResponseEntity<Void> actResponse = executor.executePost(buildPayloadWithCheckinData(validCheckinData));
     assertThat(actResponse.getStatusCode()).isEqualTo(OK);
-    assertTraceWarningsHaveBeenSaved(invalidCheckinData.size()
-        + invalidCheckinData.size() * config.getRandomCheckinsPaddingMultiplier());
+    assertTraceWarningsHaveBeenSaved(validCheckinData.size()
+        + validCheckinData.size() * config.getRandomCheckinsPaddingMultiplier());
   }
 
   @ParameterizedTest
