@@ -1,14 +1,15 @@
 package app.coronawarn.server.common.persistence.service;
 
-import static org.junit.Assert.assertArrayEquals;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-
 import app.coronawarn.server.common.persistence.domain.TraceTimeIntervalWarning;
 import app.coronawarn.server.common.persistence.repository.TraceTimeIntervalWarningRepository;
 import app.coronawarn.server.common.persistence.service.utils.checkins.CheckinsDateSpecification;
 import app.coronawarn.server.common.protocols.internal.pt.CheckIn;
 import com.google.protobuf.ByteString;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.data.jdbc.DataJdbcTest;
+import org.testcontainers.shaded.org.bouncycastle.util.encoders.Hex;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
@@ -19,10 +20,8 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.data.jdbc.DataJdbcTest;
+
+import static org.junit.Assert.*;
 
 @DataJdbcTest
 class TraceTimeIntervalWarningServiceTest {
@@ -101,13 +100,13 @@ class TraceTimeIntervalWarningServiceTest {
 
   @Test
   void testSortedRetrievalResult() {
-      traceWarningsRepository
-          .saveDoNothingOnConflict(hashLocationId(ByteString.copyFromUtf8("sorted-uuid2")),
-              56,
-              10,
-              3,
-              CheckinsDateSpecification.HOUR_SINCE_EPOCH_DERIVATION
-                  .apply(Instant.now().getEpochSecond()));
+    traceWarningsRepository
+        .saveDoNothingOnConflict(hashLocationId(ByteString.copyFromUtf8("sorted-uuid2")),
+            56,
+            10,
+            3,
+            CheckinsDateSpecification.HOUR_SINCE_EPOCH_DERIVATION
+                .apply(Instant.now().getEpochSecond()));
     traceWarningsRepository
         .saveDoNothingOnConflict(hashLocationId(ByteString.copyFromUtf8("sorted-uuid1")),
             456,
@@ -129,9 +128,25 @@ class TraceTimeIntervalWarningServiceTest {
     // Reverse as we tempered with submission timestamp
     Collections.reverse(checkins);
 
-    List<TraceTimeIntervalWarning> checkinsFromDB = new ArrayList<>(traceWarningsService.getTraceTimeIntervalWarnings());
+    List<TraceTimeIntervalWarning> checkinsFromDB = new ArrayList<>(
+        traceWarningsService.getTraceTimeIntervalWarnings());
 
     assertCheckinsAndWarningsAreEqual(checkins, checkinsFromDB);
+  }
+
+  /**
+   * Contract for hashing between client and server.
+   */
+  @Test
+  public void testHashingOfTraceLocationId() {
+    String locationId = "afa27b44d43b02a9fea41d13cedc2e4016cfcf87c5dbf990e593669aa8ce286d";
+    byte[] locationIdByte = Hex.decode(locationId);
+    byte[] hashedLocationId = hashLocationId(ByteString.copyFrom(locationIdByte));
+
+    final byte[] encode = Hex.encode(hashedLocationId);
+    String s = new String(encode);
+
+    assertEquals("0f37dac11d1b8118ea0b44303400faa5e3b876da9d758058b5ff7dc2e5da8230", s);
   }
 
 
