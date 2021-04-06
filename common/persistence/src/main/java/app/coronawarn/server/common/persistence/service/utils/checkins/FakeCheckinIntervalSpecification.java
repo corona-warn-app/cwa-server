@@ -13,7 +13,7 @@ public class FakeCheckinIntervalSpecification {
    * https://github.com/corona-warn-app/cwa-app-tech-spec/blob/proposal/event-registration-mvp
    * /docs/spec/event-registration-server.md#generating-fake-tracetimeintervalwarnings
    */
-  public static final Function<CheckIn, Integer> START_INTERVAL_GENERATION = (checkin) -> {
+  public static final Function<CheckIn, Integer> END_INTERVAL_GENERATION = (checkin) -> {
     int period = checkin.getEndIntervalNumber() - checkin.getStartIntervalNumber();
     if (period == 144) {
       return checkin.getEndIntervalNumber();
@@ -28,7 +28,7 @@ public class FakeCheckinIntervalSpecification {
    * https://github.com/corona-warn-app/cwa-app-tech-spec/blob/proposal/event-registration-mvp
    * /docs/spec/event-registration-server.md#generating-fake-tracetimeintervalwarnings
    */
-  public static final Function<CheckIn, Integer> END_INTERVAL_GENERATION = (checkin) -> {
+  public static final Function<CheckIn, Integer> START_INTERVAL_GENERATION = (checkin) -> {
     int startIntervalNumber = checkin.getStartIntervalNumber();
     int minStartIntervalNumber = (int) (Math.floor(startIntervalNumber / 144d) * 144);
     if (minStartIntervalNumber == startIntervalNumber) {
