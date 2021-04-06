@@ -163,7 +163,7 @@ services:
         require-evaluation-type-hardware-backed: ${PPA_PPAC_REQUIRE_EVALUATION_TYPE_HARDWARE_BACKED:false}
     ios-qr-code-poster-template:
       published-archive-name: qr_code_poster_template_ios
-      template:
+      template: ${EVREG_QR_CODE_POSTER_TEMPLATE_IOS_BINARY}
       offsetX: ${EVREG_QR_CODE_POSTER_TEMPLATE_IOS_OFFSET_X:97}
       offsetY: ${EVREG_QR_CODE_POSTER_TEMPLATE_IOS_OFFSET_Y:82}
       qr-code-side-length: ${EVREG_QR_CODE_POSTER_TEMPLATE_IOS_QR_CODE_SIDE_LENGTH:400}
@@ -176,7 +176,7 @@ services:
         fontColor: ${EVREG_QR_CODE_POSTER_TEMPLATE_IOS_DESCRIPTION_FONT_COLOR:black}
     android-qr-code-poster-template:
       published-archive-name: qr_code_poster_template_android
-      template:
+      template: ${EVREG_QR_CODE_POSTER_TEMPLATE_ANDROID_BINARY}
       offsetX: ${EVREG_QR_CODE_POSTER_TEMPLATE_ANDROID_OFFSET_X:10}
       offsetY: ${EVREG_QR_CODE_POSTER_TEMPLATE_ANDROID_OFFSET_Y:10}
       qr-code-side-length: ${EVREG_QR_CODE_POSTER_TEMPLATE_ANDROID_QR_CODE_SIDE_LENGTH:100}
