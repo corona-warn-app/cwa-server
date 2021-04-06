@@ -1,16 +1,13 @@
-
-
 package app.coronawarn.server.services.submission.config;
 
 import app.coronawarn.server.common.persistence.domain.config.TekFieldDerivations;
 import java.io.File;
-import java.io.UnsupportedEncodingException;
-import java.util.Base64;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
+import org.bouncycastle.util.encoders.Hex;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Component;
@@ -106,7 +103,7 @@ public class SubmissionServiceConfig {
   }
 
   public byte[] getRandomCheckinsPaddingPepperAsByteArray() {
-    return Base64.getDecoder().decode(randomCheckinsPaddingPepper.getBytes());
+    return Hex.decode(randomCheckinsPaddingPepper.getBytes());
   }
 
   public void setRandomCheckinsPaddingPepper(String randomCheckinsPaddingPepper) {
