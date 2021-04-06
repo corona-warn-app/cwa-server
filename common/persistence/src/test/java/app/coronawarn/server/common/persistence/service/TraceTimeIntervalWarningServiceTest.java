@@ -2,11 +2,14 @@ package app.coronawarn.server.common.persistence.service;
 
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
+
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
+import app.coronawarn.server.common.persistence.utils.CheckinsDateSpecification;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.data.jdbc.DataJdbcTest;
@@ -46,19 +49,13 @@ class TraceTimeIntervalWarningServiceTest {
         StreamSupport.stream(traceWarningsRepository.findAll().spliterator(), false)
             .collect(Collectors.toList());
 
-    assertCheckinsAndWarningsAreEqual(new ArrayList<>(checkins), actualTraceWarningsStored);
+    assertCheckinsAndWarningsAreEqual(checkins, actualTraceWarningsStored);
   }
 
   private void assertCheckinsAndWarningsAreEqual(List<CheckIn> checkins,
       List<TraceTimeIntervalWarning> actualTraceWarningsStored) {
 
     assertEquals(checkins.size(), actualTraceWarningsStored.size());
-
-    Collections.sort(checkins, (c1, c2) -> Integer.valueOf(c1.getTransmissionRiskLevel())
-        .compareTo(Integer.valueOf(c2.getTransmissionRiskLevel())));
-    Collections.sort(actualTraceWarningsStored,
-        (c1, c2) -> Integer.valueOf(c1.getTransmissionRiskLevel())
-            .compareTo(Integer.valueOf(c2.getTransmissionRiskLevel())));
 
     for (int i = 0; i < checkins.size(); i++) {
       CheckIn checkin = checkins.get(i);
@@ -69,5 +66,40 @@ class TraceTimeIntervalWarningServiceTest {
       assertArrayEquals(checkin.getLocationId().toByteArray(),
           warning.getTraceLocationId());
     }
+  }
+
+  @Test
+  void testSortedRetrievalResult() {
+      traceWarningsRepository
+          .saveDoNothingOnConflict(ByteString.copyFromUtf8("sorted-uuid2").toByteArray(),
+              56,
+              10,
+              3,
+              CheckinsDateSpecification.HOUR_SINCE_EPOCH_DERIVATION
+                  .apply(Instant.now().getEpochSecond()));
+    traceWarningsRepository
+        .saveDoNothingOnConflict(ByteString.copyFromUtf8("sorted-uuid1").toByteArray(),
+            456,
+            20,
+            2,
+            CheckinsDateSpecification.HOUR_SINCE_EPOCH_DERIVATION
+                .apply(Instant.now().getEpochSecond()) - 10);
+
+    List<CheckIn> checkins = new ArrayList<>(List.of(
+        CheckIn.newBuilder().setStartIntervalNumber(56).setEndIntervalNumber(66)
+            .setTransmissionRiskLevel(3)
+            .setLocationId(ByteString.copyFromUtf8("sorted-uuid2"))
+            .build(),
+        CheckIn.newBuilder().setStartIntervalNumber(456).setEndIntervalNumber(476)
+            .setTransmissionRiskLevel(2)
+            .setLocationId(ByteString.copyFromUtf8("sorted-uuid1"))
+            .build()));
+
+    // Reverse as we tempered with submission timestamp
+    Collections.reverse(checkins);
+
+    List<TraceTimeIntervalWarning> checkinsFromDB = new ArrayList<>(traceWarningsService.getTraceTimeIntervalWarnings());
+
+    assertCheckinsAndWarningsAreEqual(checkins, checkinsFromDB);
   }
 }
