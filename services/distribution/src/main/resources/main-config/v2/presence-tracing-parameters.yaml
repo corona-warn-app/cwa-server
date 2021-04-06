@@ -120,7 +120,7 @@ qr-code-descriptors:
     encoded-payload-group-index: 1
     payload-encoding: 0 # BASE32
   -
-    regex-pattern: https://e\.coronawarn\.app\?v=(\d+)\#(.+)
+    regex-pattern: https://e\.coronawarn\.app/?\?v=(\d+)\#(.+)
     # validation rule for versionGroupIndex:
     #   * >= 0
     version-group-index: 0
