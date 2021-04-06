@@ -3,24 +3,25 @@ package app.coronawarn.server.common.persistence.service;
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
+
+import app.coronawarn.server.common.persistence.domain.TraceTimeIntervalWarning;
+import app.coronawarn.server.common.persistence.repository.TraceTimeIntervalWarningRepository;
+import app.coronawarn.server.common.persistence.service.utils.checkins.CheckinsDateSpecification;
+import app.coronawarn.server.common.protocols.internal.pt.CheckIn;
+import com.google.protobuf.ByteString;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 import org.junit.jupiter.api.BeforeEach;
-import app.coronawarn.server.common.persistence.utils.CheckinsDateSpecification;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.data.jdbc.DataJdbcTest;
-import com.google.protobuf.ByteString;
-import app.coronawarn.server.common.persistence.domain.TraceTimeIntervalWarning;
-import app.coronawarn.server.common.persistence.repository.TraceTimeIntervalWarningRepository;
-import app.coronawarn.server.common.protocols.internal.pt.CheckIn;
 
 @DataJdbcTest
 class TraceTimeIntervalWarningServiceTest {
@@ -38,27 +39,14 @@ class TraceTimeIntervalWarningServiceTest {
 
   @Test
   void testStorage() {
-    List<CheckIn> checkins = List.of(
-        CheckIn.newBuilder().setStartIntervalNumber(0).setEndIntervalNumber(1)
-            .setTransmissionRiskLevel(1)
-            .setLocationId(ByteString.copyFromUtf8("uuid1"))
-            .build(),
-        CheckIn.newBuilder().setStartIntervalNumber(23).setEndIntervalNumber(30)
-            .setTransmissionRiskLevel(2)
-            .setLocationId(ByteString.copyFromUtf8("uuid1"))
-            .build(),
-        CheckIn.newBuilder().setStartIntervalNumber(40).setEndIntervalNumber(50)
-            .setTransmissionRiskLevel(3)
-            .setLocationId(ByteString.copyFromUtf8("uuid1"))
-            .build());
-
-    traceWarningsService.saveCheckinData(checkins);
+    List<CheckIn> checkins = getRandomTestData();
+    traceWarningsService.saveCheckins(checkins);
 
     List<TraceTimeIntervalWarning> actualTraceWarningsStored =
         StreamSupport.stream(traceWarningsRepository.findAll().spliterator(), false)
             .collect(Collectors.toList());
 
-    assertCheckinsAndWarningsAreEqual(checkins, actualTraceWarningsStored);
+    assertCheckinsAndWarningsAreEqual(new ArrayList<>(checkins), actualTraceWarningsStored);
   }
 
   @Test
@@ -94,6 +82,10 @@ class TraceTimeIntervalWarningServiceTest {
 
     assertEquals(checkins.size(), actualTraceWarningsStored.size());
 
+    Collections.sort(checkins, Comparator.comparing(CheckIn::getTransmissionRiskLevel));
+    Collections.sort(actualTraceWarningsStored,
+        Comparator.comparing(TraceTimeIntervalWarning::getTransmissionRiskLevel));
+
     for (int i = 0; i < checkins.size(); i++) {
       CheckIn checkin = checkins.get(i);
       TraceTimeIntervalWarning warning = actualTraceWarningsStored.get(i);
@@ -109,14 +101,14 @@ class TraceTimeIntervalWarningServiceTest {
   @Test
   void testSortedRetrievalResult() {
       traceWarningsRepository
-          .saveDoNothingOnConflict(ByteString.copyFromUtf8("sorted-uuid2").toByteArray(),
+          .saveDoNothingOnConflict(hashLocationId(ByteString.copyFromUtf8("sorted-uuid2")),
               56,
               10,
               3,
               CheckinsDateSpecification.HOUR_SINCE_EPOCH_DERIVATION
                   .apply(Instant.now().getEpochSecond()));
     traceWarningsRepository
-        .saveDoNothingOnConflict(ByteString.copyFromUtf8("sorted-uuid1").toByteArray(),
+        .saveDoNothingOnConflict(hashLocationId(ByteString.copyFromUtf8("sorted-uuid1")),
             456,
             20,
             2,
