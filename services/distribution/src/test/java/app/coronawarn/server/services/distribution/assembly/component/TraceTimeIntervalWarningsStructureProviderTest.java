@@ -138,7 +138,7 @@ public class TraceTimeIntervalWarningsStructureProviderTest {
     actualFiles.addAll(getFilePaths(testOutputFolder.getRoot(), testOutputFolder.getRoot().getAbsolutePath()));
 
     expectedPaths.stream().forEach(expected -> {
-      assertTrue(actualFiles.contains(expected));
+      assertTrue("Should contain " + expected, actualFiles.contains(expected));
     });
   }
 
