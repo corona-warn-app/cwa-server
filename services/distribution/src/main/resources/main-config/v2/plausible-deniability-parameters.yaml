@@ -1,0 +1,5 @@
+#plausible-deniability-parameters:
+  # validation rules for checkInSizesInBytes:
+  #   * zero entries are allowed
+  #   * each entry must be >= 0
+  check-in-sizes-in-bytes: [46]
