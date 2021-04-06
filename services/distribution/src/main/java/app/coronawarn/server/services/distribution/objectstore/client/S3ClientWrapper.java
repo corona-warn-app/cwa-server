@@ -8,7 +8,6 @@ import app.coronawarn.server.services.distribution.statistics.file.JsonFile;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -156,7 +155,7 @@ public class S3ClientWrapper implements ObjectStoreClient {
     Map<String, String> metadataHeaders = Set.of(HeaderKey.CWA_HASH, HeaderKey.CWA_EMPTY_PKG).stream()
         .filter(headers::containsKey)
         .collect(Collectors.toMap(HeaderKey::withMetaPrefix, headers::get));
-    if(!metadataHeaders.isEmpty()) {
+    if (!metadataHeaders.isEmpty()) {
       requestBuilder.metadata(metadataHeaders);
     }
 
