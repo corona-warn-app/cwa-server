@@ -175,12 +175,14 @@ public class ApplicationConfigurationV2PublicationConfig {
         .setQrCodeErrorCorrectionLevelValue(
             distributionServiceConfig.getPresenceTracingParameters().getQrCodeErrorCorrectionLevel())
         .addAllRevokedTraceLocationVersions(deserializedRevokedTraceLocationVersions.getRevokedTraceLocationVersions())
-        .setPlausibleDeniabilityParameters(PresenceTracingPlausibleDeniabilityParameters.newBuilder()
+        .setPlausibleDeniabilityParameters(presenceTracingParameters.getPlausibleDeniabilityParameters().toBuilder()
             .addAllCheckInSizesInBytes(deserializedPlausibleDeniabilityParameters.getCheckInSizesInBytes())
             .setProbabilityToFakeCheckInsIfNoCheckIns(
-                distributionServiceConfig.getPresenceTracingParameters().getProbabilityToFakeCheckInsIfNoCheckIns())
+                distributionServiceConfig.getPresenceTracingParameters().getPlausibleDeniabilityParameters()
+                    .getProbabilityToFakeCheckInsIfNoCheckIns())
             .setProbabilityToFakeCheckInsIfSomeCheckIns(
-                distributionServiceConfig.getPresenceTracingParameters().getProbabilityToFakeCheckInsIfSomeCheckIns())
+                distributionServiceConfig.getPresenceTracingParameters().getPlausibleDeniabilityParameters()
+                    .getProbabilityToFakeCheckInsIfSomeCheckIns())
             .build())
         .build();
     return presenceTracingParameters;

@@ -797,9 +797,38 @@ public class DistributionServiceConfig {
 
   public static class PresenceTracingParameters {
 
-    int qrCodeErrorCorrectionLevel;
-    double probabilityToFakeCheckInsIfNoCheckIns;
-    double probabilityToFakeCheckInsIfSomeCheckIns;
+    private int qrCodeErrorCorrectionLevel;
+    private PlausibleDeniabilityParameters plausibleDeniabilityParameters;
+
+    public static class PlausibleDeniabilityParameters {
+
+      private double probabilityToFakeCheckInsIfNoCheckIns;
+      private double probabilityToFakeCheckInsIfSomeCheckIns;
+
+      public double getProbabilityToFakeCheckInsIfNoCheckIns() {
+        return probabilityToFakeCheckInsIfNoCheckIns;
+      }
+
+      public void setProbabilityToFakeCheckInsIfNoCheckIns(double probabilityToFakeCheckInsIfNoCheckIns) {
+        this.probabilityToFakeCheckInsIfNoCheckIns = probabilityToFakeCheckInsIfNoCheckIns;
+      }
+
+      public double getProbabilityToFakeCheckInsIfSomeCheckIns() {
+        return probabilityToFakeCheckInsIfSomeCheckIns;
+      }
+
+      public void setProbabilityToFakeCheckInsIfSomeCheckIns(double probabilityToFakeCheckInsIfSomeCheckIns) {
+        this.probabilityToFakeCheckInsIfSomeCheckIns = probabilityToFakeCheckInsIfSomeCheckIns;
+      }
+    }
+
+    public PlausibleDeniabilityParameters getPlausibleDeniabilityParameters() {
+      return plausibleDeniabilityParameters;
+    }
+
+    public void setPlausibleDeniabilityParameters(PlausibleDeniabilityParameters plausibleDeniabilityParameters) {
+      this.plausibleDeniabilityParameters = plausibleDeniabilityParameters;
+    }
 
     public int getQrCodeErrorCorrectionLevel() {
       return qrCodeErrorCorrectionLevel;
@@ -807,22 +836,6 @@ public class DistributionServiceConfig {
 
     public void setQrCodeErrorCorrectionLevel(int qrCodeErrorCorrectionLevel) {
       this.qrCodeErrorCorrectionLevel = qrCodeErrorCorrectionLevel;
-    }
-
-    public double getProbabilityToFakeCheckInsIfNoCheckIns() {
-      return probabilityToFakeCheckInsIfNoCheckIns;
-    }
-
-    public void setProbabilityToFakeCheckInsIfNoCheckIns(double probabilityToFakeCheckInsIfNoCheckIns) {
-      this.probabilityToFakeCheckInsIfNoCheckIns = probabilityToFakeCheckInsIfNoCheckIns;
-    }
-
-    public double getProbabilityToFakeCheckInsIfSomeCheckIns() {
-      return probabilityToFakeCheckInsIfSomeCheckIns;
-    }
-
-    public void setProbabilityToFakeCheckInsIfSomeCheckIns(double probabilityToFakeCheckInsIfSomeCheckIns) {
-      this.probabilityToFakeCheckInsIfSomeCheckIns = probabilityToFakeCheckInsIfSomeCheckIns;
     }
   }
 
