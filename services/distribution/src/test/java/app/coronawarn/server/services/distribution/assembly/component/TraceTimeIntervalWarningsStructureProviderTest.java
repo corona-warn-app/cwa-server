@@ -17,6 +17,7 @@ import app.coronawarn.server.services.distribution.assembly.structure.directory.
 import app.coronawarn.server.services.distribution.assembly.structure.directory.DirectoryOnDisk;
 import app.coronawarn.server.services.distribution.assembly.structure.util.ImmutableStack;
 import app.coronawarn.server.services.distribution.assembly.structure.util.TimeUtils;
+import app.coronawarn.server.services.distribution.assembly.tracewarnings.ProdTraceTimeIntervalWarningsPackageBundler;
 import app.coronawarn.server.services.distribution.assembly.tracewarnings.TraceTimeIntervalWarningsPackageBundler;
 import app.coronawarn.server.services.distribution.assembly.transformation.EnfParameterAdapter;
 import app.coronawarn.server.services.distribution.config.DistributionServiceConfig;
@@ -80,7 +81,7 @@ public class TraceTimeIntervalWarningsStructureProviderTest {
 
   @BeforeEach
   public void setup() throws IOException {
-    bundler = new TraceTimeIntervalWarningsPackageBundler(distributionServiceConfig);
+    bundler = new ProdTraceTimeIntervalWarningsPackageBundler(distributionServiceConfig);
 
     // create a specific test folder for later assertions of structures.
     testOutputFolder.create();
@@ -91,7 +92,7 @@ public class TraceTimeIntervalWarningsStructureProviderTest {
 
   @Test
   void should_create_correct_top_parent_folder_for_warnings_file_structure() {
-    when(traceTimeWarningService.getTraceTimeIntervalWarning()).thenReturn(Collections.emptyList());
+    when(traceTimeWarningService.getTraceTimeIntervalWarnings()).thenReturn(Collections.emptyList());
     TraceTimeIntervalWarningsStructureProvider distributionStructureProvider =
         new TraceTimeIntervalWarningsStructureProvider(traceTimeWarningService, bundler,
             cryptoProvider, distributionServiceConfig);
@@ -126,8 +127,7 @@ public class TraceTimeIntervalWarningsStructureProviderTest {
             oldestHour),
         StringUtils.joinWith(SEPARATOR, PARENT_TEST_FOLDER, "twp", "country", "DE", "hour",
             middleHour),
-        StringUtils.joinWith(SEPARATOR, PARENT_TEST_FOLDER, "twp", "country", "DE", "hour",
-            newestHour),
+        // Newest hour path should not be in the package structure since it is the current hour
         StringUtils.joinWith(SEPARATOR, PARENT_TEST_FOLDER, "twp", "country", "index"),
         StringUtils.joinWith(SEPARATOR, PARENT_TEST_FOLDER, "twp", "country", "index.checksum"),
         StringUtils.joinWith(SEPARATOR, PARENT_TEST_FOLDER, "twp", "country", "DE", "hour", "index"),
@@ -312,7 +312,7 @@ public class TraceTimeIntervalWarningsStructureProviderTest {
   }
 
   private void writeDirectories(List<TraceTimeIntervalWarning> traceWarnings) throws IOException {
-    when(traceTimeWarningService.getTraceTimeIntervalWarning()).thenReturn(traceWarnings);
+    when(traceTimeWarningService.getTraceTimeIntervalWarnings()).thenReturn(traceWarnings);
     Directory<WritableOnDisk> outputDirectory = this.outputDirectoryProvider.getDirectory();
     TraceTimeIntervalWarningsStructureProvider distributionStructureProvider =
         new TraceTimeIntervalWarningsStructureProvider(traceTimeWarningService, bundler,
