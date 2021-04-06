@@ -123,7 +123,7 @@ class ProdHourIntervalIndexingDecoratorTest {
     final JSONObject jsonObject = objectMapper.readValue(indexFile.getBytes(), JSONObject.class);
     Assertions.assertThat(jsonObject.size()).isEqualTo(2);
     Assertions.assertThat(jsonObject.get("oldest")).isEqualTo(additionalSubmissionHour);
-    Assertions.assertThat(jsonObject.get("latest")).isEqualTo(submissionHour);
+    Assertions.assertThat(jsonObject.get("latest")).isEqualTo(anotherSubmissionHour);
   }
 
   private HourIntervalIndexingDecorator makeDecoratedHourDirectory(

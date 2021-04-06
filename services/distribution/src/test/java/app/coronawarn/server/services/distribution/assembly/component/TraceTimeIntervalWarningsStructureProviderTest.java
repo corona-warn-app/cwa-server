@@ -127,8 +127,7 @@ public class TraceTimeIntervalWarningsStructureProviderTest {
             oldestHour),
         StringUtils.joinWith(SEPARATOR, PARENT_TEST_FOLDER, "twp", "country", "DE", "hour",
             middleHour),
-        StringUtils.joinWith(SEPARATOR, PARENT_TEST_FOLDER, "twp", "country", "DE", "hour",
-            newestHour),
+        // Newest hour path should not be in the package structure since it is the current hour
         StringUtils.joinWith(SEPARATOR, PARENT_TEST_FOLDER, "twp", "country", "index"),
         StringUtils.joinWith(SEPARATOR, PARENT_TEST_FOLDER, "twp", "country", "index.checksum"),
         StringUtils.joinWith(SEPARATOR, PARENT_TEST_FOLDER, "twp", "country", "DE", "hour", "index"),
