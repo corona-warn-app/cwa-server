@@ -29,6 +29,8 @@ services:
     # The number of checkins to save to the DB for every real submitted checkin.
     # Same logic as described above for diagnosis keys
     random-checkins-padding-multiplier: ${RANDOM_CHECKINS_PADDING_MULTIPLIER:1}
+    # Pepper used in generating fake location ids
+    random-checkins-padding-pepper: ${RANDOM_CHECKINS_PADDING_PEPPER}
     # The ApacheHttpClient's connection pool size.
     connection-pool-size: 200
     # The maximum request size accepted by the SubmissionController (e.g. 200B or 100KB).

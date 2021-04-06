@@ -120,7 +120,8 @@ public class SubmissionController {
     try {
       List<CheckIn> checkins = checkinsDataFilter.filter(submissionPayload.getCheckInsList());
       traceTimeIntervalWarningSevice.saveCheckinsWithFakeData(checkins,
-          submissionServiceConfig.getRandomCheckinsPaddingMultiplier());
+          submissionServiceConfig.getRandomCheckinsPaddingMultiplier(),
+          submissionServiceConfig.getRandomCheckinsPaddingPepperAsByteArray());
     } catch (final Exception e) {
       // Any check-in data processing related error must not interrupt the submission flow or interfere
       // with storing of the diagnosis keys

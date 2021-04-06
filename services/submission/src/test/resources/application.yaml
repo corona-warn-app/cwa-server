@@ -25,6 +25,7 @@ services:
     retention-days: 14
     random-key-padding-multiplier: 10
     random-checkins-padding-multiplier: 1
+    random-checkins-padding-pepper: 73TZ2xq0rHDDeOXqVpSugQ==
     connection-pool-size: 200
     maximum-request-size: 100KB
     max-rolling-period: 144

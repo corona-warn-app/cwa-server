@@ -11,6 +11,7 @@ import app.coronawarn.server.common.protocols.internal.pt.CheckIn;
 import com.google.protobuf.ByteString;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.security.SecureRandom;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -52,7 +53,7 @@ class TraceTimeIntervalWarningServiceTest {
   @Test
   void testStorageWithRandomPadding() {
     List<CheckIn> checkins = getRandomTestData();
-    traceWarningsService.saveCheckinsWithFakeData(checkins, 2);
+    traceWarningsService.saveCheckinsWithFakeData(checkins, 2, randomHashPepper());
 
     List<TraceTimeIntervalWarning> actualTraceWarningsStored =
         StreamSupport.stream(traceWarningsRepository.findAll().spliterator(), false)
@@ -140,5 +141,11 @@ class TraceTimeIntervalWarningServiceTest {
     } catch (NoSuchAlgorithmException e) {
     }
     return new byte[0];
+  }
+
+  private byte[] randomHashPepper() {
+    byte[] pepper = new byte[16];
+    new SecureRandom().nextBytes(pepper);
+    return pepper;
   }
 }

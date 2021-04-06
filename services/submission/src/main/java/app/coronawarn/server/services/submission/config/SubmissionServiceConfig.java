@@ -4,6 +4,8 @@ package app.coronawarn.server.services.submission.config;
 
 import app.coronawarn.server.common.persistence.domain.config.TekFieldDerivations;
 import java.io.File;
+import java.io.UnsupportedEncodingException;
+import java.util.Base64;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotEmpty;
@@ -41,6 +43,8 @@ public class SubmissionServiceConfig {
   @Min(1)
   @Max(25)
   private Integer randomCheckinsPaddingMultiplier;
+  @NotEmpty
+  private String randomCheckinsPaddingPepper;
   @Min(1)
   @Max(10000)
   private Integer connectionPoolSize;
@@ -95,6 +99,18 @@ public class SubmissionServiceConfig {
 
   public void setRandomCheckinsPaddingMultiplier(Integer randomCheckinsPaddingMultiplier) {
     this.randomCheckinsPaddingMultiplier = randomCheckinsPaddingMultiplier;
+  }
+
+  public String getRandomCheckinsPaddingPepper() {
+    return randomCheckinsPaddingPepper;
+  }
+
+  public byte[] getRandomCheckinsPaddingPepperAsByteArray() {
+    return Base64.getDecoder().decode(randomCheckinsPaddingPepper.getBytes());
+  }
+
+  public void setRandomCheckinsPaddingPepper(String randomCheckinsPaddingPepper) {
+    this.randomCheckinsPaddingPepper = randomCheckinsPaddingPepper;
   }
 
   public Integer getConnectionPoolSize() {

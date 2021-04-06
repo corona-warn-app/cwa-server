@@ -8,7 +8,6 @@ import app.coronawarn.server.common.protocols.internal.pt.CheckIn;
 import com.google.protobuf.ByteString;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.security.SecureRandom;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -29,19 +28,23 @@ public class TraceTimeIntervalWarningService {
   private static final Logger logger =
       LoggerFactory.getLogger(TraceTimeIntervalWarningService.class);
 
-  /**
-   * Marker constant for the scenario where checkin location id hashing can not be computed.
-   */
-  private static final byte[] NO_HASH = new byte[0];
 
   private final TraceTimeIntervalWarningRepository traceTimeIntervalWarningRepo;
   private final FakeCheckinsGenerator fakeCheckinsGenerator;
+  private final MessageDigest hashAlgorithm;
 
+  /**
+   * Constructs the service instance.
+   * @param traceTimeIntervalWarningRepo Repository for {@link TraceTimeIntervalWarning} entities.
+   * @param fakeCheckinsGenerator Generator of fake data that gets stored side by side with the real checkin data.
+   * @throws NoSuchAlgorithmException In case the MessageDigest used in hashing can not be instantiated.
+   */
   public TraceTimeIntervalWarningService(
       TraceTimeIntervalWarningRepository traceTimeIntervalWarningRepo,
-      FakeCheckinsGenerator fakeCheckinsGenerator) {
+      FakeCheckinsGenerator fakeCheckinsGenerator) throws NoSuchAlgorithmException {
     this.traceTimeIntervalWarningRepo = traceTimeIntervalWarningRepo;
     this.fakeCheckinsGenerator = fakeCheckinsGenerator;
+    this.hashAlgorithm = MessageDigest.getInstance("SHA-256");
   }
 
   /**
@@ -59,18 +62,15 @@ public class TraceTimeIntervalWarningService {
 
     for (CheckIn checkin : checkins) {
       byte[] hashId = idHashGenerator.apply(checkin.getLocationId());
-      if (hashId != NO_HASH) {
-        boolean traceWarningInsertedSuccessfully = traceTimeIntervalWarningRepo
-            .saveDoNothingOnConflict(hashId,
-                checkin.getStartIntervalNumber(),
-                checkin.getEndIntervalNumber() - checkin.getStartIntervalNumber(),
-                checkin.getTransmissionRiskLevel(),
-                CheckinsDateSpecification.HOUR_SINCE_EPOCH_DERIVATION
-                    .apply(Instant.now().getEpochSecond()));
+      boolean traceWarningInsertedSuccessfully = traceTimeIntervalWarningRepo
+          .saveDoNothingOnConflict(hashId, checkin.getStartIntervalNumber(),
+              checkin.getEndIntervalNumber() - checkin.getStartIntervalNumber(),
+              checkin.getTransmissionRiskLevel(),
+              CheckinsDateSpecification.HOUR_SINCE_EPOCH_DERIVATION
+                  .apply(Instant.now().getEpochSecond()));
 
-        if (traceWarningInsertedSuccessfully) {
-          numberOfInsertedTraceWarnings++;
-        }
+      if (traceWarningInsertedSuccessfully) {
+        numberOfInsertedTraceWarnings++;
       }
     }
 
@@ -93,10 +93,11 @@ public class TraceTimeIntervalWarningService {
    * constraints during the db save operations.
    */
   @Transactional
-  public int saveCheckinsWithFakeData(List<CheckIn> originalCheckins, int numberOfFakesToCreate) {
+  public int saveCheckinsWithFakeData(List<CheckIn> originalCheckins, int numberOfFakesToCreate,
+      byte[] pepper) {
     List<CheckIn> allCheckins = new ArrayList<>(originalCheckins);
     allCheckins.addAll(fakeCheckinsGenerator.generateFakeCheckins(originalCheckins,
-        numberOfFakesToCreate, randomHashPepper()));
+        numberOfFakesToCreate, pepper));
     return saveCheckins(allCheckins, this::hashLocationId);
   }
 
@@ -111,18 +112,6 @@ public class TraceTimeIntervalWarningService {
   }
 
   private byte[] hashLocationId(ByteString locationId) {
-    try {
-      return MessageDigest.getInstance("SHA-256").digest(locationId.toByteArray());
-    } catch (NoSuchAlgorithmException e) {
-      logger.warn("Could not apply SHA-256 hash on " + locationId
-          + " while storing TraceTimeIntervalWarnings");
-    }
-    return NO_HASH;
-  }
-
-  private byte[] randomHashPepper() {
-    byte[] pepper = new byte[16];
-    new SecureRandom().nextBytes(pepper);
-    return pepper;
+    return hashAlgorithm.digest(locationId.toByteArray());
   }
 }
