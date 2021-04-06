@@ -91,7 +91,7 @@ public class TraceTimeIntervalWarningsStructureProviderTest {
 
   @Test
   void should_create_correct_top_parent_folder_for_warnings_file_structure() {
-    when(traceTimeWarningService.getTraceTimeIntervalWarning()).thenReturn(Collections.emptyList());
+    when(traceTimeWarningService.getTraceTimeIntervalWarnings()).thenReturn(Collections.emptyList());
     TraceTimeIntervalWarningsStructureProvider distributionStructureProvider =
         new TraceTimeIntervalWarningsStructureProvider(traceTimeWarningService, bundler,
             cryptoProvider, distributionServiceConfig);
@@ -312,7 +312,7 @@ public class TraceTimeIntervalWarningsStructureProviderTest {
   }
 
   private void writeDirectories(List<TraceTimeIntervalWarning> traceWarnings) throws IOException {
-    when(traceTimeWarningService.getTraceTimeIntervalWarning()).thenReturn(traceWarnings);
+    when(traceTimeWarningService.getTraceTimeIntervalWarnings()).thenReturn(traceWarnings);
     Directory<WritableOnDisk> outputDirectory = this.outputDirectoryProvider.getDirectory();
     TraceTimeIntervalWarningsStructureProvider distributionStructureProvider =
         new TraceTimeIntervalWarningsStructureProvider(traceTimeWarningService, bundler,
