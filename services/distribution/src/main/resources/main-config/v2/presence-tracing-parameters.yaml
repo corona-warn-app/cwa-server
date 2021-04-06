@@ -1,0 +1,130 @@
+#----------------------------------------------------------------------
+# This is the Corona Warn App source configuration file.
+# ----------------------------------------------------------------------
+#
+# This configuration file will be fetched by the mobile app in order to function.
+#
+# Change this file with caution!
+
+risk-calculation-parameters:
+  transmission-risk-value-mapping:
+    -
+      transmission-risk-level: 1
+      transmission-risk-value: 0
+    -
+      transmission-risk-level: 2
+      transmission-risk-value: 0
+    -
+      transmission-risk-level: 3
+      transmission-risk-value: 0.6
+    -
+      transmission-risk-level: 4
+      transmission-risk-value: 0.8
+    -
+      transmission-risk-level: 5
+      transmission-risk-value: 1
+    -
+      transmission-risk-level: 6
+      transmission-risk-value: 1.2
+    -
+      transmission-risk-level: 7
+      transmission-risk-value: 1.4
+    -
+      transmission-risk-level: 8
+      transmission-risk-value: 1.6
+  normalized-time-per-check-in-to-risk-level-mapping:
+    -
+      normalized-time-range:
+        min: 0
+        min-exclusive: true
+        max: 30
+        max-exclusive: true
+      risk-level: 1 # 1 = Low
+    -
+      normalized-time-range:
+        min: 30
+        min-exclusive: false
+        max: 9999
+        max-exclusive: false
+      risk-level: 2 # 2 = High
+  normalized-time-per-day-to-risk-level-mapping:
+    -
+      normalized-time-range:
+        min: 0
+        min-exclusive: true
+        max: 30
+        max-exclusive: true
+      risk-level: 1 # 1 = Low
+    -
+      normalized-time-range:
+        min: 30
+        min-exclusive: false
+        max: 9999
+        max-exclusive: false
+      risk-level: 2 # 2 = High
+
+submission-parameters:
+  duration-filters:
+    -
+      drop-if-minutes-in-range:
+        min: 0
+        min-exclusive: false
+        max: 10
+        max-exclusive: true
+  aerosole-decay-linear-functions:
+    -
+      minutes-range:
+        min: 0
+        min-exclusive: false
+        max: 30
+        max-exclusive: false
+      slope: 1
+      intercept: 0
+    -
+      minutes-range:
+        min: 30
+        min-exclusive: true
+        max: 9999
+        max-exclusive: false
+      slope: 0
+      intercept: 30
+
+plausible-deniability-parameters:
+  # validation rule for numberOfFakeCheckInsFunctionParameters:
+  #   * at least one entry
+  number-of-fake-check-ins-function-parameters:
+    -
+      random-number-range:
+        min: -9999
+        min-exclusive: false
+        max: 9999
+        max-exclusive: false
+      p: 100
+      q: 1.4
+      r: -1
+      s: 0.8
+      t: -1.5
+      u: 2
+      a: 0
+      b: 0
+      c: 0
+
+qr-code-descriptors:
+  -
+    regex-pattern: https://e\.coronawarn\.app/c(\d+)/(.+)
+    # validation rule for versionGroupIndex:
+    #   * >= 0
+    version-group-index: 0
+    # validation rule for encodedPayloadGroupIndex:
+    #   * >= 0
+    encoded-payload-group-index: 1
+    payload-encoding: 0 # BASE32
+  -
+    regex-pattern: https://e\.coronawarn\.app\?v=(\d+)\#(.+)
+    # validation rule for versionGroupIndex:
+    #   * >= 0
+    version-group-index: 0
+    # validation rule for encodedPayloadGroupIndex:
+    #   * >= 0
+    encoded-payload-group-index: 1
+    payload-encoding: 1 # BASE64

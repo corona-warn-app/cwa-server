@@ -27,8 +27,12 @@ import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
+import java.util.stream.Stream;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.Rule;
 import org.junit.jupiter.api.Assertions;
@@ -55,6 +59,7 @@ public class TraceTimeIntervalWarningsStructureProviderTest {
 
   private static final String PARENT_TEST_FOLDER = "parent";
   private static final String SEPARATOR = File.separator;
+  private static final String DS_STORE = ".DS_Store";
 
   @Autowired
   CryptoProvider cryptoProvider;
@@ -255,9 +260,10 @@ public class TraceTimeIntervalWarningsStructureProviderTest {
 
   @Test
   void should_create_all_hourly_packages_for_new_checkins_data() throws IOException {
+    int numberOfHourlyPackages = 10;
     LocalDateTime utcHour = TimeUtils.getCurrentUtcHour();
     Integer oldestHour = CheckinsDateSpecification.HOUR_SINCE_EPOCH_DERIVATION
-        .apply(utcHour.minusHours(10).toEpochSecond(ZoneOffset.UTC));
+        .apply(utcHour.minusHours(numberOfHourlyPackages).toEpochSecond(ZoneOffset.UTC));
     Integer newestHour = CheckinsDateSpecification.HOUR_SINCE_EPOCH_DERIVATION
         .apply(utcHour.toEpochSecond(ZoneOffset.UTC));
 
@@ -267,28 +273,42 @@ public class TraceTimeIntervalWarningsStructureProviderTest {
 
     writeDirectories(traceWarnings);
 
-    Set<String> expectedPaths = Set.of(
+    Set<String> expectedHourlyPackagesPaths = new HashSet<>();
+    IntStream.range(0, numberOfHourlyPackages + 1).forEach(hourlyPackage -> {
+      final String hourDirectory = StringUtils.joinWith(SEPARATOR, PARENT_TEST_FOLDER, "twp", "country", "DE", "hour",
+          oldestHour + hourlyPackage);
+      final String hourIndexDirectory = StringUtils
+          .joinWith(SEPARATOR, PARENT_TEST_FOLDER, "twp", "country", "DE", "hour",
+              oldestHour + hourlyPackage, "index");
+      final String hourIndexChecksumDirectory = StringUtils
+          .joinWith(SEPARATOR, PARENT_TEST_FOLDER, "twp", "country", "DE", "hour",
+              oldestHour + hourlyPackage, "index.checksum");
+      expectedHourlyPackagesPaths.addAll(Set.of(hourDirectory, hourIndexDirectory, hourIndexChecksumDirectory));
+    });
+
+    Set<String> expectedPaths = Stream.of(
         PARENT_TEST_FOLDER,
         StringUtils.joinWith(SEPARATOR, PARENT_TEST_FOLDER, "twp"),
         StringUtils.joinWith(SEPARATOR, PARENT_TEST_FOLDER, "twp", "country"),
         StringUtils.joinWith(SEPARATOR, PARENT_TEST_FOLDER, "twp", "country", "DE"),
         StringUtils.joinWith(SEPARATOR, PARENT_TEST_FOLDER, "twp", "country", "DE", "hour"),
-        StringUtils.joinWith(SEPARATOR, PARENT_TEST_FOLDER, "twp", "country", "DE", "hour",
-            oldestHour),
-        StringUtils.joinWith(SEPARATOR, PARENT_TEST_FOLDER, "twp", "country", "DE", "hour",
-            newestHour),
         StringUtils.joinWith(SEPARATOR, PARENT_TEST_FOLDER, "twp", "country", "index"),
         StringUtils.joinWith(SEPARATOR, PARENT_TEST_FOLDER, "twp", "country", "index.checksum"),
         StringUtils.joinWith(SEPARATOR, PARENT_TEST_FOLDER, "twp", "country", "DE", "hour", "index"),
-        StringUtils.joinWith(SEPARATOR, PARENT_TEST_FOLDER, "twp", "country", "DE", "hour", "index.checksum"));
+        StringUtils.joinWith(SEPARATOR, PARENT_TEST_FOLDER, "twp", "country", "DE", "hour", "index.checksum")).collect(
+        Collectors.toSet());
+    expectedPaths.addAll(expectedHourlyPackagesPaths);
 
     Set<String> actualFiles =
-        getSubFoldersPaths(testOutputFolder.getRoot().getAbsolutePath(), PARENT_TEST_FOLDER);
+        getSubFoldersPaths(testOutputFolder.getRoot().getAbsolutePath(), PARENT_TEST_FOLDER).stream()
+            .filter(this::isNotDsStore).collect(
+            Collectors.toSet());
     actualFiles.addAll(getFilePaths(testOutputFolder.getRoot(), testOutputFolder.getRoot().getAbsolutePath()));
+    actualFiles.forEach(actual -> assertTrue(expectedPaths.contains(actual)));
+  }
 
-    expectedPaths.stream().forEach(expected -> {
-      assertTrue(actualFiles.contains(expected));
-    });
+  private boolean isNotDsStore(String it) {
+    return !it.endsWith(DS_STORE);
   }
 
   private void writeDirectories(List<TraceTimeIntervalWarning> traceWarnings) throws IOException {
