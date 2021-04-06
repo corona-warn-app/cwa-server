@@ -128,11 +128,15 @@ public class ApplicationConfigurationV2PublicationConfig {
   @Bean
   @Qualifier("applicationConfigurationV2Android")
   public ApplicationConfigurationAndroid createAndroidV2Configuration(
-      DistributionServiceConfig distributionServiceConfig) throws UnableToLoadFileException {
+      DistributionServiceConfig distributionServiceConfig,
+      PreDistributionTrlValueMappingProvider trlValueMappingProvider) throws UnableToLoadFileException {
 
     RiskCalculationParameters.Builder riskCalculationParameterBuilder =
         YamlLoader.loadYamlIntoProtobufBuilder(V2_RISK_PARAMETERS_FILE,
             RiskCalculationParameters.Builder.class);
+
+    riskCalculationParameterBuilder.addAllTransmissionRiskValueMapping(
+        trlValueMappingProvider.getTransmissionRiskValueMappingAsProto());
 
     DeserializedDiagnosisKeysDataMapping dataMapping = YamlLoader.loadYamlIntoClass(
         ANDROID_V2_DATA_MAPPING_FILE, DeserializedDiagnosisKeysDataMapping.class);
@@ -308,12 +312,16 @@ public class ApplicationConfigurationV2PublicationConfig {
    */
   @Bean
   @Qualifier("applicationConfigurationV1Ios")
-  public ApplicationConfigurationIOS createIosV1Configuration(DistributionServiceConfig distributionServiceConfig)
+  public ApplicationConfigurationIOS createIosV1Configuration(DistributionServiceConfig distributionServiceConfig,
+      PreDistributionTrlValueMappingProvider trlValueMappingProvider)
       throws UnableToLoadFileException {
 
     RiskCalculationParameters.Builder riskCalculationParameterBuilder =
         YamlLoader.loadYamlIntoProtobufBuilder(V1_RISK_PARAMETERS_FILE,
             RiskCalculationParameters.Builder.class);
+
+    riskCalculationParameterBuilder.addAllTransmissionRiskValueMapping(
+        trlValueMappingProvider.getTransmissionRiskValueMappingAsProto());
 
     DeserializedExposureConfiguration exposureConfiguration = YamlLoader.loadYamlIntoClass(
         IOS_V2_EXPOSURE_CONFIGURATION_FILE, DeserializedExposureConfiguration.class);
@@ -343,12 +351,16 @@ public class ApplicationConfigurationV2PublicationConfig {
    */
   @Bean
   @Qualifier("applicationConfigurationV2Ios")
-  public ApplicationConfigurationIOS createIosV2Configuration(DistributionServiceConfig distributionServiceConfig)
+  public ApplicationConfigurationIOS createIosV2Configuration(DistributionServiceConfig distributionServiceConfig,
+      PreDistributionTrlValueMappingProvider trlValueMappingProvider)
       throws UnableToLoadFileException {
 
     RiskCalculationParameters.Builder riskCalculationParameterBuilder =
         YamlLoader.loadYamlIntoProtobufBuilder(V2_RISK_PARAMETERS_FILE,
             RiskCalculationParameters.Builder.class);
+
+    riskCalculationParameterBuilder.addAllTransmissionRiskValueMapping(
+        trlValueMappingProvider.getTransmissionRiskValueMappingAsProto());
 
     DeserializedExposureConfiguration exposureConfiguration = YamlLoader.loadYamlIntoClass(
         IOS_V2_EXPOSURE_CONFIGURATION_FILE, DeserializedExposureConfiguration.class);

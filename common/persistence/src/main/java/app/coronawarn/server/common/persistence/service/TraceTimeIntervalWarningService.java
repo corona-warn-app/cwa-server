@@ -103,7 +103,7 @@ public class TraceTimeIntervalWarningService {
   /**
    * Returns all available {@link TraceTimeIntervalWarning}s sorted by their submissionTimestamp.
    */
-  public Collection<TraceTimeIntervalWarning> getTraceTimeIntervalWarning() {
+  public Collection<TraceTimeIntervalWarning> getTraceTimeIntervalWarnings() {
     return StreamUtils
         .createStreamFromIterator(traceTimeIntervalWarningRepo
             .findAll(Sort.by(Direction.ASC, "submissionTimestamp")).iterator())
