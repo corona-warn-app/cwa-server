@@ -45,7 +45,7 @@ public class TraceTimeIntervalWarningsStructureProvider {
   public Directory<WritableOnDisk> getTraceWarningsDirectory() {
     logger.debug("Querying trace time interval warnings from the database...");
     Collection<TraceTimeIntervalWarning> traceWarnings =
-        traceWarningsService.getTraceTimeIntervalWarning();
+        traceWarningsService.getTraceTimeIntervalWarnings();
     traceWarningsBundler.setTraceTimeIntervalWarnings(traceWarnings, TimeUtils.getCurrentUtcHour());
     return new TraceTimeIntervalWarningsDirectory(traceWarningsBundler, cryptoProvider,
         distributionServiceConfig);
