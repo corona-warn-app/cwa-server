@@ -37,12 +37,12 @@ risk-calculation-parameters:
       normalized-time-range:
         min: 0
         min-exclusive: true
-        max: 30
+        max: 10
         max-exclusive: true
       risk-level: 1 # 1 = Low
     -
       normalized-time-range:
-        min: 30
+        min: 10
         min-exclusive: false
         max: 9999
         max-exclusive: false
@@ -52,12 +52,12 @@ risk-calculation-parameters:
       normalized-time-range:
         min: 0
         min-exclusive: true
-        max: 30
+        max: 10
         max-exclusive: true
       risk-level: 1 # 1 = Low
     -
       normalized-time-range:
-        min: 30
+        min: 10
         min-exclusive: false
         max: 9999
         max-exclusive: false
