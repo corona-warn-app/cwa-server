@@ -11,7 +11,7 @@ import app.coronawarn.server.services.distribution.config.DistributionServiceCon
 import com.google.protobuf.ByteString;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
-import java.util.Collection;
+import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -21,13 +21,13 @@ import java.util.stream.Collectors;
  */
 public class TemporaryExposureKeyExportFile extends FileOnDiskWithChecksum {
 
-  private final Collection<TemporaryExposureKey> temporaryExposureKeys;
+  private final List<TemporaryExposureKey> temporaryExposureKeys;
   private final String region;
   private final long startTimestamp;
   private final long endTimestamp;
   private final DistributionServiceConfig distributionServiceConfig;
 
-  private TemporaryExposureKeyExportFile(Collection<TemporaryExposureKey> temporaryExposureKeys, String region,
+  private TemporaryExposureKeyExportFile(List<TemporaryExposureKey> temporaryExposureKeys, String region,
       long startTimestamp, long endTimestamp, DistributionServiceConfig distributionServiceConfig) {
     super(distributionServiceConfig.getTekExport().getFileName(), new byte[0]);
     this.region = region;
@@ -55,7 +55,7 @@ public class TemporaryExposureKeyExportFile extends FileOnDiskWithChecksum {
    * @return A new {@link TemporaryExposureKeyExportFile}.
    */
   public static TemporaryExposureKeyExportFile fromTemporaryExposureKeys(
-      Collection<TemporaryExposureKey> temporaryExposureKeys, String region, long startTimestamp, long endTimestamp,
+      List<TemporaryExposureKey> temporaryExposureKeys, String region, long startTimestamp, long endTimestamp,
       DistributionServiceConfig distributionServiceConfig) {
     return new TemporaryExposureKeyExportFile(temporaryExposureKeys, region, startTimestamp, endTimestamp,
         distributionServiceConfig);
@@ -74,7 +74,7 @@ public class TemporaryExposureKeyExportFile extends FileOnDiskWithChecksum {
    * @param distributionServiceConfig The distribution service configuration {@link DistributionServiceConfig}
    * @return A new {@link TemporaryExposureKeyExportFile}.
    */
-  public static TemporaryExposureKeyExportFile fromDiagnosisKeys(Collection<DiagnosisKey> diagnosisKeys, String region,
+  public static TemporaryExposureKeyExportFile fromDiagnosisKeys(List<DiagnosisKey> diagnosisKeys, String region,
       long startTimestamp, long endTimestamp, DistributionServiceConfig distributionServiceConfig) {
     return new TemporaryExposureKeyExportFile(getTemporaryExposureKeysFromDiagnosisKeys(diagnosisKeys), region,
         startTimestamp, endTimestamp, distributionServiceConfig);
@@ -111,8 +111,8 @@ public class TemporaryExposureKeyExportFile extends FileOnDiskWithChecksum {
         .toByteArray();
   }
 
-  private static Set<TemporaryExposureKey> getTemporaryExposureKeysFromDiagnosisKeys(
-      Collection<DiagnosisKey> diagnosisKeys) {
+  private static List<TemporaryExposureKey> getTemporaryExposureKeysFromDiagnosisKeys(
+      List<DiagnosisKey> diagnosisKeys) {
     return diagnosisKeys.stream().map(diagnosisKey -> TemporaryExposureKey.newBuilder()
         .setKeyData(ByteString.copyFrom(diagnosisKey.getKeyData()))
         .setTransmissionRiskLevel(diagnosisKey.getTransmissionRiskLevel())
@@ -121,7 +121,7 @@ public class TemporaryExposureKeyExportFile extends FileOnDiskWithChecksum {
         .setReportType(diagnosisKey.getReportType())
         .setDaysSinceOnsetOfSymptoms(diagnosisKey.getDaysSinceOnsetOfSymptoms())
         .build())
-        .collect(Collectors.toSet());
+        .collect(Collectors.toList());
   }
 
   private byte[] getHeaderBytes() {
