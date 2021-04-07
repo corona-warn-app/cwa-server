@@ -10,6 +10,7 @@ import app.coronawarn.server.common.persistence.service.utils.checkins.CheckinsD
 import app.coronawarn.server.services.distribution.assembly.diagnosiskeys.DemoDiagnosisKeyBundler;
 import app.coronawarn.server.services.distribution.assembly.structure.util.TimeUtils;
 import app.coronawarn.server.services.distribution.assembly.tracewarnings.DemoTraceTimeIntervalWarningsPackageBundler;
+import app.coronawarn.server.services.distribution.assembly.tracewarnings.ProdTraceTimeIntervalWarningsPackageBundler;
 import app.coronawarn.server.services.distribution.assembly.tracewarnings.TraceTimeIntervalWarningsPackageBundler;
 import app.coronawarn.server.services.distribution.config.DistributionServiceConfig;
 import java.io.IOException;
@@ -20,6 +21,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import org.apache.commons.lang3.StringUtils;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,6 +40,14 @@ public class DemoTraceTimeIntervalWarningsPackageBundlerTest {
 
   @Autowired
   private TraceTimeIntervalWarningsPackageBundler bundler;
+
+  @Autowired
+  DistributionServiceConfig distributionServiceConfig;
+
+  @BeforeEach
+  void setup() {
+    bundler = new DemoTraceTimeIntervalWarningsPackageBundler(distributionServiceConfig);
+  }
 
   @Test
   void testGetsTraceLocationWarningsForHour() {
