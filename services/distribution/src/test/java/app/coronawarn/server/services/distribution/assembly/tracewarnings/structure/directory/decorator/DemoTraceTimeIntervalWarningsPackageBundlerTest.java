@@ -33,25 +33,25 @@ public class DemoTraceTimeIntervalWarningsPackageBundlerTest {
 
   @Test
   void testGetsTraceLocationWarningsForHour() {
-    List<TraceTimeIntervalWarning> diagnosisKeys = Stream
+    List<TraceTimeIntervalWarning> warnings = Stream
         .of(buildTraceTimeIntervalWarning(6, 50, 5, 5),
             buildTraceTimeIntervalWarning(6, 50, 5, 5),
             buildTraceTimeIntervalWarning(6, 50, 5,5))
         .flatMap(List::stream)
         .collect(Collectors.toList());
-    bundler.setTraceTimeIntervalWarnings(diagnosisKeys, LocalDateTime.of(1970, 1, 5, 0, 0));
+    bundler.setTraceTimeIntervalWarnings(warnings, LocalDateTime.of(1970, 1, 5, 0, 0));
     assertThat(bundler.getTraceTimeWarningsForHour(5)).hasSize(15);
   }
 
   @Test
   void testGetHoursTraceLocationWarningsForCountry() {
-    List<TraceTimeIntervalWarning> diagnosisKeys = Stream
+    List<TraceTimeIntervalWarning> warnings = Stream
         .of(buildTraceTimeIntervalWarning(6, 50, 5, 5),
             buildTraceTimeIntervalWarning(6, 50, 6, 5),
             buildTraceTimeIntervalWarning(6, 50, 7,5))
         .flatMap(List::stream)
         .collect(Collectors.toList());
-    bundler.setTraceTimeIntervalWarnings(diagnosisKeys, LocalDateTime.of(1970, 1, 5, 0, 0));
+    bundler.setTraceTimeIntervalWarnings(warnings, LocalDateTime.of(1970, 1, 5, 0, 0));
     assertThat(bundler.getHoursForDistributableWarnings("DE")).hasSize(3);
   }
 }
