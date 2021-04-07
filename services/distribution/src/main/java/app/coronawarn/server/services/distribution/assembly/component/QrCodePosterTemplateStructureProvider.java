@@ -15,8 +15,8 @@ import java.util.function.Function;
 import org.springframework.stereotype.Component;
 
 /**
- * Provide the export files that carry information about the QR Code Poster Template used by clients
- * for event registration.
+ * Provide the export files that carry information about the QR Code Poster Template used by clients for event
+ * registration.
  */
 @Component
 public class QrCodePosterTemplateStructureProvider {
@@ -34,8 +34,7 @@ public class QrCodePosterTemplateStructureProvider {
   }
 
   /**
-   * Returns the publishable archive associated with the QR code poster template for Android mobile
-   * clients.
+   * Returns the publishable archive associated with the QR code poster template for Android mobile clients.
    */
   public WritableOnDisk getQrCodeTemplateForAndroid() {
     return constructArchiveToPublish(distributionServiceConfig.getAndroidQrCodePosterTemplate(),
@@ -44,8 +43,7 @@ public class QrCodePosterTemplateStructureProvider {
   }
 
   /**
-   * Returns the publishable archive associated with the QR code poster template for IOS mobile
-   * clients.
+   * Returns the publishable archive associated with the QR code poster template for IOS mobile clients.
    */
   public WritableOnDisk getQrCodeTemplateForIos() {
     return constructArchiveToPublish(distributionServiceConfig.getIosQrCodePosterTemplate(),
@@ -70,7 +68,7 @@ public class QrCodePosterTemplateStructureProvider {
         .setTemplate(qrTemplateLoader.loadAndroidTemplateAsBytes())
         .setQrCodeSideLength(templateConfig.getQrCodeSideLength())
         .setDescriptionTextBox(QRCodeTextBoxAndroid.newBuilder()
-            .setOffsetX(textBoxConfig.getOffsetX().floatValue()).setOffsetY(textBoxConfig.getOffsetY().floatValue())
+            .setOffsetX(textBoxConfig.getOffsetX().intValue()).setOffsetY(textBoxConfig.getOffsetY().intValue())
             .setFontSize(textBoxConfig.getFontSize()).setHeight(textBoxConfig.getHeight())
             .setFontColor(textBoxConfig.getFontColor()).build())
         .build();
