@@ -68,7 +68,7 @@ public class QrCodePosterTemplateStructureProvider {
         .setTemplate(qrTemplateLoader.loadAndroidTemplateAsBytes())
         .setQrCodeSideLength(templateConfig.getQrCodeSideLength())
         .setDescriptionTextBox(QRCodeTextBoxAndroid.newBuilder()
-            .setOffsetX(textBoxConfig.getOffsetX().intValue()).setOffsetY(textBoxConfig.getOffsetY().intValue())
+            .setOffsetX(textBoxConfig.getOffsetX().floatValue()).setOffsetY(textBoxConfig.getOffsetY().floatValue())
             .setFontSize(textBoxConfig.getFontSize()).setHeight(textBoxConfig.getHeight())
             .setFontColor(textBoxConfig.getFontColor()).build())
         .build();
