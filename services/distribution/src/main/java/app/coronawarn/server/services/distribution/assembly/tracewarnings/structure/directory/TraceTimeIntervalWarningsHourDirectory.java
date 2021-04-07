@@ -9,7 +9,7 @@ import app.coronawarn.server.services.distribution.assembly.structure.archive.de
 import app.coronawarn.server.services.distribution.assembly.structure.directory.Directory;
 import app.coronawarn.server.services.distribution.assembly.structure.directory.IndexDirectoryOnDisk;
 import app.coronawarn.server.services.distribution.assembly.structure.file.File;
-import app.coronawarn.server.services.distribution.assembly.structure.file.FileOnDisk;
+import app.coronawarn.server.services.distribution.assembly.structure.file.FileOnDiskWithChecksum;
 import app.coronawarn.server.services.distribution.assembly.structure.util.ImmutableStack;
 import app.coronawarn.server.services.distribution.assembly.tracewarnings.TraceTimeIntervalWarningsPackageBundler;
 import app.coronawarn.server.services.distribution.assembly.tracewarnings.structure.file.TraceTimeIntervalWarningExportFile;
@@ -48,7 +48,7 @@ public class TraceTimeIntervalWarningsHourDirectory extends IndexDirectoryOnDisk
       List<TraceTimeIntervalWarning> traceWarningsForCurrentHour =
           this.traceWarningsBundler.getTraceTimeWarningsForHour(hourSinceEpoch);
       if (traceWarningsForCurrentHour.isEmpty()) {
-        return Optional.of(new FileOnDisk("index", new byte[0]));
+        return Optional.of(new FileOnDiskWithChecksum("index", new byte[0]));
       }
 
       File<WritableOnDisk> traceTimeIntervalWarningExportFile =

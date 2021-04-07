@@ -65,12 +65,12 @@ public class QrCodePosterTemplateStructureProvider {
   private QRCodePosterTemplateAndroid buildAndroidProtoStructure(
       QrCodePosterTemplate templateConfig) {
     DescriptionTextBox textBoxConfig = templateConfig.getDescriptionTextBox();
-    return QRCodePosterTemplateAndroid.newBuilder().setOffsetX(templateConfig.getOffsetX())
-        .setOffsetY(templateConfig.getOffsetY())
+    return QRCodePosterTemplateAndroid.newBuilder().setOffsetX(templateConfig.getOffsetX().floatValue())
+        .setOffsetY(templateConfig.getOffsetY().floatValue())
         .setTemplate(qrTemplateLoader.loadAndroidTemplateAsBytes())
         .setQrCodeSideLength(templateConfig.getQrCodeSideLength())
         .setDescriptionTextBox(QRCodeTextBoxAndroid.newBuilder()
-            .setOffsetX(textBoxConfig.getOffsetX()).setOffsetY(textBoxConfig.getOffsetY())
+            .setOffsetX(textBoxConfig.getOffsetX().floatValue()).setOffsetY(textBoxConfig.getOffsetY().floatValue())
             .setFontSize(textBoxConfig.getFontSize()).setHeight(textBoxConfig.getHeight())
             .setFontColor(textBoxConfig.getFontColor()).build())
         .build();
@@ -78,12 +78,12 @@ public class QrCodePosterTemplateStructureProvider {
 
   private QRCodePosterTemplateIOS buildIosProtoStructure(QrCodePosterTemplate templateConfig) {
     DescriptionTextBox textBoxConfig = templateConfig.getDescriptionTextBox();
-    return QRCodePosterTemplateIOS.newBuilder().setOffsetX(templateConfig.getOffsetX())
-        .setOffsetY(templateConfig.getOffsetY())
+    return QRCodePosterTemplateIOS.newBuilder().setOffsetX(templateConfig.getOffsetX().intValue())
+        .setOffsetY(templateConfig.getOffsetY().intValue())
         .setTemplate(qrTemplateLoader.loadIosTemplateAsBytes())
         .setQrCodeSideLength(templateConfig.getQrCodeSideLength())
-        .setDescriptionTextBox(QRCodeTextBoxIOS.newBuilder().setOffsetX(textBoxConfig.getOffsetX())
-            .setOffsetY(textBoxConfig.getOffsetY()).setFontSize(textBoxConfig.getFontSize())
+        .setDescriptionTextBox(QRCodeTextBoxIOS.newBuilder().setOffsetX(textBoxConfig.getOffsetX().intValue())
+            .setOffsetY(textBoxConfig.getOffsetY().intValue()).setFontSize(textBoxConfig.getFontSize())
             .setHeight(textBoxConfig.getHeight()).setFontColor(textBoxConfig.getFontColor())
             .build())
         .build();

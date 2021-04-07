@@ -63,6 +63,7 @@ public interface ObjectStoreClient {
     CACHE_CONTROL("Cache-Control"),
     AMZ_ACL("x-amz-acl"),
     CWA_HASH("cwa-hash"),
+    CWA_EMPTY_PKG("cwa-empty-pkg"),
     /**
      * To control which content type is sent, when objects are retrieved from the object store.
      */
