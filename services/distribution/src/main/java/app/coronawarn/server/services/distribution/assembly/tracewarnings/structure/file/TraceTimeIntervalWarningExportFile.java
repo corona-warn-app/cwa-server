@@ -6,24 +6,25 @@ import app.coronawarn.server.services.distribution.assembly.structure.file.FileO
 import app.coronawarn.server.services.distribution.assembly.structure.util.ImmutableStack;
 import app.coronawarn.server.services.distribution.config.DistributionServiceConfig;
 import com.google.protobuf.ByteString;
-import java.util.Collection;
-import java.util.Set;
+import java.util.Arrays;
+import java.util.Comparator;
+import java.util.List;
 import java.util.stream.Collectors;
 
 /**
  * A {@link app.coronawarn.server.services.distribution.assembly.structure.file.File} containing a
  * list of {@link app.coronawarn.server.common.protocols.internal.pt.TraceTimeIntervalWarning}
- * serliazed protos.
+ * serialized protos.
  */
 public class TraceTimeIntervalWarningExportFile extends FileOnDiskWithChecksum {
 
-  private final Set<app.coronawarn.server.common.protocols.internal.pt.TraceTimeIntervalWarning>
+  private final List<app.coronawarn.server.common.protocols.internal.pt.TraceTimeIntervalWarning>
                 traceTimeIntervalWarnings;
   private final String region;
   private final int intervalNumber;
 
   TraceTimeIntervalWarningExportFile(
-      Set<app.coronawarn.server.common.protocols.internal.pt.TraceTimeIntervalWarning> traceTimeIntervalWarnings,
+      List<app.coronawarn.server.common.protocols.internal.pt.TraceTimeIntervalWarning> traceTimeIntervalWarnings,
       String region, int intervalNumber, DistributionServiceConfig distributionServiceConfig) {
     super(distributionServiceConfig.getTekExport().getFileName(), new byte[0]);
 
@@ -42,7 +43,7 @@ public class TraceTimeIntervalWarningExportFile extends FileOnDiskWithChecksum {
    * Creates a binary export file by converting the given warnings to their proto structures.
    */
   public static TraceTimeIntervalWarningExportFile fromTraceTimeIntervalWarnings(
-      Collection<TraceTimeIntervalWarning> traceTimeIntervalWarnings, String country,
+      List<TraceTimeIntervalWarning> traceTimeIntervalWarnings, String country,
       int intervalNumber, DistributionServiceConfig distributionServiceConfig) {
     return new TraceTimeIntervalWarningExportFile(
         getTraceIntervalWarningsFromTraceIntervalWarnings(traceTimeIntervalWarnings), country,
@@ -55,16 +56,18 @@ public class TraceTimeIntervalWarningExportFile extends FileOnDiskWithChecksum {
         .toByteArray();
   }
 
-  private static Set<app.coronawarn.server.common.protocols.internal.pt.TraceTimeIntervalWarning>
+  private static List<app.coronawarn.server.common.protocols.internal.pt.TraceTimeIntervalWarning>
       getTraceIntervalWarningsFromTraceIntervalWarnings(
-      Collection<TraceTimeIntervalWarning> traceTimeIntervalWarnings) {
+      List<TraceTimeIntervalWarning> traceTimeIntervalWarnings) {
 
-    return traceTimeIntervalWarnings.stream().map(
-        intervalWarning -> app.coronawarn.server.common.protocols.internal.pt.TraceTimeIntervalWarning
+    return traceTimeIntervalWarnings.stream()
+        .sorted((o1, o2) -> Arrays.compare(o1.getTraceLocationId(), o2.getTraceLocationId()))
+        .map(
+          intervalWarning -> app.coronawarn.server.common.protocols.internal.pt.TraceTimeIntervalWarning
             .newBuilder()
             .setLocationIdHash(ByteString.copyFrom(intervalWarning.getTraceLocationId()))
             .setStartIntervalNumber(intervalWarning.getStartIntervalNumber())
             .setTransmissionRiskLevel(intervalWarning.getTransmissionRiskLevel()).build())
-        .collect(Collectors.toSet());
+        .collect(Collectors.toList());
   }
 }
