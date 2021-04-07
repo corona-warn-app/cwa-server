@@ -61,7 +61,7 @@ public class TraceTimeIntervalWarningExportFile extends FileOnDiskWithChecksum {
       List<TraceTimeIntervalWarning> traceTimeIntervalWarnings) {
 
     return traceTimeIntervalWarnings.stream()
-        .sorted((o1, o2) -> Arrays.compare(o1.getTraceLocationId(), o2.getTraceLocationId()))
+        .sorted(Comparator.comparing(TraceTimeIntervalWarning::getId))
         .map(
           intervalWarning -> app.coronawarn.server.common.protocols.internal.pt.TraceTimeIntervalWarning
             .newBuilder()
