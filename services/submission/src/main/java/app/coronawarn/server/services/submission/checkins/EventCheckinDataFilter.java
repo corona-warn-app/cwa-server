@@ -46,7 +46,7 @@ public class EventCheckinDataFilter {
     AtomicInteger checkinsPickedAfterTrlFiltering = new AtomicInteger();
     AtomicInteger checkinsPickedAfterOldFiltering = new AtomicInteger();
     AtomicInteger checkinsPickedAfterFutureFiltering = new AtomicInteger();
-    var filtered = checkins.stream()
+    final var filtered = checkins.stream()
         .filter(this::filterOutZeroTransmissionRiskLevel)
         .peek(k -> checkinsPickedAfterTrlFiltering.incrementAndGet())
         .filter(this::filterOutOldCheckins)
