@@ -10,7 +10,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -149,14 +148,11 @@ public class S3ClientWrapper implements ObjectStoreClient {
     if (headers.containsKey(HeaderKey.CACHE_CONTROL)) {
       requestBuilder.cacheControl(headers.get(HeaderKey.CACHE_CONTROL));
     }
+    if (headers.containsKey(HeaderKey.CWA_HASH)) {
+      requestBuilder.metadata(Map.of(HeaderKey.CWA_HASH.withMetaPrefix(), headers.get(HeaderKey.CWA_HASH)));
+    }
     if (headers.containsKey(HeaderKey.CONTENT_TYPE)) {
       requestBuilder.contentType(headers.get(HeaderKey.CONTENT_TYPE));
-    }
-    Map<String, String> metadataHeaders = Set.of(HeaderKey.CWA_HASH, HeaderKey.CWA_EMPTY_PKG).stream()
-        .filter(headers::containsKey)
-        .collect(Collectors.toMap(HeaderKey::withMetaPrefix, headers::get));
-    if (!metadataHeaders.isEmpty()) {
-      requestBuilder.metadata(metadataHeaders);
     }
 
     RequestBody bodyFile = RequestBody.fromFile(filePath);
