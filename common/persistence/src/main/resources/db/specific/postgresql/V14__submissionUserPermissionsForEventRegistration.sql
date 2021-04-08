@@ -1,0 +1,1 @@
+GRANT USAGE, SELECT ON SEQUENCE trace_time_interval_warning_id_seq TO "cwa_submission";
