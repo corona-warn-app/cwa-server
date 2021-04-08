@@ -107,8 +107,8 @@ public class SubmissionController {
         extractAndStoreDiagnosisKeys(submissionPayload);
         CheckinsStorageResult checkinsStorageResult = extractAndStoreEventCheckins(submissionPayload);
         deferredResult.setResult(ResponseEntity.ok()
-            .header("cwa-checkins-filtered", String.valueOf(checkinsStorageResult.getNumberOfFilteredCheckins()))
-            .header("cwa-checkins-saved", String.valueOf(checkinsStorageResult.getNumberOfSavedCheckins()))
+            .header("cwa-filtered-checkins", String.valueOf(checkinsStorageResult.getNumberOfFilteredCheckins()))
+            .header("cwa-saved-checkins", String.valueOf(checkinsStorageResult.getNumberOfSavedCheckins()))
             .build());
       }
     } catch (Exception e) {
