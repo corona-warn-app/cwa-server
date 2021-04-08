@@ -6,20 +6,18 @@ import app.coronawarn.server.services.distribution.assembly.structure.file.FileO
 import app.coronawarn.server.services.distribution.assembly.structure.util.ImmutableStack;
 import app.coronawarn.server.services.distribution.config.DistributionServiceConfig;
 import com.google.protobuf.ByteString;
-import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
 /**
- * A {@link app.coronawarn.server.services.distribution.assembly.structure.file.File} containing a
- * list of {@link app.coronawarn.server.common.protocols.internal.pt.TraceTimeIntervalWarning}
- * serialized protos.
+ * A {@link app.coronawarn.server.services.distribution.assembly.structure.file.File} containing a list of {@link
+ * app.coronawarn.server.common.protocols.internal.pt.TraceTimeIntervalWarning} serialized protos.
  */
 public class TraceTimeIntervalWarningExportFile extends FileOnDiskWithChecksum {
 
   private final List<app.coronawarn.server.common.protocols.internal.pt.TraceTimeIntervalWarning>
-                traceTimeIntervalWarnings;
+      traceTimeIntervalWarnings;
   private final String region;
   private final int intervalNumber;
 
@@ -63,11 +61,12 @@ public class TraceTimeIntervalWarningExportFile extends FileOnDiskWithChecksum {
     return traceTimeIntervalWarnings.stream()
         .sorted(Comparator.comparing(TraceTimeIntervalWarning::getId))
         .map(
-          intervalWarning -> app.coronawarn.server.common.protocols.internal.pt.TraceTimeIntervalWarning
-            .newBuilder()
-            .setLocationIdHash(ByteString.copyFrom(intervalWarning.getTraceLocationId()))
-            .setStartIntervalNumber(intervalWarning.getStartIntervalNumber())
-            .setTransmissionRiskLevel(intervalWarning.getTransmissionRiskLevel()).build())
+            intervalWarning -> app.coronawarn.server.common.protocols.internal.pt.TraceTimeIntervalWarning
+                .newBuilder()
+                .setLocationIdHash(ByteString.copyFrom(intervalWarning.getTraceLocationId()))
+                .setStartIntervalNumber(intervalWarning.getStartIntervalNumber())
+                .setPeriod(intervalWarning.getPeriod())
+                .setTransmissionRiskLevel(intervalWarning.getTransmissionRiskLevel()).build())
         .collect(Collectors.toList());
   }
 }
