@@ -489,21 +489,9 @@ class SubmissionControllerTest {
   }
 
   @Test
-  void testInvalidCheckinTime() {
-    final List<CheckIn> invalidCheckinData = List.of(
-        CheckIn.newBuilder().setTransmissionRiskLevel(2).setStartIntervalNumber(0).setEndIntervalNumber(1).build(),
-        CheckIn.newBuilder().setTransmissionRiskLevel(2).setStartIntervalNumber(0).setEndIntervalNumber(1).build());
-
-    final ResponseEntity<Void> actResponse = executor.executePost(buildPayloadWithCheckinData(invalidCheckinData));
-    assertThat(actResponse.getStatusCode()).isEqualTo(BAD_REQUEST);
-    assertTraceWarningsHaveBeenSaved(0);
-  }
-
-  @Test
   void testInvalidCheckOutTime() {
     final List<CheckIn> invalidCheckinData = List.of(
-        CheckIn.newBuilder().setTransmissionRiskLevel(2).setStartIntervalNumber(4).setEndIntervalNumber(3).build(),
-        CheckIn.newBuilder().setTransmissionRiskLevel(2).setStartIntervalNumber(2).setEndIntervalNumber(2).build());
+        CheckIn.newBuilder().setTransmissionRiskLevel(2).setStartIntervalNumber(4).setEndIntervalNumber(3).build());
 
     final ResponseEntity<Void> actResponse = executor.executePost(buildPayloadWithCheckinData(invalidCheckinData));
     assertThat(actResponse.getStatusCode()).isEqualTo(BAD_REQUEST);
@@ -555,6 +543,14 @@ class SubmissionControllerTest {
     final long eventCheckinInThePast = LocalDateTime.ofInstant(Instant.now(), UTC).minusDays(10).toEpochSecond(UTC);
 
     final List<CheckIn> validCheckinData = List.of(
+        CheckIn.newBuilder().setTransmissionRiskLevel(3)
+            .setStartIntervalNumber(TEN_MINUTE_INTERVAL_DERIVATION.apply(eventCheckinInThePast))
+            .setEndIntervalNumber(TEN_MINUTE_INTERVAL_DERIVATION.apply(eventCheckinInThePast))
+            .setLocationId(EventCheckinDataValidatorTest.CORRECT_LOCATION_ID).build(),
+        CheckIn.newBuilder().setTransmissionRiskLevel(3)
+            .setStartIntervalNumber(TEN_MINUTE_INTERVAL_DERIVATION.apply(eventCheckinInThePast))
+            .setEndIntervalNumber(TEN_MINUTE_INTERVAL_DERIVATION.apply(eventCheckinInThePast) + 1)
+            .setLocationId(EventCheckinDataValidatorTest.CORRECT_LOCATION_ID).build(),
         CheckIn.newBuilder().setTransmissionRiskLevel(3)
             .setStartIntervalNumber(TEN_MINUTE_INTERVAL_DERIVATION.apply(eventCheckinInThePast))
             .setEndIntervalNumber(TEN_MINUTE_INTERVAL_DERIVATION.apply(eventCheckinInThePast) + 10)
