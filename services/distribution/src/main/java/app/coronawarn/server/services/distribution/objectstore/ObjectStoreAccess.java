@@ -125,12 +125,6 @@ public class ObjectStoreAccess {
       headers.put(HeaderKey.CWA_HASH, file.getChecksum());
     }
 
-    if (file.getFile().toFile().length() > 0) {
-      headers.put(HeaderKey.CWA_EMPTY_PKG, "0");
-    } else {
-      headers.put(HeaderKey.CWA_EMPTY_PKG, "1");
-    }
-
     headers.put(HeaderKey.CONTENT_TYPE, file.getContentType());
 
     return headers;
