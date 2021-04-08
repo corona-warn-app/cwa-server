@@ -18,6 +18,7 @@ import io.micrometer.core.annotation.Timed;
 import java.security.SecureRandom;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import org.apache.commons.lang3.StringUtils;
@@ -104,8 +105,11 @@ public class SubmissionController {
         deferredResult.setResult(ResponseEntity.status(HttpStatus.FORBIDDEN).build());
       } else {
         extractAndStoreDiagnosisKeys(submissionPayload);
-        extractAndStoreEventCheckins(submissionPayload);
-        deferredResult.setResult(ResponseEntity.ok().build());
+        CheckinsStorageResult checkinsStorageResult = extractAndStoreEventCheckins(submissionPayload);
+        deferredResult.setResult(ResponseEntity.ok()
+            .header("cwa-filtered-checkins", String.valueOf(checkinsStorageResult.getNumberOfFilteredCheckins()))
+            .header("cwa-saved-checkins", String.valueOf(checkinsStorageResult.getNumberOfSavedCheckins()))
+            .build());
       }
     } catch (Exception e) {
       deferredResult.setErrorResult(e);
@@ -116,17 +120,22 @@ public class SubmissionController {
     return deferredResult;
   }
 
-  private void extractAndStoreEventCheckins(SubmissionPayload submissionPayload) {
+  protected CheckinsStorageResult extractAndStoreEventCheckins(SubmissionPayload submissionPayload) {
+    // need a container object that reflects how many checkins were filtered even if storage fails
+    AtomicInteger numberOfFilteredCheckins = new AtomicInteger(0);
+    AtomicInteger numberOfSavedCheckins = new AtomicInteger(0);
     try {
       List<CheckIn> checkins = checkinsDataFilter.filter(submissionPayload.getCheckInsList());
-      traceTimeIntervalWarningSevice.saveCheckinsWithFakeData(checkins,
+      numberOfFilteredCheckins.set(submissionPayload.getCheckInsList().size() - checkins.size());
+      numberOfSavedCheckins.set(traceTimeIntervalWarningSevice.saveCheckinsWithFakeData(checkins,
           submissionServiceConfig.getRandomCheckinsPaddingMultiplier(),
-          submissionServiceConfig.getRandomCheckinsPaddingPepperAsByteArray());
+          submissionServiceConfig.getRandomCheckinsPaddingPepperAsByteArray()));
     } catch (final Exception e) {
       // Any check-in data processing related error must not interrupt the submission flow or interfere
       // with storing of the diagnosis keys
       logger.error("An error has occured while trying to store the event checkin data", e);
     }
+    return new CheckinsStorageResult(numberOfFilteredCheckins.get(), numberOfSavedCheckins.get());
   }
 
   private void extractAndStoreDiagnosisKeys(SubmissionPayload submissionPayload) {

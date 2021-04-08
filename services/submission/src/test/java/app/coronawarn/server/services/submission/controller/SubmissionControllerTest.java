@@ -59,6 +59,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 import org.apache.commons.lang3.tuple.Pair;
+import org.assertj.core.data.Index;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -432,6 +433,32 @@ class SubmissionControllerTest {
     final ResponseEntity<Void> actResponse = executor.executePost(buildPayloadWithCheckinData(checkins));
     assertThat(actResponse.getStatusCode()).isEqualTo(OK);
     assertTraceWarningsHaveBeenSaved(0);
+  }
+
+  @Test
+  void testCheckinDataHeadersAreCorrectlyFilled() {
+    final Integer daysInThePast = config.getAcceptedEventDateThresholdDays() + 1;
+    final Instant thisInstant = Instant.now();
+    final long eventCheckoutInThePast = LocalDateTime.ofInstant(thisInstant, UTC).minusDays(daysInThePast)
+        .toEpochSecond(UTC);
+    final long eventCheckinInThePast = LocalDateTime.ofInstant(thisInstant, UTC).minusDays(daysInThePast + 1)
+        .toEpochSecond(UTC);
+
+    final long eventCheckinInAllowedPeriod = LocalDateTime.ofInstant(Instant.now(), UTC).minusDays(10).toEpochSecond(UTC);
+
+    final List<CheckIn> checkins = List
+        .of(CheckIn.newBuilder().setStartIntervalNumber(TEN_MINUTE_INTERVAL_DERIVATION.apply(eventCheckinInThePast))
+                .setEndIntervalNumber(TEN_MINUTE_INTERVAL_DERIVATION.apply(eventCheckoutInThePast))
+                .setTransmissionRiskLevel(1).setLocationId(EventCheckinDataValidatorTest.CORRECT_LOCATION_ID).build(),
+            CheckIn.newBuilder().setTransmissionRiskLevel(3)
+                .setStartIntervalNumber(TEN_MINUTE_INTERVAL_DERIVATION.apply(eventCheckinInAllowedPeriod))
+                .setEndIntervalNumber(TEN_MINUTE_INTERVAL_DERIVATION.apply(eventCheckinInAllowedPeriod) + 10)
+                .setLocationId(EventCheckinDataValidatorTest.CORRECT_LOCATION_ID).build());
+
+    final ResponseEntity<Void> actResponse = executor.executePost(buildPayloadWithCheckinData(checkins));
+    assertThat(actResponse.getStatusCode()).isEqualTo(OK);
+    assertThat(actResponse.getHeaders().get("cwa-filtered-checkins")).contains("1", Index.atIndex(0));
+    assertThat(actResponse.getHeaders().get("cwa-saved-checkins")).contains("2", Index.atIndex(0));
   }
 
   @Test
