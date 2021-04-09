@@ -16,6 +16,6 @@ class DeserializedPlausibleDeniabilityParametersTest {
     DeserializedPlausibleDeniabilityParameters plausibleDeniabilityParameters = YamlLoader
         .loadYamlIntoClass(PLAUSIBLE_DENIABILITY_PARAMETERS_FILE, DeserializedPlausibleDeniabilityParameters.class);
 
-    assertThat(plausibleDeniabilityParameters.getCheckInSizesInBytes()).containsAll(List.of(10, 20));
+    assertThat(plausibleDeniabilityParameters.getCheckInSizesInBytes()).containsAll(List.of(46));
   }
 }

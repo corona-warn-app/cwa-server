@@ -2,4 +2,4 @@
   # validation rules for checkInSizesInBytes:
   #   * zero entries are allowed
   #   * each entry must be >= 0
-  check-in-sizes-in-bytes: [10, 20]
+  check-in-sizes-in-bytes: [46]
