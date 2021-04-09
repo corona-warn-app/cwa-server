@@ -214,7 +214,12 @@ public class Helpers {
     final byte[] guid = UUID.randomUUID().toString().getBytes();
     final int transmissionRiskLevel = 5;
     return new TraceTimeIntervalWarning(guid, startIntervalNumber, endIntervalNumber,
-        transmissionRiskLevel, submissionHourSinceEpoch);
+        transmissionRiskLevel, submissionHourSinceEpoch){
+      @Override
+      public Long getId() {
+        return Long.valueOf(Arrays.hashCode(guid));
+      }
+    };
   }
 
   public static List<TraceTimeIntervalWarning> buildTraceTimeIntervalWarning(
