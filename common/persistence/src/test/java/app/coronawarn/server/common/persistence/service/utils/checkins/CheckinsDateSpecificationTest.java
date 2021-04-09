@@ -1,4 +1,4 @@
-package app.coronawarn.server.common.persistence.utils;
+package app.coronawarn.server.common.persistence.service.utils.checkins;
 
 import static org.junit.jupiter.api.Assertions.*;
 import java.util.stream.Stream;

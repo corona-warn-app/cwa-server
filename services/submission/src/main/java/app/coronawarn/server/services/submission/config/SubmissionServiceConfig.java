@@ -1,5 +1,3 @@
-
-
 package app.coronawarn.server.services.submission.config;
 
 import app.coronawarn.server.common.persistence.domain.config.TekFieldDerivations;
@@ -9,6 +7,7 @@ import javax.validation.constraints.Min;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
+import org.bouncycastle.util.encoders.Hex;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Component;
@@ -38,6 +37,11 @@ public class SubmissionServiceConfig {
   @Min(1)
   @Max(25)
   private Integer randomKeyPaddingMultiplier;
+  @Min(1)
+  @Max(25)
+  private Integer randomCheckinsPaddingMultiplier;
+  @NotEmpty
+  private String randomCheckinsPaddingPepper;
   @Min(1)
   @Max(10000)
   private Integer connectionPoolSize;
@@ -84,6 +88,26 @@ public class SubmissionServiceConfig {
 
   public void setRandomKeyPaddingMultiplier(Integer randomKeyPaddingMultiplier) {
     this.randomKeyPaddingMultiplier = randomKeyPaddingMultiplier;
+  }
+
+  public Integer getRandomCheckinsPaddingMultiplier() {
+    return randomCheckinsPaddingMultiplier;
+  }
+
+  public void setRandomCheckinsPaddingMultiplier(Integer randomCheckinsPaddingMultiplier) {
+    this.randomCheckinsPaddingMultiplier = randomCheckinsPaddingMultiplier;
+  }
+
+  public String getRandomCheckinsPaddingPepper() {
+    return randomCheckinsPaddingPepper;
+  }
+
+  public byte[] getRandomCheckinsPaddingPepperAsByteArray() {
+    return Hex.decode(randomCheckinsPaddingPepper.getBytes());
+  }
+
+  public void setRandomCheckinsPaddingPepper(String randomCheckinsPaddingPepper) {
+    this.randomCheckinsPaddingPepper = randomCheckinsPaddingPepper;
   }
 
   public Integer getConnectionPoolSize() {

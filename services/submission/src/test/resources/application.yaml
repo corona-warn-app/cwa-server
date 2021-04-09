@@ -24,6 +24,8 @@ services:
     fake-delay-moving-average-samples: 1
     retention-days: 14
     random-key-padding-multiplier: 10
+    random-checkins-padding-multiplier: 1
+    random-checkins-padding-pepper: 0efbb3d683b713857750eec4b042ca1a7c50b5e4
     connection-pool-size: 200
     maximum-request-size: 100KB
     max-rolling-period: 144
