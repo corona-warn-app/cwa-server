@@ -22,6 +22,8 @@ public class CwaApiStructureProvider {
   private final StatisticsStructureProvider statisticsStructureProvider;
   private final DiagnosisKeysStructureProvider diagnosisKeysStructureProvider;
   private final DistributionServiceConfig distributionServiceConfig;
+  private final TraceTimeIntervalWarningsStructureProvider traceWarningsStructureProvider;
+  private final QrCodePosterTemplateStructureProvider qrCodeTemplateStructureProvider;
 
   /**
    * Creates a new CwaApiStructureProvider.
@@ -31,12 +33,16 @@ public class CwaApiStructureProvider {
       AppConfigurationV2StructureProvider appConfigurationV2StructureProvider,
       StatisticsStructureProvider statisticsStructureProvider,
       DiagnosisKeysStructureProvider diagnosisKeysStructureProvider,
+      TraceTimeIntervalWarningsStructureProvider traceWarningsStructureProvider,
+      QrCodePosterTemplateStructureProvider qrCodeTemplateStructureProvider,
       DistributionServiceConfig distributionServiceConfig) {
     this.appConfigurationStructureProvider = appConfigurationStructureProvider;
     this.appConfigurationV2StructureProvider = appConfigurationV2StructureProvider;
     this.statisticsStructureProvider = statisticsStructureProvider;
     this.diagnosisKeysStructureProvider = diagnosisKeysStructureProvider;
     this.distributionServiceConfig = distributionServiceConfig;
+    this.traceWarningsStructureProvider = traceWarningsStructureProvider;
+    this.qrCodeTemplateStructureProvider = qrCodeTemplateStructureProvider;
   }
 
   /**
@@ -57,7 +63,13 @@ public class CwaApiStructureProvider {
     versionDirectory.addWritableToAll(
         ignoredValue -> Optional.ofNullable(appConfigurationStructureProvider.getAppConfigurationV1ForIos()));
     versionDirectory.addWritableToAll(
+        ignoredValue -> Optional.ofNullable(qrCodeTemplateStructureProvider.getQrCodeTemplateForAndroid()));
+    versionDirectory.addWritableToAll(
+        ignoredValue -> Optional.ofNullable(qrCodeTemplateStructureProvider.getQrCodeTemplateForIos()));
+    versionDirectory.addWritableToAll(
         ignoredValue -> Optional.of(diagnosisKeysStructureProvider.getDiagnosisKeys()));
+    versionDirectory.addWritableToAll(
+        ignoredValue -> Optional.of(traceWarningsStructureProvider.getTraceWarningsDirectory()));
     versionDirectory.addWritableToAll(
         ignoredValue -> Optional.ofNullable(statisticsStructureProvider.getStatistics()));
 

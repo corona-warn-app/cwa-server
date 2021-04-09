@@ -1,4 +1,4 @@
-package app.coronawarn.server.services.submission.checkins;
+package app.coronawarn.server.common.persistence.service.utils.checkins;
 
 import java.util.function.Function;
 
@@ -14,5 +14,17 @@ public final class CheckinsDateSpecification {
           "Ten minute interval cannot be computed from a negative timestamp");
     }
     return Math.toIntExact(unixTimestamp / 600L);
+  };
+
+  /**
+   * Derivation function that requires a UNIX timestamp (in seconds) and returns the corresponding
+   * hour since UNIX epoch.
+   */
+  public static final Function<Long, Integer> HOUR_SINCE_EPOCH_DERIVATION = (unixTimestamp) -> {
+    if (unixTimestamp < 0) {
+      throw new IllegalArgumentException(
+          "Hour since epoch cannot be computed from a negative timestamp");
+    }
+    return Math.toIntExact(unixTimestamp / 3600L);
   };
 }

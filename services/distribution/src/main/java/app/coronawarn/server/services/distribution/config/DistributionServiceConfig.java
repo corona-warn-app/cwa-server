@@ -65,6 +65,9 @@ public class DistributionServiceConfig {
   private AppVersions appVersions;
   private AppConfigParameters appConfigParameters;
   private StatisticsConfig statistics;
+  private QrCodePosterTemplate iosQrCodePosterTemplate;
+  private QrCodePosterTemplate androidQrCodePosterTemplate;
+  private PresenceTracingParameters presenceTracingParameters;
 
   public Paths getPaths() {
     return paths;
@@ -201,6 +204,22 @@ public class DistributionServiceConfig {
   public void setObjectStore(
       ObjectStore objectStore) {
     this.objectStore = objectStore;
+  }
+
+  public QrCodePosterTemplate getIosQrCodePosterTemplate() {
+    return iosQrCodePosterTemplate;
+  }
+
+  public void setIosQrCodePosterTemplate(QrCodePosterTemplate iosQrCodePosterTemplate) {
+    this.iosQrCodePosterTemplate = iosQrCodePosterTemplate;
+  }
+
+  public QrCodePosterTemplate getAndroidQrCodePosterTemplate() {
+    return androidQrCodePosterTemplate;
+  }
+
+  public void setAndroidQrCodePosterTemplate(QrCodePosterTemplate androidQrCodePosterTemplate) {
+    this.androidQrCodePosterTemplate = androidQrCodePosterTemplate;
   }
 
   public List<AppFeature> getAppFeatures() {
@@ -437,6 +456,8 @@ public class DistributionServiceConfig {
     private String appConfigV2AndroidFileName;
     @Pattern(regexp = CHAR_AND_NUMBER_REGEX)
     private String statisticsFileName;
+    @Pattern(regexp = CHAR_AND_NUMBER_REGEX)
+    private String traceWarningsPath;
 
     public String getStatisticsFileName() {
       return statisticsFileName;
@@ -541,6 +562,14 @@ public class DistributionServiceConfig {
     public void setOriginCountry(String originCountry) {
       this.originCountry = originCountry;
     }
+
+    public String getTraceWarningsPath() {
+      return this.traceWarningsPath;
+    }
+
+    public void setTraceWarningsPath(String traceWarningsPath) {
+      this.traceWarningsPath = traceWarningsPath;
+    }
   }
 
   public static class Signature {
@@ -639,6 +668,186 @@ public class DistributionServiceConfig {
           .build();
     }
   }
+
+  public static class QrCodePosterTemplate {
+
+    private byte[] template;
+    @NotNull
+    private Double offsetX;
+    @NotNull
+    private Double offsetY;
+    @NotNull
+    private Integer qrCodeSideLength;
+    @NotEmpty
+    private String publishedArchiveName;
+    private DescriptionTextBox descriptionTextBox;
+
+    public static class DescriptionTextBox {
+
+      @NotNull
+      private Double offsetX;
+      @NotNull
+      private Double offsetY;
+      @NotNull
+      private Integer width;
+      @NotNull
+      private Integer height;
+      @NotNull
+      private Integer fontSize;
+      @NotNull
+      private String fontColor;
+
+      public Double getOffsetX() {
+        return offsetX;
+      }
+
+      public void setOffsetX(Double offsetX) {
+        this.offsetX = offsetX;
+      }
+
+      public Double getOffsetY() {
+        return offsetY;
+      }
+
+      public void setOffsetY(Double offsetY) {
+        this.offsetY = offsetY;
+      }
+
+      public Integer getWidth() {
+        return width;
+      }
+
+      public void setWidth(Integer width) {
+        this.width = width;
+      }
+
+      public Integer getHeight() {
+        return height;
+      }
+
+      public void setHeight(Integer height) {
+        this.height = height;
+      }
+
+      public Integer getFontSize() {
+        return fontSize;
+      }
+
+      public void setFontSize(Integer fontSize) {
+        this.fontSize = fontSize;
+      }
+
+      public String getFontColor() {
+        return fontColor;
+      }
+
+      public void setFontColor(String fontColor) {
+        this.fontColor = fontColor;
+      }
+    }
+
+    public String getPublishedArchiveName() {
+      return publishedArchiveName;
+    }
+
+    public void setPublishedArchiveName(String publishedArchiveName) {
+      this.publishedArchiveName = publishedArchiveName;
+    }
+
+    public byte[] getTemplate() {
+      return template;
+    }
+
+    public void setTemplate(byte[] template) {
+      this.template = template;
+    }
+
+    public Double getOffsetX() {
+      return offsetX;
+    }
+
+    public void setOffsetX(Double offsetX) {
+      this.offsetX = offsetX;
+    }
+
+    public Double getOffsetY() {
+      return offsetY;
+    }
+
+    public void setOffsetY(Double offsetY) {
+      this.offsetY = offsetY;
+    }
+
+    public Integer getQrCodeSideLength() {
+      return qrCodeSideLength;
+    }
+
+    public void setQrCodeSideLength(Integer qrCodeSideLength) {
+      this.qrCodeSideLength = qrCodeSideLength;
+    }
+
+    public DescriptionTextBox getDescriptionTextBox() {
+      return descriptionTextBox;
+    }
+
+    public void setDescriptionTextBox(DescriptionTextBox descriptionTextBox) {
+      this.descriptionTextBox = descriptionTextBox;
+    }
+  }
+
+  public static class PresenceTracingParameters {
+
+    private int qrCodeErrorCorrectionLevel;
+    private PlausibleDeniabilityParameters plausibleDeniabilityParameters;
+
+    public static class PlausibleDeniabilityParameters {
+
+      private double probabilityToFakeCheckInsIfNoCheckIns;
+      private double probabilityToFakeCheckInsIfSomeCheckIns;
+
+      public double getProbabilityToFakeCheckInsIfNoCheckIns() {
+        return probabilityToFakeCheckInsIfNoCheckIns;
+      }
+
+      public void setProbabilityToFakeCheckInsIfNoCheckIns(double probabilityToFakeCheckInsIfNoCheckIns) {
+        this.probabilityToFakeCheckInsIfNoCheckIns = probabilityToFakeCheckInsIfNoCheckIns;
+      }
+
+      public double getProbabilityToFakeCheckInsIfSomeCheckIns() {
+        return probabilityToFakeCheckInsIfSomeCheckIns;
+      }
+
+      public void setProbabilityToFakeCheckInsIfSomeCheckIns(double probabilityToFakeCheckInsIfSomeCheckIns) {
+        this.probabilityToFakeCheckInsIfSomeCheckIns = probabilityToFakeCheckInsIfSomeCheckIns;
+      }
+    }
+
+    public PlausibleDeniabilityParameters getPlausibleDeniabilityParameters() {
+      return plausibleDeniabilityParameters;
+    }
+
+    public void setPlausibleDeniabilityParameters(PlausibleDeniabilityParameters plausibleDeniabilityParameters) {
+      this.plausibleDeniabilityParameters = plausibleDeniabilityParameters;
+    }
+
+    public int getQrCodeErrorCorrectionLevel() {
+      return qrCodeErrorCorrectionLevel;
+    }
+
+    public void setQrCodeErrorCorrectionLevel(int qrCodeErrorCorrectionLevel) {
+      this.qrCodeErrorCorrectionLevel = qrCodeErrorCorrectionLevel;
+    }
+  }
+
+  public PresenceTracingParameters getPresenceTracingParameters() {
+    return presenceTracingParameters;
+  }
+
+  public void setPresenceTracingParameters(
+      PresenceTracingParameters presenceTracingParameters) {
+    this.presenceTracingParameters = presenceTracingParameters;
+  }
+
 
   public static class ObjectStore {
 
@@ -1245,6 +1454,5 @@ public class DistributionServiceConfig {
         this.requireEvaluationTypeHardwareBacked = requireEvaluationTypeHardwareBacked;
       }
     }
-
   }
 }

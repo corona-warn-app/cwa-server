@@ -1,6 +1,8 @@
 package app.coronawarn.server.common.persistence.repository;
 
 import app.coronawarn.server.common.persistence.domain.TraceTimeIntervalWarning;
+import app.coronawarn.server.common.persistence.service.utils.checkins.CheckinsDateSpecification;
+import java.time.Instant;
 import java.util.UUID;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.AfterEach;
@@ -25,8 +27,10 @@ public class TraceTimeIntervalWarningRepositoryTest {
     final int startIntervalNumber = 0;
     final int endIntervalNumber = 10;
     final int transmissionRiskLevel = 5;
+    final long submissionTimestamp =
+        CheckinsDateSpecification.HOUR_SINCE_EPOCH_DERIVATION.apply(Instant.now().getEpochSecond());
     TraceTimeIntervalWarning traceTimeIntervalWarning = new TraceTimeIntervalWarning(
-        guid, startIntervalNumber, endIntervalNumber, transmissionRiskLevel);
+        guid, startIntervalNumber, endIntervalNumber-startIntervalNumber, transmissionRiskLevel, submissionTimestamp);
     underTest.save(traceTimeIntervalWarning);
 
     final Iterable<TraceTimeIntervalWarning> all = underTest.findAll();
@@ -36,7 +40,8 @@ public class TraceTimeIntervalWarningRepositoryTest {
     Assertions.assertThat(next.getId()).isNotNull();
     Assertions.assertThat(next.getTraceLocationId()).isEqualTo(guid);
     Assertions.assertThat(next.getStartIntervalNumber()).isEqualTo(startIntervalNumber);
-    Assertions.assertThat(next.getEndIntervalNumber()).isEqualTo(endIntervalNumber);
+    Assertions.assertThat(next.getPeriod()).isEqualTo(endIntervalNumber-startIntervalNumber);
     Assertions.assertThat(next.getTransmissionRiskLevel()).isEqualTo(transmissionRiskLevel);
+    Assertions.assertThat(next.getSubmissionTimestamp()).isEqualTo(submissionTimestamp);
   }
 }

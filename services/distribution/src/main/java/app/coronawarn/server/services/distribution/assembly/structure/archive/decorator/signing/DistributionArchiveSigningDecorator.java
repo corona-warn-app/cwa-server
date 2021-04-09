@@ -1,19 +1,18 @@
 
 
-package app.coronawarn.server.services.distribution.assembly.diagnosiskeys.structure.archive.decorator.signing;
+package app.coronawarn.server.services.distribution.assembly.structure.archive.decorator.signing;
 
 import app.coronawarn.server.services.distribution.assembly.component.CryptoProvider;
 import app.coronawarn.server.services.distribution.assembly.structure.Writable;
 import app.coronawarn.server.services.distribution.assembly.structure.WritableOnDisk;
 import app.coronawarn.server.services.distribution.assembly.structure.archive.Archive;
-import app.coronawarn.server.services.distribution.assembly.structure.archive.decorator.signing.SigningDecoratorOnDisk;
 import app.coronawarn.server.services.distribution.assembly.structure.file.File;
 import app.coronawarn.server.services.distribution.assembly.structure.file.FileOnDisk;
 import app.coronawarn.server.services.distribution.config.DistributionServiceConfig;
 
-public class DiagnosisKeySigningDecorator extends SigningDecoratorOnDisk {
+public class DistributionArchiveSigningDecorator extends SigningDecoratorOnDisk {
 
-  public DiagnosisKeySigningDecorator(Archive<WritableOnDisk> archive, CryptoProvider cryptoProvider,
+  public DistributionArchiveSigningDecorator(Archive<WritableOnDisk> archive, CryptoProvider cryptoProvider,
       DistributionServiceConfig distributionServiceConfig) {
     super(archive, cryptoProvider, distributionServiceConfig);
   }
