@@ -1,6 +1,6 @@
 package app.coronawarn.server.services.submission.checkins;
 
-import static app.coronawarn.server.common.persistence.utils.CheckinsDateSpecification.TEN_MINUTE_INTERVAL_DERIVATION;
+import static app.coronawarn.server.common.persistence.service.utils.checkins.CheckinsDateSpecification.TEN_MINUTE_INTERVAL_DERIVATION;
 import static java.time.ZoneOffset.UTC;
 
 import app.coronawarn.server.common.persistence.domain.config.PreDistributionTrlValueMappingProvider;
@@ -11,11 +11,16 @@ import java.time.Instant;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 @Component
 public class EventCheckinDataFilter {
+
+  private static final Logger logger = LoggerFactory.getLogger(EventCheckinDataFilter.class);
 
   private final SubmissionServiceConfig submissionServiceConfig;
   private final PreDistributionTrlValueMappingProvider trlValueMappingProvider;
@@ -37,10 +42,24 @@ public class EventCheckinDataFilter {
    * <li>Filter out checkins which have trace location signatures that can not be verified</li>.
    */
   public List<CheckIn> filter(List<CheckIn> checkins) {
-    return checkins.stream()
+    AtomicInteger checkinsPickedAfterTrlFiltering = new AtomicInteger();
+    AtomicInteger checkinsPickedAfterOldFiltering = new AtomicInteger();
+    AtomicInteger checkinsPickedAfterFutureFiltering = new AtomicInteger();
+    final var filtered = checkins.stream()
         .filter(this::filterOutZeroTransmissionRiskLevel)
+        .peek(k -> checkinsPickedAfterTrlFiltering.incrementAndGet())
         .filter(this::filterOutOldCheckins)
-        .filter(this::filterOutFutureCheckins).collect(Collectors.toList());
+        .peek(k -> checkinsPickedAfterOldFiltering.incrementAndGet())
+        .filter(this::filterOutFutureCheckins)
+        .peek(k -> checkinsPickedAfterFutureFiltering.incrementAndGet())
+        .collect(Collectors.toList());
+
+    logger.debug("Filtering of {} checkins started", checkins.size());
+    logger.debug("{} checkins remaining after filtering out zero TRLs", checkinsPickedAfterOldFiltering.get());
+    logger.debug("{} checkins remaining after filtering out old checkins", checkinsPickedAfterFutureFiltering.get());
+    logger.debug("{} checkins remaining after filtering out future checkins", checkinsPickedAfterFutureFiltering.get());
+
+    return filtered;
   }
 
 

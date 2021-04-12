@@ -39,8 +39,8 @@ public class EventCheckinDataValidator {
   boolean verifyEndIntervalNumber(CheckIn checkin, ConstraintValidatorContext validatorContext) {
     int startIntervalNumber = checkin.getStartIntervalNumber();
     int endIntervalNumber = checkin.getEndIntervalNumber();
-    if (endIntervalNumber <= startIntervalNumber) {
-      addViolation(validatorContext, "Checkin endIntervalNumber must be greater than startIntervalNumber");
+    if (endIntervalNumber < startIntervalNumber) {
+      addViolation(validatorContext, "Checkin endIntervalNumber must be greater than or equal to startIntervalNumber");
       return false;
     }
     return true;

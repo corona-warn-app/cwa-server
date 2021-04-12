@@ -1,6 +1,7 @@
 // This file is auto-generated, DO NOT make any changes here
 syntax = "proto3";
 package app.coronawarn.server.common.protocols.internal.pt;
+option java_multiple_files = true;
 
 message QRCodePayload {
   uint32 version = 1;
