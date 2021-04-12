@@ -76,6 +76,7 @@ public class QrCodePosterTemplateStructureProvider {
 
   private QRCodePosterTemplateIOS buildIosProtoStructure(QrCodePosterTemplate templateConfig) {
     DescriptionTextBox textBoxConfig = templateConfig.getDescriptionTextBox();
+    DescriptionTextBox textBoxIosConfig = templateConfig.getAddressTextBox();
     return QRCodePosterTemplateIOS.newBuilder().setOffsetX(templateConfig.getOffsetX().intValue())
         .setOffsetY(templateConfig.getOffsetY().intValue())
         .setTemplate(qrTemplateLoader.loadIosTemplateAsBytes())
@@ -83,6 +84,10 @@ public class QrCodePosterTemplateStructureProvider {
         .setDescriptionTextBox(QRCodeTextBoxIOS.newBuilder().setOffsetX(textBoxConfig.getOffsetX().intValue())
             .setOffsetY(textBoxConfig.getOffsetY().intValue()).setFontSize(textBoxConfig.getFontSize())
             .setHeight(textBoxConfig.getHeight()).setFontColor(textBoxConfig.getFontColor())
+            .build())
+        .setAddressTextBox(QRCodeTextBoxIOS.newBuilder().setOffsetX(textBoxIosConfig.getOffsetX().intValue())
+            .setOffsetY(textBoxIosConfig.getOffsetY().intValue()).setFontSize(textBoxIosConfig.getFontSize())
+            .setHeight(textBoxIosConfig.getHeight()).setFontColor(textBoxIosConfig.getFontColor())
             .build())
         .build();
   }
