@@ -1,0 +1,47 @@
+CREATE OR REPLACE FUNCTION mirror_uploadable_keys()
+RETURNS TRIGGER AS $$
+BEGIN
+    IF ( NEW.CONSENT_TO_FEDERATION = TRUE AND NEW.SUBMISSION_TYPE = 'SUBMISSION_TYPE_PCR_TEST' ) THEN
+        INSERT INTO federation_upload_key VALUES (NEW.*);
+    END IF;
+    RETURN NEW;
+END;
+$$
+LANGUAGE plpgsql;
+
+CREATE OR REPLACE FUNCTION remove_expired_uploadable_keys()
+RETURNS TRIGGER AS $$
+BEGIN
+    IF OLD.SUBMISSION_TYPE = 'SUBMISSION_TYPE_PCR_TEST' THEN
+        DELETE FROM federation_upload_key WHERE key_data = OLD.key_data;
+        RETURN OLD;
+    ELSE
+        RETURN NULL;
+    END IF;
+END;
+$$
+LANGUAGE plpgsql;
+
+CREATE OR REPLACE FUNCTION mirror_uploadable_swiss_keys()
+RETURNS TRIGGER AS $$
+BEGIN
+    IF ( NEW.CONSENT_TO_FEDERATION = TRUE AND NEW.SUBMISSION_TYPE = 'SUBMISSION_TYPE_PCR_TEST' ) THEN
+        INSERT INTO chgs_upload_key VALUES (NEW.*);
+    END IF;
+    RETURN NEW;
+END;
+$$
+LANGUAGE plpgsql;
+
+CREATE OR REPLACE FUNCTION remove_expired_swiss_uploadable_keys()
+RETURNS TRIGGER AS $$
+BEGIN
+    IF OLD.SUBMISSION_TYPE = 'SUBMISSION_TYPE_PCR_TEST' THEN
+        DELETE FROM chgs_upload_key WHERE key_data = OLD.key_data;
+        RETURN OLD;
+    ELSE
+        RETURN NULL;
+    END IF;
+END;
+$$
+LANGUAGE plpgsql;
