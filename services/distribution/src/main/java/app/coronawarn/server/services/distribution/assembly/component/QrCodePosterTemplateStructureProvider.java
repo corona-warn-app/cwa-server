@@ -84,6 +84,10 @@ public class QrCodePosterTemplateStructureProvider {
             .setOffsetY(textBoxConfig.getOffsetY().intValue()).setFontSize(textBoxConfig.getFontSize())
             .setHeight(textBoxConfig.getHeight()).setFontColor(textBoxConfig.getFontColor())
             .build())
+        .setAddressTextBox(QRCodeTextBoxIOS.newBuilder().setOffsetX(textBoxConfig.getOffsetX().intValue())
+            .setOffsetY(textBoxConfig.getOffsetY().intValue()).setFontSize(textBoxConfig.getFontSize())
+            .setHeight(textBoxConfig.getHeight()).setFontColor(textBoxConfig.getFontColor())
+            .build())
         .build();
   }
 }
