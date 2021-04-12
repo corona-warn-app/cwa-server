@@ -44,7 +44,7 @@ risk-calculation-parameters:
       normalized-time-range:
         min: 10
         min-exclusive: false
-        max: 9999
+        max: 999999
         max-exclusive: false
       risk-level: 2 # 2 = High
   normalized-time-per-day-to-risk-level-mapping:
@@ -59,7 +59,7 @@ risk-calculation-parameters:
       normalized-time-range:
         min: 10
         min-exclusive: false
-        max: 9999
+        max: 999999
         max-exclusive: false
       risk-level: 2 # 2 = High
 
@@ -84,7 +84,7 @@ submission-parameters:
       minutes-range:
         min: 30
         min-exclusive: true
-        max: 9999
+        max: 999999
         max-exclusive: false
       slope: 0
       intercept: 30
