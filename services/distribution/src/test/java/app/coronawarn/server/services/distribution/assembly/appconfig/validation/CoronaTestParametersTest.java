@@ -1,11 +1,11 @@
 package app.coronawarn.server.services.distribution.assembly.appconfig.validation;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
 import app.coronawarn.server.common.protocols.internal.v2.CoronaTestParameters;
 import app.coronawarn.server.services.distribution.assembly.appconfig.UnableToLoadFileException;
 import app.coronawarn.server.services.distribution.assembly.appconfig.YamlLoader;
 import org.junit.jupiter.api.Test;
-
-import static org.assertj.core.api.Assertions.assertThat;
 
 public class CoronaTestParametersTest {
 
