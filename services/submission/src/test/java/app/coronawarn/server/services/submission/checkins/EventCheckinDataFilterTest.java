@@ -175,7 +175,7 @@ class EventCheckinDataFilterTest {
           .setTransmissionRiskLevel(1).build());
     }
 
-    assertThrows(TooManyCheckInsAtSameDay.class, () -> underTest.filter(checkins));
+    assertThrows(TooManyCheckInsAtSameDay.class, () -> underTest.validateCheckInsByDate(checkins));
 
   }
 
