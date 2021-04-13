@@ -44,9 +44,6 @@ public class EventCheckinDataFilter {
    * <li>Filter out checkins which have trace location signatures that can not be verified</li>.
    */
   public List<CheckIn> filter(List<CheckIn> checkins) {
-
-    validateCheckInsByDate(checkins);
-
     AtomicInteger checkinsPickedAfterTrlFiltering = new AtomicInteger();
     AtomicInteger checkinsPickedAfterOldFiltering = new AtomicInteger();
     AtomicInteger checkinsPickedAfterFutureFiltering = new AtomicInteger();
@@ -74,7 +71,7 @@ public class EventCheckinDataFilter {
    * @param checkins list of check-ins to be validated.
    * @throws TooManyCheckInsAtSameDay if more than N check-ins for any date exist.
    */
-  void validateCheckInsByDate(final List<CheckIn> checkins) throws TooManyCheckInsAtSameDay {
+  public void validateCheckInsByDate(final List<CheckIn> checkins) throws TooManyCheckInsAtSameDay {
     final Map<Integer, Integer> counterPerDays = new HashMap<>();
     for (CheckIn checkIn : checkins) {
       final int day = checkIn.getStartIntervalNumber() / 144;
