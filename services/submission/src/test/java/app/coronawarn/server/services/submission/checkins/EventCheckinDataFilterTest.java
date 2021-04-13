@@ -4,6 +4,12 @@ import static app.coronawarn.server.common.persistence.service.utils.checkins.Ch
 import static java.time.ZoneOffset.UTC;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+import app.coronawarn.server.common.persistence.domain.config.PreDistributionTrlValueMappingProvider;
+import app.coronawarn.server.common.persistence.domain.config.TransmissionRiskValueMapping;
+import app.coronawarn.server.common.protocols.internal.pt.CheckIn;
+import app.coronawarn.server.services.submission.config.SubmissionServiceConfig;
+import app.coronawarn.server.services.submission.config.SubmissionServiceConfig.Payload;
+import app.coronawarn.server.services.submission.config.SubmissionServiceConfig.Payload.Checkins;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -11,12 +17,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
-import app.coronawarn.server.common.persistence.domain.config.PreDistributionTrlValueMappingProvider;
-import app.coronawarn.server.common.persistence.domain.config.TransmissionRiskValueMapping;
-import app.coronawarn.server.common.protocols.internal.pt.CheckIn;
-import app.coronawarn.server.services.submission.config.SubmissionServiceConfig;
-import app.coronawarn.server.services.submission.config.SubmissionServiceConfig.Payload;
-import app.coronawarn.server.services.submission.config.SubmissionServiceConfig.Payload.Checkins;
 
 class EventCheckinDataFilterTest {
 

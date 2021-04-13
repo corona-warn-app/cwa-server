@@ -9,7 +9,9 @@ import app.coronawarn.server.common.protocols.internal.pt.CheckIn;
 import app.coronawarn.server.services.submission.config.SubmissionServiceConfig;
 import java.time.Instant;
 import java.time.LocalDateTime;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
@@ -69,12 +71,19 @@ public class EventCheckinDataFilter {
    * If there are more than N check-ins for any date, the submission is considered fraudulent and processing of
    * check-ins is aborted.
    * 
-   * @param checkins list of check-ins to be validated. 
+   * @param checkins list of check-ins to be validated.
    * @throws TooManyCheckInsAtSameDay if more than N check-ins for any date exist.
    */
-  private void validateCheckInsByDate(List<CheckIn> checkins) throws TooManyCheckInsAtSameDay {
-    // TODO group by startIntervalNumber / 144
-
+  void validateCheckInsByDate(final List<CheckIn> checkins) throws TooManyCheckInsAtSameDay {
+    final Map<Integer, Integer> counterPerDays = new HashMap<>();
+    for (CheckIn checkIn : checkins) {
+      final int day = checkIn.getStartIntervalNumber() / 144;
+      int count = counterPerDays.getOrDefault(day, 0);
+      if (++count > 50) {
+        throw new TooManyCheckInsAtSameDay(day);
+      }
+      counterPerDays.put(day, count);
+    }
   }
 
   boolean filterOutZeroTransmissionRiskLevel(CheckIn checkin) {
