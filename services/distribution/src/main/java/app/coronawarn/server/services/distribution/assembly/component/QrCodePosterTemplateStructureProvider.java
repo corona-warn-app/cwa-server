@@ -69,6 +69,7 @@ public class QrCodePosterTemplateStructureProvider {
         .setQrCodeSideLength(templateConfig.getQrCodeSideLength())
         .setDescriptionTextBox(QRCodeTextBoxAndroid.newBuilder()
             .setOffsetX(textBoxConfig.getOffsetX().floatValue()).setOffsetY(textBoxConfig.getOffsetY().floatValue())
+            .setWidth(textBoxConfig.getWidth())
             .setFontSize(textBoxConfig.getFontSize()).setHeight(textBoxConfig.getHeight())
             .setFontColor(textBoxConfig.getFontColor()).build())
         .build();
@@ -83,10 +84,12 @@ public class QrCodePosterTemplateStructureProvider {
         .setQrCodeSideLength(templateConfig.getQrCodeSideLength())
         .setDescriptionTextBox(QRCodeTextBoxIOS.newBuilder().setOffsetX(textBoxConfig.getOffsetX().intValue())
             .setOffsetY(textBoxConfig.getOffsetY().intValue()).setFontSize(textBoxConfig.getFontSize())
+            .setWidth(textBoxConfig.getWidth())
             .setHeight(textBoxConfig.getHeight()).setFontColor(textBoxConfig.getFontColor())
             .build())
         .setAddressTextBox(QRCodeTextBoxIOS.newBuilder().setOffsetX(textBoxIosConfig.getOffsetX().intValue())
             .setOffsetY(textBoxIosConfig.getOffsetY().intValue()).setFontSize(textBoxIosConfig.getFontSize())
+            .setWidth(textBoxIosConfig.getWidth())
             .setHeight(textBoxIosConfig.getHeight()).setFontColor(textBoxIosConfig.getFontColor())
             .build())
         .build();
