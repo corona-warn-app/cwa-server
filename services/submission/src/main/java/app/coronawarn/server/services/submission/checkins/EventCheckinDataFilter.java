@@ -70,7 +70,7 @@ public class EventCheckinDataFilter {
   /**
    * If there are more than N check-ins for any date, the submission is considered fraudulent and processing of
    * check-ins is aborted.
-   * 
+   *
    * @param checkins list of check-ins to be validated.
    * @throws TooManyCheckInsAtSameDay if more than N check-ins for any date exist.
    */
@@ -79,7 +79,7 @@ public class EventCheckinDataFilter {
     for (CheckIn checkIn : checkins) {
       final int day = checkIn.getStartIntervalNumber() / 144;
       int count = counterPerDays.getOrDefault(day, 0);
-      if (++count > 50) {
+      if (++count > submissionServiceConfig.getMaxAllowedCheckinsPerDay()) {
         throw new TooManyCheckInsAtSameDay(day);
       }
       counterPerDays.put(day, count);
