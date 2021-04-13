@@ -32,7 +32,7 @@ services:
     # Pepper used in generating fake location ids
     random-checkins-padding-pepper: ${RANDOM_CHECKINS_PADDING_PEPPER}
     # The number of checkins allowed to be saved in the DB for each day.
-    max-allowed-checkins-per-day: ${MAX_ALLOWED_CHECKINS_PER_DAY:50}
+    max-allowed-checkins-per-day: ${MAX_ALLOWED_CHECKINS_PER_DAY:20}
     # The ApacheHttpClient's connection pool size.
     connection-pool-size: 200
     # The maximum request size accepted by the SubmissionController (e.g. 200B or 100KB).
