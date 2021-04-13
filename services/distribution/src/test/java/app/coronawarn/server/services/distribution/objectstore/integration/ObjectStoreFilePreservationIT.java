@@ -2,6 +2,8 @@
 
 package app.coronawarn.server.services.distribution.objectstore.integration;
 
+import static org.mockito.Mockito.when;
+
 import app.coronawarn.server.common.persistence.service.DiagnosisKeyService;
 import app.coronawarn.server.common.persistence.service.StatisticsDownloadService;
 import app.coronawarn.server.services.distribution.Application;
@@ -29,10 +31,11 @@ import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.rules.TemporaryFolder;
-import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.ConfigFileApplicationContextInitializer;
+import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
+import org.springframework.boot.test.context.ConfigDataApplicationContextInitializer;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.cloud.vault.config.VaultAutoConfiguration;
 import org.springframework.context.ApplicationContext;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.test.annotation.DirtiesContext;
@@ -41,7 +44,8 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 @ExtendWith(SpringExtension.class)
-@ContextConfiguration(classes = Application.class, initializers = ConfigFileApplicationContextInitializer.class)
+@EnableAutoConfiguration(exclude = VaultAutoConfiguration.class)
+@ContextConfiguration(classes = Application.class, initializers = {ConfigDataApplicationContextInitializer.class})
 @DirtiesContext
 @ActiveProfiles({"integration-test", "no-hour-retention", "local-json-stats"})
 @Tag("s3-integration")
@@ -82,20 +86,19 @@ class ObjectStoreFilePreservationIT extends BaseS3IntegrationTest {
    * The test presumes there are 4 consecutive days with 80 keys submitted daily. Running a distribution in Day 4 would
    * result in:
    * <p>
-   *     Day 1   -> submission of 80 keys   -> 1 empty file distributed<br>
-   *     Day 2   -> submission of 80 keys   -> 1 distributed containing 160 keys<br>
-   *     Day 3   -> submission of 80 keys   -> 1 empty file distributed<br>
-   *     Day 4   -> submission of 80 keys   -> 1 distributed containing 160 keys<br>
+   * Day 1   -> submission of 80 keys   -> 1 empty file distributed<br> Day 2   -> submission of 80 keys   -> 1
+   * distributed containing 160 keys<br> Day 3   -> submission of 80 keys   -> 1 empty file distributed<br> Day 4   ->
+   * submission of 80 keys   -> 1 distributed containing 160 keys<br>
    * <p>
    * All day & hour files already generated should not be changed/removed from S3 even after retention policies have
    * been applied and a second distribution is triggered.
    * <p>
    * If for example, data in Day 1 gets removed completely, then a second distribution run causes a shifting of keys in
    * different files compared to the previous run, the result being:
-   *  <p>
-   *     Day 2   -> submission of 80 keys   -> 1 empty file generated (different than what is currently on S3)<br>
-   *     Day 3   -> submission of 80 keys   -> 1 distributed containing 160 keys (different than 1 empty file on S3)<br>
-   *     Day 4   -> submission of 80 keys   -> 1 empty file (different than 1 empty file on S3)<br>
+   * <p>
+   * Day 2   -> submission of 80 keys   -> 1 empty file generated (different than what is currently on S3)<br> Day 3 ->
+   * submission of 80 keys   -> 1 distributed containing 160 keys (different than 1 empty file on S3)<br> Day 4   ->
+   * submission of 80 keys   -> 1 empty file (different than 1 empty file on S3)<br>
    */
   @Test
   void files_once_published_to_objectstore_should_not_be_overriden_because_of_retention_or_shifting_policies()
@@ -174,8 +177,8 @@ class ObjectStoreFilePreservationIT extends BaseS3IntegrationTest {
   }
 
   private void assembleAndDistribute(File output) throws IOException {
-    Mockito.when(distributionDirectoryProvider.getDirectory()).thenReturn(new DirectoryOnDisk(output));
-    Mockito.when(distributionDirectoryProvider.getFileOnDisk()).thenReturn(output);
+    when(distributionDirectoryProvider.getDirectory()).thenReturn(new DirectoryOnDisk(output));
+    when(distributionDirectoryProvider.getFileOnDisk()).thenReturn(output);
 
     fileAssembler.run(null);
 

@@ -46,9 +46,9 @@ public class SubmissionController {
    */
   public static final String SUBMISSION_ROUTE = "/diagnosis-keys";
   private static final Logger logger = LoggerFactory.getLogger(SubmissionController.class);
-  
+
   public static final Marker EVENT = MarkerFactory.getMarker("EVENT");
-  
+
   private final SubmissionMonitor submissionMonitor;
   private final DiagnosisKeyService diagnosisKeyService;
   private final TanVerifier tanVerifier;

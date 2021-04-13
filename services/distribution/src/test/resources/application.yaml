@@ -28,6 +28,7 @@ services:
     api:
       version-path: version
       version-v1: v1
+      version-v2: v2
       country-path: country
       # This is used to generate the application configuration directory for Germany
       origin-country: DE
