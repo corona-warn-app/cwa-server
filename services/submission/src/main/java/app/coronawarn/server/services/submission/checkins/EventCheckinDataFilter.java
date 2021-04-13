@@ -36,12 +36,15 @@ public class EventCheckinDataFilter {
 
   /**
    * Return a filtered list of checkin data based on the following criteria:
-   * <li>Filter out checkins with TRL values that are mapped to 0 ( as per Risk calculation paramters app config) </li>
+   * <li>Filter out checkins with TRL values that are mapped to 0 ( as per Risk calculation paramters app config)</li>
    * <li>Filter out checkins which have checkout time in the past further than 15 days (app config)</li>
    * <li>Filter out checkins which are in the future</li>
    * <li>Filter out checkins which have trace location signatures that can not be verified</li>.
    */
   public List<CheckIn> filter(List<CheckIn> checkins) {
+
+    validateCheckInsByDate(checkins);
+
     AtomicInteger checkinsPickedAfterTrlFiltering = new AtomicInteger();
     AtomicInteger checkinsPickedAfterOldFiltering = new AtomicInteger();
     AtomicInteger checkinsPickedAfterFutureFiltering = new AtomicInteger();
@@ -62,6 +65,17 @@ public class EventCheckinDataFilter {
     return filtered;
   }
 
+  /**
+   * If there are more than N check-ins for any date, the submission is considered fraudulent and processing of
+   * check-ins is aborted.
+   * 
+   * @param checkins list of check-ins to be validated. 
+   * @throws TooManyCheckInsAtSameDay if more than N check-ins for any date exist.
+   */
+  private void validateCheckInsByDate(List<CheckIn> checkins) throws TooManyCheckInsAtSameDay {
+    // TODO group by startIntervalNumber / 144
+
+  }
 
   boolean filterOutZeroTransmissionRiskLevel(CheckIn checkin) {
     return !mapsTo(checkin.getTransmissionRiskLevel(), 0.0d);
