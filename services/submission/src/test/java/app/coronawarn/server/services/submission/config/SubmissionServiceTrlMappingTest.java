@@ -8,6 +8,7 @@ import static org.mockito.Mockito.when;
 import static org.springframework.http.HttpStatus.OK;
 
 import app.coronawarn.server.common.persistence.domain.DiagnosisKey;
+import app.coronawarn.server.common.persistence.domain.config.TrlDerivations;
 import app.coronawarn.server.common.persistence.service.DiagnosisKeyService;
 import app.coronawarn.server.services.submission.controller.RequestExecutor;
 import app.coronawarn.server.services.submission.verification.TanVerifier;
@@ -61,6 +62,16 @@ class SubmissionServiceTrlMappingTest {
       assertThat(expectedTrlValues.contains(diagnosisKey.getTransmissionRiskLevel())).isTrue();
     });
     assertThat(actResponse.getStatusCode()).isEqualTo(OK);
+  }
+
+  @Test
+  void testSubmissionServiceConfigValuesAreSet() {
+    TrlDerivations trlDerivations = new TrlDerivations();
+    trlDerivations.setTrlMapping(Map.of(1, 1, 2, 2, 3, 3, 4, 4));
+    config.setTrlDerivations(trlDerivations);
+
+    assertThat(config.getTrlDerivations()).isNotNull();
+    assertThat(config.getTrlDerivations().getTrlMapping()).hasSize(4);
   }
 
 
