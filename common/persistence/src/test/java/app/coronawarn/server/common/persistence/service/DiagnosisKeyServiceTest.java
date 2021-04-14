@@ -10,13 +10,18 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatCode;
 import static org.assertj.core.api.Assertions.catchThrowable;
 import static org.assertj.core.util.Lists.list;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 import app.coronawarn.server.common.persistence.domain.DiagnosisKey;
 import app.coronawarn.server.common.persistence.repository.DiagnosisKeyRepository;
 import app.coronawarn.server.common.protocols.external.exposurenotification.ReportType;
 import app.coronawarn.server.common.protocols.internal.SubmissionPayload.SubmissionType;
 import java.time.OffsetDateTime;
+import java.util.Collection;
 import java.util.Collections;
+import java.util.List;
 import java.util.Set;
 import org.assertj.core.util.Lists;
 import org.junit.jupiter.api.AfterEach;
@@ -49,11 +54,17 @@ class DiagnosisKeyServiceTest {
 
   @Test
   void testSaveAndRetrieve() {
-    var expKeys = list(buildDiagnosisKeyForSubmissionTimestamp(1L));
+    var expKeys = List.of(
+        DiagnosisKeyServiceTestHelper.generateRandomDiagnosisKey(false, 1, SubmissionType.SUBMISSION_TYPE_PCR_TEST),
+        DiagnosisKeyServiceTestHelper.generateRandomDiagnosisKey(false, 1, SubmissionType.SUBMISSION_TYPE_RAPID_TEST),
+        DiagnosisKeyServiceTestHelper.generateRandomDiagnosisKey(true, 1, SubmissionType.SUBMISSION_TYPE_PCR_TEST),
+        DiagnosisKeyServiceTestHelper.generateRandomDiagnosisKey(true, 1, SubmissionType.SUBMISSION_TYPE_RAPID_TEST)
+    );
 
     diagnosisKeyService.saveDiagnosisKeys(expKeys);
     var actKeys = diagnosisKeyService.getDiagnosisKeys();
 
+    assertEquals(4, actKeys.size());
     assertDiagnosisKeysEqual(expKeys, actKeys);
   }
 
@@ -117,11 +128,12 @@ class DiagnosisKeyServiceTest {
     assertThat(actKeys).isEmpty();
   }
 
-  @Test
-  void shouldNotUpdateExistingKey() {
+  @ParameterizedTest
+  @ValueSource(ints = {0, 1})
+  void shouldNotUpdateExistingKeyWithSameSubmissionType(int submissionTypeNumber) {
     var keyData = "1234567890123456";
     var keys = list(DiagnosisKey.builder()
-            .withKeyDataAndSubmissionType(keyData.getBytes(), SubmissionType.SUBMISSION_TYPE_PCR_TEST)
+            .withKeyDataAndSubmissionType(keyData.getBytes(), SubmissionType.forNumber(submissionTypeNumber))
             .withRollingStartIntervalNumber(600)
             .withTransmissionRiskLevel(2)
             .withCountryCode("DE")
@@ -130,7 +142,7 @@ class DiagnosisKeyServiceTest {
             .withReportType(ReportType.CONFIRMED_TEST)
             .build(),
         DiagnosisKey.builder()
-            .withKeyDataAndSubmissionType(keyData.getBytes(), SubmissionType.SUBMISSION_TYPE_PCR_TEST)
+            .withKeyDataAndSubmissionType(keyData.getBytes(), SubmissionType.forNumber(submissionTypeNumber))
             .withRollingStartIntervalNumber(600)
             .withTransmissionRiskLevel(3)
             .withCountryCode("DE")
@@ -156,5 +168,61 @@ class DiagnosisKeyServiceTest {
 
     var actKeys = diagnosisKeyService.getDiagnosisKeys();
     assertThat(actKeys).hasSize(2);
+  }
+
+  @Test
+  void insertsPcrTestDiagnosisKeysWhenRapidTestIsPresent() {
+    DiagnosisKey pcrKey = DiagnosisKeyServiceTestHelper
+        .generateRandomDiagnosisKey(true, 1, SubmissionType.SUBMISSION_TYPE_PCR_TEST);
+    DiagnosisKey rapidKey = DiagnosisKey.builder()
+        .withKeyDataAndSubmissionType(pcrKey.getKeyData(), SubmissionType.SUBMISSION_TYPE_RAPID_TEST)
+        .withRollingStartIntervalNumber(pcrKey.getRollingStartIntervalNumber())
+        .withTransmissionRiskLevel(pcrKey.getTransmissionRiskLevel())
+        .withConsentToFederation(pcrKey.isConsentToFederation())
+        .withCountryCode(pcrKey.getOriginCountry())
+        .withDaysSinceOnsetOfSymptoms(pcrKey.getDaysSinceOnsetOfSymptoms())
+        .withReportType(pcrKey.getReportType())
+        .withRollingPeriod(pcrKey.getRollingPeriod())
+        .withSubmissionTimestamp(pcrKey.getSubmissionTimestamp())
+        .withVisitedCountries(pcrKey.getVisitedCountries())
+        .build();
+    Collection<DiagnosisKey> storedKeys;
+    diagnosisKeyService.saveDiagnosisKeys(List.of(rapidKey));
+    storedKeys = diagnosisKeyService.getDiagnosisKeys();
+    assertEquals(1, storedKeys.size());
+    assertTrue(storedKeys.contains(rapidKey));
+    diagnosisKeyService.saveDiagnosisKeys(List.of(pcrKey));
+    storedKeys = diagnosisKeyService.getDiagnosisKeys();
+    assertEquals(2, storedKeys.size());
+    assertTrue(storedKeys.contains(rapidKey));
+    assertTrue(storedKeys.contains(pcrKey));
+  }
+
+  @Test
+  void ignoresRapidTestDiagnosisKeysWhenPcrTestIsPresent() {
+    DiagnosisKey pcrKey = DiagnosisKeyServiceTestHelper
+        .generateRandomDiagnosisKey(true, 1, SubmissionType.SUBMISSION_TYPE_PCR_TEST);
+    DiagnosisKey rapidKey = DiagnosisKey.builder()
+        .withKeyDataAndSubmissionType(pcrKey.getKeyData(), SubmissionType.SUBMISSION_TYPE_RAPID_TEST)
+        .withRollingStartIntervalNumber(pcrKey.getRollingStartIntervalNumber())
+        .withTransmissionRiskLevel(pcrKey.getTransmissionRiskLevel())
+        .withConsentToFederation(pcrKey.isConsentToFederation())
+        .withCountryCode(pcrKey.getOriginCountry())
+        .withDaysSinceOnsetOfSymptoms(pcrKey.getDaysSinceOnsetOfSymptoms())
+        .withReportType(pcrKey.getReportType())
+        .withRollingPeriod(pcrKey.getRollingPeriod())
+        .withSubmissionTimestamp(pcrKey.getSubmissionTimestamp())
+        .withVisitedCountries(pcrKey.getVisitedCountries())
+        .build();
+    Collection<DiagnosisKey> storedKeys;
+    diagnosisKeyService.saveDiagnosisKeys(List.of(pcrKey));
+    storedKeys = diagnosisKeyService.getDiagnosisKeys();
+    assertEquals(1, storedKeys.size());
+    assertTrue(storedKeys.contains(pcrKey));
+    diagnosisKeyService.saveDiagnosisKeys(List.of(rapidKey));
+    storedKeys = diagnosisKeyService.getDiagnosisKeys();
+    assertEquals(1, storedKeys.size());
+    assertTrue(storedKeys.contains(pcrKey));
+    assertFalse(storedKeys.contains(rapidKey));
   }
 }
