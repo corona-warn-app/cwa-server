@@ -1,8 +1,8 @@
 package app.coronawarn.server.common.persistence.domain;
 
 import app.coronawarn.server.common.persistence.domain.validation.ValidSubmissionTimestamp;
+import app.coronawarn.server.common.persistence.domain.validation.ValidSubmissionType;
 import app.coronawarn.server.common.protocols.internal.SubmissionPayload.SubmissionType;
-import javax.validation.constraints.NotNull;
 import org.springframework.data.annotation.Id;
 
 public class TraceTimeIntervalWarning {
@@ -13,7 +13,8 @@ public class TraceTimeIntervalWarning {
   private final Integer startIntervalNumber;
   private final Integer period;
   private final Integer transmissionRiskLevel;
-  @NotNull
+
+  @ValidSubmissionType
   private final SubmissionType submissionType;
 
   @ValidSubmissionTimestamp
@@ -21,16 +22,16 @@ public class TraceTimeIntervalWarning {
 
   /**
    * Constructor for a TraceTimeIntervalWarning.
-   *  @param traceLocationId     the id/guid of the corresponding TraceLocation.
+   *
+   * @param traceLocationId       the id/guid of the corresponding TraceLocation.
    * @param startIntervalNumber   the starting interval.
    * @param period                the period interval between endIntervalNumber - startIntervalNumber.
    * @param transmissionRiskLevel the transmission risk level.
    * @param submissionTimestamp   The time when the trace warning was stored on the server in the format of
    * @param submissionType        The submission type
    */
-  public TraceTimeIntervalWarning(byte[] traceLocationId, Integer startIntervalNumber,
-      Integer period, Integer transmissionRiskLevel, long submissionTimestamp,
-      SubmissionType submissionType) {
+  public TraceTimeIntervalWarning(byte[] traceLocationId, Integer startIntervalNumber, Integer period,
+      Integer transmissionRiskLevel, long submissionTimestamp, SubmissionType submissionType) {
     this.traceLocationId = traceLocationId;
     this.startIntervalNumber = startIntervalNumber;
     this.period = period;

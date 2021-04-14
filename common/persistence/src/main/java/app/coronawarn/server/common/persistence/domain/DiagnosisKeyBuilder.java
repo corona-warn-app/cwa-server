@@ -85,7 +85,6 @@ public class DiagnosisKeyBuilder implements
   @Override
   public FinalBuilder fromFederationDiagnosisKey(
       app.coronawarn.server.common.protocols.external.exposurenotification.DiagnosisKey federationDiagnosisKey) {
-    // TODO TEST
     return this
         .withKeyDataAndSubmissionType(federationDiagnosisKey.getKeyData().toByteArray(),
             SubmissionType.SUBMISSION_TYPE_PCR_TEST)

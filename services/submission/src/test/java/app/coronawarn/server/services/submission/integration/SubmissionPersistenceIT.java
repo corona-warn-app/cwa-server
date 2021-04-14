@@ -4,6 +4,7 @@ import static app.coronawarn.server.services.submission.SubmissionPayloadGenerat
 import static app.coronawarn.server.services.submission.assertions.SubmissionAssertions.assertElementsCorrespondToEachOther;
 import static java.util.Collections.emptyList;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
 
@@ -12,6 +13,7 @@ import app.coronawarn.server.common.protocols.external.exposurenotification.Repo
 import app.coronawarn.server.common.protocols.external.exposurenotification.TemporaryExposureKey;
 import app.coronawarn.server.common.protocols.internal.SubmissionPayload;
 import app.coronawarn.server.common.protocols.internal.SubmissionPayload.Builder;
+import app.coronawarn.server.common.protocols.internal.SubmissionPayload.SubmissionType;
 import app.coronawarn.server.services.submission.config.SubmissionServiceConfig;
 import app.coronawarn.server.services.submission.controller.FakeDelayManager;
 import app.coronawarn.server.services.submission.controller.RequestExecutor;
@@ -33,6 +35,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
@@ -85,7 +88,7 @@ class SubmissionPersistenceIT {
   void testKeyInsertionWithMobileClientProtoBuf(String testFile) throws IOException {
     List<TemporaryExposureKey> temporaryExposureKeys = createValidTemporaryExposureKeys();
     SubmissionPayload submissionPayload = buildSubmissionPayload(List.of("DE"), "DE", true,
-        temporaryExposureKeys);
+        temporaryExposureKeys, SubmissionType.SUBMISSION_TYPE_PCR_TEST);
 
     writeSubmissionPayloadProtobufFile(submissionPayload);
 
@@ -114,7 +117,7 @@ class SubmissionPersistenceIT {
     List<TemporaryExposureKey> temporaryExposureKeys = createValidTemporaryExposureKeys();
 
     SubmissionPayload submissionPayload = buildSubmissionPayload(visitedCountries, originCountry, consentToFederation,
-        temporaryExposureKeys);
+        temporaryExposureKeys, SubmissionType.SUBMISSION_TYPE_PCR_TEST);
 
     writeSubmissionPayloadProtobufFile(submissionPayload);
 
@@ -147,43 +150,99 @@ class SubmissionPersistenceIT {
     assertElementsCorrespondToEachOther(expectedPayload, diagnosisKeyService.getDiagnosisKeys(), config);
   }
 
+  @Test
+  public void defaultsToPcrIfSubmissionTypeIsUndefined() throws IOException {
+    List<TemporaryExposureKey> temporaryExposureKeys = createValidTemporaryExposureKeys();
+
+    SubmissionPayload submissionPayload = buildSubmissionPayload(emptyList(), "DE", true, temporaryExposureKeys, null);
+
+    writeSubmissionPayloadProtobufFile(submissionPayload);
+
+    Path path = Paths.get(PATH_MOBILE_CLIENT_PAYLOAD_PB + "/" + FILENAME_MOBILE_CLIENT_PAYLOAD_PB);
+    InputStream input = new FileInputStream(path.toFile());
+    SubmissionPayload payload = SubmissionPayload.parseFrom(input);
+
+    logger.info("Submitting payload: " + System.lineSeparator()
+        + JsonFormat.printer().preservingProtoFieldNames().omittingInsignificantWhitespace().print(payload));
+
+    executor.executePost(payload);
+
+    assertTrue(diagnosisKeyService.getDiagnosisKeys().stream()
+        .allMatch(diagnosisKey -> diagnosisKey.getSubmissionType().equals(SubmissionType.SUBMISSION_TYPE_PCR_TEST)));
+  }
+
   private static Stream<Arguments> validSubmissionPayload() {
     return Stream.of(
-        Arguments.of(null, null, null),
-        Arguments.of(null, null, true),
-        Arguments.of(null, null, false),
-        Arguments.of(null, "DE", true),
-        Arguments.of(null, "DE", false),
-        Arguments.of(null, "DE", null),
-        Arguments.of(emptyList(), "", null),
-        Arguments.of(emptyList(), "", null),
-        Arguments.of(emptyList(), "", true),
-        Arguments.of(emptyList(), "", false),
-        Arguments.of(emptyList(), "DE", null),
-        Arguments.of(emptyList(), "DE", true),
-        Arguments.of(emptyList(), "DE", false),
-        Arguments.of(List.of("DE"), "", null),
-        Arguments.of(List.of("DE"), "", true),
-        Arguments.of(List.of("DE"), "", false),
-        Arguments.of(List.of("IT"), "", null),
-        Arguments.of(List.of("IT"), "", true),
-        Arguments.of(List.of("IT"), "", false),
-        Arguments.of(List.of("DE"), null, false),
-        Arguments.of(List.of("DE"), "DE", true),
-        Arguments.of(List.of("DE"), "DE", false),
-        Arguments.of(List.of("DE"), "DE", null),
-        Arguments.of(List.of("IT"), null, null),
-        Arguments.of(List.of("IT"), null, true),
-        Arguments.of(List.of("IT"), null, false),
-        Arguments.of(List.of("IT"), "DE", true),
-        Arguments.of(List.of("IT"), "DE", false),
-        Arguments.of(List.of("IT"), "DE", null),
-        Arguments.of(List.of("DE", "IT"), null, null),
-        Arguments.of(List.of("DE", "IT"), null, true),
-        Arguments.of(List.of("DE", "IT"), null, false),
-        Arguments.of(List.of("DE", "IT"), "DE", true),
-        Arguments.of(List.of("DE", "IT"), "DE", false),
-        Arguments.of(List.of("DE", "IT"), "DE", null)
+        Arguments.of(null, null, null, SubmissionType.SUBMISSION_TYPE_PCR_TEST),
+        Arguments.of(null, null, null, SubmissionType.SUBMISSION_TYPE_RAPID_TEST),
+        Arguments.of(null, null, true, SubmissionType.SUBMISSION_TYPE_PCR_TEST),
+        Arguments.of(null, null, true, SubmissionType.SUBMISSION_TYPE_RAPID_TEST),
+        Arguments.of(null, null, false, SubmissionType.SUBMISSION_TYPE_PCR_TEST),
+        Arguments.of(null, null, false, SubmissionType.SUBMISSION_TYPE_RAPID_TEST),
+        Arguments.of(null, "DE", true, SubmissionType.SUBMISSION_TYPE_PCR_TEST),
+        Arguments.of(null, "DE", true, SubmissionType.SUBMISSION_TYPE_RAPID_TEST),
+        Arguments.of(null, "DE", false, SubmissionType.SUBMISSION_TYPE_PCR_TEST),
+        Arguments.of(null, "DE", false, SubmissionType.SUBMISSION_TYPE_RAPID_TEST),
+        Arguments.of(null, "DE", null, SubmissionType.SUBMISSION_TYPE_PCR_TEST),
+        Arguments.of(null, "DE", null, SubmissionType.SUBMISSION_TYPE_RAPID_TEST),
+        Arguments.of(emptyList(), "", null, SubmissionType.SUBMISSION_TYPE_PCR_TEST),
+        Arguments.of(emptyList(), "", null, SubmissionType.SUBMISSION_TYPE_RAPID_TEST),
+        Arguments.of(emptyList(), "", null, SubmissionType.SUBMISSION_TYPE_PCR_TEST),
+        Arguments.of(emptyList(), "", null, SubmissionType.SUBMISSION_TYPE_RAPID_TEST),
+        Arguments.of(emptyList(), "", true, SubmissionType.SUBMISSION_TYPE_PCR_TEST),
+        Arguments.of(emptyList(), "", true, SubmissionType.SUBMISSION_TYPE_RAPID_TEST),
+        Arguments.of(emptyList(), "", false, SubmissionType.SUBMISSION_TYPE_PCR_TEST),
+        Arguments.of(emptyList(), "", false, SubmissionType.SUBMISSION_TYPE_RAPID_TEST),
+        Arguments.of(emptyList(), "DE", null, SubmissionType.SUBMISSION_TYPE_PCR_TEST),
+        Arguments.of(emptyList(), "DE", null, SubmissionType.SUBMISSION_TYPE_RAPID_TEST),
+        Arguments.of(emptyList(), "DE", true, SubmissionType.SUBMISSION_TYPE_PCR_TEST),
+        Arguments.of(emptyList(), "DE", true, SubmissionType.SUBMISSION_TYPE_RAPID_TEST),
+        Arguments.of(emptyList(), "DE", false, SubmissionType.SUBMISSION_TYPE_PCR_TEST),
+        Arguments.of(emptyList(), "DE", false, SubmissionType.SUBMISSION_TYPE_RAPID_TEST),
+        Arguments.of(List.of("DE"), "", null, SubmissionType.SUBMISSION_TYPE_PCR_TEST),
+        Arguments.of(List.of("DE"), "", null, SubmissionType.SUBMISSION_TYPE_RAPID_TEST),
+        Arguments.of(List.of("DE"), "", true, SubmissionType.SUBMISSION_TYPE_PCR_TEST),
+        Arguments.of(List.of("DE"), "", true, SubmissionType.SUBMISSION_TYPE_RAPID_TEST),
+        Arguments.of(List.of("DE"), "", false, SubmissionType.SUBMISSION_TYPE_PCR_TEST),
+        Arguments.of(List.of("DE"), "", false, SubmissionType.SUBMISSION_TYPE_RAPID_TEST),
+        Arguments.of(List.of("IT"), "", null, SubmissionType.SUBMISSION_TYPE_PCR_TEST),
+        Arguments.of(List.of("IT"), "", null, SubmissionType.SUBMISSION_TYPE_RAPID_TEST),
+        Arguments.of(List.of("IT"), "", true, SubmissionType.SUBMISSION_TYPE_PCR_TEST),
+        Arguments.of(List.of("IT"), "", true, SubmissionType.SUBMISSION_TYPE_RAPID_TEST),
+        Arguments.of(List.of("IT"), "", false, SubmissionType.SUBMISSION_TYPE_PCR_TEST),
+        Arguments.of(List.of("IT"), "", false, SubmissionType.SUBMISSION_TYPE_RAPID_TEST),
+        Arguments.of(List.of("DE"), null, false, SubmissionType.SUBMISSION_TYPE_PCR_TEST),
+        Arguments.of(List.of("DE"), null, false, SubmissionType.SUBMISSION_TYPE_RAPID_TEST),
+        Arguments.of(List.of("DE"), "DE", true, SubmissionType.SUBMISSION_TYPE_PCR_TEST),
+        Arguments.of(List.of("DE"), "DE", true, SubmissionType.SUBMISSION_TYPE_RAPID_TEST),
+        Arguments.of(List.of("DE"), "DE", false, SubmissionType.SUBMISSION_TYPE_PCR_TEST),
+        Arguments.of(List.of("DE"), "DE", false, SubmissionType.SUBMISSION_TYPE_RAPID_TEST),
+        Arguments.of(List.of("DE"), "DE", null, SubmissionType.SUBMISSION_TYPE_PCR_TEST),
+        Arguments.of(List.of("DE"), "DE", null, SubmissionType.SUBMISSION_TYPE_RAPID_TEST),
+        Arguments.of(List.of("IT"), null, null, SubmissionType.SUBMISSION_TYPE_PCR_TEST),
+        Arguments.of(List.of("IT"), null, null, SubmissionType.SUBMISSION_TYPE_RAPID_TEST),
+        Arguments.of(List.of("IT"), null, true, SubmissionType.SUBMISSION_TYPE_PCR_TEST),
+        Arguments.of(List.of("IT"), null, true, SubmissionType.SUBMISSION_TYPE_RAPID_TEST),
+        Arguments.of(List.of("IT"), null, false, SubmissionType.SUBMISSION_TYPE_PCR_TEST),
+        Arguments.of(List.of("IT"), null, false, SubmissionType.SUBMISSION_TYPE_RAPID_TEST),
+        Arguments.of(List.of("IT"), "DE", true, SubmissionType.SUBMISSION_TYPE_PCR_TEST),
+        Arguments.of(List.of("IT"), "DE", true, SubmissionType.SUBMISSION_TYPE_RAPID_TEST),
+        Arguments.of(List.of("IT"), "DE", false, SubmissionType.SUBMISSION_TYPE_PCR_TEST),
+        Arguments.of(List.of("IT"), "DE", false, SubmissionType.SUBMISSION_TYPE_RAPID_TEST),
+        Arguments.of(List.of("IT"), "DE", null, SubmissionType.SUBMISSION_TYPE_PCR_TEST),
+        Arguments.of(List.of("IT"), "DE", null, SubmissionType.SUBMISSION_TYPE_RAPID_TEST),
+        Arguments.of(List.of("DE", "IT"), null, null, SubmissionType.SUBMISSION_TYPE_PCR_TEST),
+        Arguments.of(List.of("DE", "IT"), null, null, SubmissionType.SUBMISSION_TYPE_RAPID_TEST),
+        Arguments.of(List.of("DE", "IT"), null, true, SubmissionType.SUBMISSION_TYPE_PCR_TEST),
+        Arguments.of(List.of("DE", "IT"), null, true, SubmissionType.SUBMISSION_TYPE_RAPID_TEST),
+        Arguments.of(List.of("DE", "IT"), null, false, SubmissionType.SUBMISSION_TYPE_PCR_TEST),
+        Arguments.of(List.of("DE", "IT"), null, false, SubmissionType.SUBMISSION_TYPE_RAPID_TEST),
+        Arguments.of(List.of("DE", "IT"), "DE", true, SubmissionType.SUBMISSION_TYPE_PCR_TEST),
+        Arguments.of(List.of("DE", "IT"), "DE", true, SubmissionType.SUBMISSION_TYPE_RAPID_TEST),
+        Arguments.of(List.of("DE", "IT"), "DE", false, SubmissionType.SUBMISSION_TYPE_PCR_TEST),
+        Arguments.of(List.of("DE", "IT"), "DE", false, SubmissionType.SUBMISSION_TYPE_RAPID_TEST),
+        Arguments.of(List.of("DE", "IT"), "DE", null, SubmissionType.SUBMISSION_TYPE_PCR_TEST),
+        Arguments.of(List.of("DE", "IT"), "DE", null, SubmissionType.SUBMISSION_TYPE_RAPID_TEST)
     );
   }
 
@@ -195,7 +254,7 @@ class SubmissionPersistenceIT {
     List<TemporaryExposureKey> temporaryExposureKeys = createValidTemporaryExposureKeys();
 
     SubmissionPayload submissionPayload = buildSubmissionPayload(visitedCountries, originCountry, consentToFederation,
-        temporaryExposureKeys);
+        temporaryExposureKeys, SubmissionType.SUBMISSION_TYPE_PCR_TEST);
 
     writeSubmissionPayloadProtobufFile(submissionPayload);
 
@@ -256,7 +315,8 @@ class SubmissionPersistenceIT {
   }
 
   private SubmissionPayload buildSubmissionPayload(List<String> visitedCountries, String originCountry,
-      Boolean consentToFederation, List<TemporaryExposureKey> temporaryExposureKeys) {
+      Boolean consentToFederation, List<TemporaryExposureKey> temporaryExposureKeys,
+      SubmissionType submissionType) {
     Builder submissionPayloadBuilder = SubmissionPayload
         .newBuilder()
         .addAllKeys(temporaryExposureKeys);
@@ -269,6 +329,9 @@ class SubmissionPersistenceIT {
     }
     if (consentToFederation != null) {
       submissionPayloadWithConsentToFederation(submissionPayloadBuilder, consentToFederation);
+    }
+    if (submissionType != null) {
+      submissionPayloadWithSubmissionType(submissionPayloadBuilder, submissionType);
     }
 
     SubmissionPayload submissionPayload = submissionPayloadBuilder.build();
@@ -314,17 +377,18 @@ class SubmissionPersistenceIT {
   }
 
   private Builder submissionPayloadWithOriginCountry(Builder submissionPayload, String originCountry) {
-    return submissionPayload
-        .setOrigin(originCountry);
+    return submissionPayload.setOrigin(originCountry);
   }
 
   private Builder submissionPayloadWithVisitedCountries(Builder submissionPayload, List<String> visitedCountries) {
-    return submissionPayload
-        .addAllVisitedCountries(visitedCountries);
+    return submissionPayload.addAllVisitedCountries(visitedCountries);
   }
 
   private Builder submissionPayloadWithConsentToFederation(Builder submissionPayload, boolean consentToFederation) {
-    return submissionPayload
-        .setConsentToFederation(consentToFederation);
+    return submissionPayload.setConsentToFederation(consentToFederation);
+  }
+
+  private Builder submissionPayloadWithSubmissionType(Builder submissionPayload, SubmissionType submissionType) {
+    return submissionPayload.setSubmissionType(submissionType);
   }
 }

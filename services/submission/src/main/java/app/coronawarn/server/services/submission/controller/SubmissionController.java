@@ -148,7 +148,6 @@ public class SubmissionController {
   private List<DiagnosisKey> extractValidDiagnosisKeysFromPayload(SubmissionPayload submissionPayload) {
     List<TemporaryExposureKey> protoBufferKeys = submissionPayload.getKeysList();
 
-    // TODO TEST
     List<DiagnosisKey> diagnosisKeys = protoBufferKeys.stream()
         .map(protoBufferKey -> DiagnosisKey.builder()
             .fromTemporaryExposureKeyAndMetadata(
@@ -186,7 +185,6 @@ public class SubmissionController {
     return StringUtils.defaultIfBlank(originCountry, submissionServiceConfig.getDefaultOriginCountry());
   }
 
-  // TODO TEST
   private List<DiagnosisKey> padDiagnosisKeys(List<DiagnosisKey> diagnosisKeys) {
     List<DiagnosisKey> paddedDiagnosisKeys = new ArrayList<>();
     diagnosisKeys.forEach(diagnosisKey -> {

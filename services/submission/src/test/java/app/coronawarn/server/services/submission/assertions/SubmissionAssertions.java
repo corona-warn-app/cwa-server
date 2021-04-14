@@ -54,6 +54,8 @@ public final class SubmissionAssertions {
           .getRollingStartIntervalNumber() == submittedDiagnosisKey.getRollingStartIntervalNumber());
       assertThat(savedKeysForSingleSubmittedKey).allMatch(
           savedKey -> savedKey.getTransmissionRiskLevel() == submittedDiagnosisKey.getTransmissionRiskLevel());
+      assertThat(savedKeysForSingleSubmittedKey).allMatch(
+          savedKey -> savedKey.getSubmissionType() == submittedDiagnosisKey.getSubmissionType());
     });
   }
 }

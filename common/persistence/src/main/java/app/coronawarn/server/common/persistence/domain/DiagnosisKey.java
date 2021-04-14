@@ -7,6 +7,7 @@ import app.coronawarn.server.common.persistence.domain.validation.ValidCountries
 import app.coronawarn.server.common.persistence.domain.validation.ValidCountry;
 import app.coronawarn.server.common.persistence.domain.validation.ValidRollingStartIntervalNumber;
 import app.coronawarn.server.common.persistence.domain.validation.ValidSubmissionTimestamp;
+import app.coronawarn.server.common.persistence.domain.validation.ValidSubmissionType;
 import app.coronawarn.server.common.protocols.external.exposurenotification.ReportType;
 import app.coronawarn.server.common.protocols.internal.SubmissionPayload.SubmissionType;
 import java.time.LocalDate;
@@ -51,7 +52,7 @@ public class DiagnosisKey {
       + KEY_DATA_LENGTH + ".")
   private final byte[] keyData;
 
-  @NotNull
+  @ValidSubmissionType
   private final SubmissionType submissionType;
 
   @ValidRollingStartIntervalNumber
