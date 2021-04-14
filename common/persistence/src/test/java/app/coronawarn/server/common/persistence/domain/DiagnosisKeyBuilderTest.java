@@ -11,6 +11,7 @@ import static org.assertj.core.api.Assertions.catchThrowable;
 import app.coronawarn.server.common.persistence.exception.InvalidDiagnosisKeyException;
 import app.coronawarn.server.common.protocols.external.exposurenotification.ReportType;
 import app.coronawarn.server.common.protocols.external.exposurenotification.TemporaryExposureKey;
+import app.coronawarn.server.common.protocols.internal.SubmissionPayload.SubmissionType;
 import com.google.protobuf.ByteString;
 import java.nio.charset.StandardCharsets;
 import java.time.Duration;
@@ -49,7 +50,8 @@ class DiagnosisKeyBuilderTest {
         .build();
 
     DiagnosisKey actDiagnosisKey = DiagnosisKey.builder()
-        .fromTemporaryExposureKeyAndMetadata(protoBufObj, List.of("DE"), "DE", true)
+        .fromTemporaryExposureKeyAndMetadata(protoBufObj, SubmissionType.SUBMISSION_TYPE_PCR_TEST, List.of("DE"), "DE", true
+        )
         .withSubmissionTimestamp(expSubmissionTimestamp)
         .withReportType(reportType)
         .withDaysSinceOnsetOfSymptoms(daysSinceOnsetOfSymptoms)
@@ -74,7 +76,8 @@ class DiagnosisKeyBuilderTest {
         .build();
 
     DiagnosisKey actDiagnosisKey = DiagnosisKey.builder()
-        .fromTemporaryExposureKeyAndMetadata(protoBufObj, List.of("DE"), "DE", true)
+        .fromTemporaryExposureKeyAndMetadata(protoBufObj, SubmissionType.SUBMISSION_TYPE_PCR_TEST, List.of("DE"), "DE", true
+        )
         .withReportType(reportType)
         .withDaysSinceOnsetOfSymptoms(daysSinceOnsetOfSymptoms)
         .withConsentToFederation(expConsentToFederation)
@@ -88,7 +91,7 @@ class DiagnosisKeyBuilderTest {
   @Test
   void buildSuccessivelyWithSubmissionTimestamp() {
     DiagnosisKey actDiagnosisKey = DiagnosisKey.builder()
-        .withKeyData(expKeyData)
+        .withKeyDataAndSubmissionType(expKeyData, SubmissionType.SUBMISSION_TYPE_PCR_TEST)
         .withRollingStartIntervalNumber(expRollingStartIntervalNumber)
         .withTransmissionRiskLevel(expTransmissionRiskLevel)
         .withSubmissionTimestamp(expSubmissionTimestamp)
@@ -105,7 +108,7 @@ class DiagnosisKeyBuilderTest {
   @Test
   void buildSuccessivelyWithoutSubmissionTimestamp() {
     DiagnosisKey actDiagnosisKey = DiagnosisKey.builder()
-        .withKeyData(expKeyData)
+        .withKeyDataAndSubmissionType(expKeyData, SubmissionType.SUBMISSION_TYPE_PCR_TEST)
         .withRollingStartIntervalNumber(expRollingStartIntervalNumber)
         .withTransmissionRiskLevel(expTransmissionRiskLevel)
         .withReportType(reportType)
@@ -121,7 +124,7 @@ class DiagnosisKeyBuilderTest {
   @Test
   void buildSuccessivelyWithRollingPeriod() {
     DiagnosisKey actDiagnosisKey = DiagnosisKey.builder()
-        .withKeyData(expKeyData)
+        .withKeyDataAndSubmissionType(expKeyData, SubmissionType.SUBMISSION_TYPE_PCR_TEST)
         .withRollingStartIntervalNumber(expRollingStartIntervalNumber)
         .withTransmissionRiskLevel(expTransmissionRiskLevel)
         .withSubmissionTimestamp(expSubmissionTimestamp)
@@ -139,7 +142,7 @@ class DiagnosisKeyBuilderTest {
   @Test
   void buildSuccessivelyWithoutVisitedCountries() {
     DiagnosisKey actDiagnosisKey = DiagnosisKey.builder()
-        .withKeyData(expKeyData)
+        .withKeyDataAndSubmissionType(expKeyData, SubmissionType.SUBMISSION_TYPE_PCR_TEST)
         .withRollingStartIntervalNumber(expRollingStartIntervalNumber)
         .withTransmissionRiskLevel(expTransmissionRiskLevel)
         .withReportType(reportType)
@@ -154,7 +157,7 @@ class DiagnosisKeyBuilderTest {
   @Test
   void buildSuccessivelyWithOriginMissingFromVisitedCountries() {
     DiagnosisKey actDiagnosisKey = DiagnosisKey.builder()
-        .withKeyData(expKeyData)
+        .withKeyDataAndSubmissionType(expKeyData, SubmissionType.SUBMISSION_TYPE_PCR_TEST)
         .withRollingStartIntervalNumber(expRollingStartIntervalNumber)
         .withTransmissionRiskLevel(expTransmissionRiskLevel)
         .withReportType(reportType)
@@ -199,7 +202,7 @@ class DiagnosisKeyBuilderTest {
   void failsForInvalidRollingStartIntervalNumber() {
     assertThat(
         catchThrowable(() -> DiagnosisKey.builder()
-            .withKeyData(expKeyData)
+            .withKeyDataAndSubmissionType(expKeyData, SubmissionType.SUBMISSION_TYPE_PCR_TEST)
             .withRollingStartIntervalNumber(0)
             .withTransmissionRiskLevel(expTransmissionRiskLevel)
             .withCountryCode(originCountry)
@@ -209,11 +212,11 @@ class DiagnosisKeyBuilderTest {
   }
 
   @ParameterizedTest
-  @ValueSource(strings = {"DER", "xx", "De", "dE", "DE,FRE",""})
+  @ValueSource(strings = {"DER", "xx", "De", "dE", "DE,FRE", ""})
   void failsForInvalidOriginCountry(String countryCode) {
     assertThat(
         catchThrowable(() -> DiagnosisKey.builder()
-            .withKeyData(expKeyData)
+            .withKeyDataAndSubmissionType(expKeyData, SubmissionType.SUBMISSION_TYPE_PCR_TEST)
             .withRollingStartIntervalNumber(expRollingStartIntervalNumber)
             .withTransmissionRiskLevel(expTransmissionRiskLevel)
             .withCountryCode(countryCode)
@@ -223,11 +226,11 @@ class DiagnosisKeyBuilderTest {
   }
 
   @ParameterizedTest
-  @ValueSource(strings = {"DER", "xx", "De", "dE", "DE,FRE",""})
+  @ValueSource(strings = {"DER", "xx", "De", "dE", "DE,FRE", ""})
   void failsForInvalidVisitedCountries(String visitedCountries) {
     assertThat(
         catchThrowable(() -> DiagnosisKey.builder()
-            .withKeyData(expKeyData)
+            .withKeyDataAndSubmissionType(expKeyData, SubmissionType.SUBMISSION_TYPE_PCR_TEST)
             .withRollingStartIntervalNumber(expRollingStartIntervalNumber)
             .withTransmissionRiskLevel(expTransmissionRiskLevel)
             .withCountryCode("DE")
@@ -339,7 +342,8 @@ class DiagnosisKeyBuilderTest {
         .build();
 
     DiagnosisKey actDiagnosisKey = DiagnosisKey.builder()
-        .fromTemporaryExposureKeyAndMetadata(protoBufObj, List.of("DE"), "DE", true)
+        .fromTemporaryExposureKeyAndMetadata(protoBufObj, SubmissionType.SUBMISSION_TYPE_PCR_TEST, List.of("DE"), "DE", true
+        )
         .build();
 
     assertThat(actDiagnosisKey.getReportType()).isEqualTo(reportType);
@@ -365,7 +369,7 @@ class DiagnosisKeyBuilderTest {
 
   private DiagnosisKey keyWithKeyData(byte[] expKeyData) {
     return DiagnosisKey.builder()
-        .withKeyData(expKeyData)
+        .withKeyDataAndSubmissionType(expKeyData, SubmissionType.SUBMISSION_TYPE_PCR_TEST)
         .withRollingStartIntervalNumber(expRollingStartIntervalNumber)
         .withTransmissionRiskLevel(expTransmissionRiskLevel)
         .withCountryCode(originCountry)
@@ -374,7 +378,7 @@ class DiagnosisKeyBuilderTest {
 
   private DiagnosisKey keyWithRollingStartIntervalNumber(int expRollingStartIntervalNumber) {
     return DiagnosisKey.builder()
-        .withKeyData(expKeyData)
+        .withKeyDataAndSubmissionType(expKeyData, SubmissionType.SUBMISSION_TYPE_PCR_TEST)
         .withRollingStartIntervalNumber(expRollingStartIntervalNumber)
         .withTransmissionRiskLevel(expTransmissionRiskLevel)
         .withCountryCode(originCountry)
@@ -383,7 +387,7 @@ class DiagnosisKeyBuilderTest {
 
   private DiagnosisKey keyWithRollingPeriod(int expRollingPeriod) {
     return DiagnosisKey.builder()
-        .withKeyData(expKeyData)
+        .withKeyDataAndSubmissionType(expKeyData, SubmissionType.SUBMISSION_TYPE_PCR_TEST)
         .withRollingStartIntervalNumber(expRollingStartIntervalNumber)
         .withTransmissionRiskLevel(expTransmissionRiskLevel)
         .withCountryCode(originCountry)
@@ -393,7 +397,7 @@ class DiagnosisKeyBuilderTest {
 
   private DiagnosisKey keyWithRiskLevel(int expTransmissionRiskLevel) {
     return DiagnosisKey.builder()
-        .withKeyData(expKeyData)
+        .withKeyDataAndSubmissionType(expKeyData, SubmissionType.SUBMISSION_TYPE_PCR_TEST)
         .withRollingStartIntervalNumber(expRollingStartIntervalNumber)
         .withTransmissionRiskLevel(expTransmissionRiskLevel)
         .withCountryCode(originCountry)
@@ -402,7 +406,7 @@ class DiagnosisKeyBuilderTest {
 
   private DiagnosisKey keyWithDsos(int dsos) {
     return DiagnosisKey.builder()
-        .withKeyData(expKeyData)
+        .withKeyDataAndSubmissionType(expKeyData, SubmissionType.SUBMISSION_TYPE_PCR_TEST)
         .withRollingStartIntervalNumber(expRollingStartIntervalNumber)
         .withTransmissionRiskLevel(expTransmissionRiskLevel)
         .withCountryCode(originCountry)

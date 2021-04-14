@@ -14,6 +14,7 @@ import static org.assertj.core.util.Lists.list;
 import app.coronawarn.server.common.persistence.domain.DiagnosisKey;
 import app.coronawarn.server.common.persistence.repository.DiagnosisKeyRepository;
 import app.coronawarn.server.common.protocols.external.exposurenotification.ReportType;
+import app.coronawarn.server.common.protocols.internal.SubmissionPayload.SubmissionType;
 import java.time.OffsetDateTime;
 import java.util.Collections;
 import java.util.Set;
@@ -120,7 +121,7 @@ class DiagnosisKeyServiceTest {
   void shouldNotUpdateExistingKey() {
     var keyData = "1234567890123456";
     var keys = list(DiagnosisKey.builder()
-            .withKeyData(keyData.getBytes())
+            .withKeyDataAndSubmissionType(keyData.getBytes(), SubmissionType.SUBMISSION_TYPE_PCR_TEST)
             .withRollingStartIntervalNumber(600)
             .withTransmissionRiskLevel(2)
             .withCountryCode("DE")
@@ -129,7 +130,7 @@ class DiagnosisKeyServiceTest {
             .withReportType(ReportType.CONFIRMED_TEST)
             .build(),
         DiagnosisKey.builder()
-            .withKeyData(keyData.getBytes())
+            .withKeyDataAndSubmissionType(keyData.getBytes(), SubmissionType.SUBMISSION_TYPE_PCR_TEST)
             .withRollingStartIntervalNumber(600)
             .withTransmissionRiskLevel(3)
             .withCountryCode("DE")
@@ -138,10 +139,9 @@ class DiagnosisKeyServiceTest {
             .withReportType(ReportType.CONFIRMED_TEST)
             .build());
 
-    int actNumberOfInsertedRows = diagnosisKeyService.saveDiagnosisKeys(keys);
-    var actKeys = diagnosisKeyService.getDiagnosisKeys();
+    diagnosisKeyService.saveDiagnosisKeys(keys);
 
-    assertThat(actNumberOfInsertedRows).isEqualTo(1);
+    var actKeys = diagnosisKeyService.getDiagnosisKeys();
     assertThat(actKeys).hasSize(1);
     assertThat(actKeys.iterator().next().getTransmissionRiskLevel()).isEqualTo(2);
   }
@@ -152,8 +152,9 @@ class DiagnosisKeyServiceTest {
         buildDiagnosisKeyForSubmissionTimestamp(1L),
         buildDiagnosisKeyForSubmissionTimestamp(2L));
 
-    int actNumberOfInsertedRows = diagnosisKeyService.saveDiagnosisKeys(keys);
+    diagnosisKeyService.saveDiagnosisKeys(keys);
 
-    assertThat(actNumberOfInsertedRows).isEqualTo(2);
+    var actKeys = diagnosisKeyService.getDiagnosisKeys();
+    assertThat(actKeys).hasSize(2);
   }
 }

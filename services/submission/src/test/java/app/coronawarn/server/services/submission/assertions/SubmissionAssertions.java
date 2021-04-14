@@ -26,6 +26,7 @@ public final class SubmissionAssertions {
         .map(protoBufferKey -> DiagnosisKey.builder()
             .fromTemporaryExposureKeyAndMetadata(
                 protoBufferKey,
+                submissionPayload.getSubmissionType(),
                 submissionPayload.getVisitedCountriesList(),
                 submissionPayload.getOrigin(),
                 submissionPayload.getConsentToFederation())

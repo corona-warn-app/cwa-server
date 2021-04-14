@@ -6,6 +6,7 @@ import app.coronawarn.server.common.persistence.domain.DiagnosisKey;
 import app.coronawarn.server.common.persistence.service.DiagnosisKeyService;
 import app.coronawarn.server.common.persistence.service.common.CommonDataGeneration;
 import app.coronawarn.server.common.protocols.external.exposurenotification.ReportType;
+import app.coronawarn.server.common.protocols.internal.SubmissionPayload.SubmissionType;
 import app.coronawarn.server.services.distribution.assembly.structure.util.TimeUtils;
 import app.coronawarn.server.services.distribution.config.DistributionServiceConfig;
 import app.coronawarn.server.services.distribution.config.DistributionServiceConfig.TestData;
@@ -154,7 +155,7 @@ public class TestDataGeneration extends CommonDataGeneration<DiagnosisKey> {
   @Override
   protected DiagnosisKey generateDiagnosisKey(long submissionTimestamp, String country) {
     return DiagnosisKey.builder()
-        .withKeyData(generateDiagnosisKeyBytes())
+        .withKeyDataAndSubmissionType(generateDiagnosisKeyBytes(), generateSubmissionType())
         .withRollingStartIntervalNumber(generateRollingStartIntervalNumber(submissionTimestamp))
         .withTransmissionRiskLevel(generateTransmissionRiskLevel())
         .withSubmissionTimestamp(submissionTimestamp)

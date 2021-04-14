@@ -4,6 +4,8 @@ package app.coronawarn.server.services.distribution.common;
 
 import static app.coronawarn.server.services.distribution.assembly.appconfig.YamlLoader.loadYamlIntoProtobufBuilder;
 import static java.io.File.separator;
+
+import app.coronawarn.server.common.protocols.internal.SubmissionPayload.SubmissionType;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -38,7 +40,7 @@ public class Helpers {
 
   public static DiagnosisKey buildDiagnosisKeyForSubmissionTimestamp(long submissionTimeStamp) {
     return DiagnosisKey.builder()
-        .withKeyData(new byte[16])
+        .withKeyDataAndSubmissionType(new byte[16], SubmissionType.SUBMISSION_TYPE_PCR_TEST)
         .withRollingStartIntervalNumber(1)
         .withTransmissionRiskLevel(2)
         .withSubmissionTimestamp(submissionTimeStamp)
@@ -109,7 +111,7 @@ public class Helpers {
           random.nextBytes(keyData);
 
           return DiagnosisKey.builder()
-              .withKeyData(keyData)
+              .withKeyDataAndSubmissionType(keyData, SubmissionType.SUBMISSION_TYPE_PCR_TEST)
               .withRollingStartIntervalNumber(startIntervalNumber)
               .withTransmissionRiskLevel(transmissionRiskLevel)
               .withSubmissionTimestamp(submissionTimestamp)
@@ -133,7 +135,7 @@ public class Helpers {
           random.nextBytes(keyData);
 
           return DiagnosisKey.builder()
-              .withKeyData(keyData)
+              .withKeyDataAndSubmissionType(keyData, SubmissionType.SUBMISSION_TYPE_PCR_TEST)
               .withRollingStartIntervalNumber(startIntervalNumber)
               .withTransmissionRiskLevel(2)
               .withSubmissionTimestamp(submissionTimestamp)
@@ -214,7 +216,7 @@ public class Helpers {
     final byte[] guid = UUID.randomUUID().toString().getBytes();
     final int transmissionRiskLevel = 5;
     return new TraceTimeIntervalWarning(guid, startIntervalNumber, endIntervalNumber,
-        transmissionRiskLevel, submissionHourSinceEpoch){
+        transmissionRiskLevel, submissionHourSinceEpoch, SubmissionType.SUBMISSION_TYPE_PCR_TEST){
       @Override
       public Long getId() {
         return Long.valueOf(Arrays.hashCode(guid));

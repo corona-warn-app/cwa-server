@@ -7,11 +7,11 @@ import static app.coronawarn.server.common.persistence.service.common.KeySharing
 import static java.time.ZoneOffset.UTC;
 import static org.assertj.core.api.Assertions.assertThat;
 
+import app.coronawarn.server.common.protocols.internal.SubmissionPayload.SubmissionType;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.OffsetDateTime;
-import java.time.ZoneId;
 import java.time.ZoneOffset;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
@@ -58,7 +58,7 @@ public class DiagnosisKeyServiceTestHelper {
     byte[] randomBytes = new byte[16];
     random.nextBytes(randomBytes);
     return DiagnosisKey.builder()
-        .withKeyData(randomBytes)
+        .withKeyDataAndSubmissionType(randomBytes, SubmissionType.SUBMISSION_TYPE_PCR_TEST)
         .withRollingStartIntervalNumber(rollingStartInterval)
         .withTransmissionRiskLevel(2)
         .withSubmissionTimestamp(submissionTimeStamp)

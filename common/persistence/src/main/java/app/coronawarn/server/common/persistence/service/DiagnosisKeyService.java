@@ -35,39 +35,23 @@ public class DiagnosisKeyService {
   }
 
   /**
-   * Persists the specified collection of {@link DiagnosisKey} instances and returns the number of inserted diagnosis
-   * keys. If the key data of a particular diagnosis key already exists in the database, this diagnosis key is not
-   * persisted.
+   * Persists the specified collection of {@link DiagnosisKey} instances. If the key data of a particular diagnosis key
+   * already exists in the database, this diagnosis key is not persisted.
    *
    * @param diagnosisKeys must not contain {@literal null}.
-   * @return Number of successfully inserted diagnosis keys.
    * @throws IllegalArgumentException in case the given collection contains {@literal null}.
    */
   @Timed
   @Transactional
-  public int saveDiagnosisKeys(Collection<DiagnosisKey> diagnosisKeys) {
-    int numberOfInsertedKeys = 0;
-
-    for (DiagnosisKey diagnosisKey : diagnosisKeys) {
-      boolean keyInsertedSuccessfully = keyRepository.saveDoNothingOnConflict(
+  public void saveDiagnosisKeys(Collection<DiagnosisKey> diagnosisKeys) {
+    diagnosisKeys.forEach(diagnosisKey -> {
+      keyRepository.saveDoNothingOnConflict(
           diagnosisKey.getKeyData(), diagnosisKey.getRollingStartIntervalNumber(), diagnosisKey.getRollingPeriod(),
           diagnosisKey.getSubmissionTimestamp(), diagnosisKey.getTransmissionRiskLevel(),
           diagnosisKey.getOriginCountry(), diagnosisKey.getVisitedCountries().toArray(new String[0]),
           diagnosisKey.getReportType().name(), diagnosisKey.getDaysSinceOnsetOfSymptoms(),
-          diagnosisKey.isConsentToFederation());
-
-      if (keyInsertedSuccessfully) {
-        numberOfInsertedKeys++;
-      }
-    }
-
-    int conflictingKeys = diagnosisKeys.size() - numberOfInsertedKeys;
-    if (conflictingKeys > 0) {
-      logger.warn("{} out of {} diagnosis keys conflicted with existing database entries and were ignored.",
-          conflictingKeys, diagnosisKeys.size());
-    }
-
-    return numberOfInsertedKeys;
+          diagnosisKey.isConsentToFederation(), diagnosisKey.getSubmissionType().name());
+    });
   }
 
   /**

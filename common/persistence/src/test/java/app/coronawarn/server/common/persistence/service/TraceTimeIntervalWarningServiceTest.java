@@ -1,15 +1,15 @@
 package app.coronawarn.server.common.persistence.service;
 
+import static org.junit.Assert.assertArrayEquals;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+
 import app.coronawarn.server.common.persistence.domain.TraceTimeIntervalWarning;
 import app.coronawarn.server.common.persistence.repository.TraceTimeIntervalWarningRepository;
 import app.coronawarn.server.common.persistence.service.utils.checkins.CheckinsDateSpecification;
+import app.coronawarn.server.common.protocols.internal.SubmissionPayload.SubmissionType;
 import app.coronawarn.server.common.protocols.internal.pt.CheckIn;
 import com.google.protobuf.ByteString;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.data.jdbc.DataJdbcTest;
-import org.testcontainers.shaded.org.bouncycastle.util.encoders.Hex;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
@@ -20,8 +20,11 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
-
-import static org.junit.Assert.*;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.data.jdbc.DataJdbcTest;
+import org.testcontainers.shaded.org.bouncycastle.util.encoders.Hex;
 
 @DataJdbcTest
 class TraceTimeIntervalWarningServiceTest {
@@ -40,7 +43,7 @@ class TraceTimeIntervalWarningServiceTest {
   @Test
   void testStorage() {
     List<CheckIn> checkins = getRandomTestData();
-    traceWarningsService.saveCheckins(checkins);
+    traceWarningsService.saveCheckins(checkins, SubmissionType.SUBMISSION_TYPE_PCR_TEST);
 
     List<TraceTimeIntervalWarning> actualTraceWarningsStored =
         StreamSupport.stream(traceWarningsRepository.findAll().spliterator(), false)
@@ -52,7 +55,8 @@ class TraceTimeIntervalWarningServiceTest {
   @Test
   void testStorageWithRandomPadding() {
     List<CheckIn> checkins = getRandomTestData();
-    traceWarningsService.saveCheckinsWithFakeData(checkins, 2, randomHashPepper());
+    traceWarningsService.saveCheckinsWithFakeData(checkins, 2, randomHashPepper(),
+        SubmissionType.SUBMISSION_TYPE_PCR_TEST);
 
     List<TraceTimeIntervalWarning> actualTraceWarningsStored =
         StreamSupport.stream(traceWarningsRepository.findAll().spliterator(), false)
@@ -101,19 +105,13 @@ class TraceTimeIntervalWarningServiceTest {
   @Test
   void testSortedRetrievalResult() {
     traceWarningsRepository
-        .saveDoNothingOnConflict(hashLocationId(ByteString.copyFromUtf8("sorted-uuid2")),
-            56,
-            10,
-            3,
-            CheckinsDateSpecification.HOUR_SINCE_EPOCH_DERIVATION
-                .apply(Instant.now().getEpochSecond()));
+        .saveDoNothingOnConflict(hashLocationId(ByteString.copyFromUtf8("sorted-uuid2")), 56, 10, 3,
+            CheckinsDateSpecification.HOUR_SINCE_EPOCH_DERIVATION.apply(Instant.now().getEpochSecond()),
+            SubmissionType.SUBMISSION_TYPE_PCR_TEST.name());
     traceWarningsRepository
-        .saveDoNothingOnConflict(hashLocationId(ByteString.copyFromUtf8("sorted-uuid1")),
-            456,
-            20,
-            2,
-            CheckinsDateSpecification.HOUR_SINCE_EPOCH_DERIVATION
-                .apply(Instant.now().getEpochSecond()) - 10);
+        .saveDoNothingOnConflict(hashLocationId(ByteString.copyFromUtf8("sorted-uuid1")), 456, 20, 2,
+            CheckinsDateSpecification.HOUR_SINCE_EPOCH_DERIVATION.apply(Instant.now().getEpochSecond()) - 10,
+            SubmissionType.SUBMISSION_TYPE_PCR_TEST.name());
 
     List<CheckIn> checkins = new ArrayList<>(List.of(
         CheckIn.newBuilder().setStartIntervalNumber(56).setEndIntervalNumber(66)

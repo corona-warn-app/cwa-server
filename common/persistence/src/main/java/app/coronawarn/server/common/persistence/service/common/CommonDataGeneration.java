@@ -2,6 +2,7 @@ package app.coronawarn.server.common.persistence.service.common;
 
 import app.coronawarn.server.common.persistence.domain.DiagnosisKey;
 import app.coronawarn.server.common.protocols.internal.RiskLevel;
+import app.coronawarn.server.common.protocols.internal.SubmissionPayload.SubmissionType;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.time.temporal.ChronoUnit;
@@ -29,6 +30,13 @@ public abstract class CommonDataGeneration<T extends DiagnosisKey> implements Ap
     byte[] keyData = new byte[16];
     random.nextBytes(keyData);
     return keyData;
+  }
+
+  /**
+   * Returns a random {@link SubmissionType}.
+   */
+  protected SubmissionType generateSubmissionType() {
+    return SubmissionType.forNumber(Math.toIntExact(getRandomBetween(0, 1)));
   }
 
   /**

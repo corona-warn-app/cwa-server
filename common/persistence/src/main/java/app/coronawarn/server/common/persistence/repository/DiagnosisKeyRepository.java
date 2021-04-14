@@ -32,7 +32,11 @@ public interface DiagnosisKeyRepository extends PagingAndSortingRepository<Diagn
 
   /**
    * Attempts to write the specified diagnosis key information into the database. If a row with the specified key data
-   * already exists, no data is inserted.
+   * already exists, no data is inserted. Also, when saving a diagnosis key with submission type {@link
+   * app.coronawarn.server.common.protocols.internal.SubmissionPayload.SubmissionType#SUBMISSION_TYPE_RAPID_TEST} when
+   * a diagnosis key with the same ID and {@link
+   * app.coronawarn.server.common.protocols.internal.SubmissionPayload.SubmissionType#SUBMISSION_TYPE_PCR_TEST} already
+   * exists, that new diagnosis key will be ignored.
    *
    * @param keyData                    The key data of the diagnosis key.
    * @param rollingStartIntervalNumber The rolling start interval number of the diagnosis key.
@@ -42,18 +46,15 @@ public interface DiagnosisKeyRepository extends PagingAndSortingRepository<Diagn
    * @param originCountry              The origin country from the app.
    * @param visitedCountries           The list of countries this transmissions is relevant for.
    * @param reportType                 The report type of the diagnosis key.
-   * @param consentToFederation        The consent to federation.
    * @param daysSinceOnsetOfSymptoms   The number of days since symptoms began.
-   * @return {@literal true} if the diagnosis key was inserted successfully, {@literal false} otherwise.
+   * @param consentToFederation        The consent to federation.
+   * @param submissionType             The submission type
    */
   @Modifying
-  @Query("INSERT INTO diagnosis_key "
-      + "(key_data, rolling_start_interval_number, rolling_period, submission_timestamp, transmission_risk_level, "
-      + "origin_country, visited_countries, report_type, days_since_onset_of_symptoms, consent_to_federation) "
-      + "VALUES (:keyData, :rollingStartIntervalNumber, :rollingPeriod, :submissionTimestamp, :transmissionRisk, "
-      + ":origin_country, :visited_countries, :report_type, :days_since_onset_of_symptoms, :consent_to_federation) "
-      + "ON CONFLICT DO NOTHING")
-  boolean saveDoNothingOnConflict(
+  @Query("CALL insert_diagnosis_key(:keyData, :rollingStartIntervalNumber, :rollingPeriod, :submissionTimestamp,"
+      + ":transmissionRisk, :origin_country, :visited_countries, :report_type, :days_since_onset_of_symptoms,"
+      + ":consent_to_federation, :submission_type)")
+  void saveDoNothingOnConflict(
       @Param("keyData") byte[] keyData,
       @Param("rollingStartIntervalNumber") int rollingStartIntervalNumber,
       @Param("rollingPeriod") int rollingPeriod,
@@ -63,5 +64,6 @@ public interface DiagnosisKeyRepository extends PagingAndSortingRepository<Diagn
       @Param("visited_countries") String[] visitedCountries,
       @Param("report_type") String reportType,
       @Param("days_since_onset_of_symptoms") int daysSinceOnsetOfSymptoms,
-      @Param("consent_to_federation") boolean consentToFederation);
+      @Param("consent_to_federation") boolean consentToFederation,
+      @Param("submission_type") String submissionType);
 }

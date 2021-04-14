@@ -10,6 +10,7 @@ import static org.mockito.Mockito.when;
 import app.coronawarn.server.common.persistence.repository.DiagnosisKeyRepository;
 import app.coronawarn.server.common.persistence.service.DiagnosisKeyService;
 import app.coronawarn.server.common.protocols.external.exposurenotification.ReportType;
+import app.coronawarn.server.common.protocols.internal.SubmissionPayload.SubmissionType;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Set;
@@ -24,6 +25,7 @@ import org.springframework.data.domain.Sort.Direction;
 class DiagnosisKeyServiceMockedRepositoryTest {
 
   static final byte[] expKeyData = "16-bytelongarray".getBytes(StandardCharsets.US_ASCII);
+  final static SubmissionType expSubmissionType = SubmissionType.SUBMISSION_TYPE_PCR_TEST;
   static final int expRollingStartIntervalNumber = 73800;
   static final int expTransmissionRiskLevel = 1;
   static final String originCountry = "DE";
@@ -71,14 +73,14 @@ class DiagnosisKeyServiceMockedRepositoryTest {
   }
 
   private DiagnosisKey validKey(long expSubmissionTimestamp) {
-    return new DiagnosisKey(expKeyData, expRollingStartIntervalNumber,
+    return new DiagnosisKey(expKeyData, expSubmissionType, expRollingStartIntervalNumber,
         DiagnosisKey.MAX_ROLLING_PERIOD, expTransmissionRiskLevel, expSubmissionTimestamp, false,
         originCountry, visitedCountries, reportType, daysSinceOnsetOfSymptoms);
   }
 
   private DiagnosisKey invalidKey(long expSubmissionTimestamp) {
     byte[] expKeyData = "17--bytelongarray".getBytes(StandardCharsets.US_ASCII);
-    return new DiagnosisKey(expKeyData, expRollingStartIntervalNumber,
+    return new DiagnosisKey(expKeyData, expSubmissionType, expRollingStartIntervalNumber,
         DiagnosisKey.MAX_ROLLING_PERIOD, expTransmissionRiskLevel, expSubmissionTimestamp, false,
         originCountry, visitedCountries, reportType, daysSinceOnsetOfSymptoms);
   }

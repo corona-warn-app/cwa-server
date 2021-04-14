@@ -129,7 +129,8 @@ public class SubmissionController {
       numberOfFilteredCheckins.set(submissionPayload.getCheckInsList().size() - checkins.size());
       numberOfSavedCheckins.set(traceTimeIntervalWarningSevice.saveCheckinsWithFakeData(checkins,
           submissionServiceConfig.getRandomCheckinsPaddingMultiplier(),
-          submissionServiceConfig.getRandomCheckinsPaddingPepperAsByteArray()));
+          submissionServiceConfig.getRandomCheckinsPaddingPepperAsByteArray(),
+          submissionPayload.getSubmissionType()));
     } catch (final Exception e) {
       // Any check-in data processing related error must not interrupt the submission flow or interfere
       // with storing of the diagnosis keys
@@ -147,10 +148,12 @@ public class SubmissionController {
   private List<DiagnosisKey> extractValidDiagnosisKeysFromPayload(SubmissionPayload submissionPayload) {
     List<TemporaryExposureKey> protoBufferKeys = submissionPayload.getKeysList();
 
+    // TODO TEST
     List<DiagnosisKey> diagnosisKeys = protoBufferKeys.stream()
         .map(protoBufferKey -> DiagnosisKey.builder()
             .fromTemporaryExposureKeyAndMetadata(
                 protoBufferKey,
+                submissionPayload.getSubmissionType(),
                 submissionPayload.getVisitedCountriesList(),
                 submissionPayload.getOrigin(),
                 submissionPayload.getConsentToFederation())
@@ -183,13 +186,14 @@ public class SubmissionController {
     return StringUtils.defaultIfBlank(originCountry, submissionServiceConfig.getDefaultOriginCountry());
   }
 
+  // TODO TEST
   private List<DiagnosisKey> padDiagnosisKeys(List<DiagnosisKey> diagnosisKeys) {
     List<DiagnosisKey> paddedDiagnosisKeys = new ArrayList<>();
     diagnosisKeys.forEach(diagnosisKey -> {
       paddedDiagnosisKeys.add(diagnosisKey);
       IntStream.range(1, randomKeyPaddingMultiplier)
           .mapToObj(index -> DiagnosisKey.builder()
-              .withKeyData(generateRandomKeyData())
+              .withKeyDataAndSubmissionType(generateRandomKeyData(), diagnosisKey.getSubmissionType())
               .withRollingStartIntervalNumber(diagnosisKey.getRollingStartIntervalNumber())
               .withTransmissionRiskLevel(diagnosisKey.getTransmissionRiskLevel())
               .withRollingPeriod(diagnosisKey.getRollingPeriod())

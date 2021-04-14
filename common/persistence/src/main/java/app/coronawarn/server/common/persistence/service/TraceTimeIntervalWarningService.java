@@ -4,6 +4,7 @@ import app.coronawarn.server.common.persistence.domain.TraceTimeIntervalWarning;
 import app.coronawarn.server.common.persistence.repository.TraceTimeIntervalWarningRepository;
 import app.coronawarn.server.common.persistence.service.utils.checkins.CheckinsDateSpecification;
 import app.coronawarn.server.common.persistence.service.utils.checkins.FakeCheckinsGenerator;
+import app.coronawarn.server.common.protocols.internal.SubmissionPayload.SubmissionType;
 import app.coronawarn.server.common.protocols.internal.pt.CheckIn;
 import com.google.protobuf.ByteString;
 import java.security.MessageDigest;
@@ -35,8 +36,10 @@ public class TraceTimeIntervalWarningService {
 
   /**
    * Constructs the service instance.
+   *
    * @param traceTimeIntervalWarningRepo Repository for {@link TraceTimeIntervalWarning} entities.
-   * @param fakeCheckinsGenerator Generator of fake data that gets stored side by side with the real checkin data.
+   * @param fakeCheckinsGenerator        Generator of fake data that gets stored side by side with the real checkin
+   *                                     data.
    * @throws NoSuchAlgorithmException In case the MessageDigest used in hashing can not be instantiated.
    */
   public TraceTimeIntervalWarningService(
@@ -48,16 +51,17 @@ public class TraceTimeIntervalWarningService {
   }
 
   /**
-   * Store the given checkin data as {@link TraceTimeIntervalWarning} entities. Returns the number
-   * of inserted entities, which is useful for the case where there might be conflicts with the
-   * table constraints during the db save operations.
+   * Store the given checkin data as {@link TraceTimeIntervalWarning} entities. Returns the number of inserted entities,
+   * which is useful for the case where there might be conflicts with the table constraints during the db save
+   * operations.
    */
   @Transactional
-  public int saveCheckins(List<CheckIn> checkins) {
-    return saveCheckins(checkins, this::hashLocationId);
+  public int saveCheckins(List<CheckIn> checkins, SubmissionType submissionType) {
+    return saveCheckins(checkins, this::hashLocationId, submissionType);
   }
 
-  private int saveCheckins(List<CheckIn> checkins, Function<ByteString, byte[]> idHashGenerator) {
+  private int saveCheckins(List<CheckIn> checkins, Function<ByteString, byte[]> idHashGenerator,
+      SubmissionType submissionType) {
     int numberOfInsertedTraceWarnings = 0;
 
     for (CheckIn checkin : checkins) {
@@ -67,7 +71,8 @@ public class TraceTimeIntervalWarningService {
               checkin.getEndIntervalNumber() - checkin.getStartIntervalNumber(),
               checkin.getTransmissionRiskLevel(),
               CheckinsDateSpecification.HOUR_SINCE_EPOCH_DERIVATION
-                  .apply(Instant.now().getEpochSecond()));
+                  .apply(Instant.now().getEpochSecond()),
+              submissionType.name());
 
       if (traceWarningInsertedSuccessfully) {
         numberOfInsertedTraceWarnings++;
@@ -77,9 +82,8 @@ public class TraceTimeIntervalWarningService {
     int conflictingTraceWarnings = checkins.size() - numberOfInsertedTraceWarnings;
     if (conflictingTraceWarnings > 0) {
       logger.warn(
-          "{} out of {} TraceTimeIntervalWarnings conflicted with existing "
-          + "database entries or had errors while storing "
-              + "and were ignored.",
+          "{} out of {} TraceTimeIntervalWarnings conflicted with existing database entries or had errors while "
+              + "storing and were ignored.",
           conflictingTraceWarnings, checkins.size());
     }
 
@@ -87,18 +91,17 @@ public class TraceTimeIntervalWarningService {
   }
 
   /**
-   * For each checkin in the given list, generate other fake checkin data based on the passed in
-   * number and store everything as {@link TraceTimeIntervalWarning} entities. Returns the number of
-   * inserted entities which is useful for the case where there might be conflicts with the table
-   * constraints during the db save operations.
+   * For each checkin in the given list, generate other fake checkin data based on the passed in number and store
+   * everything as {@link TraceTimeIntervalWarning} entities. Returns the number of inserted entities which is useful
+   * for the case where there might be conflicts with the table constraints during the db save operations.
    */
   @Transactional
   public int saveCheckinsWithFakeData(List<CheckIn> originalCheckins, int numberOfFakesToCreate,
-      byte[] pepper) {
+      byte[] pepper, SubmissionType submissionType) {
     List<CheckIn> allCheckins = new ArrayList<>(originalCheckins);
     allCheckins.addAll(fakeCheckinsGenerator.generateFakeCheckins(originalCheckins,
         numberOfFakesToCreate, pepper));
-    return saveCheckins(allCheckins, this::hashLocationId);
+    return saveCheckins(allCheckins, this::hashLocationId, submissionType);
   }
 
   /**

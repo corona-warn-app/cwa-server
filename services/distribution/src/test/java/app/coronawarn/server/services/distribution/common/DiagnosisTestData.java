@@ -4,6 +4,7 @@ package app.coronawarn.server.services.distribution.common;
 
 import app.coronawarn.server.common.persistence.domain.DiagnosisKey;
 import app.coronawarn.server.common.protocols.external.exposurenotification.ReportType;
+import app.coronawarn.server.common.protocols.internal.SubmissionPayload.SubmissionType;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
@@ -30,13 +31,12 @@ public final class DiagnosisTestData {
   }
 
   /**
+   * @param fromDay     start date
+   * @param untilDay    end date
+   * @param casesPerDay number of cases each day
    * @return An instance that contains diagnosis keys computed for the given interval of days. Each day will have a
    * number of keys equal to the given <code>casesPerDay</code> parameter, recorded, for simplicity, in the last hour of
    * the day.
-   *
-   * @param fromDay start date
-   * @param untilDay end date
-   * @param casesPerDay number of cases each day
    */
   public static DiagnosisTestData of(LocalDate fromDay, LocalDate untilDay, int casesPerDay) {
 
@@ -59,11 +59,12 @@ public final class DiagnosisTestData {
     long timestamp = submissionTime.toEpochSecond(ZoneOffset.UTC) / 3600;
     return IntStream.range(0, casesPerDay)
         .mapToObj(dayCounter ->
-            DiagnosisKey.builder().withKeyData(randomKeyData())
+            DiagnosisKey.builder()
+                .withKeyDataAndSubmissionType(randomKeyData(), SubmissionType.SUBMISSION_TYPE_PCR_TEST)
                 .withRollingStartIntervalNumber(600)
                 .withTransmissionRiskLevel(5).withSubmissionTimestamp(timestamp)
                 .withCountryCode("DE")
-                .withVisitedCountries(Set.of("DE","FR"))
+                .withVisitedCountries(Set.of("DE", "FR"))
                 .withReportType(ReportType.CONFIRMED_CLINICAL_DIAGNOSIS)
                 .build())
         .collect(Collectors.toList());

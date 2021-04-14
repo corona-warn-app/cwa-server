@@ -6,6 +6,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.Mockito.when;
 
+import app.coronawarn.server.common.protocols.internal.SubmissionPayload.SubmissionType;
 import app.coronawarn.server.services.federation.upload.config.UploadServiceConfig;
 import app.coronawarn.server.services.federation.upload.payload.signing.BatchSigner;
 import app.coronawarn.server.services.federation.upload.utils.BatchMockData;
@@ -54,7 +55,7 @@ class PayloadFactoryTest {
 
   @Test
   void shouldMakePayloadFromListOfDiagnosisKeys() {
-    var diagnosisKeys = List.of(MockData.generateRandomUploadKey(true));
+    var diagnosisKeys = List.of(MockData.generateRandomUploadKey(true, SubmissionType.SUBMISSION_TYPE_PCR_TEST));
 
     when(mockAssembler.assembleDiagnosisKeyBatch(anyList()))
         .thenReturn(Map.of(BatchMockData.makeSingleKeyBatch(), diagnosisKeys));
@@ -68,7 +69,7 @@ class PayloadFactoryTest {
 
   @Test
   void payloadsShouldNotHaveSameBatchTag() {
-    var diagnosisKeys = List.of(MockData.generateRandomUploadKey(true));
+    var diagnosisKeys = List.of(MockData.generateRandomUploadKey(true, SubmissionType.SUBMISSION_TYPE_PCR_TEST));
 
     when(mockAssembler.assembleDiagnosisKeyBatch(anyList()))
         .thenReturn(Map.of(
