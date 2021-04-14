@@ -146,12 +146,14 @@ public class SubmissionController {
     List<DiagnosisKey> diagnosisKeys = extractValidDiagnosisKeysFromPayload(
         enhanceWithDefaultValuesIfMissing(submissionPayload));
     for (DiagnosisKey diagnosisKey : diagnosisKeys) {
-      mapTrasmissionRiskValue(diagnosisKey);      
+      mapTrasmissionRiskValue(diagnosisKey);
     }
     diagnosisKeyService.saveDiagnosisKeys(padDiagnosisKeys(diagnosisKeys));
   }
 
-  private int mapTrasmissionRiskValue(DiagnosisKey diagnosisKey) { diagnosisKey.setTransmissionRiskLevel(trlDerivations.mapFromTrlSubmittedToTrlToStore(diagnosisKey.getTransmissionRiskLevel()));
+  private void mapTrasmissionRiskValue(DiagnosisKey diagnosisKey) {
+    diagnosisKey.setTransmissionRiskLevel(
+        trlDerivations.mapFromTrlSubmittedToTrlToStore(diagnosisKey.getTransmissionRiskLevel()));
   }
 
   private List<DiagnosisKey> extractValidDiagnosisKeysFromPayload(SubmissionPayload submissionPayload) {
