@@ -1,6 +1,7 @@
 package app.coronawarn.server.services.submission.config;
 
 import app.coronawarn.server.common.persistence.domain.config.TekFieldDerivations;
+import app.coronawarn.server.common.persistence.domain.config.TrlDerivations;
 import java.io.File;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
@@ -59,6 +60,9 @@ public class SubmissionServiceConfig {
 
   @Autowired
   private TekFieldDerivations tekFieldDerivations;
+
+  @Autowired
+  private TrlDerivations trlDerivations;
 
 
   public Long getInitialFakeDelayMilliseconds() {
@@ -179,6 +183,14 @@ public class SubmissionServiceConfig {
 
   public void setTekFieldDerivations(TekFieldDerivations tekFieldDerivations) {
     this.tekFieldDerivations = tekFieldDerivations;
+  }
+
+  public TrlDerivations getTrlDerivations() {
+    return trlDerivations;
+  }
+
+  public void setTrlDerivations(TrlDerivations trlDerivations) {
+    this.trlDerivations = trlDerivations;
   }
 
   public static class Payload {
