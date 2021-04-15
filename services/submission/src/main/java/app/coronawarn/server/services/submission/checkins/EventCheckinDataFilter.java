@@ -9,7 +9,9 @@ import app.coronawarn.server.common.protocols.internal.pt.CheckIn;
 import app.coronawarn.server.services.submission.config.SubmissionServiceConfig;
 import java.time.Instant;
 import java.time.LocalDateTime;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
@@ -36,7 +38,7 @@ public class EventCheckinDataFilter {
 
   /**
    * Return a filtered list of checkin data based on the following criteria:
-   * <li>Filter out checkins with TRL values that are mapped to 0 ( as per Risk calculation paramters app config) </li>
+   * <li>Filter out checkins with TRL values that are mapped to 0 ( as per Risk calculation paramters app config)</li>
    * <li>Filter out checkins which have checkout time in the past further than 15 days (app config)</li>
    * <li>Filter out checkins which are in the future</li>
    * <li>Filter out checkins which have trace location signatures that can not be verified</li>.
@@ -62,6 +64,24 @@ public class EventCheckinDataFilter {
     return filtered;
   }
 
+  /**
+   * If there are more than N check-ins for any date, the submission is considered fraudulent and processing of
+   * check-ins is aborted.
+   *
+   * @param checkins list of check-ins to be validated.
+   * @throws TooManyCheckInsAtSameDay if more than N check-ins for any date exist.
+   */
+  public void validateCheckInsByDate(final List<CheckIn> checkins) throws TooManyCheckInsAtSameDay {
+    final Map<Integer, Integer> counterPerDays = new HashMap<>();
+    for (CheckIn checkIn : checkins) {
+      final int day = checkIn.getStartIntervalNumber() / 144;
+      int count = counterPerDays.getOrDefault(day, 0);
+      if (++count > submissionServiceConfig.getMaxAllowedCheckinsPerDay()) {
+        throw new TooManyCheckInsAtSameDay(day);
+      }
+      counterPerDays.put(day, count);
+    }
+  }
 
   boolean filterOutZeroTransmissionRiskLevel(CheckIn checkin) {
     return !mapsTo(checkin.getTransmissionRiskLevel(), 0.0d);
