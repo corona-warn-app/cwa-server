@@ -221,7 +221,7 @@ The signing of the files basically means creating and signing an archive that co
 Both the application configuration as well as the Temporary Exposure Keys are signed so that the mobile devices
 can verify if the files are originating from the right backend. Using the signature, attack vectors like a
 man in the middle attack, request forgery etc. can be mitigated successfully. The implementation is done in
-[`DistributionArchiveSigningDecorator`](services/distribution/src/main/java/app/coronawarn/server/services/distribution/assembly/structure/archive/decorator/signing/DistributionArchiveSigningDecorator.java).
+[`DistributionArchiveSigningDecorator`](/services/distribution/src/main/java/app/coronawarn/server/services/distribution/assembly/structure/archive/decorator/signing/).
 
 The signing process takes the `export.bin` archive and creates a signature of the data structure which is then written into the `export.sig`.
 Please see `getSignatureFile` method located in [`SigningDecoratorOnDisk`](/services/distribution/src/main/java/app/coronawarn/server/services/distribution/assembly/structure/archive/decorator/signing/SigningDecoratorOnDisk.java).
