@@ -3,6 +3,7 @@
 package app.coronawarn.server.services.submission.controller;
 
 import app.coronawarn.server.common.persistence.domain.DiagnosisKey;
+import app.coronawarn.server.common.persistence.domain.config.TrlDerivations;
 import app.coronawarn.server.common.persistence.service.DiagnosisKeyService;
 import app.coronawarn.server.common.persistence.service.TraceTimeIntervalWarningService;
 import app.coronawarn.server.common.protocols.external.exposurenotification.TemporaryExposureKey;
@@ -54,6 +55,7 @@ public class SubmissionController {
   private final SubmissionServiceConfig submissionServiceConfig;
   private final EventCheckinDataFilter checkinsDataFilter;
   private final TraceTimeIntervalWarningService traceTimeIntervalWarningSevice;
+  private final TrlDerivations trlDerivations;
 
   SubmissionController(DiagnosisKeyService diagnosisKeyService, TanVerifier tanVerifier,
       FakeDelayManager fakeDelayManager, SubmissionServiceConfig submissionServiceConfig,
@@ -68,6 +70,8 @@ public class SubmissionController {
     this.randomKeyPaddingMultiplier = submissionServiceConfig.getRandomKeyPaddingMultiplier();
     this.checkinsDataFilter = checkinsDataFilter;
     this.traceTimeIntervalWarningSevice = traceTimeIntervalWarningSevice;
+    this.trlDerivations = submissionServiceConfig.getTrlDerivations();
+
   }
 
   private static byte[] generateRandomKeyData() {
@@ -141,7 +145,15 @@ public class SubmissionController {
   private void extractAndStoreDiagnosisKeys(SubmissionPayload submissionPayload) {
     List<DiagnosisKey> diagnosisKeys = extractValidDiagnosisKeysFromPayload(
         enhanceWithDefaultValuesIfMissing(submissionPayload));
+    for (DiagnosisKey diagnosisKey : diagnosisKeys) {
+      mapTrasmissionRiskValue(diagnosisKey);
+    }
     diagnosisKeyService.saveDiagnosisKeys(padDiagnosisKeys(diagnosisKeys));
+  }
+
+  private void mapTrasmissionRiskValue(DiagnosisKey diagnosisKey) {
+    diagnosisKey.setTransmissionRiskLevel(
+        trlDerivations.mapFromTrlSubmittedToTrlToStore(diagnosisKey.getTransmissionRiskLevel()));
   }
 
   private List<DiagnosisKey> extractValidDiagnosisKeysFromPayload(SubmissionPayload submissionPayload) {
