@@ -20,7 +20,6 @@ import java.util.Set;
 import javax.validation.ConstraintViolation;
 import javax.validation.Validation;
 import javax.validation.Validator;
-import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import org.hibernate.validator.constraints.Range;
 import org.springframework.data.annotation.Id;
@@ -118,6 +117,7 @@ public class DiagnosisKey {
 
   /**
    * Returns the diagnosis key.
+   *
    * @return keyData
    */
   public byte[] getKeyData() {
@@ -126,6 +126,7 @@ public class DiagnosisKey {
 
   /**
    * Returns the {@link SubmissionType}.
+   *
    * @return submissionType
    */
   public SubmissionType getSubmissionType() {
@@ -134,6 +135,7 @@ public class DiagnosisKey {
 
   /**
    * Returns a number describing when a key starts. It is equal to startTimeOfKeySinceEpochInSecs / (60 * 10).
+   *
    * @return rollingStartIntervalNumber
    */
   public int getRollingStartIntervalNumber() {
@@ -143,6 +145,7 @@ public class DiagnosisKey {
   /**
    * Returns a number describing how long a key is valid. It is expressed in increments of 10 minutes (e.g. 144 for 24
    * hours).
+   *
    * @return rollingPeriod
    */
   public int getRollingPeriod() {
@@ -151,6 +154,7 @@ public class DiagnosisKey {
 
   /**
    * Returns the risk of transmission associated with the person this key came from.
+   *
    * @return transmissionRiskLevel
    */
   public int getTransmissionRiskLevel() {
@@ -159,6 +163,7 @@ public class DiagnosisKey {
 
   /**
    * Returns the timestamp associated with the submission of this {@link DiagnosisKey} as hours since epoch.
+   *
    * @return submissionTimestamp
    */
   public long getSubmissionTimestamp() {

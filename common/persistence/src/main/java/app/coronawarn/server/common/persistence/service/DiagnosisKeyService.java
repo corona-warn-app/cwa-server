@@ -44,14 +44,13 @@ public class DiagnosisKeyService {
   @Timed
   @Transactional
   public void saveDiagnosisKeys(Collection<DiagnosisKey> diagnosisKeys) {
-    diagnosisKeys.forEach(diagnosisKey -> {
-      keyRepository.saveDoNothingOnConflict(
-          diagnosisKey.getKeyData(), diagnosisKey.getRollingStartIntervalNumber(), diagnosisKey.getRollingPeriod(),
-          diagnosisKey.getSubmissionTimestamp(), diagnosisKey.getTransmissionRiskLevel(),
-          diagnosisKey.getOriginCountry(), diagnosisKey.getVisitedCountries().toArray(new String[0]),
-          diagnosisKey.getReportType().name(), diagnosisKey.getDaysSinceOnsetOfSymptoms(),
-          diagnosisKey.isConsentToFederation(), diagnosisKey.getSubmissionType().name());
-    });
+    diagnosisKeys.forEach(diagnosisKey -> keyRepository.saveDoNothingOnConflict(
+        diagnosisKey.getKeyData(), diagnosisKey.getRollingStartIntervalNumber(), diagnosisKey.getRollingPeriod(),
+        diagnosisKey.getSubmissionTimestamp(), diagnosisKey.getTransmissionRiskLevel(),
+        diagnosisKey.getOriginCountry(), diagnosisKey.getVisitedCountries().toArray(new String[0]),
+        diagnosisKey.getReportType().name(), diagnosisKey.getDaysSinceOnsetOfSymptoms(),
+        diagnosisKey.isConsentToFederation(), diagnosisKey.getSubmissionType().name())
+    );
   }
 
   /**
