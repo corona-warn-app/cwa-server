@@ -221,15 +221,10 @@ The signing of the files basically means creating and signing an archive that co
 Both the application configuration as well as the Temporary Exposure Keys are signed so that the mobile devices
 can verify if the files are originating from the right backend. Using the signature, attack vectors like a
 man in the middle attack, request forgery etc. can be mitigated successfully. The implementation is done in
-[`AppConfigurationSigningDecorator`](/services/distribution/src/main/java/app/coronawarn/server/services/distribution/assembly/appconfig/structure/archive/decorator/signing/AppConfigurationSigningDecorator.java).
+[`DistributionArchiveSigningDecorator`](services/distribution/src/main/java/app/coronawarn/server/services/distribution/assembly/structure/archive/decorator/signing/DistributionArchiveSigningDecorator.java).
 
 The signing process takes the `export.bin` archive and creates a signature of the data structure which is then written into the `export.sig`.
-Please see`getSignatureFile` method located in [`SigningDecoratorOnDisk`](/services/distribution/src/main/java/app/coronawarn/server/services/distribution/assembly/structure/archive/decorator/signing/SigningDecoratorOnDisk.java).
-Because the `export.bin` archive contains different information (i.e keys, app configuration), there are also different
-implementations for signing each type of data structure:
-
-- [`AppConfigurationSigningDecorator`](/services/distribution/src/main/java/app/coronawarn/server/services/distribution/assembly/appconfig/structure/archive/decorator/signing/AppConfigurationSigningDecorator.java) - the specific code to determine how an application configuration file is supposed to be signed.
-- [`DiagnosisKeySigningDecorator`](/services/distribution/src/main/java/app/coronawarn/server/services/distribution/assembly/diagnosiskeys/structure/archive/decorator/signing/DiagnosisKeySigningDecorator.java) - used to sign Temporary Exposure Key files
+Please see `getSignatureFile` method located in [`SigningDecoratorOnDisk`](/services/distribution/src/main/java/app/coronawarn/server/services/distribution/assembly/structure/archive/decorator/signing/SigningDecoratorOnDisk.java).
 
 The algorithm used for signing the archives as well as other relevant information is defined in the [`application.yaml`](/services/distribution/src/main/resources/application.yaml).
 
