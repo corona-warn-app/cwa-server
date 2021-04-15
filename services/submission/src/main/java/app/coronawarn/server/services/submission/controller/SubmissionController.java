@@ -3,6 +3,7 @@ package app.coronawarn.server.services.submission.controller;
 import app.coronawarn.server.common.persistence.domain.DiagnosisKey;
 import app.coronawarn.server.common.persistence.service.DiagnosisKeyService;
 import app.coronawarn.server.common.persistence.service.TraceTimeIntervalWarningService;
+import app.coronawarn.server.common.persistence.service.utils.checkins.CheckinsDateSpecification;
 import app.coronawarn.server.common.protocols.external.exposurenotification.TemporaryExposureKey;
 import app.coronawarn.server.common.protocols.internal.SubmissionPayload;
 import app.coronawarn.server.common.protocols.internal.pt.CheckIn;
@@ -15,6 +16,7 @@ import app.coronawarn.server.services.submission.validation.ValidSubmissionPaylo
 import app.coronawarn.server.services.submission.verification.TanVerifier;
 import io.micrometer.core.annotation.Timed;
 import java.security.SecureRandom;
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -46,9 +48,9 @@ public class SubmissionController {
    */
   public static final String SUBMISSION_ROUTE = "/diagnosis-keys";
   private static final Logger logger = LoggerFactory.getLogger(SubmissionController.class);
-  
+
   public static final Marker EVENT = MarkerFactory.getMarker("EVENT");
-  
+
   private final SubmissionMonitor submissionMonitor;
   private final DiagnosisKeyService diagnosisKeyService;
   private final TanVerifier tanVerifier;
@@ -134,7 +136,8 @@ public class SubmissionController {
       numberOfFilteredCheckins.set(submissionPayload.getCheckInsList().size() - checkins.size());
       numberOfSavedCheckins.set(traceTimeIntervalWarningSevice.saveCheckinsWithFakeData(checkins,
           submissionServiceConfig.getRandomCheckinsPaddingMultiplier(),
-          submissionServiceConfig.getRandomCheckinsPaddingPepperAsByteArray()));
+          submissionServiceConfig.getRandomCheckinsPaddingPepperAsByteArray(),
+          CheckinsDateSpecification.HOUR_SINCE_EPOCH_DERIVATION.apply(Instant.now().getEpochSecond())));
     } catch (final TooManyCheckInsAtSameDay e) {
       logger.error(EVENT, e.getMessage());
     } catch (final Exception e) {
