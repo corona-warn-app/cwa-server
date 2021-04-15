@@ -14,17 +14,16 @@ import javax.validation.constraints.Size;
  * triggers).
  *
  * <p>The entity is almost equivalent to the {@link DiagnosisKey} in content, but carries some additional specific
- * metadata, and could diverge in the future. All FederationUploadKeys have the submission type
- * {@link SubmissionType#SUBMISSION_TYPE_PCR_TEST}.
+ * metadata, and could diverge in the future.
  */
 public class FederationUploadKey extends DiagnosisKey {
 
   private String batchTag;
 
-  FederationUploadKey(byte[] keyData, int rollingStartIntervalNumber, int rollingPeriod, int transmissionRiskLevel,
-      long submissionTimestamp, boolean consentToFederation, @Size String originCountry, Set<String> visitedCountries,
-      ReportType reportType, int daysSinceOnsetOfSymptoms) {
-    super(keyData, SubmissionType.SUBMISSION_TYPE_PCR_TEST, rollingStartIntervalNumber, rollingPeriod,
+  FederationUploadKey(byte[] keyData, SubmissionType submissionType, int rollingStartIntervalNumber, int rollingPeriod,
+      int transmissionRiskLevel, long submissionTimestamp, boolean consentToFederation, @Size String originCountry,
+      Set<String> visitedCountries, ReportType reportType, int daysSinceOnsetOfSymptoms) {
+    super(keyData, submissionType, rollingStartIntervalNumber, rollingPeriod,
         transmissionRiskLevel, submissionTimestamp, consentToFederation, originCountry, visitedCountries, reportType,
         daysSinceOnsetOfSymptoms);
   }
@@ -40,11 +39,12 @@ public class FederationUploadKey extends DiagnosisKey {
    * @return FederationUploadKey new {@link FederationUploadKey} created from DiagnosisKey
    */
   public static FederationUploadKey from(DiagnosisKey diagnosisKeySource) {
-    return new FederationUploadKey(diagnosisKeySource.getKeyData(), diagnosisKeySource.getRollingStartIntervalNumber(),
-        diagnosisKeySource.getRollingPeriod(), diagnosisKeySource.getTransmissionRiskLevel(),
-        diagnosisKeySource.getSubmissionTimestamp(), diagnosisKeySource.isConsentToFederation(),
-        diagnosisKeySource.getOriginCountry(), diagnosisKeySource.getVisitedCountries(),
-        diagnosisKeySource.getReportType(), diagnosisKeySource.getDaysSinceOnsetOfSymptoms());
+    return new FederationUploadKey(diagnosisKeySource.getKeyData(), diagnosisKeySource.getSubmissionType(),
+        diagnosisKeySource.getRollingStartIntervalNumber(), diagnosisKeySource.getRollingPeriod(),
+        diagnosisKeySource.getTransmissionRiskLevel(), diagnosisKeySource.getSubmissionTimestamp(),
+        diagnosisKeySource.isConsentToFederation(), diagnosisKeySource.getOriginCountry(),
+        diagnosisKeySource.getVisitedCountries(), diagnosisKeySource.getReportType(),
+        diagnosisKeySource.getDaysSinceOnsetOfSymptoms());
   }
 
   @Override
