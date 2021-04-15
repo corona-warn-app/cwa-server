@@ -8,7 +8,6 @@ import app.coronawarn.server.services.distribution.assembly.qrcode.QrCodeTemplat
 import app.coronawarn.server.services.distribution.assembly.structure.Writable;
 import app.coronawarn.server.services.distribution.assembly.structure.WritableOnDisk;
 import app.coronawarn.server.services.distribution.assembly.structure.archive.Archive;
-import app.coronawarn.server.services.distribution.assembly.structure.archive.ArchiveOnDisk;
 import app.coronawarn.server.services.distribution.assembly.structure.directory.Directory;
 import app.coronawarn.server.services.distribution.assembly.structure.directory.DirectoryOnDisk;
 import app.coronawarn.server.services.distribution.assembly.structure.util.ImmutableStack;
@@ -90,11 +89,11 @@ public class QrCodePosterTemplateStructureProviderTest {
   void should_create_signed_archive() {
     Collection<String> archiveContent;
 
-    archiveContent = ((Archive<WritableOnDisk>)qrArchiveAndroid).getWritables().stream()
+    archiveContent = ((Archive<WritableOnDisk>) qrArchiveAndroid).getWritables().stream()
         .map(Writable::getName).collect(Collectors.toList());
     assertThat(archiveContent).containsAll(Set.of("export.bin", "export.sig"));
 
-    archiveContent = ((Archive<WritableOnDisk>)qrArchiveIos).getWritables().stream()
+    archiveContent = ((Archive<WritableOnDisk>) qrArchiveIos).getWritables().stream()
         .map(Writable::getName).collect(Collectors.toList());
     assertThat(archiveContent).containsAll(Set.of("export.bin", "export.sig"));
   }

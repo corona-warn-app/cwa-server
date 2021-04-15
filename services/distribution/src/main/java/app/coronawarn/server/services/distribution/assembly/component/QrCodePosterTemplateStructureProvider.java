@@ -39,7 +39,6 @@ public class QrCodePosterTemplateStructureProvider {
 
   /**
    * Returns the publishable archive associated with the QR code poster template for Android mobile clients.
-   * @return
    */
   public Writable<WritableOnDisk> getQrCodeTemplateForAndroid() {
     return constructArchiveToPublish(distributionServiceConfig.getAndroidQrCodePosterTemplate(),
@@ -49,7 +48,6 @@ public class QrCodePosterTemplateStructureProvider {
 
   /**
    * Returns the publishable archive associated with the QR code poster template for IOS mobile clients.
-   * @return
    */
   public Writable<WritableOnDisk> getQrCodeTemplateForIos() {
     return constructArchiveToPublish(distributionServiceConfig.getIosQrCodePosterTemplate(),
