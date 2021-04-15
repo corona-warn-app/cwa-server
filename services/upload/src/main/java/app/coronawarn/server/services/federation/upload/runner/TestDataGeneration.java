@@ -4,7 +4,6 @@ import app.coronawarn.server.common.persistence.domain.DiagnosisKey;
 import app.coronawarn.server.common.persistence.domain.FederationUploadKey;
 import app.coronawarn.server.common.persistence.service.common.CommonDataGeneration;
 import app.coronawarn.server.common.protocols.external.exposurenotification.ReportType;
-import app.coronawarn.server.common.protocols.internal.SubmissionPayload.SubmissionType;
 import app.coronawarn.server.services.federation.upload.config.UploadServiceConfig;
 import app.coronawarn.server.services.federation.upload.testdata.TestDataUploadRepository;
 import java.time.Instant;
@@ -61,7 +60,9 @@ public class TestDataGeneration extends CommonDataGeneration<FederationUploadKey
         key.getVisitedCountries().toArray(new String[0]),
         key.getReportType().name(),
         key.getDaysSinceOnsetOfSymptoms(),
-        key.isConsentToFederation());
+        key.isConsentToFederation(),
+        key.getBatchTag(),
+        key.getSubmissionType());
   }
 
   private long secondsToHours(long timestampInSeconds) {
