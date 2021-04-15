@@ -64,7 +64,7 @@ public class DiagnosisKey {
   @Range(min = MIN_TRANSMISSION_RISK_LEVEL, max = MAX_TRANSMISSION_RISK_LEVEL,
       message = "Risk level must be between " + MIN_TRANSMISSION_RISK_LEVEL + " and " + MAX_TRANSMISSION_RISK_LEVEL
           + ".")
-  private final int transmissionRiskLevel;
+  private int transmissionRiskLevel;
 
   @ValidSubmissionTimestamp
   private final long submissionTimestamp;
@@ -159,6 +159,10 @@ public class DiagnosisKey {
    */
   public int getTransmissionRiskLevel() {
     return transmissionRiskLevel;
+  }
+
+  public void setTransmissionRiskLevel(int transmissionRiskLevel) {
+    this.transmissionRiskLevel = transmissionRiskLevel;
   }
 
   /**
