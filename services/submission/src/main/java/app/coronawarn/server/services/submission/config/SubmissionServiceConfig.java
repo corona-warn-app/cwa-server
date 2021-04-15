@@ -41,6 +41,9 @@ public class SubmissionServiceConfig {
   @Min(1)
   @Max(25)
   private Integer randomCheckinsPaddingMultiplier;
+  @Min(1)
+  @Max(9999)
+  private Integer maxAllowedCheckinsPerDay;
   @NotEmpty
   private String randomCheckinsPaddingPepper;
   @Min(1)
@@ -112,6 +115,14 @@ public class SubmissionServiceConfig {
 
   public void setRandomCheckinsPaddingPepper(String randomCheckinsPaddingPepper) {
     this.randomCheckinsPaddingPepper = randomCheckinsPaddingPepper;
+  }
+
+  public Integer getMaxAllowedCheckinsPerDay() {
+    return maxAllowedCheckinsPerDay;
+  }
+
+  public void setMaxAllowedCheckinsPerDay(Integer maxAllowedCheckinsPerDay) {
+    this.maxAllowedCheckinsPerDay = maxAllowedCheckinsPerDay;
   }
 
   public Integer getConnectionPoolSize() {
