@@ -22,7 +22,8 @@ public interface ChgsTestDataUploadRepository
       + ":origin_country, :visited_countries, :report_type, :days_since_onset_of_symptoms, :consent_to_federation,"
       + ":batch_tag, :submission_type) "
       + "ON CONFLICT DO NOTHING")
-  void storeUploadKey(@Param("keyData") byte[] keyData,
+  void storeUploadKey(
+      @Param("keyData") byte[] keyData,
       @Param("rollingStartIntervalNumber") int rollingStartIntervalNumber,
       @Param("rollingPeriod") int rollingPeriod,
       @Param("submissionTimestamp") long submissionTimestamp,
