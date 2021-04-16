@@ -1,6 +1,6 @@
 package app.coronawarn.server.services.submission.controller;
 
-import static app.coronawarn.server.common.persistence.utils.CheckinsDateSpecification.TEN_MINUTE_INTERVAL_DERIVATION;
+import static app.coronawarn.server.common.persistence.service.utils.checkins.CheckinsDateSpecification.TEN_MINUTE_INTERVAL_DERIVATION;
 import static app.coronawarn.server.services.submission.controller.SubmissionPayloadMockData.VALID_KEY_DATA_1;
 import static app.coronawarn.server.services.submission.controller.SubmissionPayloadMockData.VALID_KEY_DATA_2;
 import static app.coronawarn.server.services.submission.controller.SubmissionPayloadMockData.buildMultipleKeys;
@@ -59,6 +59,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 import org.apache.commons.lang3.tuple.Pair;
+import org.assertj.core.data.Index;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -156,7 +157,7 @@ class SubmissionControllerTest {
   private void assertTraceWarningsHaveBeenSaved(final int numberOfExpectedWarningsSaved) {
     final List<TraceTimeIntervalWarning> storedTimeIntervalWarnings = StreamSupport
         .stream(traceTimeIntervalWarningRepository.findAll().spliterator(), false).collect(Collectors.toList());
-    assertEquals(storedTimeIntervalWarnings.size(), numberOfExpectedWarningsSaved);
+    assertEquals(numberOfExpectedWarningsSaved, storedTimeIntervalWarnings.size());
   }
 
   private void assertTRLCorrectlyComputedFromDSOS(final SubmissionServiceConfig config,
@@ -435,6 +436,32 @@ class SubmissionControllerTest {
   }
 
   @Test
+  void testCheckinDataHeadersAreCorrectlyFilled() {
+    final Integer daysInThePast = config.getAcceptedEventDateThresholdDays() + 1;
+    final Instant thisInstant = Instant.now();
+    final long eventCheckoutInThePast = LocalDateTime.ofInstant(thisInstant, UTC).minusDays(daysInThePast)
+        .toEpochSecond(UTC);
+    final long eventCheckinInThePast = LocalDateTime.ofInstant(thisInstant, UTC).minusDays(daysInThePast + 1)
+        .toEpochSecond(UTC);
+
+    final long eventCheckinInAllowedPeriod = LocalDateTime.ofInstant(Instant.now(), UTC).minusDays(10).toEpochSecond(UTC);
+
+    final List<CheckIn> checkins = List
+        .of(CheckIn.newBuilder().setStartIntervalNumber(TEN_MINUTE_INTERVAL_DERIVATION.apply(eventCheckinInThePast))
+                .setEndIntervalNumber(TEN_MINUTE_INTERVAL_DERIVATION.apply(eventCheckoutInThePast))
+                .setTransmissionRiskLevel(1).setLocationId(EventCheckinDataValidatorTest.CORRECT_LOCATION_ID).build(),
+            CheckIn.newBuilder().setTransmissionRiskLevel(3)
+                .setStartIntervalNumber(TEN_MINUTE_INTERVAL_DERIVATION.apply(eventCheckinInAllowedPeriod))
+                .setEndIntervalNumber(TEN_MINUTE_INTERVAL_DERIVATION.apply(eventCheckinInAllowedPeriod) + 10)
+                .setLocationId(EventCheckinDataValidatorTest.CORRECT_LOCATION_ID).build());
+
+    final ResponseEntity<Void> actResponse = executor.executePost(buildPayloadWithCheckinData(checkins));
+    assertThat(actResponse.getStatusCode()).isEqualTo(OK);
+    assertThat(actResponse.getHeaders().get("cwa-filtered-checkins")).contains("1", Index.atIndex(0));
+    assertThat(actResponse.getHeaders().get("cwa-saved-checkins")).contains("2", Index.atIndex(0));
+  }
+
+  @Test
   void testCheckinDataIsFilteredForTransmissionRiskLevel() {
     final long eventCheckinInThePast = LocalDateTime.ofInstant(Instant.now(), UTC).minusDays(10).toEpochSecond(UTC);
 
@@ -462,21 +489,9 @@ class SubmissionControllerTest {
   }
 
   @Test
-  void testInvalidCheckinTime() {
-    final List<CheckIn> invalidCheckinData = List.of(
-        CheckIn.newBuilder().setTransmissionRiskLevel(2).setStartIntervalNumber(0).setEndIntervalNumber(1).build(),
-        CheckIn.newBuilder().setTransmissionRiskLevel(2).setStartIntervalNumber(0).setEndIntervalNumber(1).build());
-
-    final ResponseEntity<Void> actResponse = executor.executePost(buildPayloadWithCheckinData(invalidCheckinData));
-    assertThat(actResponse.getStatusCode()).isEqualTo(BAD_REQUEST);
-    assertTraceWarningsHaveBeenSaved(0);
-  }
-
-  @Test
   void testInvalidCheckOutTime() {
     final List<CheckIn> invalidCheckinData = List.of(
-        CheckIn.newBuilder().setTransmissionRiskLevel(2).setStartIntervalNumber(4).setEndIntervalNumber(3).build(),
-        CheckIn.newBuilder().setTransmissionRiskLevel(2).setStartIntervalNumber(2).setEndIntervalNumber(2).build());
+        CheckIn.newBuilder().setTransmissionRiskLevel(2).setStartIntervalNumber(4).setEndIntervalNumber(3).build());
 
     final ResponseEntity<Void> actResponse = executor.executePost(buildPayloadWithCheckinData(invalidCheckinData));
     assertThat(actResponse.getStatusCode()).isEqualTo(BAD_REQUEST);
@@ -527,7 +542,15 @@ class SubmissionControllerTest {
 
     final long eventCheckinInThePast = LocalDateTime.ofInstant(Instant.now(), UTC).minusDays(10).toEpochSecond(UTC);
 
-    final List<CheckIn> invalidCheckinData = List.of(
+    final List<CheckIn> validCheckinData = List.of(
+        CheckIn.newBuilder().setTransmissionRiskLevel(3)
+            .setStartIntervalNumber(TEN_MINUTE_INTERVAL_DERIVATION.apply(eventCheckinInThePast))
+            .setEndIntervalNumber(TEN_MINUTE_INTERVAL_DERIVATION.apply(eventCheckinInThePast))
+            .setLocationId(EventCheckinDataValidatorTest.CORRECT_LOCATION_ID).build(),
+        CheckIn.newBuilder().setTransmissionRiskLevel(3)
+            .setStartIntervalNumber(TEN_MINUTE_INTERVAL_DERIVATION.apply(eventCheckinInThePast))
+            .setEndIntervalNumber(TEN_MINUTE_INTERVAL_DERIVATION.apply(eventCheckinInThePast) + 1)
+            .setLocationId(EventCheckinDataValidatorTest.CORRECT_LOCATION_ID).build(),
         CheckIn.newBuilder().setTransmissionRiskLevel(3)
             .setStartIntervalNumber(TEN_MINUTE_INTERVAL_DERIVATION.apply(eventCheckinInThePast))
             .setEndIntervalNumber(TEN_MINUTE_INTERVAL_DERIVATION.apply(eventCheckinInThePast) + 10)
@@ -537,9 +560,10 @@ class SubmissionControllerTest {
             .setEndIntervalNumber(TEN_MINUTE_INTERVAL_DERIVATION.apply(eventCheckinInThePast) + 22)
             .setLocationId(EventCheckinDataValidatorTest.CORRECT_LOCATION_ID).build());
 
-    final ResponseEntity<Void> actResponse = executor.executePost(buildPayloadWithCheckinData(invalidCheckinData));
+    final ResponseEntity<Void> actResponse = executor.executePost(buildPayloadWithCheckinData(validCheckinData));
     assertThat(actResponse.getStatusCode()).isEqualTo(OK);
-    assertTraceWarningsHaveBeenSaved(2);
+    assertTraceWarningsHaveBeenSaved(validCheckinData.size()
+        + validCheckinData.size() * config.getRandomCheckinsPaddingMultiplier());
   }
 
   @ParameterizedTest

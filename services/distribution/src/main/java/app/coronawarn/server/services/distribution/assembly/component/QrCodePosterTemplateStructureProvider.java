@@ -15,8 +15,8 @@ import java.util.function.Function;
 import org.springframework.stereotype.Component;
 
 /**
- * Provide the export files that carry information about the QR Code Poster Template used by clients
- * for event registration.
+ * Provide the export files that carry information about the QR Code Poster Template used by clients for event
+ * registration.
  */
 @Component
 public class QrCodePosterTemplateStructureProvider {
@@ -34,8 +34,7 @@ public class QrCodePosterTemplateStructureProvider {
   }
 
   /**
-   * Returns the publishable archive associated with the QR code poster template for Android mobile
-   * clients.
+   * Returns the publishable archive associated with the QR code poster template for Android mobile clients.
    */
   public WritableOnDisk getQrCodeTemplateForAndroid() {
     return constructArchiveToPublish(distributionServiceConfig.getAndroidQrCodePosterTemplate(),
@@ -44,8 +43,7 @@ public class QrCodePosterTemplateStructureProvider {
   }
 
   /**
-   * Returns the publishable archive associated with the QR code poster template for IOS mobile
-   * clients.
+   * Returns the publishable archive associated with the QR code poster template for IOS mobile clients.
    */
   public WritableOnDisk getQrCodeTemplateForIos() {
     return constructArchiveToPublish(distributionServiceConfig.getIosQrCodePosterTemplate(),
@@ -65,12 +63,13 @@ public class QrCodePosterTemplateStructureProvider {
   private QRCodePosterTemplateAndroid buildAndroidProtoStructure(
       QrCodePosterTemplate templateConfig) {
     DescriptionTextBox textBoxConfig = templateConfig.getDescriptionTextBox();
-    return QRCodePosterTemplateAndroid.newBuilder().setOffsetX(templateConfig.getOffsetX())
-        .setOffsetY(templateConfig.getOffsetY())
+    return QRCodePosterTemplateAndroid.newBuilder().setOffsetX(templateConfig.getOffsetX().floatValue())
+        .setOffsetY(templateConfig.getOffsetY().floatValue())
         .setTemplate(qrTemplateLoader.loadAndroidTemplateAsBytes())
         .setQrCodeSideLength(templateConfig.getQrCodeSideLength())
         .setDescriptionTextBox(QRCodeTextBoxAndroid.newBuilder()
-            .setOffsetX(textBoxConfig.getOffsetX()).setOffsetY(textBoxConfig.getOffsetY())
+            .setOffsetX(textBoxConfig.getOffsetX().floatValue()).setOffsetY(textBoxConfig.getOffsetY().floatValue())
+            .setWidth(textBoxConfig.getWidth())
             .setFontSize(textBoxConfig.getFontSize()).setHeight(textBoxConfig.getHeight())
             .setFontColor(textBoxConfig.getFontColor()).build())
         .build();
@@ -78,13 +77,20 @@ public class QrCodePosterTemplateStructureProvider {
 
   private QRCodePosterTemplateIOS buildIosProtoStructure(QrCodePosterTemplate templateConfig) {
     DescriptionTextBox textBoxConfig = templateConfig.getDescriptionTextBox();
-    return QRCodePosterTemplateIOS.newBuilder().setOffsetX(templateConfig.getOffsetX())
-        .setOffsetY(templateConfig.getOffsetY())
+    DescriptionTextBox textBoxIosConfig = templateConfig.getAddressTextBox();
+    return QRCodePosterTemplateIOS.newBuilder().setOffsetX(templateConfig.getOffsetX().intValue())
+        .setOffsetY(templateConfig.getOffsetY().intValue())
         .setTemplate(qrTemplateLoader.loadIosTemplateAsBytes())
         .setQrCodeSideLength(templateConfig.getQrCodeSideLength())
-        .setDescriptionTextBox(QRCodeTextBoxIOS.newBuilder().setOffsetX(textBoxConfig.getOffsetX())
-            .setOffsetY(textBoxConfig.getOffsetY()).setFontSize(textBoxConfig.getFontSize())
+        .setDescriptionTextBox(QRCodeTextBoxIOS.newBuilder().setOffsetX(textBoxConfig.getOffsetX().intValue())
+            .setOffsetY(textBoxConfig.getOffsetY().intValue()).setFontSize(textBoxConfig.getFontSize())
+            .setWidth(textBoxConfig.getWidth())
             .setHeight(textBoxConfig.getHeight()).setFontColor(textBoxConfig.getFontColor())
+            .build())
+        .setAddressTextBox(QRCodeTextBoxIOS.newBuilder().setOffsetX(textBoxIosConfig.getOffsetX().intValue())
+            .setOffsetY(textBoxIosConfig.getOffsetY().intValue()).setFontSize(textBoxIosConfig.getFontSize())
+            .setWidth(textBoxIosConfig.getWidth())
+            .setHeight(textBoxIosConfig.getHeight()).setFontColor(textBoxIosConfig.getFontColor())
             .build())
         .build();
   }

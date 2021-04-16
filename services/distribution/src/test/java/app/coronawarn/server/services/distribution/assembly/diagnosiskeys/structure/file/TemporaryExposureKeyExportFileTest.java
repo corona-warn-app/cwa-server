@@ -12,7 +12,7 @@ import app.coronawarn.server.services.distribution.config.DistributionServiceCon
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
-import java.util.Set;
+import java.util.List;
 import org.junit.Rule;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -73,7 +73,7 @@ class TemporaryExposureKeyExportFileTest {
 
   private TemporaryExposureKeyExportFile createTemporaryExposureKeyExportFile() {
     return TemporaryExposureKeyExportFile.fromDiagnosisKeys(
-        Set.of(
+        List.of(
             buildDiagnosisKeyForSubmissionTimestamp(1)
         ),
         "DE", 0, 10, distributionServiceConfig

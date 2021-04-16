@@ -37,14 +37,14 @@ risk-calculation-parameters:
       normalized-time-range:
         min: 0
         min-exclusive: true
-        max: 30
+        max: 10
         max-exclusive: true
       risk-level: 1 # 1 = Low
     -
       normalized-time-range:
-        min: 30
+        min: 10
         min-exclusive: false
-        max: 9999
+        max: 999999
         max-exclusive: false
       risk-level: 2 # 2 = High
   normalized-time-per-day-to-risk-level-mapping:
@@ -52,14 +52,14 @@ risk-calculation-parameters:
       normalized-time-range:
         min: 0
         min-exclusive: true
-        max: 30
+        max: 10
         max-exclusive: true
       risk-level: 1 # 1 = Low
     -
       normalized-time-range:
-        min: 30
+        min: 10
         min-exclusive: false
-        max: 9999
+        max: 999999
         max-exclusive: false
       risk-level: 2 # 2 = High
 
@@ -84,7 +84,7 @@ submission-parameters:
       minutes-range:
         min: 30
         min-exclusive: true
-        max: 9999
+        max: 999999
         max-exclusive: false
       slope: 0
       intercept: 30
@@ -110,8 +110,7 @@ plausible-deniability-parameters:
       c: 0
 
 qr-code-descriptors:
-  -
-    regex-pattern: https://e\.coronawarn\.app/c(\d+)/(.+)
+  - regex-pattern: https://e\.coronawarn\.app/c(\d+)/(.+)
     # validation rule for versionGroupIndex:
     #   * >= 0
     version-group-index: 0
@@ -119,3 +118,12 @@ qr-code-descriptors:
     #   * >= 0
     encoded-payload-group-index: 1
     payload-encoding: 0 # BASE32
+  -
+    regex-pattern: https://e\.coronawarn\.app/?\?v=(\d+)\#(.+)
+    # validation rule for versionGroupIndex:
+    #   * >= 0
+    version-group-index: 0
+    # validation rule for encodedPayloadGroupIndex:
+    #   * >= 0
+    encoded-payload-group-index: 1
+    payload-encoding: 1 # BASE64

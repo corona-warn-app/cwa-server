@@ -1,14 +1,14 @@
-
-
 package app.coronawarn.server.services.submission.controller;
 
 import app.coronawarn.server.common.persistence.domain.DiagnosisKey;
+import app.coronawarn.server.common.persistence.domain.config.TrlDerivations;
 import app.coronawarn.server.common.persistence.service.DiagnosisKeyService;
 import app.coronawarn.server.common.persistence.service.TraceTimeIntervalWarningService;
 import app.coronawarn.server.common.protocols.external.exposurenotification.TemporaryExposureKey;
 import app.coronawarn.server.common.protocols.internal.SubmissionPayload;
 import app.coronawarn.server.common.protocols.internal.pt.CheckIn;
 import app.coronawarn.server.services.submission.checkins.EventCheckinDataFilter;
+import app.coronawarn.server.services.submission.checkins.TooManyCheckInsAtSameDay;
 import app.coronawarn.server.services.submission.config.SubmissionServiceConfig;
 import app.coronawarn.server.services.submission.monitoring.SubmissionMonitor;
 import app.coronawarn.server.services.submission.normalization.SubmissionKeyNormalizer;
@@ -18,11 +18,14 @@ import io.micrometer.core.annotation.Timed;
 import java.security.SecureRandom;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.slf4j.Marker;
+import org.slf4j.MarkerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.StopWatch;
@@ -44,6 +47,9 @@ public class SubmissionController {
    */
   public static final String SUBMISSION_ROUTE = "/diagnosis-keys";
   private static final Logger logger = LoggerFactory.getLogger(SubmissionController.class);
+
+  public static final Marker EVENT = MarkerFactory.getMarker("EVENT");
+
   private final SubmissionMonitor submissionMonitor;
   private final DiagnosisKeyService diagnosisKeyService;
   private final TanVerifier tanVerifier;
@@ -53,6 +59,7 @@ public class SubmissionController {
   private final SubmissionServiceConfig submissionServiceConfig;
   private final EventCheckinDataFilter checkinsDataFilter;
   private final TraceTimeIntervalWarningService traceTimeIntervalWarningSevice;
+  private final TrlDerivations trlDerivations;
 
   SubmissionController(DiagnosisKeyService diagnosisKeyService, TanVerifier tanVerifier,
       FakeDelayManager fakeDelayManager, SubmissionServiceConfig submissionServiceConfig,
@@ -67,6 +74,8 @@ public class SubmissionController {
     this.randomKeyPaddingMultiplier = submissionServiceConfig.getRandomKeyPaddingMultiplier();
     this.checkinsDataFilter = checkinsDataFilter;
     this.traceTimeIntervalWarningSevice = traceTimeIntervalWarningSevice;
+    this.trlDerivations = submissionServiceConfig.getTrlDerivations();
+
   }
 
   private static byte[] generateRandomKeyData() {
@@ -104,8 +113,11 @@ public class SubmissionController {
         deferredResult.setResult(ResponseEntity.status(HttpStatus.FORBIDDEN).build());
       } else {
         extractAndStoreDiagnosisKeys(submissionPayload);
-        extractAndStoreEventCheckins(submissionPayload);
-        deferredResult.setResult(ResponseEntity.ok().build());
+        CheckinsStorageResult checkinsStorageResult = extractAndStoreEventCheckins(submissionPayload);
+        deferredResult.setResult(ResponseEntity.ok()
+            .header("cwa-filtered-checkins", String.valueOf(checkinsStorageResult.getNumberOfFilteredCheckins()))
+            .header("cwa-saved-checkins", String.valueOf(checkinsStorageResult.getNumberOfSavedCheckins()))
+            .build());
       }
     } catch (Exception e) {
       deferredResult.setErrorResult(e);
@@ -116,22 +128,39 @@ public class SubmissionController {
     return deferredResult;
   }
 
-  private void extractAndStoreEventCheckins(SubmissionPayload submissionPayload) {
+  protected CheckinsStorageResult extractAndStoreEventCheckins(SubmissionPayload submissionPayload) {
+    // need a container object that reflects how many checkins were filtered even if storage fails
+    AtomicInteger numberOfFilteredCheckins = new AtomicInteger(0);
+    AtomicInteger numberOfSavedCheckins = new AtomicInteger(0);
     try {
+      checkinsDataFilter.validateCheckInsByDate(submissionPayload.getCheckInsList());
       List<CheckIn> checkins = checkinsDataFilter.filter(submissionPayload.getCheckInsList());
-
-      traceTimeIntervalWarningSevice.saveCheckinData(checkins);
+      numberOfFilteredCheckins.set(submissionPayload.getCheckInsList().size() - checkins.size());
+      numberOfSavedCheckins.set(traceTimeIntervalWarningSevice.saveCheckinsWithFakeData(checkins,
+          submissionServiceConfig.getRandomCheckinsPaddingMultiplier(),
+          submissionServiceConfig.getRandomCheckinsPaddingPepperAsByteArray()));
+    } catch (final TooManyCheckInsAtSameDay e) {
+      logger.error(EVENT, e.getMessage());
     } catch (final Exception e) {
       // Any check-in data processing related error must not interrupt the submission flow or interfere
       // with storing of the diagnosis keys
-      logger.error("An error has occured while trying to store the event checkin data", e);
+      logger.error(EVENT, "An error has occured while trying to store the event checkin data", e);
     }
+    return new CheckinsStorageResult(numberOfFilteredCheckins.get(), numberOfSavedCheckins.get());
   }
 
   private void extractAndStoreDiagnosisKeys(SubmissionPayload submissionPayload) {
     List<DiagnosisKey> diagnosisKeys = extractValidDiagnosisKeysFromPayload(
         enhanceWithDefaultValuesIfMissing(submissionPayload));
+    for (DiagnosisKey diagnosisKey : diagnosisKeys) {
+      mapTrasmissionRiskValue(diagnosisKey);
+    }
     diagnosisKeyService.saveDiagnosisKeys(padDiagnosisKeys(diagnosisKeys));
+  }
+
+  private void mapTrasmissionRiskValue(DiagnosisKey diagnosisKey) {
+    diagnosisKey.setTransmissionRiskLevel(
+        trlDerivations.mapFromTrlSubmittedToTrlToStore(diagnosisKey.getTransmissionRiskLevel()));
   }
 
   private List<DiagnosisKey> extractValidDiagnosisKeysFromPayload(SubmissionPayload submissionPayload) {

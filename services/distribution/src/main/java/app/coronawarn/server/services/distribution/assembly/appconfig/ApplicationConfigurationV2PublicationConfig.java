@@ -5,6 +5,7 @@ import app.coronawarn.server.common.protocols.internal.v2.AppFeature;
 import app.coronawarn.server.common.protocols.internal.v2.AppFeatures;
 import app.coronawarn.server.common.protocols.internal.v2.ApplicationConfigurationAndroid;
 import app.coronawarn.server.common.protocols.internal.v2.ApplicationConfigurationIOS;
+import app.coronawarn.server.common.protocols.internal.v2.CoronaTestParameters;
 import app.coronawarn.server.common.protocols.internal.v2.DailySummariesConfig;
 import app.coronawarn.server.common.protocols.internal.v2.DayPackageMetadata;
 import app.coronawarn.server.common.protocols.internal.v2.DiagnosisKeysDataMapping;
@@ -27,7 +28,6 @@ import app.coronawarn.server.common.protocols.internal.v2.PPDDPrivacyPreservingA
 import app.coronawarn.server.common.protocols.internal.v2.PPDDPrivacyPreservingAnalyticsParametersIOS;
 import app.coronawarn.server.common.protocols.internal.v2.PresenceTracingParameters;
 import app.coronawarn.server.common.protocols.internal.v2.PresenceTracingParameters.Builder;
-import app.coronawarn.server.common.protocols.internal.v2.PresenceTracingPlausibleDeniabilityParameters;
 import app.coronawarn.server.common.protocols.internal.v2.RiskCalculationParameters;
 import app.coronawarn.server.common.protocols.internal.v2.SemanticVersion;
 import app.coronawarn.server.services.distribution.assembly.appconfig.parsing.v2.DeserializedDailySummariesConfig;
@@ -68,6 +68,7 @@ public class ApplicationConfigurationV2PublicationConfig {
   private static final String V1_RISK_PARAMETERS_FILE = "main-config/v2/risk-calculation-parameters.yaml";
   private static final String V2_RISK_PARAMETERS_FILE = "main-config/v2/risk-calculation-parameters-1.15.yaml";
   private static final String PRESENCE_TRACING_PARAMETERS_FILE = "main-config/v2/presence-tracing-parameters.yaml";
+  private static final String CORONA_TEST_PARAMETERS_FILE = "main-config/v2/corona-test-parameters.yaml";
   private static final String PLAUSIBLE_DENIABILITY_PARAMETERS = "main-config/v2/plausible-deniability-parameters.yaml";
   private static final String REVOKED_TRACE_LOCATION = "main-config/v2/revoked-trace-location-versions.yaml";
   private static final String ANDROID_V2_DATA_MAPPING_FILE = "main-config/v2/diagnosis-keys-data-mapping.yaml";
@@ -94,6 +95,10 @@ public class ApplicationConfigurationV2PublicationConfig {
     riskCalculationParameterBuilder.addAllTransmissionRiskValueMapping(
         trlValueMappingProvider.getTransmissionRiskValueMappingAsProto());
 
+    CoronaTestParameters.Builder coronaTestParameters =
+        YamlLoader.loadYamlIntoProtobufBuilder(CORONA_TEST_PARAMETERS_FILE,
+            CoronaTestParameters.Builder.class);
+
     DeserializedDiagnosisKeysDataMapping dataMapping = YamlLoader.loadYamlIntoClass(
         ANDROID_V2_DATA_MAPPING_FILE, DeserializedDiagnosisKeysDataMapping.class);
 
@@ -115,6 +120,7 @@ public class ApplicationConfigurationV2PublicationConfig {
         .setEventDrivenUserSurveyParameters(buildAndroidEdusParameters(distributionServiceConfig))
         .setPrivacyPreservingAnalyticsParameters(buildAndroidPpaParameters(distributionServiceConfig))
         .setPresenceTracingParameters(buildPresenceTracingParameters(distributionServiceConfig))
+        .setCoronaTestParameters(coronaTestParameters)
         .build();
   }
 
@@ -128,11 +134,19 @@ public class ApplicationConfigurationV2PublicationConfig {
   @Bean
   @Qualifier("applicationConfigurationV2Android")
   public ApplicationConfigurationAndroid createAndroidV2Configuration(
-      DistributionServiceConfig distributionServiceConfig) throws UnableToLoadFileException {
+      DistributionServiceConfig distributionServiceConfig,
+      PreDistributionTrlValueMappingProvider trlValueMappingProvider) throws UnableToLoadFileException {
 
     RiskCalculationParameters.Builder riskCalculationParameterBuilder =
         YamlLoader.loadYamlIntoProtobufBuilder(V2_RISK_PARAMETERS_FILE,
             RiskCalculationParameters.Builder.class);
+
+    riskCalculationParameterBuilder.addAllTransmissionRiskValueMapping(
+        trlValueMappingProvider.getTransmissionRiskValueMappingAsProto());
+
+    CoronaTestParameters.Builder coronaTestParameters =
+        YamlLoader.loadYamlIntoProtobufBuilder(CORONA_TEST_PARAMETERS_FILE,
+            CoronaTestParameters.Builder.class);
 
     DeserializedDiagnosisKeysDataMapping dataMapping = YamlLoader.loadYamlIntoClass(
         ANDROID_V2_DATA_MAPPING_FILE, DeserializedDiagnosisKeysDataMapping.class);
@@ -156,6 +170,7 @@ public class ApplicationConfigurationV2PublicationConfig {
         .setPrivacyPreservingAnalyticsParameters(buildAndroidPpaParameters(distributionServiceConfig))
         .setErrorLogSharingParameters(buildErrorLogSharingParametersAndroid(distributionServiceConfig))
         .setPresenceTracingParameters(buildPresenceTracingParameters(distributionServiceConfig))
+        .setCoronaTestParameters(coronaTestParameters)
         .build();
   }
 
@@ -175,12 +190,14 @@ public class ApplicationConfigurationV2PublicationConfig {
         .setQrCodeErrorCorrectionLevelValue(
             distributionServiceConfig.getPresenceTracingParameters().getQrCodeErrorCorrectionLevel())
         .addAllRevokedTraceLocationVersions(deserializedRevokedTraceLocationVersions.getRevokedTraceLocationVersions())
-        .setPlausibleDeniabilityParameters(PresenceTracingPlausibleDeniabilityParameters.newBuilder()
+        .setPlausibleDeniabilityParameters(presenceTracingParameters.getPlausibleDeniabilityParameters().toBuilder()
             .addAllCheckInSizesInBytes(deserializedPlausibleDeniabilityParameters.getCheckInSizesInBytes())
             .setProbabilityToFakeCheckInsIfNoCheckIns(
-                distributionServiceConfig.getPresenceTracingParameters().getProbabilityToFakeCheckInsIfNoCheckIns())
+                distributionServiceConfig.getPresenceTracingParameters().getPlausibleDeniabilityParameters()
+                    .getProbabilityToFakeCheckInsIfNoCheckIns())
             .setProbabilityToFakeCheckInsIfSomeCheckIns(
-                distributionServiceConfig.getPresenceTracingParameters().getProbabilityToFakeCheckInsIfSomeCheckIns())
+                distributionServiceConfig.getPresenceTracingParameters().getPlausibleDeniabilityParameters()
+                    .getProbabilityToFakeCheckInsIfSomeCheckIns())
             .build())
         .build();
     return presenceTracingParameters;
@@ -306,12 +323,20 @@ public class ApplicationConfigurationV2PublicationConfig {
    */
   @Bean
   @Qualifier("applicationConfigurationV1Ios")
-  public ApplicationConfigurationIOS createIosV1Configuration(DistributionServiceConfig distributionServiceConfig)
+  public ApplicationConfigurationIOS createIosV1Configuration(DistributionServiceConfig distributionServiceConfig,
+      PreDistributionTrlValueMappingProvider trlValueMappingProvider)
       throws UnableToLoadFileException {
 
     RiskCalculationParameters.Builder riskCalculationParameterBuilder =
         YamlLoader.loadYamlIntoProtobufBuilder(V1_RISK_PARAMETERS_FILE,
             RiskCalculationParameters.Builder.class);
+
+    riskCalculationParameterBuilder.addAllTransmissionRiskValueMapping(
+        trlValueMappingProvider.getTransmissionRiskValueMappingAsProto());
+
+    CoronaTestParameters.Builder coronaTestParameters =
+        YamlLoader.loadYamlIntoProtobufBuilder(CORONA_TEST_PARAMETERS_FILE,
+            CoronaTestParameters.Builder.class);
 
     DeserializedExposureConfiguration exposureConfiguration = YamlLoader.loadYamlIntoClass(
         IOS_V2_EXPOSURE_CONFIGURATION_FILE, DeserializedExposureConfiguration.class);
@@ -329,6 +354,7 @@ public class ApplicationConfigurationV2PublicationConfig {
         .setEventDrivenUserSurveyParameters(buildIosEdusParameters(distributionServiceConfig))
         .setPrivacyPreservingAnalyticsParameters(buildIosPpaParameters(distributionServiceConfig))
         .setPresenceTracingParameters(buildPresenceTracingParameters(distributionServiceConfig))
+        .setCoronaTestParameters(coronaTestParameters)
         .build();
   }
 
@@ -341,12 +367,20 @@ public class ApplicationConfigurationV2PublicationConfig {
    */
   @Bean
   @Qualifier("applicationConfigurationV2Ios")
-  public ApplicationConfigurationIOS createIosV2Configuration(DistributionServiceConfig distributionServiceConfig)
+  public ApplicationConfigurationIOS createIosV2Configuration(DistributionServiceConfig distributionServiceConfig,
+      PreDistributionTrlValueMappingProvider trlValueMappingProvider)
       throws UnableToLoadFileException {
 
     RiskCalculationParameters.Builder riskCalculationParameterBuilder =
         YamlLoader.loadYamlIntoProtobufBuilder(V2_RISK_PARAMETERS_FILE,
             RiskCalculationParameters.Builder.class);
+
+    riskCalculationParameterBuilder.addAllTransmissionRiskValueMapping(
+        trlValueMappingProvider.getTransmissionRiskValueMappingAsProto());
+
+    CoronaTestParameters.Builder coronaTestParameters =
+        YamlLoader.loadYamlIntoProtobufBuilder(CORONA_TEST_PARAMETERS_FILE,
+            CoronaTestParameters.Builder.class);
 
     DeserializedExposureConfiguration exposureConfiguration = YamlLoader.loadYamlIntoClass(
         IOS_V2_EXPOSURE_CONFIGURATION_FILE, DeserializedExposureConfiguration.class);
@@ -365,6 +399,7 @@ public class ApplicationConfigurationV2PublicationConfig {
         .setPrivacyPreservingAnalyticsParameters(buildIosPpaParameters(distributionServiceConfig))
         .setErrorLogSharingParameters(buildErrorLogSharingParametersIos())
         .setPresenceTracingParameters(buildPresenceTracingParameters(distributionServiceConfig))
+        .setCoronaTestParameters(coronaTestParameters)
         .build();
   }
 

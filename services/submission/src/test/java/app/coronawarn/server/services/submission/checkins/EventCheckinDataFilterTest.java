@@ -1,22 +1,24 @@
 package app.coronawarn.server.services.submission.checkins;
 
-import static app.coronawarn.server.common.persistence.utils.CheckinsDateSpecification.TEN_MINUTE_INTERVAL_DERIVATION;
+import static app.coronawarn.server.common.persistence.service.utils.checkins.CheckinsDateSpecification.TEN_MINUTE_INTERVAL_DERIVATION;
 import static java.time.ZoneOffset.UTC;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
-import java.time.Instant;
-import java.time.LocalDateTime;
-import java.util.List;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.ValueSource;
 import app.coronawarn.server.common.persistence.domain.config.PreDistributionTrlValueMappingProvider;
 import app.coronawarn.server.common.persistence.domain.config.TransmissionRiskValueMapping;
 import app.coronawarn.server.common.protocols.internal.pt.CheckIn;
 import app.coronawarn.server.services.submission.config.SubmissionServiceConfig;
 import app.coronawarn.server.services.submission.config.SubmissionServiceConfig.Payload;
 import app.coronawarn.server.services.submission.config.SubmissionServiceConfig.Payload.Checkins;
+import java.time.Instant;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 
 class EventCheckinDataFilterTest {
 
@@ -32,6 +34,7 @@ class EventCheckinDataFilterTest {
     payloadConfig.setCheckins(new Checkins());
     mockConfig.setPayload(payloadConfig);
     mockConfig.setAcceptedEventDateThresholdDays(ACCEPTABLE_EVENT_DATE_THRESHOLD_IN_DAYS);
+    mockConfig.setMaxAllowedCheckinsPerDay(5);
 
     underTest =
         new EventCheckinDataFilter(mockConfig, createMockTranmissionRiskLevelMappingProvider());
@@ -155,6 +158,25 @@ class EventCheckinDataFilterTest {
     assertEquals(filteredCheckin.getEndIntervalNumber(),
         TEN_MINUTE_INTERVAL_DERIVATION.apply(eventCheckinInTheNearPast + 10));
     assertEquals(filteredCheckin.getTransmissionRiskLevel(), 3);
+  }
+
+  @Test
+  void should_abort_the_checkins_submission_when_too_many_checkins() {
+    Instant thisTimeInstant = Instant.now();
+    long eventCheckoutInThePast =
+        LocalDateTime.ofInstant(thisTimeInstant, UTC).minusDays(10).toEpochSecond(UTC);
+
+    List<CheckIn> checkins = new ArrayList<>();
+    for (int i = 0; i <= mockConfig.getMaxAllowedCheckinsPerDay(); i++) {
+      checkins.add(CheckIn.newBuilder()
+          .setStartIntervalNumber(
+              TEN_MINUTE_INTERVAL_DERIVATION.apply(eventCheckoutInThePast - 10))
+          .setEndIntervalNumber(TEN_MINUTE_INTERVAL_DERIVATION.apply(eventCheckoutInThePast))
+          .setTransmissionRiskLevel(1).build());
+    }
+
+    assertThrows(TooManyCheckInsAtSameDay.class, () -> underTest.validateCheckInsByDate(checkins));
+
   }
 
   private PreDistributionTrlValueMappingProvider createMockTranmissionRiskLevelMappingProvider() {

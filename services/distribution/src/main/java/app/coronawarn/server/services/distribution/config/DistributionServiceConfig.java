@@ -673,21 +673,23 @@ public class DistributionServiceConfig {
 
     private byte[] template;
     @NotNull
-    private Integer offsetX;
+    private Double offsetX;
     @NotNull
-    private Integer offsetY;
+    private Double offsetY;
     @NotNull
     private Integer qrCodeSideLength;
     @NotEmpty
     private String publishedArchiveName;
     private DescriptionTextBox descriptionTextBox;
+    private DescriptionTextBox addressTextBox;
+
 
     public static class DescriptionTextBox {
 
       @NotNull
-      private Integer offsetX;
+      private Double offsetX;
       @NotNull
-      private Integer offsetY;
+      private Double offsetY;
       @NotNull
       private Integer width;
       @NotNull
@@ -697,19 +699,19 @@ public class DistributionServiceConfig {
       @NotNull
       private String fontColor;
 
-      public Integer getOffsetX() {
+      public Double getOffsetX() {
         return offsetX;
       }
 
-      public void setOffsetX(Integer offsetX) {
+      public void setOffsetX(Double offsetX) {
         this.offsetX = offsetX;
       }
 
-      public Integer getOffsetY() {
+      public Double getOffsetY() {
         return offsetY;
       }
 
-      public void setOffsetY(Integer offsetY) {
+      public void setOffsetY(Double offsetY) {
         this.offsetY = offsetY;
       }
 
@@ -762,19 +764,19 @@ public class DistributionServiceConfig {
       this.template = template;
     }
 
-    public Integer getOffsetX() {
+    public Double getOffsetX() {
       return offsetX;
     }
 
-    public void setOffsetX(Integer offsetX) {
+    public void setOffsetX(Double offsetX) {
       this.offsetX = offsetX;
     }
 
-    public Integer getOffsetY() {
+    public Double getOffsetY() {
       return offsetY;
     }
 
-    public void setOffsetY(Integer offsetY) {
+    public void setOffsetY(Double offsetY) {
       this.offsetY = offsetY;
     }
 
@@ -793,13 +795,50 @@ public class DistributionServiceConfig {
     public void setDescriptionTextBox(DescriptionTextBox descriptionTextBox) {
       this.descriptionTextBox = descriptionTextBox;
     }
+
+    public DescriptionTextBox getAddressTextBox() {
+      return addressTextBox;
+    }
+
+    public void setAddressTextBox(DescriptionTextBox addressTextBox) {
+      this.addressTextBox = addressTextBox;
+    }
   }
 
   public static class PresenceTracingParameters {
 
-    int qrCodeErrorCorrectionLevel;
-    double probabilityToFakeCheckInsIfNoCheckIns;
-    double probabilityToFakeCheckInsIfSomeCheckIns;
+    private int qrCodeErrorCorrectionLevel;
+    private PlausibleDeniabilityParameters plausibleDeniabilityParameters;
+
+    public static class PlausibleDeniabilityParameters {
+
+      private double probabilityToFakeCheckInsIfNoCheckIns;
+      private double probabilityToFakeCheckInsIfSomeCheckIns;
+
+      public double getProbabilityToFakeCheckInsIfNoCheckIns() {
+        return probabilityToFakeCheckInsIfNoCheckIns;
+      }
+
+      public void setProbabilityToFakeCheckInsIfNoCheckIns(double probabilityToFakeCheckInsIfNoCheckIns) {
+        this.probabilityToFakeCheckInsIfNoCheckIns = probabilityToFakeCheckInsIfNoCheckIns;
+      }
+
+      public double getProbabilityToFakeCheckInsIfSomeCheckIns() {
+        return probabilityToFakeCheckInsIfSomeCheckIns;
+      }
+
+      public void setProbabilityToFakeCheckInsIfSomeCheckIns(double probabilityToFakeCheckInsIfSomeCheckIns) {
+        this.probabilityToFakeCheckInsIfSomeCheckIns = probabilityToFakeCheckInsIfSomeCheckIns;
+      }
+    }
+
+    public PlausibleDeniabilityParameters getPlausibleDeniabilityParameters() {
+      return plausibleDeniabilityParameters;
+    }
+
+    public void setPlausibleDeniabilityParameters(PlausibleDeniabilityParameters plausibleDeniabilityParameters) {
+      this.plausibleDeniabilityParameters = plausibleDeniabilityParameters;
+    }
 
     public int getQrCodeErrorCorrectionLevel() {
       return qrCodeErrorCorrectionLevel;
@@ -807,22 +846,6 @@ public class DistributionServiceConfig {
 
     public void setQrCodeErrorCorrectionLevel(int qrCodeErrorCorrectionLevel) {
       this.qrCodeErrorCorrectionLevel = qrCodeErrorCorrectionLevel;
-    }
-
-    public double getProbabilityToFakeCheckInsIfNoCheckIns() {
-      return probabilityToFakeCheckInsIfNoCheckIns;
-    }
-
-    public void setProbabilityToFakeCheckInsIfNoCheckIns(double probabilityToFakeCheckInsIfNoCheckIns) {
-      this.probabilityToFakeCheckInsIfNoCheckIns = probabilityToFakeCheckInsIfNoCheckIns;
-    }
-
-    public double getProbabilityToFakeCheckInsIfSomeCheckIns() {
-      return probabilityToFakeCheckInsIfSomeCheckIns;
-    }
-
-    public void setProbabilityToFakeCheckInsIfSomeCheckIns(double probabilityToFakeCheckInsIfSomeCheckIns) {
-      this.probabilityToFakeCheckInsIfSomeCheckIns = probabilityToFakeCheckInsIfSomeCheckIns;
     }
   }
 

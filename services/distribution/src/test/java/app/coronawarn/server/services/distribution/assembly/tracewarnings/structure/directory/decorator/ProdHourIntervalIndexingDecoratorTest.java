@@ -1,3 +1,5 @@
+
+
 package app.coronawarn.server.services.distribution.assembly.tracewarnings.structure.directory.decorator;
 
 import static app.coronawarn.server.services.distribution.common.Helpers.buildTraceTimeIntervalWarning;
@@ -5,11 +7,12 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import app.coronawarn.server.common.persistence.domain.TraceTimeIntervalWarning;
-import app.coronawarn.server.common.persistence.utils.CheckinsDateSpecification;
+import app.coronawarn.server.common.persistence.service.utils.checkins.CheckinsDateSpecification;
 import app.coronawarn.server.services.distribution.assembly.component.CryptoProvider;
 import app.coronawarn.server.services.distribution.assembly.structure.file.FileOnDisk;
 import app.coronawarn.server.services.distribution.assembly.structure.util.ImmutableStack;
 import app.coronawarn.server.services.distribution.assembly.structure.util.TimeUtils;
+import app.coronawarn.server.services.distribution.assembly.tracewarnings.ProdTraceTimeIntervalWarningsPackageBundler;
 import app.coronawarn.server.services.distribution.assembly.tracewarnings.TraceTimeIntervalWarningsPackageBundler;
 import app.coronawarn.server.services.distribution.assembly.tracewarnings.structure.directory.TraceTimeIntervalWarningsHourDirectory;
 import app.coronawarn.server.services.distribution.config.DistributionServiceConfig;
@@ -34,6 +37,8 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 @EnableConfigurationProperties(value = DistributionServiceConfig.class)
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration(classes = {CryptoProvider.class, DistributionServiceConfig.class},
+    initializers = ConfigFileApplicationContextInitializer.class)
+class ProdHourIntervalIndexingDecoratorTest {
     initializers = ConfigDataApplicationContextInitializer.class)
 class HourIntervalIndexingDecoratorTest {
 
@@ -48,7 +53,8 @@ class HourIntervalIndexingDecoratorTest {
 
   @BeforeEach
   void setup() {
-    traceTimeIntervalWarningsPackageBundler = new TraceTimeIntervalWarningsPackageBundler(distributionServiceConfig);
+    traceTimeIntervalWarningsPackageBundler = new ProdTraceTimeIntervalWarningsPackageBundler(
+        distributionServiceConfig);
   }
 
   @AfterEach
@@ -119,7 +125,7 @@ class HourIntervalIndexingDecoratorTest {
     final JSONObject jsonObject = objectMapper.readValue(indexFile.getBytes(), JSONObject.class);
     Assertions.assertThat(jsonObject.size()).isEqualTo(2);
     Assertions.assertThat(jsonObject.get("oldest")).isEqualTo(additionalSubmissionHour);
-    Assertions.assertThat(jsonObject.get("latest")).isEqualTo(submissionHour);
+    Assertions.assertThat(jsonObject.get("latest")).isEqualTo(anotherSubmissionHour);
   }
 
   private HourIntervalIndexingDecorator makeDecoratedHourDirectory(
