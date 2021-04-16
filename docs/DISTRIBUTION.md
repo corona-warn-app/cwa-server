@@ -42,7 +42,7 @@ The index will be regenerated whenever new export files are distributed to the o
 
 ## Data Retention
 
-The retention period is set to 14 days. Therefore, all keys whose _submission date_ is older than 14 days are removed from the system. This includes the database persistence layer, as well as files stored on the object store.
+The retention period is set to 14 days. Therefore, all diagnosis keys and trace time warnings whose _submission date_ is older than 14 days are removed from the system. This includes the database persistence layer, as well as files stored on the object store.
 The retention mechanism is enforced automatically by the Distribution Service upon each distribution run (multiple runs per day). The retention trigger by distribution will also be reflected within the keys pending upload to the
 federation gateway. This is especially important in scenarios where the upload service may not of run for some time or there are some failures to ensure invalid keys are not accidentally propagated.
 No manual trigger or action is required.
@@ -50,12 +50,15 @@ No manual trigger or action is required.
 Data is deleted by normal means. For PostgreSQL, the identified rows will be deleted by normal __DELETE__ calls to the database, and
 cleaned up when auto vacuuming is executed.
 
-When data deletion is executed on the object store, the object store is instructed to delete all
-files with the following prefix:
+When data deletion is executed on the object store, the object store is instructed to delete all files with the following prefixes:
 
-`version/v1/diagnosis-keys/country/<country_code>/<date>`
+`version/v1/diagnosis-keys/country/<country_code>/date/<date>`
 
-In which `<date>` stands for the ISO formatted date (e.g. `2012-06-05`), and is before the retention cutoff date (today - 14 days).
+- In which `<date>` stands for the ISO formatted date (e.g. `2012-06-05`), and is before the retention cutoff date (today - 14 days).
+
+`version/v1/twp/country/<country_code>/hour/<hour>`
+
+- In which `<hour>` stands for the hour since Unix epoch, and is before the retention cutoff date (today - 14 days).
 
 ## Spring Profiles
 
@@ -165,12 +168,15 @@ The same 14 days retention period (like the database) is also enforced on the S3
 run will execute the retention policy.
 
 When data deletion is executed on the object store, the object store is instructed to delete all files with the following
-prefix:
+prefixes:
 
-`version/v1/diagnosis-keys/country/DE/<date>`
+`version/v1/diagnosis-keys/country/<country_code>/date/<date>`
 
-In which `<date>` stands for the ISO formatted date (e.g. `2012-06-05`), and is before the retention cutoff date
-(today - 14 days).
+- In which `<date>` stands for the ISO formatted date (e.g. `2012-06-05`), and is before the retention cutoff date (today - 14 days).
+
+`version/v1/twp/country/<country_code>/hour/<hour>`
+
+- In which `<hour>` stands for the hour since Unix epoch, and is before the retention cutoff date (today - 14 days).
 
 ## Assembly Process
 
