@@ -110,14 +110,6 @@ plausible-deniability-parameters:
       c: 0
 
 qr-code-descriptors:
-  - regex-pattern: https://e\.coronawarn\.app/c(\d+)/(.+)
-    # validation rule for versionGroupIndex:
-    #   * >= 0
-    version-group-index: 0
-    # validation rule for encodedPayloadGroupIndex:
-    #   * >= 0
-    encoded-payload-group-index: 1
-    payload-encoding: 0 # BASE32
   -
     regex-pattern: https://e\.coronawarn\.app/?\?v=(\d+)\#(.+)
     # validation rule for versionGroupIndex:
