@@ -13,11 +13,18 @@
         "summary": "API to receive the BatchTag for the latest batch from Federation Gateway.",
         "description": "API to allow the Federation Gateway to send the tags/date combinations of batches that are ready to be downloaded. A response with an empty body will be returned.",
         "tags": [
-          "callback-controller",
-          "federation batch"
+          "Federation Gateway Callback"
         ],
         "operationId": "handleCallback",
         "parameters": [
+          {
+            "name": "version",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/Version"
+            }
+          },
           {
             "name": "batchTag",
             "in": "query",
@@ -47,15 +54,22 @@
     }
   },
   "components": {
-    "BatchTag": {
-      "type": "string",
-      "description": "Identifier for a Diagnosis Key Batch",
-      "example": "507f191e810c19729de860ea"
-    },
-    "Date": {
-      "type": "string",
-      "description": "An ISO-8601 date descriptor. Server time zone is UTC.",
-      "example": "2020-05-01"
+    "schemas": {
+      "Version": {
+        "type": "string",
+        "description": "A string representing the API version of form 'v[\\d+]'",
+        "example": "v1"
+      },
+      "BatchTag": {
+        "type": "string",
+        "description": "Identifier for a Diagnosis Key Batch",
+        "example": "507f191e810c19729de860ea"
+      },
+      "Date": {
+        "type": "string",
+        "description": "An ISO-8601 date descriptor. Server time zone is UTC.",
+        "example": "2020-05-01"
+      }
     }
   }
 }
