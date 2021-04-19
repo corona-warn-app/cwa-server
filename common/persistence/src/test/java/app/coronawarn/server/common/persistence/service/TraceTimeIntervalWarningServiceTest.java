@@ -89,7 +89,7 @@ class TraceTimeIntervalWarningServiceTest {
             CheckinsDateSpecification.HOUR_SINCE_EPOCH_DERIVATION
                 .apply(Instant.now().getEpochSecond()) - 10);
 
-    List<CheckIn> checkins = new java.util.ArrayList<>(List.of(
+    List<CheckIn> checkins = new ArrayList<>(List.of(
         CheckIn.newBuilder().setStartIntervalNumber(56).setEndIntervalNumber(66)
             .setTransmissionRiskLevel(3)
             .setLocationId(ByteString.copyFromUtf8("sorted-uuid2"))
