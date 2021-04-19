@@ -1,6 +1,7 @@
 package app.coronawarn.server.services.submission.checkins;
 
 import static app.coronawarn.server.common.persistence.service.utils.checkins.CheckinsDateSpecification.TEN_MINUTE_INTERVAL_DERIVATION;
+import static app.coronawarn.server.services.submission.controller.SubmissionController.EVENT;
 import static java.time.ZoneOffset.UTC;
 
 import app.coronawarn.server.common.persistence.domain.config.PreDistributionTrlValueMappingProvider;
@@ -56,10 +57,10 @@ public class EventCheckinDataFilter {
         .peek(k -> checkinsPickedAfterFutureFiltering.incrementAndGet())
         .collect(Collectors.toList());
 
-    logger.info("Filtering of {} checkins started", checkins.size());
-    logger.info("{} checkins remaining after filtering out zero TRLs", checkinsPickedAfterOldFiltering.get());
-    logger.info("{} checkins remaining after filtering out old checkins", checkinsPickedAfterFutureFiltering.get());
-    logger.info("{} checkins remaining after filtering out future checkins", checkinsPickedAfterFutureFiltering.get());
+    logger.info(EVENT, "Filtering of {} checkins started", checkins.size());
+    logger.info(EVENT, "{} checkins remaining after filtering out zero TRLs", checkinsPickedAfterOldFiltering.get());
+    logger.info(EVENT, "{} checkins remaining after filtering out old checkins", checkinsPickedAfterFutureFiltering.get());
+    logger.info(EVENT, "{} checkins remaining after filtering out future checkins", checkinsPickedAfterFutureFiltering.get());
 
     return filtered;
   }
