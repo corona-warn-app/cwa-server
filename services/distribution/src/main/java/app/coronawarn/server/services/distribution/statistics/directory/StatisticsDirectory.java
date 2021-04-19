@@ -5,9 +5,9 @@ import app.coronawarn.server.services.distribution.assembly.component.CryptoProv
 import app.coronawarn.server.services.distribution.assembly.structure.Writable;
 import app.coronawarn.server.services.distribution.assembly.structure.WritableOnDisk;
 import app.coronawarn.server.services.distribution.assembly.structure.archive.ArchiveOnDisk;
+import app.coronawarn.server.services.distribution.assembly.structure.archive.decorator.signing.DistributionArchiveSigningDecorator;
 import app.coronawarn.server.services.distribution.assembly.structure.file.FileOnDisk;
 import app.coronawarn.server.services.distribution.config.DistributionServiceConfig;
-import app.coronawarn.server.services.distribution.statistics.archive.decorator.signing.StatisticsSigningDecorator;
 
 public class StatisticsDirectory {
 
@@ -38,7 +38,7 @@ public class StatisticsDirectory {
     ArchiveOnDisk statisticsFile = new ArchiveOnDisk(distributionServiceConfig.getApi().getStatisticsFileName());
     statisticsFile
         .addWritable(new FileOnDisk("export.bin", statistics.toByteArray()));
-    return new StatisticsSigningDecorator(statisticsFile, cryptoProvider,
+    return new DistributionArchiveSigningDecorator(statisticsFile, cryptoProvider,
         distributionServiceConfig);
   }
 }

@@ -1,27 +1,36 @@
 package app.coronawarn.server.common.persistence.service;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatCode;
+import static org.assertj.core.api.Assertions.catchThrowable;
+import static org.junit.Assert.assertArrayEquals;
+import static org.junit.Assert.assertEquals;
+
 import app.coronawarn.server.common.persistence.domain.TraceTimeIntervalWarning;
 import app.coronawarn.server.common.persistence.repository.TraceTimeIntervalWarningRepository;
 import app.coronawarn.server.common.persistence.service.utils.checkins.CheckinsDateSpecification;
 import app.coronawarn.server.common.protocols.internal.pt.CheckIn;
 import com.google.protobuf.ByteString;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.data.jdbc.DataJdbcTest;
-import org.testcontainers.shaded.org.bouncycastle.util.encoders.Hex;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 import java.time.Instant;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
-
-import static org.junit.Assert.*;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.data.jdbc.DataJdbcTest;
+import org.testcontainers.shaded.org.bouncycastle.util.encoders.Hex;
 
 @DataJdbcTest
 class TraceTimeIntervalWarningServiceTest {
@@ -32,70 +41,35 @@ class TraceTimeIntervalWarningServiceTest {
   @Autowired
   TraceTimeIntervalWarningRepository traceWarningsRepository;
 
+  private int currentTimestamp;
+
   @BeforeEach
   public void setup() {
     traceWarningsRepository.deleteAll();
+    currentTimestamp = CheckinsDateSpecification.HOUR_SINCE_EPOCH_DERIVATION.apply(Instant.now().getEpochSecond());
   }
 
   @Test
   void testStorage() {
     List<CheckIn> checkins = getRandomTestData();
-    traceWarningsService.saveCheckins(checkins);
+    traceWarningsService.saveCheckins(checkins, currentTimestamp);
 
     List<TraceTimeIntervalWarning> actualTraceWarningsStored =
         StreamSupport.stream(traceWarningsRepository.findAll().spliterator(), false)
             .collect(Collectors.toList());
 
-    assertCheckinsAndWarningsAreEqual(new ArrayList<>(checkins), actualTraceWarningsStored);
+    assertCheckinsAndWarningsAreEqual(checkins, actualTraceWarningsStored);
   }
 
   @Test
   void testStorageWithRandomPadding() {
     List<CheckIn> checkins = getRandomTestData();
-    traceWarningsService.saveCheckinsWithFakeData(checkins, 2, randomHashPepper());
+    traceWarningsService.saveCheckinsWithFakeData(checkins, 2, randomHashPepper(), currentTimestamp);
 
     List<TraceTimeIntervalWarning> actualTraceWarningsStored =
         StreamSupport.stream(traceWarningsRepository.findAll().spliterator(), false)
             .collect(Collectors.toList());
-    assertTrue(actualTraceWarningsStored.size() == checkins.size() + checkins.size() * 2);
-  }
-
-  private List<CheckIn> getRandomTestData() {
-    List<CheckIn> checkins = List.of(
-        CheckIn.newBuilder().setStartIntervalNumber(0).setEndIntervalNumber(1)
-            .setTransmissionRiskLevel(1)
-            .setLocationId(ByteString.copyFromUtf8("uuid1"))
-            .build(),
-        CheckIn.newBuilder().setStartIntervalNumber(23).setEndIntervalNumber(30)
-            .setTransmissionRiskLevel(2)
-            .setLocationId(ByteString.copyFromUtf8("uuid1"))
-            .build(),
-        CheckIn.newBuilder().setStartIntervalNumber(40).setEndIntervalNumber(50)
-            .setTransmissionRiskLevel(3)
-            .setLocationId(ByteString.copyFromUtf8("uuid1"))
-            .build());
-    return checkins;
-  }
-
-  private void assertCheckinsAndWarningsAreEqual(List<CheckIn> checkins,
-      List<TraceTimeIntervalWarning> actualTraceWarningsStored) {
-
-    assertEquals(checkins.size(), actualTraceWarningsStored.size());
-
-    Collections.sort(checkins, Comparator.comparing(CheckIn::getTransmissionRiskLevel));
-    Collections.sort(actualTraceWarningsStored,
-        Comparator.comparing(TraceTimeIntervalWarning::getTransmissionRiskLevel));
-
-    for (int i = 0; i < checkins.size(); i++) {
-      CheckIn checkin = checkins.get(i);
-      TraceTimeIntervalWarning warning = actualTraceWarningsStored.get(i);
-      assertEquals(checkin.getTransmissionRiskLevel(),
-          warning.getTransmissionRiskLevel().intValue());
-      assertEquals(checkin.getStartIntervalNumber(), warning.getStartIntervalNumber().intValue());
-      assertEquals(checkin.getEndIntervalNumber() - checkin.getStartIntervalNumber(), warning.getPeriod().intValue());
-      assertArrayEquals(hashLocationId(checkin.getLocationId()),
-          warning.getTraceLocationId());
-    }
+    assertEquals(actualTraceWarningsStored.size(), checkins.size() + checkins.size() * 2);
   }
 
   @Test
@@ -128,8 +102,7 @@ class TraceTimeIntervalWarningServiceTest {
     // Reverse as we tempered with submission timestamp
     Collections.reverse(checkins);
 
-    List<TraceTimeIntervalWarning> checkinsFromDB = new ArrayList<>(
-        traceWarningsService.getTraceTimeIntervalWarnings());
+    var checkinsFromDB = traceWarningsService.getTraceTimeIntervalWarnings();
 
     assertCheckinsAndWarningsAreEqual(checkins, checkinsFromDB);
   }
@@ -149,11 +122,95 @@ class TraceTimeIntervalWarningServiceTest {
     assertEquals("0f37dac11d1b8118ea0b44303400faa5e3b876da9d758058b5ff7dc2e5da8230", s);
   }
 
+  @DisplayName("Assert a positive retention period is accepted.")
+  @ValueSource(ints = {0, 1, Integer.MAX_VALUE})
+  @ParameterizedTest
+  void testApplyRetentionPolicyForValidNumberOfDays(int daysToRetain) {
+    assertThatCode(() -> traceWarningsService.applyRetentionPolicy(daysToRetain))
+        .doesNotThrowAnyException();
+  }
+
+  @DisplayName("Assert a negative retention period is rejected.")
+  @ValueSource(ints = {Integer.MIN_VALUE, -1})
+  @ParameterizedTest
+  void testApplyRetentionPolicyForNegativeNumberOfDays(int daysToRetain) {
+    assertThat(catchThrowable(() -> traceWarningsService.applyRetentionPolicy(daysToRetain)))
+        .isInstanceOf(IllegalArgumentException.class);
+  }
+
+  @Test
+  void testApplyRetentionPolicyForEmptyDb() {
+    traceWarningsService.applyRetentionPolicy(1);
+    var actKeys = traceWarningsService.getTraceTimeIntervalWarnings();
+    assertThat(actKeys).isEmpty();
+  }
+
+  @Test
+  void testApplyRetentionPolicyForNotApplicableEntries() {
+    var expKeys = getRandomTestData();
+
+    traceWarningsService.saveCheckins(expKeys, currentTimestamp);
+    traceWarningsService.applyRetentionPolicy(1);
+    var actKeys = traceWarningsService.getTraceTimeIntervalWarnings();
+
+    assertCheckinsAndWarningsAreEqual(expKeys, actKeys);
+  }
+
+  @Test
+  void testApplyRetentionPolicyForOneApplicableEntry() {
+    var keys = getRandomTestData();
+
+    traceWarningsService.saveCheckins(keys, currentTimestamp - (int) TimeUnit.DAYS.toHours(1) - 1);
+    traceWarningsService.applyRetentionPolicy(1);
+    var actKeys = traceWarningsService.getTraceTimeIntervalWarnings();
+
+    assertThat(actKeys).isEmpty();
+  }
+
+  private List<CheckIn> getRandomTestData() {
+    return List.of(
+        CheckIn.newBuilder().setStartIntervalNumber(0).setEndIntervalNumber(1)
+            .setTransmissionRiskLevel(1)
+            .setLocationId(ByteString.copyFromUtf8("uuid1"))
+            .build(),
+        CheckIn.newBuilder().setStartIntervalNumber(23).setEndIntervalNumber(30)
+            .setTransmissionRiskLevel(2)
+            .setLocationId(ByteString.copyFromUtf8("uuid1"))
+            .build(),
+        CheckIn.newBuilder().setStartIntervalNumber(40).setEndIntervalNumber(50)
+            .setTransmissionRiskLevel(3)
+            .setLocationId(ByteString.copyFromUtf8("uuid1"))
+            .build());
+  }
+
+  private void assertCheckinsAndWarningsAreEqual(Collection<CheckIn> checkins,
+      Collection<TraceTimeIntervalWarning> actualTraceWarningsStored) {
+
+    assertEquals(checkins.size(), actualTraceWarningsStored.size());
+
+    var sortedCheckins = checkins.stream()
+        .sorted(Comparator.comparing(CheckIn::getTransmissionRiskLevel))
+        .collect(Collectors.toList());
+    var sortedTraceTimeWarnings = actualTraceWarningsStored.stream()
+        .sorted(Comparator.comparing(TraceTimeIntervalWarning::getTransmissionRiskLevel))
+        .collect(Collectors.toList());
+
+    for (int i = 0; i < checkins.size(); i++) {
+      CheckIn checkin = sortedCheckins.get(i);
+      TraceTimeIntervalWarning warning = sortedTraceTimeWarnings.get(i);
+      assertEquals(checkin.getTransmissionRiskLevel(),
+          warning.getTransmissionRiskLevel().intValue());
+      assertEquals(checkin.getStartIntervalNumber(), warning.getStartIntervalNumber().intValue());
+      assertEquals(checkin.getEndIntervalNumber() - checkin.getStartIntervalNumber(), warning.getPeriod().intValue());
+      assertArrayEquals(hashLocationId(checkin.getLocationId()),
+          warning.getTraceLocationId());
+    }
+  }
 
   private byte[] hashLocationId(ByteString locationId) {
     try {
       return MessageDigest.getInstance("SHA-256").digest(locationId.toByteArray());
-    } catch (NoSuchAlgorithmException e) {
+    } catch (NoSuchAlgorithmException ignored) {
     }
     return new byte[0];
   }
