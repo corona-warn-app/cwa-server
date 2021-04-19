@@ -37,10 +37,8 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 @EnableConfigurationProperties(value = DistributionServiceConfig.class)
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration(classes = {CryptoProvider.class, DistributionServiceConfig.class},
-    initializers = ConfigFileApplicationContextInitializer.class)
-class ProdHourIntervalIndexingDecoratorTest {
     initializers = ConfigDataApplicationContextInitializer.class)
-class HourIntervalIndexingDecoratorTest {
+class ProdHourIntervalIndexingDecoratorTest {
 
   @Autowired
   DistributionServiceConfig distributionServiceConfig;
