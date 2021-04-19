@@ -8,7 +8,6 @@ import static java.util.Arrays.asList;
 import static java.util.stream.Collectors.toList;
 import static org.assertj.core.util.Lists.list;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.atLeastOnce;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.never;
@@ -73,11 +72,11 @@ class S3RetentionPolicyTest {
     List<S3Object> mockResponse = this.s3ObjectsFromFilenames(Stream.concat(toBeDeleted.stream(), toBeKept.stream())
         .collect(Collectors.toUnmodifiableList()));
 
-    when(objectStoreAccess.getObjectsWithPrefix(eq(this.getDiagnosisKeyPrefix("DE")))).thenReturn(mockResponse);
+    when(objectStoreAccess.getObjectsWithPrefix(this.getDiagnosisKeyPrefix("DE"))).thenReturn(mockResponse);
     s3RetentionPolicy.applyDiagnosisKeyHourRetentionPolicy(2);
 
-    toBeDeleted.forEach(f -> verify(objectStoreAccess, times(1)).deleteObjectsWithPrefix(eq(f)));
-    toBeKept.forEach(f -> verify(objectStoreAccess, never()).deleteObjectsWithPrefix(eq(f)));
+    toBeDeleted.forEach(f -> verify(objectStoreAccess, times(1)).deleteObjectsWithPrefix(f));
+    toBeKept.forEach(f -> verify(objectStoreAccess, never()).deleteObjectsWithPrefix(f));
   }
 
   @Test
@@ -91,19 +90,19 @@ class S3RetentionPolicyTest {
     List<S3Object> mockResponseDE = this
         .s3ObjectsFromFilenames(Stream.concat(toBeDeletedDE.stream(), toBeKeptDE.stream())
             .collect(Collectors.toUnmodifiableList()));
-    when(objectStoreAccess.getObjectsWithPrefix(eq(this.getDiagnosisKeyPrefix("DE")))).thenReturn(mockResponseDE);
+    when(objectStoreAccess.getObjectsWithPrefix(this.getDiagnosisKeyPrefix("DE"))).thenReturn(mockResponseDE);
 
     List<S3Object> mockResponseEUR = this
         .s3ObjectsFromFilenames(Stream.concat(toBeDeletedEUR.stream(), toBeKeptEUR.stream())
             .collect(Collectors.toUnmodifiableList()));
-    when(objectStoreAccess.getObjectsWithPrefix(eq(this.getDiagnosisKeyPrefix("EUR")))).thenReturn(mockResponseEUR);
+    when(objectStoreAccess.getObjectsWithPrefix(this.getDiagnosisKeyPrefix("EUR"))).thenReturn(mockResponseEUR);
 
     s3RetentionPolicy.applyDiagnosisKeyHourRetentionPolicy(2);
 
-    toBeDeletedDE.forEach(f -> verify(objectStoreAccess, times(1)).deleteObjectsWithPrefix(eq(f)));
-    toBeKeptDE.forEach(f -> verify(objectStoreAccess, never()).deleteObjectsWithPrefix(eq(f)));
-    toBeDeletedEUR.forEach(f -> verify(objectStoreAccess, times(1)).deleteObjectsWithPrefix(eq(f)));
-    toBeKeptEUR.forEach(f -> verify(objectStoreAccess, never()).deleteObjectsWithPrefix(eq(f)));
+    toBeDeletedDE.forEach(f -> verify(objectStoreAccess, times(1)).deleteObjectsWithPrefix(f));
+    toBeKeptDE.forEach(f -> verify(objectStoreAccess, never()).deleteObjectsWithPrefix(f));
+    toBeDeletedEUR.forEach(f -> verify(objectStoreAccess, times(1)).deleteObjectsWithPrefix(f));
+    toBeKeptEUR.forEach(f -> verify(objectStoreAccess, never()).deleteObjectsWithPrefix(f));
   }
 
   @Test
@@ -113,12 +112,12 @@ class S3RetentionPolicyTest {
 
     List<S3Object> mockResponse = this.s3ObjectsFromFilenames(list(validHourFile, invalidHourFile));
 
-    when(objectStoreAccess.getObjectsWithPrefix(eq(this.getDiagnosisKeyPrefix("DE")))).thenReturn(mockResponse);
+    when(objectStoreAccess.getObjectsWithPrefix(this.getDiagnosisKeyPrefix("DE"))).thenReturn(mockResponse);
 
     s3RetentionPolicy.applyDiagnosisKeyHourRetentionPolicy(2);
 
-    verify(objectStoreAccess, times(1)).deleteObjectsWithPrefix(eq(invalidHourFile));
-    verify(objectStoreAccess, never()).deleteObjectsWithPrefix(eq(validHourFile));
+    verify(objectStoreAccess, times(1)).deleteObjectsWithPrefix(invalidHourFile);
+    verify(objectStoreAccess, never()).deleteObjectsWithPrefix(validHourFile);
   }
 
   @Test
@@ -128,12 +127,12 @@ class S3RetentionPolicyTest {
 
     List<S3Object> mockResponse = this.s3ObjectsFromFilenames(list(validHourFile, invalidHourFile));
 
-    when(objectStoreAccess.getObjectsWithPrefix(eq(this.getDiagnosisKeyPrefix("EUR")))).thenReturn(mockResponse);
+    when(objectStoreAccess.getObjectsWithPrefix(this.getDiagnosisKeyPrefix("EUR"))).thenReturn(mockResponse);
 
     s3RetentionPolicy.applyDiagnosisKeyHourRetentionPolicy(2);
 
-    verify(objectStoreAccess, times(1)).deleteObjectsWithPrefix(eq(invalidHourFile));
-    verify(objectStoreAccess, never()).deleteObjectsWithPrefix(eq(validHourFile));
+    verify(objectStoreAccess, times(1)).deleteObjectsWithPrefix(invalidHourFile);
+    verify(objectStoreAccess, never()).deleteObjectsWithPrefix(validHourFile);
   }
 
   @Test
@@ -144,13 +143,13 @@ class S3RetentionPolicyTest {
 
     List<S3Object> mockResponse = this.s3ObjectsFromFilenames(list(validHourFile, invalidHourFile1, invalidHourFile2));
 
-    when(objectStoreAccess.getObjectsWithPrefix(eq(this.getDiagnosisKeyPrefix("DE")))).thenReturn(mockResponse);
+    when(objectStoreAccess.getObjectsWithPrefix(this.getDiagnosisKeyPrefix("DE"))).thenReturn(mockResponse);
 
     s3RetentionPolicy.applyDiagnosisKeyHourRetentionPolicy(2);
 
-    verify(objectStoreAccess, times(1)).deleteObjectsWithPrefix(eq(invalidHourFile1));
-    verify(objectStoreAccess, times(1)).deleteObjectsWithPrefix(eq(invalidHourFile2));
-    verify(objectStoreAccess, never()).deleteObjectsWithPrefix(eq(validHourFile));
+    verify(objectStoreAccess, times(1)).deleteObjectsWithPrefix(invalidHourFile1);
+    verify(objectStoreAccess, times(1)).deleteObjectsWithPrefix(invalidHourFile2);
+    verify(objectStoreAccess, never()).deleteObjectsWithPrefix(validHourFile);
   }
 
   @Test
@@ -172,7 +171,7 @@ class S3RetentionPolicyTest {
     s3RetentionPolicy.applyDiagnosisKeyDayRetentionPolicy(1);
 
     expectedFilesToBeDeleted.forEach(expectedFileToBeDeleted ->
-        verify(objectStoreAccess, atLeastOnce()).deleteObjectsWithPrefix(eq(expectedFileToBeDeleted)));
+        verify(objectStoreAccess, atLeastOnce()).deleteObjectsWithPrefix(expectedFileToBeDeleted));
   }
 
   @Test
@@ -213,11 +212,11 @@ class S3RetentionPolicyTest {
     List<S3Object> mockResponse = this.s3ObjectsFromFilenames(Stream.concat(toBeDeleted.stream(), toBeKept.stream())
         .collect(Collectors.toUnmodifiableList()));
 
-    when(objectStoreAccess.getObjectsWithPrefix(eq(this.getTraceTimeWarningPrefix("DE")))).thenReturn(mockResponse);
+    when(objectStoreAccess.getObjectsWithPrefix(this.getTraceTimeWarningPrefix("DE"))).thenReturn(mockResponse);
     s3RetentionPolicy.applyTraceTimeWarningHourRetentionPolicy(2);
 
-    toBeDeleted.forEach(f -> verify(objectStoreAccess, times(1)).deleteObjectsWithPrefix(eq(f)));
-    toBeKept.forEach(f -> verify(objectStoreAccess, never()).deleteObjectsWithPrefix(eq(f)));
+    toBeDeleted.forEach(f -> verify(objectStoreAccess, times(1)).deleteObjectsWithPrefix(f));
+    toBeKept.forEach(f -> verify(objectStoreAccess, never()).deleteObjectsWithPrefix(f));
   }
 
   private String getDiagnosisKeyPrefix(String country) {
