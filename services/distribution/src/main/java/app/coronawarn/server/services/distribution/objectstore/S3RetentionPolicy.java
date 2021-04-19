@@ -89,8 +89,7 @@ public class S3RetentionPolicy {
           .filter(this::isDiagnosisKeyFilePathOnHourFolder)
           .collect(Collectors.toList());
 
-      logger.info("Deleting {} diagnosis key files from hourly folders older than {}", deletableKeys.size(),
-          cutOffDate.toString());
+      logger.info("Deleting {} diagnosis key files from hourly folders older than {}", deletableKeys.size(), cutOffDate);
       deletableKeys.forEach(this::deleteS3Object);
     });
   }
@@ -111,8 +110,7 @@ public class S3RetentionPolicy {
           .filter(traceTimeWarningsObject -> isTraceTimeWarningFilePathOlderThan(traceTimeWarningsObject, cutOffTime))
           .collect(Collectors.toList());
 
-      logger.info("Deleting {} trace time warning files older than {}", deletableTraceTimeWarnings.size(),
-          cutOffDate.toString());
+      logger.info("Deleting {} trace time warning files older than {}", deletableTraceTimeWarnings.size(), cutOffDate);
       deletableTraceTimeWarnings.forEach(this::deleteS3Object);
     });
   }
