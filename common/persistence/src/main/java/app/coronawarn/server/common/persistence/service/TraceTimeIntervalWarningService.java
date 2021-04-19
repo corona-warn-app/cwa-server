@@ -1,8 +1,10 @@
 package app.coronawarn.server.common.persistence.service;
 
+import static app.coronawarn.server.common.persistence.domain.validation.ValidSubmissionTimestampValidator.SECONDS_PER_HOUR;
+import static java.time.ZoneOffset.UTC;
+
 import app.coronawarn.server.common.persistence.domain.TraceTimeIntervalWarning;
 import app.coronawarn.server.common.persistence.repository.TraceTimeIntervalWarningRepository;
-import app.coronawarn.server.common.persistence.service.utils.checkins.CheckinsDateSpecification;
 import app.coronawarn.server.common.persistence.service.utils.checkins.FakeCheckinsGenerator;
 import app.coronawarn.server.common.protocols.internal.SubmissionPayload.SubmissionType;
 import app.coronawarn.server.common.protocols.internal.pt.CheckIn;
@@ -10,6 +12,7 @@ import com.google.protobuf.ByteString;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.time.Instant;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -28,7 +31,6 @@ public class TraceTimeIntervalWarningService {
 
   private static final Logger logger =
       LoggerFactory.getLogger(TraceTimeIntervalWarningService.class);
-
 
   private final TraceTimeIntervalWarningRepository traceTimeIntervalWarningRepo;
   private final FakeCheckinsGenerator fakeCheckinsGenerator;
@@ -56,12 +58,12 @@ public class TraceTimeIntervalWarningService {
    * operations.
    */
   @Transactional
-  public int saveCheckins(List<CheckIn> checkins, SubmissionType submissionType) {
-    return saveCheckins(checkins, this::hashLocationId, submissionType);
+  public int saveCheckins(List<CheckIn> checkins, int submissionTimestamp, SubmissionType submissionType) {
+    return saveCheckins(checkins, this::hashLocationId, submissionTimestamp, submissionType);
   }
 
   private int saveCheckins(List<CheckIn> checkins, Function<ByteString, byte[]> idHashGenerator,
-      SubmissionType submissionType) {
+      int submissionTimestamp, SubmissionType submissionType) {
     int numberOfInsertedTraceWarnings = 0;
 
     for (CheckIn checkin : checkins) {
@@ -70,8 +72,7 @@ public class TraceTimeIntervalWarningService {
           .saveDoNothingOnConflict(hashId, checkin.getStartIntervalNumber(),
               checkin.getEndIntervalNumber() - checkin.getStartIntervalNumber(),
               checkin.getTransmissionRiskLevel(),
-              CheckinsDateSpecification.HOUR_SINCE_EPOCH_DERIVATION
-                  .apply(Instant.now().getEpochSecond()),
+              submissionTimestamp,
               submissionType.name());
 
       if (traceWarningInsertedSuccessfully) {
@@ -97,11 +98,11 @@ public class TraceTimeIntervalWarningService {
    */
   @Transactional
   public int saveCheckinsWithFakeData(List<CheckIn> originalCheckins, int numberOfFakesToCreate,
-      byte[] pepper, SubmissionType submissionType) {
+      byte[] pepper, int submissionTimestamp, SubmissionType submissionType) {
     List<CheckIn> allCheckins = new ArrayList<>(originalCheckins);
     allCheckins.addAll(fakeCheckinsGenerator.generateFakeCheckins(originalCheckins,
         numberOfFakesToCreate, pepper));
-    return saveCheckins(allCheckins, this::hashLocationId, submissionType);
+    return saveCheckins(allCheckins, this::hashLocationId, submissionTimestamp, submissionType);
   }
 
   /**
@@ -116,5 +117,28 @@ public class TraceTimeIntervalWarningService {
 
   private byte[] hashLocationId(ByteString locationId) {
     return hashAlgorithm.digest(locationId.toByteArray());
+  }
+
+  /**
+   * Deletes all trace time warning entries which have a submission timestamp that is older than the specified number of
+   * days.
+   *
+   * @param daysToRetain the number of days until which trace time warnings will be retained.
+   * @throws IllegalArgumentException if {@code daysToRetain} is negative.
+   */
+  @Transactional
+  public void applyRetentionPolicy(int daysToRetain) {
+    if (daysToRetain < 0) {
+      throw new IllegalArgumentException("Number of days to retain must be greater or equal to 0.");
+    }
+
+    long threshold = LocalDateTime
+        .ofInstant(Instant.now(), UTC)
+        .minusDays(daysToRetain)
+        .toEpochSecond(UTC) / SECONDS_PER_HOUR;
+    int numberOfDeletions = traceTimeIntervalWarningRepo.countOlderThan(threshold);
+    logger.info("Deleting {} trace time warning(s) with a submission timestamp older than {} day(s) ago.",
+        numberOfDeletions, daysToRetain);
+    traceTimeIntervalWarningRepo.deleteOlderThan(threshold);
   }
 }

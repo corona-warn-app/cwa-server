@@ -6,10 +6,12 @@ import app.coronawarn.server.common.persistence.domain.DiagnosisKey;
 import app.coronawarn.server.common.persistence.domain.config.TrlDerivations;
 import app.coronawarn.server.common.persistence.service.DiagnosisKeyService;
 import app.coronawarn.server.common.persistence.service.TraceTimeIntervalWarningService;
+import app.coronawarn.server.common.persistence.service.utils.checkins.CheckinsDateSpecification;
 import app.coronawarn.server.common.protocols.external.exposurenotification.TemporaryExposureKey;
 import app.coronawarn.server.common.protocols.internal.SubmissionPayload;
 import app.coronawarn.server.common.protocols.internal.pt.CheckIn;
 import app.coronawarn.server.services.submission.checkins.EventCheckinDataFilter;
+import app.coronawarn.server.services.submission.checkins.TooManyCheckInsAtSameDay;
 import app.coronawarn.server.services.submission.config.SubmissionServiceConfig;
 import app.coronawarn.server.services.submission.monitoring.SubmissionMonitor;
 import app.coronawarn.server.services.submission.normalization.SubmissionKeyNormalizer;
@@ -17,6 +19,7 @@ import app.coronawarn.server.services.submission.validation.ValidSubmissionPaylo
 import app.coronawarn.server.services.submission.verification.TanVerifier;
 import io.micrometer.core.annotation.Timed;
 import java.security.SecureRandom;
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -25,6 +28,8 @@ import java.util.stream.IntStream;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.slf4j.Marker;
+import org.slf4j.MarkerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.StopWatch;
@@ -46,6 +51,9 @@ public class SubmissionController {
    */
   public static final String SUBMISSION_ROUTE = "/diagnosis-keys";
   private static final Logger logger = LoggerFactory.getLogger(SubmissionController.class);
+
+  public static final Marker EVENT = MarkerFactory.getMarker("EVENT");
+
   private final SubmissionMonitor submissionMonitor;
   private final DiagnosisKeyService diagnosisKeyService;
   private final TanVerifier tanVerifier;
@@ -129,16 +137,20 @@ public class SubmissionController {
     AtomicInteger numberOfFilteredCheckins = new AtomicInteger(0);
     AtomicInteger numberOfSavedCheckins = new AtomicInteger(0);
     try {
+      checkinsDataFilter.validateCheckInsByDate(submissionPayload.getCheckInsList());
       List<CheckIn> checkins = checkinsDataFilter.filter(submissionPayload.getCheckInsList());
       numberOfFilteredCheckins.set(submissionPayload.getCheckInsList().size() - checkins.size());
       numberOfSavedCheckins.set(traceTimeIntervalWarningSevice.saveCheckinsWithFakeData(checkins,
           submissionServiceConfig.getRandomCheckinsPaddingMultiplier(),
           submissionServiceConfig.getRandomCheckinsPaddingPepperAsByteArray(),
+          CheckinsDateSpecification.HOUR_SINCE_EPOCH_DERIVATION.apply(Instant.now().getEpochSecond()),
           submissionPayload.getSubmissionType()));
+    } catch (final TooManyCheckInsAtSameDay e) {
+      logger.error(EVENT, e.getMessage());
     } catch (final Exception e) {
       // Any check-in data processing related error must not interrupt the submission flow or interfere
       // with storing of the diagnosis keys
-      logger.error("An error has occured while trying to store the event checkin data", e);
+      logger.error(EVENT, "An error has occured while trying to store the event checkin data", e);
     }
     return new CheckinsStorageResult(numberOfFilteredCheckins.get(), numberOfSavedCheckins.get());
   }

@@ -22,4 +22,22 @@ public interface TraceTimeIntervalWarningRepository
       @Param("transmission_risk_level") Integer transmissionRiskLevel,
       @Param("submission_timestamp") Integer submissionTimestamp,
       @Param("submission_type") String submissionType);
+
+  /**
+   * Counts all entries that have a submission timestamp older than the specified one.
+   *
+   * @param submissionTimestamp The submission timestamp up to which entries will be expired.
+   * @return The number of expired trace time warnings.
+   */
+  @Query("SELECT COUNT(*) FROM trace_time_interval_warning WHERE submission_timestamp<:threshold")
+  int countOlderThan(@Param("threshold") long submissionTimestamp);
+
+  /**
+   * Deletes all entries that have a submission timestamp older than the specified one.
+   *
+   * @param submissionTimestamp The submission timestamp up to which entries will be deleted.
+   */
+  @Modifying
+  @Query("DELETE FROM trace_time_interval_warning WHERE submission_timestamp<:threshold")
+  void deleteOlderThan(@Param("threshold") long submissionTimestamp);
 }

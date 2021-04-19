@@ -136,6 +136,13 @@ services:
         height: ${EVREG_QR_CODE_POSTER_TEMPLATE_IOS_DESCRIPTION_HEIGHT:20}
         fontSize: ${EVREG_QR_CODE_POSTER_TEMPLATE_IOS_DESCRIPTION_FONT_SIZE:14}
         fontColor: ${EVREG_QR_CODE_POSTER_TEMPLATE_IOS_DESCRIPTION_FONT_COLOR:black}
+      address-text-box:
+        offsetX: ${EVREG_QR_CODE_POSTER_TEMPLATE_IOS_ADDRESS_OFFSET_X:80}
+        offsetY: ${EVREG_QR_CODE_POSTER_TEMPLATE_IOS_ADDRESS_OFFSET_Y:525}
+        width: ${EVREG_QR_CODE_POSTER_TEMPLATE_IOS_ADDRESS_WIDTH:420}
+        height: ${EVREG_QR_CODE_POSTER_TEMPLATE_IOS_ADDRESS_HEIGHT:15}
+        fontSize: ${EVREG_QR_CODE_POSTER_TEMPLATE_IOS_ADDRESS_FONT_SIZE:10}
+        fontColor: ${EVREG_QR_CODE_POSTER_TEMPLATE_IOS_ADDRESS_FONT_COLOR:#000000}
     android-qr-code-poster-template:
       published-archive-name: qr_code_poster_template_android
       template:

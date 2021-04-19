@@ -681,6 +681,8 @@ public class DistributionServiceConfig {
     @NotEmpty
     private String publishedArchiveName;
     private DescriptionTextBox descriptionTextBox;
+    private DescriptionTextBox addressTextBox;
+
 
     public static class DescriptionTextBox {
 
@@ -792,6 +794,14 @@ public class DistributionServiceConfig {
 
     public void setDescriptionTextBox(DescriptionTextBox descriptionTextBox) {
       this.descriptionTextBox = descriptionTextBox;
+    }
+
+    public DescriptionTextBox getAddressTextBox() {
+      return addressTextBox;
+    }
+
+    public void setAddressTextBox(DescriptionTextBox addressTextBox) {
+      this.addressTextBox = addressTextBox;
     }
   }
 
