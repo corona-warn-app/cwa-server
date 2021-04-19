@@ -28,6 +28,7 @@ import app.coronawarn.server.common.protocols.internal.v2.PPDDPrivacyPreservingA
 import app.coronawarn.server.common.protocols.internal.v2.PPDDPrivacyPreservingAnalyticsParametersIOS;
 import app.coronawarn.server.common.protocols.internal.v2.PresenceTracingParameters;
 import app.coronawarn.server.common.protocols.internal.v2.PresenceTracingParameters.Builder;
+import app.coronawarn.server.common.protocols.internal.v2.PresenceTracingPlausibleDeniabilityParameters;
 import app.coronawarn.server.common.protocols.internal.v2.RiskCalculationParameters;
 import app.coronawarn.server.common.protocols.internal.v2.SemanticVersion;
 import app.coronawarn.server.services.distribution.assembly.appconfig.parsing.v2.DeserializedDailySummariesConfig;

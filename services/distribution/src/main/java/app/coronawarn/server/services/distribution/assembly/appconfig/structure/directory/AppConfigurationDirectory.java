@@ -3,12 +3,12 @@
 package app.coronawarn.server.services.distribution.assembly.appconfig.structure.directory;
 
 import app.coronawarn.server.common.protocols.internal.ApplicationConfiguration;
-import app.coronawarn.server.services.distribution.assembly.appconfig.structure.archive.decorator.signing.AppConfigurationSigningDecorator;
 import app.coronawarn.server.services.distribution.assembly.appconfig.validation.ApplicationConfigurationValidator;
 import app.coronawarn.server.services.distribution.assembly.appconfig.validation.ConfigurationValidator;
 import app.coronawarn.server.services.distribution.assembly.appconfig.validation.ValidationResult;
 import app.coronawarn.server.services.distribution.assembly.component.CryptoProvider;
 import app.coronawarn.server.services.distribution.assembly.structure.archive.ArchiveOnDisk;
+import app.coronawarn.server.services.distribution.assembly.structure.archive.decorator.signing.DistributionArchiveSigningDecorator;
 import app.coronawarn.server.services.distribution.assembly.structure.directory.DirectoryOnDisk;
 import app.coronawarn.server.services.distribution.assembly.structure.directory.IndexDirectoryOnDisk;
 import app.coronawarn.server.services.distribution.assembly.structure.directory.decorator.indexing.IndexingDecoratorOnDisk;
@@ -35,8 +35,8 @@ public class AppConfigurationDirectory extends DirectoryOnDisk {
   /**
    * Creates an {@link AppConfigurationDirectory} for the exposure configuration and risk score classification.
    *
-   * @param applicationConfiguration app config attribute to set locally
-   * @param cryptoProvider The {@link CryptoProvider} whose artifacts to use for creating the signature.
+   * @param applicationConfiguration  app config attribute to set locally
+   * @param cryptoProvider            The {@link CryptoProvider} whose artifacts to use for creating the signature.
    * @param distributionServiceConfig used to get origin country
    */
   public AppConfigurationDirectory(ApplicationConfiguration applicationConfiguration, CryptoProvider cryptoProvider,
@@ -71,7 +71,7 @@ public class AppConfigurationDirectory extends DirectoryOnDisk {
     ArchiveOnDisk countryAppConfigurationFile = new ArchiveOnDisk(archiveName);
     countryAppConfigurationFile.addWritable(new FileOnDisk("export.bin", applicationConfiguration.toByteArray()));
     countryDirectory.addWritableToAll(ignoredValue -> Optional.of(
-        new AppConfigurationSigningDecorator(countryAppConfigurationFile, cryptoProvider,
+        new DistributionArchiveSigningDecorator(countryAppConfigurationFile, cryptoProvider,
             distributionServiceConfig)));
   }
 }
