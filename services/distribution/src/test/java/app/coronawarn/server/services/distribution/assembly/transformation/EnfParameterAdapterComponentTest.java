@@ -2,6 +2,10 @@ package app.coronawarn.server.services.distribution.assembly.transformation;
 
 import static app.coronawarn.server.services.distribution.common.Helpers.buildDiagnosisKeys;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+
+import app.coronawarn.server.common.persistence.domain.DiagnosisKey;
+import app.coronawarn.server.common.protocols.external.exposurenotification.ReportType;
+import app.coronawarn.server.services.distribution.config.TransmissionRiskLevelEncoding;
 import java.util.Collection;
 import java.util.List;
 import java.util.Set;
@@ -12,16 +16,13 @@ import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
-import org.springframework.boot.test.context.ConfigFileApplicationContextInitializer;
+import org.springframework.boot.test.context.ConfigDataApplicationContextInitializer;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
-import app.coronawarn.server.common.persistence.domain.DiagnosisKey;
-import app.coronawarn.server.common.protocols.external.exposurenotification.ReportType;
-import app.coronawarn.server.services.distribution.config.TransmissionRiskLevelEncoding;
 
 @EnableConfigurationProperties(value = TransmissionRiskLevelEncoding.class)
 @ExtendWith(SpringExtension.class)
-@ContextConfiguration(classes = {EnfParameterAdapter.class}, initializers = ConfigFileApplicationContextInitializer.class)
+@ContextConfiguration(classes = {EnfParameterAdapter.class}, initializers = ConfigDataApplicationContextInitializer.class)
 class EnfParameterAdapterComponentTest {
 
   @Autowired

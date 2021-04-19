@@ -1,6 +1,5 @@
 package app.coronawarn.server.services.distribution.objectstore.client;
 
-import static java.util.Collections.EMPTY_MAP;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 import static org.assertj.core.util.Maps.newHashMap;
@@ -17,6 +16,7 @@ import app.coronawarn.server.services.distribution.objectstore.client.ObjectStor
 import app.coronawarn.server.services.distribution.statistics.exceptions.NotModifiedException;
 import java.io.ByteArrayInputStream;
 import java.nio.file.Path;
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -32,7 +32,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
-import org.springframework.boot.test.context.ConfigFileApplicationContextInitializer;
+import org.springframework.boot.test.context.ConfigDataApplicationContextInitializer;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -64,7 +64,7 @@ import software.amazon.awssdk.services.s3.model.S3Exception;
 import software.amazon.awssdk.utils.builder.SdkBuilder;
 
 @ExtendWith(SpringExtension.class)
-@ContextConfiguration(initializers = ConfigFileApplicationContextInitializer.class)
+@ContextConfiguration(initializers = ConfigDataApplicationContextInitializer.class)
 @EnableConfigurationProperties(value = DistributionServiceConfig.class)
 class S3ClientWrapperTest {
 
@@ -197,7 +197,7 @@ class S3ClientWrapperTest {
 
   @Test
   void testPutObjectForNoHeaders() {
-    s3ClientWrapper.putObject(VALID_BUCKET_NAME, VALID_NAME, VALID_PATH, EMPTY_MAP);
+    s3ClientWrapper.putObject(VALID_BUCKET_NAME, VALID_NAME, VALID_PATH, Collections.emptyMap());
 
     PutObjectRequest expRequest = PutObjectRequest.builder().bucket(VALID_BUCKET_NAME).key(VALID_NAME).build();
     verify(s3Client, atLeastOnce()).putObject(eq(expRequest), any(RequestBody.class));
@@ -240,7 +240,7 @@ class S3ClientWrapperTest {
   void putObjectsThrowsObjectStoreOperationFailedExceptionIfClientThrows(Class<Exception> cause) {
     when(s3Client.putObject(any(PutObjectRequest.class), any(RequestBody.class))).thenThrow(cause);
     assertThatExceptionOfType(ObjectStoreOperationFailedException.class)
-        .isThrownBy(() -> s3ClientWrapper.putObject(VALID_BUCKET_NAME, VALID_PREFIX, VALID_PATH, EMPTY_MAP));
+        .isThrownBy(() -> s3ClientWrapper.putObject(VALID_BUCKET_NAME, VALID_PREFIX, VALID_PATH, Collections.emptyMap()));
   }
 
   @ParameterizedTest
@@ -248,7 +248,7 @@ class S3ClientWrapperTest {
   void shouldRetryUploadingObjectAndThenThrow(Class<Exception> cause) {
     when(s3Client.putObject(any(PutObjectRequest.class), any(RequestBody.class))).thenThrow(cause);
     assertThatExceptionOfType(ObjectStoreOperationFailedException.class)
-        .isThrownBy(() -> s3ClientWrapper.putObject(VALID_BUCKET_NAME, VALID_PREFIX, VALID_PATH, EMPTY_MAP));
+        .isThrownBy(() -> s3ClientWrapper.putObject(VALID_BUCKET_NAME, VALID_PREFIX, VALID_PATH, Collections.emptyMap()));
 
     verify(s3Client, times(configuredNumberOfRetries)).putObject(any(PutObjectRequest.class), any(RequestBody.class));
   }

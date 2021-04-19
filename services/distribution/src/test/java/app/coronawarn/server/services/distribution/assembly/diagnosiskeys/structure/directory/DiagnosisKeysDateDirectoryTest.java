@@ -1,5 +1,3 @@
-
-
 package app.coronawarn.server.services.distribution.assembly.diagnosiskeys.structure.directory;
 
 import static app.coronawarn.server.services.distribution.common.Helpers.buildDiagnosisKeys;
@@ -33,13 +31,12 @@ import java.util.stream.IntStream;
 import org.junit.Rule;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.rules.TemporaryFolder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
-import org.springframework.boot.test.context.ConfigFileApplicationContextInitializer;
+import org.springframework.boot.test.context.ConfigDataApplicationContextInitializer;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
@@ -49,7 +46,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 @ActiveProfiles({"no-hour-retention"})
 @ContextConfiguration(classes = {CryptoProvider.class, DistributionServiceConfig.class,
     KeySharingPoliciesChecker.class},
-    initializers = ConfigFileApplicationContextInitializer.class)
+    initializers = ConfigDataApplicationContextInitializer.class)
 class DiagnosisKeysDateDirectoryTest {
 
   @Rule
@@ -133,9 +130,6 @@ class DiagnosisKeysDateDirectoryTest {
   }
 
   @Test
-  @Disabled("Temporarily disabling this test as part of the fix for issue #650."
-      + "There seems to be a timing issue with this test because running it individually works, but running it"
-      + " in a suite will cause it to produce a different output then expected. Further investigation is required here ")
   void testIncludesEmptyDatesInDirectoryStructure() {
     Collection<DiagnosisKey> diagnosisKeys = IntStream.range(0, 3)
         .filter(currentDate -> currentDate != 1)

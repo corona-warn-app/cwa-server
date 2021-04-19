@@ -1,8 +1,7 @@
-
-
 package app.coronawarn.server.services.federation.upload.payload;
 
-import static app.coronawarn.server.services.federation.upload.utils.MockData.*;
+import static app.coronawarn.server.services.federation.upload.utils.MockData.generateRandomUploadKey;
+import static app.coronawarn.server.services.federation.upload.utils.MockData.generateRandomUploadKeys;
 import static java.util.Collections.emptyList;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
@@ -12,6 +11,8 @@ import app.coronawarn.server.common.persistence.domain.DiagnosisKey;
 import app.coronawarn.server.common.persistence.domain.FederationUploadKey;
 import app.coronawarn.server.common.protocols.external.exposurenotification.ReportType;
 import app.coronawarn.server.services.federation.upload.config.UploadServiceConfig;
+import java.util.List;
+import java.util.stream.Stream;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Nested;
@@ -25,12 +26,10 @@ import org.junit.jupiter.params.provider.ArgumentsProvider;
 import org.junit.jupiter.params.provider.ArgumentsSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
-import org.springframework.boot.test.context.ConfigFileApplicationContextInitializer;
+import org.springframework.boot.test.context.ConfigDataApplicationContextInitializer;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
-import java.util.List;
-import java.util.stream.Stream;
 
 class DiagnosisKeyBatchAssemblerTest {
 
@@ -66,7 +65,7 @@ class DiagnosisKeyBatchAssemblerTest {
   @EnableConfigurationProperties(value = UploadServiceConfig.class)
   @ExtendWith(SpringExtension.class)
   @ContextConfiguration(classes = {AllowedPropertiesMap.class,
-      DiagnosisKeyBatchAssembler.class}, initializers = ConfigFileApplicationContextInitializer.class)
+      DiagnosisKeyBatchAssembler.class}, initializers = ConfigDataApplicationContextInitializer.class)
   class AllPropertiesEnabled {
 
     public int minKeyThreshold;
@@ -144,7 +143,7 @@ class DiagnosisKeyBatchAssemblerTest {
   @EnableConfigurationProperties(value = UploadServiceConfig.class)
   @ExtendWith(SpringExtension.class)
   @ContextConfiguration(classes = {
-      DiagnosisKeyBatchAssembler.class}, initializers = ConfigFileApplicationContextInitializer.class)
+      DiagnosisKeyBatchAssembler.class}, initializers = ConfigDataApplicationContextInitializer.class)
   class AllPropertiesDisabled {
 
     @MockBean

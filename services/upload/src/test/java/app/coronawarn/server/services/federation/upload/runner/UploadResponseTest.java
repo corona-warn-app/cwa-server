@@ -1,9 +1,9 @@
-
 package app.coronawarn.server.services.federation.upload.runner;
 
 import static org.assertj.core.util.Lists.emptyList;
 import static org.assertj.core.util.Lists.list;
-import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -34,7 +34,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
-import org.springframework.boot.test.context.ConfigFileApplicationContextInitializer;
+import org.springframework.boot.test.context.ConfigDataApplicationContextInitializer;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.boot.test.mock.mockito.SpyBean;
 import org.springframework.test.context.ActiveProfiles;
@@ -46,7 +46,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 @ContextConfiguration(classes = {Upload.class, PayloadFactory.class, DiagnosisKeyBatchAssembler.class,
     BatchSigner.class, CryptoProvider.class, FederationUploadKeyService.class, ValidDiagnosisKeyFilter.class,
     KeySharingPoliciesChecker.class, AllowedPropertiesMap.class},
-    initializers = ConfigFileApplicationContextInitializer.class)
+    initializers = ConfigDataApplicationContextInitializer.class)
 @ActiveProfiles("connect-efgs")
 class UploadResponseTest {
 

@@ -5,7 +5,9 @@ import static app.coronawarn.server.services.distribution.statistics.keyfigureca
 import static app.coronawarn.server.services.distribution.statistics.keyfigurecard.KeyFigureCardSequenceConstants.KEY_SUBMISSION_CARD_ID;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 import app.coronawarn.server.common.persistence.domain.StatisticsDownload;
 import app.coronawarn.server.common.persistence.service.StatisticsDownloadService;
@@ -16,10 +18,8 @@ import app.coronawarn.server.common.protocols.internal.stats.KeyFigure.TrendSema
 import app.coronawarn.server.common.protocols.internal.stats.KeyFigureCard;
 import app.coronawarn.server.common.protocols.internal.stats.Statistics;
 import app.coronawarn.server.services.distribution.config.DistributionServiceConfig;
-import app.coronawarn.server.services.distribution.statistics.file.JsonFile;
 import app.coronawarn.server.services.distribution.statistics.file.JsonFileLoader;
 import app.coronawarn.server.services.distribution.statistics.file.LocalStatisticJsonFileLoader;
-import app.coronawarn.server.services.distribution.statistics.file.RemoteStatisticJsonFileLoader;
 import app.coronawarn.server.services.distribution.statistics.keyfigurecard.KeyFigureCardFactory;
 import app.coronawarn.server.services.distribution.statistics.keyfigurecard.KeyFigureCardSequenceConstants;
 import app.coronawarn.server.services.distribution.statistics.validation.StatisticsJsonValidator;
@@ -33,24 +33,18 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import org.junit.Assert;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.junit.runner.RunWith;
-import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
-import org.springframework.boot.test.context.ConfigFileApplicationContextInitializer;
+import org.springframework.boot.test.context.ConfigDataApplicationContextInitializer;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.boot.test.mock.mockito.SpyBean;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
-import org.springframework.test.context.junit4.SpringRunner;
 import org.testcontainers.shaded.org.apache.commons.io.FileUtils;
 
 class StatisticsJsonToProtobufTest {
@@ -60,7 +54,7 @@ class StatisticsJsonToProtobufTest {
   @Nested
   @DisplayName("Mocked Loader")
   @ContextConfiguration(classes = {StatisticsJsonToProtobufTest.class, KeyFigureCardFactory.class
-  }, initializers = ConfigFileApplicationContextInitializer.class)
+  }, initializers = ConfigDataApplicationContextInitializer.class)
   class StatisticsJsonMockLoaderTest {
     @MockBean
     StatisticsDownloadService service;
@@ -93,7 +87,7 @@ class StatisticsJsonToProtobufTest {
   @ContextConfiguration(classes = {StatisticsJsonToProtobufTest.class,
       StatisticsToProtobufMapping.class, KeyFigureCardFactory.class,
       LocalStatisticJsonFileLoader.class
-  }, initializers = ConfigFileApplicationContextInitializer.class)
+  }, initializers = ConfigDataApplicationContextInitializer.class)
   class StatisticsJsonParsingTest {
     @MockBean
     StatisticsDownloadService service;
@@ -183,7 +177,7 @@ class StatisticsJsonToProtobufTest {
   @ContextConfiguration(classes = {StatisticsJsonToProtobufTest.class,
       StatisticsToProtobufMapping.class, KeyFigureCardFactory.class,
       LocalStatisticJsonFileLoader.class
-  }, initializers = ConfigFileApplicationContextInitializer.class)
+  }, initializers = ConfigDataApplicationContextInitializer.class)
   class StatisticsWrongJsonTest {
 
     @MockBean
@@ -211,7 +205,7 @@ class StatisticsJsonToProtobufTest {
   @ContextConfiguration(classes = {StatisticsJsonToProtobufTest.class,
       StatisticsToProtobufMapping.class, KeyFigureCardFactory.class,
       LocalStatisticJsonFileLoader.class
-  }, initializers = ConfigFileApplicationContextInitializer.class)
+  }, initializers = ConfigDataApplicationContextInitializer.class)
 
   class StatisticsJsonProcessingTest {
 
@@ -268,4 +262,3 @@ class StatisticsJsonToProtobufTest {
 
   }
 }
-
