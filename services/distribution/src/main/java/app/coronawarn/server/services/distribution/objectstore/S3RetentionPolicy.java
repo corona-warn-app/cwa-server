@@ -107,12 +107,13 @@ public class S3RetentionPolicy {
           .getObjectsWithPrefix(getTraceTimeWarningPrefix(country));
       final LocalDateTime cutOffTime = TimeUtils.getCurrentUtcHour().minusDays(retentionDays);
       final LocalDate cutOffDate = TimeUtils.getUtcDate().minusDays(retentionDays - 1L);
-      var deletableKeys = traceTimeWarningsObjects.stream()
+      var deletableTraceTimeWarnings = traceTimeWarningsObjects.stream()
           .filter(traceTimeWarningsObject -> isTraceTimeWarningFilePathOlderThan(traceTimeWarningsObject, cutOffTime))
           .collect(Collectors.toList());
 
-      logger.info("Deleting {} trace time warning files older than {}", deletableKeys.size(), cutOffDate.toString());
-      deletableKeys.forEach(this::deleteS3Object);
+      logger.info("Deleting {} trace time warning files older than {}", deletableTraceTimeWarnings.size(),
+          cutOffDate.toString());
+      deletableTraceTimeWarnings.forEach(this::deleteS3Object);
     });
   }
 
