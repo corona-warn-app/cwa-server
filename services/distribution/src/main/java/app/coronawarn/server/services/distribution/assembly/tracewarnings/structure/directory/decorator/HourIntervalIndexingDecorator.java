@@ -22,6 +22,7 @@ public class HourIntervalIndexingDecorator extends IndexingDecoratorOnDisk<Integ
     this.packageBundler = packageBundler;
   }
 
+  @SuppressWarnings("unchecked")
   @Override
   public FileOnDisk getIndexFile(String indexFileName, ImmutableStack<Object> indices) {
     String currentCountry = (String) indices.peek();
