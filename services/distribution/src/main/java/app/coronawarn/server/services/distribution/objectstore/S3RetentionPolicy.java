@@ -89,7 +89,8 @@ public class S3RetentionPolicy {
           .filter(this::isDiagnosisKeyFilePathOnHourFolder)
           .collect(Collectors.toList());
 
-      logger.info("Deleting {} diagnosis key files from hourly folders older than {}", deletableKeys.size(), cutOffDate);
+      logger.info("Deleting {} diagnosis key files from hourly folders older than {}", deletableKeys.size(),
+          cutOffDate);
       deletableKeys.forEach(this::deleteS3Object);
     });
   }
