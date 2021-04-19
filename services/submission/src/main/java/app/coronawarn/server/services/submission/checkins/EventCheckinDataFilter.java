@@ -59,8 +59,10 @@ public class EventCheckinDataFilter {
 
     logger.info(EVENT, "Filtering of {} checkins started", checkins.size());
     logger.info(EVENT, "{} checkins remaining after filtering out zero TRLs", checkinsPickedAfterOldFiltering.get());
-    logger.info(EVENT, "{} checkins remaining after filtering out old checkins", checkinsPickedAfterFutureFiltering.get());
-    logger.info(EVENT, "{} checkins remaining after filtering out future checkins", checkinsPickedAfterFutureFiltering.get());
+    logger.info(EVENT, "{} checkins remaining after filtering out old checkins",
+         checkinsPickedAfterFutureFiltering.get());
+    logger.info(EVENT, "{} checkins remaining after filtering out future checkins",
+        checkinsPickedAfterFutureFiltering.get());
 
     return filtered;
   }
