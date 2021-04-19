@@ -14,12 +14,10 @@ LANGUAGE plpgsql;
 CREATE OR REPLACE FUNCTION remove_expired_uploadable_keys()
 RETURNS TRIGGER AS $$
 BEGIN
-    IF OLD.SUBMISSION_TYPE = 'SUBMISSION_TYPE_PCR_TEST' THEN
-        DELETE FROM federation_upload_key WHERE key_data = OLD.key_data;
-        RETURN OLD;
-    ELSE
-        RETURN NULL;
-    END IF;
+    DELETE FROM federation_upload_key
+        WHERE key_data = OLD.key_data
+        AND submission_type = OLD.submission_type;
+    RETURN OLD;
 END;
 $$
 LANGUAGE plpgsql;
@@ -40,12 +38,10 @@ LANGUAGE plpgsql;
 CREATE OR REPLACE FUNCTION remove_expired_swiss_uploadable_keys()
 RETURNS TRIGGER AS $$
 BEGIN
-    IF OLD.SUBMISSION_TYPE = 'SUBMISSION_TYPE_PCR_TEST' THEN
-        DELETE FROM chgs_upload_key WHERE key_data = OLD.key_data;
-        RETURN OLD;
-    ELSE
-        RETURN NULL;
-    END IF;
+    DELETE FROM chgs_upload_key
+        WHERE key_data = OLD.key_data
+        AND submission_type = OLD.submission_type;
+    RETURN OLD;
 END;
 $$
 LANGUAGE plpgsql;

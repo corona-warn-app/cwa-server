@@ -13,6 +13,19 @@ import org.springframework.stereotype.Repository;
 public interface DiagnosisKeyRepository extends PagingAndSortingRepository<DiagnosisKey, Long> {
 
   /**
+   * Returns whether or not a diagnosis key with the specified key data and submission type exists in teh DB.
+   *
+   * @param keyData        The key data to search for
+   * @param submissionType The submission type to search for
+   * @return whether or not a diagnosis key with the specified key data and submission type exists in teh DB
+   */
+  @Query("SELECT CAST(CASE WHEN COUNT(*) > 0 THEN 1 ELSE 0 END AS BIT) "
+      + "FROM diagnosis_key "
+      + "WHERE key_data=:key_data "
+      + "AND submission_type=:submission_type")
+  boolean exists(@Param("key_data") byte[] keyData, @Param("submission_type") String submissionType);
+
+  /**
    * Counts all entries that have a submission timestamp older than the specified one.
    *
    * @param submissionTimestamp The submission timestamp up to which entries will be expired.
@@ -32,11 +45,7 @@ public interface DiagnosisKeyRepository extends PagingAndSortingRepository<Diagn
 
   /**
    * Attempts to write the specified diagnosis key information into the database. If a row with the specified key data
-   * already exists, no data is inserted. Also, when saving a diagnosis key with submission type {@link
-   * app.coronawarn.server.common.protocols.internal.SubmissionPayload.SubmissionType#SUBMISSION_TYPE_RAPID_TEST} when
-   * a diagnosis key with the same ID and {@link
-   * app.coronawarn.server.common.protocols.internal.SubmissionPayload.SubmissionType#SUBMISSION_TYPE_PCR_TEST} already
-   * exists, that new diagnosis key will be ignored.
+   * already exists, no data is inserted.
    *
    * @param keyData                    The key data of the diagnosis key.
    * @param rollingStartIntervalNumber The rolling start interval number of the diagnosis key.
@@ -51,10 +60,15 @@ public interface DiagnosisKeyRepository extends PagingAndSortingRepository<Diagn
    * @param submissionType             The submission type
    */
   @Modifying
-  @Query("CALL insert_diagnosis_key(:keyData, :rollingStartIntervalNumber, :rollingPeriod, :submissionTimestamp,"
-      + ":transmissionRisk, :origin_country, :visited_countries, :report_type, :days_since_onset_of_symptoms,"
-      + ":consent_to_federation, :submission_type)")
-  void saveDoNothingOnConflict(
+  @Query("INSERT INTO diagnosis_key "
+      + "(key_data, rolling_start_interval_number, rolling_period, submission_timestamp, transmission_risk_level, "
+      + "origin_country, visited_countries, report_type, days_since_onset_of_symptoms, consent_to_federation, "
+      + "submission_type) "
+      + "VALUES (:keyData, :rollingStartIntervalNumber, :rollingPeriod, :submissionTimestamp, :transmissionRisk, "
+      + ":origin_country, :visited_countries, :report_type, :days_since_onset_of_symptoms, :consent_to_federation, "
+      + ":submission_type) "
+      + "ON CONFLICT DO NOTHING")
+  boolean saveDoNothingOnConflict(
       @Param("keyData") byte[] keyData,
       @Param("rollingStartIntervalNumber") int rollingStartIntervalNumber,
       @Param("rollingPeriod") int rollingPeriod,

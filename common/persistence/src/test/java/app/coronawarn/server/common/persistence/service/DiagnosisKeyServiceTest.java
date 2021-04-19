@@ -151,9 +151,10 @@ class DiagnosisKeyServiceTest {
             .withReportType(ReportType.CONFIRMED_TEST)
             .build());
 
-    diagnosisKeyService.saveDiagnosisKeys(keys);
-
+    int actNumberOfInsertedRows = diagnosisKeyService.saveDiagnosisKeys(keys);
     var actKeys = diagnosisKeyService.getDiagnosisKeys();
+
+    assertThat(actNumberOfInsertedRows).isEqualTo(1);
     assertThat(actKeys).hasSize(1);
     assertThat(actKeys.iterator().next().getTransmissionRiskLevel()).isEqualTo(2);
   }
