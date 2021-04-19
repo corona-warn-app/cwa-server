@@ -56,10 +56,10 @@ public class EventCheckinDataFilter {
         .peek(k -> checkinsPickedAfterFutureFiltering.incrementAndGet())
         .collect(Collectors.toList());
 
-    logger.debug("Filtering of {} checkins started", checkins.size());
-    logger.debug("{} checkins remaining after filtering out zero TRLs", checkinsPickedAfterOldFiltering.get());
-    logger.debug("{} checkins remaining after filtering out old checkins", checkinsPickedAfterFutureFiltering.get());
-    logger.debug("{} checkins remaining after filtering out future checkins", checkinsPickedAfterFutureFiltering.get());
+    logger.info("Filtering of {} checkins started", checkins.size());
+    logger.info("{} checkins remaining after filtering out zero TRLs", checkinsPickedAfterOldFiltering.get());
+    logger.info("{} checkins remaining after filtering out old checkins", checkinsPickedAfterFutureFiltering.get());
+    logger.info("{} checkins remaining after filtering out future checkins", checkinsPickedAfterFutureFiltering.get());
 
     return filtered;
   }
