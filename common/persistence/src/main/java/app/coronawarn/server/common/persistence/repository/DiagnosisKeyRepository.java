@@ -17,7 +17,7 @@ public interface DiagnosisKeyRepository extends PagingAndSortingRepository<Diagn
    *
    * @param keyData        The key data to search for
    * @param submissionType The submission type to search for
-   * @return whether or not a diagnosis key with the specified key data and submission type exists in teh DB
+   * @return whether or not a diagnosis key with the specified key data and submission type exists in the DB
    */
   @Query("SELECT CAST(CASE WHEN COUNT(*) > 0 THEN 1 ELSE 0 END AS BIT) "
       + "FROM diagnosis_key "
