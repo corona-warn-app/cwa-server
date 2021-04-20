@@ -13,7 +13,7 @@ import org.springframework.stereotype.Repository;
 public interface DiagnosisKeyRepository extends PagingAndSortingRepository<DiagnosisKey, Long> {
 
   /**
-   * Returns whether or not a diagnosis key with the specified key data and submission type exists in teh DB.
+   * Returns whether or not a diagnosis key with the specified key data and submission type exists in the DB.
    *
    * @param keyData        The key data to search for
    * @param submissionType The submission type to search for
