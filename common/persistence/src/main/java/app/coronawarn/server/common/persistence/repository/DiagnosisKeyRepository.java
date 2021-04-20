@@ -13,6 +13,19 @@ import org.springframework.stereotype.Repository;
 public interface DiagnosisKeyRepository extends PagingAndSortingRepository<DiagnosisKey, Long> {
 
   /**
+   * Returns whether or not a diagnosis key with the specified key data and submission type exists in the DB.
+   *
+   * @param keyData        The key data to search for
+   * @param submissionType The submission type to search for
+   * @return whether or not a diagnosis key with the specified key data and submission type exists in the DB
+   */
+  @Query("SELECT CAST(CASE WHEN COUNT(*) > 0 THEN 1 ELSE 0 END AS BIT) "
+      + "FROM diagnosis_key "
+      + "WHERE key_data=:key_data "
+      + "AND submission_type=:submission_type")
+  boolean exists(@Param("key_data") byte[] keyData, @Param("submission_type") String submissionType);
+
+  /**
    * Counts all entries that have a submission timestamp older than the specified one.
    *
    * @param submissionTimestamp The submission timestamp up to which entries will be expired.
@@ -42,16 +55,18 @@ public interface DiagnosisKeyRepository extends PagingAndSortingRepository<Diagn
    * @param originCountry              The origin country from the app.
    * @param visitedCountries           The list of countries this transmissions is relevant for.
    * @param reportType                 The report type of the diagnosis key.
-   * @param consentToFederation        The consent to federation.
    * @param daysSinceOnsetOfSymptoms   The number of days since symptoms began.
-   * @return {@literal true} if the diagnosis key was inserted successfully, {@literal false} otherwise.
+   * @param consentToFederation        The consent to federation.
+   * @param submissionType             The submission type
    */
   @Modifying
   @Query("INSERT INTO diagnosis_key "
       + "(key_data, rolling_start_interval_number, rolling_period, submission_timestamp, transmission_risk_level, "
-      + "origin_country, visited_countries, report_type, days_since_onset_of_symptoms, consent_to_federation) "
+      + "origin_country, visited_countries, report_type, days_since_onset_of_symptoms, consent_to_federation, "
+      + "submission_type) "
       + "VALUES (:keyData, :rollingStartIntervalNumber, :rollingPeriod, :submissionTimestamp, :transmissionRisk, "
-      + ":origin_country, :visited_countries, :report_type, :days_since_onset_of_symptoms, :consent_to_federation) "
+      + ":origin_country, :visited_countries, :report_type, :days_since_onset_of_symptoms, :consent_to_federation, "
+      + ":submission_type) "
       + "ON CONFLICT DO NOTHING")
   boolean saveDoNothingOnConflict(
       @Param("keyData") byte[] keyData,
@@ -63,5 +78,6 @@ public interface DiagnosisKeyRepository extends PagingAndSortingRepository<Diagn
       @Param("visited_countries") String[] visitedCountries,
       @Param("report_type") String reportType,
       @Param("days_since_onset_of_symptoms") int daysSinceOnsetOfSymptoms,
-      @Param("consent_to_federation") boolean consentToFederation);
+      @Param("consent_to_federation") boolean consentToFederation,
+      @Param("submission_type") String submissionType);
 }

@@ -7,11 +7,13 @@ import static app.coronawarn.server.common.persistence.service.common.KeySharing
 import static java.time.ZoneOffset.UTC;
 import static org.assertj.core.api.Assertions.assertThat;
 
+import app.coronawarn.server.common.persistence.domain.DiagnosisKey;
+import app.coronawarn.server.common.protocols.external.exposurenotification.ReportType;
+import app.coronawarn.server.common.protocols.internal.SubmissionPayload.SubmissionType;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.OffsetDateTime;
-import java.time.ZoneId;
 import java.time.ZoneOffset;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
@@ -19,13 +21,9 @@ import java.util.Random;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
-import app.coronawarn.server.common.persistence.domain.DiagnosisKey;
-import app.coronawarn.server.common.protocols.external.exposurenotification.ReportType;
-
 public class DiagnosisKeyServiceTestHelper {
 
   private static final Random random = new Random();
-
 
   public static void assertDiagnosisKeysEqual(List<DiagnosisKey> expKeys,
       List<DiagnosisKey> actKeys) {
@@ -55,10 +53,8 @@ public class DiagnosisKeyServiceTestHelper {
 
   public static DiagnosisKey buildDiagnosisKeyForSubmissionTimestamp(long submissionTimeStamp, int rollingStartInterval,
       boolean consentToFederation, String countryCode, Set<String> visitedCountries, ReportType reportType) {
-    byte[] randomBytes = new byte[16];
-    random.nextBytes(randomBytes);
     return DiagnosisKey.builder()
-        .withKeyData(randomBytes)
+        .withKeyDataAndSubmissionType(randomByteData(), SubmissionType.SUBMISSION_TYPE_PCR_TEST)
         .withRollingStartIntervalNumber(rollingStartInterval)
         .withTransmissionRiskLevel(2)
         .withSubmissionTimestamp(submissionTimeStamp)
@@ -70,7 +66,7 @@ public class DiagnosisKeyServiceTestHelper {
   }
 
   public static int makeRollingStartIntervalFromSubmission(long submissionTimestamp) {
-    return (int)((submissionTimestamp) * 6);
+    return (int) ((submissionTimestamp) * 6);
   }
 
   public static DiagnosisKey buildDiagnosisKeyForSubmissionTimestamp(long submissionTimeStamp) {
@@ -95,17 +91,16 @@ public class DiagnosisKeyServiceTestHelper {
   public static DiagnosisKey buildDiagnosisKeyForDateTime(OffsetDateTime dateTime,
       String countryCode, Set<String> visitedCountries, ReportType reportType) {
     var submissionTimeStamp = dateTime.toEpochSecond() / 3600;
-    return buildDiagnosisKeyForSubmissionTimestamp(submissionTimeStamp, makeRollingStartIntervalFromSubmission(submissionTimeStamp),
+    return buildDiagnosisKeyForSubmissionTimestamp(submissionTimeStamp,
+        makeRollingStartIntervalFromSubmission(submissionTimeStamp),
         false, countryCode, visitedCountries, reportType);
   }
 
   /**
-   * @return A key whos rolling period ended today (relative to test the test run) at 00:00,
-   * but was submitted X hours after that time.
-   * Altough the application uses minutes for expiration policies, the submission times are
-   * computed relative to the top of the hours.
-   *
    * @param hours number of hours
+   * @return A key whos rolling period ended today (relative to test the test run) at 00:00, but was submitted X hours
+   * after that time. Altough the application uses minutes for expiration policies, the submission times are computed
+   * relative to the top of the hours.
    */
   public static DiagnosisKey getKeySubmittedHoursAfterMidnightExpiration(int hours) {
     LocalDateTime yesterday = LocalDateTime.of(LocalDate.now(ZoneOffset.UTC), LocalTime.MIDNIGHT).minusDays(1);
@@ -116,18 +111,39 @@ public class DiagnosisKeyServiceTestHelper {
 
     // submission time is minutes after rolling period has passed
     long submissionTime = rollingPeriodExpiryTime.plus(hours, ChronoUnit.HOURS)
-            .toEpochSecond(UTC) / TimeUnit.HOURS.toSeconds(1);
+        .toEpochSecond(UTC) / TimeUnit.HOURS.toSeconds(1);
 
     return buildDiagnosisKeyForSubmissionTimestamp(submissionTime, rollingStart, true);
   }
 
   /**
-   * Returns the end of the rolling time window for the given rolling period and start interval numbers,
-   * as a {@link LocalDateTime}.
+   * Returns the end of the rolling time window for the given rolling period and start interval numbers, as a {@link
+   * LocalDateTime}.
    */
   private static LocalDateTime calculateRollingPeriodExpiryTime(long rollingStartInterval, int rollingPeriod) {
     return LocalDateTime
         .ofEpochSecond(rollingStartInterval * TEN_MINUTES_INTERVAL_SECONDS, 0, UTC)
         .plusMinutes(rollingPeriod * ROLLING_PERIOD_MINUTES_INTERVAL);
+  }
+
+  public static DiagnosisKey generateRandomDiagnosisKey(boolean consentToShare, long submissionTimestamp,
+      SubmissionType submissionType) {
+    return DiagnosisKey.builder()
+        .withKeyDataAndSubmissionType(randomByteData(), submissionType)
+        .withRollingStartIntervalNumber((int) submissionTimestamp * 6)
+        .withTransmissionRiskLevel(2)
+        .withConsentToFederation(consentToShare)
+        .withCountryCode("DE")
+        .withDaysSinceOnsetOfSymptoms(random.nextInt(13))
+        .withSubmissionTimestamp(submissionTimestamp)
+        .withVisitedCountries(Set.of("FR", "DK"))
+        .withReportType(ReportType.CONFIRMED_TEST)
+        .build();
+  }
+
+  private static byte[] randomByteData() {
+    byte[] keyData = new byte[16];
+    DiagnosisKeyServiceTestHelper.random.nextBytes(keyData);
+    return keyData;
   }
 }

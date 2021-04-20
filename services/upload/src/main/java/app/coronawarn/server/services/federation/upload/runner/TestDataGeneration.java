@@ -60,7 +60,9 @@ public class TestDataGeneration extends CommonDataGeneration<FederationUploadKey
         key.getVisitedCountries().toArray(new String[0]),
         key.getReportType().name(),
         key.getDaysSinceOnsetOfSymptoms(),
-        key.isConsentToFederation());
+        key.isConsentToFederation(),
+        key.getBatchTag(),
+        key.getSubmissionType());
   }
 
   private long secondsToHours(long timestampInSeconds) {
@@ -114,7 +116,8 @@ public class TestDataGeneration extends CommonDataGeneration<FederationUploadKey
 
   @Override
   protected FederationUploadKey generateDiagnosisKey(long submissionTimestamp, String country) {
-    return FederationUploadKey.from(DiagnosisKey.builder().withKeyData(generateDiagnosisKeyBytes())
+    return FederationUploadKey.from(DiagnosisKey.builder()
+        .withKeyDataAndSubmissionType(generateDiagnosisKeyBytes(), generateSubmissionType())
         .withRollingStartIntervalNumber(generateRollingStartIntervalNumber(submissionTimestamp))
         .withTransmissionRiskLevel(generateTransmissionRiskLevel())
         .withConsentToFederation(true)

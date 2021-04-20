@@ -3,7 +3,7 @@ logging:
   level:
     org:
       springframework: off
-    root: off
+    root: INFO
 
 federation-gateway:
   base-url: fake-url

@@ -2,9 +2,11 @@
 spring:
   flyway:
     enabled: true
-    locations: classpath:/db/migration
+    locations: classpath:/db/migration, classpath:/db/specific/{vendor}
+    mixed: true
   datasource:
-    url: jdbc:tc:postgresql:11.8:///databasename?TC_TMPFS=/testtmpfs:rw
+    driver-class-name: org.testcontainers.jdbc.ContainerDatabaseDriver
+    url: jdbc:tc:postgresql:11.8:///databasename?TC_TMPFS=/testtmpfs:rw?TC_INITSCRIPT=file:src/test/java/V0__init_db.sql
   test:
     database:
       # Use datasource as defined above.

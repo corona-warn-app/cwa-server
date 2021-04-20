@@ -6,6 +6,7 @@ import static java.time.ZoneOffset.UTC;
 import app.coronawarn.server.common.persistence.domain.TraceTimeIntervalWarning;
 import app.coronawarn.server.common.persistence.repository.TraceTimeIntervalWarningRepository;
 import app.coronawarn.server.common.persistence.service.utils.checkins.FakeCheckinsGenerator;
+import app.coronawarn.server.common.protocols.internal.SubmissionPayload.SubmissionType;
 import app.coronawarn.server.common.protocols.internal.pt.CheckIn;
 import com.google.protobuf.ByteString;
 import java.security.MessageDigest;
@@ -57,12 +58,12 @@ public class TraceTimeIntervalWarningService {
    * operations.
    */
   @Transactional
-  public int saveCheckins(List<CheckIn> checkins, int submissionTimestamp) {
-    return saveCheckins(checkins, this::hashLocationId, submissionTimestamp);
+  public int saveCheckins(List<CheckIn> checkins, int submissionTimestamp, SubmissionType submissionType) {
+    return saveCheckins(checkins, this::hashLocationId, submissionTimestamp, submissionType);
   }
 
   private int saveCheckins(List<CheckIn> checkins, Function<ByteString, byte[]> idHashGenerator,
-      int submissionTimestamp) {
+      int submissionTimestamp, SubmissionType submissionType) {
     int numberOfInsertedTraceWarnings = 0;
 
     for (CheckIn checkin : checkins) {
@@ -71,7 +72,8 @@ public class TraceTimeIntervalWarningService {
           .saveDoNothingOnConflict(hashId, checkin.getStartIntervalNumber(),
               checkin.getEndIntervalNumber() - checkin.getStartIntervalNumber(),
               checkin.getTransmissionRiskLevel(),
-              submissionTimestamp);
+              submissionTimestamp,
+              submissionType.name());
 
       if (traceWarningInsertedSuccessfully) {
         numberOfInsertedTraceWarnings++;
@@ -81,9 +83,8 @@ public class TraceTimeIntervalWarningService {
     int conflictingTraceWarnings = checkins.size() - numberOfInsertedTraceWarnings;
     if (conflictingTraceWarnings > 0) {
       logger.warn(
-          "{} out of {} TraceTimeIntervalWarnings conflicted with existing "
-              + "database entries or had errors while storing "
-              + "and were ignored.",
+          "{} out of {} TraceTimeIntervalWarnings conflicted with existing database entries or had errors while "
+              + "storing and were ignored.",
           conflictingTraceWarnings, checkins.size());
     }
 
@@ -97,11 +98,11 @@ public class TraceTimeIntervalWarningService {
    */
   @Transactional
   public int saveCheckinsWithFakeData(List<CheckIn> originalCheckins, int numberOfFakesToCreate,
-      byte[] pepper, int submissionTimestamp) {
+      byte[] pepper, int submissionTimestamp, SubmissionType submissionType) {
     List<CheckIn> allCheckins = new ArrayList<>(originalCheckins);
     allCheckins.addAll(fakeCheckinsGenerator.generateFakeCheckins(originalCheckins,
         numberOfFakesToCreate, pepper));
-    return saveCheckins(allCheckins, this::hashLocationId, submissionTimestamp);
+    return saveCheckins(allCheckins, this::hashLocationId, submissionTimestamp, submissionType);
   }
 
   /**
@@ -119,8 +120,8 @@ public class TraceTimeIntervalWarningService {
   }
 
   /**
-   * Deletes all trace time warning entries which have a submission timestamp that is older than the specified number
-   * of days.
+   * Deletes all trace time warning entries which have a submission timestamp that is older than the specified number of
+   * days.
    *
    * @param daysToRetain the number of days until which trace time warnings will be retained.
    * @throws IllegalArgumentException if {@code daysToRetain} is negative.
