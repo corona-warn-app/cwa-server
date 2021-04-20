@@ -1,6 +1,8 @@
 package app.coronawarn.server.services.distribution.statistics;
 
-import static app.coronawarn.server.services.distribution.statistics.keyfigurecard.KeyFigureCardSequenceConstants.*;
+import static app.coronawarn.server.services.distribution.statistics.keyfigurecard.KeyFigureCardSequenceConstants.INCIDENCE_CARD_ID;
+import static app.coronawarn.server.services.distribution.statistics.keyfigurecard.KeyFigureCardSequenceConstants.KEY_SUBMISSION_CARD_ID;
+import static app.coronawarn.server.services.distribution.statistics.keyfigurecard.KeyFigureCardSequenceConstants.REPRODUCTION_NUMBER_CARD;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
@@ -17,14 +19,14 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
-import org.springframework.boot.test.context.ConfigFileApplicationContextInitializer;
+import org.springframework.boot.test.context.ConfigDataApplicationContextInitializer;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 @ExtendWith(SpringExtension.class)
 @EnableConfigurationProperties(value = DistributionServiceConfig.class)
 @ContextConfiguration(classes = {KeyFigureCardFactory.class},
-    initializers = ConfigFileApplicationContextInitializer.class)
+    initializers = ConfigDataApplicationContextInitializer.class)
 class KeyFigureCardFactoryTest {
 
   @Autowired
@@ -124,7 +126,7 @@ class KeyFigureCardFactoryTest {
   @ExtendWith(SpringExtension.class)
   @EnableConfigurationProperties(value = DistributionServiceConfig.class)
   @ContextConfiguration(classes = {KeyFigureCardFactory.class},
-      initializers = ConfigFileApplicationContextInitializer.class)
+      initializers = ConfigDataApplicationContextInitializer.class)
   class IncidenceCardTest {
 
     @Test
@@ -180,7 +182,7 @@ class KeyFigureCardFactoryTest {
   @ExtendWith(SpringExtension.class)
   @EnableConfigurationProperties(value = DistributionServiceConfig.class)
   @ContextConfiguration(classes = {KeyFigureCardFactory.class},
-      initializers = ConfigFileApplicationContextInitializer.class)
+      initializers = ConfigDataApplicationContextInitializer.class)
   class KeySubmissionCard {
 
     @Test
@@ -222,7 +224,7 @@ class KeyFigureCardFactoryTest {
   @ExtendWith(SpringExtension.class)
   @EnableConfigurationProperties(value = DistributionServiceConfig.class)
   @ContextConfiguration(classes = {KeyFigureCardFactory.class},
-      initializers = ConfigFileApplicationContextInitializer.class)
+      initializers = ConfigDataApplicationContextInitializer.class)
   class ReproductionNumberCardTest {
 
     @Test

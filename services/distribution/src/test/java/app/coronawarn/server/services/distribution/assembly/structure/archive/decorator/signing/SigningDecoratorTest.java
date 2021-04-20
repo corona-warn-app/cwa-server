@@ -1,5 +1,3 @@
-
-
 package app.coronawarn.server.services.distribution.assembly.structure.archive.decorator.signing;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -36,7 +34,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.rules.TemporaryFolder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
-import org.springframework.boot.test.context.ConfigFileApplicationContextInitializer;
+import org.springframework.boot.test.context.ConfigDataApplicationContextInitializer;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.ResourceLoader;
 import org.springframework.test.context.ContextConfiguration;
@@ -45,7 +43,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 @EnableConfigurationProperties(value = DistributionServiceConfig.class)
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration(classes = {CryptoProvider.class, DistributionServiceConfig.class},
-    initializers = ConfigFileApplicationContextInitializer.class)
+    initializers = ConfigDataApplicationContextInitializer.class)
 class SigningDecoratorTest {
 
   @Autowired

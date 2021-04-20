@@ -11,18 +11,18 @@ import app.coronawarn.server.services.distribution.statistics.exceptions.FilePat
 import app.coronawarn.server.services.distribution.statistics.file.JsonFileLoader;
 import app.coronawarn.server.services.distribution.statistics.file.LocalStatisticJsonFileLoader;
 import app.coronawarn.server.services.distribution.statistics.keyfigurecard.KeyFigureCardFactory;
+import java.util.Optional;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
-import org.springframework.boot.test.context.ConfigFileApplicationContextInitializer;
+import org.springframework.boot.test.context.ConfigDataApplicationContextInitializer;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.boot.test.mock.mockito.SpyBean;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
-import java.util.Optional;
 
 @EnableConfigurationProperties(value = {DistributionServiceConfig.class})
 @ExtendWith(SpringExtension.class)
@@ -30,7 +30,7 @@ import java.util.Optional;
 @ContextConfiguration(classes = {StatisticsJsonToProtobufTest.class,
     StatisticsToProtobufMapping.class, KeyFigureCardFactory.class,
     LocalStatisticJsonFileLoader.class
-}, initializers = ConfigFileApplicationContextInitializer.class)
+}, initializers = ConfigDataApplicationContextInitializer.class)
 class StatisticsLoadExceptionTest {
 
   @SpyBean
