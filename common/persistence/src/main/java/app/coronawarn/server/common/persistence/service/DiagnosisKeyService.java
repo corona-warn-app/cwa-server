@@ -9,6 +9,7 @@ import static org.springframework.data.util.StreamUtils.createStreamFromIterator
 import app.coronawarn.server.common.persistence.domain.DiagnosisKey;
 import app.coronawarn.server.common.persistence.repository.DiagnosisKeyRepository;
 import app.coronawarn.server.common.persistence.service.common.ValidDiagnosisKeyFilter;
+import app.coronawarn.server.common.protocols.internal.SubmissionPayload.SubmissionType;
 import io.micrometer.core.annotation.Timed;
 import java.time.Instant;
 import java.time.LocalDateTime;
@@ -36,8 +37,9 @@ public class DiagnosisKeyService {
 
   /**
    * Persists the specified collection of {@link DiagnosisKey} instances and returns the number of inserted diagnosis
-   * keys. If the key data of a particular diagnosis key already exists in the database, this diagnosis key is not
-   * persisted.
+   * keys. If the key data of a particular diagnosis key already exists in the database and is of a submission type that
+   * can not be overwritten with the new submission type (e.g. overwriting PCR with RAPID is not possible), this
+   * diagnosis key is not persisted.
    *
    * @param diagnosisKeys must not contain {@literal null}.
    * @return Number of successfully inserted diagnosis keys.
@@ -49,12 +51,17 @@ public class DiagnosisKeyService {
     int numberOfInsertedKeys = 0;
 
     for (DiagnosisKey diagnosisKey : diagnosisKeys) {
+
+      if (keyRepository.exists(diagnosisKey.getKeyData(), SubmissionType.SUBMISSION_TYPE_PCR_TEST.name())) {
+        continue;
+      }
+
       boolean keyInsertedSuccessfully = keyRepository.saveDoNothingOnConflict(
           diagnosisKey.getKeyData(), diagnosisKey.getRollingStartIntervalNumber(), diagnosisKey.getRollingPeriod(),
           diagnosisKey.getSubmissionTimestamp(), diagnosisKey.getTransmissionRiskLevel(),
           diagnosisKey.getOriginCountry(), diagnosisKey.getVisitedCountries().toArray(new String[0]),
           diagnosisKey.getReportType().name(), diagnosisKey.getDaysSinceOnsetOfSymptoms(),
-          diagnosisKey.isConsentToFederation());
+          diagnosisKey.isConsentToFederation(), diagnosisKey.getSubmissionType().name());
 
       if (keyInsertedSuccessfully) {
         numberOfInsertedKeys++;

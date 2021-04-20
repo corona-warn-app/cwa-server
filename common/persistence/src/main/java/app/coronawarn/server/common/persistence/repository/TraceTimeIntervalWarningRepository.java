@@ -14,13 +14,14 @@ public interface TraceTimeIntervalWarningRepository
 
   @Modifying
   @Query("INSERT INTO trace_time_interval_warning (trace_location_id, start_interval_number,"
-      + " period, transmission_risk_level, submission_timestamp)"
+      + " period, transmission_risk_level, submission_timestamp, submission_type)"
       + " VALUES (:trace_location_id, :start_interval_number, :period, "
-      + ":transmission_risk_level, :submission_timestamp) ON CONFLICT DO NOTHING")
+      + ":transmission_risk_level, :submission_timestamp, :submission_type) ON CONFLICT DO NOTHING")
   boolean saveDoNothingOnConflict(@Param("trace_location_id") byte[] traceLocationGuid,
       @Param("start_interval_number") Integer startIntervalNumber, @Param("period") Integer period,
       @Param("transmission_risk_level") Integer transmissionRiskLevel,
-      @Param("submission_timestamp") Integer submissionTimestamp);
+      @Param("submission_timestamp") Integer submissionTimestamp,
+      @Param("submission_type") String submissionType);
 
   /**
    * Counts all entries that have a submission timestamp older than the specified one.

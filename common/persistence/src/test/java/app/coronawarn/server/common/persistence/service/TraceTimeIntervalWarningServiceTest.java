@@ -9,6 +9,7 @@ import static org.junit.Assert.assertEquals;
 import app.coronawarn.server.common.persistence.domain.TraceTimeIntervalWarning;
 import app.coronawarn.server.common.persistence.repository.TraceTimeIntervalWarningRepository;
 import app.coronawarn.server.common.persistence.service.utils.checkins.CheckinsDateSpecification;
+import app.coronawarn.server.common.protocols.internal.SubmissionPayload.SubmissionType;
 import app.coronawarn.server.common.protocols.internal.pt.CheckIn;
 import com.google.protobuf.ByteString;
 import java.security.MessageDigest;
@@ -52,7 +53,8 @@ class TraceTimeIntervalWarningServiceTest {
   @Test
   void testStorage() {
     List<CheckIn> checkins = getRandomTestData();
-    traceWarningsService.saveCheckins(checkins, currentTimestamp);
+    traceWarningsService.saveCheckins(checkins, currentTimestamp,
+        SubmissionType.SUBMISSION_TYPE_PCR_TEST);
 
     List<TraceTimeIntervalWarning> actualTraceWarningsStored =
         StreamSupport.stream(traceWarningsRepository.findAll().spliterator(), false)
@@ -64,7 +66,8 @@ class TraceTimeIntervalWarningServiceTest {
   @Test
   void testStorageWithRandomPadding() {
     List<CheckIn> checkins = getRandomTestData();
-    traceWarningsService.saveCheckinsWithFakeData(checkins, 2, randomHashPepper(), currentTimestamp);
+    traceWarningsService.saveCheckinsWithFakeData(checkins, 2, randomHashPepper(), currentTimestamp,
+        SubmissionType.SUBMISSION_TYPE_PCR_TEST);
 
     List<TraceTimeIntervalWarning> actualTraceWarningsStored =
         StreamSupport.stream(traceWarningsRepository.findAll().spliterator(), false)
@@ -75,19 +78,13 @@ class TraceTimeIntervalWarningServiceTest {
   @Test
   void testSortedRetrievalResult() {
     traceWarningsRepository
-        .saveDoNothingOnConflict(hashLocationId(ByteString.copyFromUtf8("sorted-uuid2")),
-            56,
-            10,
-            3,
-            CheckinsDateSpecification.HOUR_SINCE_EPOCH_DERIVATION
-                .apply(Instant.now().getEpochSecond()));
+        .saveDoNothingOnConflict(hashLocationId(ByteString.copyFromUtf8("sorted-uuid2")), 56, 10, 3,
+            CheckinsDateSpecification.HOUR_SINCE_EPOCH_DERIVATION.apply(Instant.now().getEpochSecond()),
+            SubmissionType.SUBMISSION_TYPE_PCR_TEST.name());
     traceWarningsRepository
-        .saveDoNothingOnConflict(hashLocationId(ByteString.copyFromUtf8("sorted-uuid1")),
-            456,
-            20,
-            2,
-            CheckinsDateSpecification.HOUR_SINCE_EPOCH_DERIVATION
-                .apply(Instant.now().getEpochSecond()) - 10);
+        .saveDoNothingOnConflict(hashLocationId(ByteString.copyFromUtf8("sorted-uuid1")), 456, 20, 2,
+            CheckinsDateSpecification.HOUR_SINCE_EPOCH_DERIVATION.apply(Instant.now().getEpochSecond()) - 10,
+            SubmissionType.SUBMISSION_TYPE_PCR_TEST.name());
 
     List<CheckIn> checkins = new ArrayList<>(List.of(
         CheckIn.newBuilder().setStartIntervalNumber(56).setEndIntervalNumber(66)
@@ -149,7 +146,7 @@ class TraceTimeIntervalWarningServiceTest {
   void testApplyRetentionPolicyForNotApplicableEntries() {
     var expKeys = getRandomTestData();
 
-    traceWarningsService.saveCheckins(expKeys, currentTimestamp);
+    traceWarningsService.saveCheckins(expKeys, currentTimestamp, SubmissionType.SUBMISSION_TYPE_PCR_TEST);
     traceWarningsService.applyRetentionPolicy(1);
     var actKeys = traceWarningsService.getTraceTimeIntervalWarnings();
 
@@ -160,7 +157,8 @@ class TraceTimeIntervalWarningServiceTest {
   void testApplyRetentionPolicyForOneApplicableEntry() {
     var keys = getRandomTestData();
 
-    traceWarningsService.saveCheckins(keys, currentTimestamp - (int) TimeUnit.DAYS.toHours(1) - 1);
+    traceWarningsService.saveCheckins(keys, currentTimestamp - (int) TimeUnit.DAYS.toHours(1) - 1,
+        SubmissionType.SUBMISSION_TYPE_PCR_TEST);
     traceWarningsService.applyRetentionPolicy(1);
     var actKeys = traceWarningsService.getTraceTimeIntervalWarnings();
 

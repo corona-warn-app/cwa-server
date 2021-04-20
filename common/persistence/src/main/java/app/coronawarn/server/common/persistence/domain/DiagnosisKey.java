@@ -7,7 +7,9 @@ import app.coronawarn.server.common.persistence.domain.validation.ValidCountries
 import app.coronawarn.server.common.persistence.domain.validation.ValidCountry;
 import app.coronawarn.server.common.persistence.domain.validation.ValidRollingStartIntervalNumber;
 import app.coronawarn.server.common.persistence.domain.validation.ValidSubmissionTimestamp;
+import app.coronawarn.server.common.persistence.domain.validation.ValidSubmissionType;
 import app.coronawarn.server.common.protocols.external.exposurenotification.ReportType;
+import app.coronawarn.server.common.protocols.internal.SubmissionPayload.SubmissionType;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -49,6 +51,9 @@ public class DiagnosisKey {
       + KEY_DATA_LENGTH + ".")
   private final byte[] keyData;
 
+  @ValidSubmissionType
+  private final SubmissionType submissionType;
+
   @ValidRollingStartIntervalNumber
   private final int rollingStartIntervalNumber;
 
@@ -82,11 +87,12 @@ public class DiagnosisKey {
   /**
    * Should be called by builders.
    */
-  DiagnosisKey(byte[] keyData, int rollingStartIntervalNumber, int rollingPeriod,
+  DiagnosisKey(byte[] keyData, SubmissionType submissionType, int rollingStartIntervalNumber, int rollingPeriod,
       int transmissionRiskLevel, long submissionTimestamp,
       boolean consentToFederation, String originCountry, Set<String> visitedCountries,
       ReportType reportType, Integer daysSinceOnsetOfSymptoms) {
     this.keyData = keyData;
+    this.submissionType = submissionType;
     this.rollingStartIntervalNumber = rollingStartIntervalNumber;
     this.rollingPeriod = rollingPeriod;
     this.transmissionRiskLevel = transmissionRiskLevel;
@@ -116,6 +122,15 @@ public class DiagnosisKey {
    */
   public byte[] getKeyData() {
     return keyData;
+  }
+
+  /**
+   * Returns the {@link SubmissionType}.
+   *
+   * @return submissionType
+   */
+  public SubmissionType getSubmissionType() {
+    return submissionType;
   }
 
   /**
@@ -224,7 +239,8 @@ public class DiagnosisKey {
       return false;
     }
     DiagnosisKey that = (DiagnosisKey) o;
-    return rollingStartIntervalNumber == that.rollingStartIntervalNumber
+    return submissionType == that.submissionType
+        && rollingStartIntervalNumber == that.rollingStartIntervalNumber
         && rollingPeriod == that.rollingPeriod
         && transmissionRiskLevel == that.transmissionRiskLevel
         && submissionTimestamp == that.submissionTimestamp
@@ -238,8 +254,8 @@ public class DiagnosisKey {
   @Override
   public int hashCode() {
     int result = Objects
-        .hash(rollingStartIntervalNumber, rollingPeriod, transmissionRiskLevel, submissionTimestamp, originCountry,
-            visitedCountries, reportType, daysSinceOnsetOfSymptoms);
+        .hash(submissionType, rollingStartIntervalNumber, rollingPeriod, transmissionRiskLevel, submissionTimestamp,
+            originCountry, visitedCountries, reportType, daysSinceOnsetOfSymptoms);
     result = 31 * result + Arrays.hashCode(keyData);
     return result;
   }
@@ -248,6 +264,7 @@ public class DiagnosisKey {
   public String toString() {
     return "DiagnosisKey{"
         + "keyData=HIDDEN"
+        + ", submissionType=" + submissionType
         + ", rollingStartIntervalNumber=" + rollingStartIntervalNumber
         + ", rollingPeriod=" + rollingPeriod
         + ", transmissionRiskLevel=" + transmissionRiskLevel

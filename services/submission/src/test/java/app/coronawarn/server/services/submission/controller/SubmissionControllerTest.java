@@ -42,6 +42,7 @@ import app.coronawarn.server.common.persistence.service.DiagnosisKeyService;
 import app.coronawarn.server.common.protocols.external.exposurenotification.ReportType;
 import app.coronawarn.server.common.protocols.external.exposurenotification.TemporaryExposureKey;
 import app.coronawarn.server.common.protocols.internal.SubmissionPayload;
+import app.coronawarn.server.common.protocols.internal.SubmissionPayload.SubmissionType;
 import app.coronawarn.server.common.protocols.internal.pt.CheckIn;
 import app.coronawarn.server.services.submission.checkins.EventCheckinDataValidatorTest;
 import app.coronawarn.server.services.submission.config.SubmissionServiceConfig;
@@ -123,8 +124,8 @@ class SubmissionControllerTest {
     final Set<DiagnosisKey> submittedDiagnosisKeys = submittedTemporaryExposureKeys.stream()
         .map(submittedTemporaryExposureKey -> DiagnosisKey.builder()
             .fromTemporaryExposureKeyAndMetadata(submittedTemporaryExposureKey,
-                submissionPayload.getVisitedCountriesList(), submissionPayload.getOrigin(),
-                submissionPayload.getConsentToFederation())
+                SubmissionType.SUBMISSION_TYPE_PCR_TEST, submissionPayload.getVisitedCountriesList(),
+                submissionPayload.getOrigin(), submissionPayload.getConsentToFederation())
             .withConsentToFederation(submissionPayload.getConsentToFederation())
             .withVisitedCountries(new HashSet<>(submissionPayload.getVisitedCountriesList()))
             .withCountryCode(defaultIfBlank(submissionPayload.getOrigin(), config.getDefaultOriginCountry())).build())
@@ -444,7 +445,8 @@ class SubmissionControllerTest {
     final long eventCheckinInThePast = LocalDateTime.ofInstant(thisInstant, UTC).minusDays(daysInThePast + 1)
         .toEpochSecond(UTC);
 
-    final long eventCheckinInAllowedPeriod = LocalDateTime.ofInstant(Instant.now(), UTC).minusDays(10).toEpochSecond(UTC);
+    final long eventCheckinInAllowedPeriod = LocalDateTime.ofInstant(Instant.now(), UTC).minusDays(10)
+        .toEpochSecond(UTC);
 
     final List<CheckIn> checkins = List
         .of(CheckIn.newBuilder().setStartIntervalNumber(TEN_MINUTE_INTERVAL_DERIVATION.apply(eventCheckinInThePast))

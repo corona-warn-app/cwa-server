@@ -1,5 +1,3 @@
-
-
 package app.coronawarn.server.common.persistence.domain;
 
 import static app.coronawarn.server.common.persistence.domain.DiagnosisKeyBuilders.Builder;
@@ -13,6 +11,7 @@ import app.coronawarn.server.common.persistence.domain.normalization.Normalizabl
 import app.coronawarn.server.common.persistence.exception.InvalidDiagnosisKeyException;
 import app.coronawarn.server.common.protocols.external.exposurenotification.ReportType;
 import app.coronawarn.server.common.protocols.external.exposurenotification.TemporaryExposureKey;
+import app.coronawarn.server.common.protocols.internal.SubmissionPayload.SubmissionType;
 import java.time.Instant;
 import java.util.HashSet;
 import java.util.List;
@@ -33,6 +32,7 @@ public class DiagnosisKeyBuilder implements
   private static final Logger logger = LoggerFactory.getLogger(DiagnosisKeyBuilder.class);
 
   private byte[] keyData;
+  private SubmissionType submissionType;
   private int rollingStartIntervalNumber;
   private int rollingPeriod = DiagnosisKey.MAX_ROLLING_PERIOD;
   private Integer transmissionRiskLevel;
@@ -48,8 +48,9 @@ public class DiagnosisKeyBuilder implements
   }
 
   @Override
-  public RollingStartIntervalNumberBuilder withKeyData(byte[] keyData) {
+  public RollingStartIntervalNumberBuilder withKeyDataAndSubmissionType(byte[] keyData, SubmissionType submissionType) {
     this.keyData = keyData;
+    this.submissionType = submissionType;
     return this;
   }
 
@@ -67,9 +68,9 @@ public class DiagnosisKeyBuilder implements
 
   @Override
   public FinalBuilder fromTemporaryExposureKeyAndMetadata(TemporaryExposureKey protoBufObject,
-      List<String> visitedCountries, String originCountry, boolean consentToFederation) {
+      SubmissionType submissionType, List<String> visitedCountries, String originCountry, boolean consentToFederation) {
     return this
-        .withKeyData(protoBufObject.getKeyData().toByteArray())
+        .withKeyDataAndSubmissionType(protoBufObject.getKeyData().toByteArray(), submissionType)
         .withRollingStartIntervalNumber(protoBufObject.getRollingStartIntervalNumber())
         .withTransmissionRiskLevel(
             protoBufObject.hasTransmissionRiskLevel() ? protoBufObject.getTransmissionRiskLevel() : null)
@@ -85,7 +86,8 @@ public class DiagnosisKeyBuilder implements
   public FinalBuilder fromFederationDiagnosisKey(
       app.coronawarn.server.common.protocols.external.exposurenotification.DiagnosisKey federationDiagnosisKey) {
     return this
-        .withKeyData(federationDiagnosisKey.getKeyData().toByteArray())
+        .withKeyDataAndSubmissionType(federationDiagnosisKey.getKeyData().toByteArray(),
+            SubmissionType.SUBMISSION_TYPE_PCR_TEST)
         .withRollingStartIntervalNumber(federationDiagnosisKey.getRollingStartIntervalNumber())
         .withTransmissionRiskLevel(federationDiagnosisKey.getTransmissionRiskLevel())
         .withRollingPeriod(federationDiagnosisKey.getRollingPeriod())
@@ -157,12 +159,9 @@ public class DiagnosisKeyBuilder implements
 
     NormalizableFields normalizedValues = normalizeValues();
 
-    var diagnosisKey = new DiagnosisKey(
-        keyData, rollingStartIntervalNumber, rollingPeriod,
-        normalizedValues.getTransmissionRiskLevel(),
-        submissionTimestamp,
-        consentToFederation, countryCode, enhanceVisitedCountriesWithOriginCountry(), reportType,
-        normalizedValues.getDaysSinceOnsetOfSymptoms());
+    var diagnosisKey = new DiagnosisKey(keyData, submissionType, rollingStartIntervalNumber, rollingPeriod,
+        normalizedValues.getTransmissionRiskLevel(), submissionTimestamp, consentToFederation, countryCode,
+        enhanceVisitedCountriesWithOriginCountry(), reportType, normalizedValues.getDaysSinceOnsetOfSymptoms());
 
     return throwIfValidationFails(diagnosisKey);
   }

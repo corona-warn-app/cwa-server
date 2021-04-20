@@ -143,7 +143,8 @@ public class SubmissionController {
       numberOfSavedCheckins.set(traceTimeIntervalWarningSevice.saveCheckinsWithFakeData(checkins,
           submissionServiceConfig.getRandomCheckinsPaddingMultiplier(),
           submissionServiceConfig.getRandomCheckinsPaddingPepperAsByteArray(),
-          CheckinsDateSpecification.HOUR_SINCE_EPOCH_DERIVATION.apply(Instant.now().getEpochSecond())));
+          CheckinsDateSpecification.HOUR_SINCE_EPOCH_DERIVATION.apply(Instant.now().getEpochSecond()),
+          submissionPayload.getSubmissionType()));
     } catch (final TooManyCheckInsAtSameDay e) {
       logger.error(EVENT, e.getMessage());
     } catch (final Exception e) {
@@ -175,6 +176,7 @@ public class SubmissionController {
         .map(protoBufferKey -> DiagnosisKey.builder()
             .fromTemporaryExposureKeyAndMetadata(
                 protoBufferKey,
+                submissionPayload.getSubmissionType(),
                 submissionPayload.getVisitedCountriesList(),
                 submissionPayload.getOrigin(),
                 submissionPayload.getConsentToFederation())
@@ -213,7 +215,7 @@ public class SubmissionController {
       paddedDiagnosisKeys.add(diagnosisKey);
       IntStream.range(1, randomKeyPaddingMultiplier)
           .mapToObj(index -> DiagnosisKey.builder()
-              .withKeyData(generateRandomKeyData())
+              .withKeyDataAndSubmissionType(generateRandomKeyData(), diagnosisKey.getSubmissionType())
               .withRollingStartIntervalNumber(diagnosisKey.getRollingStartIntervalNumber())
               .withTransmissionRiskLevel(diagnosisKey.getTransmissionRiskLevel())
               .withRollingPeriod(diagnosisKey.getRollingPeriod())

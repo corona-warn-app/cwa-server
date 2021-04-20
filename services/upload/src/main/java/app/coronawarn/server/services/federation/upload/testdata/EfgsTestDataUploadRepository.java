@@ -1,6 +1,7 @@
 package app.coronawarn.server.services.federation.upload.testdata;
 
 import app.coronawarn.server.common.persistence.domain.FederationUploadKey;
+import app.coronawarn.server.common.protocols.internal.SubmissionPayload.SubmissionType;
 import org.springframework.context.annotation.Profile;
 import org.springframework.data.jdbc.repository.query.Modifying;
 import org.springframework.data.jdbc.repository.query.Query;
@@ -15,9 +16,11 @@ public interface EfgsTestDataUploadRepository
   @Modifying
   @Query("INSERT INTO federation_upload_key "
       + "(key_data, rolling_start_interval_number, rolling_period, submission_timestamp, transmission_risk_level, "
-      + "origin_country, visited_countries, report_type, days_since_onset_of_symptoms, consent_to_federation) "
+      + "origin_country, visited_countries, report_type, days_since_onset_of_symptoms, consent_to_federation,"
+      + "batch_tag, submission_type) "
       + "VALUES (:keyData, :rollingStartIntervalNumber, :rollingPeriod, :submissionTimestamp, :transmissionRisk, "
-      + ":origin_country, :visited_countries, :report_type, :days_since_onset_of_symptoms, :consent_to_federation) "
+      + ":origin_country, :visited_countries, :report_type, :days_since_onset_of_symptoms, :consent_to_federation,"
+      + ":batch_tag, :submission_type) "
       + "ON CONFLICT DO NOTHING")
   void storeUploadKey(
       @Param("keyData") byte[] keyData,
@@ -29,7 +32,9 @@ public interface EfgsTestDataUploadRepository
       @Param("visited_countries") String[] visitedCountries,
       @Param("report_type") String reportType,
       @Param("days_since_onset_of_symptoms") int daysSinceOnsetOfSymptoms,
-      @Param("consent_to_federation") boolean consentToFederation);
+      @Param("consent_to_federation") boolean consentToFederation,
+      @Param("batch_tag") String batchTag,
+      @Param("submission_type") SubmissionType submissionType);
 
   @Query("SELECT COUNT(*) FROM federation_upload_key WHERE batch_tag IS NULL")
   Integer countPendingKeys();

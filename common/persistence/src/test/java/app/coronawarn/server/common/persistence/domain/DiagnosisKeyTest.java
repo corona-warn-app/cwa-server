@@ -7,15 +7,13 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatCode;
 import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException;
 
+import app.coronawarn.server.common.protocols.external.exposurenotification.ReportType;
+import app.coronawarn.server.common.protocols.internal.SubmissionPayload.SubmissionType;
 import java.nio.charset.StandardCharsets;
-import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
-import java.util.Collections;
-import java.util.List;
 import java.util.Set;
-import app.coronawarn.server.common.protocols.external.exposurenotification.ReportType;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -24,6 +22,7 @@ import org.junit.jupiter.params.provider.ValueSource;
 class DiagnosisKeyTest {
 
   final static byte[] expKeyData = "testKey111111111".getBytes(StandardCharsets.US_ASCII);
+  final static SubmissionType expSubmissionType = SubmissionType.SUBMISSION_TYPE_PCR_TEST;
   final static int expRollingStartIntervalNumber = 1;
   final static int expRollingPeriod = 2;
   final static int expTransmissionRiskLevel = 3;
@@ -33,9 +32,9 @@ class DiagnosisKeyTest {
   static final ReportType reportType = ReportType.CONFIRMED_TEST;
   static final int daysSinceOnsetOfSymptoms = 1;
 
-  final static DiagnosisKey diagnosisKey = new DiagnosisKey(expKeyData, expRollingStartIntervalNumber,
-      expRollingPeriod, expTransmissionRiskLevel, expSubmissionTimestamp, false, originCountry, visitedCountries,
-      reportType, daysSinceOnsetOfSymptoms);
+  final static DiagnosisKey diagnosisKey = new DiagnosisKey(expKeyData, expSubmissionType,
+      expRollingStartIntervalNumber, expRollingPeriod, expTransmissionRiskLevel, expSubmissionTimestamp, false,
+      originCountry, visitedCountries, reportType, daysSinceOnsetOfSymptoms);
 
   @Test
   void testRollingStartIntervalNumberGetter() {
@@ -63,7 +62,7 @@ class DiagnosisKeyTest {
         .of(LocalDate.now(UTC), LocalTime.MIDNIGHT)
         .minusDays(5).minusMinutes(10)
         .toEpochSecond(UTC) / (60 * 10));
-    DiagnosisKey diagnosisKeyFiveDays = new DiagnosisKey(expKeyData, fiveDaysAgo,
+    DiagnosisKey diagnosisKeyFiveDays = new DiagnosisKey(expKeyData, expSubmissionType, fiveDaysAgo,
         expRollingPeriod, expTransmissionRiskLevel, expSubmissionTimestamp, false, originCountry, visitedCountries,
         reportType, daysSinceOnsetOfSymptoms);
 
