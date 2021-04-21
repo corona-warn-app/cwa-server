@@ -15,7 +15,6 @@ import app.coronawarn.server.common.persistence.service.StatisticsDownloadServic
 import app.coronawarn.server.common.persistence.service.TraceTimeIntervalWarningService;
 import app.coronawarn.server.common.persistence.service.common.KeySharingPoliciesChecker;
 import app.coronawarn.server.common.persistence.service.common.ValidDiagnosisKeyFilter;
-import app.coronawarn.server.common.persistence.service.utils.checkins.FakeCheckinsGenerator;
 import app.coronawarn.server.common.persistence.utils.YamlPropertySourceFactory;
 import java.security.NoSuchAlgorithmException;
 import java.util.Map;
@@ -23,6 +22,7 @@ import org.mockito.Mockito;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Primary;
 
 @SpringBootApplication
 @Configuration
@@ -67,8 +67,7 @@ public class TestApplication {
   @Bean
   TraceTimeIntervalWarningService traceTimeWarningService(
       TraceTimeIntervalWarningRepository timeIntervalWarningRepository) throws NoSuchAlgorithmException {
-    return new TraceTimeIntervalWarningService(timeIntervalWarningRepository,
-        new FakeCheckinsGenerator());
+    return new TraceTimeIntervalWarningService(timeIntervalWarningRepository);
   }
 
   @Bean

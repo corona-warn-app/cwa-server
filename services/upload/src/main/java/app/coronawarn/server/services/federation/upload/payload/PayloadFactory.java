@@ -3,11 +3,11 @@
 package app.coronawarn.server.services.federation.upload.payload;
 
 import app.coronawarn.server.common.persistence.domain.FederationUploadKey;
+import app.coronawarn.server.common.persistence.utils.hash.HashUtils;
 import app.coronawarn.server.common.protocols.external.exposurenotification.DiagnosisKeyBatch;
 import app.coronawarn.server.services.federation.upload.payload.signing.BatchSigner;
 import java.io.IOException;
 import java.security.GeneralSecurityException;
-import java.security.SecureRandom;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.util.List;
@@ -69,13 +69,11 @@ public class PayloadFactory {
   public List<UploadPayload> makePayloadList(List<FederationUploadKey> diagnosisKeys) {
     Map<DiagnosisKeyBatch, List<FederationUploadKey>> batchesAndOriginalKeys = assembler
         .assembleDiagnosisKeyBatch(diagnosisKeys);
-    byte[] hash = new byte[4];
-    new SecureRandom().nextBytes(hash);
     AtomicInteger batchCounter = new AtomicInteger(0);
 
     return batchesAndOriginalKeys.entrySet().stream()
         .map(entry -> this.mapToPayloadAndSign(
-            generateBatchTag(batchCounter.getAndIncrement(), hash),
+            generateBatchTag(batchCounter.getAndIncrement(), HashUtils.generateRandomKeyData(4)),
             entry.getKey(),
             entry.getValue()))
         .collect(Collectors.toList());

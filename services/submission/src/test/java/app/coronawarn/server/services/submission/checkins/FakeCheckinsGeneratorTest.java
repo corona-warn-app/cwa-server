@@ -1,18 +1,18 @@
-package app.coronawarn.server.common.persistence.service.utils.checkins;
+package app.coronawarn.server.services.submission.checkins;
 
-import static org.assertj.core.api.Assertions.*;
-
+import app.coronawarn.server.common.protocols.internal.pt.CheckIn;
+import com.google.protobuf.ByteString;
+import org.junit.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
+import org.testcontainers.shaded.org.apache.commons.lang.RandomStringUtils;
 import java.security.SecureRandom;
 import java.util.List;
 import java.util.Random;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-import org.junit.Test;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.ValueSource;
-import org.testcontainers.shaded.org.apache.commons.lang.RandomStringUtils;
-import com.google.protobuf.ByteString;
-import app.coronawarn.server.common.protocols.internal.pt.CheckIn;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 public class FakeCheckinsGeneratorTest {
 
@@ -49,9 +49,6 @@ public class FakeCheckinsGeneratorTest {
     assertThat(fake.getLocationId()
            .equals(original.getLocationId().concat(ByteString.copyFrom(pepper).concat(ByteString.copyFromUtf8("1"))))
     );
-    // interval generation is randomized so it would only be testable if the randomiztion is mocked
-    //assertThat(fake.getStartIntervalNumber() == START_INTERVAL_GENERATION.apply(original));
-    //assertThat(fake.getEndIntervalNumber() == END_INTERVAL_GENERATION.apply(original));
     assertThat(fake.getTransmissionRiskLevel()).isEqualTo(original.getTransmissionRiskLevel());
   }
 

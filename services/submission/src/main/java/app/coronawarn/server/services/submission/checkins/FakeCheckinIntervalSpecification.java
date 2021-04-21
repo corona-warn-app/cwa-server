@@ -1,4 +1,4 @@
-package app.coronawarn.server.common.persistence.service.utils.checkins;
+package app.coronawarn.server.services.submission.checkins;
 
 import app.coronawarn.server.common.protocols.internal.pt.CheckIn;
 import java.security.SecureRandom;

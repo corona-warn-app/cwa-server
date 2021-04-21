@@ -64,18 +64,6 @@ class TraceTimeIntervalWarningServiceTest {
   }
 
   @Test
-  void testStorageWithRandomPadding() {
-    List<CheckIn> checkins = getRandomTestData();
-    traceWarningsService.saveCheckinsWithFakeData(checkins, 2, randomHashPepper(), currentTimestamp,
-        SubmissionType.SUBMISSION_TYPE_PCR_TEST);
-
-    List<TraceTimeIntervalWarning> actualTraceWarningsStored =
-        StreamSupport.stream(traceWarningsRepository.findAll().spliterator(), false)
-            .collect(Collectors.toList());
-    assertEquals(actualTraceWarningsStored.size(), checkins.size() + checkins.size() * 2);
-  }
-
-  @Test
   void testSortedRetrievalResult() {
     traceWarningsRepository
         .saveDoNothingOnConflict(hashLocationId(ByteString.copyFromUtf8("sorted-uuid2")), 56, 10, 3,

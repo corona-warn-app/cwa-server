@@ -1,6 +1,6 @@
-package app.coronawarn.server.common.persistence.service.utils.checkins;
+package app.coronawarn.server.services.submission.checkins;
 
-import static app.coronawarn.server.common.persistence.service.utils.checkins.FakeCheckinIntervalSpecification.*;
+import static app.coronawarn.server.services.submission.checkins.FakeCheckinIntervalSpecification.*;
 
 import app.coronawarn.server.common.protocols.internal.pt.CheckIn;
 import com.google.protobuf.ByteString;
