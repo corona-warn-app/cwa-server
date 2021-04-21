@@ -29,14 +29,21 @@ public class QrCodeTemplateLoader {
     return loadPosterTemplate(config.getIosQrCodePosterTemplate().getTemplate());
   }
 
-  private ByteString loadPosterTemplate(File file) {
-    try (InputStream resourceAsStream = new FileInputStream(file)) {
+  private ByteString loadPosterTemplate(String filename) {
+    try (InputStream resourceAsStream = new FileInputStream(filename)) {
       return ByteString.readFrom(resourceAsStream);
     } catch (IOException e) {
       logger.error(
-          "Could not load '" + file.getAbsolutePath() + "' QR poster template from the application package", e);
-      // At the moment just log the error but do not interfere with normal application startup
-      return ByteString.copyFromUtf8("");
+          "Could not load '" + filename + "' QR poster template, will load default from the application package:",
+          e.getMessage());
+      try (InputStream resourceAsStream = this.getClass().getClassLoader().getResourceAsStream(filename)) {
+        return ByteString.readFrom(resourceAsStream);
+      } catch (IOException e2) {
+        logger.error(
+            "Could not load default QR poster template from the application package!", e);
+      }
     }
+    // At the moment just log the error but do not interfere with normal application startup
+    return ByteString.copyFromUtf8("");
   }
 }
