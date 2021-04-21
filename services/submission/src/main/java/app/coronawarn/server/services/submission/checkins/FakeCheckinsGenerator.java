@@ -2,6 +2,7 @@ package app.coronawarn.server.services.submission.checkins;
 
 import static app.coronawarn.server.services.submission.checkins.FakeCheckinIntervalSpecification.*;
 
+import app.coronawarn.server.common.persistence.utils.hash.HashUtils;
 import app.coronawarn.server.common.protocols.internal.pt.CheckIn;
 import com.google.protobuf.ByteString;
 import java.security.SecureRandom;
@@ -27,14 +28,8 @@ public class FakeCheckinsGenerator {
     return checkins.stream()
         .flatMap(original -> IntStream.range(0, numberOfFakesToCreate)
             .mapToObj(counter -> buildFakeCheckin(original, String.valueOf(counter),
-                (pepper == null || pepper.length == 0) ? randomHashPepper() : pepper)))
+                (pepper == null || pepper.length == 0) ? HashUtils.generateRandomKeyData(16) : pepper)))
         .collect(Collectors.toList());
-  }
-
-  private byte[] randomHashPepper() {
-    byte[] pepper = new byte[16];
-    random.nextBytes(pepper);
-    return pepper;
   }
 
   private CheckIn buildFakeCheckin(CheckIn original, String counter, byte[] pepper) {

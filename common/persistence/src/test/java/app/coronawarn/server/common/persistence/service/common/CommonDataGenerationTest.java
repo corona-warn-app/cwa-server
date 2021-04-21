@@ -5,6 +5,7 @@ import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import app.coronawarn.server.common.persistence.domain.DiagnosisKey;
+import app.coronawarn.server.common.persistence.utils.hash.HashUtils;
 import com.google.protobuf.ByteString;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.ApplicationArguments;
@@ -15,7 +16,7 @@ class CommonDataGenerationTest {
 
   @Test
   void testGenerateDiagnosisKeyBytesNotNull() {
-    assertNotNull(t.generateDiagnosisKeyBytes());
+    assertNotNull(HashUtils.generateRandomKeyData(16));
   }
 
   @Test
@@ -52,7 +53,7 @@ class CommonDataGenerationTest {
               .addVisitedCountries("DE")
               .setRollingStartIntervalNumber(123123)
               .setOrigin("DE")
-              .setKeyData(ByteString.copyFrom(t.generateDiagnosisKeyBytes()))
+              .setKeyData(ByteString.copyFrom(HashUtils.generateRandomKeyData(16)))
               .setTransmissionRiskLevel(1)
               .build()
       )

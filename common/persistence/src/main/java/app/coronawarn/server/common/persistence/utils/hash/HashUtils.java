@@ -24,7 +24,6 @@ public class HashUtils {
   }
 
   private HashUtils() {
-    throw new IllegalStateException("Utility class");
   }
 
   /**

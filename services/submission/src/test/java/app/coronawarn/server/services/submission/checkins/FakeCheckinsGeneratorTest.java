@@ -1,5 +1,6 @@
 package app.coronawarn.server.services.submission.checkins;
 
+import app.coronawarn.server.common.persistence.utils.hash.HashUtils;
 import app.coronawarn.server.common.protocols.internal.pt.CheckIn;
 import com.google.protobuf.ByteString;
 import org.junit.Test;
@@ -27,7 +28,7 @@ public class FakeCheckinsGeneratorTest {
     List<CheckIn> originalData = Stream.generate(this::randomCheckin)
         .limit(originalCheckinsListSize).collect(Collectors.toList());
     List<CheckIn> fakeCheckins =
-        underTest.generateFakeCheckins(originalData, numberOfFakesToCreate, randomHashPepper());
+        underTest.generateFakeCheckins(originalData, numberOfFakesToCreate, HashUtils.generateRandomKeyData(16));
 
     assertThat(fakeCheckins).hasSize(originalCheckinsListSize * numberOfFakesToCreate);
   }
@@ -36,7 +37,7 @@ public class FakeCheckinsGeneratorTest {
   public void should_generate_fake_checkin_with_content_derived_from_original() {
     FakeCheckinsGenerator underTest = new FakeCheckinsGenerator();
     List<CheckIn> originalList = List.of(randomCheckin());
-    byte[] pepper = randomHashPepper();
+    byte[] pepper = HashUtils.generateRandomKeyData(16);
     List<CheckIn> fakes = underTest.generateFakeCheckins(originalList, 1, pepper);
 
     assertThat(fakes).hasSize(1);
@@ -62,12 +63,5 @@ public class FakeCheckinsGeneratorTest {
         .setTransmissionRiskLevel(random.nextInt(8))
         .setLocationId(ByteString.copyFromUtf8(RandomStringUtils.randomAlphanumeric(10)))
         .build();
-  }
-
-  private byte[] randomHashPepper() {
-    byte[] pepper = new byte[16];
-    SecureRandom random = new SecureRandom();
-    random.nextBytes(pepper);
-    return pepper;
   }
 }
