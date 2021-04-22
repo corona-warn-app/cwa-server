@@ -12,19 +12,19 @@ class HashUtilsTest {
 
   @Test
   void testHashHasExpectedLength() {
-    String hash = HashUtils.computeHash(TEST_STRING);
+    String hash = HashUtils.md5DigestAsHex(TEST_STRING);
     assertThat(hash).hasSize(32);
   }
 
   @Test
   void testRandomKeyDataSize() {
-    byte[] hash = HashUtils.generateRandomKeyData(16);
+    byte[] hash = HashUtils.generateRandomByteArrayData(16);
     assertThat(hash).hasSize(16);
   }
 
   @Test
   void hashLocationIdSize() {
-    byte[] hash = HashUtils.hashLocationId(ByteString.copyFromUtf8(TEST_STRING), MessageDigestAlgorithms.SHA_256);
+    byte[] hash = HashUtils.byteStringDigest(ByteString.copyFromUtf8(TEST_STRING), MessageDigestAlgorithms.SHA_256);
     assertThat(hash).hasSize(32);
   }
 }

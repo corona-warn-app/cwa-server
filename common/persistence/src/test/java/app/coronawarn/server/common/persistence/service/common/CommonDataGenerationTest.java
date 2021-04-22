@@ -16,7 +16,7 @@ class CommonDataGenerationTest {
 
   @Test
   void testGenerateDiagnosisKeyBytesNotNull() {
-    assertNotNull(HashUtils.generateRandomKeyData(16));
+    assertNotNull(HashUtils.generateRandomByteArrayData(16));
   }
 
   @Test
@@ -53,7 +53,7 @@ class CommonDataGenerationTest {
               .addVisitedCountries("DE")
               .setRollingStartIntervalNumber(123123)
               .setOrigin("DE")
-              .setKeyData(ByteString.copyFrom(HashUtils.generateRandomKeyData(16)))
+              .setKeyData(ByteString.copyFrom(HashUtils.generateRandomByteArrayData(16)))
               .setTransmissionRiskLevel(1)
               .build()
       )
