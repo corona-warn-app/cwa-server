@@ -30,15 +30,15 @@ public class QrCodeTemplateLoader {
   }
 
   private ByteString loadPosterTemplate(String filename) {
-    try (InputStream resourceAsStream = new FileInputStream(filename)) {
-      return ByteString.readFrom(resourceAsStream);
+    try (InputStream fileStream = new FileInputStream(filename)) {
+      return ByteString.readFrom(fileStream);
     } catch (IOException e) {
       logger.error(
           "Could not load '" + filename + "' QR poster template, will load default from the application package:",
           e.getMessage());
       try (InputStream resourceAsStream = this.getClass().getClassLoader().getResourceAsStream(filename)) {
         return ByteString.readFrom(resourceAsStream);
-      } catch (IOException e2) {
+      } catch (Exception e2) {
         logger.error(
             "Could not load default QR poster template from the application package!", e);
       }
