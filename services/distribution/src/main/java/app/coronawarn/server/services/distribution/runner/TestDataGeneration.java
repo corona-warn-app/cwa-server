@@ -155,7 +155,7 @@ public class TestDataGeneration extends CommonDataGeneration<DiagnosisKey> {
   @Override
   protected DiagnosisKey generateDiagnosisKey(long submissionTimestamp, String country) {
     return DiagnosisKey.builder()
-        .withKeyDataAndSubmissionType(HashUtils.generateRandomKeyData(16), generateSubmissionType())
+        .withKeyDataAndSubmissionType(HashUtils.generateRandomByteArrayData(16), generateSubmissionType())
         .withRollingStartIntervalNumber(generateRollingStartIntervalNumber(submissionTimestamp))
         .withTransmissionRiskLevel(generateTransmissionRiskLevel())
         .withSubmissionTimestamp(submissionTimestamp)

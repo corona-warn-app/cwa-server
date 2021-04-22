@@ -7,7 +7,6 @@ import org.junit.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.testcontainers.shaded.org.apache.commons.lang.RandomStringUtils;
-import java.security.SecureRandom;
 import java.util.List;
 import java.util.Random;
 import java.util.stream.Collectors;
@@ -28,7 +27,7 @@ public class FakeCheckinsGeneratorTest {
     List<CheckIn> originalData = Stream.generate(this::randomCheckin)
         .limit(originalCheckinsListSize).collect(Collectors.toList());
     List<CheckIn> fakeCheckins =
-        underTest.generateFakeCheckins(originalData, numberOfFakesToCreate, HashUtils.generateRandomKeyData(16));
+        underTest.generateFakeCheckins(originalData, numberOfFakesToCreate, HashUtils.generateRandomByteArrayData(16));
 
     assertThat(fakeCheckins).hasSize(originalCheckinsListSize * numberOfFakesToCreate);
   }
@@ -37,7 +36,7 @@ public class FakeCheckinsGeneratorTest {
   public void should_generate_fake_checkin_with_content_derived_from_original() {
     FakeCheckinsGenerator underTest = new FakeCheckinsGenerator();
     List<CheckIn> originalList = List.of(randomCheckin());
-    byte[] pepper = HashUtils.generateRandomKeyData(16);
+    byte[] pepper = HashUtils.generateRandomByteArrayData(16);
     List<CheckIn> fakes = underTest.generateFakeCheckins(originalList, 1, pepper);
 
     assertThat(fakes).hasSize(1);

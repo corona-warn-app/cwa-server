@@ -118,7 +118,7 @@ public class TestDataGeneration extends CommonDataGeneration<FederationUploadKey
   @Override
   protected FederationUploadKey generateDiagnosisKey(long submissionTimestamp, String country) {
     return FederationUploadKey.from(DiagnosisKey.builder()
-        .withKeyDataAndSubmissionType(HashUtils.generateRandomKeyData(16), generateSubmissionType())
+        .withKeyDataAndSubmissionType(HashUtils.generateRandomByteArrayData(16), generateSubmissionType())
         .withRollingStartIntervalNumber(generateRollingStartIntervalNumber(submissionTimestamp))
         .withTransmissionRiskLevel(generateTransmissionRiskLevel())
         .withConsentToFederation(true)

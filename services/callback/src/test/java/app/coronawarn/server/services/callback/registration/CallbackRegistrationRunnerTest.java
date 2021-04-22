@@ -44,7 +44,7 @@ class CallbackRegistrationRunnerTest {
     FederationGatewayClient federationGatewayClient = mock(FederationGatewayClient.class);
     when(federationGatewayClient.getCallbackRegistrations())
         .thenReturn(
-            new ResponseEntity<>(List.of(new RegistrationResponse(HashUtils.computeHash(endpointUrl), endpointUrl)),
+            new ResponseEntity<>(List.of(new RegistrationResponse(HashUtils.md5DigestAsHex(endpointUrl), endpointUrl)),
                 HttpStatus.OK));
 
     RegistrationRunner registrationRunner = new RegistrationRunner(callbackServiceConfig, federationGatewayClient);
@@ -67,7 +67,7 @@ class CallbackRegistrationRunnerTest {
     FederationGatewayClient federationGatewayClient = mock(FederationGatewayClient.class);
     when(federationGatewayClient.getCallbackRegistrations())
         .thenReturn(
-            new ResponseEntity<>(List.of(new RegistrationResponse(HashUtils.computeHash("id"), "other-url")),
+            new ResponseEntity<>(List.of(new RegistrationResponse(HashUtils.md5DigestAsHex("id"), "other-url")),
                 HttpStatus.OK));
 
     RegistrationRunner registrationRunner = new RegistrationRunner(callbackServiceConfig, federationGatewayClient);
@@ -77,7 +77,7 @@ class CallbackRegistrationRunnerTest {
     verify(callbackServiceConfig, times(1)).getEndpointUrl();
     verify(federationGatewayClient, times(1)).getCallbackRegistrations();
     verify(federationGatewayClient, times(1))
-        .putCallbackRegistration(HashUtils.computeHash(endpointUrl), endpointUrl);
+        .putCallbackRegistration(HashUtils.md5DigestAsHex(endpointUrl), endpointUrl);
   }
 
 }

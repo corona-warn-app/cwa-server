@@ -41,7 +41,7 @@ class CallbackRegistrationRunnerIntegrationTest {
 
   @BeforeAll
   static void setupWireMock() {
-    RegistrationResponse registrationResponse1 = new RegistrationResponse(HashUtils.computeHash("url1"), "url1");
+    RegistrationResponse registrationResponse1 = new RegistrationResponse(HashUtils.md5DigestAsHex("url1"), "url1");
     List<RegistrationResponse> responses = List.of(registrationResponse1);
 
     server = new WireMockServer(options().port(1234));
@@ -55,7 +55,7 @@ class CallbackRegistrationRunnerIntegrationTest {
                     .withBody(asJsonString(responses))));
 
     server.stubFor(
-        put(urlEqualTo("/diagnosiskeys/callback/" + HashUtils.computeHash("url") + "?url=url"))
+        put(urlEqualTo("/diagnosiskeys/callback/" + HashUtils.md5DigestAsHex("url") + "?url=url"))
             .willReturn(
                 aResponse()
                     .withStatus(HttpStatus.OK.value())
@@ -87,7 +87,7 @@ class CallbackRegistrationRunnerIntegrationTest {
     server.verify(1, getRequestedFor(urlEqualTo(expectedGetUrl)));
 
     String expectedPutUrl = "/diagnosiskeys/callback/"
-        + HashUtils.computeHash("url") + "?url=url";
+        + HashUtils.md5DigestAsHex("url") + "?url=url";
     server.verify(1, putRequestedFor(urlEqualTo(expectedPutUrl)));
 
     verify(callbackServiceConfig, times(1)).isRegisterOnStartup();
