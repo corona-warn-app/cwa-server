@@ -1,6 +1,6 @@
 
 
-package app.coronawarn.server.services.distribution.assembly.structure.util.functional;
+package app.coronawarn.server.common.shared.functional;
 
 import java.util.function.Consumer;
 

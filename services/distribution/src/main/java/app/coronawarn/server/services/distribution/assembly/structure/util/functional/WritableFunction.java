@@ -1,5 +1,3 @@
-
-
 package app.coronawarn.server.services.distribution.assembly.structure.util.functional;
 
 import app.coronawarn.server.common.shared.collection.ImmutableStack;

@@ -3,9 +3,9 @@
 package app.coronawarn.server.services.distribution.assembly.structure.directory.decorator;
 
 import app.coronawarn.server.common.shared.collection.ImmutableStack;
+import app.coronawarn.server.common.shared.functional.Formatter;
 import app.coronawarn.server.services.distribution.assembly.structure.Writable;
 import app.coronawarn.server.services.distribution.assembly.structure.directory.IndexDirectory;
-import app.coronawarn.server.services.distribution.assembly.structure.util.functional.Formatter;
 import app.coronawarn.server.services.distribution.assembly.structure.util.functional.WritableFunction;
 import java.util.Set;
 

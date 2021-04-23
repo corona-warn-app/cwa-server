@@ -2,7 +2,7 @@
 
 package app.coronawarn.server.services.distribution.assembly.structure.archive;
 
-import static app.coronawarn.server.services.distribution.assembly.structure.util.functional.CheckedConsumer.uncheckedConsumer;
+import static app.coronawarn.server.common.shared.functional.CheckedConsumer.uncheckedConsumer;
 
 import app.coronawarn.server.common.shared.collection.ImmutableStack;
 import app.coronawarn.server.services.distribution.assembly.structure.Writable;
