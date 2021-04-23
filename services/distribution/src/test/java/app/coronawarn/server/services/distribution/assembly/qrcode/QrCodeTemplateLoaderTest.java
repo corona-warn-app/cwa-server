@@ -26,7 +26,8 @@ class QrCodeTemplateLoaderTest {
   private DistributionServiceConfig config;
 
   @Test
-  public void testLoadPosterTemplateCanLoadDefault() throws IOException {
+  public void testLoadPosterTemplateCanLoadDefaultOnError() throws IOException {
+    config.getAndroidQrCodePosterTemplate().setTemplate("non/existent.file");
     QrCodeTemplateLoader loader = new QrCodeTemplateLoader(config);
     ByteString template = loader.loadAndroidTemplateAsBytes();
 
@@ -40,14 +41,5 @@ class QrCodeTemplateLoaderTest {
     ByteString template = loader.loadAndroidTemplateAsBytes();
 
     assertThat(template).isNotEmpty();
-  }
-
-  @Test
-  public void testLoadPosterTemplateFailsGracefully() throws IOException {
-    config.getAndroidQrCodePosterTemplate().setTemplate("non/existent.file");
-    QrCodeTemplateLoader loader = new QrCodeTemplateLoader(config);
-    ByteString template = loader.loadAndroidTemplateAsBytes();
-
-    assertThat(template).isEmpty();
   }
 }

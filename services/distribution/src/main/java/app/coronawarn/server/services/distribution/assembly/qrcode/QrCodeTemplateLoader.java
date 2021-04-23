@@ -22,21 +22,21 @@ public class QrCodeTemplateLoader {
   }
 
   public ByteString loadAndroidTemplateAsBytes() {
-    return loadPosterTemplate(config.getAndroidQrCodePosterTemplate().getTemplate());
+    return loadPosterTemplate(config.getAndroidQrCodePosterTemplate().getTemplate(), "pt-android-poster-1.0.0.pdf");
   }
 
   public ByteString loadIosTemplateAsBytes() {
-    return loadPosterTemplate(config.getIosQrCodePosterTemplate().getTemplate());
+    return loadPosterTemplate(config.getIosQrCodePosterTemplate().getTemplate(), "pt-ios-poster-1.0.0.pdf");
   }
 
-  private ByteString loadPosterTemplate(String filename) {
+  private ByteString loadPosterTemplate(String filename, String fallback) {
     try (InputStream fileStream = new FileInputStream(filename)) {
       return ByteString.readFrom(fileStream);
     } catch (IOException e) {
       logger.error(
-          "Could not load '" + filename + "' QR poster template, will load default from the application package:",
-          e.getMessage());
-      try (InputStream resourceAsStream = this.getClass().getClassLoader().getResourceAsStream(filename)) {
+          "Could not load '" + filename + "' QR poster template, will load default from the application package: {} - {}",
+          e.getClass().getName(), e.getMessage());
+      try (InputStream resourceAsStream = this.getClass().getClassLoader().getResourceAsStream(fallback)) {
         return ByteString.readFrom(resourceAsStream);
       } catch (Exception e2) {
         logger.error(
