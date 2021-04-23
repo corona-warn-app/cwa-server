@@ -30,8 +30,21 @@ class LocalFileTest {
       "version/v1/app_config_android",
       "version/v1/configuration/country/DE/app_config",
       "version/v1/diagnosis-keys/country/DE/date/2020-06-11",
-      "version/v1/diagnosis-keys/country/DE/date/2020-06-11/hour/13"})
+      "version/v1/diagnosis-keys/country/DE/date/2020-06-11/hour/13",
+      "version/v1/qr_code_poster_template_android",
+      "version/v1/qr_code_poster_template_ios"})
   void testGetContentTypeZip(String path) {
+    LocalFile test = new LocalIndexFile(Path.of("/root", path, "/index"), Path.of("/root"));
+    assertEquals("application/zip", test.getContentType());
+  }
+
+  @ParameterizedTest
+  @ValueSource(strings = {
+      "version/v1/qr_code_poster_template_android",
+      "version/v1/qr_code_poster_template_android.checksum",
+      "version/v1/qr_code_poster_template_ios",
+      "version/v1/qr_code_poster_template_ios.checksum"})
+  void testGetContentTypeForQRCodeTemplate(String path) {
     LocalFile test = new LocalIndexFile(Path.of("/root", path, "/index"), Path.of("/root"));
     assertEquals("application/zip", test.getContentType());
   }
