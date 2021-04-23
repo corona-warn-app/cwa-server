@@ -1,10 +1,10 @@
-package app.coronawarn.server.common.persistence.utils.hash;
-
-import app.coronawarn.server.common.persistence.utils.hash.HashUtils.MessageDigestAlgorithms;
-import com.google.protobuf.ByteString;
-import org.junit.jupiter.api.Test;
+package app.coronawarn.server.common.shared.util;
 
 import static org.assertj.core.api.Assertions.assertThat;
+
+import app.coronawarn.server.common.shared.util.HashUtils.MessageDigestAlgorithms;
+import com.google.protobuf.ByteString;
+import org.junit.jupiter.api.Test;
 
 class HashUtilsTest {
 
@@ -27,4 +27,5 @@ class HashUtilsTest {
     byte[] hash = HashUtils.byteStringDigest(ByteString.copyFromUtf8(TEST_STRING), MessageDigestAlgorithms.SHA_256);
     assertThat(hash).hasSize(32);
   }
+
 }

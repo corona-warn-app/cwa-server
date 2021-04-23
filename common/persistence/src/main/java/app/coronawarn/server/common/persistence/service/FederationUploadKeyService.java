@@ -92,7 +92,7 @@ public class FederationUploadKeyService {
    * Updates only the batchTagId field of all given upload keys. The entities are not merged with the persisted ones,
    * thus no other side effects are to be expected.
    *
-   * @param originalKeys a collection of FederationUploadKey
+   * @param originalKeys a app.coronawarn.server.common.shared.collection of FederationUploadKey
    * @param batchTagId the id for the keys
    */
   @Transactional

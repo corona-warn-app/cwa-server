@@ -2,12 +2,13 @@
 
 package app.coronawarn.server.services.distribution.assembly.diagnosiskeys.structure.directory.decorator;
 
+import static app.coronawarn.server.common.shared.util.TimeUtils.getCurrentUtcHour;
+import static app.coronawarn.server.common.shared.util.TimeUtils.getUtcDate;
 import static java.util.function.Predicate.not;
 
+import app.coronawarn.server.common.shared.collection.ImmutableStack;
 import app.coronawarn.server.services.distribution.assembly.diagnosiskeys.structure.directory.DiagnosisKeysHourDirectory;
 import app.coronawarn.server.services.distribution.assembly.structure.directory.decorator.indexing.IndexingDecoratorOnDisk;
-import app.coronawarn.server.services.distribution.assembly.structure.util.ImmutableStack;
-import app.coronawarn.server.services.distribution.assembly.structure.util.TimeUtils;
 import app.coronawarn.server.services.distribution.config.DistributionServiceConfig;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -33,8 +34,8 @@ public class HourIndexingDecorator extends IndexingDecoratorOnDisk<LocalDateTime
   public Set<LocalDateTime> getIndex(ImmutableStack<Object> indices) {
     LocalDate currentDateIndex = (LocalDate) indices.peek();
     if (Boolean.FALSE.equals(distributionServiceConfig.getIncludeIncompleteHours())
-        && TimeUtils.getUtcDate().equals(currentDateIndex)) {
-      LocalDateTime currentHour = TimeUtils.getCurrentUtcHour();
+        && getUtcDate().equals(currentDateIndex)) {
+      LocalDateTime currentHour = getCurrentUtcHour();
       return super.getIndex(indices).stream()
           .filter(not(currentHour::equals))
           .collect(Collectors.toSet());

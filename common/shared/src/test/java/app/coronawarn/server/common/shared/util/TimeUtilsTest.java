@@ -1,6 +1,6 @@
 
 
-package app.coronawarn.server.services.distribution.assembly.structure.util;
+package app.coronawarn.server.common.shared.util;
 
 import static java.time.ZoneOffset.UTC;
 import static java.time.temporal.ChronoUnit.HOURS;

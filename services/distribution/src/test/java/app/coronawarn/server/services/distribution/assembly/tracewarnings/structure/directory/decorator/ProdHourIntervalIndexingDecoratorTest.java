@@ -2,16 +2,18 @@
 
 package app.coronawarn.server.services.distribution.assembly.tracewarnings.structure.directory.decorator;
 
+import static app.coronawarn.server.common.shared.util.TimeUtils.getCurrentUtcHour;
+import static app.coronawarn.server.common.shared.util.TimeUtils.setNow;
 import static app.coronawarn.server.services.distribution.common.Helpers.buildTraceTimeIntervalWarning;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import app.coronawarn.server.common.persistence.domain.TraceTimeIntervalWarning;
 import app.coronawarn.server.common.persistence.service.utils.checkins.CheckinsDateSpecification;
+import app.coronawarn.server.common.shared.collection.ImmutableStack;
+import app.coronawarn.server.common.shared.util.TimeUtils;
 import app.coronawarn.server.services.distribution.assembly.component.CryptoProvider;
 import app.coronawarn.server.services.distribution.assembly.structure.file.FileOnDisk;
-import app.coronawarn.server.services.distribution.assembly.structure.util.ImmutableStack;
-import app.coronawarn.server.services.distribution.assembly.structure.util.TimeUtils;
 import app.coronawarn.server.services.distribution.assembly.tracewarnings.ProdTraceTimeIntervalWarningsPackageBundler;
 import app.coronawarn.server.services.distribution.assembly.tracewarnings.TraceTimeIntervalWarningsPackageBundler;
 import app.coronawarn.server.services.distribution.assembly.tracewarnings.structure.directory.TraceTimeIntervalWarningsHourDirectory;
@@ -57,12 +59,12 @@ class ProdHourIntervalIndexingDecoratorTest {
 
   @AfterEach
   void tearDown() {
-    TimeUtils.setNow(null);
+    setNow(null);
   }
 
   @Test
   void testEmptyFileIsCreated() throws Exception {
-    LocalDateTime utcHour = TimeUtils.getCurrentUtcHour();
+    LocalDateTime utcHour = getCurrentUtcHour();
 
     List<TraceTimeIntervalWarning> traceWarnings =
         Collections.emptyList();
@@ -89,7 +91,7 @@ class ProdHourIntervalIndexingDecoratorTest {
 
   @Test
   void testIndicesAreOldestAndLatestForMultipleSubmissions() throws Exception {
-    LocalDateTime utcHour = TimeUtils.getCurrentUtcHour();
+    LocalDateTime utcHour = getCurrentUtcHour();
     Integer submissionHour = CheckinsDateSpecification.HOUR_SINCE_EPOCH_DERIVATION
         .apply(utcHour.toEpochSecond(ZoneOffset.UTC));
     Integer additionalSubmissionHour = CheckinsDateSpecification.HOUR_SINCE_EPOCH_DERIVATION

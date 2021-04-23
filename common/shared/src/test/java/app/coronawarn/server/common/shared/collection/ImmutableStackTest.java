@@ -1,6 +1,6 @@
 
 
-package app.coronawarn.server.services.distribution.assembly.structure.util;
+package app.coronawarn.server.common.shared.collection;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;

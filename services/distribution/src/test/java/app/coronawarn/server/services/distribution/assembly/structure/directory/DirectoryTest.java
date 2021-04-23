@@ -7,10 +7,10 @@ import static org.assertj.core.api.Assertions.catchThrowable;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.verify;
 
+import app.coronawarn.server.common.shared.collection.ImmutableStack;
 import app.coronawarn.server.services.distribution.assembly.structure.WritableOnDisk;
 import app.coronawarn.server.services.distribution.assembly.structure.file.File;
 import app.coronawarn.server.services.distribution.assembly.structure.file.FileOnDisk;
-import app.coronawarn.server.services.distribution.assembly.structure.util.ImmutableStack;
 import java.io.IOException;
 import java.util.Set;
 import org.junit.Rule;

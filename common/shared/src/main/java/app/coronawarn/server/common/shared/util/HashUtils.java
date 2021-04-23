@@ -1,4 +1,4 @@
-package app.coronawarn.server.common.persistence.utils.hash;
+package app.coronawarn.server.common.shared.util;
 
 import com.google.protobuf.ByteString;
 import java.nio.charset.StandardCharsets;

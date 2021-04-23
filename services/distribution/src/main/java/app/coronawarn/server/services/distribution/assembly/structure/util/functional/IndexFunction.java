@@ -2,7 +2,7 @@
 
 package app.coronawarn.server.services.distribution.assembly.structure.util.functional;
 
-import app.coronawarn.server.services.distribution.assembly.structure.util.ImmutableStack;
+import app.coronawarn.server.common.shared.collection.ImmutableStack;
 import java.util.Set;
 import java.util.function.Function;
 

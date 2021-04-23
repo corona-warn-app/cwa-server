@@ -1,6 +1,6 @@
 
 
-package app.coronawarn.server.services.distribution.assembly.structure.util;
+package app.coronawarn.server.common.shared.collection;
 
 import java.util.ArrayDeque;
 import java.util.Deque;

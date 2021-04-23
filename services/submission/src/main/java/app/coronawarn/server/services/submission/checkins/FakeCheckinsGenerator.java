@@ -2,8 +2,8 @@ package app.coronawarn.server.services.submission.checkins;
 
 import static app.coronawarn.server.services.submission.checkins.FakeCheckinIntervalSpecification.*;
 
-import app.coronawarn.server.common.persistence.utils.hash.HashUtils;
 import app.coronawarn.server.common.protocols.internal.pt.CheckIn;
+import app.coronawarn.server.common.shared.util.HashUtils;
 import com.google.protobuf.ByteString;
 import java.security.SecureRandom;
 import java.util.List;

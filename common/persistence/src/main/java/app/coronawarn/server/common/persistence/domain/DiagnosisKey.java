@@ -101,7 +101,8 @@ public class DiagnosisKey {
     this.originCountry = originCountry;
     this.visitedCountries = visitedCountries == null ? new HashSet<>() : visitedCountries;
     this.reportType = reportType;
-    // Workaround to avoid exception on loading old DiagnosisKeys after migration to EFGS
+    /* Workaround to avoid app.coronawarn.server.common.shared.exception
+    on loading old DiagnosisKeys after migration to EFGS */
     this.daysSinceOnsetOfSymptoms = daysSinceOnsetOfSymptoms == null ? 0 : daysSinceOnsetOfSymptoms;
   }
 

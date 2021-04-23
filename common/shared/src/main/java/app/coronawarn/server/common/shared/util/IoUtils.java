@@ -1,6 +1,6 @@
 
 
-package app.coronawarn.server.services.distribution.assembly.io;
+package app.coronawarn.server.common.shared.util;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -10,14 +10,14 @@ import java.io.UncheckedIOException;
 /**
  * A class containing helper functions for general purpose file IO.
  */
-public class IO {
+public class IoUtils {
 
   /**
    * The maximum acceptable file size in bytes.
    */
   public static final int MAXIMUM_FILE_SIZE = 16000000;
 
-  private IO() {
+  private IoUtils() {
   }
 
   /**

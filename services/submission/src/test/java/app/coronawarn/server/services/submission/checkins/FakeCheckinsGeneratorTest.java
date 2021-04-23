@@ -1,7 +1,7 @@
 package app.coronawarn.server.services.submission.checkins;
 
-import app.coronawarn.server.common.persistence.utils.hash.HashUtils;
 import app.coronawarn.server.common.protocols.internal.pt.CheckIn;
+import app.coronawarn.server.common.shared.util.HashUtils;
 import com.google.protobuf.ByteString;
 import org.junit.Test;
 import org.junit.jupiter.params.ParameterizedTest;

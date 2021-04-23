@@ -1,4 +1,5 @@
-package app.coronawarn.server.services.distribution.utils;
+package app.coronawarn.server.common.shared.util;
+
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.json.JsonReadFeature;
@@ -33,7 +34,7 @@ public final class SerializationUtils {
 
   /**
    * Parse json from stream instead from string.
-   * 
+   *
    * @param jsonStream stream to read json from
    * @param typeProviderFunction type deserialization function provider
    * @return deserialized json as pojo

@@ -77,6 +77,11 @@
       <!-- our own modules -->
       <dependency>
         <groupId>org.opencwa</groupId>
+        <artifactId>shared</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.opencwa</groupId>
         <artifactId>persistence</artifactId>
         <version>${project.version}</version>
       </dependency>

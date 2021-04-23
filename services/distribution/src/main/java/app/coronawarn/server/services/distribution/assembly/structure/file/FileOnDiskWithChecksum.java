@@ -2,7 +2,7 @@
 
 package app.coronawarn.server.services.distribution.assembly.structure.file;
 
-import app.coronawarn.server.services.distribution.assembly.io.IO;
+import app.coronawarn.server.common.shared.util.IoUtils;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
 import org.bouncycastle.util.encoders.Hex;
@@ -41,8 +41,8 @@ public class FileOnDiskWithChecksum extends FileOnDisk {
     var checksumFile = getRoot().toPath().resolve(super.getName() + CHECKSUM_FILE_SUFFIX);
     byte[] checksum = computeChecksum(this.getBytesForChecksum()).getBytes(StandardCharsets.UTF_8);
 
-    IO.makeNewFile(checksumFile.getParent().toFile(), checksumFile.getFileName().toString());
-    IO.writeBytesToFile(checksum, checksumFile.toFile());
+    IoUtils.makeNewFile(checksumFile.getParent().toFile(), checksumFile.getFileName().toString());
+    IoUtils.writeBytesToFile(checksum, checksumFile.toFile());
   }
 
   /**
@@ -59,11 +59,11 @@ public class FileOnDiskWithChecksum extends FileOnDisk {
    * <a href=
    * "https://github.com/corona-warn-app/cwa-server/blob/HEAD/docs/DISTRIBUTION.md#cwa-hash">CWA-hash</a>
    * documentation. This code is intended to mimic the AWS ETag hash code for multi-part uploads.
-   * 
+   *
    * @see <a href=
    *      "https://stackoverflow.com/questions/12186993/what-is-the-algorithm-to-compute-the-amazon-s3-etag-for-a-file-larger-than-5gb#answer-19896823">answer
    *      on StackOverflow</a>
-   * 
+   *
    * @param fileContent the binary file content
    * @return the calculated hash value
    */

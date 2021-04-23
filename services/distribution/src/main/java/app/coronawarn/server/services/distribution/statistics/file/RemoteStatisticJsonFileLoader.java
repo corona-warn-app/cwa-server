@@ -27,7 +27,7 @@ public class RemoteStatisticJsonFileLoader implements JsonFileLoader {
   }
 
   /**
-   * Map parent retryable exception {@link ExhaustedRetryException} to cwa owned exceptions. The inner exception will be
+   * Map parent retryable {@link ExhaustedRetryException} to cwa owned exceptions. The inner exception will be
    * an S3 AwsException.
    *
    * @param ex {@link software.amazon.awssdk.core.exception.SdkException} wrapped in a {@link ExhaustedRetryException}.

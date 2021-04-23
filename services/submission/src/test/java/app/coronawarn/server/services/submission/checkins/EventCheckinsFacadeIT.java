@@ -1,13 +1,11 @@
 package app.coronawarn.server.services.submission.checkins;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
 import app.coronawarn.server.common.persistence.domain.TraceTimeIntervalWarning;
 import app.coronawarn.server.common.persistence.repository.TraceTimeIntervalWarningRepository;
 import app.coronawarn.server.common.persistence.service.utils.checkins.CheckinsDateSpecification;
-import app.coronawarn.server.common.persistence.utils.hash.HashUtils;
 import app.coronawarn.server.common.protocols.internal.SubmissionPayload.SubmissionType;
 import app.coronawarn.server.common.protocols.internal.pt.CheckIn;
+import app.coronawarn.server.common.shared.util.HashUtils;
 import com.google.protobuf.ByteString;
 import java.time.Instant;
 import java.util.List;
