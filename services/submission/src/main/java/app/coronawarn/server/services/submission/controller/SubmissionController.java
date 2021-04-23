@@ -107,7 +107,12 @@ public class SubmissionController {
 
   private DeferredResult<ResponseEntity<Void>> buildRealDeferredResult(SubmissionPayload submissionPayload,
       String tan) {
-    DeferredResult<ResponseEntity<Void>> deferredResult = new DeferredResult<>();
+    DeferredResult<ResponseEntity<Void>> deferredResult = new DeferredResult<>(
+        submissionServiceConfig.getTimeoutInMillis());
+    deferredResult.onTimeout(() ->
+        deferredResult.setErrorResult(
+            ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .body("Request timeout occurred.")));
 
     StopWatch stopWatch = new StopWatch();
     stopWatch.start();
@@ -129,6 +134,7 @@ public class SubmissionController {
       stopWatch.stop();
       fakeDelayManager.updateFakeRequestDelay(stopWatch.getTotalTimeMillis());
     }
+
     return deferredResult;
   }
 
