@@ -1,34 +1,28 @@
 package app.coronawarn.server.services.distribution.common;
 
-import static app.coronawarn.server.services.distribution.assembly.appconfig.YamlLoader.loadYamlIntoProtobufBuilder;
-import static java.io.File.separator;
-
 import app.coronawarn.server.common.persistence.domain.DiagnosisKey;
 import app.coronawarn.server.common.persistence.domain.TraceTimeIntervalWarning;
 import app.coronawarn.server.common.protocols.external.exposurenotification.ReportType;
 import app.coronawarn.server.common.protocols.internal.ApplicationConfiguration;
 import app.coronawarn.server.common.protocols.internal.SubmissionPayload.SubmissionType;
+import app.coronawarn.server.common.protocols.internal.pt.CheckIn;
 import app.coronawarn.server.services.distribution.assembly.appconfig.UnableToLoadFileException;
 import app.coronawarn.server.services.distribution.assembly.structure.WritableOnDisk;
 import app.coronawarn.server.services.distribution.assembly.structure.directory.Directory;
 import app.coronawarn.server.services.distribution.assembly.structure.util.ImmutableStack;
+import com.google.protobuf.ByteString;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Random;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
+
+import static app.coronawarn.server.services.distribution.assembly.appconfig.YamlLoader.loadYamlIntoProtobufBuilder;
+import static java.io.File.separator;
 
 public class Helpers {
 
@@ -215,7 +209,7 @@ public class Helpers {
     final byte[] guid = UUID.randomUUID().toString().getBytes();
     final int transmissionRiskLevel = 5;
     return new TraceTimeIntervalWarning(guid, startIntervalNumber, endIntervalNumber,
-        transmissionRiskLevel, submissionHourSinceEpoch, SubmissionType.SUBMISSION_TYPE_PCR_TEST){
+        transmissionRiskLevel, submissionHourSinceEpoch, SubmissionType.SUBMISSION_TYPE_PCR_TEST) {
       @Override
       public Long getId() {
         return Long.valueOf(Arrays.hashCode(guid));
@@ -226,7 +220,23 @@ public class Helpers {
   public static List<TraceTimeIntervalWarning> buildTraceTimeIntervalWarning(
       int startIntervalNumber, int endIntervalNumber, int submissionHourSinceEpoch, int numberOfWarnings) {
     return IntStream.range(0, numberOfWarnings)
-        .mapToObj(ignoredValue -> buildTraceTimeIntervalWarning(startIntervalNumber, endIntervalNumber, submissionHourSinceEpoch))
+        .mapToObj(ignoredValue -> buildTraceTimeIntervalWarning(startIntervalNumber, endIntervalNumber,
+            submissionHourSinceEpoch))
         .collect(Collectors.toList());
+  }
+
+  public static List<CheckIn> buildCheckIns(int startIntervalNumber, int endIntervalNumber, int numberOfCheckIns) {
+    return IntStream.range(0, numberOfCheckIns).mapToObj(
+        index -> buildCheckIn(startIntervalNumber, endIntervalNumber)).collect(Collectors.toList());
+  }
+
+  public static CheckIn buildCheckIn(int startIntervalNumber, int endIntervalNumber) {
+    final byte[] guid = UUID.randomUUID().toString().getBytes();
+    return CheckIn.newBuilder()
+        .setStartIntervalNumber(startIntervalNumber)
+        .setEndIntervalNumber(endIntervalNumber)
+        .setLocationId(ByteString.copyFrom(guid))
+        .setTransmissionRiskLevel(5)
+        .build();
   }
 }
