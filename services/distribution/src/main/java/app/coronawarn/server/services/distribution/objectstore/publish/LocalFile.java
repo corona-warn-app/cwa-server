@@ -29,7 +29,7 @@ public abstract class LocalFile {
   /**
    * the checksum of this file.
    */
-  private String checksum = "";
+  private String checksum;
 
   /**
    * Constructs a new file representing a file on the disk.

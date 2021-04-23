@@ -2,11 +2,10 @@
 
 package app.coronawarn.server.services.distribution.objectstore.publish;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.nio.file.Path;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 
@@ -43,7 +42,7 @@ class LocalFileTest {
       "version/v1/diagnosis-keys/country/DE/date/2020-06-11/hour/13"})
   void testIsKeyFile(String path) {
     LocalFile test = new LocalIndexFile(Path.of("/root", path, "/index"), Path.of("/root"));
-    assertTrue(test.isKeyFile());
+    Assertions.assertTrue(test.isKeyFile());
   }
 
   @ParameterizedTest
@@ -56,7 +55,7 @@ class LocalFileTest {
       "version/v1/diagnosis-keys/country/DE/date/2020-06-11/hour"})
   void testIsNotKeyFile(String path) {
     LocalFile test = new LocalIndexFile(Path.of("/root", path, "/index"), Path.of("/root"));
-    assertFalse(test.isKeyFile());
+    Assertions.assertFalse(test.isKeyFile());
   }
 
   @ParameterizedTest
