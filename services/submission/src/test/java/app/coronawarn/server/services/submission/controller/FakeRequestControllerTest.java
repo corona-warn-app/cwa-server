@@ -9,6 +9,7 @@ import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
 import static org.springframework.http.HttpStatus.OK;
 
 import app.coronawarn.server.services.submission.monitoring.SubmissionMonitor;
@@ -64,4 +65,14 @@ class FakeRequestControllerTest {
     verify(submissionMonitor, times(1)).incrementFakeRequestCounter();
     verify(submissionMonitor, never()).incrementInvalidTanRequestCounter();
   }
+
+  @Test
+  void fakeRequestTimeoutHandling() {
+    when(fakeDelayManager.getJitteredFakeDelay()).thenReturn(3000L);
+    ResponseEntity<Void> actResponse = executor.executePost(buildPayloadWithOneKey(), headers);
+
+    verify(fakeDelayManager, times(1)).getJitteredFakeDelay();
+    assertThat(actResponse.getStatusCode()).isEqualTo(INTERNAL_SERVER_ERROR);
+  }
+
 }

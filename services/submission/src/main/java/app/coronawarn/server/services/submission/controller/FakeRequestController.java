@@ -5,10 +5,12 @@ package app.coronawarn.server.services.submission.controller;
 import static app.coronawarn.server.services.submission.controller.SubmissionController.SUBMISSION_ROUTE;
 import static java.util.concurrent.TimeUnit.MILLISECONDS;
 
+import app.coronawarn.server.services.submission.config.SubmissionServiceConfig;
 import app.coronawarn.server.services.submission.monitoring.SubmissionMonitor;
 import io.micrometer.core.annotation.Timed;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestHeader;
@@ -23,10 +25,13 @@ public class FakeRequestController {
   private final ScheduledExecutorService scheduledExecutor = Executors.newScheduledThreadPool(4);
   private final SubmissionMonitor submissionMonitor;
   private final FakeDelayManager fakeDelayManager;
+  private final SubmissionServiceConfig submissionServiceConfig;
 
-  FakeRequestController(SubmissionMonitor submissionMonitor, FakeDelayManager fakeDelayManager) {
+  FakeRequestController(SubmissionMonitor submissionMonitor, FakeDelayManager fakeDelayManager,
+      SubmissionServiceConfig submissionServiceConfig) {
     this.submissionMonitor = submissionMonitor;
     this.fakeDelayManager = fakeDelayManager;
+    this.submissionServiceConfig = submissionServiceConfig;
   }
 
   /**
@@ -44,7 +49,12 @@ public class FakeRequestController {
     submissionMonitor.incrementRequestCounter();
     submissionMonitor.incrementFakeRequestCounter();
     long delay = fakeDelayManager.getJitteredFakeDelay();
-    DeferredResult<ResponseEntity<Void>> deferredResult = new DeferredResult<>();
+    DeferredResult<ResponseEntity<Void>> deferredResult =
+        new DeferredResult<>(submissionServiceConfig.getTimeoutInMillis());
+    deferredResult.onTimeout(() ->
+        deferredResult.setErrorResult(
+            ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .body("Request timeout occurred.")));
     scheduledExecutor.schedule(() -> deferredResult.setResult(ResponseEntity.ok().build()), delay, MILLISECONDS);
     return deferredResult;
   }
