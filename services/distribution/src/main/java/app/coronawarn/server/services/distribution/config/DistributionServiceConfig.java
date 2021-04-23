@@ -2,6 +2,7 @@ package app.coronawarn.server.services.distribution.config;
 
 import app.coronawarn.server.common.protocols.external.exposurenotification.SignatureInfo;
 import app.coronawarn.server.services.distribution.utils.SerializationUtils;
+import java.io.File;
 import java.util.List;
 import java.util.stream.Collectors;
 import javax.validation.constraints.Max;
@@ -671,7 +672,7 @@ public class DistributionServiceConfig {
 
   public static class QrCodePosterTemplate {
 
-    private byte[] template;
+    private String template;
     @NotNull
     private Double offsetX;
     @NotNull
@@ -756,11 +757,11 @@ public class DistributionServiceConfig {
       this.publishedArchiveName = publishedArchiveName;
     }
 
-    public byte[] getTemplate() {
+    public String getTemplate() {
       return template;
     }
 
-    public void setTemplate(byte[] template) {
+    public void setTemplate(String template) {
       this.template = template;
     }
 
