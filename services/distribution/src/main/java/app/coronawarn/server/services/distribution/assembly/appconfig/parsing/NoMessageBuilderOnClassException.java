@@ -11,7 +11,7 @@ import org.yaml.snakeyaml.nodes.Node;
 public class NoMessageBuilderOnClassException extends RuntimeException {
 
   /**
-   * Creates a new app.coronawarn.server.common.shared.exception instance based on the given {@link Node}.
+   * Creates a new exception instance based on the given {@link Node}.
    *
    * @param node the node, which points to a non-Protobuf message type.
    */

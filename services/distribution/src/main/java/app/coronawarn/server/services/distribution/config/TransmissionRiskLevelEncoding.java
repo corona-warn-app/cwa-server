@@ -50,7 +50,7 @@ public class TransmissionRiskLevelEncoding implements Validator {
 
   /**
    * Returns a mapped ENF v2 Days Since Symptoms value for the given Transmission Risk Level or
-   * throws an app.coronawarn.server.common.shared.exception if the TRL is not part of the mapping.
+   * throws an exception if the TRL is not part of the mapping.
    *
    * @param transmissionRiskLevel transmission risk level to search
    * @return number of days since
@@ -61,7 +61,7 @@ public class TransmissionRiskLevelEncoding implements Validator {
 
   /**
    * Returns a mapped ENF v2 Report Type value for the given Transmission Risk Level or throws an
-   * app.coronawarn.server.common.shared.exception if the TRL is not part of the mapping.
+   * exception if the TRL is not part of the mapping.
    *
    * @param transmissionRiskLevel transmission risk level to search for
    * @return ReportType for supplied transmission risk level
