@@ -671,7 +671,7 @@ public class DistributionServiceConfig {
 
   public static class QrCodePosterTemplate {
 
-    private byte[] template;
+    private String template;
     @NotNull
     private Double offsetX;
     @NotNull
@@ -756,11 +756,11 @@ public class DistributionServiceConfig {
       this.publishedArchiveName = publishedArchiveName;
     }
 
-    public byte[] getTemplate() {
+    public String getTemplate() {
       return template;
     }
 
-    public void setTemplate(byte[] template) {
+    public void setTemplate(String template) {
       this.template = template;
     }
 
