@@ -33,7 +33,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 @EnableConfigurationProperties(value = {DistributionServiceConfig.class, TransmissionRiskLevelEncoding.class})
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration(
-    classes = {DistributionServiceConfig.class,QrCodeTemplateLoader.class, CryptoProvider.class},
+    classes = {QrCodeTemplateLoader.class, CryptoProvider.class},
     initializers = ConfigDataApplicationContextInitializer.class)
 public class QrCodePosterTemplateStructureProviderTest {
 
