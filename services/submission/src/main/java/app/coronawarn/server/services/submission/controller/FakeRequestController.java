@@ -53,8 +53,7 @@ public class FakeRequestController {
         new DeferredResult<>(submissionServiceConfig.getTimeoutInMillis());
     deferredResult.onTimeout(() ->
         deferredResult.setErrorResult(
-            ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                .body("Request timeout occurred.")));
+            ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)));
     scheduledExecutor.schedule(() -> deferredResult.setResult(ResponseEntity.ok().build()), delay, MILLISECONDS);
     return deferredResult;
   }

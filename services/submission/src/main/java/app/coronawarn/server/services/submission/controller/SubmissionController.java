@@ -22,6 +22,7 @@ import java.security.SecureRandom;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ForkJoinPool;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
@@ -111,29 +112,30 @@ public class SubmissionController {
         submissionServiceConfig.getTimeoutInMillis());
     deferredResult.onTimeout(() ->
         deferredResult.setErrorResult(
-            ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                .body("Request timeout occurred.")));
+            ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)));
 
     StopWatch stopWatch = new StopWatch();
     stopWatch.start();
-    try {
-      if (!this.tanVerifier.verifyTan(tan)) {
-        submissionMonitor.incrementInvalidTanRequestCounter();
-        deferredResult.setResult(ResponseEntity.status(HttpStatus.FORBIDDEN).build());
-      } else {
-        extractAndStoreDiagnosisKeys(submissionPayload);
-        CheckinsStorageResult checkinsStorageResult = extractAndStoreEventCheckins(submissionPayload);
-        deferredResult.setResult(ResponseEntity.ok()
-            .header("cwa-filtered-checkins", String.valueOf(checkinsStorageResult.getNumberOfFilteredCheckins()))
-            .header("cwa-saved-checkins", String.valueOf(checkinsStorageResult.getNumberOfSavedCheckins()))
-            .build());
+    ForkJoinPool.commonPool().submit(() -> {
+      try {
+        if (!this.tanVerifier.verifyTan(tan)) {
+          submissionMonitor.incrementInvalidTanRequestCounter();
+          deferredResult.setResult(ResponseEntity.status(HttpStatus.FORBIDDEN).build());
+        } else {
+          extractAndStoreDiagnosisKeys(submissionPayload);
+          CheckinsStorageResult checkinsStorageResult = extractAndStoreEventCheckins(submissionPayload);
+          deferredResult.setResult(ResponseEntity.ok()
+              .header("cwa-filtered-checkins", String.valueOf(checkinsStorageResult.getNumberOfFilteredCheckins()))
+              .header("cwa-saved-checkins", String.valueOf(checkinsStorageResult.getNumberOfSavedCheckins()))
+              .build());
+        }
+      } catch (Exception e) {
+        deferredResult.setErrorResult(e);
+      } finally {
+        stopWatch.stop();
+        fakeDelayManager.updateFakeRequestDelay(stopWatch.getTotalTimeMillis());
       }
-    } catch (Exception e) {
-      deferredResult.setErrorResult(e);
-    } finally {
-      stopWatch.stop();
-      fakeDelayManager.updateFakeRequestDelay(stopWatch.getTotalTimeMillis());
-    }
+    });
 
     return deferredResult;
   }
