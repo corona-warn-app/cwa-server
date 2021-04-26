@@ -20,7 +20,7 @@ class HashUtilsTest {
 
   @Test
   void testRandomByteArrayData() {
-    byte[] hash = generateRandomByteArrayData(16);
+    byte[] hash = generateSecureRandomByteArrayData(16);
     assertThat(hash).hasSize(16);
   }
 

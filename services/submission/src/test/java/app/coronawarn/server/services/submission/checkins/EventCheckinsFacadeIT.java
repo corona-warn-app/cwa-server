@@ -44,7 +44,7 @@ class EventCheckinsFacadeIT {
   @Test
   void testStorageWithRandomPadding() {
     List<CheckIn> checkins = getRandomTestData();
-    eventCheckinFacade.saveCheckinsWithFakeData(checkins, 2, HashUtils.generateRandomByteArrayData(16),
+    eventCheckinFacade.saveCheckinsWithFakeData(checkins, 2, HashUtils.generateSecureRandomByteArrayData(16),
         currentTimestamp, SubmissionType.SUBMISSION_TYPE_PCR_TEST);
 
     List<TraceTimeIntervalWarning> actualTraceWarningsStored =

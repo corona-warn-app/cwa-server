@@ -32,7 +32,7 @@ public class HashUtils {
    * @param size - byte array size
    * @return - random key
    */
-  public static byte[] generateRandomByteArrayData(int size) {
+  public static byte[] generateSecureRandomByteArrayData(int size) {
     byte[] randomKeyData = new byte[size];
     new SecureRandom().nextBytes(randomKeyData);
     return randomKeyData;

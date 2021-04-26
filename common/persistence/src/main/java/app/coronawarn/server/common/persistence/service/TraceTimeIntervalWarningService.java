@@ -7,6 +7,7 @@ import app.coronawarn.server.common.persistence.domain.TraceTimeIntervalWarning;
 import app.coronawarn.server.common.persistence.repository.TraceTimeIntervalWarningRepository;
 import app.coronawarn.server.common.protocols.internal.SubmissionPayload.SubmissionType;
 import app.coronawarn.server.common.protocols.internal.pt.CheckIn;
+import app.coronawarn.server.common.shared.util.HashUtils.MessageDigestAlgorithms;
 import com.google.protobuf.ByteString;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -42,7 +43,7 @@ public class TraceTimeIntervalWarningService {
   public TraceTimeIntervalWarningService(
       TraceTimeIntervalWarningRepository traceTimeIntervalWarningRepo) throws NoSuchAlgorithmException {
     this.traceTimeIntervalWarningRepo = traceTimeIntervalWarningRepo;
-    this.hashAlgorithm = MessageDigest.getInstance("SHA-256");
+    this.hashAlgorithm = MessageDigest.getInstance(MessageDigestAlgorithms.SHA_256.getName());
   }
 
   /**
