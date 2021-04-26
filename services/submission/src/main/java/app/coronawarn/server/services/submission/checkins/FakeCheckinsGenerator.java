@@ -28,7 +28,7 @@ public class FakeCheckinsGenerator {
     return checkins.stream()
         .flatMap(original -> IntStream.range(0, numberOfFakesToCreate)
             .mapToObj(counter -> buildFakeCheckin(original, String.valueOf(counter),
-                (pepper == null || pepper.length == 0) ? HashUtils.generateRandomByteArrayData(16) : pepper)))
+                (pepper == null || pepper.length == 0) ? HashUtils.generateSecureRandomByteArrayData(16) : pepper)))
         .collect(Collectors.toList());
   }
 

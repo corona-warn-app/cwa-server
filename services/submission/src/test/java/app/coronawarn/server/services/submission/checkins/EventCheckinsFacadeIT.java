@@ -1,13 +1,16 @@
 package app.coronawarn.server.services.submission.checkins;
 
+import static org.junit.Assert.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import app.coronawarn.server.common.persistence.domain.TraceTimeIntervalWarning;
 import app.coronawarn.server.common.persistence.repository.TraceTimeIntervalWarningRepository;
 import app.coronawarn.server.common.persistence.service.utils.checkins.CheckinsDateSpecification;
 import app.coronawarn.server.common.persistence.utils.hash.HashUtils;
+import app.coronawarn.server.common.protocols.internal.SubmissionPayload;
 import app.coronawarn.server.common.protocols.internal.SubmissionPayload.SubmissionType;
 import app.coronawarn.server.common.protocols.internal.pt.CheckIn;
+import app.coronawarn.server.services.submission.controller.CheckinsStorageResult;
 import com.google.protobuf.ByteString;
 import java.time.Instant;
 import java.util.List;
@@ -16,6 +19,8 @@ import java.util.stream.StreamSupport;
 import org.junit.Assert;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -25,6 +30,10 @@ import org.springframework.test.annotation.DirtiesContext;
 @SpringBootTest
 @DirtiesContext
 class EventCheckinsFacadeIT {
+
+  private static final int CORRECT_TRL = 1;
+  private static final int CORRECT_CHECKOUT_TIME = 12;
+  private static final int CORRECT_CHECKIN_TIME = 1;
 
   @Autowired
   private EventCheckinFacade eventCheckinFacade;
@@ -44,9 +53,20 @@ class EventCheckinsFacadeIT {
   }
 
   @Test
+  void testExtractAndStoreEventCheckins() {
+    final SubmissionPayload newPayload = SubmissionPayload.newBuilder()
+        .addAllCheckIns(getRandomTestData())
+        .build();
+
+    CheckinsStorageResult result = eventCheckinFacade.extractAndStoreEventCheckins(newPayload);
+    assertEquals(result.getNumberOfFilteredCheckins(), 2);
+    assertEquals(result.getNumberOfSavedCheckins(), 2);
+  }
+
+  @Test
   void testStorageWithRandomPadding() {
     List<CheckIn> checkins = getRandomTestData();
-    eventCheckinFacade.saveCheckinsWithFakeData(checkins, 2, HashUtils.generateRandomByteArrayData(16),
+    eventCheckinFacade.saveCheckinsWithFakeData(checkins, 2, HashUtils.generateSecureRandomByteArrayData(16),
         currentTimestamp, SubmissionType.SUBMISSION_TYPE_PCR_TEST);
 
     List<TraceTimeIntervalWarning> actualTraceWarningsStored =
@@ -65,7 +85,7 @@ class EventCheckinsFacadeIT {
             .setTransmissionRiskLevel(2)
             .setLocationId(ByteString.copyFromUtf8("uuid1"))
             .build(),
-        CheckIn.newBuilder().setStartIntervalNumber(40).setEndIntervalNumber(50)
+        CheckIn.newBuilder().setStartIntervalNumber(40).setEndIntervalNumber(3006923)
             .setTransmissionRiskLevel(3)
             .setLocationId(ByteString.copyFromUtf8("uuid1"))
             .build());

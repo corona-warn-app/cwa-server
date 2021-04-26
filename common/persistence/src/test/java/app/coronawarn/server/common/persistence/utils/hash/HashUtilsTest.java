@@ -18,7 +18,7 @@ class HashUtilsTest {
 
   @Test
   void testRandomKeyDataSize() {
-    byte[] hash = HashUtils.generateRandomByteArrayData(16);
+    byte[] hash = HashUtils.generateSecureRandomByteArrayData(16);
     assertThat(hash).hasSize(16);
   }
 

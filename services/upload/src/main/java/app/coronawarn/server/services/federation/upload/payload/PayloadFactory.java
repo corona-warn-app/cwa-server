@@ -73,7 +73,7 @@ public class PayloadFactory {
 
     return batchesAndOriginalKeys.entrySet().stream()
         .map(entry -> this.mapToPayloadAndSign(
-            generateBatchTag(batchCounter.getAndIncrement(), HashUtils.generateRandomByteArrayData(4)),
+            generateBatchTag(batchCounter.getAndIncrement(), HashUtils.generateSecureRandomByteArrayData(4)),
             entry.getKey(),
             entry.getValue()))
         .collect(Collectors.toList());
