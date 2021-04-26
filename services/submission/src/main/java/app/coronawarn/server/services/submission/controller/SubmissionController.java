@@ -10,6 +10,8 @@ import app.coronawarn.server.common.persistence.service.utils.checkins.CheckinsD
 import app.coronawarn.server.common.protocols.external.exposurenotification.TemporaryExposureKey;
 import app.coronawarn.server.common.protocols.internal.SubmissionPayload;
 import app.coronawarn.server.common.protocols.internal.pt.CheckIn;
+import app.coronawarn.server.services.submission.audit.TrackExecutionTime;
+import app.coronawarn.server.services.submission.audit.TrackExecutionTimeProcessor;
 import app.coronawarn.server.services.submission.checkins.EventCheckinDataFilter;
 import app.coronawarn.server.services.submission.checkins.TooManyCheckInsAtSameDay;
 import app.coronawarn.server.services.submission.config.SubmissionServiceConfig;
@@ -65,11 +67,13 @@ public class SubmissionController {
   private final EventCheckinDataFilter checkinsDataFilter;
   private final TraceTimeIntervalWarningService traceTimeIntervalWarningSevice;
   private final TrlDerivations trlDerivations;
+  private final TrackExecutionTimeProcessor trackExecutionTimeProcessor;
 
   SubmissionController(DiagnosisKeyService diagnosisKeyService, TanVerifier tanVerifier,
       FakeDelayManager fakeDelayManager, SubmissionServiceConfig submissionServiceConfig,
       SubmissionMonitor submissionMonitor, EventCheckinDataFilter checkinsDataFilter,
-      TraceTimeIntervalWarningService traceTimeIntervalWarningSevice) {
+      TraceTimeIntervalWarningService traceTimeIntervalWarningSevice,
+      TrackExecutionTimeProcessor trackExecutionTimeProcessor) {
     this.diagnosisKeyService = diagnosisKeyService;
     this.tanVerifier = tanVerifier;
     this.submissionMonitor = submissionMonitor;
@@ -80,6 +84,7 @@ public class SubmissionController {
     this.checkinsDataFilter = checkinsDataFilter;
     this.traceTimeIntervalWarningSevice = traceTimeIntervalWarningSevice;
     this.trlDerivations = submissionServiceConfig.getTrlDerivations();
+    this.trackExecutionTimeProcessor = trackExecutionTimeProcessor;
 
   }
 
@@ -110,13 +115,16 @@ public class SubmissionController {
       String tan) {
     DeferredResult<ResponseEntity<Void>> deferredResult = new DeferredResult<>(
         submissionServiceConfig.getTimeoutInMillis());
-    deferredResult.onTimeout(() ->
-        deferredResult.setErrorResult(
-            ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)));
+    deferredResult.onTimeout(() -> {
+      trackExecutionTimeProcessor.logExecutionTimes();
+      deferredResult.setErrorResult(
+          ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build());
+    });
 
     StopWatch stopWatch = new StopWatch();
     stopWatch.start();
     ForkJoinPool.commonPool().submit(() -> {
+
       try {
         if (!this.tanVerifier.verifyTan(tan)) {
           submissionMonitor.incrementInvalidTanRequestCounter();
@@ -135,11 +143,13 @@ public class SubmissionController {
         stopWatch.stop();
         fakeDelayManager.updateFakeRequestDelay(stopWatch.getTotalTimeMillis());
       }
+
     });
 
     return deferredResult;
   }
 
+  @TrackExecutionTime
   protected CheckinsStorageResult extractAndStoreEventCheckins(SubmissionPayload submissionPayload) {
     // need a container object that reflects how many checkins were filtered even if storage fails
     AtomicInteger numberOfFilteredCheckins = new AtomicInteger(0);
@@ -163,6 +173,7 @@ public class SubmissionController {
     return new CheckinsStorageResult(numberOfFilteredCheckins.get(), numberOfSavedCheckins.get());
   }
 
+  @TrackExecutionTime
   private void extractAndStoreDiagnosisKeys(SubmissionPayload submissionPayload) {
     List<DiagnosisKey> diagnosisKeys = extractValidDiagnosisKeysFromPayload(
         enhanceWithDefaultValuesIfMissing(submissionPayload));

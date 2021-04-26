@@ -2,6 +2,7 @@
 
 package app.coronawarn.server.services.submission.monitoring;
 
+import app.coronawarn.server.services.submission.audit.TrackExecutionTime;
 import app.coronawarn.server.services.submission.config.SubmissionServiceConfig;
 import app.coronawarn.server.services.submission.controller.FakeDelayManager;
 import io.micrometer.core.instrument.Gauge;
@@ -28,8 +29,8 @@ public class SubmissionMonitor {
   /**
    * Constructor for {@link SubmissionMonitor}. Initializes all counters to 0 upon being called.
    *
-   * @param meterRegistry the meterRegistry
-   * @param fakeDelayManager the fake delay manager whose fake delay will be monitored
+   * @param meterRegistry           the meterRegistry
+   * @param fakeDelayManager        the fake delay manager whose fake delay will be monitored
    * @param submissionServiceConfig config containing the monitoring batch size
    */
   protected SubmissionMonitor(
@@ -42,12 +43,12 @@ public class SubmissionMonitor {
 
   /**
    * We count the following values.
-   *  <ul>
-   *    <li> All requests that reach the controllers.
-   *    <li> As part of all, the number of requests that are not fake.
-   *    <li> As part of all, the number of requests that are fake.
-   *    <li> As part of all, the number of requests for that the TAN-validation failed.
-   *  </ul>
+   * <ul>
+   *   <li> All requests that reach the controllers.
+   *   <li> As part of all, the number of requests that are not fake.
+   *   <li> As part of all, the number of requests that are fake.
+   *   <li> As part of all, the number of requests for that the TAN-validation failed.
+   * </ul>
    */
   private void initializeCounters() {
     requests = new BatchCounter(meterRegistry, batchSize, "all");
@@ -69,6 +70,7 @@ public class SubmissionMonitor {
         .register(meterRegistry);
   }
 
+  @TrackExecutionTime
   public void incrementRequestCounter() {
     requests.increment();
   }
@@ -77,6 +79,7 @@ public class SubmissionMonitor {
     realRequests.increment();
   }
 
+  @TrackExecutionTime
   public void incrementFakeRequestCounter() {
     fakeRequests.increment();
   }

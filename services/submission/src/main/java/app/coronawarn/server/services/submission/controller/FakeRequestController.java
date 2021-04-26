@@ -5,6 +5,8 @@ package app.coronawarn.server.services.submission.controller;
 import static app.coronawarn.server.services.submission.controller.SubmissionController.SUBMISSION_ROUTE;
 import static java.util.concurrent.TimeUnit.MILLISECONDS;
 
+import app.coronawarn.server.services.submission.audit.TrackExecutionTime;
+import app.coronawarn.server.services.submission.audit.TrackExecutionTimeProcessor;
 import app.coronawarn.server.services.submission.config.SubmissionServiceConfig;
 import app.coronawarn.server.services.submission.monitoring.SubmissionMonitor;
 import io.micrometer.core.annotation.Timed;
@@ -26,12 +28,14 @@ public class FakeRequestController {
   private final SubmissionMonitor submissionMonitor;
   private final FakeDelayManager fakeDelayManager;
   private final SubmissionServiceConfig submissionServiceConfig;
+  private final TrackExecutionTimeProcessor trackExecutionTimeProcessor;
 
   FakeRequestController(SubmissionMonitor submissionMonitor, FakeDelayManager fakeDelayManager,
-      SubmissionServiceConfig submissionServiceConfig) {
+      SubmissionServiceConfig submissionServiceConfig, TrackExecutionTimeProcessor trackExecutionTimeProcessor) {
     this.submissionMonitor = submissionMonitor;
     this.fakeDelayManager = fakeDelayManager;
     this.submissionServiceConfig = submissionServiceConfig;
+    this.trackExecutionTimeProcessor = trackExecutionTimeProcessor;
   }
 
   /**
@@ -45,15 +49,18 @@ public class FakeRequestController {
    */
   @PostMapping(value = SUBMISSION_ROUTE, headers = {"cwa-fake!=0"})
   @Timed(description = "Time spent handling fake submission.")
-  public DeferredResult<ResponseEntity<Void>> fakeRequest(@RequestHeader("cwa-fake") Integer fake) {
+  @TrackExecutionTime
+  public DeferredResult<ResponseEntity<Object>> fakeRequest(@RequestHeader("cwa-fake") Integer fake) {
     submissionMonitor.incrementRequestCounter();
     submissionMonitor.incrementFakeRequestCounter();
     long delay = fakeDelayManager.getJitteredFakeDelay();
-    DeferredResult<ResponseEntity<Void>> deferredResult =
+    DeferredResult<ResponseEntity<Object>> deferredResult =
         new DeferredResult<>(submissionServiceConfig.getTimeoutInMillis());
-    deferredResult.onTimeout(() ->
-        deferredResult.setErrorResult(
-            ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)));
+    deferredResult.onTimeout(() -> {
+      trackExecutionTimeProcessor.logExecutionTimes();
+      deferredResult.setErrorResult(
+          ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build());
+    });
     scheduledExecutor.schedule(() -> deferredResult.setResult(ResponseEntity.ok().build()), delay, MILLISECONDS);
     return deferredResult;
   }
