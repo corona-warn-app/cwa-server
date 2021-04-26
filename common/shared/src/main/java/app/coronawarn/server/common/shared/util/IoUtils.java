@@ -6,6 +6,8 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.UncheckedIOException;
+import java.util.Arrays;
+import java.util.Objects;
 
 /**
  * A class containing helper functions for general purpose file IO.
@@ -18,6 +20,18 @@ public class IoUtils {
   public static final int MAXIMUM_FILE_SIZE = 16000000;
 
   private IoUtils() {
+  }
+
+  /**
+   * Check whether a directory contains a filename in it.
+   * @param parent - directory
+   * @param fileName - file name
+   * @return - {@code true} if file exists in directory, {@code false} otherwise
+   */
+  public static boolean fileExistsInDirectory(File parent, String fileName) {
+    return Arrays.stream(Objects.requireNonNull(parent.listFiles()))
+        .map(File::getName)
+        .anyMatch(name -> name.equalsIgnoreCase(fileName));
   }
 
   /**

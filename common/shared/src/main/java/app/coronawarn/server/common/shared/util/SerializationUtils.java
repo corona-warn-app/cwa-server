@@ -12,6 +12,9 @@ import java.util.function.Function;
 
 public final class SerializationUtils {
 
+  private SerializationUtils() {
+  }
+
   /**
    * Deserialize json string into an object of type T. The type must also be provided to the underlying Jackson library
    * in the form of a JavaType supplied by the function parameter.
@@ -62,8 +65,5 @@ public final class SerializationUtils {
     } catch (final JsonProcessingException e) {
       throw new IllegalStateException("Object could not be converted into JSON", e);
     }
-  }
-
-  private SerializationUtils() {
   }
 }

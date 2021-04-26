@@ -28,4 +28,11 @@ class TimeUtilsTest {
     assertEquals(Instant.now().truncatedTo(HOURS), TimeUtils.getNow().truncatedTo(HOURS));
   }
 
+  @Test
+  void testSetNow() {
+    Instant now = Instant.now();
+    TimeUtils.setNow(now);
+
+    assertEquals(TimeUtils.getNow(), now);
+  }
 }
