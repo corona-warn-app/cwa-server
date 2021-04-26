@@ -1,5 +1,8 @@
 package app.coronawarn.server.services.distribution.assembly.tracewarnings.structure.directory.decorator.integration;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.when;
+
 import app.coronawarn.server.common.persistence.service.TraceTimeIntervalWarningService;
 import app.coronawarn.server.common.persistence.service.utils.checkins.CheckinsDateSpecification;
 import app.coronawarn.server.common.protocols.internal.SubmissionPayload.SubmissionType;
@@ -14,20 +17,6 @@ import app.coronawarn.server.services.distribution.assembly.structure.util.Immut
 import app.coronawarn.server.services.distribution.assembly.structure.util.TimeUtils;
 import app.coronawarn.server.services.distribution.common.Helpers;
 import app.coronawarn.server.services.distribution.objectstore.ObjectStoreAccess;
-import org.apache.commons.lang3.StringUtils;
-import org.junit.Rule;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.junit.rules.TemporaryFolder;
-import org.mockito.Mock;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
-import org.springframework.boot.test.context.ConfigDataApplicationContextInitializer;
-import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.cloud.vault.config.VaultAutoConfiguration;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
 import java.io.File;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
@@ -36,10 +25,19 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
-
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mockito.Mockito.when;
+import org.apache.commons.lang3.StringUtils;
+import org.junit.Rule;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.rules.TemporaryFolder;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
+import org.springframework.boot.test.context.ConfigDataApplicationContextInitializer;
+import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.cloud.vault.config.VaultAutoConfiguration;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 @ContextConfiguration(classes = {
     Application.class}, initializers = ConfigDataApplicationContextInitializer.class)
@@ -47,28 +45,28 @@ import static org.mockito.Mockito.when;
 @EnableAutoConfiguration(exclude = VaultAutoConfiguration.class)
 public class TraceTimeIntervalWarningsDistributionIT {
 
-  @MockBean
-  private ObjectStoreAccess objectStoreAccess;
-
-  @Mock
-  private OutputDirectoryProvider outputDirectoryProvider;
-
   @Autowired
   private TraceTimeIntervalWarningService traceTimeIntervalWarningService;
 
   @Autowired
   private TraceTimeIntervalWarningsStructureProvider traceTimeIntervalWarningsStructureProvider;
 
+  @MockBean
+  private ObjectStoreAccess objectStoreAccess;
+
+  @MockBean
+  private OutputDirectoryProvider outputDirectoryProvider;
+
   @Rule
   private TemporaryFolder tempFolder = new TemporaryFolder();
 
-  final String SEPARATOR = File.separator;
-  final String PARENT_DIRECTORY = "parent";
+  private static final String SEPARATOR = File.separator;
+  private static final String PARENT_DIRECTORY = "parent";
 
   @BeforeEach
   public void setup() throws Exception {
     tempFolder.create();
-    File outputDirectory = tempFolder.newFolder("parent");
+    File outputDirectory = tempFolder.newFolder(PARENT_DIRECTORY);
     Directory<WritableOnDisk> testDirectory = new DirectoryOnDisk(outputDirectory);
     when(outputDirectoryProvider.getDirectory()).thenReturn(testDirectory);
   }
@@ -130,7 +128,7 @@ public class TraceTimeIntervalWarningsDistributionIT {
 
     assertThat(excludedCurrentHourEmptyList).isEmpty();
     assertThat(oldestAndLatestTimeStamps).containsExactlyInAnyOrder(latestHour, oldestHour);
-    expectedPaths.forEach(expected -> assertTrue(actualFiles.contains(expected)));
+    assertThat(actualFiles).containsAll(expectedPaths);
   }
 
   private int extractSubmissionHour(String path) {
@@ -143,6 +141,4 @@ public class TraceTimeIntervalWarningsDistributionIT {
         .map(it -> path
             .endsWith(it.toString())).reduce((a, b) -> a || b).orElse(Boolean.FALSE);
   }
-
-
 }
