@@ -1,4 +1,4 @@
-package app.coronawarn.server.services.distribution.assembly.tracewarnings.structure.directory.decorator;
+package app.coronawarn.server.services.distribution.assembly.tracewarnings.structure;
 
 import static app.coronawarn.server.services.distribution.common.Helpers.*;
 import static org.assertj.core.api.Assertions.assertThat;

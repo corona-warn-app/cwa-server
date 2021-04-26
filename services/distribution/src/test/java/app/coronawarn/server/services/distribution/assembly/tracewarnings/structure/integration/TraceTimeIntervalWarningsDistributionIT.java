@@ -1,4 +1,4 @@
-package app.coronawarn.server.services.distribution.assembly.tracewarnings.structure.directory.decorator.integration;
+package app.coronawarn.server.services.distribution.assembly.tracewarnings.structure.integration;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.when;
