@@ -18,4 +18,7 @@ public class ValueSetObject {
 
   @JsonProperty("system")
   private String system;
+
+  @JsonProperty("valueSetId")
+  private String valueSetId;
 }
