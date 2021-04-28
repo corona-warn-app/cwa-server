@@ -202,6 +202,7 @@ public class SubmissionController {
         .addAllVisitedCountries(submissionPayload.getVisitedCountriesList())
         .setOrigin(originCountry)
         .setConsentToFederation(submissionPayload.getConsentToFederation())
+        .setSubmissionType(submissionPayload.getSubmissionType())
         .build();
   }
 

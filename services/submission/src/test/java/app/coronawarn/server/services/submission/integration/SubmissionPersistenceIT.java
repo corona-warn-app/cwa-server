@@ -112,12 +112,12 @@ class SubmissionPersistenceIT {
   @ParameterizedTest
   @MethodSource("validSubmissionPayload")
   void okKeyInsertionWithMobileClientProtoBuf(List<String> visitedCountries, String originCountry,
-      Boolean consentToFederation) throws IOException {
+      Boolean consentToFederation, SubmissionType submissionType) throws IOException {
 
     List<TemporaryExposureKey> temporaryExposureKeys = createValidTemporaryExposureKeys();
 
     SubmissionPayload submissionPayload = buildSubmissionPayload(visitedCountries, originCountry, consentToFederation,
-        temporaryExposureKeys, SubmissionType.SUBMISSION_TYPE_PCR_TEST);
+        temporaryExposureKeys, submissionType);
 
     writeSubmissionPayloadProtobufFile(submissionPayload);
 
@@ -144,6 +144,7 @@ class SubmissionPersistenceIT {
         .addAllVisitedCountries(expectedVisitedCountries)
         .setOrigin(StringUtils.defaultIfBlank(payload.getOrigin(), config.getDefaultOriginCountry()))
         .setConsentToFederation(payload.getConsentToFederation())
+        .setSubmissionType(submissionType)
         .build();
 
     assertEquals(payload.getKeysList().size(), result);
