@@ -1,6 +1,5 @@
 package app.coronawarn.server.services.callback.registration;
 
-import static app.coronawarn.server.services.callback.HashingUtils.computeHash;
 import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
 import static com.github.tomakehurst.wiremock.client.WireMock.get;
 import static com.github.tomakehurst.wiremock.client.WireMock.getRequestedFor;
@@ -13,6 +12,7 @@ import static org.mockito.internal.verification.VerificationModeFactory.times;
 import static org.springframework.http.HttpHeaders.CONTENT_TYPE;
 
 import app.coronawarn.server.common.federation.client.callback.RegistrationResponse;
+import app.coronawarn.server.common.persistence.utils.hash.HashUtils;
 import app.coronawarn.server.services.callback.config.CallbackServiceConfig;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.tomakehurst.wiremock.WireMockServer;
@@ -41,7 +41,7 @@ class CallbackRegistrationRunnerIntegrationTest {
 
   @BeforeAll
   static void setupWireMock() {
-    RegistrationResponse registrationResponse1 = new RegistrationResponse(computeHash("url1"), "url1");
+    RegistrationResponse registrationResponse1 = new RegistrationResponse(HashUtils.md5DigestAsHex("url1"), "url1");
     List<RegistrationResponse> responses = List.of(registrationResponse1);
 
     server = new WireMockServer(options().port(1234));
@@ -55,7 +55,7 @@ class CallbackRegistrationRunnerIntegrationTest {
                     .withBody(asJsonString(responses))));
 
     server.stubFor(
-        put(urlEqualTo("/diagnosiskeys/callback/" + computeHash("url") + "?url=url"))
+        put(urlEqualTo("/diagnosiskeys/callback/" + HashUtils.md5DigestAsHex("url") + "?url=url"))
             .willReturn(
                 aResponse()
                     .withStatus(HttpStatus.OK.value())
@@ -87,7 +87,7 @@ class CallbackRegistrationRunnerIntegrationTest {
     server.verify(1, getRequestedFor(urlEqualTo(expectedGetUrl)));
 
     String expectedPutUrl = "/diagnosiskeys/callback/"
-        + computeHash("url") + "?url=url";
+        + HashUtils.md5DigestAsHex("url") + "?url=url";
     server.verify(1, putRequestedFor(urlEqualTo(expectedPutUrl)));
 
     verify(callbackServiceConfig, times(1)).isRegisterOnStartup();

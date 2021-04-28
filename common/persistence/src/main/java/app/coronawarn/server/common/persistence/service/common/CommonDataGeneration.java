@@ -24,15 +24,6 @@ public abstract class CommonDataGeneration<T extends DiagnosisKey> implements Ap
   }
 
   /**
-   * Returns 16 random bytes.
-   */
-  protected byte[] generateDiagnosisKeyBytes() {
-    byte[] keyData = new byte[16];
-    random.nextBytes(keyData);
-    return keyData;
-  }
-
-  /**
    * Returns a random {@link SubmissionType}.
    */
   protected SubmissionType generateSubmissionType() {
