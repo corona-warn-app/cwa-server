@@ -5,6 +5,10 @@ import static app.coronawarn.server.common.shared.util.SerializationUtils.string
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.Serializable;
 import org.junit.jupiter.api.Test;
 
@@ -14,6 +18,15 @@ class SerializationUtilsTest {
   public static final String TEST_ATTRIBUTE = "testAttribute";
   public static final String TEST_ATTRIBUTE_VALUE = "test-value";
   public static final String TEST_OBJECT_SERIALIZED = "{\"testAttribute\":\"test-value\"}";
+
+  @Test
+  void testDeserializeJsonInputStream() throws IOException {
+    InputStream is = new ByteArrayInputStream(TEST_OBJECT_SERIALIZED.getBytes());
+    TestObject testObject = deserializeJson(is,
+        typeFactory -> typeFactory.constructType(TestObject.class));
+
+    assertEquals(TEST_ATTRIBUTE_VALUE, testObject.getTestAttribute());
+  }
 
   @Test
   void testDeserializeJson() {

@@ -29,10 +29,4 @@ class HashUtilsTest {
     byte[] hash = byteStringDigest(ByteString.copyFromUtf8(TEST_STRING), MessageDigestAlgorithms.SHA_256);
     assertThat(hash).hasSize(32);
   }
-
-  @Test
-  void testDigestAsHex() throws NoSuchAlgorithmException {
-    String hash = digestAsHex(TEST_STRING, MessageDigestAlgorithms.SHA_256);
-    assertThat(hash).hasSize(64);
-  }
 }

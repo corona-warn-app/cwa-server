@@ -63,30 +63,4 @@ public class HashUtils {
   public static String md5DigestAsHex(final String subject) {
     return DigestUtils.md5DigestAsHex(subject.getBytes(StandardCharsets.UTF_8));
   }
-
-  /**
-   * Hash of the provided string with wanted algorithm and return it as HEX.
-   * @param data - string to be hash
-   * @param algorithm - algorithm to be used
-   * @return - HEX string
-   * @throws NoSuchAlgorithmException - thrown when the algorithm does not exist.
-   */
-  public static String digestAsHex(String data, MessageDigestAlgorithms algorithm) throws NoSuchAlgorithmException {
-    MessageDigest md = MessageDigest.getInstance(algorithm.getName());
-    md.update(data.getBytes());
-    return bytesToHex(md.digest());
-  }
-
-  /**
-   * Transform bytes array into HEX.
-   * @param bytes - array to be transformed
-   * @return - Hex value
-   */
-  public static String bytesToHex(byte[] bytes) {
-    StringBuffer result = new StringBuffer();
-    for (byte byt : bytes) {
-      result.append(Integer.toString((byt & 0xff) + 0x100, 16).substring(1));
-    }
-    return result.toString();
-  }
 }
