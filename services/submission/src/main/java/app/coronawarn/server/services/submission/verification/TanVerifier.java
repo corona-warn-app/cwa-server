@@ -2,6 +2,7 @@
 
 package app.coronawarn.server.services.submission.verification;
 
+import app.coronawarn.server.services.submission.audit.TrackExecutionTime;
 import feign.FeignException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -33,6 +34,7 @@ public class TanVerifier {
    * @return {@literal true} if the specified TAN is valid, {@literal false} otherwise.
    * @throws RestClientException if status code is neither 2xx nor 4xx
    */
+  @TrackExecutionTime
   public boolean verifyTan(String tanString) {
     try {
       Tan tan = Tan.of(tanString);

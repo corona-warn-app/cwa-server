@@ -2,6 +2,7 @@
 
 package app.coronawarn.server.services.submission;
 
+import app.coronawarn.server.services.submission.audit.TrackExecutionTimeProcessor;
 import app.coronawarn.server.services.submission.config.SubmissionServiceConfigValidator;
 import io.micrometer.core.aop.TimedAspect;
 import io.micrometer.core.instrument.MeterRegistry;
@@ -45,6 +46,11 @@ public class ServerApplication implements EnvironmentAware, DisposableBean {
   @Bean
   TimedAspect timedAspect(MeterRegistry registry) {
     return new TimedAspect(registry);
+  }
+
+  @Bean
+  TrackExecutionTimeProcessor trackedTimeRequest() {
+    return new TrackExecutionTimeProcessor();
   }
 
   /**

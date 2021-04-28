@@ -49,6 +49,7 @@ import app.coronawarn.server.services.submission.config.SubmissionServiceConfig;
 import app.coronawarn.server.services.submission.monitoring.SubmissionMonitor;
 import app.coronawarn.server.services.submission.verification.TanVerifier;
 import com.google.protobuf.ByteString;
+import feign.FeignException;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.util.Arrays;
@@ -78,6 +79,7 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.annotation.DirtiesContext;
+import org.springframework.web.context.request.async.AsyncRequestTimeoutException;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @DirtiesContext
@@ -262,6 +264,20 @@ class SubmissionControllerTest {
   void checkResponseStatusForValidParameters() {
     final ResponseEntity<Void> actResponse = executor.executePost(buildPayload(buildMultipleKeys(config)));
     assertThat(actResponse.getStatusCode()).isEqualTo(OK);
+  }
+
+  @Test
+  void checkVerificationServiceExceptionThrownStatusForValidParameters() {
+    when(tanVerifier.verifyTan(anyString())).thenThrow(FeignException.class);
+    final ResponseEntity<Void> actResponse = executor.executePost(buildPayload(buildMultipleKeys(config)));
+    assertThat(actResponse.getStatusCode()).isEqualTo(INTERNAL_SERVER_ERROR);
+  }
+
+  @Test
+  void checkTimeoutExceptionOnSaveDiagnosisKeys() {
+    when(diagnosisKeyService.saveDiagnosisKeys(any())).thenThrow(AsyncRequestTimeoutException.class);
+    final ResponseEntity<Void> actResponse = executor.executePost(buildPayload(buildMultipleKeys(config)));
+    assertThat(actResponse.getStatusCode()).isEqualTo(INTERNAL_SERVER_ERROR);
   }
 
   @Test

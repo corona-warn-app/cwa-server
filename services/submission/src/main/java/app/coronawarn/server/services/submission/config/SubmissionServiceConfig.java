@@ -64,6 +64,7 @@ public class SubmissionServiceConfig {
   @Autowired
   private TrlDerivations trlDerivations;
 
+  private Long timeoutInMillis;
 
   public Long getInitialFakeDelayMilliseconds() {
     return initialFakeDelayMilliseconds;
@@ -192,6 +193,16 @@ public class SubmissionServiceConfig {
   public void setTrlDerivations(TrlDerivations trlDerivations) {
     this.trlDerivations = trlDerivations;
   }
+
+
+  public Long getTimeoutInMillis() {
+    return timeoutInMillis;
+  }
+
+  public void setTimeoutInMillis(Long timeoutInMillis) {
+    this.timeoutInMillis = timeoutInMillis;
+  }
+
 
   public static class Payload {
 

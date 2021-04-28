@@ -2,6 +2,7 @@
 
 package app.coronawarn.server.services.submission.controller;
 
+import app.coronawarn.server.services.submission.audit.TrackExecutionTime;
 import app.coronawarn.server.services.submission.config.SubmissionServiceConfig;
 import org.apache.commons.math3.distribution.PoissonDistribution;
 import org.springframework.stereotype.Component;
@@ -25,6 +26,7 @@ public class FakeDelayManager {
    *
    * @return the fake delay
    */
+  @TrackExecutionTime
   public long getJitteredFakeDelay() {
     return new PoissonDistribution(fakeDelay).sample();
   }
