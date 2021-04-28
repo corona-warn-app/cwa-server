@@ -28,10 +28,10 @@ public class TrackExecutionTimeProcessor {
   }
 
   /**
-   * Add executions timeouts.
+   * Add execution times for methods.
    *
-   * @param name        of the class
-   * @param trackedTime in millis
+   * @param name of the method that will be tracked
+   * @param trackedTime execution time in millis for called method
    */
   public void addExecutionTime(String name, Long trackedTime) {
     executionTimes.put(name, trackedTime);

@@ -4,37 +4,34 @@ import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.reflect.MethodSignature;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
 @Aspect
 public class ExecutionTimeAspect {
 
-  private Logger logger = LoggerFactory.getLogger(ExecutionTimeAspect.class);
-
-  @Autowired
   private TrackExecutionTimeProcessor trackExecutionTimeProcessor;
 
+  public ExecutionTimeAspect(TrackExecutionTimeProcessor trackExecutionTimeProcessor) {
+    this.trackExecutionTimeProcessor = trackExecutionTimeProcessor;
+  }
+
   /**
-   * Return an object.
+   * Return actual value of the called method and measures how much time takes in milliseconds.
    *
-   * @param joinPoint param
-   * @return object
+   * @param joinPoint interception point
+   * @return actual value of the called method
    * @throws Throwable exception
    */
   @Around("@annotation(TrackExecutionTime)")
   public Object trackTime(ProceedingJoinPoint joinPoint) throws Throwable {
-    Long trackSystemMillis = System.currentTimeMillis();
+    Long startTime = System.currentTimeMillis();
     Object result = joinPoint.proceed();
-    Long trackedTime = System.currentTimeMillis() - trackSystemMillis;
+    Long trackedTime = System.currentTimeMillis() - startTime;
 
     trackExecutionTimeProcessor.addExecutionTime(
         ((MethodSignature) joinPoint.getSignature()).getMethod().getName(), trackedTime);
 
     return result;
   }
-
 }
