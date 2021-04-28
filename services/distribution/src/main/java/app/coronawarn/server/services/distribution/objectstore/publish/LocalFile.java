@@ -73,10 +73,10 @@ public abstract class LocalFile {
    * Value for the <code>content-type</code> header.
    *
    * @return Either <a href="https://www.iana.org/assignments/media-types/application/zip">zip</a> or
-   *         <a href="https://www.iana.org/assignments/media-types/application/json">json</a>.
+   *     <a href="https://www.iana.org/assignments/media-types/application/json">json</a>.
    */
   public String getContentType() {
-    if (isConfigFile() || isStatisticFile() || isKeyFile()) {
+    if (isConfigFile() || isStatisticFile() || isKeyFile() || isQrPosterTemplate()) {
       return "application/zip";
     }
     // list of versions, dates, hours
@@ -91,6 +91,10 @@ public abstract class LocalFile {
    */
   public boolean isKeyFile() {
     return s3Key.matches(".*\\d");
+  }
+
+  public boolean isQrPosterTemplate() {
+    return s3Key.contains("qr_code_poster_template_");
   }
 
   private boolean isConfigFile() {
