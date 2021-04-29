@@ -36,16 +36,14 @@ public class DiagnosisKeyService {
   }
 
   /**
-   * Persists the specified app.coronawarn.server.common.shared.collection of
-   * {@link DiagnosisKey} instances and returns the number of inserted diagnosis
+   * Persists the specified collection of {@link DiagnosisKey} instances and returns the number of inserted diagnosis
    * keys. If the key data of a particular diagnosis key already exists in the database and is of a submission type that
    * can not be overwritten with the new submission type (e.g. overwriting PCR with RAPID is not possible), this
    * diagnosis key is not persisted.
    *
    * @param diagnosisKeys must not contain {@literal null}.
    * @return Number of successfully inserted diagnosis keys.
-   * @throws IllegalArgumentException in case the given
-   *     app.coronawarn.server.common.shared.collection contains {@literal null}.
+   * @throws IllegalArgumentException in case the given collection contains {@literal null}.
    */
   @Timed
   @Transactional

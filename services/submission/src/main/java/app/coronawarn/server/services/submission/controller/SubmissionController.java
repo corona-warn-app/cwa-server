@@ -173,8 +173,8 @@ public class SubmissionController {
       paddedDiagnosisKeys.add(diagnosisKey);
       IntStream.range(1, randomKeyPaddingMultiplier)
           .mapToObj(index -> DiagnosisKey.builder()
-              .withKeyDataAndSubmissionType(HashUtils.generateSecureRandomByteArrayData(16),
-                  diagnosisKey.getSubmissionType())
+              .withKeyDataAndSubmissionType(
+                  HashUtils.generateSecureRandomByteArrayData(16), diagnosisKey.getSubmissionType())
               .withRollingStartIntervalNumber(diagnosisKey.getRollingStartIntervalNumber())
               .withTransmissionRiskLevel(diagnosisKey.getTransmissionRiskLevel())
               .withRollingPeriod(diagnosisKey.getRollingPeriod())

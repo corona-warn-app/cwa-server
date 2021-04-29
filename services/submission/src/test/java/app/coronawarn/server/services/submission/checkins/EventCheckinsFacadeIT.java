@@ -3,9 +3,9 @@ package app.coronawarn.server.services.submission.checkins;
 import app.coronawarn.server.common.persistence.domain.TraceTimeIntervalWarning;
 import app.coronawarn.server.common.persistence.repository.TraceTimeIntervalWarningRepository;
 import app.coronawarn.server.common.persistence.service.utils.checkins.CheckinsDateSpecification;
+import app.coronawarn.server.common.persistence.utils.hash.HashUtils;
 import app.coronawarn.server.common.protocols.internal.SubmissionPayload.SubmissionType;
 import app.coronawarn.server.common.protocols.internal.pt.CheckIn;
-import app.coronawarn.server.common.shared.util.HashUtils;
 import com.google.protobuf.ByteString;
 import java.time.Instant;
 import java.util.List;
@@ -63,7 +63,7 @@ class EventCheckinsFacadeIT {
             .setTransmissionRiskLevel(2)
             .setLocationId(ByteString.copyFromUtf8("uuid1"))
             .build(),
-        CheckIn.newBuilder().setStartIntervalNumber(40).setEndIntervalNumber(50)
+        CheckIn.newBuilder().setStartIntervalNumber(40).setEndIntervalNumber(3006923)
             .setTransmissionRiskLevel(3)
             .setLocationId(ByteString.copyFromUtf8("uuid1"))
             .build());
