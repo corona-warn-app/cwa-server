@@ -1,6 +1,6 @@
-package app.coronawarn.server.common.persistence.service.utils.checkins;
+package app.coronawarn.server.services.submission.checkins;
 
-import static app.coronawarn.server.common.persistence.service.utils.checkins.FakeCheckinIntervalSpecification.START_INTERVAL_GENERATION;
+import static app.coronawarn.server.services.submission.checkins.FakeCheckinIntervalSpecification.START_INTERVAL_GENERATION;
 import static org.junit.Assert.assertTrue;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
