@@ -5,7 +5,6 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import java.util.Date;
-import java.util.List;
 import java.util.Map;
 
 
@@ -29,11 +28,11 @@ public class VaccineMedicinalProductJsonStringObject {
     this.valueSetDate = valueSetDate;
   }
 
-  public List<Map<String, ValueSetObject>> getValueSetValues() {
+  public Map<String, ValueSetObject> getValueSetValues() {
     return valueSetValues;
   }
 
-  public void setValueSetValues(List<Map<String, ValueSetObject>> valueSetValues) {
+  public void setValueSetValues(Map<String, ValueSetObject> valueSetValues) {
     this.valueSetValues = valueSetValues;
   }
 
@@ -44,6 +43,6 @@ public class VaccineMedicinalProductJsonStringObject {
   private Date valueSetDate;
 
   @JsonProperty("valueSetValues")
-  private List<Map<String, ValueSetObject>> valueSetValues;
+  private Map<String, ValueSetObject> valueSetValues;
 
 }

@@ -32,7 +32,8 @@ public class DigitalGreenCertificateJsonToProtobufTest {
   private DistributionServiceConfig distributionServiceConfig;
 
   private static String mahManfJsonPath = "src/test/resources/dgc/vaccine-mah-manf.json";
-  private static String mProductJsonPath = "src/test/resources/dgc/vaccine-mah-manf.json";
+  private static String mProductJsonPath = "src/test/resources/dgc/vaccine-medicinal-product.json";
+  private static String prophylaxisJsonPath = "src/test/resources/dgc/vaccine-prophylaxis.json";
 
   @Test
   public void shouldReadMahManfJson() throws IOException {
@@ -66,19 +67,43 @@ public class DigitalGreenCertificateJsonToProtobufTest {
 
     Mockito.when(jsonFileLoader.getFile()).thenReturn(json1);
     DigitalGreenCertificateToProtobufMapping dgcToProtobufMapping =
-        new DigitalGreenCertificateToProtobufMapping(distributionServiceConfig, jsonFileLoader, null, null);
+        new DigitalGreenCertificateToProtobufMapping(distributionServiceConfig, null, jsonFileLoader, null);
 
     var result = dgcToProtobufMapping.readMedicinalProductJson();
 
     assertThat(result.getValueSetId()).isEqualTo("vaccines-covid-19-names");
-    assertThat(result.getValueSetDate()).isEqualTo("2021-04-27");
+//    assertThat(result.getValueSetDate()).isEqualTo("2021-04-27");
     assertThat(result.getValueSetValues()).hasSize(12);
 
-    ValueSetObject actual = result.getValueSetValues().get("EU/1/20/1525");
+    ValueSetObject actual = result.getValueSetValues().get(("EU/1/20/1525"));
     assertThat(actual.getDisplay()).isEqualTo("COVID-19 Vaccine Janssen");
     assertThat(actual.getLang()).isEqualTo(Language.EN);
     assertThat(actual.isActive()).isEqualTo(true);
     assertThat(actual.getVersion()).isEmpty();
     assertThat(actual.getSystem()).isEqualTo("https://ec.europa.eu/health/documents/community-register/html/");
+  }
+
+  @Test
+  public void shouldReadProphylaxisJson() throws IOException {
+    JsonFileLoader jsonFileLoader = Mockito.mock(JsonFileLoader.class);
+    JsonFile json1 = new JsonFile(new FileInputStream(prophylaxisJsonPath), "");
+
+    Mockito.when(jsonFileLoader.getFile()).thenReturn(json1);
+    DigitalGreenCertificateToProtobufMapping dgcToProtobufMapping =
+        new DigitalGreenCertificateToProtobufMapping(distributionServiceConfig, null, null, jsonFileLoader);
+
+    var result = dgcToProtobufMapping.readProphylaxisJson();
+
+    assertThat(result.getValueSetId()).isEqualTo("sct-vaccines-covid-19");
+    assertThat(result.getValueSetDate()).isEqualTo("2021-04-27");
+    assertThat(result.getValueSetValues()).hasSize(3);
+
+    // assert at least one value
+    ValueSetObject actual = result.getValueSetValues().get("1119305005");
+    assertThat(actual.getDisplay()).isEqualTo("SARS-CoV-2 antigen vaccine");
+    assertThat(actual.getLang()).isEqualTo(Language.EN);
+    assertThat(actual.isActive()).isEqualTo(true);
+    assertThat(actual.getVersion()).isEqualTo("http://snomed.info/sct/900000000000207008/version/20210131");
+    assertThat(actual.getSystem()).isEqualTo("http://snomed.info/sct");
   }
 }
