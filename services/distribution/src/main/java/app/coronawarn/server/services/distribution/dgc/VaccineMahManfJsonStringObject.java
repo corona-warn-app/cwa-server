@@ -8,7 +8,7 @@ import java.util.Map;
 
 @JsonInclude(Include.NON_NULL)
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class VaccineMahMaJsonStringObject {
+public class VaccineMahManfJsonStringObject {
 
   @JsonProperty("valueSetId")
   private String valueSetId;

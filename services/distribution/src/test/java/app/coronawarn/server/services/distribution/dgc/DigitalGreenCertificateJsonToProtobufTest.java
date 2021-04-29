@@ -41,7 +41,7 @@ public class DigitalGreenCertificateJsonToProtobufTest {
     Mockito.when(jsonFileLoader.getFile()).thenReturn(json1);
     DigitalGreenCertificateToProtobufMapping dgcToProtobufMapping = new DigitalGreenCertificateToProtobufMapping(distributionServiceConfig, jsonFileLoader);
 
-    var result = dgcToProtobufMapping.readVmpJson();
+    var result = dgcToProtobufMapping.readMahManfJson();
 
     assertThat(result.getValueSetId()).isEqualTo("vaccines-covid-19-auth-holders");
 

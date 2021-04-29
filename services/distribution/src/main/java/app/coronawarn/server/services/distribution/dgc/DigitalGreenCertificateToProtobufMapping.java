@@ -22,16 +22,16 @@ public class DigitalGreenCertificateToProtobufMapping {
   private static final Logger logger = LoggerFactory.getLogger(DigitalGreenCertificateToProtobufMapping.class);
 
   private final DistributionServiceConfig distributionServiceConfig;
-  private final JsonFileLoader jsonFileLoader;
+  private final JsonFileLoader mahManfJsonLoader;
+  private final JsonFileLoader medicinalProductJsonLoader;
+  private final JsonFileLoader prophylaxisJsonLoader;
 
   public DigitalGreenCertificateToProtobufMapping(DistributionServiceConfig distributionServiceConfig,
-      JsonFileLoader jsonFileLoader) {
+      JsonFileLoader mahManfJsonLoader, JsonFileLoader medicinalProductJsonLoader, JsonFileLoader prophylaxisJsonLoader) {
     this.distributionServiceConfig = distributionServiceConfig;
-    this.jsonFileLoader = jsonFileLoader;
-  }
-
-  private JsonFile getFile() {
-    return this.jsonFileLoader.getFile();
+    this.mahManfJsonLoader = mahManfJsonLoader;
+    this.medicinalProductJsonLoader = medicinalProductJsonLoader;
+    this.prophylaxisJsonLoader = prophylaxisJsonLoader;
   }
 
   /**
@@ -40,11 +40,22 @@ public class DigitalGreenCertificateToProtobufMapping {
    * @return the filled VaccineMahMaJsonStringObject.
    * @throws IOException If the JsonFile throws an exception.
    */
-  public VaccineMahMaJsonStringObject readVmpJson() throws IOException {
-
+  public VaccineMahManfJsonStringObject readMahManfJson() throws IOException {
     return SerializationUtils
-        .deserializeJson(getFile().getContent(), typeFactory -> typeFactory
-            .constructSimpleType(VaccineMahMaJsonStringObject.class, new JavaType[0]));
+        .deserializeJson(this.mahManfJsonLoader.getFile().getContent(), typeFactory -> typeFactory
+            .constructSimpleType(VaccineMahManfJsonStringObject.class, new JavaType[0]));
+  }
+
+  public VaccineMedicinalProductJsonStringObject readMedicinalProductJson() throws IOException {
+    return SerializationUtils
+        .deserializeJson(this.medicinalProductJsonLoader.getFile().getContent(), typeFactory -> typeFactory
+            .constructSimpleType(VaccineMedicinalProductJsonStringObject.class, new JavaType[0]));
+  }
+
+  public VaccineProphylaxisJsonStringObject readProphylaxisJson() throws IOException {
+    return SerializationUtils
+        .deserializeJson(prophylaxisJsonLoader.getFile().getContent(), typeFactory -> typeFactory
+            .constructSimpleType(VaccineProphylaxisJsonStringObject.class, new JavaType[0]));
   }
 
   /**
@@ -54,12 +65,18 @@ public class DigitalGreenCertificateToProtobufMapping {
    */
   @Bean
   public ValueSets constructProtobufMapping() {
-    JsonFile file = this.getFile();
+    JsonFile mahManf = this.mahManfJsonLoader.getFile();
+    JsonFile medicinalProduct = this.medicinalProductJsonLoader.getFile();
+    JsonFile prophylaxis = this.prophylaxisJsonLoader.getFile();
 
     List<StatisticsJsonStringObject> jsonStringObjects = null;
     try {
 
-      VaccineMahMaJsonStringObject vmm = readVmpJson();
+      VaccineMahManfJsonStringObject vmManf = readMahManfJson();
+      VaccineMedicinalProductJsonStringObject vmProduct = readMedicinalProductJson();
+      VaccineProphylaxisJsonStringObject vProphylaxis = readProphylaxisJson();
+
+
       StatisticsJsonValidator validator = new StatisticsJsonValidator();
       jsonStringObjects = new ArrayList<>(validator.validate(jsonStringObjects));
 
