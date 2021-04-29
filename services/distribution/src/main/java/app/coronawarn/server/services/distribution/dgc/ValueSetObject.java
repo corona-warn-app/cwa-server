@@ -21,4 +21,52 @@ public class ValueSetObject {
 
   @JsonProperty("valueSetId")
   private String valueSetId;
+
+  public String getDisplay() {
+    return display;
+  }
+
+  public void setDisplay(String display) {
+    this.display = display;
+  }
+
+  public Language getLang() {
+    return lang;
+  }
+
+  public void setLang(Language lang) {
+    this.lang = lang;
+  }
+
+  public boolean isActive() {
+    return active;
+  }
+
+  public void setActive(boolean active) {
+    this.active = active;
+  }
+
+  public String getVersion() {
+    return version;
+  }
+
+  public void setVersion(String version) {
+    this.version = version;
+  }
+
+  public String getSystem() {
+    return system;
+  }
+
+  public void setSystem(String system) {
+    this.system = system;
+  }
+
+  public String getValueSetId() {
+    return valueSetId;
+  }
+
+  public void setValueSetId(String valueSetId) {
+    this.valueSetId = valueSetId;
+  }
 }
