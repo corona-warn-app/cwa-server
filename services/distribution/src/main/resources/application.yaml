@@ -199,6 +199,10 @@ services:
       plausible-deniability-parameters:
         probability-to-fake-check-ins-if-no-check-ins: ${EVREG_PROBABILITY_TO_FAKE_CHECK_INS_IF_NO_CHECK_INS:0}
         probability-to-fake-check-ins-if-some-check-ins: ${EVREG_PROBABILITY_TO_FAKE_CHECK_INS_IF_SOME_CHECK_INS:0.005}
+    digital-green-certificate:
+      mah-path: ${DIGITAL_GREEN_CERTIFICATE_MAH_PATH:}
+      prophylaxis-path: ${DIGITAL_GREEN_CERTIFICATE_PROPHYLAXIS_PATH:}
+      medicinal-products-path: ${DIGITAL_GREEN_CERTIFICATE_MEDICINAL_PRODUCTS_PATH:}
 
 spring:
   main:

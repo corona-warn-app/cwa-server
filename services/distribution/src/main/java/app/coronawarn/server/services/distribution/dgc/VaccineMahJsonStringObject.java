@@ -4,17 +4,18 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import java.util.Date;
 import java.util.Map;
 
 @JsonInclude(Include.NON_NULL)
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class VaccineMahManfJsonStringObject {
+public class VaccineMahJsonStringObject {
 
   @JsonProperty("valueSetId")
   private String valueSetId;
 
   @JsonProperty("valueSetDate")
-  private String valueSetDate;
+  private Date valueSetDate;
 
   @JsonProperty("valueSetValues")
   private Map<String, ValueSetObject> valueSetValues;
@@ -27,11 +28,11 @@ public class VaccineMahManfJsonStringObject {
     this.valueSetId = valueSetId;
   }
 
-  public String getValueSetDate() {
+  public Date getValueSetDate() {
     return valueSetDate;
   }
 
-  public void setValueSetDate(String valueSetDate) {
+  public void setValueSetDate(Date valueSetDate) {
     this.valueSetDate = valueSetDate;
   }
 

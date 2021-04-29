@@ -69,6 +69,7 @@ public class DistributionServiceConfig {
   private QrCodePosterTemplate iosQrCodePosterTemplate;
   private QrCodePosterTemplate androidQrCodePosterTemplate;
   private PresenceTracingParameters presenceTracingParameters;
+  private DigitalGreenCertificate digitalGreenCertificate;
 
   public Paths getPaths() {
     return paths;
@@ -859,6 +860,13 @@ public class DistributionServiceConfig {
     this.presenceTracingParameters = presenceTracingParameters;
   }
 
+  public DigitalGreenCertificate getDigitalGreenCertificate() {
+    return digitalGreenCertificate;
+  }
+
+  public void setDigitalGreenCertificate(DigitalGreenCertificate digitalGreenCertificate) {
+    this.digitalGreenCertificate = digitalGreenCertificate;
+  }
 
   public static class ObjectStore {
 
@@ -1464,6 +1472,42 @@ public class DistributionServiceConfig {
       public void setRequireEvaluationTypeHardwareBacked(Boolean requireEvaluationTypeHardwareBacked) {
         this.requireEvaluationTypeHardwareBacked = requireEvaluationTypeHardwareBacked;
       }
+    }
+  }
+
+  public class DigitalGreenCertificate {
+
+    @NotNull
+    private String mahPath;
+
+    @NotNull
+    private String prophylaxisPath;
+
+    @NotNull
+    private String medicinalProductsPath;
+
+    public String getMahPath() {
+      return mahPath;
+    }
+
+    public void setMahPath(String mahPath) {
+      this.mahPath = mahPath;
+    }
+
+    public String getProphylaxisPath() {
+      return prophylaxisPath;
+    }
+
+    public void setProphylaxisPath(String prophylaxisPath) {
+      this.prophylaxisPath = prophylaxisPath;
+    }
+
+    public String getMedicinalProductsPath() {
+      return medicinalProductsPath;
+    }
+
+    public void setMedicinalProductsPath(String medicinalProductsPath) {
+      this.medicinalProductsPath = medicinalProductsPath;
     }
   }
 }

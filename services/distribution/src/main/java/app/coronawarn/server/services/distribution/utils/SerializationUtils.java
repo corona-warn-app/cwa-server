@@ -6,6 +6,7 @@ import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.MapperFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.type.TypeFactory;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.function.Function;
@@ -34,7 +35,7 @@ public final class SerializationUtils {
 
   /**
    * Parse json from stream instead from string.
-   * 
+   *
    * @param jsonStream stream to read json from
    * @param typeProviderFunction type deserialization function provider
    * @return deserialized json as pojo
@@ -65,6 +66,24 @@ public final class SerializationUtils {
     }
   }
 
+  public static <T> T  deserializeJsonToSimpleType(String path, Class<T> rawType) throws IOException {
+    return deserializeResource(path, (jsonStream) -> deserializeJson(jsonStream,
+        typeFactory -> typeFactory.constructSimpleType(rawType, new JavaType[0])));
+  }
+
+  private static interface Deserializer<T> {
+    T deserialize(InputStream source) throws IOException;
+  }
+
+  private static <T> T deserializeResource(String path, Deserializer<T> deserializer) throws IOException {
+    try (InputStream resourceAsStream = SerializationUtils.class.getClassLoader().getResourceAsStream(path)) {
+      return deserializer.deserialize(resourceAsStream);
+    } catch(IOException e) {
+      return deserializer.deserialize(new FileInputStream(path));
+    }
+  }
+
   private SerializationUtils() {
   }
+
 }

@@ -1,20 +1,17 @@
 package app.coronawarn.server.services.distribution.dgc;
 
+import static app.coronawarn.server.services.distribution.utils.SerializationUtils.deserializeJsonToSimpleType;
+
+import app.coronawarn.server.common.protocols.internal.dgc.ValueSet;
+import app.coronawarn.server.common.protocols.internal.dgc.ValueSetItem;
 import app.coronawarn.server.common.protocols.internal.dgc.ValueSets;
 import app.coronawarn.server.services.distribution.config.DistributionServiceConfig;
-import app.coronawarn.server.services.distribution.statistics.StatisticsJsonStringObject;
-import app.coronawarn.server.services.distribution.statistics.file.JsonFile;
-import app.coronawarn.server.services.distribution.statistics.file.JsonFileLoader;
-import app.coronawarn.server.services.distribution.statistics.file.LocalStatisticJsonFileLoader;
-import app.coronawarn.server.services.distribution.statistics.validation.StatisticsJsonValidator;
-import app.coronawarn.server.services.distribution.utils.SerializationUtils;
 import java.io.IOException;
-import java.io.InputStream;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import com.fasterxml.jackson.databind.JavaType;
+import java.util.stream.Collectors;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Bean;
@@ -27,47 +24,30 @@ public class DigitalGreenCertificateToProtobufMapping {
 
   private final DistributionServiceConfig distributionServiceConfig;
 
-  private final JsonFileLoader defaultsJsonLoader;
-  private final JsonFileLoader mahManfJsonLoader;
-  private final JsonFileLoader medicinalProductJsonLoader;
-  private final JsonFileLoader prophylaxisJsonLoader;
+  private final Map<String, String> vp = new HashMap<>();
+  private final Map<String, String> mp = new HashMap<>();
+  private final Map<String, String> ma = new HashMap<>();
 
-  private final Map<Language, Map<String, String>> vps = new HashMap<>();
-  private final Map<Language, Map<String, String>> mps = new HashMap<>();
-  private final Map<Language, Map<String, String>> mas = new HashMap<>();
-
-  public DigitalGreenCertificateToProtobufMapping(DistributionServiceConfig distributionServiceConfig,
-      JsonFileLoader mahManfJsonLoader, JsonFileLoader medicinalProductJsonLoader, JsonFileLoader prophylaxisJsonLoader) {
-    // TODO Problem: JsonLoader is statistics specific ... ?
-    this.defaultsJsonLoader = new LocalStatisticJsonFileLoader();
+  public DigitalGreenCertificateToProtobufMapping(DistributionServiceConfig distributionServiceConfig) {
     this.distributionServiceConfig = distributionServiceConfig;
-    this.mahManfJsonLoader = mahManfJsonLoader;
-    this.medicinalProductJsonLoader = medicinalProductJsonLoader;
-    this.prophylaxisJsonLoader = prophylaxisJsonLoader;
   }
 
-  /**
-   * Reads the JSON and fills the VaccineMahMaJsonStringObject.
-   *
-   * @return the filled VaccineMahMaJsonStringObject.
-   * @throws IOException If the JsonFile throws an exception.
-   */
-  public VaccineMahManfJsonStringObject readMahManfJson() throws IOException {
-    return SerializationUtils
-        .deserializeJson(this.mahManfJsonLoader.getFile().getContent(), typeFactory -> typeFactory
-            .constructSimpleType(VaccineMahManfJsonStringObject.class, new JavaType[0]));
+  public VaccineMahJsonStringObject readMahJson() {
+    String path = distributionServiceConfig.getDigitalGreenCertificate().getMahPath();
+    return readConfiguredJsonOrDefault(path, "dgc/vaccine-mah.json",
+        VaccineMahJsonStringObject.class);
   }
 
-  public VaccineMedicinalProductJsonStringObject readMedicinalProductJson() throws IOException {
-    return SerializationUtils
-        .deserializeJson(this.medicinalProductJsonLoader.getFile().getContent(), typeFactory -> typeFactory
-            .constructSimpleType(VaccineMedicinalProductJsonStringObject.class, new JavaType[0]));
+  public VaccineMedicinalProductJsonStringObject readMedicinalProductJson() {
+    String path = distributionServiceConfig.getDigitalGreenCertificate().getMedicinalProductsPath();
+    return readConfiguredJsonOrDefault(path, "dgc/vaccine-medicinal-product.json",
+        VaccineMedicinalProductJsonStringObject.class);
   }
 
-  public VaccineProphylaxisJsonStringObject readProphylaxisJson() throws IOException {
-    return SerializationUtils
-        .deserializeJson(prophylaxisJsonLoader.getFile().getContent(), typeFactory -> typeFactory
-            .constructSimpleType(VaccineProphylaxisJsonStringObject.class, new JavaType[0]));
+  public VaccineProphylaxisJsonStringObject readProphylaxisJson() {
+    String path = distributionServiceConfig.getDigitalGreenCertificate().getProphylaxisPath();
+    return readConfiguredJsonOrDefault(path, "dgc/vaccine-prophylaxis.json",
+        VaccineProphylaxisJsonStringObject.class);
   }
 
   /**
@@ -77,26 +57,41 @@ public class DigitalGreenCertificateToProtobufMapping {
    */
   @Bean
   public ValueSets constructProtobufMapping() {
-    JsonFile mahManf = this.mahManfJsonLoader.getFile();
-    JsonFile medicinalProduct = this.medicinalProductJsonLoader.getFile();
-    JsonFile prophylaxis = this.prophylaxisJsonLoader.getFile();
+      List<ValueSetItem> vmMahItems = toValueSetItems(readMahJson().getValueSetValues());
+      List<ValueSetItem> vmProductItems = toValueSetItems(readMedicinalProductJson().getValueSetValues());
+      List<ValueSetItem> vProphylaxisItems = toValueSetItems(readProphylaxisJson().getValueSetValues());
 
-    List<StatisticsJsonStringObject> jsonStringObjects = null;
-    try {
+      return ValueSets.newBuilder()
+          .setLanguageValue(0)
+          .setMa(ValueSet.newBuilder().addAllItems(vmMahItems).build())
+          .setVp(ValueSet.newBuilder().addAllItems(vmProductItems).build())
+          .setVp(ValueSet.newBuilder().addAllItems(vProphylaxisItems).build())
+          .build();
+  }
 
-      VaccineMahManfJsonStringObject vmManf = readMahManfJson();
-      VaccineMedicinalProductJsonStringObject vmProduct = readMedicinalProductJson();
-      VaccineProphylaxisJsonStringObject vProphylaxis = readProphylaxisJson();
+  private List<ValueSetItem> toValueSetItems(Map<String, ValueSetObject> valueSetValues) {
+    return valueSetValues.entrySet().stream().map(
+        entry -> (ValueSetItem.newBuilder()
+            .setKey(entry.getKey())
+            .setDisplayText(entry.getValue().getDisplay())).build())
+        .collect(Collectors.toList());
+  }
 
-
-      StatisticsJsonValidator validator = new StatisticsJsonValidator();
-      jsonStringObjects = new ArrayList<>(validator.validate(jsonStringObjects));
-
-      return ValueSets.newBuilder().build();
-    } catch (IOException e) {
-      e.printStackTrace();
+  private <T> T readConfiguredJsonOrDefault(String path, String defaultPath, Class<T> rawType) {
+    if (!StringUtils.isEmpty(path)) {
+      try {
+        return deserializeJsonToSimpleType(path, rawType);
+      } catch (IOException e) {
+        logger.error("Error reading {} from json {}.", rawType.getSimpleName(), path, e);
+      }
     }
-    return null;
+    try {
+      // fallback to default
+      return deserializeJsonToSimpleType(defaultPath, rawType);
+    } catch (IOException e) {
+      logger.error("We could not load the default {}. This shouldn't happen!", defaultPath, e);
+      throw new RuntimeException(e);
+    }
   }
 }
 

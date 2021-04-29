@@ -3,13 +3,15 @@ package app.coronawarn.server.services.distribution.dgc;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import app.coronawarn.server.services.distribution.config.DistributionServiceConfig;
-import app.coronawarn.server.services.distribution.statistics.file.JsonFile;
-import app.coronawarn.server.services.distribution.statistics.file.JsonFileLoader;
-import java.io.FileInputStream;
 import java.io.IOException;
-import org.junit.Test;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Locale;
+import app.coronawarn.server.services.distribution.config.DistributionServiceConfig.DigitalGreenCertificate;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -22,32 +24,33 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 @EnableConfigurationProperties(value = DistributionServiceConfig.class)
 @ExtendWith(SpringExtension.class)
 @ActiveProfiles({"local-json-stats", "processing-test", "debug"})
-@ContextConfiguration(classes = {DistributionServiceConfig.class}, initializers = ConfigDataApplicationContextInitializer.class)
-public class DigitalGreenCertificateJsonToProtobufTest {
-
-  @MockBean
-  private JsonFileLoader jsonFileLoader;
+@ContextConfiguration(classes = {DistributionServiceConfig.class},
+    initializers = ConfigDataApplicationContextInitializer.class)
+class DigitalGreenCertificateJsonToProtobufTest {
 
   @Autowired
   private DistributionServiceConfig distributionServiceConfig;
 
-  private static String mahManfJsonPath = "src/test/resources/dgc/vaccine-mah-manf.json";
-  private static String mProductJsonPath = "src/test/resources/dgc/vaccine-medicinal-product.json";
-  private static String prophylaxisJsonPath = "src/test/resources/dgc/vaccine-prophylaxis.json";
+  private static final SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd", Locale.ENGLISH);
+  private static final String mahJsonPath = "src/test/resources/dgc/vaccine-mah.json";
+  private static final String mProductJsonPath = "src/test/resources/dgc/vaccine-medicinal-product.json";
+  private static final String prophylaxisJsonPath = "src/test/resources/dgc/vaccine-prophylaxis.json";
+
+  @BeforeEach
+  void setUp() {
+    distributionServiceConfig.setDigitalGreenCertificate(Mockito.mock(DigitalGreenCertificate.class));
+  }
 
   @Test
-  public void shouldReadMahManfJson() throws IOException {
-    JsonFileLoader jsonFileLoader = Mockito.mock(JsonFileLoader.class);
-    JsonFile json1 = new JsonFile(new FileInputStream(mahManfJsonPath), "");
-
-    Mockito.when(jsonFileLoader.getFile()).thenReturn(json1);
+  void shouldReadMahJson() throws ParseException {
+    distributionServiceConfig.getDigitalGreenCertificate().setMahPath(mahJsonPath);
     DigitalGreenCertificateToProtobufMapping dgcToProtobufMapping =
-        new DigitalGreenCertificateToProtobufMapping(distributionServiceConfig, jsonFileLoader, null, null);
+        new DigitalGreenCertificateToProtobufMapping(distributionServiceConfig);
 
-    var result = dgcToProtobufMapping.readMahManfJson();
+    var result = dgcToProtobufMapping.readMahJson();
 
     assertThat(result.getValueSetId()).isEqualTo("vaccines-covid-19-auth-holders");
-    assertThat(result.getValueSetDate()).isEqualTo("2021-04-27");
+    assertThat(result.getValueSetDate()).isEqualTo(formatter.parse("2021-04-27"));
     assertThat(result.getValueSetValues()).hasSize(14);
 
     // assert at least one value
@@ -61,18 +64,15 @@ public class DigitalGreenCertificateJsonToProtobufTest {
 
 
   @Test
-  public void shouldReadMProductJson() throws IOException {
-    JsonFileLoader jsonFileLoader = Mockito.mock(JsonFileLoader.class);
-    JsonFile json1 = new JsonFile(new FileInputStream(mProductJsonPath), "");
-
-    Mockito.when(jsonFileLoader.getFile()).thenReturn(json1);
+  void shouldReadMProductJson() throws ParseException {
+    distributionServiceConfig.getDigitalGreenCertificate().setMedicinalProductsPath(mProductJsonPath);
     DigitalGreenCertificateToProtobufMapping dgcToProtobufMapping =
-        new DigitalGreenCertificateToProtobufMapping(distributionServiceConfig, null, jsonFileLoader, null);
+        new DigitalGreenCertificateToProtobufMapping(distributionServiceConfig);
 
     var result = dgcToProtobufMapping.readMedicinalProductJson();
 
     assertThat(result.getValueSetId()).isEqualTo("vaccines-covid-19-names");
-//    assertThat(result.getValueSetDate()).isEqualTo("2021-04-27");
+    assertThat(result.getValueSetDate()).isEqualTo(formatter.parse("2021-04-27"));
     assertThat(result.getValueSetValues()).hasSize(12);
 
     ValueSetObject actual = result.getValueSetValues().get(("EU/1/20/1525"));
@@ -84,18 +84,15 @@ public class DigitalGreenCertificateJsonToProtobufTest {
   }
 
   @Test
-  public void shouldReadProphylaxisJson() throws IOException {
-    JsonFileLoader jsonFileLoader = Mockito.mock(JsonFileLoader.class);
-    JsonFile json1 = new JsonFile(new FileInputStream(prophylaxisJsonPath), "");
-
-    Mockito.when(jsonFileLoader.getFile()).thenReturn(json1);
+  void shouldReadProphylaxisJson() throws ParseException {
+    distributionServiceConfig.getDigitalGreenCertificate().setProphylaxisPath(prophylaxisJsonPath);
     DigitalGreenCertificateToProtobufMapping dgcToProtobufMapping =
-        new DigitalGreenCertificateToProtobufMapping(distributionServiceConfig, null, null, jsonFileLoader);
+        new DigitalGreenCertificateToProtobufMapping(distributionServiceConfig);
 
     var result = dgcToProtobufMapping.readProphylaxisJson();
 
     assertThat(result.getValueSetId()).isEqualTo("sct-vaccines-covid-19");
-    assertThat(result.getValueSetDate()).isEqualTo("2021-04-27");
+    assertThat(result.getValueSetDate()).isEqualTo(formatter.parse("2021-04-27"));
     assertThat(result.getValueSetValues()).hasSize(3);
 
     // assert at least one value

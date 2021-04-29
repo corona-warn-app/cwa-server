@@ -12,6 +12,15 @@ import java.util.Map;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class VaccineMedicinalProductJsonStringObject {
 
+  @JsonProperty("valueSetId")
+  private String valueSetId;
+
+  @JsonProperty("valueSetDate")
+  private Date valueSetDate;
+
+  @JsonProperty("valueSetValues")
+  private Map<String, ValueSetObject> valueSetValues;
+
   public String getValueSetId() {
     return valueSetId;
   }
@@ -35,14 +44,5 @@ public class VaccineMedicinalProductJsonStringObject {
   public void setValueSetValues(Map<String, ValueSetObject> valueSetValues) {
     this.valueSetValues = valueSetValues;
   }
-
-  @JsonProperty("valueSetId")
-  private String valueSetId;
-
-  @JsonProperty("valueSetDate")
-  private Date valueSetDate;
-
-  @JsonProperty("valueSetValues")
-  private Map<String, ValueSetObject> valueSetValues;
 
 }
