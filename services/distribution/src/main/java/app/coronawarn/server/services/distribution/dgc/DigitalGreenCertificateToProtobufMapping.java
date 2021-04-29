@@ -5,11 +5,15 @@ import app.coronawarn.server.services.distribution.config.DistributionServiceCon
 import app.coronawarn.server.services.distribution.statistics.StatisticsJsonStringObject;
 import app.coronawarn.server.services.distribution.statistics.file.JsonFile;
 import app.coronawarn.server.services.distribution.statistics.file.JsonFileLoader;
+import app.coronawarn.server.services.distribution.statistics.file.LocalStatisticJsonFileLoader;
 import app.coronawarn.server.services.distribution.statistics.validation.StatisticsJsonValidator;
 import app.coronawarn.server.services.distribution.utils.SerializationUtils;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import com.fasterxml.jackson.databind.JavaType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -22,12 +26,20 @@ public class DigitalGreenCertificateToProtobufMapping {
   private static final Logger logger = LoggerFactory.getLogger(DigitalGreenCertificateToProtobufMapping.class);
 
   private final DistributionServiceConfig distributionServiceConfig;
+
+  private final JsonFileLoader defaultsJsonLoader;
   private final JsonFileLoader mahManfJsonLoader;
   private final JsonFileLoader medicinalProductJsonLoader;
   private final JsonFileLoader prophylaxisJsonLoader;
 
+  private final Map<Language, Map<String, String>> vps = new HashMap<>();
+  private final Map<Language, Map<String, String>> mps = new HashMap<>();
+  private final Map<Language, Map<String, String>> mas = new HashMap<>();
+
   public DigitalGreenCertificateToProtobufMapping(DistributionServiceConfig distributionServiceConfig,
       JsonFileLoader mahManfJsonLoader, JsonFileLoader medicinalProductJsonLoader, JsonFileLoader prophylaxisJsonLoader) {
+    // TODO Problem: JsonLoader is statistics specific ... ?
+    this.defaultsJsonLoader = new LocalStatisticJsonFileLoader();
     this.distributionServiceConfig = distributionServiceConfig;
     this.mahManfJsonLoader = mahManfJsonLoader;
     this.medicinalProductJsonLoader = medicinalProductJsonLoader;

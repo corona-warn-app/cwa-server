@@ -1,0 +1,27 @@
+{
+  "language": 0,
+  "vp": {
+    "items": [
+      {
+        "key": "1119349007",
+        "displayText": "SARS-CoV-2 mRNA vaccine"
+      }
+    ]
+  },
+  "mp": {
+    "items": [
+      {
+        "key": "EU/1/20/1528",
+        "displayText": "Comirnaty"
+      }
+    ]
+  },
+  "ma": {
+    "items": [
+      {
+        "key": "ORG-100001699",
+        "displayText": "AstraZeneca AB"
+      }
+    ]
+  }
+}
