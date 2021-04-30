@@ -1,18 +1,18 @@
-package app.coronawarn.server.common.persistence.service.utils.checkins;
+package app.coronawarn.server.services.submission.checkins;
 
-import static org.assertj.core.api.Assertions.*;
-
-import java.security.SecureRandom;
-import java.util.List;
-import java.util.Random;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
+import app.coronawarn.server.common.persistence.utils.hash.HashUtils;
+import app.coronawarn.server.common.protocols.internal.pt.CheckIn;
+import com.google.protobuf.ByteString;
 import org.junit.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.testcontainers.shaded.org.apache.commons.lang.RandomStringUtils;
-import com.google.protobuf.ByteString;
-import app.coronawarn.server.common.protocols.internal.pt.CheckIn;
+import java.util.List;
+import java.util.Random;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 public class FakeCheckinsGeneratorTest {
 
@@ -27,7 +27,7 @@ public class FakeCheckinsGeneratorTest {
     List<CheckIn> originalData = Stream.generate(this::randomCheckin)
         .limit(originalCheckinsListSize).collect(Collectors.toList());
     List<CheckIn> fakeCheckins =
-        underTest.generateFakeCheckins(originalData, numberOfFakesToCreate, randomHashPepper());
+        underTest.generateFakeCheckins(originalData, numberOfFakesToCreate, HashUtils.generateSecureRandomByteArrayData(16));
 
     assertThat(fakeCheckins).hasSize(originalCheckinsListSize * numberOfFakesToCreate);
   }
@@ -36,7 +36,7 @@ public class FakeCheckinsGeneratorTest {
   public void should_generate_fake_checkin_with_content_derived_from_original() {
     FakeCheckinsGenerator underTest = new FakeCheckinsGenerator();
     List<CheckIn> originalList = List.of(randomCheckin());
-    byte[] pepper = randomHashPepper();
+    byte[] pepper = HashUtils.generateSecureRandomByteArrayData(16);
     List<CheckIn> fakes = underTest.generateFakeCheckins(originalList, 1, pepper);
 
     assertThat(fakes).hasSize(1);
@@ -49,9 +49,6 @@ public class FakeCheckinsGeneratorTest {
     assertThat(fake.getLocationId()
            .equals(original.getLocationId().concat(ByteString.copyFrom(pepper).concat(ByteString.copyFromUtf8("1"))))
     );
-    // interval generation is randomized so it would only be testable if the randomiztion is mocked
-    //assertThat(fake.getStartIntervalNumber() == START_INTERVAL_GENERATION.apply(original));
-    //assertThat(fake.getEndIntervalNumber() == END_INTERVAL_GENERATION.apply(original));
     assertThat(fake.getTransmissionRiskLevel()).isEqualTo(original.getTransmissionRiskLevel());
   }
 
@@ -65,12 +62,5 @@ public class FakeCheckinsGeneratorTest {
         .setTransmissionRiskLevel(random.nextInt(8))
         .setLocationId(ByteString.copyFromUtf8(RandomStringUtils.randomAlphanumeric(10)))
         .build();
-  }
-
-  private byte[] randomHashPepper() {
-    byte[] pepper = new byte[16];
-    SecureRandom random = new SecureRandom();
-    random.nextBytes(pepper);
-    return pepper;
   }
 }
