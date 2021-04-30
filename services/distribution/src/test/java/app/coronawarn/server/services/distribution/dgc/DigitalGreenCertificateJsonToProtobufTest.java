@@ -19,12 +19,15 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 @EnableConfigurationProperties(value = DistributionServiceConfig.class)
 @ExtendWith(SpringExtension.class)
 @ActiveProfiles({"local-json-stats", "processing-test", "debug"})
-@ContextConfiguration(classes = {DistributionServiceConfig.class},
+@ContextConfiguration(classes = {DistributionServiceConfig.class, DigitalGreenCertificateToProtobufMapping.class},
     initializers = ConfigDataApplicationContextInitializer.class)
 class DigitalGreenCertificateJsonToProtobufTest {
 
   @Autowired
-  private DistributionServiceConfig distributionServiceConfig;
+  DistributionServiceConfig distributionServiceConfig;
+
+  @Autowired
+  DigitalGreenCertificateToProtobufMapping dgcToProtobufMapping;
 
   private static final String mahJsonPath = "src/test/resources/dgc/vaccine-mah.json";
   private static final String mProductJsonPath = "src/test/resources/dgc/vaccine-medicinal-product.json";
@@ -38,8 +41,6 @@ class DigitalGreenCertificateJsonToProtobufTest {
   @Test
   void shouldReadMahJson() throws ParseException {
     distributionServiceConfig.getDigitalGreenCertificate().setMahPath(mahJsonPath);
-    DigitalGreenCertificateToProtobufMapping dgcToProtobufMapping =
-        new DigitalGreenCertificateToProtobufMapping(distributionServiceConfig);
 
     var result = dgcToProtobufMapping.readMahJson();
 
@@ -60,8 +61,6 @@ class DigitalGreenCertificateJsonToProtobufTest {
   @Test
   void shouldReadMProductJson() throws ParseException {
     distributionServiceConfig.getDigitalGreenCertificate().setMedicinalProductsPath(mProductJsonPath);
-    DigitalGreenCertificateToProtobufMapping dgcToProtobufMapping =
-        new DigitalGreenCertificateToProtobufMapping(distributionServiceConfig);
 
     var result = dgcToProtobufMapping.readMedicinalProductJson();
 
@@ -80,8 +79,6 @@ class DigitalGreenCertificateJsonToProtobufTest {
   @Test
   void shouldReadProphylaxisJson() throws ParseException {
     distributionServiceConfig.getDigitalGreenCertificate().setProphylaxisPath(prophylaxisJsonPath);
-    DigitalGreenCertificateToProtobufMapping dgcToProtobufMapping =
-        new DigitalGreenCertificateToProtobufMapping(distributionServiceConfig);
 
     var result = dgcToProtobufMapping.readProphylaxisJson();
 

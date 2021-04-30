@@ -14,36 +14,50 @@ import java.util.stream.Collectors;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.stereotype.Component;
 
-@Configuration
+@Component
 public class DigitalGreenCertificateToProtobufMapping {
 
   private static final Logger logger = LoggerFactory.getLogger(DigitalGreenCertificateToProtobufMapping.class);
 
-  private final DistributionServiceConfig distributionServiceConfig;
+  @Autowired
+  DistributionServiceConfig distributionServiceConfig;
 
   private final Map<String, String> vp = new HashMap<>();
   private final Map<String, String> mp = new HashMap<>();
   private final Map<String, String> ma = new HashMap<>();
 
-  public DigitalGreenCertificateToProtobufMapping(DistributionServiceConfig distributionServiceConfig) {
-    this.distributionServiceConfig = distributionServiceConfig;
-  }
-
+  /**
+   * Read the JSON for the marketing authorization holders.
+   *
+   * @return The corresponding JSON object.
+   */
   public VaccineMahJsonStringObject readMahJson() {
     String path = distributionServiceConfig.getDigitalGreenCertificate().getMahPath();
     return readConfiguredJsonOrDefault(path, "dgc/vaccine-mah.json",
         VaccineMahJsonStringObject.class);
   }
 
+  /**
+   * Read the JSON for the medicinal products.
+   *
+   * @return The corresponding JSON object.
+   */
   public VaccineMedicinalProductJsonStringObject readMedicinalProductJson() {
     String path = distributionServiceConfig.getDigitalGreenCertificate().getMedicinalProductsPath();
     return readConfiguredJsonOrDefault(path, "dgc/vaccine-medicinal-product.json",
         VaccineMedicinalProductJsonStringObject.class);
   }
 
+  /**
+   * Read the JSON for the prophylaxis.
+   *
+   * @return The corresponding JSON object.
+   */
   public VaccineProphylaxisJsonStringObject readProphylaxisJson() {
     String path = distributionServiceConfig.getDigitalGreenCertificate().getProphylaxisPath();
     return readConfiguredJsonOrDefault(path, "dgc/vaccine-prophylaxis.json",
@@ -55,18 +69,17 @@ public class DigitalGreenCertificateToProtobufMapping {
    *
    * @return the protobuf filled with values from JSON.
    */
-  @Bean
   public ValueSets constructProtobufMapping() {
-      List<ValueSetItem> vmMahItems = toValueSetItems(readMahJson().getValueSetValues());
-      List<ValueSetItem> vmProductItems = toValueSetItems(readMedicinalProductJson().getValueSetValues());
-      List<ValueSetItem> vProphylaxisItems = toValueSetItems(readProphylaxisJson().getValueSetValues());
+    List<ValueSetItem> mahItems = toValueSetItems(readMahJson().getValueSetValues());
+    List<ValueSetItem> productItems = toValueSetItems(readMedicinalProductJson().getValueSetValues());
+    List<ValueSetItem> prophylaxisItems = toValueSetItems(readProphylaxisJson().getValueSetValues());
 
-      return ValueSets.newBuilder()
-          .setLanguageValue(0)
-          .setMa(ValueSet.newBuilder().addAllItems(vmMahItems).build())
-          .setVp(ValueSet.newBuilder().addAllItems(vmProductItems).build())
-          .setVp(ValueSet.newBuilder().addAllItems(vProphylaxisItems).build())
-          .build();
+    return ValueSets.newBuilder()
+        .setLanguageValue(0)
+        .setMa(ValueSet.newBuilder().addAllItems(mahItems).build())
+        .setVp(ValueSet.newBuilder().addAllItems(productItems).build())
+        .setVp(ValueSet.newBuilder().addAllItems(prophylaxisItems).build())
+        .build();
   }
 
   private List<ValueSetItem> toValueSetItems(Map<String, ValueSetObject> valueSetValues) {
