@@ -1,8 +1,7 @@
-
-
 package app.coronawarn.server.services.federation.upload.payload;
 
-import static app.coronawarn.server.services.federation.upload.utils.MockData.*;
+import static app.coronawarn.server.services.federation.upload.utils.MockData.generateRandomUploadKey;
+import static app.coronawarn.server.services.federation.upload.utils.MockData.generateRandomUploadKeys;
 import static java.util.Collections.emptyList;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
@@ -11,7 +10,10 @@ import static org.mockito.Mockito.when;
 import app.coronawarn.server.common.persistence.domain.DiagnosisKey;
 import app.coronawarn.server.common.persistence.domain.FederationUploadKey;
 import app.coronawarn.server.common.protocols.external.exposurenotification.ReportType;
+import app.coronawarn.server.common.protocols.internal.SubmissionPayload.SubmissionType;
 import app.coronawarn.server.services.federation.upload.config.UploadServiceConfig;
+import java.util.List;
+import java.util.stream.Stream;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Nested;
@@ -25,12 +27,10 @@ import org.junit.jupiter.params.provider.ArgumentsProvider;
 import org.junit.jupiter.params.provider.ArgumentsSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
-import org.springframework.boot.test.context.ConfigFileApplicationContextInitializer;
+import org.springframework.boot.test.context.ConfigDataApplicationContextInitializer;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
-import java.util.List;
-import java.util.stream.Stream;
 
 class DiagnosisKeyBatchAssemblerTest {
 
@@ -45,18 +45,20 @@ class DiagnosisKeyBatchAssemblerTest {
     @Override
     public Stream<? extends Arguments> provideArguments(ExtensionContext extensionContext) throws Exception {
       return Stream.of(
-          Arguments.of(generateRandomUploadKeys(true, minKeyThreshold - 1), 0),
-          Arguments.of(generateRandomUploadKeys(true, minKeyThreshold), 1),
-          Arguments.of(generateRandomUploadKeys(true, maxKeyCount), 1),
-          Arguments.of(generateRandomUploadKeys(true, maxKeyCount / 2), 1),
-          Arguments.of(generateRandomUploadKeys(true, maxKeyCount - 1), 1),
-          Arguments.of(generateRandomUploadKeys(true, maxKeyCount + 1), 2),
-          Arguments.of(generateRandomUploadKeys(true, 2 * maxKeyCount), 2),
-          Arguments.of(generateRandomUploadKeys(true, 3 * maxKeyCount), 3),
-          Arguments.of(generateRandomUploadKeys(true, 4 * maxKeyCount), 4),
-          Arguments.of(generateRandomUploadKeys(true, 2 * maxKeyCount + 1), 3),
-          Arguments.of(generateRandomUploadKeys(true, 2 * maxKeyCount + maxKeyCount / 2), 3),
-          Arguments.of(generateRandomUploadKeys(true, 2 * maxKeyCount - maxKeyCount / 2), 2)
+          Arguments.of(generateRandomUploadKeys(true, minKeyThreshold - 1, SubmissionType.SUBMISSION_TYPE_PCR_TEST), 0),
+          Arguments.of(generateRandomUploadKeys(true, minKeyThreshold, SubmissionType.SUBMISSION_TYPE_PCR_TEST), 1),
+          Arguments.of(generateRandomUploadKeys(true, maxKeyCount, SubmissionType.SUBMISSION_TYPE_PCR_TEST), 1),
+          Arguments.of(generateRandomUploadKeys(true, maxKeyCount / 2, SubmissionType.SUBMISSION_TYPE_PCR_TEST), 1),
+          Arguments.of(generateRandomUploadKeys(true, maxKeyCount - 1, SubmissionType.SUBMISSION_TYPE_PCR_TEST), 1),
+          Arguments.of(generateRandomUploadKeys(true, maxKeyCount + 1, SubmissionType.SUBMISSION_TYPE_PCR_TEST), 2),
+          Arguments.of(generateRandomUploadKeys(true, 2 * maxKeyCount, SubmissionType.SUBMISSION_TYPE_PCR_TEST), 2),
+          Arguments.of(generateRandomUploadKeys(true, 3 * maxKeyCount, SubmissionType.SUBMISSION_TYPE_PCR_TEST), 3),
+          Arguments.of(generateRandomUploadKeys(true, 4 * maxKeyCount, SubmissionType.SUBMISSION_TYPE_PCR_TEST), 4),
+          Arguments.of(generateRandomUploadKeys(true, 2 * maxKeyCount + 1, SubmissionType.SUBMISSION_TYPE_PCR_TEST), 3),
+          Arguments.of(generateRandomUploadKeys(true, 2 * maxKeyCount + maxKeyCount / 2,
+              SubmissionType.SUBMISSION_TYPE_PCR_TEST), 3),
+          Arguments.of(generateRandomUploadKeys(true, 2 * maxKeyCount - maxKeyCount / 2,
+              SubmissionType.SUBMISSION_TYPE_PCR_TEST), 2)
       );
     }
   }
@@ -66,7 +68,7 @@ class DiagnosisKeyBatchAssemblerTest {
   @EnableConfigurationProperties(value = UploadServiceConfig.class)
   @ExtendWith(SpringExtension.class)
   @ContextConfiguration(classes = {AllowedPropertiesMap.class,
-      DiagnosisKeyBatchAssembler.class}, initializers = ConfigFileApplicationContextInitializer.class)
+      DiagnosisKeyBatchAssembler.class}, initializers = ConfigDataApplicationContextInitializer.class)
   class AllPropertiesEnabled {
 
     public int minKeyThreshold;
@@ -109,13 +111,14 @@ class DiagnosisKeyBatchAssemblerTest {
 
     @Test
     void shouldReturnEmptyListIfLessThenThresholdKeysGiven() {
-      var result = diagnosisKeyBatchAssembler.assembleDiagnosisKeyBatch(generateRandomUploadKeys(true, minKeyThreshold - 1));
+      var result = diagnosisKeyBatchAssembler.assembleDiagnosisKeyBatch(generateRandomUploadKeys(true, minKeyThreshold - 1,
+          SubmissionType.SUBMISSION_TYPE_PCR_TEST));
       Assertions.assertTrue(result.isEmpty());
     }
 
     @Test
     void packagedKeysShouldContainInitialInformation() {
-      var fakeKeys = generateRandomUploadKeys(true, minKeyThreshold);
+      var fakeKeys = generateRandomUploadKeys(true, minKeyThreshold, SubmissionType.SUBMISSION_TYPE_PCR_TEST);
       var result = diagnosisKeyBatchAssembler.assembleDiagnosisKeyBatch(fakeKeys);
       var firstBatch = result.keySet().iterator().next();
       Assertions.assertEquals(fakeKeys.size(), firstBatch.getKeysCount());
@@ -125,8 +128,8 @@ class DiagnosisKeyBatchAssemblerTest {
 
     @Test
     void shouldNotPackageKeysIfConsentFlagIsNotSet() {
-      var dataset = generateRandomUploadKeys(true, minKeyThreshold);
-      dataset.add(generateRandomUploadKey(false));
+      var dataset = generateRandomUploadKeys(true, minKeyThreshold, SubmissionType.SUBMISSION_TYPE_PCR_TEST);
+      dataset.add(generateRandomUploadKey(false, SubmissionType.SUBMISSION_TYPE_PCR_TEST));
       var result = diagnosisKeyBatchAssembler.assembleDiagnosisKeyBatch(dataset);
       Assertions.assertEquals(1, result.size());
       Assertions.assertEquals(minKeyThreshold, result.keySet().iterator().next().getKeysCount());
@@ -144,7 +147,7 @@ class DiagnosisKeyBatchAssemblerTest {
   @EnableConfigurationProperties(value = UploadServiceConfig.class)
   @ExtendWith(SpringExtension.class)
   @ContextConfiguration(classes = {
-      DiagnosisKeyBatchAssembler.class}, initializers = ConfigFileApplicationContextInitializer.class)
+      DiagnosisKeyBatchAssembler.class}, initializers = ConfigDataApplicationContextInitializer.class)
   class AllPropertiesDisabled {
 
     @MockBean
@@ -157,7 +160,7 @@ class DiagnosisKeyBatchAssemblerTest {
     void shouldNotSendDsosOrReportTypeIfNotAllowed() {
       when(allowedPropertiesMapMock.getDsosOrDefault(anyInt())).thenReturn(1);
       when(allowedPropertiesMapMock.getReportTypeOrDefault(any())).thenReturn(ReportType.UNKNOWN);
-      var keys = generateRandomUploadKeys(true, 10);
+      var keys = generateRandomUploadKeys(true, 10, SubmissionType.SUBMISSION_TYPE_PCR_TEST);
       var result = diagnosisKeyBatchAssembler.assembleDiagnosisKeyBatch(keys);
       result.forEach((batch, diagnosisKeys) -> diagnosisKeys
           .forEach(k -> {

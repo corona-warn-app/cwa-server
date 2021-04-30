@@ -51,8 +51,7 @@ public class DownloadForChgsIntegrationTest extends GatewayServiceIntegrationSui
     final List<FederationBatchInfo> processedBatches = batchInfoRepository
         .findByStatus(FederationBatchStatus.PROCESSED.name());
     assertThat(batchInfoRepository.findAll()).hasSize(2);
-    assertThat(processedBatches).extracting(FederationBatchInfo::getSourceSystem).containsExactly(
-        source);
+    assertThat(processedBatches).extracting(FederationBatchInfo::getSourceSystem).containsExactly(source);
 
   }
 }

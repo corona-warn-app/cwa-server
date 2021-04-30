@@ -1,24 +1,20 @@
-
-
 package app.coronawarn.server.services.submission.controller;
 
 import app.coronawarn.server.common.persistence.domain.DiagnosisKey;
+import app.coronawarn.server.common.persistence.domain.config.TrlDerivations;
 import app.coronawarn.server.common.persistence.service.DiagnosisKeyService;
-import app.coronawarn.server.common.persistence.service.TraceTimeIntervalWarningService;
+import app.coronawarn.server.common.persistence.utils.hash.HashUtils;
 import app.coronawarn.server.common.protocols.external.exposurenotification.TemporaryExposureKey;
 import app.coronawarn.server.common.protocols.internal.SubmissionPayload;
-import app.coronawarn.server.common.protocols.internal.pt.CheckIn;
-import app.coronawarn.server.services.submission.checkins.EventCheckinDataFilter;
+import app.coronawarn.server.services.submission.checkins.EventCheckinFacade;
 import app.coronawarn.server.services.submission.config.SubmissionServiceConfig;
 import app.coronawarn.server.services.submission.monitoring.SubmissionMonitor;
 import app.coronawarn.server.services.submission.normalization.SubmissionKeyNormalizer;
 import app.coronawarn.server.services.submission.validation.ValidSubmissionPayload;
 import app.coronawarn.server.services.submission.verification.TanVerifier;
 import io.micrometer.core.annotation.Timed;
-import java.security.SecureRandom;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import org.apache.commons.lang3.StringUtils;
@@ -45,6 +41,7 @@ public class SubmissionController {
    */
   public static final String SUBMISSION_ROUTE = "/diagnosis-keys";
   private static final Logger logger = LoggerFactory.getLogger(SubmissionController.class);
+
   private final SubmissionMonitor submissionMonitor;
   private final DiagnosisKeyService diagnosisKeyService;
   private final TanVerifier tanVerifier;
@@ -52,13 +49,12 @@ public class SubmissionController {
   private final Integer randomKeyPaddingMultiplier;
   private final FakeDelayManager fakeDelayManager;
   private final SubmissionServiceConfig submissionServiceConfig;
-  private final EventCheckinDataFilter checkinsDataFilter;
-  private final TraceTimeIntervalWarningService traceTimeIntervalWarningSevice;
+  private EventCheckinFacade eventCheckinFacade;
+  private final TrlDerivations trlDerivations;
 
   SubmissionController(DiagnosisKeyService diagnosisKeyService, TanVerifier tanVerifier,
       FakeDelayManager fakeDelayManager, SubmissionServiceConfig submissionServiceConfig,
-      SubmissionMonitor submissionMonitor, EventCheckinDataFilter checkinsDataFilter,
-      TraceTimeIntervalWarningService traceTimeIntervalWarningSevice) {
+      SubmissionMonitor submissionMonitor, EventCheckinFacade eventCheckinFacade) {
     this.diagnosisKeyService = diagnosisKeyService;
     this.tanVerifier = tanVerifier;
     this.submissionMonitor = submissionMonitor;
@@ -66,14 +62,8 @@ public class SubmissionController {
     this.submissionServiceConfig = submissionServiceConfig;
     this.retentionDays = submissionServiceConfig.getRetentionDays();
     this.randomKeyPaddingMultiplier = submissionServiceConfig.getRandomKeyPaddingMultiplier();
-    this.checkinsDataFilter = checkinsDataFilter;
-    this.traceTimeIntervalWarningSevice = traceTimeIntervalWarningSevice;
-  }
-
-  private static byte[] generateRandomKeyData() {
-    byte[] randomKeyData = new byte[16];
-    new SecureRandom().nextBytes(randomKeyData);
-    return randomKeyData;
+    this.eventCheckinFacade = eventCheckinFacade;
+    this.trlDerivations = submissionServiceConfig.getTrlDerivations();
   }
 
   /**
@@ -105,7 +95,9 @@ public class SubmissionController {
         deferredResult.setResult(ResponseEntity.status(HttpStatus.FORBIDDEN).build());
       } else {
         extractAndStoreDiagnosisKeys(submissionPayload);
-        CheckinsStorageResult checkinsStorageResult = extractAndStoreEventCheckins(submissionPayload);
+        CheckinsStorageResult checkinsStorageResult = eventCheckinFacade
+            .extractAndStoreEventCheckins(submissionPayload);
+
         deferredResult.setResult(ResponseEntity.ok()
             .header("cwa-filtered-checkins", String.valueOf(checkinsStorageResult.getNumberOfFilteredCheckins()))
             .header("cwa-saved-checkins", String.valueOf(checkinsStorageResult.getNumberOfSavedCheckins()))
@@ -120,28 +112,18 @@ public class SubmissionController {
     return deferredResult;
   }
 
-  protected CheckinsStorageResult extractAndStoreEventCheckins(SubmissionPayload submissionPayload) {
-    // need a container object that reflects how many checkins were filtered even if storage fails
-    AtomicInteger numberOfFilteredCheckins = new AtomicInteger(0);
-    AtomicInteger numberOfSavedCheckins = new AtomicInteger(0);
-    try {
-      List<CheckIn> checkins = checkinsDataFilter.filter(submissionPayload.getCheckInsList());
-      numberOfFilteredCheckins.set(submissionPayload.getCheckInsList().size() - checkins.size());
-      numberOfSavedCheckins.set(traceTimeIntervalWarningSevice.saveCheckinsWithFakeData(checkins,
-          submissionServiceConfig.getRandomCheckinsPaddingMultiplier(),
-          submissionServiceConfig.getRandomCheckinsPaddingPepperAsByteArray()));
-    } catch (final Exception e) {
-      // Any check-in data processing related error must not interrupt the submission flow or interfere
-      // with storing of the diagnosis keys
-      logger.error("An error has occured while trying to store the event checkin data", e);
-    }
-    return new CheckinsStorageResult(numberOfFilteredCheckins.get(), numberOfSavedCheckins.get());
-  }
-
   private void extractAndStoreDiagnosisKeys(SubmissionPayload submissionPayload) {
     List<DiagnosisKey> diagnosisKeys = extractValidDiagnosisKeysFromPayload(
         enhanceWithDefaultValuesIfMissing(submissionPayload));
+    for (DiagnosisKey diagnosisKey : diagnosisKeys) {
+      mapTrasmissionRiskValue(diagnosisKey);
+    }
     diagnosisKeyService.saveDiagnosisKeys(padDiagnosisKeys(diagnosisKeys));
+  }
+
+  private void mapTrasmissionRiskValue(DiagnosisKey diagnosisKey) {
+    diagnosisKey.setTransmissionRiskLevel(
+        trlDerivations.mapFromTrlSubmittedToTrlToStore(diagnosisKey.getTransmissionRiskLevel()));
   }
 
   private List<DiagnosisKey> extractValidDiagnosisKeysFromPayload(SubmissionPayload submissionPayload) {
@@ -151,6 +133,7 @@ public class SubmissionController {
         .map(protoBufferKey -> DiagnosisKey.builder()
             .fromTemporaryExposureKeyAndMetadata(
                 protoBufferKey,
+                submissionPayload.getSubmissionType(),
                 submissionPayload.getVisitedCountriesList(),
                 submissionPayload.getOrigin(),
                 submissionPayload.getConsentToFederation())
@@ -176,6 +159,7 @@ public class SubmissionController {
         .addAllVisitedCountries(submissionPayload.getVisitedCountriesList())
         .setOrigin(originCountry)
         .setConsentToFederation(submissionPayload.getConsentToFederation())
+        .setSubmissionType(submissionPayload.getSubmissionType())
         .build();
   }
 
@@ -189,7 +173,8 @@ public class SubmissionController {
       paddedDiagnosisKeys.add(diagnosisKey);
       IntStream.range(1, randomKeyPaddingMultiplier)
           .mapToObj(index -> DiagnosisKey.builder()
-              .withKeyData(generateRandomKeyData())
+              .withKeyDataAndSubmissionType(
+                  HashUtils.generateSecureRandomByteArrayData(16), diagnosisKey.getSubmissionType())
               .withRollingStartIntervalNumber(diagnosisKey.getRollingStartIntervalNumber())
               .withTransmissionRiskLevel(diagnosisKey.getTransmissionRiskLevel())
               .withRollingPeriod(diagnosisKey.getRollingPeriod())

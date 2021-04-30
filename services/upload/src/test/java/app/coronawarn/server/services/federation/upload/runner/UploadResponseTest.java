@@ -1,9 +1,9 @@
-
 package app.coronawarn.server.services.federation.upload.runner;
 
 import static org.assertj.core.util.Lists.emptyList;
 import static org.assertj.core.util.Lists.list;
-import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -15,6 +15,7 @@ import app.coronawarn.server.common.persistence.repository.FederationUploadKeyRe
 import app.coronawarn.server.common.persistence.service.FederationUploadKeyService;
 import app.coronawarn.server.common.persistence.service.common.KeySharingPoliciesChecker;
 import app.coronawarn.server.common.persistence.service.common.ValidDiagnosisKeyFilter;
+import app.coronawarn.server.common.protocols.internal.SubmissionPayload.SubmissionType;
 import app.coronawarn.server.services.federation.upload.client.FederationUploadClient;
 import app.coronawarn.server.services.federation.upload.config.UploadServiceConfig;
 import app.coronawarn.server.services.federation.upload.keys.DiagnosisKeyLoader;
@@ -34,7 +35,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
-import org.springframework.boot.test.context.ConfigFileApplicationContextInitializer;
+import org.springframework.boot.test.context.ConfigDataApplicationContextInitializer;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.boot.test.mock.mockito.SpyBean;
 import org.springframework.test.context.ActiveProfiles;
@@ -46,7 +47,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 @ContextConfiguration(classes = {Upload.class, PayloadFactory.class, DiagnosisKeyBatchAssembler.class,
     BatchSigner.class, CryptoProvider.class, FederationUploadKeyService.class, ValidDiagnosisKeyFilter.class,
     KeySharingPoliciesChecker.class, AllowedPropertiesMap.class},
-    initializers = ConfigFileApplicationContextInitializer.class)
+    initializers = ConfigDataApplicationContextInitializer.class)
 @ActiveProfiles("connect-efgs")
 class UploadResponseTest {
 
@@ -80,8 +81,8 @@ class UploadResponseTest {
 
   @Test
   void check201UploadResponseStatus() throws Exception {
-    var testKey1 = MockData.generateRandomUploadKey(true);
-    var testKey2 = MockData.generateRandomUploadKey(true);
+    var testKey1 = MockData.generateRandomUploadKey(true, SubmissionType.SUBMISSION_TYPE_PCR_TEST);
+    var testKey2 = MockData.generateRandomUploadKey(true, SubmissionType.SUBMISSION_TYPE_PCR_TEST);
 
     when(mockDiagnosisKeyLoader.loadDiagnosisKeys()).thenReturn(List.of(testKey1, testKey2));
     returnEmptyFromUpload();
@@ -94,8 +95,8 @@ class UploadResponseTest {
 
   @Test
   void check409UploadResponseStatus() throws Exception {
-    var testKey1 = MockData.generateRandomUploadKey(true);
-    var testKey2 = MockData.generateRandomUploadKey(true);
+    var testKey1 = MockData.generateRandomUploadKey(true, SubmissionType.SUBMISSION_TYPE_PCR_TEST);
+    var testKey2 = MockData.generateRandomUploadKey(true, SubmissionType.SUBMISSION_TYPE_PCR_TEST);
 
     when(mockDiagnosisKeyLoader.loadDiagnosisKeys()).thenReturn(List.of(testKey1, testKey2));
     returnFromUpload(createFake409Response());
@@ -108,8 +109,8 @@ class UploadResponseTest {
 
   @Test
   void check500UploadResponseStatus() throws Exception {
-    var testKey1 = MockData.generateRandomUploadKey(true);
-    var testKey2 = MockData.generateRandomUploadKey(true);
+    var testKey1 = MockData.generateRandomUploadKey(true, SubmissionType.SUBMISSION_TYPE_PCR_TEST);
+    var testKey2 = MockData.generateRandomUploadKey(true, SubmissionType.SUBMISSION_TYPE_PCR_TEST);
 
     when(uploadServiceConfig.getMinBatchKeyCount()).thenReturn(2);
     when(mockDiagnosisKeyLoader.loadDiagnosisKeys()).thenReturn(List.of(testKey1, testKey2));
@@ -123,8 +124,8 @@ class UploadResponseTest {
 
   @Test
   void check201And409UploadResponseStatus() throws Exception {
-    var testKey1 = MockData.generateRandomUploadKey(true);
-    var testKey2 = MockData.generateRandomUploadKey(true);
+    var testKey1 = MockData.generateRandomUploadKey(true, SubmissionType.SUBMISSION_TYPE_PCR_TEST);
+    var testKey2 = MockData.generateRandomUploadKey(true, SubmissionType.SUBMISSION_TYPE_PCR_TEST);
 
     when(uploadServiceConfig.getMinBatchKeyCount()).thenReturn(2);
     when(mockDiagnosisKeyLoader.loadDiagnosisKeys()).thenReturn(List.of(testKey1, testKey2));
@@ -138,8 +139,9 @@ class UploadResponseTest {
 
   @Test
   void check201And500UploadResponseStatus() throws Exception {
-    List<FederationUploadKey> orderedKeys = list(MockData.generateRandomUploadKey(true),
-        MockData.generateRandomUploadKey(true)).stream()
+    List<FederationUploadKey> orderedKeys = list(MockData.generateRandomUploadKey(true,
+        SubmissionType.SUBMISSION_TYPE_PCR_TEST),
+        MockData.generateRandomUploadKey(true, SubmissionType.SUBMISSION_TYPE_PCR_TEST)).stream()
         .sorted(Comparator.comparing(diagnosisKey ->
             ByteString.copyFrom(diagnosisKey.getKeyData()).toStringUtf8())).collect(Collectors.toList());
     when(uploadServiceConfig.getMinBatchKeyCount()).thenReturn(2);
@@ -154,8 +156,9 @@ class UploadResponseTest {
 
   @Test
   void check409And500UploadResponseStatus() throws Exception {
-    List<FederationUploadKey> orderedKeys = list(MockData.generateRandomUploadKey(true),
-        MockData.generateRandomUploadKey(true)).stream()
+    List<FederationUploadKey> orderedKeys = list(MockData.generateRandomUploadKey(true,
+        SubmissionType.SUBMISSION_TYPE_PCR_TEST),
+        MockData.generateRandomUploadKey(true, SubmissionType.SUBMISSION_TYPE_PCR_TEST)).stream()
         .sorted(Comparator.comparing(diagnosisKey ->
             ByteString.copyFrom(diagnosisKey.getKeyData()).toStringUtf8())).collect(Collectors.toList());
 

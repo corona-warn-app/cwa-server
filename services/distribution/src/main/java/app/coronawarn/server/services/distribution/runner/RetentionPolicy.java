@@ -2,6 +2,7 @@ package app.coronawarn.server.services.distribution.runner;
 
 import app.coronawarn.server.common.persistence.service.DiagnosisKeyService;
 import app.coronawarn.server.common.persistence.service.StatisticsDownloadService;
+import app.coronawarn.server.common.persistence.service.TraceTimeIntervalWarningService;
 import app.coronawarn.server.services.distribution.Application;
 import app.coronawarn.server.services.distribution.config.DistributionServiceConfig;
 import app.coronawarn.server.services.distribution.objectstore.S3RetentionPolicy;
@@ -25,6 +26,8 @@ public class RetentionPolicy implements ApplicationRunner {
 
   private final DiagnosisKeyService diagnosisKeyService;
 
+  private final TraceTimeIntervalWarningService traceTimeIntervalWarningService;
+
   private final ApplicationContext applicationContext;
 
   private final Integer retentionDays;
@@ -39,17 +42,21 @@ public class RetentionPolicy implements ApplicationRunner {
   /**
    * Creates a new RetentionPolicy.
    *
-   * @param diagnosisKeyService DiagnosisKeyService
-   * @param applicationContext ApplicationContext
-   * @param distributionServiceConfig retention days
-   * @param s3RetentionPolicy S3RetentionPolicy
+   * @param diagnosisKeyService             DiagnosisKeyService
+   * @param traceTimeIntervalWarningService TraceTimeIntervalWarningService
+   * @param applicationContext              ApplicationContext
+   * @param distributionServiceConfig       retention days
+   * @param s3RetentionPolicy               S3RetentionPolicy
    */
-  public RetentionPolicy(DiagnosisKeyService diagnosisKeyService,
+  public RetentionPolicy(
+      DiagnosisKeyService diagnosisKeyService,
+      TraceTimeIntervalWarningService traceTimeIntervalWarningService,
       ApplicationContext applicationContext,
       DistributionServiceConfig distributionServiceConfig,
       S3RetentionPolicy s3RetentionPolicy,
       StatisticsDownloadService statisticsDownloadService) {
     this.diagnosisKeyService = diagnosisKeyService;
+    this.traceTimeIntervalWarningService = traceTimeIntervalWarningService;
     this.applicationContext = applicationContext;
     this.retentionDays = distributionServiceConfig.getRetentionDays();
     this.hourFileRetentionDays = distributionServiceConfig.getObjectStore().getHourFileRetentionDays();
@@ -61,8 +68,10 @@ public class RetentionPolicy implements ApplicationRunner {
   public void run(ApplicationArguments args) {
     try {
       diagnosisKeyService.applyRetentionPolicy(retentionDays);
-      s3RetentionPolicy.applyRetentionPolicy(retentionDays);
-      s3RetentionPolicy.applyHourFileRetentionPolicy(hourFileRetentionDays);
+      traceTimeIntervalWarningService.applyRetentionPolicy(retentionDays);
+      s3RetentionPolicy.applyDiagnosisKeyDayRetentionPolicy(retentionDays);
+      s3RetentionPolicy.applyDiagnosisKeyHourRetentionPolicy(hourFileRetentionDays);
+      s3RetentionPolicy.applyTraceTimeWarningHourRetentionPolicy(retentionDays);
       statisticsDownloadService.applyRetentionPolicy(retentionDays);
     } catch (Exception e) {
       logger.error("Application of retention policy failed.", e);

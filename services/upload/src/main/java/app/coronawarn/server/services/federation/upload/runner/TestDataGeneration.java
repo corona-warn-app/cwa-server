@@ -3,6 +3,7 @@ package app.coronawarn.server.services.federation.upload.runner;
 import app.coronawarn.server.common.persistence.domain.DiagnosisKey;
 import app.coronawarn.server.common.persistence.domain.FederationUploadKey;
 import app.coronawarn.server.common.persistence.service.common.CommonDataGeneration;
+import app.coronawarn.server.common.persistence.utils.hash.HashUtils;
 import app.coronawarn.server.common.protocols.external.exposurenotification.ReportType;
 import app.coronawarn.server.services.federation.upload.config.UploadServiceConfig;
 import app.coronawarn.server.services.federation.upload.testdata.TestDataUploadRepository;
@@ -60,7 +61,9 @@ public class TestDataGeneration extends CommonDataGeneration<FederationUploadKey
         key.getVisitedCountries().toArray(new String[0]),
         key.getReportType().name(),
         key.getDaysSinceOnsetOfSymptoms(),
-        key.isConsentToFederation());
+        key.isConsentToFederation(),
+        key.getBatchTag(),
+        key.getSubmissionType());
   }
 
   private long secondsToHours(long timestampInSeconds) {
@@ -114,7 +117,8 @@ public class TestDataGeneration extends CommonDataGeneration<FederationUploadKey
 
   @Override
   protected FederationUploadKey generateDiagnosisKey(long submissionTimestamp, String country) {
-    return FederationUploadKey.from(DiagnosisKey.builder().withKeyData(generateDiagnosisKeyBytes())
+    return FederationUploadKey.from(DiagnosisKey.builder()
+        .withKeyDataAndSubmissionType(HashUtils.generateSecureRandomByteArrayData(16), generateSubmissionType())
         .withRollingStartIntervalNumber(generateRollingStartIntervalNumber(submissionTimestamp))
         .withTransmissionRiskLevel(generateTransmissionRiskLevel())
         .withConsentToFederation(true)

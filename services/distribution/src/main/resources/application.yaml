@@ -18,7 +18,7 @@ services:
     output-file-name: index
     # The name of the distribution output file v2.
     output-file-name-v2: index-v2
-    # The number of days to retain diagnosis keys for both database persistency layer and files stored on the object store.
+    # The number of days to retain diagnosis keys and trace time warnings for both database persistency layer and files stored on the object store.
     retention-days: 14
     # The number of minutes that diagnosis keys must have been expired for (since the end of the rolling interval window) before they can be distributed.
     expiry-policy-minutes: 120
@@ -163,7 +163,7 @@ services:
         require-evaluation-type-hardware-backed: ${PPA_PPAC_REQUIRE_EVALUATION_TYPE_HARDWARE_BACKED:false}
     ios-qr-code-poster-template:
       published-archive-name: qr_code_poster_template_ios
-      template:
+      template: ${EVREG_QR_CODE_POSTER_TEMPLATE_IOS_FILE:}
       offsetX: ${EVREG_QR_CODE_POSTER_TEMPLATE_IOS_OFFSET_X:97}
       offsetY: ${EVREG_QR_CODE_POSTER_TEMPLATE_IOS_OFFSET_Y:82}
       qr-code-side-length: ${EVREG_QR_CODE_POSTER_TEMPLATE_IOS_QR_CODE_SIDE_LENGTH:400}
@@ -171,12 +171,19 @@ services:
         offsetX: ${EVREG_QR_CODE_POSTER_TEMPLATE_IOS_DESCRIPTION_OFFSET_X:80}
         offsetY: ${EVREG_QR_CODE_POSTER_TEMPLATE_IOS_DESCRIPTION_OFFSET_Y:510}
         width: ${EVREG_QR_CODE_POSTER_TEMPLATE_IOS_DESCRIPTION_WIDTH:420}
-        height: ${EVREG_QR_CODE_POSTER_TEMPLATE_IOS_DESCRIPTION_HEIGHT:40}
-        fontSize: ${EVREG_QR_CODE_POSTER_TEMPLATE_IOS_DESCRIPTION_FONT_SIZE:14}
+        height: ${EVREG_QR_CODE_POSTER_TEMPLATE_IOS_DESCRIPTION_HEIGHT:15}
+        fontSize: ${EVREG_QR_CODE_POSTER_TEMPLATE_IOS_DESCRIPTION_FONT_SIZE:10}
         fontColor: ${EVREG_QR_CODE_POSTER_TEMPLATE_IOS_DESCRIPTION_FONT_COLOR:#000000}
+      address-text-box:
+        offsetX: ${EVREG_QR_CODE_POSTER_TEMPLATE_IOS_ADDRESS_OFFSET_X:80}
+        offsetY: ${EVREG_QR_CODE_POSTER_TEMPLATE_IOS_ADDRESS_OFFSET_Y:525}
+        width: ${EVREG_QR_CODE_POSTER_TEMPLATE_IOS_ADDRESS_WIDTH:420}
+        height: ${EVREG_QR_CODE_POSTER_TEMPLATE_IOS_ADDRESS_HEIGHT:15}
+        fontSize: ${EVREG_QR_CODE_POSTER_TEMPLATE_IOS_ADDRESS_FONT_SIZE:10}
+        fontColor: ${EVREG_QR_CODE_POSTER_TEMPLATE_IOS_ADDRESS_FONT_COLOR:#000000}
     android-qr-code-poster-template:
       published-archive-name: qr_code_poster_template_android
-      template:
+      template: ${EVREG_QR_CODE_POSTER_TEMPLATE_ANDROID_FILE:}
       offsetX: ${EVREG_QR_CODE_POSTER_TEMPLATE_ANDROID_OFFSET_X:0.16}
       offsetY: ${EVREG_QR_CODE_POSTER_TEMPLATE_ANDROID_OFFSET_Y:0.095}
       qr-code-side-length: ${EVREG_QR_CODE_POSTER_TEMPLATE_ANDROID_QR_CODE_SIDE_LENGTH:1000}

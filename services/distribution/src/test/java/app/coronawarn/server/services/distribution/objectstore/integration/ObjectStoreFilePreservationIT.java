@@ -6,6 +6,7 @@ import static org.mockito.Mockito.when;
 
 import app.coronawarn.server.common.persistence.service.DiagnosisKeyService;
 import app.coronawarn.server.common.persistence.service.StatisticsDownloadService;
+import app.coronawarn.server.common.persistence.service.TraceTimeIntervalWarningService;
 import app.coronawarn.server.services.distribution.Application;
 import app.coronawarn.server.services.distribution.assembly.component.OutputDirectoryProvider;
 import app.coronawarn.server.services.distribution.assembly.structure.directory.DirectoryOnDisk;
@@ -32,6 +33,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.rules.TemporaryFolder;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.ConfigDataApplicationContextInitializer;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.test.context.ConfigDataApplicationContextInitializer;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -53,6 +55,8 @@ class ObjectStoreFilePreservationIT extends BaseS3IntegrationTest {
 
   @Autowired
   private DiagnosisKeyService diagnosisKeyService;
+  @Autowired
+  private TraceTimeIntervalWarningService traceTimeIntervalWarningService;
   @Autowired
   private Assembly fileAssembler;
   @Autowired
@@ -163,8 +167,8 @@ class ObjectStoreFilePreservationIT extends BaseS3IntegrationTest {
     DistributionServiceConfig mockDistributionConfig = new DistributionServiceConfig();
     mockDistributionConfig.setRetentionDays(numberOfDaysSince(fromDate));
     mockDistributionConfig.setObjectStore(distributionServiceConfig.getObjectStore());
-    new RetentionPolicy(diagnosisKeyService, applicationContext, mockDistributionConfig,
-        s3RetentionPolicy, statisticsDownloadService).run(null);
+    new RetentionPolicy(diagnosisKeyService, traceTimeIntervalWarningService, applicationContext,
+        mockDistributionConfig, s3RetentionPolicy, statisticsDownloadService).run(null);
   }
 
   private Integer numberOfDaysSince(LocalDate testStartDate) {

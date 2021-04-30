@@ -13,6 +13,7 @@ import static org.springframework.http.HttpHeaders.CONTENT_TYPE;
 
 import app.coronawarn.server.common.federation.client.hostname.NoopHostnameVerifierProvider;
 import app.coronawarn.server.common.persistence.domain.config.TekFieldDerivations;
+import app.coronawarn.server.common.persistence.domain.config.TrlDerivations;
 import app.coronawarn.server.services.submission.config.SubmissionServiceConfig;
 import com.github.tomakehurst.wiremock.WireMockServer;
 import feign.FeignException;
@@ -32,7 +33,8 @@ import org.springframework.http.MediaType;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
 
-@SpringBootTest(classes = { TanVerifier.class, CloudFeignClientProvider.class, TekFieldDerivations.class, NoopHostnameVerifierProvider.class })
+@SpringBootTest(classes = { TanVerifier.class, CloudFeignClientProvider.class, TekFieldDerivations.class,
+    TrlDerivations.class, NoopHostnameVerifierProvider.class })
 @ImportAutoConfiguration({ FeignAutoConfiguration.class, FeignTestConfiguration.class })
 @EnableConfigurationProperties(value = SubmissionServiceConfig.class)
 @EnableFeignClients

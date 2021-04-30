@@ -7,7 +7,9 @@ import app.coronawarn.server.common.persistence.domain.validation.ValidCountries
 import app.coronawarn.server.common.persistence.domain.validation.ValidCountry;
 import app.coronawarn.server.common.persistence.domain.validation.ValidRollingStartIntervalNumber;
 import app.coronawarn.server.common.persistence.domain.validation.ValidSubmissionTimestamp;
+import app.coronawarn.server.common.persistence.domain.validation.ValidSubmissionType;
 import app.coronawarn.server.common.protocols.external.exposurenotification.ReportType;
+import app.coronawarn.server.common.protocols.internal.SubmissionPayload.SubmissionType;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -49,6 +51,9 @@ public class DiagnosisKey {
       + KEY_DATA_LENGTH + ".")
   private final byte[] keyData;
 
+  @ValidSubmissionType
+  private final SubmissionType submissionType;
+
   @ValidRollingStartIntervalNumber
   private final int rollingStartIntervalNumber;
 
@@ -59,7 +64,7 @@ public class DiagnosisKey {
   @Range(min = MIN_TRANSMISSION_RISK_LEVEL, max = MAX_TRANSMISSION_RISK_LEVEL,
       message = "Risk level must be between " + MIN_TRANSMISSION_RISK_LEVEL + " and " + MAX_TRANSMISSION_RISK_LEVEL
           + ".")
-  private final int transmissionRiskLevel;
+  private int transmissionRiskLevel;
 
   @ValidSubmissionTimestamp
   private final long submissionTimestamp;
@@ -82,11 +87,12 @@ public class DiagnosisKey {
   /**
    * Should be called by builders.
    */
-  DiagnosisKey(byte[] keyData, int rollingStartIntervalNumber, int rollingPeriod,
+  DiagnosisKey(byte[] keyData, SubmissionType submissionType, int rollingStartIntervalNumber, int rollingPeriod,
       int transmissionRiskLevel, long submissionTimestamp,
       boolean consentToFederation, String originCountry, Set<String> visitedCountries,
       ReportType reportType, Integer daysSinceOnsetOfSymptoms) {
     this.keyData = keyData;
+    this.submissionType = submissionType;
     this.rollingStartIntervalNumber = rollingStartIntervalNumber;
     this.rollingPeriod = rollingPeriod;
     this.transmissionRiskLevel = transmissionRiskLevel;
@@ -111,6 +117,7 @@ public class DiagnosisKey {
 
   /**
    * Returns the diagnosis key.
+   *
    * @return keyData
    */
   public byte[] getKeyData() {
@@ -118,7 +125,17 @@ public class DiagnosisKey {
   }
 
   /**
+   * Returns the {@link SubmissionType}.
+   *
+   * @return submissionType
+   */
+  public SubmissionType getSubmissionType() {
+    return submissionType;
+  }
+
+  /**
    * Returns a number describing when a key starts. It is equal to startTimeOfKeySinceEpochInSecs / (60 * 10).
+   *
    * @return rollingStartIntervalNumber
    */
   public int getRollingStartIntervalNumber() {
@@ -128,6 +145,7 @@ public class DiagnosisKey {
   /**
    * Returns a number describing how long a key is valid. It is expressed in increments of 10 minutes (e.g. 144 for 24
    * hours).
+   *
    * @return rollingPeriod
    */
   public int getRollingPeriod() {
@@ -136,14 +154,20 @@ public class DiagnosisKey {
 
   /**
    * Returns the risk of transmission associated with the person this key came from.
+   *
    * @return transmissionRiskLevel
    */
   public int getTransmissionRiskLevel() {
     return transmissionRiskLevel;
   }
 
+  public void setTransmissionRiskLevel(int transmissionRiskLevel) {
+    this.transmissionRiskLevel = transmissionRiskLevel;
+  }
+
   /**
    * Returns the timestamp associated with the submission of this {@link DiagnosisKey} as hours since epoch.
+   *
    * @return submissionTimestamp
    */
   public long getSubmissionTimestamp() {
@@ -215,7 +239,8 @@ public class DiagnosisKey {
       return false;
     }
     DiagnosisKey that = (DiagnosisKey) o;
-    return rollingStartIntervalNumber == that.rollingStartIntervalNumber
+    return submissionType == that.submissionType
+        && rollingStartIntervalNumber == that.rollingStartIntervalNumber
         && rollingPeriod == that.rollingPeriod
         && transmissionRiskLevel == that.transmissionRiskLevel
         && submissionTimestamp == that.submissionTimestamp
@@ -229,8 +254,8 @@ public class DiagnosisKey {
   @Override
   public int hashCode() {
     int result = Objects
-        .hash(rollingStartIntervalNumber, rollingPeriod, transmissionRiskLevel, submissionTimestamp, originCountry,
-            visitedCountries, reportType, daysSinceOnsetOfSymptoms);
+        .hash(submissionType, rollingStartIntervalNumber, rollingPeriod, transmissionRiskLevel, submissionTimestamp,
+            originCountry, visitedCountries, reportType, daysSinceOnsetOfSymptoms);
     result = 31 * result + Arrays.hashCode(keyData);
     return result;
   }
@@ -239,6 +264,7 @@ public class DiagnosisKey {
   public String toString() {
     return "DiagnosisKey{"
         + "keyData=HIDDEN"
+        + ", submissionType=" + submissionType
         + ", rollingStartIntervalNumber=" + rollingStartIntervalNumber
         + ", rollingPeriod=" + rollingPeriod
         + ", transmissionRiskLevel=" + transmissionRiskLevel

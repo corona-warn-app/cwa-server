@@ -1,6 +1,7 @@
 package app.coronawarn.server.services.submission.config;
 
 import app.coronawarn.server.common.persistence.domain.config.TekFieldDerivations;
+import app.coronawarn.server.common.persistence.domain.config.TrlDerivations;
 import java.io.File;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
@@ -40,6 +41,9 @@ public class SubmissionServiceConfig {
   @Min(1)
   @Max(25)
   private Integer randomCheckinsPaddingMultiplier;
+  @Min(1)
+  @Max(9999)
+  private Integer maxAllowedCheckinsPerDay;
   @NotEmpty
   private String randomCheckinsPaddingPepper;
   @Min(1)
@@ -56,6 +60,9 @@ public class SubmissionServiceConfig {
 
   @Autowired
   private TekFieldDerivations tekFieldDerivations;
+
+  @Autowired
+  private TrlDerivations trlDerivations;
 
 
   public Long getInitialFakeDelayMilliseconds() {
@@ -108,6 +115,14 @@ public class SubmissionServiceConfig {
 
   public void setRandomCheckinsPaddingPepper(String randomCheckinsPaddingPepper) {
     this.randomCheckinsPaddingPepper = randomCheckinsPaddingPepper;
+  }
+
+  public Integer getMaxAllowedCheckinsPerDay() {
+    return maxAllowedCheckinsPerDay;
+  }
+
+  public void setMaxAllowedCheckinsPerDay(Integer maxAllowedCheckinsPerDay) {
+    this.maxAllowedCheckinsPerDay = maxAllowedCheckinsPerDay;
   }
 
   public Integer getConnectionPoolSize() {
@@ -168,6 +183,14 @@ public class SubmissionServiceConfig {
 
   public void setTekFieldDerivations(TekFieldDerivations tekFieldDerivations) {
     this.tekFieldDerivations = tekFieldDerivations;
+  }
+
+  public TrlDerivations getTrlDerivations() {
+    return trlDerivations;
+  }
+
+  public void setTrlDerivations(TrlDerivations trlDerivations) {
+    this.trlDerivations = trlDerivations;
   }
 
   public static class Payload {
