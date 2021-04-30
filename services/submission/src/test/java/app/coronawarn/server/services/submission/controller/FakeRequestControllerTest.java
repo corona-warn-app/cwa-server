@@ -2,7 +2,7 @@
 
 package app.coronawarn.server.services.submission.controller;
 
-import static app.coronawarn.server.services.submission.controller.SubmissionPayloadMockData.*;
+import static app.coronawarn.server.services.submission.controller.SubmissionPayloadMockData.buildPayloadWithOneKey;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.never;
