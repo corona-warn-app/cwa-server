@@ -5,6 +5,8 @@ import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.util.DigestUtils;
 
 public class HashUtils {
@@ -22,6 +24,8 @@ public class HashUtils {
       return name;
     }
   }
+
+  private static final Logger logger = LoggerFactory.getLogger(HashUtils.class);
 
   private HashUtils() {
   }
@@ -49,7 +53,7 @@ public class HashUtils {
     try {
       return MessageDigest.getInstance(algorithm.getName()).digest(data.toByteArray());
     } catch (NoSuchAlgorithmException e) {
-      // DO NOTHING
+      logger.error(e.getMessage(), e);
     }
     return new byte[0];
   }
