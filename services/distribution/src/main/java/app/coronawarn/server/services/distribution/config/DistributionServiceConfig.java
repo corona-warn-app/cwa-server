@@ -2,7 +2,6 @@ package app.coronawarn.server.services.distribution.config;
 
 import app.coronawarn.server.common.protocols.external.exposurenotification.SignatureInfo;
 import app.coronawarn.server.services.distribution.utils.SerializationUtils;
-import java.io.File;
 import java.util.List;
 import java.util.stream.Collectors;
 import javax.validation.constraints.Max;
@@ -1478,36 +1477,58 @@ public class DistributionServiceConfig {
   public class DigitalGreenCertificate {
 
     @NotNull
-    private String mahPath;
+    private String mahJsonPath;
 
     @NotNull
-    private String prophylaxisPath;
+    private String prophylaxisJsonPath;
 
     @NotNull
-    private String medicinalProductsPath;
+    private String medicinalProductsJsonPath;
 
-    public String getMahPath() {
-      return mahPath;
+    @Pattern(regexp = CHAR_AND_NUMBER_REGEX)
+    private String dgcDirectory;
+
+    @Pattern(regexp = CHAR_AND_NUMBER_REGEX)
+    private String valuesetsDirectory;
+
+    public String getMahJsonPath() {
+      return mahJsonPath;
     }
 
-    public void setMahPath(String mahPath) {
-      this.mahPath = mahPath;
+    public void setMahJsonPath(String mahJsonPath) {
+      this.mahJsonPath = mahJsonPath;
     }
 
-    public String getProphylaxisPath() {
-      return prophylaxisPath;
+    public String getProphylaxisJsonPath() {
+      return prophylaxisJsonPath;
     }
 
-    public void setProphylaxisPath(String prophylaxisPath) {
-      this.prophylaxisPath = prophylaxisPath;
+    public void setProphylaxisJsonPath(String prophylaxisJsonPath) {
+      this.prophylaxisJsonPath = prophylaxisJsonPath;
     }
 
-    public String getMedicinalProductsPath() {
-      return medicinalProductsPath;
+    public String getMedicinalProductsJsonPath() {
+      return medicinalProductsJsonPath;
     }
 
-    public void setMedicinalProductsPath(String medicinalProductsPath) {
-      this.medicinalProductsPath = medicinalProductsPath;
+    public void setMedicinalProductsJsonPath(String medicinalProductsJsonPath) {
+      this.medicinalProductsJsonPath = medicinalProductsJsonPath;
+    }
+
+    public String getDgcDirectory() {
+      return dgcDirectory;
+    }
+
+    public void setDgcDirectory(String dgcDirectory) {
+      this.dgcDirectory = dgcDirectory;
+    }
+
+    public String getValuesetsDirectory() {
+      return valuesetsDirectory;
+    }
+
+    public void setValuesetsDirectory(String valuesetsDirectory) {
+      this.valuesetsDirectory = valuesetsDirectory;
     }
   }
 }

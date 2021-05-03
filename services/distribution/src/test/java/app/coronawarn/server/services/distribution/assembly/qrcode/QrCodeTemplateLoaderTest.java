@@ -10,6 +10,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.ConfigDataApplicationContextInitializer;
+import org.springframework.core.io.ResourceLoader;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.annotation.DirtiesContext.ClassMode;
 import org.springframework.test.context.ContextConfiguration;
@@ -25,10 +26,12 @@ class QrCodeTemplateLoaderTest {
   @Autowired
   private DistributionServiceConfig config;
 
+  @Autowired
+  private QrCodeTemplateLoader loader;
+
   @Test
   public void testLoadPosterTemplateCanLoadDefaultOnError() throws IOException {
     config.getAndroidQrCodePosterTemplate().setTemplate("non/existent.file");
-    QrCodeTemplateLoader loader = new QrCodeTemplateLoader(config);
     ByteString template = loader.loadAndroidTemplateAsBytes();
 
     assertThat(template).isNotEmpty();
@@ -37,7 +40,6 @@ class QrCodeTemplateLoaderTest {
   @Test
   public void testLoadPosterTemplateCanLoadFileFromDisk() throws IOException {
     config.getAndroidQrCodePosterTemplate().setTemplate("src/main/resources/pt-android-poster-1.0.0.pdf");
-    QrCodeTemplateLoader loader = new QrCodeTemplateLoader(config);
     ByteString template = loader.loadAndroidTemplateAsBytes();
 
     assertThat(template).isNotEmpty();

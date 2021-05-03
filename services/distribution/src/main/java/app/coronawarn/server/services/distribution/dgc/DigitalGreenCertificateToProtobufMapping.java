@@ -7,6 +7,7 @@ import app.coronawarn.server.common.protocols.internal.dgc.ValueSetItem;
 import app.coronawarn.server.common.protocols.internal.dgc.ValueSets;
 import app.coronawarn.server.services.distribution.config.DistributionServiceConfig;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -15,8 +16,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
+import org.springframework.core.io.ResourceLoader;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -27,6 +27,9 @@ public class DigitalGreenCertificateToProtobufMapping {
   @Autowired
   DistributionServiceConfig distributionServiceConfig;
 
+  @Autowired
+  ResourceLoader resourceLoader;
+
   private final Map<String, String> vp = new HashMap<>();
   private final Map<String, String> mp = new HashMap<>();
   private final Map<String, String> ma = new HashMap<>();
@@ -36,8 +39,8 @@ public class DigitalGreenCertificateToProtobufMapping {
    *
    * @return The corresponding JSON object.
    */
-  public VaccineMahJsonStringObject readMahJson() {
-    String path = distributionServiceConfig.getDigitalGreenCertificate().getMahPath();
+  VaccineMahJsonStringObject readMahJson() {
+    String path = distributionServiceConfig.getDigitalGreenCertificate().getMahJsonPath();
     return readConfiguredJsonOrDefault(path, "dgc/vaccine-mah.json",
         VaccineMahJsonStringObject.class);
   }
@@ -47,8 +50,8 @@ public class DigitalGreenCertificateToProtobufMapping {
    *
    * @return The corresponding JSON object.
    */
-  public VaccineMedicinalProductJsonStringObject readMedicinalProductJson() {
-    String path = distributionServiceConfig.getDigitalGreenCertificate().getMedicinalProductsPath();
+  VaccineMedicinalProductJsonStringObject readMedicinalProductJson() {
+    String path = distributionServiceConfig.getDigitalGreenCertificate().getMedicinalProductsJsonPath();
     return readConfiguredJsonOrDefault(path, "dgc/vaccine-medicinal-product.json",
         VaccineMedicinalProductJsonStringObject.class);
   }
@@ -58,8 +61,8 @@ public class DigitalGreenCertificateToProtobufMapping {
    *
    * @return The corresponding JSON object.
    */
-  public VaccineProphylaxisJsonStringObject readProphylaxisJson() {
-    String path = distributionServiceConfig.getDigitalGreenCertificate().getProphylaxisPath();
+  VaccineProphylaxisJsonStringObject readProphylaxisJson() {
+    String path = distributionServiceConfig.getDigitalGreenCertificate().getProphylaxisJsonPath();
     return readConfiguredJsonOrDefault(path, "dgc/vaccine-prophylaxis.json",
         VaccineProphylaxisJsonStringObject.class);
   }
@@ -75,7 +78,6 @@ public class DigitalGreenCertificateToProtobufMapping {
     List<ValueSetItem> prophylaxisItems = toValueSetItems(readProphylaxisJson().getValueSetValues());
 
     return ValueSets.newBuilder()
-        .setLanguageValue(0)
         .setMa(ValueSet.newBuilder().addAllItems(mahItems).build())
         .setVp(ValueSet.newBuilder().addAllItems(productItems).build())
         .setVp(ValueSet.newBuilder().addAllItems(prophylaxisItems).build())
@@ -92,15 +94,15 @@ public class DigitalGreenCertificateToProtobufMapping {
 
   private <T> T readConfiguredJsonOrDefault(String path, String defaultPath, Class<T> rawType) {
     if (!StringUtils.isEmpty(path)) {
-      try {
-        return deserializeJsonToSimpleType(path, rawType);
+      try (InputStream jsonStream = resourceLoader.getResource(path).getInputStream()) {
+        return deserializeJsonToSimpleType(jsonStream, rawType);
       } catch (IOException e) {
         logger.error("Error reading {} from json {}.", rawType.getSimpleName(), path, e);
       }
     }
-    try {
+    try (InputStream jsonStream = resourceLoader.getResource(defaultPath).getInputStream()) {
       // fallback to default
-      return deserializeJsonToSimpleType(defaultPath, rawType);
+      return deserializeJsonToSimpleType(jsonStream, rawType);
     } catch (IOException e) {
       logger.error("We could not load the default {}. This shouldn't happen!", defaultPath, e);
       throw new RuntimeException(e);

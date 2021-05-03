@@ -4,7 +4,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import app.coronawarn.server.services.distribution.config.DistributionServiceConfig;
 import app.coronawarn.server.services.distribution.config.DistributionServiceConfig.DigitalGreenCertificate;
-import java.text.ParseException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -12,13 +11,11 @@ import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.ConfigDataApplicationContextInitializer;
-import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 @EnableConfigurationProperties(value = DistributionServiceConfig.class)
 @ExtendWith(SpringExtension.class)
-@ActiveProfiles({"local-json-stats", "processing-test", "debug"})
 @ContextConfiguration(classes = {DistributionServiceConfig.class, DigitalGreenCertificateToProtobufMapping.class},
     initializers = ConfigDataApplicationContextInitializer.class)
 class DigitalGreenCertificateJsonToProtobufTest {
@@ -29,19 +26,13 @@ class DigitalGreenCertificateJsonToProtobufTest {
   @Autowired
   DigitalGreenCertificateToProtobufMapping dgcToProtobufMapping;
 
-  private static final String mahJsonPath = "src/test/resources/dgc/vaccine-mah.json";
-  private static final String mProductJsonPath = "src/test/resources/dgc/vaccine-medicinal-product.json";
-  private static final String prophylaxisJsonPath = "src/test/resources/dgc/vaccine-prophylaxis.json";
-
   @BeforeEach
   void setUp() {
     distributionServiceConfig.setDigitalGreenCertificate(Mockito.mock(DigitalGreenCertificate.class));
   }
 
   @Test
-  void shouldReadMahJson() throws ParseException {
-    distributionServiceConfig.getDigitalGreenCertificate().setMahPath(mahJsonPath);
-
+  void shouldReadDefaultMahJsonIfNotConfigured() {
     var result = dgcToProtobufMapping.readMahJson();
 
     assertThat(result.getValueSetId()).isEqualTo("vaccines-covid-19-auth-holders");
@@ -59,15 +50,14 @@ class DigitalGreenCertificateJsonToProtobufTest {
 
 
   @Test
-  void shouldReadMProductJson() throws ParseException {
-    distributionServiceConfig.getDigitalGreenCertificate().setMedicinalProductsPath(mProductJsonPath);
-
+  void shouldReadDefaultMProductJsonIfNotConfigured() {
     var result = dgcToProtobufMapping.readMedicinalProductJson();
 
     assertThat(result.getValueSetId()).isEqualTo("vaccines-covid-19-names");
     assertThat(result.getValueSetDate()).isEqualTo("2021-04-27");
     assertThat(result.getValueSetValues()).hasSize(12);
 
+    // assert at least one value
     ValueSetObject actual = result.getValueSetValues().get(("EU/1/20/1525"));
     assertThat(actual.getDisplay()).isEqualTo("COVID-19 Vaccine Janssen");
     assertThat(actual.getLang()).isEqualTo(Language.EN);
@@ -77,9 +67,7 @@ class DigitalGreenCertificateJsonToProtobufTest {
   }
 
   @Test
-  void shouldReadProphylaxisJson() throws ParseException {
-    distributionServiceConfig.getDigitalGreenCertificate().setProphylaxisPath(prophylaxisJsonPath);
-
+  void shouldReadDefaultProphylaxisJsonIfNotConfigured() {
     var result = dgcToProtobufMapping.readProphylaxisJson();
 
     assertThat(result.getValueSetId()).isEqualTo("sct-vaccines-covid-19");

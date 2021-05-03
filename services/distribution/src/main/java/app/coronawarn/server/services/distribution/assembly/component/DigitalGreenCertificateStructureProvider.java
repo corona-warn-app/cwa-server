@@ -5,6 +5,7 @@ import app.coronawarn.server.services.distribution.assembly.structure.Writable;
 import app.coronawarn.server.services.distribution.assembly.structure.WritableOnDisk;
 import app.coronawarn.server.services.distribution.assembly.structure.archive.ArchiveOnDisk;
 import app.coronawarn.server.services.distribution.assembly.structure.archive.decorator.signing.DistributionArchiveSigningDecorator;
+import app.coronawarn.server.services.distribution.assembly.structure.directory.DirectoryOnDisk;
 import app.coronawarn.server.services.distribution.assembly.structure.file.FileOnDisk;
 import app.coronawarn.server.services.distribution.config.DistributionServiceConfig;
 import app.coronawarn.server.services.distribution.config.DistributionServiceConfig.DigitalGreenCertificate;
@@ -42,8 +43,13 @@ public class DigitalGreenCertificateStructureProvider {
 
   private <T extends com.google.protobuf.GeneratedMessageV3> Writable<WritableOnDisk> constructArchiveToPublish(
       DigitalGreenCertificate dgcConfig, ValueSets dgcProto) {
-    ArchiveOnDisk archiveToPublish = new ArchiveOnDisk("index");
+    ArchiveOnDisk archiveToPublish = new ArchiveOnDisk(distributionServiceConfig.getOutputFileName());
     archiveToPublish.addWritable(new FileOnDisk("export.bin", dgcProto.toByteArray()));
-    return new DistributionArchiveSigningDecorator(archiveToPublish, cryptoProvider, distributionServiceConfig);
+    DirectoryOnDisk valuesetsDirectory = new DirectoryOnDisk(dgcConfig.getValuesetsDirectory());
+    valuesetsDirectory.addWritable(new DistributionArchiveSigningDecorator(
+        archiveToPublish, cryptoProvider, distributionServiceConfig));
+    DirectoryOnDisk dgcDirectory = new DirectoryOnDisk(dgcConfig.getDgcDirectory());
+    dgcDirectory.addWritable(valuesetsDirectory);
+    return dgcDirectory;
   }
 }

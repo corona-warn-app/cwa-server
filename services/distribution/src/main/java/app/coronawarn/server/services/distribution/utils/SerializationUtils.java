@@ -66,21 +66,9 @@ public final class SerializationUtils {
     }
   }
 
-  public static <T> T  deserializeJsonToSimpleType(String path, Class<T> rawType) throws IOException {
-    return deserializeResource(path, (jsonStream) -> deserializeJson(jsonStream,
-        typeFactory -> typeFactory.constructSimpleType(rawType, new JavaType[0])));
-  }
-
-  private static interface Deserializer<T> {
-    T deserialize(InputStream source) throws IOException;
-  }
-
-  private static <T> T deserializeResource(String path, Deserializer<T> deserializer) throws IOException {
-    try (InputStream resourceAsStream = SerializationUtils.class.getClassLoader().getResourceAsStream(path)) {
-      return deserializer.deserialize(resourceAsStream);
-    } catch(IOException e) {
-      return deserializer.deserialize(new FileInputStream(path));
-    }
+  public static <T> T  deserializeJsonToSimpleType(InputStream jsonStream, Class<T> rawType) throws IOException {
+    return deserializeJson(jsonStream,
+        typeFactory -> typeFactory.constructSimpleType(rawType, new JavaType[0]));
   }
 
   private SerializationUtils() {
