@@ -1474,7 +1474,7 @@ public class DistributionServiceConfig {
     }
   }
 
-  public class DigitalGreenCertificate {
+  public static class DigitalGreenCertificate {
 
     @NotNull
     private String mahJsonPath;
