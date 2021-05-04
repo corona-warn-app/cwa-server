@@ -8,7 +8,6 @@ import app.coronawarn.server.common.protocols.internal.dgc.ValueSets;
 import app.coronawarn.server.services.distribution.config.DistributionServiceConfig;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -29,10 +28,6 @@ public class DigitalGreenCertificateToProtobufMapping {
 
   @Autowired
   ResourceLoader resourceLoader;
-
-  private final Map<String, String> vp = new HashMap<>();
-  private final Map<String, String> mp = new HashMap<>();
-  private final Map<String, String> ma = new HashMap<>();
 
   /**
    * Read the JSON for the marketing authorization holders.

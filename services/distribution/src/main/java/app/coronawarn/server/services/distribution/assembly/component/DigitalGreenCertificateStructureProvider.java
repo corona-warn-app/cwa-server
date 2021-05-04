@@ -10,6 +10,9 @@ import app.coronawarn.server.services.distribution.assembly.structure.file.FileO
 import app.coronawarn.server.services.distribution.config.DistributionServiceConfig;
 import app.coronawarn.server.services.distribution.config.DistributionServiceConfig.DigitalGreenCertificate;
 import app.coronawarn.server.services.distribution.dgc.DigitalGreenCertificateToProtobufMapping;
+import app.coronawarn.server.services.distribution.runner.Assembly;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 /**
@@ -18,6 +21,8 @@ import org.springframework.stereotype.Component;
  */
 @Component
 public class DigitalGreenCertificateStructureProvider {
+
+  private static final Logger logger = LoggerFactory.getLogger(DigitalGreenCertificateStructureProvider.class);
 
   private final DistributionServiceConfig distributionServiceConfig;
   private final CryptoProvider cryptoProvider;
@@ -45,11 +50,15 @@ public class DigitalGreenCertificateStructureProvider {
       DigitalGreenCertificate dgcConfig, ValueSets dgcProto) {
     ArchiveOnDisk archiveToPublish = new ArchiveOnDisk(distributionServiceConfig.getOutputFileName());
     archiveToPublish.addWritable(new FileOnDisk("export.bin", dgcProto.toByteArray()));
-    DirectoryOnDisk valuesetsDirectory = new DirectoryOnDisk(dgcConfig.getValuesetsDirectory());
-    valuesetsDirectory.addWritable(new DistributionArchiveSigningDecorator(
+    DirectoryOnDisk enDirectory = new DirectoryOnDisk(dgcConfig.getValuesetsDirectory());
+    enDirectory.addWritable(new DistributionArchiveSigningDecorator(
         archiveToPublish, cryptoProvider, distributionServiceConfig));
+    DirectoryOnDisk valuesetsDirectory = new DirectoryOnDisk(dgcConfig.getValuesetsDirectory());
+    valuesetsDirectory.addWritable(enDirectory);
     DirectoryOnDisk dgcDirectory = new DirectoryOnDisk(dgcConfig.getDgcDirectory());
     dgcDirectory.addWritable(valuesetsDirectory);
+    logger.info("Writing digital green certificate to {}/{}/en/{}.", dgcConfig.getDgcDirectory(),
+        dgcConfig.getDgcDirectory(), distributionServiceConfig.getOutputFileName());
     return dgcDirectory;
   }
 }
