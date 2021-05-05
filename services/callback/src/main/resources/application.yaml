@@ -50,7 +50,7 @@ management:
     port: 8081
     ssl:
       enabled: true
-      enabled-protocols: TLSv1.2,TLSv1.3
+      enabled-protocols: TLSv1.2+TLSv1.3
       protocol: TLS
       ciphers: >-
         TLS_ECDHE_ECDSA_WITH_AES_128_GCM_SHA256
