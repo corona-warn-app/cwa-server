@@ -1,19 +1,15 @@
+// This file is auto-generated, DO NOT make any changes here
 syntax = "proto3";
 package app.coronawarn.server.common.protocols.internal.dgc;
 option java_multiple_files = true;
 
 message ValueSets {
-  ValueSetLanguage language = 1;
   // Vaccine or prophylaxis
-  ValueSet vp = 2;
+  ValueSet vp = 1;
   // Vaccine medicinal product
-  ValueSet mp = 3;
+  ValueSet mp = 2;
   // Marketing Authorization Holder
-  ValueSet ma = 4;
-}
-
-enum ValueSetLanguage {
-  VALUE_SET_LANGUAGE_EN = 0;
+  ValueSet ma = 3;
 }
 
 message ValueSet {
