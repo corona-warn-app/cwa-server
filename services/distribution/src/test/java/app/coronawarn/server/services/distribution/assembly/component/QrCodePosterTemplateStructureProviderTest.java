@@ -30,7 +30,7 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
-@EnableConfigurationProperties(value = {DistributionServiceConfig.class})
+@EnableConfigurationProperties(value = {DistributionServiceConfig.class, TransmissionRiskLevelEncoding.class})
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration(
     classes = {QrCodeTemplateLoader.class, CryptoProvider.class},
