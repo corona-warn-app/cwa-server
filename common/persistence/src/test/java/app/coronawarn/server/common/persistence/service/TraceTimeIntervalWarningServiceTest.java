@@ -9,12 +9,11 @@ import static org.junit.Assert.assertEquals;
 import app.coronawarn.server.common.persistence.domain.TraceTimeIntervalWarning;
 import app.coronawarn.server.common.persistence.repository.TraceTimeIntervalWarningRepository;
 import app.coronawarn.server.common.persistence.service.utils.checkins.CheckinsDateSpecification;
+import app.coronawarn.server.common.persistence.utils.hash.HashUtils;
+import app.coronawarn.server.common.persistence.utils.hash.HashUtils.MessageDigestAlgorithms;
 import app.coronawarn.server.common.protocols.internal.SubmissionPayload.SubmissionType;
 import app.coronawarn.server.common.protocols.internal.pt.CheckIn;
 import com.google.protobuf.ByteString;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
-import java.security.SecureRandom;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -64,25 +63,17 @@ class TraceTimeIntervalWarningServiceTest {
   }
 
   @Test
-  void testStorageWithRandomPadding() {
-    List<CheckIn> checkins = getRandomTestData();
-    traceWarningsService.saveCheckinsWithFakeData(checkins, 2, randomHashPepper(), currentTimestamp,
-        SubmissionType.SUBMISSION_TYPE_PCR_TEST);
-
-    List<TraceTimeIntervalWarning> actualTraceWarningsStored =
-        StreamSupport.stream(traceWarningsRepository.findAll().spliterator(), false)
-            .collect(Collectors.toList());
-    assertEquals(actualTraceWarningsStored.size(), checkins.size() + checkins.size() * 2);
-  }
-
-  @Test
   void testSortedRetrievalResult() {
     traceWarningsRepository
-        .saveDoNothingOnConflict(hashLocationId(ByteString.copyFromUtf8("sorted-uuid2")), 56, 10, 3,
+        .saveDoNothingOnConflict(
+            HashUtils.byteStringDigest(ByteString.copyFromUtf8("sorted-uuid2"), MessageDigestAlgorithms.SHA_256),
+            56, 10, 3,
             CheckinsDateSpecification.HOUR_SINCE_EPOCH_DERIVATION.apply(Instant.now().getEpochSecond()),
             SubmissionType.SUBMISSION_TYPE_PCR_TEST.name());
     traceWarningsRepository
-        .saveDoNothingOnConflict(hashLocationId(ByteString.copyFromUtf8("sorted-uuid1")), 456, 20, 2,
+        .saveDoNothingOnConflict(
+            HashUtils.byteStringDigest(ByteString.copyFromUtf8("sorted-uuid1"), MessageDigestAlgorithms.SHA_256),
+            456, 20, 2,
             CheckinsDateSpecification.HOUR_SINCE_EPOCH_DERIVATION.apply(Instant.now().getEpochSecond()) - 10,
             SubmissionType.SUBMISSION_TYPE_PCR_TEST.name());
 
@@ -111,7 +102,7 @@ class TraceTimeIntervalWarningServiceTest {
   public void testHashingOfTraceLocationId() {
     String locationId = "afa27b44d43b02a9fea41d13cedc2e4016cfcf87c5dbf990e593669aa8ce286d";
     byte[] locationIdByte = Hex.decode(locationId);
-    byte[] hashedLocationId = hashLocationId(ByteString.copyFrom(locationIdByte));
+    byte[] hashedLocationId = HashUtils.byteStringDigest(ByteString.copyFrom(locationIdByte), MessageDigestAlgorithms.SHA_256);
 
     final byte[] encode = Hex.encode(hashedLocationId);
     String s = new String(encode);
@@ -200,22 +191,9 @@ class TraceTimeIntervalWarningServiceTest {
           warning.getTransmissionRiskLevel().intValue());
       assertEquals(checkin.getStartIntervalNumber(), warning.getStartIntervalNumber().intValue());
       assertEquals(checkin.getEndIntervalNumber() - checkin.getStartIntervalNumber(), warning.getPeriod().intValue());
-      assertArrayEquals(hashLocationId(checkin.getLocationId()),
+      assertArrayEquals(HashUtils.byteStringDigest(checkin.getLocationId(), MessageDigestAlgorithms.SHA_256),
           warning.getTraceLocationId());
     }
   }
 
-  private byte[] hashLocationId(ByteString locationId) {
-    try {
-      return MessageDigest.getInstance("SHA-256").digest(locationId.toByteArray());
-    } catch (NoSuchAlgorithmException ignored) {
-    }
-    return new byte[0];
-  }
-
-  private byte[] randomHashPepper() {
-    byte[] pepper = new byte[16];
-    new SecureRandom().nextBytes(pepper);
-    return pepper;
-  }
 }

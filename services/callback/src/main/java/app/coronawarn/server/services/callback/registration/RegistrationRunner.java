@@ -1,8 +1,7 @@
 package app.coronawarn.server.services.callback.registration;
 
-import static app.coronawarn.server.services.callback.HashingUtils.computeHash;
-
 import app.coronawarn.server.common.federation.client.FederationGatewayClient;
+import app.coronawarn.server.common.persistence.utils.hash.HashUtils;
 import app.coronawarn.server.services.callback.config.CallbackServiceConfig;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -36,7 +35,7 @@ public class RegistrationRunner implements ApplicationRunner {
     }
 
     String endpointUrl = serviceConfig.getEndpointUrl();
-    String registrationId = computeHash(endpointUrl);
+    String registrationId = HashUtils.md5DigestAsHex(endpointUrl);
     logger.info("Starting callback registration for ID '{}' URL '{}'.", registrationId, endpointUrl);
 
     boolean callbackUrlIsAlreadyRegistered = federationGatewayClient.getCallbackRegistrations().getBody().stream()
