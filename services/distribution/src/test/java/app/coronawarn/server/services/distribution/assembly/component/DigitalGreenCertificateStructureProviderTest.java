@@ -1,10 +1,12 @@
 package app.coronawarn.server.services.distribution.assembly.component;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.when;
 
 import app.coronawarn.server.services.distribution.assembly.structure.Writable;
 import app.coronawarn.server.services.distribution.assembly.structure.WritableOnDisk;
+import app.coronawarn.server.services.distribution.assembly.structure.archive.decorator.signing.DistributionArchiveSigningDecorator;
 import app.coronawarn.server.services.distribution.assembly.structure.directory.Directory;
 import app.coronawarn.server.services.distribution.assembly.structure.directory.DirectoryOnDisk;
 import app.coronawarn.server.services.distribution.assembly.structure.util.ImmutableStack;
@@ -12,11 +14,10 @@ import app.coronawarn.server.services.distribution.config.DistributionServiceCon
 import app.coronawarn.server.services.distribution.dgc.DigitalGreenCertificateToProtobufMapping;
 import java.io.File;
 import java.io.IOException;
-import java.util.Collection;
+import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 import org.junit.Rule;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -54,7 +55,7 @@ public class DigitalGreenCertificateStructureProviderTest {
 
   DigitalGreenCertificateStructureProvider underTest;
 
-  private Writable<WritableOnDisk> digitalGreenCertificates;
+  private DirectoryOnDisk digitalGreenCertificates;
 
   @BeforeEach
   public void setup() throws IOException {
@@ -71,15 +72,19 @@ public class DigitalGreenCertificateStructureProviderTest {
 
   @Test
   void should_create_correct_file_structure() {
-    Assertions.assertEquals("index", digitalGreenCertificates.getName());
-  }
+    assertEquals("ehn-dgc", digitalGreenCertificates.getName());
+    DirectoryOnDisk valueSet = (DirectoryOnDisk) digitalGreenCertificates.getWritables().iterator().next();
+    assertEquals("value-sets", valueSet.getName());
 
-  @Test
-  void should_create_signed_archive() {
-    Collection<String> archiveContent;
+    DirectoryOnDisk en = (DirectoryOnDisk) valueSet.getWritables().iterator().next();
+    assertEquals("en", en.getName());
 
-    archiveContent = ((DirectoryOnDisk) digitalGreenCertificates).getWritables().stream()
+    Writable index = en.getWritables().iterator().next();
+    assertEquals("index", index.getName());
+
+    List<String> archiveContent = ((DistributionArchiveSigningDecorator) index).getWritables().stream()
         .map(Writable::getName).collect(Collectors.toList());
+
     assertThat(archiveContent).containsAll(Set.of("export.bin", "export.sig"));
   }
 }

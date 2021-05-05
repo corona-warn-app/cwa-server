@@ -41,24 +41,24 @@ public class DigitalGreenCertificateStructureProvider {
   /**
    * Returns the publishable archive with the Digital Green Certificates protobuf structure for mobile clients.
    */
-  public Writable<WritableOnDisk> getDigitalGreenCertificates() {
+  public DirectoryOnDisk getDigitalGreenCertificates() {
     return constructArchiveToPublish(distributionServiceConfig.getDigitalGreenCertificate(),
         dgcToProtobufMapping.constructProtobufMapping());
   }
 
-  private <T extends com.google.protobuf.GeneratedMessageV3> Writable<WritableOnDisk> constructArchiveToPublish(
+  private <T extends com.google.protobuf.GeneratedMessageV3> DirectoryOnDisk constructArchiveToPublish(
       DigitalGreenCertificate dgcConfig, ValueSets dgcProto) {
     ArchiveOnDisk archiveToPublish = new ArchiveOnDisk(distributionServiceConfig.getOutputFileName());
     archiveToPublish.addWritable(new FileOnDisk("export.bin", dgcProto.toByteArray()));
-    DirectoryOnDisk enDirectory = new DirectoryOnDisk(dgcConfig.getValuesetsDirectory());
+    DirectoryOnDisk enDirectory = new DirectoryOnDisk("en");
     enDirectory.addWritable(new DistributionArchiveSigningDecorator(
         archiveToPublish, cryptoProvider, distributionServiceConfig));
     DirectoryOnDisk valuesetsDirectory = new DirectoryOnDisk(dgcConfig.getValuesetsDirectory());
     valuesetsDirectory.addWritable(enDirectory);
     DirectoryOnDisk dgcDirectory = new DirectoryOnDisk(dgcConfig.getDgcDirectory());
     dgcDirectory.addWritable(valuesetsDirectory);
-    logger.info("Writing digital green certificate to {}/{}/en/{}.", dgcConfig.getDgcDirectory(),
-        dgcConfig.getDgcDirectory(), distributionServiceConfig.getOutputFileName());
+    logger.info("Writing digital green certificate to {}/{}/en/{}.", dgcDirectory.getName(),
+        valuesetsDirectory.getName(), archiveToPublish.getName());
     return dgcDirectory;
   }
 }
