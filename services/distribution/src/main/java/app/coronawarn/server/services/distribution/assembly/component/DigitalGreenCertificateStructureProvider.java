@@ -45,17 +45,16 @@ public class DigitalGreenCertificateStructureProvider {
 
   private DirectoryOnDisk constructArchiveToPublish(
       DigitalGreenCertificate dgcConfig, ValueSets dgcProto) {
-    ArchiveOnDisk archiveToPublish = new ArchiveOnDisk(distributionServiceConfig.getOutputFileName());
+
+    ArchiveOnDisk archiveToPublish = new ArchiveOnDisk(dgcConfig.getValuesetsFileName());
     archiveToPublish.addWritable(new FileOnDisk("export.bin", dgcProto.toByteArray()));
     DirectoryOnDisk enDirectory = new DirectoryOnDisk("en");
     enDirectory.addWritable(new DistributionArchiveSigningDecorator(
         archiveToPublish, cryptoProvider, distributionServiceConfig));
-    DirectoryOnDisk valuesetsDirectory = new DirectoryOnDisk(dgcConfig.getValuesetsDirectory());
-    valuesetsDirectory.addWritable(enDirectory);
     DirectoryOnDisk dgcDirectory = new DirectoryOnDisk(dgcConfig.getDgcDirectory());
-    dgcDirectory.addWritable(valuesetsDirectory);
-    logger.info("Writing digital green certificate to {}/{}/en/{}.", dgcDirectory.getName(),
-        valuesetsDirectory.getName(), archiveToPublish.getName());
+    dgcDirectory.addWritable(enDirectory);
+    logger.info("Writing digital green certificate to {}/en/{}.", dgcDirectory.getName(),
+        archiveToPublish.getName());
     return dgcDirectory;
   }
 }
