@@ -205,6 +205,7 @@ services:
       medicinal-products-json-path: ${DIGITAL_GREEN_CERTIFICATE_MEDICINAL_PRODUCTS_JSON_PATH:}
       dgc-directory: ${DIGITAL_GREEN_CERTIFICATE_DIRECTORY:ehn-dgc}
       valuesets-file-name: ${DIGITAL_GREEN_CERTIFICATE_VALUESETS_FILE_NAME:value-sets}
+      supported-languages: ${DIGITAL_GREEN_CERTIFICATE_SUPPORTED_LANGUAGES:DE, EN, BG, PL, RO, TR}
 
 spring:
   main:
