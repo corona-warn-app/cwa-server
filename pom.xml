@@ -202,6 +202,18 @@
       </dependency>
       <!-- test scope only -->
       <dependency>
+        <groupId>org.testcontainers</groupId>
+        <artifactId>testcontainers</artifactId>
+        <version>${test-containers.version}</version>
+        <scope>test</scope>
+      </dependency>
+      <dependency>
+        <groupId>org.testcontainers</groupId>
+        <artifactId>junit-jupiter</artifactId>
+        <version>${test-containers.version}</version>
+        <scope>test</scope>
+      </dependency>
+      <dependency>
         <groupId>com.github.tomakehurst</groupId>
         <artifactId>wiremock-jre8</artifactId>
         <version>${wiremock.version}</version>
@@ -521,47 +533,6 @@
           <groupId>org.codehaus.mojo</groupId>
           <artifactId>exec-maven-plugin</artifactId>
           <version>3.0.0</version>
-        </plugin>
-        <plugin>
-          <groupId>io.fabric8</groupId>
-          <artifactId>docker-maven-plugin</artifactId>
-          <version>0.35.0</version>
-          <configuration>
-            <images>
-              <image>
-                <name>zenko/cloudserver</name>
-                <alias>it-s3</alias>
-                <run>
-                  <ports>
-                    <port>8003:8000</port>
-                  </ports>
-                  <env>
-                    <ENDPOINT>objectstore</ENDPOINT>
-                    <REMOTE_MANAGEMENT_DISABLE>1</REMOTE_MANAGEMENT_DISABLE>
-                    <SCALITY_ACCESS_KEY_ID>accessKey1</SCALITY_ACCESS_KEY_ID>
-                    <SCALITY_SECRET_ACCESS_KEY>verySecretKey1</SCALITY_SECRET_ACCESS_KEY>
-                    <S3BACKEND>mem</S3BACKEND>
-                  </env>
-                </run>
-              </image>
-            </images>
-          </configuration>
-          <executions>
-            <execution>
-              <id>start</id>
-              <phase>pre-integration-test</phase>
-              <goals>
-                <goal>start</goal>
-              </goals>
-            </execution>
-            <execution>
-              <id>stop</id>
-              <phase>post-integration-test</phase>
-              <goals>
-                <goal>stop</goal>
-              </goals>
-            </execution>
-          </executions>
         </plugin>
       </plugins>
     </pluginManagement>
