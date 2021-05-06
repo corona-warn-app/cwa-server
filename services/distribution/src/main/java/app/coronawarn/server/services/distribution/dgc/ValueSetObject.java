@@ -8,7 +8,7 @@ public class ValueSetObject {
   private String display;
 
   @JsonProperty("lang")
-  private Language lang;
+  private String lang;
 
   @JsonProperty("active")
   private boolean active;
@@ -30,11 +30,11 @@ public class ValueSetObject {
     this.display = display;
   }
 
-  public Language getLang() {
+  public String getLang() {
     return lang;
   }
 
-  public void setLang(Language lang) {
+  public void setLang(String lang) {
     this.lang = lang;
   }
 

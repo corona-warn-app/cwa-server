@@ -11,7 +11,7 @@ import java.util.Map;
 public class DgcValuesJsonObject {
 
   @JsonProperty("language")
-  private Language language;
+  private String language;
 
   @JsonProperty("vp")
   Map<String, String> vp;
