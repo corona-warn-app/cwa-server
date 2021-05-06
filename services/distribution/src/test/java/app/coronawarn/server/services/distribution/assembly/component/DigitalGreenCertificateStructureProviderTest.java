@@ -80,7 +80,7 @@ public class DigitalGreenCertificateStructureProviderTest {
     DirectoryOnDisk en = (DirectoryOnDisk) valueSet.getWritables().iterator().next();
     assertEquals("en", en.getName());
 
-    Writable index = en.getWritables().iterator().next();
+    Writable<WritableOnDisk> index = en.getWritables().iterator().next();
     assertEquals("index", index.getName());
 
     List<String> archiveContent = ((DistributionArchiveSigningDecorator) index).getWritables().stream()
