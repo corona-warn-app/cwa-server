@@ -34,10 +34,10 @@ public class DigitalGreenCertificateToProtobufMapping {
    *
    * @return The corresponding JSON object.
    */
-  VaccineMahJsonStringObject readMahJson() {
+  VaccineJsonStringObject readMahJson() {
     String path = distributionServiceConfig.getDigitalGreenCertificate().getMahJsonPath();
     return readConfiguredJsonOrDefault(path, "dgc/vaccine-mah.json",
-        VaccineMahJsonStringObject.class);
+        VaccineJsonStringObject.class);
   }
 
   /**
@@ -45,10 +45,10 @@ public class DigitalGreenCertificateToProtobufMapping {
    *
    * @return The corresponding JSON object.
    */
-  VaccineMedicinalProductJsonStringObject readMedicinalProductJson() {
+  VaccineJsonStringObject readMedicinalProductJson() {
     String path = distributionServiceConfig.getDigitalGreenCertificate().getMedicinalProductsJsonPath();
     return readConfiguredJsonOrDefault(path, "dgc/vaccine-medicinal-product.json",
-        VaccineMedicinalProductJsonStringObject.class);
+        VaccineJsonStringObject.class);
   }
 
   /**
@@ -56,10 +56,10 @@ public class DigitalGreenCertificateToProtobufMapping {
    *
    * @return The corresponding JSON object.
    */
-  VaccineProphylaxisJsonStringObject readProphylaxisJson() {
+  VaccineJsonStringObject readProphylaxisJson() {
     String path = distributionServiceConfig.getDigitalGreenCertificate().getProphylaxisJsonPath();
     return readConfiguredJsonOrDefault(path, "dgc/vaccine-prophylaxis.json",
-        VaccineProphylaxisJsonStringObject.class);
+        VaccineJsonStringObject.class);
   }
 
   /**
@@ -100,7 +100,8 @@ public class DigitalGreenCertificateToProtobufMapping {
       return deserializeJsonToSimpleType(jsonStream, rawType);
     } catch (IOException e) {
       logger.error("We could not load the default {}. This shouldn't happen!", defaultPath, e);
-      throw new RuntimeException(e);
+      throw new RuntimeException("We could not load the default " + defaultPath
+          + ". This shouldn't happen!", e);
     }
   }
 }

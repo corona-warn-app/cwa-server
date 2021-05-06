@@ -43,7 +43,7 @@ class DigitalGreenCertificateJsonToProtobufTest {
     ValueSetObject actual = result.getValueSetValues().get("ORG-100001699");
     assertThat(actual.getDisplay()).isEqualTo("AstraZeneca AB");
     assertThat(actual.getLang()).isEqualTo(Language.EN);
-    assertThat(actual.isActive()).isEqualTo(true);
+    assertThat(actual.isActive()).isTrue();
     assertThat(actual.getVersion()).isEmpty();
     assertThat(actual.getSystem()).isEqualTo("https://spor.ema.europa.eu/v1/organisations");
   }
@@ -61,7 +61,7 @@ class DigitalGreenCertificateJsonToProtobufTest {
     ValueSetObject actual = result.getValueSetValues().get(("EU/1/20/1525"));
     assertThat(actual.getDisplay()).isEqualTo("COVID-19 Vaccine Janssen");
     assertThat(actual.getLang()).isEqualTo(Language.EN);
-    assertThat(actual.isActive()).isEqualTo(true);
+    assertThat(actual.isActive()).isTrue();
     assertThat(actual.getVersion()).isEmpty();
     assertThat(actual.getSystem()).isEqualTo("https://ec.europa.eu/health/documents/community-register/html/");
   }
@@ -78,7 +78,7 @@ class DigitalGreenCertificateJsonToProtobufTest {
     ValueSetObject actual = result.getValueSetValues().get("1119305005");
     assertThat(actual.getDisplay()).isEqualTo("SARS-CoV-2 antigen vaccine");
     assertThat(actual.getLang()).isEqualTo(Language.EN);
-    assertThat(actual.isActive()).isEqualTo(true);
+    assertThat(actual.isActive()).isTrue();
     assertThat(actual.getVersion()).isEqualTo("http://snomed.info/sct/900000000000207008/version/20210131");
     assertThat(actual.getSystem()).isEqualTo("http://snomed.info/sct");
   }

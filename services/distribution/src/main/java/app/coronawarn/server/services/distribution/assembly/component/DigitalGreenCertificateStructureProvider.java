@@ -1,8 +1,6 @@
 package app.coronawarn.server.services.distribution.assembly.component;
 
 import app.coronawarn.server.common.protocols.internal.dgc.ValueSets;
-import app.coronawarn.server.services.distribution.assembly.structure.Writable;
-import app.coronawarn.server.services.distribution.assembly.structure.WritableOnDisk;
 import app.coronawarn.server.services.distribution.assembly.structure.archive.ArchiveOnDisk;
 import app.coronawarn.server.services.distribution.assembly.structure.archive.decorator.signing.DistributionArchiveSigningDecorator;
 import app.coronawarn.server.services.distribution.assembly.structure.directory.DirectoryOnDisk;
@@ -10,7 +8,6 @@ import app.coronawarn.server.services.distribution.assembly.structure.file.FileO
 import app.coronawarn.server.services.distribution.config.DistributionServiceConfig;
 import app.coronawarn.server.services.distribution.config.DistributionServiceConfig.DigitalGreenCertificate;
 import app.coronawarn.server.services.distribution.dgc.DigitalGreenCertificateToProtobufMapping;
-import app.coronawarn.server.services.distribution.runner.Assembly;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
@@ -46,7 +43,7 @@ public class DigitalGreenCertificateStructureProvider {
         dgcToProtobufMapping.constructProtobufMapping());
   }
 
-  private <T extends com.google.protobuf.GeneratedMessageV3> DirectoryOnDisk constructArchiveToPublish(
+  private DirectoryOnDisk constructArchiveToPublish(
       DigitalGreenCertificate dgcConfig, ValueSets dgcProto) {
     ArchiveOnDisk archiveToPublish = new ArchiveOnDisk(distributionServiceConfig.getOutputFileName());
     archiveToPublish.addWritable(new FileOnDisk("export.bin", dgcProto.toByteArray()));

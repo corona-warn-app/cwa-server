@@ -1,18 +1,14 @@
 package app.coronawarn.server.services.distribution.dgc;
 
-
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import java.time.LocalDate;
-import java.util.Date;
-import java.util.List;
 import java.util.Map;
 
 @JsonInclude(Include.NON_NULL)
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class VaccineProphylaxisJsonStringObject {
+public class VaccineJsonStringObject {
 
   @JsonProperty("valueSetId")
   private String valueSetId;
@@ -27,23 +23,11 @@ public class VaccineProphylaxisJsonStringObject {
     return valueSetId;
   }
 
-  public void setValueSetId(String valueSetId) {
-    this.valueSetId = valueSetId;
-  }
-
   public String getValueSetDate() {
     return valueSetDate;
   }
 
-  public void setValueSetDate(String valueSetDate) {
-    this.valueSetDate = valueSetDate;
-  }
-
   public Map<String, ValueSetObject> getValueSetValues() {
     return valueSetValues;
-  }
-
-  public void setValueSetValues(Map<String, ValueSetObject> valueSetValues) {
-    this.valueSetValues = valueSetValues;
   }
 }

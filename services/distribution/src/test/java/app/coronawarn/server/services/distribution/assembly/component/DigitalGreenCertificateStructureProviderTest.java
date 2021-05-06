@@ -32,7 +32,8 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 @EnableConfigurationProperties(value = {DistributionServiceConfig.class})
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration(
-    classes = {DigitalGreenCertificateToProtobufMapping.class, CryptoProvider.class},
+    classes = {DigitalGreenCertificateToProtobufMapping.class, CryptoProvider.class,
+        DistributionServiceConfig.class},
     initializers = ConfigDataApplicationContextInitializer.class)
 public class DigitalGreenCertificateStructureProviderTest {
 
