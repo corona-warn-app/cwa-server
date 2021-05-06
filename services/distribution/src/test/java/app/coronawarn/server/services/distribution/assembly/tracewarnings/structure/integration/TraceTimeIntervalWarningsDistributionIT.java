@@ -1,8 +1,5 @@
 package app.coronawarn.server.services.distribution.assembly.tracewarnings.structure.integration;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Mockito.when;
-
 import app.coronawarn.server.common.persistence.service.TraceTimeIntervalWarningService;
 import app.coronawarn.server.common.persistence.service.utils.checkins.CheckinsDateSpecification;
 import app.coronawarn.server.common.protocols.internal.SubmissionPayload.SubmissionType;
@@ -17,14 +14,6 @@ import app.coronawarn.server.services.distribution.assembly.structure.util.Immut
 import app.coronawarn.server.services.distribution.assembly.structure.util.TimeUtils;
 import app.coronawarn.server.services.distribution.common.Helpers;
 import app.coronawarn.server.services.distribution.objectstore.ObjectStoreAccess;
-import java.io.File;
-import java.time.LocalDateTime;
-import java.time.ZoneOffset;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Set;
-import java.util.stream.Collectors;
-import java.util.stream.IntStream;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.Rule;
 import org.junit.jupiter.api.BeforeEach;
@@ -38,12 +27,22 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.cloud.vault.config.VaultAutoConfiguration;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
+import java.io.File;
+import java.time.LocalDateTime;
+import java.time.ZoneOffset;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
-@ContextConfiguration(classes = {
-    Application.class}, initializers = ConfigDataApplicationContextInitializer.class)
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.when;
+
+@ContextConfiguration(classes = {Application.class}, initializers = ConfigDataApplicationContextInitializer.class)
 @ExtendWith(SpringExtension.class)
 @EnableAutoConfiguration(exclude = VaultAutoConfiguration.class)
-public class TraceTimeIntervalWarningsDistributionIT {
+class TraceTimeIntervalWarningsDistributionIT {
 
   @Autowired
   private TraceTimeIntervalWarningService traceTimeIntervalWarningService;

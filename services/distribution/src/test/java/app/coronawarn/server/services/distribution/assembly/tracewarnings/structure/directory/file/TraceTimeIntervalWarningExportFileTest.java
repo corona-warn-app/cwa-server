@@ -1,5 +1,8 @@
 package app.coronawarn.server.services.distribution.assembly.tracewarnings.structure.directory.file;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.when;
+
 import app.coronawarn.server.common.persistence.domain.TraceTimeIntervalWarning;
 import app.coronawarn.server.services.distribution.assembly.structure.WritableOnDisk;
 import app.coronawarn.server.services.distribution.assembly.structure.directory.Directory;
@@ -8,6 +11,11 @@ import app.coronawarn.server.services.distribution.assembly.structure.util.Immut
 import app.coronawarn.server.services.distribution.assembly.tracewarnings.structure.file.TraceTimeIntervalWarningExportFile;
 import app.coronawarn.server.services.distribution.config.DistributionServiceConfig;
 import app.coronawarn.server.services.distribution.config.DistributionServiceConfig.TekExport;
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.util.Collections;
+import java.util.List;
 import org.junit.Rule;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -15,17 +23,9 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.rules.TemporaryFolder;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import java.io.File;
-import java.io.IOException;
-import java.nio.file.Files;
-import java.util.Collections;
-import java.util.List;
-
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
-public class TraceTimeIntervalWarningExportFileTest {
+class TraceTimeIntervalWarningExportFileTest {
 
   public static final String FILE_NAME_CHECKSUM = "fileName.checksum";
   public static final String FILE_NAME = "fileName";
@@ -45,7 +45,7 @@ public class TraceTimeIntervalWarningExportFileTest {
   }
 
   @Test
-  public void fromTraceTimeIntervalWarningsShouldReturnNewInstance() throws Exception {
+  void fromTraceTimeIntervalWarningsShouldReturnNewInstance() throws Exception {
     //given
     List<TraceTimeIntervalWarning> traceTimeWarnings = Collections.emptyList();
     String country = "DE";

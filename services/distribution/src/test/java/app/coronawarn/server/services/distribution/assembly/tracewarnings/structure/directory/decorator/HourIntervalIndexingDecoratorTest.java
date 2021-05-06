@@ -79,8 +79,8 @@ class HourIntervalIndexingDecoratorTest {
     //then
     final JSONObject jsonObject = objectMapper.readValue(indexFile.getBytes(), JSONObject.class);
     Assertions.assertThat(jsonObject.size()).isEqualTo(2);
-    Assertions.assertThat(jsonObject.get("oldest")).isEqualTo(null);
-    Assertions.assertThat(jsonObject.get("latest")).isEqualTo(null);
+    Assertions.assertThat(jsonObject.get("oldest")).isNull();
+    Assertions.assertThat(jsonObject.get("latest")).isNull();
   }
 
   private static Stream<List<Optional<Integer>>> createOldestAndLatest() {
