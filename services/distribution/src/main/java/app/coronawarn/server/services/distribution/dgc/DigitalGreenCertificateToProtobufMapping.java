@@ -11,12 +11,12 @@ import java.io.InputStream;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
-import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ResourceLoader;
 import org.springframework.stereotype.Component;
+import org.springframework.util.ObjectUtils;
 
 @Component
 public class DigitalGreenCertificateToProtobufMapping {
@@ -88,7 +88,7 @@ public class DigitalGreenCertificateToProtobufMapping {
   }
 
   private <T> T readConfiguredJsonOrDefault(String path, String defaultPath, Class<T> rawType) {
-    if (!StringUtils.isEmpty(path)) {
+    if (!ObjectUtils.isEmpty(path)) {
       try (InputStream jsonStream = resourceLoader.getResource(path).getInputStream()) {
         return deserializeJsonToSimpleType(jsonStream, rawType);
       } catch (IOException e) {
