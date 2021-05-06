@@ -7,6 +7,7 @@ import app.coronawarn.server.services.distribution.assembly.structure.directory.
 import app.coronawarn.server.services.distribution.assembly.structure.file.FileOnDisk;
 import app.coronawarn.server.services.distribution.config.DistributionServiceConfig;
 import app.coronawarn.server.services.distribution.config.DistributionServiceConfig.DigitalGreenCertificate;
+import app.coronawarn.server.services.distribution.dgc.DefaultValuesetsMissingException;
 import app.coronawarn.server.services.distribution.dgc.DigitalGreenCertificateToProtobufMapping;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -39,8 +40,13 @@ public class DigitalGreenCertificateStructureProvider {
    * Returns the publishable archive with the Digital Green Certificates protobuf structure for mobile clients.
    */
   public DirectoryOnDisk getDigitalGreenCertificates() {
-    return constructArchiveToPublish(distributionServiceConfig.getDigitalGreenCertificate(),
-        dgcToProtobufMapping.constructProtobufMapping());
+    try {
+      return constructArchiveToPublish(distributionServiceConfig.getDigitalGreenCertificate(),
+          dgcToProtobufMapping.constructProtobufMapping());
+    } catch (DefaultValuesetsMissingException e) {
+      logger.error("We don't generate a valuesets file and this shouldn't override existing ones.", e);
+      return new DirectoryOnDisk("");
+    }
   }
 
   private DirectoryOnDisk constructArchiveToPublish(

@@ -32,7 +32,7 @@ class DigitalGreenCertificateJsonToProtobufTest {
   }
 
   @Test
-  void shouldReadDefaultMahJsonIfNotConfigured() {
+  void shouldReadDefaultMahJsonIfNotConfigured() throws DefaultValuesetsMissingException {
     var result = dgcToProtobufMapping.readMahJson();
 
     assertThat(result.getValueSetId()).isEqualTo("vaccines-covid-19-auth-holders");
@@ -50,7 +50,7 @@ class DigitalGreenCertificateJsonToProtobufTest {
 
 
   @Test
-  void shouldReadDefaultMProductJsonIfNotConfigured() {
+  void shouldReadDefaultMProductJsonIfNotConfigured() throws DefaultValuesetsMissingException {
     var result = dgcToProtobufMapping.readMedicinalProductJson();
 
     assertThat(result.getValueSetId()).isEqualTo("vaccines-covid-19-names");
@@ -67,7 +67,7 @@ class DigitalGreenCertificateJsonToProtobufTest {
   }
 
   @Test
-  void shouldReadDefaultProphylaxisJsonIfNotConfigured() {
+  void shouldReadDefaultProphylaxisJsonIfNotConfigured() throws DefaultValuesetsMissingException {
     var result = dgcToProtobufMapping.readProphylaxisJson();
 
     assertThat(result.getValueSetId()).isEqualTo("sct-vaccines-covid-19");
