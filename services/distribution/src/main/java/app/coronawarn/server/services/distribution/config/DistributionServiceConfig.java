@@ -1489,7 +1489,7 @@ public class DistributionServiceConfig {
     private String dgcDirectory;
 
     @Pattern(regexp = CHAR_AND_NUMBER_REGEX)
-    private String valuesetsDirectory;
+    private String valuesetsFileName;
 
     public String getMahJsonPath() {
       return mahJsonPath;
@@ -1523,12 +1523,12 @@ public class DistributionServiceConfig {
       this.dgcDirectory = dgcDirectory;
     }
 
-    public String getValuesetsDirectory() {
-      return valuesetsDirectory;
+    public String getValuesetsFileName() {
+      return valuesetsFileName;
     }
 
-    public void setValuesetsDirectory(String valuesetsDirectory) {
-      this.valuesetsDirectory = valuesetsDirectory;
+    public void setValuesetsFileName(String valuesetsFileName) {
+      this.valuesetsFileName = valuesetsFileName;
     }
   }
 }
