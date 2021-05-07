@@ -119,3 +119,8 @@ qr-code-descriptors:
     #   * >= 0
     encoded-payload-group-index: 1
     payload-encoding: 1 # BASE64
+  -
+    regex-pattern: https://app\.luca-app\.de/webapp/.*#.*/CWA(\d+)/(.+)
+    version-group-index: 0
+    encoded-payload-group-index: 1
+    payload-encoding: 1 # BASE64
