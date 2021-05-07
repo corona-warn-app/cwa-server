@@ -14,10 +14,12 @@ import app.coronawarn.server.services.distribution.config.DistributionServiceCon
 import app.coronawarn.server.services.distribution.dgc.DigitalGreenCertificateToProtobufMapping;
 import java.io.File;
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 import org.junit.Rule;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -74,16 +76,16 @@ class DigitalGreenCertificateStructureProviderTest {
   @Test
   void should_create_correct_file_structure() {
     assertEquals("ehn-dgc", digitalGreenCertificates.getName());
-
-    DirectoryOnDisk en = (DirectoryOnDisk) digitalGreenCertificates.getWritables().iterator().next();
-    assertEquals("en", en.getName());
-
-    Writable<WritableOnDisk> valueSet = en.getWritables().iterator().next();
-    assertEquals("value-sets", valueSet.getName());
-
-    List<String> archiveContent = ((DistributionArchiveSigningDecorator) valueSet).getWritables().stream()
-        .map(Writable::getName).collect(Collectors.toList());
-
-    assertThat(archiveContent).containsAll(Set.of("export.bin", "export.sig"));
+    List<String> supportedLanguages = digitalGreenCertificates.getWritables().stream().map(Writable::getName).collect(
+        Collectors.toList());
+    List<String> expectedLanguages = Arrays.asList("DE", "EN", "BG", "PL", "RO", "TR");
+    Assertions.assertTrue(supportedLanguages.containsAll(expectedLanguages));
+    for (Writable directory: (digitalGreenCertificates.getWritables())) {
+      Writable <WritableOnDisk> valueSet = ((DirectoryOnDisk) directory).getWritables().iterator().next();
+      assertEquals("value-sets", valueSet.getName());
+      List<String> archiveContent = ((DistributionArchiveSigningDecorator) valueSet).getWritables().stream()
+          .map(Writable::getName).collect(Collectors.toList());
+      assertThat(archiveContent).containsAll(Set.of("export.bin", "export.sig"));
+    }
   }
 }

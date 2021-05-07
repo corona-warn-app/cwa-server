@@ -52,13 +52,10 @@ public class DigitalGreenCertificateStructureProvider {
 
     DirectoryOnDisk dgcDirectory = new DirectoryOnDisk(dgcConfig.getDgcDirectory());
 
-    for(int i = 0; i <= dgcConfig.getSupportedLanguages().length; i++) {
-      String currentLanguage = dgcConfig.getSupportedLanguages()[i];
-
+    for (String currentLanguage: dgcConfig.getSupportedLanguages()) {
       ArchiveOnDisk archiveToPublish = new ArchiveOnDisk(dgcConfig.getValuesetsFileName());
       archiveToPublish.addWritable(new FileOnDisk("export.bin",
           dgcToProtobufMapping.constructProtobufMapping().toByteArray()));
-
       DirectoryOnDisk languageDirectory = new DirectoryOnDisk(currentLanguage);
       languageDirectory.addWritable(new DistributionArchiveSigningDecorator(
           archiveToPublish, cryptoProvider, distributionServiceConfig));
