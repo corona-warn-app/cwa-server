@@ -13,7 +13,7 @@ Before submitting, please take the time to check the points below and provide so
 ## Checklist
 
 * [ ] Test your changes as thoroughly as possible before you commit them. Preferably, automate your test by unit/integration tests.
-* [ ] Make sure `mvn -P integration-tests clean verify` runs for the whole project and, if you touched any code for a service in the `services` folder, ensure it can be run with `spring-boot:run`
+* [ ] Make sure `mvn -P integration-test clean verify` runs for the whole project and, if you touched any code for a service in the `services` folder, ensure it can be run with `spring-boot:run`
 
 ## Description
 
