@@ -204,7 +204,7 @@ services:
       prophylaxis-json-path: ${DIGITAL_GREEN_CERTIFICATE_PROPHYLAXIS_JSON_PATH:}
       medicinal-products-json-path: ${DIGITAL_GREEN_CERTIFICATE_MEDICINAL_PRODUCTS_JSON_PATH:}
       dgc-directory: ${DIGITAL_GREEN_CERTIFICATE_DIRECTORY:ehn-dgc}
-      valuesetsDirectory: ${DIGITAL_GREEN_CERTIFICATE_VALUESETS_DIRECTORY:value-sets}
+      valuesets-file-name: ${DIGITAL_GREEN_CERTIFICATE_VALUESETS_FILE_NAME:value-sets}
 
 spring:
   main:

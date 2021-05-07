@@ -76,7 +76,7 @@ public abstract class LocalFile {
    *     <a href="https://www.iana.org/assignments/media-types/application/json">json</a>.
    */
   public String getContentType() {
-    if (isConfigFile() || isStatisticFile() || isKeyFile() || isQrPosterTemplate()) {
+    if (isConfigFile() || isStatisticFile() || isKeyFile() || isQrPosterTemplate() || isVaccineValueSet()) {
       return "application/zip";
     }
     // list of versions, dates, hours
@@ -103,5 +103,9 @@ public abstract class LocalFile {
 
   private boolean isStatisticFile() {
     return s3Key.endsWith("stats");
+  }
+
+  private boolean isVaccineValueSet() {
+    return s3Key.endsWith("value-sets");
   }
 }
