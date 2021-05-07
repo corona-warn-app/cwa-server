@@ -1,6 +1,5 @@
 package app.coronawarn.server.services.distribution.assembly.component;
 
-import app.coronawarn.server.common.protocols.internal.dgc.ValueSets;
 import app.coronawarn.server.services.distribution.assembly.structure.archive.ArchiveOnDisk;
 import app.coronawarn.server.services.distribution.assembly.structure.archive.decorator.signing.DistributionArchiveSigningDecorator;
 import app.coronawarn.server.services.distribution.assembly.structure.directory.DirectoryOnDisk;
@@ -41,26 +40,32 @@ public class DigitalGreenCertificateStructureProvider {
    */
   public DirectoryOnDisk getDigitalGreenCertificates() {
     try {
-      return constructArchiveToPublish(distributionServiceConfig.getDigitalGreenCertificate(),
-          dgcToProtobufMapping.constructProtobufMapping());
+      return constructArchiveToPublish(distributionServiceConfig.getDigitalGreenCertificate());
     } catch (DefaultValuesetsMissingException e) {
       logger.error("We don't generate a valuesets file and this shouldn't override existing ones.", e);
       return new DirectoryOnDisk("");
     }
   }
 
-  private DirectoryOnDisk constructArchiveToPublish(
-      DigitalGreenCertificate dgcConfig, ValueSets dgcProto) {
+  private DirectoryOnDisk constructArchiveToPublish(DigitalGreenCertificate dgcConfig)
+      throws DefaultValuesetsMissingException {
 
-    ArchiveOnDisk archiveToPublish = new ArchiveOnDisk(dgcConfig.getValuesetsFileName());
-    archiveToPublish.addWritable(new FileOnDisk("export.bin", dgcProto.toByteArray()));
-    DirectoryOnDisk enDirectory = new DirectoryOnDisk("en");
-    enDirectory.addWritable(new DistributionArchiveSigningDecorator(
-        archiveToPublish, cryptoProvider, distributionServiceConfig));
     DirectoryOnDisk dgcDirectory = new DirectoryOnDisk(dgcConfig.getDgcDirectory());
-    dgcDirectory.addWritable(enDirectory);
-    logger.info("Writing digital green certificate to {}/en/{}.", dgcDirectory.getName(),
-        archiveToPublish.getName());
+
+    for(int i = 0; i <= dgcConfig.getSupportedLanguages().length; i++) {
+      String currentLanguage = dgcConfig.getSupportedLanguages()[i];
+
+      ArchiveOnDisk archiveToPublish = new ArchiveOnDisk(dgcConfig.getValuesetsFileName());
+      archiveToPublish.addWritable(new FileOnDisk("export.bin",
+          dgcToProtobufMapping.constructProtobufMapping().toByteArray()));
+
+      DirectoryOnDisk languageDirectory = new DirectoryOnDisk(currentLanguage);
+      languageDirectory.addWritable(new DistributionArchiveSigningDecorator(
+          archiveToPublish, cryptoProvider, distributionServiceConfig));
+      dgcDirectory.addWritable(languageDirectory);
+      logger.info("Writing digital green certificate to {}/{}/{}.", dgcDirectory.getName(), currentLanguage,
+          archiveToPublish.getName());
+    }
     return dgcDirectory;
   }
 }

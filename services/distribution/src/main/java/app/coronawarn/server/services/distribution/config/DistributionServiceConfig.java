@@ -1493,9 +1493,7 @@ public class DistributionServiceConfig {
     @Pattern(regexp = CHAR_AND_NUMBER_REGEX)
     private String valuesetsFileName;
 
-    @NotNull
-    @Pattern(regexp = CHAR_AND_NUMBER_REGEX)
-    private String supportedLanguages;
+    private String[] supportedLanguages;
 
     public String getMahJsonPath() {
       return mahJsonPath;
@@ -1535,6 +1533,14 @@ public class DistributionServiceConfig {
 
     public void setValuesetsFileName(String valuesetsFileName) {
       this.valuesetsFileName = valuesetsFileName;
+    }
+
+    public String[] getSupportedLanguages() {
+      return supportedLanguages;
+    }
+
+    public void setSupportedLanguages(String[] supportedLanguages) {
+      this.supportedLanguages = supportedLanguages;
     }
   }
 }
