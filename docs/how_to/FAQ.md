@@ -31,8 +31,8 @@ Syntax error: Unterminated quoted string
 * Remove `<os.detected.classifier>osx-x86_64</os.detected.classifier>` in pom.xml.
 
  ```text
-1 problem was encountered while building the effective model for org.opencwa:persistence:${revision}
-[ERROR] 'dependencies.dependency.version' for org.opencwa:protocols:jar must be a valid version but is '${revision}'. @
+1 problem was encountered while building the effective model for app.coronawarn.server:persistence:${revision}
+[ERROR] 'dependencies.dependency.version' for app.coronawarn.server:protocols:jar must be a valid version but is '${revision}'. @
  (org.codehaus.mojo:flatten-maven-plugin:1.2.5:flatten:flatten:process-resources)
 ```
 
