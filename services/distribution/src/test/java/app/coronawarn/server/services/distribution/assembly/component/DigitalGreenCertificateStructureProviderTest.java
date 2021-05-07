@@ -35,7 +35,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
     classes = {DigitalGreenCertificateToProtobufMapping.class, CryptoProvider.class,
         DistributionServiceConfig.class},
     initializers = ConfigDataApplicationContextInitializer.class)
-public class DigitalGreenCertificateStructureProviderTest {
+class DigitalGreenCertificateStructureProviderTest {
 
   private static final String PARENT_TEST_FOLDER = "parent";
 
@@ -74,16 +74,14 @@ public class DigitalGreenCertificateStructureProviderTest {
   @Test
   void should_create_correct_file_structure() {
     assertEquals("ehn-dgc", digitalGreenCertificates.getName());
-    DirectoryOnDisk valueSet = (DirectoryOnDisk) digitalGreenCertificates.getWritables().iterator().next();
-    assertEquals("value-sets", valueSet.getName());
 
-    DirectoryOnDisk en = (DirectoryOnDisk) valueSet.getWritables().iterator().next();
+    DirectoryOnDisk en = (DirectoryOnDisk) digitalGreenCertificates.getWritables().iterator().next();
     assertEquals("en", en.getName());
 
-    Writable<WritableOnDisk> index = en.getWritables().iterator().next();
-    assertEquals("index", index.getName());
+    Writable<WritableOnDisk> valueSet = en.getWritables().iterator().next();
+    assertEquals("value-sets", valueSet.getName());
 
-    List<String> archiveContent = ((DistributionArchiveSigningDecorator) index).getWritables().stream()
+    List<String> archiveContent = ((DistributionArchiveSigningDecorator) valueSet).getWritables().stream()
         .map(Writable::getName).collect(Collectors.toList());
 
     assertThat(archiveContent).containsAll(Set.of("export.bin", "export.sig"));
