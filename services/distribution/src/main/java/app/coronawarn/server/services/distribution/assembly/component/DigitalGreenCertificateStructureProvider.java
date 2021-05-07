@@ -55,7 +55,7 @@ public class DigitalGreenCertificateStructureProvider {
     for (String currentLanguage: dgcConfig.getSupportedLanguages()) {
       ArchiveOnDisk archiveToPublish = new ArchiveOnDisk(dgcConfig.getValuesetsFileName());
       archiveToPublish.addWritable(new FileOnDisk("export.bin",
-          dgcToProtobufMapping.constructProtobufMapping().toByteArray()));
+          dgcToProtobufMapping.constructProtobufMapping(currentLanguage).toByteArray()));
       DirectoryOnDisk languageDirectory = new DirectoryOnDisk(currentLanguage);
       languageDirectory.addWritable(new DistributionArchiveSigningDecorator(
           archiveToPublish, cryptoProvider, distributionServiceConfig));

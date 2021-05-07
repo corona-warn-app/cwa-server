@@ -67,7 +67,7 @@ public class DigitalGreenCertificateToProtobufMapping {
    *
    * @return the protobuf filled with values from JSON.
    */
-  public ValueSets constructProtobufMapping() throws DefaultValuesetsMissingException {
+  public ValueSets constructProtobufMapping(String language) throws DefaultValuesetsMissingException {
     List<ValueSetItem> mahItems = toValueSetItems(readMahJson().getValueSetValues());
     List<ValueSetItem> productItems = toValueSetItems(readMedicinalProductJson().getValueSetValues());
     List<ValueSetItem> prophylaxisItems = toValueSetItems(readProphylaxisJson().getValueSetValues());
