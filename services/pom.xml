@@ -4,12 +4,13 @@
 
   <parent>
     <artifactId>server</artifactId>
-    <groupId>org.opencwa</groupId>
+    <groupId>app.coronawarn.server</groupId>
     <version>${revision}</version>
     <relativePath>../pom.xml</relativePath>
   </parent>
 
   <artifactId>services</artifactId>
+
   <packaging>pom</packaging>
 
   <modules>
@@ -42,15 +43,15 @@
       </exclusions>
     </dependency>
     <dependency>
-      <groupId>org.opencwa</groupId>
+      <groupId>${project.parent.groupId}</groupId>
       <artifactId>persistence</artifactId>
     </dependency>
     <dependency>
-      <groupId>org.opencwa</groupId>
+      <groupId>${project.parent.groupId}</groupId>
       <artifactId>protocols</artifactId>
     </dependency>
     <dependency>
-      <groupId>org.opencwa</groupId>
+      <groupId>${project.parent.groupId}</groupId>
       <artifactId>federation</artifactId>
     </dependency>
     <dependency>
