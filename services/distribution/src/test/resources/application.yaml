@@ -166,7 +166,7 @@ services:
       prophylaxis-json-path:
       medicinal-products-json-path:
       dgc-directory: ehn-dgc
-      valuesetsDirectory: value-sets
+      valuesets-file-name: value-sets
 
 spring:
   main:
