@@ -1,6 +1,5 @@
 package app.coronawarn.server.services.submission.checkins;
 
-import static org.junit.Assert.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import app.coronawarn.server.common.persistence.domain.TraceTimeIntervalWarning;
@@ -19,16 +18,16 @@ import java.util.stream.StreamSupport;
 import org.junit.Assert;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.test.annotation.DirtiesContext;
+import org.springframework.test.context.ActiveProfiles;
 
 @SpringBootTest
 @DirtiesContext
+@ActiveProfiles("integration-test")
 class EventCheckinsFacadeIT {
 
   private static final int CORRECT_TRL = 1;
