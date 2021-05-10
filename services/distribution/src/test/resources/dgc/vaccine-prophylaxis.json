@@ -1,0 +1,20 @@
+{
+  "valueSetId": "sct-vaccines-covid-21",
+  "valueSetDate": "2021-05-10",
+  "valueSetValues": {
+    "1119349007": {
+      "display": "SARS-CoV-2 mRNA vaccine",
+      "lang": "en",
+      "active": true,
+      "version": "http://snomed.info/sct/900000000000207008/version/20210131",
+      "system": "http://snomed.info/sct"
+    },
+    "11193050094": {
+      "display": "SARS-CoV-2 antigen Vaccine",
+      "lang": "es",
+      "active": true,
+      "version": "http://snomed.info/sct/900000000000207008/version/20210131",
+      "system": "http://snomed.info/sct"
+    }
+  }
+}

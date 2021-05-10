@@ -11,6 +11,7 @@ import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.ConfigDataApplicationContextInitializer;
+import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
@@ -18,6 +19,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration(classes = {DistributionServiceConfig.class, DigitalGreenCertificateToProtobufMapping.class},
     initializers = ConfigDataApplicationContextInitializer.class)
+@DirtiesContext
 class DigitalGreenCertificateJsonToProtobufTest {
 
   @Autowired
@@ -82,4 +84,25 @@ class DigitalGreenCertificateJsonToProtobufTest {
     assertThat(actual.getVersion()).isEqualTo("http://snomed.info/sct/900000000000207008/version/20210131");
     assertThat(actual.getSystem()).isEqualTo("http://snomed.info/sct");
   }
+
+  @Test
+  void shouldReadConfiguredProphylaxisJson() throws DefaultValuesetsMissingException {
+
+    distributionServiceConfig.getDigitalGreenCertificate().setProphylaxisJsonPath("src/test/resources/dgc/vaccine-prophylaxis.json");
+
+    var result = dgcToProtobufMapping.readProphylaxisJson();
+
+    assertThat(result.getValueSetId()).isEqualTo("sct-vaccines-covid-21");
+    assertThat(result.getValueSetDate()).isEqualTo("2021-05-10");
+    assertThat(result.getValueSetValues()).hasSize(2);
+
+    // assert at least one value
+    ValueSetObject actual = result.getValueSetValues().get("11193050094");
+    assertThat(actual.getDisplay()).isEqualTo("SARS-CoV-2 antigen Vaccine");
+    assertThat(actual.getLang()).isEqualTo("es");
+    assertThat(actual.isActive()).isTrue();
+    assertThat(actual.getVersion()).isEqualTo("http://snomed.info/sct/900000000000207008/version/20210131");
+    assertThat(actual.getSystem()).isEqualTo("http://snomed.info/sct");
+  }
+
 }
