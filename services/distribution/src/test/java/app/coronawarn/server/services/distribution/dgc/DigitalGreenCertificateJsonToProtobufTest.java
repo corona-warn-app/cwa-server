@@ -19,7 +19,6 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration(classes = {DistributionServiceConfig.class, DigitalGreenCertificateToProtobufMapping.class},
     initializers = ConfigDataApplicationContextInitializer.class)
-@DirtiesContext
 class DigitalGreenCertificateJsonToProtobufTest {
 
   @Autowired
@@ -86,10 +85,9 @@ class DigitalGreenCertificateJsonToProtobufTest {
   }
 
   @Test
+  @DirtiesContext
   void shouldReadConfiguredProphylaxisJson() throws DefaultValuesetsMissingException {
-
-    distributionServiceConfig.getDigitalGreenCertificate().setProphylaxisJsonPath("src/test/resources/dgc/vaccine-prophylaxis.json");
-
+    distributionServiceConfig.getDigitalGreenCertificate().setProphylaxisJsonPath("src/test/resources/dgc/vaccine-prophylaxis-test.json");
     var result = dgcToProtobufMapping.readProphylaxisJson();
 
     assertThat(result.getValueSetId()).isEqualTo("sct-vaccines-covid-21");
