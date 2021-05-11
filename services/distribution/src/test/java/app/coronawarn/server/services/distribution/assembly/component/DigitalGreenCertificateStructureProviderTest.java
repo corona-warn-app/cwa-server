@@ -2,7 +2,6 @@ package app.coronawarn.server.services.distribution.assembly.component;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
 
 import app.coronawarn.server.services.distribution.assembly.structure.Writable;
@@ -12,7 +11,6 @@ import app.coronawarn.server.services.distribution.assembly.structure.directory.
 import app.coronawarn.server.services.distribution.assembly.structure.directory.DirectoryOnDisk;
 import app.coronawarn.server.services.distribution.assembly.structure.util.ImmutableStack;
 import app.coronawarn.server.services.distribution.config.DistributionServiceConfig;
-import app.coronawarn.server.services.distribution.dgc.DefaultValuesetsMissingException;
 import app.coronawarn.server.services.distribution.dgc.DigitalGreenCertificateToProtobufMapping;
 import java.io.File;
 import java.io.IOException;
@@ -49,9 +47,6 @@ class DigitalGreenCertificateStructureProviderTest {
   @Autowired
   CryptoProvider cryptoProvider;
 
-  @MockBean
-  DigitalGreenCertificateToProtobufMapping dgcToProtobufMappingMock;
-
   @Autowired
   DigitalGreenCertificateToProtobufMapping dgcToProtobufMapping;
 
@@ -60,10 +55,6 @@ class DigitalGreenCertificateStructureProviderTest {
 
   @Rule
   TemporaryFolder testOutputFolder = new TemporaryFolder();
-
-  DigitalGreenCertificateStructureProvider underTest;
-
-  private DirectoryOnDisk digitalGreenCertificates;
 
   @BeforeEach
   public void setup() throws IOException {
@@ -76,9 +67,9 @@ class DigitalGreenCertificateStructureProviderTest {
 
   @Test
   void should_create_correct_file_structure() {
-    underTest = new DigitalGreenCertificateStructureProvider(distributionServiceConfig, cryptoProvider,
-        dgcToProtobufMapping);
-    digitalGreenCertificates = underTest.getDigitalGreenCertificates();
+    DigitalGreenCertificateStructureProvider underTest = new DigitalGreenCertificateStructureProvider(
+        distributionServiceConfig, cryptoProvider, dgcToProtobufMapping);
+    DirectoryOnDisk digitalGreenCertificates = underTest.getDigitalGreenCertificates();
     digitalGreenCertificates.prepare(new ImmutableStack<>());
 
     assertEquals("ehn-dgc", digitalGreenCertificates.getName());
@@ -93,17 +84,5 @@ class DigitalGreenCertificateStructureProviderTest {
           .map(Writable::getName).collect(Collectors.toList());
       assertThat(archiveContent).containsAll(Set.of("export.bin", "export.sig"));
     });
-  }
-
-  @Test
-  void default_missing_exception() throws DefaultValuesetsMissingException {
-    underTest = new DigitalGreenCertificateStructureProvider(distributionServiceConfig, cryptoProvider,
-        dgcToProtobufMappingMock);
-    when(dgcToProtobufMappingMock.constructProtobufMapping(anyString()))
-        .thenThrow(new DefaultValuesetsMissingException("", null));
-    digitalGreenCertificates = underTest.getDigitalGreenCertificates();
-    digitalGreenCertificates.prepare(new ImmutableStack<>());
-
-    assertEquals("", digitalGreenCertificates.getName());
   }
 }
