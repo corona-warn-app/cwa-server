@@ -1,6 +1,6 @@
 package app.coronawarn.server.services.distribution.assembly.component;
 
-import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.Assert.assertTrue;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.when;
 
@@ -19,7 +19,6 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 import org.junit.Rule;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -76,13 +75,13 @@ class DigitalGreenCertificateStructureProviderTest {
     List<String> supportedLanguages = digitalGreenCertificates.getWritables().stream().map(Writable::getName).collect(
         Collectors.toList());
     List<String> expectedLanguages = Arrays.asList("DE", "EN", "BG", "PL", "RO", "TR");
-    Assertions.assertTrue(supportedLanguages.containsAll(expectedLanguages));
+    assertTrue(supportedLanguages.containsAll(expectedLanguages));
     (digitalGreenCertificates.getWritables()).stream()
         .map(directory -> ((DirectoryOnDisk) directory).getWritables().iterator().next()).forEach(valueSet -> {
       assertEquals("value-sets", valueSet.getName());
       List<String> archiveContent = ((DistributionArchiveSigningDecorator) valueSet).getWritables().stream()
           .map(Writable::getName).collect(Collectors.toList());
-      assertThat(archiveContent).containsAll(Set.of("export.bin", "export.sig"));
+      assertTrue((archiveContent).containsAll(Set.of("export.bin", "export.sig")));
     });
   }
 }
