@@ -1,26 +1,20 @@
-package app.coronawarn.server.services.distribution.assembly.tracewarnings.structure.directory.decorator;
+package app.coronawarn.server.services.distribution.assembly.tracewarnings.structure;
 
-import static app.coronawarn.server.services.distribution.common.Helpers.*;
+import static app.coronawarn.server.services.distribution.common.Helpers.buildTraceTimeIntervalWarning;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import app.coronawarn.server.common.persistence.domain.TraceTimeIntervalWarning;
 import app.coronawarn.server.common.persistence.service.utils.checkins.CheckinsDateSpecification;
-import app.coronawarn.server.services.distribution.assembly.diagnosiskeys.DemoDiagnosisKeyBundler;
 import app.coronawarn.server.services.distribution.assembly.structure.util.TimeUtils;
 import app.coronawarn.server.services.distribution.assembly.tracewarnings.DemoTraceTimeIntervalWarningsPackageBundler;
-import app.coronawarn.server.services.distribution.assembly.tracewarnings.ProdTraceTimeIntervalWarningsPackageBundler;
 import app.coronawarn.server.services.distribution.assembly.tracewarnings.TraceTimeIntervalWarningsPackageBundler;
 import app.coronawarn.server.services.distribution.config.DistributionServiceConfig;
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.util.List;
-import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -36,7 +30,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 @ContextConfiguration(classes = {DistributionServiceConfig.class, DemoTraceTimeIntervalWarningsPackageBundler.class},
     initializers = ConfigDataApplicationContextInitializer.class)
 @ActiveProfiles("demo")
-public class DemoTraceTimeIntervalWarningsPackageBundlerTest {
+class DemoTraceTimeIntervalWarningsPackageBundlerTest {
 
   @Autowired
   private TraceTimeIntervalWarningsPackageBundler bundler;
@@ -54,7 +48,7 @@ public class DemoTraceTimeIntervalWarningsPackageBundlerTest {
     List<TraceTimeIntervalWarning> warnings = Stream
         .of(buildTraceTimeIntervalWarning(6, 50, 5, 5),
             buildTraceTimeIntervalWarning(6, 50, 5, 5),
-            buildTraceTimeIntervalWarning(6, 50, 5,5))
+            buildTraceTimeIntervalWarning(6, 50, 5, 5))
         .flatMap(List::stream)
         .collect(Collectors.toList());
     bundler.setTraceTimeIntervalWarnings(warnings, LocalDateTime.of(1970, 1, 5, 0, 0));
@@ -66,7 +60,7 @@ public class DemoTraceTimeIntervalWarningsPackageBundlerTest {
     List<TraceTimeIntervalWarning> warnings = Stream
         .of(buildTraceTimeIntervalWarning(6, 50, 5, 5),
             buildTraceTimeIntervalWarning(6, 50, 6, 5),
-            buildTraceTimeIntervalWarning(6, 50, 7,5))
+            buildTraceTimeIntervalWarning(6, 50, 7, 5))
         .flatMap(List::stream)
         .collect(Collectors.toList());
     bundler.setTraceTimeIntervalWarnings(warnings, LocalDateTime.of(1970, 1, 5, 0, 0));
@@ -92,6 +86,6 @@ public class DemoTraceTimeIntervalWarningsPackageBundlerTest {
 
     bundler.setTraceTimeIntervalWarnings(traceWarnings, utcHour);
 
-    assertThat(bundler.getLatestHourWithDistributableWarnings("DE").get()).isEqualTo(currentHour);
+    assertThat(bundler.getLatestHourWithDistributableWarnings("DE")).contains(currentHour);
   }
 }
