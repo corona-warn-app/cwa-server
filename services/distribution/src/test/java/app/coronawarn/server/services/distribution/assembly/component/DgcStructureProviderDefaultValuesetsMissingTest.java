@@ -36,7 +36,7 @@ class DgcStructureProviderDefaultValuesetsMissingTest {
   DigitalGreenCertificateToProtobufMapping dgcToProtobufMappingMock;
 
   @Test
-  void default_missing_exception() throws DefaultValuesetsMissingException {
+  void default_value_missing_should_result_in_empty_dir() throws DefaultValuesetsMissingException {
     DigitalGreenCertificateStructureProvider underTest = new DigitalGreenCertificateStructureProvider(
         distributionServiceConfig, cryptoProvider, dgcToProtobufMappingMock);
     when(dgcToProtobufMappingMock.constructProtobufMapping(anyString()))
