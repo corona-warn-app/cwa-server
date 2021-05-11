@@ -27,11 +27,6 @@ class DigitalGreenCertificateJsonToProtobufTest {
   @Autowired
   DigitalGreenCertificateToProtobufMapping dgcToProtobufMapping;
 
-  @BeforeEach
-  void setUp() {
-    distributionServiceConfig.setDigitalGreenCertificate(Mockito.mock(DigitalGreenCertificate.class));
-  }
-
   @Test
   void shouldReadDefaultMahJsonIfNotConfigured() throws DefaultValuesetsMissingException {
     var result = dgcToProtobufMapping.readMahJson();
@@ -87,7 +82,7 @@ class DigitalGreenCertificateJsonToProtobufTest {
   @Test
   @DirtiesContext
   void shouldReadConfiguredProphylaxisJson() throws DefaultValuesetsMissingException {
-    distributionServiceConfig.getDigitalGreenCertificate().setProphylaxisJsonPath("src/test/resources/dgc/vaccine-prophylaxis-test.json");
+    distributionServiceConfig.getDigitalGreenCertificate().setProphylaxisJsonPath("dgc/vaccine-prophylaxis-test.json");
     var result = dgcToProtobufMapping.readProphylaxisJson();
 
     assertThat(result.getValueSetId()).isEqualTo("sct-vaccines-covid-21");
