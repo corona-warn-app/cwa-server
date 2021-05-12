@@ -5,9 +5,13 @@ import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.util.DigestUtils;
 
 public class HashUtils {
+
+  private static final Logger logger = LoggerFactory.getLogger(HashUtils.class);
 
   public enum MessageDigestAlgorithms {
     SHA_256("SHA-256");
@@ -49,7 +53,7 @@ public class HashUtils {
     try {
       return MessageDigest.getInstance(algorithm.getName()).digest(data.toByteArray());
     } catch (NoSuchAlgorithmException e) {
-      // DO NOTHING
+      logger.error("Digest algorithm does not exist", e);
     }
     return new byte[0];
   }

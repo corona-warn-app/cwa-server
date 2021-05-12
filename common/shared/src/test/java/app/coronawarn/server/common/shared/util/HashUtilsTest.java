@@ -2,6 +2,7 @@ package app.coronawarn.server.common.shared.util;
 
 import static app.coronawarn.server.common.shared.util.HashUtils.*;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import app.coronawarn.server.common.shared.util.HashUtils.MessageDigestAlgorithms;
 import com.google.protobuf.ByteString;
@@ -11,11 +12,14 @@ import java.security.NoSuchAlgorithmException;
 class HashUtilsTest {
 
   public static final String TEST_STRING = "string";
+  public static final String HEX_DIGESTED_ORIGIN = "test string";
+  public static final String HEX_DIGESTED = "6f8db599de986fab7a21625b7916589c";
 
   @Test
   void testMd5DigestAsHex() {
-    String hash = md5DigestAsHex(TEST_STRING);
+    String hash = md5DigestAsHex(HEX_DIGESTED_ORIGIN);
     assertThat(hash).hasSize(32);
+    assertEquals(hash, HEX_DIGESTED);
   }
 
   @Test
