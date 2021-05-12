@@ -39,7 +39,7 @@ class DgcStructureProviderDefaultValuesetsMissingTest {
   void default_value_missing_should_result_in_empty_dir() throws DefaultValueSetsMissingException {
     DigitalGreenCertificateStructureProvider underTest = new DigitalGreenCertificateStructureProvider(
         distributionServiceConfig, cryptoProvider, dgcToProtobufMappingMock);
-    when(dgcToProtobufMappingMock.constructProtobufMapping(anyString()))
+    when(dgcToProtobufMappingMock.constructProtobufMapping())
         .thenThrow(new DefaultValueSetsMissingException("", null));
     DirectoryOnDisk digitalGreenCertificates = underTest.getDigitalGreenCertificates();
     digitalGreenCertificates.prepare(new ImmutableStack<>());
