@@ -36,22 +36,20 @@ public class DigitalGreenCertificateStructureProvider {
   }
 
   /**
-   * Returns the publishable archive with the Digital Green Certificates protobuf structure for mobile clients.
+   * Returns the publishable archive with the Digital Green Certificates protobuf structures for mobile clients.
    */
   public DirectoryOnDisk getDigitalGreenCertificates() {
     try {
       return constructArchiveToPublish(distributionServiceConfig.getDigitalGreenCertificate());
     } catch (DefaultValueSetsMissingException e) {
-      logger.error("We don't generate a valuesets file and this shouldn't override existing ones.", e);
+      logger.error("We don't generate a value-sets file and this shouldn't override existing ones.", e);
       return new DirectoryOnDisk("");
     }
   }
 
   private DirectoryOnDisk constructArchiveToPublish(DigitalGreenCertificate dgcConfig)
       throws DefaultValueSetsMissingException {
-
     DirectoryOnDisk dgcDirectory = new DirectoryOnDisk(dgcConfig.getDgcDirectory());
-
     for (String currentLanguage: dgcConfig.getSupportedLanguages()) {
       ArchiveOnDisk archiveToPublish = new ArchiveOnDisk(dgcConfig.getValuesetsFileName());
       archiveToPublish.addWritable(new FileOnDisk("export.bin",
