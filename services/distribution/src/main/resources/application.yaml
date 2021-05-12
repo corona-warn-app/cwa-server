@@ -199,6 +199,13 @@ services:
       plausible-deniability-parameters:
         probability-to-fake-check-ins-if-no-check-ins: ${EVREG_PROBABILITY_TO_FAKE_CHECK_INS_IF_NO_CHECK_INS:0}
         probability-to-fake-check-ins-if-some-check-ins: ${EVREG_PROBABILITY_TO_FAKE_CHECK_INS_IF_SOME_CHECK_INS:0.005}
+    digital-green-certificate:
+      mah-json-path: ${DIGITAL_GREEN_CERTIFICATE_MAH_JSON_PATH:}
+      prophylaxis-json-path: ${DIGITAL_GREEN_CERTIFICATE_PROPHYLAXIS_JSON_PATH:}
+      medicinal-products-json-path: ${DIGITAL_GREEN_CERTIFICATE_MEDICINAL_PRODUCTS_JSON_PATH:}
+      dgc-directory: ${DIGITAL_GREEN_CERTIFICATE_DIRECTORY:ehn-dgc}
+      valuesets-file-name: ${DIGITAL_GREEN_CERTIFICATE_VALUESETS_FILE_NAME:value-sets}
+      supported-languages: ${DIGITAL_GREEN_CERTIFICATE_SUPPORTED_LANGUAGES:DE, EN, BG, PL, RO, TR}
 
 spring:
   main:

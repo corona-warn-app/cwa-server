@@ -26,7 +26,7 @@ jobs:
           name: JUnit Tests, Integration Tests
           command: |
             export JAVA_HOME=/usr/lib/jvm/java-11-openjdk-amd64
-            ./mvnw --batch-mode -P integration-tests verify --fail-fast
+            ./mvnw --batch-mode -P integration-test verify --fail-fast
       - run:
           name: Analyze on SonarCloud
           command: |

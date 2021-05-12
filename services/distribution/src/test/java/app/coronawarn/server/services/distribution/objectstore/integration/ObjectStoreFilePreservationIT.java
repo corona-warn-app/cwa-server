@@ -7,7 +7,6 @@ import static org.mockito.Mockito.when;
 import app.coronawarn.server.common.persistence.service.DiagnosisKeyService;
 import app.coronawarn.server.common.persistence.service.StatisticsDownloadService;
 import app.coronawarn.server.common.persistence.service.TraceTimeIntervalWarningService;
-import app.coronawarn.server.services.distribution.Application;
 import app.coronawarn.server.services.distribution.assembly.component.OutputDirectoryProvider;
 import app.coronawarn.server.services.distribution.assembly.structure.directory.DirectoryOnDisk;
 import app.coronawarn.server.services.distribution.common.DiagnosisTestData;
@@ -28,29 +27,15 @@ import java.util.Map;
 import java.util.stream.Collectors;
 import org.junit.Rule;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.rules.TemporaryFolder;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.ConfigDataApplicationContextInitializer;
-import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
-import org.springframework.boot.test.context.ConfigDataApplicationContextInitializer;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.cloud.vault.config.VaultAutoConfiguration;
 import org.springframework.context.ApplicationContext;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
-import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
 
-@ExtendWith(SpringExtension.class)
-@EnableAutoConfiguration(exclude = VaultAutoConfiguration.class)
-@ContextConfiguration(classes = Application.class, initializers = {ConfigDataApplicationContextInitializer.class})
-@DirtiesContext
-@ActiveProfiles({"integration-test", "no-hour-retention", "local-json-stats"})
-@Tag("s3-integration")
+@ActiveProfiles({"no-hour-retention", "local-json-stats"})
 class ObjectStoreFilePreservationIT extends BaseS3IntegrationTest {
 
   @Autowired
