@@ -1476,20 +1476,24 @@ public class DistributionServiceConfig {
 
   public static class DigitalGreenCertificate {
 
-    @NotNull
+    @Pattern(regexp = PATH_REGEX)
     private String mahJsonPath;
 
-    @NotNull
+    @Pattern(regexp = PATH_REGEX)
     private String prophylaxisJsonPath;
 
-    @NotNull
+    @Pattern(regexp = PATH_REGEX)
     private String medicinalProductsJsonPath;
 
+    @NotNull
     @Pattern(regexp = CHAR_AND_NUMBER_REGEX)
     private String dgcDirectory;
 
+    @NotNull
     @Pattern(regexp = CHAR_AND_NUMBER_REGEX)
     private String valuesetsFileName;
+
+    private String[] supportedLanguages;
 
     public String getMahJsonPath() {
       return mahJsonPath;
@@ -1529,6 +1533,14 @@ public class DistributionServiceConfig {
 
     public void setValuesetsFileName(String valuesetsFileName) {
       this.valuesetsFileName = valuesetsFileName;
+    }
+
+    public String[] getSupportedLanguages() {
+      return supportedLanguages;
+    }
+
+    public void setSupportedLanguages(String[] supportedLanguages) {
+      this.supportedLanguages = supportedLanguages;
     }
   }
 }

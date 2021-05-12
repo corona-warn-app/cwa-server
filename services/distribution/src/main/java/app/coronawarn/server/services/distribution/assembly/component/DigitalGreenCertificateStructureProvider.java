@@ -1,12 +1,12 @@
 package app.coronawarn.server.services.distribution.assembly.component;
 
-import app.coronawarn.server.common.protocols.internal.dgc.ValueSets;
 import app.coronawarn.server.services.distribution.assembly.structure.archive.ArchiveOnDisk;
 import app.coronawarn.server.services.distribution.assembly.structure.archive.decorator.signing.DistributionArchiveSigningDecorator;
 import app.coronawarn.server.services.distribution.assembly.structure.directory.DirectoryOnDisk;
 import app.coronawarn.server.services.distribution.assembly.structure.file.FileOnDisk;
 import app.coronawarn.server.services.distribution.config.DistributionServiceConfig;
 import app.coronawarn.server.services.distribution.config.DistributionServiceConfig.DigitalGreenCertificate;
+import app.coronawarn.server.services.distribution.dgc.DefaultValueSetsMissingException;
 import app.coronawarn.server.services.distribution.dgc.DigitalGreenCertificateToProtobufMapping;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -36,25 +36,31 @@ public class DigitalGreenCertificateStructureProvider {
   }
 
   /**
-   * Returns the publishable archive with the Digital Green Certificates protobuf structure for mobile clients.
+   * Returns the publishable archive with the Digital Green Certificates protobuf structures for mobile clients.
    */
   public DirectoryOnDisk getDigitalGreenCertificates() {
-    return constructArchiveToPublish(distributionServiceConfig.getDigitalGreenCertificate(),
-        dgcToProtobufMapping.constructProtobufMapping());
+    try {
+      return constructArchiveToPublish(distributionServiceConfig.getDigitalGreenCertificate());
+    } catch (DefaultValueSetsMissingException e) {
+      logger.error("We don't generate a value-sets file and this shouldn't override existing ones.", e);
+      return new DirectoryOnDisk("");
+    }
   }
 
-  private DirectoryOnDisk constructArchiveToPublish(
-      DigitalGreenCertificate dgcConfig, ValueSets dgcProto) {
-
-    ArchiveOnDisk archiveToPublish = new ArchiveOnDisk(dgcConfig.getValuesetsFileName());
-    archiveToPublish.addWritable(new FileOnDisk("export.bin", dgcProto.toByteArray()));
-    DirectoryOnDisk enDirectory = new DirectoryOnDisk("en");
-    enDirectory.addWritable(new DistributionArchiveSigningDecorator(
-        archiveToPublish, cryptoProvider, distributionServiceConfig));
+  private DirectoryOnDisk constructArchiveToPublish(DigitalGreenCertificate dgcConfig)
+      throws DefaultValueSetsMissingException {
     DirectoryOnDisk dgcDirectory = new DirectoryOnDisk(dgcConfig.getDgcDirectory());
-    dgcDirectory.addWritable(enDirectory);
-    logger.info("Writing digital green certificate to {}/en/{}.", dgcDirectory.getName(),
-        archiveToPublish.getName());
+    for (String currentLanguage: dgcConfig.getSupportedLanguages()) {
+      ArchiveOnDisk archiveToPublish = new ArchiveOnDisk(dgcConfig.getValuesetsFileName());
+      archiveToPublish.addWritable(new FileOnDisk("export.bin",
+          dgcToProtobufMapping.constructProtobufMapping().toByteArray()));
+      DirectoryOnDisk languageDirectory = new DirectoryOnDisk(currentLanguage);
+      languageDirectory.addWritable(new DistributionArchiveSigningDecorator(
+          archiveToPublish, cryptoProvider, distributionServiceConfig));
+      dgcDirectory.addWritable(languageDirectory);
+      logger.info("Writing digital green certificate to {}/{}/{}.", dgcDirectory.getName(), currentLanguage,
+          archiveToPublish.getName());
+    }
     return dgcDirectory;
   }
 }
