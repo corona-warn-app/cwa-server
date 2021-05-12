@@ -3,11 +3,8 @@ package app.coronawarn.server.services.distribution.dgc;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import app.coronawarn.server.services.distribution.config.DistributionServiceConfig;
-import app.coronawarn.server.services.distribution.config.DistributionServiceConfig.DigitalGreenCertificate;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.ConfigDataApplicationContextInitializer;
@@ -28,7 +25,7 @@ class DigitalGreenCertificateJsonToProtobufTest {
   DigitalGreenCertificateToProtobufMapping dgcToProtobufMapping;
 
   @Test
-  void shouldReadDefaultMahJsonIfNotConfigured() throws DefaultValuesetsMissingException {
+  void shouldReadDefaultMahJsonIfNotConfigured() throws DefaultValueSetsMissingException {
     var result = dgcToProtobufMapping.readMahJson();
 
     assertThat(result.getValueSetId()).isEqualTo("vaccines-covid-19-auth-holders");
@@ -46,7 +43,7 @@ class DigitalGreenCertificateJsonToProtobufTest {
 
 
   @Test
-  void shouldReadDefaultMProductJsonIfNotConfigured() throws DefaultValuesetsMissingException {
+  void shouldReadDefaultMProductJsonIfNotConfigured() throws DefaultValueSetsMissingException {
     var result = dgcToProtobufMapping.readMedicinalProductJson();
 
     assertThat(result.getValueSetId()).isEqualTo("vaccines-covid-19-names");
@@ -63,7 +60,7 @@ class DigitalGreenCertificateJsonToProtobufTest {
   }
 
   @Test
-  void shouldReadDefaultProphylaxisJsonIfNotConfigured() throws DefaultValuesetsMissingException {
+  void shouldReadDefaultProphylaxisJsonIfNotConfigured() throws DefaultValueSetsMissingException {
     var result = dgcToProtobufMapping.readProphylaxisJson();
 
     assertThat(result.getValueSetId()).isEqualTo("sct-vaccines-covid-19");
@@ -81,7 +78,7 @@ class DigitalGreenCertificateJsonToProtobufTest {
 
   @Test
   @DirtiesContext
-  void shouldReadConfiguredProphylaxisJson() throws DefaultValuesetsMissingException {
+  void shouldReadConfiguredProphylaxisJson() throws DefaultValueSetsMissingException {
     distributionServiceConfig.getDigitalGreenCertificate().setProphylaxisJsonPath("dgc/vaccine-prophylaxis-test.json");
     var result = dgcToProtobufMapping.readProphylaxisJson();
 

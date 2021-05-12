@@ -7,7 +7,7 @@ import static org.mockito.Mockito.when;
 import app.coronawarn.server.services.distribution.assembly.structure.directory.DirectoryOnDisk;
 import app.coronawarn.server.services.distribution.assembly.structure.util.ImmutableStack;
 import app.coronawarn.server.services.distribution.config.DistributionServiceConfig;
-import app.coronawarn.server.services.distribution.dgc.DefaultValuesetsMissingException;
+import app.coronawarn.server.services.distribution.dgc.DefaultValueSetsMissingException;
 import app.coronawarn.server.services.distribution.dgc.DigitalGreenCertificateToProtobufMapping;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -36,11 +36,11 @@ class DgcStructureProviderDefaultValuesetsMissingTest {
   DigitalGreenCertificateToProtobufMapping dgcToProtobufMappingMock;
 
   @Test
-  void default_value_missing_should_result_in_empty_dir() throws DefaultValuesetsMissingException {
+  void default_value_missing_should_result_in_empty_dir() throws DefaultValueSetsMissingException {
     DigitalGreenCertificateStructureProvider underTest = new DigitalGreenCertificateStructureProvider(
         distributionServiceConfig, cryptoProvider, dgcToProtobufMappingMock);
     when(dgcToProtobufMappingMock.constructProtobufMapping(anyString()))
-        .thenThrow(new DefaultValuesetsMissingException("", null));
+        .thenThrow(new DefaultValueSetsMissingException("", null));
     DirectoryOnDisk digitalGreenCertificates = underTest.getDigitalGreenCertificates();
     digitalGreenCertificates.prepare(new ImmutableStack<>());
 

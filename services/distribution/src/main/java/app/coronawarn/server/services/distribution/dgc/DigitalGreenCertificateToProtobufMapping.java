@@ -34,7 +34,7 @@ public class DigitalGreenCertificateToProtobufMapping {
    *
    * @return The corresponding JSON object.
    */
-  VaccineJsonStringObject readMahJson() throws DefaultValuesetsMissingException {
+  VaccineJsonStringObject readMahJson() throws DefaultValueSetsMissingException {
     String path = distributionServiceConfig.getDigitalGreenCertificate().getMahJsonPath();
     return readConfiguredJsonOrDefault(path, "dgc/vaccine-mah.json",
         VaccineJsonStringObject.class);
@@ -45,7 +45,7 @@ public class DigitalGreenCertificateToProtobufMapping {
    *
    * @return The corresponding JSON object.
    */
-  VaccineJsonStringObject readMedicinalProductJson() throws DefaultValuesetsMissingException {
+  VaccineJsonStringObject readMedicinalProductJson() throws DefaultValueSetsMissingException {
     String path = distributionServiceConfig.getDigitalGreenCertificate().getMedicinalProductsJsonPath();
     return readConfiguredJsonOrDefault(path, "dgc/vaccine-medicinal-product.json",
         VaccineJsonStringObject.class);
@@ -56,7 +56,7 @@ public class DigitalGreenCertificateToProtobufMapping {
    *
    * @return The corresponding JSON object.
    */
-  VaccineJsonStringObject readProphylaxisJson() throws DefaultValuesetsMissingException {
+  VaccineJsonStringObject readProphylaxisJson() throws DefaultValueSetsMissingException {
     String path = distributionServiceConfig.getDigitalGreenCertificate().getProphylaxisJsonPath();
     return readConfiguredJsonOrDefault(path, "dgc/vaccine-prophylaxis.json",
         VaccineJsonStringObject.class);
@@ -67,7 +67,7 @@ public class DigitalGreenCertificateToProtobufMapping {
    *
    * @return the protobuf filled with values from JSON.
    */
-  public ValueSets constructProtobufMapping(String language) throws DefaultValuesetsMissingException {
+  public ValueSets constructProtobufMapping(String language) throws DefaultValueSetsMissingException {
     List<ValueSetItem> mahItems = toValueSetItems(readMahJson().getValueSetValues());
     List<ValueSetItem> productItems = toValueSetItems(readMedicinalProductJson().getValueSetValues());
     List<ValueSetItem> prophylaxisItems = toValueSetItems(readProphylaxisJson().getValueSetValues());
@@ -88,7 +88,7 @@ public class DigitalGreenCertificateToProtobufMapping {
   }
 
   private <T> T readConfiguredJsonOrDefault(String path, String defaultPath, Class<T> rawType)
-      throws DefaultValuesetsMissingException {
+      throws DefaultValueSetsMissingException {
     if (!ObjectUtils.isEmpty(path)) {
       try (InputStream jsonStream = resourceLoader.getResource(path).getInputStream()) {
         return deserializeJsonToSimpleType(jsonStream, rawType);
@@ -101,7 +101,7 @@ public class DigitalGreenCertificateToProtobufMapping {
       return deserializeJsonToSimpleType(jsonStream, rawType);
     } catch (IOException e) {
       logger.error("We could not load the default {}. This shouldn't happen!", defaultPath, e);
-      throw new DefaultValuesetsMissingException("Default valuesets is missing from the path " + defaultPath
+      throw new DefaultValueSetsMissingException("Default valuesets is missing from the path " + defaultPath
           + ". This shouldn't happen!", e);
     }
   }
