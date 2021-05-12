@@ -4,6 +4,7 @@ package app.coronawarn.server.common.shared.util;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.json.JsonReadFeature;
 import com.fasterxml.jackson.databind.JavaType;
+import com.fasterxml.jackson.databind.MapperFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.type.TypeFactory;
 import java.io.IOException;
@@ -11,9 +12,6 @@ import java.io.InputStream;
 import java.util.function.Function;
 
 public final class SerializationUtils {
-
-  private SerializationUtils() {
-  }
 
   /**
    * Deserialize json string into an object of type T. The type must also be provided to the underlying Jackson library
@@ -46,8 +44,9 @@ public final class SerializationUtils {
   public static <T> T deserializeJson(final InputStream jsonStream,
       final Function<TypeFactory, JavaType> typeProviderFunction) throws IOException {
     final ObjectMapper mapper = new ObjectMapper();
-    return mapper.enable(JsonReadFeature.ALLOW_NON_NUMERIC_NUMBERS.mappedFeature()).readValue(jsonStream,
-        typeProviderFunction.apply(mapper.getTypeFactory()));
+    return mapper.enable(JsonReadFeature.ALLOW_NON_NUMERIC_NUMBERS.mappedFeature())
+        .enable(MapperFeature.ACCEPT_CASE_INSENSITIVE_ENUMS)
+        .readValue(jsonStream, typeProviderFunction.apply(mapper.getTypeFactory()));
   }
 
   /**
@@ -66,4 +65,13 @@ public final class SerializationUtils {
       throw new IllegalStateException("Object could not be converted into JSON", e);
     }
   }
+
+  public static <T> T  deserializeJsonToSimpleType(InputStream jsonStream, Class<T> rawType) throws IOException {
+    return deserializeJson(jsonStream,
+        typeFactory -> typeFactory.constructSimpleType(rawType, new JavaType[0]));
+  }
+
+  private SerializationUtils() {
+  }
+
 }

@@ -2,8 +2,8 @@ package app.coronawarn.server.services.submission.checkins;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import app.coronawarn.server.common.persistence.utils.hash.HashUtils;
 import app.coronawarn.server.common.protocols.internal.pt.CheckIn;
+import app.coronawarn.server.common.shared.util.HashUtils;
 import com.google.protobuf.ByteString;
 import java.util.List;
 import java.util.Random;

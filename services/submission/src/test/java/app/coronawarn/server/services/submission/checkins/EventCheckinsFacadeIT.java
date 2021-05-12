@@ -1,11 +1,15 @@
 package app.coronawarn.server.services.submission.checkins;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
 import app.coronawarn.server.common.persistence.domain.TraceTimeIntervalWarning;
 import app.coronawarn.server.common.persistence.repository.TraceTimeIntervalWarningRepository;
 import app.coronawarn.server.common.persistence.service.utils.checkins.CheckinsDateSpecification;
-import app.coronawarn.server.common.persistence.utils.hash.HashUtils;
+import app.coronawarn.server.common.protocols.internal.SubmissionPayload;
 import app.coronawarn.server.common.protocols.internal.SubmissionPayload.SubmissionType;
 import app.coronawarn.server.common.protocols.internal.pt.CheckIn;
+import app.coronawarn.server.common.shared.util.HashUtils;
+import app.coronawarn.server.services.submission.controller.CheckinsStorageResult;
 import com.google.protobuf.ByteString;
 import java.time.Instant;
 import java.util.List;
@@ -19,9 +23,11 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.test.annotation.DirtiesContext;
+import org.springframework.test.context.ActiveProfiles;
 
 @SpringBootTest
 @DirtiesContext
+@ActiveProfiles("integration-test")
 class EventCheckinsFacadeIT {
 
   @Autowired
@@ -39,6 +45,17 @@ class EventCheckinsFacadeIT {
   public void setup() {
     traceWarningsRepository.deleteAll();
     currentTimestamp = CheckinsDateSpecification.HOUR_SINCE_EPOCH_DERIVATION.apply(Instant.now().getEpochSecond());
+  }
+
+  @Test
+  void testExtractAndStoreEventCheckins() {
+    final SubmissionPayload newPayload = SubmissionPayload.newBuilder()
+        .addAllCheckIns(getRandomTestData())
+        .build();
+
+    CheckinsStorageResult result = eventCheckinFacade.extractAndStoreEventCheckins(newPayload);
+    assertEquals(result.getNumberOfFilteredCheckins(), 2);
+    assertEquals(result.getNumberOfSavedCheckins(), 2);
   }
 
   @Test

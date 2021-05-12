@@ -68,6 +68,7 @@ public class DistributionServiceConfig {
   private QrCodePosterTemplate iosQrCodePosterTemplate;
   private QrCodePosterTemplate androidQrCodePosterTemplate;
   private PresenceTracingParameters presenceTracingParameters;
+  private DigitalGreenCertificate digitalGreenCertificate;
 
   public Paths getPaths() {
     return paths;
@@ -858,6 +859,13 @@ public class DistributionServiceConfig {
     this.presenceTracingParameters = presenceTracingParameters;
   }
 
+  public DigitalGreenCertificate getDigitalGreenCertificate() {
+    return digitalGreenCertificate;
+  }
+
+  public void setDigitalGreenCertificate(DigitalGreenCertificate digitalGreenCertificate) {
+    this.digitalGreenCertificate = digitalGreenCertificate;
+  }
 
   public static class ObjectStore {
 
@@ -1463,6 +1471,76 @@ public class DistributionServiceConfig {
       public void setRequireEvaluationTypeHardwareBacked(Boolean requireEvaluationTypeHardwareBacked) {
         this.requireEvaluationTypeHardwareBacked = requireEvaluationTypeHardwareBacked;
       }
+    }
+  }
+
+  public static class DigitalGreenCertificate {
+
+    @Pattern(regexp = PATH_REGEX)
+    private String mahJsonPath;
+
+    @Pattern(regexp = PATH_REGEX)
+    private String prophylaxisJsonPath;
+
+    @Pattern(regexp = PATH_REGEX)
+    private String medicinalProductsJsonPath;
+
+    @NotNull
+    @Pattern(regexp = CHAR_AND_NUMBER_REGEX)
+    private String dgcDirectory;
+
+    @NotNull
+    @Pattern(regexp = CHAR_AND_NUMBER_REGEX)
+    private String valuesetsFileName;
+
+    private String[] supportedLanguages;
+
+    public String getMahJsonPath() {
+      return mahJsonPath;
+    }
+
+    public void setMahJsonPath(String mahJsonPath) {
+      this.mahJsonPath = mahJsonPath;
+    }
+
+    public String getProphylaxisJsonPath() {
+      return prophylaxisJsonPath;
+    }
+
+    public void setProphylaxisJsonPath(String prophylaxisJsonPath) {
+      this.prophylaxisJsonPath = prophylaxisJsonPath;
+    }
+
+    public String getMedicinalProductsJsonPath() {
+      return medicinalProductsJsonPath;
+    }
+
+    public void setMedicinalProductsJsonPath(String medicinalProductsJsonPath) {
+      this.medicinalProductsJsonPath = medicinalProductsJsonPath;
+    }
+
+    public String getDgcDirectory() {
+      return dgcDirectory;
+    }
+
+    public void setDgcDirectory(String dgcDirectory) {
+      this.dgcDirectory = dgcDirectory;
+    }
+
+    public String getValuesetsFileName() {
+      return valuesetsFileName;
+    }
+
+    public void setValuesetsFileName(String valuesetsFileName) {
+      this.valuesetsFileName = valuesetsFileName;
+    }
+
+    public String[] getSupportedLanguages() {
+      return supportedLanguages;
+    }
+
+    public void setSupportedLanguages(String[] supportedLanguages) {
+      this.supportedLanguages = supportedLanguages;
     }
   }
 }

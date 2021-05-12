@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+<project xmlns="http://maven.apache.org/POM/4.0.0">
   <modelVersion>4.0.0</modelVersion>
 
-  <groupId>org.opencwa</groupId>
+  <groupId>app.coronawarn.server</groupId>
   <artifactId>server</artifactId>
   <version>${revision}</version>
 
@@ -53,18 +53,18 @@
     <!-- If you update spring-cloud, see if it references the correct spring-vault-core version again, then remove the following: -->
     <spring-vault-core.version>2.3.2</spring-vault-core.version>
     <spring-retry.version>1.3.1</spring-retry.version>
-    <protobuf.version>3.15.8</protobuf.version>
+    <protobuf.version>3.16.0</protobuf.version>
     <json-simple.version>1.1.1</json-simple.version>
     <commons-io.version>2.8.0</commons-io.version>
-    <feign.version>11.1</feign.version>
+    <feign.version>11.2</feign.version>
     <commons-math3.version>3.6.1</commons-math3.version>
     <bouncycastle.version>1.68</bouncycastle.version>
     <dom4j.version>2.1.3</dom4j.version>
-    <awssdk-s3.version>2.16.42</awssdk-s3.version>
+    <awssdk-s3.version>2.16.52</awssdk-s3.version>
     <guava.version>30.1.1-jre</guava.version>
     <test-containers.version>1.15.3</test-containers.version>
-    <postgresql.version>42.2.19</postgresql.version>
-    <wiremock.version>2.27.2</wiremock.version>
+    <postgresql.version>42.2.20</postgresql.version>
+    <wiremock.version>2.28.0</wiremock.version>
     <httpclient.version>4.5.13</httpclient.version>
     <junit.version>4.13.2</junit.version>
     <tomcat-embed-core.version>9.0.45</tomcat-embed-core.version>
@@ -76,22 +76,22 @@
     <dependencies>
       <!-- our own modules -->
       <dependency>
-        <groupId>org.opencwa</groupId>
+        <groupId>${project.groupId}</groupId>
         <artifactId>shared</artifactId>
         <version>${project.version}</version>
       </dependency>
       <dependency>
-        <groupId>org.opencwa</groupId>
+        <groupId>${project.groupId}</groupId>
         <artifactId>persistence</artifactId>
         <version>${project.version}</version>
       </dependency>
       <dependency>
-        <groupId>org.opencwa</groupId>
+        <groupId>${project.groupId}</groupId>
         <artifactId>protocols</artifactId>
         <version>${project.version}</version>
       </dependency>
       <dependency>
-        <groupId>org.opencwa</groupId>
+        <groupId>${project.groupId}</groupId>
         <artifactId>federation</artifactId>
         <version>${project.version}</version>
       </dependency>
@@ -207,6 +207,18 @@
       </dependency>
       <!-- test scope only -->
       <dependency>
+        <groupId>org.testcontainers</groupId>
+        <artifactId>testcontainers</artifactId>
+        <version>${test-containers.version}</version>
+        <scope>test</scope>
+      </dependency>
+      <dependency>
+        <groupId>org.testcontainers</groupId>
+        <artifactId>junit-jupiter</artifactId>
+        <version>${test-containers.version}</version>
+        <scope>test</scope>
+      </dependency>
+      <dependency>
         <groupId>com.github.tomakehurst</groupId>
         <artifactId>wiremock-jre8</artifactId>
         <version>${wiremock.version}</version>
@@ -256,7 +268,7 @@
         <artifactId>maven-surefire-report-plugin</artifactId>
         <reportSets>
           <reportSet>
-            <id>integration-tests</id>
+            <id>integration-test</id>
             <reports>
               <report>failsafe-report-only</report>
             </reports>
@@ -415,7 +427,7 @@
         </plugin>
         <plugin>
           <artifactId>maven-project-info-reports-plugin</artifactId>
-          <version>3.1.1</version>
+          <version>3.1.2</version>
         </plugin>
         <plugin>
           <artifactId>maven-site-plugin</artifactId>
@@ -473,7 +485,7 @@
         <plugin>
           <groupId>org.jacoco</groupId>
           <artifactId>jacoco-maven-plugin</artifactId>
-          <version>0.8.6</version>
+          <version>0.8.7</version>
           <executions>
             <execution>
               <goals>
@@ -526,47 +538,6 @@
           <groupId>org.codehaus.mojo</groupId>
           <artifactId>exec-maven-plugin</artifactId>
           <version>3.0.0</version>
-        </plugin>
-        <plugin>
-          <groupId>io.fabric8</groupId>
-          <artifactId>docker-maven-plugin</artifactId>
-          <version>0.35.0</version>
-          <configuration>
-            <images>
-              <image>
-                <name>zenko/cloudserver</name>
-                <alias>it-s3</alias>
-                <run>
-                  <ports>
-                    <port>8003:8000</port>
-                  </ports>
-                  <env>
-                    <ENDPOINT>objectstore</ENDPOINT>
-                    <REMOTE_MANAGEMENT_DISABLE>1</REMOTE_MANAGEMENT_DISABLE>
-                    <SCALITY_ACCESS_KEY_ID>accessKey1</SCALITY_ACCESS_KEY_ID>
-                    <SCALITY_SECRET_ACCESS_KEY>verySecretKey1</SCALITY_SECRET_ACCESS_KEY>
-                    <S3BACKEND>mem</S3BACKEND>
-                  </env>
-                </run>
-              </image>
-            </images>
-          </configuration>
-          <executions>
-            <execution>
-              <id>start</id>
-              <phase>pre-integration-test</phase>
-              <goals>
-                <goal>start</goal>
-              </goals>
-            </execution>
-            <execution>
-              <id>stop</id>
-              <phase>post-integration-test</phase>
-              <goals>
-                <goal>stop</goal>
-              </goals>
-            </execution>
-          </executions>
         </plugin>
       </plugins>
     </pluginManagement>
@@ -636,7 +607,7 @@
       </properties>
     </profile>
     <profile>
-      <id>integration-tests</id>
+      <id>integration-test</id>
       <activation>
         <activeByDefault>false</activeByDefault>
       </activation>
