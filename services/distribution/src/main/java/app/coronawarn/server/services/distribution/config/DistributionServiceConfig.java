@@ -1476,13 +1476,8 @@ public class DistributionServiceConfig {
 
   public static class DigitalGreenCertificate {
 
-    @Pattern(regexp = PATH_REGEX)
     private String mahJsonPath;
-
-    @Pattern(regexp = PATH_REGEX)
     private String prophylaxisJsonPath;
-
-    @Pattern(regexp = PATH_REGEX)
     private String medicinalProductsJsonPath;
 
     @NotNull
