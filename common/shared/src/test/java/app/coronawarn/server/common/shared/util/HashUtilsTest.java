@@ -3,11 +3,13 @@ package app.coronawarn.server.common.shared.util;
 import static app.coronawarn.server.common.shared.util.HashUtils.*;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 
 import app.coronawarn.server.common.shared.util.HashUtils.MessageDigestAlgorithms;
 import com.google.protobuf.ByteString;
 import org.junit.jupiter.api.Test;
 import java.security.NoSuchAlgorithmException;
+import java.util.Random;
 
 class HashUtilsTest {
 
@@ -25,7 +27,11 @@ class HashUtilsTest {
   @Test
   void testRandomByteArrayData() {
     byte[] hash = generateSecureRandomByteArrayData(16);
+    byte[] hash2 = generateSecureRandomByteArrayData(16);
+
     assertThat(hash).hasSize(16);
+    assertThat(hash2).hasSize(16);
+    assertThat(hash).isNotEqualTo(hash2);
   }
 
   @Test
