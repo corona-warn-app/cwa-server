@@ -74,7 +74,7 @@ public class DigitalGreenCertificateToProtobufMapping {
 
     return ValueSets.newBuilder()
         .setMa(ValueSet.newBuilder().addAllItems(mahItems).build())
-        .setVp(ValueSet.newBuilder().addAllItems(productItems).build())
+        .setMp(ValueSet.newBuilder().addAllItems(productItems).build())
         .setVp(ValueSet.newBuilder().addAllItems(prophylaxisItems).build())
         .build();
   }
