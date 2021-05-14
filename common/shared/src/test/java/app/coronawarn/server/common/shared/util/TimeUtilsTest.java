@@ -1,6 +1,6 @@
 
 
-package app.coronawarn.server.services.distribution.assembly.structure.util;
+package app.coronawarn.server.common.shared.util;
 
 import static java.time.ZoneOffset.UTC;
 import static java.time.temporal.ChronoUnit.HOURS;
@@ -28,4 +28,11 @@ class TimeUtilsTest {
     assertEquals(Instant.now().truncatedTo(HOURS), TimeUtils.getNow().truncatedTo(HOURS));
   }
 
+  @Test
+  void testSetNow() {
+    Instant now = Instant.now();
+    TimeUtils.setNow(now);
+
+    assertEquals(TimeUtils.getNow(), now);
+  }
 }

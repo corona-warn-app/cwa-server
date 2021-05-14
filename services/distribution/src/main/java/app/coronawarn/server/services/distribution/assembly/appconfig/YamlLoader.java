@@ -2,6 +2,7 @@
 
 package app.coronawarn.server.services.distribution.assembly.appconfig;
 
+import app.coronawarn.server.common.shared.exception.UnableToLoadFileException;
 import app.coronawarn.server.services.distribution.assembly.appconfig.parsing.DashToCamelCaseConstructor;
 import app.coronawarn.server.services.distribution.assembly.appconfig.parsing.YamlConstructorForProtoBuf;
 import com.google.protobuf.Message;

@@ -2,12 +2,12 @@
 
 package app.coronawarn.server.services.distribution.assembly.structure.directory;
 
-import static app.coronawarn.server.services.distribution.assembly.structure.util.functional.CheckedConsumer.uncheckedConsumer;
+import static app.coronawarn.server.common.shared.functional.CheckedConsumer.uncheckedConsumer;
 
+import app.coronawarn.server.common.shared.collection.ImmutableStack;
 import app.coronawarn.server.services.distribution.assembly.structure.Writable;
 import app.coronawarn.server.services.distribution.assembly.structure.WritableOnDisk;
 import app.coronawarn.server.services.distribution.assembly.structure.file.File;
-import app.coronawarn.server.services.distribution.assembly.structure.util.ImmutableStack;
 import java.util.HashSet;
 import java.util.Set;
 

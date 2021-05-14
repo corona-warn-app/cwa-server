@@ -1,7 +1,7 @@
 package app.coronawarn.server.services.distribution.objectstore;
 
-import static app.coronawarn.server.services.distribution.assembly.structure.util.TimeUtils.getCurrentUtcHour;
-import static app.coronawarn.server.services.distribution.assembly.structure.util.TimeUtils.getUtcDate;
+import static app.coronawarn.server.common.shared.util.TimeUtils.getCurrentUtcHour;
+import static app.coronawarn.server.common.shared.util.TimeUtils.getUtcDate;
 import static java.util.Arrays.asList;
 import static java.util.stream.Collectors.toList;
 import static org.assertj.core.util.Lists.list;

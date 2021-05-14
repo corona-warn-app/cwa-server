@@ -2,7 +2,7 @@ package app.coronawarn.server.services.distribution.assembly.appconfig.parsing.v
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import app.coronawarn.server.services.distribution.assembly.appconfig.UnableToLoadFileException;
+import app.coronawarn.server.common.shared.exception.UnableToLoadFileException;
 import app.coronawarn.server.services.distribution.assembly.appconfig.YamlLoader;
 import java.util.List;
 import org.junit.jupiter.api.Test;

@@ -2,8 +2,8 @@ package app.coronawarn.server.services.distribution.assembly.tracewarnings.struc
 
 import app.coronawarn.server.common.persistence.domain.TraceTimeIntervalWarning;
 import app.coronawarn.server.common.protocols.internal.pt.TraceWarningPackage;
+import app.coronawarn.server.common.shared.collection.ImmutableStack;
 import app.coronawarn.server.services.distribution.assembly.structure.file.FileOnDiskWithChecksum;
-import app.coronawarn.server.services.distribution.assembly.structure.util.ImmutableStack;
 import app.coronawarn.server.services.distribution.config.DistributionServiceConfig;
 import com.google.protobuf.ByteString;
 import java.util.Comparator;

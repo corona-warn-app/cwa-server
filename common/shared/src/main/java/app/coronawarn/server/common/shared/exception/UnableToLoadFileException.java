@@ -1,6 +1,6 @@
 
 
-package app.coronawarn.server.services.distribution.assembly.appconfig;
+package app.coronawarn.server.common.shared.exception;
 
 /**
  * The file could not be loaded/parsed correctly.

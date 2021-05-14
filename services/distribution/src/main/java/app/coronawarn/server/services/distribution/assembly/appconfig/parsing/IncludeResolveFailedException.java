@@ -2,7 +2,7 @@
 
 package app.coronawarn.server.services.distribution.assembly.appconfig.parsing;
 
-import app.coronawarn.server.services.distribution.assembly.appconfig.UnableToLoadFileException;
+import app.coronawarn.server.common.shared.exception.UnableToLoadFileException;
 import org.yaml.snakeyaml.nodes.ScalarNode;
 
 /**

@@ -5,7 +5,8 @@ import static app.coronawarn.server.services.distribution.statistics.keyfigureca
 import app.coronawarn.server.common.persistence.service.StatisticsDownloadService;
 import app.coronawarn.server.common.protocols.internal.stats.KeyFigureCard;
 import app.coronawarn.server.common.protocols.internal.stats.Statistics;
-import app.coronawarn.server.services.distribution.assembly.structure.util.TimeUtils;
+import app.coronawarn.server.common.shared.util.SerializationUtils;
+import app.coronawarn.server.common.shared.util.TimeUtils;
 import app.coronawarn.server.services.distribution.config.DistributionServiceConfig;
 import app.coronawarn.server.services.distribution.statistics.exceptions.BucketNotFoundException;
 import app.coronawarn.server.services.distribution.statistics.exceptions.ConnectionException;
@@ -15,7 +16,6 @@ import app.coronawarn.server.services.distribution.statistics.file.JsonFileLoade
 import app.coronawarn.server.services.distribution.statistics.keyfigurecard.KeyFigureCardFactory;
 import app.coronawarn.server.services.distribution.statistics.keyfigurecard.factory.MissingPropertyException;
 import app.coronawarn.server.services.distribution.statistics.validation.StatisticsJsonValidator;
-import app.coronawarn.server.services.distribution.utils.SerializationUtils;
 import java.io.IOException;
 import java.time.LocalDate;
 import java.time.ZoneOffset;
