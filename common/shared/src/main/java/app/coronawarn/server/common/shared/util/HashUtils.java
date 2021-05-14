@@ -1,4 +1,4 @@
-package app.coronawarn.server.common.persistence.utils.hash;
+package app.coronawarn.server.common.shared.util;
 
 import com.google.protobuf.ByteString;
 import java.nio.charset.StandardCharsets;
@@ -10,6 +10,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.util.DigestUtils;
 
 public class HashUtils {
+
+  private static final Logger logger = LoggerFactory.getLogger(HashUtils.class);
 
   public enum MessageDigestAlgorithms {
     SHA_256("SHA-256");
@@ -24,8 +26,6 @@ public class HashUtils {
       return name;
     }
   }
-
-  private static final Logger logger = LoggerFactory.getLogger(HashUtils.class);
 
   private HashUtils() {
   }
@@ -53,7 +53,7 @@ public class HashUtils {
     try {
       return MessageDigest.getInstance(algorithm.getName()).digest(data.toByteArray());
     } catch (NoSuchAlgorithmException e) {
-      logger.error(e.getMessage(), e);
+      logger.error("Digest algorithm does not exist", e);
     }
     return new byte[0];
   }
@@ -67,5 +67,4 @@ public class HashUtils {
   public static String md5DigestAsHex(final String subject) {
     return DigestUtils.md5DigestAsHex(subject.getBytes(StandardCharsets.UTF_8));
   }
-
 }

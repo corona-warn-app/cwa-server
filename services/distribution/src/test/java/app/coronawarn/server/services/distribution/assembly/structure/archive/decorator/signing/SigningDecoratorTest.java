@@ -5,6 +5,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import app.coronawarn.server.common.protocols.external.exposurenotification.SignatureInfo;
 import app.coronawarn.server.common.protocols.external.exposurenotification.TEKSignature;
 import app.coronawarn.server.common.protocols.external.exposurenotification.TEKSignatureList;
+import app.coronawarn.server.common.shared.collection.ImmutableStack;
 import app.coronawarn.server.services.distribution.assembly.component.CryptoProvider;
 import app.coronawarn.server.services.distribution.assembly.structure.WritableOnDisk;
 import app.coronawarn.server.services.distribution.assembly.structure.archive.Archive;
@@ -13,7 +14,6 @@ import app.coronawarn.server.services.distribution.assembly.structure.directory.
 import app.coronawarn.server.services.distribution.assembly.structure.directory.DirectoryOnDisk;
 import app.coronawarn.server.services.distribution.assembly.structure.file.File;
 import app.coronawarn.server.services.distribution.assembly.structure.file.FileOnDisk;
-import app.coronawarn.server.services.distribution.assembly.structure.util.ImmutableStack;
 import app.coronawarn.server.services.distribution.config.DistributionServiceConfig;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;

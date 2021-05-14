@@ -4,14 +4,14 @@ import app.coronawarn.server.common.persistence.service.TraceTimeIntervalWarning
 import app.coronawarn.server.common.persistence.service.utils.checkins.CheckinsDateSpecification;
 import app.coronawarn.server.common.protocols.internal.SubmissionPayload.SubmissionType;
 import app.coronawarn.server.common.protocols.internal.pt.CheckIn;
+import app.coronawarn.server.common.shared.collection.ImmutableStack;
+import app.coronawarn.server.common.shared.util.TimeUtils;
 import app.coronawarn.server.services.distribution.Application;
 import app.coronawarn.server.services.distribution.assembly.component.OutputDirectoryProvider;
 import app.coronawarn.server.services.distribution.assembly.component.TraceTimeIntervalWarningsStructureProvider;
 import app.coronawarn.server.services.distribution.assembly.structure.WritableOnDisk;
 import app.coronawarn.server.services.distribution.assembly.structure.directory.Directory;
 import app.coronawarn.server.services.distribution.assembly.structure.directory.DirectoryOnDisk;
-import app.coronawarn.server.services.distribution.assembly.structure.util.ImmutableStack;
-import app.coronawarn.server.services.distribution.assembly.structure.util.TimeUtils;
 import app.coronawarn.server.services.distribution.common.Helpers;
 import app.coronawarn.server.services.distribution.objectstore.ObjectStoreAccess;
 import org.apache.commons.lang3.StringUtils;

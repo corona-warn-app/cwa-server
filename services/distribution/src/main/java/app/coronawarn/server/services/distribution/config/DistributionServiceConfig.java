@@ -1,7 +1,7 @@
 package app.coronawarn.server.services.distribution.config;
 
 import app.coronawarn.server.common.protocols.external.exposurenotification.SignatureInfo;
-import app.coronawarn.server.services.distribution.utils.SerializationUtils;
+import app.coronawarn.server.common.shared.util.SerializationUtils;
 import java.util.List;
 import java.util.stream.Collectors;
 import javax.validation.constraints.Max;

@@ -5,10 +5,10 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import app.coronawarn.server.common.persistence.domain.TraceTimeIntervalWarning;
 import app.coronawarn.server.common.persistence.repository.TraceTimeIntervalWarningRepository;
 import app.coronawarn.server.common.persistence.service.utils.checkins.CheckinsDateSpecification;
-import app.coronawarn.server.common.persistence.utils.hash.HashUtils;
 import app.coronawarn.server.common.protocols.internal.SubmissionPayload;
 import app.coronawarn.server.common.protocols.internal.SubmissionPayload.SubmissionType;
 import app.coronawarn.server.common.protocols.internal.pt.CheckIn;
+import app.coronawarn.server.common.shared.util.HashUtils;
 import app.coronawarn.server.services.submission.controller.CheckinsStorageResult;
 import com.google.protobuf.ByteString;
 import java.time.Instant;
@@ -29,10 +29,6 @@ import org.springframework.test.context.ActiveProfiles;
 @DirtiesContext
 @ActiveProfiles("integration-test")
 class EventCheckinsFacadeIT {
-
-  private static final int CORRECT_TRL = 1;
-  private static final int CORRECT_CHECKOUT_TIME = 12;
-  private static final int CORRECT_CHECKIN_TIME = 1;
 
   @Autowired
   private EventCheckinFacade eventCheckinFacade;

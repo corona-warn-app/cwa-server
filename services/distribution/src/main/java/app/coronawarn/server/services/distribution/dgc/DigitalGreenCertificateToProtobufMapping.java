@@ -1,6 +1,6 @@
 package app.coronawarn.server.services.distribution.dgc;
 
-import static app.coronawarn.server.services.distribution.utils.SerializationUtils.deserializeJsonToSimpleType;
+import static app.coronawarn.server.common.shared.util.SerializationUtils.deserializeJsonToSimpleType;
 
 import app.coronawarn.server.common.protocols.internal.dgc.ValueSet;
 import app.coronawarn.server.common.protocols.internal.dgc.ValueSetItem;
@@ -17,6 +17,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ResourceLoader;
 import org.springframework.stereotype.Component;
 import org.springframework.util.ObjectUtils;
+
 
 @Component
 public class DigitalGreenCertificateToProtobufMapping {

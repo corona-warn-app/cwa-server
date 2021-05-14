@@ -12,6 +12,8 @@ import static org.mockito.Mockito.when;
 import app.coronawarn.server.common.persistence.domain.DiagnosisKey;
 import app.coronawarn.server.common.persistence.service.common.KeySharingPoliciesChecker;
 import app.coronawarn.server.common.protocols.external.exposurenotification.ReportType;
+import app.coronawarn.server.common.shared.collection.ImmutableStack;
+import app.coronawarn.server.common.shared.util.TimeUtils;
 import app.coronawarn.server.services.distribution.assembly.component.CryptoProvider;
 import app.coronawarn.server.services.distribution.assembly.diagnosiskeys.DiagnosisKeyBundler;
 import app.coronawarn.server.services.distribution.assembly.diagnosiskeys.ProdDiagnosisKeyBundler;
@@ -19,8 +21,6 @@ import app.coronawarn.server.services.distribution.assembly.structure.WritableOn
 import app.coronawarn.server.services.distribution.assembly.structure.directory.Directory;
 import app.coronawarn.server.services.distribution.assembly.structure.directory.DirectoryOnDisk;
 import app.coronawarn.server.services.distribution.assembly.structure.file.FileOnDiskWithChecksum;
-import app.coronawarn.server.services.distribution.assembly.structure.util.ImmutableStack;
-import app.coronawarn.server.services.distribution.assembly.structure.util.TimeUtils;
 import app.coronawarn.server.services.distribution.config.DistributionServiceConfig;
 import java.io.File;
 import java.io.IOException;

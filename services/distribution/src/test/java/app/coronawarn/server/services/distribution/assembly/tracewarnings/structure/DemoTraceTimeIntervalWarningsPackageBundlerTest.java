@@ -5,7 +5,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import app.coronawarn.server.common.persistence.domain.TraceTimeIntervalWarning;
 import app.coronawarn.server.common.persistence.service.utils.checkins.CheckinsDateSpecification;
-import app.coronawarn.server.services.distribution.assembly.structure.util.TimeUtils;
+import app.coronawarn.server.common.shared.util.TimeUtils;
 import app.coronawarn.server.services.distribution.assembly.tracewarnings.DemoTraceTimeIntervalWarningsPackageBundler;
 import app.coronawarn.server.services.distribution.assembly.tracewarnings.TraceTimeIntervalWarningsPackageBundler;
 import app.coronawarn.server.services.distribution.config.DistributionServiceConfig;

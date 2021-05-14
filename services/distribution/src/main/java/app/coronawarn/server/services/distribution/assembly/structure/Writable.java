@@ -1,11 +1,9 @@
-
-
 package app.coronawarn.server.services.distribution.assembly.structure;
 
+import app.coronawarn.server.common.shared.collection.ImmutableStack;
 import app.coronawarn.server.services.distribution.assembly.structure.archive.Archive;
 import app.coronawarn.server.services.distribution.assembly.structure.directory.Directory;
 import app.coronawarn.server.services.distribution.assembly.structure.file.File;
-import app.coronawarn.server.services.distribution.assembly.structure.util.ImmutableStack;
 
 /**
  * Something that has a name, a parent and that can be written to somewhere.

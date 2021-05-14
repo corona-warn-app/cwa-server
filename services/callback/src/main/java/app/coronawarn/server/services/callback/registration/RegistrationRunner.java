@@ -1,7 +1,7 @@
 package app.coronawarn.server.services.callback.registration;
 
 import app.coronawarn.server.common.federation.client.FederationGatewayClient;
-import app.coronawarn.server.common.persistence.utils.hash.HashUtils;
+import app.coronawarn.server.common.shared.util.HashUtils;
 import app.coronawarn.server.services.callback.config.CallbackServiceConfig;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;

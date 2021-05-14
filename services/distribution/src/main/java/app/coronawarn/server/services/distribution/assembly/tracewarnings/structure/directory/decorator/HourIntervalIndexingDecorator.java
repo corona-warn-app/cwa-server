@@ -1,9 +1,9 @@
 package app.coronawarn.server.services.distribution.assembly.tracewarnings.structure.directory.decorator;
 
+import app.coronawarn.server.common.shared.collection.ImmutableStack;
 import app.coronawarn.server.services.distribution.assembly.structure.directory.decorator.indexing.IndexingDecoratorOnDisk;
 import app.coronawarn.server.services.distribution.assembly.structure.file.FileOnDisk;
 import app.coronawarn.server.services.distribution.assembly.structure.file.FileOnDiskWithChecksum;
-import app.coronawarn.server.services.distribution.assembly.structure.util.ImmutableStack;
 import app.coronawarn.server.services.distribution.assembly.tracewarnings.TraceTimeIntervalWarningsPackageBundler;
 import app.coronawarn.server.services.distribution.assembly.tracewarnings.structure.directory.TraceTimeIntervalWarningsHourDirectory;
 import app.coronawarn.server.services.distribution.config.DistributionServiceConfig;

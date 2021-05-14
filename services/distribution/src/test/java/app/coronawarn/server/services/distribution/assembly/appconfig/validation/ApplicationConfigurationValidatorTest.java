@@ -9,8 +9,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 
 import app.coronawarn.server.common.protocols.internal.ApplicationConfiguration;
+import app.coronawarn.server.common.shared.exception.UnableToLoadFileException;
 import app.coronawarn.server.services.distribution.assembly.appconfig.ApplicationConfigurationPublicationConfig;
-import app.coronawarn.server.services.distribution.assembly.appconfig.UnableToLoadFileException;
 import app.coronawarn.server.services.distribution.config.DistributionServiceConfig;
 import java.util.Arrays;
 import java.util.stream.Stream;

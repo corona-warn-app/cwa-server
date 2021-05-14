@@ -12,7 +12,7 @@ import static org.mockito.internal.verification.VerificationModeFactory.times;
 import static org.springframework.http.HttpHeaders.CONTENT_TYPE;
 
 import app.coronawarn.server.common.federation.client.callback.RegistrationResponse;
-import app.coronawarn.server.common.persistence.utils.hash.HashUtils;
+import app.coronawarn.server.common.shared.util.HashUtils;
 import app.coronawarn.server.services.callback.config.CallbackServiceConfig;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.tomakehurst.wiremock.WireMockServer;
