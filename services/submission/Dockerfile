@@ -10,6 +10,7 @@ COPY ./common/pom.xml ${WORK_DIR}/common/pom.xml
 COPY ./common/protocols/pom.xml ${WORK_DIR}/common/protocols/pom.xml
 COPY ./common/persistence/pom.xml ${WORK_DIR}/common/persistence/pom.xml
 COPY ./common/federation/pom.xml ${WORK_DIR}/common/federation/pom.xml
+COPY ./common/shared/pom.xml ${WORK_DIR}/common/shared/pom.xml
 COPY ./services/pom.xml ${WORK_DIR}/services/pom.xml
 COPY ./services/distribution/pom.xml ${WORK_DIR}/services/distribution/pom.xml
 COPY ./services/submission/pom.xml ${WORK_DIR}/services/submission/pom.xml
