@@ -92,6 +92,7 @@ public class DigitalGreenCertificateToProtobufMapping {
       throws DefaultValueSetsMissingException {
     if (!ObjectUtils.isEmpty(path)) {
       try (InputStream jsonStream = resourceLoader.getResource(path).getInputStream()) {
+        logger.info("Loading JSON from {}.", path);
         return deserializeJsonToSimpleType(jsonStream, rawType);
       } catch (IOException e) {
         logger.error("Error reading {} from json {}.", rawType.getSimpleName(), path, e);
@@ -99,6 +100,7 @@ public class DigitalGreenCertificateToProtobufMapping {
     }
     try (InputStream jsonStream = resourceLoader.getResource(defaultPath).getInputStream()) {
       // fallback to default
+      logger.info("JSON to load was empty or invalid, falling back to loading from {}.", defaultPath);
       return deserializeJsonToSimpleType(jsonStream, rawType);
     } catch (IOException e) {
       logger.error("We could not load the default {}. This shouldn't happen!", defaultPath, e);
