@@ -1,5 +1,3 @@
-
-
 package app.coronawarn.server.services.download.runner;
 
 import app.coronawarn.server.common.persistence.service.FederationBatchInfoService;
@@ -40,9 +38,9 @@ public class RetentionPolicy implements ApplicationRunner {
   public void run(ApplicationArguments args) {
     try {
       federationBatchInfoService.applyRetentionPolicy(retentionDays);
+      logger.debug("Retention policy applied successfully.");
     } catch (Exception e) {
       logger.error("Application of retention policy failed.", e);
     }
-    logger.debug("Retention policy applied successfully.");
   }
 }
