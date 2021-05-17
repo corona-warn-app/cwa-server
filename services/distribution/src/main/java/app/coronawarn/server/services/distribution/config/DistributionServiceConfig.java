@@ -19,7 +19,7 @@ import org.springframework.validation.annotation.Validated;
 public class DistributionServiceConfig {
 
   private static final String PATH_REGEX = "^[/]?[a-zA-Z0-9_]{1,1024}(/[a-zA-Z0-9_]{1,1024}){0,256}[/]?$";
-  private static final String RESOURCE_REGEX = "^(classpath:|file:[/]{1,8})?[a-zA-Z0-9_]{1,1024}([a-zA-Z0-9_]{1,1024}){0,256}[/]?$";
+  private static final String RESOURCE_REGEX = "^(classpath:|file:[/]{1,3})?([a-zA-Z0-9_/\\.]{1,1010})$";
   private static final String RESOURCE_OR_EMPTY_REGEX = "(" + RESOURCE_REGEX + ")?";
   private static final String FILE_NAME_REGEX = "^[a-zA-Z0-9_-]{1,1024}$";
   private static final String FILE_NAME_WITH_TYPE_REGEX = "^[a-zA-Z0-9_-]{1,1024}\\.[a-z]{1,64}$";
