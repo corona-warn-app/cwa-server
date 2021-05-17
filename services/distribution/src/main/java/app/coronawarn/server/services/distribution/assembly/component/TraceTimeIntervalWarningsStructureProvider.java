@@ -1,10 +1,11 @@
 package app.coronawarn.server.services.distribution.assembly.component;
 
+import static app.coronawarn.server.common.shared.util.TimeUtils.getCurrentUtcHour;
+
 import app.coronawarn.server.common.persistence.domain.TraceTimeIntervalWarning;
 import app.coronawarn.server.common.persistence.service.TraceTimeIntervalWarningService;
 import app.coronawarn.server.services.distribution.assembly.structure.WritableOnDisk;
 import app.coronawarn.server.services.distribution.assembly.structure.directory.Directory;
-import app.coronawarn.server.services.distribution.assembly.structure.util.TimeUtils;
 import app.coronawarn.server.services.distribution.assembly.tracewarnings.TraceTimeIntervalWarningsPackageBundler;
 import app.coronawarn.server.services.distribution.assembly.tracewarnings.structure.directory.TraceTimeIntervalWarningsDirectory;
 import app.coronawarn.server.services.distribution.config.DistributionServiceConfig;
@@ -46,7 +47,7 @@ public class TraceTimeIntervalWarningsStructureProvider {
     logger.debug("Querying trace time interval warnings from the database...");
     Collection<TraceTimeIntervalWarning> traceWarnings =
         traceWarningsService.getTraceTimeIntervalWarnings();
-    traceWarningsBundler.setTraceTimeIntervalWarnings(traceWarnings, TimeUtils.getCurrentUtcHour());
+    traceWarningsBundler.setTraceTimeIntervalWarnings(traceWarnings, getCurrentUtcHour());
     return new TraceTimeIntervalWarningsDirectory(traceWarningsBundler, cryptoProvider,
         distributionServiceConfig);
   }

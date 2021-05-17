@@ -34,8 +34,7 @@ public class TekFieldDerivations {
   }
 
   /**
-   * Returns a mapped DSOS value for the given TRL or throws an exception if the TRL is not part of
-   * the mapping.
+   * Returns a mapped DSOS value for the given TRL or throws an exception if the TRL is not part of the mapping.
    * @param transmissionRiskLevel value for transmission risk strength
    * @return mapped days since symptoms started value for transmission risk
    */

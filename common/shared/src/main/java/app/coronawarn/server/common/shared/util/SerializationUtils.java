@@ -1,4 +1,5 @@
-package app.coronawarn.server.services.distribution.utils;
+package app.coronawarn.server.common.shared.util;
+
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.json.JsonReadFeature;

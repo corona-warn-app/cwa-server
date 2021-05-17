@@ -14,6 +14,7 @@ import app.coronawarn.server.common.protocols.internal.HourPackageMetadata;
 import app.coronawarn.server.common.protocols.internal.KeyDownloadParametersAndroid;
 import app.coronawarn.server.common.protocols.internal.KeyDownloadParametersIOS;
 import app.coronawarn.server.common.protocols.internal.SemanticVersion;
+import app.coronawarn.server.common.shared.exception.UnableToLoadFileException;
 import app.coronawarn.server.services.distribution.config.DistributionServiceConfig;
 import app.coronawarn.server.services.distribution.config.DistributionServiceConfig.AppConfigParameters.AndroidExposureDetectionParameters;
 import app.coronawarn.server.services.distribution.config.DistributionServiceConfig.AppConfigParameters.AndroidKeyDownloadParameters;

@@ -14,6 +14,7 @@
   <packaging>pom</packaging>
 
   <modules>
+    <module>shared</module>
     <module>protocols</module>
     <module>persistence</module>
     <module>federation</module>

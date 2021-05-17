@@ -5,7 +5,7 @@ import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import app.coronawarn.server.common.persistence.domain.DiagnosisKey;
-import app.coronawarn.server.common.persistence.utils.hash.HashUtils;
+import app.coronawarn.server.common.shared.util.HashUtils;
 import com.google.protobuf.ByteString;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.ApplicationArguments;

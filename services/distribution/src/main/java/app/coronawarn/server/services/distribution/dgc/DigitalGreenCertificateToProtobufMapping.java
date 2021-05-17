@@ -1,6 +1,6 @@
 package app.coronawarn.server.services.distribution.dgc;
 
-import static app.coronawarn.server.services.distribution.utils.SerializationUtils.deserializeJsonToSimpleType;
+import static app.coronawarn.server.common.shared.util.SerializationUtils.deserializeJsonToSimpleType;
 
 import app.coronawarn.server.common.protocols.internal.dgc.ValueSet;
 import app.coronawarn.server.common.protocols.internal.dgc.ValueSetItem;
@@ -17,6 +17,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ResourceLoader;
 import org.springframework.stereotype.Component;
 import org.springframework.util.ObjectUtils;
+
 
 @Component
 public class DigitalGreenCertificateToProtobufMapping {
@@ -74,7 +75,7 @@ public class DigitalGreenCertificateToProtobufMapping {
 
     return ValueSets.newBuilder()
         .setMa(ValueSet.newBuilder().addAllItems(mahItems).build())
-        .setVp(ValueSet.newBuilder().addAllItems(productItems).build())
+        .setMp(ValueSet.newBuilder().addAllItems(productItems).build())
         .setVp(ValueSet.newBuilder().addAllItems(prophylaxisItems).build())
         .build();
   }
@@ -91,6 +92,7 @@ public class DigitalGreenCertificateToProtobufMapping {
       throws DefaultValueSetsMissingException {
     if (!ObjectUtils.isEmpty(path)) {
       try (InputStream jsonStream = resourceLoader.getResource(path).getInputStream()) {
+        logger.debug("Loading JSON from {}.", path);
         return deserializeJsonToSimpleType(jsonStream, rawType);
       } catch (IOException e) {
         logger.error("Error reading {} from json {}.", rawType.getSimpleName(), path, e);
@@ -98,6 +100,7 @@ public class DigitalGreenCertificateToProtobufMapping {
     }
     try (InputStream jsonStream = resourceLoader.getResource(defaultPath).getInputStream()) {
       // fallback to default
+      logger.debug("JSON to load was empty or invalid, falling back to loading from {}.", defaultPath);
       return deserializeJsonToSimpleType(jsonStream, rawType);
     } catch (IOException e) {
       logger.error("We could not load the default {}. This shouldn't happen!", defaultPath, e);

@@ -54,11 +54,11 @@ public class DigitalGreenCertificateStructureProvider {
       ArchiveOnDisk archiveToPublish = new ArchiveOnDisk(dgcConfig.getValuesetsFileName());
       archiveToPublish.addWritable(new FileOnDisk("export.bin",
           dgcToProtobufMapping.constructProtobufMapping().toByteArray()));
-      DirectoryOnDisk languageDirectory = new DirectoryOnDisk(currentLanguage);
+      DirectoryOnDisk languageDirectory = new DirectoryOnDisk(currentLanguage.toLowerCase());
       languageDirectory.addWritable(new DistributionArchiveSigningDecorator(
           archiveToPublish, cryptoProvider, distributionServiceConfig));
       dgcDirectory.addWritable(languageDirectory);
-      logger.info("Writing digital green certificate to {}/{}/{}.", dgcDirectory.getName(), currentLanguage,
+      logger.info("Writing digital green certificate to {}/{}/{}.", dgcDirectory.getName(), languageDirectory.getName(),
           archiveToPublish.getName());
     }
     return dgcDirectory;

@@ -2,10 +2,10 @@
 
 package app.coronawarn.server.services.distribution.assembly.structure.directory.decorator.indexing;
 
+import app.coronawarn.server.common.shared.collection.ImmutableStack;
 import app.coronawarn.server.services.distribution.assembly.structure.Writable;
 import app.coronawarn.server.services.distribution.assembly.structure.directory.IndexDirectory;
 import app.coronawarn.server.services.distribution.assembly.structure.directory.decorator.IndexDirectoryDecorator;
-import app.coronawarn.server.services.distribution.assembly.structure.util.ImmutableStack;
 
 public abstract class AbstractIndexingDecorator<T, W extends Writable<W>> extends
     IndexDirectoryDecorator<T, W> implements IndexingDecorator<T, W> {

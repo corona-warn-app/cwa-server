@@ -4,12 +4,12 @@ import static org.junit.Assert.assertTrue;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.when;
 
+import app.coronawarn.server.common.shared.collection.ImmutableStack;
 import app.coronawarn.server.services.distribution.assembly.structure.Writable;
 import app.coronawarn.server.services.distribution.assembly.structure.WritableOnDisk;
 import app.coronawarn.server.services.distribution.assembly.structure.archive.decorator.signing.DistributionArchiveSigningDecorator;
 import app.coronawarn.server.services.distribution.assembly.structure.directory.Directory;
 import app.coronawarn.server.services.distribution.assembly.structure.directory.DirectoryOnDisk;
-import app.coronawarn.server.services.distribution.assembly.structure.util.ImmutableStack;
 import app.coronawarn.server.services.distribution.config.DistributionServiceConfig;
 import app.coronawarn.server.services.distribution.dgc.DigitalGreenCertificateToProtobufMapping;
 import java.io.File;
@@ -74,7 +74,7 @@ class DigitalGreenCertificateStructureProviderTest {
     assertEquals("ehn-dgc", digitalGreenCertificates.getName());
     List<String> supportedLanguages = digitalGreenCertificates.getWritables().stream().map(Writable::getName).collect(
         Collectors.toList());
-    List<String> expectedLanguages = Arrays.asList("DE", "EN", "BG", "PL", "RO", "TR");
+    List<String> expectedLanguages = Arrays.asList("de", "en", "bg", "pl", "ro", "tr");
     assertTrue(supportedLanguages.containsAll(expectedLanguages));
     (digitalGreenCertificates.getWritables()).stream()
         .map(directory -> ((DirectoryOnDisk) directory).getWritables().iterator().next()).forEach(valueSet -> {
