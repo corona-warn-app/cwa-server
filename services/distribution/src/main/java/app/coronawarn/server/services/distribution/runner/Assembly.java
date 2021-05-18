@@ -1,5 +1,3 @@
-
-
 package app.coronawarn.server.services.distribution.runner;
 
 import app.coronawarn.server.common.shared.collection.ImmutableStack;
@@ -54,11 +52,10 @@ public class Assembly implements ApplicationRunner {
       outputDirectory.prepare(new ImmutableStack<>());
       logger.debug("Writing files...");
       outputDirectory.write();
+      logger.debug("Distribution data assembled successfully.");
     } catch (Exception e) {
       logger.error("Distribution data assembly failed.", e);
       Application.killApplication(applicationContext);
     }
-
-    logger.debug("Distribution data assembled successfully.");
   }
 }
