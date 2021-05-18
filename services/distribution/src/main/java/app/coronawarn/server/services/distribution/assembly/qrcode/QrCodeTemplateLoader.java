@@ -30,7 +30,7 @@ public class QrCodeTemplateLoader {
     return loadPosterTemplate(config.getIosQrCodePosterTemplate().getTemplate(), "pt-ios-poster-1.0.0.pdf");
   }
 
-  private ByteString loadPosterTemplate(String filename, String fallback) {
+  protected ByteString loadPosterTemplate(String filename, String fallback) {
     if (!ObjectUtils.isEmpty(filename)) {
       try (InputStream fileStream = resourceLoader.getResource(filename).getInputStream()) {
         logger.debug("Loading QR poster template from {}.", filename);

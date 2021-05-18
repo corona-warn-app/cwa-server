@@ -4,7 +4,9 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import app.coronawarn.server.services.distribution.config.DistributionServiceConfig;
 import com.google.protobuf.ByteString;
+import java.io.File;
 import java.io.IOException;
+import java.nio.file.Path;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,10 +40,25 @@ class QrCodeTemplateLoaderTest {
   }
 
   @Test
-  public void testLoadPosterTemplateCanLoadFileFromDisk() throws IOException {
-    config.getAndroidQrCodePosterTemplate().setTemplate("src/main/resources/pt-android-poster-1.0.0.pdf");
-    ByteString template = loader.loadAndroidTemplateAsBytes();
+  public void testLoadPosterTemplateCanLoadDefaultMissingFile() throws IOException {
+    config.getIosQrCodePosterTemplate().setTemplate(null);
+    ByteString template = loader.loadIosTemplateAsBytes();
 
     assertThat(template).isNotEmpty();
+  }
+
+  @Test
+  public void testLoadPosterTemplateCanLoadFileFromDisk() throws IOException {
+    String uri = new File("src/main/resources/pt-android-poster-1.0.0.pdf").getAbsoluteFile().toURI().toString();
+    ByteString template = loader.loadPosterTemplate(uri, "non-existent");
+
+    assertThat(template).isNotEmpty();
+  }
+
+  @Test
+  public void testWrongFallbackDoesNotThrowException() throws IOException {
+    ByteString template = loader.loadPosterTemplate("non-existent", "non-existent");
+
+    assertThat(template).isEmpty();
   }
 }
