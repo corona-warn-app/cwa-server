@@ -150,7 +150,7 @@ class UploadResponseTest {
     upload.run(null);
     verify(mockUploadKeyRepository, never())
         .updateBatchTag(eq(orderedKeys.get(0).getKeyData()), any());
-      verify(mockUploadKeyRepository, times(1))
+      verify(mockUploadKeyRepository, times(0))
           .updateBatchTag(eq(orderedKeys.get(1).getKeyData()), any());
   }
 
