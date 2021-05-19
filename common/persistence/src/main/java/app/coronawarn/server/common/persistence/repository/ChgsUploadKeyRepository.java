@@ -5,7 +5,6 @@ import java.util.List;
 import org.springframework.context.annotation.Profile;
 import org.springframework.data.jdbc.repository.query.Modifying;
 import org.springframework.data.jdbc.repository.query.Query;
-import org.springframework.data.repository.PagingAndSortingRepository;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
@@ -14,8 +13,7 @@ import org.springframework.stereotype.Repository;
  */
 @Repository
 @Profile("connect-chgs")
-public interface ChgsUploadKeyRepository
-    extends PagingAndSortingRepository<FederationUploadKey, Long>, FederationUploadKeyRepository {
+public interface ChgsUploadKeyRepository extends FederationUploadKeyRepository {
 
   @Query("SELECT * FROM chgs_upload_key WHERE (batch_tag is null or batch_tag = '')")
   List<FederationUploadKey> findAllUploadableKeys();
