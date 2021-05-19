@@ -73,11 +73,10 @@ public class RetentionPolicy implements ApplicationRunner {
       s3RetentionPolicy.applyDiagnosisKeyHourRetentionPolicy(hourFileRetentionDays);
       s3RetentionPolicy.applyTraceTimeWarningHourRetentionPolicy(retentionDays);
       statisticsDownloadService.applyRetentionPolicy(retentionDays);
+      logger.debug("Retention policy applied successfully.");
     } catch (Exception e) {
       logger.error("Application of retention policy failed.", e);
       Application.killApplication(applicationContext);
     }
-
-    logger.debug("Retention policy applied successfully.");
   }
 }
