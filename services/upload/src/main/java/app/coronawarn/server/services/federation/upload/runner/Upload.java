@@ -70,7 +70,7 @@ public class Upload implements ApplicationRunner {
         .map(index -> sortedOriginalList.get(index))
         .collect(Collectors.toList());
 
-    if (!errorKeys.isEmpty()) {
+    if (!errorKeys.isEmpty() || !body.getStatus409().isEmpty()) {
       collectAllBatchKeys.addAll(errorKeys);
       collectAllBatchKeys.addAll(body.getStatus201()
           .stream()
