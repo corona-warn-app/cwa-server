@@ -19,6 +19,9 @@ public interface EfgsUploadKeyRepository extends FederationUploadKeyRepository {
   @Query("SELECT * FROM federation_upload_key WHERE (batch_tag is null or batch_tag = '')")
   List<FederationUploadKey> findAllUploadableKeys();
 
+  @Query("SELECT * FROM federation_upload_key")
+  List<FederationUploadKey> findAll();
+
   @Modifying
   @Query("update federation_upload_key set batch_tag = :batchTag where key_data = :keyData")
   void updateBatchTag(@Param("keyData") byte[] keyData, @Param("batchTag") String batchTag);

@@ -18,6 +18,9 @@ public interface ChgsUploadKeyRepository extends FederationUploadKeyRepository {
   @Query("SELECT * FROM chgs_upload_key WHERE (batch_tag is null or batch_tag = '')")
   List<FederationUploadKey> findAllUploadableKeys();
 
+  @Query("SELECT * FROM chgs_upload_key")
+  List<FederationUploadKey> findAll();
+
   @Modifying
   @Query("update chgs_upload_key set batch_tag = :batchTag where key_data = :keyData")
   void updateBatchTag(@Param("keyData") byte[] keyData, @Param("batchTag") String batchTag);

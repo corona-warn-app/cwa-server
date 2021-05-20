@@ -2,6 +2,7 @@ package app.coronawarn.server.services.federation.upload.integration;
 
 import static app.coronawarn.server.services.federation.upload.utils.MockData.generateRandomDiagnosisKeys;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
@@ -105,9 +106,23 @@ abstract class DiagnosisKeyUploadIT extends UploadKeyIT {
 
   @Test
   void shouldUpdateBatchTagIdsForSuccessfullyUploadedKeys() throws Exception {
-    when(federationUploadClient.postBatchUpload(any())).thenReturn(Optional.ofNullable(null)); // no response body, means success
+    when(federationUploadClient.postBatchUpload(any()))
+        .thenReturn(Optional.ofNullable(null)); // no response body, means success
     uploadKeysAndTestBatchTagIdUpdate();
     assertEquals(0, uploadKeyRepository.findAllUploadableKeys().size());
+  }
+
+  @Test
+  void testUpdatedBatchTagIdsForSuccessfullyUploadedKeys() throws Exception {
+    final BatchUploadResponse batchUploadResponse = mock(BatchUploadResponse.class);
+    when(batchUploadResponse.getStatus201()).thenReturn(indices(0, 4000));
+    when(federationUploadClient.postBatchUpload(any())).thenReturn(Optional.of(batchUploadResponse));
+    final Iterable<FederationUploadKey> currentKeys = uploadKeysAndTestBatchTagIdUpdate();
+    currentKeys.forEach(DiagnosisKeyUploadIT::assertKeyWasMarkedWithBatchTag);
+  }
+
+  private static void assertKeyWasMarkedWithBatchTag(final FederationUploadKey uploadKey) {
+    assertNotNull(uploadKey.getBatchTag());
   }
 
   private Iterable<FederationUploadKey> uploadKeysAndTestBatchTagIdUpdate() throws Exception {
