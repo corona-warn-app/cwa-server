@@ -270,8 +270,8 @@ There are three different value sets to consume:
 
 They can be found in the [dgc folder](https://github.com/corona-warn-app/cwa-server/tree/5e47a2e485585043a05ec4173204dd020c757585/services/distribution/src/main/resources/dgc)
 
-The [`DigitalGreenCertificateToProtobufMapping`](/services/distribution/src/main/java/dgc/coronawarn/server/services/distribution/dgc/DigitalGreenCertificateToProtobufMapping.java)
-is responsible for reading the values, using the [`DistributionServiceConfig`](/services/distribution/src/main/java/dgc/coronawarn/server/services/distribution/config/DistributionServiceConfig.java) and transforming the files into protobuffs.
+The [`DigitalGreenCertificateToProtobufMapping`](/services/distribution/src/main/java/app/coronawarn/server/services/distribution/dgc/DigitalGreenCertificateToProtobufMapping.java)
+is responsible for reading the values, using the [`DistributionServiceConfig`](/services/distribution/src/main/java/app/coronawarn/server/services/distribution/config/DistributionServiceConfig.java) and transforming the files into protobuffs.
 
 At the end of the process these URLs are created to allow retrieving the protobuf files: `ehn-dgc/{supportedLanguage}/value-sets`.
 
