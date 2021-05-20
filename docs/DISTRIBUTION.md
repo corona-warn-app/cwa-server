@@ -257,3 +257,23 @@ adding the rolling period of the key to its start interval number).
 140 Temporary Exposure Keys (configurable by the `shifting-policy-threshold` property). Where there are less
 keys available to distribute in a specific distribution run, these keys are shifted to a succeeding export,
 until the threshold minimum is fulfilled.
+
+## Digital Green Certificate
+
+A Digital Green Certificate is a digital proof that a person has either been vaccinated against COVID-19, received a negative test result or recovered from COVID-19.
+
+There are three different value sets to consume:
+- vaccine-prophylaxis.json - Vaccine or prophylaxis
+- vaccine-medicinal-product.json - Vaccine medicinal product
+- vaccine-mah-manf.json - Marketing Authorization Holder
+
+They can be found in the dgc folder. (/services/distribution/src/main/java/app/coronawarn/server/services/distribution/resources/dgc)
+
+The [`DigitalGreenCertificateToProtobufMapping`](/services/distribution/src/main/java/dgc/coronawarn/server/services/distribution/dgc/DigitalGreenCertificateToProtobufMapping.java)
+is responsible for reading the values, using the [`DistributionServiceConfig`](/services/distribution/src/main/java/dgc/coronawarn/server/services/distribution/config/DistributionServiceConfig.java) and transforming the files into protobuffs.
+
+At the end of the process there is created this structure: ehn-dgc/{supportedLanguage}/value-sets.
+
+supportedLanguage: DE, EN, BG, PL, RO, TR.
+
+The path of the JSONS can be taken from Vault, but there is a default path as well.
