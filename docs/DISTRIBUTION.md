@@ -263,6 +263,7 @@ until the threshold minimum is fulfilled.
 A Digital Green Certificate is a digital proof that a person has either been vaccinated against COVID-19, received a negative test result or recovered from COVID-19.
 
 There are three different value sets to consume:
+
 - vaccine-prophylaxis.json - Vaccine or prophylaxis
 - vaccine-medicinal-product.json - Vaccine medicinal product
 - vaccine-mah-manf.json - Marketing Authorization Holder
