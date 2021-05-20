@@ -263,17 +263,17 @@ until the threshold minimum is fulfilled.
 A Digital Green Certificate is a digital proof that a person has either been vaccinated against COVID-19, received a negative test result or recovered from COVID-19.
 
 There are three different value sets to consume:
-- vaccine-prophylaxis.json - Vaccine or prophylaxis
-- vaccine-medicinal-product.json - Vaccine medicinal product
-- vaccine-mah-manf.json - Marketing Authorization Holder
+ - vaccine-prophylaxis.json - Vaccine or prophylaxis
+ - vaccine-medicinal-product.json - Vaccine medicinal product
+ - vaccine-mah-manf.json - Marketing Authorization Holder
 
-They can be found in the dgc folder. (/services/distribution/src/main/java/app/coronawarn/server/services/distribution/resources/dgc)
+They can be found in the dgc folder. ([here](https://github.com/corona-warn-app/cwa-server/tree/5e47a2e485585043a05ec4173204dd020c757585/services/distribution/src/main/resources/dgc))
 
 The [`DigitalGreenCertificateToProtobufMapping`](/services/distribution/src/main/java/dgc/coronawarn/server/services/distribution/dgc/DigitalGreenCertificateToProtobufMapping.java)
 is responsible for reading the values, using the [`DistributionServiceConfig`](/services/distribution/src/main/java/dgc/coronawarn/server/services/distribution/config/DistributionServiceConfig.java) and transforming the files into protobuffs.
 
 At the end of the process there is created this structure: ehn-dgc/{supportedLanguage}/value-sets.
 
-supportedLanguage: DE, EN, BG, PL, RO, TR.
+The supported languages are configurable, for now: supportedLanguage: DE, EN, BG, PL, RO, TR. (more details [here](https://github.com/corona-warn-app/cwa-server/blob/5e47a2e485585043a05ec4173204dd020c757585/services/distribution/src/main/resources/application.yaml#L208)).
 
-The path of the JSONS can be taken from Vault, but there is a default path as well.
+The path of the JSONS can be taken from Vault, but there is a default path set as well.
