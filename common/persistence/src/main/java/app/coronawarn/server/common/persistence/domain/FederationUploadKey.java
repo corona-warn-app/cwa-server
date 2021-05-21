@@ -1,12 +1,9 @@
-
-
 package app.coronawarn.server.common.persistence.domain;
 
 import app.coronawarn.server.common.protocols.external.exposurenotification.ReportType;
 import app.coronawarn.server.common.protocols.internal.SubmissionPayload.SubmissionType;
 import java.util.Objects;
 import java.util.Set;
-import javax.validation.constraints.Size;
 
 /**
  * This entity is mapped to a table which serves as data source for the uploading of diagnosis keys to the Federation
@@ -18,49 +15,82 @@ import javax.validation.constraints.Size;
  */
 public class FederationUploadKey extends DiagnosisKey {
 
-  private String batchTag;
-
-  FederationUploadKey(byte[] keyData, SubmissionType submissionType, int rollingStartIntervalNumber, int rollingPeriod,
-      int transmissionRiskLevel, long submissionTimestamp, boolean consentToFederation, @Size String originCountry,
-      Set<String> visitedCountries, ReportType reportType, int daysSinceOnsetOfSymptoms) {
-    super(keyData, submissionType, rollingStartIntervalNumber, rollingPeriod,
-        transmissionRiskLevel, submissionTimestamp, consentToFederation, originCountry, visitedCountries, reportType,
-        daysSinceOnsetOfSymptoms);
-  }
-
-  public String getBatchTag() {
-    return batchTag;
-  }
-
   /**
    * Create a new instance of an upload key by copying the properties of the given source diagnosis key.
    *
    * @param diagnosisKeySource the {@link DiagnosisKey}
    * @return FederationUploadKey new {@link FederationUploadKey} created from DiagnosisKey
    */
-  public static FederationUploadKey from(DiagnosisKey diagnosisKeySource) {
+  public static FederationUploadKey from(final DiagnosisKey diagnosisKeySource) {
     return new FederationUploadKey(diagnosisKeySource.getKeyData(), diagnosisKeySource.getSubmissionType(),
         diagnosisKeySource.getRollingStartIntervalNumber(), diagnosisKeySource.getRollingPeriod(),
         diagnosisKeySource.getTransmissionRiskLevel(), diagnosisKeySource.getSubmissionTimestamp(),
         diagnosisKeySource.isConsentToFederation(), diagnosisKeySource.getOriginCountry(),
         diagnosisKeySource.getVisitedCountries(), diagnosisKeySource.getReportType(),
-        diagnosisKeySource.getDaysSinceOnsetOfSymptoms());
+        diagnosisKeySource.getDaysSinceOnsetOfSymptoms(), null);
+  }
+
+  private String batchTag;
+
+  /**
+   * Constructor.
+   * 
+   * @param keyData - keyData
+   * @param submissionType - submissionType
+   * @param rollingStartIntervalNumber - rollingStartIntervalNumber
+   * @param rollingPeriod - rollingPeriod
+   * @param transmissionRiskLevel - transmissionRiskLevel
+   * @param submissionTimestamp - submissionTimestamp
+   * @param consentToFederation - consentToFederation
+   * @param originCountry - originCountry
+   * @param visitedCountries - visitedCountries
+   * @param reportType - reportType
+   * @param daysSinceOnsetOfSymptoms - daysSinceOnsetOfSymptoms
+   * @param batchTag - batchTag
+   */
+  public FederationUploadKey(final byte[] keyData, final SubmissionType submissionType,
+      final int rollingStartIntervalNumber, final int rollingPeriod, final int transmissionRiskLevel,
+      final long submissionTimestamp, final boolean consentToFederation, final String originCountry,
+      final Set<String> visitedCountries, final ReportType reportType, final Integer daysSinceOnsetOfSymptoms,
+      final String batchTag) {
+    super(keyData, submissionType, rollingStartIntervalNumber, rollingPeriod, transmissionRiskLevel,
+        submissionTimestamp, consentToFederation, originCountry, visitedCountries, reportType,
+        daysSinceOnsetOfSymptoms);
+    this.batchTag = batchTag;
   }
 
   @Override
-  public boolean equals(Object o) {
+  public boolean equals(final Object o) {
     if (this == o) {
       return true;
     }
     if (o == null || getClass() != o.getClass()) {
       return false;
     }
-    FederationUploadKey that = (FederationUploadKey) o;
+    final FederationUploadKey that = (FederationUploadKey) o;
     return super.equals(o) && Objects.equals(batchTag, that.batchTag);
+  }
+
+  public String getBatchTag() {
+    return batchTag;
   }
 
   @Override
   public int hashCode() {
     return Objects.hash(super.hashCode(), batchTag);
+  }
+
+  public void setBatchTag(final String batchTag) {
+    this.batchTag = batchTag;
+  }
+
+  @Override
+  public String toString() {
+    return "FederationUploadKey [BatchTag=" + getBatchTag() + ", SubmissionType=" + getSubmissionType()
+        + ", RollingStartIntervalNumber=" + getRollingStartIntervalNumber() + ", RollingPeriod=" + getRollingPeriod()
+        + ", TransmissionRiskLevel=" + getTransmissionRiskLevel() + ", SubmissionTimestamp=" + getSubmissionTimestamp()
+        + ", isConsentToFederation=" + isConsentToFederation() + ", OriginCountry=" + getOriginCountry()
+        + ", VisitedCountries=" + getVisitedCountries() + ", ReportType=" + getReportType()
+        + ", DaysSinceOnsetOfSymptoms=" + getDaysSinceOnsetOfSymptoms() + "]";
   }
 }
