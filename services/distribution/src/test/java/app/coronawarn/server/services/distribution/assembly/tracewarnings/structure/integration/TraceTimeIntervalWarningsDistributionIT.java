@@ -1,5 +1,10 @@
 package app.coronawarn.server.services.distribution.assembly.tracewarnings.structure.integration;
 
+import static java.io.File.separator;
+import static java.io.File.separatorChar;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.when;
+
 import app.coronawarn.server.common.persistence.service.TraceTimeIntervalWarningService;
 import app.coronawarn.server.common.persistence.service.utils.checkins.CheckinsDateSpecification;
 import app.coronawarn.server.common.protocols.internal.SubmissionPayload.SubmissionType;
@@ -14,6 +19,14 @@ import app.coronawarn.server.services.distribution.assembly.structure.directory.
 import app.coronawarn.server.services.distribution.assembly.structure.directory.DirectoryOnDisk;
 import app.coronawarn.server.services.distribution.common.Helpers;
 import app.coronawarn.server.services.distribution.objectstore.ObjectStoreAccess;
+import java.io.File;
+import java.time.LocalDateTime;
+import java.time.ZoneOffset;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.Rule;
 import org.junit.jupiter.api.BeforeEach;
@@ -27,19 +40,8 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.cloud.vault.config.VaultAutoConfiguration;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
-import java.io.File;
-import java.time.LocalDateTime;
-import java.time.ZoneOffset;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Set;
-import java.util.stream.Collectors;
-import java.util.stream.IntStream;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Mockito.when;
-
-@ContextConfiguration(classes = {Application.class}, initializers = ConfigDataApplicationContextInitializer.class)
+@ContextConfiguration(classes = { Application.class }, initializers = ConfigDataApplicationContextInitializer.class)
 @ExtendWith(SpringExtension.class)
 @EnableAutoConfiguration(exclude = VaultAutoConfiguration.class)
 class TraceTimeIntervalWarningsDistributionIT {
@@ -59,7 +61,6 @@ class TraceTimeIntervalWarningsDistributionIT {
   @Rule
   private TemporaryFolder tempFolder = new TemporaryFolder();
 
-  private static final String SEPARATOR = File.separator;
   private static final String PARENT_DIRECTORY = "parent";
 
   @BeforeEach
@@ -72,7 +73,7 @@ class TraceTimeIntervalWarningsDistributionIT {
 
   @Test
   void testIndicesAreOldestAndLatestForMultipleSubmissions() throws Exception {
-    //given
+    // given
     LocalDateTime utcHour = TimeUtils.getCurrentUtcHour();
     Integer excludedCurrentHour = CheckinsDateSpecification.HOUR_SINCE_EPOCH_DERIVATION
         .apply(utcHour.toEpochSecond(ZoneOffset.UTC));
@@ -92,7 +93,7 @@ class TraceTimeIntervalWarningsDistributionIT {
     traceTimeIntervalWarningService
         .saveCheckins(anotherCheckIns, latestHour, SubmissionType.SUBMISSION_TYPE_PCR_TEST);
 
-    //when
+    // when
     final Directory<WritableOnDisk> traceWarningsDirectory = traceTimeIntervalWarningsStructureProvider
         .getTraceWarningsDirectory();
     final Directory<WritableOnDisk> directory = outputDirectoryProvider.getDirectory();
@@ -100,20 +101,18 @@ class TraceTimeIntervalWarningsDistributionIT {
     directory.prepare(new ImmutableStack<>());
     directory.write();
 
-    //then
-    Set<String> expectedPaths = new java.util.HashSet<>(Set.of(
-        PARENT_DIRECTORY,
-        StringUtils.joinWith(SEPARATOR, PARENT_DIRECTORY, "twp"),
-        StringUtils.joinWith(SEPARATOR, PARENT_DIRECTORY, "twp", "country"),
-        StringUtils.joinWith(SEPARATOR, PARENT_DIRECTORY, "twp", "country", "DE"),
-        StringUtils.joinWith(SEPARATOR, PARENT_DIRECTORY, "twp", "country", "DE", "hour"),
-        StringUtils.joinWith(SEPARATOR, PARENT_DIRECTORY, "twp", "country", "index"),
-        StringUtils.joinWith(SEPARATOR, PARENT_DIRECTORY, "twp", "country", "index.checksum"),
-        StringUtils.joinWith(SEPARATOR, PARENT_DIRECTORY, "twp", "country", "DE", "hour", "index"),
-        StringUtils.joinWith(SEPARATOR, PARENT_DIRECTORY, "twp", "country", "DE", "hour", "index.checksum")));
+    // then
+    Set<String> expectedPaths = new java.util.HashSet<>(
+        Set.of(PARENT_DIRECTORY, StringUtils.joinWith(separator, PARENT_DIRECTORY, "twp"),
+            StringUtils.joinWith(separator, PARENT_DIRECTORY, "twp", "country"),
+            StringUtils.joinWith(separator, PARENT_DIRECTORY, "twp", "country", "DE"),
+            StringUtils.joinWith(separator, PARENT_DIRECTORY, "twp", "country", "DE", "hour"),
+            StringUtils.joinWith(separator, PARENT_DIRECTORY, "twp", "country", "index"),
+            StringUtils.joinWith(separator, PARENT_DIRECTORY, "twp", "country", "index.checksum"),
+            StringUtils.joinWith(separator, PARENT_DIRECTORY, "twp", "country", "DE", "hour", "index"),
+            StringUtils.joinWith(separator, PARENT_DIRECTORY, "twp", "country", "DE", "hour", "index.checksum")));
     IntStream.range(oldestHour, latestHour + 1).forEach(hour -> {
-      expectedPaths.add(StringUtils.joinWith(SEPARATOR, PARENT_DIRECTORY, "twp", "country", "DE", "hour",
-          hour));
+      expectedPaths.add(StringUtils.joinWith(separator, PARENT_DIRECTORY, "twp", "country", "DE", "hour", hour));
     });
     Set<String> actualFiles = Helpers.getSubFoldersPaths(tempFolder.getRoot().getAbsolutePath(), PARENT_DIRECTORY);
     actualFiles.addAll(Helpers.getFilePaths(tempFolder.getRoot(), tempFolder.getRoot().getAbsolutePath()));
@@ -131,7 +130,7 @@ class TraceTimeIntervalWarningsDistributionIT {
   }
 
   private int extractSubmissionHour(String path) {
-    final String[] split = path.split("/");
+    final String[] split = path.split(separatorChar == '\\' ? "\\" + separator : separator);
     return Integer.parseInt(split[split.length - 1]);
   }
 
