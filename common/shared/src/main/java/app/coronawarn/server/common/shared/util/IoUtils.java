@@ -8,12 +8,15 @@ import java.io.IOException;
 import java.io.UncheckedIOException;
 import java.util.Arrays;
 import java.util.Objects;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * A class containing helper functions for general purpose file IO.
  */
 public class IoUtils {
 
+  private static final Logger logger = LoggerFactory.getLogger(IoUtils.class);
   /**
    * The maximum acceptable file size in bytes.
    */
@@ -24,7 +27,8 @@ public class IoUtils {
 
   /**
    * Check whether a directory contains a filename in it.
-   * @param parent - directory
+   *
+   * @param parent   - directory
    * @param fileName - file name
    * @return - {@code true} if file exists in directory, {@code false} otherwise
    */
@@ -64,6 +68,12 @@ public class IoUtils {
       throw new UncheckedIOException(
           new IOException(
               "File size of " + bytes.length + " bytes exceeds the maximum file size. Deleting" + fileName));
+    }
+
+    if (bytes.length >= MAXIMUM_FILE_SIZE * 0.75 && bytes.length <= MAXIMUM_FILE_SIZE * 0.9) {
+      logger.warn("File reaches 75% of " + MAXIMUM_FILE_SIZE + " MB limit");
+    } else if (bytes.length >= MAXIMUM_FILE_SIZE * 0.9) {
+      logger.error("File reaches 90% of " + MAXIMUM_FILE_SIZE + " MB limit");
     }
 
     try (FileOutputStream outputFileStream = new FileOutputStream(outputFile)) {
