@@ -15,7 +15,8 @@ public class FirstVaccinationCardFactory extends HeaderCardFactory {
 
   @Override
   protected Integer getCardId() {
-    return KeyFigureCardSequenceConstants.FIRST_VACCINATION_CARD;  }
+    return KeyFigureCardSequenceConstants.FIRST_VACCINATION_CARD;
+  }
 
   private KeyFigure getPersonsWithFirstDoseRatio(StatisticsJsonStringObject stats) {
     return KeyFigure.newBuilder()

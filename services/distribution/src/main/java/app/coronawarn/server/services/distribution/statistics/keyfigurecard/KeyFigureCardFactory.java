@@ -1,13 +1,12 @@
 package app.coronawarn.server.services.distribution.statistics.keyfigurecard;
 
+import static app.coronawarn.server.services.distribution.statistics.keyfigurecard.KeyFigureCardSequenceConstants.FIRST_VACCINATION_CARD;
+import static app.coronawarn.server.services.distribution.statistics.keyfigurecard.KeyFigureCardSequenceConstants.FULLY_VACCINATED_CARD;
 import static app.coronawarn.server.services.distribution.statistics.keyfigurecard.KeyFigureCardSequenceConstants.INCIDENCE_CARD_ID;
 import static app.coronawarn.server.services.distribution.statistics.keyfigurecard.KeyFigureCardSequenceConstants.INFECTIONS_CARD_ID;
 import static app.coronawarn.server.services.distribution.statistics.keyfigurecard.KeyFigureCardSequenceConstants.KEY_SUBMISSION_CARD_ID;
 import static app.coronawarn.server.services.distribution.statistics.keyfigurecard.KeyFigureCardSequenceConstants.REPRODUCTION_NUMBER_CARD;
-import static app.coronawarn.server.services.distribution.statistics.keyfigurecard.KeyFigureCardSequenceConstants.FIRST_VACCINATION_CARD;
-import static app.coronawarn.server.services.distribution.statistics.keyfigurecard.KeyFigureCardSequenceConstants.FULLY_VACCINATED_CARD;
 import static app.coronawarn.server.services.distribution.statistics.keyfigurecard.KeyFigureCardSequenceConstants.VACCINATION_DOSES_CARD;
-
 
 import app.coronawarn.server.common.protocols.internal.stats.KeyFigureCard;
 import app.coronawarn.server.services.distribution.statistics.StatisticsJsonStringObject;
@@ -19,8 +18,8 @@ import app.coronawarn.server.services.distribution.statistics.keyfigurecard.fact
 import app.coronawarn.server.services.distribution.statistics.keyfigurecard.factory.InfectionsCardFactory;
 import app.coronawarn.server.services.distribution.statistics.keyfigurecard.factory.KeySubmissionCardFactory;
 import app.coronawarn.server.services.distribution.statistics.keyfigurecard.factory.ReproductionNumberCardFactory;
-import java.util.Map;
 import app.coronawarn.server.services.distribution.statistics.keyfigurecard.factory.VaccinationDosesCardFactory;
+import java.util.Map;
 import org.springframework.stereotype.Component;
 
 @Component
