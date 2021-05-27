@@ -48,6 +48,17 @@ public class FullyVaccinatedCardFactory extends HeaderCardFactory {
 
   @Override
   protected List<Optional<Object>> getRequiredFieldValues(StatisticsJsonStringObject stats) {
-    return null;
+    List<Optional<Object>> requiredFields = List.of(
+        Optional.ofNullable(stats.getPersonsFullyVaccinatedRatio()),
+        Optional.ofNullable(stats.getPersonsFullyVaccinatedCumulated()));
+
+    if (requiredFields.contains(Optional.empty())
+        || stats.getPersonsFullyVaccinatedRatio() <= 0
+        || stats.getPersonsFullyVaccinatedCumulated() <= 0
+    ) {
+      return List.of(Optional.empty());
+    }
+
+    return requiredFields;
   }
 }

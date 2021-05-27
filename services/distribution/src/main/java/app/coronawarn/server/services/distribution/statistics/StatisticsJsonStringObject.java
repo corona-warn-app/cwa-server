@@ -78,11 +78,11 @@ public class StatisticsJsonStringObject {
   @JsonProperty("administered_doses_daily")
   private Integer administeredDosesDaily;
   @JsonProperty("administered_doses_7days_avg")
-  private Integer administeredDoses7daysAvg;
+  private Double administeredDoses7daysAvg;
   @JsonProperty("administered_doses_cumulated")
   private Integer administeredDosesCumulated;
   @JsonProperty("administered_doses_7days_avg_growthrate")
-  private Integer administeredDoses7daysAvgGrowthrate;
+  private Double administeredDoses7daysAvgGrowthrate;
   @JsonProperty("administered_doses_7days_avg_trend_5percent")
   private Integer administeredDoses7daysAvgTrend5percent;
   @JsonProperty("persons_with_first_dose_cumulated")
@@ -230,7 +230,7 @@ public class StatisticsJsonStringObject {
     return administeredDosesDaily;
   }
 
-  public Integer getAdministeredDoses7daysAvg() {
+  public Double getAdministeredDoses7daysAvg() {
     return administeredDoses7daysAvg;
   }
 
@@ -238,7 +238,7 @@ public class StatisticsJsonStringObject {
     return administeredDosesCumulated;
   }
 
-  public Integer getAdministeredDoses7daysAvgGrowthrate() {
+  public Double getAdministeredDoses7daysAvgGrowthrate() {
     return administeredDoses7daysAvgGrowthrate;
   }
 
@@ -398,7 +398,7 @@ public class StatisticsJsonStringObject {
     this.administeredDosesDaily = administeredDosesDaily;
   }
 
-  public void setAdministeredDoses7daysAvg(Integer administeredDoses7daysAvg) {
+  public void setAdministeredDoses7daysAvg(Double administeredDoses7daysAvg) {
     this.administeredDoses7daysAvg = administeredDoses7daysAvg;
   }
 
@@ -406,7 +406,7 @@ public class StatisticsJsonStringObject {
     this.administeredDosesCumulated = administeredDosesCumulated;
   }
 
-  public void setAdministeredDoses7daysAvgGrowthrate(Integer administeredDoses7daysAvgGrowthrate) {
+  public void setAdministeredDoses7daysAvgGrowthrate(Double administeredDoses7daysAvgGrowthrate) {
     this.administeredDoses7daysAvgGrowthrate = administeredDoses7daysAvgGrowthrate;
   }
 

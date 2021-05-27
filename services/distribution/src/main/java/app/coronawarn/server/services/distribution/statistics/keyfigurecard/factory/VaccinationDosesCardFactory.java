@@ -21,7 +21,7 @@ public class VaccinationDosesCardFactory extends HeaderCardFactory {
 
   private KeyFigure getAdministeredDosesDaily(StatisticsJsonStringObject stats) {
     return KeyFigure.newBuilder()
-        .setValue(stats.getInfectionsReportedDaily())
+        .setValue(stats.getAdministeredDosesDaily())
         .setRank(Rank.PRIMARY)
         .setDecimals(0)
         .setTrend(Trend.UNSPECIFIED_TREND)
@@ -62,6 +62,21 @@ public class VaccinationDosesCardFactory extends HeaderCardFactory {
 
   @Override
   protected List<Optional<Object>> getRequiredFieldValues(StatisticsJsonStringObject stats) {
-    return null;
+    List<Optional<Object>> requiredFields = List.of(
+        Optional.ofNullable(stats.getAdministeredDosesDaily()),
+        Optional.ofNullable(stats.getAdministeredDoses7daysAvg()),
+        Optional.ofNullable(stats.getAdministeredDosesCumulated()),
+        Optional.ofNullable(stats.getAdministeredDoses7daysAvgTrend5percent()));
+
+    if (requiredFields.contains(Optional.empty())
+        || stats.getAdministeredDosesDaily() <= 0
+        || stats.getAdministeredDoses7daysAvg() <= 0
+        || stats.getAdministeredDosesCumulated() <= 0
+        || stats.getAdministeredDoses7daysAvgTrend5percent() <= 0
+    ) {
+      return List.of(Optional.empty());
+    }
+
+    return requiredFields;
   }
 }
