@@ -22,7 +22,7 @@ public class FullyVaccinatedCardFactory extends HeaderCardFactory {
     return KeyFigure.newBuilder()
         .setValue(stats.getPersonsFullyVaccinatedRatio())
         .setRank(Rank.PRIMARY)
-        .setDecimals(0)
+        .setDecimals(1)
         .setTrend(Trend.UNSPECIFIED_TREND)
         .setTrendSemantic(TrendSemantic.UNSPECIFIED_TREND_SEMANTIC)
         .build();

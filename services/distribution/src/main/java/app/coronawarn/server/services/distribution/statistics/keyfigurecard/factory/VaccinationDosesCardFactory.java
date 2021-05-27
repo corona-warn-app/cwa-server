@@ -72,7 +72,6 @@ public class VaccinationDosesCardFactory extends HeaderCardFactory {
         || stats.getAdministeredDosesDaily() <= 0
         || stats.getAdministeredDoses7daysAvg() <= 0
         || stats.getAdministeredDosesCumulated() <= 0
-        || stats.getAdministeredDoses7daysAvgTrend5percent() <= 0
     ) {
       return List.of(Optional.empty());
     }
