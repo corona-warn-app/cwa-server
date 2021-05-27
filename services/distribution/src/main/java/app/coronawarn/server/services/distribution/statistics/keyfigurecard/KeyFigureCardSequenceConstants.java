@@ -33,6 +33,12 @@ public class KeyFigureCardSequenceConstants {
 
   public static final int REPRODUCTION_NUMBER_CARD = 4;
 
+  public static final int FIRST_VACCINATION_CARD = 5;
+
+  public static final int FULLY_VACCINATED_CARD = 6;
+
+  public static final int VACCINATION_DOSES_CARD = 7;
+
   public static final int EMPTY_CARD = -1;
 
 }

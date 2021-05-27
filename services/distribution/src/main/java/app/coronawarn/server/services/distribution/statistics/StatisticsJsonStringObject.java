@@ -90,9 +90,9 @@ public class StatisticsJsonStringObject {
   @JsonProperty("persons_with_first_dose_ratio")
   private Double personsWithFirstDoseRatio;
   @JsonProperty("persons_fully_vaccinated_cumulated")
-  private Integer personsFullyCaccinatedCumulated;
+  private Integer personsFullyVaccinatedCumulated;
   @JsonProperty("persons_fully_vaccinated_ratio")
-  private Double personsFullyCaccinatedRatio;
+  private Double personsFullyVaccinatedRatio;
 
   public String getAppDownloads7DaysAvg() {
     return appDownloads7DaysAvg;
@@ -254,12 +254,12 @@ public class StatisticsJsonStringObject {
     return personsWithFirstDoseRatio;
   }
 
-  public Integer getPersonsFullyCaccinatedCumulated() {
-    return personsFullyCaccinatedCumulated;
+  public Integer getPersonsFullyVaccinatedCumulated() {
+    return personsFullyVaccinatedCumulated;
   }
 
-  public Double getPersonsFullyCaccinatedRatio() {
-    return personsFullyCaccinatedRatio;
+  public Double getPersonsFullyVaccinatedRatio() {
+    return personsFullyVaccinatedRatio;
   }
 
   public void setAppDownloads7DaysAvg(String appDownloads7DaysAvg) {
@@ -422,11 +422,11 @@ public class StatisticsJsonStringObject {
     this.personsWithFirstDoseRatio = personsWithFirstDoseRatio;
   }
 
-  public void setPersonsFullyCaccinatedCumulated(Integer personsFullyCaccinatedCumulated) {
-    this.personsFullyCaccinatedCumulated = personsFullyCaccinatedCumulated;
+  public void setPersonsFullyVaccinatedCumulated(Integer personsFullyVaccinatedCumulated) {
+    this.personsFullyVaccinatedCumulated = personsFullyVaccinatedCumulated;
   }
 
-  public void setPersonsFullyCaccinatedRatio(Double personsFullyCaccinatedRatio) {
-    this.personsFullyCaccinatedRatio = personsFullyCaccinatedRatio;
+  public void setPersonsFullyVaccinatedRatio(Double personsFullyVaccinatedRatio) {
+    this.personsFullyVaccinatedRatio = personsFullyVaccinatedRatio;
   }
 }
