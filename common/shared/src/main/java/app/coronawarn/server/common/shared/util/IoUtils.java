@@ -1,5 +1,3 @@
-
-
 package app.coronawarn.server.common.shared.util;
 
 import java.io.File;
@@ -8,23 +6,29 @@ import java.io.IOException;
 import java.io.UncheckedIOException;
 import java.util.Arrays;
 import java.util.Objects;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * A class containing helper functions for general purpose file IO.
  */
 public class IoUtils {
 
+  private static final Logger logger = LoggerFactory.getLogger(IoUtils.class);
   /**
    * The maximum acceptable file size in bytes.
    */
   public static final int MAXIMUM_FILE_SIZE = 16000000;
+
+  public static final int MB_FAKTOR = 1000 * 1000;
 
   private IoUtils() {
   }
 
   /**
    * Check whether a directory contains a filename in it.
-   * @param parent - directory
+   *
+   * @param parent   - directory
    * @param fileName - file name
    * @return - {@code true} if file exists in directory, {@code false} otherwise
    */
@@ -64,6 +68,14 @@ public class IoUtils {
       throw new UncheckedIOException(
           new IOException(
               "File size of " + bytes.length + " bytes exceeds the maximum file size. Deleting" + fileName));
+    }
+
+    if (bytes.length >= MAXIMUM_FILE_SIZE * 0.75 && bytes.length <= MAXIMUM_FILE_SIZE * 0.9) {
+      logger.warn("File '{}' ({} MB) reaches 75% of {} MB limit!", outputFile.getAbsolutePath(),
+          bytes.length / MB_FAKTOR, MAXIMUM_FILE_SIZE / MB_FAKTOR);
+    } else if (bytes.length >= MAXIMUM_FILE_SIZE * 0.9) {
+      logger.error("File '{}' ({} MB) reaches 90% of {} MB limit!", outputFile.getAbsolutePath(),
+          bytes.length / MB_FAKTOR, MAXIMUM_FILE_SIZE / MB_FAKTOR);
     }
 
     try (FileOutputStream outputFileStream = new FileOutputStream(outputFile)) {

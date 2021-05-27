@@ -17,7 +17,7 @@ For more details see
 [Flyway SQL-based Migrations](https://flywaydb.org/documentation/concepts/migrations.html#sql-based-migrations).
 
 The external Flyway configuration is located in the `application.yaml` file of each service it's
-prefixed with `spring.flyway`. See [data migration properties](https://docs.spring.io/spring-boot/docs/current/reference/html/appendix-application-properties.html#data-migration-properties)
+prefixed with `spring.flyway`. See [data migration properties](https://docs.spring.io/spring-boot/docs/2.4.x/reference/html/appendix-application-properties.html#data-migration-properties)
 for detailed information.
 
 ## Data Retention Policy
