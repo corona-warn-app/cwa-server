@@ -71,9 +71,9 @@ public class IoUtils {
     }
 
     if (bytes.length >= MAXIMUM_FILE_SIZE * 0.75 && bytes.length <= MAXIMUM_FILE_SIZE * 0.9) {
-      logger.warn("File reaches 75% of " + MAXIMUM_FILE_SIZE + " MB limit");
+      logger.warn("File " + outputFile.getName() + " reaches 75% of " + MAXIMUM_FILE_SIZE + " MB limit");
     } else if (bytes.length >= MAXIMUM_FILE_SIZE * 0.9) {
-      logger.error("File reaches 90% of " + MAXIMUM_FILE_SIZE + " MB limit");
+      logger.error("File " + outputFile.getName() + " reaches 90% of " + MAXIMUM_FILE_SIZE + " MB limit");
     }
 
     try (FileOutputStream outputFileStream = new FileOutputStream(outputFile)) {
