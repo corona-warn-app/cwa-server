@@ -1,5 +1,3 @@
-
-
 package app.coronawarn.server.common.shared.util;
 
 import java.io.File;
@@ -21,6 +19,8 @@ public class IoUtils {
    * The maximum acceptable file size in bytes.
    */
   public static final int MAXIMUM_FILE_SIZE = 16000000;
+
+  public static final int MB_FAKTOR = 1000 * 1000;
 
   private IoUtils() {
   }
@@ -71,9 +71,11 @@ public class IoUtils {
     }
 
     if (bytes.length >= MAXIMUM_FILE_SIZE * 0.75 && bytes.length <= MAXIMUM_FILE_SIZE * 0.9) {
-      logger.warn("File " + outputFile.getName() + " reaches 75% of " + MAXIMUM_FILE_SIZE + " MB limit");
+      logger.warn("File '{}' ({} MB) reaches 75% of {} MB limit!", outputFile.getAbsolutePath(),
+          bytes.length / MB_FAKTOR, MAXIMUM_FILE_SIZE / MB_FAKTOR);
     } else if (bytes.length >= MAXIMUM_FILE_SIZE * 0.9) {
-      logger.error("File " + outputFile.getName() + " reaches 90% of " + MAXIMUM_FILE_SIZE + " MB limit");
+      logger.error("File '{}' ({} MB) reaches 90% of {} MB limit!", outputFile.getAbsolutePath(),
+          bytes.length / MB_FAKTOR, MAXIMUM_FILE_SIZE / MB_FAKTOR);
     }
 
     try (FileOutputStream outputFileStream = new FileOutputStream(outputFile)) {
