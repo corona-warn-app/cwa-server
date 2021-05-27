@@ -54,8 +54,6 @@ public class VaccinationDosesCardFactory extends HeaderCardFactory {
 
   @Override
   protected KeyFigureCard buildKeyFigureCard(StatisticsJsonStringObject stats, Builder keyFigureBuilder) {
-    var trend = ValueTrendCalculator.from(stats.getAdministeredDosesDaily());
-    var semantic = ValueTrendCalculator.getNegativeTrendGrowth(trend);
     return keyFigureBuilder.addAllKeyFigures(List.of(
         getAdministeredDosesDaily(stats),
         getAdministeredDoses7daysAverage(stats),
