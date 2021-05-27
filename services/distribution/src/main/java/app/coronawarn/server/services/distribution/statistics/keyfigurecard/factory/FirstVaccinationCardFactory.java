@@ -27,7 +27,7 @@ public class FirstVaccinationCardFactory extends HeaderCardFactory {
         .build();
   }
 
-  private KeyFigure getPersonsWithFirstDoseCumulate(StatisticsJsonStringObject stats) {
+  private KeyFigure getPersonsWithFirstDoseCumulated(StatisticsJsonStringObject stats) {
     return KeyFigure.newBuilder()
         .setValue(stats.getPersonsWithFirstDoseCumulated())
         .setRank(Rank.TERTIARY)
@@ -41,11 +41,21 @@ public class FirstVaccinationCardFactory extends HeaderCardFactory {
   protected KeyFigureCard buildKeyFigureCard(StatisticsJsonStringObject stats, Builder keyFigureBuilder) {
     return keyFigureBuilder.addAllKeyFigures(List.of(
         getPersonsWithFirstDoseRatio(stats),
-        getPersonsWithFirstDoseCumulate(stats))).build();
+        getPersonsWithFirstDoseCumulated(stats))).build();
   }
 
   @Override
   protected List<Optional<Object>> getRequiredFieldValues(StatisticsJsonStringObject stats) {
-    return null;
+    List<Optional<Object>> requiredFields = List.of(
+        Optional.ofNullable(stats.getPersonsWithFirstDoseRatio()),
+        Optional.ofNullable(stats.getPersonsWithFirstDoseCumulated())
+    );
+
+    if (requiredFields.contains(Optional.empty())
+        || stats.getPersonsWithFirstDoseCumulated() <= 0
+        || stats.getPersonsWithFirstDoseRatio() <= 0) {
+      return List.of(Optional.empty());
+    }
+    return requiredFields;
   }
 }
