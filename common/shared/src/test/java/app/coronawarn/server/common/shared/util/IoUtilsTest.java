@@ -1,7 +1,8 @@
 package app.coronawarn.server.common.shared.util;
 
-
-import static app.coronawarn.server.common.shared.util.IoUtils.*;
+import static app.coronawarn.server.common.shared.util.IoUtils.fileExistsInDirectory;
+import static app.coronawarn.server.common.shared.util.IoUtils.makeNewFile;
+import static app.coronawarn.server.common.shared.util.IoUtils.writeBytesToFile;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -36,6 +37,15 @@ class IoUtilsTest {
     outputFolder.create();
     File file = outputFolder.newFile();
     writeBytesToFile(new byte[IoUtils.MAXIMUM_FILE_SIZE - 1], file);
+
+    assertTrue(file.getTotalSpace() != 0);
+  }
+
+  @Test
+  void doesLog75PercentMaximumFileSize() throws IOException {
+    outputFolder.create();
+    File file = outputFolder.newFile();
+    writeBytesToFile(new byte[(int)(IoUtils.MAXIMUM_FILE_SIZE * 0.8)], file);
 
     assertTrue(file.getTotalSpace() != 0);
   }
