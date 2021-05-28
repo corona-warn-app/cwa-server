@@ -64,6 +64,50 @@ public class DigitalGreenCertificateToProtobufMapping {
   }
 
   /**
+   * Read the JSON for the disease or agent targeted.
+   *
+   * @return The corresponding JSON object.
+   */
+  VaccineJsonStringObject readDiseaseAgentTargetedJson() throws DefaultValueSetsMissingException {
+    String path = distributionServiceConfig.getDigitalGreenCertificate().getDiseaseAgentTargetedJsonPath();
+    return readConfiguredJsonOrDefault(path, "dgc/disease-agent-targeted.json",
+        VaccineJsonStringObject.class);
+  }
+
+  /**
+   * Read the JSON for the Rapid Antigen Test name and manufacturer.
+   *
+   * @return The corresponding JSON object.
+   */
+  VaccineJsonStringObject readTestManfJson() throws DefaultValueSetsMissingException {
+    String path = distributionServiceConfig.getDigitalGreenCertificate().getTestManfJsonPath();
+    return readConfiguredJsonOrDefault(path, "dgc/test-manf.json",
+        VaccineJsonStringObject.class);
+  }
+
+  /**
+   * Read the JSON for the test Result.
+   *
+   * @return The corresponding JSON object.
+   */
+  VaccineJsonStringObject readTestResultJson() throws DefaultValueSetsMissingException {
+    String path = distributionServiceConfig.getDigitalGreenCertificate().getTestResultJsonPath();
+    return readConfiguredJsonOrDefault(path, "dgc/test-result.json",
+        VaccineJsonStringObject.class);
+  }
+
+  /**
+   * Read the JSON for the type of Test.
+   *
+   * @return The corresponding JSON object.
+   */
+  VaccineJsonStringObject readTestTypeJson() throws DefaultValueSetsMissingException {
+    String path = distributionServiceConfig.getDigitalGreenCertificate().getTestTypeJsonPath();
+    return readConfiguredJsonOrDefault(path, "dgc/test-type.json",
+        VaccineJsonStringObject.class);
+  }
+
+  /**
    * Create the Protobuf from JSON.
    *
    * @return the protobuf filled with values from JSON.

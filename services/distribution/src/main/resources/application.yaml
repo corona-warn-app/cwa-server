@@ -203,6 +203,10 @@ services:
       mah-json-path: ${DIGITAL_GREEN_CERTIFICATE_MAH_JSON_PATH:}
       prophylaxis-json-path: ${DIGITAL_GREEN_CERTIFICATE_PROPHYLAXIS_JSON_PATH:}
       medicinal-products-json-path: ${DIGITAL_GREEN_CERTIFICATE_MEDICINAL_PRODUCTS_JSON_PATH:}
+      disease-agent-targeted-path:
+      test-type-manf-path:
+      test-type-result-path:
+      test-type-path:
       dgc-directory: ${DIGITAL_GREEN_CERTIFICATE_DIRECTORY:ehn-dgc}
       valuesets-file-name: ${DIGITAL_GREEN_CERTIFICATE_VALUESETS_FILE_NAME:value-sets}
       supported-languages: ${DIGITAL_GREEN_CERTIFICATE_SUPPORTED_LANGUAGES:DE, EN, BG, PL, RO, TR}
