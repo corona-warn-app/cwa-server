@@ -346,7 +346,7 @@ class KeyFigureCardFactoryTest {
   @EnableConfigurationProperties(value = DistributionServiceConfig.class)
   @ContextConfiguration(classes = {KeyFigureCardFactory.class},
       initializers = ConfigDataApplicationContextInitializer.class)
-  class FullyVaccinatedCardCardFactoryTest {
+  class FullyVaccinatedCardFactoryTest {
 
     @Test
     void testCardHasCorrectKeyFigures() {
@@ -392,7 +392,7 @@ class KeyFigureCardFactoryTest {
   @EnableConfigurationProperties(value = DistributionServiceConfig.class)
   @ContextConfiguration(classes = {KeyFigureCardFactory.class},
       initializers = ConfigDataApplicationContextInitializer.class)
-  class FirstVaccinationCardCardFactoryTest {
+  class FirstVaccinationCardFactoryTest {
 
     @Test
     void testCardHasCorrectKeyFigures() {
