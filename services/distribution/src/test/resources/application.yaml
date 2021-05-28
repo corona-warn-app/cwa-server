@@ -17,7 +17,7 @@ services:
     include-incomplete-hours: false
     eu-package-name: EUR
     apply-policies-for-all-countries: false
-    card-id-sequence: ${STATS_CARD_ID_SEQUENCE:[1,3,2,4]}
+    card-id-sequence: ${STATS_CARD_ID_SEQUENCE:[1,3,2,4,5,6,7]}
     paths:
       output: out
       privatekey: classpath:keys/private.pem

@@ -45,6 +45,7 @@ public class StatisticsToProtobufMapping {
 
   /**
    * Process the JSON file provided by TSI and map the it to Statistics protobuf object.
+   *
    * @param distributionServiceConfig The config properties
    * @param keyFigureCardFactory      KeyFigureCard structure provider
    * @param jsonFileLoader            Loader of the file from the system
@@ -130,6 +131,9 @@ public class StatisticsToProtobufMapping {
     figureCardMap.put(INCIDENCE_CARD_ID, Optional.empty());
     figureCardMap.put(KEY_SUBMISSION_CARD_ID, Optional.empty());
     figureCardMap.put(REPRODUCTION_NUMBER_CARD, Optional.empty());
+    figureCardMap.put(FIRST_VACCINATION_CARD, Optional.empty());
+    figureCardMap.put(FULLY_VACCINATED_CARD, Optional.empty());
+    figureCardMap.put(VACCINATION_DOSES_CARD, Optional.empty());
 
     List<StatisticsJsonStringObject> orderedList = jsonStringObjects.stream()
         .sorted(Comparator.comparing(a -> effectiveDateStringToLocalDate(a.getEffectiveDate())))
@@ -160,7 +164,7 @@ public class StatisticsToProtobufMapping {
 
     if (logger.isDebugEnabled()) {
       logger.debug("The following statistics JSON entries were used to create the cards. Null values are omitted.");
-      for (var stat: collectedJsonObjects) {
+      for (var stat : collectedJsonObjects) {
         var jsonString = SerializationUtils.stringifyObject(stat);
         logger.debug("[{}] {}", stat.getEffectiveDate(), jsonString);
       }
