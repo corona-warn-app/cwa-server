@@ -1,0 +1,19 @@
+#----------------------------------------------------------------------
+# This is the Corona Warn App source configuration file.
+# ----------------------------------------------------------------------
+#
+# This configuration file will be fetched by the mobile app in order to function.
+#
+# Change this file with caution!
+dgcParameters:
+  testCertificateParameters:
+    # validation rule for waitAfterPublicKeyRegistrationInSeconds:
+    #   * must be a number
+    #   * >= 0
+    #   * <= 60
+    waitAfterPublicKeyRegistrationInSeconds: ${DGC_TC_WAIT_AFTER_PUBLIC_KEY_REGISTRATION_IN_SECONDS:10}
+    # validation rule for waitForRetryInSeconds:
+    #   * must be a number
+    #   * >= 0
+    #   * <= 60
+    waitForRetryInSeconds: ${DGC_TC_WAIT_FOR_RETRY_IN_SECONDS:10}

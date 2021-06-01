@@ -8,6 +8,8 @@ import app.coronawarn.server.common.protocols.internal.v2.ApplicationConfigurati
 import app.coronawarn.server.common.protocols.internal.v2.CoronaTestParameters;
 import app.coronawarn.server.common.protocols.internal.v2.DailySummariesConfig;
 import app.coronawarn.server.common.protocols.internal.v2.DayPackageMetadata;
+import app.coronawarn.server.common.protocols.internal.v2.DgcParameters.DGCParameters;
+import app.coronawarn.server.common.protocols.internal.v2.DgcParameters.DGCTestCertificateParameters;
 import app.coronawarn.server.common.protocols.internal.v2.DiagnosisKeysDataMapping;
 import app.coronawarn.server.common.protocols.internal.v2.ExposureConfiguration;
 import app.coronawarn.server.common.protocols.internal.v2.ExposureDetectionParametersAndroid;
@@ -75,6 +77,7 @@ public class ApplicationConfigurationV2PublicationConfig {
   private static final String ANDROID_V2_DATA_MAPPING_FILE = "main-config/v2/diagnosis-keys-data-mapping.yaml";
   private static final String ANDROID_V2_DAILY_SUMMARIES_FILE = "main-config/v2/daily-summaries-config.yaml";
   private static final String IOS_V2_EXPOSURE_CONFIGURATION_FILE = "main-config/v2/exposure-configuration.yaml";
+  private static final String DGC_PARAMETERS_PATH = "main-config/v2/dgc-parameters.yaml";
 
   /**
    * Fetches the source configuration as a ApplicationConfigurationAndroid instance.
@@ -172,6 +175,7 @@ public class ApplicationConfigurationV2PublicationConfig {
         .setErrorLogSharingParameters(buildErrorLogSharingParametersAndroid(distributionServiceConfig))
         .setPresenceTracingParameters(buildPresenceTracingParameters(distributionServiceConfig))
         .setCoronaTestParameters(coronaTestParameters)
+        .setDgcParameters(buildDgcParameters(distributionServiceConfig))
         .build();
   }
 
@@ -401,6 +405,7 @@ public class ApplicationConfigurationV2PublicationConfig {
         .setErrorLogSharingParameters(buildErrorLogSharingParametersIos())
         .setPresenceTracingParameters(buildPresenceTracingParameters(distributionServiceConfig))
         .setCoronaTestParameters(coronaTestParameters)
+        .setDgcParameters(buildDgcParameters(distributionServiceConfig))
         .build();
   }
 
@@ -516,5 +521,20 @@ public class ApplicationConfigurationV2PublicationConfig {
             .setHour(deserializedHourConfig.getHour())
             .setEtag(deserializedHourConfig.getEtag())
             .build()).collect(Collectors.toList());
+  }
+
+  private DGCParameters buildDgcParameters(
+      DistributionServiceConfig distributionServiceConfig) {
+    final Integer waitAfterPublicKeyRegistrationInSeconds = distributionServiceConfig.getAppConfigParameters()
+        .getDgcParameters().getTestCertificateParameters().getWaitAfterPublicKeyRegistrationInSeconds();
+    final Integer waitForRetryInSeconds = distributionServiceConfig.getAppConfigParameters().getDgcParameters()
+        .getTestCertificateParameters().getWaitForRetryInSeconds();
+    final DGCTestCertificateParameters testCertificateParameters = DGCTestCertificateParameters.newBuilder()
+        .setWaitAfterPublicKeyRegistrationInSeconds(waitAfterPublicKeyRegistrationInSeconds)
+        .setWaitForRetryInSeconds(waitForRetryInSeconds)
+        .build();
+    return DGCParameters.newBuilder()
+        .setDgcTestCertificateParameters(testCertificateParameters)
+        .build();
   }
 }
