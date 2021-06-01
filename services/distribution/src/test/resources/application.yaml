@@ -83,6 +83,18 @@ services:
       min-android-version-code: ${ANDROID_MIN_VERSION_CODE:48}
       latest-android-version-code: ${ANDROID_LATEST_VERSION_CODE:48}
     app-config-parameters:
+      dgcParameters:
+        testCertificateParameters:
+          # validation rule for waitAfterPublicKeyRegistrationInSeconds:
+          #   * must be a number
+          #   * >= 0
+          #   * <= 60
+          waitAfterPublicKeyRegistrationInSeconds: ${DGC_TC_WAIT_AFTER_PUBLIC_KEY_REGISTRATION_IN_SECONDS:10}
+          # validation rule for waitForRetryInSeconds:
+          #   * must be a number
+          #   * >= 0
+          #   * <= 60
+          waitForRetryInSeconds: ${DGC_TC_WAIT_FOR_RETRY_IN_SECONDS:10}
       ios-key-download-parameters:
         revoked-day-packages: "[]"
         revoked-hour-packages: "[]"
