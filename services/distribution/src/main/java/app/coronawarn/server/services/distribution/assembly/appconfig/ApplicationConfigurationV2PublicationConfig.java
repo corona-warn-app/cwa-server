@@ -6,10 +6,10 @@ import app.coronawarn.server.common.protocols.internal.v2.AppFeatures;
 import app.coronawarn.server.common.protocols.internal.v2.ApplicationConfigurationAndroid;
 import app.coronawarn.server.common.protocols.internal.v2.ApplicationConfigurationIOS;
 import app.coronawarn.server.common.protocols.internal.v2.CoronaTestParameters;
+import app.coronawarn.server.common.protocols.internal.v2.DGCParameters;
+import app.coronawarn.server.common.protocols.internal.v2.DGCTestCertificateParameters;
 import app.coronawarn.server.common.protocols.internal.v2.DailySummariesConfig;
 import app.coronawarn.server.common.protocols.internal.v2.DayPackageMetadata;
-import app.coronawarn.server.common.protocols.internal.v2.DgcParameters.DGCParameters;
-import app.coronawarn.server.common.protocols.internal.v2.DgcParameters.DGCTestCertificateParameters;
 import app.coronawarn.server.common.protocols.internal.v2.DiagnosisKeysDataMapping;
 import app.coronawarn.server.common.protocols.internal.v2.ExposureConfiguration;
 import app.coronawarn.server.common.protocols.internal.v2.ExposureDetectionParametersAndroid;
@@ -533,7 +533,7 @@ public class ApplicationConfigurationV2PublicationConfig {
         .setWaitForRetryInSeconds(waitForRetryInSeconds)
         .build();
     return DGCParameters.newBuilder()
-        .setDgcTestCertificateParameters(testCertificateParameters)
+        .setTestCertificateParameters(testCertificateParameters)
         .build();
   }
 }

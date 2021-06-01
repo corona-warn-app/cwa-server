@@ -5,7 +5,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import app.coronawarn.server.common.persistence.domain.config.PreDistributionTrlValueMappingProvider;
 import app.coronawarn.server.common.protocols.internal.v2.ApplicationConfigurationAndroid;
 import app.coronawarn.server.common.protocols.internal.v2.ApplicationConfigurationIOS;
-import app.coronawarn.server.common.protocols.internal.v2.DgcParameters.DGCTestCertificateParameters;
+import app.coronawarn.server.common.protocols.internal.v2.DGCTestCertificateParameters;
 import app.coronawarn.server.services.distribution.config.DistributionServiceConfig;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -45,20 +45,20 @@ class ApplicationConfigurationV2MainFileTest {
     public void testDgcParametersAreValid() {
       assertThat(applicationConfigurationAndroid).isNotNull();
       assertThat(applicationConfigurationAndroid.getDgcParameters()).isNotNull();
-      assertThat(applicationConfigurationAndroid.getDgcParameters().getDgcTestCertificateParameters()).isNotNull();
+      assertThat(applicationConfigurationAndroid.getDgcParameters().getTestCertificateParameters()).isNotNull();
 
       assertThat(applicationConfigurationIos).isNotNull();
       assertThat(applicationConfigurationIos.getDgcParameters()).isNotNull();
-      assertThat(applicationConfigurationIos.getDgcParameters().getDgcTestCertificateParameters()).isNotNull();
+      assertThat(applicationConfigurationIos.getDgcParameters().getTestCertificateParameters()).isNotNull();
 
       final DGCTestCertificateParameters testCertificateParameters = applicationConfigurationAndroid.getDgcParameters()
-          .getDgcTestCertificateParameters();
+          .getTestCertificateParameters();
       assertThat(testCertificateParameters.getWaitAfterPublicKeyRegistrationInSeconds()).isEqualTo(10);
       assertThat(testCertificateParameters.getWaitForRetryInSeconds()).isEqualTo(10);
       assertThat(testCertificateParameters.getWaitForRetryInSeconds()).isEqualTo(10);
 
       final DGCTestCertificateParameters testCertificateParametersIos = applicationConfigurationIos.getDgcParameters()
-          .getDgcTestCertificateParameters();
+          .getTestCertificateParameters();
       assertThat(testCertificateParametersIos.getWaitAfterPublicKeyRegistrationInSeconds()).isEqualTo(10);
       assertThat(testCertificateParametersIos.getWaitForRetryInSeconds()).isEqualTo(10);
       assertThat(testCertificateParametersIos.getWaitForRetryInSeconds()).isEqualTo(10);

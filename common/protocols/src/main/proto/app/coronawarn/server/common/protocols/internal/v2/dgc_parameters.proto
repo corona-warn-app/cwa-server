@@ -1,10 +1,12 @@
 // This file is auto-generated, DO NOT make any changes here
 syntax = "proto3";
 package app.coronawarn.server.common.protocols.internal.v2;
+option java_multiple_files = true;
+option java_outer_classname = "DGCParametersProto";
 
 message DGCParameters {
 
-  DGCTestCertificateParameters dgcTestCertificateParameters = 1;
+  DGCTestCertificateParameters testCertificateParameters = 1;
 }
 
 message DGCTestCertificateParameters {
