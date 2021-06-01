@@ -75,6 +75,24 @@ public class StatisticsJsonStringObject {
   private Integer testsTotalDaily;
   @JsonProperty("update_timestamp")
   private String updateTimestamp;
+  @JsonProperty("administered_doses_daily")
+  private Integer administeredDosesDaily;
+  @JsonProperty("administered_doses_7days_avg")
+  private Double administeredDoses7daysAvg;
+  @JsonProperty("administered_doses_cumulated")
+  private Integer administeredDosesCumulated;
+  @JsonProperty("administered_doses_7days_avg_growthrate")
+  private Double administeredDoses7daysAvgGrowthrate;
+  @JsonProperty("administered_doses_7days_avg_trend_5percent")
+  private Integer administeredDoses7daysAvgTrend5percent;
+  @JsonProperty("persons_with_first_dose_cumulated")
+  private Integer personsWithFirstDoseCumulated;
+  @JsonProperty("persons_with_first_dose_ratio")
+  private Double personsWithFirstDoseRatio;
+  @JsonProperty("persons_fully_vaccinated_cumulated")
+  private Integer personsFullyVaccinatedCumulated;
+  @JsonProperty("persons_fully_vaccinated_ratio")
+  private Double personsFullyVaccinatedRatio;
 
   public String getAppDownloads7DaysAvg() {
     return appDownloads7DaysAvg;
@@ -208,6 +226,42 @@ public class StatisticsJsonStringObject {
     return updateTimestamp;
   }
 
+  public Integer getAdministeredDosesDaily() {
+    return administeredDosesDaily;
+  }
+
+  public Double getAdministeredDoses7daysAvg() {
+    return administeredDoses7daysAvg;
+  }
+
+  public Integer getAdministeredDosesCumulated() {
+    return administeredDosesCumulated;
+  }
+
+  public Double getAdministeredDoses7daysAvgGrowthrate() {
+    return administeredDoses7daysAvgGrowthrate;
+  }
+
+  public Integer getAdministeredDoses7daysAvgTrend5percent() {
+    return administeredDoses7daysAvgTrend5percent;
+  }
+
+  public Integer getPersonsWithFirstDoseCumulated() {
+    return personsWithFirstDoseCumulated;
+  }
+
+  public Double getPersonsWithFirstDoseRatio() {
+    return personsWithFirstDoseRatio;
+  }
+
+  public Integer getPersonsFullyVaccinatedCumulated() {
+    return personsFullyVaccinatedCumulated;
+  }
+
+  public Double getPersonsFullyVaccinatedRatio() {
+    return personsFullyVaccinatedRatio;
+  }
+
   public void setAppDownloads7DaysAvg(String appDownloads7DaysAvg) {
     this.appDownloads7DaysAvg = appDownloads7DaysAvg;
   }
@@ -338,5 +392,41 @@ public class StatisticsJsonStringObject {
 
   public void setUpdateTimestamp(String updateTimestamp) {
     this.updateTimestamp = updateTimestamp;
+  }
+
+  public void setAdministeredDosesDaily(Integer administeredDosesDaily) {
+    this.administeredDosesDaily = administeredDosesDaily;
+  }
+
+  public void setAdministeredDoses7daysAvg(Double administeredDoses7daysAvg) {
+    this.administeredDoses7daysAvg = administeredDoses7daysAvg;
+  }
+
+  public void setAdministeredDosesCumulated(Integer administeredDosesCumulated) {
+    this.administeredDosesCumulated = administeredDosesCumulated;
+  }
+
+  public void setAdministeredDoses7daysAvgGrowthrate(Double administeredDoses7daysAvgGrowthrate) {
+    this.administeredDoses7daysAvgGrowthrate = administeredDoses7daysAvgGrowthrate;
+  }
+
+  public void setAdministeredDoses7daysAvgTrend5percent(Integer administeredDoses7daysAvgTrend5percent) {
+    this.administeredDoses7daysAvgTrend5percent = administeredDoses7daysAvgTrend5percent;
+  }
+
+  public void setPersonsWithFirstDoseCumulated(Integer personsWithFirstDoseCumulated) {
+    this.personsWithFirstDoseCumulated = personsWithFirstDoseCumulated;
+  }
+
+  public void setPersonsWithFirstDoseRatio(Double personsWithFirstDoseRatio) {
+    this.personsWithFirstDoseRatio = personsWithFirstDoseRatio;
+  }
+
+  public void setPersonsFullyVaccinatedCumulated(Integer personsFullyVaccinatedCumulated) {
+    this.personsFullyVaccinatedCumulated = personsFullyVaccinatedCumulated;
+  }
+
+  public void setPersonsFullyVaccinatedRatio(Double personsFullyVaccinatedRatio) {
+    this.personsFullyVaccinatedRatio = personsFullyVaccinatedRatio;
   }
 }
