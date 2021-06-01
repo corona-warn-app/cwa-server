@@ -41,7 +41,6 @@ class ApplicationConfigurationV2MainFileTest {
   @Nested
   public class DgcParametersTest {
 
-
     @Test
     public void testDgcParametersAreValid() {
       assertThat(applicationConfigurationAndroid).isNotNull();

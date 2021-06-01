@@ -77,7 +77,6 @@ public class ApplicationConfigurationV2PublicationConfig {
   private static final String ANDROID_V2_DATA_MAPPING_FILE = "main-config/v2/diagnosis-keys-data-mapping.yaml";
   private static final String ANDROID_V2_DAILY_SUMMARIES_FILE = "main-config/v2/daily-summaries-config.yaml";
   private static final String IOS_V2_EXPOSURE_CONFIGURATION_FILE = "main-config/v2/exposure-configuration.yaml";
-  private static final String DGC_PARAMETERS_PATH = "main-config/v2/dgc-parameters.yaml";
 
   /**
    * Fetches the source configuration as a ApplicationConfigurationAndroid instance.
