@@ -122,6 +122,18 @@ services:
       min-android-version-code: ${ANDROID_MIN_VERSION_CODE:48}
       latest-android-version-code: ${ANDROID_LATEST_VERSION_CODE:48}
     app-config-parameters:
+      dgcParameters:
+        testCertificateParameters:
+          # validation rule for waitAfterPublicKeyRegistrationInSeconds:
+          #   * must be a number
+          #   * >= 0
+          #   * <= 60
+          waitAfterPublicKeyRegistrationInSeconds: ${DGC_TC_WAIT_AFTER_PUBLIC_KEY_REGISTRATION_IN_SECONDS:10}
+          # validation rule for waitForRetryInSeconds:
+          #   * must be a number
+          #   * >= 0
+          #   * <= 60
+          waitForRetryInSeconds: ${DGC_TC_WAIT_FOR_RETRY_IN_SECONDS:10}
       ios-key-download-parameters:
         revoked-day-packages: ${KEY_DOWNLOAD_REVOKED_DAY_PACKAGES:[]}
         revoked-hour-packages: ${KEY_DOWNLOAD_REVOKED_HOUR_PACKAGES:[]}
@@ -219,7 +231,6 @@ spring:
 
   datasource:
     driver-class-name: org.postgresql.Driver
-
     url: jdbc:postgresql://${POSTGRESQL_SERVICE_HOST}:${POSTGRESQL_SERVICE_PORT}/${POSTGRESQL_DATABASE}?ssl=true&sslmode=verify-full&sslrootcert=${SSL_POSTGRES_CERTIFICATE_PATH}&sslcert=${SSL_DISTRIBUTION_CERTIFICATE_PATH}&sslkey=${SSL_DISTRIBUTION_PRIVATE_KEY_PATH}
     username: ${POSTGRESQL_USER_DISTRIBUTION:local_setup_distribution}
     password: ${POSTGRESQL_PASSWORD_DISTRIBUTION:local_setup_distribution}
