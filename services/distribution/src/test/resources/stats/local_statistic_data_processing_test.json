@@ -1,0 +1,245 @@
+[
+	{
+		"update_timestamp": "2021-05-19T12:19:33,103",
+		"effective_date": "2021-05-14",
+		"province_code": 3357,
+		"province_name": "LK Rotenburg (W\u00fcmme)",
+		"seven_day_incidence_1st_reported_daily": 35.4,
+		"seven_day_incidence_1st_reported_growthrate": 0.7531914893617021,
+		"seven_day_incidence_1st_reported_trend_1percent": -1
+	},
+	{
+		"update_timestamp": "2021-05-19T12:19:33,103",
+		"effective_date": "2021-05-14",
+		"province_code": 5554,
+		"province_name": "LK Borken",
+		"seven_day_incidence_1st_reported_daily": 78.9,
+		"seven_day_incidence_1st_reported_growthrate": 0.9238875878220141,
+		"seven_day_incidence_1st_reported_trend_1percent": -1
+	},
+	{
+		"update_timestamp": "2021-05-19T12:19:33,103",
+		"effective_date": "2021-05-14",
+		"province_code": 5974,
+		"province_name": "LK Soest",
+		"seven_day_incidence_1st_reported_daily": 51.0,
+		"seven_day_incidence_1st_reported_growthrate": 0.868824531516184,
+		"seven_day_incidence_1st_reported_trend_1percent": -1
+	},
+	{
+		"update_timestamp": "2021-05-19T12:19:33,103",
+		"effective_date": "2021-05-14",
+		"province_code": 9179,
+		"province_name": "LK F\u00fcrstenfeldbruck",
+		"seven_day_incidence_1st_reported_daily": 83.9,
+		"seven_day_incidence_1st_reported_growthrate": 0.9250275633958104,
+		"seven_day_incidence_1st_reported_trend_1percent": -1
+	},
+	{
+		"update_timestamp": "2021-05-19T12:19:33,103",
+		"effective_date": "2021-05-14",
+		"province_code": 9574,
+		"province_name": "LK N\u00fcrnberger Land",
+		"seven_day_incidence_1st_reported_daily": 107.1,
+		"seven_day_incidence_1st_reported_growthrate": 0.9579606440071556,
+		"seven_day_incidence_1st_reported_trend_1percent": -1
+	},
+	{
+		"update_timestamp": "2021-05-19T12:19:33,103",
+		"effective_date": "2021-05-14",
+		"province_code": 12063,
+		"province_name": "LK Havelland",
+		"seven_day_incidence_1st_reported_daily": 76.7,
+		"seven_day_incidence_1st_reported_growthrate": 1.0972818311874106,
+		"seven_day_incidence_1st_reported_trend_1percent": 1
+	},
+	{
+		"update_timestamp": "2021-05-19T12:19:33,103",
+		"effective_date": "2021-05-14",
+		"province_code": 3155,
+		"province_name": "LK Northeim",
+		"seven_day_incidence_1st_reported_daily": 98.3,
+		"seven_day_incidence_1st_reported_growthrate": 0.9849699398797596,
+		"seven_day_incidence_1st_reported_trend_1percent": -1
+	},
+	{
+		"update_timestamp": "2021-05-19T12:19:33,103",
+		"effective_date": "2021-05-14",
+		"province_code": 5914,
+		"province_name": "SK Hagen",
+		"seven_day_incidence_1st_reported_daily": 215.7,
+		"seven_day_incidence_1st_reported_growthrate": 0.9976873265494912,
+		"seven_day_incidence_1st_reported_trend_1percent": 0
+	},
+	{
+		"update_timestamp": "2021-05-19T12:19:33,103",
+		"effective_date": "2021-05-14",
+		"province_code": 6533,
+		"province_name": "LK Limburg-Weilburg",
+		"seven_day_incidence_1st_reported_daily": 126.2,
+		"seven_day_incidence_1st_reported_growthrate": 0.9859375,
+		"seven_day_incidence_1st_reported_trend_1percent": -1
+	},
+	{
+		"update_timestamp": "2021-05-19T12:19:33,103",
+		"effective_date": "2021-05-14",
+		"province_code": 3452,
+		"province_name": "LK Aurich",
+		"seven_day_incidence_1st_reported_daily": 55.4,
+		"seven_day_incidence_1st_reported_growthrate": 0.8406676783004552,
+		"seven_day_incidence_1st_reported_trend_1percent": -1
+	},
+	{
+		"update_timestamp": "2021-05-19T12:19:33,103",
+		"effective_date": "2021-05-14",
+		"province_code": 8212,
+		"province_name": "SK Karlsruhe",
+		"seven_day_incidence_1st_reported_daily": 104.5,
+		"seven_day_incidence_1st_reported_growthrate": 0.972998137802607,
+		"seven_day_incidence_1st_reported_trend_1percent": -1
+	},
+	{
+		"update_timestamp": "2021-05-19T12:19:33,103",
+		"effective_date": "2021-05-14",
+		"province_code": 9775,
+		"province_name": "LK Neu-Ulm",
+		"seven_day_incidence_1st_reported_daily": 150.7,
+		"seven_day_incidence_1st_reported_growthrate": 0.9779364049318624,
+		"seven_day_incidence_1st_reported_trend_1percent": -1
+	},
+	{
+		"update_timestamp": "2021-05-19T12:19:33,103",
+		"effective_date": "2021-05-14",
+		"province_code": 11011,
+		"province_name": "SK Berlin Lichtenberg",
+		"seven_day_incidence_1st_reported_daily": 77.8,
+		"seven_day_incidence_1st_reported_growthrate": 0.765748031496063,
+		"seven_day_incidence_1st_reported_trend_1percent": -1
+	},
+	{
+		"update_timestamp": "2021-05-19T12:19:33,103",
+		"effective_date": "2021-05-14",
+		"province_code": 14626,
+		"province_name": "LK G\u00f6rlitz",
+		"seven_day_incidence_1st_reported_daily": 158.7,
+		"seven_day_incidence_1st_reported_growthrate": 1.042022324359816,
+		"seven_day_incidence_1st_reported_trend_1percent": 1
+	},
+	{
+		"update_timestamp": "2021-05-19T12:19:33,103",
+		"effective_date": "2021-05-14",
+		"province_code": 7233,
+		"province_name": "LK Vulkaneifel",
+		"seven_day_incidence_1st_reported_daily": 75.9,
+		"seven_day_incidence_1st_reported_growthrate": 1.315424610051993,
+		"seven_day_incidence_1st_reported_trend_1percent": 1
+	},
+	{
+		"update_timestamp": "2021-05-19T12:19:33,103",
+		"effective_date": "2021-05-14",
+		"province_code": 8127,
+		"province_name": "LK Schw\u00e4bisch Hall",
+		"seven_day_incidence_1st_reported_daily": 136.2,
+		"seven_day_incidence_1st_reported_growthrate": 0.9471488178025034,
+		"seven_day_incidence_1st_reported_trend_1percent": -1
+	},
+	{
+		"update_timestamp": "2021-05-19T12:19:33,103",
+		"effective_date": "2021-05-14",
+		"province_code": 9175,
+		"province_name": "LK Ebersberg",
+		"seven_day_incidence_1st_reported_daily": 72.4,
+		"seven_day_incidence_1st_reported_growthrate": 0.7276381909547739,
+		"seven_day_incidence_1st_reported_trend_1percent": -1
+	},
+	{
+		"update_timestamp": "2021-05-19T12:19:33,103",
+		"effective_date": "2021-05-14",
+		"province_code": 3252,
+		"province_name": "LK Hameln-Pyrmont",
+		"seven_day_incidence_1st_reported_daily": 53.2,
+		"seven_day_incidence_1st_reported_growthrate": 0.9761467889908257,
+		"seven_day_incidence_1st_reported_trend_1percent": -1
+	},
+	{
+		"update_timestamp": "2021-05-19T12:19:33,103",
+		"effective_date": "2021-05-14",
+		"province_code": 8435,
+		"province_name": "LK Bodenseekreis",
+		"seven_day_incidence_1st_reported_daily": 121.9,
+		"seven_day_incidence_1st_reported_growthrate": 1.0158333333333334,
+		"seven_day_incidence_1st_reported_trend_1percent": 1
+	},
+	{
+		"update_timestamp": "2021-05-19T12:19:33,103",
+		"effective_date": "2021-05-14",
+		"province_code": 9572,
+		"province_name": "LK Erlangen-H\u00f6chstadt",
+		"seven_day_incidence_1st_reported_daily": 42.3,
+		"seven_day_incidence_1st_reported_growthrate": 1.2368421052631577,
+		"seven_day_incidence_1st_reported_trend_1percent": 1
+	},
+	{
+		"update_timestamp": "2021-05-19T12:19:33,103",
+		"effective_date": "2021-05-14",
+		"province_code": 12061,
+		"province_name": "LK Dahme-Spreewald",
+		"seven_day_incidence_1st_reported_daily": 51.5,
+		"seven_day_incidence_1st_reported_growthrate": 0.8373983739837398,
+		"seven_day_incidence_1st_reported_trend_1percent": -1
+	},
+	{
+		"update_timestamp": "2021-05-19T12:19:33,103",
+		"effective_date": "2021-05-14",
+		"province_code": 1055,
+		"province_name": "LK Ostholstein",
+		"seven_day_incidence_1st_reported_daily": 33.4,
+		"seven_day_incidence_1st_reported_growthrate": 0.893048128342246,
+		"seven_day_incidence_1st_reported_trend_1percent": -1
+	},
+	{
+		"update_timestamp": "2021-05-19T12:19:33,103",
+		"effective_date": "2021-05-14",
+		"province_code": 5124,
+		"province_name": "SK Wuppertal",
+		"seven_day_incidence_1st_reported_daily": 128.4,
+		"seven_day_incidence_1st_reported_growthrate": 0.9582089552238806,
+		"seven_day_incidence_1st_reported_trend_1percent": -1
+	},
+	{
+		"update_timestamp": "2021-05-19T12:19:33,103",
+		"effective_date": "2021-05-14",
+		"province_code": 6632,
+		"province_name": "LK Hersfeld-Rotenburg",
+		"seven_day_incidence_1st_reported_daily": 153.2,
+		"seven_day_incidence_1st_reported_growthrate": 0.9022379269729092,
+		"seven_day_incidence_1st_reported_trend_1percent": -1
+	},
+	{
+		"update_timestamp": "2021-05-19T12:19:33,103",
+		"effective_date": "2021-05-14",
+		"province_code": 7133,
+		"province_name": "LK Bad Kreuznach",
+		"seven_day_incidence_1st_reported_daily": 88.4,
+		"seven_day_incidence_1st_reported_growthrate": 0.9454545454545455,
+		"seven_day_incidence_1st_reported_trend_1percent": -1
+	},
+	{
+		"update_timestamp": "2021-05-19T12:19:33,103",
+		"effective_date": "2021-05-14",
+		"province_code": 7333,
+		"province_name": "LK Donnersbergkreis",
+		"seven_day_incidence_1st_reported_daily": 61.1,
+		"seven_day_incidence_1st_reported_growthrate": 0.8521617852161785,
+		"seven_day_incidence_1st_reported_trend_1percent": -1
+	},
+	{
+		"update_timestamp": "2021-05-19T12:19:33,103",
+		"effective_date": "2021-05-14",
+		"province_code": 8426,
+		"province_name": "LK Biberach",
+		"seven_day_incidence_1st_reported_daily": 144.6,
+		"seven_day_incidence_1st_reported_growthrate": 0.9037499999999999,
+		"seven_day_incidence_1st_reported_trend_1percent": -1
+	}
+]

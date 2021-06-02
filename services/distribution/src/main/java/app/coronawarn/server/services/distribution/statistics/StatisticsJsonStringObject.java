@@ -7,7 +7,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 @JsonInclude(Include.NON_NULL)
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class StatisticsJsonStringObject {
+public class StatisticsJsonStringObject extends StatisticsTimeJsonObject {
 
   @JsonProperty("app_downloads_7days_avg")
   private String appDownloads7DaysAvg;
@@ -21,8 +21,6 @@ public class StatisticsJsonStringObject {
   private Integer appDownloadsCumulated;
   @JsonProperty("app_downloads_daily")
   private Integer appDownloadsDaily;
-  @JsonProperty("effective_date")
-  private String effectiveDate;
   @JsonProperty("infections_effective_7days_avg")
   private Double infectionsReported7daysAvg;
   @JsonProperty("infections_effective_7days_avg_growthrate")
@@ -73,8 +71,6 @@ public class StatisticsJsonStringObject {
   private Integer sevenDayRvaluePublishedTrend1percent;
   @JsonProperty("tests_total_daily")
   private Integer testsTotalDaily;
-  @JsonProperty("update_timestamp")
-  private String updateTimestamp;
 
   public String getAppDownloads7DaysAvg() {
     return appDownloads7DaysAvg;
@@ -98,10 +94,6 @@ public class StatisticsJsonStringObject {
 
   public Integer getAppDownloadsDaily() {
     return appDownloadsDaily;
-  }
-
-  public String getEffectiveDate() {
-    return effectiveDate;
   }
 
   public Double getInfectionsReported7daysAvg() {
@@ -204,10 +196,6 @@ public class StatisticsJsonStringObject {
     return testsTotalDaily;
   }
 
-  public String getUpdateTimestamp() {
-    return updateTimestamp;
-  }
-
   public void setAppDownloads7DaysAvg(String appDownloads7DaysAvg) {
     this.appDownloads7DaysAvg = appDownloads7DaysAvg;
   }
@@ -230,10 +218,6 @@ public class StatisticsJsonStringObject {
 
   public void setAppDownloadsDaily(Integer appDownloadsDaily) {
     this.appDownloadsDaily = appDownloadsDaily;
-  }
-
-  public void setEffectiveDate(String effectiveDate) {
-    this.effectiveDate = effectiveDate;
   }
 
   public void setInfectionsReported7daysAvg(Double infectionsReported7daysAvg) {
@@ -334,9 +318,5 @@ public class StatisticsJsonStringObject {
 
   public void setTestsTotalDaily(Integer testsTotalDaily) {
     this.testsTotalDaily = testsTotalDaily;
-  }
-
-  public void setUpdateTimestamp(String updateTimestamp) {
-    this.updateTimestamp = updateTimestamp;
   }
 }

@@ -284,6 +284,8 @@ public class DistributionServiceConfig {
 
     private String statisticPath;
 
+    private String localStatisticPath;
+
     private String accessKey;
 
     private String secretKey;
@@ -291,6 +293,14 @@ public class DistributionServiceConfig {
     private String endpoint;
 
     private String bucket;
+
+    public String getLocalStatisticPath() {
+      return localStatisticPath;
+    }
+
+    public void setLocalStatisticPath(String localStatisticPath) {
+      this.localStatisticPath = localStatisticPath;
+    }
 
     public String getStatisticPath() {
       return statisticPath;
@@ -460,6 +470,8 @@ public class DistributionServiceConfig {
     @Pattern(regexp = CHAR_AND_NUMBER_REGEX)
     private String statisticsFileName;
     @Pattern(regexp = CHAR_AND_NUMBER_REGEX)
+    private String localStatisticsFileName;
+    @Pattern(regexp = CHAR_AND_NUMBER_REGEX)
     private String traceWarningsPath;
 
     public String getStatisticsFileName() {
@@ -468,6 +480,14 @@ public class DistributionServiceConfig {
 
     public void setStatisticsFileName(String statisticsFileName) {
       this.statisticsFileName = statisticsFileName;
+    }
+
+    public String getLocalStatisticsFileName() {
+      return localStatisticsFileName;
+    }
+
+    public void setLocalStatisticsFileName(String localStatisticsFileName) {
+      this.localStatisticsFileName = localStatisticsFileName;
     }
 
     public String getAppConfigV2IosFileName() {

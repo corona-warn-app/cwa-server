@@ -20,7 +20,7 @@ import app.coronawarn.server.common.protocols.internal.stats.Statistics;
 import app.coronawarn.server.common.shared.util.SerializationUtils;
 import app.coronawarn.server.services.distribution.config.DistributionServiceConfig;
 import app.coronawarn.server.services.distribution.statistics.file.JsonFileLoader;
-import app.coronawarn.server.services.distribution.statistics.file.LocalStatisticJsonFileLoader;
+import app.coronawarn.server.services.distribution.statistics.file.MockStatisticJsonFileLoader;
 import app.coronawarn.server.services.distribution.statistics.keyfigurecard.KeyFigureCardFactory;
 import app.coronawarn.server.services.distribution.statistics.keyfigurecard.KeyFigureCardSequenceConstants;
 import app.coronawarn.server.services.distribution.statistics.validation.StatisticsJsonValidator;
@@ -86,7 +86,7 @@ class StatisticsJsonToProtobufTest {
   @DisplayName("General Tests")
   @ContextConfiguration(classes = {StatisticsJsonToProtobufTest.class,
       StatisticsToProtobufMapping.class, KeyFigureCardFactory.class,
-      LocalStatisticJsonFileLoader.class
+      MockStatisticJsonFileLoader.class
   }, initializers = ConfigDataApplicationContextInitializer.class)
   class StatisticsJsonParsingTest {
     @MockBean
@@ -176,7 +176,7 @@ class StatisticsJsonToProtobufTest {
   @DisplayName("Wrong JSON Properties Test")
   @ContextConfiguration(classes = {StatisticsJsonToProtobufTest.class,
       StatisticsToProtobufMapping.class, KeyFigureCardFactory.class,
-      LocalStatisticJsonFileLoader.class
+      MockStatisticJsonFileLoader.class
   }, initializers = ConfigDataApplicationContextInitializer.class)
   class StatisticsWrongJsonTest {
 
@@ -204,7 +204,7 @@ class StatisticsJsonToProtobufTest {
   @DisplayName("Value Processing Test")
   @ContextConfiguration(classes = {StatisticsJsonToProtobufTest.class,
       StatisticsToProtobufMapping.class, KeyFigureCardFactory.class,
-      LocalStatisticJsonFileLoader.class
+      MockStatisticJsonFileLoader.class
   }, initializers = ConfigDataApplicationContextInitializer.class)
 
   class StatisticsJsonProcessingTest {

@@ -87,11 +87,12 @@ public class StatisticsToProtobufMapping {
         logger.warn("Stats file is already updated to the latest version. Skipping generation.");
         return Statistics.newBuilder().build();
       } else {
+        StatisticsJsonValidator<StatisticsJsonStringObject> validator = new StatisticsJsonValidator<>();
+
         List<StatisticsJsonStringObject> jsonStringObjects = SerializationUtils
             .deserializeJson(file.get().getContent(), typeFactory -> typeFactory
                 .constructCollectionType(List.class, StatisticsJsonStringObject.class));
 
-        StatisticsJsonValidator validator = new StatisticsJsonValidator();
         jsonStringObjects = new ArrayList<>(validator.validate(jsonStringObjects));
 
         this.updateETag(file.get().getETag());

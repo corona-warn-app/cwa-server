@@ -65,6 +65,7 @@ services:
       app-config-v2-android-file-name: app_config_android
       app-config-v2-ios-file-name: app_config_ios
       statistics-file-name: stats
+      local-statistics-file-name: local-stats
     # Signature configuration, used for signing the exports.
     signature:
       # The alias with which to identify public key to be used for verification.
@@ -104,6 +105,7 @@ services:
     statistics:
       trend-calculation-threshold: 0.05
       statistic-path: ${STATISTICS_FILE_NAME:json/v1/cwa_reporting_public_data.json}
+      local-statistic-path: ${STATISTICS_FILE_NAME:json/v1/cwa_reporting_public_data_region.json}
       access-key: ${STATISTICS_FILE_ACCESS_KEY_ID:}
       secret-key: ${STATISTICS_FILE_SECRET_ACCESS_KEY:}
       endpoint: ${STATISTICS_FILE_S3_ENDPOINT:}
@@ -219,7 +221,6 @@ spring:
 
   datasource:
     driver-class-name: org.postgresql.Driver
-
     url: jdbc:postgresql://${POSTGRESQL_SERVICE_HOST}:${POSTGRESQL_SERVICE_PORT}/${POSTGRESQL_DATABASE}?ssl=true&sslmode=verify-full&sslrootcert=${SSL_POSTGRES_CERTIFICATE_PATH}&sslcert=${SSL_DISTRIBUTION_CERTIFICATE_PATH}&sslkey=${SSL_DISTRIBUTION_PRIVATE_KEY_PATH}
     username: ${POSTGRESQL_USER_DISTRIBUTION:local_setup_distribution}
     password: ${POSTGRESQL_PASSWORD_DISTRIBUTION:local_setup_distribution}
