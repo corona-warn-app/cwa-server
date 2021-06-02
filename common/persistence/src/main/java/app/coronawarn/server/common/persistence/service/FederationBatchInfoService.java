@@ -3,6 +3,7 @@
 package app.coronawarn.server.common.persistence.service;
 
 import app.coronawarn.server.common.persistence.domain.FederationBatchInfo;
+import app.coronawarn.server.common.persistence.domain.FederationBatchSourceSystem;
 import app.coronawarn.server.common.persistence.domain.FederationBatchStatus;
 import app.coronawarn.server.common.persistence.repository.FederationBatchInfoRepository;
 import java.time.LocalDate;
@@ -43,7 +44,7 @@ public class FederationBatchInfoService {
    * Sets the status of the provided federation batch.
    *
    * @param federationBatchInfo batch information {@link FederationBatchInfo}
-   * @param status batch status {@link FederationBatchStatus}
+   * @param status              batch status {@link FederationBatchStatus}
    */
   public void updateStatus(FederationBatchInfo federationBatchInfo, FederationBatchStatus status) {
     String statusValue = status.name();
@@ -54,13 +55,15 @@ public class FederationBatchInfoService {
   }
 
   /**
-   * Returns all batch information entries with a given status.
+   * Returns all batch information entries with a given status filtered by source system..
    *
    * @param federationBatchStatus the status the batch information entries should have.
+   * @param sourceSystem          source system of the batch.
    * @return the list of batch information entries with the given status.
    */
-  public List<FederationBatchInfo> findByStatus(FederationBatchStatus federationBatchStatus) {
-    return federationBatchInfoRepository.findByStatus(federationBatchStatus.name());
+  public List<FederationBatchInfo> findByStatus(FederationBatchStatus federationBatchStatus,
+      final FederationBatchSourceSystem sourceSystem) {
+    return federationBatchInfoRepository.findByStatusAndSourceSystem(federationBatchStatus.name(), sourceSystem);
   }
 
   /**

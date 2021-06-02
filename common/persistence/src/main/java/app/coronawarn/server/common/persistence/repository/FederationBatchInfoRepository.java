@@ -52,4 +52,7 @@ public interface FederationBatchInfoRepository extends PagingAndSortingRepositor
   @Modifying
   @Query("DELETE FROM federation_batch_info WHERE date=:date")
   void deleteForDate(@Param("date") LocalDate date);
+
+  List<FederationBatchInfo> findByStatusAndSourceSystem(@Param("status") String name,
+      @Param("sourceSystem") FederationBatchSourceSystem sourceSystem);
 }
