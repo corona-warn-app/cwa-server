@@ -1,8 +1,12 @@
 package app.coronawarn.server.services.distribution.statistics;
 
+import static app.coronawarn.server.services.distribution.statistics.keyfigurecard.KeyFigureCardSequenceConstants.FIRST_VACCINATION_CARD;
+import static app.coronawarn.server.services.distribution.statistics.keyfigurecard.KeyFigureCardSequenceConstants.FULLY_VACCINATED_CARD;
 import static app.coronawarn.server.services.distribution.statistics.keyfigurecard.KeyFigureCardSequenceConstants.INCIDENCE_CARD_ID;
+import static app.coronawarn.server.services.distribution.statistics.keyfigurecard.KeyFigureCardSequenceConstants.INFECTIONS_CARD_ID;
 import static app.coronawarn.server.services.distribution.statistics.keyfigurecard.KeyFigureCardSequenceConstants.KEY_SUBMISSION_CARD_ID;
 import static app.coronawarn.server.services.distribution.statistics.keyfigurecard.KeyFigureCardSequenceConstants.REPRODUCTION_NUMBER_CARD;
+import static app.coronawarn.server.services.distribution.statistics.keyfigurecard.KeyFigureCardSequenceConstants.VACCINATION_DOSES_CARD;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
@@ -17,6 +21,8 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.ConfigDataApplicationContextInitializer;
@@ -56,6 +62,16 @@ class KeyFigureCardFactoryTest {
 
     statisticsJsonStringObject.setSevenDayRvaluepublishedDaily(100.63);
     statisticsJsonStringObject.setSevenDayRvaluePublishedTrend1percent(1);
+
+    statisticsJsonStringObject.setAdministeredDosesDaily(843978);
+    statisticsJsonStringObject.setAdministeredDoses7daysAvg(656704.8571428572);
+    statisticsJsonStringObject.setAdministeredDosesCumulated(41517849);
+    statisticsJsonStringObject.setAdministeredDoses7daysAvgGrowthrate(0.8608);
+    statisticsJsonStringObject.setAdministeredDoses7daysAvgTrend5percent(1);
+    statisticsJsonStringObject.setPersonsWithFirstDoseCumulated(31678786);
+    statisticsJsonStringObject.setPersonsWithFirstDoseRatio(0.381);
+    statisticsJsonStringObject.setPersonsFullyVaccinatedCumulated(9901626);
+    statisticsJsonStringObject.setPersonsFullyVaccinatedRatio(0.11900000274181366);
   }
 
   @Nested
@@ -107,23 +123,17 @@ class KeyFigureCardFactoryTest {
           .isInstanceOf(MissingPropertyException.class);
     }
 
-    @Test
-    void shouldThrowAnExceptionIfMandatoryPropertyIsEqualToZero() {
-      statisticsJsonStringObject.setInfectionsReportedCumulated(0);
-      assertThatThrownBy(() -> figureCardFactory.createKeyFigureCard(statisticsJsonStringObject, 1))
-          .isInstanceOf(MissingPropertyException.class);
-    }
-
-    @Test
-    void shouldThrowAnExceptionIfMandatoryPropertyLessThanZero() {
-      statisticsJsonStringObject.setInfectionsReportedCumulated(-1);
-      assertThatThrownBy(() -> figureCardFactory.createKeyFigureCard(statisticsJsonStringObject, 1))
+    @ParameterizedTest
+    @ValueSource(ints = {0, -1})
+    void shouldFailIfInfectionCardIsNotValid(Integer value) {
+      statisticsJsonStringObject.setInfectionsReportedCumulated(value);
+      assertThatThrownBy(
+          () -> figureCardFactory.createKeyFigureCard(statisticsJsonStringObject, INFECTIONS_CARD_ID))
           .isInstanceOf(MissingPropertyException.class);
     }
   }
 
   @Nested
-  @ExtendWith(SpringExtension.class)
   @EnableConfigurationProperties(value = DistributionServiceConfig.class)
   @ContextConfiguration(classes = {KeyFigureCardFactory.class},
       initializers = ConfigDataApplicationContextInitializer.class)
@@ -179,7 +189,6 @@ class KeyFigureCardFactoryTest {
   }
 
   @Nested
-  @ExtendWith(SpringExtension.class)
   @EnableConfigurationProperties(value = DistributionServiceConfig.class)
   @ContextConfiguration(classes = {KeyFigureCardFactory.class},
       initializers = ConfigDataApplicationContextInitializer.class)
@@ -205,23 +214,17 @@ class KeyFigureCardFactoryTest {
           .containsExactly(Trend.DECREASING, TrendSemantic.NEUTRAL);
     }
 
-    @Test
-    void shouldThrowAnExceptionIfMandatoryPropertyIsEqualToZero() {
-      statisticsJsonStringObject.setPersonWhoSharedKeys7daysAvg(0.0);
-      assertThatThrownBy(() -> figureCardFactory.createKeyFigureCard(statisticsJsonStringObject, KEY_SUBMISSION_CARD_ID))
-          .isInstanceOf(MissingPropertyException.class);
-    }
-
-    @Test
-    void shouldThrowAnExceptionIfMandatoryPropertyIsLessThanZero() {
-      statisticsJsonStringObject.setPersonWhoSharedKeys7daysAvg(-1.0);
-      assertThatThrownBy(() -> figureCardFactory.createKeyFigureCard(statisticsJsonStringObject, KEY_SUBMISSION_CARD_ID))
+    @ParameterizedTest
+    @ValueSource(doubles = {0.0, -1.0})
+    void shouldFailIfKeySubmissionCardIsNotValid(Double value) {
+      statisticsJsonStringObject.setPersonWhoSharedKeys7daysAvg(value);
+      assertThatThrownBy(
+          () -> figureCardFactory.createKeyFigureCard(statisticsJsonStringObject, KEY_SUBMISSION_CARD_ID))
           .isInstanceOf(MissingPropertyException.class);
     }
   }
 
   @Nested
-  @ExtendWith(SpringExtension.class)
   @EnableConfigurationProperties(value = DistributionServiceConfig.class)
   @ContextConfiguration(classes = {KeyFigureCardFactory.class},
       initializers = ConfigDataApplicationContextInitializer.class)
@@ -234,17 +237,13 @@ class KeyFigureCardFactoryTest {
           TrendSemantic.NEGATIVE, 2);
     }
 
-    @Test
-    void shouldThrowAnExceptionIfMandatoryPropertyIsEqualToZero() {
-      statisticsJsonStringObject.setSevenDayRvaluepublishedDaily(0.0);
-      assertThatThrownBy(() -> figureCardFactory.createKeyFigureCard(statisticsJsonStringObject, REPRODUCTION_NUMBER_CARD))
-          .isInstanceOf(MissingPropertyException.class);
-    }
 
-    @Test
-    void shouldThrowAnExceptionIfMandatoryPropertyLessThanZero() {
-      statisticsJsonStringObject.setSevenDayRvaluepublishedDaily(-1.0);
-      assertThatThrownBy(() -> figureCardFactory.createKeyFigureCard(statisticsJsonStringObject, REPRODUCTION_NUMBER_CARD))
+    @ParameterizedTest
+    @ValueSource(doubles = {0.0, -1.0})
+    void shouldFailIfReproductionNumberCardIsNotValid(Double value) {
+      statisticsJsonStringObject.setSevenDayRvaluepublishedDaily(value);
+      assertThatThrownBy(
+          () -> figureCardFactory.createKeyFigureCard(statisticsJsonStringObject, REPRODUCTION_NUMBER_CARD))
           .isInstanceOf(MissingPropertyException.class);
     }
   }
@@ -261,4 +260,145 @@ class KeyFigureCardFactoryTest {
         .containsExactly(value, rank, trend, trendSemantic, decimals);
   }
 
+  @Nested
+  @EnableConfigurationProperties(value = DistributionServiceConfig.class)
+  @ContextConfiguration(classes = {KeyFigureCardFactory.class},
+      initializers = ConfigDataApplicationContextInitializer.class)
+  class VaccinationDosesCardFactoryTest {
+
+    @Test
+    void testCardHasCorrectKeyFigures() {
+      var result = figureCardFactory.createKeyFigureCard(statisticsJsonStringObject, 7);
+
+      assertKeyFigure(result.getKeyFigures(0), 843978, Rank.PRIMARY, Trend.UNSPECIFIED_TREND,
+          TrendSemantic.UNSPECIFIED_TREND_SEMANTIC, 0);
+      assertKeyFigure(result.getKeyFigures(1), 656704.8571428572, Rank.SECONDARY, Trend.INCREASING,
+          TrendSemantic.POSITIVE, 0);
+      assertKeyFigure(result.getKeyFigures(2), 41517849, Rank.TERTIARY, Trend.UNSPECIFIED_TREND,
+          TrendSemantic.UNSPECIFIED_TREND_SEMANTIC, 0);
+    }
+
+    @Test
+    void testAdministeredDosesDecreasing() {
+      statisticsJsonStringObject.setAdministeredDoses7daysAvgTrend5percent(-1);
+      var result = figureCardFactory.createKeyFigureCard(statisticsJsonStringObject,
+          VACCINATION_DOSES_CARD);
+      assertThat(result.getKeyFigures(1))
+          .extracting(KeyFigure::getTrend, KeyFigure::getTrendSemantic)
+          .containsExactly(Trend.DECREASING, TrendSemantic.NEGATIVE);
+    }
+
+    @Test
+    void testAdministeredDosesIncreasing() {
+      statisticsJsonStringObject.setAdministeredDoses7daysAvgTrend5percent(1);
+      var result = figureCardFactory.createKeyFigureCard(statisticsJsonStringObject,
+          VACCINATION_DOSES_CARD);
+      assertThat(result.getKeyFigures(1))
+          .extracting(KeyFigure::getTrend, KeyFigure::getTrendSemantic)
+          .containsExactly(Trend.INCREASING, TrendSemantic.POSITIVE);
+    }
+
+    @Test
+    void shouldThrowAnExceptionIfMandatoryPropertyIsEqualToZero() {
+      statisticsJsonStringObject.setAdministeredDosesDaily(0);
+      assertThatThrownBy(
+          () -> figureCardFactory.createKeyFigureCard(statisticsJsonStringObject, VACCINATION_DOSES_CARD))
+          .isInstanceOf(MissingPropertyException.class);
+    }
+
+    @Test
+    void shouldThrowAnExceptionIfMandatoryPropertyLessThanZero() {
+      statisticsJsonStringObject.setAdministeredDosesDaily(-1);
+      assertThatThrownBy(
+          () -> figureCardFactory.createKeyFigureCard(statisticsJsonStringObject, VACCINATION_DOSES_CARD))
+          .isInstanceOf(MissingPropertyException.class);
+    }
+
+
+    private void assertKeyFigure(KeyFigure result, double value, Rank rank, Trend trend, TrendSemantic trendSemantic,
+        Integer decimals) {
+      assertThat(result).extracting(
+          KeyFigure::getValue,
+          KeyFigure::getRank,
+          KeyFigure::getTrend,
+          KeyFigure::getTrendSemantic,
+          KeyFigure::getDecimals)
+          .containsExactly(value, rank, trend, trendSemantic, decimals);
+    }
+  }
+
+  @Nested
+  @EnableConfigurationProperties(value = DistributionServiceConfig.class)
+  @ContextConfiguration(classes = {KeyFigureCardFactory.class},
+      initializers = ConfigDataApplicationContextInitializer.class)
+  class FullyVaccinatedCardFactoryTest {
+
+    @Test
+    void testCardHasCorrectKeyFigures() {
+      var result = figureCardFactory.createKeyFigureCard(statisticsJsonStringObject, FULLY_VACCINATED_CARD);
+
+      assertKeyFigure(result.getKeyFigures(0), 0.11900000274181366, Rank.PRIMARY, Trend.UNSPECIFIED_TREND,
+          TrendSemantic.UNSPECIFIED_TREND_SEMANTIC, 1);
+      assertKeyFigure(result.getKeyFigures(1), 9901626, Rank.TERTIARY, Trend.UNSPECIFIED_TREND,
+          TrendSemantic.UNSPECIFIED_TREND_SEMANTIC, 0);
+    }
+
+    @ParameterizedTest
+    @ValueSource(doubles = {0.0, -1.0})
+    void shouldFailIfFullyVaccinatedCardIsNotValid(Double value) {
+      statisticsJsonStringObject.setPersonsFullyVaccinatedRatio(value);
+      assertThatThrownBy(
+          () -> figureCardFactory.createKeyFigureCard(statisticsJsonStringObject, FULLY_VACCINATED_CARD))
+          .isInstanceOf(MissingPropertyException.class);
+    }
+
+    private void assertKeyFigure(KeyFigure result, double value, Rank rank, Trend trend, TrendSemantic trendSemantic,
+        Integer decimals) {
+      assertThat(result).extracting(
+          KeyFigure::getValue,
+          KeyFigure::getRank,
+          KeyFigure::getTrend,
+          KeyFigure::getTrendSemantic,
+          KeyFigure::getDecimals)
+          .containsExactly(value, rank, trend, trendSemantic, decimals);
+    }
+  }
+
+  @Nested
+  @EnableConfigurationProperties(value = DistributionServiceConfig.class)
+  @ContextConfiguration(classes = {KeyFigureCardFactory.class},
+      initializers = ConfigDataApplicationContextInitializer.class)
+  class FirstVaccinationCardFactoryTest {
+
+    @Test
+    void testCardHasCorrectKeyFigures() {
+      var result = figureCardFactory.createKeyFigureCard(statisticsJsonStringObject, FIRST_VACCINATION_CARD);
+
+      assertKeyFigure(result.getKeyFigures(0), 0.381, Rank.PRIMARY, Trend.UNSPECIFIED_TREND,
+          TrendSemantic.UNSPECIFIED_TREND_SEMANTIC, 1);
+      assertKeyFigure(result.getKeyFigures(1), 31678786, Rank.TERTIARY, Trend.UNSPECIFIED_TREND,
+          TrendSemantic.UNSPECIFIED_TREND_SEMANTIC, 0);
+    }
+
+    @ParameterizedTest
+    @ValueSource(doubles = {0.0, -1.0})
+    void shouldFailIfFirstVaccinationCardIsNotValid(Double value) {
+      statisticsJsonStringObject.setPersonsWithFirstDoseRatio(value);
+      assertThatThrownBy(
+          () -> figureCardFactory.createKeyFigureCard(statisticsJsonStringObject, FIRST_VACCINATION_CARD))
+          .isInstanceOf(MissingPropertyException.class);
+    }
+
+
+    private void assertKeyFigure(KeyFigure result, double value, Rank rank, Trend trend, TrendSemantic trendSemantic,
+        Integer decimals) {
+      assertThat(result).extracting(
+          KeyFigure::getValue,
+          KeyFigure::getRank,
+          KeyFigure::getTrend,
+          KeyFigure::getTrendSemantic,
+          KeyFigure::getDecimals)
+          .containsExactly(value, rank, trend, trendSemantic, decimals);
+    }
+  }
 }

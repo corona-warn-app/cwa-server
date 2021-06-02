@@ -1,6 +1,15 @@
 package app.coronawarn.server.services.distribution.statistics;
 
-import static app.coronawarn.server.services.distribution.statistics.keyfigurecard.KeyFigureCardSequenceConstants.*;
+
+import static app.coronawarn.server.services.distribution.statistics.keyfigurecard.KeyFigureCardSequenceConstants.EMPTY_CARD;
+import static app.coronawarn.server.services.distribution.statistics.keyfigurecard.KeyFigureCardSequenceConstants.FIRST_VACCINATION_CARD;
+import static app.coronawarn.server.services.distribution.statistics.keyfigurecard.KeyFigureCardSequenceConstants.FULLY_VACCINATED_CARD;
+import static app.coronawarn.server.services.distribution.statistics.keyfigurecard.KeyFigureCardSequenceConstants.INCIDENCE_CARD_ID;
+import static app.coronawarn.server.services.distribution.statistics.keyfigurecard.KeyFigureCardSequenceConstants.INFECTIONS_CARD_ID;
+import static app.coronawarn.server.services.distribution.statistics.keyfigurecard.KeyFigureCardSequenceConstants.KEY_SUBMISSION_CARD_ID;
+import static app.coronawarn.server.services.distribution.statistics.keyfigurecard.KeyFigureCardSequenceConstants.REPRODUCTION_NUMBER_CARD;
+import static app.coronawarn.server.services.distribution.statistics.keyfigurecard.KeyFigureCardSequenceConstants.VACCINATION_DOSES_CARD;
+import static app.coronawarn.server.services.distribution.statistics.keyfigurecard.KeyFigureCardSequenceConstants.toCardName;
 
 import app.coronawarn.server.common.persistence.service.StatisticsDownloadService;
 import app.coronawarn.server.common.protocols.internal.stats.KeyFigureCard;
@@ -45,6 +54,7 @@ public class StatisticsToProtobufMapping {
 
   /**
    * Process the JSON file provided by TSI and map the it to Statistics protobuf object.
+   *
    * @param distributionServiceConfig The config properties
    * @param keyFigureCardFactory      KeyFigureCard structure provider
    * @param jsonFileLoader            Loader of the file from the system
@@ -131,6 +141,9 @@ public class StatisticsToProtobufMapping {
     figureCardMap.put(INCIDENCE_CARD_ID, Optional.empty());
     figureCardMap.put(KEY_SUBMISSION_CARD_ID, Optional.empty());
     figureCardMap.put(REPRODUCTION_NUMBER_CARD, Optional.empty());
+    figureCardMap.put(FIRST_VACCINATION_CARD, Optional.empty());
+    figureCardMap.put(FULLY_VACCINATED_CARD, Optional.empty());
+    figureCardMap.put(VACCINATION_DOSES_CARD, Optional.empty());
 
     List<StatisticsJsonStringObject> orderedList = jsonStringObjects.stream()
         .sorted(Comparator.comparing(a -> effectiveDateStringToLocalDate(a.getEffectiveDate())))
@@ -161,7 +174,7 @@ public class StatisticsToProtobufMapping {
 
     if (logger.isDebugEnabled()) {
       logger.debug("The following statistics JSON entries were used to create the cards. Null values are omitted.");
-      for (var stat: collectedJsonObjects) {
+      for (var stat : collectedJsonObjects) {
         var jsonString = SerializationUtils.stringifyObject(stat);
         logger.debug("[{}] {}", stat.getEffectiveDate(), jsonString);
       }

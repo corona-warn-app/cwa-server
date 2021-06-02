@@ -113,9 +113,8 @@ class StatisticsJsonToProtobufTest {
     void testGetCardIdSequenceFromConfig() throws IOException {
       Statistics stats = statisticsToProtobufMapping.constructProtobufStatistics();
 
-      assertThat(stats.getCardIdSequenceList().size()).isEqualTo(4);
+      assertThat(stats.getCardIdSequenceList().size()).isEqualTo(7);
     }
-
 
     @Test
     void testKeyFigureCardContainsHeader() throws IOException {
