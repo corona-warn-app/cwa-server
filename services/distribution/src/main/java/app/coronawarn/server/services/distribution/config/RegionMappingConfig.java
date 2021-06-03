@@ -8,6 +8,8 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.validation.annotation.Validated;
 
+import static app.coronawarn.server.services.distribution.statistics.local.BuildLocalStatisticsHelper.getFederalStateConfigIndex;
+
 /**
  * Wrapper over properties defined in <code>main-config/region-mapping.yaml</code>. It
  * provides convenience methods to find the federal state group based on a federal state code.
@@ -27,7 +29,8 @@ public class RegionMappingConfig {
   }
 
   public Optional<Integer> getFederalStateGroup(Integer federalStateId) {
-    return Optional.ofNullable(federalStatesGroups.get(federalStateId - 1));
+    return Optional.ofNullable(
+        federalStatesGroups.get(getFederalStateConfigIndex(federalStateId)));
   }
 
   public Map<Integer, Integer> getFederalStatesGroups() {

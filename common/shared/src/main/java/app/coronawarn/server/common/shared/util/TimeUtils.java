@@ -8,6 +8,8 @@ import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.time.temporal.ChronoUnit;
 
+import static java.time.ZoneOffset.UTC;
+
 public class TimeUtils {
 
   private static Instant now;
@@ -21,7 +23,7 @@ public class TimeUtils {
    * @return LocalDateTime of current UTC hour
    */
   public static LocalDateTime getCurrentUtcHour() {
-    return LocalDateTime.ofInstant(getNow().truncatedTo(ChronoUnit.HOURS), ZoneOffset.UTC);
+    return LocalDateTime.ofInstant(getNow().truncatedTo(ChronoUnit.HOURS), UTC);
   }
 
   /**
@@ -53,4 +55,13 @@ public class TimeUtils {
   public static void setNow(Instant instant) {
     now = instant;
   }
+
+  /**
+   *
+   * @return
+   */
+  public static long toEpochSecondsUTC(LocalDate localDate) {
+    return localDate.atStartOfDay(UTC).toEpochSecond();
+  }
+
 }

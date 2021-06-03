@@ -1,10 +1,11 @@
 package app.coronawarn.server.services.distribution.statistics.local;
 
+import static java.util.stream.Collectors.groupingBy;
+import static java.util.stream.Collectors.toList;
+import static app.coronawarn.server.services.distribution.statistics.local.BuildLocalStatisticsHelper.*;
+
 import app.coronawarn.server.common.persistence.service.LocalStatisticsDownloadService;
-import app.coronawarn.server.common.protocols.internal.stats.FederalStateData;
-import app.coronawarn.server.common.protocols.internal.stats.FederalStateData.FederalState;
 import app.coronawarn.server.common.protocols.internal.stats.LocalStatistics;
-import app.coronawarn.server.common.protocols.internal.stats.SevenDayIncidenceData;
 import app.coronawarn.server.common.shared.util.SerializationUtils;
 import app.coronawarn.server.common.shared.util.TimeUtils;
 import app.coronawarn.server.services.distribution.config.RegionMappingConfig;
@@ -16,12 +17,16 @@ import app.coronawarn.server.services.distribution.statistics.file.JsonFile;
 import app.coronawarn.server.services.distribution.statistics.file.StatisticJsonFileLoader;
 import app.coronawarn.server.services.distribution.statistics.validation.StatisticsJsonValidator;
 import java.io.IOException;
+import java.time.LocalDate;
 import java.time.ZoneOffset;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.function.Function;
+import java.util.function.Supplier;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Bean;
@@ -80,35 +85,36 @@ public class LocalStatisticsToProtobufMapping {
         logger.warn("Stats file is already updated to the latest version. Skipping generation.");
         return Collections.emptyMap();
       } else {
-        StatisticsJsonValidator<LocalStatisticsJsonStringObject> validator = new StatisticsJsonValidator<>();
-
-        List<LocalStatisticsJsonStringObject> jsonStringObjects = validator.validate(
-            SerializationUtils.deserializeJson(
-                file.get().getContent(), typeFactory -> typeFactory
-                    .constructCollectionType(List.class, LocalStatisticsJsonStringObject.class)
-            )
-        );
-
         this.updateETag(file.get().getETag());
 
-        jsonStringObjects.forEach(localStatisticsJsonStringObject -> {
-          Optional<String> federalStateCodeOptional = provinceToFederalStateMapping(
-              localStatisticsJsonStringObject.getProvinceCode());
+        List<LocalStatisticsJsonStringObject> onePerProvinceStatistics = deserializeAndValidate(file);
 
-          if (federalStateCodeOptional.isPresent()) {
-            int federalStateCode = Integer.parseInt(federalStateCodeOptional.get());
-            Optional<Integer> federalStateGroupOptional = regionMappingConfig.getFederalStateGroup(federalStateCode);
+        onePerProvinceStatistics.forEach(localStatisticsJsonStringObject -> {
+          if (localStatisticsJsonStringObject.getProvinceCode() != null) {
+            int provinceCode = Integer.parseInt(localStatisticsJsonStringObject.getProvinceCode());
 
-            if (federalStateGroupOptional.isPresent()) {
-              if (localStatisticsMap.get(federalStateGroupOptional.get()) != null) {
-                LocalStatistics regionGroupStatistics = localStatisticsMap.get(federalStateGroupOptional.get());
+            if (isFederalState(localStatisticsJsonStringObject.getProvinceCode())) {
+              fillLocalStatisticsFederalStatesGroupMap(
+                  localStatisticsMap,
+                  provinceCode,
+                  localStatisticsJsonStringObject,
+                  federalStateSupplier(provinceCode, localStatisticsJsonStringObject),
+                  federalStateEnhancer(provinceCode, localStatisticsJsonStringObject)
+              );
+            } else {
 
-                localStatisticsMap.put(federalStateGroupOptional.get(),
-                    addFederalStateData(regionGroupStatistics, federalStateCode, localStatisticsJsonStringObject));
-              } else {
-                localStatisticsMap.put(federalStateGroupOptional.get(),
-                    buildLocalStatistics(federalStateCode, localStatisticsJsonStringObject));
-              }
+              Optional<String> federalStateCodeOptional = findFederalStateByProvinceCode(
+                  localStatisticsJsonStringObject.getProvinceCode());
+
+              federalStateCodeOptional.ifPresent(code -> {
+                fillLocalStatisticsFederalStatesGroupMap(
+                    localStatisticsMap,
+                    Integer.parseInt(federalStateCodeOptional.get()),
+                    localStatisticsJsonStringObject,
+                    administrativeUnitSupplier(provinceCode, localStatisticsJsonStringObject),
+                    administrativeUnitEnhancer(provinceCode, localStatisticsJsonStringObject)
+                );
+              });
             }
           }
         });
@@ -120,47 +126,83 @@ public class LocalStatisticsToProtobufMapping {
     return localStatisticsMap;
   }
 
-  private SevenDayIncidenceData buildSevenDaysIncidence(
-      LocalStatisticsJsonStringObject localStatisticsJsonStringObject) {
-    return SevenDayIncidenceData.newBuilder()
-        .setValue(localStatisticsJsonStringObject.getSevenDayIncidence1stReportedDaily())
-        .build();
-  }
-
-  private FederalStateData buildFederalStateData(int federalStateCode,
-      LocalStatisticsJsonStringObject localStatisticsJsonStringObject) {
-    return FederalStateData.newBuilder()
-        .setFederalState(FederalState.forNumber(federalStateCode))
-        .setSevenDayIncidence(buildSevenDaysIncidence(localStatisticsJsonStringObject))
-        .build();
-  }
-
-  private LocalStatistics buildLocalStatistics(int federalStateCode,
-      LocalStatisticsJsonStringObject localStatisticsJsonStringObject) {
-    return LocalStatistics.newBuilder()
-        .addFederalStateData(buildFederalStateData(federalStateCode, localStatisticsJsonStringObject))
-        .build();
-  }
-
-  private LocalStatistics addFederalStateData(LocalStatistics localStatistics,
+  private void fillLocalStatisticsFederalStatesGroupMap(Map<Integer, LocalStatistics> localStatisticsMap,
       int federalStateCode,
-      LocalStatisticsJsonStringObject localStatisticsJsonStringObject) {
-    return localStatistics.toBuilder()
-        .addFederalStateData(buildFederalStateData(federalStateCode, localStatisticsJsonStringObject))
-        .build();
+      LocalStatisticsJsonStringObject localStatisticsJsonStringObject,
+      Supplier<LocalStatistics> statisticsSupplier,
+      Function<LocalStatistics, LocalStatistics> statisticsEnhancer) {
+
+      Optional<Integer> federalStateGroupOptional = regionMappingConfig.getFederalStateGroup(federalStateCode);
+
+      processLocalStatisticsMapEntry(
+          localStatisticsMap,
+          federalStateGroupOptional,
+          statisticsSupplier,
+          statisticsEnhancer
+      );
+
   }
 
-  private Optional<String> provinceToFederalStateMapping(String provinceCode) {
-    switch (provinceCode.length()) {
-      case 1:
-      case 2:
-        return Optional.of(provinceCode);
-      case 4:
-        return Optional.of(provinceCode.substring(0, 1));
-      case 5:
-        return Optional.of(provinceCode.substring(0, 2));
-      default:
-        return Optional.empty();
+  private void processLocalStatisticsMapEntry(
+      Map<Integer, LocalStatistics> localStatisticsMap,
+      Optional<Integer> federalStateGroupOptional,
+      Supplier<LocalStatistics> statisticsSupplier,
+      Function<LocalStatistics, LocalStatistics> statisticsEnhancer) {
+
+    if (federalStateGroupOptional.isPresent()) {
+      if (localStatisticsMap.get(federalStateGroupOptional.get()) != null) {
+        LocalStatistics regionGroupStatistics = localStatisticsMap.get(federalStateGroupOptional.get());
+
+        localStatisticsMap.put(federalStateGroupOptional.get(), statisticsEnhancer.apply(regionGroupStatistics));
+      } else {
+        localStatisticsMap.put(federalStateGroupOptional.get(), statisticsSupplier.get());
+      }
     }
   }
+
+  private List<LocalStatisticsJsonStringObject> filterOncePerProvinceStatistics(
+      List<LocalStatisticsJsonStringObject> jsonStringObjects) {
+    List<LocalStatisticsJsonStringObject> onePerProvinceStatistics = new ArrayList<>();
+    Map<String, List<LocalStatisticsJsonStringObject>> groupedByProvince = jsonStringObjects.stream()
+        .collect(groupingBy(LocalStatisticsJsonStringObject::getProvinceCode, toList()));
+
+    groupedByProvince.keySet().stream().forEach(key -> {
+      List<LocalStatisticsJsonStringObject> sameProvinceStatistics = groupedByProvince.get(key);
+      LocalStatisticsJsonStringObject mostRecentStatistic = null;
+
+      for (LocalStatisticsJsonStringObject provinceStatistic : sameProvinceStatistics) {
+        if (mostRecentStatistic == null) {
+          mostRecentStatistic = provinceStatistic;
+        } else {
+          if (LocalDate.parse(mostRecentStatistic.getEffectiveDate())
+              .isBefore(LocalDate.parse(provinceStatistic.getEffectiveDate()))) {
+            mostRecentStatistic = provinceStatistic;
+          }
+        }
+      }
+
+      onePerProvinceStatistics.add(mostRecentStatistic);
+    });
+
+    return onePerProvinceStatistics;
+  }
+
+  private List<LocalStatisticsJsonStringObject> deserializeAndValidate(Optional<JsonFile> file) throws IOException {
+    StatisticsJsonValidator<LocalStatisticsJsonStringObject> validator = new StatisticsJsonValidator<>();
+
+    List<LocalStatisticsJsonStringObject> jsonStringObjects = validator.validate(
+        SerializationUtils.deserializeJson(
+            file.get().getContent(), typeFactory -> typeFactory
+                .constructCollectionType(List.class, LocalStatisticsJsonStringObject.class)
+        )
+    );
+
+    return filterOncePerProvinceStatistics(jsonStringObjects);
+  }
+
+  private boolean isFederalState(String provinceCode) {
+    return provinceCode.length() >= 1 && provinceCode.length() <= 2;
+  }
+
+
 }
