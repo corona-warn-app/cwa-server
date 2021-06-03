@@ -39,19 +39,23 @@ public interface FederationBatchInfoRepository extends PagingAndSortingRepositor
 
   List<FederationBatchInfo> findByStatus(@Param("status") String status);
 
-  @Query("SELECT COUNT(*) FROM federation_batch_info WHERE date<:threshold")
-  int countOlderThan(@Param("threshold") LocalDate date);
+  @Query("SELECT COUNT(*) FROM federation_batch_info WHERE date<:threshold AND source_system=:sourceSystem")
+  int countOlderThan(@Param("threshold") LocalDate date,
+      @Param("sourceSystem") FederationBatchSourceSystem sourceSystem);
 
   @Modifying
-  @Query("DELETE FROM federation_batch_info WHERE date<:threshold")
-  void deleteOlderThan(@Param("threshold") LocalDate date);
+  @Query("DELETE FROM federation_batch_info WHERE date<:threshold AND source_system=:sourceSystem")
+  void deleteOlderThan(@Param("threshold") LocalDate date,
+      @Param("sourceSystem") FederationBatchSourceSystem sourceSystem);
 
-  @Query("SELECT COUNT(*) FROM federation_batch_info WHERE date=:date")
-  int countForDate(@Param("date") LocalDate date);
+  @Query("SELECT COUNT(*) FROM federation_batch_info WHERE date=:date AND source_system=:sourceSystem")
+  int countForDateAndSourceSystem(@Param("date") LocalDate date,
+      @Param("sourceSystem") FederationBatchSourceSystem sourceSystem);
 
   @Modifying
-  @Query("DELETE FROM federation_batch_info WHERE date=:date")
-  void deleteForDate(@Param("date") LocalDate date);
+  @Query("DELETE FROM federation_batch_info WHERE date=:date AND source_system=:sourceSystem")
+  void deleteForDate(@Param("date") LocalDate date,
+      @Param("sourceSystem") FederationBatchSourceSystem sourceSystem);
 
   List<FederationBatchInfo> findByStatusAndSourceSystem(@Param("status") String name,
       @Param("sourceSystem") FederationBatchSourceSystem sourceSystem);

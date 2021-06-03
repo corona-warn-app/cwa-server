@@ -2,6 +2,7 @@
 
 package app.coronawarn.server.common.persistence.repository;
 
+import static app.coronawarn.server.common.persistence.domain.FederationBatchSourceSystem.EFGS;
 import static java.util.Collections.singletonList;
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -69,18 +70,18 @@ class FederationBatchInfoRepositoryTest {
     federationBatchInfoRepository.saveDoNothingOnConflict(batchTag1, date1, statusUnprocessed, efgsTarget);
     federationBatchInfoRepository.saveDoNothingOnConflict(batchTag2, date2, statusUnprocessed, efgsTarget);
     federationBatchInfoRepository.saveDoNothingOnConflict(batchTag3, date2, statusUnprocessed, efgsTarget);
-    assertThat(federationBatchInfoRepository.countForDate(date1)).isEqualTo(1);
-    assertThat(federationBatchInfoRepository.countForDate(date2)).isEqualTo(2);
+    assertThat(federationBatchInfoRepository.countForDateAndSourceSystem(date1, EFGS)).isEqualTo(1);
+    assertThat(federationBatchInfoRepository.countForDateAndSourceSystem(date2, EFGS)).isEqualTo(2);
   }
 
   @Test
   void testDeleteForDate() {
     federationBatchInfoRepository.saveDoNothingOnConflict(batchTag1, date1, statusUnprocessed, efgsTarget);
     federationBatchInfoRepository.saveDoNothingOnConflict(batchTag2, date2, statusUnprocessed, efgsTarget);
-    assertThat(federationBatchInfoRepository.countForDate(date1)).isEqualTo(1);
-    assertThat(federationBatchInfoRepository.countForDate(date2)).isEqualTo(1);
-    federationBatchInfoRepository.deleteForDate(date1);
-    assertThat(federationBatchInfoRepository.countForDate(date1)).isZero();
-    assertThat(federationBatchInfoRepository.countForDate(date2)).isEqualTo(1);
+    assertThat(federationBatchInfoRepository.countForDateAndSourceSystem(date1, EFGS)).isEqualTo(1);
+    assertThat(federationBatchInfoRepository.countForDateAndSourceSystem(date2, EFGS)).isEqualTo(1);
+    federationBatchInfoRepository.deleteForDate(date1, EFGS);
+    assertThat(federationBatchInfoRepository.countForDateAndSourceSystem(date1, EFGS)).isZero();
+    assertThat(federationBatchInfoRepository.countForDateAndSourceSystem(date2, EFGS)).isEqualTo(1);
   }
 }

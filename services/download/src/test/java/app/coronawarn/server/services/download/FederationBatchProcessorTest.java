@@ -90,7 +90,7 @@ class FederationBatchProcessorTest {
 
       LocalDate date = LocalDate.now(ZoneOffset.UTC).minus(Period.ofDays(config.getEnforceDownloadOffsetDays()));
 
-      verify(batchInfoService, times(1)).deleteForDate(date);
+      verify(batchInfoService, times(1)).deleteForDate(date, EFGS);
       verify(batchProcessorSpy, times(1)).saveFirstBatchInfoForDate(date);
     }
 
@@ -100,7 +100,7 @@ class FederationBatchProcessorTest {
       config.setEnforceDateBasedDownload(false);
       batchProcessorSpy.prepareDownload();
 
-      verify(batchInfoService, never()).deleteForDate(any());
+      verify(batchInfoService, never()).deleteForDate(any(), eq(EFGS));
       verify(batchProcessorSpy, never()).saveFirstBatchInfoForDate(any());
     }
   }
@@ -143,7 +143,7 @@ class FederationBatchProcessorTest {
       config.setEnforceDateBasedDownload(true);
       batchProcessor.prepareDownload();
 
-      verify(batchInfoService, times(1)).deleteForDate(date);
+      verify(batchInfoService, times(1)).deleteForDate(date, EFGS);
     }
   }
 
