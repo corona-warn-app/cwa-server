@@ -92,7 +92,7 @@ public class FederationBatchProcessor {
     if (config.getEnforceDateBasedDownload()) {
       LocalDate downloadDate = LocalDate.now(ZoneOffset.UTC)
           .minus(Period.ofDays(config.getEnforceDownloadOffsetDays()));
-      batchInfoService.deleteForDate(downloadDate);
+      batchInfoService.deleteForDate(downloadDate, config.getSourceSystem());
       saveFirstBatchInfoForDate(downloadDate);
     }
   }

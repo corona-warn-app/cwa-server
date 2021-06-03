@@ -107,13 +107,13 @@ class FederationBatchInfoServiceTest {
   @ValueSource(ints = {0, 28})
   @ParameterizedTest
   void testApplyRetentionPolicyForValidNumberOfDays(int daysToRetain) {
-    assertThatCode(() -> federationBatchInfoService.applyRetentionPolicy(daysToRetain))
+    assertThatCode(() -> federationBatchInfoService.applyRetentionPolicy(daysToRetain, EFGS))
         .doesNotThrowAnyException();
   }
 
   @Test
   void testApplyRetentionPolicyForNegativeNumberOfDays() {
-    assertThat(catchThrowable(() -> federationBatchInfoService.applyRetentionPolicy(-1)))
+    assertThat(catchThrowable(() -> federationBatchInfoService.applyRetentionPolicy(-1, EFGS)))
         .isInstanceOf(IllegalArgumentException.class);
   }
 
@@ -123,7 +123,7 @@ class FederationBatchInfoServiceTest {
     FederationBatchInfo expectedBatchInfo = new FederationBatchInfo(batchTag, date, EFGS);
 
     federationBatchInfoService.save(expectedBatchInfo);
-    federationBatchInfoService.applyRetentionPolicy(2);
+    federationBatchInfoService.applyRetentionPolicy(2, EFGS);
     List<FederationBatchInfo> actualBatchInfos =
         federationBatchInfoService.findByStatus(FederationBatchStatus.UNPROCESSED,EFGS);
 
@@ -137,7 +137,7 @@ class FederationBatchInfoServiceTest {
     FederationBatchInfo expectedBatchInfo = new FederationBatchInfo(batchTag, date, EFGS);
 
     federationBatchInfoService.save(expectedBatchInfo);
-    federationBatchInfoService.applyRetentionPolicy(1);
+    federationBatchInfoService.applyRetentionPolicy(1, EFGS);
     List<FederationBatchInfo> actualBatchInfos =
         federationBatchInfoService.findByStatus(FederationBatchStatus.UNPROCESSED,EFGS);
 
@@ -151,7 +151,7 @@ class FederationBatchInfoServiceTest {
     federationBatchInfoService.save(expectedBatchInfo);
 
     assertThat(federationBatchInfoService.findByStatus(FederationBatchStatus.UNPROCESSED,EFGS)).hasSize(1);
-    federationBatchInfoService.deleteForDate(date);
+    federationBatchInfoService.deleteForDate(date, EFGS);
     assertThat(federationBatchInfoService.findByStatus(FederationBatchStatus.UNPROCESSED,EFGS)).isEmpty();
   }
 }
