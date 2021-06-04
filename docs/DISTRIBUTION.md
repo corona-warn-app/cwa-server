@@ -267,6 +267,12 @@ There are three different value sets to consume:
 - vaccine-prophylaxis.json - Vaccine or prophylaxis
 - vaccine-medicinal-product.json - Vaccine medicinal product
 - vaccine-mah-manf.json - Marketing Authorization Holder
+- disease-agent-targeted.json - Disease or Agent Targeted
+- test-manf.json - Rapid Antigen Test name and manufacturer
+- test-result.json - Test Result
+- test-type.json - Type of Test
+
+All the above files are encoded in Base64 and used in Vault as environment variables.
 
 They can be found in the [dgc folder](https://github.com/corona-warn-app/cwa-server/tree/5e47a2e485585043a05ec4173204dd020c757585/services/distribution/src/main/resources/dgc)
 
