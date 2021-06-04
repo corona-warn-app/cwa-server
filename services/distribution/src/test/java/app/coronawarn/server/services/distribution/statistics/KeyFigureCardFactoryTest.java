@@ -381,7 +381,7 @@ class KeyFigureCardFactoryTest {
     }
 
     @ParameterizedTest
-    @ValueSource(doubles = {0.0, 1.0})
+    @ValueSource(doubles = {0.0, -1.0})
     void shouldFailIfFirstVaccinationCardIsNotValid(Double value) {
       statisticsJsonStringObject.setPersonsWithFirstDoseRatio(value);
       assertThatThrownBy(
