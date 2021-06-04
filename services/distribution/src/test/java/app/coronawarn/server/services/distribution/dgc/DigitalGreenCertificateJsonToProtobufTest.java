@@ -98,11 +98,24 @@ class DigitalGreenCertificateJsonToProtobufTest {
   @Test
   void shouldReadDefaultTestManfJsonIfNotConfigured() throws DefaultValueSetsMissingException {
     var result = dgcToProtobufMapping.readTestManfJson();
+
+    assertThat(result.getValueSetId()).isEqualTo("covid-19-lab-test-manufacturer-and-name");
+    assertThat(result.getValueSetDate()).isEqualTo("2021-05-27");
+    assertThat(result.getValueSetValues()).hasSize(72);
+
+    // assert at least one value
+    ValueSetObject actual = result.getValueSetValues().get("1468");
+    assertThat(actual.getDisplay()).isEqualTo("ACON Laboratories, Inc, Flowflex SARS-CoV-2 Antigen rapid test");
+    assertThat(actual.getLang()).isEqualTo("en");
+    assertThat(actual.isActive()).isTrue();
+    assertThat(actual.getVersion()).isEqualTo("2021-05-10 20:07:30 CET");
+    assertThat(actual.getSystem()).isEqualTo("https://covid-19-diagnostics.jrc.ec.europa.eu/devices");
   }
 
   @Test
   void shouldReadDefaultTestResultIfNotConfigured() throws DefaultValueSetsMissingException {
     var result = dgcToProtobufMapping.readTestResultJson();
+
   }
 
   @Test
