@@ -4,6 +4,7 @@ package app.coronawarn.server.common.protocols.internal.v2;
 option java_multiple_files = true;
 import "app/coronawarn/server/common/protocols/internal/v2/app_features.proto";
 import "app/coronawarn/server/common/protocols/internal/v2/corona_test_parameters.proto";
+import "app/coronawarn/server/common/protocols/internal/v2/dgc_parameters.proto";
 import "app/coronawarn/server/common/protocols/internal/v2/exposure_detection_parameters.proto";
 import "app/coronawarn/server/common/protocols/internal/v2/key_download_parameters.proto";
 import "app/coronawarn/server/common/protocols/internal/v2/ppdd_edus_parameters.proto";
@@ -37,6 +38,8 @@ message ApplicationConfigurationIOS {
   PresenceTracingParameters presenceTracingParameters = 12;
 
   CoronaTestParameters coronaTestParameters = 13;
+
+  DGCParameters dgcParameters = 14;
 }
 
 message ExposureConfiguration {

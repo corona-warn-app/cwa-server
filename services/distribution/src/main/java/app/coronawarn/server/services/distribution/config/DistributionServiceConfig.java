@@ -1066,6 +1066,7 @@ public class DistributionServiceConfig {
     private AndroidEventDrivenUserSurveyParameters androidEventDrivenUserSurveyParameters;
     private IosPrivacyPreservingAnalyticsParameters iosPrivacyPreservingAnalyticsParameters;
     private AndroidPrivacyPreservingAnalyticsParameters androidPrivacyPreservingAnalyticsParameters;
+    private DgcParameters dgcParameters;
 
     public IosEventDrivenUserSurveyParameters getIosEventDrivenUserSurveyParameters() {
       return iosEventDrivenUserSurveyParameters;
@@ -1134,6 +1135,14 @@ public class DistributionServiceConfig {
     public void setAndroidExposureDetectionParameters(
         AndroidExposureDetectionParameters androidExposureDetectionParameters) {
       this.androidExposureDetectionParameters = androidExposureDetectionParameters;
+    }
+
+    public DgcParameters getDgcParameters() {
+      return dgcParameters;
+    }
+
+    public void setDgcParameters(DgcParameters dgcParameters) {
+      this.dgcParameters = dgcParameters;
     }
 
     public static class AndroidKeyDownloadParameters extends CommonKeyDownloadParameters {
@@ -1473,6 +1482,47 @@ public class DistributionServiceConfig {
       public void setRequireEvaluationTypeHardwareBacked(Boolean requireEvaluationTypeHardwareBacked) {
         this.requireEvaluationTypeHardwareBacked = requireEvaluationTypeHardwareBacked;
       }
+    }
+
+    public static class DgcParameters {
+
+      private DgcTestCertificateParameters dgcTestCertificateParameters;
+
+      public DgcTestCertificateParameters getTestCertificateParameters() {
+        return dgcTestCertificateParameters;
+      }
+
+      public void setTestCertificateParameters(DgcTestCertificateParameters dgcTestCertificateParameters) {
+        this.dgcTestCertificateParameters = dgcTestCertificateParameters;
+      }
+
+      public static class DgcTestCertificateParameters {
+
+        @Min(0)
+        @Max(60)
+        private Integer waitAfterPublicKeyRegistrationInSeconds;
+
+        @Min(0)
+        @Max(60)
+        private Integer waitForRetryInSeconds;
+
+        public Integer getWaitAfterPublicKeyRegistrationInSeconds() {
+          return waitAfterPublicKeyRegistrationInSeconds;
+        }
+
+        public void setWaitAfterPublicKeyRegistrationInSeconds(Integer waitAfterPublicKeyRegistrationInSeconds) {
+          this.waitAfterPublicKeyRegistrationInSeconds = waitAfterPublicKeyRegistrationInSeconds;
+        }
+
+        public Integer getWaitForRetryInSeconds() {
+          return waitForRetryInSeconds;
+        }
+
+        public void setWaitForRetryInSeconds(Integer waitForRetryInSeconds) {
+          this.waitForRetryInSeconds = waitForRetryInSeconds;
+        }
+      }
+
     }
   }
 

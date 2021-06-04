@@ -84,7 +84,7 @@ class FederationKeyNormalizerTest {
   void testBatchKeysWithDsosAndWithoutTrlAreNormalized() throws Exception {
     LocalDate date = LocalDate.of(2020, 9, 1);
     FederationBatchInfo federationBatchInfo = new FederationBatchInfo(BATCH_TAG, date, UNPROCESSED, EFGS);
-    when(batchInfoService.findByStatus(UNPROCESSED)).thenReturn(list(federationBatchInfo));
+    when(batchInfoService.findByStatus(UNPROCESSED,EFGS)).thenReturn(list(federationBatchInfo));
 
     BatchDownloadResponse serverResponse = createBatchDownloadResponseWithKeys(this::createDiagnosisKeyWithNoTrl);
     when(federationGatewayDownloadService.downloadBatch(BATCH_TAG, date)).thenReturn(serverResponse);
@@ -103,7 +103,7 @@ class FederationKeyNormalizerTest {
   void testTrlIsNormalizedWhenValueProvidedIsMaxInt() throws Exception {
     LocalDate date = LocalDate.of(2020, 9, 1);
     FederationBatchInfo federationBatchInfo = new FederationBatchInfo(BATCH_TAG, date, UNPROCESSED, EFGS);
-    when(batchInfoService.findByStatus(UNPROCESSED)).thenReturn(list(federationBatchInfo));
+    when(batchInfoService.findByStatus(UNPROCESSED,EFGS)).thenReturn(list(federationBatchInfo));
 
     BatchDownloadResponse serverResponse = createBatchDownloadResponseWithKeys(this::createDiagnosisKeyWithMaxIntTrl);
     when(federationGatewayDownloadService.downloadBatch(BATCH_TAG, date)).thenReturn(serverResponse);
