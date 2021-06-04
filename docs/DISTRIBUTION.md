@@ -274,6 +274,7 @@ There are three different value sets to consume:
 
 All the above files are being encoded in Base64 and used in Vault as environment variables.
 The following secret names should be added for each environment with the corresponding values:
+
 - vaccine_mah_json
 - vaccine_medicinal_product_json
 - vaccine_prophylaxis_json
