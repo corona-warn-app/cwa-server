@@ -95,4 +95,25 @@ class DigitalGreenCertificateJsonToProtobufTest {
     assertThat(actual.getSystem()).isEqualTo("http://snomed.info/sct");
   }
 
+  @Test
+  void shouldReadDefaultTestManfJsonIfNotConfigured() throws DefaultValueSetsMissingException {
+    var result = dgcToProtobufMapping.readTestManfJson();
+  }
+
+  @Test
+  void shouldReadDefaultTestResultIfNotConfigured() throws DefaultValueSetsMissingException {
+    var result = dgcToProtobufMapping.readTestResultJson();
+  }
+
+  @Test
+  void shouldReadDefaultTestTypeIfNotConfigured() throws DefaultValueSetsMissingException {
+    var result = dgcToProtobufMapping.readTestTypeJson();
+  }
+
+  @Test
+  void shouldReadDefaultDiseaseAgentTargetedIfNotConfigured() throws DefaultValueSetsMissingException {
+    var result = dgcToProtobufMapping.readDiseaseAgentTargetedJson();
+  }
+
+
 }

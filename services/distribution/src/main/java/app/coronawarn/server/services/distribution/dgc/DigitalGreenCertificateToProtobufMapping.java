@@ -116,11 +116,19 @@ public class DigitalGreenCertificateToProtobufMapping {
     List<ValueSetItem> mahItems = toValueSetItems(readMahJson().getValueSetValues());
     List<ValueSetItem> productItems = toValueSetItems(readMedicinalProductJson().getValueSetValues());
     List<ValueSetItem> prophylaxisItems = toValueSetItems(readProphylaxisJson().getValueSetValues());
+    List<ValueSetItem> diseaseAgentTargetedItems = toValueSetItems(readDiseaseAgentTargetedJson().getValueSetValues());
+    List<ValueSetItem> testManfItems = toValueSetItems(readTestManfJson().getValueSetValues());
+    List<ValueSetItem> testResultItems = toValueSetItems(readTestResultJson().getValueSetValues());
+    List<ValueSetItem> testTypeItems = toValueSetItems(readTestTypeJson().getValueSetValues());
 
     return ValueSets.newBuilder()
         .setMa(ValueSet.newBuilder().addAllItems(mahItems).build())
         .setMp(ValueSet.newBuilder().addAllItems(productItems).build())
         .setVp(ValueSet.newBuilder().addAllItems(prophylaxisItems).build())
+        .setTg(ValueSet.newBuilder().addAllItems(diseaseAgentTargetedItems).build())
+        .setTcMa(ValueSet.newBuilder().addAllItems(testManfItems).build())
+        .setTcTr(ValueSet.newBuilder().addAllItems(testResultItems).build())
+        .setTcTt(ValueSet.newBuilder().addAllItems(testTypeItems).build())
         .build();
   }
 
