@@ -116,16 +116,51 @@ class DigitalGreenCertificateJsonToProtobufTest {
   void shouldReadDefaultTestResultIfNotConfigured() throws DefaultValueSetsMissingException {
     var result = dgcToProtobufMapping.readTestResultJson();
 
+    assertThat(result.getValueSetId()).isEqualTo("covid-19-lab-result");
+    assertThat(result.getValueSetDate()).isEqualTo("2021-04-27");
+    assertThat(result.getValueSetValues()).hasSize(2);
+
+    // assert at least one value
+    ValueSetObject actual = result.getValueSetValues().get("260373001");
+    assertThat(actual.getDisplay()).isEqualTo("Detected");
+    assertThat(actual.getLang()).isEqualTo("en");
+    assertThat(actual.isActive()).isTrue();
+    assertThat(actual.getVersion()).isEqualTo("http://snomed.info/sct/900000000000207008/version/20210131");
+    assertThat(actual.getSystem()).isEqualTo("http://snomed.info/sct");
   }
 
   @Test
   void shouldReadDefaultTestTypeIfNotConfigured() throws DefaultValueSetsMissingException {
     var result = dgcToProtobufMapping.readTestTypeJson();
+
+    assertThat(result.getValueSetId()).isEqualTo("covid-19-lab-test-type");
+    assertThat(result.getValueSetDate()).isEqualTo("2021-04-27");
+    assertThat(result.getValueSetValues()).hasSize(2);
+
+    // assert at least one value
+    ValueSetObject actual = result.getValueSetValues().get("LP6464-4");
+    assertThat(actual.getDisplay()).isEqualTo("Nucleic acid amplification with probe detection");
+    assertThat(actual.getLang()).isEqualTo("en");
+    assertThat(actual.isActive()).isTrue();
+    assertThat(actual.getVersion()).isEqualTo("2.69");
+    assertThat(actual.getSystem()).isEqualTo("http://loinc.org");
   }
 
   @Test
   void shouldReadDefaultDiseaseAgentTargetedIfNotConfigured() throws DefaultValueSetsMissingException {
     var result = dgcToProtobufMapping.readDiseaseAgentTargetedJson();
+
+    assertThat(result.getValueSetId()).isEqualTo("disease-agent-targeted");
+    assertThat(result.getValueSetDate()).isEqualTo("2021-04-27");
+    assertThat(result.getValueSetValues()).hasSize(1);
+
+    // assert at least one value
+    ValueSetObject actual = result.getValueSetValues().get("840539006");
+    assertThat(actual.getDisplay()).isEqualTo("COVID-19");
+    assertThat(actual.getLang()).isEqualTo("en");
+    assertThat(actual.isActive()).isTrue();
+    assertThat(actual.getVersion()).isEqualTo("http://snomed.info/sct/900000000000207008/version/20210131");
+    assertThat(actual.getSystem()).isEqualTo("http://snomed.info/sct");
   }
 
 
