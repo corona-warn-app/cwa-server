@@ -272,7 +272,15 @@ There are three different value sets to consume:
 - test-result.json - Test Result
 - test-type.json - Type of Test
 
-All the above files are encoded in Base64 and used in Vault as environment variables.
+All the above files are being encoded in Base64 and used in Vault as environment variables.
+The following secret names should be added for each environment with the corresponding values:
+  - vaccine_mah_json
+  - vaccine_medicinal_product_json
+  - vaccine_prophylaxis_json
+  - disease_agent_targeted_json
+  - test_manf_json
+  - test_result_json
+  - test_type_json
 
 They can be found in the [dgc folder](https://github.com/corona-warn-app/cwa-server/tree/5e47a2e485585043a05ec4173204dd020c757585/services/distribution/src/main/resources/dgc)
 
