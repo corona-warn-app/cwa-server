@@ -111,8 +111,7 @@ public class FederationBatchProcessor {
     } catch (FatalFederationGatewayException e) {
       throw e;
     } catch (Exception e) {
-      logger.error(
-          "Triggering download of first batch for date {} failed", date, e);
+      logger.error("Triggering download of first batch for date {} failed", date, e);
     }
   }
 
@@ -174,15 +173,15 @@ public class FederationBatchProcessor {
       FederationBatchInfo batchInfo, FederationBatchStatus errorStatus) throws FatalFederationGatewayException {
     LocalDate date = batchInfo.getDate();
     String batchTag = batchInfo.getBatchTag();
-    logger.info("Processing {} batch for date {} and batchTag {}", batchInfo.getSourceSystem(), date, batchTag);
+    logger.info("Processing '{}' batch for date '{}' and batchTag '{}'", batchInfo.getSourceSystem(), date, batchTag);
     AtomicReference<Optional<String>> nextBatchTag = new AtomicReference<>(Optional.empty());
     try {
       BatchDownloadResponse response = federationGatewayDownloadService.downloadBatch(batchTag, date);
       AtomicBoolean batchContainsInvalidKeys = new AtomicBoolean(false);
       nextBatchTag.set(response.getNextBatchTag());
       response.getDiagnosisKeyBatch().ifPresentOrElse(batch -> {
-        logger.info("Downloaded {} {} keys for date {} and batchTag {}", batchInfo.getSourceSystem(),
-            batch.getKeysCount(), date, batchTag);
+        logger.info("Downloaded {} '{}' keys for date '{}' and batchTag '{}'", batch.getKeysCount(),
+            batchInfo.getSourceSystem(), date, batchTag);
         Map<String, Integer> countedKeysByOriginCountry = batch
             .getKeysList().stream().collect(Collectors.groupingBy(
                 app.coronawarn.server.common.protocols.external.exposurenotification.DiagnosisKey::getOrigin))
@@ -190,8 +189,8 @@ public class FederationBatchProcessor {
             .collect(Collectors.toMap(Entry::getKey,
                 e -> e.getValue().size()));
         if (config.getSourceSystem() == FederationBatchSourceSystem.EFGS) {
-          countedKeysByOriginCountry.forEach((key, value) -> logger.info("Downloaded {} {} keys with origin country {}",
-              batchInfo.getSourceSystem(), key, value));
+          countedKeysByOriginCountry.forEach((key, value) -> logger
+              .info("Downloaded {} '{}' keys with origin country '{}'", value, batchInfo.getSourceSystem(), key));
         }
         if (isChgs()) {
           countedKeysByOriginCountry.entrySet().stream().filter(k -> !CH.equalsIgnoreCase(k.getKey()))
@@ -212,8 +211,8 @@ public class FederationBatchProcessor {
         int insertedKeys = diagnosisKeyService.saveDiagnosisKeys(validDiagnosisKeys);
         logger.info("Successfully inserted {} {} keys for date {} and batchTag {}", batchInfo.getSourceSystem(),
             insertedKeys, date, batchTag);
-      }, () -> logger.info("{} batch for date {} and batchTag {} did not contain any keys",
-          batchInfo.getSourceSystem(), date, batchTag));
+      }, () -> logger.info("{} batch for date {} and batchTag {} did not contain any keys", batchInfo.getSourceSystem(),
+          date, batchTag));
       batchInfoService.updateStatus(batchInfo, batchContainsInvalidKeys.get() ? PROCESSED_WITH_ERROR : PROCESSED);
       return nextBatchTag.get();
     } catch (FatalFederationGatewayException e) {
