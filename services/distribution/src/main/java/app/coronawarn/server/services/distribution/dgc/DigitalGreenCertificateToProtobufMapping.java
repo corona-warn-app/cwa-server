@@ -2,7 +2,6 @@ package app.coronawarn.server.services.distribution.dgc;
 
 import static app.coronawarn.server.common.shared.util.SerializationUtils.deserializeJsonToSimpleType;
 
-import app.coronawarn.server.common.protocols.internal.dgc.ValueSet;
 import app.coronawarn.server.common.protocols.internal.dgc.ValueSetItem;
 import app.coronawarn.server.common.protocols.internal.dgc.ValueSets;
 import app.coronawarn.server.services.distribution.config.DistributionServiceConfig;
@@ -35,10 +34,10 @@ public class DigitalGreenCertificateToProtobufMapping {
    *
    * @return The corresponding JSON object.
    */
-  VaccineJsonStringObject readMahJson() throws DefaultValueSetsMissingException {
+  ValueSet readMahJson() throws DefaultValueSetsMissingException {
     String path = distributionServiceConfig.getDigitalGreenCertificate().getMahJsonPath();
     return readConfiguredJsonOrDefault(path, "dgc/vaccine-mah.json",
-        VaccineJsonStringObject.class);
+        ValueSet.class);
   }
 
   /**
@@ -46,10 +45,10 @@ public class DigitalGreenCertificateToProtobufMapping {
    *
    * @return The corresponding JSON object.
    */
-  VaccineJsonStringObject readMedicinalProductJson() throws DefaultValueSetsMissingException {
+  ValueSet readMedicinalProductJson() throws DefaultValueSetsMissingException {
     String path = distributionServiceConfig.getDigitalGreenCertificate().getMedicinalProductsJsonPath();
     return readConfiguredJsonOrDefault(path, "dgc/vaccine-medicinal-product.json",
-        VaccineJsonStringObject.class);
+        ValueSet.class);
   }
 
   /**
@@ -57,10 +56,10 @@ public class DigitalGreenCertificateToProtobufMapping {
    *
    * @return The corresponding JSON object.
    */
-  VaccineJsonStringObject readProphylaxisJson() throws DefaultValueSetsMissingException {
+  ValueSet readProphylaxisJson() throws DefaultValueSetsMissingException {
     String path = distributionServiceConfig.getDigitalGreenCertificate().getProphylaxisJsonPath();
     return readConfiguredJsonOrDefault(path, "dgc/vaccine-prophylaxis.json",
-        VaccineJsonStringObject.class);
+        ValueSet.class);
   }
 
   /**
@@ -68,10 +67,10 @@ public class DigitalGreenCertificateToProtobufMapping {
    *
    * @return The corresponding JSON object.
    */
-  VaccineJsonStringObject readDiseaseAgentTargetedJson() throws DefaultValueSetsMissingException {
+  ValueSet readDiseaseAgentTargetedJson() throws DefaultValueSetsMissingException {
     String path = distributionServiceConfig.getDigitalGreenCertificate().getDiseaseAgentTargetedJsonPath();
     return readConfiguredJsonOrDefault(path, "dgc/disease-agent-targeted.json",
-        VaccineJsonStringObject.class);
+        ValueSet.class);
   }
 
   /**
@@ -79,10 +78,10 @@ public class DigitalGreenCertificateToProtobufMapping {
    *
    * @return The corresponding JSON object.
    */
-  VaccineJsonStringObject readTestManfJson() throws DefaultValueSetsMissingException {
+  ValueSet readTestManfJson() throws DefaultValueSetsMissingException {
     String path = distributionServiceConfig.getDigitalGreenCertificate().getTestManfJsonPath();
     return readConfiguredJsonOrDefault(path, "dgc/test-manf.json",
-        VaccineJsonStringObject.class);
+        ValueSet.class);
   }
 
   /**
@@ -90,10 +89,10 @@ public class DigitalGreenCertificateToProtobufMapping {
    *
    * @return The corresponding JSON object.
    */
-  VaccineJsonStringObject readTestResultJson() throws DefaultValueSetsMissingException {
+  ValueSet readTestResultJson() throws DefaultValueSetsMissingException {
     String path = distributionServiceConfig.getDigitalGreenCertificate().getTestResultJsonPath();
     return readConfiguredJsonOrDefault(path, "dgc/test-result.json",
-        VaccineJsonStringObject.class);
+        ValueSet.class);
   }
 
   /**
@@ -101,10 +100,10 @@ public class DigitalGreenCertificateToProtobufMapping {
    *
    * @return The corresponding JSON object.
    */
-  VaccineJsonStringObject readTestTypeJson() throws DefaultValueSetsMissingException {
+  ValueSet readTestTypeJson() throws DefaultValueSetsMissingException {
     String path = distributionServiceConfig.getDigitalGreenCertificate().getTestTypeJsonPath();
     return readConfiguredJsonOrDefault(path, "dgc/test-type.json",
-        VaccineJsonStringObject.class);
+        ValueSet.class);
   }
 
   /**
@@ -122,13 +121,19 @@ public class DigitalGreenCertificateToProtobufMapping {
     List<ValueSetItem> testTypeItems = toValueSetItems(readTestTypeJson().getValueSetValues());
 
     return ValueSets.newBuilder()
-        .setMa(ValueSet.newBuilder().addAllItems(mahItems).build())
-        .setMp(ValueSet.newBuilder().addAllItems(productItems).build())
-        .setVp(ValueSet.newBuilder().addAllItems(prophylaxisItems).build())
-        .setTg(ValueSet.newBuilder().addAllItems(diseaseAgentTargetedItems).build())
-        .setTcMa(ValueSet.newBuilder().addAllItems(testManfItems).build())
-        .setTcTr(ValueSet.newBuilder().addAllItems(testResultItems).build())
-        .setTcTt(ValueSet.newBuilder().addAllItems(testTypeItems).build())
+        .setMa(app.coronawarn.server.common.protocols.internal.dgc.ValueSet.newBuilder().addAllItems(mahItems).build())
+        .setMp(
+            app.coronawarn.server.common.protocols.internal.dgc.ValueSet.newBuilder().addAllItems(productItems).build())
+        .setVp(app.coronawarn.server.common.protocols.internal.dgc.ValueSet.newBuilder().addAllItems(prophylaxisItems)
+            .build())
+        .setTg(app.coronawarn.server.common.protocols.internal.dgc.ValueSet.newBuilder()
+            .addAllItems(diseaseAgentTargetedItems).build())
+        .setTcMa(app.coronawarn.server.common.protocols.internal.dgc.ValueSet.newBuilder().addAllItems(testManfItems)
+            .build())
+        .setTcTr(app.coronawarn.server.common.protocols.internal.dgc.ValueSet.newBuilder().addAllItems(testResultItems)
+            .build())
+        .setTcTt(app.coronawarn.server.common.protocols.internal.dgc.ValueSet.newBuilder().addAllItems(testTypeItems)
+            .build())
         .build();
   }
 
