@@ -143,7 +143,7 @@ class StatisticsJsonToProtobufTest {
 
     @Test
     void testEffectiveDateValidation() throws IOException {
-      StatisticsJsonValidator statisticsJsonValidator = new StatisticsJsonValidator();
+      StatisticsJsonValidator<StatisticsJsonStringObject> statisticsJsonValidator = new StatisticsJsonValidator<>();
 
       String content = FileUtils.readFileToString(
           new File("./src/test/resources/stats/statistic_data.json"), StandardCharsets.UTF_8);

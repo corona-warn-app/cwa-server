@@ -1,5 +1,7 @@
 package app.coronawarn.server.services.distribution.config;
 
+import static app.coronawarn.server.services.distribution.statistics.local.BuildLocalStatisticsHelper.getFederalStateConfigIndex;
+
 import app.coronawarn.server.common.persistence.utils.YamlPropertySourceFactory;
 import java.util.Map;
 import java.util.Optional;
@@ -7,8 +9,6 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.validation.annotation.Validated;
-
-import static app.coronawarn.server.services.distribution.statistics.local.BuildLocalStatisticsHelper.getFederalStateConfigIndex;
 
 /**
  * Wrapper over properties defined in <code>main-config/region-mapping.yaml</code>. It

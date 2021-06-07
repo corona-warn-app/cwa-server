@@ -44,20 +44,28 @@ class LocalStatisticsJsonToProtobufTest {
   void shouldReturnCorrectFederalStateGrouping() {
     assertThat(localStatisticsMap).hasSize(7);
 
+    // first group of federal states consists of 1 state: BW.
     assertThat(localStatisticsMap.get(1).getFederalStateDataCount()).isEqualTo(1);
     assertThat(localStatisticsMap.get(1).getAdministrativeUnitDataCount()).isEqualTo(3);
 
+    // first group of federal states consists of 1 state: BY.
     assertThat(localStatisticsMap.get(2).getFederalStateDataCount()).isEqualTo(1);
 
+    // first group of federal states consists of 3 states: BE, BB, MV.
     assertThat(localStatisticsMap.get(3).getFederalStateDataCount()).isEqualTo(3);
     assertThat(localStatisticsMap.get(3).getAdministrativeUnitDataCount()).isEqualTo(2);
 
+    // first group of federal states consists of 4 states: HB, HH, NI, SH.
     assertThat(localStatisticsMap.get(4).getFederalStateDataCount()).isEqualTo(4);
 
+    // first group of federal states consists of 1 state: NRW.
     assertThat(localStatisticsMap.get(5).getFederalStateDataCount()).isEqualTo(1);
     assertThat(localStatisticsMap.get(5).getAdministrativeUnitDataCount()).isEqualTo(2);
 
+    // first group of federal states consists of 3 state: SN, ST, TH.
     assertThat(localStatisticsMap.get(6).getFederalStateDataCount()).isEqualTo(3);
+
+    // first group of federal states consists of 3 state: HE, RP, SL.
     assertThat(localStatisticsMap.get(7).getFederalStateDataCount()).isEqualTo(3);
   }
 
@@ -68,13 +76,13 @@ class LocalStatisticsJsonToProtobufTest {
     assertThat(localStatisticsMap.get(5).getFederalStateData(0))
         .extracting(FederalStateData::getFederalState, FederalStateData::getUpdatedAt)
         .containsExactly(FederalState.FEDERAL_STATE_NRW,
-            TimeUtils.toEpochSecondsUTC(LocalDate.of(2021, 5, 18)));
+            TimeUtils.toEpochSecondsUtc(LocalDate.of(2021, 5, 18)));
 
     // Federal state 8 (group 1) is duplicated in JSON sample data. Should return the most recent one.
     assertThat(localStatisticsMap.get(1).getFederalStateData(0))
         .extracting(FederalStateData::getFederalState, FederalStateData::getUpdatedAt)
         .containsExactly(FederalState.FEDERAL_STATE_BW,
-            TimeUtils.toEpochSecondsUTC(LocalDate.of(2021, 5, 18)));
+            TimeUtils.toEpochSecondsUtc(LocalDate.of(2021, 5, 18)));
 
     // Administrative Unit 8326 is duplicated in JSON sample data. Should return the most recent one.
     assertThat(localStatisticsMap.get(1).getAdministrativeUnitDataList()
@@ -83,7 +91,7 @@ class LocalStatisticsJsonToProtobufTest {
         .findFirst().get())
         .extracting(AdministrativeUnitData::getAdministrativeUnitShortId, AdministrativeUnitData::getUpdatedAt)
         .containsExactly(8326,
-            TimeUtils.toEpochSecondsUTC(LocalDate.of(2021, 5, 16)));
+            TimeUtils.toEpochSecondsUtc(LocalDate.of(2021, 5, 16)));
 
 
   }

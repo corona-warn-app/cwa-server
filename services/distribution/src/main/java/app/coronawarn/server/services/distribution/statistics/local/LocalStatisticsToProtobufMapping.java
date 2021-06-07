@@ -1,8 +1,8 @@
 package app.coronawarn.server.services.distribution.statistics.local;
 
+import static app.coronawarn.server.services.distribution.statistics.local.BuildLocalStatisticsHelper.*;
 import static java.util.stream.Collectors.groupingBy;
 import static java.util.stream.Collectors.toList;
-import static app.coronawarn.server.services.distribution.statistics.local.BuildLocalStatisticsHelper.*;
 
 import app.coronawarn.server.common.persistence.service.LocalStatisticsDownloadService;
 import app.coronawarn.server.common.protocols.internal.stats.LocalStatistics;
@@ -132,15 +132,14 @@ public class LocalStatisticsToProtobufMapping {
       Supplier<LocalStatistics> statisticsSupplier,
       Function<LocalStatistics, LocalStatistics> statisticsEnhancer) {
 
-      Optional<Integer> federalStateGroupOptional = regionMappingConfig.getFederalStateGroup(federalStateCode);
+    Optional<Integer> federalStateGroupOptional = regionMappingConfig.getFederalStateGroup(federalStateCode);
 
-      processLocalStatisticsMapEntry(
-          localStatisticsMap,
-          federalStateGroupOptional,
-          statisticsSupplier,
-          statisticsEnhancer
-      );
-
+    processLocalStatisticsMapEntry(
+        localStatisticsMap,
+        federalStateGroupOptional,
+        statisticsSupplier,
+        statisticsEnhancer
+    );
   }
 
   private void processLocalStatisticsMapEntry(
