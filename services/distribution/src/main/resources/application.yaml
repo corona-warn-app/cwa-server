@@ -216,8 +216,8 @@ services:
       prophylaxis-json-path: ${DIGITAL_GREEN_CERTIFICATE_PROPHYLAXIS_JSON_PATH:}
       medicinal-products-json-path: ${DIGITAL_GREEN_CERTIFICATE_MEDICINAL_PRODUCTS_JSON_PATH:}
       disease-agent-targeted-path: ${DIGITAL_GREEN_CERTIFICATE_DISEASE_AGENT_TARGETED_JSON_PATH:}
-      test-type-manf-path: ${DIGITAL_GREEN_CERTIFICATE_TEST_MANF_JSON_PATH:}
-      test-type-result-path: ${DIGITAL_GREEN_CERTIFICATE_TEST_RESULT_JSON_PATH:}
+      test-manf-path: ${DIGITAL_GREEN_CERTIFICATE_TEST_MANF_JSON_PATH:}
+      test-result-path: ${DIGITAL_GREEN_CERTIFICATE_TEST_RESULT_JSON_PATH:}
       test-type-path: ${DIGITAL_GREEN_CERTIFICATE_TEST_TYPE_JSON_PATH:}
       dgc-directory: ${DIGITAL_GREEN_CERTIFICATE_DIRECTORY:ehn-dgc}
       valuesets-file-name: ${DIGITAL_GREEN_CERTIFICATE_VALUESETS_FILE_NAME:value-sets}
