@@ -12,7 +12,7 @@ public class LocalStatisticsDownload {
   private final String etag;
 
   /**
-   * Statistic JSON Download record POJO.
+   * Local Statistic JSON Download record POJO.
    * @param counter file counter/version. Incremented via a postgres sequence.
    * @param downloadedTimestamp timestamp in seconds when this record was downloaded.
    * @param etag etag value of the JSON file at the downloaded time.

@@ -105,7 +105,7 @@ services:
     statistics:
       trend-calculation-threshold: 0.05
       statistic-path: ${STATISTICS_FILE_NAME:json/v1/cwa_reporting_public_data.json}
-      local-statistic-path: ${STATISTICS_FILE_NAME:json/v1/cwa_reporting_public_data_region.json}
+      local-statistic-path: ${LOCAL_STATISTICS_FILE_NAME:json/v1/cwa_reporting_public_data_region.json}
       access-key: ${STATISTICS_FILE_ACCESS_KEY_ID:}
       secret-key: ${STATISTICS_FILE_SECRET_ACCESS_KEY:}
       endpoint: ${STATISTICS_FILE_S3_ENDPOINT:}

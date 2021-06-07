@@ -7,7 +7,10 @@ public interface StatisticJsonFileLoader extends JsonFileLoader {
 
   /**
    * Returns the content of the file. Can be loaded from the local filesystem or a remote storage.
+   *
+   * @param statisticType - enum for LOCAL or STANDARD statistics
    * @return String encoded JSON content
+   *
    */
   JsonFile getFile(StatisticType statisticType);
 
@@ -17,7 +20,10 @@ public interface StatisticJsonFileLoader extends JsonFileLoader {
 
   /**
    * Returns the content of the file only if etag was updated. Otherwise returns Optional.empty.
-   * @return String encoded JSON content
+   *
+   * @param statisticType - enum for LOCAL or STANDARD statistics
+   * @param etag - file etag
+   * @return - String encoded JSON content
    */
   Optional<JsonFile> getFileIfUpdated(StatisticType statisticType, String etag);
 

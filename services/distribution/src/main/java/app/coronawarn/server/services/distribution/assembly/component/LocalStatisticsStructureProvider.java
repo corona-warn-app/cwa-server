@@ -23,7 +23,7 @@ public class LocalStatisticsStructureProvider {
   private final Map<Integer, LocalStatistics> localStatisticsMap;
 
   /**
-   * Creates a new StatisticsStructureProvider.
+   * Creates a new LocalStatisticsStructureProvider.
    */
   public LocalStatisticsStructureProvider(
       CryptoProvider cryptoProvider,
@@ -35,7 +35,7 @@ public class LocalStatisticsStructureProvider {
   }
 
   /**
-   * Returns a list containing the archives with Statistics for mobile clients using signature file.
+   * Returns a list containing the archives with Local Statistics for mobile clients using signature file.
    */
   public List<Writable<WritableOnDisk>> getLocalStatisticsList() {
     if (!localStatisticsMap.isEmpty()) {

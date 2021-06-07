@@ -42,10 +42,10 @@ public class LocalStatisticsToProtobufMapping {
   private final RegionMappingConfig regionMappingConfig;
 
   /**
-   * Process the JSON file provided by TSI and map the it to Statistics protobuf object.
+   * Process the JSON file provided by TSI and map the it to Local Statistics protobuf object.
    *
-   * @param jsonFileLoader                 Loader of the file from the system
-   * @param localStatisticsDownloadService Statistics Download Service for keeping track of ETags
+   * @param jsonFileLoader - Loader of the file from the system
+   * @param localStatisticsDownloadService - Local Statistics Download Service for keeping track of ETags
    */
   public LocalStatisticsToProtobufMapping(StatisticJsonFileLoader jsonFileLoader,
       LocalStatisticsDownloadService localStatisticsDownloadService,
@@ -55,24 +55,17 @@ public class LocalStatisticsToProtobufMapping {
     this.regionMappingConfig = regionMappingConfig;
   }
 
-  private Optional<JsonFile> getFile() {
-    var mostRecent = this.localStatisticsDownloadService.getMostRecentDownload();
-    if (mostRecent.isPresent()) {
-      return this.jsonFileLoader.getFileIfUpdated(StatisticType.LOCAL, mostRecent.get().getEtag());
-    } else {
-      return Optional.of(this.jsonFileLoader.getFile(StatisticType.LOCAL));
-    }
-  }
-
-  private void updateETag(String newETag) {
-    var currentTimestamp = TimeUtils.getCurrentUtcHour().toEpochSecond(ZoneOffset.UTC);
-    this.localStatisticsDownloadService.store(currentTimestamp, newETag);
-  }
-
   /**
-   * Create protobuf statistic object from raw JSON statistics.
+   * Create protobuf local statistic map from raw JSON local statistics.
    *
-   * @return Statistics protobuf statistics object.
+   * Local statistics has to be uploaded on CDN in 7 packages. Each entry on the map represents 1 package.
+   * Packages of local statistics contains data about 1 up to 4 federal states and all their administrative units.
+   *
+   * For more info related to the grouping of the federal states into packages please look into
+   * https://github.com/corona-warn-app/cwa-app-tech-spec/blob/42e9e4f3c588cd2fd283f904e9f0ccd53a2b83d0/
+   * docs/spec/statistics.md#populate-local-statistical-data
+   *
+   * @return map containing local statistics grouped by archive id.
    */
   @Bean
   public Map<Integer, LocalStatistics> constructProtobufLocalStatistics() {
@@ -126,6 +119,44 @@ public class LocalStatisticsToProtobufMapping {
     return localStatisticsMap;
   }
 
+  private Optional<JsonFile> getFile() {
+    var mostRecent = this.localStatisticsDownloadService.getMostRecentDownload();
+    if (mostRecent.isPresent()) {
+      return this.jsonFileLoader.getFileIfUpdated(StatisticType.LOCAL, mostRecent.get().getEtag());
+    } else {
+      return Optional.of(this.jsonFileLoader.getFile(StatisticType.LOCAL));
+    }
+  }
+
+  private void updateETag(String newETag) {
+    var currentTimestamp = TimeUtils.getCurrentUtcHour().toEpochSecond(ZoneOffset.UTC);
+    this.localStatisticsDownloadService.store(currentTimestamp, newETag);
+  }
+
+  /**
+   * Converts an {@link LocalStatisticsJsonStringObject} into a Local Statistics object and handle it addition
+   * to the local statistics map.
+   *
+   * If the map already contains the local statistics object for the current federal state or administrative unit
+   * data represented by {@link LocalStatisticsJsonStringObject}, the new protobuf will be added on that specific
+   * group in the map in which it corresponds.
+   *
+   * EX: Map contains group 3 put on key 3. Group 3 is already represented in the map by an {@link LocalStatistics}
+   * object which contains data about BE and BB federal states.
+   * The method is called with data for federal state MV this time.
+   * In this case the data will be added on map value under key 3 ({@link LocalStatistics}) in the federal data list
+   * of this object.
+   *
+   * If the map does not contain the local statistics object for the current federal state or administrative unit
+   * data represented by {@link LocalStatisticsJsonStringObject}, the new {@link LocalStatistics} protobuf
+   * will be created and put int he map with the key representing the specific group in which it corresponds.
+   *
+   * @param localStatisticsMap
+   * @param federalStateCode
+   * @param localStatisticsJsonStringObject
+   * @param statisticsSupplier
+   * @param statisticsEnhancer
+   */
   private void fillLocalStatisticsFederalStatesGroupMap(Map<Integer, LocalStatistics> localStatisticsMap,
       int federalStateCode,
       LocalStatisticsJsonStringObject localStatisticsJsonStringObject,
