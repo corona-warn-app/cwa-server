@@ -224,6 +224,7 @@ spring:
     web-application-type: NONE
   # Postgres configuration
   flyway:
+    url: ${spring.datasource.url}
     enabled: true
     locations: classpath:/db/migration, classpath:/db/specific/{vendor}
     password: ${POSTGRESQL_PASSWORD_FLYWAY:local_setup_flyway}
