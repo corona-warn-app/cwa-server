@@ -10,6 +10,7 @@ import app.coronawarn.server.services.distribution.statistics.exceptions.Connect
 import app.coronawarn.server.services.distribution.statistics.exceptions.FilePathNotFoundException;
 import app.coronawarn.server.services.distribution.statistics.file.JsonFileLoader;
 import app.coronawarn.server.services.distribution.statistics.file.MockStatisticJsonFileLoader;
+import app.coronawarn.server.services.distribution.statistics.file.StatisticJsonFileLoader;
 import app.coronawarn.server.services.distribution.statistics.keyfigurecard.KeyFigureCardFactory;
 import java.util.Optional;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -34,7 +35,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 class StatisticsLoadExceptionTest {
 
   @SpyBean
-  JsonFileLoader loader;
+  StatisticJsonFileLoader loader;
 
   @Autowired
   DistributionServiceConfig serviceConfig;

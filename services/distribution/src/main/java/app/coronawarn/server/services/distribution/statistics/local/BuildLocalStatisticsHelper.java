@@ -111,6 +111,7 @@ public class BuildLocalStatisticsHelper {
     return FederalStateData.newBuilder()
         .setFederalState(FederalState.forNumber(getFederalStateConfigIndex(federalStateCode)))
         .setSevenDayIncidence(buildSevenDaysIncidence(localStatisticsJsonStringObject))
+        .setUpdatedAt(toEpochSecondsUTC(LocalDate.parse(localStatisticsJsonStringObject.getEffectiveDate())))
         .build();
   }
 

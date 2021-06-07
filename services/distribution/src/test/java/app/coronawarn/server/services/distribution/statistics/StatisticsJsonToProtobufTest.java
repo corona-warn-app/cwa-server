@@ -19,8 +19,8 @@ import app.coronawarn.server.common.protocols.internal.stats.KeyFigureCard;
 import app.coronawarn.server.common.protocols.internal.stats.Statistics;
 import app.coronawarn.server.common.shared.util.SerializationUtils;
 import app.coronawarn.server.services.distribution.config.DistributionServiceConfig;
-import app.coronawarn.server.services.distribution.statistics.file.JsonFileLoader;
 import app.coronawarn.server.services.distribution.statistics.file.MockStatisticJsonFileLoader;
+import app.coronawarn.server.services.distribution.statistics.file.StatisticJsonFileLoader;
 import app.coronawarn.server.services.distribution.statistics.keyfigurecard.KeyFigureCardFactory;
 import app.coronawarn.server.services.distribution.statistics.keyfigurecard.KeyFigureCardSequenceConstants;
 import app.coronawarn.server.services.distribution.statistics.validation.StatisticsJsonValidator;
@@ -60,7 +60,7 @@ class StatisticsJsonToProtobufTest {
     StatisticsDownloadService service;
 
     @MockBean
-    JsonFileLoader mockLoader;
+    StatisticJsonFileLoader mockLoader;
 
     @Autowired
     DistributionServiceConfig serviceConfig;
