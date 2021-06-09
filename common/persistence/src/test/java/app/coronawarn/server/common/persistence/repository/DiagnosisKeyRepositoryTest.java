@@ -52,3 +52,8 @@ public class DiagnosisKeyRepositoryTest {
     assertTrue(repository.exists(id, type.name()));
   }
 }
+
+
+// additional checks -> when inserting zero rolling period is not working properly
+// try to insert a diagn key
+// expectation: you can not insert

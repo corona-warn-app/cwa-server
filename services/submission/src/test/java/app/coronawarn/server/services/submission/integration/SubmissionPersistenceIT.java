@@ -1,6 +1,7 @@
 package app.coronawarn.server.services.submission.integration;
 
 import static app.coronawarn.server.services.submission.SubmissionPayloadGenerator.buildTemporaryExposureKeys;
+import static app.coronawarn.server.services.submission.SubmissionPayloadGenerator.buildTemporaryExposureKeyWithoutMultiplying;
 import static app.coronawarn.server.services.submission.assertions.SubmissionAssertions.assertElementsCorrespondToEachOther;
 import static java.util.Collections.emptyList;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -8,6 +9,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
 
+import app.coronawarn.server.common.persistence.repository.DiagnosisKeyRepository;
 import app.coronawarn.server.common.persistence.service.DiagnosisKeyService;
 import app.coronawarn.server.common.protocols.external.exposurenotification.ReportType;
 import app.coronawarn.server.common.protocols.external.exposurenotification.TemporaryExposureKey;
@@ -45,6 +47,10 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.boot.test.web.client.TestRestTemplate;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
@@ -73,6 +79,12 @@ class SubmissionPersistenceIT {
   @Autowired
   private JdbcTemplate jdbcTemplate;
 
+  @Autowired
+  private TestRestTemplate testRestTemplate;
+
+  @Autowired
+  DiagnosisKeyRepository diagnosisKeyRepository;
+
   @MockBean
   private TanVerifier tanVerifier;
 
@@ -84,6 +96,33 @@ class SubmissionPersistenceIT {
     when(tanVerifier.verifyTan(anyString())).thenReturn(true);
     when(fakeDelayManager.getJitteredFakeDelay()).thenReturn(1000L);
   }
+
+  @Test
+  void testDiagnosisKeyRollingPeriodIsZeroShouldNotBeSaved() {
+
+    // given
+    List<TemporaryExposureKey> invalidKeys = createValidTemporaryExposureKeys(0);
+
+    List<TemporaryExposureKey> validKeys = createValidTemporaryExposureKeys(1);
+
+    SubmissionPayload invalidSubmissionPayload = buildSubmissionPayload(List.of("DE"), "DE", true,
+        invalidKeys, SubmissionType.SUBMISSION_TYPE_PCR_TEST);
+    String tan = "tan";
+    HttpHeaders headers = new HttpHeaders();
+    headers.add("cwa-fake", "0");
+    headers.add("cwa-authorization", tan);
+    headers.setContentType(MediaType.valueOf("Application/x-protobuf"));
+
+    SubmissionPayload validSubmissionPayload = buildSubmissionPayload(List.of("DE"), "DE", true,
+        validKeys, SubmissionType.SUBMISSION_TYPE_PCR_TEST);
+
+    testRestTemplate.postForEntity("/version/v1/diagnosis-keys", new HttpEntity<>(invalidSubmissionPayload, headers), Void.class);
+    assertEquals(0, diagnosisKeyRepository.count());
+
+    testRestTemplate.postForEntity("/version/v1/diagnosis-keys", new HttpEntity<>(validSubmissionPayload, headers), Void.class);
+    assertEquals(100, diagnosisKeyRepository.count());
+  }
+
 
   @ParameterizedTest
   @ValueSource(strings = {PATH_MOBILE_CLIENT_PAYLOAD_PB + "/" + FILENAME_MOBILE_CLIENT_PAYLOAD_PB})
@@ -362,12 +401,28 @@ class SubmissionPersistenceIT {
         .writeTo(new FileOutputStream(PATH_MOBILE_CLIENT_PAYLOAD_PB + "/" + FILENAME_MOBILE_CLIENT_PAYLOAD_PB));
   }
 
+  private List<TemporaryExposureKey> createValidTemporaryExposureKeys(int rollingPeriod) {
+    int numberOfKeys = 10;
+    int transmissionRiskLevel = 6;
+    ReportType reportType = ReportType.CONFIRMED_TEST;
+    int daysSinceOnsetOfSymptoms = 0;
+
+    LocalDateTime now = LocalDateTime.now();
+    LocalDateTime todayMidnight = LocalDateTime
+        .of(now.getYear(), now.getMonth(), now.getDayOfMonth(), 0, 0);
+    LocalDateTime todayMidnightMinusNumberOfKeys = todayMidnight.minusDays(numberOfKeys);
+
+    return buildTemporaryExposureKeyWithoutMultiplying(numberOfKeys,
+        todayMidnightMinusNumberOfKeys,
+        transmissionRiskLevel, rollingPeriod, reportType, daysSinceOnsetOfSymptoms);
+  }
+
   private List<TemporaryExposureKey> createValidTemporaryExposureKeys() {
     int numberOfKeys = 10;
     int transmissionRiskLevel = 6;
-    int rollingPeriod = 144; // 24*60/10
     ReportType reportType = ReportType.CONFIRMED_TEST;
     int daysSinceOnsetOfSymptoms = 0;
+    int rollingPeriod = 144;
 
     LocalDateTime now = LocalDateTime.now();
     LocalDateTime todayMidnight = LocalDateTime

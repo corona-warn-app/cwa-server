@@ -57,6 +57,7 @@ public class SubmissionServiceConfig {
   @Min(0)
   @Max(144)
   private Integer maxRollingPeriod;
+  private Integer minRollingPeriod;
 
   @Autowired
   private TekFieldDerivations tekFieldDerivations;
@@ -147,6 +148,14 @@ public class SubmissionServiceConfig {
 
   public void setMaxRollingPeriod(Integer maxRollingPeriod) {
     this.maxRollingPeriod = maxRollingPeriod;
+  }
+
+  public Integer getMinRollingPeriod() {
+    return minRollingPeriod;
+  }
+
+  public void setMinRollingPeriod(Integer minRollingPeriod) {
+    this.minRollingPeriod = minRollingPeriod;
   }
 
   public Integer getMaxNumberOfKeys() {

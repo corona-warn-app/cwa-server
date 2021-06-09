@@ -29,7 +29,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 @Constraint(validatedBy = ValidSubmissionPayload.SubmissionPayloadValidator.class)
-@Target({ ElementType.PARAMETER })
+@Target({ElementType.PARAMETER})
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
 public @interface ValidSubmissionPayload {
@@ -58,6 +58,7 @@ public @interface ValidSubmissionPayload {
   class SubmissionPayloadValidator implements ConstraintValidator<ValidSubmissionPayload, SubmissionPayload> {
 
     private final int maxNumberOfKeys;
+    private final int minRollingPeriod;
     private final int maxRollingPeriod;
     private final Collection<String> supportedCountries;
     private final String defaultOriginCountry;
@@ -68,6 +69,7 @@ public @interface ValidSubmissionPayload {
         EventCheckinDataValidator checkinDataValidator) {
       maxNumberOfKeys = submissionServiceConfig.getMaxNumberOfKeys();
       maxRollingPeriod = submissionServiceConfig.getMaxRollingPeriod();
+      minRollingPeriod = submissionServiceConfig.getMinRollingPeriod();
       supportedCountries = List.of(submissionServiceConfig.getSupportedCountries());
       defaultOriginCountry = submissionServiceConfig.getDefaultOriginCountry();
       eventCheckinValidator = checkinDataValidator;
@@ -98,7 +100,8 @@ public @interface ValidSubmissionPayload {
           && checkRequiredFieldsNotMissing(exposureKeys, validatorContext)
           && checkTransmissionRiskLevelIsAcceptable(exposureKeys, validatorContext)
           && checkDaysSinceOnsetOfSymptomsIsInRange(exposureKeys, validatorContext)
-          && eventCheckinValidator.verify(submissionPayload, validatorContext);
+          && eventCheckinValidator.verify(submissionPayload, validatorContext)
+          && checkRollingPeriodIsInRange(exposureKeys, validatorContext);
 
       if (!isValidPayload) {
         PrintableSubmissionPayload printableSubmissionPayload = new PrintableSubmissionPayload(submissionPayload);
@@ -137,8 +140,8 @@ public @interface ValidSubmissionPayload {
     /**
      * Verify if payload contains invalid or unaccepted origin country.
      *
-     * @return false if the originCountry field of the given payload does not contain a country code from the configured
-     *         <code>application.yml/supported-countries</code>
+     * @return false if the originCountry field of the given payload does not contain a country code from the
+     * configured* <code>application.yml/supported-countries</code>
      */
     private boolean checkOriginCountryIsValid(SubmissionPayload submissionPayload,
         ConstraintValidatorContext validatorContext) {
@@ -222,6 +225,18 @@ public @interface ValidSubmissionPayload {
         addViolation(validatorContext, messageConstructor.apply(invalidTek));
       });
       return foundInvalid.get();
+    }
+
+    private boolean checkRollingPeriodIsInRange(List<TemporaryExposureKey> exposureKeys,
+        ConstraintValidatorContext validatorContext) {
+      for (int i = 0; i < exposureKeys.size(); i++) {
+        if (exposureKeys.get(i).getRollingPeriod() < minRollingPeriod
+            || exposureKeys.get(i).getRollingPeriod() > maxRollingPeriod) {
+          addViolation(validatorContext, "The rolling period is not in range.");
+          return false;
+        }
+      }
+      return true;
     }
   }
 }

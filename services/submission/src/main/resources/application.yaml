@@ -39,6 +39,8 @@ services:
     maximum-request-size: ${MAXIMUM_REQUEST_SIZE:100KB}
     # The maximum rolling period accepted by the SubmissionController (e.g. 144 (24 hours))
     max-rolling-period: ${MAX_ROLLING_PERIOD:144}
+    # The minimum rolling period accepted by the SubmissionController (e.g. 1 (24 hours))
+    min-rolling-period: ${MIN_ROLLING_PERIOD:1}
     payload:
       # The maximum number of keys accepted for any submission.
       max-number-of-keys: ${MAX_NUMBER_OF_KEYS:14}
