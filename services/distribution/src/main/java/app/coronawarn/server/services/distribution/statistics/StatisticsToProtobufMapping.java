@@ -184,7 +184,10 @@ public class StatisticsToProtobufMapping {
         figureCardMap.get(INFECTIONS_CARD_ID).orElse(emptyCard),
         figureCardMap.get(INCIDENCE_CARD_ID).orElse(emptyCard),
         figureCardMap.get(KEY_SUBMISSION_CARD_ID).orElse(emptyCard),
-        figureCardMap.get(REPRODUCTION_NUMBER_CARD).orElse(emptyCard)
+        figureCardMap.get(REPRODUCTION_NUMBER_CARD).orElse(emptyCard),
+        figureCardMap.get(FIRST_VACCINATION_CARD).orElse(emptyCard),
+        figureCardMap.get(FULLY_VACCINATED_CARD).orElse(emptyCard),
+        figureCardMap.get(VACCINATION_DOSES_CARD).orElse(emptyCard)
     );
   }
 }
