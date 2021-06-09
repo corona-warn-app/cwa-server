@@ -37,7 +37,7 @@ public class DiagnosisKey {
    * https://developer.apple.com/documentation/exposurenotification/setting_up_an_exposure_notification_server
    */
   public static final int KEY_DATA_LENGTH = 16;
-  public static final int MIN_ROLLING_PERIOD = 0;
+  public static final int MIN_ROLLING_PERIOD = 1;
   public static final int MAX_ROLLING_PERIOD = 144;
   public static final int MIN_DAYS_SINCE_ONSET_OF_SYMPTOMS = -14;
   public static final int MAX_DAYS_SINCE_ONSET_OF_SYMPTOMS = 4000;
