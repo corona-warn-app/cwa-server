@@ -141,7 +141,7 @@ public @interface ValidSubmissionPayload {
      * Verify if payload contains invalid or unaccepted origin country.
      *
      * @return false if the originCountry field of the given payload does not contain a country code from the configured
-     *    <code>application.yml/supported-countries</code>
+     *         <code>application.yml/supported-countries</code>
      */
     private boolean checkOriginCountryIsValid(SubmissionPayload submissionPayload,
         ConstraintValidatorContext validatorContext) {
