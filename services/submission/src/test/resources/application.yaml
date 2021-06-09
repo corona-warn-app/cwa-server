@@ -35,6 +35,7 @@ services:
     connection-pool-size: 200
     maximum-request-size: 100KB
     max-rolling-period: 144
+    min-rolling-period: 1
     payload:
       max-number-of-keys: 100
       supported-countries: DE,FR,IT

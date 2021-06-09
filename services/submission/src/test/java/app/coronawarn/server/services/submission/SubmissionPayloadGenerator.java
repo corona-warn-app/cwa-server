@@ -87,4 +87,26 @@ public class SubmissionPayloadGenerator {
     return temporaryExposureKeys;
   }
 
+  public static List<TemporaryExposureKey> buildTemporaryExposureKeyWithoutMultiplying(int numberOfKeys, LocalDateTime todayMidnight,
+      int transmissionRiskLevel, int rollingPeriod, ReportType reportType, int daysSinceOnsetOfSymptoms) {
+    List<TemporaryExposureKey> temporaryExposureKeys = new ArrayList<>();
+
+    for (int i = 0; i < numberOfKeys; i++) {
+      byte[] keyData = new byte[16];
+      Random random = new Random();
+      random.nextBytes(keyData);
+
+      TemporaryExposureKey temporaryExposureKey = TemporaryExposureKey.newBuilder()
+          .setKeyData(ByteString.copyFrom(keyData))
+          .setTransmissionRiskLevel(transmissionRiskLevel)
+          .setRollingStartIntervalNumber((int) todayMidnight.toEpochSecond(ZoneOffset.UTC) / 600)
+          .setRollingPeriod(rollingPeriod)
+          .setReportType(reportType)
+          .setDaysSinceOnsetOfSymptoms(daysSinceOnsetOfSymptoms)
+          .build();
+      temporaryExposureKeys.add(temporaryExposureKey);
+    }
+    return temporaryExposureKeys;
+  }
+
 }
