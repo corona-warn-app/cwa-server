@@ -59,14 +59,13 @@ public class BuildLocalStatisticsHelper {
    * Enhances an instance of Local Statistics protobuf.
    * Adds Administrative Unit Data to the provided Local Statistics
    *
-   * @param federalStateCode - federal state code.
    * @param localStatisticsJsonStringObject - local statistics json object.
    * @return - Function which adds Administrative Unit Data to Local Statistics
    */
-  public static Function<LocalStatistics, LocalStatistics> administrativeUnitEnhancer(int federalStateCode,
+  public static Function<LocalStatistics, LocalStatistics> administrativeUnitEnhancer(
       LocalStatisticsJsonStringObject localStatisticsJsonStringObject) {
     return (localStatistics) ->
-        addAdministrativeUnitData(localStatistics, federalStateCode, localStatisticsJsonStringObject);
+        addAdministrativeUnitData(localStatistics, localStatisticsJsonStringObject);
   }
 
   /**
@@ -177,12 +176,10 @@ public class BuildLocalStatisticsHelper {
    * {@link LocalStatisticsJsonStringObject}.
    *
    * @param localStatistics - existing local statistics
-   * @param federalStateCode - federal state code.
    * @param localStatisticsJsonStringObject - local statistics json object.
    * @return - Local Statistics protobuf containing new administrative unit data.
    */
   private static LocalStatistics addAdministrativeUnitData(LocalStatistics localStatistics,
-      int federalStateCode,
       LocalStatisticsJsonStringObject localStatisticsJsonStringObject) {
     return localStatistics.toBuilder()
         .addAdministrativeUnitData(buildAdministrativeUnitData(localStatisticsJsonStringObject))

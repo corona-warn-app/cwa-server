@@ -33,8 +33,7 @@ public class LocalStatisticsDownloadService {
   @Transactional
   public boolean store(long timestamp, String etag) {
     try {
-      this.repository.insertWithAutoIncrement(timestamp, etag);
-      return true;
+      return this.repository.insertWithAutoIncrement(timestamp, etag);
     } catch (Exception e) {
       logger.error("Failed to store Statistics Download entry", e);
       return false;
@@ -48,7 +47,7 @@ public class LocalStatisticsDownloadService {
    * @return {@link LocalStatisticsDownload} returns Optional.empty if no download entries are stored.
    */
   public Optional<LocalStatisticsDownload> getMostRecentDownload() {
-    return Optional.ofNullable(repository.getWithLatestETag());
+    return repository.getWithLatestETag();
   }
 
   /**

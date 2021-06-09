@@ -70,13 +70,14 @@ public class LocalStatisticsToProtobufMapping {
     Map<Integer, LocalStatistics> localStatisticsMap = new HashMap<>();
 
     try {
-      Optional<JsonFile> file = this.getFile();
+      Optional<JsonFile> optionalFile = this.getFile();
 
-      if (file.isEmpty()) {
+      if (optionalFile.isEmpty()) {
         logger.warn("Stats file is already updated to the latest version. Skipping generation.");
         return Collections.emptyMap();
       } else {
-        this.updateETag(file.get().getETag());
+        JsonFile file = optionalFile.get();
+        this.updateETag(optionalFile.get().getETag());
 
         List<LocalStatisticsJsonStringObject> onePerProvinceStatistics = deserializeAndValidate(file);
 
@@ -88,7 +89,6 @@ public class LocalStatisticsToProtobufMapping {
               fillLocalStatisticsFederalStatesGroupMap(
                   localStatisticsMap,
                   provinceCode,
-                  localStatisticsJsonStringObject,
                   federalStateSupplier(provinceCode, localStatisticsJsonStringObject),
                   federalStateEnhancer(provinceCode, localStatisticsJsonStringObject)
               );
@@ -101,9 +101,8 @@ public class LocalStatisticsToProtobufMapping {
                 fillLocalStatisticsFederalStatesGroupMap(
                     localStatisticsMap,
                     Integer.parseInt(federalStateCodeOptional.get()),
-                    localStatisticsJsonStringObject,
                     administrativeUnitSupplier(provinceCode, localStatisticsJsonStringObject),
-                    administrativeUnitEnhancer(provinceCode, localStatisticsJsonStringObject)
+                    administrativeUnitEnhancer(localStatisticsJsonStringObject)
                 );
               });
             }
@@ -132,29 +131,25 @@ public class LocalStatisticsToProtobufMapping {
   }
 
   /**
-   * Converts an {@link LocalStatisticsJsonStringObject} into a Local Statistics object and handle it addition
-   * to the local statistics map.
-   * If the map already contains the local statistics object for the current federal state or administrative unit
-   * data represented by {@link LocalStatisticsJsonStringObject}, the new protobuf will be added on that specific
-   * group in the map in which it corresponds.
+   * Handles the addition or enhancing of Local Statistics objects in the map.
+   * If the map already contains the CDN package number for the current {@code federalStateCode}, the Local
+   * Statistics Object put on that key (CDN package number) will be enhanced using {@code statisticsEnhancer}
    * EX: Map contains group 3 put on key 3. Group 3 is already represented in the map by an {@link LocalStatistics}
    * object which contains data about BE and BB federal states.
-   * The method is called with data for federal state MV this time.
+   * The method is called with {@code federalStateCode} representing MV federal state this time.
    * In this case the data will be added on map value under key 3 ({@link LocalStatistics}) in the federal data list
    * of this object.
-   * If the map does not contain the local statistics object for the current federal state or administrative unit
-   * data represented by {@link LocalStatisticsJsonStringObject}, the new {@link LocalStatistics} protobuf
-   * will be created and put int he map with the key representing the specific group in which it corresponds.
+   * If the map does not contain the CDN package number for the current {@code federalStateCode},
+   * the Local Statistics Object supplied by {@code statisticsSupplier} will be put to the map with the key
+   * equal to the CDN package group in which the {@code federalStateCode} should stay.
    *
    * @param localStatisticsMap - local statistics map grouped by archive index.
    * @param federalStateCode - federal state code
-   * @param localStatisticsJsonStringObject - local statistics json object
    * @param statisticsSupplier - supplier which builds local statistics
    * @param statisticsEnhancer - supplier which enhance local statistics
    */
   private void fillLocalStatisticsFederalStatesGroupMap(Map<Integer, LocalStatistics> localStatisticsMap,
       int federalStateCode,
-      LocalStatisticsJsonStringObject localStatisticsJsonStringObject,
       Supplier<LocalStatistics> statisticsSupplier,
       Function<LocalStatistics, LocalStatistics> statisticsEnhancer) {
 
@@ -212,12 +207,12 @@ public class LocalStatisticsToProtobufMapping {
     return onePerProvinceStatistics;
   }
 
-  private List<LocalStatisticsJsonStringObject> deserializeAndValidate(Optional<JsonFile> file) throws IOException {
+  private List<LocalStatisticsJsonStringObject> deserializeAndValidate(JsonFile file) throws IOException {
     StatisticsJsonValidator<LocalStatisticsJsonStringObject> validator = new StatisticsJsonValidator<>();
 
     List<LocalStatisticsJsonStringObject> jsonStringObjects = validator.validate(
         SerializationUtils.deserializeJson(
-            file.get().getContent(), typeFactory -> typeFactory
+            file.getContent(), typeFactory -> typeFactory
                 .constructCollectionType(List.class, LocalStatisticsJsonStringObject.class)
         )
     );

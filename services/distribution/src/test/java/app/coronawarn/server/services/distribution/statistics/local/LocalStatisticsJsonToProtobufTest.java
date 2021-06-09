@@ -48,24 +48,24 @@ class LocalStatisticsJsonToProtobufTest {
     assertThat(localStatisticsMap.get(1).getFederalStateDataCount()).isEqualTo(1);
     assertThat(localStatisticsMap.get(1).getAdministrativeUnitDataCount()).isEqualTo(3);
 
-    // first group of federal states consists of 1 state: BY.
+    // second group of federal states consists of 1 state: BY.
     assertThat(localStatisticsMap.get(2).getFederalStateDataCount()).isEqualTo(1);
 
-    // first group of federal states consists of 3 states: BE, BB, MV.
+    // third group of federal states consists of 3 states: BE, BB, MV.
     assertThat(localStatisticsMap.get(3).getFederalStateDataCount()).isEqualTo(3);
     assertThat(localStatisticsMap.get(3).getAdministrativeUnitDataCount()).isEqualTo(2);
 
-    // first group of federal states consists of 4 states: HB, HH, NI, SH.
+    // fourth group of federal states consists of 4 states: HB, HH, NI, SH.
     assertThat(localStatisticsMap.get(4).getFederalStateDataCount()).isEqualTo(4);
 
-    // first group of federal states consists of 1 state: NRW.
+    // fifth group of federal states consists of 1 state: NRW.
     assertThat(localStatisticsMap.get(5).getFederalStateDataCount()).isEqualTo(1);
     assertThat(localStatisticsMap.get(5).getAdministrativeUnitDataCount()).isEqualTo(2);
 
-    // first group of federal states consists of 3 state: SN, ST, TH.
+    // sixth group of federal states consists of 3 state: SN, ST, TH.
     assertThat(localStatisticsMap.get(6).getFederalStateDataCount()).isEqualTo(3);
 
-    // first group of federal states consists of 3 state: HE, RP, SL.
+    // seventh group of federal states consists of 3 state: HE, RP, SL.
     assertThat(localStatisticsMap.get(7).getFederalStateDataCount()).isEqualTo(3);
   }
 
