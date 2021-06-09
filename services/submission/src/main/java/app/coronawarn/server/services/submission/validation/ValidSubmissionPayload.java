@@ -29,7 +29,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 @Constraint(validatedBy = ValidSubmissionPayload.SubmissionPayloadValidator.class)
-@Target({ElementType.PARAMETER})
+@Target({ ElementType.PARAMETER })
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
 public @interface ValidSubmissionPayload {
@@ -141,7 +141,7 @@ public @interface ValidSubmissionPayload {
      * Verify if payload contains invalid or unaccepted origin country.
      *
      * @return false if the originCountry field of the given payload does not contain a country code from the configured
-     *    <code>application.yml/supported-countries</code>
+     *         <code>application.yml/supported-countries</code>
      */
     private boolean checkOriginCountryIsValid(SubmissionPayload submissionPayload,
         ConstraintValidatorContext validatorContext) {
@@ -230,8 +230,7 @@ public @interface ValidSubmissionPayload {
     private boolean checkRollingPeriodIsInRange(List<TemporaryExposureKey> exposureKeys,
         ConstraintValidatorContext validatorContext) {
       for (TemporaryExposureKey exposureKey : exposureKeys) {
-        if (exposureKey.getRollingPeriod() < minRollingPeriod
-            || exposureKey.getRollingPeriod() > maxRollingPeriod) {
+        if (exposureKey.getRollingPeriod() < minRollingPeriod || exposureKey.getRollingPeriod() > maxRollingPeriod) {
           addViolation(validatorContext,
               "The rolling period is not in range (" + minRollingPeriod + " - " + maxRollingPeriod + ").");
           return false;
