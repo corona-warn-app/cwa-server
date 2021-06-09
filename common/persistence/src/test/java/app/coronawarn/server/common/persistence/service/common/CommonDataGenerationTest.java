@@ -52,6 +52,7 @@ class CommonDataGenerationTest {
           app.coronawarn.server.common.protocols.external.exposurenotification.DiagnosisKey.newBuilder()
               .addVisitedCountries("DE")
               .setRollingStartIntervalNumber(123123)
+              .setRollingPeriod(1)
               .setOrigin("DE")
               .setKeyData(ByteString.copyFrom(HashUtils.generateSecureRandomByteArrayData(16)))
               .setTransmissionRiskLevel(1)
