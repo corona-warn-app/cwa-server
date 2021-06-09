@@ -54,9 +54,11 @@ public class SubmissionServiceConfig {
   private Verification verification;
   private Monitoring monitoring;
   private Client client;
-  @Min(0)
+  @Min(1)
   @Max(144)
   private Integer maxRollingPeriod;
+  @Min(1)
+  @Max(144)
   private Integer minRollingPeriod;
 
   @Autowired

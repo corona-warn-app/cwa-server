@@ -140,8 +140,8 @@ public @interface ValidSubmissionPayload {
     /**
      * Verify if payload contains invalid or unaccepted origin country.
      *
-     * @return false if the originCountry field of the given payload does not contain a country code from the
-     * configured* <code>application.yml/supported-countries</code>
+     * @return false if the originCountry field of the given payload does not contain a country code from the configured
+     *    <code>application.yml/supported-countries</code>
      */
     private boolean checkOriginCountryIsValid(SubmissionPayload submissionPayload,
         ConstraintValidatorContext validatorContext) {
@@ -232,7 +232,8 @@ public @interface ValidSubmissionPayload {
       for (TemporaryExposureKey exposureKey : exposureKeys) {
         if (exposureKey.getRollingPeriod() < minRollingPeriod
             || exposureKey.getRollingPeriod() > maxRollingPeriod) {
-          addViolation(validatorContext, "The rolling period is not in range.");
+          addViolation(validatorContext,
+              "The rolling period is not in range (" + minRollingPeriod + " - " + maxRollingPeriod + ").");
           return false;
         }
       }
